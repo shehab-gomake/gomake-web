@@ -6,11 +6,12 @@
  * (All Conversations, Channels, Mentions, Unattended).
  */
 
-import React from "react";
-import { Stack } from "@mui/material";
+import React, { useMemo } from "react";
+import { Stack, Box, Divider, useTheme } from "@mui/material";
 import { Panel, PanelContent, EmptyState } from "@/widgets/frontdesk/design-system";
 import { ChatwootConversationList } from "./chatwoot-conversation-list";
 import { ChatwootMessageViewer } from "./chatwoot-message-viewer";
+import { ChatwootConversationDetailPanel } from "./chatwoot-conversation-detail-panel";
 import { useChatwootProvider } from "../hooks/use-chatwoot-provider";
 import type { ChatwootConversation } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
 
@@ -48,12 +49,23 @@ export const BaseConversationView: React.FC<BaseConversationViewProps> = ({
     inboxesLoading,
   } = useChatwootProvider();
 
+  const theme = useTheme();
+
+  // Memoize empty state to prevent unnecessary re-renders
+  const emptyStateContent = useMemo(() => (
+    <EmptyState
+      icon="inbox"
+      title="No conversation selected"
+      description="Select a conversation from the list to view messages"
+    />
+  ), []);
+
   return (
-    <Stack direction="row" spacing={1} sx={{ height: "100%", p: 0.5 }}>
+    <Stack direction="row" spacing={0} sx={{ height: "100%", p: 0 }}>
       {/* Conversation List */}
       <Panel
-        elevation={0}
-        border="default"
+        elevation={1}
+        border="none"
         sx={{
           width: 400,
           minWidth: 350,
@@ -62,6 +74,7 @@ export const BaseConversationView: React.FC<BaseConversationViewProps> = ({
           display: "flex",
           flexDirection: "column",
           height: "100%",
+          backgroundColor: "background.paper",
         }}
       >
         <ChatwootConversationList
@@ -80,10 +93,13 @@ export const BaseConversationView: React.FC<BaseConversationViewProps> = ({
         />
       </Panel>
 
+      {/* Divider between list and viewer */}
+      <Divider orientation="vertical" flexItem sx={{ borderColor: theme.palette.divider }} />
+
       {/* Message Viewer */}
       <Panel
-        elevation={0}
-        border="default"
+        elevation={1}
+        border="none"
         sx={{
           flex: 1,
           overflow: "hidden",
@@ -91,25 +107,39 @@ export const BaseConversationView: React.FC<BaseConversationViewProps> = ({
           flexDirection: "column",
           minWidth: 0,
           height: "100%",
+          backgroundColor: "background.paper",
         }}
       >
         {selectedConversation ? (
-          <ChatwootMessageViewer
-            conversation={selectedConversation}
-            accountId={currentAccountId || undefined}
-            onBack={handleBack}
-            onConversationUpdate={updateConversationInList}
-            currentStatusFilter={Array.isArray(filters.status) ? filters.status[0] : filters.status}
-            inboxes={inboxes}
-            inboxesLoading={inboxesLoading}
-            {...messageViewerProps}
-          />
+          <Stack direction="row" spacing={0} sx={{ height: "100%", overflow: "hidden" }}>
+            {/* Main Message Area */}
+            <Box sx={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0, overflow: "hidden" }}>
+              <ChatwootMessageViewer
+                conversation={selectedConversation}
+                accountId={currentAccountId || undefined}
+                onBack={handleBack}
+                onConversationUpdate={updateConversationInList}
+                currentStatusFilter={Array.isArray(filters.status) ? filters.status[0] : filters.status}
+                inboxes={inboxes}
+                inboxesLoading={inboxesLoading}
+                {...messageViewerProps}
+              />
+            </Box>
+
+            {/* Divider between message viewer and detail panel */}
+            <Divider orientation="vertical" flexItem sx={{ borderColor: theme.palette.divider }} />
+
+            {/* Right Detail Panel */}
+            <ChatwootConversationDetailPanel
+              conversation={selectedConversation}
+              accountId={currentAccountId || undefined}
+              inboxes={inboxes}
+              onConversationUpdate={updateConversationInList}
+            />
+          </Stack>
         ) : (
           <PanelContent padding="lg">
-            <EmptyState
-              title={emptyState.title}
-              description={emptyState.description}
-            />
+            {emptyStateContent}
           </PanelContent>
         )}
       </Panel>

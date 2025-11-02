@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Paper, Typography, Stack } from "@mui/material";
+import { Box, Paper, Typography, Stack, alpha } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { PanelContent, EmptyState } from "@/widgets/frontdesk/design-system";
@@ -186,15 +186,16 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
 
   return (
     <Paper
-      elevation={0}
+      elevation={2}
       sx={{
         flex: 1,
         display: "flex",
         flexDirection: "column",
         overflow: "hidden",
         height: "100%",
-        border: `1px solid ${theme.palette.divider}`,
         borderRadius: 2,
+        backgroundColor: neutralColor(0),
+        boxShadow: `0 2px 8px ${alpha(theme.palette.common.black, 0.06)}, 0 1px 3px ${alpha(theme.palette.common.black, 0.04)}`,
       }}
     >
       {/* Header */}

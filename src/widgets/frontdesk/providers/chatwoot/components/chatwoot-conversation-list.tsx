@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Box, Paper, List, Alert } from "@mui/material";
+import { Box, Paper, List, Alert, alpha } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { useRecoilValue } from "recoil";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
@@ -73,14 +73,15 @@ export const ChatwootConversationList: React.FC<ChatwootConversationListProps> =
 
   return (
     <Paper
-      elevation={0}
+      elevation={2}
       sx={{
         height: "100%",
-        border: `1px solid ${theme.palette.divider}`,
         borderRadius: 2,
         overflow: "hidden",
         display: "flex",
         flexDirection: "column",
+        backgroundColor: neutralColor(0),
+        boxShadow: `0 2px 8px ${alpha(theme.palette.common.black, 0.06)}, 0 1px 3px ${alpha(theme.palette.common.black, 0.04)}`,
       }}
     >
       {/* Custom Header */}

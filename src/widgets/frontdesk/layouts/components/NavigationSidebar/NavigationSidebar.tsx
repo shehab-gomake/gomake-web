@@ -35,7 +35,6 @@ import AlternateEmailIcon from "@mui/icons-material/AlternateEmail";
 import NotInterestedIcon from "@mui/icons-material/NotInterested";
 import ForumIcon from "@mui/icons-material/Forum";
 import AddIcon from "@mui/icons-material/Add";
-import { ChatwootProfileCard } from "@/widgets/frontdesk/providers/chatwoot/components/chatwoot-profile-card";
 import { useChatwootInboxes } from "@/widgets/frontdesk/providers/chatwoot/hooks/use-chatwoot-inboxes";
 import { useChatwootRouter } from "@/widgets/frontdesk/providers/chatwoot/hooks/use-chatwoot-router";
 import { AddChannelModal } from "@/widgets/frontdesk/providers/chatwoot/components/add-channel-modal";
@@ -1019,9 +1018,6 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
       </Box>
 
       <Divider sx={{ my: 1 }} />
-
-      {/* Chatwoot Profile Card */}
-      {selectedChannel === "chatwoot" && <ChatwootProfileCard isCollapsed={isCollapsed} />}
 
       {/* Spacer */}
       <Box sx={{ flex: 1 }} />
