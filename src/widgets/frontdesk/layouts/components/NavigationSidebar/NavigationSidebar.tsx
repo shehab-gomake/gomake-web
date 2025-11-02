@@ -488,15 +488,15 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
       <Divider sx={{ my: 1 }} />
 
       {/* Chatwoot Section */}
-      <Box sx={{ py: 1 }}>
+      <Box sx={{ py: 0.5 }}>
         {!isCollapsed && (
           <Box
             sx={{
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
-              px: 2,
-              py: 1,
+              px: 1.5,
+              py: 0.5,
               cursor: "pointer",
               "&:hover": { backgroundColor: theme.palette.action.hover },
             }}
@@ -541,7 +541,7 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
                   router.replace(path, undefined, { shallow: options.scroll === false });
                 }}
                 sx={{
-                  py: 1,
+                  py: 0.5,
                   px: isCollapsed ? 1.5 : 2,
                   justifyContent: isCollapsed ? "center" : "flex-start",
                   pointerEvents: "auto",
@@ -600,7 +600,7 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
                   router.replace(path, undefined, { shallow: options.scroll === false });
                 }}
                 sx={{
-                  py: 1,
+                  py: 0.5,
                   px: isCollapsed ? 1.5 : 2,
                   justifyContent: isCollapsed ? "center" : "flex-start",
                   pointerEvents: "auto",
@@ -643,7 +643,7 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
                 <ListItemButton
                   onClick={() => setChatwootConversationsExpanded(!chatwootConversationsExpanded)}
                   sx={{
-                    py: 0.75,
+                    py: 0.5,
                     px: 2,
                     "&:hover": { backgroundColor: theme.palette.action.hover },
                   }}
@@ -689,7 +689,7 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
                           router.replace(path, undefined, { shallow: options.scroll === false });
                         }}
                         sx={{
-                          py: 0.75,
+                          py: 0.5,
                           pl: isCollapsed ? 1.5 : 5,
                           pr: isCollapsed ? 1.5 : 2,
                           justifyContent: isCollapsed ? "center" : "flex-start",
@@ -737,7 +737,7 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
                           router.replace(path, undefined, { shallow: options.scroll === false });
                         }}
                         sx={{
-                          py: 0.75,
+                          py: 0.5,
                           pl: isCollapsed ? 1.5 : 5,
                           pr: isCollapsed ? 1.5 : 2,
                           justifyContent: isCollapsed ? "center" : "flex-start",
@@ -785,7 +785,7 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
                           router.replace(path, undefined, { shallow: options.scroll === false });
                         }}
                         sx={{
-                          py: 0.75,
+                          py: 0.5,
                           pl: isCollapsed ? 1.5 : 5,
                           pr: isCollapsed ? 1.5 : 2,
                           justifyContent: isCollapsed ? "center" : "flex-start",
@@ -821,7 +821,7 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
                 <ListItemButton
                   onClick={() => setChatwootChannelsExpanded(!chatwootChannelsExpanded)}
                   sx={{
-                    py: 0.75,
+                    py: 0.5,
                     px: 2,
                     "&:hover": { backgroundColor: theme.palette.action.hover },
                   }}
@@ -872,7 +872,7 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
                     {inboxesLoading ? (
                       <ListItemButton
                         sx={{
-                          py: 0.75,
+                          py: 0.5,
                           pl: 5,
                           pr: 2,
                           justifyContent: "center",
@@ -883,7 +883,7 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
                     ) : inboxes.length === 0 ? (
                       <ListItemButton
                         sx={{
-                          py: 0.75,
+                          py: 0.5,
                           pl: 5,
                           pr: 2,
                         }}
@@ -927,7 +927,7 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
                               router.replace(path, undefined, { shallow: options.scroll === false });
                             }}
                             sx={{
-                              py: 0.75,
+                              py: 0.5,
                               pl: 5,
                               pr: 2,
                               pointerEvents: "auto",

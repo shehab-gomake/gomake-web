@@ -329,7 +329,7 @@ export const ChatwootNotificationsCompact: React.FC = () => {
                             sx={{
                               width: 12,
                               height: 12,
-                              borderRadius: '2px',
+                              borderRadius: 1,
                               backgroundColor: isUnread
                                 ? primaryColor(600)
                                 : colorTokens.neutral[400],

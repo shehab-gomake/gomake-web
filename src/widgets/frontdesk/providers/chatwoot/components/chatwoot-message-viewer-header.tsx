@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Box, Stack, Typography, Menu, MenuItem, ListItemIcon, ListItemText, IconButton, Tooltip, Button } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 import {
   ArrowBack as BackIcon,
   Star as StarIcon,
@@ -51,6 +52,7 @@ export const ChatwootMessageViewerHeader: React.FC<ChatwootMessageViewerHeaderPr
   onPrint,
   isStarred = false,
 }) => {
+  const theme = useTheme();
   const { primaryColor, neutralColor } = useGomakeTheme();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [reopenMenuAnchor, setReopenMenuAnchor] = useState<null | HTMLElement>(null);
@@ -150,7 +152,7 @@ export const ChatwootMessageViewerHeader: React.FC<ChatwootMessageViewerHeaderPr
     <Box
       sx={{
         p: 2,
-        borderBottom: `1px solid ${neutralColor(200)}`,
+        borderBottom: `1px solid ${theme.palette.divider}`,
         backgroundColor: neutralColor(0), // Light background
       }}
     >

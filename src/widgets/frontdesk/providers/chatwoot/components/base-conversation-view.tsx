@@ -49,7 +49,7 @@ export const BaseConversationView: React.FC<BaseConversationViewProps> = ({
   } = useChatwootProvider();
 
   return (
-    <Stack direction="row" spacing={2} sx={{ height: "100%", p: 2 }}>
+    <Stack direction="row" spacing={1} sx={{ height: "100%", p: 0.5 }}>
       {/* Conversation List */}
       <Panel
         elevation={0}

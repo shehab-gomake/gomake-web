@@ -100,8 +100,8 @@ const MAX_UNREAD_DISPLAY = 99;
 // ============================================================================
 
 const getListItemButtonStyles = (isSelected: boolean): SxProps<Theme> => ({
-  py: 1.5,
-  px: 2,
+  py: 1,
+  px: 1.5,
   borderBottom: `1px solid ${colorTokens.semantic.border.default}`,
   backgroundColor: isSelected
     ? colorTokens.semantic.interactive.selected
@@ -254,7 +254,7 @@ export const ConversationListItem = React.memo<ConversationListItemProps>(({
         onContextMenu={handleContextMenu}
         sx={getListItemButtonStyles(isSelected)}
       >
-        <Stack direction="row" alignItems="flex-start" spacing={1.5} sx={{ width: '100%' }}>
+        <Stack direction="row" alignItems="flex-start" spacing={1} sx={{ width: '100%' }}>
           {/* Contact Avatar */}
           <Avatar
             size="sm"

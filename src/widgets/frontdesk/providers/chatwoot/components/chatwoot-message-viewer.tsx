@@ -1,5 +1,6 @@
 import React from "react";
 import { Box, Paper, Typography, Stack } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { PanelContent, EmptyState } from "@/widgets/frontdesk/design-system";
 import { ChatwootMessageViewerHeader } from "./chatwoot-message-viewer-header";
@@ -33,6 +34,7 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
   inboxes = [],
   inboxesLoading = false,
 }) => {
+  const theme = useTheme();
   const { neutralColor } = useGomakeTheme();
   const [isSending, setIsSending] = React.useState(false);
 
@@ -191,7 +193,7 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
         flexDirection: "column",
         overflow: "hidden",
         height: "100%",
-        border: `1px solid ${neutralColor(200)}`,
+        border: `1px solid ${theme.palette.divider}`,
         borderRadius: 2,
       }}
     >

@@ -53,7 +53,7 @@ export const ReplyComposerTabs: React.FC<ReplyComposerTabsProps> = ({
       <Box
         sx={{
           display: "inline-flex",
-          borderRadius: "6px",
+          borderRadius: 1,
           backgroundColor: neutralColor(100),
           border: `1px solid ${neutralColor(200)}`,
           overflow: "hidden",
@@ -70,7 +70,7 @@ export const ReplyComposerTabs: React.FC<ReplyComposerTabsProps> = ({
             textTransform: "none",
             color: activeTab === "reply" ? textColor : lightGrayText,
             backgroundColor: activeTab === "reply" ? "white" : "transparent",
-            borderRadius: activeTab === "reply" ? "5px 0 0 5px" : 0,
+            borderRadius: activeTab === "reply" ? "8px 0 0 8px" : 0,
             borderRight: `1px solid ${neutralColor(200)}`,
             boxShadow: activeTab === "reply" ? `0 1px 2px ${neutralColor(200)}` : "none",
             transition: "all 0.2s ease",
@@ -91,7 +91,7 @@ export const ReplyComposerTabs: React.FC<ReplyComposerTabsProps> = ({
             textTransform: "none",
             color: activeTab === "private" ? textColor : lightGrayText,
             backgroundColor: activeTab === "private" ? "white" : "transparent",
-            borderRadius: activeTab === "private" ? "0 5px 5px 0" : 0,
+            borderRadius: activeTab === "private" ? "0 8px 8px 0" : 0,
             boxShadow: activeTab === "private" ? `0 1px 2px ${neutralColor(200)}` : "none",
             transition: "all 0.2s ease",
             "&:hover": {
