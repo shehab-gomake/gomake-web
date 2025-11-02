@@ -37,6 +37,7 @@ import ForumIcon from "@mui/icons-material/Forum";
 import AddIcon from "@mui/icons-material/Add";
 import { ChatwootProfileCard } from "@/widgets/frontdesk/providers/chatwoot/components/chatwoot-profile-card";
 import { useChatwootInboxes } from "@/widgets/frontdesk/providers/chatwoot/hooks/use-chatwoot-inboxes";
+import { useChatwootRouter } from "@/widgets/frontdesk/providers/chatwoot/hooks/use-chatwoot-router";
 import { AddChannelModal } from "@/widgets/frontdesk/providers/chatwoot/components/add-channel-modal";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useRouter } from "next/router";
@@ -165,6 +166,9 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
 
   // Fetch Chatwoot inboxes (channels)
   const { inboxes, loading: inboxesLoading, selectedInboxId, selectInbox } = useChatwootInboxes();
+
+  // Get current Chatwoot view for accurate selection state
+  const { isDashboardView, isMyInboxView, isAllConversationsView, isMentionsView, isUnattendedView, isChannelsView } = useChatwootRouter();
 
   const channelItems = [
     { id: "email" as Channel, icon: <EmailIcon />, label: "Email" },
@@ -515,24 +519,85 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
         )}
         <Collapse in={isCollapsed || chatwootExpanded}>
           <List disablePadding sx={{ pointerEvents: "auto" }}>
+            {/* Dashboard */}
+            <Tooltip title="Dashboard" placement="right" disableHoverListener={!isCollapsed}>
+              <ListItemButton
+                selected={isDashboardView}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  e.preventDefault();
+
+                  // Use RouteBuilder for type-safe navigation
+                  const route = RouteBuilder.chatwootDashboard();
+                  const { path, options } = buildRoute(route, { replace: true });
+
+                  // Navigate to Chatwoot channel first if not already there
+                  if (selectedChannel !== "chatwoot") {
+                    onSectionSelect("inbox");
+                    onChannelSelect("chatwoot" as Channel);
+                  }
+
+                  // Then navigate to the dashboard view
+                  router.replace(path, undefined, { shallow: options.scroll === false });
+                }}
+                sx={{
+                  py: 1,
+                  px: isCollapsed ? 1.5 : 2,
+                  justifyContent: isCollapsed ? "center" : "flex-start",
+                  pointerEvents: "auto",
+                  "&.Mui-selected": {
+                    backgroundColor: theme.palette.primary.main + "10",
+                    borderLeft: `3px solid ${theme.palette.primary.main}`,
+                    "&:hover": {
+                      backgroundColor: theme.palette.primary.main + "20",
+                    },
+                  },
+                }}
+              >
+                {isCollapsed ? (
+                  <Box sx={{ color: theme.palette.text.secondary, display: "flex" }}>
+                    <DashboardIcon fontSize="small" />
+                  </Box>
+                ) : (
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, width: "100%" }}>
+                    <Box sx={{ color: theme.palette.text.secondary }}>
+                      <DashboardIcon fontSize="small" />
+                    </Box>
+                    <ListItemText
+                      primary="Dashboard"
+                      primaryTypographyProps={{
+                        variant: "body2",
+                        sx: {
+                          fontSize: "0.875rem",
+                          fontWeight: 400,
+                        },
+                      }}
+                    />
+                  </Box>
+                )}
+              </ListItemButton>
+            </Tooltip>
+
             {/* My Inbox */}
             <Tooltip title="My Inbox" placement="right" disableHoverListener={!isCollapsed}>
               <ListItemButton
-                selected={selectedChannel === "chatwoot" && selectedSection === "inbox"}
+                selected={isMyInboxView}
                 onClick={(e) => {
                   e.stopPropagation();
-                  onSectionSelect("inbox");
-                  onChannelSelect("chatwoot" as Channel);
-                  
-                  // Navigate to My Inbox notifications view
-                  router.push({
-                    pathname: router.pathname,
-                    query: {
-                      ...router.query,
-                      view: "notifications",
-                      provider: "chatwoot",
-                    },
-                  });
+                  e.preventDefault();
+
+                  // Use RouteBuilder for type-safe navigation
+                  const route = RouteBuilder.chatwootMyInbox();
+                  const { path, options } = buildRoute(route, { replace: true });
+
+                  // Navigate to Chatwoot channel first if not already there
+                  if (selectedChannel !== "chatwoot") {
+                    onSectionSelect("inbox");
+                    onChannelSelect("chatwoot" as Channel);
+                  }
+
+                  // Then navigate to My Inbox
+                  router.replace(path, undefined, { shallow: options.scroll === false });
                 }}
                 sx={{
                   py: 1,
@@ -602,7 +667,7 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
                     {/* All Conversations */}
                     <Tooltip title="All Conversations" placement="right">
                       <ListItemButton
-                        selected={selectedChannel === "chatwoot" && selectedSection === "inbox" && router.query.view !== "notifications"}
+                        selected={isAllConversationsView}
                         onClick={(e) => {
                           e.stopPropagation();
                           e.preventDefault();
@@ -653,7 +718,7 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
                     {/* Mentions */}
                     <Tooltip title="Mentions" placement="right">
                       <ListItemButton
-                        selected={false}
+                        selected={isMentionsView}
                         onClick={(e) => {
                           e.stopPropagation();
                           e.preventDefault();
@@ -701,7 +766,7 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
                     {/* Unattended */}
                     <Tooltip title="Unattended" placement="right">
                       <ListItemButton
-                        selected={false}
+                        selected={isUnattendedView}
                         onClick={(e) => {
                           e.stopPropagation();
                           e.preventDefault();
@@ -835,7 +900,7 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
                       inboxes.map((inbox: any) => (
                         <Tooltip key={inbox.id} title={inbox.name} placement="right">
                           <ListItemButton
-                            selected={selectedInboxId === inbox.id && selectedChannel === "chatwoot"}
+                            selected={isChannelsView && selectedInboxId === inbox.id}
                             onClick={(e) => {
                               e.stopPropagation();
 

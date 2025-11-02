@@ -103,6 +103,7 @@ const mapChannelToPath = (channel: FrontDeskChannel): string => {
  */
 const mapChatwootViewToQueryParam = (view: ChatwootView): string => {
   const map: Record<ChatwootView, string> = {
+    [ChatwootView.DASHBOARD]: "dashboard",
     [ChatwootView.MY_INBOX]: "my-inbox",
     [ChatwootView.ALL_CONVERSATIONS]: "all-conversations",
     [ChatwootView.MENTIONS]: "mentions",
@@ -268,6 +269,11 @@ export const RouteBuilder = {
   chatwootAllConversations: (): FrontDeskRoute => RouteBuilder.chatwoot(ChatwootView.ALL_CONVERSATIONS),
 
   /**
+   * Build Chatwoot Dashboard route
+   */
+  chatwootDashboard: (): FrontDeskRoute => RouteBuilder.chatwoot(ChatwootView.DASHBOARD),
+
+  /**
    * Build Chatwoot Mentions route
    */
   chatwootMentions: (): FrontDeskRoute => RouteBuilder.chatwoot(ChatwootView.MENTIONS),
@@ -342,6 +348,7 @@ export const getRouteMetadata = (route: FrontDeskRoute) => {
 
     case RouteType.CHATWOOT: {
       const viewNames = {
+        [ChatwootView.DASHBOARD]: "Dashboard",
         [ChatwootView.MY_INBOX]: "My Inbox",
         [ChatwootView.ALL_CONVERSATIONS]: "All Conversations",
         [ChatwootView.MENTIONS]: "Mentions",
