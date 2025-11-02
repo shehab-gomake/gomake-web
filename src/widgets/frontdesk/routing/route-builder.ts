@@ -5,51 +5,83 @@
  * Handles all route types and query parameters for navigation.
  */
 
-import {
-  FrontDeskRoute,
-  RouteType,
-  FrontDeskChannel,
-  FrontDeskSection,
-  TicketView,
-  NavigationOptions,
-} from './types';
+import { FrontDeskRoute, RouteType, FrontDeskChannel, FrontDeskSection, TicketView, NavigationOptions, ChatwootView } from "./types";
 
 /**
  * Build URL path from route
  */
 export const buildRoutePath = (route: FrontDeskRoute): string => {
+  console.log("[FrontDesk Route Builder] Building path for route:", route);
+
+  let path: string;
+
   switch (route.type) {
     case RouteType.INBOX:
-      return '/frontdesk/inbox';
+      path = "/frontdesk/inbox";
+      break;
 
     case RouteType.CHANNEL: {
       const channelPath = mapChannelToPath(route.channel);
-      let path = `/frontdesk/inbox/${channelPath}`;
+      path = `/frontdesk/inbox/${channelPath}`;
 
-      // Add conversation as query param if present
+      // Add query params if present
+      const queryParams = new URLSearchParams();
+      if (route.accountId) {
+        queryParams.append("account", route.accountId);
+      }
       if (route.conversationId) {
-        path += `?conversation=${route.conversationId}`;
+        queryParams.append("conversation", route.conversationId);
       }
 
-      return path;
+      const queryString = queryParams.toString();
+      if (queryString) {
+        path += `?${queryString}`;
+      }
+      break;
     }
 
     case RouteType.TICKET_LIST: {
       const viewPath = mapTicketViewToPath(route.view);
-      return `/frontdesk/tickets/${viewPath}`;
+      path = `/frontdesk/tickets/${viewPath}`;
+      break;
     }
 
     case RouteType.TICKET_DETAIL: {
-      return `/frontdesk/tickets/${route.ticketId}`;
+      path = `/frontdesk/tickets/${route.ticketId}`;
+      break;
     }
 
     case RouteType.SECTION: {
-      return `/frontdesk/${route.section}`;
+      path = `/frontdesk/${route.section}`;
+      break;
+    }
+
+    case RouteType.CHATWOOT: {
+      // Use query params for view selection instead of nested paths
+      path = `/frontdesk/chatwoot`;
+
+      // Add query params for view and other options
+      const queryParams = new URLSearchParams();
+      queryParams.append("view", mapChatwootViewToQueryParam(route.view));
+
+      if (route.conversationId) {
+        queryParams.append("conversation", route.conversationId);
+      }
+      if (route.channelId) {
+        queryParams.append("channel", route.channelId);
+      }
+
+      path += `?${queryParams.toString()}`;
+      break;
     }
 
     default:
-      return '/frontdesk/inbox';
+      path = "/frontdesk/inbox";
+      break;
   }
+
+  console.log("[FrontDesk Route Builder] Built path:", path);
+  return path;
 };
 
 /**
@@ -57,12 +89,27 @@ export const buildRoutePath = (route: FrontDeskRoute): string => {
  */
 const mapChannelToPath = (channel: FrontDeskChannel): string => {
   const map: Record<FrontDeskChannel, string> = {
-    [FrontDeskChannel.ALL]: 'unified',
-    [FrontDeskChannel.EMAIL]: 'email',
-    [FrontDeskChannel.WHATSAPP]: 'whatsapp',
-    [FrontDeskChannel.INTERNAL]: 'internal',
+    [FrontDeskChannel.ALL]: "unified",
+    [FrontDeskChannel.EMAIL]: "email",
+    [FrontDeskChannel.WHATSAPP]: "whatsapp",
+    [FrontDeskChannel.INTERNAL]: "internal",
+    [FrontDeskChannel.CHATWOOT]: "chatwoot",
   };
   return map[channel];
+};
+
+/**
+ * Map Chatwoot view enum to URL query parameter value
+ */
+const mapChatwootViewToQueryParam = (view: ChatwootView): string => {
+  const map: Record<ChatwootView, string> = {
+    [ChatwootView.MY_INBOX]: "my-inbox",
+    [ChatwootView.ALL_CONVERSATIONS]: "all-conversations",
+    [ChatwootView.MENTIONS]: "mentions",
+    [ChatwootView.UNATTENDED]: "unattended",
+    [ChatwootView.CHANNELS]: "channels",
+  };
+  return map[view];
 };
 
 /**
@@ -70,11 +117,11 @@ const mapChannelToPath = (channel: FrontDeskChannel): string => {
  */
 const mapTicketViewToPath = (view: TicketView): string => {
   const map: Record<TicketView, string> = {
-    [TicketView.MY_TICKETS]: 'my-tickets',
-    [TicketView.UNASSIGNED]: 'unassigned',
-    [TicketView.ALL_TICKETS]: 'all-tickets',
-    [TicketView.DONE]: 'done',
-    [TicketView.ARCHIVED]: 'archived',
+    [TicketView.MY_TICKETS]: "my-tickets",
+    [TicketView.UNASSIGNED]: "unassigned",
+    [TicketView.ALL_TICKETS]: "all-tickets",
+    [TicketView.DONE]: "done",
+    [TicketView.ARCHIVED]: "archived",
   };
   return map[view];
 };
@@ -87,10 +134,7 @@ export interface BuiltRoute {
   options: NavigationOptions;
 }
 
-export const buildRoute = (
-  route: FrontDeskRoute,
-  options: NavigationOptions = {}
-): BuiltRoute => {
+export const buildRoute = (route: FrontDeskRoute, options: NavigationOptions = {}): BuiltRoute => {
   const path = buildRoutePath(route);
   return {
     path,
@@ -116,29 +160,32 @@ export const RouteBuilder = {
   /**
    * Build channel route
    */
-  channel: (channel: FrontDeskChannel, conversationId?: string): FrontDeskRoute => ({
+  channel: (channel: FrontDeskChannel, conversationId?: string, accountId?: string): FrontDeskRoute => ({
     type: RouteType.CHANNEL,
     channel,
     conversationId,
+    accountId,
   }),
 
   /**
    * Build email channel route
    */
-  email: (conversationId?: string): FrontDeskRoute =>
-    RouteBuilder.channel(FrontDeskChannel.EMAIL, conversationId),
+  email: (conversationId?: string, accountId?: string): FrontDeskRoute => ({
+    type: RouteType.CHANNEL,
+    channel: FrontDeskChannel.EMAIL,
+    conversationId,
+    accountId,
+  }),
 
   /**
    * Build WhatsApp channel route
    */
-  whatsapp: (conversationId?: string): FrontDeskRoute =>
-    RouteBuilder.channel(FrontDeskChannel.WHATSAPP, conversationId),
+  whatsapp: (conversationId?: string): FrontDeskRoute => RouteBuilder.channel(FrontDeskChannel.WHATSAPP, conversationId),
 
   /**
    * Build internal (DM) channel route
    */
-  internal: (conversationId?: string): FrontDeskRoute =>
-    RouteBuilder.channel(FrontDeskChannel.INTERNAL, conversationId),
+  internal: (conversationId?: string): FrontDeskRoute => RouteBuilder.channel(FrontDeskChannel.INTERNAL, conversationId),
 
   /**
    * Build ticket list route
@@ -151,26 +198,22 @@ export const RouteBuilder = {
   /**
    * Build my tickets route
    */
-  myTickets: (): FrontDeskRoute =>
-    RouteBuilder.ticketList(TicketView.MY_TICKETS),
+  myTickets: (): FrontDeskRoute => RouteBuilder.ticketList(TicketView.MY_TICKETS),
 
   /**
    * Build unassigned tickets route
    */
-  unassignedTickets: (): FrontDeskRoute =>
-    RouteBuilder.ticketList(TicketView.UNASSIGNED),
+  unassignedTickets: (): FrontDeskRoute => RouteBuilder.ticketList(TicketView.UNASSIGNED),
 
   /**
    * Build all tickets route
    */
-  allTickets: (): FrontDeskRoute =>
-    RouteBuilder.ticketList(TicketView.ALL_TICKETS),
+  allTickets: (): FrontDeskRoute => RouteBuilder.ticketList(TicketView.ALL_TICKETS),
 
   /**
    * Build done tickets route
    */
-  doneTickets: (): FrontDeskRoute =>
-    RouteBuilder.ticketList(TicketView.DONE),
+  doneTickets: (): FrontDeskRoute => RouteBuilder.ticketList(TicketView.DONE),
 
   /**
    * Build ticket detail route
@@ -192,20 +235,52 @@ export const RouteBuilder = {
   /**
    * Build assigned section route
    */
-  assigned: (): FrontDeskRoute =>
-    RouteBuilder.section(FrontDeskSection.ASSIGNED),
+  assigned: (): FrontDeskRoute => RouteBuilder.section(FrontDeskSection.ASSIGNED),
 
   /**
    * Build admin section route
    */
-  admin: (): FrontDeskRoute =>
-    RouteBuilder.section(FrontDeskSection.ADMIN),
+  admin: (): FrontDeskRoute => RouteBuilder.section(FrontDeskSection.ADMIN),
 
   /**
    * Build settings section route
    */
-  settings: (): FrontDeskRoute =>
-    RouteBuilder.section(FrontDeskSection.SETTINGS),
+  settings: (): FrontDeskRoute => RouteBuilder.section(FrontDeskSection.SETTINGS),
+
+  /**
+   * Build Chatwoot route
+   */
+  chatwoot: (view: ChatwootView, conversationId?: string, channelId?: string): FrontDeskRoute => ({
+    type: RouteType.CHATWOOT,
+    view,
+    conversationId,
+    channelId,
+  }),
+
+  /**
+   * Build Chatwoot My Inbox route
+   */
+  chatwootMyInbox: (): FrontDeskRoute => RouteBuilder.chatwoot(ChatwootView.MY_INBOX),
+
+  /**
+   * Build Chatwoot All Conversations route
+   */
+  chatwootAllConversations: (): FrontDeskRoute => RouteBuilder.chatwoot(ChatwootView.ALL_CONVERSATIONS),
+
+  /**
+   * Build Chatwoot Mentions route
+   */
+  chatwootMentions: (): FrontDeskRoute => RouteBuilder.chatwoot(ChatwootView.MENTIONS),
+
+  /**
+   * Build Chatwoot Unattended route
+   */
+  chatwootUnattended: (): FrontDeskRoute => RouteBuilder.chatwoot(ChatwootView.UNATTENDED),
+
+  /**
+   * Build Chatwoot Channels route
+   */
+  chatwootChannels: (): FrontDeskRoute => RouteBuilder.chatwoot(ChatwootView.CHANNELS),
 };
 
 /**
@@ -215,59 +290,74 @@ export const getRouteMetadata = (route: FrontDeskRoute) => {
   switch (route.type) {
     case RouteType.INBOX:
       return {
-        title: 'Dashboard',
-        breadcrumbs: ['FrontDesk', 'Dashboard'],
+        title: "Dashboard",
+        breadcrumbs: ["FrontDesk", "Dashboard"],
       };
 
     case RouteType.CHANNEL: {
       const channelNames = {
-        [FrontDeskChannel.ALL]: 'All Channels',
-        [FrontDeskChannel.EMAIL]: 'Email',
-        [FrontDeskChannel.WHATSAPP]: 'WhatsApp',
-        [FrontDeskChannel.INTERNAL]: 'Direct Messages',
+        [FrontDeskChannel.ALL]: "All Channels",
+        [FrontDeskChannel.EMAIL]: "Email",
+        [FrontDeskChannel.WHATSAPP]: "WhatsApp",
+        [FrontDeskChannel.INTERNAL]: "Direct Messages",
+        [FrontDeskChannel.CHATWOOT]: "Chatwoot",
       };
       return {
         title: channelNames[route.channel],
-        breadcrumbs: ['FrontDesk', 'Inbox', channelNames[route.channel]],
+        breadcrumbs: ["FrontDesk", "Inbox", channelNames[route.channel]],
       };
     }
 
     case RouteType.TICKET_LIST: {
       const viewNames = {
-        [TicketView.MY_TICKETS]: 'My Tickets',
-        [TicketView.UNASSIGNED]: 'Unassigned',
-        [TicketView.ALL_TICKETS]: 'All Tickets',
-        [TicketView.DONE]: 'Done',
-        [TicketView.ARCHIVED]: 'Archived',
+        [TicketView.MY_TICKETS]: "My Tickets",
+        [TicketView.UNASSIGNED]: "Unassigned",
+        [TicketView.ALL_TICKETS]: "All Tickets",
+        [TicketView.DONE]: "Done",
+        [TicketView.ARCHIVED]: "Archived",
       };
       return {
         title: viewNames[route.view],
-        breadcrumbs: ['FrontDesk', 'Tickets', viewNames[route.view]],
+        breadcrumbs: ["FrontDesk", "Tickets", viewNames[route.view]],
       };
     }
 
     case RouteType.TICKET_DETAIL:
       return {
         title: `Ticket ${route.ticketId}`,
-        breadcrumbs: ['FrontDesk', 'Tickets', route.ticketId],
+        breadcrumbs: ["FrontDesk", "Tickets", route.ticketId],
       };
 
     case RouteType.SECTION: {
       const sectionNames = {
-        [FrontDeskSection.ASSIGNED]: 'Assigned',
-        [FrontDeskSection.ADMIN]: 'Admin',
-        [FrontDeskSection.SETTINGS]: 'Settings',
+        [FrontDeskSection.ASSIGNED]: "Assigned",
+        [FrontDeskSection.ADMIN]: "Admin",
+        [FrontDeskSection.SETTINGS]: "Settings",
       };
       return {
         title: sectionNames[route.section],
-        breadcrumbs: ['FrontDesk', sectionNames[route.section]],
+        breadcrumbs: ["FrontDesk", sectionNames[route.section]],
+      };
+    }
+
+    case RouteType.CHATWOOT: {
+      const viewNames = {
+        [ChatwootView.MY_INBOX]: "My Inbox",
+        [ChatwootView.ALL_CONVERSATIONS]: "All Conversations",
+        [ChatwootView.MENTIONS]: "Mentions",
+        [ChatwootView.UNATTENDED]: "Unattended",
+        [ChatwootView.CHANNELS]: "Channels",
+      };
+      return {
+        title: viewNames[route.view],
+        breadcrumbs: ["FrontDesk", "Chatwoot", viewNames[route.view]],
       };
     }
 
     default:
       return {
-        title: 'FrontDesk',
-        breadcrumbs: ['FrontDesk'],
+        title: "FrontDesk",
+        breadcrumbs: ["FrontDesk"],
       };
   }
 };
@@ -283,10 +373,7 @@ export const routesEqual = (a: FrontDeskRoute, b: FrontDeskRoute): boolean => {
       return true;
 
     case RouteType.CHANNEL:
-      return (
-        a.channel === (b as any).channel &&
-        a.conversationId === (b as any).conversationId
-      );
+      return a.channel === (b as any).channel && a.conversationId === (b as any).conversationId;
 
     case RouteType.TICKET_LIST:
       return a.view === (b as any).view;
@@ -296,6 +383,9 @@ export const routesEqual = (a: FrontDeskRoute, b: FrontDeskRoute): boolean => {
 
     case RouteType.SECTION:
       return a.section === (b as any).section;
+
+    case RouteType.CHATWOOT:
+      return a.view === (b as any).view && a.conversationId === (b as any).conversationId;
 
     default:
       return false;
@@ -308,10 +398,10 @@ export const routesEqual = (a: FrontDeskRoute, b: FrontDeskRoute): boolean => {
 export const describeRoute = (route: FrontDeskRoute): string => {
   switch (route.type) {
     case RouteType.INBOX:
-      return 'Dashboard (Unified Inbox)';
+      return "Dashboard (Unified Inbox)";
 
     case RouteType.CHANNEL:
-      return `Channel: ${route.channel}${route.conversationId ? ` (conversation: ${route.conversationId})` : ''}`;
+      return `Channel: ${route.channel}${route.conversationId ? ` (conversation: ${route.conversationId})` : ""}`;
 
     case RouteType.TICKET_LIST:
       return `Tickets: ${route.view}`;
@@ -322,7 +412,10 @@ export const describeRoute = (route: FrontDeskRoute): string => {
     case RouteType.SECTION:
       return `Section: ${route.section}`;
 
+    case RouteType.CHATWOOT:
+      return `Chatwoot: ${route.view}${route.conversationId ? ` (conversation: ${route.conversationId})` : ""}`;
+
     default:
-      return 'Unknown route';
+      return "Unknown route";
   }
 };

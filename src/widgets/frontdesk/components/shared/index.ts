@@ -4,4 +4,8 @@ export { BaseAccountSidebar, type BaseAccount } from "./BaseAccountSidebar";
 export { BaseConversationList, type BaseConversationItem } from "./BaseConversationList";
 export { BaseMessageInput } from "./BaseMessageInput";
 export { BaseProviderSidebar, type BaseSidebarItem } from "./BaseProviderSidebar";
+export { InfiniteScrollLoader } from "./InfiniteScrollLoader";
+export { LoadingOverlay } from "./LoadingOverlay";
+export { ConversationContextMenu, type ConversationContextMenuAction, type ConversationContextMenuProps } from "./ConversationContextMenu";
+export { ActivityBubble } from "./ActivityBubble";
 export * from "./mentions";

@@ -103,3 +103,6 @@ dist
 
 # TernJS port file
 .tern-port
+
+# Claude orchestrator state (session-specific, do not commit)
+.claude/orchestrator-state/frontdesk-tasks.json

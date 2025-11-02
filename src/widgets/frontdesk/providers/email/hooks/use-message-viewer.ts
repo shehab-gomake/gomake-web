@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { EmailConversation, EmailMessage } from "../types/email.types";
 import { emailApiClient } from "../utils/email-api-client";
 
@@ -15,16 +15,40 @@ export const useMessageViewer = ({ conversation, accountId, onSendReply }: UseMe
   const [isReplyAll, setIsReplyAll] = useState(false);
   const [replyText, setReplyText] = useState("");
 
+  // Track last fetched conversation to prevent duplicate fetches
+  const lastFetchedRef = useRef<string | null>(null);
+  const fetchInProgressRef = useRef(false);
+
   // Fetch conversation details when conversation changes
   useEffect(() => {
     const fetchConversationDetails = async () => {
       if (conversation && accountId) {
+        // Skip if we just fetched this conversation (deduplication)
+        if (lastFetchedRef.current === conversation.id) {
+          console.log("[Message Viewer] Conversation already fetched, skipping:", conversation.id);
+          return;
+        }
+
+        // Skip if already fetching this conversation (prevent concurrent fetches)
+        if (fetchInProgressRef.current) {
+          console.log("[Message Viewer] Fetch already in progress, skipping:", conversation.id);
+          return;
+        }
+
+        console.log("[Message Viewer] Fetching conversation details:", conversation.id);
+
+        // Clear old messages immediately to prevent flash of previous content
+        setMessages([]);
         setLoading(true);
+        fetchInProgressRef.current = true;
+        lastFetchedRef.current = conversation.id;
+
         try {
           const conversationDetail = await emailApiClient.getConversationDetail(accountId, conversation.id);
           setMessages(conversationDetail.messages);
+          console.log("[Message Viewer] Successfully fetched", conversationDetail.messages.length, "messages");
         } catch (error) {
-          console.error("Failed to fetch conversation details:", error);
+          console.error("[Message Viewer] Failed to fetch conversation details:", error);
           // Fallback to single message display
           // lastMessage.from is now an array
           setMessages([
@@ -44,14 +68,18 @@ export const useMessageViewer = ({ conversation, accountId, onSendReply }: UseMe
           ]);
         } finally {
           setLoading(false);
+          fetchInProgressRef.current = false;
         }
       } else {
         setMessages([]);
+        setLoading(false);
+        lastFetchedRef.current = null;
+        fetchInProgressRef.current = false;
       }
     };
 
     fetchConversationDetails();
-  }, [conversation, accountId]);
+  }, [conversation?.id, accountId]); // Only depend on conversation.id, not the whole object
 
   const handleInlineReply = useCallback(async () => {
     const text = replyText.trim();

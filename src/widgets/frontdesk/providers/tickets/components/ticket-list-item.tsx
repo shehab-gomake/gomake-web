@@ -1,14 +1,20 @@
-import React from 'react';
-import { TicketListItem as DSTicketListItem } from '@/widgets/frontdesk/design-system';
-import { TicketWithDetails, Tag } from '../types/api.types';
-import { formatTicketStatus, apiPriorityToUi } from '../types/transformers';
-import { formatConversationDate } from '@/widgets/frontdesk/utils';
+import React, { useCallback } from "react";
+import { TicketListItem as DSTicketListItem } from "@/widgets/frontdesk/design-system";
+import { TicketWithDetails, Tag } from "../types/api.types";
+import { formatTicketStatus, apiPriorityToUi } from "../types/transformers";
+import { formatConversationDate } from "@/widgets/frontdesk/utils";
 
 interface TicketListItemProps {
   ticket: TicketWithDetails;
   selected?: boolean;
   onSelect: (ticketId: string, openInNewTab?: boolean) => void;
   onTagClick?: (tag: Tag) => void;
+  // Quick action handlers passed from parent
+  onQuickReply?: (ticketId: string) => void;
+  onQuickToggleStatus?: (ticketId: string, currentStatus: string) => Promise<void>;
+  onQuickAddTag?: (ticketId: string) => Promise<void>;
+  onQuickAssign?: (ticketId: string) => Promise<void>;
+  onQuickMore?: (ticketId: string) => void;
 }
 
 /**
@@ -21,6 +27,11 @@ export const TicketListItem: React.FC<TicketListItemProps> = ({
   selected = false,
   onSelect,
   onTagClick,
+  onQuickReply,
+  onQuickToggleStatus,
+  onQuickAddTag,
+  onQuickAssign,
+  onQuickMore,
 }) => {
   const handleClick = (e: React.MouseEvent) => {
     // Middle click or Ctrl/Cmd + click opens in new tab
@@ -34,23 +45,54 @@ export const TicketListItem: React.FC<TicketListItemProps> = ({
     }
   };
 
+  // Quick Action Handlers - wrap parent handlers with ticket ID
+  const handleQuickReply = useCallback(() => {
+    onQuickReply?.(ticket.id);
+  }, [ticket.id, onQuickReply]);
+
+  const handleQuickToggleStatus = useCallback(async () => {
+    if (onQuickToggleStatus) {
+      await onQuickToggleStatus(ticket.id, ticket.status);
+    }
+  }, [ticket.id, ticket.status, onQuickToggleStatus]);
+
+  const handleQuickAddTag = useCallback(async () => {
+    if (onQuickAddTag) {
+      await onQuickAddTag(ticket.id);
+    }
+  }, [ticket.id, onQuickAddTag]);
+
+  const handleQuickAssign = useCallback(async () => {
+    if (onQuickAssign) {
+      await onQuickAssign(ticket.id);
+    }
+  }, [ticket.id, onQuickAssign]);
+
+  const handleQuickMore = useCallback(() => {
+    onQuickMore?.(ticket.id);
+  }, [ticket.id, onQuickMore]);
+
   // Multi-conversation support: Use conversations array if available, otherwise fall back to single conversation
-  const conversations = ticket.conversations || (ticket.conversation ? [{
-    ...ticket.conversation,
-    channel: 'EMAIL' as any, // Default to EMAIL for old format
-    provider: { id: '', vendor: '', type: 'EMAIL' },
-    identifier: ticket.customerEmail || '',
-    messageCount: ticket.conversation.messages?.length || 0,
-  }] : []);
+  const conversations =
+    ticket.conversations ||
+    (ticket.conversation
+      ? [
+          {
+            ...ticket.conversation,
+            channel: "EMAIL" as any, // Default to EMAIL for old format
+            provider: { id: "", vendor: "", type: "EMAIL" },
+            identifier: ticket.customerEmail || "",
+            messageCount: ticket.conversation.messages?.length || 0,
+          },
+        ]
+      : []);
   const latestConversation = conversations.length > 0 ? conversations[0] : null;
 
   // Determine if ticket is unread using backend TicketView tracking
   // Priority: viewStatus.hasUnread (most accurate) > fallback to old logic
-  const isUnread = ticket.viewStatus?.hasUnread ?? Boolean(
-    latestConversation?.lastMessageAt &&
-    !ticket.firstResponseAt &&
-    ticket.status === 'OPEN'
-  );
+  const isUnread =
+    ticket.viewStatus?.hasUnread ??
+    Boolean(latestConversation?.lastMessageAt && !ticket.firstResponseAt && ticket.status === "OPEN");
 
   // Get participants from creator, assignee and manager
   const participants = [
@@ -72,14 +114,15 @@ export const TicketListItem: React.FC<TicketListItemProps> = ({
   ].filter(Boolean) as any[];
 
   // Build title from customer info (prioritize name, fallback to email/phone)
-  const title = ticket.customerName ||
-                ticket.customerEmail ||
-                ticket.customerPhone ||
-                latestConversation?.name ||
-                'Unknown Customer';
+  const title =
+    ticket.customerName || ticket.customerEmail || ticket.customerPhone || latestConversation?.name || "Unknown Customer";
 
   // Extract channel info for multi-conversation badge
-  const channels = ticket.channels || (latestConversation?.channel ? [{ type: latestConversation.channel, vendor: latestConversation.provider?.vendor || '' }] : []);
+  const channels =
+    ticket.channels ||
+    (latestConversation?.channel
+      ? [{ type: latestConversation.channel, vendor: latestConversation.provider?.vendor || "" }]
+      : []);
   const conversationCount = ticket.conversationCount || conversations.length;
 
   // TODO: Add channel badges and conversation count to design system component
@@ -93,7 +136,7 @@ export const TicketListItem: React.FC<TicketListItemProps> = ({
       status={ticket.status} // Pass raw backend status (OPEN, REOPENED, etc.) for color logic
       statusLabel={formatTicketStatus(ticket.status)} // Friendly display label ("Open", "Reopened", etc.)
       priority={apiPriorityToUi(ticket.priority)}
-      type={'Support'} // All backend tickets are Support type
+      type={"Support"} // All backend tickets are Support type
       updatedAt={formatConversationDate(latestConversation?.lastMessageAt || ticket.updatedAt)}
       isSelected={selected}
       isUnread={isUnread}
@@ -102,6 +145,13 @@ export const TicketListItem: React.FC<TicketListItemProps> = ({
       slaBreached={ticket.sla?.breached ?? false} // Pass SLA breach status
       onClick={handleClick}
       onTagClick={onTagClick} // Pass tag click handler
+      // Quick Actions
+      enableQuickActions={true}
+      onQuickReply={handleQuickReply}
+      onQuickToggleStatus={handleQuickToggleStatus}
+      onQuickAddTag={handleQuickAddTag}
+      onQuickAssign={handleQuickAssign}
+      onQuickMore={handleQuickMore}
     />
   );
 };

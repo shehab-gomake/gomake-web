@@ -21,6 +21,7 @@ import {
   ConnectionErrorState,
   ConnectingState,
 } from "@/widgets/frontdesk/design-system";
+import { LoadingOverlay } from "@/widgets/frontdesk/components/shared";
 import { ConversationList, MessageList, MessageInput, UserSelector, ParticipantsList, GlobalSearch, InConversationSearch } from "./components/direct-messages";
 import { UserPresence } from "./components";
 import { useDirectMessages } from "./hooks";
@@ -83,6 +84,9 @@ const DirectMessagesProviderView: React.FC = () => {
     setConversationSearchQuery,
     conversationsFilter,
     setConversationFilter,
+    isFetchingConversation,
+    fetchError,
+    clearFetchError,
   } = useDirectMessages();
 
   const [showUserSelector, setShowUserSelector] = useState(false);
@@ -284,6 +288,17 @@ const DirectMessagesProviderView: React.FC = () => {
         isLoading={isLoading}
       />
 
+      {/* Error banner for conversation fetch failures */}
+      {fetchError && (
+        <Alert
+          severity="error"
+          onClose={clearFetchError}
+          sx={{ mx: 2, mt: 2 }}
+        >
+          Failed to load conversation: {fetchError}
+        </Alert>
+      )}
+
       {/* Three-pane layout */}
       <Stack direction="row" gap={2} sx={{
         width: "100%",
@@ -292,22 +307,31 @@ const DirectMessagesProviderView: React.FC = () => {
         mt: 2
       }}>
         {/* Left: Conversations sidebar */}
-        <ConversationSidebar
-          title="Conversations"
-          filter={conversationsFilter}
-          onFilterChange={setConversationFilter}
-          onSearch={openGlobalSearch}
-          onNewConversation={handleStartNewConversation}
-          width={280}
-        >
-          <ConversationList
-            conversations={conversations}
-            selectedId={activeConversationId}
-            currentUserId={currentUser?.userId}
-            onSelect={selectConversation}
-            loading={isLoadingConversations}
+        <Box sx={{ position: "relative", width: 280 }}>
+          {/* Loading overlay when fetching conversation */}
+          <LoadingOverlay 
+            loading={isFetchingConversation} 
+            message="Loading conversation..."
+            spinnerSize={32}
           />
-        </ConversationSidebar>
+
+          <ConversationSidebar
+            title="Conversations"
+            filter={conversationsFilter}
+            onFilterChange={setConversationFilter}
+            onSearch={openGlobalSearch}
+            onNewConversation={handleStartNewConversation}
+            width={280}
+          >
+            <ConversationList
+              conversations={conversations}
+              selectedId={activeConversationId}
+              currentUserId={currentUser?.userId}
+              onSelect={selectConversation}
+              loading={isLoadingConversations}
+            />
+          </ConversationSidebar>
+        </Box>
 
         {/* Center: Message area */}
         <Panel
