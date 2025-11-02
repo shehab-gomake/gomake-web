@@ -183,6 +183,7 @@ const useDigitalOffsetPrice = ({
   const [graphicNotes, setGraphicNotes] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const [productTemplate, setProductTemplate] = useState<any>([]);
+  const [productTemplateWithUIFlags, setProductTemplateWithUIFlags] = useState<any>([]);
   const [updatedProductTemplate, setupdatedProductTemplate] = useState<any>();
   const [defaultProductTemplate, setDefaultProductTemplate] = useState<any>([]);
   const [isProductCalculated, setIsProductCalculated] = useState<any>([]);
@@ -7355,7 +7356,9 @@ const useDigitalOffsetPrice = ({
       getAndSetChatBotProductId(
         callApi,
         (res) => {
-          const updatedTemplate = updateIsHidden(res, subProducts);
+          // Deep clone to prevent mutations on original data from API
+          const clonedRes = cloneDeep(res);
+          const updatedTemplate = updateIsHidden(clonedRes, subProducts);
           setDefaultProductTemplate(updatedTemplate);
           initQuoteItemProduct(updatedTemplate, materials);
           setdocumentItemByEdit(res?.docmentItem);
@@ -7418,7 +7421,9 @@ const useDigitalOffsetPrice = ({
       await getAndSetProfitProfileReviewProductId(
         callApi,
         (data) => {
-          const updatedTemplate = updateIsHidden(data, subProducts);
+          // Deep clone to prevent mutations on original data from API
+          const clonedData = cloneDeep(data);
+          const updatedTemplate = updateIsHidden(clonedData, subProducts);
           setDefaultProductTemplate(updatedTemplate);
           initProduct(updatedTemplate, materials);
           let checkParameter = validateParameters(subProducts);
@@ -7437,9 +7442,12 @@ const useDigitalOffsetPrice = ({
       await getAndSetProductById(
         callApi,
         (data) => {
-          const updatedTemplate = updateIsHidden(data, subProducts);
+          setProductTemplateWithUIFlags(data);
+          // Deep clone to prevent mutations on original data from API
+          const clonedData = cloneDeep(data);
+          const updatedTemplate = updateIsHidden(clonedData, subProducts);
           setDefaultProductTemplate(updatedTemplate);
-          initProduct(updatedTemplate, materials);
+          initProduct(clonedData, materials);
           let checkParameter = validateParameters(subProducts);
           if (checkParameter) {
             setCanCalculation(true);
@@ -8283,7 +8291,7 @@ const useDigitalOffsetPrice = ({
   useEffect(() => {
     if (!productTemplate) return;
     const updatedProductTemplate = updateIsHidden(productTemplate, subProducts);
-    const templateWithUIFlags = markHiddenSectionsForUI(productTemplate);
+    const templateWithUIFlags = markHiddenSectionsForUI(productTemplateWithUIFlags);
     setProductTemplate(templateWithUIFlags);
   }, [subProducts]);
 
@@ -8386,11 +8394,11 @@ const useDigitalOffsetPrice = ({
             if (parameter.activateByAllValues) {
               section.isHidden = false;
             } else {
-              if(matchingParameter && matchingParameter.valueIds && matchingParameter.valueIds.length > 0) {
+              if (matchingParameter && matchingParameter.valueIds && matchingParameter.valueIds.length > 0) {
                 section.isHidden = !parameter.selectedValueIds.includes(
-                    matchingParameter?.valueIds[0]
+                  matchingParameter?.valueIds[0]
                 );
-              }else{
+              } else {
                 section.isHidden = true;
               }
             }
@@ -8597,7 +8605,6 @@ const useDigitalOffsetPrice = ({
     parameters,
     productTemplate
   ) {
-    console.log("parametersparametersparameters", parameters);
     // Create a new array to store the filtered parameters
     const updatedParameters = [];
 
