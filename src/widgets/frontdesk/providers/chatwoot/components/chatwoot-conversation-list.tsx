@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { Box, Paper, List, Alert } from "@mui/material";
+import { Box, Paper, List, Alert, alpha } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 import { useRecoilValue } from "recoil";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { ConversationListEmpty } from "../../email/components/conversation/conversation-list-empty";
@@ -52,6 +53,7 @@ export const ChatwootConversationList: React.FC<ChatwootConversationListProps> =
   inboxes = [],
   inboxesLoading = false,
 }) => {
+  const theme = useTheme();
   const { neutralColor } = useGomakeTheme();
 
   // Get counts from API response (stored in atom)
@@ -71,14 +73,15 @@ export const ChatwootConversationList: React.FC<ChatwootConversationListProps> =
 
   return (
     <Paper
-      elevation={0}
+      elevation={2}
       sx={{
         height: "100%",
-        border: `1px solid ${neutralColor(200)}`,
         borderRadius: 2,
         overflow: "hidden",
         display: "flex",
         flexDirection: "column",
+        backgroundColor: neutralColor(0),
+        boxShadow: `0 2px 8px ${alpha(theme.palette.common.black, 0.06)}, 0 1px 3px ${alpha(theme.palette.common.black, 0.04)}`,
       }}
     >
       {/* Custom Header */}
@@ -98,7 +101,7 @@ export const ChatwootConversationList: React.FC<ChatwootConversationListProps> =
           flex: 1,
           overflow: "auto",
           backgroundColor: neutralColor(0), // Light background
-          px: 1,
+          px: 0.5,
           position: "relative",
         }}
       >
@@ -116,7 +119,7 @@ export const ChatwootConversationList: React.FC<ChatwootConversationListProps> =
         ) : (
           <List
             sx={{
-              py: 1,
+              py: 0.5,
               backgroundColor: neutralColor(0), // Light background
             }}
           >

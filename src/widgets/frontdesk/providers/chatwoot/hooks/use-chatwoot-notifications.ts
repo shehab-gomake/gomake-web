@@ -5,7 +5,7 @@
  * Follows the same pattern as use-chatwoot-conversations for consistency.
  */
 
-import { useEffect, useCallback } from "react";
+import { useEffect, useCallback, useRef } from "react";
 import { useRecoilState } from "recoil";
 import { chatwootService } from "@/services/frontdesk";
 import { createLogger } from "@/services/frontdesk/utils/logger";
@@ -23,6 +23,7 @@ import {
   loadNotificationPreferences,
   saveNotificationPreferences,
 } from "../utils/notification-preferences.service";
+import { useFetchDeduplication } from "./use-chatwoot-initialization";
 
 const logger = createLogger("useChatwootNotifications");
 
@@ -34,16 +35,27 @@ export const useChatwootNotifications = (
   const [error, setError] = useRecoilState(chatwootNotificationsErrorAtom);
   const [filters, setFilters] = useRecoilState(chatwootNotificationsFiltersAtom);
 
+  // Fetch deduplication to prevent redundant API calls
+  const { shouldFetch, markFetchStart, markFetchComplete, markFetchFailed } = useFetchDeduplication<NotificationListParams>();
+
+  // Track if this is the first mount
+  const isFirstMountRef = useRef(true);
+  const preferencesLoadedRef = useRef(false);
+
   /**
    * Load saved preferences on mount and merge with default filters
    */
   useEffect(() => {
+    // Only load preferences once
+    if (preferencesLoadedRef.current) return;
+    preferencesLoadedRef.current = true;
+
     const savedPreferences = loadNotificationPreferences();
     const defaultFilters = createDefaultNotificationFilters({
       ...options,
       ...savedPreferences,
     });
-    
+
     // Only update if we have saved preferences or options, otherwise keep current state
     if (Object.keys(savedPreferences).length > 0 || Object.keys(options).length > 0) {
       setFilters((prev) => ({
@@ -60,32 +72,42 @@ export const useChatwootNotifications = (
    * Follows the same pattern as use-chatwoot-conversations
    */
   const fetchNotifications = useCallback(async () => {
+    const listParams: NotificationListParams = {
+      page: filters.page || 1,
+      limit: filters.limit || options.limit || 20,
+      ...(filters.sort_order && { sort_order: filters.sort_order as NotificationSortOrder }),
+      ...(filters.includes && { includes: filters.includes }),
+      ...(filters.snoozed !== undefined && { snoozed: filters.snoozed }),
+      ...(filters.read !== undefined && { read: filters.read }),
+      ...options, // Merge with passed options
+    };
+
+    // Check if we should proceed with this fetch (prevents duplicates and concurrent fetches)
+    if (!shouldFetch(listParams)) {
+      logger.debug('Skipping duplicate/concurrent fetch');
+      return;
+    }
+
+    markFetchStart();
     setLoading(true);
     setError(null);
 
     try {
-      const listParams: NotificationListParams = {
-        page: filters.page || 1,
-        limit: filters.limit || options.limit || 20,
-        ...(filters.sort_order && { sort_order: filters.sort_order as NotificationSortOrder }),
-        ...(filters.includes && { includes: filters.includes }),
-        ...(filters.snoozed !== undefined && { snoozed: filters.snoozed }),
-        ...(filters.read !== undefined && { read: filters.read }),
-        ...options, // Merge with passed options
-      };
-
       const response = await chatwootService.notifications.listNotifications(listParams);
-      
+
       // Handle nested response structure (same as conversations)
-      const responseData = response.data || response;
-      const notificationsList = responseData.payload || responseData.data || responseData || [];
-      
+      const notificationsList = response.payload || [];
+
       setNotifications(notificationsList);
+
+      // Mark fetch as complete to prevent duplicate calls
+      markFetchComplete(listParams);
     } catch (err: any) {
       const errorMessage = err?.message || "Failed to fetch notifications";
       setError(errorMessage);
       logger.error("Failed to fetch notifications", err);
       setNotifications([]);
+      markFetchFailed();
     } finally {
       setLoading(false);
     }
@@ -95,6 +117,10 @@ export const useChatwootNotifications = (
     setNotifications,
     setLoading,
     setError,
+    shouldFetch,
+    markFetchStart,
+    markFetchComplete,
+    markFetchFailed,
   ]);
 
   /**
@@ -179,6 +205,17 @@ export const useChatwootNotifications = (
    * Follows the same pattern as use-chatwoot-conversations
    */
   useEffect(() => {
+    // Skip the first mount to prevent double fetch during initialization
+    // Wait for preferences to be loaded first
+    if (isFirstMountRef.current) {
+      isFirstMountRef.current = false;
+      // Only fetch if preferences are already loaded
+      if (preferencesLoadedRef.current) {
+        fetchNotifications();
+      }
+      return;
+    }
+
     fetchNotifications();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [

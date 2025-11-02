@@ -7,14 +7,14 @@
  * @see CONVERSATION_LIST_ICONS_GUIDE.md
  */
 
-import React, { useMemo } from 'react';
-import { Box, type SxProps, type Theme } from '@mui/material';
+import React, { useMemo } from "react";
+import { Box, type SxProps, type Theme } from "@mui/material";
 
 // ============================================================================
 // Type Definitions
 // ============================================================================
 
-export type ConversationPriority = 'urgent' | 'high' | 'medium' | 'low';
+export type ConversationPriority = "urgent" | "high" | "medium" | "low";
 
 export interface ConversationPriorityIconProps {
   priority: ConversationPriority | null | undefined;
@@ -27,17 +27,17 @@ export interface ConversationPriorityIconProps {
 // ============================================================================
 
 const PRIORITY_CONFIG = {
-  urgent: { bars: 3, color: '#EF4444' }, // Ruby/red
-  high: { bars: 3, color: '#F59E0B' },   // Amber
-  medium: { bars: 2, color: '#F59E0B' }, // Amber
-  low: { bars: 1, color: '#F59E0B' },    // Amber
+  urgent: { bars: 3, color: "#EF4444" }, // Ruby/red
+  high: { bars: 3, color: "#F59E0B" }, // Amber
+  medium: { bars: 2, color: "#F59E0B" }, // Amber
+  low: { bars: 1, color: "#F59E0B" }, // Amber
 } as const;
 
 const DEFAULT_SIZE = 12;
 const BAR_WIDTH = 2;
 const BAR_GAP = 1.5;
 const TOTAL_BARS = 3;
-const INACTIVE_BORDER_COLOR = '#D1D5DB'; // Gray-300
+const INACTIVE_BORDER_COLOR = "#D1D5DB"; // Gray-300
 
 // ============================================================================
 // Helper Functions
@@ -72,9 +72,9 @@ const PriorityBar: React.FC<PriorityBarProps> = ({ isHighlighted, color, size })
     sx={{
       width: BAR_WIDTH,
       height: size,
-      backgroundColor: isHighlighted ? color : 'transparent',
+      backgroundColor: isHighlighted ? color : "transparent",
       border: `1px solid ${isHighlighted ? color : INACTIVE_BORDER_COLOR}`,
-      borderRadius: '1px',
+      borderRadius: 1,
     }}
   />
 );
@@ -95,19 +95,12 @@ const PriorityBar: React.FC<PriorityBarProps> = ({ isHighlighted, color, size })
  * Unhighlighted bars are shown with transparent background and gray border
  * to maintain consistent spacing and visual structure.
  */
-export const ConversationPriorityIcon: React.FC<ConversationPriorityIconProps> = ({
-  priority,
-  size = DEFAULT_SIZE,
-  sx,
-}) => {
+export const ConversationPriorityIcon: React.FC<ConversationPriorityIconProps> = ({ priority, size = DEFAULT_SIZE, sx }) => {
   // ========================================================================
   // Memoized Values
   // ========================================================================
 
-  const config = useMemo(
-    () => (priority ? getPriorityConfig(priority) : null),
-    [priority]
-  );
+  const config = useMemo(() => (priority ? getPriorityConfig(priority) : null), [priority]);
 
   const bars = useMemo(
     () =>
@@ -133,8 +126,8 @@ export const ConversationPriorityIcon: React.FC<ConversationPriorityIconProps> =
   return (
     <Box
       sx={{
-        display: 'inline-flex',
-        alignItems: 'center',
+        display: "inline-flex",
+        alignItems: "center",
         gap: `${BAR_GAP}px`,
         ...sx,
       }}
@@ -142,12 +135,7 @@ export const ConversationPriorityIcon: React.FC<ConversationPriorityIconProps> =
       role="img"
     >
       {bars.map(({ key, isHighlighted }) => (
-        <PriorityBar
-          key={key}
-          isHighlighted={isHighlighted}
-          color={config.color}
-          size={size}
-        />
+        <PriorityBar key={key} isHighlighted={isHighlighted} color={config.color} size={size} />
       ))}
     </Box>
   );

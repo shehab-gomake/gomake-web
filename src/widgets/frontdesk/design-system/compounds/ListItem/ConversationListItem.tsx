@@ -6,13 +6,11 @@ import { InboxIcon } from '@/widgets/frontdesk/providers/chatwoot/utils/inbox-ic
 import { ConversationPriorityIcon } from '@/widgets/frontdesk/providers/chatwoot/components/conversation-priority-icon';
 import { ConversationSLALabel } from '@/widgets/frontdesk/providers/chatwoot/components/conversation-sla-label';
 import { ConversationLabels, ConversationLabel } from '@/widgets/frontdesk/providers/chatwoot/components/conversation-labels';
+import { PriorityLevel, PresenceStatus } from '../../types';
 
 // ============================================================================
 // Type Definitions
 // ============================================================================
-
-export type PresenceStatus = 'online' | 'away' | 'busy' | 'offline' | null;
-export type PriorityLevel = 'urgent' | 'high' | 'medium' | 'low';
 
 export interface AssigneeInfo {
   name?: string;
@@ -100,8 +98,8 @@ const MAX_UNREAD_DISPLAY = 99;
 // ============================================================================
 
 const getListItemButtonStyles = (isSelected: boolean): SxProps<Theme> => ({
-  py: 1.5,
-  px: 2,
+  py: 1,
+  px: 1.5,
   borderBottom: `1px solid ${colorTokens.semantic.border.default}`,
   backgroundColor: isSelected
     ? colorTokens.semantic.interactive.selected
@@ -229,6 +227,11 @@ export const ConversationListItem = React.memo<ConversationListItemProps>(({
     [appliedSla?.id, labels, assignee?.name]
   );
 
+  const normalizedPriority = useMemo(
+    () => priority?.toLowerCase() as 'urgent' | 'high' | 'medium' | 'low' | undefined,
+    [priority]
+  );
+
   // ========================================================================
   // Event Handlers
   // ========================================================================
@@ -254,7 +257,7 @@ export const ConversationListItem = React.memo<ConversationListItemProps>(({
         onContextMenu={handleContextMenu}
         sx={getListItemButtonStyles(isSelected)}
       >
-        <Stack direction="row" alignItems="flex-start" spacing={1.5} sx={{ width: '100%' }}>
+        <Stack direction="row" alignItems="flex-start" spacing={1} sx={{ width: '100%' }}>
           {/* Contact Avatar */}
           <Avatar
             size="sm"
@@ -279,7 +282,7 @@ export const ConversationListItem = React.memo<ConversationListItemProps>(({
 
               {/* Right Indicators */}
               <Stack direction="row" alignItems="center" spacing={0.5} sx={{ flexShrink: 0 }}>
-                {priority && <ConversationPriorityIcon priority={priority} size={PRIORITY_ICON_SIZE} />}
+                {normalizedPriority && <ConversationPriorityIcon priority={normalizedPriority} size={PRIORITY_ICON_SIZE} />}
 
                 {inboxChannelType && (
                   <Tooltip title={inboxName || ''} arrow placement="left">

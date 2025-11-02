@@ -102,6 +102,7 @@ const parseChatwootView = (viewParam?: string): ChatwootView => {
 
   // Map query param values to ChatwootView enum
   const viewMap: Record<string, ChatwootView> = {
+    "dashboard": ChatwootView.DASHBOARD,
     "my-inbox": ChatwootView.MY_INBOX,
     "all-conversations": ChatwootView.ALL_CONVERSATIONS,
     "mentions": ChatwootView.MENTIONS,

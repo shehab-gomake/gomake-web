@@ -49,7 +49,6 @@ const CHANNEL_ICON_MAP: Record<string, IconComponent> = {
   [ChannelType.TWITTER]: ChatIcon,
   [ChannelType.TELEGRAM]: ChatIcon,
   [ChannelType.LINE]: ChatIcon,
-  [ChannelType.VOICE]: PhoneIcon,
   [ChannelType.API]: CloudIcon,
   [ChannelType.SMS]: SmsIcon,
   // Legacy/alternative channel type names

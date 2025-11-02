@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { chatwootService } from "@/services/frontdesk";
 import {
@@ -13,6 +13,7 @@ import {
   chatwootConversationsErrorAtom,
   chatwootConversationCountsAtom,
 } from "@/store/frontdesk/atoms/chatwoot.atoms";
+import { useFetchDeduplication } from "./use-chatwoot-initialization";
 
 export const useChatwootConversations = (accountId: number | null, options: Partial<ConversationListParams> = {}) => {
   const [conversations, setConversations] = useRecoilState(chatwootConversationsAtom);
@@ -22,35 +23,47 @@ export const useChatwootConversations = (accountId: number | null, options: Part
   const [hasMore, setHasMore] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
 
+  // Fetch deduplication to prevent redundant API calls
+  const { shouldFetch, markFetchStart, markFetchComplete, markFetchFailed } = useFetchDeduplication<ConversationListParams>();
+
+  // Track if this is the first mount
+  const isFirstMountRef = useRef(true);
+
   const fetchConversations = useCallback(
     async (page: number = 1, append: boolean = false) => {
       // Note: accountId can be null - the API endpoint /api/accounts/conversations
       // doesn't require accountId in the URL path, it uses the authenticated user's account automatically
       // So we allow the call even if accountId is null
 
+      const listParams: ConversationListParams = {
+        page,
+        limit: options.limit || 20,
+        ...(options.status && { status: options.status }),
+        ...(options.inbox_id && { inbox_id: options.inbox_id }),
+        ...(options.assignee_type && { assignee_type: options.assignee_type }),
+        ...(options.sort_by && { sort_by: options.sort_by }),
+        ...(options.q && { q: options.q }),
+        ...(options.team_id && { team_id: options.team_id }),
+        ...(options.labels && { labels: options.labels }),
+      };
+
+      // Check if we should proceed with this fetch (prevents duplicates and concurrent fetches)
+      if (!append && !shouldFetch(listParams)) {
+        console.log('[useChatwootConversations] Skipping duplicate/concurrent fetch');
+        return;
+      }
+
+      markFetchStart();
       setLoading(true);
       setError(null);
 
       try {
-        const listParams: ConversationListParams = {
-          page,
-          limit: options.limit || 20,
-          ...(options.status && { status: options.status }),
-          ...(options.inbox_id && { inbox_id: options.inbox_id }),
-          ...(options.assignee_type && { assignee_type: options.assignee_type }),
-          ...(options.sort_by && { sort_by: options.sort_by }),
-          ...(options.q && { q: options.q }),
-          ...(options.team_id && { team_id: options.team_id }),
-          ...(options.labels && { labels: options.labels }),
-        };
-
         // Pass accountId (can be null) - the service will handle it
         const response = await chatwootService.conversations.listConversations(accountId, listParams);
 
         // Chatwoot API returns: { data: { payload: [...], meta: {...} } }
         // Handle nested structure
-        const responseData = response.data || response;
-        const conversationsList = responseData.payload || responseData.data || responseData || [];
+        const conversationsList = response.data?.payload || response.payload || [];
 
         if (append) {
           setConversations((prev) => [...prev, ...conversationsList]);
@@ -59,7 +72,7 @@ export const useChatwootConversations = (accountId: number | null, options: Part
         }
 
         // Check if there are more pages
-        const meta = responseData.meta || response.meta || {};
+        const meta = response.data?.meta || response.meta || {};
         setHasMore(meta?.page ? meta.page < (meta.total_pages || meta.count || 0) : false);
 
         // Extract counts from API response meta
@@ -70,9 +83,15 @@ export const useChatwootConversations = (accountId: number | null, options: Part
         });
 
         setCurrentPage(page);
+
+        // Mark fetch as complete to prevent duplicate calls
+        if (!append) {
+          markFetchComplete(listParams);
+        }
       } catch (err: any) {
         setError(err.message || "Failed to load conversations");
         console.error("Failed to fetch Chatwoot conversations:", err);
+        markFetchFailed();
       } finally {
         setLoading(false);
       }
@@ -91,6 +110,10 @@ export const useChatwootConversations = (accountId: number | null, options: Part
       setLoading,
       setError,
       setCounts,
+      shouldFetch,
+      markFetchStart,
+      markFetchComplete,
+      markFetchFailed,
     ]
   );
 
@@ -105,6 +128,15 @@ export const useChatwootConversations = (accountId: number | null, options: Part
   }, [fetchConversations]);
 
   useEffect(() => {
+    // Skip the first mount to prevent double fetch during initialization
+    // The parent provider will coordinate the initial fetch
+    if (isFirstMountRef.current) {
+      isFirstMountRef.current = false;
+      // Still fetch on first mount, but the deduplication will prevent multiple calls
+      fetchConversations(1, false);
+      return;
+    }
+
     // Fetch conversations even if accountId is null
     // The API endpoint uses authenticated user's account automatically
     fetchConversations(1, false);

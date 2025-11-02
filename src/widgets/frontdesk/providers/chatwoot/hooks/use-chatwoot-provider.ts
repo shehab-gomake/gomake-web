@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useEffect } from "react";
+import { useCallback, useMemo, useEffect, useRef } from "react";
 import React from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { useChatwootConversations } from "./use-chatwoot-conversations";
@@ -61,36 +61,44 @@ export const useChatwootProvider = () => {
   // Use conversations hook with accountId and filters
   const conversations = useChatwootConversations(currentAccountId, filters);
 
+  // Track initialization to prevent cascading state updates
+  const lastInboxIdRef = useRef<number | null>(selectedInboxId);
+
+  // Consolidated initialization effect
+  // Handles account selection, conversation clearing, and auto-selection in a coordinated manner
   useEffect(() => {
+    // 1. Auto-select account if needed
     if (!selectedAccountId && currentAccountId) {
       setSelectedAccountId(currentAccountId);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedAccountId, currentAccountId]);
 
-  // Clear selected conversation when channel/inbox changes
-  // This ensures we don't show a conversation from the previous channel
-  useEffect(() => {
-    setSelectedConversation(null);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedInboxId]);
+    // 2. Clear selected conversation when inbox changes (but not on initial mount)
+    if (lastInboxIdRef.current !== selectedInboxId) {
+      lastInboxIdRef.current = selectedInboxId;
+      setSelectedConversation(null);
+    }
 
-  // Auto-select first conversation only when loading completes and no conversation is selected
-  // Add a guard to prevent race conditions
-  useEffect(() => {
-    if (
-      selectedInboxId &&
-      conversations.conversations.length > 0 &&
-      !selectedConversation &&
-      !conversations.loading // Wait for loading to complete
-    ) {
+    // 3. Auto-select first conversation when appropriate
+    // Only do this if:
+    // - We have an inbox selected
+    // - Conversations have loaded
+    // - No conversation is currently selected
+    // - We have conversations to select from
+    if (selectedInboxId && conversations.conversations.length > 0 && !selectedConversation && !conversations.loading) {
       const firstConversation = conversations.conversations[0];
       if (firstConversation) {
         setSelectedConversation(firstConversation);
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedInboxId, conversations.conversations, selectedConversation, conversations.loading]);
+  }, [
+    selectedAccountId,
+    currentAccountId,
+    selectedInboxId,
+    conversations.conversations,
+    selectedConversation,
+    conversations.loading,
+  ]);
 
   const handleConversationSelect = useCallback(
     (conversation: ChatwootConversation) => {
@@ -115,45 +123,44 @@ export const useChatwootProvider = () => {
 
   // Update conversation in the list after status changes
   // Similar to Vue: commit(types.CHANGE_CONVERSATION_STATUS, { conversationId, status })
-  const updateConversationInList = useCallback((updatedConversation: ChatwootConversation) => {
-    const newStatus = updatedConversation.status;
-    const currentFilterStatus = statusFilter === ConversationStatus.ALL ? undefined : statusFilter;
+  const updateConversationInList = useCallback(
+    (updatedConversation: ChatwootConversation) => {
+      const newStatus = updatedConversation.status;
+      const currentFilterStatus = statusFilter === ConversationStatus.ALL ? undefined : statusFilter;
 
-    // Check if updated conversation matches current filter using utility function
-    const matchesFilter = matchesStatusFilter(newStatus, currentFilterStatus);
+      // Check if updated conversation matches current filter using utility function
+      const matchesFilter = matchesStatusFilter(newStatus, currentFilterStatus);
 
-    setConversationsList((prev) => {
-      if (!matchesFilter) {
-        // Remove conversation from list if it doesn't match filter (similar to Vue filtering)
-        return prev.filter((conv) => conv.id !== updatedConversation.id);
-      } else {
-        // Update conversation in list if it matches filter
-        return prev.map((conv) =>
-          conv.id === updatedConversation.id
-            ? { ...conv, ...updatedConversation }
-            : conv
-        );
+      setConversationsList((prev) => {
+        if (!matchesFilter) {
+          // Remove conversation from list if it doesn't match filter (similar to Vue filtering)
+          return prev.filter((conv) => conv.id !== updatedConversation.id);
+        } else {
+          // Update conversation in list if it matches filter
+          return prev.map((conv) => (conv.id === updatedConversation.id ? { ...conv, ...updatedConversation } : conv));
+        }
+      });
+
+      // Update selected conversation
+      if (selectedConversation?.id === updatedConversation.id) {
+        if (!matchesFilter) {
+          // If conversation no longer matches filter, deselect it (similar to how it disappears from list)
+          setSelectedConversation(null);
+        } else {
+          setSelectedConversation((prev) => (prev ? { ...prev, ...updatedConversation } : prev));
+        }
       }
-    });
-
-    // Update selected conversation
-    if (selectedConversation?.id === updatedConversation.id) {
-      if (!matchesFilter) {
-        // If conversation no longer matches filter, deselect it (similar to how it disappears from list)
-        setSelectedConversation(null);
-      } else {
-        setSelectedConversation((prev) => prev ? { ...prev, ...updatedConversation } : prev);
-      }
-    }
-  }, [setConversationsList, selectedConversation, setSelectedConversation, statusFilter]);
+    },
+    [setConversationsList, selectedConversation, setSelectedConversation, statusFilter]
+  );
 
   // Handle filter changes - support status, assignee_type, etc.
   const handleFiltersChange = useCallback((newFilters: Partial<ConversationListParams>) => {
     // Handle status filter - the component sends ConversationStatus.ALL when "All" is selected
     // Check if status property exists in the newFilters object (could be undefined or ConversationStatus.ALL)
-    if ('status' in newFilters) {
+    if ("status" in newFilters) {
       // Convert ConversationStatus.ALL or undefined to ConversationStatus.ALL for internal state
-      const statusToSet = 
+      const statusToSet =
         newFilters.status === ConversationStatus.ALL || newFilters.status === undefined
           ? ConversationStatus.ALL
           : (newFilters.status as ConversationStatus);

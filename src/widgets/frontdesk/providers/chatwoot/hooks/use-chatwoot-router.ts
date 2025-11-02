@@ -85,6 +85,17 @@ export const useChatwootRouter = () => {
   );
 
   /**
+   * Navigate to Dashboard view
+   */
+  const navigateToDashboard = useCallback(
+    (options?: NavigationOptions) => {
+      const route = RouteBuilder.chatwoot(ChatwootView.DASHBOARD);
+      navigate(route, options);
+    },
+    [navigate]
+  );
+
+  /**
    * Navigate to My Inbox view
    */
   const navigateToMyInbox = useCallback(
@@ -187,6 +198,7 @@ export const useChatwootRouter = () => {
     // Current state
     currentRoute,
     currentView,
+    isDashboardView: currentView === ChatwootView.DASHBOARD,
     isMyInboxView: currentView === ChatwootView.MY_INBOX,
     isAllConversationsView: currentView === ChatwootView.ALL_CONVERSATIONS,
     isMentionsView: currentView === ChatwootView.MENTIONS,
@@ -195,6 +207,7 @@ export const useChatwootRouter = () => {
 
     // Navigation methods
     navigate,
+    navigateToDashboard,
     navigateToMyInbox,
     navigateToAllConversations,
     navigateToMentions,

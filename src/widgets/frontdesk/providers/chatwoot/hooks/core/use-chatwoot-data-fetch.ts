@@ -48,7 +48,7 @@ export interface UseDataFetchOptions<TFilters> {
   createFilterKey?: (filters?: TFilters) => string;
 }
 
-export interface UseDataFetchReturn<TData> {
+export interface UseDataFetchReturn<TData, TFilters = any> {
   data: TData;
   loading: boolean;
   error: string | null;
@@ -67,7 +67,7 @@ export function useChatwootDataFetch<TData = any, TFilters = any>({
   createFilterKey = (filters?: TFilters) => {
     return JSON.stringify(filters || {});
   },
-}: UseDataFetchOptions<TFilters>): UseDataFetchReturn<TData> {
+}: UseDataFetchOptions<TFilters>): UseDataFetchReturn<TData, TFilters> {
   const [data, setData] = useState<TData>([] as any);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);

@@ -79,7 +79,7 @@ export const useChatwootMessages = ({ conversation, accountId }: UseChatwootMess
         // Check last message (most recent reply) for to_emails
         const lastMsg = sortedMessages[sortedMessages.length - 1];
         recipientEmail = lastMsg.content_attributes?.to_emails?.[0] ||
-                         lastMsg.content_attributes?.email?.to ||
+                         (lastMsg.content_attributes?.email as any)?.to ||
                          "";
       }
       
@@ -89,7 +89,7 @@ export const useChatwootMessages = ({ conversation, accountId }: UseChatwootMess
       // as the first message if it doesn't exist
       if (conversationToUse.additional_attributes?.mail_subject) {
         // Check if first message already has this subject
-        const firstMsgSubject = sortedMessages[0]?.content_attributes?.email?.subject || 
+        const firstMsgSubject = (sortedMessages[0]?.content_attributes?.email as any)?.subject ||
                                 sortedMessages[0]?.content_attributes?.subject;
         
         if (!firstMsgSubject || firstMsgSubject !== conversationToUse.additional_attributes.mail_subject) {
@@ -120,23 +120,23 @@ export const useChatwootMessages = ({ conversation, accountId }: UseChatwootMess
           
           // Create the original email message from conversation metadata
           const originalEmailMessage: ChatwootMessage = {
-            id: `original-${conversationToUse.id}`, // Unique ID
+            id: -(conversationToUse.id || 0), // Negative ID to avoid conflicts with real messages
             content: originalContent, 
             content_type: "text",
             content_attributes: {
               email: {
                 subject: conversationToUse.additional_attributes.mail_subject,
                 ...(inferredRecipient && { to: inferredRecipient }),
-              },
+              } as any,
             },
             message_type: 0, // Incoming (from customer)
-            created_at: conversationToUse.additional_attributes?.initiated_at?.timestamp 
+            created_at: conversationToUse.additional_attributes?.initiated_at?.timestamp
               ? new Date(conversationToUse.additional_attributes.initiated_at.timestamp).getTime() / 1000
-              : (conversationToUse.created_at || conversationToUse.timestamp || (sortedMessages[0]?.created_at || Date.now() / 1000)),
+              : (Number(conversationToUse.created_at) || Number(conversationToUse.timestamp) || (sortedMessages[0]?.created_at || Date.now() / 1000)),
             sender: conversationToUse.meta?.sender ? {
               name: conversationToUse.meta.sender.name,
               email: conversationToUse.meta.sender.email,
-              avatar_url: conversationToUse.meta.sender.thumbnail || "",
+              avatar_url: conversationToUse.meta.sender.avatar_url || "",
             } : undefined,
           };
           

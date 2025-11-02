@@ -102,6 +102,7 @@ export interface SectionRoute extends BaseRouteParams {
  * Chatwoot view types
  */
 export enum ChatwootView {
+  DASHBOARD = "dashboard",
   MY_INBOX = "my-inbox",
   ALL_CONVERSATIONS = "all-conversations",
   MENTIONS = "mentions",

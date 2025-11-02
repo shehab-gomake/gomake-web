@@ -30,6 +30,9 @@
  * ```
  */
 
+// Types
+export * from './types';
+
 // Tokens
 export * from './tokens';
 

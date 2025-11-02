@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from "react";
 import { useRecoilValue } from "recoil";
+import { useTheme } from "@mui/material/styles";
 import {
   Box,
   Stack,
@@ -52,6 +53,7 @@ export const ChatwootConversationListHeader: React.FC<ChatwootConversationListHe
   unassignedCount,
   allCount,
 }) => {
+  const theme = useTheme();
   const { primaryColor, neutralColor } = useGomakeTheme();
   const [filterMenuAnchor, setFilterMenuAnchor] = useState<null | HTMLElement>(null);
   const [sortMenuAnchor, setSortMenuAnchor] = useState<null | HTMLElement>(null);
@@ -107,7 +109,7 @@ export const ChatwootConversationListHeader: React.FC<ChatwootConversationListHe
     <Box
       sx={{
         backgroundColor: neutralColor(25), // Light background
-        borderBottom: `1px solid ${neutralColor(200)}`,
+        borderBottom: `1px solid ${theme.palette.divider}`,
       }}
     >
       {/* Top Section: Title, Status Tag, Action Buttons */}
@@ -116,11 +118,11 @@ export const ChatwootConversationListHeader: React.FC<ChatwootConversationListHe
         alignItems="center"
         justifyContent="space-between"
         sx={{
-          px: 2,
-          py: 1.5,
+          px: 1.5,
+          py: 1,
         }}
       >
-        <Stack direction="row" alignItems="center" spacing={1.5}>
+        <Stack direction="row" alignItems="center" spacing={1}>
           <Typography
             variant="h6"
             sx={{
@@ -379,9 +381,9 @@ export const ChatwootConversationListHeader: React.FC<ChatwootConversationListHe
       {/* Bottom Section: Filter Tabs */}
       <Box
         sx={{
-          borderTop: `1px solid ${neutralColor(200)}`,
-          px: 2,
-          py: 1,
+          borderTop: `1px solid ${theme.palette.divider}`,
+          px: 1.5,
+          py: 0.5,
         }}
       >
         <Tabs
@@ -391,7 +393,7 @@ export const ChatwootConversationListHeader: React.FC<ChatwootConversationListHe
             minHeight: "auto",
             "& .MuiTab-root": {
               minHeight: "auto",
-              py: 0.5,
+              py: 0.25,
               px: 1.5,
               textTransform: "none",
               fontSize: "0.875rem",
@@ -410,7 +412,7 @@ export const ChatwootConversationListHeader: React.FC<ChatwootConversationListHe
         >
           <Tab
             label={
-              <Stack direction="row" alignItems="center" spacing={1}>
+              <Stack direction="row" alignItems="center" spacing={0.75}>
                 <Typography
                   sx={{
                     fontSize: "0.875rem",
@@ -441,7 +443,7 @@ export const ChatwootConversationListHeader: React.FC<ChatwootConversationListHe
           />
           <Tab
             label={
-              <Stack direction="row" alignItems="center" spacing={1}>
+              <Stack direction="row" alignItems="center" spacing={0.75}>
                 <Typography
                   sx={{
                     fontSize: "0.875rem",
@@ -472,7 +474,7 @@ export const ChatwootConversationListHeader: React.FC<ChatwootConversationListHe
           />
           <Tab
             label={
-              <Stack direction="row" alignItems="center" spacing={1}>
+              <Stack direction="row" alignItems="center" spacing={0.75}>
                 <Typography
                   sx={{
                     fontSize: "0.875rem",

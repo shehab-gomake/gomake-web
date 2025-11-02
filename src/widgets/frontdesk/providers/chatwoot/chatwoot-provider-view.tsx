@@ -10,6 +10,7 @@ import { useChatwootProvider } from "./hooks/use-chatwoot-provider";
 import { ChatwootView } from "@/widgets/frontdesk/routing/types";
 
 // Import view components
+import { DashboardView } from "./views/dashboard-view";
 import { MyInboxView } from "./views/my-inbox-view";
 import { AllConversationsView } from "./views/all-conversations-view";
 import { MentionsView } from "./views/mentions-view";
@@ -23,9 +24,10 @@ export const ChatwootProviderView: React.FC = () => {
   // Route to appropriate view based on current route
   const currentView = chatwootRouter.currentView;
 
-  console.log("[ChatwootProviderView] Current view:", currentView);
-
   switch (currentView) {
+    case ChatwootView.DASHBOARD:
+      return <DashboardView />;
+
     case ChatwootView.MY_INBOX:
       return <MyInboxView />;
 

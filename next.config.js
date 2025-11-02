@@ -22,9 +22,6 @@ const nextConfig = {
     MONDAY_BOARD_ID: process.env.MONDAY_BOARD_ID,
     TOPICS_GROUP_ID: process.env.TOPICS_GROUP_ID,
   },
-  future: {
-    webpack5: true,
-  },
   images: {
     domains: [process.env.BASE_HOST || "localhost", "i.ibb.co"],
     unoptimized: true,
