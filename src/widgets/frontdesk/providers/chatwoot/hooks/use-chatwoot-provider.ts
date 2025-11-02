@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useEffect } from "react";
+import { useCallback, useMemo, useEffect, useRef } from "react";
 import React from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { useChatwootConversations } from "./use-chatwoot-conversations";
@@ -61,28 +61,34 @@ export const useChatwootProvider = () => {
   // Use conversations hook with accountId and filters
   const conversations = useChatwootConversations(currentAccountId, filters);
 
+  // Track initialization to prevent cascading state updates
+  const lastInboxIdRef = useRef<number | null>(selectedInboxId);
+
+  // Consolidated initialization effect
+  // Handles account selection, conversation clearing, and auto-selection in a coordinated manner
   useEffect(() => {
+    // 1. Auto-select account if needed
     if (!selectedAccountId && currentAccountId) {
       setSelectedAccountId(currentAccountId);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedAccountId, currentAccountId]);
 
-  // Clear selected conversation when channel/inbox changes
-  // This ensures we don't show a conversation from the previous channel
-  useEffect(() => {
-    setSelectedConversation(null);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedInboxId]);
+    // 2. Clear selected conversation when inbox changes (but not on initial mount)
+    if (lastInboxIdRef.current !== selectedInboxId) {
+      lastInboxIdRef.current = selectedInboxId;
+      setSelectedConversation(null);
+    }
 
-  // Auto-select first conversation only when loading completes and no conversation is selected
-  // Add a guard to prevent race conditions
-  useEffect(() => {
+    // 3. Auto-select first conversation when appropriate
+    // Only do this if:
+    // - We have an inbox selected
+    // - Conversations have loaded
+    // - No conversation is currently selected
+    // - We have conversations to select from
     if (
       selectedInboxId &&
       conversations.conversations.length > 0 &&
       !selectedConversation &&
-      !conversations.loading // Wait for loading to complete
+      !conversations.loading
     ) {
       const firstConversation = conversations.conversations[0];
       if (firstConversation) {
@@ -90,7 +96,14 @@ export const useChatwootProvider = () => {
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedInboxId, conversations.conversations, selectedConversation, conversations.loading]);
+  }, [
+    selectedAccountId,
+    currentAccountId,
+    selectedInboxId,
+    conversations.conversations,
+    selectedConversation,
+    conversations.loading,
+  ]);
 
   const handleConversationSelect = useCallback(
     (conversation: ChatwootConversation) => {
