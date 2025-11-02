@@ -33,9 +33,22 @@ export const DashboardView: React.FC = () => {
   // Memoized to prevent recalculation on every render
   const filteredConversations = useMemo(() => {
     // Helper function to sort by timestamp descending
+    // Handles Unix timestamps (numbers) and ISO strings
     const sortByTimestamp = (a: typeof conversations[0], b: typeof conversations[0]) => {
-      const aTime = a.timestamp ? new Date(a.timestamp).getTime() : 0;
-      const bTime = b.timestamp ? new Date(b.timestamp).getTime() : 0;
+      const getTimestamp = (conv: typeof conversations[0]): number => {
+        const rawTimestamp = conv.updated_at || conv.created_at || conv.timestamp;
+        if (!rawTimestamp) return 0;
+        if (typeof rawTimestamp === 'number') {
+          // Unix timestamp (seconds) - convert to milliseconds
+          return rawTimestamp * 1000;
+        }
+        // ISO string
+        const date = new Date(rawTimestamp);
+        return isNaN(date.getTime()) ? 0 : date.getTime();
+      };
+      
+      const aTime = getTimestamp(a);
+      const bTime = getTimestamp(b);
       return bTime - aTime;
     };
 

@@ -6,6 +6,7 @@
  */
 
 import type { ChatwootConversation } from '@/services/frontdesk/api/chatwoot/types/conversations.types';
+import { formatConversationDate } from '@/widgets/frontdesk/utils';
 
 /**
  * Get display name for a conversation
@@ -70,15 +71,37 @@ export const getParticipants = (conversation: ChatwootConversation): string[] =>
 };
 
 /**
- * Get conversation timestamp
+ * Converts Chatwoot Unix timestamp (seconds) to ISO string
+ */
+function formatChatwootTimestamp(timestamp: number): string {
+  return new Date(timestamp * 1000).toISOString();
+}
+
+/**
+ * Get conversation timestamp formatted for display
  *
- * Returns the conversation timestamp or current time as fallback
+ * Handles Chatwoot's Unix timestamps (numbers) and ISO strings.
+ * Formats the date using formatConversationDate for consistent display.
  *
  * @param conversation - The Chatwoot conversation object
- * @returns ISO timestamp string
+ * @returns Formatted date string (e.g., "4:30 PM", "Yesterday", "Jul 2")
  */
 export const getConversationTimestamp = (conversation: ChatwootConversation): string => {
-  return conversation.timestamp || new Date().toISOString();
+  // Priority: updated_at > created_at > timestamp
+  const timestamp = conversation.updated_at || conversation.created_at || conversation.timestamp;
+
+  if (!timestamp) {
+    return formatConversationDate(new Date());
+  }
+
+  // If timestamp is a number (Unix timestamp in seconds), convert to ISO
+  if (typeof timestamp === 'number') {
+    const isoString = formatChatwootTimestamp(timestamp);
+    return formatConversationDate(isoString);
+  }
+
+  // If timestamp is already a string (ISO format), format it directly
+  return formatConversationDate(timestamp);
 };
 
 /**

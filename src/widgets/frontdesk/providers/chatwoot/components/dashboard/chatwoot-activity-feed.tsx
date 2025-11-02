@@ -61,7 +61,24 @@ const groupConversationsByDate = (
   };
 
   conversations.forEach((conversation) => {
-    const timestamp = conversation.timestamp ? new Date(conversation.timestamp) : new Date(0);
+    // Get timestamp: priority updated_at > created_at > timestamp
+    const rawTimestamp = conversation.updated_at || conversation.created_at || conversation.timestamp;
+    
+    let timestamp: Date;
+    if (!rawTimestamp) {
+      timestamp = new Date(0);
+    } else if (typeof rawTimestamp === 'number') {
+      // Unix timestamp (seconds) - convert to milliseconds
+      timestamp = new Date(rawTimestamp * 1000);
+    } else {
+      // ISO string
+      timestamp = new Date(rawTimestamp);
+    }
+
+    // Validate date
+    if (isNaN(timestamp.getTime())) {
+      timestamp = new Date(0);
+    }
 
     if (timestamp >= today) {
       grouped.today.push(conversation);
