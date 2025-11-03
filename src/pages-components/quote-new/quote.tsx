@@ -39,8 +39,6 @@ import {
   checksRowState,
   CheckData,
 } from "@/widgets/quote-new/buttons-container/states";
-import { StepType } from "@reactour/tour";
-import { useGoMakeTour } from "@/hooks/use-go-make-tour";
 import { OtherReasonModal } from "@/widgets/quote-new/total-price-and-vat/other-reason-modal";
 import { QuoteStatuses } from "@/widgets/quote-new/total-price-and-vat/enums";
 import { fetchTaxesAuthority, LoginTaxesUrl } from "@/utils/taxes-authority";
@@ -57,7 +55,6 @@ import { InvoiceCreationModal } from "@/widgets/quote-new/invoice-creation-modal
 import { useQuoteGetData } from "./use-quote-get-data";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { DateField } from "@/components/date-picker/date-filed";
-import { createTheme } from "@mui/material/styles";
 import { ModalType } from "@/enums";
 import { DuplicateQuickModal } from "@/widgets/quote-new/modals-widgets/duplicate-quick-modal";
 import Stack from "@mui/material/Stack";
@@ -66,7 +63,6 @@ import { PrimaryCheckbox } from "@/components/check-box/primary-check-box";
 import { SettingVatListMenu } from "@/widgets/quote-new/setting-vat-menu";
 import { CLIENT_TYPE } from "@/pages/customers/enums";
 import { UpdateDeliveryPriceModal } from "@/widgets/quote-new/modals-widgets/update-delivery-price-modal/update-delivery-price-modal";
-import { useModal } from "@/hooks/use-modal";
 import { AddAttachmentsModal } from "@/widgets/quote-new/modals-widgets/add-attachments-modal/add-attachments-modal";
 import { convertUtcToLocalIsoString } from "@/components/date-time/date-time-component";
 import CloseOrderNote from "../quotes/widgets/general/close-order-note";
@@ -411,46 +407,6 @@ const QuoteNewPageWidget = ({
     }
   }, [quoteState, allClientActiveBudgets]);
 
-  const quoteSteps: StepType[] = [
-    {
-      selector: '[data-tour="quoteStep1"]',
-      content:
-        "Here is the quote. You can:\n" +
-        "Add contacts\n" +
-        "Add address\n" +
-        "Change client\n" +
-        "change languge and more",
-      position: "center",
-    },
-    {
-      selector: '[data-tour="quoteStep2"]',
-      content:
-        "With this bar, you can:\n" +
-        "Add items\n" +
-        "Send and save the quote\n" +
-        "Transfer the quote to an order, and more",
-      position: "top",
-    },
-    {
-      selector: '[data-tour="menu-materials"]',
-      content:
-        "And now, it's time to explore all the settings.\n" +
-        'Press "Materials"\n' +
-        "to discover how you can control your materials.",
-      position: "top",
-      styles: {
-        maskWrapper: (props) => ({ ...props, zIndex: 1000000 }),
-        popover: (props) => ({ ...props, zIndex: 1000000 }),
-      },
-    },
-  ];
-
-  const {} = useGoMakeTour(quoteSteps, []);
-
-  const theme = createTheme({
-    direction: dir, // Ensure the theme is in RTL mode
-  });
-
   useEffect(() => {
     if (isInvoice) {
       const fetchTaxesData = async () => {
@@ -738,7 +694,9 @@ const QuoteNewPageWidget = ({
                       <DateField
                         label={t("sales.quote.estimatedProductionDate")}
                         // date={estimatedProductionDate}
-                        date={convertUtcToLocalIsoString(estimatedProductionDate)}
+                        date={convertUtcToLocalIsoString(
+                          estimatedProductionDate
+                        )}
                         handleChange={handleChangeCreationDate}
                         isEditable={false}
                         inputRef={creationDateRef}
