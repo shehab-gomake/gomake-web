@@ -20,8 +20,8 @@ import { FileUploaderProvider } from "@/providers/signalr-provider/file-uploader
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import { MailTestProvider } from "@/providers/signalr-provider/mail-test-provider";
-import { GoSupportChatWidget } from "@/components/chat-bot/go-support-chat-widget";
 import { useRouter } from "next/router";
+import { MultiThemeProvider } from "@/contexts/theme";
 
 i18n
   .use(Backend)
@@ -41,10 +41,6 @@ export default function App({ Component, pageProps }: AppProps) {
   const { t } = useTranslation();
   const router = useRouter();
 
-  // Pages where the chat widget should be hidden
-  const hiddenChatWidgetPages = ["/gomake-ai", "/login"];
-  const shouldShowChatWidget = !hiddenChatWidgetPages.includes(router.pathname);
-
   return (
     <DndProvider backend={HTML5Backend}>
       <RecoilRoot>
@@ -52,23 +48,25 @@ export default function App({ Component, pageProps }: AppProps) {
           <MailTestProvider>
             <UpdatePathWrapper>
               <EnhancedErrorBoundary>
-                <ThemeProvider />
-                <LocalizationProvider
-                  dateAdapter={AdapterMoment}
-                  adapterLocale="en-gb"
-                >
-                  <style jsx global>{`
-                    html {
-                      direction: ${t("direction")};
-                    }
-                  `}</style>
-                  <GoMakeTourProvider>
-                    <Component {...pageProps} />
-                  </GoMakeTourProvider>
-                  <GoMakeSnackBar />
-                  <GomakeLoading />
-                  <GomakeLoadingWithShadow />
-                </LocalizationProvider>
+                <MultiThemeProvider>
+                  <ThemeProvider />
+                  <LocalizationProvider
+                    dateAdapter={AdapterMoment}
+                    adapterLocale="en-gb"
+                  >
+                    <style jsx global>{`
+                      html {
+                        direction: ${t("direction")};
+                      }
+                    `}</style>
+                    <GoMakeTourProvider>
+                      <Component {...pageProps} />
+                    </GoMakeTourProvider>
+                    <GoMakeSnackBar />
+                    <GomakeLoading />
+                    <GomakeLoadingWithShadow />
+                  </LocalizationProvider>
+                </MultiThemeProvider>
               </EnhancedErrorBoundary>
             </UpdatePathWrapper>
           </MailTestProvider>

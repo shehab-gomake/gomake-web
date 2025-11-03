@@ -25,6 +25,7 @@ import { GoMakeTreeSelect } from "@/components/auto-complete/tree-select";
 import { ModalType } from "@/enums";
 import { useUserPermission } from "@/hooks/use-permission";
 import { ClientAutocomplete } from "@/widgets/Clients-Autocomplete/clients-list";
+import { getHeadingTypography } from "@/themes/typography-utils";
 
 interface QuoteWidgetProps {
   isMobileScreen?: boolean;
@@ -134,7 +135,6 @@ const QuoteWidget = ({ isMobileScreen = false, title }: QuoteWidgetProps) => {
 
   return (
     <div
-      data-tour="quote-widget"
       style={{
         ...classes.mainContainer,
         ...(isMobileScreen
@@ -142,13 +142,13 @@ const QuoteWidget = ({ isMobileScreen = false, title }: QuoteWidgetProps) => {
           : {}),
       }}
     >
-      <div style={classes.titleStyle}>{title}</div>
+      <div style={getHeadingTypography()}>{title}</div>
       <PermissionCheck
         userPermission={Permissions.CAN_SELECT_CLIENT_IN_HOME_PAGE}
       >
         <div style={classes.customerSectionStyle}>
           <div style={classes.autoComplateRowContainer}>
-            <div data-tour="select-customer" style={{ width: "65%" }}>
+            <div style={{ width: "65%" }}>
               <ClientAutocomplete
                 disableClearable={true}
                 options={renderOptions() ? renderOptions() : []}
@@ -171,7 +171,6 @@ const QuoteWidget = ({ isMobileScreen = false, title }: QuoteWidgetProps) => {
             </div>
             {selectedClient?.id && (
               <div
-                data-tour="select-type"
                 style={{
                   width: "30%",
                   opacity: selectedClient?.id ? 1 : 0,
@@ -207,10 +206,7 @@ const QuoteWidget = ({ isMobileScreen = false, title }: QuoteWidgetProps) => {
         </div>
       </PermissionCheck>
       <div style={classes.autoComplateRowContainer}>
-        <div
-          data-tour="select-product"
-          style={{ width: isMobileScreen ? "100%" : "65%" }}
-        >
+        <div style={{ width: isMobileScreen ? "100%" : "65%" }}>
           <GoMakeTreeSelect
             selectedTab={selectedTab}
             setSelectedTab={onSelectTab}
@@ -253,7 +249,7 @@ const QuoteWidget = ({ isMobileScreen = false, title }: QuoteWidgetProps) => {
           </div>
         </Stack>
       ) : (
-        <div data-tour="create-quote" style={{ width: "50%" }}>
+        <div style={{ width: "50%" }}>
           <GomakePrimaryButton
             onClick={
               !selectedProduct?.id

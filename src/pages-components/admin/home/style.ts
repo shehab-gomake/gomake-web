@@ -18,7 +18,7 @@ const useStyle = () => {
         width: "100%",
         height: "100%",
         gap: 16,
-        backgroundColor: "#F6F6F6",
+        backgroundColor: "var(--theme-bg-body, #F6F6F6)",
         paddingLeft: 20,
         paddingRight: 20,
       },
@@ -29,7 +29,7 @@ const useStyle = () => {
         justifyContent: "flex-start",
         width: "100%",
         gap: 20,
-        backgroundColor: "#F6F6F6",
+        backgroundColor: "var(--theme-bg-body, #F6F6F6)",
         marginBottom: 15,
       },
 
@@ -40,7 +40,7 @@ const useStyle = () => {
         width: "100%",
         height: "100%",
         gap: 20,
-        backgroundColor: "#F6F6F6",
+        backgroundColor: "var(--theme-bg-body, #F6F6F6)",
         marginBottom: 15,
       },
       titleStyle: {

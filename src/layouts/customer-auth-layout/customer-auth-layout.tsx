@@ -125,7 +125,11 @@ const CustomerAuthLayout = ({
                 }
               }}
             >
-              {isMobileScreen ? <MobileHeaderWidget /> : <HeaderWidget customStyle={customHeaderStyle} />}
+              {isMobileScreen ? (
+                <MobileHeaderWidget />
+              ) : (
+                <HeaderWidget customStyle={customHeaderStyle} />
+              )}
 
               {canAccess && (
                 <div style={classes.bodyContainer} className={className}>
