@@ -145,7 +145,7 @@ export const useDoneJobsFilters = () => {
       value: ORDER_STATUSES.WaitingForPayment,
     },
     { label: t("boardMissions.paused"), value: ORDER_STATUSES.Paused },
-    { label: t("boardMissions.ready"), value: ORDER_STATUSES.Ready },
+    // { label: t("boardMissions.ready"), value: ORDER_STATUSES.Ready },
   ];
 
   return {
