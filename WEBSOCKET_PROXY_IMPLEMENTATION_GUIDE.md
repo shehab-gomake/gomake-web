@@ -3,6 +3,7 @@
 ## Current State Analysis
 
 ### Current Limitations
+
 - **Controller**: Uses `@All()` decorator which only handles HTTP methods (GET, POST, etc.)
 - **Service**: Uses Axios/HttpService which is HTTP-only
 - **No WebSocket Gateway**: Missing `@WebSocketGateway` implementation
@@ -11,6 +12,7 @@
 ### What Chatwoot Requires
 
 Chatwoot uses **ActionCable** (Rails WebSocket library) which requires:
+
 1. **WebSocket endpoint**: `/cable` (the standard ActionCable endpoint)
 2. **Protocol**: WebSocket upgrade from HTTP
 3. **Authentication**: `pubsub_token` in connection params
@@ -26,15 +28,15 @@ Create a new WebSocket gateway that handles the `/cable` endpoint:
 
 ```typescript
 // src/gateways/chatwoot-websocket.gateway.ts
-import { WebSocketGateway, WebSocketServer, OnGatewayConnection, OnGatewayDisconnect } from '@nestjs/websockets';
-import { Server, Socket } from 'socket.io';
-import { Logger } from '@nestjs/common';
-import * as WebSocket from 'ws';
+import { WebSocketGateway, WebSocketServer, OnGatewayConnection, OnGatewayDisconnect } from "@nestjs/websockets";
+import { Server, Socket } from "socket.io";
+import { Logger } from "@nestjs/common";
+import * as WebSocket from "ws";
 
 @WebSocketGateway({
-  namespace: '/cable',
-  path: '/cable',
-  transports: ['websocket'],
+  namespace: "/cable",
+  path: "/cable",
+  transports: ["websocket"],
 })
 export class ChatwootWebSocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
@@ -46,15 +48,15 @@ export class ChatwootWebSocketGateway implements OnGatewayConnection, OnGatewayD
 
   constructor() {
     // Get Chatwoot WebSocket URL from config
-    this.chatwootWsUrl = process.env.CHATWOOT_WS_URL || 'ws://localhost:3000/cable';
+    this.chatwootWsUrl = process.env.CHATWOOT_WS_URL || "ws://localhost:3000/cable";
   }
 
   async handleConnection(client: Socket) {
     this.logger.log(`Client connecting: ${client.id}`);
-    
+
     // Extract authentication info from handshake
     const { pubsub_token, account_id, user_id } = client.handshake.query;
-    
+
     if (!pubsub_token) {
       this.logger.warn(`Connection rejected: missing pubsub_token`);
       client.disconnect();
@@ -63,13 +65,8 @@ export class ChatwootWebSocketGateway implements OnGatewayConnection, OnGatewayD
 
     // Create WebSocket connection to Chatwoot
     try {
-      const chatwootWs = await this.createChatwootConnection(
-        pubsub_token,
-        account_id,
-        user_id,
-        client
-      );
-      
+      const chatwootWs = await this.createChatwootConnection(pubsub_token, account_id, user_id, client);
+
       this.activeConnections.set(client.id, chatwootWs);
       this.logger.log(`Proxy connection established: ${client.id}`);
     } catch (error) {
@@ -80,7 +77,7 @@ export class ChatwootWebSocketGateway implements OnGatewayConnection, OnGatewayD
 
   async handleDisconnect(client: Socket) {
     this.logger.log(`Client disconnecting: ${client.id}`);
-    
+
     const chatwootWs = this.activeConnections.get(client.id);
     if (chatwootWs) {
       chatwootWs.close();
@@ -97,48 +94,48 @@ export class ChatwootWebSocketGateway implements OnGatewayConnection, OnGatewayD
     return new Promise((resolve, reject) => {
       // Build ActionCable connection URL with query params
       const url = `${this.chatwootWsUrl}?pubsub_token=${pubsubToken}&account_id=${accountId}&user_id=${userId}`;
-      
+
       const ws = new WebSocket(url, {
         headers: {
-          'Origin': process.env.FRONTEND_URL || 'http://localhost:3004',
+          Origin: process.env.FRONTEND_URL || "http://localhost:3004",
         },
       });
 
-      ws.on('open', () => {
+      ws.on("open", () => {
         this.logger.log(`Connected to Chatwoot WebSocket for client ${clientSocket.id}`);
         resolve(ws);
       });
 
-      ws.on('message', (data: WebSocket.Data) => {
+      ws.on("message", (data: WebSocket.Data) => {
         // Forward messages from Chatwoot to client
         try {
           const message = JSON.parse(data.toString());
-          clientSocket.emit('message', message);
+          clientSocket.emit("message", message);
         } catch (error) {
           // If not JSON, forward as-is (ActionCable protocol)
-          clientSocket.emit('message', data.toString());
+          clientSocket.emit("message", data.toString());
         }
       });
 
-      ws.on('error', (error) => {
+      ws.on("error", (error) => {
         this.logger.error(`Chatwoot WebSocket error: ${error.message}`);
-        clientSocket.emit('error', { message: 'WebSocket connection error' });
+        clientSocket.emit("error", { message: "WebSocket connection error" });
       });
 
-      ws.on('close', () => {
+      ws.on("close", () => {
         this.logger.log(`Chatwoot WebSocket closed for client ${clientSocket.id}`);
         clientSocket.disconnect();
       });
 
       // Forward messages from client to Chatwoot
-      clientSocket.on('message', (data: any) => {
+      clientSocket.on("message", (data: any) => {
         if (ws.readyState === WebSocket.OPEN) {
-          const message = typeof data === 'string' ? data : JSON.stringify(data);
+          const message = typeof data === "string" ? data : JSON.stringify(data);
           ws.send(message);
         }
       });
 
-      ws.on('error', reject);
+      ws.on("error", reject);
     });
   }
 }
@@ -148,8 +145,8 @@ export class ChatwootWebSocketGateway implements OnGatewayConnection, OnGatewayD
 
 ```typescript
 // src/app.module.ts or your feature module
-import { Module } from '@nestjs/common';
-import { ChatwootWebSocketGateway } from './gateways/chatwoot-websocket.gateway';
+import { Module } from "@nestjs/common";
+import { ChatwootWebSocketGateway } from "./gateways/chatwoot-websocket.gateway";
 
 @Module({
   imports: [
@@ -183,10 +180,10 @@ constructor() {
 
 private createChatwootConnection(...) {
   // ... existing code ...
-  
+
   ws.on('message', (data: WebSocket.Data) => {
     const message = this.protocolHandler.parseMessage(data);
-    
+
     // Handle ActionCable protocol messages
     if (message.type === 'welcome') {
       clientSocket.emit('connected', { status: 'connected' });
@@ -201,7 +198,7 @@ private createChatwootConnection(...) {
       clientSocket.emit('message', message);
     }
   });
-  
+
   // Handle client messages
   clientSocket.on('message', (data: any) => {
     if (ws.readyState === WebSocket.OPEN) {
@@ -226,17 +223,17 @@ export class ActionCableProtocolHandler {
     try {
       const str = data.toString();
       const message = JSON.parse(str);
-      
+
       // ActionCable message types:
       // - {"type":"welcome"} - connection established
       // - {"type":"ping","message":1234567890} - keepalive
       // - {"type":"confirm_subscription","identifier":"..."} - subscription confirmed
       // - {"identifier":"...","message":{...}} - actual data
-      
+
       return message;
     } catch (error) {
       // If not JSON, return as-is
-      return { type: 'raw', data: data.toString() };
+      return { type: "raw", data: data.toString() };
     }
   }
 
@@ -244,17 +241,17 @@ export class ActionCableProtocolHandler {
    * Format client message for ActionCable protocol
    */
   formatMessage(clientMessage: any): string {
-    if (typeof clientMessage === 'string') {
+    if (typeof clientMessage === "string") {
       try {
         // Try to parse as JSON first
         const parsed = JSON.parse(clientMessage);
         return JSON.stringify(parsed);
       } catch {
         // If not JSON, wrap in ActionCable format
-        return JSON.stringify({ command: 'message', data: clientMessage });
+        return JSON.stringify({ command: "message", data: clientMessage });
       }
     }
-    
+
     return JSON.stringify(clientMessage);
   }
 }
@@ -267,13 +264,13 @@ Add JWT validation before allowing WebSocket connections:
 ```typescript
 // src/gateways/chatwoot-websocket.gateway.ts
 
-import { UseGuards } from '@nestjs/common';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { UseGuards } from "@nestjs/common";
+import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 
 @WebSocketGateway({
-  namespace: '/cable',
-  path: '/cable',
-  transports: ['websocket'],
+  namespace: "/cable",
+  path: "/cable",
+  transports: ["websocket"],
 })
 export class ChatwootWebSocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
   // ... existing code ...
@@ -281,7 +278,7 @@ export class ChatwootWebSocketGateway implements OnGatewayConnection, OnGatewayD
   async handleConnection(client: Socket) {
     // Extract JWT token from handshake
     const token = this.extractTokenFromHandshake(client);
-    
+
     if (!token) {
       this.logger.warn(`Connection rejected: missing token`);
       client.disconnect();
@@ -295,10 +292,10 @@ export class ChatwootWebSocketGateway implements OnGatewayConnection, OnGatewayD
         client.disconnect();
         return;
       }
-      
+
       // Get pubsub_token from user or generate it
       const pubsubToken = await this.getPubsubToken(user);
-      
+
       // Continue with connection...
       const { account_id, user_id } = client.handshake.query;
       // ... rest of connection logic
@@ -311,12 +308,12 @@ export class ChatwootWebSocketGateway implements OnGatewayConnection, OnGatewayD
   private extractTokenFromHandshake(client: Socket): string | null {
     // Try Authorization header first
     const authHeader = client.handshake.headers.authorization;
-    if (authHeader && authHeader.startsWith('Bearer ')) {
+    if (authHeader && authHeader.startsWith("Bearer ")) {
       return authHeader.substring(7);
     }
-    
+
     // Try query parameter
-    return client.handshake.query.token as string || null;
+    return (client.handshake.query.token as string) || null;
   }
 
   private async validateToken(token: string): Promise<any> {
@@ -351,15 +348,15 @@ Your existing HTTP proxy should remain unchanged for REST API calls:
 
 ```typescript
 // src/controllers/chatwoot-proxy.controller.ts (existing)
-import { All, Controller, Req, Res } from '@nestjs/common';
-import { Request, Response } from 'express';
-import { HttpService } from '@nestjs/axios';
+import { All, Controller, Req, Res } from "@nestjs/common";
+import { Request, Response } from "express";
+import { HttpService } from "@nestjs/axios";
 
-@Controller('api/v1')
+@Controller("api/v1")
 export class ChatwootProxyController {
   constructor(private readonly httpService: HttpService) {}
 
-  @All('*')
+  @All("*")
   async proxy(@Req() req: Request, @Res() res: Response) {
     // Your existing HTTP proxy logic
     // This handles all HTTP requests (GET, POST, etc.)
@@ -402,21 +399,21 @@ npm install --save-dev @types/ws
 
 ```typescript
 // test/websocket.test.ts
-import { io } from 'socket.io-client';
+import { io } from "socket.io-client";
 
-describe('Chatwoot WebSocket Gateway', () => {
-  it('should connect to /cable endpoint', async () => {
-    const socket = io('http://localhost:3000/cable', {
+describe("Chatwoot WebSocket Gateway", () => {
+  it("should connect to /cable endpoint", async () => {
+    const socket = io("http://localhost:3000/cable", {
       query: {
-        pubsub_token: 'test_token',
-        account_id: '1',
-        user_id: '1',
+        pubsub_token: "test_token",
+        account_id: "1",
+        user_id: "1",
       },
-      transports: ['websocket'],
+      transports: ["websocket"],
     });
 
     await new Promise((resolve) => {
-      socket.on('connect', () => {
+      socket.on("connect", () => {
         expect(socket.connected).toBe(true);
         resolve(null);
       });
@@ -431,14 +428,14 @@ describe('Chatwoot WebSocket Gateway', () => {
 
 ## Key Differences: HTTP vs WebSocket
 
-| Aspect | HTTP Proxy | WebSocket Gateway |
-|--------|-----------|-------------------|
-| **NestJS Decorator** | `@Controller()` + `@All()` | `@WebSocketGateway()` |
-| **Protocol** | HTTP (GET, POST, etc.) | WebSocket (upgrade) |
-| **Library** | Axios/HttpService | `ws` + Socket.IO |
-| **Connection** | Request/Response | Persistent connection |
-| **Path** | `/api/v1/*` | `/cable` |
-| **Authentication** | Bearer token header | Query params + headers |
+| Aspect               | HTTP Proxy                 | WebSocket Gateway      |
+| -------------------- | -------------------------- | ---------------------- |
+| **NestJS Decorator** | `@Controller()` + `@All()` | `@WebSocketGateway()`  |
+| **Protocol**         | HTTP (GET, POST, etc.)     | WebSocket (upgrade)    |
+| **Library**          | Axios/HttpService          | `ws` + Socket.IO       |
+| **Connection**       | Request/Response           | Persistent connection  |
+| **Path**             | `/api/v1/*`                | `/cable`               |
+| **Authentication**   | Bearer token header        | Query params + headers |
 
 ---
 
@@ -460,10 +457,10 @@ Your frontend should now connect to YOUR proxy instead of Chatwoot directly:
 
 ```typescript
 // Before (direct to Chatwoot)
-const cable = ActionCable.createConsumer('ws://chatwoot-server:3000/cable');
+const cable = ActionCable.createConsumer("ws://chatwoot-server:3000/cable");
 
 // After (through your proxy)
-const cable = ActionCable.createConsumer('ws://your-proxy:3000/cable');
+const cable = ActionCable.createConsumer("ws://your-proxy:3000/cable");
 ```
 
 ---
@@ -481,17 +478,19 @@ const cable = ActionCable.createConsumer('ws://your-proxy:3000/cable');
 ## Troubleshooting
 
 ### Connection fails immediately
+
 - Check WebSocket URL format (`ws://` not `http://`)
 - Verify ActionCable endpoint is `/cable`
 - Check authentication tokens
 
 ### Messages not forwarding
+
 - Verify ActionCable protocol parsing
 - Check message format matches ActionCable spec
 - Enable logging to see raw messages
 
 ### High memory usage
+
 - Implement connection cleanup on disconnect
 - Add connection limits per user
 - Monitor active connections map size
-

@@ -170,7 +170,15 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
   const { inboxes, loading: inboxesLoading, selectedInboxId, selectInbox } = useChatwootInboxes();
 
   // Get current Chatwoot view for accurate selection state
-  const { isDashboardView, isMyInboxView, isAllConversationsView, isMentionsView, isUnattendedView, isChannelsView, isWebhookTestView } = useChatwootRouter();
+  const {
+    isDashboardView,
+    isMyInboxView,
+    isAllConversationsView,
+    isMentionsView,
+    isUnattendedView,
+    isChannelsView,
+    isWebhookTestView,
+  } = useChatwootRouter();
 
   const channelItems = [
     { id: "email" as Channel, icon: <EmailIcon />, label: "Email" },
@@ -709,11 +717,7 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
                               selectInbox(inbox.id);
 
                               // Use RouteBuilder for type-safe navigation
-                              const route = RouteBuilder.chatwoot(
-                                ChatwootView.CHANNELS,
-                                undefined,
-                                inbox.id.toString()
-                              );
+                              const route = RouteBuilder.chatwoot(ChatwootView.CHANNELS, undefined, inbox.id.toString());
                               const { path, options } = buildRoute(route, { replace: true });
 
                               // Navigate to Chatwoot channel first if not already there
@@ -839,19 +843,14 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
               cursor: "pointer",
               backgroundColor: oldFrontdeskExpanded ? alpha(theme.palette.warning.main, 0.05) : "transparent",
               "&:hover": {
-                backgroundColor: oldFrontdeskExpanded
-                  ? alpha(theme.palette.warning.main, 0.1)
-                  : theme.palette.action.hover
+                backgroundColor: oldFrontdeskExpanded ? alpha(theme.palette.warning.main, 0.1) : theme.palette.action.hover,
               },
               transition: "background-color 0.2s ease",
             }}
             onClick={() => setOldFrontdeskExpanded(!oldFrontdeskExpanded)}
           >
             <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-              <HistoryIcon
-                fontSize="small"
-                sx={{ color: theme.palette.text.secondary }}
-              />
+              <HistoryIcon fontSize="small" sx={{ color: theme.palette.text.secondary }} />
               <Typography
                 variant="caption"
                 sx={{
@@ -908,7 +907,8 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
                             variant: "body2",
                             sx: {
                               fontSize: "0.875rem",
-                              fontWeight: selectedSection === "inbox" && selectedChannel === "all" && !selectedTicketView ? 600 : 400,
+                              fontWeight:
+                                selectedSection === "inbox" && selectedChannel === "all" && !selectedTicketView ? 600 : 400,
                             },
                           }}
                         />
@@ -1178,10 +1178,7 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
       </Box>
 
       {/* Add Channel Modal */}
-      <AddChannelModal
-        open={showAddChannelModal}
-        onClose={() => setShowAddChannelModal(false)}
-      />
+      <AddChannelModal open={showAddChannelModal} onClose={() => setShowAddChannelModal(false)} />
     </Box>
   );
 };

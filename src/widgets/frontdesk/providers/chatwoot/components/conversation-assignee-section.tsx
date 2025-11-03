@@ -227,22 +227,9 @@ export const ConversationAssigneeSection: React.FC<ConversationAssigneeSectionPr
             >
               {agent.name?.charAt(0) || agent.available_name?.charAt(0) || 'A'}
             </Avatar>
-            <Box>
-              <Typography variant="body2" sx={{ fontSize: 13 }}>
-                {agent.name || agent.available_name || 'Agent'}
-              </Typography>
-              {agent.email && (
-                <Typography
-                  variant="caption"
-                  sx={{
-                    fontSize: 11,
-                    color: colorTokens.semantic.text.secondary,
-                  }}
-                >
-                  {agent.email}
-                </Typography>
-              )}
-            </Box>
+            <Typography variant="body2" sx={{ fontSize: 13 }}>
+              {agent.name || agent.available_name || 'Agent'}
+            </Typography>
           </MenuItem>
         ))}
 

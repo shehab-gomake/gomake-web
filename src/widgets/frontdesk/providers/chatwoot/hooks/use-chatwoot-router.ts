@@ -18,6 +18,7 @@ import {
   isChatwootRoute,
   NavigationOptions,
   FrontDeskRoute,
+  ChatwootFilters,
 } from "@/widgets/frontdesk/routing/types";
 import { RouteBuilder, buildRoute } from "@/widgets/frontdesk/routing/route-builder";
 import { parseRoute } from "@/widgets/frontdesk/routing/route-parser";
@@ -42,6 +43,9 @@ export const useChatwootRouter = () => {
 
   // Current view
   const currentView = currentRoute?.view || ChatwootView.MY_INBOX;
+
+  // Current filters from URL
+  const currentFilters = currentRoute?.filters;
 
   /**
    * Navigate to a Chatwoot route
@@ -185,6 +189,69 @@ export const useChatwootRouter = () => {
   );
 
   /**
+   * Update filters in URL while preserving current view and conversation
+   * Uses shallow routing to avoid full page reload
+   */
+  const updateFilters = useCallback(
+    (filters: ChatwootFilters, options?: NavigationOptions) => {
+      if (!currentRoute) return;
+
+      const route: ChatwootRoute = {
+        type: RouteType.CHATWOOT,
+        view: currentRoute.view,
+        conversationId: currentRoute.conversationId,
+        channelId: currentRoute.channelId,
+        filters,
+      };
+
+      navigate(route, { ...options, replace: true, scroll: false });
+    },
+    [currentRoute, navigate]
+  );
+
+  /**
+   * Clear all filters from URL
+   */
+  const clearFilters = useCallback(
+    (options?: NavigationOptions) => {
+      if (!currentRoute) return;
+
+      const route: ChatwootRoute = {
+        type: RouteType.CHATWOOT,
+        view: currentRoute.view,
+        conversationId: currentRoute.conversationId,
+        channelId: currentRoute.channelId,
+        filters: undefined,
+      };
+
+      navigate(route, { ...options, replace: true, scroll: false });
+    },
+    [currentRoute, navigate]
+  );
+
+  /**
+   * Update a single filter parameter
+   */
+  const updateFilter = useCallback(
+    (key: keyof ChatwootFilters, value: string | undefined, options?: NavigationOptions) => {
+      const newFilters = {
+        ...currentFilters,
+        [key]: value,
+      };
+
+      // Remove undefined values
+      Object.keys(newFilters).forEach((k) => {
+        if (newFilters[k as keyof ChatwootFilters] === undefined) {
+          delete newFilters[k as keyof ChatwootFilters];
+        }
+      });
+
+      updateFilters(newFilters, options);
+    },
+    [currentFilters, updateFilters]
+  );
+
+  /**
    * Sync route changes with Recoil state atoms
    */
   useEffect(() => {
@@ -209,6 +276,7 @@ export const useChatwootRouter = () => {
     // Current state
     currentRoute,
     currentView,
+    currentFilters,
     isDashboardView: currentView === ChatwootView.DASHBOARD,
     isMyInboxView: currentView === ChatwootView.MY_INBOX,
     isAllConversationsView: currentView === ChatwootView.ALL_CONVERSATIONS,
@@ -228,5 +296,10 @@ export const useChatwootRouter = () => {
     navigateToWebhookTest,
     navigateToChannel,
     navigateToConversation,
+
+    // Filter methods
+    updateFilters,
+    updateFilter,
+    clearFilters,
   };
 };

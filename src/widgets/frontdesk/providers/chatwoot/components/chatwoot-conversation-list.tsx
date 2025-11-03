@@ -3,8 +3,6 @@ import { Box, Paper, List, Alert, alpha } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { useRecoilValue } from "recoil";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
-import { ConversationListEmpty } from "../../email/components/conversation/conversation-list-empty";
-import { ConversationListLoading } from "../../email/components/conversation/conversation-list-loading";
 import { ChatwootConversationListItem } from "./chatwoot-conversation-list-item";
 import { ChatwootConversationListHeader } from "./chatwoot-conversation-list-header";
 import { ChatwootConversationFilters } from "./chatwoot-conversation-filters";
@@ -17,6 +15,9 @@ import {
 } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
 import { chatwootConversationCountsAtom } from "@/store/frontdesk/atoms/chatwoot.atoms";
 import type { ChatwootInbox } from "@/services/frontdesk/api/chatwoot/types/inboxes.types";
+// New Chatwoot-specific loading and empty states
+import { ConversationListSkeleton } from "./skeletons";
+import { NoConversationsEmptyState, ErrorState } from "./empty-states";
 
 interface ChatwootConversationListProps {
   conversations: any[];
@@ -34,6 +35,7 @@ interface ChatwootConversationListProps {
   onFiltersChange?: (filters: Partial<ConversationListParams>) => void;
   inboxes?: ChatwootInbox[];
   inboxesLoading?: boolean;
+  onNextClick?: () => void;
 }
 
 export const ChatwootConversationList: React.FC<ChatwootConversationListProps> = ({
@@ -52,6 +54,7 @@ export const ChatwootConversationList: React.FC<ChatwootConversationListProps> =
   onFiltersChange = () => {},
   inboxes = [],
   inboxesLoading = false,
+  onNextClick,
 }) => {
   const theme = useTheme();
   const { neutralColor } = useGomakeTheme();
@@ -61,6 +64,28 @@ export const ChatwootConversationList: React.FC<ChatwootConversationListProps> =
 
   // Get current status from filters
   const currentStatus = filters.status ? (Array.isArray(filters.status) ? filters.status[0] : filters.status) : undefined;
+
+  // Check if filters are applied (for empty state messaging)
+  const hasActiveFilters = Boolean(
+    filters.status ||
+    filters.assignee_type ||
+    filters.inbox_id ||
+    filters.team_id ||
+    filters.labels
+  );
+
+  // Determine filter context for empty state messaging
+  const getFilterContext = () => {
+    if (filters.assignee_type === "me") return "mine";
+    if (filters.assignee_type === "unassigned") return "unassigned";
+    if (currentStatus) return currentStatus;
+    return undefined;
+  };
+
+  // Clear filters handler
+  const handleClearFilters = () => {
+    onFiltersChange({});
+  };
 
   // Infinite scroll setup
   const sentinelRef = useInfiniteScroll({
@@ -93,6 +118,7 @@ export const ChatwootConversationList: React.FC<ChatwootConversationListProps> =
         mineCount={counts.mine}
         unassignedCount={counts.unassigned}
         allCount={counts.all}
+        onNextClick={onNextClick}
       />
 
       {/* Content */}
@@ -100,27 +126,39 @@ export const ChatwootConversationList: React.FC<ChatwootConversationListProps> =
         sx={{
           flex: 1,
           overflow: "auto",
-          backgroundColor: neutralColor(0), // Light background
+          backgroundColor: neutralColor(0),
           px: 0.5,
           position: "relative",
         }}
       >
         {/* Beautiful Loading Overlay - Shows in list area when switching tabs */}
-        <LoadingOverlay loading={loading} message="Loading conversations..." />
+        <LoadingOverlay loading={loading && conversations.length > 0} message="Loading conversations..." />
 
         {error ? (
-          <Box sx={{ p: 2 }}>
-            <Alert severity="error">{error}</Alert>
-          </Box>
+          // Error State with retry option
+          <ErrorState
+            title="Failed to load conversations"
+            message="We couldn't load your conversations. Please check your connection and try again."
+            error={error}
+            onRetry={onRefresh}
+          />
         ) : loading && conversations.length === 0 ? (
-          <ConversationListLoading />
+          // Initial loading state with skeleton
+          <ConversationListSkeleton count={8} />
         ) : conversations.length === 0 ? (
-          <ConversationListEmpty selectedLabel={null} />
+          // Empty state with context-aware messaging
+          <NoConversationsEmptyState
+            filterContext={getFilterContext()}
+            hasFilters={hasActiveFilters}
+            onRefresh={onRefresh}
+            onClearFilters={handleClearFilters}
+          />
         ) : (
+          // Conversation list
           <List
             sx={{
               py: 0.5,
-              backgroundColor: neutralColor(0), // Light background
+              backgroundColor: neutralColor(0),
             }}
           >
             {conversations.map((conversation) => (
@@ -136,6 +174,13 @@ export const ChatwootConversationList: React.FC<ChatwootConversationListProps> =
 
             {/* Infinite scroll sentinel element */}
             <div ref={sentinelRef} style={{ height: 1, width: "100%" }} />
+
+            {/* Show skeleton at bottom when loading more */}
+            {loading && hasMore && (
+              <Box sx={{ py: 1 }}>
+                <ConversationListSkeleton count={3} />
+              </Box>
+            )}
           </List>
         )}
       </Box>

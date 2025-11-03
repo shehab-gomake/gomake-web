@@ -12,6 +12,7 @@
  * - inboxes.types.ts - Inbox/channel configuration types
  * - labels.types.ts - Label management types
  * - notifications.types.ts - Notification types
+ * - compose.types.ts - Compose new conversation types
  * - enums.types.ts - All enum types for convenience
  */
 
@@ -25,6 +26,7 @@ export * from "./teams.types";
 export * from "./inboxes.types";
 export * from "./labels.types";
 export * from "./notifications.types";
+export * from "./compose.types";
 
 // Enums for convenience
 export * from "./enums.types";

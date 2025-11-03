@@ -14,6 +14,9 @@ import {
 } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
 import type { ChatwootInbox } from "@/services/frontdesk/api/chatwoot/types/inboxes.types";
 import { chatwootService } from "@/services/frontdesk";
+// New Chatwoot-specific loading and empty states
+import { MessageViewerSkeleton } from "./skeletons";
+import { NoMessagesEmptyState, ErrorState } from "./empty-states";
 
 interface ChatwootMessageViewerProps {
   conversation: ChatwootConversation | null;
@@ -49,15 +52,39 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
     return inboxes.find((inbox) => inbox.id === conversation.inbox_id) || null;
   }, [conversation?.inbox_id, inboxes]);
 
+  // Ref for composer focus
+  const composerRef = React.useRef<any>(null);
+
+  // Focus composer when starting conversation
+  const handleStartConversation = () => {
+    composerRef.current?.focus();
+  };
+
   if (!conversation) {
     return (
-      <PanelContent padding="lg">
+      <Paper
+        elevation={2}
+        sx={{
+          flex: 1,
+          display: "flex",
+          flexDirection: "column",
+          overflow: "hidden",
+          height: "100%",
+          borderRadius: 2,
+          backgroundColor: neutralColor(0),
+        }}
+      >
         <EmptyState
           title="No conversation selected"
           description="Choose a conversation from the list to start viewing messages"
         />
-      </PanelContent>
+      </Paper>
     );
+  }
+
+  // Show full skeleton while loading conversation
+  if (loading && messages.length === 0) {
+    return <MessageViewerSkeleton messageCount={5} />;
   }
 
   // Helper to update conversation after status change (similar to Vue store.dispatch('toggleStatus'))
@@ -278,33 +305,30 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
       />
 
       {/* Messages */}
-      <Box 
-        sx={{ 
-          flex: 1, 
+      <Box
+        sx={{
+          flex: 1,
           overflow: "auto",
           background: `linear-gradient(to bottom, ${neutralColor(25)}, ${neutralColor(50)})`,
           p: 2,
         }}
         className="custom-scrollbar"
       >
-        {loading ? (
-          <Box sx={{ p: 3, textAlign: "center" }}>
-            <Typography variant="body2" sx={{ color: neutralColor(600) }}>
-              Loading messages...
-            </Typography>
-          </Box>
-        ) : error ? (
-          <Box sx={{ p: 3, textAlign: "center" }}>
-            <Typography variant="body2" sx={{ color: "error.main" }}>
-              {error}
-            </Typography>
-          </Box>
+        {error ? (
+          // Error state with retry
+          <ErrorState
+            title="Failed to load messages"
+            message="We couldn't load the messages for this conversation. Please try again."
+            error={error}
+            onRetry={refresh}
+          />
         ) : messages.length === 0 ? (
-          <Box sx={{ p: 3, textAlign: "center" }}>
-            <Typography variant="body2" sx={{ color: neutralColor(500) }}>
-              No messages in this conversation
-            </Typography>
-          </Box>
+          // Empty state - no messages yet
+          <NoMessagesEmptyState
+            isNewConversation={true}
+            contactName={conversation.meta?.sender?.name}
+            onStartConversation={handleStartConversation}
+          />
         ) : (
           <Stack spacing={2}>
             {(() => {
@@ -391,6 +415,7 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
 
       {/* Reply Composer */}
       <ChatwootReplyComposer
+        ref={composerRef}
         conversation={conversation}
         inbox={inbox}
         onSend={handleSendMessage}

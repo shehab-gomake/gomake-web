@@ -182,5 +182,31 @@ export class ChatwootContactsService extends BaseChatwootService {
       this.accountScopedUrl(accountId, `contacts/${contactId}/conversations`)
     );
   }
+
+  /**
+   * Get Contactable Inboxes
+   * GET /api/v1/accounts/{account_id}/contacts/{id}/contactable_inboxes
+   *
+   * Gets the list of inboxes where this contact can be reached.
+   * Returns inbox details along with the source_id (email, phone, etc.)
+   *
+   * @param accountId - The numeric ID of the account
+   * @param contactId - The numeric ID of the contact
+   * @returns Promise with contactable inboxes
+   *
+   * @example
+   * ```typescript
+   * const inboxes = await contactsService.getContactableInboxes(1, 123);
+   * // Returns: [{ source_id: "user@example.com", inbox: {...} }]
+   * ```
+   */
+  async getContactableInboxes(
+    accountId: number,
+    contactId: number
+  ): Promise<import("../types/inboxes.types").ContactableInboxesResponse> {
+    return await this.get<import("../types/inboxes.types").ContactableInboxesResponse>(
+      this.accountScopedUrl(accountId, `contacts/${contactId}/contactable_inboxes`)
+    );
+  }
 }
 

@@ -5,13 +5,13 @@ import { useChatwootConversations } from "./use-chatwoot-conversations";
 import { useChatwootRouter } from "./use-chatwoot-router";
 import { useChatwootProfile } from "./use-chatwoot-profile";
 import { useChatwootInboxes } from "./use-chatwoot-inboxes";
-import { useChatwootNotifications } from "./use-chatwoot-notifications";
 import {
   ConversationListParams,
   ConversationStatus,
   ConversationAssigneeType,
   ChatwootConversation,
 } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
+import { chatwootService } from "@/services/frontdesk";
 import { buildConversationFilters, matchesStatusFilter } from "../utils/filter-utils";
 import {
   chatwootSelectedConversationAtom,
@@ -34,9 +34,6 @@ export const useChatwootProvider = () => {
   // Use the custom hook to get inboxes state (prevents multiple API calls from child components)
   const { inboxes, loading: inboxesLoading, selectedInbox, selectInbox } = useChatwootInboxes();
 
-  // Use notifications hook for marking conversation notifications as read
-  const { markConversationAsRead } = useChatwootNotifications({ enableWebSocket: false });
-
   // Initialize router
   const router = useChatwootRouter();
 
@@ -54,15 +51,43 @@ export const useChatwootProvider = () => {
     return null;
   }, [selectedAccountId, availableAccounts]);
 
-  // Filter state - default to OPEN status and ME assignee type
-  const [statusFilter, setStatusFilter] = React.useState<ConversationStatus>(ConversationStatus.OPEN);
-  const [assigneeFilter, setAssigneeFilter] = React.useState<ConversationAssigneeType>(ConversationAssigneeType.ME);
+  // Initialize filters from URL if present, otherwise use defaults
+  const initialStatusFilter = useMemo(() => {
+    if (router.currentFilters?.status) {
+      return router.currentFilters.status as ConversationStatus;
+    }
+    return ConversationStatus.OPEN;
+  }, []); // Only run once on mount
 
-  // Build filters based on selected inbox, status filter, and assignee filter
+  const initialAssigneeFilter = useMemo(() => {
+    if (router.currentFilters?.assigneeType) {
+      return router.currentFilters.assigneeType as ConversationAssigneeType;
+    }
+    return ConversationAssigneeType.ME;
+  }, []); // Only run once on mount
+
+  // Filter state - initialize from URL or use defaults
+  const [statusFilter, setStatusFilter] = React.useState<ConversationStatus>(initialStatusFilter);
+  const [assigneeFilter, setAssigneeFilter] = React.useState<ConversationAssigneeType>(initialAssigneeFilter);
+
+  // Additional filter state for search, team, and sort
+  const [searchQuery, setSearchQuery] = React.useState<string>(router.currentFilters?.search || "");
+  const [teamId, setTeamId] = React.useState<number | undefined>(
+    router.currentFilters?.teamId ? parseInt(router.currentFilters.teamId, 10) : undefined
+  );
+  const [sortBy, setSortBy] = React.useState<string | undefined>(router.currentFilters?.sortBy);
+
+  // Build filters based on all filter states
   // Supports toggling between Mine/Unassigned/All via assignee filter
   const filters = useMemo<Partial<ConversationListParams>>(() => {
-    return buildConversationFilters(selectedInboxId, statusFilter, assigneeFilter);
-  }, [selectedInboxId, statusFilter, assigneeFilter]);
+    const baseFilters = buildConversationFilters(selectedInboxId, statusFilter, assigneeFilter);
+    return {
+      ...baseFilters,
+      ...(searchQuery && { q: searchQuery }),
+      ...(teamId && { team_id: teamId }),
+      ...(sortBy && { sort_by: sortBy }),
+    };
+  }, [selectedInboxId, statusFilter, assigneeFilter, searchQuery, teamId, sortBy]);
 
   // Use conversations hook with accountId and filters
   const conversations = useChatwootConversations(currentAccountId, filters);
@@ -110,17 +135,17 @@ export const useChatwootProvider = () => {
     async (conversation: ChatwootConversation) => {
       setSelectedConversation(conversation);
 
-      // Mark all notifications for this conversation as read (dual-call pattern)
-      if (conversation.id) {
+      // Mark conversation as read (updates agent_last_seen_at)
+      if (conversation.id && currentAccountId) {
         try {
-          await markConversationAsRead(conversation.id);
+          await chatwootService.conversations.markConversationAsRead(currentAccountId, conversation.id);
         } catch (err) {
-          // Error is logged by the notification hook, don't block conversation selection
-          console.error('Failed to mark conversation notifications as read:', err);
+          // Don't block conversation selection on error
+          console.error("Failed to mark conversation as read:", err);
         }
       }
     },
-    [setSelectedConversation, markConversationAsRead]
+    [setSelectedConversation, currentAccountId]
   );
 
   const handleBack = useCallback(() => {
@@ -205,23 +230,68 @@ export const useChatwootProvider = () => {
     [setConversationsList, selectedConversation, setSelectedConversation, statusFilter, setCounts]
   );
 
-  // Handle filter changes - support status, assignee_type, etc.
-  const handleFiltersChange = useCallback((newFilters: Partial<ConversationListParams>) => {
-    // Handle status filter - the component sends ConversationStatus.ALL when "All" is selected
-    // Check if status property exists in the newFilters object (could be undefined or ConversationStatus.ALL)
-    if ("status" in newFilters) {
-      // Convert ConversationStatus.ALL or undefined to ConversationStatus.ALL for internal state
-      const statusToSet =
-        newFilters.status === ConversationStatus.ALL || newFilters.status === undefined
-          ? ConversationStatus.ALL
-          : (newFilters.status as ConversationStatus);
-      setStatusFilter(statusToSet);
-    }
-    if (newFilters.assignee_type !== undefined) {
-      setAssigneeFilter(newFilters.assignee_type);
-    }
-    // Note: Other filters (sort_by, etc.) can be extended in the future if needed
-  }, []);
+  // Handle filter changes - support status, assignee_type, search, team, sort, etc.
+  // Also syncs changes to URL for deep linking and browser history
+  const handleFiltersChange = useCallback(
+    (newFilters: Partial<ConversationListParams>) => {
+      let statusToSet = statusFilter;
+      let assigneeToSet = assigneeFilter;
+      let searchToSet = searchQuery;
+      let teamToSet = teamId;
+      let sortToSet = sortBy;
+
+      // Handle status filter - the component sends ConversationStatus.ALL when "All" is selected
+      // Check if status property exists in the newFilters object (could be undefined or ConversationStatus.ALL)
+      if ("status" in newFilters) {
+        // Convert ConversationStatus.ALL or undefined to ConversationStatus.ALL for internal state
+        statusToSet =
+          newFilters.status === ConversationStatus.ALL || newFilters.status === undefined
+            ? ConversationStatus.ALL
+            : (newFilters.status as ConversationStatus);
+        setStatusFilter(statusToSet);
+      }
+      if ("assignee_type" in newFilters) {
+        assigneeToSet = newFilters.assignee_type;
+        setAssigneeFilter(newFilters.assignee_type);
+      }
+      if ("q" in newFilters) {
+        searchToSet = newFilters.q || "";
+        setSearchQuery(searchToSet);
+      }
+      if ("team_id" in newFilters) {
+        teamToSet = newFilters.team_id;
+        setTeamId(teamToSet);
+      }
+      if ("sort_by" in newFilters) {
+        sortToSet = newFilters.sort_by as string | undefined;
+        setSortBy(sortToSet);
+      }
+
+      // Sync to URL (use shallow routing to avoid full page reload)
+      const urlFilters: any = {};
+      if (statusToSet !== ConversationStatus.OPEN) {
+        urlFilters.status = statusToSet;
+      }
+      if (assigneeToSet !== ConversationAssigneeType.ME) {
+        urlFilters.assigneeType = assigneeToSet;
+      }
+      if (selectedInboxId) {
+        urlFilters.inboxId = selectedInboxId.toString();
+      }
+      if (searchToSet) {
+        urlFilters.search = searchToSet;
+      }
+      if (teamToSet) {
+        urlFilters.teamId = teamToSet.toString();
+      }
+      if (sortToSet) {
+        urlFilters.sortBy = sortToSet;
+      }
+
+      router.updateFilters(urlFilters);
+    },
+    [statusFilter, assigneeFilter, searchQuery, teamId, sortBy, selectedInboxId, router]
+  );
 
   return {
     // Account management

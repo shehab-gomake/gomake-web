@@ -14,19 +14,29 @@ import {
   MenuItem,
   ListItemText,
   Divider,
+  TextField,
+  InputAdornment,
+  Select,
+  FormControl,
+  InputLabel,
 } from "@mui/material";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import SwapVertIcon from "@mui/icons-material/SwapVert";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import CheckIcon from "@mui/icons-material/Check";
+import SearchIcon from "@mui/icons-material/Search";
+import CloseIcon from "@mui/icons-material/Close";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { useDebouncedValue } from "../hooks/use-debounced-value";
+import { useChatwootTeams } from "../hooks/resources/use-chatwoot-teams";
 import {
   ConversationStatus,
   ConversationAssigneeType,
   ConversationListParams,
   ConversationSortBy,
 } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
-import { chatwootConversationCountsAtom } from "@/store/frontdesk/atoms/chatwoot.atoms";
+import { chatwootConversationCountsAtom, chatwootSelectedAccountAtom } from "@/store/frontdesk/atoms/chatwoot.atoms";
+import { ChatwootConversationFilters } from "./chatwoot-conversation-filters";
 
 interface ChatwootConversationListHeaderProps {
   status?: ConversationStatus;
@@ -57,9 +67,24 @@ export const ChatwootConversationListHeader: React.FC<ChatwootConversationListHe
   const { primaryColor, neutralColor } = useGomakeTheme();
   const [filterMenuAnchor, setFilterMenuAnchor] = useState<null | HTMLElement>(null);
   const [sortMenuAnchor, setSortMenuAnchor] = useState<null | HTMLElement>(null);
-  
+
   // Get counts from API response (stored in atom)
   const apiCounts = useRecoilValue(chatwootConversationCountsAtom);
+  const accountId = useRecoilValue(chatwootSelectedAccountAtom);
+
+  // Fetch teams for team filter
+  const { teams } = useChatwootTeams(accountId);
+
+  // Local search state for immediate UI updates
+  const [searchValue, setSearchValue] = useState(filters.q || "");
+  const debouncedSearch = useDebouncedValue(searchValue, 300);
+
+  // Apply debounced search to filters
+  React.useEffect(() => {
+    if (debouncedSearch !== filters.q) {
+      onFiltersChange({ ...filters, q: debouncedSearch || undefined, page: 1 });
+    }
+  }, [debouncedSearch]);
 
   // Use provided counts if available, otherwise use counts from API
   const counts = useMemo(() => {
@@ -87,7 +112,7 @@ export const ChatwootConversationListHeader: React.FC<ChatwootConversationListHe
 
   const handleTabChange = (_event: React.SyntheticEvent, newValue: string) => {
     let assignee_type: ConversationAssigneeType | undefined;
-    
+
     if (newValue === "mine") {
       assignee_type = ConversationAssigneeType.ME;
     } else if (newValue === "unassigned") {
@@ -191,15 +216,89 @@ export const ChatwootConversationListHeader: React.FC<ChatwootConversationListHe
             PaperProps={{
               sx: {
                 mt: 1,
-                minWidth: 250,
+                minWidth: 280,
                 backgroundColor: neutralColor(0),
                 border: `1px solid ${neutralColor(200)}`,
                 boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.1)",
-                maxHeight: 400,
+                maxHeight: 500,
                 overflow: "auto",
               },
             }}
           >
+            {/* Team Filter */}
+            <Box sx={{ px: 2, py: 1 }}>
+              <Typography
+                variant="caption"
+                sx={{
+                  fontSize: "0.688rem",
+                  fontWeight: 600,
+                  color: neutralColor(500),
+                  textTransform: "uppercase",
+                  letterSpacing: 0.5,
+                }}
+              >
+                Team
+              </Typography>
+            </Box>
+            <MenuItem
+              onClick={() => {
+                onFiltersChange({ ...filters, team_id: undefined, page: 1 });
+              }}
+              sx={{
+                py: 1,
+                px: 2,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                color: neutralColor(900),
+                "&:hover": {
+                  backgroundColor: neutralColor(100),
+                },
+              }}
+            >
+              <ListItemText
+                primary="All Teams"
+                primaryTypographyProps={{
+                  fontSize: "0.875rem",
+                  fontWeight: !filters.team_id ? 600 : 400,
+                }}
+              />
+              {!filters.team_id && <CheckIcon sx={{ fontSize: 18, color: primaryColor(400) }} />}
+            </MenuItem>
+            {teams?.map((team) => {
+              const isSelected = filters.team_id === team.id;
+              return (
+                <MenuItem
+                  key={team.id}
+                  onClick={() => {
+                    onFiltersChange({ ...filters, team_id: team.id, page: 1 });
+                  }}
+                  sx={{
+                    py: 1,
+                    px: 2,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    color: neutralColor(900),
+                    "&:hover": {
+                      backgroundColor: neutralColor(100),
+                    },
+                  }}
+                >
+                  <ListItemText
+                    primary={team.name || "Unknown Team"}
+                    primaryTypographyProps={{
+                      fontSize: "0.875rem",
+                      fontWeight: isSelected ? 600 : 400,
+                    }}
+                  />
+                  {isSelected && <CheckIcon sx={{ fontSize: 18, color: primaryColor(400) }} />}
+                </MenuItem>
+              );
+            })}
+
+            <Divider sx={{ my: 1, borderColor: neutralColor(200) }} />
+
             {/* Status Filter */}
             <Box sx={{ px: 2, py: 1 }}>
               <Typography
@@ -504,6 +603,43 @@ export const ChatwootConversationListHeader: React.FC<ChatwootConversationListHe
             value="all"
           />
         </Tabs>
+      </Box>
+
+      {/* Search Bar - Below Filter Menu */}
+      <Box
+        sx={{
+          borderTop: `1px solid ${theme.palette.divider}`,
+          px: 2,
+          py: 1,
+        }}
+      >
+        <TextField
+          size="small"
+          fullWidth
+          placeholder="Search conversations..."
+          value={searchValue}
+          onChange={(e) => setSearchValue(e.target.value)}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <SearchIcon sx={{ fontSize: 18, color: neutralColor(400) }} />
+              </InputAdornment>
+            ),
+            endAdornment: searchValue ? (
+              <InputAdornment position="end">
+                <IconButton size="small" onClick={() => setSearchValue("")} sx={{ padding: 0.5 }}>
+                  <CloseIcon sx={{ fontSize: 16 }} />
+                </IconButton>
+              </InputAdornment>
+            ) : null,
+          }}
+          sx={{
+            "& .MuiOutlinedInput-root": {
+              fontSize: "0.875rem",
+              backgroundColor: neutralColor(0),
+            },
+          }}
+        />
       </Box>
     </Box>
   );
