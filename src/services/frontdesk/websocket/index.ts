@@ -9,6 +9,29 @@ export { directMessagesWebSocketService, DirectMessagesWebSocketService } from '
 export { notificationsWebSocketService, NotificationsWebSocketService } from './notifications-websocket.service';
 export { emailWebSocketService } from './email-websocket.service';
 export type { EmailSocketEvent } from './email-websocket.service';
+export { chatwootWebSocketService, ChatwootWebSocketService } from './chatwoot-websocket.service';
+export type {
+  ChatwootWebSocketEvent,
+  ConnectionState,
+  ChatwootWebSocketEventData,
+  ChatwootEventHandler,
+  ConnectionStateHandler,
+  ErrorHandler,
+  SubscriptionConfig,
+  ConnectionStats,
+} from './chatwoot-websocket.service';
+
+// Chatwoot Notifications WebSocket Helper
+export {
+  chatwootNotificationsWebSocketHelper,
+  ChatwootNotificationsWebSocketHelper,
+} from './chatwoot-notifications-websocket.helper';
+export type {
+  NotificationCreatedHandler,
+  NotificationUpdatedHandler,
+  NotificationDeletedHandler,
+  UnreadCountChangeHandler,
+} from './chatwoot-notifications-websocket.helper';
 
 // Re-export types for convenience
 export type {

@@ -5,6 +5,7 @@ import { useChatwootConversations } from "./use-chatwoot-conversations";
 import { useChatwootRouter } from "./use-chatwoot-router";
 import { useChatwootProfile } from "./use-chatwoot-profile";
 import { useChatwootInboxes } from "./use-chatwoot-inboxes";
+import { useChatwootNotifications } from "./use-chatwoot-notifications";
 import {
   ConversationListParams,
   ConversationStatus,
@@ -30,6 +31,9 @@ export const useChatwootProvider = () => {
 
   // Use the custom hook to get inboxes state (prevents multiple API calls from child components)
   const { inboxes, loading: inboxesLoading, selectedInbox, selectInbox } = useChatwootInboxes();
+
+  // Use notifications hook for marking conversation notifications as read
+  const { markConversationAsRead } = useChatwootNotifications({ enableWebSocket: false });
 
   // Initialize router
   const router = useChatwootRouter();
@@ -101,10 +105,20 @@ export const useChatwootProvider = () => {
   ]);
 
   const handleConversationSelect = useCallback(
-    (conversation: ChatwootConversation) => {
+    async (conversation: ChatwootConversation) => {
       setSelectedConversation(conversation);
+
+      // Mark all notifications for this conversation as read (dual-call pattern)
+      if (conversation.id) {
+        try {
+          await markConversationAsRead(conversation.id);
+        } catch (err) {
+          // Error is logged by the notification hook, don't block conversation selection
+          console.error('Failed to mark conversation notifications as read:', err);
+        }
+      }
     },
-    [setSelectedConversation]
+    [setSelectedConversation, markConversationAsRead]
   );
 
   const handleBack = useCallback(() => {

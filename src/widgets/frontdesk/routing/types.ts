@@ -108,6 +108,7 @@ export enum ChatwootView {
   MENTIONS = "mentions",
   UNATTENDED = "unattended",
   CHANNELS = "channels",
+  WEBHOOK_TEST = "webhook-test",
 }
 
 /**

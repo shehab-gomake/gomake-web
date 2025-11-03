@@ -109,6 +109,7 @@ const mapChatwootViewToQueryParam = (view: ChatwootView): string => {
     [ChatwootView.MENTIONS]: "mentions",
     [ChatwootView.UNATTENDED]: "unattended",
     [ChatwootView.CHANNELS]: "channels",
+    [ChatwootView.WEBHOOK_TEST]: "webhook-test",
   };
   return map[view];
 };

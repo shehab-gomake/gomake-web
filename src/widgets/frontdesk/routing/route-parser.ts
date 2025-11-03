@@ -108,6 +108,7 @@ const parseChatwootView = (viewParam?: string): ChatwootView => {
     "mentions": ChatwootView.MENTIONS,
     "unattended": ChatwootView.UNATTENDED,
     "channels": ChatwootView.CHANNELS,
+    "webhook-test": ChatwootView.WEBHOOK_TEST,
   };
 
   return viewMap[viewParam] || ChatwootView.MY_INBOX;

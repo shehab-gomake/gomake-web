@@ -36,6 +36,7 @@ import NotInterestedIcon from "@mui/icons-material/NotInterested";
 import ForumIcon from "@mui/icons-material/Forum";
 import AddIcon from "@mui/icons-material/Add";
 import HistoryIcon from "@mui/icons-material/History";
+import WebhookIcon from "@mui/icons-material/Webhook";
 import { useChatwootInboxes } from "@/widgets/frontdesk/providers/chatwoot/hooks/use-chatwoot-inboxes";
 import { useChatwootRouter } from "@/widgets/frontdesk/providers/chatwoot/hooks/use-chatwoot-router";
 import { AddChannelModal } from "@/widgets/frontdesk/providers/chatwoot/components/add-channel-modal";
@@ -169,7 +170,7 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
   const { inboxes, loading: inboxesLoading, selectedInboxId, selectInbox } = useChatwootInboxes();
 
   // Get current Chatwoot view for accurate selection state
-  const { isDashboardView, isMyInboxView, isAllConversationsView, isMentionsView, isUnattendedView, isChannelsView } = useChatwootRouter();
+  const { isDashboardView, isMyInboxView, isAllConversationsView, isMentionsView, isUnattendedView, isChannelsView, isWebhookTestView } = useChatwootRouter();
 
   const channelItems = [
     { id: "email" as Channel, icon: <EmailIcon />, label: "Email" },
@@ -370,6 +371,65 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
                         sx: {
                           fontSize: "0.875rem",
                           fontWeight: selectedChannel === "chatwoot" && selectedSection === "inbox" ? 600 : 400,
+                        },
+                      }}
+                    />
+                  </Box>
+                )}
+              </ListItemButton>
+            </Tooltip>
+
+            {/* Webhook Test */}
+            <Tooltip title="Webhook Test" placement="right" disableHoverListener={!isCollapsed}>
+              <ListItemButton
+                selected={isWebhookTestView}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  e.preventDefault();
+
+                  // Use RouteBuilder for type-safe navigation
+                  const route = RouteBuilder.chatwoot(ChatwootView.WEBHOOK_TEST);
+                  const { path, options } = buildRoute(route, { replace: true });
+
+                  // Navigate to Chatwoot channel first if not already there
+                  if (selectedChannel !== "chatwoot") {
+                    onSectionSelect("inbox");
+                    onChannelSelect("chatwoot" as Channel);
+                  }
+
+                  // Then navigate to Webhook Test
+                  router.replace(path, undefined, { shallow: options.scroll === false });
+                }}
+                sx={{
+                  py: 0.5,
+                  px: isCollapsed ? 1.5 : 2,
+                  justifyContent: isCollapsed ? "center" : "flex-start",
+                  pointerEvents: "auto",
+                  "&.Mui-selected": {
+                    backgroundColor: theme.palette.primary.main + "10",
+                    borderLeft: `3px solid ${theme.palette.primary.main}`,
+                    "&:hover": {
+                      backgroundColor: theme.palette.primary.main + "20",
+                    },
+                  },
+                }}
+              >
+                {isCollapsed ? (
+                  <Box sx={{ color: theme.palette.text.secondary, display: "flex" }}>
+                    <WebhookIcon fontSize="small" />
+                  </Box>
+                ) : (
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, width: "100%" }}>
+                    <Box sx={{ color: theme.palette.text.secondary }}>
+                      <WebhookIcon fontSize="small" />
+                    </Box>
+                    <ListItemText
+                      primary="Webhook Test"
+                      primaryTypographyProps={{
+                        variant: "body2",
+                        sx: {
+                          fontSize: "0.875rem",
+                          fontWeight: 400,
                         },
                       }}
                     />

@@ -32,8 +32,19 @@ import Tooltip from "@mui/material/Tooltip";
 
 export const ChatwootNotificationsView: React.FC = () => {
   const { primaryColor, neutralColor } = useGomakeTheme();
-  const { notifications, loading, error, filters, updateFilters, markAllAsRead, deleteAll, deleteAllRead } =
-    useChatwootNotifications();
+  const {
+    notifications,
+    loading,
+    error,
+    filters,
+    unreadCount,
+    wsConnected,
+    updateFilters,
+    markAllAsRead,
+    deleteAll,
+    deleteAllRead,
+    markConversationAsRead,
+  } = useChatwootNotifications();
   const [filterMenuAnchor, setFilterMenuAnchor] = useState<null | HTMLElement>(null);
   const [settingsMenuAnchor, setSettingsMenuAnchor] = useState<null | HTMLElement>(null);
 
@@ -78,9 +89,11 @@ export const ChatwootNotificationsView: React.FC = () => {
   const handleSortOrderChange = (event: any) => {
     const value = event.target.value;
     const sortOrder = value === "newest" ? NotificationSortOrder.DESC : NotificationSortOrder.ASC;
+    const hasSnoozed = filters.includes?.includes("snoozed") || false;
+    const hasRead = filters.includes?.includes("read") || false;
     const updatedFilters = buildNotificationFilters({
-      snoozed: filters.snoozed,
-      read: filters.read,
+      snoozed: hasSnoozed,
+      read: hasRead,
       sortOrder,
     });
     updateFilters(updatedFilters);
@@ -89,9 +102,10 @@ export const ChatwootNotificationsView: React.FC = () => {
   // Handle checkbox changes
   const handleSnoozedChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const checked = event.target.checked;
+    const hasRead = filters.includes?.includes("read") || false;
     const updatedFilters = buildNotificationFilters({
       snoozed: checked,
-      read: filters.read,
+      read: hasRead,
       sortOrder: filters.sort_order as NotificationSortOrder,
     });
     updateFilters(updatedFilters);
@@ -99,8 +113,9 @@ export const ChatwootNotificationsView: React.FC = () => {
 
   const handleReadChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const checked = event.target.checked;
+    const hasSnoozed = filters.includes?.includes("snoozed") || false;
     const updatedFilters = buildNotificationFilters({
-      snoozed: filters.snoozed,
+      snoozed: hasSnoozed,
       read: checked,
       sortOrder: filters.sort_order as NotificationSortOrder,
     });
@@ -315,7 +330,8 @@ export const ChatwootNotificationsView: React.FC = () => {
             <MenuItem
               onClick={(e) => {
                 e.preventDefault();
-                handleSnoozedChange({ target: { checked: !filters.snoozed } } as React.ChangeEvent<HTMLInputElement>);
+                const hasSnoozed = filters.includes?.includes("snoozed") || false;
+                handleSnoozedChange({ target: { checked: !hasSnoozed } } as React.ChangeEvent<HTMLInputElement>);
               }}
               sx={{
                 py: 1,
@@ -326,7 +342,7 @@ export const ChatwootNotificationsView: React.FC = () => {
               }}
             >
               <Checkbox
-                checked={filters.snoozed || false}
+                checked={filters.includes?.includes("snoozed") || false}
                 onChange={handleSnoozedChange}
                 size="small"
                 onClick={(e) => e.stopPropagation()}
@@ -335,7 +351,7 @@ export const ChatwootNotificationsView: React.FC = () => {
                 primary="Snoozed"
                 primaryTypographyProps={{
                   fontSize: 13,
-                  fontWeight: filters.snoozed ? 600 : 400,
+                  fontWeight: filters.includes?.includes("snoozed") ? 600 : 400,
                 }}
               />
             </MenuItem>
@@ -344,7 +360,8 @@ export const ChatwootNotificationsView: React.FC = () => {
             <MenuItem
               onClick={(e) => {
                 e.preventDefault();
-                handleReadChange({ target: { checked: !filters.read } } as React.ChangeEvent<HTMLInputElement>);
+                const hasRead = filters.includes?.includes("read") || false;
+                handleReadChange({ target: { checked: !hasRead } } as React.ChangeEvent<HTMLInputElement>);
               }}
               sx={{
                 py: 1,
@@ -355,7 +372,7 @@ export const ChatwootNotificationsView: React.FC = () => {
               }}
             >
               <Checkbox
-                checked={filters.read || false}
+                checked={filters.includes?.includes("read") || false}
                 onChange={handleReadChange}
                 size="small"
                 onClick={(e) => e.stopPropagation()}
@@ -364,7 +381,7 @@ export const ChatwootNotificationsView: React.FC = () => {
                 primary="Read"
                 primaryTypographyProps={{
                   fontSize: 13,
-                  fontWeight: filters.read ? 600 : 400,
+                  fontWeight: filters.includes?.includes("read") ? 600 : 400,
                 }}
               />
             </MenuItem>
@@ -497,9 +514,24 @@ export const ChatwootNotificationsView: React.FC = () => {
                   }
                 : null;
 
+              const handleNotificationClick = async () => {
+                // Mark all notifications for this conversation as read
+                if (primaryActor?.id) {
+                  try {
+                    await markConversationAsRead(primaryActor.id);
+                  } catch (err) {
+                    // Error is logged by the hook
+                    console.error('Failed to mark conversation notifications as read:', err);
+                  }
+                }
+                // Navigation would go here if needed
+                // For now, notifications are just marked as read
+              };
+
               return (
                 <ListItem
                   key={notification.id}
+                  onClick={handleNotificationClick}
                   sx={{
                     px: 2,
                     py: 1.5,

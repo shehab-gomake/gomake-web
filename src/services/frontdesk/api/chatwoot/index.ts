@@ -51,3 +51,15 @@ export {
   type InboxProvider,
 } from "./types/inboxes.types";
 
+export {
+  NotificationType,
+  NotificationSortOrder,
+  type ChatwootNotification,
+  type NotificationListParams,
+  type NotificationListResponse,
+  type UnreadCountResponse as ChatwootUnreadCountResponse,
+  type NotificationCreatedEvent,
+  type NotificationUpdatedEvent,
+  type NotificationDeletedEvent,
+} from "./types/notifications.types";
+

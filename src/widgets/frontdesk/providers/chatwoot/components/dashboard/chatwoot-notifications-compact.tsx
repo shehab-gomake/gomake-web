@@ -33,7 +33,14 @@ type FilterType = 'unread' | 'mentions' | 'assignments' | 'all';
 
 export const ChatwootNotificationsCompact: React.FC = () => {
   const { primaryColor, neutralColor } = useGomakeTheme();
-  const { notifications, loading, error } = useChatwootNotifications();
+  const {
+    notifications,
+    loading,
+    error,
+    unreadCount,
+    wsConnected,
+    markConversationAsRead,
+  } = useChatwootNotifications();
   const { router: chatwootRouter } = useChatwootProvider();
   const [activeFilter, setActiveFilter] = useState<FilterType>('unread');
 
@@ -136,12 +143,21 @@ export const ChatwootNotificationsCompact: React.FC = () => {
     return typeMap[notificationType || ''] || 'New message';
   };
 
-  const handleNotificationClick = (notification: ChatwootNotification) => {
+  const handleNotificationClick = async (notification: ChatwootNotification) => {
     const primaryActor = notification.primary_actor as any;
     const conversationId = primaryActor?.id;
     const inboxId = primaryActor?.inbox_id;
 
     if (conversationId) {
+      // Mark all notifications for this conversation as read
+      try {
+        await markConversationAsRead(conversationId);
+      } catch (err) {
+        // Error is logged by the hook, continue with navigation
+        console.error('Failed to mark conversation notifications as read:', err);
+      }
+
+      // Navigate to conversation
       chatwootRouter.navigateToConversation(
         conversationId.toString(),
         inboxId?.toString()

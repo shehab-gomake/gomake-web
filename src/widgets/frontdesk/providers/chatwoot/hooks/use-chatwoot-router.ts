@@ -151,6 +151,17 @@ export const useChatwootRouter = () => {
   );
 
   /**
+   * Navigate to Webhook Test view
+   */
+  const navigateToWebhookTest = useCallback(
+    (options?: NavigationOptions) => {
+      const route = RouteBuilder.chatwoot(ChatwootView.WEBHOOK_TEST);
+      navigate(route, options);
+    },
+    [navigate]
+  );
+
+  /**
    * Navigate to a specific channel (inbox)
    */
   const navigateToChannel = useCallback(
@@ -204,6 +215,7 @@ export const useChatwootRouter = () => {
     isMentionsView: currentView === ChatwootView.MENTIONS,
     isUnattendedView: currentView === ChatwootView.UNATTENDED,
     isChannelsView: currentView === ChatwootView.CHANNELS,
+    isWebhookTestView: currentView === ChatwootView.WEBHOOK_TEST,
 
     // Navigation methods
     navigate,
@@ -213,6 +225,7 @@ export const useChatwootRouter = () => {
     navigateToMentions,
     navigateToUnattended,
     navigateToChannels,
+    navigateToWebhookTest,
     navigateToChannel,
     navigateToConversation,
   };

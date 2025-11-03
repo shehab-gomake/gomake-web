@@ -1,4 +1,4 @@
-import { atom } from "recoil";
+import { atom, selector, selectorFamily } from "recoil";
 import type {
   ChatwootUser,
   ChatwootUserAccount,
@@ -135,6 +135,127 @@ export const chatwootNotificationsFiltersAtom = atom<NotificationListParams>({
   default: {
     page: 1,
     sort_order: "desc",
+  },
+});
+
+// Notification Unread Count
+// This is updated via WebSocket events or API responses
+export const chatwootNotificationUnreadCountAtom = atom<number>({
+  key: "frontdesk.chatwoot.notificationUnreadCount",
+  default: 0,
+});
+
+// Notification Connection State
+// Tracks whether we're connected to notification WebSocket events
+export const chatwootNotificationConnectionAtom = atom<boolean>({
+  key: "frontdesk.chatwoot.notificationConnection",
+  default: false,
+});
+
+/**
+ * Selectors for derived notification state
+ */
+
+// Get all unread notifications
+export const chatwootUnreadNotificationsSelector = selector<ChatwootNotification[]>({
+  key: "frontdesk.chatwoot.unreadNotificationsSelector",
+  get: ({ get }) => {
+    const notifications = get(chatwootNotificationsAtom);
+    return notifications.filter((n) => !n.read_at);
+  },
+});
+
+// Get notifications by conversation ID
+export const chatwootNotificationsByConversationSelector = selectorFamily<
+  ChatwootNotification[],
+  number
+>({
+  key: "frontdesk.chatwoot.notificationsByConversationSelector",
+  get:
+    (conversationId: number) =>
+    ({ get }) => {
+      const notifications = get(chatwootNotificationsAtom);
+      return notifications.filter(
+        (n) =>
+          n.primary_actor_type === "Conversation" &&
+          n.primary_actor_id === conversationId
+      );
+    },
+});
+
+// Get unread notifications by conversation ID
+export const chatwootUnreadNotificationsByConversationSelector = selectorFamily<
+  ChatwootNotification[],
+  number
+>({
+  key: "frontdesk.chatwoot.unreadNotificationsByConversationSelector",
+  get:
+    (conversationId: number) =>
+    ({ get }) => {
+      const notifications = get(chatwootNotificationsAtom);
+      return notifications.filter(
+        (n) =>
+          !n.read_at &&
+          n.primary_actor_type === "Conversation" &&
+          n.primary_actor_id === conversationId
+      );
+    },
+});
+
+// Count unread notifications (computed from notifications array)
+// This serves as a fallback if WebSocket unread count is not available
+export const chatwootComputedUnreadCountSelector = selector<number>({
+  key: "frontdesk.chatwoot.computedUnreadCountSelector",
+  get: ({ get }) => {
+    const notifications = get(chatwootNotificationsAtom);
+    return notifications.filter((n) => !n.read_at).length;
+  },
+});
+
+// WebSocket State
+export enum ChatwootWebSocketState {
+  DISCONNECTED = "disconnected",
+  CONNECTING = "connecting",
+  CONNECTED = "connected",
+  ERROR = "error",
+}
+
+export interface ChatwootWebSocketEvent {
+  id: string;
+  event: string;
+  data: any;
+  timestamp: number;
+}
+
+export interface ChatwootWebSocketStats {
+  eventsReceived: number;
+  uptime: number | null;
+  reconnectionAttempts: number;
+  lastEventAt: number | null;
+}
+
+export const chatwootWebSocketStateAtom = atom<ChatwootWebSocketState>({
+  key: "frontdesk.chatwoot.webSocketState",
+  default: ChatwootWebSocketState.DISCONNECTED,
+});
+
+export const chatwootWebSocketEventsAtom = atom<ChatwootWebSocketEvent[]>({
+  key: "frontdesk.chatwoot.webSocketEvents",
+  default: [],
+});
+
+export const chatwootWebSocketErrorAtom = atom<string | null>({
+  key: "frontdesk.chatwoot.webSocketError",
+  default: null,
+});
+
+export const chatwootWebSocketStatsAtom = atom<ChatwootWebSocketStats>({
+  key: "frontdesk.chatwoot.webSocketStats",
+  default: {
+    eventsReceived: 0,
+    uptime: null,
+    reconnectionAttempts: 0,
+    lastEventAt: null,
   },
 });
 

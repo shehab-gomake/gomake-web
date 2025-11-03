@@ -35,6 +35,8 @@ export const createDefaultNotificationFilters = (overrides?: Partial<Notificatio
 /**
  * Build notification filters from display options
  *
+ * Uses the 'includes' array pattern from NOTIFICATIONS_FRONTEND_API_GUIDE.md
+ *
  * @param options - Display filter options
  * @param overrides - Additional filter overrides
  * @returns Built notification filters
@@ -47,7 +49,7 @@ export const buildNotificationFilters = (
   },
   overrides?: Partial<NotificationListParams>
 ): NotificationListParams => {
-  const includes: string[] = [];
+  const includes: ("read" | "snoozed")[] = [];
 
   if (options.snoozed) {
     includes.push("snoozed");
@@ -60,10 +62,7 @@ export const buildNotificationFilters = (
   return {
     page: overrides?.page || 1,
     sort_order: options.sortOrder || overrides?.sort_order || NotificationSortOrder.DESC,
-    snoozed: options.snoozed || false,
-    read: options.read || false,
     includes: includes.length > 0 ? includes : undefined,
-    limit: overrides?.limit,
     ...overrides,
   };
 };
@@ -73,11 +72,8 @@ export const buildNotificationFilters = (
  */
 export const createNotificationFilterKey = (filters: Partial<NotificationListParams>): string => {
   return JSON.stringify({
-    snoozed: filters.snoozed || false,
-    read: filters.read || false,
     sort_order: filters.sort_order || NotificationSortOrder.DESC,
     includes: filters.includes?.sort() || [],
     page: filters.page || 1,
-    limit: filters.limit,
   });
 };
