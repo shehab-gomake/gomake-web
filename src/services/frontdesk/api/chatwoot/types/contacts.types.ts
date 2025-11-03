@@ -60,6 +60,7 @@ export interface ContactFilterRequest {
     filter_operator?: string;
     values?: unknown[];
     query_operator?: string;
+    attribute_model?: string;
   }>;
   page?: number;
 }
