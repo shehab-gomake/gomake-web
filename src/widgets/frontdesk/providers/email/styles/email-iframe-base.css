@@ -1,0 +1,340 @@
+/**
+ * Email Iframe Base Stylesheet
+ *
+ * This stylesheet is injected into the sandboxed iframe to provide:
+ * 1. Normalize/reset styles for consistent email rendering
+ * 2. Responsive layout for mobile devices
+ * 3. Proper styling for quoted replies (blockquotes)
+ * 4. Safe defaults for email HTML elements
+ *
+ * Design Philosophy:
+ * - Preserve email's original styling as much as possible
+ * - Ensure readability on all screen sizes
+ * - Apply minimal opinionated styles
+ */
+
+/* ============================================
+   RESET & NORMALIZATION
+   ============================================ */
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 16px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell,
+    'Helvetica Neue', sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #1f2937;
+  background-color: #ffffff;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+/* ============================================
+   RESPONSIVE IMAGES
+   ============================================ */
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 8px 0;
+}
+
+/* Inline images (common in emails) */
+img[align='left'],
+img[align='right'] {
+  display: inline;
+  margin: 0 8px;
+}
+
+/* ============================================
+   TYPOGRAPHY
+   ============================================ */
+
+p {
+  margin: 0 0 12px 0;
+}
+
+p:last-child {
+  margin-bottom: 0;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 16px 0 8px 0;
+  line-height: 1.3;
+  font-weight: 600;
+}
+
+h1 {
+  font-size: 24px;
+}
+h2 {
+  font-size: 20px;
+}
+h3 {
+  font-size: 18px;
+}
+h4 {
+  font-size: 16px;
+}
+h5 {
+  font-size: 14px;
+}
+h6 {
+  font-size: 12px;
+}
+
+/* ============================================
+   LINKS
+   ============================================ */
+
+a {
+  color: #2563eb;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* ============================================
+   LISTS
+   ============================================ */
+
+ul,
+ol {
+  margin: 12px 0;
+  padding-left: 24px;
+}
+
+li {
+  margin: 4px 0;
+}
+
+/* ============================================
+   TABLES
+   ============================================ */
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  max-width: 100%;
+  margin: 12px 0;
+}
+
+td,
+th {
+  padding: 8px;
+  border: 1px solid #e5e7eb;
+  text-align: left;
+}
+
+th {
+  background-color: #f9fafb;
+  font-weight: 600;
+}
+
+/* Email layout tables (no borders) */
+table[border='0'],
+table[border='0'] td,
+table[border='0'] th {
+  border: none;
+}
+
+/* ============================================
+   QUOTED REPLIES (BLOCKQUOTES)
+   Gmail/Outlook style quoted text
+   ============================================ */
+
+blockquote {
+  margin: 12px 0;
+  padding: 8px 0 8px 12px;
+  border-left: 3px solid #9ca3af;
+  color: #6b7280;
+  font-size: 13px;
+}
+
+/* Nested blockquotes */
+blockquote blockquote {
+  margin-left: 8px;
+  border-left-color: #d1d5db;
+}
+
+blockquote blockquote blockquote {
+  border-left-color: #e5e7eb;
+}
+
+/* Gmail-style quoted text divs */
+.gmail_quote,
+div[class*='gmail_quote'] {
+  margin: 12px 0;
+  padding: 8px 0 8px 12px;
+  border-left: 3px solid #9ca3af;
+  color: #6b7280;
+}
+
+/* Outlook-style quoted text */
+div[style*='border-left'] {
+  margin: 12px 0;
+  padding-left: 12px;
+}
+
+/* ============================================
+   CODE BLOCKS
+   ============================================ */
+
+pre,
+code {
+  font-family: 'Monaco', 'Menlo', 'Courier New', monospace;
+  font-size: 13px;
+  background-color: #f3f4f6;
+  border-radius: 4px;
+}
+
+pre {
+  padding: 12px;
+  overflow-x: auto;
+  margin: 12px 0;
+}
+
+code {
+  padding: 2px 4px;
+}
+
+pre code {
+  padding: 0;
+  background: transparent;
+}
+
+/* ============================================
+   HORIZONTAL RULES
+   ============================================ */
+
+hr {
+  border: none;
+  border-top: 1px solid #e5e7eb;
+  margin: 16px 0;
+}
+
+/* ============================================
+   MOBILE RESPONSIVE OVERRIDES
+   ============================================ */
+
+@media (max-width: 640px) {
+  body {
+    padding: 12px;
+    font-size: 13px;
+  }
+
+  table {
+    font-size: 12px;
+  }
+
+  td,
+  th {
+    padding: 6px;
+  }
+
+  /* Force tables to be responsive */
+  table[width] {
+    width: 100% !important;
+  }
+
+  /* Make images stack on mobile */
+  img[align='left'],
+  img[align='right'] {
+    display: block;
+    float: none !important;
+    margin: 8px 0;
+  }
+}
+
+/* ============================================
+   EMAIL CLIENT SPECIFIC FIXES
+   ============================================ */
+
+/* Microsoft Outlook conditional comments rendered as text */
+/* Hide them in the iframe */
+[class*='mso'],
+[class*='MSO'] {
+  display: none !important;
+}
+
+/* Apple Mail specific */
+.AppleMailSignature {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #e5e7eb;
+  color: #6b7280;
+  font-size: 13px;
+}
+
+/* Gmail specific */
+.gmail_signature {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #e5e7eb;
+  color: #6b7280;
+  font-size: 13px;
+}
+
+/* ============================================
+   UTILITY CLASSES
+   ============================================ */
+
+.text-muted {
+  color: #6b7280;
+}
+
+.text-small {
+  font-size: 12px;
+}
+
+/* ============================================
+   SECURITY: External content handling
+   ============================================ */
+
+/* Images with blocked sources show alt text */
+img[src=''],
+img[src='about:blank'] {
+  border: 1px dashed #d1d5db;
+  padding: 8px;
+  background-color: #f9fafb;
+  display: inline-block;
+  font-size: 12px;
+  color: #6b7280;
+}
+
+/* ============================================
+   ACCESSIBILITY
+   ============================================ */
+
+/* Ensure focus styles are visible */
+a:focus,
+button:focus {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+}
+
+/* Screen reader only content */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}

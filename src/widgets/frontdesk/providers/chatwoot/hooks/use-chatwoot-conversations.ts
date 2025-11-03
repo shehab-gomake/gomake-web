@@ -49,7 +49,7 @@ export const useChatwootConversations = (accountId: number | null, options: Part
 
       // Check if we should proceed with this fetch (prevents duplicates and concurrent fetches)
       if (!append && !shouldFetch(listParams)) {
-        console.log('[useChatwootConversations] Skipping duplicate/concurrent fetch');
+        console.log("[useChatwootConversations] Skipping duplicate/concurrent fetch");
         return;
       }
 
@@ -140,17 +140,7 @@ export const useChatwootConversations = (accountId: number | null, options: Part
     // Fetch conversations even if accountId is null
     // The API endpoint uses authenticated user's account automatically
     fetchConversations(1, false);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    accountId,
-    options.status,
-    options.assignee_type,
-    options.sort_by,
-    options.q,
-    options.inbox_id,
-    options.team_id,
-    options.labels,
-  ]);
+  }, [accountId, options, fetchConversations]);
 
   return {
     conversations,

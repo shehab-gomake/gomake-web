@@ -10,6 +10,14 @@ export { EmailHoverProfile } from "./email-hover-profile";
 export { EmailAccountMenu } from "./email-account-menu";
 export { DisconnectAccountDialog } from "./disconnect-account-dialog";
 
+// New iframe-based email viewer components
+export { EmailMessageBody } from './EmailMessageBody';
+export type { EmailMessageBodyProps } from './EmailMessageBody';
+export { EmailFrame } from './EmailFrame';
+export type { EmailFrameProps } from './EmailFrame';
+export { EmailHeader } from './EmailHeader';
+export type { EmailHeaderProps } from './EmailHeader';
+
 // Re-export UI components
 export * from "./ui";
 

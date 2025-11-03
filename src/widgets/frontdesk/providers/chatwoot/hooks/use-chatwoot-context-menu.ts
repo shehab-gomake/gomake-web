@@ -7,10 +7,12 @@
  * @see CONTEXT_MENU_API_DOCUMENTATION.md
  */
 
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState, useEffect } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { chatwootService } from "@/services/frontdesk";
 import { ChatwootConversation } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
+import { Agent } from "@/services/frontdesk/api/chatwoot/services/chatwoot-agents.service";
+import { Team } from "@/services/frontdesk/api/chatwoot/services/chatwoot-teams.service";
 import {
   chatwootSelectedAccountAtom,
   chatwootConversationsAtom,
@@ -56,6 +58,44 @@ export const useChatwootContextMenu = (conversation: ChatwootConversation | null
   const accountId = useRecoilValue(chatwootSelectedAccountAtom);
   const [conversations, setConversations] = useRecoilState(chatwootConversationsAtom);
   const [selectedConversation, setSelectedConversation] = useRecoilState(chatwootSelectedConversationAtom);
+
+  // Agent and Team data state
+  const [agents, setAgents] = useState<Agent[]>([]);
+  const [teams, setTeams] = useState<Team[]>([]);
+  const [agentsLoading, setAgentsLoading] = useState(false);
+
+  /**
+   * Fetch agents and teams when account changes
+   */
+  useEffect(() => {
+    const fetchAgentsAndTeams = async () => {
+      if (!accountId) {
+        setAgents([]);
+        setTeams([]);
+        return;
+      }
+
+      setAgentsLoading(true);
+      try {
+        // Fetch all account agents
+        const agentsData = await chatwootService.agents.listAgents(accountId);
+
+        // Fetch all teams
+        const teamsData = await chatwootService.teams.listTeams(accountId);
+
+        setAgents(agentsData || []);
+        setTeams(teamsData || []);
+      } catch (error) {
+        console.error('Failed to fetch agents/teams:', error);
+        setAgents([]);
+        setTeams([]);
+      } finally {
+        setAgentsLoading(false);
+      }
+    };
+
+    fetchAgentsAndTeams();
+  }, [accountId]);
 
   /**
    * Update a conversation in the list (optimistic update)
@@ -417,20 +457,41 @@ export const useChatwootContextMenu = (conversation: ChatwootConversation | null
       disabled: true, // TODO: Enable when label data is available
     });
 
-    // 6. Assign Agent (placeholder - needs agent data)
+    // 6. Assign Agent Submenu
+    const currentAssigneeId = conversation.meta?.assignee?.id;
+    const agentSubmenu: ContextMenuAction[] = [
+      { id: 'assign-agent-none', label: 'Unassign' },
+      ...agents
+        .filter((agent) => agent.id !== currentAssigneeId)
+        .map((agent) => ({
+          id: `assign-agent-${agent.id}`,
+          label: agent.name || agent.email || `Agent ${agent.id}`,
+        }))
+    ];
+
     actions.push({
       id: 'assign-agent',
       label: 'Assign agent',
       icon: 'person-add',
-      disabled: true, // TODO: Enable when agent data is available
+      disabled: agents.length === 0 || agentsLoading,
+      submenu: agentSubmenu,
     });
 
-    // 7. Assign Team (placeholder - needs team data)
+    // 7. Assign Team Submenu
+    const teamSubmenu: ContextMenuAction[] = [
+      { id: 'assign-team-none', label: 'Unassign' },
+      ...teams.map((team) => ({
+        id: `assign-team-${team.id}`,
+        label: team.name || `Team ${team.id}`,
+      }))
+    ];
+
     actions.push({
       id: 'assign-team',
       label: 'Assign team',
       icon: 'people-team-add',
-      disabled: true, // TODO: Enable when team data is available
+      disabled: teams.length === 0 || agentsLoading,
+      submenu: teamSubmenu,
     });
 
     // Separator
@@ -461,7 +522,7 @@ export const useChatwootContextMenu = (conversation: ChatwootConversation | null
     });
 
     return actions;
-  }, [conversation]);
+  }, [conversation, agents, teams, agentsLoading]);
 
   /**
    * Main action handler - routes to appropriate handler based on action ID
@@ -509,14 +570,6 @@ export const useChatwootContextMenu = (conversation: ChatwootConversation | null
           // TODO: Show label selector
           showNotification('Label assignment not yet implemented', "info");
           break;
-        case 'assign-agent':
-          // TODO: Show agent selector
-          showNotification('Agent assignment not yet implemented', "info");
-          break;
-        case 'assign-team':
-          // TODO: Show team selector
-          showNotification('Team assignment not yet implemented', "info");
-          break;
         case 'open-new-tab':
           handleOpenInNewTab();
           break;
@@ -527,6 +580,22 @@ export const useChatwootContextMenu = (conversation: ChatwootConversation | null
           await handleDeleteConversation();
           break;
         default:
+          // Handle agent assignment submenu items
+          if (actionId.startsWith('assign-agent-')) {
+            const agentIdStr = actionId.replace('assign-agent-', '');
+            const agentId = agentIdStr === 'none' ? null : parseInt(agentIdStr, 10);
+            await handleAssignAgent(agentId);
+            break;
+          }
+
+          // Handle team assignment submenu items
+          if (actionId.startsWith('assign-team-')) {
+            const teamIdStr = actionId.replace('assign-team-', '');
+            const teamId = teamIdStr === 'none' ? null : parseInt(teamIdStr, 10);
+            await handleAssignTeam(teamId);
+            break;
+          }
+
           console.warn(`Unknown action: ${actionId}`);
       }
     },
