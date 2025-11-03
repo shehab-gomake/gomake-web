@@ -15,8 +15,7 @@
     "jsx": "preserve",
     "incremental": true,
     "paths": {
-      "@/*": ["./src/*"],
-      "@/chatwoot": ["./chatwoot/index"]
+      "@/*": ["./src/*"]
     }
   },
   "include": ["next-env.d.ts", "elements.d.ts", "**/*.ts", "**/*.tsx"],

@@ -10,4 +10,6 @@ export * from './frontdesk-endpoints';
 export * from './direct-messages.service';
 export * from './tickets.service';
 export * from './notifications.service';
-export * from './chatwoot.service';
+
+// Export Chatwoot integration
+export * from './chatwoot';
