@@ -1,9 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { useStyle } from "./style";
-import { GoMakeAutoComplate, GoMakeModal, GomakePrimaryButton, GomakeTextInput } from "@/components";
+import { GoMakeAutoComplate, GoMakeDialog, GomakeTextInput } from "@/components";
 import { useState } from "react";
-import { DateRangePicker } from "rsuite";
-import { predefinedRanges } from "@/utils/dateRanges";
 import { ScheduleFrequencyEnum, DateRangeTypeEnum, DayOfWeek } from "@/enums/scheduled-reports-enums";
 import { DocumentTypeEnums } from "@/enums/document-type-enum";
 
@@ -210,11 +208,66 @@ const ScheduleSendWidget = ({
         }
     }
     return (
-        <GoMakeModal
-            openModal={openModal}
+        <GoMakeDialog
+            open={openModal}
             onClose={handleCloseModal}
-            modalTitle={t("sales.list.scheduleReport")}
-            insideStyle={classes.insideStyle}
+            title={t("sales.list.scheduleReport")}
+            primaryButtonLabel={t("properties.schedule")}
+            onPrimaryAction={() => {
+                if (createScheduledReport) {
+                    // Prepare the payload based on document type
+                    const basePayload = {
+                        reportName,
+                        email: mail,
+                        documentType: documentType,
+                        frequency: scheduleType?.id,
+                        startDayOfWeek: dayOfWeek?.value,
+                        startDayOfMonth: dayOfMonth?.id,
+                        exportType: detailsOption?.id,
+                        reportConfiguration: {
+                            groupBy: propertieValue, // Default group by
+                            exceptionConditionProperties: rules.map((item) => {
+                                return {
+                                    statementId: getStatementId(item) ?? item.statement2.id,
+                                    // statementValue: item.statement2.id,
+                                    statementValue:
+                                        item?.category?.id === "MATERIALTYPE"
+                                            ? item.statement2.enumCode
+                                            : item.statement2.id,
+                                    operator: item.condition.id,
+                                    conditionBetweenStatements: item.linkCondition
+                                        ? item.linkCondition.id
+                                        : "",
+                                    statementCategory: EStatementCategory[item.category.id],
+                                };
+                            }),
+                            ...(documentType === DocumentTypeEnums.BoardMission
+                                ? { boardMissionTableFilterDTO: boardMissionTableFilterDTO }
+                                : { filterDTO: filterData }
+                            ),
+                        },
+                    };
+
+                    // Add date range types based on document type
+                    if (documentType === DocumentTypeEnums.BoardMission && availableDateFilters && availableDateFilters.length > 0) {
+                        // For jobs: send separate date range types (enum values, not dates)
+                        createScheduledReport({
+                            ...basePayload,
+                            dateRangeType: creationDateRange?.value, // Creation date enum value
+                            dueDateRangeType: dueDateRange?.value, // Due date enum value
+                            readyDateRangeType: readyDateRange?.value, // Ready date enum value
+                        });
+                    } else {
+                        // For documents: send single date range type (enum value, not date)
+                        createScheduledReport({
+                            ...basePayload,
+                            dateRangeType: dateRange?.value,
+                        });
+                    }
+                }
+                handleCloseModal();
+            }}
+
         >
             <div style={classes.mainContainer}>
                 <div style={classes.inputRow}>
@@ -321,7 +374,7 @@ const ScheduleSendWidget = ({
                 )}
 
 
-                <div style={classes.buttonContainer}>
+                {/* <div style={classes.buttonContainer}>
                     <GomakePrimaryButton
                         style={classes.sendBtn}
                         onClick={() => {
@@ -381,9 +434,9 @@ const ScheduleSendWidget = ({
                     >
                         {t("properties.schedule")}
                     </GomakePrimaryButton>
-                </div>
+                </div> */}
             </div>
-        </GoMakeModal>
+        </GoMakeDialog>
     )
 }
 export { ScheduleSendWidget }
