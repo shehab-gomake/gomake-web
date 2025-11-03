@@ -3,6 +3,7 @@ import { ConversationListItem as DSConversationListItem } from "@/widgets/frontd
 import { formatConversationDate } from "@/widgets/frontdesk/utils";
 import { ConversationContextMenu } from "@/widgets/frontdesk/components/shared";
 import { useConversationContextMenu } from "@/widgets/frontdesk/hooks/use-conversation-context-menu";
+import { useChatwootContextMenu } from "../hooks/use-chatwoot-context-menu";
 import type { ChatwootConversation } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
 import type { ChatwootInbox } from "@/services/frontdesk/api/chatwoot/types/inboxes.types";
 
@@ -134,7 +135,11 @@ export const ChatwootConversationListItem: React.FC<ChatwootConversationListItem
   inboxes = [],
   inboxesLoading = false,
 }) => {
+  // Context menu position state (for right-click menu positioning)
   const { contextMenuPosition, handleContextMenu, handleCloseContextMenu } = useConversationContextMenu();
+
+  // Context menu actions and handlers (Chatwoot-specific business logic)
+  const chatwootContextMenu = useChatwootContextMenu(conversation);
 
   // ========================================================================
   // Memoized Data Extraction
@@ -186,11 +191,22 @@ export const ChatwootConversationListItem: React.FC<ChatwootConversationListItem
     onSelect(conversation);
   }, [conversation, onSelect]);
 
+  /**
+   * Handle context menu actions
+   * Use the Chatwoot-specific handler from the hook
+   * Fall back to onContextMenuAction prop if provided (for backward compatibility)
+   */
   const handleAction = useCallback(
-    (actionId: string, conversationId: string | number) => {
-      onContextMenuAction?.(actionId, conversationId);
+    async (actionId: string, conversationId?: string | number) => {
+      // Use the hook's handler first (has all the business logic)
+      await chatwootContextMenu.handleAction(actionId);
+
+      // Also call the prop handler if provided (for parent component tracking)
+      if (onContextMenuAction && conversationId !== undefined) {
+        onContextMenuAction(actionId, conversationId);
+      }
     },
-    [onContextMenuAction]
+    [chatwootContextMenu, onContextMenuAction]
   );
 
   // ========================================================================
@@ -231,6 +247,7 @@ export const ChatwootConversationListItem: React.FC<ChatwootConversationListItem
         open={Boolean(contextMenuPosition)}
         onClose={handleCloseContextMenu}
         conversationId={conversation.id}
+        actions={chatwootContextMenu.actions}
         onActionClick={handleAction}
       />
     </>
