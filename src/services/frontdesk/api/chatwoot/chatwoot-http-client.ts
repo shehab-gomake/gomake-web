@@ -36,14 +36,25 @@ export class ChatwootHttpClient {
       : `/${endpoint}`;
     const url = `${this.baseUrl}${normalizedEndpoint}`;
 
-    const response = await fetch(url, {
-      ...options,
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-        ...options.headers,
-      },
-    });
+    let response: Response;
+    try {
+      response = await fetch(url, {
+        ...options,
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+          ...options.headers,
+        },
+      });
+    } catch (error) {
+      // Network error (CORS, connection refused, DNS failure, etc.)
+      const networkError = new Error(
+        `Network error: Unable to connect to Chatwoot API at ${this.baseUrl}. ` +
+        `Please ensure the Chatwoot service is running and accessible.`
+      );
+      logger.error("Network request failed", { url, error });
+      throw networkError;
+    }
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));

@@ -5,7 +5,16 @@
  * Handles all route types and query parameters for navigation.
  */
 
-import { FrontDeskRoute, RouteType, FrontDeskChannel, FrontDeskSection, TicketView, NavigationOptions, ChatwootView } from "./types";
+import {
+  FrontDeskRoute,
+  RouteType,
+  FrontDeskChannel,
+  FrontDeskSection,
+  TicketView,
+  NavigationOptions,
+  ChatwootView,
+  ChatwootFilters,
+} from "./types";
 
 /**
  * Build URL path from route
@@ -71,6 +80,31 @@ export const buildRoutePath = (route: FrontDeskRoute): string => {
         queryParams.append("channel", route.channelId);
       }
 
+      // Add filter parameters if present
+      if (route.filters) {
+        if (route.filters.status) {
+          queryParams.append("status", route.filters.status);
+        }
+        if (route.filters.assigneeType) {
+          queryParams.append("assigneeType", route.filters.assigneeType);
+        }
+        if (route.filters.inboxId) {
+          queryParams.append("inboxId", route.filters.inboxId);
+        }
+        if (route.filters.teamId) {
+          queryParams.append("teamId", route.filters.teamId);
+        }
+        if (route.filters.sortBy) {
+          queryParams.append("sortBy", route.filters.sortBy);
+        }
+        if (route.filters.search) {
+          queryParams.append("search", route.filters.search);
+        }
+        if (route.filters.labels) {
+          queryParams.append("labels", route.filters.labels);
+        }
+      }
+
       path += `?${queryParams.toString()}`;
       break;
     }
@@ -109,6 +143,7 @@ const mapChatwootViewToQueryParam = (view: ChatwootView): string => {
     [ChatwootView.MENTIONS]: "mentions",
     [ChatwootView.UNATTENDED]: "unattended",
     [ChatwootView.CHANNELS]: "channels",
+    [ChatwootView.WEBHOOK_TEST]: "webhook-test",
   };
   return map[view];
 };
@@ -251,11 +286,12 @@ export const RouteBuilder = {
   /**
    * Build Chatwoot route
    */
-  chatwoot: (view: ChatwootView, conversationId?: string, channelId?: string): FrontDeskRoute => ({
+  chatwoot: (view: ChatwootView, conversationId?: string, channelId?: string, filters?: ChatwootFilters): FrontDeskRoute => ({
     type: RouteType.CHATWOOT,
     view,
     conversationId,
     channelId,
+    filters,
   }),
 
   /**

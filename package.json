@@ -24,6 +24,7 @@
     "@mui/material": "^5.16.6",
     "@mui/x-date-pickers": "^7.23.0",
     "@next/bundle-analyzer": "^15.0.4",
+    "@rails/actioncable": "^8.1.100",
     "@react-oauth/google": "^0.12.1",
     "@reactour/tour": "^3.6.1",
     "@tiptap/extension-color": "^2.1.13",

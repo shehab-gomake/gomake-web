@@ -108,4 +108,27 @@ export interface InboxDetailResponse {
   data?: ChatwootInbox;
 }
 
+/**
+ * Contactable Inbox
+ * Represents an inbox that a contact can be reached through
+ */
+export interface ContactableInbox {
+  /** Source ID (email address, phone number, or identifier) */
+  source_id: string;
+
+  /** Inbox details */
+  inbox: ChatwootInbox;
+}
+
+/**
+ * Contactable Inboxes Response
+ * Response structure for get contactable inboxes endpoint
+ */
+export interface ContactableInboxesResponse {
+  payload?: ContactableInbox[];
+  data?: {
+    payload?: ContactableInbox[];
+  };
+}
+
 

@@ -8,6 +8,7 @@
 import React from "react";
 import { useChatwootProvider } from "./hooks/use-chatwoot-provider";
 import { ChatwootView } from "@/widgets/frontdesk/routing/types";
+import { ChatwootErrorBoundary } from "./components/ChatwootErrorBoundary";
 
 // Import view components
 import { DashboardView } from "./views/dashboard-view";
@@ -16,8 +17,9 @@ import { AllConversationsView } from "./views/all-conversations-view";
 import { MentionsView } from "./views/mentions-view";
 import { UnattendedView } from "./views/unattended-view";
 import { ChannelsView } from "./views/channels-view";
+import { WebhookTestView } from "./views/webhook-test-view";
 
-export const ChatwootProviderView: React.FC = () => {
+const ChatwootProviderViewInternal: React.FC = () => {
   // Profile loading is handled by useChatwootProvider (via useChatwootProfile hook internally)
   const { router: chatwootRouter } = useChatwootProvider();
 
@@ -43,9 +45,24 @@ export const ChatwootProviderView: React.FC = () => {
     case ChatwootView.CHANNELS:
       return <ChannelsView />;
 
+    case ChatwootView.WEBHOOK_TEST:
+      return <WebhookTestView />;
+
     default:
       // Fallback to My Inbox
       console.warn("[ChatwootProviderView] Unknown view, falling back to My Inbox:", currentView);
       return <MyInboxView />;
   }
+};
+
+/**
+ * ChatwootProviderView with Error Boundary
+ * Wraps the internal view with error handling for production safety
+ */
+export const ChatwootProviderView: React.FC = () => {
+  return (
+    <ChatwootErrorBoundary>
+      <ChatwootProviderViewInternal />
+    </ChatwootErrorBoundary>
+  );
 };

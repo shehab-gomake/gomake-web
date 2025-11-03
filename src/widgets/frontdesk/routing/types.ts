@@ -108,6 +108,28 @@ export enum ChatwootView {
   MENTIONS = "mentions",
   UNATTENDED = "unattended",
   CHANNELS = "channels",
+  WEBHOOK_TEST = "webhook-test",
+  COMPOSE = "compose",
+}
+
+/**
+ * Chatwoot conversation filters (for URL persistence)
+ */
+export interface ChatwootFilters {
+  /** Filter by status (open, resolved, pending, snoozed) */
+  status?: string;
+  /** Filter by assignee type (me, unassigned, all) */
+  assigneeType?: string;
+  /** Filter by inbox ID */
+  inboxId?: string;
+  /** Filter by team ID */
+  teamId?: string;
+  /** Sort order */
+  sortBy?: string;
+  /** Search query */
+  search?: string;
+  /** Filter by labels (comma-separated) */
+  labels?: string;
 }
 
 /**
@@ -118,6 +140,8 @@ export interface ChatwootRoute extends BaseRouteParams {
   view: ChatwootView;
   conversationId?: string;
   channelId?: string;
+  /** Optional filters for conversation list */
+  filters?: ChatwootFilters;
 }
 
 /**

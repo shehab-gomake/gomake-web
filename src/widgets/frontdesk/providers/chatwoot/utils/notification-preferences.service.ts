@@ -3,6 +3,8 @@
  *
  * Handles localStorage persistence for notification filter preferences
  * Separates concerns - preferences logic is isolated from hooks
+ *
+ * Uses the 'includes' array pattern from NOTIFICATIONS_FRONTEND_API_GUIDE.md
  */
 
 import { createLogger } from "@/services/frontdesk/utils/logger";
@@ -13,8 +15,7 @@ const logger = createLogger("NotificationPreferencesService");
 const STORAGE_KEY = "frontdesk.chatwoot.notifications.preferences";
 
 interface NotificationPreferences {
-  snoozed?: boolean;
-  read?: boolean;
+  includes?: ("read" | "snoozed")[];
   sort_order?: string;
 }
 
@@ -27,8 +28,7 @@ export const loadNotificationPreferences = (): Partial<NotificationListParams> =
     if (stored) {
       const preferences: NotificationPreferences = JSON.parse(stored);
       return {
-        snoozed: preferences.snoozed,
-        read: preferences.read,
+        includes: preferences.includes,
         sort_order: preferences.sort_order,
       };
     }
@@ -44,8 +44,7 @@ export const loadNotificationPreferences = (): Partial<NotificationListParams> =
 export const saveNotificationPreferences = (filters: Partial<NotificationListParams>): void => {
   try {
     const preferences: NotificationPreferences = {
-      snoozed: filters.snoozed,
-      read: filters.read,
+      includes: filters.includes,
       sort_order: filters.sort_order,
     };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(preferences));

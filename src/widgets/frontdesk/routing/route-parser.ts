@@ -15,6 +15,7 @@ import {
   RouteQueryParams,
   ChatwootView,
   ChatwootRoute,
+  ChatwootFilters,
 } from "./types";
 
 /**
@@ -27,6 +28,14 @@ export interface NextRouterQuery {
   ticket?: string | string[];
   conversation?: string | string[];
   channel?: string | string[];
+  // Chatwoot filter parameters
+  status?: string | string[];
+  assigneeType?: string | string[];
+  inboxId?: string | string[];
+  teamId?: string | string[];
+  sortBy?: string | string[];
+  search?: string | string[];
+  labels?: string | string[];
 }
 
 /**
@@ -108,6 +117,7 @@ const parseChatwootView = (viewParam?: string): ChatwootView => {
     "mentions": ChatwootView.MENTIONS,
     "unattended": ChatwootView.UNATTENDED,
     "channels": ChatwootView.CHANNELS,
+    "webhook-test": ChatwootView.WEBHOOK_TEST,
   };
 
   return viewMap[viewParam] || ChatwootView.MY_INBOX;
@@ -174,6 +184,45 @@ const parseProvider = (provider?: string, baseRoute?: Partial<FrontDeskRoute>): 
 };
 
 /**
+ * Parse Chatwoot filter parameters from query
+ */
+const parseChatwootFilters = (query: NextRouterQuery): ChatwootFilters | undefined => {
+  const filters: ChatwootFilters = {};
+  let hasFilters = false;
+
+  if (query.status) {
+    filters.status = normalizeParam(query.status);
+    hasFilters = true;
+  }
+  if (query.assigneeType) {
+    filters.assigneeType = normalizeParam(query.assigneeType);
+    hasFilters = true;
+  }
+  if (query.inboxId) {
+    filters.inboxId = normalizeParam(query.inboxId);
+    hasFilters = true;
+  }
+  if (query.teamId) {
+    filters.teamId = normalizeParam(query.teamId);
+    hasFilters = true;
+  }
+  if (query.sortBy) {
+    filters.sortBy = normalizeParam(query.sortBy);
+    hasFilters = true;
+  }
+  if (query.search) {
+    filters.search = normalizeParam(query.search);
+    hasFilters = true;
+  }
+  if (query.labels) {
+    filters.labels = normalizeParam(query.labels);
+    hasFilters = true;
+  }
+
+  return hasFilters ? filters : undefined;
+};
+
+/**
  * Parse query parameters for additional context
  */
 const parseQueryParams = (query: NextRouterQuery): RouteQueryParams & { channel?: string } => {
@@ -189,18 +238,22 @@ const parseQueryParams = (query: NextRouterQuery): RouteQueryParams & { channel?
  * Apply query parameter overrides to route
  * Query params (from notifications) take precedence
  */
-const applyQueryParamOverrides = (route: Partial<FrontDeskRoute>, queryParams: RouteQueryParams & { channel?: string }): FrontDeskRoute => {
+const applyQueryParamOverrides = (route: Partial<FrontDeskRoute>, queryParams: RouteQueryParams & { channel?: string }, query: NextRouterQuery): FrontDeskRoute => {
   // Handle Chatwoot-specific query params
   if (route.type === RouteType.CHATWOOT) {
     const chatwootRoute = route as Partial<ChatwootRoute>;
     // Parse view from query params, fallback to route view or default
     const view = queryParams.view ? parseChatwootView(queryParams.view) : (chatwootRoute.view || ChatwootView.MY_INBOX);
 
+    // Parse filters from query params
+    const filters = parseChatwootFilters(query);
+
     return {
       type: RouteType.CHATWOOT,
       view,
       conversationId: queryParams.conversation || chatwootRoute.conversationId,
       channelId: queryParams.channel || chatwootRoute.channelId,
+      filters: filters || chatwootRoute.filters,
     };
   }
 
@@ -336,8 +389,8 @@ export const parseRoute = (query: NextRouterQuery): ParsedRoute => {
   // Parse provider segment if present
   route = parseProvider(provider, route);
 
-  // Apply query parameter overrides (from notifications)
-  const finalRoute = applyQueryParamOverrides(route, queryParams);
+  // Apply query parameter overrides (from notifications) and parse filters
+  const finalRoute = applyQueryParamOverrides(route, queryParams, query);
 
   return {
     route: finalRoute,

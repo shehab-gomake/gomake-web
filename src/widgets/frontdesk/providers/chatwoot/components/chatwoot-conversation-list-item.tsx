@@ -127,7 +127,7 @@ function getConversationTitle(conversation: any): string {
  *
  * @see CONVERSATION_LIST_ICONS_GUIDE.md
  */
-export const ChatwootConversationListItem: React.FC<ChatwootConversationListItemProps> = ({
+const ChatwootConversationListItemComponent: React.FC<ChatwootConversationListItemProps> = ({
   conversation,
   isSelected,
   onSelect,
@@ -253,3 +253,24 @@ export const ChatwootConversationListItem: React.FC<ChatwootConversationListItem
     </>
   );
 };
+
+/**
+ * Memoized Conversation List Item
+ *
+ * Optimizes performance by preventing unnecessary re-renders.
+ * Only re-renders when conversation data or selection state changes.
+ */
+export const ChatwootConversationListItem = React.memo(
+  ChatwootConversationListItemComponent,
+  (prevProps, nextProps) => {
+    // Custom comparison: only re-render if these specific props change
+    return (
+      prevProps.conversation?.id === nextProps.conversation?.id &&
+      prevProps.conversation?.updated_at === nextProps.conversation?.updated_at &&
+      prevProps.conversation?.unread_count === nextProps.conversation?.unread_count &&
+      prevProps.conversation?.status === nextProps.conversation?.status &&
+      prevProps.isSelected === nextProps.isSelected &&
+      prevProps.inboxesLoading === nextProps.inboxesLoading
+    );
+  }
+);

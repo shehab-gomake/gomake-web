@@ -1,13 +1,21 @@
 /**
  * Chatwoot Contacts Service
- * 
+ *
  * Handles all contact-related endpoints.
  * All endpoints require account_id.
- * 
+ *
  * @see ContactsApi.md
  */
 
 import { BaseChatwootService } from "../core/base-chatwoot-service";
+import type {
+  ContactDetail,
+  ContactCreatePayload,
+  ContactUpdatePayload,
+  ContactsListResponse,
+  ContactFilterRequest,
+  ContactConversationsResponse,
+} from "../types/contacts.types";
 
 /**
  * ChatwootContactsService
@@ -31,7 +39,7 @@ export class ChatwootContactsService extends BaseChatwootService {
   /**
    * List Contacts
    * GET /api/v1/accounts/{account_id}/contacts
-   * 
+   *
    * @param accountId - The numeric ID of the account
    * @param params - Query parameters (page, search, etc.)
    * @returns Promise with contact list
@@ -41,9 +49,9 @@ export class ChatwootContactsService extends BaseChatwootService {
     params?: {
       page?: number;
       sort?: string;
-      [key: string]: any;
+      [key: string]: unknown;
     }
-  ): Promise<any> {
+  ): Promise<ContactsListResponse> {
     const queryParams = new URLSearchParams();
     if (params) {
       Object.entries(params).forEach(([key, value]) => {
@@ -58,13 +66,13 @@ export class ChatwootContactsService extends BaseChatwootService {
       accountId,
       `contacts${queryString ? `?${queryString}` : ""}`
     );
-    return await this.get<any>(url);
+    return await this.get<ContactsListResponse>(url);
   }
 
   /**
    * Get Contact Details
    * GET /api/v1/accounts/{account_id}/contacts/{id}
-   * 
+   *
    * @param accountId - The numeric ID of the account
    * @param contactId - The numeric ID of the contact
    * @returns Promise with contact details
@@ -72,8 +80,8 @@ export class ChatwootContactsService extends BaseChatwootService {
   async getContactDetails(
     accountId: number,
     contactId: number
-  ): Promise<any> {
-    return await this.get<any>(
+  ): Promise<ContactDetail> {
+    return await this.get<ContactDetail>(
       this.accountScopedUrl(accountId, `contacts/${contactId}`)
     );
   }
@@ -81,13 +89,13 @@ export class ChatwootContactsService extends BaseChatwootService {
   /**
    * Create Contact
    * POST /api/v1/accounts/{account_id}/contacts
-   * 
+   *
    * @param accountId - The numeric ID of the account
    * @param payload - Contact creation payload
    * @returns Promise with created contact
    */
-  async createContact(accountId: number, payload: any): Promise<any> {
-    return await this.post<any>(
+  async createContact(accountId: number, payload: ContactCreatePayload): Promise<ContactDetail> {
+    return await this.post<ContactDetail>(
       this.accountScopedUrl(accountId, "contacts"),
       payload
     );
@@ -96,7 +104,7 @@ export class ChatwootContactsService extends BaseChatwootService {
   /**
    * Update Contact
    * PUT /api/v1/accounts/{account_id}/contacts/{id}
-   * 
+   *
    * @param accountId - The numeric ID of the account
    * @param contactId - The numeric ID of the contact
    * @param payload - Update payload
@@ -105,9 +113,9 @@ export class ChatwootContactsService extends BaseChatwootService {
   async updateContact(
     accountId: number,
     contactId: number,
-    payload: any
-  ): Promise<any> {
-    return await this.put<any>(
+    payload: ContactUpdatePayload
+  ): Promise<ContactDetail> {
+    return await this.put<ContactDetail>(
       this.accountScopedUrl(accountId, `contacts/${contactId}`),
       payload
     );
@@ -130,29 +138,29 @@ export class ChatwootContactsService extends BaseChatwootService {
   /**
    * Search Contacts
    * GET /api/v1/accounts/{account_id}/contacts/search
-   * 
+   *
    * @param accountId - The numeric ID of the account
    * @param query - Search query string
    * @returns Promise with search results
    */
-  async searchContacts(accountId: number, query: string): Promise<any> {
+  async searchContacts(accountId: number, query: string): Promise<ContactsListResponse> {
     const url = this.accountScopedUrl(
       accountId,
       `contacts/search?q=${encodeURIComponent(query)}`
     );
-    return await this.get<any>(url);
+    return await this.get<ContactsListResponse>(url);
   }
 
   /**
    * Filter Contacts
    * POST /api/v1/accounts/{account_id}/contacts/filter
-   * 
+   *
    * @param accountId - The numeric ID of the account
    * @param filterPayload - Filter criteria
    * @returns Promise with filtered contacts
    */
-  async filterContacts(accountId: number, filterPayload: any): Promise<any> {
-    return await this.post<any>(
+  async filterContacts(accountId: number, filterPayload: ContactFilterRequest): Promise<ContactsListResponse> {
+    return await this.post<ContactsListResponse>(
       this.accountScopedUrl(accountId, "contacts/filter"),
       filterPayload
     );
@@ -161,7 +169,7 @@ export class ChatwootContactsService extends BaseChatwootService {
   /**
    * Get Contact Conversations
    * GET /api/v1/accounts/{account_id}/contacts/{id}/conversations
-   * 
+   *
    * @param accountId - The numeric ID of the account
    * @param contactId - The numeric ID of the contact
    * @returns Promise with contact conversations
@@ -169,9 +177,35 @@ export class ChatwootContactsService extends BaseChatwootService {
   async getContactConversations(
     accountId: number,
     contactId: number
-  ): Promise<any> {
-    return await this.get<any>(
+  ): Promise<ContactConversationsResponse> {
+    return await this.get<ContactConversationsResponse>(
       this.accountScopedUrl(accountId, `contacts/${contactId}/conversations`)
+    );
+  }
+
+  /**
+   * Get Contactable Inboxes
+   * GET /api/v1/accounts/{account_id}/contacts/{id}/contactable_inboxes
+   *
+   * Gets the list of inboxes where this contact can be reached.
+   * Returns inbox details along with the source_id (email, phone, etc.)
+   *
+   * @param accountId - The numeric ID of the account
+   * @param contactId - The numeric ID of the contact
+   * @returns Promise with contactable inboxes
+   *
+   * @example
+   * ```typescript
+   * const inboxes = await contactsService.getContactableInboxes(1, 123);
+   * // Returns: [{ source_id: "user@example.com", inbox: {...} }]
+   * ```
+   */
+  async getContactableInboxes(
+    accountId: number,
+    contactId: number
+  ): Promise<import("../types/inboxes.types").ContactableInboxesResponse> {
+    return await this.get<import("../types/inboxes.types").ContactableInboxesResponse>(
+      this.accountScopedUrl(accountId, `contacts/${contactId}/contactable_inboxes`)
     );
   }
 }

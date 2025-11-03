@@ -6,7 +6,7 @@
  * (All Conversations, Channels, Mentions, Unattended).
  */
 
-import React, { useMemo } from "react";
+import React, { useMemo, useCallback } from "react";
 import { Stack, Box, Divider, useTheme } from "@mui/material";
 import { Panel, PanelContent, EmptyState } from "@/widgets/frontdesk/design-system";
 import { ChatwootConversationList } from "./chatwoot-conversation-list";
@@ -27,10 +27,7 @@ interface BaseConversationViewProps {
   };
 }
 
-export const BaseConversationView: React.FC<BaseConversationViewProps> = ({
-  emptyState,
-  messageViewerProps,
-}) => {
+export const BaseConversationView: React.FC<BaseConversationViewProps> = ({ emptyState, messageViewerProps }) => {
   const {
     selectedAccountId: currentAccountId,
     conversations,
@@ -47,18 +44,47 @@ export const BaseConversationView: React.FC<BaseConversationViewProps> = ({
     handleBack,
     inboxes,
     inboxesLoading,
+    router,
   } = useChatwootProvider();
 
   const theme = useTheme();
 
   // Memoize empty state to prevent unnecessary re-renders
-  const emptyStateContent = useMemo(() => (
-    <EmptyState
-      icon="inbox"
-      title="No conversation selected"
-      description="Select a conversation from the list to view messages"
-    />
-  ), []);
+  const emptyStateContent = useMemo(
+    () => (
+      <EmptyState
+        icon="inbox"
+        title="No conversation selected"
+        description="Select a conversation from the list to view messages"
+      />
+    ),
+    []
+  );
+
+  // Handler to navigate to next conversation
+  const handleNextConversation = useCallback(() => {
+    if (!selectedConversation || conversations.length === 0) {
+      return;
+    }
+
+    // Find current conversation index
+    const currentIndex = conversations.findIndex((conv) => conv.id === selectedConversation.id);
+
+    // If not found or at the end, do nothing
+    if (currentIndex === -1 || currentIndex === conversations.length - 1) {
+      return;
+    }
+
+    // Get next conversation
+    const nextConversation = conversations[currentIndex + 1];
+    if (nextConversation) {
+      handleConversationSelect(nextConversation);
+
+      // Also navigate using router for URL consistency
+      const inboxId = nextConversation.inbox_id?.toString();
+      router.navigateToConversation(nextConversation.id.toString(), inboxId);
+    }
+  }, [selectedConversation, conversations, handleConversationSelect, router]);
 
   return (
     <Stack direction="row" spacing={0} sx={{ height: "100%", p: 0 }}>
@@ -90,6 +116,7 @@ export const BaseConversationView: React.FC<BaseConversationViewProps> = ({
           onFiltersChange={handleFiltersChange}
           inboxes={inboxes}
           inboxesLoading={inboxesLoading}
+          onNextClick={handleNextConversation}
         />
       </Panel>
 
@@ -138,9 +165,7 @@ export const BaseConversationView: React.FC<BaseConversationViewProps> = ({
             />
           </Stack>
         ) : (
-          <PanelContent padding="lg">
-            {emptyStateContent}
-          </PanelContent>
+          <PanelContent padding="lg">{emptyStateContent}</PanelContent>
         )}
       </Panel>
     </Stack>
