@@ -4,20 +4,23 @@
  * Provides context menu actions and handlers for Chatwoot conversations.
  * Implements optimistic updates and conditional logic based on conversation state.
  *
+ * Now uses centralized resource hooks to eliminate duplicate API calls.
+ *
  * @see CONTEXT_MENU_API_DOCUMENTATION.md
  */
 
-import { useCallback, useMemo, useState, useEffect } from "react";
+import { useCallback, useMemo } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { chatwootService } from "@/services/frontdesk";
 import { ChatwootConversation } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
-import { Agent } from "@/services/frontdesk/api/chatwoot/services/chatwoot-agents.service";
-import { Team } from "@/services/frontdesk/api/chatwoot/services/chatwoot-teams.service";
+import { Agent } from "@/services/frontdesk/api/chatwoot/types/agents.types";
+import { Team } from "@/services/frontdesk/api/chatwoot/types/teams.types";
 import {
   chatwootSelectedAccountAtom,
   chatwootConversationsAtom,
   chatwootSelectedConversationAtom,
 } from "@/store/frontdesk/atoms/chatwoot.atoms";
+import { useChatwootAgents, useChatwootTeams } from "./resources";
 
 /**
  * Simple notification utility
@@ -59,43 +62,9 @@ export const useChatwootContextMenu = (conversation: ChatwootConversation | null
   const [conversations, setConversations] = useRecoilState(chatwootConversationsAtom);
   const [selectedConversation, setSelectedConversation] = useRecoilState(chatwootSelectedConversationAtom);
 
-  // Agent and Team data state
-  const [agents, setAgents] = useState<Agent[]>([]);
-  const [teams, setTeams] = useState<Team[]>([]);
-  const [agentsLoading, setAgentsLoading] = useState(false);
-
-  /**
-   * Fetch agents and teams when account changes
-   */
-  useEffect(() => {
-    const fetchAgentsAndTeams = async () => {
-      if (!accountId) {
-        setAgents([]);
-        setTeams([]);
-        return;
-      }
-
-      setAgentsLoading(true);
-      try {
-        // Fetch all account agents
-        const agentsData = await chatwootService.agents.listAgents(accountId);
-
-        // Fetch all teams
-        const teamsData = await chatwootService.teams.listTeams(accountId);
-
-        setAgents(agentsData || []);
-        setTeams(teamsData || []);
-      } catch (error) {
-        console.error('Failed to fetch agents/teams:', error);
-        setAgents([]);
-        setTeams([]);
-      } finally {
-        setAgentsLoading(false);
-      }
-    };
-
-    fetchAgentsAndTeams();
-  }, [accountId]);
+  // Use centralized resource hooks - no more duplicate fetching!
+  const { agents, loading: agentsLoading } = useChatwootAgents(accountId);
+  const { teams } = useChatwootTeams(accountId);
 
   /**
    * Update a conversation in the list (optimistic update)

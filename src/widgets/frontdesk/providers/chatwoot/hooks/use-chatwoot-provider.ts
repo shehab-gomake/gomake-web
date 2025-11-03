@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useEffect, useRef } from "react";
 import React from "react";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { useChatwootConversations } from "./use-chatwoot-conversations";
 import { useChatwootRouter } from "./use-chatwoot-router";
 import { useChatwootProfile } from "./use-chatwoot-profile";
@@ -18,6 +18,7 @@ import {
   chatwootSelectedAccountAtom,
   chatwootSelectedInboxIdAtom,
   chatwootConversationsAtom,
+  chatwootConversationCountsAtom,
 } from "@/store/frontdesk/atoms/chatwoot.atoms";
 
 export const useChatwootProvider = () => {
@@ -25,6 +26,7 @@ export const useChatwootProvider = () => {
   const [selectedConversation, setSelectedConversation] = useRecoilState(chatwootSelectedConversationAtom);
   const [conversationsList, setConversationsList] = useRecoilState(chatwootConversationsAtom);
   const selectedInboxId = useRecoilValue(chatwootSelectedInboxIdAtom);
+  const setCounts = useSetRecoilState(chatwootConversationCountsAtom);
 
   // Use the custom hook to get profile state (prevents multiple API calls)
   const { profile, loading: profileLoading } = useChatwootProfile();
@@ -145,7 +147,13 @@ export const useChatwootProvider = () => {
       // Check if updated conversation matches current filter using utility function
       const matchesFilter = matchesStatusFilter(newStatus, currentFilterStatus);
 
+      // Track the old conversation for count updates
+      let oldConversation: ChatwootConversation | undefined;
+
       setConversationsList((prev) => {
+        // Find the old conversation to track status change
+        oldConversation = prev.find((conv) => conv.id === updatedConversation.id);
+
         if (!matchesFilter) {
           // Remove conversation from list if it doesn't match filter (similar to Vue filtering)
           return prev.filter((conv) => conv.id !== updatedConversation.id);
@@ -154,6 +162,35 @@ export const useChatwootProvider = () => {
           return prev.map((conv) => (conv.id === updatedConversation.id ? { ...conv, ...updatedConversation } : conv));
         }
       });
+
+      // Update conversation counts based on status change
+      if (oldConversation && oldConversation.status !== newStatus) {
+        setCounts((prevCounts) => {
+          const newCounts = { ...prevCounts };
+
+          // Decrement old status count
+          if (oldConversation.status === "open") {
+            newCounts.mine = Math.max(0, newCounts.mine - 1);
+          }
+
+          // Increment new status count
+          if (newStatus === "open") {
+            newCounts.mine = newCounts.mine + 1;
+          }
+
+          // Handle unassigned count if applicable
+          const wasUnassigned = !oldConversation.meta?.assignee?.id;
+          const isUnassigned = !updatedConversation.meta?.assignee?.id;
+
+          if (wasUnassigned && !isUnassigned) {
+            newCounts.unassigned = Math.max(0, newCounts.unassigned - 1);
+          } else if (!wasUnassigned && isUnassigned) {
+            newCounts.unassigned = newCounts.unassigned + 1;
+          }
+
+          return newCounts;
+        });
+      }
 
       // Update selected conversation
       if (selectedConversation?.id === updatedConversation.id) {
@@ -165,7 +202,7 @@ export const useChatwootProvider = () => {
         }
       }
     },
-    [setConversationsList, selectedConversation, setSelectedConversation, statusFilter]
+    [setConversationsList, selectedConversation, setSelectedConversation, statusFilter, setCounts]
   );
 
   // Handle filter changes - support status, assignee_type, etc.

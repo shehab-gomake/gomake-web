@@ -3,6 +3,8 @@
  *
  * Displays the assigned agent for a Chatwoot conversation
  * and provides options to reassign.
+ *
+ * Now uses centralized useChatwootAgents hook to eliminate duplicate API calls.
  */
 
 import React, { useState, useCallback } from 'react';
@@ -19,15 +21,8 @@ import PersonIcon from '@mui/icons-material/Person';
 import { colorTokens } from '@/widgets/frontdesk/design-system';
 import { chatwootService } from '@/services/frontdesk';
 import { extractConversation, extractErrorMessage } from '../utils/api-response-extractors';
-
-interface Agent {
-  id?: number;
-  name?: string;
-  email?: string;
-  avatar_url?: string;
-  available_name?: string;
-  [key: string]: any;
-}
+import { useChatwootAgents } from '../hooks/resources';
+import type { Agent } from '@/services/frontdesk/api/chatwoot/types/agents.types';
 
 interface ConversationAssigneeSectionProps {
   /** Current assignee */
@@ -48,26 +43,9 @@ export const ConversationAssigneeSection: React.FC<ConversationAssigneeSectionPr
 }) => {
   const [menuAnchor, setMenuAnchor] = useState<null | HTMLElement>(null);
   const [updating, setUpdating] = useState(false);
-  const [agents, setAgents] = useState<Agent[]>([]);
-  const [loadingAgents, setLoadingAgents] = useState(false);
 
-  /**
-   * Fetch available agents for assignment
-   */
-  const fetchAgents = useCallback(async () => {
-    if (!accountId || loadingAgents) return;
-
-    setLoadingAgents(true);
-    try {
-      const agentsList = await chatwootService.agents.listAgents(accountId);
-      setAgents(agentsList || []);
-    } catch (error) {
-      console.error('[fetchAgents] Failed to load agents:', error);
-      setAgents([]);
-    } finally {
-      setLoadingAgents(false);
-    }
-  }, [accountId, loadingAgents]);
+  // Use centralized agents hook - no more duplicate fetching!
+  const { agents, loading: loadingAgents } = useChatwootAgents(accountId);
 
   const handleAssign = async (agentId: number | null) => {
     setMenuAnchor(null);
@@ -130,9 +108,7 @@ export const ConversationAssigneeSection: React.FC<ConversationAssigneeSectionPr
           onClick={(e) => {
             if (!updating) {
               setMenuAnchor(e.currentTarget);
-              if (agents.length === 0) {
-                fetchAgents();
-              }
+              // Agents are automatically fetched by useChatwootAgents hook
             }
           }}
           sx={{
@@ -155,7 +131,7 @@ export const ConversationAssigneeSection: React.FC<ConversationAssigneeSectionPr
           ) : (
             <>
               <Avatar
-                src={assignee.avatar_url}
+                src={assignee.thumbnail}
                 sx={{ width: 32, height: 32 }}
               >
                 {assignee.name?.charAt(0) || assignee.available_name?.charAt(0) || 'A'}
@@ -201,9 +177,7 @@ export const ConversationAssigneeSection: React.FC<ConversationAssigneeSectionPr
           onClick={(e) => {
             if (!updating) {
               setMenuAnchor(e.currentTarget);
-              if (agents.length === 0) {
-                fetchAgents();
-              }
+              // Agents are automatically fetched by useChatwootAgents hook
             }
           }}
           disabled={updating}
@@ -248,7 +222,7 @@ export const ConversationAssigneeSection: React.FC<ConversationAssigneeSectionPr
             selected={agent.id === assignee?.id}
           >
             <Avatar
-              src={agent.avatar_url}
+              src={agent.thumbnail}
               sx={{ width: 24, height: 24, mr: 1.5 }}
             >
               {agent.name?.charAt(0) || agent.available_name?.charAt(0) || 'A'}

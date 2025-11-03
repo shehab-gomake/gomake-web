@@ -71,10 +71,11 @@ export function useChatwootDataFetch<TData = any, TFilters = any>({
   const [data, setData] = useState<TData>([] as any);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  
+
   // Track the last fetched filter key to prevent duplicate requests
   const lastFetchedKeyRef = useRef<string | null>(null);
   const isFetchingRef = useRef(false);
+  const hasAttemptedRef = useRef(false);
 
   // Create a stable filter key
   const filterKey = useMemo(() => createFilterKey(filters), [filters, createFilterKey]);
@@ -83,6 +84,7 @@ export function useChatwootDataFetch<TData = any, TFilters = any>({
     async (overrideFilters?: TFilters) => {
       // Prevent duplicate concurrent requests
       if (isFetchingRef.current) {
+        logger.debug("Already fetching, skipping duplicate request");
         return;
       }
 
@@ -91,10 +93,12 @@ export function useChatwootDataFetch<TData = any, TFilters = any>({
 
       // Skip if we're already fetching the same filters
       if (currentFilterKey === lastFetchedKeyRef.current && !overrideFilters) {
+        logger.debug("Same filters already fetched, skipping");
         return;
       }
 
       isFetchingRef.current = true;
+      hasAttemptedRef.current = true;
       setLoading(true);
       setError(null);
 
@@ -108,6 +112,8 @@ export function useChatwootDataFetch<TData = any, TFilters = any>({
         setError(errorMessage);
         logger.error("Failed to fetch data", err);
         setData([] as any);
+        // Mark as attempted even on error to prevent infinite retry loops
+        lastFetchedKeyRef.current = currentFilterKey;
       } finally {
         setLoading(false);
         isFetchingRef.current = false;
@@ -124,8 +130,8 @@ export function useChatwootDataFetch<TData = any, TFilters = any>({
   // Auto-fetch on mount and when filters change
   useEffect(() => {
     if (autoFetch && refetchOnFilterChange) {
-      // Only fetch if filter key changed
-      if (filterKey !== lastFetchedKeyRef.current) {
+      // Only fetch if filter key changed AND we haven't attempted this key yet
+      if (filterKey !== lastFetchedKeyRef.current && !isFetchingRef.current) {
         fetchData();
       }
     }

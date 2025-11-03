@@ -130,19 +130,82 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
     }
   };
 
-  const handleArchive = () => {
-    // TODO: Implement archive functionality
-    console.log("Archive clicked");
+  const handleArchive = async () => {
+    if (!conversation?.id || !accountId) return;
+
+    try {
+      setIsSending(true);
+      // Archive conversation by updating its status to resolved
+      await chatwootService.conversations.updateConversationStatus(
+        accountId,
+        conversation.id,
+        { status: 'resolved' }
+      );
+
+      // Update conversation in list
+      if (onConversationUpdate) {
+        onConversationUpdate({ ...conversation, status: 'resolved' });
+      }
+
+      console.log('[handleArchive] Conversation archived successfully');
+    } catch (error) {
+      console.error('[handleArchive] Failed to archive conversation:', error);
+    } finally {
+      setIsSending(false);
+    }
   };
 
-  const handleDelete = () => {
-    // TODO: Implement delete functionality
-    console.log("Delete clicked");
+  const handleDelete = async () => {
+    if (!conversation?.id || !accountId) return;
+
+    // Confirm before deleting
+    if (!window.confirm('Are you sure you want to delete this conversation? This action cannot be undone.')) {
+      return;
+    }
+
+    try {
+      setIsSending(true);
+      await chatwootService.conversations.deleteConversation(accountId, conversation.id);
+
+      // Signal deletion to parent
+      if (onConversationUpdate) {
+        onConversationUpdate({ ...conversation, id: -1 }); // -1 signals deletion
+      }
+
+      console.log('[handleDelete] Conversation deleted successfully');
+    } catch (error) {
+      console.error('[handleDelete] Failed to delete conversation:', error);
+      alert('Failed to delete conversation. Please try again.');
+    } finally {
+      setIsSending(false);
+    }
   };
 
-  const handleStar = () => {
-    // TODO: Implement star functionality
-    console.log("Star clicked");
+  const handleStar = async () => {
+    if (!conversation?.id || !accountId) return;
+
+    try {
+      setIsSending(true);
+      const newStarred = !conversation.starred;
+
+      // Update conversation starred status
+      await chatwootService.conversations.updateConversation(
+        accountId,
+        conversation.id,
+        { starred: newStarred }
+      );
+
+      // Update conversation in list
+      if (onConversationUpdate) {
+        onConversationUpdate({ ...conversation, starred: newStarred });
+      }
+
+      console.log(`[handleStar] Conversation ${newStarred ? 'starred' : 'unstarred'}`);
+    } catch (error) {
+      console.error('[handleStar] Failed to toggle star:', error);
+    } finally {
+      setIsSending(false);
+    }
   };
 
   const handlePrint = () => {

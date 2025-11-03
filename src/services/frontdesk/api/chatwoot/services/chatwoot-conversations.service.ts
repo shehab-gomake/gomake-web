@@ -17,6 +17,7 @@ import {
   ConversationAssigneeType,
   ConversationSortBy,
 } from "../types/conversations.types";
+import type { ConversationLabels } from "../types/labels.types";
 
 /**
  * ConversationFilterRequest payload
@@ -178,8 +179,8 @@ export class ChatwootConversationsService extends BaseChatwootService {
    * @param filterRequest - Filter criteria and pagination
    * @returns Promise with filtered conversation list
    */
-  async filterConversations(accountId: number, filterRequest: ConversationFilterRequest): Promise<any> {
-    return await this.post<any>("/api/accounts/conversations/filter", filterRequest);
+  async filterConversations(accountId: number, filterRequest: ConversationFilterRequest): Promise<ConversationListResponse> {
+    return await this.post<ConversationListResponse>("/api/accounts/conversations/filter", filterRequest);
   }
 
   /**
@@ -298,8 +299,8 @@ export class ChatwootConversationsService extends BaseChatwootService {
    * @param conversationId - The numeric ID of the conversation
    * @returns Promise with toggled conversation
    */
-  async toggleConversationStatus(accountId: number, conversationId: number): Promise<any> {
-    return await this.post<any>(`/api/accounts/conversations/${conversationId}/toggle_status`);
+  async toggleConversationStatus(accountId: number, conversationId: number): Promise<ConversationDetailResponse> {
+    return await this.post<ConversationDetailResponse>(`/api/accounts/conversations/${conversationId}/toggle_status`);
   }
 
   /**
@@ -345,8 +346,8 @@ export class ChatwootConversationsService extends BaseChatwootService {
    * @param conversationId - The numeric ID of the conversation
    * @returns Promise with toggled conversation
    */
-  async toggleConversationPriority(accountId: number, conversationId: number): Promise<any> {
-    return await this.post<any>(`/api/accounts/conversations/${conversationId}/toggle_priority`);
+  async toggleConversationPriority(accountId: number, conversationId: number): Promise<ConversationDetailResponse> {
+    return await this.post<ConversationDetailResponse>(`/api/accounts/conversations/${conversationId}/toggle_priority`);
   }
 
   /**
@@ -374,11 +375,11 @@ export class ChatwootConversationsService extends BaseChatwootService {
     accountId: number,
     conversationId: number,
     assigneeId: number | null
-  ): Promise<any> {
+  ): Promise<ChatwootConversation> {
     const url = assigneeId !== null
       ? `/api/accounts/conversations/${conversationId}/assignments?assignee_id=${assigneeId}`
       : `/api/accounts/conversations/${conversationId}/assignments`;
-    return await this.post<any>(url, {});
+    return await this.post<ChatwootConversation>(url, {});
   }
 
   /**
@@ -406,8 +407,8 @@ export class ChatwootConversationsService extends BaseChatwootService {
     accountId: number,
     conversationId: number,
     teamId: number | null
-  ): Promise<any> {
-    return await this.post<any>(
+  ): Promise<ChatwootConversation> {
+    return await this.post<ChatwootConversation>(
       `/api/accounts/conversations/${conversationId}/assignments`,
       { team_id: teamId }
     );
@@ -444,8 +445,8 @@ export class ChatwootConversationsService extends BaseChatwootService {
    * @param labels - Array of label names
    * @returns Promise with updated labels
    */
-  async addConversationLabels(accountId: number, conversationId: number, labels: string[]): Promise<any> {
-    return await this.post<any>(`/api/accounts/conversations/${conversationId}/labels`, { labels });
+  async addConversationLabels(accountId: number, conversationId: number, labels: string[]): Promise<ConversationLabels> {
+    return await this.post<ConversationLabels>(`/api/accounts/conversations/${conversationId}/labels`, { labels });
   }
 
   /**
@@ -457,8 +458,8 @@ export class ChatwootConversationsService extends BaseChatwootService {
    * @param conversationId - The numeric ID of the conversation
    * @returns Promise with conversation labels
    */
-  async listConversationLabels(accountId: number, conversationId: number): Promise<any> {
-    return await this.get<any>(`/api/accounts/conversations/${conversationId}/labels`);
+  async listConversationLabels(accountId: number, conversationId: number): Promise<ConversationLabels> {
+    return await this.get<ConversationLabels>(`/api/accounts/conversations/${conversationId}/labels`);
   }
 
   /**
@@ -474,9 +475,9 @@ export class ChatwootConversationsService extends BaseChatwootService {
   async updateConversationCustomAttributes(
     accountId: number,
     conversationId: number,
-    customAttributes: Record<string, any>
-  ): Promise<any> {
-    return await this.post<any>(
+    customAttributes: Record<string, unknown>
+  ): Promise<ChatwootConversation> {
+    return await this.post<ChatwootConversation>(
       `/api/accounts/conversations/${conversationId}/custom_attributes`,
       customAttributes
     );
@@ -490,7 +491,7 @@ export class ChatwootConversationsService extends BaseChatwootService {
    * @param accountId - The numeric ID of the account (kept for compatibility but not used in URL)
    * @returns Promise with conversation metadata (counts, etc.)
    */
-  async getConversationMeta(accountId: number): Promise<any> {
-    return await this.get<any>("/api/accounts/conversations/meta");
+  async getConversationMeta(accountId: number): Promise<{ mine_count?: number; unassigned_count?: number; all_count?: number }> {
+    return await this.get<{ mine_count?: number; unassigned_count?: number; all_count?: number }>("/api/accounts/conversations/meta");
   }
 }

@@ -1,13 +1,19 @@
 /**
  * Chatwoot Messages Service
- * 
+ *
  * Handles all message-related endpoints.
  * All endpoints require account_id and conversation_id.
- * 
+ *
  * @see MessagesApi.md
  */
 
 import { BaseChatwootService } from "../core/base-chatwoot-service";
+import type {
+  Message,
+  MessageDetailed,
+  ConversationMessages,
+  ConversationMessageCreatePayload,
+} from "../types/messages.types";
 
 /**
  * ChatwootMessagesService
@@ -34,7 +40,7 @@ export class ChatwootMessagesService extends BaseChatwootService {
   /**
    * List All Messages
    * GET /api/v1/accounts/{account_id}/conversations/{conversation_id}/messages
-   * 
+   *
    * @param accountId - The numeric ID of the account
    * @param conversationId - The numeric ID of the conversation
    * @param params - Query parameters (before, after, etc.)
@@ -46,9 +52,9 @@ export class ChatwootMessagesService extends BaseChatwootService {
     params?: {
       before?: number;
       after?: number;
-      [key: string]: any;
+      [key: string]: unknown;
     }
-  ): Promise<any> {
+  ): Promise<ConversationMessages> {
     const queryParams = new URLSearchParams();
     if (params) {
       Object.entries(params).forEach(([key, value]) => {
@@ -63,18 +69,18 @@ export class ChatwootMessagesService extends BaseChatwootService {
       accountId,
       `conversations/${conversationId}/messages${queryString ? `?${queryString}` : ""}`
     );
-    return await this.get<any>(url);
+    return await this.get<ConversationMessages>(url);
   }
 
   /**
    * Create New Message
    * POST /api/v1/accounts/{account_id}/conversations/{conversation_id}/messages
-   * 
+   *
    * @param accountId - The numeric ID of the account
    * @param conversationId - The numeric ID of the conversation
    * @param payload - Message creation payload
    * @returns Promise with created message
-   * 
+   *
    * @example
    * ```typescript
    * // Simple text message
@@ -82,7 +88,7 @@ export class ChatwootMessagesService extends BaseChatwootService {
    *   content: "Hello!",
    *   message_type: "outgoing"
    * });
-   * 
+   *
    * // WhatsApp template message
    * await messagesService.createMessage(accountId, conversationId, {
    *   content: "Your order is confirmed",
@@ -101,21 +107,9 @@ export class ChatwootMessagesService extends BaseChatwootService {
   async createMessage(
     accountId: number,
     conversationId: number,
-    payload: {
-      content?: string;
-      message_type: "incoming" | "outgoing";
-      private?: boolean;
-      template_params?: {
-        name: string;
-        category: string;
-        language: string;
-        processed_params?: Record<string, any>;
-      };
-      attachments?: any[];
-      [key: string]: any;
-    }
-  ): Promise<any> {
-    return await this.post<any>(
+    payload: ConversationMessageCreatePayload
+  ): Promise<Message> {
+    return await this.post<Message>(
       this.accountScopedUrl(
         accountId,
         `conversations/${conversationId}/messages`

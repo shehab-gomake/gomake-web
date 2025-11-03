@@ -29,19 +29,22 @@ export const useChatwootInboxes = () => {
   // Use base data fetch hook with Recoil state synchronization
   const { data: fetchedInboxes, loading: fetchLoading, error: fetchError, refresh } = useChatwootDataFetch<ChatwootInbox[]>({
     fetchFn: async () => {
+      if (!selectedAccountId) {
+        return [];
+      }
       return await chatwootService.inboxes.listAllInboxes();
     },
     extractData: extractPayload,
-    autoFetch: true,
+    autoFetch: !!selectedAccountId,
     createFilterKey: () => `inboxes-${selectedAccountId}`,
   });
 
-  // Sync fetched data to Recoil state
+  // Sync fetched data to Recoil state (only when data actually changes)
   useEffect(() => {
-    if (fetchedInboxes.length > 0 || inboxes.length === 0) {
+    if (fetchedInboxes && fetchedInboxes.length > 0) {
       setInboxes(fetchedInboxes);
     }
-  }, [fetchedInboxes, setInboxes, inboxes.length]);
+  }, [fetchedInboxes, setInboxes]);
 
   // Sync loading state from base hook to Recoil
   useEffect(() => {
