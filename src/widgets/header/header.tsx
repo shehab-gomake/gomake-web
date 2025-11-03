@@ -1,12 +1,4 @@
-import {
-  Avatar,
-  IconButton,
-  MenuItem,
-  styled,
-  Tooltip,
-  tooltipClasses,
-  TooltipProps,
-} from "@mui/material";
+import { Avatar, IconButton, MenuItem, styled, Tooltip, tooltipClasses, TooltipProps } from "@mui/material";
 import { EditIcon } from "@/icons";
 import { useStyle } from "./style";
 import { useHeader } from "./use-header";
@@ -17,10 +9,12 @@ import { QuoteIfExistState } from "@/pages-components/quote-new/store/quote";
 import { CartIcon } from "@/icons/cart-icon";
 import { MessengerNotifications } from "@/widgets/messenger-notifications-widget/messenger-notifications";
 import { FrontdeskNav } from "@/widgets/frontdesk-nav/frontdesk-nav";
+import { FrontdeskV2Nav } from "@/widgets/frontdesk-v2-nav/frontdesk-v2-nav";
 import { SystemNotifications } from "@/widgets/system-notifications-widget/system-notifications";
 import { SystemHelp } from "./components/system-help-and-support-widget/system-help-and-support-widget";
 import { TrialIndicator } from "@/components";
 import { GoSupportChatWidget } from "@/components/chat-bot/go-support-chat-widget";
+import BugReportIcon from "@mui/icons-material/BugReport";
 
 export const CustomTooltip = styled(({ className, ...props }: TooltipProps) => (
   <Tooltip {...props} arrow classes={{ popper: className }} />
@@ -42,8 +36,7 @@ const HeaderWidget = ({ customStyle }: { customStyle?: React.CSSProperties }) =>
   const { classes } = useStyle();
   const userProfile = useRecoilValue(userProfileState);
   const [QuoteIfExist] = useRecoilState<any>(QuoteIfExistState);
-  const { t, user, open, anchorEl, handleClick, handleClose, navigate } =
-    useHeader();
+  const { t, user, open, anchorEl, handleClick, handleClose, navigate } = useHeader();
 
   const userAvatar = () => {
     return !!userProfile.imagePath ? (
@@ -70,12 +63,16 @@ const HeaderWidget = ({ customStyle }: { customStyle?: React.CSSProperties }) =>
         {/* <MessengerNotifications /> */}
         {/* !here front desk */}
         <FrontdeskNav />
+        <FrontdeskV2Nav />
+        {/* Chatwoot Test Button */}
+        <CustomTooltip title="Chatwoot Test" arrow>
+          <IconButton style={{ backgroundColor: "#f6f6f6", padding: "8px" }} onClick={() => navigate("/frontdesk/chatwoot-test")}>
+            <BugReportIcon style={{ color: "#ff6b6b", width: 22, height: 22 }} />
+          </IconButton>
+        </CustomTooltip>
         <SystemNotifications />
         {QuoteIfExist == true && window.location.pathname != "/quote" && (
-          <IconButton
-            style={{ backgroundColor: "#f6f6f6", padding: "8px" }}
-            onClick={() => navigate("/quote")}
-          >
+          <IconButton style={{ backgroundColor: "#f6f6f6", padding: "8px" }} onClick={() => navigate("/quote")}>
             <CartIcon />
           </IconButton>
         )}
@@ -86,31 +83,20 @@ const HeaderWidget = ({ customStyle }: { customStyle?: React.CSSProperties }) =>
         <SystemHelp />
         <div style={classes.verticalDivider} />
         <div style={classes.profileContainer}>
-          <CustomTooltip
-            title={`${user?.firstName} ${user?.lastName}`}
-            arrow
-            placement={"bottom-start"}
-          >
+          <CustomTooltip title={`${user?.firstName} ${user?.lastName}`} arrow placement={"bottom-start"}>
             <IconButton style={{ padding: "2px" }} onClick={handleClick}>
               {userAvatar()}
             </IconButton>
           </CustomTooltip>
         </div>
       </div>
-      <GoMakeMenu
-        handleClose={handleClose}
-        open={open}
-        anchorEl={anchorEl}
-        menuOffsetY={1}
-      >
+      <GoMakeMenu handleClose={handleClose} open={open} anchorEl={anchorEl} menuOffsetY={1}>
         <div style={classes.mainMenuContainer}>
           <div style={classes.accountTextStyle}>{t("login.account")}</div>
           <div style={classes.imgNameContainer}>
             {userAvatar()}
             <div>
-              <div
-                style={classes.nameTextStyle}
-              >{`${user?.firstName} ${user?.lastName}`}</div>
+              <div style={classes.nameTextStyle}>{`${user?.firstName} ${user?.lastName}`}</div>
               <div style={classes.emailTextStyle}>{user?.email}</div>
             </div>
           </div>
@@ -124,9 +110,7 @@ const HeaderWidget = ({ customStyle }: { customStyle?: React.CSSProperties }) =>
             }}
           >
             <div style={classes.manageAccountStyle}>
-              <div style={classes.manageAccountTextStyle}>
-                {t("login.manageAccount")}
-              </div>
+              <div style={classes.manageAccountTextStyle}>{t("login.manageAccount")}</div>
               <EditIcon />
             </div>
           </MenuItem>
