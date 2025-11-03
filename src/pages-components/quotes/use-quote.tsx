@@ -375,12 +375,30 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     setOpenAddRule(false);
   };
   const onOpenAddRuleModal = () => {
-    // Check if there are active filters
-    const activeFilters = Object.keys(router.query).filter(
-      (key) => key !== "pageNumber"
-    );
+    // Check if there are active filters by checking all filter state variables
+    const hasActiveFilters =
+      patternSearch ||
+      finalPatternSearch ||
+      statusId ||
+      approvalStatusId ||
+      quoteStatusId ||
+      customerId ||
+      agentId ||
+      dateRange ||
+      productionStatus ||
+      accountingStatus ||
+      deliveryStatus ||
+      productIds?.length > 0 ||
+      currencyFilter ||
+      isCanceledState ||
+      isPausedOrders ||
+      minPrice ||
+      maxPrice ||
+      fromDate ||
+      toDate ||
+      paymentType;
 
-    if (activeFilters.length > 0) {
+    if (hasActiveFilters) {
       setOpenFilterConfirmationModal(true);
     } else {
       setOpenAddRule(true);
@@ -578,6 +596,10 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const ExportDocumentTableToExcel = async (
     exportType?: INVOICES_EXPORT_TYPES
   ) => {
+    if (!fromDate && !toDate) {
+      alertFault(t("boardMissions.dateFilterRequired"));
+      return;
+    }
     const sortOrder = currentSortOrder;
     const callBack = (res) => {
       if (res?.success) {
