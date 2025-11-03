@@ -171,98 +171,302 @@ export class ChatwootConversationsService extends BaseChatwootService {
 
   /**
    * Filter Conversations
-   * POST /api/accounts/{account_id}/conversations/filter
+   * POST /api/accounts/conversations/filter
+   * Note: Does NOT use account ID in URL path (authenticated user's account is used)
    *
-   * @param accountId - The numeric ID of the account
+   * @param accountId - The numeric ID of the account (kept for compatibility but not used in URL)
    * @param filterRequest - Filter criteria and pagination
    * @returns Promise with filtered conversation list
    */
   async filterConversations(accountId: number, filterRequest: ConversationFilterRequest): Promise<any> {
-    return await this.post<any>(this.accountScopedUrl(accountId, "conversations/filter"), filterRequest);
+    return await this.post<any>("/api/accounts/conversations/filter", filterRequest);
   }
 
   /**
    * Create New Conversation
-   * POST /api/accounts/{account_id}/conversations
+   * POST /api/accounts/conversations
+   * Note: Does NOT use account ID in URL path (authenticated user's account is used)
    *
-   * @param accountId - The numeric ID of the account
+   * @param accountId - The numeric ID of the account (kept for compatibility but not used in URL)
    * @param payload - Conversation creation payload
    * @returns Promise with created conversation
    */
   async createConversation(accountId: number, payload: any): Promise<ConversationDetailResponse> {
-    return await this.post<ConversationDetailResponse>(this.accountScopedUrl(accountId, "conversations"), payload);
+    return await this.post<ConversationDetailResponse>("/api/accounts/conversations", payload);
   }
 
   /**
    * Update Conversation
-   * PATCH /api/accounts/{account_id}/conversations/{conversation_id}
+   * PATCH /api/accounts/conversations/{conversation_id}
+   * Note: Does NOT use account ID in URL path (authenticated user's account is used)
    *
-   * @param accountId - The numeric ID of the account
+   * @param accountId - The numeric ID of the account (kept for compatibility but not used in URL)
    * @param conversationId - The numeric ID of the conversation
    * @param payload - Update payload
    * @returns Promise with updated conversation
    */
   async updateConversation(accountId: number, conversationId: number, payload: any): Promise<ConversationDetailResponse> {
     return await this.patch<ConversationDetailResponse>(
-      this.accountScopedUrl(accountId, `conversations/${conversationId}`),
+      `/api/accounts/conversations/${conversationId}`,
       payload
     );
   }
 
   /**
-   * Toggle Conversation Status
-   * POST /api/accounts/{account_id}/conversations/{conversation_id}/toggle_status
+   * Mark Conversation as Read
+   * POST /api/accounts/conversations/{conversation_id}/update_last_seen
    *
-   * @param accountId - The numeric ID of the account
+   * Updates the agent's last seen timestamp, marking the conversation as read.
+   *
+   * @param accountId - The numeric ID of the account (kept for compatibility)
+   * @param conversationId - The numeric ID of the conversation
+   * @returns Promise<void>
+   *
+   * @example
+   * ```typescript
+   * await service.markConversationAsRead(accountId, 123);
+   * ```
+   */
+  async markConversationAsRead(accountId: number, conversationId: number): Promise<void> {
+    return await this.post<void>(`/api/accounts/conversations/${conversationId}/update_last_seen`, {});
+  }
+
+  /**
+   * Mark Conversation as Unread
+   * POST /api/accounts/conversations/{conversation_id}/unread
+   *
+   * Marks the conversation as unread for the current agent.
+   *
+   * @param accountId - The numeric ID of the account (kept for compatibility)
+   * @param conversationId - The numeric ID of the conversation
+   * @returns Promise<void>
+   *
+   * @example
+   * ```typescript
+   * await service.markConversationAsUnread(accountId, 123);
+   * ```
+   */
+  async markConversationAsUnread(accountId: number, conversationId: number): Promise<void> {
+    return await this.post<void>(`/api/accounts/conversations/${conversationId}/unread`, {});
+  }
+
+  /**
+   * Update Conversation Status
+   * POST /api/accounts/conversations/{conversation_id}/toggle_status
+   *
+   * Changes the conversation status (open, resolved, pending, snoozed).
+   * For snooze, include snoozed_until timestamp.
+   * Note: Does NOT use account ID in URL path (authenticated user's account is used)
+   *
+   * @param accountId - The numeric ID of the account (kept for compatibility but not used in URL)
+   * @param conversationId - The numeric ID of the conversation
+   * @param payload - Status change payload
+   * @returns Promise with updated conversation
+   *
+   * @example
+   * ```typescript
+   * // Resolve conversation
+   * await service.updateConversationStatus(accountId, 123, { status: 'resolved' });
+   *
+   * // Snooze conversation until tomorrow
+   * await service.updateConversationStatus(accountId, 123, {
+   *   status: 'snoozed',
+   *   snoozed_until: '2024-12-25T10:00:00Z'
+   * });
+   * ```
+   */
+  async updateConversationStatus(
+    accountId: number,
+    conversationId: number,
+    payload: {
+      status: 'open' | 'resolved' | 'pending' | 'snoozed';
+      snoozed_until?: string;
+    }
+  ): Promise<ConversationDetailResponse> {
+    return await this.post<ConversationDetailResponse>(
+      `/api/accounts/conversations/${conversationId}/toggle_status`,
+      payload
+    );
+  }
+
+  /**
+   * @deprecated Use updateConversationStatus instead
+   * Toggle Conversation Status
+   * POST /api/accounts/conversations/{conversation_id}/toggle_status
+   *
+   * @param accountId - The numeric ID of the account (kept for compatibility but not used in URL)
    * @param conversationId - The numeric ID of the conversation
    * @returns Promise with toggled conversation
    */
   async toggleConversationStatus(accountId: number, conversationId: number): Promise<any> {
-    return await this.post<any>(this.accountScopedUrl(accountId, `conversations/${conversationId}/toggle_status`));
+    return await this.post<any>(`/api/accounts/conversations/${conversationId}/toggle_status`);
   }
 
   /**
-   * Toggle Conversation Priority
-   * POST /api/accounts/{account_id}/conversations/{conversation_id}/toggle_priority
+   * Update Conversation Priority
+   * POST /api/accounts/conversations/{conversation_id}/toggle_priority
    *
-   * @param accountId - The numeric ID of the account
+   * Sets the conversation priority level.
+   * Note: Does NOT use account ID in URL path (authenticated user's account is used)
+   *
+   * @param accountId - The numeric ID of the account (kept for compatibility but not used in URL)
+   * @param conversationId - The numeric ID of the conversation
+   * @param payload - Priority change payload
+   * @returns Promise with updated conversation
+   *
+   * @example
+   * ```typescript
+   * // Set to urgent priority
+   * await service.updateConversationPriority(accountId, 123, { priority: 'urgent' });
+   *
+   * // Remove priority
+   * await service.updateConversationPriority(accountId, 123, { priority: null });
+   * ```
+   */
+  async updateConversationPriority(
+    accountId: number,
+    conversationId: number,
+    payload: {
+      priority: 'urgent' | 'high' | 'medium' | 'low' | null;
+    }
+  ): Promise<ConversationDetailResponse> {
+    return await this.post<ConversationDetailResponse>(
+      `/api/accounts/conversations/${conversationId}/toggle_priority`,
+      payload
+    );
+  }
+
+  /**
+   * @deprecated Use updateConversationPriority instead
+   * Toggle Conversation Priority
+   * POST /api/accounts/conversations/{conversation_id}/toggle_priority
+   *
+   * @param accountId - The numeric ID of the account (kept for compatibility but not used in URL)
    * @param conversationId - The numeric ID of the conversation
    * @returns Promise with toggled conversation
    */
   async toggleConversationPriority(accountId: number, conversationId: number): Promise<any> {
-    return await this.post<any>(this.accountScopedUrl(accountId, `conversations/${conversationId}/toggle_priority`));
+    return await this.post<any>(`/api/accounts/conversations/${conversationId}/toggle_priority`);
+  }
+
+  /**
+   * Assign Agent to Conversation
+   * POST /api/accounts/conversations/{conversation_id}/assignments?assignee_id={agent_id}
+   *
+   * Assigns or unassigns an agent to the conversation.
+   * Note: Does NOT use account ID in URL path (authenticated user's account is used)
+   *
+   * @param accountId - The numeric ID of the account (kept for compatibility but not used in URL)
+   * @param conversationId - The numeric ID of the conversation
+   * @param assigneeId - The agent ID to assign, or null to unassign
+   * @returns Promise with assignment result
+   *
+   * @example
+   * ```typescript
+   * // Assign agent with ID 42
+   * await service.assignAgent(accountId, 123, 42);
+   *
+   * // Unassign agent
+   * await service.assignAgent(accountId, 123, null);
+   * ```
+   */
+  async assignAgent(
+    accountId: number,
+    conversationId: number,
+    assigneeId: number | null
+  ): Promise<any> {
+    const url = assigneeId !== null
+      ? `/api/accounts/conversations/${conversationId}/assignments?assignee_id=${assigneeId}`
+      : `/api/accounts/conversations/${conversationId}/assignments`;
+    return await this.post<any>(url, {});
+  }
+
+  /**
+   * Assign Team to Conversation
+   * POST /api/accounts/conversations/{conversation_id}/assignments
+   *
+   * Assigns or unassigns a team to the conversation.
+   * Note: Does NOT use account ID in URL path (authenticated user's account is used)
+   *
+   * @param accountId - The numeric ID of the account (kept for compatibility but not used in URL)
+   * @param conversationId - The numeric ID of the conversation
+   * @param teamId - The team ID to assign, or null to unassign
+   * @returns Promise with assignment result
+   *
+   * @example
+   * ```typescript
+   * // Assign team with ID 5
+   * await service.assignTeam(accountId, 123, 5);
+   *
+   * // Unassign team
+   * await service.assignTeam(accountId, 123, null);
+   * ```
+   */
+  async assignTeam(
+    accountId: number,
+    conversationId: number,
+    teamId: number | null
+  ): Promise<any> {
+    return await this.post<any>(
+      `/api/accounts/conversations/${conversationId}/assignments`,
+      { team_id: teamId }
+    );
+  }
+
+  /**
+   * Delete Conversation (Admin Only)
+   * DELETE /api/accounts/conversations/{conversation_id}
+   *
+   * Soft-deletes a conversation via background job.
+   * This endpoint should only be accessible to admin users.
+   *
+   * @param accountId - The numeric ID of the account (kept for compatibility)
+   * @param conversationId - The numeric ID of the conversation
+   * @returns Promise<void>
+   *
+   * @example
+   * ```typescript
+   * // Delete conversation (admin only)
+   * await service.deleteConversation(accountId, 123);
+   * ```
+   */
+  async deleteConversation(accountId: number, conversationId: number): Promise<void> {
+    return await this.delete<void>(`/api/accounts/conversations/${conversationId}`);
   }
 
   /**
    * Add Labels to Conversation
-   * POST /api/accounts/{account_id}/conversations/{conversation_id}/labels
+   * POST /api/accounts/conversations/{conversation_id}/labels
+   * Note: Does NOT use account ID in URL path (authenticated user's account is used)
    *
-   * @param accountId - The numeric ID of the account
+   * @param accountId - The numeric ID of the account (kept for compatibility but not used in URL)
    * @param conversationId - The numeric ID of the conversation
    * @param labels - Array of label names
    * @returns Promise with updated labels
    */
   async addConversationLabels(accountId: number, conversationId: number, labels: string[]): Promise<any> {
-    return await this.post<any>(this.accountScopedUrl(accountId, `conversations/${conversationId}/labels`), { labels });
+    return await this.post<any>(`/api/accounts/conversations/${conversationId}/labels`, { labels });
   }
 
   /**
    * List Conversation Labels
-   * GET /api/accounts/{account_id}/conversations/{conversation_id}/labels
+   * GET /api/accounts/conversations/{conversation_id}/labels
+   * Note: Does NOT use account ID in URL path (authenticated user's account is used)
    *
-   * @param accountId - The numeric ID of the account
+   * @param accountId - The numeric ID of the account (kept for compatibility but not used in URL)
    * @param conversationId - The numeric ID of the conversation
    * @returns Promise with conversation labels
    */
   async listConversationLabels(accountId: number, conversationId: number): Promise<any> {
-    return await this.get<any>(this.accountScopedUrl(accountId, `conversations/${conversationId}/labels`));
+    return await this.get<any>(`/api/accounts/conversations/${conversationId}/labels`);
   }
 
   /**
    * Update Conversation Custom Attributes
-   * POST /api/accounts/{account_id}/conversations/{conversation_id}/custom_attributes
+   * POST /api/accounts/conversations/{conversation_id}/custom_attributes
+   * Note: Does NOT use account ID in URL path (authenticated user's account is used)
    *
-   * @param accountId - The numeric ID of the account
+   * @param accountId - The numeric ID of the account (kept for compatibility but not used in URL)
    * @param conversationId - The numeric ID of the conversation
    * @param customAttributes - Custom attributes object
    * @returns Promise with updated conversation
@@ -273,19 +477,20 @@ export class ChatwootConversationsService extends BaseChatwootService {
     customAttributes: Record<string, any>
   ): Promise<any> {
     return await this.post<any>(
-      this.accountScopedUrl(accountId, `conversations/${conversationId}/custom_attributes`),
+      `/api/accounts/conversations/${conversationId}/custom_attributes`,
       customAttributes
     );
   }
 
   /**
    * Get Conversation Counts/Meta
-   * GET /api/accounts/{account_id}/conversations/meta
+   * GET /api/accounts/conversations/meta
+   * Note: Does NOT use account ID in URL path (authenticated user's account is used)
    *
-   * @param accountId - The numeric ID of the account
+   * @param accountId - The numeric ID of the account (kept for compatibility but not used in URL)
    * @returns Promise with conversation metadata (counts, etc.)
    */
   async getConversationMeta(accountId: number): Promise<any> {
-    return await this.get<any>(this.accountScopedUrl(accountId, "conversations/meta"));
+    return await this.get<any>("/api/accounts/conversations/meta");
   }
 }

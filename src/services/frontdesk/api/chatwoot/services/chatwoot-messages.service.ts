@@ -127,7 +127,7 @@ export class ChatwootMessagesService extends BaseChatwootService {
   /**
    * Delete Message
    * DELETE /api/v1/accounts/{account_id}/conversations/{conversation_id}/messages/{message_id}
-   * 
+   *
    * @param accountId - The numeric ID of the account
    * @param conversationId - The numeric ID of the conversation
    * @param messageId - The numeric ID of the message
@@ -143,6 +143,45 @@ export class ChatwootMessagesService extends BaseChatwootService {
         accountId,
         `conversations/${conversationId}/messages/${messageId}`
       )
+    );
+  }
+
+  /**
+   * Translate Message
+   * POST /api/accounts/conversations/{conversation_id}/messages/{message_id}/translate
+   *
+   * Translates a message to the specified target language using the account's translation service.
+   * Note: Does NOT use account ID in URL path (authenticated user's account is used)
+   *
+   * @param accountId - The numeric ID of the account (kept for compatibility but not used in URL)
+   * @param conversationId - The numeric ID of the conversation
+   * @param messageId - The numeric ID of the message
+   * @param payload - Translation parameters
+   * @returns Promise with translated content
+   *
+   * @example
+   * ```typescript
+   * // Translate message to English
+   * const result = await messagesService.translateMessage(
+   *   accountId,
+   *   conversationId,
+   *   messageId,
+   *   { target_language: 'en' }
+   * );
+   * console.log(result.content); // Translated message content
+   * ```
+   */
+  async translateMessage(
+    accountId: number,
+    conversationId: number,
+    messageId: number,
+    payload: {
+      target_language: string;
+    }
+  ): Promise<{ content: string }> {
+    return await this.post<{ content: string }>(
+      `/api/accounts/conversations/${conversationId}/messages/${messageId}/translate`,
+      payload
     );
   }
 }

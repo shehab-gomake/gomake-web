@@ -54,6 +54,7 @@ docs/frontdesk/                  # FrontDesk documentation
 | **Email**          | ✅ Complete | REST + OAuth     | ❌            |
 | **WhatsApp**       | 🟡 Mock     | Mock data        | ❌            |
 | **Tickets**        | ✅ Complete | REST + WebSocket | ✅ 12 events  |
+| **Chatwoot**       | ✅ Complete | REST             | ❌            |
 | **Unified**        | 🟡 Partial  | Aggregated       | N/A           |
 
 ### Core Structure
@@ -84,6 +85,68 @@ providers/{name}/
 └── types/                        # TypeScript types
 ```
 
+### 4.1 Chatwoot Provider
+
+**Status:** ✅ Complete (REST API only, no WebSocket)
+
+**Overview:** Production-ready customer communication platform integration with comprehensive conversation, message, inbox, and team management.
+
+**Architecture:**
+```
+providers/chatwoot/
+├── chatwoot-provider-view.tsx          # Main router
+├── views/                              # 6 distinct views
+│   ├── dashboard-view.tsx              # Stats & activity
+│   ├── my-inbox-view.tsx               # Assigned conversations
+│   ├── all-conversations-view.tsx      # Team conversations
+│   ├── mentions-view.tsx               # Mentions
+│   ├── unattended-view.tsx             # Unassigned
+│   └── channels-view.tsx               # Inbox-specific
+├── components/                         # 30+ UI components
+├── hooks/                              # 10+ domain hooks
+│   ├── use-chatwoot-provider.ts        # Main orchestrator
+│   ├── use-chatwoot-conversations.ts   # Conversation management
+│   ├── use-chatwoot-messages.ts        # Message handling
+│   ├── use-chatwoot-inboxes.ts         # Channel/inbox management
+│   └── core/                           # Reusable base hooks
+└── utils/                              # Filter, validation, helpers
+```
+
+**Services (`src/services/frontdesk/api/chatwoot/`):**
+- 8 API service groups: profile, conversations, messages, inboxes, notifications, contacts, agents, teams
+- Base URL: `http://localhost:8080/api/v1/`
+- All operations are account-scoped (require `accountId`)
+- OpenAPI-generated client available in `@/chatwoot` (for reference)
+- Custom service layer in `@/services/frontdesk` (for implementation)
+
+**State Management (20 Recoil atoms):**
+- Naming: `frontdesk.chatwoot.*`
+- Groups: profile, accounts, conversations, messages, inboxes, notifications
+- Example: `chatwootConversationsAtom`, `chatwootSelectedAccountAtom`
+
+**Key Features:**
+- Multi-account support with account switching
+- Multi-channel support (Email, WhatsApp, SMS, API, Web, Twilio)
+- Advanced filtering (status, assignee, inbox, team, labels, search)
+- Pagination with load more (20 items per page)
+- Channel-specific feature flags via `channel-features.config.ts`
+- Performance optimizations: fetch deduplication, filter key caching, memoization
+
+**Missing Features:**
+- Real-time updates (WebSocket not implemented - use REST polling)
+- Offline support
+- Virtual scrolling
+
+**Routing:**
+- Type-safe routing with `useChatwootRouter()`
+- URL pattern: `/frontdesk?channel=chatwoot&view={view}&conversationId={id}`
+
+**Documentation:**
+- `chatwoot/CHATWOOT_API_GUIDE.md` — OpenAPI client usage
+- `src/widgets/frontdesk/providers/chatwoot/README.md` — Code organization
+- `src/widgets/frontdesk/providers/chatwoot/PERFORMANCE.md` — Performance patterns
+- `src/services/frontdesk/api/chatwoot/README.md` — API architecture
+
 ---
 
 ## 5. 📦 State Management (Recoil)
@@ -107,8 +170,29 @@ import {
   messagingService,       // WebSocket for DMs
   ticketSocketService,    // WebSocket for Tickets
   directMessagesService,  // REST API for DMs
-  ticketsService          // REST API for Tickets
+  ticketsService,         // REST API for Tickets
+  chatwootService         // REST API for Chatwoot (8 service groups)
 } from '@/services/frontdesk';
+```
+
+### Chatwoot Service Usage
+```typescript
+// Chatwoot service has 8 specialized sub-services
+const { profile, conversations, messages, inboxes,
+        notifications, contacts, agents, teams } = chatwootService;
+
+// Example: Fetch conversations
+const convos = await chatwootService.conversations.listConversations(
+  accountId,
+  { status: 'open', assignee_type: 'me' }
+);
+
+// Example: Send message
+const msg = await chatwootService.messages.createMessage(
+  accountId,
+  conversationId,
+  { content: 'Hello!', message_type: 'outgoing' }
+);
 ```
 
 ---
@@ -154,9 +238,18 @@ const sendMessage = async (content: string) => {
 
 ## 8. 📚 Internal Documentation Map
 
+### Core Documentation
 - **[FRONTDESK_ARCHITECTURE.md](docs/frontdesk/00-core/FRONTDESK_ARCHITECTURE.md)** — Complete architecture
 - **[DEVELOPER_GUIDE.md](docs/frontdesk/00-core/DEVELOPER_GUIDE.md)** — Development patterns
+
+### Provider Documentation
 - **[TICKETS_PROVIDER_GUIDE.md](docs/frontdesk/01-providers/tickets/TICKETS_PROVIDER_GUIDE.md)** — Tickets implementation
+
+### Chatwoot Provider Documentation
+- **[chatwoot/CHATWOOT_API_GUIDE.md](chatwoot/CHATWOOT_API_GUIDE.md)** — OpenAPI client usage guide
+- **[src/widgets/frontdesk/providers/chatwoot/README.md](src/widgets/frontdesk/providers/chatwoot/README.md)** — Code organization and patterns
+- **[src/widgets/frontdesk/providers/chatwoot/PERFORMANCE.md](src/widgets/frontdesk/providers/chatwoot/PERFORMANCE.md)** — Performance optimization guide
+- **[src/services/frontdesk/api/chatwoot/README.md](src/services/frontdesk/api/chatwoot/README.md)** — API service architecture
 
 ---
 
@@ -200,6 +293,18 @@ Use Task tool with subagent_type: "frontdesk-orchestrator"
 - Test role-based permissions (USER/MANAGER/ADMIN).
 - Handle multi-channel messages (EMAIL/WHATSAPP/SMS).
 - Preserve tenant isolation (`printHouseId` scoping).
+
+### Chatwoot-Specific Rules
+- **Use custom service layer**: Import from `@/services/frontdesk`, NOT the OpenAPI generated `@/chatwoot` client.
+- **Multi-account pattern**: All operations require `accountId` parameter (except profile).
+- **Account scoping**: URLs follow pattern `/api/v1/accounts/{accountId}/...`.
+- **Channel features**: Use `channel-features.config.ts` to determine available features per channel type.
+- **Fetch deduplication**: Use `useChatwootInitialization` pattern to prevent duplicate API calls.
+- **Filter stability**: Use `createFilterKey()` utility for stable filter keys to prevent unnecessary refetches.
+- **No WebSocket**: Real-time updates not implemented - use REST polling or manual refresh.
+- **Performance patterns**: Always use `useMemo`/`useCallback` for derived state and callbacks.
+- **Base hooks**: Prefer reusable base hooks (`useChatwootDataFetch`, `useChatwootFilters`) over duplicating logic.
+- **OpenAPI docs**: Reference `chatwoot/docs/` for API contracts, but implement using custom services.
 
 ### Workflow
 1.  Read this file first to understand scope.

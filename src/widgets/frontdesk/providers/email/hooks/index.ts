@@ -12,3 +12,7 @@ export { useEmailProvider } from "./use-email-provider";
 export { useEmailSend } from "./use-email-send";
 export { useEmailConversationManager } from "./use-email-conversation-manager";
 export { useProviders } from "./use-providers";
+
+// Email iframe viewer hooks
+export { useEmailContentProcessor, useHasExternalImages } from "./useEmailContentProcessor";
+export { useExternalImageControl, useGlobalExternalImagePreference, getExternalImageStats } from "./useExternalImageControl";

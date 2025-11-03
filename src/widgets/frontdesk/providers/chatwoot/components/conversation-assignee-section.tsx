@@ -5,7 +5,7 @@
  * and provides options to reassign.
  */
 
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
   Box,
   Typography,
@@ -48,6 +48,26 @@ export const ConversationAssigneeSection: React.FC<ConversationAssigneeSectionPr
 }) => {
   const [menuAnchor, setMenuAnchor] = useState<null | HTMLElement>(null);
   const [updating, setUpdating] = useState(false);
+  const [agents, setAgents] = useState<Agent[]>([]);
+  const [loadingAgents, setLoadingAgents] = useState(false);
+
+  /**
+   * Fetch available agents for assignment
+   */
+  const fetchAgents = useCallback(async () => {
+    if (!accountId || loadingAgents) return;
+
+    setLoadingAgents(true);
+    try {
+      const agentsList = await chatwootService.agents.listAgents(accountId);
+      setAgents(agentsList || []);
+    } catch (error) {
+      console.error('[fetchAgents] Failed to load agents:', error);
+      setAgents([]);
+    } finally {
+      setLoadingAgents(false);
+    }
+  }, [accountId, loadingAgents]);
 
   const handleAssign = async (agentId: number | null) => {
     setMenuAnchor(null);
@@ -107,7 +127,14 @@ export const ConversationAssigneeSection: React.FC<ConversationAssigneeSectionPr
 
       {assignee ? (
         <Box
-          onClick={(e) => !updating && setMenuAnchor(e.currentTarget)}
+          onClick={(e) => {
+            if (!updating) {
+              setMenuAnchor(e.currentTarget);
+              if (agents.length === 0) {
+                fetchAgents();
+              }
+            }
+          }}
           sx={{
             display: 'flex',
             alignItems: 'center',
@@ -171,7 +198,14 @@ export const ConversationAssigneeSection: React.FC<ConversationAssigneeSectionPr
           size="small"
           fullWidth
           startIcon={updating ? <CircularProgress size={16} /> : <PersonIcon />}
-          onClick={(e) => !updating && setMenuAnchor(e.currentTarget)}
+          onClick={(e) => {
+            if (!updating) {
+              setMenuAnchor(e.currentTarget);
+              if (agents.length === 0) {
+                fetchAgents();
+              }
+            }
+          }}
           disabled={updating}
           sx={{
             textTransform: 'none',
@@ -195,12 +229,57 @@ export const ConversationAssigneeSection: React.FC<ConversationAssigneeSectionPr
             </Typography>
           </MenuItem>
         )}
-        {/* TODO: Fetch and display available agents */}
-        <MenuItem disabled>
-          <Typography variant="caption" sx={{ fontSize: 11, color: colorTokens.semantic.text.secondary }}>
-            (Agent list not yet implemented)
-          </Typography>
-        </MenuItem>
+
+        {/* Loading state */}
+        {loadingAgents && (
+          <MenuItem disabled>
+            <CircularProgress size={16} sx={{ mr: 1 }} />
+            <Typography variant="caption" sx={{ fontSize: 11 }}>
+              Loading agents...
+            </Typography>
+          </MenuItem>
+        )}
+
+        {/* Agent list */}
+        {!loadingAgents && agents.map((agent) => (
+          <MenuItem
+            key={agent.id}
+            onClick={() => handleAssign(agent.id!)}
+            selected={agent.id === assignee?.id}
+          >
+            <Avatar
+              src={agent.avatar_url}
+              sx={{ width: 24, height: 24, mr: 1.5 }}
+            >
+              {agent.name?.charAt(0) || agent.available_name?.charAt(0) || 'A'}
+            </Avatar>
+            <Box>
+              <Typography variant="body2" sx={{ fontSize: 13 }}>
+                {agent.name || agent.available_name || 'Agent'}
+              </Typography>
+              {agent.email && (
+                <Typography
+                  variant="caption"
+                  sx={{
+                    fontSize: 11,
+                    color: colorTokens.semantic.text.secondary,
+                  }}
+                >
+                  {agent.email}
+                </Typography>
+              )}
+            </Box>
+          </MenuItem>
+        ))}
+
+        {/* Empty state */}
+        {!loadingAgents && agents.length === 0 && (
+          <MenuItem disabled>
+            <Typography variant="caption" sx={{ fontSize: 11, color: colorTokens.semantic.text.secondary }}>
+              No agents available
+            </Typography>
+          </MenuItem>
+        )}
       </Menu>
     </Box>
   );
