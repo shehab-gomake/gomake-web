@@ -28,6 +28,7 @@
  * ```
  */
 
+import config from "@/config";
 import { ChatwootProfileService } from "./services/chatwoot-profile.service";
 import { ChatwootConversationsService } from "./services/chatwoot-conversations.service";
 import { ChatwootInboxesService } from "./services/chatwoot-inboxes.service";
@@ -115,5 +116,6 @@ export class ChatwootService {
 /**
  * Default singleton instance
  * Use this for convenience instead of creating new instances
+ * Uses environment variable CHATWOOT_SERVER or defaults to http://localhost:8080
  */
-export const chatwootService = new ChatwootService();
+export const chatwootService = new ChatwootService(config.chatwoot_server || "http://localhost:8080");

@@ -8,6 +8,7 @@ if (getConfig()) {
     api_server: publicRuntimeConfig.API_SERVER || serverRuntimeConfig.API_SERVER,
     erp_server: publicRuntimeConfig.ERP_SERVER || serverRuntimeConfig.ERP_SERVER,
     messaging_server: publicRuntimeConfig.MESSAGING_SERVER || serverRuntimeConfig.MESSAGING_SERVER,
+    chatwoot_server: publicRuntimeConfig.CHATWOOT_SERVER || serverRuntimeConfig.CHATWOOT_SERVER,
     calculation_server: publicRuntimeConfig.CALCAULATION_SERVER || serverRuntimeConfig.CALCAULATION_SERVER,
     google_place_service: publicRuntimeConfig.GOOGLE_PLACE_SERVICE || serverRuntimeConfig.GOOGLE_PLACE_SERVICE,
     enviroment: publicRuntimeConfig.ENVIROMENT || serverRuntimeConfig.API_SERVER,
