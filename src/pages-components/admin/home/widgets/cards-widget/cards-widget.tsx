@@ -4,8 +4,25 @@ import { useTranslation } from "react-i18next";
 import { useCardWidget } from "./use-cards-widget";
 import { useRecoilValue } from "recoil";
 import { homeReportsState } from "@/pages-components/quote-new/store/quote";
+import { useTheme } from "@/contexts/theme/useTheme";
 
 const CardsWidget = () => {
+  const { getComponentOverride } = useTheme();
+
+  // Check for theme-specific override component (e.g., HpCardsWidget)
+  const OverrideComponent = getComponentOverride("CardsWidget");
+
+  // If override exists (e.g., when hp-client theme is active), use it
+  if (OverrideComponent) {
+    return <OverrideComponent />;
+  }
+
+  // Otherwise, render the default CardsWidget layout
+  return <DefaultCardsWidget />;
+};
+
+// Separate component for default layout to keep hooks unconditional
+const DefaultCardsWidget = () => {
   const { classes } = useStyle();
   const { t } = useTranslation();
   const allReports = useRecoilValue<any>(homeReportsState);

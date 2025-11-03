@@ -7,7 +7,8 @@ import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 const useStyle = () => {
   const { t } = useTranslation();
-  const { primaryColor } = useGomakeTheme();
+  const { theme, primaryColor } = useGomakeTheme();
+
   const classes = useMemo(() => {
     return {
       mainContainer: {
@@ -49,8 +50,9 @@ const useStyle = () => {
       },
       containerStyle: {
         display: "grid",
-        gridTemplateColumns: "49.5% 49.5%",
-        gridColumnGap: "1%",
+        gridTemplateColumns:
+          "var(--theme-home-grid-template-columns, 49.5% 49.5%)",
+        gridColumnGap: "var(--theme-home-grid-column-gap, 1%)",
       },
 
       mobileContainerStyle: {
@@ -67,7 +69,7 @@ const useStyle = () => {
         borderRadius: "8px",
       },
     };
-  }, [i18next.language, t]);
+  }, [i18next.language, t, theme]);
   return {
     classes,
   };

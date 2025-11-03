@@ -6,9 +6,8 @@ import { SuccessRateIcon } from "./icons/SuccessRateIcon";
 import { OrdersIcon } from "./icons/OrdersIcon";
 import { PendingIcon } from "./icons/PendingIcon";
 import { StuckJobsIcon } from "./icons/StuckJobsIcon";
-import ExampleHomePage from "../example/pages/HomePage";
-import Order from "@/pages/order/index.page";
-import Orders from "@/pages/orders/index.page";
+
+import { HpCardsWidget } from "./components/HpCardsWidget";
 
 /* HP CLIENT THEME - Custom Brand Theme */
 
@@ -174,6 +173,7 @@ const hpClientThemeConfig: ThemeConfig = {
       "--theme-card-stuck-jobs": "#EF6B6B", // Reddish
 
       // Card Text Colors (HP Client specific - for white/light cards)
+      // Used by use-cards-widget.tsx getCardTextColor()
       "--theme-card-success-rate-text": "#FFFFFF", // White text on blue
       "--theme-card-monthly-performance-text": "#024AD8", // Dark text on white
       "--theme-card-approved-text": "#FFFFFF", // White text on green
@@ -182,24 +182,24 @@ const hpClientThemeConfig: ThemeConfig = {
       "--theme-card-canceled-text": "#A3A3A3", // Dark text on gray
       "--theme-card-stuck-jobs-text": "#FFFFFF", // White text on red
 
-      // Card Layout (HP Client specific)
-      "--theme-card-height": "calc(50% - 5px)", // All cards same size (50% minus gap)
-      "--theme-card-radius": "12px", // Border radius 12px
-
-      // Card Borders (HP Client specific - for white cards)
+      // Card Borders
+      // Used by use-cards-widget.tsx getCardBorder()
       "--theme-card-monthly-performance-border":
         "1px solid var(--Stroke-Decorative-Default, #E8E8E8)",
       "--theme-card-orders-border":
         "1px solid var(--Stroke-Decorative-Default, #E8E8E8)",
 
-      // Card Shadow (HP Client specific)
-      "--theme-card-shadow": "none", // No shadow for cards
+      // Home Page Grid Layout (for quote widget + cards widget container)
+      "--theme-home-grid-template-columns": "45% 45%", // Adjusted for 10% gap
+      "--theme-home-grid-column-gap": "10%", // 10% gap between columns for HP client
     },
   },
 
   // No component or page overrides - just styling changes
   pages: {},
-  components: {},
+  components: {
+    CardsWidget: HpCardsWidget,
+  },
 
   // Icon overrides for HP Client theme - All cards now use custom HP icons
   icons: {
