@@ -328,7 +328,7 @@ const useProductionFloorData = () => {
 
     let data = jobId;
     if (productType) {
-      // data = data + "?productType=" + productType;
+       data = data + "?productType=" + productType;
     }
 
     await printJobUsingPrintNodeApi(callApi, callBack, data);
