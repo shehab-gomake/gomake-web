@@ -2007,12 +2007,26 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
 
   // Generate Report functions
   const onOpenAddRuleModal = () => {
-    // Check if there are active filters
-    const activeFilters = Object.keys(router.query).filter(
-      (key) => key !== "pageNumber" && key !== "pageSize"
-    );
+    // Check if there are active filters by checking all filter state variables
+    const hasActiveFilters =
+      patternSearch ||
+      finalPatternSearch ||
+      status ||
+      customer ||
+      agent ||
+      orderStatus ||
+      productIds?.length > 0 ||
+      proofTypes?.length > 0 ||
+      isPrintedState !== null ||
+      fromDate ||
+      toDate ||
+      fromDueDate ||
+      toDueDate ||
+      fromReadyDate ||
+      toReadyDate ||
+      sampleType;
 
-    if (activeFilters.length > 0) {
+    if (hasActiveFilters) {
       setOpenFilterConfirmationModal(true);
     } else {
       setOpenAddRule(true);
