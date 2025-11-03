@@ -349,7 +349,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
       value: ORDER_STATUSES.WaitingForPayment,
     },
     { label: t("boardMissions.paused"), value: ORDER_STATUSES.Paused },
-    { label: t("boardMissions.ready"), value: ORDER_STATUSES.Ready },
+    // { label: t("boardMissions.ready"), value: ORDER_STATUSES.Ready },
   ];
 
   const tableHeader = [
@@ -1809,14 +1809,14 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     const currentProductsIds = Array.isArray(router.query.productsIds)
       ? router.query.productsIds
       : router.query.productsIds
-      ? [router.query.productsIds]
-      : productIds;
+        ? [router.query.productsIds]
+        : productIds;
 
     const currentProofTypes = Array.isArray(router.query.proofTypes)
       ? router.query.proofTypes
       : router.query.proofTypes
-      ? [router.query.proofTypes]
-      : proofTypes;
+        ? [router.query.proofTypes]
+        : proofTypes;
 
     const currentOrderStatus = router.query.orderStatus;
 
@@ -1869,8 +1869,8 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
       agentId: router?.query?.agentId || agent?.id,
       search:
         finalPatternSearch !== null &&
-        finalPatternSearch !== undefined &&
-        finalPatternSearch !== ""
+          finalPatternSearch !== undefined &&
+          finalPatternSearch !== ""
           ? finalPatternSearch
           : currentFinalPatternSearch,
       fromDate:
