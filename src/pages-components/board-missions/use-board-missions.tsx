@@ -1787,6 +1787,10 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
   }, []);
 
   const ExportJobsTableToExcel = async () => {
+    if (!fromDate && !toDate) {
+      alertFault(t("boardMissions.dateFilterRequired"));
+      return;
+    }
     const callBack = (res) => {
       if (res?.success) {
         if (res?.data) {
@@ -1809,14 +1813,14 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     const currentProductsIds = Array.isArray(router.query.productsIds)
       ? router.query.productsIds
       : router.query.productsIds
-      ? [router.query.productsIds]
-      : productIds;
+        ? [router.query.productsIds]
+        : productIds;
 
     const currentProofTypes = Array.isArray(router.query.proofTypes)
       ? router.query.proofTypes
       : router.query.proofTypes
-      ? [router.query.proofTypes]
-      : proofTypes;
+        ? [router.query.proofTypes]
+        : proofTypes;
 
     const currentOrderStatus = router.query.orderStatus;
 
@@ -1869,8 +1873,8 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
       agentId: router?.query?.agentId || agent?.id,
       search:
         finalPatternSearch !== null &&
-        finalPatternSearch !== undefined &&
-        finalPatternSearch !== ""
+          finalPatternSearch !== undefined &&
+          finalPatternSearch !== ""
           ? finalPatternSearch
           : currentFinalPatternSearch,
       fromDate:
@@ -2003,12 +2007,26 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
 
   // Generate Report functions
   const onOpenAddRuleModal = () => {
-    // Check if there are active filters
-    const activeFilters = Object.keys(router.query).filter(
-      (key) => key !== "pageNumber" && key !== "pageSize"
-    );
+    // Check if there are active filters by checking all filter state variables
+    const hasActiveFilters =
+      patternSearch ||
+      finalPatternSearch ||
+      status ||
+      customer ||
+      agent ||
+      orderStatus ||
+      productIds?.length > 0 ||
+      proofTypes?.length > 0 ||
+      isPrintedState !== null ||
+      fromDate ||
+      toDate ||
+      fromDueDate ||
+      toDueDate ||
+      fromReadyDate ||
+      toReadyDate ||
+      sampleType;
 
-    if (activeFilters.length > 0) {
+    if (hasActiveFilters) {
       setOpenFilterConfirmationModal(true);
     } else {
       setOpenAddRule(true);
