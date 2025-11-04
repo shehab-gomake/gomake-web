@@ -4,6 +4,8 @@
  * Unified hook for fetching and managing agents across the application.
  * Implements singleton pattern with cache and deduplication.
  *
+ * Production-ready: Prevents duplicate concurrent requests with global flag
+ *
  * Usage:
  * ```typescript
  * const { agents, loading, error, refresh } = useChatwootAgents(accountId);
@@ -21,6 +23,9 @@ import {
 import { chatwootSelectedAccountAtom } from "@/store/frontdesk/atoms/chatwoot.atoms";
 import { chatwootService } from "@/services/frontdesk";
 import type { Agent } from "@/services/frontdesk/api/chatwoot/types/agents.types";
+
+// Global fetch guard to prevent duplicate concurrent requests
+let globalAgentsFetchInProgress = false;
 
 export interface UseChatwootAgentsResult {
   agents: Agent[];
@@ -51,7 +56,7 @@ export function useChatwootAgents(
   const isStale = !isCacheValid(agentsState);
 
   /**
-   * Fetch agents from API
+   * Fetch agents from API with global deduplication
    */
   const fetchAgents = useCallback(
     async (force: boolean = false) => {
@@ -60,9 +65,15 @@ export function useChatwootAgents(
         return;
       }
 
-      // Skip if already loading (deduplication)
+      // Global deduplication guard
+      if (globalAgentsFetchInProgress) {
+        console.log("[useChatwootAgents] ⏭️ Global fetch already in progress, skipping duplicate");
+        return;
+      }
+
+      // Skip if already loading (Recoil deduplication)
       if (resourceLoading.agents) {
-        console.log("[useChatwootAgents] Already fetching, skipping duplicate request");
+        console.log("[useChatwootAgents] ⏭️ Already fetching, skipping duplicate request");
         return;
       }
 
@@ -72,12 +83,13 @@ export function useChatwootAgents(
         return;
       }
 
-      // Mark as loading
+      // Mark as loading (both global and Recoil)
+      globalAgentsFetchInProgress = true;
       setResourceLoading((prev) => ({ ...prev, agents: true }));
       setAgentsState((prev) => ({ ...prev, loading: true, error: null }));
 
       try {
-        console.log(`[useChatwootAgents] Fetching agents for account ${effectiveAccountId}`);
+        console.log(`[useChatwootAgents] 🚀 Fetching agents for account ${effectiveAccountId}`);
         const agents = await chatwootService.agents.listAgents(effectiveAccountId);
 
         setAgentsState({
@@ -97,6 +109,7 @@ export function useChatwootAgents(
           error: error instanceof Error ? error : new Error("Failed to fetch agents"),
         }));
       } finally {
+        globalAgentsFetchInProgress = false;
         setResourceLoading((prev) => ({ ...prev, agents: false }));
       }
     },

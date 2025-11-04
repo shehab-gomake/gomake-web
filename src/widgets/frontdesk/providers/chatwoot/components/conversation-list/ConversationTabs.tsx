@@ -22,7 +22,7 @@ interface ConversationTabsProps {
   neutralColor: (shade: number) => string;
 }
 
-export const ConversationTabs: React.FC<ConversationTabsProps> = ({
+export const ConversationTabs: React.FC<ConversationTabsProps> = React.memo(({
   filters,
   onFiltersChange,
   counts,
@@ -152,4 +152,15 @@ export const ConversationTabs: React.FC<ConversationTabsProps> = ({
       </Tabs>
     </Box>
   );
-};
+}, (prevProps, nextProps) => {
+  // Custom comparison: only re-render if filters, counts, or callbacks changed
+  return (
+    prevProps.filters.assignee_type === nextProps.filters.assignee_type &&
+    prevProps.counts.mine === nextProps.counts.mine &&
+    prevProps.counts.unassigned === nextProps.counts.unassigned &&
+    prevProps.counts.all === nextProps.counts.all &&
+    prevProps.onFiltersChange === nextProps.onFiltersChange &&
+    prevProps.primaryColor === nextProps.primaryColor &&
+    prevProps.neutralColor === nextProps.neutralColor
+  );
+});

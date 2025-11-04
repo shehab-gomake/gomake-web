@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { chatwootService } from "@/services/frontdesk";
 import { ChatwootConversation, ChatwootMessage } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
 import { createLogger } from "@/services/frontdesk/utils/logger";
@@ -31,6 +31,10 @@ export const useChatwootMessages = ({ conversation, accountId }: UseChatwootMess
     isLoadingMore: false,
   });
 
+  // Fetch deduplication: Prevent concurrent duplicate requests
+  const isFetchingRef = useRef(false);
+  const isLoadingMoreRef = useRef(false);
+
   /**
    * Load initial batch of messages for a conversation
    */
@@ -47,6 +51,13 @@ export const useChatwootMessages = ({ conversation, accountId }: UseChatwootMess
       return;
     }
 
+    // Prevent duplicate concurrent requests
+    if (isFetchingRef.current) {
+      logger.debug("Load messages already in progress, skipping duplicate call");
+      return;
+    }
+
+    isFetchingRef.current = true;
     setLoading(true);
     setError(null);
 
@@ -174,6 +185,7 @@ export const useChatwootMessages = ({ conversation, accountId }: UseChatwootMess
       setMessages([]);
     } finally {
       setLoading(false);
+      isFetchingRef.current = false;
     }
   }, [conversation, accountId]);
 
@@ -185,10 +197,13 @@ export const useChatwootMessages = ({ conversation, accountId }: UseChatwootMess
       return false;
     }
 
-    if (pagination.isLoadingMore) {
-      return false; // Prevent duplicate requests
+    // Prevent duplicate concurrent requests
+    if (isLoadingMoreRef.current || pagination.isLoadingMore) {
+      logger.debug("Load more messages already in progress, skipping duplicate call");
+      return false;
     }
 
+    isLoadingMoreRef.current = true;
     setPagination((prev) => ({ ...prev, isLoadingMore: true }));
     setError(null);
 
@@ -240,6 +255,8 @@ export const useChatwootMessages = ({ conversation, accountId }: UseChatwootMess
       setError(err?.message || "Failed to load more messages");
       setPagination((prev) => ({ ...prev, isLoadingMore: false }));
       return false;
+    } finally {
+      isLoadingMoreRef.current = false;
     }
   }, [conversation, accountId, pagination.oldestMessageId, pagination.hasMoreOlder, pagination.isLoadingMore]);
 

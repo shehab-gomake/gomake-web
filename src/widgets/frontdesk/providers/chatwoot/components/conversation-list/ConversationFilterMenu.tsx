@@ -39,7 +39,7 @@ const STATUS_OPTIONS = [
   { label: "Snoozed", value: ConversationStatus.SNOOZED },
 ];
 
-export const ConversationFilterMenu: React.FC<ConversationFilterMenuProps> = ({
+export const ConversationFilterMenu: React.FC<ConversationFilterMenuProps> = React.memo(({
   filters,
   onFiltersChange,
   teams = [],
@@ -252,4 +252,15 @@ export const ConversationFilterMenu: React.FC<ConversationFilterMenuProps> = ({
       </Menu>
     </>
   );
-};
+}, (prevProps, nextProps) => {
+  // Custom comparison: only re-render if filters, teams, or callbacks changed
+  return (
+    prevProps.filters.status === nextProps.filters.status &&
+    prevProps.filters.team_id === nextProps.filters.team_id &&
+    prevProps.teams === nextProps.teams &&
+    prevProps.onFiltersChange === nextProps.onFiltersChange &&
+    prevProps.onFilterClick === nextProps.onFilterClick &&
+    prevProps.primaryColor === nextProps.primaryColor &&
+    prevProps.neutralColor === nextProps.neutralColor
+  );
+});

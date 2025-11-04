@@ -53,6 +53,10 @@ export const useChatwootRouter = () => {
 
   /**
    * Navigate to a Chatwoot route
+   *
+   * IMPORTANT: URL is the single source of truth for navigation state.
+   * State atoms are synced FROM the URL via useEffect, not before navigation.
+   * This prevents race conditions and ensures consistent state.
    */
   const navigate = useCallback(
     (route: FrontDeskRoute, options?: NavigationOptions) => {
@@ -66,30 +70,19 @@ export const useChatwootRouter = () => {
 
       logger.debug(`Navigating to: ${path}`, route);
 
-      // Sync state atoms with route before navigation
-      if (route.channelId) {
-        // Convert string to number for the atom
-        const inboxId = parseInt(route.channelId, 10);
-        if (!isNaN(inboxId)) {
-          setSelectedInboxId(inboxId);
-        }
-      } else if (route.view === ChatwootView.ALL_CONVERSATIONS) {
-        setSelectedInboxId(null);
+      // Navigation validation: ensure we have required context
+      if (route.conversationId && !route.channelId && route.view === ChatwootView.CHANNELS) {
+        logger.warn("Navigating to conversation in CHANNELS view without channelId");
       }
 
-      if (route.conversationId) {
-        // Will be set by conversation loader
-      } else {
-        setSelectedConversation(null);
-      }
-
+      // Perform navigation - state atoms will be synced via useEffect after URL changes
       if (routeOptions.replace) {
         router.replace(path, undefined, { shallow: routeOptions.scroll === false });
       } else {
         router.push(path, undefined, { shallow: routeOptions.scroll === false });
       }
     },
-    [router, setSelectedInboxId, setSelectedConversation]
+    [router]
   );
 
   /**
@@ -268,24 +261,35 @@ export const useChatwootRouter = () => {
 
   /**
    * Sync route changes with Recoil state atoms
+   *
+   * This is the ONLY place where navigation state flows from URL → Recoil.
+   * Makes URL the authoritative source of truth, preventing sync loops.
    */
   useEffect(() => {
     if (!currentRoute) return;
 
-    // Sync channelId with selectedInboxId
+    // Sync channelId (URL) → selectedInboxId (Recoil)
     if (currentRoute.channelId !== undefined) {
       const inboxId = parseInt(currentRoute.channelId, 10);
       if (!isNaN(inboxId) && inboxId !== selectedInboxId) {
+        logger.debug("Syncing channelId from URL to Recoil", { channelId: currentRoute.channelId, inboxId });
         setSelectedInboxId(inboxId);
       }
-    } else if (currentRoute.view === ChatwootView.ALL_CONVERSATIONS) {
+    } else if (currentRoute.view === ChatwootView.ALL_CONVERSATIONS || currentRoute.view === ChatwootView.MY_INBOX) {
+      // Clear inbox selection for views that don't need it
       if (selectedInboxId !== null) {
+        logger.debug("Clearing selectedInboxId for non-channel view", { view: currentRoute.view });
         setSelectedInboxId(null);
       }
     }
 
-    // Don't sync conversationId here - let the conversation loader handle it
-  }, [currentRoute, selectedInboxId, setSelectedInboxId]);
+    // Clear selected conversation when no conversationId in URL
+    // This ensures UI updates when user navigates back to list view
+    if (!currentRoute.conversationId && selectedConversation !== null) {
+      logger.debug("Clearing selectedConversation - not in URL");
+      setSelectedConversation(null);
+    }
+  }, [currentRoute, selectedInboxId, selectedConversation, setSelectedInboxId, setSelectedConversation]);
 
   return {
     // Current state

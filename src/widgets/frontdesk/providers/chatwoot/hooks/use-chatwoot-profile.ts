@@ -6,29 +6,31 @@ import {
   chatwootProfileLoadingAtom,
 } from "@/store/frontdesk/atoms/chatwoot.atoms";
 
-// Global flag to prevent race conditions when multiple components mount simultaneously
-let globalFetchInProgress = false;
-
 /**
  * Custom hook for managing Chatwoot profile state
  * Follows the Email provider pattern to prevent multiple API calls
  * Includes error handling for network issues
+ *
+ * Production-ready pattern: Uses useRef instead of global flag for fetch deduplication
+ * This ensures proper isolation across multiple component instances and SSR compatibility
  */
 export const useChatwootProfile = () => {
   const [profile, setProfile] = useRecoilState(chatwootProfileAtom);
   const [loading, setLoading] = useRecoilState(chatwootProfileLoadingAtom);
   const [error, setError] = useState<Error | null>(null);
   const hasAttemptedRef = useRef(false);
+  const isFetchingRef = useRef(false);
 
   const fetchProfile = useCallback(async () => {
     // Atomic check-and-set to prevent race conditions
-    if (loading || globalFetchInProgress) {
+    // Using ref instead of global flag for better isolation and SSR compatibility
+    if (loading || isFetchingRef.current) {
       console.log("[useChatwootProfile] ⏭️ Fetch already in progress, skipping duplicate call");
       return;
     }
 
     console.log("[useChatwootProfile] 🚀 Starting profile fetch...");
-    globalFetchInProgress = true;
+    isFetchingRef.current = true;
     setLoading(true);
     setError(null);
     try {
@@ -46,14 +48,14 @@ export const useChatwootProfile = () => {
       return null;
     } finally {
       setLoading(false);
-      globalFetchInProgress = false;
+      isFetchingRef.current = false;
     }
-  }, [setProfile, setLoading]);
+  }, [setProfile, setLoading, loading]);
 
   // Initial fetch on mount - only if not already loaded/attempted
   useEffect(() => {
     // Guard: Only fetch if profile is not already loaded, not currently loading, and haven't attempted yet
-    if (profile === null && !loading && !hasAttemptedRef.current && !globalFetchInProgress) {
+    if (profile === null && !loading && !hasAttemptedRef.current && !isFetchingRef.current) {
       fetchProfile();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

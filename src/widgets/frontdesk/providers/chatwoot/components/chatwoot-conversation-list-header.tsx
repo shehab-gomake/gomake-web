@@ -56,8 +56,8 @@ export const ChatwootConversationListHeader: React.FC<ChatwootConversationListHe
     return apiCounts;
   }, [mineCount, unassignedCount, allCount, apiCounts]);
 
-  // Get status label
-  const getStatusLabel = (status?: ConversationStatus): string => {
+  // Get status label - memoized to prevent recreation on every render
+  const statusLabel = useMemo(() => {
     if (!status || status === ConversationStatus.ALL) return "All";
     const labels: Record<ConversationStatus, string> = {
       [ConversationStatus.OPEN]: "Open",
@@ -67,7 +67,7 @@ export const ChatwootConversationListHeader: React.FC<ChatwootConversationListHe
       [ConversationStatus.ALL]: "All",
     };
     return labels[status] || "All";
-  };
+  }, [status]);
 
   return (
     <Box
@@ -99,7 +99,7 @@ export const ChatwootConversationListHeader: React.FC<ChatwootConversationListHe
           </Typography>
           {status && status !== ConversationStatus.ALL && (
             <Chip
-              label={getStatusLabel(status)}
+              label={statusLabel}
               size="small"
               sx={{
                 height: 24,

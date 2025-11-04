@@ -26,7 +26,7 @@ const SORT_OPTIONS = [
   { label: "Created (Oldest)", value: ConversationSortBy.CREATED_AT_ASC },
 ];
 
-export const ConversationSortMenu: React.FC<ConversationSortMenuProps> = ({
+export const ConversationSortMenu: React.FC<ConversationSortMenuProps> = React.memo(({
   filters,
   onFiltersChange,
   onSortClick,
@@ -113,4 +113,13 @@ export const ConversationSortMenu: React.FC<ConversationSortMenuProps> = ({
       </Menu>
     </>
   );
-};
+}, (prevProps, nextProps) => {
+  // Custom comparison: only re-render if sort filter or callbacks changed
+  return (
+    prevProps.filters.sort_by === nextProps.filters.sort_by &&
+    prevProps.onFiltersChange === nextProps.onFiltersChange &&
+    prevProps.onSortClick === nextProps.onSortClick &&
+    prevProps.primaryColor === nextProps.primaryColor &&
+    prevProps.neutralColor === nextProps.neutralColor
+  );
+});

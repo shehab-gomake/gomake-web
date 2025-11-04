@@ -38,7 +38,7 @@ interface ChatwootConversationListProps {
   onNextClick?: () => void;
 }
 
-export const ChatwootConversationList: React.FC<ChatwootConversationListProps> = ({
+export const ChatwootConversationList: React.FC<ChatwootConversationListProps> = React.memo(({
   conversations,
   selectedConversationId,
   onConversationSelect,
@@ -186,4 +186,24 @@ export const ChatwootConversationList: React.FC<ChatwootConversationListProps> =
       </Box>
     </Paper>
   );
-};
+}, (prevProps, nextProps) => {
+  // Custom comparison function for optimal re-render prevention
+  return (
+    prevProps.conversations === nextProps.conversations &&
+    prevProps.selectedConversationId === nextProps.selectedConversationId &&
+    prevProps.loading === nextProps.loading &&
+    prevProps.error === nextProps.error &&
+    prevProps.hasMore === nextProps.hasMore &&
+    prevProps.searchQuery === nextProps.searchQuery &&
+    prevProps.searchDisabled === nextProps.searchDisabled &&
+    prevProps.filters === nextProps.filters &&
+    prevProps.inboxes === nextProps.inboxes &&
+    prevProps.inboxesLoading === nextProps.inboxesLoading &&
+    prevProps.onLoadMore === nextProps.onLoadMore &&
+    prevProps.onRefresh === nextProps.onRefresh &&
+    prevProps.onSearch === nextProps.onSearch &&
+    prevProps.onFiltersChange === nextProps.onFiltersChange &&
+    prevProps.onConversationSelect === nextProps.onConversationSelect &&
+    prevProps.onNextClick === nextProps.onNextClick
+  );
+});

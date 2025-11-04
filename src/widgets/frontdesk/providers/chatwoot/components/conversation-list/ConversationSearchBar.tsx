@@ -17,7 +17,7 @@ interface ConversationSearchBarProps {
   placeholder?: string;
 }
 
-export const ConversationSearchBar: React.FC<ConversationSearchBarProps> = ({
+export const ConversationSearchBar: React.FC<ConversationSearchBarProps> = React.memo(({
   filters,
   onFiltersChange,
   neutralColor,
@@ -74,4 +74,12 @@ export const ConversationSearchBar: React.FC<ConversationSearchBarProps> = ({
       />
     </Box>
   );
-};
+}, (prevProps, nextProps) => {
+  // Custom comparison: only re-render if search query or callbacks changed
+  return (
+    prevProps.filters.q === nextProps.filters.q &&
+    prevProps.onFiltersChange === nextProps.onFiltersChange &&
+    prevProps.neutralColor === nextProps.neutralColor &&
+    prevProps.placeholder === nextProps.placeholder
+  );
+});
