@@ -2,28 +2,39 @@
  * Chatwoot OAuth Service
  *
  * Handles OAuth authorization flows for email channel connections (Gmail/Outlook).
- * Integrates with our backend's OAuth endpoints at /auth/oauth/{provider}.
+ * Uses Chatwoot backend endpoints for OAuth authorization.
  *
- * This service differs from the Chatwoot reference implementation:
- * - Uses GET /auth/oauth/{provider} instead of POST /api/v1/accounts/:id/{provider}/authorization
- * - No account_id parameter needed (backend uses printHouseId from JWT)
- * - Returns OAuth URL with encrypted state for popup-based flow
+ * Endpoint Pattern (Chatwoot-style):
+ * - POST /api/accounts/google/authorization
+ * - POST /api/accounts/microsoft/authorization
+ *
+ * Base URL: http://localhost:8080 (Chatwoot backend)
+ *
+ * Flow:
+ * 1. Frontend calls this service (POST to /api/accounts/{provider}/authorization)
+ * 2. Backend returns OAuth URL
+ * 3. Frontend opens URL in popup
+ * 4. User authorizes on Google/Microsoft
+ * 5. Provider redirects to backend callback
+ * 6. Backend creates channel/inbox and redirects popup
+ * 7. Frontend detects success and refreshes inboxes
  */
 
-import { MessagingHubHttpClient } from "@/services/messaging-hub-http-client";
+import { ChatwootHttpClient } from "../chatwoot-http-client";
 
 /**
- * OAuth provider types supported by our backend
+ * OAuth provider types
+ * "google" for Gmail, "microsoft" for Outlook
  */
-export type OAuthProvider = "google" | "outlook";
+export type OAuthProvider = "google" | "microsoft";
 
 /**
  * Response from OAuth authorization endpoint
  */
 export interface OAuthAuthorizationResponse {
   url: string;
-  state: string;
-  provider: string;
+  state?: string;
+  provider?: string;
 }
 
 /**
@@ -38,66 +49,52 @@ export interface OAuthAuthorizationResponse {
  * const { url } = await oauthService.getGoogleAuthUrl();
  * window.open(url, 'oauth-popup', 'width=500,height=600');
  *
- * // Get Outlook OAuth URL
- * const { url } = await oauthService.getOutlookAuthUrl();
+ * // Get Microsoft/Outlook OAuth URL
+ * const { url } = await oauthService.getMicrosoftAuthUrl();
  * window.open(url, 'oauth-popup', 'width=500,height=600');
  * ```
  */
-export class ChatwootOAuthService extends MessagingHubHttpClient {
+export class ChatwootOAuthService extends ChatwootHttpClient {
   /**
    * Get Google OAuth Authorization URL
-   * GET /auth/oauth/google
+   * POST /api/accounts/google/authorization
    *
    * Returns an OAuth URL that opens Google's consent screen.
-   * User authorizes, Google redirects to our callback, and backend creates EmailAccount.
+   * User authorizes, Google redirects to callback, and backend creates channel/inbox.
    *
-   * @returns Promise with OAuth URL and state
+   * @returns Promise with OAuth URL
    * @throws Error if OAuth URL generation fails
    *
    * @example
    * ```typescript
-   * const { url, state } = await service.getGoogleAuthUrl();
-   * console.log('Redirect to:', url);
+   * const { url } = await service.getGoogleAuthUrl();
    * // Opens popup to Google OAuth consent screen
    * const popup = window.open(url, 'oauth', 'width=500,height=600');
    * ```
    */
   async getGoogleAuthUrl(): Promise<OAuthAuthorizationResponse> {
-    return this.getAuthUrl("google");
+    return this.post<OAuthAuthorizationResponse>("/api/accounts/google/authorization", {});
   }
 
   /**
    * Get Microsoft/Outlook OAuth Authorization URL
-   * GET /auth/oauth/outlook
+   * POST /api/accounts/microsoft/authorization
    *
    * Returns an OAuth URL that opens Microsoft's consent screen.
-   * User authorizes, Microsoft redirects to our callback, and backend creates EmailAccount.
+   * User authorizes, Microsoft redirects to callback, and backend creates channel/inbox.
    *
-   * @returns Promise with OAuth URL and state
+   * @returns Promise with OAuth URL
    * @throws Error if OAuth URL generation fails
    *
    * @example
    * ```typescript
-   * const { url, state } = await service.getOutlookAuthUrl();
-   * console.log('Redirect to:', url);
+   * const { url } = await service.getMicrosoftAuthUrl();
    * // Opens popup to Microsoft OAuth consent screen
    * const popup = window.open(url, 'oauth', 'width=500,height=600');
    * ```
    */
-  async getOutlookAuthUrl(): Promise<OAuthAuthorizationResponse> {
-    return this.getAuthUrl("outlook");
-  }
-
-  /**
-   * Generic method to get OAuth authorization URL
-   * Internal helper for provider-specific methods
-   *
-   * @param provider - OAuth provider (google or outlook)
-   * @returns Promise with OAuth URL and state
-   * @private
-   */
-  private async getAuthUrl(provider: OAuthProvider): Promise<OAuthAuthorizationResponse> {
-    return this.get<OAuthAuthorizationResponse>(`/auth/oauth/${provider}`);
+  async getMicrosoftAuthUrl(): Promise<OAuthAuthorizationResponse> {
+    return this.post<OAuthAuthorizationResponse>("/api/accounts/microsoft/authorization", {});
   }
 }
 

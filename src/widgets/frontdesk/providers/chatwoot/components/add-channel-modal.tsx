@@ -97,7 +97,7 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({ open, onClose,
       name: "Outlook",
       description: "Connect with Outlook account.",
       icon: <OutlookIcon size={32} color={neutralColor(700)} />,
-      provider: "outlook",
+      provider: "microsoft",
     },
   ];
 
@@ -146,15 +146,15 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({ open, onClose,
     setSuccessMessage(null);
 
     try {
-      if (provider === "google" || provider === "outlook") {
+      if (provider === "google" || provider === "microsoft") {
         // Authenticate with OAuth
-        const result = await authenticate(provider as "google" | "outlook");
+        const result = await authenticate(provider as "google" | "microsoft");
 
         // Move to step 3 (Add Agents) - but we'll skip it and go to step 4
         setCurrentStep(4);
 
         // Show success message
-        const providerName = provider === "google" ? "Gmail" : "Outlook";
+        const providerName = provider === "google" ? "Gmail" : provider === "microsoft" ? "Outlook" : "Email";
         setSuccessMessage(
           `Successfully connected ${providerName}! ${result.accountsAdded} account(s) added.`
         );

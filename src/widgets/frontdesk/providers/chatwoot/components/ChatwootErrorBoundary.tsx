@@ -103,7 +103,7 @@ export class ChatwootErrorBoundary extends Component<Props, State> {
             <ErrorOutlineIcon
               sx={{
                 fontSize: 64,
-                color: colorTokens.semantic.error.main,
+                color: colorTokens.error[500],
                 mb: 2,
               }}
             />

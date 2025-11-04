@@ -16,13 +16,14 @@ This document explains how Chatwoot handles OAuth connections for Gmail (Google)
 ## Gmail/Google OAuth Flow
 
 ### UI Component Location
+
 - **Component**: `app/javascript/dashboard/routes/dashboard/settings/inbox/channels/emailChannels/Google.vue`
 - **Reusable Component**: `OAuthChannel.vue` (used by both Google and Microsoft)
 
 ### Flow Overview
 
 ```
-User clicks "Connect Gmail" 
+User clicks "Connect Gmail"
   → Frontend calls API to get authorization URL
   → Redirects user to Google OAuth consent screen
   → User authorizes → Google redirects to callback URL
@@ -39,22 +40,19 @@ User clicks "Connect Gmail"
 
 ```vue
 <!-- The button triggers requestAuthorization() -->
-<NextButton
-  :is-loading="isRequestingAuthorization"
-  type="submit"
-  solid
-  blue
-  :label="submitButtonText"
-/>
+<NextButton :is-loading="isRequestingAuthorization" type="submit" solid blue :label="submitButtonText" />
 ```
 
 **Frontend Code** (`OAuthChannel.vue`):
+
 ```javascript
 async function requestAuthorization() {
   try {
     isRequestingAuthorization.value = true;
     const response = await client.value.generateAuthorization();
-    const { data: { url } } = response;
+    const {
+      data: { url },
+    } = response;
     window.location.href = url; // Redirect to Google OAuth
   } catch (error) {
     useAlert(props.errorMessage);
@@ -71,7 +69,7 @@ async function requestAuthorization() {
 ```javascript
 class MicrosoftClient extends ApiClient {
   constructor() {
-    super('google', { accountScoped: true });
+    super("google", { accountScoped: true });
   }
 
   generateAuthorization(payload) {
@@ -81,6 +79,7 @@ class MicrosoftClient extends ApiClient {
 ```
 
 **Request**:
+
 ```http
 POST /api/v1/accounts/:account_id/google/authorization
 Headers:
@@ -116,6 +115,7 @@ end
 ```
 
 **Response**:
+
 ```json
 {
   "success": true,
@@ -124,6 +124,7 @@ end
 ```
 
 **Key Parameters**:
+
 - `redirect_uri`: `{FRONTEND_URL}/google/callback`
 - `scope`: `email profile https://mail.google.com/`
 - `state`: Signed GlobalID of the account (15-minute expiry)
@@ -198,6 +199,7 @@ end
 ```
 
 **What Happens**:
+
 1. Extracts OAuth code from `params[:code]`
 2. Extracts account from signed `state` parameter
 3. Exchanges code for access token + refresh token
@@ -208,15 +210,35 @@ end
 
 #### Step 7: Frontend Receives Redirect
 
-User is redirected to:
-- **Existing inbox**: `/app/accounts/:account_id/settings/inboxes/:inbox_id`
-- **New inbox**: `/app/accounts/:account_id/settings/inboxes/:inbox_id/agents`
+**Backend redirects user to:**
+
+**If inbox already exists** (reauthorization):
+
+```
+/app/accounts/:account_id/settings/inboxes/:inbox_id
+```
+
+→ **Inbox Settings Page** (where user can configure the inbox)
+
+**If new inbox** (first time connection):
+
+```
+/app/accounts/:account_id/settings/inboxes/new/:inbox_id/agents
+```
+
+→ **Agents Assignment Page** (where user assigns agents to the inbox)
+
+**Frontend Route Names:**
+
+- Existing inbox: `settings_inbox_show` (Vue route)
+- New inbox: `settings_inboxes_add_agents` (Vue route)
 
 ---
 
 ## WhatsApp Embedded Signup Flow
 
 ### UI Component Location
+
 - **Component**: `app/javascript/dashboard/routes/dashboard/settings/inbox/channels/WhatsappEmbeddedSignup.vue`
 
 ### Flow Overview
@@ -241,14 +263,7 @@ User clicks "Connect with WhatsApp Business"
 **UI Component**: `WhatsappEmbeddedSignup.vue`
 
 ```vue
-<NextButton
-  :disabled="isAuthenticating"
-  :is-loading="isAuthenticating"
-  faded
-  slate
-  class="w-full"
-  @click="launchEmbeddedSignup"
->
+<NextButton :disabled="isAuthenticating" :is-loading="isAuthenticating" faded slate class="w-full" @click="launchEmbeddedSignup">
   {{ $t('INBOX_MGMT.ADD.WHATSAPP.EMBEDDED_SIGNUP.SUBMIT_BUTTON') }}
 </NextButton>
 ```
@@ -261,26 +276,21 @@ User clicks "Connect with WhatsApp Business"
 const launchEmbeddedSignup = async () => {
   try {
     isAuthenticating.value = true;
-    
+
     // 1. Load Facebook SDK
-    await setupFacebookSdk(
-      window.chatwootConfig?.whatsappAppId,
-      window.chatwootConfig?.whatsappApiVersion
-    );
-    
+    await setupFacebookSdk(window.chatwootConfig?.whatsappAppId, window.chatwootConfig?.whatsappApiVersion);
+
     // 2. Initialize WhatsApp Embedded Signup
-    const code = await initWhatsAppEmbeddedSignup(
-      window.chatwootConfig?.whatsappConfigurationId
-    );
-    
+    const code = await initWhatsAppEmbeddedSignup(window.chatwootConfig?.whatsappConfigurationId);
+
     // 3. Store authorization code
     authCode.value = code;
     authCodeReceived.value = true;
-    
+
     // 4. Wait for business data via postMessage
     // (handled by message listener)
   } catch (error) {
-    if (error.message === 'Login cancelled') {
+    if (error.message === "Login cancelled") {
       // User cancelled
     } else {
       handleSignupError({ error: error.message });
@@ -290,6 +300,7 @@ const launchEmbeddedSignup = async () => {
 ```
 
 **Key Config Values** (from `window.chatwootConfig`):
+
 - `whatsappAppId`: Facebook App ID
 - `whatsappApiVersion`: Meta API version (e.g., "v18.0")
 - `whatsappConfigurationId`: WhatsApp Embedded Signup configuration ID
@@ -307,27 +318,28 @@ After successful Meta login, the SDK returns an authorization code to the fronte
 **Message Listener** (listens for postMessage from Meta SDK):
 
 ```javascript
-const handleEmbeddedSignupData = async data => {
-  if (data.event === 'FINISH' || data.event === 'FINISH_WHATSAPP_BUSINESS_APP_ONBOARDING') {
+const handleEmbeddedSignupData = async (data) => {
+  if (data.event === "FINISH" || data.event === "FINISH_WHATSAPP_BUSINESS_APP_ONBOARDING") {
     const businessDataLocal = data.data;
-    
+
     if (isValidBusinessData(businessDataLocal)) {
       businessData.value = businessDataLocal;
-      
+
       // If we have both code and business data, complete signup
       if (authCodeReceived.value && authCode.value) {
         await completeSignupFlow(businessDataLocal);
       }
     }
-  } else if (data.event === 'CANCEL') {
+  } else if (data.event === "CANCEL") {
     handleSignupCancellation();
-  } else if (data.event === 'error') {
+  } else if (data.event === "error") {
     handleSignupError({ error: data.error_message });
   }
 };
 ```
 
 **Business Data Structure**:
+
 ```javascript
 {
   business_id: string,
@@ -341,20 +353,17 @@ const handleEmbeddedSignupData = async data => {
 **Frontend Code**:
 
 ```javascript
-const completeSignupFlow = async businessDataParam => {
+const completeSignupFlow = async (businessDataParam) => {
   isProcessing.value = true;
-  
+
   const params = {
     code: authCode.value,
     business_id: businessDataParam.business_id,
     waba_id: businessDataParam.waba_id,
-    phone_number_id: businessDataParam?.phone_number_id || '',
+    phone_number_id: businessDataParam?.phone_number_id || "",
   };
 
-  const responseData = await store.dispatch(
-    'inboxes/createWhatsAppEmbeddedSignup',
-    params
-  );
+  const responseData = await store.dispatch("inboxes/createWhatsAppEmbeddedSignup", params);
 
   handleSignupSuccess(responseData);
 };
@@ -369,13 +378,13 @@ createWhatsAppEmbeddedSignup: async ({ commit }, params) => {
     const response = await WhatsappChannel.createEmbeddedSignup(params);
     commit(types.default.ADD_INBOXES, response.data);
     commit(types.default.SET_INBOXES_UI_FLAG, { isCreating: false });
-    sendAnalyticsEvent('whatsapp');
+    sendAnalyticsEvent("whatsapp");
     return response.data;
   } catch (error) {
     commit(types.default.SET_INBOXES_UI_FLAG, { isCreating: false });
     throw error;
   }
-}
+};
 ```
 
 **API Client**: `app/javascript/dashboard/api/channel/whatsappChannel.js`
@@ -389,6 +398,7 @@ createEmbeddedSignup(params) {
 #### Step 7: Backend API Request
 
 **Request**:
+
 ```http
 POST /api/v1/accounts/:account_id/whatsapp/authorization
 Headers:
@@ -433,30 +443,31 @@ end
 ```ruby
 def perform
   validate_parameters!
-  
+
   # 1. Exchange code for access token
   access_token = exchange_code_for_token
-  
+
   # 2. Fetch phone info
   phone_info = fetch_phone_info(access_token)
-  
+
   # 3. Validate token access
   validate_token_access(access_token)
-  
+
   # 4. Create or reauthorize channel
   channel = create_or_reauthorize_channel(access_token, phone_info)
-  
+
   # 5. Setup webhooks
   channel.setup_webhooks
-  
+
   # 6. Check channel health
   check_channel_health_and_prompt_reauth(channel)
-  
+
   channel
 end
 ```
 
 **What Happens**:
+
 1. Validates required parameters (`code`, `business_id`, `waba_id`)
 2. Exchanges authorization code for access token via Meta API
 3. Fetches phone number information
@@ -469,6 +480,7 @@ end
 #### Step 9: Backend Response
 
 **Success Response**:
+
 ```json
 {
   "success": true,
@@ -479,6 +491,7 @@ end
 ```
 
 **Error Response**:
+
 ```json
 {
   "success": false,
@@ -491,24 +504,35 @@ end
 **Frontend Code**:
 
 ```javascript
-const handleSignupSuccess = inboxData => {
+const handleSignupSuccess = (inboxData) => {
   isProcessing.value = false;
   isAuthenticating.value = false;
 
   if (inboxData && inboxData.id) {
-    useAlert(t('INBOX_MGMT.FINISH.MESSAGE'));
+    useAlert(t("INBOX_MGMT.FINISH.MESSAGE"));
     router.replace({
-      name: 'settings_inboxes_add_agents',
+      name: "settings_inboxes_add_agents",
       params: {
-        page: 'new',
+        page: "new",
         inbox_id: inboxData.id,
       },
+    });
+  } else {
+    // Fallback: redirect to inbox list
+    router.replace({
+      name: "settings_inbox_list",
     });
   }
 };
 ```
 
-User is redirected to agents assignment page.
+**User is redirected to:**
+
+```
+/app/accounts/:account_id/settings/inboxes/new/:inbox_id/agents
+```
+
+→ **Agents Assignment Page** (where user assigns agents to the newly created WhatsApp inbox)
 
 ---
 
@@ -550,17 +574,82 @@ end
 
 ---
 
+## Post-Connection Redirects
+
+### Gmail/Google/Microsoft (Email Channels)
+
+After successful OAuth callback, backend redirects based on whether inbox exists:
+
+| Scenario           | Redirect URL                                                      | Frontend Route                | Purpose                           |
+| ------------------ | ----------------------------------------------------------------- | ----------------------------- | --------------------------------- |
+| **New Inbox**      | `/app/accounts/:account_id/settings/inboxes/new/:inbox_id/agents` | `settings_inboxes_add_agents` | Assign agents to the new inbox    |
+| **Existing Inbox** | `/app/accounts/:account_id/settings/inboxes/:inbox_id`            | `settings_inbox_show`         | Configure existing inbox settings |
+
+**Backend Logic** (`oauth_callback_controller.rb`):
+
+```ruby
+if already_exists
+  redirect_to app_email_inbox_settings_url(account_id: account.id, inbox_id: inbox.id)
+else
+  redirect_to app_email_inbox_agents_url(account_id: account.id, inbox_id: inbox.id)
+end
+```
+
+### WhatsApp
+
+After successful signup, frontend always redirects to agents assignment:
+
+| Redirect URL                                                      | Frontend Route                | Purpose                                 |
+| ----------------------------------------------------------------- | ----------------------------- | --------------------------------------- |
+| `/app/accounts/:account_id/settings/inboxes/new/:inbox_id/agents` | `settings_inboxes_add_agents` | Assign agents to the new WhatsApp inbox |
+
+**Frontend Logic** (`WhatsappEmbeddedSignup.vue`):
+
+```javascript
+router.replace({
+  name: "settings_inboxes_add_agents",
+  params: {
+    page: "new",
+    inbox_id: inboxData.id,
+  },
+});
+```
+
+### Summary
+
+**✅ Recommended Redirect Strategy:**
+
+1. **New Channel Connection** → **Agents Assignment Page**
+
+   - User needs to assign agents before inbox is usable
+   - Path: `/app/accounts/:account_id/settings/inboxes/new/:inbox_id/agents`
+
+2. **Reauthorization (Existing Channel)** → **Inbox Settings Page**
+   - Channel already configured, just need to verify settings
+   - Path: `/app/accounts/:account_id/settings/inboxes/:inbox_id`
+
+**For Your New Frontend:**
+
+After successful connection, you should redirect to:
+
+- **New inbox**: Agents assignment page (to assign agents)
+- **Existing inbox**: Inbox settings page (to view/configure)
+
+---
+
 ## Summary & Implementation Guide
 
 ### For Gmail/Google
 
 **Frontend Request**:
+
 ```javascript
 POST /api/v1/accounts/:account_id/google/authorization
 // Returns: { success: true, url: "<google_oauth_url>" }
 ```
 
 **User Flow**:
+
 1. Click "Connect Gmail" → Frontend gets OAuth URL
 2. Redirect to Google → User authorizes
 3. Google redirects to `/google/callback?code=...&state=...`
@@ -568,10 +657,12 @@ POST /api/v1/accounts/:account_id/google/authorization
 5. Redirects to inbox settings
 
 **Key Backend Endpoints**:
+
 - `POST /api/v1/accounts/:account_id/google/authorization` - Get OAuth URL
 - `GET /google/callback` - OAuth callback (handles token exchange)
 
 **Required Config**:
+
 - `GOOGLE_OAUTH_CLIENT_ID`
 - `GOOGLE_OAUTH_CLIENT_SECRET`
 - `FRONTEND_URL` (for callback URL)
@@ -581,6 +672,7 @@ POST /api/v1/accounts/:account_id/google/authorization
 ### For WhatsApp
 
 **Frontend Request**:
+
 ```javascript
 POST /api/v1/accounts/:account_id/whatsapp/authorization
 Body: {
@@ -592,6 +684,7 @@ Body: {
 ```
 
 **User Flow**:
+
 1. Click "Connect WhatsApp" → Frontend loads Meta SDK
 2. User completes Meta login (popup)
 3. SDK returns authorization code
@@ -601,9 +694,11 @@ Body: {
 7. Redirects to agents page
 
 **Key Backend Endpoints**:
+
 - `POST /api/v1/accounts/:account_id/whatsapp/authorization` - Complete signup
 
 **Required Config**:
+
 - `whatsappAppId` (Facebook App ID)
 - `whatsappApiVersion` (Meta API version)
 - `whatsappConfigurationId` (Embedded Signup config ID)
@@ -613,6 +708,7 @@ Body: {
 ### For Microsoft/Outlook
 
 **Same as Gmail**, but:
+
 - Endpoint: `/api/v1/accounts/:account_id/microsoft/authorization`
 - Callback: `/microsoft/callback`
 - IMAP: `outlook.office365.com`
@@ -621,21 +717,22 @@ Body: {
 
 ## Key Differences: Gmail vs WhatsApp
 
-| Aspect | Gmail/Google | WhatsApp |
-|--------|---------------|----------|
-| **OAuth Flow** | Standard OAuth 2.0 (redirect) | Embedded Signup (popup + postMessage) |
-| **Frontend SDK** | None needed | Facebook SDK required |
-| **Authorization Code** | From URL query param | From SDK callback |
-| **Business Data** | Not needed | Required (business_id, waba_id) |
-| **Backend Steps** | 1 API call + 1 callback | 1 API call (all-in-one) |
-| **Token Exchange** | Backend exchanges code | Backend exchanges code |
-| **Callback URL** | `/google/callback` | N/A (handled by frontend) |
+| Aspect                 | Gmail/Google                  | WhatsApp                              |
+| ---------------------- | ----------------------------- | ------------------------------------- |
+| **OAuth Flow**         | Standard OAuth 2.0 (redirect) | Embedded Signup (popup + postMessage) |
+| **Frontend SDK**       | None needed                   | Facebook SDK required                 |
+| **Authorization Code** | From URL query param          | From SDK callback                     |
+| **Business Data**      | Not needed                    | Required (business_id, waba_id)       |
+| **Backend Steps**      | 1 API call + 1 callback       | 1 API call (all-in-one)               |
+| **Token Exchange**     | Backend exchanges code        | Backend exchanges code                |
+| **Callback URL**       | `/google/callback`            | N/A (handled by frontend)             |
 
 ---
 
 ## Implementation Checklist for New Frontend
 
 ### Gmail/Google
+
 - [ ] Create "Connect Gmail" button component
 - [ ] Call `POST /api/v1/accounts/:account_id/google/authorization`
 - [ ] Redirect user to returned OAuth URL
@@ -643,6 +740,7 @@ Body: {
 - [ ] Refresh inbox list after successful connection
 
 ### WhatsApp
+
 - [ ] Create "Connect WhatsApp" button component
 - [ ] Load Facebook SDK (`setupFacebookSdk`)
 - [ ] Initialize WhatsApp Embedded Signup (`initWhatsAppEmbeddedSignup`)
@@ -653,6 +751,7 @@ Body: {
 - [ ] Redirect to agents page on success
 
 ### Microsoft/Outlook
+
 - [ ] Same as Gmail, but use `/microsoft/authorization` endpoint
 
 ---
@@ -674,4 +773,3 @@ Body: {
 - **WhatsApp Service**: `app/services/whatsapp/embedded_signup_service.rb`
 - **Frontend Gmail UI**: `app/javascript/dashboard/routes/dashboard/settings/inbox/channels/emailChannels/Google.vue`
 - **Frontend WhatsApp UI**: `app/javascript/dashboard/routes/dashboard/settings/inbox/channels/WhatsappEmbeddedSignup.vue`
-

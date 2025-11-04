@@ -60,7 +60,7 @@ export interface OAuthResult {
  * // Connect Outlook
  * const handleOutlookConnect = async () => {
  *   try {
- *     const result = await authenticate('outlook');
+ *     const result = await authenticate('microsoft');
  *     console.log(`Added ${result.accountsAdded} Outlook accounts`);
  *   } catch (err) {
  *     console.error('Outlook OAuth failed:', err);
@@ -100,7 +100,7 @@ export const useChatwootOAuth = () => {
   /**
    * Authenticate with OAuth provider
    *
-   * @param provider - OAuth provider (google or outlook)
+   * @param provider - OAuth provider (google or microsoft)
    * @returns Promise with OAuth result
    * @throws Error if OAuth fails
    */
@@ -111,11 +111,11 @@ export const useChatwootOAuth = () => {
       setCurrentProvider(provider);
 
       try {
-        // 1. Get OAuth URL from backend
+        // 1. Get OAuth URL from Chatwoot backend
         const authResponse =
           provider === "google"
             ? await chatwootOAuthService.getGoogleAuthUrl()
-            : await chatwootOAuthService.getOutlookAuthUrl();
+            : await chatwootOAuthService.getMicrosoftAuthUrl();
 
         const { url } = authResponse;
 

@@ -153,16 +153,17 @@ export class ChatwootContactsService extends BaseChatwootService {
 
   /**
    * Filter Contacts
-   * POST /api/v1/accounts/contacts/filter
+   * POST /api/accounts/contacts/filter
    *
    * Note: Backend automatically handles accountId from authentication context.
+   * This endpoint uses /api instead of /api/v1
    *
    * @param filterPayload - Filter criteria
    * @returns Promise with filtered contacts
    */
   async filterContacts(filterPayload: ContactFilterRequest): Promise<ContactsListResponse> {
     return await this.post<ContactsListResponse>(
-      `${this.API_BASE}/accounts/contacts/filter`,
+      "/api/accounts/contacts/filter",
       filterPayload
     );
   }
@@ -186,12 +187,13 @@ export class ChatwootContactsService extends BaseChatwootService {
 
   /**
    * Get Contactable Inboxes
-   * GET /api/v1/accounts/contacts/{id}/contactable_inboxes
+   * GET /api/accounts/contacts/{id}/contactable_inboxes
    *
    * Gets the list of inboxes where this contact can be reached.
    * Returns inbox details along with the source_id (email, phone, etc.)
    *
    * Note: Backend automatically handles accountId from authentication context.
+   * This endpoint uses /api instead of /api/v1
    *
    * @param contactId - The numeric ID of the contact
    * @returns Promise with contactable inboxes
@@ -206,7 +208,7 @@ export class ChatwootContactsService extends BaseChatwootService {
     contactId: number
   ): Promise<import("../types/inboxes.types").ContactableInboxesResponse> {
     return await this.get<import("../types/inboxes.types").ContactableInboxesResponse>(
-      `${this.API_BASE}/accounts/contacts/${contactId}/contactable_inboxes`
+      `/api/accounts/contacts/${contactId}/contactable_inboxes`
     );
   }
 }
