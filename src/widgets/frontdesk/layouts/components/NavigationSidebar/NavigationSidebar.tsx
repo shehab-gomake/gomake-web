@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import {
   Box,
+  Button,
   IconButton,
   Tooltip,
   Badge,
@@ -35,17 +36,20 @@ import AlternateEmailIcon from "@mui/icons-material/AlternateEmail";
 import NotInterestedIcon from "@mui/icons-material/NotInterested";
 import ForumIcon from "@mui/icons-material/Forum";
 import AddIcon from "@mui/icons-material/Add";
+import CreateIcon from "@mui/icons-material/Create";
 import HistoryIcon from "@mui/icons-material/History";
 import WebhookIcon from "@mui/icons-material/Webhook";
 import { useChatwootInboxes } from "@/widgets/frontdesk/providers/chatwoot/hooks/use-chatwoot-inboxes";
 import { useChatwootRouter } from "@/widgets/frontdesk/providers/chatwoot/hooks/use-chatwoot-router";
 import { AddChannelModal } from "@/widgets/frontdesk/providers/chatwoot/components/add-channel-modal";
+import { ComposeConversationModal } from "@/widgets/frontdesk/providers/chatwoot/components/compose/ComposeConversationModal";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useRouter } from "next/router";
 import { chatwootSelectedAccountAtom } from "@/store/frontdesk/atoms/chatwoot.atoms";
 import { useRecoilValue } from "recoil";
 import { RouteBuilder, buildRoute } from "@/widgets/frontdesk/routing/route-builder";
 import { ChatwootView } from "@/widgets/frontdesk/routing/types";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 /**
  * Legacy type exports for backward compatibility
@@ -158,6 +162,7 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
 }) => {
   const theme = useTheme();
   const router = useRouter();
+  const { primaryColor, neutralColor } = useGomakeTheme();
   const [oldFrontdeskExpanded, setOldFrontdeskExpanded] = useState(false);
   const [ticketViewsExpanded, setTicketViewsExpanded] = useState(true);
   const [chatsExpanded, setChatsExpanded] = useState(true);
@@ -165,6 +170,7 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
   const [chatwootConversationsExpanded, setChatwootConversationsExpanded] = useState(true);
   const [chatwootChannelsExpanded, setChatwootChannelsExpanded] = useState(true);
   const [showAddChannelModal, setShowAddChannelModal] = useState(false);
+  const [showComposeModal, setShowComposeModal] = useState(false);
 
   // Fetch Chatwoot inboxes (channels)
   const { inboxes, loading: inboxesLoading, selectedInboxId, selectInbox } = useChatwootInboxes();
@@ -178,6 +184,7 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
     isUnattendedView,
     isChannelsView,
     isWebhookTestView,
+    isSettingsView,
   } = useChatwootRouter();
 
   const channelItems = [
@@ -269,6 +276,67 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
         )}
         <Collapse in={isCollapsed || chatwootExpanded}>
           <List disablePadding sx={{ pointerEvents: "auto" }}>
+            {/* New Conversation Button */}
+            {!isCollapsed ? (
+              <Box
+                sx={{
+                  px: 2,
+                  py: 1.5,
+                  display: "flex",
+                  justifyContent: "center",
+                }}
+              >
+                <Button
+                  fullWidth
+                  variant="contained"
+                  startIcon={<CreateIcon fontSize="small" />}
+                  onClick={() => setShowComposeModal(true)}
+                  sx={{
+                    textTransform: "none",
+                    fontWeight: 500,
+                    fontSize: "0.875rem",
+                    backgroundColor: primaryColor(600),
+                    color: "white",
+                    py: 1,
+                    borderRadius: "8px",
+                    boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
+                    "&:hover": {
+                      backgroundColor: primaryColor(700),
+                      boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.15)",
+                    },
+                  }}
+                >
+                  New Conversation
+                </Button>
+              </Box>
+            ) : (
+              <Box
+                sx={{
+                  px: 1.5,
+                  py: 1,
+                  display: "flex",
+                  justifyContent: "center",
+                }}
+              >
+                <Tooltip title="New Conversation" placement="right">
+                  <IconButton
+                    onClick={() => setShowComposeModal(true)}
+                    sx={{
+                      color: "white",
+                      backgroundColor: primaryColor(600),
+                      "&:hover": {
+                        backgroundColor: primaryColor(700),
+                      },
+                      width: 36,
+                      height: 36,
+                    }}
+                  >
+                    <CreateIcon fontSize="small" />
+                  </IconButton>
+                </Tooltip>
+              </Box>
+            )}
+
             {/* Dashboard */}
             <Tooltip title="Dashboard" placement="right" disableHoverListener={!isCollapsed}>
               <ListItemButton
@@ -433,6 +501,65 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
                     </Box>
                     <ListItemText
                       primary="Webhook Test"
+                      primaryTypographyProps={{
+                        variant: "body2",
+                        sx: {
+                          fontSize: "0.875rem",
+                          fontWeight: 400,
+                        },
+                      }}
+                    />
+                  </Box>
+                )}
+              </ListItemButton>
+            </Tooltip>
+
+            {/* Settings */}
+            <Tooltip title="Settings" placement="right" disableHoverListener={!isCollapsed}>
+              <ListItemButton
+                selected={isSettingsView}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  e.preventDefault();
+
+                  // Use RouteBuilder for type-safe navigation
+                  const route = RouteBuilder.chatwoot(ChatwootView.SETTINGS);
+                  const { path, options } = buildRoute(route, { replace: true });
+
+                  // Navigate to Chatwoot channel first if not already there
+                  if (selectedChannel !== "chatwoot") {
+                    onSectionSelect("inbox");
+                    onChannelSelect("chatwoot" as Channel);
+                  }
+
+                  // Then navigate to Settings
+                  router.replace(path, undefined, { shallow: options.scroll === false });
+                }}
+                sx={{
+                  py: 0.5,
+                  px: isCollapsed ? 1.5 : 2,
+                  justifyContent: isCollapsed ? "center" : "flex-start",
+                  pointerEvents: "auto",
+                  "&.Mui-selected": {
+                    backgroundColor: theme.palette.primary.main + "10",
+                    borderLeft: `3px solid ${theme.palette.primary.main}`,
+                    "&:hover": {
+                      backgroundColor: theme.palette.primary.main + "20",
+                    },
+                  },
+                }}
+              >
+                {isCollapsed ? (
+                  <Box sx={{ color: theme.palette.text.secondary, display: "flex" }}>
+                    <SettingsIcon fontSize="small" />
+                  </Box>
+                ) : (
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, width: "100%" }}>
+                    <Box sx={{ color: theme.palette.text.secondary }}>
+                      <SettingsIcon fontSize="small" />
+                    </Box>
+                    <ListItemText
+                      primary="Settings"
                       primaryTypographyProps={{
                         variant: "body2",
                         sx: {
@@ -1179,6 +1306,29 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
 
       {/* Add Channel Modal */}
       <AddChannelModal open={showAddChannelModal} onClose={() => setShowAddChannelModal(false)} />
+
+      {/* Compose Conversation Modal */}
+      <ComposeConversationModal
+        open={showComposeModal}
+        onClose={() => setShowComposeModal(false)}
+        onSuccess={(conversationId) => {
+          console.log("[NavigationSidebar] Conversation created:", conversationId);
+          setShowComposeModal(false);
+
+          // Navigate to the newly created conversation
+          const route = RouteBuilder.chatwoot(ChatwootView.MY_INBOX, conversationId.toString());
+          const { path, options } = buildRoute(route, { replace: true });
+
+          // Ensure we're on the chatwoot channel
+          if (selectedChannel !== "chatwoot") {
+            onSectionSelect("inbox");
+            onChannelSelect("chatwoot" as Channel);
+          }
+
+          // Navigate to the conversation
+          router.push(path, undefined, { shallow: options.scroll === false });
+        }}
+      />
     </Box>
   );
 };

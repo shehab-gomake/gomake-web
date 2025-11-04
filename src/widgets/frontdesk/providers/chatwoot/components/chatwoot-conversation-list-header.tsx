@@ -23,7 +23,6 @@ import {
 import FilterListIcon from "@mui/icons-material/FilterList";
 import SwapVertIcon from "@mui/icons-material/SwapVert";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
-import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import CheckIcon from "@mui/icons-material/Check";
 import SearchIcon from "@mui/icons-material/Search";
 import CloseIcon from "@mui/icons-material/Close";
@@ -38,7 +37,6 @@ import {
 } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
 import { chatwootConversationCountsAtom, chatwootSelectedAccountAtom } from "@/store/frontdesk/atoms/chatwoot.atoms";
 import { ChatwootConversationFilters } from "./chatwoot-conversation-filters";
-import { ComposeConversationModal } from "./compose/ComposeConversationModal";
 
 interface ChatwootConversationListHeaderProps {
   status?: ConversationStatus;
@@ -69,7 +67,6 @@ export const ChatwootConversationListHeader: React.FC<ChatwootConversationListHe
   const { primaryColor, neutralColor } = useGomakeTheme();
   const [filterMenuAnchor, setFilterMenuAnchor] = useState<null | HTMLElement>(null);
   const [sortMenuAnchor, setSortMenuAnchor] = useState<null | HTMLElement>(null);
-  const [showComposeModal, setShowComposeModal] = useState(false);
 
   // Get counts from API response (stored in atom)
   const apiCounts = useRecoilValue(chatwootConversationCountsAtom);
@@ -181,25 +178,6 @@ export const ChatwootConversationListHeader: React.FC<ChatwootConversationListHe
         </Stack>
 
         <Stack direction="row" spacing={0.5}>
-          {/* New Conversation Button */}
-          <Tooltip title="New Conversation">
-            <IconButton
-              size="small"
-              onClick={() => setShowComposeModal(true)}
-              sx={{
-                color: "white",
-                backgroundColor: primaryColor(600),
-                "&:hover": {
-                  backgroundColor: primaryColor(700),
-                },
-                width: 32,
-                height: 32,
-              }}
-            >
-              <AddCircleOutlineIcon fontSize="small" />
-            </IconButton>
-          </Tooltip>
-
           {/* Filter Button */}
           <Tooltip title="Filter">
             <IconButton
@@ -663,16 +641,6 @@ export const ChatwootConversationListHeader: React.FC<ChatwootConversationListHe
           }}
         />
       </Box>
-
-      {/* Compose Conversation Modal */}
-      <ComposeConversationModal
-        open={showComposeModal}
-        onClose={() => setShowComposeModal(false)}
-        onSuccess={(conversationId) => {
-          console.log("[ChatwootConversationListHeader] Conversation created:", conversationId);
-          // TODO: Navigate to the new conversation or refresh conversation list
-        }}
-      />
     </Box>
   );
 };

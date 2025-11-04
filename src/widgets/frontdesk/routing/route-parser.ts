@@ -16,6 +16,7 @@ import {
   ChatwootView,
   ChatwootRoute,
   ChatwootFilters,
+  ChatwootSettingsSubpage,
 } from "./types";
 
 /**
@@ -36,6 +37,8 @@ export interface NextRouterQuery {
   sortBy?: string | string[];
   search?: string | string[];
   labels?: string | string[];
+  // Settings subpage
+  subpage?: string | string[];
 }
 
 /**
@@ -118,9 +121,31 @@ const parseChatwootView = (viewParam?: string): ChatwootView => {
     "unattended": ChatwootView.UNATTENDED,
     "channels": ChatwootView.CHANNELS,
     "webhook-test": ChatwootView.WEBHOOK_TEST,
+    "settings": ChatwootView.SETTINGS,
   };
 
   return viewMap[viewParam] || ChatwootView.MY_INBOX;
+};
+
+/**
+ * Parse Chatwoot settings subpage from query param
+ */
+const parseChatwootSettingsSubpage = (subpageParam?: string): ChatwootSettingsSubpage | undefined => {
+  if (!subpageParam) {
+    return undefined;
+  }
+
+  // Map query param values to ChatwootSettingsSubpage enum
+  const subpageMap: Record<string, ChatwootSettingsSubpage> = {
+    "general": ChatwootSettingsSubpage.GENERAL,
+    "agents": ChatwootSettingsSubpage.AGENTS,
+    "inboxes": ChatwootSettingsSubpage.INBOXES,
+    "teams": ChatwootSettingsSubpage.TEAMS,
+    "labels": ChatwootSettingsSubpage.LABELS,
+    "profile": ChatwootSettingsSubpage.PROFILE,
+  };
+
+  return subpageMap[subpageParam];
 };
 
 /**
@@ -248,12 +273,16 @@ const applyQueryParamOverrides = (route: Partial<FrontDeskRoute>, queryParams: R
     // Parse filters from query params
     const filters = parseChatwootFilters(query);
 
+    // Parse settings subpage if view is SETTINGS
+    const settingsSubpage = view === ChatwootView.SETTINGS ? parseChatwootSettingsSubpage(normalizeParam(query.subpage)) : undefined;
+
     return {
       type: RouteType.CHATWOOT,
       view,
       conversationId: queryParams.conversation || chatwootRoute.conversationId,
       channelId: queryParams.channel || chatwootRoute.channelId,
       filters: filters || chatwootRoute.filters,
+      settingsSubpage: settingsSubpage || chatwootRoute.settingsSubpage,
     };
   }
 
@@ -359,6 +388,7 @@ const ensureValidRoute = (route: Partial<FrontDeskRoute>): FrontDeskRoute => {
       view: (route as any).view || ChatwootView.MY_INBOX,
       conversationId: (route as any).conversationId,
       channelId: (route as any).channelId,
+      settingsSubpage: (route as any).settingsSubpage,
     };
   }
 

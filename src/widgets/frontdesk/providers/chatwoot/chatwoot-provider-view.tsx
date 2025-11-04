@@ -18,6 +18,7 @@ import { MentionsView } from "./views/mentions-view";
 import { UnattendedView } from "./views/unattended-view";
 import { ChannelsView } from "./views/channels-view";
 import { WebhookTestView } from "./views/webhook-test-view";
+import { SettingsView } from "./views/settings-view";
 
 const ChatwootProviderViewInternal: React.FC = () => {
   // Profile loading is handled by useChatwootProvider (via useChatwootProfile hook internally)
@@ -47,6 +48,9 @@ const ChatwootProviderViewInternal: React.FC = () => {
 
     case ChatwootView.WEBHOOK_TEST:
       return <WebhookTestView />;
+
+    case ChatwootView.SETTINGS:
+      return <SettingsView />;
 
     default:
       // Fallback to My Inbox

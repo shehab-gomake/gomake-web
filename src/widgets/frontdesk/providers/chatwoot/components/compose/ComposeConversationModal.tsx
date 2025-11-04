@@ -5,11 +5,12 @@
  * Supports contact selection, inbox selection, and channel-specific message composition.
  */
 
-import React, { useState } from "react";
-import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Alert, Stack, TextField, TextareaAutosize, Typography, IconButton, Box } from "@mui/material";
+import React, { useState, useEffect } from "react";
+import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Alert, Stack, TextField, TextareaAutosize, Typography, IconButton, Box, CircularProgress, Chip } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import SendIcon from "@mui/icons-material/Send";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
+import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import { ContactSelector } from "./ContactSelector";
 import { InboxSelector } from "./InboxSelector";
 import { CreateContactModal } from "./CreateContactModal";
@@ -50,11 +51,21 @@ export const ComposeConversationModal: React.FC<ComposeConversationModalProps> =
   const requirements = channelType ? getChannelRequirements(channelType) : null;
 
   const handleClose = () => {
-    compose.resetForm();
-    setError(null);
-    setShowBcc(false);
-    onClose();
+    if (!compose.isSubmitting) {
+      compose.resetForm();
+      setError(null);
+      setShowBcc(false);
+      onClose();
+    }
   };
+
+  // Reset form when modal opens
+  useEffect(() => {
+    if (open) {
+      setError(null);
+      setShowBcc(false);
+    }
+  }, [open]);
 
   const handleSubmit = async () => {
     setError(null);
@@ -96,12 +107,13 @@ export const ComposeConversationModal: React.FC<ComposeConversationModalProps> =
       <Dialog
         open={open}
         onClose={handleClose}
-        maxWidth="md"
+        maxWidth="sm"
         fullWidth
         PaperProps={{
           sx: {
-            borderRadius: "12px",
-            maxHeight: "90vh",
+            borderRadius: "16px",
+            maxHeight: "85vh",
+            boxShadow: "0 20px 60px rgba(0, 0, 0, 0.15)",
           },
         }}
       >
@@ -111,21 +123,34 @@ export const ComposeConversationModal: React.FC<ComposeConversationModalProps> =
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
-            borderBottom: `1px solid ${neutralColor(200)}`,
+            borderBottom: "none",
             pb: 2,
+            pt: 3,
+            px: 3,
           }}
         >
-          <Typography variant="h6" sx={{ fontWeight: 600, color: neutralColor(900) }}>
+          <Typography variant="h5" sx={{ fontWeight: 600, color: neutralColor(900), fontSize: "1.5rem" }}>
             New Conversation
           </Typography>
-          <IconButton onClick={handleClose} size="small" disabled={compose.isSubmitting}>
+          <IconButton
+            onClick={handleClose}
+            size="small"
+            disabled={compose.isSubmitting}
+            sx={{
+              color: neutralColor(500),
+              "&:hover": {
+                backgroundColor: neutralColor(100),
+                color: neutralColor(900),
+              },
+            }}
+          >
             <CloseIcon />
           </IconButton>
         </DialogTitle>
 
         {/* Content */}
-        <DialogContent sx={{ pt: 3 }}>
-          <Stack spacing={3}>
+        <DialogContent sx={{ px: 3, py: 2 }}>
+          <Stack spacing={2.5}>
             {/* Error Alert */}
             {error && (
               <Alert severity="error" onClose={() => setError(null)}>
@@ -156,13 +181,20 @@ export const ComposeConversationModal: React.FC<ComposeConversationModalProps> =
 
             {/* Message Composition Section */}
             {compose.formState.selectedContactableInbox && (
-              <Box
-                sx={{
-                  border: `1px solid ${neutralColor(300)}`,
-                  borderRadius: "8px",
-                  overflow: "hidden",
-                }}
-              >
+              <Box>
+                <Box
+                  sx={{
+                    border: `1px solid ${neutralColor(200)}`,
+                    borderRadius: "12px",
+                    overflow: "hidden",
+                    backgroundColor: neutralColor(0),
+                    transition: "border-color 0.2s",
+                    "&:focus-within": {
+                      borderColor: primaryColor(500),
+                      boxShadow: `0 0 0 3px ${primaryColor(100)}`,
+                    },
+                  }}
+                >
                 {/* Email-specific fields */}
                 {requirements?.subjectRequired && (
                   <Box sx={{ borderBottom: `1px solid ${neutralColor(200)}`, px: 2, py: 1.5 }}>
@@ -236,10 +268,10 @@ export const ComposeConversationModal: React.FC<ComposeConversationModalProps> =
                 )}
 
                 {/* Message Field */}
-                <Box sx={{ px: 2, py: 1.5 }}>
+                <Box sx={{ px: 2.5, py: 2 }}>
                   <TextareaAutosize
-                    minRows={4}
-                    maxRows={8}
+                    minRows={5}
+                    maxRows={10}
                     placeholder={
                       requirements?.messageRequired
                         ? "Type your message... *"
@@ -252,13 +284,15 @@ export const ComposeConversationModal: React.FC<ComposeConversationModalProps> =
                       border: "none",
                       outline: "none",
                       fontFamily: "inherit",
-                      fontSize: "0.875rem",
+                      fontSize: "0.9375rem",
+                      lineHeight: "1.6",
                       resize: "none",
                       backgroundColor: "transparent",
+                      color: "inherit",
                     }}
                   />
                   {compose.validationErrors.message && (
-                    <Typography color="error" sx={{ fontSize: "0.75rem", mt: 0.5 }}>
+                    <Typography color="error" sx={{ fontSize: "0.75rem", mt: 1 }}>
                       {compose.validationErrors.message}
                     </Typography>
                   )}
@@ -312,17 +346,40 @@ export const ComposeConversationModal: React.FC<ComposeConversationModalProps> =
                     )}
                   </Box>
                 )}
+                </Box>
               </Box>
             )}
           </Stack>
         </DialogContent>
 
         {/* Footer */}
-        <DialogActions sx={{ borderTop: `1px solid ${neutralColor(200)}`, px: 3, py: 2 }}>
+        <DialogActions
+          sx={{
+            borderTop: "none",
+            px: 3,
+            py: 2.5,
+            gap: 1.5,
+            justifyContent: "flex-end",
+          }}
+        >
           <Button
             onClick={handleClose}
             disabled={compose.isSubmitting}
-            sx={{ textTransform: "none", color: neutralColor(700) }}
+            variant="outlined"
+            sx={{
+              textTransform: "none",
+              color: neutralColor(700),
+              borderColor: neutralColor(300),
+              fontWeight: 500,
+              fontSize: "0.9375rem",
+              px: 3,
+              py: 1,
+              borderRadius: "8px",
+              "&:hover": {
+                borderColor: neutralColor(400),
+                backgroundColor: neutralColor(50),
+              },
+            }}
           >
             Cancel
           </Button>
@@ -330,15 +387,29 @@ export const ComposeConversationModal: React.FC<ComposeConversationModalProps> =
             onClick={handleSubmit}
             disabled={!canSubmit}
             variant="contained"
-            startIcon={compose.isSubmitting ? null : <SendIcon sx={{ fontSize: 16 }} />}
+            startIcon={compose.isSubmitting ? <CircularProgress size={18} sx={{ color: "white" }} /> : <SendIcon sx={{ fontSize: 18 }} />}
             sx={{
               textTransform: "none",
               backgroundColor: primaryColor(600),
-              "&:hover": { backgroundColor: primaryColor(700) },
-              "&:disabled": { backgroundColor: neutralColor(300) },
+              color: "white",
+              fontWeight: 600,
+              fontSize: "0.9375rem",
+              px: 4,
+              py: 1,
+              borderRadius: "8px",
+              boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
+              "&:hover": {
+                backgroundColor: primaryColor(700),
+                boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
+              },
+              "&:disabled": {
+                backgroundColor: neutralColor(200),
+                color: neutralColor(500),
+                boxShadow: "none",
+              },
             }}
           >
-            {compose.isSubmitting ? "Creating..." : "Create Conversation"}
+            {compose.isSubmitting ? "Sending..." : "Send Message"}
           </Button>
         </DialogActions>
       </Dialog>
