@@ -2764,7 +2764,12 @@ const useDigitalOffsetPrice = ({
                   }
                 }
                 if (materialData) {
-                  parameter.isHidden = false;
+                  if (parameter.isHiddenInSetting) {
+                    parameter.isHidden = true
+                  }
+                  else {
+                    parameter.isHidden = false;
+                  }
                   materialData.forEach((val) => {
                     const existsValue = parameter.valuesConfigs.find(
                       (x) =>
@@ -8446,11 +8451,11 @@ const useDigitalOffsetPrice = ({
             if (parameter.activateByAllValues) {
               section.isHidden = false;
             } else {
-              if(matchingParameter && matchingParameter.valueIds && matchingParameter.valueIds.length > 0) {
+              if (matchingParameter && matchingParameter.valueIds && matchingParameter.valueIds.length > 0) {
                 section.isHidden = !parameter.selectedValueIds.includes(
-                    matchingParameter?.valueIds[0]
+                  matchingParameter?.valueIds[0]
                 );
-              }else{
+              } else {
                 section.isHidden = true;
               }
             }
