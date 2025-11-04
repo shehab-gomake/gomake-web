@@ -86,29 +86,6 @@ export const ChatwootMessageItem: React.FC<ChatwootMessageItemProps> = ({
   const htmlContent = emailHtml;
   const rawContent = htmlContent || emailText || message.content || "";
 
-  // DEBUG: Log ALL message data to diagnose HTML rendering
-  React.useEffect(() => {
-    console.log('[ChatwootMessage] Rendering message:', {
-      messageId: message.id,
-      messageType: message.message_type,
-      contentType: message.content_type,
-      hasContentAttributes: !!message.content_attributes,
-      hasEmail: !!message.content_attributes?.email,
-      hasEmailHtml: !!emailHtml,
-      hasEmailText: !!emailText,
-      emailHtmlLength: emailHtml?.length || 0,
-      emailTextLength: emailText?.length || 0,
-      contentLength: message.content?.length || 0,
-      rawContentLength: rawContent.length,
-      isHtml: isHtml,
-      isFullHtmlDocument: isFullHtmlDocument,
-      processedContentLength: processedContent.length,
-      fullMessage: message,
-      rawContentPreview: rawContent.substring(0, 300),
-      processedContentPreview: processedContent.substring(0, 300),
-    });
-  }, [message.id]);
-
   // Determine if content is HTML based on content_type or content detection
   // Check for full HTML documents (like 404 pages) - these should be displayed as code blocks
   const isFullHtmlDocument = rawContent.trim().startsWith("<!DOCTYPE html") ||

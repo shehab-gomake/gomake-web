@@ -36,6 +36,10 @@ export interface OAuthResult {
   success: boolean;
   provider: string;
   accountsAdded: number;
+  /** Account ID from OAuth callback (if available) */
+  accountId?: number;
+  /** Inbox ID from OAuth callback (if available) */
+  inboxId?: number;
 }
 
 /**
@@ -139,6 +143,8 @@ export const useChatwootOAuth = () => {
                   success: true,
                   provider,
                   accountsAdded: 0, // Will be updated after fetching accounts
+                  accountId: event.data.accountId, // Capture from OAuth callback
+                  inboxId: event.data.inboxId,     // Capture from OAuth callback
                 });
               } else {
                 reject(new Error(event.data.error || "Authentication failed"));

@@ -19,6 +19,7 @@ import { UnattendedView } from "./views/unattended-view";
 import { ChannelsView } from "./views/channels-view";
 import { WebhookTestView } from "./views/webhook-test-view";
 import { SettingsView } from "./views/settings-view";
+import { OAuthCallbackView } from "./views/oauth-callback-view";
 
 const ChatwootProviderViewInternal: React.FC = () => {
   // Profile loading is handled by useChatwootProvider (via useChatwootProfile hook internally)
@@ -51,6 +52,9 @@ const ChatwootProviderViewInternal: React.FC = () => {
 
     case ChatwootView.SETTINGS:
       return <SettingsView />;
+
+    case ChatwootView.OAUTH_CALLBACK:
+      return <OAuthCallbackView />;
 
     default:
       // Fallback to My Inbox

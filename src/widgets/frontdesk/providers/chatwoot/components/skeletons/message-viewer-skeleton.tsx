@@ -281,71 +281,172 @@ const MessageItemSkeleton: React.FC<{ isIncoming: boolean; index: number }> = ({
 
 /**
  * Message composer skeleton
+ * Matches the structure of ChatwootReplyComposer
  */
 const MessageComposerSkeleton: React.FC = () => {
-  const { neutralColor } = useGomakeTheme();
+  const theme = useTheme();
+  const { neutralColor, primaryColor } = useGomakeTheme();
+  const borderColor = neutralColor(200);
 
   return (
     <Box
       sx={{
-        padding: 2,
-        borderTop: `1px solid ${neutralColor(200)}`,
-        backgroundColor: neutralColor(0),
+        borderTop: `1px solid ${borderColor}`,
+        backgroundColor: "transparent",
       }}
     >
-      <Stack spacing={1.5}>
-        {/* Toolbar */}
-        <Box sx={{ display: "flex", gap: 1 }}>
-          <Skeleton
-            variant="circular"
-            width={32}
-            height={32}
-            sx={{
-              bgcolor: neutralColor(200),
-            }}
-          />
-          <Skeleton
-            variant="circular"
-            width={32}
-            height={32}
-            sx={{
-              bgcolor: neutralColor(200),
-            }}
-          />
-          <Skeleton
-            variant="circular"
-            width={32}
-            height={32}
-            sx={{
-              bgcolor: neutralColor(200),
-            }}
-          />
-        </Box>
-
-        {/* Text input */}
+      {/* Tabs (Reply/Private Note) */}
+      <Box
+        sx={{
+          px: 2,
+          py: 1,
+          borderBottom: `1px solid ${borderColor}`,
+          display: "flex",
+          gap: 1,
+        }}
+      >
         <Skeleton
           variant="rounded"
-          width="100%"
-          height={80}
+          width={80}
+          height={28}
           sx={{
-            borderRadius: 2,
+            borderRadius: "6px",
+            bgcolor: neutralColor(200),
+          }}
+        />
+        <Skeleton
+          variant="rounded"
+          width={100}
+          height={28}
+          sx={{
+            borderRadius: "6px",
             bgcolor: neutralColor(100),
           }}
         />
+      </Box>
 
-        {/* Send button */}
-        <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+      {/* Formatting Toolbar (conditional - shown sometimes) */}
+      {Math.random() > 0.5 && (
+        <Box
+          sx={{
+            px: 1.5,
+            py: 0.75,
+            borderBottom: `1px solid ${borderColor}`,
+            display: "flex",
+            alignItems: "center",
+            gap: 0.25,
+          }}
+        >
+          {Array.from({ length: 9 }).map((_, i) => (
+            <Skeleton
+              key={i}
+              variant="circular"
+              width={24}
+              height={24}
+              sx={{
+                bgcolor: neutralColor(200),
+              }}
+            />
+          ))}
+        </Box>
+      )}
+
+      {/* Text Input Area */}
+      <Box
+        sx={{
+          position: "relative",
+          px: 2,
+          py: 1.5,
+          backgroundColor: "transparent",
+        }}
+      >
+        <Skeleton
+          variant="rounded"
+          width="100%"
+          height={96}
+          sx={{
+            borderRadius: 1,
+            bgcolor: neutralColor(50),
+            border: `1px solid ${borderColor}`,
+          }}
+        />
+        {/* Fullscreen icon */}
+        <Skeleton
+          variant="circular"
+          width={24}
+          height={24}
+          sx={{
+            position: "absolute",
+            top: 8,
+            right: 8,
+            bgcolor: neutralColor(200),
+          }}
+        />
+      </Box>
+
+      {/* Bottom Toolbar */}
+      <Box
+        sx={{
+          px: 2,
+          py: 1,
+          borderTop: `1px solid ${borderColor}`,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
+      >
+        {/* Left Side Icons */}
+        <Stack direction="row" spacing={0.5} alignItems="center">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <Skeleton
+              key={i}
+              variant="circular"
+              width={32}
+              height={32}
+              sx={{
+                bgcolor: neutralColor(200),
+              }}
+            />
+          ))}
+          {/* AI Assist button (special styling) */}
           <Skeleton
-            variant="rounded"
-            width={100}
-            height={36}
+            variant="circular"
+            width={32}
+            height={32}
             sx={{
-              borderRadius: 1,
-              bgcolor: neutralColor(200),
+              bgcolor: theme.palette.primary.main,
+              opacity: 0.3,
             }}
           />
-        </Box>
-      </Stack>
+        </Stack>
+
+        {/* Right Side: Character Count + Send Button */}
+        <Stack direction="row" spacing={1} alignItems="center">
+          {/* Character count (sometimes shown) */}
+          {Math.random() > 0.5 && (
+            <Skeleton
+              variant="text"
+              width={60}
+              height={16}
+              sx={{
+                bgcolor: neutralColor(200),
+                borderRadius: 1,
+              }}
+            />
+          )}
+          {/* Send Button */}
+          <Skeleton
+            variant="rounded"
+            width={110}
+            height={32}
+            sx={{
+              borderRadius: "6px",
+              bgcolor: primaryColor(600),
+              opacity: 0.5,
+            }}
+          />
+        </Stack>
+      </Box>
     </Box>
   );
 };

@@ -11,8 +11,12 @@ import {
   ConversationAssigneeType,
   ChatwootConversation,
 } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
+import { RouteType } from "@/widgets/frontdesk/routing/types";
 import { chatwootService } from "@/services/frontdesk";
 import { buildConversationFilters, matchesStatusFilter } from "../utils/filter-utils";
+import { createLogger } from "@/services/frontdesk/utils/logger";
+
+const logger = createLogger("useChatwootProvider");
 import {
   chatwootSelectedConversationAtom,
   chatwootSelectedAccountAtom,
@@ -92,65 +96,120 @@ export const useChatwootProvider = () => {
   // Use conversations hook with accountId and filters
   const conversations = useChatwootConversations(currentAccountId, filters);
 
-  // Track initialization to prevent cascading state updates
-  const lastInboxIdRef = useRef<number | null>(selectedInboxId);
-
   // Consolidated initialization effect
-  // Handles account selection, conversation clearing, and auto-selection in a coordinated manner
+  // Handles only account auto-selection now - router handles conversation state
   useEffect(() => {
-    // 1. Auto-select account if needed
+    // Auto-select account if needed
     if (!selectedAccountId && currentAccountId) {
       setSelectedAccountId(currentAccountId);
     }
-
-    // 2. Clear selected conversation when inbox changes (but not on initial mount)
-    if (lastInboxIdRef.current !== selectedInboxId) {
-      lastInboxIdRef.current = selectedInboxId;
-      setSelectedConversation(null);
-    }
-
-    // 3. Auto-select first conversation when appropriate
-    // Only do this if:
-    // - We have an inbox selected
-    // - Conversations have loaded
-    // - No conversation is currently selected
-    // - We have conversations to select from
-    if (selectedInboxId && conversations.conversations.length > 0 && !selectedConversation && !conversations.loading) {
-      const firstConversation = conversations.conversations[0];
-      if (firstConversation) {
-        setSelectedConversation(firstConversation);
-      }
-    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedAccountId, currentAccountId]);
+
+  // Conversation loader: Sync conversationId from URL to actual conversation object
+  // This loads the full conversation object when URL contains a conversationId
+  // Supports deep linking by fetching conversation from API if not in current list
+  useEffect(() => {
+    const conversationIdFromUrl = router.currentRoute?.conversationId;
+
+    if (!conversationIdFromUrl) {
+      // No conversation in URL - clear selection (router already handles this)
+      return;
+    }
+
+    // Check if we already have the right conversation loaded
+    if (selectedConversation?.id.toString() === conversationIdFromUrl) {
+      return;
+    }
+
+    // Try to find conversation in the current list first (fast path)
+    const convInList = conversations.conversations.find(
+      (c) => c.id.toString() === conversationIdFromUrl
+    );
+
+    if (convInList) {
+      setSelectedConversation(convInList);
+      return;
+    }
+
+    // If not in list, fetch from API (for direct URL access / deep linking)
+    // This enables sharing conversation links that work even if conversation isn't loaded
+    const fetchConversationFromApi = async () => {
+      if (!currentAccountId) {
+        logger.warn("Cannot fetch conversation - no account selected");
+        return;
+      }
+
+      try {
+        logger.debug(`Fetching conversation ${conversationIdFromUrl} from API (deep link)`);
+        const response = await chatwootService.conversations.getConversationDetails(
+          currentAccountId,
+          parseInt(conversationIdFromUrl, 10)
+        );
+
+        // API returns the conversation object directly
+        const conversation = response as any;
+        if (conversation) {
+          setSelectedConversation(conversation);
+          logger.debug(`Loaded conversation ${conversationIdFromUrl} from API`);
+        } else {
+          logger.error("Conversation not found:", conversationIdFromUrl);
+        }
+      } catch (error) {
+        logger.error(`Failed to fetch conversation ${conversationIdFromUrl}:`, error);
+        // TODO: Show user-friendly error message (conversation not found or unauthorized)
+      }
+    };
+
+    fetchConversationFromApi();
   }, [
-    selectedAccountId,
-    currentAccountId,
-    selectedInboxId,
-    conversations.conversations,
+    router.currentRoute?.conversationId,
     selectedConversation,
-    conversations.loading,
+    conversations.conversations,
+    currentAccountId,
+    setSelectedConversation,
   ]);
 
+  /**
+   * Handle conversation selection
+   *
+   * This now triggers navigation via router instead of directly setting Recoil state.
+   * The router will update the URL, which will trigger useEffect to update Recoil.
+   * Also marks conversation as read (business logic).
+   */
   const handleConversationSelect = useCallback(
     async (conversation: ChatwootConversation) => {
-      setSelectedConversation(conversation);
+      // Navigate to conversation - URL will become source of truth
+      const inboxId = conversation.inbox_id?.toString();
+      router.navigateToConversation(conversation.id.toString(), inboxId);
 
-      // Mark conversation as read (updates agent_last_seen_at)
+      // Mark conversation as read (business logic - independent of navigation state)
       if (conversation.id && currentAccountId) {
         try {
           await chatwootService.conversations.markConversationAsRead(currentAccountId, conversation.id);
         } catch (err) {
           // Don't block conversation selection on error
-          console.error("Failed to mark conversation as read:", err);
+          logger.error("Failed to mark conversation as read:", err);
         }
       }
     },
-    [setSelectedConversation, currentAccountId]
+    [currentAccountId, router]
   );
 
+  /**
+   * Handle back navigation (return to conversation list)
+   *
+   * Now triggers router navigation to clear conversationId from URL
+   */
   const handleBack = useCallback(() => {
-    setSelectedConversation(null);
-  }, [setSelectedConversation]);
+    // Navigate to current view without conversationId
+    router.navigate({
+      type: RouteType.CHATWOOT,
+      view: router.currentView,
+      channelId: selectedInboxId?.toString(),
+      filters: router.currentFilters,
+    });
+  }, [router, selectedInboxId]);
 
   const selectAccount = useCallback(
     (accountId: number | null) => {

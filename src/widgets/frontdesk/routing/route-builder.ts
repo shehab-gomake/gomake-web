@@ -166,6 +166,7 @@ const mapChatwootViewToQueryParam = (view: ChatwootView): string => {
     [ChatwootView.CHANNELS]: "channels",
     [ChatwootView.WEBHOOK_TEST]: "webhook-test",
     [ChatwootView.SETTINGS]: "settings",
+    [ChatwootView.OAUTH_CALLBACK]: "oauth-callback",
   };
   return map[view];
 };

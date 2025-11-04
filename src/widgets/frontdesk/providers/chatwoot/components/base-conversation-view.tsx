@@ -78,13 +78,12 @@ export const BaseConversationView: React.FC<BaseConversationViewProps> = ({ empt
     // Get next conversation
     const nextConversation = conversations[currentIndex + 1];
     if (nextConversation) {
-      handleConversationSelect(nextConversation);
-
-      // Also navigate using router for URL consistency
+      // Navigate using router ONLY - this will update URL and trigger useEffect to update Recoil
+      // No need to call handleConversationSelect separately (prevents double state update)
       const inboxId = nextConversation.inbox_id?.toString();
       router.navigateToConversation(nextConversation.id.toString(), inboxId);
     }
-  }, [selectedConversation, conversations, handleConversationSelect, router]);
+  }, [selectedConversation, conversations, router]);
 
   return (
     <Stack direction="row" spacing={0} sx={{ height: "100%", p: 0 }}>

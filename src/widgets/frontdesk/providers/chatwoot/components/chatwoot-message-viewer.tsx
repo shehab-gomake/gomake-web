@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Paper, Typography, Stack, alpha } from "@mui/material";
+import { Box, Paper, Typography, Stack, alpha, Button, CircularProgress } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { PanelContent, EmptyState } from "@/widgets/frontdesk/design-system";
@@ -41,7 +41,7 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
   const { neutralColor } = useGomakeTheme();
   const [isSending, setIsSending] = React.useState(false);
 
-  const { messages, loading, error, refresh } = useChatwootMessages({
+  const { messages, loading, error, refresh, loadMoreMessages, hasMoreMessages, isLoadingMore } = useChatwootMessages({
     conversation,
     accountId: accountId || null,
   });
@@ -251,6 +251,7 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
         content,
         message_type: "outgoing",
         private: isPrivate,
+        content_type: recipientEmails ? "input_email" : "text",
         // Include email metadata if provided
         ...(recipientEmails && {
           content_attributes: {
@@ -330,28 +331,32 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
           />
         ) : (
           <Stack spacing={2}>
-            {(() => {
-              // DEBUG: Log ALL messages received from hook before any filtering
-              console.log('[MessageViewer] Messages received from hook:', {
-                total: messages.length,
-                byType: messages.reduce((acc: any, msg: any) => {
-                  const type = msg.message_type ?? 'unknown';
-                  acc[type] = (acc[type] || 0) + 1;
-                  return acc;
-                }, {}),
-                allMessages: messages.map(m => ({
-                  id: m.id,
-                  type: m.message_type,
-                  content: m.content?.substring(0, 80),
-                  hasContent: !!(m.content && m.content.trim().length > 0),
-                })),
-                activityMessages: messages.filter(m => m.message_type === 2).map(m => ({
-                  id: m.id,
-                  content: m.content,
-                  sender: m.sender?.name,
-                })),
-              });
+            {/* Load More Button - Show at top */}
+            {hasMoreMessages && (
+              <Box sx={{ display: "flex", justifyContent: "center", pt: 1 }}>
+                <Button
+                  variant="outlined"
+                  size="small"
+                  onClick={loadMoreMessages}
+                  disabled={isLoadingMore}
+                  startIcon={isLoadingMore ? <CircularProgress size={16} /> : null}
+                  sx={{
+                    borderRadius: 2,
+                    textTransform: "none",
+                    borderColor: neutralColor(200),
+                    color: neutralColor(700),
+                    "&:hover": {
+                      borderColor: theme.palette.primary.main,
+                      backgroundColor: alpha(theme.palette.primary.main, 0.05),
+                    },
+                  }}
+                >
+                  {isLoadingMore ? "Loading..." : "Load Older Messages"}
+                </Button>
+              </Box>
+            )}
 
+            {(() => {
               // Filter messages: Keep ALL activity messages, filter empty content for others
               const visibleMessages = messages.filter((message) => {
                 // Activity messages (message_type 2) should ALWAYS be shown
@@ -364,13 +369,6 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
                 // For regular messages (incoming/outgoing), filter out empty content
                 const hasContent = message.content && message.content.trim().length > 0;
                 return hasContent;
-              });
-
-              // DEBUG: Log what remains after filtering
-              console.log('[MessageViewer] After filtering:', {
-                visible: visibleMessages.length,
-                filtered: messages.length - visibleMessages.length,
-                visibleActivityCount: visibleMessages.filter(m => m.message_type === 2).length,
               });
 
               if (visibleMessages.length === 0) {

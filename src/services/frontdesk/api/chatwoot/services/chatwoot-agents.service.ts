@@ -164,4 +164,30 @@ export class ChatwootAgentsService extends BaseChatwootService {
   async deleteAgent(accountId: number, agentId: number): Promise<void> {
     return await this.delete(`/api/accounts/agents/${agentId}`);
   }
+
+  /**
+   * Add Agents to Inbox
+   * POST /api/inbox_members
+   *
+   * Assigns multiple agents to an inbox.
+   * This is required for newly created inboxes to become operational.
+   * At least one agent must be assigned for the inbox to handle messages.
+   *
+   * @param inboxId - The numeric ID of the inbox
+   * @param agentIds - Array of agent IDs to assign to the inbox
+   * @returns Promise that resolves when agents are assigned
+   *
+   * @example
+   * ```typescript
+   * // Assign agents to inbox after OAuth
+   * await agentsService.addAgentsToInbox(7, [1, 2, 3]);
+   * console.log('Agents assigned to inbox successfully');
+   * ```
+   */
+  async addAgentsToInbox(inboxId: number, agentIds: number[]): Promise<void> {
+    return await this.post<void>("/api/inbox_members", {
+      inbox_id: inboxId,
+      user_ids: agentIds,
+    });
+  }
 }

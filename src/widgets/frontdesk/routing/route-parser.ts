@@ -29,10 +29,12 @@ export interface NextRouterQuery {
   ticket?: string | string[];
   conversation?: string | string[];
   channel?: string | string[];
+  // OAuth callback parameters
+  accountId?: string | string[];
+  inboxId?: string | string[];
   // Chatwoot filter parameters
   status?: string | string[];
   assigneeType?: string | string[];
-  inboxId?: string | string[];
   teamId?: string | string[];
   sortBy?: string | string[];
   search?: string | string[];
@@ -122,6 +124,7 @@ const parseChatwootView = (viewParam?: string): ChatwootView => {
     "channels": ChatwootView.CHANNELS,
     "webhook-test": ChatwootView.WEBHOOK_TEST,
     "settings": ChatwootView.SETTINGS,
+    "oauth-callback": ChatwootView.OAUTH_CALLBACK,
   };
 
   return viewMap[viewParam] || ChatwootView.MY_INBOX;

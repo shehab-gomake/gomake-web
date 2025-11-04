@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useRef } from "react";
 import { useRecoilState } from "recoil";
 import { chatwootService } from "@/services/frontdesk";
 import {
@@ -10,51 +10,62 @@ import {
  * Custom hook for managing Chatwoot profile state
  * Follows the Email provider pattern to prevent multiple API calls
  * Includes error handling for network issues
+ *
+ * Production-ready pattern: Uses useRef instead of global flag for fetch deduplication
+ * This ensures proper isolation across multiple component instances and SSR compatibility
  */
 export const useChatwootProfile = () => {
   const [profile, setProfile] = useRecoilState(chatwootProfileAtom);
   const [loading, setLoading] = useRecoilState(chatwootProfileLoadingAtom);
   const [error, setError] = useState<Error | null>(null);
-  const [hasAttempted, setHasAttempted] = useState(false);
+  const hasAttemptedRef = useRef(false);
+  const isFetchingRef = useRef(false);
 
   const fetchProfile = useCallback(async () => {
-    // Prevent duplicate calls
-    if (loading) {
+    // Atomic check-and-set to prevent race conditions
+    // Using ref instead of global flag for better isolation and SSR compatibility
+    if (loading || isFetchingRef.current) {
+      console.log("[useChatwootProfile] ⏭️ Fetch already in progress, skipping duplicate call");
       return;
     }
 
+    console.log("[useChatwootProfile] 🚀 Starting profile fetch...");
+    isFetchingRef.current = true;
     setLoading(true);
     setError(null);
     try {
       const profileData = await chatwootService.profile.getProfile();
+      console.log("[useChatwootProfile] ✅ Profile fetched successfully");
       setProfile(profileData);
-      setHasAttempted(true);
+      hasAttemptedRef.current = true;
       return profileData;
     } catch (error) {
       const err = error instanceof Error ? error : new Error("Failed to load Chatwoot profile");
-      console.error("[useChatwootProfile] Failed to load profile:", err.message);
+      console.error("[useChatwootProfile] ❌ Failed to load profile:", err.message);
       setError(err);
-      setHasAttempted(true);
+      hasAttemptedRef.current = true;
       // Don't throw - let the component handle the error state
       return null;
     } finally {
       setLoading(false);
+      isFetchingRef.current = false;
     }
   }, [setProfile, setLoading, loading]);
 
   // Initial fetch on mount - only if not already loaded/attempted
   useEffect(() => {
     // Guard: Only fetch if profile is not already loaded, not currently loading, and haven't attempted yet
-    if (profile === null && !loading && !hasAttempted) {
+    if (profile === null && !loading && !hasAttemptedRef.current && !isFetchingRef.current) {
       fetchProfile();
     }
-  }, []); // Empty dependency array - runs only once on mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Empty dependency array - runs only once on mount per component instance
 
   return {
     profile,
     loading,
     error,
     fetchProfile, // Expose for manual refresh if needed
-    hasAttempted, // Expose to check if we've tried fetching
+    hasAttempted: hasAttemptedRef.current, // Expose to check if we've tried fetching
   };
 };

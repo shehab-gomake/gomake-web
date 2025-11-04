@@ -4,13 +4,15 @@
  * Unified hook for fetching and managing teams across the application.
  * Implements singleton pattern with cache and deduplication.
  *
+ * Production-ready: Prevents duplicate concurrent requests with ref-based flag
+ *
  * Usage:
  * ```typescript
  * const { teams, loading, error, refresh } = useChatwootTeams(accountId);
  * ```
  */
 
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import {
   chatwootTeamsAtom,
@@ -20,6 +22,10 @@ import {
 import { chatwootSelectedAccountAtom } from "@/store/frontdesk/atoms/chatwoot.atoms";
 import { chatwootService } from "@/services/frontdesk";
 import type { Team } from "@/services/frontdesk/api/chatwoot/types/teams.types";
+
+// Global fetch guard to prevent duplicate concurrent requests across all hook instances
+// This is safe because teams are global per account (not user-specific)
+let globalTeamsFetchInProgress = false;
 
 export interface UseChatwootTeamsResult {
   teams: Team[];
@@ -50,7 +56,7 @@ export function useChatwootTeams(
   const isStale = !isCacheValid(teamsState);
 
   /**
-   * Fetch teams from API
+   * Fetch teams from API with global deduplication
    */
   const fetchTeams = useCallback(
     async (force: boolean = false) => {
@@ -59,24 +65,31 @@ export function useChatwootTeams(
         return;
       }
 
-      // Skip if already loading (deduplication)
+      // Global deduplication guard (prevents concurrent requests across all component instances)
+      if (globalTeamsFetchInProgress) {
+        console.log("[useChatwootTeams] ⏭️ Global fetch already in progress, skipping duplicate");
+        return;
+      }
+
+      // Skip if already loading (Recoil state deduplication)
       if (resourceLoading.teams) {
-        console.log("[useChatwootTeams] Already fetching, skipping duplicate request");
+        console.log("[useChatwootTeams] ⏭️ Already fetching, skipping duplicate request");
         return;
       }
 
       // Skip if cache is valid and not forced
       if (!force && isCacheValid(teamsState)) {
-        console.log("[useChatwootTeams] Using cached teams");
+        console.log("[useChatwootTeams] ✅ Using cached teams");
         return;
       }
 
-      // Mark as loading
+      // Mark as loading (both global and Recoil)
+      globalTeamsFetchInProgress = true;
       setResourceLoading((prev) => ({ ...prev, teams: true }));
       setTeamsState((prev) => ({ ...prev, loading: true, error: null }));
 
       try {
-        console.log(`[useChatwootTeams] Fetching teams for account ${effectiveAccountId}`);
+        console.log(`[useChatwootTeams] 🚀 Fetching teams for account ${effectiveAccountId}`);
         const teams = await chatwootService.teams.listTeams(effectiveAccountId);
 
         setTeamsState({
@@ -87,15 +100,16 @@ export function useChatwootTeams(
           ttl: 5 * 60 * 1000, // 5 minutes
         });
 
-        console.log(`[useChatwootTeams] Fetched ${teams.length} teams`);
+        console.log(`[useChatwootTeams] ✅ Fetched ${teams.length} teams`);
       } catch (error) {
-        console.error("[useChatwootTeams] Failed to fetch teams:", error);
+        console.error("[useChatwootTeams] ❌ Failed to fetch teams:", error);
         setTeamsState((prev) => ({
           ...prev,
           loading: false,
           error: error instanceof Error ? error : new Error("Failed to fetch teams"),
         }));
       } finally {
+        globalTeamsFetchInProgress = false;
         setResourceLoading((prev) => ({ ...prev, teams: false }));
       }
     },
