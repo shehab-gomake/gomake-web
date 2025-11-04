@@ -167,15 +167,27 @@ const CustomerCardWidget = ({
 
   useEffect(() => {
     if (customer) {
-      customer?.contacts &&
-        customer?.contacts?.length > 0 &&
-        setContacts(customer?.contacts);
-      customer?.addresses &&
-        customer?.addresses?.length > 0 &&
-        setAddresses(customer?.addresses);
-      customer?.users &&
-        customer?.users?.length > 0 &&
-        setUsers(customer?.users);
+      if (customer?.contacts && customer?.contacts?.length > 0) {
+        const contactsWithIndex = customer.contacts.map((contact, i) => ({
+          ...contact,
+          index: contact.index ?? i + 1,
+        }));
+        setContacts(contactsWithIndex);
+      }
+      if (customer?.addresses && customer?.addresses?.length > 0) {
+        const addressesWithIndex = customer.addresses.map((address, i) => ({
+          ...address,
+          index: address.index ?? i + 1,
+        }));
+        setAddresses(addressesWithIndex);
+      }
+      if (customer?.users && customer?.users?.length > 0) {
+        const usersWithIndex = customer.users.map((user, i) => ({
+          ...user,
+          index: user.index ?? i + 1,
+        }));
+        setUsers(usersWithIndex);
+      }
     }
   }, [customer]);
 
@@ -572,12 +584,12 @@ const CustomerCardWidget = ({
                         ) || inputValue === ""
                           ? clientGroupList
                           : [
-                              {
-                                groupName: `Add "${inputValue}" as a new group`,
-                                id: "new",
-                              },
-                              ...clientGroupList,
-                            ]
+                            {
+                              groupName: `Add "${inputValue}" as a new group`,
+                              id: "new",
+                            },
+                            ...clientGroupList,
+                          ]
                       }
                       placeholder={t("products.profits.exceptions.groupBy")}
                       style={classes.dropDownListStyle}
