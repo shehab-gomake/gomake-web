@@ -1,7 +1,7 @@
 /**
  * Chatwoot Teams Service
  *
- * Handles all team-related endpoints for fetching available teams
+ * Handles all team-related endpoints for creating, fetching, and managing teams
  * in an account.
  *
  * @see Chatwoot API Guide - TeamsApi
@@ -20,6 +20,15 @@ export interface Team {
   allow_auto_assign?: boolean;    // Auto-assign conversations to agents
   account_id?: number;            // Account ID
   is_member?: boolean;            // Current user is member
+}
+
+/**
+ * Request payload for creating or updating a team
+ */
+export interface TeamCreateUpdatePayload {
+  name: string;                   // Team name (required, unique per account)
+  description?: string;           // Team description (optional)
+  allow_auto_assign?: boolean;    // Auto-assign conversations to agents (optional, default: true)
 }
 
 /**
@@ -105,5 +114,39 @@ export class ChatwootTeamsService extends BaseChatwootService {
    */
   async getTeamMembers(accountId: number, teamId: number): Promise<Agent[]> {
     return await this.get<Agent[]>(`/api/accounts/teams/${teamId}/team_members`);
+  }
+
+  /**
+   * Create a New Team
+   * POST /api/v1/accounts/{account_id}/teams
+   *
+   * Creates a new team in the specified account.
+   *
+   * @param accountId - The numeric ID of the account
+   * @param payload - Team creation payload (name is required)
+   * @returns Promise with created team details
+   *
+   * @example
+   * ```typescript
+   * const newTeam = await teamsService.createTeam(123, {
+   *   name: "Support Team",
+   *   description: "Handles customer support inquiries",
+   *   allow_auto_assign: true
+   * });
+   * console.log(newTeam); // { id: 789, name: 'support team', ... }
+   * ```
+   *
+   * @throws Error if team name is missing or already exists in account
+   */
+  async createTeam(
+    accountId: number,
+    payload: TeamCreateUpdatePayload
+  ): Promise<Team> {
+    // Chatwoot API expects the payload wrapped in a "team" key
+    const requestBody = { team: payload };
+    return await this.post<Team>(
+      this.accountScopedUrl(accountId, "teams"),
+      requestBody
+    );
   }
 }

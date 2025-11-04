@@ -50,6 +50,13 @@ export type AgentAvailabilityStatus = 'available' | 'busy' | 'offline';
 // Agent role type
 export type AgentRole = 'agent' | 'administrator';
 
+// Agent update payload for PATCH operations
+export interface AgentUpdatePayload {
+  role: string;                    // Required: "administrator" or "agent"
+  availability_status?: string;    // Optional: "available", "busy", or "offline"
+  auto_offline?: boolean;          // Optional: auto-offline when away
+}
+
 // Type guard for Agent
 export function isAgent(value: unknown): value is Agent {
   if (!value || typeof value !== 'object') return false;

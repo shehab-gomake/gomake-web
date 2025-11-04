@@ -318,3 +318,19 @@ export const chatwootLabelsErrorAtom = atom<string | null>({
   default: null,
 });
 
+// OAuth State (for channel connection flow)
+export const chatwootOAuthLoadingAtom = atom<boolean>({
+  key: "frontdesk.chatwoot.oauthLoading",
+  default: false,
+});
+
+export const chatwootOAuthErrorAtom = atom<string | null>({
+  key: "frontdesk.chatwoot.oauthError",
+  default: null,
+});
+
+export const chatwootOAuthProviderAtom = atom<string | null>({
+  key: "frontdesk.chatwoot.oauthProvider",
+  default: null,
+});
+

@@ -18,6 +18,8 @@ import { useComposeConversation } from "../../hooks/use-compose-conversation";
 import { getChannelRequirements } from "@/services/frontdesk/api/chatwoot/types/compose.types";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import type { ContactDetail } from "@/services/frontdesk/api/chatwoot/types/contacts.types";
+import { WhatsAppTemplateSelector, convertToTemplateParams, generateMessageContent } from "../templates";
+import type { WhatsAppTemplate, TemplateSelectorState } from "../templates";
 
 interface ComposeConversationModalProps {
   open: boolean;
@@ -33,6 +35,7 @@ export const ComposeConversationModal: React.FC<ComposeConversationModalProps> =
   const { primaryColor, neutralColor } = useGomakeTheme();
   const [showCreateContact, setShowCreateContact] = useState(false);
   const [showBcc, setShowBcc] = useState(false);
+  const [showTemplateSelector, setShowTemplateSelector] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const compose = useComposeConversation({
@@ -107,13 +110,15 @@ export const ComposeConversationModal: React.FC<ComposeConversationModalProps> =
       <Dialog
         open={open}
         onClose={handleClose}
-        maxWidth="sm"
+        maxWidth="md"
         fullWidth
         PaperProps={{
           sx: {
-            borderRadius: "16px",
-            maxHeight: "85vh",
-            boxShadow: "0 20px 60px rgba(0, 0, 0, 0.15)",
+            borderRadius: "20px",
+            maxHeight: "90vh",
+            backgroundColor: "#1e293b", // Dark slate background
+            color: "#e2e8f0", // Light text
+            boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.5)",
           },
         }}
       >
@@ -123,13 +128,13 @@ export const ComposeConversationModal: React.FC<ComposeConversationModalProps> =
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
-            borderBottom: "none",
+            borderBottom: `1px solid #334155`, // Subtle dark border
             pb: 2,
-            pt: 3,
+            pt: 2.5,
             px: 3,
           }}
         >
-          <Typography variant="h5" sx={{ fontWeight: 600, color: neutralColor(900), fontSize: "1.5rem" }}>
+          <Typography variant="h5" sx={{ fontWeight: 600, color: "#f1f5f9", fontSize: "1.375rem" }}>
             New Conversation
           </Typography>
           <IconButton
@@ -137,10 +142,10 @@ export const ComposeConversationModal: React.FC<ComposeConversationModalProps> =
             size="small"
             disabled={compose.isSubmitting}
             sx={{
-              color: neutralColor(500),
+              color: "#94a3b8",
               "&:hover": {
-                backgroundColor: neutralColor(100),
-                color: neutralColor(900),
+                backgroundColor: "#334155",
+                color: "#f1f5f9",
               },
             }}
           >
@@ -149,52 +154,93 @@ export const ComposeConversationModal: React.FC<ComposeConversationModalProps> =
         </DialogTitle>
 
         {/* Content */}
-        <DialogContent sx={{ px: 3, py: 2 }}>
-          <Stack spacing={2.5}>
+        <DialogContent sx={{ px: 0, py: 0 }}>
+          <Stack spacing={0}>
             {/* Error Alert */}
             {error && (
-              <Alert severity="error" onClose={() => setError(null)}>
-                {error}
-              </Alert>
+              <Box sx={{ px: 3, pt: 2 }}>
+                <Alert severity="error" onClose={() => setError(null)}>
+                  {error}
+                </Alert>
+              </Box>
             )}
 
-            {/* Contact Selection */}
-            <ContactSelector
-              selectedContact={compose.formState.contact}
-              searchResults={compose.searchResults}
-              isSearching={compose.isSearching}
-              onSearch={compose.searchContacts}
-              onSelectContact={compose.selectContact}
-              onCreateContact={() => setShowCreateContact(true)}
-              error={compose.validationErrors.contact}
-            />
+            {/* To: Field (Contact Selection) - Inline Design */}
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                px: 3,
+                py: 2,
+                borderBottom: `1px solid #334155`,
+              }}
+            >
+              <Typography sx={{ color: "#94a3b8", fontSize: "0.938rem", minWidth: 60, fontWeight: 500 }}>
+                To:
+              </Typography>
+              <Box sx={{ flex: 1 }}>
+                {compose.formState.contact ? (
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 1.5,
+                      cursor: "pointer",
+                      "&:hover": { opacity: 0.8 },
+                    }}
+                    onClick={() => compose.selectContact(null as any)}
+                  >
+                    <Typography sx={{ color: "#ef4444", fontSize: "0.938rem" }}>
+                      {compose.formState.contact.phone_number || compose.formState.contact.email || compose.formState.contact.name}
+                    </Typography>
+                    <IconButton size="small" sx={{ color: "#94a3b8", p: 0.5 }}>
+                      <CloseIcon sx={{ fontSize: 16 }} />
+                    </IconButton>
+                  </Box>
+                ) : (
+                  <ContactSelector
+                    selectedContact={compose.formState.contact}
+                    searchResults={compose.searchResults}
+                    isSearching={compose.isSearching}
+                    onSearch={compose.searchContacts}
+                    onSelectContact={compose.selectContact}
+                    onCreateContact={() => setShowCreateContact(true)}
+                    error={compose.validationErrors.contact}
+                  />
+                )}
+              </Box>
+            </Box>
 
-            {/* Inbox Selection */}
-            <InboxSelector
-              contactableInboxes={compose.contactableInboxes}
-              selectedInbox={compose.formState.selectedContactableInbox}
-              isLoading={compose.isLoadingInboxes}
-              disabled={!compose.formState.contact}
-              onSelect={(inbox) => compose.updateField("selectedContactableInbox", inbox)}
-              error={compose.validationErrors.inbox}
-            />
+            {/* Via: Field (Inbox Selection) - Inline Design */}
+            {compose.formState.contact && (
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  px: 3,
+                  py: 2,
+                  borderBottom: `1px solid #334155`,
+                }}
+              >
+                <Typography sx={{ color: "#94a3b8", fontSize: "0.938rem", minWidth: 60, fontWeight: 500 }}>
+                  Via:
+                </Typography>
+                <Box sx={{ flex: 1 }}>
+                  <InboxSelector
+                    contactableInboxes={compose.contactableInboxes}
+                    selectedInbox={compose.formState.selectedContactableInbox}
+                    isLoading={compose.isLoadingInboxes}
+                    disabled={!compose.formState.contact}
+                    onSelect={(inbox) => compose.updateField("selectedContactableInbox", inbox)}
+                    error={compose.validationErrors.inbox}
+                  />
+                </Box>
+              </Box>
+            )}
 
             {/* Message Composition Section */}
             {compose.formState.selectedContactableInbox && (
               <Box>
-                <Box
-                  sx={{
-                    border: `1px solid ${neutralColor(200)}`,
-                    borderRadius: "12px",
-                    overflow: "hidden",
-                    backgroundColor: neutralColor(0),
-                    transition: "border-color 0.2s",
-                    "&:focus-within": {
-                      borderColor: primaryColor(500),
-                      boxShadow: `0 0 0 3px ${primaryColor(100)}`,
-                    },
-                  }}
-                >
                 {/* Email-specific fields */}
                 {requirements?.subjectRequired && (
                   <Box sx={{ borderBottom: `1px solid ${neutralColor(200)}`, px: 2, py: 1.5 }}>
@@ -267,15 +313,47 @@ export const ComposeConversationModal: React.FC<ComposeConversationModalProps> =
                   </>
                 )}
 
-                {/* Message Field */}
-                <Box sx={{ px: 2.5, py: 2 }}>
+                {/* WhatsApp Template Button - Only for WhatsApp channels */}
+                {channelType === "Channel::WhatsApp" && (
+                  <Box sx={{ px: 3, py: 2, borderBottom: "1px solid #334155" }}>
+                    <Button
+                      fullWidth
+                      variant="outlined"
+                      onClick={() => setShowTemplateSelector(true)}
+                      sx={{
+                        textTransform: "none",
+                        borderColor: "#334155",
+                        color: "#94a3b8",
+                        fontWeight: 500,
+                        py: 1.5,
+                        borderRadius: "8px",
+                        "&:hover": {
+                          borderColor: "#3b82f6",
+                          backgroundColor: "rgba(59, 130, 246, 0.05)",
+                          color: "#3b82f6",
+                        },
+                      }}
+                    >
+                      {compose.formState.templateParams
+                        ? `Template: ${compose.formState.templateParams.name.replace(/_/g, " ")}`
+                        : "Use WhatsApp Template"}
+                    </Button>
+                    {compose.formState.templateParams && (
+                      <Typography variant="caption" sx={{ color: "#64748b", mt: 0.5, display: "block" }}>
+                        Template selected. Message field is optional.
+                      </Typography>
+                    )}
+                  </Box>
+                )}
+
+                {/* Message Field - Simple Dark Textarea */}
+                <Box sx={{ px: 3, py: 3, minHeight: 300 }}>
                   <TextareaAutosize
-                    minRows={5}
-                    maxRows={10}
+                    minRows={12}
                     placeholder={
-                      requirements?.messageRequired
-                        ? "Type your message... *"
-                        : "Type your message..."
+                      compose.formState.templateParams
+                        ? "Optional: Add a custom message (or leave empty to use template only)"
+                        : "Write your message here..."
                     }
                     value={compose.formState.message}
                     onChange={(e) => compose.updateField("message", e.target.value)}
@@ -284,11 +362,11 @@ export const ComposeConversationModal: React.FC<ComposeConversationModalProps> =
                       border: "none",
                       outline: "none",
                       fontFamily: "inherit",
-                      fontSize: "0.9375rem",
+                      fontSize: "0.938rem",
                       lineHeight: "1.6",
                       resize: "none",
                       backgroundColor: "transparent",
-                      color: "inherit",
+                      color: "#94a3b8",
                     }}
                   />
                   {compose.validationErrors.message && (
@@ -346,73 +424,100 @@ export const ComposeConversationModal: React.FC<ComposeConversationModalProps> =
                     )}
                   </Box>
                 )}
-                </Box>
               </Box>
             )}
           </Stack>
         </DialogContent>
 
-        {/* Footer */}
+        {/* Footer - Matching Screenshot */}
         <DialogActions
           sx={{
-            borderTop: "none",
+            borderTop: `1px solid #334155`,
             px: 3,
-            py: 2.5,
-            gap: 1.5,
-            justifyContent: "flex-end",
+            py: 2,
+            justifyContent: "space-between",
+            backgroundColor: "#1e293b",
           }}
         >
-          <Button
-            onClick={handleClose}
-            disabled={compose.isSubmitting}
-            variant="outlined"
+          {/* Left side - Refresh icon */}
+          <IconButton
+            size="small"
             sx={{
-              textTransform: "none",
-              color: neutralColor(700),
-              borderColor: neutralColor(300),
-              fontWeight: 500,
-              fontSize: "0.9375rem",
-              px: 3,
-              py: 1,
-              borderRadius: "8px",
+              color: "#94a3b8",
               "&:hover": {
-                borderColor: neutralColor(400),
-                backgroundColor: neutralColor(50),
+                backgroundColor: "#334155",
               },
             }}
           >
-            Cancel
-          </Button>
-          <Button
-            onClick={handleSubmit}
-            disabled={!canSubmit}
-            variant="contained"
-            startIcon={compose.isSubmitting ? <CircularProgress size={18} sx={{ color: "white" }} /> : <SendIcon sx={{ fontSize: 18 }} />}
-            sx={{
-              textTransform: "none",
-              backgroundColor: primaryColor(600),
-              color: "white",
-              fontWeight: 600,
-              fontSize: "0.9375rem",
-              px: 4,
-              py: 1,
-              borderRadius: "8px",
-              boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
-              "&:hover": {
-                backgroundColor: primaryColor(700),
-                boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
-              },
-              "&:disabled": {
-                backgroundColor: neutralColor(200),
-                color: neutralColor(500),
-                boxShadow: "none",
-              },
-            }}
-          >
-            {compose.isSubmitting ? "Sending..." : "Send Message"}
-          </Button>
+            <SendIcon sx={{ fontSize: 20, transform: "rotate(180deg)" }} />
+          </IconButton>
+
+          {/* Right side - Discard and Send buttons */}
+          <Box sx={{ display: "flex", gap: 2 }}>
+            <Button
+              onClick={handleClose}
+              disabled={compose.isSubmitting}
+              sx={{
+                textTransform: "none",
+                color: "#94a3b8",
+                fontWeight: 500,
+                fontSize: "0.938rem",
+                px: 2,
+                "&:hover": {
+                  backgroundColor: "#334155",
+                },
+              }}
+            >
+              Discard
+            </Button>
+            <Button
+              onClick={handleSubmit}
+              disabled={!canSubmit}
+              variant="contained"
+              sx={{
+                textTransform: "none",
+                backgroundColor: "#3b82f6",
+                color: "white",
+                fontWeight: 600,
+                fontSize: "0.938rem",
+                px: 3,
+                borderRadius: "8px",
+                "&:hover": {
+                  backgroundColor: "#2563eb",
+                },
+                "&:disabled": {
+                  backgroundColor: "#475569",
+                  color: "#64748b",
+                },
+              }}
+            >
+              {compose.isSubmitting ? "Sending..." : "Send (⌘ + ↵)"}
+            </Button>
+          </Box>
         </DialogActions>
       </Dialog>
+
+      {/* WhatsApp Template Selector */}
+      <WhatsAppTemplateSelector
+        open={showTemplateSelector}
+        onClose={() => setShowTemplateSelector(false)}
+        onSelect={(template: WhatsAppTemplate, state: TemplateSelectorState) => {
+          // Convert template state to template params
+          const templateParams = convertToTemplateParams(template, state);
+
+          // Set template params in form
+          compose.updateField("templateParams", templateParams);
+
+          // Optionally pre-fill message content
+          const content = generateMessageContent(template, state.bodyVariables);
+          compose.updateField("message", content);
+
+          console.log("[ComposeConversationModal] Template selected:", {
+            template: template.name,
+            params: templateParams,
+          });
+        }}
+      />
 
       {/* Create Contact Modal */}
       <CreateContactModal

@@ -5,222 +5,327 @@
  * availability, and assigned conversations.
  */
 
-import React from "react";
-import { Box, Typography, Alert, IconButton, Paper, Chip, Avatar } from "@mui/material";
+import React, { useState } from "react";
+import {
+  Box,
+  Typography,
+  Alert,
+  IconButton,
+  List,
+  ListItem,
+  ListItemAvatar,
+  ListItemText,
+  Avatar,
+  Chip,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+} from "@mui/material";
 import PeopleIcon from "@mui/icons-material/People";
 import RefreshIcon from "@mui/icons-material/Refresh";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
-import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
-import PersonIcon from "@mui/icons-material/Person";
-import { BaseSettingsSubpage, SettingsSection } from "../../components/settings";
+import { BaseSettingsSubpage, SettingsSection, EditAgentModal } from "../../components/settings";
 import { useChatwootProvider } from "../../hooks/use-chatwoot-provider";
 import { useChatwootAgents } from "../../hooks/resources/use-chatwoot-agents";
-import type { Agent } from "@/services/frontdesk/api/chatwoot/types/agents.types";
-
-// Helper function to get status color and label
-const getAvailabilityInfo = (status?: string) => {
-  switch (status) {
-    case "online":
-    case "available":
-      return { color: "success", label: "Available", icon: <CheckCircleIcon fontSize="small" /> };
-    case "busy":
-      return { color: "warning", label: "Busy", icon: <RadioButtonUncheckedIcon fontSize="small" /> };
-    case "offline":
-      return { color: "error", label: "Offline", icon: <RadioButtonUncheckedIcon fontSize="small" /> };
-    default:
-      return { color: "default", label: "Unknown", icon: <RadioButtonUncheckedIcon fontSize="small" /> };
-  }
-};
-
-// Helper function to get role display
-const getRoleInfo = (role?: string) => {
-  switch (role?.toLowerCase()) {
-    case "administrator":
-    case "admin":
-      return { label: "Administrator", color: "primary", icon: <AdminPanelSettingsIcon fontSize="small" /> };
-    case "agent":
-      return { label: "Agent", color: "default", icon: <PersonIcon fontSize="small" /> };
-    default:
-      return { label: role || "Agent", color: "default", icon: <PersonIcon fontSize="small" /> };
-  }
-};
+import type { Agent, AgentUpdatePayload } from "@/services/frontdesk/api/chatwoot/types/agents.types";
+import { generateAvatarData } from "@/widgets/frontdesk/utils/avatar.utils";
+import { chatwootService } from "@/services/frontdesk";
 
 export const AgentsSubpage: React.FC = () => {
   const { selectedAccountId } = useChatwootProvider();
   const { agents, loading, error, refresh } = useChatwootAgents(selectedAccountId);
 
-  return (
-    <BaseSettingsSubpage
-      title="Agents"
-      description="Manage team members, roles, and permissions"
-      isLoading={loading}
-      headerActions={
-        <IconButton onClick={refresh} size="small" disabled={loading}>
-          <RefreshIcon />
-        </IconButton>
-      }
-    >
-      {error ? (
-        <Alert severity="error" sx={{ mb: 2 }}>
-          {error.message || "Failed to load agents"}
-        </Alert>
-      ) : agents.length === 0 ? (
-        /* Empty State */
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            minHeight: 300,
-            textAlign: "center",
-            gap: 2,
-          }}
-        >
-          <PeopleIcon sx={{ fontSize: 64, color: "text.secondary", opacity: 0.5 }} />
-          <Typography variant="h6" color="text.primary" fontWeight={600}>
-            No Agents Found
-          </Typography>
-          <Typography variant="body2" color="text.secondary" sx={{ maxWidth: 400 }}>
-            Start by inviting team members to join your account. Agents can handle
-            conversations, manage inboxes, and collaborate with teams.
-          </Typography>
-          <Typography variant="caption" color="text.disabled" sx={{ mt: 2 }}>
-            Agent management UI is under development.
-          </Typography>
-        </Box>
-      ) : (
-        /* Agents List */
-        <SettingsSection
-          title={`Agents (${agents.length})`}
-          description="Team members with access to this account"
-        >
-          <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-            {agents.map((agent) => {
-              const availabilityInfo = getAvailabilityInfo(agent.availability_status);
-              const roleInfo = getRoleInfo(agent.role);
+  // Edit modal state
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [selectedAgent, setSelectedAgent] = useState<Agent | null>(null);
 
-              return (
-                <Paper
-                  key={agent.id}
-                  elevation={0}
-                  sx={{
-                    p: 2.5,
-                    border: "1px solid",
-                    borderColor: "divider",
-                    borderRadius: 1.5,
-                    "&:hover": {
-                      borderColor: "primary.main",
-                      bgcolor: "action.hover",
-                    },
-                    transition: "all 0.2s ease",
-                  }}
-                >
-                  <Box sx={{ display: "flex", alignItems: "flex-start", gap: 2 }}>
-                    {/* Avatar */}
-                    <Avatar
-                      src={agent.thumbnail}
-                      alt={agent.name || agent.available_name || agent.email}
+  // Delete confirmation state
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [agentToDelete, setAgentToDelete] = useState<Agent | null>(null);
+  const [deleting, setDeleting] = useState(false);
+
+  // Open edit modal
+  const handleEdit = (agent: Agent) => {
+    setSelectedAgent(agent);
+    setEditModalOpen(true);
+  };
+
+  // Save agent updates
+  const handleSave = async (agentId: number, updates: AgentUpdatePayload) => {
+    if (!selectedAccountId) return;
+
+    try {
+      await chatwootService.agents.updateAgent(selectedAccountId, agentId, updates);
+      await refresh(); // Refresh the agent list
+      setEditModalOpen(false);
+    } catch (error) {
+      console.error("Failed to update agent:", error);
+      throw error; // Re-throw so modal can handle error display
+    }
+  };
+
+  // Open delete confirmation
+  const handleDeleteClick = (agent: Agent) => {
+    setAgentToDelete(agent);
+    setDeleteDialogOpen(true);
+  };
+
+  // Confirm and execute delete
+  const handleDeleteConfirm = async () => {
+    if (!selectedAccountId || !agentToDelete?.id) return;
+
+    setDeleting(true);
+    try {
+      await chatwootService.agents.deleteAgent(selectedAccountId, agentToDelete.id);
+      await refresh(); // Refresh the agent list
+      setDeleteDialogOpen(false);
+      setAgentToDelete(null);
+    } catch (error: any) {
+      console.error("Failed to delete agent:", error);
+      alert(error.message || "Failed to delete agent");
+    } finally {
+      setDeleting(false);
+    }
+  };
+
+  // Cancel delete
+  const handleDeleteCancel = () => {
+    if (!deleting) {
+      setDeleteDialogOpen(false);
+      setAgentToDelete(null);
+    }
+  };
+
+  return (
+    <>
+      <BaseSettingsSubpage
+        title="Agents"
+        description="Manage team members, roles, and permissions"
+        isLoading={loading}
+        headerActions={
+          <IconButton onClick={refresh} size="small" disabled={loading}>
+            <RefreshIcon />
+          </IconButton>
+        }
+      >
+        {error ? (
+          <Alert severity="error" sx={{ mb: 2 }}>
+            {error.message || "Failed to load agents"}
+          </Alert>
+        ) : agents.length === 0 ? (
+          /* Empty State */
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              minHeight: 300,
+              textAlign: "center",
+              gap: 2,
+            }}
+          >
+            <PeopleIcon sx={{ fontSize: 64, color: "text.secondary", opacity: 0.5 }} />
+            <Typography variant="h6" color="text.primary" fontWeight={600}>
+              No Agents Found
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ maxWidth: 400 }}>
+              Start by inviting team members to join your account. Agents can handle
+              conversations, manage inboxes, and collaborate with teams.
+            </Typography>
+          </Box>
+        ) : (
+          /* Agents List */
+          <SettingsSection
+            title={`Agents (${agents.length})`}
+            description="Team members with access to this account"
+          >
+            <List sx={{ width: "100%", bgcolor: "background.paper", p: 0 }}>
+              {agents.map((agent, index) => {
+                const agentName = agent.name || agent.available_name || agent.email || "Unknown Agent";
+                const avatarData = generateAvatarData({
+                  name: agent.name || agent.available_name,
+                  email: agent.email,
+                  displayName: agent.available_name,
+                });
+
+                const isOnline = agent.availability_status === "online" || agent.availability_status === "available";
+
+                return (
+                  <React.Fragment key={agent.id || index}>
+                    <ListItem
                       sx={{
-                        width: 56,
-                        height: 56,
-                        bgcolor: "primary.main",
-                        fontSize: "1.5rem",
-                        fontWeight: 600,
+                        py: 2,
+                        px: 0,
+                        borderBottom: index < agents.length - 1 ? "1px solid" : "none",
+                        borderColor: "divider",
+                        "&:hover": {
+                          bgcolor: "action.hover",
+                        },
+                        display: "flex",
+                        alignItems: "center",
                       }}
                     >
-                      {(agent.name || agent.available_name || agent.email || "?")[0].toUpperCase()}
-                    </Avatar>
-
-                    {/* Content */}
-                    <Box sx={{ flex: 1, minWidth: 0 }}>
-                      {/* Header */}
-                      <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mb: 1 }}>
-                        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                          <Typography variant="h6" sx={{ fontSize: "1rem", fontWeight: 600 }}>
-                            {agent.name || agent.available_name || "Unknown Agent"}
-                          </Typography>
-                          {agent.confirmed && (
-                            <CheckCircleIcon sx={{ fontSize: 18, color: "success.main" }} titleAccess="Confirmed" />
+                      <ListItemAvatar>
+                        <Box sx={{ position: "relative" }}>
+                          <Avatar
+                            src={agent.thumbnail}
+                            sx={{
+                              bgcolor: avatarData.backgroundColor,
+                              width: 40,
+                              height: 40,
+                              fontSize: "1rem",
+                              fontWeight: 600,
+                            }}
+                          >
+                            {avatarData.initials}
+                          </Avatar>
+                          {/* Online indicator */}
+                          {isOnline && (
+                            <Box
+                              sx={{
+                                position: "absolute",
+                                bottom: 0,
+                                right: 0,
+                                width: 12,
+                                height: 12,
+                                bgcolor: "success.main",
+                                borderRadius: "50%",
+                                border: "2px solid",
+                                borderColor: "background.paper",
+                              }}
+                            />
                           )}
                         </Box>
-                        <Box sx={{ display: "flex", gap: 1 }}>
-                          <Chip
-                            icon={availabilityInfo.icon}
-                            label={availabilityInfo.label}
-                            size="small"
-                            color={availabilityInfo.color as any}
-                            variant="outlined"
-                            sx={{ fontSize: "0.75rem" }}
-                          />
-                          <Chip
-                            icon={roleInfo.icon}
-                            label={roleInfo.label}
-                            size="small"
-                            color={roleInfo.color as any}
-                            sx={{ fontSize: "0.75rem" }}
-                          />
+                      </ListItemAvatar>
+
+                      <Box sx={{ flex: 1, minWidth: 0, mr: 2 }}>
+                        <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, mb: 0.25 }}>
+                          <Typography variant="subtitle2" sx={{ fontWeight: 500 }}>
+                            {agentName}
+                          </Typography>
+                          {agent.confirmed && (
+                            <CheckCircleIcon
+                              sx={{
+                                fontSize: 16,
+                                color: "success.main",
+                              }}
+                              titleAccess="Verified"
+                            />
+                          )}
                         </Box>
+                        <Typography variant="body2" color="text.secondary" sx={{ fontSize: "0.875rem" }}>
+                          {agent.email}
+                        </Typography>
                       </Box>
 
-                      {/* Details */}
-                      <Box sx={{ display: "flex", flexDirection: "column", gap: 0.5, mb: 1.5 }}>
-                        {agent.email && (
-                          <Typography variant="body2" color="text.secondary">
-                            <strong>Email:</strong> {agent.email}
-                          </Typography>
-                        )}
-                        {agent.account_id && (
-                          <Typography variant="body2" color="text.secondary">
-                            <strong>Account ID:</strong> {agent.account_id}
-                          </Typography>
-                        )}
-                      </Box>
+                      <Chip
+                        label={
+                          agent.role === "administrator" || agent.role === "admin"
+                            ? "Administrator"
+                            : "Agent"
+                        }
+                        size="small"
+                        sx={{
+                          fontSize: "0.813rem",
+                          fontWeight: 500,
+                          height: 24,
+                          mr: 2,
+                          flexShrink: 0,
+                        }}
+                      />
 
-                      {/* Status Badges */}
-                      <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
-                        {agent.auto_offline && (
-                          <Chip
-                            label="Auto Offline"
-                            size="small"
-                            sx={{
-                              bgcolor: "grey.200",
-                              fontSize: "0.688rem",
-                              height: 22,
-                            }}
-                          />
-                        )}
-                        {agent.custom_role_id && (
-                          <Chip
-                            label={`Custom Role: ${agent.custom_role_id}`}
-                            size="small"
-                            sx={{
-                              bgcolor: "grey.200",
-                              fontSize: "0.688rem",
-                              height: 22,
-                            }}
-                          />
-                        )}
-                        <Chip
-                          label={`ID: ${agent.id}`}
+                      <Box sx={{ display: "flex", gap: 0.5, flexShrink: 0 }}>
+                        <IconButton
+                          onClick={() => handleEdit(agent)}
                           size="small"
                           sx={{
-                            bgcolor: "grey.200",
-                            fontSize: "0.688rem",
-                            height: 22,
+                            color: "text.secondary",
+                            "&:hover": {
+                              color: "primary.main",
+                            },
                           }}
-                        />
+                        >
+                          <EditIcon fontSize="small" />
+                        </IconButton>
+                        <IconButton
+                          onClick={() => handleDeleteClick(agent)}
+                          size="small"
+                          sx={{
+                            color: "text.secondary",
+                            "&:hover": {
+                              color: "error.main",
+                            },
+                          }}
+                        >
+                          <DeleteIcon fontSize="small" />
+                        </IconButton>
                       </Box>
-                    </Box>
-                  </Box>
-                </Paper>
-              );
-            })}
-          </Box>
-        </SettingsSection>
-      )}
-    </BaseSettingsSubpage>
+                    </ListItem>
+                  </React.Fragment>
+                );
+              })}
+            </List>
+          </SettingsSection>
+        )}
+      </BaseSettingsSubpage>
+
+      {/* Edit Agent Modal */}
+      <EditAgentModal
+        open={editModalOpen}
+        agent={selectedAgent}
+        onClose={() => {
+          setEditModalOpen(false);
+          setSelectedAgent(null);
+        }}
+        onSave={handleSave}
+      />
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog
+        open={deleteDialogOpen}
+        onClose={handleDeleteCancel}
+        maxWidth="xs"
+        fullWidth
+        PaperProps={{
+          sx: {
+            borderRadius: "12px",
+          },
+        }}
+      >
+        <DialogTitle>
+          <Typography variant="h6" sx={{ fontWeight: 600 }}>
+            Delete Agent
+          </Typography>
+        </DialogTitle>
+        <DialogContent>
+          <Typography variant="body2" color="text.secondary">
+            Are you sure you want to delete{" "}
+            <strong>
+              {agentToDelete?.name || agentToDelete?.available_name || agentToDelete?.email}
+            </strong>
+            ? This action cannot be undone.
+          </Typography>
+        </DialogContent>
+        <DialogActions sx={{ px: 3, pb: 2 }}>
+          <Button onClick={handleDeleteCancel} disabled={deleting} sx={{ textTransform: "none" }}>
+            Cancel
+          </Button>
+          <Button
+            onClick={handleDeleteConfirm}
+            disabled={deleting}
+            variant="contained"
+            color="error"
+            sx={{ textTransform: "none" }}
+          >
+            {deleting ? "Deleting..." : "Delete"}
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </>
   );
 };
-

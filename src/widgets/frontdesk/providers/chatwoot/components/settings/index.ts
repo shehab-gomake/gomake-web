@@ -6,3 +6,4 @@
 
 export { BaseSettingsSubpage, type BaseSettingsSubpageProps } from "./base-settings-subpage";
 export { SettingsSection, type SettingsSectionProps } from "./settings-section";
+export { EditAgentModal } from "./edit-agent-modal";
