@@ -25,8 +25,7 @@ import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import { Google as GoogleIcon } from "@mui/icons-material";
 import { OutlookIcon } from "@/icons/outlook-icon";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
-import { useEmailAuth } from "@/widgets/frontdesk/providers/email/hooks/use-email-auth";
-import { useEmailAccounts } from "@/widgets/frontdesk/providers/email/hooks/use-email-accounts";
+import { useChatwootOAuth } from "@/widgets/frontdesk/providers/chatwoot/hooks/use-chatwoot-oauth";
 import { useChatwootInboxes } from "@/widgets/frontdesk/providers/chatwoot/hooks/use-chatwoot-inboxes";
 
 interface AddChannelModalProps {
@@ -43,47 +42,46 @@ interface ChannelOption {
   provider: string;
 }
 
-const steps = [
+const getSteps = (currentStep: number) => [
   {
     number: 1,
     title: "Choose Channel",
     description: "Choose the provider you want to integrate with Chatwoot.",
-    active: true,
+    active: currentStep === 1,
   },
   {
     number: 2,
     title: "Create Inbox",
     description: "Authenticate your account and create an inbox.",
-    active: false,
+    active: currentStep === 2,
   },
   {
     number: 3,
     title: "Add Agents",
     description: "Add agents to the created inbox.",
-    active: false,
+    active: currentStep === 3,
   },
   {
     number: 4,
     title: "Voilà!",
     description: "You are all set to go!",
-    active: false,
+    active: currentStep === 4,
   },
 ];
 
 export const AddChannelModal: React.FC<AddChannelModalProps> = ({ open, onClose, error }) => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [internalError, setInternalError] = useState<string | null>(null);
   const [selectedChannel, setSelectedChannel] = useState<string | null>(null);
+  const [currentStep, setCurrentStep] = useState<number>(1);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const { primaryColor, neutralColor } = useGomakeTheme();
-  const emailAuth = useEmailAuth();
-  const { fetchAccounts } = useEmailAccounts();
+  const { authenticate, isAuthenticating, error: oauthError, clearError } = useChatwootOAuth();
   const { refresh: refreshInboxes } = useChatwootInboxes();
 
   const channels: ChannelOption[] = [
     {
       id: "whatsapp",
       name: "WhatsApp",
-      description: "Support your customers on WhatsApp.",
+      description: "Support your customers on WhatsApp. (Coming Soon)",
       icon: <WhatsAppIcon sx={{ fontSize: 32, color: neutralColor(700) }} />,
       provider: "whatsapp",
     },
@@ -92,65 +90,98 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({ open, onClose,
       name: "Gmail",
       description: "Connect with Gmail account.",
       icon: <GoogleIcon sx={{ fontSize: 32, color: neutralColor(700) }} />,
-      provider: "gmail",
+      provider: "google",
     },
     {
       id: "outlook",
       name: "Outlook",
       description: "Connect with Outlook account.",
       icon: <OutlookIcon size={32} color={neutralColor(700)} />,
-      provider: "outlook",
+      provider: "microsoft",
     },
   ];
 
   // Reset state when modal opens/closes
   useEffect(() => {
     if (!open) {
-      setInternalError(null);
-      setIsLoading(false);
+      clearError();
+      setSuccessMessage(null);
       setSelectedChannel(null);
+      setCurrentStep(1);
     }
-  }, [open]);
+  }, [open, clearError]);
 
   const handleClose = useCallback(() => {
-    if (!isLoading) {
+    if (!isAuthenticating) {
       onClose();
     }
-  }, [isLoading, onClose]);
+  }, [isAuthenticating, onClose]);
 
   const handleChannelSelect = (channelId: string) => {
+    // Don't allow WhatsApp selection yet
+    if (channelId === "whatsapp") {
+      return;
+    }
     setSelectedChannel(channelId);
-    setInternalError(null);
+    clearError();
+    setSuccessMessage(null);
   };
 
-  const handleConnect = async (provider: string) => {
+  const handleNext = () => {
+    if (currentStep === 1 && selectedChannel) {
+      setCurrentStep(2);
+    }
+  };
+
+  const handleBack = () => {
+    if (currentStep === 2) {
+      setCurrentStep(1);
+    }
+  };
+
+  const handleSignIn = async (provider: string) => {
     if (!selectedChannel) return;
 
-    setIsLoading(true);
-    setInternalError(null);
+    clearError();
+    setSuccessMessage(null);
+
     try {
-      if (provider === "gmail" || provider === "outlook") {
-        await emailAuth.authenticate(provider);
-        // Refresh email accounts after successful authentication
-        await fetchAccounts();
-        // Refresh Chatwoot inboxes to show new channel
+      if (provider === "google" || provider === "microsoft") {
+        // Authenticate with OAuth
+        const result = await authenticate(provider as "google" | "microsoft");
+
+        // Move to step 3 (Add Agents) - but we'll skip it and go to step 4
+        setCurrentStep(4);
+
+        // Show success message
+        const providerName = provider === "google" ? "Gmail" : provider === "microsoft" ? "Outlook" : "Email";
+        setSuccessMessage(
+          `Successfully connected ${providerName}! ${result.accountsAdded} account(s) added.`
+        );
+
+        // Refresh inboxes to show new channels
         await refreshInboxes();
-        onClose();
-        setSelectedChannel(null);
+
+        // Close modal after short delay to show success message
+        setTimeout(() => {
+          onClose();
+          setSelectedChannel(null);
+          setSuccessMessage(null);
+          setCurrentStep(1);
+        }, 2000);
       } else if (provider === "whatsapp") {
-        // TODO: Implement WhatsApp authentication
-        setInternalError("WhatsApp authentication is not yet implemented");
+        // WhatsApp not implemented
+        throw new Error("WhatsApp integration is coming soon!");
       }
     } catch (err: any) {
-      console.error("Authentication failed:", err);
-      setInternalError(err.message || "Authentication failed. Please try again.");
-    } finally {
-      setIsLoading(false);
+      console.error("Channel connection failed:", err);
+      // Error is already set by useChatwootOAuth hook
     }
   };
 
   const selectedChannelData = channels.find((c) => c.id === selectedChannel);
-  const displayError = error || internalError;
+  const displayError = error || oauthError;
+  const steps = getSteps(currentStep);
 
   return (
     <Dialog
@@ -211,7 +242,7 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({ open, onClose,
         </Box>
         <IconButton
           onClick={handleClose}
-          disabled={isLoading}
+          disabled={isAuthenticating}
           size="small"
           sx={{
             color: neutralColor(600),
@@ -296,7 +327,7 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({ open, onClose,
             ))}
           </Box>
 
-          {/* Right Column - Channel Cards */}
+          {/* Right Column - Dynamic Content Based on Step */}
           <Box
             sx={{
               flex: 1,
@@ -307,22 +338,25 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({ open, onClose,
               flexDirection: "column",
             }}
           >
-            <Typography
-              variant="h6"
-              sx={{
-                fontWeight: 600,
-                color: neutralColor(900),
-                mb: 3,
-              }}
-            >
-              Choose a channel to connect
-            </Typography>
+            {/* Success Message */}
+            {successMessage && (
+              <Alert
+                severity="success"
+                onClose={() => setSuccessMessage(null)}
+                sx={{
+                  mb: 3,
+                  borderRadius: 2,
+                }}
+              >
+                {successMessage}
+              </Alert>
+            )}
 
             {/* Error Display */}
             {displayError && (
               <Alert
                 severity="error"
-                onClose={() => setInternalError(null)}
+                onClose={clearError}
                 sx={{
                   mb: 3,
                   borderRadius: 2,
@@ -332,185 +366,314 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({ open, onClose,
               </Alert>
             )}
 
-            {/* Channel Grid */}
-            <Box
-              sx={{
-                display: "grid",
-                gridTemplateColumns: "repeat(3, 1fr)",
-                gap: 2,
-                flex: 1,
-              }}
-            >
-              {channels.map((channel) => {
-                const isSelected = selectedChannel === channel.id;
-                return (
-                  <Paper
-                    key={channel.id}
-                    onClick={() => handleChannelSelect(channel.id)}
+            {/* Step 1: Choose Channel */}
+            {currentStep === 1 && (
+              <>
+                <Typography
+                  variant="h6"
+                  sx={{
+                    fontWeight: 600,
+                    color: neutralColor(900),
+                    mb: 3,
+                  }}
+                >
+                  Choose a channel to connect
+                </Typography>
+
+                {/* Channel Grid */}
+                <Box
+                  sx={{
+                    display: "grid",
+                    gridTemplateColumns: "repeat(3, 1fr)",
+                    gap: 2,
+                    flex: 1,
+                  }}
+                >
+                  {channels.map((channel) => {
+                    const isSelected = selectedChannel === channel.id;
+                    const isDisabled = channel.id === "whatsapp";
+                    return (
+                      <Paper
+                        key={channel.id}
+                        onClick={() => handleChannelSelect(channel.id)}
+                        sx={{
+                          p: 3,
+                          cursor: isDisabled ? "not-allowed" : "pointer",
+                          border: isSelected ? `2px solid ${primaryColor(500)}` : `1px solid ${neutralColor(200)}`,
+                          borderRadius: 2,
+                          display: "flex",
+                          flexDirection: "column",
+                          alignItems: "center",
+                          gap: 2,
+                          textAlign: "center",
+                          backgroundColor: isDisabled ? neutralColor(50) : "#ffffff",
+                          opacity: isDisabled ? 0.6 : 1,
+                          transition: "all 0.2s ease",
+                          "&:hover": {
+                            borderColor: isDisabled
+                              ? neutralColor(200)
+                              : isSelected
+                              ? primaryColor(600)
+                              : neutralColor(300),
+                            boxShadow: isDisabled ? "none" : `0 4px 12px ${alpha(neutralColor(900), 0.08)}`,
+                          },
+                        }}
+                      >
+                        {/* Icon */}
+                        <Box
+                          sx={{
+                            width: 64,
+                            height: 64,
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            borderRadius: 2,
+                            backgroundColor: neutralColor(50),
+                          }}
+                        >
+                          {channel.icon}
+                        </Box>
+                        {/* Name */}
+                        <Typography
+                          sx={{
+                            fontWeight: 600,
+                            color: neutralColor(900),
+                            fontSize: "1rem",
+                          }}
+                        >
+                          {channel.name}
+                        </Typography>
+                        {/* Description */}
+                        <Typography
+                          sx={{
+                            fontSize: "0.813rem",
+                            color: neutralColor(600),
+                            lineHeight: 1.5,
+                          }}
+                        >
+                          {channel.description}
+                        </Typography>
+                      </Paper>
+                    );
+                  })}
+                </Box>
+
+                {/* Next Button */}
+                {selectedChannel && (
+                  <Box
                     sx={{
-                      p: 3,
-                      cursor: "pointer",
-                      border: isSelected ? `2px solid ${primaryColor(500)}` : `1px solid ${neutralColor(200)}`,
-                      borderRadius: 2,
+                      mt: 3,
                       display: "flex",
-                      flexDirection: "column",
-                      alignItems: "center",
+                      justifyContent: "flex-end",
                       gap: 2,
-                      textAlign: "center",
-                      backgroundColor: "#ffffff",
-                      transition: "all 0.2s ease",
+                    }}
+                  >
+                    <Button
+                      onClick={() => setSelectedChannel(null)}
+                      variant="outlined"
+                      sx={{
+                        color: neutralColor(700),
+                        borderColor: neutralColor(300),
+                        px: 3,
+                        py: 1.5,
+                        borderRadius: 2,
+                        fontWeight: 500,
+                        textTransform: "none",
+                        "&:hover": {
+                          backgroundColor: neutralColor(50),
+                          borderColor: neutralColor(400),
+                        },
+                      }}
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      onClick={handleNext}
+                      disabled={!selectedChannel}
+                      variant="contained"
+                      sx={{
+                        backgroundColor: primaryColor(500),
+                        color: "#ffffff",
+                        px: 4,
+                        py: 1.5,
+                        borderRadius: 2,
+                        fontWeight: 600,
+                        textTransform: "none",
+                        "&:hover": {
+                          backgroundColor: primaryColor(600),
+                        },
+                        "&:disabled": {
+                          opacity: 0.5,
+                        },
+                      }}
+                    >
+                      Next
+                    </Button>
+                  </Box>
+                )}
+              </>
+            )}
+
+            {/* Step 2: Create Inbox - Sign In */}
+            {currentStep === 2 && selectedChannelData && (
+              <>
+                <Typography
+                  variant="h5"
+                  sx={{
+                    fontWeight: 600,
+                    color: neutralColor(900),
+                    mb: 2,
+                  }}
+                >
+                  {selectedChannelData.name === "Gmail" ? "Google Email" : selectedChannelData.name}
+                </Typography>
+
+                <Typography
+                  sx={{
+                    fontSize: "0.938rem",
+                    color: neutralColor(600),
+                    mb: 4,
+                    lineHeight: 1.6,
+                  }}
+                >
+                  Click on the Sign in with {selectedChannelData.name} button to get started. You will be redirected to
+                  the email sign in page. Once you accept the requested permissions, you would be redirected back to
+                  the inbox creation step.
+                </Typography>
+
+                {/* Sign In Button */}
+                <Box>
+                  <Button
+                    onClick={() => handleSignIn(selectedChannelData.provider)}
+                    disabled={isAuthenticating}
+                    variant="contained"
+                    sx={{
+                      backgroundColor: primaryColor(500),
+                      color: "#ffffff",
+                      px: 4,
+                      py: 1.5,
+                      borderRadius: 2,
+                      fontWeight: 600,
+                      textTransform: "none",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 1.5,
+                      fontSize: "1rem",
                       "&:hover": {
-                        borderColor: isSelected ? primaryColor(600) : neutralColor(300),
-                        boxShadow: `0 4px 12px ${alpha(neutralColor(900), 0.08)}`,
+                        backgroundColor: primaryColor(600),
+                      },
+                      "&:disabled": {
+                        opacity: 0.5,
                       },
                     }}
                   >
-                    {/* Icon */}
-                    <Box
-                      sx={{
-                        width: 64,
-                        height: 64,
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        borderRadius: 2,
-                        backgroundColor: neutralColor(50),
-                      }}
-                    >
-                      {channel.icon}
-                    </Box>
-                    {/* Name */}
-                    <Typography
-                      sx={{
-                        fontWeight: 600,
-                        color: neutralColor(900),
-                        fontSize: "1rem",
-                      }}
-                    >
-                      {channel.name}
-                    </Typography>
-                    {/* Description */}
-                    <Typography
-                      sx={{
-                        fontSize: "0.813rem",
-                        color: neutralColor(600),
-                        lineHeight: 1.5,
-                      }}
-                    >
-                      {channel.description}
-                    </Typography>
-                  </Paper>
-                );
-              })}
-            </Box>
+                    {isAuthenticating ? (
+                      <>
+                        <CircularProgress size={20} sx={{ color: "#ffffff" }} />
+                        Connecting...
+                      </>
+                    ) : (
+                      <>
+                        {selectedChannelData.icon}
+                        Sign in with {selectedChannelData.name}
+                      </>
+                    )}
+                  </Button>
+                </Box>
 
-            {/* Connect Button */}
-            {selectedChannel && (
+                {/* Back Button */}
+                <Box
+                  sx={{
+                    mt: "auto",
+                    pt: 4,
+                    display: "flex",
+                    justifyContent: "flex-start",
+                  }}
+                >
+                  <Button
+                    onClick={handleBack}
+                    disabled={isAuthenticating}
+                    variant="outlined"
+                    sx={{
+                      color: neutralColor(700),
+                      borderColor: neutralColor(300),
+                      px: 3,
+                      py: 1.5,
+                      borderRadius: 2,
+                      fontWeight: 500,
+                      textTransform: "none",
+                      "&:hover": {
+                        backgroundColor: neutralColor(50),
+                        borderColor: neutralColor(400),
+                      },
+                      "&:disabled": {
+                        opacity: 0.5,
+                      },
+                    }}
+                  >
+                    Back
+                  </Button>
+                </Box>
+              </>
+            )}
+
+            {/* Step 4: Success */}
+            {currentStep === 4 && (
               <Box
                 sx={{
-                  mt: 3,
+                  flex: 1,
                   display: "flex",
-                  justifyContent: "flex-end",
-                  gap: 2,
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  textAlign: "center",
                 }}
               >
-                <Button
-                  onClick={() => setSelectedChannel(null)}
-                  disabled={isLoading}
-                  variant="outlined"
+                <Box
                   sx={{
-                    color: neutralColor(700),
-                    borderColor: neutralColor(300),
-                    px: 3,
-                    py: 1.5,
-                    borderRadius: 2,
-                    fontWeight: 500,
-                    textTransform: "none",
-                    "&:hover": {
-                      backgroundColor: neutralColor(50),
-                      borderColor: neutralColor(400),
-                    },
-                    "&:disabled": {
-                      opacity: 0.5,
-                    },
-                  }}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  onClick={() => selectedChannelData && handleConnect(selectedChannelData.provider)}
-                  disabled={isLoading || !selectedChannel}
-                  variant="contained"
-                  sx={{
-                    backgroundColor: primaryColor(500),
-                    color: "#ffffff",
-                    px: 4,
-                    py: 1.5,
-                    borderRadius: 2,
-                    fontWeight: 600,
-                    textTransform: "none",
+                    width: 80,
+                    height: 80,
+                    borderRadius: "50%",
+                    backgroundColor: primaryColor(50),
                     display: "flex",
                     alignItems: "center",
-                    gap: 1,
-                    "&:hover": {
-                      backgroundColor: primaryColor(600),
-                    },
-                    "&:disabled": {
-                      opacity: 0.5,
-                    },
+                    justifyContent: "center",
+                    mb: 3,
                   }}
                 >
-                  {isLoading ? (
-                    <>
-                      <CircularProgress size={16} sx={{ color: "#ffffff" }} />
-                      Connecting...
-                    </>
-                  ) : (
-                    "Connect"
-                  )}
-                </Button>
+                  <Typography
+                    sx={{
+                      fontSize: "2.5rem",
+                      color: primaryColor(600),
+                    }}
+                  >
+                    ✓
+                  </Typography>
+                </Box>
+                <Typography
+                  variant="h5"
+                  sx={{
+                    fontWeight: 600,
+                    color: neutralColor(900),
+                    mb: 2,
+                  }}
+                >
+                  Voilà!
+                </Typography>
+                <Typography
+                  sx={{
+                    fontSize: "0.938rem",
+                    color: neutralColor(600),
+                  }}
+                >
+                  You are all set to go!
+                </Typography>
               </Box>
             )}
           </Box>
         </Box>
       </DialogContent>
 
-      {/* Actions - Only show Cancel if no channel selected */}
-      {!selectedChannel && (
-        <DialogActions
-          sx={{
-            p: 3,
-            borderTop: `1px solid ${neutralColor(200)}`,
-            backgroundColor: "#ffffff",
-            justifyContent: "flex-end",
-            gap: 1.5,
-          }}
-        >
-          <Button
-            onClick={handleClose}
-            disabled={isLoading}
-            variant="outlined"
-            sx={{
-              color: neutralColor(700),
-              borderColor: neutralColor(300),
-              px: 3,
-              py: 1,
-              borderRadius: 2,
-              fontWeight: 500,
-              textTransform: "none",
-              "&:hover": {
-                backgroundColor: alpha(neutralColor(100), 0.8),
-                borderColor: neutralColor(400),
-              },
-              "&:disabled": {
-                opacity: 0.5,
-              },
-            }}
-          >
-            Cancel
-          </Button>
-        </DialogActions>
-      )}
     </Dialog>
   );
 };

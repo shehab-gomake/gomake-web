@@ -34,6 +34,15 @@ export interface GetInboxMembersResponse {
 }
 
 /**
+ * Agent update payload for PATCH operations
+ */
+export interface AgentUpdatePayload {
+  role: string;                    // Required: "administrator" or "agent"
+  availability_status?: string;    // Optional: "available", "busy", or "offline"
+  auto_offline?: boolean;          // Optional: auto-offline when away
+}
+
+/**
  * ChatwootAgentsService
  * Handles agent-related API operations
  *
@@ -98,5 +107,61 @@ export class ChatwootAgentsService extends BaseChatwootService {
 
     // The response is wrapped in a `payload` property
     return response.payload || [];
+  }
+
+  /**
+   * Update Agent
+   * PATCH /api/accounts/agents/{id}
+   *
+   * Updates an agent's role, availability status, and auto-offline settings.
+   * Only administrators can update agent information.
+   * Note: Does NOT use account ID in URL path (authenticated user's account is used)
+   *
+   * @param accountId - The numeric ID of the account (kept for compatibility but not used in URL)
+   * @param agentId - The numeric ID of the agent to update
+   * @param payload - Agent update data (role, availability_status, auto_offline)
+   * @returns Promise with updated agent data
+   *
+   * @example
+   * ```typescript
+   * const updatedAgent = await agentsService.updateAgent(123, 456, {
+   *   role: 'administrator',
+   *   availability_status: 'available',
+   *   auto_offline: true
+   * });
+   * ```
+   */
+  async updateAgent(
+    accountId: number,
+    agentId: number,
+    payload: AgentUpdatePayload
+  ): Promise<Agent> {
+    return await this.patch<Agent>(
+      `/api/accounts/agents/${agentId}`,
+      payload
+    );
+  }
+
+  /**
+   * Delete Agent
+   * DELETE /api/accounts/agents/{id}
+   *
+   * Removes an agent from the account.
+   * Only administrators can delete agents.
+   * The agent's assigned conversations will be unassigned.
+   * Note: Does NOT use account ID in URL path (authenticated user's account is used)
+   *
+   * @param accountId - The numeric ID of the account (kept for compatibility but not used in URL)
+   * @param agentId - The numeric ID of the agent to delete
+   * @returns Promise that resolves when deletion is complete
+   *
+   * @example
+   * ```typescript
+   * await agentsService.deleteAgent(123, 456);
+   * console.log('Agent deleted successfully');
+   * ```
+   */
+  async deleteAgent(accountId: number, agentId: number): Promise<void> {
+    return await this.delete(`/api/accounts/agents/${agentId}`);
   }
 }

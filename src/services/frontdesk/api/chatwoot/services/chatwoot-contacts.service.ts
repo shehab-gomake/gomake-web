@@ -153,15 +153,17 @@ export class ChatwootContactsService extends BaseChatwootService {
 
   /**
    * Filter Contacts
-   * POST /api/v1/accounts/{account_id}/contacts/filter
+   * POST /api/accounts/contacts/filter
    *
-   * @param accountId - The numeric ID of the account
+   * Note: Backend automatically handles accountId from authentication context.
+   * This endpoint uses /api instead of /api/v1
+   *
    * @param filterPayload - Filter criteria
    * @returns Promise with filtered contacts
    */
-  async filterContacts(accountId: number, filterPayload: ContactFilterRequest): Promise<ContactsListResponse> {
+  async filterContacts(filterPayload: ContactFilterRequest): Promise<ContactsListResponse> {
     return await this.post<ContactsListResponse>(
-      this.accountScopedUrl(accountId, "contacts/filter"),
+      "/api/accounts/contacts/filter",
       filterPayload
     );
   }
@@ -185,27 +187,28 @@ export class ChatwootContactsService extends BaseChatwootService {
 
   /**
    * Get Contactable Inboxes
-   * GET /api/v1/accounts/{account_id}/contacts/{id}/contactable_inboxes
+   * GET /api/accounts/contacts/{id}/contactable_inboxes
    *
    * Gets the list of inboxes where this contact can be reached.
    * Returns inbox details along with the source_id (email, phone, etc.)
    *
-   * @param accountId - The numeric ID of the account
+   * Note: Backend automatically handles accountId from authentication context.
+   * This endpoint uses /api instead of /api/v1
+   *
    * @param contactId - The numeric ID of the contact
    * @returns Promise with contactable inboxes
    *
    * @example
    * ```typescript
-   * const inboxes = await contactsService.getContactableInboxes(1, 123);
+   * const inboxes = await contactsService.getContactableInboxes(123);
    * // Returns: [{ source_id: "user@example.com", inbox: {...} }]
    * ```
    */
   async getContactableInboxes(
-    accountId: number,
     contactId: number
   ): Promise<import("../types/inboxes.types").ContactableInboxesResponse> {
     return await this.get<import("../types/inboxes.types").ContactableInboxesResponse>(
-      this.accountScopedUrl(accountId, `contacts/${contactId}/contactable_inboxes`)
+      `/api/accounts/contacts/${contactId}/contactable_inboxes`
     );
   }
 }

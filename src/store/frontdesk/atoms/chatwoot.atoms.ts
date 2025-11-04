@@ -12,6 +12,8 @@ import type {
   ChatwootNotification,
   NotificationListParams,
 } from "@/services/frontdesk/api/chatwoot/types/notifications.types";
+import type { Agent } from "@/services/frontdesk/api/chatwoot/types/agents.types";
+import type { Team } from "@/services/frontdesk/api/chatwoot/types/teams.types";
 
 /**
  * Chatwoot State Atoms
@@ -257,5 +259,78 @@ export const chatwootWebSocketStatsAtom = atom<ChatwootWebSocketStats>({
     reconnectionAttempts: 0,
     lastEventAt: null,
   },
+});
+
+// Agents (Settings)
+export const chatwootAgentsAtom = atom<Agent[]>({
+  key: "frontdesk.chatwoot.agents",
+  default: [],
+});
+
+export const chatwootAgentsLoadingAtom = atom<boolean>({
+  key: "frontdesk.chatwoot.agentsLoading",
+  default: false,
+});
+
+export const chatwootAgentsErrorAtom = atom<string | null>({
+  key: "frontdesk.chatwoot.agentsError",
+  default: null,
+});
+
+// Teams (Settings)
+export const chatwootTeamsAtom = atom<Team[]>({
+  key: "frontdesk.chatwoot.teams",
+  default: [],
+});
+
+export const chatwootTeamsLoadingAtom = atom<boolean>({
+  key: "frontdesk.chatwoot.teamsLoading",
+  default: false,
+});
+
+export const chatwootTeamsErrorAtom = atom<string | null>({
+  key: "frontdesk.chatwoot.teamsError",
+  default: null,
+});
+
+// Labels (Settings) - Placeholder for future implementation
+// Note: Labels service doesn't exist yet in Chatwoot API layer
+export interface ChatwootLabel {
+  id: number;
+  title: string;
+  description?: string;
+  color: string;
+  show_on_sidebar?: boolean;
+}
+
+export const chatwootLabelsAtom = atom<ChatwootLabel[]>({
+  key: "frontdesk.chatwoot.labels",
+  default: [],
+});
+
+export const chatwootLabelsLoadingAtom = atom<boolean>({
+  key: "frontdesk.chatwoot.labelsLoading",
+  default: false,
+});
+
+export const chatwootLabelsErrorAtom = atom<string | null>({
+  key: "frontdesk.chatwoot.labelsError",
+  default: null,
+});
+
+// OAuth State (for channel connection flow)
+export const chatwootOAuthLoadingAtom = atom<boolean>({
+  key: "frontdesk.chatwoot.oauthLoading",
+  default: false,
+});
+
+export const chatwootOAuthErrorAtom = atom<string | null>({
+  key: "frontdesk.chatwoot.oauthError",
+  default: null,
+});
+
+export const chatwootOAuthProviderAtom = atom<string | null>({
+  key: "frontdesk.chatwoot.oauthProvider",
+  default: null,
 });
 

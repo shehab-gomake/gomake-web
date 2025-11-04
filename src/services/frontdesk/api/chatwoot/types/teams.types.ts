@@ -12,6 +12,7 @@ export interface Team {
   allow_auto_assign?: boolean;
   account_id?: number;
   is_member?: boolean;
+  conversations_count?: number;
 }
 
 // Team-specific response wrappers

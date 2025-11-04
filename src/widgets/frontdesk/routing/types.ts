@@ -109,7 +109,7 @@ export enum ChatwootView {
   UNATTENDED = "unattended",
   CHANNELS = "channels",
   WEBHOOK_TEST = "webhook-test",
-  COMPOSE = "compose",
+  SETTINGS = "settings",
 }
 
 /**
@@ -133,6 +133,18 @@ export interface ChatwootFilters {
 }
 
 /**
+ * Chatwoot settings subpage types
+ */
+export enum ChatwootSettingsSubpage {
+  GENERAL = "general",
+  AGENTS = "agents",
+  INBOXES = "inboxes",
+  TEAMS = "teams",
+  LABELS = "labels",
+  PROFILE = "profile",
+}
+
+/**
  * Chatwoot route
  */
 export interface ChatwootRoute extends BaseRouteParams {
@@ -142,6 +154,8 @@ export interface ChatwootRoute extends BaseRouteParams {
   channelId?: string;
   /** Optional filters for conversation list */
   filters?: ChatwootFilters;
+  /** Optional settings subpage (only valid when view is SETTINGS) */
+  settingsSubpage?: ChatwootSettingsSubpage;
 }
 
 /**

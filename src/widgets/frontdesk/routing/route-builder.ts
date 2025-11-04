@@ -14,6 +14,7 @@ import {
   NavigationOptions,
   ChatwootView,
   ChatwootFilters,
+  ChatwootSettingsSubpage,
 } from "./types";
 
 /**
@@ -105,6 +106,11 @@ export const buildRoutePath = (route: FrontDeskRoute): string => {
         }
       }
 
+      // Add settings subpage if present
+      if (route.view === ChatwootView.SETTINGS && route.settingsSubpage) {
+        queryParams.append("subpage", mapChatwootSettingsSubpageToQueryParam(route.settingsSubpage));
+      }
+
       path += `?${queryParams.toString()}`;
       break;
     }
@@ -133,6 +139,21 @@ const mapChannelToPath = (channel: FrontDeskChannel): string => {
 };
 
 /**
+ * Map Chatwoot settings subpage enum to URL query parameter value
+ */
+const mapChatwootSettingsSubpageToQueryParam = (subpage: ChatwootSettingsSubpage): string => {
+  const map: Record<ChatwootSettingsSubpage, string> = {
+    [ChatwootSettingsSubpage.GENERAL]: "general",
+    [ChatwootSettingsSubpage.AGENTS]: "agents",
+    [ChatwootSettingsSubpage.INBOXES]: "inboxes",
+    [ChatwootSettingsSubpage.TEAMS]: "teams",
+    [ChatwootSettingsSubpage.LABELS]: "labels",
+    [ChatwootSettingsSubpage.PROFILE]: "profile",
+  };
+  return map[subpage];
+};
+
+/**
  * Map Chatwoot view enum to URL query parameter value
  */
 const mapChatwootViewToQueryParam = (view: ChatwootView): string => {
@@ -144,6 +165,7 @@ const mapChatwootViewToQueryParam = (view: ChatwootView): string => {
     [ChatwootView.UNATTENDED]: "unattended",
     [ChatwootView.CHANNELS]: "channels",
     [ChatwootView.WEBHOOK_TEST]: "webhook-test",
+    [ChatwootView.SETTINGS]: "settings",
   };
   return map[view];
 };
@@ -286,12 +308,13 @@ export const RouteBuilder = {
   /**
    * Build Chatwoot route
    */
-  chatwoot: (view: ChatwootView, conversationId?: string, channelId?: string, filters?: ChatwootFilters): FrontDeskRoute => ({
+  chatwoot: (view: ChatwootView, conversationId?: string, channelId?: string, filters?: ChatwootFilters, settingsSubpage?: ChatwootSettingsSubpage): FrontDeskRoute => ({
     type: RouteType.CHATWOOT,
     view,
     conversationId,
     channelId,
     filters,
+    settingsSubpage,
   }),
 
   /**
@@ -323,6 +346,11 @@ export const RouteBuilder = {
    * Build Chatwoot Channels route
    */
   chatwootChannels: (): FrontDeskRoute => RouteBuilder.chatwoot(ChatwootView.CHANNELS),
+
+  /**
+   * Build Chatwoot Settings route
+   */
+  chatwootSettings: (subpage?: ChatwootSettingsSubpage): FrontDeskRoute => RouteBuilder.chatwoot(ChatwootView.SETTINGS, undefined, undefined, undefined, subpage),
 };
 
 /**
@@ -390,10 +418,26 @@ export const getRouteMetadata = (route: FrontDeskRoute) => {
         [ChatwootView.MENTIONS]: "Mentions",
         [ChatwootView.UNATTENDED]: "Unattended",
         [ChatwootView.CHANNELS]: "Channels",
+        [ChatwootView.WEBHOOK_TEST]: "Webhook Test",
+        [ChatwootView.SETTINGS]: "Settings",
       };
+      
+      const subpageNames = {
+        [ChatwootSettingsSubpage.GENERAL]: "General Settings",
+        [ChatwootSettingsSubpage.AGENTS]: "Agents",
+        [ChatwootSettingsSubpage.INBOXES]: "Inboxes",
+        [ChatwootSettingsSubpage.TEAMS]: "Teams",
+        [ChatwootSettingsSubpage.LABELS]: "Labels",
+        [ChatwootSettingsSubpage.PROFILE]: "Profile Settings",
+      };
+
+      const title = route.settingsSubpage && route.view === ChatwootView.SETTINGS
+        ? subpageNames[route.settingsSubpage]
+        : viewNames[route.view];
+
       return {
-        title: viewNames[route.view],
-        breadcrumbs: ["FrontDesk", "Chatwoot", viewNames[route.view]],
+        title,
+        breadcrumbs: ["FrontDesk", "Chatwoot", viewNames[route.view], route.settingsSubpage ? subpageNames[route.settingsSubpage] : undefined].filter(Boolean) as string[],
       };
     }
 

@@ -90,6 +90,7 @@ export interface ChatwootConversation {
   inbox_id?: number;
   labels?: string[];
   muted?: boolean;
+  starred?: boolean;
   snoozed_until?: number;
   status?: string;
   created_at?: number;

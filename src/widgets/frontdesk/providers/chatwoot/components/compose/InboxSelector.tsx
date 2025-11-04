@@ -6,7 +6,10 @@
  */
 
 import React from "react";
-import { Mail, MessageSquare, Phone, Globe, ChevronDown } from "lucide-react";
+import MailIcon from "@mui/icons-material/Mail";
+import MessageIcon from "@mui/icons-material/Message";
+import PhoneIcon from "@mui/icons-material/Phone";
+import PublicIcon from "@mui/icons-material/Public";
 import type { ContactableInbox } from "@/services/frontdesk/api/chatwoot/types/inboxes.types";
 
 export interface InboxSelectorProps {
@@ -35,16 +38,16 @@ export interface InboxSelectorProps {
 function getChannelIcon(channelType: string) {
   switch (channelType) {
     case "Channel::Email":
-      return <Mail className="w-4 h-4" />;
+      return <MailIcon className="w-4 h-4" />;
     case "Channel::WhatsApp":
-      return <MessageSquare className="w-4 h-4" />;
+      return <MessageIcon className="w-4 h-4" />;
     case "Channel::Sms":
     case "Channel::TwilioSms":
-      return <Phone className="w-4 h-4" />;
+      return <PhoneIcon className="w-4 h-4" />;
     case "Channel::WebWidget":
-      return <Globe className="w-4 h-4" />;
+      return <PublicIcon className="w-4 h-4" />;
     default:
-      return <MessageSquare className="w-4 h-4" />;
+      return <MessageIcon className="w-4 h-4" />;
   }
 }
 

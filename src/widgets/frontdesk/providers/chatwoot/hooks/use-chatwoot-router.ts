@@ -19,6 +19,7 @@ import {
   NavigationOptions,
   FrontDeskRoute,
   ChatwootFilters,
+  ChatwootSettingsSubpage,
 } from "@/widgets/frontdesk/routing/types";
 import { RouteBuilder, buildRoute } from "@/widgets/frontdesk/routing/route-builder";
 import { parseRoute } from "@/widgets/frontdesk/routing/route-parser";
@@ -46,6 +47,9 @@ export const useChatwootRouter = () => {
 
   // Current filters from URL
   const currentFilters = currentRoute?.filters;
+
+  // Current settings subpage
+  const currentSettingsSubpage = currentRoute?.settingsSubpage;
 
   /**
    * Navigate to a Chatwoot route
@@ -160,6 +164,17 @@ export const useChatwootRouter = () => {
   const navigateToWebhookTest = useCallback(
     (options?: NavigationOptions) => {
       const route = RouteBuilder.chatwoot(ChatwootView.WEBHOOK_TEST);
+      navigate(route, options);
+    },
+    [navigate]
+  );
+
+  /**
+   * Navigate to Settings view
+   */
+  const navigateToSettings = useCallback(
+    (subpage?: ChatwootSettingsSubpage, options?: NavigationOptions) => {
+      const route = RouteBuilder.chatwootSettings(subpage);
       navigate(route, options);
     },
     [navigate]
@@ -284,6 +299,7 @@ export const useChatwootRouter = () => {
     isUnattendedView: currentView === ChatwootView.UNATTENDED,
     isChannelsView: currentView === ChatwootView.CHANNELS,
     isWebhookTestView: currentView === ChatwootView.WEBHOOK_TEST,
+    isSettingsView: currentView === ChatwootView.SETTINGS,
 
     // Navigation methods
     navigate,
@@ -294,6 +310,7 @@ export const useChatwootRouter = () => {
     navigateToUnattended,
     navigateToChannels,
     navigateToWebhookTest,
+    navigateToSettings,
     navigateToChannel,
     navigateToConversation,
 
@@ -301,5 +318,8 @@ export const useChatwootRouter = () => {
     updateFilters,
     updateFilter,
     clearFilters,
+    
+    // Settings subpage
+    currentSettingsSubpage,
   };
 };

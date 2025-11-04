@@ -33,9 +33,9 @@ export type {
   UnreadCountChangeHandler,
 } from './chatwoot-notifications-websocket.helper';
 
-// Re-export types for convenience
+// Re-export types for convenience (rename Message to avoid conflicts with API types)
 export type {
-  Message,
+  Message as WebSocketMessage,
   PresenceData,
   SendMessageData,
   JoinChannelData,

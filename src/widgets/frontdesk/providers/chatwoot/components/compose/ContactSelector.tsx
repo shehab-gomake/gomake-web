@@ -6,7 +6,12 @@
  */
 
 import React, { useState, useRef, useEffect } from "react";
-import { Search, UserPlus, User, Mail, Phone, X } from "lucide-react";
+import SearchIcon from "@mui/icons-material/Search";
+import PersonAddIcon from "@mui/icons-material/PersonAdd";
+import PersonIcon from "@mui/icons-material/Person";
+import MailIcon from "@mui/icons-material/Mail";
+import PhoneIcon from "@mui/icons-material/Phone";
+import CloseIcon from "@mui/icons-material/Close";
 import type { ContactDetail } from "@/services/frontdesk/api/chatwoot/types/contacts.types";
 
 export interface ContactSelectorProps {
@@ -93,7 +98,7 @@ export const ContactSelector: React.FC<ContactSelectorProps> = ({
                   className="w-10 h-10 rounded-full object-cover"
                 />
               ) : (
-                <User className="w-5 h-5" />
+                <PersonIcon className="w-5 h-5" />
               )}
             </div>
 
@@ -105,13 +110,13 @@ export const ContactSelector: React.FC<ContactSelectorProps> = ({
               <div className="text-sm text-gray-500 dark:text-gray-400 flex items-center gap-2">
                 {selectedContact.email && (
                   <span className="flex items-center gap-1">
-                    <Mail className="w-3 h-3" />
+                    <MailIcon className="w-3 h-3" />
                     {selectedContact.email}
                   </span>
                 )}
                 {selectedContact.phone_number && (
                   <span className="flex items-center gap-1">
-                    <Phone className="w-3 h-3" />
+                    <PhoneIcon className="w-3 h-3" />
                     {selectedContact.phone_number}
                   </span>
                 )}
@@ -125,14 +130,14 @@ export const ContactSelector: React.FC<ContactSelectorProps> = ({
             onClick={handleClearSelection}
             className="p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded"
           >
-            <X className="w-4 h-4 text-gray-500" />
+            <CloseIcon className="w-4 h-4 text-gray-500" />
           </button>
         </div>
       ) : (
         <>
           {/* Search Input */}
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
             <input
               type="text"
               value={query}
@@ -163,7 +168,7 @@ export const ContactSelector: React.FC<ContactSelectorProps> = ({
                 className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors border-b border-gray-200 dark:border-gray-700"
               >
                 <div className="w-10 h-10 rounded-full bg-green-500 flex items-center justify-center text-white">
-                  <UserPlus className="w-5 h-5" />
+                  <PersonAddIcon className="w-5 h-5" />
                 </div>
                 <div className="text-left">
                   <div className="font-medium text-gray-900 dark:text-gray-100">
@@ -197,7 +202,7 @@ export const ContactSelector: React.FC<ContactSelectorProps> = ({
                           className="w-10 h-10 rounded-full object-cover"
                         />
                       ) : (
-                        <User className="w-5 h-5" />
+                        <PersonIcon className="w-5 h-5" />
                       )}
                     </div>
 
@@ -209,13 +214,13 @@ export const ContactSelector: React.FC<ContactSelectorProps> = ({
                       <div className="text-sm text-gray-500 dark:text-gray-400 flex items-center gap-2 truncate">
                         {contact.email && (
                           <span className="flex items-center gap-1">
-                            <Mail className="w-3 h-3 shrink-0" />
+                            <MailIcon className="w-3 h-3 shrink-0" />
                             <span className="truncate">{contact.email}</span>
                           </span>
                         )}
                         {contact.phone_number && (
                           <span className="flex items-center gap-1">
-                            <Phone className="w-3 h-3 shrink-0" />
+                            <PhoneIcon className="w-3 h-3 shrink-0" />
                             {contact.phone_number}
                           </span>
                         )}

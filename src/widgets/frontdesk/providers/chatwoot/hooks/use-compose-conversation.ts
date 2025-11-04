@@ -59,17 +59,18 @@ export function useComposeConversation(options?: UseComposeConversationOptions) 
 
   /**
    * Search contacts using filter API
+   * Note: Backend automatically handles accountId from authentication context
    */
   const searchContacts = useCallback(
     async (query: string) => {
-      if (!accountId || !query.trim()) {
+      if (!query.trim()) {
         setSearchResults([]);
         return;
       }
 
       setIsSearching(true);
       try {
-        const response = await chatwootService.contacts.filterContacts(accountId, {
+        const response = await chatwootService.contacts.filterContacts({
           payload: [
             {
               attribute_key: "email",
@@ -102,7 +103,7 @@ export function useComposeConversation(options?: UseComposeConversationOptions) 
         setIsSearching(false);
       }
     },
-    [accountId]
+    []
   );
 
   // Debounced search (300ms)
@@ -113,20 +114,18 @@ export function useComposeConversation(options?: UseComposeConversationOptions) 
 
   /**
    * Fetch contactable inboxes for selected contact
+   * Note: Backend automatically handles accountId from authentication context
    */
   const fetchContactableInboxes = useCallback(
     async (contact: ContactDetail) => {
-      if (!accountId || !contact.id) {
+      if (!contact.id) {
         setContactableInboxes([]);
         return;
       }
 
       setIsLoadingInboxes(true);
       try {
-        const response = await chatwootService.contacts.getContactableInboxes(
-          accountId,
-          contact.id
-        );
+        const response = await chatwootService.contacts.getContactableInboxes(contact.id);
 
         const inboxes = response.payload || [];
         setContactableInboxes(inboxes);
@@ -145,7 +144,7 @@ export function useComposeConversation(options?: UseComposeConversationOptions) 
         setIsLoadingInboxes(false);
       }
     },
-    [accountId]
+    []
   );
 
   /**
@@ -322,6 +321,24 @@ export function useComposeConversation(options?: UseComposeConversationOptions) 
   }, [formState]);
 
   /**
+   * Reset form to initial state
+   */
+  const resetForm = useCallback(() => {
+    setFormState({
+      contact: null,
+      selectedContactableInbox: null,
+      message: "",
+      subject: "",
+      ccEmails: "",
+      bccEmails: "",
+      attachments: [],
+    });
+    setSearchResults([]);
+    setContactableInboxes([]);
+    setValidationErrors({});
+  }, []);
+
+  /**
    * Submit form and create conversation
    */
   const submit = useCallback(async (): Promise<number | null> => {
@@ -340,7 +357,10 @@ export function useComposeConversation(options?: UseComposeConversationOptions) 
       const payload = preparePayload();
       const response = await chatwootService.conversations.createConversation(accountId, payload);
 
-      const conversationId = response.id;
+      // Extract conversation from response (could be in data or payload)
+      const conversation = response.data || response.payload;
+      const conversationId = conversation?.id;
+
       if (conversationId) {
         options?.onSuccess?.(conversationId);
         // Reset form
@@ -356,25 +376,7 @@ export function useComposeConversation(options?: UseComposeConversationOptions) 
     } finally {
       setIsSubmitting(false);
     }
-  }, [accountId, validateForm, preparePayload, options]);
-
-  /**
-   * Reset form to initial state
-   */
-  const resetForm = useCallback(() => {
-    setFormState({
-      contact: null,
-      selectedContactableInbox: null,
-      message: "",
-      subject: "",
-      ccEmails: "",
-      bccEmails: "",
-      attachments: [],
-    });
-    setSearchResults([]);
-    setContactableInboxes([]);
-    setValidationErrors({});
-  }, []);
+  }, [accountId, validateForm, preparePayload, options, resetForm]);
 
   return {
     // Form state

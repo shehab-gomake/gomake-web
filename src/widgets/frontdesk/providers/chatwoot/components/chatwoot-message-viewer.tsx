@@ -52,12 +52,11 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
     return inboxes.find((inbox) => inbox.id === conversation.inbox_id) || null;
   }, [conversation?.inbox_id, inboxes]);
 
-  // Ref for composer focus
-  const composerRef = React.useRef<any>(null);
-
-  // Focus composer when starting conversation
+  // TODO: Implement composer focus with forwardRef
+  // const composerRef = React.useRef<any>(null);
   const handleStartConversation = () => {
-    composerRef.current?.focus();
+    // TODO: Focus composer when implementing forwardRef
+    // composerRef.current?.focus();
   };
 
   if (!conversation) {
@@ -415,7 +414,6 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
 
       {/* Reply Composer */}
       <ChatwootReplyComposer
-        ref={composerRef}
         conversation={conversation}
         inbox={inbox}
         onSend={handleSendMessage}
