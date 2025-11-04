@@ -140,7 +140,7 @@ export {
   type CreateConversationPayload,
   type ComposeValidationErrors,
   ChannelFieldRequirements,
-} from "@/services/frontdesk/api/chatwoot/types/compose.types";
+} from "./types/compose.types";
 
 // Enum types (for convenience)
 export * from "./types/enums.types";
