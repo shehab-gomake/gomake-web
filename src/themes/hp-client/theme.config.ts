@@ -16,19 +16,21 @@ const hpClientThemeConfig: ThemeConfig = {
 
   styles: {
     cssVariables: {
-      // Primary Colors - BLUE instead of purple
-      "--theme-primary-color": "#0066cc", // Success Rate card - Blue
-      "--theme-primary-hover": "#0052a3",
-      "--theme-primary-light": "#e6f2ff",
+      // Primary Colors
+      "--theme-primary-color": "#024AD8", // Blue
+      "--theme-primary-hover": "#1A5FFF", // Lighter/more vibrant for hover
+      "--theme-primary-light": "#B2D2FF", // More bold/darker than before
+      "--theme-primary-disabled": "#8db3e8", // Lighter/muted for disabled state
+      "--theme-primary-dark": "#002E8D", // Darker for disabled state
 
-      // Secondary Colors - ORANGE instead of pink
-      "--theme-secondary-color": "#ff6b35", // Monthly Performance - Orange
-      "--theme-secondary-hover": "#e55a2b",
-      "--theme-secondary-light": "#fff4f0",
+      // Secondary Colors
+      "--theme-secondary-color": "#ff6b35",
+      "--theme-secondary-hover": "#ff8c5c", // Lighter for hover
+      "--theme-secondary-light": "#ffccaa", // More bold/darker than before
 
       // Background Colors - WHITE page background
-      "--theme-bg-body": "#ffffff", // ⬅️ Changed to white!
-      "--theme-bg-primary": "#ffffff", // Card background - White
+      "--theme-bg-body": "#ffffff",
+      "--theme-bg-primary": "#ffffff",
       "--theme-bg-secondary": "#f8fafc",
       "--theme-bg-tertiary": "#f1f5f9",
 
@@ -157,6 +159,7 @@ const hpClientThemeConfig: ThemeConfig = {
       "--theme-button-text-primary": "#FFFFFF", // Button text color
       "--theme-button-border-color": "#E0E0E0", // Button border - gray for hp-client
       "--theme-button-radius": "8px", // Button border radius - 16px for hp-client
+      "--theme-button-full-width": "100%", // Button full width for hp-client
 
       // Widget Styles (for quote widget mainContainer)
       "--theme-widget-border-width": "1.5px", // Slightly thicker border for hp-client (between 1px and 2px)

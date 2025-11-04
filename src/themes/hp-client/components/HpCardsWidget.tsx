@@ -17,11 +17,6 @@ const HpCardsWidget = () => {
     getCardLabel,
   } = useCardWidget();
 
-  // Order cards according to the image layout
-  // Top row: Approved, Success Rate
-  // Middle row: Pending, Cancelled
-  // Bottom row: Stuck Jobs, Orders
-  // Below: Monthly Performance
   const orderedCards = useMemo(() => {
     if (!allReports) return [];
 

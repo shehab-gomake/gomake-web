@@ -1,15 +1,11 @@
 import { useTranslation } from "react-i18next";
-import {
-  GoMakeAutoComplate,
-  GoMakeDeleteModal,
-  GomakePrimaryButton,
-} from "@/components";
+import { GoMakeAutoComplate, GoMakeDeleteModal } from "@/components";
 import { useQuoteWidget } from "./use-quote-widget";
 import { useStyle } from "./style";
 import { Popover } from "@mui/material";
 import { PermissionCheck } from "@/components/CheckPermission/check-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { SecondaryButton } from "@/components/button/secondary-button";
 import { useSetRecoilState } from "recoil";
 import {
@@ -17,7 +13,6 @@ import {
   QuoteNumberState,
 } from "@/pages-components/quote-new/store/quote";
 import Stack from "@mui/material/Stack";
-import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { CustomerCardWidget } from "@/widgets/customer-card-modal/customer-card";
 import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 import { useClientTypesList } from "@/hooks/use-client-types";
@@ -26,6 +21,7 @@ import { ModalType } from "@/enums";
 import { useUserPermission } from "@/hooks/use-permission";
 import { ClientAutocomplete } from "@/widgets/Clients-Autocomplete/clients-list";
 import { getHeadingTypography } from "@/themes/typography-utils";
+import { PrimaryButton } from "@/components/button/primary-button";
 
 interface QuoteWidgetProps {
   isMobileScreen?: boolean;
@@ -221,7 +217,7 @@ const QuoteWidget = ({ isMobileScreen = false, title }: QuoteWidgetProps) => {
         <Stack direction={"row"} gap={"13px"} width={"100%"}>
           <div style={classes.btnContainer}>
             <PermissionCheck userPermission={Permissions.CREATE_QUOTES}>
-              <GomakePrimaryButton
+              <PrimaryButton
                 // onClick={
                 //   isDisabled ? handleClick : onClickCreateQuoteForCustomer
                 // }
@@ -231,7 +227,7 @@ const QuoteWidget = ({ isMobileScreen = false, title }: QuoteWidgetProps) => {
                 style={{ width: "100%", height: 40 }}
               >
                 {t("home.admin.AddItemToQuote")}
-              </GomakePrimaryButton>
+              </PrimaryButton>
             </PermissionCheck>
           </div>
           <div style={{ width: "50%" }}>
@@ -249,8 +245,13 @@ const QuoteWidget = ({ isMobileScreen = false, title }: QuoteWidgetProps) => {
           </div>
         </Stack>
       ) : (
-        <div style={{ width: "50%" }}>
-          <GomakePrimaryButton
+        <div
+          style={{
+            width: "var(--theme-button-full-width, 50%)",
+            maxWidth: "600px",
+          }}
+        >
+          <PrimaryButton
             onClick={
               !selectedProduct?.id
                 ? onclickCreateNew
@@ -260,7 +261,7 @@ const QuoteWidget = ({ isMobileScreen = false, title }: QuoteWidgetProps) => {
             style={{ width: "100%", height: 40 }}
           >
             {t("home.admin.createQoute")}
-          </GomakePrimaryButton>
+          </PrimaryButton>
         </div>
       )}
       <Popover
