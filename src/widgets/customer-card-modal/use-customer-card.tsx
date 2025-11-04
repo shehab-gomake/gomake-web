@@ -347,15 +347,33 @@ const useCustomerCard = ({
     }
   };
 
-  const [contacts, setContacts] = useState(
-    customer && customer.contacts ? customer.contacts : []
-  );
-  const [addresses, setAddresses] = useState(
-    customer && customer.addresses ? customer.addresses : []
-  );
-  const [users, setUsers] = useState(
-    customer && customer.users ? customer.users : []
-  );
+  const [contacts, setContacts] = useState(() => {
+    if (customer && customer.contacts) {
+      return customer.contacts.map((contact, i) => ({
+        ...contact,
+        index: contact.index ?? i + 1,
+      }));
+    }
+    return [];
+  });
+  const [addresses, setAddresses] = useState(() => {
+    if (customer && customer.addresses) {
+      return customer.addresses.map((address, i) => ({
+        ...address,
+        index: address.index ?? i + 1,
+      }));
+    }
+    return [];
+  });
+  const [users, setUsers] = useState(() => {
+    if (customer && customer.users) {
+      return customer.users.map((user, i) => ({
+        ...user,
+        index: user.index ?? i + 1,
+      }));
+    }
+    return [];
+  });
 
   // Contact info
   const addEmptyContact = () => {
@@ -372,7 +390,10 @@ const useCustomerCard = ({
   const addInitContact = () => {
     var temp = [];
     if (customer && customer.contacts) {
-      temp = [...customer.contacts];
+      temp = customer.contacts.map((contact, i) => ({
+        ...contact,
+        index: contact.index ?? i + 1,
+      }));
     }
 
     // else {
@@ -419,7 +440,10 @@ const useCustomerCard = ({
   const addInitAddress = () => {
     var temp = [];
     if (customer && customer.addresses) {
-      temp = [...customer.addresses];
+      temp = customer.addresses.map((address, i) => ({
+        ...address,
+        index: address.index ?? i + 1,
+      }));
     }
     // else {
     //   const index = temp.length + 1;
@@ -475,7 +499,10 @@ const useCustomerCard = ({
   const addInitUser = () => {
     var temp = [];
     if (customer && customer.users) {
-      temp = [...customer.users];
+      temp = customer.users.map((user, i) => ({
+        ...user,
+        index: user.index ?? i + 1,
+      }));
     }
     setUsers(temp);
   };
