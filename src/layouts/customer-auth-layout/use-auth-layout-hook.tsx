@@ -266,6 +266,12 @@ const useAuthLayoutHook = (
             path: "/suppliers",
             Permission: Permissions.SHOW_SUPPLIER,
           },
+          {
+            key: "myTickets",
+            title: "tabs.myTickets",
+            path: "/my-tickets",
+            Permission: undefined, // No permission required - all users can see their tickets
+          },
         ],
         icon: () => {
           return <ContactsIcon />;
