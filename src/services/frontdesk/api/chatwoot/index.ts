@@ -140,7 +140,7 @@ export {
   type CreateConversationPayload,
   type ComposeValidationErrors,
   ChannelFieldRequirements,
-} from "./types/compose.types";
+} from "./types";
 
 // Enum types (for convenience)
 export * from "./types/enums.types";
