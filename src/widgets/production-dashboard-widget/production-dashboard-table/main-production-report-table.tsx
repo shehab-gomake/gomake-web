@@ -16,7 +16,12 @@ import TrendingDownIcon from "@mui/icons-material/TrendingDown";
 import { useStyle } from "../style";
 import { format } from "date-fns";
 import { useTranslation } from "react-i18next";
-import { DepartmentPerformanceDTO, StationPerformanceDTO } from "./interfaces";
+import {
+  DepartmentPerformanceDTO,
+  StationPerformanceDTO,
+  BoardMissionsStatusFilterItem,
+  DepartmentSummaryDTO,
+} from "./interfaces";
 import { useMainProductionReport } from "./use-main-production-report";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { exportProductionDashboardToExcel } from "../production-dashboard-export-utils";
@@ -38,6 +43,106 @@ const MainProductionReportTable = () => {
     formatPercentage,
     formatCurrency,
   } = useMainProductionReport();
+
+  // Helper function to extract boardMissionIds and apply filter
+  const handleBoardMissionIdsClick = (boardMissionIds: string[]) => {
+    if (!boardMissionIds || boardMissionIds.length === 0) {
+      return;
+    }
+
+    // Store boardMissionIds in sessionStorage for the new tab to read
+    const filterKey = "boardMissionsFilterFromDashboard";
+    sessionStorage.setItem(
+      filterKey,
+      JSON.stringify({
+        boardMissionsIds: boardMissionIds,
+        pageNumber: 1,
+        pageSize: 50,
+        timestamp: Date.now(),
+      })
+    );
+
+    // Open /jobs page in a new tab
+    window.open("/jobs?applyBoardMissionsFilter=1", "_blank");
+  };
+
+  // Handler for clicking on totalJobs (status 0 + 1 combined)
+  const handleTotalJobsClick = (summary: DepartmentSummaryDTO) => {
+    if (!summary.boardMissionsStatusFilter) {
+      return;
+    }
+
+    // Extract IDs from status 0 (inprocess) and status 1 (done)
+    const inProcessFilter = summary.boardMissionsStatusFilter.find(
+      (item) => item.status === 0
+    );
+    const doneFilter = summary.boardMissionsStatusFilter.find(
+      (item) => item.status === 1
+    );
+
+    // Combine IDs from both statuses
+    const combinedIds = [
+      ...(inProcessFilter?.boardMissionIds || []),
+      ...(doneFilter?.boardMissionIds || []),
+    ];
+
+    if (combinedIds.length === 0) {
+      return;
+    }
+
+    handleBoardMissionIdsClick(combinedIds);
+  };
+
+  // Handler for clicking on totalDoneJobs (status 1)
+  const handleTotalDoneJobsClick = (summary: DepartmentSummaryDTO) => {
+    if (!summary.boardMissionsStatusFilter) {
+      return;
+    }
+
+    const doneFilter = summary.boardMissionsStatusFilter.find(
+      (item) => item.status === 1
+    );
+
+    if (!doneFilter || doneFilter.boardMissionIds.length === 0) {
+      return;
+    }
+
+    handleBoardMissionIdsClick(doneFilter.boardMissionIds);
+  };
+
+  // Handler for clicking on totalInProcessJobs (status 0)
+  const handleTotalInProcessJobsClick = (summary: DepartmentSummaryDTO) => {
+    if (!summary.boardMissionsStatusFilter) {
+      return;
+    }
+
+    const inProcessFilter = summary.boardMissionsStatusFilter.find(
+      (item) => item.status === 0
+    );
+
+    if (!inProcessFilter || inProcessFilter.boardMissionIds.length === 0) {
+      return;
+    }
+
+    handleBoardMissionIdsClick(inProcessFilter.boardMissionIds);
+  };
+
+  // Handler for clicking on totalReportedJobs (status 2)
+  const handleTotalReportedJobsClick = (summary: DepartmentSummaryDTO) => {
+    if (!summary.boardMissionsStatusFilter) {
+      return;
+    }
+
+    const reportedFilter = summary.boardMissionsStatusFilter.find(
+      (item) => item.status === 2
+    );
+
+    if (!reportedFilter || reportedFilter.boardMissionIds.length === 0) {
+      return;
+    }
+
+    handleBoardMissionIdsClick(reportedFilter.boardMissionIds);
+  };
 
   // Helper function to render growth with trending icons
   const renderGrowthWithIcon = (
@@ -118,22 +223,176 @@ const MainProductionReportTable = () => {
         <span style={{ fontWeight: "bold" }}>
           {formatTime(department.summary.totalEstimatedWorkingHours)}
         </span>,
-        <span style={{ fontWeight: "bold" }}>
-          {formatTime(department.summary.totalEstimatedHours)} /{" "}
-          {department.summary.totalJobs}
-        </span>,
-        <span style={{ fontWeight: "bold" }}>
-          {formatTime(department.summary.totalDoneHours)} /{" "}
-          {department.summary.totalDoneJobs}
-        </span>,
-        <span style={{ fontWeight: "bold" }}>
-          {formatTime(department.summary.totalInProcessHours)} /{" "}
-          {department.summary.totalInProcessJobs}
-        </span>,
-        <span style={{ fontWeight: "bold" }}>
-          {formatTime(department.summary.totalReportedHours)} /{" "}
-          {department.summary.totalReportedJobs}
-        </span>,
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            gap: 0.5,
+          }}
+        >
+          <span style={{ fontWeight: "bold" }}>
+            {formatTime(department.summary.totalEstimatedHours)} /{" "}
+          </span>
+          <span
+            style={{
+              fontWeight: "bold",
+              cursor:
+                department.summary.boardMissionsStatusFilter &&
+                department.summary.boardMissionsStatusFilter.length > 0
+                  ? "pointer"
+                  : "default",
+              color:
+                department.summary.boardMissionsStatusFilter &&
+                department.summary.boardMissionsStatusFilter.length > 0
+                  ? primaryColor(500)
+                  : "inherit",
+              textDecoration:
+                department.summary.boardMissionsStatusFilter &&
+                department.summary.boardMissionsStatusFilter.length > 0
+                  ? "underline"
+                  : "none",
+            }}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleTotalJobsClick(department.summary);
+            }}
+          >
+            {department.summary.totalJobs}
+          </span>
+        </Box>,
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            gap: 0.5,
+          }}
+        >
+          <span style={{ fontWeight: "bold" }}>
+            {formatTime(department.summary.totalDoneHours)} /{" "}
+          </span>
+          <span
+            style={{
+              fontWeight: "bold",
+              cursor:
+                department.summary.boardMissionsStatusFilter &&
+                department.summary.boardMissionsStatusFilter.some(
+                  (item) => item.status === 1 && item.boardMissionIds.length > 0
+                )
+                  ? "pointer"
+                  : "default",
+              color:
+                department.summary.boardMissionsStatusFilter &&
+                department.summary.boardMissionsStatusFilter.some(
+                  (item) => item.status === 1 && item.boardMissionIds.length > 0
+                )
+                  ? primaryColor(500)
+                  : "inherit",
+              textDecoration:
+                department.summary.boardMissionsStatusFilter &&
+                department.summary.boardMissionsStatusFilter.some(
+                  (item) => item.status === 1 && item.boardMissionIds.length > 0
+                )
+                  ? "underline"
+                  : "none",
+            }}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleTotalDoneJobsClick(department.summary);
+            }}
+          >
+            {department.summary.totalDoneJobs}
+          </span>
+        </Box>,
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            gap: 0.5,
+          }}
+        >
+          <span style={{ fontWeight: "bold" }}>
+            {formatTime(department.summary.totalInProcessHours)} /{" "}
+          </span>
+          <span
+            style={{
+              fontWeight: "bold",
+              cursor:
+                department.summary.boardMissionsStatusFilter &&
+                department.summary.boardMissionsStatusFilter.some(
+                  (item) => item.status === 0 && item.boardMissionIds.length > 0
+                )
+                  ? "pointer"
+                  : "default",
+              color:
+                department.summary.boardMissionsStatusFilter &&
+                department.summary.boardMissionsStatusFilter.some(
+                  (item) => item.status === 0 && item.boardMissionIds.length > 0
+                )
+                  ? primaryColor(500)
+                  : "inherit",
+              textDecoration:
+                department.summary.boardMissionsStatusFilter &&
+                department.summary.boardMissionsStatusFilter.some(
+                  (item) => item.status === 0 && item.boardMissionIds.length > 0
+                )
+                  ? "underline"
+                  : "none",
+            }}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleTotalInProcessJobsClick(department.summary);
+            }}
+          >
+            {department.summary.totalInProcessJobs}
+          </span>
+        </Box>,
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            gap: 0.5,
+          }}
+        >
+          <span style={{ fontWeight: "bold" }}>
+            {formatTime(department.summary.totalReportedHours)} /{" "}
+          </span>
+          <span
+            style={{
+              fontWeight: "bold",
+              cursor:
+                department.summary.boardMissionsStatusFilter &&
+                department.summary.boardMissionsStatusFilter.some(
+                  (item) => item.status === 2 && item.boardMissionIds.length > 0
+                )
+                  ? "pointer"
+                  : "default",
+              color:
+                department.summary.boardMissionsStatusFilter &&
+                department.summary.boardMissionsStatusFilter.some(
+                  (item) => item.status === 2 && item.boardMissionIds.length > 0
+                )
+                  ? primaryColor(500)
+                  : "inherit",
+              textDecoration:
+                department.summary.boardMissionsStatusFilter &&
+                department.summary.boardMissionsStatusFilter.some(
+                  (item) => item.status === 2 && item.boardMissionIds.length > 0
+                )
+                  ? "underline"
+                  : "none",
+            }}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleTotalReportedJobsClick(department.summary);
+            }}
+          >
+            {department.summary.totalReportedJobs}
+          </span>
+        </Box>,
         <Box>
           {department.summary.averageCapacity !== null && (
             <>

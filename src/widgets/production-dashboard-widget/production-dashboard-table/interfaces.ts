@@ -53,6 +53,11 @@ export interface JobAnalytics {
   jobsEstimatedPrice: number;
 }
 
+export interface BoardMissionsStatusFilterItem {
+  boardMissionIds: string[];
+  status: number; // 0 = inProcess, 1 = done, 2 = reported
+}
+
 export interface DepartmentSummaryDTO {
   totalStations: number;
   totalJobs: number;
@@ -72,4 +77,5 @@ export interface DepartmentSummaryDTO {
   totalReportedHours: number;
   averagePerformance: number | null;
   averagePerformanceGrowth: number | null;
+  boardMissionsStatusFilter?: BoardMissionsStatusFilterItem[];
 }
