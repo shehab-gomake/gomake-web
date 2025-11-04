@@ -11,6 +11,7 @@ import Head from "next/head";
 import { useEffect } from "react";
 import { useCustomerAuthLayout } from "./use-customer-auth-layout";
 import { useTrialRedirect } from "@/hooks/use-trial-redirect";
+import { TicketChatbotWidget } from "@/components/ticket-chatbot";
 
 const CustomerAuthLayout = ({
   children,
@@ -139,6 +140,7 @@ const CustomerAuthLayout = ({
             ) : (
               <></>
             )}
+            <TicketChatbotWidget />
           </div>
         </>
       )}
