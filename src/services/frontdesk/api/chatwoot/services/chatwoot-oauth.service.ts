@@ -2,22 +2,24 @@
  * Chatwoot OAuth Service
  *
  * Handles OAuth authorization flows for email channel connections (Gmail/Outlook).
- * Uses Chatwoot backend endpoints for OAuth authorization.
+ * Uses NestJS messaging hub endpoints for OAuth authorization with dynamic frontend URLs.
  *
- * Endpoint Pattern (Chatwoot-style):
- * - POST /api/accounts/google/authorization
- * - POST /api/accounts/microsoft/authorization
+ * Endpoint Pattern:
+ * - POST /api/integrations/google/authorization
+ * - POST /api/integrations/microsoft/authorization
  *
- * Base URL: http://localhost:8080 (Chatwoot backend)
+ * Base URL: Uses CHATWOOT_SERVER from config
+ * Production: https://messaging-hub-1052023886201.europe-west3.run.app
  *
  * Flow:
- * 1. Frontend calls this service (POST to /api/accounts/{provider}/authorization)
- * 2. Backend returns OAuth URL
- * 3. Frontend opens URL in popup
- * 4. User authorizes on Google/Microsoft
- * 5. Provider redirects to backend callback
- * 6. Backend creates channel/inbox and redirects popup
- * 7. Frontend detects success and refreshes inboxes
+ * 1. Frontend calls this service (POST to /api/integrations/{provider}/authorization) with frontend_url
+ * 2. NestJS proxy forwards to Chatwoot with frontend_url encoded in OAuth state
+ * 3. Backend returns OAuth URL
+ * 4. Frontend opens URL in popup
+ * 5. User authorizes on Google/Microsoft
+ * 6. Provider redirects to Chatwoot callback
+ * 7. Chatwoot decodes state, creates channel/inbox, and redirects popup to frontend_url
+ * 8. Frontend detects success and refreshes inboxes
  */
 
 import { ChatwootHttpClient } from "../chatwoot-http-client";
@@ -39,7 +41,7 @@ export interface OAuthAuthorizationResponse {
 
 /**
  * ChatwootOAuthService
- * Handles OAuth authorization for email channel connections
+ * Handles OAuth authorization for email channel connections with dynamic frontend URLs
  *
  * @example
  * ```typescript
@@ -56,10 +58,22 @@ export interface OAuthAuthorizationResponse {
  */
 export class ChatwootOAuthService extends ChatwootHttpClient {
   /**
+   * Get current frontend URL for OAuth redirect
+   * @returns Current origin (e.g., "http://localhost:3004" or "https://printhouse.com")
+   */
+  private getFrontendUrl(): string {
+    if (typeof window !== "undefined") {
+      return window.location.origin;
+    }
+    return "http://localhost:3004"; // Fallback for SSR
+  }
+
+  /**
    * Get Google OAuth Authorization URL
-   * POST /api/accounts/google/authorization
+   * POST /api/integrations/google/authorization
    *
    * Returns an OAuth URL that opens Google's consent screen.
+   * Includes frontend_url for dynamic redirect after OAuth completes.
    * User authorizes, Google redirects to callback, and backend creates channel/inbox.
    *
    * @returns Promise with OAuth URL
@@ -73,14 +87,19 @@ export class ChatwootOAuthService extends ChatwootHttpClient {
    * ```
    */
   async getGoogleAuthUrl(): Promise<OAuthAuthorizationResponse> {
-    return this.post<OAuthAuthorizationResponse>("/api/accounts/google/authorization", {});
+    const frontendUrl = this.getFrontendUrl();
+    return this.post<OAuthAuthorizationResponse>(
+      "/api/integrations/google/authorization",
+      { frontend_url: frontendUrl }
+    );
   }
 
   /**
    * Get Microsoft/Outlook OAuth Authorization URL
-   * POST /api/accounts/microsoft/authorization
+   * POST /api/integrations/microsoft/authorization
    *
    * Returns an OAuth URL that opens Microsoft's consent screen.
+   * Includes frontend_url for dynamic redirect after OAuth completes.
    * User authorizes, Microsoft redirects to callback, and backend creates channel/inbox.
    *
    * @returns Promise with OAuth URL
@@ -94,7 +113,11 @@ export class ChatwootOAuthService extends ChatwootHttpClient {
    * ```
    */
   async getMicrosoftAuthUrl(): Promise<OAuthAuthorizationResponse> {
-    return this.post<OAuthAuthorizationResponse>("/api/accounts/microsoft/authorization", {});
+    const frontendUrl = this.getFrontendUrl();
+    return this.post<OAuthAuthorizationResponse>(
+      "/api/integrations/microsoft/authorization",
+      { frontend_url: frontendUrl }
+    );
   }
 }
 

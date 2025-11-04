@@ -1,12 +1,14 @@
 import { getUserToken } from "@/services/storage-data";
 import { createLogger } from "@/services/frontdesk/utils/logger";
+import config from "@/config";
 
 const logger = createLogger("ChatwootHttpClient");
 
 /**
  * Base HTTP client for Chatwoot API integration.
  *
- * Base URL: http://localhost:8080
+ * Base URL: Uses CHATWOOT_SERVER from config (defaults to http://localhost:8080 for development)
+ * Production URL: https://messaging-hub-1052023886201.europe-west3.run.app
  * Authentication: GoMake bearer token (same as other FrontDesk services)
  *
  * This client handles authentication, error handling, and response parsing
@@ -15,8 +17,10 @@ const logger = createLogger("ChatwootHttpClient");
 export class ChatwootHttpClient {
   protected baseUrl: string;
 
-  constructor(baseUrl: string = "http://localhost:8080") {
-    this.baseUrl = baseUrl.replace(/\/$/, "");
+  constructor(baseUrl?: string) {
+    // Use provided baseUrl, or config.chatwoot_server, or fallback to localhost
+    const defaultUrl = config.chatwoot_server || "http://localhost:8080";
+    this.baseUrl = (baseUrl || defaultUrl).replace(/\/$/, "");
   }
 
   /**
