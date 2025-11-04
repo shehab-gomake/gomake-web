@@ -8,3 +8,6 @@ export { ReplyComposerTabs, type ReplyTabValue, type ReplyComposerTabsProps } fr
 export { ReplyComposerEmailFields, type ReplyComposerEmailFieldsProps } from "./ReplyComposerEmailFields";
 export { ReplyComposerToolbar, type ReplyComposerToolbarProps } from "./ReplyComposerToolbar";
 export { ReplyComposerActions, type ReplyComposerActionsProps } from "./ReplyComposerActions";
+export { ReplyComposerFormattingToolbar } from "./ReplyComposerFormattingToolbar";
+export { ReplyComposerBottomToolbar } from "./ReplyComposerBottomToolbar";
+export { ReplyComposerTextArea } from "./ReplyComposerTextArea";
