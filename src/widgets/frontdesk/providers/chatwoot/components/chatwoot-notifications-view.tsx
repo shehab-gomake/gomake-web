@@ -20,11 +20,15 @@ import TuneIcon from "@mui/icons-material/Tune";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import AddCommentIcon from "@mui/icons-material/AddComment";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { useChatwootNotifications } from "../hooks/use-chatwoot-notifications";
-import { NotificationSortOrder } from "@/services/frontdesk/api/chatwoot/types/notifications.types";
+import { useChatwootNotificationContextMenu } from "../hooks/use-chatwoot-notification-context-menu";
+import { NotificationSortOrder, ChatwootNotification } from "@/services/frontdesk/api/chatwoot/types/notifications.types";
 import { buildNotificationFilters } from "../utils/notification-filter-utils";
 import { DropdownMenu, MenuSubheader } from "@/widgets/frontdesk/components/dropdown-menu/dropdown-menu";
+import { ConversationContextMenu } from "@/widgets/frontdesk/components/shared";
 import { ConversationPriorityIcon } from "./conversation-priority-icon";
 import { ConversationSLALabel } from "./conversation-sla-label";
 import { InboxIcon } from "../utils/inbox-icons";
@@ -48,12 +52,56 @@ export const ChatwootNotificationsView: React.FC = () => {
   const [filterMenuAnchor, setFilterMenuAnchor] = useState<null | HTMLElement>(null);
   const [settingsMenuAnchor, setSettingsMenuAnchor] = useState<null | HTMLElement>(null);
 
-  // Get notification sender info
+  // Context menu state
+  const [contextMenuPosition, setContextMenuPosition] = useState<{ top: number; left: number } | null>(null);
+  const [selectedNotification, setSelectedNotification] = useState<ChatwootNotification | null>(null);
+
+  // Get context menu actions for selected notification
+  const notificationContextMenu = useChatwootNotificationContextMenu(selectedNotification);
+
+  /**
+   * Handle right-click on notification
+   */
+  const handleNotificationContextMenu = (
+    event: React.MouseEvent<HTMLLIElement>,
+    notification: ChatwootNotification
+  ) => {
+    event.preventDefault();
+    event.stopPropagation();
+    setSelectedNotification(notification);
+    setContextMenuPosition({
+      top: event.clientY,
+      left: event.clientX,
+    });
+  };
+
+  /**
+   * Close context menu
+   */
+  const handleCloseContextMenu = () => {
+    setContextMenuPosition(null);
+    // Delay clearing selected notification to allow actions to complete
+    setTimeout(() => setSelectedNotification(null), 100);
+  };
+
+  /**
+   * Handle context menu action
+   */
+  const handleContextMenuAction = async (actionId: string) => {
+    await notificationContextMenu.handleAction(actionId);
+    handleCloseContextMenu();
+  };
+
+  // Get notification sender info (the actual contact who sent the message)
   const getNotificationSender = (notification: any) => {
     const primaryActor = notification.primary_actor;
-    if (!primaryActor) return { name: "System", initials: "S", color: neutralColor(400) };
 
-    const name = primaryActor.name || primaryActor.email || "Unknown";
+    // Try to get the actual contact/sender from meta
+    const sender = primaryActor?.meta?.sender || notification.secondary_actor?.sender;
+    const name = sender?.name || sender?.email || primaryActor?.name || "Unknown";
+    const email = sender?.email || primaryActor?.meta?.sender?.email || "";
+    const thumbnail = sender?.thumbnail || primaryActor?.meta?.sender?.thumbnail || "";
+
     const initials = name
       .split(" ")
       .map((n: string) => n[0])
@@ -65,7 +113,7 @@ export const ChatwootNotificationsView: React.FC = () => {
     const colors = [primaryColor(500), "#3B82F6", "#10B981", "#F59E0B", "#EF4444", "#8B5CF6"];
     const colorIndex = name.charCodeAt(0) % colors.length;
 
-    return { name, initials, color: colors[colorIndex] };
+    return { name, email, thumbnail, initials, color: colors[colorIndex] };
   };
 
   // Format timestamp
@@ -197,21 +245,63 @@ export const ChatwootNotificationsView: React.FC = () => {
     return null;
   };
 
+  // Get email subject from notification (for email channels)
+  const getEmailSubject = (notification: any) => {
+    const primaryActor = notification.primary_actor;
+    const additionalAttrs = primaryActor?.additional_attributes;
+
+    if (additionalAttrs?.mail_subject) {
+      // Decode HTML entities
+      const decoded = additionalAttrs.mail_subject
+        .replace(/&amp;/g, "&")
+        .replace(/&lt;/g, "<")
+        .replace(/&gt;/g, ">")
+        .replace(/&quot;/g, '"')
+        .replace(/&#039;/g, "'");
+      return decoded;
+    }
+    return null;
+  };
+
+  // Get assignee info
+  const getAssigneeInfo = (notification: any) => {
+    const assignee = notification.primary_actor?.meta?.assignee;
+    if (!assignee) return null;
+    return {
+      name: assignee.name || assignee.available_name || "Unknown",
+      id: assignee.id,
+      thumbnail: assignee.thumbnail || assignee.avatar_url || "",
+    };
+  };
+
+  // Get conversation ID
+  const getConversationId = (notification: any) => {
+    return notification.primary_actor?.id || notification.primary_actor_id;
+  };
+
   // Get message preview from notification
   const getMessagePreview = (notification: any) => {
-    const pushMessageBody =
-      notification.meta?.pushMessageBody ||
-      notification.primary_actor?.meta?.pushMessageBody ||
-      notification.meta?.message?.content ||
-      "";
+    // First try to get actual message content from secondary_actor (the message itself)
+    const messageContent = notification.secondary_actor?.content;
 
-    if (!pushMessageBody) {
-      return notification.notification_type || "Notification";
+    if (messageContent) {
+      // Remove HTML tags and extra whitespace
+      const plainText = messageContent
+        .replace(/<[^>]*>/g, "")
+        .replace(/\s+/g, " ")
+        .replace(/={3,}/g, "") // Remove separator lines
+        .trim();
+      return plainText.length > 80 ? plainText.substring(0, 80) + "..." : plainText;
     }
 
-    // Remove HTML tags and truncate
-    const plainText = pushMessageBody.replace(/<[^>]*>/g, "").trim();
-    return plainText.length > 100 ? plainText.substring(0, 100) + "..." : plainText;
+    // Fallback to push message body
+    const pushMessageBody = notification.push_message_body;
+    if (pushMessageBody) {
+      const plainText = pushMessageBody.replace(/<[^>]*>/g, "").trim();
+      return plainText.length > 80 ? plainText.substring(0, 80) + "..." : plainText;
+    }
+
+    return "New message";
   };
 
   // Get conversation status badge text
@@ -528,10 +618,16 @@ export const ChatwootNotificationsView: React.FC = () => {
                 // For now, notifications are just marked as read
               };
 
+              // Extract meaningful data
+              const emailSubject = getEmailSubject(notification);
+              const assigneeInfo = getAssigneeInfo(notification);
+              const conversationId = getConversationId(notification);
+
               return (
                 <ListItem
                   key={notification.id}
                   onClick={handleNotificationClick}
+                  onContextMenu={(e) => handleNotificationContextMenu(e, notification)}
                   sx={{
                     px: 2,
                     py: 1.5,
@@ -544,18 +640,18 @@ export const ChatwootNotificationsView: React.FC = () => {
                   }}
                 >
                   <Stack direction="row" spacing={1.5} sx={{ width: "100%", alignItems: "flex-start" }}>
-                    {/* Avatar (20px) */}
+                    {/* Avatar */}
                     <Avatar
-                      src={conversationMeta.sender?.thumbnail || primaryActor?.avatar_url}
+                      src={sender.thumbnail}
                       sx={{
-                        width: 20,
-                        height: 20,
+                        width: 32,
+                        height: 32,
                         bgcolor: sender.color,
                         color: "white",
-                        fontSize: "0.625rem",
+                        fontSize: "0.75rem",
                         fontWeight: 600,
                         flexShrink: 0,
-                        mt: 0.5,
+                        mt: 0.25,
                       }}
                     >
                       {sender.initials}
@@ -563,15 +659,73 @@ export const ChatwootNotificationsView: React.FC = () => {
 
                     {/* Content */}
                     <Box sx={{ flex: 1, minWidth: 0 }}>
-                      {/* Row 1: Primary Message */}
+                      {/* Row 1: Contact Name + Conversation ID */}
+                      <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1} sx={{ mb: 0.25 }}>
+                        <Typography
+                          variant="body2"
+                          sx={{
+                            fontSize: 14,
+                            fontWeight: isUnread ? 700 : 600,
+                            color: neutralColor(900),
+                            lineHeight: 1.3,
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            whiteSpace: "nowrap",
+                          }}
+                          title={sender.name}
+                        >
+                          {sender.name}
+                        </Typography>
+
+                        {/* Conversation ID Badge */}
+                        {conversationId && (
+                          <Chip
+                            label={`#${conversationId}`}
+                            size="small"
+                            sx={{
+                              height: 16,
+                              fontSize: 10,
+                              fontWeight: 600,
+                              backgroundColor: neutralColor(100),
+                              color: neutralColor(600),
+                              flexShrink: 0,
+                              "& .MuiChip-label": {
+                                px: 0.75,
+                              },
+                            }}
+                          />
+                        )}
+                      </Stack>
+
+                      {/* Row 2: Email Subject (if available) */}
+                      {emailSubject && (
+                        <Typography
+                          variant="body2"
+                          sx={{
+                            fontSize: 13,
+                            fontWeight: isUnread ? 600 : 500,
+                            color: neutralColor(800),
+                            lineHeight: 1.3,
+                            mb: 0.5,
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            whiteSpace: "nowrap",
+                          }}
+                          title={emailSubject}
+                        >
+                          {emailSubject}
+                        </Typography>
+                      )}
+
+                      {/* Row 3: Message Preview */}
                       <Typography
                         variant="body2"
                         sx={{
-                          fontSize: 13,
-                          fontWeight: isUnread ? 600 : 400,
-                          color: neutralColor(900),
+                          fontSize: 12,
+                          fontWeight: 400,
+                          color: neutralColor(600),
                           lineHeight: 1.4,
-                          mb: 0.5,
+                          mb: 0.75,
                           overflow: "hidden",
                           textOverflow: "ellipsis",
                           whiteSpace: "nowrap",
@@ -581,64 +735,44 @@ export const ChatwootNotificationsView: React.FC = () => {
                         {messagePreview}
                       </Typography>
 
-                      {/* Row 2: Secondary Info */}
+                      {/* Row 4: Meta Info */}
                       <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1}>
-                        {/* Left: Square Icon + Notification Type or Snooze */}
+                        {/* Left: Assignee + Status + Notification Type */}
                         <Stack direction="row" alignItems="center" spacing={0.75} sx={{ flex: 1, minWidth: 0 }}>
-                          {hasSnooze ? (
-                            <>
-                              <AccessTimeIcon
+                          {/* Assignee */}
+                          {assigneeInfo && (
+                            <Tooltip title={`Assigned to ${assigneeInfo.name}`} arrow placement="top">
+                              <Chip
+                                label={assigneeInfo.name}
+                                size="small"
+                                avatar={
+                                  <Avatar
+                                    src={assigneeInfo.thumbnail}
+                                    sx={{
+                                      width: 16,
+                                      height: 16,
+                                      fontSize: "0.5rem",
+                                    }}
+                                  >
+                                    {assigneeInfo.name.charAt(0)}
+                                  </Avatar>
+                                }
                                 sx={{
-                                  fontSize: 14,
-                                  color: isUnread ? primaryColor(600) : neutralColor(500),
+                                  height: 20,
+                                  fontSize: 11,
+                                  backgroundColor: primaryColor(100),
+                                  color: primaryColor(800),
+                                  fontWeight: 500,
                                   flexShrink: 0,
+                                  "& .MuiChip-label": {
+                                    px: 0.5,
+                                  },
+                                  "& .MuiChip-avatar": {
+                                    ml: 0.5,
+                                  },
                                 }}
                               />
-                              <Typography
-                                variant="caption"
-                                sx={{
-                                  fontSize: 12,
-                                  fontWeight: 400,
-                                  color: isUnread ? primaryColor(600) : neutralColor(500),
-                                  overflow: "hidden",
-                                  textOverflow: "ellipsis",
-                                  whiteSpace: "nowrap",
-                                }}
-                              >
-                                {snoozeText}
-                              </Typography>
-                            </>
-                          ) : (
-                            <>
-                              {/* Square Icon */}
-                              <Box
-                                sx={{
-                                  width: 14,
-                                  height: 14,
-                                  borderRadius: 1,
-                                  backgroundColor: isUnread ? primaryColor(600) : neutralColor(400),
-                                  display: "flex",
-                                  alignItems: "center",
-                                  justifyContent: "center",
-                                  flexShrink: 0,
-                                }}
-                              >
-                                <AddCommentIcon sx={{ fontSize: 10, color: "white" }} />
-                              </Box>
-                              <Typography
-                                variant="caption"
-                                sx={{
-                                  fontSize: 12,
-                                  fontWeight: 400,
-                                  color: isUnread ? primaryColor(600) : neutralColor(500),
-                                  overflow: "hidden",
-                                  textOverflow: "ellipsis",
-                                  whiteSpace: "nowrap",
-                                }}
-                              >
-                                {notificationDetails?.label || "New message"}
-                              </Typography>
-                            </>
+                            </Tooltip>
                           )}
 
                           {/* Status Badge */}
@@ -647,25 +781,64 @@ export const ChatwootNotificationsView: React.FC = () => {
                               label={statusLabel}
                               size="small"
                               sx={{
-                                height: 18,
+                                height: 20,
                                 fontSize: 11,
                                 backgroundColor: statusColor ? `${statusColor}20` : neutralColor(100),
                                 color: statusColor || neutralColor(700),
                                 border: `1px solid ${statusColor || neutralColor(300)}`,
-                                fontWeight: 400,
+                                fontWeight: 500,
                                 flexShrink: 0,
-                                ml: 0.5,
+                                "& .MuiChip-label": {
+                                  px: 0.75,
+                                },
                               }}
                             />
                           )}
+
+                          {/* Notification Type or Snooze */}
+                          {hasSnooze ? (
+                            <Stack direction="row" alignItems="center" spacing={0.5}>
+                              <AccessTimeIcon
+                                sx={{
+                                  fontSize: 12,
+                                  color: neutralColor(500),
+                                  flexShrink: 0,
+                                }}
+                              />
+                              <Typography
+                                variant="caption"
+                                sx={{
+                                  fontSize: 11,
+                                  fontWeight: 400,
+                                  color: neutralColor(500),
+                                }}
+                              >
+                                {snoozeText}
+                              </Typography>
+                            </Stack>
+                          ) : (
+                            <Typography
+                              variant="caption"
+                              sx={{
+                                fontSize: 11,
+                                fontWeight: 400,
+                                color: neutralColor(500),
+                                overflow: "hidden",
+                                textOverflow: "ellipsis",
+                                whiteSpace: "nowrap",
+                              }}
+                            >
+                              {notificationDetails?.label || "New message"}
+                            </Typography>
+                          )}
                         </Stack>
 
-                        {/* Right: Priority | Inbox | Timestamp */}
-                        <Stack direction="row" alignItems="center" spacing={0.5} sx={{ flexShrink: 0 }}>
+                        {/* Right: Priority | Inbox Icon | Timestamp */}
+                        <Stack direction="row" alignItems="center" spacing={0.75} sx={{ flexShrink: 0 }}>
                           {/* Priority Icon */}
-                          {priority && <ConversationPriorityIcon priority={priority} size={12} />}
+                          {priority && <ConversationPriorityIcon priority={priority} size={14} />}
 
-                          {/* Inbox/Envelope Icon */}
+                          {/* Inbox Icon */}
                           {inboxChannelType && (
                             <Tooltip title={inboxName || ""} arrow placement="left">
                               <Box
@@ -677,7 +850,7 @@ export const ChatwootNotificationsView: React.FC = () => {
                                   flexShrink: 0,
                                 }}
                               >
-                                <InboxIcon channelType={inboxChannelType} medium={inboxMedium} size={14} />
+                                <InboxIcon channelType={inboxChannelType} medium={inboxMedium} size={16} />
                               </Box>
                             </Tooltip>
                           )}
@@ -686,9 +859,10 @@ export const ChatwootNotificationsView: React.FC = () => {
                           <Typography
                             variant="caption"
                             sx={{
-                              fontSize: 12,
+                              fontSize: 11,
                               color: neutralColor(500),
                               whiteSpace: "nowrap",
+                              fontWeight: 500,
                             }}
                           >
                             {formatTimeAgo(lastActivityAt)}
@@ -703,6 +877,16 @@ export const ChatwootNotificationsView: React.FC = () => {
           </List>
         )}
       </Box>
+
+      {/* Context Menu */}
+      <ConversationContextMenu
+        anchorPosition={contextMenuPosition}
+        open={Boolean(contextMenuPosition)}
+        onClose={handleCloseContextMenu}
+        conversationId={selectedNotification?.id || 0}
+        actions={notificationContextMenu.actions}
+        onActionClick={handleContextMenuAction}
+      />
     </Paper>
   );
 };

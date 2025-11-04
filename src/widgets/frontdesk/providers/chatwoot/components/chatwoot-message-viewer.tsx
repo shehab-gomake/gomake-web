@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Paper, Typography, Stack, alpha } from "@mui/material";
+import { Box, Paper, Typography, Stack, alpha, Button, CircularProgress } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { PanelContent, EmptyState } from "@/widgets/frontdesk/design-system";
@@ -41,7 +41,7 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
   const { neutralColor } = useGomakeTheme();
   const [isSending, setIsSending] = React.useState(false);
 
-  const { messages, loading, error, refresh } = useChatwootMessages({
+  const { messages, loading, error, refresh, loadMoreMessages, hasMoreMessages, isLoadingMore } = useChatwootMessages({
     conversation,
     accountId: accountId || null,
   });
@@ -251,6 +251,7 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
         content,
         message_type: "outgoing",
         private: isPrivate,
+        content_type: recipientEmails ? "input_email" : "text",
         // Include email metadata if provided
         ...(recipientEmails && {
           content_attributes: {
@@ -330,6 +331,31 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
           />
         ) : (
           <Stack spacing={2}>
+            {/* Load More Button - Show at top */}
+            {hasMoreMessages && (
+              <Box sx={{ display: "flex", justifyContent: "center", pt: 1 }}>
+                <Button
+                  variant="outlined"
+                  size="small"
+                  onClick={loadMoreMessages}
+                  disabled={isLoadingMore}
+                  startIcon={isLoadingMore ? <CircularProgress size={16} /> : null}
+                  sx={{
+                    borderRadius: 2,
+                    textTransform: "none",
+                    borderColor: neutralColor(200),
+                    color: neutralColor(700),
+                    "&:hover": {
+                      borderColor: theme.palette.primary.main,
+                      backgroundColor: alpha(theme.palette.primary.main, 0.05),
+                    },
+                  }}
+                >
+                  {isLoadingMore ? "Loading..." : "Load Older Messages"}
+                </Button>
+              </Box>
+            )}
+
             {(() => {
               // DEBUG: Log ALL messages received from hook before any filtering
               console.log('[MessageViewer] Messages received from hook:', {

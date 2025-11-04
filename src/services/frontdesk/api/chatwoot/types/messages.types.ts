@@ -63,7 +63,7 @@ export interface ConversationMessageCreatePayload {
 // Message type aliases for convenience
 export type MessageType = 0 | 1 | 2; // 0: incoming, 1: outgoing, 2: activity
 export type MessageStatus = 'sent' | 'delivered' | 'read' | 'failed';
-export type MessageContentType = 'text' | 'input_select' | 'cards' | 'form';
+export type MessageContentType = 'text' | 'input_email' | 'input_select' | 'cards' | 'form' | 'article';
 export type MessageSenderType = 'contact' | 'agent' | 'agent_bot';
 
 // Message-specific response wrappers

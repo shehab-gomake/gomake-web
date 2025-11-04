@@ -39,9 +39,12 @@ export class ChatwootMessagesService extends BaseChatwootService {
   }
   /**
    * List All Messages
-   * GET /api/v1/accounts/{account_id}/conversations/{conversation_id}/messages
+   * GET /api/accounts/conversations/{conversation_id}/messages
    *
-   * @param accountId - The numeric ID of the account
+   * Note: This endpoint does NOT use account-scoped URL pattern (no /v1/accounts/{account_id})
+   * The account context is determined by the authenticated user's session.
+   *
+   * @param accountId - The numeric ID of the account (kept for compatibility but not used in URL)
    * @param conversationId - The numeric ID of the conversation
    * @param params - Query parameters (before, after, etc.)
    * @returns Promise with message list
@@ -65,18 +68,18 @@ export class ChatwootMessagesService extends BaseChatwootService {
     }
 
     const queryString = queryParams.toString();
-    const url = this.accountScopedUrl(
-      accountId,
-      `conversations/${conversationId}/messages${queryString ? `?${queryString}` : ""}`
-    );
+    const url = `/api/accounts/conversations/${conversationId}/messages${queryString ? `?${queryString}` : ""}`;
     return await this.get<ConversationMessages>(url);
   }
 
   /**
    * Create New Message
-   * POST /api/v1/accounts/{account_id}/conversations/{conversation_id}/messages
+   * POST /api/accounts/conversations/{conversation_id}/messages
    *
-   * @param accountId - The numeric ID of the account
+   * Note: This endpoint does NOT use account-scoped URL pattern (no /v1/accounts/{account_id})
+   * The account context is determined by the authenticated user's session.
+   *
+   * @param accountId - The numeric ID of the account (kept for compatibility but not used in URL)
    * @param conversationId - The numeric ID of the conversation
    * @param payload - Message creation payload
    * @returns Promise with created message
@@ -86,13 +89,28 @@ export class ChatwootMessagesService extends BaseChatwootService {
    * // Simple text message
    * await messagesService.createMessage(accountId, conversationId, {
    *   content: "Hello!",
-   *   message_type: "outgoing"
+   *   message_type: "outgoing",
+   *   content_type: "text"
+   * });
+   *
+   * // Email message
+   * await messagesService.createMessage(accountId, conversationId, {
+   *   content: "Hello!",
+   *   message_type: "outgoing",
+   *   content_type: "input_email",
+   *   content_attributes: {
+   *     email: {
+   *       to: "recipient@example.com",
+   *       cc: "cc@example.com"
+   *     }
+   *   }
    * });
    *
    * // WhatsApp template message
    * await messagesService.createMessage(accountId, conversationId, {
    *   content: "Your order is confirmed",
    *   message_type: "outgoing",
+   *   content_type: "text",
    *   template_params: {
    *     name: "order_confirmation",
    *     category: "MARKETING",
@@ -110,19 +128,19 @@ export class ChatwootMessagesService extends BaseChatwootService {
     payload: ConversationMessageCreatePayload
   ): Promise<Message> {
     return await this.post<Message>(
-      this.accountScopedUrl(
-        accountId,
-        `conversations/${conversationId}/messages`
-      ),
+      `/api/accounts/conversations/${conversationId}/messages`,
       payload
     );
   }
 
   /**
    * Delete Message
-   * DELETE /api/v1/accounts/{account_id}/conversations/{conversation_id}/messages/{message_id}
+   * DELETE /api/accounts/conversations/{conversation_id}/messages/{message_id}
    *
-   * @param accountId - The numeric ID of the account
+   * Note: This endpoint does NOT use account-scoped URL pattern (no /v1/accounts/{account_id})
+   * The account context is determined by the authenticated user's session.
+   *
+   * @param accountId - The numeric ID of the account (kept for compatibility but not used in URL)
    * @param conversationId - The numeric ID of the conversation
    * @param messageId - The numeric ID of the message
    * @returns Promise<void>
@@ -133,10 +151,7 @@ export class ChatwootMessagesService extends BaseChatwootService {
     messageId: number
   ): Promise<void> {
     return await this.delete<void>(
-      this.accountScopedUrl(
-        accountId,
-        `conversations/${conversationId}/messages/${messageId}`
-      )
+      `/api/accounts/conversations/${conversationId}/messages/${messageId}`
     );
   }
 

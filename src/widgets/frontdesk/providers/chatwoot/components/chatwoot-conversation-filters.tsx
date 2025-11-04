@@ -1,21 +1,7 @@
-import React, { useState, useMemo } from "react";
-import {
-  Box,
-  IconButton,
-  Menu,
-  MenuItem,
-  ListItemText,
-  Badge,
-  Typography,
-  Divider,
-  Button,
-  Stack,
-  alpha,
-} from "@mui/material";
-import { useTheme } from "@mui/material/styles";
+import React, { useState } from "react";
+import { Box, IconButton, Menu, MenuItem, ListItemText, Badge, Typography, Divider } from "@mui/material";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import CheckIcon from "@mui/icons-material/Check";
-import ClearIcon from "@mui/icons-material/Clear";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import {
   ConversationStatus,
@@ -23,32 +9,16 @@ import {
   ConversationSortBy,
   ConversationListParams,
 } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
-import {
-  getConversationStatusLabel,
-  getAssigneeTypeLabel,
-  getSortByLabel,
-} from "../utils/filter-utils";
-import { ChatwootMultiSelectFilter, ChatwootSearchFilter, MultiSelectOption } from "./filters";
-import { useChatwootTeams } from "../hooks/resources/use-chatwoot-teams";
 
 interface ChatwootConversationFiltersProps {
   filters: Partial<ConversationListParams>;
   onFiltersChange: (filters: Partial<ConversationListParams>) => void;
-  accountId?: number | null;
 }
 
-export const ChatwootConversationFilters: React.FC<ChatwootConversationFiltersProps> = ({
-  filters,
-  onFiltersChange,
-  accountId,
-}) => {
-  const theme = useTheme();
+export const ChatwootConversationFilters: React.FC<ChatwootConversationFiltersProps> = ({ filters, onFiltersChange }) => {
   const { primaryColor, neutralColor } = useGomakeTheme();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
-
-  // Fetch teams for team filter
-  const { teams, loading: teamsLoading } = useChatwootTeams(accountId);
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -57,6 +27,8 @@ export const ChatwootConversationFilters: React.FC<ChatwootConversationFiltersPr
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  const activeFilterCount = [filters.status, filters.assignee_type, filters.sort_by].filter(Boolean).length;
 
   const handleStatusChange = (status: ConversationStatus | undefined) => {
     onFiltersChange({ ...filters, status, page: 1 });
@@ -73,67 +45,38 @@ export const ChatwootConversationFilters: React.FC<ChatwootConversationFiltersPr
     handleClose();
   };
 
-  // New filter handlers
-  const handleSearchChange = (q: string) => {
-    onFiltersChange({ ...filters, q: q || undefined, page: 1 });
+  const getStatusLabel = (status: ConversationStatus): string => {
+    const labels: Record<ConversationStatus, string> = {
+      [ConversationStatus.ALL]: "All",
+      [ConversationStatus.OPEN]: "Open",
+      [ConversationStatus.RESOLVED]: "Resolved",
+      [ConversationStatus.PENDING]: "Pending",
+      [ConversationStatus.SNOOZED]: "Snoozed",
+    };
+    return labels[status];
   };
 
-  const handleTeamChange = (teamIds: string[]) => {
-    // Convert string IDs to number for team_id (API expects single team_id)
-    const team_id = teamIds.length > 0 ? parseInt(teamIds[0], 10) : undefined;
-    onFiltersChange({ ...filters, team_id, page: 1 });
+  const getAssigneeTypeLabel = (type: ConversationAssigneeType): string => {
+    const labels: Record<ConversationAssigneeType, string> = {
+      [ConversationAssigneeType.ME]: "Assigned to Me",
+      [ConversationAssigneeType.UNASSIGNED]: "Unassigned",
+      [ConversationAssigneeType.ALL]: "All",
+      [ConversationAssigneeType.ASSIGNED]: "Assigned",
+    };
+    return labels[type];
   };
 
-  const handleClearAll = () => {
-    onFiltersChange({ page: 1 });
-    handleClose();
+  const getSortByLabel = (sortBy: ConversationSortBy | string): string => {
+    const labels: Record<ConversationSortBy | string, string> = {
+      [ConversationSortBy.LAST_ACTIVITY_AT_DESC]: "Last Activity (Newest)",
+      [ConversationSortBy.LAST_ACTIVITY_AT_ASC]: "Last Activity (Oldest)",
+      [ConversationSortBy.CREATED_AT_DESC]: "Created (Newest)",
+      [ConversationSortBy.CREATED_AT_ASC]: "Created (Oldest)",
+    };
+    return labels[sortBy] || sortBy;
   };
-
-  // Prepare team options for multi-select
-  const teamOptions: MultiSelectOption[] = useMemo(() => {
-    return (teams || []).map((team) => ({
-      value: team.id?.toString() || "",
-      label: team.name || "Unknown Team",
-      count: team.conversations_count,
-    }));
-  }, [teams]);
-
-  // Selected team IDs for multi-select
-  const selectedTeamIds = useMemo(() => {
-    return filters.team_id ? [filters.team_id.toString()] : [];
-  }, [filters.team_id]);
-
-  // Count active filters for badge
-  const activeFilterCount = [
-    filters.status && filters.status !== ConversationStatus.ALL,
-    filters.assignee_type,
-    filters.sort_by,
-    filters.q,
-    filters.team_id,
-  ].filter(Boolean).length;
-
-  const hasActiveFilters = activeFilterCount > 0;
 
   return (
-    <Stack direction="row" spacing={1} alignItems="center" sx={{ flexWrap: "wrap", gap: 1 }}>
-      {/* Search Filter */}
-      <ChatwootSearchFilter
-        value={filters.q || ""}
-        onChange={handleSearchChange}
-        placeholder="Search conversations..."
-      />
-
-      {/* Team Filter */}
-      <ChatwootMultiSelectFilter
-        label="Team"
-        options={teamOptions}
-        selectedValues={selectedTeamIds}
-        onChange={handleTeamChange}
-        placeholder="All Teams"
-        disabled={teamsLoading}
-      />
-
-      {/* Advanced Filters Menu (Status, Assignee, Sort) */}
     <>
       <IconButton
         size="small"
@@ -187,11 +130,7 @@ export const ChatwootConversationFilters: React.FC<ChatwootConversationFiltersPr
           </Typography>
         </Box>
         {Object.values(ConversationStatus).map((status) => {
-          // Handle "All" status selection: when status is ALL, filters.status will be undefined
-          const isSelected = 
-            status === ConversationStatus.ALL 
-              ? (filters.status === undefined || filters.status === ConversationStatus.ALL)
-              : filters.status === status;
+          const isSelected = filters.status === status;
           return (
             <MenuItem
               key={status}
@@ -205,15 +144,13 @@ export const ChatwootConversationFilters: React.FC<ChatwootConversationFiltersPr
               }}
             >
               <ListItemText
-                primary={getConversationStatusLabel(status)}
+                primary={getStatusLabel(status)}
                 primaryTypographyProps={{
                   fontSize: "0.875rem",
                   fontWeight: isSelected ? 600 : 400,
                 }}
               />
-              {isSelected && (
-                <CheckIcon sx={{ fontSize: 18, color: primaryColor(600) }} />
-              )}
+              {isSelected && <CheckIcon sx={{ fontSize: 18, color: primaryColor(600) }} />}
             </MenuItem>
           );
         })}
@@ -252,9 +189,7 @@ export const ChatwootConversationFilters: React.FC<ChatwootConversationFiltersPr
               fontWeight: !filters.assignee_type ? 600 : 400,
             }}
           />
-          {!filters.assignee_type && (
-            <CheckIcon sx={{ fontSize: 18, color: primaryColor(600) }} />
-          )}
+          {!filters.assignee_type && <CheckIcon sx={{ fontSize: 18, color: primaryColor(600) }} />}
         </MenuItem>
         {Object.values(ConversationAssigneeType).map((type) => {
           const isSelected = filters.assignee_type === type;
@@ -277,9 +212,7 @@ export const ChatwootConversationFilters: React.FC<ChatwootConversationFiltersPr
                   fontWeight: isSelected ? 600 : 400,
                 }}
               />
-              {isSelected && (
-                <CheckIcon sx={{ fontSize: 18, color: primaryColor(600) }} />
-              )}
+              {isSelected && <CheckIcon sx={{ fontSize: 18, color: primaryColor(600) }} />}
             </MenuItem>
           );
         })}
@@ -318,9 +251,7 @@ export const ChatwootConversationFilters: React.FC<ChatwootConversationFiltersPr
               fontWeight: !filters.sort_by ? 600 : 400,
             }}
           />
-          {!filters.sort_by && (
-            <CheckIcon sx={{ fontSize: 18, color: primaryColor(600) }} />
-          )}
+          {!filters.sort_by && <CheckIcon sx={{ fontSize: 18, color: primaryColor(600) }} />}
         </MenuItem>
         {Object.values(ConversationSortBy).map((sortBy) => {
           const isSelected = filters.sort_by === sortBy;
@@ -343,36 +274,11 @@ export const ChatwootConversationFilters: React.FC<ChatwootConversationFiltersPr
                   fontWeight: isSelected ? 600 : 400,
                 }}
               />
-              {isSelected && (
-                <CheckIcon sx={{ fontSize: 18, color: primaryColor(600) }} />
-              )}
+              {isSelected && <CheckIcon sx={{ fontSize: 18, color: primaryColor(600) }} />}
             </MenuItem>
           );
         })}
       </Menu>
     </>
-
-      {/* Clear All Filters Button */}
-      {hasActiveFilters && (
-        <Button
-          size="small"
-          variant="text"
-          startIcon={<ClearIcon />}
-          onClick={handleClearAll}
-          sx={{
-            textTransform: "none",
-            color: neutralColor(600),
-            fontSize: "0.875rem",
-            "&:hover": {
-              backgroundColor: alpha(theme.palette.error.main, 0.08),
-              color: theme.palette.error.main,
-            },
-          }}
-        >
-          Clear All
-        </Button>
-      )}
-    </Stack>
   );
 };
-
