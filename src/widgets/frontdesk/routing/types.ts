@@ -110,6 +110,7 @@ export enum ChatwootView {
   CHANNELS = "channels",
   WEBHOOK_TEST = "webhook-test",
   SETTINGS = "settings",
+  OAUTH_CALLBACK = "oauth-callback",
 }
 
 /**

@@ -14,6 +14,9 @@ import {
 import { RouteType } from "@/widgets/frontdesk/routing/types";
 import { chatwootService } from "@/services/frontdesk";
 import { buildConversationFilters, matchesStatusFilter } from "../utils/filter-utils";
+import { createLogger } from "@/services/frontdesk/utils/logger";
+
+const logger = createLogger("useChatwootProvider");
 import {
   chatwootSelectedConversationAtom,
   chatwootSelectedAccountAtom,
@@ -133,12 +136,12 @@ export const useChatwootProvider = () => {
     // This enables sharing conversation links that work even if conversation isn't loaded
     const fetchConversationFromApi = async () => {
       if (!currentAccountId) {
-        console.warn("[Provider] Cannot fetch conversation - no account selected");
+        logger.warn("Cannot fetch conversation - no account selected");
         return;
       }
 
       try {
-        console.log(`[Provider] Fetching conversation ${conversationIdFromUrl} from API (deep link)`);
+        logger.debug(`Fetching conversation ${conversationIdFromUrl} from API (deep link)`);
         const response = await chatwootService.conversations.getConversationDetails(
           currentAccountId,
           parseInt(conversationIdFromUrl, 10)
@@ -148,12 +151,12 @@ export const useChatwootProvider = () => {
         const conversation = response as any;
         if (conversation) {
           setSelectedConversation(conversation);
-          console.log(`[Provider] ✅ Loaded conversation ${conversationIdFromUrl} from API`);
+          logger.debug(`Loaded conversation ${conversationIdFromUrl} from API`);
         } else {
-          console.error("[Provider] ❌ Conversation not found:", conversationIdFromUrl);
+          logger.error("Conversation not found:", conversationIdFromUrl);
         }
       } catch (error) {
-        console.error(`[Provider] ❌ Failed to fetch conversation ${conversationIdFromUrl}:`, error);
+        logger.error(`Failed to fetch conversation ${conversationIdFromUrl}:`, error);
         // TODO: Show user-friendly error message (conversation not found or unauthorized)
       }
     };
@@ -186,7 +189,7 @@ export const useChatwootProvider = () => {
           await chatwootService.conversations.markConversationAsRead(currentAccountId, conversation.id);
         } catch (err) {
           // Don't block conversation selection on error
-          console.error("Failed to mark conversation as read:", err);
+          logger.error("Failed to mark conversation as read:", err);
         }
       }
     },

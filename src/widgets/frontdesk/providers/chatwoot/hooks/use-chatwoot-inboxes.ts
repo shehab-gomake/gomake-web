@@ -3,6 +3,8 @@
  *
  * Manages inboxes (channels) fetching and state for Chatwoot provider.
  * Inboxes represent different communication channels like Email, WhatsApp, Facebook, etc.
+ *
+ * Production-ready: Prevents duplicate concurrent requests with global flag
  */
 
 import { useEffect, useMemo, useCallback } from "react";
@@ -19,6 +21,9 @@ import type { ChatwootInbox } from "@/services/frontdesk/api/chatwoot/types/inbo
 import { useChatwootDataFetch } from "./core/use-chatwoot-data-fetch";
 import { extractPayload } from "../utils/api-response-utils";
 
+// Global fetch guard to prevent duplicate concurrent requests across all hook instances
+let globalInboxesFetchInProgress = false;
+
 export const useChatwootInboxes = () => {
   const selectedAccountId = useRecoilValue(chatwootSelectedAccountAtom);
   const [inboxes, setInboxes] = useRecoilState(chatwootInboxesAtom);
@@ -26,14 +31,34 @@ export const useChatwootInboxes = () => {
   const [loading, setLoading] = useRecoilState(chatwootInboxesLoadingAtom);
   const [error, setError] = useRecoilState(chatwootInboxesErrorAtom);
 
+  // Wrap fetch function with global deduplication
+  const fetchInboxesWithDeduplication = useCallback(async () => {
+    if (!selectedAccountId) {
+      return [];
+    }
+
+    // Global deduplication guard
+    if (globalInboxesFetchInProgress) {
+      console.log("[useChatwootInboxes] ⏭️ Global fetch already in progress, returning empty (will use cached data)");
+      return inboxes; // Return current data to avoid breaking the hook
+    }
+
+    globalInboxesFetchInProgress = true;
+    console.log("[useChatwootInboxes] 🚀 Fetching inboxes");
+
+    try {
+      const result = await chatwootService.inboxes.listAllInboxes();
+      const inboxesArray = result.payload || result.data?.payload || [];
+      console.log(`[useChatwootInboxes] ✅ Fetched ${inboxesArray.length} inboxes`);
+      return result;
+    } finally {
+      globalInboxesFetchInProgress = false;
+    }
+  }, [selectedAccountId, inboxes]);
+
   // Use base data fetch hook with Recoil state synchronization
   const { data: fetchedInboxes, loading: fetchLoading, error: fetchError, refresh } = useChatwootDataFetch<ChatwootInbox[]>({
-    fetchFn: async () => {
-      if (!selectedAccountId) {
-        return [];
-      }
-      return await chatwootService.inboxes.listAllInboxes();
-    },
+    fetchFn: fetchInboxesWithDeduplication,
     extractData: extractPayload,
     autoFetch: !!selectedAccountId,
     createFilterKey: () => `inboxes-${selectedAccountId}`,

@@ -357,27 +357,6 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
             )}
 
             {(() => {
-              // DEBUG: Log ALL messages received from hook before any filtering
-              console.log('[MessageViewer] Messages received from hook:', {
-                total: messages.length,
-                byType: messages.reduce((acc: any, msg: any) => {
-                  const type = msg.message_type ?? 'unknown';
-                  acc[type] = (acc[type] || 0) + 1;
-                  return acc;
-                }, {}),
-                allMessages: messages.map(m => ({
-                  id: m.id,
-                  type: m.message_type,
-                  content: m.content?.substring(0, 80),
-                  hasContent: !!(m.content && m.content.trim().length > 0),
-                })),
-                activityMessages: messages.filter(m => m.message_type === 2).map(m => ({
-                  id: m.id,
-                  content: m.content,
-                  sender: m.sender?.name,
-                })),
-              });
-
               // Filter messages: Keep ALL activity messages, filter empty content for others
               const visibleMessages = messages.filter((message) => {
                 // Activity messages (message_type 2) should ALWAYS be shown
@@ -390,13 +369,6 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
                 // For regular messages (incoming/outgoing), filter out empty content
                 const hasContent = message.content && message.content.trim().length > 0;
                 return hasContent;
-              });
-
-              // DEBUG: Log what remains after filtering
-              console.log('[MessageViewer] After filtering:', {
-                visible: visibleMessages.length,
-                filtered: messages.length - visibleMessages.length,
-                visibleActivityCount: visibleMessages.filter(m => m.message_type === 2).length,
               });
 
               if (visibleMessages.length === 0) {

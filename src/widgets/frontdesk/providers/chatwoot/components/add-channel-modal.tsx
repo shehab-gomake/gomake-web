@@ -19,6 +19,10 @@ import {
   alpha,
   IconButton,
   Paper,
+  Checkbox,
+  FormControlLabel,
+  FormGroup,
+  Avatar,
 } from "@mui/material";
 import { Close as CloseIcon } from "@mui/icons-material";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
@@ -27,6 +31,9 @@ import { OutlookIcon } from "@/icons/outlook-icon";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { useChatwootOAuth } from "@/widgets/frontdesk/providers/chatwoot/hooks/use-chatwoot-oauth";
 import { useChatwootInboxes } from "@/widgets/frontdesk/providers/chatwoot/hooks/use-chatwoot-inboxes";
+import { useChatwootAgents } from "@/widgets/frontdesk/providers/chatwoot/hooks/resources/use-chatwoot-agents";
+import { useChatwootProfile } from "@/widgets/frontdesk/providers/chatwoot/hooks/use-chatwoot-profile";
+import { chatwootService } from "@/services/frontdesk";
 
 interface AddChannelModalProps {
   open: boolean;
@@ -73,9 +80,16 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({ open, onClose,
   const [selectedChannel, setSelectedChannel] = useState<string | null>(null);
   const [currentStep, setCurrentStep] = useState<number>(1);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [newInboxData, setNewInboxData] = useState<{ accountId: number; inboxId: number } | null>(null);
+  const [selectedAgents, setSelectedAgents] = useState<number[]>([]);
+  const [isAssigningAgents, setIsAssigningAgents] = useState(false);
+  const [agentAssignmentError, setAgentAssignmentError] = useState<string | null>(null);
+
   const { primaryColor, neutralColor } = useGomakeTheme();
   const { authenticate, isAuthenticating, error: oauthError, clearError } = useChatwootOAuth();
   const { refresh: refreshInboxes } = useChatwootInboxes();
+  const { profile } = useChatwootProfile();
+  const { agents, loading: agentsLoading, error: agentsError, refresh: refreshAgents } = useChatwootAgents(newInboxData?.accountId ?? null, false);
 
   const channels: ChannelOption[] = [
     {
@@ -108,8 +122,29 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({ open, onClose,
       setSuccessMessage(null);
       setSelectedChannel(null);
       setCurrentStep(1);
+      setNewInboxData(null);
+      setSelectedAgents([]);
+      setAgentAssignmentError(null);
     }
   }, [open, clearError]);
+
+  // Fetch agents when we reach Step 3
+  useEffect(() => {
+    if (currentStep === 3 && newInboxData?.accountId && !agentsLoading) {
+      refreshAgents();
+    }
+  }, [currentStep, newInboxData, agentsLoading, refreshAgents]);
+
+  // Auto-select current user when agents are loaded
+  useEffect(() => {
+    if (currentStep === 3 && agents.length > 0 && profile?.id && selectedAgents.length === 0) {
+      // Auto-select current user if they're in the agents list
+      const currentUserAgent = agents.find((agent) => agent.id === profile.id);
+      if (currentUserAgent) {
+        setSelectedAgents([profile.id]);
+      }
+    }
+  }, [currentStep, agents, profile, selectedAgents.length]);
 
   const handleClose = useCallback(() => {
     if (!isAuthenticating) {
@@ -144,31 +179,43 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({ open, onClose,
 
     clearError();
     setSuccessMessage(null);
+    setAgentAssignmentError(null);
 
     try {
       if (provider === "google" || provider === "microsoft") {
         // Authenticate with OAuth
         const result = await authenticate(provider as "google" | "microsoft");
 
-        // Move to step 3 (Add Agents) - but we'll skip it and go to step 4
-        setCurrentStep(4);
+        // Check if we received accountId and inboxId from OAuth callback
+        if (result.accountId && result.inboxId) {
+          // Store inbox data for Step 3
+          setNewInboxData({
+            accountId: result.accountId,
+            inboxId: result.inboxId,
+          });
 
-        // Show success message
-        const providerName = provider === "google" ? "Gmail" : provider === "microsoft" ? "Outlook" : "Email";
-        setSuccessMessage(
-          `Successfully connected ${providerName}! ${result.accountsAdded} account(s) added.`
-        );
+          // Move to Step 3 (Add Agents)
+          setCurrentStep(3);
+        } else {
+          // Fallback: If no inbox data, skip to success (legacy flow)
+          setCurrentStep(4);
 
-        // Refresh inboxes to show new channels
-        await refreshInboxes();
+          const providerName = provider === "google" ? "Gmail" : provider === "microsoft" ? "Outlook" : "Email";
+          setSuccessMessage(
+            `Successfully connected ${providerName}! ${result.accountsAdded} account(s) added.`
+          );
 
-        // Close modal after short delay to show success message
-        setTimeout(() => {
-          onClose();
-          setSelectedChannel(null);
-          setSuccessMessage(null);
-          setCurrentStep(1);
-        }, 2000);
+          // Refresh inboxes to show new channels
+          await refreshInboxes();
+
+          // Close modal after short delay
+          setTimeout(() => {
+            onClose();
+            setSelectedChannel(null);
+            setSuccessMessage(null);
+            setCurrentStep(1);
+          }, 2000);
+        }
       } else if (provider === "whatsapp") {
         // WhatsApp not implemented
         throw new Error("WhatsApp integration is coming soon!");
@@ -179,8 +226,57 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({ open, onClose,
     }
   };
 
+  const handleAgentToggle = (agentId: number) => {
+    setSelectedAgents((prev) => {
+      if (prev.includes(agentId)) {
+        return prev.filter((id) => id !== agentId);
+      } else {
+        return [...prev, agentId];
+      }
+    });
+  };
+
+  const handleAddAgents = async () => {
+    if (!newInboxData || selectedAgents.length === 0) {
+      setAgentAssignmentError("Please select at least one agent to continue.");
+      return;
+    }
+
+    setIsAssigningAgents(true);
+    setAgentAssignmentError(null);
+
+    try {
+      // Call agent assignment API
+      await chatwootService.agents.addAgentsToInbox(newInboxData.inboxId, selectedAgents);
+
+      // Move to Step 4 (Success)
+      setCurrentStep(4);
+      setSuccessMessage(`Successfully assigned ${selectedAgents.length} agent(s) to the inbox!`);
+
+      // Refresh inboxes to show new channels
+      await refreshInboxes();
+
+      // Close modal after short delay
+      setTimeout(() => {
+        onClose();
+        setSelectedChannel(null);
+        setSuccessMessage(null);
+        setCurrentStep(1);
+        setNewInboxData(null);
+        setSelectedAgents([]);
+      }, 2000);
+    } catch (err: any) {
+      console.error("Agent assignment failed:", err);
+      setAgentAssignmentError(
+        err.message || "Failed to assign agents. Please try again."
+      );
+    } finally {
+      setIsAssigningAgents(false);
+    }
+  };
+
   const selectedChannelData = channels.find((c) => c.id === selectedChannel);
-  const displayError = error || oauthError;
+  const displayError = error || oauthError || agentAssignmentError;
   const steps = getSteps(currentStep);
 
   return (
@@ -612,6 +708,234 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({ open, onClose,
                     }}
                   >
                     Back
+                  </Button>
+                </Box>
+              </>
+            )}
+
+            {/* Step 3: Add Agents */}
+            {currentStep === 3 && (
+              <>
+                <Typography
+                  variant="h5"
+                  sx={{
+                    fontWeight: 600,
+                    color: neutralColor(900),
+                    mb: 2,
+                  }}
+                >
+                  Add Agents to Inbox
+                </Typography>
+
+                <Typography
+                  sx={{
+                    fontSize: "0.938rem",
+                    color: neutralColor(600),
+                    mb: 4,
+                    lineHeight: 1.6,
+                  }}
+                >
+                  Select at least one agent to handle messages in this inbox. The current user is automatically selected.
+                </Typography>
+
+                {/* Loading State */}
+                {agentsLoading && (
+                  <Box sx={{ display: "flex", justifyContent: "center", py: 4 }}>
+                    <CircularProgress size={40} />
+                  </Box>
+                )}
+
+                {/* Error State */}
+                {agentsError && !agentsLoading && (
+                  <Alert severity="error" sx={{ mb: 3 }}>
+                    Failed to load agents. Please try again.
+                  </Alert>
+                )}
+
+                {/* Agents List */}
+                {!agentsLoading && !agentsError && agents.length > 0 && (
+                  <FormGroup sx={{ mb: 3 }}>
+                    {agents.map((agent) => {
+                      const isSelected = selectedAgents.includes(agent.id!);
+                      const isCurrentUser = agent.id === profile?.id;
+
+                      return (
+                        <Paper
+                          key={agent.id}
+                          sx={{
+                            p: 2,
+                            mb: 1.5,
+                            border: isSelected
+                              ? `2px solid ${primaryColor(500)}`
+                              : `1px solid ${neutralColor(200)}`,
+                            borderRadius: 2,
+                            cursor: "pointer",
+                            transition: "all 0.2s ease",
+                            backgroundColor: isSelected ? alpha(primaryColor(50), 0.5) : "#ffffff",
+                            "&:hover": {
+                              borderColor: isSelected ? primaryColor(600) : neutralColor(300),
+                              boxShadow: `0 2px 8px ${alpha(neutralColor(900), 0.08)}`,
+                            },
+                          }}
+                          onClick={() => handleAgentToggle(agent.id!)}
+                        >
+                          <FormControlLabel
+                            control={
+                              <Checkbox
+                                checked={isSelected}
+                                onChange={() => handleAgentToggle(agent.id!)}
+                                sx={{
+                                  color: neutralColor(400),
+                                  "&.Mui-checked": {
+                                    color: primaryColor(500),
+                                  },
+                                }}
+                              />
+                            }
+                            label={
+                              <Box sx={{ display: "flex", alignItems: "center", gap: 2, ml: 1 }}>
+                                <Avatar
+                                  src={agent.thumbnail}
+                                  alt={agent.name || agent.email}
+                                  sx={{
+                                    width: 40,
+                                    height: 40,
+                                    bgcolor: primaryColor(100),
+                                    color: primaryColor(700),
+                                    fontSize: "0.875rem",
+                                    fontWeight: 600,
+                                  }}
+                                >
+                                  {(agent.name || agent.email || "?").charAt(0).toUpperCase()}
+                                </Avatar>
+                                <Box sx={{ flex: 1 }}>
+                                  <Typography
+                                    sx={{
+                                      fontWeight: 600,
+                                      color: neutralColor(900),
+                                      fontSize: "0.938rem",
+                                    }}
+                                  >
+                                    {agent.name || agent.available_name || "Unknown"}
+                                    {isCurrentUser && (
+                                      <Typography
+                                        component="span"
+                                        sx={{
+                                          ml: 1,
+                                          fontSize: "0.75rem",
+                                          color: primaryColor(600),
+                                          fontWeight: 500,
+                                          px: 1,
+                                          py: 0.5,
+                                          borderRadius: 1,
+                                          backgroundColor: primaryColor(50),
+                                        }}
+                                      >
+                                        You
+                                      </Typography>
+                                    )}
+                                  </Typography>
+                                  <Typography
+                                    sx={{
+                                      fontSize: "0.813rem",
+                                      color: neutralColor(600),
+                                    }}
+                                  >
+                                    {agent.email}
+                                  </Typography>
+                                  {agent.role && (
+                                    <Typography
+                                      sx={{
+                                        fontSize: "0.75rem",
+                                        color: neutralColor(500),
+                                        textTransform: "capitalize",
+                                      }}
+                                    >
+                                      {agent.role}
+                                    </Typography>
+                                  )}
+                                </Box>
+                              </Box>
+                            }
+                            sx={{ m: 0, width: "100%" }}
+                          />
+                        </Paper>
+                      );
+                    })}
+                  </FormGroup>
+                )}
+
+                {/* No Agents State */}
+                {!agentsLoading && !agentsError && agents.length === 0 && (
+                  <Alert severity="warning" sx={{ mb: 3 }}>
+                    No agents found in this account. Please contact your administrator.
+                  </Alert>
+                )}
+
+                {/* Continue Button */}
+                <Box
+                  sx={{
+                    mt: "auto",
+                    pt: 4,
+                    display: "flex",
+                    justifyContent: "flex-end",
+                    gap: 2,
+                  }}
+                >
+                  <Button
+                    onClick={() => setCurrentStep(2)}
+                    disabled={isAssigningAgents}
+                    variant="outlined"
+                    sx={{
+                      color: neutralColor(700),
+                      borderColor: neutralColor(300),
+                      px: 3,
+                      py: 1.5,
+                      borderRadius: 2,
+                      fontWeight: 500,
+                      textTransform: "none",
+                      "&:hover": {
+                        backgroundColor: neutralColor(50),
+                        borderColor: neutralColor(400),
+                      },
+                      "&:disabled": {
+                        opacity: 0.5,
+                      },
+                    }}
+                  >
+                    Back
+                  </Button>
+                  <Button
+                    onClick={handleAddAgents}
+                    disabled={isAssigningAgents || selectedAgents.length === 0}
+                    variant="contained"
+                    sx={{
+                      backgroundColor: primaryColor(500),
+                      color: "#ffffff",
+                      px: 4,
+                      py: 1.5,
+                      borderRadius: 2,
+                      fontWeight: 600,
+                      textTransform: "none",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 1.5,
+                      "&:hover": {
+                        backgroundColor: primaryColor(600),
+                      },
+                      "&:disabled": {
+                        opacity: 0.5,
+                      },
+                    }}
+                  >
+                    {isAssigningAgents ? (
+                      <>
+                        <CircularProgress size={20} sx={{ color: "#ffffff" }} />
+                        Adding Agents...
+                      </>
+                    ) : (
+                      `Continue (${selectedAgents.length} selected)`
+                    )}
                   </Button>
                 </Box>
               </>
