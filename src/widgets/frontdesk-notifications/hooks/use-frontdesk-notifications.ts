@@ -216,7 +216,7 @@ export const useFrontdeskNotifications = () => {
    * Navigate to FrontDesk main view
    */
   const navigateToFrontdesk = useCallback(() => {
-    router.push("/frontdesk/inbox");
+    router.push("/frontdesk/chatwoot?view=dashboard");
   }, [router]);
 
   /**
