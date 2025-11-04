@@ -20,6 +20,7 @@ import { TableCellData } from "@/widgets/materials-widget/components/table-cell-
 import { EDataTypeEnum } from "@/widgets/materials-widget/components/table-cell-data/data-type-enum";
 import { useRecoilValue } from "recoil";
 import { currenciesState } from "@/widgets/materials-widget/state";
+import { GomakePrimaryButton } from "@/components";
 
 interface InventoryIntakeModalProps {
   open: boolean;
@@ -75,8 +76,6 @@ const InventoryIntakeModal: React.FC<InventoryIntakeModalProps> = ({
   const [rows, setRows] = useState<InventoryRowData[]>([]);
   const [isAllIntaked, setIsAllIntaked] = useState(false);
 
-  console.log("inventoryData", { inventoryData, rows, purchaseOrderId, purchaseOrderNumber, isAllIntaked });
-
   useEffect(() => {
     if (open) {
       if (inventoryData && inventoryData.length > 0) {
@@ -102,9 +101,13 @@ const InventoryIntakeModal: React.FC<InventoryIntakeModalProps> = ({
     }
   }, [open, inventoryData]);
 
-  // Get units from first row if available, otherwise use defaults
-  const convertedPricingUnit = rows.length > 0 ? rows[0]?.tableHeadingUnits?.pricingUnit : null;
-  const convertedInventoryUnit = rows.length > 0 ? rows[0]?.tableHeadingUnits?.inventoryUnit : null;
+  const handleIntake = () => {
+    console.log("handleIntake");
+  };
+
+  const handleSplitInventoryPackages = (purchaseOrderItemId: string) => {
+    console.log("handleSplitInventoryPackages", purchaseOrderItemId);
+  };
 
   return (
     <GoMakeDialog
@@ -112,7 +115,9 @@ const InventoryIntakeModal: React.FC<InventoryIntakeModalProps> = ({
       onClose={onClose}
       title={t("sales.purchaseOrder.inventoryIntake")}
       maxWidth="lg"
-      showFooter={false}
+      showFooter={true}
+      primaryButtonLabel={t("sales.purchaseOrder.intake")}
+      onPrimaryAction={handleIntake}
     >
       <Box sx={{ padding: "20px" }}>
         {loading ? (
@@ -137,165 +142,146 @@ const InventoryIntakeModal: React.FC<InventoryIntakeModalProps> = ({
             </Typography>
           </Box>
         ) : (
-          <>
-            <TableContainer component={Paper} sx={classes.tableContainer}>
-              <Table sx={classes.table} stickyHeader>
-                <TableHead>
-                  <TableRow sx={classes.headerRow}>
-                    <TableCell sx={classes.headerCell}>
-                      {t("materials.childTable.code")}
-                    </TableCell>
-                    <TableCell sx={classes.headerCell}>
-                      {t("materials.childTable.purchasePrice")}
-                      {convertedPricingUnit && (
-                        <>
-                          <br />
-                          <span style={classes.headerCellPriceUnitText}>
-                            ({convertedPricingUnit.value})
-                          </span>
-                        </>
-                      )}
-                    </TableCell>
-                    <TableCell sx={classes.headerCell}>
-                      {t("materials.childTable.purchaseCurrency")}
-                    </TableCell>
-                    <TableCell sx={classes.headerCell}>
-                      {t("materials.childTable.saleCost")}
-                      {convertedPricingUnit && (
-                        <>
-                          <br />
-                          <span style={classes.headerCellPriceUnitText}>
-                            ({convertedPricingUnit.value})
-                          </span>
-                        </>
-                      )}
-                    </TableCell>
-                    <TableCell sx={classes.headerCell}>
-                      {t("materials.childTable.saleCurrency")}
-                    </TableCell>
-                    <TableCell sx={classes.headerCell}>
-                      {t("materials.childTable.quantity")}
-                      {convertedInventoryUnit && (
-                        <span style={classes.headerCellUnitText}>
-                          {" "}({convertedInventoryUnit.value})
-                        </span>
-                      )}
-                    </TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {rows && rows.length > 0 ? (
-                    rows.map((row, index) => {
-                      return (
-                        <TableRow key={row.purchaseOrderItemId || index} sx={classes.bodyRow}>
-                          <TableCell sx={classes.bodyCell}>
-                            <TableCellData
-                              value={row.code || '000'}
-                              isEditable={false}
-                              type={EDataTypeEnum.STRING}
-                              id={row.purchaseOrderItemId}
-                              parameterKey="code"
-                              isAdmin={false}
-                              onChangeRowCheckBox={() => { }}
-                            />
-                          </TableCell>
-                          <TableCell sx={classes.bodyCell}>
-                            <TableCellData
-                              value={[row.purchasePrice?.perUnit?.toString() || '0']}
-                              isEditable={false}
-                              type={EDataTypeEnum.ARRAY_INPUT}
-                              id={row.purchaseOrderItemId}
-                              parameterKey="purchasePrice"
-                              isAdmin={false}
-                              onChangeRowCheckBox={() => { }}
-                            />
-                          </TableCell>
-                          <TableCell sx={classes.bodyCell}>
-                            <TableCellData
-                              value={row.purchasePrice?.currency?.toLowerCase() || ''}
-                              isEditable={false}
-                              type={EDataTypeEnum.CURRENCY}
-                              id={row.purchaseOrderItemId}
-                              parameterKey="purchaseCurrency"
-                              isAdmin={false}
-                              onChangeRowCheckBox={() => { }}
-                            />
-                          </TableCell>
-                          <TableCell sx={classes.bodyCell}>
-                            <TableCellData
-                              value={[row.salePrice?.perUnit?.toString() || '0']}
-                              isEditable={true}
-                              type={EDataTypeEnum.ARRAY_INPUT}
-                              id={row.purchaseOrderItemId}
-                              parameterKey="salePrice"
-                              isAdmin={false}
-                              onChangeRowCheckBox={() => { }}
-                            />
-                          </TableCell>
-                          <TableCell sx={classes.bodyCell}>
-                            <TableCellData
-                              value={row.salePrice?.currency?.toLowerCase() || ''}
-                              isEditable={true}
-                              type={EDataTypeEnum.CURRENCY}
-                              id={row.purchaseOrderItemId}
-                              parameterKey="saleCurrency"
-                              isAdmin={false}
-                              onChangeRowCheckBox={() => { }}
-                            />
-                          </TableCell>
-                          <TableCell sx={classes.bodyCell}>
-                            <TableCellData
-                              value={row.quantity?.toString() || ''}
-                              isEditable={false}
-                              type={EDataTypeEnum.NUMBER}
-                              id={row.purchaseOrderItemId}
-                              parameterKey="quantity"
-                              isAdmin={false}
-                              onChangeRowCheckBox={() => { }}
-                            />
-                          </TableCell>
-                        </TableRow>
-                      );
-                    })
-                  ) : (
-                    <TableRow>
-                      <TableCell colSpan={6} align="center" sx={{ padding: "40px" }}>
-                        {t("common.noData")}
-                      </TableCell>
-                    </TableRow>
-                  )}
-                </TableBody>
-              </Table>
-            </TableContainer>
-            {/* <Stack
-              direction="row"
-              justifyContent="flex-end"
-              spacing={2}
-              sx={{ marginTop: "20px" }}
-            >
-              <Button
-                variant="outlined"
-                onClick={onClose}
-                sx={{
-                  textTransform: "none",
-                  fontWeight: 500,
-                }}
-              >
-                {t("modal.cancel")}
-              </Button>
-              <Button
-                variant="contained"
-                onClick={handleSave}
-                disabled={rows.length === 0 || isAllIntaked}
-                sx={{
-                  textTransform: "none",
-                  fontWeight: 500,
-                }}
-              >
-                {t("common.save")}
-              </Button>
-            </Stack> */}
-          </>
+          <Stack spacing={3}>
+            {rows && rows.length > 0 ? (
+              rows.map((row, index) => {
+                const convertedPricingUnit = row?.tableHeadingUnits?.pricingUnit;
+                const convertedInventoryUnit = row?.tableHeadingUnits?.inventoryUnit;
+
+                return (
+                  <Box key={row.purchaseOrderItemId || index}>
+                    {/* Split Inventory Packages Button */}
+                    <Box
+                      sx={{
+                        display: "flex",
+                        justifyContent: "flex-end",
+                        marginBottom: "12px",
+                        width: "100%",
+                      }}
+                    >
+                      <GomakePrimaryButton
+                        onClick={() => handleSplitInventoryPackages(row.purchaseOrderItemId)}
+                        style={{ width: "fit-content", height: "40px" }}
+                      >
+                        {t("sales.purchaseOrder.splitInventoryPackages")}
+                      </GomakePrimaryButton>
+                    </Box>
+
+                    {/* Item Table */}
+                    <TableContainer component={Paper} sx={classes.tableContainer}>
+                      <Table sx={classes.table} stickyHeader>
+                        <TableHead>
+                          <TableRow sx={classes.headerRow}>
+                            <TableCell sx={classes.headerCell}>
+                              {t("materials.childTable.purchasePrice")}
+                              {convertedPricingUnit && (
+                                <>
+                                  <br />
+                                  <span style={classes.headerCellPriceUnitText}>
+                                    ({convertedPricingUnit.value})
+                                  </span>
+                                </>
+                              )}
+                            </TableCell>
+                            <TableCell sx={classes.headerCell}>
+                              {t("materials.childTable.purchaseCurrency")}
+                            </TableCell>
+                            <TableCell sx={classes.headerCell}>
+                              {t("materials.childTable.saleCost")}
+                              {convertedPricingUnit && (
+                                <>
+                                  <br />
+                                  <span style={classes.headerCellPriceUnitText}>
+                                    ({convertedPricingUnit.value})
+                                  </span>
+                                </>
+                              )}
+                            </TableCell>
+                            <TableCell sx={classes.headerCell}>
+                              {t("materials.childTable.saleCurrency")}
+                            </TableCell>
+                            <TableCell sx={classes.headerCell}>
+                              {t("materials.childTable.quantity")}
+                              {convertedInventoryUnit && (
+                                <span style={classes.headerCellUnitText}>
+                                  {" "}({convertedInventoryUnit.value})
+                                </span>
+                              )}
+                            </TableCell>
+                          </TableRow>
+                        </TableHead>
+                        <TableBody>
+                          <TableRow sx={classes.bodyRow}>
+                            <TableCell sx={classes.bodyCell}>
+                              <TableCellData
+                                value={[row.purchasePrice?.perUnit?.toString() || '0']}
+                                isEditable={false}
+                                type={EDataTypeEnum.ARRAY_INPUT}
+                                id={row.purchaseOrderItemId}
+                                parameterKey="purchasePrice"
+                                isAdmin={false}
+                                onChangeRowCheckBox={() => { }}
+                              />
+                            </TableCell>
+                            <TableCell sx={classes.bodyCell}>
+                              <TableCellData
+                                value={row.purchasePrice?.currency?.toLowerCase() || ''}
+                                isEditable={false}
+                                type={EDataTypeEnum.CURRENCY}
+                                id={row.purchaseOrderItemId}
+                                parameterKey="purchaseCurrency"
+                                isAdmin={false}
+                                onChangeRowCheckBox={() => { }}
+                              />
+                            </TableCell>
+                            <TableCell sx={classes.bodyCell}>
+                              <TableCellData
+                                value={[row.salePrice?.perUnit?.toString() || '0']}
+                                isEditable={true}
+                                type={EDataTypeEnum.ARRAY_INPUT}
+                                id={row.purchaseOrderItemId}
+                                parameterKey="salePrice"
+                                isAdmin={false}
+                                onChangeRowCheckBox={() => { }}
+                              />
+                            </TableCell>
+                            <TableCell sx={classes.bodyCell}>
+                              <TableCellData
+                                value={row.salePrice?.currency?.toLowerCase() || ''}
+                                isEditable={true}
+                                type={EDataTypeEnum.CURRENCY}
+                                id={row.purchaseOrderItemId}
+                                parameterKey="saleCurrency"
+                                isAdmin={false}
+                                onChangeRowCheckBox={() => { }}
+                              />
+                            </TableCell>
+                            <TableCell sx={classes.bodyCell}>
+                              <TableCellData
+                                value={row.quantity?.toString() || ''}
+                                isEditable={false}
+                                type={EDataTypeEnum.NUMBER}
+                                id={row.purchaseOrderItemId}
+                                parameterKey="quantity"
+                                isAdmin={false}
+                                onChangeRowCheckBox={() => { }}
+                              />
+                            </TableCell>
+                          </TableRow>
+                        </TableBody>
+                      </Table>
+                    </TableContainer>
+                  </Box>
+                );
+              })
+            ) : (
+              <Box sx={{ padding: "40px", textAlign: "center" }}>
+                <Typography variant="body1" color="text.secondary">
+                  {t("common.noData")}
+                </Typography>
+              </Box>
+            )}
+          </Stack>
         )}
       </Box>
     </GoMakeDialog>
