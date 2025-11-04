@@ -25,6 +25,7 @@ export interface StationPerformanceDTO {
   sla?: DDP;
   averageProductionTime: number;
   totalEstimatedWorkingHours: number;
+  boardMissionsStatusFilter?: BoardMissionsStatusFilterItem[];
 }
 
 export interface StationMetrics {
