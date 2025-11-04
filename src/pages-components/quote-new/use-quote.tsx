@@ -61,6 +61,7 @@ import {
   updateOccasionalClientNameApi,
   updatePurchaseNumberApi,
   updateQuoteItemQuantityApi,
+  getDocumentInventoryApi,
 } from "@/services/api-service/generic-doc/documents-api";
 import { DOCUMENT_TYPE } from "../quotes/enums";
 import { useRouter } from "next/router";
@@ -432,6 +433,38 @@ const useQuoteNew = ({
     setSelectedDocument(order);
     setOpenChangeProductionStatusModal(true);
   };
+
+  // Inventory Intake Modal State
+  const [openInventoryIntakeModal, setOpenInventoryIntakeModal] =
+    useState(false);
+  const [inventoryData, setInventoryData] = useState<any[]>([]);
+  const [inventoryLoading, setInventoryLoading] = useState(false);
+
+  const onClickOpenInventoryIntakeModal = async () => {
+    setOpenInventoryIntakeModal(true);
+    setInventoryLoading(true);
+
+    const callBack = (res) => {
+      if (res?.success) {
+        setInventoryData(res?.data || []);
+      } else {
+        alertFault(t("alerts.failedToLoadData"));
+      }
+      setInventoryLoading(false);
+    };
+
+    await getDocumentInventoryApi(callApi, callBack, {
+      documentType: docType,
+      documentId: quoteItemValue?.id,
+      purchaseOrderId: quoteItemValue?.id, // For purchase orders table
+    });
+  };
+
+  const onClickCloseInventoryIntakeModal = () => {
+    setOpenInventoryIntakeModal(false);
+    setInventoryData([]);
+  };
+
   const { CheckPreferenceValue } = usePrintHousePreferences();
 
   const source = isQuoteConfirmation ? quoteConfirm : quoteItemValue;
@@ -440,7 +473,10 @@ const useQuoteNew = ({
 
   const showPrices = source?.showPrices !== ShowPricesEnum.HidePrices;
 
-  const isMaterialPurchaseOrder = isPurchaseOrder && isNewCreation && isMaterial;
+  const isCanIntake = source?.isCanIntake === true;
+  const isMaterialPurchaseOrder =
+    (isPurchaseOrder && isNewCreation && isMaterial) ||
+    (isPurchaseOrder && isCanIntake);
 
   const tableHeaders = [
     "#",
@@ -2940,6 +2976,12 @@ const useQuoteNew = ({
     handleExportToExcel,
     isMaterial,
     isMaterialPurchaseOrder,
+    isCanIntake,
+    openInventoryIntakeModal,
+    onClickOpenInventoryIntakeModal,
+    onClickCloseInventoryIntakeModal,
+    inventoryData,
+    inventoryLoading,
   };
 };
 

@@ -1,6 +1,7 @@
 import { useRecoilState, useRecoilValue } from "recoil";
 import { DuplicateItemModal } from "@/widgets/quote-new/modals-widgets/duplicate-item-modal";
 import { AddNewItemModal } from "@/widgets/quote-new/modals-widgets/add-new-item-modal";
+import { InventoryIntakeModal } from "@/widgets/quote-new/modals-widgets/inventory-intake-modal";
 import { ButtonsContainer } from "@/widgets/quote-new/buttons-container";
 import { BusinessNewWidget } from "@/widgets/quote-new/business-widget";
 import { ContactNewWidget } from "@/widgets/quote-new/contact-widget";
@@ -20,6 +21,7 @@ import { CancelBtnMenu } from "@/widgets/quote-new/cancel-btn-menu";
 import { SendBtnMenu } from "@/widgets/quote-new/send-btn-menu";
 import { _renderQuoteStatus } from "@/utils/constants";
 import {
+  Button,
   FormControlLabel,
   IconButton,
   Radio,
@@ -378,6 +380,12 @@ const QuoteNewPageWidget = ({
     handleExportToExcel,
     isMaterial,
     isMaterialPurchaseOrder,
+    isCanIntake,
+    openInventoryIntakeModal,
+    onClickOpenInventoryIntakeModal,
+    onClickCloseInventoryIntakeModal,
+    inventoryData,
+    inventoryLoading,
   } = useQuoteNew({
     docType: documentType,
     isQuoteConfirmation: isQuoteConfirmation,
@@ -947,6 +955,8 @@ const QuoteNewPageWidget = ({
                 }
                 deliveryDate={selectDate}
                 handleExportToExcel={handleExportToExcel}
+                isCanIntake={isCanIntake}
+                onClickOpenInventoryIntakeModal={onClickOpenInventoryIntakeModal}
               />
             </div>
           )}
@@ -972,6 +982,14 @@ const QuoteNewPageWidget = ({
         getQuote={getQuote}
         getCalculateQuoteItem={getCalculateQuoteItem}
         isMaterial={isMaterial}
+      />
+      <InventoryIntakeModal
+        open={openInventoryIntakeModal}
+        onClose={onClickCloseInventoryIntakeModal}
+        inventoryData={inventoryData}
+        loading={inventoryLoading}
+        purchaseOrderId={quoteItemValue?.id}
+        purchaseOrderNumber={quoteItemValue?.number}
       />
       <AddNewContactModal
         openModal={openAddNewContactModal}
