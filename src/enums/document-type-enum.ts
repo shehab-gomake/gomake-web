@@ -190,3 +190,10 @@ export enum ShowPricesEnum {
   HideTotalPriceOnly = 1,
   HidePrices = 2,
 }
+
+
+export enum PurchaseOrderType
+{
+    Products,
+    Materials
+}

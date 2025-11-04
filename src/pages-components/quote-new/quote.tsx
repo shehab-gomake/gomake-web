@@ -99,7 +99,7 @@ const QuoteNewPageWidget = ({
     setQuoteItemValue({});
   }, []);
 
-  const {} = updateQuoteStatusSocketIo({
+  const { } = updateQuoteStatusSocketIo({
     setUserQuote: null,
     setQuoteId: null,
     setQuoteNumber: null,
@@ -376,6 +376,8 @@ const QuoteNewPageWidget = ({
     onConfirmVatMismatchModal,
     estimatedProductionDate,
     handleExportToExcel,
+    isMaterial,
+    isMaterialPurchaseOrder,
   } = useQuoteNew({
     docType: documentType,
     isQuoteConfirmation: isQuoteConfirmation,
@@ -383,10 +385,10 @@ const QuoteNewPageWidget = ({
   });
   const { getQuoteConfirmation } = useQuoteConfirmation();
   if (documentType == DOCUMENT_TYPE.quote) {
-    const {} = useQuotesSocketIo({ getQuote });
+    const { } = useQuotesSocketIo({ getQuote });
   }
   if (documentType == DOCUMENT_TYPE.order) {
-    const {} = useOrdersSocketIo({ getQuote });
+    const { } = useOrdersSocketIo({ getQuote });
   }
 
   const dir: "rtl" | "ltr" = t("direction");
@@ -445,7 +447,7 @@ const QuoteNewPageWidget = ({
     },
   ];
 
-  const {} = useGoMakeTour(quoteSteps, []);
+  const { } = useGoMakeTour(quoteSteps, []);
 
   const theme = createTheme({
     direction: dir, // Ensure the theme is in RTL mode
@@ -528,8 +530,8 @@ const QuoteNewPageWidget = ({
                     title={
                       router?.query?.isNewCreation
                         ? `${t(
-                            "properties.create"
-                          )} ${documentTitle.toLowerCase()}`
+                          "properties.create"
+                        )} ${documentTitle.toLowerCase()}`
                         : documentTitle
                     }
                     marginBottom={1}
@@ -609,7 +611,7 @@ const QuoteNewPageWidget = ({
                     {isQuote && (
                       <>
                         {quoteItemValue?.signImageUrl &&
-                        quoteItemValue?.signerName ? (
+                          quoteItemValue?.signerName ? (
                           <div
                             style={classes.signatureApproval}
                             onClick={onClickOpenSignatureApprovalModal}
@@ -622,7 +624,7 @@ const QuoteNewPageWidget = ({
                               <div style={classes.quoteStatusContainer}>
                                 {_renderQuoteStatus(
                                   quoteState?.[
-                                    isReceipt ? "status" : "documentStatus"
+                                  isReceipt ? "status" : "documentStatus"
                                   ],
                                   quoteState,
                                   t
@@ -687,11 +689,11 @@ const QuoteNewPageWidget = ({
                   />
                   {documentType !== DOCUMENT_TYPE.purchaseOrder &&
                     (isQuote &&
-                    !selectDate &&
-                    (!CheckPreferenceValue(
-                      EPreferences.DELIVERY_DATE_REQUIRED_IN_QUOTE
-                    ) ||
-                      quoteItemValue?.dueDateUpdatedByUser) ? (
+                      !selectDate &&
+                      (!CheckPreferenceValue(
+                        EPreferences.DELIVERY_DATE_REQUIRED_IN_QUOTE
+                      ) ||
+                        quoteItemValue?.dueDateUpdatedByUser) ? (
                       <Skeleton variant="text" width={200} height={40} />
                     ) : (
                       <DateField
@@ -729,7 +731,7 @@ const QuoteNewPageWidget = ({
                       }}
                       isEditable={quoteItemValue?.isEditable}
                       inputRef={taxDateRef}
-                      // preventOpenCondition={!quoteState.client}
+                    // preventOpenCondition={!quoteState.client}
                     />
                   )}
                   {(documentType === DOCUMENT_TYPE.order ||
@@ -878,6 +880,7 @@ const QuoteNewPageWidget = ({
                   onChangeSelectedItemRowForQoute={
                     onChangeSelectedItemRowForQoute
                   }
+                  isMaterialPurchaseOrder={isMaterialPurchaseOrder}
                 />
               )}
               {isPrePaymentPage && (
@@ -968,6 +971,7 @@ const QuoteNewPageWidget = ({
         documentType={documentType}
         getQuote={getQuote}
         getCalculateQuoteItem={getCalculateQuoteItem}
+        isMaterial={isMaterial}
       />
       <AddNewContactModal
         openModal={openAddNewContactModal}
@@ -1160,18 +1164,18 @@ const QuoteNewPageWidget = ({
           isMoveToReady
             ? () => moveOrderToReady(moveToReadyOption === "withMessage")
             : () => {
-                if (isSelectedCLoseAsDeliveryNote) {
-                  navigate(
-                    `/deliveryNote?isNewCreation=true&orderId=${selectedDocument?.id}`
-                  );
-                } else {
-                  const path =
-                    documentType === DOCUMENT_TYPE.order
-                      ? `/invoice?isNewCreation=true&orderId=${selectedDocument?.id}`
-                      : `/invoice?isNewCreation=true&deliveryNoteId=${selectedDocument?.id}`;
-                  navigate(path);
-                }
+              if (isSelectedCLoseAsDeliveryNote) {
+                navigate(
+                  `/deliveryNote?isNewCreation=true&orderId=${selectedDocument?.id}`
+                );
+              } else {
+                const path =
+                  documentType === DOCUMENT_TYPE.order
+                    ? `/invoice?isNewCreation=true&orderId=${selectedDocument?.id}`
+                    : `/invoice?isNewCreation=true&deliveryNoteId=${selectedDocument?.id}`;
+                navigate(path);
               }
+            }
         }
       >
         <Stack alignItems={"center"}>
@@ -1307,7 +1311,7 @@ const QuoteNewPageWidget = ({
         openModal={openAddAttachmentsModal}
         onClose={onCloseAddAttachmentsModal}
         documentType={documentType}
-        getQuote={isQuoteConfirmation ? () => {} : getQuote}
+        getQuote={isQuoteConfirmation ? () => { } : getQuote}
         isQuoteConfirmation={isQuoteConfirmation}
         quoteConfirm={quoteState}
         onFileUploadStart={onFileUploadStart}

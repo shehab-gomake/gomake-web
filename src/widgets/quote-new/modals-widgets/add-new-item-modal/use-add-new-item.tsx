@@ -19,7 +19,7 @@ import {
 import { useUserPermission } from "@/hooks/use-permission";
 import { ETab } from "@/pages-components/admin/home/widgets/quote-widget/enums";
 
-const useAddNewItem = ({ onClose, getQuote, documentType, getCalculateQuoteItem }) => {
+const useAddNewItem = ({ onClose, getQuote, documentType, getCalculateQuoteItem, isMaterial }) => {
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
   const [selectedProduct, setSelectedProduct] = useState<any>({});
@@ -46,7 +46,15 @@ const useAddNewItem = ({ onClose, getQuote, documentType, getCalculateQuoteItem 
     setProductCode("");
     setActive(true);
   };
-  const [selectedTab, setSelectedTab] = useState<ETab>(ETab.PRODUCTS);
+  
+  // Set initial tab based on isMaterial for purchase orders
+  const initialTab = documentType === DOCUMENT_TYPE.purchaseOrder && isMaterial 
+    ? ETab.MATERIALS 
+    : documentType === DOCUMENT_TYPE.purchaseOrder && !isMaterial 
+    ? ETab.PRODUCTS 
+    : ETab.PRODUCTS;
+  
+  const [selectedTab, setSelectedTab] = useState<ETab>(initialTab);
 
   const getAllProductsAndMaterials = useCallback(
     async (clientId, clientTypeId, selectedTab) => {
@@ -105,8 +113,20 @@ const useAddNewItem = ({ onClose, getQuote, documentType, getCalculateQuoteItem 
           const transformedProducts = transformProducts(res?.data?.products);
           const transformedMaterials = transformMaterials(res?.data?.materials);
 
-          // Combine the transformed data
-          const combinedFinalData = [transformedProducts, transformedMaterials];
+          // Filter data based on purchase order type
+          let combinedFinalData;
+          if (documentType === DOCUMENT_TYPE.purchaseOrder) {
+            if (isMaterial) {
+              // Show only materials for material purchase orders
+              combinedFinalData = [transformedMaterials];
+            } else {
+              // Show only products for product purchase orders
+              combinedFinalData = [transformedProducts];
+            }
+          } else {
+            // Combine both for other document types
+            combinedFinalData = [transformedProducts, transformedMaterials];
+          }
           setCombinedData(combinedFinalData);
         }
       };

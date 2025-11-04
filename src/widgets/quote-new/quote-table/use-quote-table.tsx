@@ -19,6 +19,8 @@ const useQuoteTable = ({
   const [isUpdatePrice, setIsUpdatePrice] = useState(null);
   const [isUpdateFinalPrice, setIsUpdateFinalPrice] = useState(null);
   const [isUpdateApproveAmount, setIsUpdateApproveAmount] = useState(null);
+  const [isUpdatePackagesQuantity, setIsUpdatePackagesQuantity] = useState(null);
+  const [isUpdateQuantityInPackage, setIsUpdateQuantityInPackage] = useState(null);
 
   const isDeliveryNote =
     documentType === DOCUMENT_TYPE.deliveryNote ||
@@ -92,6 +94,42 @@ const useQuoteTable = ({
     changeDocumentItems(index, "finalPrice", e);
   };
 
+  const onBlurPackagesQuantity = async () => {
+    const packagesQuantity = parseFloat(item?.packagesQuantity || item?.packageQuantity || "0") || 0;
+    const quantityInPackage = parseFloat(item?.quantityInPackage || item?.quantityPerPackage || "0") || 0;
+    const totalQuantity = packagesQuantity * quantityInPackage;
+    
+    if (totalQuantity > 0) {
+      changeDocumentItems(index, "quantity", totalQuantity);
+      // Update the item with the new quantity before calculating
+      const updatedItem = { ...item, quantity: totalQuantity };
+      getCalculateQuoteItem(updatedItem, 0, totalQuantity);
+    }
+    setIsUpdatePackagesQuantity(null);
+  };
+
+  const onInputChangePackagesQuantity = (e) => {
+    changeDocumentItems(index, "packagesQuantity", e);
+  };
+
+  const onBlurQuantityInPackage = async () => {
+    const packagesQuantity = parseFloat(item?.packagesQuantity || item?.packageQuantity || "0") || 0;
+    const quantityInPackage = parseFloat(item?.quantityInPackage || item?.quantityPerPackage || "0") || 0;
+    const totalQuantity = packagesQuantity * quantityInPackage;
+    
+    if (totalQuantity > 0) {
+      changeDocumentItems(index, "quantity", totalQuantity);
+      // Update the item with the new quantity before calculating
+      const updatedItem = { ...item, quantity: totalQuantity };
+      getCalculateQuoteItem(updatedItem, 0, totalQuantity);
+    }
+    setIsUpdateQuantityInPackage(null);
+  };
+
+  const onInputChangeQuantityInPackage = (e) => {
+    changeDocumentItems(index, "quantityInPackage", e);
+  };
+
   return {
     t,
     isUpdateAmount,
@@ -113,6 +151,14 @@ const useQuoteTable = ({
     onBlurApproveAmount,
     isUpdateApproveAmount,
     setIsUpdateApproveAmount,
+    isUpdatePackagesQuantity,
+    setIsUpdatePackagesQuantity,
+    onBlurPackagesQuantity,
+    onInputChangePackagesQuantity,
+    isUpdateQuantityInPackage,
+    setIsUpdateQuantityInPackage,
+    onBlurQuantityInPackage,
+    onInputChangeQuantityInPackage,
   };
 };
 

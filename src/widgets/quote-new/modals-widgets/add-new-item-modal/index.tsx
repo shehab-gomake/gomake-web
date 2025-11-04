@@ -10,6 +10,7 @@ import { Popover } from "@mui/material";
 import { Stack, RadioGroup, FormControlLabel, Radio } from "@mui/material";
 import { PrimaryButton } from "@/components/button/primary-button";
 import { Permissions } from "@/components/CheckPermission/enum";
+import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 
 const ProductTypeSelector = ({ active, onChange, primaryColor, t }) => (
   <RadioGroup
@@ -64,7 +65,7 @@ const GenericProductInput = ({
   </Stack>
 );
 
-const AddNewItemModal = ({ openModal, onClose, documentType, getQuote, getCalculateQuoteItem }) => {
+const AddNewItemModal = ({ openModal, onClose, documentType, getQuote, getCalculateQuoteItem, isMaterial }) => {
   const { t } = useTranslation();
   const { classes } = useStyle();
 
@@ -90,7 +91,7 @@ const AddNewItemModal = ({ openModal, onClose, documentType, getQuote, getCalcul
     CheckPermission,
     selectedTab,
     setSelectedTab,
-  } = useAddNewItem({ onClose, getQuote, documentType, getCalculateQuoteItem });
+  } = useAddNewItem({ onClose, getQuote, documentType, getCalculateQuoteItem, isMaterial });
 
   return (
     <>
@@ -118,11 +119,18 @@ const AddNewItemModal = ({ openModal, onClose, documentType, getQuote, getCalcul
           {active ? (
             <GoMakeTreeSelect
               selectedTab={selectedTab}
-              setSelectedTab={(v) => setSelectedTab(v)}
+              setSelectedTab={(v) => {
+                // Prevent tab switching for purchase orders
+                if (documentType === DOCUMENT_TYPE.purchaseOrder) {
+                  return;
+                }
+                setSelectedTab(v);
+              }}
               value={selectedProduct}
               options={combinedData}
               onChange={handleProductChange}
               placeholder={t("home.admin.selectProductOrMaterial")}
+              hideOtherTabs={documentType === DOCUMENT_TYPE.purchaseOrder}
             />
           ) : (
             <GenericProductInput

@@ -185,6 +185,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const [customerId, setCustomerId] = useState<any>();
   const [isCanceledState, setIsCanceledState] = useState(false);
   const [isPausedOrders, setIsPausedOrders] = useState(false);
+  const [openPurchaseOrderTypeModal, setOpenPurchaseOrderTypeModal] = useState(false);
   const [dateRange, setDateRange] = useState<any>();
   const [agentId, setAgentId] = useState<any>();
   const [allQuotes, setAllQuotes] = useState<any[] | undefined>(undefined);
@@ -2455,6 +2456,22 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     await createNewDocumentApi(callApi, callBack, { documentType: 0 });
   };
 
+  const onOpenPurchaseOrderTypeModal = () => {
+    setOpenPurchaseOrderTypeModal(true);
+  };
+
+  const onClosePurchaseOrderTypeModal = () => {
+    setOpenPurchaseOrderTypeModal(false);
+  };
+
+  const handleSelectPurchaseOrderType = (isForMaterial: boolean) => {
+    setOpenPurchaseOrderTypeModal(false);
+    const url = isForMaterial
+      ? `/${documentPath}?isNewCreation=true&isMaterial=true`
+      : `/${documentPath}?isNewCreation=true`;
+    navigate(url);
+  };
+
   // table in home page
   const getAllDocuments = async (docType) => {
     const callBack = (res) => {
@@ -4257,6 +4274,10 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     handlePageChange: handleScheduledReportsPageChange,
     handlePageSizeChangeScheduledReports: handleScheduledReportsPageSizeChange,
     scheduledReportsPageSize,
+    openPurchaseOrderTypeModal,
+    onOpenPurchaseOrderTypeModal,
+    onClosePurchaseOrderTypeModal,
+    handleSelectPurchaseOrderType,
   };
 };
 
