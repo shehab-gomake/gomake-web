@@ -639,7 +639,7 @@ const useAddRuleModal = ({
           return {
             statementValue:
               typeof item?.statement === "object"
-                ? item?.statement?.id
+                ? item?.statement2?.type === 5 ? item?.statement?.code : item?.statement?.id
                 : item?.statement,
             statementId: item?.statement2?.id,
             operator: item?.condition?.id,
