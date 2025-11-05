@@ -5,6 +5,45 @@
 
 ---
 
+## 🏢 Workspace Context
+
+This project is part of a multi-project workspace focused on FrontDesk Chatwoot integration:
+
+### Related Projects
+
+1. **gomake-web** (THIS PROJECT) - Frontend application
+   - **Location:** `/Users/omarsabbah/Desktop/gomake-services/gomake-web`
+   - **Focus:** FrontDesk Chatwoot provider implementation
+   - **Tech:** Next.js, React, TypeScript, Recoil
+
+2. **messaging-hub-v2** - NestJS proxy service
+   - **Location:** `/Users/omarsabbah/Desktop/gomake-services/messaging-hub-v2`
+   - **Purpose:** Proxy between FrontDesk and Chatwoot backend
+   - **Tech:** NestJS, TypeScript
+   - **Docs:** See `messaging-hub-v2/CLAUDE.md` for proxy architecture
+
+3. **chatwoot** - Customer support platform (Reference)
+   - **Location:** `/Users/omarsabbah/Desktop/messaging/chatwoot`
+   - **Purpose:** Backend API + Frontend demo (use as reference)
+   - **Tech:** Rails 7.1, Vue 3, PostgreSQL
+   - **Reference:** `app/javascript/dashboard/` - Use Chatwoot's frontend as reference for UI patterns
+
+### Connection Flow
+
+```
+FrontDesk Chatwoot Provider (gomake-web)
+    ↓ JWT Bearer Token
+messaging-hub-v2 (NestJS Proxy)
+    ↓ Auto-provisioning + Path Transformation
+Chatwoot Backend (Rails API)
+```
+
+**Important:** When working on FrontDesk Chatwoot features, reference the Chatwoot frontend demo at `/Users/omarsabbah/Desktop/messaging/chatwoot/app/javascript/dashboard/` to understand UI patterns, API usage, and component behavior.
+
+**Documentation:** See `docs/frontdesk/FRONTDESK_CHATWOOT_ARCHITECTURE.md` for complete architecture guide.
+
+---
+
 ## 1. 🎯 SCOPE: FrontDesk Feature ONLY
 
 ### ✅ Allowed Paths
@@ -36,9 +75,11 @@ docs/frontdesk/                  # FrontDesk documentation
 
 1.  `CLAUDE.md` (This file)
 2.  `GEMINI.md`
-3.  `docs/frontdesk/FRONTDESK_KNOWLEDGE_BASE.md`
-4.  `docs/frontdesk/README.md`
+3.  `docs/frontdesk/FRONTDESK_CHATWOOT_ARCHITECTURE.md` - **Complete architecture guide**
+4.  `docs/frontdesk/README.md` - Documentation index
 5.  **Backend Docs:** `/Users/omarsabbah/Desktop/Messaging-Hub/docs/README.md` (for all API and data contracts)
+6.  **Chatwoot Reference:** `/Users/omarsabbah/Desktop/messaging/chatwoot/app/javascript/dashboard/` - Use as reference for UI patterns
+7.  **Proxy Docs:** `/Users/omarsabbah/Desktop/gomake-services/messaging-hub-v2/CLAUDE.md` - Proxy service architecture
 
 ---
 
@@ -246,10 +287,15 @@ const sendMessage = async (content: string) => {
 - **[TICKETS_PROVIDER_GUIDE.md](docs/frontdesk/01-providers/tickets/TICKETS_PROVIDER_GUIDE.md)** — Tickets implementation
 
 ### Chatwoot Provider Documentation
+- **[FRONTDESK_CHATWOOT_ARCHITECTURE.md](docs/frontdesk/FRONTDESK_CHATWOOT_ARCHITECTURE.md)** — Complete architecture guide with workspace context
 - **[chatwoot/CHATWOOT_API_GUIDE.md](chatwoot/CHATWOOT_API_GUIDE.md)** — OpenAPI client usage guide
 - **[src/widgets/frontdesk/providers/chatwoot/README.md](src/widgets/frontdesk/providers/chatwoot/README.md)** — Code organization and patterns
 - **[src/widgets/frontdesk/providers/chatwoot/PERFORMANCE.md](src/widgets/frontdesk/providers/chatwoot/PERFORMANCE.md)** — Performance optimization guide
 - **[src/services/frontdesk/api/chatwoot/README.md](src/services/frontdesk/api/chatwoot/README.md)** — API service architecture
+
+### Related Project Documentation
+- **messaging-hub-v2:** `/Users/omarsabbah/Desktop/gomake-services/messaging-hub-v2/CLAUDE.md` — Proxy service architecture
+- **chatwoot:** `/Users/omarsabbah/Desktop/messaging/chatwoot/CLAUDE.md` — Backend development guidelines
 
 ---
 
@@ -305,6 +351,11 @@ Use Task tool with subagent_type: "frontdesk-orchestrator"
 - **Performance patterns**: Always use `useMemo`/`useCallback` for derived state and callbacks.
 - **Base hooks**: Prefer reusable base hooks (`useChatwootDataFetch`, `useChatwootFilters`) over duplicating logic.
 - **OpenAPI docs**: Reference `chatwoot/docs/` for API contracts, but implement using custom services.
+- **Reference Chatwoot Frontend**: When implementing UI features, check `/Users/omarsabbah/Desktop/messaging/chatwoot/app/javascript/dashboard/` for patterns:
+  - API client patterns: `api/ApiClient.js`, `api/conversations.js`
+  - Component structure: `components/widgets/`
+  - State management: `store/modules/`
+  - Routing patterns: `routes/dashboard/`
 
 ### Workflow
 1.  Read this file first to understand scope.

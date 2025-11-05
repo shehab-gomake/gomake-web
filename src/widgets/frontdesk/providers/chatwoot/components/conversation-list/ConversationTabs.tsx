@@ -46,7 +46,24 @@ export const ConversationTabs: React.FC<ConversationTabsProps> = React.memo(({
       assignee_type = ConversationAssigneeType.ALL;
     }
 
-    onFiltersChange({ ...filters, assignee_type, page: 1 });
+    // When switching tabs, only preserve status and inbox_id filters
+    // Clear contextual filters (search, team, sort) to avoid pollution
+    const newFilters: Partial<ConversationListParams> = {
+      assignee_type,
+      page: 1,
+    };
+
+    // Explicitly preserve status filter if present
+    if (filters.status !== undefined) {
+      newFilters.status = filters.status;
+    }
+
+    // Explicitly preserve inbox_id if present (for channel-specific views)
+    if (filters.inbox_id !== undefined) {
+      newFilters.inbox_id = filters.inbox_id;
+    }
+
+    onFiltersChange(newFilters);
   };
 
   const currentTab = getCurrentTab();

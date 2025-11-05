@@ -52,7 +52,7 @@ export const NoConversationsEmptyState: React.FC<NoConversationsEmptyStateProps>
   hasFilters = false,
 }) => {
   const theme = useTheme();
-  const { neutralColor } = useGomakeTheme();
+  const { primaryColor, neutralColor } = useGomakeTheme();
 
   // Context-aware messaging
   const getMessage = () => {
@@ -165,11 +165,14 @@ export const NoConversationsEmptyState: React.FC<NoConversationsEmptyStateProps>
         {onRefresh && (
           <Button
             variant="outlined"
+            size="small"
             startIcon={<RefreshIcon />}
             onClick={onRefresh}
             sx={{
               borderColor: neutralColor(300),
               color: neutralColor(700),
+              fontWeight: 400,
+              textTransform: "none",
               "&:hover": {
                 borderColor: theme.palette.primary.main,
                 backgroundColor: alpha(theme.palette.primary.main, 0.04),
@@ -183,9 +186,13 @@ export const NoConversationsEmptyState: React.FC<NoConversationsEmptyStateProps>
         {hasFilters && onClearFilters && (
           <Button
             variant="contained"
+            size="small"
             onClick={onClearFilters}
             sx={{
               backgroundColor: theme.palette.primary.main,
+              color: "white",
+              fontWeight: 500,
+              textTransform: "none",
               "&:hover": {
                 backgroundColor: theme.palette.primary.dark,
               },

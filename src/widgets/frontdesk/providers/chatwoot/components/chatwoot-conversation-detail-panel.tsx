@@ -202,6 +202,7 @@ export const ChatwootConversationDetailPanel: React.FC<
         assignee={conversation.meta?.assignee}
         accountId={accountId}
         conversationId={conversation.id}
+        inboxId={conversation.inbox_id}
         onAssigneeChanged={(newAssignee) => {
           handleConversationChange({
             meta: {

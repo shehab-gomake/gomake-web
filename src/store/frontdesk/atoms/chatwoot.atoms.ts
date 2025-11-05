@@ -59,9 +59,29 @@ export const chatwootSelectedConversationAtom = atom<ChatwootConversation | null
   default: null,
 });
 
-export const chatwootConversationsLoadingAtom = atom<boolean>({
+// Granular loading states for conversations
+export interface ChatwootConversationsLoadingState {
+  initialLoading: boolean;  // First load - shows full overlay
+  filtering: boolean;       // Filter changes - shows subtle indicator
+  loadingMore: boolean;     // Pagination - shows at bottom
+}
+
+export const chatwootConversationsLoadingAtom = atom<ChatwootConversationsLoadingState>({
   key: "frontdesk.chatwoot.conversationsLoading",
-  default: false,
+  default: {
+    initialLoading: false,
+    filtering: false,
+    loadingMore: false,
+  },
+});
+
+// Backward compatibility: Single loading state derived from granular states
+export const chatwootConversationsLoadingLegacyAtom = selector<boolean>({
+  key: "frontdesk.chatwoot.conversationsLoadingLegacy",
+  get: ({ get }) => {
+    const loading = get(chatwootConversationsLoadingAtom);
+    return loading.initialLoading || loading.filtering || loading.loadingMore;
+  },
 });
 
 export const chatwootConversationsErrorAtom = atom<string | null>({

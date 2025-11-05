@@ -50,15 +50,34 @@ export const ConversationFilterMenu: React.FC<ConversationFilterMenuProps> = Rea
   const [filterMenuAnchor, setFilterMenuAnchor] = useState<null | HTMLElement>(null);
 
   const handleTeamSelect = (teamId: number | undefined) => {
+    // When changing team, preserve assignee_type, status, inbox_id, search, and sort
     onFiltersChange({ ...filters, team_id: teamId, page: 1 });
   };
 
   const handleStatusSelect = (status: ConversationStatus) => {
-    onFiltersChange({
-      ...filters,
+    // When changing status, preserve assignee_type, inbox_id, and sort
+    // Clear contextual filters (search, team) to avoid confusion
+    const newFilters: Partial<ConversationListParams> = {
       status: status === ConversationStatus.ALL ? undefined : status,
       page: 1,
-    });
+    };
+
+    // Preserve assignee_type
+    if (filters.assignee_type !== undefined) {
+      newFilters.assignee_type = filters.assignee_type;
+    }
+
+    // Preserve inbox_id (for channel-specific views)
+    if (filters.inbox_id !== undefined) {
+      newFilters.inbox_id = filters.inbox_id;
+    }
+
+    // Preserve sort (orthogonal filter)
+    if (filters.sort_by !== undefined) {
+      newFilters.sort_by = filters.sort_by;
+    }
+
+    onFiltersChange(newFilters);
     setFilterMenuAnchor(null);
   };
 

@@ -3,7 +3,7 @@
  * Handles agent and team assignments, and label management
  */
 
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { chatwootService } from "@/services/frontdesk";
 import type { ChatwootConversation } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
 import { showNotification } from "../utils/notification-utils";
@@ -19,54 +19,123 @@ export const useConversationAssignmentActions = ({
   conversation,
   updateConversation,
 }: UseConversationAssignmentActionsProps) => {
+  const [isAssigning, setIsAssigning] = useState(false);
+  const [isAssigningTeam, setIsAssigningTeam] = useState(false);
+
   /**
    * Handle Assign Agent
+   * Updates conversation state with new assignee after successful API call
    */
   const handleAssignAgent = useCallback(
-    async (assigneeId: number | null) => {
+    async (assigneeId: number | null, agentData?: { id: number; name?: string; email?: string; thumbnail?: string }) => {
       if (!accountId || !conversation?.id) {
         showNotification("Cannot perform action: Missing account or conversation", "error");
         return;
       }
 
+      setIsAssigning(true);
+      const previousAssignee = conversation.meta?.assignee;
+
       try {
-        await chatwootService.conversations.assignAgent(accountId, conversation.id, assigneeId);
+        // Optimistic update if we have agent data
+        if (agentData) {
+          updateConversation({
+            meta: {
+              ...conversation.meta,
+              assignee: assigneeId ? agentData : null,
+            },
+          });
+        }
+
+        const response = await chatwootService.conversations.assignAgent(accountId, conversation.id, assigneeId);
+
+        // Update with server response
+        if (response.meta?.assignee !== undefined) {
+          updateConversation({
+            meta: {
+              ...conversation.meta,
+              assignee: response.meta.assignee,
+            },
+          });
+        }
 
         const actionLabel = assigneeId ? "Agent assigned" : "Agent unassigned";
         showNotification(actionLabel, "success");
-
-        // TODO: Update conversation assignee in state when we have agent data
       } catch (error: any) {
+        // Revert optimistic update on failure
+        if (agentData) {
+          updateConversation({
+            meta: {
+              ...conversation.meta,
+              assignee: previousAssignee,
+            },
+          });
+        }
         showNotification(`Failed to assign agent`, "error");
         console.error("Failed to assign agent:", error);
+      } finally {
+        setIsAssigning(false);
       }
     },
-    [accountId, conversation]
+    [accountId, conversation, updateConversation]
   );
 
   /**
    * Handle Assign Team
+   * Updates conversation state with new team after successful API call
    */
   const handleAssignTeam = useCallback(
-    async (teamId: number | null) => {
+    async (teamId: number | null, teamData?: { id: number; name?: string; description?: string }) => {
       if (!accountId || !conversation?.id) {
         showNotification("Cannot perform action: Missing account or conversation", "error");
         return;
       }
 
+      setIsAssigningTeam(true);
+      const previousTeam = conversation.meta?.team;
+
       try {
-        await chatwootService.conversations.assignTeam(accountId, conversation.id, teamId);
+        // Optimistic update if we have team data
+        if (teamData) {
+          updateConversation({
+            meta: {
+              ...conversation.meta,
+              team: teamId ? teamData : null,
+            },
+          });
+        }
+
+        const response = await chatwootService.conversations.assignTeam(accountId, conversation.id, teamId);
+
+        // Update with server response
+        if (response.meta?.team !== undefined) {
+          updateConversation({
+            meta: {
+              ...conversation.meta,
+              team: response.meta.team,
+            },
+          });
+        }
 
         const actionLabel = teamId ? "Team assigned" : "Team unassigned";
         showNotification(actionLabel, "success");
-
-        // TODO: Update conversation team in state when we have team data
       } catch (error: any) {
+        // Revert optimistic update on failure
+        if (teamData) {
+          updateConversation({
+            meta: {
+              ...conversation.meta,
+              team: previousTeam,
+            },
+          });
+        }
         showNotification(`Failed to assign team`, "error");
         console.error("Failed to assign team:", error);
+      } finally {
+        setIsAssigningTeam(false);
       }
     },
-    [accountId, conversation]
+    [accountId, conversation, updateConversation]
   );
 
   /**
@@ -102,5 +171,7 @@ export const useConversationAssignmentActions = ({
     handleAssignAgent,
     handleAssignTeam,
     handleAssignLabel,
+    isAssigning,
+    isAssigningTeam,
   };
 };

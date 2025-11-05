@@ -1,6 +1,38 @@
 import { useRef, useCallback } from 'react';
 
 /**
+ * Creates a stable serialized key from an object by sorting keys
+ * This ensures that objects with the same properties but different key orders
+ * produce the same string representation
+ */
+function createStableKey<T = any>(params: T): string {
+  if (params === null || params === undefined) {
+    return String(params);
+  }
+
+  if (typeof params !== 'object') {
+    return String(params);
+  }
+
+  // Sort keys recursively for nested objects
+  const sortKeys = (obj: any): any => {
+    if (obj === null || obj === undefined) return obj;
+    if (typeof obj !== 'object') return obj;
+    if (Array.isArray(obj)) return obj.map(sortKeys);
+
+    const sorted: Record<string, any> = {};
+    Object.keys(obj)
+      .sort()
+      .forEach(key => {
+        sorted[key] = sortKeys(obj[key]);
+      });
+    return sorted;
+  };
+
+  return JSON.stringify(sortKeys(params));
+}
+
+/**
  * Initialization coordinator for Chatwoot provider
  *
  * Prevents cascading state updates and redundant API fetches during component mount
@@ -80,7 +112,7 @@ export function useFetchDeduplication<T = any>() {
    * - A fetch is currently in progress
    */
   const shouldFetch = useCallback((params: T): boolean => {
-    const paramsKey = JSON.stringify(params);
+    const paramsKey = createStableKey(params);
 
     // Skip if already fetching
     if (isFetchingRef.current) {
@@ -108,7 +140,7 @@ export function useFetchDeduplication<T = any>() {
    * Mark fetch as complete and store params to prevent duplicates
    */
   const markFetchComplete = useCallback((params: T) => {
-    const paramsKey = JSON.stringify(params);
+    const paramsKey = createStableKey(params);
     lastFetchParamsRef.current = paramsKey;
     isFetchingRef.current = false;
   }, []);
