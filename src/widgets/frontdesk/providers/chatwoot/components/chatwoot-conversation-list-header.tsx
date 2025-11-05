@@ -3,6 +3,8 @@ import { useRecoilValue } from "recoil";
 import { useTheme } from "@mui/material/styles";
 import { Box, Stack, Typography, Chip, IconButton, Tooltip } from "@mui/material";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+import RefreshIcon from "@mui/icons-material/Refresh";
+import ClearIcon from "@mui/icons-material/Clear";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { useChatwootTeams } from "../hooks/resources/use-chatwoot-teams";
 import { ConversationStatus, ConversationListParams } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
@@ -21,6 +23,8 @@ interface ChatwootConversationListHeaderProps {
   onFilterClick?: () => void;
   onSortClick?: () => void;
   onNextClick?: () => void;
+  onRefresh?: () => void;
+  onClearFilters?: () => void;
   conversations?: any[];
   mineCount?: number;
   unassignedCount?: number;
@@ -34,6 +38,8 @@ export const ChatwootConversationListHeader: React.FC<ChatwootConversationListHe
   onFilterClick,
   onSortClick,
   onNextClick,
+  onRefresh,
+  onClearFilters,
   mineCount,
   unassignedCount,
   allCount,
@@ -68,6 +74,16 @@ export const ChatwootConversationListHeader: React.FC<ChatwootConversationListHe
     };
     return labels[status] || "All";
   }, [status]);
+
+  // Check if any non-default filters are active
+  const hasActiveFilters = useMemo(() => {
+    return Boolean(
+      filters.q || // search query
+      filters.team_id || // team filter
+      filters.labels || // labels filter
+      (filters.sort_by && filters.sort_by !== "latest_activity") // non-default sort
+    );
+  }, [filters]);
 
   return (
     <Box
@@ -117,6 +133,48 @@ export const ChatwootConversationListHeader: React.FC<ChatwootConversationListHe
         </Stack>
 
         <Stack direction="row" spacing={0.5}>
+          {/* Refresh Button */}
+          {onRefresh && (
+            <Tooltip title="Refresh">
+              <IconButton
+                size="small"
+                onClick={onRefresh}
+                sx={{
+                  color: neutralColor(600),
+                  backgroundColor: neutralColor(100),
+                  "&:hover": {
+                    backgroundColor: neutralColor(200),
+                  },
+                  width: 32,
+                  height: 32,
+                }}
+              >
+                <RefreshIcon fontSize="small" />
+              </IconButton>
+            </Tooltip>
+          )}
+
+          {/* Clear Filters Button - only show when filters are active */}
+          {hasActiveFilters && onClearFilters && (
+            <Tooltip title="Clear Filters">
+              <IconButton
+                size="small"
+                onClick={onClearFilters}
+                sx={{
+                  color: primaryColor(600),
+                  backgroundColor: primaryColor(50),
+                  "&:hover": {
+                    backgroundColor: primaryColor(100),
+                  },
+                  width: 32,
+                  height: 32,
+                }}
+              >
+                <ClearIcon fontSize="small" />
+              </IconButton>
+            </Tooltip>
+          )}
+
           <ConversationFilterMenu
             filters={filters}
             onFiltersChange={onFiltersChange}

@@ -90,9 +90,15 @@ export const ChatwootConversationList: React.FC<ChatwootConversationListProps> =
     return undefined;
   };
 
-  // Clear filters handler
+  // Clear filters handler - resets to default filter state
   const handleClearFilters = () => {
-    onFiltersChange({});
+    // Reset to default values: Mine tab + Open status
+    onFiltersChange({
+      assignee_type: ConversationAssigneeType.ME,
+      status: ConversationStatus.OPEN,
+      page: 1,
+      // Explicitly clear all other filters by not including them
+    });
   };
 
   // Infinite scroll setup
@@ -127,6 +133,8 @@ export const ChatwootConversationList: React.FC<ChatwootConversationListProps> =
         unassignedCount={counts.unassigned}
         allCount={counts.all}
         onNextClick={onNextClick}
+        onRefresh={onRefresh}
+        onClearFilters={handleClearFilters}
       />
 
       {/* Content */}

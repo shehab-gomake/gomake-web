@@ -310,6 +310,9 @@ export const useChatwootProvider = () => {
         let teamToSet = teamId;
         let sortToSet = sortBy;
 
+        // Detect if this is a tab switch (assignee_type change without other filters)
+        const isTabSwitch = "assignee_type" in newFilters && Object.keys(newFilters).length <= 3; // assignee_type, page, and maybe status/inbox_id
+
         // Handle status filter - the component sends ConversationStatus.ALL when "All" is selected
         // Check if status property exists in the newFilters object (could be undefined or ConversationStatus.ALL)
         if ("status" in newFilters) {
@@ -323,6 +326,16 @@ export const useChatwootProvider = () => {
         if ("assignee_type" in newFilters) {
           assigneeToSet = newFilters.assignee_type;
           setAssigneeFilter(newFilters.assignee_type);
+
+          // On tab switch, clear contextual filters (search, team, sort)
+          if (isTabSwitch) {
+            searchToSet = "";
+            setSearchQuery("");
+            teamToSet = undefined;
+            setTeamId(undefined);
+            sortToSet = undefined;
+            setSortBy(undefined);
+          }
         }
         if ("q" in newFilters) {
           searchToSet = newFilters.q || "";
