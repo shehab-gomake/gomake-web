@@ -59,6 +59,12 @@ const PrimaryButton = styled(Button)<PrimaryButtonProps>((props) => {
         letterSpacing: 0,
       },
     },
+    "&.MuiButton-outlined": {
+      backgroundColor: "inherit",
+      "&:hover": {
+        letterSpacing: "0.1em",
+      },
+    },
     "&.Mui-disabled": {
       backgroundColor: `var(--theme-primary-disabled, ${primaryDisabled})`,
       color: "#FFFFFF",

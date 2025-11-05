@@ -31,7 +31,8 @@ const SecondaryButton = styled(Button)((props: ButtonProps) => {
     "&:hover": {
       backgroundColor: `var(--theme-secondary-light, ${secondaryLight})`,
       borderColor: `var(--theme-secondary-color, ${secondaryColor})`,
-      opacity: 0.8,
+      // opacity: 0.8,
+      borderRadius: "var(--theme-radius-md, 4px)",
     },
     transition: "0.25s",
     ...FONT_FAMILY.Lexend(500, 16),

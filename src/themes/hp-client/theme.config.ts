@@ -180,6 +180,22 @@ const hpClientThemeConfig: ThemeConfig = {
       "--theme-widget-border-color": "#E0E0E0", // Border color for hp-client
       "--theme-widget-shadow": "none", // No shadow for hp-client
 
+      // Table Styles
+      "--theme-table-head-bg": "#E8F2FF", // Table header background - very light blue tint
+      // Alternative lighter options:
+      // "#F0F7FF" - extremely light blue tint (almost white)
+      // "#F5F9FF" - very subtle blue tint
+      // "#F9FAFB" - neutral light gray (matches round table header)
+      "--theme-table-head-color": "var(--theme-text-primary,rgb(26, 44, 28))", // Table header text color
+      "--theme-table-body-color": "var(--theme-text-primary, #1a202c)", // Table body text color
+      "--theme-table-row-even-bg": "rgba(236, 236, 236, 0.54)", // Even row background (#ececec8a)
+      "--theme-table-border-color": "var(--theme-border-color, #E0E0E0)", // Table border color
+      "--theme-table-classic-head-color": "#B5B7C0", // Classic table header color
+      "--theme-table-round-head-bg": "var(--theme-bg-secondary, #F9FAFB)", // Round table header background
+      "--theme-table-round-head-color": "var(--theme-text-secondary, #475467)", // Round table header color
+      "--theme-table-scrollbar-track": "var(--theme-bg-tertiary, #f1f1f1)", // Scrollbar track color
+      "--theme-table-scrollbar-thumb": "#CCCDCF", // Scrollbar thumb color
+
       // Card Background Colors (HP Client specific)
       "--theme-card-success-rate": "#0073A8", // Dark Blue
       "--theme-card-monthly-performance": "#FFFFFF", // White
