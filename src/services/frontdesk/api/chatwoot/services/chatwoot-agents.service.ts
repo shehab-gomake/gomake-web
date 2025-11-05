@@ -83,26 +83,29 @@ export class ChatwootAgentsService extends BaseChatwootService {
   }
 
   /**
-   * List Agents for Specific Inbox
-   * GET /api/accounts/inbox_members/{inbox_id}
+   * List Assignable Agents for Inbox
+   * GET /api/accounts/assignable_agents?inbox_ids[]={inbox_id}
    *
-   * Fetches only the agents assigned to a specific inbox.
-   * This is useful for showing inbox-specific agent assignments.
+   * Fetches agents who can be assigned to conversations in a specific inbox.
+   * This includes inbox members PLUS all account administrators.
+   * This matches Chatwoot's frontend behavior for assignment dropdowns.
    * Note: Does NOT use account ID in URL path (authenticated user's account is used)
    *
    * @param accountId - The numeric ID of the account (kept for compatibility but not used in URL)
    * @param inboxId - The numeric ID of the inbox
-   * @returns Promise with array of agents assigned to the inbox
+   * @returns Promise with array of agents who can be assigned (inbox members + admins)
    *
    * @example
    * ```typescript
-   * const inboxAgents = await agentsService.listInboxAgents(123, 456);
-   * console.log(inboxAgents); // [{ id: 1, name: 'John Doe', ... }]
+   * const assignableAgents = await agentsService.listInboxAgents(123, 456);
+   * console.log(assignableAgents); // [{ id: 1, name: 'Agent', ... }, { id: 2, name: 'Admin', ... }]
    * ```
    */
   async listInboxAgents(accountId: number, inboxId: number): Promise<Agent[]> {
+    // Use assignable_agents endpoint which includes inbox members + administrators
+    // This matches Chatwoot's frontend behavior
     const response = await this.get<GetInboxMembersResponse>(
-      `/api/accounts/inbox_members/${inboxId}`
+      `/api/accounts/assignable_agents?inbox_ids[]=${inboxId}`
     );
 
     // The response is wrapped in a `payload` property

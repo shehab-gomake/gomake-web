@@ -44,12 +44,14 @@ export interface UseChatwootInboxAgentsResult {
  *
  * @param accountId - Account ID to fetch agents for (optional, uses selected account if not provided)
  * @param inboxId - Inbox ID to fetch agents for (required)
+ * @param conversationId - Conversation ID to trigger refetch when switching conversations (optional)
  * @param autoFetch - Whether to automatically fetch on mount (default: true)
  * @returns Inbox agents data, loading state, error, and refresh function
  */
 export function useChatwootInboxAgents(
   accountId?: number | null,
   inboxId?: number | null,
+  conversationId?: number | null,
   autoFetch: boolean = true
 ): UseChatwootInboxAgentsResult {
   const selectedAccountId = useRecoilValue(chatwootSelectedAccountAtom);
@@ -112,7 +114,7 @@ export function useChatwootInboxAgents(
       }));
 
       try {
-        console.log(`[useChatwootInboxAgents] 🚀 Fetching agents for inbox ${inboxId} in account ${effectiveAccountId}`);
+        console.log(`[useChatwootInboxAgents] 🚀 Fetching agents for inbox ${inboxId} in account ${effectiveAccountId}${conversationId ? ` (conversation: ${conversationId})` : ''}`);
         const agents = await chatwootService.agents.listInboxAgents(effectiveAccountId, inboxId);
 
         setInboxAgentsState((prev) => ({
@@ -158,12 +160,12 @@ export function useChatwootInboxAgents(
     await fetchInboxAgents(true);
   }, [fetchInboxAgents]);
 
-  // Auto-fetch on mount or when account/inbox changes
+  // Auto-fetch on mount or when account/inbox/conversation changes
   useEffect(() => {
     if (autoFetch && effectiveAccountId && inboxId) {
       fetchInboxAgents();
     }
-  }, [effectiveAccountId, inboxId, autoFetch]); // Only depend on IDs and autoFetch
+  }, [effectiveAccountId, inboxId, conversationId, autoFetch]); // Refetch when conversation changes
 
   /**
    * Filter to only verified agents (confirmed: true)

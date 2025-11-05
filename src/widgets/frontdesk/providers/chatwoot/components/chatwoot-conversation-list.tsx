@@ -143,7 +143,7 @@ export const ChatwootConversationList: React.FC<ChatwootConversationListProps> =
           flex: 1,
           overflow: "auto",
           backgroundColor: neutralColor(0),
-          px: 0.5,
+          px: 0,
           position: "relative",
         }}
       >
@@ -174,7 +174,7 @@ export const ChatwootConversationList: React.FC<ChatwootConversationListProps> =
           // Conversation list
           <List
             sx={{
-              py: 0.5,
+              py: 0,
               backgroundColor: neutralColor(0),
             }}
           >

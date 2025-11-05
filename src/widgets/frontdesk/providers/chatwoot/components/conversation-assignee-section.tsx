@@ -8,7 +8,7 @@
  * Pattern from Chatwoot: Shows only verified agents assigned to the inbox.
  */
 
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   Box,
   Typography,
@@ -22,34 +22,33 @@ import {
 import PersonIcon from '@mui/icons-material/Person';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import { colorTokens } from '@/widgets/frontdesk/design-system';
-import { chatwootService } from '@/services/frontdesk';
-import { extractConversation, extractErrorMessage } from '../utils/api-response-extractors';
 import { useChatwootInboxAgents } from '../hooks/resources';
 import { useChatwootProfile } from '../hooks/use-chatwoot-profile';
+import { useConversationAssignmentActions } from '../hooks/actions/use-conversation-assignment-actions';
 import type { Agent } from '@/services/frontdesk/api/chatwoot/types/agents.types';
+import type { ChatwootConversation } from '@/services/frontdesk/api/chatwoot/types/conversations.types';
 
 interface ConversationAssigneeSectionProps {
   /** Current assignee */
   assignee?: Agent | null;
   /** Account ID for API calls */
   accountId?: number;
-  /** Conversation ID for API calls */
-  conversationId?: number;
+  /** Conversation object for updates */
+  conversation?: ChatwootConversation | null;
   /** Inbox ID for fetching inbox-specific agents */
   inboxId?: number;
-  /** Callback when assignee is changed */
-  onAssigneeChanged?: (newAssignee: Agent | null) => void;
+  /** Callback to update the conversation in parent state */
+  updateConversation?: (updates: Partial<ChatwootConversation>) => void;
 }
 
 export const ConversationAssigneeSection: React.FC<ConversationAssigneeSectionProps> = ({
   assignee,
   accountId,
-  conversationId,
+  conversation,
   inboxId,
-  onAssigneeChanged,
+  updateConversation = () => {},
 }) => {
   const [menuAnchor, setMenuAnchor] = useState<null | HTMLElement>(null);
-  const [updating, setUpdating] = useState(false);
 
   // Get current user profile for "Self Assign" feature
   const { profile } = useChatwootProfile();
@@ -57,7 +56,15 @@ export const ConversationAssigneeSection: React.FC<ConversationAssigneeSectionPr
 
   // Use inbox-specific agents hook - shows only agents assigned to this inbox
   // Automatically filters to verified agents only
-  const { verifiedAgents, loading: loadingAgents } = useChatwootInboxAgents(accountId, inboxId);
+  // Pass conversation.id to trigger refetch when switching conversations
+  const { verifiedAgents, loading: loadingAgents } = useChatwootInboxAgents(accountId, inboxId, conversation?.id);
+
+  // Use the centralized assignment actions hook
+  const { handleAssignAgent, isAssigning } = useConversationAssignmentActions({
+    accountId: accountId ?? null,
+    conversation: conversation ?? null,
+    updateConversation,
+  });
 
   // Check if current user can self-assign
   const canSelfAssign = useMemo(() => {
@@ -68,38 +75,19 @@ export const ConversationAssigneeSection: React.FC<ConversationAssigneeSectionPr
 
   const handleAssign = async (agentId: number | null) => {
     setMenuAnchor(null);
-    if (!accountId || !conversationId) return;
 
-    // Optimistic update
-    const previousAssignee = assignee;
-    if (onAssigneeChanged) {
-      onAssigneeChanged(agentId === null ? null : assignee);
-    }
+    // Find the agent data to pass for optimistic update
+    const agentData = agentId
+      ? verifiedAgents.find(a => a.id === agentId)
+      : undefined;
 
-    setUpdating(true);
-    try {
-      const response = await chatwootService.conversations.updateConversation(
-        accountId,
-        conversationId,
-        { assignee_id: agentId }
-      );
-
-      // Extract updated assignee from response
-      const fallbackConversation = { id: conversationId, meta: { assignee: null } } as any;
-      const updatedConversation = extractConversation(response, fallbackConversation);
-      const newAssignee = updatedConversation?.meta?.assignee || null;
-
-      // Update with actual data from server
-      onAssigneeChanged?.(newAssignee);
-    } catch (error) {
-      const errorMessage = extractErrorMessage(error);
-      console.error('[handleAssign] Failed to update assignee:', errorMessage);
-      // Revert optimistic update on error
-      onAssigneeChanged?.(previousAssignee || null);
-      // TODO: Show error toast with message: errorMessage
-    } finally {
-      setUpdating(false);
-    }
+    // Use the hook's handler with proper agent data
+    await handleAssignAgent(agentId, agentData ? {
+      id: agentData.id!,
+      name: agentData.name,
+      email: agentData.email,
+      thumbnail: agentData.thumbnail,
+    } : undefined);
   };
 
   const handleUnassign = () => {
@@ -131,9 +119,9 @@ export const ConversationAssigneeSection: React.FC<ConversationAssigneeSectionPr
       {assignee ? (
         <Box
           onClick={(e) => {
-            if (!updating) {
+            if (!isAssigning) {
               setMenuAnchor(e.currentTarget);
-              // Agents are automatically fetched by useChatwootAgents hook
+              // Agents are automatically fetched by useChatwootInboxAgents hook
             }
           }}
           sx={{
@@ -144,14 +132,14 @@ export const ConversationAssigneeSection: React.FC<ConversationAssigneeSectionPr
             backgroundColor: colorTokens.neutral[50],
             borderRadius: '6px',
             border: `1px solid ${colorTokens.semantic.border.default}`,
-            cursor: updating ? 'not-allowed' : 'pointer',
-            opacity: updating ? 0.6 : 1,
+            cursor: isAssigning ? 'not-allowed' : 'pointer',
+            opacity: isAssigning ? 0.6 : 1,
             '&:hover': {
-              backgroundColor: updating ? colorTokens.neutral[50] : colorTokens.neutral[100],
+              backgroundColor: isAssigning ? colorTokens.neutral[50] : colorTokens.neutral[100],
             },
           }}
         >
-          {updating ? (
+          {isAssigning ? (
             <CircularProgress size={32} />
           ) : (
             <>
@@ -198,14 +186,14 @@ export const ConversationAssigneeSection: React.FC<ConversationAssigneeSectionPr
           variant="outlined"
           size="small"
           fullWidth
-          startIcon={updating ? <CircularProgress size={16} /> : <PersonIcon />}
+          startIcon={isAssigning ? <CircularProgress size={16} /> : <PersonIcon />}
           onClick={(e) => {
-            if (!updating) {
+            if (!isAssigning) {
               setMenuAnchor(e.currentTarget);
-              // Agents are automatically fetched by useChatwootAgents hook
+              // Agents are automatically fetched by useChatwootInboxAgents hook
             }
           }}
-          disabled={updating}
+          disabled={isAssigning}
           sx={{
             textTransform: 'none',
             justifyContent: 'flex-start',
