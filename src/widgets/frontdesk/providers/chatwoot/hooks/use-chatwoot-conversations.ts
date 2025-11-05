@@ -177,9 +177,16 @@ export const useChatwootConversations = (accountId: number | null, options: Part
     const isFilterChange = filterKey !== prevFilterKeyRef.current;
     prevFilterKeyRef.current = filterKey;
 
+    // Clear stale conversations immediately when filters change
+    // This prevents showing old conversations from previous view during fetch
+    if (isFilterChange) {
+      setConversations([]);
+      setLoadingType('initialLoading', true);
+    }
+
     // Fetch conversations with filter change flag
     fetchConversations(1, false, isFilterChange);
-  }, [accountId, options, fetchConversations]);
+  }, [accountId, options, fetchConversations, setConversations, setLoadingType]);
 
   return {
     conversations,

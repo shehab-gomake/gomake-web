@@ -11,7 +11,7 @@ import {
   ConversationAssigneeType,
   ChatwootConversation,
 } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
-import { RouteType } from "@/widgets/frontdesk/routing/types";
+import { RouteType, ChatwootView } from "@/widgets/frontdesk/routing/types";
 import { chatwootService } from "@/services/frontdesk";
 import { buildConversationFilters, matchesStatusFilter } from "../utils/filter-utils";
 import { createLogger } from "@/services/frontdesk/utils/logger";
@@ -183,7 +183,11 @@ export const useChatwootProvider = () => {
   const handleConversationSelect = useCallback(
     async (conversation: ChatwootConversation) => {
       // Navigate to conversation - URL will become source of truth
-      const inboxId = conversation.inbox_id?.toString();
+      // Only pass inbox_id when in CHANNELS view
+      // For ALL_CONVERSATIONS, MY_INBOX, MENTIONS, UNATTENDED - don't pass it
+      const inboxId = router.isChannelsView
+        ? conversation.inbox_id?.toString()
+        : undefined;
       router.navigateToConversation(conversation.id.toString(), inboxId);
 
       // Mark conversation as read (business logic - independent of navigation state)
