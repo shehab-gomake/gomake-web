@@ -1,18 +1,20 @@
-import { getItem, setItem } from "@/services/storage-data";
+import { setItem } from "@/services/storage-data";
 import { ITheme, themeState } from "@/store";
-import { userState } from "@/store/user";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback } from "react";
 import { useRecoilState } from "recoil";
 
 const useGomakeTheme = () => {
   const [theme, setTheme] = useRecoilState(themeState);
+
   const changedTheme = (theme: ITheme) => {
     setTheme(theme);
   };
+
   const changeThemeMode = useCallback(() => {
     const selectedTheme: any = theme.themeMode;
     setItem("themeMode", selectedTheme === "dark" ? "light" : "dark");
   }, []);
+
   const getColor = useCallback(
     (pattern: string, degree: number) => {
       if (degree >= 500) {
@@ -51,48 +53,100 @@ const useGomakeTheme = () => {
     },
     [theme]
   );
+
   const primaryColor = useCallback(
     (degree: number) => {
+      // Check for CSS variable first (for theme-based colors) //!here important
+      if (typeof window !== "undefined") {
+        const root = document.documentElement;
+        const computedStyle = getComputedStyle(root);
+
+        // Map degree to CSS variable names
+        const cssVarMap: { [key: number]: string } = {
+          100: "--theme-primary-light",
+          200: "--theme-primary-disabled",
+          500: "--theme-primary-color",
+          700: "--theme-primary-text",
+        };
+
+        const cssVar = cssVarMap[degree];
+        if (cssVar) {
+          const cssValue = computedStyle.getPropertyValue(cssVar).trim();
+          if (cssValue) {
+            return cssValue;
+          }
+        }
+      }
+
+      // Fallback to existing behavior
       return getColor("primary", degree);
     },
     [theme]
   );
+
   const secondColor = useCallback(
     (degree: number) => {
+      // Check for CSS variable first (for theme-based colors) //!here important
+      if (typeof window !== "undefined") {
+        const root = document.documentElement;
+        const computedStyle = getComputedStyle(root);
+
+        // Map degree to CSS variable names
+        const cssVarMap: { [key: number]: string } = {
+          500: "--theme-secondary-color",
+          100: "--theme-secondary-light",
+        };
+
+        const cssVar = cssVarMap[degree];
+        if (cssVar) {
+          const cssValue = computedStyle.getPropertyValue(cssVar).trim();
+          if (cssValue) {
+            return cssValue;
+          }
+        }
+      }
+
+      // Fallback to existing behavior
       return getColor("second", degree);
     },
     [theme]
   );
+
   const successColor = useCallback(
     (degree: number) => {
       return getColor("success", degree);
     },
     [theme]
   );
+
   const warningColor = useCallback(
     (degree: number) => {
       return getColor("warning", degree);
     },
     [theme]
   );
+
   const errorColor = useCallback(
     (degree: number) => {
       return getColor("error", degree);
     },
     [theme]
   );
+
   const neutralColor = useCallback(
     (degree: number) => {
       return getColor("neutral", degree);
     },
     [theme]
   );
+
   const grayColor = useCallback(
     (degree: number) => {
       return getColor("gray", degree);
     },
     [theme]
   );
+
   return {
     theme,
     changedTheme,

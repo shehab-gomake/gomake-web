@@ -46,15 +46,12 @@ const useStyle = () => {
       },
       selectCustomerContainer: {
         width: "100%",
-        border: `none`,
-        borderRadius: "4px",
         height: 40,
         display: "flex",
         alignItems: "center" as "center",
       },
       selectTypeContainer: {
         width: "100%",
-        border: `none`,
       },
       btnContainer: {
         display: "flex",

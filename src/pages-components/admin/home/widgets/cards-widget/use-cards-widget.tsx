@@ -75,11 +75,21 @@ const useCardWidget = () => {
       cardBgColor === "#E0E0E0" ||
       cardBgColor.toLowerCase() === "#e0e0e0"
     ) {
-      return "#1a202c"; // Dark text for white/light cards
+      return "#1a202c";
     }
 
-    // Default: white text for colored cards
     return "#FFFFFF";
+  };
+
+  const getCardNumberColor = (cardKey: string) => {
+    if (
+      cardKey === EStatisticsLabels.MONTHLY_PERFORMANCE ||
+      cardKey === EStatisticsLabels.ORDERS
+    ) {
+      return "#000000";
+    }
+    // For other cards, use the same color as text
+    return getCardTextColor(cardKey);
   };
 
   const getCardIcon = (cardKey: string) => {
@@ -270,6 +280,7 @@ const useCardWidget = () => {
     getCardIcon,
     getCardColor,
     getCardTextColor,
+    getCardNumberColor,
     getCardBorder,
     getCardLabel,
   };

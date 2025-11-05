@@ -161,6 +161,15 @@ const hpClientThemeConfig: ThemeConfig = {
       "--theme-button-radius": "8px", // Button border radius - 16px for hp-client
       "--theme-button-full-width": "100%", // Button full width for hp-client
 
+      // Dropdown/Autocomplete Styles
+      "--theme-dropdown-shadow": "none",
+      "--theme-dropdown-border": "none",
+      "--theme-dropdown-border--color": "#E0E0E0",
+      "--theme-dropdown-border-radius": "var(--theme-radius-md, 8px)",
+      "--theme-dropdown-placeholder-color": "#A3A3A3",
+      "--theme-dropdown-placeholder-size": "14px",
+      "--theme-dropdown-placeholder-weight": "400",
+
       // Widget Styles (for quote widget mainContainer)
       "--theme-widget-border-width": "1.5px", // Slightly thicker border for hp-client (between 1px and 2px)
       "--theme-widget-border-color": "#E0E0E0", // Border color for hp-client

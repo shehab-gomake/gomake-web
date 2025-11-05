@@ -13,6 +13,7 @@ const HpCardsWidget = () => {
     getCardIcon,
     getCardColor,
     getCardTextColor,
+    getCardNumberColor,
     getCardBorder,
     getCardLabel,
   } = useCardWidget();
@@ -85,6 +86,7 @@ const HpCardsWidget = () => {
                 : "0"
             }
             textColor={getCardTextColor(card?.key)}
+            numberColor={getCardNumberColor(card?.key)}
             icon={getCardIcon(card?.key)}
           />
         ))}

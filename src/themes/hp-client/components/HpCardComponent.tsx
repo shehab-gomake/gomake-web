@@ -3,6 +3,7 @@ import { CSSProperties } from "react";
 
 interface IHpCardProps {
   textColor?: string;
+  numberColor?: string;
   text?: string;
   number?: string;
   icon?: JSX.Element;
@@ -12,6 +13,7 @@ interface IHpCardProps {
 const HpCardComponent = ({
   text,
   textColor,
+  numberColor,
   number,
   icon,
   style,
@@ -100,7 +102,7 @@ const HpCardComponent = ({
     fontWeight: 500,
     fontSize: "30px",
     lineHeight: "40px", // or 114%
-    color: textColor || "#FFFFFF",
+    color: numberColor || textColor || "#FFFFFF",
     margin: 0,
     padding: 0,
     display: "flex",

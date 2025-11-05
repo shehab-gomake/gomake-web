@@ -9,6 +9,7 @@ import { useState } from "react";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { Stack } from "@mui/material";
 import { ClientBalanceComponent } from "@/components/client-balance/client-balance";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 const HomeTableWidget = ({
   clientId,
@@ -19,6 +20,7 @@ const HomeTableWidget = ({
   const { classes } = useStyle();
   const { t } = useTranslation();
   const { CheckPermission } = useUserPermission();
+  const { secondColor, primaryColor } = useGomakeTheme();
   const tabs: (ITab & { permission?: boolean })[] = [
     {
       title: t("home.tabs.Quotes"),
@@ -91,9 +93,10 @@ const HomeTableWidget = ({
             onClick={() => setSelectedTab(index)} // Ensure this updates the state
             style={{
               padding: 10,
-              backgroundColor: index === selectedTab ? "#ED028C" : "#D5D6E9",
+              backgroundColor:
+                index === selectedTab ? secondColor(500) : primaryColor(100),
               borderRadius: 8,
-              color: index === selectedTab ? "#fff" : "#252661",
+              color: index === selectedTab ? "#fff" : primaryColor(700),
               ...FONT_FAMILY.Inter(500, 16),
               cursor: "pointer",
             }}
