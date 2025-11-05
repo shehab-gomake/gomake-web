@@ -24,14 +24,13 @@ const useAddNewItem = ({ onClose, getQuote, documentType, getCalculateQuoteItem,
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
   const [selectedProduct, setSelectedProduct] = useState<any>({});
-  const { alertFaultAdded, alertSuccessAdded } = useSnackBar();
+  const { alertFaultAdded, alertSuccessAdded, alertFault } = useSnackBar();
   const { navigate } = useGomakeRouter();
   const router = useRouter();
   const { CheckPermission } = useUserPermission();
   const [selectedFirstMaterial, setSelectedFirstMaterial] = useRecoilState<any>(selectedFirstMaterialState);
   const [combinedData, setCombinedData] = useState<any>([]);
   const [quoteItemValue, setQuoteItemValue] = useRecoilState<any>(quoteItemState);
-
   const [active, setActive] = useState(true);
   const [productName, setProductName] = useState("");
   const [productCode, setProductCode] = useState("");
@@ -430,6 +429,17 @@ const useAddNewItem = ({ onClose, getQuote, documentType, getCalculateQuoteItem,
     setSelectedFirstMaterial(true);
     if (router.query.isNewCreation) {
       if (selectedProduct?.category === ProductCategoryType.MATERIAL) {
+        // Validate supplier selection for purchase order material items
+        // Only validate when it's a purchase order, creating new, and isMaterial is true
+        if (
+          documentType === DOCUMENT_TYPE.purchaseOrder &&
+          isMaterial &&
+          !quoteItemValue?.client?.id
+        ) {
+          alertFault(t("home.admin.pleaseSelectSupplier"));
+          // Don't close modal, let user select supplier and try again
+          return;
+        }
         setSelectedFirstMaterial(true);
         getDocumentItemDataFromMaterial();
       } else {

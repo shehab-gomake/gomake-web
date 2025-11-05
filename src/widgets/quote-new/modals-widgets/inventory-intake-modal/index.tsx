@@ -21,6 +21,9 @@ import { EDataTypeEnum } from "@/widgets/materials-widget/components/table-cell-
 import { useRecoilValue } from "recoil";
 import { currenciesState } from "@/widgets/materials-widget/state";
 import { GomakePrimaryButton } from "@/components";
+import { useInventoryIntake } from "./use-inventory-intake";
+import { InventoryPriceInput } from "./inventory-price-input";
+import { InventoryCurrencyInput } from "./inventory-currency-input";
 
 interface InventoryIntakeModalProps {
   open: boolean;
@@ -75,6 +78,9 @@ const InventoryIntakeModal: React.FC<InventoryIntakeModalProps> = ({
   // Use mock data if no real data is provided
   const [rows, setRows] = useState<InventoryRowData[]>([]);
   const [isAllIntaked, setIsAllIntaked] = useState(false);
+
+  // Use custom hook for inventory intake operations
+  const { updateCellData } = useInventoryIntake(rows, setRows);
 
   useEffect(() => {
     if (open) {
@@ -173,6 +179,9 @@ const InventoryIntakeModal: React.FC<InventoryIntakeModalProps> = ({
                         <TableHead>
                           <TableRow sx={classes.headerRow}>
                             <TableCell sx={classes.headerCell}>
+                              {t("materials.childTable.code")}
+                            </TableCell>
+                            <TableCell sx={classes.headerCell}>
                               {t("materials.childTable.purchasePrice")}
                               {convertedPricingUnit && (
                                 <>
@@ -214,46 +223,51 @@ const InventoryIntakeModal: React.FC<InventoryIntakeModalProps> = ({
                           <TableRow sx={classes.bodyRow}>
                             <TableCell sx={classes.bodyCell}>
                               <TableCellData
-                                value={[row.purchasePrice?.perUnit?.toString() || '0']}
-                                isEditable={false}
-                                type={EDataTypeEnum.ARRAY_INPUT}
-                                id={row.purchaseOrderItemId}
-                                parameterKey="purchasePrice"
-                                isAdmin={false}
-                                onChangeRowCheckBox={() => { }}
-                              />
-                            </TableCell>
-                            <TableCell sx={classes.bodyCell}>
-                              <TableCellData
-                                value={row.purchasePrice?.currency?.toLowerCase() || ''}
-                                isEditable={false}
-                                type={EDataTypeEnum.CURRENCY}
-                                id={row.purchaseOrderItemId}
-                                parameterKey="purchaseCurrency"
-                                isAdmin={false}
-                                onChangeRowCheckBox={() => { }}
-                              />
-                            </TableCell>
-                            <TableCell sx={classes.bodyCell}>
-                              <TableCellData
-                                value={[row.salePrice?.perUnit?.toString() || '0']}
+                                value={[row.code || '000']}
                                 isEditable={true}
-                                type={EDataTypeEnum.ARRAY_INPUT}
+                                type={EDataTypeEnum.STRING}
                                 id={row.purchaseOrderItemId}
-                                parameterKey="salePrice"
+                                parameterKey="code"
                                 isAdmin={false}
                                 onChangeRowCheckBox={() => { }}
                               />
                             </TableCell>
                             <TableCell sx={classes.bodyCell}>
-                              <TableCellData
+                              <InventoryPriceInput
+                                value={row.purchasePrice?.perUnit || 0}
+                                isEditable={true}
+                                onUpdate={async (newValue) => {
+                                  await updateCellData(row.purchaseOrderItemId, "purchasePrice", newValue);
+                                }}
+                              />
+                            </TableCell>
+                            <TableCell sx={classes.bodyCell}>
+                              <InventoryCurrencyInput
+                                value={row.purchasePrice?.currency?.toLowerCase() || ''}
+                                isEditable={true}
+                                currencyLabel={t("materials.childTable.purchaseCurrency")}
+                                onUpdate={async (newValue, exchangeRate) => {
+                                  await updateCellData(row.purchaseOrderItemId, "purchaseCurrency", newValue, exchangeRate);
+                                }}
+                              />
+                            </TableCell>
+                            <TableCell sx={classes.bodyCell}>
+                              <InventoryPriceInput
+                                value={row.salePrice?.perUnit || 0}
+                                isEditable={true}
+                                onUpdate={async (newValue) => {
+                                  await updateCellData(row.purchaseOrderItemId, "salePrice", newValue);
+                                }}
+                              />
+                            </TableCell>
+                            <TableCell sx={classes.bodyCell}>
+                              <InventoryCurrencyInput
                                 value={row.salePrice?.currency?.toLowerCase() || ''}
                                 isEditable={true}
-                                type={EDataTypeEnum.CURRENCY}
-                                id={row.purchaseOrderItemId}
-                                parameterKey="saleCurrency"
-                                isAdmin={false}
-                                onChangeRowCheckBox={() => { }}
+                                currencyLabel={t("materials.childTable.saleCurrency")}
+                                onUpdate={async (newValue, exchangeRate) => {
+                                  await updateCellData(row.purchaseOrderItemId, "saleCurrency", newValue, exchangeRate);
+                                }}
                               />
                             </TableCell>
                             <TableCell sx={classes.bodyCell}>

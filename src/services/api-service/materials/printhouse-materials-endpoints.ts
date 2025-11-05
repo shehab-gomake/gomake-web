@@ -64,6 +64,7 @@ const UPDATE_PRINT_HOUSE_MATERIAL_SUPPLIER_URL = "/v1/printhouse-materials/updat
 const ADD_PRINT_HOUSE_MATERIAL_SUPPLIER_URL = "/v1/printhouse-materials/add-print-house-material-supplier";
 const UPDATE_SUPPLIER_INVENTORIES_ACTION_URL = "/v1/printhouse-materials/update-supplier-inventories-action";
 const UPDATE_PRINTHOUSE_MATERIAL_SUPPLIERS_ACTION_URL = "/v1/printhouse-materials/update-printhouse-material-suppliers-action";
+const CALCULATE_PRICE_URL = "/v1/printhouse-materials/calculate-price";
 
 const getPrintHouseMaterialCategoriesApi: ICallAndSetData = async (
   callApi,
@@ -594,6 +595,27 @@ const updatePrintHouseMaterialSuppliersActionApi: ICallAndSetData = async (
   );
 };
 
+const calculatePriceApi: ICallAndSetData = async (
+  callApi,
+  callBack,
+  data: {
+    printHouseMaterialId: string;
+    price: number;
+    currency: string;
+    priceIndex: number;
+    exchangeRate: number;
+    key: string;
+  }
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.PUT,
+    CALCULATE_PRICE_URL,
+    callBack,
+    data
+  );
+};
+
 export {
   getPrintHouseMaterialCategoriesApi,
   getPrintHouseMaterialCategoryDataApi,
@@ -632,5 +654,7 @@ export {
   addPrintHouseMaterialSupplierApi,
   // New supplier action APIs
   updateSupplierInventoriesActionApi,
-  updatePrintHouseMaterialSuppliersActionApi
+  updatePrintHouseMaterialSuppliersActionApi,
+  // Price calculation API
+  calculatePriceApi
 };
