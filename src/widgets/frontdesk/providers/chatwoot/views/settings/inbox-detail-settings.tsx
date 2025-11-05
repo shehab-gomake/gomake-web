@@ -45,7 +45,7 @@ export const InboxDetailSettings: React.FC<InboxDetailSettingsProps> = ({
   inbox,
   onBack,
 }) => {
-  const { selectedAccount } = useChatwootProvider();
+  const { selectedAccountId } = useChatwootProvider();
   const [activeTab, setActiveTab] = useState<SettingsTab>("settings");
   const [isSaving, setIsSaving] = useState(false);
   const [notification, setNotification] = useState<{
@@ -54,7 +54,7 @@ export const InboxDetailSettings: React.FC<InboxDetailSettingsProps> = ({
     severity: "success" | "error";
   }>({ open: false, message: "", severity: "success" });
 
-  const accountId = selectedAccount?.id;
+  const accountId = selectedAccountId;
   const inboxDisplayName = inbox.name || inbox.email || "Unknown Inbox";
   const inboxEmail =
     inbox.email ||
@@ -162,22 +162,58 @@ export const InboxDetailSettings: React.FC<InboxDetailSettingsProps> = ({
 
   // Handle business hours save
   const handleSaveBusinessHours = async (schedule: any) => {
-    // TODO: Implement business hours save
-    setNotification({
-      open: true,
-      message: "Business hours API endpoint not yet implemented",
-      severity: "error",
-    });
+    if (!accountId) return;
+
+    setIsSaving(true);
+    try {
+      await chatwootService.inboxes.updateBusinessHours(
+        accountId,
+        inbox.id,
+        schedule
+      );
+      setNotification({
+        open: true,
+        message: "Business hours saved successfully",
+        severity: "success",
+      });
+    } catch (error) {
+      console.error("Failed to save business hours:", error);
+      setNotification({
+        open: true,
+        message: "Failed to save business hours. Please try again.",
+        severity: "error",
+      });
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   // Handle CSAT save
   const handleSaveCSAT = async (config: any) => {
-    // TODO: Implement CSAT save
-    setNotification({
-      open: true,
-      message: "CSAT API endpoint not yet implemented",
-      severity: "error",
-    });
+    if (!accountId) return;
+
+    setIsSaving(true);
+    try {
+      await chatwootService.inboxes.updateCSATConfig(
+        accountId,
+        inbox.id,
+        config
+      );
+      setNotification({
+        open: true,
+        message: "CSAT settings saved successfully",
+        severity: "success",
+      });
+    } catch (error) {
+      console.error("Failed to save CSAT settings:", error);
+      setNotification({
+        open: true,
+        message: "Failed to save CSAT settings. Please try again.",
+        severity: "error",
+      });
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   if (!accountId) {

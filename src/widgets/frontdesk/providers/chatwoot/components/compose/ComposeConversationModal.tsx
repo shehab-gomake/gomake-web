@@ -5,17 +5,17 @@
  * Supports contact selection, inbox selection, and channel-specific message composition.
  */
 
-import React, { useState, useEffect } from "react";
-import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Alert, Stack, TextField, Typography, IconButton, Box, CircularProgress, Chip } from "@mui/material";
+import React, { useState, useEffect, useMemo } from "react";
+import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Alert, Stack, Typography, IconButton, Box, CircularProgress } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import SendIcon from "@mui/icons-material/Send";
-import AttachFileIcon from "@mui/icons-material/AttachFile";
-import PersonAddIcon from "@mui/icons-material/PersonAdd";
-import { ContactSelector } from "./ContactSelector";
+import { ContactSelectionField } from "./ContactSelectionField";
 import { CreateContactModal } from "./CreateContactModal";
 import { MessageEditor } from "./MessageEditor";
-import { AttachmentPreviews } from "./AttachmentPreview";
+import { EmailCompositionFields } from "./EmailCompositionFields";
+import { AttachmentUploader } from "./AttachmentUploader";
 import { InboxSelector } from "./InboxSelector";
+import { ConfirmDialog } from "../settings/ConfirmDialog";
 import { useComposeConversation } from "../../hooks/use-compose-conversation";
 import { getChannelRequirements } from "@/services/frontdesk/api/chatwoot/types/compose.types";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
@@ -27,21 +27,23 @@ interface ComposeConversationModalProps {
   open: boolean;
   onClose: () => void;
   onSuccess?: (conversationId: number) => void;
+  accountId: number | null;
 }
 
 export const ComposeConversationModal: React.FC<ComposeConversationModalProps> = ({
   open,
   onClose,
   onSuccess,
+  accountId,
 }) => {
   const { primaryColor, neutralColor } = useGomakeTheme();
   const [showCreateContact, setShowCreateContact] = useState(false);
-  const [showBcc, setShowBcc] = useState(false);
   const [showTemplateSelector, setShowTemplateSelector] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showExitConfirm, setShowExitConfirm] = useState(false);
 
   const compose = useComposeConversation({
+    accountId,
     onSuccess: (conversationId) => {
       setError(null);
       onSuccess?.(conversationId);
@@ -60,7 +62,6 @@ export const ComposeConversationModal: React.FC<ComposeConversationModalProps> =
     if (!compose.isSubmitting) {
       compose.resetForm();
       setError(null);
-      setShowBcc(false);
       setShowExitConfirm(false);
       onClose();
     }
@@ -96,7 +97,6 @@ export const ComposeConversationModal: React.FC<ComposeConversationModalProps> =
   useEffect(() => {
     if (open) {
       setError(null);
-      setShowBcc(false);
     }
   }, [open]);
 
@@ -118,21 +118,13 @@ export const ComposeConversationModal: React.FC<ComposeConversationModalProps> =
     }
   };
 
-  // File upload handling
-  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files || []);
-    compose.updateField("attachments", [...compose.formState.attachments, ...files]);
-  };
-
-  const handleRemoveFile = (index: number) => {
-    const newAttachments = compose.formState.attachments.filter((_, i) => i !== index);
-    compose.updateField("attachments", newAttachments);
-  };
-
-  const canSubmit =
-    !compose.isSubmitting &&
-    compose.formState.contact &&
-    (compose.formState.message || (requirements && !requirements.messageRequired));
+  const canSubmit = useMemo(
+    () =>
+      !compose.isSubmitting &&
+      compose.formState.contact &&
+      (compose.formState.message || (requirements && !requirements.messageRequired)),
+    [compose.isSubmitting, compose.formState.contact, compose.formState.message, requirements]
+  );
 
   // Keyboard shortcuts
   useEffect(() => {
@@ -171,6 +163,8 @@ export const ComposeConversationModal: React.FC<ComposeConversationModalProps> =
         }}
         maxWidth="md"
         fullWidth
+        aria-labelledby="compose-modal-title"
+        aria-describedby="compose-modal-description"
         PaperProps={{
           sx: {
             borderRadius: 2,
@@ -209,6 +203,7 @@ export const ComposeConversationModal: React.FC<ComposeConversationModalProps> =
               <SendIcon />
             </Box>
             <Typography
+              id="compose-modal-title"
               variant="h5"
               sx={{
                 fontWeight: 600,
@@ -223,6 +218,7 @@ export const ComposeConversationModal: React.FC<ComposeConversationModalProps> =
             onClick={handleBackdropClick}
             size="small"
             disabled={compose.isSubmitting}
+            aria-label="Close compose conversation modal"
             sx={{
               color: neutralColor(600),
               "&:hover": {
@@ -247,66 +243,16 @@ export const ComposeConversationModal: React.FC<ComposeConversationModalProps> =
               </Box>
             )}
 
-            {/* To: Field (Contact Selection) */}
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "flex-start",
-                px: 4,
-                py: 3,
-                borderBottom: `1px solid ${neutralColor(200)}`,
-                backgroundColor: neutralColor(25),
-              }}
-            >
-              <Typography
-                sx={{
-                  color: neutralColor(700),
-                  fontSize: "0.875rem",
-                  minWidth: 100,
-                  fontWeight: 600,
-                  pt: 1,
-                  textTransform: "uppercase",
-                  letterSpacing: "0.05em",
-                }}
-              >
-                Contact *
-              </Typography>
-              <Box sx={{ flex: 1 }}>
-                {compose.formState.contact ? (
-                  <Chip
-                    label={
-                      compose.formState.contact.name ||
-                      compose.formState.contact.email ||
-                      compose.formState.contact.phone_number
-                    }
-                    onDelete={() => compose.selectContact(null as any)}
-                    sx={{
-                      backgroundColor: primaryColor(50),
-                      color: primaryColor(700),
-                      border: `1px solid ${primaryColor(200)}`,
-                      fontWeight: 500,
-                      fontSize: "0.875rem",
-                      "& .MuiChip-deleteIcon": {
-                        color: primaryColor(600),
-                        "&:hover": {
-                          color: primaryColor(800),
-                        },
-                      },
-                    }}
-                  />
-                ) : (
-                  <ContactSelector
-                    selectedContact={compose.formState.contact}
-                    searchResults={compose.searchResults}
-                    isSearching={compose.isSearching}
-                    onSearch={compose.searchContacts}
-                    onSelectContact={compose.selectContact}
-                    onCreateContact={() => setShowCreateContact(true)}
-                    error={compose.validationErrors.contact}
-                  />
-                )}
-              </Box>
-            </Box>
+            {/* Contact Selection */}
+            <ContactSelectionField
+              selectedContact={compose.formState.contact}
+              searchResults={compose.searchResults}
+              isSearching={compose.isSearching}
+              onSearch={compose.searchContacts}
+              onSelectContact={compose.selectContact}
+              onCreateContact={() => setShowCreateContact(true)}
+              error={compose.validationErrors.contact}
+            />
 
             {/* Inbox Selection - Show after contact is selected */}
             {compose.formState.contact && (
@@ -350,116 +296,16 @@ export const ComposeConversationModal: React.FC<ComposeConversationModalProps> =
             {compose.formState.contact && compose.formState.selectedContactableInbox && (
               <Box>
                 {/* Email-specific fields */}
-                {requirements?.subjectRequired && (
-                  <Box sx={{ borderBottom: `1px solid ${neutralColor(200)}`, px: 4, py: 3, backgroundColor: neutralColor(25) }}>
-                    <TextField
-                      fullWidth
-                      variant="standard"
-                      label="SUBJECT"
-                      placeholder="Enter subject"
-                      value={compose.formState.subject || ""}
-                      onChange={(e) => compose.updateField("subject", e.target.value)}
-                      error={!!compose.validationErrors.subject}
-                      helperText={compose.validationErrors.subject}
-                      InputProps={{
-                        disableUnderline: true,
-                        sx: {
-                          fontSize: "0.875rem",
-                          color: neutralColor(900),
-                          mt: 0.5,
-                        },
-                      }}
-                      InputLabelProps={{
-                        sx: {
-                          fontSize: "0.75rem",
-                          color: neutralColor(700),
-                          fontWeight: 600,
-                          letterSpacing: "0.05em",
-                        },
-                      }}
-                    />
-                  </Box>
-                )}
-
-                {requirements?.ccBccSupported && (
-                  <>
-                    <Box sx={{ borderBottom: `1px solid ${neutralColor(200)}`, px: 4, py: 2.5, backgroundColor: neutralColor(0) }}>
-                      <Stack direction="row" alignItems="center" spacing={2}>
-                        <Typography
-                          sx={{
-                            minWidth: 50,
-                            fontSize: "0.75rem",
-                            color: neutralColor(700),
-                            fontWeight: 600,
-                            textTransform: "uppercase",
-                            letterSpacing: "0.05em",
-                          }}
-                        >
-                          CC
-                        </Typography>
-                        <TextField
-                          fullWidth
-                          variant="standard"
-                          placeholder="email@example.com (optional)"
-                          value={compose.formState.ccEmails || ""}
-                          onChange={(e) => compose.updateField("ccEmails", e.target.value)}
-                          error={!!compose.validationErrors.ccEmails}
-                          InputProps={{
-                            disableUnderline: true,
-                            sx: { fontSize: "0.875rem", color: neutralColor(900) },
-                          }}
-                        />
-                        {!showBcc && (
-                          <Button
-                            size="small"
-                            onClick={() => setShowBcc(true)}
-                            sx={{
-                              textTransform: "none",
-                              fontSize: "0.8125rem",
-                              color: primaryColor(600),
-                              fontWeight: 500,
-                              minWidth: "auto",
-                              "&:hover": {
-                                backgroundColor: primaryColor(50),
-                              },
-                            }}
-                          >
-                            + BCC
-                          </Button>
-                        )}
-                      </Stack>
-                    </Box>
-                    {showBcc && (
-                      <Box sx={{ borderBottom: `1px solid ${neutralColor(200)}`, px: 4, py: 2.5, backgroundColor: neutralColor(0) }}>
-                        <Stack direction="row" alignItems="center" spacing={2}>
-                          <Typography
-                            sx={{
-                              minWidth: 50,
-                              fontSize: "0.75rem",
-                              color: neutralColor(700),
-                              fontWeight: 600,
-                              textTransform: "uppercase",
-                              letterSpacing: "0.05em",
-                            }}
-                          >
-                            BCC
-                          </Typography>
-                          <TextField
-                            fullWidth
-                            variant="standard"
-                            placeholder="email@example.com (optional)"
-                            value={compose.formState.bccEmails || ""}
-                            onChange={(e) => compose.updateField("bccEmails", e.target.value)}
-                            error={!!compose.validationErrors.bccEmails}
-                            InputProps={{
-                              disableUnderline: true,
-                              sx: { fontSize: "0.875rem", color: neutralColor(900) },
-                            }}
-                          />
-                        </Stack>
-                      </Box>
-                    )}
-                  </>
+                {requirements?.subjectRequired && requirements?.ccBccSupported && (
+                  <EmailCompositionFields
+                    subject={compose.formState.subject || ""}
+                    ccEmails={compose.formState.ccEmails || ""}
+                    bccEmails={compose.formState.bccEmails || ""}
+                    errors={compose.validationErrors}
+                    onSubjectChange={(value) => compose.updateField("subject", value)}
+                    onCcChange={(value) => compose.updateField("ccEmails", value)}
+                    onBccChange={(value) => compose.updateField("bccEmails", value)}
+                  />
                 )}
 
                 {/* WhatsApp Template Button - Only for WhatsApp channels */}
@@ -534,40 +380,15 @@ export const ComposeConversationModal: React.FC<ComposeConversationModalProps> =
 
                 {/* Attachments Section */}
                 {requirements?.attachmentsSupported && (
-                  <Box sx={{ borderTop: `1px solid ${neutralColor(200)}`, px: 4, py: 3, backgroundColor: neutralColor(25) }}>
-                    <Typography
-                      sx={{
-                        fontSize: "0.75rem",
-                        color: neutralColor(700),
-                        fontWeight: 600,
-                        textTransform: "uppercase",
-                        letterSpacing: "0.05em",
-                        mb: 2,
-                      }}
-                    >
-                      Attachments
-                    </Typography>
-                    <Button
-                      component="label"
-                      startIcon={<AttachFileIcon sx={{ fontSize: 18 }} />}
-                      variant="outlined"
-                      sx={{
-                        textTransform: "none",
-                        fontSize: "0.875rem",
-                        color: neutralColor(700),
-                        fontWeight: 500,
-                        borderColor: neutralColor(300),
-                        "&:hover": {
-                          backgroundColor: neutralColor(50),
-                          borderColor: neutralColor(400),
-                        },
-                      }}
-                    >
-                      Choose Files
-                      <input type="file" multiple hidden onChange={handleFileSelect} />
-                    </Button>
-                    <AttachmentPreviews files={compose.formState.attachments} onRemove={handleRemoveFile} />
-                  </Box>
+                  <AttachmentUploader
+                    files={compose.formState.attachments}
+                    onFilesSelect={(files) => compose.updateField("attachments", files)}
+                    onFileRemove={(index) => {
+                      const newAttachments = compose.formState.attachments.filter((_, i) => i !== index);
+                      compose.updateField("attachments", newAttachments);
+                    }}
+                    disabled={compose.isSubmitting}
+                  />
                 )}
               </Box>
             )}
@@ -608,6 +429,7 @@ export const ComposeConversationModal: React.FC<ComposeConversationModalProps> =
             disabled={!canSubmit}
             variant="contained"
             startIcon={compose.isSubmitting ? <CircularProgress size={18} color="inherit" /> : <SendIcon />}
+            aria-label={compose.isSubmitting ? "Sending message" : "Send message"}
             sx={{
               textTransform: "none",
               backgroundColor: primaryColor(600),
@@ -628,72 +450,23 @@ export const ComposeConversationModal: React.FC<ComposeConversationModalProps> =
               },
             }}
           >
-            {compose.isSubmitting ? "Sending..." : "Send Message"}
+            <Box component="span" role={compose.isSubmitting ? "status" : undefined} aria-live="polite">
+              {compose.isSubmitting ? "Sending..." : "Send Message"}
+            </Box>
           </Button>
         </DialogActions>
       </Dialog>
 
       {/* Exit Confirmation Dialog */}
-      <Dialog
+      <ConfirmDialog
         open={showExitConfirm}
         onClose={handleCancelExit}
-        maxWidth="xs"
-        fullWidth
-        PaperProps={{
-          sx: {
-            borderRadius: 2,
-            boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
-          },
-        }}
-      >
-        <DialogTitle sx={{ pb: 1 }}>
-          <Typography variant="h6" sx={{ fontWeight: 600, fontSize: "1.125rem" }}>
-            Discard Changes?
-          </Typography>
-        </DialogTitle>
-        <DialogContent>
-          <Typography sx={{ fontSize: "0.875rem", color: neutralColor(700), lineHeight: 1.6 }}>
-            You have unsaved changes. Are you sure you want to close this conversation? All your progress will be
-            lost.
-          </Typography>
-        </DialogContent>
-        <DialogActions sx={{ px: 3, pb: 3, gap: 1.5 }}>
-          <Button
-            onClick={handleCancelExit}
-            sx={{
-              textTransform: "none",
-              color: neutralColor(700),
-              fontWeight: 500,
-              fontSize: "0.875rem",
-              px: 2.5,
-              "&:hover": {
-                backgroundColor: neutralColor(100),
-              },
-            }}
-          >
-            Keep Editing
-          </Button>
-          <Button
-            onClick={handleConfirmExit}
-            variant="contained"
-            sx={{
-              textTransform: "none",
-              backgroundColor: "#ef4444",
-              color: "white",
-              fontWeight: 600,
-              fontSize: "0.875rem",
-              px: 2.5,
-              boxShadow: "none",
-              "&:hover": {
-                backgroundColor: "#dc2626",
-                boxShadow: "none",
-              },
-            }}
-          >
-            Discard
-          </Button>
-        </DialogActions>
-      </Dialog>
+        onConfirm={handleConfirmExit}
+        title="Discard Changes?"
+        message="You have unsaved changes. Are you sure you want to close this conversation? All your progress will be lost."
+        confirmText="Discard"
+        confirmColor="error"
+      />
 
       {/* WhatsApp Template Selector */}
       <WhatsAppTemplateSelector

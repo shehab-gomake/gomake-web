@@ -198,6 +198,7 @@ export const BaseConversationView: React.FC<BaseConversationViewProps> = ({ empt
         open={showComposeModal}
         onClose={handleComposeClose}
         onSuccess={handleComposeSuccess}
+        accountId={currentAccountId}
       />
     </Stack>
   );

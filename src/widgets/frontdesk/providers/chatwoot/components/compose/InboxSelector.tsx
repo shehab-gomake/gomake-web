@@ -14,6 +14,7 @@ import PublicIcon from "@mui/icons-material/Public";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { useTheme } from "@mui/material/styles";
 import type { ContactableInbox } from "@/services/frontdesk/api/chatwoot/types/inboxes.types";
 
 export interface InboxSelectorProps {
@@ -86,6 +87,7 @@ export const InboxSelector: React.FC<InboxSelectorProps> = ({
   error,
 }) => {
   const { neutralColor, primaryColor } = useGomakeTheme();
+  const theme = useTheme();
 
   return (
     <Box>
@@ -197,7 +199,7 @@ export const InboxSelector: React.FC<InboxSelectorProps> = ({
 
       {/* Error Message */}
       {error && (
-        <Typography sx={{ mt: 1, fontSize: "0.75rem", color: "#ef4444" }}>
+        <Typography sx={{ mt: 1, fontSize: "0.75rem", color: theme.palette.error.main }}>
           {error}
         </Typography>
       )}

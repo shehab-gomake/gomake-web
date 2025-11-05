@@ -25,6 +25,7 @@ import { useTheme } from "@mui/material/styles";
 import type { ChatwootInbox } from "@/services/frontdesk/api/chatwoot/types/inboxes.types";
 import { SettingsSection } from "../../../components/settings";
 import { useChatwootAgents } from "../../../hooks/resources/use-chatwoot-agents";
+import { chatwootService } from "@/services/frontdesk";
 
 interface InboxCollaboratorsTabProps {
   inbox: ChatwootInbox;
@@ -53,13 +54,35 @@ export const InboxCollaboratorsTab: React.FC<InboxCollaboratorsTabProps> = ({
   );
   const [hasAgentChanges, setHasAgentChanges] = useState(false);
   const [hasSettingsChanges, setHasSettingsChanges] = useState(false);
+  const [loadingInboxAgents, setLoadingInboxAgents] = useState(true);
 
-  // Load current inbox agents (mock - would come from API)
+  // Load current inbox agents from API
   useEffect(() => {
-    // TODO: Fetch inbox agents from API
-    // For now, just set empty array
-    setSelectedAgentIds([]);
-  }, [inbox.id]);
+    const fetchInboxAgents = async () => {
+      try {
+        setLoadingInboxAgents(true);
+        const response = await chatwootService.inboxes.getInboxAgents(
+          accountId,
+          inbox.id
+        );
+
+        // Extract agent IDs from response
+        // Response format: { payload: [...agents...] } or similar
+        const inboxAgents = response?.payload || response || [];
+        const agentIds = inboxAgents.map((agent: any) => agent.id);
+
+        setSelectedAgentIds(agentIds);
+      } catch (error) {
+        console.error("Failed to load inbox agents:", error);
+        // Start with empty if API fails
+        setSelectedAgentIds([]);
+      } finally {
+        setLoadingInboxAgents(false);
+      }
+    };
+
+    fetchInboxAgents();
+  }, [inbox.id, accountId]);
 
   const handleAgentChange = (event: any) => {
     const value = event.target.value;
@@ -93,7 +116,7 @@ export const InboxCollaboratorsTab: React.FC<InboxCollaboratorsTabProps> = ({
     setHasSettingsChanges(false);
   };
 
-  if (loadingAgents) {
+  if (loadingAgents || loadingInboxAgents) {
     return (
       <Box
         sx={{
@@ -104,6 +127,9 @@ export const InboxCollaboratorsTab: React.FC<InboxCollaboratorsTabProps> = ({
         }}
       >
         <CircularProgress />
+        <Typography variant="body2" sx={{ ml: 2, color: "text.secondary" }}>
+          {loadingAgents ? "Loading agents..." : "Loading inbox assignments..."}
+        </Typography>
       </Box>
     );
   }

@@ -29,6 +29,8 @@ function debounce<T extends (...args: any[]) => any>(func: T, wait: number): T {
 }
 
 export interface UseComposeConversationOptions {
+  /** Account ID to use for operations */
+  accountId: number | null;
   /** Callback on successful conversation creation */
   onSuccess?: (conversationId: number) => void;
   /** Callback on error */
@@ -36,7 +38,7 @@ export interface UseComposeConversationOptions {
 }
 
 export function useComposeConversation(options?: UseComposeConversationOptions) {
-  const accountId = useRecoilValue(chatwootSelectedAccountAtom);
+  const accountId = options?.accountId;
   const currentUser = useRecoilValue(chatwootProfileAtom);
 
   // Form state
@@ -98,16 +100,6 @@ export function useComposeConversation(options?: UseComposeConversationOptions) 
             filter_operator: "contains",
             values: [query],
             attribute_model: "standard",
-            query_operator: "or",
-          });
-        }
-
-        if (searchName) {
-          filters.push({
-            attribute_key: "name",
-            filter_operator: "contains",
-            values: [query],
-            attribute_model: "standard",
           });
         }
 
@@ -120,9 +112,31 @@ export function useComposeConversation(options?: UseComposeConversationOptions) 
           });
         }
 
-        const response = await chatwootService.contacts.filterContacts({
-          payload: filters,
+        if (searchName) {
+          filters.push({
+            attribute_key: "name",
+            filter_operator: "contains",
+            values: [query],
+            attribute_model: "standard",
+          });
+        }
+
+        // Add query_operator: "or" to all filters except the last one
+        filters.forEach((filter, index) => {
+          if (index < filters.length - 1) {
+            filter.query_operator = "or";
+          }
         });
+
+        const response = await chatwootService.contacts.filterContacts(
+          accountId || 1, // Fallback to 1 (backend uses JWT for actual scoping)
+          { payload: filters },
+          {
+            include_contact_inboxes: false,
+            page: 1,
+            sort: "name",
+          }
+        );
 
         const contacts = response.payload || [];
         setSearchResults(contacts);
@@ -147,8 +161,8 @@ export function useComposeConversation(options?: UseComposeConversationOptions) 
    * Note: Backend automatically handles accountId from authentication context
    */
   const fetchContactableInboxes = useCallback(
-    async (contact: ContactDetail) => {
-      if (!contact.id) {
+    async (contact: ContactDetail | null) => {
+      if (!contact || !contact.id) {
         setContactableInboxes([]);
         return;
       }
@@ -181,7 +195,7 @@ export function useComposeConversation(options?: UseComposeConversationOptions) 
    * Handle contact selection
    */
   const selectContact = useCallback(
-    (contact: ContactDetail) => {
+    (contact: ContactDetail | null) => {
       setFormState((prev) => ({
         ...prev,
         contact,
@@ -189,8 +203,14 @@ export function useComposeConversation(options?: UseComposeConversationOptions) 
       }));
       setValidationErrors((prev) => ({ ...prev, contact: undefined }));
 
-      // Fetch contactable inboxes
-      fetchContactableInboxes(contact);
+      // Clear search results and inboxes when contact is cleared
+      if (!contact) {
+        setSearchResults([]);
+        setContactableInboxes([]);
+      } else {
+        // Fetch contactable inboxes only if contact is not null
+        fetchContactableInboxes(contact);
+      }
     },
     [fetchContactableInboxes]
   );

@@ -15,6 +15,8 @@ import VideocamIcon from "@mui/icons-material/Videocam";
 import AudiotrackIcon from "@mui/icons-material/Audiotrack";
 import ArchiveIcon from "@mui/icons-material/Archive";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { useTheme } from "@mui/material/styles";
+import { FILE_TYPE_COLORS } from "../../styles/compose-styles";
 
 interface AttachmentPreviewProps {
   file: File;
@@ -54,14 +56,14 @@ const getFileColor = (file: File) => {
   const type = file.type;
   const extension = file.name.split(".").pop()?.toLowerCase();
 
-  if (type.startsWith("image/")) return "#10b981"; // green
-  if (type.startsWith("video/")) return "#8b5cf6"; // purple
-  if (type.startsWith("audio/")) return "#f59e0b"; // amber
-  if (type === "application/pdf") return "#ef4444"; // red
-  if (["doc", "docx"].includes(extension || "")) return "#3b82f6"; // blue
-  if (["xls", "xlsx", "csv"].includes(extension || "")) return "#059669"; // emerald
+  if (type.startsWith("image/")) return FILE_TYPE_COLORS.image;
+  if (type.startsWith("video/")) return FILE_TYPE_COLORS.video;
+  if (type.startsWith("audio/")) return FILE_TYPE_COLORS.audio;
+  if (type === "application/pdf") return FILE_TYPE_COLORS.pdf;
+  if (["doc", "docx"].includes(extension || "")) return FILE_TYPE_COLORS.document;
+  if (["xls", "xlsx", "csv"].includes(extension || "")) return FILE_TYPE_COLORS.spreadsheet;
 
-  return "#6b7280"; // gray
+  return FILE_TYPE_COLORS.default;
 };
 
 // Format file size
@@ -73,8 +75,9 @@ const formatFileSize = (bytes: number): string => {
   return `${Math.round(bytes / Math.pow(k, i) * 100) / 100} ${sizes[i]}`;
 };
 
-export const AttachmentPreview: React.FC<AttachmentPreviewProps> = ({ file, onRemove }) => {
+export const AttachmentPreview = React.memo<AttachmentPreviewProps>(({ file, onRemove }) => {
   const { neutralColor, primaryColor } = useGomakeTheme();
+  const theme = useTheme();
   const [thumbnail, setThumbnail] = useState<string | null>(null);
 
   const isImage = file.type.startsWith("image/");
@@ -198,8 +201,8 @@ export const AttachmentPreview: React.FC<AttachmentPreviewProps> = ({ file, onRe
           width: 24,
           height: 24,
           "&:hover": {
-            backgroundColor: "#ef4444",
-            borderColor: "#ef4444",
+            backgroundColor: theme.palette.error.main,
+            borderColor: theme.palette.error.main,
             color: "#fff",
           },
         }}
@@ -208,7 +211,7 @@ export const AttachmentPreview: React.FC<AttachmentPreviewProps> = ({ file, onRe
       </IconButton>
     </Box>
   );
-};
+});
 
 /**
  * AttachmentPreviews List Component

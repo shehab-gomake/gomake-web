@@ -2,7 +2,7 @@
  * Chatwoot Inboxes Service
  *
  * Handles all inbox (channel) related endpoints.
- * All endpoints require account_id.
+ * Account context is determined from JWT Bearer token.
  *
  * In Chatwoot, "inboxes" are channels like Email, WhatsApp, Facebook, etc.
  */
@@ -60,11 +60,11 @@ export class ChatwootInboxesService extends BaseChatwootService {
 
   /**
    * Get Inbox Details
-   * GET /api/accounts/{accountId}/inboxes/{inboxId}
+   * GET /api/accounts/inboxes/{inboxId}
    *
    * Returns detailed information about a specific inbox.
    *
-   * @param accountId - The numeric ID of the account
+   * @param accountId - The numeric ID of the account (not used in URL, kept for compatibility)
    * @param inboxId - The numeric ID of the inbox
    * @returns Promise with inbox details
    *
@@ -75,16 +75,16 @@ export class ChatwootInboxesService extends BaseChatwootService {
    * ```
    */
   async getInbox(accountId: number, inboxId: number): Promise<InboxDetailResponse> {
-    return await this.get<InboxDetailResponse>(this.accountScopedUrl(accountId, `inboxes/${inboxId}`));
+    return await this.get<InboxDetailResponse>(`/api/accounts/inboxes/${inboxId}`);
   }
 
   /**
    * Update Inbox Settings
-   * PATCH /api/v1/accounts/{accountId}/inboxes/{inboxId}
+   * PATCH /api/accounts/inboxes/{inboxId}
    *
    * Update inbox configuration including name, greeting message, features, etc.
    *
-   * @param accountId - The numeric ID of the account
+   * @param accountId - The numeric ID of the account (not used in URL, kept for compatibility)
    * @param inboxId - The numeric ID of the inbox
    * @param updates - Partial inbox settings to update
    * @returns Promise with updated inbox
@@ -95,18 +95,18 @@ export class ChatwootInboxesService extends BaseChatwootService {
     updates: Partial<ChatwootInbox>
   ): Promise<InboxDetailResponse> {
     return await this.patch<InboxDetailResponse>(
-      this.accountScopedUrl(accountId, `inboxes/${inboxId}`),
+      `/api/accounts/inboxes/${inboxId}`,
       updates
     );
   }
 
   /**
    * Upload Inbox Avatar
-   * POST /api/v1/accounts/{accountId}/inboxes/{inboxId}/avatar
+   * POST /api/accounts/inboxes/{inboxId}/avatar
    *
    * Upload a new avatar image for the inbox.
    *
-   * @param accountId - The numeric ID of the account
+   * @param accountId - The numeric ID of the account (not used in URL, kept for compatibility)
    * @param inboxId - The numeric ID of the inbox
    * @param file - The image file to upload
    * @returns Promise with updated inbox
@@ -120,48 +120,48 @@ export class ChatwootInboxesService extends BaseChatwootService {
     formData.append("avatar", file);
 
     return await this.post<InboxDetailResponse>(
-      this.accountScopedUrl(accountId, `inboxes/${inboxId}/avatar`),
+      `/api/accounts/inboxes/${inboxId}/avatar`,
       formData
     );
   }
 
   /**
    * Delete Inbox Avatar
-   * DELETE /api/v1/accounts/{accountId}/inboxes/{inboxId}/avatar
+   * DELETE /api/accounts/inboxes/{inboxId}/avatar
    *
    * Remove the current avatar image from the inbox.
    *
-   * @param accountId - The numeric ID of the account
+   * @param accountId - The numeric ID of the account (not used in URL, kept for compatibility)
    * @param inboxId - The numeric ID of the inbox
    * @returns Promise with updated inbox
    */
   async deleteAvatar(accountId: number, inboxId: number): Promise<InboxDetailResponse> {
     return await this.delete<InboxDetailResponse>(
-      this.accountScopedUrl(accountId, `inboxes/${inboxId}/avatar`)
+      `/api/accounts/inboxes/${inboxId}/avatar`
     );
   }
 
   /**
    * Delete Inbox
-   * DELETE /api/v1/accounts/{accountId}/inboxes/{inboxId}
+   * DELETE /api/accounts/inboxes/{inboxId}
    *
    * Permanently delete an inbox and all its conversations.
    *
-   * @param accountId - The numeric ID of the account
+   * @param accountId - The numeric ID of the account (not used in URL, kept for compatibility)
    * @param inboxId - The numeric ID of the inbox
    * @returns Promise with void
    */
   async deleteInbox(accountId: number, inboxId: number): Promise<void> {
-    return await this.delete<void>(this.accountScopedUrl(accountId, `inboxes/${inboxId}`));
+    return await this.delete<void>(`/api/accounts/inboxes/${inboxId}`);
   }
 
   /**
    * Add Agents to Inbox
-   * POST /api/v1/accounts/{accountId}/inbox_members
+   * POST /api/accounts/inbox_members
    *
    * Assign agents to an inbox for handling conversations.
    *
-   * @param accountId - The numeric ID of the account
+   * @param accountId - The numeric ID of the account (not used in URL, kept for compatibility)
    * @param inboxId - The numeric ID of the inbox
    * @param agentIds - Array of agent IDs to assign
    * @returns Promise with response
@@ -172,7 +172,7 @@ export class ChatwootInboxesService extends BaseChatwootService {
     agentIds: number[]
   ): Promise<any> {
     return await this.post<any>(
-      this.accountScopedUrl(accountId, "inbox_members"),
+      `/api/accounts/inbox_members`,
       {
         inbox_id: inboxId,
         user_ids: agentIds,
@@ -182,17 +182,79 @@ export class ChatwootInboxesService extends BaseChatwootService {
 
   /**
    * Get Inbox Agents
-   * GET /api/v1/accounts/{accountId}/inbox_members/{inboxId}
+   * GET /api/accounts/inbox_members/{inboxId}
    *
    * Get list of agents assigned to an inbox.
    *
-   * @param accountId - The numeric ID of the account
+   * @param accountId - The numeric ID of the account (not used in URL, kept for compatibility)
    * @param inboxId - The numeric ID of the inbox
    * @returns Promise with agents list
    */
   async getInboxAgents(accountId: number, inboxId: number): Promise<any> {
-    return await this.get<any>(
-      this.accountScopedUrl(accountId, `inbox_members/${inboxId}`)
+    return await this.get<any>(`/api/accounts/inbox_members/${inboxId}`);
+  }
+
+  /**
+   * Update Business Hours
+   * PATCH /api/accounts/inboxes/{inboxId}/business_hours
+   *
+   * Configure working hours for the inbox.
+   *
+   * @param accountId - The numeric ID of the account (not used in URL, kept for compatibility)
+   * @param inboxId - The numeric ID of the inbox
+   * @param schedule - Weekly schedule object with business hours
+   * @returns Promise with updated inbox
+   */
+  async updateBusinessHours(
+    accountId: number,
+    inboxId: number,
+    schedule: any
+  ): Promise<InboxDetailResponse> {
+    return await this.patch<InboxDetailResponse>(
+      `/api/accounts/inboxes/${inboxId}/business_hours`,
+      { business_hours: schedule }
+    );
+  }
+
+  /**
+   * Update CSAT Configuration
+   * PATCH /api/accounts/inboxes/{inboxId}/csat
+   *
+   * Configure customer satisfaction survey settings.
+   *
+   * @param accountId - The numeric ID of the account (not used in URL, kept for compatibility)
+   * @param inboxId - The numeric ID of the inbox
+   * @param config - CSAT configuration object
+   * @returns Promise with updated inbox
+   */
+  async updateCSATConfig(
+    accountId: number,
+    inboxId: number,
+    config: any
+  ): Promise<InboxDetailResponse> {
+    return await this.patch<InboxDetailResponse>(
+      `/api/accounts/inboxes/${inboxId}/csat`,
+      { csat_config: config }
+    );
+  }
+
+  /**
+   * Sync WhatsApp Templates
+   * POST /api/accounts/inboxes/{inboxId}/sync_templates
+   *
+   * Sync message templates from WhatsApp Business Account.
+   *
+   * @param accountId - The numeric ID of the account (not used in URL, kept for compatibility)
+   * @param inboxId - The numeric ID of the inbox
+   * @returns Promise with sync result
+   */
+  async syncWhatsAppTemplates(
+    accountId: number,
+    inboxId: number
+  ): Promise<any> {
+    return await this.post<any>(
+      `/api/accounts/inboxes/${inboxId}/sync_templates`,
+      {}
     );
   }
 }
