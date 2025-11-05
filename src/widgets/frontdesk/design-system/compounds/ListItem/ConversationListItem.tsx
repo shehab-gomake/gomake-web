@@ -99,7 +99,7 @@ const MAX_UNREAD_DISPLAY = 99;
 
 const getListItemButtonStyles = (isSelected: boolean): SxProps<Theme> => ({
   py: 1,
-  px: 1.5,
+  px: 0,
   borderBottom: `1px solid ${colorTokens.semantic.border.default}`,
   backgroundColor: isSelected
     ? colorTokens.semantic.interactive.selected
@@ -160,10 +160,7 @@ const inboxIconContainerStyles: SxProps<Theme> = {
   alignItems: 'center',
   justifyContent: 'center',
   flexShrink: 0,
-  borderRadius: '50%',
-  bgcolor: colorTokens.semantic.background.secondary,
-  width: INBOX_ICON_CONTAINER_SIZE,
-  height: INBOX_ICON_CONTAINER_SIZE,
+  color: colorTokens.semantic.text.secondary,
 };
 
 // ============================================================================
@@ -257,7 +254,7 @@ export const ConversationListItem = React.memo<ConversationListItemProps>(({
         onContextMenu={handleContextMenu}
         sx={getListItemButtonStyles(isSelected)}
       >
-        <Stack direction="row" alignItems="flex-start" spacing={1} sx={{ width: '100%' }}>
+        <Stack direction="row" alignItems="center" spacing={1} sx={{ width: '100%', px: 1.5 }}>
           {/* Contact Avatar */}
           <Avatar
             size="sm"
@@ -274,27 +271,36 @@ export const ConversationListItem = React.memo<ConversationListItemProps>(({
 
           {/* Content Section */}
           <Stack flex={1} spacing={0.5} sx={{ minWidth: 0 }}>
-            {/* Top Row: Contact Name | Priority | Inbox | Timestamp */}
+            {/* First Row: Inbox Icon | Inbox Name | Priority | Timestamp */}
             <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1}>
-              <Typography variant="body2" sx={getTitleStyles(isSelected, isUnread)}>
-                {title}
-              </Typography>
+              <Stack direction="row" alignItems="center" spacing={0.75} sx={{ flex: 1, minWidth: 0 }}>
+                {inboxChannelType && (
+                  <Box sx={inboxIconContainerStyles}>
+                    <InboxIcon
+                      channelType={inboxChannelType}
+                      medium={inboxMedium}
+                      size={INBOX_ICON_SIZE}
+                    />
+                  </Box>
+                )}
+
+                {inboxName && (
+                  <Typography
+                    variant="caption"
+                    sx={{
+                      color: colorTokens.semantic.text.secondary,
+                      fontSize: 12,
+                      fontWeight: 500,
+                    }}
+                  >
+                    {inboxName}
+                  </Typography>
+                )}
+              </Stack>
 
               {/* Right Indicators */}
               <Stack direction="row" alignItems="center" spacing={0.5} sx={{ flexShrink: 0 }}>
                 {normalizedPriority && <ConversationPriorityIcon priority={normalizedPriority} size={PRIORITY_ICON_SIZE} />}
-
-                {inboxChannelType && (
-                  <Tooltip title={inboxName || ''} arrow placement="left">
-                    <Box sx={inboxIconContainerStyles}>
-                      <InboxIcon
-                        channelType={inboxChannelType}
-                        medium={inboxMedium}
-                        size={INBOX_ICON_SIZE}
-                      />
-                    </Box>
-                  </Tooltip>
-                )}
 
                 <Typography variant="caption" sx={timestampStyles}>
                   {timestamp}
@@ -302,7 +308,12 @@ export const ConversationListItem = React.memo<ConversationListItemProps>(({
               </Stack>
             </Stack>
 
-            {/* Message Preview Row */}
+            {/* Second Row: Contact Name */}
+            <Typography variant="body2" sx={getTitleStyles(isSelected, isUnread)}>
+              {title}
+            </Typography>
+
+            {/* Third Row: Message Preview | Unread Count */}
             <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1}>
               <Typography variant="body2" sx={snippetStyles}>
                 {snippet || 'No messages yet'}

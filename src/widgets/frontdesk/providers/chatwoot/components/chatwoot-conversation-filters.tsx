@@ -49,7 +49,7 @@ export const ChatwootConversationFilters: React.FC<ChatwootConversationFiltersPr
     const labels: Record<ConversationStatus, string> = {
       [ConversationStatus.ALL]: "All",
       [ConversationStatus.OPEN]: "Open",
-      [ConversationStatus.RESOLVED]: "Resolved",
+      [ConversationStatus.RESOLVED]: "Closed",
       [ConversationStatus.PENDING]: "Pending",
       [ConversationStatus.SNOOZED]: "Snoozed",
     };

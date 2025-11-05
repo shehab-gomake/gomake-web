@@ -173,6 +173,13 @@ providers/chatwoot/
 - Channel-specific feature flags via `channel-features.config.ts`
 - Performance optimizations: fetch deduplication, filter key caching, memoization
 
+**Recent Improvements (2025-01):**
+- Compose conversation modal with rich text editor, attachment preview, and exit confirmation
+- Inbox settings management UI with 6 tabs (general, business hours, CSAT, configuration, bot, collaborators)
+- Refactored compose components for better maintainability (ContactSelectionField, EmailCompositionFields, AttachmentUploader)
+- Centralized style constants and error messages for consistency
+- Enhanced accessibility with ARIA labels and keyboard navigation
+
 **Missing Features:**
 - Real-time updates (WebSocket not implemented - use REST polling)
 - Offline support

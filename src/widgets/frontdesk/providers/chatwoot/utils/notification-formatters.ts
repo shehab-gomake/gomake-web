@@ -194,7 +194,7 @@ export function getNotificationTypeDetails(
   const typeMap: Record<string, NotificationTypeDetails> = {
     "conversation.mention": { icon: "alternate_email", label: "Mention", color: colors.primary },
     "conversation.assigned": { icon: "person_add", label: "Assignment", color: colors.primary },
-    "conversation.created": { icon: "add_comment", label: "New Conversation", color: colors.primary },
+    "conversation.created": { icon: "add_comment", label: "New Ticket", color: colors.primary },
     "conversation.updated": { icon: "edit", label: "Updated", color: colors.neutral },
     "message.created": { icon: "message", label: "New Message", color: colors.primary },
   };
@@ -206,7 +206,7 @@ export function getNotificationTypeDetails(
  * Conversation status label mapping
  */
 const STATUS_LABELS: Record<string, string> = {
-  resolved: "Resolved",
+  resolved: "Closed",
   pending: "Pending",
   snoozed: "Snoozed",
 };

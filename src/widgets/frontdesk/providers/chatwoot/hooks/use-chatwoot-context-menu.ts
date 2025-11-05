@@ -20,7 +20,10 @@ import {
   chatwootConversationsAtom,
   chatwootSelectedConversationAtom,
 } from "@/store/frontdesk/atoms/chatwoot.atoms";
-import { useChatwootAgents, useChatwootTeams } from "./resources";
+import { useChatwootAgents, useChatwootTeams, useChatwootInboxAgents } from "./resources";
+import { useConversationAssignmentActions } from "./actions/use-conversation-assignment-actions";
+import { useChatwootProfile } from "./use-chatwoot-profile";
+import { prepareAgentsForAssignment } from "../utils/agent-helpers";
 
 /**
  * Simple notification utility
@@ -62,9 +65,23 @@ export const useChatwootContextMenu = (conversation: ChatwootConversation | null
   const [conversations, setConversations] = useRecoilState(chatwootConversationsAtom);
   const [selectedConversation, setSelectedConversation] = useRecoilState(chatwootSelectedConversationAtom);
 
+  // Get current user profile for presence updates
+  const { profile } = useChatwootProfile();
+
   // Use centralized resource hooks - no more duplicate fetching!
-  const { agents, loading: agentsLoading } = useChatwootAgents(accountId);
+  // Use inbox-specific agents (includes inbox members + administrators)
+  // Pass conversation.id to trigger refetch when switching conversations
+  const inboxId = conversation?.inbox_id;
+  const conversationId = conversation?.id;
+  const { verifiedAgents: agents, loading: agentsLoading } = useChatwootInboxAgents(accountId, inboxId, conversationId);
   const { teams } = useChatwootTeams(accountId);
+
+  // Process agents with Chatwoot's pattern: update presence + sort by availability
+  // Don't include "None" option here - we'll add it manually in the submenu
+  const processedAgents = useMemo(() => {
+    if (!accountId) return agents;
+    return prepareAgentsForAssignment(agents, profile, accountId, false);
+  }, [agents, profile, accountId]);
 
   /**
    * Update a conversation in the list (optimistic update)
@@ -105,6 +122,13 @@ export const useChatwootContextMenu = (conversation: ChatwootConversation | null
     },
     [setConversations, selectedConversation?.id, setSelectedConversation]
   );
+
+  // Use centralized assignment actions hook (must be after updateConversationInList is defined)
+  const { handleAssignAgent: handleAssignAgentAction, handleAssignTeam: handleAssignTeamAction } = useConversationAssignmentActions({
+    accountId,
+    conversation,
+    updateConversation: updateConversationInList,
+  });
 
   /**
    * Handle Mark as Read/Unread
@@ -203,52 +227,45 @@ export const useChatwootContextMenu = (conversation: ChatwootConversation | null
 
   /**
    * Handle Assign Agent
+   * Now uses centralized assignment actions hook
    */
   const handleAssignAgent = useCallback(
     async (assigneeId: number | null) => {
-      if (!accountId || !conversation?.id) {
-        showNotification("Cannot perform action: Missing account or conversation", "error");
-        return;
-      }
+      // Find agent data for optimistic update
+      const agentData = assigneeId
+        ? agents.find(a => a.id === assigneeId)
+        : undefined;
 
-      try {
-        await chatwootService.conversations.assignAgent(accountId, conversation.id, assigneeId);
-
-        const actionLabel = assigneeId ? "Agent assigned" : "Agent unassigned";
-        showNotification(actionLabel, "success");
-
-        // TODO: Update conversation assignee in state when we have agent data
-      } catch (error: any) {
-        showNotification(`Failed to assign agent`, "error");
-        console.error("Failed to assign agent:", error);
-      }
+      // Use centralized hook with proper agent data
+      await handleAssignAgentAction(assigneeId, agentData ? {
+        id: agentData.id!,
+        name: agentData.name,
+        email: agentData.email,
+        thumbnail: agentData.thumbnail,
+      } : undefined);
     },
-    [accountId, conversation]
+    [agents, handleAssignAgentAction]
   );
 
   /**
    * Handle Assign Team
+   * Now uses centralized assignment actions hook
    */
   const handleAssignTeam = useCallback(
     async (teamId: number | null) => {
-      if (!accountId || !conversation?.id) {
-        showNotification("Cannot perform action: Missing account or conversation", "error");
-        return;
-      }
+      // Find team data for optimistic update
+      const teamData = teamId
+        ? teams.find(t => t.id === teamId)
+        : undefined;
 
-      try {
-        await chatwootService.conversations.assignTeam(accountId, conversation.id, teamId);
-
-        const actionLabel = teamId ? "Team assigned" : "Team unassigned";
-        showNotification(actionLabel, "success");
-
-        // TODO: Update conversation team in state when we have team data
-      } catch (error: any) {
-        showNotification(`Failed to assign team`, "error");
-        console.error("Failed to assign team:", error);
-      }
+      // Use centralized hook with proper team data
+      await handleAssignTeamAction(teamId, teamData ? {
+        id: teamData.id!,
+        name: teamData.name,
+        description: teamData.description,
+      } : undefined);
     },
-    [accountId, conversation]
+    [teams, handleAssignTeamAction]
   );
 
   /**
@@ -427,10 +444,11 @@ export const useChatwootContextMenu = (conversation: ChatwootConversation | null
     });
 
     // 6. Assign Agent Submenu
+    // Use processedAgents which are already sorted by availability (online → busy → offline)
     const currentAssigneeId = conversation.meta?.assignee?.id;
     const agentSubmenu: ContextMenuAction[] = [
       { id: 'assign-agent-none', label: 'Unassign' },
-      ...agents
+      ...processedAgents
         .filter((agent) => agent.id !== currentAssigneeId)
         .map((agent) => ({
           id: `assign-agent-${agent.id}`,
@@ -442,7 +460,7 @@ export const useChatwootContextMenu = (conversation: ChatwootConversation | null
       id: 'assign-agent',
       label: 'Assign agent',
       icon: 'person-add',
-      disabled: agents.length === 0 || agentsLoading,
+      disabled: processedAgents.length === 0 || agentsLoading,
       submenu: agentSubmenu,
     });
 
@@ -491,7 +509,7 @@ export const useChatwootContextMenu = (conversation: ChatwootConversation | null
     });
 
     return actions;
-  }, [conversation, agents, teams, agentsLoading]);
+  }, [conversation, processedAgents, teams, agentsLoading]);
 
   /**
    * Main action handler - routes to appropriate handler based on action ID

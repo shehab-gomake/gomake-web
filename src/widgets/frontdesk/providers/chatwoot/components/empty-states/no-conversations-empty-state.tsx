@@ -58,8 +58,8 @@ export const NoConversationsEmptyState: React.FC<NoConversationsEmptyStateProps>
   const getMessage = () => {
     if (hasFilters) {
       return {
-        title: "No conversations match your filters",
-        description: "Try adjusting your filters or clearing them to see all conversations.",
+        title: "No tickets match your filters",
+        description: "Try adjusting your filters or clearing them to see all tickets.",
       };
     }
 
@@ -67,38 +67,38 @@ export const NoConversationsEmptyState: React.FC<NoConversationsEmptyStateProps>
       case "open":
       case "mine":
         return {
-          title: "No open conversations",
-          description: "Great job! You've resolved all your conversations. Take a break or check for new messages.",
+          title: "No open tickets",
+          description: "Great job! You've closed all your tickets. Take a break or check for new messages.",
         };
       case "resolved":
         return {
-          title: "No resolved conversations",
-          description: "You haven't resolved any conversations yet. Keep working on those open ones!",
+          title: "No closed tickets",
+          description: "You haven't closed any tickets yet. Keep working on those open ones!",
         };
       case "pending":
         return {
-          title: "No pending conversations",
-          description: "All conversations are either open or resolved. Nothing is waiting for action.",
+          title: "No pending tickets",
+          description: "All tickets are either open or closed. Nothing is waiting for action.",
         };
       case "snoozed":
         return {
-          title: "No snoozed conversations",
-          description: "You haven't snoozed any conversations. Use snooze to temporarily hide conversations.",
+          title: "No snoozed tickets",
+          description: "You haven't snoozed any tickets. Use snooze to temporarily hide tickets.",
         };
       case "unassigned":
         return {
-          title: "No unassigned conversations",
-          description: "All conversations have been assigned to team members. Great teamwork!",
+          title: "No unassigned tickets",
+          description: "All tickets have been assigned to team members. Great teamwork!",
         };
       case "mentions":
         return {
           title: "No mentions",
-          description: "You haven't been mentioned in any conversations recently.",
+          description: "You haven't been mentioned in any tickets recently.",
         };
       default:
         return {
-          title: "No conversations yet",
-          description: "Start a conversation with a customer or wait for incoming messages.",
+          title: "No tickets yet",
+          description: "Start a ticket with a customer or wait for incoming messages.",
         };
     }
   };

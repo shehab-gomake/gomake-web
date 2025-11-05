@@ -133,6 +133,12 @@ export {
   type LabelDetailResponse,
 } from "./types/labels.types";
 
+// Label service types
+export {
+  type CreateLabelPayload,
+  type UpdateLabelPayload,
+} from "./services/chatwoot-labels.service";
+
 // Compose types
 export {
   type ComposeFormState,

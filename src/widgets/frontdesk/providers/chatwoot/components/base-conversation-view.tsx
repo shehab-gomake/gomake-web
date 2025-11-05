@@ -6,12 +6,13 @@
  * (All Conversations, Channels, Mentions, Unattended).
  */
 
-import React, { useMemo, useCallback } from "react";
+import React, { useMemo, useCallback, useState } from "react";
 import { Stack, Box, Divider, useTheme } from "@mui/material";
 import { Panel, PanelContent, EmptyState } from "@/widgets/frontdesk/design-system";
 import { ChatwootConversationList } from "./chatwoot-conversation-list";
 import { ChatwootMessageViewer } from "./chatwoot-message-viewer";
 import { ChatwootConversationDetailPanel } from "./chatwoot-conversation-detail-panel";
+import { ComposeConversationModal } from "./compose/ComposeConversationModal";
 import { useChatwootProvider } from "../hooks/use-chatwoot-provider";
 import type { ChatwootConversation } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
 
@@ -48,14 +49,37 @@ export const BaseConversationView: React.FC<BaseConversationViewProps> = ({ empt
   } = useChatwootProvider();
 
   const theme = useTheme();
+  const [showComposeModal, setShowComposeModal] = useState(false);
+
+  // Handle compose button click
+  const handleComposeClick = useCallback(() => {
+    setShowComposeModal(true);
+  }, []);
+
+  // Handle compose modal close
+  const handleComposeClose = useCallback(() => {
+    setShowComposeModal(false);
+  }, []);
+
+  // Handle successful conversation creation
+  const handleComposeSuccess = useCallback(
+    (conversationId: number) => {
+      setShowComposeModal(false);
+      // Navigate to the newly created conversation
+      router.navigateToConversation(conversationId.toString());
+      // Refresh conversation list to show the new conversation
+      refresh();
+    },
+    [router, refresh]
+  );
 
   // Memoize empty state to prevent unnecessary re-renders
   const emptyStateContent = useMemo(
     () => (
       <EmptyState
         icon="inbox"
-        title="No conversation selected"
-        description="Select a conversation from the list to view messages"
+        title="No ticket selected"
+        description="Select a ticket from the list to view messages"
       />
     ),
     []
@@ -116,6 +140,7 @@ export const BaseConversationView: React.FC<BaseConversationViewProps> = ({ empt
           inboxes={inboxes}
           inboxesLoading={inboxesLoading}
           onNextClick={handleNextConversation}
+          onComposeClick={handleComposeClick}
         />
       </Panel>
 
@@ -167,6 +192,14 @@ export const BaseConversationView: React.FC<BaseConversationViewProps> = ({ empt
           <PanelContent padding="lg">{emptyStateContent}</PanelContent>
         )}
       </Panel>
+
+      {/* Compose Conversation Modal */}
+      <ComposeConversationModal
+        open={showComposeModal}
+        onClose={handleComposeClose}
+        onSuccess={handleComposeSuccess}
+        accountId={currentAccountId}
+      />
     </Stack>
   );
 };

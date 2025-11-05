@@ -28,10 +28,10 @@ export const ChatwootStatsCards: React.FC<ChatwootStatsCardsProps> = ({
   return (
     <Box sx={{ mb: 3 }}>
       <Grid container spacing={2}>
-        {/* Unread Conversations */}
+        {/* Unread Tickets */}
         <Grid item xs={12} sm={6} md={3}>
           <StatCard
-            label="Unread Conversations"
+            label="Unread Tickets"
             value={
               stats.unreadConversations === 0
                 ? "All caught up!"
@@ -49,10 +49,10 @@ export const ChatwootStatsCards: React.FC<ChatwootStatsCardsProps> = ({
           />
         </Grid>
 
-        {/* Open Conversations */}
+        {/* Open Tickets */}
         <Grid item xs={12} sm={6} md={3}>
           <StatCard
-            label="Open Conversations"
+            label="Open Tickets"
             value={stats.openConversations}
             icon={<ForumIcon />}
             variant="primary"

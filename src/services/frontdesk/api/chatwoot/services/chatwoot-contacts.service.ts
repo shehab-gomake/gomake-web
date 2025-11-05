@@ -156,16 +156,35 @@ export class ChatwootContactsService extends BaseChatwootService {
    * POST /api/accounts/contacts/filter
    *
    * Note: Backend automatically handles accountId from authentication context.
-   * This endpoint uses /api instead of /api/v1
+   * This endpoint uses /api instead of /api/v1 and doesn't require accountId in path.
    *
+   * @param accountId - The numeric ID of the account (not used in URL, kept for API consistency)
    * @param filterPayload - Filter criteria
+   * @param params - Optional query parameters (include_contact_inboxes, page, sort)
    * @returns Promise with filtered contacts
    */
-  async filterContacts(filterPayload: ContactFilterRequest): Promise<ContactsListResponse> {
-    return await this.post<ContactsListResponse>(
-      "/api/accounts/contacts/filter",
-      filterPayload
-    );
+  async filterContacts(
+    accountId: number,
+    filterPayload: ContactFilterRequest,
+    params?: {
+      include_contact_inboxes?: boolean;
+      page?: number;
+      sort?: string;
+    }
+  ): Promise<ContactsListResponse> {
+    const queryParams = new URLSearchParams();
+    if (params) {
+      Object.entries(params).forEach(([key, value]) => {
+        if (value !== undefined && value !== null) {
+          queryParams.append(key, String(value));
+        }
+      });
+    }
+
+    const queryString = queryParams.toString();
+    // This endpoint doesn't include accountId in path - proxy handles it via JWT
+    const url = `/api/accounts/contacts/filter${queryString ? `?${queryString}` : ""}`;
+    return await this.post<ContactsListResponse>(url, filterPayload);
   }
 
   /**

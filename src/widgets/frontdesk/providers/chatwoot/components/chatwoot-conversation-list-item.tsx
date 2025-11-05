@@ -69,9 +69,10 @@ function getFormattedTimestamp(conversation: any): string {
   }
 
   // Chatwoot uses Unix timestamps (seconds), convert to ISO
-  const isoTimestamp =
-    conversation.updated_at ? formatChatwootTimestamp(conversation.updated_at)
-    : conversation.created_at ? formatChatwootTimestamp(conversation.created_at)
+  const isoTimestamp = conversation.updated_at
+    ? formatChatwootTimestamp(conversation.updated_at)
+    : conversation.created_at
+    ? formatChatwootTimestamp(conversation.created_at)
     : conversation.timestamp;
 
   return formatConversationDate(isoTimestamp);
@@ -87,9 +88,17 @@ function getConversationSnippet(conversation: any): string {
     return "";
   }
 
-  return typeof lastMessage.content === "string"
-    ? lastMessage.content
-    : JSON.stringify(lastMessage.content);
+  const content = typeof lastMessage.content === "string" ? lastMessage.content : JSON.stringify(lastMessage.content);
+
+  // Check if message is private (support both _private and private properties)
+  const isPrivate = lastMessage._private === true || lastMessage.private === true;
+
+  // Add visual indicator for private messages
+  if (isPrivate) {
+    return `🔒 Private Note: ${content}`;
+  }
+
+  return content;
 }
 
 /**
@@ -260,17 +269,14 @@ const ChatwootConversationListItemComponent: React.FC<ChatwootConversationListIt
  * Optimizes performance by preventing unnecessary re-renders.
  * Only re-renders when conversation data or selection state changes.
  */
-export const ChatwootConversationListItem = React.memo(
-  ChatwootConversationListItemComponent,
-  (prevProps, nextProps) => {
-    // Custom comparison: only re-render if these specific props change
-    return (
-      prevProps.conversation?.id === nextProps.conversation?.id &&
-      prevProps.conversation?.updated_at === nextProps.conversation?.updated_at &&
-      prevProps.conversation?.unread_count === nextProps.conversation?.unread_count &&
-      prevProps.conversation?.status === nextProps.conversation?.status &&
-      prevProps.isSelected === nextProps.isSelected &&
-      prevProps.inboxesLoading === nextProps.inboxesLoading
-    );
-  }
-);
+export const ChatwootConversationListItem = React.memo(ChatwootConversationListItemComponent, (prevProps, nextProps) => {
+  // Custom comparison: only re-render if these specific props change
+  return (
+    prevProps.conversation?.id === nextProps.conversation?.id &&
+    prevProps.conversation?.updated_at === nextProps.conversation?.updated_at &&
+    prevProps.conversation?.unread_count === nextProps.conversation?.unread_count &&
+    prevProps.conversation?.status === nextProps.conversation?.status &&
+    prevProps.isSelected === nextProps.isSelected &&
+    prevProps.inboxesLoading === nextProps.inboxesLoading
+  );
+});

@@ -15,7 +15,7 @@ import {
   chatwootConversationsAtom,
   chatwootSelectedConversationAtom,
 } from "@/store/frontdesk/atoms/chatwoot.atoms";
-import { useChatwootAgents, useChatwootTeams } from "./resources";
+import { useChatwootAgents, useChatwootTeams, useChatwootInboxAgents } from "./resources";
 import {
   useConversationStatusActions,
   useConversationAssignmentActions,
@@ -47,7 +47,11 @@ export const useChatwootContextMenu = (conversation: ChatwootConversation | null
   const [selectedConversation, setSelectedConversation] = useRecoilState(chatwootSelectedConversationAtom);
 
   // Use centralized resource hooks
-  const { agents, loading: agentsLoading } = useChatwootAgents(accountId);
+  // Use inbox-specific agents (includes inbox members + administrators)
+  // Pass conversation.id to trigger refetch when switching conversations
+  const inboxId = conversation?.inbox_id;
+  const conversationId = conversation?.id;
+  const { verifiedAgents: agents, loading: agentsLoading } = useChatwootInboxAgents(accountId, inboxId, conversationId);
   const { teams } = useChatwootTeams(accountId);
 
   /**

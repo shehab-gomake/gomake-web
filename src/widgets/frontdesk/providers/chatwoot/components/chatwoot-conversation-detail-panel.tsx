@@ -29,6 +29,7 @@ import {
   AccessTime as SnoozeIcon,
   TaskAlt as ResolvedIcon,
   Flag as FlagIcon,
+  Close as CloseIcon,
 } from "@mui/icons-material";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { colorTokens, Chip } from "@/widgets/frontdesk/design-system";
@@ -48,9 +49,12 @@ interface ChatwootConversationDetailPanelProps {
   onConversationUpdate?: (updatedConversation: ChatwootConversation) => void;
 }
 
-export const ChatwootConversationDetailPanel: React.FC<
-  ChatwootConversationDetailPanelProps
-> = ({ conversation, accountId, inboxes = [], onConversationUpdate }) => {
+export const ChatwootConversationDetailPanel: React.FC<ChatwootConversationDetailPanelProps> = ({
+  conversation,
+  accountId,
+  inboxes = [],
+  onConversationUpdate,
+}) => {
   const theme = useTheme();
   const { primaryColor, neutralColor } = useGomakeTheme();
   const [statusMenuAnchor, setStatusMenuAnchor] = useState<null | HTMLElement>(null);
@@ -61,7 +65,7 @@ export const ChatwootConversationDetailPanel: React.FC<
   const statusMap: Record<string, { label: string; color: "primary" | "warning" | "success" | "error" | "neutral" }> = {
     open: { label: "Open", color: "primary" },
     pending: { label: "Pending", color: "warning" },
-    resolved: { label: "Resolved", color: "success" },
+    resolved: { label: "Closed", color: "success" },
     snoozed: { label: "Snoozed", color: "error" },
   };
 
@@ -69,86 +73,91 @@ export const ChatwootConversationDetailPanel: React.FC<
   const statusInfo = statusMap[currentStatus] || { label: "Open", color: "primary" as const };
 
   // Priority mapping
-  const priorityMap: Record<string, "Urgent" | "High" | "Medium" | "Low"> = {
+  const priorityMap: Record<string, "Urgent" | "High" | "Medium" | "Low" | "None"> = {
     urgent: "Urgent",
     high: "High",
     medium: "Medium",
     low: "Low",
   };
 
-  const currentPriority = (conversation.priority || "medium") as "urgent" | "high" | "medium" | "low";
-  const uiPriority = priorityMap[currentPriority] || "Medium";
+  const currentPriority = (conversation.priority || null) as "urgent" | "high" | "medium" | "low" | null;
+  const uiPriority = currentPriority ? priorityMap[currentPriority] : "None";
 
   // Get inbox info
   const inbox = inboxes.find((i) => i.id === conversation.inbox_id);
 
   // Handle status change
-  const handleStatusChange = useCallback(async (newStatus: string) => {
-    setStatusMenuAnchor(null);
-    if (!accountId || !conversation.id) return;
+  const handleStatusChange = useCallback(
+    async (newStatus: string) => {
+      setStatusMenuAnchor(null);
+      if (!accountId || !conversation.id) return;
 
-    setUpdating(true);
-    try {
-      const response = await chatwootService.conversations.updateConversation(
-        accountId,
-        conversation.id,
-        { status: newStatus }
-      );
+      setUpdating(true);
+      try {
+        const response = await chatwootService.conversations.updateConversation(accountId, conversation.id, {
+          status: newStatus,
+        });
 
-      // Extract and merge conversation update
-      const extracted = extractConversation(response, conversation);
-      const finalConversation = mergeConversationUpdate(conversation, {
-        ...extracted,
-        status: newStatus,
-      });
+        // Extract and merge conversation update
+        const extracted = extractConversation(response, conversation);
+        const finalConversation = mergeConversationUpdate(conversation, {
+          ...extracted,
+          status: newStatus,
+        });
 
-      // Propagate update to parent
-      onConversationUpdate?.(finalConversation);
-    } catch (error) {
-      const errorMessage = extractErrorMessage(error);
-      console.error("[handleStatusChange] Failed to update status:", errorMessage);
-      // TODO: Show error toast with message: errorMessage
-    } finally {
-      setUpdating(false);
-    }
-  }, [accountId, conversation, onConversationUpdate]);
+        // Propagate update to parent
+        onConversationUpdate?.(finalConversation);
+      } catch (error) {
+        const errorMessage = extractErrorMessage(error);
+        console.error("[handleStatusChange] Failed to update status:", errorMessage);
+        // TODO: Show error toast with message: errorMessage
+      } finally {
+        setUpdating(false);
+      }
+    },
+    [accountId, conversation, onConversationUpdate]
+  );
 
   // Handle priority change
-  const handlePriorityChange = useCallback(async (newPriority: string) => {
-    setPriorityMenuAnchor(null);
-    if (!accountId || !conversation.id) return;
+  const handlePriorityChange = useCallback(
+    async (newPriority: string | null) => {
+      setPriorityMenuAnchor(null);
+      if (!accountId || !conversation.id) return;
 
-    setUpdating(true);
-    try {
-      const response = await chatwootService.conversations.updateConversation(
-        accountId,
-        conversation.id,
-        { priority: newPriority }
-      );
+      setUpdating(true);
+      try {
+        const response = await chatwootService.conversations.updateConversationPriority(accountId, conversation.id, {
+          priority: newPriority,
+        });
 
-      // Extract and merge conversation update
-      const extracted = extractConversation(response, conversation);
-      const finalConversation = mergeConversationUpdate(conversation, {
-        ...extracted,
-        priority: newPriority,
-      });
+        // Extract and merge conversation update
+        const extracted = extractConversation(response, conversation);
+        const finalConversation = mergeConversationUpdate(conversation, {
+          ...extracted,
+          priority: newPriority || undefined,
+        });
 
-      // Propagate update to parent
-      onConversationUpdate?.(finalConversation);
-    } catch (error) {
-      const errorMessage = extractErrorMessage(error);
-      console.error("[handlePriorityChange] Failed to update priority:", errorMessage);
-      // TODO: Show error toast with message: errorMessage
-    } finally {
-      setUpdating(false);
-    }
-  }, [accountId, conversation, onConversationUpdate]);
+        // Propagate update to parent
+        onConversationUpdate?.(finalConversation);
+      } catch (error) {
+        const errorMessage = extractErrorMessage(error);
+        console.error("[handlePriorityChange] Failed to update priority:", errorMessage);
+        // TODO: Show error toast with message: errorMessage
+      } finally {
+        setUpdating(false);
+      }
+    },
+    [accountId, conversation, onConversationUpdate]
+  );
 
   // Handle conversation updates from child components
-  const handleConversationChange = useCallback((updates: Partial<ChatwootConversation>) => {
-    const updatedConversation = mergeConversationUpdate(conversation, updates);
-    onConversationUpdate?.(updatedConversation);
-  }, [conversation, onConversationUpdate]);
+  const handleConversationChange = useCallback(
+    (updates: Partial<ChatwootConversation>) => {
+      const updatedConversation = mergeConversationUpdate(conversation, updates);
+      onConversationUpdate?.(updatedConversation);
+    },
+    [conversation, onConversationUpdate]
+  );
 
   return (
     <Box
@@ -172,11 +181,9 @@ export const ChatwootConversationDetailPanel: React.FC<
 
           try {
             // Persist customer ID to Chatwoot backend
-            await chatwootService.conversations.updateConversationCustomAttributes(
-              accountId,
-              conversation.id,
-              { gomake_customer_id: customerId }
-            );
+            await chatwootService.conversations.updateConversationCustomAttributes(accountId, conversation.id, {
+              gomake_customer_id: customerId,
+            });
 
             // Update local conversation state
             const updatedConversation = {
@@ -201,16 +208,9 @@ export const ChatwootConversationDetailPanel: React.FC<
       <ConversationAssigneeSection
         assignee={conversation.meta?.assignee}
         accountId={accountId}
-        conversationId={conversation.id}
+        conversation={conversation}
         inboxId={conversation.inbox_id}
-        onAssigneeChanged={(newAssignee) => {
-          handleConversationChange({
-            meta: {
-              ...conversation.meta,
-              assignee: newAssignee,
-            },
-          });
-        }}
+        updateConversation={handleConversationChange}
       />
 
       {/* Status */}
@@ -280,7 +280,7 @@ export const ChatwootConversationDetailPanel: React.FC<
             <ListItemIcon>
               <ResolvedIcon fontSize="small" />
             </ListItemIcon>
-            <ListItemText>Resolved</ListItemText>
+            <ListItemText>Close</ListItemText>
           </MenuItem>
           <MenuItem onClick={() => handleStatusChange("snoozed")}>
             <ListItemIcon>
@@ -313,7 +313,7 @@ export const ChatwootConversationDetailPanel: React.FC<
           onClick={(e) => !updating && setPriorityMenuAnchor(e.currentTarget)}
           endIcon={updating ? <CircularProgress size={16} /> : <ArrowDropDownIcon />}
           disabled={updating}
-          startIcon={!updating && <ConversationPriorityIcon priority={currentPriority} size={12} />}
+          startIcon={!updating && currentPriority && <ConversationPriorityIcon priority={currentPriority} size={12} />}
           sx={{
             textTransform: "capitalize",
             justifyContent: "space-between",
@@ -328,7 +328,7 @@ export const ChatwootConversationDetailPanel: React.FC<
             },
           }}
         >
-          {currentPriority}
+          {uiPriority}
         </Button>
         <Menu
           anchorEl={priorityMenuAnchor}
@@ -366,6 +366,12 @@ export const ChatwootConversationDetailPanel: React.FC<
               <ConversationPriorityIcon priority="low" size={12} />
             </ListItemIcon>
             <ListItemText>Low</ListItemText>
+          </MenuItem>
+          <MenuItem onClick={() => handlePriorityChange(null)}>
+            <ListItemIcon>
+              <CloseIcon fontSize="small" />
+            </ListItemIcon>
+            <ListItemText>None</ListItemText>
           </MenuItem>
         </Menu>
       </Box>
@@ -407,10 +413,7 @@ export const ChatwootConversationDetailPanel: React.FC<
             <Typography variant="body2" sx={{ fontWeight: 500, fontSize: 13 }}>
               {inbox.name}
             </Typography>
-            <Typography
-              variant="caption"
-              sx={{ color: colorTokens.semantic.text.secondary, fontSize: 11 }}
-            >
+            <Typography variant="caption" sx={{ color: colorTokens.semantic.text.secondary, fontSize: 11 }}>
               {conversation.meta?.channel || "Unknown channel"}
             </Typography>
           </Box>
@@ -421,45 +424,44 @@ export const ChatwootConversationDetailPanel: React.FC<
 
       {/* Expandable Sections */}
       {/* Custom Attributes */}
-      {conversation.custom_attributes &&
-        Object.keys(conversation.custom_attributes).length > 0 && (
-          <Accordion elevation={0} defaultExpanded={false} sx={{ "&:before": { display: "none" } }}>
-            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-              <Typography
-                variant="body2"
-                sx={{
-                  fontWeight: 600,
-                  fontSize: 11,
-                  color: colorTokens.semantic.text.secondary,
-                }}
-              >
-                CUSTOM ATTRIBUTES
-              </Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-                {Object.entries(conversation.custom_attributes).map(([key, value]) => (
-                  <Box key={key}>
-                    <Typography
-                      variant="caption"
-                      sx={{
-                        color: colorTokens.semantic.text.secondary,
-                        fontSize: 10,
-                        textTransform: "uppercase",
-                        fontWeight: 600,
-                      }}
-                    >
-                      {key}
-                    </Typography>
-                    <Typography variant="body2" sx={{ fontSize: 13, mt: 0.5 }}>
-                      {String(value)}
-                    </Typography>
-                  </Box>
-                ))}
-              </Box>
-            </AccordionDetails>
-          </Accordion>
-        )}
+      {conversation.custom_attributes && Object.keys(conversation.custom_attributes).length > 0 && (
+        <Accordion elevation={0} defaultExpanded={false} sx={{ "&:before": { display: "none" } }}>
+          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+            <Typography
+              variant="body2"
+              sx={{
+                fontWeight: 600,
+                fontSize: 11,
+                color: colorTokens.semantic.text.secondary,
+              }}
+            >
+              CUSTOM ATTRIBUTES
+            </Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+              {Object.entries(conversation.custom_attributes).map(([key, value]) => (
+                <Box key={key}>
+                  <Typography
+                    variant="caption"
+                    sx={{
+                      color: colorTokens.semantic.text.secondary,
+                      fontSize: 10,
+                      textTransform: "uppercase",
+                      fontWeight: 600,
+                    }}
+                  >
+                    {key}
+                  </Typography>
+                  <Typography variant="body2" sx={{ fontSize: 13, mt: 0.5 }}>
+                    {String(value)}
+                  </Typography>
+                </Box>
+              ))}
+            </Box>
+          </AccordionDetails>
+        </Accordion>
+      )}
 
       {/* SLA Information */}
       {conversation.applied_sla && (

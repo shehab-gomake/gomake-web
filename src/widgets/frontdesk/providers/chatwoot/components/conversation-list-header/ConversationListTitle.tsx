@@ -32,7 +32,7 @@ export const ConversationListTitle: React.FC<ConversationListTitleProps> = ({
           color: neutralColor(900),
         }}
       >
-        Conversations
+        Tickets
       </Typography>
       {status && status !== ConversationStatus.ALL && (
         <Chip

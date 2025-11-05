@@ -16,7 +16,7 @@
  * ```
  */
 
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import {
   chatwootInboxAgentsAtom,
@@ -44,12 +44,14 @@ export interface UseChatwootInboxAgentsResult {
  *
  * @param accountId - Account ID to fetch agents for (optional, uses selected account if not provided)
  * @param inboxId - Inbox ID to fetch agents for (required)
+ * @param conversationId - Conversation ID to trigger refetch when switching conversations (optional)
  * @param autoFetch - Whether to automatically fetch on mount (default: true)
  * @returns Inbox agents data, loading state, error, and refresh function
  */
 export function useChatwootInboxAgents(
   accountId?: number | null,
   inboxId?: number | null,
+  conversationId?: number | null,
   autoFetch: boolean = true
 ): UseChatwootInboxAgentsResult {
   const selectedAccountId = useRecoilValue(chatwootSelectedAccountAtom);
@@ -112,7 +114,7 @@ export function useChatwootInboxAgents(
       }));
 
       try {
-        console.log(`[useChatwootInboxAgents] 🚀 Fetching agents for inbox ${inboxId} in account ${effectiveAccountId}`);
+        console.log(`[useChatwootInboxAgents] 🚀 Fetching agents for inbox ${inboxId} in account ${effectiveAccountId}${conversationId ? ` (conversation: ${conversationId})` : ''}`);
         const agents = await chatwootService.agents.listInboxAgents(effectiveAccountId, inboxId);
 
         setInboxAgentsState((prev) => ({
@@ -126,9 +128,9 @@ export function useChatwootInboxAgents(
           },
         }));
 
-        console.log(`[useChatwootInboxAgents] Fetched ${agents.length} agents for inbox ${inboxId}`);
+        console.log(`[useChatwootInboxAgents] ✅ Fetched ${agents.length} agents for inbox ${inboxId}`);
       } catch (error) {
-        console.error(`[useChatwootInboxAgents] Failed to fetch agents for inbox ${inboxId}:`, error);
+        console.error(`[useChatwootInboxAgents] ❌ Failed to fetch agents for inbox ${inboxId}:`, error);
         setInboxAgentsState((prev) => ({
           ...prev,
           [inboxId]: {
@@ -148,7 +150,7 @@ export function useChatwootInboxAgents(
         }));
       }
     },
-    [effectiveAccountId, inboxId, resourceLoading.inboxAgents, inboxAgents, setInboxAgentsState, setResourceLoading]
+    [effectiveAccountId, inboxId, resourceLoading.inboxAgents, inboxAgents, setInboxAgentsState, setResourceLoading, conversationId]
   );
 
   /**
@@ -158,12 +160,28 @@ export function useChatwootInboxAgents(
     await fetchInboxAgents(true);
   }, [fetchInboxAgents]);
 
-  // Auto-fetch on mount or when account/inbox changes
+  // Track the previous conversationId to detect changes
+  const prevConversationIdRef = useRef<number | null | undefined>(conversationId);
+
+  // Auto-fetch on mount or when account/inbox/conversation changes
   useEffect(() => {
-    if (autoFetch && effectiveAccountId && inboxId) {
-      fetchInboxAgents();
+    if (!autoFetch || !effectiveAccountId || !inboxId) {
+      return;
     }
-  }, [effectiveAccountId, inboxId, autoFetch]); // Only depend on IDs and autoFetch
+
+    // Detect if conversationId changed
+    const conversationChanged = prevConversationIdRef.current !== conversationId;
+    prevConversationIdRef.current = conversationId;
+
+    // Force refetch when conversation changes to get latest agents
+    // This ensures the assignment list is fresh for each conversation
+    if (conversationChanged && conversationId) {
+      console.log(`[useChatwootInboxAgents] 🔄 Conversation changed to ${conversationId}, forcing agent refetch`);
+      fetchInboxAgents(true); // Force refetch
+    } else {
+      fetchInboxAgents(); // Normal fetch (respects cache)
+    }
+  }, [effectiveAccountId, inboxId, conversationId, autoFetch, fetchInboxAgents])
 
   /**
    * Filter to only verified agents (confirmed: true)

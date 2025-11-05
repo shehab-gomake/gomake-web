@@ -21,7 +21,7 @@ export const ConversationSearchBar: React.FC<ConversationSearchBarProps> = React
   filters,
   onFiltersChange,
   neutralColor,
-  placeholder = "Search conversations...",
+  placeholder = "Search tickets...",
 }) => {
   // Local search state for immediate UI updates
   const [searchValue, setSearchValue] = useState(filters.q || "");

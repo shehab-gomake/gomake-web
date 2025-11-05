@@ -206,6 +206,7 @@ export const ChatwootReplyComposer: React.FC<ChatwootReplyComposerProps> = ({
         lightGrayText={lightGrayText}
         neutralColor={neutralColor}
         primaryColor={primaryColor}
+        isPrivateNote={activeTab === "private"}
       />
 
       {/* Bottom Toolbar */}

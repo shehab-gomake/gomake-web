@@ -76,16 +76,48 @@ export interface CreateConversationPayload {
 
 /**
  * Validation Errors
- * Form validation error messages
+ * Form validation error messages for compose conversation form
+ *
+ * All fields are optional strings containing error messages.
+ * Only fields that have validation errors should be present.
+ *
+ * @example
+ * ```typescript
+ * const errors: ComposeValidationErrors = {
+ *   contact: "Contact is required",
+ *   subject: "Subject is required for email conversations"
+ * };
+ * ```
  */
 export interface ComposeValidationErrors {
-  contact?: string;
-  inbox?: string;
-  message?: string;
-  subject?: string;
-  ccEmails?: string;
-  bccEmails?: string;
-  attachments?: string;
+  /** Error message for contact field */
+  readonly contact?: string;
+  /** Error message for inbox field */
+  readonly inbox?: string;
+  /** Error message for message content field */
+  readonly message?: string;
+  /** Error message for email subject field */
+  readonly subject?: string;
+  /** Error message for CC emails field */
+  readonly ccEmails?: string;
+  /** Error message for BCC emails field */
+  readonly bccEmails?: string;
+  /** Error message for attachments field */
+  readonly attachments?: string;
+}
+
+/**
+ * Type guard to check if a key is a valid ComposeValidationErrors key
+ */
+export function isValidationErrorKey(key: string): key is keyof ComposeValidationErrors {
+  return ["contact", "inbox", "message", "subject", "ccEmails", "bccEmails", "attachments"].includes(key);
+}
+
+/**
+ * Helper to check if there are any validation errors
+ */
+export function hasValidationErrors(errors: ComposeValidationErrors): boolean {
+  return Object.values(errors).some((error) => error !== undefined && error !== "");
 }
 
 /**

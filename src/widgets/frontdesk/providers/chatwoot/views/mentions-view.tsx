@@ -15,8 +15,8 @@ export const MentionsView: React.FC = () => {
   return (
     <BaseConversationView
       emptyState={{
-        title: "No conversation selected",
-        description: "Choose a conversation where you've been mentioned",
+        title: "No ticket selected",
+        description: "Choose a ticket where you've been mentioned",
       }}
     />
   );

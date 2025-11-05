@@ -57,6 +57,9 @@ export const ChatwootMessageItem: React.FC<ChatwootMessageItemProps> = ({
   // message_type: 0 = incoming, 1 = outgoing (or check sender_type)
   const isMe = message.message_type === 1 || message.sender_type === "User";
 
+  // Check if message is private (support both _private and private properties)
+  const isPrivate = message._private === true || message.private === true;
+
   const sender = message.sender || {
     name: isMe ? "You" : "Contact",
     email: "",
@@ -121,9 +124,19 @@ export const ChatwootMessageItem: React.FC<ChatwootMessageItemProps> = ({
 
   // Message bubble styles matching WhatsApp
   const getMessageBubbleStyles = (isOutgoing: boolean) => ({
-    bgcolor: isOutgoing ? primaryColor(100) : neutralColor(50),
+    bgcolor: isPrivate
+      ? neutralColor(100)
+      : isOutgoing
+      ? primaryColor(100)
+      : neutralColor(50),
     color: isOutgoing ? primaryColor(900) : neutralColor(800),
-    border: `1px solid ${isOutgoing ? primaryColor(200) : neutralColor(200)}`,
+    border: `1px solid ${
+      isPrivate
+        ? neutralColor(300)
+        : isOutgoing
+        ? primaryColor(200)
+        : neutralColor(200)
+    }`,
     borderRadius: isOutgoing ? "18px 18px 4px 18px" : "18px 18px 18px 4px",
     px: 2,
     py: 1.5,
@@ -132,6 +145,8 @@ export const ChatwootMessageItem: React.FC<ChatwootMessageItemProps> = ({
     transition: theme.transitions.create(["box-shadow", "transform"], {
       duration: theme.transitions.duration.short,
     }),
+    opacity: isPrivate ? 0.85 : 1,
+    fontStyle: isPrivate ? "italic" : "normal",
     "&:hover": {
       boxShadow: `0 2px 8px ${alpha(theme.palette.common.black, 0.15)}`,
       transform: "translateY(-1px)",
@@ -234,14 +249,22 @@ export const ChatwootMessageItem: React.FC<ChatwootMessageItemProps> = ({
       >
         {shouldShowAvatar && (
           <Chip
-            label={isMe ? "You" : senderName}
+            label={isPrivate ? `🔒 ${isMe ? "You" : senderName} (Private)` : isMe ? "You" : senderName}
             size="small"
             variant="outlined"
             sx={{
               height: 20,
               fontSize: "0.7rem",
-              borderColor: isMe ? primaryColor(300) : neutralColor(300),
-              color: isMe ? primaryColor(700) : neutralColor(700),
+              borderColor: isPrivate
+                ? neutralColor(400)
+                : isMe
+                ? primaryColor(300)
+                : neutralColor(300),
+              color: isPrivate
+                ? neutralColor(600)
+                : isMe
+                ? primaryColor(700)
+                : neutralColor(700),
               bgcolor: "transparent",
             }}
           />

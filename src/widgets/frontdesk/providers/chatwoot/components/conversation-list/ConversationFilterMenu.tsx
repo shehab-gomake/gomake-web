@@ -34,7 +34,7 @@ interface ConversationFilterMenuProps {
 const STATUS_OPTIONS = [
   { label: "All", value: ConversationStatus.ALL },
   { label: "Open", value: ConversationStatus.OPEN },
-  { label: "Resolved", value: ConversationStatus.RESOLVED },
+  { label: "Closed", value: ConversationStatus.RESOLVED },
   { label: "Pending", value: ConversationStatus.PENDING },
   { label: "Snoozed", value: ConversationStatus.SNOOZED },
 ];
