@@ -97,6 +97,8 @@ const QuoteNewPageWidget = ({
   const [quoteItemValue, setQuoteItemValue] =
     useRecoilState<any>(quoteItemState);
 
+  console.log("ssssssssssssssssss", quoteItemValue);
+
   useEffect(() => {
     setQuoteItemValue({});
   }, []);
@@ -991,8 +993,9 @@ const QuoteNewPageWidget = ({
         onClose={onClickCloseInventoryIntakeModal}
         inventoryData={inventoryData}
         loading={inventoryLoading}
-        purchaseOrderId={quoteItemValue?.id}
+        purchaseOrderId={router.query?.Id as string}
         purchaseOrderNumber={quoteItemValue?.number}
+        supplierId={quoteItemValue?.client?.id}
       />
       <AddNewContactModal
         openModal={openAddNewContactModal}

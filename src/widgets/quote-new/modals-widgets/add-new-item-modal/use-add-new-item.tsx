@@ -7,6 +7,7 @@ import { useRecoilState } from "recoil";
 import { quoteItemState, selectedFirstMaterialState } from "@/store";
 import {
   addDocumentItemFromMaterialApi,
+  addDocumentItemFromMaterialRowApi,
   getDocumentItemDataFromMaterialApi,
   getDocumentItemDataFromRowMaterialApi,
 } from "@/services/api-service/materials/materials-endpoints";
@@ -194,12 +195,24 @@ const useAddNewItem = ({ onClose, getQuote, documentType, getCalculateQuoteItem,
         alertFaultAdded();
       }
     };
-    await addDocumentItemFromMaterialApi(callApi, callBack, {
-      clientId: quoteItemValue?.customerID,
-      printHouseMaterialId: selectedProduct?.id,
-      documentType,
-      documentId: quoteItemValue?.id,
-    });
+
+    // Use new endpoint if isCanIntake is true and it's a purchase order
+    // Otherwise use the existing endpoint
+    if (isCanIntake && isPurchaseOrder) {
+      await addDocumentItemFromMaterialRowApi(callApi, callBack, {
+        clientId: quoteItemValue?.customerID,
+        printHouseMaterialId: selectedProduct?.id,
+        documentType,
+        documentId: quoteItemValue?.id,
+      });
+    } else {
+      await addDocumentItemFromMaterialApi(callApi, callBack, {
+        clientId: quoteItemValue?.customerID,
+        printHouseMaterialId: selectedProduct?.id,
+        documentType,
+        documentId: quoteItemValue?.id,
+      });
+    }
   };
 
   const [isDisabled, setIsDisabled] = useState(true);

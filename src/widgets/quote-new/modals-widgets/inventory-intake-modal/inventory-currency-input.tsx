@@ -44,7 +44,7 @@ const InventoryCurrencyInput: React.FC<InventoryCurrencyInputProps> = ({
           sx={classes.clickableData}
           onClick={() => isEditable && setOpenModal(true)}
           variant={"text"}
-          style={{ minWidth: "max-content" }}
+          style={{ minWidth: "max-content", width: "100%" }}
           disabled={!isEditable}
         >
           {currencyName()}
