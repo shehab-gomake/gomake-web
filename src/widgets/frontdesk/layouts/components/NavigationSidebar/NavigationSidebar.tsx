@@ -514,65 +514,6 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
               </ListItemButton>
             </Tooltip>
 
-            {/* Settings */}
-            <Tooltip title="Settings" placement="right" disableHoverListener={!isCollapsed}>
-              <ListItemButton
-                selected={isSettingsView}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  e.preventDefault();
-
-                  // Use RouteBuilder for type-safe navigation
-                  const route = RouteBuilder.chatwoot(ChatwootView.SETTINGS);
-                  const { path, options } = buildRoute(route, { replace: true });
-
-                  // Navigate to Chatwoot channel first if not already there
-                  if (selectedChannel !== "chatwoot") {
-                    onSectionSelect("inbox");
-                    onChannelSelect("chatwoot" as Channel);
-                  }
-
-                  // Then navigate to Settings
-                  router.replace(path, undefined, { shallow: options.scroll === false });
-                }}
-                sx={{
-                  py: 0.5,
-                  px: isCollapsed ? 1.5 : 2,
-                  justifyContent: isCollapsed ? "center" : "flex-start",
-                  pointerEvents: "auto",
-                  "&.Mui-selected": {
-                    backgroundColor: theme.palette.primary.main + "10",
-                    borderLeft: `3px solid ${theme.palette.primary.main}`,
-                    "&:hover": {
-                      backgroundColor: theme.palette.primary.main + "20",
-                    },
-                  },
-                }}
-              >
-                {isCollapsed ? (
-                  <Box sx={{ color: theme.palette.text.secondary, display: "flex" }}>
-                    <SettingsIcon fontSize="small" />
-                  </Box>
-                ) : (
-                  <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, width: "100%" }}>
-                    <Box sx={{ color: theme.palette.text.secondary }}>
-                      <SettingsIcon fontSize="small" />
-                    </Box>
-                    <ListItemText
-                      primary="Settings"
-                      primaryTypographyProps={{
-                        variant: "body2",
-                        sx: {
-                          fontSize: "0.875rem",
-                          fontWeight: 400,
-                        },
-                      }}
-                    />
-                  </Box>
-                )}
-              </ListItemButton>
-            </Tooltip>
-
             {/* Conversations - Expandable */}
             {!isCollapsed && (
               <Box>
@@ -840,9 +781,6 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
                             onClick={(e) => {
                               e.stopPropagation();
 
-                              // Update state first
-                              selectInbox(inbox.id);
-
                               // Use RouteBuilder for type-safe navigation
                               const route = RouteBuilder.chatwoot(ChatwootView.CHANNELS, undefined, inbox.id.toString());
                               const { path, options } = buildRoute(route, { replace: true });
@@ -855,7 +793,9 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
                                 onSectionSelect("inbox");
                               }
 
-                              // Then navigate to the specific channel view
+                              // Navigate to the specific channel view
+                              // The router will sync the state from URL → Recoil automatically
+                              // This prevents race conditions between state and URL updates
                               router.replace(path, undefined, { shallow: options.scroll === false });
                             }}
                             sx={{
@@ -946,6 +886,65 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
                 </ListItemButton>
               </Tooltip>
             )}
+
+            {/* Settings */}
+            <Tooltip title="Settings" placement="right" disableHoverListener={!isCollapsed}>
+              <ListItemButton
+                selected={isSettingsView}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  e.preventDefault();
+
+                  // Use RouteBuilder for type-safe navigation
+                  const route = RouteBuilder.chatwoot(ChatwootView.SETTINGS);
+                  const { path, options } = buildRoute(route, { replace: true });
+
+                  // Navigate to Chatwoot channel first if not already there
+                  if (selectedChannel !== "chatwoot") {
+                    onSectionSelect("inbox");
+                    onChannelSelect("chatwoot" as Channel);
+                  }
+
+                  // Then navigate to Settings
+                  router.replace(path, undefined, { shallow: options.scroll === false });
+                }}
+                sx={{
+                  py: 0.5,
+                  px: isCollapsed ? 1.5 : 2,
+                  justifyContent: isCollapsed ? "center" : "flex-start",
+                  pointerEvents: "auto",
+                  "&.Mui-selected": {
+                    backgroundColor: theme.palette.primary.main + "10",
+                    borderLeft: `3px solid ${theme.palette.primary.main}`,
+                    "&:hover": {
+                      backgroundColor: theme.palette.primary.main + "20",
+                    },
+                  },
+                }}
+              >
+                {isCollapsed ? (
+                  <Box sx={{ color: theme.palette.text.secondary, display: "flex" }}>
+                    <SettingsIcon fontSize="small" />
+                  </Box>
+                ) : (
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, width: "100%" }}>
+                    <Box sx={{ color: theme.palette.text.secondary }}>
+                      <SettingsIcon fontSize="small" />
+                    </Box>
+                    <ListItemText
+                      primary="Settings"
+                      primaryTypographyProps={{
+                        variant: "body2",
+                        sx: {
+                          fontSize: "0.875rem",
+                          fontWeight: 400,
+                        },
+                      }}
+                    />
+                  </Box>
+                )}
+              </ListItemButton>
+            </Tooltip>
           </List>
         </Collapse>
       </Box>

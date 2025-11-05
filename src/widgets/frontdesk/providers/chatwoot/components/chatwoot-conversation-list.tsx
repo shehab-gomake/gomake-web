@@ -13,7 +13,7 @@ import {
   ConversationStatus,
   ConversationAssigneeType,
 } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
-import { chatwootConversationCountsAtom } from "@/store/frontdesk/atoms/chatwoot.atoms";
+import { chatwootConversationCountsAtom, ChatwootConversationsLoadingState } from "@/store/frontdesk/atoms/chatwoot.atoms";
 import type { ChatwootInbox } from "@/services/frontdesk/api/chatwoot/types/inboxes.types";
 // New Chatwoot-specific loading and empty states
 import { ConversationListSkeleton } from "./skeletons";
@@ -23,7 +23,7 @@ interface ChatwootConversationListProps {
   conversations: any[];
   selectedConversationId?: string | number;
   onConversationSelect: (conversation: any) => void;
-  loading?: boolean;
+  loading?: boolean | ChatwootConversationsLoadingState;
   error?: string;
   hasMore?: boolean;
   onLoadMore?: () => void;
@@ -42,7 +42,7 @@ export const ChatwootConversationList: React.FC<ChatwootConversationListProps> =
   conversations,
   selectedConversationId,
   onConversationSelect,
-  loading = false,
+  loading: loadingProp = false,
   error,
   hasMore = false,
   onLoadMore,
@@ -58,6 +58,14 @@ export const ChatwootConversationList: React.FC<ChatwootConversationListProps> =
 }) => {
   const theme = useTheme();
   const { neutralColor } = useGomakeTheme();
+
+  // Extract granular loading states
+  const loadingState: ChatwootConversationsLoadingState = typeof loadingProp === 'boolean'
+    ? { initialLoading: loadingProp, filtering: false, loadingMore: false }
+    : loadingProp;
+
+  const { initialLoading, filtering, loadingMore } = loadingState;
+  const isAnyLoading = initialLoading || filtering || loadingMore;
 
   // Get counts from API response (stored in atom)
   const counts = useRecoilValue(chatwootConversationCountsAtom);
@@ -91,7 +99,7 @@ export const ChatwootConversationList: React.FC<ChatwootConversationListProps> =
   const sentinelRef = useInfiniteScroll({
     onLoadMore: onLoadMore || (() => {}),
     hasMore: hasMore,
-    loading: loading,
+    loading: isAnyLoading,
     threshold: 200,
     enabled: !!onLoadMore && hasMore,
   });
@@ -131,8 +139,9 @@ export const ChatwootConversationList: React.FC<ChatwootConversationListProps> =
           position: "relative",
         }}
       >
-        {/* Beautiful Loading Overlay - Shows in list area when switching tabs */}
-        <LoadingOverlay loading={loading && conversations.length > 0} message="Loading conversations..." />
+        {/* Beautiful Loading Overlay - Only show for filtering, not initial load */}
+        {/* This prevents the "refresh screen" effect when switching views */}
+        <LoadingOverlay loading={filtering && conversations.length > 0} message="Updating conversations..." />
 
         {error ? (
           // Error State with retry option
@@ -142,8 +151,8 @@ export const ChatwootConversationList: React.FC<ChatwootConversationListProps> =
             error={error}
             onRetry={onRefresh}
           />
-        ) : loading && conversations.length === 0 ? (
-          // Initial loading state with skeleton
+        ) : initialLoading && conversations.length === 0 ? (
+          // Initial loading state with skeleton (only on first load with no data)
           <ConversationListSkeleton count={8} />
         ) : conversations.length === 0 ? (
           // Empty state with context-aware messaging
@@ -176,7 +185,7 @@ export const ChatwootConversationList: React.FC<ChatwootConversationListProps> =
             <div ref={sentinelRef} style={{ height: 1, width: "100%" }} />
 
             {/* Show skeleton at bottom when loading more */}
-            {loading && hasMore && (
+            {loadingMore && hasMore && (
               <Box sx={{ py: 1 }}>
                 <ConversationListSkeleton count={3} />
               </Box>
@@ -188,10 +197,20 @@ export const ChatwootConversationList: React.FC<ChatwootConversationListProps> =
   );
 }, (prevProps, nextProps) => {
   // Custom comparison function for optimal re-render prevention
+
+  // Deep compare loading state (can be boolean or object)
+  const loadingEqual = typeof prevProps.loading === 'boolean' && typeof nextProps.loading === 'boolean'
+    ? prevProps.loading === nextProps.loading
+    : typeof prevProps.loading === 'object' && typeof nextProps.loading === 'object'
+    ? prevProps.loading.initialLoading === nextProps.loading.initialLoading &&
+      prevProps.loading.filtering === nextProps.loading.filtering &&
+      prevProps.loading.loadingMore === nextProps.loading.loadingMore
+    : false;
+
   return (
     prevProps.conversations === nextProps.conversations &&
     prevProps.selectedConversationId === nextProps.selectedConversationId &&
-    prevProps.loading === nextProps.loading &&
+    loadingEqual &&
     prevProps.error === nextProps.error &&
     prevProps.hasMore === nextProps.hasMore &&
     prevProps.searchQuery === nextProps.searchQuery &&

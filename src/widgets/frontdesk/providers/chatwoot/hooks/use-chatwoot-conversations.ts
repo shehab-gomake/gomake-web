@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState, useRecoilValue } from "recoil";
 import { chatwootService } from "@/services/frontdesk";
 import {
   ConversationListParams,
@@ -12,12 +12,13 @@ import {
   chatwootConversationsLoadingAtom,
   chatwootConversationsErrorAtom,
   chatwootConversationCountsAtom,
+  ChatwootConversationsLoadingState,
 } from "@/store/frontdesk/atoms/chatwoot.atoms";
 import { useFetchDeduplication } from "./use-chatwoot-initialization";
 
 export const useChatwootConversations = (accountId: number | null, options: Partial<ConversationListParams> = {}) => {
   const [conversations, setConversations] = useRecoilState(chatwootConversationsAtom);
-  const [loading, setLoading] = useRecoilState(chatwootConversationsLoadingAtom);
+  const [loadingState, setLoadingState] = useRecoilState(chatwootConversationsLoadingAtom);
   const [error, setError] = useRecoilState(chatwootConversationsErrorAtom);
   const setCounts = useSetRecoilState(chatwootConversationCountsAtom);
   const [hasMore, setHasMore] = useState(true);
@@ -29,8 +30,16 @@ export const useChatwootConversations = (accountId: number | null, options: Part
   // Track if this is the first mount
   const isFirstMountRef = useRef(true);
 
+  // Track previous filter key to detect filter changes
+  const prevFilterKeyRef = useRef<string>("");
+
+  // Helper to update specific loading states
+  const setLoadingType = useCallback((type: keyof ChatwootConversationsLoadingState, value: boolean) => {
+    setLoadingState(prev => ({ ...prev, [type]: value }));
+  }, [setLoadingState]);
+
   const fetchConversations = useCallback(
-    async (page: number = 1, append: boolean = false) => {
+    async (page: number = 1, append: boolean = false, isFilterChange: boolean = false) => {
       // Note: accountId can be null - the API endpoint /api/accounts/conversations
       // doesn't require accountId in the URL path, it uses the authenticated user's account automatically
       // So we allow the call even if accountId is null
@@ -54,7 +63,16 @@ export const useChatwootConversations = (accountId: number | null, options: Part
       }
 
       markFetchStart();
-      setLoading(true);
+
+      // Set appropriate loading state based on operation type
+      if (append) {
+        setLoadingType('loadingMore', true);
+      } else if (isFilterChange && conversations.length > 0) {
+        setLoadingType('filtering', true);
+      } else {
+        setLoadingType('initialLoading', true);
+      }
+
       setError(null);
 
       try {
@@ -93,7 +111,12 @@ export const useChatwootConversations = (accountId: number | null, options: Part
         console.error("Failed to fetch Chatwoot conversations:", err);
         markFetchFailed();
       } finally {
-        setLoading(false);
+        // Reset all loading states
+        setLoadingState({
+          initialLoading: false,
+          filtering: false,
+          loadingMore: false,
+        });
       }
     },
     [
@@ -106,8 +129,10 @@ export const useChatwootConversations = (accountId: number | null, options: Part
       options.q,
       options.team_id,
       options.labels,
+      conversations.length,
       setConversations,
-      setLoading,
+      setLoadingState,
+      setLoadingType,
       setError,
       setCounts,
       shouldFetch,
@@ -118,33 +143,47 @@ export const useChatwootConversations = (accountId: number | null, options: Part
   );
 
   const loadMore = useCallback(() => {
-    if (!loading && hasMore) {
-      fetchConversations(currentPage + 1, true);
+    const isLoading = loadingState.initialLoading || loadingState.filtering || loadingState.loadingMore;
+    if (!isLoading && hasMore) {
+      fetchConversations(currentPage + 1, true, false);
     }
-  }, [loading, hasMore, currentPage, fetchConversations]);
+  }, [loadingState, hasMore, currentPage, fetchConversations]);
 
   const refresh = useCallback(() => {
-    fetchConversations(1, false);
+    fetchConversations(1, false, false);
   }, [fetchConversations]);
 
   useEffect(() => {
+    // Create a stable filter key to detect changes
+    const filterKey = JSON.stringify({
+      accountId,
+      inbox_id: options.inbox_id,
+      status: options.status,
+      assignee_type: options.assignee_type,
+      q: options.q,
+      team_id: options.team_id,
+    });
+
     // Skip the first mount to prevent double fetch during initialization
-    // The parent provider will coordinate the initial fetch
     if (isFirstMountRef.current) {
       isFirstMountRef.current = false;
+      prevFilterKeyRef.current = filterKey;
       // Still fetch on first mount, but the deduplication will prevent multiple calls
-      fetchConversations(1, false);
+      fetchConversations(1, false, false);
       return;
     }
 
-    // Fetch conversations even if accountId is null
-    // The API endpoint uses authenticated user's account automatically
-    fetchConversations(1, false);
+    // Detect if filters have changed
+    const isFilterChange = filterKey !== prevFilterKeyRef.current;
+    prevFilterKeyRef.current = filterKey;
+
+    // Fetch conversations with filter change flag
+    fetchConversations(1, false, isFilterChange);
   }, [accountId, options, fetchConversations]);
 
   return {
     conversations,
-    loading,
+    loading: loadingState,
     error,
     hasMore,
     loadMore,

@@ -81,6 +81,9 @@ export const useChatwootProvider = () => {
   );
   const [sortBy, setSortBy] = React.useState<string | undefined>(router.currentFilters?.sortBy);
 
+  // Debounce timer for filter changes to batch rapid updates
+  const filterDebounceTimerRef = useRef<NodeJS.Timeout | null>(null);
+
   // Build filters based on all filter states
   // Supports toggling between Mine/Unassigned/All via assignee filter
   const filters = useMemo<Partial<ConversationListParams>>(() => {
@@ -291,66 +294,95 @@ export const useChatwootProvider = () => {
 
   // Handle filter changes - support status, assignee_type, search, team, sort, etc.
   // Also syncs changes to URL for deep linking and browser history
+  // Uses debouncing to batch rapid filter changes and prevent multiple API calls
   const handleFiltersChange = useCallback(
-    (newFilters: Partial<ConversationListParams>) => {
-      let statusToSet = statusFilter;
-      let assigneeToSet = assigneeFilter;
-      let searchToSet = searchQuery;
-      let teamToSet = teamId;
-      let sortToSet = sortBy;
-
-      // Handle status filter - the component sends ConversationStatus.ALL when "All" is selected
-      // Check if status property exists in the newFilters object (could be undefined or ConversationStatus.ALL)
-      if ("status" in newFilters) {
-        // Convert ConversationStatus.ALL or undefined to ConversationStatus.ALL for internal state
-        statusToSet =
-          newFilters.status === ConversationStatus.ALL || newFilters.status === undefined
-            ? ConversationStatus.ALL
-            : (newFilters.status as ConversationStatus);
-        setStatusFilter(statusToSet);
-      }
-      if ("assignee_type" in newFilters) {
-        assigneeToSet = newFilters.assignee_type;
-        setAssigneeFilter(newFilters.assignee_type);
-      }
-      if ("q" in newFilters) {
-        searchToSet = newFilters.q || "";
-        setSearchQuery(searchToSet);
-      }
-      if ("team_id" in newFilters) {
-        teamToSet = newFilters.team_id;
-        setTeamId(teamToSet);
-      }
-      if ("sort_by" in newFilters) {
-        sortToSet = newFilters.sort_by as string | undefined;
-        setSortBy(sortToSet);
+    (newFilters: Partial<ConversationListParams>, immediate: boolean = false) => {
+      // Clear any pending debounce timer
+      if (filterDebounceTimerRef.current) {
+        clearTimeout(filterDebounceTimerRef.current);
       }
 
-      // Sync to URL (use shallow routing to avoid full page reload)
-      const urlFilters: any = {};
-      if (statusToSet !== ConversationStatus.OPEN) {
-        urlFilters.status = statusToSet;
-      }
-      if (assigneeToSet !== ConversationAssigneeType.ME) {
-        urlFilters.assigneeType = assigneeToSet;
-      }
-      if (selectedInboxId) {
-        urlFilters.inboxId = selectedInboxId.toString();
-      }
-      if (searchToSet) {
-        urlFilters.search = searchToSet;
-      }
-      if (teamToSet) {
-        urlFilters.teamId = teamToSet.toString();
-      }
-      if (sortToSet) {
-        urlFilters.sortBy = sortToSet;
-      }
+      // Function to apply filter changes
+      const applyFilters = () => {
+        let statusToSet = statusFilter;
+        let assigneeToSet = assigneeFilter;
+        let searchToSet = searchQuery;
+        let teamToSet = teamId;
+        let sortToSet = sortBy;
 
-      router.updateFilters(urlFilters);
+        // Handle status filter - the component sends ConversationStatus.ALL when "All" is selected
+        // Check if status property exists in the newFilters object (could be undefined or ConversationStatus.ALL)
+        if ("status" in newFilters) {
+          // Convert ConversationStatus.ALL or undefined to ConversationStatus.ALL for internal state
+          statusToSet =
+            newFilters.status === ConversationStatus.ALL || newFilters.status === undefined
+              ? ConversationStatus.ALL
+              : (newFilters.status as ConversationStatus);
+          setStatusFilter(statusToSet);
+        }
+        if ("assignee_type" in newFilters) {
+          assigneeToSet = newFilters.assignee_type;
+          setAssigneeFilter(newFilters.assignee_type);
+        }
+        if ("q" in newFilters) {
+          searchToSet = newFilters.q || "";
+          setSearchQuery(searchToSet);
+        }
+        if ("team_id" in newFilters) {
+          teamToSet = newFilters.team_id;
+          setTeamId(teamToSet);
+        }
+        if ("sort_by" in newFilters) {
+          sortToSet = newFilters.sort_by as string | undefined;
+          setSortBy(sortToSet);
+        }
+
+        // Sync to URL (use shallow routing to avoid full page reload)
+        const urlFilters: any = {};
+        if (statusToSet !== ConversationStatus.OPEN) {
+          urlFilters.status = statusToSet;
+        }
+        if (assigneeToSet !== ConversationAssigneeType.ME) {
+          urlFilters.assigneeType = assigneeToSet;
+        }
+        if (selectedInboxId) {
+          urlFilters.inboxId = selectedInboxId.toString();
+        }
+        if (searchToSet) {
+          urlFilters.search = searchToSet;
+        }
+        if (teamToSet) {
+          urlFilters.teamId = teamToSet.toString();
+        }
+        if (sortToSet) {
+          urlFilters.sortBy = sortToSet;
+        }
+
+        router.updateFilters(urlFilters);
+      };
+
+      // Apply immediately for important filters (status, assignee), debounce for search
+      const shouldDebounce = "q" in newFilters && !immediate;
+
+      if (shouldDebounce) {
+        // Debounce search queries to avoid excessive API calls while typing
+        filterDebounceTimerRef.current = setTimeout(applyFilters, 300);
+      } else {
+        // Apply status/assignee/team/sort changes immediately
+        applyFilters();
+      }
     },
     [statusFilter, assigneeFilter, searchQuery, teamId, sortBy, selectedInboxId, router]
   );
+
+  // Cleanup debounce timer on unmount
+  useEffect(() => {
+    return () => {
+      if (filterDebounceTimerRef.current) {
+        clearTimeout(filterDebounceTimerRef.current);
+      }
+    };
+  }, []);
 
   return {
     // Account management
