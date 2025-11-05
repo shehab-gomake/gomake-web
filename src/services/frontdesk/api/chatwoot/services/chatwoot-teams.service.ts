@@ -118,11 +118,12 @@ export class ChatwootTeamsService extends BaseChatwootService {
 
   /**
    * Create a New Team
-   * POST /api/v1/accounts/{account_id}/teams
+   * POST /api/accounts/teams
    *
-   * Creates a new team in the specified account.
+   * Creates a new team in the account.
+   * Note: Account context comes from JWT Bearer token, not URL path
    *
-   * @param accountId - The numeric ID of the account
+   * @param accountId - The numeric ID of the account (not used in URL, kept for compatibility)
    * @param payload - Team creation payload (name is required)
    * @returns Promise with created team details
    *
@@ -142,11 +143,109 @@ export class ChatwootTeamsService extends BaseChatwootService {
     accountId: number,
     payload: TeamCreateUpdatePayload
   ): Promise<Team> {
-    // Chatwoot API expects the payload wrapped in a "team" key
-    const requestBody = { team: payload };
-    return await this.post<Team>(
-      this.accountScopedUrl(accountId, "teams"),
-      requestBody
+    return await this.post<Team>("/api/accounts/teams", payload);
+  }
+
+  /**
+   * Update a Team
+   * PATCH /api/accounts/teams/{team_id}
+   *
+   * Updates an existing team's details.
+   * Note: Account context comes from JWT Bearer token, not URL path
+   *
+   * @param accountId - The numeric ID of the account (not used in URL, kept for compatibility)
+   * @param teamId - The numeric ID of the team to update
+   * @param payload - Team update payload
+   * @returns Promise with updated team details
+   *
+   * @example
+   * ```typescript
+   * const updated = await teamsService.updateTeam(123, 456, {
+   *   name: "Updated Team Name",
+   *   description: "New description"
+   * });
+   * ```
+   */
+  async updateTeam(
+    accountId: number,
+    teamId: number,
+    payload: TeamCreateUpdatePayload
+  ): Promise<Team> {
+    return await this.patch<Team>(`/api/accounts/teams/${teamId}`, payload);
+  }
+
+  /**
+   * Delete a Team
+   * DELETE /api/accounts/teams/{team_id}
+   *
+   * Permanently deletes a team from the account.
+   * Note: Account context comes from JWT Bearer token, not URL path
+   *
+   * @param accountId - The numeric ID of the account (not used in URL, kept for compatibility)
+   * @param teamId - The numeric ID of the team to delete
+   * @returns Promise with void
+   *
+   * @example
+   * ```typescript
+   * await teamsService.deleteTeam(123, 456);
+   * ```
+   */
+  async deleteTeam(accountId: number, teamId: number): Promise<void> {
+    return await this.delete<void>(`/api/accounts/teams/${teamId}`);
+  }
+
+  /**
+   * Add Agents to Team
+   * POST /api/accounts/teams/{team_id}/team_members
+   *
+   * Adds one or more agents to a team.
+   * Note: Account context comes from JWT Bearer token, not URL path
+   *
+   * @param accountId - The numeric ID of the account (not used in URL, kept for compatibility)
+   * @param teamId - The numeric ID of the team
+   * @param agentIds - Array of agent IDs to add to the team
+   * @returns Promise with updated team members list
+   *
+   * @example
+   * ```typescript
+   * await teamsService.addTeamMembers(123, 456, [10, 20, 30]);
+   * ```
+   */
+  async addTeamMembers(
+    accountId: number,
+    teamId: number,
+    agentIds: number[]
+  ): Promise<Agent[]> {
+    return await this.post<Agent[]>(
+      `/api/accounts/teams/${teamId}/team_members`,
+      { user_ids: agentIds }
+    );
+  }
+
+  /**
+   * Remove Agent from Team
+   * DELETE /api/accounts/teams/{team_id}/team_members/{agent_id}
+   *
+   * Removes a specific agent from a team.
+   * Note: Account context comes from JWT Bearer token, not URL path
+   *
+   * @param accountId - The numeric ID of the account (not used in URL, kept for compatibility)
+   * @param teamId - The numeric ID of the team
+   * @param agentId - The numeric ID of the agent to remove
+   * @returns Promise with void
+   *
+   * @example
+   * ```typescript
+   * await teamsService.removeTeamMember(123, 456, 789);
+   * ```
+   */
+  async removeTeamMember(
+    accountId: number,
+    teamId: number,
+    agentId: number
+  ): Promise<void> {
+    return await this.delete<void>(
+      `/api/accounts/teams/${teamId}/team_members/${agentId}`
     );
   }
 }

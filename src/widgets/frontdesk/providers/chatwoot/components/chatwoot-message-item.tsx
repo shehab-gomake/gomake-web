@@ -57,8 +57,8 @@ export const ChatwootMessageItem: React.FC<ChatwootMessageItemProps> = ({
   // message_type: 0 = incoming, 1 = outgoing (or check sender_type)
   const isMe = message.message_type === 1 || message.sender_type === "User";
 
-  // Check if message is private (support both _private and private properties)
-  const isPrivate = message._private === true || message.private === true;
+  // Check if message is private (use _private property)
+  const isPrivate = message._private === true;
 
   const sender = message.sender || {
     name: isMe ? "You" : "Contact",

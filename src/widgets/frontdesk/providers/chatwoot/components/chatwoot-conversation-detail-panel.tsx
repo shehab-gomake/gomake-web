@@ -120,7 +120,7 @@ export const ChatwootConversationDetailPanel: React.FC<ChatwootConversationDetai
 
   // Handle priority change
   const handlePriorityChange = useCallback(
-    async (newPriority: string | null) => {
+    async (newPriority: 'urgent' | 'high' | 'medium' | 'low' | null) => {
       setPriorityMenuAnchor(null);
       if (!accountId || !conversation.id) return;
 

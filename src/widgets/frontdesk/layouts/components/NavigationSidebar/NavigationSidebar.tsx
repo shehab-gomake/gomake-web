@@ -172,6 +172,9 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
   const [showAddChannelModal, setShowAddChannelModal] = useState(false);
   const [showComposeModal, setShowComposeModal] = useState(false);
 
+  // Get selected Chatwoot account
+  const selectedAccount = useRecoilValue(chatwootSelectedAccountAtom);
+
   // Fetch Chatwoot inboxes (channels)
   const { inboxes, loading: inboxesLoading, selectedInboxId, selectInbox } = useChatwootInboxes();
 
@@ -1308,6 +1311,7 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
 
       {/* Compose Conversation Modal */}
       <ComposeConversationModal
+        accountId={selectedAccount || 0}
         open={showComposeModal}
         onClose={() => setShowComposeModal(false)}
         onSuccess={(conversationId) => {

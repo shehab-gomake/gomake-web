@@ -2,7 +2,7 @@
  * Inbox Detail Settings View
  *
  * Displays detailed settings for a specific inbox with tabs for
- * Settings, Collaborators, Business Hours, CSAT, Configuration, and Bot Configuration.
+ * Settings and Collaborators.
  */
 
 import React, { useState } from "react";
@@ -22,10 +22,6 @@ import { useChatwootProvider } from "../../hooks/use-chatwoot-provider";
 import {
   InboxSettingsTab,
   InboxCollaboratorsTab,
-  InboxBusinessHoursTab,
-  InboxCSATTab,
-  InboxConfigurationTab,
-  InboxBotConfigurationTab,
 } from "./tabs";
 
 interface InboxDetailSettingsProps {
@@ -33,13 +29,7 @@ interface InboxDetailSettingsProps {
   onBack: () => void;
 }
 
-type SettingsTab =
-  | "settings"
-  | "collaborators"
-  | "business-hours"
-  | "csat"
-  | "configuration"
-  | "bot-configuration";
+type SettingsTab = "settings" | "collaborators";
 
 export const InboxDetailSettings: React.FC<InboxDetailSettingsProps> = ({
   inbox,
@@ -160,62 +150,6 @@ export const InboxDetailSettings: React.FC<InboxDetailSettingsProps> = ({
     }
   };
 
-  // Handle business hours save
-  const handleSaveBusinessHours = async (schedule: any) => {
-    if (!accountId) return;
-
-    setIsSaving(true);
-    try {
-      await chatwootService.inboxes.updateBusinessHours(
-        accountId,
-        inbox.id,
-        schedule
-      );
-      setNotification({
-        open: true,
-        message: "Business hours saved successfully",
-        severity: "success",
-      });
-    } catch (error) {
-      console.error("Failed to save business hours:", error);
-      setNotification({
-        open: true,
-        message: "Failed to save business hours. Please try again.",
-        severity: "error",
-      });
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
-  // Handle CSAT save
-  const handleSaveCSAT = async (config: any) => {
-    if (!accountId) return;
-
-    setIsSaving(true);
-    try {
-      await chatwootService.inboxes.updateCSATConfig(
-        accountId,
-        inbox.id,
-        config
-      );
-      setNotification({
-        open: true,
-        message: "CSAT settings saved successfully",
-        severity: "success",
-      });
-    } catch (error) {
-      console.error("Failed to save CSAT settings:", error);
-      setNotification({
-        open: true,
-        message: "Failed to save CSAT settings. Please try again.",
-        severity: "error",
-      });
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
   if (!accountId) {
     return (
       <Box sx={{ p: 3 }}>
@@ -288,10 +222,6 @@ export const InboxDetailSettings: React.FC<InboxDetailSettingsProps> = ({
         >
           <Tab label="Settings" value="settings" />
           <Tab label="Collaborators" value="collaborators" />
-          <Tab label="Business Hours" value="business-hours" />
-          <Tab label="CSAT" value="csat" />
-          <Tab label="Configuration" value="configuration" />
-          <Tab label="Bot Configuration" value="bot-configuration" />
         </Tabs>
       </Box>
 
@@ -316,32 +246,6 @@ export const InboxDetailSettings: React.FC<InboxDetailSettingsProps> = ({
             onUpdateAgents={handleUpdateAgents}
             isSaving={isSaving}
           />
-        )}
-
-        {activeTab === "business-hours" && (
-          <InboxBusinessHoursTab
-            inbox={inbox}
-            accountId={accountId}
-            onSave={handleSaveBusinessHours}
-            isSaving={isSaving}
-          />
-        )}
-
-        {activeTab === "csat" && (
-          <InboxCSATTab
-            inbox={inbox}
-            accountId={accountId}
-            onSave={handleSaveCSAT}
-            isSaving={isSaving}
-          />
-        )}
-
-        {activeTab === "configuration" && (
-          <InboxConfigurationTab inbox={inbox} accountId={accountId} />
-        )}
-
-        {activeTab === "bot-configuration" && (
-          <InboxBotConfigurationTab inbox={inbox} accountId={accountId} />
         )}
       </Box>
 
