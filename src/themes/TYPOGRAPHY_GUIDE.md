@@ -43,7 +43,7 @@ The theme system includes a comprehensive typography system with predefined styl
 ### Using Typography Utility Functions (Recommended)
 
 ```tsx
-import { getTitleTypography, getLabelTypography, getSubLabelTypography } from '@/themes/typography-utils';
+import { getTitleTypography, getLabelTypography, getSubLabelTypography } from '@/utils/typography-utils';
 
 // Title
 <div style={getTitleTypography()}>

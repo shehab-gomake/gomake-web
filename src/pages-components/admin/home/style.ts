@@ -1,8 +1,7 @@
 import { useMemo } from "react";
 import i18next from "i18next";
-
 import { useTranslation } from "react-i18next";
-import { FONT_FAMILY } from "@/utils/font-family";
+import { getHeadingTypography } from "@/utils/typography-utils";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 const useStyle = () => {
@@ -45,8 +44,10 @@ const useStyle = () => {
         marginBottom: 15,
       },
       titleStyle: {
-        ...FONT_FAMILY.Lexend(600, 25),
-        color: primaryColor(500),
+        ...getHeadingTypography({
+          color: `var(--theme-typography-title-color, ${primaryColor(500)})`,
+          fontWeight: 600,
+        }),
       },
       containerStyle: {
         display: "grid",

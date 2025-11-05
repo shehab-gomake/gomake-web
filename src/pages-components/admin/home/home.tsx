@@ -52,7 +52,11 @@ const HomePageComponentForAdmin = ({ isMobileScreen }) => {
         <div style={classes.secondRowContainer}>
           <div style={classes.titleStyle}>
             {t("sales.quote.documents")}{" "}
-            <span style={{ color: "rgb(213, 214, 233)" }}>
+            <span
+              style={{
+                color: "var(--theme-text-breadcrumb, rgb(213, 214, 233))",
+              }}
+            >
               / {selectedClient?.name}
             </span>
           </div>

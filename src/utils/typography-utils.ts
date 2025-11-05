@@ -1,8 +1,10 @@
 /**
  * Typography Utility Functions
  *
- * Helper functions to quickly apply typography styles from theme variables
- * Use these instead of manually typing CSS variables everywhere
+ * Theme-aware typography helpers that use CSS variables from the active theme.
+ * Use these for semantic typography (titles, headings, labels, etc.)
+ *
+ * For explicit font styling with hardcoded values, use FONT_FAMILY from @/utils/font-family
  *
  * All functions accept optional overrides for customization
  */

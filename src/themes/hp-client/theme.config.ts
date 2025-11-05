@@ -56,6 +56,11 @@ const hpClientThemeConfig: ThemeConfig = {
       "--theme-text-secondary": "#4a5568",
       "--theme-text-muted": "#718096",
       "--theme-text-inverse": "#ffffff",
+      "--theme-text-breadcrumb": "#94A3B8", // Breadcrumb/secondary navigation text color - light blue-gray that complements the primary blue
+      // Alternative options:
+      // "#A3A3A3" - matches placeholder color, clean neutral gray
+      // "#64748B" - medium slate gray, between secondary and muted
+      // "#8B92A5" - slightly blue-tinted gray
 
       // Typography - Font Families
       "--theme-font-family-base": '"Inter", sans-serif',
@@ -80,7 +85,7 @@ const hpClientThemeConfig: ThemeConfig = {
       // Typography - Heading Styles (h3, h4, section headings)
       "--theme-typography-heading-font-family": '"Forma DJR UI", sans-serif',
       "--theme-typography-heading-font-weight": "500",
-      "--theme-typography-heading-font-size": "32px",
+      "--theme-typography-heading-font-size": "25px",
       "--theme-typography-heading-line-height": "40px",
       "--theme-typography-heading-letter-spacing": "0px",
       "--theme-typography-heading-color": "#1a202c",

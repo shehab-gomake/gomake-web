@@ -21,6 +21,7 @@ const HomeTableWidget = ({
   const { t } = useTranslation();
   const { CheckPermission } = useUserPermission();
   const { secondColor, primaryColor } = useGomakeTheme();
+
   const tabs: (ITab & { permission?: boolean })[] = [
     {
       title: t("home.tabs.Quotes"),
@@ -73,7 +74,9 @@ const HomeTableWidget = ({
       ),
     },
   ].filter((tab) => tab.permission);
+
   const [selectedTab, setSelectedTab] = useState<number>(0);
+
   const _renderSelectedTab = () => {
     return (
       <div
@@ -107,6 +110,7 @@ const HomeTableWidget = ({
       </div>
     );
   };
+
   const _renderTabContent = () => {
     return (
       <div style={classes.mainContainer}>
@@ -118,6 +122,7 @@ const HomeTableWidget = ({
       </div>
     );
   };
+
   return (
     <>
       <Stack

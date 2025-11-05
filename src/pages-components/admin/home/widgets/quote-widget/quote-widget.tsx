@@ -20,7 +20,7 @@ import { GoMakeTreeSelect } from "@/components/auto-complete/tree-select";
 import { ModalType } from "@/enums";
 import { useUserPermission } from "@/hooks/use-permission";
 import { ClientAutocomplete } from "@/widgets/Clients-Autocomplete/clients-list";
-import { getHeadingTypography } from "@/themes/typography-utils";
+import { getHeadingTypography } from "@/utils/typography-utils";
 import { PrimaryButton } from "@/components/button/primary-button";
 
 interface QuoteWidgetProps {
