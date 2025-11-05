@@ -45,7 +45,7 @@ export function getHeadingTypography(
     fontSize: "var(--theme-typography-heading-font-size, 25px)",
     lineHeight: "var(--theme-typography-heading-line-height, 32px)",
     letterSpacing: "var(--theme-typography-heading-letter-spacing, 0px)",
-    color: "var(--theme-typography-heading-color, #1a202c)",
+    color: "var(--theme-typography-heading-color, #2e3092)",
     ...overrides,
   };
 }

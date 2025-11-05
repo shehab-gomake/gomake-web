@@ -17,11 +17,15 @@ const hpClientThemeConfig: ThemeConfig = {
   styles: {
     cssVariables: {
       // Primary Colors
-      "--theme-primary-color": "#024AD8", // Blue
+      "--theme-primary-color": "#024AD8", // Blue - primary(500)
       "--theme-primary-hover": "#1A5FFF", // Lighter/more vibrant for hover
       "--theme-primary-light": "#B2D2FF", // More bold/darker than before
       "--theme-primary-disabled": "#8db3e8", // Lighter/muted for disabled state
       "--theme-primary-dark": "#002E8D", // Darker for disabled state
+
+      "--theme-primary-lavender-color": "#C4D4F0", // Medium blue background (base - like 500)
+      "--theme-primary-lavender-light": "#E1EBF8", // Light blue variant
+      "--theme-primary-lavender-dark": "#504fa1", // Dark blue variant
 
       // Secondary Colors
       "--theme-secondary-color": "#ff6b35",
@@ -46,6 +50,16 @@ const hpClientThemeConfig: ThemeConfig = {
       "--theme-status-error": "#ef4444", // Pending/Stuck Jobs - Red
       "--theme-status-error-bg": "#fee2e2",
       "--theme-status-error-text": "#991b1b",
+
+      // Error Colors - Degree variants
+      "--theme-error-color": "#ef4444", // Base error color (like 500)
+      "--theme-error-light": "#fee2e2", // Light error variant
+      "--theme-error-dark": "#991b1b", // Dark error variant
+
+      // Success Colors - Degree variants
+      "--theme-success-color": "#10b981", // Base success color (like 500)
+      "--theme-success-light": "#d1fae5", // Light success variant
+      "--theme-success-dark": "#065f46", // Dark success variant
 
       "--theme-status-neutral": "#6b7280", // Cancelled - Gray
       "--theme-status-neutral-bg": "#f3f4f6",

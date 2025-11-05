@@ -62,10 +62,12 @@ const useGomakeTheme = () => {
         const computedStyle = getComputedStyle(root);
 
         // Map degree to CSS variable names
+
         const cssVarMap: { [key: number]: string } = {
           100: "--theme-primary-light",
           200: "--theme-primary-disabled",
           500: "--theme-primary-color",
+          600: "--theme-primary-dark",
           700: "--theme-primary-text",
         };
 
@@ -114,6 +116,28 @@ const useGomakeTheme = () => {
 
   const successColor = useCallback(
     (degree: number) => {
+      // Check for CSS variable first (for theme-based colors)
+      if (typeof window !== "undefined") {
+        const root = document.documentElement;
+        const computedStyle = getComputedStyle(root);
+
+        // Map degree to CSS variable names
+        const cssVarMap: { [key: number]: string } = {
+          100: "--theme-success-light",
+          500: "--theme-success-color",
+          700: "--theme-success-dark",
+        };
+
+        const cssVar = cssVarMap[degree];
+        if (cssVar) {
+          const cssValue = computedStyle.getPropertyValue(cssVar).trim();
+          if (cssValue) {
+            return cssValue;
+          }
+        }
+      }
+
+      // Fallback to existing behavior
       return getColor("success", degree);
     },
     [theme]
@@ -128,6 +152,28 @@ const useGomakeTheme = () => {
 
   const errorColor = useCallback(
     (degree: number) => {
+      // Check for CSS variable first (for theme-based colors)
+      if (typeof window !== "undefined") {
+        const root = document.documentElement;
+        const computedStyle = getComputedStyle(root);
+
+        // Map degree to CSS variable names
+        const cssVarMap: { [key: number]: string } = {
+          100: "--theme-error-light",
+          500: "--theme-error-color",
+          700: "--theme-error-dark",
+        };
+
+        const cssVar = cssVarMap[degree];
+        if (cssVar) {
+          const cssValue = computedStyle.getPropertyValue(cssVar).trim();
+          if (cssValue) {
+            return cssValue;
+          }
+        }
+      }
+
+      // Fallback to existing behavior
       return getColor("error", degree);
     },
     [theme]
@@ -147,6 +193,38 @@ const useGomakeTheme = () => {
     [theme]
   );
 
+  const primaryLavender = useCallback((degree: number = 500) => {
+    // Check for CSS variable first (for theme-based colors)
+    if (typeof window !== "undefined") {
+      const root = document.documentElement;
+      const computedStyle = getComputedStyle(root);
+
+      // Map degree to CSS variable names
+      const cssVarMap: { [key: number]: string } = {
+        100: "--theme-primary-lavender-light",
+        500: "--theme-primary-lavender-color",
+        700: "--theme-primary-lavender-dark",
+      };
+
+      const cssVar = cssVarMap[degree];
+      if (cssVar) {
+        const cssValue = computedStyle.getPropertyValue(cssVar).trim();
+        if (cssValue) {
+          return cssValue;
+        }
+      }
+    }
+
+    // Default fallbacks based on degree
+    const defaultMap: { [key: number]: string } = {
+      100: "#E8E8F2", // Light variant
+      500: "#CBCBE4", // Medium/base variant
+      700: "#504fa1", // Dark variant
+    };
+
+    return defaultMap[degree] || defaultMap[500];
+  }, []);
+
   return {
     theme,
     changedTheme,
@@ -158,6 +236,7 @@ const useGomakeTheme = () => {
     errorColor,
     warningColor,
     grayColor,
+    primaryLavender,
   };
 };
 

@@ -12,11 +12,16 @@ const baseThemeConfig: ThemeConfig = {
   styles: {
     cssVariables: {
       // Primary Colors - Your current purple/pink scheme
-      "--theme-primary-color": "#2e3092", // Success Rate card - Purple
+      "--theme-primary-color": "#2e3092",
       "--theme-primary-hover": "#6d28d9",
       "--theme-primary-light": "#ede9fe",
+      "--theme-primary-dark": "#252675",
 
-      "--theme-secondary-color": "#ec4899", // Monthly Performance - Pink
+      "--theme-primary-lavender-color": "#CBCBE4",
+      "--theme-primary-lavender-light": "#E8E8F2",
+      "--theme-primary-lavender-dark": "#504fa1",
+
+      "--theme-secondary-color": "#ec4899",
       "--theme-secondary-hover": "#db2777",
       "--theme-secondary-light": "#fce7f3",
 
@@ -38,6 +43,16 @@ const baseThemeConfig: ThemeConfig = {
       "--theme-status-error": "#ef4444", // Pending/Stuck Jobs - Red
       "--theme-status-error-bg": "#fee2e2",
       "--theme-status-error-text": "#991b1b",
+
+      // Error Colors - Degree variants
+      "--theme-error-color": "#ef4444", // Base error color (like 500)
+      "--theme-error-light": "#fee2e2", // Light error variant
+      "--theme-error-dark": "#991b1b", // Dark error variant
+
+      // Success Colors - Degree variants
+      "--theme-success-color": "#10b981", // Base success color (like 500)
+      "--theme-success-light": "#d1fae5", // Light success variant
+      "--theme-success-dark": "#065f46", // Dark success variant
 
       "--theme-status-neutral": "#6b7280", // Cancelled - Gray
       "--theme-status-neutral-bg": "#f3f4f6",
