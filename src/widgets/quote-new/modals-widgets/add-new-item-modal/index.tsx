@@ -65,7 +65,7 @@ const GenericProductInput = ({
   </Stack>
 );
 
-const AddNewItemModal = ({ openModal, onClose, documentType, getQuote, getCalculateQuoteItem, isMaterial }) => {
+const AddNewItemModal = ({ openModal, onClose, documentType, getQuote, getCalculateQuoteItem, isMaterial, isNewCreation, isPurchaseOrder, isCanIntake }) => {
   const { t } = useTranslation();
   const { classes } = useStyle();
 
@@ -91,7 +91,7 @@ const AddNewItemModal = ({ openModal, onClose, documentType, getQuote, getCalcul
     CheckPermission,
     selectedTab,
     setSelectedTab,
-  } = useAddNewItem({ onClose, getQuote, documentType, getCalculateQuoteItem, isMaterial });
+  } = useAddNewItem({ onClose, getQuote, documentType, getCalculateQuoteItem, isMaterial, isNewCreation, isPurchaseOrder, isCanIntake });
 
   return (
     <>

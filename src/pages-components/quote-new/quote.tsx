@@ -982,6 +982,9 @@ const QuoteNewPageWidget = ({
         getQuote={getQuote}
         getCalculateQuoteItem={getCalculateQuoteItem}
         isMaterial={isMaterial}
+        isNewCreation={isNewCreation}
+        isPurchaseOrder={documentType === DOCUMENT_TYPE.purchaseOrder}
+        isCanIntake={isCanIntake}
       />
       <InventoryIntakeModal
         open={openInventoryIntakeModal}

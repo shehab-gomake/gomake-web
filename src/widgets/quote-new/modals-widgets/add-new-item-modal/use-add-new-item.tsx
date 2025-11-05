@@ -8,6 +8,7 @@ import { quoteItemState, selectedFirstMaterialState } from "@/store";
 import {
   addDocumentItemFromMaterialApi,
   getDocumentItemDataFromMaterialApi,
+  getDocumentItemDataFromRowMaterialApi,
 } from "@/services/api-service/materials/materials-endpoints";
 import { v4 as uuidv4 } from "uuid";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
@@ -19,7 +20,7 @@ import {
 import { useUserPermission } from "@/hooks/use-permission";
 import { ETab } from "@/pages-components/admin/home/widgets/quote-widget/enums";
 
-const useAddNewItem = ({ onClose, getQuote, documentType, getCalculateQuoteItem, isMaterial }) => {
+const useAddNewItem = ({ onClose, getQuote, documentType, getCalculateQuoteItem, isMaterial, isNewCreation, isPurchaseOrder, isCanIntake }) => {
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
   const [selectedProduct, setSelectedProduct] = useState<any>({});
@@ -46,14 +47,21 @@ const useAddNewItem = ({ onClose, getQuote, documentType, getCalculateQuoteItem,
     setProductCode("");
     setActive(true);
   };
-  
-  // Set initial tab based on isMaterial for purchase orders
-  const initialTab = documentType === DOCUMENT_TYPE.purchaseOrder && isMaterial 
-    ? ETab.MATERIALS 
-    : documentType === DOCUMENT_TYPE.purchaseOrder && !isMaterial 
-    ? ETab.PRODUCTS 
-    : ETab.PRODUCTS;
-  
+
+  // Determine if materials should be shown
+  // If isNewCreation: show materials if isMaterial OR isPurchaseOrder
+  // If not isNewCreation: show materials if isCanIntake
+  const shouldShowMaterials = isNewCreation
+    ? (isMaterial || isPurchaseOrder)
+    : isCanIntake;
+
+  // Set initial tab based on shouldShowMaterials for purchase orders
+  const initialTab = documentType === DOCUMENT_TYPE.purchaseOrder && shouldShowMaterials
+    ? ETab.MATERIALS
+    : documentType === DOCUMENT_TYPE.purchaseOrder && !shouldShowMaterials
+      ? ETab.PRODUCTS
+      : ETab.PRODUCTS;
+
   const [selectedTab, setSelectedTab] = useState<ETab>(initialTab);
 
   const getAllProductsAndMaterials = useCallback(
@@ -113,10 +121,17 @@ const useAddNewItem = ({ onClose, getQuote, documentType, getCalculateQuoteItem,
           const transformedProducts = transformProducts(res?.data?.products);
           const transformedMaterials = transformMaterials(res?.data?.materials);
 
-          // Filter data based on purchase order type
+          // Determine if materials should be shown
+          // If isNewCreation: show materials if isMaterial OR isPurchaseOrder
+          // If not isNewCreation: show materials if isCanIntake
+          const shouldShowMaterials = isNewCreation
+            ? (isMaterial || isPurchaseOrder)
+            : isCanIntake;
+
+          // Filter data based on purchase order type and material visibility
           let combinedFinalData;
           if (documentType === DOCUMENT_TYPE.purchaseOrder) {
-            if (isMaterial) {
+            if (shouldShowMaterials) {
               // Show only materials for material purchase orders
               combinedFinalData = [transformedMaterials];
             } else {
@@ -136,7 +151,7 @@ const useAddNewItem = ({ onClose, getQuote, documentType, getCalculateQuoteItem,
         selectionType: selectedTab,
       });
     },
-    []
+    [isNewCreation, isMaterial, isPurchaseOrder, isCanIntake, documentType]
   );
 
   const handleProductChange = (e) => {
@@ -180,7 +195,6 @@ const useAddNewItem = ({ onClose, getQuote, documentType, getCalculateQuoteItem,
         alertFaultAdded();
       }
     };
-
     await addDocumentItemFromMaterialApi(callApi, callBack, {
       clientId: quoteItemValue?.customerID,
       printHouseMaterialId: selectedProduct?.id,
@@ -261,6 +275,9 @@ const useAddNewItem = ({ onClose, getQuote, documentType, getCalculateQuoteItem,
           isSelected: false,
           productType: 0,
           productID: selectedMaterial?.productId,
+          // Add fields for material purchase orders
+          packagesQuantity: selectedMaterial?.packagesQuantity || 0,
+          quantityInPackage: selectedMaterial?.quantityInPackage || 1,
         };
 
         const updatedQuoteItemValue = { ...quoteItemValue };
@@ -270,9 +287,14 @@ const useAddNewItem = ({ onClose, getQuote, documentType, getCalculateQuoteItem,
           newItem,
         ];
         setQuoteItemValue(updatedQuoteItemValue);
+        // Use packagesQuantity * quantityInPackage if available, otherwise use quantity
+        const calculatedQuantity =
+          (selectedMaterial?.packagesQuantity && selectedMaterial?.quantityInPackage)
+            ? selectedMaterial.packagesQuantity * selectedMaterial.quantityInPackage
+            : (selectedMaterial?.quantity || 1);
         getCalculateQuoteItem(
           newItem,
-          1,
+          calculatedQuantity,
           newItem.price,
           updatedQuoteItemValue,
           true
@@ -283,10 +305,39 @@ const useAddNewItem = ({ onClose, getQuote, documentType, getCalculateQuoteItem,
         alertFaultAdded();
       }
     };
-    await getDocumentItemDataFromMaterialApi(callApi, callBack, {
-      printHouseMaterialId: selectedProduct?.id,
-    });
+
+    // Determine if we should use the new endpoint with supplierId
+    // Conditions: purchaseOrder AND (isNewCreation ? isMaterial : isCanIntake)
+    const shouldUseRowMaterialEndpoint =
+      documentType === DOCUMENT_TYPE.purchaseOrder &&
+      (isNewCreation ? isMaterial : isCanIntake);
+
+    if (shouldUseRowMaterialEndpoint) {
+      // Use the new endpoint with supplierId if available
+      const supplierId = quoteItemValue?.client?.id;
+      await getDocumentItemDataFromRowMaterialApi(callApi, callBack, {
+        printHouseMaterialId: selectedProduct?.id,
+        ...(supplierId && { supplierId }),
+      });
+    } else {
+      // Use the original endpoint
+      await getDocumentItemDataFromMaterialApi(callApi, callBack, {
+        printHouseMaterialId: selectedProduct?.id,
+      });
+    }
   };
+
+  // Update selectedTab when shouldShowMaterials changes
+  useEffect(() => {
+    const shouldShowMaterials = isNewCreation
+      ? (isMaterial || isPurchaseOrder)
+      : isCanIntake;
+
+    if (documentType === DOCUMENT_TYPE.purchaseOrder) {
+      const newTab = shouldShowMaterials ? ETab.MATERIALS : ETab.PRODUCTS;
+      setSelectedTab(newTab);
+    }
+  }, [isNewCreation, isMaterial, isPurchaseOrder, isCanIntake, documentType]);
 
   useEffect(() => {
     // if (quoteItemValue?.client?.id) {
@@ -301,7 +352,7 @@ const useAddNewItem = ({ onClose, getQuote, documentType, getCalculateQuoteItem,
       quoteItemValue?.client?.clientTypeId,
       selectedTab
     );
-  }, [quoteItemValue?.client?.id, selectedTab]);
+  }, [quoteItemValue?.client?.id, selectedTab, getAllProductsAndMaterials]);
 
   const item = {
     id: uuidv4(),
