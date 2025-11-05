@@ -31,6 +31,7 @@ const CREATE_DIE_CUT_FROM_TEMPLATE_MAKER_URL = "/v1/materials/create-die-cut-fro
 const UPLOAD_PRINT_HOUSE_MATERIAL_IMAGE_URL = "/v1/materials/upload-print-house-material-image";
 const ADD_DOCUMENT_ITEM_FROM_MATERIALS = "/v1/printhouse-config/materials/add-document-item-from-material";
 const GET_DOCUMENT_ITEM_DATA_FROM_MATERIALS = "/v1/materials/get-document-item-data-from-material";
+const GET_DOCUMENT_ITEM_DATA_FROM_ROW_MATERIAL = "/v1/materials/get-document-item-data-from-row-material";
 
 const TOGGLE_MATERIAL_TYPE_ACTIVE_URL = "/v1/materials/toggle-material-type-active";
 const GET_GROUPED_MATERIAL_TYPES_URL = "/v1/materials/get-grouped-material-types";
@@ -354,6 +355,23 @@ const getDocumentItemDataFromMaterialApi: ICallAndSetData = async (
   );
 };
 
+const getDocumentItemDataFromRowMaterialApi: ICallAndSetData = async (
+  callApi,
+  callBack,
+  data: { printHouseMaterialId: string; supplierId?: string }
+) => {
+  let url = `${GET_DOCUMENT_ITEM_DATA_FROM_ROW_MATERIAL}/${data.printHouseMaterialId}`;
+  if (data.supplierId) {
+    url += `?supplierId=${data.supplierId}`;
+  }
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.GET,
+    url,
+    callBack
+  );
+};
+
 const toggleMaterialTypeActiveApi: ICallAndSetData = async (
   callApi,
   callBack,
@@ -472,6 +490,7 @@ export {
   uploadPrintHouseMaterialApi,
   addDocumentItemFromMaterialApi,
   getDocumentItemDataFromMaterialApi,
+  getDocumentItemDataFromRowMaterialApi,
   updateMaterialCategoryNumberingApi,
   updateSupplierPriorityApi,
   toggleMaterialTypeActiveApi,

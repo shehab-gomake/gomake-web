@@ -163,6 +163,8 @@ const GET_DOCUMENT_TABLE_SETTINGS_URL =
   "/v1/erp-service/documents-table-settings/get-document-table-settings";
 
 const RE_CALCULATE_ITEM_URL = "/v1/erp-service/document/re-calculate-item";
+const GET_DOCUMENT_INVENTORY_URL =
+  "/v1/erp-service/documents/get-document-inventory";
 
 const getDocumentApi: ICallAndSetData = async (
   callApi,
@@ -1367,6 +1369,20 @@ const reCalculateItemApi: ICallAndSetData = async (
   );
 };
 
+const getDocumentInventoryApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.GET,
+    GET_DOCUMENT_INVENTORY_URL,
+    setState,
+    data
+  );
+};
+
 export {
   getDocumentApi,
   getAllDocumentsApi,
@@ -1457,4 +1473,5 @@ export {
   saveDocumentTableSettingsApi,
   getDocumentTableSettingsApi,
   reCalculateItemApi,
+  getDocumentInventoryApi,
 };

@@ -7,6 +7,7 @@ import {
   GoMakeModal,
   GomakeTextInput,
   ThreeOptionsModal,
+  GoMakeDialog,
 } from "@/components";
 import { DocumentsFilterSection } from "./components/documents-filter-section";
 import { HeaderTitle } from "@/widgets";
@@ -294,6 +295,10 @@ const QuotesListPageWidget = ({
     createScheduledReport,
     handlePageChange: handleScheduledReportsPageChange,
     handlePageSizeChangeScheduledReports: handleScheduledReportsPageSizeChange,
+    openPurchaseOrderTypeModal,
+    onOpenPurchaseOrderTypeModal,
+    onClosePurchaseOrderTypeModal,
+    handleSelectPurchaseOrderType,
   } = useQuotes(documentType, isFromHomePage);
 
   // Get the main quotes pagination handler
@@ -413,7 +418,7 @@ const QuotesListPageWidget = ({
   useEffect(() => {
     const loadDocumentColumnSettings = async () => {
       try {
-        const res = await getDocumentTableSettingsApi(callApi, () => {}, {
+        const res = await getDocumentTableSettingsApi(callApi, () => { }, {
           documentType,
         });
         const saved: ColumnSetting[] = res?.data;
@@ -478,11 +483,16 @@ const QuotesListPageWidget = ({
                     isOrder
                       ? onclickCreateNew
                       : isSupplierPayments
-                      ? () => navigate(`/${documentPath}`)
-                      : () => {
-                          setSelectedItems([]);
-                          navigate(`/${documentPath}?isNewCreation=true`);
-                        }
+                        ? () => navigate(`/${documentPath}`)
+                        : isPurchaseOrder
+                          ? () => {
+                            setSelectedItems([]);
+                            onOpenPurchaseOrderTypeModal();
+                          }
+                          : () => {
+                            setSelectedItems([]);
+                            navigate(`/${documentPath}?isNewCreation=true`);
+                          }
                   )}
               </div>
             </div>
@@ -1019,6 +1029,42 @@ const QuotesListPageWidget = ({
         handleQuantityPerPackageChange={handleQuantityPerPackageChange}
         onClickConfirm={onClickPrintPackagingSlip}
       />
+      <GoMakeDialog
+        open={openPurchaseOrderTypeModal}
+        onClose={onClosePurchaseOrderTypeModal}
+        title={t("sales.quote.selectPurchaseOrderType")}
+        showFooter={false}
+        maxWidth="sm"
+      >
+        <Stack spacing={2} sx={{ padding: "20px 0" }}>
+          <Button
+            variant="contained"
+            fullWidth
+            onClick={() => handleSelectPurchaseOrderType(false)}
+            sx={{
+              height: "48px",
+              fontSize: "16px",
+              fontWeight: 500,
+              textTransform: "none",
+            }}
+          >
+            {t("sales.quote.purchaseOrderForProduct")}
+          </Button>
+          <Button
+            variant="contained"
+            fullWidth
+            onClick={() => handleSelectPurchaseOrderType(true)}
+            sx={{
+              height: "48px",
+              fontSize: "16px",
+              fontWeight: 500,
+              textTransform: "none",
+            }}
+          >
+            {t("sales.quote.purchaseOrderForMaterial")}
+          </Button>
+        </Stack>
+      </GoMakeDialog>
     </>
   );
 };

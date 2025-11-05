@@ -28,6 +28,7 @@ const QuoteForPriceTable = ({
   columnWidths,
   tableHeaders,
   headerHeight,
+  isMaterialPurchaseOrder,
   changeDocumentItems,
   getCalculateQuoteItem,
   getCalculateQuoteConfirmationItem,
@@ -246,6 +247,7 @@ const QuoteForPriceTable = ({
                       quoteItems={quoteItems}
                       isShowChilds={visibleChilds[parentIndex]} // Access visibleChilds with correct parentIndex
                       setIsShowChilds={() => toggleChildVisibility(parentIndex)}
+                      isMaterialPurchaseOrder={isMaterialPurchaseOrder}
                       _renderIconcalculationStatus={
                         _renderIconcalculationStatus
                       }

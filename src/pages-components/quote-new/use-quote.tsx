@@ -61,6 +61,7 @@ import {
   updateOccasionalClientNameApi,
   updatePurchaseNumberApi,
   updateQuoteItemQuantityApi,
+  getDocumentInventoryApi,
 } from "@/services/api-service/generic-doc/documents-api";
 import { DOCUMENT_TYPE } from "../quotes/enums";
 import { useRouter } from "next/router";
@@ -98,7 +99,7 @@ import { Button } from "@mui/material";
 import { PlusIcon } from "../quotes/widgets/icons/header-section-icons";
 import { useStyle } from "./style";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
-import { ShowDocumentDetailsEnum, ShowPricesEnum } from "@/enums";
+import { PurchaseOrderType, ShowDocumentDetailsEnum, ShowPricesEnum } from "@/enums";
 
 export enum MessageType {
   Email = 0,
@@ -273,6 +274,7 @@ const useQuoteNew = ({
     docType === DOCUMENT_TYPE.invoiceRefund;
   const isReceipt = docType === DOCUMENT_TYPE.receipt;
   const isNewCreation = router.query.isNewCreation === "true";
+  const isMaterial = router.query.isMaterial === "true";
 
   const [openWhatsAppModal, setOpenWatsAppModal] = useState(false);
   const [isSelectedAtLeastOne, setIsSelectedAtLeastOne] = useState(null);
@@ -431,6 +433,38 @@ const useQuoteNew = ({
     setSelectedDocument(order);
     setOpenChangeProductionStatusModal(true);
   };
+
+  // Inventory Intake Modal State
+  const [openInventoryIntakeModal, setOpenInventoryIntakeModal] =
+    useState(false);
+  const [inventoryData, setInventoryData] = useState<any[]>([]);
+  const [inventoryLoading, setInventoryLoading] = useState(false);
+
+  const onClickOpenInventoryIntakeModal = async () => {
+    setOpenInventoryIntakeModal(true);
+    setInventoryLoading(true);
+
+    const callBack = (res) => {
+      if (res?.success) {
+        setInventoryData(res?.data || []);
+      } else {
+        alertFault(t("alerts.failedToLoadData"));
+      }
+      setInventoryLoading(false);
+    };
+
+    await getDocumentInventoryApi(callApi, callBack, {
+      documentType: docType,
+      documentId: quoteItemValue?.id,
+      purchaseOrderId: quoteItemValue?.id, // For purchase orders table
+    });
+  };
+
+  const onClickCloseInventoryIntakeModal = () => {
+    setOpenInventoryIntakeModal(false);
+    setInventoryData([]);
+  };
+
   const { CheckPreferenceValue } = usePrintHousePreferences();
 
   const source = isQuoteConfirmation ? quoteConfirm : quoteItemValue;
@@ -439,24 +473,45 @@ const useQuoteNew = ({
 
   const showPrices = source?.showPrices !== ShowPricesEnum.HidePrices;
 
+  const isCanIntake = source?.isCanIntake === true;
+  const isMaterialPurchaseOrder =
+    (isPurchaseOrder && isNewCreation && isMaterial) ||
+    (isPurchaseOrder && isCanIntake);
+
   const tableHeaders = [
     "#",
     isDeliveryNote || isInvoice ? t("products.profits.documentNumber") : null,
     !CheckPreferenceValue(EPreferences.HIDE_ITEM_CODE_FROM_DOCUMENT_CART) &&
-      t("sales.quote.itemCode"),
+    t("sales.quote.itemCode"),
     !CheckPreferenceValue(EPreferences.HIDE_ITEM_CODE_FROM_DOCUMENT_CART) &&
-      t("products.profits.itemName"),
+    t("products.profits.itemName"),
     CheckPreferenceValue(EPreferences.HIDE_ITEM_CODE_FROM_DOCUMENT_CART) &&
-      t("products.profits.itemName"),
+    t("products.profits.itemName"),
     showDetails ? t("products.profits.details") : null,
+    isMaterialPurchaseOrder ? t("sales.purchaseOrder.packagesQuantity") : null,
+    isMaterialPurchaseOrder ? t("sales.purchaseOrder.quantityInPackage") : null,
     t("sales.quote.amount"),
+    isMaterialPurchaseOrder ? t("sales.purchaseOrder.unit") : null,
     showPrices ? t("products.profits.pricingListWidget.unitPrice") : null,
     showPrices ? t("sales.quote.discount") : null,
     showPrices ? t("products.offsetPrice.admin.finalPrice") : null,
     t("products.profits.more"),
   ].filter(Boolean);
 
-  const columnWidths = [
+  const columnWidths = isMaterialPurchaseOrder ? [
+    "5%", // "#"
+    "9%", // Item Code
+    "10%", // Item Name
+    "15%", // Details column (optional)
+    "9%", // Amount
+    "9%", // Amount
+    "9%", // Amount
+    "5%", // Unit Price
+    showPrices ? "8%" : null, // Unit Price
+    showPrices ? "8%" : null, // Discount
+    showPrices ? "8%" : null, // Final Price
+    "5%", // More
+  ] : [
     "5%", // "#"
     isDeliveryNote || isInvoice ? "10%" : null, // Document Number
     !CheckPreferenceValue(EPreferences.HIDE_ITEM_CODE_FROM_DOCUMENT_CART)
@@ -466,8 +521,8 @@ const useQuoteNew = ({
     source?.showDetails === ShowDocumentDetailsEnum.All
       ? "25%"
       : source?.showDetails === ShowDocumentDetailsEnum.ShowJobNameOnly
-      ? "10%"
-      : null, // Details column (optional)
+        ? "10%"
+        : null, // Details column (optional)
     "10%", // Amount
     showPrices ? "10%" : null, // Unit Price
     showPrices ? "10%" : null, // Discount
@@ -1246,7 +1301,7 @@ const useQuoteNew = ({
             discount: quoteItem?.discount,
             isPrintHouseMaterialItem:
               quoteItem?.printHouseMaterialId &&
-              (isPrintHouseMaterialItem || selectedFirstMaterial)
+                (isPrintHouseMaterialItem || selectedFirstMaterial)
                 ? true
                 : false,
             finalPrice: quoteItemEdit?.finalPrice,
@@ -1489,7 +1544,7 @@ const useQuoteNew = ({
           alertSuccessDelete();
           onCloseDeleteItemModal();
           quoteItemValue?.documentItems?.length === 1 ||
-          res?.data?.succ === false
+            res?.data?.succ === false
             ? navigate("/home")
             : getQuote();
         } else {
@@ -1877,7 +1932,7 @@ const useQuoteNew = ({
   const receiptSendModal = useModal();
   const [modalCallback, setModalCallback] = useState<
     (includeInvoices: boolean) => void
-  >(() => () => {});
+  >(() => () => { });
 
   const openReceiptModal = (callback: (includeInvoices: boolean) => void) => {
     receiptSendModal.open();
@@ -2074,6 +2129,7 @@ const useQuoteNew = ({
         exchangeRate:
           quoteItemValue.exchangeRate === 0 ? 1 : quoteItemValue.exchangeRate,
         isOpenRelatedDocuments: isOpenRelatedDocuments,
+        type: isMaterialPurchaseOrder ? PurchaseOrderType.Materials : PurchaseOrderType.Products,
       },
     });
   };
@@ -2603,10 +2659,10 @@ const useQuoteNew = ({
         isOrder
           ? onclickCreateNew()
           : navigate(
-              isOutgoingPayments
-                ? `/${documentPath}?isOutgoingPayments=true&isNewCreation=true`
-                : `/${documentPath}?isNewCreation=true`
-            )
+            isOutgoingPayments
+              ? `/${documentPath}?isOutgoingPayments=true&isNewCreation=true`
+              : `/${documentPath}?isNewCreation=true`
+          )
       }
       startIcon={<PlusIcon />}
     >
@@ -2918,6 +2974,14 @@ const useQuoteNew = ({
     onConfirmVatMismatchModal,
     estimatedProductionDate,
     handleExportToExcel,
+    isMaterial,
+    isMaterialPurchaseOrder,
+    isCanIntake,
+    openInventoryIntakeModal,
+    onClickOpenInventoryIntakeModal,
+    onClickCloseInventoryIntakeModal,
+    inventoryData,
+    inventoryLoading,
   };
 };
 
