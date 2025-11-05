@@ -22,7 +22,7 @@ const useStyle = ({
   navStatus: any;
   customGap?: number;
 }) => {
-  const { primaryColor } = useGomakeTheme();
+  const { theme, primaryColor, primaryLavender } = useGomakeTheme();
   const isMobile = useIsMobile();
   const mobileHeight = useMobileHeight();
 
@@ -37,7 +37,7 @@ const useStyle = ({
       logoContainer: {
         display: "flex",
         marginTop: navStatus?.isClosed ? 20 : 0,
-        backgroundColor: "#504FA1",
+        backgroundColor: primaryLavender(700),
         borderRadius: 8,
         padding: 10,
       },
@@ -174,7 +174,7 @@ const useStyle = ({
         backgroundColor: primaryColor(500),
       },
     };
-  }, [isHover, navStatus, isMobile, mobileHeight]);
+  }, [isHover, navStatus, isMobile, mobileHeight, theme]);
   return {
     classes,
   };

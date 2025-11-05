@@ -14,7 +14,6 @@ import { Tab, Tabs } from "@mui/material";
 import { styled } from "@mui/material/styles";
 
 const StyledTabs = styled(Tabs)(() => {
-  const { primaryColor, neutralColor } = useGomakeTheme();
   return {
     minHeight: "48px",
     "& .MuiTabs-indicator": {
@@ -159,7 +158,7 @@ const HomeTableWidget = ({
         direction={"row"}
         alignItems={"center"}
         justifyContent={"space-between"}
-        sx={{ marginBottom: "15px" }}
+        sx={{ marginBottom: "12px" }}
       >
         {_renderSelectedTab()}
         <ClientBalanceComponent clientId={clientId} />

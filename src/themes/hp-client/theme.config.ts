@@ -23,9 +23,9 @@ const hpClientThemeConfig: ThemeConfig = {
       "--theme-primary-disabled": "#8db3e8", // Lighter/muted for disabled state
       "--theme-primary-dark": "#002E8D", // Darker for disabled state
 
-      "--theme-primary-lavender-color": "#C4D4F0", // Medium blue background (base - like 500)
-      "--theme-primary-lavender-light": "#E1EBF8", // Light blue variant
-      "--theme-primary-lavender-dark": "#504fa1", // Dark blue variant
+      "--theme-primary-lavender-color": "#D6E8FF", // Medium blue background (base - like 500) - harmonizes with primary blue #024AD8
+      "--theme-primary-lavender-light": "#F0F7FF", // Light blue variant - very subtle blue tint
+      "--theme-primary-lavender-dark": "#1E4AA8", // Dark blue variant - darker blue that complements primary
 
       // Secondary Colors
       "--theme-secondary-color": "#ff6b35",

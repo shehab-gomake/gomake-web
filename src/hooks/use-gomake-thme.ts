@@ -193,37 +193,40 @@ const useGomakeTheme = () => {
     [theme]
   );
 
-  const primaryLavender = useCallback((degree: number = 500) => {
-    // Check for CSS variable first (for theme-based colors)
-    if (typeof window !== "undefined") {
-      const root = document.documentElement;
-      const computedStyle = getComputedStyle(root);
+  const primaryLavender = useCallback(
+    (degree: number = 500) => {
+      // Check for CSS variable first (for theme-based colors)
+      if (typeof window !== "undefined") {
+        const root = document.documentElement;
+        const computedStyle = getComputedStyle(root);
 
-      // Map degree to CSS variable names
-      const cssVarMap: { [key: number]: string } = {
-        100: "--theme-primary-lavender-light",
-        500: "--theme-primary-lavender-color",
-        700: "--theme-primary-lavender-dark",
-      };
+        // Map degree to CSS variable names
+        const cssVarMap: { [key: number]: string } = {
+          100: "--theme-primary-lavender-light",
+          500: "--theme-primary-lavender-color",
+          700: "--theme-primary-lavender-dark",
+        };
 
-      const cssVar = cssVarMap[degree];
-      if (cssVar) {
-        const cssValue = computedStyle.getPropertyValue(cssVar).trim();
-        if (cssValue) {
-          return cssValue;
+        const cssVar = cssVarMap[degree];
+        if (cssVar) {
+          const cssValue = computedStyle.getPropertyValue(cssVar).trim();
+          if (cssValue) {
+            return cssValue;
+          }
         }
       }
-    }
 
-    // Default fallbacks based on degree
-    const defaultMap: { [key: number]: string } = {
-      100: "#E8E8F2", // Light variant
-      500: "#CBCBE4", // Medium/base variant
-      700: "#504fa1", // Dark variant
-    };
+      // Default fallbacks based on degree
+      const defaultMap: { [key: number]: string } = {
+        100: "#E8E8F2", // Light variant
+        500: "#CBCBE4", // Medium/base variant
+        700: "#504fa1", // Dark variant
+      };
 
-    return defaultMap[degree] || defaultMap[500];
-  }, []);
+      return defaultMap[degree] || defaultMap[500];
+    },
+    [theme]
+  );
 
   return {
     theme,
