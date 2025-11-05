@@ -1,10 +1,7 @@
 import { useCallback, useEffect, useState, useRef } from "react";
 import { useRecoilState } from "recoil";
 import { chatwootService } from "@/services/frontdesk";
-import {
-  chatwootProfileAtom,
-  chatwootProfileLoadingAtom,
-} from "@/store/frontdesk/atoms/chatwoot.atoms";
+import { chatwootProfileAtom, chatwootProfileLoadingAtom } from "@/store/frontdesk/atoms/chatwoot.atoms";
 
 /**
  * Custom hook for managing Chatwoot profile state
@@ -67,5 +64,6 @@ export const useChatwootProfile = () => {
     error,
     fetchProfile, // Expose for manual refresh if needed
     hasAttempted: hasAttemptedRef.current, // Expose to check if we've tried fetching
+    profileError: error, // Explicit alias for clarity
   };
 };

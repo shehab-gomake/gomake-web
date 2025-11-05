@@ -33,7 +33,7 @@ export const useChatwootProvider = () => {
   const setCounts = useSetRecoilState(chatwootConversationCountsAtom);
 
   // Use the custom hook to get profile state (prevents multiple API calls)
-  const { profile, loading: profileLoading } = useChatwootProfile();
+  const { profile, loading: profileLoading, error: profileError, fetchProfile } = useChatwootProfile();
 
   // Use the custom hook to get inboxes state (prevents multiple API calls from child components)
   const { inboxes, loading: inboxesLoading, selectedInbox, selectInbox } = useChatwootInboxes();
@@ -406,6 +406,8 @@ export const useChatwootProvider = () => {
     // Profile
     profile,
     profileLoading,
+    profileError,
+    fetchProfile, // Expose fetchProfile for retry functionality
 
     // Inboxes
     inboxes,
