@@ -12,7 +12,6 @@ import SendIcon from "@mui/icons-material/Send";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import { ContactSelector } from "./ContactSelector";
-import { InboxSelector } from "./InboxSelector";
 import { CreateContactModal } from "./CreateContactModal";
 import { useComposeConversation } from "../../hooks/use-compose-conversation";
 import { getChannelRequirements } from "@/services/frontdesk/api/chatwoot/types/compose.types";
@@ -102,7 +101,6 @@ export const ComposeConversationModal: React.FC<ComposeConversationModalProps> =
   const canSubmit =
     !compose.isSubmitting &&
     compose.formState.contact &&
-    compose.formState.selectedContactableInbox &&
     (compose.formState.message || (requirements && !requirements.messageRequired));
 
   return (
@@ -211,35 +209,8 @@ export const ComposeConversationModal: React.FC<ComposeConversationModalProps> =
               </Box>
             </Box>
 
-            {/* Via: Field (Inbox Selection) - Inline Design */}
-            {compose.formState.contact && (
-              <Box
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  px: 3,
-                  py: 2,
-                  borderBottom: `1px solid #334155`,
-                }}
-              >
-                <Typography sx={{ color: "#94a3b8", fontSize: "0.938rem", minWidth: 60, fontWeight: 500 }}>
-                  Via:
-                </Typography>
-                <Box sx={{ flex: 1 }}>
-                  <InboxSelector
-                    contactableInboxes={compose.contactableInboxes}
-                    selectedInbox={compose.formState.selectedContactableInbox}
-                    isLoading={compose.isLoadingInboxes}
-                    disabled={!compose.formState.contact}
-                    onSelect={(inbox) => compose.updateField("selectedContactableInbox", inbox)}
-                    error={compose.validationErrors.inbox}
-                  />
-                </Box>
-              </Box>
-            )}
-
             {/* Message Composition Section */}
-            {compose.formState.selectedContactableInbox && (
+            {compose.formState.contact && (
               <Box>
                 {/* Email-specific fields */}
                 {requirements?.subjectRequired && (

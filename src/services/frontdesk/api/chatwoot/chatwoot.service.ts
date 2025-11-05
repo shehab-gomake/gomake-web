@@ -37,6 +37,7 @@ import { ChatwootMessagesService } from "./services/chatwoot-messages.service";
 import { ChatwootNotificationsService } from "./services/chatwoot-notifications.service";
 import { ChatwootAgentsService } from "./services/chatwoot-agents.service";
 import { ChatwootTeamsService } from "./services/chatwoot-teams.service";
+import { ChatwootLabelsService } from "./services/chatwoot-labels.service";
 import { ChatwootOAuthService } from "./services/chatwoot-oauth.service";
 
 /**
@@ -95,6 +96,12 @@ export class ChatwootService {
   public readonly teams: ChatwootTeamsService;
 
   /**
+   * Labels service
+   * Handles all label-related endpoints
+   */
+  public readonly labels: ChatwootLabelsService;
+
+  /**
    * OAuth service
    * Handles OAuth authorization for channel connections (Gmail/Outlook)
    */
@@ -117,6 +124,7 @@ export class ChatwootService {
     this.notifications = new ChatwootNotificationsService(this.baseUrl);
     this.agents = new ChatwootAgentsService(this.baseUrl);
     this.teams = new ChatwootTeamsService(this.baseUrl);
+    this.labels = new ChatwootLabelsService(this.baseUrl);
     this.oauth = new ChatwootOAuthService();
   }
 }

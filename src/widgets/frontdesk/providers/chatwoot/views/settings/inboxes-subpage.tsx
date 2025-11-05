@@ -18,6 +18,7 @@ import ApiIcon from "@mui/icons-material/Api";
 import { BaseSettingsSubpage, SettingsSection } from "../../components/settings";
 import { useChatwootInboxes } from "../../hooks/use-chatwoot-inboxes";
 import { AddChannelModal } from "../../components/add-channel-modal";
+import { InboxDetailSettings } from "./inbox-detail-settings";
 import type { ChatwootInbox } from "@/services/frontdesk/api/chatwoot/types/inboxes.types";
 
 // Helper function to get icon for channel type
@@ -39,6 +40,12 @@ const getChannelTypeLabel = (channelType: string) => {
 export const InboxesSubpage: React.FC = () => {
   const { inboxes, loading, error, refresh } = useChatwootInboxes();
   const [showAddChannelModal, setShowAddChannelModal] = useState(false);
+  const [selectedInbox, setSelectedInbox] = useState<ChatwootInbox | null>(null);
+
+  // If an inbox is selected, show detail view
+  if (selectedInbox) {
+    return <InboxDetailSettings inbox={selectedInbox} onBack={() => setSelectedInbox(null)} />;
+  }
 
   return (
     <>
@@ -109,11 +116,13 @@ export const InboxesSubpage: React.FC = () => {
               <Paper
                 key={inbox.id}
                 elevation={0}
+                onClick={() => setSelectedInbox(inbox)}
                 sx={{
                   p: 2.5,
                   border: "1px solid",
                   borderColor: "divider",
                   borderRadius: 1.5,
+                  cursor: "pointer",
                   "&:hover": {
                     borderColor: "primary.main",
                     bgcolor: "action.hover",
