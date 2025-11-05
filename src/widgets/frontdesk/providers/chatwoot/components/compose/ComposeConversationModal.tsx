@@ -135,7 +135,7 @@ export const ComposeConversationModal: React.FC<ComposeConversationModalProps> =
           }}
         >
           <Typography variant="h5" sx={{ fontWeight: 600, color: "#f1f5f9", fontSize: "1.375rem" }}>
-            New Conversation
+            New Ticket
           </Typography>
           <IconButton
             onClick={handleClose}

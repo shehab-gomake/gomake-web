@@ -74,8 +74,8 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
         }}
       >
         <EmptyState
-          title="No conversation selected"
-          description="Choose a conversation from the list to start viewing messages"
+          title="No ticket selected"
+          description="Choose a ticket from the list to start viewing messages"
         />
       </Paper>
     );

@@ -13,8 +13,8 @@ export const ChannelsView: React.FC = () => {
   return (
     <BaseConversationView
       emptyState={{
-        title: "No conversation selected",
-        description: "Choose a conversation from this channel to start messaging",
+        title: "No ticket selected",
+        description: "Choose a ticket from this channel to start messaging",
       }}
     />
   );

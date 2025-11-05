@@ -16,8 +16,8 @@ export const UnattendedView: React.FC = () => {
   return (
     <BaseConversationView
       emptyState={{
-        title: "No conversation selected",
-        description: "Choose an unattended conversation to start responding",
+        title: "No ticket selected",
+        description: "Choose an unattended ticket to start responding",
       }}
     />
   );

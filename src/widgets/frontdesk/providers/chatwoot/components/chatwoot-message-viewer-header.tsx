@@ -195,7 +195,7 @@ export const ChatwootMessageViewerHeader: React.FC<ChatwootMessageViewerHeaderPr
                     },
                   }}
                 >
-                  Resolve
+                  Close
                 </Button>
                 <Menu
                   anchorEl={resolveMenuAnchor}
@@ -214,7 +214,7 @@ export const ChatwootMessageViewerHeader: React.FC<ChatwootMessageViewerHeaderPr
                     <ListItemIcon>
                       <ResolveIcon fontSize="small" />
                     </ListItemIcon>
-                    <ListItemText>Resolve</ListItemText>
+                    <ListItemText>Close</ListItemText>
                   </MenuItem>
                   <MenuItem onClick={handleSnoozeClick}>
                     <ListItemIcon>
@@ -270,7 +270,7 @@ export const ChatwootMessageViewerHeader: React.FC<ChatwootMessageViewerHeaderPr
                   }}
                 >
                   <MenuItem onClick={handleReopenClick}>
-                    <ListItemText>Reopen Conversation</ListItemText>
+                    <ListItemText>Reopen Ticket</ListItemText>
                   </MenuItem>
                 </Menu>
               </>

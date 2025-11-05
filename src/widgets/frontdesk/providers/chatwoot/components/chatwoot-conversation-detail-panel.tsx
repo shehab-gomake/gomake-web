@@ -61,7 +61,7 @@ export const ChatwootConversationDetailPanel: React.FC<
   const statusMap: Record<string, { label: string; color: "primary" | "warning" | "success" | "error" | "neutral" }> = {
     open: { label: "Open", color: "primary" },
     pending: { label: "Pending", color: "warning" },
-    resolved: { label: "Resolved", color: "success" },
+    resolved: { label: "Closed", color: "success" },
     snoozed: { label: "Snoozed", color: "error" },
   };
 
@@ -280,7 +280,7 @@ export const ChatwootConversationDetailPanel: React.FC<
             <ListItemIcon>
               <ResolvedIcon fontSize="small" />
             </ListItemIcon>
-            <ListItemText>Resolved</ListItemText>
+            <ListItemText>Close</ListItemText>
           </MenuItem>
           <MenuItem onClick={() => handleStatusChange("snoozed")}>
             <ListItemIcon>

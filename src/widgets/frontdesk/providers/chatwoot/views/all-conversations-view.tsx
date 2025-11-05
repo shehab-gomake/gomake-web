@@ -12,8 +12,8 @@ export const AllConversationsView: React.FC = () => {
   return (
     <BaseConversationView
       emptyState={{
-        title: "No conversation selected",
-        description: "Choose a conversation from the list to start viewing messages",
+        title: "No ticket selected",
+        description: "Choose a ticket from the list to start viewing messages",
       }}
     />
   );

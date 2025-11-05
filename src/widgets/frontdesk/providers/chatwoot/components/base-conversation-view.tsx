@@ -54,8 +54,8 @@ export const BaseConversationView: React.FC<BaseConversationViewProps> = ({ empt
     () => (
       <EmptyState
         icon="inbox"
-        title="No conversation selected"
-        description="Select a conversation from the list to view messages"
+        title="No ticket selected"
+        description="Select a ticket from the list to view messages"
       />
     ),
     []

@@ -67,7 +67,7 @@ export const ChatwootConversationListHeader: React.FC<ChatwootConversationListHe
     if (!status || status === ConversationStatus.ALL) return "All";
     const labels: Record<ConversationStatus, string> = {
       [ConversationStatus.OPEN]: "Open",
-      [ConversationStatus.RESOLVED]: "Resolved",
+      [ConversationStatus.RESOLVED]: "Closed",
       [ConversationStatus.PENDING]: "Pending",
       [ConversationStatus.SNOOZED]: "Snoozed",
       [ConversationStatus.ALL]: "All",
@@ -111,7 +111,7 @@ export const ChatwootConversationListHeader: React.FC<ChatwootConversationListHe
               color: neutralColor(900),
             }}
           >
-            Conversations
+            Tickets
           </Typography>
           {status && status !== ConversationStatus.ALL && (
             <Chip

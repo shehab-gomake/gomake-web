@@ -43,7 +43,7 @@ export const ChatwootResolutionStatusBar: React.FC<ChatwootResolutionStatusBarPr
           fontStyle: "italic",
         }}
       >
-        Conversation was marked resolved by {resolverName} - agent
+        Ticket was marked closed by {resolverName} - agent
       </Typography>
     </Box>
   );
