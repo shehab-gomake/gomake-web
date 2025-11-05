@@ -11,7 +11,6 @@ import { useTheme } from "@mui/material/styles";
 import { useChatwootProvider } from "../hooks/use-chatwoot-provider";
 import { ChatwootSettingsSubpage } from "@/widgets/frontdesk/routing/types";
 import {
-  Settings as SettingsIcon,
   People as AgentsIcon,
   Inbox as InboxesIcon,
   Groups as TeamsIcon,
@@ -21,7 +20,6 @@ import {
 } from "@mui/icons-material";
 
 // Import subpage components
-import { GeneralSettingsSubpage } from "./settings/general-settings-subpage";
 import { AgentsSubpage } from "./settings/agents-subpage";
 import { InboxesSubpage } from "./settings/inboxes-subpage";
 import { TeamsSubpage } from "./settings/teams-subpage";
@@ -35,11 +33,6 @@ interface SettingsMenuItem {
 }
 
 const SETTINGS_MENU_ITEMS: SettingsMenuItem[] = [
-  {
-    subpage: ChatwootSettingsSubpage.GENERAL,
-    label: "General Settings (Account)",
-    icon: <SettingsIcon />,
-  },
   {
     subpage: ChatwootSettingsSubpage.AGENTS,
     label: "Agents",
@@ -71,14 +64,12 @@ export const SettingsView: React.FC = () => {
   const theme = useTheme();
   const { router: chatwootRouter } = useChatwootProvider();
 
-  // Get current subpage or default to GENERAL
-  const currentSubpage = chatwootRouter.currentSettingsSubpage || ChatwootSettingsSubpage.GENERAL;
+  // Get current subpage or default to AGENTS
+  const currentSubpage = chatwootRouter.currentSettingsSubpage || ChatwootSettingsSubpage.AGENTS;
 
   // Render the appropriate subpage component
   const renderSubpage = () => {
     switch (currentSubpage) {
-      case ChatwootSettingsSubpage.GENERAL:
-        return <GeneralSettingsSubpage />;
       case ChatwootSettingsSubpage.AGENTS:
         return <AgentsSubpage />;
       case ChatwootSettingsSubpage.INBOXES:
@@ -89,8 +80,11 @@ export const SettingsView: React.FC = () => {
         return <LabelsSubpage />;
       case ChatwootSettingsSubpage.PROFILE:
         return <ProfileSettingsSubpage />;
+      case ChatwootSettingsSubpage.GENERAL:
+        // General Settings removed - redirect to Agents
+        return <AgentsSubpage />;
       default:
-        return <GeneralSettingsSubpage />;
+        return <AgentsSubpage />;
     }
   };
 

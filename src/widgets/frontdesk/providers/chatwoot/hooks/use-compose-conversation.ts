@@ -8,7 +8,7 @@
 import { useState, useCallback, useMemo } from "react";
 import { useRecoilValue } from "recoil";
 import { chatwootService } from "@/services/frontdesk";
-import { chatwootSelectedAccountAtom } from "@/store/frontdesk/atoms/chatwoot.atoms";
+import { chatwootSelectedAccountAtom, chatwootProfileAtom } from "@/store/frontdesk/atoms/chatwoot.atoms";
 import type {
   ComposeFormState,
   ComposeValidationErrors,
@@ -37,6 +37,7 @@ export interface UseComposeConversationOptions {
 
 export function useComposeConversation(options?: UseComposeConversationOptions) {
   const accountId = useRecoilValue(chatwootSelectedAccountAtom);
+  const currentUser = useRecoilValue(chatwootProfileAtom);
 
   // Form state
   const [formState, setFormState] = useState<ComposeFormState>({
@@ -58,7 +59,23 @@ export function useComposeConversation(options?: UseComposeConversationOptions) 
   const [validationErrors, setValidationErrors] = useState<ComposeValidationErrors>({});
 
   /**
-   * Search contacts using filter API
+   * Detect query type for smarter search
+   * Returns which fields to search based on query pattern
+   */
+  const detectQueryType = useCallback((query: string) => {
+    const hasAlphabet = /[a-zA-Z]/.test(query);
+    const isEmailLike = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(query);
+    const isPhoneLike = /^[\d\s\-\+\(\)]+$/.test(query);
+
+    return {
+      searchEmail: true, // Always search email
+      searchPhone: !hasAlphabet, // Only search phone if no letters
+      searchName: !isEmailLike, // Skip name if it looks like an email
+    };
+  }, []);
+
+  /**
+   * Search contacts using filter API with smart query detection
    * Note: Backend automatically handles accountId from authentication context
    */
   const searchContacts = useCallback(
@@ -70,28 +87,41 @@ export function useComposeConversation(options?: UseComposeConversationOptions) 
 
       setIsSearching(true);
       try {
+        // Smart query detection - only search relevant fields
+        const { searchEmail, searchPhone, searchName } = detectQueryType(query);
+
+        const filters: any[] = [];
+
+        if (searchEmail) {
+          filters.push({
+            attribute_key: "email",
+            filter_operator: "contains",
+            values: [query],
+            attribute_model: "standard",
+            query_operator: "or",
+          });
+        }
+
+        if (searchName) {
+          filters.push({
+            attribute_key: "name",
+            filter_operator: "contains",
+            values: [query],
+            attribute_model: "standard",
+          });
+        }
+
+        if (searchPhone) {
+          filters.push({
+            attribute_key: "phone_number",
+            filter_operator: "contains",
+            values: [query],
+            attribute_model: "standard",
+          });
+        }
+
         const response = await chatwootService.contacts.filterContacts({
-          payload: [
-            {
-              attribute_key: "email",
-              filter_operator: "contains",
-              values: [query],
-              attribute_model: "standard",
-              query_operator: "or",
-            },
-            {
-              attribute_key: "name",
-              filter_operator: "contains",
-              values: [query],
-              attribute_model: "standard",
-            },
-            {
-              attribute_key: "phone_number",
-              filter_operator: "contains",
-              values: [query],
-              attribute_model: "standard",
-            },
-          ],
+          payload: filters,
         });
 
         const contacts = response.payload || [];
@@ -103,7 +133,7 @@ export function useComposeConversation(options?: UseComposeConversationOptions) 
         setIsSearching(false);
       }
     },
-    []
+    [detectQueryType]
   );
 
   // Debounced search (300ms)
@@ -263,6 +293,12 @@ export function useComposeConversation(options?: UseComposeConversationOptions) 
       formData.append("inbox_id", selectedContactableInbox.inbox.id.toString());
       formData.append("contact_id", contact.id.toString());
       formData.append("source_id", selectedContactableInbox.source_id);
+      formData.append("status", "open");
+
+      // Auto-assign to current user
+      if (currentUser?.id) {
+        formData.append("assignee_id", currentUser.id.toString());
+      }
 
       // Message
       if (message) {
@@ -295,6 +331,7 @@ export function useComposeConversation(options?: UseComposeConversationOptions) 
         contact_id: contact.id,
         source_id: selectedContactableInbox.source_id,
         status: "open",
+        ...(currentUser?.id && { assignee_id: currentUser.id }),
       };
 
       // Message
@@ -318,7 +355,7 @@ export function useComposeConversation(options?: UseComposeConversationOptions) 
 
       return payload;
     }
-  }, [formState]);
+  }, [formState, currentUser]);
 
   /**
    * Reset form to initial state

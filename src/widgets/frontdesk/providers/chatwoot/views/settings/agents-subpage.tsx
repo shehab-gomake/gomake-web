@@ -28,7 +28,8 @@ import RefreshIcon from "@mui/icons-material/Refresh";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import { BaseSettingsSubpage, SettingsSection, EditAgentModal } from "../../components/settings";
+import AddIcon from "@mui/icons-material/Add";
+import { BaseSettingsSubpage, SettingsSection, EditAgentModal, AddAgentModal, type AddAgentData } from "../../components/settings";
 import { useChatwootProvider } from "../../hooks/use-chatwoot-provider";
 import { useChatwootAgents } from "../../hooks/resources/use-chatwoot-agents";
 import type { Agent, AgentUpdatePayload } from "@/services/frontdesk/api/chatwoot/types/agents.types";
@@ -39,6 +40,9 @@ export const AgentsSubpage: React.FC = () => {
   const { selectedAccountId } = useChatwootProvider();
   const { agents, loading, error, refresh } = useChatwootAgents(selectedAccountId);
 
+  // Add modal state
+  const [addModalOpen, setAddModalOpen] = useState(false);
+
   // Edit modal state
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [selectedAgent, setSelectedAgent] = useState<Agent | null>(null);
@@ -47,6 +51,23 @@ export const AgentsSubpage: React.FC = () => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [agentToDelete, setAgentToDelete] = useState<Agent | null>(null);
   const [deleting, setDeleting] = useState(false);
+
+  // Add agent handler
+  const handleAddAgent = async (data: AddAgentData) => {
+    if (!selectedAccountId) return;
+
+    try {
+      // TODO: Implement createAgent API call
+      // await chatwootService.agents.createAgent(selectedAccountId, data);
+      console.log("Add agent:", data);
+      alert("Add Agent API endpoint not yet implemented in backend");
+      await refresh();
+      setAddModalOpen(false);
+    } catch (error) {
+      console.error("Failed to add agent:", error);
+      throw error;
+    }
+  };
 
   // Open edit modal
   const handleEdit = (agent: Agent) => {
@@ -107,9 +128,19 @@ export const AgentsSubpage: React.FC = () => {
         description="Manage team members, roles, and permissions"
         isLoading={loading}
         headerActions={
-          <IconButton onClick={refresh} size="small" disabled={loading}>
-            <RefreshIcon />
-          </IconButton>
+          <Box sx={{ display: "flex", gap: 1 }}>
+            <Button
+              variant="contained"
+              startIcon={<AddIcon />}
+              onClick={() => setAddModalOpen(true)}
+              size="small"
+            >
+              Add Agent
+            </Button>
+            <IconButton onClick={refresh} size="small" disabled={loading}>
+              <RefreshIcon />
+            </IconButton>
+          </Box>
         }
       >
         {error ? (
@@ -146,7 +177,7 @@ export const AgentsSubpage: React.FC = () => {
           >
             <List sx={{ width: "100%", bgcolor: "background.paper", p: 0 }}>
               {agents.map((agent, index) => {
-                const agentName = agent.name || agent.available_name || agent.email || "Unknown Agent";
+                const agentName = agent.name || agent.available_name || "Unknown Agent";
                 const avatarData = generateAvatarData({
                   name: agent.name || agent.available_name,
                   email: agent.email,
@@ -189,14 +220,15 @@ export const AgentsSubpage: React.FC = () => {
                             <Box
                               sx={{
                                 position: "absolute",
-                                bottom: 0,
-                                right: 0,
-                                width: 12,
-                                height: 12,
+                                bottom: -2,
+                                right: -2,
+                                width: 14,
+                                height: 14,
                                 bgcolor: "success.main",
                                 borderRadius: "50%",
-                                border: "2px solid",
+                                border: "2.5px solid",
                                 borderColor: "background.paper",
+                                boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
                               }}
                             />
                           )}
@@ -204,23 +236,31 @@ export const AgentsSubpage: React.FC = () => {
                       </ListItemAvatar>
 
                       <Box sx={{ flex: 1, minWidth: 0, mr: 2 }}>
-                        <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, mb: 0.25 }}>
+                        <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
                           <Typography variant="subtitle2" sx={{ fontWeight: 500 }}>
                             {agentName}
                           </Typography>
                           {agent.confirmed && (
-                            <CheckCircleIcon
-                              sx={{
-                                fontSize: 16,
-                                color: "success.main",
-                              }}
-                              titleAccess="Verified"
-                            />
+                            <Box sx={{ display: "flex", alignItems: "center", gap: 0.25 }}>
+                              <CheckCircleIcon
+                                sx={{
+                                  fontSize: 14,
+                                  color: "success.main",
+                                }}
+                              />
+                              <Typography
+                                variant="caption"
+                                sx={{
+                                  color: "success.main",
+                                  fontSize: "0.75rem",
+                                  fontWeight: 500,
+                                }}
+                              >
+                                Verified
+                              </Typography>
+                            </Box>
                           )}
                         </Box>
-                        <Typography variant="body2" color="text.secondary" sx={{ fontSize: "0.875rem" }}>
-                          {agent.email}
-                        </Typography>
                       </Box>
 
                       <Chip
@@ -273,6 +313,13 @@ export const AgentsSubpage: React.FC = () => {
           </SettingsSection>
         )}
       </BaseSettingsSubpage>
+
+      {/* Add Agent Modal */}
+      <AddAgentModal
+        open={addModalOpen}
+        onClose={() => setAddModalOpen(false)}
+        onAdd={handleAddAgent}
+      />
 
       {/* Edit Agent Modal */}
       <EditAgentModal

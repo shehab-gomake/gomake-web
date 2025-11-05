@@ -6,10 +6,14 @@
  */
 
 import React from "react";
+import { Box, Typography, Button, Stack, CircularProgress, Radio } from "@mui/material";
 import MailIcon from "@mui/icons-material/Mail";
 import MessageIcon from "@mui/icons-material/Message";
 import PhoneIcon from "@mui/icons-material/Phone";
 import PublicIcon from "@mui/icons-material/Public";
+import WhatsAppIcon from "@mui/icons-material/WhatsApp";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import type { ContactableInbox } from "@/services/frontdesk/api/chatwoot/types/inboxes.types";
 
 export interface InboxSelectorProps {
@@ -38,16 +42,16 @@ export interface InboxSelectorProps {
 function getChannelIcon(channelType: string) {
   switch (channelType) {
     case "Channel::Email":
-      return <MailIcon className="w-4 h-4" />;
+      return <MailIcon fontSize="small" />;
     case "Channel::WhatsApp":
-      return <MessageIcon className="w-4 h-4" />;
+      return <WhatsAppIcon fontSize="small" />;
     case "Channel::Sms":
     case "Channel::TwilioSms":
-      return <PhoneIcon className="w-4 h-4" />;
+      return <PhoneIcon fontSize="small" />;
     case "Channel::WebWidget":
-      return <PublicIcon className="w-4 h-4" />;
+      return <PublicIcon fontSize="small" />;
     default:
-      return <MessageIcon className="w-4 h-4" />;
+      return <MessageIcon fontSize="small" />;
   }
 }
 
@@ -81,100 +85,122 @@ export const InboxSelector: React.FC<InboxSelectorProps> = ({
   onSelect,
   error,
 }) => {
-  return (
-    <div className="space-y-2">
-      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-        Inbox (Channel) <span className="text-red-500">*</span>
-      </label>
+  const { neutralColor, primaryColor } = useGomakeTheme();
 
+  return (
+    <Box>
       {/* Loading State */}
       {isLoading ? (
-        <div className="flex items-center justify-center p-4 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800">
-          <div className="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
-          <span className="ml-2 text-sm text-gray-500 dark:text-gray-400">
-            Loading available inboxes...
-          </span>
-        </div>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            p: 3,
+            border: `1px solid ${neutralColor(200)}`,
+            borderRadius: 1,
+            backgroundColor: neutralColor(25),
+          }}
+        >
+          <CircularProgress size={20} sx={{ color: primaryColor(600) }} />
+          <Typography sx={{ ml: 2, fontSize: "0.875rem", color: neutralColor(600) }}>
+            Loading inboxes...
+          </Typography>
+        </Box>
       ) : disabled || contactableInboxes.length === 0 ? (
         /* Disabled/Empty State */
-        <div className="p-4 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-500 dark:text-gray-400 text-sm">
-          {disabled
-            ? "Select a contact first to see available inboxes"
-            : "No inboxes available for this contact"}
-        </div>
+        <Box
+          sx={{
+            p: 3,
+            border: `1px solid ${neutralColor(200)}`,
+            borderRadius: 1,
+            backgroundColor: neutralColor(25),
+            color: neutralColor(600),
+            fontSize: "0.875rem",
+            textAlign: "center",
+          }}
+        >
+          {disabled ? "Select a contact first" : "No inboxes available"}
+        </Box>
       ) : (
         /* Inbox Selection */
-        <div className="space-y-2">
+        <Stack spacing={1}>
           {contactableInboxes.map((contactableInbox) => {
             const isSelected = selectedInbox?.source_id === contactableInbox.source_id;
             const channelType = contactableInbox.inbox.channel_type;
 
             return (
-              <button
+              <Button
                 key={`${contactableInbox.inbox.id}-${contactableInbox.source_id}`}
-                type="button"
                 onClick={() => onSelect(contactableInbox)}
-                className={`w-full flex items-center justify-between p-3 border rounded-lg transition-colors ${
-                  isSelected
-                    ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20"
-                    : "border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 bg-white dark:bg-gray-800"
-                }`}
+                sx={{
+                  width: "100%",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  p: 2,
+                  border: `1px solid ${isSelected ? primaryColor(400) : neutralColor(200)}`,
+                  borderRadius: 1,
+                  backgroundColor: isSelected ? primaryColor(25) : neutralColor(0),
+                  textTransform: "none",
+                  "&:hover": {
+                    backgroundColor: isSelected ? primaryColor(50) : neutralColor(50),
+                    borderColor: isSelected ? primaryColor(500) : neutralColor(300),
+                  },
+                }}
               >
-                <div className="flex items-center gap-3">
+                <Stack direction="row" alignItems="center" spacing={2}>
                   {/* Channel Icon */}
-                  <div
-                    className={`w-10 h-10 rounded-lg flex items-center justify-center ${
-                      isSelected
-                        ? "bg-blue-500 text-white"
-                        : "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400"
-                    }`}
+                  <Box
+                    sx={{
+                      width: 40,
+                      height: 40,
+                      borderRadius: 1,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      backgroundColor: isSelected ? primaryColor(100) : neutralColor(100),
+                      color: isSelected ? primaryColor(700) : neutralColor(600),
+                    }}
                   >
                     {getChannelIcon(channelType)}
-                  </div>
+                  </Box>
 
                   {/* Inbox Info */}
-                  <div className="text-left">
-                    <div
-                      className={`font-medium ${
-                        isSelected
-                          ? "text-blue-700 dark:text-blue-300"
-                          : "text-gray-900 dark:text-gray-100"
-                      }`}
+                  <Box sx={{ textAlign: "left" }}>
+                    <Typography
+                      sx={{
+                        fontWeight: 500,
+                        fontSize: "0.875rem",
+                        color: isSelected ? primaryColor(700) : neutralColor(900),
+                      }}
                     >
                       {contactableInbox.inbox.name}
-                    </div>
-                    <div className="text-sm text-gray-500 dark:text-gray-400 flex items-center gap-2">
-                      <span>{getChannelTypeName(channelType)}</span>
-                      <span>•</span>
-                      <span className="font-mono text-xs">{contactableInbox.source_id}</span>
-                    </div>
-                  </div>
-                </div>
+                    </Typography>
+                    <Stack direction="row" alignItems="center" spacing={1}>
+                      <Typography sx={{ fontSize: "0.75rem", color: neutralColor(600) }}>
+                        {getChannelTypeName(channelType)}
+                      </Typography>
+                    </Stack>
+                  </Box>
+                </Stack>
 
                 {/* Selection Indicator */}
                 {isSelected && (
-                  <div className="w-5 h-5 rounded-full bg-blue-500 flex items-center justify-center">
-                    <svg
-                      className="w-3 h-3 text-white"
-                      fill="none"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path d="M5 13l4 4L19 7" />
-                    </svg>
-                  </div>
+                  <CheckCircleIcon sx={{ fontSize: 20, color: primaryColor(600) }} />
                 )}
-              </button>
+              </Button>
             );
           })}
-        </div>
+        </Stack>
       )}
 
       {/* Error Message */}
-      {error && <p className="text-sm text-red-500">{error}</p>}
-    </div>
+      {error && (
+        <Typography sx={{ mt: 1, fontSize: "0.75rem", color: "#ef4444" }}>
+          {error}
+        </Typography>
+      )}
+    </Box>
   );
 };

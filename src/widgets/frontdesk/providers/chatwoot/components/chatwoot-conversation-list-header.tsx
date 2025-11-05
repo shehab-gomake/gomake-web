@@ -5,6 +5,7 @@ import { Box, Stack, Typography, Chip, IconButton, Tooltip } from "@mui/material
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import ClearIcon from "@mui/icons-material/Clear";
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { useChatwootTeams } from "../hooks/resources/use-chatwoot-teams";
 import { ConversationStatus, ConversationListParams } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
@@ -25,6 +26,7 @@ interface ChatwootConversationListHeaderProps {
   onNextClick?: () => void;
   onRefresh?: () => void;
   onClearFilters?: () => void;
+  onComposeClick?: () => void;
   conversations?: any[];
   mineCount?: number;
   unassignedCount?: number;
@@ -40,6 +42,7 @@ export const ChatwootConversationListHeader: React.FC<ChatwootConversationListHe
   onNextClick,
   onRefresh,
   onClearFilters,
+  onComposeClick,
   mineCount,
   unassignedCount,
   allCount,
@@ -133,6 +136,27 @@ export const ChatwootConversationListHeader: React.FC<ChatwootConversationListHe
         </Stack>
 
         <Stack direction="row" spacing={0.5}>
+          {/* New Conversation Button */}
+          {onComposeClick && (
+            <Tooltip title="New Conversation">
+              <IconButton
+                size="small"
+                onClick={onComposeClick}
+                sx={{
+                  color: "white",
+                  backgroundColor: primaryColor(600),
+                  "&:hover": {
+                    backgroundColor: primaryColor(700),
+                  },
+                  width: 32,
+                  height: 32,
+                }}
+              >
+                <AddCircleOutlineIcon fontSize="small" />
+              </IconButton>
+            </Tooltip>
+          )}
+
           {/* Refresh Button */}
           {onRefresh && (
             <Tooltip title="Refresh">

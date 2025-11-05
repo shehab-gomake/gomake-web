@@ -36,6 +36,7 @@ interface ChatwootConversationListProps {
   inboxes?: ChatwootInbox[];
   inboxesLoading?: boolean;
   onNextClick?: () => void;
+  onComposeClick?: () => void;
 }
 
 export const ChatwootConversationList: React.FC<ChatwootConversationListProps> = React.memo(({
@@ -55,6 +56,7 @@ export const ChatwootConversationList: React.FC<ChatwootConversationListProps> =
   inboxes = [],
   inboxesLoading = false,
   onNextClick,
+  onComposeClick,
 }) => {
   const theme = useTheme();
   const { neutralColor } = useGomakeTheme();
@@ -135,6 +137,7 @@ export const ChatwootConversationList: React.FC<ChatwootConversationListProps> =
         onNextClick={onNextClick}
         onRefresh={onRefresh}
         onClearFilters={handleClearFilters}
+        onComposeClick={onComposeClick}
       />
 
       {/* Content */}
@@ -231,6 +234,7 @@ export const ChatwootConversationList: React.FC<ChatwootConversationListProps> =
     prevProps.onSearch === nextProps.onSearch &&
     prevProps.onFiltersChange === nextProps.onFiltersChange &&
     prevProps.onConversationSelect === nextProps.onConversationSelect &&
-    prevProps.onNextClick === nextProps.onNextClick
+    prevProps.onNextClick === nextProps.onNextClick &&
+    prevProps.onComposeClick === nextProps.onComposeClick
   );
 });

@@ -2,7 +2,7 @@
  * Inbox Detail Settings View
  *
  * Displays detailed settings for a specific inbox with tabs for
- * Settings, Collaborators, Business Hours, CSAT, and Bot Configuration.
+ * Settings, Collaborators, Business Hours, CSAT, Configuration, and Bot Configuration.
  */
 
 import React, { useState } from "react";
@@ -12,39 +12,191 @@ import {
   Link,
   Tabs,
   Tab,
-  TextField,
-  Select,
-  MenuItem,
-  FormControl,
-  Paper,
-  Avatar,
-  Card,
-  CardContent,
+  Alert,
+  Snackbar,
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import EmailIcon from "@mui/icons-material/Email";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import type { ChatwootInbox } from "@/services/frontdesk/api/chatwoot/types/inboxes.types";
+import { chatwootService } from "@/services/frontdesk";
+import { useChatwootProvider } from "../../hooks/use-chatwoot-provider";
+import {
+  InboxSettingsTab,
+  InboxCollaboratorsTab,
+  InboxBusinessHoursTab,
+  InboxCSATTab,
+  InboxConfigurationTab,
+  InboxBotConfigurationTab,
+} from "./tabs";
 
 interface InboxDetailSettingsProps {
   inbox: ChatwootInbox;
   onBack: () => void;
 }
 
-type SettingsTab = "settings" | "collaborators" | "business-hours" | "csat" | "bot-configuration";
+type SettingsTab =
+  | "settings"
+  | "collaborators"
+  | "business-hours"
+  | "csat"
+  | "configuration"
+  | "bot-configuration";
 
-export const InboxDetailSettings: React.FC<InboxDetailSettingsProps> = ({ inbox, onBack }) => {
+export const InboxDetailSettings: React.FC<InboxDetailSettingsProps> = ({
+  inbox,
+  onBack,
+}) => {
+  const { selectedAccount } = useChatwootProvider();
   const [activeTab, setActiveTab] = useState<SettingsTab>("settings");
-  const [inboxName, setInboxName] = useState(inbox.name || "");
-  const [greetingEnabled, setGreetingEnabled] = useState("disabled");
-  const [helpCenter, setHelpCenter] = useState("");
-  const [senderNameType, setSenderNameType] = useState<"friendly" | "professional">("friendly");
+  const [isSaving, setIsSaving] = useState(false);
+  const [notification, setNotification] = useState<{
+    open: boolean;
+    message: string;
+    severity: "success" | "error";
+  }>({ open: false, message: "", severity: "success" });
 
+  const accountId = selectedAccount?.id;
   const inboxDisplayName = inbox.name || inbox.email || "Unknown Inbox";
-  const inboxEmail = inbox.email || `${inbox.name?.toLowerCase().replace(/\s+/g, ".")}@gomake.net`;
+  const inboxEmail =
+    inbox.email ||
+    `${inbox.name?.toLowerCase().replace(/\s+/g, ".")}@gomake.net`;
+
+  // Handle inbox settings save
+  const handleSaveSettings = async (updates: Partial<ChatwootInbox>) => {
+    if (!accountId) return;
+
+    setIsSaving(true);
+    try {
+      await chatwootService.inboxes.updateInbox(accountId, inbox.id, updates);
+      setNotification({
+        open: true,
+        message: "Settings saved successfully",
+        severity: "success",
+      });
+    } catch (error) {
+      console.error("Failed to save inbox settings:", error);
+      setNotification({
+        open: true,
+        message: "Failed to save settings. Please try again.",
+        severity: "error",
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  // Handle avatar upload
+  const handleAvatarUpload = async (file: File) => {
+    if (!accountId) return;
+
+    setIsSaving(true);
+    try {
+      await chatwootService.inboxes.uploadAvatar(accountId, inbox.id, file);
+      setNotification({
+        open: true,
+        message: "Avatar uploaded successfully",
+        severity: "success",
+      });
+    } catch (error) {
+      console.error("Failed to upload avatar:", error);
+      setNotification({
+        open: true,
+        message: "Failed to upload avatar. Please try again.",
+        severity: "error",
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  // Handle avatar delete
+  const handleAvatarDelete = async () => {
+    if (!accountId) return;
+
+    setIsSaving(true);
+    try {
+      await chatwootService.inboxes.deleteAvatar(accountId, inbox.id);
+      setNotification({
+        open: true,
+        message: "Avatar deleted successfully",
+        severity: "success",
+      });
+    } catch (error) {
+      console.error("Failed to delete avatar:", error);
+      setNotification({
+        open: true,
+        message: "Failed to delete avatar. Please try again.",
+        severity: "error",
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  // Handle agent updates
+  const handleUpdateAgents = async (agentIds: number[]) => {
+    if (!accountId) return;
+
+    setIsSaving(true);
+    try {
+      await chatwootService.inboxes.addAgentsToInbox(
+        accountId,
+        inbox.id,
+        agentIds
+      );
+      setNotification({
+        open: true,
+        message: "Agents updated successfully",
+        severity: "success",
+      });
+    } catch (error) {
+      console.error("Failed to update agents:", error);
+      setNotification({
+        open: true,
+        message: "Failed to update agents. Please try again.",
+        severity: "error",
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  // Handle business hours save
+  const handleSaveBusinessHours = async (schedule: any) => {
+    // TODO: Implement business hours save
+    setNotification({
+      open: true,
+      message: "Business hours API endpoint not yet implemented",
+      severity: "error",
+    });
+  };
+
+  // Handle CSAT save
+  const handleSaveCSAT = async (config: any) => {
+    // TODO: Implement CSAT save
+    setNotification({
+      open: true,
+      message: "CSAT API endpoint not yet implemented",
+      severity: "error",
+    });
+  };
+
+  if (!accountId) {
+    return (
+      <Box sx={{ p: 3 }}>
+        <Alert severity="error">No account selected</Alert>
+      </Box>
+    );
+  }
 
   return (
-    <Box sx={{ height: "100%", display: "flex", flexDirection: "column", bgcolor: "background.default" }}>
+    <Box
+      sx={{
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
+        bgcolor: "background.default",
+      }}
+    >
       {/* Header */}
       <Box sx={{ px: 3, pt: 2, pb: 1, borderBottom: "1px solid", borderColor: "divider" }}>
         <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1 }}>
@@ -70,16 +222,18 @@ export const InboxDetailSettings: React.FC<InboxDetailSettingsProps> = ({ inbox,
           </Link>
         </Box>
         <Typography variant="h5" sx={{ fontWeight: 600, mb: 1 }}>
-          Inboxes
+          Inbox Settings
         </Typography>
         <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-          {inboxDisplayName} ({inboxEmail})
+          {inboxDisplayName} • {inbox.channel_type}
         </Typography>
 
         {/* Tabs */}
         <Tabs
           value={activeTab}
           onChange={(_, newValue) => setActiveTab(newValue)}
+          variant="scrollable"
+          scrollButtons="auto"
           sx={{
             borderBottom: "1px solid",
             borderColor: "divider",
@@ -100,282 +254,76 @@ export const InboxDetailSettings: React.FC<InboxDetailSettingsProps> = ({ inbox,
           <Tab label="Collaborators" value="collaborators" />
           <Tab label="Business Hours" value="business-hours" />
           <Tab label="CSAT" value="csat" />
+          <Tab label="Configuration" value="configuration" />
           <Tab label="Bot Configuration" value="bot-configuration" />
         </Tabs>
       </Box>
 
       {/* Content */}
-      <Box sx={{ flex: 1, overflow: "auto", display: "flex" }}>
-        {/* Left Sidebar */}
-        <Box
-          sx={{
-            width: 280,
-            p: 3,
-            borderRight: "1px solid",
-            borderColor: "divider",
-            bgcolor: "background.paper",
-          }}
-        >
-          <Typography variant="h6" sx={{ fontWeight: 600, mb: 1, color: "primary.main" }}>
-            Inbox Settings
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            Update your inbox settings
-          </Typography>
-        </Box>
+      <Box sx={{ flex: 1, overflow: "auto", p: 3, bgcolor: "background.default" }}>
+        {activeTab === "settings" && (
+          <InboxSettingsTab
+            inbox={inbox}
+            accountId={accountId}
+            onSave={handleSaveSettings}
+            onAvatarUpload={handleAvatarUpload}
+            onAvatarDelete={handleAvatarDelete}
+            isSaving={isSaving}
+          />
+        )}
 
-        {/* Right Content */}
-        <Box sx={{ flex: 1, p: 3, bgcolor: "background.default" }}>
-          {activeTab === "settings" && (
-            <Box sx={{ display: "flex", flexDirection: "column", gap: 4, maxWidth: 800 }}>
-              {/* Channel Avatar */}
-              <Box>
-                <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1.5 }}>
-                  Channel Avatar
-                </Typography>
-                <Box
-                  sx={{
-                    width: 120,
-                    height: 120,
-                    borderRadius: "50%",
-                    bgcolor: "grey.300",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    border: "2px solid",
-                    borderColor: "grey.400",
-                  }}
-                >
-                  <EmailIcon sx={{ fontSize: 48, color: "grey.600" }} />
-                </Box>
-              </Box>
+        {activeTab === "collaborators" && (
+          <InboxCollaboratorsTab
+            inbox={inbox}
+            accountId={accountId}
+            onSave={handleSaveSettings}
+            onUpdateAgents={handleUpdateAgents}
+            isSaving={isSaving}
+          />
+        )}
 
-              {/* Inbox Name */}
-              <Box>
-                <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1.5 }}>
-                  Inbox Name
-                </Typography>
-                <TextField
-                  fullWidth
-                  value={inboxName}
-                  onChange={(e) => setInboxName(e.target.value)}
-                  placeholder="Enter inbox name"
-                  sx={{
-                    maxWidth: 500,
-                    "& .MuiOutlinedInput-root": {
-                      bgcolor: "grey.50",
-                      borderRadius: "8px",
-                    },
-                  }}
-                />
-              </Box>
+        {activeTab === "business-hours" && (
+          <InboxBusinessHoursTab
+            inbox={inbox}
+            accountId={accountId}
+            onSave={handleSaveBusinessHours}
+            isSaving={isSaving}
+          />
+        )}
 
-              {/* Enable channel greeting */}
-              <Box>
-                <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1.5 }}>
-                  Enable channel greeting
-                </Typography>
-                <FormControl sx={{ minWidth: 200, mb: 1 }}>
-                  <Select
-                    value={greetingEnabled}
-                    onChange={(e) => setGreetingEnabled(e.target.value)}
-                    sx={{
-                      bgcolor: "background.paper",
-                      borderRadius: "8px",
-                    }}
-                  >
-                    <MenuItem value="disabled">Disabled</MenuItem>
-                    <MenuItem value="enabled">Enabled</MenuItem>
-                  </Select>
-                </FormControl>
-                <Typography variant="body2" color="text.secondary">
-                  Auto-send greeting messages when customers start a conversation and send their first message.
-                </Typography>
-              </Box>
+        {activeTab === "csat" && (
+          <InboxCSATTab
+            inbox={inbox}
+            accountId={accountId}
+            onSave={handleSaveCSAT}
+            isSaving={isSaving}
+          />
+        )}
 
-              {/* Help Center */}
-              <Box>
-                <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1.5 }}>
-                  Help Center
-                </Typography>
-                <FormControl sx={{ minWidth: 200, mb: 1 }}>
-                  <Select
-                    value={helpCenter}
-                    onChange={(e) => setHelpCenter(e.target.value)}
-                    displayEmpty
-                    sx={{
-                      bgcolor: "background.paper",
-                      borderRadius: "8px",
-                    }}
-                  >
-                    <MenuItem value="">
-                      <em>Select Help Center</em>
-                    </MenuItem>
-                    <MenuItem value="default">Default Help Center</MenuItem>
-                  </Select>
-                </FormControl>
-                <Typography variant="body2" color="text.secondary">
-                  Attach a Help Center with the inbox
-                </Typography>
-              </Box>
+        {activeTab === "configuration" && (
+          <InboxConfigurationTab inbox={inbox} accountId={accountId} />
+        )}
 
-              {/* Sender name */}
-              <Box>
-                <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", mb: 2 }}>
-                  <Box sx={{ flex: 1 }}>
-                    <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1, color: "primary.main" }}>
-                      Sender name
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      Select the name shown to your customer when they receive emails from your agents.
-                    </Typography>
-                  </Box>
-                </Box>
-
-                <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
-                  {/* Friendly Card */}
-                  <Card
-                    onClick={() => setSenderNameType("friendly")}
-                    sx={{
-                      flex: 1,
-                      cursor: "pointer",
-                      border: senderNameType === "friendly" ? "2px solid" : "1px solid",
-                      borderColor: senderNameType === "friendly" ? "primary.main" : "divider",
-                      bgcolor: senderNameType === "friendly" ? "grey.50" : "background.paper",
-                      transition: "all 0.2s",
-                      "&:hover": {
-                        borderColor: "primary.main",
-                        bgcolor: "grey.50",
-                      },
-                    }}
-                  >
-                    <CardContent>
-                      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", mb: 1 }}>
-                        <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
-                          Friendly
-                        </Typography>
-                        {senderNameType === "friendly" && <CheckCircleIcon sx={{ color: "primary.main", fontSize: 20 }} />}
-                      </Box>
-                      <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                        Add the name of the agent who sent the reply in the sender name to make it friendly.
-                      </Typography>
-                      <Box
-                        sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: 1,
-                          p: 1.5,
-                          bgcolor: "background.paper",
-                          borderRadius: 1,
-                        }}
-                      >
-                        <Avatar sx={{ width: 24, height: 24, bgcolor: "primary.main", fontSize: 12 }}>S</Avatar>
-                        <Typography variant="body2" sx={{ fontSize: "0.813rem" }}>
-                          <strong>S Smith</strong> from Chatwoot &lt;support@yourbusiness.com&gt;
-                        </Typography>
-                      </Box>
-                    </CardContent>
-                  </Card>
-
-                  {/* Professional Card */}
-                  <Card
-                    onClick={() => setSenderNameType("professional")}
-                    sx={{
-                      flex: 1,
-                      cursor: "pointer",
-                      border: senderNameType === "professional" ? "2px solid" : "1px solid",
-                      borderColor: senderNameType === "professional" ? "primary.main" : "divider",
-                      bgcolor: senderNameType === "professional" ? "grey.50" : "background.paper",
-                      transition: "all 0.2s",
-                      "&:hover": {
-                        borderColor: "primary.main",
-                        bgcolor: "grey.50",
-                      },
-                    }}
-                  >
-                    <CardContent>
-                      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", mb: 1 }}>
-                        <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
-                          Professional
-                        </Typography>
-                        {senderNameType === "professional" && <CheckCircleIcon sx={{ color: "primary.main", fontSize: 20 }} />}
-                      </Box>
-                      <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                        Use only the configured business name as the sender name in the email header.
-                      </Typography>
-                      <Box
-                        sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: 1,
-                          p: 1.5,
-                          bgcolor: "background.paper",
-                          borderRadius: 1,
-                        }}
-                      >
-                        <Avatar sx={{ width: 24, height: 24, bgcolor: "grey.400", fontSize: 12 }}>C</Avatar>
-                        <Typography variant="body2" sx={{ fontSize: "0.813rem" }}>
-                          <strong>C Chatwoot</strong> &lt;support@yourbusiness.com&gt;
-                        </Typography>
-                      </Box>
-                    </CardContent>
-                  </Card>
-                </Box>
-
-                <Link
-                  href="#"
-                  sx={{
-                    color: "primary.main",
-                    textDecoration: "none",
-                    fontWeight: 500,
-                    "&:hover": {
-                      textDecoration: "underline",
-                    },
-                  }}
-                >
-                  + Configure your business name
-                </Link>
-              </Box>
-            </Box>
-          )}
-
-          {activeTab === "collaborators" && (
-            <Box>
-              <Typography variant="h6">Collaborators</Typography>
-              <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-                Manage agents assigned to this inbox
-              </Typography>
-            </Box>
-          )}
-
-          {activeTab === "business-hours" && (
-            <Box>
-              <Typography variant="h6">Business Hours</Typography>
-              <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-                Configure working hours for this inbox
-              </Typography>
-            </Box>
-          )}
-
-          {activeTab === "csat" && (
-            <Box>
-              <Typography variant="h6">CSAT</Typography>
-              <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-                Configure customer satisfaction surveys
-              </Typography>
-            </Box>
-          )}
-
-          {activeTab === "bot-configuration" && (
-            <Box>
-              <Typography variant="h6">Bot Configuration</Typography>
-              <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-                Configure automated bot responses
-              </Typography>
-            </Box>
-          )}
-        </Box>
+        {activeTab === "bot-configuration" && (
+          <InboxBotConfigurationTab inbox={inbox} accountId={accountId} />
+        )}
       </Box>
+
+      {/* Notification Snackbar */}
+      <Snackbar
+        open={notification.open}
+        autoHideDuration={6000}
+        onClose={() => setNotification({ ...notification, open: false })}
+        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+      >
+        <Alert
+          onClose={() => setNotification({ ...notification, open: false })}
+          severity={notification.severity}
+          sx={{ width: "100%" }}
+        >
+          {notification.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };
