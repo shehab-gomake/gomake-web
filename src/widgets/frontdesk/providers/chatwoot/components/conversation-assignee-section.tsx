@@ -4,10 +4,11 @@
  * Displays the assigned agent for a Chatwoot conversation
  * and provides options to reassign.
  *
- * Now uses centralized useChatwootAgents hook to eliminate duplicate API calls.
+ * Now uses inbox-specific agents and provides "Self Assign" quick action.
+ * Pattern from Chatwoot: Shows only verified agents assigned to the inbox.
  */
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import {
   Box,
   Typography,
@@ -16,12 +17,15 @@ import {
   Menu,
   MenuItem,
   CircularProgress,
+  Divider,
 } from '@mui/material';
 import PersonIcon from '@mui/icons-material/Person';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import { colorTokens } from '@/widgets/frontdesk/design-system';
 import { chatwootService } from '@/services/frontdesk';
 import { extractConversation, extractErrorMessage } from '../utils/api-response-extractors';
-import { useChatwootAgents } from '../hooks/resources';
+import { useChatwootInboxAgents } from '../hooks/resources';
+import { useChatwootProfile } from '../hooks/use-chatwoot-profile';
 import type { Agent } from '@/services/frontdesk/api/chatwoot/types/agents.types';
 
 interface ConversationAssigneeSectionProps {
@@ -31,6 +35,8 @@ interface ConversationAssigneeSectionProps {
   accountId?: number;
   /** Conversation ID for API calls */
   conversationId?: number;
+  /** Inbox ID for fetching inbox-specific agents */
+  inboxId?: number;
   /** Callback when assignee is changed */
   onAssigneeChanged?: (newAssignee: Agent | null) => void;
 }
@@ -39,13 +45,26 @@ export const ConversationAssigneeSection: React.FC<ConversationAssigneeSectionPr
   assignee,
   accountId,
   conversationId,
+  inboxId,
   onAssigneeChanged,
 }) => {
   const [menuAnchor, setMenuAnchor] = useState<null | HTMLElement>(null);
   const [updating, setUpdating] = useState(false);
 
-  // Use centralized agents hook - no more duplicate fetching!
-  const { agents, loading: loadingAgents } = useChatwootAgents(accountId);
+  // Get current user profile for "Self Assign" feature
+  const { profile } = useChatwootProfile();
+  const currentUserId = profile?.id;
+
+  // Use inbox-specific agents hook - shows only agents assigned to this inbox
+  // Automatically filters to verified agents only
+  const { verifiedAgents, loading: loadingAgents } = useChatwootInboxAgents(accountId, inboxId);
+
+  // Check if current user can self-assign
+  const canSelfAssign = useMemo(() => {
+    if (!currentUserId || assignee?.id === currentUserId) return false;
+    // Check if current user is in the inbox agents list
+    return verifiedAgents.some((agent) => agent.id === currentUserId);
+  }, [currentUserId, assignee, verifiedAgents]);
 
   const handleAssign = async (agentId: number | null) => {
     setMenuAnchor(null);
@@ -85,6 +104,12 @@ export const ConversationAssigneeSection: React.FC<ConversationAssigneeSectionPr
 
   const handleUnassign = () => {
     handleAssign(null);
+  };
+
+  const handleSelfAssign = () => {
+    if (currentUserId) {
+      handleAssign(currentUserId);
+    }
   };
 
   return (
@@ -196,12 +221,29 @@ export const ConversationAssigneeSection: React.FC<ConversationAssigneeSectionPr
         open={Boolean(menuAnchor)}
         onClose={() => setMenuAnchor(null)}
       >
+        {/* Self Assign - Quick Action (Chatwoot pattern) */}
+        {canSelfAssign && (
+          <>
+            <MenuItem onClick={handleSelfAssign} sx={{ fontWeight: 600 }}>
+              <PersonAddIcon sx={{ mr: 1.5, fontSize: 20 }} />
+              <Typography variant="body2" sx={{ fontSize: 13, fontWeight: 600 }}>
+                Self Assign
+              </Typography>
+            </MenuItem>
+            <Divider sx={{ my: 0.5 }} />
+          </>
+        )}
+
+        {/* Unassign Option */}
         {assignee && (
-          <MenuItem onClick={handleUnassign}>
-            <Typography variant="body2" sx={{ fontSize: 13 }}>
-              Unassign
-            </Typography>
-          </MenuItem>
+          <>
+            <MenuItem onClick={handleUnassign}>
+              <Typography variant="body2" sx={{ fontSize: 13 }}>
+                Unassign
+              </Typography>
+            </MenuItem>
+            <Divider sx={{ my: 0.5 }} />
+          </>
         )}
 
         {/* Loading state */}
@@ -214,8 +256,8 @@ export const ConversationAssigneeSection: React.FC<ConversationAssigneeSectionPr
           </MenuItem>
         )}
 
-        {/* Agent list */}
-        {!loadingAgents && agents.map((agent) => (
+        {/* Agent list - Only verified agents assigned to this inbox */}
+        {!loadingAgents && verifiedAgents.map((agent) => (
           <MenuItem
             key={agent.id}
             onClick={() => handleAssign(agent.id!)}
@@ -227,17 +269,24 @@ export const ConversationAssigneeSection: React.FC<ConversationAssigneeSectionPr
             >
               {agent.name?.charAt(0) || agent.available_name?.charAt(0) || 'A'}
             </Avatar>
-            <Typography variant="body2" sx={{ fontSize: 13 }}>
-              {agent.name || agent.available_name || 'Agent'}
-            </Typography>
+            <Box sx={{ flex: 1 }}>
+              <Typography variant="body2" sx={{ fontSize: 13 }}>
+                {agent.name || agent.available_name || 'Agent'}
+              </Typography>
+              {agent.email && (
+                <Typography variant="caption" sx={{ fontSize: 10, color: colorTokens.semantic.text.secondary }}>
+                  {agent.email}
+                </Typography>
+              )}
+            </Box>
           </MenuItem>
         ))}
 
         {/* Empty state */}
-        {!loadingAgents && agents.length === 0 && (
+        {!loadingAgents && verifiedAgents.length === 0 && (
           <MenuItem disabled>
             <Typography variant="caption" sx={{ fontSize: 11, color: colorTokens.semantic.text.secondary }}>
-              No agents available
+              No agents assigned to this inbox
             </Typography>
           </MenuItem>
         )}

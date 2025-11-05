@@ -228,72 +228,127 @@ export const useChatwootProvider = () => {
 
   // Use the utility function for status matching (already imported from utils)
 
-  // Update conversation in the list after status changes
+  // Update conversation in the list after status or assignee changes
   // Similar to Vue: commit(types.CHANGE_CONVERSATION_STATUS, { conversationId, status })
+  // Now also handles assignee changes and filters conversations accordingly
   const updateConversationInList = useCallback(
     (updatedConversation: ChatwootConversation) => {
+      const currentUserId = profile?.id;
       const newStatus = updatedConversation.status;
       const currentFilterStatus = statusFilter === ConversationStatus.ALL ? undefined : statusFilter;
 
-      // Check if updated conversation matches current filter using utility function
-      const matchesFilter = matchesStatusFilter(newStatus, currentFilterStatus);
+      // Check if updated conversation matches current status filter
+      const statusMatches = matchesStatusFilter(newStatus, currentFilterStatus);
 
       // Track the old conversation for count updates
       let oldConversation: ChatwootConversation | undefined;
 
       setConversationsList((prev) => {
-        // Find the old conversation to track status change
+        // Find the old conversation to track changes
         oldConversation = prev.find((conv) => conv.id === updatedConversation.id);
 
-        if (!matchesFilter) {
-          // Remove conversation from list if it doesn't match filter (similar to Vue filtering)
+        // Check if conversation matches assignee filter
+        const newAssigneeId = updatedConversation.meta?.assignee?.id;
+        const oldAssigneeId = oldConversation?.meta?.assignee?.id;
+
+        let matchesAssigneeFilter = true;
+        if (assigneeFilter === ConversationAssigneeType.ME) {
+          matchesAssigneeFilter = newAssigneeId === currentUserId;
+        } else if (assigneeFilter === ConversationAssigneeType.UNASSIGNED) {
+          matchesAssigneeFilter = !newAssigneeId;
+        } else if (assigneeFilter === ConversationAssigneeType.ASSIGNED) {
+          matchesAssigneeFilter = !!newAssigneeId;
+        }
+        // ConversationAssigneeType.ALL always matches
+
+        const matchesAllFilters = statusMatches && matchesAssigneeFilter;
+
+        if (!matchesAllFilters) {
+          // Remove conversation from list if it doesn't match filters
+          logger.debug(`Removing conversation ${updatedConversation.id} - doesn't match filters`);
           return prev.filter((conv) => conv.id !== updatedConversation.id);
         } else {
-          // Update conversation in list if it matches filter
+          // Update conversation in list if it matches filters
           return prev.map((conv) => (conv.id === updatedConversation.id ? { ...conv, ...updatedConversation } : conv));
         }
       });
 
-      // Update conversation counts based on status change
-      if (oldConversation && oldConversation.status !== newStatus) {
-        setCounts((prevCounts) => {
-          const newCounts = { ...prevCounts };
+      // Update conversation counts based on status and assignee changes
+      if (oldConversation) {
+        const statusChanged = oldConversation.status !== newStatus;
+        const oldAssigneeId = oldConversation.meta?.assignee?.id;
+        const newAssigneeId = updatedConversation.meta?.assignee?.id;
+        const assigneeChanged = oldAssigneeId !== newAssigneeId;
 
-          // Decrement old status count
-          if (oldConversation.status === "open") {
-            newCounts.mine = Math.max(0, newCounts.mine - 1);
-          }
+        if (statusChanged || assigneeChanged) {
+          setCounts((prevCounts) => {
+            const newCounts = { ...prevCounts };
 
-          // Increment new status count
-          if (newStatus === "open") {
-            newCounts.mine = newCounts.mine + 1;
-          }
+            // Handle status count changes
+            if (statusChanged) {
+              // Decrement old status count
+              if (oldConversation.status === "open") {
+                newCounts.mine = Math.max(0, newCounts.mine - 1);
+              }
 
-          // Handle unassigned count if applicable
-          const wasUnassigned = !oldConversation.meta?.assignee?.id;
-          const isUnassigned = !updatedConversation.meta?.assignee?.id;
+              // Increment new status count
+              if (newStatus === "open") {
+                newCounts.mine = newCounts.mine + 1;
+              }
+            }
 
-          if (wasUnassigned && !isUnassigned) {
-            newCounts.unassigned = Math.max(0, newCounts.unassigned - 1);
-          } else if (!wasUnassigned && isUnassigned) {
-            newCounts.unassigned = newCounts.unassigned + 1;
-          }
+            // Handle unassigned count changes
+            const wasUnassigned = !oldAssigneeId;
+            const isUnassigned = !newAssigneeId;
 
-          return newCounts;
-        });
+            if (wasUnassigned && !isUnassigned) {
+              newCounts.unassigned = Math.max(0, newCounts.unassigned - 1);
+            } else if (!wasUnassigned && isUnassigned) {
+              newCounts.unassigned = newCounts.unassigned + 1;
+            }
+
+            // Handle "mine" count changes based on assignee
+            if (currentUserId) {
+              const wasAssignedToMe = oldAssigneeId === currentUserId;
+              const isAssignedToMe = newAssigneeId === currentUserId;
+
+              if (!wasAssignedToMe && isAssignedToMe && newStatus === "open") {
+                // Conversation was assigned to me
+                newCounts.mine = newCounts.mine + 1;
+              } else if (wasAssignedToMe && !isAssignedToMe && oldConversation.status === "open") {
+                // Conversation was unassigned from me
+                newCounts.mine = Math.max(0, newCounts.mine - 1);
+              }
+            }
+
+            return newCounts;
+          });
+        }
       }
 
       // Update selected conversation
       if (selectedConversation?.id === updatedConversation.id) {
-        if (!matchesFilter) {
-          // If conversation no longer matches filter, deselect it (similar to how it disappears from list)
+        const matchesAllFilters = statusMatches && (() => {
+          const newAssigneeId = updatedConversation.meta?.assignee?.id;
+          if (assigneeFilter === ConversationAssigneeType.ME) {
+            return newAssigneeId === currentUserId;
+          } else if (assigneeFilter === ConversationAssigneeType.UNASSIGNED) {
+            return !newAssigneeId;
+          } else if (assigneeFilter === ConversationAssigneeType.ASSIGNED) {
+            return !!newAssigneeId;
+          }
+          return true; // ALL
+        })();
+
+        if (!matchesAllFilters) {
+          // If conversation no longer matches filter, deselect it
           setSelectedConversation(null);
         } else {
           setSelectedConversation((prev) => (prev ? { ...prev, ...updatedConversation } : prev));
         }
       }
     },
-    [setConversationsList, selectedConversation, setSelectedConversation, statusFilter, setCounts]
+    [setConversationsList, selectedConversation, setSelectedConversation, statusFilter, assigneeFilter, profile, setCounts]
   );
 
   // Handle filter changes - support status, assignee_type, search, team, sort, etc.

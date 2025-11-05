@@ -113,7 +113,19 @@ export interface ChatwootConversation {
       avatar_url?: string;
     };
     channel?: string;
-    assignee?: any;
+    assignee?: {
+      id?: number;
+      name?: string;
+      email?: string;
+      thumbnail?: string;
+      availability_status?: string;
+      account_id?: number;
+    } | null;
+    team?: {
+      id?: number;
+      name?: string;
+      description?: string;
+    } | null;
     hmac_verified?: boolean;
   };
 }

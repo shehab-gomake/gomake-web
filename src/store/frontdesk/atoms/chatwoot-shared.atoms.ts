@@ -61,6 +61,18 @@ export const chatwootAgentsAtom = atom<RequestState<Agent[]>>({
   default: createInitialRequestState<Agent[]>(5 * 60 * 1000),
 });
 
+/**
+ * Inbox Agents Atom
+ * Stores agents per inbox ID (inbox-specific assignments)
+ * TTL: 5 minutes (inbox assignments don't change frequently)
+ *
+ * Pattern: { [inboxId: number]: RequestState<Agent[]> }
+ */
+export const chatwootInboxAgentsAtom = atom<Record<number, RequestState<Agent[]>>>({
+  key: "frontdesk.chatwoot.inboxAgents",
+  default: {},
+});
+
 // ============================================================================
 // TEAMS STATE
 // ============================================================================
@@ -152,6 +164,7 @@ export const chatwootAccountDataAtom = atom<RequestState<AccountData>>({
  */
 export interface ResourceLoadingState {
   agents: boolean;
+  inboxAgents?: Record<number, boolean>; // Per-inbox loading state
   teams: boolean;
   contacts: boolean;
   labels: boolean;
@@ -161,6 +174,7 @@ export const chatwootResourceLoadingAtom = atom<ResourceLoadingState>({
   key: "frontdesk.chatwoot.resourceLoading",
   default: {
     agents: false,
+    inboxAgents: {},
     teams: false,
     contacts: false,
     labels: false,
