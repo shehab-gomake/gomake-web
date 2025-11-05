@@ -15,7 +15,6 @@ import {
   Select,
   MenuItem,
   FormControl,
-  InputLabel,
   Button,
   IconButton,
   Box,
@@ -26,6 +25,7 @@ import {
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import LockResetIcon from "@mui/icons-material/LockReset";
+import CircleIcon from "@mui/icons-material/Circle";
 import type { Agent, AgentUpdatePayload } from "@/services/frontdesk/api/chatwoot/types/agents.types";
 
 interface EditAgentModalProps {
@@ -43,6 +43,7 @@ export const EditAgentModal: React.FC<EditAgentModalProps> = ({
   onSave,
   loading = false,
 }) => {
+  const [name, setName] = useState<string>("");
   const [role, setRole] = useState<string>("agent");
   const [availabilityStatus, setAvailabilityStatus] = useState<string>("offline");
   const [autoOffline, setAutoOffline] = useState<boolean>(false);
@@ -52,6 +53,7 @@ export const EditAgentModal: React.FC<EditAgentModalProps> = ({
   // Initialize form values when agent changes
   useEffect(() => {
     if (agent) {
+      setName(agent.name || agent.available_name || agent.email || "");
       setRole(agent.role || "agent");
       setAvailabilityStatus(agent.availability_status || "offline");
       setAutoOffline(agent.auto_offline || false);
@@ -67,6 +69,7 @@ export const EditAgentModal: React.FC<EditAgentModalProps> = ({
 
     try {
       await onSave(agent.id, {
+        name,
         role,
         availability_status: availabilityStatus,
         auto_offline: autoOffline,
@@ -93,7 +96,20 @@ export const EditAgentModal: React.FC<EditAgentModalProps> = ({
 
   if (!agent) return null;
 
-  const agentName = agent.name || agent.available_name || agent.email || "Unknown Agent";
+  const displayName = name || agent.name || agent.available_name || agent.email || "Unknown Agent";
+
+  // Status color mapping
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "online":
+        return "#10b981"; // green
+      case "busy":
+        return "#f59e0b"; // amber
+      case "offline":
+      default:
+        return "#6b7280"; // gray
+    }
+  };
 
   return (
     <Dialog
@@ -103,8 +119,7 @@ export const EditAgentModal: React.FC<EditAgentModalProps> = ({
       fullWidth
       PaperProps={{
         sx: {
-          borderRadius: "16px",
-          minHeight: "400px",
+          borderRadius: "12px",
         },
       }}
     >
@@ -115,10 +130,12 @@ export const EditAgentModal: React.FC<EditAgentModalProps> = ({
           alignItems: "center",
           justifyContent: "space-between",
           pb: 2,
+          borderBottom: "1px solid",
+          borderColor: "divider",
         }}
       >
         <Typography variant="h6" sx={{ fontWeight: 600, fontSize: "1.25rem" }}>
-          Edit agent - {agentName.toLowerCase()}
+          Edit agent - {displayName}
         </Typography>
         <IconButton
           onClick={handleClose}
@@ -136,15 +153,24 @@ export const EditAgentModal: React.FC<EditAgentModalProps> = ({
       </DialogTitle>
 
       {/* Content */}
-      <DialogContent sx={{ pt: 1 }}>
+      <DialogContent sx={{ pt: 3, px: 3 }}>
         {error && (
-          <Alert severity="error" sx={{ mb: 3 }}>
+          <Alert
+            severity="error"
+            sx={{
+              mb: 3,
+              borderRadius: "12px",
+              "& .MuiAlert-icon": {
+                alignItems: "center",
+              },
+            }}
+          >
             {error}
           </Alert>
         )}
 
         <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
-          {/* Agent Name - Display Only */}
+          {/* Agent Name - Editable */}
           <Box>
             <Typography
               variant="body2"
@@ -159,15 +185,11 @@ export const EditAgentModal: React.FC<EditAgentModalProps> = ({
             </Typography>
             <TextField
               fullWidth
-              value={agentName}
-              disabled
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              disabled={saving || loading}
               variant="outlined"
-              sx={{
-                "& .MuiInputBase-input.Mui-disabled": {
-                  WebkitTextFillColor: "text.primary",
-                  color: "text.primary",
-                },
-              }}
+              placeholder="Enter agent name"
             />
           </Box>
 
@@ -215,9 +237,24 @@ export const EditAgentModal: React.FC<EditAgentModalProps> = ({
                 onChange={(e) => setAvailabilityStatus(e.target.value)}
                 disabled={saving || loading}
               >
-                <MenuItem value="online">Online</MenuItem>
-                <MenuItem value="offline">Offline</MenuItem>
-                <MenuItem value="busy">Busy</MenuItem>
+                <MenuItem value="online">
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                    <CircleIcon sx={{ fontSize: 10, color: "#10b981" }} />
+                    <span>Online</span>
+                  </Box>
+                </MenuItem>
+                <MenuItem value="busy">
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                    <CircleIcon sx={{ fontSize: 10, color: "#f59e0b" }} />
+                    <span>Busy</span>
+                  </Box>
+                </MenuItem>
+                <MenuItem value="offline">
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                    <CircleIcon sx={{ fontSize: 10, color: "#6b7280" }} />
+                    <span>Offline</span>
+                  </Box>
+                </MenuItem>
               </Select>
             </FormControl>
           </Box>

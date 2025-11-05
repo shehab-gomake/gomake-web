@@ -5,7 +5,7 @@
  * and provides options to link/create GoMake customers.
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Typography,
@@ -17,20 +17,20 @@ import {
   ListItemIcon,
   ListItemText,
   Divider,
-} from '@mui/material';
+} from "@mui/material";
 import {
   PersonAdd as PersonAddIcon,
   Business as BusinessIcon,
   Link as LinkIcon,
   ArrowDropDown as ArrowDropDownIcon,
-} from '@mui/icons-material';
-import { useGomakeTheme } from '@/hooks/use-gomake-thme';
-import { colorTokens } from '@/widgets/frontdesk/design-system';
-import { getAndSetCustomerById } from '@/services/api-service/customers/customers-api';
-import { useGomakeAxios } from '@/hooks/use-gomake-axios';
-import { useCustomerEdit } from '@/hooks/use-customer-edit';
-import { CustomerCardWidget } from '@/widgets/customer-card-modal';
-import { CLIENT_TYPE, CUSTOMER_ACTIONS } from '@/pages/customers/enums';
+} from "@mui/icons-material";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { colorTokens } from "@/widgets/frontdesk/design-system";
+import { getAndSetCustomerById } from "@/services/api-service/customers/customers-api";
+import { useGomakeAxios } from "@/hooks/use-gomake-axios";
+import { useCustomerEdit } from "@/hooks/use-customer-edit";
+import { CustomerCardWidget } from "@/widgets/customer-card-modal";
+import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 
 interface Customer {
   id: string;
@@ -87,14 +87,14 @@ export const ConversationProfileSection: React.FC<ConversationProfileSectionProp
         if (res?.success && res.data) {
           setCustomer(res.data);
         } else {
-          console.warn('Customer not found or invalid response:', res);
+          console.warn("Customer not found or invalid response:", res);
         }
         setLoading(false);
       };
 
       await getAndSetCustomerById(callApi, callback, { customerId: id });
     } catch (error) {
-      console.error('Error loading customer:', error);
+      console.error("Error loading customer:", error);
       // TODO: Show error state in UI
       setLoading(false);
     }
@@ -106,9 +106,9 @@ export const ConversationProfileSection: React.FC<ConversationProfileSectionProp
 
     // Initialize temp data for the modal with available contact info
     setTempCustomerData({
-      name: contactName?.trim() || '',
-      mail: contactEmail?.trim() || '',
-      phone: '',
+      name: contactName?.trim() || "",
+      mail: contactEmail?.trim() || "",
+      phone: "",
     });
     setOpenCreateModal(true);
   };
@@ -135,9 +135,9 @@ export const ConversationProfileSection: React.FC<ConversationProfileSectionProp
         sx={{
           color: colorTokens.semantic.text.secondary,
           mb: 1,
-          display: 'block',
+          display: "block",
           fontWeight: 600,
-          textTransform: 'uppercase',
+          textTransform: "uppercase",
           fontSize: 10,
         }}
       >
@@ -145,7 +145,7 @@ export const ConversationProfileSection: React.FC<ConversationProfileSectionProp
       </Typography>
 
       {loading ? (
-        <Box sx={{ display: 'flex', justifyContent: 'center', p: 2 }}>
+        <Box sx={{ display: "flex", justifyContent: "center", p: 2 }}>
           <CircularProgress size={24} />
         </Box>
       ) : customer ? (
@@ -155,20 +155,17 @@ export const ConversationProfileSection: React.FC<ConversationProfileSectionProp
           sx={{
             p: 1.5,
             backgroundColor: colorTokens.neutral[50],
-            borderRadius: '6px',
+            borderRadius: "6px",
             border: `1px solid ${colorTokens.semantic.border.default}`,
-            cursor: 'pointer',
-            transition: 'background-color 0.2s',
-            '&:hover': {
+            cursor: "pointer",
+            transition: "background-color 0.2s",
+            "&:hover": {
               backgroundColor: colorTokens.neutral[100],
             },
           }}
         >
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 1 }}>
-            <Avatar
-              src={contactAvatarUrl || undefined}
-              sx={{ width: 32, height: 32 }}
-            >
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 1 }}>
+            <Avatar src={contactAvatarUrl || undefined} sx={{ width: 32, height: 32 }}>
               {customer.name?.charAt(0)}
             </Avatar>
             <Box sx={{ flex: 1, minWidth: 0 }}>
@@ -177,9 +174,9 @@ export const ConversationProfileSection: React.FC<ConversationProfileSectionProp
                 sx={{
                   fontWeight: 500,
                   fontSize: 13,
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  whiteSpace: 'nowrap',
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
                 }}
               >
                 {customer.name}
@@ -190,10 +187,10 @@ export const ConversationProfileSection: React.FC<ConversationProfileSectionProp
                   sx={{
                     color: colorTokens.semantic.text.secondary,
                     fontSize: 11,
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap',
-                    display: 'block',
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
+                    display: "block",
                   }}
                 >
                   {customer.mail}
@@ -213,117 +210,47 @@ export const ConversationProfileSection: React.FC<ConversationProfileSectionProp
           </Typography>
         </Box>
       ) : (
-        // Unlinked Contact View
-        <>
-          {/* Contact Info Display */}
-          <Box
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 1.5,
-              p: 1.5,
-              mb: 1.5,
-              backgroundColor: colorTokens.neutral[50],
-              borderRadius: '6px',
-              border: `1px solid ${colorTokens.semantic.border.default}`,
-            }}
-          >
-            <Avatar
-              src={contactAvatarUrl || undefined}
-              sx={{ width: 32, height: 32 }}
+        // Unlinked Contact View - Simple display without background or functionality
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            gap: 1.5,
+          }}
+        >
+          <Avatar src={contactAvatarUrl || undefined} sx={{ width: 32, height: 32 }}>
+            {contactName?.charAt(0) || contactEmail?.charAt(0) || "?"}
+          </Avatar>
+          <Box sx={{ flex: 1, minWidth: 0 }}>
+            <Typography
+              variant="body2"
+              sx={{
+                fontWeight: 500,
+                fontSize: 13,
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+              }}
             >
-              {contactName?.charAt(0) || contactEmail?.charAt(0) || '?'}
-            </Avatar>
-            <Box sx={{ flex: 1, minWidth: 0 }}>
+              {contactName || contactEmail || "Unknown Contact"}
+            </Typography>
+            {contactEmail && (
               <Typography
-                variant="body2"
+                variant="caption"
                 sx={{
-                  fontWeight: 500,
-                  fontSize: 13,
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  whiteSpace: 'nowrap',
+                  color: colorTokens.semantic.text.secondary,
+                  fontSize: 11,
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                  display: "block",
                 }}
               >
-                {contactName || contactEmail || 'Unknown Contact'}
+                {contactEmail}
               </Typography>
-              {contactEmail && contactName && (
-                <Typography
-                  variant="caption"
-                  sx={{
-                    color: colorTokens.semantic.text.secondary,
-                    fontSize: 11,
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap',
-                    display: 'block',
-                  }}
-                >
-                  {contactEmail}
-                </Typography>
-              )}
-            </Box>
+            )}
           </Box>
-
-          {/* Link Customer Button */}
-          <Button
-            variant="outlined"
-            size="small"
-            fullWidth
-            onClick={(e) => setLinkMenuAnchor(e.currentTarget)}
-            endIcon={<ArrowDropDownIcon />}
-            sx={{
-              textTransform: 'none',
-              justifyContent: 'space-between',
-              borderColor: neutralColor(300),
-              color: neutralColor(700),
-              fontSize: '0.8125rem',
-              px: 1.5,
-              py: 1,
-              '&:hover': {
-                backgroundColor: neutralColor(50),
-                borderColor: neutralColor(400),
-              },
-            }}
-          >
-            Link Customer
-          </Button>
-
-          {/* Link Customer Menu */}
-          <Menu
-            anchorEl={linkMenuAnchor}
-            open={Boolean(linkMenuAnchor)}
-            onClose={() => setLinkMenuAnchor(null)}
-            anchorOrigin={{
-              vertical: 'bottom',
-              horizontal: 'left',
-            }}
-            transformOrigin={{
-              vertical: 'top',
-              horizontal: 'left',
-            }}
-          >
-            <MenuItem onClick={() => handleCreateCustomer(CLIENT_TYPE.CUSTOMER)}>
-              <ListItemIcon>
-                <PersonAddIcon fontSize="small" />
-              </ListItemIcon>
-              <ListItemText>Create as Client</ListItemText>
-            </MenuItem>
-            <MenuItem onClick={() => handleCreateCustomer(CLIENT_TYPE.SUPPLIER)}>
-              <ListItemIcon>
-                <BusinessIcon fontSize="small" />
-              </ListItemIcon>
-              <ListItemText>Create as Supplier</ListItemText>
-            </MenuItem>
-            <Divider />
-            <MenuItem disabled>
-              <ListItemIcon>
-                <LinkIcon fontSize="small" />
-              </ListItemIcon>
-              <ListItemText>Link to Existing</ListItemText>
-            </MenuItem>
-          </Menu>
-        </>
+        </Box>
       )}
 
       {/* Customer Creation Modal */}

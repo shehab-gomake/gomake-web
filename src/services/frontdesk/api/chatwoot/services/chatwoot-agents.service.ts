@@ -37,6 +37,7 @@ export interface GetInboxMembersResponse {
  * Agent update payload for PATCH operations
  */
 export interface AgentUpdatePayload {
+  name?: string;                   // Optional: agent's display name
   role: string;                    // Required: "administrator" or "agent"
   availability_status?: string;    // Optional: "available", "busy", or "offline"
   auto_offline?: boolean;          // Optional: auto-offline when away

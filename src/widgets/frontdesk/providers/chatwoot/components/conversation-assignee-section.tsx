@@ -25,6 +25,9 @@ import { colorTokens } from '@/widgets/frontdesk/design-system';
 import { useChatwootInboxAgents } from '../hooks/resources';
 import { useChatwootProfile } from '../hooks/use-chatwoot-profile';
 import { useConversationAssignmentActions } from '../hooks/actions/use-conversation-assignment-actions';
+import { useRecoilValue } from 'recoil';
+import { chatwootSelectedAccountAtom } from '@/store/frontdesk/atoms/chatwoot.atoms';
+import { prepareAgentsForAssignment } from '../utils/agent-helpers';
 import type { Agent } from '@/services/frontdesk/api/chatwoot/types/agents.types';
 import type { ChatwootConversation } from '@/services/frontdesk/api/chatwoot/types/conversations.types';
 
@@ -53,6 +56,8 @@ export const ConversationAssigneeSection: React.FC<ConversationAssigneeSectionPr
   // Get current user profile for "Self Assign" feature
   const { profile } = useChatwootProfile();
   const currentUserId = profile?.id;
+  const selectedAccountId = useRecoilValue(chatwootSelectedAccountAtom);
+  const effectiveAccountId = accountId ?? selectedAccountId;
 
   // Use inbox-specific agents hook - shows only agents assigned to this inbox
   // Automatically filters to verified agents only
@@ -66,6 +71,22 @@ export const ConversationAssigneeSection: React.FC<ConversationAssigneeSectionPr
     updateConversation,
   });
 
+  // Process agents with Chatwoot's pattern: update presence + sort by availability + add "None" option
+  const processedAgents = useMemo(() => {
+    if (!effectiveAccountId) return verifiedAgents;
+
+    // Apply Chatwoot's agent processing:
+    // 1. Update current user's presence dynamically
+    // 2. Sort by availability (online → busy → offline)
+    // 3. Add "None" option at the beginning for unassignment
+    return prepareAgentsForAssignment(
+      verifiedAgents,
+      profile,
+      effectiveAccountId,
+      !!assignee // Only include "None" when someone is assigned
+    );
+  }, [verifiedAgents, profile, effectiveAccountId, assignee]);
+
   // Check if current user can self-assign
   const canSelfAssign = useMemo(() => {
     if (!currentUserId || assignee?.id === currentUserId) return false;
@@ -75,6 +96,18 @@ export const ConversationAssigneeSection: React.FC<ConversationAssigneeSectionPr
 
   const handleAssign = async (agentId: number | null) => {
     setMenuAnchor(null);
+
+    // Chatwoot pattern: If clicking the same agent, unassign (toggle behavior)
+    if (assignee && agentId === assignee.id) {
+      await handleAssignAgent(null);
+      return;
+    }
+
+    // Special handling for "None" option (id: 0)
+    if (agentId === 0) {
+      await handleAssignAgent(null);
+      return;
+    }
 
     // Find the agent data to pass for optimistic update
     const agentData = agentId
@@ -88,10 +121,6 @@ export const ConversationAssigneeSection: React.FC<ConversationAssigneeSectionPr
       email: agentData.email,
       thumbnail: agentData.thumbnail,
     } : undefined);
-  };
-
-  const handleUnassign = () => {
-    handleAssign(null);
   };
 
   const handleSelfAssign = () => {
@@ -222,18 +251,6 @@ export const ConversationAssigneeSection: React.FC<ConversationAssigneeSectionPr
           </>
         )}
 
-        {/* Unassign Option */}
-        {assignee && (
-          <>
-            <MenuItem onClick={handleUnassign}>
-              <Typography variant="body2" sx={{ fontSize: 13 }}>
-                Unassign
-              </Typography>
-            </MenuItem>
-            <Divider sx={{ my: 0.5 }} />
-          </>
-        )}
-
         {/* Loading state */}
         {loadingAgents && (
           <MenuItem disabled>
@@ -244,34 +261,66 @@ export const ConversationAssigneeSection: React.FC<ConversationAssigneeSectionPr
           </MenuItem>
         )}
 
-        {/* Agent list - Only verified agents assigned to this inbox */}
-        {!loadingAgents && verifiedAgents.map((agent) => (
+        {/* Agent list - Includes "None" option, sorted by availability (online → busy → offline) */}
+        {!loadingAgents && processedAgents.map((agent) => (
           <MenuItem
             key={agent.id}
             onClick={() => handleAssign(agent.id!)}
             selected={agent.id === assignee?.id}
+            sx={{
+              // Highlight "None" option slightly differently
+              fontWeight: agent.id === 0 ? 500 : 400,
+            }}
           >
-            <Avatar
-              src={agent.thumbnail}
-              sx={{ width: 24, height: 24, mr: 1.5 }}
-            >
-              {agent.name?.charAt(0) || agent.available_name?.charAt(0) || 'A'}
-            </Avatar>
-            <Box sx={{ flex: 1 }}>
-              <Typography variant="body2" sx={{ fontSize: 13 }}>
-                {agent.name || agent.available_name || 'Agent'}
+            {agent.id === 0 ? (
+              // "None" option - no avatar
+              <Typography variant="body2" sx={{ fontSize: 13, ml: 4.5 }}>
+                {agent.name}
               </Typography>
-              {agent.email && (
-                <Typography variant="caption" sx={{ fontSize: 10, color: colorTokens.semantic.text.secondary }}>
-                  {agent.email}
-                </Typography>
-              )}
-            </Box>
+            ) : (
+              // Regular agent with avatar and availability indicator
+              <>
+                <Avatar
+                  src={agent.thumbnail}
+                  sx={{ width: 24, height: 24, mr: 1.5 }}
+                >
+                  {agent.name?.charAt(0) || agent.available_name?.charAt(0) || 'A'}
+                </Avatar>
+                <Box sx={{ flex: 1 }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Typography variant="body2" sx={{ fontSize: 13 }}>
+                      {agent.name || agent.available_name || 'Agent'}
+                    </Typography>
+                    {/* Availability indicator (matches Chatwoot) */}
+                    {agent.availability_status && (
+                      <Box
+                        sx={{
+                          width: 8,
+                          height: 8,
+                          borderRadius: '50%',
+                          backgroundColor:
+                            agent.availability_status === 'online'
+                              ? '#22c55e' // green
+                              : agent.availability_status === 'busy'
+                              ? '#f59e0b' // amber
+                              : '#6b7280', // gray
+                        }}
+                      />
+                    )}
+                  </Box>
+                  {agent.email && agent.email !== 'None' && (
+                    <Typography variant="caption" sx={{ fontSize: 10, color: colorTokens.semantic.text.secondary }}>
+                      {agent.email}
+                    </Typography>
+                  )}
+                </Box>
+              </>
+            )}
           </MenuItem>
         ))}
 
         {/* Empty state */}
-        {!loadingAgents && verifiedAgents.length === 0 && (
+        {!loadingAgents && processedAgents.length === 0 && (
           <MenuItem disabled>
             <Typography variant="caption" sx={{ fontSize: 11, color: colorTokens.semantic.text.secondary }}>
               No agents assigned to this inbox
