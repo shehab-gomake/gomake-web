@@ -164,7 +164,7 @@ const hpClientThemeConfig: ThemeConfig = {
       // Dropdown/Autocomplete Styles
       "--theme-dropdown-shadow": "none",
       "--theme-dropdown-border": "none",
-      "--theme-dropdown-border--color": "#E0E0E0",
+      "--theme-dropdown-border-color": "#E0E0E0",
       "--theme-dropdown-border-radius": "var(--theme-radius-md, 8px)",
       "--theme-dropdown-placeholder-color": "#A3A3A3",
       "--theme-dropdown-placeholder-size": "14px",

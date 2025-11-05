@@ -42,18 +42,17 @@ const StyledTreeSelect = styled<any>(TreeSelect)(
       : "2px solid rgb(237, 2, 140) !important",
     "& .ant-select-selector": {
       border: hasValue
-        ? "1px solid var(--theme-dropdown-border--color, transparent) !important"
+        ? "1px solid var(--theme-dropdown-border-color, transparent) !important"
         : "var(--theme-dropdown-border, none) !important",
       borderColor: hasValue
-        ? "var(--theme-dropdown-border--color, transparent) !important"
+        ? "var(--theme-dropdown-border-color, transparent) !important"
         : "transparent !important",
       borderRadius: "var(--theme-dropdown-border-radius, 4px) !important",
       display: "flex !important",
       alignItems: "center !important",
     },
     "&.ant-select-focused .ant-select-selector": {
-      borderColor:
-        "var(--theme-dropdown-border--color, transparent) !important",
+      borderColor: "var(--theme-dropdown-border-color, transparent) !important",
       borderWidth: "1px !important",
       borderStyle: "solid !important",
       boxShadow:
@@ -209,20 +208,20 @@ const GoMakeTreeSelect = ({
         }
 
         .editorDiv .ant-select-focused .ant-select-selector {
-            border-color: var(--theme-dropdown-border--color, transparent) !important;
+            border-color: var(--theme-dropdown-border-color, transparent) !important;
             border-width: 1px !important;
             border-style: solid !important;
             box-shadow: 0 0 0 2px rgba(224, 224, 224, 0.2) !important;
         }
         
         .editorDiv .ant-select:not(.ant-select-disabled):hover .ant-select-selector {
-            border-color: var(--theme-dropdown-border--color, transparent) !important;
+            border-color: var(--theme-dropdown-border-color, transparent) !important;
             border-width: 1px !important;
             border-style: solid !important;
         }
 
         .editorDiv .ant-select:not(.ant-select-disabled) .ant-select-selector:has(.ant-select-selection-item) {
-            border-color: var(--theme-dropdown-border--color, transparent) !important;
+            border-color: var(--theme-dropdown-border-color, transparent) !important;
             border-width: 1px !important;
             border-style: solid !important;
         }

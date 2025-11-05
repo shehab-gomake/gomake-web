@@ -44,43 +44,43 @@ const StyledAutocomplete: any = styled(Autocomplete, {
       // !here not sure about this style theme css variable
       "& fieldset": {
         border: props?.selectedOption
-          ? "1px solid var(--theme-dropdown-border--color, transparent) !important"
+          ? "1px solid var(--theme-dropdown-border-color, transparent) !important"
           : "var(--theme-dropdown-border, none) ",
         borderColor: props?.selectedOption
-          ? "var(--theme-dropdown-border--color, transparent)"
+          ? "var(--theme-dropdown-border-color, transparent)"
           : "transparent",
         boxSizing: "border-box",
         borderRadius: "var(--theme-dropdown-border-radius, 4px)",
       },
       "& .MuiOutlinedInput-notchedOutline": {
         border: props?.selectedOption
-          ? "1px solid var(--theme-dropdown-border--color, transparent)"
+          ? "1px solid var(--theme-dropdown-border-color, transparent)"
           : "var(--theme-dropdown-border, none)",
         borderColor: props?.selectedOption
-          ? "var(--theme-dropdown-border--color, transparent)"
+          ? "var(--theme-dropdown-border-color, transparent)"
           : "transparent",
       },
       "&.Mui-focused fieldset": {
         borderColor:
-          "var(--theme-dropdown-border--color, transparent) !important",
+          "var(--theme-dropdown-border-color, transparent) !important",
         borderWidth: "1px !important",
         borderStyle: "solid !important",
       },
       "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
         borderColor:
-          "var(--theme-dropdown-border--color, transparent) !important",
+          "var(--theme-dropdown-border-color, transparent) !important",
         borderWidth: "1px !important",
         borderStyle: "solid !important",
       },
       "&:hover fieldset": {
         borderColor:
-          "var(--theme-dropdown-border--color, transparent) !important",
+          "var(--theme-dropdown-border-color, transparent) !important",
         borderWidth: "1px !important",
         borderStyle: "solid !important",
       },
       "&:hover .MuiOutlinedInput-notchedOutline": {
         borderColor:
-          "var(--theme-dropdown-border--color, transparent) !important",
+          "var(--theme-dropdown-border-color, transparent) !important",
         borderWidth: "1px !important",
         borderStyle: "solid !important",
       },
