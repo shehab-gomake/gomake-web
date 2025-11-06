@@ -97,6 +97,7 @@ const useMoreCircle = () => {
     handleGetTaxConfirmNo,
     onClickOpenMoveOrderToReadyModal,
     onOpenPackagesModal,
+    onClickOpenInventoryIntakeModal,
   }) => {
     const isEditableDocument = quote?.isEditable;
     const documentPath = DOCUMENT_TYPE[documentType];
@@ -551,6 +552,14 @@ const useMoreCircle = () => {
         name: t("sales.quote.close"),
       },
 
+      {
+        condition:
+          isPurchaseOrder &&
+          quote?.isCanIntake,
+        onClick: () => onClickOpenInventoryIntakeModal(quote),
+        icon: <PackageIcon />,
+        name: t("sales.quote.inventoryIntake"),
+      },
       {
         condition:
           isPurchaseOrder &&

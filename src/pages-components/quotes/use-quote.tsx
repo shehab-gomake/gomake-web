@@ -35,6 +35,7 @@ import {
   ExportDocumentTableToPdfApi,
   getAllDocumentLogsApi,
   getAllDocumentsApi,
+  getDocumentInventoryApi,
   getDocumentPdfApi,
   manuallyCloseDocumentApi,
   moveOrderToReadyApi,
@@ -876,6 +877,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               onClickOpenCloseOrderNotesModal={onClickOpenCloseOrderNotesModal}
               onOpenDuplicateModal={onOpenDuplicateModal}
               handleGetTaxConfirmNo={handleGetTaxConfirmNo}
+              onClickOpenInventoryIntakeModal={onClickOpenInventoryIntakeModal}
             />
           ),
         };
@@ -3145,6 +3147,39 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     setOpenDeliveryTimeCancelModal(false);
   };
 
+  // Inventory Intake Modal State
+  const [openInventoryIntakeModal, setOpenInventoryIntakeModal] =
+    useState(false);
+  const [inventoryData, setInventoryData] = useState<any[]>([]);
+  const [inventoryLoading, setInventoryLoading] = useState(false);
+
+  const onClickOpenInventoryIntakeModal = async (quote) => {
+    setSelectedDocument(quote);
+    setOpenInventoryIntakeModal(true);
+    setInventoryLoading(true);
+
+    const callBack = (res) => {
+      if (res?.success) {
+        setInventoryData(res?.data || []);
+      } else {
+        alertFaultGetData();
+      }
+      setInventoryLoading(false);
+    };
+
+    await getDocumentInventoryApi(callApi, callBack, {
+      documentType: docType,
+      documentId: quote?.id,
+      purchaseOrderId: quote?.id,
+    });
+  };
+
+  const onClickCloseInventoryIntakeModal = () => {
+    setOpenInventoryIntakeModal(false);
+    setInventoryData([]);
+    setSelectedDocument(null);
+  };
+
   const MoveOrderToReady = useModal();
 
   const onClickOpenMoveOrderToReadyModal = (order) => {
@@ -4209,6 +4244,11 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     setFromDate,
     setToDate,
     onClickOpenCustomerModal,
+    openInventoryIntakeModal,
+    onClickCloseInventoryIntakeModal,
+    inventoryData,
+    inventoryLoading,
+    selectedDocument,
     isPurchaseOrder,
     isMoveToReady,
     handleCheckboxChange,

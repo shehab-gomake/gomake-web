@@ -144,8 +144,6 @@ const InventoryIntakeModal: React.FC<InventoryIntakeModalProps> = ({
   inventoryData,
   loading,
   purchaseOrderId,
-  purchaseOrderNumber,
-  supplierId,
   documentType = DOCUMENT_TYPE.purchaseOrder, // Default to purchase order type
 }) => {
 

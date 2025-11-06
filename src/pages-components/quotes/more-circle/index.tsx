@@ -30,6 +30,7 @@ const MoreMenuWidget = ({
   handleGetTaxConfirmNo,
   onClickOpenMoveOrderToReadyModal,
   onOpenPackagesModal,
+  onClickOpenInventoryIntakeModal,
 }: any) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -59,7 +60,8 @@ const MoreMenuWidget = ({
     onClickOpenRemoveDraftModal,
     handleGetTaxConfirmNo,
     onClickOpenMoveOrderToReadyModal,
-    onOpenPackagesModal
+    onOpenPackagesModal,
+    onClickOpenInventoryIntakeModal,
   });
 
   return (

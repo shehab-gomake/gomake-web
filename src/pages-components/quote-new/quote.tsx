@@ -994,8 +994,6 @@ const QuoteNewPageWidget = ({
         inventoryData={inventoryData}
         loading={inventoryLoading}
         purchaseOrderId={router.query?.Id as string}
-        purchaseOrderNumber={quoteItemValue?.number}
-        supplierId={quoteItemValue?.client?.id}
       />
       <AddNewContactModal
         openModal={openAddNewContactModal}
