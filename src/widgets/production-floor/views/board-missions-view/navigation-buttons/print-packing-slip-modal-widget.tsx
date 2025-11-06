@@ -24,18 +24,39 @@ const PrintPackingSlipModalWidget = ({
   const isMobile = useIsMobile();
   const { classes } = useStyle();
   const { t } = useTranslation();
+  const [totalQuantity, setTotalQuantity] = useState<number>(quantity);
   const [quantityOfPackages, setQuantityOfPackages] = useState<number>(1);
   const [quantityPerPackage, setQuantityPerPackage] =
     useState<number>(quantity);
 
   useEffect(() => {
+    setTotalQuantity(quantity);
     setQuantityPerPackage(quantity);
   }, [quantity]);
 
   const remainingQuantity =
-    quantity - quantityPerPackage * (quantityOfPackages - 1);
+    totalQuantity - quantityPerPackage * (quantityOfPackages - 1);
   const { alertFault } = useSnackBar();
   const { callApi } = useGomakeAxios();
+
+  const handleTotalQuantityChange = (event) => {
+    const newTotalQuantity = parseInt(event.target.value, 10);
+
+    // Validate input - only allow positive numbers
+    if (isNaN(newTotalQuantity) || newTotalQuantity <= 0) {
+      return;
+    }
+
+    setTotalQuantity(newTotalQuantity);
+    
+    // Recalculate quantity per package based on new total quantity
+    if (quantityOfPackages > 0) {
+      const newQuantityPerPackage = Math.ceil(
+        newTotalQuantity / quantityOfPackages
+      );
+      setQuantityPerPackage(newQuantityPerPackage);
+    }
+  };
 
   const handleQuantityOfPackagesChange = (event) => {
     const newQuantityOfPackages = parseInt(event.target.value, 10);
@@ -45,7 +66,6 @@ const PrintPackingSlipModalWidget = ({
       return;
     }
 
-    const totalQuantity = quantity || 0;
     const newQuantityPerPackage = Math.ceil(
       totalQuantity / newQuantityOfPackages
     );
@@ -61,7 +81,6 @@ const PrintPackingSlipModalWidget = ({
       return;
     }
 
-    const totalQuantity = quantity;
     const newQuantityOfPackages = Math.ceil(
       totalQuantity / newQuantityPerPackage
     );
@@ -69,15 +88,14 @@ const PrintPackingSlipModalWidget = ({
     setQuantityOfPackages(newQuantityOfPackages);
   };
   const [packageQuantities, setPackageQuantities] = useState<number[]>(() => {
-    const initialQuantityPerPackage = quantity
-      ? Math.ceil(quantity / quantityOfPackages)
+    const initialQuantityPerPackage = totalQuantity
+      ? Math.ceil(totalQuantity / quantityOfPackages)
       : 0;
     return Array(quantityOfPackages).fill(initialQuantityPerPackage);
   });
 
   useEffect(() => {
-    if (quantity && quantityPerPackage > 0) {
-      const totalQuantity = quantity;
+    if (totalQuantity && quantityPerPackage > 0) {
       const fullPackages = Math.max(
         0,
         Math.floor(totalQuantity / quantityPerPackage)
@@ -93,7 +111,7 @@ const PrintPackingSlipModalWidget = ({
     } else {
       setPackageQuantities([]);
     }
-  }, [quantity, quantityPerPackage]);
+  }, [totalQuantity, quantityPerPackage]);
 
   const handlePackageQuantityChange = (index: number, newValue: number) => {
     // Validate input - only allow non-negative numbers
@@ -106,7 +124,6 @@ const PrintPackingSlipModalWidget = ({
       updatedQuantities[index] = newValue;
 
       if (index === quantityOfPackages - 1) {
-        const totalQuantity = quantity || 0;
         const sumOfOtherPackages = updatedQuantities
           .slice(0, -1)
           .reduce((acc, val) => acc + val, 0);
@@ -137,7 +154,7 @@ const PrintPackingSlipModalWidget = ({
   }, [quantityOfPackages, packageQuantities]);
 
   const onClickPrintPackagingSlip = async () => {
-    if (quantityPerPackage > quantity) {
+    if (quantityPerPackage > totalQuantity) {
       alertFault("boardMissions.alertQuantity");
       return;
     }
@@ -179,6 +196,18 @@ const PrintPackingSlipModalWidget = ({
     >
       <Stack direction={"column"} gap={"15px"}>
         <Stack direction={"column"} gap={"15px"}>
+          <div style={{ width: "100%" }}>
+            <h3 style={classes.filterLabelStyle}>
+              {t("boardMissions.totalQuantity")}
+            </h3>
+            <GomakeTextInput
+              style={classes.textInputStyle}
+              value={totalQuantity}
+              placeholder={t("boardMissions.totalQuantity")}
+              onChange={handleTotalQuantityChange}
+              type={"number"}
+            />
+          </div>
           <Stack direction={"row"} gap={"15px"}>
             <div style={{ width: "40%" }}>
               <h3 style={classes.filterLabelStyle}>
