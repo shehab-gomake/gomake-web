@@ -1,5 +1,6 @@
 import { IAuthLayout } from "./interfaces";
 import { LeftSideLayout } from "./left-side";
+import { useThemeComponent } from "@/contexts/theme/useThemeComponent";
 import { HeaderWidget } from "@/widgets/header";
 import { LAYOUT_DEFAULT_GAP } from "@/utils/layout-config";
 import { GoMakeAlertModal, GoMakeModal } from "@/components";
@@ -44,6 +45,12 @@ const CustomerAuthLayout = ({
     getLastVersion,
     isHomePage,
   } = useCustomerAuthLayout(permissionEnumValue, allowAnonymous, customGap);
+
+  // Get theme-aware LeftSideLayout component
+  const ThemeLeftSideLayout = useThemeComponent(
+    "LeftSideLayout",
+    LeftSideLayout
+  );
 
   // Handle trial redirect in case of trial finished
   useTrialRedirect();
@@ -114,7 +121,7 @@ const CustomerAuthLayout = ({
             {isMobileScreen ? (
               <div></div>
             ) : (
-              <LeftSideLayout customGap={customGap} />
+              <ThemeLeftSideLayout customGap={customGap} />
             )}
 
             <div

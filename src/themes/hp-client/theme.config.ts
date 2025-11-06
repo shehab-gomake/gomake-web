@@ -8,6 +8,7 @@ import { PendingIcon } from "./icons/PendingIcon";
 import { StuckJobsIcon } from "./icons/StuckJobsIcon";
 
 import { HpCardsWidget } from "./components/HpCardsWidget";
+import { HpLeftSideLayout } from "./components/hp-left-side-layout";
 
 /* HP CLIENT THEME - Custom Brand Theme */
 
@@ -246,6 +247,7 @@ const hpClientThemeConfig: ThemeConfig = {
   pages: {},
   components: {
     CardsWidget: HpCardsWidget,
+    LeftSideLayout: HpLeftSideLayout,
   },
 
   // Icon overrides for HP Client theme - All cards now use custom HP icons
