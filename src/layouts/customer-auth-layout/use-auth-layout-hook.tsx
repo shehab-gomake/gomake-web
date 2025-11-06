@@ -272,6 +272,12 @@ const useAuthLayoutHook = (
             path: "/my-tickets",
             Permission: undefined, // No permission required - all users can see their tickets
           },
+          {
+            key: "helpCenter",
+            title: "tabs.helpCenter",
+            path: "/help-center",
+            Permission: undefined, // No permission required - all users can access help center
+          },
         ],
         icon: () => {
           return <ContactsIcon />;

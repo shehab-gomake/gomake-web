@@ -42,18 +42,31 @@ interface RemoteSessionEnded {
   ticketId: number;
 }
 
+interface DrawingData {
+  sessionId: string;
+  type: 'draw' | 'erase' | 'clear';
+  x: number;
+  y: number;
+  prevX?: number;
+  prevY?: number;
+  color?: string;
+  brushSize?: number;
+}
+
 export const useRemoteSessionSocket = (
   ticketId: number | undefined,
   onSessionRequest?: (request: RemoteSessionRequest) => void,
   onSessionResponse?: (response: RemoteSessionResponse) => void,
   onSignal?: (signal: WebRTCSignal) => void,
-  onSessionEnded?: (ended: RemoteSessionEnded) => void
+  onSessionEnded?: (ended: RemoteSessionEnded) => void,
+  onDrawing?: (drawing: DrawingData) => void
 ) => {
   const socketRef = useRef<Socket | null>(null);
   const onSessionRequestRef = useRef(onSessionRequest);
   const onSessionResponseRef = useRef(onSessionResponse);
   const onSignalRef = useRef(onSignal);
   const onSessionEndedRef = useRef(onSessionEnded);
+  const onDrawingRef = useRef(onDrawing);
 
   // Update refs when callbacks change
   useEffect(() => {
@@ -61,7 +74,8 @@ export const useRemoteSessionSocket = (
     onSessionResponseRef.current = onSessionResponse;
     onSignalRef.current = onSignal;
     onSessionEndedRef.current = onSessionEnded;
-  }, [onSessionRequest, onSessionResponse, onSignal, onSessionEnded]);
+    onDrawingRef.current = onDrawing;
+  }, [onSessionRequest, onSessionResponse, onSignal, onSessionEnded, onDrawing]);
 
   useEffect(() => {
     if (!ticketId) {
@@ -87,12 +101,14 @@ export const useRemoteSessionSocket = (
     const responseEventName = `ticket:${ticketId}:remote_session_response`;
     const signalEventName = `ticket:${ticketId}:remote_session_signal`;
     const endedEventName = `ticket:${ticketId}:remote_session_ended`;
+    const drawingEventName = `ticket:${ticketId}:remote_session_drawing`;
 
     console.log("🔍 Setting up listeners for:", {
       requestEventName,
       responseEventName,
       signalEventName,
       endedEventName,
+      drawingEventName,
       ticketId,
     });
 
@@ -141,10 +157,18 @@ export const useRemoteSessionSocket = (
       }
     };
 
+    const handleDrawing = (data: DrawingData) => {
+      console.log("📨 Drawing data received:", data);
+      if (onDrawingRef.current) {
+        onDrawingRef.current(data);
+      }
+    };
+
     socket.on(requestEventName, handleRequest);
     socket.on(responseEventName, handleResponse);
     socket.on(signalEventName, handleSignal);
     socket.on(endedEventName, handleSessionEnded);
+    socket.on(drawingEventName, handleDrawing);
 
     // Cleanup on unmount or ticket change
     return () => {
@@ -153,6 +177,7 @@ export const useRemoteSessionSocket = (
       socket.off(responseEventName, handleResponse);
       socket.off(signalEventName, handleSignal);
       socket.off(endedEventName, handleSessionEnded);
+      socket.off(drawingEventName, handleDrawing);
       socket.off("connect");
       socket.off("disconnect");
       socket.off("connect_error");

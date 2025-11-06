@@ -14,6 +14,7 @@ import { createTicket, addTicketMessage, Ticket, TicketMessage } from "@/service
 import { useTicketChatSocket } from "./use-ticket-chat-socket";
 import { useRemoteSessionSocket } from "./use-remote-session-socket";
 import { useWebRTCSender } from "./use-webrtc-sender";
+import DrawingOverlay, { applyDrawingToOverlay } from "./DrawingOverlay";
 
 interface TicketChatbotWidgetProps {
   position?: "bottom-right" | "bottom-left";
@@ -32,7 +33,7 @@ export const TicketChatbotWidget = ({ position = "bottom-right" }: TicketChatbot
     requestedBy: string;
     sessionId: string;
   } | null>(null);
-  const [isSharingScreen, setIsSharingScreen] = useState(false);
+  // Removed isSharingScreen state - use sender.isSharing directly to avoid infinite loops
   const messagesEndRef = useRef<HTMLDivElement>(null);
   // Track message IDs we've added from API responses to prevent Socket.IO duplicates
   const sentMessageIdsRef = useRef<Set<number>>(new Set());
@@ -79,7 +80,6 @@ export const TicketChatbotWidget = ({ position = "bottom-right" }: TicketChatbot
   useTicketChatSocket(currentTicket?.id, sentMessageIdsRef, handleSocketMessage);
 
   // Set up remote session socket first
-  const [emitSignalFn, setEmitSignalFn] = useState<((signal: any) => void) | null>(null);
   const senderRef = useRef<ReturnType<typeof useWebRTCSender> | null>(null);
   
   const { emitResponse, emitSignal } = useRemoteSessionSocket(
@@ -88,7 +88,6 @@ export const TicketChatbotWidget = ({ position = "bottom-right" }: TicketChatbot
       console.log("📨 Remote session request received in chatbot:", request);
       // Show remote session request to user
       setRemoteSessionRequest(request);
-      setIsSharingScreen(false);
     }, []),
     undefined,
     useCallback((signal: { type: "offer" | "answer" | "ice-candidate"; data: any }) => {
@@ -110,15 +109,16 @@ export const TicketChatbotWidget = ({ position = "bottom-right" }: TicketChatbot
         }
         // Clear remote session state
         setRemoteSessionRequest(null);
-        setIsSharingScreen(false);
+      }
+    }, [remoteSessionRequest]),
+    useCallback((drawing: { sessionId: string; type: 'draw' | 'erase' | 'clear'; x: number; y: number; prevX?: number; prevY?: number; color?: string; brushSize?: number }) => {
+      console.log("📨 Drawing data received:", drawing);
+      // Only handle if it's for the current session
+      if (remoteSessionRequest?.sessionId === drawing.sessionId) {
+        applyDrawingToOverlay(drawing);
       }
     }, [remoteSessionRequest])
   );
-
-  // Set emitSignal function
-  useEffect(() => {
-    setEmitSignalFn(() => emitSignal);
-  }, [emitSignal]);
 
   // Debug: Log when remoteSessionRequest changes
   useEffect(() => {
@@ -135,39 +135,42 @@ export const TicketChatbotWidget = ({ position = "bottom-right" }: TicketChatbot
     console.log("🔍 Current ticket ID changed:", currentTicket?.id);
   }, [currentTicket?.id]);
 
-  // Set up WebRTC sender
+  // Memoize the signal handler to prevent recreating sender on every render
+  const handleReceiveSignal = useCallback(async (signal: { type: "offer" | "answer" | "ice-candidate"; data: any }) => {
+    console.log("📤 WebRTC signal from sender:", signal.type, {
+      hasRemoteSessionRequest: !!remoteSessionRequest,
+      hasCurrentTicket: !!currentTicket,
+    });
+    if (remoteSessionRequest && currentTicket) {
+      const signalToEmit = {
+        sessionId: remoteSessionRequest.sessionId,
+        ...signal,
+      };
+      console.log("📤 Sending signal via API:", signalToEmit);
+      
+      // Send signal via API endpoint (backend will relay via Socket.IO)
+      try {
+        await callApi(
+          "POST",
+          `/api/tickets/${currentTicket.id}/remote-session-signal`,
+          signalToEmit
+        );
+        console.log("✅ Signal sent via API");
+      } catch (error) {
+        console.error("❌ Error sending signal via API:", error);
+      }
+    } else {
+      console.warn("⚠️ Cannot emit signal - missing dependencies:", {
+        remoteSessionRequest: !!remoteSessionRequest,
+        currentTicket: !!currentTicket,
+      });
+    }
+  }, [remoteSessionRequest, currentTicket, callApi]);
+
+  // Set up WebRTC sender with memoized callback
   const sender = useWebRTCSender({
     sessionId: remoteSessionRequest?.sessionId || "",
-    onReceiveSignal: async (signal) => {
-      console.log("📤 WebRTC signal from sender:", signal.type, {
-        hasRemoteSessionRequest: !!remoteSessionRequest,
-        hasCurrentTicket: !!currentTicket,
-      });
-      if (remoteSessionRequest && currentTicket) {
-        const signalToEmit = {
-          sessionId: remoteSessionRequest.sessionId,
-          ...signal,
-        };
-        console.log("📤 Sending signal via API:", signalToEmit);
-        
-        // Send signal via API endpoint (backend will relay via Socket.IO)
-        try {
-          await callApi(
-            "POST",
-            `/api/tickets/${currentTicket.id}/remote-session-signal`,
-            signalToEmit
-          );
-          console.log("✅ Signal sent via API");
-        } catch (error) {
-          console.error("❌ Error sending signal via API:", error);
-        }
-      } else {
-        console.warn("⚠️ Cannot emit signal - missing dependencies:", {
-          remoteSessionRequest: !!remoteSessionRequest,
-          currentTicket: !!currentTicket,
-        });
-      }
-    },
+    onReceiveSignal: handleReceiveSignal,
   });
 
   // Update sender ref when sender changes
@@ -177,19 +180,14 @@ export const TicketChatbotWidget = ({ position = "bottom-right" }: TicketChatbot
 
   // Handle WebRTC signaling from socket
   const handleSignal = useCallback((signal: { type: "offer" | "answer" | "ice-candidate"; data: any }) => {
-    if (!remoteSessionRequest || !sender) return;
+    if (!remoteSessionRequest || !senderRef.current) return;
     
     if (signal.type === "answer") {
-      sender.handleAnswer(signal.data);
+      senderRef.current.handleAnswer(signal.data);
     } else if (signal.type === "ice-candidate") {
-      sender.handleIceCandidate(signal.data);
+      senderRef.current.handleIceCandidate(signal.data);
     }
-  }, [remoteSessionRequest, sender]);
-
-  // Update sharing state
-  useEffect(() => {
-    setIsSharingScreen(sender.isSharing);
-  }, [sender.isSharing]);
+  }, [remoteSessionRequest]);
 
   useEffect(() => {
     // Scroll to bottom when new messages arrive
@@ -204,16 +202,15 @@ export const TicketChatbotWidget = ({ position = "bottom-right" }: TicketChatbot
       setInputMessage("");
       sentMessageIdsRef.current.clear();
       setRemoteSessionRequest(null);
-      setIsSharingScreen(false);
-      if (sender.isSharing) {
-        sender.stopScreenShare();
+      if (senderRef.current?.isSharing) {
+        senderRef.current.stopScreenShare();
       }
     }
-  }, [isOpen, sender]);
+  }, [isOpen]);
 
   // Handle accept remote session
   const handleAcceptRemoteSession = useCallback(async () => {
-    if (!remoteSessionRequest || !currentTicket || !sender) return;
+    if (!remoteSessionRequest || !currentTicket || !senderRef.current) return;
 
     // Emit acceptance response
     emitResponse({
@@ -225,13 +222,12 @@ export const TicketChatbotWidget = ({ position = "bottom-right" }: TicketChatbot
 
     // Start screen sharing
     try {
-      await sender.startScreenShare();
-      setIsSharingScreen(true);
+      await senderRef.current.startScreenShare();
+      // isSharing state is managed by the sender hook
     } catch (error) {
       console.error("Error starting screen share:", error);
-      setIsSharingScreen(false);
     }
-  }, [remoteSessionRequest, currentTicket, emitResponse, sender, userProfile]);
+  }, [remoteSessionRequest, currentTicket, emitResponse, userProfile]);
 
   // Handle reject remote session
   const handleRejectRemoteSession = useCallback(() => {
@@ -246,7 +242,6 @@ export const TicketChatbotWidget = ({ position = "bottom-right" }: TicketChatbot
     });
 
     setRemoteSessionRequest(null);
-    setIsSharingScreen(false);
   }, [remoteSessionRequest, emitResponse, userProfile]);
 
   const getUsername = () => {
@@ -445,7 +440,7 @@ export const TicketChatbotWidget = ({ position = "bottom-right" }: TicketChatbot
                           color="primary"
                           startIcon={<CheckIcon />}
                           onClick={handleAcceptRemoteSession}
-                          disabled={isSharingScreen}
+                          disabled={sender.isSharing}
                           size="small"
                         >
                           Accept
@@ -455,13 +450,13 @@ export const TicketChatbotWidget = ({ position = "bottom-right" }: TicketChatbot
                           color="error"
                           startIcon={<CloseIconSmall />}
                           onClick={handleRejectRemoteSession}
-                          disabled={isSharingScreen}
+                          disabled={sender.isSharing}
                           size="small"
                         >
                           Reject
                         </Button>
                       </Stack>
-                      {isSharingScreen && (
+                      {sender.isSharing && (
                         <Typography variant="caption" sx={{ display: "block", mt: 2, color: "#4caf50" }}>
                           Screen sharing active...
                         </Typography>
@@ -616,6 +611,17 @@ export const TicketChatbotWidget = ({ position = "bottom-right" }: TicketChatbot
       >
         {isOpen ? <CloseIcon /> : <SupportAgentIcon />}
       </IconButton>
+
+      {/* Drawing Overlay - shown when screen sharing is active */}
+      {sender.isSharing && (
+        <DrawingOverlay
+          isSharing={sender.isSharing}
+          onDrawing={(drawing) => {
+            // Drawing is handled via socket callback
+            // This is just for the ref assignment
+          }}
+        />
+      )}
     </Box>
   );
 };
