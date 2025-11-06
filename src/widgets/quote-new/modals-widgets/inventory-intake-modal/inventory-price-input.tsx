@@ -23,7 +23,7 @@ const InventoryPriceInput: React.FC<InventoryPriceInputProps> = ({
   const [updateValue, setUpdateValue] = useState<string>("");
 
   // Normalize value to array format
-  const valueArray = Array.isArray(value) 
+  const valueArray = Array.isArray(value)
     ? value.map(v => typeof v === 'string' ? v : v?.toString() || "0")
     : [value?.toString() || "0"];
 
@@ -56,9 +56,9 @@ const InventoryPriceInput: React.FC<InventoryPriceInputProps> = ({
   };
 
   return (
-    <Stack 
-      direction="row" 
-      spacing={1} 
+    <Stack
+      direction="row"
+      spacing={1}
       alignItems="center"
       justifyContent="center"
       gap="2px"
@@ -77,7 +77,7 @@ const InventoryPriceInput: React.FC<InventoryPriceInputProps> = ({
                   onUpdate={() => handleUpdate(index)}
                   onCancel={handleCancel}
                   clickedOut={() => handleClickOutside(index)}
-                  style={classes.updateInputStyle}
+                // style={classes.updateInputStyle}
                 />
               ) : (
                 <PrimaryButton
@@ -103,7 +103,7 @@ const InventoryPriceInput: React.FC<InventoryPriceInputProps> = ({
                   onUpdate={() => handleUpdate(index)}
                   onCancel={handleCancel}
                   clickedOut={() => handleClickOutside(index)}
-                  style={classes.updateInputStyle}
+                // style={classes.updateInputStyle}
                 />
               ) : (
                 <PrimaryButton

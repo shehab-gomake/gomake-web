@@ -21,7 +21,15 @@ import {
 import { useUserPermission } from "@/hooks/use-permission";
 import { ETab } from "@/pages-components/admin/home/widgets/quote-widget/enums";
 
-const useAddNewItem = ({ onClose, getQuote, documentType, getCalculateQuoteItem, isMaterial, isNewCreation, isPurchaseOrder, isCanIntake }) => {
+const useAddNewItem = ({ onClose, getQuote, documentType, getCalculateQuoteItem, isMaterial, isNewCreation, isPurchaseOrder, isCanIntake }: {
+  onClose: () => void, getQuote: () => void,
+  documentType: DOCUMENT_TYPE,
+  getCalculateQuoteItem: (item: any, quantity: number, price: number, quoteValue: any, isNewCreation?: boolean) => void,
+  isMaterial?: boolean,
+  isNewCreation?: boolean,
+  isPurchaseOrder?: boolean,
+  isCanIntake?: boolean
+}) => {
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
   const [selectedProduct, setSelectedProduct] = useState<any>({});

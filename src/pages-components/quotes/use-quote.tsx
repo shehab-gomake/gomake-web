@@ -956,8 +956,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
           );
 
           const paymentStatus = `${isRTL
-              ? `${quote?.sumApplied} ${getCurrencyUnitText(quote?.currency)}`
-              : `${getCurrencyUnitText(quote?.currency)} ${quote?.sumApplied}`
+            ? `${quote?.sumApplied} ${getCurrencyUnitText(quote?.currency)}`
+            : `${getCurrencyUnitText(quote?.currency)} ${quote?.sumApplied}`
             }/${isRTL
               ? `${quote?.totalPrice} ${getCurrencyUnitText(quote?.currency)}`
               : `${getCurrencyUnitText(quote?.currency)} ${quote?.totalPrice}`
@@ -1393,11 +1393,11 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               );
 
               const paymentStatus = `${isRTL
-                  ? `${quote?.sumApplied} ${getCurrencyUnitText(
-                    quote?.currency
-                  )}`
-                  : `${getCurrencyUnitText(quote?.currency)} ${quote?.sumApplied
-                  }`
+                ? `${quote?.sumApplied} ${getCurrencyUnitText(
+                  quote?.currency
+                )}`
+                : `${getCurrencyUnitText(quote?.currency)} ${quote?.sumApplied
+                }`
                 }/${isRTL
                   ? `${quote?.totalPrice} ${getCurrencyUnitText(
                     quote?.currency
@@ -1897,8 +1897,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             );
 
             const paymentStatus = `${isRTL
-                ? `${quote?.sumApplied} ${getCurrencyUnitText(quote?.currency)}`
-                : `${getCurrencyUnitText(quote?.currency)} ${quote?.sumApplied}`
+              ? `${quote?.sumApplied} ${getCurrencyUnitText(quote?.currency)}`
+              : `${getCurrencyUnitText(quote?.currency)} ${quote?.sumApplied}`
               }/${isRTL
                 ? `${quote?.totalPrice} ${getCurrencyUnitText(quote?.currency)}`
                 : `${getCurrencyUnitText(quote?.currency)} ${quote?.totalPrice}`
@@ -4248,7 +4248,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     onClickCloseInventoryIntakeModal,
     inventoryData,
     inventoryLoading,
-    selectedDocument,
     isPurchaseOrder,
     isMoveToReady,
     handleCheckboxChange,
