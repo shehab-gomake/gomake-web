@@ -4,8 +4,8 @@ import StarterKit from '@tiptap/starter-kit';
 import TextAlign from '@tiptap/extension-text-align';
 import Underline from '@tiptap/extension-underline';
 import Link from '@tiptap/extension-link';
-import TextStyle from '@tiptap/extension-text-style';
-import Color from '@tiptap/extension-color';
+import { TextStyle } from '@tiptap/extension-text-style';
+import { Color } from '@tiptap/extension-text-style';
 import Highlight from '@tiptap/extension-highlight';
 import FontFamily from '@tiptap/extension-font-family';
 import Subscript from '@tiptap/extension-subscript';
@@ -104,7 +104,7 @@ const AdvancedEmailEditor = ({ value, setValue }: IProps) => {
 
     useEffect(() => {
         if (editor && value !== editor.getHTML()) {
-            editor.commands.setContent(value || '', false);
+            editor.commands.setContent(value || '', { emitUpdate: false });
         }
     }, [value, editor]);
 

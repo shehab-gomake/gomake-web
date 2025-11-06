@@ -249,7 +249,7 @@ export function useComposeConversation(options?: UseComposeConversationOptions) 
    * Validate form based on channel requirements
    */
   const validateForm = useCallback((): boolean => {
-    const errors: ComposeValidationErrors = {};
+    const errors: Partial<Record<keyof ComposeValidationErrors, string>> = {};
 
     // Contact required
     if (!formState.contact) {
@@ -289,7 +289,7 @@ export function useComposeConversation(options?: UseComposeConversationOptions) 
       }
     }
 
-    setValidationErrors(errors);
+    setValidationErrors(errors as ComposeValidationErrors);
     return Object.keys(errors).length === 0;
   }, [formState]);
 

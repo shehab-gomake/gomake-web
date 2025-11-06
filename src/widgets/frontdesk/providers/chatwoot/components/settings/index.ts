@@ -9,6 +9,7 @@ export { SettingsSection, type SettingsSectionProps } from "./settings-section";
 export { EditAgentModal } from "./edit-agent-modal";
 export { AddAgentModal, type AddAgentModalProps, type AddAgentData } from "./add-agent-modal";
 export { AddEditLabelModal } from "./add-edit-label-modal";
+export { AddEditTeamModal, type AddEditTeamData } from "./add-edit-team-modal";
 
 // New shared components
 export { CodeDisplay, type CodeDisplayProps } from "./CodeDisplay";
