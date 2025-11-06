@@ -12,10 +12,11 @@ export const useStyle = () => {
     return {
       // Table container styles
       tableContainer: {
-        maxHeight: 600,
+        maxHeight: 500,
         width: '100%',
         overflowX: 'auto',
         overflowY: 'auto',
+
         '&::-webkit-scrollbar': {
           height: '8px',
         },
@@ -35,40 +36,61 @@ export const useStyle = () => {
       // Table styles
       table: {
         width: '100%',
-        tableLayout: 'auto' as 'auto',
+        tableLayout: 'fixed' as 'fixed',
       },
 
       // Header row styles
       headerRow: {
-        textAlign: 'center' as 'center',
+        textAlign: 'center' as "center",
         fontWeight: 'bold',
-        whiteSpace: 'nowrap' as 'nowrap',
+        whiteSpace: 'nowrap',
         padding: '4px',
         backgroundColor: '#FFF',
-        width: 'fit-content',
-        minWidth: 'fit-content',
+         width: 'fit-content',
+        minWidth: 'fit-content'
       },
 
-      // Header cell styles
-      headerCell: {
-        textAlign: 'center' as 'center',
-        fontWeight: 'bold',
-        whiteSpace: 'nowrap' as 'nowrap',
-        padding: '12px 8px',
-        backgroundColor: '#EBECFF',
-        width: 'fit-content',
-        minWidth: 'fit-content',
-        textTransform: 'capitalize' as 'capitalize',
-        borderBottom: '1px solid #e0e0e0',
-      },
+        // Header cell styles
+        headerCell: {
+          textAlign: 'center',
+          fontWeight: 'bold',
+          whiteSpace: 'nowrap',
+          padding: '4px',
+          backgroundColor: '#EBECFF',
+          textTransform: 'capitalize' as 'capitalize',
+        },
+        // Column width styles
+        codeCell: {
+          minWidth: '100px',
+          width: '100px',
+        },
+        purchasePriceCell: {
+          minWidth: '180px',
+          width: '180px',
+        },
+        purchaseCurrencyCell: {
+          minWidth: '140px',
+          width: '140px',
+        },
+        salePriceCell: {
+          minWidth: '180px',
+          width: '180px',
+        },
+        saleCurrencyCell: {
+          minWidth: '140px',
+          width: '140px',
+        },
+        quantityCell: {
+          minWidth: '120px',
+          width: '120px',
+        },
       headerCellUnitText: {
         ...FONT_FAMILY.Inter(700, 12),
         textTransform: 'lowercase' as 'lowercase',
       },
-      headerCellPriceUnitText: {
+      headerCellPriceUnitText:{
         textTransform: 'capitalize' as 'capitalize',
-        fontSize: '12px',
-        fontWeight: 'normal',
+
       },
       headerCellText: {
         color: "#2E3092",

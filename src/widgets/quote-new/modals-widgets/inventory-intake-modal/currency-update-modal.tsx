@@ -54,22 +54,22 @@ const CurrencyUpdateModal: React.FC<CurrencyUpdateModalProps> = ({
 
   const handleCurrencyChange = async (event: any, value: any) => {
     setSelectedCurrency(value);
-    
+
     // Reset previous rate
     setRate("");
     setCheckedPrice(false);
     setCalculatedRate(null);
-    
+
     if (!value?.value) {
       return;
     }
-    
+
     // If same currency, set rate to 1
     if (value.value === currentCurrency) {
       setCalculatedRate(1);
       return;
     }
-    
+
     // Calculate exchange rate from current currency to selected currency
     if (currentCurrency && value.value) {
       setIsCalculatingRate(true);
@@ -92,7 +92,7 @@ const CurrencyUpdateModal: React.FC<CurrencyUpdateModalProps> = ({
     <GoMakeDialog
       open={open}
       onClose={onClose}
-      title={t("materials.childTable.updateCurrency")}
+      title={t("materialsActions.UpdateCurrency")}
       maxWidth="sm"
       showFooter={true}
       primaryButtonLabel={t("documentingSettings.update")}
@@ -135,7 +135,7 @@ const CurrencyUpdateModal: React.FC<CurrencyUpdateModalProps> = ({
         {checkedPrice && (
           <Box>
             <div style={{ marginBottom: 8, fontWeight: 500 }}>
-              {t("materials.inputs.exchangeRate") || "Exchange Rate"}
+              {t("sales.quote.exchangeRate")}
             </div>
             <Box sx={{ position: "relative", width: "100%" }}>
               {isCalculatingRate && (

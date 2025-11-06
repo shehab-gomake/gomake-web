@@ -8,10 +8,13 @@ import {
   GomakeTextInput,
   ThreeOptionsModal,
   GoMakeDialog,
+  GomakePrimaryButton,
 } from "@/components";
 import { DocumentsFilterSection } from "./components/documents-filter-section";
 import { HeaderTitle } from "@/widgets";
 import { DocumentLogsWidget } from "./widgets/documents-logs-widget/logs-widget";
+import { InventoryIntakeModal } from "@/widgets/quote-new/modals-widgets/inventory-intake-modal";
+import { PurchaseOrderTypeModal } from "@/widgets/quote-new/modals-widgets/purchase-order-type-modal";
 import { DOCUMENT_TYPE } from "./enums";
 import {
   Box,
@@ -238,6 +241,11 @@ const QuotesListPageWidget = ({
     isReceipt,
     isSupplierPayments,
     isPurchaseOrder,
+    openInventoryIntakeModal,
+    onClickCloseInventoryIntakeModal,
+    inventoryData,
+    inventoryLoading,
+    selectedDocument: selectedInventoryDocument,
     isMoveToReady,
     handleCheckboxChange,
     handleSortBE,
@@ -1030,42 +1038,20 @@ const QuotesListPageWidget = ({
         handleQuantityPerPackageChange={handleQuantityPerPackageChange}
         onClickConfirm={onClickPrintPackagingSlip}
       />
-      <GoMakeDialog
+      <PurchaseOrderTypeModal
         open={openPurchaseOrderTypeModal}
         onClose={onClosePurchaseOrderTypeModal}
-        title={t("sales.quote.selectPurchaseOrderType")}
-        showFooter={false}
-        maxWidth="sm"
-      >
-        <Stack spacing={2} sx={{ padding: "20px 0" }}>
-          <Button
-            variant="contained"
-            fullWidth
-            onClick={() => handleSelectPurchaseOrderType(false)}
-            sx={{
-              height: "48px",
-              fontSize: "16px",
-              fontWeight: 500,
-              textTransform: "none",
-            }}
-          >
-            {t("sales.quote.purchaseOrderForProduct")}
-          </Button>
-          <Button
-            variant="contained"
-            fullWidth
-            onClick={() => handleSelectPurchaseOrderType(true)}
-            sx={{
-              height: "48px",
-              fontSize: "16px",
-              fontWeight: 500,
-              textTransform: "none",
-            }}
-          >
-            {t("sales.quote.purchaseOrderForMaterial")}
-          </Button>
-        </Stack>
-      </GoMakeDialog>
+        onSelectProduct={() => handleSelectPurchaseOrderType(false)}
+        onSelectMaterial={() => handleSelectPurchaseOrderType(true)}
+      />
+      <InventoryIntakeModal
+        open={openInventoryIntakeModal}
+        onClose={onClickCloseInventoryIntakeModal}
+        inventoryData={inventoryData}
+        loading={inventoryLoading}
+        purchaseOrderId={selectedInventoryDocument?.id}
+        documentType={DOCUMENT_TYPE.purchaseOrder}
+      />
     </>
   );
 };
