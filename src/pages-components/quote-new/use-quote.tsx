@@ -439,6 +439,7 @@ const useQuoteNew = ({
     useState(false);
   const [inventoryData, setInventoryData] = useState<any[]>([]);
   const [inventoryLoading, setInventoryLoading] = useState(false);
+  const [openPurchaseOrderTypeModal, setOpenPurchaseOrderTypeModal] = useState(false);
 
   const onClickOpenInventoryIntakeModal = async () => {
     setOpenInventoryIntakeModal(true);
@@ -2645,6 +2646,22 @@ const useQuoteNew = ({
     await createNewDocumentApi(callApi, callBack, { documentType: 0 });
   };
 
+  const onOpenPurchaseOrderTypeModal = () => {
+    setOpenPurchaseOrderTypeModal(true);
+  };
+
+  const onClosePurchaseOrderTypeModal = () => {
+    setOpenPurchaseOrderTypeModal(false);
+  };
+
+  const handleSelectPurchaseOrderType = (isForMaterial: boolean) => {
+    setOpenPurchaseOrderTypeModal(false);
+    const url = isForMaterial
+      ? `/${documentPath}?isNewCreation=true&isMaterial=true`
+      : `/${documentPath}?isNewCreation=true`;
+    navigate(url);
+  };
+
   const renderCreateNewButton = () => (
     <Button
       sx={{
@@ -2655,15 +2672,19 @@ const useQuoteNew = ({
             : { marginRight: "4px", marginLeft: 0 }),
         },
       }}
-      onClick={() =>
-        isOrder
-          ? onclickCreateNew()
-          : navigate(
+      onClick={() => {
+        if (isPurchaseOrder) {
+          onOpenPurchaseOrderTypeModal();
+        } else if (isOrder) {
+          onclickCreateNew();
+        } else {
+          navigate(
             isOutgoingPayments
               ? `/${documentPath}?isOutgoingPayments=true&isNewCreation=true`
               : `/${documentPath}?isNewCreation=true`
-          )
-      }
+          );
+        }
+      }}
       startIcon={<PlusIcon />}
     >
       {t("sales.quote.createNew")}
@@ -2982,6 +3003,10 @@ const useQuoteNew = ({
     onClickCloseInventoryIntakeModal,
     inventoryData,
     inventoryLoading,
+    openPurchaseOrderTypeModal,
+    onOpenPurchaseOrderTypeModal,
+    onClosePurchaseOrderTypeModal,
+    handleSelectPurchaseOrderType,
   };
 };
 

@@ -2,6 +2,7 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import { DuplicateItemModal } from "@/widgets/quote-new/modals-widgets/duplicate-item-modal";
 import { AddNewItemModal } from "@/widgets/quote-new/modals-widgets/add-new-item-modal";
 import { InventoryIntakeModal } from "@/widgets/quote-new/modals-widgets/inventory-intake-modal";
+import { PurchaseOrderTypeModal } from "@/widgets/quote-new/modals-widgets/purchase-order-type-modal";
 import { ButtonsContainer } from "@/widgets/quote-new/buttons-container";
 import { BusinessNewWidget } from "@/widgets/quote-new/business-widget";
 import { ContactNewWidget } from "@/widgets/quote-new/contact-widget";
@@ -388,6 +389,10 @@ const QuoteNewPageWidget = ({
     onClickCloseInventoryIntakeModal,
     inventoryData,
     inventoryLoading,
+    openPurchaseOrderTypeModal,
+    onOpenPurchaseOrderTypeModal,
+    onClosePurchaseOrderTypeModal,
+    handleSelectPurchaseOrderType,
   } = useQuoteNew({
     docType: documentType,
     isQuoteConfirmation: isQuoteConfirmation,
@@ -994,6 +999,12 @@ const QuoteNewPageWidget = ({
         inventoryData={inventoryData}
         loading={inventoryLoading}
         purchaseOrderId={router.query?.Id as string}
+      />
+      <PurchaseOrderTypeModal
+        open={openPurchaseOrderTypeModal}
+        onClose={onClosePurchaseOrderTypeModal}
+        onSelectProduct={() => handleSelectPurchaseOrderType(false)}
+        onSelectMaterial={() => handleSelectPurchaseOrderType(true)}
       />
       <AddNewContactModal
         openModal={openAddNewContactModal}

@@ -12,10 +12,11 @@ export const useStyle = () => {
     return {
       // Table container styles
       tableContainer: {
-        maxHeight: 600,
+        maxHeight: 500,
         width: '100%',
         overflowX: 'auto',
         overflowY: 'auto',
+
         '&::-webkit-scrollbar': {
           height: '8px',
         },

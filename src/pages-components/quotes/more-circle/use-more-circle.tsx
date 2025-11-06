@@ -105,9 +105,8 @@ const useMoreCircle = () => {
 
     const getDocumentPath = (id?: string, extraParams: string = "") => {
       if (isSupplierPayments) {
-        return `/${
-          DOCUMENT_TYPE[DOCUMENT_TYPE.receipt]
-        }?isOutgoingPayments=true${id ? `&Id=${id}` : ""}${extraParams}`;
+        return `/${DOCUMENT_TYPE[DOCUMENT_TYPE.receipt]
+          }?isOutgoingPayments=true${id ? `&Id=${id}` : ""}${extraParams}`;
       }
       return `/${documentPath}${id ? `?Id=${id}` : ""}${extraParams}`;
     };
@@ -545,8 +544,8 @@ const useMoreCircle = () => {
         onClick: () =>
           quote?.closeOrderNotes && quote?.closeOrderNotes.trim() !== ""
             ? onClickOpenCloseOrderNotesModal(quote, "closeManually", () =>
-                onClickOpenCloseOrderModal(quote)
-              )
+              onClickOpenCloseOrderModal(quote)
+            )
             : onClickOpenCloseOrderModal(quote),
         icon: <LockIcon />,
         name: t("sales.quote.close"),
@@ -558,7 +557,7 @@ const useMoreCircle = () => {
           quote?.isCanIntake,
         onClick: () => onClickOpenInventoryIntakeModal(quote),
         icon: <PackageIcon />,
-        name: t("sales.quote.inventoryIntake"),
+        name: t("sales.purchaseOrder.addInventoryIntake"),
       },
       {
         condition:
@@ -607,8 +606,8 @@ const useMoreCircle = () => {
           isOrder
             ? onClickOpenIrrelevantModal(quote)
             : quote?.creditCardTotal > 0
-            ? onOpenCancelReceiptModalRefund(quote)
-            : onOpenCancelReceiptModal(quote),
+              ? onOpenCancelReceiptModalRefund(quote)
+              : onOpenCancelReceiptModal(quote),
         icon: <TickCancelIcon />,
         name: t("sales.quote.cancel"),
       },
@@ -650,8 +649,7 @@ const useMoreCircle = () => {
           onClickSendPayment(quote, true, !!isSendOrderReadyToClient),
         icon: <MailIcon />,
         name: t(
-          `sales.quote.${
-            isSendOrderReadyToClient ? "sendOrderReadyToClient" : "sendToClient"
+          `sales.quote.${isSendOrderReadyToClient ? "sendOrderReadyToClient" : "sendToClient"
           }`
         ),
       },

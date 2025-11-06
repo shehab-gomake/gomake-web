@@ -6,8 +6,10 @@ import { currenciesState } from "@/widgets/materials-widget/state";
 
 interface InventoryRowData {
   code: string;
+  name?: string;
   purchaseOrderItemId: string;
   printHouseMaterialId: string;
+  supplierId?: string;
   purchasePrice: {
     perTon: number;
     perUnit: number;
@@ -19,6 +21,7 @@ interface InventoryRowData {
     currency: string;
   };
   quantity: number;
+  clients?: string[];
   tableHeadingUnits: {
     inventoryUnit: {
       key: string;
