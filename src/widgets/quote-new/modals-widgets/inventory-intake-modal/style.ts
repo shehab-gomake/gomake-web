@@ -40,35 +40,33 @@ export const useStyle = () => {
 
       // Header row styles
       headerRow: {
-        textAlign: 'center' as 'center',
+        textAlign: 'center' as "center",
         fontWeight: 'bold',
-        whiteSpace: 'nowrap' as 'nowrap',
+        whiteSpace: 'nowrap',
         padding: '4px',
         backgroundColor: '#FFF',
-        width: 'fit-content',
-        minWidth: 'fit-content',
+         width: 'fit-content',
+        minWidth: 'fit-content'
       },
 
-      // Header cell styles
-      headerCell: {
-        textAlign: 'center' as 'center',
-        fontWeight: 'bold',
-        whiteSpace: 'nowrap' as 'nowrap',
-        padding: '12px 8px',
-        backgroundColor: '#EBECFF',
-        width: 'fit-content',
-        minWidth: 'fit-content',
-        textTransform: 'capitalize' as 'capitalize',
-        borderBottom: '1px solid #e0e0e0',
-      },
+        // Header cell styles
+        headerCell: {
+          textAlign: 'center',
+          fontWeight: 'bold',
+          whiteSpace: 'nowrap',
+          padding: '4px',
+          backgroundColor: '#EBECFF',
+           width: 'fit-content',
+          minWidth: 'fit-content',
+          textTransform: 'capitalize' as 'capitalize',
+        },
       headerCellUnitText: {
         ...FONT_FAMILY.Inter(700, 12),
         textTransform: 'lowercase' as 'lowercase',
       },
-      headerCellPriceUnitText: {
+      headerCellPriceUnitText:{
         textTransform: 'capitalize' as 'capitalize',
-        fontSize: '12px',
-        fontWeight: 'normal',
+
       },
       headerCellText: {
         color: "#2E3092",

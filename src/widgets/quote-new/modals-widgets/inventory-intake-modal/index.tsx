@@ -407,7 +407,7 @@ const InventoryIntakeModal: React.FC<InventoryIntakeModalProps> = ({
                                 <>
                                   <br />
                                   <span style={classes.headerCellPriceUnitText}>
-                                    ({convertedPricingUnit.value})
+                                    {convertedPricingUnit.value}
                                   </span>
                                 </>
                               )}
@@ -421,7 +421,7 @@ const InventoryIntakeModal: React.FC<InventoryIntakeModalProps> = ({
                                 <>
                                   <br />
                                   <span style={classes.headerCellPriceUnitText}>
-                                    ({convertedPricingUnit.value})
+                                    {convertedPricingUnit.value}
                                   </span>
                                 </>
                               )}
