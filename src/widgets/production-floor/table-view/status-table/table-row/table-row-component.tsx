@@ -18,6 +18,7 @@ import {
   Skeleton,
   TableCell,
   TableRow,
+  Tooltip,
 } from "@mui/material";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { MoreMenuWidget } from "./more-circle";
@@ -46,6 +47,70 @@ import { boardMissionsFilesState } from "@/widgets/production-floor/views/board-
 import { AddStuckReasonWidget } from "@/widgets/production-floor/add-stuck-reason/add-stuck-reason";
 import { CharacterDetails } from "@/widgets/quote-new/quote-table/row-details/character-details";
 import { ChangeMachineEmployeeComponent } from "../stations/change-machine-employee";
+import { useEffect } from "react";
+
+// Helper component for truncation detection with conditional tooltip
+const TruncatedTextWithTooltip = ({
+  text,
+  maxLines = 2,
+  showTooltipOnlyIfTruncated = true,
+}: {
+  text: string;
+  maxLines?: number;
+  showTooltipOnlyIfTruncated?: boolean;
+}) => {
+  const textRef = useRef<HTMLDivElement>(null);
+  const [isTruncated, setIsTruncated] = useState(false);
+
+  useEffect(() => {
+    const checkTruncation = () => {
+      if (textRef.current) {
+        const element = textRef.current;
+        const isTruncated = element.scrollHeight > element.clientHeight;
+        setIsTruncated(isTruncated);
+      }
+    };
+
+    checkTruncation();
+    // Re-check on window resize
+    window.addEventListener("resize", checkTruncation);
+    return () => window.removeEventListener("resize", checkTruncation);
+  }, [text]);
+
+  const content = (
+    <div
+      ref={textRef}
+      style={{
+        display: "-webkit-box",
+        WebkitLineClamp: maxLines,
+        WebkitBoxOrient: "vertical",
+        overflow: "hidden",
+        textOverflow: "ellipsis",
+        lineHeight: "1.4",
+      }}
+    >
+      {text}
+    </div>
+  );
+
+  if (showTooltipOnlyIfTruncated && isTruncated) {
+    return (
+      <Tooltip title={text} placement="right" arrow>
+        {content}
+      </Tooltip>
+    );
+  }
+
+  if (!showTooltipOnlyIfTruncated) {
+    return (
+      <Tooltip title={text} placement="right" arrow>
+        {content}
+      </Tooltip>
+    );
+  }
+
+  return content;
+};
 
 interface IProps {
   boardMission: IBoardMissions;
@@ -468,10 +533,11 @@ const TableRowComponent = ({
               }}
               onClick={() => onClickClient(boardMission?.clientId)}
             >
-              {getTruncatedLabel(
-                boardMission?.clientName,
-                isMobileScreen ? 12 : 15
-              )}
+              <TruncatedTextWithTooltip
+                text={boardMission?.clientName || ""}
+                maxLines={2}
+                showTooltipOnlyIfTruncated={true}
+              />
             </SecondaryTableCell>
           );
 
@@ -486,10 +552,11 @@ const TableRowComponent = ({
                 ...commonStyle,
               }}
             >
-              {getTruncatedLabel(
-                boardMission?.agentName,
-                isMobileScreen ? 12 : 15
-              )}
+              <TruncatedTextWithTooltip
+                text={boardMission?.agentName || ""}
+                maxLines={2}
+                showTooltipOnlyIfTruncated={true}
+              />
             </SecondaryTableCell>
           );
 

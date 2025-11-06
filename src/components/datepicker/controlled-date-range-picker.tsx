@@ -139,7 +139,14 @@ const ControlledDateRangePicker = ({
   const handleSelectDates = () => {
     // Always use tempRange as the source of truth
     // tempRange gets updated from both calendar selection and manual input
-    onChange(tempRange.startDate, tempRange.endDate);
+    // Normalize dates to ensure single-day selections use startOfDay and endOfDay
+    const normalizedStartDate = tempRange.startDate
+      ? startOfDay(tempRange.startDate)
+      : null;
+    const normalizedEndDate = tempRange.endDate
+      ? endOfDay(tempRange.endDate)
+      : null;
+    onChange(normalizedStartDate, normalizedEndDate);
     setOpenPicker(false);
   };
 
