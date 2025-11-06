@@ -246,7 +246,7 @@ const useStyle = () => {
         gap: "5px",
       },
       lastOrderDetails: {
-        color: "var(--second-500, #ED028C)",
+        color: secondColor(500),
         fontStyle: "normal",
         ...FONT_FAMILY.Lexend(500, 14),
         lineHeight: "normal",
