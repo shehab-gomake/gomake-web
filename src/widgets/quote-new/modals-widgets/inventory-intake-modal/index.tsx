@@ -249,10 +249,10 @@ const InventoryIntakeModal: React.FC<InventoryIntakeModalProps> = ({
                       <Table sx={classes.table} stickyHeader>
                         <TableHead>
                           <TableRow sx={classes.headerRow}>
-                            <TableCell sx={classes.headerCell}>
+                            <TableCell sx={{ ...classes.headerCell, ...classes.codeCell }}>
                               {t("materials.childTable.code")}
                             </TableCell>
-                            <TableCell sx={classes.headerCell}>
+                            <TableCell sx={{ ...classes.headerCell, ...classes.purchasePriceCell }}>
                               {t("materials.childTable.purchasePrice")}
                               {convertedPricingUnit && (
                                 <>
@@ -263,10 +263,10 @@ const InventoryIntakeModal: React.FC<InventoryIntakeModalProps> = ({
                                 </>
                               )}
                             </TableCell>
-                            <TableCell sx={classes.headerCell}>
+                            <TableCell sx={{ ...classes.headerCell, ...classes.purchaseCurrencyCell }}>
                               {t("materials.childTable.purchaseCurrency")}
                             </TableCell>
-                            <TableCell sx={classes.headerCell}>
+                            <TableCell sx={{ ...classes.headerCell, ...classes.salePriceCell }}>
                               {t("materials.childTable.saleCost")}
                               {convertedPricingUnit && (
                                 <>
@@ -277,10 +277,10 @@ const InventoryIntakeModal: React.FC<InventoryIntakeModalProps> = ({
                                 </>
                               )}
                             </TableCell>
-                            <TableCell sx={classes.headerCell}>
+                            <TableCell sx={{ ...classes.headerCell, ...classes.saleCurrencyCell }}>
                               {t("materials.childTable.saleCurrency")}
                             </TableCell>
-                            <TableCell sx={classes.headerCell}>
+                            <TableCell sx={{ ...classes.headerCell, ...classes.quantityCell }}>
                               {t("materials.childTable.quantity")}
                               {convertedInventoryUnit && (
                                 <span style={classes.headerCellUnitText}>
@@ -292,7 +292,7 @@ const InventoryIntakeModal: React.FC<InventoryIntakeModalProps> = ({
                         </TableHead>
                         <TableBody>
                           <TableRow sx={classes.bodyRow}>
-                            <TableCell sx={classes.bodyCell}>
+                            <TableCell sx={{ ...classes.bodyCell, ...classes.codeCell }}>
                               <CodeInputCell
                                 row={row}
                                 onCodeUpdate={(newValue) => {
@@ -300,7 +300,7 @@ const InventoryIntakeModal: React.FC<InventoryIntakeModalProps> = ({
                                 }}
                               />
                             </TableCell>
-                            <TableCell sx={classes.bodyCell}>
+                            <TableCell sx={{ ...classes.bodyCell, ...classes.purchasePriceCell }}>
                               <InventoryPriceInput
                                 value={
                                   // Always display as array if both values exist, or if perUnit exists (perTon might be 0)
@@ -327,7 +327,7 @@ const InventoryIntakeModal: React.FC<InventoryIntakeModalProps> = ({
                                 }}
                               />
                             </TableCell>
-                            <TableCell sx={classes.bodyCell}>
+                            <TableCell sx={{ ...classes.bodyCell, ...classes.purchaseCurrencyCell }}>
                               <InventoryCurrencyInput
                                 value={row.purchasePrice?.currency?.toLowerCase() || ''}
                                 isEditable={true}
@@ -337,7 +337,7 @@ const InventoryIntakeModal: React.FC<InventoryIntakeModalProps> = ({
                                 }}
                               />
                             </TableCell>
-                            <TableCell sx={classes.bodyCell}>
+                            <TableCell sx={{ ...classes.bodyCell, ...classes.salePriceCell }}>
                               <InventoryPriceInput
                                 value={
                                   // Always display as array if both values exist, or if perUnit exists (perTon might be 0)
@@ -364,7 +364,7 @@ const InventoryIntakeModal: React.FC<InventoryIntakeModalProps> = ({
                                 }}
                               />
                             </TableCell>
-                            <TableCell sx={classes.bodyCell}>
+                            <TableCell sx={{ ...classes.bodyCell, ...classes.saleCurrencyCell }}>
                               <InventoryCurrencyInput
                                 value={row.salePrice?.currency?.toLowerCase() || ''}
                                 isEditable={true}
@@ -374,7 +374,7 @@ const InventoryIntakeModal: React.FC<InventoryIntakeModalProps> = ({
                                 }}
                               />
                             </TableCell>
-                            <TableCell sx={classes.bodyCell}>
+                            <TableCell sx={{ ...classes.bodyCell, ...classes.quantityCell }}>
                               <TableCellData
                                 value={row.quantity?.toString() || ''}
                                 isEditable={false}

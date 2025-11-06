@@ -36,7 +36,7 @@ export const useStyle = () => {
       // Table styles
       table: {
         width: '100%',
-        tableLayout: 'auto' as 'auto',
+        tableLayout: 'fixed' as 'fixed',
       },
 
       // Header row styles
@@ -57,9 +57,32 @@ export const useStyle = () => {
           whiteSpace: 'nowrap',
           padding: '4px',
           backgroundColor: '#EBECFF',
-           width: 'fit-content',
-          minWidth: 'fit-content',
           textTransform: 'capitalize' as 'capitalize',
+        },
+        // Column width styles
+        codeCell: {
+          minWidth: '100px',
+          width: '100px',
+        },
+        purchasePriceCell: {
+          minWidth: '180px',
+          width: '180px',
+        },
+        purchaseCurrencyCell: {
+          minWidth: '140px',
+          width: '140px',
+        },
+        salePriceCell: {
+          minWidth: '180px',
+          width: '180px',
+        },
+        saleCurrencyCell: {
+          minWidth: '140px',
+          width: '140px',
+        },
+        quantityCell: {
+          minWidth: '120px',
+          width: '120px',
         },
       headerCellUnitText: {
         ...FONT_FAMILY.Inter(700, 12),
