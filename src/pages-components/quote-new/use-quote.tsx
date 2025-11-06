@@ -99,7 +99,7 @@ import { Button } from "@mui/material";
 import { PlusIcon } from "../quotes/widgets/icons/header-section-icons";
 import { useStyle } from "./style";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
-import { PurchaseOrderType, ShowDocumentDetailsEnum, ShowPricesEnum } from "@/enums";
+import { PurchaseOrderType, ShowDocumentDetailsEnum, ShowPricesEnum, ItemCalculationType } from "@/enums";
 
 export enum MessageType {
   Email = 0,
@@ -782,7 +782,7 @@ const useQuoteNew = ({
 
       getCalculateQuoteItem(
         updatedQuoteItemValue,
-        4,
+        ItemCalculationType.Currency,
         quoteItemValue.price,
         updatedQuoteItemValue
       );
@@ -817,7 +817,7 @@ const useQuoteNew = ({
       setIsUpdateVatStatus(null);
       getCalculateQuoteItem(
         updatedQuoteItemValue,
-        2,
+        ItemCalculationType.Discount,
         quoteItemValue.discount,
         updatedQuoteItemValue
       );

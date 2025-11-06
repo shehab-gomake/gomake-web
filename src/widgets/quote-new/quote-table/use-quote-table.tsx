@@ -2,6 +2,7 @@ import { useSnackBar } from "@/hooks";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { ItemCalculationType } from "@/enums/document-type-enum";
 
 const useQuoteTable = ({
   getCalculateQuoteItem,
@@ -53,7 +54,7 @@ const useQuoteTable = ({
       setTimeout(() => {
         getCalculateQuoteItem(
           { ...item, quantity: originalQuantity },
-          0,
+          ItemCalculationType.Amount,
           originalQuantity
         );
       }, 0);
@@ -62,7 +63,7 @@ const useQuoteTable = ({
       return;
     }
 
-    getCalculateQuoteItem(item, 0, item.quantity);
+    getCalculateQuoteItem(item, ItemCalculationType.Amount, item.quantity);
     setIsUpdateAmount(null);
   };
 
@@ -71,7 +72,7 @@ const useQuoteTable = ({
   };
 
   const onBlurDiscount = async () => {
-    getCalculateQuoteItem(item, 2, item.discount);
+    getCalculateQuoteItem(item, ItemCalculationType.Discount, item.discount);
     setIsUpdateDiscount(null);
   };
 
@@ -79,7 +80,7 @@ const useQuoteTable = ({
     changeDocumentItems(index, "discount", e);
   };
   const onBlurPrice = async () => {
-    getCalculateQuoteItem(item, 1, item.price);
+    getCalculateQuoteItem(item, ItemCalculationType.UnitPrice, item.price);
     setIsUpdatePrice(null);
   };
   const onInputChangePrice = (e) => {
@@ -87,7 +88,7 @@ const useQuoteTable = ({
   };
 
   const onBlurFinalPrice = async () => {
-    getCalculateQuoteItem(item, 3, item.finalPrice);
+    getCalculateQuoteItem(item, ItemCalculationType.finalPrice, item.finalPrice);
     setIsUpdateFinalPrice(null);
   };
   const onInputChangeFinalPrice = (e) => {
@@ -103,7 +104,7 @@ const useQuoteTable = ({
       changeDocumentItems(index, "quantity", totalQuantity);
       // Update the item with the new quantity before calculating
       const updatedItem = { ...item, quantity: totalQuantity };
-      getCalculateQuoteItem(updatedItem, 0, totalQuantity);
+      getCalculateQuoteItem(updatedItem, ItemCalculationType.PackagesQuantity, packagesQuantity);
     }
     setIsUpdatePackagesQuantity(null);
   };
@@ -121,7 +122,7 @@ const useQuoteTable = ({
       changeDocumentItems(index, "quantity", totalQuantity);
       // Update the item with the new quantity before calculating
       const updatedItem = { ...item, quantity: totalQuantity };
-      getCalculateQuoteItem(updatedItem, 0, totalQuantity);
+      getCalculateQuoteItem(updatedItem, ItemCalculationType.QuantityInPackage, quantityInPackage);
     }
     setIsUpdateQuantityInPackage(null);
   };

@@ -34,40 +34,24 @@ export const useInventoryIntakeModal = ({
   useEffect(() => {
     if (open) {
       if (inventoryData && inventoryData.length > 0) {
-        // Transform API data - extract price arrays if available and ensure salePrice is initialized
+        // Transform API data - extract price arrays using dynamic pricing unit key
         const transformedData = inventoryData.map((item: any) => {
-          // Extract purchase price array if available
-          let purchasePerUnit = item.purchasePrice?.perUnit || 0;
-          let purchasePerTon = item.purchasePrice?.perTon || 0;
-          let salePerUnit = item.salePrice?.perUnit || 0;
-          let salePerTon = item.salePrice?.perTon || 0;
+          // Get the pricing unit key from tableHeadingUnits
+          const pricingUnitKey = item.tableHeadingUnits?.pricingUnit?.key;
 
-          // Extract price array from the structure: { "price unit / M^2": { "value": ["1672.370", "267.472"] } }
-          // Or: { "price Unit / ton": { "value": ["8.195", "203249.008"] } }
-          const extractPriceArray = (priceObj: any): number[] => {
-            if (!priceObj) return [0, 0];
+          // Extract price array from the structure: { "CostPerRollPerSquareMeterPerTon": { "value": ["6297.820", "25.191", "157445.500"] } }
+          const extractPriceArray = (priceObj: any, unitKey: string): number[] => {
+            if (!priceObj || !unitKey) return [0, 0];
 
-            // Find any key that contains "price" - this will match "price unit / M^2", "price Unit / ton", etc.
-            const priceKeys = Object.keys(priceObj).filter(key =>
-              key.toLowerCase().includes("price")
-            );
-
-            if (priceKeys.length > 0) {
-              // Use the first price key found
-              const priceKey = priceKeys[0];
-              const priceObject = priceObj[priceKey];
-              if (priceObject?.value && Array.isArray(priceObject.value) && priceObject.value.length >= 2) {
-                return [
-                  parseFloat(priceObject.value[0]) || 0,
-                  parseFloat(priceObject.value[1]) || 0
-                ];
-              } else if (priceObject?.value && Array.isArray(priceObject.value) && priceObject.value.length === 1) {
-                // Single value in array
-                return [
-                  parseFloat(priceObject.value[0]) || 0,
-                  0
-                ];
-              }
+            // Use the pricing unit key to get the price object
+            const priceObject = priceObj[unitKey];
+            if (priceObject?.value && Array.isArray(priceObject.value)) {
+              // Return first two values (or pad with 0 if less than 2)
+              return [
+                parseFloat(priceObject.value[0]) || 0,
+                parseFloat(priceObject.value[1]) || 0,
+                ...(priceObject.value[2] ? [parseFloat(priceObject.value[2]) || 0] : [])
+              ].slice(0, 2); // Take only first 2 for perUnit and perTon
             }
 
             // Fallback to perUnit and perTon if they exist directly
@@ -81,35 +65,35 @@ export const useInventoryIntakeModal = ({
             return [0, 0];
           };
 
-          const [purchasePerUnitValue, purchasePerTonValue] = extractPriceArray(item.purchasePrice);
-          purchasePerUnit = purchasePerUnitValue;
-          purchasePerTon = purchasePerTonValue;
-
-          // Extract sale price array if available
-          const [salePerUnitValue, salePerTonValue] = extractPriceArray(item.salePrice);
-          salePerUnit = salePerUnitValue || purchasePerUnit;
-          salePerTon = salePerTonValue || purchasePerTon;
+          const [purchasePerUnitValue, purchasePerTonValue] = extractPriceArray(item.purchasePrice, pricingUnitKey);
+          const [salePerUnitValue, salePerTonValue] = extractPriceArray(item.salePrice, pricingUnitKey);
 
           return {
             ...item,
-            name: item.name, // Preserve name if available
-            supplierId: item.supplierId, // Preserve supplierId if available
-            clients: item.clients || [], // Preserve clients array if available
+            name: item.name,
+            supplierId: item.supplierId,
+            clients: item.clients || [],
+            packagesQuantity: item.packagesQuantity,
+            quantityInPackage: item.quantityInPackage,
             purchasePrice: {
               ...item.purchasePrice,
-              perUnit: purchasePerUnit,
-              perTon: purchasePerTon,
-              // Extract currency from item level or price object, or default to USD
-              currency: item.purchasePrice?.currency ||
-                item.currency
+              perUnit: purchasePerUnitValue,
+              perTon: purchasePerTonValue,
+              currency: item.purchasePrice?.currency || item.currency,
+              // Preserve the original structure with pricing unit key
+              pricingUnitKey: pricingUnitKey,
             },
             salePrice: {
               ...(item.salePrice || {}),
-              perTon: salePerTon,
-              perUnit: salePerUnit,
-              currency: item.salePrice?.currency ||
-                item.currency
+              perUnit: salePerUnitValue || purchasePerUnitValue,
+              perTon: salePerTonValue || purchasePerTonValue,
+              currency: item.salePrice?.currency || item.currency,
+              // Preserve the original structure with pricing unit key
+              pricingUnitKey: pricingUnitKey,
             },
+            isSplit: false,
+            splitGroupId: undefined,
+            isOriginal: undefined,
           };
         });
         setRows(transformedData);
@@ -191,7 +175,75 @@ export const useInventoryIntakeModal = ({
   };
 
   const handleSplitInventoryPackages = (purchaseOrderItemId: string) => {
-    console.log("handleSplitInventoryPackages", purchaseOrderItemId);
+    setRows((prevRows) => {
+      const rowIndex = prevRows.findIndex((r) => r.purchaseOrderItemId === purchaseOrderItemId);
+      if (rowIndex === -1) return prevRows;
+
+      const row = prevRows[rowIndex];
+      const packagesQuantity = row.packagesQuantity || 1;
+      const quantityInPackage = row.quantityInPackage || row.quantity;
+
+      // Validate that we can split
+      if (packagesQuantity <= 1) {
+        return prevRows; // Can't split if only 1 package
+      }
+
+      // Create split items
+      const splitItems: InventoryRowData[] = [];
+      for (let i = 0; i < packagesQuantity; i++) {
+        splitItems.push({
+          ...row,
+          purchaseOrderItemId: `${row.purchaseOrderItemId}_split_${i}`, // Unique ID for each split item
+          quantity: quantityInPackage,
+          packagesQuantity: packagesQuantity, // Preserve original packagesQuantity
+          quantityInPackage: quantityInPackage, // Preserve quantityInPackage
+          isSplit: true,
+          splitGroupId: row.purchaseOrderItemId, // Track the original item ID
+          isOriginal: false,
+          code: `${row.code || ''}-${i + 1}`, // Add package number to code
+        });
+      }
+
+      // Replace the original row with split items
+      const newRows = [...prevRows];
+      newRows.splice(rowIndex, 1, ...splitItems);
+      return newRows;
+    });
+  };
+
+  const handleMergeInventoryPackages = (splitGroupId: string) => {
+    setRows((prevRows) => {
+      // Find all items in the split group
+      const splitItems = prevRows.filter((r) => r.splitGroupId === splitGroupId);
+      if (splitItems.length === 0) return prevRows;
+
+      // Get packagesQuantity and quantityInPackage from the first split item
+      const packagesQuantity = splitItems.length;
+      const quantityInPackage = splitItems[0]?.quantityInPackage || splitItems[0]?.quantity || 0;
+
+      // Calculate quantity as quantityInPackage * packagesQuantity
+      const totalQuantity = quantityInPackage * packagesQuantity;
+
+      // Reconstruct the original item
+      const originalItem: InventoryRowData = {
+        ...splitItems[0],
+        purchaseOrderItemId: splitGroupId, // Restore original ID
+        quantity: totalQuantity, // Use quantityInPackage * packagesQuantity
+        packagesQuantity: packagesQuantity,
+        quantityInPackage: quantityInPackage,
+        isSplit: false,
+        splitGroupId: undefined,
+        isOriginal: undefined,
+        code: splitItems[0]?.code?.replace(/-\d+$/, '') || splitItems[0]?.code || '', // Remove package number suffix
+      };
+
+      // Remove all split items and add the merged item
+      const newRows = prevRows.filter((r) => r.splitGroupId !== splitGroupId);
+      const firstSplitIndex = prevRows.findIndex((r) => r.splitGroupId === splitGroupId);
+      newRows.splice(firstSplitIndex, 0, originalItem);
+
+      return newRows;
+    });
   };
 
   const handleCodeUpdate = (rowId: string, newValue: string) => {
@@ -216,6 +268,7 @@ export const useInventoryIntakeModal = ({
     updateCellData,
     handleIntake,
     handleSplitInventoryPackages,
+    handleMergeInventoryPackages,
     handleCodeUpdate,
   };
 };
