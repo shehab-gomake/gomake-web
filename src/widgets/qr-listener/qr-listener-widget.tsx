@@ -19,6 +19,7 @@ import { useStyle } from "@/pages-components/board-missions/style";
 import { downloadPdf } from "@/utils/helpers";
 import { getDeliveryTickerPdfApi } from "@/services/api-service/board-missions/board-missions-table";
 import { ModalType } from "@/enums";
+import { PrintPackingSlipModalWidget } from "../production-floor/views/board-missions-view/navigation-buttons/print-packing-slip-modal-widget";
 
 interface IProps {
   listening: boolean;
@@ -42,110 +43,14 @@ const QrListenerWidget = ({ listening }: IProps) => {
   const [openDeliveryModal, setOpenDeliveryModal] = useState<boolean>(false);
   const [openPrintAndActionModal, setOpenPrintAndActionModal] =
     useState<boolean>(false);
-  const [quantityOfPackages, setQuantityOfPackages] = useState<number>(1);
-  const [quantityPerPackage, setQuantityPerPackage] = useState<number>(0);
+  //const [quantityOfPackages, setQuantityOfPackages] = useState<number>(1);
+  //const [quantityPerPackage, setQuantityPerPackage] = useState<number>(0);
   const [isQRErrorModalOpen, setIsQRErrorModalOpen] = useState<boolean>(false);
   const [qrErrorMessage, setQrErrorMessage] = useState<string>("");
   const [qrErrorKey, setQrErrorKey] = useState<string>("");
-  const remainingQuantity =
-    qrData?.quantity - quantityPerPackage * (quantityOfPackages - 1);
   const { t } = useTranslation();
   const { classes } = useStyle();
 
-  const onClickPrintPackagingSlip = async () => {
-    if (quantityPerPackage > qrData?.quantity) {
-      alertFault("boardMissions.alertQuantity");
-      return;
-    }
-    const callBack = (res) => {
-      if (res?.success) {
-        const pdfLink = res.data;
-        downloadPdf(pdfLink);
-        setOpenPackagesModal(false);
-      } else {
-        alertFault("boardMissions.alertPrintPackingSlip");
-      }
-    };
-    await getDeliveryTickerPdfApi(callApi, callBack, {
-      boardMissionId: qrData.boardMissionId,
-      packageQuantities,
-    });
-  };
-  const [packageQuantities, setPackageQuantities] = useState<number[]>(() => {
-    const initialQuantityPerPackage = qrData?.quantity
-      ? Math.ceil(qrData.quantity / quantityOfPackages)
-      : 0;
-    return Array(quantityOfPackages).fill(initialQuantityPerPackage);
-  });
-  useEffect(() => {
-    if (qrData?.quantity && quantityPerPackage > 0) {
-      const totalQuantity = qrData.quantity;
-      const fullPackages = Math.max(0, Math.floor(totalQuantity / quantityPerPackage));
-      const remainingQuantity = totalQuantity % quantityPerPackage;
-
-      let newPackageQuantities = Array(fullPackages).fill(quantityPerPackage);
-      if (remainingQuantity > 0) {
-        newPackageQuantities = [...newPackageQuantities, remainingQuantity];
-      }
-
-      setPackageQuantities(newPackageQuantities);
-    } else {
-      setPackageQuantities([]);
-    }
-  }, [qrData, quantityPerPackage]);
-
-  const handlePackageQuantityChange = (index: number, newValue: number) => {
-    setPackageQuantities((prevQuantities) => {
-      const updatedQuantities = [...prevQuantities];
-      updatedQuantities[index] = newValue;
-
-      if (index === quantityOfPackages - 1) {
-        const totalQuantity = qrData?.quantity || 0;
-        const sumOfOtherPackages = updatedQuantities.slice(0, -1).reduce((acc, val) => acc + val, 0);
-        updatedQuantities[index] = totalQuantity - sumOfOtherPackages;
-      }
-
-      return updatedQuantities;
-    });
-  };
-  const packageInputs = useMemo(() => {
-    if (quantityOfPackages) {
-      return [...Array(quantityOfPackages)].map((_, index) => (
-        <div key={index} style={{ width: "30%" }}>
-          <h3 style={classes.packageLabelStyle}>
-            {`${t("boardMissions.package")} ${index + 1}`}
-          </h3>
-          <GomakeTextInput
-            type="number"
-            value={packageQuantities[index]}
-            onChange={(e) => {
-              const newValue = parseInt(e.target.value, 10);
-              handlePackageQuantityChange(index, newValue);
-            }}
-          />
-        </div>
-      ));
-    }
-  }, [quantityOfPackages, packageQuantities]);
-  const handleQuantityOfPackagesChange = (event) => {
-    const newQuantityOfPackages = parseInt(event.target.value, 10);
-    const totalQuantity = qrData.quantity || 0;
-    const newQuantityPerPackage = Math.ceil(
-      totalQuantity / newQuantityOfPackages
-    );
-    setQuantityOfPackages(newQuantityOfPackages);
-    setQuantityPerPackage(newQuantityPerPackage);
-  };
-
-  const handleQuantityPerPackageChange = (event) => {
-    const newQuantityPerPackage = parseInt(event.target.value, 10);
-    const totalQuantity = qrData.quantity;
-    const newQuantityOfPackages = Math.ceil(
-      totalQuantity / newQuantityPerPackage
-    );
-    setQuantityPerPackage(newQuantityPerPackage);
-    setQuantityOfPackages(newQuantityOfPackages);
-  };
   const handleKeyPress = async (event) => {
     const currentTime = Date.now();
     const timeDifference = currentTime - lastInputTime;
@@ -186,7 +91,6 @@ const QrListenerWidget = ({ listening }: IProps) => {
         if (res?.data?.qrCodeAction === 3) {
           setQrData(res?.data);
           setOpenDeliveryModal(true);
-          setQuantityPerPackage(res?.data?.quantity);
         } else {
           setScannedCode(qrCode);
           setInputBuffer("");
@@ -260,16 +164,13 @@ const QrListenerWidget = ({ listening }: IProps) => {
         onClickYes={() => setOpenPackagesModal(true)}
         onClickNo={() => setOpenPackagesModal(true)}
       />
-      <PrintPackingSlipModal
-        openPackagesModal={openPackagesModal}
-        onClosePackagesModal={() => setOpenPackagesModal(false)}
-        packageInputs={packageInputs}
-        quantityOfPackages={quantityOfPackages}
-        quantityPerPackage={quantityPerPackage}
-        handleQuantityOfPackagesChange={handleQuantityOfPackagesChange}
-        handleQuantityPerPackageChange={handleQuantityPerPackageChange}
-        onClickConfirm={onClickPrintPackagingSlip}
-      />
+    
+      <PrintPackingSlipModalWidget
+            boardMissionId={qrData.boardMissionId}
+            quantity={qrData.quantity}
+            openModal={openPackagesModal}
+            onClose={() => setOpenPackagesModal(false)}
+          />
       <QRErrorModal
         openModal={isQRErrorModalOpen}
         onClose={() => setIsQRErrorModalOpen(false)}
