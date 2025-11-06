@@ -107,18 +107,27 @@ const PrintPackingSlipModalWidget = ({
 
   // Reset packages when total quantity, quantity of packages, or quantity per package changes
   useEffect(() => {
+    // Don't reset if we're in the middle of a calculation (rollsAmount or stickersPerRoll was just changed)
+    if (isCalculatingRef.current || lastChangedField?.field === 'rolls' || lastChangedField?.field === 'stickers') {
+      return;
+    }
+    
     if (isLabelInRolls && quantityOfPackages > 0) {
       // Reset and reinitialize rollsAmounts and stickersPerRoll arrays
+      // Only reset when main inputs change, not when packageQuantities changes programmatically
+      // Read the latest packageQuantities using a callback to avoid stale closure
       setPackageRollsAmounts(Array(quantityOfPackages).fill(1));
-      setPackageStickersPerRoll((prev) => {
+      setPackageQuantities((currentQuantities) => {
         const newStickers = [...Array(quantityOfPackages)];
-        return newStickers.map((_, index) => {
-          return packageQuantities[index] || 0;
+        const updatedStickers = newStickers.map((_, index) => {
+          return currentQuantities[index] || 0;
         });
+        setPackageStickersPerRoll(updatedStickers);
+        return currentQuantities; // Return unchanged since we're just reading it
       });
       setLastChangedField(null);
     }
-  }, [totalQuantity, quantityOfPackages, quantityPerPackage, isLabelInRolls, packageQuantities]);
+  }, [totalQuantity, quantityOfPackages, quantityPerPackage, isLabelInRolls, lastChangedField]);
 
   const handleTotalQuantityChange = (event) => {
     const newTotalQuantity = parseInt(event.target.value, 10);
