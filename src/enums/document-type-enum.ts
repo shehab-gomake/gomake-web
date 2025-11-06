@@ -197,3 +197,13 @@ export enum PurchaseOrderType
     Products,
     Materials
 }
+
+export enum ItemCalculationType {
+  Amount = 0,
+  UnitPrice = 1,
+  Discount = 2,
+  finalPrice = 3,
+  Currency = 4,
+  PackagesQuantity = 5,
+  QuantityInPackage = 6,
+}

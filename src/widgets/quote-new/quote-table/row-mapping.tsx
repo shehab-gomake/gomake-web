@@ -56,6 +56,7 @@ const RowMappingWidget = ({
   updateItemStatus,
   isMaterialPurchaseOrder,
 }) => {
+  console.log("item", item);
   const router = useRouter();
   const { t } = useTranslation();
   const { classes } = useStyle({ headerHeight });
@@ -355,13 +356,14 @@ const RowMappingWidget = ({
             borderBottom: item?.childsDocumentItems && "none",
           }}
         >
-          {item?.unit ||
+          {item?.unit?.value ||
+            (typeof item?.unit === 'string' ? item?.unit : null) ||
             item?.packagesUnit ||
             (item?.stockUnit !== undefined && item?.stockUnit !== null
               ? (typeof item.stockUnit === 'number'
                 ? t(`boardMissions.${MaterialStockUnit[item.stockUnit]}`) || MaterialStockUnit[item.stockUnit]
                 : item.stockUnit)
-              : (t("boardMissions.Units") || "Units"))}
+              : "")}
         </PrimaryTableCell>
       )}
       {quoteItems?.showPrices !== ShowPricesEnum.HidePrices && (

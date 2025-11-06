@@ -298,6 +298,8 @@ const useAddNewItem = ({ onClose, getQuote, documentType, getCalculateQuoteItem,
           // Add fields for material purchase orders
           packagesQuantity: selectedMaterial?.packagesQuantity || 0,
           quantityInPackage: selectedMaterial?.quantityInPackage || 1,
+          // Include unit object when available (for purchase orders)
+          ...(selectedMaterial?.unit && { unit: selectedMaterial.unit }),
         };
 
         const updatedQuoteItemValue = { ...quoteItemValue };

@@ -7,6 +7,8 @@ import { currenciesState } from "@/widgets/materials-widget/state";
 interface InventoryRowData {
   code: string;
   name?: string;
+  productName?: string;
+  productCode?: string;
   purchaseOrderItemId: string;
   printHouseMaterialId: string;
   supplierId?: string;
@@ -14,13 +16,17 @@ interface InventoryRowData {
     perTon: number;
     perUnit: number;
     currency: string;
+    pricingUnitKey?: string; // Dynamic key from tableHeadingUnits.pricingUnit.key
   };
   salePrice: {
     perTon: number;
     perUnit: number;
     currency: string;
+    pricingUnitKey?: string; // Dynamic key from tableHeadingUnits.pricingUnit.key
   };
   quantity: number;
+  packagesQuantity?: number;
+  quantityInPackage?: number;
   clients?: string[];
   tableHeadingUnits: {
     inventoryUnit: {
@@ -32,6 +38,10 @@ interface InventoryRowData {
       value: string;
     };
   };
+  // Split tracking fields
+  isSplit?: boolean; // Whether this item is a result of splitting
+  splitGroupId?: string; // ID to group split items together (original item's purchaseOrderItemId)
+  isOriginal?: boolean; // Whether this is the original item before splitting
 }
 
 const useInventoryIntake = (
@@ -66,29 +76,40 @@ const useInventoryIntake = (
             // Extract the nested data object (response has data.data structure)
             const priceData = res?.data?.data || res?.data;
 
-            // Extract price array from response - API returns price as object with "value" array
-            // Example: { "price unit / M^2": { "value": ["1672.370", "267.472"] } }
-            // Or: { "price Unit / ton": { "value": ["8.195", "203249.008"] } }
+            // Get the pricing unit key from the row
+            const row = rows.find((r) => r.purchaseOrderItemId === rowId);
+            const pricingUnitKey = row?.purchasePrice?.pricingUnitKey || row?.tableHeadingUnits?.pricingUnit?.key;
+
+            // Extract price array from response using the dynamic pricing unit key
+            // Example: { "CostPerRollPerSquareMeterPerTon": { "value": ["6297.820", "25.191", "157445.500"] } }
             let priceArray: string[] = [];
 
-            // Find any key that contains "price" - this will match "price unit / M^2", "price Unit / ton", etc.
-            const priceKeys = Object.keys(priceData || {}).filter(key =>
-              key.toLowerCase().includes("price")
-            );
-
-            if (priceKeys.length > 0) {
-              // Use the first price key found
-              const priceKey = priceKeys[0];
-              const priceObject = priceData[priceKey];
+            if (pricingUnitKey && priceData?.[pricingUnitKey]) {
+              // Use the pricing unit key to get the price object
+              const priceObject = priceData[pricingUnitKey];
               if (priceObject?.value && Array.isArray(priceObject.value)) {
                 priceArray = priceObject.value.map((v: any) => v?.toString() || "0");
               }
-            } else if (priceData?.perUnit !== undefined && priceData?.perSquareMeter !== undefined) {
-              // Fallback to perUnit and perSquareMeter if available
-              priceArray = [priceData.perUnit?.toString(), priceData.perSquareMeter?.toString()];
-            } else if (priceData?.perUnit !== undefined) {
-              // Single value fallback
-              priceArray = [priceData.perUnit?.toString()];
+            } else {
+              // Fallback: Find any key that contains "price" - this will match "price unit / M^2", "price Unit / ton", etc.
+              const priceKeys = Object.keys(priceData || {}).filter(key =>
+                key.toLowerCase().includes("price")
+              );
+
+              if (priceKeys.length > 0) {
+                // Use the first price key found
+                const priceKey = priceKeys[0];
+                const priceObject = priceData[priceKey];
+                if (priceObject?.value && Array.isArray(priceObject.value)) {
+                  priceArray = priceObject.value.map((v: any) => v?.toString() || "0");
+                }
+              } else if (priceData?.perUnit !== undefined && priceData?.perSquareMeter !== undefined) {
+                // Fallback to perUnit and perSquareMeter if available
+                priceArray = [priceData.perUnit?.toString(), priceData.perSquareMeter?.toString()];
+              } else if (priceData?.perUnit !== undefined) {
+                // Single value fallback
+                priceArray = [priceData.perUnit?.toString()];
+              }
             }
 
             const calculatedCurrency = priceData?.currency;
@@ -102,6 +123,9 @@ const useInventoryIntake = (
                   // Update based on the key
                   // priceIndex now refers to array index (0 = perUnit, 1 = perTon) for both purchase and sale
                   // key distinguishes between purchasePrice and salePrice
+                  // Preserve pricingUnitKey when updating prices
+                  const pricingUnitKey = updatedRow.purchasePrice?.pricingUnitKey || updatedRow.tableHeadingUnits?.pricingUnit?.key;
+
                   if (key === "currency") {
                     // When updating currency, use originalPriceKey to determine which price type to update
                     const priceTypeToUpdate = originalPriceKey || "purchasePrice";
@@ -112,6 +136,7 @@ const useInventoryIntake = (
                         perUnit: priceArray.length > 0 ? parseFloat(priceArray[0]) : updatedRow.purchasePrice?.perUnit || price,
                         perTon: priceArray.length > 1 ? parseFloat(priceArray[1]) : updatedRow.purchasePrice?.perTon,
                         currency: calculatedCurrency || currency,
+                        pricingUnitKey: pricingUnitKey,
                       };
                     } else if (priceTypeToUpdate === "salePrice" || priceTypeToUpdate === "sale") {
                       // Sale price
@@ -120,6 +145,7 @@ const useInventoryIntake = (
                         perUnit: priceArray.length > 0 ? parseFloat(priceArray[0]) : updatedRow.salePrice?.perUnit || price,
                         perTon: priceArray.length > 1 ? parseFloat(priceArray[1]) : updatedRow.salePrice?.perTon,
                         currency: calculatedCurrency || currency,
+                        pricingUnitKey: pricingUnitKey,
                       };
                     }
                   } else if (key === "purchasePrice" || key === "purchase") {
@@ -128,6 +154,7 @@ const useInventoryIntake = (
                       perUnit: priceArray.length > 0 ? parseFloat(priceArray[0]) : price,
                       perTon: priceArray.length > 1 ? parseFloat(priceArray[1]) : updatedRow.purchasePrice?.perTon,
                       currency: calculatedCurrency || currency,
+                      pricingUnitKey: pricingUnitKey,
                     };
                   } else if (key === "salePrice" || key === "sale") {
                     updatedRow.salePrice = {
@@ -135,6 +162,7 @@ const useInventoryIntake = (
                       perUnit: priceArray.length > 0 ? parseFloat(priceArray[0]) : price,
                       perTon: priceArray.length > 1 ? parseFloat(priceArray[1]) : updatedRow.salePrice?.perTon,
                       currency: calculatedCurrency || currency,
+                      pricingUnitKey: pricingUnitKey,
                     };
                   }
 
@@ -197,6 +225,8 @@ const useInventoryIntake = (
           return prevRows.map((r) => {
             if (r.purchaseOrderItemId === rowId) {
               const updatedRow = { ...r };
+              // Preserve pricingUnitKey
+              const pricingUnitKey = updatedRow.purchasePrice?.pricingUnitKey || updatedRow.tableHeadingUnits?.pricingUnit?.key;
 
               if (isPurchase) {
                 if (isPriceField) {
@@ -206,11 +236,13 @@ const useInventoryIntake = (
                       updatedRow.purchasePrice = {
                         ...updatedRow.purchasePrice,
                         perUnit: Number(updatedValue) || 0,
+                        pricingUnitKey: pricingUnitKey,
                       };
                     } else if (priceIndex === 1) {
                       updatedRow.purchasePrice = {
                         ...updatedRow.purchasePrice,
                         perTon: Number(updatedValue) || 0,
+                        pricingUnitKey: pricingUnitKey,
                       };
                     }
                   } else {
@@ -218,12 +250,14 @@ const useInventoryIntake = (
                     updatedRow.purchasePrice = {
                       ...updatedRow.purchasePrice,
                       perUnit: Number(updatedValue) || 0,
+                      pricingUnitKey: pricingUnitKey,
                     };
                   }
                 } else if (isCurrencyField) {
                   updatedRow.purchasePrice = {
                     ...updatedRow.purchasePrice,
                     currency: updatedValue as string,
+                    pricingUnitKey: pricingUnitKey,
                   };
                 }
               } else if (isSale) {
@@ -234,11 +268,13 @@ const useInventoryIntake = (
                       updatedRow.salePrice = {
                         ...updatedRow.salePrice,
                         perUnit: Number(updatedValue) || 0,
+                        pricingUnitKey: pricingUnitKey,
                       };
                     } else if (priceIndex === 1) {
                       updatedRow.salePrice = {
                         ...updatedRow.salePrice,
                         perTon: Number(updatedValue) || 0,
+                        pricingUnitKey: pricingUnitKey,
                       };
                     }
                   } else {
@@ -246,12 +282,14 @@ const useInventoryIntake = (
                     updatedRow.salePrice = {
                       ...updatedRow.salePrice,
                       perUnit: Number(updatedValue) || 0,
+                      pricingUnitKey: pricingUnitKey,
                     };
                   }
                 } else if (isCurrencyField) {
                   updatedRow.salePrice = {
                     ...updatedRow.salePrice,
                     currency: updatedValue as string,
+                    pricingUnitKey: pricingUnitKey,
                   };
                 }
               }

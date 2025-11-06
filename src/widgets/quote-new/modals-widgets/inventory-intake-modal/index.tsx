@@ -155,6 +155,7 @@ const InventoryIntakeModal: React.FC<InventoryIntakeModalProps> = ({
     updateCellData,
     handleIntake,
     handleSplitInventoryPackages,
+    handleMergeInventoryPackages,
     handleCodeUpdate,
   } = useInventoryIntakeModal({
     open,
@@ -200,15 +201,28 @@ const InventoryIntakeModal: React.FC<InventoryIntakeModalProps> = ({
           </Box>
         ) : (
           <Stack spacing={1.5} sx={{ marginTop: "12px" }}>
-            {rows && rows.length > 0 ? (
-              rows.map((row, index) => {
-                const convertedPricingUnit = row?.tableHeadingUnits?.pricingUnit;
-                const convertedInventoryUnit = row?.tableHeadingUnits?.inventoryUnit;
+            {rows && rows.length > 0 ? (() => {
+              // Group rows by splitGroupId (if split) or purchaseOrderItemId (if not split)
+              const groupedRows = rows.reduce((acc, row) => {
+                const groupKey = row.splitGroupId || row.purchaseOrderItemId;
+                if (!acc[groupKey]) {
+                  acc[groupKey] = [];
+                }
+                acc[groupKey].push(row);
+                return acc;
+              }, {} as Record<string, typeof rows>);
+
+              return Object.entries(groupedRows).map(([groupKey, groupRows]) => {
+                // Use the first row for header information
+                const firstRow = groupRows[0];
+                const convertedPricingUnit = firstRow?.tableHeadingUnits?.pricingUnit;
+                const convertedInventoryUnit = firstRow?.tableHeadingUnits?.inventoryUnit;
+                const isSplit = firstRow?.isSplit || false;
 
                 return (
-                  <Box key={row.purchaseOrderItemId || index} >
+                  <Box key={groupKey}>
                     {/* Name and Code Header */}
-                    {(row.name || row.code) && (
+                    {(firstRow.productName || firstRow.productCode) && (
                       <Box
                         sx={{
                           display: "flex",
@@ -216,7 +230,6 @@ const InventoryIntakeModal: React.FC<InventoryIntakeModalProps> = ({
                           alignItems: "center",
                           marginBottom: "6px",
                           borderRadius: "4px",
-
                         }}
                       >
                         <Typography
@@ -230,21 +243,31 @@ const InventoryIntakeModal: React.FC<InventoryIntakeModalProps> = ({
                             gap: "8px",
                           }}
                         >
-                          {row.name && <span>{row.name}</span>}
-                          {row.name && row.code && <span>-</span>}
-                          {row.code && <span>{row.code}</span>}
+                          {firstRow.productName && <span>{firstRow.productName}</span>}
+                          {firstRow.productName && firstRow.productCode && <span>-</span>}
+                          {firstRow.productCode && <span>{firstRow.productCode}</span>}
                         </Typography>
-                        {/* Split Inventory Packages Button */}
-                        <GomakePrimaryButton
-                          onClick={() => handleSplitInventoryPackages(row.purchaseOrderItemId)}
-                          style={{ width: "fit-content", height: "40px" }}
-                        >
-                          {t("sales.purchaseOrder.splitInventoryPackages")}
-                        </GomakePrimaryButton>
+                        {/* Split/Merge Inventory Packages Button */}
+                        {isSplit ? (
+                          <GomakePrimaryButton
+                            onClick={() => handleMergeInventoryPackages(firstRow.splitGroupId || firstRow.purchaseOrderItemId)}
+                            style={{ width: "fit-content", height: "40px" }}
+                          >
+                            {t("sales.purchaseOrder.mergeInventoryPackages")}
+                          </GomakePrimaryButton>
+                        ) : (
+                          <GomakePrimaryButton
+                            onClick={() => handleSplitInventoryPackages(firstRow.purchaseOrderItemId)}
+                            style={{ width: "fit-content", height: "40px" }}
+                            disabled={!firstRow.packagesQuantity || firstRow.packagesQuantity <= 1}
+                          >
+                            {t("sales.purchaseOrder.splitInventoryPackages")}
+                          </GomakePrimaryButton>
+                        )}
                       </Box>
                     )}
 
-                    {/* Item Table */}
+                    {/* Item Table - Show all rows in the same table */}
                     <TableContainer component={Paper} sx={classes.tableContainer}>
                       <Table sx={classes.table} stickyHeader>
                         <TableHead>
@@ -291,108 +314,106 @@ const InventoryIntakeModal: React.FC<InventoryIntakeModalProps> = ({
                           </TableRow>
                         </TableHead>
                         <TableBody>
-                          <TableRow sx={classes.bodyRow}>
-                            <TableCell sx={{ ...classes.bodyCell, ...classes.codeCell }}>
-                              <CodeInputCell
-                                row={row}
-                                onCodeUpdate={(newValue) => {
-                                  handleCodeUpdate(row.purchaseOrderItemId, newValue);
-                                }}
-                              />
-                            </TableCell>
-                            <TableCell sx={{ ...classes.bodyCell, ...classes.purchasePriceCell }}>
-                              <InventoryPriceInput
-                                value={
-                                  // Always display as array if both values exist, or if perUnit exists (perTon might be 0)
-                                  row.purchasePrice?.perUnit !== undefined
-                                    ? [
-                                      row.purchasePrice.perUnit || 0,
-                                      row.purchasePrice?.perTon !== undefined ? row.purchasePrice.perTon : 0
-                                    ]
-                                    : [0, 0]
-                                }
-                                isEditable={true}
-                                onUpdate={async (newValue, index) => {
-                                  // If index is provided, update individual price value
-                                  if (index !== undefined && index !== null) {
-                                    const currentPrice = row.purchasePrice;
-                                    const priceArray = [
-                                      index === 0 ? newValue : (currentPrice?.perUnit || 0),
-                                      index === 1 ? newValue : (currentPrice?.perTon || 0),
-                                    ];
-                                    await updateCellData(row.purchaseOrderItemId, "purchasePrice", priceArray[index], undefined, index);
-                                  } else {
-                                    await updateCellData(row.purchaseOrderItemId, "purchasePrice", newValue);
+                          {groupRows.map((row) => (
+                            <TableRow key={row.purchaseOrderItemId} sx={classes.bodyRow}>
+                              <TableCell sx={{ ...classes.bodyCell, ...classes.codeCell }}>
+                                <CodeInputCell
+                                  row={row}
+                                  onCodeUpdate={(newValue) => {
+                                    handleCodeUpdate(row.purchaseOrderItemId, newValue);
+                                  }}
+                                />
+                              </TableCell>
+                              <TableCell sx={{ ...classes.bodyCell, ...classes.purchasePriceCell }}>
+                                <InventoryPriceInput
+                                  value={
+                                    row.purchasePrice?.perUnit !== undefined
+                                      ? [
+                                        row.purchasePrice.perUnit || 0,
+                                        row.purchasePrice?.perTon !== undefined ? row.purchasePrice.perTon : 0
+                                      ]
+                                      : [0, 0]
                                   }
-                                }}
-                              />
-                            </TableCell>
-                            <TableCell sx={{ ...classes.bodyCell, ...classes.purchaseCurrencyCell }}>
-                              <InventoryCurrencyInput
-                                value={row.purchasePrice?.currency?.toLowerCase() || ''}
-                                isEditable={true}
-                                currencyLabel={t("materials.childTable.purchaseCurrency")}
-                                onUpdate={async (newValue, exchangeRate) => {
-                                  await updateCellData(row.purchaseOrderItemId, "purchaseCurrency", newValue, exchangeRate);
-                                }}
-                              />
-                            </TableCell>
-                            <TableCell sx={{ ...classes.bodyCell, ...classes.salePriceCell }}>
-                              <InventoryPriceInput
-                                value={
-                                  // Always display as array if both values exist, or if perUnit exists (perTon might be 0)
-                                  row.salePrice?.perUnit !== undefined
-                                    ? [
-                                      row.salePrice.perUnit || 0,
-                                      row.salePrice?.perTon !== undefined ? row.salePrice.perTon : 0
-                                    ]
-                                    : [0, 0]
-                                }
-                                isEditable={true}
-                                onUpdate={async (newValue, index) => {
-                                  // If index is provided, update individual price value
-                                  if (index !== undefined && index !== null) {
-                                    const currentPrice = row.salePrice;
-                                    const priceArray = [
-                                      index === 0 ? newValue : (currentPrice?.perUnit || 0),
-                                      index === 1 ? newValue : (currentPrice?.perTon || 0),
-                                    ];
-                                    await updateCellData(row.purchaseOrderItemId, "salePrice", priceArray[index], undefined, index);
-                                  } else {
-                                    await updateCellData(row.purchaseOrderItemId, "salePrice", newValue);
+                                  isEditable={true}
+                                  onUpdate={async (newValue, index) => {
+                                    if (index !== undefined && index !== null) {
+                                      const currentPrice = row.purchasePrice;
+                                      const priceArray = [
+                                        index === 0 ? newValue : (currentPrice?.perUnit || 0),
+                                        index === 1 ? newValue : (currentPrice?.perTon || 0),
+                                      ];
+                                      await updateCellData(row.purchaseOrderItemId, "purchasePrice", priceArray[index], undefined, index);
+                                    } else {
+                                      await updateCellData(row.purchaseOrderItemId, "purchasePrice", newValue);
+                                    }
+                                  }}
+                                />
+                              </TableCell>
+                              <TableCell sx={{ ...classes.bodyCell, ...classes.purchaseCurrencyCell }}>
+                                <InventoryCurrencyInput
+                                  value={row.purchasePrice?.currency?.toLowerCase() || ''}
+                                  isEditable={true}
+                                  currencyLabel={t("materials.childTable.purchaseCurrency")}
+                                  onUpdate={async (newValue, exchangeRate) => {
+                                    await updateCellData(row.purchaseOrderItemId, "purchaseCurrency", newValue, exchangeRate);
+                                  }}
+                                />
+                              </TableCell>
+                              <TableCell sx={{ ...classes.bodyCell, ...classes.salePriceCell }}>
+                                <InventoryPriceInput
+                                  value={
+                                    row.salePrice?.perUnit !== undefined
+                                      ? [
+                                        row.salePrice.perUnit || 0,
+                                        row.salePrice?.perTon !== undefined ? row.salePrice.perTon : 0
+                                      ]
+                                      : [0, 0]
                                   }
-                                }}
-                              />
-                            </TableCell>
-                            <TableCell sx={{ ...classes.bodyCell, ...classes.saleCurrencyCell }}>
-                              <InventoryCurrencyInput
-                                value={row.salePrice?.currency?.toLowerCase() || ''}
-                                isEditable={true}
-                                currencyLabel={t("materials.childTable.saleCurrency")}
-                                onUpdate={async (newValue, exchangeRate) => {
-                                  await updateCellData(row.purchaseOrderItemId, "saleCurrency", newValue, exchangeRate);
-                                }}
-                              />
-                            </TableCell>
-                            <TableCell sx={{ ...classes.bodyCell, ...classes.quantityCell }}>
-                              <TableCellData
-                                value={row.quantity?.toString() || ''}
-                                isEditable={false}
-                                type={EDataTypeEnum.NUMBER}
-                                id={row.purchaseOrderItemId}
-                                parameterKey="quantity"
-                                isAdmin={false}
-                                onChangeRowCheckBox={() => { }}
-                              />
-                            </TableCell>
-                          </TableRow>
+                                  isEditable={true}
+                                  onUpdate={async (newValue, index) => {
+                                    if (index !== undefined && index !== null) {
+                                      const currentPrice = row.salePrice;
+                                      const priceArray = [
+                                        index === 0 ? newValue : (currentPrice?.perUnit || 0),
+                                        index === 1 ? newValue : (currentPrice?.perTon || 0),
+                                      ];
+                                      await updateCellData(row.purchaseOrderItemId, "salePrice", priceArray[index], undefined, index);
+                                    } else {
+                                      await updateCellData(row.purchaseOrderItemId, "salePrice", newValue);
+                                    }
+                                  }}
+                                />
+                              </TableCell>
+                              <TableCell sx={{ ...classes.bodyCell, ...classes.saleCurrencyCell }}>
+                                <InventoryCurrencyInput
+                                  value={row.salePrice?.currency?.toLowerCase() || ''}
+                                  isEditable={true}
+                                  currencyLabel={t("materials.childTable.saleCurrency")}
+                                  onUpdate={async (newValue, exchangeRate) => {
+                                    await updateCellData(row.purchaseOrderItemId, "saleCurrency", newValue, exchangeRate);
+                                  }}
+                                />
+                              </TableCell>
+                              <TableCell sx={{ ...classes.bodyCell, ...classes.quantityCell }}>
+                                <TableCellData
+                                  value={row.quantity?.toString() || ''}
+                                  isEditable={false}
+                                  type={EDataTypeEnum.NUMBER}
+                                  id={row.purchaseOrderItemId}
+                                  parameterKey="quantity"
+                                  isAdmin={false}
+                                  onChangeRowCheckBox={() => { }}
+                                />
+                              </TableCell>
+                            </TableRow>
+                          ))}
                         </TableBody>
                       </Table>
                     </TableContainer>
                   </Box>
                 );
-              })
-            ) : (
+              });
+            })() : (
               <Box sx={{ padding: "40px", textAlign: "center" }}>
                 <Typography variant="body1" color="text.secondary">
                   {t("common.noData")}
