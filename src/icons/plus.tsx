@@ -1,4 +1,4 @@
-const PlusIcon = ({ ...props }) => {
+const PlusIcon = ({ color = "#ED028C", ...props }) => {
   return (
     <svg
       width={props.width || "16"}
@@ -9,14 +9,14 @@ const PlusIcon = ({ ...props }) => {
     >
       <path
         d="M4 8.61865H12"
-        stroke={props.stroke || "#ED028C"}
+        stroke={props.stroke || color}
         stroke-width="1.5"
         stroke-linecap="round"
         stroke-linejoin="round"
       />
       <path
         d="M8 12.6187V4.61865"
-        stroke={props.stroke || "#ED028C"}
+        stroke={props.stroke || color}
         stroke-width="1.5"
         stroke-linecap="round"
         stroke-linejoin="round"

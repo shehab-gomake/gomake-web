@@ -134,6 +134,8 @@ const CustomerCardWidget = ({
     defaultPaymentTerm,
     getAllShipmentTypes,
     shipmentTypes,
+    primaryColor,
+    secondaryColor,
   } = useCustomerCard({
     t,
     customer,
@@ -234,7 +236,7 @@ const CustomerCardWidget = ({
 
   const renderAddButton = (onClick, labelKey) => (
     <div style={classes.addNewStyle}>
-      <AddIcon onClick={onClick} />
+      <AddIcon onClick={onClick} color={primaryColor(500)} />
       <button style={classes.buttonsStyle} onClick={onClick}>
         {t(labelKey)}
       </button>
@@ -537,7 +539,7 @@ const CustomerCardWidget = ({
                     size="small"
                     sx={{ padding: "4px" }}
                   >
-                    <PlusIcon />
+                    <PlusIcon color={secondaryColor(500)} />
                   </IconButton>
                 </div>
                 {/* !here */}
@@ -584,12 +586,12 @@ const CustomerCardWidget = ({
                         ) || inputValue === ""
                           ? clientGroupList
                           : [
-                            {
-                              groupName: `Add "${inputValue}" as a new group`,
-                              id: "new",
-                            },
-                            ...clientGroupList,
-                          ]
+                              {
+                                groupName: `Add "${inputValue}" as a new group`,
+                                id: "new",
+                              },
+                              ...clientGroupList,
+                            ]
                       }
                       placeholder={t("products.profits.exceptions.groupBy")}
                       style={classes.dropDownListStyle}
