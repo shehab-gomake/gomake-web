@@ -1,6 +1,7 @@
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
+import { createGlobalStyle } from "styled-components";
 
 const useStyle = ({
   navStatus,
@@ -31,16 +32,21 @@ const useStyle = ({
         borderRadius: "0px",
         transition: "width 0.3s ease",
         overflow: "hidden",
+        display: "flex",
+        flexDirection: "column" as const,
       },
 
       // Header Section
       header: {
-        position: "absolute" as const,
-        width: navStatus?.isClosed ? "60px" : "183px",
-        height: "64px",
-        left: navStatus?.isClosed ? "0px" : "8px",
-        top: "16px",
-        display: "block", // Always show header, but with different content when closed
+        flexShrink: 0,
+        width: "100%",
+        minHeight: "64px",
+        padding: navStatus?.isClosed ? "0px" : "16px 0px",
+        paddingLeft: navStatus?.isClosed ? "0px" : "8px",
+        paddingRight: navStatus?.isClosed ? "0px" : "8px",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: navStatus?.isClosed ? "center" : "flex-start",
         transition: "all 0.3s ease",
       },
 
@@ -51,7 +57,6 @@ const useStyle = ({
         padding: navStatus?.isClosed ? "0px" : "0px 8px 12px",
         gap: navStatus?.isClosed ? "0px" : "12px",
         width: "100%",
-        height: "100%",
         justifyContent: navStatus?.isClosed ? "center" : "flex-start",
         position: "relative" as const,
       },
@@ -112,23 +117,25 @@ const useStyle = ({
 
       // Navigation Section
       navigation: {
-        position: "absolute" as const,
-        width: navStatus?.isClosed ? "59px" : "199px",
-        height: navStatus?.isClosed ? "729px" : "711px",
-        left: navStatus?.isClosed ? "0px" : "1px",
-        top: navStatus?.isClosed ? "64px" : "80px", // Below header when open, at 64px when closed
-        borderRadius: "0px",
+        flex: 1,
+        minHeight: 0, // Important for flexbox scrolling
+        width: "100%",
         overflowY: "auto" as const,
+        overflowX: "hidden" as const,
+        borderRadius: "0px",
         transition: "all 0.3s ease",
+        marginTop: navStatus?.isClosed ? "0px" : "18px", // Space between header and navigation only when open
       },
 
       menuContainer: {
-        padding: navStatus?.isClosed ? "16px 8px 0px" : "0px 8px",
+        padding: navStatus?.isClosed ? "0px 8px 16px" : "0px 8px 16px",
         display: "flex",
         flexDirection: "column" as const,
         gap: navStatus?.isClosed ? "4px" : "0px",
         alignItems: navStatus?.isClosed ? "center" : "flex-start", // Center when closed, left when open
         transition: "all 0.3s ease",
+        minHeight: "100%", // Ensure container takes full height for scrolling
+        paddingBottom: navStatus?.isClosed ? "16px" : "32px", // Less padding when closed, more when open for scrolling
       },
 
       // Collapse Button
@@ -175,5 +182,51 @@ const useStyle = ({
     classes,
   };
 };
+
+// Global styles for navigation scrollbar
+export const NavigationScrollbarStyles = createGlobalStyle`
+  .hp-navigation-scroll {
+    /* Firefox scrollbar - hide by default, show on hover */
+    scrollbar-width: thin;
+    scrollbar-color: transparent transparent;
+  }
+
+  .hp-navigation-scroll:hover {
+    scrollbar-color: #CCCDCF transparent;
+  }
+
+  /* Webkit scrollbar (Chrome, Safari, Edge) */
+  .hp-navigation-scroll::-webkit-scrollbar {
+    width: 6px;
+    display: none; /* Hide by default */
+  }
+
+  .hp-navigation-scroll:hover::-webkit-scrollbar {
+    display: block; /* Show on hover */
+  }
+
+  .hp-navigation-scroll::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .hp-navigation-scroll::-webkit-scrollbar-thumb {
+    background: transparent;
+    border-radius: 3px;
+    transition: background 0.2s ease;
+  }
+
+  .hp-navigation-scroll:hover::-webkit-scrollbar-thumb {
+    background: #CCCDCF;
+  }
+
+  .hp-navigation-scroll::-webkit-scrollbar-thumb:hover {
+    background: #A0A0A0;
+  }
+
+  /* Hide scrollbar arrows/buttons */
+  .hp-navigation-scroll::-webkit-scrollbar-button {
+    display: none;
+  }
+`;
 
 export { useStyle };

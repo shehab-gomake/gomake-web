@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { useStyle } from "./style";
+import { useStyle, NavigationScrollbarStyles } from "./style";
 import { HpTab } from "./tab";
 import { useAuthLayoutHook } from "@/layouts/customer-auth-layout/use-auth-layout-hook";
 import { useRecoilValue } from "recoil";
@@ -12,6 +12,7 @@ import { HpLogoIcon } from "@/themes/hp-client/icons/HpLogoIcon";
 
 const HpLeftSideLayout = ({ customGap }: { customGap?: number }) => {
   const { t } = useTranslation();
+  const isRTL = t("direction") === "rtl";
   const { tabs1, tabs2, tabs3, tabs4 } = useAuthLayoutHook(null, true);
   const [isSidebarClosed, setIsSidebarClosed] = useState(false);
   const { CheckPermission } = useUserPermission();
@@ -65,46 +66,32 @@ const HpLeftSideLayout = ({ customGap }: { customGap?: number }) => {
   const hasTabs4 = filterTabsWithPermission(tabs4).length > 0;
 
   return (
-    <div style={classes.sidebar}>
-      {/* Header Section */}
-      <div style={classes.header}>
-        <div style={classes.headerContent}>
-          {/* Logo Circle */}
-          <div style={classes.logoCircle}>
-            <HpLogoIcon />
-          </div>
-          {/* Company Name and Tagline */}
-          {!isSidebarClosed && (
-            <div style={classes.headerText}>
-              <div style={classes.companyName}>HP XXX</div>
-              <div style={classes.poweredBy}>powered by GoMake</div>
+    <>
+      <NavigationScrollbarStyles />
+      <div style={classes.sidebar}>
+        {/* Header Section */}
+        <div style={classes.header}>
+          <div style={classes.headerContent}>
+            {/* Logo Circle */}
+            <div style={classes.logoCircle}>
+              <HpLogoIcon />
             </div>
-          )}
+            {/* Company Name and Tagline */}
+            {!isSidebarClosed && (
+              <div style={classes.headerText}>
+                <div style={classes.companyName}>HP XXX</div>
+                <div style={classes.poweredBy}>powered by GoMake</div>
+              </div>
+            )}
+          </div>
         </div>
-      </div>
 
-      {/* Navigation Menu */}
-      <div style={classes.navigation}>
-        <div style={classes.menuContainer}>
-          {tabs1.map((tab, i) => {
-            if (tab.isLine) {
-              return null; // Skip lines in HP design
-            } else if (checkTabPermissions(tab)) {
-              return (
-                <div key={tab.key} data-tour={`${tab?.tourData}`}>
-                  <HpTab
-                    tab={tab}
-                    customGap={customGap}
-                    isSidebarClosed={isSidebarClosed}
-                  />
-                </div>
-              );
-            }
-          })}
-          {hasTabs2 &&
-            tabs2.map((tab, i) => {
+        {/* Navigation Menu */}
+        <div style={classes.navigation}>
+          <div style={classes.menuContainer}>
+            {tabs1.map((tab, i) => {
               if (tab.isLine) {
-                return null;
+                return null; // Skip lines in HP design
               } else if (checkTabPermissions(tab)) {
                 return (
                   <div key={tab.key} data-tour={`${tab?.tourData}`}>
@@ -117,82 +104,118 @@ const HpLeftSideLayout = ({ customGap }: { customGap?: number }) => {
                 );
               }
             })}
-          {hasTabs3 &&
-            tabs3.map((tab, i) => {
-              if (tab.isLine) {
-                return null;
-              } else if (checkTabPermissions(tab)) {
-                return (
-                  <div key={tab.key} data-tour={`${tab?.tourData}`}>
-                    <HpTab
-                      tab={tab}
-                      customGap={customGap}
-                      isSidebarClosed={isSidebarClosed}
-                    />
-                  </div>
-                );
-              }
-            })}
-          {hasTabs4 &&
-            tabs4.map((tab, i) => {
-              if (tab.isLine) {
-                return null;
-              } else if (checkTabPermissions(tab)) {
-                return (
-                  <div key={tab.key} data-tour={`${tab?.tourData}`}>
-                    <HpTab
-                      tab={tab}
-                      customGap={customGap}
-                      isSidebarClosed={isSidebarClosed}
-                    />
-                  </div>
-                );
-              }
-            })}
+            {hasTabs2 &&
+              tabs2.map((tab, i) => {
+                if (tab.isLine) {
+                  return null;
+                } else if (checkTabPermissions(tab)) {
+                  return (
+                    <div key={tab.key} data-tour={`${tab?.tourData}`}>
+                      <HpTab
+                        tab={tab}
+                        customGap={customGap}
+                        isSidebarClosed={isSidebarClosed}
+                      />
+                    </div>
+                  );
+                }
+              })}
+            {hasTabs3 &&
+              tabs3.map((tab, i) => {
+                if (tab.isLine) {
+                  return null;
+                } else if (checkTabPermissions(tab)) {
+                  return (
+                    <div key={tab.key} data-tour={`${tab?.tourData}`}>
+                      <HpTab
+                        tab={tab}
+                        customGap={customGap}
+                        isSidebarClosed={isSidebarClosed}
+                      />
+                    </div>
+                  );
+                }
+              })}
+            {hasTabs4 &&
+              tabs4.map((tab, i) => {
+                if (tab.isLine) {
+                  return null;
+                } else if (checkTabPermissions(tab)) {
+                  return (
+                    <div key={tab.key} data-tour={`${tab?.tourData}`}>
+                      <HpTab
+                        tab={tab}
+                        customGap={customGap}
+                        isSidebarClosed={isSidebarClosed}
+                      />
+                    </div>
+                  );
+                }
+              })}
+          </div>
         </div>
-      </div>
 
-      {/* Divider (only visible when closed) */}
-      {isSidebarClosed && (
+        {/* Collapse Button Section */}
         <div
           style={{
-            position: "absolute",
-            width: "59px",
-            height: "1px",
-            left: "0px",
-            top: "845px",
-            background: "#E0E0E0",
+            flexShrink: 0,
+            padding: "28px 0px",
+            paddingLeft: isSidebarClosed ? "16px" : "0px",
+            paddingRight: isSidebarClosed ? "16px" : "0px",
+            display: "flex",
+            justifyContent: isSidebarClosed
+              ? "center"
+              : isRTL
+              ? "flex-start"
+              : "flex-end",
+            alignItems: "center",
+            borderTop: isSidebarClosed ? "1px solid #E0E0E0" : "none",
+            position: "relative" as const,
+            // marginTop: "18px",
           }}
-        />
-      )}
+        >
+          {/* Divider (only visible when closed) */}
+          {isSidebarClosed && (
+            <div
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                height: "1px",
+                background: "#E0E0E0",
+              }}
+            />
+          )}
 
-      {/* Collapse Button */}
-      <div
-        style={{
-          position: "absolute",
-          ...(isSidebarClosed
-            ? { left: "16px", right: "auto" }
-            : adaptRight(t("direction"), 172)),
-          top: 864,
-          cursor: "pointer",
-          background: "transparent",
-          padding: "4px",
-          borderRadius: "32px",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          width: "28px",
-          height: "28px",
-          border: "1px solid #024AD8",
-          transition: "all 0.3s ease",
-        }}
-        onClick={() => {
-          setIsSidebarClosed(!isSidebarClosed);
-        }}
-      >
-        <HpArrowIcon isOpen={isSidebarClosed} />
+          {/* Collapse Button */}
+          <div
+            style={{
+              ...(isSidebarClosed
+                ? { margin: "0 auto" }
+                : isRTL
+                ? { marginLeft: "18px", marginRight: "auto" }
+                : { marginLeft: "auto", marginRight: "18px" }),
+              cursor: "pointer",
+              background: "transparent",
+              padding: "4px",
+              borderRadius: "32px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              width: "28px",
+              height: "28px",
+              border: "1px solid #024AD8",
+              transition: "all 0.3s ease",
+            }}
+            onClick={() => {
+              setIsSidebarClosed(!isSidebarClosed);
+            }}
+          >
+            <HpArrowIcon isOpen={isSidebarClosed} />
+          </div>
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

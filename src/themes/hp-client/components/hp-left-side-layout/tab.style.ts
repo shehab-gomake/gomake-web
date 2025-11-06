@@ -14,6 +14,7 @@ import Link from "next/link";
 // Styled Menu Item with hover support
 const StyledMenuItem = styled.div<{
   $isSelected: boolean;
+  $isListOpen?: boolean;
   $isClosed: boolean;
 }>`
   display: flex;
@@ -25,7 +26,12 @@ const StyledMenuItem = styled.div<{
   isolation: isolate;
   width: ${(props) => (props.$isClosed ? "43px" : "183px")};
   height: 40px;
-  background: ${(props) => (props.$isSelected ? "#B2D2FF" : "transparent")};
+  background: ${(props) =>
+    props.$isSelected
+      ? "#B2D2FF"
+      : props.$isListOpen
+      ? "rgba(178, 210, 255, 0.3)"
+      : "transparent"};
   border-radius: 12px;
   cursor: pointer;
   position: relative;

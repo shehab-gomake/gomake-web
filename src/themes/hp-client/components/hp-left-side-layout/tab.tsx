@@ -153,6 +153,7 @@ const HpTab = ({ tab, customGap, isSidebarClosed = false }: IProps) => {
         <>
           <StyledMenuItem
             $isSelected={isSelected}
+            $isListOpen={isListOpen}
             $isClosed={isSidebarClosed}
             onClick={onClickTab}
             onMouseDown={(e) => handleOpenInNewTab(tab.path, e)}
