@@ -30,6 +30,14 @@ const useStyle = () => {
       pageTitle: {
         ...FONT_FAMILY.Inter(600, 24),
         color: primaryColor(900),
+        marginBottom: 0,
+        marginTop: 0,
+        lineHeight: 1,
+      },
+      titleContainer: {
+        display: "flex",
+        alignItems: "center",
+        gap: 16,
         marginBottom: 20,
       },
       contentWrapper: {
