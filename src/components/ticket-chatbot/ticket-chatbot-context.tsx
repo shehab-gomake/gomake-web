@@ -30,6 +30,15 @@ export const TicketChatbotProvider = ({ children }: { children: ReactNode }) => 
 export const useTicketChatbot = () => {
   const context = useContext(TicketChatbotContext);
   if (!context) {
+    // During SSR, provide a default context to prevent errors
+    if (typeof window === 'undefined') {
+      return {
+        isOpen: false,
+        openChatbot: () => {},
+        closeChatbot: () => {},
+        toggleChatbot: () => {},
+      };
+    }
     throw new Error(
       "useTicketChatbot must be used within TicketChatbotProvider"
     );
