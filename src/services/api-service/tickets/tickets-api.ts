@@ -13,6 +13,7 @@ export interface Ticket {
   priority: string;
   title: string;
   description?: string;
+  summary?: string; // AI-generated summary for ticket tabs
   createdAt: string;
   updatedAt: string;
   createdBy: string;
