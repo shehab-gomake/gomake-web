@@ -387,8 +387,8 @@ const useSetupGuideMenu = ({
                 StepStatus.DONE
               );
             }
-            handleGoSupportClick("articles");
-            setIsExpanded(false);
+            navigate("/help-center");
+            collapseMenu();
           },
         },
         {

@@ -21,6 +21,8 @@ import { SystemNotifications } from "@/widgets/system-notifications-widget/syste
 import { SystemHelp } from "./components/system-help-and-support-widget/system-help-and-support-widget";
 import { TrialIndicator } from "@/components";
 import { GoSupportChatWidget } from "@/components/chat-bot/go-support-chat-widget";
+import { useTicketChatbot } from "@/components/ticket-chatbot";
+import HeadsetMicOutlinedIcon from "@mui/icons-material/HeadsetMicOutlined";
 
 export const CustomTooltip = styled(({ className, ...props }: TooltipProps) => (
   <Tooltip {...props} arrow classes={{ popper: className }} />
@@ -44,6 +46,7 @@ const HeaderWidget = ({ customStyle }: { customStyle?: React.CSSProperties }) =>
   const [QuoteIfExist] = useRecoilState<any>(QuoteIfExistState);
   const { t, user, open, anchorEl, handleClick, handleClose, navigate } =
     useHeader();
+  const { openChatbot } = useTicketChatbot();
 
   const userAvatar = () => {
     return !!userProfile.imagePath ? (
@@ -79,8 +82,17 @@ const HeaderWidget = ({ customStyle }: { customStyle?: React.CSSProperties }) =>
             <CartIcon />
           </IconButton>
         )}
-        <CustomTooltip title={t("Support Chat")} arrow placement="bottom">
+        {/* <CustomTooltip title={t("Support Chat")} arrow placement="bottom">
           <GoSupportChatWidget />
+        </CustomTooltip>*/}
+
+        <CustomTooltip title={t("tickets.support") || "Support Desk"} arrow placement="bottom">
+          <IconButton
+            style={{ backgroundColor: "#f6f6f6", padding: "8px" }}
+            onClick={openChatbot}
+          >
+            <HeadsetMicOutlinedIcon style={{ width: 22, height: 22, color: "#2e3092" }} />
+          </IconButton>
         </CustomTooltip>
 
         <SystemHelp />

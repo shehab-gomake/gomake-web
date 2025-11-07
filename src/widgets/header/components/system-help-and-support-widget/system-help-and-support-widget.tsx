@@ -78,7 +78,7 @@ const SystemHelp = () => {
     },
     {
       name: t("header.guideAndTutorial"),
-      onclick: () => handleGoSupportClick("articles"),
+      onclick: () => navigate("/help-center"),
     },
     {
       name: t("header.whatsNew"),
