@@ -24,18 +24,11 @@ export default function MyTickets() {
     handleCreateTicket,
   } = useMyTickets();
 
-  const handleRowClick = (row: any[]) => {
-    const rowIndex = getTicketsRows().indexOf(row);
-    if (rowIndex >= 0 && rowIndex < tickets.length) {
-      setSelectedTicket(tickets[rowIndex]);
-    }
-  };
-
   return (
     <CustomerAuthLayout>
-      <Stack direction="column" className={classes.mainContainer}>
+      <Stack direction="column" sx={classes.mainContainer}>
         <Stack direction="row" justifyContent="space-between" alignItems="center">
-          <h1 className={classes.title}>{t("tabs.myTickets")}</h1>
+          <h1 style={classes.title}>{t("tabs.myTickets")}</h1>
           <AddTicketButton onClick={() => setIsModalOpen(true)} />
         </Stack>
 
@@ -43,10 +36,8 @@ export default function MyTickets() {
           stickyFirstCol={false}
           stickyHeader={true}
           rows={getTicketsRows()}
-          header={tableHeaders}
+          headers={tableHeaders}
           maxHeight={600}
-          loading={loading}
-          onClickRow={handleRowClick}
         />
 
         <CreateTicketModal
