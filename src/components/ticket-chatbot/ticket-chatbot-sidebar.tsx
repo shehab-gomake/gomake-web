@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import {
   Box,
   Paper,
@@ -37,6 +37,8 @@ import { useTicketChatSocket } from "./use-ticket-chat-socket";
 import { useRemoteSessionSocket } from "./use-remote-session-socket";
 import { useWebRTCSender } from "./use-webrtc-sender";
 import DrawingOverlay, { applyDrawingToOverlay } from "./DrawingOverlay";
+import io, { Socket } from "socket.io-client";
+import config from "@/config";
 
 interface TicketChatbotSidebarProps {
   isOpen: boolean;
@@ -167,6 +169,96 @@ export const TicketChatbotSidebar = ({
 
   // Use Socket.IO hook to listen for new messages
   useTicketChatSocket(currentTicket?.id, sentMessageIdsRef, handleSocketMessage);
+
+  // Memoize ticket IDs to avoid unnecessary re-renders
+  const ticketIds = useMemo(() => 
+    tickets.filter(t => t.id).map(t => t.id!),
+    [tickets]
+  );
+
+  // Listen for ticket summary updates via Socket.IO
+  useEffect(() => {
+    if (!isOpen || ticketIds.length === 0) return;
+
+    const socket: Socket = io(config.api_server, {
+      transports: ["websocket", "polling"],
+    });
+
+    socket.on("connect", () => {
+      console.log("Ticket summary socket connected:", socket.id);
+    });
+
+    // Listen for summary updates for all tickets
+    const handleSummaryUpdate = (updatedTicket: Ticket) => {
+      console.log("📝 Summary update received for ticket:", updatedTicket.id, updatedTicket.summary);
+      setTickets((prev) =>
+        prev.map((t) => (t.id === updatedTicket.id ? updatedTicket : t))
+      );
+      
+      // If this is the current ticket, update it as well
+      setCurrentTicket((prev) => {
+        if (prev?.id === updatedTicket.id) {
+          return updatedTicket;
+        }
+        return prev;
+      });
+    };
+
+    // Subscribe to summary update events for all tickets
+    ticketIds.forEach((ticketId) => {
+      socket.on(`ticket:${ticketId}:summary_updated`, handleSummaryUpdate);
+      socket.on(`ticket_updated_${ticketId}`, handleSummaryUpdate);
+    });
+
+    return () => {
+      ticketIds.forEach((ticketId) => {
+        socket.off(`ticket:${ticketId}:summary_updated`, handleSummaryUpdate);
+        socket.off(`ticket_updated_${ticketId}`, handleSummaryUpdate);
+      });
+      socket.disconnect();
+    };
+  }, [isOpen, ticketIds]);
+
+  // Listen for new ticket creation events (when user asks about different topic)
+  useEffect(() => {
+    if (!isOpen || (!userProfile?.userId && !userProfile?.id)) return;
+
+    const userId = userProfile?.userId || userProfile?.id;
+    if (!userId) return;
+
+    const socket: Socket = io(config.api_server, {
+      transports: ["websocket", "polling"],
+    });
+
+    socket.on("connect", () => {
+      console.log("New ticket creation socket connected:", socket.id);
+    });
+
+    const handleNewTicketCreated = async (data: {
+      oldTicketId: number;
+      newTicketId: number;
+      newTicket: Ticket;
+    }) => {
+      console.log("🆕 New ticket created for different issue:", data);
+      
+      // Refresh tickets list to include the new ticket
+      await fetchTickets();
+      
+      // Switch to the new ticket
+      if (data.newTicket.id) {
+        await loadTicketMessages(data.newTicket.id);
+        console.log("✅ Switched to new ticket:", data.newTicket.id);
+      }
+    };
+
+    // Listen for new ticket creation event for this user
+    socket.on(`user:${userId}:new_ticket_created`, handleNewTicketCreated);
+
+    return () => {
+      socket.off(`user:${userId}:new_ticket_created`, handleNewTicketCreated);
+      socket.disconnect();
+    };
+  }, [isOpen, userProfile?.userId, userProfile?.id, fetchTickets, loadTicketMessages]);
 
   // Set up remote session socket
   const senderRef = useRef<ReturnType<typeof useWebRTCSender> | null>(null);
@@ -565,7 +657,7 @@ export const TicketChatbotSidebar = ({
                         maxWidth: 150,
                       }}
                     >
-                      {ticket.title}
+                      {ticket.summary || ticket.title}
                     </Typography>
                     <Chip
                       label={ticket.status}
