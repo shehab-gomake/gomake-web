@@ -3,7 +3,7 @@ import { QuoteIfExistState } from "@/pages-components/quote-new/store/quote";
 import { useMemo } from "react";
 import { useRecoilState } from "recoil";
 
-const useStyle = (isRtl: boolean, hasFrontDeskPermission: boolean = false) => {
+const useStyle = (isRtl: boolean, hasFrontDeskPermission: boolean = false, isChatbotOpen: boolean = false) => {
   const { primaryColor, theme, grayColor } = useGomakeTheme();
   const [QuoteIfExist] = useRecoilState<any>(QuoteIfExistState);
 
@@ -37,6 +37,11 @@ const useStyle = (isRtl: boolean, hasFrontDeskPermission: boolean = false) => {
           // Add frontDesk icon width if user has permission
           if (hasFrontDeskPermission) {
             margin += 45;
+          }
+
+          // Add chatbot sidebar width (default 500px) if chatbot is open
+          if (isChatbotOpen) {
+            margin += 500;
           }
 
           return `${margin}px`;
@@ -106,7 +111,7 @@ const useStyle = (isRtl: boolean, hasFrontDeskPermission: boolean = false) => {
         },
       },
     };
-  }, [theme, isRtl, QuoteIfExist, hasFrontDeskPermission]);
+  }, [theme, isRtl, QuoteIfExist, hasFrontDeskPermission, isChatbotOpen]);
 
   return {
     classes,

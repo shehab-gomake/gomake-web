@@ -22,6 +22,7 @@ import { CustomerCardWidget } from "@/widgets/customer-card-modal";
 import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 import { useUserPermission } from "@/hooks/use-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
+import { useTicketChatbot } from "@/components/ticket-chatbot";
 
 interface SetupGuideMenuProps {
   handleOpenModal: () => void;
@@ -77,8 +78,11 @@ export const SetupGuideMenu = ({
   // Check FrontDesk permission for header spacing calculation
   const { CheckPermission } = useUserPermission();
   const hasFrontDeskPermission = CheckPermission(Permissions.SHOW_FRONT_DESK);
+  
+  // Check if chatbot is open to adjust button position
+  const { isOpen: isChatbotOpen } = useTicketChatbot();
 
-  const { classes } = useStyle(isRtl, hasFrontDeskPermission);
+  const { classes } = useStyle(isRtl, hasFrontDeskPermission, isChatbotOpen);
   const nextStep = findNextStep(steps);
 
   useEffect(() => {
