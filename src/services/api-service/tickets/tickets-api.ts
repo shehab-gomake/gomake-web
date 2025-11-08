@@ -80,3 +80,23 @@ export const addTicketMessage = async (
   return res?.data;
 };
 
+// Notification API functions
+export const markTicketAsRead = async (callApi: any, ticketId: number): Promise<void> => {
+  await callApi("POST", `/api/tickets/${ticketId}/mark-read`, {});
+};
+
+export const getUnreadTicketCount = async (callApi: any): Promise<number> => {
+  const res = await callApi("GET", "/api/tickets/unread-count");
+  return res?.data?.unreadCount || 0;
+};
+
+export const getUnreadTicketIds = async (callApi: any): Promise<number[]> => {
+  const res = await callApi("GET", "/api/tickets/unread-ids");
+  return res?.data?.ticketIds || [];
+};
+
+export const getFirstUnreadTicketId = async (callApi: any): Promise<number | null> => {
+  const res = await callApi("GET", "/api/tickets/first-unread");
+  return res?.data?.ticketId || null;
+};
+

@@ -11,7 +11,14 @@ import Head from "next/head";
 import { useEffect } from "react";
 import { useCustomerAuthLayout } from "./use-customer-auth-layout";
 import { useTrialRedirect } from "@/hooks/use-trial-redirect";
-import { TicketChatbotSidebar, TicketChatbotProvider, useTicketChatbot } from "@/components/ticket-chatbot";
+import { 
+  TicketChatbotSidebar, 
+  TicketChatbotProvider, 
+  useTicketChatbot,
+  RequestNotificationProvider,
+  RequestNotificationModal,
+  useGlobalRequestListener,
+} from "@/components/ticket-chatbot";
 
 const CustomerAuthLayoutInner = ({
   children,
@@ -26,6 +33,9 @@ const CustomerAuthLayoutInner = ({
 }: IAuthLayout) => {
   const isMobileScreen = useMediaQuery("(max-width:768px)");
   const { isOpen, closeChatbot } = useTicketChatbot();
+  
+  // Set up global request listener (works even when chatbot is closed)
+  useGlobalRequestListener();
 
   const {
     profile,
@@ -192,6 +202,8 @@ const CustomerAuthLayoutInner = ({
           withCancelBtn={false}
         />
       )}
+      {/* Request notification modal for huddle and remote session */}
+      <RequestNotificationModal />
     </>
   );
 };
@@ -199,7 +211,9 @@ const CustomerAuthLayoutInner = ({
 const CustomerAuthLayout = (props: IAuthLayout) => {
   return (
     <TicketChatbotProvider>
-      <CustomerAuthLayoutInner {...props} />
+      <RequestNotificationProvider>
+        <CustomerAuthLayoutInner {...props} />
+      </RequestNotificationProvider>
     </TicketChatbotProvider>
   );
 };

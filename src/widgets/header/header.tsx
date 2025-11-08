@@ -6,6 +6,7 @@ import {
   Tooltip,
   tooltipClasses,
   TooltipProps,
+  Badge,
 } from "@mui/material";
 import { EditIcon } from "@/icons";
 import { useStyle } from "./style";
@@ -21,7 +22,7 @@ import { SystemNotifications } from "@/widgets/system-notifications-widget/syste
 import { SystemHelp } from "./components/system-help-and-support-widget/system-help-and-support-widget";
 import { TrialIndicator } from "@/components";
 import { GoSupportChatWidget } from "@/components/chat-bot/go-support-chat-widget";
-import { useTicketChatbot } from "@/components/ticket-chatbot";
+import { useTicketChatbot, useTicketNotifications } from "@/components/ticket-chatbot";
 import HeadsetMicOutlinedIcon from "@mui/icons-material/HeadsetMicOutlined";
 
 export const CustomTooltip = styled(({ className, ...props }: TooltipProps) => (
@@ -47,6 +48,7 @@ const HeaderWidget = ({ customStyle }: { customStyle?: React.CSSProperties }) =>
   const { t, user, open, anchorEl, handleClick, handleClose, navigate } =
     useHeader();
   const { openChatbot } = useTicketChatbot();
+  const { unreadCount } = useTicketNotifications();
 
   const userAvatar = () => {
     return !!userProfile.imagePath ? (
@@ -91,7 +93,21 @@ const HeaderWidget = ({ customStyle }: { customStyle?: React.CSSProperties }) =>
             style={{ backgroundColor: "#f6f6f6", padding: "8px" }}
             onClick={openChatbot}
           >
-            <HeadsetMicOutlinedIcon style={{ width: 22, height: 22, color: "#2e3092" }} />
+            <Badge
+              badgeContent={unreadCount}
+              color="error"
+              sx={{
+                "& .MuiBadge-badge": {
+                  fontSize: "0.7rem",
+                  height: 18,
+                  minWidth: 18,
+                  right: 4,
+                  top: 4,
+                },
+              }}
+            >
+              <HeadsetMicOutlinedIcon style={{ width: 22, height: 22, color: "#2e3092" }} />
+            </Badge>
           </IconButton>
         </CustomTooltip>
 
