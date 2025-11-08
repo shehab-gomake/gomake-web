@@ -31,6 +31,8 @@ import VideoFileIcon from "@mui/icons-material/VideoFile";
 import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
 import DownloadIcon from "@mui/icons-material/Download";
 import CameraAltIcon from "@mui/icons-material/CameraAlt";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { useTranslation } from "react-i18next";
 import { useRecoilValue } from "recoil";
 import { userProfileState } from "@/store/user-profile";
@@ -80,6 +82,8 @@ export const TicketChatbotSidebar = ({
 }: TicketChatbotSidebarProps) => {
   const { t } = useTranslation();
   const { primaryColor, secondColor, neutralColor, grayColor } = useGomakeTheme();
+  const direction: "rtl" | "ltr" = t("direction") || "ltr";
+  const isRTL = direction === "rtl";
   const [width, setWidth] = useState(DEFAULT_WIDTH);
   const [isResizing, setIsResizing] = useState(false);
   const [messages, setMessages] = useState<TicketMessage[]>([]);
@@ -112,6 +116,8 @@ export const TicketChatbotSidebar = ({
   const huddleRequestRef = useRef<HTMLDivElement>(null);
   const sentMessageIdsRef = useRef<Set<number>>(new Set());
   const sidebarRef = useRef<HTMLDivElement>(null);
+  const tabsRef = useRef<HTMLDivElement>(null);
+  const tabsScrollContainerRef = useRef<HTMLElement | null>(null);
   const userProfile = useRecoilValue(userProfileState);
   const printHouse = useRecoilValue(printHouseProfile);
   const { callApi } = useGomakeAxios();
@@ -1052,6 +1058,34 @@ export const TicketChatbotSidebar = ({
     // Shift+Enter also creates a new line (default behavior)
   };
 
+  // Store tabs container ref for RTL custom scroll buttons
+  useEffect(() => {
+    if (!isRTL || !tabsRef.current) return;
+    
+    const updateRef = () => {
+      const tabsContainer = tabsRef.current?.querySelector('.MuiTabs-scrollableContainer') as HTMLElement;
+      if (tabsContainer) {
+        tabsScrollContainerRef.current = tabsContainer;
+      }
+    };
+    
+    updateRef();
+    const timeoutId = setTimeout(updateRef, 100);
+    
+    const observer = new MutationObserver(updateRef);
+    if (tabsRef.current) {
+      observer.observe(tabsRef.current, {
+        childList: true,
+        subtree: true
+      });
+    }
+    
+    return () => {
+      clearTimeout(timeoutId);
+      observer.disconnect();
+    };
+  }, [isRTL, tickets.length]);
+
   // Resize handlers
   const handleMouseDown = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -1065,7 +1099,11 @@ export const TicketChatbotSidebar = ({
       if (!sidebarRef.current) return;
       
       const containerRect = sidebarRef.current.getBoundingClientRect();
-      const newWidth = containerRect.right - e.clientX;
+      // In RTL, sidebar is on the right, so calculate width from left edge
+      // In LTR, sidebar is on the left, so calculate width from right edge
+      const newWidth = isRTL 
+        ? e.clientX - containerRect.left 
+        : containerRect.right - e.clientX;
       const clampedWidth = Math.max(MIN_WIDTH, Math.min(MAX_WIDTH, newWidth));
       setWidth(clampedWidth);
     };
@@ -1114,15 +1152,20 @@ export const TicketChatbotSidebar = ({
       />
       <Box
         ref={sidebarRef}
+        dir={direction}
         sx={{
           width: `${width}px`,
           height: "100%",
           display: "flex",
           flexDirection: "column",
           backgroundColor: "white",
-          borderLeft: `1px solid ${neutralColor(200)}`,
+          ...(isRTL 
+            ? { borderRight: `1px solid ${neutralColor(200)}` }
+            : { borderLeft: `1px solid ${neutralColor(200)}` }
+          ),
           position: "relative",
           flexShrink: 0,
+          direction,
         }}
       >
         {/* Resize handle */}
@@ -1130,7 +1173,7 @@ export const TicketChatbotSidebar = ({
           onMouseDown={handleMouseDown}
           sx={{
             position: "absolute",
-            left: 0,
+            ...(isRTL ? { right: 0 } : { left: 0 }),
             top: 0,
             width: "4px",
             height: "100%",
@@ -1145,6 +1188,7 @@ export const TicketChatbotSidebar = ({
 
         {/* Header */}
         <Box
+          dir={direction}
           sx={{
             backgroundColor: primaryColor(500),
             color: "white",
@@ -1153,6 +1197,8 @@ export const TicketChatbotSidebar = ({
             alignItems: "center",
             justifyContent: "space-between",
             minHeight: 64,
+            direction,
+            flexDirection: isRTL ? "row-reverse" : "row",
           }}
         >
           <Stack direction="row" spacing={1} alignItems="center">
@@ -1167,18 +1213,52 @@ export const TicketChatbotSidebar = ({
         </Box>
 
         {/* Tabs for Ticket History */}
-        <Box sx={{ borderBottom: 1, borderColor: "divider", backgroundColor: "white" }}>
+        <Box 
+          ref={tabsRef}
+          sx={{ 
+            borderBottom: 1, 
+            borderColor: "divider", 
+            backgroundColor: "white", 
+            direction,
+            position: "relative"
+          }}
+          dir={direction}
+        >
           <Tabs
             value={getCurrentTabIndex()}
             onChange={handleTabChange}
             variant="scrollable"
             scrollButtons="auto"
+            dir={direction}
             sx={{
               minHeight: 48,
+              position: "relative",
+              direction,
               "& .MuiTab-root": {
                 minHeight: 48,
                 textTransform: "none",
                 fontSize: "0.875rem",
+              },
+              // Hide Material-UI scroll buttons (we use custom ones)
+              "& .MuiTabs-scrollButtons": {
+                display: "none !important",
+                visibility: "hidden",
+                pointerEvents: "none",
+              },
+              // Add padding to scrollable container to prevent buttons from overlaying tabs
+              // Use logical properties for better RTL support
+              "& .MuiTabs-scrollableContainer": {
+                paddingInlineStart: "40px",
+                paddingInlineEnd: "40px",
+              },
+              // Add margin to first and last tabs for extra spacing
+              "& .MuiTabs-flexContainer": {
+                "& .MuiTab-root:first-of-type": {
+                  marginInlineStart: "40px",
+                },
+                "& .MuiTab-root:last-of-type": {
+                  marginInlineEnd: "40px",
+                },
               },
             }}
           >
@@ -1234,20 +1314,194 @@ export const TicketChatbotSidebar = ({
               );
             })}
           </Tabs>
+          
+          {/* Custom scroll buttons - placed after Tabs to ensure DOM is ready */}
+          <>
+            <IconButton
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                if (e.nativeEvent && typeof e.nativeEvent.stopImmediatePropagation === 'function') {
+                  e.nativeEvent.stopImmediatePropagation();
+                }
+                
+                // Find the scroll container - try multiple selectors
+                let container = tabsRef.current?.querySelector('.MuiTabs-scrollableContainer') as HTMLElement;
+                if (!container) {
+                  container = tabsRef.current?.querySelector('[role="tablist"]')?.parentElement as HTMLElement;
+                }
+                if (!container) {
+                  container = tabsRef.current?.querySelector('.MuiTabs-flexContainer')?.parentElement as HTMLElement;
+                }
+                
+                // Try to find the actual scrollable element by checking overflow
+                if (!container || container.scrollWidth <= container.clientWidth) {
+                  const allElements = tabsRef.current?.querySelectorAll('*') || [];
+                  for (const el of Array.from(allElements)) {
+                    const htmlEl = el as HTMLElement;
+                    const style = window.getComputedStyle(htmlEl);
+                    if ((style.overflowX === 'auto' || style.overflowX === 'scroll') && 
+                        htmlEl.scrollWidth > htmlEl.clientWidth) {
+                      container = htmlEl;
+                      break;
+                    }
+                  }
+                }
+                
+                if (!container) {
+                  console.error('Scroll container not found.');
+                  return;
+                }
+                
+                // Set direction on container
+                container.setAttribute('dir', direction);
+                
+                const scrollAmount = 200;
+                const currentScroll = container.scrollLeft;
+                const maxScroll = container.scrollWidth - container.clientWidth;
+                
+                if (isRTL) {
+                  // In RTL: scrollLeft can be negative!
+                  // scrollLeft = 0 is rightmost (start), scrollLeft = -maxScroll is leftmost (end)
+                  // LEFT button should scroll LEFT = reveal content on the left = DECREASE scrollLeft (make it more negative)
+                  const minScroll = -maxScroll;
+                  if (currentScroll > minScroll) {
+                    container.scrollBy({
+                      left: -scrollAmount,
+                      behavior: 'smooth'
+                    });
+                  }
+                } else {
+                  // In LTR: scrollLeft = 0 is leftmost, scrollLeft = maxScroll is rightmost
+                  // LEFT button should scroll LEFT = DECREASE scrollLeft
+                  if (currentScroll > 0) {
+                    container.scrollBy({
+                      left: -scrollAmount,
+                      behavior: 'smooth'
+                    });
+                  }
+                }
+              }}
+              sx={{
+                position: "absolute",
+                left: 0,
+                top: 0,
+                height: 48,
+                zIndex: 100,
+                backgroundColor: "white",
+                borderRadius: 0,
+                width: 40,
+                minWidth: 40,
+                borderRight: `1px solid ${neutralColor(200)}`,
+                pointerEvents: "auto",
+                "&:hover": {
+                  backgroundColor: neutralColor(100),
+                },
+              }}
+            >
+              <ChevronLeftIcon />
+            </IconButton>
+            <IconButton
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                if (e.nativeEvent && typeof e.nativeEvent.stopImmediatePropagation === 'function') {
+                  e.nativeEvent.stopImmediatePropagation();
+                }
+                
+                // Find the scroll container - try multiple selectors
+                let container = tabsRef.current?.querySelector('.MuiTabs-scrollableContainer') as HTMLElement;
+                if (!container) {
+                  container = tabsRef.current?.querySelector('[role="tablist"]')?.parentElement as HTMLElement;
+                }
+                if (!container) {
+                  container = tabsRef.current?.querySelector('.MuiTabs-flexContainer')?.parentElement as HTMLElement;
+                }
+                
+                // Try to find the actual scrollable element by checking overflow
+                if (!container || container.scrollWidth <= container.clientWidth) {
+                  const allElements = tabsRef.current?.querySelectorAll('*') || [];
+                  for (const el of Array.from(allElements)) {
+                    const htmlEl = el as HTMLElement;
+                    const style = window.getComputedStyle(htmlEl);
+                    if ((style.overflowX === 'auto' || style.overflowX === 'scroll') && 
+                        htmlEl.scrollWidth > htmlEl.clientWidth) {
+                      container = htmlEl;
+                      break;
+                    }
+                  }
+                }
+                
+                if (!container) {
+                  console.error('Scroll container not found.');
+                  return;
+                }
+                
+                // Set direction on container
+                container.setAttribute('dir', direction);
+                
+                const scrollAmount = 200;
+                const currentScroll = container.scrollLeft;
+                const maxScroll = container.scrollWidth - container.clientWidth;
+                
+                if (isRTL) {
+                  // In RTL: scrollLeft can be negative!
+                  // scrollLeft = 0 is rightmost (start), scrollLeft = -maxScroll is leftmost (end)
+                  // RIGHT button should scroll RIGHT = reveal content on the right = INCREASE scrollLeft (make it less negative, towards 0)
+                  if (currentScroll < 0) {
+                    container.scrollBy({
+                      left: scrollAmount,
+                      behavior: 'smooth'
+                    });
+                  }
+                } else {
+                  // In LTR: scrollLeft = 0 is leftmost, scrollLeft = maxScroll is rightmost
+                  // RIGHT button should scroll RIGHT = INCREASE scrollLeft
+                  if (currentScroll < maxScroll) {
+                    container.scrollBy({
+                      left: scrollAmount,
+                      behavior: 'smooth'
+                    });
+                  }
+                }
+              }}
+              sx={{
+                position: "absolute",
+                right: 0,
+                top: 0,
+                height: 48,
+                zIndex: 100,
+                backgroundColor: "white",
+                borderRadius: 0,
+                width: 40,
+                minWidth: 40,
+                borderLeft: `1px solid ${neutralColor(200)}`,
+                pointerEvents: "auto",
+                "&:hover": {
+                  backgroundColor: neutralColor(100),
+                },
+              }}
+            >
+              <ChevronRightIcon />
+            </IconButton>
+          </>
         </Box>
 
         {/* Chat Area */}
         <Box
+          dir={direction}
           sx={{
             flex: 1,
             display: "flex",
             flexDirection: "column",
             overflow: "hidden",
+            direction,
           }}
         >
           {/* Messages Area */}
           <Box
             ref={messagesContainerRef}
+            dir={direction}
             sx={{
               flex: 1,
               overflowY: "auto",
@@ -1256,6 +1510,7 @@ export const TicketChatbotSidebar = ({
               display: "flex",
               flexDirection: "column",
               gap: 1,
+              direction,
             }}
           >
             {isLoadingMessages ? (
@@ -1424,12 +1679,14 @@ export const TicketChatbotSidebar = ({
                   messages.map((message) => (
                     <Box
                       key={message.id}
+                      dir={direction}
                       sx={{
                         display: "flex",
                         justifyContent:
-                          message.senderType === "user" ? "flex-end" : "flex-start",
+                          message.senderType === "user" ? (isRTL ? "flex-start" : "flex-end") : (isRTL ? "flex-end" : "flex-start"),
                         alignItems: "flex-start",
                         gap: 1,
+                        direction,
                       }}
                     >
                       {message.senderType === "support" && (
@@ -1585,10 +1842,12 @@ export const TicketChatbotSidebar = ({
 
           {/* Input Area */}
           <Box
+            dir={direction}
             sx={{
               borderTop: `1px solid ${neutralColor(200)}`,
               padding: 1.5,
               backgroundColor: "white",
+              direction,
             }}
           >
             {/* Selected Files Preview */}
@@ -1685,7 +1944,11 @@ export const TicketChatbotSidebar = ({
                 disabled={(!inputMessage.trim() && selectedFiles.length === 0) || isCreatingTicket || isSending || uploadingFiles}
                 sx={{ minWidth: 40 }}
               >
-                {(isSending || uploadingFiles) ? <CircularProgress size={20} /> : <SendIcon />}
+                {(isSending || uploadingFiles) ? (
+                  <CircularProgress size={20} />
+                ) : (
+                  <SendIcon sx={{ transform: isRTL ? 'scaleX(-1)' : 'none' }} />
+                )}
               </IconButton>
             </Stack>
             {currentTicket && (
