@@ -36,6 +36,8 @@ import { useRecoilValue } from "recoil";
 import { userProfileState } from "@/store/user-profile";
 import { printHouseProfile } from "@/store/print-house-profile";
 import { useGomakeAxios } from "@/hooks/use-gomake-axios";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { FONT_FAMILY } from "@/utils/font-family";
 import {
   createTicket,
   addTicketMessage,
@@ -77,6 +79,7 @@ export const TicketChatbotSidebar = ({
   onClose,
 }: TicketChatbotSidebarProps) => {
   const { t } = useTranslation();
+  const { primaryColor, secondColor, neutralColor, grayColor } = useGomakeTheme();
   const [width, setWidth] = useState(DEFAULT_WIDTH);
   const [isResizing, setIsResizing] = useState(false);
   const [messages, setMessages] = useState<TicketMessage[]>([]);
@@ -1117,7 +1120,7 @@ export const TicketChatbotSidebar = ({
           display: "flex",
           flexDirection: "column",
           backgroundColor: "white",
-          borderLeft: "1px solid #e0e0e0",
+          borderLeft: `1px solid ${neutralColor(200)}`,
           position: "relative",
           flexShrink: 0,
         }}
@@ -1134,7 +1137,7 @@ export const TicketChatbotSidebar = ({
             cursor: "col-resize",
             backgroundColor: "transparent",
             "&:hover": {
-              backgroundColor: "#1976d2",
+              backgroundColor: primaryColor(500),
             },
             zIndex: 10,
           }}
@@ -1143,7 +1146,7 @@ export const TicketChatbotSidebar = ({
         {/* Header */}
         <Box
           sx={{
-            backgroundColor: "#1976d2",
+            backgroundColor: primaryColor(500),
             color: "white",
             padding: 2,
             display: "flex",
@@ -1154,7 +1157,7 @@ export const TicketChatbotSidebar = ({
         >
           <Stack direction="row" spacing={1} alignItems="center">
             <SupportAgentIcon />
-            <Typography variant="h6" sx={{ fontWeight: 600 }}>
+            <Typography variant="h6" sx={{ fontWeight: 600, ...FONT_FAMILY.Lexend(600, 18) }}>
               {t("tickets.support") || "Support"}
             </Typography>
           </Stack>
@@ -1249,7 +1252,7 @@ export const TicketChatbotSidebar = ({
               flex: 1,
               overflowY: "auto",
               padding: 2,
-              backgroundColor: "#f5f5f5",
+              backgroundColor: neutralColor(100),
               display: "flex",
               flexDirection: "column",
               gap: 1,
@@ -1262,7 +1265,7 @@ export const TicketChatbotSidebar = ({
             ) : isCreatingTicket ? (
               <Stack alignItems="center" justifyContent="center" sx={{ flex: 1 }}>
                 <CircularProgress size={40} />
-                <Typography variant="body2" sx={{ mt: 2, color: "#666" }}>
+                <Typography variant="body2" sx={{ mt: 2, color: grayColor(500), ...FONT_FAMILY.Heebo(400, 14) }}>
                   {t("tickets.creatingTicket") || "Creating ticket..."}
                 </Typography>
               </Stack>
@@ -1287,16 +1290,16 @@ export const TicketChatbotSidebar = ({
                         textAlign: "center",
                         maxWidth: "90%",
                         boxShadow: 2,
-                        border: "2px solid #1976d2",
+                        border: `2px solid ${primaryColor(500)}`,
                       }}
                     >
                       <SupportAgentIcon
-                        sx={{ fontSize: 40, color: "#1976d2", mb: 1 }}
+                        sx={{ fontSize: 40, color: primaryColor(500), mb: 1 }}
                       />
-                      <Typography variant="h6" sx={{ fontWeight: 600, mb: 1 }}>
+                      <Typography variant="h6" sx={{ fontWeight: 600, mb: 1, ...FONT_FAMILY.Lexend(600, 18) }}>
                         Remote Session Request
                       </Typography>
-                      <Typography variant="body2" sx={{ color: "#666", mb: 2 }}>
+                      <Typography variant="body2" sx={{ color: grayColor(500), mb: 2, ...FONT_FAMILY.Heebo(400, 14) }}>
                         Support wants to view your screen. Click "Accept" to start
                         sharing or "Reject" to decline.
                       </Typography>
@@ -1325,7 +1328,7 @@ export const TicketChatbotSidebar = ({
                       {sender.isSharing && (
                         <Typography
                           variant="caption"
-                          sx={{ display: "block", mt: 2, color: "#4caf50" }}
+                          sx={{ display: "block", mt: 2, color: secondColor(500), ...FONT_FAMILY.Heebo(400, 12) }}
                         >
                           Screen sharing active...
                         </Typography>
@@ -1353,16 +1356,16 @@ export const TicketChatbotSidebar = ({
                         textAlign: "center",
                         maxWidth: "90%",
                         boxShadow: 2,
-                        border: "2px solid #4caf50",
+                        border: `2px solid ${secondColor(500)}`,
                       }}
                     >
                       <MicIcon
-                        sx={{ fontSize: 40, color: "#4caf50", mb: 1 }}
+                        sx={{ fontSize: 40, color: secondColor(500), mb: 1 }}
                       />
-                      <Typography variant="h6" sx={{ fontWeight: 600, mb: 1 }}>
+                      <Typography variant="h6" sx={{ fontWeight: 600, mb: 1, ...FONT_FAMILY.Lexend(600, 18) }}>
                         Huddle Request
                       </Typography>
-                      <Typography variant="body2" sx={{ color: "#666", mb: 2 }}>
+                      <Typography variant="body2" sx={{ color: grayColor(500), mb: 2, ...FONT_FAMILY.Heebo(400, 14) }}>
                         Support wants to start a voice call. Click "Accept" to start
                         the huddle or "Reject" to decline.
                       </Typography>
@@ -1405,10 +1408,10 @@ export const TicketChatbotSidebar = ({
                 {/* Messages */}
                 {messages.length === 0 ? (
                   <Stack alignItems="center" justifyContent="center" sx={{ flex: 1 }}>
-                    <SupportAgentIcon sx={{ fontSize: 60, color: "#ccc", mb: 2 }} />
+                    <SupportAgentIcon sx={{ fontSize: 60, color: neutralColor(300), mb: 2 }} />
                     <Typography
                       variant="body2"
-                      sx={{ color: "#666", textAlign: "center" }}
+                      sx={{ color: grayColor(500), textAlign: "center", ...FONT_FAMILY.Heebo(400, 14) }}
                     >
                       {currentTicket
                         ? t("tickets.startConversation") ||
@@ -1430,7 +1433,7 @@ export const TicketChatbotSidebar = ({
                       }}
                     >
                       {message.senderType === "support" && (
-                        <Avatar sx={{ width: 32, height: 32, bgcolor: "#1976d2" }}>
+                        <Avatar sx={{ width: 32, height: 32, bgcolor: primaryColor(500) }}>
                           <SupportAgentIcon sx={{ fontSize: 20 }} />
                         </Avatar>
                       )}
@@ -1440,7 +1443,7 @@ export const TicketChatbotSidebar = ({
                           maxWidth: "75%",
                           padding: 1.5,
                           backgroundColor:
-                            message.senderType === "user" ? "#E3F2FD" : "white",
+                            message.senderType === "user" ? primaryColor(50) : "white",
                           borderRadius: 2,
                         }}
                       >
@@ -1450,14 +1453,15 @@ export const TicketChatbotSidebar = ({
                             display: "block",
                             fontWeight: 600,
                             marginBottom: 0.5,
-                            color: "#1976d2",
+                            color: primaryColor(500),
+                            ...FONT_FAMILY.Lexend(600, 12),
                           }}
                         >
                           {message.senderType === "user"
                             ? t("tickets.you") || "You"
                             : message.senderName}
                         </Typography>
-                        <Typography variant="body2" sx={{ whiteSpace: "pre-wrap" }}>
+                        <Typography variant="body2" sx={{ whiteSpace: "pre-wrap", ...FONT_FAMILY.Heebo(400, 14) }}>
                           {message.message}
                         </Typography>
                         
@@ -1468,10 +1472,10 @@ export const TicketChatbotSidebar = ({
                               <Box
                                 key={file.id}
                                 sx={{
-                                  border: "1px solid #e0e0e0",
+                                  border: `1px solid ${neutralColor(200)}`,
                                   borderRadius: 1,
                                   padding: 1,
-                                  backgroundColor: "#f5f5f5",
+                                  backgroundColor: neutralColor(100),
                                 }}
                               >
                                 {isImageFile(file.fileType) ? (
@@ -1492,8 +1496,9 @@ export const TicketChatbotSidebar = ({
                                       sx={{
                                         display: "block",
                                         mt: 0.5,
-                                        color: "#666",
+                                        color: grayColor(500),
                                         fontSize: "0.7rem",
+                                        ...FONT_FAMILY.Heebo(400, 12),
                                       }}
                                     >
                                       {file.fileName} ({formatFileSize(file.fileSize)})
@@ -1519,8 +1524,9 @@ export const TicketChatbotSidebar = ({
                                       sx={{
                                         display: "block",
                                         mt: 0.5,
-                                        color: "#666",
+                                        color: grayColor(500),
                                         fontSize: "0.7rem",
+                                        ...FONT_FAMILY.Heebo(400, 12),
                                       }}
                                     >
                                       {file.fileName} ({formatFileSize(file.fileSize)})
@@ -1534,16 +1540,16 @@ export const TicketChatbotSidebar = ({
                                     sx={{ cursor: "pointer" }}
                                     onClick={() => window.open(file.fileUrl, "_blank")}
                                   >
-                                    <InsertDriveFileIcon sx={{ fontSize: 24, color: "#666" }} />
+                                    <InsertDriveFileIcon sx={{ fontSize: 24, color: grayColor(500) }} />
                                     <Box sx={{ flex: 1 }}>
-                                      <Typography variant="body2" sx={{ fontSize: "0.875rem" }}>
+                                      <Typography variant="body2" sx={{ fontSize: "0.875rem", ...FONT_FAMILY.Heebo(400, 14) }}>
                                         {file.fileName}
                                       </Typography>
-                                      <Typography variant="caption" sx={{ color: "#999", fontSize: "0.7rem" }}>
+                                      <Typography variant="caption" sx={{ color: grayColor(400), fontSize: "0.7rem", ...FONT_FAMILY.Heebo(400, 12) }}>
                                         {formatFileSize(file.fileSize)}
                                       </Typography>
                                     </Box>
-                                    <DownloadIcon sx={{ fontSize: 20, color: "#1976d2" }} />
+                                    <DownloadIcon sx={{ fontSize: 20, color: primaryColor(500) }} />
                                   </Stack>
                                 )}
                               </Box>
@@ -1556,15 +1562,16 @@ export const TicketChatbotSidebar = ({
                           sx={{
                             display: "block",
                             marginTop: 0.5,
-                            color: "#999",
+                            color: grayColor(400),
                             fontSize: "0.7rem",
+                            ...FONT_FAMILY.Heebo(400, 12),
                           }}
                         >
                           {new Date(message.createdAt).toLocaleTimeString()}
                         </Typography>
                       </Paper>
                       {message.senderType === "user" && (
-                        <Avatar sx={{ width: 32, height: 32, bgcolor: "#1976d2" }}>
+                        <Avatar sx={{ width: 32, height: 32, bgcolor: primaryColor(500) }}>
                           {userProfile?.firstName?.[0] || userProfile?.email?.[0] || "U"}
                         </Avatar>
                       )}
@@ -1579,7 +1586,7 @@ export const TicketChatbotSidebar = ({
           {/* Input Area */}
           <Box
             sx={{
-              borderTop: "1px solid #e0e0e0",
+              borderTop: `1px solid ${neutralColor(200)}`,
               padding: 1.5,
               backgroundColor: "white",
             }}
@@ -1687,8 +1694,9 @@ export const TicketChatbotSidebar = ({
                 sx={{
                   display: "block",
                   marginTop: 0.5,
-                  color: "#999",
+                  color: grayColor(400),
                   fontSize: "0.7rem",
+                  ...FONT_FAMILY.Heebo(400, 12),
                 }}
               >
                 {t("tickets.ticketId") || "Ticket"}: {currentTicket.ticketId}
