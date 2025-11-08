@@ -41,10 +41,20 @@ export const useTicketChatSocket = (
       const currentUserId = currentUser?.userId || currentUser?.id;
       const currentUserEmail = currentUser?.email;
       
+      // Check if this is a user message with files - these are updates to existing messages
+      const isUserMessageWithFiles = data.senderType === "user" && data.files && data.files.length > 0;
+      
       // CRITICAL: Skip ALL user messages from Socket.IO - we only add them from API responses
-      // This prevents duplicates since user messages are always added optimistically
-      if (data.senderType === "user") {
+      // EXCEPT: User messages with files are updates to existing messages (file uploads)
+      if (data.senderType === "user" && !isUserMessageWithFiles) {
         console.log("Socket.IO: Skipping user message (will be added from API):", data.id);
+        return;
+      }
+      
+      // If this is a user message with files, it's an update - always process it
+      if (isUserMessageWithFiles) {
+        console.log("Socket.IO: Processing user message update with files:", data.id);
+        onNewMessage(data);
         return;
       }
       

@@ -30,6 +30,16 @@ export interface CreateTicketRequest {
   username?: string;
 }
 
+export interface FileAttachment {
+  id: number;
+  messageId: number;
+  fileName: string;
+  fileUrl: string;
+  fileType: string;
+  fileSize: number;
+  createdAt: string;
+}
+
 export interface TicketMessage {
   id: number;
   ticketId: number;
@@ -39,6 +49,7 @@ export interface TicketMessage {
   senderName: string;
   senderEmail: string;
   createdAt: string;
+  files?: FileAttachment[];
 }
 
 export const getTickets = async (callApi: any, filters?: any): Promise<Ticket[]> => {
@@ -98,5 +109,36 @@ export const getUnreadTicketIds = async (callApi: any): Promise<number[]> => {
 export const getFirstUnreadTicketId = async (callApi: any): Promise<number | null> => {
   const res = await callApi("GET", "/api/tickets/first-unread");
   return res?.data?.ticketId || null;
+};
+
+// File upload API functions
+export const uploadFileToMessage = async (
+  callApi: any,
+  ticketId: number,
+  messageId: number,
+  file: File
+): Promise<FileAttachment> => {
+  // Use axios directly for file uploads to avoid Content-Type header issues
+  const axios = require('axios');
+  const config = require('@/config').default;
+  const { getUserToken } = require('@/services/storage-data');
+  
+  const formData = new FormData();
+  formData.append('file', file);
+  
+  const userToken = getUserToken();
+  const url = `${config.api_server}/api/tickets/${ticketId}/messages/${messageId}/files`;
+  
+  const response = await axios.post(url, formData, {
+    headers: {
+      // Don't set Content-Type - axios will set it automatically with boundary for FormData
+      ...(userToken && { Authorization: `Bearer ${userToken}` }),
+      'project-name': 'business-dashboard',
+      'lang': 'en',
+      'domain': '',
+    },
+  });
+  
+  return response.data;
 };
 

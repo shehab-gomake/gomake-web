@@ -13,6 +13,10 @@ import {
   Tab,
   Chip,
   Badge,
+  Menu,
+  MenuItem,
+  ListItemIcon,
+  ListItemText,
 } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 import CloseIcon from "@mui/icons-material/Close";
@@ -21,6 +25,12 @@ import CheckIcon from "@mui/icons-material/Check";
 import CloseIconSmall from "@mui/icons-material/Close";
 import AddIcon from "@mui/icons-material/Add";
 import MicIcon from "@mui/icons-material/Mic";
+import AttachFileIcon from "@mui/icons-material/AttachFile";
+import ImageIcon from "@mui/icons-material/Image";
+import VideoFileIcon from "@mui/icons-material/VideoFile";
+import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
+import DownloadIcon from "@mui/icons-material/Download";
+import CameraAltIcon from "@mui/icons-material/CameraAlt";
 import { useTranslation } from "react-i18next";
 import { useRecoilValue } from "recoil";
 import { userProfileState } from "@/store/user-profile";
@@ -33,14 +43,17 @@ import {
   getTicketMessages,
   getTicketById,
   markTicketAsRead,
+  uploadFileToMessage,
   Ticket,
   TicketMessage,
+  FileAttachment,
 } from "@/services/api-service/tickets/tickets-api";
 import { useTicketChatSocket } from "./use-ticket-chat-socket";
 import { useRemoteSessionSocket } from "./use-remote-session-socket";
 import { useHuddleSocket } from "./use-huddle-socket";
 import { useWebRTCSender } from "./use-webrtc-sender";
 import { useWebRTCAudioSender } from "./use-webrtc-audio-sender";
+import { ScreenshotAnnotationModal } from "./ScreenshotAnnotationModal";
 import { useTicketNotifications } from "./use-ticket-notifications";
 import DrawingOverlay, { applyDrawingToOverlay } from "./DrawingOverlay";
 import { HuddleControls } from "./HuddleControls";
@@ -74,6 +87,12 @@ export const TicketChatbotSidebar = ({
   const [isCreatingTicket, setIsCreatingTicket] = useState(false);
   const [isSending, setIsSending] = useState(false);
   const [isLoadingMessages, setIsLoadingMessages] = useState(false);
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [uploadingFiles, setUploadingFiles] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [screenshotToAnnotate, setScreenshotToAnnotate] = useState<File | null>(null);
+  const [screenshotAnnotationIndex, setScreenshotAnnotationIndex] = useState<number>(-1);
+  const [attachmentMenuAnchor, setAttachmentMenuAnchor] = useState<null | HTMLElement>(null);
   const [remoteSessionRequest, setRemoteSessionRequest] = useState<{
     ticketId: number;
     requestedBy: string;
@@ -159,19 +178,42 @@ export const TicketChatbotSidebar = ({
 
   // Stable callback for Socket.IO that has access to sentMessageIdsRef
   const handleSocketMessage = useCallback((newMessage: TicketMessage) => {
-    // CRITICAL: Skip ALL user messages from Socket.IO - we only add them from API responses
-    if (newMessage.senderType === "user") {
-      console.log("Widget: Skipping user message from Socket.IO:", newMessage.id);
-      return;
-    }
-
-    // Skip if this is a message we just sent (tracked by ID)
-    if (sentMessageIdsRef.current.has(newMessage.id)) {
-      console.log("Skipping duplicate message from Socket.IO:", newMessage.id);
-      return;
-    }
-
     setMessages((prev) => {
+      // Check if message already exists (update it if it does - e.g., when files are added)
+      const existingMessageIndex = prev.findIndex((msg) => msg.id === newMessage.id);
+      if (existingMessageIndex >= 0) {
+        // Update existing message (e.g., when files are added via Socket.IO)
+        console.log("Updating existing message with files:", newMessage.id);
+        const updated = [...prev];
+        updated[existingMessageIndex] = newMessage;
+        return updated;
+      }
+
+      // CRITICAL: Skip ALL user messages from Socket.IO - we only add them from API responses
+      // EXCEPT: If the message has files, it might be an update to an existing user message (file upload)
+      if (newMessage.senderType === "user" && (!newMessage.files || newMessage.files.length === 0)) {
+        console.log("Widget: Skipping user message from Socket.IO:", newMessage.id);
+        return prev;
+      }
+
+      // Skip if this is a message we just sent (tracked by ID)
+      // EXCEPT: If it has files, it's an update - allow it through
+      if (sentMessageIdsRef.current.has(newMessage.id) && (!newMessage.files || newMessage.files.length === 0)) {
+        console.log("Skipping duplicate message from Socket.IO:", newMessage.id);
+        return prev;
+      }
+      
+      // If message is tracked but has files, it's an update - update it
+      if (sentMessageIdsRef.current.has(newMessage.id) && newMessage.files && newMessage.files.length > 0) {
+        const existingMessageIndex = prev.findIndex((msg) => msg.id === newMessage.id);
+        if (existingMessageIndex >= 0) {
+          console.log("Updating tracked message with files:", newMessage.id);
+          const updated = [...prev];
+          updated[existingMessageIndex] = newMessage;
+          return updated;
+        }
+      }
+
       // Avoid duplicates by checking if message already exists
       const exists = prev.some((msg) => {
         if (msg.id === newMessage.id) return true;
@@ -738,9 +780,9 @@ export const TicketChatbotSidebar = ({
   };
 
   const handleSendMessage = async () => {
-    if (!inputMessage.trim()) return;
+    if (!inputMessage.trim() && selectedFiles.length === 0) return;
 
-    const messageText = inputMessage.trim();
+    const messageText = inputMessage.trim() || "File attachment";
     setInputMessage("");
 
     try {
@@ -772,8 +814,46 @@ export const TicketChatbotSidebar = ({
           username
         );
 
+        // Upload files if any
+        if (selectedFiles.length > 0 && firstMessage.id) {
+          setUploadingFiles(true);
+          try {
+            const uploadedFiles: FileAttachment[] = [];
+            for (const file of selectedFiles) {
+              const fileAttachment = await uploadFileToMessage(callApi, ticket.id!, firstMessage.id, file);
+              uploadedFiles.push(fileAttachment);
+            }
+            
+            // Update the message in state with the uploaded files
+            setMessages((prev) =>
+              prev.map((msg) =>
+                msg.id === firstMessage.id
+                  ? { ...msg, files: uploadedFiles }
+                  : msg
+              )
+            );
+          } catch (fileError) {
+            console.error("Error uploading files:", fileError);
+          } finally {
+            setUploadingFiles(false);
+            setSelectedFiles([]);
+          }
+        }
+
         sentMessageIdsRef.current.add(firstMessage.id);
-        setMessages([firstMessage]);
+        // Update messages state - if files were uploaded, merge them
+        setMessages((prev) => {
+          const existingMessage = prev.find((msg) => msg.id === firstMessage.id);
+          if (existingMessage && existingMessage.files) {
+            // Merge files if they exist
+            return prev.map((msg) =>
+              msg.id === firstMessage.id
+                ? { ...firstMessage, files: existingMessage.files }
+                : msg
+            );
+          }
+          return [firstMessage];
+        });
         setIsCreatingTicket(false);
       } else {
         setIsSending(true);
@@ -785,6 +865,32 @@ export const TicketChatbotSidebar = ({
           "user",
           username
         );
+
+        // Upload files if any
+        if (selectedFiles.length > 0 && newMessage.id) {
+          setUploadingFiles(true);
+          try {
+            const uploadedFiles: FileAttachment[] = [];
+            for (const file of selectedFiles) {
+              const fileAttachment = await uploadFileToMessage(callApi, currentTicket.id!, newMessage.id, file);
+              uploadedFiles.push(fileAttachment);
+            }
+            
+            // Update the message in state with the uploaded files
+            setMessages((prev) =>
+              prev.map((msg) =>
+                msg.id === newMessage.id
+                  ? { ...msg, files: uploadedFiles }
+                  : msg
+              )
+            );
+          } catch (fileError) {
+            console.error("Error uploading files:", fileError);
+          } finally {
+            setUploadingFiles(false);
+            setSelectedFiles([]);
+          }
+        }
 
         sentMessageIdsRef.current.add(newMessage.id);
         setMessages((prev) => [...prev, newMessage]);
@@ -798,11 +904,149 @@ export const TicketChatbotSidebar = ({
     }
   };
 
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files) {
+      setSelectedFiles((prev) => [...prev, ...Array.from(files)]);
+    }
+    // Reset input so same file can be selected again
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  const handleRemoveFile = (index: number) => {
+    setSelectedFiles((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const handleTakeScreenshot = async () => {
+    try {
+      // Dynamically import html2canvas to avoid SSR issues
+      const html2canvas = (await import('html2canvas')).default;
+      
+      // Hide the chatbot sidebar temporarily to capture the page behind it
+      const sidebarElement = sidebarRef.current;
+      let originalDisplay = '';
+      if (sidebarElement) {
+        originalDisplay = sidebarElement.style.display;
+        sidebarElement.style.display = 'none';
+      }
+
+      // Wait a moment for the sidebar to hide
+      await new Promise(resolve => setTimeout(resolve, 200));
+
+      // Capture the entire page (excluding the sidebar)
+      const canvas = await html2canvas(document.body, {
+        useCORS: true,
+        logging: false,
+        scale: 1,
+        windowWidth: window.innerWidth,
+        windowHeight: window.innerHeight,
+        ignoreElements: (element) => {
+          // Ignore the sidebar element if it's still in the DOM
+          return sidebarElement ? sidebarElement.contains(element) : false;
+        },
+      });
+
+      // Show the sidebar again
+      if (sidebarElement) {
+        sidebarElement.style.display = originalDisplay;
+      }
+
+      // Convert canvas to blob
+      canvas.toBlob((blob) => {
+        if (blob) {
+          // Create a File object from the blob
+          const fileName = `screenshot-${new Date().toISOString().replace(/[:.]/g, '-')}.png`;
+          const file = new File([blob], fileName, { type: 'image/png' });
+          
+          // Open annotation modal - we'll add the file after annotation
+          setScreenshotToAnnotate(file);
+          setScreenshotAnnotationIndex(selectedFiles.length); // Index where it will be added
+        }
+      }, 'image/png');
+    } catch (error) {
+      console.error('Error taking screenshot:', error);
+      alert('Failed to take screenshot. Please try again.');
+      
+      // Make sure sidebar is visible again on error
+      if (sidebarRef.current) {
+        sidebarRef.current.style.display = '';
+      }
+    }
+  };
+
+  const handleSaveAnnotatedScreenshot = (annotatedFile: File) => {
+    // Verify the file object is valid before adding to state
+    if (!(annotatedFile instanceof File)) {
+      return;
+    }
+    
+    // Read the file as array buffer and create a new File object to ensure it's properly preserved
+    annotatedFile.arrayBuffer().then(buffer => {
+      // Create a new File object from the buffer to ensure it's properly preserved
+      const preservedFile = new File([buffer], annotatedFile.name, { type: annotatedFile.type, lastModified: annotatedFile.lastModified });
+      
+      setSelectedFiles((prev) => {
+        // If index is valid and within bounds, replace at that index
+        if (screenshotAnnotationIndex >= 0 && screenshotAnnotationIndex < prev.length) {
+          const updated = [...prev];
+          updated[screenshotAnnotationIndex] = preservedFile;
+          return updated;
+        } else {
+          // Add new file (this is the normal case for new screenshots)
+          return [...prev, preservedFile];
+        }
+      });
+      
+      setScreenshotToAnnotate(null);
+      setScreenshotAnnotationIndex(-1);
+    }).catch(error => {
+      console.error('Error reading file buffer:', error);
+    });
+  };
+
+  const handleCloseAnnotationModal = () => {
+    // If user cancels, remove the file from selectedFiles
+    // The screenshotAnnotationIndex points to where the file would be added
+    // If it's a valid index within selectedFiles, remove that file
+    setSelectedFiles((prev) => {
+      if (screenshotAnnotationIndex >= 0 && screenshotAnnotationIndex < prev.length) {
+        const updated = [...prev];
+        updated.splice(screenshotAnnotationIndex, 1);
+        return updated;
+      }
+      return prev;
+    });
+    // Clear the screenshot state
+    setScreenshotToAnnotate(null);
+    setScreenshotAnnotationIndex(-1);
+  };
+
+  const isImageFile = (fileType: string) => {
+    return fileType.startsWith('image/');
+  };
+
+  const isVideoFile = (fileType: string) => {
+    return fileType.startsWith('video/');
+  };
+
+  const formatFileSize = (bytes: number) => {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+  };
+
   const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" && !e.shiftKey) {
+    // Ctrl+Enter or Cmd+Enter sends the message
+    // Enter alone creates a new line
+    if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
       e.preventDefault();
       handleSendMessage();
     }
+    // Shift+Enter also creates a new line (default behavior)
   };
 
   // Resize handlers
@@ -859,6 +1103,12 @@ export const TicketChatbotSidebar = ({
 
   return (
     <>
+      <ScreenshotAnnotationModal
+        open={screenshotToAnnotate !== null}
+        screenshotFile={screenshotToAnnotate}
+        onClose={handleCloseAnnotationModal}
+        onSave={handleSaveAnnotatedScreenshot}
+      />
       <Box
         ref={sidebarRef}
         sx={{
@@ -1210,6 +1460,97 @@ export const TicketChatbotSidebar = ({
                         <Typography variant="body2" sx={{ whiteSpace: "pre-wrap" }}>
                           {message.message}
                         </Typography>
+                        
+                        {/* File Attachments */}
+                        {message.files && message.files.length > 0 && (
+                          <Box sx={{ mt: 1, display: "flex", flexDirection: "column", gap: 1 }}>
+                            {message.files.map((file) => (
+                              <Box
+                                key={file.id}
+                                sx={{
+                                  border: "1px solid #e0e0e0",
+                                  borderRadius: 1,
+                                  padding: 1,
+                                  backgroundColor: "#f5f5f5",
+                                }}
+                              >
+                                {isImageFile(file.fileType) ? (
+                                  <Box>
+                                    <img
+                                      src={file.fileUrl}
+                                      alt={file.fileName}
+                                      style={{
+                                        maxWidth: "100%",
+                                        maxHeight: "300px",
+                                        borderRadius: 4,
+                                        cursor: "pointer",
+                                      }}
+                                      onClick={() => window.open(file.fileUrl, "_blank")}
+                                    />
+                                    <Typography
+                                      variant="caption"
+                                      sx={{
+                                        display: "block",
+                                        mt: 0.5,
+                                        color: "#666",
+                                        fontSize: "0.7rem",
+                                      }}
+                                    >
+                                      {file.fileName} ({formatFileSize(file.fileSize)})
+                                    </Typography>
+                                  </Box>
+                                ) : isVideoFile(file.fileType) ? (
+                                  <Box>
+                                    <video
+                                      src={file.fileUrl}
+                                      controls
+                                      preload="metadata"
+                                      playsInline
+                                      style={{
+                                        maxWidth: "100%",
+                                        maxHeight: "300px",
+                                        borderRadius: 4,
+                                      }}
+                                    >
+                                      Your browser does not support the video tag.
+                                    </video>
+                                    <Typography
+                                      variant="caption"
+                                      sx={{
+                                        display: "block",
+                                        mt: 0.5,
+                                        color: "#666",
+                                        fontSize: "0.7rem",
+                                      }}
+                                    >
+                                      {file.fileName} ({formatFileSize(file.fileSize)})
+                                    </Typography>
+                                  </Box>
+                                ) : (
+                                  <Stack
+                                    direction="row"
+                                    spacing={1}
+                                    alignItems="center"
+                                    sx={{ cursor: "pointer" }}
+                                    onClick={() => window.open(file.fileUrl, "_blank")}
+                                  >
+                                    <InsertDriveFileIcon sx={{ fontSize: 24, color: "#666" }} />
+                                    <Box sx={{ flex: 1 }}>
+                                      <Typography variant="body2" sx={{ fontSize: "0.875rem" }}>
+                                        {file.fileName}
+                                      </Typography>
+                                      <Typography variant="caption" sx={{ color: "#999", fontSize: "0.7rem" }}>
+                                        {formatFileSize(file.fileSize)}
+                                      </Typography>
+                                    </Box>
+                                    <DownloadIcon sx={{ fontSize: 20, color: "#1976d2" }} />
+                                  </Stack>
+                                )}
+                              </Box>
+                            ))}
+                          </Box>
+                        )}
+                        
                         <Typography
                           variant="caption"
                           sx={{
@@ -1243,30 +1584,101 @@ export const TicketChatbotSidebar = ({
               backgroundColor: "white",
             }}
           >
+            {/* Selected Files Preview */}
+            {selectedFiles.length > 0 && (
+              <Box sx={{ mb: 1, display: "flex", flexWrap: "wrap", gap: 1 }}>
+                {selectedFiles.map((file, index) => (
+                  <Chip
+                    key={index}
+                    label={`${file.name} (${formatFileSize(file.size)})`}
+                    onDelete={() => handleRemoveFile(index)}
+                    size="small"
+                    icon={isImageFile(file.type) ? <ImageIcon /> : isVideoFile(file.type) ? <VideoFileIcon /> : <InsertDriveFileIcon />}
+                  />
+                ))}
+              </Box>
+            )}
+            
             <Stack direction="row" spacing={1} alignItems="flex-end">
-              <TextField
-                multiline
-                maxRows={4}
-                placeholder={t("tickets.typeMessage") || "Type a message..."}
-                value={inputMessage}
-                onChange={(e) => setInputMessage(e.target.value)}
-                onKeyPress={handleKeyPress}
-                disabled={isCreatingTicket || isSending}
-                fullWidth
-                size="small"
-                sx={{
-                  "& .MuiOutlinedInput-root": {
-                    borderRadius: 2,
-                  },
-                }}
+              <input
+                ref={fileInputRef}
+                type="file"
+                multiple
+                style={{ display: "none" }}
+                onChange={handleFileSelect}
               />
               <IconButton
                 color="primary"
+                onClick={(e) => setAttachmentMenuAnchor(e.currentTarget)}
+                disabled={isCreatingTicket || isSending || uploadingFiles}
+                sx={{ minWidth: 40 }}
+                title="Attach files or take screenshot"
+              >
+                <AttachFileIcon />
+              </IconButton>
+              <Menu
+                anchorEl={attachmentMenuAnchor}
+                open={Boolean(attachmentMenuAnchor)}
+                onClose={() => setAttachmentMenuAnchor(null)}
+                anchorOrigin={{
+                  vertical: 'top',
+                  horizontal: 'left',
+                }}
+                transformOrigin={{
+                  vertical: 'bottom',
+                  horizontal: 'left',
+                }}
+              >
+                <MenuItem
+                  onClick={() => {
+                    fileInputRef.current?.click();
+                    setAttachmentMenuAnchor(null);
+                  }}
+                  disabled={isCreatingTicket || isSending || uploadingFiles}
+                >
+                  <ListItemIcon>
+                    <AttachFileIcon fontSize="small" />
+                  </ListItemIcon>
+                  <ListItemText>{t("tickets.attachFiles") || "Attach Files"}</ListItemText>
+                </MenuItem>
+                <MenuItem
+                  onClick={() => {
+                    handleTakeScreenshot();
+                    setAttachmentMenuAnchor(null);
+                  }}
+                  disabled={isCreatingTicket || isSending || uploadingFiles}
+                >
+                  <ListItemIcon>
+                    <CameraAltIcon fontSize="small" />
+                  </ListItemIcon>
+                  <ListItemText>{t("tickets.takeScreenshot") || "Take Screenshot"}</ListItemText>
+                </MenuItem>
+              </Menu>
+              <Box sx={{ flex: 1 }}>
+                <TextField
+                  multiline
+                  maxRows={4}
+                  placeholder={t("tickets.typeMessage") || "Type a message..."}
+                  value={inputMessage}
+                  onChange={(e) => setInputMessage(e.target.value)}
+                  onKeyPress={handleKeyPress}
+                  disabled={isCreatingTicket || isSending || uploadingFiles}
+                  fullWidth
+                  size="small"
+                  sx={{
+                    "& .MuiOutlinedInput-root": {
+                      borderRadius: 2,
+                    },
+                  }}
+                />
+              </Box>
+              <IconButton
+                color="primary"
                 onClick={handleSendMessage}
-                disabled={!inputMessage.trim() || isCreatingTicket || isSending}
+                disabled={(!inputMessage.trim() && selectedFiles.length === 0) || isCreatingTicket || isSending || uploadingFiles}
                 sx={{ minWidth: 40 }}
               >
-                {isSending ? <CircularProgress size={20} /> : <SendIcon />}
+                {(isSending || uploadingFiles) ? <CircularProgress size={20} /> : <SendIcon />}
               </IconButton>
             </Stack>
             {currentTicket && (
