@@ -215,6 +215,9 @@ const KeyValueViewComponent = ({
   useEffect(() => {
     if (isOutSource && outSourceValues && outSourceValues.length > 0) {
       setValue(outSourceValues[0]);
+    } else if (isOutSource && (!outSourceValues || outSourceValues.length === 0)) {
+      // Clear value when outSourceValues becomes null or empty
+      setValue("");
     } else {
       if (values && values.length > 0) {
         if (values.length > 1) {
@@ -225,9 +228,12 @@ const KeyValueViewComponent = ({
         } else {
           setValue(values[0]);
         }
+      } else {
+        // Clear value when values becomes null or empty
+        setValue("");
       }
     }
-  }, [values, outSourceValues]);
+  }, [values, outSourceValues, isOutSource]);
   const handleOnClose = () => {
     setOpenModal(false);
   };
