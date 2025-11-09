@@ -45,7 +45,6 @@ const QualityIssueModal = ({
       <div style={clasess.mainModalContainer}>
         <GomakeTextInput
           multiline
-          rows={6}
           style={clasess.textInputStyle}
           placeholder={t("productionFloor.qualityIssueReason")}
           value={reason}
