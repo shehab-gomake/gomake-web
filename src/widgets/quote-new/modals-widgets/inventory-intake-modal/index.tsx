@@ -258,7 +258,9 @@ const InventoryIntakeModal: React.FC<InventoryIntakeModalProps> = ({
                         ) : (
                           <GomakePrimaryButton
                             onClick={() => handleSplitInventoryPackages(firstRow.purchaseOrderItemId)}
-                            style={{ width: "fit-content", height: "40px" }}
+                            style={!firstRow.packagesQuantity || firstRow.packagesQuantity <= 1 ?
+                              { width: "fit-content", height: "40px", backgroundColor: "#ccc" } :
+                              { width: "fit-content", height: "40px" }}
                             disabled={!firstRow.packagesQuantity || firstRow.packagesQuantity <= 1}
                           >
                             {t("sales.purchaseOrder.splitInventoryPackages")}

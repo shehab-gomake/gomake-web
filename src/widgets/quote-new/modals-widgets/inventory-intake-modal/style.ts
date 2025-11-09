@@ -12,7 +12,7 @@ export const useStyle = () => {
     return {
       // Table container styles
       tableContainer: {
-        maxHeight: 500,
+        maxHeight: 350,
         width: '100%',
         overflowX: 'auto',
         overflowY: 'auto',
