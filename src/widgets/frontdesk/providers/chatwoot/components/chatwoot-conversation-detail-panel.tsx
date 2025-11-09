@@ -206,10 +206,20 @@ export const ChatwootConversationDetailPanel: React.FC<ChatwootConversationDetai
 
       {/* Assigned Agent Section */}
       <ConversationAssigneeSection
+        type="agent"
         assignee={conversation.meta?.assignee}
         accountId={accountId}
         conversation={conversation}
         inboxId={conversation.inbox_id}
+        updateConversation={handleConversationChange}
+      />
+
+      {/* Assigned Team Section */}
+      <ConversationAssigneeSection
+        type="team"
+        team={conversation.meta?.team}
+        accountId={accountId}
+        conversation={conversation}
         updateConversation={handleConversationChange}
       />
 
