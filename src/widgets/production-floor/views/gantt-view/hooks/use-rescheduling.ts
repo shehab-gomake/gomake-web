@@ -277,18 +277,14 @@ export const useRescheduling = () => {
           }
 
           const rescheduleAction: IReschedulingAction = {
+            boardMissionId: change.boardMissionId,
             actionId: change.actionId,
             machineId: machineId,
             employeeId: employeeId,
-            boardMissionId: change.boardMissionId,
-            type: change.type,
-            changes: {
-              newEmployeeId: newEmployeeId,
-              newMachineId: newMachineId,
-              newStartTime: change.newStartTime,
-              newEndTime: change.newEndTime,
-            },
-            reason: change.reason || "",
+            newEmployeeId: newEmployeeId,
+            newMachineId: newMachineId,
+            startDate: change.newStartTime,
+            endDate: change.newEndTime,
           };
 
           // Only include productType if it's not empty or null
