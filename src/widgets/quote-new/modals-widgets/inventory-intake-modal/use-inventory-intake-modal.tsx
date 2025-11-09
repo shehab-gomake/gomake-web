@@ -148,17 +148,23 @@ export const useInventoryIntakeModal = ({
     // The body should be an array of inventory items directly
     // Each inventory item should have its own purchaseOrderItemId
     // Remove supplierId and clients from items as per new API structure
-    const inventories = rows.map(row => ({
-      printHouseMaterialId: row.printHouseMaterialId,
-      code: row.code || "",
-      quantity: row.quantity || 0,
-      isActive: true,
-      purchasePrice: row.purchasePrice?.perUnit || 0, // Use perUnit (first price value)
-      salePrice: row.salePrice?.perUnit || 0, // Use perUnit (first price value)
-      purchaseCurrency: row.purchasePrice?.currency,
-      saleCurrency: row.salePrice?.currency,
-      purchaseOrderItemId: row.purchaseOrderItemId, // Each item has its own purchaseOrderItemId
-    }));
+    const inventories = rows.map(row => {
+      // For split items, extract the original purchaseOrderItemId from the split ID
+      // Split IDs are in format: "originalId_split_0", "originalId_split_1", etc.
+      const originalPurchaseOrderItemId = row.splitGroupId || row.purchaseOrderItemId;
+      
+      return {
+        printHouseMaterialId: row.printHouseMaterialId,
+        code: row.code || "",
+        quantity: row.quantity || 0,
+        isActive: true,
+        purchasePrice: row.purchasePrice?.perUnit || 0, // Use perUnit (first price value)
+        salePrice: row.salePrice?.perUnit || 0, // Use perUnit (first price value)
+        purchaseCurrency: row.purchasePrice?.currency,
+        saleCurrency: row.salePrice?.currency,
+        purchaseOrderItemId: originalPurchaseOrderItemId, // Use original ID for split items
+      };
+    });
 
     const payload = {
       documentType: documentType, // Pass documentType as path parameter
@@ -199,7 +205,7 @@ export const useInventoryIntakeModal = ({
       for (let i = 0; i < packagesQuantity; i++) {
         splitItems.push({
           ...row,
-          purchaseOrderItemId: row.purchaseOrderItemId, // Unique ID for each split item
+          purchaseOrderItemId: `${row.purchaseOrderItemId}_split_${i}`, // Unique ID for each split item
           quantity: quantityInPackage,
           packagesQuantity: packagesQuantity, // Preserve original packagesQuantity
           quantityInPackage: quantityInPackage, // Preserve quantityInPackage
