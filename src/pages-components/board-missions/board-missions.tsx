@@ -46,6 +46,7 @@ import { ColumnSetting } from "@/widgets/production-floor/state/production-floor
 import { AddRuleModal } from "../products/profits-new/widgets/add-rule-modal";
 import { ScheduledReportsTable } from "../quotes/widgets/scheduled-reports-table/scheduled-reports-table";
 import { JobsFiltersSection } from "./components/jobs-filters-section";
+import { PrintPackingSlipModalWidget } from "@/widgets/production-floor/views/board-missions-view/navigation-buttons/print-packing-slip-modal-widget";
 
 const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
   const { classes } = useStyle();
@@ -600,15 +601,11 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
         }}
         cancelBtn={t("modal.cancel")}
       />
-      <PrintPackingSlipModal
-        openPackagesModal={openPackagesModal}
-        onClosePackagesModal={onClosePackagesModal}
-        packageInputs={packageInputs}
-        quantityOfPackages={quantityOfPackages}
-        quantityPerPackage={quantityPerPackage}
-        handleQuantityOfPackagesChange={handleQuantityOfPackagesChange}
-        handleQuantityPerPackageChange={handleQuantityPerPackageChange}
-        onClickConfirm={onClickPrintPackagingSlip}
+      <PrintPackingSlipModalWidget
+        openModal={openPackagesModal}
+        onClose={onClosePackagesModal}
+        boardMissionId={missionItem?.id || missionItem?.boardMissionId}
+        quantity={missionItem?.quantity}
       />
       <QrListenerWidget listening={true} />
       <CustomerCardWidget

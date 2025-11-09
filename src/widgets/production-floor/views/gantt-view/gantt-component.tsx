@@ -8,6 +8,9 @@ import Timeline, {
 } from "react-calendar-timeline";
 import { useGantt } from "@/widgets/production-floor/views/gantt-view/use-gantt";
 import { useRescheduling, useRecoverOverdue } from "./hooks";
+import { restoreOldBoardApi } from "@/services/api-service/jobs-time-line/jobs-time-line-endpoints";
+import { useGomakeAxios } from "@/hooks/use-gomake-axios";
+import { useSnackBar } from "@/hooks/use-snack-bar";
 import Stack from "@mui/material/Stack";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
@@ -57,6 +60,13 @@ const TimelineWidget = () => {
   // Initialize recover overdue hook
   const { recoverOverdue, isRecovering } = useRecoverOverdue();
 
+  // Track if rescheduling was successful
+  const [rescheduleSuccess, setRescheduleSuccess] = useState(false);
+
+  // For restoreOldBoardApi
+  const { callApi } = useGomakeAxios();
+  const { alertSuccessUpdate, alertFaultUpdate } = useSnackBar();
+
   const {
     t,
     groups,
@@ -95,6 +105,13 @@ const TimelineWidget = () => {
     isSubmitting,
     clearAllLocalChanges,
   } = reschedulingHook;
+
+  // Reset rescheduleSuccess when new local changes are made
+  useEffect(() => {
+    if (hasLocalChanges() && rescheduleSuccess) {
+      setRescheduleSuccess(false);
+    }
+  }, [hasLocalChanges, rescheduleSuccess]);
 
   // No need for this useEffect - getGanttData already handles initial load
   // useEffect(() => {
@@ -525,10 +542,25 @@ const TimelineWidget = () => {
             <Button
               variant="outlined"
               startIcon={<RefreshIcon />}
-              disabled={!hasLocalChanges()}
-              onClick={() => {
-                clearAllLocalChanges();
-                getData(currentMonth.clone().month());
+              disabled={!hasLocalChanges() && !rescheduleSuccess}
+              onClick={async () => {
+                if (hasLocalChanges()) {
+                  // Case 1: Reset local changes (current behavior)
+                  clearAllLocalChanges();
+                  setRescheduleSuccess(false); // Reset success state when clearing local changes
+                  getData(currentMonth.clone().month());
+                } else if (rescheduleSuccess) {
+                  // Case 2: Restore old board after successful reschedule
+                  await restoreOldBoardApi(callApi, (res) => {
+                    if (res.success) {
+                      alertSuccessUpdate();
+                      setRescheduleSuccess(false);
+                      getData(currentMonth.clone().month());
+                    } else {
+                      alertFaultUpdate();
+                    }
+                  });
+                }
               }}
               sx={{
                 borderColor: "#6C757D",
@@ -731,10 +763,12 @@ const TimelineWidget = () => {
         onClickDelete={async () => {
           const success = await submitRescheduleActions();
           if (success) {
-            // Success: refresh the data
+            // Success: refresh the data and enable restore button
+            setRescheduleSuccess(true);
             getData(currentMonth.clone().month());
           } else {
             // Failure: revert to original state and clear local changes
+            setRescheduleSuccess(false);
             getData(currentMonth.clone().month()); // Refresh to get original data
             clearAllLocalChanges(); // Clear the local changes payload
           }
