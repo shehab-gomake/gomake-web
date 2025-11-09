@@ -11,6 +11,7 @@ import { Stack, RadioGroup, FormControlLabel, Radio } from "@mui/material";
 import { PrimaryButton } from "@/components/button/primary-button";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
+import { ETab } from "@/pages-components/admin/home/widgets/quote-widget/enums";
 
 const ProductTypeSelector = ({ active, onChange, primaryColor, t }) => (
   <RadioGroup
@@ -129,7 +130,9 @@ const AddNewItemModal = ({ openModal, onClose, documentType, getQuote, getCalcul
               value={selectedProduct}
               options={combinedData}
               onChange={handleProductChange}
-              placeholder={t("home.admin.selectProductOrMaterial")}
+              // placeholder={t("home.admin.selectProductOrMaterial")}
+              placeholder={selectedTab === ETab.PRODUCTS ? t("modal.pleaseSelect") : t("modal.pleaseSelectMaterial")}
+
               hideOtherTabs={documentType === DOCUMENT_TYPE.purchaseOrder}
             />
           ) : (

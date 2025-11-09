@@ -56,12 +56,16 @@ const useAddNewItem = ({ onClose, getQuote, documentType, getCalculateQuoteItem,
     setActive(true);
   };
 
+  // Check if isMaterial is in URL query parameters
+  const isMaterialInUrl = router.query.isMaterial === "true";
+
   // Determine if materials should be shown
-  // If isNewCreation: show materials if isMaterial OR isPurchaseOrder
-  // If not isNewCreation: show materials if isCanIntake
-  const shouldShowMaterials = isNewCreation
-    ? (isMaterial || isPurchaseOrder)
-    : isCanIntake;
+  // If isCanIntake is true (after creation), show materials regardless of isMaterial
+  // If isNewCreation is true, show materials only if isMaterial is true (from prop or URL)
+  // Otherwise, show products
+  const shouldShowMaterials = isCanIntake === true
+    ? true
+    : isNewCreation === true && (isMaterial === true || isMaterialInUrl);
 
   // Set initial tab based on shouldShowMaterials for purchase orders
   const initialTab = documentType === DOCUMENT_TYPE.purchaseOrder && shouldShowMaterials
@@ -129,12 +133,16 @@ const useAddNewItem = ({ onClose, getQuote, documentType, getCalculateQuoteItem,
           const transformedProducts = transformProducts(res?.data?.products);
           const transformedMaterials = transformMaterials(res?.data?.materials);
 
+          // Check if isMaterial is in URL query parameters
+          const isMaterialInUrl = router.query.isMaterial === "true";
+
           // Determine if materials should be shown
-          // If isNewCreation: show materials if isMaterial OR isPurchaseOrder
-          // If not isNewCreation: show materials if isCanIntake
-          const shouldShowMaterials = isNewCreation
-            ? (isMaterial || isPurchaseOrder)
-            : isCanIntake;
+          // If isCanIntake is true (after creation), show materials regardless of isMaterial
+          // If isNewCreation is true, show materials only if isMaterial is true (from prop or URL)
+          // Otherwise, show products
+          const shouldShowMaterials = isCanIntake === true
+            ? true
+            : isNewCreation === true && (isMaterial === true || isMaterialInUrl);
 
           // Filter data based on purchase order type and material visibility
           let combinedFinalData;
@@ -351,15 +359,22 @@ const useAddNewItem = ({ onClose, getQuote, documentType, getCalculateQuoteItem,
 
   // Update selectedTab when shouldShowMaterials changes
   useEffect(() => {
-    const shouldShowMaterials = isNewCreation
-      ? (isMaterial || isPurchaseOrder)
-      : isCanIntake;
+    // Check if isMaterial is in URL query parameters
+    const isMaterialInUrl = router.query.isMaterial === "true";
+
+    // Determine if materials should be shown
+    // If isCanIntake is true (after creation), show materials regardless of isMaterial
+    // If isNewCreation is true, show materials only if isMaterial is true (from prop or URL)
+    // Otherwise, show products
+    const shouldShowMaterials = isCanIntake === true
+      ? true
+      : isNewCreation === true && (isMaterial === true || isMaterialInUrl);
 
     if (documentType === DOCUMENT_TYPE.purchaseOrder) {
       const newTab = shouldShowMaterials ? ETab.MATERIALS : ETab.PRODUCTS;
       setSelectedTab(newTab);
     }
-  }, [isNewCreation, isMaterial, isPurchaseOrder, isCanIntake, documentType]);
+  }, [isNewCreation, isMaterial, isCanIntake, documentType, router.query.isMaterial]);
 
   useEffect(() => {
     // if (quoteItemValue?.client?.id) {
