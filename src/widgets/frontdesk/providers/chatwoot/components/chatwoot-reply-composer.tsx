@@ -51,10 +51,10 @@ export const ChatwootReplyComposer: React.FC<ChatwootReplyComposerProps> = ({
   const defaultRecipient = conversation?.meta?.sender?.email || "";
 
   React.useEffect(() => {
-    if (conversation && !toEmails) {
+    if (conversation) {
       setToEmails(defaultRecipient);
     }
-  }, [conversation, defaultRecipient, toEmails]);
+  }, [conversation, defaultRecipient]);
 
   const handleTabChange = (newValue: TabValue) => {
     setActiveTab(newValue);
