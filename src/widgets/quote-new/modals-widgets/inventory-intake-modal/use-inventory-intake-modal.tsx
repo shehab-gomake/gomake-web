@@ -27,7 +27,6 @@ export const useInventoryIntakeModal = ({
   const [isAllIntaked, setIsAllIntaked] = useState(false);
   const [isIntaking, setIsIntaking] = useState(false);
 
-  // Use custom hook for inventory intake operations
   const { updateCellData } = useInventoryIntake(rows, setRows);
 
   // Transform inventory data when modal opens
@@ -40,33 +39,38 @@ export const useInventoryIntakeModal = ({
           const pricingUnitKey = item.tableHeadingUnits?.pricingUnit?.key;
 
           // Extract price array from the structure: { "CostPerRollPerSquareMeterPerTon": { "value": ["6297.820", "25.191", "157445.500"] } }
+          // Returns all values (1, 2, or 3) without padding zeros
           const extractPriceArray = (priceObj: any, unitKey: string): number[] => {
-            if (!priceObj || !unitKey) return [0, 0];
+            if (!priceObj || !unitKey) return [];
 
             // Use the pricing unit key to get the price object
             const priceObject = priceObj[unitKey];
             if (priceObject?.value && Array.isArray(priceObject.value)) {
-              // Return first two values (or pad with 0 if less than 2)
-              return [
-                parseFloat(priceObject.value[0]) || 0,
-                parseFloat(priceObject.value[1]) || 0,
-                ...(priceObject.value[2] ? [parseFloat(priceObject.value[2]) || 0] : [])
-              ].slice(0, 2); // Take only first 2 for perUnit and perTon
+              // Return all values, converting to numbers and filtering out invalid values
+              return priceObject.value
+                .map((v: any) => parseFloat(v))
+                .filter((v: number) => !isNaN(v));
             }
 
             // Fallback to perUnit and perTon if they exist directly
             if (priceObj?.perUnit !== undefined || priceObj?.perTon !== undefined) {
-              return [
-                priceObj?.perUnit || 0,
-                priceObj?.perTon || 0
-              ];
+              const result: number[] = [];
+              if (priceObj?.perUnit !== undefined) result.push(priceObj.perUnit);
+              if (priceObj?.perTon !== undefined) result.push(priceObj.perTon);
+              return result;
             }
 
-            return [0, 0];
+            return [];
           };
 
-          const [purchasePerUnitValue, purchasePerTonValue] = extractPriceArray(item.purchasePrice, pricingUnitKey);
-          const [salePerUnitValue, salePerTonValue] = extractPriceArray(item.salePrice, pricingUnitKey);
+          const purchasePriceArray = extractPriceArray(item.purchasePrice, pricingUnitKey);
+          const salePriceArray = extractPriceArray(item.salePrice, pricingUnitKey);
+
+          // For backward compatibility, keep perUnit and perTon (first two values)
+          const purchasePerUnitValue = purchasePriceArray[0] || 0;
+          const purchasePerTonValue = purchasePriceArray[1] || 0;
+          const salePerUnitValue = salePriceArray[0] || 0;
+          const salePerTonValue = salePriceArray[1] || 0;
 
           return {
             ...item,
@@ -79,6 +83,7 @@ export const useInventoryIntakeModal = ({
               ...item.purchasePrice,
               perUnit: purchasePerUnitValue,
               perTon: purchasePerTonValue,
+              priceArray: purchasePriceArray, // Store full array (1, 2, or 3 values)
               currency: item.purchasePrice?.currency || item.currency,
               // Preserve the original structure with pricing unit key
               pricingUnitKey: pricingUnitKey,
@@ -87,6 +92,7 @@ export const useInventoryIntakeModal = ({
               ...(item.salePrice || {}),
               perUnit: salePerUnitValue || purchasePerUnitValue,
               perTon: salePerTonValue || purchasePerTonValue,
+              priceArray: salePriceArray.length > 0 ? salePriceArray : purchasePriceArray, // Store full array (1, 2, or 3 values)
               currency: item.salePrice?.currency || item.currency,
               // Preserve the original structure with pricing unit key
               pricingUnitKey: pricingUnitKey,
@@ -149,8 +155,8 @@ export const useInventoryIntakeModal = ({
       isActive: true,
       purchasePrice: row.purchasePrice?.perUnit || 0, // Use perUnit (first price value)
       salePrice: row.salePrice?.perUnit || 0, // Use perUnit (first price value)
-      purchaseCurrency: row.purchasePrice?.currency || "USD",
-      saleCurrency: row.salePrice?.currency || "USD",
+      purchaseCurrency: row.purchasePrice?.currency,
+      saleCurrency: row.salePrice?.currency,
       purchaseOrderItemId: row.purchaseOrderItemId, // Each item has its own purchaseOrderItemId
     }));
 
@@ -193,14 +199,14 @@ export const useInventoryIntakeModal = ({
       for (let i = 0; i < packagesQuantity; i++) {
         splitItems.push({
           ...row,
-          purchaseOrderItemId: `${row.purchaseOrderItemId}_split_${i}`, // Unique ID for each split item
+          purchaseOrderItemId: row.purchaseOrderItemId, // Unique ID for each split item
           quantity: quantityInPackage,
           packagesQuantity: packagesQuantity, // Preserve original packagesQuantity
           quantityInPackage: quantityInPackage, // Preserve quantityInPackage
           isSplit: true,
           splitGroupId: row.purchaseOrderItemId, // Track the original item ID
           isOriginal: false,
-          code: `${row.code || ''}-${i + 1}`, // Add package number to code
+          code: row.code || '', // Preserve original code without modification
         });
       }
 
