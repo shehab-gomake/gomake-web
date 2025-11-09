@@ -1,4 +1,5 @@
 import { useState, useCallback } from "react";
+import moment from "moment";
 import { useGomakeAxios } from "@/hooks/use-gomake-axios";
 import { useSnackBar } from "@/hooks/use-snack-bar";
 import { rescheduleActionsApi } from "@/services/api-service/jobs-time-line/jobs-time-line-endpoints";
@@ -276,15 +277,22 @@ export const useRescheduling = () => {
             }
           }
 
+          const startDate = change.newStartTime
+            ? moment(change.newStartTime.replace(/Z$/, "")).utc().toISOString()
+            : undefined;
+          const endDate = change.newEndTime
+            ? moment(change.newEndTime.replace(/Z$/, "")).utc().toISOString()
+            : undefined;
+
           const rescheduleAction: IReschedulingAction = {
             boardMissionId: change.boardMissionId,
             actionId: change.actionId,
             machineId: machineId,
             employeeId: employeeId,
-            newEmployeeId: newEmployeeId,
-            newMachineId: newMachineId,
-            startDate: change.newStartTime,
-            endDate: change.newEndTime,
+            newEmployeeId: newEmployeeId ?? employeeId,
+            newMachineId: newMachineId ?? machineId,
+            startDate: startDate,
+            endDate: endDate,
           };
 
           // Only include productType if it's not empty or null
