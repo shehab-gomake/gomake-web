@@ -13,6 +13,8 @@ const GET_WORK_MISSION_PDF_URL =
   "/v1/erp-service/board-missions-tables/get-work-mission-pdf";
 const GET_DELIVERY_TICKER_PDF_URL =
   "/v1/erp-service/board-missions-tables/get-delivery-ticker-pdf";
+const CHECK_IF_PRODUCT_IS_LABEL_IN_ROLLS_URL =
+  "/v1/erp-service/board-missions/check-if-product-is-label-in-rolls";
 const ADD_BOARD_MISSIONS_TO_FILE_UPLOADER_URL =
   "/v1/erp-service/board-missions/add-to-file-uploader";
 const PRINT_JOB_USING_PRINT_NODE_URL =
@@ -284,6 +286,19 @@ const getJobsTableSettingsApi: ICallAndSetData = async (
   );
 };
 
+const checkIfProductIsLabelInRollsApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  boardMissionId: string
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.GET,
+    `${CHECK_IF_PRODUCT_IS_LABEL_IN_ROLLS_URL}/${boardMissionId}`,
+    setState
+  );
+};
+
 export {
   setBoardMissionsFiltersApi,
   getOrderSummeryPdfApi,
@@ -303,4 +318,5 @@ export {
   getInitialOrderFoldersData,
   saveJobsTableSettingsApi,
   getJobsTableSettingsApi,
+  checkIfProductIsLabelInRollsApi,
 };

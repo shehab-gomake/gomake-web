@@ -6,14 +6,15 @@ export interface IReschedulingChanges {
 }
 
 export interface IReschedulingAction {
+  boardMissionId: string;
+  productType?: string; // Optional product type
   actionId: string;
   machineId?: string;
   employeeId?: string;
-  boardMissionId: string;
-  type: number; // ReschedulingType enum value
-  changes: IReschedulingChanges;
-  reason: string;
-  productType?: string; // Optional product type
+  newEmployeeId?: string;
+  newMachineId?: string;
+  startDate?: string; // ISO date string
+  endDate?: string; // ISO date string
 }
 
 export interface IReschedulingRequest {
