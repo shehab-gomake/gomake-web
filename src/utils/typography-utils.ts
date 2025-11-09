@@ -19,26 +19,10 @@ interface TypographyOverrides {
   [key: string]: any; // Allow any CSS property override
 }
 
-export function getTitleTypography(
-  overrides?: TypographyOverrides
-): React.CSSProperties {
-  return {
-    fontFamily:
-      "var(--theme-typography-title-font-family, 'Lexend', sans-serif)",
-    fontWeight: "var(--theme-typography-title-font-weight, 600)",
-    fontSize: "var(--theme-typography-title-font-size, 25px)",
-    lineHeight: "var(--theme-typography-title-line-height, 32px)",
-    letterSpacing: "var(--theme-typography-title-letter-spacing, 0px)",
-    color:
-      "var(--theme-typography-title-color, var(--theme-primary-color, #2e3092))",
-    ...overrides,
-  };
-}
-
 export function getHeadingTypography(
   overrides?: TypographyOverrides
 ): React.CSSProperties {
-  return {
+  const baseStyle: React.CSSProperties = {
     fontFamily:
       "var(--theme-typography-heading-font-family, 'Lexend', sans-serif)",
     fontWeight: "var(--theme-typography-heading-font-weight, 600)",
@@ -46,14 +30,54 @@ export function getHeadingTypography(
     lineHeight: "var(--theme-typography-heading-line-height, 32px)",
     letterSpacing: "var(--theme-typography-heading-letter-spacing, 0px)",
     color: "var(--theme-typography-heading-color, #2e3092)",
-    ...overrides,
   };
+
+  // Only apply overrides if they are defined (not undefined/null)
+  if (overrides) {
+    const filteredOverrides: TypographyOverrides = {};
+    Object.keys(overrides).forEach((key) => {
+      if (overrides[key] !== undefined && overrides[key] !== null) {
+        filteredOverrides[key] = overrides[key];
+      }
+    });
+    return { ...baseStyle, ...filteredOverrides };
+  }
+
+  return baseStyle;
+}
+
+export function getTitleTypography(
+  overrides?: TypographyOverrides
+): React.CSSProperties {
+  const baseStyle: React.CSSProperties = {
+    fontFamily:
+      "var(--theme-typography-title-font-family, 'Lexend', sans-serif)",
+    fontWeight: "var(--theme-typography-title-font-weight, 500)",
+    fontSize: "var(--theme-typography-title-font-size, 20px)",
+    lineHeight: "var(--theme-typography-title-line-height, 32px)",
+    letterSpacing: "var(--theme-typography-title-letter-spacing, 0px)",
+    color:
+      "var(--theme-typography-title-color, var(--theme-primary-color, #2e3092))",
+  };
+
+  // Only apply overrides if they are defined (not undefined/null)
+  if (overrides) {
+    const filteredOverrides: TypographyOverrides = {};
+    Object.keys(overrides).forEach((key) => {
+      if (overrides[key] !== undefined && overrides[key] !== null) {
+        filteredOverrides[key] = overrides[key];
+      }
+    });
+    return { ...baseStyle, ...filteredOverrides };
+  }
+
+  return baseStyle;
 }
 
 export function getLabelTypography(
   overrides?: TypographyOverrides
 ): React.CSSProperties {
-  return {
+  const baseStyle: React.CSSProperties = {
     fontFamily:
       "var(--theme-typography-label-font-family, 'Heebo', sans-serif)",
     fontWeight: "var(--theme-typography-label-font-weight, 500)",
@@ -61,14 +85,26 @@ export function getLabelTypography(
     lineHeight: "var(--theme-typography-label-line-height, 20px)",
     letterSpacing: "var(--theme-typography-label-letter-spacing, 0px)",
     color: "var(--theme-typography-label-color, #4a5568)",
-    ...overrides,
   };
+
+  // Only apply overrides if they are defined (not undefined/null)
+  if (overrides) {
+    const filteredOverrides: TypographyOverrides = {};
+    Object.keys(overrides).forEach((key) => {
+      if (overrides[key] !== undefined && overrides[key] !== null) {
+        filteredOverrides[key] = overrides[key];
+      }
+    });
+    return { ...baseStyle, ...filteredOverrides };
+  }
+
+  return baseStyle;
 }
 
 export function getSubLabelTypography(
   overrides?: TypographyOverrides
 ): React.CSSProperties {
-  return {
+  const baseStyle: React.CSSProperties = {
     fontFamily:
       "var(--theme-typography-sublabel-font-family, 'Heebo', sans-serif)",
     fontWeight: "var(--theme-typography-sublabel-font-weight, 400)",
@@ -76,34 +112,70 @@ export function getSubLabelTypography(
     lineHeight: "var(--theme-typography-sublabel-line-height, 18px)",
     letterSpacing: "var(--theme-typography-sublabel-letter-spacing, 0px)",
     color: "var(--theme-typography-sublabel-color, #718096)",
-    ...overrides,
   };
+
+  // Only apply overrides if they are defined (not undefined/null)
+  if (overrides) {
+    const filteredOverrides: TypographyOverrides = {};
+    Object.keys(overrides).forEach((key) => {
+      if (overrides[key] !== undefined && overrides[key] !== null) {
+        filteredOverrides[key] = overrides[key];
+      }
+    });
+    return { ...baseStyle, ...filteredOverrides };
+  }
+
+  return baseStyle;
 }
 
 export function getButtonTypography(
   overrides?: TypographyOverrides
 ): React.CSSProperties {
-  return {
+  const baseStyle: React.CSSProperties = {
     fontFamily:
       "var(--theme-typography-button-font-family, 'Lexend', sans-serif)",
     fontWeight: "var(--theme-typography-button-font-weight, 500)",
     fontSize: "var(--theme-typography-button-font-size, 16px)",
     lineHeight: "var(--theme-typography-button-line-height, 24px)",
     letterSpacing: "var(--theme-typography-button-letter-spacing, 0px)",
-    ...overrides,
   };
+
+  // Only apply overrides if they are defined (not undefined/null)
+  if (overrides) {
+    const filteredOverrides: TypographyOverrides = {};
+    Object.keys(overrides).forEach((key) => {
+      if (overrides[key] !== undefined && overrides[key] !== null) {
+        filteredOverrides[key] = overrides[key];
+      }
+    });
+    return { ...baseStyle, ...filteredOverrides };
+  }
+
+  return baseStyle;
 }
 
 export function getBodyTypography(
   overrides?: TypographyOverrides
 ): React.CSSProperties {
-  return {
+  const baseStyle: React.CSSProperties = {
     fontFamily: "var(--theme-typography-body-font-family, 'Heebo', sans-serif)",
     fontWeight: "var(--theme-typography-body-font-weight, 400)",
     fontSize: "var(--theme-typography-body-font-size, 14px)",
     lineHeight: "var(--theme-typography-body-line-height, 21px)",
     letterSpacing: "var(--theme-typography-body-letter-spacing, 0px)",
     color: "var(--theme-typography-body-color, #1a202c)",
-    ...overrides,
   };
+
+  // Only apply overrides if they are defined (not undefined/null)
+  if (overrides) {
+    const filteredOverrides: TypographyOverrides = {};
+    Object.keys(overrides).forEach((key) => {
+      if (overrides[key] !== undefined && overrides[key] !== null) {
+        filteredOverrides[key] = overrides[key];
+      }
+    });
+    return { ...baseStyle, ...filteredOverrides };
+  }
+
+  return baseStyle;
 }

@@ -18,7 +18,7 @@ const baseThemeConfig: ThemeConfig = {
       "--theme-primary-dark": "#252675",
 
       "--theme-primary-lavender-color": "#CBCBE4",
-      "--theme-primary-lavender-light": "#E8E8F2",
+      "--theme-primary-lavender-light": "#8283be",
       "--theme-primary-lavender-dark": "#504fa1",
 
       "--theme-secondary-color": "#ec4899",

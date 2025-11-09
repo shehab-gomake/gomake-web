@@ -10,6 +10,7 @@ import {
   DOCUMENT_TYPE,
   INVOICES_EXPORT_TYPES,
 } from "@/pages-components/quotes/enums";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 interface ExcelMenuProps {
   onGenerateReportClick?: () => void;
@@ -26,6 +27,7 @@ const ExcelMenu = ({
 }: ExcelMenuProps) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
+  const { primaryColor } = useGomakeTheme();
   const direction = t("direction");
   const [anchorExcelEl, setAnchorExcelEl] = useState<null | HTMLElement>(null);
 
@@ -42,7 +44,7 @@ const ExcelMenu = ({
       <IconButton onClick={handleExcelIconClick} sx={classes.iconButton}>
         <FileDownloadOutlinedIcon
           sx={{
-            color: "#2e3092",
+            color: `var(--theme-secondary-color , ${primaryColor(500)})`,
             fontSize: "22px",
             transition: "color 0.2s ease-in-out",
           }}
@@ -101,58 +103,58 @@ const ExcelMenu = ({
             </div>
           </MenuItem>
         )}
-          {(documentType == DOCUMENT_TYPE.invoice ||
-              documentType == DOCUMENT_TYPE.invoiceRefund) && (
-              <MenuItem
-                  onClick={() => {
-                      handleMenuClose();
-                      onExportTableClick(INVOICES_EXPORT_TYPES.ExtendedExcel);
-                  }}
-              >
-                  <div style={classes.rowTextStyle}>
-                      {t("sales.list.exportExtendedTableExcel")}
-                  </div>
-              </MenuItem>
-          )}
-          {(documentType == DOCUMENT_TYPE.invoice ||
-              documentType == DOCUMENT_TYPE.invoiceRefund) && (
-              <MenuItem
-                  onClick={() => {
-                      handleMenuClose();
-                      onExportTableClick(INVOICES_EXPORT_TYPES.ExtendedTxt);
-                  }}
-              >
-                  <div style={classes.rowTextStyle}>
-                      {t("sales.list.exportExtendedTableTxt")}
-                  </div>
-              </MenuItem>
-          )}
-          {(documentType == DOCUMENT_TYPE.invoice ||
-              documentType == DOCUMENT_TYPE.invoiceRefund) && (
-              <MenuItem
-                  onClick={() => {
-                      handleMenuClose();
-                      onExportTableClick(INVOICES_EXPORT_TYPES.SummeryExcelWithVat);
-                  }}
-              >
-                  <div style={classes.rowTextStyle}>
-                      {t("sales.list.exportSummeryExcelWithVat")}
-                  </div>
-              </MenuItem>
-          )}
-          {(documentType == DOCUMENT_TYPE.invoice ||
-              documentType == DOCUMENT_TYPE.invoiceRefund) && (
-              <MenuItem
-                  onClick={() => {
-                      handleMenuClose();
-                      onExportTableClick(INVOICES_EXPORT_TYPES.SummeryExcelWithoutVat);
-                  }}
-              >
-                  <div style={classes.rowTextStyle}>
-                      {t("sales.list.exportSummeryExcelWithoutVat")}
-                  </div>
-              </MenuItem>
-          )}
+        {(documentType == DOCUMENT_TYPE.invoice ||
+          documentType == DOCUMENT_TYPE.invoiceRefund) && (
+          <MenuItem
+            onClick={() => {
+              handleMenuClose();
+              onExportTableClick(INVOICES_EXPORT_TYPES.ExtendedExcel);
+            }}
+          >
+            <div style={classes.rowTextStyle}>
+              {t("sales.list.exportExtendedTableExcel")}
+            </div>
+          </MenuItem>
+        )}
+        {(documentType == DOCUMENT_TYPE.invoice ||
+          documentType == DOCUMENT_TYPE.invoiceRefund) && (
+          <MenuItem
+            onClick={() => {
+              handleMenuClose();
+              onExportTableClick(INVOICES_EXPORT_TYPES.ExtendedTxt);
+            }}
+          >
+            <div style={classes.rowTextStyle}>
+              {t("sales.list.exportExtendedTableTxt")}
+            </div>
+          </MenuItem>
+        )}
+        {(documentType == DOCUMENT_TYPE.invoice ||
+          documentType == DOCUMENT_TYPE.invoiceRefund) && (
+          <MenuItem
+            onClick={() => {
+              handleMenuClose();
+              onExportTableClick(INVOICES_EXPORT_TYPES.SummeryExcelWithVat);
+            }}
+          >
+            <div style={classes.rowTextStyle}>
+              {t("sales.list.exportSummeryExcelWithVat")}
+            </div>
+          </MenuItem>
+        )}
+        {(documentType == DOCUMENT_TYPE.invoice ||
+          documentType == DOCUMENT_TYPE.invoiceRefund) && (
+          <MenuItem
+            onClick={() => {
+              handleMenuClose();
+              onExportTableClick(INVOICES_EXPORT_TYPES.SummeryExcelWithoutVat);
+            }}
+          >
+            <div style={classes.rowTextStyle}>
+              {t("sales.list.exportSummeryExcelWithoutVat")}
+            </div>
+          </MenuItem>
+        )}
       </Menu>
     </div>
   );

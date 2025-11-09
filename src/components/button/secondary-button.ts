@@ -5,8 +5,6 @@ import { FONT_FAMILY } from "@/utils/font-family";
 
 const SecondaryButton = styled(Button)((props: ButtonProps) => {
   const { secondColor } = useGomakeTheme();
-  const secondaryColor = secondColor(500);
-  const secondaryLight = secondColor(100);
   return {
     boxShadow: "none",
     textTransform: "capitalize",
@@ -15,23 +13,17 @@ const SecondaryButton = styled(Button)((props: ButtonProps) => {
     height: 40,
     width: 99,
     backgroundColor:
-      props.variant == "contained"
-        ? `var(--theme-secondary-color, ${secondaryColor})`
-        : "#FFFFFF",
+      props.variant == "contained" ? secondColor(500) : "#FFFFFF",
     borderRadius: "var(--theme-radius-md, 4px)",
-    borderColor:
-      props.variant === "text"
-        ? ""
-        : `var(--theme-secondary-color, ${secondaryColor})`,
+    borderColor: props.variant === "text" ? "" : secondColor(500),
     gap: 7,
-    color:
-      props.variant === "contained"
-        ? "#FFFFFF"
-        : `var(--theme-secondary-color, ${secondaryColor})`,
+    color: props.variant === "contained" ? "#FFFFFF" : secondColor(500),
     "&:hover": {
-      backgroundColor: `var(--theme-secondary-light, ${secondaryLight})`,
-      borderColor: `var(--theme-secondary-color, ${secondaryColor})`,
-      // opacity: 0.8,
+      backgroundColor:
+        props.variant === "outlined"
+          ? `var(--theme-secondary-light, ${secondColor(100)})`
+          : secondColor(100),
+      borderColor: secondColor(500),
       borderRadius: "var(--theme-radius-md, 4px)",
     },
     transition: "0.25s",

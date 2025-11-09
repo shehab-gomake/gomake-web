@@ -27,6 +27,10 @@ const StyledTabs = styled(Tabs)(() => {
 
 const StyledTab = styled(Tab)(() => {
   const { primaryColor, secondColor, neutralColor } = useGomakeTheme();
+  const primaryColorValue = primaryColor(500);
+  const primaryLight = primaryColor(100);
+  const primaryDisabled = primaryColor(200);
+
   return {
     minWidth: "auto",
     minHeight: "40px",
@@ -39,9 +43,9 @@ const StyledTab = styled(Tab)(() => {
     ...FONT_FAMILY.Inter(500, 15),
     transition: "all 0.2s ease",
     "&:hover": {
-      backgroundColor: primaryColor(100),
-      color: primaryColor(500),
-      borderColor: primaryColor(200),
+      backgroundColor: `var(--theme-secondary-light, ${primaryLight})`,
+      color: `var(--theme-secondary-color, ${primaryColorValue})`,
+      borderColor: `var(--theme-secondary-color, ${primaryDisabled})`,
     },
     "&.Mui-selected": {
       backgroundColor: secondColor(500),

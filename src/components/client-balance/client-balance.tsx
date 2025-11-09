@@ -70,7 +70,9 @@ const ClientBalanceComponent = ({
             <span
               style={{
                 width: "70px",
-                color: isNegative ? neutralColor(600) : primaryColor(600),
+                color: isNegative
+                  ? neutralColor(600)
+                  : `var(--theme-secondary-color, ${primaryColor(600)})`,
               }}
             >
               {t("home.clientBalance")}
@@ -78,7 +80,11 @@ const ClientBalanceComponent = ({
             <Button
               startIcon={
                 <WalletIcon
-                  stroke={isNegative ? "#FFFFFF" : primaryColor(600)}
+                  stroke={
+                    isNegative
+                      ? "#FFFFFF"
+                      : `var(--theme-secondary-color, ${primaryColor(600)})`
+                  }
                 />
               }
               sx={{
@@ -89,10 +95,12 @@ const ClientBalanceComponent = ({
                 padding: "4px 12px",
                 backgroundColor: isNegative
                   ? errorColor(500)
-                  : primaryLavender(500),
+                  : `var(--theme-secondary-light, ${primaryLavender(500)})`,
                 color: isNegative
                   ? "#FFFFFF !important"
-                  : `${primaryColor(600)} !important`,
+                  : `var(--theme-secondary-color, ${primaryColor(
+                      600
+                    )}) !important`,
                 borderRadius: 16,
                 ...FONT_FAMILY.Inter(500, 14),
                 "& .MuiButton-startIcon": {

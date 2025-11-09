@@ -54,7 +54,7 @@ const HomePageComponentForAdmin = ({ isMobileScreen }) => {
             {t("sales.quote.documents")}{" "}
             <span
               style={{
-                color: "var(--theme-text-breadcrumb, rgb(213, 214, 233))",
+                color: "var(--theme-secondary-color, rgb(213, 214, 233))",
               }}
             >
               / {selectedClient?.name}

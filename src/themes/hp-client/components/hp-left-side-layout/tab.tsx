@@ -51,13 +51,19 @@ const HpTab = ({ tab, customGap, isSidebarClosed = false }: IProps) => {
   const normalizedCurrentPath = normalizePath(currentPath);
   const normalizedTabPath = normalizePath(tab.path || "");
 
-  const isCurrentRoute =
-    normalizedCurrentPath === normalizedTabPath ||
-    (tab.isList &&
-      tab.list?.some(
+  // Treat root path "/" as equivalent to "/home" for matching
+  const effectiveCurrentPath =
+    normalizedCurrentPath === "/" ? "/home" : normalizedCurrentPath;
+
+  // For list tabs, only check if any sub-item matches (don't check tab path)
+  // For non-list tabs, check if tab path matches, but exclude tabs with path "/" when current path is "/"
+  const isCurrentRoute = tab.isList
+    ? tab.list?.some(
         (subItem: any) =>
-          normalizedCurrentPath === normalizePath(subItem.path || "")
-      ));
+          effectiveCurrentPath === normalizePath(subItem.path || "")
+      )
+    : effectiveCurrentPath === normalizedTabPath &&
+      !(normalizedCurrentPath === "/" && normalizedTabPath === "/");
 
   // Tab is selected only if current route matches (not just based on selectedTabValue)
   // This ensures selection is cleared when navigating away

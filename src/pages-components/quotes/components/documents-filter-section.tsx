@@ -189,8 +189,6 @@ const DocumentsFilterSection: React.FC<IDocumentsFilterSectionProps> = ({
   classes,
 }) => {
   const { t } = useTranslation();
-  const dir: "rtl" | "ltr" = t("direction");
-  const isRTL = dir === "rtl";
 
   // Check if there are active filters
   const hasActiveFilters =

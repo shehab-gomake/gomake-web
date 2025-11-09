@@ -24,14 +24,20 @@ const hpClientThemeConfig: ThemeConfig = {
       "--theme-primary-disabled": "#8db3e8", // Lighter/muted for disabled state
       "--theme-primary-dark": "#002E8D", // Darker for disabled state
 
-      "--theme-primary-lavender-color": "#D6E8FF", // Medium blue background (base - like 500) - harmonizes with primary blue #024AD8
-      "--theme-primary-lavender-light": "#F0F7FF", // Light blue variant - very subtle blue tint
-      "--theme-primary-lavender-dark": "#1E4AA8", // Dark blue variant - darker blue that complements primary
+      /* -------------------------------------------------
+       HP SECONDARY COLORS
+      --------------------------------------------------*/
+      // POWER STORM
+      "--theme-secondary-color": "#568393", // Power Storm - shade A (main, white background)
+      "--theme-secondary-on-dark": "#789CA9", // Power Storm - shade B (darker photos)
+      "--theme-secondary-on-light": "#4D7684", // Power Storm - shade C (lighter photos)
+      //!HERE FROM ME
+      "--theme-secondary-light": "#E8F0F3", // Power Storm - light background tint (for hover states on white)
 
-      // Secondary Colors
-      "--theme-secondary-color": "#ff6b35",
-      "--theme-secondary-hover": "#ff8c5c", // Lighter for hover
-      "--theme-secondary-light": "#ffccaa", // More bold/darker than before
+      // ORANGE BLOOM
+      "--theme-accent-color": "#FF5050", // Orange Bloom - shade A (main, white background)
+      "--theme-accent-on-dark": "#FF7373", // Orange Bloom - shade B (darker photos)
+      "--theme-accent-on-light": "#E54848", // Orange Bloom - shade C (lighter photos)
 
       // Background Colors - WHITE page background
       "--theme-bg-body": "#ffffff",
@@ -71,11 +77,6 @@ const hpClientThemeConfig: ThemeConfig = {
       "--theme-text-secondary": "#4a5568",
       "--theme-text-muted": "#718096",
       "--theme-text-inverse": "#ffffff",
-      "--theme-text-breadcrumb": "#94A3B8", // Breadcrumb/secondary navigation text color - light blue-gray that complements the primary blue
-      // Alternative options:
-      // "#A3A3A3" - matches placeholder color, clean neutral gray
-      // "#64748B" - medium slate gray, between secondary and muted
-      // "#8B92A5" - slightly blue-tinted gray
 
       // Typography - Font Families
       "--theme-font-family-base": '"Inter", sans-serif',
@@ -95,7 +96,7 @@ const hpClientThemeConfig: ThemeConfig = {
       "--theme-typography-title-font-size": "32px",
       "--theme-typography-title-line-height": "40px",
       "--theme-typography-title-letter-spacing": "0px",
-      "--theme-typography-title-color": "#000000",
+      "--theme-typography-title-color": "#1A1A1A",
 
       // Typography - Heading Styles (h3, h4, section headings)
       "--theme-typography-heading-font-family": '"Forma DJR UI", sans-serif',
@@ -103,7 +104,7 @@ const hpClientThemeConfig: ThemeConfig = {
       "--theme-typography-heading-font-size": "25px",
       "--theme-typography-heading-line-height": "40px",
       "--theme-typography-heading-letter-spacing": "0px",
-      "--theme-typography-heading-color": "#1a202c",
+      "--theme-typography-heading-color": "#1A1A1A",
 
       // Typography - Label Styles (form labels, field labels)
       "--theme-typography-label-font-family": '"Inter", sans-serif',
@@ -196,11 +197,7 @@ const hpClientThemeConfig: ThemeConfig = {
       "--theme-widget-shadow": "none", // No shadow for hp-client
 
       // Table Styles
-      "--theme-table-head-bg": "#E8F2FF", // Table header background - very light blue tint
-      // Alternative lighter options:
-      // "#F0F7FF" - extremely light blue tint (almost white)
-      // "#F5F9FF" - very subtle blue tint
-      // "#F9FAFB" - neutral light gray (matches round table header)
+      "--theme-table-head-bg": "var(--theme-secondary-light, #E8F2FF8)",
       "--theme-table-head-color": "var(--theme-text-primary,rgb(26, 44, 28))", // Table header text color
       "--theme-table-body-color": "var(--theme-text-primary, #1a202c)", // Table body text color
       "--theme-table-row-even-bg": "rgba(236, 236, 236, 0.54)", // Even row background (#ececec8a)
