@@ -1288,42 +1288,57 @@ const useQuoteNew = ({
       const quoteItemEdit = newQuoteItemValue.documentItems.find(
         (item) => item.id === quoteItem.id
       );
+
+      // Prepare document payload
+      const documentPayload: any = {
+        exchangeRate:
+          newQuoteItemValue?.exchangeRate == 0
+            ? 1
+            : newQuoteItemValue?.exchangeRate,
+        price: quoteItem?.price,
+        discount: quoteItem?.discount,
+        isPrintHouseMaterialItem:
+          quoteItem?.printHouseMaterialId &&
+            (isPrintHouseMaterialItem || selectedFirstMaterial)
+            ? true
+            : false,
+        finalPrice: quoteItemEdit?.finalPrice,
+        quantity: quoteItem?.quantity,
+        roundPrices: newQuoteItemValue?.client?.roundPrices,
+        document: {
+          totalPrice: newQuoteItemValue?.totalPrice,
+          totalPriceAfterDiscount:
+            newQuoteItemValue?.totalPriceAfterDiscount,
+          discount: +newQuoteItemValue?.discount,
+          discountAmount: newQuoteItemValue?.discountAmount,
+          totalPayment: newQuoteItemValue?.totalPayment,
+          vat: newQuoteItemValue?.vat,
+          vatStatus: newQuoteItemValue?.vatStatus,
+          totalVAT: newQuoteItemValue?.totalVAT,
+        },
+        data: data,
+        calculationType: calculationType,
+        currency: newQuoteItemValue?.currency,
+        fromCurrency: newQuoteItemValue?.fromCurrency,
+      };
+
+      // When updating PackagesQuantity or QuantityInPackage for material items,
+      // include packagesQuantity and quantityInPackage in the payload
+      if (
+        (calculationType === ItemCalculationType.PackagesQuantity ||
+          calculationType === ItemCalculationType.QuantityInPackage) &&
+        quoteItem?.printHouseMaterialId
+      ) {
+        documentPayload.packagesQuantity = quoteItem?.packagesQuantity || quoteItem?.packageQuantity || 0;
+        documentPayload.quantityInPackage = quoteItem?.quantityInPackage || quoteItem?.quantityPerPackage || 0;
+      }
+
       const res = await callApi(
         EHttpMethod.POST,
         `/v1/erp-service/documents/calculate-item`,
         {
           documentType: docType,
-          document: {
-            exchangeRate:
-              newQuoteItemValue?.exchangeRate == 0
-                ? 1
-                : newQuoteItemValue?.exchangeRate,
-            price: quoteItem?.price,
-            discount: quoteItem?.discount,
-            isPrintHouseMaterialItem:
-              quoteItem?.printHouseMaterialId &&
-                (isPrintHouseMaterialItem || selectedFirstMaterial)
-                ? true
-                : false,
-            finalPrice: quoteItemEdit?.finalPrice,
-            quantity: quoteItem?.quantity,
-            roundPrices: newQuoteItemValue?.client?.roundPrices,
-            document: {
-              totalPrice: newQuoteItemValue?.totalPrice,
-              totalPriceAfterDiscount:
-                newQuoteItemValue?.totalPriceAfterDiscount,
-              discount: +newQuoteItemValue?.discount,
-              discountAmount: newQuoteItemValue?.discountAmount,
-              totalPayment: newQuoteItemValue?.totalPayment,
-              vat: newQuoteItemValue?.vat,
-              vatStatus: newQuoteItemValue?.vatStatus,
-              totalVAT: newQuoteItemValue?.totalVAT,
-            },
-            data: data,
-            calculationType: calculationType,
-            currency: newQuoteItemValue?.currency,
-            fromCurrency: newQuoteItemValue?.fromCurrency,
-          },
+          document: documentPayload,
         },
         false
       );
@@ -1369,13 +1384,25 @@ const useQuoteNew = ({
             documentItems: newQuoteItemValue.documentItems.map(
               (documentItem) => {
                 if (documentItem.id === quoteItem.id) {
-                  return {
+                  // Preserve packagesQuantity and quantityInPackage when updating PackagesQuantity or QuantityInPackage
+                  const updatedItem: any = {
                     ...documentItem,
                     finalPrice: _data.finalPrice,
                     price: _data.price,
                     quantity: _data.quantity,
                     discount: _data.discount,
                   };
+
+                  // Preserve packagesQuantity and quantityInPackage if they exist in the response or in the original item
+                  if (
+                    calculationType === ItemCalculationType.PackagesQuantity ||
+                    calculationType === ItemCalculationType.QuantityInPackage
+                  ) {
+                    updatedItem.packagesQuantity = _data.packagesQuantity ?? quoteItem.packagesQuantity ?? quoteItem.packageQuantity ?? documentItem.packagesQuantity ?? documentItem.packageQuantity;
+                    updatedItem.quantityInPackage = _data.quantityInPackage ?? quoteItem.quantityInPackage ?? quoteItem.quantityPerPackage ?? documentItem.quantityInPackage ?? documentItem.quantityPerPackage;
+                  }
+
+                  return updatedItem;
                 } else {
                   return documentItem;
                 }

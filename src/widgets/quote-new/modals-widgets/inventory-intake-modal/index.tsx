@@ -327,22 +327,20 @@ const InventoryIntakeModal: React.FC<InventoryIntakeModalProps> = ({
                               <TableCell sx={{ ...classes.bodyCell, ...classes.purchasePriceCell }}>
                                 <InventoryPriceInput
                                   value={
-                                    row.purchasePrice?.perUnit !== undefined
-                                      ? [
-                                        row.purchasePrice.perUnit || 0,
-                                        row.purchasePrice?.perTon !== undefined ? row.purchasePrice.perTon : 0
-                                      ]
-                                      : [0, 0]
+                                    row.purchasePrice?.priceArray && row.purchasePrice.priceArray.length > 0
+                                      ? row.purchasePrice.priceArray
+                                      : row.purchasePrice?.perUnit !== undefined
+                                        ? [row.purchasePrice.perUnit || 0]
+                                        : []
                                   }
                                   isEditable={true}
                                   onUpdate={async (newValue, index) => {
                                     if (index !== undefined && index !== null) {
                                       const currentPrice = row.purchasePrice;
-                                      const priceArray = [
-                                        index === 0 ? newValue : (currentPrice?.perUnit || 0),
-                                        index === 1 ? newValue : (currentPrice?.perTon || 0),
-                                      ];
-                                      await updateCellData(row.purchaseOrderItemId, "purchasePrice", priceArray[index], undefined, index);
+                                      const priceArray = currentPrice?.priceArray || [currentPrice?.perUnit || 0];
+                                      const updatedArray = [...priceArray];
+                                      updatedArray[index] = newValue;
+                                      await updateCellData(row.purchaseOrderItemId, "purchasePrice", updatedArray[index], undefined, index);
                                     } else {
                                       await updateCellData(row.purchaseOrderItemId, "purchasePrice", newValue);
                                     }
@@ -362,22 +360,20 @@ const InventoryIntakeModal: React.FC<InventoryIntakeModalProps> = ({
                               <TableCell sx={{ ...classes.bodyCell, ...classes.salePriceCell }}>
                                 <InventoryPriceInput
                                   value={
-                                    row.salePrice?.perUnit !== undefined
-                                      ? [
-                                        row.salePrice.perUnit || 0,
-                                        row.salePrice?.perTon !== undefined ? row.salePrice.perTon : 0
-                                      ]
-                                      : [0, 0]
+                                    row.salePrice?.priceArray && row.salePrice.priceArray.length > 0
+                                      ? row.salePrice.priceArray
+                                      : row.salePrice?.perUnit !== undefined
+                                        ? [row.salePrice.perUnit || 0]
+                                        : []
                                   }
                                   isEditable={true}
                                   onUpdate={async (newValue, index) => {
                                     if (index !== undefined && index !== null) {
                                       const currentPrice = row.salePrice;
-                                      const priceArray = [
-                                        index === 0 ? newValue : (currentPrice?.perUnit || 0),
-                                        index === 1 ? newValue : (currentPrice?.perTon || 0),
-                                      ];
-                                      await updateCellData(row.purchaseOrderItemId, "salePrice", priceArray[index], undefined, index);
+                                      const priceArray = currentPrice?.priceArray || [currentPrice?.perUnit || 0];
+                                      const updatedArray = [...priceArray];
+                                      updatedArray[index] = newValue;
+                                      await updateCellData(row.purchaseOrderItemId, "salePrice", updatedArray[index], undefined, index);
                                     } else {
                                       await updateCellData(row.purchaseOrderItemId, "salePrice", newValue);
                                     }
