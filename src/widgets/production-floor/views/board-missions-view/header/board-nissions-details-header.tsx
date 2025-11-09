@@ -161,7 +161,7 @@ const InfoSection = ({ boardMissionsDetails, CheckPreferenceValue, t }) => {
       background: undefined,
     },
     {
-      condition: boardMissionsDetails?.isRepetitiveWork,
+      condition: boardMissionsDetails?.isRepetitiveWork && !boardMissionsDetails?.qualityIssueReason,
       label: t("boardMissions.isRepetitiveWork"),
       background: "#B93815",
     },
@@ -169,6 +169,12 @@ const InfoSection = ({ boardMissionsDetails, CheckPreferenceValue, t }) => {
       condition: boardMissionsDetails?.isHaveDelivery,
       label: t("boardMissions.isHaveDelivery"),
       background: "#F4A100",
+    },
+    {
+      condition: boardMissionsDetails?.qualityIssueReason,
+      label: t("productionFloor.qualityIssueFix"),
+      background: "#DC2626",
+      tooltip: boardMissionsDetails?.qualityIssueReason,
     },
   ];
 
@@ -192,11 +198,19 @@ const InfoSection = ({ boardMissionsDetails, CheckPreferenceValue, t }) => {
 
       {/* Render Status Labels */}
       {statusLabels.map(
-        ({ condition, label, background }, index) =>
+        ({ condition, label, background, tooltip }, index) =>
           condition && (
-            <span key={index} style={{ ...classes.labelsStyle, background }}>
-              {label}
-            </span>
+            tooltip ? (
+              <Tooltip key={index} title={tooltip} arrow>
+                <span style={{ ...classes.labelsStyle, background, cursor: "help" }}>
+                  {label}
+                </span>
+              </Tooltip>
+            ) : (
+              <span key={index} style={{ ...classes.labelsStyle, background }}>
+                {label}
+              </span>
+            )
           )
       )}
     </Stack>

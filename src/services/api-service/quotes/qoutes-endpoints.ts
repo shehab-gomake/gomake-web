@@ -8,6 +8,9 @@ const GET_DATA_FOR_AUTO_PRICING_ACTIONS_CHART_URL =
 
 const EXPORT_DATA_FOR_PROFITS_BY_ACTION_URL =
   "/v1/erp-service/quote/export-data-for-profits-by-action";
+const CREATE_QUOTE_FROM_QUALITY_ISSUE_URL =
+  "/v1/erp-service/quote/create-quote-from-quality-issue";
+
 const addItemToQuoteApi: ICallAndSetData = async (callApi, setState, data) => {
   return await getSetApiData(
     callApi,
@@ -44,8 +47,23 @@ const exportDataForProfitsByActionApi: ICallAndSetData = async (
   );
 };
 
+const createQuoteFromQualityIssueApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    CREATE_QUOTE_FROM_QUALITY_ISSUE_URL,
+    setState,
+    data
+  );
+};
+
 export {
   addItemToQuoteApi,
   getDataForAutoPricingActionsChartApi,
   exportDataForProfitsByActionApi,
+  createQuoteFromQualityIssueApi,
 };

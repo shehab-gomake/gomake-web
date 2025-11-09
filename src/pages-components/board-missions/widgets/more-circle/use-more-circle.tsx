@@ -10,6 +10,7 @@ import TaskAltOutlinedIcon from "@mui/icons-material/TaskAltOutlined";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import { useStyle } from "./style";
 import { PackageIcon } from "@/icons/package-icon";
+import { QualityIssueIcon } from "@/widgets/production-floor/table-view/status-table/table-row/more-circle/icons/quality-issue";
 import { GetPrintingTicketPDFApi } from "@/services/api-service/generic-doc/documents-api";
 import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
 import { BoardMissionStatusForFilter } from "../enums";
@@ -48,7 +49,8 @@ const useMoreCircle = ({
   handleClickBackToProcess,
   onOpenMarkReadyModalForHasJobs,
   printJobUsingPrintNode,
-  onOpenMarkReadyTypeModal, // ✅ ADD THIS NEW PROP
+  onOpenMarkReadyTypeModal,
+  onReportQualityIssue, // ✅ ADD THIS NEW PROP
 }: any) => {
   const { t } = useTranslation();
   const { classes } = useStyle();
@@ -283,6 +285,12 @@ const useMoreCircle = ({
       name: t("fileUploader.uploadFile"),
       icon: <PDFIcon />,
       onclick: () => addBoardMissionsToFileUploader(mission),
+    },
+    {
+      condition: true && isSendPaymentToClient && onReportQualityIssue,
+      name: t("productionFloor.reportQualityIssue"),
+      icon: <QualityIssueIcon />,
+      onclick: () => onReportQualityIssue?.(mission),
     },
   ];
 

@@ -2713,12 +2713,19 @@
     "noStationsSelected": "No stations selected",
     "QRScanner": "QR Scanner",
     "scanQRCodeToProceed": "Scan QR code to proceed",
+    "reportQualityIssue": "Report Quality Issue",
+    "qualityIssueReason": "Please describe the quality issue",
+    "qualityIssueReasonLabel": "Quality Issue Reason",
+    "qualityIssueFix": "Quality issue fix",
     "export": {
       "exportToExcel": "Export to Excel",
       "noDataToExport": "No data to export",
       "excelExportSuccess": "Data exported to Excel successfully",
       "excelExportError": "Failed to export data to Excel"
     }
+  },
+  "boardMissions": {
+    "isQualityFixJob": "Is Quality fix job"
   },
   "logs": {
     "CLOSE": "document closed",
