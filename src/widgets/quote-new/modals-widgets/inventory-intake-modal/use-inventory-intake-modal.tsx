@@ -155,8 +155,8 @@ export const useInventoryIntakeModal = ({
       isActive: true,
       purchasePrice: row.purchasePrice?.perUnit || 0, // Use perUnit (first price value)
       salePrice: row.salePrice?.perUnit || 0, // Use perUnit (first price value)
-      purchaseCurrency: row.purchasePrice?.currency || "USD",
-      saleCurrency: row.salePrice?.currency || "USD",
+      purchaseCurrency: row.purchasePrice?.currency,
+      saleCurrency: row.salePrice?.currency,
       purchaseOrderItemId: row.purchaseOrderItemId, // Each item has its own purchaseOrderItemId
     }));
 
@@ -199,7 +199,7 @@ export const useInventoryIntakeModal = ({
       for (let i = 0; i < packagesQuantity; i++) {
         splitItems.push({
           ...row,
-          purchaseOrderItemId: `${row.purchaseOrderItemId}_split_${i}`, // Unique ID for each split item
+          purchaseOrderItemId: row.purchaseOrderItemId, // Unique ID for each split item
           quantity: quantityInPackage,
           packagesQuantity: packagesQuantity, // Preserve original packagesQuantity
           quantityInPackage: quantityInPackage, // Preserve quantityInPackage
