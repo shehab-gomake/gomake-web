@@ -1002,6 +1002,7 @@ const useQuoteNew = ({
 
       if (res?.success) {
         const _data = res?.data?.data?.result || {};
+        const isNewCreation = router?.query?.isNewCreation === "true";
 
         if (clientChangeSource === ClientChangeSource.SAVE_AND_START_NEW_DOC) {
           const {
@@ -1043,16 +1044,59 @@ const useQuoteNew = ({
           prevDocumentItem.documentItems.length > 0
         ) {
           // Merge re-calculated items from supplier change
-          setQuoteItemValue({
+          const updatedQuoteItemValue = {
             ..._data,
             documentItems: prevDocumentItem.documentItems,
-          });
+          };
+          setQuoteItemValue(updatedQuoteItemValue);
+          
+          // Recalculate totals after updating document items
+          if (isNewCreation) {
+            const calculateRes = await callApi(
+              EHttpMethod.POST,
+              `/v1/erp-service/documents/calculate-document-new`,
+              {
+                documentType: docType,
+                document: {
+                  exchangeRate:
+                    updatedQuoteItemValue?.exchangeRate === 0
+                      ? 1
+                      : updatedQuoteItemValue?.exchangeRate,
+                  totalPrice: updatedQuoteItemValue?.totalPrice,
+                  data: updatedQuoteItemValue?.discount || 0,
+                  calculationType: 0,
+                  totalPriceAfterDiscount: updatedQuoteItemValue?.totalPriceAfterDiscount,
+                  discount: updatedQuoteItemValue?.discount || 0,
+                  discountAmount: updatedQuoteItemValue?.discountAmount || 0,
+                  totalPayment: updatedQuoteItemValue?.totalPayment,
+                  vat: updatedQuoteItemValue?.vat || 0.17,
+                  totalVAT: updatedQuoteItemValue?.totalVAT || 0,
+                  roundPrices: updatedQuoteItemValue?.client?.roundPrices,
+                  documentItems: updatedQuoteItemValue.documentItems?.map((item) => ({
+                    finalPrice: item.finalPrice,
+                  })),
+                },
+              }
+            );
+            if (calculateRes?.success) {
+              const calculatedData = calculateRes?.data?.data?.data;
+              setQuoteItemValue({
+                ...updatedQuoteItemValue,
+                discount: calculatedData.discount,
+                discountAmount: calculatedData.discountAmount,
+                totalPayment: calculatedData.totalPayment,
+                totalPrice: calculatedData.totalPrice,
+                totalPriceAfterDiscount: calculatedData.totalPriceAfterDiscount,
+                totalVAT: calculatedData.totalVAT,
+                vat: calculatedData.vat,
+              });
+            }
+          }
         } else {
           setQuoteItemValue(_data);
         }
 
         // Check if the client vat Exempt and show modal if needed
-        const isNewCreation = router?.query?.isNewCreation === "true";
         const isCorrectPage =
           router.pathname === "/invoice" || router.pathname === "/deliveryNote";
         const isVATMismatch = Math.abs(systemVAT - _data?.vat) > 0.001;
