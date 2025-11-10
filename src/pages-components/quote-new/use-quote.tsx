@@ -1036,6 +1036,17 @@ const useQuoteNew = ({
             discountAmount: prevDocumentItem?.discountAmount,
             totalVAT: prevDocumentItem?.totalVAT,
           });
+        } else if (
+          prevDocumentItem &&
+          prevDocumentItem?.documentItems &&
+          Array.isArray(prevDocumentItem.documentItems) &&
+          prevDocumentItem.documentItems.length > 0
+        ) {
+          // Merge re-calculated items from supplier change
+          setQuoteItemValue({
+            ..._data,
+            documentItems: prevDocumentItem.documentItems,
+          });
         } else {
           setQuoteItemValue(_data);
         }
@@ -1322,11 +1333,12 @@ const useQuoteNew = ({
         fromCurrency: newQuoteItemValue?.fromCurrency,
       };
 
-      // When updating PackagesQuantity or QuantityInPackage for material items,
+      // When updating PackagesQuantity, QuantityInPackage, or Amount for material items,
       // include packagesQuantity and quantityInPackage in the payload
       if (
         (calculationType === ItemCalculationType.PackagesQuantity ||
-          calculationType === ItemCalculationType.QuantityInPackage) &&
+          calculationType === ItemCalculationType.QuantityInPackage ||
+          calculationType === ItemCalculationType.Amount) &&
         quoteItem?.printHouseMaterialId
       ) {
         documentPayload.packagesQuantity = quoteItem?.packagesQuantity || quoteItem?.packageQuantity || 0;
@@ -1396,7 +1408,8 @@ const useQuoteNew = ({
                   // Preserve packagesQuantity and quantityInPackage if they exist in the response or in the original item
                   if (
                     calculationType === ItemCalculationType.PackagesQuantity ||
-                    calculationType === ItemCalculationType.QuantityInPackage
+                    calculationType === ItemCalculationType.QuantityInPackage ||
+                    calculationType === ItemCalculationType.Amount
                   ) {
                     updatedItem.packagesQuantity = _data.packagesQuantity ?? quoteItem.packagesQuantity ?? quoteItem.packageQuantity ?? documentItem.packagesQuantity ?? documentItem.packageQuantity;
                     updatedItem.quantityInPackage = _data.quantityInPackage ?? quoteItem.quantityInPackage ?? quoteItem.quantityPerPackage ?? documentItem.quantityInPackage ?? documentItem.quantityPerPackage;
