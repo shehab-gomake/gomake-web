@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useRouter } from "next/router";
 import { useSetRecoilState, useRecoilValue, useRecoilState } from "recoil";
@@ -40,6 +40,13 @@ const useBusinessWidget = ({
   const [purchaseNumber, setPurchaseNumber] = useState(
     values?.purchaseNumber || t("sales.quote.noPurchaseNumber")
   );
+
+  // Sync purchaseNumber with values when it changes (e.g., when modal resets it)
+  useEffect(() => {
+    if (values?.purchaseNumber !== undefined) {
+      setPurchaseNumber(values?.purchaseNumber || t("sales.quote.noPurchaseNumber"));
+    }
+  }, [values?.purchaseNumber]);
 
   const [documentTitle, setDocumentTitle] = useState(
     values?.title || t("sales.quote.noTitle")

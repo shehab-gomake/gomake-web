@@ -23,6 +23,7 @@ import {
   printOrderJobUsingPrintNodeApi,
   setBoardMissionsFiltersApi,
 } from "@/services/api-service/board-missions/board-missions-table";
+import { createQuoteFromQualityIssueApi } from "@/services/api-service/quotes/qoutes-endpoints";
 import { useDateFormat } from "@/hooks/use-date-format";
 import { CLIENT_TYPE, DEFAULT_VALUES } from "@/pages/customers/enums";
 import { EWorkSource } from "@/widgets/product-pricing-widget/enums";
@@ -44,7 +45,7 @@ import { useQuoteGetData } from "../quote-new/use-quote-get-data";
 import { getAndSetCustomerById } from "@/services/api-service/customers/customers-api";
 import { GomakeTextInput } from "@/components";
 import { useJobsTableSocketIo } from "@/hooks/socket-io/use-jobs-table-socket-io";
-import { Fab, Stack } from "@mui/material";
+import { Fab, Stack, Tooltip } from "@mui/material";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { userQuoteState } from "@/store";
 import { updateDocumentApi } from "@/services/api-service/generic-doc/documents-api";
@@ -89,6 +90,7 @@ interface Query {
   sampleType?: number;
   proofTypes?: string[];
   isPrinted?: boolean;
+  isQualityFixJob?: boolean | string;
   finalPatternSearch?: string;
 }
 
@@ -124,6 +126,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
   // Add state for multiple proof types (similar to productIds)
   const [proofTypes, setProofTypes] = useState([]);
   const [isPrintedState, setIsPrintedState] = useState<boolean | null>(null);
+  const [isQualityFixJob, setIsQualityFixJob] = useState<boolean | null>(null);
   const [boardMissionsIds, setBoardMissionsIds] = useState<
     string[] | undefined
   >(undefined);
@@ -184,6 +187,89 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
   const onOpenMarkReadyTypeModal = (mission) => {
     setPendingMarkReadyParams(mission);
     setOpenMarkReadyTypeModal(true);
+  };
+
+  // Quality Issue Modal state and handlers
+  const [openQualityIssueModal, setOpenQualityIssueModal] = useState<boolean>(false);
+  const [selectedMissionForQualityIssue, setSelectedMissionForQualityIssue] = useState<any>(null);
+
+  const onOpenQualityIssueModal = (mission: any) => {
+    setSelectedMissionForQualityIssue(mission);
+    setOpenQualityIssueModal(true);
+  };
+
+  const onCloseQualityIssueModal = () => {
+    setOpenQualityIssueModal(false);
+    setSelectedMissionForQualityIssue(null);
+  };
+
+  // Change Status Modal state for quality issue
+  const [openChangeStatusModalForQualityIssue, setOpenChangeStatusModalForQualityIssue] = useState<boolean>(false);
+  const [selectedQuoteIdForQualityIssue, setSelectedQuoteIdForQualityIssue] = useState<string | null>(null);
+
+  const onClickOpenChangeStatusModalForQualityIssue = (quoteId: string) => {
+    setSelectedQuoteIdForQualityIssue(quoteId);
+    setOpenChangeStatusModalForQualityIssue(true);
+  };
+
+  const onClickCloseChangeStatusModalForQualityIssue = () => {
+    setOpenChangeStatusModalForQualityIssue(false);
+    setSelectedQuoteIdForQualityIssue(null);
+  };
+
+  const updateQuoteStatusForQualityIssue = async () => {
+    if (!selectedQuoteIdForQualityIssue) return;
+
+    const callBack = (res) => {
+      if (res?.success) {
+        onClickCloseChangeStatusModalForQualityIssue();
+        navigate("/quote");
+      } else {
+        if (res?.statusCode === 85) {
+          alertFault(res?.message);
+        } else {
+          alertFaultUpdate();
+        }
+      }
+    };
+
+    await updateDocumentApi(callApi, callBack, {
+      documentType: 0,
+      document: {
+        documentId: selectedQuoteIdForQualityIssue,
+      },
+    });
+  };
+
+  const handleQualityIssueConfirm = async (reason: string) => {
+    if (!selectedMissionForQualityIssue) return;
+
+    const callBack = (res) => {
+      if (res?.success) {
+        alertSuccessUpdate();
+        onCloseQualityIssueModal();
+        getAllData(isPurchaseJobs, false);
+        
+        const isAnotherQuoteInCreate = res?.data?.isAnotherQuoteInCreate;
+        const documentId = res?.data?.documentId;
+        
+        if (!isAnotherQuoteInCreate) {
+          // No existing quote, redirect to quote cart
+          navigate("/quote");
+        } else {
+          // Existing quote in Create status, show modal to save it
+          onClickOpenChangeStatusModalForQualityIssue(documentId);
+        }
+      } else {
+        alertFaultUpdate();
+      }
+    };
+
+    await createQuoteFromQualityIssueApi(callApi, callBack, {
+      boardMissionId: selectedMissionForQualityIssue.id,
+      orderItemId: selectedMissionForQualityIssue.orderItemId || selectedMissionForQualityIssue.orderId,
+      qualityIssueReason: reason,
+    });
   };
 
   const handleMarkReadyTypeChoice = async (markAllReady: boolean) => {
@@ -370,6 +456,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     CheckPermission(Permissions.SHOW_COSTS_IN_BOARD_MISSIONS) &&
       t("boardMissions.priceFromOrderItem"),
     isPrintHouseUsePrintNode && t("boardMissions.isPrinted"),
+    t("boardMissions.isQualityFixJob"),
     t("boardMissions.jobName"),
     t("boardMissions.numberOfBoardMissionsInOrder"),
     t("boardMissions.productName"),
@@ -511,6 +598,9 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     if (isPrintedState !== null) newQuery.isPrinted = isPrintedState;
     else delete newQuery.isPrinted;
 
+    if (isQualityFixJob !== null) newQuery.isQualityFixJob = isQualityFixJob;
+    else delete newQuery.isQualityFixJob;
+
     router.replace(
       {
         pathname: router.pathname,
@@ -535,6 +625,8 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     setProductIds([]);
     setPatternSearch("");
     setFinalPatternSearch("");
+    setIsPrintedState(null);
+    setIsQualityFixJob(null);
     setFromDate(null);
     setFromDueDate(null);
     setFromReadyDate(null);
@@ -937,6 +1029,13 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
             ...(isPrintHouseUsePrintNode && {
               isPrinted: mission?.isPrinted ? t("modal.yes") : t("modal.no"),
             }),
+            isQualityFixJob: mission?.qualityIssueReason ? (
+              <Tooltip title={mission.qualityIssueReason} arrow>
+                <span style={{ cursor: "help" }}>{t("modal.yes")}</span>
+              </Tooltip>
+            ) : (
+              t("modal.no")
+            ),
             jobName: mission?.jobName,
             numberOfBoardMissionsInOrder: mission?.numberOfBoardMissions,
             productName: mission?.productName,
@@ -962,6 +1061,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
                 onOpenMarkReadyModalForHasJobs={onOpenMarkReadyModalForHasJobs}
                 printJobUsingPrintNode={printJobUsingPrintNode}
                 onOpenMarkReadyTypeModal={onOpenMarkReadyTypeModal}
+                onReportQualityIssue={onOpenQualityIssueModal}
               />
             ),
           };
@@ -1042,6 +1142,9 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
       ? Number(router.query.pageSize)
       : pageSize;
     const currentIsPrinted = router.query.isPrinted;
+    const currentIsQualityFixJob = router.query.isQualityFixJob !== undefined 
+      ? (typeof router.query.isQualityFixJob === 'string' && router.query.isQualityFixJob === 'true' ? true : false)
+      : isQualityFixJob;
 
     const data = isClear
       ? {
@@ -1085,6 +1188,9 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
           order: sortOrder,
           exampleTypes: currentProofTypes,
           isPrinted: currentIsPrinted || isPrintedState,
+          isQualityFixJob: currentIsQualityFixJob !== null && currentIsQualityFixJob !== undefined 
+            ? currentIsQualityFixJob 
+            : (isQualityFixJob !== null ? isQualityFixJob : undefined),
           // Include boardMissionsIds - prioritize dashboard filter, then state
           ...(dashboardBoardMissionsIds && dashboardBoardMissionsIds.length > 0
             ? { boardMissionsIds: dashboardBoardMissionsIds }
@@ -1161,6 +1267,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
                 onOpenMarkReadyModalForHasJobs={onOpenMarkReadyModalForHasJobs}
                 printJobUsingPrintNode={printJobUsingPrintNode}
                 onOpenMarkReadyTypeModal={onOpenMarkReadyTypeModal}
+                onReportQualityIssue={onOpenQualityIssueModal}
               />
             ),
           };
@@ -2293,6 +2400,8 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     tableKey,
     setIsPrintedState,
     isPrintedState,
+    isQualityFixJob,
+    setIsQualityFixJob,
     isPrintHouseUsePrintNode,
     openPrintTypeModal,
     onClosePrintTypeModal,
@@ -2331,6 +2440,16 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     onDeleteScheduledReport,
     handleScheduledReportsPageChange,
     handleScheduledReportsPageSizeChange,
+    // Quality Issue Modal
+    openQualityIssueModal,
+    onOpenQualityIssueModal,
+    onCloseQualityIssueModal,
+    handleQualityIssueConfirm,
+    selectedMissionForQualityIssue,
+    // Change Status Modal for Quality Issue
+    openChangeStatusModalForQualityIssue,
+    onClickCloseChangeStatusModalForQualityIssue,
+    updateQuoteStatusForQualityIssue,
   };
 };
 

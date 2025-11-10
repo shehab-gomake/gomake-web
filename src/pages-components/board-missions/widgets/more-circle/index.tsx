@@ -19,6 +19,7 @@ interface IBoardMissionsProps {
   onOpenMarkReadyModalForHasJobs?: (mission?: any, markAllReady?: boolean) => void;
   printJobUsingPrintNode?: (jobId: string, productType?: string, productName?: string) => void;
   onOpenMarkReadyTypeModal?: (mission?: any) => void;
+  onReportQualityIssue?: (mission?: any) => void;
 }
 const MoreMenuWidget = ({
   mission,
@@ -35,7 +36,8 @@ const MoreMenuWidget = ({
   handleClickBackToProcess,
   onOpenMarkReadyModalForHasJobs,
   printJobUsingPrintNode,
-  onOpenMarkReadyTypeModal
+  onOpenMarkReadyTypeModal,
+  onReportQualityIssue
 }: IBoardMissionsProps) => {
   const { classes } = useStyle();
 
@@ -58,7 +60,8 @@ const MoreMenuWidget = ({
     handleClickBackToProcess,
     onOpenMarkReadyModalForHasJobs,
     printJobUsingPrintNode,
-    onOpenMarkReadyTypeModal
+    onOpenMarkReadyTypeModal,
+    onReportQualityIssue
   });
 
   return (

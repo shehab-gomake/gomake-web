@@ -20,6 +20,8 @@ export interface BoardMissionFilters {
   pageSize: number | null;
   boardMissionsIds?: string[];
   boardMissionsStatusFilter?: BoardMissionsStatusFilterItem[];
+  isPrinted?: boolean | null;
+  isQualityFixJob?: boolean | null;
 }
 
 export interface BoardMission {

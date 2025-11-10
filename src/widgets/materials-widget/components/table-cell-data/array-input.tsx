@@ -21,7 +21,7 @@ const ArrayInput = ({ valueArray, isEditable, parameterKey, id, isAdmin, isInven
   const materialSuppliers = useRecoilValue(materialCategorySuppliersState)
   const isHaveMorethanMaterialSuppliers = materialSuppliers?.length > 1
   const { t } = useTranslation();
-  const { alertSuccessUpdate, alertFaultUpdate } = useSnackBar();
+  const { alertFaultUpdate } = useSnackBar();
 
   const [openDeleteTableRowModal, setOpenDeleteTableRowModal] = useState<boolean>(false);
 
@@ -67,7 +67,7 @@ const ArrayInput = ({ valueArray, isEditable, parameterKey, id, isAdmin, isInven
           } else {
             await updateCellData(id, parameterKey?.split(' ! ')[0], updateValue, isUpdate);
             setIsUpdate(null);
-            alertSuccessUpdate();
+            // alertSuccessUpdate();
           }
         }
       } catch (error) {
@@ -168,7 +168,7 @@ const ArrayInput = ({ valueArray, isEditable, parameterKey, id, isAdmin, isInven
               await updateCellData(id, parameterKey, updateValue, isUpdate);
             }
             setIsUpdate(null);
-            alertSuccessUpdate();
+            // alertSuccessUpdate();
           } catch (error) {
             alertFaultUpdate();
             console.error("Error updating array input:", error);
