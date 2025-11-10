@@ -2081,7 +2081,15 @@
     "wednesday": "الاربعاء",
     "thursday": "الخميس",
     "friday": "الجمعة",
-    "saturday": "السبت"
+    "saturday": "السبت",
+    "printNode": "Print Node",
+    "printnodeUsername": "اسم مستخدم PrintNode",
+    "printnodePassword": "كلمة مرور PrintNode",
+    "smsAndEmails": "SMS والبريد الإلكتروني",
+    "creditCards": "البطاقات الائتمانية",
+    "taxAuthority": "الهيئة الضريبية",
+    "hours": "ساعات",
+    "businessProfile": "الملف الشخصي للشركة"
   },
   "remainWords": {
     "newQuote": "عرض جديد",

@@ -2076,7 +2076,15 @@
     "wednesday": "ד",
     "thursday": "ה",
     "friday": "ו",
-    "saturday": "ש"
+    "saturday": "ש",
+    "printNode": "Print Node",
+    "printnodeUsername": "שם משתמש PrintNode",
+    "printnodePassword": "סיסמת PrintNode",
+    "smsAndEmails": "SMS ואימיילים",
+    "creditCards": "כרטיסי אשראי",
+    "taxAuthority": "רשות המסים",
+    "hours": "שעות",
+    "businessProfile": "פרופיל עסקי"
   },
   "remainWords": {
     "newQuote": "ציטוט חדש",

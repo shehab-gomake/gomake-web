@@ -2049,7 +2049,15 @@
     "wednesday": "Mittwoch",
     "thursday": "Donnerstag",
     "friday": "Freitag",
-    "saturday": "Samstag"
+    "saturday": "Samstag",
+    "printNode": "Print Node",
+    "printnodeUsername": "PrintNode Benutzername",
+    "printnodePassword": "PrintNode Passwort",
+    "smsAndEmails": "SMS und E-Mails",
+    "creditCards": "Kreditkarten",
+    "taxAuthority": "Steuerbehörde",
+    "hours": "Stunden",
+    "businessProfile": "Geschäftsprofil"
   },
   "remainWords": {
     "newQuote": "Neues Angebot",

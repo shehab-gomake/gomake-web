@@ -2199,7 +2199,15 @@
     "wednesday": "Wed",
     "thursday": "Thu",
     "friday": "Fri",
-    "saturday": "Sat"
+    "saturday": "Sat",
+    "printNode": "Print Node",
+    "printnodeUsername": "PrintNode Username",
+    "printnodePassword": "PrintNode Password",
+    "smsAndEmails": "SMS and Emails",
+    "creditCards": "Credit Cards",
+    "taxAuthority": "Tax Authority",
+    "hours": "Hours",
+    "businessProfile": "Business Profile"
   },
   "remainWords": {
     "newQuote": "New quote",
