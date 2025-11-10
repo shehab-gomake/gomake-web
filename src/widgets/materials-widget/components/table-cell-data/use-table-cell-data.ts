@@ -155,7 +155,8 @@ const useTableCellData = (isAdmin:boolean, inventoryTable: boolean = false, purc
                     }
                     alertSuccessUpdate();
                     resolve(res); // Resolve with success response
-                } else {
+                } 
+                else {
                     if (res?.statusCode === 2627) {
               
                         if (error?.errorParams?.length > 0) {
