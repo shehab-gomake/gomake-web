@@ -78,7 +78,7 @@ const useStyle = ({
       bodyContainer: {
         display: "flex",
         flexDirection: "column" as "column",
-        backgroundColor: "#F6F6F6",
+        backgroundColor: "var(--theme-bg-body, #F6F6F6)",
         height: "100%",
         // overflow: "scroll",
         overflow: "auto",

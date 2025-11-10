@@ -7,7 +7,8 @@ import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 const useStyle = () => {
   const { t } = useTranslation();
-  const { neutralColor, primaryColor, successColor } = useGomakeTheme();
+  const { neutralColor, primaryColor, successColor, secondColor } =
+    useGomakeTheme();
   const classes = useMemo(() => {
     return {
       container: {
@@ -42,7 +43,7 @@ const useStyle = () => {
         flexDirection: "row" as "row",
         justifyContent: "flex-start",
         alignItems: "center",
-        gap: "5px",
+        gap: "4px",
       },
       profileContainer: {
         display: "flex",
@@ -211,6 +212,7 @@ const useStyle = () => {
   return {
     classes,
     primaryColor,
+    secondColor,
   };
 };
 export { useStyle };

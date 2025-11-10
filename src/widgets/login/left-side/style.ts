@@ -37,7 +37,7 @@ const useStyle = () => {
         ...adaptPaddingRight(t("direction"), 48),
       },
       loginLbl: {
-        color: primaryColor(600),
+        color: primaryColor(500),
         ...FONT_FAMILY.Outfit(600, 48),
         marginBottom: 40,
       },

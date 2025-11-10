@@ -12,9 +12,9 @@ import Head from "next/head";
 import { useEffect } from "react";
 import { useCustomerAuthLayout } from "./use-customer-auth-layout";
 import { useTrialRedirect } from "@/hooks/use-trial-redirect";
-import { 
-  TicketChatbotSidebar, 
-  TicketChatbotProvider, 
+import {
+  TicketChatbotSidebar,
+  TicketChatbotProvider,
   useTicketChatbot,
   RequestNotificationProvider,
   RequestNotificationModal,
@@ -34,7 +34,7 @@ const CustomerAuthLayoutInner = ({
 }: IAuthLayout) => {
   const isMobileScreen = useMediaQuery("(max-width:768px)");
   const { isOpen, closeChatbot } = useTicketChatbot();
-  
+
   // Set up global request listener (works even when chatbot is closed)
   useGlobalRequestListener();
 
@@ -146,7 +146,11 @@ const CustomerAuthLayoutInner = ({
                   overflow: "hidden",
                 }}
               >
-                {isMobileScreen ? <MobileHeaderWidget /> : <HeaderWidget customStyle={customHeaderStyle} />}
+                {isMobileScreen ? (
+                  <MobileHeaderWidget />
+                ) : (
+                  <HeaderWidget customStyle={customHeaderStyle} />
+                )}
 
                 {canAccess && (
                   <div style={classes.bodyContainer} className={className}>

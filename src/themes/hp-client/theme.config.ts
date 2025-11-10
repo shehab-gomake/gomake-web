@@ -6,9 +6,17 @@ import { SuccessRateIcon } from "./icons/SuccessRateIcon";
 import { OrdersIcon } from "./icons/OrdersIcon";
 import { PendingIcon } from "./icons/PendingIcon";
 import { StuckJobsIcon } from "./icons/StuckJobsIcon";
-
-import { HpCardsWidget } from "./components/HpCardsWidget";
+import { HpCardsWidget } from "./components/hp-cards";
 import { HpLeftSideLayout } from "./components/hp-left-side-layout";
+import {
+  HpNotificationsIcon,
+  HpTrialIndicator,
+} from "./components/hp-top-header";
+import {
+  HpUserIcon,
+  HpHelpIcon,
+  HpFrontDeskIcon,
+} from "./components/hp-top-header";
 
 /* HP CLIENT THEME - Custom Brand Theme */
 
@@ -41,6 +49,7 @@ const hpClientThemeConfig: ThemeConfig = {
 
       // Background Colors - WHITE page background
       "--theme-bg-body": "#ffffff",
+      "--theme-bg-body-settings": "#E0E0E04D",
       "--theme-bg-primary": "#ffffff",
       "--theme-bg-secondary": "#f8fafc",
       "--theme-bg-tertiary": "#f1f5f9",
@@ -245,9 +254,10 @@ const hpClientThemeConfig: ThemeConfig = {
   components: {
     CardsWidget: HpCardsWidget,
     LeftSideLayout: HpLeftSideLayout,
+    TrialIndicator: HpTrialIndicator,
   },
 
-  // Icon overrides for HP Client theme - All cards now use custom HP icons
+  // Icon overrides for HP Client theme
   icons: {
     MonthlyPerformanceIcon: MonthlyPerformanceIcon,
     CanceledIcon: CanceledIcon,
@@ -256,6 +266,11 @@ const hpClientThemeConfig: ThemeConfig = {
     OrdersIcon: OrdersIcon,
     PendingIcon: PendingIcon,
     StuckJobsIcon: StuckJobsIcon,
+    // Header icons
+    UserIcon: HpUserIcon,
+    HelpIcon: HpHelpIcon,
+    FrontDeskIcon: HpFrontDeskIcon,
+    NotificationsIcon: HpNotificationsIcon,
   },
 };
 
