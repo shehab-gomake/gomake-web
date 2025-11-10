@@ -14,10 +14,13 @@ import { Permissions } from "@/components/CheckPermission/enum";
 import { GoMakeDeleteModal, ThreeOptionsModal } from "@/components";
 import { ModalType } from "@/enums";
 import { addressTypeState, EAddressType } from "./address-widget/state";
-import { fontWeight } from "html2canvas/dist/types/css/property-descriptors/font-weight";
 import { ClientChangeSource } from "@/pages-components/quote-new/store/quote";
 import { ClientAutocomplete } from "@/widgets/Clients-Autocomplete/clients-list";
 import { useRecoilState } from "recoil";
+import { SupplierChangeConfirmationModal } from "@/widgets/quote-new/modals-widgets/supplier-change-confirmation-modal";
+import { reCalculateDocumentItemsDataFromRowMaterialsApi } from "@/services/api-service/materials/printhouse-materials-endpoints";
+import { useGomakeAxios, useSnackBar } from "@/hooks";
+import { v4 as uuidv4 } from "uuid";
 
 const BusinessNewWidget = ({
   values,
@@ -88,6 +91,8 @@ const BusinessNewWidget = ({
     onClickCloseChangeClientModalFromInvoice,
     openChangeClientModalFromInvoice,
     openChangeClientModal,
+    openSupplierChangeConfirmationModal,
+    onClickCloseSupplierChangeConfirmationModal,
     selectedClient,
     manuaLInvoiceNum,
     setManuaLInvoiceNum,
@@ -108,6 +113,119 @@ const BusinessNewWidget = ({
   const dir: "rtl" | "ltr" = t("direction");
   const isRTL = dir === "rtl";
   const { classes } = useStyle({ isRTL });
+  const { callApi } = useGomakeAxios();
+  const { alertSuccessUpdate, alertFaultUpdate } = useSnackBar();
+  const [isReCalculating, setIsReCalculating] = useState(false);
+
+  // Handler for option 1: Start new document
+  const handleStartNew = () => {
+    onChangeSelectBusiness(
+      selectedClient,
+      ClientChangeSource.SAVE_AND_START_NEW_DOC
+    );
+    onClickCloseSupplierChangeConfirmationModal();
+  };
+
+  // Handler for option 2: Change supplier and recalculate prices
+  const handleRecalculatePrice = async () => {
+    if (!selectedClient?.id) {
+      return;
+    }
+
+    // Get printHouseMaterialsIds from document items
+    const printHouseMaterialsIds = quoteStateValue?.documentItems
+      ?.filter((item) => item.printHouseMaterialId)
+      ?.map((item) => item.printHouseMaterialId) || [];
+
+    if (printHouseMaterialsIds.length === 0) {
+      alertFaultUpdate();
+      onClickCloseSupplierChangeConfirmationModal();
+      return;
+    }
+
+    setIsReCalculating(true);
+
+    const callBack = async (res) => {
+      setIsReCalculating(false);
+      if (res?.success && res?.data) {
+        // Get the re-calculated items from the response
+        // The data is already extracted by getSetApiData, so res.data is the array
+        const items = Array.isArray(res.data) ? res.data : (res.data?.data || []);
+
+        if (items.length === 0) {
+          alertFaultUpdate();
+          return;
+        }
+
+        // Transform items to match documentItems format
+        const transformedItems = items.map((item: any) => ({
+          id: uuidv4(),
+          printHouseMaterialId: item.printHouseMaterialId,
+          code: item.productCode,
+          details: item.details,
+          price: item.unitPrice,
+          workName: "",
+          discount: 0,
+          finalPrice: item.finalPrice || item.unitPrice,
+          quantity: item.quantity || (item.packagesQuantity * item.quantityInPackage),
+          productName: item.productName,
+          isSelected: false,
+          productType: 0,
+          productID: item.productId,
+          packagesQuantity: item.packagesQuantity || 0,
+          quantityInPackage: item.quantityInPackage || 1,
+          ...(item.unit && { unit: item.unit }),
+        }));
+
+        // Change the supplier and merge the items
+        await onChangeSelectBusiness(
+          selectedClient,
+          ClientChangeSource.REGULAR_CHANGE,
+          {
+            documentItems: transformedItems,
+          }
+        );
+
+        alertSuccessUpdate();
+        onClickCloseSupplierChangeConfirmationModal();
+      } else {
+        alertFaultUpdate();
+      }
+    };
+
+    await reCalculateDocumentItemsDataFromRowMaterialsApi(
+      callApi,
+      callBack,
+      {
+        supplierId: selectedClient.id,
+        printHouseMaterialsIds: printHouseMaterialsIds,
+      }
+    );
+  };
+
+  // Handler for option 3: Change supplier and keep items without price change
+  const handleKeepItemsWithoutPriceChange = async () => {
+    if (!selectedClient?.id) {
+      return;
+    }
+
+    // Keep existing documentItems as-is, just change the supplier
+    await onChangeSelectBusiness(
+      selectedClient,
+      ClientChangeSource.REGULAR_CHANGE,
+      {
+        documentItems: quoteStateValue?.documentItems || [],
+      }
+    );
+
+    alertSuccessUpdate();
+    onClickCloseSupplierChangeConfirmationModal();
+  };
+
+  // Handler for option 3: Cancel
+  const handleCancel = () => {
+    onClickCloseSupplierChangeConfirmationModal();
+  };
 
   useEffect(() => {
     setPurchaseNumber(values?.purchaseNumber);
@@ -615,6 +733,14 @@ const BusinessNewWidget = ({
         yesBtn={`sales.cart.${isPurchaseDocument ? "saveAndChangeSupplier" : "saveAndChangeClients"
           }`}
         noBtn={"sales.cart.startNewInvoice"}
+      />
+      <SupplierChangeConfirmationModal
+        open={openSupplierChangeConfirmationModal}
+        onClose={handleCancel}
+        onStartNew={handleStartNew}
+        onRecalculatePrice={handleRecalculatePrice}
+        onKeepItemsWithoutPriceChange={handleKeepItemsWithoutPriceChange}
+        loading={isReCalculating}
       />
     </>
   );

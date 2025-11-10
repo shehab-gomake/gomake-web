@@ -75,6 +75,9 @@ export const useInventoryIntakeModal = ({
           return {
             ...item,
             name: item.name,
+            productName: item.productName || item.name,
+            productCode: item.productCode || item.code,
+            details: item.details,
             supplierId: item.supplierId,
             clients: item.clients || [],
             packagesQuantity: item.packagesQuantity,

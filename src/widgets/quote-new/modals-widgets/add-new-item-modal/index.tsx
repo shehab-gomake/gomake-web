@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { GoMakeModal, GomakeTextInput } from "@/components";
+import { GoMakeDialog, GomakeTextInput } from "@/components";
 import { useStyle } from "./style";
 import { GoMakeTreeSelect } from "@/components/auto-complete/tree-select";
 import "primereact/resources/themes/saga-blue/theme.css";
@@ -8,10 +8,9 @@ import "primeicons/primeicons.css";
 import { useAddNewItem } from "./use-add-new-item";
 import { Popover } from "@mui/material";
 import { Stack, RadioGroup, FormControlLabel, Radio } from "@mui/material";
-import { PrimaryButton } from "@/components/button/primary-button";
-import { Permissions } from "@/components/CheckPermission/enum";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { ETab } from "@/pages-components/admin/home/widgets/quote-widget/enums";
+import { Permissions } from "@/components/CheckPermission/enum";
 
 const ProductTypeSelector = ({ active, onChange, primaryColor, t }) => (
   <RadioGroup
@@ -94,19 +93,46 @@ const AddNewItemModal = ({ openModal, onClose, documentType, getQuote, getCalcul
     setSelectedTab,
   } = useAddNewItem({ onClose, getQuote, documentType, getCalculateQuoteItem, isMaterial, isNewCreation, isPurchaseOrder, isCanIntake });
 
+  const handlePrimaryAction = () => {
+    if (isDisabled) {
+      // Show error popover - find the primary button div in the footer
+      setTimeout(() => {
+        const dialog = document.querySelector('[role="dialog"]');
+        if (dialog) {
+          const footer = dialog.querySelector('[class*="MuiDialogActions"]');
+          if (footer) {
+            // Find the primary button div (it's the first clickable div in the footer buttons container)
+            const buttonDiv = footer.querySelector('div[style*="cursor"]') as HTMLElement;
+            if (buttonDiv) {
+              handleClick({ currentTarget: buttonDiv } as any);
+            }
+          }
+        }
+      }, 0);
+    } else {
+      onClickCreateQuoteForCustomer();
+    }
+  };
+
   return (
     <>
-      <GoMakeModal
-        openModal={openModal}
-        modalTitle={t("sales.quote.addNewItem")}
-        onClose={handleCloseModal}
-        insideStyle={classes.insideStyle}
-        withRoundedCloseIcon={false}
-        modalTitleStyle={
-          !CheckPermission(Permissions.ADD_NEW_PRODUCT_FROM_CART)
-            ? { paddingBottom: "20px" }
-            : undefined
+      <GoMakeDialog
+        open={openModal}
+        title={t("sales.quote.addNewItem")}
+        customStyles={
+          {
+            title: !CheckPermission(Permissions.ADD_NEW_PRODUCT_FROM_CART)
+              ? { paddingBottom: "20px" }
+              : undefined
+          }
         }
+        onClose={handleCloseModal}
+        showFooter={true}
+        primaryButtonLabel={t("sales.quote.add")}
+        onPrimaryAction={handlePrimaryAction}
+        primaryButtonDisabled={isDisabled}
+
+        maxWidth="sm"
       >
         <Stack style={classes.mainContainer}>
           {/*CheckPermission(Permissions.ADD_NEW_PRODUCT_FROM_CART) && (
@@ -145,29 +171,20 @@ const AddNewItemModal = ({ openModal, onClose, documentType, getQuote, getCalcul
               styles={classes}
             />
           )}
-          <div style={classes.btnContainer}>
-            <PrimaryButton
-              variant="contained"
-              style={classes.btnStyle}
-              onClick={isDisabled ? handleClick : onClickCreateQuoteForCustomer}
-            >
-              {t("sales.quote.add")}
-            </PrimaryButton>
-            <Popover
-              id={id}
-              open={open}
-              anchorEl={anchorEl}
-              onClose={handleClose}
-              anchorOrigin={{
-                vertical: "bottom",
-                horizontal: "left",
-              }}
-            >
-              <div style={classes.errorMsgStyle}>{_renderErrorMessage()}</div>
-            </Popover>
-          </div>
         </Stack>
-      </GoMakeModal>
+        <Popover
+          id={id}
+          open={open}
+          anchorEl={anchorEl}
+          onClose={handleClose}
+          anchorOrigin={{
+            vertical: "bottom",
+            horizontal: "left",
+          }}
+        >
+          <div style={classes.errorMsgStyle}>{_renderErrorMessage()}</div>
+        </Popover>
+      </GoMakeDialog>
     </>
   );
 };
