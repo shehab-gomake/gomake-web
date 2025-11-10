@@ -363,6 +363,7 @@ const QuoteNewPageWidget = ({
     pendingPurchaseNumber,
     setPendingPurchaseNumber,
     originalPurchaseNumber,
+    setOriginalPurchaseNumber,
     updatePurchaseNumber,
     checkPurchaseNumber,
     modalCallback,
