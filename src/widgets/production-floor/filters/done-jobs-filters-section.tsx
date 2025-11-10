@@ -138,6 +138,8 @@ const DoneJobsFiltersSection = ({
       onGenerateReportClick={() => {}}
       classes={classes}
       hideActionButtons={true}
+      setIsQualityFixJob={()=>{}}
+      isQualityFixJob={undefined}
     />
   );
 };

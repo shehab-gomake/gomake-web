@@ -139,6 +139,31 @@ const FileComponent = ({ fileName, fileStatus, filePath, orderItemId, productTyp
     setOpen(false);
   };
 
+  const onClickCopyPath = async () => {
+    try {
+      // Construct the file path - prefer downloadFilePath, then filePath, then fileName
+      const pathToCopy = downloadFilePath || filePath || fileName;
+      
+      // Try modern clipboard API first
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(pathToCopy);
+      } else {
+        // Fallback for older browsers
+        const textArea = document.createElement("textarea");
+        textArea.value = pathToCopy;
+        textArea.style.position = "fixed";
+        textArea.style.opacity = "0";
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand("copy");
+        document.body.removeChild(textArea);
+      }
+      setOpen(false);
+    } catch (error) {
+      console.error("Failed to copy file path:", error);
+    }
+  };
+
   return (
     <div style={{ position: "relative" }}>
       <Stack
@@ -247,6 +272,9 @@ const FileComponent = ({ fileName, fileStatus, filePath, orderItemId, productTyp
               }
             }}>
               {t("translations.download")}
+            </MenuItem>
+            <MenuItem onClick={onClickCopyPath}>
+              {t("fileUploader.copyPath")}
             </MenuItem>
             <MenuItem onClick={onClickDelete}>{t("modal.delete")}</MenuItem>
           </Paper>

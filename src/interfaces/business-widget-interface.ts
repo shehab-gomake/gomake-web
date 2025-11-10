@@ -25,4 +25,5 @@ export interface IBusinessWidget {
   isRightSign?: boolean;
   showClearIcon?: boolean;
   filterOptions?: (options: any[], state: { inputValue: string }) => any[];
+  errorMessage?: string;
 }

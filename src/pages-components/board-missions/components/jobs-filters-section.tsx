@@ -53,6 +53,10 @@ interface IJobsFiltersSectionProps {
   setIsPrintedState: (value: boolean) => void;
   isPrintHouseUsePrintNode: boolean;
 
+  // Is Quality fix job filter
+  isQualityFixJob: boolean | null;
+  setIsQualityFixJob: (value: boolean | null) => void;
+
   // Products filter
   productsList: any[];
   productIds: any[];
@@ -117,6 +121,9 @@ const JobsFiltersSection = ({
   isPrintedState,
   setIsPrintedState,
   isPrintHouseUsePrintNode,
+  // Is Quality fix job filter
+  isQualityFixJob,
+  setIsQualityFixJob,
   // Products filter
   productsList,
   productIds,
@@ -312,6 +319,33 @@ const JobsFiltersSection = ({
         },
       ]
       : []),
+    {
+      id: "isQualityFixJob",
+      label: t("boardMissions.isQualityFixJob"),
+      component: (
+        <GoMakeAutoComplate
+          key={
+            isQualityFixJob === null ? "null" : isQualityFixJob.toString()
+          }
+          options={[
+            { value: true, text: t("modal.yes") },
+            { value: false, text: t("modal.no") },
+          ]}
+          getOptionLabel={(option: any) => option.text}
+          placeholder={t("boardMissions.isQualityFixJob")}
+          style={classes.textInputStyle}
+          onChange={(e, value) => setIsQualityFixJob(value?.value ?? null)}
+          value={
+            isQualityFixJob === null
+              ? null
+              : isQualityFixJob === true
+                ? { value: true, text: t("modal.yes") }
+                : { value: false, text: t("modal.no") }
+          }
+          withArrow={true}
+        />
+      ),
+    },
     {
       id: "products",
       label: t("boardMissions.products"),

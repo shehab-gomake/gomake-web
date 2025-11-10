@@ -60,6 +60,7 @@ import {
   updateExchangeRateApi,
   updateOccasionalClientNameApi,
   updatePurchaseNumberApi,
+  checkPurchaseNumberExistsApi,
   updateQuoteItemQuantityApi,
   getDocumentInventoryApi,
 } from "@/services/api-service/generic-doc/documents-api";
@@ -870,8 +871,48 @@ const useQuoteNew = ({
 
   const [originalPurchaseNumber, setOriginalPurchaseNumber] = useState(null);
   const [pendingPurchaseNumber, setPendingPurchaseNumber] = useState(null);
+  const purchaseNumberCheckTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const checkPurchaseNumber = async (value: string) => {
+    if (!value || value.trim() === "") {
+      return;
+    }
+
+    // Clear previous timeout
+    if (purchaseNumberCheckTimeoutRef.current) {
+      clearTimeout(purchaseNumberCheckTimeoutRef.current);
+    }
+
+    // Debounce the API call
+    purchaseNumberCheckTimeoutRef.current = setTimeout(async () => {
+      const callBack = (res) => {
+        if (res?.success) {
+          if (res?.data === true) {
+            // Store the original value if not already stored
+            if (originalPurchaseNumber === null) {
+              setOriginalPurchaseNumber(quoteItemValue?.purchaseNumber);
+            }
+            // Store pending value and open modal
+            setPendingPurchaseNumber(value);
+            alertExistPurchaseNumber.open();
+          }
+        }
+      };
+
+      await checkPurchaseNumberExistsApi(callApi, callBack, {
+        documentType: docType,
+        purchaseNumber: value,
+        documentId: quoteItemValue?.id,
+      });
+    }, 500); // 500ms debounce
+  };
 
   const onBlurPurchaseNumber = async (value) => {
+    // Clear timeout if user blurs before debounce completes
+    if (purchaseNumberCheckTimeoutRef.current) {
+      clearTimeout(purchaseNumberCheckTimeoutRef.current);
+      purchaseNumberCheckTimeoutRef.current = null;
+    }
     await updatePurchaseNumber(value);
     setIsUpdatePurchaseNumber(null);
   };
@@ -3000,6 +3041,7 @@ const useQuoteNew = ({
     originalPurchaseNumber,
     setOriginalPurchaseNumber,
     updatePurchaseNumber,
+    checkPurchaseNumber,
     modalCallback,
     openReceiptModal,
     receiptSendModal,

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useStyle } from "./style";
 import { UpdateValueInput } from "@/components/text-input/update-value-input";
 import { IBusinessWidget } from "@/interfaces";
+import { FONT_FAMILY } from "@/utils/font-family";
 
 const InputUpdatedValues = ({
   label,
@@ -20,6 +21,7 @@ const InputUpdatedValues = ({
   isTwoDigit = false,
   placeholder,
   width,
+  errorMessage,
 }: IBusinessWidget) => {
   const { classes } = useStyle({ isUnderLine });
   const [originalValue, setOriginalValue] = useState(value);
@@ -40,35 +42,49 @@ const InputUpdatedValues = ({
 
   return (
     <>
-      <div style={inputMainContainerStyle || classes.inputMainContainer}>
-        <div style={classes.labelStyle}>{label}</div>
-        {isUpdate ? (
-          <UpdateValueInput
-            clickedOut={() => onBlur()?.then()}
-            onInputChange={onInputChange}
-            onCancel={() => {
-              onInputChange(originalValue);
-              setIsUpdate(null);
-            }}
-            onUpdate={() => onBlur()?.then()}
-            value={value}
-            width={width ? width : "210px"}
-          />
-        ) : (
+      <div style={{ display: "flex", flexDirection: "column" }}>
+        <div style={inputMainContainerStyle || classes.inputMainContainer}>
+          <div style={classes.labelStyle}>{label}</div>
+          {isUpdate ? (
+            <UpdateValueInput
+              clickedOut={() => onBlur()?.then()}
+              onInputChange={onInputChange}
+              onCancel={() => {
+                onInputChange(originalValue);
+                setIsUpdate(null);
+              }}
+              onUpdate={() => onBlur()?.then()}
+              value={value}
+              width={width ? width : "210px"}
+            />
+          ) : (
+            <div
+              style={{ ...classes.inputTextStyle, ...specialStyle }}
+              className="customInput"
+              onClick={handleClick}
+            >
+              {isRightSign ? null : sign ? sign + " " : ""}
+              {placeholder
+                ? placeholder
+                : isTwoDigit
+                ? typeof value === "number"
+                  ? value.toFixed(2)
+                  : value
+                : value}
+              {isRightSign ? (sign ? "  " + sign : "") : null}
+            </div>
+          )}
+        </div>
+        {errorMessage && (
           <div
-            style={{ ...classes.inputTextStyle, ...specialStyle }}
-            className="customInput"
-            onClick={handleClick}
+            style={{
+              ...FONT_FAMILY.Lexend(400, 12),
+              color: "#d32f2f",
+              marginTop: "4px",
+              marginLeft: "4px",
+            }}
           >
-            {isRightSign ? null : sign ? sign + " " : ""}
-            {placeholder
-              ? placeholder
-              : isTwoDigit
-              ? typeof value === "number"
-                ? value.toFixed(2)
-                : value
-              : value}
-            {isRightSign ? (sign ? "  " + sign : "") : null}
+            {errorMessage}
           </div>
         )}
       </div>

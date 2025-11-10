@@ -364,6 +364,7 @@ const QuoteNewPageWidget = ({
     setPendingPurchaseNumber,
     originalPurchaseNumber,
     updatePurchaseNumber,
+    checkPurchaseNumber,
     modalCallback,
     openReceiptModal,
     receiptSendModal,
@@ -787,6 +788,7 @@ const QuoteNewPageWidget = ({
                   onBlurPurchaseNumber={onBlurPurchaseNumber}
                   isUpdatePurchaseNumber={isUpdatePurchaseNumber}
                   setIsUpdatePurchaseNumber={setIsUpdatePurchaseNumber}
+                  checkPurchaseNumber={checkPurchaseNumber}
                   onBlurBusinessCode={onBlurBusinessCode}
                   setIsUpdateBusinessCode={setIsUpdateBusinessCode}
                   onBlurAddress={onBlurAddress}
@@ -1375,9 +1377,10 @@ const QuoteNewPageWidget = ({
           alertExistPurchaseNumber.close();
           setQuoteItemValue((prev) => ({
             ...prev,
-            purchaseNumber: originalPurchaseNumber,
+            purchaseNumber: originalPurchaseNumber || prev.purchaseNumber,
           }));
           setPendingPurchaseNumber(null);
+          setOriginalPurchaseNumber(null);
         }}
         onClickConfirm={async () => {
           alertExistPurchaseNumber.close();

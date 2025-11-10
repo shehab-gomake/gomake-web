@@ -35,7 +35,6 @@ import { ApprovalFileStatusComponent } from "./approval-file-status-component";
 import { ExpandIcon } from "@/icons/expand-icon";
 import { convertUtcToLocalIsoString } from "@/components/date-time/date-time-component";
 import { DateField } from "@/components/date-picker/date-filed";
-import { useGomakeAxios } from "@/hooks";
 import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
 import { ProductionFloorNote } from "../board-note/production-floor-note";
 import { useSimpleApproveModal } from "@/hooks/use-simple-approve-modal";
@@ -162,7 +161,6 @@ const TableRowComponent = ({
     selectedBoardsMissionsState
   );
   const { CheckPermission } = useUserPermission();
-  const { callApi } = useGomakeAxios();
   const canDrag =
     CheckPermission(Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR) &&
     !status.isGroup;

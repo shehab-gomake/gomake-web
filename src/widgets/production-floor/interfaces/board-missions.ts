@@ -83,6 +83,7 @@ export interface IBoardMissionsDetails {
   currentStation?: any;
   contactName?: string;
   isHaveDelivery?: boolean;
+  qualityIssueReason?: string;
 }
 
 export interface IBoardMissionStep {
