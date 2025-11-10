@@ -2717,6 +2717,9 @@
     "qualityIssueReason": "Please describe the quality issue",
     "qualityIssueReasonLabel": "Quality Issue Reason",
     "qualityIssueFix": "Quality issue fix",
+    "otherReason": "Other reason",
+    "addNewReason": "Add new reason",
+    "noReasonsFound": "No reasons found",
     "export": {
       "exportToExcel": "Export to Excel",
       "noDataToExport": "No data to export",

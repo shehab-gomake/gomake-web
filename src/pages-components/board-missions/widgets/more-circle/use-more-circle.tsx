@@ -244,6 +244,12 @@ const useMoreCircle = ({
       onclick: () => onClickDuplicate(mission),
     },
     {
+      condition: true && isSendPaymentToClient && onReportQualityIssue && !isDoneJobs,
+      name: t("productionFloor.reportQualityIssue"),
+      icon: <QualityIssueIcon />,
+      onclick: () => onReportQualityIssue?.(mission),
+    },
+    {
       condition: mission?.boardMissionStatus?.key === "Stuck",
       name: t("boardMissions.backToProcess"),
       icon: <MarkAsUnReadyIcon />,
@@ -285,12 +291,6 @@ const useMoreCircle = ({
       name: t("fileUploader.uploadFile"),
       icon: <PDFIcon />,
       onclick: () => addBoardMissionsToFileUploader(mission),
-    },
-    {
-      condition: true && isSendPaymentToClient && onReportQualityIssue,
-      name: t("productionFloor.reportQualityIssue"),
-      icon: <QualityIssueIcon />,
-      onclick: () => onReportQualityIssue?.(mission),
     },
   ];
 

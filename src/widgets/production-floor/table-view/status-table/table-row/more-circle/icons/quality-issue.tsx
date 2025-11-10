@@ -1,15 +1,32 @@
 const QualityIssueIcon = (props: any) => {
   return (
     <svg
-      width="17"
-      height="17"
-      viewBox="0 0 24 24"
+      width="16"
+      height="16"
+      viewBox="0 0 16 16"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
       <path
-        d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM13 17H11V15H13V17ZM13 13H11V7H13V13Z"
-        fill="#8283BE"
+        d="M8 14.6667C11.6819 14.6667 14.6667 11.6819 14.6667 8C14.6667 4.3181 11.6819 1.33334 8 1.33334C4.3181 1.33334 1.33334 4.3181 1.33334 8C1.33334 11.6819 4.3181 14.6667 8 14.6667Z"
+        stroke="#8283BE"
+        stroke-width="1.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+      <path
+        d="M8 10.6667V8"
+        stroke="#8283BE"
+        stroke-width="1.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+      <path
+        d="M8 5.33334H8.00667"
+        stroke="#8283BE"
+        stroke-width="1.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
       />
     </svg>
   );

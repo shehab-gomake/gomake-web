@@ -19,12 +19,9 @@ const useStyle = () => {
       },
       textInputStyle: {
         width: "100%",
-        border: "1px solid #2E3092",
-        borderRadius: 4,
-        height: 110,
-        overflow: "scroll",
+        border: "none",
+        height: 45,
         marginTop: 20,
-        padding: 5,
       },
       btnContainer: {
         display: "flex",
