@@ -46,6 +46,8 @@ const GET_PRINTING_TICKET_PDF =
   "/v1/erp-service/board-missions-tables/get-printing-ticket-pdf";
 const UPDATE_PURCHASE_NUMBER_URL =
   "/v1/erp-service/documents/update-purchase-number";
+const CHECK_PURCHASE_NUMBER_EXISTS_URL =
+  "/v1/erp-service/documents/check-purchase-number-exists";
 const ADD_DELIVERY_URL = "/v1/erp-service/documents/add-delivery";
 const CANCEL_DOCUMENT_URL = "/v1/erp-service/documents/cancel-document";
 const SEND_DOCUMENT_TO_CLIENT_URL =
@@ -432,6 +434,20 @@ const updatePurchaseNumberApi: ICallAndSetData = async (
     callApi,
     EHttpMethod.PUT,
     UPDATE_PURCHASE_NUMBER_URL,
+    setState,
+    data
+  );
+};
+
+const checkPurchaseNumberExistsApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    CHECK_PURCHASE_NUMBER_EXISTS_URL,
     setState,
     data
   );
@@ -1386,6 +1402,7 @@ export {
   duplicateWithAnotherQuantityApi,
   getDocumentPdfApi,
   updatePurchaseNumberApi,
+  checkPurchaseNumberExistsApi,
   addDeliveryApi,
   cancelDocumentApi,
   sendDocumentToClientApi,

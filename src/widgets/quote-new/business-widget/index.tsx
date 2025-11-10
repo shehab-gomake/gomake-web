@@ -24,6 +24,7 @@ const BusinessNewWidget = ({
   onBlurPurchaseNumber,
   isUpdatePurchaseNumber,
   setIsUpdatePurchaseNumber,
+  checkPurchaseNumber,
   onBlurBusinessCode,
   setIsUpdateBusinessCode,
   onBlurAddress,
@@ -346,7 +347,12 @@ const BusinessNewWidget = ({
                 ? setIsConfirmation
                 : setIsUpdatePurchaseNumber
             }
-            onInputChange={(v) => setPurchaseNumber(v)}
+            onInputChange={(v) => {
+              setPurchaseNumber(v);
+              if (checkPurchaseNumber) {
+                checkPurchaseNumber(v);
+              }
+            }}
           />
         )}
         {isInvoice && (
