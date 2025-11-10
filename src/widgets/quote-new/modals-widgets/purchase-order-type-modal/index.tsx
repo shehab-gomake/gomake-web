@@ -1,9 +1,11 @@
 import React from "react";
 import { GoMakeDialog } from "@/components/dialog/go-make-dialog";
 import { GomakePrimaryButton } from "@/components";
-import { Stack } from "@mui/material";
+import { Stack, Typography, Box, IconButton } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { FONT_FAMILY } from "@/utils/font-family";
+import { WarningIcon } from "@/icons";
 
 interface PurchaseOrderTypeModalProps {
   open: boolean;
@@ -19,39 +21,59 @@ const PurchaseOrderTypeModal: React.FC<PurchaseOrderTypeModalProps> = ({
   onSelectMaterial,
 }) => {
   const { t } = useTranslation();
-  const { primaryColor } = useGomakeTheme();
+  const { primaryColor, grayColor } = useGomakeTheme();
 
   return (
     <GoMakeDialog
       open={open}
       onClose={onClose}
       title={t("sales.purchaseOrder.selectPurchaseOrderType")}
-      showFooter={false}
-      maxWidth="xs"
+      showFooter={true}
+      hideCancelButton={true}
+      hidePrimaryButton={true}
+      customFooter={
+        <Stack direction="row" spacing={2} sx={{ width: "100%" }}>
+          <GomakePrimaryButton
+            onClick={onSelectProduct}
+            style={{
+              flex: 1,
+              height: "48px",
+              fontSize: "16px",
+              fontWeight: 500,
+              backgroundColor: primaryColor(500),
+            }}
+          >
+            {t("sales.purchaseOrder.purchaseOrderForProduct")}
+          </GomakePrimaryButton>
+          <GomakePrimaryButton
+            onClick={onSelectMaterial}
+            style={{
+              flex: 1,
+              height: "48px",
+              fontSize: "16px",
+              fontWeight: 500,
+              backgroundColor: primaryColor(500),
+            }}
+          >
+            {t("sales.purchaseOrder.purchaseOrderForMaterial")}
+          </GomakePrimaryButton>
+        </Stack>
+      }
+      maxWidth="sm"
     >
       <Stack spacing={2} sx={{ padding: "20px 0" }}>
-        <GomakePrimaryButton
-          onClick={onSelectProduct}
-          style={{
-            height: "48px",
-            fontSize: "16px",
-            fontWeight: 500,
-            backgroundColor: primaryColor(500),
-          }}
-        >
-          {t("sales.purchaseOrder.purchaseOrderForProduct")}
-        </GomakePrimaryButton>
-        <GomakePrimaryButton
-          onClick={onSelectMaterial}
-          style={{
-            height: "48px",
-            fontSize: "16px",
-            fontWeight: 500,
-            backgroundColor: primaryColor(500),
-          }}
-        >
-          {t("sales.purchaseOrder.purchaseOrderForMaterial")}
-        </GomakePrimaryButton>
+        <Box>
+          <Typography
+            variant="body2"
+            sx={{
+              ...FONT_FAMILY.Outfit(500, 16),
+              lineHeight: 1.6,
+              textAlign: "center",
+            }}
+          >
+            {t("sales.purchaseOrder.selectPurchaseOrderTypeDescription")}
+          </Typography>
+        </Box>
       </Stack>
     </GoMakeDialog>
   );

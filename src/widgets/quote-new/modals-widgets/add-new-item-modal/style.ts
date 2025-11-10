@@ -13,6 +13,7 @@ const useStyle = () => {
         alignItems: "flex-start",
         width: "100%",
         height: "100%",
+        padding: "10px 0",
       },
       insideStyle: {
         width: "30%",
