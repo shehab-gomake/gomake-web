@@ -2085,6 +2085,7 @@
     "printNode": "Print Node",
     "printnodeUsername": "اسم مستخدم PrintNode",
     "printnodePassword": "كلمة مرور PrintNode",
+    "packingSlipPrinter": "طابعة ملصق الشحن",
     "smsAndEmails": "SMS والبريد الإلكتروني",
     "creditCards": "البطاقات الائتمانية",
     "taxAuthority": "الهيئة الضريبية",
@@ -2423,6 +2424,18 @@
       "deleteReportTitle": "حذف التقرير المجدول",
       "deleteReportMessage": "هل أنت متأكد من أنك تريد حذف هذا التقرير المجدول؟ لا يمكن التراجع عن هذا الإجراء."
     }
+  },
+  "boardMissions": {
+    "isQualityFixJob": "هل هي وظيفة إصلاح الجودة",
+    "packagesTitle": "الحزم",
+    "alertPrintPackingSlip": "فشل في طباعة ملصق الشحن",
+    "alertQuantity": "لا يمكن أن تكون الكمية لكل حزمة أكبر من الكمية الإجمالية",
+    "selectPackingSlipAction": "اختر الإجراء",
+    "selectPackingSlipActionSubtitle": "كيف تريد المتابعة مع ملصق الشحن؟",
+    "exportPdf": "تصدير PDF",
+    "print": "طباعة",
+    "packingSlipPrinted": "تم طباعة ملصق الشحن بنجاح",
+    "printPackingSlipNotImplemented": "ميزة طباعة ملصق الشحن قادمة قريباً"
   },
   "logs": {
     "CLOSE": "تم إغلاق المستند",

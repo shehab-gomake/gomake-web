@@ -2080,6 +2080,7 @@
     "printNode": "Print Node",
     "printnodeUsername": "שם משתמש PrintNode",
     "printnodePassword": "סיסמת PrintNode",
+    "packingSlipPrinter": "מדפסת תוויות משלוח",
     "smsAndEmails": "SMS ואימיילים",
     "creditCards": "כרטיסי אשראי",
     "taxAuthority": "רשות המסים",
@@ -2463,6 +2464,18 @@
       "deleteReportTitle": "מחיקת דוח מתוזמן",
       "deleteReportMessage": "האם אתה בטוח שברצונך למחוק את הדוח המתוזמן הזה? לא ניתן לבטל פעולה זו."
     }
+  },
+  "boardMissions": {
+    "isQualityFixJob": "האם עבודת תיקון איכות",
+    "packagesTitle": "חבילות",
+    "alertPrintPackingSlip": "נכשל בהדפסת תווית משלוח",
+    "alertQuantity": "כמות לכל חבילה לא יכולה להיות גדולה מהכמות הכוללת",
+    "selectPackingSlipAction": "בחר פעולה",
+    "selectPackingSlipActionSubtitle": "איך תרצה להמשיך עם תווית המשלוח?",
+    "exportPdf": "ייצא PDF",
+    "print": "הדפס",
+    "packingSlipPrinted": "תווית משלוח הודפסה בהצלחה",
+    "printPackingSlipNotImplemented": "תכונת הדפסת תווית משלוח תגיע בקרוב"
   },
   "logs": {
     "CLOSE": "המסמך נסגר",

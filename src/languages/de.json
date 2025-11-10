@@ -2053,6 +2053,7 @@
     "printNode": "Print Node",
     "printnodeUsername": "PrintNode Benutzername",
     "printnodePassword": "PrintNode Passwort",
+    "packingSlipPrinter": "Lieferschein-Drucker",
     "smsAndEmails": "SMS und E-Mails",
     "creditCards": "Kreditkarten",
     "taxAuthority": "Steuerbehörde",
@@ -2279,6 +2280,18 @@
     "scheduledReports": "Geplante Berichte",
     "deleteReportTitle": "Geplanten Bericht löschen",
     "deleteReportMessage": "Sind Sie sicher, dass Sie diesen geplanten Bericht löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden."
+  },
+  "boardMissions": {
+    "isQualityFixJob": "Ist Qualitätsreparatur-Job",
+    "packagesTitle": "Pakete",
+    "alertPrintPackingSlip": "Lieferschein konnte nicht gedruckt werden",
+    "alertQuantity": "Menge pro Paket darf nicht größer sein als Gesamtmenge",
+    "selectPackingSlipAction": "Aktion auswählen",
+    "selectPackingSlipActionSubtitle": "Wie möchten Sie mit dem Lieferschein fortfahren?",
+    "exportPdf": "PDF exportieren",
+    "print": "Drucken",
+    "packingSlipPrinted": "Lieferschein erfolgreich gedruckt",
+    "printPackingSlipNotImplemented": "Lieferschein-Druckfunktion kommt bald"
   },
   "logs": {
     "CLOSE": "Dokument geschlossen",
