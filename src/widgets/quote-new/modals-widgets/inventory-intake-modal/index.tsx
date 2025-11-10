@@ -41,6 +41,9 @@ interface InventoryIntakeModalProps {
 interface InventoryRowData {
   code: string;
   name?: string;
+  productName?: string;
+  productCode?: string;
+  details?: string;
   purchaseOrderItemId: string;
   printHouseMaterialId: string;
   supplierId?: string;
@@ -67,6 +70,49 @@ interface InventoryRowData {
     };
   };
 }
+
+// Component to display product details inline with hover tooltip
+const ProductDetailsInline: React.FC<{ details: string }> = ({ details }) => {
+  const { primaryColor } = useGomakeTheme();
+
+  // Clean details - replace \n with spaces for inline display
+  const formatDetails = (text: string) => {
+    if (!text) return "";
+    // Replace \n with spaces for inline display
+    return text.split("\\n").join(" ").trim();
+  };
+
+  const formattedDetails = formatDetails(details);
+  const maxLength = 80; // Character limit for display
+  const shouldTruncate = formattedDetails.length > maxLength;
+  const displayText = shouldTruncate
+    ? formattedDetails.slice(0, maxLength) + "..."
+    : formattedDetails;
+
+  return (
+    <Box
+      component="span"
+      title={formattedDetails} // Show full text on hover
+      sx={{
+        display: "inline-flex",
+        alignItems: "center",
+        cursor: shouldTruncate ? "help" : "default",
+      }}
+    >
+      <Typography
+        component="span"
+        sx={{
+          fontSize: "16px",
+          fontWeight: 600,
+          color: primaryColor(500),
+          lineHeight: 1.4,
+        }}
+      >
+        {displayText}
+      </Typography>
+    </Box>
+  );
+};
 
 // Component for code input that updates local state only
 const CodeInputCell: React.FC<{
@@ -230,23 +276,33 @@ const InventoryIntakeModal: React.FC<InventoryIntakeModalProps> = ({
                           alignItems: "center",
                           marginBottom: "6px",
                           borderRadius: "4px",
+                          gap: "12px",
                         }}
                       >
-                        <Typography
-                          variant="h6"
-                          sx={{
-                            fontSize: "16px",
-                            fontWeight: 600,
-                            color: primaryColor(500),
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "8px",
-                          }}
-                        >
-                          {firstRow.productName && <span>{firstRow.productName}</span>}
-                          {firstRow.productName && firstRow.productCode && <span>-</span>}
-                          {firstRow.productCode && <span>{firstRow.productCode}</span>}
-                        </Typography>
+                        <Box sx={{ flex: 1, minWidth: 0, display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap" }}>
+                          <Typography
+                            variant="h6"
+                            sx={{
+                              fontSize: "16px",
+                              fontWeight: 600,
+                              color: primaryColor(500),
+                              display: "flex",
+                              alignItems: "center",
+                              gap: "8px",
+                              flexWrap: "wrap",
+                            }}
+                          >
+                            {firstRow.productCode && <span>{firstRow.productCode}</span>}
+                            {firstRow.productName && firstRow.productCode && <span>-</span>}
+                            {firstRow.productName && <span>{firstRow.productName}</span>}
+                            {firstRow.details && (
+                              <>
+                                <span>-</span>
+                                <ProductDetailsInline details={firstRow.details} />
+                              </>
+                            )}
+                          </Typography>
+                        </Box>
                         {/* Split/Merge Inventory Packages Button */}
                         {isSplit ? (
                           <GomakePrimaryButton

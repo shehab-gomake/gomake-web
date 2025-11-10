@@ -9,6 +9,7 @@ interface InventoryRowData {
   name?: string;
   productName?: string;
   productCode?: string;
+  details?: string;
   purchaseOrderItemId: string;
   printHouseMaterialId: string;
   supplierId?: string;
