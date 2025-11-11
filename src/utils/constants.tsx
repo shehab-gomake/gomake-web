@@ -218,7 +218,7 @@ export const _renderStatus = (
                   minWidth: "auto",
                   height: "auto",
                   padding: 0,
-                  color: "#2e3092",
+                  color: "var(--theme-secondary-color, #2e3092)",
                   cursor: "pointer",
                   textDecoration: "none",
                 }}
@@ -251,7 +251,7 @@ export const _renderStatus = (
                     minWidth: "auto",
                     height: "auto",
                     padding: 0,
-                    color: "#2e3092",
+                    color: "var(--theme-secondary-color, #2e3092)",
                     cursor: "pointer",
                     textDecoration: "none",
                   }}
@@ -273,7 +273,7 @@ export const _renderStatus = (
                   minWidth: "auto",
                   height: "auto",
                   padding: 0,
-                  color: "#2e3092",
+                  color: "var(--theme-secondary-color, #2e3092)",
                   cursor: "pointer",
                   textDecoration: "none",
                 }}
@@ -293,7 +293,13 @@ export const _renderStatus = (
 
       if (firstDocuments.length > 0) {
         result.push(
-          <div key="first-documents">
+          <div
+            key="first-documents"
+            style={{
+              color:
+                "var(--theme-table-body-color, var(--theme-text-primary, #2e3092))",
+            }}
+          >
             {t(`documentStatus.${document.titleDocumentNumber}.title`)}:{" "}
             {firstDocuments}
           </div>
@@ -302,7 +308,13 @@ export const _renderStatus = (
 
       if (secondDocuments.length > 0) {
         result.push(
-          <div key="second-documents">
+          <div
+            key="second-documents"
+            style={{
+              color:
+                "var(--theme-table-body-color, var(--theme-text-primary, #2e3092))",
+            }}
+          >
             {t(`documentStatus.${document.titleSecondDocumentNumber}.title`)}:{" "}
             {secondDocuments}
           </div>
@@ -311,7 +323,13 @@ export const _renderStatus = (
 
       if (thirdDocuments.length > 0) {
         result.push(
-          <div key="third-documents">
+          <div
+            key="third-documents"
+            style={{
+              color:
+                "var(--theme-table-body-color, var(--theme-text-primary, #2e3092))",
+            }}
+          >
             {t(`documentStatus.${document.titleThirdDocumentNumber}.title`)}:{" "}
             {thirdDocuments}
           </div>

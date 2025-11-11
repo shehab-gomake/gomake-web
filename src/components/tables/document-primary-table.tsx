@@ -45,15 +45,24 @@ const StyledTableCell = styled(TableCell)(() => {
 
   return {
     [`&.${tableCellClasses.head}`]: {
-      backgroundColor: primaryColor(50),
-      color: primaryColor(900),
+      backgroundColor:
+        "var(--theme-table-head-bg, var(--theme-primary-light, " +
+        primaryColor(50) +
+        "))",
+      color:
+        "var(--theme-table-head-color, var(--theme-text-primary, " +
+        primaryColor(900) +
+        "))",
       ...FONT_FAMILY.Lexend(500, 14),
       padding: isMobile ? "5px 10px" : "5px",
       height: 47,
     },
     [`&.${tableCellClasses.body}`]: {
       ...FONT_FAMILY.Lexend(500, 14),
-      color: primaryColor(500),
+      color:
+        "var(--theme-table-body-color, var(--theme-text-primary, " +
+        primaryColor(500) +
+        "))",
       padding: isMobile ? "5px 10px" : "3px 0",
       height: 47,
     },
@@ -66,23 +75,27 @@ const StyledTableRow = styled(TableRow)(() => ({
   },
 }));
 
-const StyledTableContainer = styled(TableContainer)(() => ({
-  overflowX: "auto",
-  "&::-webkit-scrollbar": {
-    width: "10px",
-    height: "10px",
-  },
-  "&::-webkit-scrollbar-track": {
-    background: "#f1f1f1",
-  },
-  "&::-webkit-scrollbar-thumb": {
-    background: "#CCCDCF",
-    borderRadius: "10px",
-  },
-  "&::-webkit-scrollbar-thumb:hover": {
-    cursor: "pointer",
-  },
-}));
+const StyledTableContainer = styled(TableContainer)(() => {
+  return {
+    // Enable horizontal scrolling
+    overflowX: "auto",
+    "&::-webkit-scrollbar": {
+      width: "10px",
+      height: "10px", // For horizontal scrollbar height
+    },
+    "&::-webkit-scrollbar-track": {
+      background:
+        "var(--theme-table-scrollbar-track, var(--theme-bg-tertiary, #f1f1f1))",
+    },
+    "&::-webkit-scrollbar-thumb": {
+      background: "var(--theme-table-scrollbar-thumb, #CCCDCF)",
+      borderRadius: "10px",
+    },
+    "&::-webkit-scrollbar-thumb:hover": {
+      cursor: "pointer",
+    },
+  };
+});
 
 export const DocumentPrimaryTable = ({
   rows = [],
@@ -241,7 +254,10 @@ export const DocumentPrimaryTable = ({
                   ) : loading && !disableSkeleton ? (
                     <div style={{ width: "100%" }}>
                       {Array.from({ length: 5 }).map((_, idx) => (
-                        <div key={`sk-${idx}`} style={{ display: "flex", gap: 8, marginBottom: 8 }}>
+                        <div
+                          key={`sk-${idx}`}
+                          style={{ display: "flex", gap: 8, marginBottom: 8 }}
+                        >
                           {headers.map((_, cIdx) => (
                             <div key={`sk-${idx}-${cIdx}`} style={{ flex: 1 }}>
                               <Skeleton variant="rounded" height={32} />

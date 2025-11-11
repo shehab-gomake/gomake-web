@@ -1,19 +1,14 @@
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import i18next from "i18next";
-
-import {
-  convertHeightToVH,
-  convertWidthToVW,
-  leftRightAdapter,
-} from "@/utils/adapter";
+import { convertWidthToVW, leftRightAdapter } from "@/utils/adapter";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
-import { HEADER_HEIGHT } from "@/utils/layout-config";
 
 const useStyle = () => {
   const { t } = useTranslation();
-  const { neutralColor, primaryColor, successColor } = useGomakeTheme();
+  const { neutralColor, primaryColor, successColor, secondColor } =
+    useGomakeTheme();
   const classes = useMemo(() => {
     return {
       container: {
@@ -24,12 +19,11 @@ const useStyle = () => {
         width: "100%",
         paddingBottom: 5,
         paddingTop: 5,
-        // height: convertHeightToVH(HEADER_HEIGHT),
-        // maxHeight: convertHeightToVH(HEADER_HEIGHT),
-        backgroundColor: "#FFFFFF",
+        backgroundColor: "var(--theme-bg-primary, #ffffff)",
         paddingLeft: 12,
         paddingRight: 12,
         marginBottom: 20,
+        borderBottom: "1px solid var(--theme-border-color, transparent)",
       },
       searchInputContainer: {
         width: convertWidthToVW(375),
@@ -49,7 +43,7 @@ const useStyle = () => {
         flexDirection: "row" as "row",
         justifyContent: "flex-start",
         alignItems: "center",
-        gap: "5px",
+        gap: "4px",
       },
       profileContainer: {
         display: "flex",
@@ -218,6 +212,7 @@ const useStyle = () => {
   return {
     classes,
     primaryColor,
+    secondColor,
   };
 };
 export { useStyle };

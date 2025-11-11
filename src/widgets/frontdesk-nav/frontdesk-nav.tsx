@@ -27,8 +27,9 @@ import { useFrontdeskNotifications } from "@/widgets/frontdesk-notifications/hoo
 import { Permissions } from "@/components/CheckPermission/enum";
 import { useUserPermission } from "@/hooks/use-permission";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
+import { useTheme } from "@/contexts/theme/useTheme";
 
-const FrontdeskNav = () => {
+const FrontDeskNav = () => {
   const { primaryColor, neutralColor } = useGomakeTheme();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [activeTab, setActiveTab] = useState(0);
@@ -47,6 +48,15 @@ const FrontdeskNav = () => {
     retryFetch,
     loadMore,
   } = useFrontdeskNotifications();
+
+  const { getIconOverride, currentTheme } = useTheme();
+
+  // Get theme-aware Help icon (HP Client icon when theme is active)
+  const FrontDeskIcon = getIconOverride("FrontDeskIcon");
+
+  // Make background color theme-aware: transparent for HP theme, default gray for others
+  const iconButtonBackground =
+    currentTheme === "hp-client" ? "transparent" : "#f6f6f6";
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -77,12 +87,16 @@ const FrontdeskNav = () => {
   const renderIconButton = () => (
     <CustomTooltip title="FrontDesk" arrow>
       <IconButton
-        style={{ backgroundColor: "#f6f6f6", padding: "8px" }}
+        style={{ backgroundColor: iconButtonBackground, padding: "8px" }}
         onClick={handleClick}
       >
-        <EmailOutlinedIcon
-          style={{ color: "#2e3092", width: 22, height: 22 }}
-        />
+        {FrontDeskIcon ? (
+          <FrontDeskIcon width={20} height={20} />
+        ) : (
+          <EmailOutlinedIcon
+            style={{ color: "#2e3092", width: 22, height: 22 }}
+          />
+        )}
       </IconButton>
     </CustomTooltip>
   );
@@ -356,4 +370,4 @@ const FrontdeskNav = () => {
   );
 };
 
-export { FrontdeskNav };
+export { FrontDeskNav };

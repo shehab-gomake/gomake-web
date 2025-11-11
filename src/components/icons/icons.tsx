@@ -46,7 +46,7 @@ const RemoveIcon = () => {
   );
 };
 
-const AddIcon = ({ onClick = null }) => {
+const AddIcon = ({ onClick = null, color = "#2E3092" }) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -59,21 +59,21 @@ const AddIcon = ({ onClick = null }) => {
     >
       <path
         d="M5.33325 8H10.6666"
-        stroke="#2E3092"
+        stroke={color}
         stroke-width="1.5"
         stroke-linecap="round"
         stroke-linejoin="round"
       />
       <path
         d="M8 10.6666V5.33325"
-        stroke="#2E3092"
+        stroke={color}
         stroke-width="1.5"
         stroke-linecap="round"
         stroke-linejoin="round"
       />
       <path
         d="M5.99992 14.6666H9.99992C13.3333 14.6666 14.6666 13.3333 14.6666 9.99992V5.99992C14.6666 2.66659 13.3333 1.33325 9.99992 1.33325H5.99992C2.66659 1.33325 1.33325 2.66659 1.33325 5.99992V9.99992C1.33325 13.3333 2.66659 14.6666 5.99992 14.6666Z"
-        stroke="#2E3092"
+        stroke={color}
         stroke-width="1.5"
         stroke-linecap="round"
         stroke-linejoin="round"
@@ -118,7 +118,8 @@ const EditIcon = () => {
   );
 };
 
-const DuplicateIcon = () => {
+const DuplicateIcon = (props: any) => {
+  const color = props.color || "#2E3092";
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -129,43 +130,43 @@ const DuplicateIcon = () => {
     >
       <path
         d="M12.75 10.05V12.3C12.75 15.3 11.55 16.5 8.55 16.5H5.7C2.7 16.5 1.5 15.3 1.5 12.3V9.45C1.5 6.45 2.7 5.25 5.7 5.25H7.95"
-        stroke="#2E3092"
-        stroke-width="1.5"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        stroke={color}
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M12.75 10.05H10.35C8.54995 10.05 7.94995 9.45 7.94995 7.65V5.25L12.75 10.05Z"
-        stroke="#2E3092"
-        stroke-width="1.5"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        stroke={color}
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M8.69995 1.5H11.7"
-        stroke="#2E3092"
-        stroke-width="1.5"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        stroke={color}
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M5.25 3.75C5.25 2.505 6.255 1.5 7.5 1.5H9.465"
-        stroke="#2E3092"
-        stroke-width="1.5"
-        stroke-linecap="round"
+        stroke={color}
+        strokeWidth="1.5"
+        strokeLinecap="round"
         stroke-linejoin="round"
       />
       <path
         d="M16.5001 6V10.6425C16.5001 11.805 15.5551 12.75 14.3926 12.75"
-        stroke="#2E3092"
-        stroke-width="1.5"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        stroke={color}
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M16.5 6H14.25C12.5625 6 12 5.4375 12 3.75V1.5L16.5 6Z"
-        stroke="#2E3092"
-        stroke-width="1.5"
+        stroke={color}
+        strokeWidth="1.5"
         stroke-linecap="round"
         stroke-linejoin="round"
       />

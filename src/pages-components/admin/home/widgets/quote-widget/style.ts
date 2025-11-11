@@ -16,17 +16,17 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "flex-start",
         width: "100%",
-        height: "100%",
+        // height: "100%",
         paddingTop: 20,
         paddingBottom: 40,
         paddingLeft: 20,
         paddingRight: 20,
-        backgroundColor: "#FFFFFF",
+        backgroundColor: "var(--theme-bg-primary, #FFFFFF)",
         margin: "0 4px",
-        borderRadius: 8,
-        // boxShadow: "0px 4px 15px 0px rgba(0, 0, 0, 0.08)",
+        borderRadius: "var(--theme-radius-lg, 8px)",
+        border: "1px solid var(--theme-widget-border-color, transparent)",
         boxShadow:
-          "0 1px 0px 0 rgba(0, 0, 0, 0.08), 0 0px 5px 0 rgba(0, 0, 0, 0.08)",
+          "var(--theme-widget-shadow, 0 1px 0px 0 rgba(0, 0, 0, 0.08), 0 0px 5px 0 rgba(0, 0, 0, 0.08))",
         gap: 30,
       },
       customerSectionStyle: {
@@ -46,16 +46,12 @@ const useStyle = () => {
       },
       selectCustomerContainer: {
         width: "100%",
-        border: `none`,
-        borderRadius: "4px",
         height: 40,
         display: "flex",
         alignItems: "center" as "center",
       },
       selectTypeContainer: {
         width: "100%",
-        // border: `1px solid ${secondColor(300)}`,
-        border: `none`,
       },
       btnContainer: {
         display: "flex",
@@ -75,23 +71,23 @@ const useStyle = () => {
       autoButtonStyle: {
         ...adaptPaddingRight(direction, 10),
         background: "none",
-        color: primaryColor(500),
+        color:
+          "var(--theme-auto-button-color, var(--theme-primary-color, #2e3092))",
         TextAlign: "center",
         fontStyle: "normal",
-        lineHeight: "normal",
+        fontFamily:
+          "var(--theme-auto-button-font-family, 'Lexend', sans-serif)",
+        fontWeight: "var(--theme-auto-button-font-weight, 500)",
+        fontSize: "var(--theme-auto-button-font-size, 14px)",
+        lineHeight: "var(--theme-auto-button-line-height, 21px)",
+        letterSpacing: "var(--theme-auto-button-letter-spacing, 0px)",
         border: "none",
         cursor: "pointer",
-        ...FONT_FAMILY.Lexend(500, 14),
       },
       AmberIconStyle: {
         width: 120,
         height: 120,
         color: errorColor(300),
-      },
-      titleStyle: {
-        ...FONT_FAMILY.Lexend(600, 25),
-        color: primaryColor(500),
-        marginBottom: 16,
       },
     };
   }, [theme]);

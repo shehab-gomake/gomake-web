@@ -1,13 +1,13 @@
 import { useMemo } from "react";
 import i18next from "i18next";
-
 import { useTranslation } from "react-i18next";
-import { FONT_FAMILY } from "@/utils/font-family";
+import { getHeadingTypography } from "@/utils/typography-utils";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 const useStyle = () => {
   const { t } = useTranslation();
-  const { primaryColor } = useGomakeTheme();
+  const { theme, primaryColor } = useGomakeTheme();
+
   const classes = useMemo(() => {
     return {
       mainContainer: {
@@ -18,7 +18,7 @@ const useStyle = () => {
         width: "100%",
         height: "100%",
         gap: 16,
-        backgroundColor: "#F6F6F6",
+        backgroundColor: "var(--theme-bg-body, #F6F6F6)",
         paddingLeft: 20,
         paddingRight: 20,
       },
@@ -29,7 +29,7 @@ const useStyle = () => {
         justifyContent: "flex-start",
         width: "100%",
         gap: 20,
-        backgroundColor: "#F6F6F6",
+        backgroundColor: "var(--theme-bg-body, #F6F6F6)",
         marginBottom: 15,
       },
 
@@ -40,17 +40,20 @@ const useStyle = () => {
         width: "100%",
         height: "100%",
         gap: 20,
-        backgroundColor: "#F6F6F6",
+        backgroundColor: "var(--theme-bg-body, #F6F6F6)",
         marginBottom: 15,
       },
       titleStyle: {
-        ...FONT_FAMILY.Lexend(600, 25),
-        color: primaryColor(500),
+        ...getHeadingTypography({
+          color: `var(--theme-typography-title-color, ${primaryColor(500)})`,
+          fontWeight: 600,
+        }),
       },
       containerStyle: {
         display: "grid",
-        gridTemplateColumns: "49.5% 49.5%",
-        gridColumnGap: "1%",
+        gridTemplateColumns:
+          "var(--theme-home-grid-template-columns, 49.5% 49.5%)",
+        gridColumnGap: "var(--theme-home-grid-column-gap, 1%)",
       },
 
       mobileContainerStyle: {
@@ -67,7 +70,7 @@ const useStyle = () => {
         borderRadius: "8px",
       },
     };
-  }, [i18next.language, t]);
+  }, [i18next.language, t, theme]);
   return {
     classes,
   };
