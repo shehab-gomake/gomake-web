@@ -534,10 +534,14 @@ const DocumentsFilterSection: React.FC<IDocumentsFilterSectionProps> = ({
           allowClear={true}
           allowManualInput={true}
           buttonStyle={{
-            borderRadius: "4px",
-            border: "none",
-            boxShadow: "0px 1px 10px rgba(0, 0, 0, 0.08)",
-            WebkitBoxShadow: "0px 1px 10px rgba(0, 0, 0, 0.08)",
+            borderRadius:
+              "var(--theme-input-border-radius, var(--theme-radius-md, 4px))",
+            border:
+              "var(--theme-input-border, 1px solid var(--theme-border-color, transparent))",
+            boxShadow:
+              "var(--theme-input-shadow, 0px 1px 10px rgba(0, 0, 0, 0.08))",
+            WebkitBoxShadow:
+              "var(--theme-input-shadow, 0px 1px 10px rgba(0, 0, 0, 0.08))",
           }}
           textStyle={{
             ...FONT_FAMILY.Heebo(500, 13),

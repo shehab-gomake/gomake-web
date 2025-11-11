@@ -31,6 +31,8 @@ const hpClientThemeConfig: ThemeConfig = {
       "--theme-primary-light": "#B2D2FF", // More bold/darker than before
       "--theme-primary-disabled": "#8db3e8", // Lighter/muted for disabled state
       "--theme-primary-dark": "#002E8D", // Darker for disabled state
+      "--theme-primary-on-light": "#0039B8", // Darker blue for better contrast on light backgrounds
+      "--theme-primary-on-dark": "#B2D2FF",
 
       /* -------------------------------------------------
        HP SECONDARY COLORS
@@ -199,6 +201,13 @@ const hpClientThemeConfig: ThemeConfig = {
       "--theme-dropdown-placeholder-color": "#A3A3A3",
       "--theme-dropdown-placeholder-size": "14px",
       "--theme-dropdown-placeholder-weight": "400",
+
+      "--theme-input-shadow": "none",
+      "--theme-input-border": "none",
+      "--theme-input-border-color": "#E0E0E0",
+      "--theme-input-border-radius": "var(--theme-radius-md, 4px)",
+      "--theme-input-height": "40px",
+      "--theme-input-placeholder-color": "#A3A3A3",
 
       // Widget Styles (for quote widget mainContainer)
       "--theme-widget-border-width": "1.5px", // Slightly thicker border for hp-client (between 1px and 2px)

@@ -34,6 +34,10 @@ import { EPreferences } from "@/enums/prefernces";
 import { ReceiptSummaryContent } from "../receipt-summary-content/receipt-summary-content";
 import { AttachIcon } from "@/components/icons/attach-icon";
 import { SecondaryButton } from "@/components/button/secondary-button";
+import { SendPaymentModal } from "@/pages-components/quotes/widgets/send-payment-modal/send-payment-modal";
+import { PermissionCheck } from "@/components/CheckPermission";
+import { Permissions } from "@/components/CheckPermission/enum";
+import { PayIcon } from "@/pages-components/quotes/more-circle/icons/pay";
 
 const ButtonsContainer = ({
   openSendBtn,
@@ -70,6 +74,19 @@ const ButtonsContainer = ({
   const { t } = useTranslation();
   const { alertFault } = useSnackBar();
   const { navigate } = useGomakeRouter();
+
+  const showAlertModal = ({
+    message,
+    onConfirm,
+  }: {
+    message: string;
+    onConfirm?: () => void;
+  }) => {
+    alertFault(message);
+    if (onConfirm) {
+      onConfirm();
+    }
+  };
 
   const {
     quoteItemValue,
@@ -156,6 +173,12 @@ const ButtonsContainer = ({
     filteredReceiptItems,
     finalTotalPayment,
     handleOpenReceiptSummary,
+    openSendPaymentModal,
+    onClickCloseSendPaymentModal,
+    onClickSendPayment,
+    paymentModalTitle,
+    isSendToClient,
+    isSendOrderReadyToClient,
   } = useButtonsContainer(documentType);
 
   const isShowSendButton =
@@ -254,6 +277,17 @@ const ButtonsContainer = ({
           >
             {t("payment.payment")}
           </GomakePrimaryButton>
+        )}
+        {!isNewCreation && isInvoice && quoteItemValue?.isCanClose && (
+          <PermissionCheck userPermission={Permissions.SEND_PAYMENT_TO_CLIENT}>
+            <GomakePrimaryButton
+              leftIcon={<PayIcon />}
+              onClick={() => onClickSendPayment(quoteItemValue, false)}
+              style={classes.btnContainer}
+            >
+              {t("sales.quote.sendPayment")}
+            </GomakePrimaryButton>
+          </PermissionCheck>
         )}
         {showAddNewItemBtn && (
           <GomakePrimaryButton
@@ -733,6 +767,15 @@ const ButtonsContainer = ({
             totalPayment={finalTotalPayment}
           />
         </GoMakeDeleteModal>
+        <SendPaymentModal
+          openPaymentModal={openSendPaymentModal}
+          onClickClosePaymentModal={onClickCloseSendPaymentModal}
+          paymentModalTitle={paymentModalTitle}
+          documentType={documentType}
+          isSendToClient={isSendToClient}
+          isSendOrderReadyToClient={isSendOrderReadyToClient}
+          showAlertModal={showAlertModal}
+        />
       </div>
     </div>
   );

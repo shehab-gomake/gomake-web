@@ -13,8 +13,8 @@ const StyledTextField = styled(TextField, {
   width: "100%",
   input: {
     boxSizing: "border-box",
-    borderRadius: props?.style?.borderRadius || 4,
-    height: props?.style?.height || 37,
+    borderRadius: props?.style?.borderRadius || "var(--theme-radius-md, 4px)",
+    height: props?.style?.height || "var(--theme-input-height, 37px)",
     fontFamily: "Heebo",
     fontStyle: "normal",
     fontWeight: 500,
@@ -23,10 +23,11 @@ const StyledTextField = styled(TextField, {
     display: "flex",
     alignItems: "center",
     color: props?.error ? "red" : "#000000",
-    boxShadow: "0px 1px 10px rgba(0, 0, 0, 0.08)",
-    WebkitBoxShadow: "0px 1px 10px rgba(0, 0, 0, 0.08)",
+    boxShadow: "var(--theme-input-shadow, 0px 1px 10px rgba(0, 0, 0, 0.08))",
+    WebkitBoxShadow:
+      "var(--theme-input-shadow, 0px 1px 10px rgba(0, 0, 0, 0.08))",
     WebkitAppearance: "none",
-    backgroundColor: "#FFF",
+    backgroundColor: "var(--theme-bg-primary, #FFF)",
     width: "100%",
     borderBottom: props.error
       ? `2px solid ${props.errorColor(300)}`
@@ -40,20 +41,27 @@ const StyledTextField = styled(TextField, {
     "&:hover fieldset": {
       border: props.error
         ? `2px solid ${props.errorColor(300)}`
-        : `2px solid #FFFFFF`,
+        : `var(--theme-input-border-hover, 1px solid var(--theme-input-border-color, #FFFFFF))`,
+    },
+    "&:hover input": {
+      borderColor: "var(--theme-input-border-color, transparent) !important",
+      borderWidth: "1px !important",
+      borderStyle: "solid !important",
     },
     "& fieldset": {
       border: props.error
         ? `1px solid ${props.errorColor(300)}`
-        : `1px solid #FFFFFF`,
+        : `1px solid var(--theme-input-border-color, #E0E0E0)`,
       boxSizing: "border-box",
-      borderRadius: props?.style?.borderRadius || 4,
+      borderRadius: props?.style?.borderRadius || "var(--theme-radius-md, 4px)",
       width: "100%",
     },
 
     "&.Mui-focused fieldset": {
-      borderColor: props.error ? `${props.errorColor(300)}` : "#FFFFFF",
-      borderRadius: props?.style?.borderRadius || 4,
+      borderColor: props.error
+        ? `${props.errorColor(300)}`
+        : `var(--theme-input-border-focus-color, var(--theme-input-border-color, #E0E0E0))`,
+      borderRadius: props?.style?.borderRadius || "var(--theme-radius-md, 4px)",
       width: "100%",
     },
   },
@@ -99,7 +107,7 @@ const GomakeTextInput = ({
   helperText,
   direction,
   sx,
-  labelText
+  labelText,
 }: {
   labelText?: string;
   value?: any;
@@ -144,10 +152,9 @@ const GomakeTextInput = ({
 
   return (
     <>
-      {
-        labelText &&
+      {labelText && (
         <div style={{ ...FONT_FAMILY.Lexend(600, 14) }}>{labelText}</div>
-      }
+      )}
       <StyledTextField
         autoComplete="off"
         autoFocus={autoFocus}
@@ -177,7 +184,6 @@ const GomakeTextInput = ({
         onWheel={handleWheel}
       />
     </>
-
   );
 };
 

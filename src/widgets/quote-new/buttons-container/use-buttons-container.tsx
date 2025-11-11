@@ -42,6 +42,14 @@ import {
   getGroupJobsUsingOrderIdApi,
 } from "@/services/api-service/production-floor/production-floor-endpoints";
 import { directMessagesService } from "@/services/frontdesk/api/direct-messages.service";
+import {
+  StatePayment,
+  sendPaymentState,
+} from "@/pages-components/quotes/widgets/send-payment-modal/states";
+import {
+  getDocumentContactApi,
+  sendDocumentToClientForPaymentApi,
+} from "@/services/api-service/pay/pay-api";
 
 const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
   const { navigate } = useGomakeRouter();
@@ -716,6 +724,78 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     setOpenCloseOrderNotesModal(false);
   };
 
+  // Send Payment Modal State
+  const [openSendPaymentModal, setOpenSendPaymentModal] = useState(false);
+  const [isSendToClient, setIsSendToClient] = useState(false);
+  const [isSendOrderReadyToClient, setIsSendOrderReadyToClient] = useState(false);
+  const [paymentModalTitle, setPaymentModalTitle] = useState("");
+  const [sendPayment, setSendPayment] = useRecoilState<StatePayment>(sendPaymentState);
+
+  const onClickCloseSendPaymentModal = () => {
+    setOpenSendPaymentModal(false);
+  };
+
+  const onClickSendPaymentOld = (
+    document: any,
+    isSendToClientParam: boolean
+  ): Promise<void> => {
+    if (isSendToClientParam) {
+      return new Promise<void>((resolve, reject) => {
+        const callBack = (res) => {
+          if (res?.success) {
+            const newSendPaymentState = { ...sendPayment };
+            newSendPaymentState.documentId = document?.id;
+            newSendPaymentState.documentContacts = res.data;
+            setSendPayment(newSendPaymentState);
+            resolve();
+          } else {
+            reject(new Error("Failed to update payment state"));
+          }
+        };
+        getDocumentContactApi(callApi, callBack, {
+          documentId: document?.id,
+          documentType: docType,
+        });
+      });
+    } else {
+      return new Promise<void>((resolve, reject) => {
+        const callBack = (res) => {
+          if (res?.success) {
+            const newSendPaymentState = { ...sendPayment, ...res.data };
+            setSendPayment(newSendPaymentState);
+            resolve();
+          } else {
+            reject(new Error("Failed to update payment state"));
+          }
+        };
+        sendDocumentToClientForPaymentApi(callApi, callBack, {
+          id: document?.id,
+          documentType: docType,
+        });
+      });
+    }
+  };
+
+  const onClickSendPayment = async (
+    document: any,
+    isSendToClientParam: boolean,
+    isSendOrderReadyToClientParam: boolean = false
+  ) => {
+    setIsSendToClient(isSendToClientParam);
+    setIsSendOrderReadyToClient(isSendOrderReadyToClientParam);
+    try {
+      await onClickSendPaymentOld(document, isSendToClientParam);
+      setPaymentModalTitle(
+        `${t("prePayment.paymentPageFor")} ${t(
+          `sales.quote.${DOCUMENT_TYPE[docType]}`
+        ).toLowerCase()} ${t("sales.quote.number")} - ${document?.number}`
+      );
+      setOpenSendPaymentModal(true);
+    } catch (error) {
+      alertFaultGetData();
+    }
+  };
+
   return {
     openOrderNowModal,
     onClickConfirmWithoutNotification,
@@ -807,6 +887,12 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     finalTotalPayment,
     handleOpenReceiptSummary,
     sendBodyCommingFromOrder,
+    openSendPaymentModal,
+    onClickCloseSendPaymentModal,
+    onClickSendPayment,
+    paymentModalTitle,
+    isSendToClient,
+    isSendOrderReadyToClient,
   };
 };
 
