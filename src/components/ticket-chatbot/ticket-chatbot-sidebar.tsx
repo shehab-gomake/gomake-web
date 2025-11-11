@@ -1072,7 +1072,7 @@ export const TicketChatbotSidebar = ({
     return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLElement>) => {
     // Enter sends the message (unless Ctrl/Cmd is pressed)
     if (e.key === "Enter" && !e.shiftKey) {
       // Ctrl+Enter or Cmd+Enter creates a new line

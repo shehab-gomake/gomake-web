@@ -70,7 +70,7 @@ export const useWebRTCSender = ({
       // Get screen share stream with automatic current tab selection
       // preferCurrentTab: true automatically selects current tab in the picker
       // User can still change selection if needed
-      const constraints: DisplayMediaStreamConstraints = {
+      const constraints: MediaStreamConstraints = {
         video: {
           // @ts-ignore - preferCurrentTab is a newer Chrome API (Chrome 104+)
           // Automatically selects current tab when picker opens
@@ -88,7 +88,8 @@ export const useWebRTCSender = ({
         const settings = videoTrack.getSettings();
         console.log('📺 Screen share selected:', {
           displaySurface: settings.displaySurface,
-          logicalSurface: settings.logicalSurface,
+          // @ts-ignore - logicalSurface is an experimental property not in TypeScript definitions
+          logicalSurface: (settings as any).logicalSurface,
         });
         
         // Show user-friendly message about what's being shared
