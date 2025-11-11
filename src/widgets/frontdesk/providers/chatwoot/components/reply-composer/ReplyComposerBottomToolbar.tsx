@@ -1,6 +1,6 @@
 /**
  * ReplyComposerBottomToolbar Component
- * Bottom toolbar with emoji, attach, voice, AI assist, and send button
+ * Bottom toolbar with emoji, attach, voice, schedule, AI assist, and send button
  */
 
 import React from "react";
@@ -66,9 +66,20 @@ export const ReplyComposerBottomToolbar: React.FC<ReplyComposerBottomToolbarProp
     >
       {/* Left Side Icons */}
       <Stack direction="row" spacing={0.5} alignItems="center">
-        <Tooltip title="Emoji">
-          <IconButton size="small" sx={iconButtonStyle}>
-            <EmojiIcon sx={{ fontSize: 18 }} />
+        {/* AI Assist Button */}
+        <Tooltip title="AI Assist">
+          <IconButton
+            size="small"
+            sx={{
+              background: "linear-gradient(135deg, #9333EA 0%, #7E22CE 100%)",
+              color: "white",
+              p: 0.75,
+              "&:hover": {
+                background: "linear-gradient(135deg, #7E22CE 0%, #6B21A8 100%)",
+              },
+            }}
+          >
+            <AIAssistIcon sx={{ fontSize: 18 }} />
           </IconButton>
         </Tooltip>
 
@@ -120,34 +131,6 @@ export const ReplyComposerBottomToolbar: React.FC<ReplyComposerBottomToolbarProp
             </IconButton>
           </Tooltip>
         )}
-
-        <Tooltip title="Voice input">
-          <IconButton size="small" sx={iconButtonStyle}>
-            <MicIcon sx={{ fontSize: 18 }} />
-          </IconButton>
-        </Tooltip>
-
-        <Tooltip title="Schedule">
-          <IconButton size="small" sx={iconButtonStyle}>
-            <CalendarIcon sx={{ fontSize: 18 }} />
-          </IconButton>
-        </Tooltip>
-
-        <Tooltip title="AI Assist">
-          <IconButton
-            size="small"
-            sx={{
-              background: "linear-gradient(135deg, #9333EA 0%, #7E22CE 100%)",
-              color: "white",
-              p: 0.75,
-              "&:hover": {
-                background: "linear-gradient(135deg, #7E22CE 0%, #6B21A8 100%)",
-              },
-            }}
-          >
-            <AIAssistIcon sx={{ fontSize: 18 }} />
-          </IconButton>
-        </Tooltip>
 
         {/* WhatsApp Templates Button - only for WhatsApp Cloud */}
         {channelFeatures.shouldShowWhatsAppTemplates && (

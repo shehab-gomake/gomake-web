@@ -19,6 +19,8 @@ import FormatUnderlinedIcon from "@mui/icons-material/FormatUnderlined";
 import LinkIcon from "@mui/icons-material/Link";
 import FormatListBulletedIcon from "@mui/icons-material/FormatListBulleted";
 import FormatListNumberedIcon from "@mui/icons-material/FormatListNumbered";
+import UndoIcon from "@mui/icons-material/Undo";
+import RedoIcon from "@mui/icons-material/Redo";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { htmlToMarkdown, isEmptyHtml } from "@/utils/markdown-converter";
 
@@ -133,6 +135,14 @@ export const MessageEditor: React.FC<MessageEditorProps> = ({
     editor.chain().focus().extendMarkRange("link").setLink({ href: url }).run();
   }, [editor]);
 
+  const handleUndo = useCallback(() => {
+    editor?.chain().focus().undo().run();
+  }, [editor]);
+
+  const handleRedo = useCallback(() => {
+    editor?.chain().focus().redo().run();
+  }, [editor]);
+
   if (!editor) {
     return null;
   }
@@ -197,8 +207,6 @@ export const MessageEditor: React.FC<MessageEditorProps> = ({
           </IconButton>
         </Tooltip>
 
-        <Box sx={{ width: 1, height: 24, backgroundColor: neutralColor(200), mx: 0.5 }} />
-
         <Tooltip title="Bullet List">
           <IconButton
             size="small"
@@ -233,8 +241,6 @@ export const MessageEditor: React.FC<MessageEditorProps> = ({
           </IconButton>
         </Tooltip>
 
-        <Box sx={{ width: 1, height: 24, backgroundColor: neutralColor(200), mx: 0.5 }} />
-
         <Tooltip title="Insert Link (Ctrl+K)">
           <IconButton
             size="small"
@@ -249,6 +255,44 @@ export const MessageEditor: React.FC<MessageEditorProps> = ({
             }}
           >
             <LinkIcon fontSize="small" />
+          </IconButton>
+        </Tooltip>
+
+        <Tooltip title="Undo (Ctrl+Z)">
+          <IconButton
+            size="small"
+            onClick={handleUndo}
+            disabled={disabled || !editor.can().undo()}
+            sx={{
+              color: neutralColor(600),
+              "&:hover": {
+                backgroundColor: neutralColor(100),
+              },
+              "&:disabled": {
+                color: neutralColor(300),
+              },
+            }}
+          >
+            <UndoIcon fontSize="small" />
+          </IconButton>
+        </Tooltip>
+
+        <Tooltip title="Redo (Ctrl+Shift+Z)">
+          <IconButton
+            size="small"
+            onClick={handleRedo}
+            disabled={disabled || !editor.can().redo()}
+            sx={{
+              color: neutralColor(600),
+              "&:hover": {
+                backgroundColor: neutralColor(100),
+              },
+              "&:disabled": {
+                color: neutralColor(300),
+              },
+            }}
+          >
+            <RedoIcon fontSize="small" />
           </IconButton>
         </Tooltip>
       </Stack>

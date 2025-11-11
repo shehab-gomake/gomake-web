@@ -1,4 +1,4 @@
-import React, { useState, useRef, KeyboardEvent } from "react";
+import React, { useState, useRef } from "react";
 import { Box } from "@mui/material";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import type { ChatwootConversation } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
@@ -6,13 +6,12 @@ import type { ChatwootInbox } from "@/services/frontdesk/api/chatwoot/types/inbo
 import {
   ReplyComposerTabs,
   ReplyComposerEmailFields,
-  ReplyComposerFormattingToolbar,
-  ReplyComposerTextArea,
   ReplyComposerBottomToolbar,
 } from "./reply-composer";
 import { useChannelFeatures } from "../hooks/use-channel-features";
 import { createLogger } from "@/services/frontdesk/utils/logger";
 import { AttachmentPreviews } from "./compose/AttachmentPreview";
+import { MessageEditor } from "./compose/MessageEditor";
 
 const logger = createLogger("ChatwootReplyComposer");
 
@@ -49,7 +48,6 @@ export const ChatwootReplyComposer: React.FC<ChatwootReplyComposerProps> = ({
   const [showBcc, setShowBcc] = useState(false);
   const [bccEmails, setBccEmails] = useState("");
   const [attachments, setAttachments] = useState<File[]>([]);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Use channel features hook (memoized)
@@ -87,53 +85,6 @@ export const ChatwootReplyComposer: React.FC<ChatwootReplyComposerProps> = ({
 
   const handleAttachClick = () => {
     fileInputRef.current?.click();
-  };
-
-  const handleFormatText = (command: string) => {
-    if (!textareaRef.current) return;
-
-    const textarea = textareaRef.current;
-    const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
-    const selectedText = messageContent.substring(start, end);
-    const before = messageContent.substring(0, start);
-    const after = messageContent.substring(end);
-
-    let formattedText = "";
-    switch (command) {
-      case "bold":
-        formattedText = `${before}**${selectedText}**${after}`;
-        break;
-      case "italic":
-        formattedText = `${before}*${selectedText}*${after}`;
-        break;
-      case "underline":
-        formattedText = `${before}<u>${selectedText}</u>${after}`;
-        break;
-      case "code":
-        formattedText = `${before}\`${selectedText}\`${after}`;
-        break;
-      default:
-        return;
-    }
-
-    setMessageContent(formattedText);
-    setTimeout(() => {
-      textarea.focus();
-      textarea.setSelectionRange(start + 2, end + 2);
-    }, 0);
-  };
-
-  const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
-    // Handle Shift+Enter for new line
-    if (e.key === "Enter" && e.shiftKey) {
-      return; // Allow default behavior (new line)
-    }
-    // Handle Cmd/Ctrl+Enter to send
-    if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
-      e.preventDefault();
-      handleSend();
-    }
   };
 
   const handleSend = async () => {
@@ -216,32 +167,16 @@ export const ChatwootReplyComposer: React.FC<ChatwootReplyComposerProps> = ({
         />
       )}
 
-      {/* Formatting Toolbar (only for rich editor) */}
-      {channelFeatures.shouldUseRichEditor && (
-        <ReplyComposerFormattingToolbar
-          onFormat={handleFormatText}
-          borderColor={borderColor}
-          lightGrayText={lightGrayText}
-          neutralColor={neutralColor}
-          primaryColor={primaryColor}
+      {/* Message Editor (Rich Text with built-in toolbar) */}
+      <Box sx={{ px: 2, pt: 2 }}>
+        <MessageEditor
+          content={messageContent}
+          onChange={setMessageContent}
+          placeholder={activeTab === "private" ? "Write a private note..." : "Type your reply..."}
+          disabled={isSending}
+          minHeight={150}
         />
-      )}
-
-      {/* Text Input Area */}
-      <ReplyComposerTextArea
-        messageContent={messageContent}
-        onContentChange={setMessageContent}
-        onKeyDown={handleKeyDown}
-        textareaRef={textareaRef}
-        maxLength={channelFeatures.maxMessageLength}
-        isSending={isSending}
-        shouldUseRichEditor={channelFeatures.shouldUseRichEditor}
-        textColor={textColor}
-        lightGrayText={lightGrayText}
-        neutralColor={neutralColor}
-        primaryColor={primaryColor}
-        isPrivateNote={activeTab === "private"}
-      />
+      </Box>
 
       {/* Attachment Previews (if any) */}
       {attachments.length > 0 && (
