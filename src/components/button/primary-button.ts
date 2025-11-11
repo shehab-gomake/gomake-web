@@ -9,6 +9,10 @@ interface PrimaryButtonProps extends ButtonProps {
 
 const PrimaryButton = styled(Button)<PrimaryButtonProps>((props) => {
   const { primaryColor } = useGomakeTheme();
+  const primaryColorValue = primaryColor(500);
+  const primaryLight = primaryColor(100);
+  const primaryHover = primaryColor(500);
+  const primaryDisabled = primaryColor(200);
 
   return {
     boxShadow: "none",
@@ -17,38 +21,52 @@ const PrimaryButton = styled(Button)<PrimaryButtonProps>((props) => {
     lineHeight: "1.5px",
     height: 40,
     width: "100%",
-    backgroundColor: props.variant === "contained" ? primaryColor(500) : "#FFF",
-    borderRadius: 4,
-    borderColor: primaryColor(500),
+    backgroundColor:
+      props.variant === "contained"
+        ? `var(--theme-primary-color, ${primaryColorValue})`
+        : "#FFF",
+    borderRadius: "var(--theme-radius-md, 4px)",
+    borderColor: `var(--theme-primary-color, ${primaryColorValue})`,
     gap: 7,
-    color: props.variant === "contained" ? "#FFFFFF" : primaryColor(500),
+    color:
+      props.variant === "contained"
+        ? "#FFFFFF"
+        : `var(--theme-primary-color, ${primaryColorValue})`,
     transition: "0.25s",
     ...FONT_FAMILY.Lexend(500, 16),
     "&:hover": {
-      letterSpacing: "0.1em",
+      // letterSpacing: "0.1em",
       backgroundColor:
-        props.variant === "contained" ? primaryColor(500) : "#FFF",
-      borderColor: primaryColor(500),
+        props.variant === "contained"
+          ? `var(--theme-primary-hover, ${primaryHover})`
+          : "#FFF",
+      borderColor: `var(--theme-primary-color, ${primaryColorValue})`,
     },
     ...(props.hoverStyle &&
       props.variant === "contained" && {
         "&:hover": {
-          backgroundColor: primaryColor(100),
-          borderColor: primaryColor(500),
+          backgroundColor: `var(--theme-primary-light, ${primaryLight})`,
+          borderColor: `var(--theme-primary-color, ${primaryColorValue})`,
           opacity: 0.8,
-          color: primaryColor(500),
+          color: `var(--theme-primary-color, ${primaryColorValue})`,
         },
       }),
     "&.MuiButton-text": {
       backgroundColor: "inherit",
-      color: primaryColor(500),
+      color: `var(--theme-primary-color, ${primaryColorValue})`,
       width: "fit-content",
       "&:hover": {
         letterSpacing: 0,
       },
     },
+    "&.MuiButton-outlined": {
+      backgroundColor: "inherit",
+      "&:hover": {
+        letterSpacing: "0.1em",
+      },
+    },
     "&.Mui-disabled": {
-      backgroundColor: primaryColor(200),
+      backgroundColor: `var(--theme-primary-disabled, ${primaryDisabled})`,
       color: "#FFFFFF",
     },
   };

@@ -2,9 +2,11 @@ import { useMemo } from "react";
 import i18next from "i18next";
 import { useTranslation } from "react-i18next";
 import { FONT_FAMILY } from "@/utils/font-family";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 const useStyle = () => {
   const { t } = useTranslation();
+  const { primaryColor, theme } = useGomakeTheme();
   const classes = useMemo(() => {
     return {
       headerContainer: {
@@ -22,8 +24,8 @@ const useStyle = () => {
         padding: "8px",
         transition: "all 0.2s ease-in-out",
         "&:hover": {
-          backgroundColor: "#2e3092",
-          borderColor: "#2e3092",
+          backgroundColor: `var(--theme-secondary-color, ${primaryColor(500)})`,
+          border: "none",
           transform: "translateY(-1px)",
           boxShadow: "0 4px 12px rgba(46, 48, 146, 0.15)",
           "& .MuiSvgIcon-root": {
@@ -32,7 +34,7 @@ const useStyle = () => {
         },
       },
     };
-  }, [i18next.language, t]);
+  }, [i18next.language, t, theme]);
   return {
     classes,
   };

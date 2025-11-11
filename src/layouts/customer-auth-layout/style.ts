@@ -22,25 +22,22 @@ const useStyle = ({
   navStatus: any;
   customGap?: number;
 }) => {
-  const { primaryColor } = useGomakeTheme();
+  const { theme, primaryColor, primaryLavender } = useGomakeTheme();
   const isMobile = useIsMobile();
-    const mobileHeight = useMobileHeight();
-  
+  const mobileHeight = useMobileHeight();
 
   const classes = useMemo(() => {
     return {
       container: {
         width: "100%",
-        // height: "100vh",
         display: "flex",
         flexDirection: "row" as "row",
-        // gap: customGap ? LAYOUT_DEFAULT_GAP : 0,
-        backgroundColor: "#F6F6F6",
+        backgroundColor: "var(--theme-bg-body, #f6f6f6)",
       },
       logoContainer: {
         display: "flex",
         marginTop: navStatus?.isClosed ? 20 : 0,
-        backgroundColor: "#504FA1",
+        backgroundColor: primaryLavender(700),
         borderRadius: 8,
         padding: 10,
       },
@@ -66,7 +63,7 @@ const useStyle = ({
         width: "100%",
         display: "flex",
         flexDirection: "column" as "column",
-        height: isMobile ? mobileHeight: "100vh", 
+        height: isMobile ? mobileHeight : "100vh",
         maxHeight: "100vh",
         overflow: "scroll",
       },
@@ -81,7 +78,7 @@ const useStyle = ({
       bodyContainer: {
         display: "flex",
         flexDirection: "column" as "column",
-        backgroundColor: "#F6F6F6",
+        backgroundColor: "var(--theme-bg-body, #F6F6F6)",
         height: "100%",
         // overflow: "scroll",
         overflow: "auto",
@@ -174,11 +171,10 @@ const useStyle = ({
         padding: "5px 10px",
         height: convertHeightToVH(HEADER_HEIGHT),
         maxHeight: convertHeightToVH(HEADER_HEIGHT),
-
         backgroundColor: primaryColor(500),
       },
     };
-  }, [isHover, navStatus , isMobile, mobileHeight]);
+  }, [isHover, navStatus, isMobile, mobileHeight, theme]);
   return {
     classes,
   };

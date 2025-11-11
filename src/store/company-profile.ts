@@ -54,6 +54,7 @@ export interface ICompanyProfile {
   mailServiceEmail?: string;
   printnodeUsername?: string;
   printnodePassword?: string;
+  packagingSlipPrinterId?: number;
   employeeWorkingHourCost?: string;
   unitType?: number;
   creditClearanceCompany?: CreditClearanceCompanies;

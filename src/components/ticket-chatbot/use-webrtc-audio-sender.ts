@@ -103,6 +103,12 @@ export const useWebRTCAudioSender = ({
       };
 
       // Create and send offer
+      // Check if local description is already set (prevent duplicate offers)
+      if (pc.localDescription) {
+        console.log("⚠️ Local description already set, skipping offer creation");
+        return;
+      }
+
       const offer = await pc.createOffer();
       await pc.setLocalDescription(offer);
 
@@ -129,10 +135,26 @@ export const useWebRTCAudioSender = ({
       const pc = peerConnectionRef.current;
       if (!pc) return;
 
+      // Check if remote description is already set
+      if (pc.remoteDescription) {
+        console.log("⚠️ Remote description already set, skipping duplicate answer");
+        return;
+      }
+
+      // Check connection state - must be 'have-local-offer' to set remote answer
+      if (pc.signalingState !== "have-local-offer") {
+        console.warn(`⚠️ Cannot set remote answer in state: ${pc.signalingState}`);
+        return;
+      }
+
       await pc.setRemoteDescription(answer);
+      console.log("✅ Remote answer set successfully");
     } catch (err: any) {
       console.error("Error handling answer:", err);
-      setError(err.message);
+      // Don't set error if it's just a state mismatch (already handled)
+      if (!err.message?.includes("wrong state")) {
+        setError(err.message);
+      }
     }
   }, []);
 
@@ -141,10 +163,21 @@ export const useWebRTCAudioSender = ({
       const pc = peerConnectionRef.current;
       if (!pc) return;
 
+      // Check if remote description is set (required for ICE candidates)
+      if (!pc.remoteDescription) {
+        console.log("⚠️ Cannot add ICE candidate: remote description not set yet");
+        return;
+      }
+
       await pc.addIceCandidate(candidate);
     } catch (err: any) {
       console.error("Error adding ICE candidate:", err);
-      setError(err.message);
+      // Don't set error for ICE candidate errors (they're often non-critical)
+      if (err.message?.includes("InvalidStateError")) {
+        console.warn("⚠️ ICE candidate error (non-critical):", err.message);
+      } else {
+        setError(err.message);
+      }
     }
   }, []);
 

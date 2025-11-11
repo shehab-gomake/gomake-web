@@ -11,31 +11,31 @@ const TagIcon = ({ width, height, color }: IIconProps) => {
     >
       <path
         d="M6.66671 2L5.33337 14"
-        stroke="#8283BE"
-        stroke-width="1.5"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        stroke={color || "#8283BE"}
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M10.6667 2L9.33337 14"
-        stroke="#8283BE"
-        stroke-width="1.5"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        stroke={color || "#8283BE"}
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M2.33337 6H14.3334"
-        stroke="#8283BE"
-        stroke-width="1.5"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        stroke={color || "#8283BE"}
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M1.66663 10H13.6666"
-        stroke="#8283BE"
-        stroke-width="1.5"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        stroke={color || "#8283BE"}
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
 

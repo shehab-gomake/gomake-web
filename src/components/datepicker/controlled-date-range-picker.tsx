@@ -262,18 +262,23 @@ const ControlledDateRangePicker = ({
 
   const defaultButtonStyle = {
     textTransform: "none" as const,
-    border: "1px solid rgba(208, 213, 221, 1)",
+    border: "1px solid var(--theme-border-color, #D0D5DD)",
     padding: "10px 16px",
     justifyContent: "space-between" as const,
-    color: "#333",
+    color: "var(--theme-input-text-color, var(--theme-text-primary, #333))",
     width: "100%",
     maxWidth: "280px",
-    height: "40px",
-    borderRadius: "8px",
-    backgroundColor: "#fff",
+    height: "var(--theme-input-height, 40px)",
+    borderRadius:
+      "var(--theme-input-border-radius, var(--theme-radius-md, 8px))",
+    backgroundColor: "var(--theme-bg-primary, #fff)",
+    boxShadow: "var(--theme-input-shadow, none)",
     "&:hover": {
-      backgroundColor: "#f5f5f5",
-      border: "1px solid rgba(180, 185, 195, 1)",
+      backgroundColor: "var(--theme-bg-secondary, #f5f5f5)",
+      border:
+        "var(--theme-input-border-hover, 1px solid var(--theme-border-color, #E0E0E0))",
+      boxShadow:
+        "var(--theme-input-shadow-hover, var(--theme-input-shadow, none))",
     },
   };
 
@@ -306,10 +311,10 @@ const ControlledDateRangePicker = ({
     top: "50%",
     left: "50%",
     transform: "translate(-50%, -50%)",
-    backgroundColor: "#fff",
-    padding: "20px",
-    borderRadius: "16px",
-    boxShadow: "0 8px 32px rgba(0, 0, 0, 0.12)",
+    backgroundColor: "var(--theme-bg-primary, #fff)",
+    padding: "var(--theme-spacing-lg, 20px)",
+    borderRadius: "var(--theme-radius-lg, 16px)",
+    boxShadow: "var(--theme-modal-shadow, 0 8px 32px rgba(0, 0, 0, 0.12))",
     maxWidth: "90vw",
     maxHeight: "90vh",
     overflow: "auto",
@@ -376,19 +381,26 @@ const ControlledDateRangePicker = ({
               flexDirection: isRTL ? "row-reverse" : "row",
               justifyContent: "space-between",
               alignItems: "center",
-              marginBottom: "16px",
-              borderBottom: "1px solid #e0e0e0",
-              paddingBottom: "12px",
+              marginBottom: "var(--theme-spacing-md, 16px)",
+              borderBottom: "1px solid var(--theme-border-color, #e0e0e0)",
+              paddingBottom: "var(--theme-spacing-sm, 12px)",
             }}
           >
-            <span style={{ ...FONT_FAMILY.Lexend(600, 18), color: "#344054" }}>
+            <span
+              style={{
+                ...FONT_FAMILY.Lexend(600, 18),
+                color: "var(--theme-text-primary, #344054)",
+              }}
+            >
               {t("general.selectDateRange") || "Select Date Range"}
             </span>
             <IconButton
               onClick={() => setOpenPicker(false)}
               size="small"
               sx={{
-                "&:hover": { backgroundColor: "rgba(0, 0, 0, 0.08)" },
+                "&:hover": {
+                  backgroundColor: "var(--theme-hover-bg, rgba(0, 0, 0, 0.08))",
+                },
               }}
             >
               <CloseIcon />
@@ -402,7 +414,7 @@ const ControlledDateRangePicker = ({
                 maxWidth: "100%",
               },
               "& .rdrDateDisplayWrapper": {
-                backgroundColor: "#f9fafb",
+                backgroundColor: "var(--theme-bg-secondary, #f9fafb)",
               },
               "& .rdrDefinedRangesWrapper": {
                 "@media (max-width: 600px)": {
@@ -416,19 +428,22 @@ const ControlledDateRangePicker = ({
                 },
               },
               "& .rdrStaticRange": {
-                borderBottom: "1px solid #e0e0e0",
+                borderBottom: "1px solid var(--theme-border-color, #e0e0e0)",
                 padding: "10px 20px",
                 "&:hover": {
-                  backgroundColor: "#f5f7fa",
+                  backgroundColor: "var(--theme-bg-tertiary, #f5f7fa)",
                 },
               },
               "& .rdrStaticRangeSelected": {
-                backgroundColor: "#e3f2fd !important",
-                color: "#1976d2 !important",
+                backgroundColor:
+                  "var(--theme-date-selected-bg, #e3f2fd) !important",
+                color: "var(--theme-date-selected-color, #1976d2) !important",
                 fontWeight: 600,
-                borderLeft: "3px solid #1976d2",
+                borderLeft:
+                  "3px solid var(--theme-date-selected-color, #1976d2)",
                 "&:hover": {
-                  backgroundColor: "#e3f2fd !important",
+                  backgroundColor:
+                    "var(--theme-date-selected-bg, #e3f2fd) !important",
                 },
               },
               "& .rdrStaticRangeLabel": {

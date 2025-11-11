@@ -30,10 +30,10 @@ const LoginWidget = () => {
     const origin = data.domain;
     const base = data.domain ? `https://${data.domain}` : origin;
     if (!base) return "";
-    debugger
-    let url =base+"/login";
-    if (data?.username && data?.password){
-      url = url +"?email="+data.username+"&password="+data.password  
+    debugger;
+    let url = base + "/login";
+    if (data?.username && data?.password) {
+      url = url + "?email=" + data.username + "&password=" + data.password;
     }
     return url;
   }, [data]);
@@ -78,8 +78,18 @@ const LoginWidget = () => {
           </div>
           <div style={{ wordBreak: "break-all" }}>{loginLink}</div>
           <div style={{ display: "flex", gap: 8 }}>
-            <GomakePrimaryButton onClick={() => window.open(loginLink, "_self")}>Open Link</GomakePrimaryButton>
-            <GomakePrimaryButton onClick={async () => { await navigator.clipboard.writeText(loginLink); }}>Copy Link</GomakePrimaryButton>
+            <GomakePrimaryButton
+              onClick={() => window.open(loginLink, "_self")}
+            >
+              Open Link
+            </GomakePrimaryButton>
+            <GomakePrimaryButton
+              onClick={async () => {
+                await navigator.clipboard.writeText(loginLink);
+              }}
+            >
+              Copy Link
+            </GomakePrimaryButton>
           </div>
         </div>
       </GoMakeModal>
@@ -109,8 +119,18 @@ const LoginWidget = () => {
           </div>
           <div style={{ wordBreak: "break-all" }}>{loginLink}</div>
           <div style={{ display: "flex", gap: 8 }}>
-            <GomakePrimaryButton onClick={() => window.open(loginLink, "_self")}>Open Link</GomakePrimaryButton>
-            <GomakePrimaryButton onClick={async () => { await navigator.clipboard.writeText(loginLink); }}>Copy Link</GomakePrimaryButton>
+            <GomakePrimaryButton
+              onClick={() => window.open(loginLink, "_self")}
+            >
+              Open Link
+            </GomakePrimaryButton>
+            <GomakePrimaryButton
+              onClick={async () => {
+                await navigator.clipboard.writeText(loginLink);
+              }}
+            >
+              Copy Link
+            </GomakePrimaryButton>
           </div>
         </div>
       </GoMakeModal>

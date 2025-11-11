@@ -55,7 +55,7 @@ import {
 import { useTicketChatSocket } from "./use-ticket-chat-socket";
 import { useRemoteSessionSocket } from "./use-remote-session-socket";
 import { useHuddleSocket } from "./use-huddle-socket";
-import { useWebRTCSender } from "./use-webrtc-sender";
+import { useWebRTCSender, ControlCommand } from "./use-webrtc-sender";
 import { useWebRTCAudioSender } from "./use-webrtc-audio-sender";
 import { ScreenshotAnnotationModal } from "./ScreenshotAnnotationModal";
 import { useTicketNotifications } from "./use-ticket-notifications";
@@ -420,9 +420,32 @@ export const TicketChatbotSidebar = ({
     [remoteSessionRequest, currentTicket, callApi]
   );
 
+  // Handle control commands from admin
+  const handleControlCommandRef = useRef<((command: ControlCommand) => void) | null>(null);
+  
+  const handleControlCommand = useCallback((command: ControlCommand) => {
+    // Only execute if user has accepted remote session
+    if (!remoteSessionRequest) {
+      console.warn('⚠️ Control command received but remote session not active');
+      return;
+    }
+
+    // Import and execute the control command
+    import('./execute-control-command').then(({ executeControlCommand }) => {
+      executeControlCommand(command);
+    }).catch((error) => {
+      console.error('❌ Error executing control command:', error);
+    });
+  }, [remoteSessionRequest]);
+
+  useEffect(() => {
+    handleControlCommandRef.current = handleControlCommand;
+  }, [handleControlCommand]);
+
   const sender = useWebRTCSender({
     sessionId: remoteSessionRequest?.sessionId || "",
     onReceiveSignal: handleReceiveSignal,
+    onControlCommand: handleControlCommand,
   });
 
   useEffect(() => {
@@ -1552,11 +1575,14 @@ export const TicketChatbotSidebar = ({
                         sx={{ fontSize: 40, color: primaryColor(500), mb: 1 }}
                       />
                       <Typography variant="h6" sx={{ fontWeight: 600, mb: 1, ...FONT_FAMILY.Lexend(600, 18) }}>
-                        Remote Session Request
+                        Remote Control Request
                       </Typography>
                       <Typography variant="body2" sx={{ color: grayColor(500), mb: 2, ...FONT_FAMILY.Heebo(400, 14) }}>
-                        Support wants to view your screen. Click "Accept" to start
+                        Support wants to control your screen. Click "Accept" to start
                         sharing or "Reject" to decline.
+                      </Typography>
+                      <Typography variant="caption" sx={{ color: grayColor(400), display: "block", mb: 1, ...FONT_FAMILY.Heebo(400, 12) }}>
+                        💡 Tip: Select "Chrome Tab" when prompted to share only the current tab
                       </Typography>
                       <Stack direction="row" spacing={2} justifyContent="center">
                         <Button
@@ -1585,7 +1611,9 @@ export const TicketChatbotSidebar = ({
                           variant="caption"
                           sx={{ display: "block", mt: 2, color: secondColor(500), ...FONT_FAMILY.Heebo(400, 12) }}
                         >
-                          Screen sharing active...
+                          {sender.isDataChannelReady 
+                            ? "Remote control active - Support can control your screen"
+                            : "Screen sharing active..."}
                         </Typography>
                       )}
                     </Box>

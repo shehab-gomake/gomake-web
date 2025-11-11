@@ -29,8 +29,10 @@ import { NotificationMessageComponent } from "@/widgets/system-notifications-wid
 import { useTranslation } from "react-i18next";
 import { MessageDateTimeComponent } from "@/widgets/messenger/components/message-date-time-component";
 import { CustomTooltip } from "../header";
+import { useTheme } from "@/contexts/theme";
 
 const SystemNotifications = () => {
+  const { getIconOverride, currentTheme } = useTheme();
   const [notifications, setNotifications] = useRecoilState(
     systemNotificationsState
   );
@@ -43,6 +45,13 @@ const SystemNotifications = () => {
   const noNotificationsOpen = Boolean(noNotificationsAnchorEl);
   const { successColor, errorColor, primaryColor } = useGomakeTheme();
   const { t } = useTranslation();
+
+  const isHpClient = currentTheme === "hp-client";
+  const NotificationsIcon = getIconOverride("NotificationsIcon");
+  const iconButtonBackground = isHpClient ? "transparent" : "#f6f6f6";
+  // const showIconBadge = isHpClient && notifications.length > 0;
+  const showIconBadge = true;
+
   const handelClick = async (event) => {
     if (notifications.length > 0) {
       setAnchorEl(event.currentTarget);
@@ -54,9 +63,11 @@ const SystemNotifications = () => {
       }, 2000);
     }
   };
+
   const handleClose = () => {
     setAnchorEl(null);
   };
+
   const handleNoNotificationsClose = () => {
     setNoNotificationsAnchorEl(null);
   };
@@ -115,10 +126,14 @@ const SystemNotifications = () => {
   const renderIconButton = () => (
     <CustomTooltip title={t("header.notifications")} arrow>
       <IconButton
-        style={{ backgroundColor: "#f6f6f6", padding: "8px" }}
+        style={{ backgroundColor: iconButtonBackground, padding: "8px" }}
         onClick={handelClick}
       >
-        <NotificationsNoneOutlinedIcon style={{ color: "#2e3092" }} />
+        {NotificationsIcon ? (
+          <NotificationsIcon width={22} height={22} showBadge={showIconBadge} />
+        ) : (
+          <NotificationsNoneOutlinedIcon style={{ color: "#2e3092" }} />
+        )}
       </IconButton>
     </CustomTooltip>
   );
@@ -222,11 +237,10 @@ const SystemNotifications = () => {
               }}
             />
           </Box>
-
           <Typography
             variant="h6"
             sx={{
-              color: "#2e3092",
+              color: primaryColor(500),
               fontWeight: 600,
               fontSize: "16px",
               mb: 0.5,
@@ -252,23 +266,32 @@ const SystemNotifications = () => {
     </Popover>
   );
 
+  const showBadge = currentTheme !== "hp-client" && notifications.length > 0;
+
   return notifications.length > 0 ? (
-    <Badge
-      style={{ padding: "2px" }}
-      badgeContent={notifications.length}
-      color="warning"
-      componentsProps={{
-        badge: {
-          style: {
-            right: "-5px",
-            transform: "none",
+    showBadge ? (
+      <Badge
+        style={{ padding: "2px" }}
+        badgeContent={notifications.length}
+        color="warning"
+        componentsProps={{
+          badge: {
+            style: {
+              right: "-5px",
+              transform: "none",
+            },
           },
-        },
-      }}
-    >
-      {renderIconButton()}
-      {renderMenu()}
-    </Badge>
+        }}
+      >
+        {renderIconButton()}
+        {renderMenu()}
+      </Badge>
+    ) : (
+      <>
+        {renderIconButton()}
+        {renderMenu()}
+      </>
+    )
   ) : (
     <>
       {renderIconButton()}

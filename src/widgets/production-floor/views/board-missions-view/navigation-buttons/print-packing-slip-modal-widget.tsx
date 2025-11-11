@@ -4,10 +4,14 @@ import { Stack } from "@mui/material";
 import { useStyle } from "@/pages-components/board-missions/style";
 import { SecondaryButton } from "@/components/button/secondary-button";
 import { useEffect, useMemo, useState, useRef } from "react";
-import { getDeliveryTickerPdfApi, checkIfProductIsLabelInRollsApi } from "@/services/api-service/board-missions/board-missions-table";
+import { getDeliveryTickerPdfApi, printDeliveryTickerPdfApi, checkIfProductIsLabelInRollsApi } from "@/services/api-service/board-missions/board-missions-table";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { useIsMobile } from "@/hooks/use-responsive";
 import { FONT_FAMILY } from "@/utils/font-family";
+import { useRecoilValue } from "recoil";
+import { printHouseHasPackagingSlipPrinter } from "@/store/print-house-profile";
+import { ThreeOptionsModal } from "@/components/modal-deleted/three-options-modal";
+import { ModalType } from "@/enums";
 
 interface IProps {
   boardMissionId: string;
@@ -24,8 +28,10 @@ const PrintPackingSlipModalWidget = ({
   const isMobile = useIsMobile();
   const { classes } = useStyle();
   const { t } = useTranslation();
-  const { alertFault } = useSnackBar();
+  const { alertFault, alertSuccess } = useSnackBar();
   const { callApi } = useGomakeAxios();
+  const isPrintHouseHasPackagingSlipPrinter = useRecoilValue(printHouseHasPackagingSlipPrinter);
+  const [openPrintExportModal, setOpenPrintExportModal] = useState<boolean>(false);
   const [totalQuantity, setTotalQuantity] = useState<number>(quantity);
   const [quantityOfPackages, setQuantityOfPackages] = useState<number>(1);
   const [quantityPerPackage, setQuantityPerPackage] =
@@ -394,6 +400,18 @@ const PrintPackingSlipModalWidget = ({
       alertFault("boardMissions.alertQuantity");
       return;
     }
+    
+    // If PrintNode is enabled and packaging slip printer is configured, show selection modal
+    if (isPrintHouseHasPackagingSlipPrinter) {
+      setOpenPrintExportModal(true);
+      return;
+    }
+    
+    // Otherwise, export PDF directly
+    await exportPdf();
+  };
+
+  const exportPdf = async () => {
     const callBack = (res) => {
       if (res?.success) {
         const pdfLink = res.data;
@@ -412,6 +430,29 @@ const PrintPackingSlipModalWidget = ({
     }));
     
     await getDeliveryTickerPdfApi(callApi, callBack, {
+      boardMissionId: boardMissionId,
+      packages,
+    });
+  };
+
+  const printPackingSlip = async () => {
+    const callBack = (res) => {
+      if (res?.success) {
+        alertSuccess("boardMissions.packingSlipPrinted");
+        onClose();
+      } else {
+        alertFault("boardMissions.alertPrintPackingSlip");
+      }
+    };
+    
+    // Build packages array with combined data
+    const packages = packageQuantities.map((quantity, index) => ({
+      packageQuantity: quantity,
+      rollsAmount: isLabelInRolls ? (packageRollsAmounts[index] || 0) : 0,
+      stickersPerRoll: isLabelInRolls ? (packageStickersPerRoll[index] || 0) : 0,
+    }));
+    
+    await printDeliveryTickerPdfApi(callApi, callBack, {
       boardMissionId: boardMissionId,
       packages,
     });
@@ -493,6 +534,36 @@ const PrintPackingSlipModalWidget = ({
           </SecondaryButton>
         </Stack>
       </Stack>
+      
+      {/* Print/Export Selection Modal */}
+      {isPrintHouseHasPackagingSlipPrinter && (
+        <ThreeOptionsModal
+          modalType={ModalType.WARNING}
+          title="boardMissions.selectPackingSlipAction"
+          subTitle="boardMissions.selectPackingSlipActionSubtitle"
+          yesBtn="boardMissions.exportPdf"
+          noBtn="boardMissions.print"
+          openModal={openPrintExportModal}
+          onClose={() => setOpenPrintExportModal(false)}
+          onClickYes={() => {
+            setOpenPrintExportModal(false);
+            exportPdf();
+          }}
+          onClickNo={() => {
+            setOpenPrintExportModal(false);
+            printPackingSlip();
+          }}
+          style={
+            isMobile
+              ? {
+                  width: "95vw",
+                  maxWidth: 600,
+                  minWidth: "unset",
+                }
+              : undefined
+          }
+        />
+      )}
     </GoMakeModal>
   );
 };

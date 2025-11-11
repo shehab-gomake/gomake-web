@@ -46,7 +46,6 @@ const useAddRuleModal = ({
   documentType,
   detailsOption,
 }) => {
-  console.log("filterData", filterData);
   const GET_MATERIALS_TYPES_URL = "/v1/materials/getMaterialsTypes";
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
@@ -252,8 +251,6 @@ const useAddRuleModal = ({
     useRecoilState<any>(productsState);
   const [clientTypesStateValue, setClientTypesState] =
     useRecoilState<any>(clientTypesState);
-  const [parametersStateValue, setParametersState] =
-    useRecoilState<any>(parametersState);
   const [allProductTypes, setAllProductTypes] = useState<any>();
   const [employeeList, setEmployeeList] = useState([]);
   const [actionEmployeeList, setActionEmployeeList] =
@@ -289,9 +286,6 @@ const useAddRuleModal = ({
     });
   }, []);
 
-  const getParameters = useCallback(async () => {
-    return await getAndSetAllParameters(callApi, setParametersState);
-  }, []);
 
   const getAllProductTypes = useCallback(async () => {
     const result = await getAllTemplets(callApi);
@@ -336,7 +330,6 @@ const useAddRuleModal = ({
     if (openModal) {
       getClientTypes();
       getProducts();
-      getParameters();
       getAllMaterials();
       getAllProductTypes();
       getEmployeeCategories();
@@ -860,7 +853,6 @@ const useAddRuleModal = ({
     allMachincesList,
     productsStateValue,
     clientTypesStateValue,
-    parametersStateValue,
     Outputs,
     exceptionType,
     setExceptionType,
