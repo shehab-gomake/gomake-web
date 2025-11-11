@@ -16,7 +16,11 @@ import {
 } from "@/store/frontdesk/atoms/chatwoot.atoms";
 import { useFetchDeduplication } from "./use-chatwoot-initialization";
 
-export const useChatwootConversations = (accountId: number | null, options: Partial<ConversationListParams> = {}) => {
+export const useChatwootConversations = (
+  accountId: number | null,
+  options: Partial<ConversationListParams> = {},
+  skipFetch: boolean = false // NEW: Allow caller to skip fetching when navigating to a conversation
+) => {
   const [conversations, setConversations] = useRecoilState(chatwootConversationsAtom);
   const [loadingState, setLoadingState] = useRecoilState(chatwootConversationsLoadingAtom);
   const [error, setError] = useRecoilState(chatwootConversationsErrorAtom);
@@ -32,6 +36,9 @@ export const useChatwootConversations = (accountId: number | null, options: Part
 
   // Track previous filter key to detect filter changes
   const prevFilterKeyRef = useRef<string>("");
+
+  // Track previous skip state to detect when we return from conversation view
+  const prevSkipFetchRef = useRef<boolean>(false);
 
   // Helper to update specific loading states
   const setLoadingType = useCallback((type: keyof ChatwootConversationsLoadingState, value: boolean) => {
@@ -168,14 +175,34 @@ export const useChatwootConversations = (accountId: number | null, options: Part
     if (isFirstMountRef.current) {
       isFirstMountRef.current = false;
       prevFilterKeyRef.current = filterKey;
-      // Still fetch on first mount, but the deduplication will prevent multiple calls
-      fetchConversations(1, false, false);
+      prevSkipFetchRef.current = skipFetch;
+      // Still fetch on first mount (unless skipFetch is true), but the deduplication will prevent multiple calls
+      if (!skipFetch) {
+        fetchConversations(1, false, false);
+      }
+      return;
+    }
+
+    // If skipFetch is true, we're viewing a conversation - don't refetch the list
+    // This preserves the conversation list and counters during navigation
+    if (skipFetch) {
+      prevFilterKeyRef.current = filterKey;
+      prevSkipFetchRef.current = skipFetch;
       return;
     }
 
     // Detect if filters have changed
     const isFilterChange = filterKey !== prevFilterKeyRef.current;
+    const wasSkipping = prevSkipFetchRef.current;
+
     prevFilterKeyRef.current = filterKey;
+    prevSkipFetchRef.current = skipFetch;
+
+    // If we just returned from viewing a conversation (was skipping, now not)
+    // and filters haven't changed, don't refetch - preserve the list
+    if (wasSkipping && !isFilterChange) {
+      return;
+    }
 
     // Clear stale conversations immediately when filters change
     // This prevents showing old conversations from previous view during fetch
@@ -186,7 +213,7 @@ export const useChatwootConversations = (accountId: number | null, options: Part
 
     // Fetch conversations with filter change flag
     fetchConversations(1, false, isFilterChange);
-  }, [accountId, options, fetchConversations, setConversations, setLoadingType]);
+  }, [accountId, options, skipFetch, fetchConversations, setConversations, setLoadingType]);
 
   return {
     conversations,

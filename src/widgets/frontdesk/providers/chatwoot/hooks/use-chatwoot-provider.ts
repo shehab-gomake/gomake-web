@@ -84,20 +84,34 @@ export const useChatwootProvider = () => {
   // Debounce timer for filter changes to batch rapid updates
   const filterDebounceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
+  // Determine if we're currently viewing a conversation (not just listing them)
+  const isViewingConversation = useMemo(() => {
+    return Boolean(router.currentRoute?.conversationId);
+  }, [router.currentRoute?.conversationId]);
+
   // Build filters based on all filter states
   // Supports toggling between Mine/Unassigned/All via assignee filter
+  // When viewing a conversation, don't include inbox_id in filters to prevent refetch
   const filters = useMemo<Partial<ConversationListParams>>(() => {
-    const baseFilters = buildConversationFilters(selectedInboxId, statusFilter, assigneeFilter);
+    // Only include inbox filter when in CHANNELS view AND not viewing a conversation
+    const shouldIncludeInboxFilter = selectedInboxId && router.isChannelsView && !isViewingConversation;
+
+    const baseFilters = buildConversationFilters(
+      shouldIncludeInboxFilter ? selectedInboxId : null,
+      statusFilter,
+      assigneeFilter
+    );
     return {
       ...baseFilters,
       ...(searchQuery && { q: searchQuery }),
       ...(teamId && { team_id: teamId }),
       ...(sortBy && { sort_by: sortBy }),
     };
-  }, [selectedInboxId, statusFilter, assigneeFilter, searchQuery, teamId, sortBy]);
+  }, [selectedInboxId, router.isChannelsView, isViewingConversation, statusFilter, assigneeFilter, searchQuery, teamId, sortBy]);
 
   // Use conversations hook with accountId and filters
-  const conversations = useChatwootConversations(currentAccountId, filters);
+  // Skip fetching when viewing a conversation to preserve list state and counters
+  const conversations = useChatwootConversations(currentAccountId, filters, isViewingConversation);
 
   // Consolidated initialization effect
   // Handles only account auto-selection now - router handles conversation state
