@@ -1582,7 +1582,7 @@ export const TicketChatbotSidebar = ({
                         sharing or "Reject" to decline.
                       </Typography>
                       <Typography variant="caption" sx={{ color: grayColor(400), display: "block", mb: 1, ...FONT_FAMILY.Heebo(400, 12) }}>
-                        💡 Tip: Select "Chrome Tab" when prompted to share only the current tab
+                        💡 Your current Chrome tab will be selected automatically. You can change it in the browser prompt if needed.
                       </Typography>
                       <Stack direction="row" spacing={2} justifyContent="center">
                         <Button

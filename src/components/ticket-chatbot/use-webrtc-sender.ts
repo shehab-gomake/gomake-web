@@ -67,19 +67,37 @@ export const useWebRTCSender = ({
     try {
       setError(null);
       
-      // Get screen share stream with preference for Chrome tab selection
-      // Use displaySurface: "browser" to prefer tab selection
-      // preferCurrentTab (if available) will select current tab automatically
+      // Get screen share stream with automatic current tab selection
+      // preferCurrentTab: true automatically selects current tab in the picker
+      // User can still change selection if needed
       const constraints: DisplayMediaStreamConstraints = {
         video: {
-          displaySurface: "browser" as ConstrainDOMString,
-          // @ts-ignore - preferCurrentTab is a newer API, may not be in types yet
+          // @ts-ignore - preferCurrentTab is a newer Chrome API (Chrome 104+)
+          // Automatically selects current tab when picker opens
           preferCurrentTab: true,
         } as MediaTrackConstraints,
         audio: true,
       };
       
+      console.log('📺 Requesting screen share with preferCurrentTab...');
       const stream = await navigator.mediaDevices.getDisplayMedia(constraints);
+      
+      // Log what was actually selected
+      const videoTrack = stream.getVideoTracks()[0];
+      if (videoTrack) {
+        const settings = videoTrack.getSettings();
+        console.log('📺 Screen share selected:', {
+          displaySurface: settings.displaySurface,
+          logicalSurface: settings.logicalSurface,
+        });
+        
+        // Show user-friendly message about what's being shared
+        if (settings.displaySurface === 'browser') {
+          console.log('✅ Current Chrome tab is being shared');
+        } else {
+          console.log('⚠️ User selected:', settings.displaySurface);
+        }
+      }
 
       localStreamRef.current = stream;
 
