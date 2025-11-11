@@ -53,7 +53,7 @@ export function getTitleTypography(
     fontFamily:
       "var(--theme-typography-title-font-family, 'Lexend', sans-serif)",
     fontWeight: "var(--theme-typography-title-font-weight, 500)",
-    fontSize: "var(--theme-typography-title-font-size, 20px)",
+    fontSize: "var(--theme-typography-title-font-size, 24px)",
     lineHeight: "var(--theme-typography-title-line-height, 32px)",
     letterSpacing: "var(--theme-typography-title-letter-spacing, 0px)",
     color:
