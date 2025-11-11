@@ -16,6 +16,7 @@ import {
 import { MoreMenuWidget } from "./more-circle";
 import { getAllProductsForDropDownList } from "@/services/hooks";
 import { useRecoilValue, useRecoilState, useSetRecoilState } from "recoil";
+import { printHouseHasPackagingSlipPrinter } from "@/store/print-house-profile";
 import {
   agentsCategoriesState,
   closeOrderAsInvoiceOrDeliveryNoteState,
@@ -94,9 +95,9 @@ import { useClientTypesList } from "@/hooks/use-client-types";
 import { useModal } from "@/hooks/use-modal";
 import { getTaxConfirmationNumberApi } from "@/services/api-service/generic-doc/invoices";
 import { getDeliveryTickerPdfApi } from "@/services/api-service/board-missions/board-missions-table";
+import { exportDeliveryTicketPDFApi, printDeliveryTicketPDFApi } from "@/services/api-service/generic-doc/orders-api";
 import { GomakeTextInput } from "@/components";
 import { downloadPdf } from "@/utils/helpers";
-import { exportDeliveryTicketPDFApi } from "@/services/api-service/generic-doc/orders-api";
 import { PAYMENT_TYPE } from "../deposit/enums";
 import { useListPagination } from "@/hooks/use-list-pagination";
 import { useScheduledReports } from "@/hooks/use-scheduled-reports";
@@ -175,6 +176,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const { errorColor, primaryColor } = useGomakeTheme();
   const { GetDateFormat, formatCustomDateTime, formatISODateTime } =
     useDateFormat();
+  const isPrintHouseHasPackagingSlipPrinter = useRecoilValue(printHouseHasPackagingSlipPrinter);
 
   const [patternSearch, setPatternSearch] = useState<any>(
     router.query.finalPatternSearch || null
@@ -3193,11 +3195,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     MoveOrderToReady.close();
   };
 
-  const onClickPrintPackagingSlip = async () => {
-    if (quantityPerPackage > selectedDocument?.totalOrderQuantity) {
-      alertFault("boardMissions.alertQuantity");
-      return;
-    }
+  const exportPdf = async () => {
     const callBack = (res) => {
       if (res?.success) {
         const pdfLink = res.data;
@@ -3214,7 +3212,40 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     });
   };
 
+  const printPackingSlip = async () => {
+    const callBack = (res) => {
+      if (res?.success) {
+        alertSuccess("boardMissions.packingSlipPrinted");
+        onClosePackagesModal();
+        openPathAfterPackageModal();
+      } else {
+        alertFault("boardMissions.alertPrintPackingSlip");
+      }
+    };
+    await printDeliveryTicketPDFApi(callApi, callBack, {
+      orderId: selectedDocument?.id,
+      packageQuantities,
+    });
+  };
+
+  const onClickPrintPackagingSlip = async () => {
+    if (quantityPerPackage > selectedDocument?.totalOrderQuantity) {
+      alertFault("boardMissions.alertQuantity");
+      return;
+    }
+    
+    // If PrintNode is enabled and packaging slip printer is configured, show selection modal
+    if (isPrintHouseHasPackagingSlipPrinter) {
+      setOpenPrintExportModal(true);
+      return;
+    }
+    
+    // Otherwise, export PDF directly
+    await exportPdf();
+  };
+
   const [openPackagesModal, setOpenPackagesModal] = useState<boolean>(false);
+  const [openPrintExportModal, setOpenPrintExportModal] = useState<boolean>(false);
   const [triggeredFromMoveOrderToReady, setTriggeredFromMoveOrderToReady] =
     useState(false);
 
@@ -4280,6 +4311,11 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     packageInputs,
     onClosePackagesModal,
     openPackagesModal,
+    openPrintExportModal,
+    setOpenPrintExportModal,
+    exportPdf,
+    printPackingSlip,
+    isPrintHouseHasPackagingSlipPrinter,
     paymentType,
     handlePaymentTypeChange,
     typeOfPayments,

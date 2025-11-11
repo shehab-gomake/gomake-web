@@ -273,6 +273,11 @@ const QuotesListPageWidget = ({
     packageInputs,
     onClosePackagesModal,
     openPackagesModal,
+    openPrintExportModal,
+    setOpenPrintExportModal,
+    exportPdf,
+    printPackingSlip,
+    isPrintHouseHasPackagingSlipPrinter,
     paymentType,
     handlePaymentTypeChange,
     typeOfPayments,
@@ -1037,6 +1042,11 @@ const QuotesListPageWidget = ({
         handleQuantityOfPackagesChange={handleQuantityOfPackagesChange}
         handleQuantityPerPackageChange={handleQuantityPerPackageChange}
         onClickConfirm={onClickPrintPackagingSlip}
+        openPrintExportModal={openPrintExportModal}
+        setOpenPrintExportModal={setOpenPrintExportModal}
+        exportPdf={exportPdf}
+        printPackingSlip={printPackingSlip}
+        isPrintHouseUsePrintNode={isPrintHouseHasPackagingSlipPrinter}
       />
       <PurchaseOrderTypeModal
         open={openPurchaseOrderTypeModal}
