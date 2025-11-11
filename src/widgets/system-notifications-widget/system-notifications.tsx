@@ -49,7 +49,8 @@ const SystemNotifications = () => {
   const isHpClient = currentTheme === "hp-client";
   const NotificationsIcon = getIconOverride("NotificationsIcon");
   const iconButtonBackground = isHpClient ? "transparent" : "#f6f6f6";
-  const showIconBadge = isHpClient && notifications.length > 0;
+  // const showIconBadge = isHpClient && notifications.length > 0;
+  const showIconBadge = true;
 
   const handelClick = async (event) => {
     if (notifications.length > 0) {
