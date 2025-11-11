@@ -48,6 +48,7 @@ import { ScheduledReportsTable } from "../quotes/widgets/scheduled-reports-table
 import { JobsFiltersSection } from "./components/jobs-filters-section";
 import { PrintPackingSlipModalWidget } from "@/widgets/production-floor/views/board-missions-view/navigation-buttons/print-packing-slip-modal-widget";
 import { QualityIssueModal } from "@/widgets/production-floor/table-view/status-table/table-row/more-circle/quality-issue-modal";
+import { useParameters } from "@/hooks/use-parameters";
 
 const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
   const { classes } = useStyle();
@@ -218,6 +219,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
   const [openPrintNodeModal, setOpenPrintNodeModal] = useState(false);
   const [printNodeOrderId, setPrintNodeOrderId] = useState(null);
   const { CheckPreferenceValue } = usePrintHousePreferences();
+  const { parametersStateValue } = useParameters();
 
   useEffect(() => {
     if (router.isReady && companyProfile.filesApiAddress && newOrderId) {
@@ -783,6 +785,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
           availableDateFilters={getAvailableDateFilters()}
           onShowScheduledReports={onShowScheduledReports}
           createScheduledReport={createScheduledReport}
+          parametersStateValue={parametersStateValue}
         />
       )}
 

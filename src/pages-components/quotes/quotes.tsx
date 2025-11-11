@@ -69,6 +69,7 @@ import QrCodeReader from "@/components/qr-code-reader";
 import { useSetRecoilState } from "recoil";
 import { selectedItemsState } from "@/store";
 import { PrintPackingSlipModalWidget } from "@/widgets/production-floor/views/board-missions-view/navigation-buttons/print-packing-slip-modal-widget";
+import { useParameters } from "@/hooks/use-parameters";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -461,6 +462,8 @@ const QuotesListPageWidget = ({
     loadDocumentColumnSettings();
   }, [documentType, tableKey]);
   const setSelectedItems = useSetRecoilState(selectedItemsState);
+  const { parametersStateValue } = useParameters();
+
   return (
     <>
       {!isFromHomePage && (
@@ -677,6 +680,7 @@ const QuotesListPageWidget = ({
           documentType={documentType}
           onShowScheduledReports={onShowScheduledReports}
           createScheduledReport={createScheduledReport}
+          parametersStateValue={parametersStateValue}
         />
       )}
       <GoMakeDeleteModal
