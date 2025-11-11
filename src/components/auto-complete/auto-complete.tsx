@@ -172,6 +172,8 @@ const GoMakeAutoComplate = ({
   isOptionEqualToValue,
   labelText,
   getOptionDisabled,
+  freeSolo = false,
+  inputValue
 }: {
   value?: any;
   onChange?: any;
@@ -206,6 +208,8 @@ const GoMakeAutoComplate = ({
   isOptionEqualToValue?: (option: any, value: any) => boolean;
   labelText?: string;
   getOptionDisabled?: (option: any) => boolean;
+  freeSolo?: boolean;
+  inputValue?: string;
 }) => {
   const [selectedOption, setSelectedOption] = useState<any>();
   const { t } = useTranslation();
@@ -243,8 +247,9 @@ const GoMakeAutoComplate = ({
         <div style={{ ...FONT_FAMILY.Lexend(600, 14) }}>{labelText}</div>
       )}
       <StyledAutocomplete
-        {...(value && { value })}
-        selectedOption={selectedOption}
+        value={value !== null && value !== undefined ? value : null}
+        {...(selectedOption && { selectedOption })}
+        {...(inputValue !== undefined && freeSolo && { inputValue })}
         direction={dir}
         onChange={(e: any, value: any) => {
           onChange(e, value);
@@ -258,9 +263,8 @@ const GoMakeAutoComplate = ({
         style={style}
         options={options}
         disabled={disabled}
-        popupIcon={
-          withArrow ? popupIcon ? popupIcon : <ArrowDropDownIcon /> : ""
-        }
+        freeSolo={freeSolo}
+        popupIcon={withArrow ? popupIcon ? popupIcon : <ArrowDropDownIcon /> : ""}
         groupBy={groupBy}
         renderGroup={(params) => (
           <div key={params.key}>

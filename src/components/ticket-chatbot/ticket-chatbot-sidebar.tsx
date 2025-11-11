@@ -791,7 +791,7 @@ export const TicketChatbotSidebar = ({
   const handleSendMessage = async () => {
     if (!inputMessage.trim() && selectedFiles.length === 0) return;
 
-    const messageText = inputMessage.trim() || "File attachment";
+    const messageText = inputMessage.trim();
     setInputMessage("");
 
     try {

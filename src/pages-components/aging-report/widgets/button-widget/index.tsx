@@ -14,6 +14,7 @@ export interface AgingReportButtonWidgetProps {
   onClickBtn3: () => void;
   onClickBtn4: () => void;
   onClickBtn5: () => void;
+  onClickBtn6: () => void;
 }
 const AgingReportButtonWidget = ({
   onClickBtn1,
@@ -21,6 +22,7 @@ const AgingReportButtonWidget = ({
   onClickBtn3,
   onClickBtn4,
   onClickBtn5,
+  onClickBtn6,
 }: AgingReportButtonWidgetProps) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -58,6 +60,15 @@ const AgingReportButtonWidget = ({
       onclick: onClickBtn5,
       icon: (
         <WhatsAppIcon style={{ color: primaryColor(300), fontSize: "22px" }} />
+      ),
+    },
+    {
+      name: t("reports.sendDebitsToAllClients"),
+      onclick: onClickBtn6,
+      icon: (
+        <ForwardToInboxRoundedIcon
+          style={{ color: primaryColor(300), fontSize: "22px" }}
+        />
       ),
     },
   ];

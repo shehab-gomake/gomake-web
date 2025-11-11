@@ -37,6 +37,7 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
   } = useCustomerDropDownList({ clientType });
   const isSendPaymentModal = useModal();
   const isWhatsAppModal = useModal();
+  const isSendToAllClientsModal = useModal();
 
   const { agent, agentsCategories, handleAgentChange } = useAgentsList();
   const [selectDate, setSelectDate] = useState<string>(
@@ -323,6 +324,10 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
     }
   };
 
+  const onClickBtn6 = () => {
+    isSendToAllClientsModal.open();
+  };
+
   const getAgingReportFilter = useCallback(
     async (
       expendedReport = false,
@@ -572,6 +577,56 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
     isPurchaseReport,
   ]);
 
+  const sendPaymentToAllClients = useCallback(async () => {
+    if (!areDatesValid(fromDate, toDate)) {
+      alertFault("alerts.pleaseEnsureDatesSelected");
+      return;
+    }
+
+    const formattedStartDate = format(fromDate, "yyyy-MM-dd");
+    const formattedEndDate = format(toDate, "yyyy-MM-dd");
+
+    const res = await callApi(
+      EHttpMethod.POST,
+      `/v1/erp-service/reports/send-debit-payment-to-all-clients`,
+      {
+        startDate: formattedStartDate,
+        endDate: formattedEndDate,
+        referDate: selectDate ? selectDate : new Date(),
+        agentId: agent?.id,
+        expendedReport: detailedReport,
+        byCreationDate: agingReportByCreationDate,
+        orderBy,
+        isDescOrder,
+        cardType: isPurchaseReport
+          ? CLIENT_TYPE.SUPPLIER
+          : CLIENT_TYPE.CUSTOMER,
+      }
+    );
+    if (res?.success) {
+      alertSuccessSend();
+      isSendToAllClientsModal.close();
+    } else {
+      alertFaultSend();
+    }
+  }, [
+    fromDate,
+    toDate,
+    detailedReport,
+    agent,
+    selectDate,
+    byReferenceDate,
+    orderBy,
+    isDescOrder,
+    agingReportByCreationDate,
+    isPurchaseReport,
+    callApi,
+    alertFault,
+    alertSuccessSend,
+    alertFaultSend,
+    isSendToAllClientsModal,
+  ]);
+
   return {
     t,
     handleClickSelectDate,
@@ -590,6 +645,7 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
     onClickBtn3,
     onClickBtn4,
     onClickBtn5,
+    onClickBtn6,
     showTable,
     detailedReport,
     setShowTable,
@@ -626,6 +682,8 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
     sendPaymenttoClient,
     isWhatsAppModal,
     whatsappMessage,
+    isSendToAllClientsModal,
+    sendPaymentToAllClients,
   };
 };
 

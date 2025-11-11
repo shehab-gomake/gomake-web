@@ -47,6 +47,7 @@ import { AddRuleModal } from "../products/profits-new/widgets/add-rule-modal";
 import { ScheduledReportsTable } from "../quotes/widgets/scheduled-reports-table/scheduled-reports-table";
 import { JobsFiltersSection } from "./components/jobs-filters-section";
 import { PrintPackingSlipModalWidget } from "@/widgets/production-floor/views/board-missions-view/navigation-buttons/print-packing-slip-modal-widget";
+import { QualityIssueModal } from "@/widgets/production-floor/table-view/status-table/table-row/more-circle/quality-issue-modal";
 
 const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
   const { classes } = useStyle();
@@ -160,6 +161,8 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
     tableKey,
     setIsPrintedState,
     isPrintedState,
+    isQualityFixJob,
+    setIsQualityFixJob,
     isPrintHouseUsePrintNode,
     openPrintTypeModal,
     onClosePrintTypeModal,
@@ -197,6 +200,14 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
     onDeleteScheduledReport,
     handleScheduledReportsPageChange,
     handleScheduledReportsPageSizeChange,
+    // Quality Issue Modal
+    openQualityIssueModal,
+    onCloseQualityIssueModal,
+    handleQualityIssueConfirm,
+    // Change Status Modal for Quality Issue
+    openChangeStatusModalForQualityIssue,
+    onClickCloseChangeStatusModalForQualityIssue,
+    updateQuoteStatusForQualityIssue,
   } = useBoardMissions({ isPurchaseJobs });
   const { callApi } = useGomakeAxios();
   const [companyProfile] = useRecoilState(printHouseProfile);
@@ -364,6 +375,9 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
             isPrintedState={isPrintedState}
             setIsPrintedState={setIsPrintedState}
             isPrintHouseUsePrintNode={isPrintHouseUsePrintNode}
+            // Is Quality fix job props
+            isQualityFixJob={isQualityFixJob}
+            setIsQualityFixJob={setIsQualityFixJob}
             // Products props
             productsList={productsList}
             productIds={productIds}
@@ -798,6 +812,20 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
         onDelete={onDeleteScheduledReport}
         onPageChange={handleScheduledReportsPageChange}
         onPageSizeChange={handleScheduledReportsPageSizeChange}
+      />
+      <QualityIssueModal
+        openModal={openQualityIssueModal}
+        onClose={onCloseQualityIssueModal}
+        onConfirm={handleQualityIssueConfirm}
+      />
+      <GoMakeDeleteModal
+        modalType={ModalType.WARNING}
+        title={t("sales.quote.titleModal")}
+        subTitle={t("sales.quote.subTitleModal")}
+        yesBtn={t("sales.quote.changeStatus")}
+        openModal={openChangeStatusModalForQualityIssue}
+        onClose={onClickCloseChangeStatusModalForQualityIssue}
+        onClickDelete={updateQuoteStatusForQualityIssue}
       />
     </>
   );

@@ -13,6 +13,8 @@ const GET_WORK_MISSION_PDF_URL =
   "/v1/erp-service/board-missions-tables/get-work-mission-pdf";
 const GET_DELIVERY_TICKER_PDF_URL =
   "/v1/erp-service/board-missions-tables/get-delivery-ticker-pdf";
+const PRINT_DELIVERY_TICKER_PDF_URL =
+  "/v1/erp-service/board-missions-tables/print-delivery-ticker-pdf";
 const CHECK_IF_PRODUCT_IS_LABEL_IN_ROLLS_URL =
   "/v1/erp-service/board-missions/check-if-product-is-label-in-rolls";
 const ADD_BOARD_MISSIONS_TO_FILE_UPLOADER_URL =
@@ -106,6 +108,19 @@ const getDeliveryTickerPdfApi: ICallAndSetData = async (
     callApi,
     EHttpMethod.POST,
     GET_DELIVERY_TICKER_PDF_URL,
+    setState,
+    data
+  );
+};
+const printDeliveryTickerPdfApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    PRINT_DELIVERY_TICKER_PDF_URL,
     setState,
     data
   );
@@ -304,6 +319,7 @@ export {
   getOrderSummeryPdfApi,
   getWorkMissionPdfApi,
   getDeliveryTickerPdfApi,
+  printDeliveryTickerPdfApi,
   getAllPurchaseJobsApi,
   addBoardMissionsToFileUploaderApi,
   printJobUsingPrintNodeApi,

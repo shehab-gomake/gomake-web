@@ -171,6 +171,7 @@ const JobTooltipComponent = ({
   title,
   bgColor,
   jobNumber,
+  jobName,
   orderNumber,
   numberOfJobsInOrder,
   boardMissionId,
@@ -265,7 +266,40 @@ const JobTooltipComponent = ({
         />
       </Stack>
 
-      <Stack gap="8px">
+      <Stack gap="10px">
+        {jobName && (
+          <Stack
+            direction={"row"}
+            alignItems="center"
+            gap="6px"
+            sx={{
+              padding: "6px 10px",
+              backgroundColor: toRgba(safeColor, 0.08),
+              borderRadius: "6px",
+              border: `1px solid ${toRgba(safeColor, 0.15)}`,
+            }}
+          >
+            <div
+              style={{
+                width: "3px",
+                height: "16px",
+                backgroundColor: safeColor,
+                borderRadius: "2px",
+              }}
+            />
+            <span
+              style={{
+                ...classes.jobTitle,
+                fontSize: "13px",
+                fontWeight: 600,
+                color: safeColor,
+                flex: 1,
+              }}
+            >
+              {jobName}
+            </span>
+          </Stack>
+        )}
         <Stack direction={"row"} justifyContent={"space-between"} gap={"8px"}>
           <span
             style={{

@@ -23,6 +23,7 @@ export interface IGanttJob {
   productName: string;
   // boardMissionNumber: string;
   jobNumber: string;
+  jobName?: string;
   clientName: string;
   productType: string;
   numberOfJobsInOrder?: number | string;

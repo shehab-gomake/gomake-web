@@ -2449,9 +2449,22 @@ const useDigitalOffsetPrice = ({
             return item;
           });
 
+          // Combine existing and processed parameters, then remove duplicates
+          const combinedParameters = [...subProduct.parameters, ...processedParameters];
+          const uniqueParameters = removeDuplicateParameters(combinedParameters);
+
+          // Filter out parameters with empty GUID for both sectionId and subSectionId
+          const finalParameters = uniqueParameters.filter(
+            (param) =>
+              !(
+                param.sectionId === "00000000-0000-0000-0000-000000000000" &&
+                param.subSectionId === "00000000-0000-0000-0000-000000000000"
+              )
+          );
+
           return {
             ...subProduct,
-            parameters: processedParameters,
+            parameters: finalParameters,
           };
         });
       });

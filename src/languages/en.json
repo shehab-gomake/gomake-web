@@ -2199,7 +2199,16 @@
     "wednesday": "Wed",
     "thursday": "Thu",
     "friday": "Fri",
-    "saturday": "Sat"
+    "saturday": "Sat",
+    "printNode": "Print Node",
+    "printnodeUsername": "PrintNode Username",
+    "printnodePassword": "PrintNode Password",
+    "packingSlipPrinter": "Packing Slip Printer",
+    "smsAndEmails": "SMS and Emails",
+    "creditCards": "Credit Cards",
+    "taxAuthority": "Tax Authority",
+    "hours": "Hours",
+    "businessProfile": "Business Profile"
   },
   "remainWords": {
     "newQuote": "New quote",
@@ -2713,12 +2722,31 @@
     "noStationsSelected": "No stations selected",
     "QRScanner": "QR Scanner",
     "scanQRCodeToProceed": "Scan QR code to proceed",
+    "reportQualityIssue": "Report Quality Issue",
+    "qualityIssueReason": "Please describe the quality issue",
+    "qualityIssueReasonLabel": "Quality Issue Reason",
+    "qualityIssueFix": "Quality issue fix",
+    "otherReason": "Other reason",
+    "addNewReason": "Add new reason",
+    "noReasonsFound": "No reasons found",
     "export": {
       "exportToExcel": "Export to Excel",
       "noDataToExport": "No data to export",
       "excelExportSuccess": "Data exported to Excel successfully",
       "excelExportError": "Failed to export data to Excel"
     }
+  },
+  "boardMissions": {
+    "isQualityFixJob": "Is Quality fix job",
+    "packagesTitle": "Packages",
+    "alertPrintPackingSlip": "Failed to print packing slip",
+    "alertQuantity": "Quantity per package cannot be greater than total quantity",
+    "selectPackingSlipAction": "Select Action",
+    "selectPackingSlipActionSubtitle": "How would you like to proceed with the packing slip?",
+    "exportPdf": "Export PDF",
+    "print": "Print",
+    "packingSlipPrinted": "Packing slip printed successfully",
+    "printPackingSlipNotImplemented": "Print packing slip feature is coming soon"
   },
   "logs": {
     "CLOSE": "document closed",

@@ -1,9 +1,11 @@
 import { useTranslation } from "react-i18next";
-import { GoMakeModal, GomakeTextInput } from "@/components";
+import { GoMakeModal, GomakeTextInput, ThreeOptionsModal } from "@/components";
 import { Stack } from "@mui/material";
 import { useStyle } from "../style";
 import { SecondaryButton } from "@/components/button/secondary-button";
 import { FONT_FAMILY } from "@/utils/font-family";
+import { ModalType } from "@/enums";
+import { useIsMobile } from "@/hooks/use-responsive";
 
 const PrintPackingSlipModal = ({
   openPackagesModal,
@@ -14,9 +16,16 @@ const PrintPackingSlipModal = ({
   handleQuantityOfPackagesChange,
   handleQuantityPerPackageChange,
   onClickConfirm,
+  openPrintExportModal,
+  setOpenPrintExportModal,
+  exportPdf,
+  printPackingSlip,
+  isPrintHouseUsePrintNode,
 }: any) => {
+  // Note: prop name kept as isPrintHouseUsePrintNode for backward compatibility, but it now receives isPrintHouseHasPackagingSlipPrinter value
   const { classes } = useStyle();
   const { t } = useTranslation();
+  const isMobile = useIsMobile();
 
   return (
     <GoMakeModal
@@ -68,6 +77,36 @@ const PrintPackingSlipModal = ({
           </SecondaryButton>
         </Stack>
       </Stack>
+      
+      {/* Print/Export Selection Modal */}
+      {isPrintHouseUsePrintNode && (
+        <ThreeOptionsModal
+          modalType={ModalType.WARNING}
+          title="boardMissions.selectPackingSlipAction"
+          subTitle="boardMissions.selectPackingSlipActionSubtitle"
+          yesBtn="boardMissions.exportPdf"
+          noBtn="boardMissions.print"
+          openModal={openPrintExportModal}
+          onClose={() => setOpenPrintExportModal(false)}
+          onClickYes={() => {
+            setOpenPrintExportModal(false);
+            exportPdf();
+          }}
+          onClickNo={() => {
+            setOpenPrintExportModal(false);
+            printPackingSlip();
+          }}
+          style={
+            isMobile
+              ? {
+                  width: "95vw",
+                  maxWidth: 600,
+                  minWidth: "unset",
+                }
+              : undefined
+          }
+        />
+      )}
     </GoMakeModal>
   );
 };
