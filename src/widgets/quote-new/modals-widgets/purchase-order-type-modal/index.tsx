@@ -32,15 +32,18 @@ const PurchaseOrderTypeModal: React.FC<PurchaseOrderTypeModalProps> = ({
       hideCancelButton={true}
       hidePrimaryButton={true}
       customFooter={
-        <Stack direction="row" spacing={2} sx={{ width: "100%" }}>
+        <Stack direction="row" sx={{ width: "100%", gap: "20px" }}>
           <GomakePrimaryButton
             onClick={onSelectProduct}
             style={{
-              flex: 1,
-              height: "48px",
-              fontSize: "16px",
-              fontWeight: 500,
-              backgroundColor: primaryColor(500),
+              width: "50%",
+              height: "44px",
+              minWidth: "fit-content",
+              borderRadius: "15px",
+              ...FONT_FAMILY.Lexend(600, 14),
+              backgroundColor: "rgb(46, 48, 146)",
+              border: "1px solid rgb(46, 48, 146)",
+              color: "rgb(255, 255, 255)",
             }}
           >
             {t("sales.purchaseOrder.purchaseOrderForProduct")}
@@ -48,11 +51,11 @@ const PurchaseOrderTypeModal: React.FC<PurchaseOrderTypeModalProps> = ({
           <GomakePrimaryButton
             onClick={onSelectMaterial}
             style={{
-              flex: 1,
+              width: "50%",
+              height: "44px",
+              minWidth: "fit-content",
               borderRadius: "15px",
-              fontFamily: "Lexend",
-              fontWeight: 600,
-              fontSize: "14px",
+              ...FONT_FAMILY.Lexend(600, 14),
               backgroundColor: "rgb(46, 48, 146)",
               border: "1px solid rgb(46, 48, 146)",
               color: "rgb(255, 255, 255)",
