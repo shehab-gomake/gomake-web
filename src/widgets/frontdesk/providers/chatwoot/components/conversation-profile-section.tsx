@@ -12,9 +12,16 @@ import {
   Avatar,
   Button,
   CircularProgress,
+  IconButton,
+  Tooltip,
 } from "@mui/material";
 import {
   Link as LinkIcon,
+  Email as EmailIcon,
+  Phone as PhoneIcon,
+  Badge as BadgeIcon,
+  OpenInNew as OpenInNewIcon,
+  SwapHoriz as SwapHorizIcon,
 } from "@mui/icons-material";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { colorTokens } from "@/widgets/frontdesk/design-system";
@@ -200,99 +207,159 @@ export const ConversationProfileSection: React.FC<ConversationProfileSectionProp
       ) : customer ? (
         // Linked Customer View
         <Box
-          onClick={handleViewCustomer}
           sx={{
+            position: "relative",
             p: 1.5,
             backgroundColor: colorTokens.neutral[50],
             borderRadius: "6px",
             border: `1px solid ${colorTokens.semantic.border.default}`,
-            cursor: "pointer",
             transition: "background-color 0.2s",
             "&:hover": {
               backgroundColor: colorTokens.neutral[100],
             },
           }}
         >
-          <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 1 }}>
-            <Avatar src={contactAvatarUrl || undefined} sx={{ width: 32, height: 32 }}>
+          {/* Customer Name with Avatar */}
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 2 }}>
+            <Avatar src={contactAvatarUrl || undefined} sx={{ width: 40, height: 40 }}>
               {customer.name?.charAt(0)}
             </Avatar>
-            <Box sx={{ flex: 1, minWidth: 0 }}>
+            <Typography
+              variant="body2"
+              sx={{
+                fontWeight: 600,
+                fontSize: 15,
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+                flex: 1,
+              }}
+            >
+              {customer.name}
+            </Typography>
+          </Box>
+
+          {/* Email with Icon */}
+          {customer.mail && (
+            <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1 }}>
+              <EmailIcon sx={{ fontSize: 16, color: colorTokens.semantic.text.secondary }} />
               <Typography
-                variant="body2"
+                variant="caption"
                 sx={{
-                  fontWeight: 500,
+                  color: colorTokens.semantic.text.secondary,
                   fontSize: 13,
                   overflow: "hidden",
                   textOverflow: "ellipsis",
                   whiteSpace: "nowrap",
+                  flex: 1,
                 }}
               >
-                {customer.name}
+                {customer.mail}
               </Typography>
-              {customer.mail && (
-                <Typography
-                  variant="caption"
-                  sx={{
-                    color: colorTokens.semantic.text.secondary,
-                    fontSize: 11,
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    whiteSpace: "nowrap",
-                    display: "block",
-                  }}
-                >
-                  {customer.mail}
-                </Typography>
-              )}
-              {customer.phone && (
-                <Typography
-                  variant="caption"
-                  sx={{
-                    color: colorTokens.semantic.text.secondary,
-                    fontSize: 11,
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    whiteSpace: "nowrap",
-                    display: "block",
-                  }}
-                >
-                  {customer.phone}
-                </Typography>
-              )}
-              {(customer.code || customer.typeClient) && (
-                <Typography
-                  variant="caption"
-                  sx={{
-                    color: colorTokens.semantic.text.secondary,
-                    fontSize: 11,
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    whiteSpace: "nowrap",
-                    display: "block",
-                    mt: 0.5,
-                  }}
-                >
-                  {customer.code}
-                  {customer.typeClient && (
-                    <span style={{ marginLeft: customer.code ? "4px" : "0" }}>
-                      ({getClientTypeLabel(customer.typeClient)})
-                    </span>
-                  )}
-                </Typography>
-              )}
             </Box>
-          </Box>
-          <Typography
-            variant="caption"
+          )}
+
+          {/* Phone with Icon */}
+          {customer.phone && (
+            <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1 }}>
+              <PhoneIcon sx={{ fontSize: 16, color: colorTokens.semantic.text.secondary }} />
+              <Typography
+                variant="caption"
+                sx={{
+                  color: colorTokens.semantic.text.secondary,
+                  fontSize: 13,
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                  flex: 1,
+                }}
+              >
+                {customer.phone}
+              </Typography>
+            </Box>
+          )}
+
+          {/* Customer Code and Type with Icon */}
+          {(customer.code || customer.typeClient) && (
+            <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1 }}>
+              <BadgeIcon sx={{ fontSize: 16, color: colorTokens.semantic.text.secondary }} />
+              <Typography
+                variant="caption"
+                sx={{
+                  color: colorTokens.semantic.text.secondary,
+                  fontSize: 13,
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                  flex: 1,
+                }}
+              >
+                {customer.code}
+                {customer.typeClient && (
+                  <span style={{ marginLeft: customer.code ? "4px" : "0" }}>
+                    ({getClientTypeLabel(customer.typeClient)})
+                  </span>
+                )}
+              </Typography>
+            </Box>
+          )}
+
+          {/* Action Icons - Upper Right Corner */}
+          <Box
             sx={{
-              color: colorTokens.primary[600],
-              fontSize: 10,
-              fontWeight: 600,
+              position: "absolute",
+              top: 8,
+              right: 8,
+              display: "flex",
+              gap: 0.5,
             }}
           >
-            Click to view customer details
-          </Typography>
+            {/* View Customer Details */}
+            <Tooltip title="View customer details">
+              <IconButton
+                size="small"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleViewCustomer();
+                }}
+                sx={{
+                  backgroundColor: "rgba(255, 255, 255, 0.9)",
+                  boxShadow: "0 1px 2px rgba(0, 0, 0, 0.1)",
+                  width: 24,
+                  height: 24,
+                  "&:hover": {
+                    backgroundColor: primaryColor(50),
+                    color: primaryColor(600),
+                  },
+                }}
+              >
+                <OpenInNewIcon sx={{ fontSize: 16 }} />
+              </IconButton>
+            </Tooltip>
+
+            {/* Change Linked Customer */}
+            <Tooltip title="Change linked customer">
+              <IconButton
+                size="small"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setOpenLinkModal(true);
+                }}
+                sx={{
+                  backgroundColor: "rgba(255, 255, 255, 0.9)",
+                  boxShadow: "0 1px 2px rgba(0, 0, 0, 0.1)",
+                  width: 24,
+                  height: 24,
+                  "&:hover": {
+                    backgroundColor: primaryColor(50),
+                    color: primaryColor(600),
+                  },
+                }}
+              >
+                <SwapHorizIcon sx={{ fontSize: 16 }} />
+              </IconButton>
+            </Tooltip>
+          </Box>
         </Box>
       ) : (
         // Unlinked Contact View - Simple display without background or functionality

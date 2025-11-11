@@ -405,10 +405,9 @@ export function useComposeConversation(options?: UseComposeConversationOptions) 
     try {
       const payload = preparePayload();
       const response = await chatwootService.conversations.createConversation(accountId, payload);
-      console.log("[useComposeConversation] API Response:", response);
 
-      // Extract conversation from response (could be in data or payload)
-      const conversation = response.data || response.payload;
+      // The conversation object is the response itself
+      const conversation = response;
       const conversationId = conversation?.id;
 
       if (conversationId) {

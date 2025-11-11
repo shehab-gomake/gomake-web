@@ -1,17 +1,30 @@
 /**
  * ContactSelector Component
  *
- * Searchable dropdown for selecting or creating contacts.
+ * Searchable dropdown for selecting or creating contacts using Material-UI components.
  * Supports debounced search by name, email, or phone number.
  */
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
+import {
+  TextField,
+  Autocomplete,
+  Box,
+  Typography,
+  CircularProgress,
+  List,
+  ListItem,
+  ListItemAvatar,
+  Avatar,
+  ListItemText,
+  Button,
+} from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import PersonIcon from "@mui/icons-material/Person";
 import MailIcon from "@mui/icons-material/Mail";
 import PhoneIcon from "@mui/icons-material/Phone";
-import CloseIcon from "@mui/icons-material/Close";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import type { ContactDetail } from "@/services/frontdesk/api/chatwoot/types/contacts.types";
 
 export interface ContactSelectorProps {
@@ -46,204 +59,96 @@ export const ContactSelector: React.FC<ContactSelectorProps> = ({
   onCreateContact,
   error,
 }) => {
+  const { neutralColor, primaryColor } = useGomakeTheme();
   const [query, setQuery] = useState("");
-  const [isOpen, setIsOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Close dropdown when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsOpen(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
-  const handleQueryChange = (value: string) => {
-    setQuery(value);
-    setIsOpen(true);
-    onSearch(value);
-  };
-
-  const handleSelectContact = (contact: ContactDetail) => {
-    onSelectContact(contact);
-    setQuery("");
-    setIsOpen(false);
-  };
-
-  const handleClearSelection = () => {
-    onSelectContact(null as any);
-    setQuery("");
+  const handleQueryChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newQuery = event.target.value;
+    setQuery(newQuery);
+    onSearch(newQuery);
   };
 
   return (
-    <div className="space-y-2" ref={dropdownRef}>
-      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-        Contact <span className="text-red-500">*</span>
-      </label>
-
-      {/* Selected Contact Display */}
-      {selectedContact ? (
-        <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg">
-          <div className="flex items-center gap-3">
-            {/* Avatar */}
-            <div className="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white font-medium">
-              {selectedContact.thumbnail ? (
-                <img
-                  src={selectedContact.thumbnail}
-                  alt={selectedContact.name || "Contact"}
-                  className="w-10 h-10 rounded-full object-cover"
-                />
-              ) : (
-                <PersonIcon className="w-5 h-5" />
-              )}
-            </div>
-
-            {/* Contact Info */}
-            <div>
-              <div className="font-medium text-gray-900 dark:text-gray-100">
-                {selectedContact.name || "Unnamed Contact"}
-              </div>
-              <div className="text-sm text-gray-500 dark:text-gray-400 flex items-center gap-2">
-                {selectedContact.email && (
-                  <span className="flex items-center gap-1">
-                    <MailIcon className="w-3 h-3" />
-                    {selectedContact.email}
-                  </span>
-                )}
-                {selectedContact.phone_number && (
-                  <span className="flex items-center gap-1">
-                    <PhoneIcon className="w-3 h-3" />
-                    {selectedContact.phone_number}
-                  </span>
-                )}
-              </div>
-            </div>
-          </div>
-
-          {/* Clear Button */}
-          <button
-            type="button"
-            onClick={handleClearSelection}
-            className="p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded"
-          >
-            <CloseIcon className="w-4 h-4 text-gray-500" />
-          </button>
-        </div>
-      ) : (
-        <>
-          {/* Search Input */}
-          <div className="relative">
-            <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-            <input
-              type="text"
-              value={query}
-              onChange={(e) => handleQueryChange(e.target.value)}
-              onFocus={() => setIsOpen(true)}
-              placeholder="Search by name, email, or phone..."
-              className={`w-full pl-10 pr-4 py-2 border ${
-                error ? "border-red-500" : "border-gray-300 dark:border-gray-600"
-              } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100`}
-            />
-            {isSearching && (
-              <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
-              </div>
-            )}
-          </div>
-
-          {/* Dropdown */}
-          {isOpen && (
-            <div className="absolute z-50 w-full mt-1 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg max-h-64 overflow-y-auto">
-              {/* Create New Contact */}
-              <button
-                type="button"
-                onClick={() => {
-                  onCreateContact();
-                  setIsOpen(false);
-                }}
-                className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors border-b border-gray-200 dark:border-gray-700"
-              >
-                <div className="w-10 h-10 rounded-full bg-green-500 flex items-center justify-center text-white">
-                  <PersonAddIcon className="w-5 h-5" />
-                </div>
-                <div className="text-left">
-                  <div className="font-medium text-gray-900 dark:text-gray-100">
-                    Create New Contact
-                  </div>
-                  <div className="text-sm text-gray-500 dark:text-gray-400">
-                    Add a new contact to your list
-                  </div>
-                </div>
-              </button>
-
-              {/* Search Results */}
-              {isSearching ? (
-                <div className="px-4 py-8 text-center text-gray-500">
-                  Searching contacts...
-                </div>
-              ) : searchResults.length > 0 ? (
-                searchResults.map((contact) => (
-                  <button
-                    key={contact.id}
-                    type="button"
-                    onClick={() => handleSelectContact(contact)}
-                    className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-                  >
-                    {/* Avatar */}
-                    <div className="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white font-medium shrink-0">
-                      {contact.thumbnail ? (
-                        <img
-                          src={contact.thumbnail}
-                          alt={contact.name || "Contact"}
-                          className="w-10 h-10 rounded-full object-cover"
-                        />
-                      ) : (
-                        <PersonIcon className="w-5 h-5" />
-                      )}
-                    </div>
-
-                    {/* Contact Info */}
-                    <div className="text-left flex-1 min-w-0">
-                      <div className="font-medium text-gray-900 dark:text-gray-100 truncate">
-                        {contact.name || "Unnamed Contact"}
-                      </div>
-                      <div className="text-sm text-gray-500 dark:text-gray-400 flex items-center gap-2 truncate">
-                        {contact.email && (
-                          <span className="flex items-center gap-1">
-                            <MailIcon className="w-3 h-3 shrink-0" />
-                            <span className="truncate">{contact.email}</span>
-                          </span>
-                        )}
-                        {contact.phone_number && (
-                          <span className="flex items-center gap-1">
-                            <PhoneIcon className="w-3 h-3 shrink-0" />
-                            {contact.phone_number}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  </button>
-                ))
-              ) : query ? (
-                <div className="px-4 py-8 text-center text-gray-500">
-                  No contacts found. Try creating a new one.
-                </div>
-              ) : (
-                <div className="px-4 py-8 text-center text-gray-500">
-                  Start typing to search contacts
-                </div>
-              )}
-            </div>
-          )}
-        </>
+    <Autocomplete
+      fullWidth
+      openOnFocus
+      options={searchResults}
+      loading={isSearching}
+      onInputChange={(event, newInputValue) => {
+        onSearch(newInputValue);
+      }}
+      onChange={(event, value) => {
+        if (value) {
+          onSelectContact(value as ContactDetail);
+        }
+      }}
+      getOptionLabel={(option) => (option as ContactDetail).name || ""}
+      renderInput={(params) => (
+        <TextField
+          {...params}
+          placeholder="Search by name, email, or phone..."
+          variant="outlined"
+          error={!!error}
+          helperText={error}
+          InputProps={{
+            ...params.InputProps,
+            startAdornment: <SearchIcon sx={{ color: neutralColor(500), mr: 1 }} />,
+            endAdornment: (
+              <>
+                {isSearching ? <CircularProgress color="inherit" size={20} /> : null}
+                {params.InputProps.endAdornment}
+              </>
+            ),
+          }}
+        />
       )}
-
-      {/* Error Message */}
-      {error && <p className="text-sm text-red-500">{error}</p>}
-    </div>
+      renderOption={(props, option) => (
+        <ListItem {...props} key={option.id}>
+          <ListItemAvatar>
+            <Avatar src={option.thumbnail}>
+              <PersonIcon />
+            </Avatar>
+          </ListItemAvatar>
+          <ListItemText
+            primary={option.name || "Unnamed Contact"}
+            secondary={
+              <Box component="span" sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                {option.email && (
+                  <>
+                    <MailIcon sx={{ fontSize: "0.875rem" }} />
+                    <Typography variant="caption">{option.email}</Typography>
+                  </>
+                )}
+                {option.phone_number && (
+                  <>
+                    <PhoneIcon sx={{ fontSize: "0.875rem" }} />
+                    <Typography variant="caption">{option.phone_number}</Typography>
+                  </>
+                )}
+              </Box>
+            }
+          />
+        </ListItem>
+      )}
+      ListboxComponent={(props) => (
+        <List {...props}>
+          {props.children}
+          <ListItem>
+            <Button
+              fullWidth
+              startIcon={<PersonAddIcon />}
+              onClick={onCreateContact}
+              sx={{
+                justifyContent: "flex-start",
+                textTransform: "none",
+                color: primaryColor(600),
+              }}
+            >
+              Create New Contact
+            </Button>
+          </ListItem>
+        </List>
+      )}
+    />
   );
 };

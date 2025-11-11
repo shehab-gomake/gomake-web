@@ -1,65 +1,50 @@
 /**
  * InboxSelector Component
  *
- * Dropdown for selecting an inbox (channel) where the contact can be reached.
- * Shows available inboxes based on contact's communication channels.
+ * A visually enhanced component for selecting an inbox (channel).
+ * Displays available inboxes in a card-based grid layout.
  */
 
 import React from "react";
-import { Box, Typography, Button, Stack, CircularProgress, Radio } from "@mui/material";
+import {
+  Box,
+  Typography,
+  Grid,
+  Paper,
+  CircularProgress,
+  Radio,
+  useTheme,
+} from "@mui/material";
 import MailIcon from "@mui/icons-material/Mail";
 import MessageIcon from "@mui/icons-material/Message";
 import PhoneIcon from "@mui/icons-material/Phone";
 import PublicIcon from "@mui/icons-material/Public";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
-import { useTheme } from "@mui/material/styles";
 import type { ContactableInbox } from "@/services/frontdesk/api/chatwoot/types/inboxes.types";
 
 export interface InboxSelectorProps {
-  /** Available inboxes for the selected contact */
   contactableInboxes: ContactableInbox[];
-
-  /** Currently selected inbox */
   selectedInbox: ContactableInbox | null;
-
-  /** Loading state */
   isLoading: boolean;
-
-  /** Disabled state (e.g., no contact selected) */
   disabled?: boolean;
-
-  /** Callback when inbox is selected */
   onSelect: (inbox: ContactableInbox) => void;
-
-  /** Validation error message */
   error?: string;
 }
 
-/**
- * Get icon for channel type
- */
-function getChannelIcon(channelType: string) {
-  switch (channelType) {
-    case "Channel::Email":
-      return <MailIcon fontSize="small" />;
-    case "Channel::WhatsApp":
-      return <WhatsAppIcon fontSize="small" />;
-    case "Channel::Sms":
-    case "Channel::TwilioSms":
-      return <PhoneIcon fontSize="small" />;
-    case "Channel::WebWidget":
-      return <PublicIcon fontSize="small" />;
-    default:
-      return <MessageIcon fontSize="small" />;
-  }
-}
+const channelIcons: Record<string, React.ReactElement> = {
+  "Channel::Email": <MailIcon />,
+  "Channel::WhatsApp": <WhatsAppIcon />,
+  "Channel::Sms": <PhoneIcon />,
+  "Channel::TwilioSms": <PhoneIcon />,
+  "Channel::WebWidget": <PublicIcon />,
+  default: <MessageIcon />,
+};
 
-/**
- * Get display name for channel type
- */
-function getChannelTypeName(channelType: string): string {
+const getChannelIcon = (channelType: string) =>
+  channelIcons[channelType] || channelIcons.default;
+
+const getChannelTypeName = (channelType: string): string => {
   switch (channelType) {
     case "Channel::Email":
       return "Email";
@@ -76,7 +61,7 @@ function getChannelTypeName(channelType: string): string {
     default:
       return "Channel";
   }
-}
+};
 
 export const InboxSelector: React.FC<InboxSelectorProps> = ({
   contactableInboxes,
@@ -89,117 +74,109 @@ export const InboxSelector: React.FC<InboxSelectorProps> = ({
   const { neutralColor, primaryColor } = useGomakeTheme();
   const theme = useTheme();
 
+  if (isLoading) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          p: 3,
+          border: `1px solid ${neutralColor(200)}`,
+          borderRadius: 2,
+          backgroundColor: neutralColor(25),
+        }}
+      >
+        <CircularProgress size={24} sx={{ color: primaryColor(600) }} />
+        <Typography sx={{ ml: 2, color: neutralColor(600) }}>
+          Loading inboxes...
+        </Typography>
+      </Box>
+    );
+  }
+
+  if (disabled || contactableInboxes.length === 0) {
+    return (
+      <Box
+        sx={{
+          p: 3,
+          border: `1px solid ${neutralColor(200)}`,
+          borderRadius: 2,
+          backgroundColor: neutralColor(25),
+          color: neutralColor(600),
+          textAlign: "center",
+        }}
+      >
+        {disabled ? "Select a contact to see available inboxes" : "No inboxes available for this contact"}
+      </Box>
+    );
+  }
+
   return (
     <Box>
-      {/* Loading State */}
-      {isLoading ? (
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            p: 3,
-            border: `1px solid ${neutralColor(200)}`,
-            borderRadius: 1,
-            backgroundColor: neutralColor(25),
-          }}
-        >
-          <CircularProgress size={20} sx={{ color: primaryColor(600) }} />
-          <Typography sx={{ ml: 2, fontSize: "0.875rem", color: neutralColor(600) }}>
-            Loading inboxes...
-          </Typography>
-        </Box>
-      ) : disabled || contactableInboxes.length === 0 ? (
-        /* Disabled/Empty State */
-        <Box
-          sx={{
-            p: 3,
-            border: `1px solid ${neutralColor(200)}`,
-            borderRadius: 1,
-            backgroundColor: neutralColor(25),
-            color: neutralColor(600),
-            fontSize: "0.875rem",
-            textAlign: "center",
-          }}
-        >
-          {disabled ? "Select a contact first" : "No inboxes available"}
-        </Box>
-      ) : (
-        /* Inbox Selection */
-        <Stack spacing={1}>
-          {contactableInboxes.map((contactableInbox) => {
-            const isSelected = selectedInbox?.inbox.id === contactableInbox.inbox.id;
-            const channelType = contactableInbox.inbox.channel_type;
-
-            return (
-              <Button
-                key={`${contactableInbox.inbox.id}-${contactableInbox.source_id}`}
-                onClick={() => onSelect(contactableInbox)}
+      <Grid container spacing={2}>
+        {contactableInboxes.map((inbox) => {
+          const isSelected = selectedInbox?.inbox.id === inbox.inbox.id;
+          return (
+            <Grid item xs={12} sm={6} key={inbox.inbox.id}>
+              <Paper
+                variant="outlined"
+                onClick={() => onSelect(inbox)}
                 sx={{
-                  width: "100%",
+                  p: 2,
                   display: "flex",
                   alignItems: "center",
-                  justifyContent: "space-between",
-                  p: 2,
-                  border: `1px solid ${isSelected ? primaryColor(400) : neutralColor(200)}`,
-                  borderRadius: 1,
+                  cursor: "pointer",
                   backgroundColor: isSelected ? primaryColor(25) : neutralColor(0),
-                  textTransform: "none",
+                  border: `1px solid ${
+                    isSelected ? primaryColor(400) : neutralColor(200)
+                  }`,
+                  transition: "all 0.2s ease-in-out",
                   "&:hover": {
-                    backgroundColor: isSelected ? primaryColor(50) : neutralColor(50),
-                    borderColor: isSelected ? primaryColor(500) : neutralColor(300),
+                    borderColor: primaryColor(500),
+                    boxShadow: `0 0 0 2px ${primaryColor(100)}`,
                   },
                 }}
               >
-                <Stack direction="row" alignItems="center" spacing={2}>
-                  {/* Channel Icon */}
-                  <Box
+                <Box
+                  sx={{
+                    width: 40,
+                    height: 40,
+                    borderRadius: "50%",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    backgroundColor: isSelected ? primaryColor(100) : neutralColor(100),
+                    color: isSelected ? primaryColor(700) : neutralColor(600),
+                    mr: 2,
+                  }}
+                >
+                  {getChannelIcon(inbox.inbox.channel_type)}
+                </Box>
+                <Box sx={{ flexGrow: 1 }}>
+                  <Typography
+                    variant="subtitle1"
                     sx={{
-                      width: 40,
-                      height: 40,
-                      borderRadius: 1,
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      backgroundColor: isSelected ? primaryColor(100) : neutralColor(100),
-                      color: isSelected ? primaryColor(700) : neutralColor(600),
+                      fontWeight: 600,
+                      color: isSelected ? primaryColor(800) : neutralColor(900),
                     }}
                   >
-                    {getChannelIcon(channelType)}
-                  </Box>
-
-                  {/* Inbox Info */}
-                  <Box sx={{ textAlign: "left" }}>
-                    <Typography
-                      sx={{
-                        fontWeight: 500,
-                        fontSize: "0.875rem",
-                        color: isSelected ? primaryColor(700) : neutralColor(900),
-                      }}
-                    >
-                      {contactableInbox.inbox.name}
-                    </Typography>
-                    <Stack direction="row" alignItems="center" spacing={1}>
-                      <Typography sx={{ fontSize: "0.75rem", color: neutralColor(600) }}>
-                        {getChannelTypeName(channelType)}
-                      </Typography>
-                    </Stack>
-                  </Box>
-                </Stack>
-
-                {/* Selection Indicator */}
-                {isSelected && (
-                  <CheckCircleIcon sx={{ fontSize: 20, color: primaryColor(600) }} />
-                )}
-              </Button>
-            );
-          })}
-        </Stack>
-      )}
-
-      {/* Error Message */}
+                    {inbox.inbox.name}
+                  </Typography>
+                  <Typography variant="body2" sx={{ color: neutralColor(600) }}>
+                    {getChannelTypeName(inbox.inbox.channel_type)}
+                  </Typography>
+                </Box>
+                <Radio checked={isSelected} />
+              </Paper>
+            </Grid>
+          );
+        })}
+      </Grid>
       {error && (
-        <Typography sx={{ mt: 1, fontSize: "0.75rem", color: theme.palette.error.main }}>
+        <Typography
+          sx={{ mt: 2, fontSize: "0.75rem", color: theme.palette.error.main }}
+        >
           {error}
         </Typography>
       )}

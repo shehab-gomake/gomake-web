@@ -47,7 +47,6 @@ export const ComposeConversationModal: React.FC<ComposeConversationModalProps> =
   const compose = useComposeConversation({
     accountId,
     onSuccess: (conversationId) => {
-      console.log("Conversation created successfully, triggering snackbar...");
       setError(null);
       onSuccess?.(conversationId);
       setSnackbarStateValue({
