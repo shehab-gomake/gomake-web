@@ -200,6 +200,13 @@ const hpClientThemeConfig: ThemeConfig = {
       "--theme-dropdown-placeholder-size": "14px",
       "--theme-dropdown-placeholder-weight": "400",
 
+      "--theme-input-shadow": "none",
+      "--theme-input-border": "none",
+      "--theme-input-border-color": "#E0E0E0",
+      "--theme-input-border-radius": "var(--theme-radius-md, 4px)",
+      "--theme-input-height": "40px",
+      "--theme-input-placeholder-color": "#A3A3A3",
+
       // Widget Styles (for quote widget mainContainer)
       "--theme-widget-border-width": "1.5px", // Slightly thicker border for hp-client (between 1px and 2px)
       "--theme-widget-border-color": "#E0E0E0", // Border color for hp-client

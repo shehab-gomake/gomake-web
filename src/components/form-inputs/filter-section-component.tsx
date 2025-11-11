@@ -148,7 +148,7 @@ const FilterSectionComponent = ({
                         onClick={() => setShowAll(!showAll)}
                         style={{
                           padding: "8px 12px",
-                          backgroundColor: "#f8f9fa",
+                          backgroundColor: "transparent",
                           borderRadius: 6,
                           cursor: "pointer",
                           fontSize: 12,
