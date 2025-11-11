@@ -4,6 +4,10 @@
  * Reusable component for displaying conversations with message viewer.
  * Eliminates code duplication across all conversation views
  * (All Conversations, Channels, Mentions, Unattended).
+ *
+ * Layout: [List] [Divider] [Detail OR EmptyState]
+ * Both list and detail are always mounted (matches Chatwoot pattern).
+ * This prevents duplicate provider calls and maintains scroll/filter state.
  */
 
 import React, { useMemo, useCallback, useState } from "react";
@@ -29,6 +33,7 @@ interface BaseConversationViewProps {
 }
 
 export const BaseConversationView: React.FC<BaseConversationViewProps> = ({ emptyState, messageViewerProps }) => {
+  // Single provider call - prevents duplicate inbox fetches
   const {
     selectedAccountId: currentAccountId,
     conversations,
@@ -78,11 +83,11 @@ export const BaseConversationView: React.FC<BaseConversationViewProps> = ({ empt
     () => (
       <EmptyState
         icon="inbox"
-        title="No ticket selected"
-        description="Select a ticket from the list to view messages"
+        title={emptyState.title}
+        description={emptyState.description}
       />
     ),
-    []
+    [emptyState.title, emptyState.description]
   );
 
   // Handler to navigate to next conversation
@@ -111,7 +116,7 @@ export const BaseConversationView: React.FC<BaseConversationViewProps> = ({ empt
 
   return (
     <Stack direction="row" spacing={0} sx={{ height: "100%", p: 0 }}>
-      {/* Conversation List */}
+      {/* Conversation List - Always visible */}
       <Panel
         elevation={1}
         border="none"
@@ -147,7 +152,7 @@ export const BaseConversationView: React.FC<BaseConversationViewProps> = ({ empt
       {/* Divider between list and viewer */}
       <Divider orientation="vertical" flexItem sx={{ borderColor: theme.palette.divider }} />
 
-      {/* Message Viewer */}
+      {/* Message Viewer - Conditionally show detail or empty state */}
       <Panel
         elevation={1}
         border="none"

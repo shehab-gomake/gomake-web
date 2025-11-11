@@ -17,6 +17,7 @@ import { buildConversationFilters, matchesStatusFilter } from "../utils/filter-u
 import { createLogger } from "@/services/frontdesk/utils/logger";
 
 const logger = createLogger("useChatwootProvider");
+
 import {
   chatwootSelectedConversationAtom,
   chatwootSelectedAccountAtom,
@@ -84,37 +85,23 @@ export const useChatwootProvider = () => {
   // Debounce timer for filter changes to batch rapid updates
   const filterDebounceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Determine if we're currently viewing a conversation (not just listing them)
-  const isViewingConversation = useMemo(() => {
-    return Boolean(router.currentRoute?.conversationId);
-  }, [router.currentRoute?.conversationId]);
-
   // Build filters based on all filter states
   // Supports toggling between Mine/Unassigned/All via assignee filter
-  // When viewing a conversation, don't include inbox_id in filters to prevent refetch
   const filters = useMemo<Partial<ConversationListParams>>(() => {
-    // Only include inbox filter when in CHANNELS view AND not viewing a conversation
-    const shouldIncludeInboxFilter = selectedInboxId && router.isChannelsView && !isViewingConversation;
-
-    const baseFilters = buildConversationFilters(
-      shouldIncludeInboxFilter ? selectedInboxId : null,
-      statusFilter,
-      assigneeFilter
-    );
+    const baseFilters = buildConversationFilters(selectedInboxId, statusFilter, assigneeFilter);
     return {
       ...baseFilters,
       ...(searchQuery && { q: searchQuery }),
       ...(teamId && { team_id: teamId }),
       ...(sortBy && { sort_by: sortBy }),
     };
-  }, [selectedInboxId, router.isChannelsView, isViewingConversation, statusFilter, assigneeFilter, searchQuery, teamId, sortBy]);
+  }, [selectedInboxId, statusFilter, assigneeFilter, searchQuery, teamId, sortBy]);
 
   // Use conversations hook with accountId and filters
-  // Skip fetching when viewing a conversation to preserve list state and counters
-  const conversations = useChatwootConversations(currentAccountId, filters, isViewingConversation);
+  const conversations = useChatwootConversations(currentAccountId, filters);
 
   // Consolidated initialization effect
-  // Handles only account auto-selection now - router handles conversation state
+  // Handles only account auto-selection
   useEffect(() => {
     // Auto-select account if needed
     if (!selectedAccountId && currentAccountId) {
@@ -279,7 +266,6 @@ export const useChatwootProvider = () => {
 
         if (!matchesAllFilters) {
           // Remove conversation from list if it doesn't match filters
-          logger.debug(`Removing conversation ${updatedConversation.id} - doesn't match filters`);
           return prev.filter((conv) => conv.id !== updatedConversation.id);
         } else {
           // Update conversation in list if it matches filters
