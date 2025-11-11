@@ -1581,6 +1581,9 @@ export const TicketChatbotSidebar = ({
                         Support wants to control your screen. Click "Accept" to start
                         sharing or "Reject" to decline.
                       </Typography>
+                      <Typography variant="caption" sx={{ color: grayColor(400), display: "block", mb: 1, ...FONT_FAMILY.Heebo(400, 12) }}>
+                        💡 Tip: Select "Chrome Tab" when prompted to share only the current tab
+                      </Typography>
                       <Stack direction="row" spacing={2} justifyContent="center">
                         <Button
                           variant="contained"

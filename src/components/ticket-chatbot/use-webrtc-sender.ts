@@ -67,11 +67,19 @@ export const useWebRTCSender = ({
     try {
       setError(null);
       
-      // Get screen share stream
-      const stream = await navigator.mediaDevices.getDisplayMedia({
-        video: true,
+      // Get screen share stream with preference for Chrome tab selection
+      // Use displaySurface: "browser" to prefer tab selection
+      // preferCurrentTab (if available) will select current tab automatically
+      const constraints: DisplayMediaStreamConstraints = {
+        video: {
+          displaySurface: "browser" as ConstrainDOMString,
+          // @ts-ignore - preferCurrentTab is a newer API, may not be in types yet
+          preferCurrentTab: true,
+        } as MediaTrackConstraints,
         audio: true,
-      });
+      };
+      
+      const stream = await navigator.mediaDevices.getDisplayMedia(constraints);
 
       localStreamRef.current = stream;
 
