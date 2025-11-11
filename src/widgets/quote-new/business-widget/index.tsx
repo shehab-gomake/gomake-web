@@ -734,7 +734,6 @@ const BusinessNewWidget = ({
         onStartNew={handleStartNew}
         onRecalculatePrice={handleRecalculatePrice}
         onKeepItemsWithoutPriceChange={handleKeepItemsWithoutPriceChange}
-        loading={isReCalculating}
       />
     </>
   );

@@ -49,10 +49,13 @@ const PurchaseOrderTypeModal: React.FC<PurchaseOrderTypeModalProps> = ({
             onClick={onSelectMaterial}
             style={{
               flex: 1,
-              height: "48px",
-              fontSize: "16px",
-              fontWeight: 500,
-              backgroundColor: primaryColor(500),
+              borderRadius: "15px",
+              fontFamily: "Lexend",
+              fontWeight: 600,
+              fontSize: "14px",
+              backgroundColor: "rgb(46, 48, 146)",
+              border: "1px solid rgb(46, 48, 146)",
+              color: "rgb(255, 255, 255)",
             }}
           >
             {t("sales.purchaseOrder.purchaseOrderForMaterial")}
