@@ -33,12 +33,17 @@ import {
 } from "@mui/icons-material";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { colorTokens, Chip } from "@/widgets/frontdesk/design-system";
+import { QuickActionButton } from "@/widgets/frontdesk/design-system/primitives/Button/QuickActionButton";
+import { QuickActionMenu, QuickActionItem } from "@/widgets/frontdesk/design-system/compounds/QuickActionMenu/QuickActionMenu";
 import { ConversationPriorityIcon } from "./conversation-priority-icon";
 import { chatwootService } from "@/services/frontdesk";
 import { ConversationProfileSection } from "./conversation-profile-section";
 import { ConversationAssigneeSection } from "./conversation-assignee-section";
 import { ConversationLabelsManagement } from "./conversation-labels-management";
 import { extractConversation, mergeConversationUpdate, extractErrorMessage } from "../utils/api-response-extractors";
+import { useChatwootQuickActions } from "../hooks/use-chatwoot-quick-actions";
+import { getActionsExcludingTickets, GROUP_LABELS } from "@/widgets/frontdesk/providers/tickets/utils/quick-actions-config";
+import { AssignDocumentModal } from "./assign-document-modal";
 import type { ChatwootConversation } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
 import type { ChatwootInbox } from "@/services/frontdesk/api/chatwoot/types/inboxes.types";
 
@@ -59,6 +64,7 @@ export const ChatwootConversationDetailPanel: React.FC<ChatwootConversationDetai
   const { primaryColor, neutralColor } = useGomakeTheme();
   const [statusMenuAnchor, setStatusMenuAnchor] = useState<null | HTMLElement>(null);
   const [priorityMenuAnchor, setPriorityMenuAnchor] = useState<null | HTMLElement>(null);
+  const [quickActionsAnchor, setQuickActionsAnchor] = useState<null | HTMLElement>(null);
   const [updating, setUpdating] = useState(false);
 
   // Status mapping (using Chip color type)
@@ -120,7 +126,7 @@ export const ChatwootConversationDetailPanel: React.FC<ChatwootConversationDetai
 
   // Handle priority change
   const handlePriorityChange = useCallback(
-    async (newPriority: 'urgent' | 'high' | 'medium' | 'low' | null) => {
+    async (newPriority: "urgent" | "high" | "medium" | "low" | null) => {
       setPriorityMenuAnchor(null);
       if (!accountId || !conversation.id) return;
 
@@ -159,6 +165,50 @@ export const ChatwootConversationDetailPanel: React.FC<ChatwootConversationDetai
     [conversation, onConversationUpdate]
   );
 
+  // Quick Actions integration
+  const {
+    availableActions,
+    executeAction,
+    getActionBlockReason,
+    selectedAction,
+    closeActionModal,
+    connectToExistingDocument,
+    createNewDocument,
+  } = useChatwootQuickActions({
+    conversation,
+    accountId,
+    onActionComplete: (actionType) => {
+      console.log("[ChatwootConversationDetailPanel] Quick action completed:", actionType);
+      // Refresh conversation data after linking document
+      if (onConversationUpdate && conversation) {
+        // Optionally refetch conversation to get updated custom_attributes
+        // For now, we'll rely on the hook to update correctly
+      }
+    },
+    onActionError: (actionType, error) => {
+      console.error("[ChatwootConversationDetailPanel] Quick action error:", actionType, error);
+    },
+  });
+
+  // Extract customer info for modal
+  const customerId = conversation?.custom_attributes?.gomake_customer_id as string | undefined;
+  const customerName = conversation?.meta?.sender?.name;
+
+  // Convert action configs to QuickActionItem format for the menu
+  const quickActionMenuItems: QuickActionItem[] = availableActions.map((action) => ({
+    id: action.type,
+    label: action.label,
+    icon: action.icon,
+    tooltip: action.tooltip,
+    disabled: !!getActionBlockReason(action.type),
+    disabledReason: getActionBlockReason(action.type) || undefined,
+    group: action.group,
+  }));
+
+  const handleQuickActionClick = (action: QuickActionItem) => {
+    executeAction(action.id as any);
+  };
+
   return (
     <Box
       sx={{
@@ -170,11 +220,34 @@ export const ChatwootConversationDetailPanel: React.FC<ChatwootConversationDetai
       }}
       className="custom-scrollbar"
     >
+      {/* Actions Button - Sales/Purchase Documents */}
+      <Box sx={{ mb: 2.5 }}>
+        <QuickActionButton
+          size="sm"
+          isOpen={Boolean(quickActionsAnchor)}
+          onClick={(e) => setQuickActionsAnchor(e.currentTarget)}
+          sx={{ width: "100%" }}
+        >
+          Actions
+        </QuickActionButton>
+      </Box>
+
+      <Divider sx={{ my: 2 }} />
+
       {/* Contact Profile Section */}
       <ConversationProfileSection
         contactName={conversation.meta?.sender?.name}
         contactEmail={conversation.meta?.sender?.email}
         contactAvatarUrl={conversation.meta?.sender?.avatar_url}
+        contactPhoneNumber={conversation.meta?.sender?.phone_number}
+        contactId={conversation.meta?.sender?.id}
+        contactIdentifier={conversation.meta?.sender?.identifier}
+        contactAvailabilityStatus={conversation.meta?.sender?.availability_status}
+        contactBlocked={conversation.meta?.sender?.blocked}
+        contactAdditionalAttributes={conversation.meta?.sender?.additional_attributes}
+        contactCustomAttributes={conversation.meta?.sender?.custom_attributes}
+        contactLastActivityAt={conversation.meta?.sender?.last_activity_at}
+        contactCreatedAt={conversation.meta?.sender?.created_at}
         customerId={conversation.custom_attributes?.gomake_customer_id}
         onCustomerLinked={async (customerId) => {
           if (!accountId || !conversation.id) return;
@@ -496,6 +569,27 @@ export const ChatwootConversationDetailPanel: React.FC<ChatwootConversationDetai
           </AccordionDetails>
         </Accordion>
       )}
+
+      {/* Quick Actions Menu */}
+      <QuickActionMenu
+        anchorEl={quickActionsAnchor}
+        open={Boolean(quickActionsAnchor)}
+        onClose={() => setQuickActionsAnchor(null)}
+        actions={quickActionMenuItems}
+        groupLabels={GROUP_LABELS}
+        onActionClick={handleQuickActionClick}
+      />
+
+      {/* Assign Document Modal */}
+      <AssignDocumentModal
+        open={Boolean(selectedAction)}
+        onClose={closeActionModal}
+        actionConfig={selectedAction}
+        customerId={customerId}
+        customerName={customerName}
+        onConnectToExisting={connectToExistingDocument}
+        onCreateNew={createNewDocument}
+      />
     </Box>
   );
 };

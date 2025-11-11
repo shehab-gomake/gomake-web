@@ -2616,5 +2616,32 @@
       "excelExportSuccess": "Data exported to Excel successfully",
       "excelExportError": "Failed to export data to Excel"
     }
+  },
+  "frontdesk": {
+    "assignTo": "Assign to",
+    "customer": "Customer",
+    "connect": "Connect",
+    "createNew": "Create new",
+    "connectToExisting": "Connect to existing",
+    "or": "OR",
+    "loadingDocuments": "Loading documents...",
+    "searchDocuments": "Search documents...",
+    "noDocumentsFound": "No documents found for this customer",
+    "connectToExistingNotAvailable": "Connecting to existing documents is not available for this document type",
+    "customerRequired": "Customer must be linked to conversation first",
+    "documentLinkedSuccess": "Document linked successfully",
+    "documentLinkFailed": "Failed to link document",
+    "errorFetchingDocuments": "An error occurred while fetching documents",
+    "retry": "Retry",
+    "navigatingToDocument": "Opening document page...",
+    "navigationFailed": "Failed to navigate to document page",
+    "noResultsFound": "No matching documents found",
+    "startTypingToSearch": "Start typing to search...",
+    "selectedDocument": "Selected Document",
+    "linkDocument": "Link Document",
+    "selectDocumentFirst": "Select a document to connect",
+    "createForCustomer": "Create for {{customer}}",
+    "startFresh": "Start with a blank document",
+    "createNewDocument": "Create New Document"
   }
 }

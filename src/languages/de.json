@@ -2247,5 +2247,32 @@
     "displayall": "Alle Typen mit gleichen Mengen in der PDF der PACA anzeigen",
     "ShowStarted": "Gestartete und beendete QRs in der Produktions-PDF anzeigen",
     "deliveryWarning": "Dieser QR-Code wird für die Lieferung verwendet. Um den Job abzuschließen, müssen Sie den Fertigstellungs-QR-Code scannen, nicht den Lieferungs-QR-Code."
+  },
+  "frontdesk": {
+    "assignTo": "Zuweisen zu",
+    "customer": "Kunde",
+    "connect": "Verbinden",
+    "createNew": "Neu erstellen",
+    "connectToExisting": "Mit vorhandenem verbinden",
+    "or": "ODER",
+    "loadingDocuments": "Dokumente werden geladen...",
+    "searchDocuments": "Dokumente durchsuchen...",
+    "noDocumentsFound": "Keine Dokumente für diesen Kunden gefunden",
+    "connectToExistingNotAvailable": "Verbindung zu vorhandenen Dokumenten ist für diesen Dokumenttyp nicht verfügbar",
+    "customerRequired": "Kunde muss zuerst mit der Konversation verknüpft werden",
+    "documentLinkedSuccess": "Dokument erfolgreich verknüpft",
+    "documentLinkFailed": "Fehler beim Verknüpfen des Dokuments",
+    "errorFetchingDocuments": "Fehler beim Laden der Dokumente",
+    "retry": "Wiederholen",
+    "navigatingToDocument": "Dokumentseite wird geöffnet...",
+    "navigationFailed": "Navigation zur Dokumentseite fehlgeschlagen",
+    "noResultsFound": "Keine passenden Dokumente gefunden",
+    "startTypingToSearch": "Beginnen Sie mit der Eingabe zum Suchen...",
+    "selectedDocument": "Ausgewähltes Dokument",
+    "linkDocument": "Dokument verknüpfen",
+    "selectDocumentFirst": "Wählen Sie ein Dokument zum Verbinden",
+    "createForCustomer": "Erstellen für {{customer}}",
+    "startFresh": "Mit leerem Dokument beginnen",
+    "createNewDocument": "Neues Dokument erstellen"
   }
 }

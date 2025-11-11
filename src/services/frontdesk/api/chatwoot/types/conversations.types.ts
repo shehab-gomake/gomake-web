@@ -111,6 +111,14 @@ export interface ChatwootConversation {
       name?: string;
       email?: string;
       avatar_url?: string;
+      phone_number?: string;
+      identifier?: string;
+      availability_status?: string;
+      blocked?: boolean;
+      additional_attributes?: Record<string, any>;
+      custom_attributes?: Record<string, any>;
+      last_activity_at?: number;
+      created_at?: number;
     };
     channel?: string;
     assignee?: {

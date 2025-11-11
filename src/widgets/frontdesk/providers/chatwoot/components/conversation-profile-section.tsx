@@ -47,6 +47,24 @@ interface ConversationProfileSectionProps {
   contactEmail?: string | null;
   /** Contact avatar URL */
   contactAvatarUrl?: string | null;
+  /** Contact phone number */
+  contactPhoneNumber?: string | null;
+  /** Contact ID */
+  contactId?: number | null;
+  /** Contact identifier */
+  contactIdentifier?: string | null;
+  /** Contact availability status */
+  contactAvailabilityStatus?: string | null;
+  /** Contact blocked status */
+  contactBlocked?: boolean | null;
+  /** Contact additional attributes */
+  contactAdditionalAttributes?: Record<string, any> | null;
+  /** Contact custom attributes */
+  contactCustomAttributes?: Record<string, any> | null;
+  /** Contact last activity at */
+  contactLastActivityAt?: number | null;
+  /** Contact created at */
+  contactCreatedAt?: number | null;
   /** Linked GoMake customer ID (if already linked) */
   customerId?: string | null;
   /** Callback when customer is linked */
@@ -57,6 +75,15 @@ export const ConversationProfileSection: React.FC<ConversationProfileSectionProp
   contactName,
   contactEmail,
   contactAvatarUrl,
+  contactPhoneNumber,
+  contactId,
+  contactIdentifier,
+  contactAvailabilityStatus,
+  contactBlocked,
+  contactAdditionalAttributes,
+  contactCustomAttributes,
+  contactLastActivityAt,
+  contactCreatedAt,
   customerId,
   onCustomerLinked,
 }) => {
@@ -125,6 +152,15 @@ export const ConversationProfileSection: React.FC<ConversationProfileSectionProp
   const handleViewCustomer = () => {
     if (customer?.id) {
       getCustomerForEdit(customer.id);
+    }
+  };
+
+  // Helper to format timestamp
+  const formatTimestamp = (timestamp: number) => {
+    try {
+      return new Date(timestamp * 1000).toLocaleString();
+    } catch {
+      return String(timestamp);
     }
   };
 
@@ -211,43 +247,109 @@ export const ConversationProfileSection: React.FC<ConversationProfileSectionProp
         </Box>
       ) : (
         // Unlinked Contact View - Simple display without background or functionality
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            gap: 1.5,
-          }}
-        >
-          <Avatar src={contactAvatarUrl || undefined} sx={{ width: 32, height: 32 }}>
-            {contactName?.charAt(0) || contactEmail?.charAt(0) || "?"}
-          </Avatar>
-          <Box sx={{ flex: 1, minWidth: 0 }}>
-            <Typography
-              variant="body2"
-              sx={{
-                fontWeight: 500,
-                fontSize: 13,
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                whiteSpace: "nowrap",
-              }}
-            >
-              {contactName || contactEmail || "Unknown Contact"}
-            </Typography>
-            {contactEmail && (
+        <Box>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: 1.5,
+              mb: 1,
+            }}
+          >
+            <Avatar src={contactAvatarUrl || undefined} sx={{ width: 32, height: 32 }}>
+              {contactName?.charAt(0) || contactEmail?.charAt(0) || "?"}
+            </Avatar>
+            <Box sx={{ flex: 1, minWidth: 0 }}>
               <Typography
-                variant="caption"
+                variant="body2"
                 sx={{
-                  color: colorTokens.semantic.text.secondary,
-                  fontSize: 11,
+                  fontWeight: 500,
+                  fontSize: 13,
                   overflow: "hidden",
                   textOverflow: "ellipsis",
                   whiteSpace: "nowrap",
-                  display: "block",
                 }}
               >
-                {contactEmail}
+                {contactName || contactEmail || "Unknown Contact"}
               </Typography>
+              {contactEmail && (
+                <Typography
+                  variant="caption"
+                  sx={{
+                    color: colorTokens.semantic.text.secondary,
+                    fontSize: 11,
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
+                    display: "block",
+                  }}
+                >
+                  {contactEmail}
+                </Typography>
+              )}
+            </Box>
+          </Box>
+
+          {/* Additional contact fields (for testing) */}
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 0.5, mt: 1 }}>
+            {contactPhoneNumber && (
+              <Typography variant="caption" sx={{ fontSize: 11, color: colorTokens.semantic.text.secondary }}>
+                Phone: {contactPhoneNumber}
+              </Typography>
+            )}
+            {contactId && (
+              <Typography variant="caption" sx={{ fontSize: 11, color: colorTokens.semantic.text.secondary }}>
+                Contact ID: {contactId}
+              </Typography>
+            )}
+            {contactIdentifier && (
+              <Typography variant="caption" sx={{ fontSize: 11, color: colorTokens.semantic.text.secondary }}>
+                Identifier: {contactIdentifier}
+              </Typography>
+            )}
+            {contactAvailabilityStatus && (
+              <Typography variant="caption" sx={{ fontSize: 11, color: colorTokens.semantic.text.secondary }}>
+                Status: {contactAvailabilityStatus}
+              </Typography>
+            )}
+            {contactBlocked !== null && contactBlocked !== undefined && (
+              <Typography variant="caption" sx={{ fontSize: 11, color: colorTokens.semantic.text.secondary }}>
+                Blocked: {contactBlocked ? "Yes" : "No"}
+              </Typography>
+            )}
+            {contactLastActivityAt && (
+              <Typography variant="caption" sx={{ fontSize: 11, color: colorTokens.semantic.text.secondary }}>
+                Last Activity: {formatTimestamp(contactLastActivityAt)}
+              </Typography>
+            )}
+            {contactCreatedAt && (
+              <Typography variant="caption" sx={{ fontSize: 11, color: colorTokens.semantic.text.secondary }}>
+                Created: {formatTimestamp(contactCreatedAt)}
+              </Typography>
+            )}
+            {contactAdditionalAttributes && Object.keys(contactAdditionalAttributes).length > 0 && (
+              <Box sx={{ mt: 0.5 }}>
+                <Typography variant="caption" sx={{ fontSize: 10, fontWeight: 600, color: colorTokens.semantic.text.secondary }}>
+                  Additional Attributes:
+                </Typography>
+                {Object.entries(contactAdditionalAttributes).map(([key, value]) => (
+                  <Typography key={key} variant="caption" sx={{ fontSize: 11, color: colorTokens.semantic.text.secondary, display: "block" }}>
+                    {key}: {JSON.stringify(value)}
+                  </Typography>
+                ))}
+              </Box>
+            )}
+            {contactCustomAttributes && Object.keys(contactCustomAttributes).length > 0 && (
+              <Box sx={{ mt: 0.5 }}>
+                <Typography variant="caption" sx={{ fontSize: 10, fontWeight: 600, color: colorTokens.semantic.text.secondary }}>
+                  Custom Attributes:
+                </Typography>
+                {Object.entries(contactCustomAttributes).map(([key, value]) => (
+                  <Typography key={key} variant="caption" sx={{ fontSize: 11, color: colorTokens.semantic.text.secondary, display: "block" }}>
+                    {key}: {JSON.stringify(value)}
+                  </Typography>
+                ))}
+              </Box>
             )}
           </Box>
         </Box>
