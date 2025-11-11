@@ -14,7 +14,6 @@ const companyPrintNodeInputs = (state: ICompanyProfile, printers: IPrintNodePrin
             parameterKey: "printnodeUsername",
             options: [],
             value: state.printnodeUsername,
-            machineInputType: 'input',
             isValid: !!state.printnodeUsername,
         },
         {
@@ -26,7 +25,6 @@ const companyPrintNodeInputs = (state: ICompanyProfile, printers: IPrintNodePrin
             parameterKey: "printnodePassword",
             options: [],
             value: state.printnodePassword,
-            machineInputType: 'input',
             isValid: !!state.printnodePassword,
         },
         {
@@ -41,7 +39,6 @@ const companyPrintNodeInputs = (state: ICompanyProfile, printers: IPrintNodePrin
                 text: printer.printerName,
             })),
             value: state.packagingSlipPrinterId?.toString(),
-            machineInputType: 'select',
             isValid: true,
         },
     ] as IInput[];
