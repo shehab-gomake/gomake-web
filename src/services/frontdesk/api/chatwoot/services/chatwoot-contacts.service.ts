@@ -103,9 +103,12 @@ export class ChatwootContactsService extends BaseChatwootService {
 
   /**
    * Update Contact
-   * PUT /api/v1/accounts/{account_id}/contacts/{id}
+   * PUT /api/accounts/contacts/{id}
    *
-   * @param accountId - The numeric ID of the account
+   * Note: Backend automatically handles accountId from authentication context.
+   * This endpoint uses /api instead of /api/v1 and doesn't require accountId in path.
+   *
+   * @param accountId - The numeric ID of the account (not used in URL, kept for API consistency)
    * @param contactId - The numeric ID of the contact
    * @param payload - Update payload
    * @returns Promise with updated contact
@@ -115,8 +118,9 @@ export class ChatwootContactsService extends BaseChatwootService {
     contactId: number,
     payload: ContactUpdatePayload
   ): Promise<ContactDetail> {
+    // Backend handles accountId via JWT authentication
     return await this.put<ContactDetail>(
-      this.accountScopedUrl(accountId, `contacts/${contactId}`),
+      `/api/accounts/contacts/${contactId}`,
       payload
     );
   }

@@ -18,6 +18,7 @@ import { InboxSelector } from "./InboxSelector";
 import { ConfirmDialog } from "../settings/ConfirmDialog";
 import { useComposeConversation } from "../../hooks/use-compose-conversation";
 import { getChannelRequirements } from "@/services/frontdesk/api/chatwoot/types/compose.types";
+import { useSnackBar } from "@/hooks/use-snack-bar";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import type { ContactDetail } from "@/services/frontdesk/api/chatwoot/types/contacts.types";
 import { WhatsAppTemplateSelector, convertToTemplateParams, generateMessageContent } from "../templates";
@@ -37,6 +38,7 @@ export const ComposeConversationModal: React.FC<ComposeConversationModalProps> =
   accountId,
 }) => {
   const { primaryColor, neutralColor } = useGomakeTheme();
+  const { setSnackbarStateValue } = useSnackBar();
   const [showCreateContact, setShowCreateContact] = useState(false);
   const [showTemplateSelector, setShowTemplateSelector] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -45,8 +47,14 @@ export const ComposeConversationModal: React.FC<ComposeConversationModalProps> =
   const compose = useComposeConversation({
     accountId,
     onSuccess: (conversationId) => {
+      console.log("Conversation created successfully, triggering snackbar...");
       setError(null);
       onSuccess?.(conversationId);
+      setSnackbarStateValue({
+        state: true,
+        message: "Conversation created successfully!",
+        type: "success",
+      });
       handleClose();
     },
     onError: (err) => {

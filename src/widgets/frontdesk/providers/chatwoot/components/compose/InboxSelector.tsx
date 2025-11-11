@@ -128,7 +128,7 @@ export const InboxSelector: React.FC<InboxSelectorProps> = ({
         /* Inbox Selection */
         <Stack spacing={1}>
           {contactableInboxes.map((contactableInbox) => {
-            const isSelected = selectedInbox?.source_id === contactableInbox.source_id;
+            const isSelected = selectedInbox?.inbox.id === contactableInbox.inbox.id;
             const channelType = contactableInbox.inbox.channel_type;
 
             return (

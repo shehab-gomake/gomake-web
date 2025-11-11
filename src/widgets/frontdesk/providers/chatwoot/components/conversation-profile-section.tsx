@@ -12,17 +12,9 @@ import {
   Avatar,
   Button,
   CircularProgress,
-  Menu,
-  MenuItem,
-  ListItemIcon,
-  ListItemText,
-  Divider,
 } from "@mui/material";
 import {
-  PersonAdd as PersonAddIcon,
-  Business as BusinessIcon,
   Link as LinkIcon,
-  ArrowDropDown as ArrowDropDownIcon,
 } from "@mui/icons-material";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { colorTokens } from "@/widgets/frontdesk/design-system";
@@ -31,12 +23,15 @@ import { useGomakeAxios } from "@/hooks/use-gomake-axios";
 import { useCustomerEdit } from "@/hooks/use-customer-edit";
 import { CustomerCardWidget } from "@/widgets/customer-card-modal";
 import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
+import { LinkCustomerModal } from "./link-customer-modal";
 
 interface Customer {
   id: string;
   name: string;
   mail?: string;
   phone?: string;
+  code?: string;        // Customer code
+  typeClient?: string;  // Client type: "C" = Customer, "S" = Supplier
   [key: string]: any;
 }
 
@@ -87,13 +82,13 @@ export const ConversationProfileSection: React.FC<ConversationProfileSectionProp
   customerId,
   onCustomerLinked,
 }) => {
-  const { neutralColor, primaryColor } = useGomakeTheme();
+  const { primaryColor } = useGomakeTheme();
   const { callApi } = useGomakeAxios();
   const [customer, setCustomer] = useState<Customer | null>(null);
   const [loading, setLoading] = useState(false);
   const [openCreateModal, setOpenCreateModal] = useState(false);
+  const [openLinkModal, setOpenLinkModal] = useState(false);
   const [clientType, setClientType] = useState<CLIENT_TYPE>(CLIENT_TYPE.CUSTOMER);
-  const [linkMenuAnchor, setLinkMenuAnchor] = useState<null | HTMLElement>(null);
   const [tempCustomerData, setTempCustomerData] = useState<any>(null);
 
   const { showCustomerModal, customerForEdit, getCustomerForEdit, closeModal, setCustomerForEdit } = useCustomerEdit();
@@ -129,7 +124,6 @@ export const ConversationProfileSection: React.FC<ConversationProfileSectionProp
 
   const handleCreateCustomer = (type: CLIENT_TYPE) => {
     setClientType(type);
-    setLinkMenuAnchor(null); // Close menu first
 
     // Initialize temp data for the modal with available contact info
     setTempCustomerData({
@@ -155,6 +149,15 @@ export const ConversationProfileSection: React.FC<ConversationProfileSectionProp
     }
   };
 
+  const handleLinkCustomer = async (customerId: string, customerData: any) => {
+    // Update local state
+    setCustomer(customerData);
+    // Notify parent component
+    if (onCustomerLinked) {
+      onCustomerLinked(customerId);
+    }
+  };
+
   // Helper to format timestamp
   const formatTimestamp = (timestamp: number) => {
     try {
@@ -162,6 +165,16 @@ export const ConversationProfileSection: React.FC<ConversationProfileSectionProp
     } catch {
       return String(timestamp);
     }
+  };
+
+  // Helper to get client type label
+  const getClientTypeLabel = (typeClient?: string) => {
+    if (typeClient === CLIENT_TYPE.CUSTOMER || typeClient === "C") {
+      return "Customer";
+    } else if (typeClient === CLIENT_TYPE.SUPPLIER || typeClient === "S") {
+      return "Supplier";
+    }
+    return null;
   };
 
   return (
@@ -230,6 +243,42 @@ export const ConversationProfileSection: React.FC<ConversationProfileSectionProp
                   }}
                 >
                   {customer.mail}
+                </Typography>
+              )}
+              {customer.phone && (
+                <Typography
+                  variant="caption"
+                  sx={{
+                    color: colorTokens.semantic.text.secondary,
+                    fontSize: 11,
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
+                    display: "block",
+                  }}
+                >
+                  {customer.phone}
+                </Typography>
+              )}
+              {(customer.code || customer.typeClient) && (
+                <Typography
+                  variant="caption"
+                  sx={{
+                    color: colorTokens.semantic.text.secondary,
+                    fontSize: 11,
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
+                    display: "block",
+                    mt: 0.5,
+                  }}
+                >
+                  {customer.code}
+                  {customer.typeClient && (
+                    <span style={{ marginLeft: customer.code ? "4px" : "0" }}>
+                      ({getClientTypeLabel(customer.typeClient)})
+                    </span>
+                  )}
                 </Typography>
               )}
             </Box>
@@ -352,7 +401,40 @@ export const ConversationProfileSection: React.FC<ConversationProfileSectionProp
               </Box>
             )}
           </Box>
+
+          {/* Link Customer Button */}
+          <Button
+            variant="outlined"
+            size="small"
+            fullWidth
+            startIcon={<LinkIcon />}
+            onClick={() => setOpenLinkModal(true)}
+            sx={{
+              mt: 2,
+              textTransform: "none",
+              borderColor: primaryColor(300),
+              color: primaryColor(600),
+              fontSize: "0.8125rem",
+              "&:hover": {
+                backgroundColor: primaryColor(50),
+                borderColor: primaryColor(400),
+              },
+            }}
+          >
+            Link to Customer
+          </Button>
         </Box>
+      )}
+
+      {/* Link Customer Modal - Only mount when open to prevent unnecessary API calls */}
+      {openLinkModal && (
+        <LinkCustomerModal
+          open={openLinkModal}
+          onClose={() => setOpenLinkModal(false)}
+          contactName={contactName || undefined}
+          contactEmail={contactEmail || undefined}
+          onCustomerLinked={handleLinkCustomer}
+        />
       )}
 
       {/* Customer Creation Modal */}

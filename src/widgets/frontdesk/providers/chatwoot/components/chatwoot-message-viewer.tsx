@@ -241,7 +241,8 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
   const handleSendMessage = async (
     content: string,
     isPrivate: boolean,
-    recipientEmails?: { to?: string; cc?: string; bcc?: string }
+    recipientEmails?: { to?: string; cc?: string; bcc?: string },
+    attachments?: File[]
   ) => {
     if (!accountId || !conversation.id) return;
 
@@ -261,6 +262,10 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
               bcc: recipientEmails.bcc,
             },
           },
+        }),
+        // Include attachments if provided
+        ...(attachments && attachments.length > 0 && {
+          attachments,
         }),
       });
 

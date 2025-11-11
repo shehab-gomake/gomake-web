@@ -173,14 +173,6 @@ export function useComposeConversation(options?: UseComposeConversationOptions) 
 
         const inboxes = response.payload || [];
         setContactableInboxes(inboxes);
-
-        // Auto-select first inbox if only one available
-        if (inboxes.length === 1) {
-          setFormState((prev) => ({
-            ...prev,
-            selectedContactableInbox: inboxes[0],
-          }));
-        }
       } catch (error) {
         console.error("[useComposeConversation] Failed to fetch contactable inboxes:", error);
         setContactableInboxes([]);
@@ -413,6 +405,7 @@ export function useComposeConversation(options?: UseComposeConversationOptions) 
     try {
       const payload = preparePayload();
       const response = await chatwootService.conversations.createConversation(accountId, payload);
+      console.log("[useComposeConversation] API Response:", response);
 
       // Extract conversation from response (could be in data or payload)
       const conversation = response.data || response.payload;

@@ -248,22 +248,37 @@ export const ChatwootConversationDetailPanel: React.FC<ChatwootConversationDetai
         contactCustomAttributes={conversation.meta?.sender?.custom_attributes}
         contactLastActivityAt={conversation.meta?.sender?.last_activity_at}
         contactCreatedAt={conversation.meta?.sender?.created_at}
-        customerId={conversation.custom_attributes?.gomake_customer_id}
+        customerId={conversation.meta?.sender?.custom_attributes?.gomake_customer_id}
         onCustomerLinked={async (customerId) => {
-          if (!accountId || !conversation.id) return;
+          if (!accountId) return;
+
+          const contactId = conversation.meta?.sender?.id;
+          if (!contactId) {
+            console.error("Cannot link customer: Contact ID not available");
+            // TODO: Show error toast to user
+            return;
+          }
 
           try {
-            // Persist customer ID to Chatwoot backend
-            await chatwootService.conversations.updateConversationCustomAttributes(accountId, conversation.id, {
-              gomake_customer_id: customerId,
+            // ✅ CORRECT: Update contact custom_attributes (not conversation)
+            await chatwootService.contacts.updateContact(accountId, contactId, {
+              custom_attributes: {
+                gomake_customer_id: customerId,
+              },
             });
 
-            // Update local conversation state
+            // Update local conversation state to reflect the change in sender's custom_attributes
             const updatedConversation = {
               ...conversation,
-              custom_attributes: {
-                ...conversation.custom_attributes,
-                gomake_customer_id: customerId,
+              meta: {
+                ...conversation.meta,
+                sender: {
+                  ...conversation.meta?.sender,
+                  custom_attributes: {
+                    ...conversation.meta?.sender?.custom_attributes,
+                    gomake_customer_id: customerId,
+                  },
+                },
               },
             };
 
@@ -272,7 +287,8 @@ export const ChatwootConversationDetailPanel: React.FC<ChatwootConversationDetai
               onConversationUpdate(updatedConversation);
             }
           } catch (error) {
-            console.error("Failed to link customer to conversation:", error);
+            console.error("Failed to link customer to contact:", error);
+            // TODO: Show error toast to user
           }
         }}
       />

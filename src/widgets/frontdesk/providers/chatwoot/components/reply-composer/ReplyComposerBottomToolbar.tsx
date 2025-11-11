@@ -22,6 +22,8 @@ interface ReplyComposerBottomToolbarProps {
   canSend: boolean;
   isSending: boolean;
   onSend: () => void;
+  onAttachClick: () => void;
+  attachmentCount: number;
   borderColor: string;
   lightGrayText: string;
   neutralColor: (shade: number) => string;
@@ -34,6 +36,8 @@ export const ReplyComposerBottomToolbar: React.FC<ReplyComposerBottomToolbarProp
   canSend,
   isSending,
   onSend,
+  onAttachClick,
+  attachmentCount,
   borderColor,
   lightGrayText,
   neutralColor,
@@ -70,9 +74,49 @@ export const ReplyComposerBottomToolbar: React.FC<ReplyComposerBottomToolbarProp
 
         {/* File upload - only if supported */}
         {channelFeatures.supportsFileUpload && (
-          <Tooltip title={channelFeatures.supportsMultipleFileUpload ? "Attach files" : "Attach file"}>
-            <IconButton size="small" sx={iconButtonStyle}>
+          <Tooltip
+            title={
+              attachmentCount > 0
+                ? `${attachmentCount} file${attachmentCount > 1 ? 's' : ''} attached`
+                : channelFeatures.supportsMultipleFileUpload
+                ? 'Attach files'
+                : 'Attach file'
+            }
+          >
+            <IconButton
+              size="small"
+              onClick={onAttachClick}
+              sx={{
+                ...iconButtonStyle,
+                ...(attachmentCount > 0 && {
+                  color: primaryColor(600),
+                  backgroundColor: `${primaryColor(600)}15`,
+                }),
+              }}
+            >
               <AttachIcon sx={{ fontSize: 18 }} />
+              {attachmentCount > 0 && (
+                <Box
+                  component="span"
+                  sx={{
+                    position: 'absolute',
+                    top: 2,
+                    right: 2,
+                    backgroundColor: primaryColor(600),
+                    color: 'white',
+                    borderRadius: '50%',
+                    width: 14,
+                    height: 14,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '0.625rem',
+                    fontWeight: 600,
+                  }}
+                >
+                  {attachmentCount}
+                </Box>
+              )}
             </IconButton>
           </Tooltip>
         )}
