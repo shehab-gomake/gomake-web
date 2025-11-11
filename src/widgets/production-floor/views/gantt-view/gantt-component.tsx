@@ -22,6 +22,7 @@ import {
   Box,
   Button,
   Chip,
+  CircularProgress,
   IconButton,
   Tooltip,
   Typography,
@@ -97,6 +98,8 @@ const TimelineWidget = () => {
     setShowRecoverModal,
     showRescheduleModal,
     setShowRescheduleModal,
+    isTimeLineLocked,
+    primaryColor,
   } = useGantt(reschedulingHook);
 
   const {
@@ -494,7 +497,7 @@ const TimelineWidget = () => {
             <Button
               variant="contained"
               startIcon={<BoltIcon />}
-              disabled={!hasLocalChanges() || isSubmitting}
+              disabled={!hasLocalChanges() || isSubmitting || isTimeLineLocked}
               onClick={() => setShowRescheduleModal(true)}
               sx={{
                 backgroundColor: "#FD7E14",
@@ -517,7 +520,7 @@ const TimelineWidget = () => {
             <Button
               variant="contained"
               startIcon={<RestoreIcon />}
-              disabled={isRecovering}
+              disabled={isRecovering || isTimeLineLocked}
               onClick={() => setShowRecoverModal(true)}
               sx={{
                 backgroundColor: "#DC3545",
@@ -588,172 +591,201 @@ const TimelineWidget = () => {
         </Stack>
       </Box>
 
-      <div style={{ position: "relative", direction: "ltr" }}>
-        <Stack
-          alignItems="center"
-          direction="row"
-          position="absolute"
-          right="0px"
-          top="0px"
-          zIndex={1200}
-          height="60px"
+      {isTimeLineLocked ? (
+        <Box
           sx={{
-            background: "#fff",
-            borderRadius: "8px",
-            padding: "8px",
-            boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-          }}
-        >
-          <IconButton onClick={() => scrollTimeline("right")}>
-            <ChevronRightIcon />
-          </IconButton>
-          <Stack
-            padding={isRTL ? "0px 0px 0px 8px" : "0px 8px 0px 0px"}
-            gap={"5px"}
-          >
-            <AddIcon
-              onClick={() => handleClickZoom("in")}
-              style={{ height: "20px", width: "20px", cursor: "pointer" }}
-            />
-            <RemoveIcon
-              onClick={() => handleClickZoom("out")}
-              style={{ height: "20px", width: "20px", cursor: "pointer" }}
-            />
-          </Stack>
-        </Stack>
-        <Timeline
-          groups={
-            filteredGroups.length > 0
-              ? filteredGroups
-              : [
-                  {
-                    id: "empty",
-                    title: (
-                      <div
-                        style={{
-                          fontSize: "16px",
-                          fontWeight: "500",
-                          color: "#7A7A7A",
-                          textAlign: "center",
-                          padding: "0px 10px",
-                          borderRadius: "8px",
-                        }}
-                      >
-                        {t("productionFloor.noGroupsAvailable")}
-                      </div>
-                    ),
-                  },
-                ]
-          }
-          items={items.filter((item) => {
-            const isGroupOpen = openGroups[item.group];
-            return isGroupOpen ? item.isEditable : true;
-          })}
-          defaultTimeStart={timeRange.defaultTimeStart}
-          defaultTimeEnd={timeRange.defaultTimeEnd}
-          sidebarWidth={240}
-          onItemMove={handleItemMove}
-          onItemResize={handleItemResize}
-          onZoom={handleZoom}
-          canResize={"right"}
-          canChangeGroup={true}
-          itemRenderer={(props) => {
-            return <JobComponent {...props} toggleGroup={toggleGroup} />;
-          }}
-          onTimeChange={onTimeChange}
-          visibleTimeStart={visibleTimeRange.start}
-          visibleTimeEnd={visibleTimeRange.end}
-          onItemSelect={handleItemSelect}
-          onItemDeselect={handleItemDeselect}
-          selected={items.filter((item) => !!item.selected).map((i) => i.id)}
-          dragSnap={1000 * 60}
-          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            minHeight: "500px",
             backgroundColor: "#fff",
             borderRadius: "12px",
             boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
           }}
         >
-          {/* Red Overdue Indicator */}
-          <TimelineMarkers>
-            <TodayMarker>
-              {({ styles }) => (
-                <div
-                  style={{
-                    ...styles,
-                    backgroundColor: "red",
-                    width: "2px",
-                    zIndex: 10,
-                  }}
-                />
-              )}
-            </TodayMarker>
-          </TimelineMarkers>
-          <TimelineHeaders style={{ ...FONT_FAMILY.Inter(500, 12) }}>
-            <SidebarHeader>
-              {({ getRootProps }) => {
-                return (
-                  <Box
-                    {...getRootProps()}
-                    sx={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                      width: "280px",
-                      paddingLeft: "24px",
-                      backgroundColor: "#F8F9FA",
-                      ...FONT_FAMILY.Inter(600, 14),
-                      color: "#495057",
-                    }}
-                  >
-                    <Typography variant="subtitle2" fontWeight={600}>
-                      {t("productionFloor.stations")}
-                    </Typography>
-                    <Stack
-                      direction={"row"}
-                      alignItems={"center"}
-                      style={{
-                        height: "60px",
-                        ...adaptRight(dir, 0),
-                        pointerEvents: "auto",
-                        zIndex: 10,
-                        background: "#fff",
-                        borderRadius: "8px",
-                        boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-                      }}
-                    >
-                      <IconButton onClick={() => scrollTimeline("left")}>
-                        <KeyboardArrowLeftIcon />
-                      </IconButton>
-                    </Stack>
-                  </Box>
-                );
-              }}
-            </SidebarHeader>
-            {/* this the header that top of hours,days, etc..  */}
-            <DateHeader unit="primaryHeader" />
-            <DateHeader
-              labelFormat={([start, end], unit) => {
-                const momentStart = moment(start);
-                switch (unit) {
-                  case "year":
-                    return `${start?.getFullYear()}`;
-                  case "month":
-                    return `${momentStart?.format("MMMM")}`;
-                  case "day":
-                    return `${momentStart?.format("DD")}`;
-                  case "hour":
-                    // return `${momentStart?.format("hh:mm A")}`;
-                    return `${momentStart.format("ha")}`; // <-- Simplified format here
-                  case "minute":
-                    return `${momentStart?.format("mm")}`;
-                  default:
-                    return "";
-                }
+          <Stack alignItems="center" spacing={2}>
+            <CircularProgress
+              size={70}
+              thickness={3}
+              sx={{
+                color: primaryColor(500),
+                animationDuration: "1.4s",
               }}
             />
-          </TimelineHeaders>
-        </Timeline>
-      </div>
+            <Typography variant="body1" color="text.secondary">
+              {t("productionFloor.processingReschedule") ||
+                "Processing reschedule. Please wait..."}
+            </Typography>
+          </Stack>
+        </Box>
+      ) : (
+        <div style={{ position: "relative", direction: "ltr" }}>
+          <Stack
+            alignItems="center"
+            direction="row"
+            position="absolute"
+            right="0px"
+            top="0px"
+            zIndex={1200}
+            height="60px"
+            sx={{
+              background: "#fff",
+              borderRadius: "8px",
+              padding: "8px",
+              boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+            }}
+          >
+            <IconButton onClick={() => scrollTimeline("right")}>
+              <ChevronRightIcon />
+            </IconButton>
+            <Stack
+              padding={isRTL ? "0px 0px 0px 8px" : "0px 8px 0px 0px"}
+              gap={"5px"}
+            >
+              <AddIcon
+                onClick={() => handleClickZoom("in")}
+                style={{ height: "20px", width: "20px", cursor: "pointer" }}
+              />
+              <RemoveIcon
+                onClick={() => handleClickZoom("out")}
+                style={{ height: "20px", width: "20px", cursor: "pointer" }}
+              />
+            </Stack>
+          </Stack>
+          <Timeline
+            groups={
+              filteredGroups.length > 0
+                ? filteredGroups
+                : [
+                    {
+                      id: "empty",
+                      title: (
+                        <div
+                          style={{
+                            fontSize: "16px",
+                            fontWeight: "500",
+                            color: "#7A7A7A",
+                            textAlign: "center",
+                            padding: "0px 10px",
+                            borderRadius: "8px",
+                          }}
+                        >
+                          {t("productionFloor.noGroupsAvailable")}
+                        </div>
+                      ),
+                    },
+                  ]
+            }
+            items={items.filter((item) => {
+              const isGroupOpen = openGroups[item.group];
+              return isGroupOpen ? item.isEditable : true;
+            })}
+            defaultTimeStart={timeRange.defaultTimeStart}
+            defaultTimeEnd={timeRange.defaultTimeEnd}
+            sidebarWidth={240}
+            onItemMove={handleItemMove}
+            onItemResize={handleItemResize}
+            onZoom={handleZoom}
+            canResize={"right"}
+            canChangeGroup={true}
+            itemRenderer={(props) => {
+              return <JobComponent {...props} toggleGroup={toggleGroup} />;
+            }}
+            onTimeChange={onTimeChange}
+            visibleTimeStart={visibleTimeRange.start}
+            visibleTimeEnd={visibleTimeRange.end}
+            onItemSelect={handleItemSelect}
+            onItemDeselect={handleItemDeselect}
+            selected={items.filter((item) => !!item.selected).map((i) => i.id)}
+            dragSnap={1000 * 60}
+            style={{
+              backgroundColor: "#fff",
+              borderRadius: "12px",
+              boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
+            }}
+          >
+            {/* Red Overdue Indicator */}
+            <TimelineMarkers>
+              <TodayMarker>
+                {({ styles }) => (
+                  <div
+                    style={{
+                      ...styles,
+                      backgroundColor: "red",
+                      width: "2px",
+                      zIndex: 10,
+                    }}
+                  />
+                )}
+              </TodayMarker>
+            </TimelineMarkers>
+            <TimelineHeaders style={{ ...FONT_FAMILY.Inter(500, 12) }}>
+              <SidebarHeader>
+                {({ getRootProps }) => {
+                  return (
+                    <Box
+                      {...getRootProps()}
+                      sx={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        width: "280px",
+                        paddingLeft: "24px",
+                        backgroundColor: "#F8F9FA",
+                        ...FONT_FAMILY.Inter(600, 14),
+                        color: "#495057",
+                      }}
+                    >
+                      <Typography variant="subtitle2" fontWeight={600}>
+                        {t("productionFloor.stations")}
+                      </Typography>
+                      <Stack
+                        direction={"row"}
+                        alignItems={"center"}
+                        style={{
+                          height: "60px",
+                          ...adaptRight(dir, 0),
+                          pointerEvents: "auto",
+                          zIndex: 10,
+                          background: "#fff",
+                          borderRadius: "8px",
+                          boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+                        }}
+                      >
+                        <IconButton onClick={() => scrollTimeline("left")}>
+                          <KeyboardArrowLeftIcon />
+                        </IconButton>
+                      </Stack>
+                    </Box>
+                  );
+                }}
+              </SidebarHeader>
+              {/* this the header that top of hours,days, etc..  */}
+              <DateHeader unit="primaryHeader" />
+              <DateHeader
+                labelFormat={([start, end], unit) => {
+                  const momentStart = moment(start);
+                  switch (unit) {
+                    case "year":
+                      return `${start?.getFullYear()}`;
+                    case "month":
+                      return `${momentStart?.format("MMMM")}`;
+                    case "day":
+                      return `${momentStart?.format("DD")}`;
+                    case "hour":
+                      // return `${momentStart?.format("hh:mm A")}`;
+                      return `${momentStart.format("ha")}`; // <-- Simplified format here
+                    case "minute":
+                      return `${momentStart?.format("mm")}`;
+                    default:
+                      return "";
+                  }
+                }}
+              />
+            </TimelineHeaders>
+          </Timeline>
+        </div>
+      )}
       <GoMakeDeleteModal
         modalType={ModalType.WARNING}
         openModal={showRescheduleModal}
