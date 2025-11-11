@@ -164,7 +164,8 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
                 key={materialCategory + "-" + key}
                 onChange={(e, v) => setFilterValue(key, v, unit)}
                 style={{ width: "180px" }}
-                value={getFilterValue(key)}
+                // value={getFilterValue(key)}
+                value={typeof getFilterValue(key) === "object" ? getFilterValue(key)?.value : getFilterValue(key)}
                 options={convertedUnit}
                 placeholder={
                   convertedUnitText
