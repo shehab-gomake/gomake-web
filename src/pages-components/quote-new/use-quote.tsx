@@ -492,7 +492,7 @@ const useQuoteNew = ({
     showDetails ? t("products.profits.details") : null,
     isMaterialPurchaseOrder ? t("sales.purchaseOrder.packagesQuantity") : null,
     isMaterialPurchaseOrder ? t("sales.purchaseOrder.quantityInPackage") : null,
-    t("sales.quote.amount"),
+    isMaterialPurchaseOrder ? t("sales.purchaseOrder.totalQuantity") : t("sales.quote.amount"),
     isMaterialPurchaseOrder ? t("sales.purchaseOrder.unit") : null,
     showPrices ? t("products.profits.pricingListWidget.unitPrice") : null,
     showPrices ? t("sales.quote.discount") : null,
@@ -1090,7 +1090,7 @@ const useQuoteNew = ({
             documentItems: prevDocumentItem.documentItems,
           };
           setQuoteItemValue(updatedQuoteItemValue);
-          
+
           // Recalculate totals after updating document items
           if (isNewCreation) {
             const calculateRes = await callApi(
