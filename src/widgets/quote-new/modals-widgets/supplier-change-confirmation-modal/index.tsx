@@ -3,7 +3,6 @@ import { GoMakeDialog } from "@/components/dialog/go-make-dialog";
 import { GomakePrimaryButton } from "@/components";
 import { Stack, Typography, Box } from "@mui/material";
 import { useTranslation } from "react-i18next";
-import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { FONT_FAMILY } from "@/utils/font-family";
 
 interface SupplierChangeConfirmationModalProps {
@@ -21,10 +20,8 @@ const SupplierChangeConfirmationModal: React.FC<SupplierChangeConfirmationModalP
   onStartNew,
   onRecalculatePrice,
   onKeepItemsWithoutPriceChange,
-  loading = false,
 }) => {
   const { t } = useTranslation();
-  const { primaryColor, grayColor } = useGomakeTheme();
 
   return (
     <GoMakeDialog
@@ -35,55 +32,55 @@ const SupplierChangeConfirmationModal: React.FC<SupplierChangeConfirmationModalP
       hideCancelButton={true}
       hidePrimaryButton={true}
       customFooter={
-        <Stack direction="row-reverse" spacing={2} sx={{ width: "100%" }}>
-
-
+        <Stack direction="row" sx={{ width: "100%", gap: "20px" }}>
           <GomakePrimaryButton
             onClick={onStartNew}
-            disabled={loading}
             style={{
-              width: "fit-content",
-              height: "40px",
-              fontSize: "16px",
-              fontWeight: 500,
-              backgroundColor: loading ? "#ccc" : primaryColor(500),
+              width: "33%",
+              minWidth: "fit-content",
+              textAlign: "center",
+              height: "44px",
+              borderRadius: "15px",
+              ...FONT_FAMILY.Lexend(600, 14),
+              backgroundColor: "rgb(255, 255, 255)",
+              color: "rgb(39, 41, 119)",
+              border: "1px solid rgb(115, 117, 205)",
             }}
           >
             {t("sales.purchaseOrder.startNewPurchaseOrder")}
           </GomakePrimaryButton>
+
+          <GomakePrimaryButton
+            onClick={onKeepItemsWithoutPriceChange}
+            style={{
+              width: "33%",
+              minWidth: "fit-content",
+              height: "44px",
+              borderRadius: "15px",
+              ...FONT_FAMILY.Lexend(600, 14),
+              backgroundColor: "rgb(46, 48, 146)",
+              border: "1px solid rgb(46, 48, 146)",
+              color: "rgb(255, 255, 255)",
+            }}
+          >
+            {t("sales.purchaseOrder.changeSupplierAndKeepItemsWithoutPriceChange")}
+          </GomakePrimaryButton>
+
           <GomakePrimaryButton
             onClick={onRecalculatePrice}
-            disabled={loading}
             style={{
-              width: "fit-content",
-              height: "40px",
-              fontSize: "16px",
-              fontWeight: 500,
-              backgroundColor: loading ? "#ccc" : "#FFF",
-              color: loading ? "#ccc" : primaryColor(500),
-              border: `1px solid ${loading ? "#ccc" : primaryColor(500)}`,
+              height: "44px",
+              width: "33%",
+              borderRadius: "15px",
+              ...FONT_FAMILY.Lexend(600, 14),
+              backgroundColor: "rgb(46, 48, 146)",
+              border: "1px solid rgb(46, 48, 146)",
+              color: "rgb(255, 255, 255)",
             }}
           >
             {t("sales.purchaseOrder.changeSupplierAndRecalculatePrice")}
           </GomakePrimaryButton>
 
-
-
-          <GomakePrimaryButton
-            onClick={onKeepItemsWithoutPriceChange}
-            disabled={loading}
-            style={{
-              width: "fit-content",
-              height: "40px",
-              fontSize: "16px",
-              fontWeight: 500,
-              backgroundColor: loading ? "#ccc" : "#FFF",
-              color: loading ? "#ccc" : primaryColor(500),
-              border: `1px solid ${loading ? "#ccc" : primaryColor(500)}`,
-            }}
-          >
-            {t("sales.purchaseOrder.changeSupplierAndKeepItemsWithoutPriceChange")}
-          </GomakePrimaryButton>
         </Stack>
       }
       maxWidth="lg"
