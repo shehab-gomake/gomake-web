@@ -20,7 +20,8 @@ const useStyle = ({ customStyles, isRTL = false }: UseStyleProps) => {
     return {
       paper: {
         borderRadius: "12px",
-        maxHeight: "90vh",
+        maxHeight: "80vh",
+        overflowY: "scroll",
         ...customStyles?.paper,
       },
       header: {
