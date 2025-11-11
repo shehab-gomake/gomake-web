@@ -31,6 +31,8 @@ const hpClientThemeConfig: ThemeConfig = {
       "--theme-primary-light": "#B2D2FF", // More bold/darker than before
       "--theme-primary-disabled": "#8db3e8", // Lighter/muted for disabled state
       "--theme-primary-dark": "#002E8D", // Darker for disabled state
+      "--theme-primary-on-light": "#0039B8", // Darker blue for better contrast on light backgrounds
+      "--theme-primary-on-dark": "#B2D2FF",
 
       /* -------------------------------------------------
        HP SECONDARY COLORS
