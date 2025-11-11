@@ -3,6 +3,7 @@
  *
  * Rich text editor for composing messages using TipTap.
  * Supports basic formatting (bold, italic, links) with keyboard shortcuts.
+ * Outputs Markdown format compatible with Chatwoot's message storage.
  */
 
 import React, { useCallback } from "react";
@@ -19,9 +20,10 @@ import LinkIcon from "@mui/icons-material/Link";
 import FormatListBulletedIcon from "@mui/icons-material/FormatListBulleted";
 import FormatListNumberedIcon from "@mui/icons-material/FormatListNumbered";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { htmlToMarkdown, isEmptyHtml } from "@/utils/markdown-converter";
 
 interface MessageEditorProps {
-  /** Current content (HTML) */
+  /** Current content (Markdown) */
   content: string;
   /** Callback when content changes */
   onChange: (content: string) => void;
@@ -65,11 +67,14 @@ export const MessageEditor: React.FC<MessageEditorProps> = ({
     ],
     content,
     onUpdate: ({ editor }) => {
-      // Get HTML content
+      // Get HTML content from editor
       const html = editor.getHTML();
-      // If content is just empty paragraph, return empty string
-      const isEmpty = html === "<p></p>" || html === "";
-      onChange(isEmpty ? "" : html);
+
+      // Convert HTML to Markdown (Chatwoot expects Markdown)
+      const markdown = htmlToMarkdown(html);
+
+      // Call onChange with Markdown content
+      onChange(markdown);
     },
     editorProps: {
       attributes: {
@@ -79,9 +84,17 @@ export const MessageEditor: React.FC<MessageEditorProps> = ({
   });
 
   // Update editor content when prop changes (but don't trigger onChange)
+  // Note: content prop is Markdown, but editor works with HTML
+  // We don't convert back to HTML since the editor maintains its own state
   React.useEffect(() => {
-    if (editor && content !== editor.getHTML()) {
-      editor.commands.setContent(content);
+    if (editor && content) {
+      const currentMarkdown = htmlToMarkdown(editor.getHTML());
+      // Only update if content actually changed to avoid cursor jumps
+      if (content !== currentMarkdown) {
+        // For now, set content as plain text since Markdown→HTML conversion
+        // would require a separate library. Editor will treat it as plain text.
+        editor.commands.setContent(content);
+      }
     }
   }, [content, editor]);
 

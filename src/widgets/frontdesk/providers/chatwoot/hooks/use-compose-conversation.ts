@@ -406,8 +406,8 @@ export function useComposeConversation(options?: UseComposeConversationOptions) 
       const payload = preparePayload();
       const response = await chatwootService.conversations.createConversation(accountId, payload);
 
-      // The conversation object is the response itself
-      const conversation = response;
+      // Extract conversation from response (check both data and payload fields)
+      const conversation = response.data || response.payload;
       const conversationId = conversation?.id;
 
       if (conversationId) {
@@ -417,6 +417,7 @@ export function useComposeConversation(options?: UseComposeConversationOptions) 
         return conversationId;
       }
 
+      console.error("[useComposeConversation] No conversation ID in response:", response);
       return null;
     } catch (error) {
       console.error("[useComposeConversation] Failed to create conversation:", error);
