@@ -334,7 +334,8 @@ const useProperites = ({ classes }) => {
     reOrderPropertiesTables,
     updateIsHiddenFromWorkFlow,
     updateIsHiddenFromCalculation,
-    ToggleIsShowInOutSourceDetails
+    ToggleIsShowInOutSourceDetails,
+    parameters
   };
 };
 
