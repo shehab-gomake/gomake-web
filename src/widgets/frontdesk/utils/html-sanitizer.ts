@@ -29,16 +29,16 @@ const EMAIL_SANITIZE_CONFIG: DOMPurify.Config = {
   ALLOWED_TAGS: [
     // Text formatting
     'p', 'div', 'span', 'br', 'hr',
-    'strong', 'b', 'em', 'i', 'u', 's', 'strike', 'sup', 'sub',
+    'strong', 'b', 'em', 'i', 'u', 's', 'strike', 'sup', 'sub', 'small', 'big', 'mark',
 
     // Headings
     'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
 
     // Lists
-    'ul', 'ol', 'li',
+    'ul', 'ol', 'li', 'dl', 'dt', 'dd',
 
     // Links and images
-    'a', 'img',
+    'a', 'img', 'picture', 'source',
 
     // Tables
     'table', 'thead', 'tbody', 'tfoot', 'tr', 'td', 'th', 'caption', 'col', 'colgroup',
@@ -47,25 +47,31 @@ const EMAIL_SANITIZE_CONFIG: DOMPurify.Config = {
     'blockquote', 'pre', 'code',
 
     // Other formatting
-    'center', 'font',
+    'center', 'font', 'section', 'article', 'aside', 'header', 'footer', 'main', 'nav',
+
+    // Email-specific tags
+    'address', 'abbr', 'cite', 'del', 'ins', 'kbd', 'samp', 'var', 'time',
   ],
 
   // Allowed attributes - only safe ones
   ALLOWED_ATTR: [
     // Styling (required for email HTML formatting)
-    'style', 'class',
+    'style', 'class', 'id',
 
     // Links
-    'href', 'target', 'rel',
+    'href', 'target', 'rel', 'name',
 
     // Images
-    'src', 'alt', 'title', 'width', 'height',
+    'src', 'alt', 'title', 'width', 'height', 'loading', 'srcset', 'sizes',
 
     // Tables
     'align', 'valign', 'colspan', 'rowspan', 'border', 'cellpadding', 'cellspacing',
 
+    // Email-specific
+    'bgcolor', 'color', 'face', 'size', 'dir', 'lang',
+
     // Accessibility
-    'aria-label', 'role',
+    'aria-label', 'role', 'tabindex',
 
     // Data attributes (for tracking pixels - read-only)
     'data-*',
@@ -103,6 +109,16 @@ export function sanitizeHtml(html: string): string {
   try {
     // Sanitize with DOMPurify
     const clean = DOMPurify.sanitize(html, EMAIL_SANITIZE_CONFIG);
+
+    // Debug logging in development
+    if (process.env.NODE_ENV === 'development' && html.length > 1000) {
+      console.log('[HTML Sanitizer] Sanitization stats:', {
+        original_length: html.length,
+        sanitized_length: clean.length,
+        removed_bytes: html.length - clean.length,
+        preview: clean.substring(0, 200)
+      });
+    }
 
     // Post-processing: Add security attributes to links
     // This ensures all links open in new tab with security
