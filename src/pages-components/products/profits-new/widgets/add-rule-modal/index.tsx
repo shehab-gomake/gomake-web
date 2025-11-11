@@ -46,6 +46,7 @@ const AddRuleModal = ({
   filterDTO,
   boardMissionTableFilterDTO,
   availableDateFilters = [],
+  parametersStateValue
 }: any) => {
   const { clasess } = useStyle();
   const { t } = useTranslation();
@@ -71,7 +72,6 @@ const AddRuleModal = ({
     allMachincesList,
     productsStateValue,
     clientTypesStateValue,
-    parametersStateValue,
     Outputs,
     materialsTypes,
     expression,

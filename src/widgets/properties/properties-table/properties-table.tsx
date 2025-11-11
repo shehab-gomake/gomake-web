@@ -8,6 +8,7 @@ import { EditRulesModal } from "../properties-modals/edit-rule-modal";
 import { useProperites } from "../hooks/use-properites";
 import { MoreMenuWidget } from "../more-circle";
 import { PrimaryTableWithDragAndDrop } from "@/components/tables/primary-table-with-drag-and-drop";
+import { useParameters } from "@/hooks/use-parameters";
 
 const PropertiesTable = () => {
   const { t } = useTranslation();
@@ -61,6 +62,7 @@ const PropertiesTable = () => {
 
     reOrderPropertiesTables(reOrderData)
   };
+  const { parametersStateValue } = useParameters();
 
   return (
     <div style={classes.mainContainer}>
@@ -96,6 +98,7 @@ const PropertiesTable = () => {
         isPropertiesWidge={true}
         selectedProperties={selectedProperties}
         getProperitesService={getProperitesService}
+        parametersStateValue={parametersStateValue}
       />
       <EditRulesModal
         openModal={openEditRule}
