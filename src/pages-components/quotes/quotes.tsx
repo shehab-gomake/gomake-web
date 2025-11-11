@@ -358,7 +358,7 @@ const QuotesListPageWidget = ({
         },
       }}
       onClick={onClickHandler}
-      startIcon={<PlusIcon />}
+      startIcon={<PlusIcon stroke={primaryColor(500)} />}
     >
       {t("sales.quote.createNew")}
     </Button>

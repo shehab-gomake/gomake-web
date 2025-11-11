@@ -5,6 +5,7 @@ import { lazy, Suspense, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { CustomerCardWidget } from "../customer-card-modal/customer-card";
 import { useCustomerDropDownList } from "@/hooks/use-customer-drop-down-list";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 // import { CustomerCardWidget } from "../customer-card-modal";
 
 interface ClientAutocompleteProps {
@@ -39,6 +40,7 @@ export const ClientAutocomplete = ({
   ...props
 }: ClientAutocompleteProps) => {
   const { t } = useTranslation();
+  const { primaryColor } = useGomakeTheme();
   const isCustomer = clientType === CLIENT_TYPE.CUSTOMER;
   const [customerOfAdd, setCustomerOfAdd] = useState<any>([]);
   const [open, setOpen] = useState<boolean>(false);
@@ -75,10 +77,11 @@ export const ClientAutocomplete = ({
   };
   const mergedOptions = useMemo(() => {
     const addClientOption = {
-      name: `+ ${clientType === CLIENT_TYPE.CUSTOMER
-        ? t("customers.buttons.addCustomer")
-        : t("suppliers.buttons.addSupplier")
-        } "${searchText}"`,
+      name: `+ ${
+        clientType === CLIENT_TYPE.CUSTOMER
+          ? t("customers.buttons.addCustomer")
+          : t("suppliers.buttons.addSupplier")
+      } "${searchText}"`,
       id: "addClient",
       isInfo: true,
     };
@@ -116,7 +119,7 @@ export const ClientAutocomplete = ({
           {...props}
           style={{
             pointerEvents: option.id === "addClient" ? "auto" : "none",
-            color: "#2e3092",
+            color: primaryColor(500),
             fontWeight: 500,
             fontSize: "14px",
             cursor: option.id === "addClient" ? "pointer" : "default",

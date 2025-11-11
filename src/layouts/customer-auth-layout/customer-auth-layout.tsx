@@ -1,5 +1,6 @@
 import { IAuthLayout } from "./interfaces";
 import { LeftSideLayout } from "./left-side";
+import { useThemeComponent } from "@/contexts/theme/useThemeComponent";
 import { HeaderWidget } from "@/widgets/header";
 import { LAYOUT_DEFAULT_GAP } from "@/utils/layout-config";
 import { GoMakeAlertModal, GoMakeModal } from "@/components";
@@ -11,9 +12,9 @@ import Head from "next/head";
 import { useEffect } from "react";
 import { useCustomerAuthLayout } from "./use-customer-auth-layout";
 import { useTrialRedirect } from "@/hooks/use-trial-redirect";
-import { 
-  TicketChatbotSidebar, 
-  TicketChatbotProvider, 
+import {
+  TicketChatbotSidebar,
+  TicketChatbotProvider,
   useTicketChatbot,
   RequestNotificationProvider,
   RequestNotificationModal,
@@ -33,7 +34,7 @@ const CustomerAuthLayoutInner = ({
 }: IAuthLayout) => {
   const isMobileScreen = useMediaQuery("(max-width:768px)");
   const { isOpen, closeChatbot } = useTicketChatbot();
-  
+
   // Set up global request listener (works even when chatbot is closed)
   useGlobalRequestListener();
 
@@ -56,6 +57,12 @@ const CustomerAuthLayoutInner = ({
     getLastVersion,
     isHomePage,
   } = useCustomerAuthLayout(permissionEnumValue, allowAnonymous, customGap);
+
+  // Get theme-aware LeftSideLayout component
+  const ThemeLeftSideLayout = useThemeComponent(
+    "LeftSideLayout",
+    LeftSideLayout
+  );
 
   // Handle trial redirect in case of trial finished
   useTrialRedirect();
@@ -114,7 +121,7 @@ const CustomerAuthLayoutInner = ({
             {isMobileScreen ? (
               <div></div>
             ) : (
-              <LeftSideLayout customGap={customGap} />
+              <ThemeLeftSideLayout customGap={customGap} />
             )}
 
             <div
@@ -139,7 +146,11 @@ const CustomerAuthLayoutInner = ({
                   overflow: "hidden",
                 }}
               >
-                {isMobileScreen ? <MobileHeaderWidget /> : <HeaderWidget customStyle={customHeaderStyle} />}
+                {isMobileScreen ? (
+                  <MobileHeaderWidget />
+                ) : (
+                  <HeaderWidget customStyle={customHeaderStyle} />
+                )}
 
                 {canAccess && (
                   <div style={classes.bodyContainer} className={className}>

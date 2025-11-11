@@ -7,14 +7,16 @@ import { useTranslation } from "react-i18next";
 import { Collapse, Divider, Stack } from "@mui/material";
 import { DownIcon, UpIcon } from "./icons";
 import CircularProgress from "@mui/material/CircularProgress";
-import { adaptMarginRight } from "@/utils/adapter";
 import { FONT_FAMILY } from "@/utils/font-family";
 
-const StyledAutocomplete: any = styled(Autocomplete)((props: any) => {
+const StyledAutocomplete: any = styled(Autocomplete, {
+  shouldForwardProp: (prop) =>
+    prop !== "selectedOption" && prop !== "direction",
+})((props: any) => {
   return {
     direction: props?.direction,
     boxSizing: "border-box",
-    borderRadius: "4px",
+    borderRadius: "var(--theme-dropdown-border-radius, 4px)",
     height: props?.style?.height || 40,
     fontFamily: "Lexend",
     fontStyle: "normal",
@@ -25,10 +27,11 @@ const StyledAutocomplete: any = styled(Autocomplete)((props: any) => {
     alignItems: "center",
     color: props?.error ? "red" : "#000000",
     backgroundColor: "#FFF",
-    borderBottom: props?.selectedOption
-      ? "2px solid rgb(67,195,232)"
-      : "2px solid rgb(237, 2, 140)",
-    boxShadow: "0px 1px 10px rgba(0, 0, 0, 0.08)",
+    // !here not sure about hiding the border bottom
+    // borderBottom: props?.selectedOption
+    //   ? "2px solid rgb(67,195,232)"
+    //   : "2px solid rgb(237, 2, 140)",
+    boxShadow: "var(--theme-dropdown-shadow, 0px 1px 10px rgba(0, 0, 0, 0.08))",
     "& .MuiOutlinedInput-root": {
       paddingRight: "9px!important",
       color: props?.error ? "red" : "",
@@ -38,13 +41,49 @@ const StyledAutocomplete: any = styled(Autocomplete)((props: any) => {
       fontWeight: 500,
       fontSize: 14,
       width: "100%",
-      // ...props?.style,
+      // !here not sure about this style theme css variable
       "& fieldset": {
-        border: "1px solid transparent",
+        border: props?.selectedOption
+          ? "1px solid var(--theme-dropdown-border-color, transparent) !important"
+          : "var(--theme-dropdown-border, none) ",
+        borderColor: props?.selectedOption
+          ? "var(--theme-dropdown-border-color, transparent)"
+          : "transparent",
         boxSizing: "border-box",
-        borderRadius: "4px",
+        borderRadius: "var(--theme-dropdown-border-radius, 4px)",
       },
-
+      "& .MuiOutlinedInput-notchedOutline": {
+        border: props?.selectedOption
+          ? "1px solid var(--theme-dropdown-border-color, transparent)"
+          : "var(--theme-dropdown-border, none)",
+        borderColor: props?.selectedOption
+          ? "var(--theme-dropdown-border-color, transparent)"
+          : "transparent",
+      },
+      "&.Mui-focused fieldset": {
+        borderColor:
+          "var(--theme-dropdown-border-color, transparent) !important",
+        borderWidth: "1px !important",
+        borderStyle: "solid !important",
+      },
+      "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+        borderColor:
+          "var(--theme-dropdown-border-color, transparent) !important",
+        borderWidth: "1px !important",
+        borderStyle: "solid !important",
+      },
+      "&:hover fieldset": {
+        borderColor:
+          "var(--theme-dropdown-border-color, transparent) !important",
+        borderWidth: "1px !important",
+        borderStyle: "solid !important",
+      },
+      "&:hover .MuiOutlinedInput-notchedOutline": {
+        borderColor:
+          "var(--theme-dropdown-border-color, transparent) !important",
+        borderWidth: "1px !important",
+        borderStyle: "solid !important",
+      },
       "& .MuiAutocomplete-endAdornment": {
         right: props?.direction === "rtl" ? "auto" : 0,
         left: props?.direction === "rtl" ? 0 : "auto",
@@ -64,12 +103,12 @@ const StyledAutocomplete: any = styled(Autocomplete)((props: any) => {
         },
       },
       "& input::placeholder": {
-        color: "#B1B1B1",
+        color: "var(--theme-dropdown-placeholder-color, #B1B1B1)",
         opacity: 1,
         fontFamily: "Heebo",
         fontStyle: "normal",
-        fontWeight: 500,
-        fontSize: 12,
+        fontWeight: "var(--theme-dropdown-placeholder-weight, 500)",
+        fontSize: "var(--theme-dropdown-placeholder-size, 12px)",
       },
     },
     ...props?.style,
@@ -203,11 +242,10 @@ const GoMakeAutoComplate = ({
   const lastGroup = uniqueGroups[uniqueGroups.length - 1];
 
   return (
-    < >
-      {
-        labelText &&
+    <>
+      {labelText && (
         <div style={{ ...FONT_FAMILY.Lexend(600, 14) }}>{labelText}</div>
-      }
+      )}
       <StyledAutocomplete
         value={value !== null && value !== undefined ? value : null}
         {...(selectedOption && { selectedOption })}
@@ -280,19 +318,21 @@ const GoMakeAutoComplate = ({
         disableClearable={disableClearable}
         placeholder="Enter"
         multiple={multiple}
-        getOptionSelected={(option: any, value: any) => option?.id === value?.id}
+        getOptionSelected={(option: any, value: any) =>
+          option?.id === value?.id
+        }
         PaperComponent={PaperComponent}
         filterOptions={defaultFiltering ? undefined : (x) => x} //? Bypass default filtering
         noOptionsText={noOptionsText}
         componentsProps={componentsProps}
         isOptionEqualToValue={
           isOptionEqualToValue ??
-          ((option: any, value: any) => String(option?.id) === String(value?.id))
+          ((option: any, value: any) =>
+            String(option?.id) === String(value?.id))
         }
         getOptionDisabled={getOptionDisabled}
       />
     </>
-
   );
 };
 

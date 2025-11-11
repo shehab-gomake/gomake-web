@@ -9,6 +9,57 @@ import { useState } from "react";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { Stack } from "@mui/material";
 import { ClientBalanceComponent } from "@/components/client-balance/client-balance";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { Tab, Tabs } from "@mui/material";
+import { styled } from "@mui/material/styles";
+
+const StyledTabs = styled(Tabs)(() => {
+  return {
+    minHeight: "48px",
+    "& .MuiTabs-indicator": {
+      display: "none",
+    },
+    "& .MuiTabs-flexContainer": {
+      gap: "8px",
+    },
+  };
+});
+
+const StyledTab = styled(Tab)(() => {
+  const { primaryColor, secondColor, neutralColor } = useGomakeTheme();
+  const primaryColorValue = primaryColor(500);
+  const primaryLight = primaryColor(100);
+  const primaryDisabled = primaryColor(200);
+
+  return {
+    minWidth: "auto",
+    minHeight: "40px",
+    padding: "8px 20px",
+    textTransform: "none",
+    borderRadius: "8px",
+    backgroundColor: "transparent",
+    color: neutralColor(600),
+    border: `1px solid ${neutralColor(200)}`,
+    ...FONT_FAMILY.Inter(500, 15),
+    transition: "all 0.2s ease",
+    "&:hover": {
+      backgroundColor: `var(--theme-secondary-light, ${primaryLight})`,
+      color: `var(--theme-secondary-color, ${primaryColorValue})`,
+      borderColor: `var(--theme-secondary-color, ${primaryDisabled})`,
+    },
+    "&.Mui-selected": {
+      backgroundColor: secondColor(500),
+      color: "#FFFFFF",
+      borderColor: "transparent",
+      ...FONT_FAMILY.Inter(600, 15),
+      "&:hover": {
+        backgroundColor: secondColor(500),
+        color: "#FFFFFF",
+        borderColor: "transparent",
+      },
+    },
+  };
+});
 
 const HomeTableWidget = ({
   clientId,
@@ -19,6 +70,7 @@ const HomeTableWidget = ({
   const { classes } = useStyle();
   const { t } = useTranslation();
   const { CheckPermission } = useUserPermission();
+
   const tabs: (ITab & { permission?: boolean })[] = [
     {
       title: t("home.tabs.Quotes"),
@@ -71,39 +123,27 @@ const HomeTableWidget = ({
       ),
     },
   ].filter((tab) => tab.permission);
+
   const [selectedTab, setSelectedTab] = useState<number>(0);
+
+  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+    setSelectedTab(newValue);
+  };
+
   const _renderSelectedTab = () => {
     return (
-      <div
-        style={{
-          width: "100%",
-          display: "flex",
-          flexDirection: "row",
-          justifyContent: "flex-start",
-          alignItems: "center",
-          gap: 25,
-          marginBottom: 15,
-        }}
+      <StyledTabs
+        value={selectedTab}
+        onChange={handleTabChange}
+        aria-label="document type tabs"
       >
         {tabs.map((tab, index) => (
-          <div
-            key={index}
-            onClick={() => setSelectedTab(index)} // Ensure this updates the state
-            style={{
-              padding: 10,
-              backgroundColor: index === selectedTab ? "#ED028C" : "#D5D6E9",
-              borderRadius: 8,
-              color: index === selectedTab ? "#fff" : "#252661",
-              ...FONT_FAMILY.Inter(500, 16),
-              cursor: "pointer",
-            }}
-          >
-            <div style={{ ...FONT_FAMILY.Inter(500, 16) }}>{tab.title}</div>
-          </div>
+          <StyledTab key={`tab-${index}`} label={tab.title} />
         ))}
-      </div>
+      </StyledTabs>
     );
   };
+
   const _renderTabContent = () => {
     return (
       <div style={classes.mainContainer}>
@@ -115,12 +155,14 @@ const HomeTableWidget = ({
       </div>
     );
   };
+
   return (
     <>
       <Stack
         direction={"row"}
         alignItems={"center"}
         justifyContent={"space-between"}
+        sx={{ marginBottom: "12px" }}
       >
         {_renderSelectedTab()}
         <ClientBalanceComponent clientId={clientId} />

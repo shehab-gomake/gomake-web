@@ -24,9 +24,9 @@ const FONT_FAMILY = {
     return {
       fontFamily: "Heebo",
       fontWeight,
-      fontSize
-    }
-  }
+      fontSize,
+    };
+  },
 };
 
 export { FONT_FAMILY };

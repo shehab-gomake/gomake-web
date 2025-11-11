@@ -3,7 +3,7 @@ import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 
 const useStyle = () => {
-  const { primaryColor } = useGomakeTheme();
+  const { primaryColor, primaryLavender, theme } = useGomakeTheme();
   const classes = useMemo(() => {
     return {
       insideStyle: { width: "85%" },
@@ -33,14 +33,13 @@ const useStyle = () => {
       },
       rowTextStyle: {
         ...FONT_FAMILY.Lexend(500, 10),
-        color: "rgba(130, 131, 190, 1)",
-        fontSize:'12px',
-       // width:'100%',
-        textDecoration:"unset",
-        display:'block',
+        color: primaryLavender(500),
+        fontSize: "12px",
+        textDecoration: "unset",
+        display: "block",
       },
     };
-  }, []);
+  }, [theme]);
   return {
     classes,
   };

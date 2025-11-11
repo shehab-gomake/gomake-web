@@ -29,6 +29,7 @@ import { userProfileState } from "@/store/user-profile";
 import { printHouseCountryState } from "@/store/print-house-country";
 import { EPreferences } from "@/enums/prefernces";
 import { getAllShipmentTypesApi } from "@/services/api-service/shipmentTypes/shipment-type-api";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 const useCustomerCard = ({
   t,
@@ -46,6 +47,7 @@ const useCustomerCard = ({
   openModal,
 }) => {
   const { callApi } = useGomakeAxios();
+  const { primaryColor, secondColor: secondaryColor } = useGomakeTheme();
   const { alertFaultGetData } = useSnackBar();
   const [showTable, setShowTable] = useState(false);
   const [customerTableRows, setCustomerTableRows] = useState([]);
@@ -703,6 +705,8 @@ const useCustomerCard = ({
     defaultPaymentTerm,
     getAllShipmentTypes,
     shipmentTypes,
+    primaryColor,
+    secondaryColor,
   };
 };
 

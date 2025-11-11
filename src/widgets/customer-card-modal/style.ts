@@ -42,7 +42,7 @@ const useStyle = () => {
       subTitleStyle: {
         fontStyle: "normal",
         lineHeight: "normal",
-        color: "#ED028C",
+        color: secondColor(500),
         ...FONT_FAMILY.Lexend(600, 16),
         marginBottom: 10,
       },
@@ -246,7 +246,7 @@ const useStyle = () => {
         gap: "5px",
       },
       lastOrderDetails: {
-        color: "var(--second-500, #ED028C)",
+        color: secondColor(500),
         fontStyle: "normal",
         ...FONT_FAMILY.Lexend(500, 14),
         lineHeight: "normal",

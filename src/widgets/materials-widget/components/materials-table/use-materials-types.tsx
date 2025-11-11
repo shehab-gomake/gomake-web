@@ -8,13 +8,7 @@ import { PrimaryButton } from "@/components/button/primary-button";
 import { EditIcon } from "@/components/icons/edit-icon";
 import { useTranslation } from "react-i18next";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
-import { StepType } from "@reactour/tour";
-import { useGoMakeTour } from "@/hooks/use-go-make-tour";
-import { MoreIcon } from "@/components/icons/icons";
-import { IconButton, Stack } from "@mui/material";
 import { EFilterStatus } from "./materials-table";
-import ToggleOnIcon from "@mui/icons-material/ToggleOn";
-import ToggleOffIcon from "@mui/icons-material/ToggleOff";
 import ToggleOnOutlinedIcon from "@mui/icons-material/ToggleOnOutlined";
 import ToggleOffOutlinedIcon from "@mui/icons-material/ToggleOffOutlined";
 
@@ -73,21 +67,6 @@ const useMaterialsTypes = (isAdmin: boolean) => {
     getAllMaterials().then();
   }, []);
 
-  const materialsSteps: StepType[] = [
-    {
-      selector: '[data-tour="materialsTable"]',
-      content: "This is the table displaying all the materials we support.",
-      position: "bottom",
-    },
-    {
-      selector: '[data-tour="sheetMaterialsEdit"]',
-      content:
-        'Please click on "Edit" in the "Sheets" line to explore the functionalities available for managing sheets.',
-      position: "bottom",
-    },
-  ];
-
-  const {} = useGoMakeTour(materialsSteps, [materialsTypes]);
   const [selectedMaterial, setSelectedMaterial] = useState<{
     materialTypeKey: string;
     materialTypeName: string;
