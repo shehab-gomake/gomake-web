@@ -66,6 +66,7 @@ const useGomakeTheme = () => {
         const cssVarMap: { [key: number]: string } = {
           100: "--theme-primary-light",
           200: "--theme-primary-disabled",
+          300: "--theme-primary-on-dark",
           500: "--theme-primary-color",
           600: "--theme-primary-dark",
           700: "--theme-primary-text",
