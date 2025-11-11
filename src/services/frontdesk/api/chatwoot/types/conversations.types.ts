@@ -141,14 +141,15 @@ export interface ChatwootConversation {
 /**
  * Chatwoot Email Content Structure
  * How Chatwoot stores email HTML and plain text versions
+ * Note: Chatwoot API returns snake_case properties
  */
 export interface ChatwootEmailContent {
   /** HTML version of the email */
-  htmlContent?: {
+  html_content?: {
     full?: string;
   };
   /** Plain text version of the email */
-  textContent?: {
+  text_content?: {
     full?: string;
   };
 }
