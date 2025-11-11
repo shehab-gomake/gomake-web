@@ -545,7 +545,9 @@ const TimelineWidget = () => {
             <Button
               variant="outlined"
               startIcon={<RefreshIcon />}
-              disabled={!hasLocalChanges() && !rescheduleSuccess}
+              disabled={
+                (!hasLocalChanges() && !rescheduleSuccess) || isTimeLineLocked
+              }
               onClick={async () => {
                 if (hasLocalChanges()) {
                   // Case 1: Reset local changes (current behavior)
