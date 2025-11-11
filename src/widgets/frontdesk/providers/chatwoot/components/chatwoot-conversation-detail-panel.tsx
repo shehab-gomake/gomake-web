@@ -38,10 +38,12 @@ import { QuickActionMenu, QuickActionItem } from "@/widgets/frontdesk/design-sys
 import { ConversationPriorityIcon } from "./conversation-priority-icon";
 import { chatwootService } from "@/services/frontdesk";
 import { ConversationProfileSection } from "./conversation-profile-section";
+import { ContactHistorySection } from "./contact-history-section";
 import { ConversationAssigneeSection } from "./conversation-assignee-section";
 import { ConversationLabelsManagement } from "./conversation-labels-management";
 import { extractConversation, mergeConversationUpdate, extractErrorMessage } from "../utils/api-response-extractors";
 import { useChatwootQuickActions } from "../hooks/use-chatwoot-quick-actions";
+import { useChatwootProvider } from "../hooks/use-chatwoot-provider";
 import { getActionsExcludingTickets, GROUP_LABELS } from "@/widgets/frontdesk/providers/tickets/utils/quick-actions-config";
 import { AssignDocumentModal } from "./assign-document-modal";
 import type { ChatwootConversation } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
@@ -62,6 +64,7 @@ export const ChatwootConversationDetailPanel: React.FC<ChatwootConversationDetai
 }) => {
   const theme = useTheme();
   const { primaryColor, neutralColor } = useGomakeTheme();
+  const { router } = useChatwootProvider();
   const [statusMenuAnchor, setStatusMenuAnchor] = useState<null | HTMLElement>(null);
   const [priorityMenuAnchor, setPriorityMenuAnchor] = useState<null | HTMLElement>(null);
   const [quickActionsAnchor, setQuickActionsAnchor] = useState<null | HTMLElement>(null);
@@ -291,6 +294,13 @@ export const ChatwootConversationDetailPanel: React.FC<ChatwootConversationDetai
             // TODO: Show error toast to user
           }
         }}
+      />
+
+      {/* Contact History Section */}
+      <ContactHistorySection
+        contactId={conversation.meta?.sender?.id}
+        accountId={accountId}
+        router={router}
       />
 
       {/* Assigned Agent Section */}

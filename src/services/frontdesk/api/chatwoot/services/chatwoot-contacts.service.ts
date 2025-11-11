@@ -193,9 +193,9 @@ export class ChatwootContactsService extends BaseChatwootService {
 
   /**
    * Get Contact Conversations
-   * GET /api/v1/accounts/{account_id}/contacts/{id}/conversations
+   * GET /api/accounts/contacts/{contact_id}/conversations
    *
-   * @param accountId - The numeric ID of the account
+   * @param accountId - The numeric ID of the account (not used in URL, kept for API consistency)
    * @param contactId - The numeric ID of the contact
    * @returns Promise with contact conversations
    */
@@ -203,8 +203,9 @@ export class ChatwootContactsService extends BaseChatwootService {
     accountId: number,
     contactId: number
   ): Promise<ContactConversationsResponse> {
+    // This endpoint doesn't include accountId in path - proxy handles it via JWT
     return await this.get<ContactConversationsResponse>(
-      this.accountScopedUrl(accountId, `contacts/${contactId}/conversations`)
+      `/api/accounts/contacts/${contactId}/conversations`
     );
   }
 

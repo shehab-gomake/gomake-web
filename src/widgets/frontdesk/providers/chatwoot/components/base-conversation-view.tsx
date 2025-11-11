@@ -182,6 +182,7 @@ export const BaseConversationView: React.FC<BaseConversationViewProps> = ({ empt
 
             {/* Right Detail Panel */}
             <ChatwootConversationDetailPanel
+              key={selectedConversation.id}
               conversation={selectedConversation}
               accountId={currentAccountId || undefined}
               inboxes={inboxes}
