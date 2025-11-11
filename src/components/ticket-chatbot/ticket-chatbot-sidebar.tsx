@@ -97,6 +97,7 @@ export const TicketChatbotSidebar = ({
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [uploadingFiles, setUploadingFiles] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const messageInputRef = useRef<HTMLTextAreaElement | null>(null);
   const [screenshotToAnnotate, setScreenshotToAnnotate] = useState<File | null>(null);
   const [screenshotAnnotationIndex, setScreenshotAnnotationIndex] = useState<number>(-1);
   const [attachmentMenuAnchor, setAttachmentMenuAnchor] = useState<null | HTMLElement>(null);
@@ -1071,10 +1072,28 @@ export const TicketChatbotSidebar = ({
     return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
   };
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    // Ctrl+Enter or Cmd+Enter sends the message
-    // Enter alone creates a new line
-    if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    // Enter sends the message (unless Ctrl/Cmd is pressed)
+    if (e.key === "Enter" && !e.shiftKey) {
+      // Ctrl+Enter or Cmd+Enter creates a new line
+      if (e.ctrlKey || e.metaKey) {
+        // Insert newline at cursor position
+        const textarea = messageInputRef.current;
+        if (textarea) {
+          const start = textarea.selectionStart;
+          const end = textarea.selectionEnd;
+          const newValue = inputMessage.substring(0, start) + "\n" + inputMessage.substring(end);
+          setInputMessage(newValue);
+          // Set cursor position after the newline
+          setTimeout(() => {
+            textarea.selectionStart = textarea.selectionEnd = start + 1;
+            textarea.focus();
+          }, 0);
+        }
+        e.preventDefault();
+        return;
+      }
+      // Enter alone sends the message
       e.preventDefault();
       handleSendMessage();
     }
@@ -1955,16 +1974,47 @@ export const TicketChatbotSidebar = ({
                   placeholder={t("tickets.typeMessage") || "Type a message..."}
                   value={inputMessage}
                   onChange={(e) => setInputMessage(e.target.value)}
-                  onKeyPress={handleKeyPress}
+                  onKeyDown={handleKeyDown}
                   disabled={isCreatingTicket || isSending || uploadingFiles}
                   fullWidth
                   size="small"
+                  inputRef={(ref: HTMLTextAreaElement | null) => {
+                    messageInputRef.current = ref;
+                  }}
                   sx={{
                     "& .MuiOutlinedInput-root": {
                       borderRadius: 2,
                     },
                   }}
                 />
+                <Typography
+                  variant="caption"
+                  sx={{
+                    display: "block",
+                    marginTop: 0.25,
+                    marginBottom: 0,
+                    color: grayColor(400),
+                    fontSize: "0.6rem",
+                    fontStyle: "italic",
+                    textAlign: isRTL ? "left" : "right",
+                    opacity: 0.7,
+                    ...FONT_FAMILY.Heebo(400, 10),
+                  }}
+                >
+                  {(() => {
+                    const translation = t("tickets.ctrlEnterForNewLine");
+                    if (translation && translation !== "tickets.ctrlEnterForNewLine") {
+                      return translation;
+                    }
+                    // Detect Mac platform
+                    if (typeof navigator !== "undefined") {
+                      const isMac = navigator.platform.toUpperCase().indexOf("MAC") >= 0 ||
+                                    navigator.userAgent.toUpperCase().indexOf("MAC") >= 0;
+                      return isMac ? "Cmd+Enter for new line" : "Ctrl+Enter for new line";
+                    }
+                    return "Ctrl+Enter for new line";
+                  })()}
+                </Typography>
               </Box>
               <IconButton
                 color="primary"
