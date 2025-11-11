@@ -20,6 +20,7 @@ import {
 } from "@/services/api-service/generic-doc/documents-api";
 import { useUserPermission } from "@/hooks/use-permission";
 import { ETab } from "@/pages-components/admin/home/widgets/quote-widget/enums";
+import { ItemCalculationType } from "@/enums";
 
 const useAddNewItem = ({ onClose, getQuote, documentType, getCalculateQuoteItem, isMaterial, isNewCreation, isPurchaseOrder, isCanIntake }: {
   onClose: () => void, getQuote: () => void,
@@ -317,14 +318,9 @@ const useAddNewItem = ({ onClose, getQuote, documentType, getCalculateQuoteItem,
           newItem,
         ];
         setQuoteItemValue(updatedQuoteItemValue);
-        // Use packagesQuantity * quantityInPackage if available, otherwise use quantity
-        const calculatedQuantity =
-          (selectedMaterial?.packagesQuantity && selectedMaterial?.quantityInPackage)
-            ? selectedMaterial.packagesQuantity * selectedMaterial.quantityInPackage
-            : (selectedMaterial?.quantity || 1);
         getCalculateQuoteItem(
           newItem,
-          calculatedQuantity,
+          ItemCalculationType.UnitPrice,
           newItem.price,
           updatedQuoteItemValue,
           true
