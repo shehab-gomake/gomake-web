@@ -140,6 +140,13 @@ export const useChatwootProvider = () => {
   // This loads the full conversation object when URL contains a conversationId
   // Supports deep linking by fetching conversation from API if not in current list
   // Optimized to use list data when available for instant transitions
+  
+  // Track conversations in a ref to avoid recreating the effect when conversations array changes
+  const conversationsRef = useRef(conversations.conversations);
+  useEffect(() => {
+    conversationsRef.current = conversations.conversations;
+  }, [conversations.conversations]);
+  
   useEffect(() => {
     const conversationIdFromUrl = router.currentRoute?.conversationId;
 
@@ -157,7 +164,8 @@ export const useChatwootProvider = () => {
     }
 
     // Try to find conversation in the current list first (fast path - instant transition)
-    const convInList = conversations.conversations.find(
+    // Use ref to avoid dependency on the entire conversations array
+    const convInList = conversationsRef.current.find(
       (c) => c.id.toString() === conversationIdFromUrl
     );
 
@@ -201,7 +209,7 @@ export const useChatwootProvider = () => {
   }, [
     router.currentRoute?.conversationId,
     selectedConversation,
-    conversations.conversations,
+    // conversations.conversations, // ❌ REMOVED - causes unnecessary re-runs
     currentAccountId,
     setSelectedConversation,
   ]);
