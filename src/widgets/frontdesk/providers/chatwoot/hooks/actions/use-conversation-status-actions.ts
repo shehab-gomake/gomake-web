@@ -61,30 +61,52 @@ export const useConversationStatusActions = ({
   const handleUpdateStatus = useCallback(
     async (status: ConversationStatusType, snoozedUntil?: string) => {
       if (!accountId || !conversation?.id) {
-        showNotification("Cannot perform action: Missing account or conversation", "error");
+        showNotification("Cannot update status: Missing account or conversation", "error");
         return;
       }
 
       const oldStatus = conversation.status;
 
+      // User-friendly status messages
+      const statusMessages = {
+        open: "reopened",
+        resolved: "marked as resolved",
+        pending: "marked as pending",
+        snoozed: snoozedUntil ? "snoozed until specified time" : "snoozed until next reply",
+      };
+
       try {
-        // Optimistic update
+        // Optimistic update - immediately update UI
         updateConversation({
           status,
           ...(snoozedUntil && { snoozed_until: new Date(snoozedUntil).getTime() }),
         });
 
-        await chatwootService.conversations.updateConversationStatus(accountId, conversation.id, {
+        // Make API call
+        const response = await chatwootService.conversations.updateConversationStatus(accountId, conversation.id, {
           status,
           ...(snoozedUntil && { snoozed_until: snoozedUntil }),
         });
 
-        showNotification(`Conversation ${status}`, "success");
+        // Verify success
+        if (response.payload?.success) {
+          const message = statusMessages[status] || status;
+          showNotification(`Conversation ${message}`, "success");
+        } else {
+          throw new Error("Status update failed: Unexpected response from server");
+        }
       } catch (error: any) {
         // Revert on failure
         updateConversation({ status: oldStatus });
-        showNotification(`Failed to update conversation status`, "error");
-        console.error("Failed to update conversation status:", error);
+        
+        const errorMessage = error.message || "Failed to update conversation status";
+        showNotification(errorMessage, "error");
+        console.error("Failed to update conversation status:", {
+          conversationId: conversation.id,
+          oldStatus,
+          newStatus: status,
+          error: errorMessage,
+        });
       }
     },
     [accountId, conversation, updateConversation]

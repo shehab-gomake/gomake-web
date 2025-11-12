@@ -71,13 +71,14 @@ export const ConversationStatusSelector: React.FC<ConversationStatusSelectorProp
           display: "flex",
           alignItems: "center",
           gap: 0.75,
-          cursor: updating ? "default" : "pointer",
+          cursor: updating ? "not-allowed" : "pointer",
           px: 1.25,
           py: 0.5,
           borderRadius: "6px",
           border: `1px solid ${neutralColor(300)}`,
           backgroundColor: neutralColor(0),
           transition: "all 0.2s",
+          opacity: updating ? 0.6 : 1,
           "&:hover": updating
             ? {}
             : {
@@ -85,6 +86,7 @@ export const ConversationStatusSelector: React.FC<ConversationStatusSelectorProp
                 borderColor: neutralColor(400),
               },
         }}
+        title={updating ? "Updating status..." : `Change status (currently: ${currentStatusOption.label})`}
       >
         {updating ? (
           <CircularProgress size={16} sx={{ color: neutralColor(600) }} />
@@ -99,7 +101,7 @@ export const ConversationStatusSelector: React.FC<ConversationStatusSelectorProp
             lineHeight: 1,
           }}
         >
-          {currentStatusOption.label}
+          {updating ? "Updating..." : currentStatusOption.label}
         </Typography>
       </Box>
 

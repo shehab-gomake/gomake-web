@@ -207,21 +207,24 @@ export const useChatwootConversations = (accountId: number | null, options: Part
           { status: newStatus }
         );
 
-        // Extract updated conversation from response
-        const updatedConversation = response.data || response.payload;
-
-        if (updatedConversation) {
-          // Merge server response with local state
+        // Verify success from API response
+        if (response.payload?.success && response.payload.current_status) {
+          // API confirmed the status change, ensure UI is synced with server response
+          const serverStatus = response.payload.current_status;
+          
           setConversations(prev =>
             prev.map(conv =>
               conv.id === conversationId
-                ? { ...conv, ...updatedConversation, status: newStatus }
+                ? { ...conv, status: serverStatus }
                 : conv
             )
           );
+          
+          console.log(`[updateConversationStatus] Successfully updated conversation ${conversationId} to ${serverStatus}`);
+        } else {
+          // API call succeeded but response format unexpected - log warning but keep optimistic update
+          console.warn("[updateConversationStatus] Unexpected response format:", response);
         }
-
-        console.log(`[updateConversationStatus] Successfully updated conversation ${conversationId} to ${newStatus}`);
       } catch (err: any) {
         // Step 3: Revert on Failure
         console.error("[updateConversationStatus] Failed to update status, reverting:", err);
