@@ -17,6 +17,7 @@ import { buildConversationFilters, matchesStatusFilter } from "../utils/filter-u
 import { createLogger } from "@/services/frontdesk/utils/logger";
 
 const logger = createLogger("useChatwootProvider");
+
 import {
   chatwootSelectedConversationAtom,
   chatwootSelectedAccountAtom,
@@ -100,7 +101,7 @@ export const useChatwootProvider = () => {
   const conversations = useChatwootConversations(currentAccountId, filters);
 
   // Consolidated initialization effect
-  // Handles only account auto-selection now - router handles conversation state
+  // Handles only account auto-selection
   useEffect(() => {
     // Auto-select account if needed
     if (!selectedAccountId && currentAccountId) {
@@ -265,7 +266,6 @@ export const useChatwootProvider = () => {
 
         if (!matchesAllFilters) {
           // Remove conversation from list if it doesn't match filters
-          logger.debug(`Removing conversation ${updatedConversation.id} - doesn't match filters`);
           return prev.filter((conv) => conv.id !== updatedConversation.id);
         } else {
           // Update conversation in list if it matches filters

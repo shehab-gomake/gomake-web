@@ -111,6 +111,14 @@ export interface ChatwootConversation {
       name?: string;
       email?: string;
       avatar_url?: string;
+      phone_number?: string;
+      identifier?: string;
+      availability_status?: string;
+      blocked?: boolean;
+      additional_attributes?: Record<string, any>;
+      custom_attributes?: Record<string, any>;
+      last_activity_at?: number;
+      created_at?: number;
     };
     channel?: string;
     assignee?: {
@@ -133,14 +141,15 @@ export interface ChatwootConversation {
 /**
  * Chatwoot Email Content Structure
  * How Chatwoot stores email HTML and plain text versions
+ * Note: Chatwoot API returns snake_case properties
  */
 export interface ChatwootEmailContent {
   /** HTML version of the email */
-  htmlContent?: {
+  html_content?: {
     full?: string;
   };
   /** Plain text version of the email */
-  textContent?: {
+  text_content?: {
     full?: string;
   };
 }

@@ -1,4 +1,4 @@
-import React, { useState, useRef, KeyboardEvent } from "react";
+import React, { useState, useRef } from "react";
 import { Box } from "@mui/material";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import type { ChatwootConversation } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
@@ -6,19 +6,24 @@ import type { ChatwootInbox } from "@/services/frontdesk/api/chatwoot/types/inbo
 import {
   ReplyComposerTabs,
   ReplyComposerEmailFields,
-  ReplyComposerFormattingToolbar,
-  ReplyComposerTextArea,
   ReplyComposerBottomToolbar,
 } from "./reply-composer";
 import { useChannelFeatures } from "../hooks/use-channel-features";
 import { createLogger } from "@/services/frontdesk/utils/logger";
+import { AttachmentPreviews } from "./compose/AttachmentPreview";
+import { MessageEditor } from "./compose/MessageEditor";
 
 const logger = createLogger("ChatwootReplyComposer");
 
 interface ChatwootReplyComposerProps {
   conversation: ChatwootConversation | null;
   inbox?: ChatwootInbox | null;
-  onSend: (content: string, isPrivate: boolean, recipientEmails?: { to?: string; cc?: string; bcc?: string }) => Promise<void>;
+  onSend: (
+    content: string,
+    isPrivate: boolean,
+    recipientEmails?: { to?: string; cc?: string; bcc?: string },
+    attachments?: File[]
+  ) => Promise<void>;
   isSending?: boolean;
   uiSettings?: {
     display_rich_content_editor?: boolean;
@@ -42,7 +47,8 @@ export const ChatwootReplyComposer: React.FC<ChatwootReplyComposerProps> = ({
   const [ccEmails, setCcEmails] = useState("");
   const [showBcc, setShowBcc] = useState(false);
   const [bccEmails, setBccEmails] = useState("");
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const [attachments, setAttachments] = useState<File[]>([]);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Use channel features hook (memoized)
   const channelFeatures = useChannelFeatures(inbox, activeTab === "private", uiSettings);
@@ -51,65 +57,39 @@ export const ChatwootReplyComposer: React.FC<ChatwootReplyComposerProps> = ({
   const defaultRecipient = conversation?.meta?.sender?.email || "";
 
   React.useEffect(() => {
-    if (conversation && !toEmails) {
+    if (conversation) {
       setToEmails(defaultRecipient);
     }
-  }, [conversation, defaultRecipient, toEmails]);
+  }, [conversation, defaultRecipient]);
 
   const handleTabChange = (newValue: TabValue) => {
     setActiveTab(newValue);
   };
 
-  const handleFormatText = (command: string) => {
-    if (!textareaRef.current) return;
-
-    const textarea = textareaRef.current;
-    const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
-    const selectedText = messageContent.substring(start, end);
-    const before = messageContent.substring(0, start);
-    const after = messageContent.substring(end);
-
-    let formattedText = "";
-    switch (command) {
-      case "bold":
-        formattedText = `${before}**${selectedText}**${after}`;
-        break;
-      case "italic":
-        formattedText = `${before}*${selectedText}*${after}`;
-        break;
-      case "underline":
-        formattedText = `${before}<u>${selectedText}</u>${after}`;
-        break;
-      case "code":
-        formattedText = `${before}\`${selectedText}\`${after}`;
-        break;
-      default:
-        return;
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFiles = Array.from(e.target.files || []);
+    if (selectedFiles.length > 0) {
+      setAttachments([...attachments, ...selectedFiles]);
+      logger.debug(`Added ${selectedFiles.length} file(s), total: ${attachments.length + selectedFiles.length}`);
     }
-
-    setMessageContent(formattedText);
-    setTimeout(() => {
-      textarea.focus();
-      textarea.setSelectionRange(start + 2, end + 2);
-    }, 0);
+    // Reset input to allow selecting the same file again
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
   };
 
-  const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
-    // Handle Shift+Enter for new line
-    if (e.key === "Enter" && e.shiftKey) {
-      return; // Allow default behavior (new line)
-    }
-    // Handle Cmd/Ctrl+Enter to send
-    if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
-      e.preventDefault();
-      handleSend();
-    }
+  const handleFileRemove = (index: number) => {
+    setAttachments(attachments.filter((_, i) => i !== index));
+    logger.debug(`Removed file at index ${index}, remaining: ${attachments.length - 1}`);
+  };
+
+  const handleAttachClick = () => {
+    fileInputRef.current?.click();
   };
 
   const handleSend = async () => {
-    if (!messageContent.trim()) {
-      logger.debug("Message content is empty, not sending");
+    if (!messageContent.trim() && attachments.length === 0) {
+      logger.debug("Message content and attachments are empty, not sending");
       return;
     }
 
@@ -129,19 +109,24 @@ export const ChatwootReplyComposer: React.FC<ChatwootReplyComposerProps> = ({
         isPrivate,
         !isPrivate && channelFeatures.shouldShowEmailHeader
           ? { to: toEmails, cc: ccEmails || undefined, bcc: bccEmails || undefined }
-          : undefined
+          : undefined,
+        attachments.length > 0 ? attachments : undefined
       );
 
       // Clear form after successful send
       setMessageContent("");
-      logger.info(`Message sent successfully (private: ${isPrivate})`);
+      setAttachments([]);
+      logger.info(`Message sent successfully (private: ${isPrivate}, attachments: ${attachments.length})`);
     } catch (error) {
       logger.error("Failed to send message", error);
       // Error handling is done by parent component
     }
   };
 
-  const canSend = messageContent.trim().length > 0 && !isSending && messageContent.length <= channelFeatures.maxMessageLength;
+  const canSend =
+    (messageContent.trim().length > 0 || attachments.length > 0) &&
+    !isSending &&
+    messageContent.length <= channelFeatures.maxMessageLength;
 
   // Theme colors - transparent/no background
   const borderColor = neutralColor(200);
@@ -182,31 +167,33 @@ export const ChatwootReplyComposer: React.FC<ChatwootReplyComposerProps> = ({
         />
       )}
 
-      {/* Formatting Toolbar (only for rich editor) */}
-      {channelFeatures.shouldUseRichEditor && (
-        <ReplyComposerFormattingToolbar
-          onFormat={handleFormatText}
-          borderColor={borderColor}
-          lightGrayText={lightGrayText}
-          neutralColor={neutralColor}
-          primaryColor={primaryColor}
+      {/* Message Editor (Rich Text with built-in toolbar) */}
+      <Box sx={{ px: 2, pt: 2 }}>
+        <MessageEditor
+          content={messageContent}
+          onChange={setMessageContent}
+          placeholder={activeTab === "private" ? "Write a private note..." : "Type your reply..."}
+          disabled={isSending}
+          minHeight={150}
         />
+      </Box>
+
+      {/* Attachment Previews (if any) */}
+      {attachments.length > 0 && (
+        <Box sx={{ px: 2, py: 1 }}>
+          <AttachmentPreviews files={attachments} onRemove={handleFileRemove} />
+        </Box>
       )}
 
-      {/* Text Input Area */}
-      <ReplyComposerTextArea
-        messageContent={messageContent}
-        onContentChange={setMessageContent}
-        onKeyDown={handleKeyDown}
-        textareaRef={textareaRef}
-        maxLength={channelFeatures.maxMessageLength}
-        isSending={isSending}
-        shouldUseRichEditor={channelFeatures.shouldUseRichEditor}
-        textColor={textColor}
-        lightGrayText={lightGrayText}
-        neutralColor={neutralColor}
-        primaryColor={primaryColor}
-        isPrivateNote={activeTab === "private"}
+      {/* Hidden File Input */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        multiple={channelFeatures.supportsMultipleFileUpload}
+        hidden
+        onChange={handleFileSelect}
+        disabled={isSending}
+        aria-label="File input for attachments"
       />
 
       {/* Bottom Toolbar */}
@@ -216,6 +203,8 @@ export const ChatwootReplyComposer: React.FC<ChatwootReplyComposerProps> = ({
         canSend={canSend}
         isSending={isSending}
         onSend={handleSend}
+        onAttachClick={handleAttachClick}
+        attachmentCount={attachments.length}
         borderColor={borderColor}
         lightGrayText={lightGrayText}
         neutralColor={neutralColor}

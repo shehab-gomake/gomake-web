@@ -80,36 +80,71 @@ export const ChatwootMessageItem: React.FC<ChatwootMessageItemProps> = ({
 
   // Extract and process content
   // Chatwoot stores email HTML in a specific structure:
-  // content_attributes.email.htmlContent.full (HTML version)
-  // content_attributes.email.textContent.full (plain text version)
-  const emailHtml = message.content_attributes?.email?.htmlContent?.full;
-  const emailText = message.content_attributes?.email?.textContent?.full;
+  // content_attributes.email.html_content.full (HTML version)
+  // content_attributes.email.text_content.full (plain text version)
+  const emailHtml = message.content_attributes?.email?.html_content?.full;
+  const emailText = message.content_attributes?.email?.text_content?.full;
 
   // Priority: 1. email HTML, 2. email plain text, 3. regular content field
   const htmlContent = emailHtml;
-  const rawContent = htmlContent || emailText || message.content || "";
+
+  // Extract body content from full HTML documents
+  // Email HTML often comes as complete documents with <html>, <head>, <body>
+  // We only want the body content to avoid layout conflicts
+  let rawContent = htmlContent || emailText || message.content || "";
+
+  if (htmlContent && htmlContent.includes('<body')) {
+    try {
+      // Extract content between <body> tags
+      const bodyMatch = htmlContent.match(/<body[^>]*>([\s\S]*)<\/body>/i);
+      if (bodyMatch && bodyMatch[1]) {
+        rawContent = bodyMatch[1];
+      }
+    } catch (error) {
+      console.warn('[ChatwootMessageItem] Failed to extract body content:', error);
+    }
+  }
 
   // Determine if content is HTML based on content_type or content detection
   // Check for full HTML documents (like 404 pages) - these should be displayed as code blocks
-  const isFullHtmlDocument = rawContent.trim().startsWith("<!DOCTYPE html") ||
-                            rawContent.trim().startsWith("<!doctype html") ||
-                            (rawContent.includes("<html") && rawContent.includes("<head>"));
+  // EXCEPTION: Email messages with full HTML should be rendered, not displayed as code
+  const isFullHtmlDocument = !emailHtml && (
+    rawContent.trim().startsWith("<!DOCTYPE html") ||
+    rawContent.trim().startsWith("<!doctype html") ||
+    (rawContent.includes("<html") && rawContent.includes("<head>"))
+  );
 
-  // If we have HTML in content_attributes.email, always treat it as HTML
+  // If we have HTML in content_attributes.email, always treat it as HTML (even if full document)
+  // For emails, render the full HTML document with sanitization
   const isHtml = !isFullHtmlDocument && (
     !!htmlContent ||  // Explicit HTML content from email attributes
     message.content_type === "text/html" ||
+    message.content_type === "incoming_email" ||  // Always render email HTML
     isHtmlContent(rawContent)
   );
 
-  // For full HTML documents, treat as code/plain text to display the source
-  // For regular HTML fragments, sanitize and render
+  // For full HTML documents (non-email), treat as code/plain text to display the source
+  // For email HTML or regular HTML fragments, sanitize and render
   // For plain text, use as-is
   const processedContent = isFullHtmlDocument
-    ? rawContent // Display as code
+    ? rawContent // Display as code (404 pages, etc.)
     : isHtml && rawContent
-    ? sanitizeHtml(rawContent) // Sanitize HTML fragments
+    ? sanitizeHtml(rawContent) // Sanitize HTML fragments and email HTML
     : rawContent; // Plain text
+
+  // Debug: Log email content structure for incoming emails
+  if (message.content_type === 'incoming_email' && process.env.NODE_ENV === 'development') {
+    console.log('[ChatwootMessageItem] Email rendering:', {
+      id: message.id,
+      has_emailHtml: !!emailHtml,
+      rawContent_length: rawContent.length,
+      isHtml,
+      isFullHtmlDocument,
+      processedContent_length: processedContent.length,
+      emailHtml_preview: emailHtml?.substring(0, 200),
+      processedContent_preview: processedContent?.substring(0, 200),
+    });
+  }
 
   // Determine if avatar should be shown (show if first message, or sender changed from previous)
   const shouldShowAvatar = isFirst || showAvatar ||
@@ -130,31 +165,24 @@ export const ChatwootMessageItem: React.FC<ChatwootMessageItemProps> = ({
       ? primaryColor(100)
       : neutralColor(50),
     color: isOutgoing ? primaryColor(900) : neutralColor(800),
-    border: `1px solid ${
-      isPrivate
-        ? neutralColor(300)
-        : isOutgoing
-        ? primaryColor(200)
-        : neutralColor(200)
-    }`,
+    border: "none",
     borderRadius: isOutgoing ? "18px 18px 4px 18px" : "18px 18px 18px 4px",
     px: 2,
     py: 1.5,
     position: "relative" as const,
-    boxShadow: `0 1px 3px ${alpha(theme.palette.common.black, 0.1)}`,
+    boxShadow: `0 1px 2px ${alpha(theme.palette.common.black, 0.08)}`,
     transition: theme.transitions.create(["box-shadow", "transform"], {
       duration: theme.transitions.duration.short,
     }),
     opacity: isPrivate ? 0.85 : 1,
     fontStyle: isPrivate ? "italic" : "normal",
     "&:hover": {
-      boxShadow: `0 2px 8px ${alpha(theme.palette.common.black, 0.15)}`,
-      transform: "translateY(-1px)",
+      boxShadow: `0 2px 4px ${alpha(theme.palette.common.black, 0.12)}`,
     },
-    // HTML content styling
+    // HTML content styling - clean and natural
     "& p": {
       margin: 0,
-      marginBottom: 1,
+      marginBottom: "0.5em",
       "&:last-child": { marginBottom: 0 },
     },
     "& a": {
@@ -163,60 +191,84 @@ export const ChatwootMessageItem: React.FC<ChatwootMessageItemProps> = ({
       "&:hover": { textDecoration: "underline" },
     },
     "& ul, & ol": {
-      paddingLeft: 2,
-      marginTop: 0.5,
-      marginBottom: 0.5,
+      paddingLeft: "20px",
+      marginTop: "0.25em",
+      marginBottom: "0.25em",
     },
     "& li": {
-      marginBottom: 0.25,
+      marginBottom: "0.25em",
     },
     "& blockquote": {
       borderLeft: `3px solid ${isOutgoing ? primaryColor(300) : neutralColor(300)}`,
-      paddingLeft: 2,
+      paddingLeft: "12px",
       marginLeft: 0,
+      marginTop: "0.5em",
+      marginBottom: "0.5em",
       fontStyle: "italic",
     },
     "& img": {
       maxWidth: "100%",
       height: "auto",
-      borderRadius: 1,
-      marginTop: 1,
-      marginBottom: 1,
+      borderRadius: "8px",
+      marginTop: "8px",
+      marginBottom: "8px",
+      display: "block",
     },
+    // Remove all table borders for email tables (layout tables)
     "& table": {
       borderCollapse: "collapse",
       width: "100%",
-      marginTop: 1,
-      marginBottom: 1,
+      border: "none",
+      margin: 0,
     },
     "& th, & td": {
-      border: `1px solid ${neutralColor(300)}`,
-      padding: 1,
+      border: "none",
+      padding: "4px",
       textAlign: "left" as const,
     },
+    "& tbody, & tr": {
+      border: "none",
+    },
     "& th": {
-      backgroundColor: neutralColor(50),
-      fontWeight: 600,
+      border: "none",
+      backgroundColor: "transparent",
+      fontWeight: "inherit",
     },
-    // Email-specific styling
+    // Email-specific styling - natural appearance
     "& h1, & h2, & h3, & h4, & h5, & h6": {
-      marginTop: 1,
-      marginBottom: 0.5,
+      marginTop: "0.5em",
+      marginBottom: "0.25em",
       lineHeight: 1.3,
-      "&:first-of-type": { marginTop: 0 },
+      fontWeight: 600,
+      "&:first-child": { marginTop: 0 },
     },
-    // Preserve email font sizes but ensure readability
+    "& h1": { fontSize: "1.5em" },
+    "& h2": { fontSize: "1.3em" },
+    "& h3": { fontSize: "1.1em" },
+    "& h4, & h5, & h6": { fontSize: "1em" },
+    // Preserve email styling but remove visual clutter
     "& font": {
-      fontSize: "inherit !important",
+      fontSize: "inherit",
     },
-    // Center tag support (common in email HTML)
     "& center": {
       textAlign: "center",
     },
-    // Better spacing for nested divs (common in email templates)
+    // Clean spacing for email layout divs
     "& div": {
       margin: 0,
     },
+    // Remove borders from email layout elements
+    "& div[style*='border']": {
+      border: "none !important",
+    },
+    "& table[border]": {
+      border: "none !important",
+    },
+    "& td[style*='border'], & th[style*='border']": {
+      border: "none !important",
+    },
+    // Better line height for readability
+    lineHeight: 1.5,
   });
 
   const getAvatarStyles = (isOutgoing: boolean) => ({

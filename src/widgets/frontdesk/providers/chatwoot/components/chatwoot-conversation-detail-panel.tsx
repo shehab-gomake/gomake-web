@@ -33,12 +33,19 @@ import {
 } from "@mui/icons-material";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { colorTokens, Chip } from "@/widgets/frontdesk/design-system";
+import { QuickActionButton } from "@/widgets/frontdesk/design-system/primitives/Button/QuickActionButton";
+import { QuickActionMenu, QuickActionItem } from "@/widgets/frontdesk/design-system/compounds/QuickActionMenu/QuickActionMenu";
 import { ConversationPriorityIcon } from "./conversation-priority-icon";
 import { chatwootService } from "@/services/frontdesk";
 import { ConversationProfileSection } from "./conversation-profile-section";
+import { ContactHistorySection } from "./contact-history-section";
 import { ConversationAssigneeSection } from "./conversation-assignee-section";
 import { ConversationLabelsManagement } from "./conversation-labels-management";
 import { extractConversation, mergeConversationUpdate, extractErrorMessage } from "../utils/api-response-extractors";
+import { useChatwootQuickActions } from "../hooks/use-chatwoot-quick-actions";
+import { useChatwootProvider } from "../hooks/use-chatwoot-provider";
+import { getActionsExcludingTickets, GROUP_LABELS } from "@/widgets/frontdesk/providers/tickets/utils/quick-actions-config";
+import { AssignDocumentModal } from "./assign-document-modal";
 import type { ChatwootConversation } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
 import type { ChatwootInbox } from "@/services/frontdesk/api/chatwoot/types/inboxes.types";
 
@@ -57,8 +64,10 @@ export const ChatwootConversationDetailPanel: React.FC<ChatwootConversationDetai
 }) => {
   const theme = useTheme();
   const { primaryColor, neutralColor } = useGomakeTheme();
+  const { router } = useChatwootProvider();
   const [statusMenuAnchor, setStatusMenuAnchor] = useState<null | HTMLElement>(null);
   const [priorityMenuAnchor, setPriorityMenuAnchor] = useState<null | HTMLElement>(null);
+  const [quickActionsAnchor, setQuickActionsAnchor] = useState<null | HTMLElement>(null);
   const [updating, setUpdating] = useState(false);
 
   // Status mapping (using Chip color type)
@@ -120,7 +129,7 @@ export const ChatwootConversationDetailPanel: React.FC<ChatwootConversationDetai
 
   // Handle priority change
   const handlePriorityChange = useCallback(
-    async (newPriority: 'urgent' | 'high' | 'medium' | 'low' | null) => {
+    async (newPriority: "urgent" | "high" | "medium" | "low" | null) => {
       setPriorityMenuAnchor(null);
       if (!accountId || !conversation.id) return;
 
@@ -159,6 +168,50 @@ export const ChatwootConversationDetailPanel: React.FC<ChatwootConversationDetai
     [conversation, onConversationUpdate]
   );
 
+  // Quick Actions integration
+  const {
+    availableActions,
+    executeAction,
+    getActionBlockReason,
+    selectedAction,
+    closeActionModal,
+    connectToExistingDocument,
+    createNewDocument,
+  } = useChatwootQuickActions({
+    conversation,
+    accountId,
+    onActionComplete: (actionType) => {
+      console.log("[ChatwootConversationDetailPanel] Quick action completed:", actionType);
+      // Refresh conversation data after linking document
+      if (onConversationUpdate && conversation) {
+        // Optionally refetch conversation to get updated custom_attributes
+        // For now, we'll rely on the hook to update correctly
+      }
+    },
+    onActionError: (actionType, error) => {
+      console.error("[ChatwootConversationDetailPanel] Quick action error:", actionType, error);
+    },
+  });
+
+  // Extract customer info for modal
+  const customerId = conversation?.custom_attributes?.gomake_customer_id as string | undefined;
+  const customerName = conversation?.meta?.sender?.name;
+
+  // Convert action configs to QuickActionItem format for the menu
+  const quickActionMenuItems: QuickActionItem[] = availableActions.map((action) => ({
+    id: action.type,
+    label: action.label,
+    icon: action.icon,
+    tooltip: action.tooltip,
+    disabled: !!getActionBlockReason(action.type),
+    disabledReason: getActionBlockReason(action.type) || undefined,
+    group: action.group,
+  }));
+
+  const handleQuickActionClick = (action: QuickActionItem) => {
+    executeAction(action.id as any);
+  };
+
   return (
     <Box
       sx={{
@@ -170,27 +223,65 @@ export const ChatwootConversationDetailPanel: React.FC<ChatwootConversationDetai
       }}
       className="custom-scrollbar"
     >
+      {/* Actions Button - Sales/Purchase Documents */}
+      <Box sx={{ mb: 2.5 }}>
+        <QuickActionButton
+          size="sm"
+          isOpen={Boolean(quickActionsAnchor)}
+          onClick={(e) => setQuickActionsAnchor(e.currentTarget)}
+          sx={{ width: "100%" }}
+        >
+          Actions
+        </QuickActionButton>
+      </Box>
+
+      <Divider sx={{ my: 2 }} />
+
       {/* Contact Profile Section */}
       <ConversationProfileSection
         contactName={conversation.meta?.sender?.name}
         contactEmail={conversation.meta?.sender?.email}
         contactAvatarUrl={conversation.meta?.sender?.avatar_url}
-        customerId={conversation.custom_attributes?.gomake_customer_id}
+        contactPhoneNumber={conversation.meta?.sender?.phone_number}
+        contactId={conversation.meta?.sender?.id}
+        contactIdentifier={conversation.meta?.sender?.identifier}
+        contactAvailabilityStatus={conversation.meta?.sender?.availability_status}
+        contactBlocked={conversation.meta?.sender?.blocked}
+        contactAdditionalAttributes={conversation.meta?.sender?.additional_attributes}
+        contactCustomAttributes={conversation.meta?.sender?.custom_attributes}
+        contactLastActivityAt={conversation.meta?.sender?.last_activity_at}
+        contactCreatedAt={conversation.meta?.sender?.created_at}
+        customerId={conversation.meta?.sender?.custom_attributes?.gomake_customer_id}
         onCustomerLinked={async (customerId) => {
-          if (!accountId || !conversation.id) return;
+          if (!accountId) return;
+
+          const contactId = conversation.meta?.sender?.id;
+          if (!contactId) {
+            console.error("Cannot link customer: Contact ID not available");
+            // TODO: Show error toast to user
+            return;
+          }
 
           try {
-            // Persist customer ID to Chatwoot backend
-            await chatwootService.conversations.updateConversationCustomAttributes(accountId, conversation.id, {
-              gomake_customer_id: customerId,
+            // ✅ CORRECT: Update contact custom_attributes (not conversation)
+            await chatwootService.contacts.updateContact(accountId, contactId, {
+              custom_attributes: {
+                gomake_customer_id: customerId,
+              },
             });
 
-            // Update local conversation state
+            // Update local conversation state to reflect the change in sender's custom_attributes
             const updatedConversation = {
               ...conversation,
-              custom_attributes: {
-                ...conversation.custom_attributes,
-                gomake_customer_id: customerId,
+              meta: {
+                ...conversation.meta,
+                sender: {
+                  ...conversation.meta?.sender,
+                  custom_attributes: {
+                    ...conversation.meta?.sender?.custom_attributes,
+                    gomake_customer_id: customerId,
+                  },
+                },
               },
             };
 
@@ -199,17 +290,35 @@ export const ChatwootConversationDetailPanel: React.FC<ChatwootConversationDetai
               onConversationUpdate(updatedConversation);
             }
           } catch (error) {
-            console.error("Failed to link customer to conversation:", error);
+            console.error("Failed to link customer to contact:", error);
+            // TODO: Show error toast to user
           }
         }}
       />
 
+      {/* Contact History Section */}
+      <ContactHistorySection
+        contactId={conversation.meta?.sender?.id}
+        accountId={accountId}
+        router={router}
+      />
+
       {/* Assigned Agent Section */}
       <ConversationAssigneeSection
+        type="agent"
         assignee={conversation.meta?.assignee}
         accountId={accountId}
         conversation={conversation}
         inboxId={conversation.inbox_id}
+        updateConversation={handleConversationChange}
+      />
+
+      {/* Assigned Team Section */}
+      <ConversationAssigneeSection
+        type="team"
+        team={conversation.meta?.team}
+        accountId={accountId}
+        conversation={conversation}
         updateConversation={handleConversationChange}
       />
 
@@ -486,6 +595,27 @@ export const ChatwootConversationDetailPanel: React.FC<ChatwootConversationDetai
           </AccordionDetails>
         </Accordion>
       )}
+
+      {/* Quick Actions Menu */}
+      <QuickActionMenu
+        anchorEl={quickActionsAnchor}
+        open={Boolean(quickActionsAnchor)}
+        onClose={() => setQuickActionsAnchor(null)}
+        actions={quickActionMenuItems}
+        groupLabels={GROUP_LABELS}
+        onActionClick={handleQuickActionClick}
+      />
+
+      {/* Assign Document Modal */}
+      <AssignDocumentModal
+        open={Boolean(selectedAction)}
+        onClose={closeActionModal}
+        actionConfig={selectedAction}
+        customerId={customerId}
+        customerName={customerName}
+        onConnectToExisting={connectToExistingDocument}
+        onCreateNew={createNewDocument}
+      />
     </Box>
   );
 };

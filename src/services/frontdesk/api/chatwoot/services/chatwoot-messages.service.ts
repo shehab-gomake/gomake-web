@@ -79,6 +79,9 @@ export class ChatwootMessagesService extends BaseChatwootService {
    * Note: This endpoint does NOT use account-scoped URL pattern (no /v1/accounts/{account_id})
    * The account context is determined by the authenticated user's session.
    *
+   * Supports both JSON payload (text-only) and FormData (with attachments).
+   * When attachments are present, automatically uses multipart/form-data.
+   *
    * @param accountId - The numeric ID of the account (kept for compatibility but not used in URL)
    * @param conversationId - The numeric ID of the conversation
    * @param payload - Message creation payload
@@ -91,6 +94,13 @@ export class ChatwootMessagesService extends BaseChatwootService {
    *   content: "Hello!",
    *   message_type: "outgoing",
    *   content_type: "text"
+   * });
+   *
+   * // Message with attachments
+   * await messagesService.createMessage(accountId, conversationId, {
+   *   content: "Check out these files",
+   *   message_type: "outgoing",
+   *   attachments: [file1, file2]
    * });
    *
    * // Email message
@@ -127,10 +137,76 @@ export class ChatwootMessagesService extends BaseChatwootService {
     conversationId: number,
     payload: ConversationMessageCreatePayload
   ): Promise<Message> {
-    return await this.post<Message>(
-      `/api/accounts/conversations/${conversationId}/messages`,
-      payload
-    );
+    const url = `/api/accounts/conversations/${conversationId}/messages`;
+
+    // Check if we have attachments - if so, use FormData
+    if (payload.attachments && payload.attachments.length > 0) {
+      return await this.createMessageWithAttachments(url, payload);
+    }
+
+    // Otherwise, use standard JSON payload
+    return await this.post<Message>(url, payload);
+  }
+
+  /**
+   * Create message with attachments using FormData
+   * Private helper method that builds multipart/form-data payload
+   *
+   * @param url - The endpoint URL
+   * @param payload - Message creation payload with attachments
+   * @returns Promise with created message
+   */
+  private async createMessageWithAttachments(
+    url: string,
+    payload: ConversationMessageCreatePayload
+  ): Promise<Message> {
+    const formData = new FormData();
+
+    // Add message content
+    formData.append('content', payload.content);
+
+    // Add message type (default to outgoing)
+    formData.append('message_type', payload.message_type || 'outgoing');
+
+    // Add private flag
+    if (payload.private !== undefined) {
+      formData.append('private', String(payload.private));
+    }
+
+    // Add content type
+    if (payload.content_type) {
+      formData.append('content_type', payload.content_type);
+    }
+
+    // Add content attributes (as JSON string)
+    if (payload.content_attributes) {
+      formData.append('content_attributes', JSON.stringify(payload.content_attributes));
+    }
+
+    // Add campaign ID
+    if (payload.campaign_id) {
+      formData.append('campaign_id', String(payload.campaign_id));
+    }
+
+    // Add template params (as JSON string)
+    if (payload.template_params) {
+      formData.append('template_params', JSON.stringify(payload.template_params));
+    }
+
+    // Add attachments using array notation (matching Chatwoot backend expectation)
+    payload.attachments!.forEach((file) => {
+      formData.append('attachments[]', file);
+    });
+
+    // Make request with FormData (don't set Content-Type, browser will set it with boundary)
+    return await this.request<Message>(url, {
+      method: 'POST',
+      body: formData,
+      headers: {
+        // Remove Content-Type to let browser set multipart/form-data with boundary
+        'Content-Type': '',
+      },
+    });
   }
 
   /**

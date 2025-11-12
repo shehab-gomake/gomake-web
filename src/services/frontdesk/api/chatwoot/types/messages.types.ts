@@ -58,6 +58,7 @@ export interface ConversationMessageCreatePayload {
     language: string;
     processed_params?: Record<string, unknown>;
   };
+  attachments?: File[]; // Support for file attachments
 }
 
 // Message type aliases for convenience

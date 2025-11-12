@@ -1,6 +1,7 @@
 import React, { useMemo, useCallback } from "react";
 import { ConversationListItem as DSConversationListItem } from "@/widgets/frontdesk/design-system";
 import { formatConversationDate } from "@/widgets/frontdesk/utils";
+import { htmlToPlainText, isHtmlContent } from "@/widgets/frontdesk/utils/html-sanitizer";
 import { ConversationContextMenu } from "@/widgets/frontdesk/components/shared";
 import { useConversationContextMenu } from "@/widgets/frontdesk/hooks/use-conversation-context-menu";
 import { useChatwootContextMenu } from "../hooks/use-chatwoot-context-menu";
@@ -88,7 +89,18 @@ function getConversationSnippet(conversation: any): string {
     return "";
   }
 
-  const content = typeof lastMessage.content === "string" ? lastMessage.content : JSON.stringify(lastMessage.content);
+  let content = typeof lastMessage.content === "string" ? lastMessage.content : JSON.stringify(lastMessage.content);
+
+  // Strip HTML tags if content contains HTML
+  if (isHtmlContent(content)) {
+    content = htmlToPlainText(content);
+  }
+
+  // Truncate to reasonable length for preview
+  const maxLength = 100;
+  if (content.length > maxLength) {
+    content = content.substring(0, maxLength) + "...";
+  }
 
   // Check if message is private (support both _private and private properties)
   const isPrivate = lastMessage._private === true || lastMessage.private === true;
