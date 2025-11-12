@@ -1,7 +1,8 @@
 export interface MainProductionReportResponseDTO {
   reportGeneratedAt: string;
   departments: DepartmentPerformanceDTO[];
-  sla: number;
+  otd: number;
+  tB_OTD: number;
 }
 
 export interface DepartmentPerformanceDTO {

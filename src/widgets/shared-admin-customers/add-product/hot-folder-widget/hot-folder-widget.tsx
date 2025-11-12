@@ -15,6 +15,7 @@ import { useModal } from "@/hooks/use-modal";
 import { ModalType } from "@/enums";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { CopyAnotherProductsModal } from "../work-flows-widget/copy-another-products-modal";
+import { useParameters } from "@/hooks/use-parameters";
 
 const HotFolderWidget = () => {
   const { clasess } = useStyle();
@@ -38,6 +39,8 @@ const HotFolderWidget = () => {
     open: openCopyAnotherProductsModal,
     close: handleCloseCopyAnotherProductsModal,
   } = useModal();
+  const { parametersStateValue } = useParameters();
+
 
   return (
     <div style={clasess.mainContainer}>
@@ -139,6 +142,7 @@ const HotFolderWidget = () => {
         onCloseModal={onClickCloseAddNewRuleModal}
         isHotFolderWidget={true}
         getProductHotFolderRules={getProductHotFolderRules}
+        parametersStateValue={parametersStateValue}
       />
 
       <GoMakeMenu handleClose={handleClose} open={open} anchorEl={anchorEl}>

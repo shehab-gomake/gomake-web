@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { GoMakeModal, GomakeTextInput } from "@/components";
-import { Stack } from "@mui/material";
+import { Stack, CircularProgress, Box } from "@mui/material";
 import { useStyle } from "@/pages-components/board-missions/style";
 import { SecondaryButton } from "@/components/button/secondary-button";
 import { useEffect, useMemo, useState, useRef } from "react";
@@ -36,6 +36,7 @@ const PrintPackingSlipModalWidget = ({
   const [quantityOfPackages, setQuantityOfPackages] = useState<number>(1);
   const [quantityPerPackage, setQuantityPerPackage] =
     useState<number>(quantity);
+  const [isCheckingLabelInRolls, setIsCheckingLabelInRolls] = useState<boolean>(false);
   const [isLabelInRolls, setIsLabelInRolls] = useState<boolean>(false);
   const [packageRollsAmounts, setPackageRollsAmounts] = useState<number[]>([]);
   const [packageStickersPerRoll, setPackageStickersPerRoll] = useState<number[]>([]);
@@ -74,13 +75,18 @@ const PrintPackingSlipModalWidget = ({
 
   useEffect(() => {
     if (openModal && boardMissionId) {
+      setIsCheckingLabelInRolls(true);
       const callBack = (res) => {
+        setIsCheckingLabelInRolls(false);
         if (res?.success) {
           setIsLabelInRolls(res.data?.isLabelInRolls || false);
+        } else {
+          setIsLabelInRolls(false);
         }
       };
       checkIfProductIsLabelInRollsApi(callApi, callBack, boardMissionId);
     } else {
+      setIsCheckingLabelInRolls(false);
       setIsLabelInRolls(false);
     }
   }, [openModal, boardMissionId, callApi]);
@@ -353,6 +359,7 @@ const PrintPackingSlipModalWidget = ({
                   handlePackageQuantityChange(index, newValue);
                 }}
                 placeholder={t("boardMissions.quantity")}
+                disabled={isCheckingLabelInRolls}
               />
             </div>
             {isLabelInRolls && (
@@ -370,6 +377,7 @@ const PrintPackingSlipModalWidget = ({
                       handleRollsAmountChange(index, newValue);
                     }}
                     placeholder={t("boardMissions.rollsAmount")}
+                    disabled={isCheckingLabelInRolls}
                   />
                 </div>
                 <div style={{ width: "33%" }}>
@@ -385,6 +393,7 @@ const PrintPackingSlipModalWidget = ({
                       handleStickersPerRollChange(index, newValue);
                     }}
                     placeholder={t("boardMissions.stickersPerRoll")}
+                    disabled={isCheckingLabelInRolls}
                   />
                 </div>
               </>
@@ -393,7 +402,7 @@ const PrintPackingSlipModalWidget = ({
         </div>
       ));
     }
-  }, [quantityOfPackages, packageQuantities, isLabelInRolls, packageRollsAmounts, packageStickersPerRoll]);
+  }, [quantityOfPackages, packageQuantities, isLabelInRolls, packageRollsAmounts, packageStickersPerRoll, isCheckingLabelInRolls, classes, t]);
 
   const onClickPrintPackagingSlip = async () => {
     if (quantityPerPackage > totalQuantity) {
@@ -479,7 +488,32 @@ const PrintPackingSlipModalWidget = ({
       insideStyle={classes.modalStyle}
       style={{ zIndex: 999999 }}
     >
-      <Stack direction={"column"} gap={"15px"}>
+      <Box sx={{ position: "relative" }}>
+        {isCheckingLabelInRolls && (
+          <Box
+            sx={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundColor: "rgba(255, 255, 255, 0.9)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              zIndex: 10,
+              borderRadius: 1,
+            }}
+          >
+            <Stack direction="row" alignItems="center" spacing={2}>
+              <CircularProgress size={24} />
+              <span style={{ fontSize: "0.875rem", color: "#666" }}>
+                {t("Loading")}...
+              </span>
+            </Stack>
+          </Box>
+        )}
+        <Stack direction={"column"} gap={"15px"}>
         <Stack direction={"column"} gap={"15px"}>
           <Stack direction={"row"} gap={"15px"}>
             <div style={{ width: "33%" }}>
@@ -492,6 +526,7 @@ const PrintPackingSlipModalWidget = ({
                 placeholder={t("boardMissions.totalQuantity")}
                 onChange={handleTotalQuantityChange}
                 type={"number"}
+                disabled={isCheckingLabelInRolls}
               />
             </div>
             <div style={{ width: "33%" }}>
@@ -504,6 +539,7 @@ const PrintPackingSlipModalWidget = ({
                 placeholder={t("boardMissions.quantityOfPackages")}
                 onChange={handleQuantityOfPackagesChange}
                 type={"number"}
+                disabled={isCheckingLabelInRolls}
               />
             </div>
             <div style={{ width: "33%" }}>
@@ -516,6 +552,7 @@ const PrintPackingSlipModalWidget = ({
                 placeholder={t("boardMissions.quantityPerPackage")}
                 onChange={handleQuantityPerPackageChange}
                 type={"number"}
+                disabled={isCheckingLabelInRolls}
               />
             </div>
           </Stack>
@@ -526,14 +563,20 @@ const PrintPackingSlipModalWidget = ({
           <SecondaryButton
             variant={"contained"}
             onClick={onClickPrintPackagingSlip}
+            disabled={isCheckingLabelInRolls}
           >
             {t("modal.confirm")}
           </SecondaryButton>
-          <SecondaryButton variant={"outlined"} onClick={onClose}>
+          <SecondaryButton 
+            variant={"outlined"} 
+            onClick={onClose}
+            disabled={isCheckingLabelInRolls}
+          >
             {t("modal.cancel")}
           </SecondaryButton>
         </Stack>
       </Stack>
+      </Box>
       
       {/* Print/Export Selection Modal */}
       {isPrintHouseHasPackagingSlipPrinter && (

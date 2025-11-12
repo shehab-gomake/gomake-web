@@ -21,6 +21,7 @@ import { IconButton } from "@mui/material";
 import { InputAdornment } from "@mui/material";
 import TuneIcon from "@mui/icons-material/Tune";
 import { DotIcon } from "@/icons";
+import { useParameters } from "@/hooks/use-parameters";
 
 const ProductManagementWidget = () => {
   const { t } = useTranslation();
@@ -51,6 +52,8 @@ const ProductManagementWidget = () => {
     anchorEl,
     onClickClearFilter,
   } = useProductManagement();
+  const { parametersStateValue } = useParameters();
+
 
   const { productId } = router.query;
 
@@ -199,6 +202,7 @@ const ProductManagementWidget = () => {
         onCreate={(v) =>
           addProductProfitRule(v).then(() => setOpenProfitRule(false))
         }
+        parametersStateValue={parametersStateValue}
       />
       <EditProductProfitRulesModal
         openModal={openEditProfitRule}
