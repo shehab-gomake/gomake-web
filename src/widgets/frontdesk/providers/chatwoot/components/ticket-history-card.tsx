@@ -192,7 +192,7 @@ export const TicketHistoryCard: React.FC<TicketHistoryCardProps> = ({
         p: 0.875,
         backgroundColor: isActive ? colorTokens.primary[50] : colorTokens.neutral[50],
         border: `1px solid ${isActive ? colorTokens.primary[300] : colorTokens.semantic.border.default}`,
-        borderRadius: radiusTokens.md,
+        borderRadius: "6px",
         cursor: "pointer",
         transition: "all 0.15s ease",
         "&:hover": {

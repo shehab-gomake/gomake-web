@@ -522,6 +522,7 @@ export const useChatwootProvider = () => {
 
     // Conversation updates
     updateConversationInList,
+    updateConversationStatus: conversations.updateConversationStatus, // Optimistic status updates
 
     // Selected conversation
     selectedConversation,

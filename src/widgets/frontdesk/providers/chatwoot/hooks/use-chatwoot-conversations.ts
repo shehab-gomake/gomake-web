@@ -161,6 +161,92 @@ export const useChatwootConversations = (accountId: number | null, options: Part
     fetchConversations(1, false, false);
   }, [fetchConversations]);
 
+  /**
+   * Update Conversation Status (Optimistic Update Pattern)
+   *
+   * Implements Chatwoot's optimistic update pattern:
+   * 1. Immediately update UI (optimism)
+   * 2. Make API call in background
+   * 3. Revert on failure
+   *
+   * @param conversationId - The conversation ID to update
+   * @param newStatus - The new status ('open' | 'resolved' | 'pending' | 'snoozed')
+   * @returns Promise<void>
+   */
+  const updateConversationStatus = useCallback(
+    async (conversationId: number, newStatus: 'open' | 'resolved' | 'pending' | 'snoozed') => {
+      if (!accountId) {
+        console.error("[updateConversationStatus] Account ID is required");
+        return;
+      }
+
+      // Find the conversation to update
+      const conversationToUpdate = conversations.find(c => c.id === conversationId);
+      if (!conversationToUpdate) {
+        console.error("[updateConversationStatus] Conversation not found in state:", conversationId);
+        return;
+      }
+
+      // Store original status for revert
+      const originalStatus = conversationToUpdate.status;
+
+      // Step 1: Optimistic Update - Immediately update UI
+      setConversations(prev =>
+        prev.map(conv =>
+          conv.id === conversationId
+            ? { ...conv, status: newStatus }
+            : conv
+        )
+      );
+
+      try {
+        // Step 2: Background API Call
+        const response = await chatwootService.conversations.updateConversationStatus(
+          accountId,
+          conversationId,
+          { status: newStatus }
+        );
+
+        // Extract updated conversation from response
+        const updatedConversation = response.data || response.payload;
+
+        if (updatedConversation) {
+          // Merge server response with local state
+          setConversations(prev =>
+            prev.map(conv =>
+              conv.id === conversationId
+                ? { ...conv, ...updatedConversation, status: newStatus }
+                : conv
+            )
+          );
+        }
+
+        console.log(`[updateConversationStatus] Successfully updated conversation ${conversationId} to ${newStatus}`);
+      } catch (err: any) {
+        // Step 3: Revert on Failure
+        console.error("[updateConversationStatus] Failed to update status, reverting:", err);
+
+        setConversations(prev =>
+          prev.map(conv =>
+            conv.id === conversationId
+              ? { ...conv, status: originalStatus }
+              : conv
+          )
+        );
+
+        // Set error for UI feedback
+        setError(err.message || "Failed to update conversation status");
+
+        // Clear error after 5 seconds
+        setTimeout(() => setError(null), 5000);
+
+        // Re-throw for component error handling
+        throw err;
+      }
+    },
+    [accountId, conversations, setConversations, setError]
+  );
+
   useEffect(() => {
     // Create a stable filter key to detect changes
     const filterKey = JSON.stringify({
@@ -205,5 +291,6 @@ export const useChatwootConversations = (accountId: number | null, options: Part
     loadMore,
     refresh,
     fetchConversations,
+    updateConversationStatus,
   };
 };

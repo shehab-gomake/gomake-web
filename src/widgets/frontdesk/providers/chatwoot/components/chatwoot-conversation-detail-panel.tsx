@@ -13,11 +13,20 @@ import {
   Accordion,
   AccordionSummary,
   AccordionDetails,
+  Button,
+  alpha,
+  Menu,
+  MenuItem,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import {
   ExpandMore as ExpandMoreIcon,
   Flag as FlagIcon,
+  CheckCircle as CheckCircleIcon,
+  Pending as PendingIcon,
+  Block as BlockIcon,
+  OpenInNew as OpenIcon,
+  Snooze as SnoozeIcon,
 } from "@mui/icons-material";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { colorTokens } from "@/widgets/frontdesk/design-system";
@@ -51,7 +60,7 @@ export const ChatwootConversationDetailPanel: React.FC<ChatwootConversationDetai
 }) => {
   const theme = useTheme();
   const { primaryColor, neutralColor } = useGomakeTheme();
-  const { router } = useChatwootProvider();
+  const { router, updateConversationStatus } = useChatwootProvider();
   const [statusMenuAnchor, setStatusMenuAnchor] = useState<null | HTMLElement>(null);
   const [priorityMenuAnchor, setPriorityMenuAnchor] = useState<null | HTMLElement>(null);
   const [quickActionsAnchor, setQuickActionsAnchor] = useState<null | HTMLElement>(null);
@@ -82,36 +91,36 @@ export const ChatwootConversationDetailPanel: React.FC<ChatwootConversationDetai
   // Get inbox info
   const inbox = inboxes.find((i) => i.id === conversation.inbox_id);
 
-  // Handle status change
+  // Handle status change with optimistic update
   const handleStatusChange = useCallback(
-    async (newStatus: string) => {
+    async (newStatus: 'open' | 'resolved' | 'pending' | 'snoozed') => {
       setStatusMenuAnchor(null);
-      if (!accountId || !conversation.id) return;
+      if (!conversation.id || !updateConversationStatus) return;
 
       setUpdating(true);
       try {
-        const response = await chatwootService.conversations.updateConversation(accountId, conversation.id, {
-          status: newStatus,
-        });
+        // Use the optimistic update from the hook
+        // This will immediately update the UI, then sync with server in background
+        await updateConversationStatus(conversation.id, newStatus);
 
-        // Extract and merge conversation update
-        const extracted = extractConversation(response, conversation);
-        const finalConversation = mergeConversationUpdate(conversation, {
-          ...extracted,
+        // Update local conversation for immediate feedback
+        const updatedConversation = {
+          ...conversation,
           status: newStatus,
-        });
+        };
 
         // Propagate update to parent
-        onConversationUpdate?.(finalConversation);
+        onConversationUpdate?.(updatedConversation);
       } catch (error) {
         const errorMessage = extractErrorMessage(error);
         console.error("[handleStatusChange] Failed to update status:", errorMessage);
+        // Error already handled by the hook (reverted + logged)
         // TODO: Show error toast with message: errorMessage
       } finally {
         setUpdating(false);
       }
     },
-    [accountId, conversation, onConversationUpdate]
+    [conversation, updateConversationStatus, onConversationUpdate]
   );
 
   // Handle priority change
@@ -220,6 +229,92 @@ export const ChatwootConversationDetailPanel: React.FC<ChatwootConversationDetai
         >
           Actions
         </QuickActionButton>
+      </Box>
+
+      {/* Status and Priority Controls */}
+      <Box sx={{ mb: 2.5, display: "flex", flexDirection: "column", gap: 1.5 }}>
+        {/* Status Dropdown */}
+        <Box>
+          <Typography
+            variant="caption"
+            sx={{
+              color: colorTokens.semantic.text.secondary,
+              mb: 0.5,
+              display: "block",
+              fontWeight: 600,
+              textTransform: "uppercase",
+              fontSize: 10,
+            }}
+          >
+            Status
+          </Typography>
+          <Button
+            fullWidth
+            variant="outlined"
+            size="small"
+            disabled={updating}
+            onClick={(e) => setStatusMenuAnchor(e.currentTarget)}
+            sx={{
+              justifyContent: "space-between",
+              textTransform: "none",
+              fontWeight: 500,
+              fontSize: 13,
+              py: 0.75,
+              px: 1.5,
+              borderColor: colorTokens.semantic.border.default,
+              color: theme.palette.text.primary,
+              "&:hover": {
+                borderColor: primaryColor(600),
+                backgroundColor: alpha(primaryColor(100), 0.1),
+              },
+            }}
+            endIcon={<ExpandMoreIcon />}
+          >
+            {statusInfo.label}
+          </Button>
+        </Box>
+
+        {/* Priority Dropdown */}
+        <Box>
+          <Typography
+            variant="caption"
+            sx={{
+              color: colorTokens.semantic.text.secondary,
+              mb: 0.5,
+              display: "block",
+              fontWeight: 600,
+              textTransform: "uppercase",
+              fontSize: 10,
+            }}
+          >
+            Priority
+          </Typography>
+          <Button
+            fullWidth
+            variant="outlined"
+            size="small"
+            disabled={updating}
+            onClick={(e) => setPriorityMenuAnchor(e.currentTarget)}
+            sx={{
+              justifyContent: "space-between",
+              textTransform: "none",
+              fontWeight: 500,
+              fontSize: 13,
+              py: 0.75,
+              px: 1.5,
+              borderColor: colorTokens.semantic.border.default,
+              color: theme.palette.text.primary,
+              "&:hover": {
+                borderColor: primaryColor(600),
+                backgroundColor: alpha(primaryColor(100), 0.1),
+              },
+            }}
+            startIcon={currentPriority ? <FlagIcon /> : null}
+            endIcon={<ExpandMoreIcon />}
+          >
+            {uiPriority}
+          </Button>
+        </Box>
       </Box>
 
       <Divider sx={{ my: 2 }} />
@@ -422,6 +517,99 @@ export const ChatwootConversationDetailPanel: React.FC<ChatwootConversationDetai
           </AccordionDetails>
         </Accordion>
       )}
+
+      {/* Status Menu */}
+      <Menu
+        anchorEl={statusMenuAnchor}
+        open={Boolean(statusMenuAnchor)}
+        onClose={() => setStatusMenuAnchor(null)}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+        transformOrigin={{ vertical: 'top', horizontal: 'left' }}
+      >
+        <MenuItem
+          onClick={() => handleStatusChange('open')}
+          disabled={currentStatus === 'open'}
+          sx={{ fontSize: 13 }}
+        >
+          <OpenIcon sx={{ mr: 1, fontSize: 18 }} />
+          Open
+        </MenuItem>
+        <MenuItem
+          onClick={() => handleStatusChange('pending')}
+          disabled={currentStatus === 'pending'}
+          sx={{ fontSize: 13 }}
+        >
+          <PendingIcon sx={{ mr: 1, fontSize: 18 }} />
+          Pending
+        </MenuItem>
+        <MenuItem
+          onClick={() => handleStatusChange('resolved')}
+          disabled={currentStatus === 'resolved'}
+          sx={{ fontSize: 13 }}
+        >
+          <CheckCircleIcon sx={{ mr: 1, fontSize: 18 }} />
+          Resolved
+        </MenuItem>
+        <MenuItem
+          onClick={() => handleStatusChange('snoozed')}
+          disabled={currentStatus === 'snoozed'}
+          sx={{ fontSize: 13 }}
+        >
+          <SnoozeIcon sx={{ mr: 1, fontSize: 18 }} />
+          Snoozed
+        </MenuItem>
+      </Menu>
+
+      {/* Priority Menu */}
+      <Menu
+        anchorEl={priorityMenuAnchor}
+        open={Boolean(priorityMenuAnchor)}
+        onClose={() => setPriorityMenuAnchor(null)}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+        transformOrigin={{ vertical: 'top', horizontal: 'left' }}
+      >
+        <MenuItem
+          onClick={() => handlePriorityChange('urgent')}
+          disabled={currentPriority === 'urgent'}
+          sx={{ fontSize: 13 }}
+        >
+          <FlagIcon sx={{ mr: 1, fontSize: 18, color: '#d32f2f' }} />
+          Urgent
+        </MenuItem>
+        <MenuItem
+          onClick={() => handlePriorityChange('high')}
+          disabled={currentPriority === 'high'}
+          sx={{ fontSize: 13 }}
+        >
+          <FlagIcon sx={{ mr: 1, fontSize: 18, color: '#f57c00' }} />
+          High
+        </MenuItem>
+        <MenuItem
+          onClick={() => handlePriorityChange('medium')}
+          disabled={currentPriority === 'medium'}
+          sx={{ fontSize: 13 }}
+        >
+          <FlagIcon sx={{ mr: 1, fontSize: 18, color: '#fbc02d' }} />
+          Medium
+        </MenuItem>
+        <MenuItem
+          onClick={() => handlePriorityChange('low')}
+          disabled={currentPriority === 'low'}
+          sx={{ fontSize: 13 }}
+        >
+          <FlagIcon sx={{ mr: 1, fontSize: 18, color: '#7cb342' }} />
+          Low
+        </MenuItem>
+        <Divider />
+        <MenuItem
+          onClick={() => handlePriorityChange(null)}
+          disabled={!currentPriority}
+          sx={{ fontSize: 13 }}
+        >
+          <BlockIcon sx={{ mr: 1, fontSize: 18 }} />
+          None
+        </MenuItem>
+      </Menu>
 
       {/* Quick Actions Menu */}
       <QuickActionMenu

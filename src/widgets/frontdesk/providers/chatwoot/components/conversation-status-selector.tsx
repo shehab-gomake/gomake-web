@@ -7,13 +7,11 @@
 import React, { useState } from "react";
 import {
   Box,
-  IconButton,
   Menu,
   MenuItem,
   ListItemText,
   Typography,
   CircularProgress,
-  Tooltip,
 } from "@mui/material";
 import {
   CheckCircle as OpenIcon,
@@ -23,6 +21,7 @@ import {
   Check as CheckIcon,
 } from "@mui/icons-material";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { ConversationStatus } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
 
 interface ConversationStatusSelectorProps {
   status: string;
@@ -31,10 +30,10 @@ interface ConversationStatusSelectorProps {
 }
 
 const STATUS_OPTIONS = [
-  { value: "open", label: "Open", icon: OpenIcon },
-  { value: "pending", label: "Pending", icon: PendingIcon },
-  { value: "resolved", label: "Resolved", icon: ResolvedIcon },
-  { value: "snoozed", label: "Snoozed", icon: SnoozeIcon },
+  { value: ConversationStatus.OPEN, label: "Open", icon: OpenIcon },
+  { value: ConversationStatus.PENDING, label: "Pending", icon: PendingIcon },
+  { value: ConversationStatus.RESOLVED, label: "Resolved", icon: ResolvedIcon },
+  { value: ConversationStatus.SNOOZED, label: "Snoozed", icon: SnoozeIcon },
 ];
 
 export const ConversationStatusSelector: React.FC<ConversationStatusSelectorProps> = ({
@@ -66,36 +65,42 @@ export const ConversationStatusSelector: React.FC<ConversationStatusSelectorProp
 
   return (
     <>
-      <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+      <Box
+        onClick={handleClick}
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          gap: 0.75,
+          cursor: updating ? "default" : "pointer",
+          px: 1.25,
+          py: 0.5,
+          borderRadius: "6px",
+          border: `1px solid ${neutralColor(300)}`,
+          backgroundColor: neutralColor(0),
+          transition: "all 0.2s",
+          "&:hover": updating
+            ? {}
+            : {
+                backgroundColor: neutralColor(50),
+                borderColor: neutralColor(400),
+              },
+        }}
+      >
+        {updating ? (
+          <CircularProgress size={16} sx={{ color: neutralColor(600) }} />
+        ) : (
+          <StatusIcon sx={{ fontSize: 16, color: neutralColor(600) }} />
+        )}
         <Typography
-          variant="caption"
           sx={{
-            fontSize: "0.75rem",
+            fontSize: "0.8125rem",
             fontWeight: 500,
-            color: neutralColor(600),
+            color: neutralColor(700),
+            lineHeight: 1,
           }}
         >
-          Status:
+          {currentStatusOption.label}
         </Typography>
-        <Tooltip title={currentStatusOption.label} arrow>
-          <IconButton
-            onClick={handleClick}
-            disabled={updating}
-            size="small"
-            sx={{
-              color: neutralColor(600),
-              "&:hover": {
-                backgroundColor: neutralColor(100),
-              },
-            }}
-          >
-            {updating ? (
-              <CircularProgress size={20} sx={{ color: neutralColor(600) }} />
-            ) : (
-              <StatusIcon sx={{ fontSize: 20 }} />
-            )}
-          </IconButton>
-        </Tooltip>
       </Box>
 
       <Menu

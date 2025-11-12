@@ -7,13 +7,11 @@
 import React, { useState } from "react";
 import {
   Box,
-  IconButton,
   Menu,
   MenuItem,
   ListItemText,
   Typography,
   CircularProgress,
-  Tooltip,
 } from "@mui/material";
 import {
   Flag as FlagIcon,
@@ -22,21 +20,24 @@ import {
 } from "@mui/icons-material";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { ConversationPriorityIcon } from "./conversation-priority-icon";
+import { ConversationPriority } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
+
+type PriorityValue = ConversationPriority.URGENT | ConversationPriority.HIGH | ConversationPriority.MEDIUM | ConversationPriority.LOW | null;
 
 interface ConversationPrioritySelectorProps {
-  priority: "urgent" | "high" | "medium" | "low" | null;
-  onPriorityChange: (priority: "urgent" | "high" | "medium" | "low" | null) => void;
+  priority: PriorityValue;
+  onPriorityChange: (priority: PriorityValue) => void;
   updating?: boolean;
 }
 
 const PRIORITY_OPTIONS: Array<{
-  value: "urgent" | "high" | "medium" | "low" | null;
+  value: PriorityValue;
   label: string;
 }> = [
-  { value: "urgent", label: "Urgent" },
-  { value: "high", label: "High" },
-  { value: "medium", label: "Medium" },
-  { value: "low", label: "Low" },
+  { value: ConversationPriority.URGENT, label: "Urgent" },
+  { value: ConversationPriority.HIGH, label: "High" },
+  { value: ConversationPriority.MEDIUM, label: "Medium" },
+  { value: ConversationPriority.LOW, label: "Low" },
   { value: null, label: "None" },
 ];
 
@@ -59,7 +60,7 @@ export const ConversationPrioritySelector: React.FC<ConversationPrioritySelector
     setAnchorEl(null);
   };
 
-  const handlePrioritySelect = (newPriority: "urgent" | "high" | "medium" | "low" | null) => {
+  const handlePrioritySelect = (newPriority: PriorityValue) => {
     onPriorityChange(newPriority);
     handleClose();
   };
@@ -68,36 +69,44 @@ export const ConversationPrioritySelector: React.FC<ConversationPrioritySelector
 
   return (
     <>
-      <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+      <Box
+        onClick={handleClick}
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          gap: 0.75,
+          cursor: updating ? "default" : "pointer",
+          px: 1.25,
+          py: 0.5,
+          borderRadius: "6px",
+          border: `1px solid ${neutralColor(300)}`,
+          backgroundColor: neutralColor(0),
+          transition: "all 0.2s",
+          "&:hover": updating
+            ? {}
+            : {
+                backgroundColor: neutralColor(50),
+                borderColor: neutralColor(400),
+              },
+        }}
+      >
+        {updating ? (
+          <CircularProgress size={16} sx={{ color: neutralColor(600) }} />
+        ) : priority ? (
+          <ConversationPriorityIcon priority={priority} size={16} />
+        ) : (
+          <FlagIcon sx={{ fontSize: 16, color: neutralColor(400) }} />
+        )}
         <Typography
-          variant="caption"
           sx={{
-            fontSize: "0.75rem",
+            fontSize: "0.8125rem",
             fontWeight: 500,
-            color: neutralColor(600),
+            color: neutralColor(700),
+            lineHeight: 1,
           }}
         >
-          Priority:
+          {currentPriorityOption.label}
         </Typography>
-        <Tooltip title={currentPriorityOption.label} arrow>
-          <IconButton
-            onClick={handleClick}
-            disabled={updating}
-            size="small"
-            sx={{
-              color: neutralColor(600),
-              "&:hover": {
-                backgroundColor: neutralColor(100),
-              },
-            }}
-          >
-            {updating ? (
-              <CircularProgress size={20} sx={{ color: neutralColor(600) }} />
-            ) : (
-              <FlagIcon sx={{ fontSize: 20 }} />
-            )}
-          </IconButton>
-        </Tooltip>
       </Box>
 
       <Menu

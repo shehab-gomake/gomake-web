@@ -18,6 +18,18 @@ export enum ConversationStatus {
 }
 
 /**
+ * Conversation Priority Enum
+ * Priority levels for conversations
+ */
+export enum ConversationPriority {
+  URGENT = "urgent",
+  HIGH = "high",
+  MEDIUM = "medium",
+  LOW = "low",
+  NONE = "none",
+}
+
+/**
  * Conversation Assignee Type Enum
  * Filter by assignee
  */
