@@ -1,6 +1,6 @@
 import React from "react";
 import { EmailComposer } from "@/widgets/frontdesk/providers/email/components/email-composer";
-import { EmailDraft } from "@/widgets/frontdesk/providers/email/types/email.types";
+import { EmailAttachment, EmailDraft } from "@/widgets/frontdesk/providers/email/types/email.types";
 import { useGomakeAxios } from "@/hooks/use-gomake-axios";
 import { useSnackBar } from "@/hooks/use-snack-bar";
 import { sendDocumentToClientApi } from "@/services/api-service/generic-doc/documents-api";
@@ -26,6 +26,7 @@ interface FrontDeskEmailComposerWrapperProps {
         tos: string[];
         subject: string;
         body: string;
+        attachments?: EmailAttachment[];
     } | null;
     documentId: string | number;
     documentType: DOCUMENT_TYPE;
@@ -67,6 +68,14 @@ export const FrontDeskEmailComposerWrapper: React.FC<FrontDeskEmailComposerWrapp
                         contactEmail: draft.to?.map(email => email.email).join(","),
                         emailSubject: draft.subject,
                         emailBody: draft.text || draft.body || draft.message || "",
+                        attachments: draft.attachments?.map((attachment) => ({
+                            id: attachment.id,
+                            filename: attachment.filename,
+                            contentType: attachment.contentType ?? attachment.mimeType,
+                            size: attachment.size,
+                            content: attachment.content ?? attachment.data,
+                            url: attachment.url,
+                        })),
                     },
                 }
             );
@@ -88,7 +97,7 @@ export const FrontDeskEmailComposerWrapper: React.FC<FrontDeskEmailComposerWrapp
             bcc: [],
             subject: emailData.subject || "",
             message: htmlToPlainText(emailData.body || ""),
-            attachments: [],
+            attachments: emailData.attachments,
         }
         : undefined;
 
