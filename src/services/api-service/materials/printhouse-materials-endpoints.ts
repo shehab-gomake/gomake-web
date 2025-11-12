@@ -28,8 +28,8 @@ const ADD_MATERIAL_CATEGORY_ROW_URL =
   "/v1/printhouse-materials/add-printhouse-material-category-row";
 const ADD_PRINTHOUSE_MATERIAL_ROW_URL =
   "/v1/printhouse-materials/add-printhouse-material-row";
-const UPDATE_MATERIAL_CATEGORY_CATEGORY_NAME_URL =
-  "/v1/printhouse-materials/update-print-house-material-category-name";
+const UPDATE_MATERIAL_DISPLAY_NAME_URL =
+  "/v1/printhouse-materials/update-print-house-material-display-name";
 const DUPLICATE_MATERIAL_CATEGORY_URL =
   "/v1/printhouse-materials/duplicate-print-house-material-category";
 
@@ -253,6 +253,7 @@ const updatePrintHouseMaterialCategoryNameApi: ICallAndSetData = async (
   row: {
     materialTypeKey: string;
     categoryKey: string;
+    lang: string;
     displayName: string;
     defaultAttributeValues: {
       attributeName: string;
@@ -262,8 +263,8 @@ const updatePrintHouseMaterialCategoryNameApi: ICallAndSetData = async (
 ) => {
   return await getSetApiData(
     callApi,
-    EHttpMethod.POST,
-    UPDATE_MATERIAL_CATEGORY_CATEGORY_NAME_URL,
+    EHttpMethod.PUT,
+    UPDATE_MATERIAL_DISPLAY_NAME_URL,
     callBack,
     row
   );
