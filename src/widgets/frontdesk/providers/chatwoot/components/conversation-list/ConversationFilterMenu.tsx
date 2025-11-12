@@ -102,9 +102,12 @@ export const ConversationFilterMenu: React.FC<ConversationFilterMenuProps> = Rea
             backgroundColor: neutralColor(100),
             "&:hover": {
               backgroundColor: neutralColor(200),
+              boxShadow: `0 2px 8px ${neutralColor(300)}`,
             },
-            width: 32,
-            height: 32,
+            width: 36,
+            height: 36,
+            transition: "all 0.2s ease-in-out",
+            boxShadow: `0 1px 3px ${neutralColor(200)}`,
           }}
         >
           <FilterListIcon fontSize="small" />

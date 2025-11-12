@@ -145,7 +145,6 @@ export const BaseConversationView: React.FC<BaseConversationViewProps> = ({ empt
           inboxes={inboxes}
           inboxesLoading={inboxesLoading}
           onNextClick={handleNextConversation}
-          onComposeClick={handleComposeClick}
         />
       </Panel>
 
