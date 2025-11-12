@@ -142,7 +142,17 @@ const FileComponent = ({ fileName, fileStatus, filePath, orderItemId, productTyp
   const onClickCopyPath = async () => {
     try {
       // Construct the file path - prefer downloadFilePath, then filePath, then fileName
-      const pathToCopy = downloadFilePath || filePath || fileName;
+      let pathToCopy = downloadFilePath || filePath || fileName;
+      
+      // Prepend localFilePathMapping if it exists
+      if (companyProfile?.localFilePathMapping) {
+        // Ensure proper path joining - remove trailing slash from mapping and leading slash from path if present
+        const mapping = companyProfile.localFilePathMapping.replace(/[/\\]+$/, '');
+        const filePathPart = pathToCopy.replace(/^[/\\]+/, '');
+        // Join with appropriate separator based on the mapping (Windows uses \, Unix uses /)
+        const separator = mapping.includes('\\') ? '\\' : '/';
+        pathToCopy = `${mapping}${separator}${filePathPart}`;
+      }
       
       // Try modern clipboard API first
       if (navigator.clipboard && navigator.clipboard.writeText) {
