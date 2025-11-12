@@ -17,7 +17,7 @@ import 'react-horizontal-scrolling-menu/dist/styles.css';
 import { LeftArrowIcon } from "@/components/icons/left-arrow-icon";
 import { RightArrowIcon } from "@/components/icons/right-arrow-icon";
 import { TemplateVariableButton } from './extensions/template-variable-button';
-import { FontSize } from '@tiptap/extension-text-style/dist/font-size';
+import { FontSize } from './extensions/font-size';
 import { useMessageTemplate } from '@/widgets/settings-mailing/useMessageTemplate';
 import FormatBoldIcon from '@mui/icons-material/FormatBold';
 import FormatItalicIcon from '@mui/icons-material/FormatItalic';
