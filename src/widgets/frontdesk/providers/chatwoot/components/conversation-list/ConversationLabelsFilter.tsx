@@ -54,8 +54,8 @@ export const ConversationLabelsFilter: React.FC<ConversationLabelsFilterProps> =
   // Check if user can manage labels (admin only)
   const canManageLabels = canAccess(SETTINGS_PERMISSIONS.labels);
 
-  // Filter labels to only show those with show_on_sidebar enabled
-  const sidebarLabels = allLabels.filter(label => label.show_on_sidebar === true);
+  // Filter labels to only show those with show_on_sidebar enabled (with safety check)
+  const sidebarLabels = (Array.isArray(allLabels) ? allLabels : []).filter(label => label.show_on_sidebar === true);
 
   // Get currently selected labels from filters (ensure it's always an array)
   const selectedLabels: string[] = Array.isArray(filters.labels)
@@ -116,15 +116,14 @@ export const ConversationLabelsFilter: React.FC<ConversationLabelsFilterProps> =
           }}
           sx={{
             color: neutralColor(600),
-            backgroundColor: neutralColor(100),
             "&:hover": {
-              backgroundColor: neutralColor(200),
-              boxShadow: `0 2px 8px ${neutralColor(300)}`,
+              backgroundColor: neutralColor(100),
+              color: neutralColor(900),
             },
-            width: 36,
-            height: 36,
+            width: 28,
+            height: 28,
+            padding: 0.5,
             transition: "all 0.2s ease-in-out",
-            boxShadow: `0 1px 3px ${neutralColor(200)}`,
           }}
         >
           <Badge
@@ -132,14 +131,14 @@ export const ConversationLabelsFilter: React.FC<ConversationLabelsFilterProps> =
             color="primary"
             sx={{
               '& .MuiBadge-badge': {
-                fontSize: '0.65rem',
-                height: 16,
-                minWidth: 16,
+                fontSize: '0.6rem',
+                height: 14,
+                minWidth: 14,
                 backgroundColor: primaryColor(600),
               },
             }}
           >
-            <LabelIcon fontSize="small" />
+            <LabelIcon sx={{ fontSize: 16 }} />
           </Badge>
         </IconButton>
       </Tooltip>
