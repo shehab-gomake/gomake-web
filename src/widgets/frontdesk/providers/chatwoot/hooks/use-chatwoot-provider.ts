@@ -56,31 +56,45 @@ export const useChatwootProvider = () => {
     return null;
   }, [selectedAccountId, availableAccounts]);
 
-  // Initialize filters from URL if present, otherwise use defaults
-  const initialStatusFilter = useMemo(() => {
-    if (router.currentFilters?.status) {
-      return router.currentFilters.status as ConversationStatus;
+  // Helper to safely parse filter values from URL with validation and defaults
+  const parseStatusFilter = useCallback((): ConversationStatus => {
+    const urlStatus = router.currentFilters?.status as ConversationStatus | undefined;
+    const validStatuses = Object.values(ConversationStatus);
+    if (urlStatus && validStatuses.includes(urlStatus)) {
+      return urlStatus;
     }
     return ConversationStatus.OPEN;
-  }, []); // Only run once on mount
+  }, [router.currentFilters?.status]);
 
-  const initialAssigneeFilter = useMemo(() => {
-    if (router.currentFilters?.assigneeType) {
-      return router.currentFilters.assigneeType as ConversationAssigneeType;
+  const parseAssigneeFilter = useCallback((): ConversationAssigneeType => {
+    const urlAssignee = router.currentFilters?.assigneeType as ConversationAssigneeType | undefined;
+    const validTypes = Object.values(ConversationAssigneeType);
+    if (urlAssignee && validTypes.includes(urlAssignee)) {
+      return urlAssignee;
     }
     return ConversationAssigneeType.ME;
-  }, []); // Only run once on mount
+  }, [router.currentFilters?.assigneeType]);
 
-  // Filter state - initialize from URL or use defaults
-  const [statusFilter, setStatusFilter] = React.useState<ConversationStatus>(initialStatusFilter);
-  const [assigneeFilter, setAssigneeFilter] = React.useState<ConversationAssigneeType>(initialAssigneeFilter);
+  const parseSearchQuery = useCallback((): string => {
+    return router.currentFilters?.search || "";
+  }, [router.currentFilters?.search]);
 
-  // Additional filter state for search, team, and sort
-  const [searchQuery, setSearchQuery] = React.useState<string>(router.currentFilters?.search || "");
-  const [teamId, setTeamId] = React.useState<number | undefined>(
-    router.currentFilters?.teamId ? parseInt(router.currentFilters.teamId, 10) : undefined
-  );
-  const [sortBy, setSortBy] = React.useState<string | undefined>(router.currentFilters?.sortBy);
+  const parseTeamId = useCallback((): number | undefined => {
+    if (!router.currentFilters?.teamId) return undefined;
+    const parsed = parseInt(router.currentFilters.teamId, 10);
+    return isNaN(parsed) ? undefined : parsed;
+  }, [router.currentFilters?.teamId]);
+
+  const parseSortBy = useCallback((): string | undefined => {
+    return router.currentFilters?.sortBy;
+  }, [router.currentFilters?.sortBy]);
+
+  // Read filter values directly from URL (single source of truth)
+  const statusFilter = parseStatusFilter();
+  const assigneeFilter = parseAssigneeFilter();
+  const searchQuery = parseSearchQuery();
+  const teamId = parseTeamId();
+  const sortBy = parseSortBy();
 
   // Debounce timer for filter changes to batch rapid updates
   const filterDebounceTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -352,7 +366,7 @@ export const useChatwootProvider = () => {
   );
 
   // Handle filter changes - support status, assignee_type, search, team, sort, etc.
-  // Also syncs changes to URL for deep linking and browser history
+  // Updates URL only - URL is single source of truth, parsed values will update automatically
   // Uses debouncing to batch rapid filter changes and prevent multiple API calls
   const handleFiltersChange = useCallback(
     (newFilters: Partial<ConversationListParams>, immediate: boolean = false) => {
@@ -361,8 +375,9 @@ export const useChatwootProvider = () => {
         clearTimeout(filterDebounceTimerRef.current);
       }
 
-      // Function to apply filter changes
+      // Function to apply filter changes to URL
       const applyFilters = () => {
+        // Start with current URL values
         let statusToSet = statusFilter;
         let assigneeToSet = assigneeFilter;
         let searchToSet = searchQuery;
@@ -373,43 +388,33 @@ export const useChatwootProvider = () => {
         const isTabSwitch = "assignee_type" in newFilters && Object.keys(newFilters).length <= 3; // assignee_type, page, and maybe status/inbox_id
 
         // Handle status filter - the component sends ConversationStatus.ALL when "All" is selected
-        // Check if status property exists in the newFilters object (could be undefined or ConversationStatus.ALL)
         if ("status" in newFilters) {
-          // Convert ConversationStatus.ALL or undefined to ConversationStatus.ALL for internal state
           statusToSet =
             newFilters.status === ConversationStatus.ALL || newFilters.status === undefined
               ? ConversationStatus.ALL
               : (newFilters.status as ConversationStatus);
-          setStatusFilter(statusToSet);
         }
         if ("assignee_type" in newFilters) {
           assigneeToSet = newFilters.assignee_type;
-          setAssigneeFilter(newFilters.assignee_type);
 
           // On tab switch, clear contextual filters (search, team, sort)
           if (isTabSwitch) {
             searchToSet = "";
-            setSearchQuery("");
             teamToSet = undefined;
-            setTeamId(undefined);
             sortToSet = undefined;
-            setSortBy(undefined);
           }
         }
         if ("q" in newFilters) {
           searchToSet = newFilters.q || "";
-          setSearchQuery(searchToSet);
         }
         if ("team_id" in newFilters) {
           teamToSet = newFilters.team_id;
-          setTeamId(teamToSet);
         }
         if ("sort_by" in newFilters) {
           sortToSet = newFilters.sort_by as string | undefined;
-          setSortBy(sortToSet);
         }
 
-        // Sync to URL (use shallow routing to avoid full page reload)
+        // Build URL filters object (omit defaults to keep URL clean)
         const urlFilters: any = {};
         if (statusToSet !== ConversationStatus.OPEN) {
           urlFilters.status = statusToSet;
@@ -430,6 +435,7 @@ export const useChatwootProvider = () => {
           urlFilters.sortBy = sortToSet;
         }
 
+        // Update URL - this will trigger re-parse of filter values automatically
         router.updateFilters(urlFilters);
       };
 
