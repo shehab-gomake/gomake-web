@@ -1,0 +1,23 @@
+/* HP Client Custom Fonts - Forma DJR UI */
+
+/* Regular weight (400) */
+@font-face {
+  font-family: "Forma DJR UI";
+  src: url("./FormaDJRUI.woff2") format("woff2"),
+    url("./FormaDJRUI.woff") format("woff"),
+    url("./FormaDJRUI.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Italic style */
+@font-face {
+  font-family: "Forma DJR UI";
+  src: url("./FormaDJRUI-Italic.woff2") format("woff2"),
+    url("./FormaDJRUI-Italic.woff") format("woff"),
+    url("./FormaDJRUI-Italic.ttf") format("truetype");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}

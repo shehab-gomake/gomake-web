@@ -90,7 +90,7 @@ const hpClientThemeConfig: ThemeConfig = {
       "--theme-text-inverse": "#ffffff",
 
       // Typography - Font Families
-      "--theme-font-family-base": '"Inter", sans-serif',
+      "--theme-font-family-base": '"Forma DJR UI", sans-serif',
       "--theme-font-family-brand": '"Forma DJR UI", sans-serif', // Brand font for titles/headings
       "--theme-font-family-monospace": '"Courier New", monospace',
 
@@ -118,7 +118,7 @@ const hpClientThemeConfig: ThemeConfig = {
       "--theme-typography-heading-color": "#1A1A1A",
 
       // Typography - Label Styles (form labels, field labels)
-      "--theme-typography-label-font-family": '"Inter", sans-serif',
+      "--theme-typography-label-font-family": '"Forma DJR UI", sans-serif',
       "--theme-typography-label-font-weight": "500",
       "--theme-typography-label-font-size": "14px",
       "--theme-typography-label-line-height": "20px",
@@ -126,7 +126,7 @@ const hpClientThemeConfig: ThemeConfig = {
       "--theme-typography-label-color": "#4a5568",
 
       // Typography - Sub-label Styles (helper text, descriptions)
-      "--theme-typography-sublabel-font-family": '"Inter", sans-serif',
+      "--theme-typography-sublabel-font-family": '"Forma DJR UI", sans-serif',
       "--theme-typography-sublabel-font-weight": "400",
       "--theme-typography-sublabel-font-size": "12px",
       "--theme-typography-sublabel-line-height": "18px",
@@ -134,7 +134,7 @@ const hpClientThemeConfig: ThemeConfig = {
       "--theme-typography-sublabel-color": "#718096",
 
       // Typography - Button Text Styles
-      "--theme-typography-button-font-family": '"Inter", sans-serif',
+      "--theme-typography-button-font-family": '"Forma DJR UI", sans-serif',
       "--theme-typography-button-font-weight": "500",
       "--theme-typography-button-font-size": "16px",
       "--theme-typography-button-line-height": "24px",
@@ -149,7 +149,7 @@ const hpClientThemeConfig: ThemeConfig = {
       "--theme-auto-button-letter-spacing": "0px",
 
       // Typography - Body Text Styles (paragraphs, default text)
-      "--theme-typography-body-font-family": '"Inter", sans-serif',
+      "--theme-typography-body-font-family": '"Forma DJR UI", sans-serif',
       "--theme-typography-body-font-weight": "400",
       "--theme-typography-body-font-size": "16px",
       "--theme-typography-body-line-height": "24px",
