@@ -80,13 +80,7 @@ export const BaseConversationView: React.FC<BaseConversationViewProps> = ({ empt
 
   // Memoize empty state to prevent unnecessary re-renders
   const emptyStateContent = useMemo(
-    () => (
-      <EmptyState
-        icon="inbox"
-        title={emptyState.title}
-        description={emptyState.description}
-      />
-    ),
+    () => <EmptyState icon="inbox" title={emptyState.title} description={emptyState.description} />,
     [emptyState.title, emptyState.description]
   );
 

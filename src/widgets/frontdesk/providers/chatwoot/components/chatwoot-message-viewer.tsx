@@ -302,11 +302,6 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
         onResolve={handleResolve}
         onSnooze={handleSnooze}
         onMarkAsPending={handleMarkAsPending}
-        onArchive={handleArchive}
-        onDelete={handleDelete}
-        onStar={handleStar}
-        onPrint={handlePrint}
-        isStarred={false}
       />
 
       {/* Messages */}
