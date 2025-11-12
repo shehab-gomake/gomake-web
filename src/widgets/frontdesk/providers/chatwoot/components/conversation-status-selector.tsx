@@ -1,7 +1,7 @@
 /**
  * Conversation Status Selector
  *
- * Minimal icon-button status selector for conversation header
+ * Status selector for conversation header with icon-based dropdown menu
  */
 
 import React, { useState } from "react";
@@ -9,15 +9,16 @@ import {
   Box,
   Menu,
   MenuItem,
+  ListItemIcon,
   ListItemText,
   Typography,
   CircularProgress,
 } from "@mui/material";
 import {
-  CheckCircle as OpenIcon,
+  OpenInNew as OpenIcon,
   Pending as PendingIcon,
-  AccessTime as SnoozeIcon,
-  TaskAlt as ResolvedIcon,
+  Snooze as SnoozeIcon,
+  CheckCircle as ResolvedIcon,
   Check as CheckIcon,
 } from "@mui/icons-material";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
@@ -131,23 +132,22 @@ export const ConversationStatusSelector: React.FC<ConversationStatusSelectorProp
             <MenuItem
               key={option.value}
               onClick={() => handleStatusSelect(option.value)}
+              disabled={isSelected}
               sx={{
+                fontSize: 13,
                 py: 1,
                 px: 2,
-                display: "flex",
-                alignItems: "center",
-                gap: 1.5,
               }}
             >
-              <OptionIcon sx={{ fontSize: 18, color: neutralColor(600) }} />
+              <ListItemIcon sx={{ minWidth: 32 }}>
+                <OptionIcon sx={{ fontSize: 18 }} />
+              </ListItemIcon>
               <ListItemText
                 primary={option.label}
                 primaryTypographyProps={{
-                  fontSize: "0.875rem",
-                  fontWeight: isSelected ? 600 : 400,
+                  fontSize: "0.8125rem",
                 }}
               />
-              {isSelected && <CheckIcon sx={{ fontSize: 16, color: primaryColor(600), ml: "auto" }} />}
             </MenuItem>
           );
         })}
