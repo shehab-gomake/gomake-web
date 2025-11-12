@@ -7,3 +7,4 @@ export { ConversationFilterMenu } from "./ConversationFilterMenu";
 export { ConversationSortMenu } from "./ConversationSortMenu";
 export { ConversationSearchBar } from "./ConversationSearchBar";
 export { ConversationTabs } from "./ConversationTabs";
+export { ConversationLabelsFilter } from "./ConversationLabelsFilter";

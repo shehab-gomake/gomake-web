@@ -40,20 +40,50 @@ This directory contains files specifically designed to accelerate AI-powered dev
    - Key documentation
    - Quick reference
 
+### 📐 Architecture Rules (`rules/` directory)
+7. **`rules/frontdesk-architecture.mdc`** - Core FrontDesk architecture patterns
+   - Three-layer architecture
+   - Provider pattern
+   - State management rules
+   - Service layer rules
+
+8. **`rules/frontdesk-chatwoot-provider.mdc`** - Chatwoot-specific development rules
+   - Account-scoped architecture
+   - Service layer usage
+   - Component patterns
+   - Performance optimization
+
+9. **`rules/chatwoot-skills-integration.mdc`** - How to use Chatwoot skills
+   - Adaptation workflow
+   - Vue → React translation
+   - Pattern mappings
+   - Common mistakes to avoid
+
 ## 🎯 How AI Uses These Files
 
 ### When Starting a Task
 1. AI reads `.cursorrules` → Gets workspace context
-2. AI checks `ai-dev-acceleration.md` → Gets patterns
-3. AI uses `api-reference.md` → Finds API methods
-4. AI uses `quick-decision-tree.md` → Makes decisions
-5. AI copies from `code-snippets.ts` → Gets working code
+2. AI checks `rules/` directory → Gets architectural patterns
+3. AI checks `ai-dev-acceleration.md` → Gets quick patterns
+4. AI uses `api-reference.md` → Finds API methods
+5. AI uses `quick-decision-tree.md` → Makes decisions
+6. AI copies from `code-snippets.ts` → Gets working code
 
 ### When Creating New Features
-1. AI uses `feature-template.tsx` → Gets scaffolding
-2. AI references `code-snippets.ts` → Gets patterns
-3. AI checks `api-reference.md` → Verifies API usage
-4. AI follows `quick-decision-tree.md` → Makes choices
+1. AI checks `rules/frontdesk-architecture.mdc` → Understands core patterns
+2. AI checks `rules/frontdesk-chatwoot-provider.mdc` → Gets Chatwoot-specific rules
+3. AI checks `.claude/skills/chatwoot/` → References Chatwoot implementation
+4. AI uses `feature-template.tsx` → Gets scaffolding
+5. AI references `code-snippets.ts` → Gets patterns
+6. AI checks `api-reference.md` → Verifies API usage
+7. AI follows `quick-decision-tree.md` → Makes choices
+
+### When Adapting Chatwoot Patterns
+1. AI reads `rules/chatwoot-skills-integration.mdc` → Learns adaptation workflow
+2. AI reads relevant `.claude/skills/chatwoot/` file → Understands Chatwoot pattern
+3. AI creates adaptation blueprint → Maps Vue/Vuex to React/Recoil
+4. AI implements following FrontDesk conventions → Uses our patterns
+5. AI verifies against Chatwoot demo → Checks `/Users/omarsabbah/Desktop/messaging/chatwoot/`
 
 ## 📋 Usage Workflow
 
@@ -93,17 +123,39 @@ This directory contains files specifically designed to accelerate AI-powered dev
 
 ## 📁 Related Documentation
 
-- `../CLAUDE.md` - Complete development guidelines
+### Root Documentation
+- `../CLAUDE.md` - Complete development guidelines (mandatory read)
+- `../GEMINI.md` - Gemini-specific development guidelines
 - `../docs/frontdesk/FRONTDESK_CHATWOOT_ARCHITECTURE.md` - Architecture guide
 - `../docs/frontdesk/README.md` - Documentation index
 
+### Skills Documentation
+- `../.claude/skills/chatwoot/README.md` - Chatwoot skills overview
+- `../.claude/skills/chatwoot/core-architecture.md` - Chatwoot frontend structure
+- `../.claude/skills/chatwoot/api-patterns.md` - API client patterns
+- `../.claude/skills/chatwoot/flows/` - Feature implementation flows
+
+### External References
+- **Chatwoot Demo**: `/Users/omarsabbah/Desktop/messaging/chatwoot/app/javascript/dashboard/`
+- **Proxy Service**: `/Users/omarsabbah/Desktop/gomake-services/messaging-hub-v2/CLAUDE.md`
+
 ## 🚀 Quick Access
 
+### For Quick Patterns
 - **Patterns**: `ai-dev-acceleration.md`
 - **API Docs**: `api-reference.md`
 - **Decisions**: `quick-decision-tree.md`
 - **Code**: `code-snippets.ts`
 - **Template**: `feature-template.tsx`
+
+### For Architecture
+- **Core Architecture**: `rules/frontdesk-architecture.mdc`
+- **Chatwoot Rules**: `rules/frontdesk-chatwoot-provider.mdc`
+- **Skills Integration**: `rules/chatwoot-skills-integration.mdc`
+
+### For Chatwoot Reference
+- **Skills Directory**: `../.claude/skills/chatwoot/`
+- **Chatwoot Demo**: `/Users/omarsabbah/Desktop/messaging/chatwoot/app/javascript/dashboard/`
 
 ---
 
