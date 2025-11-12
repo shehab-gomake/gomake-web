@@ -43,8 +43,8 @@ export const ConversationLabelsManagement: React.FC<ConversationLabelsManagement
   conversationId,
   onLabelsChanged,
 }) => {
-  // Fetch account labels
-  const { labels: accountLabels, loading: labelsLoading, createLabel } = useChatwootLabels(accountId, true);
+  // Fetch account labels (only when accountId is available)
+  const { labels: accountLabels = [], loading: labelsLoading, createLabel } = useChatwootLabels(accountId ?? undefined, !!accountId);
 
   const [inputValue, setInputValue] = useState('');
   const [selectedValue, setSelectedValue] = useState<ChatwootLabel | null>(null);
@@ -54,11 +54,13 @@ export const ConversationLabelsManagement: React.FC<ConversationLabelsManagement
 
   // Get labels that are not already added to the conversation
   const availableLabels = useMemo(() => {
+    if (!Array.isArray(accountLabels)) return [];
     return accountLabels.filter(label => !labels.includes(label.title));
   }, [accountLabels, labels]);
 
   // Get label objects for current conversation labels
   const conversationLabelObjects = useMemo(() => {
+    if (!Array.isArray(accountLabels)) return labels.map(title => ({ title, color: '#6B7280' }));
     return labels.map(labelTitle => {
       const found = accountLabels.find(al => al.title === labelTitle);
       return found || { title: labelTitle, color: '#6B7280' };
@@ -272,6 +274,9 @@ export const ConversationLabelsManagement: React.FC<ConversationLabelsManagement
             loading={labelsLoading}
             freeSolo
             filterOptions={(options, params) => {
+              // Safety check
+              if (!Array.isArray(options)) return [];
+
               const filtered = options.filter(option =>
                 option.title.toLowerCase().includes(params.inputValue.toLowerCase())
               );
