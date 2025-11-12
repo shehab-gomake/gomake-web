@@ -127,11 +127,15 @@ export const useChatwootProvider = () => {
   // Conversation loader: Sync conversationId from URL to actual conversation object
   // This loads the full conversation object when URL contains a conversationId
   // Supports deep linking by fetching conversation from API if not in current list
+  // Optimized to use list data when available for instant transitions
   useEffect(() => {
     const conversationIdFromUrl = router.currentRoute?.conversationId;
 
     if (!conversationIdFromUrl) {
       // No conversation in URL - clear selection (router already handles this)
+      if (selectedConversation) {
+        setSelectedConversation(null);
+      }
       return;
     }
 
@@ -140,13 +144,15 @@ export const useChatwootProvider = () => {
       return;
     }
 
-    // Try to find conversation in the current list first (fast path)
+    // Try to find conversation in the current list first (fast path - instant transition)
     const convInList = conversations.conversations.find(
       (c) => c.id.toString() === conversationIdFromUrl
     );
 
     if (convInList) {
+      // Use conversation from list immediately for smooth transition
       setSelectedConversation(convInList);
+      logger.debug(`Using conversation ${conversationIdFromUrl} from list (instant)`);
       return;
     }
 
