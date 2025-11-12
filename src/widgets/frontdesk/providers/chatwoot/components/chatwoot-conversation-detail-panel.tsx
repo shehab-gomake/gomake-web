@@ -301,6 +301,8 @@ export const ChatwootConversationDetailPanel: React.FC<ChatwootConversationDetai
         contactId={conversation.meta?.sender?.id}
         accountId={accountId}
         router={router}
+        currentConversationId={conversation.id}
+        inboxes={inboxes}
       />
 
       {/* Assigned Agent Section */}

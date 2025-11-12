@@ -175,6 +175,7 @@ export const ChatwootReplyComposer: React.FC<ChatwootReplyComposerProps> = ({
           placeholder={activeTab === "private" ? "Write a private note..." : "Type your reply..."}
           disabled={isSending}
           minHeight={150}
+          isPrivateNote={activeTab === "private"}
         />
       </Box>
 
