@@ -17,7 +17,7 @@ import 'react-horizontal-scrolling-menu/dist/styles.css';
 import { LeftArrowIcon } from "@/components/icons/left-arrow-icon";
 import { RightArrowIcon } from "@/components/icons/right-arrow-icon";
 import { TemplateVariableButton } from './extensions/template-variable-button';
-import { FontSize } from './extensions/font-size';
+import { FontSize } from '@tiptap/extension-text-style/dist/font-size';
 import { useMessageTemplate } from '@/widgets/settings-mailing/useMessageTemplate';
 import FormatBoldIcon from '@mui/icons-material/FormatBold';
 import FormatItalicIcon from '@mui/icons-material/FormatItalic';
@@ -34,7 +34,6 @@ import FormatColorFillIcon from '@mui/icons-material/FormatColorFill';
 import UndoIcon from '@mui/icons-material/Undo';
 import RedoIcon from '@mui/icons-material/Redo';
 import { FONT_FAMILY } from '@/utils/font-family';
-import { useAdvancedEmailEditorStyles } from './advanced-email-editor-styles';
 
 interface IProps {
     value: string;
@@ -43,7 +42,6 @@ interface IProps {
 
 const AdvancedEmailEditor = ({ value, setValue }: IProps) => {
     const { templateVariables } = useMessageTemplate();
-    const { classes } = useAdvancedEmailEditorStyles();
     const { t } = useTranslation();
     const [selectedColor, setSelectedColor] = React.useState('#000000');
     const [selectedBgColor, setSelectedBgColor] = React.useState('#ffff00');
@@ -542,7 +540,7 @@ const AdvancedEmailEditor = ({ value, setValue }: IProps) => {
                     padding: '12px',
                 }}
             >
-                <EditorContent editor={editor} className={classes.editorContent as string} />
+                <EditorContent editor={editor} className="tiptap-editor" />
             </div>
 
             {/* Template Variables */}

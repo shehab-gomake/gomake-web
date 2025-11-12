@@ -4,6 +4,7 @@
  * Common operations and helpers for working with Chatwoot conversations.
  */
 
+import { format } from "date-fns";
 import { ChatwootConversation, ConversationStatus } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
 
 /**
@@ -139,7 +140,8 @@ export function formatRelativeTime(timestamp?: number): string {
   if (diffSeconds < 86400) return `${Math.floor(diffSeconds / 3600)}h ago`;
   if (diffSeconds < 604800) return `${Math.floor(diffSeconds / 86400)}d ago`;
 
-  return new Date(timestamp * 1000).toLocaleDateString();
+  // Format as day/month/year
+  return format(new Date(timestamp * 1000), "d/M/yyyy");
 }
 
 /**

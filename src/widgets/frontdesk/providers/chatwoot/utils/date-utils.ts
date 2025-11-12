@@ -3,13 +3,22 @@
  * Utility functions for date formatting and time calculations
  */
 
-/**
- * Format a date string to a relative time string (e.g., "5m ago", "2h ago")
- */
-export function formatTimeAgo(dateString?: string): string {
-  if (!dateString) return "";
+import { format } from "date-fns";
+import { chatwootTimestampToDate } from "./conversation-helpers";
 
-  const date = new Date(dateString);
+/**
+ * Format a date string or Unix timestamp to a relative time string (e.g., "5m ago", "2h ago")
+ *
+ * Handles both ISO date strings and Unix timestamps (numbers in seconds).
+ * Uses the shared chatwootTimestampToDate utility for consistent conversion.
+ */
+export function formatTimeAgo(dateString?: string | number): string {
+  const date = chatwootTimestampToDate(dateString);
+
+  if (!date) {
+    return "";
+  }
+
   const now = new Date();
   const diffMs = now.getTime() - date.getTime();
   const diffMins = Math.floor(diffMs / 60000);
@@ -21,16 +30,25 @@ export function formatTimeAgo(dateString?: string): string {
   if (diffHours < 24) return `${diffHours}h`;
   if (diffDays < 7) return `${diffDays}d`;
 
-  return date.toLocaleDateString();
+  // Format as day/month/year
+  return format(date, "d/M/yyyy");
 }
 
 /**
- * Format a full date string
+ * Format a full date string or Unix timestamp
+ *
+ * Handles both ISO date strings and Unix timestamps (numbers in seconds).
+ * Uses the shared chatwootTimestampToDate utility for consistent conversion.
  */
-export function formatFullDate(dateString?: string): string {
-  if (!dateString) return "";
-  const date = new Date(dateString);
-  return date.toLocaleString();
+export function formatFullDate(dateString?: string | number): string {
+  const date = chatwootTimestampToDate(dateString);
+
+  if (!date) {
+    return "";
+  }
+
+  // Format as day/month/year with time
+  return format(date, "d/M/yyyy HH:mm");
 }
 
 /**

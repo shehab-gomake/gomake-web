@@ -3,9 +3,11 @@
  *
  * Displays and manages Chatwoot inboxes (channels) including
  * Email, WhatsApp, SMS, API, Web, and Twilio channels.
+ *
+ * RBAC: Only administrators can access this page.
  */
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Box, Typography, Alert, IconButton, Button, List, ListItem, ListItemAvatar, ListItemText, Avatar, Divider } from "@mui/material";
 import InboxIcon from "@mui/icons-material/Inbox";
 import RefreshIcon from "@mui/icons-material/Refresh";
@@ -15,6 +17,9 @@ import PhoneIcon from "@mui/icons-material/Phone";
 import WebIcon from "@mui/icons-material/Web";
 import ApiIcon from "@mui/icons-material/Api";
 import { BaseSettingsSubpage, SettingsSection } from "../../components/settings";
+import { useChatwootProvider } from "../../hooks/use-chatwoot-provider";
+import { useChatwootPermissions } from "../../hooks/use-chatwoot-permissions";
+import { SETTINGS_PERMISSIONS } from "../../constants/permissions.constants";
 import { useChatwootInboxes } from "../../hooks/use-chatwoot-inboxes";
 import { AddChannelModal } from "../../components/add-channel-modal";
 import { InboxDetailSettings } from "./inbox-detail-settings";
@@ -53,9 +58,22 @@ const getChannelTypeLabel = (channelType: string) => {
 };
 
 export const InboxesSubpage: React.FC = () => {
+  const { router: chatwootRouter } = useChatwootProvider();
   const { inboxes, loading, error, refresh } = useChatwootInboxes();
   const [showAddChannelModal, setShowAddChannelModal] = useState(false);
   const [selectedInbox, setSelectedInbox] = useState<ChatwootInbox | null>(null);
+
+  // Defense-in-depth: Check if user has permission to access Inboxes settings
+  const { canAccess } = useChatwootPermissions();
+  const canAccessInboxes = canAccess(SETTINGS_PERMISSIONS.inboxes);
+
+  // Redirect unauthorized users to My Inbox
+  useEffect(() => {
+    if (!canAccessInboxes) {
+      console.warn("[InboxesSubpage] Unauthorized access attempt - redirecting to My Inbox");
+      chatwootRouter.navigateToMyInbox();
+    }
+  }, [canAccessInboxes, chatwootRouter]);
 
   // If an inbox is selected, show detail view
   if (selectedInbox) {

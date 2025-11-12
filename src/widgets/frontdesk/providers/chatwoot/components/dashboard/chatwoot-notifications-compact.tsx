@@ -19,6 +19,7 @@ import {
 import AddCommentIcon from '@mui/icons-material/AddComment';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import { format } from 'date-fns';
 import { useGomakeTheme } from '@/hooks/use-gomake-thme';
 import { useChatwootNotifications } from '../../hooks/use-chatwoot-notifications';
 import { useChatwootProvider } from '../../hooks/use-chatwoot-provider';
@@ -114,7 +115,8 @@ export const ChatwootNotificationsCompact: React.FC = () => {
     if (diffMins < 60) return `${diffMins}m`;
     if (diffHours < 24) return `${diffHours}h`;
     if (diffDays < 7) return `${diffDays}d`;
-    return date.toLocaleDateString();
+    // Format as day/month/year
+    return format(date, 'd/M/yyyy');
   };
 
   const getMessagePreview = (notification: ChatwootNotification) => {

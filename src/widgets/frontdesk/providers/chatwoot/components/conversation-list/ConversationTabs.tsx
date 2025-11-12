@@ -1,14 +1,21 @@
 /**
  * ConversationTabs Component
  * Mine/Unassigned/All tabs with counts
+ *
+ * RBAC: Tabs are filtered based on user permissions
+ * - "Mine" tab: visible to all users
+ * - "Unassigned" tab: visible to admins and users with conversation_unassigned_manage permission
+ * - "All" tab: visible to admins and users with conversation_participating_manage permission
  */
 
-import React from "react";
+import React, { useMemo } from "react";
 import { Box, Tabs, Tab, Stack, Typography, Chip } from "@mui/material";
 import {
   ConversationAssigneeType,
   ConversationListParams,
 } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
+import { useChatwootPermissions } from "../../hooks/use-chatwoot-permissions";
+import { ASSIGNEE_TAB_PERMISSIONS } from "../../constants/permissions.constants";
 
 interface ConversationTabsProps {
   filters: Partial<ConversationListParams>;
@@ -29,6 +36,16 @@ export const ConversationTabs: React.FC<ConversationTabsProps> = React.memo(({
   primaryColor,
   neutralColor,
 }) => {
+  // Get permission checking functions
+  const { canAccess } = useChatwootPermissions();
+
+  // Check which tabs are visible based on permissions
+  const visibleTabs = useMemo(() => ({
+    mine: canAccess(ASSIGNEE_TAB_PERMISSIONS.me), // Always true - all users can see Mine
+    unassigned: canAccess(ASSIGNEE_TAB_PERMISSIONS.unassigned), // Admin or conversation_unassigned_manage
+    all: canAccess(ASSIGNEE_TAB_PERMISSIONS.all), // Admin or conversation_participating_manage
+  }), [canAccess]);
+
   const getCurrentTab = (): string => {
     if (filters.assignee_type === ConversationAssigneeType.ME) return "mine";
     if (filters.assignee_type === ConversationAssigneeType.UNASSIGNED) return "unassigned";
@@ -94,85 +111,99 @@ export const ConversationTabs: React.FC<ConversationTabsProps> = React.memo(({
           },
         }}
       >
-        <Tab
-          label={
-            <Stack direction="row" alignItems="center" spacing={0.75}>
-              <Typography sx={{ fontSize: "0.875rem", color: "inherit" }}>Mine</Typography>
-              <Chip
-                label={counts.mine}
-                size="small"
-                sx={{
-                  height: 18,
-                  minWidth: 18,
-                  fontSize: "0.688rem",
-                  fontWeight: 500,
-                  backgroundColor: currentTab === "mine" ? primaryColor(100) : neutralColor(100),
-                  color: currentTab === "mine" ? primaryColor(700) : neutralColor(700),
-                  "& .MuiChip-label": {
-                    px: 0.75,
-                    py: 0,
-                  },
-                }}
-              />
-            </Stack>
-          }
-          value="mine"
-        />
-        <Tab
-          label={
-            <Stack direction="row" alignItems="center" spacing={0.75}>
-              <Typography sx={{ fontSize: "0.875rem", color: "inherit" }}>Unassigned</Typography>
-              <Chip
-                label={counts.unassigned}
-                size="small"
-                sx={{
-                  height: 18,
-                  minWidth: 18,
-                  fontSize: "0.688rem",
-                  fontWeight: 500,
-                  backgroundColor: currentTab === "unassigned" ? primaryColor(100) : neutralColor(100),
-                  color: currentTab === "unassigned" ? primaryColor(700) : neutralColor(700),
-                  "& .MuiChip-label": {
-                    px: 0.75,
-                    py: 0,
-                  },
-                }}
-              />
-            </Stack>
-          }
-          value="unassigned"
-        />
-        <Tab
-          label={
-            <Stack direction="row" alignItems="center" spacing={0.75}>
-              <Typography sx={{ fontSize: "0.875rem", color: "inherit" }}>All</Typography>
-              <Chip
-                label={counts.all}
-                size="small"
-                sx={{
-                  height: 18,
-                  minWidth: 18,
-                  fontSize: "0.688rem",
-                  fontWeight: 500,
-                  backgroundColor: currentTab === "all" ? primaryColor(100) : neutralColor(100),
-                  color: currentTab === "all" ? primaryColor(700) : neutralColor(700),
-                  "& .MuiChip-label": {
-                    px: 0.75,
-                    py: 0,
-                  },
-                }}
-              />
-            </Stack>
-          }
-          value="all"
-        />
+        {/* Mine tab - visible to all users */}
+        {visibleTabs.mine && (
+          <Tab
+            label={
+              <Stack direction="row" alignItems="center" spacing={0.75}>
+                <Typography sx={{ fontSize: "0.875rem", color: "inherit" }}>Mine</Typography>
+                <Chip
+                  label={counts.mine}
+                  size="small"
+                  sx={{
+                    height: 18,
+                    minWidth: 18,
+                    fontSize: "0.688rem",
+                    fontWeight: 500,
+                    backgroundColor: currentTab === "mine" ? primaryColor(100) : neutralColor(100),
+                    color: currentTab === "mine" ? primaryColor(700) : neutralColor(700),
+                    "& .MuiChip-label": {
+                      px: 0.75,
+                      py: 0,
+                    },
+                  }}
+                />
+              </Stack>
+            }
+            value="mine"
+          />
+        )}
+
+        {/* Unassigned tab - visible to admins and users with conversation_unassigned_manage */}
+        {visibleTabs.unassigned && (
+          <Tab
+            label={
+              <Stack direction="row" alignItems="center" spacing={0.75}>
+                <Typography sx={{ fontSize: "0.875rem", color: "inherit" }}>Unassigned</Typography>
+                <Chip
+                  label={counts.unassigned}
+                  size="small"
+                  sx={{
+                    height: 18,
+                    minWidth: 18,
+                    fontSize: "0.688rem",
+                    fontWeight: 500,
+                    backgroundColor: currentTab === "unassigned" ? primaryColor(100) : neutralColor(100),
+                    color: currentTab === "unassigned" ? primaryColor(700) : neutralColor(700),
+                    "& .MuiChip-label": {
+                      px: 0.75,
+                      py: 0,
+                    },
+                  }}
+                />
+              </Stack>
+            }
+            value="unassigned"
+          />
+        )}
+
+        {/* All tab - visible to admins and users with conversation_participating_manage */}
+        {visibleTabs.all && (
+          <Tab
+            label={
+              <Stack direction="row" alignItems="center" spacing={0.75}>
+                <Typography sx={{ fontSize: "0.875rem", color: "inherit" }}>All</Typography>
+                <Chip
+                  label={counts.all}
+                  size="small"
+                  sx={{
+                    height: 18,
+                    minWidth: 18,
+                    fontSize: "0.688rem",
+                    fontWeight: 500,
+                    backgroundColor: currentTab === "all" ? primaryColor(100) : neutralColor(100),
+                    color: currentTab === "all" ? primaryColor(700) : neutralColor(700),
+                    "& .MuiChip-label": {
+                      px: 0.75,
+                      py: 0,
+                    },
+                  }}
+                />
+              </Stack>
+            }
+            value="all"
+          />
+        )}
       </Tabs>
     </Box>
   );
 }, (prevProps, nextProps) => {
   // Custom comparison: only re-render if filters, counts, or callbacks changed
+  // IMPORTANT: Check all relevant filter properties to ensure re-renders when needed
   return (
     prevProps.filters.assignee_type === nextProps.filters.assignee_type &&
+    prevProps.filters.status === nextProps.filters.status && // Check status filter
+    prevProps.filters.inbox_id === nextProps.filters.inbox_id && // Check inbox filter
     prevProps.counts.mine === nextProps.counts.mine &&
     prevProps.counts.unassigned === nextProps.counts.unassigned &&
     prevProps.counts.all === nextProps.counts.all &&
