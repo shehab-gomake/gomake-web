@@ -34,27 +34,46 @@ export const useChatwootMessages = ({ conversation, accountId }: UseChatwootMess
   // Fetch deduplication: Prevent concurrent duplicate requests
   const isFetchingRef = useRef(false);
   const isLoadingMoreRef = useRef(false);
+  
+  // Track previous conversation ID to preserve messages during transition
+  const previousConversationIdRef = useRef<number | null>(null);
+  const previousMessagesRef = useRef<ChatwootMessage[]>([]);
 
   /**
    * Load initial batch of messages for a conversation
    */
   const loadMessages = useCallback(async () => {
     if (!conversation?.id || !accountId) {
-      setMessages([]);
-      setPagination({
-        hasMoreOlder: false,
-        hasMoreNewer: false,
-        oldestMessageId: null,
-        newestMessageId: null,
-        isLoadingMore: false,
-      });
+      // Clear messages only if conversation is actually null (not just switching)
+      if (!conversation) {
+        setMessages([]);
+        previousMessagesRef.current = [];
+        previousConversationIdRef.current = null;
+        setPagination({
+          hasMoreOlder: false,
+          hasMoreNewer: false,
+          oldestMessageId: null,
+          newestMessageId: null,
+          isLoadingMore: false,
+        });
+      }
       return;
     }
+
+    // Check if this is a conversation switch
+    const isConversationSwitch = previousConversationIdRef.current !== null && 
+                                  previousConversationIdRef.current !== conversation.id;
 
     // Prevent duplicate concurrent requests
     if (isFetchingRef.current) {
       logger.debug("Load messages already in progress, skipping duplicate call");
       return;
+    }
+
+    // Preserve previous messages during transition for smooth UX
+    if (isConversationSwitch && previousMessagesRef.current.length > 0) {
+      // Keep showing previous messages until new ones load
+      setMessages(previousMessagesRef.current);
     }
 
     isFetchingRef.current = true;
@@ -157,7 +176,10 @@ export const useChatwootMessages = ({ conversation, accountId }: UseChatwootMess
         }
       }
 
+      // Update messages and track for next transition
       setMessages(sortedMessages);
+      previousMessagesRef.current = sortedMessages;
+      previousConversationIdRef.current = conversation.id;
 
       // Update pagination cursors
       if (sortedMessages.length > 0) {
@@ -182,7 +204,10 @@ export const useChatwootMessages = ({ conversation, accountId }: UseChatwootMess
     } catch (err: any) {
       logger.error("Failed to load messages", err);
       setError(err?.message || "Failed to load messages");
-      setMessages([]);
+      // Only clear messages on error if we don't have previous messages to show
+      if (previousMessagesRef.current.length === 0) {
+        setMessages([]);
+      }
     } finally {
       setLoading(false);
       isFetchingRef.current = false;

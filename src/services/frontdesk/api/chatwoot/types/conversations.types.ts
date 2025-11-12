@@ -180,7 +180,10 @@ export interface ChatwootMessage {
   message_type?: number;
   created_at?: number;
   updated_at?: number;
+  /** Private flag - API may return as _private or private */
   _private?: boolean;
+  /** Private flag - API may return as _private or private */
+  private?: boolean;
   status?: string;
   source_id?: string;
   content_type?: string;

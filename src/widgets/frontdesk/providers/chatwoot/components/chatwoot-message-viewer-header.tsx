@@ -1,15 +1,8 @@
 import React, { useState } from "react";
-import { Box, Stack, Typography, Menu, MenuItem, ListItemIcon, ListItemText, IconButton, Tooltip, Button } from "@mui/material";
+import { Box, Stack, Typography, Menu, MenuItem, ListItemIcon, ListItemText, Button } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import {
   ArrowBack as BackIcon,
-  Star as StarIcon,
-  StarBorder as StarBorderIcon,
-  Print as PrintIcon,
-  Archive as ArchiveIcon,
-  Delete as DeleteIcon,
-  Reply as ReplyIcon,
-  MoreVert as MoreIcon,
   ArrowDropDown as ArrowDropDownIcon,
   AccessTime as SnoozeIcon,
   Pending as PendingIcon,
@@ -25,39 +18,25 @@ interface ChatwootMessageViewerHeaderProps {
   conversation: ChatwootConversation | null;
   accountId?: number;
   onBack: () => void;
-  onReply?: () => void;
   onReopen?: () => void;
   onResolve?: () => void;
   onSnooze?: () => void;
   onMarkAsPending?: () => void;
-  onArchive?: () => void;
-  onDelete?: () => void;
-  onStar?: () => void;
-  onPrint?: () => void;
-  isStarred?: boolean;
 }
 
 export const ChatwootMessageViewerHeader: React.FC<ChatwootMessageViewerHeaderProps> = ({
   conversation,
   accountId,
   onBack,
-  onReply,
   onReopen,
   onResolve,
   onSnooze,
   onMarkAsPending,
-  onArchive,
-  onDelete,
-  onStar,
-  onPrint,
-  isStarred = false,
 }) => {
   const theme = useTheme();
   const { primaryColor, neutralColor } = useGomakeTheme();
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [reopenMenuAnchor, setReopenMenuAnchor] = useState<null | HTMLElement>(null);
   const [resolveMenuAnchor, setResolveMenuAnchor] = useState<null | HTMLElement>(null);
-  const open = Boolean(anchorEl);
   const reopenMenuOpen = Boolean(reopenMenuAnchor);
   const resolveMenuOpen = Boolean(resolveMenuAnchor);
   const profile = useRecoilValue(chatwootProfileAtom);
@@ -88,25 +67,12 @@ export const ChatwootMessageViewerHeader: React.FC<ChatwootMessageViewerHeaderPr
       )
     : "";
 
-  const handleMoreActionsClick = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleMoreActionsClose = () => {
-    setAnchorEl(null);
-  };
-
   const handleReopenMenuClick = (event: React.MouseEvent<HTMLElement>) => {
     setReopenMenuAnchor(event.currentTarget);
   };
 
   const handleReopenMenuClose = () => {
     setReopenMenuAnchor(null);
-  };
-
-  const handleMenuAction = (action: () => void) => {
-    action();
-    handleMoreActionsClose();
   };
 
   const handleReopenClick = () => {
@@ -275,80 +241,10 @@ export const ChatwootMessageViewerHeader: React.FC<ChatwootMessageViewerHeaderPr
                 </Menu>
               </>
             )}
-
-            {/* More Actions */}
-            <Tooltip title="More actions">
-              <IconButton
-                size="small"
-                onClick={handleMoreActionsClick}
-                sx={{
-                  color: neutralColor(600),
-                  "&:hover": {
-                    backgroundColor: neutralColor(100),
-                    color: primaryColor(600),
-                  },
-                }}
-              >
-                <MoreIcon fontSize="small" />
-              </IconButton>
-            </Tooltip>
           </Stack>
         </Stack>
 
       </Stack>
-
-      {/* More Actions Dropdown Menu */}
-      <Menu anchorEl={anchorEl} open={open} onClose={handleMoreActionsClose}>
-        {onStar && (
-          <MenuItem onClick={() => handleMenuAction(onStar)}>
-            <ListItemIcon>
-              {isStarred ? <StarIcon fontSize="small" /> : <StarBorderIcon fontSize="small" />}
-            </ListItemIcon>
-            <ListItemText>{isStarred ? "Unstar" : "Star"}</ListItemText>
-          </MenuItem>
-        )}
-        {onReply && (
-          <MenuItem onClick={() => handleMenuAction(onReply)}>
-            <ListItemIcon>
-              <ReplyIcon fontSize="small" />
-            </ListItemIcon>
-            <ListItemText>Reply</ListItemText>
-          </MenuItem>
-        )}
-        {onArchive && (
-          <MenuItem onClick={() => handleMenuAction(onArchive)}>
-            <ListItemIcon>
-              <ArchiveIcon fontSize="small" />
-            </ListItemIcon>
-            <ListItemText>Archive</ListItemText>
-          </MenuItem>
-        )}
-        {onPrint && (
-          <MenuItem onClick={() => handleMenuAction(onPrint)}>
-            <ListItemIcon>
-              <PrintIcon fontSize="small" />
-            </ListItemIcon>
-            <ListItemText>Print</ListItemText>
-          </MenuItem>
-        )}
-        {onDelete && (
-          <MenuItem
-            onClick={() => handleMenuAction(onDelete)}
-            sx={{
-              color: "error.main",
-              "&:hover": {
-                backgroundColor: "error.light",
-                color: "error.dark",
-              },
-            }}
-          >
-            <ListItemIcon>
-              <DeleteIcon fontSize="small" sx={{ color: "error.main" }} />
-            </ListItemIcon>
-            <ListItemText>Delete</ListItemText>
-          </MenuItem>
-        )}
-      </Menu>
     </Box>
   );
 };

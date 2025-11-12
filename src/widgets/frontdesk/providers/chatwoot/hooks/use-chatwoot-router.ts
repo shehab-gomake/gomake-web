@@ -6,7 +6,7 @@
  */
 
 import { useRouter } from "next/router";
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import { useRecoilState } from "recoil";
 import { createLogger } from "@/services/frontdesk/utils/logger";
 
@@ -50,6 +50,12 @@ export const useChatwootRouter = () => {
 
   // Current settings subpage
   const currentSettingsSubpage = currentRoute?.settingsSubpage;
+
+  // Use ref to always get latest filter values (prevents stale closure in callbacks)
+  const currentFiltersRef = useRef(currentFilters);
+  useEffect(() => {
+    currentFiltersRef.current = currentFilters;
+  }, [currentFilters]);
 
   /**
    * Navigate to a Chatwoot route
@@ -186,11 +192,14 @@ export const useChatwootRouter = () => {
 
   /**
    * Navigate to a specific conversation
+   * Preserves current filters to maintain the active tab (Mine/Unassigned/All)
+   * Uses ref to avoid stale closure when filters change
    */
   const navigateToConversation = useCallback(
     (conversationId: string, channelId?: string, options?: NavigationOptions) => {
       const view = channelId ? ChatwootView.CHANNELS : ChatwootView.ALL_CONVERSATIONS;
-      const route = RouteBuilder.chatwoot(view, conversationId, channelId);
+      // Use ref to get latest filter values (prevents stale closure)
+      const route = RouteBuilder.chatwoot(view, conversationId, channelId, currentFiltersRef.current);
       navigate(route, options);
     },
     [navigate]

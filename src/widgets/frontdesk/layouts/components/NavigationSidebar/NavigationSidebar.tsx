@@ -41,6 +41,8 @@ import HistoryIcon from "@mui/icons-material/History";
 import WebhookIcon from "@mui/icons-material/Webhook";
 import { useChatwootInboxes } from "@/widgets/frontdesk/providers/chatwoot/hooks/use-chatwoot-inboxes";
 import { useChatwootRouter } from "@/widgets/frontdesk/providers/chatwoot/hooks/use-chatwoot-router";
+import { useChatwootPermissions } from "@/widgets/frontdesk/providers/chatwoot/hooks/use-chatwoot-permissions";
+import { VIEW_PERMISSIONS, ACTION_PERMISSIONS } from "@/widgets/frontdesk/providers/chatwoot/constants/permissions.constants";
 import { AddChannelModal } from "@/widgets/frontdesk/providers/chatwoot/components/add-channel-modal";
 import { ComposeConversationModal } from "@/widgets/frontdesk/providers/chatwoot/components/compose/ComposeConversationModal";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -190,6 +192,10 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
     isSettingsView,
   } = useChatwootRouter();
 
+  // Check permissions for channel creation (RBAC)
+  const { canPerformAction } = useChatwootPermissions();
+  const canCreateInbox = canPerformAction(ACTION_PERMISSIONS.createInbox);
+
   const channelItems = [
     { id: "email" as Channel, icon: <EmailIcon />, label: "Email" },
     { id: "whatsapp" as Channel, icon: <WhatsAppIcon />, label: "WhatsApp" },
@@ -203,8 +209,6 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
     { id: "done" as TicketView, icon: <AssignmentIcon fontSize="small" />, label: "Done" },
     { id: "archived" as TicketView, icon: <ArchiveIcon fontSize="small" />, label: "Archived" },
   ];
-
-  const systemItems = [{ id: "settings" as Section, icon: <SettingsIcon />, label: "Settings" }];
 
   return (
     <Box
@@ -718,25 +722,28 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
                       }}
                     />
                     <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, ml: "auto" }}>
-                      <Tooltip title="Add New Channel" placement="right">
-                        <IconButton
-                          size="small"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setShowAddChannelModal(true);
-                          }}
-                          sx={{
-                            color: theme.palette.primary.main,
-                            "&:hover": {
-                              backgroundColor: alpha(theme.palette.primary.main, 0.1),
-                            },
-                            width: 24,
-                            height: 24,
-                          }}
-                        >
-                          <AddIcon fontSize="small" />
-                        </IconButton>
-                      </Tooltip>
+                      {/* Only administrators can add new channels */}
+                      {canCreateInbox && (
+                        <Tooltip title="Add New Channel" placement="right">
+                          <IconButton
+                            size="small"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setShowAddChannelModal(true);
+                            }}
+                            sx={{
+                              color: theme.palette.primary.main,
+                              "&:hover": {
+                                backgroundColor: alpha(theme.palette.primary.main, 0.1),
+                              },
+                              width: 24,
+                              height: 24,
+                            }}
+                          >
+                            <AddIcon fontSize="small" />
+                          </IconButton>
+                        </Tooltip>
+                      )}
                       {inboxesLoading ? (
                         <CircularProgress size={16} sx={{ color: theme.palette.text.secondary }} />
                       ) : chatwootChannelsExpanded ? (
@@ -1260,7 +1267,7 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
         </Collapse>
       </Box>
 
-      {/* Footer/System Items */}
+      {/* Footer/System Items - Settings visible to all users */}
       <Box
         sx={{
           p: 1,
@@ -1268,41 +1275,43 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
         }}
       >
         <List disablePadding>
-          {systemItems.map((item) => (
-            <Tooltip key={item.id} title={item.label} placement="right" disableHoverListener={!isCollapsed}>
-              <ListItemButton
-                selected={selectedSection === item.id}
-                onClick={() => onSectionSelect(item.id)}
-                sx={{
-                  py: 1,
-                  px: isCollapsed ? 1.5 : 2,
-                  justifyContent: isCollapsed ? "center" : "flex-start",
-                  "&.Mui-selected": {
-                    backgroundColor: theme.palette.primary.main + "10",
-                    borderLeft: `3px solid ${theme.palette.primary.main}`,
-                    "&:hover": {
-                      backgroundColor: theme.palette.primary.main + "20",
-                    },
+          <Tooltip title="Settings" placement="right" disableHoverListener={!isCollapsed}>
+            <ListItemButton
+              selected={selectedSection === "settings"}
+              onClick={() => onSectionSelect("settings")}
+              sx={{
+                py: 1,
+                px: isCollapsed ? 1.5 : 2,
+                justifyContent: isCollapsed ? "center" : "flex-start",
+                "&.Mui-selected": {
+                  backgroundColor: theme.palette.primary.main + "10",
+                  borderLeft: `3px solid ${theme.palette.primary.main}`,
+                  "&:hover": {
+                    backgroundColor: theme.palette.primary.main + "20",
                   },
-                }}
-              >
-                {isCollapsed ? (
-                  <Box sx={{ color: theme.palette.text.secondary, display: "flex" }}>{item.icon}</Box>
-                ) : (
-                  <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, width: "100%" }}>
-                    <Box sx={{ color: theme.palette.text.secondary }}>{item.icon}</Box>
-                    <ListItemText
-                      primary={item.label}
-                      primaryTypographyProps={{
-                        variant: "body2",
-                        sx: { fontSize: "0.875rem", fontWeight: selectedSection === item.id ? 600 : 400 },
-                      }}
-                    />
+                },
+              }}
+            >
+              {isCollapsed ? (
+                <Box sx={{ color: theme.palette.text.secondary, display: "flex" }}>
+                  <SettingsIcon />
+                </Box>
+              ) : (
+                <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, width: "100%" }}>
+                  <Box sx={{ color: theme.palette.text.secondary }}>
+                    <SettingsIcon />
                   </Box>
-                )}
-              </ListItemButton>
-            </Tooltip>
-          ))}
+                  <ListItemText
+                    primary="Settings"
+                    primaryTypographyProps={{
+                      variant: "body2",
+                      sx: { fontSize: "0.875rem", fontWeight: selectedSection === "settings" ? 600 : 400 },
+                    }}
+                  />
+                </Box>
+              )}
+            </ListItemButton>
+          </Tooltip>
         </List>
       </Box>
 

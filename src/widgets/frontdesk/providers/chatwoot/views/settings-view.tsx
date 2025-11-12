@@ -5,10 +5,12 @@
  * Displays a sidebar with settings categories and renders the selected subpage.
  */
 
-import React from "react";
+import React, { useEffect } from "react";
 import { Box, Paper, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Typography, Divider, IconButton, Tooltip } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { useChatwootProvider } from "../hooks/use-chatwoot-provider";
+import { useChatwootPermissions } from "../hooks/use-chatwoot-permissions";
+import { VIEW_PERMISSIONS } from "../constants/permissions.constants";
 import { ChatwootSettingsSubpage } from "@/widgets/frontdesk/routing/types";
 import {
   People as AgentsIcon,
@@ -63,6 +65,18 @@ const SETTINGS_MENU_ITEMS: SettingsMenuItem[] = [
 export const SettingsView: React.FC = () => {
   const theme = useTheme();
   const { router: chatwootRouter } = useChatwootProvider();
+
+  // Defense-in-depth: Check if user has permission to access Settings
+  const { canAccess } = useChatwootPermissions();
+  const canAccessSettings = canAccess(VIEW_PERMISSIONS.settings);
+
+  // Redirect unauthorized users to My Inbox
+  useEffect(() => {
+    if (!canAccessSettings) {
+      console.warn("[SettingsView] Unauthorized access attempt - redirecting to My Inbox");
+      chatwootRouter.navigateToMyInbox();
+    }
+  }, [canAccessSettings, chatwootRouter]);
 
   // Get current subpage or default to AGENTS
   const currentSubpage = chatwootRouter.currentSettingsSubpage || ChatwootSettingsSubpage.AGENTS;

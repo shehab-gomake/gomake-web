@@ -197,9 +197,56 @@ export function getNotificationTypeDetails(
     "conversation.created": { icon: "add_comment", label: "New Ticket", color: colors.primary },
     "conversation.updated": { icon: "edit", label: "Updated", color: colors.neutral },
     "message.created": { icon: "message", label: "New Message", color: colors.primary },
+    // Handle compound notification types
+    "assigned_conversation_new_message": { icon: "message", label: "New Message", color: colors.primary },
+    "unassigned_conversation_new_message": { icon: "message", label: "New Message", color: colors.primary },
   };
 
-  return typeMap[notificationType] || { icon: "notifications", label: notificationType, color: colors.neutral };
+  // Check exact match first
+  if (typeMap[notificationType]) {
+    return typeMap[notificationType];
+  }
+
+  // Handle patterns for better user experience
+  // Priority: Check for message-related notifications first (most common)
+  if (notificationType.includes("new_message") || notificationType.includes("message.created") || notificationType.includes("message")) {
+    return { icon: "message", label: "New Message", color: colors.primary };
+  }
+
+  // Pattern: "conversation.mention" or "mention" -> "Mention"
+  if (notificationType.includes("mention")) {
+    return { icon: "alternate_email", label: "Mention", color: colors.primary };
+  }
+
+  // Pattern: "conversation.created" or "created" -> "New Conversation"
+  if (notificationType.includes("created")) {
+    return { icon: "add_comment", label: "New Conversation", color: colors.primary };
+  }
+
+  // Pattern: "conversation.assigned" or "assigned" -> "Assignment"
+  // (but not if it's about a message, which we already handled above)
+  if (notificationType.includes("assigned") && !notificationType.includes("unassigned")) {
+    return { icon: "person_add", label: "Assignment", color: colors.primary };
+  }
+
+  // Pattern: "conversation.updated" or "updated" -> "Updated"
+  if (notificationType.includes("updated")) {
+    return { icon: "edit", label: "Updated", color: colors.neutral };
+  }
+
+  // Fallback: Try to format the notification type nicely
+  // Convert snake_case to Title Case and clean up common patterns
+  const formattedLabel = notificationType
+    .replace(/_/g, " ")
+    .replace(/\b\w/g, (char) => char.toUpperCase())
+    .replace(/\s+/g, " ")
+    .trim();
+
+  return {
+    icon: "notifications",
+    label: formattedLabel || "Notification",
+    color: colors.neutral,
+  };
 }
 
 /**

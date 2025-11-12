@@ -1,21 +1,14 @@
 import React, { useMemo } from "react";
 import { useRecoilValue } from "recoil";
 import { useTheme } from "@mui/material/styles";
-import { Box, Stack, Typography, Chip, IconButton, Tooltip } from "@mui/material";
+import { Box, Stack, Typography, IconButton, Tooltip } from "@mui/material";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
-import RefreshIcon from "@mui/icons-material/Refresh";
 import ClearIcon from "@mui/icons-material/Clear";
-import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { useChatwootTeams } from "../hooks/resources/use-chatwoot-teams";
 import { ConversationStatus, ConversationListParams } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
 import { chatwootConversationCountsAtom, chatwootSelectedAccountAtom } from "@/store/frontdesk/atoms/chatwoot.atoms";
-import {
-  ConversationFilterMenu,
-  ConversationSortMenu,
-  ConversationSearchBar,
-  ConversationTabs,
-} from "./conversation-list";
+import { ConversationFilterMenu, ConversationSortMenu, ConversationSearchBar, ConversationTabs } from "./conversation-list";
 
 interface ChatwootConversationListHeaderProps {
   status?: ConversationStatus;
@@ -24,9 +17,7 @@ interface ChatwootConversationListHeaderProps {
   onFilterClick?: () => void;
   onSortClick?: () => void;
   onNextClick?: () => void;
-  onRefresh?: () => void;
   onClearFilters?: () => void;
-  onComposeClick?: () => void;
   conversations?: any[];
   mineCount?: number;
   unassignedCount?: number;
@@ -40,9 +31,7 @@ export const ChatwootConversationListHeader: React.FC<ChatwootConversationListHe
   onFilterClick,
   onSortClick,
   onNextClick,
-  onRefresh,
   onClearFilters,
-  onComposeClick,
   mineCount,
   unassignedCount,
   allCount,
@@ -65,26 +54,13 @@ export const ChatwootConversationListHeader: React.FC<ChatwootConversationListHe
     return apiCounts;
   }, [mineCount, unassignedCount, allCount, apiCounts]);
 
-  // Get status label - memoized to prevent recreation on every render
-  const statusLabel = useMemo(() => {
-    if (!status || status === ConversationStatus.ALL) return "All";
-    const labels: Record<ConversationStatus, string> = {
-      [ConversationStatus.OPEN]: "Open",
-      [ConversationStatus.RESOLVED]: "Closed",
-      [ConversationStatus.PENDING]: "Pending",
-      [ConversationStatus.SNOOZED]: "Snoozed",
-      [ConversationStatus.ALL]: "All",
-    };
-    return labels[status] || "All";
-  }, [status]);
-
   // Check if any non-default filters are active
   const hasActiveFilters = useMemo(() => {
     return Boolean(
       filters.q || // search query
-      filters.team_id || // team filter
-      filters.labels || // labels filter
-      (filters.sort_by && filters.sort_by !== "latest_activity") // non-default sort
+        filters.team_id || // team filter
+        filters.labels || // labels filter
+        (filters.sort_by && filters.sort_by !== "latest_activity") // non-default sort
     );
   }, [filters]);
 
@@ -105,79 +81,18 @@ export const ChatwootConversationListHeader: React.FC<ChatwootConversationListHe
           py: 1,
         }}
       >
-        <Stack direction="row" alignItems="center" spacing={1}>
-          <Typography
-            variant="h6"
-            sx={{
-              fontWeight: 600,
-              fontSize: "1rem",
-              color: neutralColor(900),
-            }}
-          >
-            Tickets
-          </Typography>
-          {status && status !== ConversationStatus.ALL && (
-            <Chip
-              label={statusLabel}
-              size="small"
-              sx={{
-                height: 24,
-                fontSize: "0.75rem",
-                fontWeight: 500,
-                backgroundColor: neutralColor(100),
-                color: neutralColor(700),
-                border: `1px solid ${neutralColor(300)}`,
-                "& .MuiChip-label": {
-                  px: 1.5,
-                },
-              }}
-            />
-          )}
-        </Stack>
+        <Typography
+          variant="h6"
+          sx={{
+            fontWeight: 600,
+            fontSize: "1rem",
+            color: neutralColor(900),
+          }}
+        >
+          Tickets
+        </Typography>
 
-        <Stack direction="row" spacing={0.5}>
-          {/* New Conversation Button */}
-          {onComposeClick && (
-            <Tooltip title="New Conversation">
-              <IconButton
-                size="small"
-                onClick={onComposeClick}
-                sx={{
-                  color: "white",
-                  backgroundColor: primaryColor(600),
-                  "&:hover": {
-                    backgroundColor: primaryColor(700),
-                  },
-                  width: 32,
-                  height: 32,
-                }}
-              >
-                <AddCircleOutlineIcon fontSize="small" />
-              </IconButton>
-            </Tooltip>
-          )}
-
-          {/* Refresh Button */}
-          {onRefresh && (
-            <Tooltip title="Refresh">
-              <IconButton
-                size="small"
-                onClick={onRefresh}
-                sx={{
-                  color: neutralColor(600),
-                  backgroundColor: neutralColor(100),
-                  "&:hover": {
-                    backgroundColor: neutralColor(200),
-                  },
-                  width: 32,
-                  height: 32,
-                }}
-              >
-                <RefreshIcon fontSize="small" />
-              </IconButton>
-            </Tooltip>
-          )}
-
+        <Stack direction="row" spacing={1}>
           {/* Clear Filters Button - only show when filters are active */}
           {hasActiveFilters && onClearFilters && (
             <Tooltip title="Clear Filters">
@@ -189,9 +104,12 @@ export const ChatwootConversationListHeader: React.FC<ChatwootConversationListHe
                   backgroundColor: primaryColor(50),
                   "&:hover": {
                     backgroundColor: primaryColor(100),
+                    boxShadow: `0 2px 8px ${primaryColor(200)}`,
                   },
-                  width: 32,
-                  height: 32,
+                  width: 36,
+                  height: 36,
+                  transition: "all 0.2s ease-in-out",
+                  boxShadow: `0 1px 3px ${neutralColor(200)}`,
                 }}
               >
                 <ClearIcon fontSize="small" />
@@ -226,9 +144,12 @@ export const ChatwootConversationListHeader: React.FC<ChatwootConversationListHe
                 backgroundColor: neutralColor(100),
                 "&:hover": {
                   backgroundColor: neutralColor(200),
+                  boxShadow: `0 2px 8px ${neutralColor(300)}`,
                 },
-                width: 32,
-                height: 32,
+                width: 36,
+                height: 36,
+                transition: "all 0.2s ease-in-out",
+                boxShadow: `0 1px 3px ${neutralColor(200)}`,
               }}
             >
               <ArrowForwardIosIcon fontSize="small" />
@@ -255,4 +176,3 @@ export const ChatwootConversationListHeader: React.FC<ChatwootConversationListHe
     </Box>
   );
 };
-

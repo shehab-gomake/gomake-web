@@ -5,6 +5,7 @@ import { htmlToPlainText, isHtmlContent } from "@/widgets/frontdesk/utils/html-s
 import { ConversationContextMenu } from "@/widgets/frontdesk/components/shared";
 import { useConversationContextMenu } from "@/widgets/frontdesk/hooks/use-conversation-context-menu";
 import { useChatwootContextMenu } from "../hooks/use-chatwoot-context-menu";
+import { formatChatwootTimestamp } from "../utils/conversation-helpers";
 import type { ChatwootConversation } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
 import type { ChatwootInbox } from "@/services/frontdesk/api/chatwoot/types/inboxes.types";
 
@@ -53,14 +54,9 @@ function extractEmailRecipient(conversation: any): string | null {
 }
 
 /**
- * Formats Chatwoot Unix timestamp to ISO string
- */
-function formatChatwootTimestamp(timestamp: number): string {
-  return new Date(timestamp * 1000).toISOString();
-}
-
-/**
  * Extracts and formats the conversation timestamp
+ * 
+ * Uses the shared formatChatwootTimestamp utility for consistent conversion.
  */
 function getFormattedTimestamp(conversation: any): string {
   const timestamp = conversation.updated_at || conversation.created_at || conversation.timestamp;
@@ -70,11 +66,18 @@ function getFormattedTimestamp(conversation: any): string {
   }
 
   // Chatwoot uses Unix timestamps (seconds), convert to ISO
-  const isoTimestamp = conversation.updated_at
-    ? formatChatwootTimestamp(conversation.updated_at)
-    : conversation.created_at
-    ? formatChatwootTimestamp(conversation.created_at)
-    : conversation.timestamp;
+  let isoTimestamp: string;
+  if (conversation.updated_at) {
+    isoTimestamp = formatChatwootTimestamp(conversation.updated_at);
+  } else if (conversation.created_at) {
+    isoTimestamp = formatChatwootTimestamp(conversation.created_at);
+  } else if (typeof conversation.timestamp === 'number') {
+    // Handle numeric timestamp (Unix seconds)
+    isoTimestamp = formatChatwootTimestamp(conversation.timestamp);
+  } else {
+    // Already an ISO string
+    isoTimestamp = conversation.timestamp;
+  }
 
   return formatConversationDate(isoTimestamp);
 }

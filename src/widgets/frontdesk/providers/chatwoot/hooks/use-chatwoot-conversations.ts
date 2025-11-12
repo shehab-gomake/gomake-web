@@ -82,6 +82,7 @@ export const useChatwootConversations = (accountId: number | null, options: Part
         // Chatwoot API returns: { data: { payload: [...], meta: {...} } }
         // Handle nested structure
         const conversationsList = response.data?.payload || response.payload || [];
+        const limit = listParams.limit || 20;
 
         if (append) {
           setConversations((prev) => [...prev, ...conversationsList]);
@@ -90,8 +91,15 @@ export const useChatwootConversations = (accountId: number | null, options: Part
         }
 
         // Check if there are more pages
+        // Chatwoot API doesn't return pagination metadata (page, total_pages)
+        // Instead, we determine hasMore by checking if the returned array length equals the limit
+        // If length < limit, we've reached the end. If length === limit, there might be more.
+        // Also, if we get an empty array when appending, we've definitely reached the end.
         const meta = response.data?.meta || response.meta || {};
-        setHasMore(meta?.page ? meta.page < (meta.total_pages || meta.count || 0) : false);
+        const hasMoreData = append 
+          ? conversationsList.length > 0 && conversationsList.length >= limit
+          : conversationsList.length >= limit;
+        setHasMore(hasMoreData);
 
         // Extract counts from API response meta
         setCounts({

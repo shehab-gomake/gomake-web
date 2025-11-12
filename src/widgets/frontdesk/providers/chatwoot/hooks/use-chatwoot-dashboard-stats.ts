@@ -13,6 +13,7 @@ import {
   chatwootNotificationsAtom,
 } from '@/store/frontdesk/atoms/chatwoot.atoms';
 import { ConversationStatus } from '@/services/frontdesk/api/chatwoot/types/conversations.types';
+import { chatwootTimestampToDate } from '../utils/conversation-helpers';
 
 /**
  * Dashboard statistics for Chatwoot provider
@@ -103,8 +104,14 @@ export const useChatwootDashboardStats = (): ChatwootDashboardStats => {
     const yesterday = new Date(now.getTime() - 24 * 60 * 60 * 1000);
 
     const activeToday = conversations.filter((conv) => {
-      if (!conv.timestamp) return false;
-      const convDate = new Date(conv.timestamp);
+      const timestamp = conv.updated_at || conv.created_at || conv.timestamp;
+      if (!timestamp) return false;
+      
+      // Use shared utility for consistent timestamp conversion
+      const convDate = chatwootTimestampToDate(timestamp);
+      
+      if (!convDate) return false;
+      
       return convDate >= yesterday;
     }).length;
 

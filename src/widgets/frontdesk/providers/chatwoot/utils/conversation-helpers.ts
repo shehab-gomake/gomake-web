@@ -72,9 +72,38 @@ export const getParticipants = (conversation: ChatwootConversation): string[] =>
 
 /**
  * Converts Chatwoot Unix timestamp (seconds) to ISO string
+ * 
+ * @param timestamp - Unix timestamp in seconds
+ * @returns ISO string representation
  */
-function formatChatwootTimestamp(timestamp: number): string {
+export function formatChatwootTimestamp(timestamp: number): string {
+  // Chatwoot uses Unix timestamps in seconds, convert to milliseconds for Date
   return new Date(timestamp * 1000).toISOString();
+}
+
+/**
+ * Converts Chatwoot timestamp (Unix seconds or ISO string) to Date object
+ * 
+ * Handles both Unix timestamps (numbers in seconds) and ISO strings.
+ * This is the central utility for converting Chatwoot timestamps.
+ * 
+ * @param timestamp - Unix timestamp (number in seconds) or ISO string
+ * @returns Date object, or null if invalid
+ */
+export function chatwootTimestampToDate(timestamp: string | number | null | undefined): Date | null {
+  if (timestamp === null || timestamp === undefined) {
+    return null;
+  }
+  
+  // Handle Unix timestamp (number in seconds) - Chatwoot format
+  if (typeof timestamp === 'number') {
+    const date = new Date(timestamp * 1000);
+    return isNaN(date.getTime()) ? null : date;
+  }
+  
+  // Handle ISO string format
+  const date = new Date(timestamp);
+  return isNaN(date.getTime()) ? null : date;
 }
 
 /**

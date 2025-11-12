@@ -1,5 +1,6 @@
 import React from "react";
 import { Box, Stack, Typography, Avatar, Paper, Chip } from "@mui/material";
+import LockIcon from "@mui/icons-material/Lock";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { useTheme } from "@mui/material/styles";
 import { alpha } from "@mui/material";
@@ -57,8 +58,9 @@ export const ChatwootMessageItem: React.FC<ChatwootMessageItemProps> = ({
   // message_type: 0 = incoming, 1 = outgoing (or check sender_type)
   const isMe = message.message_type === 1 || message.sender_type === "User";
 
-  // Check if message is private (use _private property)
-  const isPrivate = message._private === true;
+  // Check if message is private (support both _private and private properties)
+  // The API may return either property name depending on the endpoint
+  const isPrivate = message._private === true || message.private === true;
 
   const sender = message.sender || {
     name: isMe ? "You" : "Contact",
@@ -158,24 +160,27 @@ export const ChatwootMessageItem: React.FC<ChatwootMessageItemProps> = ({
   const isEmailMessage = !!message.content_attributes?.email;
 
   // Message bubble styles matching WhatsApp
+  // For private messages, use a distinctive amber/yellow background tint
   const getMessageBubbleStyles = (isOutgoing: boolean) => ({
     bgcolor: isPrivate
-      ? neutralColor(100)
+      ? "rgba(251, 191, 36, 0.12)" // Amber/yellow tint for private messages (more visible than neutral)
       : isOutgoing
       ? primaryColor(100)
       : neutralColor(50),
     color: isOutgoing ? primaryColor(900) : neutralColor(800),
-    border: "none",
+    border: isPrivate 
+      ? `1px solid rgba(251, 191, 36, 0.3)` // Amber border for private messages
+      : "none",
     borderRadius: isOutgoing ? "18px 18px 4px 18px" : "18px 18px 18px 4px",
     px: 2,
     py: 1.5,
     position: "relative" as const,
     boxShadow: `0 1px 2px ${alpha(theme.palette.common.black, 0.08)}`,
-    transition: theme.transitions.create(["box-shadow", "transform"], {
+    transition: theme.transitions.create(["box-shadow", "transform", "background-color", "border-color"], {
       duration: theme.transitions.duration.short,
     }),
-    opacity: isPrivate ? 0.85 : 1,
-    fontStyle: isPrivate ? "italic" : "normal",
+    opacity: 1, // Remove opacity reduction - use background color instead
+    fontStyle: "normal", // Remove italic - use background color and icon instead
     "&:hover": {
       boxShadow: `0 2px 4px ${alpha(theme.palette.common.black, 0.12)}`,
     },
@@ -358,6 +363,25 @@ export const ChatwootMessageItem: React.FC<ChatwootMessageItemProps> = ({
             >
               (Empty message)
             </Typography>
+          )}
+          
+          {/* Private message indicator icon - positioned at bottom right */}
+          {isPrivate && (
+            <Box
+              sx={{
+                position: "absolute",
+                bottom: 4,
+                right: 4,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                width: 16,
+                height: 16,
+                color: "rgba(251, 191, 36, 0.8)", // Amber color matching the theme
+              }}
+            >
+              <LockIcon sx={{ fontSize: 14 }} />
+            </Box>
           )}
         </Paper>
 

@@ -3,9 +3,12 @@
  *
  * Displays and manages Chatwoot agents including their roles,
  * availability, and assigned conversations.
+ *
+ * RBAC: Only administrators can add, edit, or delete agents.
+ * Business Logic: Can't edit/delete self, can't delete last verified admin.
  */
 
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import {
   Box,
   Typography,
@@ -31,14 +34,75 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import AddIcon from "@mui/icons-material/Add";
 import { BaseSettingsSubpage, SettingsSection, EditAgentModal, AddAgentModal, type AddAgentData } from "../../components/settings";
 import { useChatwootProvider } from "../../hooks/use-chatwoot-provider";
+import { useChatwootPermissions } from "../../hooks/use-chatwoot-permissions";
 import { useChatwootAgents } from "../../hooks/resources/use-chatwoot-agents";
 import type { Agent, AgentUpdatePayload } from "@/services/frontdesk/api/chatwoot/types/agents.types";
 import { generateAvatarData } from "@/widgets/frontdesk/utils/avatar.utils";
 import { chatwootService } from "@/services/frontdesk";
+import { ACTION_PERMISSIONS } from "../../constants/permissions.constants";
 
 export const AgentsSubpage: React.FC = () => {
-  const { selectedAccountId } = useChatwootProvider();
+  const { selectedAccountId, profile } = useChatwootProvider();
   const { agents, loading, error, refresh } = useChatwootAgents(selectedAccountId);
+
+  // Get permission checking functions
+  const { canPerformAction } = useChatwootPermissions();
+
+  // Check specific action permissions (RBAC only)
+  const canAddAgent = canPerformAction(ACTION_PERMISSIONS.addAgent);
+  const canEditAgent = canPerformAction(ACTION_PERMISSIONS.editAgent);
+  const canDeleteAgent = canPerformAction(ACTION_PERMISSIONS.deleteAgent);
+
+  // Get current user ID for business logic checks
+  const currentUserId = profile?.id;
+
+  // Count verified administrators (business logic requirement)
+  // Following Chatwoot's pattern: can't delete the last verified administrator
+  const verifiedAdministrators = useMemo(() => {
+    return agents.filter(
+      (agent) =>
+        (agent.role === 'administrator' || agent.role === 'admin') &&
+        agent.confirmed
+    );
+  }, [agents]);
+
+  /**
+   * Check if a specific agent can be edited
+   * Business Rule: Users cannot edit themselves
+   *
+   * @see /Users/omarsabbah/Desktop/messaging/chatwoot/.../agents/Index.vue (showEditAction)
+   */
+  const canEditSpecificAgent = (agent: Agent): boolean => {
+    if (!canEditAgent) return false;
+    // Can't edit yourself
+    return currentUserId !== agent.id;
+  };
+
+  /**
+   * Check if a specific agent can be deleted
+   * Business Rules:
+   * 1. Users cannot delete themselves
+   * 2. Cannot delete the last verified administrator
+   * 3. Can always delete unconfirmed agents
+   *
+   * @see /Users/omarsabbah/Desktop/messaging/chatwoot/.../agents/Index.vue (showDeleteAction)
+   */
+  const canDeleteSpecificAgent = (agent: Agent): boolean => {
+    if (!canDeleteAgent) return false;
+
+    // Can't delete yourself
+    if (currentUserId === agent.id) return false;
+
+    // Can always delete unconfirmed agents
+    if (!agent.confirmed) return true;
+
+    // Can't delete the last verified administrator
+    if (agent.role === 'administrator' || agent.role === 'admin') {
+      return verifiedAdministrators.length > 1;
+    }
+
+    return true;
+  };
 
   // Add modal state
   const [addModalOpen, setAddModalOpen] = useState(false);
@@ -55,6 +119,13 @@ export const AgentsSubpage: React.FC = () => {
   // Add agent handler
   const handleAddAgent = async (data: AddAgentData) => {
     if (!selectedAccountId) return;
+
+    // Defense-in-depth: Re-check permissions before API call
+    // (Frontend UI already hides button, but this prevents direct function calls via DevTools)
+    if (!canAddAgent) {
+      console.error('[AgentsSubpage] Permission denied: Cannot add agent');
+      throw new Error('You do not have permission to add agents');
+    }
 
     try {
       // TODO: Implement createAgent API call
@@ -79,6 +150,12 @@ export const AgentsSubpage: React.FC = () => {
   const handleSave = async (agentId: number, updates: AgentUpdatePayload) => {
     if (!selectedAccountId) return;
 
+    // Defense-in-depth: Re-check permissions before API call
+    if (!canEditAgent) {
+      console.error('[AgentsSubpage] Permission denied: Cannot edit agent');
+      throw new Error('You do not have permission to edit agents');
+    }
+
     try {
       await chatwootService.agents.updateAgent(selectedAccountId, agentId, updates);
       await refresh(); // Refresh the agent list
@@ -97,7 +174,15 @@ export const AgentsSubpage: React.FC = () => {
 
   // Confirm and execute delete
   const handleDeleteConfirm = async () => {
-    if (!selectedAccountId || !agentToDelete?.id) return;
+    // Prevent duplicate API calls if already deleting
+    if (!selectedAccountId || !agentToDelete?.id || deleting) return;
+
+    // Defense-in-depth: Re-check permissions before API call
+    if (!canDeleteAgent) {
+      console.error('[AgentsSubpage] Permission denied: Cannot delete agent');
+      alert('You do not have permission to delete agents');
+      return;
+    }
 
     setDeleting(true);
     try {
@@ -129,15 +214,24 @@ export const AgentsSubpage: React.FC = () => {
         isLoading={loading}
         headerActions={
           <Box sx={{ display: "flex", gap: 1 }}>
-            <Button
-              variant="contained"
-              startIcon={<AddIcon />}
-              onClick={() => setAddModalOpen(true)}
+            {/* Add Agent button - Only visible to administrators */}
+            {canAddAgent && (
+              <Button
+                variant="contained"
+                startIcon={<AddIcon />}
+                onClick={() => setAddModalOpen(true)}
+                size="small"
+                aria-label="Add new agent"
+              >
+                Add Agent
+              </Button>
+            )}
+            <IconButton
+              onClick={refresh}
               size="small"
+              disabled={loading}
+              aria-label="Refresh agents list"
             >
-              Add Agent
-            </Button>
-            <IconButton onClick={refresh} size="small" disabled={loading}>
               <RefreshIcon />
             </IconButton>
           </Box>
@@ -279,32 +373,41 @@ export const AgentsSubpage: React.FC = () => {
                         }}
                       />
 
-                      <Box sx={{ display: "flex", gap: 0.5, flexShrink: 0 }}>
-                        <IconButton
-                          onClick={() => handleEdit(agent)}
-                          size="small"
-                          sx={{
-                            color: "text.secondary",
-                            "&:hover": {
-                              color: "primary.main",
-                            },
-                          }}
-                        >
-                          <EditIcon fontSize="small" />
-                        </IconButton>
-                        <IconButton
-                          onClick={() => handleDeleteClick(agent)}
-                          size="small"
-                          sx={{
-                            color: "text.secondary",
-                            "&:hover": {
-                              color: "error.main",
-                            },
-                          }}
-                        >
-                          <DeleteIcon fontSize="small" />
-                        </IconButton>
-                      </Box>
+                      {/* Edit/Delete actions - Only visible based on RBAC + business logic */}
+                      {(canEditSpecificAgent(agent) || canDeleteSpecificAgent(agent)) && (
+                        <Box sx={{ display: "flex", gap: 0.5, flexShrink: 0 }}>
+                          {canEditSpecificAgent(agent) && (
+                            <IconButton
+                              onClick={() => handleEdit(agent)}
+                              size="small"
+                              aria-label={`Edit agent ${agentName}`}
+                              sx={{
+                                color: "text.secondary",
+                                "&:hover": {
+                                  color: "primary.main",
+                                },
+                              }}
+                            >
+                              <EditIcon fontSize="small" />
+                            </IconButton>
+                          )}
+                          {canDeleteSpecificAgent(agent) && (
+                            <IconButton
+                              onClick={() => handleDeleteClick(agent)}
+                              size="small"
+                              aria-label={`Delete agent ${agentName}`}
+                              sx={{
+                                color: "text.secondary",
+                                "&:hover": {
+                                  color: "error.main",
+                                },
+                              }}
+                            >
+                              <DeleteIcon fontSize="small" />
+                            </IconButton>
+                          )}
+                        </Box>
+                      )}
                     </ListItem>
                   </React.Fragment>
                 );
