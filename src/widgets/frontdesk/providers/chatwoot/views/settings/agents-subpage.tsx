@@ -31,8 +31,7 @@ import RefreshIcon from "@mui/icons-material/Refresh";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import AddIcon from "@mui/icons-material/Add";
-import { BaseSettingsSubpage, SettingsSection, EditAgentModal, AddAgentModal, type AddAgentData } from "../../components/settings";
+import { BaseSettingsSubpage, SettingsSection, EditAgentModal } from "../../components/settings";
 import { useChatwootProvider } from "../../hooks/use-chatwoot-provider";
 import { useChatwootPermissions } from "../../hooks/use-chatwoot-permissions";
 import { useChatwootAgents } from "../../hooks/resources/use-chatwoot-agents";
@@ -49,7 +48,6 @@ export const AgentsSubpage: React.FC = () => {
   const { canPerformAction } = useChatwootPermissions();
 
   // Check specific action permissions (RBAC only)
-  const canAddAgent = canPerformAction(ACTION_PERMISSIONS.addAgent);
   const canEditAgent = canPerformAction(ACTION_PERMISSIONS.editAgent);
   const canDeleteAgent = canPerformAction(ACTION_PERMISSIONS.deleteAgent);
 
@@ -104,9 +102,6 @@ export const AgentsSubpage: React.FC = () => {
     return true;
   };
 
-  // Add modal state
-  const [addModalOpen, setAddModalOpen] = useState(false);
-
   // Edit modal state
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [selectedAgent, setSelectedAgent] = useState<Agent | null>(null);
@@ -115,30 +110,6 @@ export const AgentsSubpage: React.FC = () => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [agentToDelete, setAgentToDelete] = useState<Agent | null>(null);
   const [deleting, setDeleting] = useState(false);
-
-  // Add agent handler
-  const handleAddAgent = async (data: AddAgentData) => {
-    if (!selectedAccountId) return;
-
-    // Defense-in-depth: Re-check permissions before API call
-    // (Frontend UI already hides button, but this prevents direct function calls via DevTools)
-    if (!canAddAgent) {
-      console.error('[AgentsSubpage] Permission denied: Cannot add agent');
-      throw new Error('You do not have permission to add agents');
-    }
-
-    try {
-      // TODO: Implement createAgent API call
-      // await chatwootService.agents.createAgent(selectedAccountId, data);
-      console.log("Add agent:", data);
-      alert("Add Agent API endpoint not yet implemented in backend");
-      await refresh();
-      setAddModalOpen(false);
-    } catch (error) {
-      console.error("Failed to add agent:", error);
-      throw error;
-    }
-  };
 
   // Open edit modal
   const handleEdit = (agent: Agent) => {
@@ -214,18 +185,6 @@ export const AgentsSubpage: React.FC = () => {
         isLoading={loading}
         headerActions={
           <Box sx={{ display: "flex", gap: 1 }}>
-            {/* Add Agent button - Only visible to administrators */}
-            {canAddAgent && (
-              <Button
-                variant="contained"
-                startIcon={<AddIcon />}
-                onClick={() => setAddModalOpen(true)}
-                size="small"
-                aria-label="Add new agent"
-              >
-                Add Agent
-              </Button>
-            )}
             <IconButton
               onClick={refresh}
               size="small"
@@ -357,25 +316,9 @@ export const AgentsSubpage: React.FC = () => {
                         </Box>
                       </Box>
 
-                      <Chip
-                        label={
-                          agent.role === "administrator" || agent.role === "admin"
-                            ? "Administrator"
-                            : "Agent"
-                        }
-                        size="small"
-                        sx={{
-                          fontSize: "0.813rem",
-                          fontWeight: 500,
-                          height: 24,
-                          mr: 2,
-                          flexShrink: 0,
-                        }}
-                      />
-
                       {/* Edit/Delete actions - Only visible based on RBAC + business logic */}
                       {(canEditSpecificAgent(agent) || canDeleteSpecificAgent(agent)) && (
-                        <Box sx={{ display: "flex", gap: 0.5, flexShrink: 0 }}>
+                        <Box sx={{ display: "flex", gap: 0.5, flexShrink: 0, mr: 2 }}>
                           {canEditSpecificAgent(agent) && (
                             <IconButton
                               onClick={() => handleEdit(agent)}
@@ -408,6 +351,21 @@ export const AgentsSubpage: React.FC = () => {
                           )}
                         </Box>
                       )}
+
+                      <Chip
+                        label={
+                          agent.role === "administrator" || agent.role === "admin"
+                            ? "Administrator"
+                            : "Agent"
+                        }
+                        size="small"
+                        sx={{
+                          fontSize: "0.813rem",
+                          fontWeight: 500,
+                          height: 24,
+                          flexShrink: 0,
+                        }}
+                      />
                     </ListItem>
                   </React.Fragment>
                 );
@@ -416,13 +374,6 @@ export const AgentsSubpage: React.FC = () => {
           </SettingsSection>
         )}
       </BaseSettingsSubpage>
-
-      {/* Add Agent Modal */}
-      <AddAgentModal
-        open={addModalOpen}
-        onClose={() => setAddModalOpen(false)}
-        onAdd={handleAddAgent}
-      />
 
       {/* Edit Agent Modal */}
       <EditAgentModal

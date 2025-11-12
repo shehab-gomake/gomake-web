@@ -39,11 +39,14 @@ export const useChatwootMessages = ({ conversation, accountId }: UseChatwootMess
   const previousConversationIdRef = useRef<number | null>(null);
   const previousMessagesRef = useRef<ChatwootMessage[]>([]);
 
+  // Track conversation ID separately to avoid unnecessary refetches when conversation object changes
+  const conversationId = conversation?.id;
+
   /**
    * Load initial batch of messages for a conversation
    */
   const loadMessages = useCallback(async () => {
-    if (!conversation?.id || !accountId) {
+    if (!conversationId || !accountId) {
       // Clear messages only if conversation is actually null (not just switching)
       if (!conversation) {
         setMessages([]);
@@ -62,7 +65,7 @@ export const useChatwootMessages = ({ conversation, accountId }: UseChatwootMess
 
     // Check if this is a conversation switch
     const isConversationSwitch = previousConversationIdRef.current !== null && 
-                                  previousConversationIdRef.current !== conversation.id;
+                                  previousConversationIdRef.current !== conversationId;
 
     // Prevent duplicate concurrent requests
     if (isFetchingRef.current) {
@@ -84,7 +87,7 @@ export const useChatwootMessages = ({ conversation, accountId }: UseChatwootMess
       // Load initial batch of messages using listMessages API with pagination
       const response = await chatwootService.messages.listMessages(
         accountId,
-        conversation.id
+        conversationId
       );
 
       let apiMessages: ChatwootMessage[] = response.payload || [];
@@ -179,7 +182,7 @@ export const useChatwootMessages = ({ conversation, accountId }: UseChatwootMess
       // Update messages and track for next transition
       setMessages(sortedMessages);
       previousMessagesRef.current = sortedMessages;
-      previousConversationIdRef.current = conversation.id;
+      previousConversationIdRef.current = conversationId;
 
       // Update pagination cursors
       if (sortedMessages.length > 0) {
@@ -195,8 +198,8 @@ export const useChatwootMessages = ({ conversation, accountId }: UseChatwootMess
 
       // Mark conversation as read after loading messages
       try {
-        await chatwootService.conversations.markConversationAsRead(accountId, conversation.id);
-        logger.debug("Marked conversation as read", { conversationId: conversation.id });
+        await chatwootService.conversations.markConversationAsRead(accountId, conversationId);
+        logger.debug("Marked conversation as read", { conversationId });
       } catch (readError) {
         // Don't fail the whole operation if marking as read fails
         logger.warn("Failed to mark conversation as read", readError);
@@ -212,7 +215,7 @@ export const useChatwootMessages = ({ conversation, accountId }: UseChatwootMess
       setLoading(false);
       isFetchingRef.current = false;
     }
-  }, [conversation, accountId]);
+  }, [conversationId, accountId, conversation]);
 
   /**
    * Load more older messages (pagination)

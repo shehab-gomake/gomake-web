@@ -131,9 +131,6 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
         if (onConversationUpdate) {
           onConversationUpdate(finalConversation);
         }
-        
-        // Refresh messages
-        refresh();
       } else {
         throw new Error("Status update failed: Unexpected response from server");
       }
