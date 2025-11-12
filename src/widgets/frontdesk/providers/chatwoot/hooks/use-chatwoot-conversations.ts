@@ -170,6 +170,7 @@ export const useChatwootConversations = (accountId: number | null, options: Part
       assignee_type: options.assignee_type,
       q: options.q,
       team_id: options.team_id,
+      labels: options.labels, // ← Added labels to trigger refetch when they change
     });
 
     // Skip the first mount to prevent double fetch during initialization

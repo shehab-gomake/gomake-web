@@ -89,12 +89,23 @@ export const useChatwootProvider = () => {
     return router.currentFilters?.sortBy;
   }, [router.currentFilters?.sortBy]);
 
+  const parseLabels = useCallback((): string[] | undefined => {
+    // Labels are stored in URL as comma-separated string: "label1,label2"
+    if (!router.currentFilters?.labels) return undefined;
+    const labelsString = router.currentFilters.labels;
+    if (typeof labelsString === 'string' && labelsString.trim()) {
+      return labelsString.split(',').map(l => l.trim()).filter(l => l.length > 0);
+    }
+    return undefined;
+  }, [router.currentFilters?.labels]);
+
   // Read filter values directly from URL (single source of truth)
   const statusFilter = parseStatusFilter();
   const assigneeFilter = parseAssigneeFilter();
   const searchQuery = parseSearchQuery();
   const teamId = parseTeamId();
   const sortBy = parseSortBy();
+  const labels = parseLabels();
 
   // Debounce timer for filter changes to batch rapid updates
   const filterDebounceTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -108,8 +119,9 @@ export const useChatwootProvider = () => {
       ...(searchQuery && { q: searchQuery }),
       ...(teamId && { team_id: teamId }),
       ...(sortBy && { sort_by: sortBy }),
+      ...(labels && labels.length > 0 && { labels }), // ← Add labels filter
     };
-  }, [selectedInboxId, statusFilter, assigneeFilter, searchQuery, teamId, sortBy]);
+  }, [selectedInboxId, statusFilter, assigneeFilter, searchQuery, teamId, sortBy, labels]);
 
   // Use conversations hook with accountId and filters
   const conversations = useChatwootConversations(currentAccountId, filters);
@@ -389,6 +401,7 @@ export const useChatwootProvider = () => {
         let searchToSet = searchQuery;
         let teamToSet = teamId;
         let sortToSet = sortBy;
+        let labelsToSet = labels; // ← Read current labels from parsed URL (already array)
 
         // Detect if this is a tab switch (assignee_type change without other filters)
         const isTabSwitch = "assignee_type" in newFilters && Object.keys(newFilters).length <= 3; // assignee_type, page, and maybe status/inbox_id
@@ -403,11 +416,12 @@ export const useChatwootProvider = () => {
         if ("assignee_type" in newFilters) {
           assigneeToSet = newFilters.assignee_type;
 
-          // On tab switch, clear contextual filters (search, team, sort)
+          // On tab switch, clear contextual filters (search, team, sort, labels)
           if (isTabSwitch) {
             searchToSet = "";
             teamToSet = undefined;
             sortToSet = undefined;
+            labelsToSet = undefined; // ← Clear labels on tab switch
           }
         }
         if ("q" in newFilters) {
@@ -418,6 +432,10 @@ export const useChatwootProvider = () => {
         }
         if ("sort_by" in newFilters) {
           sortToSet = newFilters.sort_by as string | undefined;
+        }
+        if ("labels" in newFilters) {
+          // ← Handle labels filter
+          labelsToSet = newFilters.labels as string[] | undefined;
         }
 
         // Build URL filters object (omit defaults to keep URL clean)
@@ -439,6 +457,10 @@ export const useChatwootProvider = () => {
         }
         if (sortToSet) {
           urlFilters.sortBy = sortToSet;
+        }
+        if (labelsToSet && labelsToSet.length > 0) {
+          // ← Add labels to URL filters (as comma-separated string)
+          urlFilters.labels = labelsToSet.join(",");
         }
 
         // Update URL - this will trigger re-parse of filter values automatically

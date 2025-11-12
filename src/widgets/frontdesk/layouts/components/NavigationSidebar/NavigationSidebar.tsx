@@ -168,7 +168,6 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
   const [oldFrontdeskExpanded, setOldFrontdeskExpanded] = useState(false);
   const [ticketViewsExpanded, setTicketViewsExpanded] = useState(true);
   const [chatsExpanded, setChatsExpanded] = useState(true);
-  const [chatwootExpanded, setChatwootExpanded] = useState(true);
   const [chatwootConversationsExpanded, setChatwootConversationsExpanded] = useState(true);
   const [chatwootChannelsExpanded, setChatwootChannelsExpanded] = useState(true);
   const [showAddChannelModal, setShowAddChannelModal] = useState(false);
@@ -253,36 +252,7 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
 
       {/* Chatwoot Section */}
       <Box sx={{ py: 0.5 }}>
-        {!isCollapsed && (
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              px: 1.5,
-              py: 0.5,
-              cursor: "pointer",
-              "&:hover": { backgroundColor: theme.palette.action.hover },
-            }}
-            onClick={() => setChatwootExpanded(!chatwootExpanded)}
-          >
-            <Typography
-              variant="caption"
-              sx={{
-                color: theme.palette.text.secondary,
-                fontWeight: 600,
-                fontSize: "0.688rem",
-                textTransform: "uppercase",
-                letterSpacing: 0.5,
-              }}
-            >
-              CHATWOOT
-            </Typography>
-            {chatwootExpanded ? <ExpandLessIcon fontSize="small" /> : <ExpandMoreIcon fontSize="small" />}
-          </Box>
-        )}
-        <Collapse in={isCollapsed || chatwootExpanded}>
-          <List disablePadding sx={{ pointerEvents: "auto" }}>
+        <List disablePadding sx={{ pointerEvents: "auto" }}>
             {/* New Conversation Button */}
             {!isCollapsed ? (
               <Box
@@ -296,20 +266,32 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
                 <Button
                   fullWidth
                   variant="contained"
-                  startIcon={<CreateIcon fontSize="small" />}
+                  startIcon={<CreateIcon sx={{ fontSize: "1.125rem" }} />}
                   onClick={() => setShowComposeModal(true)}
                   sx={{
                     textTransform: "none",
-                    fontWeight: 500,
+                    fontWeight: 600,
                     fontSize: "0.875rem",
+                    letterSpacing: "0.01em",
                     backgroundColor: primaryColor(600),
                     color: "white",
-                    py: 1,
-                    borderRadius: "8px",
-                    boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
+                    py: 1.25,
+                    px: 2,
+                    borderRadius: "10px",
+                    boxShadow: `0 2px 8px ${alpha(primaryColor(600), 0.3)}, 0 1px 3px ${alpha(primaryColor(600), 0.2)}`,
+                    transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+                    "& .MuiButton-startIcon": {
+                      marginRight: 1,
+                      marginLeft: 0,
+                    },
                     "&:hover": {
                       backgroundColor: primaryColor(700),
-                      boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.15)",
+                      boxShadow: `0 4px 12px ${alpha(primaryColor(600), 0.4)}, 0 2px 6px ${alpha(primaryColor(600), 0.3)}`,
+                      transform: "translateY(-1px)",
+                    },
+                    "&:active": {
+                      transform: "translateY(0px)",
+                      boxShadow: `0 2px 6px ${alpha(primaryColor(600), 0.3)}, 0 1px 3px ${alpha(primaryColor(600), 0.2)}`,
                     },
                   }}
                 >
@@ -331,11 +313,18 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
                     sx={{
                       color: "white",
                       backgroundColor: primaryColor(600),
+                      boxShadow: `0 2px 6px ${alpha(primaryColor(600), 0.3)}`,
+                      transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+                      width: 40,
+                      height: 40,
                       "&:hover": {
                         backgroundColor: primaryColor(700),
+                        boxShadow: `0 4px 10px ${alpha(primaryColor(600), 0.4)}`,
+                        transform: "translateY(-1px)",
                       },
-                      width: 36,
-                      height: 36,
+                      "&:active": {
+                        transform: "translateY(0px)",
+                      },
                     }}
                   >
                     <CreateIcon fontSize="small" />
@@ -956,7 +945,6 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
               </ListItemButton>
             </Tooltip>
           </List>
-        </Collapse>
       </Box>
 
       <Divider sx={{ my: 1 }} />
