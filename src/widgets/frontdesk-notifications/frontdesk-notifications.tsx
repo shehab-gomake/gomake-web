@@ -1,21 +1,25 @@
-import React, { useState } from 'react';
-import { Badge, IconButton, Stack, Box, Typography } from '@mui/material';
-import HeadsetMicOutlinedIcon from '@mui/icons-material/HeadsetMicOutlined';
-import { useGomakeTheme } from '@/hooks/use-gomake-thme';
-import { GoMakeMenu } from '@/components';
-import { CustomTooltip } from '@/widgets/header';
-import { PrimaryButton } from '@/components/button/primary-button';
-import { FONT_FAMILY } from '@/utils/font-family';
-import { NotificationTabs, TabPanel } from './components/notification-tabs';
-import { MessageNotificationItem } from './components/message-notification-item';
-import { TicketNotificationItem } from './components/ticket-notification-item';
-import { useFrontdeskNotifications } from './hooks/use-frontdesk-notifications';
+import React, { useState } from "react";
+import { Badge, IconButton, Stack, Box, Typography } from "@mui/material";
+import HeadsetMicOutlinedIcon from "@mui/icons-material/HeadsetMicOutlined";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { GoMakeMenu } from "@/components";
+import { CustomTooltip } from "@/widgets/header";
+import { PrimaryButton } from "@/components/button/primary-button";
+import { FONT_FAMILY } from "@/utils/font-family";
+import { useSetRecoilState } from "recoil";
+import { snackbarState } from "@/store/snackbar";
+import { NotificationTabs, TabPanel } from "./components/notification-tabs";
+import { MessageNotificationItem } from "./components/message-notification-item";
+import { TicketNotificationItem } from "./components/ticket-notification-item";
+import { useFrontdeskNotifications } from "./hooks/use-frontdesk-notifications";
 
 const FrontdeskNotifications = () => {
   const { primaryColor, neutralColor } = useGomakeTheme();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [activeTab, setActiveTab] = useState(0);
+  const [isMarkingAllRead, setIsMarkingAllRead] = useState(false);
   const open = Boolean(anchorEl);
+  const setSnackbar = useSetRecoilState(snackbarState);
 
   const {
     messageNotifications,
@@ -24,10 +28,24 @@ const FrontdeskNotifications = () => {
     handleNotificationClick,
     navigateToFrontdesk,
     notifications,
+    markAllAsRead,
   } = useFrontdeskNotifications();
 
   // Calculate total notifications (read + unread)
   const totalNotifications = messageNotifications.length + ticketNotifications.length;
+
+  // DEBUG: Log notification counts
+  console.log("[FrontdeskNotifications] Debug - COUNTS:", counts);
+  console.log("[FrontdeskNotifications] Debug - Button should show?", counts.total > 0);
+  console.log(
+    "[FrontdeskNotifications] Debug - First 3 notifications:",
+    notifications.slice(0, 3).map((n) => ({
+      id: n.id.substring(0, 8),
+      type: n.type,
+      readAt: n.readAt,
+      dismissedAt: n.dismissedAt,
+    }))
+  );
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -51,29 +69,49 @@ const FrontdeskNotifications = () => {
     handleClose();
   };
 
+  const handleMarkAllAsRead = async () => {
+    if (isMarkingAllRead) return;
+
+    setIsMarkingAllRead(true);
+    try {
+      await markAllAsRead();
+      // Show success feedback
+      setSnackbar({
+        state: true,
+        message: "All notifications marked as read",
+        type: "success",
+      });
+    } catch (error) {
+      console.error("[FrontdeskNotifications] Mark all as read error:", error);
+      // Show error feedback
+      setSnackbar({
+        state: true,
+        message: "Failed to mark notifications as read",
+        type: "error",
+      });
+    } finally {
+      setIsMarkingAllRead(false);
+    }
+  };
+
   const renderIconButton = () => (
     <CustomTooltip title="FrontDesk" arrow>
-      <IconButton
-        style={{ backgroundColor: '#f6f6f6', padding: '8px' }}
-        onClick={handleClick}
-      >
-        <HeadsetMicOutlinedIcon style={{ color: '#2e3092', width: 22, height: 22 }} />
+      <IconButton style={{ backgroundColor: "#f6f6f6", padding: "8px" }} onClick={handleClick}>
+        <HeadsetMicOutlinedIcon style={{ color: "#2e3092", width: 22, height: 22 }} />
       </IconButton>
     </CustomTooltip>
   );
 
-  const renderEmptyState = (type: 'messages' | 'tickets') => (
+  const renderEmptyState = (type: "messages" | "tickets") => (
     <Box
       sx={{
-        padding: '40px 20px',
-        textAlign: 'center',
+        padding: "40px 20px",
+        textAlign: "center",
         color: neutralColor(400),
       }}
     >
       <Typography sx={{ ...FONT_FAMILY.Lexend(400, 14) }}>
-        {type === 'messages'
-          ? 'No message notifications'
-          : 'No ticket notifications'}
+        {type === "messages" ? "No message notifications" : "No ticket notifications"}
       </Typography>
     </Box>
   );
@@ -85,7 +123,7 @@ const FrontdeskNotifications = () => {
       anchorEl={anchorEl}
       noListPadding
       sx={{
-        '& .MuiPaper-root': {
+        "& .MuiPaper-root": {
           width: 420,
           maxHeight: 600,
         },
@@ -95,31 +133,57 @@ const FrontdeskNotifications = () => {
         {/* Header */}
         <Box
           sx={{
-            padding: '16px 20px',
+            padding: "16px 20px",
             borderBottom: `1px solid ${neutralColor(200)}`,
           }}
         >
-          <Typography
+          <Box
             sx={{
-              ...FONT_FAMILY.Lexend(600, 16),
-              color: primaryColor(900),
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              marginBottom: "4px",
             }}
           >
-            FrontDesk Notifications
-          </Typography>
+            <Typography
+              sx={{
+                ...FONT_FAMILY.Lexend(600, 16),
+                color: primaryColor(900),
+              }}
+            >
+              FrontDesk Notifications
+            </Typography>
+            {counts.total > 0 && (
+              <Typography
+                component="span"
+                onClick={handleMarkAllAsRead}
+                sx={{
+                  ...FONT_FAMILY.Lexend(500, 13),
+                  color: primaryColor(500),
+                  cursor: isMarkingAllRead ? "not-allowed" : "pointer",
+                  opacity: isMarkingAllRead ? 0.6 : 1,
+                  textDecoration: "none",
+                  "&:hover": {
+                    textDecoration: isMarkingAllRead ? "none" : "underline",
+                  },
+                }}
+              >
+                {isMarkingAllRead ? "Marking..." : "Mark all as read"}
+              </Typography>
+            )}
+          </Box>
           <Typography
             sx={{
               ...FONT_FAMILY.Lexend(400, 12),
-              color: neutralColor(600),
-              marginTop: '4px',
+              color: counts.total === 0 ? neutralColor(500) : neutralColor(600),
             }}
           >
             {counts.total > 0 ? (
               <>
-                {counts.total} unread{totalNotifications > counts.total ? `, ${totalNotifications} total` : ''}
+                {counts.total} unread{totalNotifications > counts.total ? `, ${totalNotifications} total` : ""}
               </>
             ) : (
-              `${totalNotifications} notification${totalNotifications !== 1 ? 's' : ''}`
+              "All caught up! No new notifications"
             )}
           </Typography>
         </Box>
@@ -136,7 +200,7 @@ const FrontdeskNotifications = () => {
         <Box
           sx={{
             flex: 1,
-            overflowY: 'auto',
+            overflowY: "auto",
             maxHeight: 400,
           }}
         >
@@ -152,7 +216,7 @@ const FrontdeskNotifications = () => {
                 ))}
               </Stack>
             ) : (
-              renderEmptyState('messages')
+              renderEmptyState("messages")
             )}
           </TabPanel>
 
@@ -168,7 +232,7 @@ const FrontdeskNotifications = () => {
                 ))}
               </Stack>
             ) : (
-              renderEmptyState('tickets')
+              renderEmptyState("tickets")
             )}
           </TabPanel>
         </Box>
@@ -176,21 +240,21 @@ const FrontdeskNotifications = () => {
         {/* Footer Button */}
         <Box
           sx={{
-            padding: '12px 20px',
+            padding: "12px 20px",
             borderTop: `1px solid ${neutralColor(200)}`,
           }}
         >
           <PrimaryButton
             onClick={handleOpenFrontdesk}
             style={{
-              width: '100%',
+              width: "100%",
               backgroundColor: primaryColor(500),
-              color: '#ffffff',
-              padding: '10px 16px',
+              color: "#ffffff",
+              padding: "10px 16px",
               fontSize: 14,
               fontWeight: 600,
-              textTransform: 'none',
-              borderRadius: '6px',
+              textTransform: "none",
+              borderRadius: "6px",
             }}
           >
             Open FrontDesk
@@ -202,15 +266,15 @@ const FrontdeskNotifications = () => {
 
   return counts.total > 0 ? (
     <Badge
-      style={{ padding: '2px' }}
+      style={{ padding: "2px" }}
       badgeContent={counts.total}
       color="error"
       max={99}
       componentsProps={{
         badge: {
           style: {
-            right: '-5px',
-            transform: 'none',
+            right: "-5px",
+            transform: "none",
           },
         },
       }}

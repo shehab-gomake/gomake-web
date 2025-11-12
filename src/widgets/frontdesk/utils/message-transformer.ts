@@ -37,10 +37,7 @@ export interface UnifiedMessage {
 /**
  * Transform Email message to unified format
  */
-export function emailToUnified(
-  message: any,
-  currentUserEmail?: string
-): UnifiedMessage {
+export function emailToUnified(message: any, currentUserEmail?: string): UnifiedMessage {
   // Determine if message is from current user
   const senderEmail = message.from?.[0]?.email || message.from;
   const isOwn = currentUserEmail && senderEmail === currentUserEmail;
@@ -80,13 +77,22 @@ export function emailToUnified(
 /**
  * Transform Ticket message to unified format
  */
-export function ticketToUnified(
-  message: any,
-  ticket?: any
-): UnifiedMessage {
+export function ticketToUnified(message: any, ticket?: any): UnifiedMessage {
   const isInbound = message.direction === "INBOUND";
 
-  // Determine author based on direction
+  // 🐛 DEBUG: Log message transformation
+  console.log("[ticketToUnified] Transforming message:", {
+    messageId: message.id,
+    direction: message.direction,
+    fromIdentifier: message.fromIdentifier,
+    channel: message.channel,
+    customerEmail: ticket?.customerEmail,
+    assigneeEmail: ticket?.assignee?.email,
+  });
+
+  // Determine author based on direction and fromIdentifier
+  // For INBOUND: Use customer info (sender is external customer)
+  // For OUTBOUND: Use fromIdentifier if available (sender is agent/support), otherwise use assignee
   const author = isInbound
     ? {
         name: ticket?.customerName || ticket?.customerEmail || message.fromIdentifier || "Customer",
@@ -94,8 +100,21 @@ export function ticketToUnified(
         phone: ticket?.customerPhone,
       }
     : {
-        name: ticket?.assignee?.name || message.fromIdentifier || "Agent",
-        email: ticket?.assignee?.email || message.fromIdentifier,
+        // For outbound messages, prefer fromIdentifier (actual sender) over assignee
+        name: message.fromIdentifier || ticket?.assignee?.name || "Support Agent",
+        email: message.fromIdentifier || ticket?.assignee?.email,
+      };
+
+  // Determine recipient for better message context
+  const recipient = isInbound
+    ? {
+        name: ticket?.assignee?.name || "Support",
+        email: ticket?.assignee?.email,
+      }
+    : {
+        name: ticket?.customerName,
+        email: ticket?.customerEmail,
+        phone: ticket?.customerPhone,
       };
 
   // Map ticket channel to unified channel
@@ -110,17 +129,18 @@ export function ticketToUnified(
   // Smart HTML detection - same logic email uses!
   const content = message.content || "";
   const hasHtml =
-    message.metadata?.hasHtml ||           // Trust backend flag if set
-    content.includes('<') ||                // Has HTML tags
-    content.includes('&lt;') ||             // Has encoded HTML
-    content.match(/<[a-z][\s\S]*>/i);      // Regex for HTML tags
+    message.metadata?.hasHtml || // Trust backend flag if set
+    content.includes("<") || // Has HTML tags
+    content.includes("&lt;") || // Has encoded HTML
+    content.match(/<[a-z][\s\S]*>/i); // Regex for HTML tags
 
   return {
     id: message.id,
     content: content,
-    html: hasHtml ? content : undefined,    // ✅ Always set html if HTML detected
+    html: hasHtml ? content : undefined, // ✅ Always set html if HTML detected
     timestamp: message.createdAt,
     author,
+    recipient, // Now includes recipient info
     channel: channelMap[message.channel] || "email",
     direction: isInbound ? "inbound" : "outbound",
     status: message.status || "delivered",
@@ -144,10 +164,7 @@ export function ticketToUnified(
 /**
  * Transform DM message to unified format (for future use)
  */
-export function dmToUnified(
-  message: any,
-  currentUserId?: string
-): UnifiedMessage {
+export function dmToUnified(message: any, currentUserId?: string): UnifiedMessage {
   const isOwn = message.senderId === currentUserId;
 
   return {
@@ -176,11 +193,7 @@ export function dmToUnified(
 /**
  * Infer message direction based on author email/identifier
  */
-export function inferDirection(
-  message: any,
-  currentUserEmail?: string,
-  currentUserId?: string
-): "inbound" | "outbound" {
+export function inferDirection(message: any, currentUserEmail?: string, currentUserId?: string): "inbound" | "outbound" {
   // Check explicit direction field
   if (message.direction) {
     return message.direction.toLowerCase() as "inbound" | "outbound";
@@ -204,12 +217,26 @@ export function inferDirection(
 /**
  * Get avatar color based on email/name
  */
-export function getAvatarColor(identifier: string): string {
+export function getAvatarColor(identifier: string | undefined | null): string {
   const colors = [
-    "#FF6B6B", "#4ECDC4", "#45B7D1", "#FFA07A",
-    "#98D8C8", "#F7B731", "#5F27CD", "#00B894",
-    "#0984E3", "#6C5CE7", "#FD79A8", "#FDCB6E"
+    "#FF6B6B",
+    "#4ECDC4",
+    "#45B7D1",
+    "#FFA07A",
+    "#98D8C8",
+    "#F7B731",
+    "#5F27CD",
+    "#00B894",
+    "#0984E3",
+    "#6C5CE7",
+    "#FD79A8",
+    "#FDCB6E",
   ];
+
+  // Handle undefined, null, or non-string values
+  if (!identifier || typeof identifier !== "string") {
+    return colors[0]; // Return first color as default
+  }
 
   const hash = identifier.split("").reduce((acc, char) => {
     return char.charCodeAt(0) + ((acc << 5) - acc);
@@ -221,8 +248,8 @@ export function getAvatarColor(identifier: string): string {
 /**
  * Get initials from name or email
  */
-export function getInitials(name: string): string {
-  if (!name) return "?";
+export function getInitials(name: string | undefined | null): string {
+  if (!name || typeof name !== "string") return "?";
 
   // If it's an email, extract name part
   if (name.includes("@")) {

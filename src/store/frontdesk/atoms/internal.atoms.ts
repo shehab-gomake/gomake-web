@@ -63,12 +63,14 @@ export const internalLoadingStatesAtom = atom<{
   channels: boolean;
   messages: boolean;
   sending: boolean;
+  conversationDetail: boolean; // For fetching single conversation by ID
 }>({
   key: 'frontdesk.internal.loadingStates',
   default: {
     channels: false,
     messages: false,
-    sending: false
+    sending: false,
+    conversationDetail: false
   }
 });
 

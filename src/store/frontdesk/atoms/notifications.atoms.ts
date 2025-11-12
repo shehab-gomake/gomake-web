@@ -3,6 +3,7 @@ import {
   BackendNotification,
   BackendNotificationType,
   BackendNotificationPriority,
+  NotificationMetadata,
   mapNotificationToTab,
   isNotificationUnread,
 } from '@/services/frontdesk/utils/notification-type-mapper';
@@ -11,7 +12,7 @@ import {
  * Export backend types for use in components
  */
 export { BackendNotificationType, BackendNotificationPriority };
-export type { BackendNotification };
+export type { BackendNotification, NotificationMetadata };
 
 /**
  * Atom: All FrontDesk notifications from backend

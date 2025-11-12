@@ -6,6 +6,7 @@ import { Channel } from '../../layouts/components/NavigationSidebar';
 const UnifiedProvider = lazy(() => import('../unified/UnifiedProvider'));
 const EmailProvider = lazy(() => import('../email/email-provider-view').then(m => ({ default: m.EmailProviderView })));
 const InternalProvider = lazy(() => import('../internal/internal-provider').then(m => ({ default: m.InternalProvider })));
+const ChatwootProvider = lazy(() => import('../chatwoot/chatwoot-provider-view').then(m => ({ default: m.ChatwootProviderView })));
 
 // Placeholder components for providers not yet implemented
 const WhatsAppProvider = lazy(() => Promise.resolve({ 
@@ -46,6 +47,11 @@ const providerRegistry: Record<Channel, ProviderConfig> = {
     component: InternalProvider,
     name: 'Direct Messages',
     requiresAuth: false
+  },
+  chatwoot: {
+    component: ChatwootProvider,
+    name: 'Chatwoot',
+    requiresAuth: true
   }
 };
 

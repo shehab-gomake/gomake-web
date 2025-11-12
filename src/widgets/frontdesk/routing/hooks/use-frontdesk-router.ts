@@ -5,19 +5,11 @@
  * Integrates with Next.js router and provides a clean API for FrontDesk routing.
  */
 
-import { useRouter } from 'next/router';
-import { useCallback, useMemo, useEffect, useState } from 'react';
-import {
-  FrontDeskRoute,
-  NavigationOptions,
-  FrontDeskChannel,
-  FrontDeskSection,
-  TicketView,
-  Channel,
-  Section,
-} from '../types';
-import { parseRoute, getSectionFromRoute, getChannelFromRoute, getTicketViewFromRoute, isTicketRoute } from '../route-parser';
-import { buildRoute, buildRoutePath, RouteBuilder, getRouteMetadata, routesEqual } from '../route-builder';
+import { useRouter } from "next/router";
+import { useCallback, useMemo, useEffect, useState, useRef } from "react";
+import { FrontDeskRoute, NavigationOptions, FrontDeskChannel, FrontDeskSection, TicketView, Channel, Section } from "../types";
+import { parseRoute, getSectionFromRoute, getChannelFromRoute, getTicketViewFromRoute, isTicketRoute } from "../route-parser";
+import { buildRoute, buildRoutePath, RouteBuilder, getRouteMetadata, routesEqual } from "../route-builder";
 
 /**
  * FrontDesk Router Hook
@@ -26,7 +18,13 @@ export const useFrontDeskRouter = () => {
   const router = useRouter();
   const [isInitialized, setIsInitialized] = useState(false);
 
-  // Parse current route from URL
+  // Cache previous query and result to prevent unnecessary re-parses
+  const cacheRef = useRef<{
+    queryString: string;
+    result: { route: FrontDeskRoute; queryParams: any };
+  } | null>(null);
+
+  // Parse current route from URL with caching
   const parsed = useMemo(() => {
     if (!router.isReady) {
       return {
@@ -34,7 +32,19 @@ export const useFrontDeskRouter = () => {
         queryParams: {},
       };
     }
-    return parseRoute(router.query);
+
+    // Serialize query to detect actual changes
+    const queryString = JSON.stringify(router.query);
+
+    // Return cached result if query hasn't changed
+    if (cacheRef.current && queryString === cacheRef.current.queryString) {
+      return cacheRef.current.result;
+    }
+
+    // Parse and cache new result
+    const result = parseRoute(router.query);
+    cacheRef.current = { queryString, result };
+    return result;
   }, [router.query, router.isReady]);
 
   const currentRoute = parsed.route;
@@ -55,14 +65,18 @@ export const useFrontDeskRouter = () => {
       const built = buildRoute(route, options);
 
       if (options.newTab) {
-        window.open(built.path, '_blank');
+        window.open(built.path, "_blank");
         return;
       }
 
-      if (options.replace) {
-        router.replace(built.path, undefined, { scroll: options.scroll });
-      } else {
-        router.push(built.path, undefined, { scroll: options.scroll });
+      try {
+        if (options.replace) {
+          router.replace(built.path, undefined, { scroll: options.scroll });
+        } else {
+          router.push(built.path, undefined, { scroll: options.scroll });
+        }
+      } catch (error) {
+        console.error("[FrontDesk Router] Navigation error:", error);
       }
     },
     [router]
@@ -74,7 +88,7 @@ export const useFrontDeskRouter = () => {
    */
   const navigateSmooth = useCallback((route: FrontDeskRoute) => {
     const path = buildRoutePath(route);
-    window.history.pushState({}, '', path);
+    window.history.pushState({}, "", path);
   }, []);
 
   /**
@@ -125,6 +139,37 @@ export const useFrontDeskRouter = () => {
   );
 
   /**
+   * Navigate to a specific email conversation
+   */
+  const goToEmailConversation = useCallback(
+    (conversationId: string, accountId?: string) => {
+      console.log("[FrontDesk Router] Navigating to email conversation:", { conversationId, accountId });
+      navigate(RouteBuilder.email(conversationId, accountId));
+    },
+    [navigate]
+  );
+
+  /**
+   * Navigate to a specific DM conversation
+   */
+  const goToDMConversation = useCallback(
+    (conversationId: string) => {
+      navigate(RouteBuilder.internal(conversationId));
+    },
+    [navigate]
+  );
+
+  /**
+   * Navigate to a specific WhatsApp conversation
+   */
+  const goToWhatsAppConversation = useCallback(
+    (conversationId: string) => {
+      navigate(RouteBuilder.whatsapp(conversationId));
+    },
+    [navigate]
+  );
+
+  /**
    * Get route metadata for display
    */
   const metadata = useMemo(() => getRouteMetadata(currentRoute), [currentRoute]);
@@ -142,7 +187,7 @@ export const useFrontDeskRouter = () => {
    */
   const handleSectionChange = useCallback(
     (section: Section) => {
-      if (section === 'inbox') {
+      if (section === "inbox") {
         goToInbox();
       } else {
         goToSection(section as any);
@@ -158,6 +203,7 @@ export const useFrontDeskRouter = () => {
         email: FrontDeskChannel.EMAIL,
         whatsapp: FrontDeskChannel.WHATSAPP,
         internal: FrontDeskChannel.INTERNAL,
+        chatwoot: FrontDeskChannel.CHATWOOT,
       };
       goToChannel(channelMap[channel]);
     },
@@ -191,6 +237,11 @@ export const useFrontDeskRouter = () => {
     goToTicket,
     goToSection,
 
+    // Conversation-specific navigation methods
+    goToEmailConversation,
+    goToDMConversation,
+    goToWhatsAppConversation,
+
     // Legacy handlers (for backward compatibility)
     handleSectionChange,
     handleChannelChange,
@@ -209,15 +260,24 @@ export const useChannelNavigation = () => {
   const { goToChannel } = useFrontDeskRouter();
 
   return {
-    goToEmail: useCallback((conversationId?: string) => {
-      goToChannel(FrontDeskChannel.EMAIL, conversationId);
-    }, [goToChannel]),
-    goToWhatsApp: useCallback((conversationId?: string) => {
-      goToChannel(FrontDeskChannel.WHATSAPP, conversationId);
-    }, [goToChannel]),
-    goToInternal: useCallback((conversationId?: string) => {
-      goToChannel(FrontDeskChannel.INTERNAL, conversationId);
-    }, [goToChannel]),
+    goToEmail: useCallback(
+      (conversationId?: string) => {
+        goToChannel(FrontDeskChannel.EMAIL, conversationId);
+      },
+      [goToChannel]
+    ),
+    goToWhatsApp: useCallback(
+      (conversationId?: string) => {
+        goToChannel(FrontDeskChannel.WHATSAPP, conversationId);
+      },
+      [goToChannel]
+    ),
+    goToInternal: useCallback(
+      (conversationId?: string) => {
+        goToChannel(FrontDeskChannel.INTERNAL, conversationId);
+      },
+      [goToChannel]
+    ),
   };
 };
 
@@ -240,9 +300,12 @@ export const useTicketNavigation = () => {
     goToDoneTickets: useCallback(() => {
       goToTicketList(TicketView.DONE);
     }, [goToTicketList]),
-    goToTicket: useCallback((ticketId: string, options?: NavigationOptions) => {
-      goToTicket(ticketId, undefined, options);
-    }, [goToTicket]),
+    goToTicket: useCallback(
+      (ticketId: string, options?: NavigationOptions) => {
+        goToTicket(ticketId, undefined, options);
+      },
+      [goToTicket]
+    ),
   };
 };
 

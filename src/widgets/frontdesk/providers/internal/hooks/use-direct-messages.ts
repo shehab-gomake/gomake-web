@@ -3,6 +3,8 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { directMessagesWebSocketService } from "@/services/frontdesk/websocket/direct-messages-websocket.service";
 import { directMessagesService } from "@/services/frontdesk/api/direct-messages.service";
 import { parsePresenceResponse, parseStatusChangeEvent, isValidUserId } from "@/widgets/frontdesk/providers/internal/utils/presence-helpers";
+import { useFrontDeskRouter } from "@/widgets/frontdesk/routing/hooks/use-frontdesk-router";
+import { useFetchDMConversation } from "./use-fetch-dm-conversation";
 import {
   dmConnectionState,
   dmConnectedState,
@@ -64,6 +66,8 @@ import { internalDirectMessagesAtom } from "@/store/frontdesk";
 
 export const useDirectMessages = () => {
   const debug = process.env.NEXT_PUBLIC_DM_DEBUG === 'true';
+  const { queryParams, isInitialized: isRouterInitialized, goToDMConversation } = useFrontDeskRouter();
+  const { fetchConversation, isLoading: isFetchingConversation, error: fetchError, clearError: clearFetchError } = useFetchDMConversation();
   const [connectionStatus, setConnectionStatus] = useRecoilState(dmConnectionState);
   const [connected, setConnected] = useRecoilState(dmConnectedState);
   const [currentUser, setCurrentUser] = useRecoilState(dmCurrentUserState);
@@ -459,6 +463,9 @@ export const useDirectMessages = () => {
         setError(null);
         setActiveConversationId(conversation.id);
 
+        // Update URL to reflect conversation selection
+        goToDMConversation(conversation.id);
+
         // Populate user presence from conversation members
         if (conversation.members && conversation.members.length > 0) {
           const presenceUpdate: Record<string, DMPresenceData> = {};
@@ -515,7 +522,7 @@ export const useDirectMessages = () => {
         setError(error.message || "Failed to select conversation");
       }
     },
-    [setError, setActiveConversationId, setUnreadCounts, setUserPresence, userPresence, messages, loadMessageHistory, connected]
+    [setError, setActiveConversationId, setUnreadCounts, setUserPresence, userPresence, messages, loadMessageHistory, connected, goToDMConversation]
   );
 
   // Create new conversation
@@ -1535,6 +1542,48 @@ export const useDirectMessages = () => {
     }
   }, [userProfile, currentUser, setCurrentUser]);
 
+  // Sync URL conversation parameter with DM conversation selection
+  useEffect(() => {
+    if (!isRouterInitialized || !connected || !queryParams.conversation) return;
+
+    const urlConversationId = queryParams.conversation;
+
+    // If URL has a conversation ID and it's different from current selection
+    if (urlConversationId && urlConversationId !== activeConversationId) {
+      console.log('[DM Provider] URL changed, selecting conversation:', urlConversationId);
+
+      // Find the conversation in our list
+      const conversation = conversations.find(
+        (conv) => conv.id === urlConversationId
+      );
+
+      if (conversation) {
+        selectConversation(conversation);
+      } else {
+        // NOT FOUND: Fetch from API
+        console.log('[DM Provider] Conversation not in list, fetching:', urlConversationId);
+
+        fetchConversation(urlConversationId)
+          .then(fetchedConversation => {
+            if (fetchedConversation) {
+              console.log('[DM Provider] Successfully fetched and selecting conversation');
+              selectConversation(fetchedConversation);
+            } else {
+              console.error('[DM Provider] Failed to fetch conversation:', urlConversationId);
+            }
+          });
+      }
+    }
+  }, [
+    isRouterInitialized,
+    connected,
+    queryParams.conversation,
+    activeConversationId,
+    conversations,
+    selectConversation,
+    fetchConversation,
+  ]);
+
   return {
     // Connection state
     connected,
@@ -1617,5 +1666,10 @@ export const useDirectMessages = () => {
     // Conversation filter
     conversationsFilter,
     setConversationFilter: setConversationsFilter,
+
+    // Conversation fetching (for deep linking)
+    isFetchingConversation,
+    fetchError,
+    clearFetchError,
   };
 };

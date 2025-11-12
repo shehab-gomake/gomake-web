@@ -65,12 +65,14 @@ export const emailLoadingStatesAtom = atom<{
   conversations: boolean;
   messages: boolean;
   sending: boolean;
+  conversationDetail: boolean; // For fetching single conversation by ID
 }>({
   key: 'frontdesk.email.loadingStates',
   default: {
     conversations: false,
     messages: false,
-    sending: false
+    sending: false,
+    conversationDetail: false
   }
 });
 
