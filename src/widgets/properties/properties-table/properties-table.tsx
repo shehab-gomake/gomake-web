@@ -38,7 +38,8 @@ const PropertiesTable = () => {
     reOrderPropertiesTables,
     updateIsHiddenFromWorkFlow,
     updateIsHiddenFromCalculation,
-    ToggleIsShowInOutSourceDetails
+    ToggleIsShowInOutSourceDetails,
+    parameters
   } = useProperites({ classes });
 
   const onDragEnd = (result) => {
@@ -96,6 +97,7 @@ const PropertiesTable = () => {
         isPropertiesWidge={true}
         selectedProperties={selectedProperties}
         getProperitesService={getProperitesService}
+        parametersStateValue={parameters}
       />
       <EditRulesModal
         openModal={openEditRule}

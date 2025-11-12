@@ -46,6 +46,7 @@ const AddRuleModal = ({
   filterDTO,
   boardMissionTableFilterDTO,
   availableDateFilters = [],
+  parametersStateValue
 }: any) => {
   const { clasess } = useStyle();
   const { t } = useTranslation();
@@ -53,8 +54,17 @@ const AddRuleModal = ({
   const [selectedCategories, setSelectedCategories] = useState<any>("");
   const [selectedStatment2, setSelectedStatment2] = useState<any>("");
   const [openScheduleOrDownloadModal, setOpenScheduleOrDownloadModal] = useState(false);
-  const [detailsOption, setDetailsOption] = useState<number | null>(null);
+  const [detailsOption, setDetailsOption] = useState<{ label: string; id: number } | null>({
+    label: t("products.profits.exceptions.withoutDetails"),
+    id: 2,
+  });
 
+  useEffect(() => {
+    setDetailsOption({ label: t("products.profits.exceptions.withoutDetails"), id: 2 });
+  }, []);
+
+  const isInvoice = documentType === 3; // 3 = invoice (based on DOCUMENT_TYPE enum: quote=0, order=1, deliveryNote=2, invoice=3)
+  const isDeliveryNote = documentType === 2; // 2 = deliveryNote
   const {
     rules,
     propertieValue,
@@ -62,7 +72,6 @@ const AddRuleModal = ({
     allMachincesList,
     productsStateValue,
     clientTypesStateValue,
-    parametersStateValue,
     Outputs,
     materialsTypes,
     expression,
@@ -444,8 +453,7 @@ const AddRuleModal = ({
 
   const _renderInptsForQuotes = () => {
     // Check document type
-    const isInvoice = documentType === 3; // 3 = invoice (based on DOCUMENT_TYPE enum: quote=0, order=1, deliveryNote=2, invoice=3)
-    const isDeliveryNote = documentType === 2; // 2 = deliveryNote
+
 
     // For invoices, show the 4 extended export options
     if (isInvoice) {
@@ -467,8 +475,9 @@ const AddRuleModal = ({
               style={clasess.dropDownListContainer}
               placeholder={t("products.profits.exceptions.selectDetailsOption")}
               onChange={(e, value) => {
-                setDetailsOption(value?.id);
+                setDetailsOption({ label: value?.label, id: value?.id });
               }}
+              value={detailsOption}
             />
           </div>
         </div>
@@ -490,9 +499,10 @@ const AddRuleModal = ({
               style={clasess.dropDownListContainer}
               placeholder={t("products.profits.exceptions.selectDetailsOption")}
               onChange={(e, value) => {
-                setDetailsOption(value?.id);
+                setDetailsOption({ label: value?.label, id: value?.id });
                 setPropertieValue(null);
               }}
+              value={detailsOption}
             />
           </div>
         </div>
@@ -514,14 +524,15 @@ const AddRuleModal = ({
             style={clasess.dropDownListContainer}
             placeholder={t("products.profits.exceptions.selectDetailsOption")}
             onChange={(e, value) => {
-              setDetailsOption(value?.id);
+              setDetailsOption({ label: value?.label, id: value?.id });
               if (value?.id === 2) { // withoutDetails
                 setPropertieValue(null);
               }
             }}
+            value={detailsOption}
           />
         </div>
-        {detailsOption && detailsOption === 1 && ( // withDetails
+        {detailsOption && detailsOption?.id === 1 && ( // withDetails
           <div>
             <div style={clasess.selectTypeStyle}>
               {t("products.profits.exceptions.groupBy")}
@@ -607,7 +618,7 @@ const AddRuleModal = ({
         insideStyle={clasess.insideStyle}
       >
         <div>
-          {rules?.map((rule, index) => {
+          {(!isInvoice && !isDeliveryNote) && rules?.map((rule, index) => {
             return (
               <>
                 {index != 0 && (
@@ -1131,12 +1142,12 @@ const AddRuleModal = ({
               </>
             );
           })}
-          <div style={clasess.AddNewRuleDiv}>
+          {(!isInvoice && !isDeliveryNote) && <div style={clasess.AddNewRuleDiv}>
             <AddPlusIcon />{" "}
             <span onClick={addRule} style={clasess.spanAddNewRule}>
               {t("properties.addNewRule")}
             </span>
-          </div>
+          </div>}
           {typeExceptionSelected === ETypeException.ADDITIONAL && (
             <div style={{ display: "flex", gap: 10 }}>
               <div style={{ width: "20%" }}>
@@ -1273,6 +1284,7 @@ const AddRuleModal = ({
           </div>
         </div>
         <ScheduleSendWidget
+          detailsOption={detailsOption}
           openModal={openScheduleModal}
           onCloseModal={onCloseScheduleModal}
           documentType={documentType}

@@ -22,6 +22,8 @@ import { CustomerCardWidget } from "@/widgets/customer-card-modal";
 import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 import { useUserPermission } from "@/hooks/use-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
+import { useTicketChatbot } from "@/components/ticket-chatbot";
+import { useTheme } from "@/contexts/theme";
 
 interface SetupGuideMenuProps {
   handleOpenModal: () => void;
@@ -78,7 +80,19 @@ export const SetupGuideMenu = ({
   const { CheckPermission } = useUserPermission();
   const hasFrontDeskPermission = CheckPermission(Permissions.SHOW_FRONT_DESK);
 
-  const { classes } = useStyle(isRtl, hasFrontDeskPermission);
+  // Check if chatbot is open to adjust button position
+  const { isOpen: isChatbotOpen } = useTicketChatbot();
+
+  // Check if HP theme is active
+  const { currentTheme } = useTheme();
+  const isHpClient = currentTheme === "hp-client";
+
+  const { classes } = useStyle(
+    isRtl,
+    hasFrontDeskPermission,
+    isChatbotOpen,
+    isHpClient
+  );
   const nextStep = findNextStep(steps);
 
   useEffect(() => {
@@ -247,16 +261,24 @@ export const SetupGuideMenu = ({
         </Card>
       ) : (
         <Box sx={classes.secondGuide} onClick={() => setShowGuideMenu(true)}>
-          <Typography sx={{ fontSize: "14px", fontWeight: 500 }}>
+          <Typography
+            sx={
+              isHpClient
+                ? classes.hpSetupGuideText
+                : { fontSize: "14px", fontWeight: 500 }
+            }
+          >
             {t("quickSetup.setupGuide")}
           </Typography>
-          <CircularProgress
-            variant="determinate"
-            value={progressValue}
-            size={20}
-            thickness={7}
-            sx={classes.circularProgress}
-          />
+          {!isHpClient && (
+            <CircularProgress
+              variant="determinate"
+              value={progressValue}
+              size={20}
+              thickness={7}
+              sx={classes.circularProgress}
+            />
+          )}
         </Box>
       )}
 

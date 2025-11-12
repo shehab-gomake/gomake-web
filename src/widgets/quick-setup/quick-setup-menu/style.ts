@@ -3,7 +3,12 @@ import { QuoteIfExistState } from "@/pages-components/quote-new/store/quote";
 import { useMemo } from "react";
 import { useRecoilState } from "recoil";
 
-const useStyle = (isRtl: boolean, hasFrontDeskPermission: boolean = false) => {
+const useStyle = (
+  isRtl: boolean,
+  hasFrontDeskPermission: boolean = false,
+  isChatbotOpen: boolean = false,
+  isHpClient: boolean = false
+) => {
   const { primaryColor, theme, grayColor } = useGomakeTheme();
   const [QuoteIfExist] = useRecoilState<any>(QuoteIfExistState);
 
@@ -24,10 +29,10 @@ const useStyle = (isRtl: boolean, hasFrontDeskPermission: boolean = false) => {
       secondGuide: {
         color: grayColor(500),
         position: "fixed",
-        top: 9,
+        top: isHpClient ? 6 : 9,
         [isRtl ? "left" : "right"]: 1,
         [isRtl ? "marginLeft" : "marginRight"]: (() => {
-          let margin = 205; // Base margin for default header icons
+          let margin = isHpClient ? 180 : 205; // Base margin for default header icons
 
           // Add cart icon width if showing quote cart
           if (QuoteIfExist && window.location.pathname !== "/quote") {
@@ -39,17 +44,31 @@ const useStyle = (isRtl: boolean, hasFrontDeskPermission: boolean = false) => {
             margin += 45;
           }
 
+          // Add chatbot sidebar width (default 500px) if chatbot is open
+          if (isChatbotOpen) {
+            margin += 500;
+          }
+
           return `${margin}px`;
         })(),
+
         display: "flex",
         alignItems: "center",
-        gap: 1.5,
-        background: "#F6F6F6",
-        borderRadius: "999px",
-        px: 2,
-        py: 1,
+        gap: isHpClient ? 0 : 1.5,
+        background: isHpClient ? "transparent" : "#F6F6F6",
+        borderRadius: isHpClient ? "0px" : "999px",
+        px: isHpClient ? 0 : 2,
+        py: isHpClient ? 1 : 1,
         cursor: "pointer",
         zIndex: 1300,
+      },
+      hpSetupGuideText: {
+        fontFamily: "'Forma DJR UI', sans-serif",
+        fontStyle: "normal",
+        fontWeight: 500,
+        fontSize: "16px",
+        lineHeight: "24px",
+        color: "#A3A3A3",
       },
       listItemText: {
         color: "#333333",
@@ -106,7 +125,14 @@ const useStyle = (isRtl: boolean, hasFrontDeskPermission: boolean = false) => {
         },
       },
     };
-  }, [theme, isRtl, QuoteIfExist, hasFrontDeskPermission]);
+  }, [
+    theme,
+    isRtl,
+    QuoteIfExist,
+    hasFrontDeskPermission,
+    isChatbotOpen,
+    isHpClient,
+  ]);
 
   return {
     classes,

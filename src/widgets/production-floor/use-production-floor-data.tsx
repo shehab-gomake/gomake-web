@@ -8,6 +8,7 @@ import {
   updateJobDueDateApi,
   updateProductionFloorNotesApi,
   ungroupJobsApi,
+  backToProcessApi,
 } from "@/services/api-service/production-floor/production-floor-endpoints";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import {
@@ -18,7 +19,25 @@ import {
   boardsMissionsState,
   jobsStatusesState,
   selectedMissionsState,
+  openReturnToProdModalState,
+  openPrintTypeModalState,
+  pendingPrintParamsState,
 } from "@/widgets/production-floor/state/boards";
+import {
+  doneJobsCustomerState,
+  doneJobsAgentState,
+  doneJobsProductionStatusState,
+  doneJobsOrderStatusState,
+  doneJobsProofTypesState,
+  doneJobsIsPrintedState,
+  doneJobsProductIdsState,
+  doneJobsFromDateState,
+  doneJobsToDateState,
+  doneJobsFromDueDateState,
+  doneJobsToDueDateState,
+  doneJobsFromReadyDateState,
+  doneJobsToReadyDateState,
+} from "@/widgets/production-floor/state/done-jobs-filters";
 import { tagsState } from "@/widgets/production-floor/state/tags";
 import { userProductionFloorGroupsState } from "@/widgets/production-floor/state/production-floor-groups-state";
 import { productionFloorPathsState } from "@/widgets/production-floor/state/production-floor-paths";
@@ -47,13 +66,19 @@ import {
   productionFloorViewState,
 } from "@/widgets/production-floor/state/production-floor-view";
 import { useRouter } from "next/router";
-import { agentsState, currentStationOrderingState } from "@/store/agents-state";
+import {
+  agentsState,
+  currentStationOrderingState,
+  deliveryTimeOrderingState,
+  createDateOrderingState,
+} from "@/store/agents-state";
 import moment from "moment";
 import { IProductionFloorFilter } from "@/widgets/production-floor/interfaces/filters";
 import { CurrentStationOrderingEnum } from "@/enums";
 import {
   getOrderSummeryPdfApi,
   getWorkMissionPdfApi,
+  printJobUsingPrintNodeApi,
   setBoardMissionsFiltersApi,
 } from "@/services/api-service/board-missions/board-missions-table";
 import { EWorkSource } from "../product-pricing-widget/enums";
@@ -79,6 +104,14 @@ const useProductionFloorData = () => {
   const [selectedMission, setSelectedMission] = useRecoilState<any>(
     selectedMissionsState
   );
+  const [openReturnToProdModal, setOpenReturnToProdModalModal] =
+    useRecoilState<boolean>(openReturnToProdModalState);
+  const [openPrintTypeModal, setOpenPrintTypeModal] = useRecoilState<boolean>(
+    openPrintTypeModalState
+  );
+  const [pendingPrintParams, setPendingPrintParams] = useRecoilState<any>(
+    pendingPrintParamsState
+  );
   const [abortController, setAbortController] = useRecoilState(
     productionFloorAbortControllerState
   );
@@ -90,6 +123,8 @@ const useProductionFloorData = () => {
   const setPath = useSetRecoilState(productionFloorPathsState);
   const setJobsStatuses = useSetRecoilState(jobsStatusesState);
   const setStationOrdering = useSetRecoilState(currentStationOrderingState);
+  const setDeliveryTimeOrdering = useSetRecoilState(deliveryTimeOrderingState);
+  const setCreateDateOrdering = useSetRecoilState(createDateOrderingState);
   const { alertFaultUpdate, alertSuccessUpdate } = useSnackBar();
   const [selectedGroupId, setSelectedGroupId] = useRecoilState<string | null>(
     selectedGroupIdState
@@ -105,20 +140,54 @@ const useProductionFloorData = () => {
       }
 
       if (view === EProductionFloorView.DONE_JOBS) {
-        return await getAllBoardMissions();
+        // Default sort by readyDate descending
+        const defaultSortOrder = [
+          {
+            column: 2, // ReadyDate
+            dir: "desc",
+          },
+        ];
+        return await getAllBoardMissions(
+          undefined,
+          undefined,
+          undefined,
+          defaultSortOrder
+        );
       }
 
       const callBack = (res) => {
         if (res.success) {
           setData(res?.data?.boardMissionsCollections);
-          setFilters(res?.data?.filter);
+
+          // Don't restore filters from API when in Gantt view
+          // Gantt view manages its own filters (stations=[], groupId=null)
+          // Check router query directly to avoid stale closure value
+          const currentViewQuery = router.query.view as string;
+          const isGanttView = currentViewQuery?.toLowerCase() === "gantt";
+
+          if (!isGanttView) {
+            setFilters(res?.data?.filter);
+            setSelectedGroupId(res?.data?.filter?.groupId);
+          }
+
           let currentStationOrdering =
             res?.data?.filter?.currentStationOrdering;
           if (!currentStationOrdering) {
             currentStationOrdering = CurrentStationOrderingEnum.NONE;
           }
           setStationOrdering(currentStationOrdering);
-          setSelectedGroupId(res?.data?.filter?.groupId);
+
+          let deliveryTimeOrdering = res?.data?.filter?.deliveryTimeOrdering;
+          if (!deliveryTimeOrdering) {
+            deliveryTimeOrdering = CurrentStationOrderingEnum.NONE;
+          }
+          setDeliveryTimeOrdering(deliveryTimeOrdering);
+
+          let createDateOrdering = res?.data?.filter?.createDateOrdering;
+          if (!createDateOrdering) {
+            createDateOrdering = CurrentStationOrderingEnum.NONE;
+          }
+          setCreateDateOrdering(createDateOrdering);
           setTags(res?.data?.automatedTagsFilter);
           setUserGroups(res?.data?.groups);
           setPath(res?.data?.path ? res?.data?.path : []);
@@ -158,6 +227,8 @@ const useProductionFloorData = () => {
       setData,
       setFilters,
       setStationOrdering,
+      setDeliveryTimeOrdering,
+      setCreateDateOrdering,
       setSelectedGroupId,
       setTags,
       setUserGroups,
@@ -237,6 +308,91 @@ const useProductionFloorData = () => {
     ]
   );
 
+  const onOpenReturnToProdModal = (mission) => {
+    setSelectedMission(mission);
+    setOpenReturnToProdModalModal(true);
+  };
+
+  const onCloseReturnToProdModal = () => {
+    setSelectedMission(null);
+    setOpenReturnToProdModalModal(false);
+  };
+
+  const processPrintNodeRequest = async (
+    jobId: string,
+    productType: string
+  ) => {
+    const callBack = (res) => {
+      if (res.success) {
+        // Handle success
+      }
+    };
+
+    let data = jobId;
+    if (productType) {
+      data = data + "?productType=" + productType;
+    }
+
+    await printJobUsingPrintNodeApi(callApi, callBack, data);
+  };
+
+  const printJobUsingPrintNode = async (
+    jobId: string,
+    productType?: string,
+    productTypeName?: string
+  ) => {
+    if (productType) {
+      // Has productType - show modal
+      setPendingPrintParams({
+        type: "printNode",
+        jobId,
+        productType,
+        productTypeName,
+      });
+      setOpenPrintTypeModal(true);
+    } else {
+      // No productType - print full job directly
+      await processPrintNodeRequest(jobId, "");
+    }
+  };
+
+  const onClosePrintTypeModal = () => {
+    setOpenPrintTypeModal(false);
+    setPendingPrintParams(null);
+  };
+
+  const handlePrintTypeChoice = async (printAllJobs: boolean) => {
+    if (!pendingPrintParams) return;
+
+    const { jobId, productType } = pendingPrintParams;
+
+    if (printAllJobs) {
+      // Print all jobs - don't pass productType
+      await processPrintNodeRequest(jobId, "");
+    } else {
+      // Print product type only
+      await processPrintNodeRequest(jobId, productType);
+    }
+
+    onClosePrintTypeModal();
+  };
+
+  const onClickBackToProcess = async () => {
+    const callBack = async (res) => {
+      if (res?.success) {
+        alertSuccessUpdate();
+        await getAllData(pageNumber, pageSize, patternSearch);
+      } else {
+        alertFaultUpdate();
+      }
+    };
+    await backToProcessApi(callApi, callBack, {
+      boardMissionId: selectedMission?.id,
+      sendMessage: false,
+      productType: selectedMission?.productType ?? "",
+    });
+  };
+
   const { CheckPermission } = useUserPermission();
   const { getCurrencyUnitText } = useQuoteGetData();
   const { formatISODateTime } = useDateFormat();
@@ -250,6 +406,20 @@ const useProductionFloorData = () => {
   const pageSize = useRecoilValue<number>(pageSizeState);
   const [patternSearch, setPatternSearch] =
     useRecoilState<any>(patternSearchState);
+
+  // Done jobs filters
+  const doneJobsCustomer = useRecoilValue(doneJobsCustomerState);
+  const doneJobsAgent = useRecoilValue(doneJobsAgentState);
+  const doneJobsProductIds = useRecoilValue(doneJobsProductIdsState);
+  const doneJobsFromDate = useRecoilValue(doneJobsFromDateState);
+  const doneJobsToDate = useRecoilValue(doneJobsToDateState);
+  const doneJobsFromDueDate = useRecoilValue(doneJobsFromDueDateState);
+  const doneJobsToDueDate = useRecoilValue(doneJobsToDueDateState);
+  const doneJobsFromReadyDate = useRecoilValue(doneJobsFromReadyDateState);
+  const doneJobsToReadyDate = useRecoilValue(doneJobsToReadyDateState);
+  const doneJobsProofTypes = useRecoilValue(doneJobsProofTypesState);
+  const doneJobsIsPrinted = useRecoilValue(doneJobsIsPrintedState);
+  const doneJobsOrderStatus = useRecoilValue(doneJobsOrderStatusState);
   const searchInputFilterRef = useRef(null);
 
   const debouncePatternSearch = useDebounce(patternSearch, 1000);
@@ -307,7 +477,8 @@ const useProductionFloorData = () => {
     async (
       pageNumberInput?: number,
       pageSizeInput?: number,
-      patternSearchInput?: string
+      patternSearchInput?: string,
+      sortOrderInput?: any
     ) => {
       const callBack = (res) => {
         if (res?.success) {
@@ -338,6 +509,7 @@ const useProductionFloorData = () => {
               </a>,
               formatISODateTime(mission?.createdDate),
               formatISODateTime(mission?.dueDate),
+              formatISODateTime(mission?.readyDate),
               <div style={{ cursor: "pointer" }}>{mission?.clientName}</div>,
               mission?.productType
                 ? `${mission?.number} / ${mission?.productTypeName
@@ -394,6 +566,8 @@ const useProductionFloorData = () => {
                 isDoneJobs={true}
                 onClickOrderSummeryPdf={onClickOrderSummeryPdf}
                 onClickWorkMissionPdf={onClickWorkMissionPdf}
+                onClickReturnToProduction={onOpenReturnToProdModal}
+                printJobUsingPrintNode={printJobUsingPrintNode}
               />,
             ];
           });
@@ -438,14 +612,14 @@ const useProductionFloorData = () => {
       };
 
       const data = {
-        fromDate: null,
-        toDate: null,
-        fromDueDate: null,
-        toDueDate: null,
-        fromReadyDate: null,
-        toReadyDate: null,
-        productsIds: [],
-        productionStatus: "6",
+        fromDate: doneJobsFromDate,
+        toDate: doneJobsToDate,
+        fromDueDate: doneJobsFromDueDate,
+        toDueDate: doneJobsToDueDate,
+        fromReadyDate: doneJobsFromReadyDate,
+        toReadyDate: doneJobsToReadyDate,
+        productsIds: doneJobsProductIds,
+        productionStatus: "6", // Always "Done" for done jobs view
         pageNumber: pageNumberInput ?? pageNumber,
         pageSize: pageSizeInput ?? pageSize,
         search:
@@ -454,6 +628,12 @@ const useProductionFloorData = () => {
             patternSearchInput !== ""
             ? patternSearchInput
             : "",
+        customerId: doneJobsCustomer?.id || null,
+        agentId: doneJobsAgent?.id || null,
+        proofTypes: doneJobsProofTypes?.map((pt) => pt.value) || [],
+        isPrinted: doneJobsIsPrinted,
+        orderStatus: doneJobsOrderStatus?.value || null,
+        ...(sortOrderInput && { order: sortOrderInput }),
       };
       await setBoardMissionsFiltersApi(callApi, callBack, data);
     },
@@ -467,6 +647,18 @@ const useProductionFloorData = () => {
       router,
       t,
       CheckPermission,
+      doneJobsCustomer,
+      doneJobsAgent,
+      doneJobsProductIds,
+      doneJobsFromDate,
+      doneJobsToDate,
+      doneJobsFromDueDate,
+      doneJobsToDueDate,
+      doneJobsFromReadyDate,
+      doneJobsToReadyDate,
+      doneJobsProofTypes,
+      doneJobsIsPrinted,
+      doneJobsOrderStatus,
     ]
   );
 
@@ -474,12 +666,14 @@ const useProductionFloorData = () => {
     async (
       pageNumber: number,
       pageSize: number,
-      patternSearchInput?: string
+      patternSearchInput?: string,
+      sortOrderInput?: any
     ) => {
       return await getAllBoardMissions(
         pageNumber,
         pageSize,
-        patternSearchInput
+        patternSearchInput,
+        sortOrderInput
       );
     },
     [getAllBoardMissions]
@@ -613,7 +807,8 @@ const useProductionFloorData = () => {
       if (res.success) {
         if (boardMission.productType) {
           // Ask whether to mark all jobs or only product type
-          setOpenDoneScopeModal(true);
+          //setOpenDoneScopeModal(true);
+          moveBoardMissionToDone(boardMission);
         } else {
           if (res.data) {
             onOpenMarkReadyModalForHasJobs(boardMission);
@@ -692,7 +887,7 @@ const useProductionFloorData = () => {
     closeEmailComposer,
   } = useFrontDeskEmailIntegration({ documentType: DOCUMENT_TYPE.boardMission });
 
-  const onClickMoveBoardMissionToDone = async (sendMessage: boolean) => {
+  const onClickMoveBoardMissionToDone = async (sendMessage: boolean, ignoreProductType: boolean = false) => {
     const callBack = (res) => {
       setOpenMarkReadyModal(false);
       if (res?.success) {
@@ -714,7 +909,7 @@ const useProductionFloorData = () => {
     await moveBoardMissionToDoneApi(callApi, callBack, {
       boardMissionId: selectedMission.id || selectedMission.boardMissionId,
       sendMessage,
-      productType: selectedMission.productType ?? "",
+      productType: ignoreProductType ? "" : selectedMission.productType ?? "",
       storage: selectedMission.storage ?? "",
     });
   };
@@ -953,6 +1148,15 @@ const useProductionFloorData = () => {
     emailData,
     openEmailComposer,
     closeEmailComposer,
+    openReturnToProdModal,
+    onOpenReturnToProdModal,
+    onCloseReturnToProdModal,
+    onClickBackToProcess,
+    openPrintTypeModal,
+    onClosePrintTypeModal,
+    handlePrintTypeChoice,
+    pendingPrintParams,
+    printJobUsingPrintNode,
   };
 };
 

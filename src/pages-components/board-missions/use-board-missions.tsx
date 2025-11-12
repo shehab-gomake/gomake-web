@@ -13,6 +13,7 @@ import { BoardMissionStatusForFilter } from "./widgets/enums";
 import {
   exportJobTableToExcelApi,
   exportJobTableToExcelAsyncApi,
+  exportPurchaseJobTableToExcelApi,
   getAllPurchaseJobsApi,
   getDeliveryTickerPdfApi,
   getOrderSummeryPdfApi,
@@ -22,6 +23,7 @@ import {
   printOrderJobUsingPrintNodeApi,
   setBoardMissionsFiltersApi,
 } from "@/services/api-service/board-missions/board-missions-table";
+import { createQuoteFromQualityIssueApi } from "@/services/api-service/quotes/qoutes-endpoints";
 import { useDateFormat } from "@/hooks/use-date-format";
 import { CLIENT_TYPE, DEFAULT_VALUES } from "@/pages/customers/enums";
 import { EWorkSource } from "@/widgets/product-pricing-widget/enums";
@@ -43,7 +45,7 @@ import { useQuoteGetData } from "../quote-new/use-quote-get-data";
 import { getAndSetCustomerById } from "@/services/api-service/customers/customers-api";
 import { GomakeTextInput } from "@/components";
 import { useJobsTableSocketIo } from "@/hooks/socket-io/use-jobs-table-socket-io";
-import { Fab, Stack } from "@mui/material";
+import { Fab, Stack, Tooltip } from "@mui/material";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { userQuoteState } from "@/store";
 import { updateDocumentApi } from "@/services/api-service/generic-doc/documents-api";
@@ -89,6 +91,7 @@ interface Query {
   sampleType?: number;
   proofTypes?: string[];
   isPrinted?: boolean;
+  isQualityFixJob?: boolean | string;
   finalPatternSearch?: string;
 }
 
@@ -107,7 +110,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     alertFaultGetData,
     alertFaultUpdate,
     alertSuccessUpdate,
-    alertSuccess
+    alertSuccess,
   } = useSnackBar();
   const { navigate } = useGomakeRouter();
   const [status, setStatus] = useState<{
@@ -124,6 +127,11 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
   // Add state for multiple proof types (similar to productIds)
   const [proofTypes, setProofTypes] = useState([]);
   const [isPrintedState, setIsPrintedState] = useState<boolean | null>(null);
+  const [isQualityFixJob, setIsQualityFixJob] = useState<boolean | null>(null);
+  const [boardMissionsIds, setBoardMissionsIds] = useState<
+    string[] | undefined
+  >(undefined);
+  const hasAppliedDashboardFilter = useRef(false);
 
   // Generate Report states
   const [openFilterConfirmationModal, setOpenFilterConfirmationModal] =
@@ -180,6 +188,89 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
   const onOpenMarkReadyTypeModal = (mission) => {
     setPendingMarkReadyParams(mission);
     setOpenMarkReadyTypeModal(true);
+  };
+
+  // Quality Issue Modal state and handlers
+  const [openQualityIssueModal, setOpenQualityIssueModal] = useState<boolean>(false);
+  const [selectedMissionForQualityIssue, setSelectedMissionForQualityIssue] = useState<any>(null);
+
+  const onOpenQualityIssueModal = (mission: any) => {
+    setSelectedMissionForQualityIssue(mission);
+    setOpenQualityIssueModal(true);
+  };
+
+  const onCloseQualityIssueModal = () => {
+    setOpenQualityIssueModal(false);
+    setSelectedMissionForQualityIssue(null);
+  };
+
+  // Change Status Modal state for quality issue
+  const [openChangeStatusModalForQualityIssue, setOpenChangeStatusModalForQualityIssue] = useState<boolean>(false);
+  const [selectedQuoteIdForQualityIssue, setSelectedQuoteIdForQualityIssue] = useState<string | null>(null);
+
+  const onClickOpenChangeStatusModalForQualityIssue = (quoteId: string) => {
+    setSelectedQuoteIdForQualityIssue(quoteId);
+    setOpenChangeStatusModalForQualityIssue(true);
+  };
+
+  const onClickCloseChangeStatusModalForQualityIssue = () => {
+    setOpenChangeStatusModalForQualityIssue(false);
+    setSelectedQuoteIdForQualityIssue(null);
+  };
+
+  const updateQuoteStatusForQualityIssue = async () => {
+    if (!selectedQuoteIdForQualityIssue) return;
+
+    const callBack = (res) => {
+      if (res?.success) {
+        onClickCloseChangeStatusModalForQualityIssue();
+        navigate("/quote");
+      } else {
+        if (res?.statusCode === 85) {
+          alertFault(res?.message);
+        } else {
+          alertFaultUpdate();
+        }
+      }
+    };
+
+    await updateDocumentApi(callApi, callBack, {
+      documentType: 0,
+      document: {
+        documentId: selectedQuoteIdForQualityIssue,
+      },
+    });
+  };
+
+  const handleQualityIssueConfirm = async (reason: string) => {
+    if (!selectedMissionForQualityIssue) return;
+
+    const callBack = (res) => {
+      if (res?.success) {
+        alertSuccessUpdate();
+        onCloseQualityIssueModal();
+        getAllData(isPurchaseJobs, false);
+
+        const isAnotherQuoteInCreate = res?.data?.isAnotherQuoteInCreate;
+        const documentId = res?.data?.documentId;
+
+        if (!isAnotherQuoteInCreate) {
+          // No existing quote, redirect to quote cart
+          navigate("/quote");
+        } else {
+          // Existing quote in Create status, show modal to save it
+          onClickOpenChangeStatusModalForQualityIssue(documentId);
+        }
+      } else {
+        alertFaultUpdate();
+      }
+    };
+
+    await createQuoteFromQualityIssueApi(callApi, callBack, {
+      boardMissionId: selectedMissionForQualityIssue.id,
+      orderItemId: selectedMissionForQualityIssue.orderItemId || selectedMissionForQualityIssue.orderId,
+      qualityIssueReason: reason,
+    });
   };
 
   const handleMarkReadyTypeChoice = async (markAllReady: boolean) => {
@@ -311,6 +402,10 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
 
   const productionStatuses = [
     {
+      label: t("boardMissions.NoStations"),
+      value: BoardMissionStatusForFilter.NoStations,
+    },
+    {
       label: t("boardMissions.NotReady"),
       value: BoardMissionStatusForFilter.NotReady,
     },
@@ -345,7 +440,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
       value: ORDER_STATUSES.WaitingForPayment,
     },
     { label: t("boardMissions.paused"), value: ORDER_STATUSES.Paused },
-    { label: t("boardMissions.ready"), value: ORDER_STATUSES.Ready },
+    // { label: t("boardMissions.ready"), value: ORDER_STATUSES.Ready },
   ];
 
   const tableHeader = [
@@ -362,6 +457,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     CheckPermission(Permissions.SHOW_COSTS_IN_BOARD_MISSIONS) &&
     t("boardMissions.priceFromOrderItem"),
     isPrintHouseUsePrintNode && t("boardMissions.isPrinted"),
+    t("boardMissions.isQualityFixJob"),
     t("boardMissions.jobName"),
     t("boardMissions.numberOfBoardMissionsInOrder"),
     t("boardMissions.productName"),
@@ -503,6 +599,9 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     if (isPrintedState !== null) newQuery.isPrinted = isPrintedState;
     else delete newQuery.isPrinted;
 
+    if (isQualityFixJob !== null) newQuery.isQualityFixJob = isQualityFixJob;
+    else delete newQuery.isQualityFixJob;
+
     router.replace(
       {
         pathname: router.pathname,
@@ -527,6 +626,8 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     setProductIds([]);
     setPatternSearch("");
     setFinalPatternSearch("");
+    setIsPrintedState(null);
+    setIsQualityFixJob(null);
     setFromDate(null);
     setFromDueDate(null);
     setFromReadyDate(null);
@@ -539,13 +640,16 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     setCurrentSortOrder(null);
     setIsPrintedState(null);
     setPageNumber(1);
+    setBoardMissionsIds(undefined); // Clear boardMissionsIds filter
+    hasAppliedDashboardFilter.current = false; // Reset the flag so filter can be reapplied if needed
 
     setHasFetchedQuery(null); // ✅ force next fetch on empty query
 
-    const query = {
+    const query: any = {
       pageNumber: "1",
       pageSize: String(router.query.pageSize ?? pageSize),
     };
+
     router.replace({ pathname: router.pathname, query }, undefined, {
       shallow: true,
     });
@@ -566,16 +670,20 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     const signature = JSON.stringify({
       q: router.query,
       pageSize: effectivePageSize,
+      boardMissionsIds: boardMissionsIds,
     });
 
     if (isNotFilteredData) {
-      getAllData(isPurchaseJobs, true);
-      setHasFetchedQuery(null);
+      // Only clear if we don't have a boardMissionsIds filter active
+      if (!boardMissionsIds || boardMissionsIds.length === 0) {
+        getAllData(isPurchaseJobs, true);
+        setHasFetchedQuery(null);
+      }
     } else if (hasFetchedQuery !== signature) {
       getAllData(isPurchaseJobs, false);
       setHasFetchedQuery(signature);
     }
-  }, [router.query, pageSize, isPurchaseJobs]); // include isPurchaseJobs just in case
+  }, [router.query, pageSize, isPurchaseJobs, boardMissionsIds]); // include boardMissionsIds
 
   const { isSocketUpdateJobsTable, setIsSocketUpdateJobsTable } =
     useJobsTableSocketIo();
@@ -787,6 +895,42 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     setIsJobsTableError(false);
     setIsJobsTableLoading(!isSocketRefreshingJobs);
 
+    // Check for boardMissionsIds filter from production dashboard
+    // Handle it directly here to avoid race conditions
+    let dashboardBoardMissionsIds: string[] | undefined = undefined;
+    if (
+      router.query.applyBoardMissionsFilter === "1" &&
+      !hasAppliedDashboardFilter.current
+    ) {
+      const filterKey = "boardMissionsFilterFromDashboard";
+      const storedFilter = sessionStorage.getItem(filterKey);
+
+      if (storedFilter) {
+        try {
+          const filterData = JSON.parse(storedFilter);
+
+          // Clear the stored filter so it's only used once
+          sessionStorage.removeItem(filterKey);
+
+          if (
+            filterData.boardMissionsIds &&
+            filterData.boardMissionsIds.length > 0
+          ) {
+            // Mark that we've applied the filter to prevent duplicate reads
+            hasAppliedDashboardFilter.current = true;
+
+            // Store in state so it persists across re-renders
+            setBoardMissionsIds(filterData.boardMissionsIds);
+
+            // Use these IDs for this API call
+            dashboardBoardMissionsIds = filterData.boardMissionsIds;
+          }
+        } catch (error) {
+          console.error("Error parsing stored filter:", error);
+        }
+      }
+    }
+
     const callBack = (res) => {
       if (res?.success) {
         const _data = res?.data;
@@ -820,6 +964,9 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
             ),
             creationDate: formatISODateTime(mission?.createdDate),
             dueDate: formatISODateTime(mission?.dueDate),
+            readyDate: mission?.readyDate
+              ? formatISODateTime(mission?.readyDate)
+              : "-",
             clientName: (
               <div
                 style={{ cursor: "pointer" }}
@@ -880,6 +1027,13 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
             ...(isPrintHouseUsePrintNode && {
               isPrinted: mission?.isPrinted ? t("modal.yes") : t("modal.no"),
             }),
+            isQualityFixJob: mission?.qualityIssueReason ? (
+              <Tooltip title={mission.qualityIssueReason} arrow>
+                <span style={{ cursor: "help" }}>{t("modal.yes")}</span>
+              </Tooltip>
+            ) : (
+              t("modal.no")
+            ),
             jobName: mission?.jobName,
             numberOfBoardMissionsInOrder: mission?.numberOfBoardMissions,
             productName: mission?.productName,
@@ -905,6 +1059,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
                 onOpenMarkReadyModalForHasJobs={onOpenMarkReadyModalForHasJobs}
                 printJobUsingPrintNode={printJobUsingPrintNode}
                 onOpenMarkReadyTypeModal={onOpenMarkReadyTypeModal}
+                onReportQualityIssue={onOpenQualityIssueModal}
               />
             ),
           };
@@ -985,12 +1140,17 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
       ? Number(router.query.pageSize)
       : pageSize;
     const currentIsPrinted = router.query.isPrinted;
+    const currentIsQualityFixJob = router.query.isQualityFixJob !== undefined
+      ? (typeof router.query.isQualityFixJob === 'string' && router.query.isQualityFixJob === 'true' ? true : false)
+      : isQualityFixJob;
 
     const data = isClear
       ? {
         productsIds: [],
         pageNumber: currentPageNumber || pageNumber,
         pageSize: currentPageSize,
+        // Clear boardMissionsIds when clearing filters
+        ...(boardMissionsIds && { boardMissionsIds: [] }),
       }
       : {
         clientId: router?.query?.clientId || customer?.id,
@@ -1026,6 +1186,15 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
         order: sortOrder,
         exampleTypes: currentProofTypes,
         isPrinted: currentIsPrinted || isPrintedState,
+        isQualityFixJob: currentIsQualityFixJob !== null && currentIsQualityFixJob !== undefined
+          ? currentIsQualityFixJob
+          : (isQualityFixJob !== null ? isQualityFixJob : undefined),
+        // Include boardMissionsIds - prioritize dashboard filter, then state
+        ...(dashboardBoardMissionsIds && dashboardBoardMissionsIds.length > 0
+          ? { boardMissionsIds: dashboardBoardMissionsIds }
+          : boardMissionsIds && boardMissionsIds.length > 0
+            ? { boardMissionsIds }
+            : {}),
       };
     await setBoardMissionsFiltersApi(callApi, callBack, data);
     setIsJobsTableLoading(false);
@@ -1095,6 +1264,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
                 onOpenMarkReadyModalForHasJobs={onOpenMarkReadyModalForHasJobs}
                 printJobUsingPrintNode={printJobUsingPrintNode}
                 onOpenMarkReadyTypeModal={onOpenMarkReadyTypeModal}
+                onReportQualityIssue={onOpenQualityIssueModal}
               />
             ),
           };
@@ -1569,7 +1739,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
 
     let data = jobId;
     if (productType) {
-      // data = data + "?productType=" + productType;
+      data = data + "?productType=" + productType;
     }
 
     await printJobUsingPrintNodeApi(callApi, callBack, data);
@@ -1788,30 +1958,25 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     }
   }, []);
 
-  const [showEmailModal, setShowEmailModal] = useState(false);
-  const [exportEmail, setExportEmail] = useState("");
-
   const ExportJobsTableToExcel = async () => {
-    // Show email modal instead of direct export
-    setShowEmailModal(true);
-  };
-
-  const handleEmailModalClose = () => {
-    setShowEmailModal(false);
-    setExportEmail("");
-  };
-
-  const handleExportWithEmail = async () => {
-    if (!exportEmail || !exportEmail.includes("@")) {
-      alertFault(t("boardMissions.invalidEmail"));
+    if (!fromDate && !toDate) {
+      alertFault(t("boardMissions.dateFilterRequired"));
       return;
     }
-
     const callBack = (res) => {
       if (res?.success) {
-        alertSuccess(t("boardMissions.exportRequestSubmitted"));
-        setShowEmailModal(false);
-        setExportEmail("");
+        if (res?.data) {
+          // Download the file directly
+          const link = document.createElement("a");
+          link.href = res.data;
+          link.download = isPurchaseJobs
+            ? "purchase-jobs-export.xlsx"
+            : "jobs-export.xlsx";
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          alertSuccess(t("boardMissions.exportSuccess"));
+        }
       } else {
         alertFault(t("boardMissions.exportFailed"));
       }
@@ -1908,10 +2073,14 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
       pageSize: currentPageSize,
       orderNumber: router?.query?.orderNumber,
       exampleTypes: currentProofTypes,
-      email: exportEmail,
     };
 
-    await exportJobTableToExcelAsyncApi(callApi, callBack, data);
+    // Use different API based on whether it's purchase jobs or regular jobs
+    if (isPurchaseJobs) {
+      await exportPurchaseJobTableToExcelApi(callApi, callBack, data);
+    } else {
+      await exportJobTableToExcelApi(callApi, callBack, data);
+    }
   };
 
   const handleClickBackToProcess = async (mission) => {
@@ -1939,6 +2108,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     boardMissions: {
       creationDate: JobsTableColumns.CreationDate,
       dueDate: JobsTableColumns.DueDate,
+      readyDate: JobsTableColumns.ReadyDate,
     },
     purchaseJobs: {
       creationDate: JobsTableColumns.CreationDate,
@@ -2011,12 +2181,26 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
 
   // Generate Report functions
   const onOpenAddRuleModal = () => {
-    // Check if there are active filters
-    const activeFilters = Object.keys(router.query).filter(
-      (key) => key !== "pageNumber" && key !== "pageSize"
-    );
+    // Check if there are active filters by checking all filter state variables
+    const hasActiveFilters =
+      patternSearch ||
+      finalPatternSearch ||
+      status ||
+      customer ||
+      agent ||
+      orderStatus ||
+      productIds?.length > 0 ||
+      proofTypes?.length > 0 ||
+      isPrintedState !== null ||
+      fromDate ||
+      toDate ||
+      fromDueDate ||
+      toDueDate ||
+      fromReadyDate ||
+      toReadyDate ||
+      sampleType;
 
-    if (activeFilters.length > 0) {
+    if (hasActiveFilters) {
       setOpenFilterConfirmationModal(true);
     } else {
       setOpenAddRule(true);
@@ -2218,6 +2402,8 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     tableKey,
     setIsPrintedState,
     isPrintedState,
+    isQualityFixJob,
+    setIsQualityFixJob,
     isPrintHouseUsePrintNode,
     openPrintTypeModal,
     onClosePrintTypeModal,
@@ -2256,18 +2442,22 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     onDeleteScheduledReport,
     handleScheduledReportsPageChange,
     handleScheduledReportsPageSizeChange,
-    // Email export modal
-    showEmailModal,
-    exportEmail,
-    setExportEmail,
-    handleEmailModalClose,
-    handleExportWithEmail,
+
     isEmailComposerOpen,
     emailData,
     openEmailComposer,
     closeEmailComposer,
+    // Quality Issue Modal
+    openQualityIssueModal,
+    onOpenQualityIssueModal,
+    onCloseQualityIssueModal,
+    handleQualityIssueConfirm,
+    selectedMissionForQualityIssue,
+    // Change Status Modal for Quality Issue
+    openChangeStatusModalForQualityIssue,
+    onClickCloseChangeStatusModalForQualityIssue,
+    updateQuoteStatusForQualityIssue,
   };
 };
 
 export { useBoardMissions };
-

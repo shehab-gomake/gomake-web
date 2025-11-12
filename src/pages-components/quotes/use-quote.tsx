@@ -16,6 +16,7 @@ import {
 import { MoreMenuWidget } from "./more-circle";
 import { getAllProductsForDropDownList } from "@/services/hooks";
 import { useRecoilValue, useRecoilState, useSetRecoilState } from "recoil";
+import { printHouseHasPackagingSlipPrinter } from "@/store/print-house-profile";
 import {
   agentsCategoriesState,
   closeOrderAsInvoiceOrDeliveryNoteState,
@@ -93,9 +94,12 @@ import { useClientTypesList } from "@/hooks/use-client-types";
 import { useModal } from "@/hooks/use-modal";
 import { getTaxConfirmationNumberApi } from "@/services/api-service/generic-doc/invoices";
 import { getDeliveryTickerPdfApi } from "@/services/api-service/board-missions/board-missions-table";
+import {
+  exportDeliveryTicketPDFApi,
+  printDeliveryTicketPDFApi,
+} from "@/services/api-service/generic-doc/orders-api";
 import { GomakeTextInput } from "@/components";
 import { downloadPdf } from "@/utils/helpers";
-import { exportDeliveryTicketPDFApi } from "@/services/api-service/generic-doc/orders-api";
 import { PAYMENT_TYPE } from "../deposit/enums";
 import { useListPagination } from "@/hooks/use-list-pagination";
 import { useScheduledReports } from "@/hooks/use-scheduled-reports";
@@ -153,6 +157,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     alertFault,
     alertFaultDelete,
     alertSuccessGetData,
+    alertSuccess,
   } = useSnackBar();
   const router = useRouter();
   const documentPath =
@@ -175,6 +180,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const { errorColor, primaryColor } = useGomakeTheme();
   const { GetDateFormat, formatCustomDateTime, formatISODateTime } =
     useDateFormat();
+  const isPrintHouseHasPackagingSlipPrinter = useRecoilValue(
+    printHouseHasPackagingSlipPrinter
+  );
 
   const [patternSearch, setPatternSearch] = useState<any>(
     router.query.finalPatternSearch || null
@@ -385,12 +393,30 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     setOpenAddRule(false);
   };
   const onOpenAddRuleModal = () => {
-    // Check if there are active filters
-    const activeFilters = Object.keys(router.query).filter(
-      (key) => key !== "pageNumber"
-    );
+    // Check if there are active filters by checking all filter state variables
+    const hasActiveFilters =
+      patternSearch ||
+      finalPatternSearch ||
+      statusId ||
+      approvalStatusId ||
+      quoteStatusId ||
+      customerId ||
+      agentId ||
+      dateRange ||
+      productionStatus ||
+      accountingStatus ||
+      deliveryStatus ||
+      productIds?.length > 0 ||
+      currencyFilter ||
+      isCanceledState ||
+      isPausedOrders ||
+      minPrice ||
+      maxPrice ||
+      fromDate ||
+      toDate ||
+      paymentType;
 
-    if (activeFilters.length > 0) {
+    if (hasActiveFilters) {
       setOpenFilterConfirmationModal(true);
     } else {
       setOpenAddRule(true);
@@ -588,6 +614,10 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const ExportDocumentTableToExcel = async (
     exportType?: INVOICES_EXPORT_TYPES
   ) => {
+    if (!fromDate && !toDate) {
+      alertFault(t("boardMissions.dateFilterRequired"));
+      return;
+    }
     const sortOrder = currentSortOrder;
     const callBack = (res) => {
       if (res?.success) {
@@ -2136,7 +2166,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     if (isPausedOrders) query.isPaused = isPausedOrders;
     else delete query.isPaused;
 
-    //!here
     const trimmedSearch = patternSearch?.trim() || "";
     setFinalPatternSearch(trimmedSearch);
 
@@ -2580,15 +2609,16 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     setActiveCard(null);
   };
 
-  // const onSelectDeliveryTimeDates = (fromDate: Date, toDate: Date) => {
-  //   setResetDatePicker(false);
-  //   setFromDate(fromDate);
-  //   setToDate(toDate);
-  // };
-
   const onSelectDeliveryTimeDates = (value) => {
     if (value && value.length === 2) {
       const [firstDate, secondDate] = value;
+
+      // Handle null values
+      if (!firstDate || !secondDate) {
+        setFromDate(null);
+        setToDate(null);
+        return;
+      }
 
       // Ensure fromDate is always the earlier date and toDate is always the later date
       if (firstDate <= secondDate) {
@@ -2793,6 +2823,12 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         return `${t("logs.PARTIAL_DELIVERED")}`;
       case LogActionType[47]:
         return `${t("logs.REMOVE_DELIVERED")}`;
+      case LogActionType[48]:
+        return `${t("logs.BACK_JOB_TO_PRODUCTION")}`;
+      case LogActionType[49]:
+        return `${t("logs.PACKAGING_SLIP_PRINTED_FOR_JOB")}`;
+      case LogActionType[50]:
+        return `${t("logs.PACKAGING_SLIP_PRINTED_FOR_ORDER")}`;
 
       default:
         return "";
@@ -3141,11 +3177,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     MoveOrderToReady.close();
   };
 
-  const onClickPrintPackagingSlip = async () => {
-    if (quantityPerPackage > selectedDocument?.totalOrderQuantity) {
-      alertFault("boardMissions.alertQuantity");
-      return;
-    }
+  const exportPdf = async () => {
     const callBack = (res) => {
       if (res?.success) {
         const pdfLink = res.data;
@@ -3162,7 +3194,41 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     });
   };
 
+  const printPackingSlip = async () => {
+    const callBack = (res) => {
+      if (res?.success) {
+        alertSuccess("boardMissions.packingSlipPrinted");
+        onClosePackagesModal();
+        openPathAfterPackageModal();
+      } else {
+        alertFault("boardMissions.alertPrintPackingSlip");
+      }
+    };
+    await printDeliveryTicketPDFApi(callApi, callBack, {
+      orderId: selectedDocument?.id,
+      packageQuantities,
+    });
+  };
+
+  const onClickPrintPackagingSlip = async () => {
+    if (quantityPerPackage > selectedDocument?.totalOrderQuantity) {
+      alertFault("boardMissions.alertQuantity");
+      return;
+    }
+
+    // If PrintNode is enabled and packaging slip printer is configured, show selection modal
+    if (isPrintHouseHasPackagingSlipPrinter) {
+      setOpenPrintExportModal(true);
+      return;
+    }
+
+    // Otherwise, export PDF directly
+    await exportPdf();
+  };
+
   const [openPackagesModal, setOpenPackagesModal] = useState<boolean>(false);
+  const [openPrintExportModal, setOpenPrintExportModal] =
+    useState<boolean>(false);
   const [triggeredFromMoveOrderToReady, setTriggeredFromMoveOrderToReady] =
     useState(false);
 
@@ -3179,7 +3245,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   };
 
   //  opening the path in new tab when closing order as invoice/delivery note after opening package slip modal
-  //!here
   const openPathAfterPackageModal = () => {
     if (!triggeredFromMoveOrderToReady) return;
 
@@ -3874,7 +3939,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
           onOpenPackagesModal(
             selectedDocument,
             closeOrderAsInvoiceOrDeliveryNote ? true : false
-          ); //!here
+          );
           return;
         }
         if (isSelectedCLoseAsDeliveryNote) {
@@ -4286,6 +4351,11 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     packageInputs,
     onClosePackagesModal,
     openPackagesModal,
+    openPrintExportModal,
+    setOpenPrintExportModal,
+    exportPdf,
+    printPackingSlip,
+    isPrintHouseHasPackagingSlipPrinter,
     paymentType,
     handlePaymentTypeChange,
     typeOfPayments,

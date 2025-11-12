@@ -1,5 +1,6 @@
 import { IAuthLayout } from "./interfaces";
 import { LeftSideLayout } from "./left-side";
+import { useThemeComponent } from "@/contexts/theme/useThemeComponent";
 import { HeaderWidget } from "@/widgets/header";
 import { LAYOUT_DEFAULT_GAP } from "@/utils/layout-config";
 import { GoMakeAlertModal, GoMakeModal } from "@/components";
@@ -11,8 +12,16 @@ import Head from "next/head";
 import { useEffect } from "react";
 import { useCustomerAuthLayout } from "./use-customer-auth-layout";
 import { useTrialRedirect } from "@/hooks/use-trial-redirect";
+import {
+  TicketChatbotSidebar,
+  TicketChatbotProvider,
+  useTicketChatbot,
+  RequestNotificationProvider,
+  RequestNotificationModal,
+  useGlobalRequestListener,
+} from "@/components/ticket-chatbot";
 
-const CustomerAuthLayout = ({
+const CustomerAuthLayoutInner = ({
   children,
   permissionEnumValue,
   customGap = LAYOUT_DEFAULT_GAP,
@@ -21,8 +30,13 @@ const CustomerAuthLayout = ({
   className,
   backgroundColor,
   staticPageTitle,
+  customHeaderStyle,
 }: IAuthLayout) => {
   const isMobileScreen = useMediaQuery("(max-width:768px)");
+  const { isOpen, closeChatbot } = useTicketChatbot();
+
+  // Set up global request listener (works even when chatbot is closed)
+  useGlobalRequestListener();
 
   const {
     profile,
@@ -44,6 +58,12 @@ const CustomerAuthLayout = ({
     isHomePage,
   } = useCustomerAuthLayout(permissionEnumValue, allowAnonymous, customGap);
 
+  // Get theme-aware LeftSideLayout component
+  const ThemeLeftSideLayout = useThemeComponent(
+    "LeftSideLayout",
+    LeftSideLayout
+  );
+
   // Handle trial redirect in case of trial finished
   useTrialRedirect();
 
@@ -61,18 +81,6 @@ const CustomerAuthLayout = ({
     }
     return "Gomake";
   };
-
-  /*useEffect(() => {
-    const lastSeenVersion = localStorage.getItem("lastSeenAppVersion");
-    if (!lastSeenVersion) {
-      localStorage.setItem("lastSeenAppVersion", appVersion);
-    }
-
-    if (appVersion && appVersion !== Number(lastSeenVersion)) {
-      alertNewVersion.open();
-      localStorage.setItem("lastSeenAppVersion", appVersion);
-    }
-  }, [appVersion]);*/
 
   // Show nothing while authentication is being checked to prevent flash
   if (canAccess === null) {
@@ -113,24 +121,44 @@ const CustomerAuthLayout = ({
             {isMobileScreen ? (
               <div></div>
             ) : (
-              <LeftSideLayout customGap={customGap} />
+              <ThemeLeftSideLayout customGap={customGap} />
             )}
 
             <div
-              style={classes.rightContainer}
+              style={{
+                ...classes.rightContainer,
+                display: "flex",
+                flexDirection: "row",
+                overflow: "hidden",
+              }}
               onMouseEnter={() => {
                 if (!isHover) {
                   setNavStatus({ isClosed: true });
                 }
               }}
             >
-              {isMobileScreen ? <MobileHeaderWidget /> : <HeaderWidget />}
+              <div
+                style={{
+                  flex: 1,
+                  display: "flex",
+                  flexDirection: "column",
+                  minWidth: 0,
+                  overflow: "hidden",
+                }}
+              >
+                {isMobileScreen ? (
+                  <MobileHeaderWidget />
+                ) : (
+                  <HeaderWidget customStyle={customHeaderStyle} />
+                )}
 
-              {canAccess && (
-                <div style={classes.bodyContainer} className={className}>
-                  {children}
-                </div>
-              )}
+                {canAccess && (
+                  <div style={classes.bodyContainer} className={className}>
+                    {children}
+                  </div>
+                )}
+              </div>
+              <TicketChatbotSidebar isOpen={isOpen} onClose={closeChatbot} />
             </div>
             <FilesUploaderWidget />
             {profile?.isShowOnBoardingMenu && !isMobileScreen ? (
@@ -179,20 +207,25 @@ const CustomerAuthLayout = ({
           onClickConfirm={() => {
             setIsTokenExpired(false);
             window.open("/login", "_blank");
-            /*const currentPath =
-              window.location.pathname + window.location.search;
-            const loginUrl =
-              currentPath && currentPath !== "/"
-                ? `/login?redirect=${encodeURIComponent(currentPath)}`
-                : "/login";
-            navigate(loginUrl);*/
           }}
           subTitle="modal.alertTokenExpired"
           yesBtn="login.login"
           withCancelBtn={false}
         />
       )}
+      {/* Request notification modal for huddle and remote session */}
+      <RequestNotificationModal />
     </>
+  );
+};
+
+const CustomerAuthLayout = (props: IAuthLayout) => {
+  return (
+    <TicketChatbotProvider>
+      <RequestNotificationProvider>
+        <CustomerAuthLayoutInner {...props} />
+      </RequestNotificationProvider>
+    </TicketChatbotProvider>
   );
 };
 

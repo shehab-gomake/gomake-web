@@ -21,6 +21,17 @@ export const printHouseUsePrintNode = selector<boolean>({
   },
 });
 
+// Selector to check if print house has PrintNode feature AND packaging slip printer configured
+export const printHouseHasPackagingSlipPrinter = selector<boolean>({
+  key: "printHouseHasPackagingSlipPrinterSelector",
+  get: ({ get }) => {
+    const profileState = get(printHouseProfile);
+    const hasPrintNodeFeature = profileState.allowedFeaturesId?.includes(PRINT_NODE_FEATURE_ID) ?? false;
+    const hasPackagingSlipPrinter = profileState.packagingSlipPrinterId != null && profileState.packagingSlipPrinterId > 0;
+    return hasPrintNodeFeature && hasPackagingSlipPrinter;
+  },
+});
+
 // Selector to check if print house has Gomake MIS feature
 export const printHouseHasMISFeature = selector<boolean>({
   key: "printHouseHasMISFeatureSelector",
@@ -78,4 +89,6 @@ export interface IPrintHouseProfile {
   maxTrialDays?: number;
   remainingTrialDays?: number;
   trialFinished?: boolean;
+  packagingSlipPrinterId?: number;
+  localFilePathMapping?: string;
 }

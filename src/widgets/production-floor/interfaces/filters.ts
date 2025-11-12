@@ -18,7 +18,9 @@ export interface IProductionFloorFilter {
   groupId: string;
   agentIds?: string[];
   isFirstLoading?: boolean;
-  stationOrdering?: CurrentStationOrderingEnum;
+  currentStationOrdering?: CurrentStationOrderingEnum;
+  deliveryTimeOrdering?: CurrentStationOrderingEnum;
+  createDateOrdering?: CurrentStationOrderingEnum;
 }
 
 export interface IStation {

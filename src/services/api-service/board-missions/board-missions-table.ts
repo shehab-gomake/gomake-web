@@ -13,6 +13,10 @@ const GET_WORK_MISSION_PDF_URL =
   "/v1/erp-service/board-missions-tables/get-work-mission-pdf";
 const GET_DELIVERY_TICKER_PDF_URL =
   "/v1/erp-service/board-missions-tables/get-delivery-ticker-pdf";
+const PRINT_DELIVERY_TICKER_PDF_URL =
+  "/v1/erp-service/board-missions-tables/print-delivery-ticker-pdf";
+const CHECK_IF_PRODUCT_IS_LABEL_IN_ROLLS_URL =
+  "/v1/erp-service/board-missions/check-if-product-is-label-in-rolls";
 const ADD_BOARD_MISSIONS_TO_FILE_UPLOADER_URL =
   "/v1/erp-service/board-missions/add-to-file-uploader";
 const PRINT_JOB_USING_PRINT_NODE_URL =
@@ -26,6 +30,8 @@ const EXPORT_JOBS_TABLE_TO_EXCEL_URL =
   "/v1/job-service/board-missions-tables/export-job-table-to-excel";
 const EXPORT_JOBS_TABLE_TO_EXCEL_ASYNC_URL =
   "/v1/job-service/board-missions-tables/export-job-table-to-excel-async";
+const EXPORT_PURCHASE_JOB_TABLE_TO_EXCEL_URL =
+  "/v1/erp-service/board-missions-tables/export-purchase-job-table-to-excel";
 const PRINT_NODE_PRINTING_MODAL_LOG =
   "/v1/job-service/board-missions-tables/print-node-modal-log";
 const PRINT_NODE_PRINTING_CANCEL_LOG =
@@ -102,6 +108,19 @@ const getDeliveryTickerPdfApi: ICallAndSetData = async (
     callApi,
     EHttpMethod.POST,
     GET_DELIVERY_TICKER_PDF_URL,
+    setState,
+    data
+  );
+};
+const printDeliveryTickerPdfApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    PRINT_DELIVERY_TICKER_PDF_URL,
     setState,
     data
   );
@@ -199,6 +218,21 @@ const exportJobTableToExcelAsyncApi: ICallAndSetData = async (
     data
   );
 };
+
+const exportPurchaseJobTableToExcelApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data: BoardMissionFilters
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    EXPORT_PURCHASE_JOB_TABLE_TO_EXCEL_URL,
+    setState,
+    data
+  );
+};
+
 const printNodeModalShowLog: ICallAndSetData = async (
   callApi,
   setState,
@@ -267,11 +301,25 @@ const getJobsTableSettingsApi: ICallAndSetData = async (
   );
 };
 
+const checkIfProductIsLabelInRollsApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  boardMissionId: string
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.GET,
+    `${CHECK_IF_PRODUCT_IS_LABEL_IN_ROLLS_URL}/${boardMissionId}`,
+    setState
+  );
+};
+
 export {
   setBoardMissionsFiltersApi,
   getOrderSummeryPdfApi,
   getWorkMissionPdfApi,
   getDeliveryTickerPdfApi,
+  printDeliveryTickerPdfApi,
   getAllPurchaseJobsApi,
   addBoardMissionsToFileUploaderApi,
   printJobUsingPrintNodeApi,
@@ -280,9 +328,11 @@ export {
   addOrderBoardMissionsToFileUploaderApi,
   exportJobTableToExcelApi,
   exportJobTableToExcelAsyncApi,
+  exportPurchaseJobTableToExcelApi,
   printNodeModalShowLog,
   printNodeModalCancelLog,
   getInitialOrderFoldersData,
   saveJobsTableSettingsApi,
   getJobsTableSettingsApi,
+  checkIfProductIsLabelInRollsApi,
 };

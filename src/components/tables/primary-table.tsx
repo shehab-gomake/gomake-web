@@ -27,8 +27,14 @@ const PrimaryTableCell = styled(TableCell)(() => {
 
   return {
     [`&.${tableCellClasses.head}`]: {
-      backgroundColor: primaryColor(50),
-      color: primaryColor(900),
+      backgroundColor:
+        "var(--theme-table-head-bg, var(--theme-primary-light, " +
+        primaryColor(50) +
+        "))",
+      color:
+        "var(--theme-table-head-color, var(--theme-text-primary, " +
+        primaryColor(900) +
+        "))",
       ...FONT_FAMILY.Lexend(500, 14),
       padding: isMobile ? "5px 10px" : "5px",
 
@@ -36,7 +42,10 @@ const PrimaryTableCell = styled(TableCell)(() => {
     },
     [`&.${tableCellClasses.body}`]: {
       ...FONT_FAMILY.Lexend(500, 14),
-      color: primaryColor(500),
+      color:
+        "var(--theme-table-body-color, var(--theme-text-primary, " +
+        primaryColor(500) +
+        "))",
       padding: isMobile ? "5px 10px" : "3px 0",
 
       height: 47,
@@ -56,7 +65,7 @@ const PrimaryTableRow = styled(TableRow)(() => {
 const OddEvenTableRow = styled(TableRow)(() => {
   return {
     "&:nth-of-type(even)": {
-      backgroundColor: `#ececec8a !important`,
+      backgroundColor: "var(--theme-table-row-even-bg, #ececec) !important",
     },
     "&:last-child td, &:last-child th": {
       border: 0,
@@ -67,13 +76,14 @@ const OddEvenTableRow = styled(TableRow)(() => {
 const ClassicTableCell = styled(TableCell)(() => {
   return {
     [`&.${tableCellClasses.head}`]: {
-      color: "#B5B7C0",
+      color: "var(--theme-table-classic-head-color, #B5B7C0)",
       ...FONT_FAMILY.Lexend(500, 14),
       padding: "5px 5px",
     },
     [`&.${tableCellClasses.body}`]: {
       ...FONT_FAMILY.Lexend(500, 14),
-      color: "#292D32",
+      color:
+        "var(--theme-table-body-color, var(--theme-text-primary, #292D32))",
       padding: "3px 0",
     },
   };
@@ -85,7 +95,8 @@ const ClassicTableRow = styled(TableRow)(() => {
       border: 0,
     },
     "&:first-child td, &:first-child th": {
-      borderBottom: "1px solid #e0e0e0",
+      borderBottom:
+        "1px solid var(--theme-table-border-color, var(--theme-border-color, #e0e0e0))",
     },
   };
 });
@@ -94,14 +105,18 @@ const RoundTableCell = styled(TableCell)(() => {
   return {
     [`&.${tableCellClasses.head}`]: {
       ...FONT_FAMILY.Lexend(500, 13),
-      backgroundColor: "#F9FAFB",
-      borderBottom: "1px solid #EAECF0 !important",
-      color: "#475467",
+      backgroundColor:
+        "var(--theme-table-round-head-bg, var(--theme-bg-secondary, #F9FAFB))",
+      borderBottom:
+        "1px solid var(--theme-table-border-color, var(--theme-border-color, #EAECF0)) !important",
+      color:
+        "var(--theme-table-round-head-color, var(--theme-text-secondary, #475467))",
       padding: "5px 5px",
       height: "40px !important",
     },
     [`&.${tableCellClasses.body}`]: {
-      color: "#292D32",
+      color:
+        "var(--theme-table-body-color, var(--theme-text-primary, #292D32))",
       // padding: "3px 0",
       padding: "5px 5px",
 
@@ -128,10 +143,11 @@ const StyledTableContainer = styled(TableContainer)(() => ({
     height: "10px", // For horizontal scrollbar height
   },
   "&::-webkit-scrollbar-track": {
-    background: "#f1f1f1",
+    background:
+      "var(--theme-table-scrollbar-track, var(--theme-bg-tertiary, #f1f1f1))",
   },
   "&::-webkit-scrollbar-thumb": {
-    background: "#CCCDCF",
+    background: "var(--theme-table-scrollbar-thumb, #CCCDCF)",
     borderRadius: "10px",
   },
   "&::-webkit-scrollbar-thumb:hover": {
@@ -181,7 +197,10 @@ const PrimaryTable = ({
     direction: "asc" | "desc";
   } | null>(
     withSort && defaultSortIndex !== undefined
-      ? { key: defaultSortIndex as number, direction: defaultSortDirection || "desc" }
+      ? {
+          key: defaultSortIndex as number,
+          direction: defaultSortDirection || "desc",
+        }
       : null
   );
   const sortConfig = externalSortConfig ?? internalSortConfig;
@@ -217,17 +236,17 @@ const PrimaryTable = ({
     variant === "ClassicTable"
       ? ClassicTableCell
       : variant === "RoundTable"
-        ? RoundTableCell
-        : PrimaryTableCell;
+      ? RoundTableCell
+      : PrimaryTableCell;
 
   const TableRow =
     variant === "ClassicTable"
       ? ClassicTableRow
       : variant === "OddEvenTable"
-        ? OddEvenTableRow
-        : variant === "RoundTable"
-          ? RoundTableRow
-          : PrimaryTableRow;
+      ? OddEvenTableRow
+      : variant === "RoundTable"
+      ? RoundTableRow
+      : PrimaryTableRow;
 
   // Sorting logic
   const sortedRows = useMemo(() => {
@@ -240,10 +259,10 @@ const PrimaryTable = ({
       const result = sortFn
         ? sortFn(a, b)
         : a[key] < b[key]
-          ? -1
-          : a[key] > b[key]
-            ? 1
-            : 0;
+        ? -1
+        : a[key] > b[key]
+        ? 1
+        : 0;
       return direction === "asc" ? result : -result;
     });
   }, [rows, sortConfig, customSortFns]);
@@ -251,7 +270,10 @@ const PrimaryTable = ({
   const handleSort = (index: number) => {
     const next = (() => {
       if (sortConfig?.key === index) {
-        return { key: index, direction: sortConfig.direction === "asc" ? "desc" : "asc" as const };
+        return {
+          key: index,
+          direction: sortConfig.direction === "asc" ? "desc" : ("asc" as const),
+        };
       }
       return { key: index, direction: "asc" as const };
     })();
@@ -271,8 +293,9 @@ const PrimaryTable = ({
         boxShadow: withoutShadow && "none",
         height: "100%",
         ...(variant === "RoundTable" && {
-          borderRadius: "12px",
-          border: "1px solid #EAECF0 !important",
+          borderRadius: "var(--theme-radius-lg, 12px)",
+          border:
+            "1px solid var(--theme-table-border-color, var(--theme-border-color, #EAECF0)) !important",
         }),
       }}
     >
@@ -321,23 +344,24 @@ const PrimaryTable = ({
                   >
                     {isAgingeport ? header?.name : header}
                     {/* Show sorting icon: on hover OR when this header is sorted (for FE sort) */}
-                    {withSort && !isAgingeport && header !== "" &&
-                      (sortConfig?.key === index || hoveredColumn === header) && (
+                    {withSort &&
+                      !isAgingeport &&
+                      header !== "" &&
+                      (sortConfig?.key === index ||
+                        hoveredColumn === header) && (
                         <IconButton
                           size="small"
                           style={{ ...adaptMarginRight(dir, 4) }}
                         >
-                          {sortConfig?.key === index
-                            ? sortConfig.direction === "asc"
-                              ? (
-                                <ArrowUpward sx={{ fontSize: "18px" }} />
-                              )
-                              : (
-                                <ArrowDownward sx={{ fontSize: "18px" }} />
-                              )
-                            : (
+                          {sortConfig?.key === index ? (
+                            sortConfig.direction === "asc" ? (
                               <ArrowUpward sx={{ fontSize: "18px" }} />
-                            )}
+                            ) : (
+                              <ArrowDownward sx={{ fontSize: "18px" }} />
+                            )
+                          ) : (
+                            <ArrowUpward sx={{ fontSize: "18px" }} />
+                          )}
                         </IconButton>
                       )}
                     {isAgingeport &&
@@ -388,8 +412,8 @@ const PrimaryTable = ({
                     isAgingeport && isAgingDetailedReport && row[0] == " "
                       ? "#F6F6F6"
                       : isLastItemTotal && rowIndex === rows.length - 1
-                        ? "#EFDDFF"
-                        : "inherit",
+                      ? "#EFDDFF"
+                      : "inherit",
                 }}
               >
                 {enableCheckboxes && (

@@ -13,10 +13,11 @@ import { InputAdornment } from "@mui/material";
 import { GoMakeMultiSelect } from "@/components/auto-complete/multi-select";
 import { ClientAutocomplete } from "@/widgets/Clients-Autocomplete/clients-list";
 import { CLIENT_TYPE } from "@/pages/customers/enums";
-import { DateRangePicker } from "rsuite";
+import { ControlledDateRangePicker } from "@/components/datepicker/controlled-date-range-picker";
 import ProductMultiSelect from "@/components/auto-complete/product-multi-select";
 import { BoardMissionsColumnSettingsMenu } from "../widgets/board-missions-column-settings-menu/board-missions-column-settings-menu";
 import { ExcelMenu } from "@/pages-components/quotes/widgets/excel-menu/excel-menu";
+import { FONT_FAMILY } from "@/utils/font-family";
 
 interface IJobsFiltersSectionProps {
   // Customer/Supplier filter
@@ -52,6 +53,10 @@ interface IJobsFiltersSectionProps {
   setIsPrintedState: (value: boolean) => void;
   isPrintHouseUsePrintNode: boolean;
 
+  // Is Quality fix job filter
+  isQualityFixJob: boolean | null;
+  setIsQualityFixJob: (value: boolean | null) => void;
+
   // Products filter
   productsList: any[];
   productIds: any[];
@@ -69,8 +74,6 @@ interface IJobsFiltersSectionProps {
   fromReadyDate: any;
   toReadyDate: any;
   onSelectReadyTimeDates: (value: any) => void;
-
-  predefinedRanges: any[];
 
   // Search
   patternSearch: string;
@@ -118,6 +121,9 @@ const JobsFiltersSection = ({
   isPrintedState,
   setIsPrintedState,
   isPrintHouseUsePrintNode,
+  // Is Quality fix job filter
+  isQualityFixJob,
+  setIsQualityFixJob,
   // Products filter
   productsList,
   productIds,
@@ -134,7 +140,6 @@ const JobsFiltersSection = ({
   fromReadyDate,
   toReadyDate,
   onSelectReadyTimeDates,
-  predefinedRanges,
   // Search
   patternSearch,
   onChangeMissionsSearch,
@@ -148,6 +153,7 @@ const JobsFiltersSection = ({
   tableKey,
   // Styles
   classes,
+  hideActionButtons = false,
 }) => {
   const { t } = useTranslation();
   const dir: "rtl" | "ltr" = t("direction");
@@ -224,21 +230,25 @@ const JobsFiltersSection = ({
         />
       ),
     },
-    {
-      id: "productionStatus",
-      label: t("boardMissions.productionStatus"),
-      component: (
-        <GoMakeAutoComplate
-          key={status?.value}
-          options={productionStatuses}
-          style={classes.textInputStyle}
-          placeholder={t("boardMissions.productionStatus")}
-          onChange={handleStatusChange}
-          value={status}
-          withArrow={true}
-        />
-      ),
-    },
+    ...(productionStatuses.length > 1
+      ? [
+          {
+            id: "productionStatus",
+            label: t("boardMissions.productionStatus"),
+            component: (
+              <GoMakeAutoComplate
+                key={status?.value}
+                options={productionStatuses}
+                style={classes.textInputStyle}
+                placeholder={t("boardMissions.productionStatus")}
+                onChange={handleStatusChange}
+                value={status}
+                withArrow={true}
+              />
+            ),
+          },
+        ]
+      : []),
     {
       id: "orderStatus",
       label: t("boardMissions.orderStatus"),
@@ -280,35 +290,62 @@ const JobsFiltersSection = ({
     },
     ...(isPrintHouseUsePrintNode
       ? [
-          {
-            id: "isPrinted",
-            label: t("boardMissions.isPrinted"),
-            component: (
-              <GoMakeAutoComplate
-                key={
-                  isPrintedState === null ? "null" : isPrintedState.toString()
-                }
-                options={[
-                  { value: true, text: t("modal.yes") },
-                  { value: false, text: t("modal.no") },
-                ]}
-                getOptionLabel={(option: any) => option.text}
-                placeholder={t("boardMissions.isPrinted")}
-                style={classes.textInputStyle}
-                onChange={(e, value) => setIsPrintedState(value?.value ?? null)}
-                value={
-                  isPrintedState === null
-                    ? null
-                    : isPrintedState === true
+        {
+          id: "isPrinted",
+          label: t("boardMissions.isPrinted"),
+          component: (
+            <GoMakeAutoComplate
+              key={
+                isPrintedState === null ? "null" : isPrintedState.toString()
+              }
+              options={[
+                { value: true, text: t("modal.yes") },
+                { value: false, text: t("modal.no") },
+              ]}
+              getOptionLabel={(option: any) => option.text}
+              placeholder={t("boardMissions.isPrinted")}
+              style={classes.textInputStyle}
+              onChange={(e, value) => setIsPrintedState(value?.value ?? null)}
+              value={
+                isPrintedState === null
+                  ? null
+                  : isPrintedState === true
                     ? { value: true, text: t("modal.yes") }
                     : { value: false, text: t("modal.no") }
-                }
-                withArrow={true}
-              />
-            ),
-          },
-        ]
+              }
+              withArrow={true}
+            />
+          ),
+        },
+      ]
       : []),
+    {
+      id: "isQualityFixJob",
+      label: t("boardMissions.isQualityFixJob"),
+      component: (
+        <GoMakeAutoComplate
+          key={
+            isQualityFixJob === null ? "null" : isQualityFixJob.toString()
+          }
+          options={[
+            { value: true, text: t("modal.yes") },
+            { value: false, text: t("modal.no") },
+          ]}
+          getOptionLabel={(option: any) => option.text}
+          placeholder={t("boardMissions.isQualityFixJob")}
+          style={classes.textInputStyle}
+          onChange={(e, value) => setIsQualityFixJob(value?.value ?? null)}
+          value={
+            isQualityFixJob === null
+              ? null
+              : isQualityFixJob === true
+                ? { value: true, text: t("modal.yes") }
+                : { value: false, text: t("modal.no") }
+          }
+          withArrow={true}
+        />
+      ),
+    },
     {
       id: "products",
       label: t("boardMissions.products"),
@@ -327,47 +364,66 @@ const JobsFiltersSection = ({
       id: "dateRange",
       label: t("boardMissions.dateRange"),
       component: (
-        <div>
-          <DateRangePicker
-            onChange={onSelectDeliveryTimeDates}
-            value={fromDate && toDate ? [fromDate, toDate] : null}
-            ranges={predefinedRanges}
-            placement={isRTL ? "bottomEnd" : "bottomStart"}
-            style={{ direction: dir }}
-          />
-        </div>
+        <ControlledDateRangePicker
+          startDate={fromDate}
+          endDate={toDate}
+          onChange={(start, end) => {
+            onSelectDeliveryTimeDates([start, end]);
+          }}
+          allowClear={true}
+          allowManualInput={true}
+          dateFormat="dd-MM-yyyy"
+          buttonStyle={{
+            borderRadius: "5px",
+          }}
+          textStyle={{
+            ...FONT_FAMILY.Heebo(500, 13),
+          }}
+        />
       ),
     },
     {
       id: "dueDate",
       label: t("boardMissions.dueDate"),
       component: (
-        <div>
-          <DateRangePicker
-            onChange={onSelectDueTimeDates}
-            value={fromDueDate && toDueDate ? [fromDueDate, toDueDate] : null}
-            ranges={predefinedRanges}
-            placement={isRTL ? "bottomEnd" : "bottomStart"}
-            style={{ direction: dir }}
-          />
-        </div>
+        <ControlledDateRangePicker
+          startDate={fromDueDate}
+          endDate={toDueDate}
+          onChange={(start, end) => {
+            onSelectDueTimeDates([start, end]);
+          }}
+          allowClear={true}
+          allowManualInput={true}
+          dateFormat="dd-MM-yyyy"
+          buttonStyle={{
+            borderRadius: "5px",
+          }}
+          textStyle={{
+            ...FONT_FAMILY.Heebo(500, 13),
+          }}
+        />
       ),
     },
     {
       id: "readyDate",
       label: t("boardMissions.readyDate"),
       component: (
-        <div>
-          <DateRangePicker
-            onChange={onSelectReadyTimeDates}
-            value={
-              fromReadyDate && toReadyDate ? [fromReadyDate, toReadyDate] : null
-            }
-            ranges={predefinedRanges}
-            placement={isRTL ? "bottomEnd" : "bottomStart"}
-            style={{ direction: dir }}
-          />
-        </div>
+        <ControlledDateRangePicker
+          startDate={fromReadyDate}
+          endDate={toReadyDate}
+          onChange={(start, end) => {
+            onSelectReadyTimeDates([start, end]);
+          }}
+          allowClear={true}
+          allowManualInput={true}
+          dateFormat="dd-MM-yyyy"
+          buttonStyle={{
+            borderRadius: "5px",
+          }}
+          textStyle={{
+            ...FONT_FAMILY.Heebo(500, 13),
+          }}
+        />
       ),
     },
   ];
@@ -391,13 +447,11 @@ const JobsFiltersSection = ({
           isPurchaseJobs={isPurchaseJobs}
         />
       )}
-      {!isPurchaseJobs && (
-        <ExcelMenu
-          onGenerateReportClick={onGenerateReportClick}
-          onExportTableClick={ExportJobsTableToExcel}
-          documentType={null}
-        />
-      )}
+      <ExcelMenu
+        onGenerateReportClick={isPurchaseJobs ? undefined : onGenerateReportClick}
+        onExportTableClick={ExportJobsTableToExcel}
+        documentType={null}
+      />
     </>
   );
 
@@ -405,7 +459,7 @@ const JobsFiltersSection = ({
     <FilterSectionComponent
       filters={filters}
       actionButtons={actionButtons}
-      tableActionButtons={tableActionButtons}
+      tableActionButtons={hideActionButtons ? null : tableActionButtons}
     />
   );
 };

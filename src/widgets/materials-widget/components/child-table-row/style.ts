@@ -234,23 +234,21 @@ const useStyle = () => {
 
       // Add inventory button
       addInventoryButton: {
-        backgroundColor: '#fff',
-        color: primaryColor(600),
-        border: `1px solid ${primaryColor(200)}`,
+        backgroundColor: primaryColor(600),
+        color: '#fff',
+        border: `1px solid ${primaryColor(600)}`,
         borderRadius: '6px',
         fontWeight: 500,
         fontSize: '12px',
         textTransform: 'none',
         minHeight: '28px',
-        minWidth: 'auto',
-        boxShadow: '0 1px 2px rgba(0,0,0,0.05)',
         transition: 'all 0.2s ease',
         width: 'fit-content',
         height: '40px',
         '&:hover': {
-          backgroundColor: primaryColor(50),
+          backgroundColor: "#fff",
           borderColor: primaryColor(400),
-          color: primaryColor(700),
+          color: "#fff",
           boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
         },
         

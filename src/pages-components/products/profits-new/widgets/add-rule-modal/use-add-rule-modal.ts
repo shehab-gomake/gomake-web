@@ -17,7 +17,7 @@ import { ICallAndSetData } from "@/services/api-service/interface";
 import { getSetApiData } from "@/services/api-service/get-set-api-data";
 import { CLIENT_TYPE, CLIENT_TYPE_Id } from "@/pages/customers/enums";
 import { useTranslation } from "react-i18next";
-import { EGroupByEnum } from "@/enums";
+import { DocumentTypeEnums, EGroupByEnum } from "@/enums";
 import { agentsCategoriesState } from "@/pages/customers/customer-states";
 import {
   getAndSetEmployees2,
@@ -88,10 +88,10 @@ const useAddRuleModal = ({
         label: t("products.profits.exceptions.machineTypeCategory"),
         id: "Machine category",
       },
-      {
-        label: t("products.profits.exceptions.materialType"),
-        id: "MATERIALTYPE",
-      },
+      // {
+      //   label: t("products.profits.exceptions.materialType"),
+      //   id: "MATERIALTYPE",
+      // },
       { label: t("products.profits.exceptions.products"), id: "Products" },
       {
         label: t("products.profits.exceptions.productType"),
@@ -251,8 +251,6 @@ const useAddRuleModal = ({
     useRecoilState<any>(productsState);
   const [clientTypesStateValue, setClientTypesState] =
     useRecoilState<any>(clientTypesState);
-  const [parametersStateValue, setParametersState] =
-    useRecoilState<any>(parametersState);
   const [allProductTypes, setAllProductTypes] = useState<any>();
   const [employeeList, setEmployeeList] = useState([]);
   const [actionEmployeeList, setActionEmployeeList] =
@@ -288,9 +286,6 @@ const useAddRuleModal = ({
     });
   }, []);
 
-  const getParameters = useCallback(async () => {
-    return await getAndSetAllParameters(callApi, setParametersState);
-  }, []);
 
   const getAllProductTypes = useCallback(async () => {
     const result = await getAllTemplets(callApi);
@@ -335,7 +330,6 @@ const useAddRuleModal = ({
     if (openModal) {
       getClientTypes();
       getProducts();
-      getParameters();
       getAllMaterials();
       getAllProductTypes();
       getEmployeeCategories();
@@ -621,6 +615,8 @@ const useAddRuleModal = ({
   //   setToDate(toDate);
   // };
   const createForQuoteWidget = useCallback(async () => {
+
+   
     // Filter out empty/invalid rules
     const validRules = rules.filter((item) => {
       return (
@@ -636,7 +632,7 @@ const useAddRuleModal = ({
           return {
             statementValue:
               typeof item?.statement === "object"
-                ? item?.statement?.id
+                ? item?.statement2?.type === 5 ? item?.statement?.code : item?.statement?.id
                 : item?.statement,
             statementId: item?.statement2?.id,
             operator: item?.condition?.id,
@@ -649,26 +645,69 @@ const useAddRuleModal = ({
       : [];
 
     try {
+      if (!filterData?.fromDate && !filterData?.toDate) {
+        alertFault(t("boardMissions.dateFilterRequired"));
+        return;
+      }
       const res = await callApi(
         EHttpMethod.POST,
         `/v1/erp-service/documents/generate-document-report`,
         {
           documentType: documentType,
-          exportType: detailsOption,
-            filterDTO: {
-              statusId: filterData?.statusId,
-              closeStatus: filterData?.closeStatus,
-              productionStatus: filterData?.productionStatus,
-              patternSearch: filterData?.patternSearch,
-              customerId: filterData?.customerId,
-              dateRange: filterData?.dateRange,
-              agentId: filterData?.agentId,
-              minPrice: filterData?.minPrice,
-              maxPrice: filterData?.maxPrice,
-              productList: filterData?.productList,
-              fromDate: filterData?.fromDate,
-              toDate: filterData?.toDate,
-            },
+          exportType: detailsOption?.id,
+          ...(documentType === DocumentTypeEnums.BoardMission
+            ? { 
+              boardMissionTableFilterDTO: {
+                clientId: filterData?.customerId,
+                agentId: filterData?.agentId,
+                search: filterData?.patternSearch,
+                fromDate: filterData?.fromDate,
+                toDate: filterData?.toDate,
+                fromDueDate: filterData?.fromDueDate,
+                toDueDate: filterData?.toDueDate,
+                fromReadyDate: filterData?.fromReadyDate,
+                toReadyDate: filterData?.toReadyDate,
+                productsIds: filterData?.productIds,
+                productionStatus: filterData?.statusId?.toString(),
+                orderStatus: filterData?.orderStatus?.toString(),
+                pageNumber: filterData?.pageNumber?.toString(),
+                pageSize: filterData?.pageSize,
+                orderNumber: filterData?.orderNumber,
+                order: filterData?.order || null,
+                exampleTypes: filterData?.proofTypes,
+                isPrinted: filterData?.isPrinted?.toString(),
+                }
+              }
+            : { 
+                filterDTO: {
+                  statusId: filterData?.statusId,
+                  closeStatus: filterData?.closeStatus,
+                  productionStatus: filterData?.productionStatus || filterData?.statusId?.toString(),
+                  patternSearch: filterData?.patternSearch,
+                  customerId: filterData?.customerId,
+                  dateRange: filterData?.dateRange,
+                  agentId: filterData?.agentId,
+                  minPrice: filterData?.minPrice,
+                  maxPrice: filterData?.maxPrice,
+                  productList: filterData?.productList,
+                  fromDate: filterData?.fromDate,
+                  toDate: filterData?.toDate,
+                  clientId: filterData?.clientId,
+                  search: filterData?.patternSearch,
+                  orderNumber: filterData?.orderNumber,
+                  fromDueDate: filterData?.fromDueDate,
+                  toDueDate: filterData?.toDueDate,
+                  fromReadyDate: filterData?.fromReadyDate,
+                  toReadyDate: filterData?.toReadyDate,
+                  orderStatus: filterData?.orderStatus,
+                  productsIds: filterData?.productIds,
+                  supplierId: filterData?.supplierId,
+                  isPrinted: filterData?.isPrinted,
+                  isPurchaseJobs: filterData?.isPurchaseJobs,
+                  exampleTypes: filterData?.proofTypes,
+                }
+              }
+          ),
             groupBy: propertieValue,
             exceptionConditionProperties: exceptionConditionProperties,
         }
@@ -814,7 +853,6 @@ const useAddRuleModal = ({
     allMachincesList,
     productsStateValue,
     clientTypesStateValue,
-    parametersStateValue,
     Outputs,
     exceptionType,
     setExceptionType,

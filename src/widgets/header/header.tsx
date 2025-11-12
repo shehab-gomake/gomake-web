@@ -6,6 +6,7 @@ import {
   Tooltip,
   tooltipClasses,
   TooltipProps,
+  Badge,
 } from "@mui/material";
 import { EditIcon } from "@/icons";
 import { useStyle } from "./style";
@@ -16,11 +17,17 @@ import { userProfileState } from "@/store/user-profile";
 import { QuoteIfExistState } from "@/pages-components/quote-new/store/quote";
 import { CartIcon } from "@/icons/cart-icon";
 import { MessengerNotifications } from "@/widgets/messenger-notifications-widget/messenger-notifications";
-import { FrontdeskNav } from "@/widgets/frontdesk-nav/frontdesk-nav";
+import { FrontDeskNav } from "@/widgets/frontdesk-nav/frontdesk-nav";
 import { SystemNotifications } from "@/widgets/system-notifications-widget/system-notifications";
 import { SystemHelp } from "./components/system-help-and-support-widget/system-help-and-support-widget";
 import { TrialIndicator } from "@/components";
-import { GoSupportChatWidget } from "@/components/chat-bot/go-support-chat-widget";
+import {
+  useTicketChatbot,
+  useTicketNotifications,
+} from "@/components/ticket-chatbot";
+import HeadsetMicOutlinedIcon from "@mui/icons-material/HeadsetMicOutlined";
+import { useThemeComponent } from "@/contexts/theme/useThemeComponent";
+import { useTheme } from "@/contexts/theme";
 
 export const CustomTooltip = styled(({ className, ...props }: TooltipProps) => (
   <Tooltip {...props} arrow classes={{ popper: className }} />
@@ -38,14 +45,38 @@ export const CustomTooltip = styled(({ className, ...props }: TooltipProps) => (
   },
 }));
 
-const HeaderWidget = () => {
-  const { classes } = useStyle();
+const HeaderWidget = ({
+  customStyle,
+}: {
+  customStyle?: React.CSSProperties;
+}) => {
+  const { classes, primaryColor, secondColor } = useStyle();
   const userProfile = useRecoilValue(userProfileState);
   const [QuoteIfExist] = useRecoilState<any>(QuoteIfExistState);
   const { t, user, open, anchorEl, handleClick, handleClose, navigate } =
     useHeader();
+  const { openChatbot } = useTicketChatbot();
+  const { unreadCount } = useTicketNotifications();
+
+  // Use theme-aware TrialIndicator (will use HpTrialIndicator when hp-client theme is active)
+  const { currentTheme, getIconOverride } = useTheme();
+  const isHpClient = currentTheme === "hp-client";
+  const iconButtonBackground = isHpClient ? "transparent" : "#f6f6f6";
+  const ThemedTrialIndicator = useThemeComponent(
+    "TrialIndicator",
+    TrialIndicator
+  );
+
+  // Get theme-aware User icon (HP Client icon when theme is active)
+  const UserIcon = getIconOverride("UserIcon");
 
   const userAvatar = () => {
+    // Use HpUserIcon when HP theme is active
+    if (UserIcon) {
+      return <UserIcon width={32} height={32} />;
+    }
+
+    // Default Avatar behavior for other themes
     return !!userProfile.imagePath ? (
       <Avatar style={classes.avatarProps} src={userProfile.imagePath} />
     ) : (
@@ -61,30 +92,55 @@ const HeaderWidget = () => {
   };
 
   return (
-    <div style={classes.container}>
+    <div style={{ ...classes.container, ...customStyle }}>
       <div style={{ display: "flex", alignItems: "center", width: "100%" }}>
-        <TrialIndicator />
+        <ThemedTrialIndicator />
         <div style={{ flex: 1 }} />
       </div>
       <div style={classes.rightSideContainer}>
-        {/* <MessengerNotifications /> */}
-        {/* !here front desk */}
-        <FrontdeskNav />
+        <FrontDeskNav />
         <SystemNotifications />
         {QuoteIfExist == true && window.location.pathname != "/quote" && (
           <IconButton
-            style={{ backgroundColor: "#f6f6f6", padding: "8px" }}
+            style={{ backgroundColor: iconButtonBackground, padding: "8px" }}
             onClick={() => navigate("/quote")}
           >
-            <CartIcon />
+            <CartIcon color={secondColor(500)} />
           </IconButton>
         )}
-        <CustomTooltip title={t("Support Chat")} arrow placement="bottom">
+        {/* <CustomTooltip title={t("Support Chat")} arrow placement="bottom">
           <GoSupportChatWidget />
+        </CustomTooltip>*/}
+        <CustomTooltip
+          title={t("tickets.support") || "Support Desk"}
+          arrow
+          placement="bottom"
+        >
+          <IconButton
+            style={{ backgroundColor: iconButtonBackground, padding: "8px" }}
+            onClick={openChatbot}
+          >
+            <Badge
+              badgeContent={unreadCount}
+              color="error"
+              sx={{
+                "& .MuiBadge-badge": {
+                  fontSize: "0.7rem",
+                  height: 18,
+                  minWidth: 18,
+                  right: 4,
+                  top: 4,
+                },
+              }}
+            >
+              <HeadsetMicOutlinedIcon
+                style={{ width: 22, height: 22, color: primaryColor(500) }}
+              />
+            </Badge>
+          </IconButton>
         </CustomTooltip>
-
         <SystemHelp />
-        <div style={classes.verticalDivider} />
+        {!isHpClient && <div style={classes.verticalDivider} />}
         <div style={classes.profileContainer}>
           <CustomTooltip
             title={`${user?.firstName} ${user?.lastName}`}

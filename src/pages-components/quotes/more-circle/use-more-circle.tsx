@@ -4,6 +4,7 @@ import {
   useGomakeRouter,
   useSnackBar,
 } from "@/hooks";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { DOCUMENT_TYPE, QUOTE_STATUSES, StatusTitleText } from "../enums";
 import { LoggerIcon } from "@/pages-components/admin/home/widgets/more-circle/icons/logger";
 import { EditingIcon } from "./icons/editing";
@@ -47,12 +48,14 @@ import { PackageIcon } from "@/icons/package-icon";
 import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
 import { EPreferences } from "@/enums/prefernces";
 import { SendToCustomerSubmenu } from "./send-to-customer-submenu";
+import { MailIcon } from "./icons/mail";
 
 const useMoreCircle = () => {
   const { user } = useCustomer();
   const { navigate } = useGomakeRouter();
   const { CheckPermission } = useUserPermission();
   const { CheckPreferenceValue } = usePrintHousePreferences();
+  const { primaryColor, primaryLavender } = useGomakeTheme();
 
   const canCloseDocumentManually = CheckPermission(
     Permissions.CAN_CLOSE_MANUALLY
@@ -251,7 +254,7 @@ const useMoreCircle = () => {
         {
           condition: true,
           onClick: () => navigate(href),
-          icon: <EditingIcon />,
+          icon: <EditingIcon color={primaryLavender(500)} />,
           name: t("sales.quote.edit"),
           isLink: true,
           href,
@@ -259,13 +262,13 @@ const useMoreCircle = () => {
         {
           condition: true,
           onClick: () => onClickOpenRemoveDraftModal(quote),
-          icon: <DeleteIcon />,
+          icon: <DeleteIcon color={primaryLavender(500)} />,
           name: t("navigationButtons.delete"),
         },
         {
           condition: true,
           onClick: () => onClickPdf(quote?.id),
-          icon: <PDFIcon />,
+          icon: <PDFIcon color={primaryLavender(500)} />,
           name: t("sales.quote.pdf"),
         },
       ];
@@ -277,7 +280,7 @@ const useMoreCircle = () => {
         onClick: () => {
           isCreateStatus ? navigate(`/quote`) : onClickEditQuote(quote);
         },
-        icon: <EditingIcon />,
+        icon: <EditingIcon color={primaryLavender(500)} />,
         name: t("sales.quote.edit"),
         isLink: isCreateStatus,
         href: `/quote`,
@@ -289,7 +292,7 @@ const useMoreCircle = () => {
           documentType !== DOCUMENT_TYPE.quote &&
           isEditableDocument,
         onClick: () => navigate(getDocumentPath(quote?.id)),
-        icon: <EditingIcon />,
+        icon: <EditingIcon color={primaryLavender(500)} />,
         name: t("sales.quote.edit"),
         isLink: true,
         href: getDocumentPath(quote?.id),
@@ -302,13 +305,13 @@ const useMoreCircle = () => {
           quote?.isWaitingForPayment &&
           CheckPermission(Permissions.SHOW_BOARD_MISSIONS),
         onClick: () => onClickStartProduction(quote),
-        icon: <StartProductionIcon />,
+        icon: <StartProductionIcon color={primaryLavender(500)} />,
         name: t("sales.tables.startProduction"),
       },
       {
         condition: !isPauseOrder && isShowLogs,
         onClick: () => onClickLoggers(quote),
-        icon: <LoggerIcon />,
+        icon: <LoggerIcon color={primaryLavender(500)} />,
         name: t("sales.quote.loggers"),
       },
       {
@@ -317,7 +320,7 @@ const useMoreCircle = () => {
           askToPrintWithPricesInDeliveryNotes
             ? onClickOpenPrintPDFModal(quote)
             : onClickPdf(quote?.id, null),
-        icon: <PDFIcon />,
+        icon: <PDFIcon color={primaryLavender(500)} />,
         name: t("sales.quote.pdf"),
       },
 
@@ -325,26 +328,26 @@ const useMoreCircle = () => {
         condition: !isPauseOrder && !isDeliveryNote,
         onClick: () =>
           onClickPdf(isReceipt || isSupplierPayments ? quote : quote?.id),
-        icon: <PDFIcon />,
+        icon: <PDFIcon color={primaryLavender(500)} />,
         name: t("sales.quote.pdf"),
       },
 
       {
         condition: isReceipt && quote.isShowPrintReceiptChecksButton,
         onClick: () => handleClickPrintChecks(quote?.id),
-        icon: <PrintPdfIcon />,
+        icon: <PrintPdfIcon color={primaryLavender(500)} />,
         name: t("sales.cart.printChecks"),
       },
       {
         condition: !isPauseOrder && isOrder && !isCanceledOrder && quote?.jobs,
         onClick: () => onClickGetOrderBoardMissionPDF(quote),
-        icon: <PDFIcon />,
+        icon: <PDFIcon color={primaryLavender(500)} />,
         name: t("sales.quote.boardMissionsPdf"),
       },
       {
         condition: !isPauseOrder && isOrder && !isCanceledOrder && quote?.jobs,
         onClick: () => onClickGetOrderSummaryPDF(quote),
-        icon: <PDFIcon />,
+        icon: <PDFIcon color={primaryLavender(500)} />,
         name: t("sales.quote.orderSummaryPdf"),
       },
       {
@@ -352,7 +355,7 @@ const useMoreCircle = () => {
         onClick: () => {
           isOrder ? onOpenDuplicateModal(quote) : onClickDuplicate(quote?.id);
         },
-        icon: <DuplicateIcon />,
+        icon: <DuplicateIcon color={primaryLavender(700)} />,
         name: t("sales.quote.duplicate"),
       },
       // {
@@ -375,7 +378,7 @@ const useMoreCircle = () => {
               "?isNewCreation=true&documentToDuplicateId=" + quote?.id
             )
           ),
-        icon: <DuplicateIcon />,
+        icon: <DuplicateIcon color={primaryLavender(700)} />,
         name: t("sales.quote.duplicate"),
         isLink: true,
         href: getDocumentPath(
@@ -389,7 +392,7 @@ const useMoreCircle = () => {
           !quote?.isWaitingForPayment &&
           CheckPermission(Permissions.SHOW_BOARD_MISSIONS),
         onClick: () => navigate(`/jobs?finalPatternSearch=${quote?.number}`),
-        icon: <JobsIcon />,
+        icon: <JobsIcon color={primaryLavender(500)} />,
         name: t("sales.quote.jobs"),
         isLink: true,
         href: `/jobs?finalPatternSearch=${quote?.number}`,
@@ -420,7 +423,7 @@ const useMoreCircle = () => {
             setIsSelectedCLoseAsDeliveryNote(true);
           }
         },
-        icon: <TickIcon />,
+        icon: <TickIcon color={primaryLavender(500)} />,
         name: t("sales.quote.closeAsDeliveryNote"),
         isLink: quote?.productionStatus && !quote?.closeOrderNotes?.trim(),
         href: `/deliveryNote?isNewCreation=true&orderId=${quote?.id}`,
@@ -451,7 +454,7 @@ const useMoreCircle = () => {
             navigate(`/invoice?isNewCreation=true&deliveryNoteId=${quote?.id}`);
           }
         },
-        icon: <TickIcon />,
+        icon: <TickIcon color={primaryLavender(500)} />,
         name: t("sales.quote.closeAsInvoice"),
         isLink: isOrder
           ? quote?.productionStatus && !quote?.closeOrderNotes?.trim()
@@ -467,7 +470,9 @@ const useMoreCircle = () => {
           onClickOpenMoveOrderToReadyModal(quote);
         },
         icon: (
-          <AlarmOnRoundedIcon style={{ color: "#8283BE", fontSize: "20px" }} />
+          <AlarmOnRoundedIcon
+            style={{ color: primaryLavender(500), fontSize: "20px" }}
+          />
         ),
         name: t("sales.moveToReadyAndCloseOrder"),
       },
@@ -482,7 +487,7 @@ const useMoreCircle = () => {
           navigate(
             `/purchaseOrders?finalPatternSearch=${quote?.number}&pageNumber=1`
           ),
-        icon: <TickMoveIcon />,
+        icon: <TickMoveIcon color={primaryLavender(500)} />,
         name: t("sales.quote.purchaseOrders"),
       },
       {
@@ -491,7 +496,7 @@ const useMoreCircle = () => {
           navigate(
             `/deliveryNoteRefund?isNewCreation=true&documentId=${quote?.id}`
           ),
-        icon: <TickIcon />,
+        icon: <TickIcon color={primaryLavender(500)} />,
         name: t("sales.quote.createDeliveryNoteRefund"),
         isLink: true,
         href: `/deliveryNoteRefund?isNewCreation=true&documentId=${quote?.id}`,
@@ -500,7 +505,7 @@ const useMoreCircle = () => {
         condition: !isPauseOrder && isInvoice && quote?.isCanClose,
         onClick: () =>
           navigate(`/invoiceRefund?isNewCreation=true&documentId=${quote?.id}`),
-        icon: <TickIcon />,
+        icon: <TickIcon color={primaryLavender(500)} />,
         name: t("sales.quote.createInvoiceRefund"),
         isLink: true,
         href: `/invoiceRefund?isNewCreation=true&documentId=${quote?.id}`,
@@ -511,7 +516,7 @@ const useMoreCircle = () => {
           navigate(
             `/purchaseInvoiceRefund?isNewCreation=true&documentId=${quote?.id}`
           ),
-        icon: <TickIcon />,
+        icon: <TickIcon color={primaryLavender(500)} />,
         name: t("sales.quote.createPurchaseInvoiceRefund"),
         isLink: true,
         href: `/purchaseInvoiceRefund?isNewCreation=true&documentId=${quote?.id}`,
@@ -520,7 +525,7 @@ const useMoreCircle = () => {
       {
         condition: isInvoice && quote?.isCanGetTaxConfirmationNumber,
         onClick: () => handleGetTaxConfirmNo(quote?.id),
-        icon: <TagIcon />,
+        icon: <TagIcon color={primaryLavender(500)} />,
         name: t("sales.quote.getTaxConfirmationNumber"),
       },
 
@@ -528,7 +533,7 @@ const useMoreCircle = () => {
         condition: isPurchaseOrder && quote?.isCanClose,
         onClick: () =>
           navigate(`/purchaseInvoice?isNewCreation=true&orderId=${quote?.id}`),
-        icon: <TickIcon />,
+        icon: <TickIcon color={primaryLavender(500)} />,
         name: t("sales.quote.closeAsPurchaseInvoice"),
         isLink: true,
         href: `/purchaseInvoice?isNewCreation=true&orderId=${quote?.id}`,
@@ -549,7 +554,7 @@ const useMoreCircle = () => {
               onClickOpenCloseOrderModal(quote)
             )
             : onClickOpenCloseOrderModal(quote),
-        icon: <LockIcon />,
+        icon: <LockIcon color={primaryLavender(500)} />,
         name: t("sales.quote.close"),
       },
 
@@ -561,7 +566,7 @@ const useMoreCircle = () => {
           isEditableDocument &&
           canCloseDocumentManually,
         onClick: () => onClickOpenCloseOrderModal(quote),
-        icon: <LockIcon />,
+        icon: <LockIcon color={primaryLavender(500)} />,
         name: t("sales.quote.close"),
       },
 
@@ -573,7 +578,7 @@ const useMoreCircle = () => {
           isCanReOpenCancledPurchaseOrder ||
           isCanReOpenCanceledPurchaseInvoice,
         onClick: () => onClickReopenDocument(quote),
-        icon: <UnLockIcon />,
+        icon: <UnLockIcon color={primaryLavender(500)} />,
         name: t("sales.quote.open"),
       },
       {
@@ -583,7 +588,7 @@ const useMoreCircle = () => {
           quote?.isCanCloseForTracking &&
           !isCanceledOrder,
         onClick: () => onClickCloseAndTrack(quote),
-        icon: <TrackingIcon />,
+        icon: <TrackingIcon color={primaryLavender(500)} />,
         name: t("sales.quote.closeAndTrack"),
       },
       {
@@ -602,14 +607,14 @@ const useMoreCircle = () => {
             : quote?.creditCardTotal > 0
               ? onOpenCancelReceiptModalRefund(quote)
               : onOpenCancelReceiptModal(quote),
-        icon: <TickCancelIcon />,
+        icon: <TickCancelIcon color={primaryLavender(500)} />,
         name: t("sales.quote.cancel"),
       },
       {
         condition:
           isPurchaseOrder && !isCanceledPurchaseOrder && isEditableDocument,
         onClick: () => onClickOpenIrrelevantModal(quote),
-        icon: <TickCancelIcon />,
+        icon: <TickCancelIcon color={primaryLavender(500)} />,
         name: t("sales.quote.cancel"),
       },
       {
@@ -620,7 +625,7 @@ const useMoreCircle = () => {
               ? `/receipt?isOutgoingPayments=true&isNewCreation=true&documentNumber=${quote?.number}&ClientId=${quote?.customerId}`
               : `/receipt?isNewCreation=true&documentNumber=${quote?.accountingNumber}&ClientId=${quote?.customerId}`
           ),
-        icon: <PayIcon />,
+        icon: <PayIcon color={primaryLavender(500)} />,
         name: t("sales.quote.pay"),
         isLink: true,
         href: isPurchaseInvoice
@@ -634,20 +639,17 @@ const useMoreCircle = () => {
           quote?.isCanClose &&
           isSendPaymentToClient,
         onClick: () => onClickSendPayment(quote, false),
-        icon: <PayIcon />,
+        icon: <PayIcon color={primaryLavender(500)} />,
         name: t("sales.quote.sendPayment"),
       },
       {
         condition: true,
-        component: (closeMenu) => (
-          <SendToCustomerSubmenu
-            onClickEmail={() => onClickSendToCustomerEmail?.(quote)}
-            onClickSMS={() => onClickSendToCustomerSMS?.(quote)}
-            onClickWhatsApp={() => onClickSendToCustomerWhatsApp?.(quote)}
-            menuItemStyle={classes?.menuRowStyle}
-            rowTextStyle={classes?.rowTextStyle}
-            onCloseParentMenu={closeMenu}
-          />
+        onClick: () =>
+          onClickSendPayment(quote, true, !!isSendOrderReadyToClient),
+        icon: <MailIcon color={primaryLavender(500)} />,
+        name: t(
+          `sales.quote.${isSendOrderReadyToClient ? "sendOrderReadyToClient" : "sendToClient"
+          }`
         ),
       },
       {
@@ -656,7 +658,7 @@ const useMoreCircle = () => {
           isOrdersTracking &&
           parseFloat(quote?.totalPrice) !== parseFloat(quote?.sumApplied),
         onClick: () => onClickMakePayment(quote),
-        icon: <PayIcon />,
+        icon: <PayIcon color={primaryLavender(500)} />,
         name: t("sales.quote.makePayment"),
       },
       {
@@ -667,25 +669,25 @@ const useMoreCircle = () => {
           !isClosedOrder &&
           isEditableDocument,
         onClick: () => onClickPauseOrResume(quote?.id),
-        icon: <PauseIcon />,
+        icon: <PauseIcon color={primaryLavender(500)} />,
         name: t("sales.quote.pause"),
       },
       {
         condition: isOrder && isPauseOrder,
         onClick: () => onClickPauseOrResume(quote?.id),
-        icon: <ResumeIcon />,
+        icon: <ResumeIcon color={primaryLavender(500)} />,
         name: t("sales.quote.resume"),
       },
       {
         condition: !!companyProfile.filesApiAddress,
         onClick: () => addOrderBoardMissionsToFileUploader(quote?.id),
-        icon: <PDFIcon />,
+        icon: <PDFIcon color={primaryLavender(500)} />,
         name: t("fileUploader.uploadFile"),
       },
       {
         condition: isOrder && quote?.jobs,
         name: t("boardMissions.printPackagingSlip"),
-        icon: <PackageIcon />,
+        icon: <PackageIcon color={primaryLavender(500)} />,
         onClick: () => onOpenPackagesModal(quote),
       },
     ];

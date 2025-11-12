@@ -35,7 +35,7 @@ const PricingTableMapping = ({
           }}
           style={{ width: "100%" }}
         >
-          {item.name}
+          {item.exceptionType != ETypeException.DEFAULT ? item.name : t("customers.modal.default")}
         </div>
         <div
           onClick={(e) => {

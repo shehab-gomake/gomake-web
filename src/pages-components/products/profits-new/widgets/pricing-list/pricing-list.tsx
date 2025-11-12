@@ -118,7 +118,7 @@ const PricingList = ({
               onInputChangeMinimumValue(e.target.value)}
             onBlur={() => onBlurMinimumValue()}
             style={classes.autoCompleteStyleContainer}
-            placeholder="minimum price"
+            placeholder={t("products.addProduct.admin.minimumPrice")}
           />
           {router?.query?.isOutSource && (
             <div style={classes.autoCompleteContainer}>
@@ -130,7 +130,7 @@ const PricingList = ({
                   setSelectedSupplier(value);
                 }}
                 getOptionLabel={(option) => option.name}
-                placeholder={t("select supplier")}
+                placeholder={t("home.admin.pleaseSelectSupplier")}
                 value={selectedSupplier}
                 key={selectedSupplier}
               />

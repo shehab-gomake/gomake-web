@@ -16,18 +16,21 @@ import { useRef, useState } from "react";
 import { ClickOutside } from "@/components/click-out-side/click-out-side";
 import { useRecoilState } from "recoil";
 import { printHouseProfile } from "@/store/print-house-profile";
-import { getUserToken } from "@/services/storage-data";
+import { getTempUserToken, getUserToken } from "@/services/storage-data";
 import { boardMissionsDetailsState } from "@/widgets/production-floor/state/boards";
 import { DotsLoader } from "@/components/dots-loader/dots-Loader";
 import { useRouter } from "next/router";
 import { useTranslation } from "react-i18next";
+import axios from "axios";
+
 import {
   deleteJobFileApi,
 } from "@/services/api-service/production-floor/production-floor-endpoints";
 import { useGomakeAxios } from "@/hooks";
+import { quoteItemState } from "@/store";
 
-const FileComponent = ({ fileName, fileStatus, filePath, orderItemId, productType, fileType, onFileDeleted, downloadFilePath }: IUploadingFile & { onFileDeleted?: (fileName: string, fileType: FileTypeENUM) => void }) => {
-  const { successColor, errorColor, primaryColor, grayColor ,warningColor} =
+const FileComponent = ({ fileName, fileStatus, filePath, orderItemId, productType, fileType, onFileDeleted, downloadFilePath, bucketKey }: IUploadingFile & { onFileDeleted?: (fileName: string, fileType: FileTypeENUM) => void }) => {
+  const { successColor, errorColor, primaryColor, grayColor, warningColor } =
     useGomakeTheme();
   const { t } = useTranslation();
   const direction = t("direction");
@@ -63,6 +66,41 @@ const FileComponent = ({ fileName, fileStatus, filePath, orderItemId, productTyp
     }
     setIsLoading(false);
   };
+
+  const handleDownloadFile = async (bucketName: string) => {
+    // Add file to downloading state
+    // setDownloadingFiles((prev) => [...prev, bucketName]);
+
+    try {
+      let userToken = getUserToken();
+      if (!userToken) {
+        userToken = getTempUserToken();
+      }
+
+      const response = await axios.post(
+        `${companyProfile.filesApiAddress}/api/Files/CreateDownloadFilePreSignedUrl`,
+        { bucketKey: bucketName },
+        {
+          headers: {
+            authorization: "Bearer " + userToken,
+          },
+        }
+      );
+
+      if (response.data && typeof response.data === "string") {
+        // Open the presigned URL in a new tab
+        window.open(response.data, "_blank");
+      } else {
+        console.error("Invalid response from CreateDownloadFilePreSignedUrl");
+      }
+    } catch (error) {
+      console.error("Error getting download URL:", error);
+    } finally {
+      // Remove file from downloading state
+      // setDownloadingFiles((prev) => prev.filter((key) => key !== bucketName));
+    }
+  };
+
 
   const onClickDownload = async () => {
     try {
@@ -101,6 +139,41 @@ const FileComponent = ({ fileName, fileStatus, filePath, orderItemId, productTyp
     setOpen(false);
   };
 
+  const onClickCopyPath = async () => {
+    try {
+      // Construct the file path - prefer downloadFilePath, then filePath, then fileName
+      let pathToCopy = downloadFilePath || filePath || fileName;
+      
+      // Prepend localFilePathMapping if it exists
+      if (companyProfile?.localFilePathMapping) {
+        // Ensure proper path joining - remove trailing slash from mapping and leading slash from path if present
+        const mapping = companyProfile.localFilePathMapping.replace(/[/\\]+$/, '');
+        const filePathPart = pathToCopy.replace(/^[/\\]+/, '');
+        // Join with appropriate separator based on the mapping (Windows uses \, Unix uses /)
+        const separator = mapping.includes('\\') ? '\\' : '/';
+        pathToCopy = `${mapping}${separator}${filePathPart}`;
+      }
+      
+      // Try modern clipboard API first
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(pathToCopy);
+      } else {
+        // Fallback for older browsers
+        const textArea = document.createElement("textarea");
+        textArea.value = pathToCopy;
+        textArea.style.position = "fixed";
+        textArea.style.opacity = "0";
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand("copy");
+        document.body.removeChild(textArea);
+      }
+      setOpen(false);
+    } catch (error) {
+      console.error("Failed to copy file path:", error);
+    }
+  };
+
   return (
     <div style={{ position: "relative" }}>
       <Stack
@@ -135,33 +208,33 @@ const FileComponent = ({ fileName, fileStatus, filePath, orderItemId, productTyp
           {fileStatus === EUploadingFileStatus.UPLOADING ? (
             <CircularProgress size={"25px"} />
           ) : fileStatus === EUploadingFileStatus.DONE ||
-            fileStatus === EUploadingFileStatus.Uploaded ||  fileStatus === EUploadingFileStatus.UploadedToGoogleCloud ? (
+            fileStatus === EUploadingFileStatus.Uploaded || fileStatus === EUploadingFileStatus.UploadedToGoogleCloud ? (
             <>
-            {
-              fileStatus === EUploadingFileStatus.UploadedToGoogleCloud ?
+              {
+                fileStatus === EUploadingFileStatus.UploadedToGoogleCloud ?
                   <CloudDoneIcon
-                      style={{
-                        color: warningColor(500),
-                        backgroundColor: warningColor(100),
-                        width: "25px",
-                        height: "25px",
-                        padding: "2px",
-                        borderRadius: "50%",
-                      }}
+                    style={{
+                      color: warningColor(500),
+                      backgroundColor: warningColor(100),
+                      width: "25px",
+                      height: "25px",
+                      padding: "2px",
+                      borderRadius: "50%",
+                    }}
                   /> :
                   <TaskAltIcon
-                      style={{
-                        color: successColor(500),
-                        backgroundColor: successColor(100),
-                        width: "25px",
-                        height: "25px",
-                        padding: "2px",
-                        borderRadius: "50%",
-                      }}
+                    style={{
+                      color: successColor(500),
+                      backgroundColor: successColor(100),
+                      width: "25px",
+                      height: "25px",
+                      padding: "2px",
+                      borderRadius: "50%",
+                    }}
                   />
-            
-            
-            } 
+
+
+              }
               {isLoading ? (
                 <DotsLoader />
               ) : (
@@ -199,8 +272,19 @@ const FileComponent = ({ fileName, fileStatus, filePath, orderItemId, productTyp
               top: "0px",
             }}
           >
-            <MenuItem onClick={onClickDownload}>
+            <MenuItem onClick={() => {
+              if (fileStatus === EUploadingFileStatus.UploadedToGoogleCloud) {
+                handleDownloadFile(bucketKey);
+
+              }
+              else {
+                onClickDownload();
+              }
+            }}>
               {t("translations.download")}
+            </MenuItem>
+            <MenuItem onClick={onClickCopyPath}>
+              {t("fileUploader.copyPath")}
             </MenuItem>
             <MenuItem onClick={onClickDelete}>{t("modal.delete")}</MenuItem>
           </Paper>

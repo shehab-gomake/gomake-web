@@ -7,14 +7,18 @@ import { CompanyWorkingDaysComponent } from "./components/tabs-components/compan
 import { CompanyAddressComponent } from "./components/tabs-components/company-address-component";
 import { CompanyFinancialComponent } from "./components/tabs-components/company-financial-component";
 import { CompanyCommunicationComponent } from "./components/tabs-components/company-communication-component";
+import { CompanyPrintNodeComponent } from "./components/tabs-components/company-print-node-component";
 import { useCompanyProfile } from "@/hooks/use-company-profile";
 import { useTranslation } from "react-i18next";
+import { useRecoilValue } from "recoil";
+import { printHouseUsePrintNode } from "@/store/print-house-profile";
 import Head from "next/head";
 
 const SettingsCompanyProfileWidget = () => {
   const { t } = useTranslation();
   const router = useRouter();
   const tabQuery = router.query.tab as string;
+  const isPrintHouseUsePrintNode = useRecoilValue(printHouseUsePrintNode);
 
   const {
     profile,
@@ -33,39 +37,52 @@ const SettingsCompanyProfileWidget = () => {
   }, []);
 
   const tabs: ITab[] = useMemo(
-    () => [
-      {
-        title: t("profileSettings.company"),
-        component: <CompanyBasicInfoComponent />,
-        id: "company",
-      },
-      {
-        title: t("profileSettings.hours"),
-        component: <CompanyWorkingDaysComponent />,
-        id: "hours",
-      },
-      {
-        title: t("customers.modal.addresses"),
-        component: <CompanyAddressComponent />,
-        id: "addresses",
-      },
-      {
-        title: t("profileSettings.financial"),
-        component: (
-          <CompanyFinancialComponent
-            taxLoginInfo={taxLoginInfo}
-            printHouseTaxLogout={printHouseTaxLogout}
-          />
-        ),
-        id: "financial",
-      },
-      {
-        title: t("profileSettings.smsAndEmails"),
-        component: <CompanyCommunicationComponent />,
-        id: "communication",
-      },
-    ],
-    [t, taxLoginInfo, printHouseTaxLogout]
+    () => {
+      const baseTabs: ITab[] = [
+        {
+          title: t("profileSettings.company"),
+          component: <CompanyBasicInfoComponent />,
+          id: "company",
+        },
+        {
+          title: t("profileSettings.hours"),
+          component: <CompanyWorkingDaysComponent />,
+          id: "hours",
+        },
+        {
+          title: t("customers.modal.addresses"),
+          component: <CompanyAddressComponent />,
+          id: "addresses",
+        },
+        {
+          title: t("profileSettings.financial"),
+          component: (
+            <CompanyFinancialComponent
+              taxLoginInfo={taxLoginInfo}
+              printHouseTaxLogout={printHouseTaxLogout}
+            />
+          ),
+          id: "financial",
+        },
+        {
+          title: t("profileSettings.smsAndEmails"),
+          component: <CompanyCommunicationComponent />,
+          id: "communication",
+        },
+      ];
+
+      // Add Print Node tab only if the print house has PrintNode feature
+      if (isPrintHouseUsePrintNode) {
+        baseTabs.push({
+          title: t("profileSettings.printNode"),
+          component: <CompanyPrintNodeComponent />,
+          id: "printNode",
+        });
+      }
+
+      return baseTabs;
+    },
+    [t, taxLoginInfo, printHouseTaxLogout, isPrintHouseUsePrintNode]
   );
 
   const tabIndex = useMemo(() => {

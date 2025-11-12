@@ -18,6 +18,7 @@ import { IconButton, Stack } from "@mui/material";
 import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 import { ChangePasswordComponent } from "@/components/change-password/change-password-component";
 import { SecondaryButton } from "@/components/button/secondary-button";
+import { PrimaryButton } from "@/components/button/primary-button";
 import { PrimaryTable } from "@/components/tables/primary-table";
 import { useCustomerCard } from "./use-customer-card";
 import { TableFilter } from "./components/table-filter";
@@ -133,6 +134,8 @@ const CustomerCardWidget = ({
     defaultPaymentTerm,
     getAllShipmentTypes,
     shipmentTypes,
+    primaryColor,
+    secondaryColor,
   } = useCustomerCard({
     t,
     customer,
@@ -166,15 +169,27 @@ const CustomerCardWidget = ({
 
   useEffect(() => {
     if (customer) {
-      customer?.contacts &&
-        customer?.contacts?.length > 0 &&
-        setContacts(customer?.contacts);
-      customer?.addresses &&
-        customer?.addresses?.length > 0 &&
-        setAddresses(customer?.addresses);
-      customer?.users &&
-        customer?.users?.length > 0 &&
-        setUsers(customer?.users);
+      if (customer?.contacts && customer?.contacts?.length > 0) {
+        const contactsWithIndex = customer.contacts.map((contact, i) => ({
+          ...contact,
+          index: contact.index ?? i + 1,
+        }));
+        setContacts(contactsWithIndex);
+      }
+      if (customer?.addresses && customer?.addresses?.length > 0) {
+        const addressesWithIndex = customer.addresses.map((address, i) => ({
+          ...address,
+          index: address.index ?? i + 1,
+        }));
+        setAddresses(addressesWithIndex);
+      }
+      if (customer?.users && customer?.users?.length > 0) {
+        const usersWithIndex = customer.users.map((user, i) => ({
+          ...user,
+          index: user.index ?? i + 1,
+        }));
+        setUsers(usersWithIndex);
+      }
     }
   }, [customer]);
 
@@ -221,7 +236,7 @@ const CustomerCardWidget = ({
 
   const renderAddButton = (onClick, labelKey) => (
     <div style={classes.addNewStyle}>
-      <AddIcon onClick={onClick} />
+      <AddIcon onClick={onClick} color={primaryColor(500)} />
       <button style={classes.buttonsStyle} onClick={onClick}>
         {t(labelKey)}
       </button>
@@ -524,7 +539,7 @@ const CustomerCardWidget = ({
                     size="small"
                     sx={{ padding: "4px" }}
                   >
-                    <PlusIcon />
+                    <PlusIcon color={secondaryColor(500)} />
                   </IconButton>
                 </div>
                 {/* !here */}
@@ -615,26 +630,38 @@ const CustomerCardWidget = ({
             </PrimaryTabsComponent>
           </div>
           <div style={classes.footerStyle}>
-            {isFromHomePage && !showTable ? (
+            {isFromHomePage && showAddButton && (
+              <Stack direction="row" gap={2}>
+                <PrimaryButton
+                  variant="contained"
+                  style={{ width: "fit-content" }}
+                  onClick={handleShowTable}
+                >
+                  {t("customers.buttons.search")}
+                </PrimaryButton>
+                {showTable && (
+                  <SecondaryButton
+                    variant="contained"
+                    style={{ width: "fit-content" }}
+                    onClick={handleAddCustomer}
+                  >
+                    {isCustomer
+                      ? t("customers.buttons.addCustomer")
+                      : t("suppliers.buttons.addSupplier")}
+                  </SecondaryButton>
+                )}
+              </Stack>
+            )}
+            {!isFromHomePage && showAddButton && (
               <SecondaryButton
                 variant="contained"
                 style={{ width: "fit-content" }}
-                onClick={handleShowTable}
+                onClick={handleAddCustomer}
               >
-                {t("customers.buttons.search")}
+                {isCustomer
+                  ? t("customers.buttons.addCustomer")
+                  : t("suppliers.buttons.addSupplier")}
               </SecondaryButton>
-            ) : (
-              showAddButton && (
-                <SecondaryButton
-                  variant="contained"
-                  style={{ width: "fit-content" }}
-                  onClick={handleAddCustomer}
-                >
-                  {isCustomer
-                    ? t("customers.buttons.addCustomer")
-                    : t("suppliers.buttons.addSupplier")}
-                </SecondaryButton>
-              )
             )}
             <PermissionCheck userPermission={Permissions.EDIT_CLIENT}>
               {showUpdateButton && (

@@ -37,9 +37,6 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
     materialCategory,
   } = useMaterialFilters();
 
-  console.log("props.subCategory", props.subCategory);
-
-
   const dir: "rtl" | "ltr" = t("direction");
   const isRTL = dir === "rtl";
 
@@ -167,7 +164,8 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
                 key={materialCategory + "-" + key}
                 onChange={(e, v) => setFilterValue(key, v, unit)}
                 style={{ width: "180px" }}
-                value={getFilterValue(key)}
+                // value={getFilterValue(key)}
+                value={typeof getFilterValue(key) === "object" ? getFilterValue(key)?.value : getFilterValue(key)}
                 options={convertedUnit}
                 placeholder={
                   convertedUnitText
@@ -274,7 +272,7 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
         </Box>
       )}
 
-      <Stack direction={"row"} alignItems={"center"} sx={{ padding: 0, position: "absolute", [isRTL ? 'left' : 'right']: 10, top: 80 }}>
+      <Stack direction={"row"} alignItems={"center"} sx={{ padding: 0, position: "absolute", [isRTL ? 'left' : 'right']: 10, top: 85 }}>
         {<ActionMenu isAdmin={props.isAdmin} subCategory={props.subCategory} />}
       </Stack>
     </Stack>

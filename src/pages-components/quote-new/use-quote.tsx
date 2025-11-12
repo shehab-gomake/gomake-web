@@ -60,6 +60,7 @@ import {
   updateExchangeRateApi,
   updateOccasionalClientNameApi,
   updatePurchaseNumberApi,
+  checkPurchaseNumberExistsApi,
   updateQuoteItemQuantityApi,
 } from "@/services/api-service/generic-doc/documents-api";
 import { DOCUMENT_TYPE } from "../quotes/enums";
@@ -72,6 +73,8 @@ import {
   checkedItemsIdsState,
   creditTransactionsState,
   transactionOptionsData,
+  checksRowState,
+  CheckData,
 } from "@/widgets/quote-new/buttons-container/states";
 import { QuoteStatuses } from "@/widgets/quote-new/total-price-and-vat/enums";
 import { isSelectedCLoseAsDeliveryNoteState } from "@/pages/customers/customer-states";
@@ -157,6 +160,7 @@ const useQuoteNew = ({
   );
   const [openReceiptCreationModal, setOpenReceiptCreationModal] =
     useRecoilState(openReceiptCreationModalState);
+  const checksReceipt = useRecoilValue<CheckData[]>(checksRowState);
 
   const isOutgoingPayments = router.query.isOutgoingPayments === "true";
   const isSupplierPayments = docType === DOCUMENT_TYPE.supplierPayments;
@@ -449,11 +453,11 @@ const useQuoteNew = ({
     "#",
     isDeliveryNote || isInvoice ? t("products.profits.documentNumber") : null,
     !CheckPreferenceValue(EPreferences.HIDE_ITEM_CODE_FROM_DOCUMENT_CART) &&
-    t("sales.quote.itemCode"),
+      t("sales.quote.itemCode"),
     !CheckPreferenceValue(EPreferences.HIDE_ITEM_CODE_FROM_DOCUMENT_CART) &&
-    t("products.profits.itemName"),
+      t("products.profits.itemName"),
     CheckPreferenceValue(EPreferences.HIDE_ITEM_CODE_FROM_DOCUMENT_CART) &&
-    t("products.profits.itemName"),
+      t("products.profits.itemName"),
     showDetails ? t("products.profits.details") : null,
     t("sales.quote.amount"),
     showPrices ? t("products.profits.pricingListWidget.unitPrice") : null,
@@ -472,8 +476,8 @@ const useQuoteNew = ({
     source?.showDetails === ShowDocumentDetailsEnum.All
       ? "25%"
       : source?.showDetails === ShowDocumentDetailsEnum.ShowJobNameOnly
-        ? "10%"
-        : null, // Details column (optional)
+      ? "10%"
+      : null, // Details column (optional)
     "10%", // Amount
     showPrices ? "10%" : null, // Unit Price
     showPrices ? "10%" : null, // Discount
@@ -820,8 +824,48 @@ const useQuoteNew = ({
 
   const [originalPurchaseNumber, setOriginalPurchaseNumber] = useState(null);
   const [pendingPurchaseNumber, setPendingPurchaseNumber] = useState(null);
+  const purchaseNumberCheckTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const checkPurchaseNumber = async (value: string) => {
+    if (!value || value.trim() === "") {
+      return;
+    }
+
+    // Clear previous timeout
+    if (purchaseNumberCheckTimeoutRef.current) {
+      clearTimeout(purchaseNumberCheckTimeoutRef.current);
+    }
+
+    // Debounce the API call
+    purchaseNumberCheckTimeoutRef.current = setTimeout(async () => {
+      const callBack = (res) => {
+        if (res?.success) {
+          if (res?.data === true) {
+            // Store the original value if not already stored
+            if (originalPurchaseNumber === null) {
+              setOriginalPurchaseNumber(quoteItemValue?.purchaseNumber);
+            }
+            // Store pending value and open modal
+            setPendingPurchaseNumber(value);
+            alertExistPurchaseNumber.open();
+          }
+        }
+      };
+
+      await checkPurchaseNumberExistsApi(callApi, callBack, {
+        documentType: docType,
+        purchaseNumber: value,
+        documentId: quoteItemValue?.id,
+      });
+    }, 500); // 500ms debounce
+  };
 
   const onBlurPurchaseNumber = async (value) => {
+    // Clear timeout if user blurs before debounce completes
+    if (purchaseNumberCheckTimeoutRef.current) {
+      clearTimeout(purchaseNumberCheckTimeoutRef.current);
+      purchaseNumberCheckTimeoutRef.current = null;
+    }
     await updatePurchaseNumber(value);
     setIsUpdatePurchaseNumber(null);
   };
@@ -1252,7 +1296,7 @@ const useQuoteNew = ({
             discount: quoteItem?.discount,
             isPrintHouseMaterialItem:
               quoteItem?.printHouseMaterialId &&
-                (isPrintHouseMaterialItem || selectedFirstMaterial)
+              (isPrintHouseMaterialItem || selectedFirstMaterial)
                 ? true
                 : false,
             finalPrice: quoteItemEdit?.finalPrice,
@@ -1495,7 +1539,7 @@ const useQuoteNew = ({
           alertSuccessDelete();
           onCloseDeleteItemModal();
           quoteItemValue?.documentItems?.length === 1 ||
-            res?.data?.succ === false
+          res?.data?.succ === false
             ? navigate("/home")
             : getQuote();
         } else {
@@ -1905,7 +1949,7 @@ const useQuoteNew = ({
   const receiptSendModal = useModal();
   const [modalCallback, setModalCallback] = useState<
     (includeInvoices: boolean) => void
-  >(() => () => { });
+  >(() => () => {});
 
   const openReceiptModal = (callback: (includeInvoices: boolean) => void) => {
     receiptSendModal.open();
@@ -2259,10 +2303,26 @@ const useQuoteNew = ({
     setTaxDate(source?.taxDate);
     setClientName(source?.occasionalClientName);
 
-    if (!isQuote) {
+    // Check if we should skip setting the due date because we have valid checks
+    const hasValidChecks = checksReceipt?.some(
+      (check) => check.dueDate && check.checkSum > 0
+    );
+    const shouldSkipDueDateUpdate =
+      isReceipt && isOutgoingPayments && isNewCreation && hasValidChecks;
+
+    if (!isQuote && !shouldSkipDueDateUpdate) {
       setSelectDate(source?.dueDate);
     }
-  }, [quoteItemValue, quoteConfirm, isQuote, isQuoteConfirmation]);
+  }, [
+    quoteItemValue,
+    quoteConfirm,
+    isQuote,
+    isQuoteConfirmation,
+    checksReceipt,
+    isReceipt,
+    isOutgoingPayments,
+    isNewCreation,
+  ]);
 
   useEffect(() => {
     if (!isQuote) return;
@@ -2615,10 +2675,10 @@ const useQuoteNew = ({
         isOrder
           ? onclickCreateNew()
           : navigate(
-            isOutgoingPayments
-              ? `/${documentPath}?isOutgoingPayments=true&isNewCreation=true`
-              : `/${documentPath}?isNewCreation=true`
-          )
+              isOutgoingPayments
+                ? `/${documentPath}?isOutgoingPayments=true&isNewCreation=true`
+                : `/${documentPath}?isNewCreation=true`
+            )
       }
       startIcon={<PlusIcon />}
     >
@@ -2642,7 +2702,9 @@ const useQuoteNew = ({
 
   // Export to Excel handler
   const handleExportToExcel = () => {
-    const { exportQuoteToExcel } = require("@/widgets/quote-new/utils/export-quote-to-excel");
+    const {
+      exportQuoteToExcel,
+    } = require("@/widgets/quote-new/utils/export-quote-to-excel");
     exportQuoteToExcel({
       documentItems: quoteItemValue?.documentItems || [],
       documentType: docType,
@@ -2906,6 +2968,7 @@ const useQuoteNew = ({
     originalPurchaseNumber,
     setOriginalPurchaseNumber,
     updatePurchaseNumber,
+    checkPurchaseNumber,
     modalCallback,
     openReceiptModal,
     receiptSendModal,

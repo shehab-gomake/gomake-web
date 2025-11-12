@@ -9,7 +9,7 @@ const PlusIcon = (props: any) => {
     >
       <path
         d="M9.99935 4.16663V15.8333M4.16602 9.99996H15.8327"
-        stroke="#272977"
+        stroke={props?.stroke || "#272977"}
         stroke-width="1.66667"
         stroke-linecap="round"
         stroke-linejoin="round"

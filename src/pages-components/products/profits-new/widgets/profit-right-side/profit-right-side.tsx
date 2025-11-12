@@ -8,12 +8,12 @@ import { PricingTableMapping } from "../pricing-table-mapping";
 import { ETypeException } from "../../enums/profites-enum";
 import { PricingTableMenu } from "../pricing-table-menu";
 import { ProfitRightSideProps } from "../../interface";
-import { MinimumWidget } from "../minimum-widget";
 import { AddRuleModal } from "../add-rule-modal";
 import { useStyle } from "./style";
 import { AdditinalProfitMenu } from "../additinal-profit-menu";
 import { useTranslation } from "react-i18next";
 import { ModalType } from "@/enums";
+import { useParameters } from "@/hooks/use-parameters";
 
 const ProfitRightSideWidget = ({
     minimumValue,
@@ -76,7 +76,7 @@ const ProfitRightSideWidget = ({
     const onClickCloseAddNewRuleModal = () => {
         setOpenAddNewRuleModal(false);
     };
-
+    const { parametersStateValue } = useParameters();
     return (
         <div style={clasess.mainHeaderContainer}>
             <AccordionTable
@@ -231,6 +231,7 @@ const ProfitRightSideWidget = ({
                 actionProfitByActionId={actionProfitByActionId}
                 getProfitsPricingTables={getProfitsPricingTables}
                 selectedPricingTableItems={selectedPricingTableItems}
+                parametersStateValue={parametersStateValue}
             />
         </div>
     );

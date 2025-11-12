@@ -174,7 +174,7 @@ const useMaterials = (isAdmin: boolean) => {
     setSupplierId("");
     setDefaultSupplier("");
     const path = isAdmin ? "/materials-admin" : "/materials";
-    push(path + `/${materialType}?materialCategory=${category}`);
+    push(path + `/${materialType}?materialCategory=${encodeURIComponent(category)}`);
     setFlagState(false);
     setActiveFilter(EMaterialActiveFilter.ACTIVE);
     setIsAllMaterialsChecked(false);
@@ -566,12 +566,6 @@ const useMaterials = (isAdmin: boolean) => {
   }, []);
 
   const uploadExcelFile = async (e) => {
-    if (!materialType || !materialCategory) {
-      alertFault("materials.inputs.errorNoMaterialTypeOrCategory");
-      e.target.value = ""; // Reset input to allow same file upload
-      return;
-    }
-
     const file = e.target.files[0];
     if (file) {
       const reader = new FileReader();
@@ -627,7 +621,7 @@ const useMaterials = (isAdmin: boolean) => {
         } else {
           uploadPrintHouseMaterial1RowExcelFileApi(callApi, callBack, {
             key: materialType.toString(),
-            supplierId: supplierId,
+            supplierId: supplierId || null,
             base64: base64String,
           });
         }

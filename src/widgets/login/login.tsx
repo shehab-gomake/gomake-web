@@ -27,14 +27,15 @@ const LoginWidget = () => {
   const loginLink = useMemo(() => {
     if (!data) return "";
     const isBrowser = typeof window !== "undefined";
-    const protocol = isBrowser ? window.location.protocol : "https:";
-    const origin = isBrowser ? window.location.origin : "";
-    const base = data.domain ? `${protocol}//${data.domain}` : origin;
+    const origin = data.domain;
+    const base = data.domain ? `https://${data.domain}` : origin;
     if (!base) return "";
-    const url = new URL("/login", base);
-    if (data?.username) url.searchParams.set("email", data.username);
-    if (data?.password) url.searchParams.set("password", data.password);
-    return url.toString();
+    debugger;
+    let url = base + "/login";
+    if (data?.username && data?.password) {
+      url = url + "?email=" + data.username + "&password=" + data.password;
+    }
+    return url;
   }, [data]);
 
   // const isMobile = useMediaQuery("(max-width: 768px)");
@@ -77,8 +78,18 @@ const LoginWidget = () => {
           </div>
           <div style={{ wordBreak: "break-all" }}>{loginLink}</div>
           <div style={{ display: "flex", gap: 8 }}>
-            <GomakePrimaryButton onClick={() => window.open(loginLink, "_self")}>Open Link</GomakePrimaryButton>
-            <GomakePrimaryButton onClick={async () => { await navigator.clipboard.writeText(loginLink); }}>Copy Link</GomakePrimaryButton>
+            <GomakePrimaryButton
+              onClick={() => window.open(loginLink, "_self")}
+            >
+              Open Link
+            </GomakePrimaryButton>
+            <GomakePrimaryButton
+              onClick={async () => {
+                await navigator.clipboard.writeText(loginLink);
+              }}
+            >
+              Copy Link
+            </GomakePrimaryButton>
           </div>
         </div>
       </GoMakeModal>
@@ -108,8 +119,18 @@ const LoginWidget = () => {
           </div>
           <div style={{ wordBreak: "break-all" }}>{loginLink}</div>
           <div style={{ display: "flex", gap: 8 }}>
-            <GomakePrimaryButton onClick={() => window.open(loginLink, "_self")}>Open Link</GomakePrimaryButton>
-            <GomakePrimaryButton onClick={async () => { await navigator.clipboard.writeText(loginLink); }}>Copy Link</GomakePrimaryButton>
+            <GomakePrimaryButton
+              onClick={() => window.open(loginLink, "_self")}
+            >
+              Open Link
+            </GomakePrimaryButton>
+            <GomakePrimaryButton
+              onClick={async () => {
+                await navigator.clipboard.writeText(loginLink);
+              }}
+            >
+              Copy Link
+            </GomakePrimaryButton>
           </div>
         </div>
       </GoMakeModal>

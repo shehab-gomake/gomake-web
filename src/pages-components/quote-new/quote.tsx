@@ -35,8 +35,10 @@ import { ReceiptsTable } from "@/widgets/quote-new/receipts-table";
 import { useRouter } from "next/router";
 import { usePaymentsTable } from "@/widgets/quote-new/receipts-table/use-payments-table";
 import { useEffect, useState } from "react";
-import { StepType } from "@reactour/tour";
-import { useGoMakeTour } from "@/hooks/use-go-make-tour";
+import {
+  checksRowState,
+  CheckData,
+} from "@/widgets/quote-new/buttons-container/states";
 import { OtherReasonModal } from "@/widgets/quote-new/total-price-and-vat/other-reason-modal";
 import { QuoteStatuses } from "@/widgets/quote-new/total-price-and-vat/enums";
 import { fetchTaxesAuthority, LoginTaxesUrl } from "@/utils/taxes-authority";
@@ -53,7 +55,6 @@ import { InvoiceCreationModal } from "@/widgets/quote-new/invoice-creation-modal
 import { useQuoteGetData } from "./use-quote-get-data";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { DateField } from "@/components/date-picker/date-filed";
-import { createTheme } from "@mui/material/styles";
 import { ModalType } from "@/enums";
 import { DuplicateQuickModal } from "@/widgets/quote-new/modals-widgets/duplicate-quick-modal";
 import Stack from "@mui/material/Stack";
@@ -62,7 +63,6 @@ import { PrimaryCheckbox } from "@/components/check-box/primary-check-box";
 import { SettingVatListMenu } from "@/widgets/quote-new/setting-vat-menu";
 import { CLIENT_TYPE } from "@/pages/customers/enums";
 import { UpdateDeliveryPriceModal } from "@/widgets/quote-new/modals-widgets/update-delivery-price-modal/update-delivery-price-modal";
-import { useModal } from "@/hooks/use-modal";
 import { AddAttachmentsModal } from "@/widgets/quote-new/modals-widgets/add-attachments-modal/add-attachments-modal";
 import { convertUtcToLocalIsoString } from "@/components/date-time/date-time-component";
 import CloseOrderNote from "../quotes/widgets/general/close-order-note";
@@ -96,7 +96,7 @@ const QuoteNewPageWidget = ({
     setQuoteItemValue({});
   }, []);
 
-  const { } = updateQuoteStatusSocketIo({
+  const {} = updateQuoteStatusSocketIo({
     setUserQuote: null,
     setQuoteId: null,
     setQuoteNumber: null,
@@ -110,6 +110,7 @@ const QuoteNewPageWidget = ({
   const quoteConfirm = useRecoilValue<any>(quoteConfirmationState);
   const printHouseProfileState = useRecoilValue<any>(printHouseProfile);
   const quoteState = isQuoteConfirmation ? quoteConfirm : quoteItemValue;
+  const checksReceipt = useRecoilValue<CheckData[]>(checksRowState);
   const { resetReceiptState } = usePaymentsTable();
   const { getCurrencyUnitText } = useQuoteGetData();
   const [docNumber, setDocNumber] = useState(quoteState?.number);
@@ -354,7 +355,9 @@ const QuoteNewPageWidget = ({
     pendingPurchaseNumber,
     setPendingPurchaseNumber,
     originalPurchaseNumber,
+    setOriginalPurchaseNumber,
     updatePurchaseNumber,
+    checkPurchaseNumber,
     modalCallback,
     openReceiptModal,
     receiptSendModal,
@@ -383,10 +386,10 @@ const QuoteNewPageWidget = ({
   });
   const { getQuoteConfirmation } = useQuoteConfirmation();
   if (documentType == DOCUMENT_TYPE.quote) {
-    const { } = useQuotesSocketIo({ getQuote });
+    const {} = useQuotesSocketIo({ getQuote });
   }
   if (documentType == DOCUMENT_TYPE.order) {
-    const { } = useOrdersSocketIo({ getQuote });
+    const {} = useOrdersSocketIo({ getQuote });
   }
 
   const dir: "rtl" | "ltr" = t("direction");
@@ -410,46 +413,6 @@ const QuoteNewPageWidget = ({
       setSelectedBudget(budget);
     }
   }, [quoteState, allClientActiveBudgets]);
-
-  const quoteSteps: StepType[] = [
-    {
-      selector: '[data-tour="quoteStep1"]',
-      content:
-        "Here is the quote. You can:\n" +
-        "Add contacts\n" +
-        "Add address\n" +
-        "Change client\n" +
-        "change languge and more",
-      position: "center",
-    },
-    {
-      selector: '[data-tour="quoteStep2"]',
-      content:
-        "With this bar, you can:\n" +
-        "Add items\n" +
-        "Send and save the quote\n" +
-        "Transfer the quote to an order, and more",
-      position: "top",
-    },
-    {
-      selector: '[data-tour="menu-materials"]',
-      content:
-        "And now, it's time to explore all the settings.\n" +
-        'Press "Materials"\n' +
-        "to discover how you can control your materials.",
-      position: "top",
-      styles: {
-        maskWrapper: (props) => ({ ...props, zIndex: 1000000 }),
-        popover: (props) => ({ ...props, zIndex: 1000000 }),
-      },
-    },
-  ];
-
-  const { } = useGoMakeTour(quoteSteps, []);
-
-  const theme = createTheme({
-    direction: dir, // Ensure the theme is in RTL mode
-  });
 
   useEffect(() => {
     if (isInvoice) {
@@ -477,6 +440,45 @@ const QuoteNewPageWidget = ({
     setDocNumber(quoteState?.number);
   }, [quoteState?.number, router, quoteState, isQuoteConfirmation]);
 
+  // Update due date to the latest check date when paying with checks
+  useEffect(() => {
+    const isOutgoingPayments = router.query?.isOutgoingPayments === "true";
+
+    if (
+      isReceipt &&
+      isOutgoingPayments &&
+      isNewCreation &&
+      checksReceipt?.length > 0
+    ) {
+      // Filter checks with valid due dates and non-zero amounts
+      const validChecks = checksReceipt.filter(
+        (check) => check.dueDate && check.checkSum > 0
+      );
+
+      if (validChecks.length > 0) {
+        // Find the latest (maximum) due date among all checks
+        const latestCheckDate = validChecks.reduce((latest, check) => {
+          const checkDate = new Date(check.dueDate);
+          const latestDate = new Date(latest);
+          return checkDate > latestDate ? check.dueDate : latest;
+        }, validChecks[0].dueDate);
+
+        // Update the due date if we found a valid latest check date
+        if (latestCheckDate) {
+          const formattedDate = moment(latestCheckDate)
+            .utc()
+            .format("YYYY-MM-DD HH:mm:ss");
+          setSelectDate(formattedDate);
+        }
+      }
+    }
+  }, [
+    checksReceipt,
+    isReceipt,
+    isNewCreation,
+    router.query?.isOutgoingPayments,
+  ]);
+
   return (
     <>
       {quoteState?.id ? (
@@ -489,8 +491,8 @@ const QuoteNewPageWidget = ({
                     title={
                       router?.query?.isNewCreation
                         ? `${t(
-                          "properties.create"
-                        )} ${documentTitle.toLowerCase()}`
+                            "properties.create"
+                          )} ${documentTitle.toLowerCase()}`
                         : documentTitle
                     }
                     marginBottom={1}
@@ -570,7 +572,7 @@ const QuoteNewPageWidget = ({
                     {isQuote && (
                       <>
                         {quoteItemValue?.signImageUrl &&
-                          quoteItemValue?.signerName ? (
+                        quoteItemValue?.signerName ? (
                           <div
                             style={classes.signatureApproval}
                             onClick={onClickOpenSignatureApprovalModal}
@@ -583,7 +585,7 @@ const QuoteNewPageWidget = ({
                               <div style={classes.quoteStatusContainer}>
                                 {_renderQuoteStatus(
                                   quoteState?.[
-                                  isReceipt ? "status" : "documentStatus"
+                                    isReceipt ? "status" : "documentStatus"
                                   ],
                                   quoteState,
                                   t
@@ -646,14 +648,13 @@ const QuoteNewPageWidget = ({
                     }
                     inputRef={creationDateRef}
                   />
-
                   {documentType !== DOCUMENT_TYPE.purchaseOrder &&
                     (isQuote &&
-                      !selectDate &&
-                      (!CheckPreferenceValue(
-                        EPreferences.DELIVERY_DATE_REQUIRED_IN_QUOTE
-                      ) ||
-                        quoteItemValue?.dueDateUpdatedByUser) ? (
+                    !selectDate &&
+                    (!CheckPreferenceValue(
+                      EPreferences.DELIVERY_DATE_REQUIRED_IN_QUOTE
+                    ) ||
+                      quoteItemValue?.dueDateUpdatedByUser) ? (
                       <Skeleton variant="text" width={200} height={40} />
                     ) : (
                       <DateField
@@ -671,7 +672,10 @@ const QuoteNewPageWidget = ({
                           setSelectDate(formattedDueDate);
                           setActiveClickAway(true);
                         }}
-                        isEditable={quoteItemValue?.isEditable}
+                        isEditable={
+                          quoteItemValue?.isEditable ||
+                          (isNewCreation && isReceipt)
+                        }
                         inputRef={dateRef}
                         // preventOpenCondition={!quoteState.client}
                         withTime={isOrder || isQuote}
@@ -688,7 +692,7 @@ const QuoteNewPageWidget = ({
                       }}
                       isEditable={quoteItemValue?.isEditable}
                       inputRef={taxDateRef}
-                    // preventOpenCondition={!quoteState.client}
+                      // preventOpenCondition={!quoteState.client}
                     />
                   )}
                   {(documentType === DOCUMENT_TYPE.order ||
@@ -696,7 +700,10 @@ const QuoteNewPageWidget = ({
                     estimatedProductionDate && (
                       <DateField
                         label={t("sales.quote.estimatedProductionDate")}
-                        date={estimatedProductionDate}
+                        // date={estimatedProductionDate}
+                        date={convertUtcToLocalIsoString(
+                          estimatedProductionDate
+                        )}
                         handleChange={handleChangeCreationDate}
                         isEditable={false}
                         inputRef={creationDateRef}
@@ -728,6 +735,7 @@ const QuoteNewPageWidget = ({
                   onBlurPurchaseNumber={onBlurPurchaseNumber}
                   isUpdatePurchaseNumber={isUpdatePurchaseNumber}
                   setIsUpdatePurchaseNumber={setIsUpdatePurchaseNumber}
+                  checkPurchaseNumber={checkPurchaseNumber}
                   onBlurBusinessCode={onBlurBusinessCode}
                   setIsUpdateBusinessCode={setIsUpdateBusinessCode}
                   onBlurAddress={onBlurAddress}
@@ -997,6 +1005,7 @@ const QuoteNewPageWidget = ({
         whatsappMassage={whatsappMassage}
         documentType={documentType}
       />
+
       <SettingQuoteMenu
         handleClose={handleSettingMenuClose}
         open={openSettingMenu}
@@ -1118,18 +1127,18 @@ const QuoteNewPageWidget = ({
           isMoveToReady
             ? () => moveOrderToReady(moveToReadyOption === "withMessage")
             : () => {
-              if (isSelectedCLoseAsDeliveryNote) {
-                navigate(
-                  `/deliveryNote?isNewCreation=true&orderId=${selectedDocument?.id}`
-                );
-              } else {
-                const path =
-                  documentType === DOCUMENT_TYPE.order
-                    ? `/invoice?isNewCreation=true&orderId=${selectedDocument?.id}`
-                    : `/invoice?isNewCreation=true&deliveryNoteId=${selectedDocument?.id}`;
-                navigate(path);
+                if (isSelectedCLoseAsDeliveryNote) {
+                  navigate(
+                    `/deliveryNote?isNewCreation=true&orderId=${selectedDocument?.id}`
+                  );
+                } else {
+                  const path =
+                    documentType === DOCUMENT_TYPE.order
+                      ? `/invoice?isNewCreation=true&orderId=${selectedDocument?.id}`
+                      : `/invoice?isNewCreation=true&deliveryNoteId=${selectedDocument?.id}`;
+                  navigate(path);
+                }
               }
-            }
         }
       >
         <Stack alignItems={"center"}>
@@ -1265,7 +1274,7 @@ const QuoteNewPageWidget = ({
         openModal={openAddAttachmentsModal}
         onClose={onCloseAddAttachmentsModal}
         documentType={documentType}
-        getQuote={isQuoteConfirmation ? () => { } : getQuote}
+        getQuote={isQuoteConfirmation ? () => {} : getQuote}
         isQuoteConfirmation={isQuoteConfirmation}
         quoteConfirm={quoteState}
         onFileUploadStart={onFileUploadStart}
@@ -1296,9 +1305,10 @@ const QuoteNewPageWidget = ({
           alertExistPurchaseNumber.close();
           setQuoteItemValue((prev) => ({
             ...prev,
-            purchaseNumber: originalPurchaseNumber,
+            purchaseNumber: originalPurchaseNumber || prev.purchaseNumber,
           }));
           setPendingPurchaseNumber(null);
+          setOriginalPurchaseNumber(null);
         }}
         onClickConfirm={async () => {
           alertExistPurchaseNumber.close();

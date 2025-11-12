@@ -16,7 +16,15 @@ const StyledTextField = styled(InputBase)((props: any) => ({
     paddingLeft: props?.style?.paddingInputLeft || "40px",
     paddingRight: props?.style?.paddingInputRight || "40px",
     color: props?.error ? "red" : "#000",
+    boxShadow: "var(--theme-input-shadow, 0px 1px 10px rgba(0, 0, 0, 0.08))",
+    WebkitBoxShadow:
+      "var(--theme-input-shadow, 0px 1px 10px rgba(0, 0, 0, 0.08))",
     ...props.style,
+  },
+  "&:hover input": {
+    borderColor: "var(--theme-input-border-color, transparent)",
+    borderWidth: "1px !important",
+    borderStyle: "solid !important",
   },
   "& .MuiOutlinedInput-root": {
     "&:hover fieldset": {
@@ -27,14 +35,14 @@ const StyledTextField = styled(InputBase)((props: any) => ({
     "& fieldset": {
       border: props.error
         ? `1px solid ${props.errorColor(300)}`
-        : `1px solid #FFFFFF`,
+        : `1px solid var(--theme-input-border-color, #FFFFFF)`,
       boxSizing: "border-box",
       borderRadius: props?.style?.borderRadius || 4,
       width: "100%",
     },
     "&.Mui-focused fieldset": {
       borderColor: props.error ? `${props.errorColor(300)}` : "#FFFFFF",
-      borderRadius: props?.style?.borderRadius || 4,
+      borderRadius: props?.style?.borderRadius || "var(--theme-radius-md, 4px)",
       width: "100%",
     },
   },

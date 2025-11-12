@@ -26,6 +26,7 @@ import {
 } from "../../states/documents-columns-settings-state";
 import { saveDocumentTableSettingsApi } from "@/services/api-service/generic-doc/documents-api";
 import { useStyle } from "./style";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 interface DragItem {
   id: string;
@@ -33,6 +34,8 @@ interface DragItem {
 }
 
 export const DocumentsColumnSettingsMenu = ({ tableKey, documentType }) => {
+  const { primaryColor } = useGomakeTheme();
+
   const { t } = useTranslation();
   const { classes } = useStyle();
   const { callApi } = useGomakeAxios();
@@ -180,7 +183,7 @@ export const DocumentsColumnSettingsMenu = ({ tableKey, documentType }) => {
         <IconButton onClick={handleOpen} sx={classes.iconButton}>
           <VisibilityOutlinedIcon
             sx={{
-              color: "#2e3092",
+              color: `var(--theme-secondary-color , ${primaryColor(500)})`,
               fontSize: "22px",
               transition: "color 0.2s ease-in-out",
             }}
@@ -222,6 +225,7 @@ export const DocumentsColumnSettingsMenu = ({ tableKey, documentType }) => {
                 checked={tempColumnVisibility[key]}
                 onToggle={() => handleToggleColumn(key)}
                 moveItem={moveItem}
+                primaryColor={primaryColor}
               />
             ))}
           </DndProvider>
@@ -260,6 +264,7 @@ const DraggableMenuItem = React.memo(
     checked,
     onToggle,
     moveItem,
+    primaryColor,
   }: {
     id: string;
     index: number;
@@ -267,6 +272,7 @@ const DraggableMenuItem = React.memo(
     checked: boolean;
     onToggle: () => void;
     moveItem: (dragIndex: number, hoverIndex: number) => void;
+    primaryColor: (degree: number) => string;
   }) => {
     const ref = useRef<HTMLLIElement>(null);
 
@@ -313,7 +319,7 @@ const DraggableMenuItem = React.memo(
         dense
         style={{
           opacity: isDragging ? 0.5 : 1,
-          border: isDragging ? "1px dashed #2e3092" : "none",
+          border: isDragging ? `1px dashed ${primaryColor(500)}` : "none",
           cursor: "move",
           transition: "opacity 0.15s ease",
         }}

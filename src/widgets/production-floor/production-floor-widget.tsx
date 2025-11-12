@@ -5,7 +5,8 @@ import {
   EProductionFloorView,
   productionFloorViewState,
 } from "@/widgets/production-floor/state/production-floor-view";
-import { useEffect, useState } from "react";
+import { productionFloorFiltersState } from "@/widgets/production-floor/state/production-floor-filters";
+import { useEffect, useState, useRef } from "react";
 import { GroupsTable } from "@/widgets/production-floor/views/groups-view/groups-table";
 import { useRouter } from "next/router";
 import { ProductionFloorBoardMissionsViews } from "@/widgets/production-floor/views/boards-view/production-floor-board-missions-views";
@@ -43,14 +44,19 @@ import { getAllBoardMissionStatusApi } from "@/services/api-service/board-missio
 import { statusesListState } from "./state/boards";
 import { FrontDeskEmailComposerWrapper } from "@/pages-components/quotes/components/frontdesk-email-composer-wrapper";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
+import { setBoardFiltersApi } from "@/services/api-service/production-floor/production-floor-endpoints";
 
 const ProductionFloorWidget = () => {
   const [view, setView] = useRecoilState(productionFloorViewState);
+  const [filtersState, setFiltersState] = useRecoilState(
+    productionFloorFiltersState
+  );
   const { query, replace, pathname, push } = useRouter();
   const { connectionId } = useProductionFloorSocketIO(view);
   const { groupsId, boardMissionsId, step, productType, isScanning } = query;
   const isMobile = useIsMobile();
   const mobileHeight = useMobileHeight();
+  const prevViewRef = useRef<EProductionFloorView | null>(null);
 
   const [selectedBoardMissionId, setSelectedBoardMissionId] = useState<
     string | null
@@ -78,6 +84,13 @@ const ProductionFloorWidget = () => {
     openPackagesModal,
     onClosePrintDeliverTicketModal,
     selectedMission,
+    openReturnToProdModal,
+    onCloseReturnToProdModal,
+    onClickBackToProcess,
+    openPrintTypeModal,
+    onClosePrintTypeModal,
+    handlePrintTypeChoice,
+    pendingPrintParams,
   } = useProductionFloorData();
 
   useEffect(() => {
@@ -124,7 +137,19 @@ const ProductionFloorWidget = () => {
       ).find((key) => key.toLowerCase() === viewQuery);
 
       if (viewEnum) {
-        setView(EProductionFloorView[viewEnum]);
+        const newView = EProductionFloorView[viewEnum];
+
+        // On page refresh/load, if view is Gantt, reset filters immediately
+        if (newView === EProductionFloorView.GANTT) {
+          setFiltersState((prev) => ({
+            ...prev,
+            stations: [],
+            groupId: null,
+          }));
+          setSelectedGroupId(null);
+        }
+
+        setView(newView);
       }
     }
   }, [query, setView]);
@@ -162,6 +187,31 @@ const ProductionFloorWidget = () => {
   const { callApi } = useGomakeAxios();
   const { alertSuccessUpdate, alertFaultUpdate, alertFault } = useSnackBar();
 
+  // Handle transition FROM Gantt TO other views (Table/Kanban)
+  // Always call setFilters with current filters to sync data
+  useEffect(() => {
+    const previousView = prevViewRef.current;
+
+    // Detect transition FROM Gantt TO another view (except initial mount)
+    if (
+      previousView === EProductionFloorView.GANTT &&
+      view !== EProductionFloorView.GANTT &&
+      previousView !== null
+    ) {
+      // Always call setBoardFiltersApi with current filters from Gantt
+      const callBack = (res) => {
+        if (res?.success) {
+          console.log("Synced data after leaving Gantt view");
+        }
+      };
+
+      setBoardFiltersApi(callApi, callBack, filtersState, true);
+    }
+
+    // Update previous view ref
+    prevViewRef.current = view;
+  }, [view, filtersState, callApi]);
+
   const onUpdateToNextStation = async (
     boardMissionId: string,
     productType: string
@@ -179,7 +229,6 @@ const ProductionFloorWidget = () => {
       { boardId: boardMissionId, stationId: null, productType }
     );
   };
-
 
   const handleScan = (data: { text: string } | null) => {
     //if (!data) return;
@@ -292,7 +341,6 @@ const ProductionFloorWidget = () => {
           width={"100vw"}
           height={`calc(${mobileHeight} - 50px)`}
         >
-
           <IconButton
             onClick={onClose}
             sx={{
@@ -342,8 +390,8 @@ const ProductionFloorWidget = () => {
         noBtn={"boardMissions.markDoneModalNo"}
         openModal={isOpenDoneModal.isOpen}
         onClose={() => isOpenDoneModal.close()}
-        onClickYes={() => onClickMoveBoardMissionToDone(true)}
-        onClickNo={() => onClickMoveBoardMissionToDone(false)}
+        onClickYes={() => onClickMoveBoardMissionToDone(true, true)}
+        onClickNo={() => onClickMoveBoardMissionToDone(false, true)}
         style={
           isMobile
             ? {
@@ -373,6 +421,40 @@ const ProductionFloorWidget = () => {
           documentType={DOCUMENT_TYPE.boardMission}
         />
       )}
+      <GoMakeDeleteModal
+        modalType={ModalType.WARNING}
+        title={t("boardMissions.unReadyModalTitle")}
+        subTitle={" "}
+        yesBtn={t("modal.confirm")}
+        cancelBtn={t("modal.cancel")}
+        openModal={openReturnToProdModal}
+        onClose={onCloseReturnToProdModal}
+        onClickDelete={onClickBackToProcess}
+      />
+      <ThreeOptionsModal
+        modalType={ModalType.WARNING}
+        title={t("boardMissions.selectPrintContent")}
+        subTitle={
+          pendingPrintParams?.productType
+            ? t("boardMissions.askPrintType", {
+              productType:
+                pendingPrintParams?.productTypeName ||
+                pendingPrintParams?.productName ||
+                pendingPrintParams?.productType,
+            })
+            : ""
+        }
+        yesBtn={"boardMissions.printAllJobs"}
+        noBtn={t("boardMissions.printProductTypeOnly", {
+          productType:
+            pendingPrintParams?.productTypeName ||
+            pendingPrintParams?.productType,
+        })}
+        openModal={openPrintTypeModal}
+        onClose={onClosePrintTypeModal}
+        onClickYes={() => handlePrintTypeChoice(true)}
+        onClickNo={() => handlePrintTypeChoice(false)}
+      />
     </Stack>
   );
 };

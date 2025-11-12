@@ -2,13 +2,13 @@ import { Badge, IconButton, MenuItem } from "@mui/material";
 import { useState } from "react";
 import { useGomakeAxios, useGomakeRouter } from "@/hooks";
 import { GoMakeMenu } from "@/components";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState } from "recoil";
 import { useTranslation } from "react-i18next";
-import { currentPathState } from "@/pages-components/customer-service/store/currentPathState";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useStyle } from "../style";
 import QuestionMarkRoundedIcon from "@mui/icons-material/QuestionMarkRounded";
 import { CustomTooltip } from "../../header";
+import { useTheme } from "@/contexts/theme/useTheme";
 import { WhatsNewModal } from "./whats-new-modal";
 import { useModal } from "@/hooks/use-modal";
 import { lastVersionState } from "@/store/last-version-state";
@@ -22,8 +22,15 @@ const SystemHelp = () => {
   const whatsNewModal = useModal();
   const [version, setVersion] = useRecoilState(lastVersionState);
   const { callApi } = useGomakeAxios();
+  const { getIconOverride, currentTheme } = useTheme();
 
-  const currentPath = useRecoilValue(currentPathState);
+  // Get theme-aware Help icon (HP Client icon when theme is active)
+  const HpHelpIcon = getIconOverride("HelpIcon");
+
+  // Make background color theme-aware: transparent for HP theme, default gray for others
+  const iconButtonBackground =
+    currentTheme === "hp-client" ? "transparent" : "#f6f6f6";
+
   const [anchorSupportEl, setAnchorSupportEl] = useState<null | HTMLElement>(
     null
   );
@@ -53,29 +60,31 @@ const SystemHelp = () => {
     whatsNewModal.open();
   };
 
-  const handleGoSupportClick = async () => {
-    await generateCustomerLoginLinkApi(callApi, (res) => {
-      if (res?.success && res?.data) {
-        window.open(res.data, "_blank");
-      }
-    });
+  const handleGoSupportClick = async (redirect?: "tickets" | "articles") => {
+    await generateCustomerLoginLinkApi(
+      callApi,
+      (res) => {
+        if (res?.success && res?.data) {
+          window.open(res.data, "_blank");
+        }
+      },
+      redirect ? { redirect } : undefined
+    );
   };
 
   const helpMenuList = [
+    // {
+    //   name: t("header.customerSupport"),
+    //   onclick: () =>
+    //     navigate(`/customer-service?from=${encodeURIComponent(currentPath)}`),
+    // },
     {
-      name: t("header.customerSupport"),
-      onclick: () =>
-        navigate(`/customer-service?from=${encodeURIComponent(currentPath)}`),
-    },
-    {
-      name: t("header.goSupport"),
-      onclick: handleGoSupportClick,
+      name: t("quickSetup.steps.customerService"),
+      onclick: () => handleGoSupportClick("tickets"),
     },
     {
       name: t("header.guideAndTutorial"),
-      onclick: () => {
-        window.open("https://know-base-qassamat.replit.app/customer", "_blank");
-      },
+      onclick: () => navigate("/help-center"),
     },
     {
       name: t("header.whatsNew"),
@@ -92,11 +101,15 @@ const SystemHelp = () => {
     >
       <CustomTooltip title={t("header.help")} arrow>
         <IconButton
-          style={{ backgroundColor: "#f6f6f6", padding: "8px" }}
+          style={{ backgroundColor: iconButtonBackground, padding: "8px" }}
           data-tour={"start-tour-btn"}
           onClick={handleClickSupport}
         >
-          <QuestionMarkRoundedIcon style={{ width: 22, height: 22 }} />
+          {HpHelpIcon ? (
+            <HpHelpIcon width={22} height={22} />
+          ) : (
+            <QuestionMarkRoundedIcon style={{ width: 22, height: 22 }} />
+          )}
         </IconButton>
       </CustomTooltip>
       <GoMakeMenu

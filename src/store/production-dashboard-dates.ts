@@ -11,10 +11,11 @@ export enum DashboardActions {
   DATE_RANGE_BOARDS,
 }
 
-// Calculate last 30 days for production dashboard default
+// Default date for Activity Date: today
 const today = new Date();
-const thirtyDaysAgo = new Date();
-thirtyDaysAgo.setDate(today.getDate() - 30);
+today.setHours(0, 0, 0, 0); // Start of day
+const endOfToday = new Date();
+endOfToday.setHours(23, 59, 59, 999); // End of day
 
 const productionDeliveryDateState = atom<{
   dates: IDateRange;
@@ -36,10 +37,26 @@ const productionCreationDateState = atom<{
   key: "productionCreationDate",
   default: {
     dates: {
-      startDate: thirtyDaysAgo,
-      endDate: today,
+      startDate: undefined,
+      endDate: undefined,
     },
   },
 });
 
-export { productionDeliveryDateState, productionCreationDateState };
+const productionActivityDateState = atom<{
+  dates: IDateRange;
+}>({
+  key: "productionActivityDate",
+  default: {
+    dates: {
+      startDate: today,
+      endDate: endOfToday,
+    },
+  },
+});
+
+export {
+  productionDeliveryDateState,
+  productionCreationDateState,
+  productionActivityDateState,
+};

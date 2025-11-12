@@ -802,6 +802,9 @@ const useDigitalOffsetPrice = ({
     let defaultProductTemplateCopy = cloneDeep(productTemplate);
     const productTemplateCopy = cloneDeep(productTemplate);
 
+    // Variable to store the new section ID for later selection
+    let newSectionId = null;
+
     const section = defaultProductTemplateCopy.sections.find(
       (x) => x.id === item.id
     );
@@ -847,6 +850,9 @@ const useDigitalOffsetPrice = ({
     sectionCopy.duplicatedFromSectionId = item.id;
     sectionCopy.id = uuidv4();
 
+    // Store the new section ID for later selection
+    newSectionId = sectionCopy.id;
+
     sectionCopy.isCanDeleted = true; // Set isCanDeleted to true
     sectionCopy.subSections.forEach((sub) => {
       sub.duplicatedFromSubSectionId = sub.id;
@@ -870,9 +876,10 @@ const useDigitalOffsetPrice = ({
     productTemplateCopy.sections = sectionsArr;
 
     // Add section to subProducts manually
-    if (subProducts && subProducts.length > 0) {
-      const subProductsCopy = cloneDeep(subProducts);
+    // Declare subProductsCopy outside to use for validation later
+    let subProductsCopy = cloneDeep(subProducts);
 
+    if (subProducts && subProducts.length > 0) {
       // Create a single subProduct entry for the duplicated section
       // Find the original subProduct entry that matches this section
       const originalSubProduct = subProducts.find(
@@ -1050,6 +1057,26 @@ const useDigitalOffsetPrice = ({
 
     // Replace the entire underParameterIds state with the rebuilt array
     setUnderParameterIds(allUnderParameterIdsArray);
+
+    // Automatically select the newly added section
+    // Calculate the index of the new section among visible sections
+    const visibleSections = productTemplateCopy.sections.filter((s) => !s.isHidden);
+    const newSectionIndex = visibleSections.findIndex((s) => s.id === newSectionId);
+
+    if (newSectionIndex !== -1) {
+      // Use setTimeout to ensure state updates have completed before changing active index
+      setTimeout(() => {
+        setActiveIndex(newSectionIndex);
+
+        // Validate parameters and trigger recalculation if all required parameters are filled
+        let checkParameter = validateParameters(subProductsCopy);
+        if (checkParameter) {
+          setCanCalculation(true);
+        } else {
+          setCanCalculation(false);
+        }
+      }, 0);
+    }
   };
 
   const removeSection = (item) => {
@@ -2308,6 +2335,36 @@ const useDigitalOffsetPrice = ({
             ...removedParams,
           }));
         }
+
+        // Calculate Quantity when Sets is enabled by default
+        filteredSubProductsArray.forEach((subProduct) => {
+          if (!subProduct.type) { // General parameters
+            const setsParam = subProduct.parameters.find(
+              (p) => p.parameterCode === "Sets" && p.values && p.values[0] === "true"
+            );
+
+            if (setsParam) {
+              const setQuantityParam = subProduct.parameters.find(
+                (p) => p.parameterId === "0fdbca1a-f250-447b-93e3-5b91909da59c"
+              );
+              const setUnitsParam = subProduct.parameters.find(
+                (p) => p.parameterId === "91d3fe77-b852-4974-beb6-2da7d7616c78"
+              );
+              const quantityParam = subProduct.parameters.find(
+                (p) => p.parameterId === "4991945c-5e07-4773-8f11-2e3483b70b53"
+              );
+
+              if (setQuantityParam && setUnitsParam && quantityParam) {
+                const setQuantityValue = Number(setQuantityParam.values[0]) || 0;
+                const setUnitsValue = Number(setUnitsParam.values[0]) || 0;
+                const calculatedQuantity = setQuantityValue * setUnitsValue;
+
+                quantityParam.values = [calculatedQuantity.toString()];
+              }
+            }
+          }
+        });
+
         setProductTemplate(productTemplate);
         setSubProducts(filteredSubProductsArray);
         setUnderParameterIds(underParameterIdsArray);
@@ -2392,9 +2449,22 @@ const useDigitalOffsetPrice = ({
             return item;
           });
 
+          // Combine existing and processed parameters, then remove duplicates
+          const combinedParameters = [...subProduct.parameters, ...processedParameters];
+          const uniqueParameters = removeDuplicateParameters(combinedParameters);
+
+          // Filter out parameters with empty GUID for both sectionId and subSectionId
+          const finalParameters = uniqueParameters.filter(
+            (param) =>
+              !(
+                param.sectionId === "00000000-0000-0000-0000-000000000000" &&
+                param.subSectionId === "00000000-0000-0000-0000-000000000000"
+              )
+          );
+
           return {
             ...subProduct,
-            parameters: processedParameters,
+            parameters: finalParameters,
           };
         });
       });
@@ -2707,7 +2777,12 @@ const useDigitalOffsetPrice = ({
                   }
                 }
                 if (materialData) {
-                  parameter.isHidden = false;
+                  if (parameter.isHiddenInSetting) {
+                    parameter.isHidden = true
+                  }
+                  else {
+                    parameter.isHidden = false;
+                  }
                   materialData.forEach((val) => {
                     const existsValue = parameter.valuesConfigs.find(
                       (x) =>
@@ -4652,7 +4727,7 @@ const useDigitalOffsetPrice = ({
           (x) => x.id === subSection.id
         );
         const param = subSectionCopy.parameters.find(
-          (x) => x.id === relatedParameter.parameterId
+          (x) => x.id === relatedParameter.parameterId && x.actionIndex === actionIndex
         );
         if (hasRelatedParams && hasChildParams && isHidden) {
           parameter.childsParameters.forEach((childParam) => {
@@ -4668,8 +4743,11 @@ const useDigitalOffsetPrice = ({
           if (param.relatedParameters) {
             for (let i = 0; i < param.relatedParameters.length; i++) {
               let relatedParameterId = param.relatedParameters[i].parameterId;
+              let relatedParamActionIndex = param.relatedParameters[i].actionIndex !== undefined
+                ? param.relatedParameters[i].actionIndex
+                : actionIndex;
               let relatedParameter = subSectionCopy.parameters.find(
-                (x) => x.id === relatedParameterId
+                (x) => x.id === relatedParameterId && x.actionIndex === relatedParamActionIndex
               );
               if (relatedParameter) {
                 relatedParameter.isHidden = true;
@@ -4690,7 +4768,12 @@ const useDigitalOffsetPrice = ({
           if (x.type == subSection.type) {
             x = {
               ...x,
-              parameters: x.parameters.filter((p) => p.parameterId != param.id),
+              parameters: x.parameters.filter((p) =>
+                !(p.parameterId === param.id &&
+                  p.actionIndex === actionIndex &&
+                  p.sectionId === section.id &&
+                  p.subSectionId === subSection.id)
+              ),
             };
           }
         });
@@ -4769,7 +4852,12 @@ const useDigitalOffsetPrice = ({
           if (x.type == subSection.type) {
             x = {
               ...x,
-              parameters: x.parameters.filter((p) => p.parameterId != param.id),
+              parameters: x.parameters.filter((p) =>
+                !(p.parameterId === param.id &&
+                  p.actionIndex === actionIndex &&
+                  p.sectionId === section.id &&
+                  p.subSectionId === subSection.id)
+              ),
             };
           }
         });
@@ -4825,14 +4913,17 @@ const useDigitalOffsetPrice = ({
             (x) => x.id === subSection.id
           );
           const param = subSectionCopy.parameters.find(
-            (x) => x.id === relatedParameter.parameterId
+            (x) => x.id === relatedParameter.parameterId && x.actionIndex === actionIndex
           );
           if (param.isHidden == true) {
             if (param.relatedParameters) {
               for (let i = 0; i < param.relatedParameters.length; i++) {
                 let relatedParameterId = param.relatedParameters[i].parameterId;
+                let relatedParamActionIndex = param.relatedParameters[i].actionIndex !== undefined
+                  ? param.relatedParameters[i].actionIndex
+                  : actionIndex;
                 let relatedParameter = subSectionCopy.parameters.find(
-                  (x) => x.id === relatedParameterId
+                  (x) => x.id === relatedParameterId && x.actionIndex === relatedParamActionIndex
                 );
                 if (relatedParameter) {
                   relatedParameter.isHidden = true;
@@ -4852,8 +4943,11 @@ const useDigitalOffsetPrice = ({
             if (x.type == subSection.type) {
               x = {
                 ...x,
-                parameters: x.parameters.filter(
-                  (p) => p.parameterId != param.id
+                parameters: x.parameters.filter((p) =>
+                  !(p.parameterId === param.id &&
+                    p.actionIndex === actionIndex &&
+                    p.sectionId === section.id &&
+                    p.subSectionId === subSection.id)
                 ),
               };
             }
@@ -4862,8 +4956,11 @@ const useDigitalOffsetPrice = ({
           if (param.relatedParameters) {
             for (let i = 0; i < param.relatedParameters.length; i++) {
               let relatedParameterId = param.relatedParameters[i].parameterId;
+              let relatedParamActionIndex = param.relatedParameters[i].actionIndex !== undefined
+                ? param.relatedParameters[i].actionIndex
+                : actionIndex;
               let relatedParameter = subSectionCopy.parameters.find(
-                (x) => x.id === relatedParameterId
+                (x) => x.id === relatedParameterId && x.actionIndex === relatedParamActionIndex
               );
               if (relatedParameter) {
                 relatedParameter.isHidden = true;
@@ -4920,14 +5017,17 @@ const useDigitalOffsetPrice = ({
             (x) => x.id === subSection.id
           );
           const param = subSectionCopy.parameters.find(
-            (x) => x.id === relatedParameter.parameterId
+            (x) => x.id === relatedParameter.parameterId && x.actionIndex === actionIndex
           );
           if (param.isHidden == true) {
             if (param.relatedParameters) {
               for (let i = 0; i < param.relatedParameters.length; i++) {
                 let relatedParameterId = param.relatedParameters[i].parameterId;
+                let relatedParamActionIndex = param.relatedParameters[i].actionIndex !== undefined
+                  ? param.relatedParameters[i].actionIndex
+                  : actionIndex;
                 let relatedParameter = subSectionCopy.parameters.find(
-                  (x) => x.id === relatedParameterId
+                  (x) => x.id === relatedParameterId && x.actionIndex === relatedParamActionIndex
                 );
                 if (relatedParameter) {
                   relatedParameter.isHidden = true;
@@ -4947,8 +5047,11 @@ const useDigitalOffsetPrice = ({
             if (x.type == subSection.type) {
               x = {
                 ...x,
-                parameters: x.parameters.filter(
-                  (p) => p.parameterId != param.id
+                parameters: x.parameters.filter((p) =>
+                  !(p.parameterId === param.id &&
+                    p.actionIndex === actionIndex &&
+                    p.sectionId === section.id &&
+                    p.subSectionId === subSection.id)
                 ),
               };
             }
@@ -4956,8 +5059,11 @@ const useDigitalOffsetPrice = ({
           if (param.relatedParameters) {
             for (let i = 0; i < param.relatedParameters.length; i++) {
               let relatedParameterId = param.relatedParameters[i].parameterId;
+              let relatedParamActionIndex = param.relatedParameters[i].actionIndex !== undefined
+                ? param.relatedParameters[i].actionIndex
+                : actionIndex;
               let relatedParameter = subSectionCopy.parameters.find(
-                (x) => x.id === relatedParameterId
+                (x) => x.id === relatedParameterId && x.actionIndex === relatedParamActionIndex
               );
               if (relatedParameter) {
                 relatedParameter.isHidden = true;
@@ -5886,7 +5992,12 @@ const useDigitalOffsetPrice = ({
             if (data?.value === null && data?.values === undefined) {
               subSectionParameter.childsParameters?.forEach((childParam) => {
                 temp = temp.filter(
-                  (item) => item.parameterId !== childParam.id
+                  (item) => !(
+                    item.parameterId === childParam.id &&
+                    item.actionIndex === actionIndex &&
+                    item.sectionId === sectionId &&
+                    item.subSectionId === subSectionId
+                  )
                 );
               });
             }
@@ -6221,8 +6332,15 @@ const useDigitalOffsetPrice = ({
           }
         }
         if (subSectionParameter.id == "0fdbca1a-f250-447b-93e3-5b91909da59c") {
-          if (!quantity) {
-            temp.push({
+          // Set Quantity parameter changed
+          // Check if quantity exists in temp array (not memoized value)
+          let quantityParam = temp.find(
+            (item) => item?.parameterId === "4991945c-5e07-4773-8f11-2e3483b70b53"
+          );
+
+          if (!quantityParam) {
+            // Create quantity parameter if it doesn't exist
+            const newQuantityParam = {
               parameterId: "4991945c-5e07-4773-8f11-2e3483b70b53",
               sectionId: sectionId,
               subSectionId: subSectionId,
@@ -6238,19 +6356,35 @@ const useDigitalOffsetPrice = ({
               defaultUnit: null,
               unitType: 0,
               factor: subSectionParameter?.factor,
-            });
+            };
+            temp.push(newQuantityParam);
+            quantityParam = newQuantityParam;
           }
-          //setQuantity
-          const setUnits = setUnitsParameter ? setUnitsParameter.values[0] : 0;
+
+          // Get Set Units value from temp array
+          const setUnitsParam = temp.find(
+            (item) => item?.parameterId === "91d3fe77-b852-4974-beb6-2da7d7616c78"
+          );
+          const setUnits = setUnitsParam ? Number(setUnitsParam.values[0]) : 0;
+
+          // Calculate and update Quantity = Set Quantity * Set Units
+          const calculatedQuantity = Number(data.values) * setUnits;
           temp = temp.map((x) =>
-            x.parameterId === quantity?.parameterId
-              ? { ...x, values: [(setUnits * data.values).toString()] }
+            x.parameterId === "4991945c-5e07-4773-8f11-2e3483b70b53"
+              ? { ...x, values: [calculatedQuantity.toString()] }
               : x
           );
         }
         if (subSectionParameter.id == "91d3fe77-b852-4974-beb6-2da7d7616c78") {
-          if (!quantity) {
-            temp.push({
+          // Set Units parameter changed
+          // Check if quantity exists in temp array (not memoized value)
+          let quantityParam = temp.find(
+            (item) => item?.parameterId === "4991945c-5e07-4773-8f11-2e3483b70b53"
+          );
+
+          if (!quantityParam) {
+            // Create quantity parameter if it doesn't exist
+            const newQuantityParam = {
               parameterId: "4991945c-5e07-4773-8f11-2e3483b70b53",
               sectionId: sectionId,
               subSectionId: subSectionId,
@@ -6266,15 +6400,22 @@ const useDigitalOffsetPrice = ({
               defaultUnit: null,
               unitType: 0,
               factor: subSectionParameter?.factor,
-            });
+            };
+            temp.push(newQuantityParam);
+            quantityParam = newQuantityParam;
           }
-          // SetUnits
-          const setQuantity = setQuantityParameter
-            ? setQuantityParameter.values[0]
-            : 0;
+
+          // Get Set Quantity value from temp array
+          const setQuantityParam = temp.find(
+            (item) => item?.parameterId === "0fdbca1a-f250-447b-93e3-5b91909da59c"
+          );
+          const setQuantity = setQuantityParam ? Number(setQuantityParam.values[0]) : 0;
+
+          // Calculate and update Quantity = Set Units * Set Quantity
+          const calculatedQuantity = Number(data.values) * setQuantity;
           temp = temp.map((x) =>
-            x.parameterId === quantity?.parameterId
-              ? { ...x, values: [(data.values * setQuantity).toString()] }
+            x.parameterId === "4991945c-5e07-4773-8f11-2e3483b70b53"
+              ? { ...x, values: [calculatedQuantity.toString()] }
               : x
           );
         }
@@ -6283,7 +6424,12 @@ const useDigitalOffsetPrice = ({
           subSectionParameter.settingParameters.length > 0
         ) {
           subSectionParameter.settingParameters.forEach((settingParam) => {
-            temp = temp.filter((x) => x.parameterId != settingParam.id);
+            temp = temp.filter((x) =>
+              !(x.parameterId === settingParam.id &&
+                x.actionIndex === actionIndex &&
+                x.sectionId === sectionId &&
+                x.subSectionId === subSectionId)
+            );
           });
         }
         const parameterValue = subSectionParameter.valuesConfigs.find(
@@ -7580,9 +7726,14 @@ const useDigitalOffsetPrice = ({
       if (!productTemplate?.sections) {
         return true;
       }
-      let sections = productTemplate?.sections.filter((x) => !x.isHidden);
+      // Skip sections that are hidden OR hidden from UI
+      let sections = productTemplate?.sections.filter((x) => !x.isHidden && !x.hideFromUI);
       for (const section of sections) {
         for (const subSection of section.subSections) {
+          // Skip subsections that are hidden from UI
+          if (subSection.hideFromUI) {
+            continue;
+          }
           for (const parameter of subSection.parameters) {
             if (!parameter.isHidden && parameter.isRequired) {
               const index = allParameters.findIndex(
@@ -8208,9 +8359,72 @@ const useDigitalOffsetPrice = ({
     getCurrenciesApi();
   }, []);
   useEffect(() => {
+    if (!productTemplate) return;
     const updatedProductTemplate = updateIsHidden(productTemplate, subProducts);
-    setProductTemplate(updatedProductTemplate);
+    const templateWithUIFlags = markHiddenSectionsForUI(productTemplate);
+    setProductTemplate(templateWithUIFlags);
   }, [subProducts]);
+
+  // Mark sections/subsections that should be hidden from UI only (not from calculation)
+  const markHiddenSectionsForUI = (productTemplate) => {
+    if (
+      !productTemplate ||
+      !productTemplate.sections ||
+      !Array.isArray(productTemplate.sections)
+    ) {
+      return productTemplate;
+    }
+
+    // Don't create a new object - modify the existing one directly to ensure reference is maintained
+    const updatedTemplate = productTemplate;
+
+    updatedTemplate.sections.forEach((section) => {
+      // Reset UI-only hidden flag
+      section.hideFromUI = false;
+
+      if (section.subSections && Array.isArray(section.subSections)) {
+        // First, mark subsections where ALL parameters have both isHidden AND isHiddenInSetting
+        section.subSections.forEach((subSection) => {
+          subSection.hideFromUI = false;
+
+          if (subSection.parameters && Array.isArray(subSection.parameters)) {
+            if (subSection.parameters.length === 0) {
+              // If subsection has no parameters, hide it from UI
+              subSection.hideFromUI = true;
+            } else {
+              // Check if ALL parameters in this subsection have BOTH flags set to true
+              const allParametersHiddenInSettings = subSection.parameters.every(
+                (param) => param.isHidden === true && param.isHiddenInSetting === true
+              );
+
+              if (allParametersHiddenInSettings) {
+                subSection.hideFromUI = true;
+              } else {
+                const hiddenCount = subSection.parameters.filter(p => p.isHidden === true && p.isHiddenInSetting === true).length;
+                const notHiddenParams = subSection.parameters.filter(p => !(p.isHidden === true && p.isHiddenInSetting === true));
+              }
+            }
+          } else {
+            // If subsection has no parameters array, hide it from UI
+            subSection.hideFromUI = true;
+          }
+        });
+
+        // Then, check if ALL subsections should be hidden from UI
+        // (either because they have hideFromUI=true OR isHidden=true)
+        const allSubSectionsHiddenFromUI = section.subSections.every(
+          (subSection) => subSection.hideFromUI === true || subSection.isHidden === true
+        );
+
+        if (allSubSectionsHiddenFromUI && section.subSections.length > 0) {
+          section.hideFromUI = true;
+        } else {
+        }
+      }
+    });
+
+    return updatedTemplate;
+  };
 
   const updateIsHidden = (productTemplate, subProducts) => {
     if (
@@ -8223,6 +8437,7 @@ const useDigitalOffsetPrice = ({
     const allParameters = subProducts.flatMap((product) => product.parameters);
     const updatedTemplate = { ...productTemplate };
     updatedTemplate.sections.forEach((section) => {
+      // Then handle section visibility based on relatedToParameters
       if (
         section.relatedToParameters &&
         section.relatedToParameters.length === 0
@@ -8249,9 +8464,13 @@ const useDigitalOffsetPrice = ({
             if (parameter.activateByAllValues) {
               section.isHidden = false;
             } else {
-              section.isHidden = !parameter.selectedValueIds.includes(
-                matchingParameter?.valueIds[0]
-              );
+              if (matchingParameter && matchingParameter.valueIds && matchingParameter.valueIds.length > 0) {
+                section.isHidden = !parameter.selectedValueIds.includes(
+                  matchingParameter?.valueIds[0]
+                );
+              } else {
+                section.isHidden = true;
+              }
             }
           } else {
             section.isHidden = true;
