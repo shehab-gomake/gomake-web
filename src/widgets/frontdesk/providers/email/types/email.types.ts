@@ -57,6 +57,13 @@ export interface EmailAttachment {
   data?: string; // alias for content
 }
 
+export interface EmailSenderOption {
+  inboxId: number;
+  inboxName: string;
+  sourceId: string;
+  channelType?: string;
+}
+
 export interface EmailFolder {
   id: string;
   name: string;
@@ -78,6 +85,8 @@ export interface EmailDraft {
   replyToMessageId?: string;
   threadId?: string;
   attachments?: EmailAttachment[];
+  sender?: EmailSenderOption | null;
+  contactId?: number | null;
 }
 
 export interface EmailSendRequest {

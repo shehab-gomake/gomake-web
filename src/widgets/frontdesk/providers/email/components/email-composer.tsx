@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from "react";
 import { Box, Paper, Collapse, Fade, InputBase } from "@mui/material";
-import { EmailDraft, EmailMessage } from "../types/email.types";
+import { EmailDraft, EmailMessage, EmailSenderOption } from "../types/email.types";
 import { useEmailComposerForm } from "../hooks/use-email-composer-form";
 import { EmailComposerHeader } from "./email-composer-header";
 import { EmailRecipientsSection } from "./email-recipients-section";
@@ -14,6 +14,9 @@ interface EmailComposerProps {
   draft?: EmailDraft;
   isSending?: boolean;
   replyToMessage?: EmailMessage;
+  fromOptions?: EmailSenderOption[];
+  defaultSenderOption?: EmailSenderOption | null;
+  contactId?: number | null;
 }
 
 export const EmailComposer: React.FC<EmailComposerProps> = ({
@@ -23,6 +26,9 @@ export const EmailComposer: React.FC<EmailComposerProps> = ({
   draft,
   isSending = false,
   replyToMessage,
+  fromOptions,
+  defaultSenderOption,
+  contactId,
 }) => {
   const [isMinimized, setIsMinimized] = useState(false);
 
@@ -35,6 +41,7 @@ export const EmailComposer: React.FC<EmailComposerProps> = ({
     showCc,
     showBcc,
     attachments,
+    senderOption,
     setTo,
     setCc,
     setBcc,
@@ -43,10 +50,18 @@ export const EmailComposer: React.FC<EmailComposerProps> = ({
     setShowCc,
     setShowBcc,
     setAttachments,
+    setSenderOption,
     handleSend,
     formatText,
     canSend,
-  } = useEmailComposerForm({ draft, replyToMessage, onSend });
+  } = useEmailComposerForm({
+    draft,
+    replyToMessage,
+    onSend,
+    fromOptions,
+    initialSenderOption: defaultSenderOption,
+    contactId,
+  });
 
   const handleMinimize = useCallback(() => {
     setIsMinimized(!isMinimized);
@@ -68,7 +83,7 @@ export const EmailComposer: React.FC<EmailComposerProps> = ({
           position: "fixed",
           bottom: 0,
           right: 16,
-          zIndex: 1400,
+          // zIndex: 1400,
           width: isMinimized ? 260 : 450,
           transition: "all 0.2s ease",
         }}
@@ -88,6 +103,9 @@ export const EmailComposer: React.FC<EmailComposerProps> = ({
           <Collapse in={!isMinimized}>
             <Box sx={{ backgroundColor: "#fff" }}>
               <EmailRecipientsSection
+                fromOptions={fromOptions}
+                selectedFromOption={senderOption}
+                onFromChange={setSenderOption}
                 to={to}
                 cc={cc}
                 bcc={bcc}
