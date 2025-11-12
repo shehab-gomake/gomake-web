@@ -13,29 +13,16 @@ import {
   Accordion,
   AccordionSummary,
   AccordionDetails,
-  CircularProgress,
-  Menu,
-  MenuItem,
-  ListItemIcon,
-  ListItemText,
-  Button,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import {
   ExpandMore as ExpandMoreIcon,
-  ArrowDropDown as ArrowDropDownIcon,
-  CheckCircle as OpenIcon,
-  Pending as PendingIcon,
-  AccessTime as SnoozeIcon,
-  TaskAlt as ResolvedIcon,
   Flag as FlagIcon,
-  Close as CloseIcon,
 } from "@mui/icons-material";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
-import { colorTokens, Chip } from "@/widgets/frontdesk/design-system";
+import { colorTokens } from "@/widgets/frontdesk/design-system";
 import { QuickActionButton } from "@/widgets/frontdesk/design-system/primitives/Button/QuickActionButton";
 import { QuickActionMenu, QuickActionItem } from "@/widgets/frontdesk/design-system/compounds/QuickActionMenu/QuickActionMenu";
-import { ConversationPriorityIcon } from "./conversation-priority-icon";
 import { chatwootService } from "@/services/frontdesk";
 import { ConversationProfileSection } from "./conversation-profile-section";
 import { ContactHistorySection } from "./contact-history-section";
@@ -324,168 +311,6 @@ export const ChatwootConversationDetailPanel: React.FC<ChatwootConversationDetai
         updateConversation={handleConversationChange}
       />
 
-      {/* Status */}
-      <Box sx={{ mb: 2.5 }}>
-        <Typography
-          variant="caption"
-          sx={{
-            color: colorTokens.semantic.text.secondary,
-            mb: 1,
-            display: "block",
-            fontWeight: 600,
-            textTransform: "uppercase",
-            fontSize: 10,
-          }}
-        >
-          Status
-        </Typography>
-        <Button
-          variant="outlined"
-          size="small"
-          fullWidth
-          onClick={(e) => !updating && setStatusMenuAnchor(e.currentTarget)}
-          endIcon={updating ? <CircularProgress size={16} /> : <ArrowDropDownIcon />}
-          disabled={updating}
-          sx={{
-            textTransform: "none",
-            justifyContent: "space-between",
-            borderColor: neutralColor(300),
-            color: neutralColor(700),
-            fontSize: "0.8125rem",
-            px: 1.5,
-            py: 1,
-            "&:hover": {
-              backgroundColor: neutralColor(50),
-              borderColor: neutralColor(400),
-            },
-          }}
-        >
-          {statusInfo.label}
-        </Button>
-        <Menu
-          anchorEl={statusMenuAnchor}
-          open={Boolean(statusMenuAnchor)}
-          onClose={() => setStatusMenuAnchor(null)}
-          anchorOrigin={{
-            vertical: "bottom",
-            horizontal: "left",
-          }}
-          transformOrigin={{
-            vertical: "top",
-            horizontal: "left",
-          }}
-        >
-          <MenuItem onClick={() => handleStatusChange("open")}>
-            <ListItemIcon>
-              <OpenIcon fontSize="small" />
-            </ListItemIcon>
-            <ListItemText>Open</ListItemText>
-          </MenuItem>
-          <MenuItem onClick={() => handleStatusChange("pending")}>
-            <ListItemIcon>
-              <PendingIcon fontSize="small" />
-            </ListItemIcon>
-            <ListItemText>Pending</ListItemText>
-          </MenuItem>
-          <MenuItem onClick={() => handleStatusChange("resolved")}>
-            <ListItemIcon>
-              <ResolvedIcon fontSize="small" />
-            </ListItemIcon>
-            <ListItemText>Close</ListItemText>
-          </MenuItem>
-          <MenuItem onClick={() => handleStatusChange("snoozed")}>
-            <ListItemIcon>
-              <SnoozeIcon fontSize="small" />
-            </ListItemIcon>
-            <ListItemText>Snooze</ListItemText>
-          </MenuItem>
-        </Menu>
-      </Box>
-
-      {/* Priority */}
-      <Box sx={{ mb: 2.5 }}>
-        <Typography
-          variant="caption"
-          sx={{
-            color: colorTokens.semantic.text.secondary,
-            mb: 1,
-            display: "block",
-            fontWeight: 600,
-            textTransform: "uppercase",
-            fontSize: 10,
-          }}
-        >
-          Priority
-        </Typography>
-        <Button
-          variant="outlined"
-          size="small"
-          fullWidth
-          onClick={(e) => !updating && setPriorityMenuAnchor(e.currentTarget)}
-          endIcon={updating ? <CircularProgress size={16} /> : <ArrowDropDownIcon />}
-          disabled={updating}
-          startIcon={!updating && currentPriority && <ConversationPriorityIcon priority={currentPriority} size={12} />}
-          sx={{
-            textTransform: "capitalize",
-            justifyContent: "space-between",
-            borderColor: neutralColor(300),
-            color: neutralColor(700),
-            fontSize: "0.8125rem",
-            px: 1.5,
-            py: 1,
-            "&:hover": {
-              backgroundColor: neutralColor(50),
-              borderColor: neutralColor(400),
-            },
-          }}
-        >
-          {uiPriority}
-        </Button>
-        <Menu
-          anchorEl={priorityMenuAnchor}
-          open={Boolean(priorityMenuAnchor)}
-          onClose={() => setPriorityMenuAnchor(null)}
-          anchorOrigin={{
-            vertical: "bottom",
-            horizontal: "left",
-          }}
-          transformOrigin={{
-            vertical: "top",
-            horizontal: "left",
-          }}
-        >
-          <MenuItem onClick={() => handlePriorityChange("urgent")}>
-            <ListItemIcon>
-              <ConversationPriorityIcon priority="urgent" size={12} />
-            </ListItemIcon>
-            <ListItemText>Urgent</ListItemText>
-          </MenuItem>
-          <MenuItem onClick={() => handlePriorityChange("high")}>
-            <ListItemIcon>
-              <ConversationPriorityIcon priority="high" size={12} />
-            </ListItemIcon>
-            <ListItemText>High</ListItemText>
-          </MenuItem>
-          <MenuItem onClick={() => handlePriorityChange("medium")}>
-            <ListItemIcon>
-              <ConversationPriorityIcon priority="medium" size={12} />
-            </ListItemIcon>
-            <ListItemText>Medium</ListItemText>
-          </MenuItem>
-          <MenuItem onClick={() => handlePriorityChange("low")}>
-            <ListItemIcon>
-              <ConversationPriorityIcon priority="low" size={12} />
-            </ListItemIcon>
-            <ListItemText>Low</ListItemText>
-          </MenuItem>
-          <MenuItem onClick={() => handlePriorityChange(null)}>
-            <ListItemIcon>
-              <CloseIcon fontSize="small" />
-            </ListItemIcon>
-            <ListItemText>None</ListItemText>
-          </MenuItem>
-        </Menu>
-      </Box>
 
       {/* Labels Management */}
       <ConversationLabelsManagement

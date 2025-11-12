@@ -85,12 +85,12 @@ export interface ConversationListItemProps {
 // Constants
 // ============================================================================
 
-const AVATAR_SIZE = 24;
-const INBOX_ICON_CONTAINER_SIZE = 20;
-const INBOX_ICON_SIZE = 12;
+const AVATAR_SIZE = 28;
+const INBOX_ICON_CONTAINER_SIZE = 18;
+const INBOX_ICON_SIZE = 11;
 const PRIORITY_ICON_SIZE = 12;
-const ASSIGNEE_AVATAR_SIZE = 20;
-const UNREAD_BADGE_SIZE = 20;
+const ASSIGNEE_AVATAR_SIZE = 18;
+const UNREAD_BADGE_SIZE = 18;
 const MAX_UNREAD_DISPLAY = 99;
 
 // ============================================================================
@@ -98,7 +98,7 @@ const MAX_UNREAD_DISPLAY = 99;
 // ============================================================================
 
 const getListItemButtonStyles = (isSelected: boolean): SxProps<Theme> => ({
-  py: 1,
+  py: 0.75,
   px: 0,
   borderBottom: `1px solid ${colorTokens.semantic.border.default}`,
   backgroundColor: isSelected
@@ -108,51 +108,71 @@ const getListItemButtonStyles = (isSelected: boolean): SxProps<Theme> => ({
     backgroundColor: isSelected
       ? colorTokens.semantic.interactive.selectedHover
       : colorTokens.semantic.interactive.hover,
+    boxShadow: 'inset 0 0 0 1px rgba(0, 0, 0, 0.04)',
   },
-  transition: 'background-color 0.15s ease',
+  transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+  position: 'relative',
+  '&::before': isSelected ? {
+    content: '""',
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    bottom: 0,
+    width: 3,
+    backgroundColor: colorTokens.primary[600],
+  } : {},
 });
 
 const getTitleStyles = (isSelected: boolean, isUnread: boolean): SxProps<Theme> => ({
-  fontWeight: isUnread ? 600 : 400,
+  fontWeight: isUnread ? 600 : 500,
   color: isSelected
     ? colorTokens.primary[900]
     : colorTokens.semantic.text.primary,
-  fontSize: 16,
+  fontSize: 14,
+  lineHeight: 1.3,
   overflow: 'hidden',
   textOverflow: 'ellipsis',
   whiteSpace: 'nowrap',
   flex: 1,
+  letterSpacing: '-0.01em',
 });
 
 const snippetStyles: SxProps<Theme> = {
   color: colorTokens.semantic.text.secondary,
-  fontSize: 14,
+  fontSize: 12,
+  lineHeight: 1.3,
   overflow: 'hidden',
   textOverflow: 'ellipsis',
   whiteSpace: 'nowrap',
   flex: 1,
   minWidth: 0,
+  opacity: 0.85,
 };
 
 const timestampStyles: SxProps<Theme> = {
   color: colorTokens.semantic.text.secondary,
-  fontSize: 14,
+  fontSize: 11,
+  fontWeight: 500,
   flexShrink: 0,
+  opacity: 0.75,
+  letterSpacing: '0.01em',
 };
 
 const unreadBadgeStyles: SxProps<Theme> = {
   display: 'inline-flex',
   alignItems: 'center',
   justifyContent: 'center',
-  borderRadius: '50%',
+  borderRadius: '9px',
   bgcolor: colorTokens.primary[600],
-  width: UNREAD_BADGE_SIZE,
+  minWidth: UNREAD_BADGE_SIZE,
   height: UNREAD_BADGE_SIZE,
+  px: 0.5,
   color: 'white',
-  fontSize: 12,
+  fontSize: 10,
   fontWeight: 600,
   flexShrink: 0,
   ml: 0.5,
+  boxShadow: '0 1px 2px rgba(0, 0, 0, 0.1)',
 };
 
 const inboxIconContainerStyles: SxProps<Theme> = {
@@ -254,7 +274,7 @@ export const ConversationListItem = React.memo<ConversationListItemProps>(({
         onContextMenu={handleContextMenu}
         sx={getListItemButtonStyles(isSelected)}
       >
-        <Stack direction="row" alignItems="center" spacing={1} sx={{ width: '100%', px: 1.5 }}>
+        <Stack direction="row" alignItems="flex-start" spacing={1} sx={{ width: '100%', px: 1.5 }}>
           {/* Contact Avatar */}
           <Avatar
             size="sm"
@@ -266,14 +286,16 @@ export const ConversationListItem = React.memo<ConversationListItemProps>(({
               height: AVATAR_SIZE,
               fontSize: '0.75rem',
               flexShrink: 0,
+              border: `1.5px solid ${colorTokens.semantic.border.default}`,
+              boxShadow: '0 1px 2px rgba(0, 0, 0, 0.06)',
             }}
           />
 
           {/* Content Section */}
-          <Stack flex={1} spacing={0.5} sx={{ minWidth: 0 }}>
-            {/* First Row: Inbox Icon | Inbox Name | Priority | Timestamp */}
-            <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1}>
-              <Stack direction="row" alignItems="center" spacing={0.75} sx={{ flex: 1, minWidth: 0 }}>
+          <Stack flex={1} spacing={0.4} sx={{ minWidth: 0 }}>
+            {/* First Row: Inbox Icon | Inbox Name | Timestamp */}
+            <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={0.75}>
+              <Stack direction="row" alignItems="center" spacing={0.5} sx={{ flex: 1, minWidth: 0 }}>
                 {inboxChannelType && (
                   <Box sx={inboxIconContainerStyles}>
                     <InboxIcon
@@ -289,8 +311,11 @@ export const ConversationListItem = React.memo<ConversationListItemProps>(({
                     variant="caption"
                     sx={{
                       color: colorTokens.semantic.text.secondary,
-                      fontSize: 12,
-                      fontWeight: 500,
+                      fontSize: 10,
+                      fontWeight: 600,
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.05em',
+                      opacity: 0.7,
                     }}
                   >
                     {inboxName}
@@ -298,13 +323,16 @@ export const ConversationListItem = React.memo<ConversationListItemProps>(({
                 )}
               </Stack>
 
-              {/* Right Indicators */}
-              <Stack direction="row" alignItems="center" spacing={0.5} sx={{ flexShrink: 0 }}>
-                {normalizedPriority && <ConversationPriorityIcon priority={normalizedPriority} size={PRIORITY_ICON_SIZE} />}
-
+              {/* Right Indicators: Timestamp on top, Priority below (compact vertical stack) */}
+              <Stack direction="column" alignItems="flex-end" justifyContent="center" spacing={0} sx={{ flexShrink: 0, lineHeight: 1 }}>
                 <Typography variant="caption" sx={timestampStyles}>
                   {timestamp}
                 </Typography>
+                {normalizedPriority && (
+                  <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', mt: -0.25 }}>
+                    <ConversationPriorityIcon priority={normalizedPriority} size={PRIORITY_ICON_SIZE} />
+                  </Box>
+                )}
               </Stack>
             </Stack>
 
@@ -314,27 +342,27 @@ export const ConversationListItem = React.memo<ConversationListItemProps>(({
             </Typography>
 
             {/* Third Row: Message Preview | Unread Count */}
-            <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1}>
+            <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={0.75}>
               <Typography variant="body2" sx={snippetStyles}>
                 {snippet || 'No messages yet'}
               </Typography>
 
               {displayUnreadCount && (
                 <Box sx={unreadBadgeStyles}>
-                  <span>{displayUnreadCount}</span>
+                  {displayUnreadCount}
                 </Box>
               )}
             </Stack>
 
             {/* Bottom Row: SLA | Labels | Assignee */}
             {hasMetadata && (
-              <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1}>
+              <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={0.75}>
                 {/* Left: SLA & Labels */}
                 <Stack
                   direction="row"
                   alignItems="center"
-                  spacing={1}
-                  sx={{ flexWrap: 'wrap', gap: 0.5, flex: 1, minWidth: 0 }}
+                  spacing={0.75}
+                  sx={{ flexWrap: 'wrap', gap: 0.4, flex: 1, minWidth: 0 }}
                 >
                   {appliedSla?.id && conversationTimestamp && (
                     <ConversationSLALabel
@@ -351,18 +379,22 @@ export const ConversationListItem = React.memo<ConversationListItemProps>(({
 
                 {/* Right: Assignee */}
                 {assignee?.name && (
-                  <Avatar
-                    size="xs"
-                    name={assignee.name}
-                    src={assignee.avatarSrc}
-                    presence={assignee.presence}
-                    sx={{
-                      width: ASSIGNEE_AVATAR_SIZE,
-                      height: ASSIGNEE_AVATAR_SIZE,
-                      fontSize: '0.625rem',
-                      flexShrink: 0,
-                    }}
-                  />
+                  <Tooltip title={assignee.name} arrow>
+                    <Avatar
+                      size="xs"
+                      name={assignee.name}
+                      src={assignee.avatarSrc}
+                      presence={assignee.presence}
+                      sx={{
+                        width: ASSIGNEE_AVATAR_SIZE,
+                        height: ASSIGNEE_AVATAR_SIZE,
+                        fontSize: '0.6rem',
+                        flexShrink: 0,
+                        border: `1px solid ${colorTokens.semantic.border.default}`,
+                        boxShadow: '0 1px 2px rgba(0, 0, 0, 0.06)',
+                      }}
+                    />
+                  </Tooltip>
                 )}
               </Stack>
             )}

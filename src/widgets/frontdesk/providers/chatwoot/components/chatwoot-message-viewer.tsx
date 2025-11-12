@@ -177,6 +177,36 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
     }
   };
 
+  const handlePriorityChange = async (newPriority: "urgent" | "high" | "medium" | "low" | null) => {
+    if (!accountId || !conversation.id) return;
+
+    try {
+      // Update conversation via API
+      const response = await chatwootService.conversations.updateConversation(accountId, conversation.id, {
+        priority: newPriority,
+      });
+
+      // Get updated conversation from response
+      const updatedConversation = response.payload || response.data || conversation;
+      const finalConversation = {
+        ...conversation,
+        ...updatedConversation,
+        priority: newPriority,
+      };
+
+      // Update in list
+      if (onConversationUpdate) {
+        onConversationUpdate(finalConversation);
+      }
+
+      // Refresh messages
+      refresh();
+    } catch (err) {
+      console.error(`Failed to update conversation priority to ${newPriority}:`, err);
+      throw err;
+    }
+  };
+
   const handleArchive = async () => {
     if (!conversation?.id || !accountId) return;
 
@@ -357,6 +387,9 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
             onResolve={handleResolve}
             onSnooze={handleSnooze}
             onMarkAsPending={handleMarkAsPending}
+            onStatusChange={handleStatusChange}
+            onPriorityChange={handlePriorityChange}
+            updating={isSending}
           />
         </Box>
       </Fade>
