@@ -84,30 +84,6 @@ export const BaseConversationView: React.FC<BaseConversationViewProps> = ({ empt
     [emptyState.title, emptyState.description]
   );
 
-  // Handler to navigate to next conversation
-  const handleNextConversation = useCallback(() => {
-    if (!selectedConversation || conversations.length === 0) {
-      return;
-    }
-
-    // Find current conversation index
-    const currentIndex = conversations.findIndex((conv) => conv.id === selectedConversation.id);
-
-    // If not found or at the end, do nothing
-    if (currentIndex === -1 || currentIndex === conversations.length - 1) {
-      return;
-    }
-
-    // Get next conversation
-    const nextConversation = conversations[currentIndex + 1];
-    if (nextConversation) {
-      // Navigate using router ONLY - this will update URL and trigger useEffect to update Recoil
-      // No need to call handleConversationSelect separately (prevents double state update)
-      const inboxId = nextConversation.inbox_id?.toString();
-      router.navigateToConversation(nextConversation.id.toString(), inboxId);
-    }
-  }, [selectedConversation, conversations, router]);
-
   return (
     <Stack direction="row" spacing={0} sx={{ height: "100%", p: 0 }}>
       {/* Conversation List - Always visible */}
@@ -138,7 +114,6 @@ export const BaseConversationView: React.FC<BaseConversationViewProps> = ({ empt
           onFiltersChange={handleFiltersChange}
           inboxes={inboxes}
           inboxesLoading={inboxesLoading}
-          onNextClick={handleNextConversation}
         />
       </Panel>
 
