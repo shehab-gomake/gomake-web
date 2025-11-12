@@ -48,7 +48,7 @@ const useAddMaterialCategory = (isAdmin: boolean) => {
   const [selectedImgForAdded, setSelectedImgForAdded] = useState();
   const setActiveFilter = useSetRecoilState(activeFilterState);
   const setFlagState = useSetRecoilState(flagState);
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [attributeValues, setAttributeValues] = useState<Record<string, any>>(
     {}
   );
@@ -144,8 +144,8 @@ const useAddMaterialCategory = (isAdmin: boolean) => {
     await updatePrintHouseMaterialCategoryNameApi(callApi, callBack, {
       materialTypeKey: materialType.toString(),
       categoryKey: selectedCategoryModal?.categoryKey,
+      lang: i18n.language,
       displayName: newCategory,
-      newCategoryKey:newCategory,
       defaultAttributeValues,
     });
   };
