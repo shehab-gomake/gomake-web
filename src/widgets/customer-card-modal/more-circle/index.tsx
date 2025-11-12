@@ -10,7 +10,7 @@ import { PermissionCheck } from "@/components/CheckPermission";
 import { Permissions } from "@/components/CheckPermission/enum";
 
 const MoreMenuWidget = ({ item, updatedStatus, onClickEdit }: any) => {
-  const { clasess } = useStyle();
+  const { classes, primaryLavender } = useStyle();
   const { t } = useTranslation();
   const { open, anchorEl, handleClose, handleClick, updatedCustomerStatus } =
     useMoreCircle({
@@ -25,19 +25,19 @@ const MoreMenuWidget = ({ item, updatedStatus, onClickEdit }: any) => {
     <>
       <PermissionCheck userPermission={Permissions.EDIT_CLIENT}>
         <IconButton onClick={handleClick}>
-          <MoreCircleIcon />
+          <MoreCircleIcon color={primaryLavender(500)} />
         </IconButton>
         <GoMakeMenu handleClose={handleClose} open={open} anchorEl={anchorEl}>
           <MenuItem onClick={handleEditClick}>
-            <div style={clasess.menuRowStyle}>
-              <EditingIcon />
-              <div style={clasess.rowTextStyle}>{t("remainWords.editing")}</div>
+            <div style={classes.menuRowStyle}>
+              <EditingIcon color={primaryLavender(500)} />
+              <div style={classes.rowTextStyle}>{t("remainWords.editing")}</div>
             </div>
           </MenuItem>
           <MenuItem onClick={() => updatedCustomerStatus(item)}>
-            <div style={clasess.menuRowStyle}>
-              <ConvertIcon />
-              <div style={clasess.rowTextStyle}>
+            <div style={classes.menuRowStyle}>
+              <ConvertIcon color={primaryLavender(500)} />
+              <div style={classes.rowTextStyle}>
                 {item?.isActive
                   ? t("remainWords.convertToInactive")
                   : t("remainWords.convertToActive")}
