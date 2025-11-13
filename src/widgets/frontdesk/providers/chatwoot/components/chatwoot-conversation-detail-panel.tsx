@@ -77,12 +77,11 @@ export const ChatwootConversationDetailPanel: React.FC<ChatwootConversationDetai
   } = useChatwootQuickActions({
     conversation,
     accountId,
-    onActionComplete: (actionType) => {
-      console.log("[ChatwootConversationDetailPanel] Quick action completed:", actionType);
-      // Refresh conversation data after linking document
-      if (onConversationUpdate && conversation) {
-        // Optionally refetch conversation to get updated custom_attributes
-        // For now, we'll rely on the hook to update correctly
+    onActionComplete: (actionType, updatedConversation) => {
+      console.log("[ChatwootConversationDetailPanel] Quick action completed:", actionType, updatedConversation);
+      // Update conversation with the response from the API
+      if (onConversationUpdate && updatedConversation) {
+        onConversationUpdate(updatedConversation);
       }
     },
     onActionError: (actionType, error) => {
@@ -91,7 +90,11 @@ export const ChatwootConversationDetailPanel: React.FC<ChatwootConversationDetai
   });
 
   // Extract customer info for modal
-  const customerId = conversation?.custom_attributes?.gomake_customer_id as string | undefined;
+  // Check both conversation-level and contact-level custom attributes
+  // Priority: contact-level (where it's actually stored when linking) > conversation-level
+  const customerId = 
+    (conversation?.meta?.sender?.custom_attributes?.gomake_customer_id as string | undefined) ||
+    (conversation?.custom_attributes?.gomake_customer_id as string | undefined);
   const customerName = conversation?.meta?.sender?.name;
 
   // Convert action configs to QuickActionItem format for the menu

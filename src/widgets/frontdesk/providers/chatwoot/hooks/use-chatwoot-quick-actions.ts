@@ -30,7 +30,7 @@ export interface UseChatwootQuickActionsOptions {
   onBeforeAction?: (actionType: QuickActionType) => void;
 
   /** Callback when action completes */
-  onActionComplete?: (actionType: QuickActionType) => void;
+  onActionComplete?: (actionType: QuickActionType, updatedConversation?: ChatwootConversation) => void;
 
   /** Callback when action fails */
   onActionError?: (actionType: QuickActionType, error: string) => void;
@@ -70,8 +70,13 @@ export function useChatwootQuickActions(
   const { alertSuccess, alertFault } = useSnackBar();
 
   // Extract customer ID from conversation custom attributes
+  // Check both conversation-level and contact-level custom attributes
+  // Priority: contact-level (where it's actually stored when linking) > conversation-level
   const customerId = useMemo(() => {
-    return conversation?.custom_attributes?.[CHATWOOT_CUSTOM_ATTRIBUTES.CUSTOMER_ID] as string | undefined;
+    return (
+      (conversation?.meta?.sender?.custom_attributes?.[CHATWOOT_CUSTOM_ATTRIBUTES.CUSTOMER_ID] as string | undefined) ||
+      (conversation?.custom_attributes?.[CHATWOOT_CUSTOM_ATTRIBUTES.CUSTOMER_ID] as string | undefined)
+    );
   }, [conversation]);
 
   // Extract customer info from conversation meta
@@ -204,7 +209,8 @@ export function useChatwootQuickActions(
           [attributeKeys.timestampKey]: new Date().toISOString(),
         };
 
-        await chatwootService.conversations.updateConversationCustomAttributes(
+        // Update conversation custom attributes and get the updated conversation
+        const updatedConversation = await chatwootService.conversations.updateConversationCustomAttributes(
           accountId,
           conversation.id,
           updatedAttributes
@@ -213,9 +219,15 @@ export function useChatwootQuickActions(
         // Show success notification
         alertSuccess('frontdesk.documentLinkedSuccess');
 
-        console.log(`[useChatwootQuickActions] Successfully linked document ${documentId}`);
+        console.log(`[useChatwootQuickActions] Successfully linked document ${documentId}`, {
+          documentId,
+          attributeKeys,
+          updatedAttributes,
+          updatedConversation,
+        });
 
-        onActionComplete?.(selectedAction.type);
+        // Notify parent component with updated conversation
+        onActionComplete?.(selectedAction.type, updatedConversation);
         setSelectedAction(null);
       } catch (error: any) {
         console.error('[useChatwootQuickActions] Error linking document:', error);
