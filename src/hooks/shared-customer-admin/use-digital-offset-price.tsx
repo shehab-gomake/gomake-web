@@ -189,6 +189,8 @@ const useDigitalOffsetPrice = ({
   const [subProducts, setSubProducts] = useRecoilState<any>(
     subProductsParametersState
   );
+
+  console.log("subProducts", subProducts);
   const [isMigratedFromOldSystem, setIsMigratedFromOldSystem] = useState(false);
   const [ignoreCalculatedWorkflows, setIgnoreCalculatedWorkflows] = useState(
     productTemplate?.ignoreCalculatedWorkflows
@@ -6014,20 +6016,22 @@ const useDigitalOffsetPrice = ({
                       factor: myparameter?.factor,
                     };
                   } else {
+                    const rawValue = data?.value?.values?.[parameterId];
+                    const factorValue = Number(myparameter?.factor);
+                    const numericValue = Number(rawValue);
+                    const shouldConvert =
+                      unitType === UNIT_TYPE.IMPERIAL &&
+                      myparameter?.code != "Width" &&
+                      myparameter?.code != "Height" &&
+                      !Number.isNaN(numericValue) &&
+                      factorValue > 0;
+                    const resolvedValue = shouldConvert
+                      ? (numericValue * factorValue).toFixed(3)
+                      : rawValue;
                     temp[myindex] = {
                       ...temp[myindex],
                       parameterCode: myparameter?.code,
-                      values:
-                        unitType === UNIT_TYPE.IMPERIAL &&
-                          myparameter?.code != "Width" &&
-                          myparameter?.code != "Height"
-                          ? [
-                            (
-                              data?.value?.values[parameterId] *
-                              myparameter?.factor
-                            ).toFixed(3),
-                          ]
-                          : [data?.value?.values[parameterId]],
+                      values: [resolvedValue ?? ""],
                       isDisabled: hasValues(data?.value),
                       factor: myparameter?.factor,
                     };
@@ -6059,23 +6063,25 @@ const useDigitalOffsetPrice = ({
                       myparameter?.isGeneralInfoInProductionFloor,
                   });
                 } else {
+                  const rawValue = data?.value?.values?.[parameterId];
+                  const factorValue = Number(myparameter?.factor);
+                  const numericValue = Number(rawValue);
+                  const shouldConvert =
+                    unitType === UNIT_TYPE.IMPERIAL &&
+                    myparameter?.code != "Width" &&
+                    myparameter?.code != "Height" &&
+                    !Number.isNaN(numericValue) &&
+                    factorValue > 0;
+                  const resolvedValue = shouldConvert
+                    ? (numericValue * factorValue).toFixed(3)
+                    : rawValue;
                   temp.push({
                     parameterId: myparameter?.id,
                     sectionId: section?.id,
                     subSectionId: subSection?.id,
                     ParameterType: myparameter?.parameterType,
                     isQuantityParameter: myparameter?.isQuantityParameter,
-                    values:
-                      unitType === UNIT_TYPE.IMPERIAL &&
-                        myparameter?.code != "Width" &&
-                        myparameter?.code != "Height"
-                        ? [
-                          (
-                            data?.value?.values[parameterId] *
-                            myparameter?.factor
-                          ).toFixed(3),
-                        ]
-                        : [data?.value?.values[parameterId]],
+                    values: [resolvedValue ?? ""],
                     actionIndex: myparameter?.actionIndex,
                     parameterName: myparameter?.name,
                     parameterCode: myparameter?.code,
