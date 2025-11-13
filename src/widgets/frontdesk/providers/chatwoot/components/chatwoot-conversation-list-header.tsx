@@ -7,7 +7,7 @@ import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { useChatwootTeams } from "../hooks/resources/use-chatwoot-teams";
 import { ConversationStatus, ConversationListParams } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
 import { chatwootConversationCountsAtom, chatwootSelectedAccountAtom } from "@/store/frontdesk/atoms/chatwoot.atoms";
-import { ConversationFilterMenu, ConversationSortMenu, ConversationSearchBar, ConversationTabs, ConversationLabelsFilter } from "./conversation-list";
+import { ConversationFilterMenu, ConversationSortMenu, ConversationSearchBar, ConversationTabs, ConversationLabelsFilter, ConversationTeamsFilter } from "./conversation-list";
 
 interface ChatwootConversationListHeaderProps {
   status?: ConversationStatus;
@@ -89,8 +89,16 @@ export const ChatwootConversationListHeader: React.FC<ChatwootConversationListHe
           Tickets
         </Typography>
 
-        <Stack direction="row" spacing={0.25}>
+        <Stack direction="row" spacing={0.25} alignItems="center">
           <ConversationLabelsFilter
+            accountId={accountId}
+            filters={filters}
+            onFiltersChange={onFiltersChange}
+            primaryColor={primaryColor}
+            neutralColor={neutralColor}
+          />
+
+          <ConversationTeamsFilter
             accountId={accountId}
             filters={filters}
             onFiltersChange={onFiltersChange}

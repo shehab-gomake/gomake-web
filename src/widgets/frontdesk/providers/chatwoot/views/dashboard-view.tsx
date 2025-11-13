@@ -10,23 +10,41 @@ import { Box, Typography } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { colorTokens } from '@/widgets/frontdesk/design-system/tokens';
 import { useChatwootProvider } from '../hooks/use-chatwoot-provider';
-import { useChatwootDashboardStats } from '../hooks/use-chatwoot-dashboard-stats';
-import { ChatwootStatsCards } from '../components/dashboard/chatwoot-stats-cards';
+import { useAgentDashboardStats, useAdminDashboardStats } from '../hooks/use-chatwoot-dashboard-stats';
+import { useChatwootDashboardType } from '../hooks/use-chatwoot-dashboard-type';
+import { AgentStatsCards } from '../components/dashboard/agent-stats-cards';
+import { AdminStatsCards } from '../components/dashboard/admin-stats-cards';
 import { ChatwootActivityFeed } from '../components/dashboard/chatwoot-activity-feed';
 import { ChatwootDashboardSidebar } from '../components/dashboard/chatwoot-dashboard-sidebar';
 import { useRecoilValue } from 'recoil';
-import { chatwootConversationsAtom, chatwootSelectedConversationAtom } from '@/store/frontdesk/atoms/chatwoot.atoms';
+import { chatwootConversationsAtom, chatwootSelectedConversationAtom, chatwootConversationCountsAtom } from '@/store/frontdesk/atoms/chatwoot.atoms';
 import { ErrorBoundary } from '@/widgets/frontdesk/components/shared/ErrorBoundary';
 import { DASHBOARD_LIMITS } from '../constants/dashboard.constants';
 import { ConversationStatus } from '@/services/frontdesk/api/chatwoot/types/conversations.types';
+import { RouteBuilder } from '@/widgets/frontdesk/routing/route-builder';
+import { ChatwootView } from '@/widgets/frontdesk/routing/types';
 
 export const DashboardView: React.FC = () => {
   const theme = useTheme();
   const { router: chatwootRouter } = useChatwootProvider();
-  const stats = useChatwootDashboardStats();
+  const dashboardType = useChatwootDashboardType();
+  
+  // Use role-specific stats hooks - only call the one we need
+  const agentStats = useAgentDashboardStats();
+  const adminStats = useAdminDashboardStats();
+  
+  // Select stats based on dashboard type
+  const stats = dashboardType === 'admin' ? adminStats : agentStats;
+
+  // Debug logging (remove in production)
+  React.useEffect(() => {
+    console.log('[DashboardView] Dashboard type:', dashboardType);
+    console.log('[DashboardView] Stats:', stats);
+  }, [dashboardType, stats]);
 
   // Get conversations and selection state
   const conversations = useRecoilValue(chatwootConversationsAtom);
+  const conversationCounts = useRecoilValue(chatwootConversationCountsAtom);
   const selectedConversation = useRecoilValue(chatwootSelectedConversationAtom);
 
   // Filter conversations for quick view sections
@@ -70,9 +88,51 @@ export const DashboardView: React.FC = () => {
     };
   }, [conversations]);
 
-  // Navigation handlers
+  // Navigation handlers with smart filters
   const handleCardClick = (cardType: string) => {
     switch (cardType) {
+      // Agent-specific navigation
+      case 'my-open-tickets':
+        // Navigate to My Inbox with filters for open tickets assigned to me
+        chatwootRouter.navigate(
+          RouteBuilder.chatwoot(ChatwootView.MY_INBOX, undefined, undefined, {
+            status: 'open',
+            assigneeType: 'me',
+          })
+        );
+        break;
+      case 'my-resolved-today':
+        // Navigate to My Inbox with filters for resolved tickets
+        chatwootRouter.navigate(
+          RouteBuilder.chatwoot(ChatwootView.MY_INBOX, undefined, undefined, {
+            status: 'resolved',
+          })
+        );
+        break;
+      case 'my-response-time':
+        chatwootRouter.navigateToMyInbox();
+        break;
+      
+      // Admin-specific navigation
+      case 'total-open-tickets':
+        // Navigate to All Conversations with filters for open tickets
+        chatwootRouter.navigate(
+          RouteBuilder.chatwoot(ChatwootView.ALL_CONVERSATIONS, undefined, undefined, {
+            status: 'open',
+          })
+        );
+        break;
+      case 'unassigned-tickets':
+        chatwootRouter.navigateToUnattended();
+        break;
+      case 'team-response-time':
+        chatwootRouter.navigateToAllConversations();
+        break;
+      case 'active-today':
+        chatwootRouter.navigateToAllConversations();
+        break;
+      
+      // Common navigation
       case 'unread-conversations':
         chatwootRouter.navigateToMyInbox();
         break;
@@ -86,6 +146,7 @@ export const DashboardView: React.FC = () => {
         chatwootRouter.navigateToUnattended();
         break;
       default:
+        console.warn('[DashboardView] Unknown card type:', cardType);
         break;
     }
   };
@@ -148,11 +209,13 @@ export const DashboardView: React.FC = () => {
             fontSize: '0.875rem',
           }}
         >
-          Overview of all your Chatwoot conversations, notifications, and activity
+          {dashboardType === 'admin'
+            ? 'Team performance and operational overview'
+            : 'Your personal performance and tasks'}
         </Typography>
       </Box>
 
-      {/* Stats Overview */}
+      {/* Stats Overview - Role-specific */}
       <ErrorBoundary context="Dashboard Stats">
         <Box
           sx={{
@@ -162,7 +225,11 @@ export const DashboardView: React.FC = () => {
             borderBottom: `1px solid ${colorTokens.neutral[200]}`,
           }}
         >
-          <ChatwootStatsCards stats={stats} onCardClick={handleCardClick} />
+          {dashboardType === 'admin' ? (
+            <AdminStatsCards stats={adminStats} onCardClick={handleCardClick} />
+          ) : (
+            <AgentStatsCards stats={agentStats} onCardClick={handleCardClick} />
+          )}
         </Box>
       </ErrorBoundary>
 
@@ -241,6 +308,12 @@ export const DashboardView: React.FC = () => {
               myConversations={filteredConversations.my}
               mentionedConversations={filteredConversations.mentioned}
               unattendedConversations={filteredConversations.unattended}
+              counts={{
+                mine: conversationCounts.mine,
+                unassigned: conversationCounts.unassigned,
+                // Mentions count is approximate (no API endpoint for this)
+                mentions: undefined,
+              }}
               onConversationSelect={handleConversationSelect}
               onViewAll={handleViewAllConversations}
               unreadNotificationCount={stats.unreadNotifications}

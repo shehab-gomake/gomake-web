@@ -19,6 +19,11 @@ export interface ChatwootDashboardSidebarProps {
   myConversations: ChatwootConversation[];
   mentionedConversations: ChatwootConversation[];
   unattendedConversations: ChatwootConversation[];
+  counts?: {
+    mine?: number;
+    unassigned?: number;
+    mentions?: number;
+  };
   onConversationSelect: (conversationId: number, inboxId?: number) => void;
   onViewAll: (view: 'my-inbox' | 'mentions' | 'unattended') => void;
 
@@ -55,6 +60,7 @@ export const ChatwootDashboardSidebar: React.FC<ChatwootDashboardSidebarProps> =
   myConversations,
   mentionedConversations,
   unattendedConversations,
+  counts,
   onConversationSelect,
   onViewAll,
   unreadNotificationCount,
@@ -171,6 +177,7 @@ export const ChatwootDashboardSidebar: React.FC<ChatwootDashboardSidebarProps> =
             myConversations={myConversations}
             mentionedConversations={mentionedConversations}
             unattendedConversations={unattendedConversations}
+            counts={counts}
             onConversationSelect={onConversationSelect}
             onViewAll={onViewAll}
           />
