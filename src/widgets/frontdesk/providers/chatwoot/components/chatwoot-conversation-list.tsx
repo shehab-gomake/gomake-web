@@ -35,6 +35,8 @@ interface ChatwootConversationListProps {
   onFiltersChange?: (filters: Partial<ConversationListParams>) => void;
   inboxes?: ChatwootInbox[];
   inboxesLoading?: boolean;
+  hideHeader?: boolean;
+  hideAssigneeAvatars?: boolean;
 }
 
 export const ChatwootConversationList: React.FC<ChatwootConversationListProps> = React.memo(({
@@ -53,6 +55,8 @@ export const ChatwootConversationList: React.FC<ChatwootConversationListProps> =
   onFiltersChange = () => {},
   inboxes = [],
   inboxesLoading = false,
+  hideHeader = false,
+  hideAssigneeAvatars = false,
 }) => {
   const theme = useTheme();
   const { neutralColor } = useGomakeTheme();
@@ -110,28 +114,30 @@ export const ChatwootConversationList: React.FC<ChatwootConversationListProps> =
 
   return (
     <Paper
-      elevation={2}
+      elevation={hideHeader ? 0 : 2}
       sx={{
         height: "100%",
-        borderRadius: 2,
+        borderRadius: hideHeader ? 0 : 2,
         overflow: "hidden",
         display: "flex",
         flexDirection: "column",
         backgroundColor: neutralColor(0),
-        boxShadow: `0 2px 8px ${alpha(theme.palette.common.black, 0.06)}, 0 1px 3px ${alpha(theme.palette.common.black, 0.04)}`,
+        boxShadow: hideHeader ? "none" : `0 2px 8px ${alpha(theme.palette.common.black, 0.06)}, 0 1px 3px ${alpha(theme.palette.common.black, 0.04)}`,
       }}
     >
-      {/* Custom Header */}
-      <ChatwootConversationListHeader
-        status={currentStatus as ConversationStatus}
-        filters={filters}
-        onFiltersChange={onFiltersChange}
-        conversations={conversations}
-        mineCount={counts.mine}
-        unassignedCount={counts.unassigned}
-        allCount={counts.all}
-        onClearFilters={handleClearFilters}
-      />
+      {/* Custom Header - Conditionally rendered */}
+      {!hideHeader && (
+        <ChatwootConversationListHeader
+          status={currentStatus as ConversationStatus}
+          filters={filters}
+          onFiltersChange={onFiltersChange}
+          conversations={conversations}
+          mineCount={counts.mine}
+          unassignedCount={counts.unassigned}
+          allCount={counts.all}
+          onClearFilters={handleClearFilters}
+        />
+      )}
 
       {/* Content */}
       <Box
@@ -182,6 +188,7 @@ export const ChatwootConversationList: React.FC<ChatwootConversationListProps> =
                 onSelect={onConversationSelect}
                 inboxes={inboxes}
                 inboxesLoading={inboxesLoading}
+                hideAssigneeAvatar={hideAssigneeAvatars}
               />
             ))}
 
