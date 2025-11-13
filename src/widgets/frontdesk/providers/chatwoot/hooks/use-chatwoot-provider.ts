@@ -1,11 +1,12 @@
 import { useCallback, useMemo, useEffect, useRef } from "react";
 import React from "react";
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState, useRecoilCallback } from "recoil";
 import { useChatwootConversations } from "./use-chatwoot-conversations";
 import { useChatwootRouter } from "./use-chatwoot-router";
 import { useChatwootProfile } from "./use-chatwoot-profile";
 import { useChatwootInboxes } from "./use-chatwoot-inboxes";
 import { useChatwootCache } from "./use-chatwoot-cache";
+import { useChatwootConversationUpdater } from "./use-chatwoot-conversation-updater";
 import {
   ConversationListParams,
   ConversationStatus,
@@ -14,7 +15,7 @@ import {
 } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
 import { RouteType, ChatwootView } from "@/widgets/frontdesk/routing/types";
 import { chatwootService } from "@/services/frontdesk";
-import { buildConversationFilters, matchesStatusFilter } from "../utils/filter-utils";
+import { buildConversationFilters, matchesStatusFilter, createFilterKey } from "../utils/filter-utils";
 import { createLogger } from "@/services/frontdesk/utils/logger";
 
 const logger = createLogger("useChatwootProvider");
@@ -57,6 +58,7 @@ import {
   chatwootSelectedInboxIdAtom,
   chatwootConversationsAtom,
   chatwootConversationCountsAtom,
+  chatwootConversationsCacheFamily,
 } from "@/store/frontdesk/atoms/chatwoot.atoms";
 
 export const useChatwootProvider = () => {
@@ -91,6 +93,9 @@ export const useChatwootProvider = () => {
 
   // Cache management for conversations (must come after currentAccountId is defined)
   const cache = useChatwootCache(currentAccountId);
+
+  // Cache-aware conversation updater (updates all caches, not just legacy atom)
+  const { updateConversation: updateConversationCache } = useChatwootConversationUpdater();
 
   // Debounce timer for filter changes to batch rapid updates
   const filterDebounceTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -201,6 +206,18 @@ export const useChatwootProvider = () => {
   const conversationsRef = useRef(conversations.conversations);
   conversationsRef.current = conversations.conversations; // Direct assignment - instant, no effect
 
+  // Helper to read latest conversations from cache directly (bypasses stale ref)
+  const getLatestConversations = useRecoilCallback(
+    ({ snapshot }) =>
+      () => {
+        // Generate the same cache key that useChatwootConversations uses
+        const cacheKey = createFilterKey(currentAccountId, filters);
+        const cache = snapshot.getLoadable(chatwootConversationsCacheFamily(cacheKey));
+        return cache.state === 'hasValue' ? cache.getValue().conversations : [];
+      },
+    [currentAccountId, filters]
+  );
+
   useEffect(() => {
     const conversationIdFromUrl = router.currentRoute?.conversationId;
 
@@ -220,7 +237,9 @@ export const useChatwootProvider = () => {
     }
 
     // Try to find conversation in the current list first (fast path - instant transition)
-    const convInList = conversationsRef.current.find(
+    // Get latest conversations from cache (bypasses stale ref, always fresh)
+    const latestConversations = getLatestConversations();
+    const convInList = latestConversations.find(
       (c) => c.id.toString() === conversationIdFromUrl
     );
 
@@ -339,6 +358,10 @@ export const useChatwootProvider = () => {
       // Track the old conversation for count updates
       let oldConversation: ChatwootConversation | undefined;
 
+      // First, update all caches with the cache-aware updater
+      updateConversationCache(updatedConversation.id, updatedConversation);
+
+      // Then update legacy atom with filtering logic (for backward compatibility)
       setConversationsList((prev) => {
         // Find the old conversation to track changes
         oldConversation = prev.find((conv) => conv.id === updatedConversation.id);
@@ -443,7 +466,7 @@ export const useChatwootProvider = () => {
         }
       }
     },
-    [setConversationsList, selectedConversation, setSelectedConversation, statusFilter, assigneeFilter, profile, setCounts]
+    [updateConversationCache, setConversationsList, selectedConversation, setSelectedConversation, statusFilter, assigneeFilter, profile, setCounts]
   );
 
   // OPTIMIZED: Handle filter changes with simplified dependencies

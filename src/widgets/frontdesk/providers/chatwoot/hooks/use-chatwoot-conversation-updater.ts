@@ -10,7 +10,7 @@
  */
 
 import { useCallback } from 'react';
-import { useRecoilState, useRecoilCallback } from 'recoil';
+import { useRecoilState, useRecoilCallback, useRecoilValue } from 'recoil';
 import {
   chatwootConversationsAtom,
   chatwootSelectedConversationAtom,
@@ -24,23 +24,24 @@ const logger = createLogger('useChatwootConversationUpdater');
 
 export const useChatwootConversationUpdater = () => {
   const [selectedConversation, setSelectedConversation] = useRecoilState(chatwootSelectedConversationAtom);
+  const cacheKeys = useRecoilValue(chatwootCacheKeysAtom);
 
   /**
    * Update a conversation across all caches and atoms
-   * Uses Recoil callback to access all cache entries
+   * SYNCHRONOUS version using snapshot.getLoadable for immediate updates
    */
   const updateConversation = useRecoilCallback(
     ({ snapshot, set }) =>
-      async (conversationId: number, updates: Partial<ChatwootConversation>) => {
+      (conversationId: number, updates: Partial<ChatwootConversation>) => {
         logger.debug(`Updating conversation ${conversationId} across all caches`, updates);
 
-        // Get all cache keys
-        const cacheKeys = await snapshot.getPromise(chatwootCacheKeysAtom);
-
-        // Update each cache that contains this conversation
+        // Update each cache that contains this conversation (synchronous)
         let updatedCacheCount = 0;
         for (const cacheKey of Array.from(cacheKeys)) {
-          const cache = await snapshot.getPromise(chatwootConversationsCacheFamily(cacheKey));
+          const cacheLoadable = snapshot.getLoadable(chatwootConversationsCacheFamily(cacheKey));
+          if (cacheLoadable.state !== 'hasValue') continue;
+
+          const cache = cacheLoadable.getValue();
 
           // Check if this cache contains the conversation
           const conversationIndex = cache.conversations.findIndex(c => c.id === conversationId);
@@ -63,35 +64,39 @@ export const useChatwootConversationUpdater = () => {
 
         logger.debug(`Updated conversation in ${updatedCacheCount} cache(s)`);
 
-        // Update legacy atom for backward compatibility
-        const legacyConversations = await snapshot.getPromise(chatwootConversationsAtom);
-        const updatedLegacy = legacyConversations.map(conv =>
-          conv.id === conversationId ? { ...conv, ...updates } : conv
-        );
-        set(chatwootConversationsAtom, updatedLegacy);
+        // Update legacy atom for backward compatibility (synchronous)
+        const legacyLoadable = snapshot.getLoadable(chatwootConversationsAtom);
+        if (legacyLoadable.state === 'hasValue') {
+          const legacyConversations = legacyLoadable.getValue();
+          const updatedLegacy = legacyConversations.map(conv =>
+            conv.id === conversationId ? { ...conv, ...updates } : conv
+          );
+          set(chatwootConversationsAtom, updatedLegacy);
+        }
 
         // Update selected conversation if it's the one being modified
         if (selectedConversation?.id === conversationId) {
           setSelectedConversation(prev => prev ? { ...prev, ...updates } : prev);
         }
       },
-    [selectedConversation?.id, setSelectedConversation]
+    [cacheKeys, selectedConversation?.id, setSelectedConversation]
   );
 
   /**
    * Remove a conversation from all caches and atoms
+   * SYNCHRONOUS version using snapshot.getLoadable for immediate updates
    */
   const removeConversation = useRecoilCallback(
     ({ snapshot, set }) =>
-      async (conversationId: number) => {
+      (conversationId: number) => {
         logger.debug(`Removing conversation ${conversationId} from all caches`);
 
-        // Get all cache keys
-        const cacheKeys = await snapshot.getPromise(chatwootCacheKeysAtom);
-
-        // Remove from each cache
+        // Remove from each cache (synchronous)
         for (const cacheKey of Array.from(cacheKeys)) {
-          const cache = await snapshot.getPromise(chatwootConversationsCacheFamily(cacheKey));
+          const cacheLoadable = snapshot.getLoadable(chatwootConversationsCacheFamily(cacheKey));
+          if (cacheLoadable.state !== 'hasValue') continue;
+
+          const cache = cacheLoadable.getValue();
           const filteredConversations = cache.conversations.filter(c => c.id !== conversationId);
 
           if (filteredConversations.length !== cache.conversations.length) {
@@ -102,16 +107,19 @@ export const useChatwootConversationUpdater = () => {
           }
         }
 
-        // Remove from legacy atom
-        const legacyConversations = await snapshot.getPromise(chatwootConversationsAtom);
-        set(chatwootConversationsAtom, legacyConversations.filter(c => c.id !== conversationId));
+        // Remove from legacy atom (synchronous)
+        const legacyLoadable = snapshot.getLoadable(chatwootConversationsAtom);
+        if (legacyLoadable.state === 'hasValue') {
+          const legacyConversations = legacyLoadable.getValue();
+          set(chatwootConversationsAtom, legacyConversations.filter(c => c.id !== conversationId));
+        }
 
         // Clear selected conversation if it's the one being removed
         if (selectedConversation?.id === conversationId) {
           setSelectedConversation(null);
         }
       },
-    [selectedConversation?.id, setSelectedConversation]
+    [cacheKeys, selectedConversation?.id, setSelectedConversation]
   );
 
   /**
