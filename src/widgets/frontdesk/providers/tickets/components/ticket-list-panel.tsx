@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from "react";
-import { Box, Typography, IconButton, Menu, MenuItem, Divider, Chip, Badge, CircularProgress } from "@mui/material";
+import { Box, Menu, MenuItem, Divider, CircularProgress } from "@mui/material";
 import {
   Panel,
   PanelHeader,
@@ -7,14 +7,12 @@ import {
   SearchInput,
   EmptyState,
   colorTokens,
-  TagFilterChips,
 } from "@/widgets/frontdesk/design-system";
-import FilterListIcon from "@mui/icons-material/FilterList";
-import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { TicketWithDetails, TicketFilters, Tag } from "../types/api.types";
 import { TicketListItem } from "./ticket-list-item";
 import { TicketFiltersMenu } from "./ticket-filters-menu";
 import { TicketSortMenu } from "./ticket-sort-menu";
+import { TicketFilterChips } from "./ticket-filter-chips";
 import { useTicketsProvider } from "../hooks/use-tickets-provider";
 import { useInfiniteScroll } from "@/widgets/frontdesk/hooks/use-infinite-scroll";
 import { InfiniteScrollLoader } from "@/widgets/frontdesk/components/shared";
@@ -211,6 +209,40 @@ export const TicketListPanel: React.FC<TicketListPanelProps> = ({
           }
         />
 
+        {/* Active Filter Chips */}
+        <TicketFilterChips
+          filters={filters}
+          onRemoveFilter={(filterKey, value) => {
+            const newFilters = { ...filters };
+            if (filterKey === "tags" && value) {
+              // Remove specific tag from array
+              const newTags = filters.tags?.filter((t) => t !== value) || [];
+              if (newTags.length === 0) {
+                delete newFilters.tags;
+              } else {
+                newFilters.tags = newTags;
+              }
+            } else {
+              delete newFilters[filterKey];
+            }
+            onApplyFilters({ ...newFilters, page: 1 });
+          }}
+          onClearAll={() => {
+            const defaultFilters = { page: 1, limit: 20, sortBy: "createdAt" as const, sortOrder: "desc" as const };
+            // Preserve search query and sort options
+            if (filters.search) {
+              defaultFilters.search = filters.search;
+            }
+            if (filters.sortBy) {
+              defaultFilters.sortBy = filters.sortBy;
+            }
+            if (filters.sortOrder) {
+              defaultFilters.sortOrder = filters.sortOrder;
+            }
+            onApplyFilters(defaultFilters);
+          }}
+        />
+
         {/* Search Bar */}
         <Box sx={{ px: 2, pb: 1.5, borderBottom: `1px solid ${colorTokens.semantic.border.default}` }}>
           <SearchInput
@@ -221,30 +253,6 @@ export const TicketListPanel: React.FC<TicketListPanelProps> = ({
             showClear={searchQuery.length > 0}
           />
         </Box>
-
-        {/* Active Tag Filters */}
-        {filters.tags && filters.tags.length > 0 && (
-          <TagFilterChips
-            tags={filters.tags.map((tagName) => ({
-              id: tagName,
-              name: tagName,
-              displayName: tagName,
-              color: null,
-              category: "GENERAL" as any,
-              usageCount: 0,
-              isSystem: false,
-              printHouseId: "",
-              createdAt: "",
-            }))}
-            onRemoveTag={(tag) => {
-              const newTags = filters.tags?.filter((t) => t !== tag.name) || [];
-              onApplyFilters({ ...filters, tags: newTags.length > 0 ? newTags : undefined, page: 1 });
-            }}
-            onClearAll={() => {
-              onApplyFilters({ ...filters, tags: undefined, page: 1 });
-            }}
-          />
-        )}
 
         {/* Ticket List */}
         <PanelContent padding="none" scrollable sx={{ flex: 1 }}>

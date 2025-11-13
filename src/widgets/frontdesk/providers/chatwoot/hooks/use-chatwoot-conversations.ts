@@ -1,11 +1,24 @@
+/**
+ * Chatwoot Conversations Hook
+ *
+ * Fetches and manages conversations with deduplication and optimistic updates.
+ *
+ * @example
+ * ```typescript
+ * const { conversations, loading, error, loadMore, refresh } = useChatwootConversations(accountId, {
+ *   status: ConversationStatus.OPEN,
+ *   assignee_type: ConversationAssigneeType.ME
+ * });
+ * ```
+ */
+
 import { useState, useEffect, useCallback, useRef, useMemo } from "react";
-import { useRecoilState, useSetRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import { chatwootService } from "@/services/frontdesk";
 import {
   ConversationListParams,
   ConversationStatus,
   ConversationAssigneeType,
-  ConversationSortBy,
 } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
 import {
   chatwootConversationsAtom,
@@ -16,11 +29,6 @@ import {
 } from "@/store/frontdesk/atoms/chatwoot.atoms";
 import { useFetchDeduplication } from "./use-chatwoot-initialization";
 import { createFilterKey } from "../utils/filter-utils";
-
-// Global flag to prevent concurrent conversation fetches across all instances
-// Similar to globalTeamsFetchInProgress pattern used in useChatwootTeams
-let globalConversationsFetchInProgress = false;
-let globalLastFetchParamsKey: string | null = null;
 
 export const useChatwootConversations = (accountId: number | null, options: Partial<ConversationListParams> = {}) => {
   const [conversations, setConversations] = useRecoilState(chatwootConversationsAtom);
@@ -39,8 +47,9 @@ export const useChatwootConversations = (accountId: number | null, options: Part
   // Track previous filter key to detect filter changes
   const prevFilterKeyRef = useRef<string>("");
 
-  // Track if a fetch is currently in progress to prevent concurrent calls
-  const isFetchingRef = useRef(false);
+  // Synchronous guard to prevent duplicate fetches when React runs effect multiple times rapidly
+  // This is checked BEFORE shouldFetch to prevent race conditions
+  const isEffectRunningRef = useRef(false);
 
   // Track conversations length in a ref to avoid recreating fetchConversations callback
   const conversationsLengthRef = useRef(conversations.length);
@@ -49,16 +58,20 @@ export const useChatwootConversations = (accountId: number | null, options: Part
   }, [conversations.length]);
 
   // Helper to update specific loading states
-  const setLoadingType = useCallback((type: keyof ChatwootConversationsLoadingState, value: boolean) => {
-    setLoadingState(prev => ({ ...prev, [type]: value }));
-  }, [setLoadingState]);
+  const setLoadingType = useCallback(
+    (type: keyof ChatwootConversationsLoadingState, value: boolean) => {
+      setLoadingState((prev) => ({ ...prev, [type]: value }));
+    },
+    [setLoadingState]
+  );
 
   const fetchConversations = useCallback(
-    async (page: number = 1, append: boolean = false, isFilterChange: boolean = false) => {
-      // Note: accountId can be null - the API endpoint /api/accounts/conversations
-      // doesn't require accountId in the URL path, it uses the authenticated user's account automatically
-      // So we allow the call even if accountId is null
-
+    async (
+      page: number = 1,
+      append: boolean = false,
+      isFilterChange: boolean = false,
+      skipDeduplicationCheck: boolean = false
+    ) => {
       const listParams: ConversationListParams = {
         page,
         limit: options.limit || 20,
@@ -71,46 +84,21 @@ export const useChatwootConversations = (accountId: number | null, options: Part
         ...(options.labels && { labels: options.labels }),
       };
 
-      // Create stable key for global deduplication
-      const paramsKey = createFilterKey(accountId, listParams);
-
-      // Global deduplication guard (prevents concurrent requests across all component instances)
-      // This check happens FIRST to prevent race conditions
-      if (!append) {
-        if (globalConversationsFetchInProgress) {
-          console.log("[useChatwootConversations] ⏭️ Global fetch already in progress, skipping duplicate");
-          return;
-        }
-
-        // Check if same params as last successful fetch
-        if (paramsKey === globalLastFetchParamsKey) {
-          console.log("[useChatwootConversations] ⏭️ Same params as last fetch, skipping duplicate");
-          return;
-        }
-
-        // Mark global fetch as in progress
-        globalConversationsFetchInProgress = true;
-      }
-
-      // Instance-level deduplication check (backup)
-      if (!append && !shouldFetch(listParams)) {
-        console.log("[useChatwootConversations] Skipping duplicate/concurrent fetch (instance-level)");
-        if (!append) {
-          globalConversationsFetchInProgress = false;
-        }
+      // Prevent duplicate requests
+      // Skip check if already validated in useEffect (skipDeduplicationCheck = true)
+      if (!append && !skipDeduplicationCheck && !shouldFetch(listParams)) {
         return;
       }
-
-      // Mark fetch start AFTER the check passes
-      markFetchStart();
+      // Note: If skipDeduplicationCheck is true, shouldFetch was already called in useEffect
+      // and marked fetch as started atomically
 
       // Set appropriate loading state based on operation type
       if (append) {
-        setLoadingType('loadingMore', true);
+        setLoadingType("loadingMore", true);
       } else if (isFilterChange && conversationsLengthRef.current > 0) {
-        setLoadingType('filtering', true);
+        setLoadingType("filtering", true);
       } else {
-        setLoadingType('initialLoading', true);
+        setLoadingType("initialLoading", true);
       }
 
       setError(null);
@@ -136,7 +124,7 @@ export const useChatwootConversations = (accountId: number | null, options: Part
         // If length < limit, we've reached the end. If length === limit, there might be more.
         // Also, if we get an empty array when appending, we've definitely reached the end.
         const meta = response.data?.meta || response.meta || {};
-        const hasMoreData = append 
+        const hasMoreData = append
           ? conversationsList.length > 0 && conversationsList.length >= limit
           : conversationsList.length >= limit;
         setHasMore(hasMoreData);
@@ -150,32 +138,19 @@ export const useChatwootConversations = (accountId: number | null, options: Part
 
         setCurrentPage(page);
 
-        // Mark fetch as complete to prevent duplicate calls
         if (!append) {
           markFetchComplete(listParams);
-          // Update global state
-          globalLastFetchParamsKey = paramsKey;
-          globalConversationsFetchInProgress = false;
         }
-      } catch (err: any) {
-        setError(err.message || "Failed to load conversations");
-        console.error("Failed to fetch Chatwoot conversations:", err);
+      } catch (err: unknown) {
+        const errorMessage = err instanceof Error ? err.message : "Failed to load conversations";
+        setError(errorMessage);
         markFetchFailed();
-        // Reset global flag on error
-        if (!append) {
-          globalConversationsFetchInProgress = false;
-        }
       } finally {
-        // Reset all loading states
         setLoadingState({
           initialLoading: false,
           filtering: false,
           loadingMore: false,
         });
-        // Ensure global flag is reset even if something goes wrong
-        if (!append && globalConversationsFetchInProgress) {
-          globalConversationsFetchInProgress = false;
-        }
       }
     },
     [
@@ -225,14 +200,14 @@ export const useChatwootConversations = (accountId: number | null, options: Part
    * @returns Promise<void>
    */
   const updateConversationStatus = useCallback(
-    async (conversationId: number, newStatus: 'open' | 'resolved' | 'pending' | 'snoozed') => {
+    async (conversationId: number, newStatus: "open" | "resolved" | "pending" | "snoozed") => {
       if (!accountId) {
         console.error("[updateConversationStatus] Account ID is required");
         return;
       }
 
       // Find the conversation to update
-      const conversationToUpdate = conversations.find(c => c.id === conversationId);
+      const conversationToUpdate = conversations.find((c) => c.id === conversationId);
       if (!conversationToUpdate) {
         console.error("[updateConversationStatus] Conversation not found in state:", conversationId);
         return;
@@ -242,35 +217,21 @@ export const useChatwootConversations = (accountId: number | null, options: Part
       const originalStatus = conversationToUpdate.status;
 
       // Step 1: Optimistic Update - Immediately update UI
-      setConversations(prev =>
-        prev.map(conv =>
-          conv.id === conversationId
-            ? { ...conv, status: newStatus }
-            : conv
-        )
-      );
+      setConversations((prev) => prev.map((conv) => (conv.id === conversationId ? { ...conv, status: newStatus } : conv)));
 
       try {
         // Step 2: Background API Call
-        const response = await chatwootService.conversations.updateConversationStatus(
-          accountId,
-          conversationId,
-          { status: newStatus }
-        );
+        const response = await chatwootService.conversations.updateConversationStatus(accountId, conversationId, {
+          status: newStatus,
+        });
 
         // Verify success from API response
         if (response.payload?.success && response.payload.current_status) {
           // API confirmed the status change, ensure UI is synced with server response
           const serverStatus = response.payload.current_status;
-          
-          setConversations(prev =>
-            prev.map(conv =>
-              conv.id === conversationId
-                ? { ...conv, status: serverStatus }
-                : conv
-            )
-          );
-          
+
+          setConversations((prev) => prev.map((conv) => (conv.id === conversationId ? { ...conv, status: serverStatus } : conv)));
+
           console.log(`[updateConversationStatus] Successfully updated conversation ${conversationId} to ${serverStatus}`);
         } else {
           // API call succeeded but response format unexpected - log warning but keep optimistic update
@@ -280,13 +241,7 @@ export const useChatwootConversations = (accountId: number | null, options: Part
         // Step 3: Revert on Failure
         console.error("[updateConversationStatus] Failed to update status, reverting:", err);
 
-        setConversations(prev =>
-          prev.map(conv =>
-            conv.id === conversationId
-              ? { ...conv, status: originalStatus }
-              : conv
-          )
-        );
+        setConversations((prev) => prev.map((conv) => (conv.id === conversationId ? { ...conv, status: originalStatus } : conv)));
 
         // Set error for UI feedback
         setError(err.message || "Failed to update conversation status");
@@ -305,52 +260,78 @@ export const useChatwootConversations = (accountId: number | null, options: Part
   // This ensures consistent comparison and prevents unnecessary re-renders
   const stableFilterKey = useMemo(() => {
     return createFilterKey(accountId, options || {});
-  }, [accountId, options?.inbox_id, options?.status, options?.assignee_type, options?.q, options?.team_id, options?.labels, options?.sort_by, options?.limit]);
+  }, [
+    accountId,
+    options?.inbox_id,
+    options?.status,
+    options?.assignee_type,
+    options?.q,
+    options?.team_id,
+    options?.labels,
+    options?.sort_by,
+    options?.limit,
+  ]);
 
   useEffect(() => {
-    // Skip if already fetching to prevent concurrent calls
-    if (isFetchingRef.current) {
-      console.log("[useChatwootConversations] Skipping - fetch already in progress");
+    // Build params to check deduplication BEFORE calling fetchConversations
+    const listParams: ConversationListParams = {
+      page: 1,
+      limit: options.limit || 20,
+      ...(options.status && { status: options.status }),
+      ...(options.inbox_id && { inbox_id: options.inbox_id }),
+      ...(options.assignee_type && { assignee_type: options.assignee_type }),
+      ...(options.sort_by && { sort_by: options.sort_by }),
+      ...(options.q && { q: options.q }),
+      ...(options.team_id && { team_id: options.team_id }),
+      ...(options.labels && { labels: options.labels }),
+    };
+
+    // Check deduplication FIRST - if already fetching or duplicate params, skip immediately
+    // shouldFetch atomically checks and marks, preventing race conditions
+    if (!shouldFetch(listParams)) {
       return;
     }
+    // Note: shouldFetch already marked fetch as started atomically
 
-    // Skip the first mount to prevent double fetch during initialization
+    // Set synchronous guard AFTER shouldFetch check to prevent duplicate effect runs
+    // This ensures that if React runs this effect multiple times rapidly,
+    // only the first one that passes shouldFetch proceeds
+    if (isEffectRunningRef.current) {
+      // Reset the flag since shouldFetch already marked it, but we're skipping this run
+      markFetchFailed();
+      return;
+    }
+    isEffectRunningRef.current = true;
+
     if (isFirstMountRef.current) {
       isFirstMountRef.current = false;
       prevFilterKeyRef.current = stableFilterKey;
-      // Still fetch on first mount, but the deduplication will prevent multiple calls
-      isFetchingRef.current = true;
-      fetchConversations(1, false, false).finally(() => {
-        isFetchingRef.current = false;
+      // Pass skipDeduplicationCheck=true since we already checked and marked start
+      fetchConversations(1, false, false, true).finally(() => {
+        isEffectRunningRef.current = false;
       });
       return;
     }
 
-    // Detect if filters have changed
     const isFilterChange = stableFilterKey !== prevFilterKeyRef.current;
-    
-    // If filters haven't changed, don't do anything
     if (!isFilterChange) {
+      // Reset flags if we're not actually fetching (filter didn't change)
+      markFetchFailed();
+      isEffectRunningRef.current = false;
       return;
     }
 
-    // Update the previous filter key
     prevFilterKeyRef.current = stableFilterKey;
 
-    // Mark as fetching to prevent concurrent calls
-    isFetchingRef.current = true;
-
-    // Clear stale conversations immediately when filters change
-    // This prevents showing old conversations from previous view during fetch
     setConversations([]);
-    setLoadingType('initialLoading', true);
+    setLoadingType("initialLoading", true);
 
-    // Fetch conversations with filter change flag
-    fetchConversations(1, false, true).finally(() => {
-      isFetchingRef.current = false;
+    // Pass skipDeduplicationCheck=true since we already checked and marked start
+    fetchConversations(1, false, true, true).finally(() => {
+      isEffectRunningRef.current = false;
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [stableFilterKey]); // Only depend on stableFilterKey - fetchConversations is stable enough via its own deps
+  }, [stableFilterKey]);
 
   return {
     conversations,

@@ -106,31 +106,36 @@ export function useFetchDeduplication<T = any>() {
   const isFetchingRef = useRef(false);
 
   /**
-   * Check if we should proceed with a fetch operation
+   * Check if we should proceed with a fetch operation and atomically mark as started
    * Returns false if:
    * - Same params as last successful fetch
    * - A fetch is currently in progress
+   * 
+   * If returns true, the fetch is automatically marked as started to prevent race conditions
    */
   const shouldFetch = useCallback((params: T): boolean => {
-    const paramsKey = createStableKey(params);
-
-    // Skip if already fetching
+    // Skip if already fetching - check this FIRST to prevent race conditions
     if (isFetchingRef.current) {
-      console.log('[FetchDeduplication] Skipping - fetch in progress');
       return false;
     }
+
+    const paramsKey = createStableKey(params);
 
     // Skip if same as last successful fetch
     if (paramsKey === lastFetchParamsRef.current) {
-      console.log('[FetchDeduplication] Skipping - duplicate params');
       return false;
     }
 
+    // Atomically mark as fetching to prevent race conditions
+    // This ensures that if React runs effects multiple times rapidly,
+    // only the first one proceeds
+    isFetchingRef.current = true;
     return true;
   }, []);
 
   /**
    * Mark the start of a fetch operation
+   * Note: shouldFetch now handles this atomically, but this is kept for manual calls
    */
   const markFetchStart = useCallback(() => {
     isFetchingRef.current = true;

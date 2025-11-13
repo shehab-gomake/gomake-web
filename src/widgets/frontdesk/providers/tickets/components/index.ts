@@ -8,3 +8,4 @@ export { TicketTimeline } from './ticket-timeline';
 export { RelatedTickets } from './related-tickets';
 export { TicketFiltersMenu } from './ticket-filters-menu';
 export { TicketSortMenu } from './ticket-sort-menu';
+export { TicketFilterChips } from './ticket-filter-chips';
