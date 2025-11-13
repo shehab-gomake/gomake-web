@@ -24,6 +24,7 @@ import { useChatwootAgents, useChatwootTeams, useChatwootInboxAgents } from "./r
 import { useConversationAssignmentActions } from "./actions/use-conversation-assignment-actions";
 import { useChatwootProfile } from "./use-chatwoot-profile";
 import { prepareAgentsForAssignment } from "../utils/agent-helpers";
+import { useChatwootConversationUpdater } from "./use-chatwoot-conversation-updater";
 
 /**
  * Simple notification utility
@@ -83,44 +84,27 @@ export const useChatwootContextMenu = (conversation: ChatwootConversation | null
     return prepareAgentsForAssignment(agents, profile, accountId, false);
   }, [agents, profile, accountId]);
 
+  // Use cache-aware updater for mutations
+  const { updateConversation: updateConversationCache, removeConversation: removeConversationCache } = useChatwootConversationUpdater();
+
   /**
-   * Update a conversation in the list (optimistic update)
+   * Update a conversation in the list (cache-aware)
    */
   const updateConversationInList = useCallback(
-    (updatedConversation: Partial<ChatwootConversation>) => {
-      if (!conversation?.id) return;
-
-      setConversations((prev) =>
-        prev.map((conv) =>
-          conv.id === conversation.id
-            ? { ...conv, ...updatedConversation }
-            : conv
-        )
-      );
-
-      // Update selected conversation if it's the one being modified
-      if (selectedConversation?.id === conversation.id) {
-        setSelectedConversation((prev) =>
-          prev ? { ...prev, ...updatedConversation } : prev
-        );
-      }
+    (conversationId: number, updatedConversation: Partial<ChatwootConversation>) => {
+      updateConversationCache(conversationId, updatedConversation);
     },
-    [conversation?.id, setConversations, selectedConversation?.id, setSelectedConversation]
+    [updateConversationCache]
   );
 
   /**
-   * Remove a conversation from the list
+   * Remove a conversation from the list (cache-aware)
    */
   const removeConversationFromList = useCallback(
     (conversationId: number) => {
-      setConversations((prev) => prev.filter((conv) => conv.id !== conversationId));
-
-      // Clear selected conversation if it's the one being deleted
-      if (selectedConversation?.id === conversationId) {
-        setSelectedConversation(null);
-      }
+      removeConversationCache(conversationId);
     },
-    [setConversations, selectedConversation?.id, setSelectedConversation]
+    [removeConversationCache]
   );
 
   // Use centralized assignment actions hook (must be after updateConversationInList is defined)
@@ -144,7 +128,7 @@ export const useChatwootContextMenu = (conversation: ChatwootConversation | null
 
       try {
         // Optimistic update
-        updateConversationInList({ unread_count: markAsRead ? 0 : 1 });
+        updateConversationInList(conversation.id, { unread_count: markAsRead ? 0 : 1 });
 
         if (markAsRead) {
           await chatwootService.conversations.markConversationAsRead(accountId, conversation.id);
@@ -155,7 +139,7 @@ export const useChatwootContextMenu = (conversation: ChatwootConversation | null
         showNotification(`Conversation marked as ${action}`, "success");
       } catch (error: any) {
         // Revert on failure
-        updateConversationInList({ unread_count: conversation.unread_count });
+        updateConversationInList(conversation.id, { unread_count: conversation.unread_count });
         showNotification(`Failed to mark conversation as ${action}`, "error");
         console.error(`Failed to mark conversation as ${action}:`, error);
       }
@@ -185,7 +169,7 @@ export const useChatwootContextMenu = (conversation: ChatwootConversation | null
 
       try {
         // Optimistic update - immediately update UI
-        updateConversationInList({ status, ...(snoozedUntil && { snoozed_until: new Date(snoozedUntil).getTime() }) });
+        updateConversationInList(conversation.id, { status, ...(snoozedUntil && { snoozed_until: new Date(snoozedUntil).getTime() }) });
 
         // Make API call
         const response = await chatwootService.conversations.updateConversationStatus(accountId, conversation.id, {
@@ -202,7 +186,7 @@ export const useChatwootContextMenu = (conversation: ChatwootConversation | null
         }
       } catch (error: any) {
         // Revert on failure
-        updateConversationInList({ status: oldStatus });
+        updateConversationInList(conversation.id, { status: oldStatus });
         
         const errorMessage = error.message || "Failed to update conversation status";
         showNotification(errorMessage, "error");
@@ -231,7 +215,7 @@ export const useChatwootContextMenu = (conversation: ChatwootConversation | null
 
       try {
         // Optimistic update
-        updateConversationInList({ priority: priority || undefined });
+        updateConversationInList(conversation.id, { priority: priority || undefined });
 
         await chatwootService.conversations.updateConversationPriority(accountId, conversation.id, { priority });
 
@@ -239,7 +223,7 @@ export const useChatwootContextMenu = (conversation: ChatwootConversation | null
         showNotification(`Priority set to ${priorityLabel}`, "success");
       } catch (error: any) {
         // Revert on failure
-        updateConversationInList({ priority: oldPriority });
+        updateConversationInList(conversation.id, { priority: oldPriority });
         showNotification(`Failed to update priority`, "error");
         console.error("Failed to update priority:", error);
       }
@@ -304,14 +288,14 @@ export const useChatwootContextMenu = (conversation: ChatwootConversation | null
 
       try {
         // Optimistic update
-        updateConversationInList({ labels });
+        updateConversationInList(conversation.id, { labels });
 
         await chatwootService.conversations.addConversationLabels(accountId, conversation.id, labels);
 
         showNotification(`Labels updated`, "success");
       } catch (error: any) {
         // Revert on failure
-        updateConversationInList({ labels: oldLabels });
+        updateConversationInList(conversation.id, { labels: oldLabels });
         showNotification(`Failed to update labels`, "error");
         console.error("Failed to update labels:", error);
       }

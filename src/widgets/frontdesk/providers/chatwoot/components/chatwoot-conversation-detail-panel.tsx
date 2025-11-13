@@ -31,6 +31,7 @@ import { LinkedDocumentsSection } from "./linked-documents-section";
 import { extractConversation, mergeConversationUpdate, extractErrorMessage } from "../utils/api-response-extractors";
 import { useChatwootQuickActions } from "../hooks/use-chatwoot-quick-actions";
 import { useChatwootProvider } from "../hooks/use-chatwoot-provider";
+import { useChatwootConversationUpdater } from "../hooks/use-chatwoot-conversation-updater";
 import { getActionsExcludingTickets, GROUP_LABELS } from "@/widgets/frontdesk/providers/tickets/utils/quick-actions-config";
 import { AssignDocumentModal } from "./assign-document-modal";
 import type { ChatwootConversation } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
@@ -57,13 +58,20 @@ export const ChatwootConversationDetailPanel: React.FC<ChatwootConversationDetai
   // Get inbox info
   const inbox = inboxes.find((i) => i.id === conversation.inbox_id);
 
-  // Handle conversation updates from child components
+  // Use cache-aware updater
+  const { updateConversation: updateConversationCache } = useChatwootConversationUpdater();
+
+  // Handle conversation updates from child components (cache-aware)
   const handleConversationChange = useCallback(
-    (updates: Partial<ChatwootConversation>) => {
+    (conversationId: number, updates: Partial<ChatwootConversation>) => {
+      // Update cache across all views
+      updateConversationCache(conversationId, updates);
+
+      // Also notify parent for local state update
       const updatedConversation = mergeConversationUpdate(conversation, updates);
       onConversationUpdate?.(updatedConversation);
     },
-    [conversation, onConversationUpdate]
+    [conversation, onConversationUpdate, updateConversationCache]
   );
 
   // Quick Actions integration
@@ -235,7 +243,7 @@ export const ChatwootConversationDetailPanel: React.FC<ChatwootConversationDetai
         accountId={accountId}
         conversationId={conversation.id}
         onLabelsChanged={(newLabels) => {
-          handleConversationChange({ labels: newLabels });
+          handleConversationChange(conversation.id, { labels: newLabels });
         }}
       />
 

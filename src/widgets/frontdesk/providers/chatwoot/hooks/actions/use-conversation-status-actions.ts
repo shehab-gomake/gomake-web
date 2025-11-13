@@ -13,7 +13,7 @@ export type ConversationStatusType = "open" | "resolved" | "pending" | "snoozed"
 interface UseConversationStatusActionsProps {
   accountId: number | null;
   conversation: ChatwootConversation | null;
-  updateConversation: (updates: Partial<ChatwootConversation>) => void;
+  updateConversation: (conversationId: number, updates: Partial<ChatwootConversation>) => void;
 }
 
 export const useConversationStatusActions = ({
@@ -36,7 +36,7 @@ export const useConversationStatusActions = ({
 
       try {
         // Optimistic update
-        updateConversation({ unread_count: markAsRead ? 0 : 1 });
+        updateConversation(conversation.id, { unread_count: markAsRead ? 0 : 1 });
 
         if (markAsRead) {
           await chatwootService.conversations.markConversationAsRead(accountId, conversation.id);
@@ -47,7 +47,7 @@ export const useConversationStatusActions = ({
         showNotification(`Conversation marked as ${action}`, "success");
       } catch (error: any) {
         // Revert on failure
-        updateConversation({ unread_count: originalUnreadCount });
+        updateConversation(conversation.id, { unread_count: originalUnreadCount });
         showNotification(`Failed to mark conversation as ${action}`, "error");
         console.error(`Failed to mark conversation as ${action}:`, error);
       }
@@ -77,7 +77,7 @@ export const useConversationStatusActions = ({
 
       try {
         // Optimistic update - immediately update UI
-        updateConversation({
+        updateConversation(conversation.id, {
           status,
           ...(snoozedUntil && { snoozed_until: new Date(snoozedUntil).getTime() }),
         });
@@ -97,7 +97,7 @@ export const useConversationStatusActions = ({
         }
       } catch (error: any) {
         // Revert on failure
-        updateConversation({ status: oldStatus });
+        updateConversation(conversation.id, { status: oldStatus });
         
         const errorMessage = error.message || "Failed to update conversation status";
         showNotification(errorMessage, "error");

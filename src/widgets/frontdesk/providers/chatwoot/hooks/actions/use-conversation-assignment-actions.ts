@@ -11,7 +11,7 @@ import { showNotification } from "../utils/notification-utils";
 interface UseConversationAssignmentActionsProps {
   accountId: number | null;
   conversation: ChatwootConversation | null;
-  updateConversation: (updates: Partial<ChatwootConversation>) => void;
+  updateConversation: (conversationId: number, updates: Partial<ChatwootConversation>) => void;
 }
 
 export const useConversationAssignmentActions = ({
@@ -39,7 +39,7 @@ export const useConversationAssignmentActions = ({
       try {
         // Optimistic update if we have agent data
         if (agentData) {
-          updateConversation({
+          updateConversation(conversation.id, {
             meta: {
               ...conversation.meta,
               assignee: assigneeId ? agentData : null,
@@ -51,7 +51,7 @@ export const useConversationAssignmentActions = ({
 
         // Update with server response
         if (response.meta?.assignee !== undefined) {
-          updateConversation({
+          updateConversation(conversation.id, {
             meta: {
               ...conversation.meta,
               assignee: response.meta.assignee,
@@ -64,7 +64,7 @@ export const useConversationAssignmentActions = ({
       } catch (error: any) {
         // Revert optimistic update on failure
         if (agentData) {
-          updateConversation({
+          updateConversation(conversation.id, {
             meta: {
               ...conversation.meta,
               assignee: previousAssignee,
@@ -97,7 +97,7 @@ export const useConversationAssignmentActions = ({
       try {
         // Optimistic update if we have team data
         if (teamData) {
-          updateConversation({
+          updateConversation(conversation.id, {
             meta: {
               ...conversation.meta,
               team: teamId ? teamData : null,
@@ -109,7 +109,7 @@ export const useConversationAssignmentActions = ({
 
         // Update with server response
         if (response.meta?.team !== undefined) {
-          updateConversation({
+          updateConversation(conversation.id, {
             meta: {
               ...conversation.meta,
               team: response.meta.team,
@@ -122,7 +122,7 @@ export const useConversationAssignmentActions = ({
       } catch (error: any) {
         // Revert optimistic update on failure
         if (teamData) {
-          updateConversation({
+          updateConversation(conversation.id, {
             meta: {
               ...conversation.meta,
               team: previousTeam,
@@ -152,14 +152,14 @@ export const useConversationAssignmentActions = ({
 
       try {
         // Optimistic update
-        updateConversation({ labels });
+        updateConversation(conversation.id, { labels });
 
         await chatwootService.conversations.addConversationLabels(accountId, conversation.id, labels);
 
         showNotification(`Labels updated`, "success");
       } catch (error: any) {
         // Revert on failure
-        updateConversation({ labels: oldLabels });
+        updateConversation(conversation.id, { labels: oldLabels });
         showNotification(`Failed to update labels`, "error");
         console.error("Failed to update labels:", error);
       }

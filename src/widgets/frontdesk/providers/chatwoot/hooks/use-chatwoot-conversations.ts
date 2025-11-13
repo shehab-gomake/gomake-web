@@ -81,7 +81,7 @@ export const useChatwootConversations = (accountId: number | null, options: Part
   // CACHE-FIRST: Track this cache key
   useEffect(() => {
     if (stableFilterKey && !cacheKeys.has(stableFilterKey)) {
-      setCacheKeys(prev => new Set([...prev, stableFilterKey]));
+      setCacheKeys(prev => new Set([...Array.from(prev), stableFilterKey]));
     }
   }, [stableFilterKey, cacheKeys, setCacheKeys]);
 
