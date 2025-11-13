@@ -13,7 +13,7 @@ export type PriorityLevel = "urgent" | "high" | "medium" | "low" | null;
 interface UseConversationPriorityActionsProps {
   accountId: number | null;
   conversation: ChatwootConversation | null;
-  updateConversation: (updates: Partial<ChatwootConversation>) => void;
+  updateConversation: (conversationId: number, updates: Partial<ChatwootConversation>) => void;
 }
 
 export const useConversationPriorityActions = ({
@@ -35,7 +35,7 @@ export const useConversationPriorityActions = ({
 
       try {
         // Optimistic update
-        updateConversation({ priority: priority || undefined });
+        updateConversation(conversation.id, { priority: priority || undefined });
 
         await chatwootService.conversations.updateConversationPriority(accountId, conversation.id, { priority });
 
@@ -43,7 +43,7 @@ export const useConversationPriorityActions = ({
         showNotification(`Priority set to ${priorityLabel}`, "success");
       } catch (error: any) {
         // Revert on failure
-        updateConversation({ priority: oldPriority });
+        updateConversation(conversation.id, { priority: oldPriority });
         showNotification(`Failed to update priority`, "error");
         console.error("Failed to update priority:", error);
       }

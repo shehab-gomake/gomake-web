@@ -13,37 +13,25 @@ import {
   Accordion,
   AccordionSummary,
   AccordionDetails,
-  CircularProgress,
-  Menu,
-  MenuItem,
-  ListItemIcon,
-  ListItemText,
-  Button,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import {
   ExpandMore as ExpandMoreIcon,
-  ArrowDropDown as ArrowDropDownIcon,
-  CheckCircle as OpenIcon,
-  Pending as PendingIcon,
-  AccessTime as SnoozeIcon,
-  TaskAlt as ResolvedIcon,
-  Flag as FlagIcon,
-  Close as CloseIcon,
 } from "@mui/icons-material";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
-import { colorTokens, Chip } from "@/widgets/frontdesk/design-system";
+import { colorTokens } from "@/widgets/frontdesk/design-system";
 import { QuickActionButton } from "@/widgets/frontdesk/design-system/primitives/Button/QuickActionButton";
 import { QuickActionMenu, QuickActionItem } from "@/widgets/frontdesk/design-system/compounds/QuickActionMenu/QuickActionMenu";
-import { ConversationPriorityIcon } from "./conversation-priority-icon";
 import { chatwootService } from "@/services/frontdesk";
 import { ConversationProfileSection } from "./conversation-profile-section";
 import { ContactHistorySection } from "./contact-history-section";
 import { ConversationAssigneeSection } from "./conversation-assignee-section";
 import { ConversationLabelsManagement } from "./conversation-labels-management";
+import { LinkedDocumentsSection } from "./linked-documents-section";
 import { extractConversation, mergeConversationUpdate, extractErrorMessage } from "../utils/api-response-extractors";
 import { useChatwootQuickActions } from "../hooks/use-chatwoot-quick-actions";
 import { useChatwootProvider } from "../hooks/use-chatwoot-provider";
+import { useChatwootConversationUpdater } from "../hooks/use-chatwoot-conversation-updater";
 import { getActionsExcludingTickets, GROUP_LABELS } from "@/widgets/frontdesk/providers/tickets/utils/quick-actions-config";
 import { AssignDocumentModal } from "./assign-document-modal";
 import type { ChatwootConversation } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
@@ -65,107 +53,25 @@ export const ChatwootConversationDetailPanel: React.FC<ChatwootConversationDetai
   const theme = useTheme();
   const { primaryColor, neutralColor } = useGomakeTheme();
   const { router } = useChatwootProvider();
-  const [statusMenuAnchor, setStatusMenuAnchor] = useState<null | HTMLElement>(null);
-  const [priorityMenuAnchor, setPriorityMenuAnchor] = useState<null | HTMLElement>(null);
   const [quickActionsAnchor, setQuickActionsAnchor] = useState<null | HTMLElement>(null);
-  const [updating, setUpdating] = useState(false);
-
-  // Status mapping (using Chip color type)
-  const statusMap: Record<string, { label: string; color: "primary" | "warning" | "success" | "error" | "neutral" }> = {
-    open: { label: "Open", color: "primary" },
-    pending: { label: "Pending", color: "warning" },
-    resolved: { label: "Closed", color: "success" },
-    snoozed: { label: "Snoozed", color: "error" },
-  };
-
-  const currentStatus = conversation.status || "open";
-  const statusInfo = statusMap[currentStatus] || { label: "Open", color: "primary" as const };
-
-  // Priority mapping
-  const priorityMap: Record<string, "Urgent" | "High" | "Medium" | "Low" | "None"> = {
-    urgent: "Urgent",
-    high: "High",
-    medium: "Medium",
-    low: "Low",
-  };
-
-  const currentPriority = (conversation.priority || null) as "urgent" | "high" | "medium" | "low" | null;
-  const uiPriority = currentPriority ? priorityMap[currentPriority] : "None";
 
   // Get inbox info
   const inbox = inboxes.find((i) => i.id === conversation.inbox_id);
 
-  // Handle status change
-  const handleStatusChange = useCallback(
-    async (newStatus: string) => {
-      setStatusMenuAnchor(null);
-      if (!accountId || !conversation.id) return;
+  // Use cache-aware updater
+  const { updateConversation: updateConversationCache } = useChatwootConversationUpdater();
 
-      setUpdating(true);
-      try {
-        const response = await chatwootService.conversations.updateConversation(accountId, conversation.id, {
-          status: newStatus,
-        });
-
-        // Extract and merge conversation update
-        const extracted = extractConversation(response, conversation);
-        const finalConversation = mergeConversationUpdate(conversation, {
-          ...extracted,
-          status: newStatus,
-        });
-
-        // Propagate update to parent
-        onConversationUpdate?.(finalConversation);
-      } catch (error) {
-        const errorMessage = extractErrorMessage(error);
-        console.error("[handleStatusChange] Failed to update status:", errorMessage);
-        // TODO: Show error toast with message: errorMessage
-      } finally {
-        setUpdating(false);
-      }
-    },
-    [accountId, conversation, onConversationUpdate]
-  );
-
-  // Handle priority change
-  const handlePriorityChange = useCallback(
-    async (newPriority: "urgent" | "high" | "medium" | "low" | null) => {
-      setPriorityMenuAnchor(null);
-      if (!accountId || !conversation.id) return;
-
-      setUpdating(true);
-      try {
-        const response = await chatwootService.conversations.updateConversationPriority(accountId, conversation.id, {
-          priority: newPriority,
-        });
-
-        // Extract and merge conversation update
-        const extracted = extractConversation(response, conversation);
-        const finalConversation = mergeConversationUpdate(conversation, {
-          ...extracted,
-          priority: newPriority || undefined,
-        });
-
-        // Propagate update to parent
-        onConversationUpdate?.(finalConversation);
-      } catch (error) {
-        const errorMessage = extractErrorMessage(error);
-        console.error("[handlePriorityChange] Failed to update priority:", errorMessage);
-        // TODO: Show error toast with message: errorMessage
-      } finally {
-        setUpdating(false);
-      }
-    },
-    [accountId, conversation, onConversationUpdate]
-  );
-
-  // Handle conversation updates from child components
+  // Handle conversation updates from child components (cache-aware)
   const handleConversationChange = useCallback(
-    (updates: Partial<ChatwootConversation>) => {
+    (conversationId: number, updates: Partial<ChatwootConversation>) => {
+      // Update cache across all views
+      updateConversationCache(conversationId, updates);
+
+      // Also notify parent for local state update
       const updatedConversation = mergeConversationUpdate(conversation, updates);
       onConversationUpdate?.(updatedConversation);
     },
-    [conversation, onConversationUpdate]
+    [conversation, onConversationUpdate, updateConversationCache]
   );
 
   // Quick Actions integration
@@ -180,12 +86,11 @@ export const ChatwootConversationDetailPanel: React.FC<ChatwootConversationDetai
   } = useChatwootQuickActions({
     conversation,
     accountId,
-    onActionComplete: (actionType) => {
-      console.log("[ChatwootConversationDetailPanel] Quick action completed:", actionType);
-      // Refresh conversation data after linking document
-      if (onConversationUpdate && conversation) {
-        // Optionally refetch conversation to get updated custom_attributes
-        // For now, we'll rely on the hook to update correctly
+    onActionComplete: (actionType, updatedConversation) => {
+      console.log("[ChatwootConversationDetailPanel] Quick action completed:", actionType, updatedConversation);
+      // Update conversation with the response from the API
+      if (onConversationUpdate && updatedConversation) {
+        onConversationUpdate(updatedConversation);
       }
     },
     onActionError: (actionType, error) => {
@@ -194,7 +99,11 @@ export const ChatwootConversationDetailPanel: React.FC<ChatwootConversationDetai
   });
 
   // Extract customer info for modal
-  const customerId = conversation?.custom_attributes?.gomake_customer_id as string | undefined;
+  // Check both conversation-level and contact-level custom attributes
+  // Priority: contact-level (where it's actually stored when linking) > conversation-level
+  const customerId = 
+    (conversation?.meta?.sender?.custom_attributes?.gomake_customer_id as string | undefined) ||
+    (conversation?.custom_attributes?.gomake_customer_id as string | undefined);
   const customerName = conversation?.meta?.sender?.name;
 
   // Convert action configs to QuickActionItem format for the menu
@@ -296,6 +205,9 @@ export const ChatwootConversationDetailPanel: React.FC<ChatwootConversationDetai
         }}
       />
 
+      {/* Linked Documents Section */}
+      <LinkedDocumentsSection conversation={conversation} />
+
       {/* Contact History Section */}
       <ContactHistorySection
         contactId={conversation.meta?.sender?.id}
@@ -324,168 +236,6 @@ export const ChatwootConversationDetailPanel: React.FC<ChatwootConversationDetai
         updateConversation={handleConversationChange}
       />
 
-      {/* Status */}
-      <Box sx={{ mb: 2.5 }}>
-        <Typography
-          variant="caption"
-          sx={{
-            color: colorTokens.semantic.text.secondary,
-            mb: 1,
-            display: "block",
-            fontWeight: 600,
-            textTransform: "uppercase",
-            fontSize: 10,
-          }}
-        >
-          Status
-        </Typography>
-        <Button
-          variant="outlined"
-          size="small"
-          fullWidth
-          onClick={(e) => !updating && setStatusMenuAnchor(e.currentTarget)}
-          endIcon={updating ? <CircularProgress size={16} /> : <ArrowDropDownIcon />}
-          disabled={updating}
-          sx={{
-            textTransform: "none",
-            justifyContent: "space-between",
-            borderColor: neutralColor(300),
-            color: neutralColor(700),
-            fontSize: "0.8125rem",
-            px: 1.5,
-            py: 1,
-            "&:hover": {
-              backgroundColor: neutralColor(50),
-              borderColor: neutralColor(400),
-            },
-          }}
-        >
-          {statusInfo.label}
-        </Button>
-        <Menu
-          anchorEl={statusMenuAnchor}
-          open={Boolean(statusMenuAnchor)}
-          onClose={() => setStatusMenuAnchor(null)}
-          anchorOrigin={{
-            vertical: "bottom",
-            horizontal: "left",
-          }}
-          transformOrigin={{
-            vertical: "top",
-            horizontal: "left",
-          }}
-        >
-          <MenuItem onClick={() => handleStatusChange("open")}>
-            <ListItemIcon>
-              <OpenIcon fontSize="small" />
-            </ListItemIcon>
-            <ListItemText>Open</ListItemText>
-          </MenuItem>
-          <MenuItem onClick={() => handleStatusChange("pending")}>
-            <ListItemIcon>
-              <PendingIcon fontSize="small" />
-            </ListItemIcon>
-            <ListItemText>Pending</ListItemText>
-          </MenuItem>
-          <MenuItem onClick={() => handleStatusChange("resolved")}>
-            <ListItemIcon>
-              <ResolvedIcon fontSize="small" />
-            </ListItemIcon>
-            <ListItemText>Close</ListItemText>
-          </MenuItem>
-          <MenuItem onClick={() => handleStatusChange("snoozed")}>
-            <ListItemIcon>
-              <SnoozeIcon fontSize="small" />
-            </ListItemIcon>
-            <ListItemText>Snooze</ListItemText>
-          </MenuItem>
-        </Menu>
-      </Box>
-
-      {/* Priority */}
-      <Box sx={{ mb: 2.5 }}>
-        <Typography
-          variant="caption"
-          sx={{
-            color: colorTokens.semantic.text.secondary,
-            mb: 1,
-            display: "block",
-            fontWeight: 600,
-            textTransform: "uppercase",
-            fontSize: 10,
-          }}
-        >
-          Priority
-        </Typography>
-        <Button
-          variant="outlined"
-          size="small"
-          fullWidth
-          onClick={(e) => !updating && setPriorityMenuAnchor(e.currentTarget)}
-          endIcon={updating ? <CircularProgress size={16} /> : <ArrowDropDownIcon />}
-          disabled={updating}
-          startIcon={!updating && currentPriority && <ConversationPriorityIcon priority={currentPriority} size={12} />}
-          sx={{
-            textTransform: "capitalize",
-            justifyContent: "space-between",
-            borderColor: neutralColor(300),
-            color: neutralColor(700),
-            fontSize: "0.8125rem",
-            px: 1.5,
-            py: 1,
-            "&:hover": {
-              backgroundColor: neutralColor(50),
-              borderColor: neutralColor(400),
-            },
-          }}
-        >
-          {uiPriority}
-        </Button>
-        <Menu
-          anchorEl={priorityMenuAnchor}
-          open={Boolean(priorityMenuAnchor)}
-          onClose={() => setPriorityMenuAnchor(null)}
-          anchorOrigin={{
-            vertical: "bottom",
-            horizontal: "left",
-          }}
-          transformOrigin={{
-            vertical: "top",
-            horizontal: "left",
-          }}
-        >
-          <MenuItem onClick={() => handlePriorityChange("urgent")}>
-            <ListItemIcon>
-              <ConversationPriorityIcon priority="urgent" size={12} />
-            </ListItemIcon>
-            <ListItemText>Urgent</ListItemText>
-          </MenuItem>
-          <MenuItem onClick={() => handlePriorityChange("high")}>
-            <ListItemIcon>
-              <ConversationPriorityIcon priority="high" size={12} />
-            </ListItemIcon>
-            <ListItemText>High</ListItemText>
-          </MenuItem>
-          <MenuItem onClick={() => handlePriorityChange("medium")}>
-            <ListItemIcon>
-              <ConversationPriorityIcon priority="medium" size={12} />
-            </ListItemIcon>
-            <ListItemText>Medium</ListItemText>
-          </MenuItem>
-          <MenuItem onClick={() => handlePriorityChange("low")}>
-            <ListItemIcon>
-              <ConversationPriorityIcon priority="low" size={12} />
-            </ListItemIcon>
-            <ListItemText>Low</ListItemText>
-          </MenuItem>
-          <MenuItem onClick={() => handlePriorityChange(null)}>
-            <ListItemIcon>
-              <CloseIcon fontSize="small" />
-            </ListItemIcon>
-            <ListItemText>None</ListItemText>
-          </MenuItem>
-        </Menu>
-      </Box>
 
       {/* Labels Management */}
       <ConversationLabelsManagement
@@ -493,7 +243,7 @@ export const ChatwootConversationDetailPanel: React.FC<ChatwootConversationDetai
         accountId={accountId}
         conversationId={conversation.id}
         onLabelsChanged={(newLabels) => {
-          handleConversationChange({ labels: newLabels });
+          handleConversationChange(conversation.id, { labels: newLabels });
         }}
       />
 

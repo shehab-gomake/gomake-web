@@ -52,18 +52,17 @@ export const ConversationSortMenu: React.FC<ConversationSortMenuProps> = React.m
           }}
           sx={{
             color: neutralColor(600),
-            backgroundColor: neutralColor(100),
             "&:hover": {
-              backgroundColor: neutralColor(200),
-              boxShadow: `0 2px 8px ${neutralColor(300)}`,
+              backgroundColor: neutralColor(100),
+              color: neutralColor(900),
             },
-            width: 36,
-            height: 36,
+            width: 28,
+            height: 28,
+            padding: 0.5,
             transition: "all 0.2s ease-in-out",
-            boxShadow: `0 1px 3px ${neutralColor(200)}`,
           }}
         >
-          <SwapVertIcon fontSize="small" />
+          <SwapVertIcon sx={{ fontSize: 16 }} />
         </IconButton>
       </Tooltip>
 

@@ -112,26 +112,28 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
     if (!accountId || !conversation.id) return;
     
     try {
-      // Update conversation via API
-      const response = await chatwootService.conversations.updateConversation(accountId, conversation.id, {
-        status: newStatus,
-      });
+      // Update conversation status via toggle_status API
+      const response = await chatwootService.conversations.updateConversationStatus(
+        accountId,
+        conversation.id,
+        { status: newStatus as 'open' | 'resolved' | 'pending' | 'snoozed' }
+      );
       
-      // Get updated conversation from response
-      const updatedConversation = response.payload || response.data || conversation;
-      const finalConversation = {
-        ...conversation,
-        ...updatedConversation,
-        status: newStatus,
-      };
-      
-      // Update in list (similar to Vue: commit(types.CHANGE_CONVERSATION_STATUS))
-      if (onConversationUpdate) {
-        onConversationUpdate(finalConversation);
+      // Verify success
+      if (response.payload?.success) {
+        // Update conversation with new status
+        const finalConversation = {
+          ...conversation,
+          status: response.payload.current_status,
+        };
+        
+        // Update in list (similar to Vue: commit(types.CHANGE_CONVERSATION_STATUS))
+        if (onConversationUpdate) {
+          onConversationUpdate(finalConversation);
+        }
+      } else {
+        throw new Error("Status update failed: Unexpected response from server");
       }
-      
-      // Refresh messages
-      refresh();
     } catch (err) {
       console.error(`Failed to update conversation status to ${newStatus}:`, err);
       throw err;
@@ -174,6 +176,36 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
       await handleStatusChange("pending");
     } catch (err) {
       console.error("Failed to mark conversation as pending:", err);
+    }
+  };
+
+  const handlePriorityChange = async (newPriority: "urgent" | "high" | "medium" | "low" | null) => {
+    if (!accountId || !conversation.id) return;
+
+    try {
+      // Update conversation via API
+      const response = await chatwootService.conversations.updateConversation(accountId, conversation.id, {
+        priority: newPriority,
+      });
+
+      // Get updated conversation from response
+      const updatedConversation = response.payload || response.data || conversation;
+      const finalConversation = {
+        ...conversation,
+        ...updatedConversation,
+        priority: newPriority,
+      };
+
+      // Update in list
+      if (onConversationUpdate) {
+        onConversationUpdate(finalConversation);
+      }
+
+      // Refresh messages
+      refresh();
+    } catch (err) {
+      console.error(`Failed to update conversation priority to ${newPriority}:`, err);
+      throw err;
     }
   };
 
@@ -357,6 +389,9 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
             onResolve={handleResolve}
             onSnooze={handleSnooze}
             onMarkAsPending={handleMarkAsPending}
+            onStatusChange={handleStatusChange}
+            onPriorityChange={handlePriorityChange}
+            updating={isSending}
           />
         </Box>
       </Fade>

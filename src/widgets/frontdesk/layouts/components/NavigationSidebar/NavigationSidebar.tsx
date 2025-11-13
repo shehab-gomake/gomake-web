@@ -168,7 +168,6 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
   const [oldFrontdeskExpanded, setOldFrontdeskExpanded] = useState(false);
   const [ticketViewsExpanded, setTicketViewsExpanded] = useState(true);
   const [chatsExpanded, setChatsExpanded] = useState(true);
-  const [chatwootExpanded, setChatwootExpanded] = useState(true);
   const [chatwootConversationsExpanded, setChatwootConversationsExpanded] = useState(true);
   const [chatwootChannelsExpanded, setChatwootChannelsExpanded] = useState(true);
   const [showAddChannelModal, setShowAddChannelModal] = useState(false);
@@ -253,36 +252,7 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
 
       {/* Chatwoot Section */}
       <Box sx={{ py: 0.5 }}>
-        {!isCollapsed && (
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              px: 1.5,
-              py: 0.5,
-              cursor: "pointer",
-              "&:hover": { backgroundColor: theme.palette.action.hover },
-            }}
-            onClick={() => setChatwootExpanded(!chatwootExpanded)}
-          >
-            <Typography
-              variant="caption"
-              sx={{
-                color: theme.palette.text.secondary,
-                fontWeight: 600,
-                fontSize: "0.688rem",
-                textTransform: "uppercase",
-                letterSpacing: 0.5,
-              }}
-            >
-              CHATWOOT
-            </Typography>
-            {chatwootExpanded ? <ExpandLessIcon fontSize="small" /> : <ExpandMoreIcon fontSize="small" />}
-          </Box>
-        )}
-        <Collapse in={isCollapsed || chatwootExpanded}>
-          <List disablePadding sx={{ pointerEvents: "auto" }}>
+        <List disablePadding sx={{ pointerEvents: "auto" }}>
             {/* New Conversation Button */}
             {!isCollapsed ? (
               <Box
@@ -296,20 +266,32 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
                 <Button
                   fullWidth
                   variant="contained"
-                  startIcon={<CreateIcon fontSize="small" />}
+                  startIcon={<CreateIcon sx={{ fontSize: "1.125rem" }} />}
                   onClick={() => setShowComposeModal(true)}
                   sx={{
                     textTransform: "none",
-                    fontWeight: 500,
+                    fontWeight: 600,
                     fontSize: "0.875rem",
+                    letterSpacing: "0.01em",
                     backgroundColor: primaryColor(600),
                     color: "white",
-                    py: 1,
-                    borderRadius: "8px",
-                    boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
+                    py: 1.25,
+                    px: 2,
+                    borderRadius: "10px",
+                    boxShadow: `0 2px 8px ${alpha(primaryColor(600), 0.3)}, 0 1px 3px ${alpha(primaryColor(600), 0.2)}`,
+                    transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+                    "& .MuiButton-startIcon": {
+                      marginRight: 1,
+                      marginLeft: 0,
+                    },
                     "&:hover": {
                       backgroundColor: primaryColor(700),
-                      boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.15)",
+                      boxShadow: `0 4px 12px ${alpha(primaryColor(600), 0.4)}, 0 2px 6px ${alpha(primaryColor(600), 0.3)}`,
+                      transform: "translateY(-1px)",
+                    },
+                    "&:active": {
+                      transform: "translateY(0px)",
+                      boxShadow: `0 2px 6px ${alpha(primaryColor(600), 0.3)}, 0 1px 3px ${alpha(primaryColor(600), 0.2)}`,
                     },
                   }}
                 >
@@ -331,11 +313,18 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
                     sx={{
                       color: "white",
                       backgroundColor: primaryColor(600),
+                      boxShadow: `0 2px 6px ${alpha(primaryColor(600), 0.3)}`,
+                      transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+                      width: 40,
+                      height: 40,
                       "&:hover": {
                         backgroundColor: primaryColor(700),
+                        boxShadow: `0 4px 10px ${alpha(primaryColor(600), 0.4)}`,
+                        transform: "translateY(-1px)",
                       },
-                      width: 36,
-                      height: 36,
+                      "&:active": {
+                        transform: "translateY(0px)",
+                      },
                     }}
                   >
                     <CreateIcon fontSize="small" />
@@ -896,67 +885,7 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
                 </ListItemButton>
               </Tooltip>
             )}
-
-            {/* Settings */}
-            <Tooltip title="Settings" placement="right" disableHoverListener={!isCollapsed}>
-              <ListItemButton
-                selected={isSettingsView}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  e.preventDefault();
-
-                  // Use RouteBuilder for type-safe navigation
-                  const route = RouteBuilder.chatwoot(ChatwootView.SETTINGS);
-                  const { path, options } = buildRoute(route, { replace: true });
-
-                  // Navigate to Chatwoot channel first if not already there
-                  if (selectedChannel !== "chatwoot") {
-                    onSectionSelect("inbox");
-                    onChannelSelect("chatwoot" as Channel);
-                  }
-
-                  // Then navigate to Settings
-                  router.replace(path, undefined, { shallow: options.scroll === false });
-                }}
-                sx={{
-                  py: 0.5,
-                  px: isCollapsed ? 1.5 : 2,
-                  justifyContent: isCollapsed ? "center" : "flex-start",
-                  pointerEvents: "auto",
-                  "&.Mui-selected": {
-                    backgroundColor: theme.palette.primary.main + "10",
-                    borderLeft: `3px solid ${theme.palette.primary.main}`,
-                    "&:hover": {
-                      backgroundColor: theme.palette.primary.main + "20",
-                    },
-                  },
-                }}
-              >
-                {isCollapsed ? (
-                  <Box sx={{ color: theme.palette.text.secondary, display: "flex" }}>
-                    <SettingsIcon fontSize="small" />
-                  </Box>
-                ) : (
-                  <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, width: "100%" }}>
-                    <Box sx={{ color: theme.palette.text.secondary }}>
-                      <SettingsIcon fontSize="small" />
-                    </Box>
-                    <ListItemText
-                      primary="Settings"
-                      primaryTypographyProps={{
-                        variant: "body2",
-                        sx: {
-                          fontSize: "0.875rem",
-                          fontWeight: 400,
-                        },
-                      }}
-                    />
-                  </Box>
-                )}
-              </ListItemButton>
-            </Tooltip>
           </List>
-        </Collapse>
       </Box>
 
       <Divider sx={{ my: 1 }} />
@@ -1267,7 +1196,7 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
         </Collapse>
       </Box>
 
-      {/* Footer/System Items - Settings visible to all users */}
+      {/* Footer/System Items - Settings */}
       <Box
         sx={{
           p: 1,
@@ -1277,8 +1206,24 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
         <List disablePadding>
           <Tooltip title="Settings" placement="right" disableHoverListener={!isCollapsed}>
             <ListItemButton
-              selected={selectedSection === "settings"}
-              onClick={() => onSectionSelect("settings")}
+              selected={isSettingsView}
+              onClick={(e) => {
+                e.stopPropagation();
+                e.preventDefault();
+
+                // Use RouteBuilder for type-safe navigation
+                const route = RouteBuilder.chatwoot(ChatwootView.SETTINGS);
+                const { path, options } = buildRoute(route, { replace: true });
+
+                // Navigate to Chatwoot channel first if not already there
+                if (selectedChannel !== "chatwoot") {
+                  onSectionSelect("inbox");
+                  onChannelSelect("chatwoot" as Channel);
+                }
+
+                // Then navigate to Settings
+                router.replace(path, undefined, { shallow: options.scroll === false });
+              }}
               sx={{
                 py: 1,
                 px: isCollapsed ? 1.5 : 2,
@@ -1305,7 +1250,7 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
                     primary="Settings"
                     primaryTypographyProps={{
                       variant: "body2",
-                      sx: { fontSize: "0.875rem", fontWeight: selectedSection === "settings" ? 600 : 400 },
+                      sx: { fontSize: "0.875rem", fontWeight: isSettingsView ? 600 : 400 },
                     }}
                   />
                 </Box>

@@ -11,6 +11,7 @@ This directory contains documentation for the FrontDesk unified messaging hub fe
 - **[01-providers/chatwoot/](./01-providers/chatwoot/)** - Chatwoot provider documentation
   - `TEAM_CREATION_GUIDE.md` - Guide for team creation feature
   - `TEAM_CREATION_QUICK_REFERENCE.md` - Quick reference for team creation
+  - `DASHBOARD_EVOLUTION_PLAN.md` - Three-phase plan for evolving the Chatwoot dashboard into a role-based, insight-driven command center
 
 ### Integration Guides
 - **[CHATWOOT_CHANNEL_CONNECTION_FLOW.md](./CHATWOOT_CHANNEL_CONNECTION_FLOW.md)** - Channel connection flow documentation

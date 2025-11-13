@@ -18,6 +18,18 @@ export enum ConversationStatus {
 }
 
 /**
+ * Conversation Priority Enum
+ * Priority levels for conversations
+ */
+export enum ConversationPriority {
+  URGENT = "urgent",
+  HIGH = "high",
+  MEDIUM = "medium",
+  LOW = "low",
+  NONE = "none",
+}
+
+/**
  * Conversation Assignee Type Enum
  * Filter by assignee
  */
@@ -236,4 +248,17 @@ export interface ConversationListResponse {
 export interface ConversationDetailResponse {
   data?: ChatwootConversation;
   payload?: ChatwootConversation;
+}
+
+/**
+ * Response from toggle_status endpoint
+ * POST /api/accounts/conversations/{conversation_id}/toggle_status
+ */
+export interface ConversationStatusToggleResponse {
+  meta: Record<string, any>;
+  payload: {
+    success: boolean;
+    current_status: string;
+    conversation_id: number;
+  };
 }

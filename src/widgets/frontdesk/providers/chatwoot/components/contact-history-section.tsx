@@ -31,7 +31,7 @@ interface GroupedConversations {
   older: ChatwootConversation[];
 }
 
-const INITIAL_DISPLAY_LIMIT = 10;
+const INITIAL_DISPLAY_LIMIT = 3;
 
 export const ContactHistorySection: React.FC<ContactHistorySectionProps> = ({
   contactId,
@@ -229,14 +229,14 @@ export const ContactHistorySection: React.FC<ContactHistorySectionProps> = ({
       if (convos.length === 0) return null;
 
       return (
-        <Box key={label} sx={{ mb: isLast ? 0 : 2 }}>
+        <Box key={label} sx={{ mb: isLast ? 0 : 1.5 }}>
           {/* Date Header */}
           <Box
             sx={{
               display: "flex",
               alignItems: "center",
-              gap: 1,
-              mb: 0.75,
+              gap: 0.75,
+              mb: 0.5,
             }}
           >
             <Typography
@@ -261,7 +261,7 @@ export const ContactHistorySection: React.FC<ContactHistorySectionProps> = ({
           </Box>
 
           {/* Conversation Cards */}
-          <Box sx={{ display: "flex", flexDirection: "column", gap: 0.875 }}>
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 0.5 }}>
             {convos.map((convo) => (
               <TicketHistoryCard
                 key={convo.id}
@@ -283,18 +283,19 @@ export const ContactHistorySection: React.FC<ContactHistorySectionProps> = ({
         {renderGroup("This Week", groupedConversations.thisWeek, false)}
         {renderGroup("Older", groupedConversations.older, !hasMore)}
 
-        {/* Load More Button */}
+        {/* Expand Button */}
         {hasMore && (
           <Box sx={{ mt: 1.5, display: "flex", justifyContent: "center" }}>
             <Button
               size="small"
               variant="outlined"
-              onClick={() => setDisplayLimit((prev) => prev + INITIAL_DISPLAY_LIMIT)}
+              onClick={() => setDisplayLimit(totalCount)}
+              startIcon={<ExpandMoreIcon />}
               sx={{
-                fontSize: 10,
+                fontSize: 11,
                 textTransform: "none",
-                py: 0.25,
-                px: 1.5,
+                py: 0.5,
+                px: 2,
                 borderColor: colorTokens.semantic.border.default,
                 color: colorTokens.semantic.text.secondary,
                 "&:hover": {
@@ -303,7 +304,7 @@ export const ContactHistorySection: React.FC<ContactHistorySectionProps> = ({
                 },
               }}
             >
-              Load More ({totalCount - displayLimit} remaining)
+              Show {totalCount - displayLimit} More {totalCount - displayLimit === 1 ? 'Ticket' : 'Tickets'}
             </Button>
           </Box>
         )}

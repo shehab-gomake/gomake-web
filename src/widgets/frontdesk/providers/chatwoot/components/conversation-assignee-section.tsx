@@ -38,7 +38,7 @@ interface ConversationAssigneeSectionProps {
   /** Inbox ID for fetching inbox-specific agents */
   inboxId?: number;
   /** Callback to update the conversation in parent state */
-  updateConversation?: (updates: Partial<ChatwootConversation>) => void;
+  updateConversation?: (conversationId: number, updates: Partial<ChatwootConversation>) => void;
 }
 
 export const ConversationAssigneeSection: React.FC<ConversationAssigneeSectionProps> = ({
@@ -48,7 +48,7 @@ export const ConversationAssigneeSection: React.FC<ConversationAssigneeSectionPr
   accountId,
   conversation,
   inboxId,
-  updateConversation = () => {},
+  updateConversation = (_id, _updates) => {},
 }) => {
   const [menuAnchor, setMenuAnchor] = useState<null | HTMLElement>(null);
   const selectedAccountId = useRecoilValue(chatwootSelectedAccountAtom);

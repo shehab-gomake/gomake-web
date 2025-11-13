@@ -45,6 +45,7 @@ export const ChatwootReplyComposer: React.FC<ChatwootReplyComposerProps> = ({
   const [messageContent, setMessageContent] = useState("");
   const [toEmails, setToEmails] = useState("");
   const [ccEmails, setCcEmails] = useState("");
+  const [showCc, setShowCc] = useState(false);
   const [showBcc, setShowBcc] = useState(false);
   const [bccEmails, setBccEmails] = useState("");
   const [attachments, setAttachments] = useState<File[]>([]);
@@ -56,11 +57,27 @@ export const ChatwootReplyComposer: React.FC<ChatwootReplyComposerProps> = ({
   // Extract recipient email from conversation
   const defaultRecipient = conversation?.meta?.sender?.email || "";
 
+  // Reset form fields when conversation changes
   React.useEffect(() => {
     if (conversation) {
       setToEmails(defaultRecipient);
+      // Clear CC and BCC fields when switching conversations
+      setCcEmails("");
+      setBccEmails("");
+      setShowCc(false);
+      setShowBcc(false);
+      // Also clear message content and attachments
+      setMessageContent("");
+      setAttachments([]);
     }
-  }, [conversation, defaultRecipient]);
+  }, [conversation?.id, defaultRecipient]);
+
+  // Show CC field if it has content
+  React.useEffect(() => {
+    if (ccEmails && !showCc) {
+      setShowCc(true);
+    }
+  }, [ccEmails, showCc]);
 
   const handleTabChange = (newValue: TabValue) => {
     setActiveTab(newValue);
@@ -156,10 +173,11 @@ export const ChatwootReplyComposer: React.FC<ChatwootReplyComposerProps> = ({
           toEmails={toEmails}
           ccEmails={ccEmails}
           bccEmails={bccEmails}
+          showCc={showCc}
           showBcc={showBcc}
-          onToChange={setToEmails}
           onCcChange={setCcEmails}
           onBccChange={setBccEmails}
+          onToggleCc={() => setShowCc(!showCc)}
           onToggleBcc={() => setShowBcc(!showBcc)}
           borderColor={borderColor}
           textColor={textColor}

@@ -24,6 +24,7 @@ import {
   type ConversationStatusType,
   type PriorityLevel,
 } from "./actions";
+import { useChatwootConversationUpdater } from "./use-chatwoot-conversation-updater";
 
 /**
  * Context Menu Action Definition
@@ -54,38 +55,27 @@ export const useChatwootContextMenu = (conversation: ChatwootConversation | null
   const { verifiedAgents: agents, loading: agentsLoading } = useChatwootInboxAgents(accountId, inboxId, conversationId);
   const { teams } = useChatwootTeams(accountId);
 
+  // Use cache-aware updater for mutations
+  const { updateConversation: updateConversationCache, removeConversation: removeConversationCache } = useChatwootConversationUpdater();
+
   /**
-   * Update a conversation in the list (optimistic update)
+   * Update a conversation in the list (cache-aware)
    */
   const updateConversationInList = useCallback(
-    (updatedConversation: Partial<ChatwootConversation>) => {
-      if (!conversation?.id) return;
-
-      setConversations((prev) =>
-        prev.map((conv) => (conv.id === conversation.id ? { ...conv, ...updatedConversation } : conv))
-      );
-
-      // Update selected conversation if it's the one being modified
-      if (selectedConversation?.id === conversation.id) {
-        setSelectedConversation((prev) => (prev ? { ...prev, ...updatedConversation } : prev));
-      }
+    (conversationId: number, updatedConversation: Partial<ChatwootConversation>) => {
+      updateConversationCache(conversationId, updatedConversation);
     },
-    [conversation?.id, setConversations, selectedConversation?.id, setSelectedConversation]
+    [updateConversationCache]
   );
 
   /**
-   * Remove a conversation from the list
+   * Remove a conversation from the list (cache-aware)
    */
   const removeConversationFromList = useCallback(
     (conversationId: number) => {
-      setConversations((prev) => prev.filter((conv) => conv.id !== conversationId));
-
-      // Clear selected conversation if it's the one being deleted
-      if (selectedConversation?.id === conversationId) {
-        setSelectedConversation(null);
-      }
+      removeConversationCache(conversationId);
     },
-    [setConversations, selectedConversation?.id, setSelectedConversation]
+    [removeConversationCache]
   );
 
   // Use modular action hooks

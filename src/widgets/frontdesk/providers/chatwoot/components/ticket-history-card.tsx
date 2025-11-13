@@ -189,10 +189,10 @@ export const TicketHistoryCard: React.FC<TicketHistoryCardProps> = ({
     <Box
       onClick={() => onClick(conversation)}
       sx={{
-        p: 1.25,
+        p: 0.875,
         backgroundColor: isActive ? colorTokens.primary[50] : colorTokens.neutral[50],
         border: `1px solid ${isActive ? colorTokens.primary[300] : colorTokens.semantic.border.default}`,
-        borderRadius: radiusTokens.md,
+        borderRadius: "6px",
         cursor: "pointer",
         transition: "all 0.15s ease",
         "&:hover": {
@@ -208,15 +208,15 @@ export const TicketHistoryCard: React.FC<TicketHistoryCardProps> = ({
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
-          mb: 0.875,
+          mb: 0.5,
         }}
       >
-        <Chip label={statusInfo.label} color={statusInfo.color} variant="soft" size="small" sx={{ fontSize: 11, height: 22 }} />
+        <Chip label={statusInfo.label} color={statusInfo.color} variant="soft" size="small" sx={{ fontSize: 10, height: 20 }} />
         <Typography
           variant="caption"
           sx={{
             fontWeight: 600,
-            fontSize: 11,
+            fontSize: 10,
             color: isActive ? colorTokens.primary[700] : colorTokens.semantic.text.secondary,
             fontFamily: "monospace",
           }}
@@ -231,7 +231,7 @@ export const TicketHistoryCard: React.FC<TicketHistoryCardProps> = ({
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
-          mb: 0.875,
+          mb: 0.5,
         }}
       >
         <Box
@@ -245,7 +245,7 @@ export const TicketHistoryCard: React.FC<TicketHistoryCardProps> = ({
           <Typography
             variant="body2"
             sx={{
-              fontSize: 11,
+              fontSize: 10,
               color: colorTokens.semantic.text.primary,
               fontWeight: 500,
             }}
@@ -258,12 +258,12 @@ export const TicketHistoryCard: React.FC<TicketHistoryCardProps> = ({
           sx={{
             display: "flex",
             alignItems: "center",
-            gap: 0.5,
+            gap: 0.375,
             color: colorTokens.semantic.text.tertiary,
           }}
         >
-          <TimeIcon sx={{ fontSize: 12 }} />
-          <Typography variant="caption" sx={{ fontSize: 10 }}>
+          <TimeIcon sx={{ fontSize: 11 }} />
+          <Typography variant="caption" sx={{ fontSize: 9 }}>
             {relativeTime}
           </Typography>
         </Box>
@@ -273,15 +273,15 @@ export const TicketHistoryCard: React.FC<TicketHistoryCardProps> = ({
       <Typography
         variant="body2"
         sx={{
-          fontSize: 12,
+          fontSize: 11,
           color: colorTokens.semantic.text.secondary,
-          mb: 0.875,
+          mb: 0.5,
           overflow: "hidden",
           textOverflow: "ellipsis",
           display: "-webkit-box",
-          WebkitLineClamp: 2,
+          WebkitLineClamp: 1,
           WebkitBoxOrient: "vertical",
-          lineHeight: 1.4,
+          lineHeight: 1.3,
         }}
       >
         {messagePreview}
@@ -292,12 +292,12 @@ export const TicketHistoryCard: React.FC<TicketHistoryCardProps> = ({
         sx={{
           display: "flex",
           alignItems: "center",
-          gap: 0.5,
+          gap: 0.375,
           color: colorTokens.semantic.text.tertiary,
         }}
       >
         {inboxIcon}
-        <Typography variant="caption" sx={{ fontSize: 10 }}>
+        <Typography variant="caption" sx={{ fontSize: 9 }}>
           {inboxName}
         </Typography>
       </Box>

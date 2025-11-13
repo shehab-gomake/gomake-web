@@ -135,7 +135,8 @@ export function useChatwootDataFetch<TData = any, TFilters = any>({
         fetchData();
       }
     }
-  }, [autoFetch, refetchOnFilterChange, filterKey, fetchData]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoFetch, refetchOnFilterChange, filterKey]);
 
   return {
     data,
@@ -145,4 +146,5 @@ export function useChatwootDataFetch<TData = any, TFilters = any>({
     fetchData,
   };
 }
+
 

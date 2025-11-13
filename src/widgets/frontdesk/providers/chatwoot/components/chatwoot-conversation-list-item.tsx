@@ -20,6 +20,7 @@ interface ChatwootConversationListItemProps {
   onContextMenuAction?: (actionId: string, conversationId: string | number) => void;
   inboxes?: ChatwootInbox[];
   inboxesLoading?: boolean;
+  hideAssigneeAvatar?: boolean;
 }
 
 // ============================================================================
@@ -158,6 +159,7 @@ const ChatwootConversationListItemComponent: React.FC<ChatwootConversationListIt
   onContextMenuAction,
   inboxes = [],
   inboxesLoading = false,
+  hideAssigneeAvatar = false,
 }) => {
   // Context menu position state (for right-click menu positioning)
   const { contextMenuPosition, handleContextMenu, handleCloseContextMenu } = useConversationContextMenu();
@@ -193,19 +195,19 @@ const ChatwootConversationListItemComponent: React.FC<ChatwootConversationListIt
       inboxChannelType: inbox?.channel_type || conversation.meta?.channel || null,
       inboxMedium: (inbox as any)?.medium || null,
       inboxName: inbox?.name || null,
-      assignee: conversation.meta?.assignee
+      assignee: hideAssigneeAvatar ? null : (conversation.meta?.assignee
         ? {
             name: conversation.meta.assignee.name,
             avatarSrc: conversation.meta.assignee.avatar_url,
             presence: conversation.meta.assignee.availability_status || null,
           }
-        : null,
+        : null),
       labels: conversation.labels || [],
       appliedSla: conversation.applied_sla || conversation.appliedSla || null,
       conversationTimestamp: conversation.timestamp || conversation.created_at || null,
       lastActivityAt: conversation.last_activity_at || conversation.lastActivityAt || null,
     };
-  }, [conversation, inbox]);
+  }, [conversation, inbox, hideAssigneeAvatar]);
 
   // ========================================================================
   // Event Handlers

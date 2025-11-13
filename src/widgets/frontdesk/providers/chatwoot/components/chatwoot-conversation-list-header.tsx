@@ -2,13 +2,12 @@ import React, { useMemo } from "react";
 import { useRecoilValue } from "recoil";
 import { useTheme } from "@mui/material/styles";
 import { Box, Stack, Typography, IconButton, Tooltip } from "@mui/material";
-import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import ClearIcon from "@mui/icons-material/Clear";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { useChatwootTeams } from "../hooks/resources/use-chatwoot-teams";
 import { ConversationStatus, ConversationListParams } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
 import { chatwootConversationCountsAtom, chatwootSelectedAccountAtom } from "@/store/frontdesk/atoms/chatwoot.atoms";
-import { ConversationFilterMenu, ConversationSortMenu, ConversationSearchBar, ConversationTabs } from "./conversation-list";
+import { ConversationFilterMenu, ConversationSortMenu, ConversationSearchBar, ConversationTabs, ConversationLabelsFilter, ConversationTeamsFilter } from "./conversation-list";
 
 interface ChatwootConversationListHeaderProps {
   status?: ConversationStatus;
@@ -16,7 +15,6 @@ interface ChatwootConversationListHeaderProps {
   onFiltersChange?: (filters: Partial<ConversationListParams>) => void;
   onFilterClick?: () => void;
   onSortClick?: () => void;
-  onNextClick?: () => void;
   onClearFilters?: () => void;
   conversations?: any[];
   mineCount?: number;
@@ -30,7 +28,6 @@ export const ChatwootConversationListHeader: React.FC<ChatwootConversationListHe
   onFiltersChange = () => {},
   onFilterClick,
   onSortClick,
-  onNextClick,
   onClearFilters,
   mineCount,
   unassignedCount,
@@ -92,30 +89,22 @@ export const ChatwootConversationListHeader: React.FC<ChatwootConversationListHe
           Tickets
         </Typography>
 
-        <Stack direction="row" spacing={1}>
-          {/* Clear Filters Button - only show when filters are active */}
-          {hasActiveFilters && onClearFilters && (
-            <Tooltip title="Clear Filters">
-              <IconButton
-                size="small"
-                onClick={onClearFilters}
-                sx={{
-                  color: primaryColor(600),
-                  backgroundColor: primaryColor(50),
-                  "&:hover": {
-                    backgroundColor: primaryColor(100),
-                    boxShadow: `0 2px 8px ${primaryColor(200)}`,
-                  },
-                  width: 36,
-                  height: 36,
-                  transition: "all 0.2s ease-in-out",
-                  boxShadow: `0 1px 3px ${neutralColor(200)}`,
-                }}
-              >
-                <ClearIcon fontSize="small" />
-              </IconButton>
-            </Tooltip>
-          )}
+        <Stack direction="row" spacing={0.25} alignItems="center">
+          <ConversationLabelsFilter
+            accountId={accountId}
+            filters={filters}
+            onFiltersChange={onFiltersChange}
+            primaryColor={primaryColor}
+            neutralColor={neutralColor}
+          />
+
+          <ConversationTeamsFilter
+            accountId={accountId}
+            filters={filters}
+            onFiltersChange={onFiltersChange}
+            primaryColor={primaryColor}
+            neutralColor={neutralColor}
+          />
 
           <ConversationFilterMenu
             filters={filters}
@@ -134,27 +123,28 @@ export const ChatwootConversationListHeader: React.FC<ChatwootConversationListHe
             neutralColor={neutralColor}
           />
 
-          {/* Next/Navigation Button */}
-          <Tooltip title="Next">
-            <IconButton
-              size="small"
-              onClick={onNextClick}
-              sx={{
-                color: neutralColor(600),
-                backgroundColor: neutralColor(100),
-                "&:hover": {
-                  backgroundColor: neutralColor(200),
-                  boxShadow: `0 2px 8px ${neutralColor(300)}`,
-                },
-                width: 36,
-                height: 36,
-                transition: "all 0.2s ease-in-out",
-                boxShadow: `0 1px 3px ${neutralColor(200)}`,
-              }}
-            >
-              <ArrowForwardIosIcon fontSize="small" />
-            </IconButton>
-          </Tooltip>
+          {/* Clear Filters Button - moved to next button position */}
+          {hasActiveFilters && onClearFilters && (
+            <Tooltip title="Clear Filters">
+              <IconButton
+                size="small"
+                onClick={onClearFilters}
+                sx={{
+                  color: neutralColor(600),
+                  "&:hover": {
+                    backgroundColor: neutralColor(100),
+                    color: primaryColor(600),
+                  },
+                  width: 28,
+                  height: 28,
+                  padding: 0.5,
+                  transition: "all 0.2s ease-in-out",
+                }}
+              >
+                <ClearIcon sx={{ fontSize: 16 }} />
+              </IconButton>
+            </Tooltip>
+          )}
         </Stack>
       </Stack>
 

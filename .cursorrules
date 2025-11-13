@@ -73,13 +73,20 @@ Chatwoot Backend (Rails API)
 - When touching OAuth or auth flows, follow the redirect + token handling sequence defined in the FrontDesk docs and reuse `getUserToken()` helpers.
 - Cross-reference the `.cursor/rules/` modules for provider, UI, Recoil, and Socket.IO specifics before writing code.
 
-## Reference Rule Modules
-- frontdesk-architecture.mdc
-- frontdesk-messaging-ui.mdc
-- frontdesk-email-integration.mdc
-- frontdesk-internal-messaging.mdc
-- mcp-integrations.mdc
-- mui-theming.mdc
-- recoil-state.mdc
-- typescript-patterns.mdc
-- websocket-realtime.mdc
+## 📋 Reference Rule Modules (`.cursor/rules/`)
+
+### FrontDesk Core Rules
+- **`frontdesk-architecture.mdc`** - Core architecture patterns for ALL providers
+- **`frontdesk-chatwoot-provider.mdc`** - Chatwoot-specific development rules
+- **`chatwoot-skills-integration.mdc`** - How to use Chatwoot skills for adaptation
+
+### Skills Reference (`.claude/skills/chatwoot/`)
+When implementing Chatwoot features, ALWAYS check skills first:
+- **Core Skills**: `core-architecture.md`, `api-patterns.md`, `state-management.md`, `component-patterns.md`
+- **Flow Skills**: `flows/message-sending-flow.md`, `flows/conversation-list-filtering.md`, `flows/contact-management.md`, `flows/new-conversation-creation.md`
+
+### Quick Access Pattern
+1. Check `.cursor/ai-dev-acceleration.md` for quick patterns
+2. Check `.cursor/rules/` for architectural guidance
+3. Check `.claude/skills/chatwoot/` for Chatwoot reference patterns
+4. Check Chatwoot demo: `/Users/omarsabbah/Desktop/messaging/chatwoot/app/javascript/dashboard/`

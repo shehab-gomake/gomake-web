@@ -1,4 +1,4 @@
-import { atom, selector, selectorFamily } from "recoil";
+import { atom, selector, selectorFamily, atomFamily } from "recoil";
 import type {
   ChatwootUser,
   ChatwootUserAccount,
@@ -97,6 +97,56 @@ export const chatwootConversationCountsAtom = atom<{
 }>({
   key: "frontdesk.chatwoot.conversationCounts",
   default: { mine: 0, unassigned: 0, all: 0 },
+});
+
+/**
+ * View-scoped Conversation Cache
+ *
+ * Caches conversations per view/filter combination to avoid refetching when
+ * navigating between views. Each cache entry is keyed by a stable filter key.
+ *
+ * Cache Strategy:
+ * - Store conversations per view/filter combination
+ * - Track timestamp for stale detection (30 second default)
+ * - Track pagination state (hasMore, current page)
+ * - Invalidate on explicit refresh or account switch
+ */
+export interface ConversationCacheEntry {
+  conversations: ChatwootConversation[];
+  timestamp: number;
+  hasMore: boolean;
+  totalPages: number;
+  error: string | null;
+}
+
+/**
+ * Atom family for caching conversations per filter key
+ * Key format: Stable JSON string of filter parameters
+ * Example: '{"accountId":1,"inboxId":null,"status":"open","assigneeType":"me"}'
+ */
+export const chatwootConversationsCacheFamily = atomFamily<ConversationCacheEntry, string>({
+  key: "frontdesk.chatwoot.conversationsCache",
+  default: {
+    conversations: [],
+    timestamp: 0,
+    hasMore: true,
+    totalPages: 0,
+    error: null,
+  },
+});
+
+/**
+ * Cache configuration
+ */
+export const CONVERSATION_CACHE_STALE_TIME = 30000; // 30 seconds
+
+/**
+ * Track active cache keys for cleanup/invalidation
+ * Used to clear all caches on account switch or manual refresh
+ */
+export const chatwootCacheKeysAtom = atom<Set<string>>({
+  key: "frontdesk.chatwoot.cacheKeys",
+  default: new Set(),
 });
 
 // Messages

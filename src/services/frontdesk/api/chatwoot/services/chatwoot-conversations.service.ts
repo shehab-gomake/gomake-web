@@ -12,6 +12,7 @@ import {
   ConversationListParams,
   ConversationListResponse,
   ConversationDetailResponse,
+  ConversationStatusToggleResponse,
   ChatwootConversation,
   ConversationStatus,
   ConversationAssigneeType,
@@ -281,10 +282,10 @@ export class ChatwootConversationsService extends BaseChatwootService {
     conversationId: number,
     payload: {
       status: 'open' | 'resolved' | 'pending' | 'snoozed';
-      snoozed_until?: string;
+      snoozed_until?: string | number;
     }
-  ): Promise<ConversationDetailResponse> {
-    return await this.post<ConversationDetailResponse>(
+  ): Promise<ConversationStatusToggleResponse> {
+    return await this.post<ConversationStatusToggleResponse>(
       `/api/accounts/conversations/${conversationId}/toggle_status`,
       payload
     );

@@ -133,3 +133,4 @@ When adding new features:
 3. Follow the established patterns for consistency
 4. Update this README if you add new patterns
 
+

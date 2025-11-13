@@ -30,14 +30,21 @@ import { DASHBOARD_LIMITS } from '../../constants/dashboard.constants';
  * Displays three collapsible sections showing filtered conversation lists
  */
 export interface ChatwootQuickViewProps {
-  /** Conversations assigned to current user */
+  /** Conversations assigned to current user (for display) */
   myConversations: ChatwootConversation[];
 
-  /** Conversations where user was mentioned */
+  /** Conversations where user was mentioned (for display) */
   mentionedConversations: ChatwootConversation[];
 
-  /** Conversations that are unassigned */
+  /** Conversations that are unassigned (for display) */
   unattendedConversations: ChatwootConversation[];
+
+  /** API-provided counts (accurate across all conversations) */
+  counts?: {
+    mine?: number;
+    unassigned?: number;
+    mentions?: number;
+  };
 
   /** Callback when a conversation is clicked */
   onConversationSelect: (conversationId: number, inboxId?: number) => void;
@@ -54,6 +61,7 @@ export const ChatwootQuickView: React.FC<ChatwootQuickViewProps> = ({
   myConversations,
   mentionedConversations,
   unattendedConversations,
+  counts,
   onConversationSelect,
   onViewAll,
   isLoading = false,
@@ -64,6 +72,11 @@ export const ChatwootQuickView: React.FC<ChatwootQuickViewProps> = ({
   const [myConversationsExpanded, setMyConversationsExpanded] = useState(true);
   const [mentionsExpanded, setMentionsExpanded] = useState(true);
   const [unattendedExpanded, setUnattendedExpanded] = useState(true);
+
+  // Use API-provided counts if available, otherwise fall back to array length
+  const myCount = counts?.mine ?? myConversations.length;
+  const unassignedCount = counts?.unassigned ?? unattendedConversations.length;
+  const mentionsCount = counts?.mentions ?? mentionedConversations.length;
 
   const SectionHeader: React.FC<{
     title: string;
@@ -163,7 +176,7 @@ export const ChatwootQuickView: React.FC<ChatwootQuickViewProps> = ({
         <Box sx={{ mb: 2 }}>
           <SectionHeader
             title="My Conversations"
-            count={myConversations.length}
+            count={myCount}
             isExpanded={myConversationsExpanded}
             onToggle={() => setMyConversationsExpanded(!myConversationsExpanded)}
             onViewAll={() => onViewAll('my-inbox')}
@@ -207,7 +220,7 @@ export const ChatwootQuickView: React.FC<ChatwootQuickViewProps> = ({
         <Box sx={{ my: 2 }}>
           <SectionHeader
             title="Mentions"
-            count={mentionedConversations.length}
+            count={mentionsCount}
             isExpanded={mentionsExpanded}
             onToggle={() => setMentionsExpanded(!mentionsExpanded)}
             onViewAll={() => onViewAll('mentions')}
@@ -251,7 +264,7 @@ export const ChatwootQuickView: React.FC<ChatwootQuickViewProps> = ({
         <Box sx={{ mt: 2 }}>
           <SectionHeader
             title="Unattended"
-            count={unattendedConversations.length}
+            count={unassignedCount}
             isExpanded={unattendedExpanded}
             onToggle={() => setUnattendedExpanded(!unattendedExpanded)}
             onViewAll={() => onViewAll('unattended')}
