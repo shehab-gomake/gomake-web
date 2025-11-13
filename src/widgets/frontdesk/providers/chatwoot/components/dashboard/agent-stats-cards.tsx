@@ -88,7 +88,7 @@ export const AgentStatsCards: React.FC<AgentStatsCardsProps> = ({
             label="Mentions"
             value={stats.mentions}
             icon={<ChatIcon />}
-            variant={stats.mentions === 0 ? "default" : "warning"}
+            variant={stats.mentions === 0 ? "neutral" : "warning"}
             description="Need my attention"
             isLoading={isLoading}
             onClick={() => onCardClick?.("mentions")}

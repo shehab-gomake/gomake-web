@@ -2,11 +2,13 @@ import React from "react";
 import { Box, Stack, Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
-import { ChatwootConversation } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
+import { ChatwootConversation, ConversationPriority } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
 import { useRecoilValue } from "recoil";
 import { chatwootProfileAtom } from "@/store/frontdesk/atoms/chatwoot.atoms";
 import { ConversationStatusSelector } from "./conversation-status-selector";
 import { ConversationPrioritySelector } from "./conversation-priority-selector";
+
+type PriorityValue = ConversationPriority.URGENT | ConversationPriority.HIGH | ConversationPriority.MEDIUM | ConversationPriority.LOW | null;
 
 interface ChatwootMessageViewerHeaderProps {
   conversation: ChatwootConversation | null;
@@ -17,7 +19,7 @@ interface ChatwootMessageViewerHeaderProps {
   onSnooze?: () => void;
   onMarkAsPending?: () => void;
   onStatusChange?: (status: string) => void;
-  onPriorityChange?: (priority: "urgent" | "high" | "medium" | "low" | null) => void;
+  onPriorityChange?: (priority: PriorityValue) => void;
   updating?: boolean;
 }
 
@@ -42,7 +44,19 @@ export const ChatwootMessageViewerHeader: React.FC<ChatwootMessageViewerHeaderPr
   // Get current user display name (from profile)
   const currentUserName = profile?.name || profile?.available_name || profile?.email || "";
 
-  const currentPriority = (conversation.priority || null) as "urgent" | "high" | "medium" | "low" | null;
+  // Convert string priority to enum value
+  const getPriorityValue = (priority: string | undefined | null): PriorityValue => {
+    if (!priority) return null;
+    const priorityMap: Record<string, PriorityValue> = {
+      [ConversationPriority.URGENT]: ConversationPriority.URGENT,
+      [ConversationPriority.HIGH]: ConversationPriority.HIGH,
+      [ConversationPriority.MEDIUM]: ConversationPriority.MEDIUM,
+      [ConversationPriority.LOW]: ConversationPriority.LOW,
+    };
+    return priorityMap[priority] || null;
+  };
+
+  const currentPriority = getPriorityValue(conversation.priority);
 
   return (
     <Box

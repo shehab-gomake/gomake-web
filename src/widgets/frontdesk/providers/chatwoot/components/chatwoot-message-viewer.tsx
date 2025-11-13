@@ -11,7 +11,10 @@ import { useChatwootMessages } from "../hooks/use-chatwoot-messages";
 import {
   ChatwootConversation,
   ConversationStatus,
+  ConversationPriority,
 } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
+
+type PriorityValue = ConversationPriority.URGENT | ConversationPriority.HIGH | ConversationPriority.MEDIUM | ConversationPriority.LOW | null;
 import type { ChatwootInbox } from "@/services/frontdesk/api/chatwoot/types/inboxes.types";
 import { chatwootService } from "@/services/frontdesk";
 // New Chatwoot-specific loading and empty states
@@ -179,13 +182,16 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
     }
   };
 
-  const handlePriorityChange = async (newPriority: "urgent" | "high" | "medium" | "low" | null) => {
+  const handlePriorityChange = async (newPriority: PriorityValue) => {
     if (!accountId || !conversation.id) return;
 
     try {
+      // Convert enum value to string for API (API expects string)
+      const priorityString = newPriority || null;
+      
       // Update conversation via API
       const response = await chatwootService.conversations.updateConversation(accountId, conversation.id, {
-        priority: newPriority,
+        priority: priorityString,
       });
 
       // Get updated conversation from response
@@ -193,7 +199,7 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
       const finalConversation = {
         ...conversation,
         ...updatedConversation,
-        priority: newPriority,
+        priority: priorityString,
       };
 
       // Update in list
