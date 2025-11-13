@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import { useRecoilState, useSetRecoilState, useRecoilValue } from "recoil";
 import { chatwootService } from "@/services/frontdesk";
 import {
@@ -15,6 +15,12 @@ import {
   ChatwootConversationsLoadingState,
 } from "@/store/frontdesk/atoms/chatwoot.atoms";
 import { useFetchDeduplication } from "./use-chatwoot-initialization";
+import { createFilterKey } from "../utils/filter-utils";
+
+// Global flag to prevent concurrent conversation fetches across all instances
+// Similar to globalTeamsFetchInProgress pattern used in useChatwootTeams
+let globalConversationsFetchInProgress = false;
+let globalLastFetchParamsKey: string | null = null;
 
 export const useChatwootConversations = (accountId: number | null, options: Partial<ConversationListParams> = {}) => {
   const [conversations, setConversations] = useRecoilState(chatwootConversationsAtom);
@@ -32,6 +38,15 @@ export const useChatwootConversations = (accountId: number | null, options: Part
 
   // Track previous filter key to detect filter changes
   const prevFilterKeyRef = useRef<string>("");
+
+  // Track if a fetch is currently in progress to prevent concurrent calls
+  const isFetchingRef = useRef(false);
+
+  // Track conversations length in a ref to avoid recreating fetchConversations callback
+  const conversationsLengthRef = useRef(conversations.length);
+  useEffect(() => {
+    conversationsLengthRef.current = conversations.length;
+  }, [conversations.length]);
 
   // Helper to update specific loading states
   const setLoadingType = useCallback((type: keyof ChatwootConversationsLoadingState, value: boolean) => {
@@ -56,18 +71,43 @@ export const useChatwootConversations = (accountId: number | null, options: Part
         ...(options.labels && { labels: options.labels }),
       };
 
-      // Check if we should proceed with this fetch (prevents duplicates and concurrent fetches)
+      // Create stable key for global deduplication
+      const paramsKey = createFilterKey(accountId, listParams);
+
+      // Global deduplication guard (prevents concurrent requests across all component instances)
+      // This check happens FIRST to prevent race conditions
+      if (!append) {
+        if (globalConversationsFetchInProgress) {
+          console.log("[useChatwootConversations] ⏭️ Global fetch already in progress, skipping duplicate");
+          return;
+        }
+
+        // Check if same params as last successful fetch
+        if (paramsKey === globalLastFetchParamsKey) {
+          console.log("[useChatwootConversations] ⏭️ Same params as last fetch, skipping duplicate");
+          return;
+        }
+
+        // Mark global fetch as in progress
+        globalConversationsFetchInProgress = true;
+      }
+
+      // Instance-level deduplication check (backup)
       if (!append && !shouldFetch(listParams)) {
-        console.log("[useChatwootConversations] Skipping duplicate/concurrent fetch");
+        console.log("[useChatwootConversations] Skipping duplicate/concurrent fetch (instance-level)");
+        if (!append) {
+          globalConversationsFetchInProgress = false;
+        }
         return;
       }
 
+      // Mark fetch start AFTER the check passes
       markFetchStart();
 
       // Set appropriate loading state based on operation type
       if (append) {
         setLoadingType('loadingMore', true);
-      } else if (isFilterChange && conversations.length > 0) {
+      } else if (isFilterChange && conversationsLengthRef.current > 0) {
         setLoadingType('filtering', true);
       } else {
         setLoadingType('initialLoading', true);
@@ -113,11 +153,18 @@ export const useChatwootConversations = (accountId: number | null, options: Part
         // Mark fetch as complete to prevent duplicate calls
         if (!append) {
           markFetchComplete(listParams);
+          // Update global state
+          globalLastFetchParamsKey = paramsKey;
+          globalConversationsFetchInProgress = false;
         }
       } catch (err: any) {
         setError(err.message || "Failed to load conversations");
         console.error("Failed to fetch Chatwoot conversations:", err);
         markFetchFailed();
+        // Reset global flag on error
+        if (!append) {
+          globalConversationsFetchInProgress = false;
+        }
       } finally {
         // Reset all loading states
         setLoadingState({
@@ -125,6 +172,10 @@ export const useChatwootConversations = (accountId: number | null, options: Part
           filtering: false,
           loadingMore: false,
         });
+        // Ensure global flag is reset even if something goes wrong
+        if (!append && globalConversationsFetchInProgress) {
+          globalConversationsFetchInProgress = false;
+        }
       }
     },
     [
@@ -137,7 +188,7 @@ export const useChatwootConversations = (accountId: number | null, options: Part
       options.q,
       options.team_id,
       options.labels,
-      conversations.length,
+      // Removed conversations.length - using ref instead to prevent unnecessary re-renders
       setConversations,
       setLoadingState,
       setLoadingType,
@@ -250,41 +301,56 @@ export const useChatwootConversations = (accountId: number | null, options: Part
     [accountId, conversations, setConversations, setError]
   );
 
+  // Create a stable filter key using the same utility function used elsewhere
+  // This ensures consistent comparison and prevents unnecessary re-renders
+  const stableFilterKey = useMemo(() => {
+    return createFilterKey(accountId, options || {});
+  }, [accountId, options?.inbox_id, options?.status, options?.assignee_type, options?.q, options?.team_id, options?.labels, options?.sort_by, options?.limit]);
+
   useEffect(() => {
-    // Create a stable filter key to detect changes
-    const filterKey = JSON.stringify({
-      accountId,
-      inbox_id: options.inbox_id,
-      status: options.status,
-      assignee_type: options.assignee_type,
-      q: options.q,
-      team_id: options.team_id,
-      labels: options.labels, // ← Added labels to trigger refetch when they change
-    });
+    // Skip if already fetching to prevent concurrent calls
+    if (isFetchingRef.current) {
+      console.log("[useChatwootConversations] Skipping - fetch already in progress");
+      return;
+    }
 
     // Skip the first mount to prevent double fetch during initialization
     if (isFirstMountRef.current) {
       isFirstMountRef.current = false;
-      prevFilterKeyRef.current = filterKey;
+      prevFilterKeyRef.current = stableFilterKey;
       // Still fetch on first mount, but the deduplication will prevent multiple calls
-      fetchConversations(1, false, false);
+      isFetchingRef.current = true;
+      fetchConversations(1, false, false).finally(() => {
+        isFetchingRef.current = false;
+      });
       return;
     }
 
     // Detect if filters have changed
-    const isFilterChange = filterKey !== prevFilterKeyRef.current;
-    prevFilterKeyRef.current = filterKey;
+    const isFilterChange = stableFilterKey !== prevFilterKeyRef.current;
+    
+    // If filters haven't changed, don't do anything
+    if (!isFilterChange) {
+      return;
+    }
+
+    // Update the previous filter key
+    prevFilterKeyRef.current = stableFilterKey;
+
+    // Mark as fetching to prevent concurrent calls
+    isFetchingRef.current = true;
 
     // Clear stale conversations immediately when filters change
     // This prevents showing old conversations from previous view during fetch
-    if (isFilterChange) {
-      setConversations([]);
-      setLoadingType('initialLoading', true);
-    }
+    setConversations([]);
+    setLoadingType('initialLoading', true);
 
     // Fetch conversations with filter change flag
-    fetchConversations(1, false, isFilterChange);
-  }, [accountId, options, fetchConversations, setConversations, setLoadingType]);
+    fetchConversations(1, false, true).finally(() => {
+      isFetchingRef.current = false;
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [stableFilterKey]); // Only depend on stableFilterKey - fetchConversations is stable enough via its own deps
 
   return {
     conversations,
