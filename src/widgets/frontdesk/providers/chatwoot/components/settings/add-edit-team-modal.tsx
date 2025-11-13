@@ -348,7 +348,19 @@ export const AddEditTeamModal: React.FC<AddEditTeamModalProps> = ({
                   color: neutralColor(800),
                 }}
               >
-                Team Members <span style={{ fontSize: "0.75rem", color: neutralColor(500) }}>(Optional)</span>
+                Team Members
+              </Typography>
+              <Typography
+                sx={{
+                  mb: 1.5,
+                  fontSize: "0.75rem",
+                  color: neutralColor(600),
+                  lineHeight: 1.5,
+                }}
+              >
+                {isEditMode
+                  ? "Add Agents to this team. All the added agents will be notified when a conversation is assigned to this team."
+                  : "Add Agents to your newly created team. All the added agents will be notified when a conversation is assigned to this team."}
               </Typography>
               <FormControl
                 fullWidth
@@ -651,9 +663,7 @@ export const AddEditTeamModal: React.FC<AddEditTeamModalProps> = ({
                 border: `1px solid ${primaryColor(200)}`,
               }}
             >
-              <Typography sx={{ fontSize: "0.75rem", fontWeight: 600, color: primaryColor(800), mb: 1 }}>
-                💡 Quick Tip
-              </Typography>
+              <Typography sx={{ fontSize: "0.75rem", fontWeight: 600, color: primaryColor(800), mb: 1 }}>💡 Quick Tip</Typography>
               <Typography sx={{ fontSize: "0.7rem", color: primaryColor(700), lineHeight: 1.5 }}>
                 Teams help organize conversations and distribute workload. Add members to enable collaborative support.
               </Typography>

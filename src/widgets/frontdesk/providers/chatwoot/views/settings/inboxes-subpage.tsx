@@ -8,10 +8,11 @@
  */
 
 import React, { useState, useEffect } from "react";
-import { Box, Typography, Alert, IconButton, Button, List, ListItem, ListItemAvatar, ListItemText, Avatar, Divider } from "@mui/material";
+import { Box, Typography, Alert, IconButton, Button, List, ListItem, ListItemAvatar, ListItemText, Avatar, Divider, Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material";
 import InboxIcon from "@mui/icons-material/Inbox";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import AddIcon from "@mui/icons-material/Add";
+import DeleteIcon from "@mui/icons-material/Delete";
 import EmailIcon from "@mui/icons-material/Email";
 import PhoneIcon from "@mui/icons-material/Phone";
 import WebIcon from "@mui/icons-material/Web";
@@ -24,6 +25,7 @@ import { useChatwootInboxes } from "../../hooks/use-chatwoot-inboxes";
 import { AddChannelModal } from "../../components/add-channel-modal";
 import { InboxDetailSettings } from "./inbox-detail-settings";
 import type { ChatwootInbox } from "@/services/frontdesk/api/chatwoot/types/inboxes.types";
+import { chatwootService } from "@/services/frontdesk";
 
 // Custom WhatsApp Icon Component
 const WhatsAppIcon: React.FC = () => (
@@ -58,10 +60,15 @@ const getChannelTypeLabel = (channelType: string) => {
 };
 
 export const InboxesSubpage: React.FC = () => {
-  const { router: chatwootRouter } = useChatwootProvider();
+  const { router: chatwootRouter, selectedAccountId } = useChatwootProvider();
   const { inboxes, loading, error, refresh } = useChatwootInboxes();
   const [showAddChannelModal, setShowAddChannelModal] = useState(false);
   const [selectedInbox, setSelectedInbox] = useState<ChatwootInbox | null>(null);
+  
+  // Delete confirmation state
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [inboxToDelete, setInboxToDelete] = useState<ChatwootInbox | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   // Defense-in-depth: Check if user has permission to access Inboxes settings
   const { canAccess } = useChatwootPermissions();
@@ -74,6 +81,39 @@ export const InboxesSubpage: React.FC = () => {
       chatwootRouter.navigateToMyInbox();
     }
   }, [canAccessInboxes, chatwootRouter]);
+
+  // Open delete confirmation
+  const handleDeleteClick = (e: React.MouseEvent, inbox: ChatwootInbox) => {
+    e.stopPropagation(); // Prevent navigation to detail settings
+    setInboxToDelete(inbox);
+    setDeleteDialogOpen(true);
+  };
+
+  // Confirm and execute delete
+  const handleDeleteConfirm = async () => {
+    if (!selectedAccountId || !inboxToDelete?.id || deleting) return;
+
+    setDeleting(true);
+    try {
+      await chatwootService.inboxes.deleteInbox(selectedAccountId, inboxToDelete.id);
+      await refresh(); // Refresh the inbox list
+      setDeleteDialogOpen(false);
+      setInboxToDelete(null);
+    } catch (error: any) {
+      console.error("Failed to delete inbox:", error);
+      alert(error.message || "Failed to delete inbox");
+    } finally {
+      setDeleting(false);
+    }
+  };
+
+  // Cancel delete
+  const handleDeleteCancel = () => {
+    if (!deleting) {
+      setDeleteDialogOpen(false);
+      setInboxToDelete(null);
+    }
+  };
 
   // If an inbox is selected, show detail view
   if (selectedInbox) {
@@ -184,6 +224,20 @@ export const InboxesSubpage: React.FC = () => {
                       </Typography>
                     }
                   />
+                  <IconButton
+                    onClick={(e) => handleDeleteClick(e, inbox)}
+                    size="small"
+                    aria-label={`Delete inbox ${inbox.name}`}
+                    disabled={deleting || loading}
+                    sx={{
+                      color: "text.secondary",
+                      "&:hover": {
+                        color: "error.main",
+                      },
+                    }}
+                  >
+                    <DeleteIcon fontSize="small" />
+                  </IconButton>
                 </ListItem>
                 {index < inboxes.length - 1 && <Divider component="li" />}
               </React.Fragment>
@@ -195,6 +249,44 @@ export const InboxesSubpage: React.FC = () => {
 
     {/* Add Channel Modal */}
     <AddChannelModal open={showAddChannelModal} onClose={() => setShowAddChannelModal(false)} />
+
+    {/* Delete Confirmation Dialog */}
+    <Dialog
+      open={deleteDialogOpen}
+      onClose={handleDeleteCancel}
+      maxWidth="xs"
+      fullWidth
+      PaperProps={{
+        sx: {
+          borderRadius: "12px",
+        },
+      }}
+    >
+      <DialogTitle>
+        <Typography variant="h6" sx={{ fontWeight: 600 }}>
+          Delete Inbox
+        </Typography>
+      </DialogTitle>
+      <DialogContent>
+        <Typography variant="body2" color="text.secondary">
+          Are you sure you want to delete <strong>{inboxToDelete?.name}</strong>? This action cannot be undone and will permanently delete all conversations in this inbox.
+        </Typography>
+      </DialogContent>
+      <DialogActions sx={{ px: 3, pb: 2 }}>
+        <Button onClick={handleDeleteCancel} disabled={deleting} sx={{ textTransform: "none" }}>
+          Cancel
+        </Button>
+        <Button
+          onClick={handleDeleteConfirm}
+          disabled={deleting}
+          variant="contained"
+          color="error"
+          sx={{ textTransform: "none" }}
+        >
+          {deleting ? "Deleting..." : "Delete"}
+        </Button>
+      </DialogActions>
+    </Dialog>
     </>
   );
 };

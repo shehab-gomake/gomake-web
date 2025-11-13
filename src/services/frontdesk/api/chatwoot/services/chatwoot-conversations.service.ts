@@ -17,6 +17,7 @@ import {
   ConversationStatus,
   ConversationAssigneeType,
   ConversationSortBy,
+  ConversationType,
 } from "../types/conversations.types";
 import type { ConversationLabels } from "../types/labels.types";
 
@@ -63,6 +64,7 @@ export class ChatwootConversationsService extends BaseChatwootService {
    * Supported query parameters:
    * - status: Filter by conversation status (all, open, resolved, pending, snoozed)
    * - assignee_type: Filter by assignee (me, unassigned, all, assigned)
+   * - conversation_type: Pre-defined filter type (unattended, mention, participating)
    * - sort_by: Sort order (last_activity_at_desc, last_activity_at_asc, created_at_desc, created_at_asc)
    * - page: Page number for pagination (default: 1)
    * - q: Search query string
@@ -110,6 +112,12 @@ export class ChatwootConversationsService extends BaseChatwootService {
       // Handle assignee_type (single value)
       if (params.assignee_type !== undefined) {
         queryParams.append("assignee_type", params.assignee_type);
+      }
+
+      // Handle conversation_type (single value)
+      // This is a pre-defined filter that translates to specific backend queries
+      if (params.conversation_type !== undefined) {
+        queryParams.append("conversation_type", params.conversation_type);
       }
 
       // Handle sort_by

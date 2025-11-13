@@ -11,6 +11,7 @@ import {
   ConversationListParams,
   ConversationStatus,
   ConversationAssigneeType,
+  ConversationType,
   ChatwootConversation,
 } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
 import { RouteType, ChatwootView } from "@/widgets/frontdesk/routing/types";
@@ -164,8 +165,19 @@ export const useChatwootProvider = () => {
       labels = labelsString.split(',').map(l => l.trim()).filter(l => l.length > 0);
     }
 
+    // Set conversation_type based on view
+    // This translates to specific backend queries as documented
+    let conversationType: ConversationType | undefined = undefined;
+    if (route.view === ChatwootView.MENTIONS) {
+      conversationType = ConversationType.MENTION;
+    } else if (route.view === ChatwootView.UNATTENDED) {
+      conversationType = ConversationType.UNATTENDED;
+    }
+    // Note: PARTICIPATING is not currently used in our views, but can be added if needed
+
     return {
       ...baseFilters,
+      ...(conversationType && { conversation_type: conversationType }),
       ...(searchQuery && { q: searchQuery }),
       ...(parsedTeamId && { team_id: parsedTeamId }),
       ...(sortBy && { sort_by: sortBy }),

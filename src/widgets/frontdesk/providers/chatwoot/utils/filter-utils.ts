@@ -8,6 +8,7 @@ import {
   ConversationStatus,
   ConversationAssigneeType,
   ConversationSortBy,
+  ConversationType,
   ConversationListParams,
 } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
 
@@ -123,6 +124,7 @@ export const createFilterKey = (
     status: filters.status === undefined ? "ALL" : filters.status,
     inbox_id: filters.inbox_id,
     assignee_type: filters.assignee_type,
+    conversation_type: filters.conversation_type, // Include conversation_type for proper caching
     sort_by: filters.sort_by,
     q: filters.q,
     team_id: filters.team_id,
