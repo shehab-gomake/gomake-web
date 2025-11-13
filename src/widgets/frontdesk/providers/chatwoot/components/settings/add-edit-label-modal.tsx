@@ -294,7 +294,7 @@ export const AddEditLabelModal: React.FC<AddEditLabelModalProps> = ({
           <Box>
             <Typography
               sx={{
-                mb: 1.5,
+                mb: 1,
                 fontSize: "0.875rem",
                 fontWeight: 600,
                 color: neutralColor(800),
@@ -304,87 +304,58 @@ export const AddEditLabelModal: React.FC<AddEditLabelModalProps> = ({
             </Typography>
 
             {/* Color Palette Grid */}
-            <Box sx={{ mb: 2 }}>
-              {Object.entries(COLOR_PALETTE).map(([category, colors]) => (
-                <Box key={category} sx={{ mb: 1 }}>
-                  <Box sx={{ display: "flex", gap: 1, mb: 0.5 }}>
-                    {colors.map((c) => (
-                      <Tooltip key={c} title={c} arrow placement="top">
-                        <Box
-                          onClick={() => !saving && !loading && setColor(c)}
-                          sx={{
-                            width: 36,
-                            height: 36,
-                            borderRadius: "8px",
-                            bgcolor: c,
-                            cursor: saving || loading ? "default" : "pointer",
-                            border: color === c ? "3px solid" : "2px solid",
-                            borderColor: color === c ? neutralColor(900) : neutralColor(300),
-                            transition: "all 0.15s cubic-bezier(0.4, 0, 0.2, 1)",
-                            position: "relative",
-                            "&:hover": {
-                              transform: saving || loading ? "none" : "scale(1.1)",
-                              borderColor: saving || loading ? neutralColor(300) : neutralColor(700),
-                              boxShadow: saving || loading ? "none" : "0 4px 12px rgba(0,0,0,0.15)",
-                            },
-                          }}
-                        >
-                          {color === c && (
-                            <CheckCircleIcon
-                              sx={{
-                                position: "absolute",
-                                top: "50%",
-                                left: "50%",
-                                transform: "translate(-50%, -50%)",
-                                fontSize: 18,
-                                color: "#FFFFFF",
-                                filter: "drop-shadow(0 1px 2px rgba(0,0,0,0.3))",
-                              }}
-                            />
-                          )}
-                        </Box>
-                      </Tooltip>
-                    ))}
+            <Box 
+              sx={{ 
+                mb: 1.5,
+                display: "grid",
+                gridTemplateColumns: "repeat(16, 1fr)",
+                gap: 0.375,
+                p: 0.5,
+                borderRadius: "8px",
+                bgcolor: neutralColor(50),
+                border: `1px solid ${neutralColor(200)}`,
+              }}
+            >
+              {ALL_COLORS.map((c) => (
+                <Tooltip key={c} title={c} arrow placement="top">
+                  <Box
+                    onClick={() => !saving && !loading && setColor(c)}
+                    sx={{
+                      width: 24,
+                      height: 24,
+                      borderRadius: "6px",
+                      bgcolor: c,
+                      cursor: saving || loading ? "default" : "pointer",
+                      border: color === c ? "2px solid" : "1px solid",
+                      borderColor: color === c ? neutralColor(900) : neutralColor(300),
+                      transition: "all 0.15s cubic-bezier(0.4, 0, 0.2, 1)",
+                      position: "relative",
+                      flexShrink: 0,
+                      "&:hover": {
+                        transform: saving || loading ? "none" : "scale(1.15)",
+                        borderColor: saving || loading ? neutralColor(300) : neutralColor(700),
+                        boxShadow: saving || loading ? "none" : "0 2px 6px rgba(0,0,0,0.15)",
+                        zIndex: 1,
+                      },
+                    }}
+                  >
+                    {color === c && (
+                      <CheckCircleIcon
+                        sx={{
+                          position: "absolute",
+                          top: "50%",
+                          left: "50%",
+                          transform: "translate(-50%, -50%)",
+                          fontSize: 14,
+                          color: "#FFFFFF",
+                          filter: "drop-shadow(0 1px 2px rgba(0,0,0,0.4))",
+                        }}
+                      />
+                    )}
                   </Box>
-                </Box>
+                </Tooltip>
               ))}
             </Box>
-
-            {/* Custom Color Input */}
-            <TextField
-              fullWidth
-              size="small"
-              value={color}
-              onChange={(e) => {
-                const value = e.target.value;
-                if (value.match(/^#[0-9A-Fa-f]{0,6}$/)) {
-                  setColor(value);
-                }
-              }}
-              placeholder="#FF0000"
-              disabled={saving || loading}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <Box
-                      sx={{
-                        width: 24,
-                        height: 24,
-                        borderRadius: "6px",
-                        bgcolor: color,
-                        border: `2px solid ${neutralColor(300)}`,
-                      }}
-                    />
-                  </InputAdornment>
-                ),
-              }}
-              sx={{
-                "& .MuiOutlinedInput-root": {
-                  borderRadius: "8px",
-                  fontSize: "0.875rem",
-                },
-              }}
-            />
           </Box>
 
           {/* Show on Sidebar */}
@@ -521,23 +492,6 @@ export const AddEditLabelModal: React.FC<AddEditLabelModalProps> = ({
                 </Typography>
               )}
             </Box>
-          </Box>
-
-          {/* Usage Context */}
-          <Box
-            sx={{
-              p: 2,
-              borderRadius: "10px",
-              bgcolor: primaryColor(50),
-              border: `1px solid ${primaryColor(200)}`,
-            }}
-          >
-            <Typography sx={{ fontSize: "0.75rem", fontWeight: 600, color: primaryColor(800), mb: 1 }}>
-              💡 Quick Tip
-            </Typography>
-            <Typography sx={{ fontSize: "0.7rem", color: primaryColor(700), lineHeight: 1.5 }}>
-              Use descriptive labels to categorize conversations. Choose colors that match your workflow and priorities.
-            </Typography>
           </Box>
         </Box>
       </Box>

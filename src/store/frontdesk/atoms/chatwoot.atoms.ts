@@ -404,3 +404,66 @@ export const chatwootOAuthProviderAtom = atom<string | null>({
   default: null,
 });
 
+/**
+ * Navigation Count Selectors
+ * Efficient selectors for computing navigation bar counts
+ * These selectors compute derived data from conversations and cache results
+ */
+
+/**
+ * My Inbox Count Selector
+ * Counts open conversations assigned to the current user
+ */
+export const myInboxCountSelector = selector<number>({
+  key: "frontdesk.chatwoot.myInboxCount",
+  get: ({ get }) => {
+    const conversations = get(chatwootConversationsAtom);
+    const profile = get(chatwootProfileAtom);
+    const currentUserId = profile?.id;
+
+    if (!currentUserId) {
+      return 0;
+    }
+
+    return conversations.filter(
+      (conv) =>
+        conv.status === "open" &&
+        conv.meta?.assignee?.id === currentUserId
+    ).length;
+  },
+});
+
+/**
+ * Mentions Count Selector
+ * Counts conversations with unread messages (proxy for mentions)
+ * Note: Chatwoot API doesn't have a dedicated mentions filter yet,
+ * so we use unread_count > 0 as a proxy
+ */
+export const mentionsCountSelector = selector<number>({
+  key: "frontdesk.chatwoot.mentionsCount",
+  get: ({ get }) => {
+    const conversations = get(chatwootConversationsAtom);
+
+    return conversations.filter(
+      (conv) => (conv.unread_count || 0) > 0 && conv.meta?.sender?.name
+    ).length;
+  },
+});
+
+/**
+ * Unattended Count Selector
+ * Counts open conversations that are unassigned
+ */
+export const unattendedCountSelector = selector<number>({
+  key: "frontdesk.chatwoot.unattendedCount",
+  get: ({ get }) => {
+    const conversations = get(chatwootConversationsAtom);
+
+    return conversations.filter(
+      (conv) =>
+        conv.status === "open" &&
+        (!conv.meta?.assignee || conv.meta.assignee.id === null || conv.meta.assignee.id === undefined)
+    ).length;
+  },
+});
+

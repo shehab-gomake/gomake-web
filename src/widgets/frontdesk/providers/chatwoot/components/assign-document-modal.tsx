@@ -219,10 +219,8 @@ export const AssignDocumentModal: React.FC<AssignDocumentModalProps> = ({
       aria-labelledby="assign-document-modal-title"
       PaperProps={{
         sx: {
-          borderRadius: 2,
+          borderRadius: "8px",
           maxHeight: "90vh",
-          backgroundColor: neutralColor(0),
-          boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
         },
       }}
     >
@@ -230,70 +228,46 @@ export const AssignDocumentModal: React.FC<AssignDocumentModalProps> = ({
       <DialogTitle
         sx={{
           display: "flex",
-          justifyContent: "space-between",
           alignItems: "center",
-          borderBottom: `2px solid ${neutralColor(200)}`,
-          pb: 2.5,
-          pt: 3,
-          px: 4,
-          backgroundColor: neutralColor(0),
+          justifyContent: "space-between",
+          pb: 2,
+          pt: 2.5,
+          px: 3,
+          borderBottom: `1px solid ${neutralColor(200)}`,
         }}
       >
-        <Stack direction="row" alignItems="center" spacing={2}>
-          <Box
-            sx={{
-              width: 40,
-              height: 40,
-              borderRadius: 2,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              backgroundColor: primaryColor(50),
-              color: primaryColor(600),
-            }}
-          >
-            <LinkIcon />
-          </Box>
-          <Typography
-            id="assign-document-modal-title"
-            variant="h5"
-            sx={{
-              fontWeight: 600,
-              color: neutralColor(900),
-              fontSize: "1.375rem",
-            }}
-          >
-            {modalTitle}
-          </Typography>
-        </Stack>
+        <Typography
+          id="assign-document-modal-title"
+          variant="h6"
+          sx={{ fontWeight: 600, fontSize: "1.125rem", color: neutralColor(900) }}
+        >
+          {modalTitle}
+        </Typography>
         <IconButton
           onClick={onClose}
           size="small"
+          disabled={loading}
           aria-label="Close assign document modal"
           sx={{
             color: neutralColor(600),
             "&:hover": {
-              backgroundColor: neutralColor(100),
-              color: neutralColor(900),
+              bgcolor: neutralColor(100),
             },
           }}
         >
-          <CloseIcon />
+          <CloseIcon fontSize="small" />
         </IconButton>
       </DialogTitle>
 
       {/* Content */}
-      <DialogContent sx={{ px: 0, py: 0 }}>
-        <Stack spacing={0}>
-          {/* Error Alert */}
-          {error && (
-            <Box sx={{ px: 4, pt: 3 }}>
-              <Alert severity="error" onClose={() => setError(null)}>
-                {error}
-              </Alert>
-            </Box>
-          )}
+      <DialogContent sx={{ pt: 3, px: 3, pb: 2 }}>
+        {error && (
+          <Alert severity="error" onClose={() => setError(null)} sx={{ mb: 2 }}>
+            {error}
+          </Alert>
+        )}
 
+        <Stack spacing={3}>
           {/* Customer Info - Only show if customer exists */}
           {customerName && (
             <Box
@@ -301,10 +275,9 @@ export const AssignDocumentModal: React.FC<AssignDocumentModalProps> = ({
                 display: "flex",
                 alignItems: "center",
                 gap: 1.5,
-                px: 4,
-                py: 3,
-                borderBottom: `1px solid ${neutralColor(200)}`,
-                backgroundColor: neutralColor(0),
+                p: 2,
+                backgroundColor: neutralColor(50),
+                borderRadius: "6px",
               }}
             >
               <Box
@@ -349,41 +322,17 @@ export const AssignDocumentModal: React.FC<AssignDocumentModalProps> = ({
           )}
 
           {/* Connect to Existing Section */}
-          <Box
-            sx={{
-              px: 4,
-              py: 3,
-              borderBottom: `1px solid ${neutralColor(200)}`,
-              backgroundColor: neutralColor(0),
-            }}
-          >
-            <Stack direction="row" alignItems="center" spacing={1.5} sx={{ mb: 2 }}>
-              <Box
-                sx={{
-                  width: 32,
-                  height: 32,
-                  borderRadius: 1,
-                  backgroundColor: primaryColor(50),
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  color: primaryColor(600),
-                }}
-              >
-                <LinkIcon sx={{ fontSize: 18 }} />
-              </Box>
-              <Typography
-                sx={{
-                  fontSize: "0.75rem",
-                  color: neutralColor(700),
-                  fontWeight: 600,
-                  textTransform: "uppercase",
-                  letterSpacing: "0.05em",
-                }}
-              >
-                {t("frontdesk.connectToExisting", { defaultValue: "Connect to existing" })} {documentTitle}
-              </Typography>
-            </Stack>
+          <Box>
+            <Typography
+              sx={{
+                fontSize: "0.875rem",
+                color: neutralColor(800),
+                fontWeight: 600,
+                mb: 1.5,
+              }}
+            >
+              {t("frontdesk.connectToExisting", { defaultValue: "Connect to existing" })} {documentTitle}
+            </Typography>
 
             {loading ? (
               <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", py: 5 }}>
@@ -400,25 +349,9 @@ export const AssignDocumentModal: React.FC<AssignDocumentModalProps> = ({
                 </Typography>
               </Box>
             ) : !canConnectToExisting ? (
-              <Box
-                sx={{
-                  p: 3,
-                  borderRadius: 1,
-                  backgroundColor: "#FEF2F2",
-                  border: "1px solid #FEE2E2",
-                  textAlign: "center",
-                }}
-              >
-                <Typography
-                  variant="body2"
-                  sx={{
-                    fontWeight: 500,
-                    color: "#DC2626",
-                  }}
-                >
-                  {t("frontdesk.customerRequired", { defaultValue: "Customer must be linked to conversation first" })}
-                </Typography>
-              </Box>
+              <Alert severity="warning" icon={<ErrorOutlineIcon />}>
+                {t("frontdesk.customerRequired", { defaultValue: "Customer must be linked to conversation first" })}
+              </Alert>
             ) : (
               <>
                 <Box sx={{ position: "relative" }}>
@@ -612,37 +545,17 @@ export const AssignDocumentModal: React.FC<AssignDocumentModalProps> = ({
                   <Box
                     sx={{
                       mt: 2,
-                      p: 3,
-                      borderRadius: 1,
-                      backgroundColor: neutralColor(25),
+                      p: 2,
                       textAlign: "center",
-                      border: `1px dashed ${neutralColor(200)}`,
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "center",
-                      gap: 1,
+                      backgroundColor: neutralColor(50),
+                      borderRadius: "6px",
                     }}
                   >
-                    <Box
-                      sx={{
-                        width: 48,
-                        height: 48,
-                        borderRadius: "50%",
-                        backgroundColor: neutralColor(100),
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        mb: 0.5,
-                      }}
-                    >
-                      <DescriptionOutlinedIcon sx={{ fontSize: 24, color: neutralColor(500) }} />
-                    </Box>
                     <Typography
                       variant="body2"
                       sx={{
                         fontSize: "0.875rem",
-                        color: neutralColor(700),
-                        fontWeight: 500,
+                        color: neutralColor(600),
                       }}
                     >
                       {requiresCustomerId
@@ -651,18 +564,6 @@ export const AssignDocumentModal: React.FC<AssignDocumentModalProps> = ({
                             defaultValue: "Connecting to existing documents is not available for this document type",
                           })}
                     </Typography>
-                    {requiresCustomerId && (
-                      <Typography
-                        variant="caption"
-                        sx={{
-                          fontSize: "0.75rem",
-                          color: neutralColor(500),
-                          mt: 0.5,
-                        }}
-                      >
-                        {t("frontdesk.createNewInstead", { defaultValue: "You can create a new document instead" })}
-                      </Typography>
-                    )}
                   </Box>
                 )}
 
@@ -675,8 +576,8 @@ export const AssignDocumentModal: React.FC<AssignDocumentModalProps> = ({
                         sx={{
                           mt: 2,
                           p: 2,
-                          borderRadius: 1,
-                          backgroundColor: primaryColor(25),
+                          borderRadius: "6px",
+                          backgroundColor: primaryColor(50),
                           border: `1px solid ${primaryColor(200)}`,
                         }}
                       >
@@ -782,73 +683,25 @@ export const AssignDocumentModal: React.FC<AssignDocumentModalProps> = ({
           </Box>
 
           {/* Divider */}
-          <Box
-            sx={{
-              px: 4,
-              py: 2,
-              borderBottom: `1px solid ${neutralColor(200)}`,
-              backgroundColor: neutralColor(0),
-            }}
-          >
-            <Divider>
-              <Typography
-                variant="caption"
-                sx={{
-                  color: neutralColor(600),
-                  fontWeight: 600,
-                  fontSize: "0.75rem",
-                  letterSpacing: "0.5px",
-                  px: 2,
-                  backgroundColor: neutralColor(0),
-                }}
-              >
-                {t("frontdesk.or", { defaultValue: "OR" })}
-              </Typography>
-            </Divider>
-          </Box>
+          <Divider />
 
           {/* Create New Section */}
-          <Box
-            sx={{
-              px: 4,
-              py: 3,
-              borderBottom: `1px solid ${neutralColor(200)}`,
-              backgroundColor: neutralColor(0),
-            }}
-          >
-            <Stack direction="row" alignItems="center" spacing={1.5} sx={{ mb: 2 }}>
-              <Box
-                sx={{
-                  width: 32,
-                  height: 32,
-                  borderRadius: 1,
-                  backgroundColor: "rgba(16, 185, 129, 0.1)",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  color: "#10b981",
-                }}
-              >
-                <AddIcon sx={{ fontSize: 18 }} />
-              </Box>
-              <Typography
-                sx={{
-                  fontSize: "0.75rem",
-                  color: neutralColor(700),
-                  fontWeight: 600,
-                  textTransform: "uppercase",
-                  letterSpacing: "0.05em",
-                }}
-              >
-                {t("frontdesk.createNew", { defaultValue: "Create new" })} {documentTitle}
-              </Typography>
-            </Stack>
+          <Box>
+            <Typography
+              sx={{
+                fontSize: "0.875rem",
+                color: neutralColor(800),
+                fontWeight: 600,
+                mb: 1.5,
+              }}
+            >
+              {t("frontdesk.createNew", { defaultValue: "Create new" })} {documentTitle}
+            </Typography>
             <Typography
               variant="body2"
               sx={{
                 color: neutralColor(600),
                 fontSize: "0.875rem",
-                pl: 5, // Align with icon
               }}
             >
               {customerName
@@ -860,85 +713,19 @@ export const AssignDocumentModal: React.FC<AssignDocumentModalProps> = ({
       </DialogContent>
 
       {/* Footer */}
-      <DialogActions
-        sx={{
-          borderTop: `2px solid ${neutralColor(200)}`,
-          px: 4,
-          py: 3,
-          justifyContent: "space-between",
-          backgroundColor: neutralColor(0),
-          gap: 2,
-        }}
-      >
-        <Button
-          onClick={onClose}
-          sx={{
-            textTransform: "none",
-            color: neutralColor(700),
-            fontWeight: 500,
-            fontSize: "0.875rem",
-            px: 3,
-            py: 1.25,
-            borderRadius: 1,
-            "&:hover": {
-              backgroundColor: neutralColor(100),
-            },
-          }}
-        >
+      <DialogActions sx={{ px: 3, py: 2, borderTop: `1px solid ${neutralColor(200)}`, gap: 1.5 }}>
+        <Button onClick={onClose} disabled={loading}>
           {t("frontdesk.cancel", { defaultValue: "Cancel" })}
         </Button>
-        <Stack direction="row" spacing={2}>
+        <Stack direction="row" spacing={1.5}>
           {canConnectToExisting && (
-            <Button
-              onClick={handleConnect}
-              disabled={!selectedDocument}
-              variant="contained"
-              startIcon={<LinkIcon />}
-              sx={{
-                textTransform: "none",
-                backgroundColor: selectedDocument ? primaryColor(600) : neutralColor(300),
-                color: selectedDocument ? "white" : neutralColor(500),
-                fontWeight: 600,
-                fontSize: "0.875rem",
-                px: 4,
-                py: 1.25,
-                borderRadius: 1,
-                boxShadow: selectedDocument ? "0 1px 3px rgba(0, 0, 0, 0.1)" : "none",
-                "&:hover": {
-                  backgroundColor: selectedDocument ? primaryColor(700) : neutralColor(300),
-                  boxShadow: selectedDocument ? "0 4px 6px rgba(0, 0, 0, 0.1)" : "none",
-                },
-                "&:disabled": {
-                  backgroundColor: neutralColor(300),
-                  color: neutralColor(500),
-                },
-              }}
-            >
+            <Button onClick={handleConnect} disabled={!selectedDocument || loading} variant="contained" startIcon={<LinkIcon />}>
               {selectedDocument
                 ? t("frontdesk.linkDocument", { defaultValue: "Link Document" })
-                : t("frontdesk.selectDocumentFirst", { defaultValue: "Select a document to connect" })}
+                : t("frontdesk.selectDocumentFirst", { defaultValue: "Select Document" })}
             </Button>
           )}
-          <Button
-            onClick={handleCreateNew}
-            variant="contained"
-            startIcon={<AddIcon />}
-            sx={{
-              textTransform: "none",
-              backgroundColor: "#10b981",
-              color: "white",
-              fontWeight: 600,
-              fontSize: "0.875rem",
-              px: 4,
-              py: 1.25,
-              borderRadius: 1,
-              boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
-              "&:hover": {
-                backgroundColor: "#059669",
-                boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-              },
-            }}
-          >
+          <Button onClick={handleCreateNew} variant="contained" startIcon={<AddIcon />} disabled={loading}>
             {t("frontdesk.createNewDocument", { defaultValue: "Create New Document" })}
           </Button>
         </Stack>

@@ -149,6 +149,8 @@ const mapChatwootSettingsSubpageToQueryParam = (subpage: ChatwootSettingsSubpage
     [ChatwootSettingsSubpage.TEAMS]: "teams",
     [ChatwootSettingsSubpage.LABELS]: "labels",
     [ChatwootSettingsSubpage.PROFILE]: "profile",
+    [ChatwootSettingsSubpage.WEBHOOK_TEST]: "webhook-test",
+    [ChatwootSettingsSubpage.OLD_FRONTDESK]: "old-frontdesk",
   };
   return map[subpage];
 };
@@ -430,6 +432,8 @@ export const getRouteMetadata = (route: FrontDeskRoute) => {
         [ChatwootSettingsSubpage.TEAMS]: "Teams",
         [ChatwootSettingsSubpage.LABELS]: "Labels",
         [ChatwootSettingsSubpage.PROFILE]: "Profile Settings",
+        [ChatwootSettingsSubpage.WEBHOOK_TEST]: "Webhook Test",
+        [ChatwootSettingsSubpage.OLD_FRONTDESK]: "Old FrontDesk",
       };
 
       const title = route.settingsSubpage && route.view === ChatwootView.SETTINGS

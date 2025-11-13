@@ -111,7 +111,7 @@ const parseFrontDeskRoute = (frontdeskRoute?: string): Partial<FrontDeskRoute> =
  */
 const parseChatwootView = (viewParam?: string): ChatwootView => {
   if (!viewParam) {
-    return ChatwootView.MY_INBOX;
+    return ChatwootView.DASHBOARD;
   }
 
   // Map query param values to ChatwootView enum
@@ -127,7 +127,7 @@ const parseChatwootView = (viewParam?: string): ChatwootView => {
     "oauth-callback": ChatwootView.OAUTH_CALLBACK,
   };
 
-  return viewMap[viewParam] || ChatwootView.MY_INBOX;
+  return viewMap[viewParam] || ChatwootView.DASHBOARD;
 };
 
 /**
@@ -146,6 +146,8 @@ const parseChatwootSettingsSubpage = (subpageParam?: string): ChatwootSettingsSu
     "teams": ChatwootSettingsSubpage.TEAMS,
     "labels": ChatwootSettingsSubpage.LABELS,
     "profile": ChatwootSettingsSubpage.PROFILE,
+    "webhook-test": ChatwootSettingsSubpage.WEBHOOK_TEST,
+    "old-frontdesk": ChatwootSettingsSubpage.OLD_FRONTDESK,
   };
 
   return subpageMap[subpageParam];
@@ -271,7 +273,7 @@ const applyQueryParamOverrides = (route: Partial<FrontDeskRoute>, queryParams: R
   if (route.type === RouteType.CHATWOOT) {
     const chatwootRoute = route as Partial<ChatwootRoute>;
     // Parse view from query params, fallback to route view or default
-    const view = queryParams.view ? parseChatwootView(queryParams.view) : (chatwootRoute.view || ChatwootView.MY_INBOX);
+    const view = queryParams.view ? parseChatwootView(queryParams.view) : (chatwootRoute.view || ChatwootView.DASHBOARD);
 
     // Parse filters from query params
     const filters = parseChatwootFilters(query);
@@ -388,7 +390,7 @@ const ensureValidRoute = (route: Partial<FrontDeskRoute>): FrontDeskRoute => {
   if (route.type === RouteType.CHATWOOT) {
     return {
       type: RouteType.CHATWOOT,
-      view: (route as any).view || ChatwootView.MY_INBOX,
+      view: (route as any).view || ChatwootView.DASHBOARD,
       conversationId: (route as any).conversationId,
       channelId: (route as any).channelId,
       settingsSubpage: (route as any).settingsSubpage,

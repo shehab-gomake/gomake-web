@@ -43,7 +43,7 @@ export const useChatwootRouter = () => {
   }, [router.query]);
 
   // Current view
-  const currentView = currentRoute?.view || ChatwootView.MY_INBOX;
+  const currentView = currentRoute?.view || ChatwootView.DASHBOARD;
 
   // Current filters from URL
   const currentFilters = currentRoute?.filters;
@@ -284,7 +284,7 @@ export const useChatwootRouter = () => {
         logger.debug("Syncing channelId from URL to Recoil", { channelId: currentRoute.channelId, inboxId });
         setSelectedInboxId(inboxId);
       }
-    } else if (currentRoute.view === ChatwootView.ALL_CONVERSATIONS || currentRoute.view === ChatwootView.MY_INBOX) {
+    } else if (currentRoute.view === ChatwootView.DASHBOARD || currentRoute.view === ChatwootView.ALL_CONVERSATIONS || currentRoute.view === ChatwootView.MY_INBOX) {
       // Clear inbox selection for views that don't need it
       if (selectedInboxId !== null) {
         logger.debug("Clearing selectedInboxId for non-channel view", { view: currentRoute.view });
