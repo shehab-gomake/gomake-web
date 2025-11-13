@@ -14,9 +14,13 @@ import {
 } from "@/widgets/production-floor/views/gantt-view/state";
 import { useTranslation } from "react-i18next";
 import { ITab } from "@/components/tabs/interface";
+import io from "socket.io-client";
+import config from "@/config";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 const useGantt = (reschedulingHook?: any) => {
   const { t } = useTranslation();
+  const { primaryColor } = useGomakeTheme();
   const dir: "rtl" | "ltr" = t("direction");
   const isRTL = dir === "rtl";
   const { callApi } = useGomakeAxios();
@@ -58,6 +62,7 @@ const useGantt = (reschedulingHook?: any) => {
   const [, setLoadingItemId] = useRecoilState<string>(loadingGanttItemId);
   const [currentDate, setCurrentDate] = useState(moment());
   const [currentMonth, setCurrentMonth] = useState(moment());
+  const [isTimeLineLocked, setIsTimeLineLocked] = useState(false);
 
   const getData = async (month, stationsOverride?, groupIdOverride?) => {
     // Prevent concurrent API calls
@@ -93,6 +98,10 @@ const useGantt = (reschedulingHook?: any) => {
             end_time: moment(item.endTime).local(),
           }))
         );
+        // Update isTimeLineLocked from API response
+        if (res.data.isTimeLineLocked !== undefined) {
+          setIsTimeLineLocked(res.data.isTimeLineLocked);
+        }
       }
       isFetching.current = false;
     };
@@ -482,6 +491,27 @@ const useGantt = (reschedulingHook?: any) => {
     }
   }, [filtersState.stations, filtersState.groupId, getGanttData]);
 
+  // Socket.IO listener for updateTimeLineBoard event
+  useEffect(() => {
+    const socket = io(config.api_server);
+
+    const handleUpdateTimeLineBoard = () => {
+      // Call getGanttData to refresh timeline data when board is updated
+      getGanttData();
+    };
+
+    socket.on("updateTimeLineBoard", handleUpdateTimeLineBoard);
+
+    socket.on("connect", () => {
+      console.log("Gantt Socket.IO connected:", socket.id);
+    });
+
+    return () => {
+      socket.off("updateTimeLineBoard", handleUpdateTimeLineBoard);
+      socket.disconnect();
+    };
+  }, [getGanttData]);
+
   const [activeTab, setActiveTab] = useState(TimeFrameTabs.DAY);
 
   const timeFrameTabs: ITab[] = [
@@ -698,6 +728,8 @@ const useGantt = (reschedulingHook?: any) => {
     setShowRecoverModal,
     showRescheduleModal,
     setShowRescheduleModal,
+    isTimeLineLocked,
+    primaryColor,
   };
 };
 
