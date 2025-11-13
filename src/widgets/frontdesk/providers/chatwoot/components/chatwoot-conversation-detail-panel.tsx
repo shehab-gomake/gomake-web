@@ -27,6 +27,7 @@ import { ConversationProfileSection } from "./conversation-profile-section";
 import { ContactHistorySection } from "./contact-history-section";
 import { ConversationAssigneeSection } from "./conversation-assignee-section";
 import { ConversationLabelsManagement } from "./conversation-labels-management";
+import { LinkedDocumentsSection } from "./linked-documents-section";
 import { extractConversation, mergeConversationUpdate, extractErrorMessage } from "../utils/api-response-extractors";
 import { useChatwootQuickActions } from "../hooks/use-chatwoot-quick-actions";
 import { useChatwootProvider } from "../hooks/use-chatwoot-provider";
@@ -195,6 +196,9 @@ export const ChatwootConversationDetailPanel: React.FC<ChatwootConversationDetai
           }
         }}
       />
+
+      {/* Linked Documents Section */}
+      <LinkedDocumentsSection conversation={conversation} />
 
       {/* Contact History Section */}
       <ContactHistorySection

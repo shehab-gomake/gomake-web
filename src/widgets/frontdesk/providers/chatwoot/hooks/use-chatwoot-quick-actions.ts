@@ -202,10 +202,14 @@ export function useChatwootQuickActions(
           throw new Error(`Unknown document type for action: ${selectedAction.type}`);
         }
 
-        // Update conversation custom attributes with document ID and timestamp
+        // Get document type from action config
+        const documentType = selectedAction.documentType;
+
+        // Update conversation custom attributes with document ID, type, and timestamp
         const updatedAttributes = {
           ...conversation.custom_attributes,
           [attributeKeys.idKey]: documentId,
+          [attributeKeys.typeKey]: documentType,
           [attributeKeys.timestampKey]: new Date().toISOString(),
         };
 
