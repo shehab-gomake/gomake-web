@@ -222,6 +222,18 @@ export const LinkedDocumentsSection: React.FC<LinkedDocumentsSectionProps> = ({ 
                   {docDetails?.number && ` #${docDetails.number}`}
                 </Typography>
                 <Stack spacing={0.25}>
+                  {priceText && (
+                    <Typography
+                      variant="caption"
+                      sx={{
+                        color: colorTokens.semantic.text.secondary,
+                        fontSize: 10,
+                        fontWeight: 500,
+                      }}
+                    >
+                      {priceText}
+                    </Typography>
+                  )}
                   {sourceDocText && (
                     <Typography
                       variant="caption"
@@ -236,56 +248,22 @@ export const LinkedDocumentsSection: React.FC<LinkedDocumentsSectionProps> = ({ 
                       {t('frontdesk.sourceDocument', { defaultValue: 'Source' })}: {sourceDocText}
                     </Typography>
                   )}
-                  <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap">
-                    {priceText && (
-                      <Typography
-                        variant="caption"
-                        sx={{
-                          color: colorTokens.semantic.text.secondary,
-                          fontSize: 10,
-                          fontWeight: 500,
-                        }}
-                      >
-                        {priceText}
-                      </Typography>
-                    )}
-                    {creationDate && (
-                      <>
-                        {priceText && (
-                          <Typography
-                            variant="caption"
-                            sx={{ color: colorTokens.semantic.text.tertiary, fontSize: 10 }}
-                          >
-
-                          </Typography>
-                        )}
-                        <Typography
-                          variant="caption"
-                          sx={{ color: colorTokens.semantic.text.secondary, fontSize: 10 }}
-                        >
-                          {t('frontdesk.created', { defaultValue: 'Created' })}: {creationDate}
-                        </Typography>
-                      </>
-                    )}
-                    {dueDate && (
-                      <>
-                        {(priceText || creationDate) && (
-                          <Typography
-                            variant="caption"
-                            sx={{ color: colorTokens.semantic.text.tertiary, fontSize: 10 }}
-                          >
-
-                          </Typography>
-                        )}
-                        <Typography
-                          variant="caption"
-                          sx={{ color: colorTokens.semantic.text.secondary, fontSize: 10 }}
-                        >
-                          {t('frontdesk.dueDate', { defaultValue: 'Due' })}: {dueDate}
-                        </Typography>
-                      </>
-                    )}
-                  </Stack>
+                  {creationDate && (
+                    <Typography
+                      variant="caption"
+                      sx={{ color: colorTokens.semantic.text.secondary, fontSize: 10 }}
+                    >
+                      {t('frontdesk.created', { defaultValue: 'Created' })}: {creationDate}
+                    </Typography>
+                  )}
+                  {dueDate && (
+                    <Typography
+                      variant="caption"
+                      sx={{ color: colorTokens.semantic.text.secondary, fontSize: 10 }}
+                    >
+                      {t('frontdesk.dueDate', { defaultValue: 'Due' })}: {dueDate}
+                    </Typography>
+                  )}
                 </Stack>
               </Box>
               <Tooltip title={t('frontdesk.openInNewTab', { defaultValue: 'Open in new tab' })}>

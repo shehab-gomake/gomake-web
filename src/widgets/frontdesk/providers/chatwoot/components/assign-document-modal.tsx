@@ -19,7 +19,6 @@ import { QuickActionConfig } from "@/widgets/frontdesk/providers/tickets/types/q
 import { useDocumentTitle } from "@/pages-components/quote-new/use-document-title";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import AddIcon from "@mui/icons-material/Add";
-import LinkIcon from "@mui/icons-material/Link";
 import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 import CloseIcon from "@mui/icons-material/Close";
 import { DocumentAutocompleteOption, NormalizedDocument } from "../types/document.types";
@@ -54,7 +53,6 @@ export const AssignDocumentModal: React.FC<AssignDocumentModalProps> = ({
   onCreateNew,
 }) => {
   const { t } = useTranslation();
-  const [selectedDocument, setSelectedDocument] = useState<DocumentAutocompleteOption | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
 
   // Debounce search term for better performance (300ms delay)
@@ -83,7 +81,6 @@ export const AssignDocumentModal: React.FC<AssignDocumentModalProps> = ({
 
   // Reset state when modal closes
   const handleClose = useCallback(() => {
-    setSelectedDocument(null);
     setSearchTerm("");
     onClose();
   }, [onClose]);
@@ -108,12 +105,10 @@ export const AssignDocumentModal: React.FC<AssignDocumentModalProps> = ({
     }));
   }, [documents]);
 
-  const handleConnect = () => {
-    if (selectedDocument?.documentId) {
-      onConnectToExisting(selectedDocument.documentId);
-      handleClose();
-    }
-  };
+  const handleDocumentSelect = useCallback((documentId: string) => {
+    onConnectToExisting(documentId);
+    handleClose();
+  }, [onConnectToExisting, handleClose]);
 
   const handleCreateNew = () => {
     onCreateNew();
@@ -142,6 +137,11 @@ export const AssignDocumentModal: React.FC<AssignDocumentModalProps> = ({
           component="li"
           {...props}
           key={option.id}
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            handleDocumentSelect(option.documentId);
+          }}
           sx={{
             py: 1.25,
             px: 2,
@@ -151,6 +151,7 @@ export const AssignDocumentModal: React.FC<AssignDocumentModalProps> = ({
             borderBottom: `1px solid ${neutralColor(200)}`,
             "&:last-child": { borderBottom: "none" },
             "&:hover": { backgroundColor: neutralColor(50) },
+            cursor: "pointer",
           }}
         >
           <DocumentIcon
@@ -183,83 +184,8 @@ export const AssignDocumentModal: React.FC<AssignDocumentModalProps> = ({
         </Box>
       );
     },
-    [actionConfig?.documentType, neutralColor, t]
+    [actionConfig?.documentType, neutralColor, t, handleDocumentSelect]
   );
-
-  // Render selected document preview
-  const renderSelectedDocument = useCallback(() => {
-    if (!selectedDocument) return null;
-
-    const doc = selectedDocument.value as unknown as NormalizedDocument;
-
-    const statusElement = actionConfig?.documentType
-      ? actionConfig.documentType === DOCUMENT_TYPE.invoice && doc.isDraft
-        ? <span style={{ color: "#e77676" }}>{t("sales.quote.draft")}</span>
-        : _renderStatus(actionConfig.documentType, doc, t)
-      : null;
-
-    return (
-      <Box
-        sx={{
-          mt: 2,
-          p: 2,
-          borderRadius: "6px",
-          backgroundColor: primaryColor(50),
-          border: `1px solid ${primaryColor(200)}`,
-        }}
-      >
-        <Stack direction="row" spacing={1.5} alignItems="flex-start">
-          <DocumentIcon
-            size="large"
-            variant="primary"
-            primaryColor={primaryColor}
-          />
-          <Box sx={{ flex: 1, minWidth: 0 }}>
-            <Typography
-              sx={{
-                color: primaryColor(600),
-                fontWeight: 600,
-                display: "block",
-                mb: 1,
-                fontSize: "0.75rem",
-              }}
-            >
-              {t("frontdesk.selectedDocument", { defaultValue: "Selected Document" })}
-            </Typography>
-            <DocumentInfoDisplay
-              number={doc.number}
-              amount={doc.totalPrice > 0 ? formatDocumentPrice(doc.totalPrice, doc.currency) : undefined}
-              date={formatDocumentDate(doc.createdDate)}
-              neutralColor={neutralColor}
-              statusElement={statusElement}
-            >
-              {doc.sourceDocuments.length > 0 && (
-                <Box sx={{ mb: 1 }}>
-                  <Typography
-                    variant="caption"
-                    sx={{
-                      color: neutralColor(600),
-                      fontSize: "0.7rem",
-                      fontWeight: 600,
-                      display: "block",
-                      mb: 0.5,
-                    }}
-                  >
-                    {t("sales.quote.sourceDocument", { defaultValue: "Source Document" })}:
-                  </Typography>
-                  <SourceDocumentLinks
-                    sourceDocuments={doc.sourceDocuments}
-                    layout="list"
-                    neutralColor={neutralColor}
-                  />
-                </Box>
-              )}
-            </DocumentInfoDisplay>
-          </Box>
-        </Stack>
-      </Box>
-    );
-  }, [selectedDocument, actionConfig?.documentType, primaryColor, neutralColor, t]);
 
   return (
     <Dialog
@@ -352,10 +278,8 @@ export const AssignDocumentModal: React.FC<AssignDocumentModalProps> = ({
                     placeholder={t("frontdesk.searchDocuments", {
                       defaultValue: "Search by number, customer, date, status, or amount...",
                     })}
-                    value={selectedDocument}
-                    onChange={(_e: React.SyntheticEvent, value: DocumentAutocompleteOption | null) => {
-                      setSelectedDocument(value);
-                    }}
+                    value={null}
+                    onChange={() => {}}
                     onInputChange={(_e: React.SyntheticEvent, value: string) => {
                       setSearchTerm(value || "");
                     }}
@@ -374,6 +298,8 @@ export const AssignDocumentModal: React.FC<AssignDocumentModalProps> = ({
                     loading={loading}
                     disabled={!canConnectToExisting || !!error}
                     style={{ width: "100%" }}
+                    clearOnBlur={false}
+                    blurOnSelect={false}
                   />
                   {!loading && documents.length > 0 && (
                     <Box
@@ -423,8 +349,6 @@ export const AssignDocumentModal: React.FC<AssignDocumentModalProps> = ({
                     </Typography>
                   </Box>
                 )}
-
-                {renderSelectedDocument()}
               </>
             )}
           </Box>
@@ -433,21 +357,9 @@ export const AssignDocumentModal: React.FC<AssignDocumentModalProps> = ({
 
       {/* Footer */}
       <DialogActions sx={{ px: 3, py: 2, borderTop: `1px solid ${neutralColor(200)}`, gap: 1.5 }}>
-        <Button onClick={handleClose} disabled={loading}>
-          {t("frontdesk.cancel", { defaultValue: "Cancel" })}
+        <Button onClick={handleCreateNew} variant="contained" startIcon={<AddIcon />} disabled={loading}>
+          {t("frontdesk.createNewDocument", { defaultValue: "Create New Document" })}
         </Button>
-        <Stack direction="row" spacing={1.5}>
-          {canConnectToExisting && (
-            <Button onClick={handleConnect} disabled={!selectedDocument || loading} variant="contained" startIcon={<LinkIcon />}>
-              {selectedDocument
-                ? t("frontdesk.linkDocument", { defaultValue: "Link Document" })
-                : t("frontdesk.selectDocumentFirst", { defaultValue: "Select Document" })}
-            </Button>
-          )}
-          <Button onClick={handleCreateNew} variant="contained" startIcon={<AddIcon />} disabled={loading}>
-            {t("frontdesk.createNewDocument", { defaultValue: "Create New Document" })}
-          </Button>
-        </Stack>
       </DialogActions>
     </Dialog>
   );
