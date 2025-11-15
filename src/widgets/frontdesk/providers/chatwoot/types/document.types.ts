@@ -19,6 +19,15 @@ export interface DocumentClient {
 }
 
 /**
+ * Source document reference information
+ */
+export interface SourceDocumentInfo {
+  documentId: string;
+  documentNumber: string;
+  sourceDocumentType: DOCUMENT_TYPE;
+}
+
+/**
  * Document from API response
  */
 export interface DocumentListItem {
@@ -48,6 +57,100 @@ export interface DocumentListItem {
 
   /** Any additional properties */
   [key: string]: any;
+}
+
+/**
+ * Normalized document structure with all possible API fields explicitly typed
+ * This eliminates the need for type casts across the codebase
+ */
+export interface NormalizedDocument {
+  /** Unique document identifier */
+  id: string;
+
+  /** Document number/reference - normalized from various API field names */
+  number: string;
+
+  /** Document type */
+  documentType: DOCUMENT_TYPE;
+
+  /** Normalized client information */
+  client: {
+    id: string;
+    name: string;
+    code?: string;
+  };
+
+  /** Document creation date (ISO string) */
+  createdDate: string;
+
+  /** Document total price */
+  totalPrice: number;
+
+  /** Total price without VAT */
+  totalPriceWithoutVat?: number;
+
+  /** Currency code */
+  currency: string;
+
+  /** Document status */
+  status: string;
+
+  /** Status display text */
+  statusTitleText?: string;
+
+  /** Whether document is a draft */
+  isDraft?: boolean;
+
+  /** Source documents (for invoices, delivery notes, etc.) */
+  sourceDocuments: SourceDocumentInfo[];
+
+  /** User who created the document */
+  userName?: string;
+
+  /** Additional document number fields for display */
+  documentNumbers?: string;
+  secondDocumentNumbers?: string;
+  thirdDocumentNumbers?: string;
+  titleDocumentNumber?: string;
+  titleSecondDocumentNumber?: string;
+  titleThirdDocumentNumber?: string;
+  externalDocumentNumber?: string;
+  titleExternalDocumentNumber?: string;
+
+  /** Approval status */
+  approvalStatus?: string;
+
+  /** Due date for payment */
+  dueDate?: string;
+}
+
+/**
+ * Document details fetched for linked documents display
+ */
+export interface DocumentDetailsInfo {
+  /** Document number */
+  number: string;
+
+  /** Source documents */
+  sourceDocuments: SourceDocumentInfo[];
+
+  /** Total price */
+  totalPrice: number;
+
+  /** Total price without VAT */
+  totalPriceWithoutVat?: number;
+
+  /** Currency code */
+  currency: string;
+
+  /** Creation date */
+  createdDate: string;
+
+  /** Due date */
+  dueDate?: string;
+
+  /** Document status */
+  status: string;
 }
 
 /**
