@@ -26,13 +26,14 @@ import MailIcon from "@mui/icons-material/Mail";
 import PhoneIcon from "@mui/icons-material/Phone";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import type { ContactDetail } from "@/services/frontdesk/api/chatwoot/types/contacts.types";
+import type { GomakeContact } from "../../hooks/use-compose-conversation";
 
 export interface ContactSelectorProps {
   /** Currently selected contact */
   selectedContact: ContactDetail | null;
 
-  /** Contact search results */
-  searchResults: ContactDetail[];
+  /** Contact search results (GomakeContact from customer search) */
+  searchResults: GomakeContact[];
 
   /** Loading state for search */
   isSearching: boolean;
@@ -41,7 +42,7 @@ export interface ContactSelectorProps {
   onSearch: (query: string) => void;
 
   /** Callback when contact is selected */
-  onSelectContact: (contact: ContactDetail) => void;
+  onSelectContact: (contact: GomakeContact) => void;
 
   /** Callback to open create contact modal */
   onCreateContact: () => void;
@@ -74,19 +75,64 @@ export const ContactSelector: React.FC<ContactSelectorProps> = ({
       openOnFocus
       options={searchResults}
       loading={isSearching}
+      filterOptions={(options) => options} // Don't filter - we already filtered via API search
+      getOptionKey={(option) => {
+        const contact = option as GomakeContact;
+        // Ensure we always return a unique key
+        const key = contact.gomake_contact_id || 
+                   contact.id?.toString() || 
+                   contact.email || 
+                   contact.phone_number || 
+                   `${contact.gomake_customer_id}-${contact.email || contact.phone_number || Math.random()}`;
+        return key;
+      }}
+      isOptionEqualToValue={(option, value) => {
+        const opt = option as GomakeContact;
+        const val = value as GomakeContact;
+        // Compare by gomake_contact_id first, then by email or phone
+        if (opt.gomake_contact_id && val.gomake_contact_id) {
+          return opt.gomake_contact_id === val.gomake_contact_id;
+        }
+        if (opt.email && val.email) {
+          return opt.email === val.email;
+        }
+        if (opt.phone_number && val.phone_number) {
+          return opt.phone_number === val.phone_number;
+        }
+        return false;
+      }}
       onInputChange={(event, newInputValue) => {
         onSearch(newInputValue);
       }}
       onChange={(event, value) => {
         if (value) {
-          onSelectContact(value as ContactDetail);
+          onSelectContact(value as GomakeContact);
         }
       }}
-      getOptionLabel={(option) => (option as ContactDetail).name || ""}
+      getOptionLabel={(option) => {
+        const contact = option as GomakeContact;
+        // Ensure we always return a non-empty string for MUI Autocomplete
+        if (contact.name && contact.name.trim()) {
+          // Show customer name if available
+          if (contact.gomake_customer_name && contact.gomake_customer_name !== contact.name) {
+            return `${contact.name} (${contact.gomake_customer_name})`;
+          }
+          return contact.name;
+        }
+        // Fallback to email or phone if name is empty
+        if (contact.email && contact.email.trim()) {
+          return contact.email;
+        }
+        if (contact.phone_number && contact.phone_number.trim()) {
+          return contact.phone_number;
+        }
+        // Last resort - use customer name or "Unnamed Contact"
+        return contact.gomake_customer_name || "Unnamed Contact";
+      }}
       renderInput={(params) => (
         <TextField
           {...params}
-          placeholder="Search by name, email, or phone..."
+          placeholder="Search by customer name..."
           variant="outlined"
           error={!!error}
           helperText={error}
@@ -102,34 +148,46 @@ export const ContactSelector: React.FC<ContactSelectorProps> = ({
           }}
         />
       )}
-      renderOption={(props, option) => (
-        <ListItem {...props} key={option.id}>
-          <ListItemAvatar>
-            <Avatar src={option.thumbnail}>
-              <PersonIcon />
-            </Avatar>
-          </ListItemAvatar>
-          <ListItemText
-            primary={option.name || "Unnamed Contact"}
-            secondary={
-              <Box component="span" sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                {option.email && (
-                  <>
-                    <MailIcon sx={{ fontSize: "0.875rem" }} />
-                    <Typography variant="caption">{option.email}</Typography>
-                  </>
-                )}
-                {option.phone_number && (
-                  <>
-                    <PhoneIcon sx={{ fontSize: "0.875rem" }} />
-                    <Typography variant="caption">{option.phone_number}</Typography>
-                  </>
-                )}
-              </Box>
-            }
-          />
-        </ListItem>
-      )}
+      renderOption={(props, option) => {
+        const contact = option as GomakeContact;
+        return (
+          <ListItem {...props} key={contact.gomake_contact_id || contact.id || contact.email || contact.phone_number}>
+            <ListItemAvatar>
+              <Avatar src={contact.thumbnail}>
+                <PersonIcon />
+              </Avatar>
+            </ListItemAvatar>
+            <ListItemText
+              primary={
+                <Box>
+                  <Typography variant="body2">{contact.name || "Unnamed Contact"}</Typography>
+                  {contact.gomake_customer_name && contact.gomake_customer_name !== contact.name && (
+                    <Typography variant="caption" color="text.secondary">
+                      {contact.gomake_customer_name}
+                    </Typography>
+                  )}
+                </Box>
+              }
+              secondary={
+                <Box component="span" sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                  {contact.email && (
+                    <>
+                      <MailIcon sx={{ fontSize: "0.875rem" }} />
+                      <Typography variant="caption">{contact.email}</Typography>
+                    </>
+                  )}
+                  {contact.phone_number && (
+                    <>
+                      <PhoneIcon sx={{ fontSize: "0.875rem" }} />
+                      <Typography variant="caption">{contact.phone_number}</Typography>
+                    </>
+                  )}
+                </Box>
+              }
+            />
+          </ListItem>
+        );
+      }}
       ListboxComponent={(props) => (
         <List {...props}>
           {props.children}
