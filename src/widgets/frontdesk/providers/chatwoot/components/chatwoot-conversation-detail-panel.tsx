@@ -161,6 +161,7 @@ export const ChatwootConversationDetailPanel: React.FC<ChatwootConversationDetai
         contactLastActivityAt={conversation.meta?.sender?.last_activity_at}
         contactCreatedAt={conversation.meta?.sender?.created_at}
         customerId={conversation.meta?.sender?.custom_attributes?.gomake_customer_id}
+        accountId={accountId}
         onCustomerLinked={async (customerId) => {
           if (!accountId) return;
 

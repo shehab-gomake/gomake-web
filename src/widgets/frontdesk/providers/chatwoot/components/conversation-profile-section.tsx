@@ -25,7 +25,7 @@ import {
 } from "@mui/icons-material";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { colorTokens } from "@/widgets/frontdesk/design-system";
-import { getAndSetCustomerById } from "@/services/api-service/customers/customers-api";
+import { getAndSetCustomerById, getMostRelevantCustomerByEmailApi, getMostRelevantCustomerByPhoneApi } from "@/services/api-service/customers/customers-api";
 import { useGomakeAxios } from "@/hooks/use-gomake-axios";
 import { useCustomerEdit } from "@/hooks/use-customer-edit";
 import { CustomerCardWidget } from "@/widgets/customer-card-modal";
@@ -69,6 +69,8 @@ interface ConversationProfileSectionProps {
   contactCreatedAt?: number | null;
   /** Linked GoMake customer ID (if already linked) */
   customerId?: string | null;
+  /** Account ID for Chatwoot operations */
+  accountId?: number | null;
   /** Callback when customer is linked */
   onCustomerLinked?: (customerId: string) => void;
 }
@@ -87,6 +89,7 @@ export const ConversationProfileSection: React.FC<ConversationProfileSectionProp
   contactLastActivityAt,
   contactCreatedAt,
   customerId,
+  accountId,
   onCustomerLinked,
 }) => {
   const { primaryColor } = useGomakeTheme();
@@ -97,8 +100,15 @@ export const ConversationProfileSection: React.FC<ConversationProfileSectionProp
   const [openLinkModal, setOpenLinkModal] = useState(false);
   const [clientType, setClientType] = useState<CLIENT_TYPE>(CLIENT_TYPE.CUSTOMER);
   const [tempCustomerData, setTempCustomerData] = useState<any>(null);
+  const [isAutoSearching, setIsAutoSearching] = useState(false);
+  const [hasAutoSearched, setHasAutoSearched] = useState(false);
 
   const { showCustomerModal, customerForEdit, getCustomerForEdit, closeModal, setCustomerForEdit } = useCustomerEdit();
+
+  // Reset auto-search flag when contact changes
+  useEffect(() => {
+    setHasAutoSearched(false);
+  }, [contactId]);
 
   // Fetch customer if customerId exists
   useEffect(() => {
@@ -106,6 +116,78 @@ export const ConversationProfileSection: React.FC<ConversationProfileSectionProp
       loadCustomer(customerId);
     }
   }, [customerId]);
+
+  // Auto-search CRM when contact doesn't have customerId
+  useEffect(() => {
+    // Only search if:
+    // 1. No customerId is linked
+    // 2. We haven't already searched for this contact
+    // 3. We have either email or phone
+    // 4. We have accountId and contactId (needed for linking)
+    if (customerId || hasAutoSearched || isAutoSearching || !accountId || !contactId) {
+      return;
+    }
+
+    const shouldSearch = (contactEmail && contactEmail.trim()) || (contactPhoneNumber && contactPhoneNumber.trim());
+    if (!shouldSearch) {
+      return;
+    }
+
+    const searchCrmForCustomer = async () => {
+      setIsAutoSearching(true);
+      try {
+        let customerResult: any = null;
+
+        // Prefer email search, fallback to phone
+        if (contactEmail && contactEmail.trim()) {
+          // getSetApiData returns Promise<{ success: boolean; data: any }>
+          const result = await getMostRelevantCustomerByEmailApi(
+            callApi,
+            () => {}, // Callback not needed, we use return value
+            { email: contactEmail.trim() }
+          );
+          if (result?.success && result.data) {
+            customerResult = result.data;
+          }
+        } else if (contactPhoneNumber && contactPhoneNumber.trim()) {
+          // getSetApiData returns Promise<{ success: boolean; data: any }>
+          const result = await getMostRelevantCustomerByPhoneApi(
+            callApi,
+            () => {}, // Callback not needed, we use return value
+            { phone: contactPhoneNumber.trim() }
+          );
+          if (result?.success && result.data) {
+            customerResult = result.data;
+          }
+        }
+
+        // If we got exactly one customer result, auto-link it
+        if (customerResult) {
+          // Check if result is an array with one item, or a single object
+          const customers = Array.isArray(customerResult) ? customerResult : [customerResult];
+          
+          // Filter out null/undefined entries
+          const validCustomers = customers.filter((c: any) => c && c.id);
+          
+          if (validCustomers.length === 1) {
+            const foundCustomer = validCustomers[0];
+            // Auto-link the customer
+            if (onCustomerLinked) {
+              await onCustomerLinked(foundCustomer.id);
+            }
+          }
+        }
+      } catch (error) {
+        console.error("[ConversationProfileSection] Error auto-searching CRM:", error);
+        // Silently fail - don't show error to user for auto-search
+      } finally {
+        setIsAutoSearching(false);
+        setHasAutoSearched(true);
+      }
+    };
+
+    searchCrmForCustomer();
+  }, [customerId, contactEmail, contactPhoneNumber, accountId, contactId, hasAutoSearched, isAutoSearching, callApi, onCustomerLinked]);
 
   const loadCustomer = async (id: string) => {
     if (!id) return;
