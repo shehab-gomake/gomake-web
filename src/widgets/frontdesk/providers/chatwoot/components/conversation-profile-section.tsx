@@ -29,8 +29,9 @@ import { getAndSetCustomerById, getMostRelevantCustomerByEmailApi, getMostReleva
 import { useGomakeAxios } from "@/hooks/use-gomake-axios";
 import { useCustomerEdit } from "@/hooks/use-customer-edit";
 import { CustomerCardWidget } from "@/widgets/customer-card-modal";
-import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
+import { CLIENT_TYPE, CUSTOMER_ACTIONS, CLIENT_TYPE_Id } from "@/pages/customers/enums";
 import { LinkCustomerModal } from "./link-customer-modal";
+import { useClientTypesList } from "@/hooks/use-client-types";
 
 interface Customer {
   id: string;
@@ -104,6 +105,7 @@ export const ConversationProfileSection: React.FC<ConversationProfileSectionProp
   const [hasAutoSearched, setHasAutoSearched] = useState(false);
 
   const { showCustomerModal, customerForEdit, getCustomerForEdit, closeModal, setCustomerForEdit } = useCustomerEdit();
+  const { getClientTypesCategories } = useClientTypesList();
 
   // Reset auto-search flag when contact changes
   useEffect(() => {
@@ -211,8 +213,14 @@ export const ConversationProfileSection: React.FC<ConversationProfileSectionProp
     }
   };
 
-  const handleCreateCustomer = (type: CLIENT_TYPE) => {
+  const handleCreateCustomer = async (type: CLIENT_TYPE) => {
     setClientType(type);
+
+    // Load client types data based on the selected type
+    const clientTypeId = type === CLIENT_TYPE.CUSTOMER
+      ? CLIENT_TYPE_Id.CUSTOMER
+      : CLIENT_TYPE_Id.SUPPLIER;
+    await getClientTypesCategories(clientTypeId);
 
     // Initialize temp data for the modal with available contact info
     setTempCustomerData({
@@ -551,27 +559,65 @@ export const ConversationProfileSection: React.FC<ConversationProfileSectionProp
             )}
           </Box>
 
-          {/* Link Customer Button */}
-          <Button
-            variant="outlined"
-            size="small"
-            fullWidth
-            startIcon={<LinkIcon />}
-            onClick={() => setOpenLinkModal(true)}
-            sx={{
-              mt: 2,
-              textTransform: "none",
-              borderColor: primaryColor(300),
-              color: primaryColor(600),
-              fontSize: "0.8125rem",
-              "&:hover": {
-                backgroundColor: primaryColor(50),
-                borderColor: primaryColor(400),
-              },
-            }}
-          >
-            Link to Customer
-          </Button>
+          {/* Customer Action Buttons */}
+          <Box sx={{ mt: 2, display: "flex", flexDirection: "column", gap: 1 }}>
+            {/* Create Customer Button */}
+            <Button
+              variant="contained"
+              size="small"
+              fullWidth
+              onClick={() => handleCreateCustomer(CLIENT_TYPE.CUSTOMER)}
+              sx={{
+                textTransform: "none",
+                backgroundColor: primaryColor(600),
+                fontSize: "0.8125rem",
+                "&:hover": {
+                  backgroundColor: primaryColor(700),
+                },
+              }}
+            >
+              Create Customer
+            </Button>
+
+            {/* Create Supplier Button */}
+            <Button
+              variant="outlined"
+              size="small"
+              fullWidth
+              onClick={() => handleCreateCustomer(CLIENT_TYPE.SUPPLIER)}
+              sx={{
+                textTransform: "none",
+                borderColor: primaryColor(300),
+                color: primaryColor(600),
+                fontSize: "0.8125rem",
+                "&:hover": {
+                  backgroundColor: primaryColor(50),
+                  borderColor: primaryColor(400),
+                },
+              }}
+            >
+              Create Supplier
+            </Button>
+
+            {/* Link to Existing Customer Button */}
+            <Button
+              variant="text"
+              size="small"
+              fullWidth
+              startIcon={<LinkIcon />}
+              onClick={() => setOpenLinkModal(true)}
+              sx={{
+                textTransform: "none",
+                color: colorTokens.semantic.text.secondary,
+                fontSize: "0.75rem",
+                "&:hover": {
+                  backgroundColor: colorTokens.neutral[100],
+                },
+              }}
+            >
+              Link to Existing
+            </Button>
+          </Box>
         </Box>
       )}
 

@@ -467,8 +467,12 @@ export function useComposeConversation(options?: UseComposeConversationOptions) 
         return extractedContact;
       } catch (error) {
         console.error("[useComposeConversation] Failed to create contact:", error);
-        options?.onError?.(error as Error);
-        return null;
+        // Re-throw error so CreateContactModal can handle field-specific errors (422)
+        // Only call onError for non-422 errors to avoid duplicate error handling
+        if ((error as any)?.status !== 422) {
+          options?.onError?.(error as Error);
+        }
+        throw error;
       }
     },
     [accountId, options]

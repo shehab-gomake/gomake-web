@@ -142,11 +142,12 @@ export const ComposeConversationModal: React.FC<ComposeConversationModalProps> =
           type: "success",
         });
       } else {
-        setError("Failed to create contact: Invalid response");
+        // Re-throw error so CreateContactModal can handle it
+        throw new Error("Failed to create contact: Invalid response");
       }
     } catch (error) {
-      console.error("[ComposeConversationModal] Failed to create contact:", error);
-      setError(error instanceof Error ? error.message : "Failed to create contact");
+      // Re-throw error so CreateContactModal can handle field-specific errors
+      throw error;
     }
   };
 

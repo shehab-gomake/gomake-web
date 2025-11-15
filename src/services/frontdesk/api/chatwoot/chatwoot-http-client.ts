@@ -75,7 +75,16 @@ export class ChatwootHttpClient {
         errorData,
       });
 
-      throw new Error(errorMessage);
+      // Create error with additional properties for error handling
+      const error = new Error(errorMessage) as Error & {
+        status?: number;
+        errorData?: any;
+        attributes?: string[];
+      };
+      error.status = response.status;
+      error.errorData = errorData;
+      error.attributes = errorData.attributes || [];
+      throw error;
     }
 
     // Handle binary responses (like file downloads)

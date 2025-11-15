@@ -43,6 +43,7 @@ import { useChatwootPermissions } from "@/widgets/frontdesk/providers/chatwoot/h
 import { VIEW_PERMISSIONS, ACTION_PERMISSIONS } from "@/widgets/frontdesk/providers/chatwoot/constants/permissions.constants";
 import { AddChannelModal } from "@/widgets/frontdesk/providers/chatwoot/components/add-channel-modal";
 import { ComposeConversationModal } from "@/widgets/frontdesk/providers/chatwoot/components/compose/ComposeConversationModal";
+import { InboxIcon as ChatwootInboxIcon } from "@/widgets/frontdesk/providers/chatwoot/utils/inbox-icons";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useRouter } from "next/router";
 import { chatwootSelectedAccountAtom } from "@/store/frontdesk/atoms/chatwoot.atoms";
@@ -750,25 +751,52 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
                               },
                             }}
                           >
-                            <ListItemText
-                              primary={inbox.name}
-                              secondary={inbox.channel_type?.replace("Channel::", "") || inbox.provider}
-                              primaryTypographyProps={{
-                                variant: "body2",
-                                sx: {
-                                  fontSize: "0.813rem",
-                                  fontWeight: selectedInboxId === inbox.id ? 600 : 400,
-                                  color: theme.palette.text.primary,
-                                },
+                            <Box
+                              sx={{
+                                display: "flex",
+                                alignItems: "center",
+                                gap: 1.5,
+                                width: "100%",
                               }}
-                              secondaryTypographyProps={{
-                                variant: "caption",
-                                sx: {
-                                  fontSize: "0.688rem",
-                                  color: theme.palette.text.secondary,
-                                },
-                              }}
-                            />
+                            >
+                              {/* Inbox Icon */}
+                              <Box
+                                sx={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  color: selectedInboxId === inbox.id 
+                                    ? theme.palette.primary.main 
+                                    : theme.palette.text.secondary,
+                                  flexShrink: 0,
+                                }}
+                              >
+                                <ChatwootInboxIcon
+                                  channelType={inbox.channel_type}
+                                  medium={inbox.medium}
+                                  size={16}
+                                />
+                              </Box>
+                              {/* Inbox Name and Type */}
+                              <ListItemText
+                                primary={inbox.name}
+                                secondary={inbox.channel_type?.replace("Channel::", "") || inbox.provider}
+                                primaryTypographyProps={{
+                                  variant: "body2",
+                                  sx: {
+                                    fontSize: "0.813rem",
+                                    fontWeight: selectedInboxId === inbox.id ? 600 : 400,
+                                    color: theme.palette.text.primary,
+                                  },
+                                }}
+                                secondaryTypographyProps={{
+                                  variant: "caption",
+                                  sx: {
+                                    fontSize: "0.688rem",
+                                    color: theme.palette.text.secondary,
+                                  },
+                                }}
+                              />
+                            </Box>
                           </ListItemButton>
                         </Tooltip>
                       ))

@@ -80,14 +80,56 @@ export const CreateContactModal: React.FC<CreateContactModalProps> = ({
       return;
     }
 
-    await onSubmit({
-      name: name.trim(),
-      email: email.trim() || undefined,
-      phone_number: phoneNumber.trim() || undefined,
-    });
+    try {
+      await onSubmit({
+        name: name.trim(),
+        email: email.trim() || undefined,
+        phone_number: phoneNumber.trim() || undefined,
+      });
 
-    // Close and reset on success
-    handleClose();
+      // Close and reset on success
+      handleClose();
+    } catch (error: any) {
+      // Handle 422 Unprocessable Entity errors with field-specific messages
+      // Error format: {"message":"Email has already been taken","attributes":["email"]}
+      if (error?.status === 422) {
+        const fieldErrors: { name?: string; email?: string; phone?: string } = {};
+        const errorMessage = error?.message || error?.errorData?.message || "Validation error";
+        const attributes = error?.attributes || error?.errorData?.attributes || [];
+        
+        // Map error attributes to form fields
+        if (Array.isArray(attributes) && attributes.length > 0) {
+          attributes.forEach((attribute: string) => {
+            if (attribute === "email") {
+              fieldErrors.email = errorMessage;
+            } else if (attribute === "phone_number" || attribute === "phone") {
+              fieldErrors.phone = errorMessage;
+            } else if (attribute === "name") {
+              fieldErrors.name = errorMessage;
+            }
+          });
+        } else {
+          // If no attributes array, try to infer from error message
+          if (errorMessage.toLowerCase().includes("email")) {
+            fieldErrors.email = errorMessage;
+          } else if (errorMessage.toLowerCase().includes("phone")) {
+            fieldErrors.phone = errorMessage;
+          } else {
+            // Fallback: show error on email field if we can't determine the field
+            fieldErrors.email = errorMessage;
+          }
+        }
+
+        // Set field-specific errors
+        setErrors(fieldErrors);
+      } else {
+        // Handle other errors - show general error message
+        const errorMessage = error?.message || "Failed to create contact. Please try again.";
+        setErrors({
+          email: errorMessage,
+        });
+      }
+    }
   };
 
   return (
