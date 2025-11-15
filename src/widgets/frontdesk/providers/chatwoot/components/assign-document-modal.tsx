@@ -24,17 +24,16 @@ import { useDocumentTitle } from "@/pages-components/quote-new/use-document-titl
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import AddIcon from "@mui/icons-material/Add";
 import LinkIcon from "@mui/icons-material/Link";
-import PersonIcon from "@mui/icons-material/Person";
 import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
-import SearchIcon from "@mui/icons-material/Search";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CloseIcon from "@mui/icons-material/Close";
 import { DocumentListItem, DocumentApiResponse, DocumentAutocompleteOption } from "../types/document.types";
 import { searchDocuments, formatDocumentForDisplay } from "../utils/document-search.utils";
 import { useDebouncedValue } from "../hooks/use-debounced-value";
+import { _renderStatus } from "@/utils/constants";
+import { renderDocumentTypeForSourceDocumentNumber, renderURLDocumentType } from "@/widgets/settings-documenting/documentDesign/enums/document-type";
 
 interface AssignDocumentModalProps {
   open: boolean;
@@ -91,24 +90,67 @@ export const AssignDocumentModal: React.FC<AssignDocumentModalProps> = ({
         console.log("[AssignDocumentModal] API Response:", res);
 
         if (res?.success) {
-          // Handle different response structures
-          // The API might return data directly or nested in data.data.data
-          // getSetApiData extracts data from result.data.data.data
-          let documentsData: DocumentListItem[] = [];
+          // Use the same response structure as invoice page (use-quote.tsx line 1616)
+          // The API already filters by documentType when passed in the request
+          const rawDocuments = res?.data?.data || [];
 
-          if (Array.isArray(res.data)) {
-            documentsData = res.data;
-          } else if (res.data?.data && Array.isArray(res.data.data)) {
-            documentsData = res.data.data;
-          } else if (res.data?.data?.data && Array.isArray(res.data.data.data)) {
-            documentsData = res.data.data.data;
-          }
+          // Map API response to match invoice page field structure
+          // API returns: clientName/customerName, totalPrice, createdDate/creationDate, statusTitleText
+          // We need to normalize these fields for consistent display
+          const documentsData: DocumentListItem[] = rawDocuments.map((doc: any) => {
+            // Debug: Log first document to see structure
+            if (rawDocuments.indexOf(doc) === 0) {
+              console.log("[AssignDocumentModal] Sample document from API:", doc);
+              console.log("[AssignDocumentModal] Available number fields:", {
+                number: doc.number,
+                documentNumber: doc.documentNumber,
+                invoiceNumber: doc.invoiceNumber,
+                quoteNumber: doc.quoteNumber,
+                orderNumber: doc.orderNumber,
+              });
+            }
+            
+            // Spread original doc first, then override with normalized fields
+            return {
+            ...doc,
+            id: doc.id,
+            // Document number - check multiple possible fields (same as invoice page uses doc.number)
+            // This must come after spread to ensure our mapping takes precedence
+            number: doc.number || doc.documentNumber || doc.invoiceNumber || doc.quoteNumber || doc.orderNumber || doc.receiptNumber || null,
+            documentType: doc.documentType || actionConfig?.documentType,
+            // Map client/customer fields (same as invoice page line 1631)
+            client: {
+              id: doc.clientId || doc.customerId,
+              name: doc.clientName || doc.customerName,
+              code: doc.clientCode || doc.customerCode,
+            },
+            // Map date fields (same as invoice page line 1621-1622)
+            createDate: doc.createdDate || doc.creationDate,
+            // Map price fields (same as invoice page line 1662-1663)
+            total: doc.totalPrice !== undefined ? doc.totalPrice : doc.total,
+            totalPriceWithoutVat: doc.totalPriceWithoutVat,
+            currency: doc.currency,
+            // Map status fields (same as invoice page line 1665)
+            status: doc.status,
+            statusTitleText: doc.statusTitleText, // Required for _renderStatus function
+            approvalStatus: doc.approvalStatus,
+            userName: doc.userName,
+            isDraft: doc.isDraft,
+            externalDocumentNumber: doc.externalDocumentNumber,
+            documentNumbers: doc.documentNumbers,
+            secondDocumentNumbers: doc.secondDocumentNumbers,
+            thirdDocumentNumbers: doc.thirdDocumentNumbers,
+            titleDocumentNumber: doc.titleDocumentNumber,
+            titleSecondDocumentNumber: doc.titleSecondDocumentNumber,
+            titleThirdDocumentNumber: doc.titleThirdDocumentNumber,
+            titleExternalDocumentNumber: doc.titleExternalDocumentNumber,
+            // Source document fields (for invoices/delivery notes)
+            sourceDocumentNumber: doc.sourceDocumentNumber,
+          };
+          });
 
-          // Filter documents by type
-          const filteredDocs = documentsData.filter((doc) => doc.documentType === actionConfig.documentType);
-
-          console.log("[AssignDocumentModal] Filtered documents:", filteredDocs);
-          setDocuments(filteredDocs);
+          console.log("[AssignDocumentModal] Documents received:", documentsData);
+          setDocuments(documentsData);
           setError(null);
         } else {
           // API returned error
@@ -132,21 +174,27 @@ export const AssignDocumentModal: React.FC<AssignDocumentModalProps> = ({
         setLoading(false);
       };
 
-      // Use getAllDocumentsApi with filters (same pattern as use-quote.tsx)
-      // This is the standard way to fetch filtered documents
+      // Use getAllDocumentsApi with filters (same pattern as invoice page - use-quote.tsx line 1923)
+      // The API filters by documentType automatically, no need for client-side filtering
       const requestData: any = {
         documentType: actionConfig.documentType,
         data: {
           model: {
             pageNumber: 1,
             pageSize: 100, // Get more documents for search
+            order: null,
           },
         },
       };
 
-      // Add customerId filter if required and available
+      // Add customerId filter if required and available (same pattern as use-quote.tsx line 2426)
       if (requiresCustomerId && customerId) {
         requestData.data.customerId = customerId;
+      }
+
+      // Add patternSearch if user has typed a search term (same pattern as useMentionSearch.ts line 74)
+      if (debouncedSearchTerm && debouncedSearchTerm.trim()) {
+        requestData.data.patternSearch = debouncedSearchTerm.trim();
       }
 
       console.log("[AssignDocumentModal] Fetching documents with params:", requestData);
@@ -163,7 +211,7 @@ export const AssignDocumentModal: React.FC<AssignDocumentModalProps> = ({
       );
       setLoading(false);
     }
-  }, [actionConfig?.documentType, customerId, callApi, requiresCustomerId, t]);
+  }, [actionConfig?.documentType, customerId, callApi, requiresCustomerId, debouncedSearchTerm, t]);
 
   useEffect(() => {
     if (open && actionConfig?.documentType) {
@@ -176,14 +224,29 @@ export const AssignDocumentModal: React.FC<AssignDocumentModalProps> = ({
     }
   }, [open, actionConfig?.documentType, fetchDocuments]);
 
-  // Search and rank documents by relevance using advanced search utility
+  // Document options for autocomplete
+  // When patternSearch is used, API already filters results, so we use them directly
+  // Otherwise, use client-side search for additional filtering
   const documentOptions = useMemo((): DocumentAutocompleteOption[] => {
     if (!documents.length) return [];
 
-    // Use advanced search with relevance scoring
-    const scoredDocs = searchDocuments(documents, debouncedSearchTerm);
+    // If we have a search term and API filtered results, use them directly
+    // Otherwise, use client-side search for additional filtering
+    if (debouncedSearchTerm && debouncedSearchTerm.trim()) {
+      // API already filtered by patternSearch, use results directly
+      return documents.map((doc) => ({
+        id: doc.id,
+        label: `${doc.number || 'N/A'} - ${doc.client?.name || (doc as any).clientName || (doc as any).customerName || 'Unknown'}`,
+        value: doc,
+        documentNumber: doc.number,
+        documentId: doc.id,
+      }));
+    }
 
-    // Return top 50 results (sorted by relevance)
+    // No search term - use client-side search for sorting/ranking
+    const scoredDocs = searchDocuments(documents, "");
+
+    // Return top 50 results (sorted by date, newest first)
     return scoredDocs.slice(0, 50).map((doc) => ({
       id: doc.id,
       label: doc.label,
@@ -267,60 +330,7 @@ export const AssignDocumentModal: React.FC<AssignDocumentModalProps> = ({
           </Alert>
         )}
 
-        <Stack spacing={3}>
-          {/* Customer Info - Only show if customer exists */}
-          {customerName && (
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                gap: 1.5,
-                p: 2,
-                backgroundColor: neutralColor(50),
-                borderRadius: "6px",
-              }}
-            >
-              <Box
-                sx={{
-                  width: 40,
-                  height: 40,
-                  borderRadius: 2,
-                  backgroundColor: primaryColor(50),
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  color: primaryColor(600),
-                }}
-              >
-                <PersonIcon sx={{ fontSize: 22 }} />
-              </Box>
-              <Box sx={{ flex: 1 }}>
-                <Typography
-                  sx={{
-                    fontSize: "0.75rem",
-                    color: neutralColor(700),
-                    fontWeight: 600,
-                    textTransform: "uppercase",
-                    letterSpacing: "0.05em",
-                    mb: 0.5,
-                  }}
-                >
-                  {t("frontdesk.customer", { defaultValue: "Customer" })}
-                </Typography>
-                <Typography
-                  variant="body1"
-                  sx={{
-                    fontWeight: 600,
-                    color: neutralColor(900),
-                    fontSize: "1rem",
-                  }}
-                >
-                  {customerName}
-                </Typography>
-              </Box>
-            </Box>
-          )}
-
+        <Stack spacing={2}>
           {/* Connect to Existing Section */}
           <Box>
             <Typography
@@ -370,6 +380,33 @@ export const AssignDocumentModal: React.FC<AssignDocumentModalProps> = ({
                     getOptionLabel={(option: DocumentAutocompleteOption) => option?.label || ""}
                     renderOption={(props: React.HTMLAttributes<HTMLLIElement>, option: DocumentAutocompleteOption) => {
                       const displayInfo = formatDocumentForDisplay(option.value);
+                      const document = option.value;
+                      // Use same status rendering logic as invoice page (use-quote.tsx line 905-910)
+                      const statusElement = actionConfig?.documentType
+                        ? (actionConfig.documentType === DOCUMENT_TYPE.invoice && document.isDraft
+                            ? <span style={{ color: "#e77676" }}>{t("sales.quote.draft")}</span>
+                            : _renderStatus(actionConfig.documentType, document, t))
+                        : null;
+                      
+                      // Source documents (same as invoice page line 884-891)
+                      const sourceDocuments = document.sourceDocumentNumber && document.sourceDocumentNumber.length > 0
+                        ? document.sourceDocumentNumber.slice(0, 2).map((item: any, index: number) => (
+                            <a
+                              key={index}
+                              href={renderURLDocumentType(item?.sourceDocumentType, item.documentId)}
+                              onClick={(e) => e.stopPropagation()}
+                              style={{
+                                cursor: "pointer",
+                                color: "#5859A8",
+                                textDecoration: "none",
+                                fontSize: "0.75rem",
+                                marginRight: index < Math.min(document.sourceDocumentNumber.length, 2) - 1 ? "4px" : "0",
+                              }}
+                            >
+                              {t(renderDocumentTypeForSourceDocumentNumber(item?.sourceDocumentType))}: {item?.documentNumber}
+                            </a>
+                          ))
+                        : null;
 
                       return (
                         <Box
@@ -377,11 +414,11 @@ export const AssignDocumentModal: React.FC<AssignDocumentModalProps> = ({
                           {...props}
                           key={option.id}
                           sx={{
-                            py: 1.75,
+                            py: 1.25,
                             px: 2,
                             display: "flex",
-                            alignItems: "flex-start",
-                            gap: 2,
+                            alignItems: "center",
+                            gap: 1.5,
                             borderBottom: `1px solid ${neutralColor(200)}`,
                             "&:last-child": {
                               borderBottom: "none",
@@ -393,98 +430,87 @@ export const AssignDocumentModal: React.FC<AssignDocumentModalProps> = ({
                         >
                           <Box
                             sx={{
-                              width: 40,
-                              height: 40,
+                              width: 32,
+                              height: 32,
                               borderRadius: 1,
                               backgroundColor: neutralColor(100),
                               display: "flex",
                               alignItems: "center",
                               justifyContent: "center",
                               flexShrink: 0,
-                              mt: 0.25,
                             }}
                           >
-                            <DescriptionOutlinedIcon sx={{ fontSize: 18, color: neutralColor(600) }} />
+                            <DescriptionOutlinedIcon sx={{ fontSize: 16, color: neutralColor(600) }} />
                           </Box>
                           <Box sx={{ flex: 1, minWidth: 0 }}>
-                            <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 0.5 }}>
+                            <Stack direction="row" spacing={1.5} alignItems="center" sx={{ mb: 0.5 }}>
                               <Typography
                                 variant="body2"
                                 sx={{
                                   fontWeight: 600,
                                   color: neutralColor(900),
-                                  fontSize: "0.9375rem",
-                                  overflow: "hidden",
-                                  textOverflow: "ellipsis",
-                                  whiteSpace: "nowrap",
-                                  flex: 1,
+                                  fontSize: "0.875rem",
+                                  minWidth: "80px",
                                 }}
                               >
                                 {displayInfo.number}
                               </Typography>
-                              {displayInfo.hasStatus && (
-                                <Chip
-                                  label={displayInfo.status}
-                                  size="small"
-                                  icon={<CheckCircleIcon sx={{ fontSize: 14 }} />}
+                              {displayInfo.hasAmount && (
+                                <Typography
+                                  variant="caption"
                                   sx={{
-                                    height: 20,
-                                    fontSize: "0.7rem",
+                                    color: neutralColor(700),
+                                    fontSize: "0.8125rem",
                                     fontWeight: 500,
-                                    "& .MuiChip-icon": {
-                                      fontSize: 14,
-                                      marginLeft: "4px",
-                                    },
+                                    minWidth: "100px",
                                   }}
-                                />
+                                >
+                                  {displayInfo.amount}
+                                </Typography>
+                              )}
+                              {displayInfo.date && (
+                                <Typography
+                                  variant="caption"
+                                  sx={{
+                                    color: neutralColor(600),
+                                    fontSize: "0.75rem",
+                                  }}
+                                >
+                                  {displayInfo.date}
+                                </Typography>
                               )}
                             </Stack>
-                            <Typography
-                              variant="caption"
+                            {sourceDocuments && (
+                              <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5, alignItems: "center" }}>
+                                {sourceDocuments}
+                                {document.sourceDocumentNumber.length > 2 && (
+                                  <Typography
+                                    variant="caption"
+                                    sx={{
+                                      color: neutralColor(600),
+                                      fontSize: "0.7rem",
+                                      fontStyle: "italic",
+                                    }}
+                                  >
+                                    +{document.sourceDocumentNumber.length - 2} more
+                                  </Typography>
+                                )}
+                              </Box>
+                            )}
+                          </Box>
+                          {statusElement && (
+                            <Box
                               sx={{
-                                color: neutralColor(600),
-                                fontSize: "0.8125rem",
-                                overflow: "hidden",
-                                textOverflow: "ellipsis",
-                                whiteSpace: "nowrap",
-                                display: "block",
-                                mb: 0.5,
+                                display: "flex",
+                                alignItems: "center",
+                                flexShrink: 0,
+                                // Let _renderStatus use its default styles (same as invoice page)
+                                // No fontSize/fontWeight overrides to maintain consistency
                               }}
                             >
-                              {displayInfo.clientName}
-                            </Typography>
-                            <Stack direction="row" spacing={1.5} alignItems="center" sx={{ mt: 0.5 }}>
-                              {displayInfo.date && (
-                                <Stack direction="row" spacing={0.5} alignItems="center">
-                                  <CalendarTodayIcon sx={{ fontSize: 12, color: neutralColor(600) }} />
-                                  <Typography
-                                    variant="caption"
-                                    sx={{
-                                      color: neutralColor(600),
-                                      fontSize: "0.75rem",
-                                    }}
-                                  >
-                                    {displayInfo.date}
-                                  </Typography>
-                                </Stack>
-                              )}
-                              {displayInfo.hasAmount && (
-                                <Stack direction="row" spacing={0.5} alignItems="center">
-                                  <AttachMoneyIcon sx={{ fontSize: 12, color: neutralColor(600) }} />
-                                  <Typography
-                                    variant="caption"
-                                    sx={{
-                                      color: neutralColor(600),
-                                      fontSize: "0.75rem",
-                                      fontWeight: 500,
-                                    }}
-                                  >
-                                    {displayInfo.amount}
-                                  </Typography>
-                                </Stack>
-                              )}
-                            </Stack>
-                          </Box>
+                              {statusElement}
+                            </Box>
+                          )}
                         </Box>
                       );
                     }}
@@ -505,38 +531,28 @@ export const AssignDocumentModal: React.FC<AssignDocumentModalProps> = ({
                   {!loading && documents.length > 0 && (
                     <Box
                       sx={{
-                        mt: 1.5,
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "space-between",
+                        position: "absolute",
+                        top: "8px",
+                        right: "12px",
+                        zIndex: 1,
                       }}
                     >
-                      <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                        <SearchIcon sx={{ fontSize: 16, color: neutralColor(600) }} />
-                        <Typography
-                          variant="caption"
-                          sx={{
-                            fontSize: "0.8125rem",
-                            color: neutralColor(600),
-                          }}
-                        >
-                          {debouncedSearchTerm
-                            ? `${documentOptions.length} ${documentOptions.length === 1 ? "result" : "results"} found`
-                            : `${documents.length} ${documents.length === 1 ? "document" : "documents"} available`}
-                        </Typography>
-                      </Box>
-                      {debouncedSearchTerm && documentOptions.length > 0 && (
-                        <Typography
-                          variant="caption"
-                          sx={{
-                            fontSize: "0.75rem",
-                            fontStyle: "italic",
-                            color: neutralColor(600),
-                          }}
-                        >
-                          Sorted by relevance
-                        </Typography>
-                      )}
+                      <Typography
+                        variant="caption"
+                        sx={{
+                          fontSize: "0.75rem",
+                          color: neutralColor(600),
+                          fontWeight: 500,
+                          backgroundColor: neutralColor(0),
+                          px: 1,
+                          py: 0.5,
+                          borderRadius: "4px",
+                        }}
+                      >
+                        {debouncedSearchTerm
+                          ? `${documentOptions.length} ${documentOptions.length === 1 ? "result" : "results"}`
+                          : `${documents.length} ${documents.length === 1 ? "document" : "documents"}`}
+                      </Typography>
                     </Box>
                   )}
                 </Box>
@@ -570,6 +586,34 @@ export const AssignDocumentModal: React.FC<AssignDocumentModalProps> = ({
                 {selectedDocument &&
                   (() => {
                     const displayInfo = formatDocumentForDisplay(selectedDocument.value);
+                    const document = selectedDocument.value;
+                    // Use same status rendering logic as invoice page (use-quote.tsx line 905-910)
+                    const statusElement = actionConfig?.documentType
+                      ? (actionConfig.documentType === DOCUMENT_TYPE.invoice && document.isDraft
+                          ? <span style={{ color: "#e77676" }}>{t("sales.quote.draft")}</span>
+                          : _renderStatus(actionConfig.documentType, document, t))
+                      : null;
+                    
+                    // Source documents for selected document
+                    const selectedSourceDocuments = document.sourceDocumentNumber && document.sourceDocumentNumber.length > 0
+                      ? document.sourceDocumentNumber.map((item: any, index: number) => (
+                          <a
+                            key={index}
+                            href={renderURLDocumentType(item?.sourceDocumentType, item.documentId)}
+                            onClick={(e) => e.stopPropagation()}
+                            style={{
+                              cursor: "pointer",
+                              color: "#5859A8",
+                              textDecoration: "none",
+                              fontSize: "0.75rem",
+                              display: "block",
+                              marginBottom: index < document.sourceDocumentNumber.length - 1 ? "2px" : "0",
+                            }}
+                          >
+                            {t(renderDocumentTypeForSourceDocumentNumber(item?.sourceDocumentType))}: {item?.documentNumber}
+                          </a>
+                        ))
+                      : null;
 
                     return (
                       <Box
@@ -603,76 +647,69 @@ export const AssignDocumentModal: React.FC<AssignDocumentModalProps> = ({
                                 color: primaryColor(600),
                                 fontWeight: 600,
                                 display: "block",
-                                mb: 0.5,
+                                mb: 1,
                                 fontSize: "0.75rem",
                               }}
                             >
                               {t("frontdesk.selectedDocument", { defaultValue: "Selected Document" })}
                             </Typography>
-                            <Typography
-                              variant="body2"
-                              sx={{
-                                fontWeight: 600,
-                                color: neutralColor(900),
-                                fontSize: "0.9375rem",
-                                mb: 0.5,
-                              }}
-                            >
-                              {displayInfo.number}
-                            </Typography>
-                            <Typography
-                              variant="caption"
-                              sx={{
-                                color: neutralColor(600),
-                                fontSize: "0.8125rem",
-                                display: "block",
-                                mb: 0.75,
-                              }}
-                            >
-                              {displayInfo.clientName}
-                            </Typography>
-                            <Stack direction="row" spacing={1.5} alignItems="center" flexWrap="wrap">
-                              {displayInfo.date && (
-                                <Stack direction="row" spacing={0.5} alignItems="center">
-                                  <CalendarTodayIcon sx={{ fontSize: 12, color: neutralColor(600) }} />
-                                  <Typography
-                                    variant="caption"
-                                    sx={{
-                                      color: neutralColor(600),
-                                      fontSize: "0.75rem",
-                                    }}
-                                  >
-                                    {displayInfo.date}
-                                  </Typography>
-                                </Stack>
-                              )}
+                            <Stack direction="row" spacing={1.5} alignItems="center" flexWrap="wrap" sx={{ mb: 1 }}>
+                              <Typography
+                                variant="body2"
+                                sx={{
+                                  fontWeight: 600,
+                                  color: neutralColor(900),
+                                  fontSize: "0.875rem",
+                                }}
+                              >
+                                {displayInfo.number}
+                              </Typography>
                               {displayInfo.hasAmount && (
-                                <Stack direction="row" spacing={0.5} alignItems="center">
-                                  <AttachMoneyIcon sx={{ fontSize: 12, color: neutralColor(600) }} />
-                                  <Typography
-                                    variant="caption"
-                                    sx={{
-                                      color: neutralColor(600),
-                                      fontSize: "0.75rem",
-                                      fontWeight: 500,
-                                    }}
-                                  >
-                                    {displayInfo.amount}
-                                  </Typography>
-                                </Stack>
-                              )}
-                              {displayInfo.hasStatus && (
-                                <Chip
-                                  label={displayInfo.status}
-                                  size="small"
+                                <Typography
+                                  variant="caption"
                                   sx={{
-                                    height: 20,
-                                    fontSize: "0.7rem",
+                                    color: neutralColor(700),
+                                    fontSize: "0.8125rem",
                                     fontWeight: 500,
                                   }}
-                                />
+                                >
+                                  {displayInfo.amount}
+                                </Typography>
+                              )}
+                              {displayInfo.date && (
+                                <Typography
+                                  variant="caption"
+                                  sx={{
+                                    color: neutralColor(600),
+                                    fontSize: "0.75rem",
+                                  }}
+                                >
+                                  {displayInfo.date}
+                                </Typography>
                               )}
                             </Stack>
+                            {selectedSourceDocuments && (
+                              <Box sx={{ mb: 1 }}>
+                                <Typography
+                                  variant="caption"
+                                  sx={{
+                                    color: neutralColor(600),
+                                    fontSize: "0.7rem",
+                                    fontWeight: 600,
+                                    display: "block",
+                                    mb: 0.5,
+                                  }}
+                                >
+                                  {t("sales.quote.sourceDocument", { defaultValue: "Source Document" })}:
+                                </Typography>
+                                {selectedSourceDocuments}
+                              </Box>
+                            )}
+                            {statusElement && (
+                              <Box>
+                                {statusElement}
+                              </Box>
+                            )}
                           </Box>
                         </Stack>
                       </Box>
@@ -682,33 +719,6 @@ export const AssignDocumentModal: React.FC<AssignDocumentModalProps> = ({
             )}
           </Box>
 
-          {/* Divider */}
-          <Divider />
-
-          {/* Create New Section */}
-          <Box>
-            <Typography
-              sx={{
-                fontSize: "0.875rem",
-                color: neutralColor(800),
-                fontWeight: 600,
-                mb: 1.5,
-              }}
-            >
-              {t("frontdesk.createNew", { defaultValue: "Create new" })} {documentTitle}
-            </Typography>
-            <Typography
-              variant="body2"
-              sx={{
-                color: neutralColor(600),
-                fontSize: "0.875rem",
-              }}
-            >
-              {customerName
-                ? t("frontdesk.createForCustomer", { defaultValue: "Create for {{customer}}", customer: customerName })
-                : t("frontdesk.startFresh", { defaultValue: "Start with a blank document" })}
-            </Typography>
-          </Box>
         </Stack>
       </DialogContent>
 

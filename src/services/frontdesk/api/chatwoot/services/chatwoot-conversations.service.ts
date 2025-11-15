@@ -488,7 +488,7 @@ export class ChatwootConversationsService extends BaseChatwootService {
   ): Promise<ChatwootConversation> {
     return await this.post<ChatwootConversation>(
       `/api/accounts/conversations/${conversationId}/custom_attributes`,
-      customAttributes
+      { custom_attributes: customAttributes }
     );
   }
 
