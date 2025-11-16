@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { useRecoilValue } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import { EmailComposer } from "@/widgets/frontdesk/providers/email/components/email-composer";
 import {
     EmailAttachment,
@@ -10,6 +10,7 @@ import { useSnackBar } from "@/hooks/use-snack-bar";
 import { chatwootService } from "@/services/frontdesk";
 import { chatwootProfileAtom, chatwootSelectedAccountAtom } from "@/store/frontdesk/atoms/chatwoot.atoms";
 import { DOCUMENT_TYPE } from "../enums";
+import { useChatwootProfile } from "@/widgets/frontdesk/providers/chatwoot/hooks/use-chatwoot-profile";
 
 // Helper function to convert HTML to plain text
 const htmlToPlainText = (html: string): string => {
@@ -54,7 +55,9 @@ export const FrontDeskEmailComposerWrapper: React.FC<FrontDeskEmailComposerWrapp
 }) => {
     const { alertSuccessSend, alertFaultSend } = useSnackBar();
     const selectedAccountId = useRecoilValue(chatwootSelectedAccountAtom);
+    const setSelectedAccountId = useSetRecoilState(chatwootSelectedAccountAtom);
     const currentUser = useRecoilValue(chatwootProfileAtom);
+    const { profile: profileUser, loading: profileLoading, fetchProfile } = useChatwootProfile();
     const [isSending, setIsSending] = React.useState(false);
     const [senderOptions, setSenderOptions] = useState<EmailSenderOption[]>([]);
     const [defaultSenderOption, setDefaultSenderOption] = useState<EmailSenderOption | null>(null);
@@ -90,29 +93,34 @@ export const FrontDeskEmailComposerWrapper: React.FC<FrontDeskEmailComposerWrapp
         }
 
         const baseOptions = emailData.senderOptions ?? [];
-        let nextDefault = emailData.defaultSenderOption ?? null;
-        let mergedOptions = baseOptions;
-
-        if (nextDefault) {
-            mergedOptions = dedupeOptions([...baseOptions, nextDefault]);
-        } else if (emailData.sender) {
-            nextDefault = {
-                inboxId:
-                    typeof emailData.senderInboxId === "number"
-                        ? emailData.senderInboxId
-                        : -1,
-                inboxName: emailData.senderInboxName || emailData.sender,
-                sourceId: emailData.sender,
-                channelType: "Channel::Email",
-            };
-            mergedOptions = dedupeOptions([...baseOptions, nextDefault]);
-        } else if (mergedOptions.length > 0) {
-            nextDefault = mergedOptions[0];
-        }
+        let mergedOptions = dedupeOptions(baseOptions);
 
         setSenderOptions(mergedOptions);
-        setDefaultSenderOption(nextDefault);
+        setDefaultSenderOption(null);
     }, [emailData, dedupeOptions]);
+
+    useEffect(() => {
+        if (!profileUser && !profileLoading) {
+            fetchProfile();
+        }
+    }, [profileUser, profileLoading, fetchProfile]);
+
+    useEffect(() => {
+        if (selectedAccountId) {
+            return;
+        }
+
+        const resolvedAccount =
+            currentUser?.accounts?.find((account) => typeof account.id === "number")?.id ??
+            profileUser?.accounts?.find((account) => typeof account.id === "number")?.id ??
+            currentUser?.account_id ??
+            profileUser?.account_id ??
+            null;
+
+        if (resolvedAccount) {
+            setSelectedAccountId(resolvedAccount);
+        }
+    }, [selectedAccountId, currentUser, profileUser, setSelectedAccountId]);
 
     useEffect(() => {
         let cancelled = false;
@@ -137,13 +145,11 @@ export const FrontDeskEmailComposerWrapper: React.FC<FrontDeskEmailComposerWrapp
                 const merged = dedupeOptions([...senderOptions, ...additionalOptions]);
 
                 let nextDefault = defaultSenderOption;
-                if (!nextDefault) {
+                if (!nextDefault && emailData.sender) {
                     nextDefault =
                         merged.find(
-                            (option) =>
-                                emailData.sender &&
-                                option.sourceId.toLowerCase() === emailData.sender.toLowerCase()
-                        ) ?? merged[0] ?? null;
+                            (option) => option.sourceId.toLowerCase() === emailData.sender.toLowerCase()
+                        ) ?? null;
                 }
 
                 setSenderOptions(merged);
@@ -187,17 +193,127 @@ export const FrontDeskEmailComposerWrapper: React.FC<FrontDeskEmailComposerWrapp
         }
     };
 
+    const resolveSenderOption = useCallback(
+        (option?: EmailSenderOption | null): EmailSenderOption | null => {
+            const normalizedSource = option?.sourceId?.toLowerCase();
+
+            if (normalizedSource) {
+                const positiveMatch = senderOptions.find(
+                    (candidate) =>
+                        candidate.sourceId?.toLowerCase() === normalizedSource && candidate.inboxId > 0
+                );
+
+                if (positiveMatch) {
+                    return positiveMatch;
+                }
+
+                const looseMatch = senderOptions.find(
+                    (candidate) => candidate.sourceId?.toLowerCase() === normalizedSource
+                );
+
+                if (looseMatch) {
+                    return looseMatch;
+                }
+            }
+
+            return null;
+        },
+        [senderOptions]
+    );
+
+    const extractAccountId = useCallback((profile: typeof currentUser | typeof profileUser | null | undefined) => {
+        if (!profile) return null;
+        const fromAccounts = profile.accounts?.find((account) => typeof account.id === "number")?.id;
+        if (typeof fromAccounts === "number") return fromAccounts;
+        if (typeof profile.account_id === "number") return profile.account_id;
+        return null;
+    }, []);
+
+    const ensureAccountId = useCallback(async (): Promise<number | null> => {
+        let resolved = typeof selectedAccountId === "number" ? selectedAccountId : null;
+
+        if (!resolved) {
+            resolved = extractAccountId(currentUser) ?? extractAccountId(profileUser);
+        }
+
+        if (!resolved) {
+            const refreshedProfile = await fetchProfile();
+            resolved = extractAccountId(refreshedProfile);
+        }
+
+        if (resolved) {
+            setSelectedAccountId(resolved);
+            return resolved;
+        }
+
+        return null;
+    }, [selectedAccountId, currentUser, profileUser, fetchProfile, extractAccountId, setSelectedAccountId]);
+
     const handleSend = async (draft: EmailDraft): Promise<boolean> => {
         setIsSending(true);
 
         try {
-            if (!draft.sender) {
+            const senderOption = resolveSenderOption(draft.sender ?? defaultSenderOption);
+            let contactId = draft.contactId ?? emailData?.contactId ?? null;
+
+            if (!senderOption) {
+                console.error("[FrontDeskEmailComposerWrapper] Missing sender or contact", {
+                    draftSender: draft.sender,
+                    defaultSenderOption,
+                    resolvedSenderOption: senderOption,
+                    contactId,
+                    senderOptions,
+                    emailData,
+                });
                 alertFaultSend();
                 setIsSending(false);
                 return false;
             }
 
-            const accountId = selectedAccountId || 1;
+            const resolvedAccountId = await ensureAccountId();
+
+            if (!resolvedAccountId) {
+                console.log("[FrontDeskEmailComposerWrapper] Unable to resolve Chatwoot account", {
+                    selectedAccountId,
+                    currentUser,
+                    profileUser,
+                });
+                alertFaultSend();
+                setIsSending(false);
+                return false;
+            }
+
+            const accountId = Number(resolvedAccountId);
+            if (Number.isNaN(accountId)) {
+                console.log("[FrontDeskEmailComposerWrapper] Resolved account ID is not a number", {
+                    resolvedAccountId,
+                });
+                alertFaultSend();
+                setIsSending(false);
+                return false;
+            }
+
+            if (!contactId) {
+                const fallbackEmail =
+                    emailData?.contactEmail ||
+                    emailData?.tos?.[0] ||
+                    draft.to?.[0]?.email ||
+                    null;
+
+                if (!fallbackEmail) {
+                    console.error("[FrontDeskEmailComposerWrapper] Missing contact email for conversation payload", {
+                        draft,
+                        emailData,
+                    });
+                    alertFaultSend();
+                    setIsSending(false);
+                    return false;
+                }
+
+
+
+            }
+
             const messageContent = draft.html || draft.text || draft.body || draft.message || "";
             const ccEmails = draft.cc?.map((recipient) => recipient.email).filter(Boolean) ?? [];
             const bccEmails = draft.bcc?.map((recipient) => recipient.email).filter(Boolean) ?? [];
@@ -208,9 +324,9 @@ export const FrontDeskEmailComposerWrapper: React.FC<FrontDeskEmailComposerWrapp
 
             if (hasAttachments) {
                 const formData = new FormData();
-                formData.append("inbox_id", draft.sender.inboxId.toString());
-                formData.append("contact_id", draft.contactId.toString());
-                formData.append("source_id", draft.sender.sourceId);
+                formData.append("inbox_id", senderOption.inboxId.toString());
+                formData.append("contact_id", contactId.toString());
+                formData.append("source_id", senderOption.sourceId);
                 formData.append("status", "open");
                 if (assigneeId) {
                     formData.append("assignee_id", assigneeId.toString());
@@ -240,9 +356,9 @@ export const FrontDeskEmailComposerWrapper: React.FC<FrontDeskEmailComposerWrapp
                 payload = formData;
             } else {
                 const jsonPayload: Record<string, any> = {
-                    inbox_id: draft.sender.inboxId,
-                    contact_id: draft.contactId,
-                    source_id: draft.sender.sourceId,
+                    inbox_id: senderOption.inboxId,
+                    contact_id: contactId,
+                    source_id: senderOption.sourceId,
                     status: "open",
                 };
 

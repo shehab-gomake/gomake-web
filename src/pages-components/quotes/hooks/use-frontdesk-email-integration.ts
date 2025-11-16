@@ -313,49 +313,25 @@ export const useFrontDeskEmailIntegration = ({
                 senderOptions.find((option) => sender && option.sourceId.toLowerCase() === sender.toLowerCase()) ??
                 (senderOptions.length > 0 ? senderOptions[0] : null);
 
-              let normalizedDefaultSenderOption = defaultSenderOption;
+              // let normalizedDefaultSenderOption = defaultSenderOption;
               let normalizedSenderOptions = senderOptions;
+              let erpSenderOption: EmailSenderOption | null = null;
 
-              if (sender && !normalizedDefaultSenderOption) {
-                const fallbackContactable = combinedContactableInboxes.find(
-                  (inbox) => inbox.source_id?.toLowerCase() === sender.toLowerCase()
-                );
-                if (fallbackContactable) {
-                  normalizedDefaultSenderOption = {
-                    inboxId: fallbackContactable.inbox.id,
-                    inboxName: fallbackContactable.inbox.name || fallbackContactable.source_id,
-                    sourceId: fallbackContactable.source_id,
-                    channelType: fallbackContactable.inbox.channel_type,
-                  };
-                } else if (senderInboxId) {
-                  normalizedDefaultSenderOption = {
-                    inboxId: senderInboxId,
-                    inboxName: senderInboxName || sender,
-                    sourceId: sender,
-                    channelType: ChannelType.EMAIL,
-                  };
-                }
-              }
 
-              if (normalizedDefaultSenderOption) {
-                const exists = normalizedSenderOptions.some(
-                  (option) =>
-                    option.inboxId === normalizedDefaultSenderOption?.inboxId &&
-                    option.sourceId.toLowerCase() === normalizedDefaultSenderOption.sourceId.toLowerCase()
-                );
-                if (!exists) {
-                  normalizedSenderOptions = mergeSenderOptions(normalizedSenderOptions, [normalizedDefaultSenderOption]);
-                }
-              } else if (sender && senderInboxId) {
-                const fallbackOption: EmailSenderOption = {
-                  inboxId: senderInboxId,
-                  inboxName: senderInboxName || sender,
-                  sourceId: sender,
-                  channelType: ChannelType.EMAIL,
-                };
-                normalizedDefaultSenderOption = fallbackOption;
-                normalizedSenderOptions = mergeSenderOptions(normalizedSenderOptions, [fallbackOption]);
-              }
+              // if (erpSenderOption) {
+              //   normalizedDefaultSenderOption = erpSenderOption;
+              // }
+
+              // if (normalizedDefaultSenderOption) {
+              //   const exists = normalizedSenderOptions.some(
+              //     (option) =>
+              //       option.inboxId === normalizedDefaultSenderOption?.inboxId &&
+              //       option.sourceId.toLowerCase() === normalizedDefaultSenderOption.sourceId.toLowerCase()
+              //   );
+              //   if (!exists) {
+              //     normalizedSenderOptions = mergeSenderOptions(normalizedSenderOptions, [normalizedDefaultSenderOption]);
+              //   }
+              // }
 
               const normalizedEmailData: EmailData = {
                 tos: res.data.tos || [],
@@ -369,9 +345,9 @@ export const useFrontDeskEmailIntegration = ({
                 contactEmail: primaryContactEmail,
                 contactableInboxes: combinedContactableInboxes,
                 senderOptions: normalizedSenderOptions,
-                defaultSenderOption: normalizedDefaultSenderOption,
-                senderInboxId: normalizedDefaultSenderOption?.inboxId ?? senderInboxId ?? null,
-                senderInboxName: normalizedDefaultSenderOption?.inboxName ?? senderInboxName ?? null,
+                // defaultSenderOption: normalizedDefaultSenderOption,
+                // senderInboxId: normalizedDefaultSenderOption?.inboxId ?? senderInboxId ?? null,
+                // senderInboxName: normalizedDefaultSenderOption?.inboxName ?? senderInboxName ?? null,
               };
 
               setEmailData(normalizedEmailData);
