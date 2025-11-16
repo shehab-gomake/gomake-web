@@ -35,10 +35,27 @@ const useStyle = () => {
         background: "none",
       },
       iconColor: secondColor(500),
+      addButtonStyle: {
+        display: "inline-flex",
+        padding: "0px 12px",
+        justifyContent: "center",
+        alignItems: "center",
+        gap: "4px",
+        borderRadius: "var(--theme-button-radius, 4px)",
+        border: `1px solid ${primaryColor(500)}`,
+        background: "#FFF",
+        boxShadow: "0px 1px 2px 0px rgba(16, 24, 40, 0.05)",
+        textTransform: "none" as "none",
+        color: primaryColor(500),
+        ...FONT_FAMILY.Inter(500, 14),
+        lineHeight: "18px",
+        height: "40px",
+      },
     };
   }, [theme]);
   return {
     classes,
+    primaryColor,
   };
 };
 export { useStyle };

@@ -45,7 +45,7 @@ const StyledAutocomplete: any = styled(Autocomplete, {
       "& fieldset": {
         border: props?.selectedOption
           ? "1px solid var(--theme-dropdown-border-color, transparent) !important"
-          : "var(--theme-dropdown-border, none) ",
+          : "var(--theme-dropdown-border, none) !important", //!here i don't know if it's correct to set to !important
         borderColor: props?.selectedOption
           ? "var(--theme-dropdown-border-color, transparent)"
           : "transparent",

@@ -14,7 +14,7 @@ body {
 }
 
 html * {
-  font-family: "Heebo", "sans-serif" !important;
+  font-family: var(--theme-font-family-base, "Heebo", sans-serif) !important;
 }
 
 @-moz-keyframes rotate90 {
