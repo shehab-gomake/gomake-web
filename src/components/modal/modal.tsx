@@ -28,6 +28,7 @@ const GoMakeModal = ({
     withClose,
     modalTitleColor,
   });
+
   return (
     <Modal disableEnforceFocus open={openModal} onClose={onClose} {...props}>
       <div style={classes.container}>

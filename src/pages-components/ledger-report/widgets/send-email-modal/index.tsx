@@ -1,11 +1,10 @@
 import { useTranslation } from "react-i18next";
-import { Divider } from "@mui/material";
+import { Divider, Typography } from "@mui/material";
 import { GoMakeAutoComplate, GoMakeModal, GomakeTextInput } from "@/components";
 import { useStyle } from "./style";
 import { SecondaryButton } from "@/components/button/secondary-button";
-import { CLIENT_TYPE } from "@/pages/customers/enums";
-import { ClientAutocomplete } from "@/widgets/Clients-Autocomplete/clients-list";
 
+import { getLabelTypography } from "@/utils/typography-utils";
 
 const SendEmailLedgerReportModal = ({
   openModal,
@@ -23,7 +22,11 @@ const SendEmailLedgerReportModal = ({
     <>
       <GoMakeModal
         openModal={openModal}
-        modalTitle={isAgingReport ? t("sales.quote.sendPayment") : t("reports.chooseEmailToSendCard")}
+        modalTitle={
+          isAgingReport
+            ? t("sales.quote.sendPayment")
+            : t("reports.chooseEmailToSendCard")
+        }
         onClose={onCloseModal}
         insideStyle={classes.insideStyle}
       >
@@ -31,7 +34,9 @@ const SendEmailLedgerReportModal = ({
           <Divider style={classes.dividerContainer} />
           <div style={classes.inputsContainer}>
             <div style={classes.itemInputContainer}>
-              <h3>{t("reports.contact")}</h3>
+              <Typography style={getLabelTypography()}>
+                {t("reports.contact")}
+              </Typography>
               <div style={{ width: "100%" }}>
                 <GoMakeAutoComplate
                   options={clientContactsValue}
@@ -45,23 +50,27 @@ const SendEmailLedgerReportModal = ({
               </div>
             </div>
             <div style={classes.itemInputContainer}>
-              <h3>{t("sales.quote.email")}</h3>
+              <Typography style={getLabelTypography()}>
+                {t("sales.quote.email")}
+              </Typography>
               <div style={{ width: "100%" }}>
                 <GomakeTextInput
                   placeholder={t("sales.quote.email")}
                   style={classes.textInputStyle}
                   value={selectedContactById?.mail}
                   onChange={(e: any) => {
-                    onChangeUpdateClientContact(
-                      "mail",
-                      e.target.value
-                    );
+                    onChangeUpdateClientContact("mail", e.target.value);
                   }}
                 />
               </div>
             </div>
           </div>
-          <SecondaryButton variant="contained" onClick={SendCustomerLedgerToMailApi}>{t("login.send")}</SecondaryButton>
+          <SecondaryButton
+            variant="contained"
+            onClick={SendCustomerLedgerToMailApi}
+          >
+            {t("login.send")}
+          </SecondaryButton>
         </div>
       </GoMakeModal>
     </>

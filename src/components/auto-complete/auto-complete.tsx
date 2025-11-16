@@ -45,7 +45,7 @@ const StyledAutocomplete: any = styled(Autocomplete, {
       "& fieldset": {
         border: props?.selectedOption
           ? "1px solid var(--theme-dropdown-border-color, transparent) !important"
-          : "var(--theme-dropdown-border, none) ",
+          : "var(--theme-dropdown-border, none) !important", //!here i don't know if it's correct to set to !important
         borderColor: props?.selectedOption
           ? "var(--theme-dropdown-border-color, transparent)"
           : "transparent",
@@ -173,7 +173,7 @@ const GoMakeAutoComplate = ({
   labelText,
   getOptionDisabled,
   freeSolo = false,
-  inputValue
+  inputValue,
 }: {
   value?: any;
   onChange?: any;
@@ -264,7 +264,9 @@ const GoMakeAutoComplate = ({
         options={options}
         disabled={disabled}
         freeSolo={freeSolo}
-        popupIcon={withArrow ? popupIcon ? popupIcon : <ArrowDropDownIcon /> : ""}
+        popupIcon={
+          withArrow ? popupIcon ? popupIcon : <ArrowDropDownIcon /> : ""
+        }
         groupBy={groupBy}
         renderGroup={(params) => (
           <div key={params.key}>

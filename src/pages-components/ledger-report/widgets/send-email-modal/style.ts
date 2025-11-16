@@ -3,7 +3,7 @@ import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 
 const useStyle = () => {
-  const {secondColor}=useGomakeTheme()
+  const { secondColor } = useGomakeTheme();
 
   const classes = useMemo(() => {
     return {
@@ -13,23 +13,23 @@ const useStyle = () => {
         height: "auto",
         maxHeight: 750,
       },
-      mainContainer:{
+      mainContainer: {
         display: "flex",
         flexDirection: "column" as "column",
         justifyContent: "flex-start",
         alignItems: "flex-start",
         width: "100%",
-        gap:20
+        gap: 20,
       },
-      dividerContainer:{ width: "100%", marginTop: 10 },
-      inputsContainer:{
+      dividerContainer: { width: "100%", marginTop: 10 },
+      inputsContainer: {
         display: "flex",
         flexDirection: "row" as "row",
         justifyContent: "flex-start",
         alignItems: "center",
-        gap:10,
+        gap: 10,
         width: "100%",
-        marginBottom:25,
+        marginBottom: 25,
       },
       autoComplateStyle: {
         background: "#FFFFFF",
@@ -38,22 +38,19 @@ const useStyle = () => {
         height: 40,
         width: "100%",
       },
-      itemInputContainer:{
+      itemInputContainer: {
         display: "flex",
         flexDirection: "column" as "column",
         justifyContent: "flex-start",
         alignItems: "flex-start",
-        gap:5,
-        width:"45%"
-        
+        gap: 5,
+        width: "45%",
       },
       textInputStyle: {
-        borderRadius: 4,
-        height: 40,
         width: "100%",
-        minWidth:340
+        minWidth: 340,
       },
-      sendBtnContainer:{
+      sendBtnContainer: {
         height: 40,
       },
       date2FilterContainer: {

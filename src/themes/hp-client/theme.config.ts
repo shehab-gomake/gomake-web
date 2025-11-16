@@ -121,9 +121,9 @@ const hpClientThemeConfig: ThemeConfig = {
       "--theme-typography-label-font-family": '"Forma DJR UI", sans-serif',
       "--theme-typography-label-font-weight": "500",
       "--theme-typography-label-font-size": "14px",
-      "--theme-typography-label-line-height": "20px",
+      "--theme-typography-label-line-height": "21px",
       "--theme-typography-label-letter-spacing": "0px",
-      "--theme-typography-label-color": "#4a5568",
+      "--theme-typography-label-color": "#1A1A1A",
 
       // Typography - Sub-label Styles (helper text, descriptions)
       "--theme-typography-sublabel-font-family": '"Forma DJR UI", sans-serif',
@@ -195,7 +195,9 @@ const hpClientThemeConfig: ThemeConfig = {
 
       // Dropdown/Autocomplete Styles
       "--theme-dropdown-shadow": "none",
-      "--theme-dropdown-border": "none",
+      // "--theme-dropdown-border": "none",
+      "--theme-dropdown-border":
+        "1px solid var(--theme-dropdown-border-color, #E0E0E0)",
       "--theme-dropdown-border-color": "#E0E0E0",
       "--theme-dropdown-border-radius": "var(--theme-radius-md, 8px)",
       "--theme-dropdown-placeholder-color": "#A3A3A3",
