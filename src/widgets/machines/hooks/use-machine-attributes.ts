@@ -118,28 +118,45 @@ const useMachineAttributes = () => {
 
     
     const changeMachineGeneralAttributes = (key: string, value: any) => {
-        if(key === "productionFloorColor"){
-            setMachine({...machineState, attributes: {...machineState.attributes, productionFloorColor: value}});
+        if (key === "productionFloorColor") {
+            setMachine((prevState) => ({
+                ...prevState,
+                attributes: { ...(prevState?.attributes || {}), productionFloorColor: value }
+            }));
+            return;
         }
-        else if(key === "price"){
-          
-            setMachine({
-                ...machineState, 
-                price: {
-                    ...machineState.price,
-                    price: value?.price !== undefined ? value.price : machineState.price?.price,
-                    currency: value?.currency !== undefined ? value.currency : machineState.price?.currency,
-                }
-            });
-            if(value?.machineHourCost !== undefined && machineState.attributes?.machineHourCost !== value?.machineHourCost){
-                setMachine({...machineState, attributes: {...machineState.attributes, machineHourCost: value?.machineHourCost}});
-            }
 
+        if (key === "price") {
+            setErrors((prev) => ({ ...prev, price: false }));
+            setMachine((prevState) => {
+                const nextPrice = {
+                    ...(prevState?.price || {}),
+                    price: value?.price !== undefined ? value.price : prevState?.price?.price,
+                    currency: value?.currency !== undefined ? value.currency : prevState?.price?.currency,
+                };
+
+                const shouldUpdateMachineHourCost = value?.machineHourCost !== undefined;
+
+                if (shouldUpdateMachineHourCost) {
+                    nextPrice.machineHourCost = value.machineHourCost;
+                }
+
+                return {
+                    ...prevState,
+                    price: nextPrice,
+                    attributes: shouldUpdateMachineHourCost
+                        ? {
+                            ...(prevState?.attributes || {}),
+                            machineHourCost: value.machineHourCost,
+                        }
+                        : prevState?.attributes || {},
+                };
+            });
+            return;
         }
-        else{
-            setErrors({...errors, [key]: false});
-            setMachine({...machineState, [key]: value});
-        }
+
+        setErrors((prev) => ({ ...prev, [key]: false }));
+        setMachine((prevState) => ({ ...prevState, [key]: value }));
     };
 
     const changeMachineAttributes = (key: string, value: any) => {
