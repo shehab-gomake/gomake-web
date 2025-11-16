@@ -37,14 +37,13 @@ import NotInterestedIcon from "@mui/icons-material/NotInterested";
 import ForumIcon from "@mui/icons-material/Forum";
 import AddIcon from "@mui/icons-material/Add";
 import CreateIcon from "@mui/icons-material/Create";
-import HistoryIcon from "@mui/icons-material/History";
-import WebhookIcon from "@mui/icons-material/Webhook";
 import { useChatwootInboxes } from "@/widgets/frontdesk/providers/chatwoot/hooks/use-chatwoot-inboxes";
 import { useChatwootRouter } from "@/widgets/frontdesk/providers/chatwoot/hooks/use-chatwoot-router";
 import { useChatwootPermissions } from "@/widgets/frontdesk/providers/chatwoot/hooks/use-chatwoot-permissions";
 import { VIEW_PERMISSIONS, ACTION_PERMISSIONS } from "@/widgets/frontdesk/providers/chatwoot/constants/permissions.constants";
 import { AddChannelModal } from "@/widgets/frontdesk/providers/chatwoot/components/add-channel-modal";
 import { ComposeConversationModal } from "@/widgets/frontdesk/providers/chatwoot/components/compose/ComposeConversationModal";
+import { InboxIcon as ChatwootInboxIcon } from "@/widgets/frontdesk/providers/chatwoot/utils/inbox-icons";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useRouter } from "next/router";
 import { chatwootSelectedAccountAtom } from "@/store/frontdesk/atoms/chatwoot.atoms";
@@ -165,7 +164,6 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
   const theme = useTheme();
   const router = useRouter();
   const { primaryColor, neutralColor } = useGomakeTheme();
-  const [oldFrontdeskExpanded, setOldFrontdeskExpanded] = useState(false);
   const [ticketViewsExpanded, setTicketViewsExpanded] = useState(true);
   const [chatsExpanded, setChatsExpanded] = useState(true);
   const [chatwootConversationsExpanded, setChatwootConversationsExpanded] = useState(true);
@@ -187,7 +185,6 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
     isMentionsView,
     isUnattendedView,
     isChannelsView,
-    isWebhookTestView,
     isSettingsView,
   } = useChatwootRouter();
 
@@ -443,65 +440,6 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
                         sx: {
                           fontSize: "0.875rem",
                           fontWeight: selectedChannel === "chatwoot" && selectedSection === "inbox" ? 600 : 400,
-                        },
-                      }}
-                    />
-                  </Box>
-                )}
-              </ListItemButton>
-            </Tooltip>
-
-            {/* Webhook Test */}
-            <Tooltip title="Webhook Test" placement="right" disableHoverListener={!isCollapsed}>
-              <ListItemButton
-                selected={isWebhookTestView}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  e.preventDefault();
-
-                  // Use RouteBuilder for type-safe navigation
-                  const route = RouteBuilder.chatwoot(ChatwootView.WEBHOOK_TEST);
-                  const { path, options } = buildRoute(route, { replace: true });
-
-                  // Navigate to Chatwoot channel first if not already there
-                  if (selectedChannel !== "chatwoot") {
-                    onSectionSelect("inbox");
-                    onChannelSelect("chatwoot" as Channel);
-                  }
-
-                  // Then navigate to Webhook Test
-                  router.replace(path, undefined, { shallow: options.scroll === false });
-                }}
-                sx={{
-                  py: 0.5,
-                  px: isCollapsed ? 1.5 : 2,
-                  justifyContent: isCollapsed ? "center" : "flex-start",
-                  pointerEvents: "auto",
-                  "&.Mui-selected": {
-                    backgroundColor: theme.palette.primary.main + "10",
-                    borderLeft: `3px solid ${theme.palette.primary.main}`,
-                    "&:hover": {
-                      backgroundColor: theme.palette.primary.main + "20",
-                    },
-                  },
-                }}
-              >
-                {isCollapsed ? (
-                  <Box sx={{ color: theme.palette.text.secondary, display: "flex" }}>
-                    <WebhookIcon fontSize="small" />
-                  </Box>
-                ) : (
-                  <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, width: "100%" }}>
-                    <Box sx={{ color: theme.palette.text.secondary }}>
-                      <WebhookIcon fontSize="small" />
-                    </Box>
-                    <ListItemText
-                      primary="Webhook Test"
-                      primaryTypographyProps={{
-                        variant: "body2",
-                        sx: {
-                          fontSize: "0.875rem",
-                          fontWeight: 400,
                         },
                       }}
                     />
@@ -813,25 +751,52 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
                               },
                             }}
                           >
-                            <ListItemText
-                              primary={inbox.name}
-                              secondary={inbox.channel_type?.replace("Channel::", "") || inbox.provider}
-                              primaryTypographyProps={{
-                                variant: "body2",
-                                sx: {
-                                  fontSize: "0.813rem",
-                                  fontWeight: selectedInboxId === inbox.id ? 600 : 400,
-                                  color: theme.palette.text.primary,
-                                },
+                            <Box
+                              sx={{
+                                display: "flex",
+                                alignItems: "center",
+                                gap: 1.5,
+                                width: "100%",
                               }}
-                              secondaryTypographyProps={{
-                                variant: "caption",
-                                sx: {
-                                  fontSize: "0.688rem",
-                                  color: theme.palette.text.secondary,
-                                },
-                              }}
-                            />
+                            >
+                              {/* Inbox Icon */}
+                              <Box
+                                sx={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  color: selectedInboxId === inbox.id 
+                                    ? theme.palette.primary.main 
+                                    : theme.palette.text.secondary,
+                                  flexShrink: 0,
+                                }}
+                              >
+                                <ChatwootInboxIcon
+                                  channelType={inbox.channel_type}
+                                  medium={inbox.medium}
+                                  size={16}
+                                />
+                              </Box>
+                              {/* Inbox Name and Type */}
+                              <ListItemText
+                                primary={inbox.name}
+                                secondary={inbox.channel_type?.replace("Channel::", "") || inbox.provider}
+                                primaryTypographyProps={{
+                                  variant: "body2",
+                                  sx: {
+                                    fontSize: "0.813rem",
+                                    fontWeight: selectedInboxId === inbox.id ? 600 : 400,
+                                    color: theme.palette.text.primary,
+                                  },
+                                }}
+                                secondaryTypographyProps={{
+                                  variant: "caption",
+                                  sx: {
+                                    fontSize: "0.688rem",
+                                    color: theme.palette.text.secondary,
+                                  },
+                                }}
+                              />
+                            </Box>
                           </ListItemButton>
                         </Tooltip>
                       ))
@@ -892,309 +857,6 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
 
       {/* Spacer */}
       <Box sx={{ flex: 1 }} />
-
-      <Divider sx={{ my: 1 }} />
-
-      {/* Old FrontDesk Section - Collapsible wrapper for legacy features */}
-      <Box sx={{ py: 1 }}>
-        {!isCollapsed && (
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              px: 2,
-              py: 1,
-              cursor: "pointer",
-              backgroundColor: oldFrontdeskExpanded ? alpha(theme.palette.warning.main, 0.05) : "transparent",
-              "&:hover": {
-                backgroundColor: oldFrontdeskExpanded ? alpha(theme.palette.warning.main, 0.1) : theme.palette.action.hover,
-              },
-              transition: "background-color 0.2s ease",
-            }}
-            onClick={() => setOldFrontdeskExpanded(!oldFrontdeskExpanded)}
-          >
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-              <HistoryIcon fontSize="small" sx={{ color: theme.palette.text.secondary }} />
-              <Typography
-                variant="caption"
-                sx={{
-                  color: theme.palette.text.secondary,
-                  fontWeight: 600,
-                  fontSize: "0.688rem",
-                  textTransform: "uppercase",
-                  letterSpacing: 0.5,
-                }}
-              >
-                Old FrontDesk
-              </Typography>
-            </Box>
-            {oldFrontdeskExpanded ? <ExpandLessIcon fontSize="small" /> : <ExpandMoreIcon fontSize="small" />}
-          </Box>
-        )}
-        <Collapse in={isCollapsed || oldFrontdeskExpanded}>
-          <Box>
-            {/* Dashboard - Top Item */}
-            <Box sx={{ py: 1 }}>
-              <List disablePadding>
-                <Tooltip title="Dashboard" placement="right" disableHoverListener={!isCollapsed}>
-                  <ListItemButton
-                    selected={selectedSection === "inbox" && selectedChannel === "all" && !selectedTicketView}
-                    onClick={() => {
-                      onSectionSelect("inbox");
-                      onChannelSelect("all");
-                    }}
-                    sx={{
-                      py: 1,
-                      px: isCollapsed ? 1.5 : 2,
-                      justifyContent: isCollapsed ? "center" : "flex-start",
-                      "&.Mui-selected": {
-                        backgroundColor: theme.palette.primary.main + "10",
-                        borderLeft: `3px solid ${theme.palette.primary.main}`,
-                        "&:hover": {
-                          backgroundColor: theme.palette.primary.main + "20",
-                        },
-                      },
-                    }}
-                  >
-                    {isCollapsed ? (
-                      <Box sx={{ color: theme.palette.text.secondary, display: "flex" }}>
-                        <DashboardIcon />
-                      </Box>
-                    ) : (
-                      <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, width: "100%" }}>
-                        <Box sx={{ color: theme.palette.text.secondary }}>
-                          <DashboardIcon />
-                        </Box>
-                        <ListItemText
-                          primary="Dashboard"
-                          primaryTypographyProps={{
-                            variant: "body2",
-                            sx: {
-                              fontSize: "0.875rem",
-                              fontWeight:
-                                selectedSection === "inbox" && selectedChannel === "all" && !selectedTicketView ? 600 : 400,
-                            },
-                          }}
-                        />
-                      </Box>
-                    )}
-                  </ListItemButton>
-                </Tooltip>
-              </List>
-            </Box>
-
-            <Divider sx={{ my: 1 }} />
-
-            {/* Ticket Views Section */}
-            <Box sx={{ py: 1 }}>
-              {!isCollapsed && (
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    px: 2,
-                    py: 1,
-                    cursor: "pointer",
-                    "&:hover": { backgroundColor: theme.palette.action.hover },
-                  }}
-                  onClick={() => setTicketViewsExpanded(!ticketViewsExpanded)}
-                >
-                  <Typography
-                    variant="caption"
-                    sx={{
-                      color: theme.palette.text.secondary,
-                      fontWeight: 600,
-                      fontSize: "0.688rem",
-                      textTransform: "uppercase",
-                      letterSpacing: 0.5,
-                    }}
-                  >
-                    TICKET VIEWS
-                  </Typography>
-                  {ticketViewsExpanded ? <ExpandLessIcon fontSize="small" /> : <ExpandMoreIcon fontSize="small" />}
-                </Box>
-              )}
-              <Collapse in={isCollapsed || ticketViewsExpanded}>
-                <List disablePadding>
-                  {ticketViewItems.map((item) => (
-                    <Tooltip key={item.id} title={item.label} placement="right" disableHoverListener={!isCollapsed}>
-                      <ListItemButton
-                        selected={selectedTicketView === item.id}
-                        onClick={() => onTicketViewSelect?.(item.id)}
-                        sx={{
-                          py: 1,
-                          px: isCollapsed ? 1.5 : 2,
-                          justifyContent: isCollapsed ? "center" : "flex-start",
-                          "&.Mui-selected": {
-                            backgroundColor: theme.palette.primary.main + "10",
-                            borderLeft: `3px solid ${theme.palette.primary.main}`,
-                            "&:hover": {
-                              backgroundColor: theme.palette.primary.main + "20",
-                            },
-                          },
-                        }}
-                      >
-                        {isCollapsed ? (
-                          <Badge
-                            badgeContent={ticketCounts[item.id] || 0}
-                            color="default"
-                            sx={{
-                              "& .MuiBadge-badge": {
-                                fontSize: "0.625rem",
-                                height: 16,
-                                minWidth: 16,
-                                backgroundColor: theme.palette.grey[200],
-                                color: theme.palette.text.primary,
-                              },
-                            }}
-                            invisible={!ticketCounts[item.id] || ticketCounts[item.id]! <= 0}
-                          >
-                            <Box sx={{ color: theme.palette.text.secondary, display: "flex" }}>{item.icon}</Box>
-                          </Badge>
-                        ) : (
-                          <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, width: "100%" }}>
-                            <Box sx={{ color: theme.palette.text.secondary }}>{item.icon}</Box>
-                            <ListItemText
-                              primary={item.label}
-                              primaryTypographyProps={{
-                                variant: "body2",
-                                sx: { fontSize: "0.875rem", fontWeight: selectedTicketView === item.id ? 600 : 400 },
-                              }}
-                            />
-                            {ticketCounts[item.id] !== undefined && ticketCounts[item.id]! > 0 && (
-                              <Badge
-                                badgeContent={ticketCounts[item.id]}
-                                color="default"
-                                sx={{
-                                  "& .MuiBadge-badge": {
-                                    fontSize: "0.688rem",
-                                    height: 18,
-                                    minWidth: 18,
-                                    backgroundColor: theme.palette.grey[200],
-                                    color: theme.palette.text.primary,
-                                  },
-                                }}
-                              />
-                            )}
-                          </Box>
-                        )}
-                      </ListItemButton>
-                    </Tooltip>
-                  ))}
-                </List>
-              </Collapse>
-            </Box>
-
-            <Divider sx={{ my: 1 }} />
-
-            {/* Live Chats Section */}
-            <Box sx={{ py: 1 }}>
-              {!isCollapsed && (
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    px: 2,
-                    py: 1,
-                    cursor: "pointer",
-                    "&:hover": { backgroundColor: theme.palette.action.hover },
-                  }}
-                  onClick={() => setChatsExpanded(!chatsExpanded)}
-                >
-                  <Typography
-                    variant="caption"
-                    sx={{
-                      color: theme.palette.text.secondary,
-                      fontWeight: 600,
-                      fontSize: "0.688rem",
-                      textTransform: "uppercase",
-                      letterSpacing: 0.5,
-                    }}
-                  >
-                    LIVE CHATS
-                  </Typography>
-                  {chatsExpanded ? <ExpandLessIcon fontSize="small" /> : <ExpandMoreIcon fontSize="small" />}
-                </Box>
-              )}
-              <Collapse in={isCollapsed || chatsExpanded}>
-                <List disablePadding>
-                  {channelItems.map((item) => (
-                    <Tooltip key={item.id} title={item.label} placement="right" disableHoverListener={!isCollapsed}>
-                      <ListItemButton
-                        selected={selectedSection === "inbox" && selectedChannel === item.id && !selectedTicketView}
-                        onClick={() => {
-                          onSectionSelect("inbox");
-                          onChannelSelect(item.id);
-                        }}
-                        sx={{
-                          py: 1,
-                          px: isCollapsed ? 1.5 : 2,
-                          justifyContent: isCollapsed ? "center" : "flex-start",
-                          "&.Mui-selected": {
-                            backgroundColor: theme.palette.primary.main + "10",
-                            borderLeft: `3px solid ${theme.palette.primary.main}`,
-                            "&:hover": {
-                              backgroundColor: theme.palette.primary.main + "20",
-                            },
-                          },
-                        }}
-                      >
-                        {isCollapsed ? (
-                          <Badge
-                            badgeContent={channelBadges[item.id] || 0}
-                            color="error"
-                            sx={{
-                              "& .MuiBadge-badge": {
-                                fontSize: "0.625rem",
-                                height: 16,
-                                minWidth: 16,
-                              },
-                            }}
-                            invisible={!channelBadges[item.id] || channelBadges[item.id]! <= 0}
-                          >
-                            <Box sx={{ color: theme.palette.text.secondary, display: "flex" }}>{item.icon}</Box>
-                          </Badge>
-                        ) : (
-                          <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, width: "100%" }}>
-                            <Box sx={{ color: theme.palette.text.secondary }}>{item.icon}</Box>
-                            <ListItemText
-                              primary={item.label}
-                              primaryTypographyProps={{
-                                variant: "body2",
-                                sx: {
-                                  fontSize: "0.875rem",
-                                  fontWeight:
-                                    selectedSection === "inbox" && selectedChannel === item.id && !selectedTicketView ? 600 : 400,
-                                },
-                              }}
-                            />
-                            {channelBadges[item.id] !== undefined && channelBadges[item.id]! > 0 && (
-                              <Badge
-                                badgeContent={channelBadges[item.id]}
-                                color="error"
-                                sx={{
-                                  "& .MuiBadge-badge": {
-                                    fontSize: "0.688rem",
-                                    height: 18,
-                                    minWidth: 18,
-                                  },
-                                }}
-                              />
-                            )}
-                          </Box>
-                        )}
-                      </ListItemButton>
-                    </Tooltip>
-                  ))}
-                </List>
-              </Collapse>
-            </Box>
-          </Box>
-        </Collapse>
-      </Box>
 
       {/* Footer/System Items - Settings */}
       <Box

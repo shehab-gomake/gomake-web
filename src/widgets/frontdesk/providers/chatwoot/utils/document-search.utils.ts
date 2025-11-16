@@ -96,16 +96,26 @@ function calculateRelevanceScore(
     totalScore += 60;
   }
 
-  // Search in client name
-  const clientName = document.client?.name?.toLowerCase() || '';
+  // Search in client name (support both normalized and direct fields)
+  const clientName = (
+    document.client?.name || 
+    (document as any).clientName || 
+    (document as any).customerName || 
+    ''
+  ).toLowerCase();
+  const clientNameDisplay = document.client?.name || 
+                            (document as any).clientName || 
+                            (document as any).customerName || 
+                            '';
+  
   if (clientName === term) {
-    matches.push({ field: 'client', score: 50, matchedText: document.client?.name });
+    matches.push({ field: 'client', score: 50, matchedText: clientNameDisplay });
     totalScore += 50;
   } else if (clientName.startsWith(term)) {
-    matches.push({ field: 'client', score: 40, matchedText: document.client?.name });
+    matches.push({ field: 'client', score: 40, matchedText: clientNameDisplay });
     totalScore += 40;
   } else if (clientName.includes(term)) {
-    matches.push({ field: 'client', score: 30, matchedText: document.client?.name });
+    matches.push({ field: 'client', score: 30, matchedText: clientNameDisplay });
     totalScore += 30;
   }
 
@@ -123,17 +133,22 @@ function calculateRelevanceScore(
     totalScore += 20;
   }
 
-  // Search in date (formatted)
-  const formattedDate = formatDate(document.createDate);
+  // Search in date (formatted) - support both createDate and createdDate/creationDate
+  const dateField = document.createDate || 
+                    (document as any).createdDate || 
+                    (document as any).creationDate;
+  const formattedDate = formatDate(dateField);
   if (formattedDate.toLowerCase().includes(term)) {
     matches.push({ field: 'date', score: 15, matchedText: formattedDate });
     totalScore += 15;
   }
 
-  // Search in amount (as string)
-  const amountStr = document.total?.toString() || '';
+  // Search in amount (as string) - support both total and totalPrice
+  const totalAmount = document.total !== undefined ? document.total : 
+                      (document as any).totalPrice;
+  const amountStr = totalAmount?.toString() || '';
   if (amountStr.includes(term)) {
-    matches.push({ field: 'amount', score: 10, matchedText: formatCurrency(document.total, document.currency) });
+    matches.push({ field: 'amount', score: 10, matchedText: formatCurrency(totalAmount, document.currency) });
     totalScore += 10;
   }
 
@@ -154,18 +169,34 @@ export function searchDocuments(
   if (!searchTerm.trim()) {
     // No search term - return all documents sorted by date (newest first)
     return documents
-      .map((doc) => ({
-        id: doc.id,
-        label: `${doc.number || 'N/A'} - ${doc.client?.name || 'Unknown'}`,
-        value: doc,
-        documentNumber: doc.number,
-        documentId: doc.id,
-        relevanceScore: 0,
-        matches: [],
-      }))
+      .map((doc) => {
+        const clientName = doc.client?.name || 
+                          (doc as any).clientName || 
+                          (doc as any).customerName || 
+                          'Unknown';
+        return {
+          id: doc.id,
+          label: `${doc.number || 'N/A'} - ${clientName}`,
+          value: doc,
+          documentNumber: doc.number,
+          documentId: doc.id,
+          relevanceScore: 0,
+          matches: [],
+        };
+      })
       .sort((a, b) => {
-        const dateA = new Date(a.value.createDate || 0).getTime();
-        const dateB = new Date(b.value.createDate || 0).getTime();
+        const dateA = new Date(
+          a.value.createDate || 
+          (a.value as any).createdDate || 
+          (a.value as any).creationDate || 
+          0
+        ).getTime();
+        const dateB = new Date(
+          b.value.createDate || 
+          (b.value as any).createdDate || 
+          (b.value as any).creationDate || 
+          0
+        ).getTime();
         return dateB - dateA; // Newest first
       });
   }
@@ -174,10 +205,14 @@ export function searchDocuments(
   const scoredDocs: ScoredDocument[] = documents
     .map((doc) => {
       const { score, matches } = calculateRelevanceScore(doc, searchTerm);
+      const clientName = doc.client?.name || 
+                        (doc as any).clientName || 
+                        (doc as any).customerName || 
+                        'Unknown';
       
       return {
         id: doc.id,
-        label: `${doc.number || 'N/A'} - ${doc.client?.name || 'Unknown'}`,
+        label: `${doc.number || 'N/A'} - ${clientName}`,
         value: doc,
         documentNumber: doc.number,
         documentId: doc.id,
@@ -192,8 +227,18 @@ export function searchDocuments(
         return b.relevanceScore - a.relevanceScore;
       }
       // If scores are equal, sort by date (newest first)
-      const dateA = new Date(a.value.createDate || 0).getTime();
-      const dateB = new Date(b.value.createDate || 0).getTime();
+      const dateA = new Date(
+        a.value.createDate || 
+        (a.value as any).createdDate || 
+        (a.value as any).creationDate || 
+        0
+      ).getTime();
+      const dateB = new Date(
+        b.value.createDate || 
+        (b.value as any).createdDate || 
+        (b.value as any).creationDate || 
+        0
+      ).getTime();
       return dateB - dateA;
     });
 
@@ -202,6 +247,7 @@ export function searchDocuments(
 
 /**
  * Format document for display with enhanced context
+ * Uses same field mapping as invoice page (use-quote.tsx)
  */
 export function formatDocumentForDisplay(document: DocumentListItem): {
   number: string;
@@ -212,14 +258,40 @@ export function formatDocumentForDisplay(document: DocumentListItem): {
   hasStatus: boolean;
   hasAmount: boolean;
 } {
+  // Use same field access pattern as invoice page
+  // Support both normalized structure (client.name) and direct fields (clientName)
+  const clientName = document.client?.name || 
+                     (document as any).clientName || 
+                     (document as any).customerName || 
+                     'Unknown Customer';
+  
+  // Support both createDate and createdDate/creationDate (same as invoice page line 1621-1622)
+  const dateField = document.createDate || 
+                    (document as any).createdDate || 
+                    (document as any).creationDate;
+  
+  // Support both total and totalPrice (same as invoice page line 1662-1663)
+  const totalAmount = document.total !== undefined ? document.total : 
+                      (document as any).totalPrice;
+  
+  // For document number, try multiple fallbacks if number is missing
+  // If no number field exists, show "N/A" or "Number unavailable"
+  const documentNumber = document.number || 
+                        (document as any).documentNumber || 
+                        (document as any).invoiceNumber || 
+                        (document as any).quoteNumber || 
+                        (document as any).orderNumber || 
+                        (document as any).receiptNumber ||
+                        'N/A';
+  
   return {
-    number: document.number || 'N/A',
-    clientName: document.client?.name || 'Unknown Customer',
-    date: formatDate(document.createDate),
-    amount: formatCurrency(document.total, document.currency),
+    number: documentNumber,
+    clientName,
+    date: formatDate(dateField),
+    amount: formatCurrency(totalAmount, document.currency),
     status: document.status || '',
     hasStatus: !!document.status,
-    hasAmount: document.total !== undefined && document.total !== null,
+    hasAmount: totalAmount !== undefined && totalAmount !== null,
   };
 }
 

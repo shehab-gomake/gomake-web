@@ -52,6 +52,19 @@ export enum ConversationSortBy {
 }
 
 /**
+ * Conversation Type Enum
+ * Pre-defined filter types that translate to specific backend queries
+ */
+export enum ConversationType {
+  /** Shows conversations that require attention (never replied to OR waiting for contact response) */
+  UNATTENDED = "unattended",
+  /** Shows conversations where the current user has been mentioned */
+  MENTION = "mention",
+  /** Shows conversations the user is actively involved in (participating) */
+  PARTICIPATING = "participating",
+}
+
+/**
  * Conversation List Query Parameters
  * Query parameters for GET /api/accounts/conversations
  */
@@ -61,6 +74,9 @@ export interface ConversationListParams {
 
   /** Filter by assignee */
   assignee_type?: ConversationAssigneeType;
+
+  /** Pre-defined conversation type filter (unattended, mention, participating) */
+  conversation_type?: ConversationType;
 
   /** Sort order */
   sort_by?: ConversationSortBy | string;

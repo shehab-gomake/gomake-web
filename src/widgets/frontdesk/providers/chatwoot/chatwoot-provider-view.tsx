@@ -149,9 +149,9 @@ const ChatwootProviderViewInternal: React.FC = () => {
       case ChatwootView.OAUTH_CALLBACK:
         return <OAuthCallbackView />;
       default:
-        // Fallback to My Inbox
-        console.warn("[ChatwootProviderView] Unknown view, falling back to My Inbox:", currentView);
-        return <MyInboxView />;
+        // Fallback to Dashboard
+        console.warn("[ChatwootProviderView] Unknown view, falling back to Dashboard:", currentView);
+        return <DashboardView />;
     }
   };
 

@@ -9,6 +9,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Alert, Stack, Typography, IconButton, Box, CircularProgress } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import SendIcon from "@mui/icons-material/Send";
+import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import { ContactSelectionField } from "./ContactSelectionField";
 import { CreateContactModal } from "./CreateContactModal";
 import { MessageEditor } from "./MessageEditor";
@@ -16,7 +17,7 @@ import { EmailCompositionFields } from "./EmailCompositionFields";
 import { AttachmentUploader } from "./AttachmentUploader";
 import { InboxSelector } from "./InboxSelector";
 import { ConfirmDialog } from "../settings/ConfirmDialog";
-import { useComposeConversation } from "../../hooks/use-compose-conversation";
+import { useComposeConversation, type GomakeContact } from "../../hooks/use-compose-conversation";
 import { getChannelRequirements } from "@/services/frontdesk/api/chatwoot/types/compose.types";
 import { useSnackBar } from "@/hooks/use-snack-bar";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
@@ -118,10 +119,35 @@ export const ComposeConversationModal: React.FC<ComposeConversationModalProps> =
     email?: string;
     phone_number?: string;
   }) => {
-    const newContact = await compose.createContact(contactData);
-    if (newContact) {
-      compose.selectContact(newContact);
-      setShowCreateContact(false);
+    try {
+      const newContact = await compose.createContact({
+        name: contactData.name,
+        email: contactData.email,
+        phone_number: contactData.phone_number,
+      });
+      
+      if (newContact && newContact.id) {
+        // Convert ContactDetail to GomakeContact format and select it
+        // This will set the contact in form state and fetch contactable inboxes
+        const gomakeContact: GomakeContact = {
+          ...newContact,
+          gomake_contact_id: undefined,
+        };
+        await compose.selectContact(gomakeContact);
+        
+        setShowCreateContact(false);
+        setSnackbarStateValue({
+          state: true,
+          message: "Contact created successfully!",
+          type: "success",
+        });
+      } else {
+        // Re-throw error so CreateContactModal can handle it
+        throw new Error("Failed to create contact: Invalid response");
+      }
+    } catch (error) {
+      // Re-throw error so CreateContactModal can handle field-specific errors
+      throw error;
     }
   };
 
@@ -260,6 +286,45 @@ export const ComposeConversationModal: React.FC<ComposeConversationModalProps> =
               onCreateContact={() => setShowCreateContact(true)}
               error={compose.validationErrors.contact}
             />
+
+            {/* Create New Contact Button - Show when no contact is selected */}
+            {!compose.formState.contact && (
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  px: 4,
+                  py: 1.5,
+                  borderBottom: `1px solid ${neutralColor(200)}`,
+                  backgroundColor: neutralColor(25),
+                }}
+              >
+                <Button
+                  startIcon={<PersonAddIcon />}
+                  onClick={() => setShowCreateContact(true)}
+                  disabled={compose.isSubmitting}
+                  sx={{
+                    textTransform: "none",
+                    color: primaryColor(600),
+                    fontWeight: 500,
+                    fontSize: "0.875rem",
+                    px: 2.5,
+                    py: 0.75,
+                    borderRadius: 1,
+                    backgroundColor: "transparent",
+                    "&:hover": {
+                      backgroundColor: primaryColor(50),
+                      color: primaryColor(700),
+                    },
+                    "&:disabled": {
+                      color: neutralColor(400),
+                    },
+                  }}
+                >
+                  Create New Contact
+                </Button>
+              </Box>
+            )}
 
             {/* Inbox Selection - Show after contact is selected */}
             {compose.formState.contact && (

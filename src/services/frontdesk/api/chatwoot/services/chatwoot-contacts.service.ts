@@ -88,15 +88,19 @@ export class ChatwootContactsService extends BaseChatwootService {
 
   /**
    * Create Contact
-   * POST /api/v1/accounts/{account_id}/contacts
+   * POST /api/accounts/contacts
    *
-   * @param accountId - The numeric ID of the account
+   * Note: Backend automatically handles accountId from authentication context.
+   * This endpoint uses /api instead of /api/v1 and doesn't require accountId in path.
+   *
+   * @param accountId - The numeric ID of the account (not used in URL, kept for API consistency)
    * @param payload - Contact creation payload
    * @returns Promise with created contact
    */
   async createContact(accountId: number, payload: ContactCreatePayload): Promise<ContactDetail> {
+    // Backend handles accountId via JWT authentication
     return await this.post<ContactDetail>(
-      this.accountScopedUrl(accountId, "contacts"),
+      `/api/accounts/contacts`,
       payload
     );
   }

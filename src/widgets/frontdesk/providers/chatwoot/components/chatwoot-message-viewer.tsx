@@ -398,6 +398,7 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
             onStatusChange={handleStatusChange}
             onPriorityChange={handlePriorityChange}
             updating={isSending}
+            inboxes={inboxes}
           />
         </Box>
       </Fade>

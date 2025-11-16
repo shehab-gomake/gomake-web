@@ -35,6 +35,7 @@ export const useChatwootConversations = (accountId: number | null, options: Part
     options?.inbox_id,
     options?.status,
     options?.assignee_type,
+    options?.conversation_type, // Include conversation_type for proper cache invalidation
     options?.q,
     options?.team_id,
     options?.labels,
@@ -122,6 +123,7 @@ export const useChatwootConversations = (accountId: number | null, options: Part
         ...(options.status && { status: options.status }),
         ...(options.inbox_id && { inbox_id: options.inbox_id }),
         ...(options.assignee_type && { assignee_type: options.assignee_type }),
+        ...(options.conversation_type && { conversation_type: options.conversation_type }),
         ...(options.sort_by && { sort_by: options.sort_by }),
         ...(options.q && { q: options.q }),
         ...(options.team_id && { team_id: options.team_id }),

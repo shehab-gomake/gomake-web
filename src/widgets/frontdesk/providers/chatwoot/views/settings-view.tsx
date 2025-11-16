@@ -19,6 +19,8 @@ import {
   Label as LabelsIcon,
   Person as ProfileIcon,
   ArrowBack as ArrowBackIcon,
+  Webhook as WebhookIcon,
+  History as HistoryIcon,
 } from "@mui/icons-material";
 
 // Import subpage components
@@ -27,6 +29,8 @@ import { InboxesSubpage } from "./settings/inboxes-subpage";
 import { TeamsSubpage } from "./settings/teams-subpage";
 import { LabelsSubpage } from "./settings/labels-subpage";
 import { ProfileSettingsSubpage } from "./settings/profile-settings-subpage";
+import { WebhookTestView } from "./webhook-test-view";
+import { OldFrontDeskSubpage } from "./settings/old-frontdesk-subpage";
 
 interface SettingsMenuItem {
   subpage: ChatwootSettingsSubpage;
@@ -59,6 +63,16 @@ const SETTINGS_MENU_ITEMS: SettingsMenuItem[] = [
     subpage: ChatwootSettingsSubpage.PROFILE,
     label: "Profile Settings",
     icon: <ProfileIcon />,
+  },
+  {
+    subpage: ChatwootSettingsSubpage.WEBHOOK_TEST,
+    label: "Webhook Test",
+    icon: <WebhookIcon />,
+  },
+  {
+    subpage: ChatwootSettingsSubpage.OLD_FRONTDESK,
+    label: "Old FrontDesk",
+    icon: <HistoryIcon />,
   },
 ];
 
@@ -94,6 +108,10 @@ export const SettingsView: React.FC = () => {
         return <LabelsSubpage />;
       case ChatwootSettingsSubpage.PROFILE:
         return <ProfileSettingsSubpage />;
+      case ChatwootSettingsSubpage.WEBHOOK_TEST:
+        return <WebhookTestView />;
+      case ChatwootSettingsSubpage.OLD_FRONTDESK:
+        return <OldFrontDeskSubpage />;
       case ChatwootSettingsSubpage.GENERAL:
         // General Settings removed - redirect to Agents
         return <AgentsSubpage />;

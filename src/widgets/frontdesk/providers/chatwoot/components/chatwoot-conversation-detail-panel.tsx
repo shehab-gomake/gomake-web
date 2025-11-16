@@ -5,7 +5,7 @@
  * Mirrors the design and structure of ticket-detail-view's right column.
  */
 
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, Suspense } from "react";
 import {
   Box,
   Typography,
@@ -161,6 +161,7 @@ export const ChatwootConversationDetailPanel: React.FC<ChatwootConversationDetai
         contactLastActivityAt={conversation.meta?.sender?.last_activity_at}
         contactCreatedAt={conversation.meta?.sender?.created_at}
         customerId={conversation.meta?.sender?.custom_attributes?.gomake_customer_id}
+        accountId={accountId}
         onCustomerLinked={async (customerId) => {
           if (!accountId) return;
 
@@ -205,8 +206,10 @@ export const ChatwootConversationDetailPanel: React.FC<ChatwootConversationDetai
         }}
       />
 
-      {/* Linked Documents Section */}
-      <LinkedDocumentsSection conversation={conversation} />
+      {/* Linked Documents Section - Wrapped in Suspense to handle async Recoil state */}
+      <Suspense fallback={null}>
+        <LinkedDocumentsSection conversation={conversation} />
+      </Suspense>
 
       {/* Contact History Section */}
       <ContactHistorySection

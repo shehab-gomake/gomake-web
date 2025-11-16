@@ -1,43 +1,30 @@
 /**
  * Linked Documents Section Component
- * 
+ *
  * Displays linked documents in the conversation detail panel
  * with clickable navigation to open documents.
+ * Uses shared hooks and components for consistent behavior.
  */
 
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect } from 'react';
 import { Box, Typography, Stack, IconButton, Tooltip } from '@mui/material';
-import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
-import { useGomakeTheme } from '@/hooks/use-gomake-thme';
+import { useRecoilValue } from 'recoil';
 import { useGomakeRouter } from '@/hooks/use-gomake-router';
 import { DOCUMENT_TYPE } from '@/pages-components/quotes/enums';
 import { CHATWOOT_CUSTOM_ATTRIBUTES } from '@/widgets/frontdesk/constants/chatwoot-attributes';
+import { colorTokens } from '@/widgets/frontdesk/design-system';
+import { currencyUnitState } from '@/store/currency-units';
 import type { ChatwootConversation } from '@/services/frontdesk/api/chatwoot/types/conversations.types';
 import { useTranslation } from 'react-i18next';
-
-/**
- * Get document title for display
- */
-function getDocumentTitle(documentType: DOCUMENT_TYPE): string {
-  const titles: Record<DOCUMENT_TYPE, string> = {
-    [DOCUMENT_TYPE.quote]: 'Quote',
-    [DOCUMENT_TYPE.invoice]: 'Invoice',
-    [DOCUMENT_TYPE.order]: 'Order',
-    [DOCUMENT_TYPE.receipt]: 'Receipt',
-    [DOCUMENT_TYPE.deliveryNote]: 'Delivery Note',
-    [DOCUMENT_TYPE.purchaseOrder]: 'Purchase Order',
-    [DOCUMENT_TYPE.purchaseInvoice]: 'Purchase Invoice',
-    [DOCUMENT_TYPE.deliveryNoteRefund]: 'Delivery Note Refund',
-    [DOCUMENT_TYPE.invoiceRefund]: 'Invoice Refund',
-    [DOCUMENT_TYPE.generalLedgerReport]: 'General Ledger Report',
-    [DOCUMENT_TYPE.purchaseInvoiceRefund]: 'Purchase Invoice Refund',
-    [DOCUMENT_TYPE.boardMission]: 'Board Mission',
-    [DOCUMENT_TYPE.customerChat]: 'Customer Chat',
-    [DOCUMENT_TYPE.supplierPayments]: 'Supplier Payments',
-  };
-  return titles[documentType] || 'Document';
-}
+import { useDocumentDetails, createDocumentKey } from '../hooks/document/use-document-details';
+import {
+  getDocumentTypeTitle,
+  getDocumentRoute,
+  openDocumentInNewTab,
+  formatDocumentDateShort,
+  formatDocumentPriceCompact,
+} from '../utils/document/formatting.utils';
 
 interface LinkedDocument {
   id: string;
@@ -47,30 +34,6 @@ interface LinkedDocument {
 
 interface LinkedDocumentsSectionProps {
   conversation: ChatwootConversation;
-}
-
-/**
- * Get document route based on document type
- */
-function getDocumentRoute(documentType: DOCUMENT_TYPE, documentId: string): string {
-  switch (documentType) {
-    case DOCUMENT_TYPE.quote:
-      return `/quote?Id=${documentId}`;
-    case DOCUMENT_TYPE.invoice:
-      return `/invoice?Id=${documentId}`;
-    case DOCUMENT_TYPE.order:
-      return `/orders?Id=${documentId}`;
-    case DOCUMENT_TYPE.receipt:
-      return `/receipts?Id=${documentId}`;
-    case DOCUMENT_TYPE.deliveryNote:
-      return `/deliveryNote?Id=${documentId}`;
-    case DOCUMENT_TYPE.purchaseOrder:
-      return `/purchaseOrders?Id=${documentId}`;
-    case DOCUMENT_TYPE.purchaseInvoice:
-      return `/purchaseInvoices?Id=${documentId}`;
-    default:
-      return '/quotes';
-  }
 }
 
 /**
@@ -131,21 +94,20 @@ function extractLinkedDocuments(conversation: ChatwootConversation): LinkedDocum
     const documentTypeRaw = customAttributes[typeKey];
     const linkedAtRaw = customAttributes[timestampKey];
 
-    // Handle document ID - can be string or number
+    // Handle document ID
     const documentId = documentIdRaw ? String(documentIdRaw) : undefined;
-    
-    // Handle document type - convert string to number if needed (JSON serialization)
+
+    // Handle document type
     let documentType: DOCUMENT_TYPE = type;
     if (documentTypeRaw !== undefined && documentTypeRaw !== null) {
-      const parsedType = typeof documentTypeRaw === 'string' 
-        ? parseInt(documentTypeRaw, 10) 
-        : Number(documentTypeRaw);
+      const parsedType =
+        typeof documentTypeRaw === 'string' ? parseInt(documentTypeRaw, 10) : Number(documentTypeRaw);
       if (!isNaN(parsedType) && Object.values(DOCUMENT_TYPE).includes(parsedType)) {
         documentType = parsedType as DOCUMENT_TYPE;
       }
     }
-    
-    // Handle timestamp - ensure it's a valid string
+
+    // Handle timestamp
     const linkedAt = linkedAtRaw ? String(linkedAtRaw) : undefined;
 
     if (documentId) {
@@ -160,17 +122,21 @@ function extractLinkedDocuments(conversation: ChatwootConversation): LinkedDocum
   return documents;
 }
 
-export const LinkedDocumentsSection: React.FC<LinkedDocumentsSectionProps> = ({
-  conversation,
-}) => {
-  const { primaryColor, neutralColor } = useGomakeTheme();
+export const LinkedDocumentsSection: React.FC<LinkedDocumentsSectionProps> = ({ conversation }) => {
   const { navigate } = useGomakeRouter();
   const { t } = useTranslation();
+  const currenciesUnits = useRecoilValue(currencyUnitState);
+  const { details, loadingKeys, fetchMultipleDetails } = useDocumentDetails();
 
   // Extract linked documents from conversation
-  const linkedDocuments = useMemo(() => {
-    return extractLinkedDocuments(conversation);
-  }, [conversation]);
+  const linkedDocuments = useMemo(() => extractLinkedDocuments(conversation), [conversation]);
+
+  // Fetch document details when linked documents change
+  useEffect(() => {
+    if (linkedDocuments.length > 0) {
+      fetchMultipleDetails(linkedDocuments);
+    }
+  }, [linkedDocuments, fetchMultipleDetails]);
 
   // Don't render if no linked documents
   if (linkedDocuments.length === 0) {
@@ -178,150 +144,128 @@ export const LinkedDocumentsSection: React.FC<LinkedDocumentsSectionProps> = ({
   }
 
   const handleDocumentClick = (documentType: DOCUMENT_TYPE, documentId: string) => {
-    try {
-      const route = getDocumentRoute(documentType, documentId);
-      navigate(route);
-    } catch (error) {
-      console.error('[LinkedDocumentsSection] Navigation error:', error);
-      // Could show a toast notification here
-    }
+    const route = getDocumentRoute(documentType, documentId);
+    navigate(route);
   };
 
   const handleDocumentClickNewTab = (documentType: DOCUMENT_TYPE, documentId: string) => {
-    try {
-      const route = getDocumentRoute(documentType, documentId);
-      window.open(route, '_blank');
-    } catch (error) {
-      console.error('[LinkedDocumentsSection] Navigation error (new tab):', error);
-      // Could show a toast notification here
-    }
+    openDocumentInNewTab(documentType, documentId);
   };
 
   return (
-    <Box
-      sx={{
-        mb: 2.5,
-        px: 2,
-        py: 2,
-        backgroundColor: neutralColor(0),
-        borderRadius: 1,
-        border: `1px solid ${neutralColor(200)}`,
-      }}
-    >
+    <Box sx={{ mb: 2.5 }}>
       <Typography
         variant="caption"
         sx={{
-          color: neutralColor(700),
-          mb: 1.5,
+          color: colorTokens.semantic.text.secondary,
+          mb: 1,
           display: 'block',
           fontWeight: 600,
           textTransform: 'uppercase',
           fontSize: 10,
-          letterSpacing: '0.05em',
         }}
       >
         {t('frontdesk.linkedDocuments', { defaultValue: 'Linked Documents' })}
       </Typography>
 
-      <Stack spacing={1.5}>
+      <Stack spacing={1}>
         {linkedDocuments.map((doc) => {
-          const documentTitle = getDocumentTitle(doc.type);
-          // Safely format date, handle invalid dates
-          let formattedDate = '';
-          if (doc.linkedAt) {
-            try {
-              const date = new Date(doc.linkedAt);
-              if (!isNaN(date.getTime())) {
-                formattedDate = date.toLocaleDateString();
-              }
-            } catch (error) {
-              // Invalid date, leave formattedDate empty
-            }
-          }
+          const documentTitle = getDocumentTypeTitle(doc.type);
+          const key = createDocumentKey(doc.type, doc.id);
+          const docDetails = details[key];
+          const isLoading = loadingKeys.has(key);
+
+          // Format display values
+          const creationDate = formatDocumentDateShort(docDetails?.createdDate);
+          const dueDate = formatDocumentDateShort(docDetails?.dueDate);
+          const priceText = formatDocumentPriceCompact(
+            docDetails?.totalPrice,
+            docDetails?.currency,
+            currenciesUnits
+          );
+          const sourceDocText = docDetails?.sourceDocuments?.length
+            ? docDetails.sourceDocuments.map((s) => s.documentNumber).join(', ')
+            : '';
 
           return (
             <Box
-              key={`${doc.type}-${doc.id}`}
+              key={key}
               sx={{
-                p: 1.5,
-                borderRadius: 1,
-                backgroundColor: neutralColor(25),
-                border: `1px solid ${neutralColor(200)}`,
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'space-between',
+                gap: 1.5,
+                p: 1.5,
+                backgroundColor: colorTokens.neutral[50],
+                borderRadius: '6px',
+                border: `1px solid ${colorTokens.semantic.border.default}`,
                 cursor: 'pointer',
                 transition: 'all 0.2s ease',
                 '&:hover': {
-                  backgroundColor: primaryColor(25),
-                  borderColor: primaryColor(300),
+                  backgroundColor: colorTokens.neutral[100],
                 },
               }}
               onClick={() => handleDocumentClick(doc.type, doc.id)}
             >
-              <Stack direction="row" spacing={1.5} alignItems="center" sx={{ flex: 1 }}>
-                <Box
+              <Box sx={{ flex: 1, minWidth: 0 }}>
+                <Typography
+                  variant="body2"
                   sx={{
-                    width: 36,
-                    height: 36,
-                    borderRadius: 1,
-                    backgroundColor: primaryColor(50),
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    color: primaryColor(600),
-                    flexShrink: 0,
+                    fontWeight: 500,
+                    fontSize: 13,
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                    mb: 0.25,
                   }}
                 >
-                  <DescriptionOutlinedIcon sx={{ fontSize: 18 }} />
-                </Box>
-                <Box sx={{ flex: 1, minWidth: 0 }}>
-                  <Typography
-                    variant="body2"
-                    sx={{
-                      color: neutralColor(900),
-                      fontWeight: 600,
-                      fontSize: '0.875rem',
-                      mb: 0.25,
-                    }}
-                  >
-                    {documentTitle}
-                  </Typography>
-                  <Stack direction="row" spacing={1} alignItems="center">
+                  {documentTitle}
+                  {docDetails?.number && ` #${docDetails.number}`}
+                </Typography>
+                <Stack spacing={0.25}>
+                  {priceText && (
                     <Typography
                       variant="caption"
                       sx={{
-                        color: neutralColor(600),
-                        fontSize: '0.75rem',
+                        color: colorTokens.semantic.text.secondary,
+                        fontSize: 10,
+                        fontWeight: 500,
                       }}
                     >
-                      ID: {doc.id}
+                      {priceText}
                     </Typography>
-                    {formattedDate && (
-                      <>
-                        <Typography
-                          variant="caption"
-                          sx={{
-                            color: neutralColor(400),
-                            fontSize: '0.75rem',
-                          }}
-                        >
-                          •
-                        </Typography>
-                        <Typography
-                          variant="caption"
-                          sx={{
-                            color: neutralColor(600),
-                            fontSize: '0.75rem',
-                          }}
-                        >
-                          {formattedDate}
-                        </Typography>
-                      </>
-                    )}
-                  </Stack>
-                </Box>
-              </Stack>
+                  )}
+                  {sourceDocText && (
+                    <Typography
+                      variant="caption"
+                      sx={{
+                        color: colorTokens.semantic.text.secondary,
+                        fontSize: 10,
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap',
+                      }}
+                    >
+                      {t('frontdesk.sourceDocument', { defaultValue: 'Source' })}: {sourceDocText}
+                    </Typography>
+                  )}
+                  {creationDate && (
+                    <Typography
+                      variant="caption"
+                      sx={{ color: colorTokens.semantic.text.secondary, fontSize: 10 }}
+                    >
+                      {t('frontdesk.created', { defaultValue: 'Created' })}: {creationDate}
+                    </Typography>
+                  )}
+                  {dueDate && (
+                    <Typography
+                      variant="caption"
+                      sx={{ color: colorTokens.semantic.text.secondary, fontSize: 10 }}
+                    >
+                      {t('frontdesk.dueDate', { defaultValue: 'Due' })}: {dueDate}
+                    </Typography>
+                  )}
+                </Stack>
+              </Box>
               <Tooltip title={t('frontdesk.openInNewTab', { defaultValue: 'Open in new tab' })}>
                 <IconButton
                   size="small"
@@ -330,10 +274,10 @@ export const LinkedDocumentsSection: React.FC<LinkedDocumentsSectionProps> = ({
                     handleDocumentClickNewTab(doc.type, doc.id);
                   }}
                   sx={{
-                    color: neutralColor(600),
+                    color: colorTokens.semantic.text.secondary,
                     '&:hover': {
-                      backgroundColor: primaryColor(50),
-                      color: primaryColor(600),
+                      backgroundColor: colorTokens.primary[50],
+                      color: colorTokens.primary[600],
                     },
                   }}
                 >
@@ -347,4 +291,3 @@ export const LinkedDocumentsSection: React.FC<LinkedDocumentsSectionProps> = ({
     </Box>
   );
 };
-
