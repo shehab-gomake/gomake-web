@@ -339,7 +339,7 @@ export function useComposeConversation(options?: UseComposeConversationOptions) 
               },
             };
 
-            const createResponse = await chatwootService.contacts.createContact(accountId, createPayload);
+            const createResponse:any = await chatwootService.contacts.createContact(accountId, createPayload);
             // Extract contact from response
             // Response structure: { payload: { contact: {...}, contact_inbox: {...} } }
             // or: { data: { payload: { contact: {...} } } }
@@ -393,7 +393,7 @@ export function useComposeConversation(options?: UseComposeConversationOptions) 
             },
           };
 
-          const createResponse = await chatwootService.contacts.createContact(accountId, createPayload);
+          const createResponse:any = await chatwootService.contacts.createContact(accountId, createPayload);
           // Extract contact from response
           // Response structure: { payload: { contact: {...}, contact_inbox: {...} } }
           // or: { data: { payload: { contact: {...} } } }
@@ -448,7 +448,7 @@ export function useComposeConversation(options?: UseComposeConversationOptions) 
       if (!accountId) return null;
 
       try {
-        const createResponse = await chatwootService.contacts.createContact(accountId, payload);
+        const createResponse:any = await chatwootService.contacts.createContact(accountId, payload);
         // Extract contact from response
         // Response structure: { payload: { contact: {...}, contact_inbox: {...} } }
         // or: { data: { payload: { contact: {...} } } }

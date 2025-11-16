@@ -101,7 +101,6 @@ import { PlusIcon } from "../quotes/widgets/icons/header-section-icons";
 import { useStyle } from "./style";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { PurchaseOrderType, ShowDocumentDetailsEnum, ShowPricesEnum, ItemCalculationType } from "@/enums";
-import { ShowDocumentDetailsEnum, ShowPricesEnum } from "@/enums";
 import { useFrontDeskEmailIntegration } from "../quotes/hooks/use-frontdesk-email-integration";
 
 export enum MessageType {

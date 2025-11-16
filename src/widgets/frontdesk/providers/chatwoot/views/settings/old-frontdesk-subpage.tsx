@@ -19,7 +19,7 @@ export const OldFrontDeskSubpage: React.FC = () => {
     <BaseSettingsSubpage
       title="Old FrontDesk"
       description="Access legacy FrontDesk features and navigation"
-      icon={<HistoryIcon />}
+    // icon={<HistoryIcon />}
     >
       <Box sx={{ p: 3 }}>
         <Alert severity="info" sx={{ mb: 3 }}>
