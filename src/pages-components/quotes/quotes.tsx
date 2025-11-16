@@ -65,6 +65,7 @@ import QrCodeReader from "@/components/qr-code-reader";
 import { useSetRecoilState } from "recoil";
 import { selectedItemsState } from "@/store";
 import { PrintPackingSlipModalWidget } from "@/widgets/production-floor/views/board-missions-view/navigation-buttons/print-packing-slip-modal-widget";
+import { useParameters } from "@/hooks/use-parameters";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -419,7 +420,7 @@ const QuotesListPageWidget = ({
   useEffect(() => {
     const loadDocumentColumnSettings = async () => {
       try {
-        const res = await getDocumentTableSettingsApi(callApi, () => {}, {
+        const res = await getDocumentTableSettingsApi(callApi, () => { }, {
           documentType,
         });
         const saved: ColumnSetting[] = res?.data;
@@ -448,6 +449,8 @@ const QuotesListPageWidget = ({
     loadDocumentColumnSettings();
   }, [documentType, tableKey]);
   const setSelectedItems = useSetRecoilState(selectedItemsState);
+  const { parametersStateValue } = useParameters();
+
   return (
     <>
       {!isFromHomePage && (
@@ -484,8 +487,8 @@ const QuotesListPageWidget = ({
                     isOrder
                       ? onclickCreateNew
                       : isSupplierPayments
-                      ? () => navigate(`/${documentPath}`)
-                      : () => {
+                        ? () => navigate(`/${documentPath}`)
+                        : () => {
                           setSelectedItems([]);
                           navigate(`/${documentPath}?isNewCreation=true`);
                         }
@@ -659,6 +662,7 @@ const QuotesListPageWidget = ({
           documentType={documentType}
           onShowScheduledReports={onShowScheduledReports}
           createScheduledReport={createScheduledReport}
+          parametersStateValue={parametersStateValue}
         />
       )}
       <GoMakeDeleteModal

@@ -90,4 +90,5 @@ export interface IPrintHouseProfile {
   remainingTrialDays?: number;
   trialFinished?: boolean;
   packagingSlipPrinterId?: number;
+  localFilePathMapping?: string;
 }

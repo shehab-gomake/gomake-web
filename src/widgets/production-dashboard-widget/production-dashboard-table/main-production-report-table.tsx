@@ -639,21 +639,42 @@ const MainProductionReportTable = () => {
               {format(new Date(data.reportGeneratedAt), "MMM d, yyyy HH:mm")}
             </Typography>
           )}
-          {data.sla !== undefined && (
-            <Box sx={{ mt: 1.5 }}>
-              <Chip
-                label={`SLA: ${formatPercentage(data.sla)}`}
-                sx={{
-                  backgroundColor: "#e3f2fd",
-                  color: "#495057",
-                  fontSize: "0.9rem",
-                  height: "28px",
-                  px: 1,
-                  "& .MuiChip-label": {
-                    px: 1.5,
-                  },
-                }}
-              />
+          {(data.otd !== undefined || data.tB_OTD !== undefined) && (
+            <Box sx={{ mt: 1.5, display: "flex", gap: 1, flexWrap: "wrap" }}>
+              {data.otd !== undefined && (
+                <Chip
+                  label={`${t(
+                    "productionReport.onTimeDelivery"
+                  )}: ${formatPercentage(data.otd)}`}
+                  sx={{
+                    backgroundColor: "#e3f2fd",
+                    color: "#495057",
+                    fontSize: "0.9rem",
+                    height: "28px",
+                    px: 1,
+                    "& .MuiChip-label": {
+                      px: 1.5,
+                    },
+                  }}
+                />
+              )}
+              {data.tB_OTD !== undefined && (
+                <Chip
+                  label={`${t(
+                    "productionReport.timeBasedOnTimeDelivery"
+                  )}: ${formatPercentage(data.tB_OTD)}`}
+                  sx={{
+                    backgroundColor: "#e3f2fd",
+                    color: "#495057",
+                    fontSize: "0.9rem",
+                    height: "28px",
+                    px: 1,
+                    "& .MuiChip-label": {
+                      px: 1.5,
+                    },
+                  }}
+                />
+              )}
             </Box>
           )}
         </Box>
