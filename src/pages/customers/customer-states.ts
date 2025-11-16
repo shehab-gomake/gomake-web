@@ -20,13 +20,6 @@ export const isSelectedCLoseAsDeliveryNoteState = atom<boolean>({
   default: false,
 });
 
-//!Old state
-// export const closeAsInvoiceState = atom<boolean>({
-//   key: "closeAsInvoiceState",
-//   default: false,
-// });
-
-//!New state
 export const closeOrderAsInvoiceOrDeliveryNoteState = atom<boolean>({
   key: "closeOrderAsInvoiceOrDeliveryNoteState",
   default: false,

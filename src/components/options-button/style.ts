@@ -7,9 +7,7 @@ const useStyle = ({ withCircle }) => {
     return {
       button: {
         border: withCircle ? "1px solid" : "none",
-        // color: primaryColor(500),
-        // color: `var(--theme-accent-color , ${primaryColor(500)})`,
-        color: `var(--theme-secondary-color , ${primaryColor(500)})`, //!here menu
+        color: `var(--theme-secondary-color , ${primaryColor(500)})`,
 
         height: withCircle ? 22 : 25,
         width: withCircle ? 22 : 25,

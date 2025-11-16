@@ -42,7 +42,9 @@ const useStyle = ({
 
       titleModalStyle: {
         display: "flex",
-        color: modalTitleColor || primaryColor(500),
+        color:
+          modalTitleColor ||
+          `var(--theme-typography-title-color, ${primaryColor(500)})`,
         ...FONT_FAMILY.Lexend(500, 24),
         ...(isMiddleTitle && { margin: "0 auto" }),
       },

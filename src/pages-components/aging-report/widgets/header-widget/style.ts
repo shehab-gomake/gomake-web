@@ -32,7 +32,7 @@ const useStyle = () => {
       },
       textInputStyle: {
         width: "100%",
-        border: "none",
+        // border: "none",
       },
       inputsForQuotesContainer: {
         display: "flex",

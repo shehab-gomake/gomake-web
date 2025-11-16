@@ -88,7 +88,8 @@ const useStyle = () => {
         height: 40,
         backgroundColor: "#FFF",
         border: "0px",
-        boxShadow: "0px 1px 2px 0px rgba(0, 0, 0, 0.08)",
+        boxShadow:
+          "var(--theme-shadow-sm, 0px 1px 2px 0px rgba(0, 0, 0, 0.08))",
       },
       cleanBtnStyle: {
         backgroundColor: "#FFFFFF",

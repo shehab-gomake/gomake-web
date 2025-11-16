@@ -1,7 +1,9 @@
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 
 const useStyle = () => {
+  const { primaryColor, theme } = useGomakeTheme();
   const classes = useMemo(() => {
     return {
       mainContainer: {
@@ -41,15 +43,15 @@ const useStyle = () => {
         ...FONT_FAMILY.Inter(600, 16),
         borderRadius: "8px",
         height: "40px",
-        backgroundColor: "#2E3092",
+        backgroundColor: primaryColor(500),
         color: "#FFF",
         textTransform: "capitalize",
         "&:hover": {
-          backgroundColor: "#1F217A",
+          backgroundColor: primaryColor(600),
         },
       },
     };
-  }, []);
+  }, [theme]);
   return {
     classes,
   };
