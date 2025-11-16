@@ -1,10 +1,10 @@
-import React, { useEffect, useRef, useContext } from 'react';
+import React, { useEffect, useRef, useContext, useState, ContextType } from 'react';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import TextAlign from '@tiptap/extension-text-align';
 import Underline from '@tiptap/extension-underline';
 import Link from '@tiptap/extension-link';
-import { TextStyle } from '@tiptap/extension-text-style';
+import { FontSize, TextStyle } from '@tiptap/extension-text-style';
 import { Color } from '@tiptap/extension-text-style';
 import Highlight from '@tiptap/extension-highlight';
 import FontFamily from '@tiptap/extension-font-family';
@@ -16,8 +16,6 @@ import { ScrollMenu, VisibilityContext } from 'react-horizontal-scrolling-menu';
 import 'react-horizontal-scrolling-menu/dist/styles.css';
 import { LeftArrowIcon } from "@/components/icons/left-arrow-icon";
 import { RightArrowIcon } from "@/components/icons/right-arrow-icon";
-import { TemplateVariableButton } from './extensions/template-variable-button';
-import { FontSize } from './extensions/font-size';
 import { useMessageTemplate } from '@/widgets/settings-mailing/useMessageTemplate';
 import FormatBoldIcon from '@mui/icons-material/FormatBold';
 import FormatItalicIcon from '@mui/icons-material/FormatItalic';
@@ -30,7 +28,6 @@ import FormatAlignCenterIcon from '@mui/icons-material/FormatAlignCenter';
 import FormatAlignRightIcon from '@mui/icons-material/FormatAlignRight';
 import FormatAlignJustifyIcon from '@mui/icons-material/FormatAlignJustify';
 import LinkIcon from '@mui/icons-material/Link';
-import FormatColorFillIcon from '@mui/icons-material/FormatColorFill';
 import UndoIcon from '@mui/icons-material/Undo';
 import RedoIcon from '@mui/icons-material/Redo';
 import { FONT_FAMILY } from '@/utils/font-family';
@@ -42,13 +39,14 @@ interface IProps {
 
 const AdvancedEmailEditor = ({ value, setValue }: IProps) => {
     const { templateVariables } = useMessageTemplate();
+    // const { classes } = useAdvancedEmailEditorStyles();
     const { t } = useTranslation();
-    const [selectedColor, setSelectedColor] = React.useState('#000000');
-    const [selectedBgColor, setSelectedBgColor] = React.useState('#ffff00');
-    const [selectedFontSize, setSelectedFontSize] = React.useState('14px');
-    const [selectedFontFamily, setSelectedFontFamily] = React.useState('Inter');
+    const [selectedColor, setSelectedColor] = useState('#000000');
+    const [selectedBgColor, setSelectedBgColor] = useState('#ffff00');
+    const [selectedFontSize, setSelectedFontSize] = useState('14px');
+    const [selectedFontFamily, setSelectedFontFamily] = useState('Inter');
 
-    type scrollVisibilityApiType = React.ContextType<typeof VisibilityContext>;
+    type scrollVisibilityApiType = ContextType<typeof VisibilityContext>;
     const dir: 'rtl' | 'ltr' = t('direction');
     const RTL = dir === 'rtl';
     const apiRef: { current: scrollVisibilityApiType } = useRef(null);
@@ -86,7 +84,7 @@ const AdvancedEmailEditor = ({ value, setValue }: IProps) => {
             FontSize,
             Subscript,
             Superscript,
-            TemplateVariableButton,
+            // TemplateVariableButton,
         ],
         content: value || '',
         editorProps: {
@@ -106,18 +104,18 @@ const AdvancedEmailEditor = ({ value, setValue }: IProps) => {
         }
     }, [value, editor]);
 
-    const addTemplateVariable = (variable: any) => {
-        if (editor) {
-            editor
-                .chain()
-                .focus()
-                .setTemplateVariableButton({
-                    marker: variable.value,
-                    title: variable.label,
-                })
-                .run();
-        }
-    };
+    // const addTemplateVariable = (variable: any) => {
+    //     if (editor) {
+    //         editor
+    //             .chain()
+    //             .focus()
+    //             .setTemplateVariableButton({
+    //                 marker: variable.value,
+    //                 title: variable.label,
+    //             })
+    //             .run();
+    //     }
+    // };
 
     const setLink = () => {
         const url = window.prompt('Enter URL');
@@ -541,6 +539,9 @@ const AdvancedEmailEditor = ({ value, setValue }: IProps) => {
                 }}
             >
                 <EditorContent editor={editor} className="tiptap-editor" />
+                <EditorContent editor={editor}
+                // className={classes.editorContent as string} 
+                />
             </div>
 
             {/* Template Variables */}
@@ -566,7 +567,7 @@ const AdvancedEmailEditor = ({ value, setValue }: IProps) => {
                     {templateVariables?.map((option) => (
                         <button
                             key={option?.value}
-                            onClick={() => addTemplateVariable(option)}
+                            // onClick={() => addTemplateVariable(option)}
                             style={{
                                 padding: '6px 14px',
                                 margin: '0 4px',

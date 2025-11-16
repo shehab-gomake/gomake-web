@@ -31,6 +31,9 @@ const MoreMenuWidget = ({
   onClickOpenMoveOrderToReadyModal,
   onOpenPackagesModal,
   onClickOpenInventoryIntakeModal,
+  onClickSendToCustomerEmail,
+  onClickSendToCustomerSMS,
+  onClickSendToCustomerWhatsApp,
 }: any) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -62,39 +65,48 @@ const MoreMenuWidget = ({
     onClickOpenMoveOrderToReadyModal,
     onOpenPackagesModal,
     onClickOpenInventoryIntakeModal,
+    onClickSendToCustomerEmail,
+    onClickSendToCustomerSMS,
+    onClickSendToCustomerWhatsApp,
+    classes,
   });
 
   return (
     <OptionsButton>
-      {menuList.map((item, index) =>
+      {(closeMenu: any) => menuList.map((item: any, index: number) =>
         item?.condition ? (
-          <MenuItem
-            style={classes.menuRowStyle}
-            key={index}
-            onClick={item.onClick}
-          >
-            {item?.isLink ? (
-              <Link
-                href={item.href || "#"}
-                rel="noopener noreferrer"
-                style={{
-                  textDecoration: "none",
-                  display: "flex",
-                  alignItems: "center",
-                  width: "100%",
-                  gap: 8,
-                }}
-              >
-                {item.icon}
-                <span style={classes.rowTextStyle}>{item.name}</span>
-              </Link>
-            ) : (
-              <>
-                {item.icon}
-                <div style={classes.rowTextStyle}>{item.name}</div>
-              </>
-            )}
-          </MenuItem>
+          item?.component ? (
+            // Render custom component (e.g., submenu) with close handler
+            <div key={index}>{typeof item.component === 'function' ? item.component(closeMenu) : item.component}</div>
+          ) : (
+            <MenuItem
+              style={classes.menuRowStyle}
+              key={index}
+              onClick={item.onClick}
+            >
+              {item?.isLink ? (
+                <Link
+                  href={item.href || "#"}
+                  rel="noopener noreferrer"
+                  style={{
+                    textDecoration: "none",
+                    display: "flex",
+                    alignItems: "center",
+                    width: "100%",
+                    gap: 8,
+                  }}
+                >
+                  {item.icon}
+                  <span style={classes.rowTextStyle}>{item.name}</span>
+                </Link>
+              ) : (
+                <>
+                  {item.icon}
+                  <div style={classes.rowTextStyle}>{item.name}</div>
+                </>
+              )}
+            </MenuItem>
+          )
         ) : null
       )}
     </OptionsButton>

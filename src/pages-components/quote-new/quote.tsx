@@ -76,6 +76,7 @@ import { AddAttachmentsPurchaseModal } from "@/widgets/quote-new/modals-widgets/
 import { EPreferences } from "@/enums/prefernces";
 import { updateQuoteStatusSocketIo } from "@/hooks/socket-io/update-quote-status-socket-io";
 import { useQuoteConfirmation } from "@/pages-components/quote-confirmation/use-quote-confirmation";
+import { FrontDeskEmailComposerWrapper } from "../quotes/components/frontdesk-email-composer-wrapper";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -391,6 +392,10 @@ const QuoteNewPageWidget = ({
     onOpenPurchaseOrderTypeModal,
     onClosePurchaseOrderTypeModal,
     handleSelectPurchaseOrderType,
+    onClickSendEmailViaComposer,
+    isEmailComposerOpen,
+    emailData,
+    closeEmailComposer,
   } = useQuoteNew({
     docType: documentType,
     isQuoteConfirmation: isQuoteConfirmation,
@@ -1027,6 +1032,7 @@ const QuoteNewPageWidget = ({
         documentState={quoteItemValue}
         documentType={documentType}
         openReceiptModal={openReceiptModal}
+        onClickSendEmailViaComposer={onClickSendEmailViaComposer}
       />
       <WhatsAppWebModal
         openModal={openWhatsAppModal}
@@ -1360,6 +1366,16 @@ const QuoteNewPageWidget = ({
         onClose={onClickCloseChangeStatusModal}
         onClickDelete={() => updateQuoteStatus()}
       />
+      {/* FrontDesk Email Composer */}
+      {isEmailComposerOpen && (
+        <FrontDeskEmailComposerWrapper
+          open={isEmailComposerOpen}
+          onClose={closeEmailComposer}
+          emailData={emailData}
+          documentId={quoteItemValue?.id}
+          documentType={documentType}
+        />
+      )}
     </>
   );
 };
