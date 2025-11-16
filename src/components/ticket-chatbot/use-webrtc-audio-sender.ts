@@ -62,8 +62,17 @@ export const useWebRTCAudioSender = ({
       peerConnectionRef.current = pc;
 
       // Add tracks to peer connection
+      // Use addTransceiver to ensure tracks are properly included in SDP
       stream.getTracks().forEach((track) => {
-        pc.addTrack(track, stream);
+        const transceiver = pc.addTransceiver(track, {
+          direction: 'sendrecv',
+        });
+        console.log('🎤 Added audio transceiver:', {
+          trackId: track.id,
+          enabled: track.enabled,
+          kind: track.kind,
+          transceiverDirection: transceiver.direction,
+        });
       });
 
       // Handle ICE candidates
@@ -78,9 +87,28 @@ export const useWebRTCAudioSender = ({
 
       // Handle remote stream
       pc.ontrack = (event) => {
-        console.log("🎤 Remote audio track received:", event);
+        console.log("🎤 Remote audio track received:", {
+          trackId: event.track.id,
+          trackKind: event.track.kind,
+          trackEnabled: event.track.enabled,
+          trackReadyState: event.track.readyState,
+          streams: event.streams.length,
+          transceiver: event.transceiver?.direction,
+        });
+        
+        // Ensure track is enabled
+        if (event.track) {
+          event.track.enabled = true;
+        }
+        
         if (remoteAudioRef.current) {
           remoteAudioRef.current.srcObject = event.streams[0];
+          
+          // Ensure audio element is ready to play
+          remoteAudioRef.current.play().catch((err) => {
+            console.warn("⚠️ Audio play failed (may be expected):", err);
+          });
+          
           setIsConnected(true);
           setError(null);
         }
@@ -109,10 +137,30 @@ export const useWebRTCAudioSender = ({
         return;
       }
 
+      // Verify tracks are in the connection before creating offer
+      const senders = pc.getSenders();
+      console.log("📤 Active senders before creating offer:", senders.length);
+      senders.forEach((sender, index) => {
+        const track = sender.track;
+        console.log(`📤 Sender ${index}:`, {
+          trackId: track?.id,
+          trackKind: track?.kind,
+          trackEnabled: track?.enabled,
+          trackReadyState: track?.readyState,
+        });
+      });
+
       const offer = await pc.createOffer();
+      
+      // Log SDP to verify tracks are included
+      console.log("📤 Offer SDP:", offer.sdp?.substring(0, 500));
+      
       await pc.setLocalDescription(offer);
 
-      console.log("📤 WebRTC Offer created:", offer);
+      console.log("📤 WebRTC Offer created:", {
+        type: offer.type,
+        sdpLength: offer.sdp?.length,
+      });
       console.log("📤 Calling onReceiveSignal with offer");
 
       if (onReceiveSignalRef.current) {
@@ -148,6 +196,20 @@ export const useWebRTCAudioSender = ({
       }
 
       await pc.setRemoteDescription(answer);
+      
+      // Verify receivers after setting remote description
+      const receivers = pc.getReceivers();
+      console.log("📥 Active receivers after setting answer:", receivers.length);
+      receivers.forEach((receiver, index) => {
+        const track = receiver.track;
+        console.log(`📥 Receiver ${index}:`, {
+          trackId: track?.id,
+          trackKind: track?.kind,
+          trackEnabled: track?.enabled,
+          trackReadyState: track?.readyState,
+        });
+      });
+      
       console.log("✅ Remote answer set successfully");
     } catch (err: any) {
       console.error("Error handling answer:", err);
