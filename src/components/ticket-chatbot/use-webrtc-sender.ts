@@ -113,18 +113,28 @@ export const useWebRTCSender = ({
       peerConnectionRef.current = pc;
 
       // Listen for incoming data channel (created by receiver)
+      // This event fires when the remote peer creates a data channel
+      console.log("📊 Setting up ondatachannel listener...");
       pc.ondatachannel = (event) => {
-        console.log("📨 Incoming data channel received:", event.channel.label);
+        console.log("📨 Incoming data channel received!");
+        console.log("  - Channel label:", event.channel.label);
+        console.log("  - Channel id:", event.channel.id);
+        console.log("  - Channel readyState:", event.channel.readyState);
+        console.log("  - Channel ordered:", event.channel.ordered);
+        console.log("  - Channel protocol:", event.channel.protocol);
+        
         const channel = event.channel;
         dataChannelRef.current = channel;
 
         channel.onopen = () => {
           console.log("✅ Data channel opened (sender side)");
+          console.log("  - Channel readyState:", channel.readyState);
           setIsDataChannelReady(true);
         };
 
         channel.onclose = () => {
           console.log("❌ Data channel closed (sender side)");
+          console.log("  - Channel readyState:", channel.readyState);
           setIsDataChannelReady(false);
         };
 
@@ -146,6 +156,12 @@ export const useWebRTCSender = ({
           }
         };
       };
+      
+      // Also check if data channel arrives after answer is set
+      // Sometimes the event fires after setRemoteDescription
+      console.log("📊 Peer connection state when setting up data channel listener:");
+      console.log("  - Signaling state:", pc.signalingState);
+      console.log("  - Connection state:", pc.connectionState);
 
       // Add tracks to peer connection
       stream.getTracks().forEach((track) => {
@@ -211,10 +227,50 @@ export const useWebRTCSender = ({
   const handleAnswer = async (answer: RTCSessionDescriptionInit) => {
     try {
       const pc = peerConnectionRef.current;
-      if (!pc) return;
+      if (!pc) {
+        console.error('❌ Peer connection is null in handleAnswer');
+        return;
+      }
+
+      console.log('📥 Handling answer on sender side...');
+      console.log('📊 Peer connection state before setRemoteDescription:');
+      console.log('  - Signaling state:', pc.signalingState);
+      console.log('  - Connection state:', pc.connectionState);
+      console.log('  - Data channel exists:', !!dataChannelRef.current);
+      console.log('  - Data channel state:', dataChannelRef.current?.readyState);
+      
+      // Check if answer SDP includes data channel
+      const sdpIncludesDataChannel = answer.sdp?.includes('m=application') || 
+                                      answer.sdp?.includes('data') ||
+                                      answer.sdp?.includes('webrtc-datachannel');
+      console.log('📊 Answer SDP includes data channel:', sdpIncludesDataChannel);
+      if (sdpIncludesDataChannel) {
+        console.log('✅ Answer SDP includes data channel - ondatachannel should fire after setRemoteDescription');
+      } else {
+        console.warn('⚠️ Answer SDP does NOT include data channel!');
+        console.warn('⚠️ This means the data channel will not be established!');
+        console.warn('📊 Answer SDP preview:', answer.sdp?.substring(0, 500));
+      }
 
       await pc.setRemoteDescription(answer);
       console.log('✅ Remote description (answer) set on sender side');
+      console.log('📊 Peer connection state after setRemoteDescription:');
+      console.log('  - Signaling state:', pc.signalingState);
+      console.log('  - Connection state:', pc.connectionState);
+      console.log('  - Data channel exists:', !!dataChannelRef.current);
+      console.log('  - Data channel state:', dataChannelRef.current?.readyState);
+      
+      // The ondatachannel event should fire after setRemoteDescription if data channel is in SDP
+      // Wait a moment and check if data channel was received
+      setTimeout(() => {
+        if (dataChannelRef.current) {
+          console.log('✅ Data channel received after setRemoteDescription');
+          console.log('  - Channel readyState:', dataChannelRef.current.readyState);
+        } else {
+          console.warn('⚠️ Data channel not received after setRemoteDescription');
+          console.warn('⚠️ This might mean the data channel is not in the answer SDP');
+        }
+      }, 100);
       
       // Process any pending ICE candidates that arrived before remote description was set
       if (pendingIceCandidatesRef.current.length > 0) {

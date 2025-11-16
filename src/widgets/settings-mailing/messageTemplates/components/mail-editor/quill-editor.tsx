@@ -1,5 +1,5 @@
 import { useMessageTemplate } from '@/widgets/settings-mailing/useMessageTemplate';
-import React, { Suspense, lazy, useEffect, useRef, useContext } from 'react';
+import React, { Suspense, lazy, useEffect, useRef, useContext, useMemo, useState } from 'react';
 import { useStyle } from './style';
 import { Stack, IconButton } from '@mui/material';
 import { useTranslation } from 'react-i18next';
@@ -12,8 +12,40 @@ import { RightArrowIcon } from "@/components/icons/right-arrow-icon";
 const ReactQuill = lazy(() => import('react-quill'));
 
 interface IProps {
-    value: string;
+    value: string | null | undefined;
     setValue: (value: string) => void;
+}
+
+// Error boundary component specifically for Quill editor
+class QuillErrorBoundary extends React.Component<
+    { children: React.ReactNode; onError: () => void },
+    { hasError: boolean }
+> {
+    constructor(props: { children: React.ReactNode; onError: () => void }) {
+        super(props);
+        this.state = { hasError: false };
+    }
+
+    static getDerivedStateFromError() {
+        return { hasError: true };
+    }
+
+    componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+        console.error('Quill editor error caught:', error, errorInfo);
+        this.props.onError();
+    }
+
+    render() {
+        if (this.state.hasError) {
+            return (
+                <div style={{ padding: '10px', color: '#f44336' }}>
+                    Error loading editor. Please try again.
+                </div>
+            );
+        }
+
+        return this.props.children;
+    }
 }
 
 const QuillEditor = ({ value, setValue }: IProps) => {
@@ -22,6 +54,125 @@ const QuillEditor = ({ value, setValue }: IProps) => {
     const { t } = useTranslation();
 
     const editorRef = useRef<any>();
+    const [editorKey, setEditorKey] = useState(0);
+    const [hasError, setHasError] = useState(false);
+    
+    // Normalize and sanitize value to always be a valid string - this prevents null/undefined errors
+    // Also ensures the HTML is safe for Quill to parse
+    const normalizedValue = useMemo(() => {
+        if (!value || typeof value !== 'string') return '';
+        
+        try {
+            // Trim and check for empty content
+            const trimmedValue = value.trim();
+            if (!trimmedValue || trimmedValue === '<br>' || trimmedValue === '<br/>') {
+                return '';
+            }
+            
+            // Create a temporary DOM element to parse and sanitize HTML
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(trimmedValue, 'text/html');
+            
+            // If parsing resulted in an error (invalid HTML), return empty string
+            if (doc.querySelector('parsererror')) {
+                console.warn('Invalid HTML detected in template, using empty content');
+                return '';
+            }
+            
+            // Get the body element
+            const body = doc.body;
+            
+            // Remove elements that Quill doesn't support or might cause issues
+            const unsupportedTags = ['script', 'style', 'iframe', 'object', 'embed', 'form', 'input', 'button', 'select', 'textarea', 'meta', 'link', 'base'];
+            unsupportedTags.forEach(tag => {
+                const elements = body.querySelectorAll(tag);
+                elements.forEach(el => {
+                    try {
+                        el.remove();
+                    } catch (e) {
+                        // Ignore removal errors
+                    }
+                });
+            });
+            
+            // Remove any nodes that aren't proper DOM elements (text nodes are fine)
+            const walker = doc.createTreeWalker(body, NodeFilter.SHOW_ELEMENT);
+            const nodesToRemove: Element[] = [];
+            let node: Node | null;
+            while ((node = walker.nextNode())) {
+                if (node instanceof Element) {
+                    // Check if node is a proper element
+                    if (!node.tagName || typeof node.appendChild !== 'function') {
+                        nodesToRemove.push(node);
+                    }
+                }
+            }
+            nodesToRemove.forEach(n => {
+                try {
+                    n.remove();
+                } catch (e) {
+                    // Ignore removal errors
+                }
+            });
+            
+            // Remove attributes that might cause issues
+            const allElements = body.querySelectorAll('*');
+            allElements.forEach(el => {
+                try {
+                    // Keep only safe attributes
+                    const safeAttributes = ['href', 'target', 'class', 'data-marker', 'data-title'];
+                    Array.from(el.attributes).forEach(attr => {
+                        if (!safeAttributes.includes(attr.name.toLowerCase())) {
+                            el.removeAttribute(attr.name);
+                        }
+                    });
+                } catch (e) {
+                    // Ignore attribute removal errors
+                }
+            });
+            
+            // Get the sanitized HTML
+            let sanitized = body.innerHTML;
+            
+            // Ensure we have valid HTML structure - if empty or just whitespace, return empty
+            if (!sanitized || sanitized.trim() === '' || sanitized.trim() === '<br>' || sanitized.trim() === '<br/>') {
+                return '';
+            }
+            
+            // Ensure content starts with a block element that Quill expects
+            // Quill works best with block-level elements like <p>, <div>, etc.
+            const trimmedSanitized = sanitized.trim();
+            if (!trimmedSanitized.match(/^<(p|div|h[1-6]|blockquote|pre|ul|ol|li)/i)) {
+                // Wrap in a paragraph if it doesn't start with a block element
+                sanitized = `<p>${trimmedSanitized}</p>`;
+            }
+            
+            return sanitized;
+        } catch (error) {
+            console.warn('Error sanitizing HTML:', error);
+            return '';
+        }
+    }, [value]);
+    
+    // Handle editor initialization errors
+    useEffect(() => {
+        if (hasError) {
+            // Reset error state and remount editor after a short delay
+            const timer = setTimeout(() => {
+                setHasError(false);
+                setEditorKey(prev => prev + 1);
+            }, 100);
+            return () => clearTimeout(timer);
+        }
+    }, [hasError]);
+    
+    // Reset editor key when value changes significantly to ensure clean initialization
+    useEffect(() => {
+        // Force remount when value changes from/to null/undefined to handle edge cases
+        if (value !== normalizedValue && (value === null || value === undefined || normalizedValue === '')) {
+            setEditorKey(prev => prev + 1);
+        }
+    }, [value, normalizedValue]);
 
     type scrollVisibilityApiType = React.ContextType<typeof VisibilityContext>;
     const dir: 'rtl' | 'ltr' = t('direction');
@@ -62,6 +213,11 @@ const QuillEditor = ({ value, setValue }: IProps) => {
             'formats/TemplateMarker': TemplateMarker
         });
     }, []);
+
+    // Simple ref callback - ReactQuill handles content initialization internally
+    const handleEditorRef = (ref: any) => {
+        editorRef.current = ref;
+    };
 
     // Add Ctrl + A / Cmd + A keyboard shortcut for Select All
     useEffect(() => {
@@ -181,14 +337,24 @@ const QuillEditor = ({ value, setValue }: IProps) => {
               }
             `}</style>
             <Suspense fallback={<div>Loading editor...</div>}>
-                <ReactQuill
-                    modules={modules}
-                    style={classes.myEditor}
-                    value={value}
-                    onChange={handleChange}
-                    ref={editorRef}
-                    id="editor"
-                />
+                <QuillErrorBoundary
+                    onError={() => {
+                        setHasError(true);
+                    }}
+                >
+                    <ReactQuill
+                        key={editorKey}
+                        modules={modules}
+                        style={classes.myEditor}
+                        value={normalizedValue}
+                        onChange={handleChange}
+                        ref={handleEditorRef}
+                        id="editor"
+                        theme="snow"
+                        preserveWhitespace={false}
+                        bounds="self"
+                    />
+                </QuillErrorBoundary>
             </Suspense>
             <Stack style={classes.variablesContainer}>
                 <ScrollMenu LeftArrow={LeftArrow} RightArrow={RightArrow} apiRef={apiRef} RTL={RTL}>
