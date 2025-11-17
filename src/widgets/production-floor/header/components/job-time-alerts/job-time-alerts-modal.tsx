@@ -6,8 +6,6 @@ import {
   GomakeTextInput,
 } from "@/components";
 import { Stack, Box, IconButton, Divider } from "@mui/material";
-import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
-import EditIcon from "@mui/icons-material/Edit";
 import { PrimaryButton } from "@/components/button/primary-button";
 import { SketchPicker } from "react-color";
 import { Popover } from "@mui/material";
@@ -16,6 +14,9 @@ import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import { useJobTimeAlerts, IJobTimeAlertStep } from "./use-job-time-alerts";
 import { FONT_FAMILY } from "@/utils/font-family";
 import AddIcon from "@mui/icons-material/Add";
+import { useStyle } from "./style";
+import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
+import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
 
 interface JobTimeAlertsModalProps {
   openModal: boolean;
@@ -27,6 +28,7 @@ const JobTimeAlertsModal = ({
   onClose,
 }: JobTimeAlertsModalProps) => {
   const { t } = useTranslation();
+  const { classes } = useStyle();
   const {
     steps,
     loading,
@@ -212,106 +214,44 @@ const JobTimeAlertsModal = ({
       modalTitleStyle={{ ...FONT_FAMILY.Inter(600, 18) }}
       modalTitleColor={"#000000"}
       withRoundedCloseIcon={false}
-      insideStyle={{
-        width: "600px",
-        minWidth: "500px",
-        maxHeight: "80vh",
-        padding: "20px",
-      }}
+      insideStyle={classes.modalInsideStyle}
     >
       <Stack direction="column" gap="20px">
-        {error && (
-          <Box
-            sx={{
-              padding: "10px",
-              backgroundColor: "#FEE4E2",
-              color: "#D92D20",
-              borderRadius: "8px",
-              ...FONT_FAMILY.Inter(400, 14),
-            }}
-          >
-            {error}
-          </Box>
-        )}
+        {error && <Box sx={classes.errorBox}>{error}</Box>}
 
         <Stack
           direction="row"
           justifyContent="space-between"
           alignItems="center"
         >
-          <span
-            style={{
-              ...FONT_FAMILY.Inter(500, 16),
-              color: "#344054",
-            }}
-          >
+          <span style={classes.sectionTitle}>
             {t("productionFloor.timeAlertSteps")}
           </span>
           <PrimaryButton
             variant="contained"
             onClick={handleAddNew}
             startIcon={<AddIcon style={{ fontSize: "16px", color: "#fff" }} />}
-            style={{
-              borderRadius: "8px",
-              height: "36px",
-              width: "fit-content",
-            }}
+            style={classes.addButtonStyle}
           >
             {t("materials.buttons.add")}
           </PrimaryButton>
         </Stack>
 
-        <Box
-          sx={{
-            maxHeight: "60vh",
-            overflowY: "auto",
-            "&::-webkit-scrollbar": {
-              width: "8px",
-            },
-            "&::-webkit-scrollbar-track": {
-              background: "#f1f1f1",
-            },
-            "&::-webkit-scrollbar-thumb": {
-              background: "#cccdcf",
-              borderRadius: "10px",
-            },
-          }}
-        >
+        <Box sx={classes.scrollableContainer}>
           {steps.length === 0 ? (
-            <Box
-              sx={{
-                padding: "40px",
-                textAlign: "center",
-                color: "#98A2B3",
-                ...FONT_FAMILY.Inter(400, 14),
-              }}
-            >
+            <Box sx={classes.emptyStateBox}>
               {t("productionFloor.noTimeAlertSteps")}
             </Box>
           ) : (
             <Stack direction="column" gap="12px">
               {steps.map((step, index) => (
                 <Box key={step.id || `new-${index}`}>
-                  <Box
-                    sx={{
-                      padding: "16px",
-                      border: "1px solid #D0D5DD",
-                      borderRadius: "8px",
-                      backgroundColor: "#FAFAFA",
-                    }}
-                  >
+                  <Box sx={classes.stepCard}>
                     {editingIndex === index ? (
                       <Stack direction="column" gap="16px">
                         <Stack direction="row" gap="12px" alignItems="center">
                           <Box sx={{ flex: 1 }}>
-                            <span
-                              style={{
-                                ...FONT_FAMILY.Inter(500, 14),
-                                color: "#344054",
-                                display: "block",
-                                marginBottom: "8px",
-                              }}
-                            >
+                            <span style={classes.labelStyle}>
                               {t("productionFloor.timeFromDelivery")} (h)
                             </span>
                             <GomakeTextInput
@@ -320,69 +260,31 @@ const JobTimeAlertsModal = ({
                               onChange={(e) =>
                                 handleTimeChange(e.target.value, index)
                               }
-                              sx={{
-                                width: "100%",
-                                borderRadius: "8px",
-                                "& .MuiOutlinedInput-root": {
-                                  "& input": {
-                                    height: "44px",
-                                  },
-                                },
-                              }}
+                              sx={classes.textInputStyle}
                             />
                           </Box>
                           <Box>
-                            <span
-                              style={{
-                                ...FONT_FAMILY.Inter(500, 14),
-                                color: "#344054",
-                                display: "block",
-                                marginBottom: "8px",
-                              }}
-                            >
+                            <span style={classes.labelStyle}>
                               {t("machineAttributes.color")}
                             </span>
                             <div
                               onClick={(e) => handleOpenColorPicker(e, index)}
-                              style={{
-                                display: "flex",
-                                alignItems: "center",
-                                gap: "8px",
-                                padding: "8px 12px",
-                                border: "1px solid #D0D5DD",
-                                borderRadius: "8px",
-                                backgroundColor: "white",
-                                cursor: "pointer",
-                                width: "140px",
-                              }}
+                              style={classes.colorPickerContainer}
                             >
                               <div
                                 style={{
-                                  width: "20px",
-                                  height: "20px",
-                                  borderRadius: "50%",
+                                  ...classes.colorCircle,
                                   backgroundColor:
                                     editingStep?.color || step.color,
-                                  border: "1px solid #D0D5DD",
                                 }}
                               />
-                              <span
-                                style={{
-                                  ...FONT_FAMILY.Inter(400, 14),
-                                  color: "#344054",
-                                  flex: 1,
-                                }}
-                              >
+                              <span style={classes.colorText}>
                                 {editingStep?.color || step.color}
                               </span>
                               {colorPickerIndex === index ? (
-                                <KeyboardArrowUpIcon
-                                  sx={{ color: "#98A2B3", fontSize: "18px" }}
-                                />
+                                <KeyboardArrowUpIcon sx={classes.arrowIcon} />
                               ) : (
-                                <KeyboardArrowDownIcon
-                                  sx={{ color: "#98A2B3", fontSize: "18px" }}
-                                />
+                                <KeyboardArrowDownIcon sx={classes.arrowIcon} />
                               )}
                             </div>
                           </Box>
@@ -394,23 +296,14 @@ const JobTimeAlertsModal = ({
                         >
                           <GomakePrimaryButton
                             onClick={handleCancel}
-                            style={{
-                              borderRadius: "8px",
-                              height: "36px",
-                              background: "white",
-                              color: "#000000",
-                              border: "1px solid #D0D5DD",
-                            }}
+                            style={classes.cancelButtonStyle}
                           >
                             {t("materials.buttons.cancel")}
                           </GomakePrimaryButton>
                           <GomakePrimaryButton
                             onClick={handleSave}
                             disabled={loading}
-                            style={{
-                              borderRadius: "8px",
-                              height: "36px",
-                            }}
+                            style={classes.saveButtonStyle}
                           >
                             {t("materials.buttons.save")}
                           </GomakePrimaryButton>
@@ -425,29 +318,16 @@ const JobTimeAlertsModal = ({
                         <Stack direction="row" gap="16px" alignItems="center">
                           <div
                             style={{
-                              width: "24px",
-                              height: "24px",
-                              borderRadius: "50%",
+                              ...classes.colorCircleLarge,
                               backgroundColor: step.color,
-                              border: "1px solid #D0D5DD",
                             }}
                           />
                           <Stack direction="column">
-                            <span
-                              style={{
-                                ...FONT_FAMILY.Inter(500, 14),
-                                color: "#344054",
-                              }}
-                            >
+                            <span style={classes.stepTitle}>
                               {step.timeFromDeliveryTime}{" "}
                               {t("productionFloor.hoursFromDelivery")}
                             </span>
-                            <span
-                              style={{
-                                ...FONT_FAMILY.Inter(400, 12),
-                                color: "#98A2B3",
-                              }}
-                            >
+                            <span style={classes.stepSubtitle}>
                               {step.color}
                             </span>
                           </Stack>
@@ -456,29 +336,25 @@ const JobTimeAlertsModal = ({
                           <IconButton
                             onClick={() => handleEdit(step, index)}
                             size="small"
-                            sx={{
-                              color: "#344054",
-                              "&:hover": { backgroundColor: "#F2F4F7" },
-                            }}
+                            sx={classes.editIconButton}
+                            title={t("navigationButtons.edit")}
                           >
-                            <EditIcon fontSize="small" />
+                            <EditOutlinedIcon fontSize="small" />
                           </IconButton>
                           <IconButton
                             onClick={() => handleDelete(step, index)}
                             size="small"
-                            sx={{
-                              color: "#D92D20",
-                              "&:hover": { backgroundColor: "#FEE4E2" },
-                            }}
+                            sx={classes.deleteIconButton}
+                            title={t("navigationButtons.delete")}
                           >
-                            <DeleteOutlineIcon fontSize="small" />
+                            <DeleteOutlinedIcon fontSize="small" />
                           </IconButton>
                         </Stack>
                       </Stack>
                     )}
                   </Box>
                   {index < steps.length - 1 && (
-                    <Divider sx={{ marginTop: "12px" }} />
+                    <Divider sx={classes.dividerStyle} />
                   )}
                 </Box>
               ))}
