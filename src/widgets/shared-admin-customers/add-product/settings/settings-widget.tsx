@@ -6,6 +6,7 @@ import {
   GoMakeDeleteModal,
   GomakeTextInput,
 } from "@/components";
+import ProductMultiSelect from "@/components/auto-complete/product-multi-select";
 import { AddProductSkuModal } from "./modals/add-contact-modal";
 import { UploadImgProduct } from "./upload-widget";
 import { EProductClient, EProductStructureType } from "./settings-data";
@@ -52,6 +53,7 @@ const SettingsWidget = ({
     query,
     productSKU,
     updateProductSKURow,
+    productsList,
   } = useSettings({ onClickParametersTab, productState, onChangeStateProduct });
 
   const [defultProductSKU, setDefultProductSKU] = useState();
@@ -81,6 +83,33 @@ const SettingsWidget = ({
       ) ?? productStructureOptions[0]
     );
   }, [productStructureOptions, productState?.productStructureType]);
+
+  const isCompositeStructure =
+    selectedProductStructure?.id === EProductStructureType.COMPOSITE;
+
+  useEffect(() => {
+    if (!isCompositeStructure) {
+      return;
+    }
+
+    if (!Array.isArray(productState?.compositeProductIds)) {
+      onChangeStateProduct("compositeProductIds", []);
+      return;
+    }
+
+    const hasNonPrimitive = productState?.compositeProductIds?.some(
+      (item: any) => typeof item === "object"
+    );
+
+    if (hasNonPrimitive) {
+      onChangeStateProduct(
+        "compositeProductIds",
+        productState?.compositeProductIds?.map((item: any) =>
+          typeof item === "object" ? item?.id ?? item?.value : item
+        )
+      );
+    }
+  }, [isCompositeStructure, productState?.compositeProductIds, onChangeStateProduct]);
 
   useEffect(() => {
     if (!productState?.productStructureType) {
@@ -271,171 +300,202 @@ const SettingsWidget = ({
               placeholder={t("products.addProduct.admin.productStructureType")}
               style={clasess.dropDownListStyle}
               onChange={(e: any, value: any) => {
-                onChangeStateProduct(
-                  "productStructureType",
-                  value?.id ?? EProductStructureType.BASE
-                );
+                const structureType =
+                  value?.id ?? EProductStructureType.BASE;
+                onChangeStateProduct("productStructureType", structureType);
+                if (structureType === EProductStructureType.COMPOSITE) {
+                  if (!Array.isArray(productState?.compositeProductIds)) {
+                    onChangeStateProduct("compositeProductIds", []);
+                  }
+                } else {
+                  onChangeStateProduct("compositeProductIds", []);
+                }
               }}
               value={selectedProductStructure}
             />
           </div>
         </div>
-        <div style={clasess.itemOnFirstContainer}>
-          <div style={clasess.labelTitleStyle}>
-            {t("products.addProduct.admin.pricingType")}
-            <span style={clasess.requierdInput}>*</span>
-          </div>
-          <div style={{ width: "100%" }}>
-            {allTemplate && (
-              <GoMakeAutoComplate
-                key={defultTemplate}
-                options={allTemplate}
-                placeholder={t("products.addProduct.admin.pricingType")}
-                style={clasess.dropDownListStyle}
-                getOptionLabel={(option: any) => option.name}
-                value={
-                  typeof productState?.templateId != "object"
-                    ? defultTemplate
-                    : productState?.templateId
-                }
-                onChange={(e: any, value: any) => {
-                  if (isUpdate) {
-                    onClickOpenPricingType(value);
-                  } else {
-                    onChangeStateProduct("templateId", value);
-                  }
-                }}
-              //disabled={isUpdate && !query?.isSubProducts}
-              />
-            )}
-          </div>
-        </div>
-        <div style={clasess.itemOnFirstContainer}>
-          <div style={clasess.labelTitleStyle}>
-            {t("products.addProduct.admin.deliveryTime")}
-          </div>
-          <div>
-            <GomakeTextInput
-              style={clasess.textInputStyle}
-              placeholder={t("products.addProduct.admin.deliveryTime")}
-              onChange={(e: any) => {
-                onChangeStateProduct("deliveryTime", e.target.value);
+        {isCompositeStructure ? (
+          <div style={clasess.itemGropupsContainer}>
+            <div style={clasess.labelTitleStyle}>
+              {t("products.addProduct.admin.compositeProducts")}
+              <span style={clasess.requierdInput}>*</span>
+            </div>
+            <ProductMultiSelect
+              products={productsList ?? []}
+              selectedProductIds={productState?.compositeProductIds ?? []}
+              onProductChange={(ids) => {
+                onChangeStateProduct("compositeProductIds", ids);
               }}
-              value={productState?.deliveryTime}
-            />
-          </div>
-        </div>
-        <div style={clasess.itemOnFirstContainer}>
-          <div style={clasess.labelTitleStyle}>
-            {`${t("customers.modal.additionProfits")} (%)`}
-          </div>
-          <div>
-            <GomakeTextInput
-              style={clasess.textInputStyle}
-              placeholder={t("customers.modal.additionProfits")}
-              onChange={(e: any) => {
-                onChangeStateProduct("additionProfits", e.target.value);
-              }}
-              value={productState?.additionProfits}
-              type={"number"}
-            />
-          </div>
-        </div>
-        <div style={clasess.itemOnFirstContainer}>
-          <div style={clasess.labelTitleStyle}>
-            {t("products.addProduct.admin.externalCode")}
-          </div>
-          <div>
-            <GomakeTextInput
-              style={clasess.textInputStyle}
-              placeholder={t("products.addProduct.admin.externalCode")}
-              onChange={(e: any) => {
-                onChangeStateProduct("externalCode", e.target.value);
-              }}
-              value={productState?.externalCode}
-            />
-          </div>
-        </div>
-        <div style={clasess.itemOnFirstContainer}>
-          <div style={clasess.labelTitleStyle}>
-            {t("products.addProduct.admin.minimumPrice")}
-          </div>
-          <div>
-            <GomakeTextInput
-              style={clasess.textInputStyle}
-              placeholder={t("products.addProduct.admin.minimumPrice")}
-              onChange={(e: any) => {
-                onChangeStateProduct("minimumPrice", e.target.value);
-              }}
-              value={productState?.minimumPrice}
-              type="number"
-            />
-          </div>
-        </div>
-      </div>
-      <div style={clasess.itemGropupsContainer}>
-        <div style={clasess.labelTitleStyle}>
-          {t("products.addProduct.admin.groups")}
-        </div>
-        <div style={{ width: "100%" }}>
-          {allGroups?.length > 0 && (
-            <GoMakeAutoComplate
-              options={allGroups}
-              placeholder={t("products.addProduct.admin.groups")}
-              style={clasess.multiSelectStyle}
-              multiple
-              onChange={(e: any, value: any) => {
-                onChangeStateProduct(
-                  "groups",
-                  value?.map((item: any) => item?.id)
-                );
-              }}
-              value={productState?.groups?.map((item: any) => {
-                const group = allGroups?.find(
-                  (group: any) => group?.id === item
-                );
-                return {
-                  label: group?.label,
-                  id: group?.id,
-                };
-              })}
-            />
-          )}
-        </div>
-      </div>
-
-      <div style={clasess.categoryNameStyle}>
-        {t("products.addProduct.admin.clients")}
-      </div>
-      <div style={clasess.firstContainer}>
-        <div style={clasess.itemOnFirstContainer}>
-          <div style={clasess.labelTitleStyle}>
-            {t("products.addProduct.admin.pricingType")}
-          </div>
-          <div style={{ width: "100%" }}>
-            <GoMakeAutoComplate
-              key={SelectproductClient?.id}
-              options={productClientsList}
-              placeholder={t("products.addProduct.admin.pricingType")}
-              style={clasess.dropDownListStyle}
-              onChange={(e: any, value: any) => {
-                onChangeStateProduct("pricingType", value?.id);
-                onChangeStateProduct("clientsTypes", []);
-                onChangeStateProduct("clients", []);
-              }}
-              value={productClientsList.find(
-                (item) => item.id === productState?.pricingType
+              placeholder={t(
+                "products.addProduct.admin.selectCompositeProducts"
               )}
+              containerStyle={{ width: "100%" }}
+              selectStyle={{ width: "100%" }}
             />
           </div>
-        </div>
-        {_renderProductClientSelector()}
+        ) : (
+          <>
+            <div style={clasess.itemOnFirstContainer}>
+              <div style={clasess.labelTitleStyle}>
+                {t("products.addProduct.admin.pricingType")}
+                <span style={clasess.requierdInput}>*</span>
+              </div>
+              <div style={{ width: "100%" }}>
+                {allTemplate && (
+                  <GoMakeAutoComplate
+                    key={defultTemplate}
+                    options={allTemplate}
+                    placeholder={t("products.addProduct.admin.pricingType")}
+                    style={clasess.dropDownListStyle}
+                    getOptionLabel={(option: any) => option.name}
+                    value={
+                      typeof productState?.templateId != "object"
+                        ? defultTemplate
+                        : productState?.templateId
+                    }
+                    onChange={(e: any, value: any) => {
+                      if (isUpdate) {
+                        onClickOpenPricingType(value);
+                      } else {
+                        onChangeStateProduct("templateId", value);
+                      }
+                    }}
+                  //disabled={isUpdate && !query?.isSubProducts}
+                  />
+                )}
+              </div>
+            </div>
+            <div style={clasess.itemOnFirstContainer}>
+              <div style={clasess.labelTitleStyle}>
+                {t("products.addProduct.admin.deliveryTime")}
+              </div>
+              <div>
+                <GomakeTextInput
+                  style={clasess.textInputStyle}
+                  placeholder={t("products.addProduct.admin.deliveryTime")}
+                  onChange={(e: any) => {
+                    onChangeStateProduct("deliveryTime", e.target.value);
+                  }}
+                  value={productState?.deliveryTime}
+                />
+              </div>
+            </div>
+            <div style={clasess.itemOnFirstContainer}>
+              <div style={clasess.labelTitleStyle}>
+                {`${t("customers.modal.additionProfits")} (%)`}
+              </div>
+              <div>
+                <GomakeTextInput
+                  style={clasess.textInputStyle}
+                  placeholder={t("customers.modal.additionProfits")}
+                  onChange={(e: any) => {
+                    onChangeStateProduct("additionProfits", e.target.value);
+                  }}
+                  value={productState?.additionProfits}
+                  type={"number"}
+                />
+              </div>
+            </div>
+            <div style={clasess.itemOnFirstContainer}>
+              <div style={clasess.labelTitleStyle}>
+                {t("products.addProduct.admin.externalCode")}
+              </div>
+              <div>
+                <GomakeTextInput
+                  style={clasess.textInputStyle}
+                  placeholder={t("products.addProduct.admin.externalCode")}
+                  onChange={(e: any) => {
+                    onChangeStateProduct("externalCode", e.target.value);
+                  }}
+                  value={productState?.externalCode}
+                />
+              </div>
+            </div>
+            <div style={clasess.itemOnFirstContainer}>
+              <div style={clasess.labelTitleStyle}>
+                {t("products.addProduct.admin.minimumPrice")}
+              </div>
+              <div>
+                <GomakeTextInput
+                  style={clasess.textInputStyle}
+                  placeholder={t("products.addProduct.admin.minimumPrice")}
+                  onChange={(e: any) => {
+                    onChangeStateProduct("minimumPrice", e.target.value);
+                  }}
+                  value={productState?.minimumPrice}
+                  type="number"
+                />
+              </div>
+            </div>
+          </>
+        )}
       </div>
-      <div style={clasess.categoryNameStyle}>
-        {t("products.addProduct.admin.style")}
-      </div>
-      <div style={clasess.firstContainer}>
-        {/* <div style={clasess.itemOnFirstContainer}>
+      {!isCompositeStructure && (
+        <>
+          <div style={clasess.itemGropupsContainer}>
+            <div style={clasess.labelTitleStyle}>
+              {t("products.addProduct.admin.groups")}
+            </div>
+            <div style={{ width: "100%" }}>
+              {allGroups?.length > 0 && (
+                <GoMakeAutoComplate
+                  options={allGroups}
+                  placeholder={t("products.addProduct.admin.groups")}
+                  style={clasess.multiSelectStyle}
+                  multiple
+                  onChange={(e: any, value: any) => {
+                    onChangeStateProduct(
+                      "groups",
+                      value?.map((item: any) => item?.id)
+                    );
+                  }}
+                  value={productState?.groups?.map((item: any) => {
+                    const group = allGroups?.find(
+                      (group: any) => group?.id === item
+                    );
+                    return {
+                      label: group?.label,
+                      id: group?.id,
+                    };
+                  })}
+                />
+              )}
+            </div>
+          </div>
+
+          <div style={clasess.categoryNameStyle}>
+            {t("products.addProduct.admin.clients")}
+          </div>
+          <div style={clasess.firstContainer}>
+            <div style={clasess.itemOnFirstContainer}>
+              <div style={clasess.labelTitleStyle}>
+                {t("products.addProduct.admin.pricingType")}
+              </div>
+              <div style={{ width: "100%" }}>
+                <GoMakeAutoComplate
+                  key={SelectproductClient?.id}
+                  options={productClientsList}
+                  placeholder={t("products.addProduct.admin.pricingType")}
+                  style={clasess.dropDownListStyle}
+                  onChange={(e: any, value: any) => {
+                    onChangeStateProduct("pricingType", value?.id);
+                    onChangeStateProduct("clientsTypes", []);
+                    onChangeStateProduct("clients", []);
+                  }}
+                  value={productClientsList.find(
+                    (item) => item.id === productState?.pricingType
+                  )}
+                />
+              </div>
+            </div>
+            {_renderProductClientSelector()}
+          </div>
+          <div style={clasess.categoryNameStyle}>
+            {t("products.addProduct.admin.style")}
+          </div>
+          <div style={clasess.firstContainer}>
+            {/* <div style={clasess.itemOnFirstContainer}>
           <div style={clasess.labelTitleStyle}>
             {t("products.addProduct.admin.noteColor")}
           </div>
@@ -460,7 +520,7 @@ const SettingsWidget = ({
             )}
           </div>
         </div> */}
-        {/* <div style={clasess.itemOnFirstContainer}>
+            {/* <div style={clasess.itemOnFirstContainer}>
           <div style={clasess.labelTitleStyle}>
             {t("products.addProduct.admin.textColor")}
           </div>
@@ -485,34 +545,36 @@ const SettingsWidget = ({
             )}
           </div>
         </div> */}
-        <div style={clasess.itemOnFirstContainer}>
-          <div style={clasess.labelTitleStyle}>
-            {t("products.addProduct.admin.jobColor")}
-          </div>
-          <div style={clasess.fileInputStyle}>
-            <MuiColorInput
-              value={
-                productState?.productionFloorJobColor ??
-                t("products.addProduct.admin.jobColor")
-              }
-              onChange={(value: any) => {
-                onChangeStateProduct("productionFloorJobColor", value);
-              }}
-              format="hex"
-            />
-            {productState?.productionFloorJobColor && (
-              <div
-                style={{ cursor: "pointer" }}
-                onClick={() =>
-                  onChangeStateProduct("productionFloorJobColor", null)
-                }
-              >
-                <FormatColorResetIcon />
+            <div style={clasess.itemOnFirstContainer}>
+              <div style={clasess.labelTitleStyle}>
+                {t("products.addProduct.admin.jobColor")}
               </div>
-            )}
+              <div style={clasess.fileInputStyle}>
+                <MuiColorInput
+                  value={
+                    productState?.productionFloorJobColor ??
+                    t("products.addProduct.admin.jobColor")
+                  }
+                  onChange={(value: any) => {
+                    onChangeStateProduct("productionFloorJobColor", value);
+                  }}
+                  format="hex"
+                />
+                {productState?.productionFloorJobColor && (
+                  <div
+                    style={{ cursor: "pointer" }}
+                    onClick={() =>
+                      onChangeStateProduct("productionFloorJobColor", null)
+                    }
+                  >
+                    <FormatColorResetIcon />
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
+        </>
+      )}
       {/* <div style={clasess.categoryNameStyle}>
         {t("products.addProduct.admin.graphicsRequired")}
       </div>
@@ -556,12 +618,14 @@ const SettingsWidget = ({
         </div>
       ) : (
         <div style={clasess.btnsContainer}>
-          <div
-            style={clasess.goToListBtn}
-            onClick={createNewProductAndGoToParameterList}
-          >
-            {t("products.addProduct.admin.addGoToList")}
-          </div>
+          {!isCompositeStructure && (
+            <div
+              style={clasess.goToListBtn}
+              onClick={createNewProductAndGoToParameterList}
+            >
+              {t("products.addProduct.admin.addGoToList")}
+            </div>
+          )}
           <div style={clasess.addNwBtn} onClick={createNewProduct}>
             {t("products.addProduct.admin.addNewProduct")}
           </div>

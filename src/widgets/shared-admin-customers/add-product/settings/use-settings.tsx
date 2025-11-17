@@ -22,6 +22,7 @@ import {
   EWidgetProductSettingsTabs,
   selectedProductsTabState,
 } from "@/widgets/products-settings-widget/enums";
+import { useAllProductsDropDownList } from "@/hooks/use-products-drop-down-list";
 
 const useSettings = ({
   onClickParametersTab,
@@ -153,175 +154,269 @@ const useSettings = ({
   }, [productSKU, errorName, errorCode]);
 
   const createNewProduct = useCallback(async () => {
-    if (
-      !productState.name ||
-      !productState.productSKUId ||
-      !productState.templateId
-    ) {
+    const structureTypeValue =
+      typeof productState?.productStructureType === "object"
+        ? productState?.productStructureType?.id
+        : productState?.productStructureType ?? EProductStructureType.BASE;
+
+    const isCompositeStructure =
+      structureTypeValue === EProductStructureType.COMPOSITE;
+
+    if (!productState?.name) {
       setSnackbarStateValue({
         state: true,
         message: t("products.addProduct.admin.requiredField"),
         type: "error",
       });
+      return;
+    }
+
+    if (isCompositeStructure) {
+      if (
+        !productState?.compositeProductIds ||
+        productState?.compositeProductIds?.length === 0
+      ) {
+        setSnackbarStateValue({
+          state: true,
+          message: t("products.addProduct.admin.requiredField"),
+          type: "error",
+        });
+        return;
+      }
+    } else if (!productState?.productSKUId || !productState?.templateId) {
+      setSnackbarStateValue({
+        state: true,
+        message: t("products.addProduct.admin.requiredField"),
+        type: "error",
+      });
+      return;
+    }
+
+    const payload: any = {
+      id: RandomId,
+      name: productState?.name,
+      details: productState?.details,
+      groups: productState?.groups?.map((item) => item),
+      deliveryTime: productState?.deliveryTime,
+      startingPrice: productState?.startingPrice,
+      additionPrice: productState?.additionPrice,
+      noteColor: productState?.noteColor,
+      textColor: productState?.textColor,
+      productionFloorJobColor: productState?.productionFloorJobColor,
+      clients: productState?.clients,
+      clientsTypes: productState?.clientsTypes,
+      productStructureType: structureTypeValue,
+    };
+
+    if (isCompositeStructure) {
+      payload.compositeProductIds = productState?.compositeProductIds ?? [];
     } else {
-      const res = await callApi(
-        "POST",
-        `/v1/printhouse-config/products/create-product`,
-        {
-          id: RandomId,
-          name: productState?.name,
-          details: productState?.details,
-          groups: productState?.groups?.map((item) => {
-            return item;
-          }),
-          deliveryTime: productState?.deliveryTime,
-          startingPrice: productState?.startingPrice,
-          additionPrice: productState?.additionPrice,
-          noteColor: productState?.noteColor,
-          textColor: productState?.textColor,
-          productionFloorJobColor: productState?.productionFloorJobColor,
-          productSKUId: productState?.productSKUId?.id,
-          templateId: productState?.templateId?.id,
-          clients: productState?.clients,
-          clientsTypes: productState?.clientsTypes,
-          productStructureType:
-            typeof productState?.productStructureType === "object"
-              ? productState?.productStructureType?.id
-              : productState?.productStructureType ??
-                EProductStructureType.BASE,
-        }
-      );
-      if (res?.success) {
-        alertSuccessAdded();
-        setSelectedTabValue(EWidgetProductSettingsTabs.PRODUCT_MANAGMENT);
+      payload.productSKUId =
+        typeof productState?.productSKUId === "string"
+          ? productState?.productSKUId
+          : productState?.productSKUId?.id;
+      payload.templateId =
+        typeof productState?.templateId === "string"
+          ? productState?.templateId
+          : productState?.templateId?.id;
+    }
+
+    const res = await callApi(
+      "POST",
+      `/v1/printhouse-config/products/create-product`,
+      payload
+    );
+    if (res?.success) {
+      alertSuccessAdded();
+      setSelectedTabValue(EWidgetProductSettingsTabs.PRODUCT_MANAGMENT);
+    } else {
+      if (res?.errors?.statusCode === 2627) {
+        alertFault(t("products.offsetPrice.admin.productAlreadyExists"));
       } else {
-        if (res?.errors?.statusCode === 2627) {
-          alertFault(t("products.offsetPrice.admin.productAlreadyExists"));
-        } else {
-          alertFaultAdded();
-        }
+        alertFaultAdded();
       }
     }
   }, [productState, RandomId]);
 
   const createNewProductAndGoToParameterList = useCallback(async () => {
-    if (
-      !productState.name ||
-      !productState.productSKUId ||
-      !productState.templateId
-    ) {
+    const structureTypeValue =
+      typeof productState?.productStructureType === "object"
+        ? productState?.productStructureType?.id
+        : productState?.productStructureType ?? EProductStructureType.BASE;
+
+    const isCompositeStructure =
+      structureTypeValue === EProductStructureType.COMPOSITE;
+
+    if (!productState?.name) {
       setSnackbarStateValue({
         state: true,
         message: t("products.addProduct.admin.requiredField"),
         type: "error",
       });
+      return;
+    }
+
+    if (isCompositeStructure) {
+      if (
+        !productState?.compositeProductIds ||
+        productState?.compositeProductIds?.length === 0
+      ) {
+        setSnackbarStateValue({
+          state: true,
+          message: t("products.addProduct.admin.requiredField"),
+          type: "error",
+        });
+        return;
+      }
+    } else if (!productState?.productSKUId || !productState?.templateId) {
+      setSnackbarStateValue({
+        state: true,
+        message: t("products.addProduct.admin.requiredField"),
+        type: "error",
+      });
+      return;
+    }
+
+    const payload: any = {
+      id: RandomId,
+      name: productState?.name,
+      details: productState?.details,
+      groups: productState?.groups?.map((item) => item),
+      deliveryTime: productState?.deliveryTime,
+      startingPrice: productState?.startingPrice,
+      additionPrice: productState?.additionPrice,
+      noteColor: productState?.noteColor,
+      textColor: productState?.textColor,
+      productionFloorJobColor: productState?.productionFloorJobColor,
+      clients: productState?.clients,
+      clientsTypes: productState?.clientsTypes,
+      additionProfits: productState?.additionProfits,
+      externalCode: productState?.externalCode,
+      productStructureType: structureTypeValue,
+    };
+
+    if (isCompositeStructure) {
+      payload.compositeProductIds = productState?.compositeProductIds ?? [];
     } else {
-      const res = await callApi(
-        "POST",
-        `/v1/printhouse-config/products/create-product`,
-        {
-          id: RandomId,
-          name: productState?.name,
-          details: productState?.details,
-          groups: productState?.groups?.map((item) => {
-            return item;
-          }),
-          deliveryTime: productState?.deliveryTime,
-          startingPrice: productState?.startingPrice,
-          additionPrice: productState?.additionPrice,
-          noteColor: productState?.noteColor,
-          textColor: productState?.textColor,
-          productionFloorJobColor: productState?.productionFloorJobColor,
-          productSKUId: productState?.productSKUId?.id,
-          templateId: productState?.templateId?.id,
-          clients: productState?.clients,
-          clientsTypes: productState?.clientsTypes,
-          additionProfits: productState?.additionProfits,
-          externalCode: productState?.externalCode,
-          productStructureType:
-            typeof productState?.productStructureType === "object"
-              ? productState?.productStructureType?.id
-              : productState?.productStructureType ??
-                EProductStructureType.BASE,
-        }
-      );
-      if (res?.success) {
-        alertSuccessAdded();
-        navigate(`/settings/products/edit/${RandomId}?isParameter=${true}`);
-        onClickParametersTab();
+      payload.productSKUId =
+        typeof productState?.productSKUId === "string"
+          ? productState?.productSKUId
+          : productState?.productSKUId?.id;
+      payload.templateId =
+        typeof productState?.templateId === "string"
+          ? productState?.templateId
+          : productState?.templateId?.id;
+    }
+
+    const res = await callApi(
+      "POST",
+      `/v1/printhouse-config/products/create-product`,
+      payload
+    );
+    if (res?.success) {
+      alertSuccessAdded();
+      navigate(`/settings/products/edit/${RandomId}?isParameter=${true}`);
+      onClickParametersTab();
+    } else {
+      if (res?.errors?.statusCode === 2627) {
+        alertFault(t("products.offsetPrice.admin.productAlreadyExists"));
       } else {
-        if (res?.errors?.statusCode === 2627) {
-          alertFault(t("products.offsetPrice.admin.productAlreadyExists"));
-        } else {
-          alertFaultAdded();
-        }
+        alertFaultAdded();
       }
     }
   }, [productState, RandomId]);
 
   const updatedProduct = useCallback(async () => {
-    if (
-      !productState?.name ||
-      !productState?.productSKUId ||
-      !productState?.templateId
-    ) {
+    const structureTypeValue =
+      typeof productState?.productStructureType === "object"
+        ? productState?.productStructureType?.id
+        : productState?.productStructureType ?? EProductStructureType.BASE;
+
+    const isCompositeStructure =
+      structureTypeValue === EProductStructureType.COMPOSITE;
+
+    if (!productState?.name) {
       setSnackbarStateValue({
         state: true,
         message: t("products.offsetPrice.admin.errorReq"),
         type: "error",
       });
-    } else {
-      const res = await callApi(
-        "PUT",
-        `/v1/printhouse-config/products/update-product-settings`,
-        {
-          id: id,
-          name: productState?.name,
-          details: productState?.details,
-          groups: productState?.groups?.map((item) => {
-            return item;
-          }),
-          deliveryTime: productState?.deliveryTime,
-          startingPrice: productState?.startingPrice,
-          additionPrice: productState?.additionPrice,
-          noteColor: productState?.noteColor,
-          textColor: productState?.textColor,
-          productionFloorJobColor: productState?.productionFloorJobColor,
-          productSKUId:
-            typeof productState?.productSKUId === "string"
-              ? productState?.productSKUId
-              : productState?.productSKUId?.id,
-          templateId:
-            typeof productState?.templateId === "string"
-              ? productState?.templateId
-              : productState?.templateId?.id,
-          status: true,
-          clients: productState?.clients,
-          clientsTypes: productState?.clientsTypes,
-          additionProfits: productState?.additionProfits,
-          externalCode: productState?.externalCode,
-          minimumPrice: productState?.minimumPrice === "" ? 0 : productState?.minimumPrice,
-          productStructureType:
-            typeof productState?.productStructureType === "object"
-              ? productState?.productStructureType?.id
-              : productState?.productStructureType ??
-                EProductStructureType.BASE,
-          //sections: productState?.sections,
-        }
-      );
-      if (res?.success) {
+      return;
+    }
+
+    if (isCompositeStructure) {
+      if (
+        !productState?.compositeProductIds ||
+        productState?.compositeProductIds?.length === 0
+      ) {
         setSnackbarStateValue({
           state: true,
-          message: t("modal.addedSusuccessfully"),
-          type: "sucess",
-        });
-      } else {
-        setSnackbarStateValue({
-          state: true,
-          message: t("modal.addedfailed"),
+          message: t("products.offsetPrice.admin.errorReq"),
           type: "error",
         });
+        return;
       }
+    } else if (!productState?.productSKUId || !productState?.templateId) {
+      setSnackbarStateValue({
+        state: true,
+        message: t("products.offsetPrice.admin.errorReq"),
+        type: "error",
+      });
+      return;
+    }
+
+    const payload: any = {
+      id: id,
+      name: productState?.name,
+      details: productState?.details,
+      groups: productState?.groups?.map((item) => item),
+      deliveryTime: productState?.deliveryTime,
+      startingPrice: productState?.startingPrice,
+      additionPrice: productState?.additionPrice,
+      noteColor: productState?.noteColor,
+      textColor: productState?.textColor,
+      productionFloorJobColor: productState?.productionFloorJobColor,
+      status: true,
+      clients: productState?.clients,
+      clientsTypes: productState?.clientsTypes,
+      additionProfits: productState?.additionProfits,
+      externalCode: productState?.externalCode,
+      minimumPrice:
+        productState?.minimumPrice === "" ? 0 : productState?.minimumPrice,
+      productStructureType: structureTypeValue,
+      //sections: productState?.sections,
+    };
+
+    if (isCompositeStructure) {
+      payload.compositeProductIds = productState?.compositeProductIds ?? [];
+    } else {
+      payload.productSKUId =
+        typeof productState?.productSKUId === "string"
+          ? productState?.productSKUId
+          : productState?.productSKUId?.id;
+      payload.templateId =
+        typeof productState?.templateId === "string"
+          ? productState?.templateId
+          : productState?.templateId?.id;
+    }
+
+    const res = await callApi(
+      "PUT",
+      `/v1/printhouse-config/products/update-product-settings`,
+      payload
+    );
+    if (res?.success) {
+      setSnackbarStateValue({
+        state: true,
+        message: t("modal.addedSusuccessfully"),
+        type: "sucess",
+      });
+    } else {
+      setSnackbarStateValue({
+        state: true,
+        message: t("modal.addedfailed"),
+        type: "error",
+      });
     }
   }, [productState, RandomId]);
 
@@ -329,6 +424,7 @@ const useSettings = ({
     useState<ProductClient>();
   const [customersList, setCustomersList] = useState([]);
   const [clientTypesList, setClientTypesList] = useState([]);
+  const { productList: productsList } = useAllProductsDropDownList();
   const productClientsList: ProductClient[] = useMemo(
     () => [
       {
@@ -439,6 +535,7 @@ const useSettings = ({
     SelectproductClient,
     customersList,
     clientTypesList,
+    productsList,
     openDeleteRowModal,
     query,
     onClickOpenDeleteRowModal,
