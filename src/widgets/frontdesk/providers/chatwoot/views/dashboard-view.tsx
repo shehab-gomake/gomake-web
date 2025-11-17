@@ -199,7 +199,7 @@ export const DashboardView: React.FC = () => {
             color: colorTokens.neutral[900],
           }}
         >
-          Chatwoot Dashboard
+          FrontDesk
         </Typography>
         <Typography
           variant="body2"

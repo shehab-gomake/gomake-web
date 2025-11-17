@@ -167,7 +167,7 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
   const [ticketViewsExpanded, setTicketViewsExpanded] = useState(true);
   const [chatsExpanded, setChatsExpanded] = useState(true);
   const [chatwootConversationsExpanded, setChatwootConversationsExpanded] = useState(true);
-  const [chatwootChannelsExpanded, setChatwootChannelsExpanded] = useState(false);
+  const [chatwootChannelsExpanded, setChatwootChannelsExpanded] = useState(true);
   const [showAddChannelModal, setShowAddChannelModal] = useState(false);
   const [showComposeModal, setShowComposeModal] = useState(false);
 
@@ -390,7 +390,7 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
             </Tooltip>
 
             {/* My Inbox */}
-            <Tooltip title="my tickets" placement="right" disableHoverListener={!isCollapsed}>
+            <Tooltip title="My Inbox" placement="right" disableHoverListener={!isCollapsed}>
               <ListItemButton
                 selected={isMyInboxView}
                 onClick={(e) => {
@@ -434,7 +434,7 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
                       <InboxIcon fontSize="small" />
                     </Box>
                     <ListItemText
-                      primary="my tickets"
+                      primary="My Inbox"
                       primaryTypographyProps={{
                         variant: "body2",
                         sx: {
