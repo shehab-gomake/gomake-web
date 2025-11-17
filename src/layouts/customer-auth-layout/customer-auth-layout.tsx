@@ -19,6 +19,7 @@ import {
   RequestNotificationProvider,
   RequestNotificationModal,
   useGlobalRequestListener,
+  useGlobalPopupMessageListener,
 } from "@/components/ticket-chatbot";
 
 const CustomerAuthLayoutInner = ({
@@ -37,6 +38,9 @@ const CustomerAuthLayoutInner = ({
 
   // Set up global request listener (works even when chatbot is closed)
   useGlobalRequestListener();
+  
+  // Set up global popup message listener (persists across navigation for remote control)
+  useGlobalPopupMessageListener();
 
   const {
     profile,
