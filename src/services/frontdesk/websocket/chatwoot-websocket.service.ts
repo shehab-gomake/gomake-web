@@ -76,6 +76,26 @@ export interface ConnectionStats {
   disconnectedAt: number | null;
   reconnectionAttempts: number;
   lastEventAt: number | null;
+  lastHeartbeatAt: number | null;
+}
+
+/**
+ * Retry Configuration
+ */
+export interface RetryConfig {
+  maxRetries: number;
+  initialDelayMs: number;
+  maxDelayMs: number;
+  backoffMultiplier: number;
+}
+
+/**
+ * Connection Health Status
+ */
+export enum ConnectionHealth {
+  HEALTHY = "healthy",
+  DEGRADED = "degraded",
+  UNHEALTHY = "unhealthy",
 }
 
 /**
@@ -100,7 +120,25 @@ export class ChatwootWebSocketService {
     disconnectedAt: null,
     reconnectionAttempts: 0,
     lastEventAt: null,
+    lastHeartbeatAt: null,
   };
+
+  // Retry configuration
+  private retryConfig: RetryConfig = {
+    maxRetries: 5,
+    initialDelayMs: 1000,
+    maxDelayMs: 30000,
+    backoffMultiplier: 2,
+  };
+
+  // Heartbeat interval
+  private heartbeatInterval: NodeJS.Timeout | null = null;
+  private readonly heartbeatIntervalMs = 30000; // 30 seconds
+  private readonly heartbeatTimeoutMs = 60000; // 60 seconds
+
+  // Auto-reconnect flag
+  private autoReconnect: boolean = true;
+  private isManualDisconnect: boolean = false;
 
   // Debug mode
   private debugEnabled: boolean = false;
@@ -132,15 +170,14 @@ export class ChatwootWebSocketService {
   private isDebugEnabled(): boolean {
     try {
       const w: any = typeof window !== "undefined" ? window : {};
-      // Always enable debug in development to see connection issues
+      // Only enable debug in development or when explicitly requested
       return (
         process.env.NEXT_PUBLIC_CHATWOOT_DEBUG === "true" ||
         w.CHATWOOT_DEBUG === true ||
-        process.env.NODE_ENV === "development" ||
-        true // Force enable for debugging
+        process.env.NODE_ENV === "development"
       );
     } catch {
-      return true; // Enable by default for debugging
+      return false; // Disable by default in production
     }
   }
 
@@ -336,6 +373,9 @@ export class ChatwootWebSocketService {
               console.log("[ChatwootWS] ✅ Connected successfully to WebSocket");
               this.setConnectionState(ConnectionState.CONNECTED);
               this.stats.reconnectionAttempts = 0;
+              this.isManualDisconnect = false;
+              // Start heartbeat monitoring
+              this.startHeartbeat();
               resolve();
             },
 
@@ -343,7 +383,20 @@ export class ChatwootWebSocketService {
               if (this.debugEnabled) {
                 console.log("[ChatwootWS] Disconnected");
               }
+              this.stopHeartbeat();
               this.setConnectionState(ConnectionState.DISCONNECTED);
+
+              // Auto-reconnect if not manually disconnected
+              if (this.autoReconnect && !this.isManualDisconnect) {
+                if (this.debugEnabled) {
+                  console.log("[ChatwootWS] Auto-reconnecting...");
+                }
+                this.reconnect().catch((err) => {
+                  if (this.debugEnabled) {
+                    console.error("[ChatwootWS] Auto-reconnect failed:", err);
+                  }
+                });
+              }
             },
 
             rejected: () => {
@@ -408,20 +461,96 @@ export class ChatwootWebSocketService {
   }
 
   /**
+   * Start heartbeat monitoring
+   */
+  private startHeartbeat(): void {
+    this.stopHeartbeat();
+
+    this.heartbeatInterval = setInterval(() => {
+      this.stats.lastHeartbeatAt = Date.now();
+
+      // Check if connection is healthy
+      const health = this.getConnectionHealth();
+      if (health === ConnectionHealth.UNHEALTHY && this.autoReconnect && !this.isManualDisconnect) {
+        if (this.debugEnabled) {
+          console.warn("[ChatwootWS] Connection unhealthy, attempting reconnect...");
+        }
+        this.reconnect().catch((err) => {
+          if (this.debugEnabled) {
+            console.error("[ChatwootWS] Heartbeat reconnect failed:", err);
+          }
+        });
+      }
+    }, this.heartbeatIntervalMs);
+  }
+
+  /**
+   * Stop heartbeat monitoring
+   */
+  private stopHeartbeat(): void {
+    if (this.heartbeatInterval) {
+      clearInterval(this.heartbeatInterval);
+      this.heartbeatInterval = null;
+    }
+  }
+
+  /**
+   * Get connection health status
+   */
+  public getConnectionHealth(): ConnectionHealth {
+    if (this.connectionState !== ConnectionState.CONNECTED) {
+      return ConnectionHealth.UNHEALTHY;
+    }
+
+    const now = Date.now();
+    const lastEventOrHeartbeat = Math.max(
+      this.stats.lastEventAt || 0,
+      this.stats.lastHeartbeatAt || 0,
+      this.stats.connectedAt || 0
+    );
+
+    const timeSinceLastActivity = now - lastEventOrHeartbeat;
+
+    if (timeSinceLastActivity > this.heartbeatTimeoutMs) {
+      return ConnectionHealth.UNHEALTHY;
+    } else if (timeSinceLastActivity > this.heartbeatIntervalMs) {
+      return ConnectionHealth.DEGRADED;
+    }
+
+    return ConnectionHealth.HEALTHY;
+  }
+
+  /**
    * Disconnect from Chatwoot WebSocket
    */
   public disconnect(): void {
+    this.isManualDisconnect = true;
+
     if (this.debugEnabled) {
       console.log("[ChatwootWS] Disconnecting...");
     }
 
+    this.stopHeartbeat();
+
     if (this.subscription) {
-      this.subscription.unsubscribe();
+      try {
+        this.subscription.unsubscribe();
+      } catch (err) {
+        if (this.debugEnabled) {
+          console.warn("[ChatwootWS] Error unsubscribing:", err);
+        }
+      }
       this.subscription = null;
     }
 
     if (this.consumer) {
-      this.consumer.disconnect();
+      try {
+        this.consumer.disconnect();
+      } catch (err) {
+        if (this.debugEnabled) {
+          console.warn("[ChatwootWS] Error disconnecting consumer:", err);
+        }
+      }
       this.consumer = null;
     }
 
@@ -430,18 +559,52 @@ export class ChatwootWebSocketService {
   }
 
   /**
-   * Reconnect with current configuration
+   * Calculate exponential backoff delay
+   */
+  private calculateBackoffDelay(attempt: number): number {
+    const delay = Math.min(
+      this.retryConfig.initialDelayMs * Math.pow(this.retryConfig.backoffMultiplier, attempt),
+      this.retryConfig.maxDelayMs
+    );
+    // Add jitter (±20%) to prevent thundering herd
+    const jitter = delay * 0.2 * (Math.random() * 2 - 1);
+    return Math.floor(delay + jitter);
+  }
+
+  /**
+   * Reconnect with current configuration using exponential backoff
    */
   public async reconnect(): Promise<void> {
     if (!this.currentConfig) {
       throw new Error("No previous configuration to reconnect with");
     }
 
-    this.stats.reconnectionAttempts++;
-    this.disconnect();
+    this.isManualDisconnect = false;
 
-    // Wait a bit before reconnecting
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    // Don't exceed max retries
+    if (this.stats.reconnectionAttempts >= this.retryConfig.maxRetries) {
+      const error = `Max reconnection attempts (${this.retryConfig.maxRetries}) exceeded`;
+      this.emitError(error);
+      throw new Error(error);
+    }
+
+    const delay = this.calculateBackoffDelay(this.stats.reconnectionAttempts);
+
+    if (this.debugEnabled) {
+      console.log(
+        `[ChatwootWS] Reconnecting in ${delay}ms (attempt ${this.stats.reconnectionAttempts + 1}/${this.retryConfig.maxRetries})`
+      );
+    }
+
+    this.stats.reconnectionAttempts++;
+
+    // Disconnect cleanly before reconnecting
+    this.isManualDisconnect = true;
+    this.disconnect();
+    this.isManualDisconnect = false;
+
+    // Wait before reconnecting (exponential backoff)
+    await new Promise((resolve) => setTimeout(resolve, delay));
 
     return this.connect(this.currentConfig);
   }
@@ -532,7 +695,39 @@ export class ChatwootWebSocketService {
       disconnectedAt: this.stats.disconnectedAt,
       reconnectionAttempts: 0,
       lastEventAt: null,
+      lastHeartbeatAt: null,
     };
+  }
+
+  /**
+   * Configure retry behavior
+   */
+  public setRetryConfig(config: Partial<RetryConfig>): void {
+    this.retryConfig = {
+      ...this.retryConfig,
+      ...config,
+    };
+  }
+
+  /**
+   * Get current retry configuration
+   */
+  public getRetryConfig(): RetryConfig {
+    return { ...this.retryConfig };
+  }
+
+  /**
+   * Enable/disable auto-reconnect
+   */
+  public setAutoReconnect(enabled: boolean): void {
+    this.autoReconnect = enabled;
+  }
+
+  /**
+   * Check if auto-reconnect is enabled
+   */
+  public isAutoReconnectEnabled(): boolean {
+    return this.autoReconnect;
   }
 
   /**
