@@ -167,7 +167,7 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
   const [ticketViewsExpanded, setTicketViewsExpanded] = useState(true);
   const [chatsExpanded, setChatsExpanded] = useState(true);
   const [chatwootConversationsExpanded, setChatwootConversationsExpanded] = useState(true);
-  const [chatwootChannelsExpanded, setChatwootChannelsExpanded] = useState(true);
+  const [chatwootChannelsExpanded, setChatwootChannelsExpanded] = useState(false);
   const [showAddChannelModal, setShowAddChannelModal] = useState(false);
   const [showComposeModal, setShowComposeModal] = useState(false);
 
@@ -292,7 +292,7 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
                     },
                   }}
                 >
-                  New Conversation
+                  New Ticket
                 </Button>
               </Box>
             ) : (
@@ -304,7 +304,7 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
                   justifyContent: "center",
                 }}
               >
-                <Tooltip title="New Conversation" placement="right">
+                <Tooltip title="New Ticket" placement="right">
                   <IconButton
                     onClick={() => setShowComposeModal(true)}
                     sx={{
@@ -464,7 +464,7 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
                       <CommentIcon fontSize="small" />
                     </Box>
                     <ListItemText
-                      primary="Conversations"
+                      primary="Tickets"
                       primaryTypographyProps={{
                         variant: "body2",
                         sx: { fontSize: "0.875rem" },
@@ -475,8 +475,8 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
                 </ListItemButton>
                 <Collapse in={chatwootConversationsExpanded}>
                   <List disablePadding sx={{ pointerEvents: "auto" }}>
-                    {/* All Conversations */}
-                    <Tooltip title="All Conversations" placement="right">
+                    {/* All Tickets */}
+                    <Tooltip title="All Tickets" placement="right">
                       <ListItemButton
                         selected={isAllConversationsView}
                         onClick={(e) => {
@@ -516,7 +516,7 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
                           </Box>
                         ) : (
                           <ListItemText
-                            primary="All conversations"
+                            primary="All tickets"
                             primaryTypographyProps={{
                               variant: "body2",
                               sx: { fontSize: "0.813rem", color: theme.palette.text.secondary },
