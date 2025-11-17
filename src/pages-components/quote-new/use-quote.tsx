@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import lodashClonedeep from "lodash.clonedeep";
 import { useTranslation } from "react-i18next";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
@@ -55,6 +55,7 @@ import {
   updateDocumentCurrencyApi,
   updateDocumentPreferenceApi,
   updateDocumentTitleApi,
+  updateDocumentStatusApi,
   updateDocumentVatStatusApi,
   updateDueDateApi,
   updateExchangeRateApi,
@@ -100,8 +101,8 @@ import { Button } from "@mui/material";
 import { PlusIcon } from "../quotes/widgets/icons/header-section-icons";
 import { useStyle } from "./style";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
-import { PurchaseOrderType, ShowDocumentDetailsEnum, ShowPricesEnum, ItemCalculationType } from "@/enums";
 import { useFrontDeskEmailIntegration } from "../quotes/hooks/use-frontdesk-email-integration";
+import { PurchaseOrderType, ShowDocumentDetailsEnum, ShowPricesEnum, ItemCalculationType, PurchaseOrderStatuses } from "@/enums";
 
 export enum MessageType {
   Email = 0,
@@ -184,6 +185,21 @@ const useQuoteNew = ({
     openEmailComposer,
     closeEmailComposer,
   } = useFrontDeskEmailIntegration({ documentType: docType });
+  const purchaseOrderStatusOptions = useMemo(
+    () =>
+      Object.keys(PurchaseOrderStatuses)
+        .filter((key) => isNaN(Number(key)))
+        .map((key) => ({
+          value:
+            PurchaseOrderStatuses[
+            key as keyof typeof PurchaseOrderStatuses
+            ],
+          label: t(`documentStatus.PurchaseOrder.${key}`),
+        })),
+    [t]
+  );
+  const [isUpdatingPurchaseStatus, setIsUpdatingPurchaseStatus] =
+    useState(false);
 
   const [creationDate, setCreationDate] = useState(
     isQuoteConfirmation
@@ -2718,6 +2734,41 @@ const useQuoteNew = ({
     [docType, quoteItemValue, allClientActiveBudgets]
   );
 
+  const updatePurchaseOrderStatus = useCallback(
+    async (status: number) => {
+      if (!isPurchaseOrder || !quoteItemValue?.id) {
+        return;
+      }
+      setIsUpdatingPurchaseStatus(true);
+      try {
+        const response = await updateDocumentStatusApi(callApi, () => { }, {
+          documentType: docType,
+          documentId: quoteItemValue.id,
+          status,
+        });
+        if (response?.success) {
+          alertSuccessUpdate();
+          await getQuote();
+        } else {
+          alertFaultUpdate();
+        }
+      } catch (error) {
+        alertFaultUpdate();
+      } finally {
+        setIsUpdatingPurchaseStatus(false);
+      }
+    },
+    [
+      alertFaultUpdate,
+      alertSuccessUpdate,
+      callApi,
+      docType,
+      getQuote,
+      isPurchaseOrder,
+      quoteItemValue?.id,
+    ]
+  );
+
   const handleSendUsingWhatsAppWeb = (sendWithInvoices = false) => {
     let checkPhones = checkArrayNotEmptyOrPhoneNotEmpty(
       quoteItemValue?.documentContacts
@@ -3104,6 +3155,10 @@ const useQuoteNew = ({
     handleCheckboxChange,
     isDeliveryNote,
     isPurchaseDocument,
+    isPurchaseOrder,
+    purchaseOrderStatusOptions,
+    updatePurchaseOrderStatus,
+    isUpdatingPurchaseStatus,
     isOpenRelatedDocuments,
     setIsOpenRelatedDocuments,
     isPurchaseInvoice,

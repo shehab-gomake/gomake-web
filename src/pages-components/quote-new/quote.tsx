@@ -12,6 +12,7 @@ import {
   GoMakeAlertModal,
   GoMakeAutoComplate,
   GoMakeDeleteModal,
+  GoMakeMenu,
 } from "@/components";
 import { HeaderTitle } from "@/widgets";
 import { ArrowDownNewIcon, BudgetIcon } from "@/icons";
@@ -23,8 +24,10 @@ import { SendBtnMenu } from "@/widgets/quote-new/send-btn-menu";
 import { _renderQuoteStatus } from "@/utils/constants";
 import {
   Button,
+  CircularProgress,
   FormControlLabel,
   IconButton,
+  MenuItem,
   Radio,
   RadioGroup,
   Skeleton,
@@ -37,7 +40,7 @@ import { CopyFromOrderModal } from "@/widgets/quote-new/modals-widgets/copy-from
 import { ReceiptsTable } from "@/widgets/quote-new/receipts-table";
 import { useRouter } from "next/router";
 import { usePaymentsTable } from "@/widgets/quote-new/receipts-table/use-payments-table";
-import { useEffect, useState } from "react";
+import { useEffect, useState, MouseEvent } from "react";
 import {
   checksRowState,
   CheckData,
@@ -334,6 +337,10 @@ const QuoteNewPageWidget = ({
     isMoveToReady,
     handleCheckboxChange,
     isPurchaseDocument,
+    isPurchaseOrder,
+    purchaseOrderStatusOptions,
+    updatePurchaseOrderStatus,
+    isUpdatingPurchaseStatus,
     isOpenRelatedDocuments,
     setIsOpenRelatedDocuments,
     isPurchaseInvoice,
@@ -408,6 +415,36 @@ const QuoteNewPageWidget = ({
   if (documentType == DOCUMENT_TYPE.order) {
     const { } = useOrdersSocketIo({ getQuote });
   }
+
+  const [purchaseStatusAnchorEl, setPurchaseStatusAnchorEl] =
+    useState<null | HTMLElement>(null);
+  const isPurchaseStatusMenuOpen = Boolean(purchaseStatusAnchorEl);
+  const currentPurchaseOrderStatus = quoteItemValue?.documentStatus;
+  const currentPurchaseOrderStatusLabel = purchaseOrderStatusOptions.find(
+    (option) => option.value === currentPurchaseOrderStatus
+  )?.label;
+
+  const handleOpenPurchaseStatusMenu = (event: MouseEvent<HTMLElement>) => {
+    if(quoteItemValue?.documentStatus === 8) return;
+    event.preventDefault();
+    event.stopPropagation();
+    setPurchaseStatusAnchorEl(event.currentTarget);
+  };
+
+  const handleClosePurchaseStatusMenu = () => {
+    setPurchaseStatusAnchorEl(null);
+  };
+
+  const handleSelectPurchaseStatus = (statusValue: number) => {
+    handleClosePurchaseStatusMenu();
+    if (
+      statusValue === currentPurchaseOrderStatus ||
+      isUpdatingPurchaseStatus
+    ) {
+      return;
+    }
+    updatePurchaseOrderStatus(statusValue);
+  };
 
   const dir: "rtl" | "ltr" = t("direction");
 
@@ -612,6 +649,46 @@ const QuoteNewPageWidget = ({
                           </>
                         )}
                       </>
+                    )}
+                    {isPurchaseOrder && !isNewCreation && (
+                      <div style={classes.quoteStatusContainer}>
+                        <span
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 8,
+                            cursor: "pointer",
+                          }}
+                          onClick={handleOpenPurchaseStatusMenu}
+                        >
+                          {currentPurchaseOrderStatusLabel ||
+                            t("sales.quote.status")}
+                          {isUpdatingPurchaseStatus && (
+                            <CircularProgress size={16} />
+                          )}
+                        </span>
+                        <GoMakeMenu
+                          open={isPurchaseStatusMenuOpen}
+                          anchorEl={purchaseStatusAnchorEl}
+                          handleClose={handleClosePurchaseStatusMenu}
+                          noListPadding
+                        >
+                          {purchaseOrderStatusOptions.map((option) => (
+                            <MenuItem
+                              key={option.value}
+                              selected={
+                                option.value === currentPurchaseOrderStatus
+                              }
+                              onClick={() =>
+                                handleSelectPurchaseStatus(option.value)
+                              }
+                              disabled={isUpdatingPurchaseStatus}
+                            >
+                              {option.label}
+                            </MenuItem>
+                          ))}
+                        </GoMakeMenu>
+                      </div>
                     )}
                     {!isQuote && !isNewCreation && renderCreateNewButton()}
                     {isShowSettingIcon && (
