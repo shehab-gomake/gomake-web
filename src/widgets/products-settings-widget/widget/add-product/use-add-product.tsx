@@ -14,6 +14,7 @@ const useAddProduct = () => {
   const router = useRouter();
   const { t } = useTranslation();
   const [productState, setProductState] = useState<any>([]);
+  console.log("productState", productState);
   const [changeName, setChangeName] = useState("");
   const [changeDefaultValue, setChangeDefaultValue] = useState("");
   const onChangeStateProduct = useCallback(

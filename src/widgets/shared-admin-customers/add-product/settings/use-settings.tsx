@@ -10,7 +10,11 @@ import { useRouter } from "next/router";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { v4 as uuidv4 } from "uuid";
-import { EProductClient, ProductClient } from "./settings-data";
+import {
+  EProductClient,
+  EProductStructureType,
+  ProductClient,
+} from "./settings-data";
 import { EHttpMethod } from "@/services/api-service/enums";
 import { CLIENT_TYPE_Id } from "@/pages/customers/enums";
 import { useSetRecoilState } from "recoil";
@@ -180,6 +184,11 @@ const useSettings = ({
           templateId: productState?.templateId?.id,
           clients: productState?.clients,
           clientsTypes: productState?.clientsTypes,
+          productStructureType:
+            typeof productState?.productStructureType === "object"
+              ? productState?.productStructureType?.id
+              : productState?.productStructureType ??
+                EProductStructureType.BASE,
         }
       );
       if (res?.success) {
@@ -229,6 +238,11 @@ const useSettings = ({
           clientsTypes: productState?.clientsTypes,
           additionProfits: productState?.additionProfits,
           externalCode: productState?.externalCode,
+          productStructureType:
+            typeof productState?.productStructureType === "object"
+              ? productState?.productStructureType?.id
+              : productState?.productStructureType ??
+                EProductStructureType.BASE,
         }
       );
       if (res?.success) {
@@ -287,6 +301,11 @@ const useSettings = ({
           additionProfits: productState?.additionProfits,
           externalCode: productState?.externalCode,
           minimumPrice: productState?.minimumPrice === "" ? 0 : productState?.minimumPrice,
+          productStructureType:
+            typeof productState?.productStructureType === "object"
+              ? productState?.productStructureType?.id
+              : productState?.productStructureType ??
+                EProductStructureType.BASE,
           //sections: productState?.sections,
         }
       );

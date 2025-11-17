@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { MuiColorInput } from "mui-color-input";
 import { useTranslation } from "react-i18next";
 import {
@@ -8,7 +8,7 @@ import {
 } from "@/components";
 import { AddProductSkuModal } from "./modals/add-contact-modal";
 import { UploadImgProduct } from "./upload-widget";
-import { EProductClient } from "./settings-data";
+import { EProductClient, EProductStructureType } from "./settings-data";
 import { useSettings } from "./use-settings";
 import { useStyle } from "./style";
 import FormatColorResetIcon from "@mui/icons-material/FormatColorReset";
@@ -56,6 +56,38 @@ const SettingsWidget = ({
 
   const [defultProductSKU, setDefultProductSKU] = useState();
   const [defultTemplate, setDefultTemplate] = useState();
+  const productStructureOptions = useMemo(
+    () => [
+      {
+        label: t("products.addProduct.admin.base"),
+        id: EProductStructureType.BASE,
+      },
+      {
+        label: t("products.addProduct.admin.composite"),
+        id: EProductStructureType.COMPOSITE,
+      },
+    ],
+    [t]
+  );
+  const selectedProductStructure = useMemo(() => {
+    const currentStructureType =
+      typeof productState?.productStructureType === "object"
+        ? productState?.productStructureType?.id
+        : productState?.productStructureType;
+
+    return (
+      productStructureOptions.find(
+        (option) => option.id === currentStructureType
+      ) ?? productStructureOptions[0]
+    );
+  }, [productStructureOptions, productState?.productStructureType]);
+
+  useEffect(() => {
+    if (!productState?.productStructureType) {
+      onChangeStateProduct("productStructureType", EProductStructureType.BASE);
+    }
+  }, [productState?.productStructureType, onChangeStateProduct]);
+
   useEffect(() => {
     const defultProductSKU = allProductSKU?.find(
       (item) => item.id === productState?.productSKUId
@@ -226,6 +258,26 @@ const SettingsWidget = ({
                 }}
               />
             )}
+          </div>
+        </div>
+        <div style={clasess.itemOnFirstContainer}>
+          <div style={clasess.labelTitleStyle}>
+            {t("products.addProduct.admin.productStructureType")}
+            <span style={clasess.requierdInput}>*</span>
+          </div>
+          <div style={{ width: "100%" }}>
+            <GoMakeAutoComplate
+              options={productStructureOptions}
+              placeholder={t("products.addProduct.admin.productStructureType")}
+              style={clasess.dropDownListStyle}
+              onChange={(e: any, value: any) => {
+                onChangeStateProduct(
+                  "productStructureType",
+                  value?.id ?? EProductStructureType.BASE
+                );
+              }}
+              value={selectedProductStructure}
+            />
           </div>
         </div>
         <div style={clasess.itemOnFirstContainer}>
