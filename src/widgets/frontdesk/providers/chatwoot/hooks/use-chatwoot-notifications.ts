@@ -443,17 +443,27 @@ export const useChatwootNotifications = (
    * Follows the same pattern as use-chatwoot-conversations
    */
   useEffect(() => {
+    // Wait for account ID to be available
+    if (!selectedAccountId) {
+      logger.debug("No account ID, skipping fetch");
+      return;
+    }
+
     // Skip the first mount to prevent double fetch during initialization
     // Wait for preferences to be loaded first
     if (isFirstMountRef.current) {
       isFirstMountRef.current = false;
-      // Only fetch if preferences are already loaded
-      if (preferencesLoadedRef.current) {
-        fetchNotifications();
-      }
-      return;
+      // Fetch after a short delay to ensure preferences are loaded
+      const timeoutId = setTimeout(() => {
+        if (selectedAccountId) {
+          logger.debug("Fetching notifications on first mount");
+          fetchNotifications();
+        }
+      }, 150);
+      return () => clearTimeout(timeoutId);
     }
 
+    logger.debug("Fetching notifications due to filter/account change");
     fetchNotifications();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [

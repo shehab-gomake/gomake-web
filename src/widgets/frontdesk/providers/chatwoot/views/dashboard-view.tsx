@@ -16,6 +16,7 @@ import { AgentStatsCards } from '../components/dashboard/agent-stats-cards';
 import { AdminStatsCards } from '../components/dashboard/admin-stats-cards';
 import { ChatwootActivityFeed } from '../components/dashboard/chatwoot-activity-feed';
 import { ChatwootDashboardSidebar } from '../components/dashboard/chatwoot-dashboard-sidebar';
+import { ChatwootNotificationsWidget } from '../components/dashboard/chatwoot-notifications-widget';
 import { useRecoilValue } from 'recoil';
 import { chatwootConversationsAtom, chatwootSelectedConversationAtom, chatwootConversationCountsAtom } from '@/store/frontdesk/atoms/chatwoot.atoms';
 import { ErrorBoundary } from '@/widgets/frontdesk/components/shared/ErrorBoundary';
@@ -230,6 +231,30 @@ export const DashboardView: React.FC = () => {
           ) : (
             <AgentStatsCards stats={agentStats} onCardClick={handleCardClick} />
           )}
+        </Box>
+      </ErrorBoundary>
+
+      {/* Notifications Widget Section */}
+      <ErrorBoundary context="Notifications Widget">
+        <Box
+          sx={{
+            px: 3,
+            py: 2,
+            backgroundColor: colorTokens.neutral[50],
+            borderBottom: `1px solid ${colorTokens.neutral[200]}`,
+          }}
+        >
+          <ChatwootNotificationsWidget
+            maxItems={5}
+            showHeader={true}
+            onViewAll={() => {
+              // Switch to Inbox tab in sidebar
+              const sidebarElement = document.querySelector('[role="tab"][aria-controls="dashboard-tabpanel-1"]') as HTMLElement;
+              if (sidebarElement) {
+                sidebarElement.click();
+              }
+            }}
+          />
         </Box>
       </ErrorBoundary>
 

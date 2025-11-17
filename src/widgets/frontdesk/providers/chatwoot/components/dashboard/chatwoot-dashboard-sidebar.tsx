@@ -11,7 +11,7 @@ import { Box, Tabs, Tab, Badge, Typography } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { colorTokens } from '@/widgets/frontdesk/design-system/tokens';
 import { ChatwootQuickView } from './chatwoot-quick-view';
-import { ChatwootNotificationsCompact } from './chatwoot-notifications-compact';
+import { ChatwootNotificationsEnhanced } from './chatwoot-notifications-enhanced';
 import type { ChatwootConversation } from '@/services/frontdesk/api/chatwoot/types/conversations.types';
 
 export interface ChatwootDashboardSidebarProps {
@@ -185,7 +185,7 @@ export const ChatwootDashboardSidebar: React.FC<ChatwootDashboardSidebarProps> =
 
         {/* Inbox Tab */}
         <TabPanel value={activeTab} index={1}>
-          <ChatwootNotificationsCompact />
+          <ChatwootNotificationsEnhanced />
         </TabPanel>
       </Box>
     </Box>
