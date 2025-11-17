@@ -4,7 +4,14 @@ import {
   useGomakeRouter,
   useSnackBar,
 } from "@/hooks";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  MouseEvent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { useTranslation } from "react-i18next";
 import {
   ApprovalStatus,
@@ -45,6 +52,7 @@ import {
   removeDraftDocumentApi,
   startOrderProductionApi,
   updateDocumentApi,
+  updateDocumentStatusApi,
 } from "@/services/api-service/generic-doc/documents-api";
 import { DOCUMENT_TYPE } from "./enums";
 import { useQuoteGetData } from "../quote-new/use-quote-get-data";
@@ -94,7 +102,7 @@ import { useClientTypesList } from "@/hooks/use-client-types";
 import { useModal } from "@/hooks/use-modal";
 import { getTaxConfirmationNumberApi } from "@/services/api-service/generic-doc/invoices";
 import { getDeliveryTickerPdfApi } from "@/services/api-service/board-missions/board-missions-table";
-import { GomakeTextInput } from "@/components";
+import { GomakeTextInput, GoMakeMenu } from "@/components";
 import { downloadPdf } from "@/utils/helpers";
 import { exportDeliveryTicketPDFApi } from "@/services/api-service/generic-doc/orders-api";
 import { PAYMENT_TYPE } from "../deposit/enums";
@@ -109,7 +117,8 @@ import {
   OrdersTableColumns,
   QuotesTableColumns,
 } from "./enums/document-table-columns-enum";
-import { Typography } from "@mui/material";
+import { CircularProgress, MenuItem, Typography } from "@mui/material";
+import { PurchaseOrderStatuses } from "@/enums/document-type-enum";
 import { currenciesState } from "@/widgets/materials-widget/state";
 import { getCurrencies } from "@/services/api-service/general/enums";
 
@@ -287,6 +296,21 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     label: string;
     value: any;
   } | null>();
+
+  const purchaseOrderStatusOptions = useMemo(
+    () =>
+      Object.keys(PurchaseOrderStatuses)
+        .filter((key) => isNaN(Number(key)))
+        .map((key) => ({
+          value:
+            PurchaseOrderStatuses[
+            key as keyof typeof PurchaseOrderStatuses
+            ],
+          label: t(`documentStatus.PurchaseOrder.${key}`),
+        })),
+    [t]
+  );
+  const [statusUpdatingId, setStatusUpdatingId] = useState<string | null>(null);
 
   const [productsList, setProductsList] = useState([]);
   const [productIds, setProductIds] = useState<string[]>([]);
@@ -846,7 +870,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             ? `${quote?.totalPrice} ${getCurrencyUnitText(quote?.currency)}`
             : `${getCurrencyUnitText(quote?.currency)} ${quote?.totalPrice}`,
           notes: quote?.notes,
-          status: _renderStatus(docType, quote, t),
+          status: renderStatusCell(quote),
           more: (
             <MoreMenuWidget
               quote={quote}
@@ -1030,7 +1054,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             isInvoice && quote?.isDraft ? (
               <span style={{ color: "#e77676" }}>{t("sales.quote.draft")}</span>
             ) : (
-              _renderStatus(docType, quote, t)
+              renderStatusCell(quote)
             ),
         };
       });
@@ -1283,7 +1307,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 : `${getCurrencyUnitText(quote?.currency)} ${quote?.totalPrice
                 }`,
               notes: quote?.notes,
-              status: _renderStatus(docType, quote, t),
+              status: renderStatusCell(quote),
               more: (
                 <MoreMenuWidget
                   quote={quote}
@@ -1353,7 +1377,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                       {t("sales.quote.draft")}
                     </span>
                   ) : (
-                    _renderStatus(docType, quote, t)
+                    renderStatusCell(quote)
                   ),
               };
             }
@@ -1787,7 +1811,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               ? `${quote?.totalPrice} ${getCurrencyUnitText(quote?.currency)}`
               : `${getCurrencyUnitText(quote?.currency)} ${quote?.totalPrice}`,
             notes: quote?.notes,
-            status: _renderStatus(docType, quote, t),
+            status: renderStatusCell(quote),
             more: (
               <MoreMenuWidget
                 quote={quote}
@@ -2060,6 +2084,96 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       setIsDocumentTableLoading(false);
     }
   };
+
+  const handlePurchaseOrderStatusChange = useCallback(
+    async (documentId: string, nextStatus: number) => {
+      setStatusUpdatingId(documentId);
+      try {
+        const response = await updateDocumentStatusApi(callApi, () => { }, {
+          documentType: docType,
+          documentId,
+          status: nextStatus,
+        });
+
+        if (response?.success) {
+          alertSuccessUpdate();
+          await getAllQuotes(undefined, true);
+        } else {
+          alertFaultUpdate();
+        }
+      } catch (error) {
+        alertFaultUpdate();
+      } finally {
+        setStatusUpdatingId(null);
+      }
+    },
+    [alertFaultUpdate, alertSuccessUpdate, callApi, docType, getAllQuotes]
+  );
+
+  function PurchaseOrderStatusCell({ document }: { document: any }) {
+    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+    const isLoading = statusUpdatingId === document?.id;
+
+    const handleOpen = (event: MouseEvent<HTMLElement>) => {
+      event.stopPropagation();
+      setAnchorEl(event.currentTarget);
+    };
+
+    const handleClose = () => {
+      setAnchorEl(null);
+    };
+
+    const handleSelect = (event: MouseEvent<HTMLElement>, value: number) => {
+      event.stopPropagation();
+      handleClose();
+      if (value === document?.status || isLoading) {
+        return;
+      }
+      void handlePurchaseOrderStatusChange(document?.id, value);
+    };
+
+    return (
+      <>
+        <span
+          onClick={handleOpen}
+          style={{
+            cursor: "pointer",
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 8,
+            fontWeight: 600,
+          }}
+        >
+          {_renderStatus(docType, document, t)}
+          {isLoading && <CircularProgress size={16} />}
+        </span>
+        <GoMakeMenu
+          open={Boolean(anchorEl)}
+          anchorEl={anchorEl}
+          handleClose={handleClose}
+          noListPadding
+        >
+          {purchaseOrderStatusOptions.map(({ value, label }) => (
+            <MenuItem
+              key={value}
+              selected={document?.status === value}
+              onClick={(event) => handleSelect(event, value)}
+              disabled={isLoading}
+            >
+              {label}
+            </MenuItem>
+          ))}
+        </GoMakeMenu>
+      </>
+    );
+  }
+
+  function renderStatusCell(document: any) {
+    if (isPurchaseOrder && document?.status !== 8) {
+      return <PurchaseOrderStatusCell document={document} />;
+    }
+    return _renderStatus(docType, document, t);
+  }
 
   const { isSocketUpdateDocumentsTable, setIsSocketUpdateDocumentsTable } =
     useDocumentsTableSocketIo(docType);
@@ -2509,7 +2623,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                     : classes.closeBtnStyle
                 }
               >
-                {_renderStatus(docType, document, t)}
+                {renderStatusCell(document)}
               </h2>
             </div>,
           ];
@@ -2948,7 +3062,12 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
           { label: t("sales.quote.draft"), value: AStatus.DRAFT },
         ]
         : [
-          { label: t("sales.quote.open"), value: AStatus.OPEN },
+          {
+            label: isPurchaseOrder
+              ? t("documentStatus.PurchaseOrder.UnderCreation")
+              : t("sales.quote.open"),
+            value: AStatus.OPEN,
+          },
           {
             label: t("sales.quote.partialClosed"),
             value: AStatus.PARTIAL_CLOSED,

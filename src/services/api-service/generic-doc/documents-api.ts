@@ -50,6 +50,8 @@ const ADD_DELIVERY_URL = "/v1/erp-service/documents/add-delivery";
 const CANCEL_DOCUMENT_URL = "/v1/erp-service/documents/cancel-document";
 const SEND_DOCUMENT_TO_CLIENT_URL =
   "/v1/erp-service/documents/send-document-to-client";
+const UPDATE_DOCUMENT_STATUS_URL =
+  "/v1/erp-service/documents/update-document-status";
 const SEND_ORDER_READY_TO_CLIENT_URL =
   "/v1/jobs-service/board-missions/send-order-ready-to-client";
 const SAVE_DOCUMENT_URL = "/v1/erp-service/documents/save-document";
@@ -456,6 +458,21 @@ const cancelDocumentApi: ICallAndSetData = async (callApi, setState, data) => {
     CANCEL_DOCUMENT_URL,
     setState,
     data
+  );
+};
+
+const updateDocumentStatusApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data: { documentType: DOCUMENT_TYPE; [key: string]: any }
+) => {
+  const { documentType, ...payload } = data || {};
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.PUT,
+    `${UPDATE_DOCUMENT_STATUS_URL}/${documentType}`,
+    setState,
+    payload
   );
 };
 
@@ -1403,6 +1420,7 @@ export {
   getDocumentPdfApi,
   updatePurchaseNumberApi,
   addDeliveryApi,
+  updateDocumentStatusApi,
   cancelDocumentApi,
   sendDocumentToClientApi,
   saveDocumentApi,

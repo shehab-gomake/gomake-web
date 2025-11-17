@@ -207,3 +207,13 @@ export enum ItemCalculationType {
   PackagesQuantity = 5,
   QuantityInPackage = 6,
 }
+
+
+export enum PurchaseOrderStatuses
+{
+    UnderCreation = 0,
+    SentToSupplier= 10,
+    Received =11,
+    SupplierRequestingApproval =12,
+    Closed =8,
+}
