@@ -318,7 +318,7 @@ const SettingsWidget = ({
         {isCompositeStructure ? (
           <div style={clasess.itemGropupsContainer}>
             <div style={clasess.labelTitleStyle}>
-              {t("products.addProduct.admin.compositeProducts")}
+              {t("boardMissions.products")}
               <span style={clasess.requierdInput}>*</span>
             </div>
             <ProductMultiSelect
@@ -328,7 +328,7 @@ const SettingsWidget = ({
                 onChangeStateProduct("compositeProductIds", ids);
               }}
               placeholder={t(
-                "products.addProduct.admin.selectCompositeProducts"
+                "boardMissions.selectProducts"
               )}
               containerStyle={{ width: "100%" }}
               selectStyle={{ width: "100%" }}
