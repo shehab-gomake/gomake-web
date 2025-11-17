@@ -28,7 +28,7 @@ const useaddRelatedDocuments = () => {
     { label: t("tabs.receipts"), value: DocumentTypeEnums.Receipt },
     { label: t("documentType.DeliveryNoteRefund"), value: DocumentTypeEnums.DeliveryNoteRefund },
     { label: t("documentType.InvoiceRefund"), value: DocumentTypeEnums.InvoiceRefund },
-    { label: t("PurchaseOrder.title"), value: DocumentTypeEnums.PurchaseOrder },
+    { label: t("sales.quote.purchaseOrder"), value: DocumentTypeEnums.PurchaseOrder },
     { label: t("documentingNumbering.PurchaseInvoice"), value: DocumentTypeEnums.PurchaseInvoice },
     { label: t("documentingNumbering.PurchaseInvoiceRefund"), value: DocumentTypeEnums.PurchaseInvoiceRefund },
   ];
