@@ -20,23 +20,56 @@ interface DrawingData {
 export default function DrawingOverlay({ isSharing }: DrawingOverlayProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  // Update canvas size to match screen resolution (not window size)
+  // Update canvas size to match actual shared screen dimensions
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
     const updateCanvasSize = () => {
-      // Use screen.width and screen.height for actual screen resolution
-      // This ensures drawings match the shared screen dimensions
+      // Check if we have stored screen share dimensions
+      if (typeof (window as any).__screenShareDimensions !== 'undefined') {
+        const dims = (window as any).__screenShareDimensions;
+        if (dims.width && dims.height) {
+          // Use actual shared screen dimensions
+          canvas.width = dims.width;
+          canvas.height = dims.height;
+          console.log('📊 DrawingOverlay canvas size set to shared dimensions:', {
+            width: dims.width,
+            height: dims.height,
+            displaySurface: dims.displaySurface,
+          });
+          return;
+        }
+      }
+      
+      // Fallback: Use screen resolution if dimensions not available
       canvas.width = screen.width;
       canvas.height = screen.height;
+      console.log('📊 DrawingOverlay canvas size set to screen resolution (fallback):', {
+        width: screen.width,
+        height: screen.height,
+      });
     };
 
+    // Initial update
     updateCanvasSize();
+    
+    // Update on window resize
     window.addEventListener('resize', updateCanvasSize);
+    
+    // Poll for dimensions if not available yet (they're set when screen sharing starts)
+    const pollInterval = setInterval(() => {
+      if (typeof (window as any).__screenShareDimensions !== 'undefined') {
+        const dims = (window as any).__screenShareDimensions;
+        if (dims.width && dims.height && (canvas.width !== dims.width || canvas.height !== dims.height)) {
+          updateCanvasSize();
+        }
+      }
+    }, 500); // Check every 500ms
 
     return () => {
       window.removeEventListener('resize', updateCanvasSize);
+      clearInterval(pollInterval);
     };
   }, []);
 
@@ -93,6 +126,11 @@ export const applyDrawingToOverlay = (drawingData: DrawingData) => {
 
   if (drawingData.type === 'clear') {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    // Clear the auto-clear timer when manually clearing
+    if ((window as any).__drawingClearTimeout) {
+      clearTimeout((window as any).__drawingClearTimeout);
+      (window as any).__drawingClearTimeout = null;
+    }
     return;
   }
 
@@ -122,5 +160,15 @@ export const applyDrawingToOverlay = (drawingData: DrawingData) => {
   }
   ctx.lineTo(screenX, screenY);
   ctx.stroke();
+
+  // Reset auto-clear timer: clear all drawings after 30 seconds of inactivity
+  if ((window as any).__drawingClearTimeout) {
+    clearTimeout((window as any).__drawingClearTimeout);
+  }
+  
+  (window as any).__drawingClearTimeout = setTimeout(() => {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    (window as any).__drawingClearTimeout = null;
+  }, 30000); // 30 seconds
 };
 

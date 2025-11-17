@@ -325,7 +325,7 @@ const JobsFiltersSection = ({
       component: (
         <GoMakeAutoComplate
           key={
-            isQualityFixJob === null ? "null" : isQualityFixJob.toString()
+            isQualityFixJob === null ? "null" : isQualityFixJob?.toString()
           }
           options={[
             { value: true, text: t("modal.yes") },
