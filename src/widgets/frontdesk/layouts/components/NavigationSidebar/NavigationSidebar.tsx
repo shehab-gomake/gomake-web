@@ -390,7 +390,7 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
             </Tooltip>
 
             {/* My Inbox */}
-            <Tooltip title="My Inbox" placement="right" disableHoverListener={!isCollapsed}>
+            <Tooltip title="my tickets" placement="right" disableHoverListener={!isCollapsed}>
               <ListItemButton
                 selected={isMyInboxView}
                 onClick={(e) => {
@@ -434,7 +434,7 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
                       <InboxIcon fontSize="small" />
                     </Box>
                     <ListItemText
-                      primary="My Inbox"
+                      primary="my tickets"
                       primaryTypographyProps={{
                         variant: "body2",
                         sx: {
