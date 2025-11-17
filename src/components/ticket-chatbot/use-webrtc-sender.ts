@@ -2,13 +2,17 @@ import { useEffect, useRef, useState, useCallback } from "react";
 
 export interface ControlCommand {
   type: 'mouse' | 'keyboard' | 'scroll' | 'focus';
-  action: string;
+  action: string; // 'click', 'mousedown', 'mouseup', 'mousemove', 'mouseenter', 'mouseleave', 'mouseover', 'mouseout', 'dblclick', 'contextmenu', 'keydown', 'keyup', 'keypress', 'scroll', etc.
   data: {
-    x?: number;
+    x?: number; // Normalized coordinates (0-1) representing percentage of displayed video area
     y?: number;
     button?: number;
     key?: string;
     code?: string;
+    keyCode?: number; // Legacy keyCode
+    which?: number; // Legacy which
+    charCode?: number; // Character code for keypress
+    repeat?: boolean; // Whether key is repeating
     deltaX?: number;
     deltaY?: number;
     ctrlKey?: boolean;
@@ -82,7 +86,7 @@ export const useWebRTCSender = ({
       console.log('📺 Requesting screen share with preferCurrentTab...');
       const stream = await navigator.mediaDevices.getDisplayMedia(constraints);
       
-      // Log what was actually selected
+      // Log what was actually selected and store dimensions for coordinate scaling
       const videoTrack = stream.getVideoTracks()[0];
       if (videoTrack) {
         const settings = videoTrack.getSettings();
@@ -90,11 +94,38 @@ export const useWebRTCSender = ({
           displaySurface: settings.displaySurface,
           // @ts-ignore - logicalSurface is an experimental property not in TypeScript definitions
           logicalSurface: (settings as any).logicalSurface,
+          width: settings.width,
+          height: settings.height,
         });
+        
+        // Store video dimensions and display surface type for coordinate scaling
+        // These are the actual dimensions of the shared content
+        if (settings.width && settings.height) {
+          // For browser window sharing, also store window outer dimensions for accurate chrome offset calculation
+          const windowOuterWidth = typeof window.outerWidth !== 'undefined' ? window.outerWidth : null;
+          const windowOuterHeight = typeof window.outerHeight !== 'undefined' ? window.outerHeight : null;
+          
+          (window as any).__screenShareDimensions = {
+            width: settings.width,
+            height: settings.height,
+            displaySurface: settings.displaySurface,
+            // Store window outer dimensions for browser window sharing
+            windowOuterWidth,
+            windowOuterHeight,
+          };
+          console.log('📊 Stored screen share dimensions for coordinate scaling:', {
+            width: settings.width,
+            height: settings.height,
+            displaySurface: settings.displaySurface,
+            windowOuter: windowOuterWidth && windowOuterHeight ? { width: windowOuterWidth, height: windowOuterHeight } : undefined,
+          });
+        }
         
         // Show user-friendly message about what's being shared
         if (settings.displaySurface === 'browser') {
-          console.log('✅ Current Chrome tab is being shared');
+          console.log('✅ Chrome tab is being shared');
+        } else if (settings.displaySurface === 'window') {
+          console.log('✅ Browser window is being shared');
         } else {
           console.log('⚠️ User selected:', settings.displaySurface);
         }
@@ -112,11 +143,37 @@ export const useWebRTCSender = ({
 
       peerConnectionRef.current = pc;
 
+      // CRITICAL: Create a dummy data channel on sender side to ensure SCTP is included in offer SDP
+      // This allows the receiver to create its own data channel in the answer
+      // Without this, some browsers won't include data channels in the answer
+      try {
+        console.log("📊 Creating dummy data channel on sender side to enable SCTP in offer...");
+        const dummyChannel = pc.createDataChannel('dummy', {
+          ordered: true,
+        });
+        console.log("✅ Dummy data channel created on sender side");
+        console.log("  - This ensures SCTP support is in the offer SDP");
+        console.log("  - Receiver can then create the real data channel in answer");
+        
+        // We don't need to use this channel, just need it to exist for SDP negotiation
+        dummyChannel.onopen = () => {
+          console.log("📊 Dummy data channel opened (not used)");
+        };
+        dummyChannel.onclose = () => {
+          console.log("📊 Dummy data channel closed");
+        };
+      } catch (err: any) {
+        console.error("❌ Error creating dummy data channel:", err);
+        // Continue anyway - receiver might still be able to create one
+      }
+
       // Listen for incoming data channel (created by receiver)
       // This event fires when the remote peer creates a data channel
+      // Note: The dummy channel we created above is local, so it won't trigger this event
+      // Only the receiver's "control" channel will trigger this
       console.log("📊 Setting up ondatachannel listener...");
       pc.ondatachannel = (event) => {
-        console.log("📨 Incoming data channel received!");
+        console.log("📨 Incoming data channel received from receiver!");
         console.log("  - Channel label:", event.channel.label);
         console.log("  - Channel id:", event.channel.id);
         console.log("  - Channel readyState:", event.channel.readyState);

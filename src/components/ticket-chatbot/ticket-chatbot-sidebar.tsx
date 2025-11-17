@@ -56,6 +56,8 @@ import { useTicketChatSocket } from "./use-ticket-chat-socket";
 import { useRemoteSessionSocket } from "./use-remote-session-socket";
 import { useHuddleSocket } from "./use-huddle-socket";
 import { useWebRTCSender, ControlCommand } from "./use-webrtc-sender";
+import { useRemoteSessionPopup } from "./use-remote-session-popup";
+import { useGlobalPopupMessageListener } from "./use-global-popup-message-listener";
 import { useWebRTCAudioSender } from "./use-webrtc-audio-sender";
 import { ScreenshotAnnotationModal } from "./ScreenshotAnnotationModal";
 import { useTicketNotifications } from "./use-ticket-notifications";
@@ -125,6 +127,20 @@ export const TicketChatbotSidebar = ({
   const { unreadTicketIds, firstUnreadTicketId, refreshNotifications } = useTicketNotifications();
   const { setNavigateToTicketCallback } = useTicketChatbot();
   const { getAcceptedRequest, removeAcceptedRequest } = useRequestNotification();
+
+  // Restore remoteSessionRequest from sessionStorage on mount (for persistence across navigation)
+  useEffect(() => {
+    try {
+      const stored = sessionStorage.getItem('remoteSessionRequest');
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        console.log('🔄 Restoring remoteSessionRequest from sessionStorage:', parsed);
+        setRemoteSessionRequest(parsed);
+      }
+    } catch (error) {
+      console.error('❌ Error restoring remoteSessionRequest:', error);
+    }
+  }, []); // Only run on mount
 
   // Fetch tickets history
   const fetchTickets = useCallback(async () => {
@@ -340,6 +356,9 @@ export const TicketChatbotSidebar = ({
     };
   }, [isOpen, userProfile?.userId, userProfile?.id, fetchTickets, loadTicketMessages]);
 
+  // Set up remote session popup bridge (maintains connection across navigation)
+  const popupBridge = useRemoteSessionPopup();
+
   // Set up remote session socket
   const senderRef = useRef<ReturnType<typeof useWebRTCSender> | null>(null);
 
@@ -353,25 +372,42 @@ export const TicketChatbotSidebar = ({
     }, []),
     undefined,
     useCallback((signal: { type: "offer" | "answer" | "ice-candidate"; data: any }) => {
-      if (!remoteSessionRequest || !senderRef.current) return;
+      if (!remoteSessionRequest) return;
 
-      if (signal.type === "answer") {
-        senderRef.current.handleAnswer(signal.data);
-      } else if (signal.type === "ice-candidate") {
-        senderRef.current.handleIceCandidate(signal.data);
+      // Use popup bridge if available, otherwise fall back to inline sender
+      if (popupBridge.isPopupOpen) {
+        popupBridge.sendSignal(signal);
+      } else if (senderRef.current) {
+        if (signal.type === "answer") {
+          senderRef.current.handleAnswer(signal.data);
+        } else if (signal.type === "ice-candidate") {
+          senderRef.current.handleIceCandidate(signal.data);
+        }
       }
-    }, [remoteSessionRequest]),
+    }, [remoteSessionRequest, popupBridge]),
     useCallback(
       (ended: { sessionId: string; endedBy: string; ticketId: number }) => {
         console.log("📨 Remote session ended received:", ended);
         if (remoteSessionRequest?.sessionId === ended.sessionId) {
+          // Stop popup session if active
+          if (popupBridge.isPopupOpen) {
+            popupBridge.stopSession();
+          }
+          // Stop inline sender if active
           if (senderRef.current) {
             senderRef.current.stopScreenShare();
           }
           setRemoteSessionRequest(null);
+          // Clear from sessionStorage when session ends
+          try {
+            sessionStorage.removeItem('remoteSessionRequest');
+            console.log('🧹 Cleared remoteSessionRequest from sessionStorage');
+          } catch (error) {
+            console.error('❌ Error clearing remoteSessionRequest:', error);
+          }
         }
       },
-      [remoteSessionRequest]
+      [remoteSessionRequest, popupBridge]
     ),
     useCallback(
       (drawing: {
@@ -425,14 +461,31 @@ export const TicketChatbotSidebar = ({
   const handleControlCommandRef = useRef<((command: ControlCommand) => void) | null>(null);
   
   const handleControlCommand = useCallback((command: ControlCommand) => {
-    // Only execute if user has accepted remote session
-    if (!remoteSessionRequest) {
+    // Check if session is active - either from state or from sessionStorage (for persistence across navigation)
+    const hasActiveSession = remoteSessionRequest || (() => {
+      try {
+        const sessionId = sessionStorage.getItem('remoteSessionSessionId');
+        return !!sessionId;
+      } catch {
+        return false;
+      }
+    })();
+    
+    console.log('🎮 Control command received:', command.type, { 
+      hasRemoteSessionRequest: !!remoteSessionRequest,
+      hasActiveSession,
+      sessionId: sessionStorage.getItem('remoteSessionSessionId')
+    });
+    
+    // Only execute if user has accepted remote session (check both state and sessionStorage)
+    if (!hasActiveSession) {
       console.warn('⚠️ Control command received but remote session not active');
       return;
     }
 
     // Import and execute the control command
     import('./execute-control-command').then(({ executeControlCommand }) => {
+      console.log('✅ Executing control command:', command.type);
       executeControlCommand(command);
     }).catch((error) => {
       console.error('❌ Error executing control command:', error);
@@ -441,7 +494,25 @@ export const TicketChatbotSidebar = ({
 
   useEffect(() => {
     handleControlCommandRef.current = handleControlCommand;
-  }, [handleControlCommand]);
+    console.log('🔄 Updated handleControlCommandRef', { hasRemoteSessionRequest: !!remoteSessionRequest });
+  }, [handleControlCommand, remoteSessionRequest]);
+  
+  // Register with global listener so it persists across navigation
+  const { setOnControlCommand } = useGlobalPopupMessageListener();
+  useEffect(() => {
+    // Register handler with global listener - this persists across navigation
+    setOnControlCommand((command) => {
+      console.log('📨 Global listener calling handleControlCommand:', command.type, { hasRef: !!handleControlCommandRef.current });
+      if (handleControlCommandRef.current) {
+        handleControlCommandRef.current(command);
+      }
+    });
+    
+    return () => {
+      // Don't clear on unmount - need to persist across navigation
+      // Only clear when session actually ends
+    };
+  }, [setOnControlCommand, handleControlCommand]);
 
   const sender = useWebRTCSender({
     sessionId: remoteSessionRequest?.sessionId || "",
@@ -452,6 +523,28 @@ export const TicketChatbotSidebar = ({
   useEffect(() => {
     senderRef.current = sender;
   }, [sender]);
+
+  // Use popup bridge state when popup is active, otherwise use inline sender state
+  const sessionState = popupBridge.isPopupOpen ? {
+    isSharing: popupBridge.isSharing,
+    isConnected: popupBridge.isConnected,
+    isDataChannelReady: popupBridge.isDataChannelReady,
+    error: popupBridge.error,
+  } : {
+    isSharing: sender.isSharing,
+    isConnected: sender.isConnected,
+    isDataChannelReady: sender.isDataChannelReady,
+    error: sender.error,
+  };
+
+  // Show popup error if it exists
+  useEffect(() => {
+    if (popupBridge.error && !popupBridge.isPopupOpen) {
+      console.error('❌ Popup error:', popupBridge.error);
+      // The error will be shown in the UI through sessionState.error
+    }
+  }, [popupBridge.error, popupBridge.isPopupOpen]);
+
 
   // Set up huddle socket
   const huddleSenderRef = useRef<ReturnType<typeof useWebRTCAudioSender> | null>(null);
@@ -578,25 +671,61 @@ export const TicketChatbotSidebar = ({
         requestedBy: acceptedRequest.requestedBy,
         sessionId: acceptedRequest.sessionId,
       });
+      
+      // Store in sessionStorage for persistence across navigation
+      try {
+        sessionStorage.setItem('remoteSessionRequest', JSON.stringify({
+          ticketId: acceptedRequest.ticketId,
+          requestedBy: acceptedRequest.requestedBy,
+          sessionId: acceptedRequest.sessionId,
+        }));
+        console.log('💾 Stored remoteSessionRequest in sessionStorage');
+      } catch (error) {
+        console.error('❌ Error storing remoteSessionRequest:', error);
+      }
 
-      // Start screen share automatically after a short delay
+      // Automatically start the session since user already accepted from modal
       setTimeout(async () => {
-        if (senderRef.current) {
-          try {
-            await senderRef.current.startScreenShare();
-            console.log("✅ Started remote session from accepted request");
-          } catch (error) {
-            console.error("Error starting remote session:", error);
-          }
+        try {
+          console.log("🚀 Starting remote session from accepted request (modal)...");
+          console.log("📋 Session ID:", acceptedRequest.sessionId);
+          
+          // Emit response first
+          emitResponse({
+            ticketId: acceptedRequest.ticketId,
+            sessionId: acceptedRequest.sessionId,
+            accepted: true,
+            userId: userProfile?.userId || userProfile?.id || "",
+          });
+          
+          // Start session in popup
+          // Ensure ref is set before starting session
+          handleControlCommandRef.current = handleControlCommand;
+          await popupBridge.startSession(
+            acceptedRequest.sessionId,
+            handleReceiveSignal,
+            (command) => {
+              console.log('🎮 Wrapper callback called with command:', command.type, { hasRef: !!handleControlCommandRef.current });
+              // Use the ref to ensure we have the latest handler
+              if (handleControlCommandRef.current) {
+                handleControlCommandRef.current(command);
+              } else {
+                console.error('❌ handleControlCommandRef.current is null!');
+              }
+            }
+          );
+          console.log("✅ Remote session started in popup window (from modal)");
+        } catch (error) {
+          console.error("❌ Error starting remote session from accepted request:", error);
+        } finally {
+          // Remove from accepted requests after attempting to start
+          removeAcceptedRequest(currentTicket.id);
         }
       }, 500);
-
-      // Remove from accepted requests
-      removeAcceptedRequest(currentTicket.id);
     }
 
     // Note: The interval clears itself after maxAttempts or success, so no cleanup needed
-  }, [currentTicket?.id, getAcceptedRequest, removeAcceptedRequest]);
+  }, [currentTicket?.id, getAcceptedRequest, removeAcceptedRequest, popupBridge, handleReceiveSignal, handleControlCommand, emitResponse, userProfile]);
 
   // Scroll to top when remote session request appears
   useEffect(() => {
@@ -630,18 +759,19 @@ export const TicketChatbotSidebar = ({
     }
   }, [huddleRequest, huddleSender?.isConnected]);
 
-  // Reset state when sidebar closes
+  // Reset state when sidebar closes (but preserve remote session)
   useEffect(() => {
     if (!isOpen) {
       setCurrentTicket(null);
       setMessages([]);
       setInputMessage("");
       sentMessageIdsRef.current.clear();
-      setRemoteSessionRequest(null);
+      // Don't clear remoteSessionRequest - it should persist across sidebar open/close
+      // The session should continue even if the sidebar is closed
+      // Only clear it when the session actually ends (via socket event)
       setHuddleRequest(null);
-      if (senderRef.current?.isSharing) {
-        senderRef.current.stopScreenShare();
-      }
+      // Don't stop screen sharing when sidebar closes - session should continue
+      // The user can navigate and the session will persist
       if (huddleSenderRef.current) {
         huddleSenderRef.current.stopAudio();
       }
@@ -709,7 +839,13 @@ export const TicketChatbotSidebar = ({
   };
 
   const handleAcceptRemoteSession = useCallback(async () => {
-    if (!remoteSessionRequest || !currentTicket || !senderRef.current) return;
+    if (!remoteSessionRequest || !currentTicket) return;
+
+    // Don't start if popup is already open
+    if (popupBridge.isPopupOpen) {
+      console.log('✅ Popup already open, session is active');
+      return;
+    }
 
     emitResponse({
       ticketId: remoteSessionRequest.ticketId,
@@ -719,11 +855,29 @@ export const TicketChatbotSidebar = ({
     });
 
     try {
-      await senderRef.current.startScreenShare();
+      console.log('🚀 Starting remote session in popup...');
+      console.log('📋 Session ID:', remoteSessionRequest.sessionId);
+      
+      // Ensure ref is set before starting session
+      handleControlCommandRef.current = handleControlCommand;
+      await popupBridge.startSession(
+        remoteSessionRequest.sessionId,
+        handleReceiveSignal,
+        (command) => {
+          console.log('🎮 Wrapper callback called with command:', command.type, { hasRef: !!handleControlCommandRef.current });
+          // Use the ref to ensure we have the latest handler
+          if (handleControlCommandRef.current) {
+            handleControlCommandRef.current(command);
+          } else {
+            console.error('❌ handleControlCommandRef.current is null!');
+          }
+        }
+      );
+      console.log('✅ Remote session started in popup window');
     } catch (error) {
-      console.error("Error starting screen share:", error);
+      console.error("❌ Error starting remote session:", error);
     }
-  }, [remoteSessionRequest, currentTicket, emitResponse, userProfile]);
+  }, [remoteSessionRequest, currentTicket, emitResponse, userProfile, popupBridge, handleReceiveSignal, handleControlCommand]);
 
   const handleRejectRemoteSession = useCallback(() => {
     if (!remoteSessionRequest) return;
@@ -736,6 +890,13 @@ export const TicketChatbotSidebar = ({
     });
 
     setRemoteSessionRequest(null);
+    // Clear from sessionStorage when rejected
+    try {
+      sessionStorage.removeItem('remoteSessionRequest');
+      console.log('🧹 Cleared remoteSessionRequest from sessionStorage (rejected)');
+    } catch (error) {
+      console.error('❌ Error clearing remoteSessionRequest:', error);
+    }
   }, [remoteSessionRequest, emitResponse, userProfile]);
 
   const handleAcceptHuddle = useCallback(async () => {
@@ -1161,9 +1322,7 @@ export const TicketChatbotSidebar = ({
       document.removeEventListener("mousemove", handleMouseMove);
       document.removeEventListener("mouseup", handleMouseUp);
     };
-  }, [isResizing]);
-
-  if (!isOpen) return null;
+  }, [isResizing, isRTL]);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -1609,7 +1768,7 @@ export const TicketChatbotSidebar = ({
                           color="primary"
                           startIcon={<CheckIcon />}
                           onClick={handleAcceptRemoteSession}
-                          disabled={sender.isSharing}
+                          disabled={sessionState.isSharing}
                           size="small"
                         >
                           Accept
@@ -1619,21 +1778,57 @@ export const TicketChatbotSidebar = ({
                           color="error"
                           startIcon={<CloseIconSmall />}
                           onClick={handleRejectRemoteSession}
-                          disabled={sender.isSharing}
+                          disabled={sessionState.isSharing}
                           size="small"
                         >
                           Reject
                         </Button>
                       </Stack>
-                      {sender.isSharing && (
-                        <Typography
-                          variant="caption"
-                          sx={{ display: "block", mt: 2, color: secondColor(500), ...FONT_FAMILY.Heebo(400, 12) }}
-                        >
-                          {sender.isDataChannelReady 
-                            ? "Remote control active - Support can control your screen"
-                            : "Screen sharing active..."}
-                        </Typography>
+                      {sessionState.isSharing && (
+                        <>
+                          {sessionState.error && !popupBridge.isPopupOpen && (
+                            <Box
+                              sx={{
+                                mt: 1,
+                                p: 1,
+                                bgcolor: "error.light",
+                                borderRadius: 1,
+                                border: `1px solid ${primaryColor(300)}`,
+                              }}
+                            >
+                              <Typography
+                                variant="caption"
+                                sx={{
+                                  color: "error.dark",
+                                  display: "block",
+                                  textAlign: "center",
+                                  fontWeight: 600,
+                                  ...FONT_FAMILY.Heebo(600, 11),
+                                }}
+                              >
+                                ⚠️ {sessionState.error}
+                              </Typography>
+                            </Box>
+                          )}
+                          <Typography
+                            variant="caption"
+                            sx={{ display: "block", mt: 2, color: secondColor(500), ...FONT_FAMILY.Heebo(400, 12) }}
+                          >
+                            {popupBridge.isPopupOpen ? (
+                              <>
+                                {sessionState.isDataChannelReady 
+                                  ? "Remote control active - Connection maintained in background"
+                                  : "Screen sharing active - Connection maintained in background..."}
+                              </>
+                            ) : (
+                              <>
+                                {sessionState.isDataChannelReady 
+                                  ? "Remote control active - Support can control your screen"
+                                  : "Screen sharing active..."}
+                              </>
+                            )}
+                          </Typography>
+                        </>
                       )}
                     </Box>
                   </Box>
@@ -2048,9 +2243,9 @@ export const TicketChatbotSidebar = ({
       </Box>
 
       {/* Drawing Overlay - shown when screen sharing is active */}
-      {sender.isSharing && (
+      {sessionState.isSharing && (
         <DrawingOverlay
-          isSharing={sender.isSharing}
+          isSharing={sessionState.isSharing}
           onDrawing={() => {
             // Drawing is handled via socket callback
           }}

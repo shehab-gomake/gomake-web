@@ -101,9 +101,9 @@ const BoardStatusComponent = ({
           backgroundColor: newBgColor,
           border: `1px solid ${newTextColor}`,
           color: newTextColor,
-          width: "fit-content",
-          minWidth: "fit-content",
-          height: isMobile ? 30 : 36,
+          width: "100%",
+          maxWidth: "100%",
+          minHeight: isMobile ? 30 : 36,
           pointerEvents: canChangeStatus ? "auto" : "none",
           opacity: 1,
           display: "inline-flex",
@@ -134,9 +134,24 @@ const BoardStatusComponent = ({
             alignItems: "center",
             gap: "5px",
             fontSize: GetProductionFontSizeFromPreferences(),
+            minWidth: 0,
+            flex: 1,
+            overflow: "hidden",
           }}
         >
-          <div style={{ width: "max-content" }}>
+          <div
+            style={{
+              overflow: "hidden",
+              wordBreak: "normal",
+              overflowWrap: "break-word",
+              display: "-webkit-box",
+              WebkitLineClamp: 2,
+              WebkitBoxOrient: "vertical",
+              minWidth: 0,
+              flex: 1,
+              lineHeight: "16px",
+            }}
+          >
             {anchorEl
               ? t("customers.selectStatus")
               : isFromMissionView

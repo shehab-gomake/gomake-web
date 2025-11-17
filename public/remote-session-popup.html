@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Remote Session</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+      background: #f5f5f5;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+    .status {
+      text-align: center;
+      color: #666;
+      font-size: 14px;
+    }
+    .status.active {
+      color: #4caf50;
+    }
+    .status.error {
+      color: #f44336;
+    }
+  </style>
+</head>
+<body>
+  <div id="root">
+    <div class="status">Initializing remote session...</div>
+  </div>
+  <script>
+    // Wait for parent window to inject the React app
+    // The parent will use postMessage to signal when it's ready
+    window.addEventListener('message', function(event) {
+      // Security: Only accept messages from same origin
+      if (event.origin !== window.location.origin) {
+        return;
+      }
+      
+      if (event.data && event.data.type === 'INIT_POPUP') {
+        console.log('📨 Popup received INIT_POPUP message');
+        // The parent will inject the React app via eval or script injection
+        // For now, just acknowledge that we're ready
+        if (window.opener && !window.opener.closed) {
+          window.opener.postMessage({ type: 'PONG' }, window.location.origin);
+        }
+      }
+    });
+    
+    // Also send PONG immediately when page loads to indicate readiness
+    if (window.opener && !window.opener.closed) {
+      window.opener.postMessage({ type: 'PONG' }, window.location.origin);
+    }
+  </script>
+</body>
+</html>
+
