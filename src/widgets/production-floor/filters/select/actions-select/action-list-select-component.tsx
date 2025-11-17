@@ -22,9 +22,11 @@ import { DepartmentModal } from "@/widgets/production-floor/header/components/gr
 import styled from "styled-components";
 import { PrimaryButton } from "@/components/button/primary-button";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
 import { useRouter } from "next/router";
 import { useUserPermission } from "@/hooks/use-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
+import { JobTimeAlertsModal } from "@/widgets/production-floor/header/components/job-time-alerts/job-time-alerts-modal";
 
 interface IProps {
   onClickApply: any;
@@ -34,6 +36,7 @@ interface IProps {
   setFilterGroups?: any;
 }
 
+//!here aa
 const ActionsListComponent = ({
   onClickApply,
   source,
@@ -66,9 +69,10 @@ const ActionsListComponent = ({
   const buttonRef = useRef<HTMLButtonElement>(null);
   const { CheckPermission } = useUserPermission();
   const [isAllSelected, setIsAllSelected] = useState(false);
+  const [openJobTimeAlertsModal, setOpenJobTimeAlertsModal] = useState(false);
 
   useEffect(() => {
-    setIsAllSelected(actionsList.every(option => option.checked));
+    setIsAllSelected(actionsList.every((option) => option.checked));
   }, [actionsList]);
 
   const handleFilterChange = (event: FormEvent<HTMLInputElement>) => {
@@ -95,23 +99,22 @@ const ActionsListComponent = ({
     }
     return list?.length > 0
       ? list?.sort((a, b) =>
-        a.checked === b.checked ? 0 : !!a.checked ? -1 : 0
-      )
+          a.checked === b.checked ? 0 : !!a.checked ? -1 : 0
+        )
       : [];
   }, [actionsList, filter]);
 
   const handleSelectAll = () => {
     const allOptions = getList();
-    const areAllSelected = allOptions.every(option => option.checked);
+    const areAllSelected = allOptions.every((option) => option.checked);
 
-    allOptions.forEach(option => {
+    allOptions.forEach((option) => {
       if (areAllSelected) {
         onSelectStation(option.actionId, true);
         // option.machines.forEach(machine => {
         //   onSelectMachine(option.actionId, machine.machineId);
         // });
-      }
-      else {
+      } else {
         onSelectStation(option.actionId, false);
         // option.machines.forEach(machine => {
         //   onSelectMachine(option.actionId, machine.machineId);
@@ -119,14 +122,12 @@ const ActionsListComponent = ({
       }
 
       // Then select/deselect all machines in that station
-
     });
 
     setIsAllSelected(!areAllSelected);
   };
 
   // Add effect to update isAllSelected state based on actual selection state
-
 
   const clonedChild =
     buttonElement &&
@@ -179,28 +180,26 @@ const ActionsListComponent = ({
               {CheckPermission(Permissions.SHOW_EMPLOYEE_WORKING_HOURS) && (
                 <PrimaryButton
                   onClick={() => push("/employees-working-hours")}
-                  style={{
-                    width: "fit-content",
-                    padding: 0,
-                    gap: "5px",
-                    alignItems: "center",
-                    display: "flex",
-                  }}
+                  style={classes.actionButtonStyle}
                 >
-                  <AccessTimeIcon
-                    style={{ height: "14px", width: "14px", padding: 0 }}
-                  />
-                  <span
-                    style={{
-                      paddingTop: "2px",
-                      color: "#344054",
-                      fontSize: 12,
-                    }}
-                  >
+                  <AccessTimeIcon style={classes.actionIconStyle} />
+                  <span style={classes.actionButtonTextStyle}>
                     {t("employeeWorkingHours.employeeHours")}
                   </span>
                 </PrimaryButton>
               )}
+              <PrimaryButton
+                onClick={() => {
+                  setOpen(false);
+                  setOpenJobTimeAlertsModal(true);
+                }}
+                style={classes.jobTimeAlertsButtonStyle}
+              >
+                <NotificationsActiveIcon style={classes.actionIconStyle} />
+                <span style={classes.actionButtonTextStyle}>
+                  {t("productionFloor.jobTimeAlerts")}
+                </span>
+              </PrimaryButton>
 
               <FormGroup>
                 <div style={classes.listContainer}>
@@ -215,11 +214,13 @@ const ActionsListComponent = ({
                       marginTop: "8px",
                       width: "100%",
                       fontSize: "12px",
-                      height: "32px"
+                      height: "32px",
                     }}
                     onClick={handleSelectAll}
                   >
-                    {isAllSelected ? t("productionFloor.unselectAll") : t("productionFloor.selectAll")}
+                    {isAllSelected
+                      ? t("productionFloor.unselectAll")
+                      : t("productionFloor.selectAll")}
                   </SecondaryButton>
                 </div>
                 <ScrollableDiv ref={scrollRef}>
@@ -261,6 +262,10 @@ const ActionsListComponent = ({
         onClose={onClickCloseDepartmentModal}
         onClickAdd={createBoardMissionStationFilterGroup}
         onClickApply={onClickApply}
+      />
+      <JobTimeAlertsModal
+        openModal={openJobTimeAlertsModal}
+        onClose={() => setOpenJobTimeAlertsModal(false)}
       />
     </div>
   );
