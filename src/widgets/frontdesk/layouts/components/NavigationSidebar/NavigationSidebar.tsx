@@ -389,8 +389,8 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
               </ListItemButton>
             </Tooltip>
 
-            {/* My Inbox */}
-            <Tooltip title="My Inbox" placement="right" disableHoverListener={!isCollapsed}>
+            {/* My Tickets */}
+            <Tooltip title="My Tickets" placement="right" disableHoverListener={!isCollapsed}>
               <ListItemButton
                 selected={isMyInboxView}
                 onClick={(e) => {
@@ -407,7 +407,7 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
                     onChannelSelect("chatwoot" as Channel);
                   }
 
-                  // Then navigate to My Inbox
+                  // Then navigate to My Tickets
                   router.replace(path, undefined, { shallow: options.scroll === false });
                 }}
                 sx={{
@@ -434,7 +434,7 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
                       <InboxIcon fontSize="small" />
                     </Box>
                     <ListItemText
-                      primary="My Inbox"
+                      primary="My Tickets"
                       primaryTypographyProps={{
                         variant: "body2",
                         sx: {
