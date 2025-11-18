@@ -167,11 +167,12 @@ export const _renderStatus = (
       document?.statusTitleText === openStatus ||
       document?.statusTitleText === "DeliveryNote.Open" ||
       document?.statusTitleText === "Invoice.Open" ||
-      document?.statusTitleText === "PurchaseOrder.Open"
+      document?.statusTitleText === "PurchaseOrder.Open" ||
+      document?.statusTitleText === "PurchaseOrder.UnderCreation"
     ) {
       return (
         <div>
-          <div style={{ fontWeight: "bold" }}>{t("sales.quote.open")}</div>
+          <div style={{ fontWeight: "bold" }}>{docType == DOCUMENT_TYPE.purchaseOrder ? t("documentStatus.PurchaseOrder.UnderCreation") : t("sales.quote.open")}</div>
           {statusApproval}
         </div>
       );
@@ -212,6 +213,37 @@ export const _renderStatus = (
     ) {
       const firstDocuments = document.documentNumbers
         ? document.documentNumbers.map((item: any, index: number) => (
+          <span key={index}>
+            <a
+              style={{
+                minWidth: "auto",
+                height: "auto",
+                padding: 0,
+                color: "#2e3092",
+                cursor: "pointer",
+                textDecoration: "none",
+              }}
+              href={`/${document.titleDocumentNumber.charAt(0).toLowerCase() +
+                document.titleDocumentNumber.slice(1)
+                }?Id=${item.documentId}`}
+            >
+              {item.documentNumber}
+            </a>
+            {index < document.documentNumbers.length - 1 && ", "}
+          </span>
+        ))
+        : [];
+
+      const secondDocuments = document.secondDocumentNumbers
+        ? document.secondDocumentNumbers.map((item: any, index: number) => {
+          const isPayment = document.titleSecondDocumentNumber === "Payment";
+          const href = isPayment
+            ? `/receipt?isOutgoingPayments=true&Id=${item.documentId}`
+            : `/${document.titleSecondDocumentNumber.charAt(0).toLowerCase() +
+            document.titleSecondDocumentNumber.slice(1)
+            }?Id=${item.documentId}`;
+
+          return (
             <span key={index}>
               <a
                 style={{
@@ -222,71 +254,37 @@ export const _renderStatus = (
                   cursor: "pointer",
                   textDecoration: "none",
                 }}
-                href={`/${
-                  document.titleDocumentNumber.charAt(0).toLowerCase() +
-                  document.titleDocumentNumber.slice(1)
-                }?Id=${item.documentId}`}
+                href={href}
               >
                 {item.documentNumber}
               </a>
-              {index < document.documentNumbers.length - 1 && ", "}
+              {index < document.secondDocumentNumbers.length - 1 && ", "}
             </span>
-          ))
-        : [];
-
-      const secondDocuments = document.secondDocumentNumbers
-        ? document.secondDocumentNumbers.map((item: any, index: number) => {
-            const isPayment = document.titleSecondDocumentNumber === "Payment";
-            const href = isPayment
-              ? `/receipt?isOutgoingPayments=true&Id=${item.documentId}`
-              : `/${
-                  document.titleSecondDocumentNumber.charAt(0).toLowerCase() +
-                  document.titleSecondDocumentNumber.slice(1)
-                }?Id=${item.documentId}`;
-
-            return (
-              <span key={index}>
-                <a
-                  style={{
-                    minWidth: "auto",
-                    height: "auto",
-                    padding: 0,
-                    color: "#2e3092",
-                    cursor: "pointer",
-                    textDecoration: "none",
-                  }}
-                  href={href}
-                >
-                  {item.documentNumber}
-                </a>
-                {index < document.secondDocumentNumbers.length - 1 && ", "}
-              </span>
-            );
-          })
+          );
+        })
         : [];
 
       const thirdDocuments = document.thirdDocumentNumbers
         ? document.thirdDocumentNumbers.map((item: any, index: number) => (
-            <span key={`third-${index}`}>
-              <a
-                style={{
-                  minWidth: "auto",
-                  height: "auto",
-                  padding: 0,
-                  color: "#2e3092",
-                  cursor: "pointer",
-                  textDecoration: "none",
-                }}
-                href={`/${
-                  document.titleThirdDocumentNumber.charAt(0).toLowerCase() +
-                  document.titleThirdDocumentNumber.slice(1)
+          <span key={`third-${index}`}>
+            <a
+              style={{
+                minWidth: "auto",
+                height: "auto",
+                padding: 0,
+                color: "#2e3092",
+                cursor: "pointer",
+                textDecoration: "none",
+              }}
+              href={`/${document.titleThirdDocumentNumber.charAt(0).toLowerCase() +
+                document.titleThirdDocumentNumber.slice(1)
                 }?Id=${item.documentId}`}
-              >
-                {item.documentNumber}
-              </a>
-              {index < document.thirdDocumentNumbers.length - 1 && ", "}
-            </span>
-          ))
+            >
+              {item.documentNumber}
+            </a>
+            {index < document.thirdDocumentNumbers.length - 1 && ", "}
+          </span>
+        ))
         : [];
 
       let result: JSX.Element[] = [];
