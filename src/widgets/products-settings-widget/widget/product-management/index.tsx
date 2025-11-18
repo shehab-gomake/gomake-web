@@ -46,6 +46,9 @@ const ProductManagementWidget = () => {
     setProductAddProfitRuleId,
     selectedSKU,
     setSelectedSKU,
+    selectedTemplateId,
+    setSelectedTemplateId,
+    allProductTypes,
     handleClose,
     handleClick,
     open,
@@ -53,7 +56,6 @@ const ProductManagementWidget = () => {
     onClickClearFilter,
   } = useProductManagement();
   const { parametersStateValue } = useParameters();
-
 
   const { productId } = router.query;
 
@@ -87,7 +89,7 @@ const ProductManagementWidget = () => {
                 <div>
                   <IconButton onClick={handleClick}>
                     <TuneIcon />
-                    {selectedSKU && (
+                    {(selectedSKU || selectedTemplateId) && (
                       <div style={{ position: "absolute", top: -5, right: -1 }}>
                         <DotIcon />
                       </div>
@@ -127,6 +129,32 @@ const ProductManagementWidget = () => {
                           />
                         </div>
                       </div>
+                      <div style={classes.selectProductContainer}>
+                        <div style={classes.selectProductTextStyle}>
+                          {t("products.addProduct.admin.selectPricingType")}
+                        </div>
+                        <div style={{ width: 250 }}>
+                          <GoMakeAutoComplate
+                            key={selectedTemplateId}
+                            options={allProductTypes || []}
+                            placeholder={t(
+                              "products.addProduct.admin.pricingType"
+                            )}
+                            style={classes.dropDownListStyle}
+                            getOptionLabel={(option: any) =>
+                              option.label || option.name
+                            }
+                            onChange={(e: any, value: any) => {
+                              setSelectedTemplateId(value?.id);
+                            }}
+                            value={
+                              allProductTypes?.find(
+                                (item: any) => item.id === selectedTemplateId
+                              ) || null
+                            }
+                          />
+                        </div>
+                      </div>
                       <div style={classes.buttonsFilterContainer}>
                         <GomakePrimaryButton
                           style={classes.clearBtnStyle}
@@ -146,7 +174,7 @@ const ProductManagementWidget = () => {
         />
       </div>
       <>
-        {term || selectedSKU ? (
+        {term || selectedSKU || selectedTemplateId ? (
           <PrimaryTable
             stickyFirstCol={false}
             // rows={productSearched}
