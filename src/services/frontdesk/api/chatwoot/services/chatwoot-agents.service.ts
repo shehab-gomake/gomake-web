@@ -171,7 +171,7 @@ export class ChatwootAgentsService extends BaseChatwootService {
 
   /**
    * Add Agents to Inbox
-   * POST /api/inbox_members
+   * POST /api/accounts/inbox_members
    *
    * Assigns multiple agents to an inbox.
    * This is required for newly created inboxes to become operational.
@@ -189,7 +189,7 @@ export class ChatwootAgentsService extends BaseChatwootService {
    * ```
    */
   async addAgentsToInbox(inboxId: number, agentIds: number[]): Promise<void> {
-    return await this.post<void>("/api/inbox_members", {
+    return await this.post<void>("/api/accounts/inbox_members", {
       inbox_id: inboxId,
       user_ids: agentIds,
     });

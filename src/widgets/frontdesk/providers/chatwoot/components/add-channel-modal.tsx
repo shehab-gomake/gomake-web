@@ -39,6 +39,8 @@ interface AddChannelModalProps {
   open: boolean;
   onClose: () => void;
   error?: string | null;
+  preloadedInboxId?: number | null;
+  preloadedAccountId?: number | null;
 }
 
 interface ChannelOption {
@@ -76,7 +78,13 @@ const getSteps = (currentStep: number) => [
   },
 ];
 
-export const AddChannelModal: React.FC<AddChannelModalProps> = ({ open, onClose, error }) => {
+export const AddChannelModal: React.FC<AddChannelModalProps> = ({ 
+  open, 
+  onClose, 
+  error,
+  preloadedInboxId = null,
+  preloadedAccountId = null,
+}) => {
   const [selectedChannel, setSelectedChannel] = useState<string | null>(null);
   const [currentStep, setCurrentStep] = useState<number>(1);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
@@ -115,7 +123,31 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({ open, onClose,
     },
   ];
 
-  // Reset state when modal opens/closes
+  // Ref to track if we've already attempted to fetch agents (prevents infinite loop)
+  const hasAttemptedFetchRef = React.useRef(false);
+
+  // Initialize with preloaded inbox data if provided
+  useEffect(() => {
+    if (open && preloadedInboxId && preloadedAccountId) {
+      console.log("[AddChannelModal] Preloaded inbox data:", { preloadedInboxId, preloadedAccountId });
+      setNewInboxData({ accountId: preloadedAccountId, inboxId: preloadedInboxId });
+      setCurrentStep(3); // Jump to step 3 (Add Agents)
+      setSelectedChannel("preloaded"); // Mark as preloaded to skip channel selection
+      hasAttemptedFetchRef.current = false; // Reset fetch flag for new inbox
+    } else if (open) {
+      // Reset state when modal opens without preloaded data
+      clearError();
+      setSuccessMessage(null);
+      setSelectedChannel(null);
+      setCurrentStep(1);
+      setNewInboxData(null);
+      setSelectedAgents([]);
+      setAgentAssignmentError(null);
+      hasAttemptedFetchRef.current = false; // Reset fetch flag
+    }
+  }, [open, preloadedInboxId, preloadedAccountId, clearError]);
+
+  // Reset state when modal closes
   useEffect(() => {
     if (!open) {
       clearError();
@@ -125,15 +157,23 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({ open, onClose,
       setNewInboxData(null);
       setSelectedAgents([]);
       setAgentAssignmentError(null);
+      hasAttemptedFetchRef.current = false; // Reset fetch flag
     }
   }, [open, clearError]);
 
-  // Fetch agents when we reach Step 3
+  // Fetch agents when we reach Step 3 (one-time fetch per inbox)
   useEffect(() => {
-    if (currentStep === 3 && newInboxData?.accountId && !agentsLoading) {
+    if (currentStep === 3 && newInboxData?.accountId && !agentsLoading && !hasAttemptedFetchRef.current) {
+      hasAttemptedFetchRef.current = true;
+      console.log("[AddChannelModal] Fetching agents for step 3");
       refreshAgents();
     }
-  }, [currentStep, newInboxData, agentsLoading, refreshAgents]);
+    
+    // Reset the ref when step changes away from 3
+    if (currentStep !== 3) {
+      hasAttemptedFetchRef.current = false;
+    }
+  }, [currentStep, newInboxData?.accountId, agentsLoading]);
 
   // Auto-select current user when agents are loaded
   useEffect(() => {
