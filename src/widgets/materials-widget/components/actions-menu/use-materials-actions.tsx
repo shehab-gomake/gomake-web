@@ -366,11 +366,19 @@ const useMaterialsActions = (isAdmin: boolean) => {
       const isFromPurchaseTable = action.isPurchasePricingTable;
       const currencyParameterKey = action.parameterKey;
       if (isFromInventoryTable || isFromPurchaseTable) {
+        // Check if exchange rate is available before proceeding
+        const selectedCurrency = currencies?.find(c => c.value === updatedValue);
+        const exchangeRate = rate || selectedCurrency?.exchangeRate;
+
+        // Validate exchange rate - if missing, show alert and prevent update
+        if (!exchangeRate || exchangeRate === null || exchangeRate === undefined) {
+          const currencyName = selectedCurrency?.label || updatedValue || t("materials.inputs.currency");
+          alertFault(t("materials.inputs.exchangeRateMissing", { currency: currencyName }) || `Exchange rate is missing for currency ${currencyName}. Please ensure exchange rate is configured before updating currency.`);
+          return;
+        }
+
         // For inventory/purchase tables, update individual rows using the specific endpoint
         const updatePromises = selectedMaterialsIds.map(async (rowId) => {
-          const selectedCurrency = currencies?.find(c => c.value === updatedValue);
-          const exchangeRate = rate || selectedCurrency?.exchangeRate || 1;
-
           // Determine pricing type based on parameterKey (like price updates do)
           let pricingType = 1; // Default to PurchasePrice
           if (currencyParameterKey && (currencyParameterKey.includes('sale') || currencyParameterKey.toLowerCase().includes('sale'))) {
@@ -413,6 +421,21 @@ const useMaterialsActions = (isAdmin: boolean) => {
       }
     }
 
+    // For main materials table currency updates, validate exchange rate
+    let finalExchangeRate = rate;
+    if (action.action === EMaterialsActions.UpdateCurrency) {
+      const selectedCurrency = currencies?.find(c => c.value === updatedValue);
+      const exchangeRate = rate || selectedCurrency?.exchangeRate;
+
+      // Validate exchange rate - if missing, show alert and prevent update
+      if (!exchangeRate || exchangeRate === null || exchangeRate === undefined) {
+        const currencyName = selectedCurrency?.label || updatedValue || t("materials.inputs.currency");
+        alertFault(t("materials.inputs.exchangeRateMissing", { currency: currencyName }));
+        return;
+      }
+      finalExchangeRate = exchangeRate;
+    }
+
     // Default behavior for main materials table
     return await updatePrintHouseMaterialsRowsApi(callApi, onUpdateCallBack, {
       materialTypeKey: materialType.toString(),
@@ -437,7 +460,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
               : null,
         customFiltersKeyValueList: materialFilter,
       },
-      exchangeRate: rate,
+      exchangeRate: finalExchangeRate,
     });
   };
 
@@ -1133,9 +1156,23 @@ const useMaterialsActions = (isAdmin: boolean) => {
     const { submenuOption, priceValue, supplier, currency } = data;
     const isCurrencyAction = currentAction?.action === EMaterialsActions.UpdateCurrency;
 
+    // For currency actions, validate exchange rate before proceeding
+    if (isCurrencyAction) {
+      const selectedCurrency = currencies?.find(c => c.value === updatedValue);
+      const exchangeRate = rate || selectedCurrency?.exchangeRate;
+
+      // Validate exchange rate - if missing, show alert and prevent update
+      if (!exchangeRate || exchangeRate === null || exchangeRate === undefined) {
+        const currencyName = selectedCurrency?.label || updatedValue || t("materials.inputs.currency");
+        alertFault(t("materials.inputs.exchangeRateMissing", { currency: currencyName }) || `Exchange rate is missing for currency ${currencyName}. Please ensure exchange rate is configured before updating currency.`);
+        return;
+      }
+    }
+
     // For currency actions, the value is already in updatedValue (set by updateModalCurrency)
     // For price actions, we use the priceValue parameter
     const finalUpdatedValue = isCurrencyAction ? updatedValue : priceValue;
+    const finalExchangeRate = isCurrencyAction ? (rate || currencies?.find(c => c.value === updatedValue)?.exchangeRate) : rate;
 
     // Build request body based on submenu option
     const requestBody: any = {
@@ -1147,7 +1184,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
       priceIndex: 0,
       updatedValue: finalUpdatedValue,
       isUpdatePrices: checkedPrice,
-      exchangeRate: rate,
+      exchangeRate: finalExchangeRate,
       package: 0,
       isDeleted: false,
       uncheckedMaterials: [],
