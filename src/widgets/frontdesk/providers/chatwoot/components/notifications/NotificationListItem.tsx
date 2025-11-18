@@ -51,7 +51,11 @@ export const NotificationListItem: React.FC<NotificationListItemProps> = ({
   const messagePreview = getMessagePreview(notification);
   const statusLabel = getStatusLabel(primaryActor?.status);
   const statusColor = getStatusColor(primaryActor?.status, neutralColor(600));
-  const lastActivityAt = primaryActor?.last_activity_at || notification.updated_at || notification.created_at;
+  // Use created_at (Unix timestamp in seconds) as primary source, fallback to other timestamps
+  // chatwootTimestampToDate handles Unix timestamps (numbers) and ISO strings
+  const lastActivityAt = notification.created_at || 
+    (primaryActor?.last_activity_at ? primaryActor.last_activity_at : undefined) ||
+    notification.updated_at;
 
   // Extract conversation metadata
   const conversationMeta = primaryActor?.meta || {};

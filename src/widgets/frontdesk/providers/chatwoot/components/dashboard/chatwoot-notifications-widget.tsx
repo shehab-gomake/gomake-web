@@ -24,7 +24,6 @@ import {
   WifiOff as OfflineIcon,
   ArrowForward as ArrowForwardIcon,
 } from '@mui/icons-material';
-import { formatDistanceToNow, parseISO } from 'date-fns';
 import { useGomakeTheme } from '@/hooks/use-gomake-thme';
 import { useChatwootNotifications } from '../../hooks/use-chatwoot-notifications';
 import { useChatwootProvider } from '../../hooks/use-chatwoot-provider';
@@ -32,6 +31,8 @@ import { colorTokens } from '@/widgets/frontdesk/design-system/tokens';
 import { EmptyState } from '@/widgets/frontdesk/design-system';
 import type { ChatwootNotification } from '@/services/frontdesk/api/chatwoot/types/notifications.types';
 import { NotificationType } from '@/services/frontdesk/api/chatwoot/types/notifications.types';
+import { formatTimeAgo } from '../../utils/date-utils';
+import { getNotificationSender, getMessagePreview } from '../../utils/notification-formatters';
 
 interface ChatwootNotificationsWidgetProps {
   maxItems?: number;
@@ -92,57 +93,18 @@ export const ChatwootNotificationsWidget: React.FC<ChatwootNotificationsWidgetPr
     };
   };
 
-  // Get sender info
+  // Get sender info using shared formatter
   const getSenderInfo = (notification: ChatwootNotification) => {
-    const primaryActor = notification.primary_actor;
-    if (!primaryActor) {
-      return { name: 'System', initials: 'S', color: neutralColor(400), avatar: null };
-    }
-
-    const name = primaryActor.name || primaryActor.email || 'Unknown';
-    const initials = name
-      .split(' ')
-      .map((n: string) => n[0])
-      .join('')
-      .toUpperCase()
-      .slice(0, 2);
-
-    const colors = [primaryColor(500), '#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6'];
-    const colorIndex = name.charCodeAt(0) % colors.length;
-
+    const sender = getNotificationSender(notification, primaryColor(500));
+    const primaryActor = notification.primary_actor as any;
     return {
-      name,
-      initials,
-      color: colors[colorIndex],
-      avatar: primaryActor.avatar_url || primaryActor.meta?.sender?.thumbnail || null,
+      name: sender.name,
+      initials: sender.initials,
+      color: sender.color,
+      avatar: sender.thumbnail || primaryActor?.avatar_url || null,
     };
   };
 
-  // Format time ago
-  const formatTimeAgo = (timestamp: number | string | undefined) => {
-    if (!timestamp) return '';
-    const date = typeof timestamp === 'number' 
-      ? new Date(timestamp * 1000)
-      : parseISO(timestamp.toString());
-    return formatDistanceToNow(date, { addSuffix: true });
-  };
-
-  // Get message preview
-  const getMessagePreview = (notification: ChatwootNotification): string => {
-    const pushMessageBody =
-      notification.push_message_body ||
-      notification.meta?.pushMessageBody ||
-      (notification.primary_actor as any)?.meta?.pushMessageBody ||
-      notification.meta?.message?.content ||
-      '';
-
-    if (!pushMessageBody) {
-      return notification.push_message_title || 'New notification';
-    }
-
-    const plainText = pushMessageBody.replace(/<[^>]*>/g, '').trim();
-    return plainText.length > 60 ? plainText.substring(0, 60) + '...' : plainText;
-  };
 
   // Handle notification click
   const handleNotificationClick = async (notification: ChatwootNotification) => {
@@ -284,12 +246,9 @@ export const ChatwootNotificationsWidget: React.FC<ChatwootNotificationsWidgetPr
             {recentNotifications.map((notification) => {
               const sender = getSenderInfo(notification);
               const typeInfo = getNotificationTypeInfo(notification.notification_type);
-              const messagePreview = getMessagePreview(notification);
-              const timestamp = notification.created_at
-                ? typeof notification.created_at === 'number'
-                  ? notification.created_at * 1000
-                  : parseISO(notification.created_at.toString()).getTime()
-                : Date.now();
+              const messagePreview = getMessagePreview(notification, 60);
+              // created_at is Unix timestamp in seconds, formatTimeAgo handles it correctly
+              const timestamp = notification.created_at;
 
               return (
                 <ListItem

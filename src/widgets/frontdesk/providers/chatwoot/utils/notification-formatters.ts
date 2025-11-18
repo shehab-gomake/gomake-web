@@ -42,12 +42,47 @@ const AVATAR_COLORS = [
  */
 export function getNotificationSender(notification: ChatwootNotification, fallbackColor: string): NotificationSender {
   const primaryActor = notification.primary_actor as any;
+  const secondaryActor = notification.secondary_actor as any;
 
-  // Try to get the actual contact/sender from meta
-  const sender = primaryActor?.meta?.sender || notification.secondary_actor?.sender;
-  const name = sender?.name || sender?.email || primaryActor?.name || "Unknown";
-  const email = sender?.email || primaryActor?.meta?.sender?.email || "";
-  const thumbnail = sender?.thumbnail || primaryActor?.meta?.sender?.thumbnail || "";
+  // Priority order for sender name:
+  // 1. secondary_actor.name (message sender - most accurate)
+  // 2. secondary_actor.email (message sender email)
+  // 3. primary_actor.meta.sender.name (contact name from conversation meta)
+  // 4. primary_actor.meta.sender.email (contact email from conversation meta)
+  // 5. secondary_actor.sender.name (nested sender object)
+  // 6. primary_actor.name (conversation/contact name)
+  // 7. primary_actor.email (conversation/contact email)
+  // 8. Fallback to "Unknown"
+  
+  const senderName = 
+    secondaryActor?.name ||
+    secondaryActor?.email ||
+    primaryActor?.meta?.sender?.name ||
+    primaryActor?.meta?.sender?.email ||
+    secondaryActor?.sender?.name ||
+    secondaryActor?.sender?.email ||
+    primaryActor?.name ||
+    primaryActor?.email ||
+    "Unknown";
+
+  const senderEmail = 
+    secondaryActor?.email ||
+    primaryActor?.meta?.sender?.email ||
+    secondaryActor?.sender?.email ||
+    primaryActor?.email ||
+    "";
+
+  const senderThumbnail = 
+    secondaryActor?.thumbnail ||
+    secondaryActor?.avatar_url ||
+    secondaryActor?.sender?.thumbnail ||
+    primaryActor?.meta?.sender?.thumbnail ||
+    primaryActor?.avatar_url ||
+    "";
+
+  const name = senderName;
+  const email = senderEmail;
+  const thumbnail = senderThumbnail;
 
   const initials = name
     .split(" ")
