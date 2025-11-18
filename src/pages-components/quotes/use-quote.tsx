@@ -3075,10 +3075,10 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             label: t("sales.quote.closed"),
             value: DocumentCloseStatus.Closed
           },
-          {
-            label: t("documentStatus.PurchaseOrder.Draft"),
-            value: DocumentCloseStatus.Draft
-          },
+          // {
+          //   label: t("documentStatus.PurchaseOrder.Draft"),
+          //   value: DocumentCloseStatus.Draft
+          // },
           {
             label: t("documentStatus.PurchaseOrder.SentToSupplier"),
             value: DocumentCloseStatus.SentToSupplier
