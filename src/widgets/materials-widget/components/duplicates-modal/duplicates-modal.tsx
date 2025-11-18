@@ -26,6 +26,7 @@ import { useStyle } from "./style";
 import { useRecoilValue } from "recoil";
 import { userState } from "@/store";
 import { UNIT_TYPE } from "@/enums";
+import { convertTitleUnits } from "@/utils/helpers";
 
 interface IDuplicatesModalProps {
     openModal: boolean;
@@ -151,11 +152,22 @@ const DuplicatesModal: React.FC<IDuplicatesModalProps> = ({
 
                 return true;
             })
-            .map(header => ({
-                key: header.key,
-                label: header.unit ? `${header.value} (${header.unit})` : header.value,
-                unit: header.unit,
-            }));
+            .map(header => {
+                const convertedUnit =
+                    unitType === UNIT_TYPE.IMPERIAL
+                        ? convertTitleUnits(header.unit)
+                        : header.unit;
+
+                const label = header.unit
+                    ? `${header.value} ${convertedUnit ? `(${t(`measurementUnits.${convertedUnit}`)})` : ''}`
+                    : header.value;
+
+                return {
+                    key: header.key,
+                    label: label,
+                    unit: header.unit,
+                };
+            });
 
         return filteredHeaders;
     };
@@ -195,6 +207,33 @@ const DuplicatesModal: React.FC<IDuplicatesModalProps> = ({
             }
         }
     };
+
+    useEffect(() => {
+        // Select all materials by default when modal opens
+        if (openModal && data && data.length > 0) {
+            const allMaterialIds = new Set<string>();
+            data.forEach((category) => {
+                if (category.printHouseMaterialDuplicated?.length > 0) {
+                    category.printHouseMaterialDuplicated.forEach((material: any) => {
+                        if (material.id) {
+                            allMaterialIds.add(material.id);
+                        }
+                    });
+                }
+                if (category.printHouseMaterialDeleted?.length > 0) {
+                    category.printHouseMaterialDeleted.forEach((material: any) => {
+                        if (material.id) {
+                            allMaterialIds.add(material.id);
+                        }
+                    });
+                }
+            });
+            setSelectedMaterials(allMaterialIds);
+        } else if (!openModal) {
+            // Clear selection when modal closes
+            setSelectedMaterials(new Set());
+        }
+    }, [openModal, data]);
 
     useEffect(() => {
         // Check initial scroll state for all tables
