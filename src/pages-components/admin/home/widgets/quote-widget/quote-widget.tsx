@@ -133,10 +133,10 @@ const QuoteWidget = ({ isMobileScreen = false, title }: QuoteWidgetProps) => {
 
     setCompositeDialogOpen(false);
     setCompositeErrors({});
-    onClickCreateQuoteForCustomer({
-      workName: trimmedWorkName,
-      quantity: parsedQuantity,
-    });
+    // onClickCreateQuoteForCustomer({
+    //   workName: trimmedWorkName,
+    //   quantity: parsedQuantity,
+    // });
     setCompositeWorkName("");
     setCompositeQuantity("");
   };
