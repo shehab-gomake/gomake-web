@@ -131,8 +131,33 @@ const useAddNewItem = ({ onClose, getQuote, documentType, getCalculateQuoteItem,
             };
           };
 
+          const attachParentReferences = (nodes, parent = null) => {
+            if (!Array.isArray(nodes)) return [];
+
+            return nodes.map((node) => {
+              const newNode = { ...node, parent };
+              if (newNode.children) {
+                newNode.children = attachParentReferences(
+                  newNode.children,
+                  newNode
+                );
+              }
+              return newNode;
+            });
+          };
+
           const transformedProducts = transformProducts(res?.data?.products);
           const transformedMaterials = transformMaterials(res?.data?.materials);
+          
+          // Attach parent references for proper search functionality
+          transformedProducts.children = attachParentReferences(
+            transformedProducts.children,
+            transformedProducts
+          );
+          transformedMaterials.children = attachParentReferences(
+            transformedMaterials.children,
+            transformedMaterials
+          );
 
           // Check if isMaterial is in URL query parameters
           const isMaterialInUrl = router.query.isMaterial === "true";
