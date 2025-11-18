@@ -164,9 +164,8 @@ const useAddNewItem = ({ onClose, getQuote, documentType, getCalculateQuoteItem 
     await addDocumentItemFromMaterialApi(callApi, callBack, {
       clientId: quoteItemValue?.customerID,
       printHouseMaterialId: selectedProduct?.id,
-      documentType,
       documentId: quoteItemValue?.id,
-    });
+    }, documentType);
   };
 
   const [isDisabled, setIsDisabled] = useState(true);
