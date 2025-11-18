@@ -75,6 +75,7 @@ import {
 import {
   AStatus,
   BoardMissionStatusForFilter,
+  DocumentCloseStatus,
   PStatus,
   ReceiptAccountingStatus,
 } from "../board-missions/widgets/enums";
@@ -3061,19 +3062,48 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
           { label: t("sales.quote.closed"), value: AStatus.CLOSED },
           { label: t("sales.quote.draft"), value: AStatus.DRAFT },
         ]
-        : [
+        : isPurchaseOrder ? [
           {
-            label: isPurchaseOrder
-              ? t("documentStatus.PurchaseOrder.UnderCreation")
-              : t("sales.quote.open"),
-            value: AStatus.OPEN,
+            label: t("documentStatus.PurchaseOrder.UnderCreation"),
+            value: DocumentCloseStatus.Open,
           },
           {
             label: t("sales.quote.partialClosed"),
-            value: AStatus.PARTIAL_CLOSED,
+            value: DocumentCloseStatus.PartialClosed,
           },
-          { label: t("sales.quote.closed"), value: AStatus.CLOSED },
-        ];
+          {
+            label: t("sales.quote.closed"),
+            value: DocumentCloseStatus.Closed
+          },
+          {
+            label: t("documentStatus.PurchaseOrder.Draft"),
+            value: DocumentCloseStatus.Draft
+          },
+          {
+            label: t("documentStatus.PurchaseOrder.SentToSupplier"),
+            value: DocumentCloseStatus.SentToSupplier
+          },
+          {
+            label: t("documentStatus.PurchaseOrder.Received"),
+            value: DocumentCloseStatus.Received
+          },
+          {
+            label: t("documentStatus.PurchaseOrder.SupplierRequestingApproval"),
+            value: DocumentCloseStatus.SupplierRequestingApproval
+          },
+
+        ]
+          : [
+            {
+              label: t("sales.quote.open"),
+              value: AStatus.OPEN,
+            },
+            {
+              label: t("sales.quote.partialClosed"),
+              value: AStatus.PARTIAL_CLOSED,
+            },
+            { label: t("sales.quote.closed"), value: AStatus.CLOSED },
+          ];
 
   const deliveryStatuses = useMemo(
     () => [
