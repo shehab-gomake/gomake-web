@@ -148,7 +148,7 @@ const useAddNewItem = ({ onClose, getQuote, documentType, getCalculateQuoteItem,
 
           const transformedProducts = transformProducts(res?.data?.products);
           const transformedMaterials = transformMaterials(res?.data?.materials);
-          
+
           // Attach parent references for proper search functionality
           transformedProducts.children = attachParentReferences(
             transformedProducts.children,
@@ -251,10 +251,10 @@ const useAddNewItem = ({ onClose, getQuote, documentType, getCalculateQuoteItem,
       await addDocumentItemFromMaterialApi(callApi, callBack, {
         clientId: quoteItemValue?.customerID,
         printHouseMaterialId: selectedProduct?.id,
-        documentType,
         documentId: quoteItemValue?.id,
-      });
+      }, documentType);
     }
+
   };
 
   const [isDisabled, setIsDisabled] = useState(true);

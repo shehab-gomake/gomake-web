@@ -449,7 +449,7 @@ const useQuoteWidget = () => {
     await addDocumentItemFromMaterialApi(callApi, callBack, {
       clientId: selectedClient?.id,
       printHouseMaterialId: selectedProduct?.id,
-    });
+    }, 0); // DOCUMENT_TYPE.quote
   };
 
   const onSelectTab = (v) => {
