@@ -302,6 +302,10 @@ const useSettings = ({
 
     if (isCompositeStructure) {
       payload.compositeProductIds = productState?.compositeProductIds ?? [];
+      payload.productSKUId =
+        typeof productState?.productSKUId === "string"
+          ? productState?.productSKUId
+          : productState?.productSKUId?.id;
     } else {
       payload.productSKUId =
         typeof productState?.productSKUId === "string"
