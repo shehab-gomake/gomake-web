@@ -100,7 +100,7 @@ const QuoteWidget = ({ isMobileScreen = false, title }: QuoteWidgetProps) => {
     selectedProduct?.productStructureType === EProductStructureType.COMPOSITE;
 
   const openCompositeDialog = () => {
-    setCompositeWorkName(selectedProduct?.name ?? "");
+    setCompositeWorkName("");
     setCompositeQuantity("");
     setCompositeErrors({});
     setCompositeDialogOpen(true);
@@ -115,15 +115,15 @@ const QuoteWidget = ({ isMobileScreen = false, title }: QuoteWidgetProps) => {
     const errors: { workName?: string; quantity?: string } = {};
     const trimmedWorkName = compositeWorkName.trim();
     if (!trimmedWorkName) {
-      errors.workName = t("home.admin.workNameRequired");
+      errors.workName = t("products.addProduct.admin.jobNameRequired");
     }
     const parsedQuantity = Number(compositeQuantity);
     if (!compositeQuantity) {
-      errors.quantity = t("home.admin.quantityRequired");
+      errors.quantity = t("products.addProduct.admin.quantityRequired");
     } else if (Number.isNaN(parsedQuantity)) {
-      errors.quantity = t("home.admin.quantityRequired");
+      errors.quantity = t("products.addProduct.admin.quantityRequired");
     } else if (parsedQuantity <= 0) {
-      errors.quantity = t("home.admin.quantityPositive");
+      errors.quantity = t("products.addProduct.admin.quantityPositive");
     }
 
     if (Object.keys(errors).length > 0) {
@@ -371,8 +371,8 @@ const QuoteWidget = ({ isMobileScreen = false, title }: QuoteWidgetProps) => {
       <GoMakeDialog
         open={compositeDialogOpen}
         onClose={handleCompositeCancel}
-        title={t("home.admin.compositeProductTitle")}
-        primaryButtonLabel={t("home.admin.continue")}
+        title={t("products.addProduct.admin.compositeProductTitle")}
+        primaryButtonLabel={t("products.addProduct.admin.continue")}
         cancelButtonLabel={t("modal.close")}
         onPrimaryAction={handleCompositeConfirm}
         onCancel={handleCompositeCancel}
@@ -380,11 +380,11 @@ const QuoteWidget = ({ isMobileScreen = false, title }: QuoteWidgetProps) => {
         <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
           <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
             <div style={{ fontWeight: 500 }}>
-              {t("home.admin.jobNameLabel")}
+              {t("products.addProduct.admin.jobNameLabel")}
             </div>
             <GomakeTextInput
               value={compositeWorkName}
-              placeholder={t("home.admin.enterJobName")}
+              placeholder={t("products.addProduct.admin.jobNamePlaceholder")}
               onChange={(event) => {
                 setCompositeWorkName(event.target.value);
                 if (compositeErrors.workName) {
@@ -397,11 +397,11 @@ const QuoteWidget = ({ isMobileScreen = false, title }: QuoteWidgetProps) => {
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
             <div style={{ fontWeight: 500 }}>
-              {t("home.admin.quantityLabel")}
+              {t("products.addProduct.admin.quantityLabel")}
             </div>
             <GomakeTextInput
               value={compositeQuantity}
-              placeholder={t("home.admin.enterQuantity")}
+              placeholder={t("products.addProduct.admin.quantityPlaceholder")}
               onChange={(event) => {
                 setCompositeQuantity(event.target.value);
                 if (compositeErrors.quantity) {
