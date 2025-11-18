@@ -156,22 +156,35 @@ export class ChatwootInboxesService extends BaseChatwootService {
   }
 
   /**
-   * Add Agents to Inbox
-   * POST /api/accounts/inbox_members
+   * Update Inbox Agents (Add/Remove)
+   * PATCH /api/accounts/inbox_members
    *
-   * Assign agents to an inbox for handling conversations.
+   * Update agents assigned to an inbox for handling conversations.
+   * 
+   * ⚠️ IMPORTANT: This is a REPLACEMENT operation, not additive.
+   * All agents except the ones passed in the agentIds array will be REMOVED from the inbox.
+   * 
+   * Example:
+   * - Current agents: [13, 14, 15]
+   * - Call with agentIds: [13, 15]
+   * - Result: Agent 14 is removed, only [13, 15] remain
    *
-   * @param accountId - The numeric ID of the account (not used in URL, kept for compatibility)
-   * @param inboxId - The numeric ID of the inbox
-   * @param agentIds - Array of agent IDs to assign
-   * @returns Promise with response
+   * @see https://developers.chatwoot.com/api-reference/inboxes/update-agents-in-inbox
+   * 
+   * Note: Goes through messaging-hub-v2 proxy which handles account context via JWT.
+   * Original Chatwoot endpoint: PATCH /api/v1/accounts/{account_id}/inbox_members
+   * 
+   * @param accountId - The numeric ID of the account (not used in URL, handled by proxy via JWT)
+   * @param inboxId - The numeric ID of the inbox (sent in request body)
+   * @param agentIds - Array of agent IDs to assign (REPLACES current assignments - agents not in this list will be removed)
+   * @returns Promise with response containing updated agent list
    */
   async addAgentsToInbox(
     accountId: number,
     inboxId: number,
     agentIds: number[]
   ): Promise<any> {
-    return await this.post<any>(
+    return await this.patch<any>(
       `/api/accounts/inbox_members`,
       {
         inbox_id: inboxId,

@@ -73,8 +73,12 @@ export const useChatwootInboxes = () => {
         
         try {
           const agentsPromises = inboxesArray.map((inbox: ChatwootInbox) =>
-            chatwootService.agents.listInboxAgents(selectedAccountId, inbox.id)
-              .then(agents => ({ inboxId: inbox.id, agents }))
+            chatwootService.inboxes.getInboxAgents(selectedAccountId, inbox.id)
+              .then(response => {
+                // Extract agents from response (payload property)
+                const agents = response?.payload || [];
+                return { inboxId: inbox.id, agents };
+              })
               .catch(err => {
                 console.error(`[useChatwootInboxes] ❌ Failed to fetch agents for inbox ${inbox.id}:`, err);
                 return { inboxId: inbox.id, agents: [] };
