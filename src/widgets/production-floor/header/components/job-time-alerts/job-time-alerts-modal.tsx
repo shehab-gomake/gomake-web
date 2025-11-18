@@ -183,7 +183,7 @@ const JobTimeAlertsModal = ({
   };
 
   const handleTimeChange = (value: string, index: number) => {
-    const numValue = parseInt(value) || 0;
+    const numValue = parseFloat(value) || 0;
     if (editingStep && editingIndex === index) {
       setEditingStep({ ...editingStep, timeFromDeliveryTime: numValue });
     }
@@ -216,7 +216,7 @@ const JobTimeAlertsModal = ({
       withRoundedCloseIcon={false}
       insideStyle={classes.modalInsideStyle}
     >
-      <Stack direction="column" gap="20px">
+      <Stack direction="column" gap="20px" mt="16px">
         {error && <Box sx={classes.errorBox}>{error}</Box>}
 
         <Stack
@@ -256,6 +256,11 @@ const JobTimeAlertsModal = ({
                             </span>
                             <GomakeTextInput
                               type="number"
+                              InputProps={{
+                                inputProps: {
+                                  step: "0.1",
+                                },
+                              }}
                               value={editingStep?.timeFromDeliveryTime || 0}
                               onChange={(e) =>
                                 handleTimeChange(e.target.value, index)
