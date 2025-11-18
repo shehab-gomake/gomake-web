@@ -29,6 +29,7 @@ const useSettings = ({
   productState,
   onChangeStateProduct,
 }) => {
+  console.log("productState", productState);
   const { callApi } = useGomakeAxios();
   const { navigate } = useGomakeRouter();
   const { query } = useRouter();
@@ -388,11 +389,14 @@ const useSettings = ({
       minimumPrice:
         productState?.minimumPrice === "" ? 0 : productState?.minimumPrice,
       productStructureType: structureTypeValue,
-      //sections: productState?.sections,
     };
 
     if (isCompositeStructure) {
       payload.compositeProductIds = productState?.compositeProductIds ?? [];
+      payload.productSKUId =
+        typeof productState?.productSKUId === "string"
+          ? productState?.productSKUId
+          : productState?.productSKUId?.id;
     } else {
       payload.productSKUId =
         typeof productState?.productSKUId === "string"
