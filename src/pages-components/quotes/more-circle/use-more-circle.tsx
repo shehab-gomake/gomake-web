@@ -653,12 +653,15 @@ const useMoreCircle = () => {
       },
       {
         condition: true,
-        onClick: () =>
-          onClickSendPayment(quote, true, !!isSendOrderReadyToClient),
-        icon: <MailIcon color={primaryLavender(500)} />,
-        name: t(
-          `sales.quote.${isSendOrderReadyToClient ? "sendOrderReadyToClient" : "sendToClient"
-          }`
+        component: (closeMenu: () => void) => (
+          <SendToCustomerSubmenu
+            onClickEmail={() => onClickSendToCustomerEmail(quote)}
+            onClickSMS={() => onClickSendToCustomerSMS(quote)}
+            onClickWhatsApp={() => onClickSendToCustomerWhatsApp(quote)}
+            menuItemStyle={classes.menuRowStyle}
+            rowTextStyle={classes.rowTextStyle}
+            onCloseParentMenu={closeMenu}
+          />
         ),
       },
       {
