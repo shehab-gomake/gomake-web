@@ -6,11 +6,13 @@ import { useQuoteConfirmation } from "@/pages-components/quote-confirmation/use-
 import { ERPDocumentsTypesEnum } from "@/enums/document-type-enum";
 import { useTranslation } from "react-i18next";
 import { useDateFormat } from "@/hooks/use-date-format";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 const DebtRowMappingWidget = ({ item, index, headerHeight, parentIndex }) => {
   const { t } = useTranslation();
   const { classes } = useStyle({ headerHeight });
   const { formatISODateTime } = useDateFormat();
+  const { primaryLavender } = useGomakeTheme();
   const columnWidths = ["10%", "22%"];
   const { getDocumentPdfByNumber, handleDebtItemCheck, quoteConfirm } =
     useQuoteConfirmation();
@@ -62,7 +64,17 @@ const DebtRowMappingWidget = ({ item, index, headerHeight, parentIndex }) => {
         <Button
           onClick={() => getDocumentPdfByNumber(item?.docNum, item?.type)}
           variant="text"
-          style={classes.documentNum}
+          sx={{
+            ...classes.documentNum,
+            color: primaryLavender(500),
+            textDecoration: "underline",
+            textDecorationColor: primaryLavender(500),
+            "&:hover": {
+              textDecoration: "underline",
+              backgroundColor: "rgba(88, 89, 168, 0.08)",
+              textDecorationColor: primaryLavender(500),
+            },
+          }}
         >
           {item?.docNum}
         </Button>

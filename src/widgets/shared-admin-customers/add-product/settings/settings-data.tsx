@@ -8,8 +8,8 @@ export enum EProductClient {
   BY_CLIENT_TYPE = 2,
 }
 
-export enum EProductProfites {
+export enum EProductProfits {
   BY_ACTION = 0,
   BY_PRODUCT = 1,
-  BY_RULE
+  BY_RULE,
 }

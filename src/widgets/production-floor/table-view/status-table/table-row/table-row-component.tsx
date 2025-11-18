@@ -593,7 +593,7 @@ const TableRowComponent = ({
               align="center"
               style={{
                 ...commonStyle,
-                maxWidth: isMobileScreen ? "150px" : "180px",
+                maxWidth: isMobileScreen ? "200px" : "250px",
                 padding: isMobileScreen ? "4px" : "8px",
               }}
             >
