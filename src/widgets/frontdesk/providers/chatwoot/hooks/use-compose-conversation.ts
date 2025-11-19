@@ -205,6 +205,7 @@ export function useComposeConversation(options?: UseComposeConversationOptions) 
       setIsSearching(true);
       try {
         // Search customers using get-customers-pagination (like customers page)
+        // Search by both name AND customer code for better matching
         const result: any = await callApi(
           "GET",
           "/v1/customers/get-customers-pagination",
@@ -212,7 +213,8 @@ export function useComposeConversation(options?: UseComposeConversationOptions) 
             clientType: "C", // Search customers
             pageNumber: 1,
             pageSize: 20,
-            name: query.trim(),
+            name: query.trim(), // Search by name
+            code: query.trim(), // Also search by customer code (e.g., "CUST-001")
             isActive: true,
           },
           false
@@ -757,6 +759,23 @@ export function useComposeConversation(options?: UseComposeConversationOptions) 
       console.log("[useComposeConversation] Conversation ID:", conversationId);
 
       if (conversationId) {
+        // AUTO-LINK: If contact has gomake_customer_id, automatically link it to the conversation
+        const gomakeCustomerId = formState.contact?.custom_attributes?.gomake_customer_id as string | undefined;
+        if (gomakeCustomerId) {
+          try {
+            console.log(`[useComposeConversation] Auto-linking customer ${gomakeCustomerId} to conversation ${conversationId}`);
+            await chatwootService.conversations.updateCustomAttributes(
+              accountId,
+              conversationId,
+              { gomake_customer_id: gomakeCustomerId }
+            );
+            console.log(`[useComposeConversation] Successfully auto-linked customer ${gomakeCustomerId}`);
+          } catch (linkError) {
+            // Log but don't fail - conversation was created successfully
+            console.warn("[useComposeConversation] Failed to auto-link customer:", linkError);
+          }
+        }
+
         options?.onSuccess?.(conversationId);
         // Reset form
         resetForm();
