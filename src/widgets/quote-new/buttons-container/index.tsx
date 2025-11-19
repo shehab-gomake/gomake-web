@@ -118,6 +118,7 @@ const ButtonsContainer = ({
     onClickSendAndChat,
     canAddDelivery,
     isInvoice,
+    isProformaInvoice,
     isShowCloseButton,
     anchorElCloseBtn,
     handleCloseBtnClose,
@@ -248,7 +249,12 @@ const ButtonsContainer = ({
       alertFault("sales.cart.deliveryDateIsRequired");
     } else if (isNeedDeliveryDate && !quoteItemValue?.dueDate) {
       alertFault("sales.cart.deliveryDateIsRequired");
-    } else if (isQuote && checkIsAgentRequiredInQuote && isAgentEmpty && isQuote) {
+    } else if (
+      isQuote &&
+      checkIsAgentRequiredInQuote &&
+      isAgentEmpty &&
+      isQuote
+    ) {
       alertFault("sales.cart.agentIsRequired");
     } else {
       onClickOpenOrderNowModal(false);
@@ -361,16 +367,17 @@ const ButtonsContainer = ({
               : t("sales.quote.addAttachments")}
           </GomakePrimaryButton>
         )}
-        {isNewCreation && (isDeliveryNote || isInvoice) && (
-          <GomakePrimaryButton
-            leftIcon={<PlusIcon stroke={"#344054"} />}
-            style={classes.btnContainer}
-            onClick={() => handleCopyFromDocumentClick(DOCUMENT_TYPE.order)}
-          >
-            {t("sales.quote.copyFromOrder")}
-          </GomakePrimaryButton>
-        )}
-        {isNewCreation && isInvoice && (
+        {isNewCreation &&
+          (isDeliveryNote || isInvoice || isProformaInvoice) && (
+            <GomakePrimaryButton
+              leftIcon={<PlusIcon stroke={"#344054"} />}
+              style={classes.btnContainer}
+              onClick={() => handleCopyFromDocumentClick(DOCUMENT_TYPE.order)}
+            >
+              {t("sales.quote.copyFromOrder")}
+            </GomakePrimaryButton>
+          )}
+        {isNewCreation && (isInvoice || isProformaInvoice) && (
           <GomakePrimaryButton
             leftIcon={<PlusIcon stroke={"#344054"} />}
             style={classes.btnContainer}
@@ -379,6 +386,17 @@ const ButtonsContainer = ({
             }
           >
             {t("sales.quote.copyFromDeliveryNote")}
+          </GomakePrimaryButton>
+        )}
+        {isNewCreation && isInvoice && (
+          <GomakePrimaryButton
+            leftIcon={<PlusIcon stroke={"#344054"} />}
+            style={classes.btnContainer}
+            onClick={() =>
+              handleCopyFromDocumentClick(DOCUMENT_TYPE.proformaInvoice)
+            }
+          >
+            {t("sales.quote.copyFromProformaInvoice")}
           </GomakePrimaryButton>
         )}
         {isNewCreation && documentType === DOCUMENT_TYPE.purchaseInvoice && (
@@ -439,16 +457,17 @@ const ButtonsContainer = ({
         )}
         {(isQuote ||
           (isOrder && quoteItemValue?.documentStatus !== 1) ||
-          ((isPurchaseOrder && !isNewCreation) &&
+          (isPurchaseOrder &&
+            !isNewCreation &&
             quoteItemValue?.documentStatus !==
-            PURCHASE_ORDER_STATUSES.Canceled)) && (
-            <GomakePrimaryButton
-              style={classes.btnSecondContainer}
-              onClick={handleCancelBtnClick}
-            >
-              {t("materials.buttons.cancel")}
-            </GomakePrimaryButton>
-          )}
+              PURCHASE_ORDER_STATUSES.Canceled)) && (
+          <GomakePrimaryButton
+            style={classes.btnSecondContainer}
+            onClick={handleCancelBtnClick}
+          >
+            {t("materials.buttons.cancel")}
+          </GomakePrimaryButton>
+        )}
         {isReceipt &&
           !!canCancelReceipt &&
           !isNewCreation &&
@@ -564,10 +583,11 @@ const ButtonsContainer = ({
               {t(
                 quoteItemValue?.isNeedApproval
                   ? "sales.quote.managerApproval"
-                  : `sales.quote.${quoteItemValue?.isUsedStripe
-                    ? "placeOrder"
-                    : "orderNowTitle"
-                  }`
+                  : `sales.quote.${
+                      quoteItemValue?.isUsedStripe
+                        ? "placeOrder"
+                        : "orderNowTitle"
+                    }`
               )}
             </GomakePrimaryButton>
           </>
@@ -703,7 +723,7 @@ const ButtonsContainer = ({
           cancelBtn={t("sales.modals.proceedWithoutPayment")}
           openModal={CheckoutModalOpen.isOpen}
           withClose={false}
-          onClose={() => { }}
+          onClose={() => {}}
           onClickDelete={() => handleProcessCheckout(checkoutModalData.orderId)}
           onClickCancel={() => {
             if (checkoutModalData) {
@@ -727,7 +747,7 @@ const ButtonsContainer = ({
           yesBtn={t("sales.quote.yesBtn")}
           cancelBtn={t("modal.no")}
           openModal={isOpenGroupJobsModal.isOpen}
-          onClose={() => { }}
+          onClose={() => {}}
           withClose={false}
           onClickDelete={() => handleGetGroupJobsUsingOrderId(pendingOrderData)}
           onClickCancel={() => {
