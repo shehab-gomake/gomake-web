@@ -29,12 +29,7 @@ interface CreateContactModalProps {
   isSubmitting: boolean;
 }
 
-export const CreateContactModal: React.FC<CreateContactModalProps> = ({
-  open,
-  onClose,
-  onSubmit,
-  isSubmitting,
-}) => {
+export const CreateContactModal: React.FC<CreateContactModalProps> = ({ open, onClose, onSubmit, isSubmitting }) => {
   const { primaryColor, neutralColor } = useGomakeTheme();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -99,7 +94,7 @@ export const CreateContactModal: React.FC<CreateContactModalProps> = ({
         const fieldErrors: { name?: string; email?: string; phone?: string } = {};
         const errorMessage = error?.message || error?.errorData?.message || "Validation error";
         const attributes = error?.attributes || error?.errorData?.attributes || [];
-        
+
         // Map error attributes to form fields
         if (Array.isArray(attributes) && attributes.length > 0) {
           attributes.forEach((attribute: string) => {

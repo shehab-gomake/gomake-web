@@ -5,7 +5,7 @@
  * Supports debounced search by name, email, or phone number.
  */
 
-import React, { useState, useEffect } from "react";
+import React from "react";
 import {
   TextField,
   Autocomplete,
@@ -17,14 +17,16 @@ import {
   ListItemAvatar,
   Avatar,
   ListItemText,
-  Button,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-import PersonAddIcon from "@mui/icons-material/PersonAdd";
-import PersonIcon from "@mui/icons-material/Person";
 import MailIcon from "@mui/icons-material/Mail";
 import PhoneIcon from "@mui/icons-material/Phone";
+import BusinessIcon from "@mui/icons-material/Business";
+import BadgeIcon from "@mui/icons-material/Badge";
+import StarIcon from "@mui/icons-material/Star";
+import Chip from "@mui/material/Chip";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { generateAvatarData } from "@/widgets/frontdesk/utils/avatar.utils";
 import type { ContactDetail } from "@/services/frontdesk/api/chatwoot/types/contacts.types";
 import type { GomakeContact } from "../../hooks/use-compose-conversation";
 
@@ -44,9 +46,6 @@ export interface ContactSelectorProps {
   /** Callback when contact is selected */
   onSelectContact: (contact: GomakeContact) => void;
 
-  /** Callback to open create contact modal */
-  onCreateContact: () => void;
-
   /** Validation error message */
   error?: string;
 }
@@ -57,17 +56,9 @@ export const ContactSelector: React.FC<ContactSelectorProps> = ({
   isSearching,
   onSearch,
   onSelectContact,
-  onCreateContact,
   error,
 }) => {
   const { neutralColor, primaryColor } = useGomakeTheme();
-  const [query, setQuery] = useState("");
-
-  const handleQueryChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const newQuery = event.target.value;
-    setQuery(newQuery);
-    onSearch(newQuery);
-  };
 
   return (
     <Autocomplete
@@ -129,10 +120,17 @@ export const ContactSelector: React.FC<ContactSelectorProps> = ({
         // Last resort - use customer name or "Unnamed Contact"
         return contact.gomake_customer_name || "Unnamed Contact";
       }}
+      noOptionsText={
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1, py: 1 }}>
+          <Typography variant="body2" sx={{ color: "text.secondary" }}>
+            No contacts found. Type an email or phone number to create a new contact.
+          </Typography>
+        </Box>
+      }
       renderInput={(params) => (
         <TextField
           {...params}
-          placeholder="Search by customer name..."
+          placeholder="Search by customer name, email, or phone..."
           variant="outlined"
           error={!!error}
           helperText={error}
@@ -150,26 +148,66 @@ export const ContactSelector: React.FC<ContactSelectorProps> = ({
       )}
       renderOption={(props, option) => {
         const contact = option as GomakeContact;
+        const hasClientInfo = contact.gomake_customer_name || contact.gomake_client_code || contact.gomake_agent_id || contact.gomake_is_main_contact;
+        const isNewContact = !contact.id && !contact.gomake_contact_id && (contact.email || contact.phone_number);
+        
+        // Generate avatar data using the shared utility
+        const avatarData = generateAvatarData({
+          id: contact.gomake_contact_id || contact.id?.toString(),
+          email: contact.email || undefined,
+          name: contact.name || undefined,
+        });
+        
         return (
-          <ListItem {...props} key={contact.gomake_contact_id || contact.id || contact.email || contact.phone_number}>
+          <ListItem 
+            {...props} 
+            key={contact.gomake_contact_id || contact.id || contact.email || contact.phone_number}
+            sx={{ 
+              display: "flex", 
+              alignItems: "flex-start", 
+              gap: 1,
+              borderBottom: `1px solid ${neutralColor(200)}`,
+              "&:last-child": {
+                borderBottom: "none",
+              },
+            }}
+          >
             <ListItemAvatar>
-              <Avatar src={contact.thumbnail}>
-                <PersonIcon />
+              <Avatar 
+                src={contact.thumbnail || undefined}
+                sx={{
+                  bgcolor: avatarData.backgroundColor,
+                  color: "white",
+                }}
+              >
+                {avatarData.initials}
               </Avatar>
             </ListItemAvatar>
             <ListItemText
               primary={
-                <Box>
-                  <Typography variant="body2">{contact.name || "Unnamed Contact"}</Typography>
-                  {contact.gomake_customer_name && contact.gomake_customer_name !== contact.name && (
-                    <Typography variant="caption" color="text.secondary">
-                      {contact.gomake_customer_name}
-                    </Typography>
+                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                  <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                    {contact.name || "Unnamed Contact"}
+                  </Typography>
+                  {isNewContact && (
+                    <Chip
+                      icon={<PersonAddIcon sx={{ fontSize: "0.7rem !important" }} />}
+                      label="New"
+                      size="small"
+                      sx={{
+                        height: 18,
+                        fontSize: "0.65rem",
+                        "& .MuiChip-icon": { fontSize: "0.7rem", marginLeft: "4px" },
+                        "& .MuiChip-label": { padding: "0 6px" },
+                      }}
+                      color="primary"
+                      variant="outlined"
+                    />
                   )}
                 </Box>
               }
               secondary={
-                <Box component="span" sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                <Box component="span" sx={{ display: "flex", alignItems: "center", gap: 1, flexWrap: "wrap" }}>
                   {contact.email && (
                     <>
                       <MailIcon sx={{ fontSize: "0.875rem" }} />
@@ -184,29 +222,75 @@ export const ContactSelector: React.FC<ContactSelectorProps> = ({
                   )}
                 </Box>
               }
+              sx={{ flex: 1, minWidth: 0 }}
             />
+            {hasClientInfo && (
+              <Box sx={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 0.5, flexShrink: 0 }}>
+                {contact.gomake_is_main_contact && (
+                  <Chip
+                    icon={<StarIcon sx={{ fontSize: "0.7rem !important" }} />}
+                    label="Main"
+                    size="small"
+                    sx={{
+                      height: 18,
+                      fontSize: "0.65rem",
+                      "& .MuiChip-icon": { fontSize: "0.7rem", marginLeft: "4px" },
+                      "& .MuiChip-label": { padding: "0 6px" },
+                    }}
+                    color="primary"
+                    variant="outlined"
+                  />
+                )}
+                {contact.gomake_customer_name && (
+                  <Typography 
+                    variant="caption" 
+                    sx={{ 
+                      fontSize: "0.7rem",
+                      fontWeight: 500,
+                      color: "text.secondary",
+                      textAlign: "right",
+                      maxWidth: "120px",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    {contact.gomake_customer_name}
+                  </Typography>
+                )}
+                {contact.gomake_client_code && (
+                  <Chip
+                    icon={<BusinessIcon sx={{ fontSize: "0.7rem !important" }} />}
+                    label={contact.gomake_client_code}
+                    size="small"
+                    sx={{
+                      height: 18,
+                      fontSize: "0.65rem",
+                      "& .MuiChip-icon": { fontSize: "0.7rem", marginLeft: "4px" },
+                      "& .MuiChip-label": { padding: "0 6px" },
+                    }}
+                    variant="outlined"
+                  />
+                )}
+                {contact.gomake_agent_id && (
+                  <Chip
+                    icon={<BadgeIcon sx={{ fontSize: "0.7rem !important" }} />}
+                    label={contact.gomake_agent_id}
+                    size="small"
+                    sx={{
+                      height: 18,
+                      fontSize: "0.65rem",
+                      "& .MuiChip-icon": { fontSize: "0.7rem", marginLeft: "4px" },
+                      "& .MuiChip-label": { padding: "0 6px" },
+                    }}
+                    variant="outlined"
+                  />
+                )}
+              </Box>
+            )}
           </ListItem>
         );
       }}
-      ListboxComponent={(props) => (
-        <List {...props}>
-          {props.children}
-          <ListItem>
-            <Button
-              fullWidth
-              startIcon={<PersonAddIcon />}
-              onClick={onCreateContact}
-              sx={{
-                justifyContent: "flex-start",
-                textTransform: "none",
-                color: primaryColor(600),
-              }}
-            >
-              Create New Contact
-            </Button>
-          </ListItem>
-        </List>
-      )}
     />
   );
 };

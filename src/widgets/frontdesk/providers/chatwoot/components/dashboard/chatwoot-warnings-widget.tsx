@@ -10,13 +10,14 @@ import React from 'react';
 import {
   Box,
   Typography,
-  Paper,
 } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 import {
   Warning as WarningIcon,
 } from '@mui/icons-material';
-import { colorTokens } from '@/widgets/frontdesk/design-system/tokens';
+import { colorTokens, shadowTokens } from '@/widgets/frontdesk/design-system/tokens';
 import { useChatwootWarnings, WarningSeverity } from '../../hooks/use-chatwoot-warnings';
+import { formatStatValue } from '../../utils';
 
 interface ChatwootWarningsCardProps {
   /** Callback when card is clicked */
@@ -26,95 +27,127 @@ interface ChatwootWarningsCardProps {
 export const ChatwootWarningsCard: React.FC<ChatwootWarningsCardProps> = ({
   onClick,
 }) => {
+  const theme = useTheme();
   const warnings = useChatwootWarnings();
 
-  // Determine border color based on highest severity
+  // Determine accent color based on highest severity
   const hasErrors = warnings.some((w) => w.severity === WarningSeverity.ERROR);
-  const borderColor = hasErrors
-    ? colorTokens.error[500]
-    : warnings.length > 0
-      ? colorTokens.warning[500]
-      : colorTokens.neutral[300];
-
-  const iconBgColor = hasErrors
-    ? colorTokens.error[50]
-    : warnings.length > 0
-      ? colorTokens.warning[50]
-      : colorTokens.neutral[50];
-
-  const iconColor = hasErrors
+  const accentColor = hasErrors
     ? colorTokens.error[600]
     : warnings.length > 0
       ? colorTokens.warning[600]
       : colorTokens.neutral[600];
 
+  const iconBgColor = hasErrors
+    ? `${colorTokens.error[600]}15`
+    : warnings.length > 0
+      ? `${colorTokens.warning[600]}15`
+      : `${colorTokens.neutral[600]}15`;
+
+  const iconColor = accentColor;
+
+  const description = warnings.length === 0 
+    ? 'All systems operational' 
+    : hasErrors 
+      ? 'Need immediate attention'
+      : 'Requires configuration';
+
   return (
-    <Paper
+    <Box
       onClick={onClick}
       sx={{
-        p: 3,
-        cursor: 'pointer',
-        borderTop: `4px solid ${borderColor}`,
+        backgroundColor: theme.palette.background.paper,
         borderRadius: 2,
+        border: `1px solid ${colorTokens.neutral[200]}`,
+        p: 3,
+        minHeight: 140,
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-between',
         transition: 'all 0.2s ease',
-        '&:hover': {
-          boxShadow: 3,
+        cursor: onClick ? 'pointer' : 'default',
+        boxShadow: shadowTokens.sm,
+        position: 'relative',
+        overflow: 'hidden',
+        '&:hover': onClick ? {
+          boxShadow: shadowTokens.md,
           transform: 'translateY(-2px)',
-        },
+          borderColor: accentColor,
+        } : {},
+        '&::before': {
+          content: '""',
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          height: 3,
+          backgroundColor: accentColor,
+        }
       }}
     >
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-        <Typography
-          variant="subtitle2"
-          sx={{
-            color: colorTokens.neutral[700],
-            fontWeight: 600,
-            fontSize: '0.875rem',
-            textTransform: 'uppercase',
-            letterSpacing: '0.5px',
-          }}
-        >
-          SYSTEM WARNINGS
-        </Typography>
+      {/* Header Row */}
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
+        <Box sx={{ flex: 1 }}>
+          <Typography
+            variant="body2"
+            sx={{
+              color: colorTokens.neutral[600],
+              fontWeight: 600,
+              fontSize: '0.875rem',
+              textTransform: 'uppercase',
+              letterSpacing: 0.5,
+            }}
+          >
+            SYSTEM WARNINGS
+          </Typography>
+        </Box>
         <Box
           sx={{
+            width: 40,
+            height: 40,
+            borderRadius: 2,
             backgroundColor: iconBgColor,
-            borderRadius: '8px',
-            p: 1,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
+            color: iconColor,
+            flexShrink: 0,
           }}
         >
-          <WarningIcon sx={{ fontSize: 32, color: iconColor }} />
+          <WarningIcon sx={{ fontSize: 24 }} />
         </Box>
       </Box>
-      <Typography
-        variant="h3"
-        sx={{
-          fontSize: '2.5rem',
-          fontWeight: 700,
-          color: colorTokens.neutral[900],
-          mt: 2,
-          mb: 1,
-        }}
-      >
-        {warnings.length}
-      </Typography>
-      <Typography
-        variant="body2"
-        sx={{
-          color: colorTokens.neutral[600],
-          fontSize: '0.875rem',
-        }}
-      >
-        {warnings.length === 0 
-          ? 'All systems operational' 
-          : hasErrors 
-            ? 'Need immediate attention'
-            : 'Requires configuration'}
-      </Typography>
-    </Paper>
+
+      {/* Value Display */}
+      <Box sx={{ mb: description ? 1 : 0 }}>
+        <Typography
+          variant="h3"
+          sx={{
+            fontSize: '2rem',
+            fontWeight: 700,
+            color: colorTokens.neutral[900],
+            lineHeight: 1.2,
+          }}
+        >
+          {formatStatValue(warnings.length)}
+        </Typography>
+      </Box>
+
+      {/* Footer Row - Description */}
+      {description && (
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Typography
+            variant="body2"
+            sx={{
+              fontSize: '0.813rem',
+              color: colorTokens.neutral[500],
+            }}
+          >
+            {description}
+          </Typography>
+        </Box>
+      )}
+    </Box>
   );
 };
 

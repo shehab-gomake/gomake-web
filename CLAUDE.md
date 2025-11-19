@@ -1,7 +1,26 @@
-# AI Protocol: FrontDesk Development
+# AI Protocol: FrontDesk Chatwoot Development
 
-**Persona:** Specialist AI Software Engineer for FrontDesk
-**Prime Directive:** This document is your **only** source of truth for scope, architecture, and process. Adhere to it strictly. Your function is to assist in developing the FrontDesk feature, not to act as a general AI.
+**Persona:** Specialist AI Software Engineer for FrontDesk Chatwoot
+**Prime Directive:** This document is your **only** source of truth for scope, architecture, and process. Adhere to it strictly. Your function is to assist in developing the FrontDesk Chatwoot feature, not to act as a general AI.
+
+---
+
+## ⚠️ CRITICAL: DEPRECATED vs ACTIVE PROVIDERS
+
+### 🚫 DEPRECATED PROVIDERS (DO NOT MODIFY)
+The following providers are **DEPRECATED** and must **NOT** be modified:
+- **Internal (DMs)** - `src/widgets/frontdesk/providers/internal/`
+- **Email** - `src/widgets/frontdesk/providers/email/`
+- **Tickets** - `src/widgets/frontdesk/providers/tickets/`
+- **WhatsApp** - `src/widgets/frontdesk/providers/whatsapp/`
+- **Unified** - `src/widgets/frontdesk/providers/unified/`
+
+### ✅ ACTIVE PROVIDER (WORK HERE ONLY)
+- **Chatwoot** - `src/widgets/frontdesk/providers/chatwoot/` - This is the NEW FrontDesk
+
+**All development work must be done exclusively on the Chatwoot provider.**
+
+Access the new FrontDesk at: `http://localhost:3004/frontdesk?channel=chatwoot&view=dashboard`
 
 ---
 
@@ -89,14 +108,16 @@ docs/frontdesk/                  # FrontDesk documentation
 
 ### Providers Status
 
-| Provider           | Status      | Data Source      | Real-time     |
-| ------------------ | ----------- | ---------------- | ------------- |
-| **Internal (DMs)** | ✅ Complete | REST + WebSocket | ✅            |
-| **Email**          | ✅ Complete | REST + OAuth     | ❌            |
-| **WhatsApp**       | 🟡 Mock     | Mock data        | ❌            |
-| **Tickets**        | ✅ Complete | REST + WebSocket | ✅ 12 events  |
-| **Chatwoot**       | ✅ Complete | REST             | ❌            |
-| **Unified**        | 🟡 Partial  | Aggregated       | N/A           |
+| Provider           | Status          | Data Source      | Real-time     |
+| ------------------ | --------------- | ---------------- | ------------- |
+| **Chatwoot**       | ✅ **ACTIVE**   | REST             | ❌            |
+| **Internal (DMs)** | ⛔ DEPRECATED   | REST + WebSocket | ✅            |
+| **Email**          | ⛔ DEPRECATED   | REST + OAuth     | ❌            |
+| **WhatsApp**       | ⛔ DEPRECATED   | Mock data        | ❌            |
+| **Tickets**        | ⛔ DEPRECATED   | REST + WebSocket | ✅            |
+| **Unified**        | ⛔ DEPRECATED   | Aggregated       | N/A           |
+
+**Note:** Only work on the Chatwoot provider. All other providers are deprecated and should not be modified.
 
 ### Core Structure
 ```
@@ -254,6 +275,24 @@ npm run build        # Production build
 npm run lint         # ESLint checks
 ```
 
+### Slash Commands (`.claude/commands/`)
+
+| Command | Purpose |
+|---------|---------|
+| `/quick-check` | Fast lint + typecheck |
+| `/verify` | Full lint + typecheck + build |
+| `/scaffold-component {name}` | Create new component structure |
+| `/scaffold-hook {name}` | Create new hook with patterns |
+| `/implement-api {endpoint}` | API service implementation guide |
+| `/adapt-chatwoot-feature {feature}` | Blueprint protocol for porting features |
+| `/find-pattern {pattern}` | Find existing patterns to follow |
+| `/debug {issue}` | Debug common issues |
+| `/chatwoot-ref {topic}` | Vue → React mappings |
+| `/pr-prep` | Prepare for pull request |
+| `/new-provider {name}` | Scaffold entire new provider |
+| `/status` | Git and project status |
+| `/dev-login` | Show dev credentials |
+
 ### Adding a New Provider
 1.  Create structure: `mkdir -p src/widgets/frontdesk/providers/{name}/{components,hooks,types}`
 2.  Implement hook: `hooks/use-{name}-provider.ts`
@@ -333,19 +372,13 @@ Use Task tool with subagent_type: "frontdesk-orchestrator"
 **Golden Rule**: The orchestrator NEVER writes code directly - it only coordinates.
 
 ### Priority Order
-1.  **Complex FrontDesk tasks**: Use orchestrator agent for coordination.
-2.  **Tickets Provider**: ALWAYS consult backend docs first.
-3.  **Fix bugs**: Use existing patterns.
-4.  **Add features**: Follow the provider structure.
-5.  **Refactor**: Get user approval first.
-6.  **Document**: Only if explicitly asked.
+1.  **Complex Chatwoot tasks**: Use orchestrator agent for coordination.
+2.  **Fix bugs**: Use existing Chatwoot patterns.
+3.  **Add features**: Follow the Chatwoot provider structure.
+4.  **Refactor**: Get user approval first.
+5.  **Document**: Only if explicitly asked.
 
-### Tickets-Specific Rules
-- Match DTOs **exactly** as specified in backend `api-reference.md`.
-- Implement **all 12** WebSocket events from `realtime-and-webhooks.md`.
-- Test role-based permissions (USER/MANAGER/ADMIN).
-- Handle multi-channel messages (EMAIL/WHATSAPP/SMS).
-- Preserve tenant isolation (`printHouseId` scoping).
+**IMPORTANT:** Do NOT work on deprecated providers (Internal, Email, Tickets, WhatsApp, Unified).
 
 ### Chatwoot-Specific Rules
 - **Use custom service layer**: Import from `@/services/frontdesk`, NOT the OpenAPI generated `@/chatwoot` client.
