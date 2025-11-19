@@ -24,8 +24,6 @@ export interface ContactSelectionFieldProps {
   onSearch: (query: string) => void;
   /** Select contact handler */
   onSelectContact: (contact: GomakeContact | null) => void;
-  /** Create new contact handler */
-  onCreateContact: () => void;
   /** Validation error message */
   error?: string;
 }
@@ -35,7 +33,7 @@ export interface ContactSelectionFieldProps {
  * Displays selected contact or contact search input
  */
 export const ContactSelectionField = React.memo<ContactSelectionFieldProps>(
-  ({ selectedContact, searchResults, isSearching, onSearch, onSelectContact, onCreateContact, error }) => {
+  ({ selectedContact, searchResults, isSearching, onSearch, onSelectContact, error }) => {
     const { neutralColor, primaryColor } = useGomakeTheme();
 
     return (
@@ -55,7 +53,6 @@ export const ContactSelectionField = React.memo<ContactSelectionFieldProps>(
               isSearching={isSearching}
               onSearch={onSearch}
               onSelectContact={onSelectContact}
-              onCreateContact={onCreateContact}
               error={error}
             />
           )}

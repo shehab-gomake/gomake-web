@@ -17,10 +17,8 @@ import {
   ListItemAvatar,
   Avatar,
   ListItemText,
-  Button,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import MailIcon from "@mui/icons-material/Mail";
 import PhoneIcon from "@mui/icons-material/Phone";
 import BusinessIcon from "@mui/icons-material/Business";
@@ -48,9 +46,6 @@ export interface ContactSelectorProps {
   /** Callback when contact is selected */
   onSelectContact: (contact: GomakeContact) => void;
 
-  /** Callback to open create contact modal */
-  onCreateContact: () => void;
-
   /** Validation error message */
   error?: string;
 }
@@ -61,7 +56,6 @@ export const ContactSelector: React.FC<ContactSelectorProps> = ({
   isSearching,
   onSearch,
   onSelectContact,
-  onCreateContact,
   error,
 }) => {
   const { neutralColor, primaryColor } = useGomakeTheme();
@@ -126,10 +120,17 @@ export const ContactSelector: React.FC<ContactSelectorProps> = ({
         // Last resort - use customer name or "Unnamed Contact"
         return contact.gomake_customer_name || "Unnamed Contact";
       }}
+      noOptionsText={
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1, py: 1 }}>
+          <Typography variant="body2" sx={{ color: "text.secondary" }}>
+            No contacts found. Type an email or phone number to create a new contact.
+          </Typography>
+        </Box>
+      }
       renderInput={(params) => (
         <TextField
           {...params}
-          placeholder="Search by customer name..."
+          placeholder="Search by customer name, email, or phone..."
           variant="outlined"
           error={!!error}
           helperText={error}
@@ -148,6 +149,7 @@ export const ContactSelector: React.FC<ContactSelectorProps> = ({
       renderOption={(props, option) => {
         const contact = option as GomakeContact;
         const hasClientInfo = contact.gomake_customer_name || contact.gomake_client_code || contact.gomake_agent_id || contact.gomake_is_main_contact;
+        const isNewContact = !contact.id && !contact.gomake_contact_id && (contact.email || contact.phone_number);
         
         // Generate avatar data using the shared utility
         const avatarData = generateAvatarData({
@@ -183,9 +185,26 @@ export const ContactSelector: React.FC<ContactSelectorProps> = ({
             </ListItemAvatar>
             <ListItemText
               primary={
-                <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                  {contact.name || "Unnamed Contact"}
-                </Typography>
+                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                  <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                    {contact.name || "Unnamed Contact"}
+                  </Typography>
+                  {isNewContact && (
+                    <Chip
+                      icon={<PersonAddIcon sx={{ fontSize: "0.7rem !important" }} />}
+                      label="New"
+                      size="small"
+                      sx={{
+                        height: 18,
+                        fontSize: "0.65rem",
+                        "& .MuiChip-icon": { fontSize: "0.7rem", marginLeft: "4px" },
+                        "& .MuiChip-label": { padding: "0 6px" },
+                      }}
+                      color="primary"
+                      variant="outlined"
+                    />
+                  )}
+                </Box>
               }
               secondary={
                 <Box component="span" sx={{ display: "flex", alignItems: "center", gap: 1, flexWrap: "wrap" }}>
@@ -272,25 +291,6 @@ export const ContactSelector: React.FC<ContactSelectorProps> = ({
           </ListItem>
         );
       }}
-      ListboxComponent={(props) => (
-        <List {...props}>
-          {props.children}
-          <ListItem>
-            <Button
-              fullWidth
-              startIcon={<PersonAddIcon />}
-              onClick={onCreateContact}
-              sx={{
-                justifyContent: "flex-start",
-                textTransform: "none",
-                color: primaryColor(600),
-              }}
-            >
-              Create New Contact
-            </Button>
-          </ListItem>
-        </List>
-      )}
     />
   );
 };

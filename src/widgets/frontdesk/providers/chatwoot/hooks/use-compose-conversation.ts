@@ -41,6 +41,24 @@ function debounce<T extends (...args: any[]) => any>(func: T, wait: number): T {
   }) as T;
 }
 
+/**
+ * Check if query looks like an email address
+ */
+function looksLikeEmail(query: string): boolean {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(query.trim());
+}
+
+/**
+ * Check if query looks like a phone number
+ */
+function looksLikePhone(query: string): boolean {
+  // Remove common phone formatting characters
+  const cleaned = query.trim().replace(/[\s\-\(\)]/g, "");
+  // Check if it starts with + and has digits, or just has enough digits
+  return /^\+?\d{7,}$/.test(cleaned);
+}
+
 export interface UseComposeConversationOptions {
   /** Account ID to use for operations */
   accountId: number | null;
@@ -193,6 +211,7 @@ export function useComposeConversation(options?: UseComposeConversationOptions) 
 
   /**
    * Search customers and their contacts using gomake customer search
+   * If no GoMake results found, searches Chatwoot contacts
    * Similar to how customers page searches
    */
   const searchContacts = useCallback(
@@ -203,122 +222,154 @@ export function useComposeConversation(options?: UseComposeConversationOptions) 
       }
 
       setIsSearching(true);
-      try {
-        // Search customers using get-customers-pagination (like customers page)
-        // Search by both name AND customer code for better matching
-        const result: any = await callApi(
-          "GET",
-          "/v1/customers/get-customers-pagination",
-          {
-            clientType: "C", // Search customers
-            pageNumber: 1,
-            pageSize: 20,
-            name: query.trim(), // Search by name
-            code: query.trim(), // Also search by customer code (e.g., "CUST-001")
-            isActive: true,
-          },
-          false
-        );
+      const trimmedQuery = query.trim();
+      const isEmailQuery = looksLikeEmail(trimmedQuery);
+      const isPhoneQuery = looksLikePhone(trimmedQuery);
 
-        // Extract customer data from response
-        const dataContainer = result?.data?.data?.data || result?.data?.data || {};
-        const customers = dataContainer.data || dataContainer || [];
-        
-        if (!Array.isArray(customers) || customers.length === 0) {
-          setSearchResults([]);
-          return;
+      try {
+        // Step 1: Always search GoMake customers first (by name)
+        let customerResult: any = null;
+        try {
+          customerResult = await callApi(
+            "GET",
+            "/v1/customers/get-customers-pagination",
+            {
+              clientType: "C", // Search customers
+              pageNumber: 1,
+              pageSize: 20,
+              name: trimmedQuery,
+              isActive: true,
+            },
+            false
+          );
+        } catch (error) {
+          console.error("[useComposeConversation] GoMake customer search failed:", error);
         }
 
-        // For each customer, get their contacts
-        const contactsPromises = customers.map(async (customer: any) => {
+        // Process GoMake customers
+        let gomakeContacts: GomakeContact[] = [];
+        if (customerResult) {
+          const dataContainer = customerResult?.data?.data?.data || customerResult?.data?.data || {};
+          const customers = dataContainer.data || dataContainer || [];
+          
+          if (Array.isArray(customers) && customers.length > 0) {
+            // For each customer, get their contacts
+            const contactsPromises = customers.map(async (customer: any) => {
+              try {
+                const rawResult: any = await callApi(
+                  "GET",
+                  "/v1/crm-service/customer/get-client-contacts",
+                  { ClientId: customer.id || customer._id },
+                  false
+                );
+
+                let contactsArray: any[] = [];
+                
+                if (rawResult?.data?.data?.data && Array.isArray(rawResult.data.data.data)) {
+                  contactsArray = rawResult.data.data.data;
+                } else if (rawResult?.data?.data && Array.isArray(rawResult.data.data)) {
+                  contactsArray = rawResult.data.data;
+                } else if (rawResult?.data && Array.isArray(rawResult.data)) {
+                  contactsArray = rawResult.data;
+                } else if (Array.isArray(rawResult)) {
+                  contactsArray = rawResult;
+                }
+
+                // Transform contacts to GomakeContact format
+                const transformedContacts = contactsArray.map((contact: any) => ({
+                  id: undefined,
+                  name: contact.name || "",
+                  email: contact.mail || contact.email || "",
+                  phone_number: contact.phone || contact.phone_number || "",
+                  gomake_contact_id: contact.id || contact._id || "",
+                  gomake_customer_id: customer.id || customer._id || "",
+                  gomake_customer_name: customer.name || "",
+                  gomake_client_code: customer.code || customer.customerCode || "",
+                  gomake_agent_id: customer.agentId || customer.agent_id || "",
+                  gomake_is_main_contact: contact.isMainContact || contact.is_main_contact || false,
+                } as GomakeContact));
+
+                return transformedContacts;
+              } catch (error) {
+                console.error(`[useComposeConversation] Failed to get contacts for customer ${customer.id}:`, error);
+                return [];
+              }
+            });
+
+            const contactsArrays = await Promise.all(contactsPromises);
+            gomakeContacts = contactsArrays.flat();
+
+            // If customer has no contacts but has email/phone, create a contact from customer data
+            customers.forEach((customer: any, customerIndex: number) => {
+              const customerId = customer.id || customer._id;
+              const customerContacts = contactsArrays[customerIndex] || [];
+              const hasContacts = customerContacts.length > 0;
+              
+              if (!hasContacts && (customer.mail || customer.phone)) {
+                const fallbackContact = {
+                  id: undefined,
+                  name: customer.name || "",
+                  email: customer.mail || customer.email || "",
+                  phone_number: customer.phone || customer.phone_number || "",
+                  gomake_contact_id: undefined,
+                  gomake_customer_id: customerId,
+                  gomake_customer_name: customer.name || "",
+                  gomake_client_code: customer.code || customer.customerCode || "",
+                  gomake_agent_id: customer.agentId || customer.agent_id || "",
+                  gomake_is_main_contact: true,
+                } as GomakeContact;
+                gomakeContacts.push(fallbackContact);
+              }
+            });
+          }
+        }
+
+        // Step 2: If no GoMake results found, search Chatwoot contacts
+        let chatwootContacts: GomakeContact[] = [];
+        if (gomakeContacts.length === 0 && accountId) {
           try {
-            // Call API directly to get the raw response structure
-            const rawResult: any = await callApi(
-              "GET",
-              "/v1/crm-service/customer/get-client-contacts",
-              { ClientId: customer.id || customer._id },
-              false
-            );
-
-            console.log(`[useComposeConversation] Raw contacts result for customer ${customer.id}:`, rawResult);
-
-            // Handle response structure: 
-            // { status: "success", data: { data: [...] } }
-            // returnResult extracts data.data.data by default, but actual structure is data.data
-            let contactsArray: any[] = [];
+            const chatwootResult = await chatwootService.contacts.searchContacts(accountId, trimmedQuery);
             
-            if (rawResult?.data?.data?.data && Array.isArray(rawResult.data.data.data)) {
-              // Structure: data.data.data (what returnResult expects)
-              contactsArray = rawResult.data.data.data;
-            } else if (rawResult?.data?.data && Array.isArray(rawResult.data.data)) {
-              // Structure: data.data (actual API response)
-              contactsArray = rawResult.data.data;
-            } else if (rawResult?.data && Array.isArray(rawResult.data)) {
-              // Structure: data (fallback)
-              contactsArray = rawResult.data;
-            } else if (Array.isArray(rawResult)) {
-              // Already an array
-              contactsArray = rawResult;
+            if (chatwootResult && chatwootResult.payload) {
+              chatwootContacts = (chatwootResult.payload || []).map((contact: ContactDetail) => ({
+                id: contact.id,
+                name: contact.name || "",
+                email: contact.email || "",
+                phone_number: contact.phone_number || "",
+                thumbnail: contact.thumbnail,
+                gomake_contact_id: undefined, // Chatwoot contacts don't have GoMake IDs
+                gomake_customer_id: undefined,
+                gomake_customer_name: undefined,
+                gomake_client_code: undefined,
+                gomake_agent_id: undefined,
+                gomake_is_main_contact: false,
+              } as GomakeContact));
             }
-
-            console.log(`[useComposeConversation] Extracted contacts array for customer ${customer.id}:`, contactsArray);
-
-            // Transform contacts to GomakeContact format
-            const transformedContacts = contactsArray.map((contact: any) => ({
-              id: undefined, // Will be set after Chatwoot search/create
-              name: contact.name || "",
-              email: contact.mail || contact.email || "",
-              phone_number: contact.phone || contact.phone_number || "",
-              gomake_contact_id: contact.id || contact._id || "",
-              gomake_customer_id: customer.id || customer._id || "",
-              gomake_customer_name: customer.name || "",
-              gomake_client_code: customer.code || customer.customerCode || "",
-              gomake_agent_id: customer.agentId || customer.agent_id || "",
-              gomake_is_main_contact: contact.isMainContact || contact.is_main_contact || false,
-            } as GomakeContact));
-
-            console.log(`[useComposeConversation] Transformed contacts for customer ${customer.id}:`, transformedContacts);
-            return transformedContacts;
           } catch (error) {
-            console.error(`[useComposeConversation] Failed to get contacts for customer ${customer.id}:`, error);
-            return [];
+            console.error("[useComposeConversation] Chatwoot contact search failed:", error);
           }
-        });
+        }
 
-        const contactsArrays = await Promise.all(contactsPromises);
-        const allContacts = contactsArrays.flat();
+        // Combine results (GoMake contacts take priority, Chatwoot contacts are added if no GoMake results)
+        const allContacts: GomakeContact[] = [...gomakeContacts, ...chatwootContacts];
 
-        console.log(`[useComposeConversation] All contacts arrays:`, contactsArrays);
-        console.log(`[useComposeConversation] Flattened contacts:`, allContacts);
+        // If no results found and query looks like email/phone, add a "create new" suggestion
+        if (allContacts.length === 0 && (isEmailQuery || isPhoneQuery)) {
+          const createSuggestion: GomakeContact = {
+            id: undefined,
+            name: trimmedQuery, // Use email/phone as name
+            email: isEmailQuery ? trimmedQuery : undefined,
+            phone_number: isPhoneQuery ? trimmedQuery : undefined,
+            gomake_contact_id: undefined,
+            gomake_customer_id: undefined,
+            gomake_customer_name: undefined,
+            gomake_client_code: undefined,
+            gomake_agent_id: undefined,
+            gomake_is_main_contact: false,
+          } as GomakeContact;
+          allContacts.push(createSuggestion);
+        }
 
-        // If customer has no contacts but has email/phone, create a contact from customer data
-        customers.forEach((customer: any, customerIndex: number) => {
-          const customerId = customer.id || customer._id;
-          // Check if this customer has contacts by checking the corresponding array at the same index
-          const customerContacts = contactsArrays[customerIndex] || [];
-          const hasContacts = customerContacts.length > 0;
-          
-          console.log(`[useComposeConversation] Customer ${customerId} (index ${customerIndex}) hasContacts:`, hasContacts, `contacts count:`, customerContacts.length);
-          
-          if (!hasContacts && (customer.mail || customer.phone)) {
-            const fallbackContact = {
-              id: undefined,
-              name: customer.name || "",
-              email: customer.mail || customer.email || "",
-              phone_number: customer.phone || customer.phone_number || "",
-              gomake_contact_id: undefined, // No specific contact, use customer as contact
-              gomake_customer_id: customerId,
-              gomake_customer_name: customer.name || "",
-              gomake_client_code: customer.code || customer.customerCode || "",
-              gomake_agent_id: customer.agentId || customer.agent_id || "",
-              gomake_is_main_contact: true, // Customer itself is main contact
-            } as GomakeContact;
-            console.log(`[useComposeConversation] Adding fallback contact for customer ${customerId}:`, fallbackContact);
-            allContacts.push(fallbackContact);
-          }
-        });
-
-        console.log(`[useComposeConversation] Final allContacts:`, allContacts);
         setSearchResults(allContacts);
       } catch (error) {
         console.error("[useComposeConversation] Contact search failed:", error);
@@ -327,7 +378,7 @@ export function useComposeConversation(options?: UseComposeConversationOptions) 
         setIsSearching(false);
       }
     },
-    [callApi]
+    [callApi, accountId]
   );
 
   // Debounced search (300ms)
@@ -396,6 +447,60 @@ export function useComposeConversation(options?: UseComposeConversationOptions) 
         // If contact already has an id (already exists in Chatwoot), use it directly
         if (contact.id) {
           chatwootContact = contact as ContactDetail;
+        }
+        // If contact has email/phone but no ID, search Chatwoot by email/phone first
+        else if ((contact.email || contact.phone_number) && !contact.gomake_contact_id) {
+          // This is likely an email/phone suggestion - search Chatwoot for existing contact
+          const searchQuery = contact.email || contact.phone_number || "";
+          try {
+            const searchResults = await chatwootService.contacts.searchContacts(
+              accountId,
+              searchQuery
+            );
+
+            // Find exact match
+            const exactMatch = searchResults.payload?.find((c: ContactDetail) => {
+              if (contact.email && c.email) {
+                return c.email.toLowerCase() === contact.email.toLowerCase();
+              }
+              if (contact.phone_number && c.phone_number) {
+                return c.phone_number === contact.phone_number;
+              }
+              return false;
+            });
+
+            if (exactMatch?.id) {
+              // Found existing contact
+              chatwootContact = exactMatch;
+            } else {
+              // Not found - create new contact, using email/phone as name if name is empty or equals email/phone
+              const contactName = contact.name && contact.name !== contact.email && contact.name !== contact.phone_number
+                ? contact.name
+                : (contact.email || contact.phone_number || "Unnamed Contact");
+              
+              const createPayload: ContactCreatePayload = {
+                name: contactName,
+                email: contact.email || undefined,
+                phone_number: contact.phone_number || undefined,
+              };
+
+              chatwootContact = await findOrCreateContact(accountId, createPayload);
+            }
+          } catch (searchError) {
+            console.error("[useComposeConversation] Failed to search Chatwoot contacts:", searchError);
+            // Fall through to create new contact
+            const contactName = contact.name && contact.name !== contact.email && contact.name !== contact.phone_number
+              ? contact.name
+              : (contact.email || contact.phone_number || "Unnamed Contact");
+            
+            const createPayload: ContactCreatePayload = {
+              name: contactName,
+              email: contact.email || undefined,
+              phone_number: contact.phone_number || undefined,
+            };
+
+            chatwootContact = await findOrCreateContact(accountId, createPayload);
+          }
         }
         // If contact has gomake_contact_id, search Chatwoot for it
         else if (contact.gomake_contact_id) {
@@ -745,55 +850,18 @@ export function useComposeConversation(options?: UseComposeConversationOptions) 
       const payload = preparePayload();
       const response = await chatwootService.conversations.createConversation(accountId, payload);
 
-      // Extract conversation from response (check multiple possible structures)
-      const conversation = response.data || response.payload || response;
-      
-      // Try multiple ways to get the conversation ID
-      const conversationId = 
-        conversation?.id || 
-        conversation?.conversation_id || 
-        (typeof conversation === 'object' && conversation !== null ? (conversation as any).id : null);
-
-      console.log("[useComposeConversation] Response:", response);
-      console.log("[useComposeConversation] Extracted conversation:", conversation);
-      console.log("[useComposeConversation] Conversation ID:", conversationId);
+      // Extract conversation from response (check both data and payload fields)
+      const conversation = response.data || response.payload;
+      const conversationId = conversation?.id;
 
       if (conversationId) {
-        // AUTO-LINK: If contact has gomake_customer_id, automatically link it to the conversation
-        const gomakeCustomerId = formState.contact?.custom_attributes?.gomake_customer_id as string | undefined;
-        if (gomakeCustomerId) {
-          try {
-            console.log(`[useComposeConversation] Auto-linking customer ${gomakeCustomerId} to conversation ${conversationId}`);
-            await chatwootService.conversations.updateCustomAttributes(
-              accountId,
-              conversationId,
-              { gomake_customer_id: gomakeCustomerId }
-            );
-            console.log(`[useComposeConversation] Successfully auto-linked customer ${gomakeCustomerId}`);
-          } catch (linkError) {
-            // Log but don't fail - conversation was created successfully
-            console.warn("[useComposeConversation] Failed to auto-link customer:", linkError);
-          }
-        }
-
         options?.onSuccess?.(conversationId);
         // Reset form
         resetForm();
         return conversationId;
       }
 
-      // If response exists but no ID, still consider it a success (API might return differently)
-      // Log for debugging but don't fail
-      console.warn("[useComposeConversation] No conversation ID in response, but request succeeded:", response);
-      
-      // Still call onSuccess with a placeholder to allow modal to close
-      // The parent can handle navigation if needed
-      if (conversation || response) {
-        // Use 0 as placeholder - parent should handle this gracefully
-        options?.onSuccess?.(0);
-        resetForm();
-      }
-      
+      console.error("[useComposeConversation] No conversation ID in response:", response);
       return null;
     } catch (error) {
       console.error("[useComposeConversation] Failed to create conversation:", error);

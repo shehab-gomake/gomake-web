@@ -9,9 +9,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Alert, Stack, Typography, IconButton, Box, CircularProgress } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import SendIcon from "@mui/icons-material/Send";
-import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import { ContactSelectionField } from "./ContactSelectionField";
-import { CreateContactModal } from "./CreateContactModal";
 import { MessageEditor } from "./MessageEditor";
 import { EmailCompositionFields } from "./EmailCompositionFields";
 import { AttachmentUploader } from "./AttachmentUploader";
@@ -40,7 +38,6 @@ export const ComposeConversationModal: React.FC<ComposeConversationModalProps> =
 }) => {
   const { primaryColor, neutralColor } = useGomakeTheme();
   const { setSnackbarStateValue } = useSnackBar();
-  const [showCreateContact, setShowCreateContact] = useState(false);
   const [showTemplateSelector, setShowTemplateSelector] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showExitConfirm, setShowExitConfirm] = useState(false);
@@ -48,7 +45,6 @@ export const ComposeConversationModal: React.FC<ComposeConversationModalProps> =
   const compose = useComposeConversation({
     accountId,
     onSuccess: (conversationId) => {
-      console.log("[ComposeConversationModal] onSuccess called with conversationId:", conversationId);
       setError(null);
       onSuccess?.(conversationId);
       setSnackbarStateValue({
@@ -56,13 +52,7 @@ export const ComposeConversationModal: React.FC<ComposeConversationModalProps> =
         message: "Conversation created successfully!",
         type: "success",
       });
-      // Close modal directly on success (bypass isSubmitting check)
-      // Note: resetForm is already called in the hook's submit function
-      console.log("[ComposeConversationModal] Closing modal...");
-      setError(null);
-      setShowExitConfirm(false);
-      onClose();
-      console.log("[ComposeConversationModal] Modal close called");
+      handleClose();
     },
     onError: (err) => {
       setError(err.message || "Failed to create conversation");
@@ -121,41 +111,6 @@ export const ComposeConversationModal: React.FC<ComposeConversationModalProps> =
     // Success is handled by onSuccess callback
   };
 
-  const handleCreateContact = async (contactData: {
-    name: string;
-    email?: string;
-    phone_number?: string;
-  }) => {
-    try {
-      const newContact = await compose.createContact({
-        name: contactData.name,
-        email: contactData.email,
-        phone_number: contactData.phone_number,
-      });
-      
-      if (newContact && newContact.id) {
-        // Convert ContactDetail to GomakeContact format and select it
-        // This will set the contact in form state and fetch contactable inboxes
-        const gomakeContact: GomakeContact = {
-          ...newContact,
-          gomake_contact_id: undefined,
-        };
-        await compose.selectContact(gomakeContact);
-        
-        setShowCreateContact(false);
-        setSnackbarStateValue({
-          state: true,
-          message: "Contact created successfully!",
-          type: "success",
-        });
-      } else {
-        setError("Failed to create contact: Invalid response");
-      }
-    } catch (error) {
-      console.error("[ComposeConversationModal] Failed to create contact:", error);
-      setError(error instanceof Error ? error.message : "Failed to create contact");
-    }
-  };
 
   const canSubmit = useMemo(
     () =>
@@ -289,48 +244,9 @@ export const ComposeConversationModal: React.FC<ComposeConversationModalProps> =
               isSearching={compose.isSearching}
               onSearch={compose.searchContacts}
               onSelectContact={compose.selectContact}
-              onCreateContact={() => setShowCreateContact(true)}
               error={compose.validationErrors.contact}
             />
 
-            {/* Create New Contact Button - Show when no contact is selected */}
-            {!compose.formState.contact && (
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "flex-end",
-                  px: 4,
-                  py: 1.5,
-                  borderBottom: `1px solid ${neutralColor(200)}`,
-                  backgroundColor: neutralColor(25),
-                }}
-              >
-                <Button
-                  startIcon={<PersonAddIcon />}
-                  onClick={() => setShowCreateContact(true)}
-                  disabled={compose.isSubmitting}
-                  sx={{
-                    textTransform: "none",
-                    color: primaryColor(600),
-                    fontWeight: 500,
-                    fontSize: "0.875rem",
-                    px: 2.5,
-                    py: 0.75,
-                    borderRadius: 1,
-                    backgroundColor: "transparent",
-                    "&:hover": {
-                      backgroundColor: primaryColor(50),
-                      color: primaryColor(700),
-                    },
-                    "&:disabled": {
-                      color: neutralColor(400),
-                    },
-                  }}
-                >
-                  Create New Contact
-                </Button>
-              </Box>
-            )}
 
             {/* Inbox Selection - Show after contact is selected */}
             {compose.formState.contact && (
@@ -568,13 +484,6 @@ export const ComposeConversationModal: React.FC<ComposeConversationModalProps> =
         }}
       />
 
-      {/* Create Contact Modal */}
-      <CreateContactModal
-        open={showCreateContact}
-        onClose={() => setShowCreateContact(false)}
-        onSubmit={handleCreateContact}
-        isSubmitting={compose.isSubmitting}
-      />
     </>
   );
 };
