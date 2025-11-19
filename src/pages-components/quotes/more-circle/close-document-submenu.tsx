@@ -2,6 +2,7 @@ import React, { useState, useMemo, useCallback } from "react";
 import { MenuItem, Menu, ListItemIcon, ListItemText } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import LockIcon from "@mui/icons-material/Lock";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
@@ -50,6 +51,8 @@ export const CloseDocumentSubmenu: React.FC<CloseDocumentSubmenuProps> = ({
   onCloseParentMenu,
 }) => {
   const { t } = useTranslation();
+  const direction = t("direction");
+  const isRTL = direction === "rtl";
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
@@ -257,7 +260,11 @@ export const CloseDocumentSubmenu: React.FC<CloseDocumentSubmenuProps> = ({
       >
         <CustomLockIcon color="#8283BE" />
         <div style={rowTextStyle}>{t("sales.quote.closeDocument")}</div>
-        <ChevronRightIcon sx={{ ml: "auto", fontSize: 20 }} />
+        {isRTL ? (
+          <ChevronLeftIcon sx={{ mr: "auto", fontSize: 20 }} />
+        ) : (
+          <ChevronRightIcon sx={{ ml: "auto", fontSize: 20 }} />
+        )}
       </MenuItem>
 
       <Menu
@@ -266,11 +273,11 @@ export const CloseDocumentSubmenu: React.FC<CloseDocumentSubmenuProps> = ({
         onClose={handleClose}
         anchorOrigin={{
           vertical: "top",
-          horizontal: "right",
+          horizontal: isRTL ? "left" : "right",
         }}
         transformOrigin={{
           vertical: "top",
-          horizontal: "left",
+          horizontal: isRTL ? "right" : "left",
         }}
         sx={{
           "& .MuiPaper-root": {
@@ -287,7 +294,13 @@ export const CloseDocumentSubmenu: React.FC<CloseDocumentSubmenuProps> = ({
           const handleClick = handleMenuItemClick(option.onClick);
           return (
             <MenuItem key={`${option.label}-${index}`} onClick={handleClick}>
-              <ListItemIcon>
+              <ListItemIcon
+                sx={{
+                  minWidth: "auto",
+                  mr: isRTL ? 0 : 0.5,
+                  ml: isRTL ? 0.5 : 0,
+                }}
+              >
                 {option.icon || <TickIcon color="#8283BE" />}
               </ListItemIcon>
               <ListItemText
