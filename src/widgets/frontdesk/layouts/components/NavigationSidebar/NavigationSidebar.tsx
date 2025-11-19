@@ -150,6 +150,43 @@ const NavItem: React.FC<NavItemProps> = ({ icon, label, isSelected, onClick, bad
   );
 };
 
+/**
+ * Get the channel source (email, phone number, or website URL) for display
+ */
+const getChannelSource = (inbox: any): string | null => {
+  // WhatsApp channels - prioritize phone_number
+  if (
+    inbox.channel_type === "Channel::WhatsApp" ||
+    inbox.channel_type === "Channel::Whatsapp" ||
+    inbox.provider === "whatsapp"
+  ) {
+    return inbox.phone_number || null;
+  }
+
+  // Email channels
+  if (inbox.channel_type === "Channel::Email" || inbox.provider === "email") {
+    return inbox.email || null;
+  }
+
+  // Other phone-based channels (SMS, Twilio, Voice)
+  if (
+    inbox.channel_type === "Channel::Sms" ||
+    inbox.channel_type === "Channel::TwilioSms" ||
+    inbox.channel_type === "Channel::Voice" ||
+    inbox.provider === "sms" ||
+    inbox.provider === "twilio"
+  ) {
+    return inbox.phone_number || null;
+  }
+
+  // Web Widget channels
+  if (inbox.channel_type === "Channel::WebWidget" || inbox.provider === "web_widget") {
+    return inbox.website_url || null;
+  }
+
+  return null;
+};
+
 export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
   selectedChannel,
   selectedSection,
@@ -803,10 +840,10 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
                                     size={16}
                                   />
                                 </Box>
-                                {/* Inbox Name and Type */}
+                                {/* Inbox Name and Source */}
                                 <ListItemText
                                   primary={inbox.name}
-                                  secondary={inbox.channel_type?.replace("Channel::", "") || inbox.provider}
+                                  secondary={getChannelSource(inbox) || inbox.channel_type?.replace("Channel::", "") || inbox.provider}
                                   primaryTypographyProps={{
                                     variant: "body2",
                                     sx: {
