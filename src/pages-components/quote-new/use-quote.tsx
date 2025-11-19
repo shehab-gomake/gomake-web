@@ -64,6 +64,7 @@ import {
   checkPurchaseNumberExistsApi,
   updateQuoteItemQuantityApi,
   getDocumentInventoryApi,
+  updateQuoteClientNoteAsShownApi,
 } from "@/services/api-service/generic-doc/documents-api";
 import { DOCUMENT_TYPE } from "../quotes/enums";
 import { useRouter } from "next/router";
@@ -327,8 +328,29 @@ const useQuoteNew = ({
   const onClickOpenNewItemNotesModal = () => {
     setOpenNewItemNotesModal(true);
   };
-  const onClickCloseNewItemNotesModal = () => {
+  const onClickCloseNewItemNotesModal = async () => {
     setOpenNewItemNotesModal(false);
+
+    // Call API to update isClientNoteShown flag when closing the modal
+    // Only call if flag is null or false (hasn't been set yet)
+    if (
+      quoteItemValue?.id &&
+      docType === DOCUMENT_TYPE.quote &&
+      (quoteItemValue?.client?.isClientNoteShown === null ||
+        quoteItemValue?.client?.isClientNoteShown === false ||
+        quoteItemValue?.isClientNoteShown === null ||
+        quoteItemValue?.isClientNoteShown === false)
+    ) {
+      const callBack = (res) => {
+        if (res?.success) {
+          // Refresh the quote to get updated flag
+          getQuote();
+        }
+      };
+      await updateQuoteClientNoteAsShownApi(callApi, callBack, {
+        quoteId: quoteItemValue?.id,
+      });
+    }
   };
 
   useEffect(() => {
@@ -336,7 +358,11 @@ const useQuoteNew = ({
       quoteItemValue?.client?.newItemNotes &&
       quoteItemValue?.client?.newItemNotes.trim() !== "" &&
       quoteItemValue?.client?.newItemNotes.trim() !== null &&
-      docType === DOCUMENT_TYPE.quote
+      docType === DOCUMENT_TYPE.quote &&
+      (quoteItemValue?.client?.isClientNoteShown === null ||
+        quoteItemValue?.client?.isClientNoteShown === false ||
+        quoteItemValue?.isClientNoteShown === null ||
+        quoteItemValue?.isClientNoteShown === false)
     ) {
       onClickOpenNewItemNotesModal();
     }
