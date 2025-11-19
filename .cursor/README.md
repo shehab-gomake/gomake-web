@@ -23,12 +23,14 @@ This directory contains files specifically designed to accelerate AI-powered dev
    - Common task patterns
    - Debugging steps
    - Where to find things
+   - Quick fixes
 
 4. **`code-snippets.ts`** - Copy-paste code library
    - Service usage patterns
-   - Hook patterns
+   - Hook patterns (including optimized base hooks)
    - Component patterns
    - Utility patterns
+   - Performance-optimized patterns
 
 5. **`feature-template.tsx`** - New feature template
    - Complete feature scaffolding
@@ -39,6 +41,28 @@ This directory contains files specifically designed to accelerate AI-powered dev
    - Project locations
    - Key documentation
    - Quick reference
+
+7. **`quick-commands.md`** - Command reference ⭐ NEW
+   - Development commands
+   - File operations
+   - Search & find
+   - Debugging commands
+   - Git operations
+   - Common tasks
+
+8. **`troubleshooting.md`** - Error solutions ⭐ NEW
+   - Common errors and fixes
+   - Debugging checklist
+   - Performance issues
+   - Network problems
+   - State management issues
+
+9. **`performance-patterns.md`** - Performance guide ⭐ NEW
+   - Core performance principles
+   - Optimized patterns by use case
+   - Component optimization
+   - State management optimization
+   - Common pitfalls
 
 ### 📐 Architecture Rules (`rules/` directory)
 7. **`rules/frontdesk-architecture.mdc`** - Core FrontDesk architecture patterns
@@ -147,6 +171,9 @@ This directory contains files specifically designed to accelerate AI-powered dev
 - **Decisions**: `quick-decision-tree.md`
 - **Code**: `code-snippets.ts`
 - **Template**: `feature-template.tsx`
+- **Commands**: `quick-commands.md` ⭐ NEW
+- **Troubleshooting**: `troubleshooting.md` ⭐ NEW
+- **Performance**: `performance-patterns.md` ⭐ NEW
 
 ### For Architecture
 - **Core Architecture**: `rules/frontdesk-architecture.mdc`

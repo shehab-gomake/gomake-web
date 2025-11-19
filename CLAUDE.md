@@ -254,6 +254,24 @@ npm run build        # Production build
 npm run lint         # ESLint checks
 ```
 
+### Slash Commands (`.claude/commands/`)
+
+| Command | Purpose |
+|---------|---------|
+| `/quick-check` | Fast lint + typecheck |
+| `/verify` | Full lint + typecheck + build |
+| `/scaffold-component {name}` | Create new component structure |
+| `/scaffold-hook {name}` | Create new hook with patterns |
+| `/implement-api {endpoint}` | API service implementation guide |
+| `/adapt-chatwoot-feature {feature}` | Blueprint protocol for porting features |
+| `/find-pattern {pattern}` | Find existing patterns to follow |
+| `/debug {issue}` | Debug common issues |
+| `/chatwoot-ref {topic}` | Vue → React mappings |
+| `/pr-prep` | Prepare for pull request |
+| `/new-provider {name}` | Scaffold entire new provider |
+| `/status` | Git and project status |
+| `/dev-login` | Show dev credentials |
+
 ### Adding a New Provider
 1.  Create structure: `mkdir -p src/widgets/frontdesk/providers/{name}/{components,hooks,types}`
 2.  Implement hook: `hooks/use-{name}-provider.ts`

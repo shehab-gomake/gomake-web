@@ -104,5 +104,11 @@ dist
 # TernJS port file
 .tern-port
 
-# Claude orchestrator state (session-specific, do not commit)
-.claude/orchestrator-state/frontdesk-tasks.json
+# AI tool configurations (personal, do not commit)
+.claude/
+.cursor/
+.gemini/
+.vscode/
+CLAUDE.md
+AGENTS.md
+GEMINI.md

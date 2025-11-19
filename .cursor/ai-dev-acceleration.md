@@ -403,3 +403,38 @@ const data = await chatwootService.conversations.listConversations(accountId);
 - **Component Patterns**: `src/widgets/frontdesk/providers/chatwoot/README.md`
 - **Chatwoot Reference**: `/Users/omarsabbah/Desktop/messaging/chatwoot/app/javascript/dashboard/`
 
+## 🆕 New Acceleration Files
+
+### Quick Commands (`quick-commands.md`)
+Copy-paste commands for:
+- Development server
+- File operations
+- Search & find
+- Debugging
+- Git operations
+
+### Troubleshooting (`troubleshooting.md`)
+Solutions for:
+- Common errors (accountId, API responses, infinite loops)
+- Debugging checklist
+- Network issues
+- State management problems
+
+### Performance Patterns (`performance-patterns.md`)
+Optimized patterns for:
+- Preventing duplicate API calls
+- Stable filter keys
+- Memoization
+- Component optimization
+- Common pitfalls
+
+## ⚡ Performance Quick Tips
+
+1. **Always use base hooks**: `useChatwootDataFetch` prevents duplicate requests
+2. **Use filter keys**: `createFilterKey()` prevents unnecessary refetches
+3. **Memoize everything**: `useMemo`/`useCallback` for stable references
+4. **Check accountId**: Always verify before API calls
+5. **Use Recoil**: Shared state, not local state
+
+See `performance-patterns.md` for detailed patterns.
+
