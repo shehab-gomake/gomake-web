@@ -21,6 +21,7 @@ import {
   agentsCategoriesState,
   closeOrderAsInvoiceOrDeliveryNoteState,
   isSelectedCLoseAsDeliveryNoteState,
+  isSelectedCLoseAsProformaInvoiceState,
 } from "@/pages/customers/customer-states";
 import { getAndSetEmployees2 } from "@/services/api-service/customers/employees-api";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
@@ -316,6 +317,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const isSelectedCLoseAsDeliveryNote = useRecoilValue(
     isSelectedCLoseAsDeliveryNoteState
   );
+  const isSelectedCLoseAsProformaInvoice = useRecoilValue(
+    isSelectedCLoseAsProformaInvoiceState
+  );
   const [paymentType, setPaymentType] = useState<PaymentTypeOption | null>(
     null
   );
@@ -342,6 +346,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const isSupplierPayments = docType === DOCUMENT_TYPE.supplierPayments;
   const isDeliveryNote = docType === DOCUMENT_TYPE.deliveryNote;
   const isDeliveryNoteRefund = docType === DOCUMENT_TYPE.deliveryNoteRefund;
+  const isProformaInvoice = docType === DOCUMENT_TYPE.proformaInvoice;
   const isInvoice = docType === DOCUMENT_TYPE.invoice;
   const isInvoiceRefund = docType === DOCUMENT_TYPE.invoiceRefund;
   const isPurchaseOrder = docType === DOCUMENT_TYPE.purchaseOrder;
@@ -2393,6 +2398,10 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       value: DOCUMENT_TYPE.deliveryNote,
     },
     {
+      label: t("sales.quote.proformaInvoiceList"),
+      value: DOCUMENT_TYPE.proformaInvoice,
+    },
+    {
       label: t("sales.quote.receiptList"),
       value: DOCUMENT_TYPE.receipt,
     },
@@ -3945,6 +3954,11 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         if (isSelectedCLoseAsDeliveryNote) {
           const path = `/deliveryNote?isNewCreation=true&orderId=${selectedDocument?.id}`;
           window.open(path, "_blank");
+        } else if (isSelectedCLoseAsProformaInvoice) {
+          const path = isOrder
+            ? `/proformaInvoice?isNewCreation=true&orderId=${selectedDocument?.id}`
+            : `/proformaInvoice?isNewCreation=true&deliveryNoteId=${selectedDocument?.id}`;
+          window.open(path, "_blank");
         } else {
           const path = isOrder
             ? `/invoice?isNewCreation=true&orderId=${selectedDocument?.id}`
@@ -4131,6 +4145,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     [DOCUMENT_TYPE.order]: "orders",
     [DOCUMENT_TYPE.deliveryNote]: "deliveryNotes",
     [DOCUMENT_TYPE.deliveryNoteRefund]: "deliveryNotes",
+    [DOCUMENT_TYPE.proformaInvoice]: "proformaInvoices",
     [DOCUMENT_TYPE.invoice]: "invoices",
     [DOCUMENT_TYPE.invoiceRefund]: "invoices",
     [DOCUMENT_TYPE.purchaseOrder]: "purchaseOrders",
@@ -4290,6 +4305,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     isFetching,
     openChangeProductionStatusModal,
     isSelectedCLoseAsDeliveryNote,
+    isSelectedCLoseAsProformaInvoice,
     onClickCloseChangeProductionStatusModal,
     moveOrderToReady,
     onChangeDocumentSearch,
@@ -4310,6 +4326,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     isReceipt,
     isSupplierPayments,
     isDeliveryNote,
+    isProformaInvoice,
     isInvoice,
     deliveryStatuses,
     deliveryStatus,

@@ -77,7 +77,10 @@ import {
   CheckData,
 } from "@/widgets/quote-new/buttons-container/states";
 import { QuoteStatuses } from "@/widgets/quote-new/total-price-and-vat/enums";
-import { isSelectedCLoseAsDeliveryNoteState } from "@/pages/customers/customer-states";
+import {
+  isSelectedCLoseAsDeliveryNoteState,
+  isSelectedCLoseAsProformaInvoiceState,
+} from "@/pages/customers/customer-states";
 import {
   checkArrayNotEmptyOrEmailNotEmpty,
   checkArrayNotEmptyOrPhoneNotEmpty,
@@ -432,6 +435,9 @@ const useQuoteNew = ({
   const [selectedDocument, setSelectedDocument] = useState<any>({});
   const isSelectedCLoseAsDeliveryNote = useRecoilValue(
     isSelectedCLoseAsDeliveryNoteState
+  );
+  const isSelectedCLoseAsProformaInvoice = useRecoilValue(
+    isSelectedCLoseAsProformaInvoiceState
   );
   const onClickCloseChangeProductionStatusModal = () => {
     setOpenChangeProductionStatusModal(false);
@@ -2511,11 +2517,15 @@ const useQuoteNew = ({
           navigate(
             `/deliveryNote?isNewCreation=true&orderId=${selectedDocument?.id}`
           );
+        } else if (isSelectedCLoseAsProformaInvoice) {
+          const path = isOrder
+            ? `/proformaInvoice?isNewCreation=true&orderId=${selectedDocument?.id}`
+            : `/proformaInvoice?isNewCreation=true&deliveryNoteId=${selectedDocument?.id}`;
+          navigate(path);
         } else {
-          const path =
-            docType === DOCUMENT_TYPE.order
-              ? `/invoice?isNewCreation=true&orderId=${selectedDocument?.id}`
-              : `/invoice?isNewCreation=true&deliveryNoteId=${selectedDocument?.id}`;
+          const path = isOrder
+            ? `/invoice?isNewCreation=true&orderId=${selectedDocument?.id}`
+            : `/invoice?isNewCreation=true&deliveryNoteId=${selectedDocument?.id}`;
           navigate(path);
         }
       } else {
@@ -2920,6 +2930,7 @@ const useQuoteNew = ({
     onClickCloseChangeProductionStatusModal,
     selectedDocument,
     isSelectedCLoseAsDeliveryNote,
+    isSelectedCLoseAsProformaInvoice,
     navigate,
     moveOrderToReady,
     allClientActiveBudgets,

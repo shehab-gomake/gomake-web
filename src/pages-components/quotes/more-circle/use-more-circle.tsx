@@ -27,6 +27,7 @@ import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   closeOrderAsInvoiceOrDeliveryNoteState,
   isSelectedCLoseAsDeliveryNoteState,
+  isSelectedCLoseAsProformaInvoiceState,
 } from "@/pages/customers/customer-states";
 import { PauseIcon } from "@/icons/pause-icon";
 import { ResumeIcon } from "@/icons/resume-icon";
@@ -67,6 +68,9 @@ const useMoreCircle = () => {
   const [connectionId] = useRecoilState(fileUploaderConnectionIdState);
   const setIsSelectedCLoseAsDeliveryNote = useSetRecoilState(
     isSelectedCLoseAsDeliveryNoteState
+  );
+  const setIsSelectedCLoseAsProformaInvoice = useSetRecoilState(
+    isSelectedCLoseAsProformaInvoiceState
   );
 
   const setCloseAsInvoiceOrDeliveryNote = useSetRecoilState(
@@ -197,6 +201,7 @@ const useMoreCircle = () => {
     const isDeliveryNote = documentType === DOCUMENT_TYPE.deliveryNote;
     const isDeliveryNoteRefund =
       documentType === DOCUMENT_TYPE.deliveryNoteRefund;
+    const isProformaInvoice = documentType === DOCUMENT_TYPE.proformaInvoice;
     const isInvoice = documentType === DOCUMENT_TYPE.invoice;
     const isInvoiceRefund = documentType === DOCUMENT_TYPE.invoiceRefund;
     const isPurchaseInvoice = documentType === DOCUMENT_TYPE.purchaseInvoice;
@@ -210,10 +215,19 @@ const useMoreCircle = () => {
       quote?.statusTitleText === StatusTitleText.OrderCanceled;
     const isClosedDeliveryNote =
       quote?.statusTitleText === StatusTitleText.DeliveryNoteClosed;
+
+    //!here Proforma Invoice
+    const isClosedProformaInvoice =
+      quote?.statusTitleText === StatusTitleText.ProformaInvoiceClosed;
+
     const isClosedInvoice =
       quote?.statusTitleText === StatusTitleText.InvoiceClosed;
     const showNewDuplicate =
-      isDeliveryNote || isDeliveryNoteRefund || isInvoice || isInvoiceRefund;
+      isDeliveryNote ||
+      isDeliveryNoteRefund ||
+      isProformaInvoice ||
+      isInvoice ||
+      isInvoiceRefund;
     const isOrdersTracking = pathname === "/ordersTracking";
     const isCanceledPurchaseOrder =
       quote?.statusTitleText === StatusTitleText.PurchaseOrderCanceled;
@@ -240,6 +254,7 @@ const useMoreCircle = () => {
       CheckPermission(Permissions.CAN_OPEN_CLOSED_DOCUMENTS) &&
       ((isOrder && isClosedOrder) ||
         (isDeliveryNote && isClosedDeliveryNote) ||
+        (isProformaInvoice && isClosedProformaInvoice) ||
         (isInvoice && isClosedInvoice));
 
     const isSendOrderReadyToClient = isOrder && quote?.productionStatus;
@@ -315,7 +330,7 @@ const useMoreCircle = () => {
         name: t("sales.quote.loggers"),
       },
       {
-        condition: !isPauseOrder && isDeliveryNote,
+        condition: !isPauseOrder && (isDeliveryNote || isProformaInvoice),
         onClick: () =>
           askToPrintWithPricesInDeliveryNotes
             ? onClickOpenPrintPDFModal(quote)
@@ -325,7 +340,7 @@ const useMoreCircle = () => {
       },
 
       {
-        condition: !isPauseOrder && !isDeliveryNote,
+        condition: !isPauseOrder && !isDeliveryNote && !isProformaInvoice,
         onClick: () =>
           onClickPdf(isReceipt || isSupplierPayments ? quote : quote?.id),
         icon: <PDFIcon color={primaryLavender(500)} />,
@@ -421,6 +436,7 @@ const useMoreCircle = () => {
           } else {
             onClickOpenChangeProductionStatusModal(quote);
             setIsSelectedCLoseAsDeliveryNote(true);
+            setIsSelectedCLoseAsProformaInvoice(false);
           }
         },
         icon: <TickIcon color={primaryLavender(500)} />,
@@ -430,11 +446,46 @@ const useMoreCircle = () => {
       },
       {
         condition:
+          !isPauseOrder &&
+          isOrder &&
+          quote?.isCanClose &&
+          !isCanceledOrder &&
+          isEditableDocument,
+        onClick: () => {
+          setCloseAsInvoiceOrDeliveryNote(true);
+          if (quote?.productionStatus) {
+            if (quote?.closeOrderNotes?.trim()) {
+              onClickOpenCloseOrderNotesModal(
+                quote,
+                "closeAsProformaInvoice",
+                () =>
+                  navigate(
+                    `/proformaInvoice?isNewCreation=true&orderId=${quote?.id}`
+                  )
+              );
+            } else
+              navigate(
+                `/proformaInvoice?isNewCreation=true&orderId=${quote?.id}`
+              );
+          } else {
+            onClickOpenChangeProductionStatusModal(quote);
+            setIsSelectedCLoseAsDeliveryNote(false);
+            setIsSelectedCLoseAsProformaInvoice(true);
+          }
+        },
+        icon: <TickIcon color={primaryLavender(500)} />,
+        name: t("sales.quote.closeAsProformaInvoice"),
+        isLink: quote?.productionStatus && !quote?.closeOrderNotes?.trim(),
+        href: `/proformaInvoice?isNewCreation=true&orderId=${quote?.id}`,
+      },
+      {
+        condition:
           ((!isPauseOrder &&
             isOrder &&
             quote?.isCanClose &&
             !isCanceledOrder) ||
-            (isDeliveryNote && quote?.isCanClose)) &&
+            (isDeliveryNote && quote?.isCanClose) ||
+            (isProformaInvoice && quote?.isCanClose)) &&
           isEditableDocument,
         onClick: () => {
           if (isOrder) {
@@ -450,8 +501,12 @@ const useMoreCircle = () => {
               onClickOpenChangeProductionStatusModal(quote);
               setIsSelectedCLoseAsDeliveryNote(false);
             }
-          } else {
+          } else if (isDeliveryNote) {
             navigate(`/invoice?isNewCreation=true&deliveryNoteId=${quote?.id}`);
+          } else {
+            navigate(
+              `/invoice?isNewCreation=true&proformaInvoiceId=${quote?.id}`
+            );
           }
         },
         icon: <TickIcon color={primaryLavender(500)} />,
@@ -461,7 +516,9 @@ const useMoreCircle = () => {
           : true,
         href: isOrder
           ? `/invoice?isNewCreation=true&orderId=${quote?.id}`
-          : `/invoice?isNewCreation=true&deliveryNoteId=${quote?.id}`,
+          : isDeliveryNote
+          ? `/invoice?isNewCreation=true&deliveryNoteId=${quote?.id}`
+          : `/invoice?isNewCreation=true&proformaInvoiceId=${quote?.id}`,
       },
       {
         condition: !isPauseOrder && isOrder && !quote?.productionStatus,
@@ -489,6 +546,21 @@ const useMoreCircle = () => {
           ),
         icon: <TickMoveIcon color={primaryLavender(500)} />,
         name: t("sales.quote.purchaseOrders"),
+      },
+      {
+        condition:
+          !isPauseOrder &&
+          isDeliveryNote &&
+          quote?.isCanClose &&
+          isEditableDocument,
+        onClick: () =>
+          navigate(
+            `/proformaInvoice?isNewCreation=true&deliveryNoteId=${quote?.id}`
+          ),
+        icon: <TickIcon color={primaryLavender(500)} />,
+        name: t("sales.quote.closeAsProformaInvoice"),
+        isLink: true,
+        href: `/proformaInvoice?isNewCreation=true&deliveryNoteId=${quote?.id}`,
       },
       {
         condition: !isPauseOrder && isDeliveryNote && quote?.isCanClose,
@@ -545,6 +617,7 @@ const useMoreCircle = () => {
             quote?.isCanClose &&
             !isCanceledOrder) ||
             (isDeliveryNote && quote?.isCanClose) ||
+            (isProformaInvoice && quote?.isCanClose) ||
             (isInvoice && quote?.isCanClose)) &&
           isEditableDocument &&
           canCloseDocumentManually,
@@ -618,7 +691,9 @@ const useMoreCircle = () => {
         name: t("sales.quote.cancel"),
       },
       {
-        condition: (isInvoice || isPurchaseInvoice) && quote?.isCanClose,
+        condition:
+          (isInvoice || isProformaInvoice || isPurchaseInvoice) &&
+          quote?.isCanClose,
         onClick: () =>
           navigate(
             isPurchaseInvoice
@@ -632,10 +707,11 @@ const useMoreCircle = () => {
           ? `/receipt?isOutgoingPayments=true&isNewCreation=true&documentNumber=${quote?.number}&ClientId=${quote?.customerId}`
           : `/receipt?isNewCreation=true&documentNumber=${quote?.accountingNumber}&ClientId=${quote?.customerId}`,
       },
-      // !here
       {
         condition:
-          ((!isPauseOrder && isOrder && !isCanceledOrder) || isInvoice) &&
+          ((!isPauseOrder && isOrder && !isCanceledOrder) ||
+            isInvoice ||
+            isProformaInvoice) &&
           quote?.isCanClose &&
           isSendPaymentToClient,
         onClick: () => onClickSendPayment(quote, false),

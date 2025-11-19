@@ -13,6 +13,7 @@ export enum DOCUMENT_TYPE {
   boardMission,
   customerChat,
   supplierPayments,
+  proformaInvoice = 14,
 }
 
 export enum QUOTE_STATUSES {
@@ -40,6 +41,16 @@ export enum DELIVERY_NOTE_STATUSES {
   Confirmed,
   Rejected,
   PartialRefunded,
+  ClosedAsInvoice,
+  ClosedByMultiDocuments,
+  ManualClose,
+}
+
+//!here Proforma Invoice
+export enum PROFORMA_INVOICE_STATUSES {
+  Open = 0,
+  Canceled,
+  Created,
   ClosedAsInvoice,
   ClosedByMultiDocuments,
   ManualClose,
@@ -106,7 +117,7 @@ export enum LogActionType {
   REMOVE_DELIVERED,
   BACK_JOB_TO_PRODUCTION,
   PACKAGING_SLIP_PRINTED_FOR_JOB,
-  PACKAGING_SLIP_PRINTED_FOR_ORDER
+  PACKAGING_SLIP_PRINTED_FOR_ORDER,
 }
 
 export enum ApprovalStatus {
@@ -130,6 +141,8 @@ export enum StatusTitleText {
   DeliveryNoteClosed = "DeliveryNote.Closed",
   InvoiceOpen = "Invoice.Open",
   InvoiceClosed = "Invoice.Closed",
+  ProformaInvoiceOpen = "ProformaInvoice.Open",
+  ProformaInvoiceClosed = "ProformaInvoice.Closed",
 }
 
 export enum PURCHASE_ORDER_STATUSES {

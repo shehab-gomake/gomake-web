@@ -17,6 +17,7 @@ import {
   ApprovalStatus,
   DELIVERY_NOTE_STATUSES,
   DOCUMENT_TYPE,
+  PROFORMA_INVOICE_STATUSES,
   QUOTE_STATUSES,
 } from "@/pages-components/quotes/enums";
 import { ECalculationLogType } from "@/widgets/product-pricing-widget/enums";
@@ -130,6 +131,28 @@ export const _renderDocumentStatus = (status: number, t: any) => {
     return t("sales.quote.closedByMultiDocuments");
   }
   if (status === DELIVERY_NOTE_STATUSES.ManualClose) {
+    return t("sales.quote.manualClose");
+  }
+};
+
+// for proforma invoice
+export const _renderProformaInvoiceStatus = (status: number, t: any) => {
+  if (status === PROFORMA_INVOICE_STATUSES.Open) {
+    return t("sales.quote.open");
+  }
+  if (status === PROFORMA_INVOICE_STATUSES.Canceled) {
+    return t("sales.quote.canceled");
+  }
+  if (status === PROFORMA_INVOICE_STATUSES.Created) {
+    return t("sales.quote.created");
+  }
+  if (status === PROFORMA_INVOICE_STATUSES.ClosedAsInvoice) {
+    return t("sales.quote.closedAsInvoice");
+  }
+  if (status === PROFORMA_INVOICE_STATUSES.ClosedByMultiDocuments) {
+    return t("sales.quote.closedByMultiDocuments");
+  }
+  if (status === PROFORMA_INVOICE_STATUSES.ManualClose) {
     return t("sales.quote.manualClose");
   }
 };
