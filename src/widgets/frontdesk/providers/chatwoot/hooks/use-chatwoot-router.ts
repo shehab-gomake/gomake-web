@@ -192,17 +192,18 @@ export const useChatwootRouter = () => {
 
   /**
    * Navigate to a specific conversation
-   * Preserves current filters to maintain the active tab (Mine/Unassigned/All)
+   * Preserves current view and filters to maintain the active tab (My Inbox/All Conversations/etc)
    * Uses ref to avoid stale closure when filters change
    */
   const navigateToConversation = useCallback(
     (conversationId: string, channelId?: string, options?: NavigationOptions) => {
-      const view = channelId ? ChatwootView.CHANNELS : ChatwootView.ALL_CONVERSATIONS;
+      // Preserve current view, but use CHANNELS if channelId is provided
+      const view = channelId ? ChatwootView.CHANNELS : currentView;
       // Use ref to get latest filter values (prevents stale closure)
       const route = RouteBuilder.chatwoot(view, conversationId, channelId, currentFiltersRef.current);
       navigate(route, options);
     },
-    [navigate]
+    [navigate, currentView]
   );
 
   /**

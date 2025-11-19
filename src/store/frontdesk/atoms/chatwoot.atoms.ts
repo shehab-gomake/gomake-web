@@ -347,6 +347,18 @@ export const chatwootAgentsErrorAtom = atom<string | null>({
   default: null,
 });
 
+// Inbox Agents Mapping
+// Maps inboxId to list of agents assigned to that inbox
+export const chatwootInboxAgentsMapAtom = atom<Record<number, Agent[]>>({
+  key: "frontdesk.chatwoot.inboxAgentsMap",
+  default: {},
+});
+
+export const chatwootInboxAgentsLoadingAtom = atom<boolean>({
+  key: "frontdesk.chatwoot.inboxAgentsLoading",
+  default: false,
+});
+
 // Teams (Settings)
 export const chatwootTeamsAtom = atom<Team[]>({
   key: "frontdesk.chatwoot.teams",

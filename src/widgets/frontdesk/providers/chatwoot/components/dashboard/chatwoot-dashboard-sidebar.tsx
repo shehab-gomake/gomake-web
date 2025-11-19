@@ -11,7 +11,9 @@ import { Box, Tabs, Tab, Badge, Typography } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { colorTokens } from '@/widgets/frontdesk/design-system/tokens';
 import { ChatwootQuickView } from './chatwoot-quick-view';
-import { ChatwootNotificationsCompact } from './chatwoot-notifications-compact';
+import { ChatwootNotificationsEnhanced } from './chatwoot-notifications-enhanced';
+import { ChatwootWarningsCompact } from './chatwoot-warnings-compact';
+import { useChatwootWarnings } from '../../hooks/use-chatwoot-warnings';
 import type { ChatwootConversation } from '@/services/frontdesk/api/chatwoot/types/conversations.types';
 
 export interface ChatwootDashboardSidebarProps {
@@ -29,6 +31,10 @@ export interface ChatwootDashboardSidebarProps {
 
   // Props for Inbox tab
   unreadNotificationCount: number;
+
+  // Tab control props (optional - defaults to internal state)
+  activeTab?: number;
+  onTabChange?: (tab: number) => void;
 }
 
 interface TabPanelProps {
@@ -64,9 +70,17 @@ export const ChatwootDashboardSidebar: React.FC<ChatwootDashboardSidebarProps> =
   onConversationSelect,
   onViewAll,
   unreadNotificationCount,
+  activeTab: controlledActiveTab,
+  onTabChange: controlledOnTabChange,
 }) => {
   const theme = useTheme();
-  const [activeTab, setActiveTab] = useState(0);
+  const [internalActiveTab, setInternalActiveTab] = useState(0);
+  const warnings = useChatwootWarnings();
+  const warningCount = warnings.length;
+
+  // Use controlled tab if provided, otherwise use internal state
+  const activeTab = controlledActiveTab !== undefined ? controlledActiveTab : internalActiveTab;
+  const setActiveTab = controlledOnTabChange || setInternalActiveTab;
 
   const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
     setActiveTab(newValue);
@@ -166,6 +180,35 @@ export const ChatwootDashboardSidebar: React.FC<ChatwootDashboardSidebarProps> =
             id="dashboard-tab-1"
             aria-controls="dashboard-tabpanel-1"
           />
+          <Tab
+            label={
+              warningCount > 0 ? (
+                <Badge
+                  badgeContent={warningCount}
+                  color="warning"
+                  max={99}
+                  sx={{
+                    '& .MuiBadge-badge': {
+                      right: -12,
+                      top: 2,
+                      fontSize: '0.625rem',
+                      height: 16,
+                      minWidth: 16,
+                      padding: '0 4px',
+                      backgroundColor: colorTokens.warning[600],
+                      color: '#fff',
+                    },
+                  }}
+                >
+                  <Box component="span">Warnings</Box>
+                </Badge>
+              ) : (
+                'Warnings'
+              )
+            }
+            id="dashboard-tab-2"
+            aria-controls="dashboard-tabpanel-2"
+          />
         </Tabs>
       </Box>
 
@@ -185,7 +228,12 @@ export const ChatwootDashboardSidebar: React.FC<ChatwootDashboardSidebarProps> =
 
         {/* Inbox Tab */}
         <TabPanel value={activeTab} index={1}>
-          <ChatwootNotificationsCompact />
+          <ChatwootNotificationsEnhanced />
+        </TabPanel>
+
+        {/* Warnings Tab */}
+        <TabPanel value={activeTab} index={2}>
+          <ChatwootWarningsCompact maxItems={10} />
         </TabPanel>
       </Box>
     </Box>

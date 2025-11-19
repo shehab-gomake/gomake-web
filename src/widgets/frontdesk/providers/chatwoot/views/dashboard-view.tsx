@@ -9,6 +9,7 @@ import React, { useMemo } from 'react';
 import { Box, Typography } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { colorTokens } from '@/widgets/frontdesk/design-system/tokens';
+import { ChatwootSettingsSubpage } from '@/widgets/frontdesk/routing/types';
 import { useChatwootProvider } from '../hooks/use-chatwoot-provider';
 import { useAgentDashboardStats, useAdminDashboardStats } from '../hooks/use-chatwoot-dashboard-stats';
 import { useChatwootDashboardType } from '../hooks/use-chatwoot-dashboard-type';
@@ -16,6 +17,7 @@ import { AgentStatsCards } from '../components/dashboard/agent-stats-cards';
 import { AdminStatsCards } from '../components/dashboard/admin-stats-cards';
 import { ChatwootActivityFeed } from '../components/dashboard/chatwoot-activity-feed';
 import { ChatwootDashboardSidebar } from '../components/dashboard/chatwoot-dashboard-sidebar';
+import { ChatwootNotificationsWidget } from '../components/dashboard/chatwoot-notifications-widget';
 import { useRecoilValue } from 'recoil';
 import { chatwootConversationsAtom, chatwootSelectedConversationAtom, chatwootConversationCountsAtom } from '@/store/frontdesk/atoms/chatwoot.atoms';
 import { ErrorBoundary } from '@/widgets/frontdesk/components/shared/ErrorBoundary';
@@ -28,19 +30,16 @@ export const DashboardView: React.FC = () => {
   const theme = useTheme();
   const { router: chatwootRouter } = useChatwootProvider();
   const dashboardType = useChatwootDashboardType();
-  
+
   // Use role-specific stats hooks - only call the one we need
   const agentStats = useAgentDashboardStats();
   const adminStats = useAdminDashboardStats();
-  
+
   // Select stats based on dashboard type
   const stats = dashboardType === 'admin' ? adminStats : agentStats;
 
-  // Debug logging (remove in production)
-  React.useEffect(() => {
-    console.log('[DashboardView] Dashboard type:', dashboardType);
-    console.log('[DashboardView] Stats:', stats);
-  }, [dashboardType, stats]);
+  // Sidebar tab state management
+  const [sidebarActiveTab, setSidebarActiveTab] = React.useState(0);
 
   // Get conversations and selection state
   const conversations = useRecoilValue(chatwootConversationsAtom);
@@ -199,7 +198,7 @@ export const DashboardView: React.FC = () => {
             color: colorTokens.neutral[900],
           }}
         >
-          Chatwoot Dashboard
+          FrontDesk
         </Typography>
         <Typography
           variant="body2"
@@ -226,10 +225,45 @@ export const DashboardView: React.FC = () => {
           }}
         >
           {dashboardType === 'admin' ? (
-            <AdminStatsCards stats={adminStats} onCardClick={handleCardClick} />
+            <AdminStatsCards 
+              stats={adminStats} 
+              onCardClick={handleCardClick}
+              onWarningsClick={() => {
+                // Navigate to warnings settings subpage using the proper router method
+                chatwootRouter.navigateToSettings(ChatwootSettingsSubpage.WARNINGS);
+              }}
+            />
           ) : (
-            <AgentStatsCards stats={agentStats} onCardClick={handleCardClick} />
+            <AgentStatsCards 
+              stats={agentStats} 
+              onCardClick={handleCardClick}
+              onWarningsClick={() => {
+                // Navigate to warnings settings subpage using the proper router method
+                chatwootRouter.navigateToSettings(ChatwootSettingsSubpage.WARNINGS);
+              }}
+            />
           )}
+        </Box>
+      </ErrorBoundary>
+
+      {/* Notifications Widget Section */}
+      <ErrorBoundary context="Notifications Widget">
+        <Box
+          sx={{
+            px: 3,
+            py: 2,
+            backgroundColor: colorTokens.neutral[50],
+            borderBottom: `1px solid ${colorTokens.neutral[200]}`,
+          }}
+        >
+          <ChatwootNotificationsWidget
+            maxItems={5}
+            showHeader={true}
+            onViewAll={() => {
+              // Switch to Inbox tab in sidebar (tab index 1)
+              setSidebarActiveTab(1);
+            }}
+          />
         </Box>
       </ErrorBoundary>
 
@@ -317,6 +351,8 @@ export const DashboardView: React.FC = () => {
               onConversationSelect={handleConversationSelect}
               onViewAll={handleViewAllConversations}
               unreadNotificationCount={stats.unreadNotifications}
+              activeTab={sidebarActiveTab}
+              onTabChange={setSidebarActiveTab}
             />
           </Box>
         </ErrorBoundary>

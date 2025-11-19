@@ -15,8 +15,11 @@ import {
   Stack,
   Typography,
   IconButton,
+  Box,
+  CircularProgress,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
+import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 interface CreateContactModalProps {
@@ -138,9 +141,14 @@ export const CreateContactModal: React.FC<CreateContactModalProps> = ({
       onClose={handleClose}
       maxWidth="sm"
       fullWidth
+      aria-labelledby="create-contact-modal-title"
+      aria-describedby="create-contact-modal-description"
       PaperProps={{
         sx: {
-          borderRadius: "12px",
+          borderRadius: 2,
+          maxHeight: "90vh",
+          backgroundColor: neutralColor(0),
+          boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
         },
       }}
     >
@@ -150,20 +158,59 @@ export const CreateContactModal: React.FC<CreateContactModalProps> = ({
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
-          borderBottom: `1px solid ${neutralColor(200)}`,
-          pb: 2,
+          borderBottom: `2px solid ${neutralColor(200)}`,
+          pb: 2.5,
+          pt: 3,
+          px: 4,
+          backgroundColor: neutralColor(0),
         }}
       >
-        <Typography variant="h6" sx={{ fontWeight: 600, color: neutralColor(900) }}>
-          Create New Contact
-        </Typography>
-        <IconButton onClick={handleClose} size="small" disabled={isSubmitting}>
+        <Stack direction="row" alignItems="center" spacing={2}>
+          <Box
+            sx={{
+              width: 40,
+              height: 40,
+              borderRadius: 2,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              backgroundColor: primaryColor(50),
+              color: primaryColor(600),
+            }}
+          >
+            <PersonAddIcon />
+          </Box>
+          <Typography
+            id="create-contact-modal-title"
+            variant="h5"
+            sx={{
+              fontWeight: 600,
+              color: neutralColor(900),
+              fontSize: "1.375rem",
+            }}
+          >
+            Create New Contact
+          </Typography>
+        </Stack>
+        <IconButton
+          onClick={handleClose}
+          size="small"
+          disabled={isSubmitting}
+          aria-label="Close create contact modal"
+          sx={{
+            color: neutralColor(600),
+            "&:hover": {
+              backgroundColor: neutralColor(100),
+              color: neutralColor(900),
+            },
+          }}
+        >
           <CloseIcon />
         </IconButton>
       </DialogTitle>
 
       {/* Content */}
-      <DialogContent sx={{ pt: 3 }}>
+      <DialogContent sx={{ px: 4, pt: 3, pb: 2 }}>
         <Stack spacing={2.5}>
           {/* Name Field */}
           <div>
@@ -267,11 +314,32 @@ export const CreateContactModal: React.FC<CreateContactModalProps> = ({
       </DialogContent>
 
       {/* Footer */}
-      <DialogActions sx={{ borderTop: `1px solid ${neutralColor(200)}`, px: 3, py: 2 }}>
+      <DialogActions
+        sx={{
+          borderTop: `2px solid ${neutralColor(200)}`,
+          px: 4,
+          py: 2.5,
+          backgroundColor: neutralColor(0),
+        }}
+      >
         <Button
           onClick={handleClose}
           disabled={isSubmitting}
-          sx={{ textTransform: "none", color: neutralColor(700) }}
+          sx={{
+            textTransform: "none",
+            color: neutralColor(700),
+            fontWeight: 500,
+            fontSize: "0.875rem",
+            px: 2.5,
+            py: 0.75,
+            borderRadius: 1,
+            "&:hover": {
+              backgroundColor: neutralColor(50),
+            },
+            "&:disabled": {
+              color: neutralColor(400),
+            },
+          }}
         >
           Cancel
         </Button>
@@ -279,14 +347,31 @@ export const CreateContactModal: React.FC<CreateContactModalProps> = ({
           onClick={handleSubmit}
           disabled={isSubmitting || !name.trim()}
           variant="contained"
+          startIcon={isSubmitting ? <CircularProgress size={18} color="inherit" /> : <PersonAddIcon />}
+          aria-label={isSubmitting ? "Creating contact" : "Create contact"}
           sx={{
             textTransform: "none",
             backgroundColor: primaryColor(600),
-            "&:hover": { backgroundColor: primaryColor(700) },
-            "&:disabled": { backgroundColor: neutralColor(300) },
+            color: "white",
+            fontWeight: 600,
+            fontSize: "0.875rem",
+            px: 4,
+            py: 1.25,
+            borderRadius: 1,
+            boxShadow: `0 1px 3px rgba(0, 0, 0, 0.1)`,
+            "&:hover": {
+              backgroundColor: primaryColor(700),
+              boxShadow: `0 4px 6px rgba(0, 0, 0, 0.1)`,
+            },
+            "&:disabled": {
+              backgroundColor: neutralColor(300),
+              color: neutralColor(500),
+            },
           }}
         >
-          {isSubmitting ? "Creating..." : "Create Contact"}
+          <Box component="span" role={isSubmitting ? "status" : undefined} aria-live="polite">
+            {isSubmitting ? "Creating..." : "Create Contact"}
+          </Box>
         </Button>
       </DialogActions>
     </Dialog>

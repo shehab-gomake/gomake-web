@@ -10,28 +10,23 @@ import { Box, Grid } from "@mui/material";
 import { StatCard } from "@/widgets/frontdesk/design-system";
 import ForumIcon from "@mui/icons-material/Forum";
 import AssignmentLateIcon from "@mui/icons-material/AssignmentLate";
-import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import TrendingUpIcon from "@mui/icons-material/TrendingUp";
+import { ChatwootWarningsCard } from "./chatwoot-warnings-widget";
 import type { AdminDashboardStats } from "../../hooks/use-chatwoot-dashboard-stats";
 
 export interface AdminStatsCardsProps {
   stats: AdminDashboardStats;
   isLoading?: boolean;
   onCardClick?: (cardType: string) => void;
+  onWarningsClick?: () => void;
 }
 
-/**
- * Formats response time in minutes to a human-readable string
- */
-const formatResponseTime = (minutes: number): string => {
-  if (minutes === 0) return "N/A";
-  if (minutes < 60) return `${minutes}m`;
-  const hours = Math.floor(minutes / 60);
-  const mins = minutes % 60;
-  return mins > 0 ? `${hours}h ${mins}m` : `${hours}h`;
-};
-
-export const AdminStatsCards: React.FC<AdminStatsCardsProps> = ({ stats, isLoading = false, onCardClick }) => {
+export const AdminStatsCards: React.FC<AdminStatsCardsProps> = ({ 
+  stats, 
+  isLoading = false, 
+  onCardClick,
+  onWarningsClick 
+}) => {
   return (
     <Box sx={{ mb: 3 }}>
       <Grid container spacing={2}>
@@ -61,19 +56,6 @@ export const AdminStatsCards: React.FC<AdminStatsCardsProps> = ({ stats, isLoadi
           />
         </Grid>
 
-        {/* Average Team Response Time */}
-        <Grid item xs={12} sm={6} md={3}>
-          <StatCard
-            label="Team Avg Response"
-            value={formatResponseTime(stats.averageTeamResponseTime)}
-            icon={<AccessTimeIcon />}
-            variant="neutral"
-            description="Team average"
-            isLoading={isLoading}
-            onClick={() => onCardClick?.("team-response-time")}
-          />
-        </Grid>
-
         {/* Active Today */}
         <Grid item xs={12} sm={6} md={3}>
           <StatCard
@@ -85,6 +67,11 @@ export const AdminStatsCards: React.FC<AdminStatsCardsProps> = ({ stats, isLoadi
             isLoading={isLoading}
             onClick={() => onCardClick?.("active-today")}
           />
+        </Grid>
+
+        {/* System Warnings */}
+        <Grid item xs={12} sm={6} md={3}>
+          <ChatwootWarningsCard onClick={onWarningsClick} />
         </Grid>
       </Grid>
     </Box>

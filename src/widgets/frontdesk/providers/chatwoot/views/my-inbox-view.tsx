@@ -134,7 +134,7 @@ export const MyInboxView: React.FC = () => {
             mb: 0.5,
           }}
         >
-          My Inbox
+          My Tickets
         </Typography>
         <Typography
           variant="body2"

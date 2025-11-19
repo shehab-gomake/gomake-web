@@ -46,11 +46,13 @@ import { ComposeConversationModal } from "@/widgets/frontdesk/providers/chatwoot
 import { InboxIcon as ChatwootInboxIcon } from "@/widgets/frontdesk/providers/chatwoot/utils/inbox-icons";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useRouter } from "next/router";
-import { chatwootSelectedAccountAtom } from "@/store/frontdesk/atoms/chatwoot.atoms";
+import { chatwootSelectedAccountAtom, chatwootInboxAgentsMapAtom } from "@/store/frontdesk/atoms/chatwoot.atoms";
 import { useRecoilValue } from "recoil";
 import { RouteBuilder, buildRoute } from "@/widgets/frontdesk/routing/route-builder";
 import { ChatwootView } from "@/widgets/frontdesk/routing/types";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import WarningIcon from "@mui/icons-material/Warning";
+import type { Agent } from "@/services/frontdesk/api/chatwoot/types/agents.types";
 
 /**
  * Legacy type exports for backward compatibility
@@ -170,12 +172,16 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
   const [chatwootChannelsExpanded, setChatwootChannelsExpanded] = useState(true);
   const [showAddChannelModal, setShowAddChannelModal] = useState(false);
   const [showComposeModal, setShowComposeModal] = useState(false);
+  const [preloadedInboxForModal, setPreloadedInboxForModal] = useState<{ accountId: number; inboxId: number } | null>(null);
 
   // Get selected Chatwoot account
   const selectedAccount = useRecoilValue(chatwootSelectedAccountAtom);
 
   // Fetch Chatwoot inboxes (channels)
   const { inboxes, loading: inboxesLoading, selectedInboxId, selectInbox } = useChatwootInboxes();
+
+  // Get inbox agents map to check which inboxes have agents
+  const inboxAgentsMap = useRecoilValue(chatwootInboxAgentsMapAtom);
 
   // Get current Chatwoot view for accurate selection state
   const {
@@ -292,7 +298,7 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
                     },
                   }}
                 >
-                  New Conversation
+                  New Ticket
                 </Button>
               </Box>
             ) : (
@@ -304,7 +310,7 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
                   justifyContent: "center",
                 }}
               >
-                <Tooltip title="New Conversation" placement="right">
+                <Tooltip title="New Ticket" placement="right">
                   <IconButton
                     onClick={() => setShowComposeModal(true)}
                     sx={{
@@ -389,8 +395,8 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
               </ListItemButton>
             </Tooltip>
 
-            {/* My Inbox */}
-            <Tooltip title="My Inbox" placement="right" disableHoverListener={!isCollapsed}>
+            {/* My Tickets */}
+            <Tooltip title="My Tickets" placement="right" disableHoverListener={!isCollapsed}>
               <ListItemButton
                 selected={isMyInboxView}
                 onClick={(e) => {
@@ -407,7 +413,7 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
                     onChannelSelect("chatwoot" as Channel);
                   }
 
-                  // Then navigate to My Inbox
+                  // Then navigate to My Tickets
                   router.replace(path, undefined, { shallow: options.scroll === false });
                 }}
                 sx={{
@@ -434,7 +440,7 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
                       <InboxIcon fontSize="small" />
                     </Box>
                     <ListItemText
-                      primary="My Inbox"
+                      primary="My Tickets"
                       primaryTypographyProps={{
                         variant: "body2",
                         sx: {
@@ -464,7 +470,7 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
                       <CommentIcon fontSize="small" />
                     </Box>
                     <ListItemText
-                      primary="Conversations"
+                      primary="Tickets"
                       primaryTypographyProps={{
                         variant: "body2",
                         sx: { fontSize: "0.875rem" },
@@ -475,8 +481,8 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
                 </ListItemButton>
                 <Collapse in={chatwootConversationsExpanded}>
                   <List disablePadding sx={{ pointerEvents: "auto" }}>
-                    {/* All Conversations */}
-                    <Tooltip title="All Conversations" placement="right">
+                    {/* All Tickets */}
+                    <Tooltip title="All Tickets" placement="right">
                       <ListItemButton
                         selected={isAllConversationsView}
                         onClick={(e) => {
@@ -516,7 +522,7 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
                           </Box>
                         ) : (
                           <ListItemText
-                            primary="All conversations"
+                            primary="All tickets"
                             primaryTypographyProps={{
                               variant: "body2",
                               sx: { fontSize: "0.813rem", color: theme.palette.text.secondary },
@@ -711,95 +717,129 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
                         />
                       </ListItemButton>
                     ) : (
-                      inboxes.map((inbox: any) => (
-                        <Tooltip key={inbox.id} title={inbox.name} placement="right">
-                          <ListItemButton
-                            selected={isChannelsView && selectedInboxId === inbox.id}
-                            onClick={(e) => {
-                              e.stopPropagation();
+                      inboxes.map((inbox: any) => {
+                        // Check if inbox has at least one non-administrator agent
+                        const inboxAgents: Agent[] = inboxAgentsMap[inbox.id] || [];
+                        const nonAdminAgents = inboxAgents.filter((agent: Agent) => agent.role !== "administrator");
+                        const hasNonAdminAgents = nonAdminAgents.length > 0;
+                        const inboxName = hasNonAdminAgents ? inbox.name : `${inbox.name} (No agents assigned)`;
 
-                              // Use RouteBuilder for type-safe navigation
-                              const route = RouteBuilder.chatwoot(ChatwootView.CHANNELS, undefined, inbox.id.toString());
-                              const { path, options } = buildRoute(route, { replace: true });
+                        return (
+                          <Tooltip key={inbox.id} title={inboxName} placement="right">
+                            <ListItemButton
+                              selected={isChannelsView && selectedInboxId === inbox.id}
+                              onClick={(e) => {
+                                e.stopPropagation();
 
-                              // Navigate to Chatwoot channel first if not already there
-                              if (selectedChannel !== "chatwoot") {
-                                onSectionSelect("inbox");
-                                onChannelSelect("chatwoot" as Channel);
-                              } else if (selectedSection !== "inbox") {
-                                onSectionSelect("inbox");
-                              }
+                                // If inbox has no non-admin agents, open the modal at step 3 to assign agents
+                                if (!hasNonAdminAgents && selectedAccount) {
+                                  console.log("[NavigationSidebar] Inbox has no non-admin agents. Opening modal to assign agents.", {
+                                    inboxId: inbox.id,
+                                    inboxName: inbox.name,
+                                    totalAgents: inboxAgents.length,
+                                    nonAdminAgents: nonAdminAgents.length,
+                                    agents: inboxAgents.map(a => ({ id: a.id, name: a.name, role: a.role }))
+                                  });
+                                  setPreloadedInboxForModal({ accountId: selectedAccount, inboxId: inbox.id });
+                                  setShowAddChannelModal(true);
+                                  return;
+                                }
 
-                              // Navigate to the specific channel view
-                              // The router will sync the state from URL → Recoil automatically
-                              // This prevents race conditions between state and URL updates
-                              router.replace(path, undefined, { shallow: options.scroll === false });
-                            }}
-                            sx={{
-                              py: 0.5,
-                              pl: 5,
-                              pr: 2,
-                              pointerEvents: "auto",
-                              "&.Mui-selected": {
-                                backgroundColor: theme.palette.primary.main + "10",
-                                "&:hover": {
-                                  backgroundColor: theme.palette.primary.main + "20",
-                                },
-                              },
-                              "&:hover": {
-                                backgroundColor: theme.palette.action.hover,
-                              },
-                            }}
-                          >
-                            <Box
+                                // Use RouteBuilder for type-safe navigation
+                                const route = RouteBuilder.chatwoot(ChatwootView.CHANNELS, undefined, inbox.id.toString());
+                                const { path, options } = buildRoute(route, { replace: true });
+
+                                // Navigate to Chatwoot channel first if not already there
+                                if (selectedChannel !== "chatwoot") {
+                                  onSectionSelect("inbox");
+                                  onChannelSelect("chatwoot" as Channel);
+                                } else if (selectedSection !== "inbox") {
+                                  onSectionSelect("inbox");
+                                }
+
+                                // Navigate to the specific channel view
+                                // The router will sync the state from URL → Recoil automatically
+                                // This prevents race conditions between state and URL updates
+                                router.replace(path, undefined, { shallow: options.scroll === false });
+                              }}
                               sx={{
-                                display: "flex",
-                                alignItems: "center",
-                                gap: 1.5,
-                                width: "100%",
+                                py: 0.5,
+                                pl: 5,
+                                pr: 2,
+                                pointerEvents: "auto",
+                                "&.Mui-selected": {
+                                  backgroundColor: theme.palette.primary.main + "10",
+                                  "&:hover": {
+                                    backgroundColor: theme.palette.primary.main + "20",
+                                  },
+                                },
+                                "&:hover": {
+                                  backgroundColor: theme.palette.action.hover,
+                                },
                               }}
                             >
-                              {/* Inbox Icon */}
                               <Box
                                 sx={{
                                   display: "flex",
                                   alignItems: "center",
-                                  color: selectedInboxId === inbox.id 
-                                    ? theme.palette.primary.main 
-                                    : theme.palette.text.secondary,
-                                  flexShrink: 0,
+                                  gap: 1.5,
+                                  width: "100%",
                                 }}
                               >
-                                <ChatwootInboxIcon
-                                  channelType={inbox.channel_type}
-                                  medium={inbox.medium}
-                                  size={16}
+                                {/* Inbox Icon */}
+                                <Box
+                                  sx={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    color: selectedInboxId === inbox.id 
+                                      ? theme.palette.primary.main 
+                                      : theme.palette.text.secondary,
+                                    flexShrink: 0,
+                                  }}
+                                >
+                                  <ChatwootInboxIcon
+                                    channelType={inbox.channel_type}
+                                    medium={inbox.medium}
+                                    size={16}
+                                  />
+                                </Box>
+                                {/* Inbox Name and Type */}
+                                <ListItemText
+                                  primary={inbox.name}
+                                  secondary={inbox.channel_type?.replace("Channel::", "") || inbox.provider}
+                                  primaryTypographyProps={{
+                                    variant: "body2",
+                                    sx: {
+                                      fontSize: "0.813rem",
+                                      fontWeight: selectedInboxId === inbox.id ? 600 : 400,
+                                      color: theme.palette.text.primary,
+                                    },
+                                  }}
+                                  secondaryTypographyProps={{
+                                    variant: "caption",
+                                    sx: {
+                                      fontSize: "0.688rem",
+                                      color: theme.palette.text.secondary,
+                                    },
+                                  }}
                                 />
+                                {/* Warning Badge for inboxes without non-admin agents */}
+                                {!hasNonAdminAgents && (
+                                  <Tooltip title="No agents assigned" placement="top">
+                                    <WarningIcon
+                                      sx={{
+                                        fontSize: 16,
+                                        color: theme.palette.warning.main,
+                                        flexShrink: 0,
+                                      }}
+                                    />
+                                  </Tooltip>
+                                )}
                               </Box>
-                              {/* Inbox Name and Type */}
-                              <ListItemText
-                                primary={inbox.name}
-                                secondary={inbox.channel_type?.replace("Channel::", "") || inbox.provider}
-                                primaryTypographyProps={{
-                                  variant: "body2",
-                                  sx: {
-                                    fontSize: "0.813rem",
-                                    fontWeight: selectedInboxId === inbox.id ? 600 : 400,
-                                    color: theme.palette.text.primary,
-                                  },
-                                }}
-                                secondaryTypographyProps={{
-                                  variant: "caption",
-                                  sx: {
-                                    fontSize: "0.688rem",
-                                    color: theme.palette.text.secondary,
-                                  },
-                                }}
-                              />
-                            </Box>
-                          </ListItemButton>
-                        </Tooltip>
-                      ))
+                            </ListItemButton>
+                          </Tooltip>
+                        );
+                      })
                     )}
                   </List>
                 </Collapse>
@@ -923,7 +963,15 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
       </Box>
 
       {/* Add Channel Modal */}
-      <AddChannelModal open={showAddChannelModal} onClose={() => setShowAddChannelModal(false)} />
+      <AddChannelModal 
+        open={showAddChannelModal} 
+        onClose={() => {
+          setShowAddChannelModal(false);
+          setPreloadedInboxForModal(null);
+        }}
+        preloadedInboxId={preloadedInboxForModal?.inboxId}
+        preloadedAccountId={preloadedInboxForModal?.accountId}
+      />
 
       {/* Compose Conversation Modal */}
       <ComposeConversationModal
