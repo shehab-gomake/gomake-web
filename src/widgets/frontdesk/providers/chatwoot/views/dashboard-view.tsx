@@ -9,6 +9,7 @@ import React, { useMemo } from 'react';
 import { Box, Typography } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { colorTokens } from '@/widgets/frontdesk/design-system/tokens';
+import { ChatwootSettingsSubpage } from '@/widgets/frontdesk/routing/types';
 import { useChatwootProvider } from '../hooks/use-chatwoot-provider';
 import { useAgentDashboardStats, useAdminDashboardStats } from '../hooks/use-chatwoot-dashboard-stats';
 import { useChatwootDashboardType } from '../hooks/use-chatwoot-dashboard-type';
@@ -29,19 +30,16 @@ export const DashboardView: React.FC = () => {
   const theme = useTheme();
   const { router: chatwootRouter } = useChatwootProvider();
   const dashboardType = useChatwootDashboardType();
-  
+
   // Use role-specific stats hooks - only call the one we need
   const agentStats = useAgentDashboardStats();
   const adminStats = useAdminDashboardStats();
-  
+
   // Select stats based on dashboard type
   const stats = dashboardType === 'admin' ? adminStats : agentStats;
 
-  // Debug logging (remove in production)
-  React.useEffect(() => {
-    console.log('[DashboardView] Dashboard type:', dashboardType);
-    console.log('[DashboardView] Stats:', stats);
-  }, [dashboardType, stats]);
+  // Sidebar tab state management
+  const [sidebarActiveTab, setSidebarActiveTab] = React.useState(0);
 
   // Get conversations and selection state
   const conversations = useRecoilValue(chatwootConversationsAtom);
@@ -227,9 +225,23 @@ export const DashboardView: React.FC = () => {
           }}
         >
           {dashboardType === 'admin' ? (
-            <AdminStatsCards stats={adminStats} onCardClick={handleCardClick} />
+            <AdminStatsCards 
+              stats={adminStats} 
+              onCardClick={handleCardClick}
+              onWarningsClick={() => {
+                // Navigate to warnings settings subpage using the proper router method
+                chatwootRouter.navigateToSettings(ChatwootSettingsSubpage.WARNINGS);
+              }}
+            />
           ) : (
-            <AgentStatsCards stats={agentStats} onCardClick={handleCardClick} />
+            <AgentStatsCards 
+              stats={agentStats} 
+              onCardClick={handleCardClick}
+              onWarningsClick={() => {
+                // Navigate to warnings settings subpage using the proper router method
+                chatwootRouter.navigateToSettings(ChatwootSettingsSubpage.WARNINGS);
+              }}
+            />
           )}
         </Box>
       </ErrorBoundary>
@@ -248,11 +260,8 @@ export const DashboardView: React.FC = () => {
             maxItems={5}
             showHeader={true}
             onViewAll={() => {
-              // Switch to Inbox tab in sidebar
-              const sidebarElement = document.querySelector('[role="tab"][aria-controls="dashboard-tabpanel-1"]') as HTMLElement;
-              if (sidebarElement) {
-                sidebarElement.click();
-              }
+              // Switch to Inbox tab in sidebar (tab index 1)
+              setSidebarActiveTab(1);
             }}
           />
         </Box>
@@ -342,6 +351,8 @@ export const DashboardView: React.FC = () => {
               onConversationSelect={handleConversationSelect}
               onViewAll={handleViewAllConversations}
               unreadNotificationCount={stats.unreadNotifications}
+              activeTab={sidebarActiveTab}
+              onTabChange={setSidebarActiveTab}
             />
           </Box>
         </ErrorBoundary>

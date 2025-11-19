@@ -12,12 +12,14 @@ import ChatIcon from "@mui/icons-material/Chat";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import { ChatwootWarningsCard } from "./chatwoot-warnings-widget";
 import type { AgentDashboardStats } from "../../hooks/use-chatwoot-dashboard-stats";
 
 export interface AgentStatsCardsProps {
   stats: AgentDashboardStats;
   isLoading?: boolean;
   onCardClick?: (cardType: string) => void;
+  onWarningsClick?: () => void;
 }
 
 /**
@@ -35,6 +37,7 @@ export const AgentStatsCards: React.FC<AgentStatsCardsProps> = ({
   stats,
   isLoading = false,
   onCardClick,
+  onWarningsClick,
 }) => {
   return (
     <Box sx={{ mb: 3 }}>
@@ -82,17 +85,9 @@ export const AgentStatsCards: React.FC<AgentStatsCardsProps> = ({
           />
         </Grid>
 
-        {/* Mentions */}
+        {/* System Warnings */}
         <Grid item xs={12} sm={6} md={3}>
-          <StatCard
-            label="Mentions"
-            value={stats.mentions}
-            icon={<ChatIcon />}
-            variant={stats.mentions === 0 ? "neutral" : "warning"}
-            description="Need my attention"
-            isLoading={isLoading}
-            onClick={() => onCardClick?.("mentions")}
-          />
+          <ChatwootWarningsCard onClick={onWarningsClick} />
         </Grid>
       </Grid>
     </Box>

@@ -6,10 +6,11 @@
  */
 
 import React, { useEffect } from "react";
-import { Box, Paper, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Typography, Divider, IconButton, Tooltip } from "@mui/material";
+import { Box, Paper, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Typography, Divider, IconButton, Tooltip, Badge } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { useChatwootProvider } from "../hooks/use-chatwoot-provider";
 import { useChatwootPermissions } from "../hooks/use-chatwoot-permissions";
+import { useChatwootWarnings } from "../hooks/use-chatwoot-warnings";
 import { VIEW_PERMISSIONS } from "../constants/permissions.constants";
 import { ChatwootSettingsSubpage } from "@/widgets/frontdesk/routing/types";
 import {
@@ -17,6 +18,7 @@ import {
   Inbox as InboxesIcon,
   Groups as TeamsIcon,
   Label as LabelsIcon,
+  Warning as WarningIcon,
   Person as ProfileIcon,
   ArrowBack as ArrowBackIcon,
   Webhook as WebhookIcon,
@@ -28,6 +30,7 @@ import { AgentsSubpage } from "./settings/agents-subpage";
 import { InboxesSubpage } from "./settings/inboxes-subpage";
 import { TeamsSubpage } from "./settings/teams-subpage";
 import { LabelsSubpage } from "./settings/labels-subpage";
+import { WarningsSettingsView } from "./settings/warnings-settings-view";
 import { ProfileSettingsSubpage } from "./settings/profile-settings-subpage";
 import { WebhookTestView } from "./webhook-test-view";
 import { OldFrontDeskSubpage } from "./settings/old-frontdesk-subpage";
@@ -60,6 +63,11 @@ const SETTINGS_MENU_ITEMS: SettingsMenuItem[] = [
     icon: <LabelsIcon />,
   },
   {
+    subpage: ChatwootSettingsSubpage.WARNINGS,
+    label: "Warnings",
+    icon: <WarningIcon />,
+  },
+  {
     subpage: ChatwootSettingsSubpage.PROFILE,
     label: "Profile Settings",
     icon: <ProfileIcon />,
@@ -79,6 +87,8 @@ const SETTINGS_MENU_ITEMS: SettingsMenuItem[] = [
 export const SettingsView: React.FC = () => {
   const theme = useTheme();
   const { router: chatwootRouter } = useChatwootProvider();
+  const warnings = useChatwootWarnings();
+  const warningCount = warnings.length;
 
   // Defense-in-depth: Check if user has permission to access Settings
   const { canAccess } = useChatwootPermissions();
@@ -106,6 +116,8 @@ export const SettingsView: React.FC = () => {
         return <TeamsSubpage />;
       case ChatwootSettingsSubpage.LABELS:
         return <LabelsSubpage />;
+      case ChatwootSettingsSubpage.WARNINGS:
+        return <WarningsSettingsView />;
       case ChatwootSettingsSubpage.PROFILE:
         return <ProfileSettingsSubpage />;
       case ChatwootSettingsSubpage.WEBHOOK_TEST:
@@ -164,6 +176,7 @@ export const SettingsView: React.FC = () => {
         <List sx={{ flex: 1, py: 1 }}>
           {SETTINGS_MENU_ITEMS.map((item) => {
             const isSelected = currentSubpage === item.subpage;
+            const showBadge = item.subpage === ChatwootSettingsSubpage.WARNINGS && warningCount > 0;
             return (
               <ListItem key={item.subpage} disablePadding>
                 <ListItemButton
@@ -185,7 +198,25 @@ export const SettingsView: React.FC = () => {
                       color: isSelected ? theme.palette.primary.main : theme.palette.text.secondary,
                     }}
                   >
-                    {item.icon}
+                    {showBadge ? (
+                      <Badge 
+                        badgeContent={warningCount} 
+                        color="error"
+                        max={99}
+                        sx={{
+                          '& .MuiBadge-badge': {
+                            fontSize: '0.625rem',
+                            height: 16,
+                            minWidth: 16,
+                            padding: '0 4px',
+                          },
+                        }}
+                      >
+                        {item.icon}
+                      </Badge>
+                    ) : (
+                      item.icon
+                    )}
                   </ListItemIcon>
                   <ListItemText
                     primary={item.label}

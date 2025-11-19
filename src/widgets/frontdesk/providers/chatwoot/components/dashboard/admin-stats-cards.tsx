@@ -11,15 +11,22 @@ import { StatCard } from "@/widgets/frontdesk/design-system";
 import ForumIcon from "@mui/icons-material/Forum";
 import AssignmentLateIcon from "@mui/icons-material/AssignmentLate";
 import TrendingUpIcon from "@mui/icons-material/TrendingUp";
+import { ChatwootWarningsCard } from "./chatwoot-warnings-widget";
 import type { AdminDashboardStats } from "../../hooks/use-chatwoot-dashboard-stats";
 
 export interface AdminStatsCardsProps {
   stats: AdminDashboardStats;
   isLoading?: boolean;
   onCardClick?: (cardType: string) => void;
+  onWarningsClick?: () => void;
 }
 
-export const AdminStatsCards: React.FC<AdminStatsCardsProps> = ({ stats, isLoading = false, onCardClick }) => {
+export const AdminStatsCards: React.FC<AdminStatsCardsProps> = ({ 
+  stats, 
+  isLoading = false, 
+  onCardClick,
+  onWarningsClick 
+}) => {
   return (
     <Box sx={{ mb: 3 }}>
       <Grid container spacing={2}>
@@ -60,6 +67,11 @@ export const AdminStatsCards: React.FC<AdminStatsCardsProps> = ({ stats, isLoadi
             isLoading={isLoading}
             onClick={() => onCardClick?.("active-today")}
           />
+        </Grid>
+
+        {/* System Warnings */}
+        <Grid item xs={12} sm={6} md={3}>
+          <ChatwootWarningsCard onClick={onWarningsClick} />
         </Grid>
       </Grid>
     </Box>

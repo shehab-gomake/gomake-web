@@ -142,6 +142,7 @@ export enum ChatwootSettingsSubpage {
   INBOXES = "inboxes",
   TEAMS = "teams",
   LABELS = "labels",
+  WARNINGS = "warnings",
   PROFILE = "profile",
   WEBHOOK_TEST = "webhook-test",
   OLD_FRONTDESK = "old-frontdesk",
