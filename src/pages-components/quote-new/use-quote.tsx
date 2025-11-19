@@ -62,6 +62,7 @@ import {
   updatePurchaseNumberApi,
   checkPurchaseNumberExistsApi,
   updateQuoteItemQuantityApi,
+  updateQuoteClientNoteAsShownApi,
 } from "@/services/api-service/generic-doc/documents-api";
 import { DOCUMENT_TYPE } from "../quotes/enums";
 import { useRouter } from "next/router";
@@ -300,8 +301,29 @@ const useQuoteNew = ({
   const onClickOpenNewItemNotesModal = () => {
     setOpenNewItemNotesModal(true);
   };
-  const onClickCloseNewItemNotesModal = () => {
+  const onClickCloseNewItemNotesModal = async () => {
     setOpenNewItemNotesModal(false);
+
+    // Call API to update isClientNoteShown flag when closing the modal
+    // Only call if flag is null or false (hasn't been set yet)
+    if (
+      quoteItemValue?.id &&
+      docType === DOCUMENT_TYPE.quote &&
+      (quoteItemValue?.client?.isClientNoteShown === null ||
+        quoteItemValue?.client?.isClientNoteShown === false ||
+        quoteItemValue?.isClientNoteShown === null ||
+        quoteItemValue?.isClientNoteShown === false)
+    ) {
+      const callBack = (res) => {
+        if (res?.success) {
+          // Refresh the quote to get updated flag
+          getQuote();
+        }
+      };
+      await updateQuoteClientNoteAsShownApi(callApi, callBack, {
+        quoteId: quoteItemValue?.id,
+      });
+    }
   };
 
   useEffect(() => {
@@ -309,7 +331,11 @@ const useQuoteNew = ({
       quoteItemValue?.client?.newItemNotes &&
       quoteItemValue?.client?.newItemNotes.trim() !== "" &&
       quoteItemValue?.client?.newItemNotes.trim() !== null &&
-      docType === DOCUMENT_TYPE.quote
+      docType === DOCUMENT_TYPE.quote &&
+      (quoteItemValue?.client?.isClientNoteShown === null ||
+        quoteItemValue?.client?.isClientNoteShown === false ||
+        quoteItemValue?.isClientNoteShown === null ||
+        quoteItemValue?.isClientNoteShown === false)
     ) {
       onClickOpenNewItemNotesModal();
     }
@@ -444,11 +470,11 @@ const useQuoteNew = ({
     "#",
     isDeliveryNote || isInvoice ? t("products.profits.documentNumber") : null,
     !CheckPreferenceValue(EPreferences.HIDE_ITEM_CODE_FROM_DOCUMENT_CART) &&
-      t("sales.quote.itemCode"),
+    t("sales.quote.itemCode"),
     !CheckPreferenceValue(EPreferences.HIDE_ITEM_CODE_FROM_DOCUMENT_CART) &&
-      t("products.profits.itemName"),
+    t("products.profits.itemName"),
     CheckPreferenceValue(EPreferences.HIDE_ITEM_CODE_FROM_DOCUMENT_CART) &&
-      t("products.profits.itemName"),
+    t("products.profits.itemName"),
     showDetails ? t("products.profits.details") : null,
     t("sales.quote.amount"),
     showPrices ? t("products.profits.pricingListWidget.unitPrice") : null,
@@ -467,8 +493,8 @@ const useQuoteNew = ({
     source?.showDetails === ShowDocumentDetailsEnum.All
       ? "25%"
       : source?.showDetails === ShowDocumentDetailsEnum.ShowJobNameOnly
-      ? "10%"
-      : null, // Details column (optional)
+        ? "10%"
+        : null, // Details column (optional)
     "10%", // Amount
     showPrices ? "10%" : null, // Unit Price
     showPrices ? "10%" : null, // Discount
@@ -1287,7 +1313,7 @@ const useQuoteNew = ({
             discount: quoteItem?.discount,
             isPrintHouseMaterialItem:
               quoteItem?.printHouseMaterialId &&
-              (isPrintHouseMaterialItem || selectedFirstMaterial)
+                (isPrintHouseMaterialItem || selectedFirstMaterial)
                 ? true
                 : false,
             finalPrice: quoteItemEdit?.finalPrice,
@@ -1530,7 +1556,7 @@ const useQuoteNew = ({
           alertSuccessDelete();
           onCloseDeleteItemModal();
           quoteItemValue?.documentItems?.length === 1 ||
-          res?.data?.succ === false
+            res?.data?.succ === false
             ? navigate("/home")
             : getQuote();
         } else {
@@ -1918,7 +1944,7 @@ const useQuoteNew = ({
   const receiptSendModal = useModal();
   const [modalCallback, setModalCallback] = useState<
     (includeInvoices: boolean) => void
-  >(() => () => {});
+  >(() => () => { });
 
   const openReceiptModal = (callback: (includeInvoices: boolean) => void) => {
     receiptSendModal.open();
@@ -2644,10 +2670,10 @@ const useQuoteNew = ({
         isOrder
           ? onclickCreateNew()
           : navigate(
-              isOutgoingPayments
-                ? `/${documentPath}?isOutgoingPayments=true&isNewCreation=true`
-                : `/${documentPath}?isNewCreation=true`
-            )
+            isOutgoingPayments
+              ? `/${documentPath}?isOutgoingPayments=true&isNewCreation=true`
+              : `/${documentPath}?isNewCreation=true`
+          )
       }
       startIcon={<PlusIcon />}
     >
