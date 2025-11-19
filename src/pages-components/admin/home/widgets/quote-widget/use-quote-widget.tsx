@@ -467,6 +467,11 @@ const useQuoteWidget = () => {
   const onClickCreateQuoteForCustomer = (compositeData?: {
     workName?: string;
     quantity?: number;
+    compositeProducts?: Array<{
+      id: string;
+      quantity: number;
+      jobName: string;
+    }>;
   }) => {
     if (selectedProduct?.category === ProductCategoryType.MATERIAL) {
       addDocumentItemFromMaterial();
@@ -493,11 +498,17 @@ const useQuoteWidget = () => {
       if (
         selectedProduct?.productStructureType === EProductStructureType.COMPOSITE
       ) {
-        if (compositeData?.workName) {
-          params.append("workName", compositeData.workName);
-        }
-        if (typeof compositeData?.quantity === "number") {
-          params.append("quantity", String(compositeData.quantity));
+        // Handle new format with compositeProducts array
+        if (compositeData?.compositeProducts && Array.isArray(compositeData.compositeProducts)) {
+          params.append("compositeProducts", JSON.stringify(compositeData.compositeProducts));
+        } else {
+          // Handle old format for backward compatibility
+          if (compositeData?.workName) {
+            params.append("workName", compositeData.workName);
+          }
+          if (typeof compositeData?.quantity === "number") {
+            params.append("quantity", String(compositeData.quantity));
+          }
         }
       }
       navigate(`/products/create?${params.toString()}`);
@@ -513,11 +524,17 @@ const useQuoteWidget = () => {
       if (
         selectedProduct?.productStructureType === EProductStructureType.COMPOSITE
       ) {
-        if (compositeData?.workName) {
-          params.append("workName", compositeData.workName);
-        }
-        if (typeof compositeData?.quantity === "number") {
-          params.append("quantity", String(compositeData.quantity));
+        // Handle new format with compositeProducts array
+        if (compositeData?.compositeProducts && Array.isArray(compositeData.compositeProducts)) {
+          params.append("compositeProducts", JSON.stringify(compositeData.compositeProducts));
+        } else {
+          // Handle old format for backward compatibility
+          if (compositeData?.workName) {
+            params.append("workName", compositeData.workName);
+          }
+          if (typeof compositeData?.quantity === "number") {
+            params.append("quantity", String(compositeData.quantity));
+          }
         }
       }
       navigate(`/products/create?${params.toString()}`);

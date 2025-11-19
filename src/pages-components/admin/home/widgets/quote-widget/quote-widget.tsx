@@ -7,7 +7,7 @@ import {
 } from "@/components";
 import { useQuoteWidget } from "./use-quote-widget";
 import { useStyle } from "./style";
-import { Popover } from "@mui/material";
+import { Divider, Popover, Skeleton } from "@mui/material";
 import { PermissionCheck } from "@/components/CheckPermission/check-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { useEffect, useState } from "react";
@@ -29,6 +29,9 @@ import { getHeadingTypography } from "@/utils/typography-utils";
 import { PrimaryButton } from "@/components/button/primary-button";
 import { EProductStructureType } from "@/widgets/shared-admin-customers/add-product/settings/settings-data";
 import { ProductCategoryType } from "./states";
+import { useGomakeAxios } from "@/hooks";
+import { getCompositeProductById } from "@/services/hooks/admin-side/products/get-set-product-by-id";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 interface QuoteWidgetProps {
   isMobileScreen?: boolean;
@@ -86,59 +89,219 @@ const QuoteWidget = ({ isMobileScreen = false, title }: QuoteWidgetProps) => {
     onclickCreateNew,
     onCustomerAddFromOption,
   } = useQuoteWidget();
-
+  const { secondColor } = useGomakeTheme();
+  const { callApi } = useGomakeAxios();
   const [compositeDialogOpen, setCompositeDialogOpen] = useState(false);
-  const [compositeWorkName, setCompositeWorkName] = useState<string>("");
-  const [compositeQuantity, setCompositeQuantity] = useState<string>("");
+  const [compositeProducts, setCompositeProducts] = useState<Array<{
+    id: string;
+    name: string;
+    quantity: number;
+    jobName: string;
+    baseQuantity: number; // Original quantity from backend
+    isManuallyEdited: boolean; // Track if user manually edited this product's quantity
+    isJobNameManuallyEdited: boolean; // Track if user manually edited this product's jobName
+  }>>([]);
+  const [quantityMultiplier, setQuantityMultiplier] = useState<number>(1);
+  const [mainJobName, setMainJobName] = useState<string>("");
+  const [isLoadingCompositeProducts, setIsLoadingCompositeProducts] = useState(false);
   const [compositeErrors, setCompositeErrors] = useState<{
-    workName?: string;
-    quantity?: string;
+    [key: string]: {
+      quantity?: string;
+      jobName?: string;
+    };
   }>({});
 
   const isCompositeSelectedProduct =
     selectedProduct?.category === ProductCategoryType.PRODUCT &&
     selectedProduct?.productStructureType === EProductStructureType.COMPOSITE;
 
-  const openCompositeDialog = () => {
-    setCompositeWorkName("");
-    setCompositeQuantity("");
+  const openCompositeDialog = async () => {
     setCompositeErrors({});
     setCompositeDialogOpen(true);
+
+    if (selectedProduct?.id) {
+      setIsLoadingCompositeProducts(true);
+      try {
+        const result = await getCompositeProductById(callApi, null, {
+          Id: selectedProduct.id,
+        });
+
+        // Handle different possible response structures
+        let productsData = null;
+        if (Array.isArray(result)) {
+          productsData = result;
+        } else if (result?.data) {
+          productsData = Array.isArray(result.data) ? result.data : result.data.data;
+        }
+
+        if (productsData && Array.isArray(productsData)) {
+          // Map the API response to our state structure
+          const baseQty = productsData[0]?.quantity || 1;
+          const products = productsData.map((product: any) => ({
+            id: product.id,
+            name: product.name,
+            baseQuantity: product.quantity || 1,
+            quantity: product.quantity || 1,
+            jobName: product.jobName || "",
+            isManuallyEdited: false,
+            isJobNameManuallyEdited: false,
+          }));
+          setCompositeProducts(products);
+          setQuantityMultiplier(1);
+        } else {
+          setCompositeProducts([]);
+          setQuantityMultiplier(1);
+        }
+      } catch (error) {
+        console.error("Error fetching composite products:", error);
+        setCompositeProducts([]);
+      } finally {
+        setIsLoadingCompositeProducts(false);
+      }
+    }
   };
 
   const handleCompositeCancel = () => {
     setCompositeDialogOpen(false);
     setCompositeErrors({});
+    setCompositeProducts([]);
+    setQuantityMultiplier(1);
+    setMainJobName("");
+  };
+
+  const handleMainJobNameChange = (value: string) => {
+    setMainJobName(value);
+
+    // Update job names for products that haven't been manually edited
+    // Only update products with empty jobName from BE or that were set from main field
+    setCompositeProducts((prev) =>
+      prev.map((product) => {
+        // Only update if jobName hasn't been manually edited
+        if (!product.isJobNameManuallyEdited) {
+          return {
+            ...product,
+            jobName: value,
+          };
+        }
+        return product;
+      })
+    );
+  };
+
+  const handleMultiplierChange = (value: number) => {
+    setQuantityMultiplier(value);
+
+    // Update ALL products when multiplier changes (reset manual edits)
+    setCompositeProducts((prev) =>
+      prev.map((product) => ({
+        ...product,
+        quantity: product.baseQuantity * value,
+        isManuallyEdited: false, // Reset manual edit flag so multiplier affects all products
+      }))
+    );
+  };
+
+  const handleProductQuantityChange = (index: number, value: number) => {
+    setCompositeProducts((prev) => {
+      const updated = [...prev];
+      updated[index] = {
+        ...updated[index],
+        quantity: value,
+        isManuallyEdited: true, // Mark as manually edited
+      };
+      return updated;
+    });
+
+    // Clear error for this field
+    if (compositeErrors[`${index}`]?.quantity) {
+      setCompositeErrors((prev) => {
+        const updated = { ...prev };
+        if (updated[`${index}`]) {
+          const productErrors = { ...updated[`${index}`] };
+          delete productErrors.quantity;
+          if (Object.keys(productErrors).length === 0) {
+            delete updated[`${index}`];
+          } else {
+            updated[`${index}`] = productErrors;
+          }
+        }
+        return updated;
+      });
+    }
+  };
+
+  const updateCompositeProduct = (index: number, field: "jobName", value: string) => {
+    setCompositeProducts((prev) => {
+      const updated = [...prev];
+      updated[index] = {
+        ...updated[index],
+        [field]: value,
+        isJobNameManuallyEdited: true, // Mark as manually edited
+      };
+      return updated;
+    });
+
+    // Clear error for this field
+    if (compositeErrors[`${index}`]?.[field]) {
+      setCompositeErrors((prev) => {
+        const updated = { ...prev };
+        if (updated[`${index}`]) {
+          const productErrors = { ...updated[`${index}`] };
+          delete productErrors[field];
+          if (Object.keys(productErrors).length === 0) {
+            delete updated[`${index}`];
+          } else {
+            updated[`${index}`] = productErrors;
+          }
+        }
+        return updated;
+      });
+    }
   };
 
   const handleCompositeConfirm = () => {
-    const errors: { workName?: string; quantity?: string } = {};
-    const trimmedWorkName = compositeWorkName.trim();
-    if (!trimmedWorkName) {
-      errors.workName = t("products.addProduct.admin.jobNameRequired");
-    }
-    const parsedQuantity = Number(compositeQuantity);
-    if (!compositeQuantity) {
-      errors.quantity = t("products.addProduct.admin.quantityRequired");
-    } else if (Number.isNaN(parsedQuantity)) {
-      errors.quantity = t("products.addProduct.admin.quantityRequired");
-    } else if (parsedQuantity <= 0) {
-      errors.quantity = t("products.addProduct.admin.quantityPositive");
-    }
+    const errors: { [key: string]: { quantity?: string; jobName?: string } } = {};
+    let hasErrors = false;
 
-    if (Object.keys(errors).length > 0) {
+    compositeProducts.forEach((product, index) => {
+      const productErrors: { quantity?: string; jobName?: string } = {};
+
+      // Validate quantity
+      if (!product.quantity || product.quantity <= 0) {
+        productErrors.quantity = t("products.addProduct.admin.quantityRequired");
+        hasErrors = true;
+      }
+
+      // Validate job name (optional based on requirements, but you can make it required)
+      // Uncomment if job name is required:
+      // if (!product.jobName.trim()) {
+      //   productErrors.jobName = t("products.addProduct.admin.jobNameRequired");
+      //   hasErrors = true;
+      // }
+
+      if (Object.keys(productErrors).length > 0) {
+        errors[`${index}`] = productErrors;
+      }
+    });
+
+    if (hasErrors) {
       setCompositeErrors(errors);
       return;
     }
 
     setCompositeDialogOpen(false);
     setCompositeErrors({});
-    // onClickCreateQuoteForCustomer({
-    //   workName: trimmedWorkName,
-    //   quantity: parsedQuantity,
-    // });
-    setCompositeWorkName("");
-    setCompositeQuantity("");
+
+    // Pass all composite products data
+    onClickCreateQuoteForCustomer({
+      compositeProducts: compositeProducts.map((p) => ({
+        id: p.id,
+        quantity: p.quantity,
+        jobName: p.jobName,
+      })),
+    });
+
+    setCompositeProducts([]);
   };
 
   const handleCreateCompositeAware = () => {
@@ -372,47 +535,181 @@ const QuoteWidget = ({ isMobileScreen = false, title }: QuoteWidgetProps) => {
         open={compositeDialogOpen}
         onClose={handleCompositeCancel}
         title={t("products.addProduct.admin.compositeProductTitle")}
-        primaryButtonLabel={t("products.addProduct.admin.continue")}
-        cancelButtonLabel={t("modal.close")}
+        primaryButtonLabel={t("products.offsetPrice.admin.addOrderBtn")}
+        cancelButtonLabel={t("modal.cancel")}
         onPrimaryAction={handleCompositeConfirm}
         onCancel={handleCompositeCancel}
+        maxWidth="md"
+        customStyles={{
+          primaryButton: {
+            backgroundColor: secondColor(500),
+          },
+        }}
       >
-        <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-            <div style={{ fontWeight: 500 }}>
-              {t("products.addProduct.admin.jobNameLabel")}
+        <div
+          className={"custom-scrollbar"}
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 8,
+            minWidth: 500,
+            marginTop: 8,
+            maxHeight: "600px",
+            overflowY: "auto",
+            paddingRight: 8,
+          }}>
+          {isLoadingCompositeProducts ? (
+            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+              {/* Skeleton for Quantity and Job Name Fields */}
+              <div style={{
+                display: "flex",
+                flexDirection: "row",
+                gap: 12,
+                padding: 16,
+                backgroundColor: "#f5f5f5",
+                borderRadius: 8,
+                marginBottom: 8
+              }}>
+                <div style={{ display: "flex", flexDirection: "column", gap: 8, flex: 1 }}>
+                  <Skeleton variant="text" width={80} height={20} />
+                  <Skeleton variant="rectangular" width="100%" height={40} sx={{ borderRadius: 1 }} />
+                </div>
+                <div style={{ display: "flex", flexDirection: "column", gap: 8, flex: 1 }}>
+                  <Skeleton variant="text" width={80} height={20} />
+                  <Skeleton variant="rectangular" width="100%" height={40} sx={{ borderRadius: 1 }} />
+                </div>
+              </div>
+
+              {/* Skeleton for Product Cards */}
+              {[1, 2, 3].map((index) => (
+                <div
+                  key={index}
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 12,
+                    padding: 16,
+                    border: "1px solid #e0e0e0",
+                    borderRadius: 8,
+                  }}
+                >
+                  {/* Product Name Skeleton */}
+                  <Skeleton variant="text" width={200} height={24} style={{ marginBottom: 8 }} />
+
+                  {/* Quantity and Job Name Fields Skeleton */}
+                  <div style={{ display: "flex", flexDirection: "row", gap: 12, alignItems: "flex-start" }}>
+                    <div style={{ display: "flex", flexDirection: "column", gap: 8, flex: 1 }}>
+                      <Skeleton variant="text" width={70} height={20} />
+                      <Skeleton variant="rectangular" width="100%" height={40} sx={{ borderRadius: 1 }} />
+                    </div>
+                    <div style={{ display: "flex", flexDirection: "column", gap: 8, flex: 1 }}>
+                      <Skeleton variant="text" width={80} height={20} />
+                      <Skeleton variant="rectangular" width="100%" height={40} sx={{ borderRadius: 1 }} />
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
-            <GomakeTextInput
-              value={compositeWorkName}
-              placeholder={t("products.addProduct.admin.jobNamePlaceholder")}
-              onChange={(event) => {
-                setCompositeWorkName(event.target.value);
-                if (compositeErrors.workName) {
-                  setCompositeErrors((prev) => ({ ...prev, workName: undefined }));
-                }
-              }}
-              error={Boolean(compositeErrors.workName)}
-              helperText={compositeErrors.workName}
-            />
-          </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-            <div style={{ fontWeight: 500 }}>
-              {t("products.addProduct.admin.quantityLabel")}
+          ) : compositeProducts.length === 0 ? (
+            <div style={{ padding: 20, textAlign: "center" }}>
+              {t("products.addProduct.admin.noCompositeProducts")}
             </div>
-            <GomakeTextInput
-              value={compositeQuantity}
-              placeholder={t("products.addProduct.admin.quantityPlaceholder")}
-              onChange={(event) => {
-                setCompositeQuantity(event.target.value);
-                if (compositeErrors.quantity) {
-                  setCompositeErrors((prev) => ({ ...prev, quantity: undefined }));
-                }
-              }}
-              type="number"
-              error={Boolean(compositeErrors.quantity)}
-              helperText={compositeErrors.quantity}
-            />
-          </div>
+          ) : (
+            <div style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: 8
+            }}>
+              {/* Quantity and Job Name Fields */}
+              <div style={{
+                display: "flex",
+                flexDirection: "row",
+                gap: 12,
+                padding: 16,
+                backgroundColor: "#f5f5f5",
+                borderRadius: 8,
+                marginBottom: 8
+              }}>
+                <div style={{ display: "flex", flexDirection: "column", gap: 8, flex: 1 }}>
+                  <div style={{ fontWeight: 500 }}>
+                    {t("products.addProduct.admin.quantityLabel")}
+                  </div>
+                  <GomakeTextInput
+                    value={quantityMultiplier.toString()}
+                    placeholder={t("products.addProduct.admin.quantityPlaceholder")}
+                    onChange={(event) => {
+                      const value = event.target.value;
+                      const numValue = value === "" ? 1 : Number(value);
+                      handleMultiplierChange(numValue);
+                    }}
+                    type="number"
+                  />
+                </div>
+                <div style={{ display: "flex", flexDirection: "column", gap: 8, flex: 1 }}>
+                  <div style={{ fontWeight: 500 }}>
+                    {t("products.addProduct.admin.jobNameLabel")}
+                  </div>
+                  <GomakeTextInput
+                    value={mainJobName}
+                    placeholder={t("products.addProduct.admin.jobNamePlaceholder")}
+                    onChange={(event) => {
+                      handleMainJobNameChange(event.target.value);
+                    }}
+                  />
+                </div>
+              </div>
+              {compositeProducts.map((product, index) => (
+                <div
+                  key={product.id}
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 12,
+                    padding: 16,
+                    border: "1px solid #e0e0e0",
+                    borderRadius: 8,
+                  }}
+                >
+                  <div style={{ fontWeight: 600, fontSize: 16, marginBottom: 8 }}>
+                    {product.name}
+                  </div>
+                  <div style={{ display: "flex", flexDirection: "row", gap: 12, alignItems: "flex-start" }}>
+                    <div style={{ display: "flex", flexDirection: "column", gap: 8, flex: 1 }}>
+                      <div style={{ fontWeight: 500 }}>
+                        {t("products.addProduct.admin.quantityLabel")}
+                      </div>
+                      <GomakeTextInput
+                        value={product.quantity.toString()}
+                        placeholder={t("products.addProduct.admin.quantityPlaceholder")}
+                        onChange={(event) => {
+                          const value = event.target.value;
+                          const numValue = value === "" ? 0 : Number(value);
+                          handleProductQuantityChange(index, numValue);
+                        }}
+                        type="number"
+                        error={Boolean(compositeErrors[`${index}`]?.quantity)}
+                        helperText={compositeErrors[`${index}`]?.quantity}
+                      />
+                    </div>
+                    <div style={{ display: "flex", flexDirection: "column", gap: 8, flex: 1 }}>
+                      <div style={{ fontWeight: 500 }}>
+                        {t("products.addProduct.admin.jobNameLabel")}
+                      </div>
+                      <GomakeTextInput
+                        value={product.jobName}
+                        placeholder={t("products.addProduct.admin.jobNamePlaceholder")}
+                        onChange={(event) => {
+                          updateCompositeProduct(index, "jobName", event.target.value);
+                        }}
+                        error={Boolean(compositeErrors[`${index}`]?.jobName)}
+                        helperText={compositeErrors[`${index}`]?.jobName}
+                      />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </GoMakeDialog>
     </div>

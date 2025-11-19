@@ -168,7 +168,7 @@ const GoMakeDialog: React.FC<GoMakeDialogProps> = ({
 
                                             <div
                                                 onClick={handlePrimaryAction}
-                                                style={classes.primaryButton}
+                                                style={{ ...classes.primaryButton, ...customStyles?.primaryButton }}
                                             // disabled={primaryButtonDisabled || primaryButtonLoading}
                                             >
                                                 <div style={classes.primaryButtonContainer}>
