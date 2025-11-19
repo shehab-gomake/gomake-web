@@ -1,5 +1,5 @@
 import { TabsMappingWidget } from "@/pages-components/products/digital-offset-price/widgets/tabs-mapping";
-import { GomakePrimaryButton } from "@/components";
+import { GomakePrimaryButton, GoMakeDialog, GomakeTextInput } from "@/components";
 import { useAddProduct } from "@/hooks";
 import { ChildParameterModal } from "../child-parameter-modal";
 import { useStyle } from "./style";
@@ -9,6 +9,8 @@ import { SectionMappingWidget } from "./widgets/section-mapping";
 import { GalleryModal, MultiParameterModal } from "../../digital-offset-price";
 import { UpdateParameterModal } from "./widgets/update-parameter-modal";
 import { ExternalValuesIdModal } from "../external-ids-modal";
+import { useState } from "react";
+import { Stack } from "@mui/material";
 
 const ParameterWidget = () => {
   const { classes } = useStyle();
@@ -58,10 +60,45 @@ const ParameterWidget = () => {
     onOpenExternalIdsModal,
     onCloseExternalIdsModal,
     openExternalIdsModal,
-    removeProductParamete
+    removeProductParamete,
+    productState,
+    addSubSectionToProduct
   } = useAddProduct({ classes });
 
+  const [isAddSubSectionDialogOpen, setIsAddSubSectionDialogOpen] = useState(false);
+  const [subSectionName, setSubSectionName] = useState("");
+  const [selectedSectionIdForSubSection, setSelectedSectionIdForSubSection] = useState<string | null>(null);
+
   const visibleSections = template?.sections;
+
+  const CUSTOM_PRODUCT_TEMPLATE_ID = "a4b096a5-cf5a-4b72-a101-c79f5eccfef8";
+  const isCustomProduct = productState?.templateId === CUSTOM_PRODUCT_TEMPLATE_ID ||
+    (typeof productState?.templateId === "object" && productState?.templateId?.id === CUSTOM_PRODUCT_TEMPLATE_ID);
+
+  console.log("visibleSections", { visibleSections, template });
+
+  const handleOpenAddSubSectionDialog = (sectionId: string) => {
+    setSelectedSectionIdForSubSection(sectionId);
+    setSubSectionName("");
+    setIsAddSubSectionDialogOpen(true);
+  };
+
+  const handleCloseAddSubSectionDialog = () => {
+    setIsAddSubSectionDialogOpen(false);
+    setSubSectionName("");
+    setSelectedSectionIdForSubSection(null);
+  };
+
+  const handleAddSubSection = () => {
+    if (!subSectionName.trim()) {
+      return;
+    }
+    if (selectedSectionIdForSubSection) {
+      addSubSectionToProduct(selectedSectionIdForSubSection, subSectionName.trim());
+      handleCloseAddSubSectionDialog();
+    }
+  };
+
 
   return (
     <>
@@ -96,66 +133,87 @@ const ParameterWidget = () => {
                 <div style={classes.sectionsContainer}>
                   {[...visibleSections]?.map((section, index) => {
                     if (index === activeIndex) {
-                      return section?.subSections?.map((subSection, index) => {
-                        if (subSection?.isAccordion) {
-                          return (
-                            <AccordionMappingWidget
-                              index={index}
-                              expanded={expanded}
-                              classes={classes}
-                              handleChange={handleChange}
-                              subSection={subSection}
-                              onOpenModal={onOpenModal}
-                              onOpenExternalIdsModal={onOpenExternalIdsModal}
-                              section={section}
-                              updatedProductParameterHidden={
-                                updatedProductParameterHidden
-                              }
-                              updatedProductParameterShowToClient={
-                                updatedProductParameterShowToClient
-                              }
-                              updatedProductParameteRequierd={
-                                updatedProductParameteRequierd
-                              }
-                              updatedProductParameteLocked={
-                                updatedProductParameteLocked
-                              }
-                              _renderParameterType={_renderParameterType}
-                              relatedParameters={relatedParameters}
-                              getProductById={getProductById}
-                              removeProductParamete={removeProductParamete}
-                            />
-                          );
-                        } else {
-                          return (
-                            <SectionMappingWidget
-                              index={index}
-                              classes={classes}
-                              subSection={subSection}
-                              onOpenModal={onOpenModal}
-                              onOpenExternalIdsModal={onOpenExternalIdsModal}
-                              section={section}
-                              updatedProductParameterHidden={
-                                updatedProductParameterHidden
-                              }
-                              updatedProductParameterShowToClient={
-                                updatedProductParameterShowToClient
-                              }
-                              updatedProductParameteRequierd={
-                                updatedProductParameteRequierd
-                              }
-                              updatedProductParameteLocked={
-                                updatedProductParameteLocked
-                              }
-                              _renderParameterType={_renderParameterType}
-                              relatedParameters={relatedParameters}
-                              getProductById={getProductById}
-                              removeProductParamete={removeProductParamete}
-                            />
-                          );
-                        }
-                      });
+                      const showAddSubSectionButton = isCustomProduct;
+
+                      return (
+                        <div key={`section-${index}`}>
+                          {showAddSubSectionButton && (
+                            <div style={{
+                              marginBottom: "20px"
+                            }}>
+                              <GomakePrimaryButton
+                                onClick={() => handleOpenAddSubSectionDialog(section?.id)}
+                                style={{ minWidth: "200px", height: "40px" }}
+                              >
+                                {t("products.addProduct.admin.addSubSection") || "Add SubSection"}
+                              </GomakePrimaryButton>
+                            </div>
+                          )}
+                          {section?.subSections?.map((subSection, subIndex) => {
+                            if (subSection?.isAccordion) {
+                              return (
+                                <AccordionMappingWidget
+                                  key={`accordion-${subIndex}`}
+                                  index={subIndex}
+                                  expanded={expanded}
+                                  classes={classes}
+                                  handleChange={handleChange}
+                                  subSection={subSection}
+                                  onOpenModal={onOpenModal}
+                                  onOpenExternalIdsModal={onOpenExternalIdsModal}
+                                  section={section}
+                                  updatedProductParameterHidden={
+                                    updatedProductParameterHidden
+                                  }
+                                  updatedProductParameterShowToClient={
+                                    updatedProductParameterShowToClient
+                                  }
+                                  updatedProductParameteRequierd={
+                                    updatedProductParameteRequierd
+                                  }
+                                  updatedProductParameteLocked={
+                                    updatedProductParameteLocked
+                                  }
+                                  _renderParameterType={_renderParameterType}
+                                  relatedParameters={relatedParameters}
+                                  getProductById={getProductById}
+                                  removeProductParamete={removeProductParamete}
+                                />
+                              );
+                            } else {
+                              return (
+                                <SectionMappingWidget
+                                  key={`section-mapping-${subIndex}`}
+                                  index={subIndex}
+                                  classes={classes}
+                                  subSection={subSection}
+                                  onOpenModal={onOpenModal}
+                                  onOpenExternalIdsModal={onOpenExternalIdsModal}
+                                  section={section}
+                                  updatedProductParameterHidden={
+                                    updatedProductParameterHidden
+                                  }
+                                  updatedProductParameterShowToClient={
+                                    updatedProductParameterShowToClient
+                                  }
+                                  updatedProductParameteRequierd={
+                                    updatedProductParameteRequierd
+                                  }
+                                  updatedProductParameteLocked={
+                                    updatedProductParameteLocked
+                                  }
+                                  _renderParameterType={_renderParameterType}
+                                  relatedParameters={relatedParameters}
+                                  getProductById={getProductById}
+                                  removeProductParamete={removeProductParamete}
+                                />
+                              );
+                            }
+                          })}
+                        </div>
+                      );
                     }
+                    return null;
                   })}
                 </div>
               </div>
@@ -237,6 +295,31 @@ const ParameterWidget = () => {
         setDoNotAskNextTime={setDoNotAskNextTime}
         doNotAskNextTime={doNotAskNextTime}
       />
+      <GoMakeDialog
+        open={isAddSubSectionDialogOpen}
+        onClose={handleCloseAddSubSectionDialog}
+        title={t("products.addProduct.admin.addSubSection") || "Add SubSection"}
+        onPrimaryAction={handleAddSubSection}
+        primaryButtonLabel={t("common.add") || "Add"}
+        cancelButtonLabel={t("modal.cancel") || "Cancel"}
+        primaryButtonDisabled={!subSectionName.trim()}
+        maxWidth="sm"
+        fullWidth
+      >
+        <Stack gap={2} paddingTop={"10px"}>
+          <div>
+            <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 8 }}>
+              {t("products.addProduct.admin.subSectionName") || "SubSection Name"}
+            </div>
+            <GomakeTextInput
+              value={subSectionName}
+              onChange={(e: any) => setSubSectionName(e.target.value)}
+              placeholder={t("products.addProduct.admin.enterSubSectionName") || "Enter SubSection Name"}
+              style={{ width: "100%", height: "40px" }}
+            />
+          </div>
+        </Stack>
+      </GoMakeDialog>
     </>
   );
 };
