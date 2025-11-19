@@ -110,6 +110,10 @@ const QuoteWidget = ({ isMobileScreen = false, title }: QuoteWidgetProps) => {
       jobName?: string;
     };
   }>({});
+  const [mainFieldErrors, setMainFieldErrors] = useState<{
+    quantity?: string;
+    jobName?: string;
+  }>({});
 
   const isCompositeSelectedProduct =
     selectedProduct?.category === ProductCategoryType.PRODUCT &&
@@ -117,6 +121,7 @@ const QuoteWidget = ({ isMobileScreen = false, title }: QuoteWidgetProps) => {
 
   const openCompositeDialog = async () => {
     setCompositeErrors({});
+    setMainFieldErrors({});
     setCompositeDialogOpen(true);
 
     if (selectedProduct?.id) {
@@ -164,6 +169,7 @@ const QuoteWidget = ({ isMobileScreen = false, title }: QuoteWidgetProps) => {
   const handleCompositeCancel = () => {
     setCompositeDialogOpen(false);
     setCompositeErrors({});
+    setMainFieldErrors({});
     setCompositeProducts([]);
     setQuantityMultiplier(1);
     setMainJobName("");
@@ -171,6 +177,15 @@ const QuoteWidget = ({ isMobileScreen = false, title }: QuoteWidgetProps) => {
 
   const handleMainJobNameChange = (value: string) => {
     setMainJobName(value);
+
+    // Clear error for main job name field
+    if (mainFieldErrors.jobName) {
+      setMainFieldErrors((prev) => {
+        const updated = { ...prev };
+        delete updated.jobName;
+        return updated;
+      });
+    }
 
     // Update job names for products that haven't been manually edited
     // Only update products with empty jobName from BE or that were set from main field
@@ -190,6 +205,15 @@ const QuoteWidget = ({ isMobileScreen = false, title }: QuoteWidgetProps) => {
 
   const handleMultiplierChange = (value: number) => {
     setQuantityMultiplier(value);
+
+    // Clear error for main quantity field
+    if (mainFieldErrors.quantity) {
+      setMainFieldErrors((prev) => {
+        const updated = { ...prev };
+        delete updated.quantity;
+        return updated;
+      });
+    }
 
     // Update ALL products when multiplier changes (reset manual edits)
     setCompositeProducts((prev) =>
@@ -263,6 +287,7 @@ const QuoteWidget = ({ isMobileScreen = false, title }: QuoteWidgetProps) => {
     const errors: { [key: string]: { quantity?: string; jobName?: string } } = {};
     let hasErrors = false;
 
+    // Validate each product
     compositeProducts.forEach((product, index) => {
       const productErrors: { quantity?: string; jobName?: string } = {};
 
@@ -272,12 +297,11 @@ const QuoteWidget = ({ isMobileScreen = false, title }: QuoteWidgetProps) => {
         hasErrors = true;
       }
 
-      // Validate job name (optional based on requirements, but you can make it required)
-      // Uncomment if job name is required:
-      // if (!product.jobName.trim()) {
-      //   productErrors.jobName = t("products.addProduct.admin.jobNameRequired");
-      //   hasErrors = true;
-      // }
+      // Validate job name (required)
+      if (!product.jobName.trim()) {
+        productErrors.jobName = t("products.addProduct.admin.jobNameRequired");
+        hasErrors = true;
+      }
 
       if (Object.keys(productErrors).length > 0) {
         errors[`${index}`] = productErrors;
@@ -291,15 +315,17 @@ const QuoteWidget = ({ isMobileScreen = false, title }: QuoteWidgetProps) => {
 
     setCompositeDialogOpen(false);
     setCompositeErrors({});
+    setMainFieldErrors({});
 
-    // Pass all composite products data
-    onClickCreateQuoteForCustomer({
-      compositeProducts: compositeProducts.map((p) => ({
-        id: p.id,
-        quantity: p.quantity,
-        jobName: p.jobName,
-      })),
-    });
+
+    // // Pass all composite products data
+    // onClickCreateQuoteForCustomer({
+    //   compositeProducts: compositeProducts.map((p) => ({
+    //     id: p.id,
+    //     quantity: p.quantity,
+    //     jobName: p.jobName,
+    //   })),
+    // });
 
     setCompositeProducts([]);
   };
@@ -677,6 +703,7 @@ const QuoteWidget = ({ isMobileScreen = false, title }: QuoteWidgetProps) => {
                     <div style={{ display: "flex", flexDirection: "column", gap: 8, flex: 1 }}>
                       <div style={{ fontWeight: 500 }}>
                         {t("products.addProduct.admin.quantityLabel")}
+                        <span style={{ color: "red", marginLeft: 4 }}>*</span>
                       </div>
                       <GomakeTextInput
                         value={product.quantity.toString()}
@@ -694,6 +721,7 @@ const QuoteWidget = ({ isMobileScreen = false, title }: QuoteWidgetProps) => {
                     <div style={{ display: "flex", flexDirection: "column", gap: 8, flex: 1 }}>
                       <div style={{ fontWeight: 500 }}>
                         {t("products.addProduct.admin.jobNameLabel")}
+                        <span style={{ color: "red", marginLeft: 4 }}>*</span>
                       </div>
                       <GomakeTextInput
                         value={product.jobName}
