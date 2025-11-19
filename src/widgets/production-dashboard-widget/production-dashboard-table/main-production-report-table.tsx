@@ -25,6 +25,7 @@ import {
 import { useMainProductionReport } from "./use-main-production-report";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { exportProductionDashboardToExcel } from "../production-dashboard-export-utils";
+import { InfoTooltip } from "@/components/info-tooltip/info-tooltip";
 
 const MainProductionReportTable = () => {
   const { classes } = useStyle();
@@ -495,81 +496,103 @@ const MainProductionReportTable = () => {
 
   const tableHeaders = [
     <Box>
-      <Typography variant="body2" fontWeight="bold">
-        {t("productionReport.stationDetails")}
-      </Typography>
+      <InfoTooltip content={t("productionReport.stationDetailsTooltip")}>
+        <Typography variant="body2" fontWeight="bold">
+          {t("productionReport.stationDetails")}
+        </Typography>
+      </InfoTooltip>
       <Typography variant="caption" color="textSecondary">
         {t("productionReport.departmentStation")}
       </Typography>
     </Box>,
     <Box>
-      <Typography variant="body2" fontWeight="bold">
-        {t("productionReport.totalEstimatedWorkingHours")}
-      </Typography>
+      <InfoTooltip
+        content={t("productionReport.totalEstimatedWorkingHoursTooltip")}
+      >
+        <Typography variant="body2" fontWeight="bold">
+          {t("productionReport.totalEstimatedWorkingHours")}
+        </Typography>
+      </InfoTooltip>
       <Typography variant="caption" color="textSecondary">
         {t("productionReport.hoursPerDay")}
       </Typography>
     </Box>,
     <Box>
-      <Typography variant="body2" fontWeight="bold">
-        {t("productionReport.totalEstimated")}
-      </Typography>
+      <InfoTooltip content={t("productionReport.totalEstimatedTooltip")}>
+        <Typography variant="body2" fontWeight="bold">
+          {t("productionReport.totalEstimated")}
+        </Typography>
+      </InfoTooltip>
       <Typography variant="caption" color="textSecondary">
         {t("productionReport.timeJobs")}
       </Typography>
     </Box>,
     <Box>
-      <Typography variant="body2" fontWeight="bold">
-        {t("productionReport.done")}
-      </Typography>
+      <InfoTooltip content={t("productionReport.doneTooltip")}>
+        <Typography variant="body2" fontWeight="bold">
+          {t("productionReport.done")}
+        </Typography>
+      </InfoTooltip>
       <Typography variant="caption" color="textSecondary">
         {t("productionReport.timeJobs")}
       </Typography>
     </Box>,
     <Box>
-      <Typography variant="body2" fontWeight="bold">
-        {t("productionReport.inProcess")}
-      </Typography>
+      <InfoTooltip content={t("productionReport.inProcessTooltip")}>
+        <Typography variant="body2" fontWeight="bold">
+          {t("productionReport.inProcess")}
+        </Typography>
+      </InfoTooltip>
       <Typography variant="caption" color="textSecondary">
         {t("productionReport.timeJobs")}
       </Typography>
     </Box>,
     <Box>
-      <Typography variant="body2" fontWeight="bold">
-        {t("productionReport.reported")}
-      </Typography>
+      <InfoTooltip content={t("productionReport.reportedTooltip")}>
+        <Typography variant="body2" fontWeight="bold">
+          {t("productionReport.reported")}
+        </Typography>
+      </InfoTooltip>
       <Typography variant="caption" color="textSecondary">
         {t("productionReport.timeJobsPercentage")}
       </Typography>
     </Box>,
     <Box>
-      <Typography variant="body2" fontWeight="bold">
-        {t("productionReport.capacity")}
-      </Typography>
+      <InfoTooltip content={t("productionReport.capacityTooltip")}>
+        <Typography variant="body2" fontWeight="bold">
+          {t("productionReport.capacity")}
+        </Typography>
+      </InfoTooltip>
       <Typography variant="caption" color="textSecondary">
         {t("productionReport.capacityGrowth") || "Capacity/Growth"}
       </Typography>
     </Box>,
     <Box>
-      <Typography variant="body2" fontWeight="bold">
-        {t("productionReport.performance")}
-      </Typography>
+      <InfoTooltip content={t("productionReport.performanceTooltip")}>
+        <Typography variant="body2" fontWeight="bold">
+          {t("productionReport.performance")}
+        </Typography>
+      </InfoTooltip>
       <Typography variant="caption" color="textSecondary">
         {t("productionReport.productivityGrowth")}
       </Typography>
     </Box>,
     <Box>
-      <Typography variant="body2" fontWeight="bold">
-        {t("productionReport.avgTime")}
-      </Typography>
+      <InfoTooltip content={t("productionReport.avgTimeTooltip")}>
+        <Typography variant="body2" fontWeight="bold">
+          {t("productionReport.avgTime")}
+        </Typography>
+      </InfoTooltip>
       <Typography variant="caption" color="textSecondary">
         {t("productionReport.dailyProductivity")}
       </Typography>
     </Box>,
     <Box>
-      <Typography variant="body2" fontWeight="bold">
-        {t("productionReport.jobAnalytics")}
-      </Typography>
+      <InfoTooltip content={t("productionReport.jobAnalyticsTooltip")}>
+        <Typography variant="body2" fontWeight="bold">
+          {t("productionReport.jobAnalytics")}
+        </Typography>
+      </InfoTooltip>
       <Typography variant="caption" color="textSecondary">
         {t("productionReport.costPrice")}
       </Typography>
@@ -642,38 +665,42 @@ const MainProductionReportTable = () => {
           {(data.otd !== undefined || data.tB_OTD !== undefined) && (
             <Box sx={{ mt: 1.5, display: "flex", gap: 1, flexWrap: "wrap" }}>
               {data.otd !== undefined && (
-                <Chip
-                  label={`${t(
-                    "productionReport.onTimeDelivery"
-                  )}: ${formatPercentage(data.otd)}`}
-                  sx={{
-                    backgroundColor: "#e3f2fd",
-                    color: "#495057",
-                    fontSize: "0.9rem",
-                    height: "28px",
-                    px: 1,
-                    "& .MuiChip-label": {
-                      px: 1.5,
-                    },
-                  }}
-                />
+                <InfoTooltip content={t("productionReport.otdTooltip")}>
+                  <Chip
+                    label={`${t(
+                      "productionReport.onTimeDelivery"
+                    )}: ${formatPercentage(data.otd)}`}
+                    sx={{
+                      backgroundColor: "#e3f2fd",
+                      color: "#495057",
+                      fontSize: "0.9rem",
+                      height: "28px",
+                      px: 1,
+                      "& .MuiChip-label": {
+                        px: 1.5,
+                      },
+                    }}
+                  />
+                </InfoTooltip>
               )}
               {data.tB_OTD !== undefined && (
-                <Chip
-                  label={`${t(
-                    "productionReport.timeBasedOnTimeDelivery"
-                  )}: ${formatPercentage(data.tB_OTD)}`}
-                  sx={{
-                    backgroundColor: "#e3f2fd",
-                    color: "#495057",
-                    fontSize: "0.9rem",
-                    height: "28px",
-                    px: 1,
-                    "& .MuiChip-label": {
-                      px: 1.5,
-                    },
-                  }}
-                />
+                <InfoTooltip content={t("productionReport.tB_OTDTooltip")}>
+                  <Chip
+                    label={`${t(
+                      "productionReport.timeBasedOnTimeDelivery"
+                    )}: ${formatPercentage(data.tB_OTD)}`}
+                    sx={{
+                      backgroundColor: "#e3f2fd",
+                      color: "#495057",
+                      fontSize: "0.9rem",
+                      height: "28px",
+                      px: 1,
+                      "& .MuiChip-label": {
+                        px: 1.5,
+                      },
+                    }}
+                  />
+                </InfoTooltip>
               )}
             </Box>
           )}

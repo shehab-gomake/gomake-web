@@ -150,6 +150,7 @@ const ProductionDashboardFilters = () => {
         endDate={toInDate}
         onChange={handleActivityDateChange}
         dateFormat="MMM d, yyyy"
+        tooltip={t("productionReport.activityDateTooltip")}
       />
       <PrimaryButton
         variant="contained"
