@@ -145,18 +145,19 @@ export class ChatwootContactsService extends BaseChatwootService {
 
   /**
    * Search Contacts
-   * GET /api/v1/accounts/{account_id}/contacts/search
+   * GET /api/accounts/contacts/search
    *
-   * @param accountId - The numeric ID of the account
+   * Note: Backend automatically handles accountId from authentication context.
+   * This endpoint uses /api instead of /api/v1 and doesn't require accountId in path.
+   *
+   * @param accountId - The numeric ID of the account (not used in URL, kept for API consistency)
    * @param query - Search query string
    * @returns Promise with search results
    */
   async searchContacts(accountId: number, query: string): Promise<ContactsListResponse> {
-    const url = this.accountScopedUrl(
-      accountId,
-      `contacts/search?q=${encodeURIComponent(query)}`
+    return await this.get<ContactsListResponse>(
+      `/api/accounts/contacts/search?q=${encodeURIComponent(query)}`
     );
-    return await this.get<ContactsListResponse>(url);
   }
 
   /**

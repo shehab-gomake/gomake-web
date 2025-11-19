@@ -48,6 +48,7 @@ export const ComposeConversationModal: React.FC<ComposeConversationModalProps> =
   const compose = useComposeConversation({
     accountId,
     onSuccess: (conversationId) => {
+      console.log("[ComposeConversationModal] onSuccess called with conversationId:", conversationId);
       setError(null);
       onSuccess?.(conversationId);
       setSnackbarStateValue({
@@ -55,7 +56,13 @@ export const ComposeConversationModal: React.FC<ComposeConversationModalProps> =
         message: "Conversation created successfully!",
         type: "success",
       });
-      handleClose();
+      // Close modal directly on success (bypass isSubmitting check)
+      // Note: resetForm is already called in the hook's submit function
+      console.log("[ComposeConversationModal] Closing modal...");
+      setError(null);
+      setShowExitConfirm(false);
+      onClose();
+      console.log("[ComposeConversationModal] Modal close called");
     },
     onError: (err) => {
       setError(err.message || "Failed to create conversation");
@@ -142,12 +149,11 @@ export const ComposeConversationModal: React.FC<ComposeConversationModalProps> =
           type: "success",
         });
       } else {
-        // Re-throw error so CreateContactModal can handle it
-        throw new Error("Failed to create contact: Invalid response");
+        setError("Failed to create contact: Invalid response");
       }
     } catch (error) {
-      // Re-throw error so CreateContactModal can handle field-specific errors
-      throw error;
+      console.error("[ComposeConversationModal] Failed to create contact:", error);
+      setError(error instanceof Error ? error.message : "Failed to create contact");
     }
   };
 
