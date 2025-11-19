@@ -29,6 +29,8 @@ interface ChatwootMessageViewerProps {
   currentStatusFilter?: ConversationStatus;
   inboxes?: ChatwootInbox[];
   inboxesLoading?: boolean;
+  isSidebarVisible?: boolean;
+  onToggleSidebar?: () => void;
 }
 
 export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
@@ -39,6 +41,8 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
   currentStatusFilter,
   inboxes = [],
   inboxesLoading = false,
+  isSidebarVisible = true,
+  onToggleSidebar,
 }) => {
   const theme = useTheme();
   const { neutralColor } = useGomakeTheme();
@@ -399,6 +403,8 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
             onPriorityChange={handlePriorityChange}
             updating={isSending}
             inboxes={inboxes}
+            isSidebarVisible={isSidebarVisible}
+            onToggleSidebar={onToggleSidebar}
           />
         </Box>
       </Fade>

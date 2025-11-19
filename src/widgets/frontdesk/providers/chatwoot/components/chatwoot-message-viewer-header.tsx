@@ -1,6 +1,7 @@
 import React, { useMemo } from "react";
-import { Box, Stack, Typography } from "@mui/material";
+import { Box, Stack, Typography, IconButton, Tooltip } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
+import { ChevronRight, ChevronLeft } from "@mui/icons-material";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { ChatwootConversation, ConversationPriority } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
 import { ConversationStatusSelector } from "./conversation-status-selector";
@@ -28,6 +29,8 @@ interface ChatwootMessageViewerHeaderProps {
   onPriorityChange?: (priority: PriorityValue) => void;
   updating?: boolean;
   inboxes?: ChatwootInbox[];
+  isSidebarVisible?: boolean;
+  onToggleSidebar?: () => void;
 }
 
 export const ChatwootMessageViewerHeader: React.FC<ChatwootMessageViewerHeaderProps> = ({
@@ -42,6 +45,8 @@ export const ChatwootMessageViewerHeader: React.FC<ChatwootMessageViewerHeaderPr
   onPriorityChange,
   updating = false,
   inboxes = [],
+  isSidebarVisible = true,
+  onToggleSidebar,
 }) => {
   const theme = useTheme();
   const { neutralColor } = useGomakeTheme();
@@ -121,7 +126,7 @@ export const ChatwootMessageViewerHeader: React.FC<ChatwootMessageViewerHeaderPr
           )}
         </Stack>
 
-        {/* Right: Status and Priority Selectors */}
+        {/* Right: Status, Priority Selectors, and Sidebar Toggle */}
         <Stack direction="row" alignItems="center" spacing={1}>
           {onStatusChange && (
             <ConversationStatusSelector
@@ -132,6 +137,23 @@ export const ChatwootMessageViewerHeader: React.FC<ChatwootMessageViewerHeaderPr
           )}
           {onPriorityChange && (
             <ConversationPrioritySelector priority={currentPriority} onPriorityChange={onPriorityChange} updating={updating} />
+          )}
+          {onToggleSidebar && (
+            <Tooltip title={isSidebarVisible ? "Hide sidebar" : "Show sidebar"}>
+              <IconButton
+                size="small"
+                onClick={onToggleSidebar}
+                sx={{
+                  color: neutralColor(600),
+                  "&:hover": {
+                    color: neutralColor(800),
+                    backgroundColor: neutralColor(100),
+                  },
+                }}
+              >
+                {isSidebarVisible ? <ChevronRight fontSize="small" /> : <ChevronLeft fontSize="small" />}
+              </IconButton>
+            </Tooltip>
           )}
         </Stack>
       </Stack>

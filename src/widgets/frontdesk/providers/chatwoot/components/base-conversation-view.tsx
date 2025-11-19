@@ -10,7 +10,7 @@
  * This prevents duplicate provider calls and maintains scroll/filter state.
  */
 
-import React, { useMemo, useCallback, useState } from "react";
+import React, { useMemo, useCallback, useState, useEffect } from "react";
 import { Stack, Box, Divider, useTheme } from "@mui/material";
 import { Panel, PanelContent, EmptyState } from "@/widgets/frontdesk/design-system";
 import { ChatwootConversationList } from "./chatwoot-conversation-list";
@@ -55,6 +55,26 @@ export const BaseConversationView: React.FC<BaseConversationViewProps> = ({ empt
 
   const theme = useTheme();
   const [showComposeModal, setShowComposeModal] = useState(false);
+  
+  // Sidebar visibility state - persist to localStorage
+  const [isSidebarVisible, setIsSidebarVisible] = useState(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("chatwoot-sidebar-visible");
+      return saved !== null ? saved === "true" : true; // Default to visible
+    }
+    return true;
+  });
+
+  // Save sidebar visibility preference to localStorage
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      localStorage.setItem("chatwoot-sidebar-visible", String(isSidebarVisible));
+    }
+  }, [isSidebarVisible]);
+
+  const handleToggleSidebar = useCallback(() => {
+    setIsSidebarVisible((prev) => !prev);
+  }, []);
 
   // Handle compose button click
   const handleComposeClick = useCallback(() => {
@@ -146,21 +166,27 @@ export const BaseConversationView: React.FC<BaseConversationViewProps> = ({ empt
                 currentStatusFilter={Array.isArray(filters.status) ? filters.status[0] : filters.status}
                 inboxes={inboxes}
                 inboxesLoading={inboxesLoading}
+                isSidebarVisible={isSidebarVisible}
+                onToggleSidebar={handleToggleSidebar}
                 {...messageViewerProps}
               />
             </Box>
 
-            {/* Divider between message viewer and detail panel */}
-            <Divider orientation="vertical" flexItem sx={{ borderColor: theme.palette.divider }} />
+            {/* Divider between message viewer and detail panel - only show when sidebar is visible */}
+            {isSidebarVisible && (
+              <Divider orientation="vertical" flexItem sx={{ borderColor: theme.palette.divider }} />
+            )}
 
-            {/* Right Detail Panel */}
-            <ChatwootConversationDetailPanel
-              key={selectedConversation.id}
-              conversation={selectedConversation}
-              accountId={currentAccountId || undefined}
-              inboxes={inboxes}
-              onConversationUpdate={updateConversationInList}
-            />
+            {/* Right Detail Panel - conditionally rendered */}
+            {isSidebarVisible && (
+              <ChatwootConversationDetailPanel
+                key={selectedConversation.id}
+                conversation={selectedConversation}
+                accountId={currentAccountId || undefined}
+                inboxes={inboxes}
+                onConversationUpdate={updateConversationInList}
+              />
+            )}
           </Stack>
         ) : (
           <PanelContent padding="lg">{emptyStateContent}</PanelContent>
