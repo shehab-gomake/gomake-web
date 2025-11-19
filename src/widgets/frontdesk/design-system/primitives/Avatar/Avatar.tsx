@@ -48,7 +48,10 @@ const presenceMap = {
  * Get initials from name
  */
 const getInitials = (name: string): string => {
-  const parts = name.trim().split(' ').filter(Boolean);
+  if (!name || typeof name !== 'string') return '?';
+  const trimmedName = String(name).trim();
+  if (!trimmedName) return '?';
+  const parts = trimmedName.split(' ').filter(Boolean);
   if (parts.length === 0) return '?';
   if (parts.length === 1) return parts[0][0].toUpperCase();
   return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
@@ -58,6 +61,7 @@ const getInitials = (name: string): string => {
  * Generate consistent color from string
  */
 const getAvatarColor = (name: string): string => {
+  const safeName = String(name || '?');
   const colors = [
     colorTokens.primary[500],
     colorTokens.success[500],
@@ -69,8 +73,8 @@ const getAvatarColor = (name: string): string => {
   ];
 
   let hash = 0;
-  for (let i = 0; i < name.length; i++) {
-    hash = name.charCodeAt(i) + ((hash << 5) - hash);
+  for (let i = 0; i < safeName.length; i++) {
+    hash = safeName.charCodeAt(i) + ((hash << 5) - hash);
   }
 
   return colors[Math.abs(hash) % colors.length];
@@ -96,13 +100,14 @@ export const Avatar: React.FC<AvatarProps> = ({
 }) => {
   const avatarSize = sizeMap[size];
   const fontSize = fontSizeMap[size];
-  const initials = name ? getInitials(name) : '';
-  const bgColor = backgroundColor || (name ? getAvatarColor(name) : colorTokens.neutral[400]);
+  const safeName = name ? String(name) : '';
+  const initials = safeName ? getInitials(safeName) : '';
+  const bgColor = backgroundColor || (safeName ? getAvatarColor(safeName) : colorTokens.neutral[400]);
 
   const avatarContent = (
     <MuiAvatar
       src={src}
-      alt={alt || name}
+      alt={alt || safeName}
       sx={{
         width: avatarSize,
         height: avatarSize,

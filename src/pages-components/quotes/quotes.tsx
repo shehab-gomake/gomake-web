@@ -64,6 +64,7 @@ import { QR_CODE_LISTENER_FROM } from "@/hooks/use-qr-code-listener";
 import QrCodeReader from "@/components/qr-code-reader";
 import { useSetRecoilState } from "recoil";
 import { selectedItemsState } from "@/store";
+import { FrontDeskEmailComposerWrapper } from "./components/frontdesk-email-composer-wrapper";
 import { PrintPackingSlipModalWidget } from "@/widgets/production-floor/views/board-missions-view/navigation-buttons/print-packing-slip-modal-widget";
 import { useParameters } from "@/hooks/use-parameters";
 
@@ -301,6 +302,10 @@ const QuotesListPageWidget = ({
     createScheduledReport,
     handlePageChange: handleScheduledReportsPageChange,
     handlePageSizeChangeScheduledReports: handleScheduledReportsPageSizeChange,
+    isEmailComposerOpen,
+    emailData,
+    closeEmailComposer,
+    documentForEmail
   } = useQuotes(documentType, isFromHomePage);
 
   // Get the main quotes pagination handler
@@ -774,6 +779,7 @@ const QuotesListPageWidget = ({
         isSendToClient={isSendToClient}
         isSendOrderReadyToClient={isSendOrderReadyToClient}
         showAlertModal={showAlertModal}
+        hideCheckboxes={true}
       />
       <GoMakeAlertModal
         openModal={alertNotVerifiedMailModal.isOpen}
@@ -1034,6 +1040,16 @@ const QuotesListPageWidget = ({
         printPackingSlip={printPackingSlip}
         isPrintHouseUsePrintNode={isPrintHouseHasPackagingSlipPrinter}
       />
+      {/* FrontDesk Email Composer */}
+      {isEmailComposerOpen && (
+        <FrontDeskEmailComposerWrapper
+          open={isEmailComposerOpen}
+          onClose={closeEmailComposer}
+          emailData={emailData}
+          documentId={documentForEmail?.id}
+          documentType={documentType}
+        />
+      )}
     </>
   );
 };

@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import {
   Box,
   Stack,
@@ -25,6 +25,8 @@ interface EmailAttachmentListProps {
   attachments: EmailAttachment[];
   accountId: string;
   messageId: string;
+  /** Filter out inline (CID) attachments that are embedded in HTML (default: true) */
+  filterInlineAttachments?: boolean;
 }
 
 const formatFileSize = (bytes: number): string => {
@@ -67,12 +69,40 @@ const getFileIcon = (mimeType?: string, filename?: string) => {
   return <FileIcon />;
 };
 
+/**
+ * Check if an attachment is an inline (CID) attachment
+ * Inline attachments have Content-ID and are embedded in HTML
+ */
+const isInlineAttachment = (attachment: EmailAttachment): boolean => {
+  // CID attachments typically have an ID that's used in img src="cid:..."
+  // They may also have a Content-Disposition header of "inline"
+  // For now, we check if the attachment has an ID (which would be the CID)
+  // and if it's an image type (most inline attachments are images)
+  const mimeType = attachment.mimeType || attachment.contentType || '';
+  const isImage = mimeType.startsWith('image/');
+
+  // If it's an image with a CID-like ID, it's likely inline
+  // CIDs often look like: "image001@example.com" or just "ABC123"
+  return isImage && !!attachment.id;
+};
+
 export const EmailAttachmentList: React.FC<EmailAttachmentListProps> = ({
   attachments,
   accountId,
   messageId,
+  filterInlineAttachments = true,
 }) => {
   const [downloading, setDownloading] = useState<string | null>(null);
+
+  // Filter out inline attachments if requested
+  const displayAttachments = useMemo(() => {
+    if (!filterInlineAttachments) {
+      return attachments;
+    }
+
+    // Only show non-inline attachments (regular downloads)
+    return attachments.filter(att => !isInlineAttachment(att));
+  }, [attachments, filterInlineAttachments]);
 
   const handleDownload = useCallback(
     async (attachment: EmailAttachment) => {
@@ -106,18 +136,18 @@ export const EmailAttachmentList: React.FC<EmailAttachmentListProps> = ({
     [accountId, messageId]
   );
 
-  if (!attachments || attachments.length === 0) {
+  if (!displayAttachments || displayAttachments.length === 0) {
     return null;
   }
 
   return (
     <Box sx={{ mt: 2 }}>
       <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-        {attachments.length} Attachment{attachments.length > 1 ? "s" : ""}
+        {displayAttachments.length} Attachment{displayAttachments.length > 1 ? "s" : ""}
       </Typography>
 
       <Stack spacing={1}>
-        {attachments.map((attachment, index) => {
+        {displayAttachments.map((attachment, index) => {
           const isDownloading = downloading === attachment.id;
           const mimeType = attachment.mimeType || attachment.contentType;
 

@@ -1,8 +1,11 @@
 /**
  * Text Formatting Utilities
  *
- * Converts plain text to formatted HTML for better message display
+ * Converts plain text to formatted HTML for better message display.
+ * All HTML content is sanitized using DOMPurify to prevent XSS attacks.
  */
+
+import { sanitizeHtml, isHtmlContent as detectHtml } from './html-sanitizer';
 
 /**
  * Convert plain text URLs to clickable links
@@ -51,42 +54,34 @@ export function formatPlainTextToHtml(text: string): string {
 
 /**
  * Detect if text is HTML or plain text
+ * Re-exported from html-sanitizer for backwards compatibility
  */
 export function isHtmlContent(text: string): boolean {
-  if (!text) return false;
-
-  // Check for common HTML patterns
-  return (
-    text.includes('<html') ||
-    text.includes('<!DOCTYPE') ||
-    text.includes('<p>') ||
-    text.includes('<div>') ||
-    text.includes('<br>') ||
-    text.includes('<img') ||
-    text.includes('<a href') ||
-    text.includes('<table') ||
-    text.includes('<ul>') ||
-    text.includes('<ol>') ||
-    text.match(/<[a-z][\s\S]*>/i) !== null
-  );
+  return detectHtml(text);
 }
 
 /**
- * Smart content formatter
- * - If content is HTML, return as-is
+ * Smart content formatter with security
+ * - If content is HTML, sanitize it with DOMPurify
  * - If content is plain text, convert to formatted HTML
+ *
+ * SECURITY: All HTML content is sanitized to prevent XSS attacks
+ *
+ * @param content - Message content (plain text or HTML)
+ * @param html - Optional explicit HTML content
+ * @returns Safe HTML ready for rendering
  */
 export function smartFormatContent(content: string, html?: string): string {
-  // If we have explicit HTML, use it
+  // If we have explicit HTML, sanitize and use it
   if (html) {
-    return html;
+    return sanitizeHtml(html);
   }
 
-  // If content looks like HTML, use it
+  // If content looks like HTML, sanitize it
   if (isHtmlContent(content)) {
-    return content;
+    return sanitizeHtml(content);
   }
 
-  // Otherwise, format plain text to HTML
+  // Otherwise, format plain text to HTML (already safe, no HTML tags)
   return formatPlainTextToHtml(content);
 }

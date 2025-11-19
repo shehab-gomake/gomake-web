@@ -7,8 +7,9 @@ import { ConversationListHeader } from "./conversation/conversation-list-header"
 import { ConversationListItem } from "./conversation/conversation-list-item";
 import { ConversationListEmpty } from "./conversation/conversation-list-empty";
 import { ConversationListLoading } from "./conversation/conversation-list-loading";
-import { ConversationListLoadMore } from "./conversation/conversation-list-load-more";
 import { EmailHoverProfile } from "./email-hover-profile";
+import { useInfiniteScroll } from "@/widgets/frontdesk/hooks/use-infinite-scroll";
+import { InfiniteScrollLoader } from "@/widgets/frontdesk/components/shared";
 
 interface EmailConversationListProps {
   conversations: EmailConversation[];
@@ -54,6 +55,15 @@ export const EmailConversationList: React.FC<EmailConversationListProps> = ({
     onHideProfile: () => {},
   });
 
+  // Infinite scroll setup
+  const sentinelRef = useInfiniteScroll({
+    onLoadMore: onLoadMore || (() => {}),
+    hasMore: hasMore,
+    loading: loading,
+    threshold: 200,
+    enabled: !!onLoadMore && hasMore,
+  });
+
   return (
     <Paper
       elevation={0}
@@ -79,7 +89,7 @@ export const EmailConversationList: React.FC<EmailConversationListProps> = ({
           <Box sx={{ p: 2 }}>
             <Alert severity="error">{error}</Alert>
           </Box>
-        ) : loading ? (
+        ) : loading && conversations.length === 0 ? (
           <ConversationListLoading />
         ) : conversations.length === 0 ? (
           <ConversationListEmpty selectedLabel={selectedLabel} />
@@ -96,7 +106,11 @@ export const EmailConversationList: React.FC<EmailConversationListProps> = ({
               />
             ))}
 
-            {hasMore && onLoadMore && <ConversationListLoadMore onLoadMore={onLoadMore} />}
+            {/* Infinite scroll sentinel element - always render for observer to work */}
+            <div ref={sentinelRef} style={{ height: 1, width: "100%" }} />
+
+            {/* Loading indicator at bottom */}
+            {loading && conversations.length > 0 && <InfiniteScrollLoader />}
           </List>
         )}
       </Box>

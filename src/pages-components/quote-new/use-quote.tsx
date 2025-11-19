@@ -100,6 +100,7 @@ import { PlusIcon } from "../quotes/widgets/icons/header-section-icons";
 import { useStyle } from "./style";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { ShowDocumentDetailsEnum, ShowPricesEnum } from "@/enums";
+import { useFrontDeskEmailIntegration } from "../quotes/hooks/use-frontdesk-email-integration";
 
 export enum MessageType {
   Email = 0,
@@ -174,6 +175,14 @@ const useQuoteNew = ({
     isPurchaseInvoiceRefund ||
     isSupplierPayments ||
     isOutgoingPayments;
+
+  // FrontDesk Email Integration
+  const {
+    isEmailComposerOpen,
+    emailData,
+    openEmailComposer,
+    closeEmailComposer,
+  } = useFrontDeskEmailIntegration({ documentType: docType });
 
   const [creationDate, setCreationDate] = useState(
     isQuoteConfirmation
@@ -1814,6 +1823,28 @@ const useQuoteNew = ({
     alertNotVerifiedMail.open();
   };
 
+  // New handler for email - opens FrontDesk composer
+  const onClickSendEmailViaComposer = async () => {
+    if (!isSelectedAtLeastOne && docType === DOCUMENT_TYPE.quote) {
+      alertFault("reports.pleaseSelectOneItem");
+      return;
+    }
+
+    const contacts = quoteItemValue?.documentContacts;
+    const emailValid = checkArrayNotEmptyOrEmailNotEmpty(contacts);
+
+    if (!emailValid) {
+      alertFault("sales.quote.mailContectErrorMsg");
+      return;
+    }
+
+    // Get first valid email from contacts
+    const contactEmail = contacts?.find(c => c.contactMail)?.contactMail;
+    const contactPhone = contacts?.find(c => c.contactPhone)?.contactPhone;
+
+    await openEmailComposer(quoteItemValue?.id, contactEmail, contactPhone);
+  };
+
   const onClickSendQuoteToClient = async (messageType: MessageType) => {
     if (!isSelectedAtLeastOne && docType === DOCUMENT_TYPE.quote) {
       alertFault("reports.pleaseSelectOneItem");
@@ -2960,6 +2991,11 @@ const useQuoteNew = ({
     onConfirmVatMismatchModal,
     estimatedProductionDate,
     handleExportToExcel,
+    // FrontDesk Email Integration
+    onClickSendEmailViaComposer,
+    isEmailComposerOpen,
+    emailData,
+    closeEmailComposer,
   };
 };
 

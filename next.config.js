@@ -6,6 +6,7 @@ const nextConfig = {
     API_SERVER: process.env.API_SERVER,
     ERP_SERVER: process.env.ERP_SERVER,
     MESSAGING_SERVER: process.env.MESSAGING_SERVER,
+    CHATWOOT_SERVER: process.env.CHATWOOT_SERVER,
     ENVIROMENT: process.env.ENVIROMENT,
     GA_MEASUREMENT_ID: process.env.GA_MEASUREMENT_ID,
     MONDAY_API_TOKEN: process.env.MONDAY_API_TOKEN,
@@ -16,14 +17,12 @@ const nextConfig = {
     API_SERVER: process.env.API_SERVER,
     ERP_SERVER: process.env.ERP_SERVER,
     MESSAGING_SERVER: process.env.MESSAGING_SERVER,
+    CHATWOOT_SERVER: process.env.CHATWOOT_SERVER,
     ENVIROMENT: process.env.ENVIROMENT,
     GA_MEASUREMENT_ID: process.env.GA_MEASUREMENT_ID,
     MONDAY_API_TOKEN: process.env.MONDAY_API_TOKEN,
     MONDAY_BOARD_ID: process.env.MONDAY_BOARD_ID,
     TOPICS_GROUP_ID: process.env.TOPICS_GROUP_ID,
-  },
-  future: {
-    webpack5: true,
   },
   images: {
     domains: [process.env.BASE_HOST || "localhost", "i.ibb.co"],

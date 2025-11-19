@@ -2,8 +2,7 @@ import React from 'react';
 import { Box, Typography } from '@mui/material';
 import { colorTokens, radiusTokens, semanticTypography } from '../../tokens';
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
-
-export type PriorityLevel = 'Urgent' | 'High' | 'Medium' | 'Low' | 'URGENT' | 'HIGH' | 'MEDIUM' | 'LOW';
+import { PriorityLevel } from '../../types';
 
 export interface PriorityBadgeProps {
   /** Priority level (accepts both capitalized and uppercase formats) */

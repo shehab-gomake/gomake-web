@@ -39,16 +39,16 @@ import {
   openFileUploaderList,
   pinFileUploaderState,
 } from "@/store/file-uploader-state";
-import { MailIcon } from "./icons/mail";
 import { DeleteIcon } from "./icons/delete";
 import { printReceiptChecksApi } from "@/services/api-service/generic-doc/receipts-api";
 import { PrintPdfIcon } from "./icons/print-pdf";
 import { TagIcon } from "@/icons/tag-icon";
-import { getTaxConfirmationNumberApi } from "@/services/api-service/generic-doc/invoices";
 import AlarmOnRoundedIcon from "@mui/icons-material/AlarmOnRounded";
 import { PackageIcon } from "@/icons/package-icon";
 import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
 import { EPreferences } from "@/enums/prefernces";
+import { SendToCustomerSubmenu } from "./send-to-customer-submenu";
+import { MailIcon } from "./icons/mail";
 
 const useMoreCircle = () => {
   const { user } = useCustomer();
@@ -99,6 +99,10 @@ const useMoreCircle = () => {
     handleGetTaxConfirmNo,
     onClickOpenMoveOrderToReadyModal,
     onOpenPackagesModal,
+    onClickSendToCustomerEmail,
+    onClickSendToCustomerSMS,
+    onClickSendToCustomerWhatsApp,
+    classes,
   }) => {
     const isEditableDocument = quote?.isEditable;
     const documentPath = DOCUMENT_TYPE[documentType];
@@ -106,9 +110,8 @@ const useMoreCircle = () => {
 
     const getDocumentPath = (id?: string, extraParams: string = "") => {
       if (isSupplierPayments) {
-        return `/${
-          DOCUMENT_TYPE[DOCUMENT_TYPE.receipt]
-        }?isOutgoingPayments=true${id ? `&Id=${id}` : ""}${extraParams}`;
+        return `/${DOCUMENT_TYPE[DOCUMENT_TYPE.receipt]
+          }?isOutgoingPayments=true${id ? `&Id=${id}` : ""}${extraParams}`;
       }
       return `/${documentPath}${id ? `?Id=${id}` : ""}${extraParams}`;
     };
@@ -548,8 +551,8 @@ const useMoreCircle = () => {
         onClick: () =>
           quote?.closeOrderNotes && quote?.closeOrderNotes.trim() !== ""
             ? onClickOpenCloseOrderNotesModal(quote, "closeManually", () =>
-                onClickOpenCloseOrderModal(quote)
-              )
+              onClickOpenCloseOrderModal(quote)
+            )
             : onClickOpenCloseOrderModal(quote),
         icon: <LockIcon color={primaryLavender(500)} />,
         name: t("sales.quote.close"),
@@ -602,8 +605,8 @@ const useMoreCircle = () => {
           isOrder
             ? onClickOpenIrrelevantModal(quote)
             : quote?.creditCardTotal > 0
-            ? onOpenCancelReceiptModalRefund(quote)
-            : onOpenCancelReceiptModal(quote),
+              ? onOpenCancelReceiptModalRefund(quote)
+              : onOpenCancelReceiptModal(quote),
         icon: <TickCancelIcon color={primaryLavender(500)} />,
         name: t("sales.quote.cancel"),
       },
@@ -641,13 +644,15 @@ const useMoreCircle = () => {
       },
       {
         condition: true,
-        onClick: () =>
-          onClickSendPayment(quote, true, !!isSendOrderReadyToClient),
-        icon: <MailIcon color={primaryLavender(500)} />,
-        name: t(
-          `sales.quote.${
-            isSendOrderReadyToClient ? "sendOrderReadyToClient" : "sendToClient"
-          }`
+        component: (closeMenu: () => void) => (
+          <SendToCustomerSubmenu
+            onClickEmail={() => onClickSendToCustomerEmail(quote)}
+            onClickSMS={() => onClickSendToCustomerSMS(quote)}
+            onClickWhatsApp={() => onClickSendToCustomerWhatsApp(quote)}
+            menuItemStyle={classes.menuRowStyle}
+            rowTextStyle={classes.rowTextStyle}
+            onCloseParentMenu={closeMenu}
+          />
         ),
       },
       {

@@ -38,6 +38,14 @@ export const ticketsErrorAtom = atom<string | null>({
 });
 
 /**
+ * Ticket detail loading state (for fetching single ticket by ID)
+ */
+export const ticketDetailLoadingAtom = atom<boolean>({
+  key: 'frontdesk.tickets.detailLoading',
+  default: false,
+});
+
+/**
  * WebSocket connection state
  */
 export const ticketSocketConnectedAtom = atom<boolean>({

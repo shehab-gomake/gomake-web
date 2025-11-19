@@ -47,6 +47,36 @@ export enum BackendNotificationPriority {
 export type FrontendTabType = 'MESSAGE' | 'TICKET';
 
 /**
+ * Notification metadata structure
+ * Contains additional context based on notification type
+ */
+export interface NotificationMetadata {
+  // Email-specific metadata (Option 3 backend implementation)
+  conversationId?: string;    // Database conversation ID (for unified navigation)
+  threadId?: string;          // Provider thread ID (email-specific)
+  accountId?: string;         // Email account UUID (for API calls)
+  senderName?: string;        // Email sender name
+  senderEmail?: string;       // Email sender address
+  senderAvatar?: string;      // Email sender avatar URL
+  emailSubject?: string;      // Email subject line
+  emailPreview?: string;      // Email preview text
+  messageId?: string;         // Individual message ID that triggered notification
+
+  // DM-specific metadata
+  userName?: string;          // DM sender name
+  userAvatar?: string;        // DM sender avatar URL
+  channel?: string;           // Channel type (DM, EMAIL, WHATSAPP)
+
+  // Ticket-specific metadata
+  ticketNumber?: string;      // Ticket number for display
+  ticketPriority?: string;    // Ticket priority level
+  priority?: string;          // Alias for ticketPriority
+
+  // Generic metadata (allows for future extensions)
+  [key: string]: any;
+}
+
+/**
  * Backend notification structure (from Messaging Hub API)
  */
 export interface BackendNotification {
@@ -55,11 +85,11 @@ export interface BackendNotification {
   printHouseId: string;
   type: BackendNotificationType;
   priority: BackendNotificationPriority;
-  entityType?: string | null; // "ticket", "conversation", "message"
+  entityType?: string | null; // "ticket", "conversation", "message", "email"
   entityId?: string | null;
   title: string;
   body?: string | null;
-  metadata: any;
+  metadata: NotificationMetadata;
   readAt?: Date | null;
   dismissedAt?: Date | null;
   createdAt: Date;
@@ -158,12 +188,28 @@ export function extractChannel(notification: BackendNotification): 'DM' | 'EMAIL
     }
   }
 
+  // Check entityType field
+  if (notification.entityType) {
+    const entityType = notification.entityType.toUpperCase();
+    if (entityType === 'EMAIL') {
+      return 'EMAIL';
+    } else if (entityType === 'WHATSAPP') {
+      return 'WHATSAPP';
+    } else if (entityType === 'CONVERSATION' || entityType === 'MESSAGE') {
+      return 'DM';
+    }
+  }
+
   // Infer from notification type
   if (
     notification.type === BackendNotificationType.DM_RECEIVED ||
     notification.type === BackendNotificationType.DM_MENTION
   ) {
     return 'DM';
+  }
+
+  if (notification.type === BackendNotificationType.EMAIL_RECEIVED) {
+    return 'EMAIL';
   }
 
   return null;
