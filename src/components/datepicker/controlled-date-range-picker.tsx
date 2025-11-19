@@ -21,11 +21,13 @@ import {
 } from "date-fns";
 import { CalendarIcon } from "./icons";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
+import { InfoTooltip } from "@/components/info-tooltip";
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
 
 interface IControlledDateRangePicker {
   label?: string;
+  tooltip?: string | React.ReactNode;
   startDate: Date | null;
   endDate: Date | null;
   onChange: (startDate: Date | null, endDate: Date | null) => void;
@@ -39,6 +41,7 @@ interface IControlledDateRangePicker {
 // ? new component DATE RANGE PICKER USE THIS COMPONENT INSTEAD OF THE DATEPICKER COMPONENT
 const ControlledDateRangePicker = ({
   label = "",
+  tooltip,
   startDate,
   endDate,
   onChange,
@@ -326,12 +329,15 @@ const ControlledDateRangePicker = ({
       {label && (
         <label
           style={{
-            display: "block",
+            display: "flex",
+            alignItems: "center",
+            gap: 6,
             marginBottom: 8,
             ...FONT_FAMILY.Lexend(500, 15),
           }}
         >
-          {label}
+          <span>{label}</span>
+          {tooltip && <InfoTooltip content={tooltip} />}
         </label>
       )}
       <Box sx={{ position: "relative", width: "100%", maxWidth: "280px" }}>
