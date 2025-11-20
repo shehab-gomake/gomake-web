@@ -94,10 +94,10 @@ export const CloseDocumentSubmenu: React.FC<CloseDocumentSubmenuProps> = ({
               onClickOpenCloseOrderNotesModal
             ) {
               onClickOpenCloseOrderNotesModal(document, "closeManually", () =>
-                onCloseDocument(document?.id)
+                onCloseDocument(document)
               );
             } else {
-              onCloseDocument(document?.id);
+              onCloseDocument(document);
             }
           },
         });
@@ -131,7 +131,7 @@ export const CloseDocumentSubmenu: React.FC<CloseDocumentSubmenuProps> = ({
         // Close delivery note
         options.push({
           label: t("sales.quote.close"),
-          onClick: () => onCloseDocument(document?.id),
+          onClick: () => onCloseDocument(document),
         });
 
         // Close as Proforma Invoice
@@ -163,7 +163,7 @@ export const CloseDocumentSubmenu: React.FC<CloseDocumentSubmenuProps> = ({
         // Close proforma invoice
         options.push({
           label: t("sales.quote.close"),
-          onClick: () => onCloseDocument(document?.id),
+          onClick: () => onCloseDocument(document),
         });
 
         // Close as Invoice
@@ -179,7 +179,7 @@ export const CloseDocumentSubmenu: React.FC<CloseDocumentSubmenuProps> = ({
         // Close invoice
         options.push({
           label: t("sales.quote.close"),
-          onClick: () => onCloseDocument(document?.id),
+          onClick: () => onCloseDocument(document),
         });
 
         // Create Invoice Refund
@@ -195,7 +195,7 @@ export const CloseDocumentSubmenu: React.FC<CloseDocumentSubmenuProps> = ({
         // Close purchase order
         options.push({
           label: t("sales.quote.close"),
-          onClick: () => onCloseDocument(document?.id),
+          onClick: () => onCloseDocument(document),
         });
         break;
 
@@ -213,7 +213,7 @@ export const CloseDocumentSubmenu: React.FC<CloseDocumentSubmenuProps> = ({
         // For other document types, just show close option
         options.push({
           label: t("sales.quote.close"),
-          onClick: () => onCloseDocument(document?.id),
+          onClick: () => onCloseDocument(document),
         });
         break;
     }
