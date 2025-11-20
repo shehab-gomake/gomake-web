@@ -81,9 +81,13 @@ export class ChatwootContactsService extends BaseChatwootService {
     accountId: number,
     contactId: number
   ): Promise<ContactDetail> {
-    return await this.get<ContactDetail>(
+    // Chatwoot API returns: { payload: { contact: {...} } }
+    const response = await this.get<{ payload: ContactDetail }>(
       this.accountScopedUrl(accountId, `contacts/${contactId}`)
     );
+    
+    // Extract the contact from the nested payload structure
+    return response.payload;
   }
 
   /**
@@ -99,10 +103,14 @@ export class ChatwootContactsService extends BaseChatwootService {
    */
   async createContact(accountId: number, payload: ContactCreatePayload): Promise<ContactDetail> {
     // Backend handles accountId via JWT authentication
-    return await this.post<ContactDetail>(
+    // Chatwoot API returns: { payload: { contact: {...}, contact_inbox: {...} } }
+    const response = await this.post<{ payload: { contact: ContactDetail; contact_inbox: any } }>(
       `/api/accounts/contacts`,
       payload
     );
+    
+    // Extract the contact from the nested payload structure
+    return response.payload.contact;
   }
 
   /**
@@ -123,10 +131,14 @@ export class ChatwootContactsService extends BaseChatwootService {
     payload: ContactUpdatePayload
   ): Promise<ContactDetail> {
     // Backend handles accountId via JWT authentication
-    return await this.put<ContactDetail>(
+    // Chatwoot API returns: { payload: { contact: {...} } }
+    const response = await this.put<{ payload: ContactDetail }>(
       `/api/accounts/contacts/${contactId}`,
       payload
     );
+    
+    // Extract the contact from the nested payload structure
+    return response.payload;
   }
 
   /**
