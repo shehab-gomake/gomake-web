@@ -23,6 +23,7 @@ const letterSidesBendingMachine = (state: Record<string, any>) => {
             type: "text",
             placeholder: "machineAttributes.setupTimePerLetterLightBox",
             required: true,
+            unit: EMeasurementUnits.SECOND,
             parameterKey: "setupTimePerLetterLightBox",
             options: [],
             value: state.attributes?.setupTimePerLetterLightBox ? state.attributes?.setupTimePerLetterLightBox : '',
