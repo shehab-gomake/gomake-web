@@ -21,9 +21,9 @@ import {
 } from "@/services/api-service/generic-doc/documents-api";
 import { useUserPermission } from "@/hooks/use-permission";
 import { ETab } from "@/pages-components/admin/home/widgets/quote-widget/enums";
-import { ItemCalculationType } from "@/enums";
 import { EProductStructureType } from "@/widgets/shared-admin-customers/add-product/settings/settings-data";
 import { getCompositeProductById } from "@/services/hooks/admin-side/products/get-set-product-by-id";
+import {ItemCalculationType} from "@/enums";
 
 const useAddNewItem = ({ onClose, getQuote, documentType, getCalculateQuoteItem, isMaterial, isNewCreation, isPurchaseOrder, isCanIntake }: {
   onClose: () => void, getQuote: () => void,
@@ -283,9 +283,8 @@ const useAddNewItem = ({ onClose, getQuote, documentType, getCalculateQuoteItem,
       await addDocumentItemFromMaterialApi(callApi, callBack, {
         clientId: quoteItemValue?.customerID,
         printHouseMaterialId: selectedProduct?.id,
-        documentType,
         documentId: quoteItemValue?.id,
-      });
+      }, documentType);
     }
   };
 

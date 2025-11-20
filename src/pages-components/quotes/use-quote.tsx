@@ -75,8 +75,7 @@ import {
 } from "@/widgets/settings-documenting/documentDesign/enums/document-type";
 import {
   AStatus,
-  BoardMissionStatusForFilter,
-  DocumentCloseStatus,
+  BoardMissionStatusForFilter, DocumentCloseStatus,
   PStatus,
   ReceiptAccountingStatus,
 } from "../board-missions/widgets/enums";
@@ -96,7 +95,7 @@ import { useRouter } from "next/router";
 import { ICard } from "./widgets/statistics-section/statistics-sections";
 import { ClickableStatusButton } from "./widgets/delivery-status-button/delivery-status-button";
 import { DocumentDeliveryStatuses } from "./widgets/delivery-status-button/delivery-status-modal/use-delivery-status-modal";
-import { EMessageStatus } from "@/enums/document-type-enum";
+import {EMessageStatus, PurchaseOrderStatuses} from "@/enums/document-type-enum";
 import { useDocumentsTableSocketIo } from "@/hooks/socket-io/use-documents-table-socket-io";
 import { QuoteIfExistState } from "../quote-new/store/quote";
 import { userQuoteState } from "@/store/user-qoute-state";
@@ -108,7 +107,6 @@ import {
   exportDeliveryTicketPDFApi,
   printDeliveryTicketPDFApi,
 } from "@/services/api-service/generic-doc/orders-api";
-import { GomakeTextInput } from "@/components";
 import { GomakeTextInput, GoMakeMenu } from "@/components";
 import { downloadPdf } from "@/utils/helpers";
 import { PAYMENT_TYPE } from "../deposit/enums";
@@ -124,7 +122,6 @@ import {
   QuotesTableColumns,
 } from "./enums/document-table-columns-enum";
 import { CircularProgress, MenuItem, Typography } from "@mui/material";
-import { PurchaseOrderStatuses } from "@/enums/document-type-enum";
 import { currenciesState } from "@/widgets/materials-widget/state";
 import { getCurrencies } from "@/services/api-service/general/enums";
 
