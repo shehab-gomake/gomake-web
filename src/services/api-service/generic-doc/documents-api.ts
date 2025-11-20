@@ -165,6 +165,7 @@ const GET_DOCUMENT_TABLE_SETTINGS_URL =
   "/v1/erp-service/documents-table-settings/get-document-table-settings";
 
 const RE_CALCULATE_ITEM_URL = "/v1/erp-service/document/re-calculate-item";
+const ADD_COMPOSITE_PRODUCTS_URL = "/v1/erp-service/add-composite-products";
 
 const getDocumentApi: ICallAndSetData = async (
   callApi,
@@ -1383,6 +1384,38 @@ const reCalculateItemApi: ICallAndSetData = async (
   );
 };
 
+const addCompositeProductsApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data: {
+    documentType: number;
+    clientId: string;
+    clientTypeId: string;
+    orderId: string;
+    compositeProducts: Array<{
+      id: string;
+      name: string;
+      quantity: number;
+      jobName: string;
+    }>;
+  }
+) => {
+  const url = `${ADD_COMPOSITE_PRODUCTS_URL}/${data.documentType}`;
+  const requestBody = {
+    clientId: data.clientId,
+    clientTypeId: data.clientTypeId,
+    orderId: data.orderId,
+    compositeProducts: data.compositeProducts,
+  };
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.PUT,
+    url,
+    setState,
+    requestBody
+  );
+};
+
 export {
   getDocumentApi,
   getAllDocumentsApi,
@@ -1474,4 +1507,5 @@ export {
   saveDocumentTableSettingsApi,
   getDocumentTableSettingsApi,
   reCalculateItemApi,
+  addCompositeProductsApi,
 };

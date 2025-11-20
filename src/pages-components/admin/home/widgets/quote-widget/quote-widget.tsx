@@ -29,9 +29,11 @@ import { getHeadingTypography } from "@/utils/typography-utils";
 import { PrimaryButton } from "@/components/button/primary-button";
 import { EProductStructureType } from "@/widgets/shared-admin-customers/add-product/settings/settings-data";
 import { ProductCategoryType } from "./states";
-import { useGomakeAxios } from "@/hooks";
+import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { getCompositeProductById } from "@/services/hooks/admin-side/products/get-set-product-by-id";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { addCompositeProductsApi } from "@/services/api-service/generic-doc/documents-api";
+import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 
 interface QuoteWidgetProps {
   isMobileScreen?: boolean;
@@ -91,7 +93,9 @@ const QuoteWidget = ({ isMobileScreen = false, title }: QuoteWidgetProps) => {
   } = useQuoteWidget();
   const { secondColor } = useGomakeTheme();
   const { callApi } = useGomakeAxios();
+  const { alertSuccessAdded, alertFaultAdded } = useSnackBar();
   const [compositeDialogOpen, setCompositeDialogOpen] = useState(false);
+  const [isSubmittingComposite, setIsSubmittingComposite] = useState(false);
   const [compositeProducts, setCompositeProducts] = useState<Array<{
     id: string;
     name: string;
@@ -114,6 +118,11 @@ const QuoteWidget = ({ isMobileScreen = false, title }: QuoteWidgetProps) => {
     quantity?: string;
     jobName?: string;
   }>({});
+
+  console.log("selectedClientType", {
+    compositeProducts, selectedClientType,
+    selectedClient,
+  });
 
   const isCompositeSelectedProduct =
     selectedProduct?.category === ProductCategoryType.PRODUCT &&
@@ -167,6 +176,9 @@ const QuoteWidget = ({ isMobileScreen = false, title }: QuoteWidgetProps) => {
   };
 
   const handleCompositeCancel = () => {
+    if (isSubmittingComposite) {
+      return;
+    }
     setCompositeDialogOpen(false);
     setCompositeErrors({});
     setMainFieldErrors({});
@@ -283,7 +295,7 @@ const QuoteWidget = ({ isMobileScreen = false, title }: QuoteWidgetProps) => {
     }
   };
 
-  const handleCompositeConfirm = () => {
+  const handleCompositeConfirm = async () => {
     const errors: { [key: string]: { quantity?: string; jobName?: string } } = {};
     let hasErrors = false;
 
@@ -313,21 +325,42 @@ const QuoteWidget = ({ isMobileScreen = false, title }: QuoteWidgetProps) => {
       return;
     }
 
-    setCompositeDialogOpen(false);
-    setCompositeErrors({});
-    setMainFieldErrors({});
 
+    setIsSubmittingComposite(true);
 
-    // // Pass all composite products data
-    // onClickCreateQuoteForCustomer({
-    //   compositeProducts: compositeProducts.map((p) => ({
-    //     id: p.id,
-    //     quantity: p.quantity,
-    //     jobName: p.jobName,
-    //   })),
-    // });
+    const callBack = (res: any) => {
+      setIsSubmittingComposite(false);
+      if (res?.success) {
+        setCompositeDialogOpen(false);
+        setCompositeErrors({});
+        setMainFieldErrors({});
+        setCompositeProducts([]);
+        setQuantityMultiplier(1);
+        setMainJobName("");
+        alertSuccessAdded();
+        // Refresh the quote to show the new items
+        getAndSetExistQuote();
+      } else {
+        alertFaultAdded();
+      }
+    };
 
-    setCompositeProducts([]);
+    await addCompositeProductsApi(
+      callApi,
+      callBack,
+      {
+        documentType: DOCUMENT_TYPE.quote,
+        clientId: selectedClient?.id,
+        clientTypeId: selectedClientType?.id,
+        // orderId: QuoteId,
+        compositeProducts: compositeProducts.map((p) => ({
+          id: p.id,
+          name: p.name,
+          quantity: p.quantity,
+          jobName: p.jobName,
+        })),
+      }
+    );
   };
 
   const handleCreateCompositeAware = () => {
