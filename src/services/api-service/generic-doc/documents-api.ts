@@ -171,10 +171,10 @@ const GET_DOCUMENT_TABLE_SETTINGS_URL =
   "/v1/erp-service/documents-table-settings/get-document-table-settings";
 
 const RE_CALCULATE_ITEM_URL = "/v1/erp-service/document/re-calculate-item";
-const GET_DOCUMENT_INVENTORY_URL =
-  "/v1/erp-service/documents/get-document-inventory";
 const UPDATE_QUOTE_CLIENT_NOTE_AS_SHOWN_URL =
   "/v1/erp-service/documents/update-quote-client-note-as-shown";
+const GET_DOCUMENT_INVENTORY_URL =
+  "/v1/erp-service/documents/get-document-inventory";
 const ADD_COMPOSITE_PRODUCTS_URL = "/v1/erp-service/add-composite-products";
 
 const getDocumentApi: ICallAndSetData = async (
@@ -1438,20 +1438,6 @@ const reCalculateItemApi: ICallAndSetData = async (
   );
 };
 
-const getDocumentInventoryApi: ICallAndSetData = async (
-  callApi,
-  setState,
-  data
-) => {
-  return await getSetApiData(
-    callApi,
-    EHttpMethod.GET,
-    GET_DOCUMENT_INVENTORY_URL,
-    setState,
-    data
-  );
-};
-
 const updateQuoteClientNoteAsShownApi: ICallAndSetData = async (
   callApi,
   setState,
@@ -1465,7 +1451,19 @@ const updateQuoteClientNoteAsShownApi: ICallAndSetData = async (
     {}
   );
 };
-
+const getDocumentInventoryApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.GET,
+    GET_DOCUMENT_INVENTORY_URL,
+    setState,
+    data
+  );
+};
 const addCompositeProductsApi: ICallAndSetData = async (
   callApi,
   setState,
@@ -1519,8 +1517,8 @@ export {
   updatePurchaseNumberApi,
   checkPurchaseNumberExistsApi,
   addDeliveryApi,
-  updateDocumentStatusApi,
   addRelatedDocumentApi,
+  updateDocumentStatusApi,
   cancelDocumentApi,
   sendDocumentToClientApi,
   getDocumentMailDataApi,
@@ -1592,7 +1590,7 @@ export {
   saveDocumentTableSettingsApi,
   getDocumentTableSettingsApi,
   reCalculateItemApi,
-  getDocumentInventoryApi,
   updateQuoteClientNoteAsShownApi,
+  getDocumentInventoryApi,
   addCompositeProductsApi,
 };

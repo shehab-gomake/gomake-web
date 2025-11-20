@@ -116,29 +116,69 @@ export const uploadFileToMessage = async (
   callApi: any,
   ticketId: number,
   messageId: number,
-  file: File
+  file: File,
+  onProgress?: (progress: number) => void
 ): Promise<FileAttachment> => {
-  // Use axios directly for file uploads to avoid Content-Type header issues
   const axios = require('axios');
   const config = require('@/config').default;
   const { getUserToken } = require('@/services/storage-data');
-  
-  const formData = new FormData();
-  formData.append('file', file);
+  const { uploadFileResumable } = require('@/utils/resumable-upload');
   
   const userToken = getUserToken();
-  const url = `${config.api_server}/api/tickets/${ticketId}/messages/${messageId}/files`;
+  const baseUrl = `${config.api_server}/api/tickets/${ticketId}/messages/${messageId}/files`;
   
-  const response = await axios.post(url, formData, {
-    headers: {
-      // Don't set Content-Type - axios will set it automatically with boundary for FormData
-      ...(userToken && { Authorization: `Bearer ${userToken}` }),
-      'project-name': 'business-dashboard',
-      'lang': 'en',
-      'domain': '',
-    },
-  });
-  
-  return response.data;
+  try {
+    // Step 1: Request resumable upload URL from backend
+    const urlResponse = await axios.post(
+      `${baseUrl}/resumable-url`,
+      {
+        fileName: file.name,
+        mimeType: file.type || 'application/octet-stream',
+        fileSize: file.size,
+      },
+      {
+        headers: {
+          ...(userToken && { Authorization: `Bearer ${userToken}` }),
+          'project-name': 'business-dashboard',
+          'lang': 'en',
+          'domain': '',
+        },
+      }
+    );
+
+    const { sessionUri, filePath, origin } = urlResponse.data;
+
+    // Step 2: Upload file directly to Google Cloud Storage using resumable upload
+    const uploadResult = await uploadFileResumable({
+      sessionUri,
+      file,
+      onProgress,
+      chunkSize: 8 * 1024 * 1024, // 8 MiB chunks
+      origin, // Pass origin for CORS
+    });
+
+    if (!uploadResult.success) {
+      throw new Error(uploadResult.error || 'Upload failed');
+    }
+
+    // Step 3: Confirm upload completion with backend
+    const confirmResponse = await axios.post(
+      `${baseUrl}/confirm`,
+      { filePath },
+      {
+        headers: {
+          ...(userToken && { Authorization: `Bearer ${userToken}` }),
+          'project-name': 'business-dashboard',
+          'lang': 'en',
+          'domain': '',
+        },
+      }
+    );
+
+    return confirmResponse.data;
+  } catch (error: any) {
+    console.error('Error uploading file:', error);
+    throw error;
+  }
 };
 

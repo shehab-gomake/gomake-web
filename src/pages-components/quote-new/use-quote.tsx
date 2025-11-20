@@ -63,8 +63,8 @@ import {
   updatePurchaseNumberApi,
   checkPurchaseNumberExistsApi,
   updateQuoteItemQuantityApi,
-  getDocumentInventoryApi,
   updateQuoteClientNoteAsShownApi,
+  getDocumentInventoryApi,
 } from "@/services/api-service/generic-doc/documents-api";
 import { DOCUMENT_TYPE } from "../quotes/enums";
 import { useRouter } from "next/router";

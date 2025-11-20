@@ -997,7 +997,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
                   </a>
                 )}
                 <a
-                  href={`/orders?finalPatternSearch=${mission?.orderNumber}`}
+                  href={`/order?Id=${mission?.orderID}`}
                   style={classes.tableAtagStyle}
                   target="_blank"
                   rel="noopener noreferrer"

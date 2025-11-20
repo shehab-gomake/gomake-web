@@ -219,7 +219,7 @@ export const _renderStatus = (
                 minWidth: "auto",
                 height: "auto",
                 padding: 0,
-                color: "#2e3092",
+                color: "var(--theme-secondary-color, #2e3092)",
                 cursor: "pointer",
                 textDecoration: "none",
               }}
@@ -250,7 +250,7 @@ export const _renderStatus = (
                   minWidth: "auto",
                   height: "auto",
                   padding: 0,
-                  color: "#2e3092",
+                  color: "var(--theme-secondary-color, #2e3092)",
                   cursor: "pointer",
                   textDecoration: "none",
                 }}
@@ -272,7 +272,7 @@ export const _renderStatus = (
                 minWidth: "auto",
                 height: "auto",
                 padding: 0,
-                color: "#2e3092",
+                color: "var(--theme-secondary-color, #2e3092)",
                 cursor: "pointer",
                 textDecoration: "none",
               }}

@@ -70,6 +70,13 @@ const GalleryModalMapping = ({
 
       }
       {
+        item?.rowData?.code?.value ?
+          <div style={clasess.shapeWidthHeightStyle}>
+            {t("login.code")}: {String(parseFloat(item?.rowData?.code?.value) || item?.rowData?.code?.value)}
+          </div> : <></>
+
+      }
+      {
         isParameterSettings && <div style={{
           position: "absolute",
           bottom: 0,

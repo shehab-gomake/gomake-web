@@ -92,6 +92,7 @@ const AddNewItemModal = ({ openModal, onClose, documentType, getQuote, getCalcul
     CheckPermission,
     selectedTab,
     setSelectedTab,
+    // Composite products
     compositeDialogOpen,
     compositeProducts,
     quantityMultiplier,
@@ -127,7 +128,6 @@ const AddNewItemModal = ({ openModal, onClose, documentType, getQuote, getCalcul
       onClickCreateQuoteForCustomer();
     }
   };
-
   return (
     <>
       <GoMakeDialog
