@@ -60,6 +60,7 @@ const CompositeProductsDialog = ({
       customStyles={{
         primaryButton: {
           backgroundColor: secondColor(500),
+          minWidth: 180,
         },
       }}
     >
