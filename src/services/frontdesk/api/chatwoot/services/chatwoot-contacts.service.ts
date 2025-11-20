@@ -38,9 +38,12 @@ export class ChatwootContactsService extends BaseChatwootService {
   }
   /**
    * List Contacts
-   * GET /api/v1/accounts/{account_id}/contacts
+   * GET /api/accounts/contacts
    *
-   * @param accountId - The numeric ID of the account
+   * Note: Backend automatically handles accountId from authentication context.
+   * This endpoint uses /api instead of /api/v1 and doesn't require accountId in path.
+   *
+   * @param accountId - The numeric ID of the account (not used in URL, kept for API consistency)
    * @param params - Query parameters (page, search, etc.)
    * @returns Promise with contact list
    */
@@ -62,18 +65,18 @@ export class ChatwootContactsService extends BaseChatwootService {
     }
 
     const queryString = queryParams.toString();
-    const url = this.accountScopedUrl(
-      accountId,
-      `contacts${queryString ? `?${queryString}` : ""}`
-    );
+    const url = `/api/accounts/contacts${queryString ? `?${queryString}` : ""}`;
     return await this.get<ContactsListResponse>(url);
   }
 
   /**
    * Get Contact Details
-   * GET /api/v1/accounts/{account_id}/contacts/{id}
+   * GET /api/accounts/contacts/{id}
    *
-   * @param accountId - The numeric ID of the account
+   * Note: Backend automatically handles accountId from authentication context.
+   * This endpoint uses /api instead of /api/v1 and doesn't require accountId in path.
+   *
+   * @param accountId - The numeric ID of the account (not used in URL, kept for API consistency)
    * @param contactId - The numeric ID of the contact
    * @returns Promise with contact details
    */
@@ -81,9 +84,14 @@ export class ChatwootContactsService extends BaseChatwootService {
     accountId: number,
     contactId: number
   ): Promise<ContactDetail> {
-    return await this.get<ContactDetail>(
-      this.accountScopedUrl(accountId, `contacts/${contactId}`)
+    // Backend handles accountId via JWT authentication
+    // Chatwoot API returns: { payload: { contact: {...} } }
+    const response = await this.get<{ payload: ContactDetail }>(
+      `/api/accounts/contacts/${contactId}`
     );
+    
+    // Extract the contact from the nested payload structure
+    return response.payload;
   }
 
   /**
@@ -99,10 +107,14 @@ export class ChatwootContactsService extends BaseChatwootService {
    */
   async createContact(accountId: number, payload: ContactCreatePayload): Promise<ContactDetail> {
     // Backend handles accountId via JWT authentication
-    return await this.post<ContactDetail>(
+    // Chatwoot API returns: { payload: { contact: {...}, contact_inbox: {...} } }
+    const response = await this.post<{ payload: { contact: ContactDetail; contact_inbox: any } }>(
       `/api/accounts/contacts`,
       payload
     );
+    
+    // Extract the contact from the nested payload structure
+    return response.payload.contact;
   }
 
   /**
@@ -123,23 +135,30 @@ export class ChatwootContactsService extends BaseChatwootService {
     payload: ContactUpdatePayload
   ): Promise<ContactDetail> {
     // Backend handles accountId via JWT authentication
-    return await this.put<ContactDetail>(
+    // Chatwoot API returns: { payload: { contact: {...} } }
+    const response = await this.put<{ payload: ContactDetail }>(
       `/api/accounts/contacts/${contactId}`,
       payload
     );
+    
+    // Extract the contact from the nested payload structure
+    return response.payload;
   }
 
   /**
    * Delete Contact
-   * DELETE /api/v1/accounts/{account_id}/contacts/{id}
+   * DELETE /api/accounts/contacts/{id}
+   *
+   * Note: Backend automatically handles accountId from authentication context.
+   * This endpoint uses /api instead of /api/v1 and doesn't require accountId in path.
    * 
-   * @param accountId - The numeric ID of the account
+   * @param accountId - The numeric ID of the account (not used in URL, kept for API consistency)
    * @param contactId - The numeric ID of the contact
    * @returns Promise<void>
    */
   async deleteContact(accountId: number, contactId: number): Promise<void> {
     return await this.delete<void>(
-      this.accountScopedUrl(accountId, `contacts/${contactId}`)
+      `/api/accounts/contacts/${contactId}`
     );
   }
 

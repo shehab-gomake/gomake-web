@@ -202,8 +202,8 @@ export const useFrontdeskNotifications = () => {
           // Navigate to message's conversation (for DMs, the entityId should be the conversation ID)
           goToDMConversation(notification.entityId);
         } else {
-          // Default: navigate to frontdesk inbox
-          router.push("/frontdesk/inbox");
+          // Default: navigate to Chatwoot dashboard
+          router.push("/frontdesk/chatwoot?view=dashboard");
         }
       } catch (err) {
         console.error("[useFrontdeskNotifications] Click handler error:", err);

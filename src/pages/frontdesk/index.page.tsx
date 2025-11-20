@@ -14,8 +14,8 @@ const FrontdeskWidget = dynamic(
 export default function FrontdeskPage() {
   const { replace } = useRouter();
   useEffect(() => {
-    // Ensure canonical route points to inbox
-    replace("/frontdesk/inbox").then();
+    // Ensure canonical route points to Chatwoot dashboard
+    replace("/frontdesk/chatwoot?view=dashboard").then();
   }, [replace]);
 
   // Don't render layout during redirect to prevent duplicate profile fetch

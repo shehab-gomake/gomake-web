@@ -755,11 +755,10 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
                       </ListItemButton>
                     ) : (
                       inboxes.map((inbox: any) => {
-                        // Check if inbox has at least one non-administrator agent
+                        // Check if inbox has any agents assigned
                         const inboxAgents: Agent[] = inboxAgentsMap[inbox.id] || [];
-                        const nonAdminAgents = inboxAgents.filter((agent: Agent) => agent.role !== "administrator");
-                        const hasNonAdminAgents = nonAdminAgents.length > 0;
-                        const inboxName = hasNonAdminAgents ? inbox.name : `${inbox.name} (No agents assigned)`;
+                        const hasAgents = inboxAgents.length > 0;
+                        const inboxName = hasAgents ? inbox.name : `${inbox.name} (No agents assigned)`;
 
                         return (
                           <Tooltip key={inbox.id} title={inboxName} placement="right">
@@ -767,20 +766,6 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
                               selected={isChannelsView && selectedInboxId === inbox.id}
                               onClick={(e) => {
                                 e.stopPropagation();
-
-                                // If inbox has no non-admin agents, open the modal at step 3 to assign agents
-                                if (!hasNonAdminAgents && selectedAccount) {
-                                  console.log("[NavigationSidebar] Inbox has no non-admin agents. Opening modal to assign agents.", {
-                                    inboxId: inbox.id,
-                                    inboxName: inbox.name,
-                                    totalAgents: inboxAgents.length,
-                                    nonAdminAgents: nonAdminAgents.length,
-                                    agents: inboxAgents.map(a => ({ id: a.id, name: a.name, role: a.role }))
-                                  });
-                                  setPreloadedInboxForModal({ accountId: selectedAccount, inboxId: inbox.id });
-                                  setShowAddChannelModal(true);
-                                  return;
-                                }
 
                                 // Use RouteBuilder for type-safe navigation
                                 const route = RouteBuilder.chatwoot(ChatwootView.CHANNELS, undefined, inbox.id.toString());
@@ -860,16 +845,39 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
                                     },
                                   }}
                                 />
-                                {/* Warning Badge for inboxes without non-admin agents */}
-                                {!hasNonAdminAgents && (
-                                  <Tooltip title="No agents assigned" placement="top">
-                                    <WarningIcon
-                                      sx={{
-                                        fontSize: 16,
-                                        color: theme.palette.warning.main,
-                                        flexShrink: 0,
+                                {/* Warning Badge for inboxes without agents */}
+                                {!hasAgents && (
+                                  <Tooltip title="No agents assigned - Click to assign" placement="top">
+                                    <Box
+                                      component="span"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        if (selectedAccount) {
+                                          console.log("[NavigationSidebar] Opening modal to assign agents.", {
+                                            inboxId: inbox.id,
+                                            inboxName: inbox.name
+                                          });
+                                          setPreloadedInboxForModal({ accountId: selectedAccount, inboxId: inbox.id });
+                                          setShowAddChannelModal(true);
+                                        }
                                       }}
-                                    />
+                                      sx={{
+                                        cursor: "pointer",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        "&:hover": {
+                                          opacity: 0.8,
+                                        }
+                                      }}
+                                    >
+                                      <WarningIcon
+                                        sx={{
+                                          fontSize: 16,
+                                          color: theme.palette.warning.main,
+                                          flexShrink: 0,
+                                        }}
+                                      />
+                                    </Box>
                                   </Tooltip>
                                 )}
                               </Box>

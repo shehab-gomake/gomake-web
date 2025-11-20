@@ -11,6 +11,11 @@ import { chatwootService } from "@/services/frontdesk";
 import { chatwootProfileAtom, chatwootSelectedAccountAtom } from "@/store/frontdesk/atoms/chatwoot.atoms";
 import { DOCUMENT_TYPE } from "../enums";
 import { useChatwootProfile } from "@/widgets/frontdesk/providers/chatwoot/hooks/use-chatwoot-profile";
+import { useGomakeAxios } from "@/hooks/use-gomake-axios";
+import type { ContactDetail } from "@/services/frontdesk/api/chatwoot/types/contacts.types";
+import type { ContactableInbox } from "@/services/frontdesk/api/chatwoot/types/inboxes.types";
+import { ChannelType } from "@/services/frontdesk/api/chatwoot/types/inboxes.types";
+import type { ContactCreatePayload } from "@/services/frontdesk/api/chatwoot/types/contacts.types";
 
 // Helper function to convert HTML to plain text
 const htmlToPlainText = (html: string): string => {
@@ -39,11 +44,102 @@ interface FrontDeskEmailComposerWrapperProps {
         senderInboxName?: string | null;
         contactId?: number;
         contactEmail?: string;
+        contactName?: string;
+        contactPhone?: string;
+        customerId?: string | number;
+        customerName?: string;
         senderOptions?: EmailSenderOption[];
         defaultSenderOption?: EmailSenderOption | null;
     } | null;
     documentId: string | number;
     documentType: DOCUMENT_TYPE;
+}
+
+/**
+ * Helper function to find existing contact by email or create new one
+ * Same pattern as useComposeConversation
+ */
+async function findOrCreateContact(
+    accountId: number,
+    createPayload: ContactCreatePayload
+): Promise<ContactDetail | null> {
+    // Step 1: If email is provided, search for existing contact first
+    if (createPayload.email?.trim()) {
+        try {
+            const searchResults = await chatwootService.contacts.searchContacts(
+                accountId,
+                createPayload.email.trim()
+            );
+
+            // Find exact email match (case-insensitive)
+            const exactMatch = searchResults.payload?.find(
+                (c) => c.email?.toLowerCase() === createPayload.email?.toLowerCase()
+            );
+
+            if (exactMatch?.id) {
+                console.log(
+                    `[findOrCreateContact] Found existing contact with email ${createPayload.email}, ID: ${exactMatch.id}`
+                );
+                return {
+                    id: exactMatch.id,
+                    name: exactMatch.name,
+                    email: exactMatch.email,
+                    phone_number: exactMatch.phone_number,
+                    thumbnail: exactMatch.thumbnail,
+                    additional_attributes: exactMatch.additional_attributes,
+                } as ContactDetail;
+            }
+        } catch (searchError) {
+            console.warn(
+                `[findOrCreateContact] Failed to search for existing contact: ${searchError}`
+            );
+        }
+    }
+
+    // Step 2: Try to create new contact
+    try {
+        const createResponse = await chatwootService.contacts.createContact(accountId, createPayload);
+        return createResponse;
+    } catch (createError: any) {
+        // Step 3: Handle 422 "Email has already been taken" by searching again
+        if (createError?.status === 422 && createPayload.email?.trim()) {
+            console.warn(
+                `[findOrCreateContact] Contact creation failed with 422, attempting to find existing contact by email`
+            );
+
+            try {
+                const searchResults = await chatwootService.contacts.searchContacts(
+                    accountId,
+                    createPayload.email.trim()
+                );
+
+                // Find exact email match
+                const exactMatch = searchResults.payload?.find(
+                    (c) => c.email?.toLowerCase() === createPayload.email?.toLowerCase()
+                );
+
+                if (exactMatch?.id) {
+                    console.log(
+                        `[findOrCreateContact] Successfully recovered by finding existing contact ID: ${exactMatch.id}`
+                    );
+                    return {
+                        id: exactMatch.id,
+                        name: exactMatch.name,
+                        email: exactMatch.email,
+                        phone_number: exactMatch.phone_number,
+                        thumbnail: exactMatch.thumbnail,
+                        additional_attributes: exactMatch.additional_attributes,
+                    } as ContactDetail;
+                } else {
+                    throw createError;
+                }
+            } catch (fallbackError) {
+                throw createError;
+            }
+        } else {
+            throw createError;
+        }
+    }
 }
 
 export const FrontDeskEmailComposerWrapper: React.FC<FrontDeskEmailComposerWrapperProps> = ({
@@ -54,13 +150,22 @@ export const FrontDeskEmailComposerWrapper: React.FC<FrontDeskEmailComposerWrapp
     documentType,
 }) => {
     const { alertSuccessSend, alertFaultSend } = useSnackBar();
+    const { callApi } = useGomakeAxios();
     const selectedAccountId = useRecoilValue(chatwootSelectedAccountAtom);
     const setSelectedAccountId = useSetRecoilState(chatwootSelectedAccountAtom);
     const currentUser = useRecoilValue(chatwootProfileAtom);
     const { profile: profileUser, loading: profileLoading, fetchProfile } = useChatwootProfile();
     const [isSending, setIsSending] = React.useState(false);
+    const [isLoadingContact, setIsLoadingContact] = React.useState(false);
     const [senderOptions, setSenderOptions] = useState<EmailSenderOption[]>([]);
     const [defaultSenderOption, setDefaultSenderOption] = useState<EmailSenderOption | null>(null);
+    const [resolvedContact, setResolvedContact] = useState<ContactDetail | null>(null);
+    const [contactableInboxes, setContactableInboxes] = useState<ContactableInbox[]>([]);
+    const resolvedContactRef = React.useRef<string | null>(null); // Track what we've resolved
+    
+    // Map to track inbox ID to contact's source_id (email) for API calls
+    // Key: inboxId, Value: contact's email (source_id from contactable inbox)
+    const [inboxToSourceIdMap, setInboxToSourceIdMap] = useState<Map<number, string>>(new Map());
 
     const dedupeOptions = useCallback((options: EmailSenderOption[]) => {
         const map = new Map<string, EmailSenderOption>();
@@ -73,31 +178,299 @@ export const FrontDeskEmailComposerWrapper: React.FC<FrontDeskEmailComposerWrapp
         return Array.from(map.values());
     }, []);
 
-    const mapContactableToOptions = useCallback((contactable: unknown): EmailSenderOption[] => {
-        if (!Array.isArray(contactable)) return [];
-        return contactable
-            .filter((item) => item?.inbox?.channel_type === "Channel::Email")
-            .map((item) => ({
-                inboxId: item.inbox.id,
-                inboxName: item.inbox.name || item.source_id,
-                sourceId: item.source_id,
-                channelType: item.inbox.channel_type,
-            }));
-    }, []);
 
-    useEffect(() => {
-        if (!emailData) {
-            setSenderOptions([]);
-            setDefaultSenderOption(null);
+    /**
+     * Resolve Chatwoot contact from GoMake customer data
+     * Follows the EXACT same pattern as useComposeConversation
+     */
+    const resolveContactFromGomakeCustomer = useCallback(async (
+        customerId?: string | number,
+        contactEmail?: string,
+        contactName?: string,
+        contactPhone?: string
+    ) => {
+        if (!open || !selectedAccountId) return;
+
+        // Create a unique key for this resolution attempt
+        const resolutionKey = `${customerId || ''}_${contactEmail || ''}_${selectedAccountId}`;
+        
+        // Skip if we've already resolved for this combination
+        if (resolvedContactRef.current === resolutionKey) {
             return;
         }
 
-        const baseOptions = emailData.senderOptions ?? [];
-        let mergedOptions = dedupeOptions(baseOptions);
+        if (!customerId && !contactEmail) {
+            console.warn("[FrontDeskEmailComposerWrapper] No customer ID or contact email provided");
+            return;
+        }
 
-        setSenderOptions(mergedOptions);
-        setDefaultSenderOption(null);
-    }, [emailData, dedupeOptions]);
+        // Mark that we're resolving this combination
+        resolvedContactRef.current = resolutionKey;
+        setIsLoadingContact(true);
+        try {
+            let chatwootContact: ContactDetail | null = null;
+
+            // Step 1: Search GoMake customer by customerId to get contacts
+            if (customerId) {
+                try {
+                    const customerResult = await callApi(
+                        "GET",
+                        "/v1/customers/get-customers-pagination",
+                        {
+                            clientType: "C",
+                            pageNumber: 1,
+                            pageSize: 1,
+                            id: customerId,
+                            isActive: true,
+                        },
+                        false
+                    );
+
+                    if (customerResult?.data?.data?.data?.length > 0) {
+                        const customer = customerResult.data.data.data[0];
+                        
+                        // Get customer contacts from gomake CRM
+                        const contactsResponse = await callApi(
+                            "GET",
+                            "/v1/crm-service/customer/get-client-contacts",
+                            { ClientId: customerId },
+                            false
+                        );
+
+                        let contactsArray: any[] = [];
+                        
+                        // Handle different response formats (same as useComposeConversation)
+                        if (contactsResponse?.data?.data?.data && Array.isArray(contactsResponse.data.data.data)) {
+                            contactsArray = contactsResponse.data.data.data;
+                        } else if (contactsResponse?.data?.data && Array.isArray(contactsResponse.data.data)) {
+                            contactsArray = contactsResponse.data.data;
+                        } else if (contactsResponse?.data && Array.isArray(contactsResponse.data)) {
+                            contactsArray = contactsResponse.data;
+                        } else if (Array.isArray(contactsResponse)) {
+                            contactsArray = contactsResponse;
+                        }
+                        
+                        // Find matching contact by email or use first contact
+                        let selectedContact = contactsArray.find(
+                            (c: any) => (c.mail || c.email)?.toLowerCase() === contactEmail?.toLowerCase()
+                        ) || contactsArray[0] || null;
+
+                        // If no contact found but customer has email/phone, create fallback contact
+                        if (!selectedContact && (customer.mail || customer.phone)) {
+                            selectedContact = {
+                                id: undefined,
+                                name: customer.name || contactName || "",
+                                mail: customer.mail || contactEmail || "",
+                                phone: customer.phone || contactPhone || "",
+                            };
+                        }
+
+                        if (selectedContact) {
+                            const gomakeContact = {
+                                id: undefined,
+                                name: selectedContact.name || contactName || customer.name || "",
+                                email: selectedContact.mail || selectedContact.email || contactEmail || customer.mail || "",
+                                phone_number: selectedContact.phone || selectedContact.phone_number || contactPhone || customer.phone || "",
+                                gomake_contact_id: selectedContact.id || selectedContact._id,
+                                gomake_customer_id: customerId,
+                                gomake_customer_name: customer.name || "",
+                                gomake_client_code: customer.code || customer.customerCode || "",
+                                gomake_agent_id: customer.agentId || customer.agent_id || "",
+                                gomake_is_main_contact: selectedContact.isMainContact || selectedContact.is_main_contact || true,
+                            };
+
+                            // Step 2: Search Chatwoot for contact with gomake_contact_id (if available)
+                            if (gomakeContact.gomake_contact_id) {
+                                const filters = [
+                                    {
+                                        attribute_key: "gomake_contact_id",
+                                        filter_operator: "equal_to",
+                                        values: [gomakeContact.gomake_contact_id],
+                                        attribute_model: "standard",
+                                    },
+                                ];
+
+                                // Filter contacts WITHOUT including contact inboxes (Chatwoot pattern)
+                                const filterResponse = await chatwootService.contacts.filterContacts(
+                                    selectedAccountId,
+                                    { payload: filters },
+                                    {
+                                        include_contact_inboxes: false,
+                                        page: 1,
+                                        sort: "name",
+                                    }
+                                );
+
+                                const foundContacts = filterResponse.payload || [];
+                                
+                                if (foundContacts.length === 1) {
+                                    // Found existing contact - use it
+                                    chatwootContact = foundContacts[0];
+                                } else if (foundContacts.length === 0) {
+                                    // Not found, create new contact
+                                    const createPayload: ContactCreatePayload = {
+                                        name: gomakeContact.name,
+                                        email: gomakeContact.email || undefined,
+                                        phone_number: gomakeContact.phone_number || undefined,
+                                        custom_attributes: {
+                                            gomake_contact_id: gomakeContact.gomake_contact_id,
+                                            gomake_customer_id: gomakeContact.gomake_customer_id,
+                                            gomake_client_code: gomakeContact.gomake_client_code,
+                                            gomake_agent_id: gomakeContact.gomake_agent_id,
+                                            gomake_is_main_contact: gomakeContact.gomake_is_main_contact,
+                                        },
+                                    };
+                                    chatwootContact = await findOrCreateContact(selectedAccountId, createPayload);
+                                } else {
+                                    // Multiple found - use first one
+                                    console.warn(
+                                        `[FrontDeskEmailComposerWrapper] Multiple contacts found with gomake_contact_id ${gomakeContact.gomake_contact_id}, using first one`
+                                    );
+                                    chatwootContact = foundContacts[0];
+                                }
+                            } else {
+                                // No gomake_contact_id, use find-or-create pattern
+                                const createPayload: ContactCreatePayload = {
+                                    name: gomakeContact.name,
+                                    email: gomakeContact.email || undefined,
+                                    phone_number: gomakeContact.phone_number || undefined,
+                                    custom_attributes: {
+                                        gomake_customer_id: gomakeContact.gomake_customer_id,
+                                        gomake_client_code: gomakeContact.gomake_client_code,
+                                        gomake_agent_id: gomakeContact.gomake_agent_id,
+                                        gomake_is_main_contact: gomakeContact.gomake_is_main_contact,
+                                    },
+                                };
+                                chatwootContact = await findOrCreateContact(selectedAccountId, createPayload);
+                            }
+                        }
+                    }
+                } catch (error) {
+                    console.error("[FrontDeskEmailComposerWrapper] Failed to fetch GoMake customer:", error);
+                }
+            }
+
+            // Step 3: Fallback - if no customer found, try to create contact from email/phone
+            if (!chatwootContact && contactEmail) {
+                const createPayload: ContactCreatePayload = {
+                    name: contactName || contactEmail,
+                    email: contactEmail,
+                    phone_number: contactPhone || undefined,
+                };
+                chatwootContact = await findOrCreateContact(selectedAccountId, createPayload);
+            }
+
+            if (chatwootContact?.id) {
+                setResolvedContact(chatwootContact);
+                
+                // Step 4: Fetch contactable inboxes SEPARATELY (Chatwoot pattern)
+                // This is the key - fetch inboxes AFTER contact is resolved
+                try {
+                    const inboxResponse = await chatwootService.contacts.getContactableInboxes(chatwootContact.id);
+                    const contactableInboxesData = inboxResponse.payload || [];
+                    setContactableInboxes(contactableInboxesData);
+
+                    // Step 5: Build sender options from contactable inboxes
+                    // Filter for email inboxes only
+                    const emailContactableInboxes = contactableInboxesData.filter(
+                        (item) => item.inbox && item.inbox.channel_type === ChannelType.EMAIL
+                    );
+                    
+                    // Build a map of inbox ID to contact's source_id (email) for API calls
+                    const sourceIdMap = new Map<number, string>();
+                    
+                    // Transform contactable inboxes to sender options
+                    // IMPORTANT: 
+                    // - contactableInbox.source_id = CONTACT's email (what we send in API as source_id)
+                    // - inbox.name/email = INBOX's email (what we display in the "From" dropdown)
+                    const options: EmailSenderOption[] = emailContactableInboxes.map((contactableInbox) => {
+                        const inbox = contactableInbox.inbox;
+                        
+                        // Store the contact's source_id (email) for this inbox for API use
+                        sourceIdMap.set(inbox.id, contactableInbox.source_id);
+                        
+                        // Get the inbox's sending email address from various possible properties
+                        const inboxEmail = 
+                            inbox.name || // OAuth inboxes store email in name
+                            inbox.forward_to_email || // Forward-to email
+                            inbox.email || // Direct email property
+                            (inbox as any)._emailAccount?.email || // OAuth email account
+                            `inbox-${inbox.id}@mail.gomake.com`; // Fallback generated email
+                        
+                        return {
+                            inboxId: inbox.id,
+                            inboxName: inbox.name || `Inbox ${inbox.id}`,
+                            sourceId: inboxEmail, // The INBOX's email for display in dropdown
+                            channelType: inbox.channel_type,
+                        };
+                    });
+                    
+                    setInboxToSourceIdMap(sourceIdMap);
+                    setSenderOptions(options);
+                    
+                    // Set default sender option (first email inbox)
+                    if (options.length > 0) {
+                        setDefaultSenderOption(options[0]);
+                        console.log(`[FrontDeskEmailComposerWrapper] Found ${options.length} email inbox(es) for contact. User can select from dropdown.`, options);
+                    } else {
+                        console.warn("[FrontDeskEmailComposerWrapper] No email inboxes found for contact");
+                    }
+                } catch (error) {
+                    console.error("[FrontDeskEmailComposerWrapper] Failed to fetch contactable inboxes:", error);
+                    // Don't block the flow - contact is still resolved even if inbox fetch fails
+                }
+            }
+        } catch (error) {
+            console.error("[FrontDeskEmailComposerWrapper] Failed to resolve contact:", error);
+            alertFaultSend();
+            // Reset ref on error so we can retry
+            resolvedContactRef.current = null;
+        } finally {
+            setIsLoadingContact(false);
+        }
+    }, [open, selectedAccountId, callApi, alertFaultSend]);
+
+    // Reset when modal closes
+    useEffect(() => {
+        if (!open) {
+            resolvedContactRef.current = null;
+            setResolvedContact(null);
+            setContactableInboxes([]);
+            setSenderOptions([]);
+            setDefaultSenderOption(null);
+            setInboxToSourceIdMap(new Map());
+        }
+    }, [open]);
+
+    useEffect(() => {
+        if (!open || !emailData) {
+            return;
+        }
+
+        // Only resolve if we have the required data and haven't resolved yet
+        const customerId = emailData.customerId;
+        const contactEmail = emailData.contactEmail;
+        const contactName = emailData.contactName;
+        const contactPhone = emailData.contactPhone;
+        
+        if (!selectedAccountId) {
+            return; // Wait for account ID
+        }
+
+        const resolutionKey = `${customerId || ''}_${contactEmail || ''}_${selectedAccountId}`;
+        
+        if (resolvedContactRef.current !== resolutionKey && (customerId || contactEmail)) {
+            resolveContactFromGomakeCustomer(customerId, contactEmail, contactName, contactPhone);
+        }
+    }, [
+        open,
+        emailData?.customerId,
+        emailData?.contactEmail,
+        emailData?.contactName,
+        emailData?.contactPhone,
+        selectedAccountId,
+        resolveContactFromGomakeCustomer
+    ]);
 
     useEffect(() => {
         if (!profileUser && !profileLoading) {
@@ -122,56 +495,6 @@ export const FrontDeskEmailComposerWrapper: React.FC<FrontDeskEmailComposerWrapp
         }
     }, [selectedAccountId, currentUser, profileUser, setSelectedAccountId]);
 
-    useEffect(() => {
-        let cancelled = false;
-
-        const resolveContactInboxes = async () => {
-            if (!open || !emailData?.contactId) return;
-
-            const hasServerProvidedOptions = (emailData.senderOptions?.length ?? 0) > 0;
-            if (hasServerProvidedOptions) return;
-
-            try {
-                const response = await chatwootService.contacts.getContactableInboxes(emailData.contactId);
-                const inboxes =
-                    (response as any)?.payload ||
-                    (response as any)?.data?.payload ||
-                    [];
-
-                const additionalOptions = mapContactableToOptions(inboxes);
-                if (additionalOptions.length === 0) return;
-                if (cancelled) return;
-
-                const merged = dedupeOptions([...senderOptions, ...additionalOptions]);
-
-                let nextDefault = defaultSenderOption;
-                if (!nextDefault && emailData.sender) {
-                    nextDefault =
-                        merged.find(
-                            (option) => option.sourceId.toLowerCase() === emailData.sender.toLowerCase()
-                        ) ?? null;
-                }
-
-                setSenderOptions(merged);
-                setDefaultSenderOption(nextDefault);
-            } catch (error) {
-                console.error("Failed to fetch contactable inboxes for composer:", error);
-            }
-        };
-
-        resolveContactInboxes();
-
-        return () => {
-            cancelled = true;
-        };
-    }, [
-        open,
-        emailData,
-        senderOptions,
-        defaultSenderOption,
-        dedupeOptions,
-        mapContactableToOptions,
-    ]);
 
     const convertAttachmentToFile = (attachment: EmailAttachment): File | null => {
         const base64 = attachment.content ?? attachment.data;
@@ -254,15 +577,22 @@ export const FrontDeskEmailComposerWrapper: React.FC<FrontDeskEmailComposerWrapp
 
         try {
             const senderOption = resolveSenderOption(draft.sender ?? defaultSenderOption);
-            let contactId = draft.contactId ?? emailData?.contactId ?? null;
+            const contactId = resolvedContact?.id ?? emailData?.contactId ?? null;
 
             if (!senderOption) {
-                console.error("[FrontDeskEmailComposerWrapper] Missing sender or contact", {
+                console.error("[FrontDeskEmailComposerWrapper] Missing sender option", {
                     draftSender: draft.sender,
                     defaultSenderOption,
-                    resolvedSenderOption: senderOption,
-                    contactId,
                     senderOptions,
+                });
+                alertFaultSend();
+                setIsSending(false);
+                return false;
+            }
+
+            if (!contactId) {
+                console.error("[FrontDeskEmailComposerWrapper] Missing contact ID", {
+                    resolvedContact,
                     emailData,
                 });
                 alertFaultSend();
@@ -273,7 +603,7 @@ export const FrontDeskEmailComposerWrapper: React.FC<FrontDeskEmailComposerWrapp
             const resolvedAccountId = await ensureAccountId();
 
             if (!resolvedAccountId) {
-                console.log("[FrontDeskEmailComposerWrapper] Unable to resolve Chatwoot account", {
+                console.error("[FrontDeskEmailComposerWrapper] Unable to resolve Chatwoot account", {
                     selectedAccountId,
                     currentUser,
                     profileUser,
@@ -285,7 +615,7 @@ export const FrontDeskEmailComposerWrapper: React.FC<FrontDeskEmailComposerWrapp
 
             const accountId = Number(resolvedAccountId);
             if (Number.isNaN(accountId)) {
-                console.log("[FrontDeskEmailComposerWrapper] Resolved account ID is not a number", {
+                console.error("[FrontDeskEmailComposerWrapper] Resolved account ID is not a number", {
                     resolvedAccountId,
                 });
                 alertFaultSend();
@@ -293,53 +623,72 @@ export const FrontDeskEmailComposerWrapper: React.FC<FrontDeskEmailComposerWrapp
                 return false;
             }
 
-            if (!contactId) {
-                const fallbackEmail =
-                    emailData?.contactEmail ||
-                    emailData?.tos?.[0] ||
-                    draft.to?.[0]?.email ||
-                    null;
-
-                if (!fallbackEmail) {
-                    console.error("[FrontDeskEmailComposerWrapper] Missing contact email for conversation payload", {
-                        draft,
-                        emailData,
-                    });
-                    alertFaultSend();
-                    setIsSending(false);
-                    return false;
-                }
-
-
-
-            }
-
             const messageContent = draft.html || draft.text || draft.body || draft.message || "";
+            const toEmails = draft.to?.map((recipient) => recipient.email).filter(Boolean) ?? [];
             const ccEmails = draft.cc?.map((recipient) => recipient.email).filter(Boolean) ?? [];
             const bccEmails = draft.bcc?.map((recipient) => recipient.email).filter(Boolean) ?? [];
             const hasAttachments = (draft.attachments?.length ?? 0) > 0;
             const assigneeId = currentUser?.id;
 
+            // Get the contact's source_id (email) for this inbox from our map
+            // This is what Chatwoot expects as source_id (the contact's identifier, not the inbox's email)
+            const contactSourceId = inboxToSourceIdMap.get(senderOption.inboxId) || emailData?.contactEmail || "";
+            
+            if (!contactSourceId) {
+                console.error("[FrontDeskEmailComposerWrapper] Missing contact source_id for inbox", {
+                    inboxId: senderOption.inboxId,
+                    inboxToSourceIdMap,
+                    emailData
+                });
+                alertFaultSend();
+                setIsSending(false);
+                return false;
+            }
+
             let payload: FormData | Record<string, any>;
+
+            // Build content_attributes for email metadata
+            const contentAttributes: Record<string, any> = {};
+            if (toEmails.length > 0 || ccEmails.length > 0 || bccEmails.length > 0) {
+                contentAttributes.email = {};
+                if (toEmails.length > 0) {
+                    contentAttributes.email.to = toEmails;
+                }
+                if (ccEmails.length > 0) {
+                    contentAttributes.email.cc = ccEmails;
+                }
+                if (bccEmails.length > 0) {
+                    contentAttributes.email.bcc = bccEmails;
+                }
+            }
 
             if (hasAttachments) {
                 const formData = new FormData();
                 formData.append("inbox_id", senderOption.inboxId.toString());
                 formData.append("contact_id", contactId.toString());
-                formData.append("source_id", senderOption.sourceId);
+                formData.append("source_id", contactSourceId); // Contact's email (identifier in this channel)
                 formData.append("status", "open");
                 if (assigneeId) {
                     formData.append("assignee_id", assigneeId.toString());
                 }
                 if (messageContent) {
                     formData.append("message[content]", messageContent);
+                    formData.append("message[content_type]", "input_email"); // Email content type
                 }
+                
+                // Email-specific fields
                 if (ccEmails.length > 0) {
                     formData.append("message[cc_emails]", ccEmails.join(","));
                 }
                 if (bccEmails.length > 0) {
                     formData.append("message[bcc_emails]", bccEmails.join(","));
                 }
+                
+                // Add content_attributes as JSON string for FormData
+                if (Object.keys(contentAttributes).length > 0) {
+                    formData.append("message[content_attributes]", JSON.stringify(contentAttributes));
+                }
+                
                 if (draft.subject) {
                     formData.append("additional_attributes[mail_subject]", draft.subject);
                 }
@@ -355,10 +704,11 @@ export const FrontDeskEmailComposerWrapper: React.FC<FrontDeskEmailComposerWrapp
 
                 payload = formData;
             } else {
+                // Use JSON for no attachments
                 const jsonPayload: Record<string, any> = {
                     inbox_id: senderOption.inboxId,
                     contact_id: contactId,
-                    source_id: senderOption.sourceId,
+                    source_id: contactSourceId, // Contact's email (identifier in this channel)
                     status: "open",
                 };
 
@@ -366,11 +716,16 @@ export const FrontDeskEmailComposerWrapper: React.FC<FrontDeskEmailComposerWrapp
                     jsonPayload.assignee_id = assigneeId;
                 }
 
-                if (messageContent || ccEmails.length > 0 || bccEmails.length > 0) {
+                // Message with email content_attributes
+                if (messageContent || Object.keys(contentAttributes).length > 0 || ccEmails.length > 0 || bccEmails.length > 0) {
                     jsonPayload.message = {
                         content: messageContent,
-                        ...(ccEmails.length > 0 ? { cc_emails: ccEmails.join(",") } : {}),
-                        ...(bccEmails.length > 0 ? { bcc_emails: bccEmails.join(",") } : {}),
+                        content_type: "input_email", // Email content type
+                        ...(Object.keys(contentAttributes).length > 0 && {
+                            content_attributes: contentAttributes,
+                        }),
+                        ...(ccEmails.length > 0 && { cc_emails: ccEmails.join(",") }),
+                        ...(bccEmails.length > 0 && { bcc_emails: bccEmails.join(",") }),
                     };
                 }
 
@@ -418,7 +773,7 @@ export const FrontDeskEmailComposerWrapper: React.FC<FrontDeskEmailComposerWrapp
             message: htmlToPlainText(emailData.body || ""),
             attachments: emailData.attachments,
             sender: defaultSenderOption,
-            contactId: emailData.contactId ?? null,
+            contactId: resolvedContact?.id ?? emailData.contactId ?? null,
         }
         : undefined;
 
@@ -428,10 +783,10 @@ export const FrontDeskEmailComposerWrapper: React.FC<FrontDeskEmailComposerWrapp
             onClose={onClose}
             onSend={handleSend}
             draft={draft}
-            isSending={isSending}
+            isSending={isSending || isLoadingContact}
             fromOptions={senderOptions}
             defaultSenderOption={defaultSenderOption}
-            contactId={emailData?.contactId ?? null}
+            contactId={resolvedContact?.id ?? emailData?.contactId ?? null}
         />
     );
 };
