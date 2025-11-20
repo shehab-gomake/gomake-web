@@ -492,6 +492,7 @@ const DocumentsFilterSection: React.FC<IDocumentsFilterSectionProps> = ({
           {
             id: "priceRange",
             label: t("sales.quote.priceRange"),
+            width: "lg" as "lg",
             component: (
               <div style={classes.priceDivStyle}>
                 <GomakeTextInput
@@ -500,7 +501,9 @@ const DocumentsFilterSection: React.FC<IDocumentsFilterSectionProps> = ({
                   type={"number"}
                   style={{
                     ...classes.textInputStyle,
+                    width: "auto",
                     height: "40px",
+                    flex: 1,
                   }}
                   placeholder={t("sales.quote.minPrice")}
                 />
@@ -511,7 +514,9 @@ const DocumentsFilterSection: React.FC<IDocumentsFilterSectionProps> = ({
                   type={"number"}
                   style={{
                     ...classes.textInputStyle,
+                    width: "auto",
                     height: "40px",
+                    flex: 1,
                   }}
                   placeholder={t("sales.quote.maxPrice")}
                 />

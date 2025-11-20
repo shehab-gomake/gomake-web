@@ -6,3 +6,4 @@ export { useTicketNotifications } from './use-ticket-notifications';
 export { RequestNotificationProvider, useRequestNotification } from './request-notification-context';
 export { RequestNotificationModal } from './RequestNotificationModal';
 export { useGlobalRequestListener } from './use-global-request-listener';
+export { useGlobalPopupMessageListener } from './use-global-popup-message-listener';

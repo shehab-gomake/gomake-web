@@ -7,10 +7,14 @@ import {
   GoMakeModal,
   GomakeTextInput,
   ThreeOptionsModal,
+  GoMakeDialog,
+  GomakePrimaryButton,
 } from "@/components";
 import { DocumentsFilterSection } from "./components/documents-filter-section";
 import { HeaderTitle } from "@/widgets";
 import { DocumentLogsWidget } from "./widgets/documents-logs-widget/logs-widget";
+import { InventoryIntakeModal } from "@/widgets/quote-new/modals-widgets/inventory-intake-modal";
+import { PurchaseOrderTypeModal } from "@/widgets/quote-new/modals-widgets/purchase-order-type-modal";
 import { DOCUMENT_TYPE } from "./enums";
 import {
   Box,
@@ -238,6 +242,11 @@ const QuotesListPageWidget = ({
     isReceipt,
     isSupplierPayments,
     isPurchaseOrder,
+    openInventoryIntakeModal,
+    onClickCloseInventoryIntakeModal,
+    inventoryData,
+    inventoryLoading,
+    selectedDocument: selectedInventoryDocument,
     isMoveToReady,
     handleCheckboxChange,
     handleSortBE,
@@ -301,6 +310,10 @@ const QuotesListPageWidget = ({
     createScheduledReport,
     handlePageChange: handleScheduledReportsPageChange,
     handlePageSizeChangeScheduledReports: handleScheduledReportsPageSizeChange,
+    openPurchaseOrderTypeModal,
+    onOpenPurchaseOrderTypeModal,
+    onClosePurchaseOrderTypeModal,
+    handleSelectPurchaseOrderType,
   } = useQuotes(documentType, isFromHomePage);
 
   // Get the main quotes pagination handler
@@ -488,10 +501,15 @@ const QuotesListPageWidget = ({
                       ? onclickCreateNew
                       : isSupplierPayments
                         ? () => navigate(`/${documentPath}`)
-                        : () => {
-                          setSelectedItems([]);
-                          navigate(`/${documentPath}?isNewCreation=true`);
-                        }
+                        : isPurchaseOrder
+                          ? () => {
+                            setSelectedItems([]);
+                            onOpenPurchaseOrderTypeModal();
+                          }
+                          : () => {
+                            setSelectedItems([]);
+                            navigate(`/${documentPath}?isNewCreation=true`);
+                          }
                   )}
               </div>
             </div>
@@ -1033,6 +1051,20 @@ const QuotesListPageWidget = ({
         exportPdf={exportPdf}
         printPackingSlip={printPackingSlip}
         isPrintHouseUsePrintNode={isPrintHouseHasPackagingSlipPrinter}
+      />
+      <PurchaseOrderTypeModal
+        open={openPurchaseOrderTypeModal}
+        onClose={onClosePurchaseOrderTypeModal}
+        onSelectProduct={() => handleSelectPurchaseOrderType(false)}
+        onSelectMaterial={() => handleSelectPurchaseOrderType(true)}
+      />
+      <InventoryIntakeModal
+        open={openInventoryIntakeModal}
+        onClose={onClickCloseInventoryIntakeModal}
+        inventoryData={inventoryData}
+        loading={inventoryLoading}
+        purchaseOrderId={selectedInventoryDocument?.id}
+        documentType={DOCUMENT_TYPE.purchaseOrder}
       />
     </>
   );

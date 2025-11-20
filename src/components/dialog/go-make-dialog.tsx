@@ -139,7 +139,7 @@ const GoMakeDialog: React.FC<GoMakeDialogProps> = ({
             )}
 
             {/* Body/Content */}
-            <DialogContent sx={classes.content}>
+            <DialogContent sx={classes.content} className="custom-scrollbar" >
                 {children}
             </DialogContent>
 

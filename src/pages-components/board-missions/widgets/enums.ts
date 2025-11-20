@@ -26,3 +26,14 @@ export enum BoardMissionStatusForFilter {
   NotReady,
   NoStations
 }
+
+export enum DocumentCloseStatus
+{
+    Open,
+    PartialClosed,
+    Closed,
+    Draft,
+    SentToSupplier,
+    Received,
+    SupplierRequestingApproval
+}

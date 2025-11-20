@@ -54,6 +54,8 @@ const ADD_RELATED_DOCUMENT_URL =
 const CANCEL_DOCUMENT_URL = "/v1/erp-service/documents/cancel-document";
 const SEND_DOCUMENT_TO_CLIENT_URL =
   "/v1/erp-service/documents/send-document-to-client";
+const UPDATE_DOCUMENT_STATUS_URL =
+  "/v1/erp-service/documents/update-document-status";
 const SEND_ORDER_READY_TO_CLIENT_URL =
   "/v1/jobs-service/board-missions/send-order-ready-to-client";
 const SAVE_DOCUMENT_URL = "/v1/erp-service/documents/save-document";
@@ -167,6 +169,8 @@ const GET_DOCUMENT_TABLE_SETTINGS_URL =
   "/v1/erp-service/documents-table-settings/get-document-table-settings";
 
 const RE_CALCULATE_ITEM_URL = "/v1/erp-service/document/re-calculate-item";
+const GET_DOCUMENT_INVENTORY_URL =
+  "/v1/erp-service/documents/get-document-inventory";
 
 const getDocumentApi: ICallAndSetData = async (
   callApi,
@@ -486,6 +490,21 @@ const cancelDocumentApi: ICallAndSetData = async (callApi, setState, data) => {
     CANCEL_DOCUMENT_URL,
     setState,
     data
+  );
+};
+
+const updateDocumentStatusApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data: { documentType: DOCUMENT_TYPE; [key: string]: any }
+) => {
+  const { documentType, ...payload } = data || {};
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.PUT,
+    `${UPDATE_DOCUMENT_STATUS_URL}/${documentType}`,
+    setState,
+    payload
   );
 };
 
@@ -1399,6 +1418,20 @@ const reCalculateItemApi: ICallAndSetData = async (
   );
 };
 
+const getDocumentInventoryApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.GET,
+    GET_DOCUMENT_INVENTORY_URL,
+    setState,
+    data
+  );
+};
+
 export {
   getDocumentApi,
   getAllDocumentsApi,
@@ -1421,6 +1454,7 @@ export {
   checkPurchaseNumberExistsApi,
   addDeliveryApi,
   addRelatedDocumentApi,
+  updateDocumentStatusApi,
   cancelDocumentApi,
   sendDocumentToClientApi,
   saveDocumentApi,
@@ -1491,4 +1525,5 @@ export {
   saveDocumentTableSettingsApi,
   getDocumentTableSettingsApi,
   reCalculateItemApi,
+  getDocumentInventoryApi,
 };

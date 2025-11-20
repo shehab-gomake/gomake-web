@@ -8,7 +8,7 @@ import { MoreMenuWidget } from "../more-circle";
 import { GoMakeAutoComplate } from "@/components";
 import {
   EProductClient,
-  EProductProfites,
+  EProductProfits,
   ProductClient,
 } from "@/widgets/shared-admin-customers/add-product/settings/settings-data";
 import { SettingIcon } from "@/widgets/shared-admin-customers";
@@ -18,6 +18,7 @@ import { getAllSubProducts } from "@/services/hooks/admin-side/products/get-all-
 import { EnterArrow, PlusIcon } from "@/icons";
 import { addProductProfitRuleApi } from "@/services/api-service/products/product-endpoints";
 import { EditingIcon } from "../more-circle/icons/editing";
+import { useAllProductTypesDropDownList } from "@/hooks/use-product-types-drop-down-list";
 
 const useProductManagement = () => {
   const router = useRouter();
@@ -27,7 +28,9 @@ const useProductManagement = () => {
   const [allProducts, setAllProducts] = useState<any>();
   const [term, setTerm] = useState<any>("");
   const [selectedSKU, setSelectedSKU] = useState<string>("");
+  const [selectedTemplateId, setSelectedTemplateId] = useState<string>("");
   const [productSearched, setProductSearched] = useState([]);
+  const { allProductTypes } = useAllProductTypesDropDownList();
   const [selectProfitsModal, setSelectProfitsModal] = useState<ProductClient>();
   const { navigate } = useGomakeRouter();
   const [allProductSKU, setAllProductSKU] = useState<any>();
@@ -99,15 +102,15 @@ const useProductManagement = () => {
     () => [
       {
         label: t("partners.options.action"),
-        id: EProductProfites.BY_ACTION,
+        id: EProductProfits.BY_ACTION,
       },
       {
         label: t("products.addProduct.admin.product"),
-        id: EProductProfites.BY_PRODUCT,
+        id: EProductProfits.BY_PRODUCT,
       },
       {
         label: t("products.profits.profitByRule"),
-        id: EProductProfites.BY_RULE,
+        id: EProductProfits.BY_RULE,
       },
     ],
     []
@@ -120,134 +123,147 @@ const useProductManagement = () => {
         })
       : await getAllProductsMongoDB(callApi, setAllProducts);
 
-    const mapData = data?.map((item) => ({
-      row: [
-        item?.code,
-        item?.name,
-        _renderPricingType(item.pricingType),
-        <div style={classes.profitProductsCellStyle}>
+    const mapData = data?.map((item) => {
+      // Find template name by templateId
+      const templateId =
+        typeof item?.templateId === "object"
+          ? item?.templateId?.id
+          : item?.templateId;
+      const template = allProductTypes?.find((t: any) => t.id === templateId);
+      const templateName = template?.label || template?.name || "";
+
+      return {
+        row: [
+          item?.code,
+          item?.name,
+          templateName,
+          _renderPricingType(item.pricingType),
+          <div style={classes.profitProductsCellStyle}>
+            <div
+              style={{
+                textAlignLast: "center",
+                width: 100,
+                display: "inline-table",
+              }}
+            >
+              <GoMakeAutoComplate
+                key={item?.id}
+                options={productProfitesList}
+                placeholder={""}
+                style={classes.dropDownListByTableStyle}
+                value={productProfitesList?.find(
+                  (profit) => profit.id === item.profitsModal
+                )}
+                disableClearable={true}
+                onChange={(e: any, value: any) => {
+                  setSelectProfitsModal(value);
+                  UpdateProfitsModal(item, value);
+                  if (value?.id === EProductProfits.BY_RULE) {
+                    setOpenProfitRule(true);
+                    setProductAddProfitRuleId(item?.id);
+                  }
+                }}
+              />
+            </div>
+            {(item.profitsModal === EProductProfits.BY_PRODUCT ||
+              item.profitsModal === EProductProfits.BY_RULE) && (
+              <div
+                style={{ display: "inline-flex", cursor: "pointer" }}
+                onClick={() => {
+                  item.profitsModal === EProductProfits.BY_PRODUCT
+                    ? window.open(
+                        `/products/profits?productId=${item?.id}&productName=${item?.name}`,
+                        "_blank"
+                      )
+                    : setEditProfitRule(true);
+                  setEditProductId(item?.id);
+                }}
+              >
+                <SettingIcon />
+              </div>
+            )}
+          </div>,
           <div
-            style={{
-              textAlignLast: "center",
-              width: 100,
-              display: "inline-table",
+            style={{ display: "inline-flex" }}
+            onClick={() => {
+              window.open(
+                `/products/profits?productId=${item?.id}&productName=${item?.name}&isOutSource=true`,
+                "_blank"
+              );
             }}
           >
-            <GoMakeAutoComplate
-              key={item?.id}
-              options={productProfitesList}
-              placeholder={t("products.addProduct.admin.pricingType")}
-              style={classes.dropDownListByTableStyle}
-              value={productProfitesList?.find(
-                (profit) => profit.id === item.profitsModal
-              )}
-              disableClearable={true}
-              onChange={(e: any, value: any) => {
-                setSelectProfitsModal(value);
-                UpdateProfitsModal(item, value);
-                if (value?.id === EProductProfites.BY_RULE) {
-                  setOpenProfitRule(true);
-                  setProductAddProfitRuleId(item?.id);
-                }
-              }}
-            />
-          </div>
-          {(item.profitsModal === EProductProfites.BY_PRODUCT ||
-            item.profitsModal === EProductProfites.BY_RULE) && (
-            <div
-              style={{ display: "inline-flex", cursor: "pointer" }}
-              onClick={() => {
-                item.profitsModal === EProductProfites.BY_PRODUCT
-                  ? window.open(
-                      `/products/profits?productId=${item?.id}&productName=${item?.name}`,
-                      "_blank"
-                    )
-                  : setEditProfitRule(true);
-                setEditProductId(item?.id);
-              }}
-            >
-              <SettingIcon />
-            </div>
-          )}
-        </div>,
-        <div
-          style={{ display: "inline-flex" }}
-          onClick={() => {
-            window.open(
-              `/products/profits?productId=${item?.id}&productName=${item?.name}&isOutSource=true`,
-              "_blank"
-            );
-          }}
-        >
-          {item?.isHaveOutSourceSettings ? (
-            <div
-              style={{
-                display: "inline-flex",
-                cursor: "pointer",
-                alignItems: "center",
-                gap: 10,
-              }}
-            >
-              <EditingIcon />
-              {t("materials.buttons.edit")}
-            </div>
-          ) : (
-            <div
-              style={{
-                display: "inline-flex",
-                cursor: "pointer",
-                alignItems: "center",
-                gap: 10,
-              }}
-            >
-              <PlusIcon stroke="#8283BE" /> {t("materials.buttons.add")}{" "}
-            </div>
-          )}
-        </div>,
-        <div
-          style={classes.subPrductContainer}
-          onClick={(e: any) =>
-            item.subProductsCount > 0 &&
-            navigate(
-              `/settings/products/sub-product/${item?.id}?productName=${item?.name}&isSubProducts=true`
-            )
-          }
-        >
-          <EnterArrow stroke="#8283BE" />
-          <div style={{ width: 35 }}>{item?.subProductsCount}</div>
-        </div>,
+            {item?.isHaveOutSourceSettings ? (
+              <div
+                style={{
+                  display: "inline-flex",
+                  cursor: "pointer",
+                  alignItems: "center",
+                  gap: 10,
+                }}
+              >
+                <EditingIcon />
+                {t("materials.buttons.edit")}
+              </div>
+            ) : (
+              <div
+                style={{
+                  display: "inline-flex",
+                  cursor: "pointer",
+                  alignItems: "center",
+                  gap: 10,
+                }}
+              >
+                <PlusIcon stroke="#8283BE" /> {t("materials.buttons.add")}{" "}
+              </div>
+            )}
+          </div>,
+          <div
+            style={classes.subPrductContainer}
+            onClick={(e: any) =>
+              item.subProductsCount > 0 &&
+              navigate(
+                `/settings/products/sub-product/${item?.id}?productName=${item?.name}&isSubProducts=true`
+              )
+            }
+          >
+            <EnterArrow stroke="#8283BE" />
+            <div style={{ width: 35 }}>{item?.subProductsCount}</div>
+          </div>,
 
-        <div style={{ display: "inline-flex" }}>
-          {item?.status === false ? (
-            <div style={classes.inActiveTabStyle}>
-              {t("usersSettings.inactive")}
-            </div>
-          ) : (
-            <div style={classes.activeTabStyle}>
-              {t("usersSettings.active")}
-            </div>
-          )}
-        </div>,
-        <MoreMenuWidget
-          item={item}
-          updatedProduct={updatedProduct}
-          getActions={getActions}
-        />,
-      ],
-      subProducts: item?.subProducts,
-    }));
+          <div style={{ display: "inline-flex" }}>
+            {item?.status === false ? (
+              <div style={classes.inActiveTabStyle}>
+                {t("usersSettings.inactive")}
+              </div>
+            ) : (
+              <div style={classes.activeTabStyle}>
+                {t("usersSettings.active")}
+              </div>
+            )}
+          </div>,
+          <MoreMenuWidget
+            item={item}
+            updatedProduct={updatedProduct}
+            getActions={getActions}
+          />,
+        ],
+        subProducts: item?.subProducts,
+        templateId: templateId,
+      };
+    });
     setAllProducts(mapData);
-  }, []);
+  }, [allProductTypes]);
 
   useEffect(() => {
     getActions();
     getAllProductsSKU();
-  }, []);
+  }, [getActions, getAllProductsSKU]);
 
   const tableHeaders = [
     t("products.productManagement.admin.productCode"),
     t("products.productManagement.admin.prouctName"),
     t("products.addProduct.admin.pricingType"),
+    t("products.addProduct.admin.byCustomerGroup"),
     t("tabs.profits"),
     t("products.actions.outSource"),
     t("products.addProduct.admin.subProducts"),
@@ -255,7 +271,12 @@ const useProductManagement = () => {
     t("products.productManagement.admin.more"),
   ];
 
-  const filterArray = (array: any[], searchText: string, selectedSKU: any) =>
+  const filterArray = (
+    array: any[],
+    searchText: string,
+    selectedSKU: any,
+    selectedTemplateId: any
+  ) =>
     array.filter((item) => {
       // Search in main product fields (first two cells :  code and name)
       const mainMatches = matchSorter(item.row.slice(0, 2), searchText);
@@ -270,16 +291,30 @@ const useProductManagement = () => {
         ? String(item?.row?.[0]) === String(selectedSKU)
         : true;
 
-      // Ensure that searchText, selectedSKU, and subProducts are matched together
-      return (mainMatches.length > 0 || subProductMatches) && selectedSKUMatch;
+      // Search for selectedTemplateId match
+      const selectedTemplateMatch = selectedTemplateId
+        ? String(item?.templateId) === String(selectedTemplateId)
+        : true;
+
+      // Ensure that searchText, selectedSKU, selectedTemplateId, and subProducts are matched together
+      return (
+        (mainMatches.length > 0 || subProductMatches) &&
+        selectedSKUMatch &&
+        selectedTemplateMatch
+      );
     });
 
   useEffect(() => {
     if (allProducts?.length) {
-      const temp = filterArray(allProducts, term, selectedSKU);
+      const temp = filterArray(
+        allProducts,
+        term,
+        selectedSKU,
+        selectedTemplateId
+      );
       setProductSearched(temp);
     }
-  }, [term, allProducts, selectedSKU]);
+  }, [term, allProducts, selectedSKU, selectedTemplateId]);
 
   const handleGoBack = () => {
     router.back();
@@ -301,6 +336,7 @@ const useProductManagement = () => {
 
   const onClickClearFilter = () => {
     setSelectedSKU("");
+    setSelectedTemplateId("");
   };
 
   return {
@@ -322,6 +358,9 @@ const useProductManagement = () => {
     setProductAddProfitRuleId,
     selectedSKU,
     setSelectedSKU,
+    selectedTemplateId,
+    setSelectedTemplateId,
+    allProductTypes,
     handleClose,
     handleClick,
     open,
