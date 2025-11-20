@@ -22,6 +22,8 @@ import {
   Badge as BadgeIcon,
   OpenInNew as OpenInNewIcon,
   SwapHoriz as SwapHorizIcon,
+  PersonAdd as PersonAddIcon,
+  Business as BusinessIcon,
 } from "@mui/icons-material";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { colorTokens } from "@/widgets/frontdesk/design-system";
@@ -496,31 +498,19 @@ export const ConversationProfileSection: React.FC<ConversationProfileSectionProp
             </Box>
           </Box>
 
-          {/* Additional contact fields (for testing) */}
+          {/* Contact details - only user-relevant information */}
           <Box sx={{ display: "flex", flexDirection: "column", gap: 0.5, mt: 1 }}>
             {contactPhoneNumber && (
-              <Typography variant="caption" sx={{ fontSize: 11, color: colorTokens.semantic.text.secondary }}>
-                Phone: {contactPhoneNumber}
-              </Typography>
+              <Box sx={{ display: "flex", alignItems: "center", gap: 0.75 }}>
+                <PhoneIcon sx={{ fontSize: 14, color: colorTokens.semantic.text.secondary }} />
+                <Typography variant="caption" sx={{ fontSize: 11, color: colorTokens.semantic.text.secondary }}>
+                  {contactPhoneNumber}
+                </Typography>
+              </Box>
             )}
-            {contactId && (
-              <Typography variant="caption" sx={{ fontSize: 11, color: colorTokens.semantic.text.secondary }}>
-                Contact ID: {contactId}
-              </Typography>
-            )}
-            {contactIdentifier && (
-              <Typography variant="caption" sx={{ fontSize: 11, color: colorTokens.semantic.text.secondary }}>
-                Identifier: {contactIdentifier}
-              </Typography>
-            )}
-            {contactAvailabilityStatus && (
-              <Typography variant="caption" sx={{ fontSize: 11, color: colorTokens.semantic.text.secondary }}>
-                Status: {contactAvailabilityStatus}
-              </Typography>
-            )}
-            {contactBlocked !== null && contactBlocked !== undefined && (
-              <Typography variant="caption" sx={{ fontSize: 11, color: colorTokens.semantic.text.secondary }}>
-                Blocked: {contactBlocked ? "Yes" : "No"}
+            {contactBlocked !== null && contactBlocked !== undefined && contactBlocked && (
+              <Typography variant="caption" sx={{ fontSize: 11, color: colorTokens.semantic.error.main }}>
+                Blocked
               </Typography>
             )}
             {contactLastActivityAt && (
@@ -528,95 +518,86 @@ export const ConversationProfileSection: React.FC<ConversationProfileSectionProp
                 Last Activity: {formatTimestamp(contactLastActivityAt)}
               </Typography>
             )}
-            {contactCreatedAt && (
-              <Typography variant="caption" sx={{ fontSize: 11, color: colorTokens.semantic.text.secondary }}>
-                Created: {formatTimestamp(contactCreatedAt)}
-              </Typography>
-            )}
-            {contactAdditionalAttributes && Object.keys(contactAdditionalAttributes).length > 0 && (
-              <Box sx={{ mt: 0.5 }}>
-                <Typography variant="caption" sx={{ fontSize: 10, fontWeight: 600, color: colorTokens.semantic.text.secondary }}>
-                  Additional Attributes:
-                </Typography>
-                {Object.entries(contactAdditionalAttributes).map(([key, value]) => (
-                  <Typography key={key} variant="caption" sx={{ fontSize: 11, color: colorTokens.semantic.text.secondary, display: "block" }}>
-                    {key}: {JSON.stringify(value)}
-                  </Typography>
-                ))}
-              </Box>
-            )}
-            {contactCustomAttributes && Object.keys(contactCustomAttributes).length > 0 && (
-              <Box sx={{ mt: 0.5 }}>
-                <Typography variant="caption" sx={{ fontSize: 10, fontWeight: 600, color: colorTokens.semantic.text.secondary }}>
-                  Custom Attributes:
-                </Typography>
-                {Object.entries(contactCustomAttributes).map(([key, value]) => (
-                  <Typography key={key} variant="caption" sx={{ fontSize: 11, color: colorTokens.semantic.text.secondary, display: "block" }}>
-                    {key}: {JSON.stringify(value)}
-                  </Typography>
-                ))}
-              </Box>
-            )}
           </Box>
 
-          {/* Customer Action Buttons */}
-          <Box sx={{ mt: 2, display: "flex", flexDirection: "column", gap: 1 }}>
+          {/* Customer Action Buttons - Icon-only with tooltips */}
+          <Box sx={{ mt: 2, display: "flex", gap: 1.5, alignItems: "center", justifyContent: "flex-start" }}>
             {/* Create Customer Button */}
-            <Button
-              variant="contained"
-              size="small"
-              fullWidth
-              onClick={() => handleCreateCustomer(CLIENT_TYPE.CUSTOMER)}
-              sx={{
-                textTransform: "none",
-                backgroundColor: primaryColor(600),
-                fontSize: "0.8125rem",
-                "&:hover": {
-                  backgroundColor: primaryColor(700),
-                },
-              }}
-            >
-              Create Customer
-            </Button>
+            <Tooltip title="Create Customer">
+              <IconButton
+                size="small"
+                onClick={() => handleCreateCustomer(CLIENT_TYPE.CUSTOMER)}
+                sx={{
+                  backgroundColor: "transparent",
+                  color: primaryColor(600),
+                  borderRadius: "4px",
+                  padding: "6px",
+                  minWidth: "32px",
+                  height: "32px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  "&:hover": {
+                    backgroundColor: primaryColor(50),
+                    color: primaryColor(700),
+                  },
+                }}
+              >
+                <PersonAddIcon sx={{ fontSize: 20 }} />
+              </IconButton>
+            </Tooltip>
 
             {/* Create Supplier Button */}
-            <Button
-              variant="outlined"
-              size="small"
-              fullWidth
-              onClick={() => handleCreateCustomer(CLIENT_TYPE.SUPPLIER)}
-              sx={{
-                textTransform: "none",
-                borderColor: primaryColor(300),
-                color: primaryColor(600),
-                fontSize: "0.8125rem",
-                "&:hover": {
-                  backgroundColor: primaryColor(50),
-                  borderColor: primaryColor(400),
-                },
-              }}
-            >
-              Create Supplier
-            </Button>
+            <Tooltip title="Create Supplier">
+              <IconButton
+                size="small"
+                onClick={() => handleCreateCustomer(CLIENT_TYPE.SUPPLIER)}
+                sx={{
+                  backgroundColor: "transparent",
+                  border: `1px solid ${primaryColor(300)}`,
+                  color: primaryColor(600),
+                  borderRadius: "4px",
+                  padding: "6px",
+                  minWidth: "32px",
+                  height: "32px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  "&:hover": {
+                    backgroundColor: primaryColor(50),
+                    borderColor: primaryColor(400),
+                    color: primaryColor(700),
+                  },
+                }}
+              >
+                <BusinessIcon sx={{ fontSize: 20 }} />
+              </IconButton>
+            </Tooltip>
 
             {/* Link to Existing Customer Button */}
-            <Button
-              variant="text"
-              size="small"
-              fullWidth
-              startIcon={<LinkIcon />}
-              onClick={() => setOpenLinkModal(true)}
-              sx={{
-                textTransform: "none",
-                color: colorTokens.semantic.text.secondary,
-                fontSize: "0.75rem",
-                "&:hover": {
-                  backgroundColor: colorTokens.neutral[100],
-                },
-              }}
-            >
-              Link to Existing
-            </Button>
+            <Tooltip title="Link Existing">
+              <IconButton
+                size="small"
+                onClick={() => setOpenLinkModal(true)}
+                sx={{
+                  backgroundColor: "transparent",
+                  color: colorTokens.semantic.text.secondary,
+                  borderRadius: "4px",
+                  padding: "6px",
+                  minWidth: "32px",
+                  height: "32px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  "&:hover": {
+                    backgroundColor: colorTokens.neutral[100],
+                    color: primaryColor(600),
+                  },
+                }}
+              >
+                <LinkIcon sx={{ fontSize: 20 }} />
+              </IconButton>
+            </Tooltip>
           </Box>
         </Box>
       )}
