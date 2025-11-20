@@ -22,6 +22,7 @@ import {
 import { selectedClientState } from "@/pages-components/quotes/states";
 import { CLIENT_TYPE_Id } from "@/pages/customers/enums";
 import { prevSelectedClientState, ProductCategoryType } from "./states";
+import { EProductStructureType } from "@/widgets/shared-admin-customers/add-product/settings/settings-data";
 import { getAllProductAndMaterialsApi } from "@/services/api-service/products/product-endpoints";
 import { addDocumentItemFromMaterialApi } from "@/services/api-service/materials/materials-endpoints";
 import { ETab } from "@/pages-components/admin/home/widgets/quote-widget/enums";
@@ -53,7 +54,7 @@ const useQuoteWidget = () => {
   const permissions = useRecoilValue(permissionsState);
   const setQuoteIfExist = useSetRecoilState<any>(QuoteIfExistState);
   const setAllReports = useSetRecoilState<any>(homeReportsState);
-  const [selectedProduct, setSelectedProduct] = useState<any>({});
+  const [selectedProduct, setSelectedProduct] = useState<any>(null);
   const [isDisabled, setIsDisabled] = useState(true);
   const [QuoteId, setQuoteId] = useState("");
   const setQuoteNumber = useSetRecoilState<any>(QuoteNumberState);
@@ -428,9 +429,15 @@ const useQuoteWidget = () => {
     const selectedNode = findNodeByKey(selectedValue, combinedData);
 
     if (selectedNode && !selectedNode.children) {
+      let matchedProduct = null;
+      if (selectedNode?.category === ProductCategoryType.PRODUCT) {
+        matchedProduct = products?.find((product) => product.id === selectedValue);
+      }
       setSelectedProduct({
         id: selectedValue,
         category: selectedNode?.category,
+        productStructureType: matchedProduct?.productStructureType,
+        name: matchedProduct?.name,
       });
     } else {
       setSelectedProduct(null);
@@ -457,7 +464,15 @@ const useQuoteWidget = () => {
     localStorage.setItem("homePageSelectedTab", JSON.stringify(v));
   };
 
-  const onClickCreateQuoteForCustomer = () => {
+  const onClickCreateQuoteForCustomer = (compositeData?: {
+    workName?: string;
+    quantity?: number;
+    compositeProducts?: Array<{
+      id: string;
+      quantity: number;
+      jobName: string;
+    }>;
+  }) => {
     if (selectedProduct?.category === ProductCategoryType.MATERIAL) {
       addDocumentItemFromMaterial();
       return;
@@ -475,9 +490,28 @@ const useQuoteWidget = () => {
         return;
       }
 
-      navigate(
-        `/products/create?clientTypeId=${clientTypeId}&customerId=${clientId}&customerName=${clientName}&productId=${selectedProduct.id}`
-      );
+      const params = new URLSearchParams();
+      params.append("clientTypeId", String(clientTypeId));
+      params.append("customerId", String(clientId));
+      params.append("customerName", clientName);
+      params.append("productId", String(selectedProduct.id));
+      if (
+        selectedProduct?.productStructureType === EProductStructureType.COMPOSITE
+      ) {
+        // Handle new format with compositeProducts array
+        if (compositeData?.compositeProducts && Array.isArray(compositeData.compositeProducts)) {
+          params.append("compositeProducts", JSON.stringify(compositeData.compositeProducts));
+        } else {
+          // Handle old format for backward compatibility
+          if (compositeData?.workName) {
+            params.append("workName", compositeData.workName);
+          }
+          if (typeof compositeData?.quantity === "number") {
+            params.append("quantity", String(compositeData.quantity));
+          }
+        }
+      }
+      navigate(`/products/create?${params.toString()}`);
     } else {
       // Navigate with just the productId
       if (!selectedProduct?.id) {
@@ -485,7 +519,25 @@ const useQuoteWidget = () => {
         return;
       }
 
-      navigate(`/products/create?productId=${selectedProduct.id}`);
+      const params = new URLSearchParams();
+      params.append("productId", String(selectedProduct.id));
+      if (
+        selectedProduct?.productStructureType === EProductStructureType.COMPOSITE
+      ) {
+        // Handle new format with compositeProducts array
+        if (compositeData?.compositeProducts && Array.isArray(compositeData.compositeProducts)) {
+          params.append("compositeProducts", JSON.stringify(compositeData.compositeProducts));
+        } else {
+          // Handle old format for backward compatibility
+          if (compositeData?.workName) {
+            params.append("workName", compositeData.workName);
+          }
+          if (typeof compositeData?.quantity === "number") {
+            params.append("quantity", String(compositeData.quantity));
+          }
+        }
+      }
+      navigate(`/products/create?${params.toString()}`);
     }
   };
 

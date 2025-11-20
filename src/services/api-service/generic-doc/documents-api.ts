@@ -175,6 +175,7 @@ const GET_DOCUMENT_INVENTORY_URL =
   "/v1/erp-service/documents/get-document-inventory";
 const UPDATE_QUOTE_CLIENT_NOTE_AS_SHOWN_URL =
   "/v1/erp-service/documents/update-quote-client-note-as-shown";
+const ADD_COMPOSITE_PRODUCTS_URL = "/v1/erp-service/add-composite-products";
 
 const getDocumentApi: ICallAndSetData = async (
   callApi,
@@ -1465,6 +1466,38 @@ const updateQuoteClientNoteAsShownApi: ICallAndSetData = async (
   );
 };
 
+const addCompositeProductsApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data: {
+    documentType: number;
+    clientId: string;
+    clientTypeId: string;
+    orderId: string;
+    compositeProducts: Array<{
+      id: string;
+      name: string;
+      quantity: number;
+      jobName: string;
+    }>;
+  }
+) => {
+  const url = `${ADD_COMPOSITE_PRODUCTS_URL}/${data.documentType}`;
+  const requestBody = {
+    clientId: data.clientId,
+    clientTypeId: data.clientTypeId,
+    orderId: data.orderId,
+    compositeProducts: data.compositeProducts,
+  };
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.PUT,
+    url,
+    setState,
+    requestBody
+  );
+};
+
 export {
   getDocumentApi,
   getAllDocumentsApi,
@@ -1561,4 +1594,5 @@ export {
   reCalculateItemApi,
   getDocumentInventoryApi,
   updateQuoteClientNoteAsShownApi,
+  addCompositeProductsApi,
 };

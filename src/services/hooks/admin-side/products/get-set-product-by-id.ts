@@ -37,4 +37,18 @@ const getAndSetProfitProfileReviewProductId = async (
   );
   return returnResult(result, setState);
 };
-export { getAndSetProductById,getAndSetChatBotProductId,getAndSetProfitProfileReviewProductId };
+
+const getCompositeProductById = async (
+  callApi: ICallApi,
+  setState?: ISetState,
+  data?: any
+) => {
+  const result: any = await callApi(
+    "GET",
+    "/v1/printhouse-config/products/get-composite-product-by-id",
+    data
+  );
+  return returnResult(result, setState);
+};
+
+export { getAndSetProductById,getAndSetChatBotProductId,getAndSetProfitProfileReviewProductId, getCompositeProductById };

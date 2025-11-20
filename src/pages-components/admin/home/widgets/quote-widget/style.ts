@@ -89,6 +89,16 @@ const useStyle = () => {
         height: 120,
         color: errorColor(300),
       },
+      inputsDivStyle: {
+        display: "flex",
+        flexDirection: 'row' as "row",
+        gap: "5px",
+        flexWrap: "wrap" as "wrap",
+        justifyContent: 'space-between',
+        overflowY: "auto" as "auto",
+        maxHeight: "500px",
+        width: "100%",
+      },
     };
   }, [theme]);
   return {
