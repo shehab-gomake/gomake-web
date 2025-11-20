@@ -67,10 +67,12 @@ export class ChatwootConversationsService extends BaseChatwootService {
    * - conversation_type: Pre-defined filter type (unattended, mention, participating)
    * - sort_by: Sort order (last_activity_at_desc, last_activity_at_asc, created_at_desc, created_at_asc)
    * - page: Page number for pagination (default: 1)
-   * - q: Search query string
+   * - q: Search query string (inline filtering)
    * - inbox_id: Filter by specific inbox ID
    * - team_id: Filter by specific team ID
    * - labels: Filter by conversation labels (can be array)
+   *
+   * Note: For comprehensive search across all conversations, use searchConversations() instead.
    *
    * @param accountId - The numeric ID of the account (optional, not used in URL but kept for compatibility)
    * @param params - Query parameters (page, status, inbox_id, etc.)
@@ -130,7 +132,7 @@ export class ChatwootConversationsService extends BaseChatwootService {
         queryParams.append("page", String(params.page));
       }
 
-      // Handle search query
+      // Handle search query (inline filtering within current filters)
       if (params.q !== undefined && params.q !== "") {
         queryParams.append("q", params.q);
       }
@@ -163,6 +165,39 @@ export class ChatwootConversationsService extends BaseChatwootService {
     const queryString = queryParams.toString();
     // Use /api/accounts/conversations (without /v1)
     const url = `/api/accounts/conversations${queryString ? `?${queryString}` : ""}`;
+    return await this.get<ConversationListResponse>(url);
+  }
+
+  /**
+   * Search Conversations (Dedicated Search Endpoint)
+   * GET /api/accounts/conversations/search
+   *
+   * This endpoint performs a comprehensive search across all conversations,
+   * searching in contact names, emails, and message content.
+   * It's more powerful than the inline 'q' parameter in listConversations.
+   *
+   * @param accountId - The numeric ID of the account (not used in URL, but kept for consistency)
+   * @param query - Search query string
+   * @param page - Page number for pagination (default: 1)
+   * @returns Promise with search results
+   *
+   * @example
+   * ```typescript
+   * // Search for conversations containing "john"
+   * const results = await service.searchConversations(accountId, "john", 1);
+   * ```
+   */
+  async searchConversations(
+    accountId: number | null,
+    query: string,
+    page: number = 1
+  ): Promise<ConversationListResponse> {
+    const queryParams = new URLSearchParams();
+    queryParams.append("q", query);
+    queryParams.append("page", String(page));
+
+    const queryString = queryParams.toString();
+    const url = `/api/accounts/conversations/search${queryString ? `?${queryString}` : ""}`;
     return await this.get<ConversationListResponse>(url);
   }
 
