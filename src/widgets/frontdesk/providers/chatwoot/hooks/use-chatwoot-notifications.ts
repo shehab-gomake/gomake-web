@@ -26,6 +26,7 @@ import {
   chatwootSelectedAccountAtom,
   chatwootNotificationUnreadCountAtom,
   chatwootNotificationConnectionAtom,
+  chatwootNotificationMetaAtom,
 } from "@/store/frontdesk/atoms/chatwoot.atoms";
 import type {
   NotificationListParams,
@@ -64,6 +65,7 @@ export const useChatwootNotifications = (
 
   // New: Unread count tracking
   const [unreadCount, setUnreadCount] = useRecoilState(chatwootNotificationUnreadCountAtom);
+  const [notificationMeta, setNotificationMeta] = useRecoilState(chatwootNotificationMetaAtom);
   const setConnectionState = useSetRecoilState(chatwootNotificationConnectionAtom);
 
   // Fetch deduplication to prevent redundant API calls
@@ -139,8 +141,19 @@ export const useChatwootNotifications = (
 
       // Handle new response structure from NOTIFICATIONS_FRONTEND_API_GUIDE.md
       const notificationsList = response.data?.payload || [];
+      const meta = response.data?.meta;
 
       setNotifications(notificationsList);
+
+      // Store meta information (count and unread_count from API)
+      if (meta) {
+        setNotificationMeta({
+          count: meta.count || 0,
+          unread_count: meta.unread_count || 0,
+        });
+        // Also update unread count atom for backward compatibility
+        setUnreadCount(meta.unread_count || 0);
+      }
 
       // Mark fetch as complete to prevent duplicate calls
       markFetchComplete(listParams);
@@ -160,6 +173,8 @@ export const useChatwootNotifications = (
     setNotifications,
     setLoading,
     setError,
+    setNotificationMeta,
+    setUnreadCount,
     shouldFetch,
     markFetchStart,
     markFetchComplete,
@@ -480,6 +495,7 @@ export const useChatwootNotifications = (
     error,
     filters,
     unreadCount,
+    notificationMeta, // count and unread_count from API
 
     // WebSocket state
     wsConnected,

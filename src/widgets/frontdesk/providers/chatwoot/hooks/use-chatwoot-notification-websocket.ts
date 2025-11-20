@@ -19,6 +19,7 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import {
   chatwootNotificationsAtom,
   chatwootNotificationUnreadCountAtom,
+  chatwootNotificationMetaAtom,
   chatwootNotificationConnectionAtom,
   chatwootSelectedAccountAtom,
   chatwootProfileAtom,
@@ -89,6 +90,7 @@ export const useChatwootNotificationWebSocket = (
   const profile = useRecoilValue(chatwootProfileAtom);
   const [notifications, setNotifications] = useRecoilState(chatwootNotificationsAtom);
   const setUnreadCount = useSetRecoilState(chatwootNotificationUnreadCountAtom);
+  const setNotificationMeta = useSetRecoilState(chatwootNotificationMetaAtom);
   const [connected, setConnected] = useRecoilState(chatwootNotificationConnectionAtom);
 
   // Local error state (not using Recoil to avoid interference with API errors)
@@ -148,12 +150,18 @@ export const useChatwootNotificationWebSocket = (
         );
       }
 
-      // Update unread count from WebSocket event
-      if (typeof event.unread_count === "number") {
+      // Update unread count and meta from WebSocket event
+      if (typeof event.unread_count === "number" && typeof event.count === "number") {
+        setUnreadCount(event.unread_count);
+        setNotificationMeta({
+          count: event.count,
+          unread_count: event.unread_count,
+        });
+      } else if (typeof event.unread_count === "number") {
         setUnreadCount(event.unread_count);
       }
     },
-    [setNotifications, setUnreadCount]
+    [setNotifications, setUnreadCount, setNotificationMeta]
   );
 
   /**
@@ -170,12 +178,18 @@ export const useChatwootNotificationWebSocket = (
         setNotifications((prev) => prev.filter((n) => n.id !== event.notification.id));
       }
 
-      // Update unread count from WebSocket event
-      if (typeof event.unread_count === "number") {
+      // Update unread count and meta from WebSocket event
+      if (typeof event.unread_count === "number" && typeof event.count === "number") {
+        setUnreadCount(event.unread_count);
+        setNotificationMeta({
+          count: event.count,
+          unread_count: event.unread_count,
+        });
+      } else if (typeof event.unread_count === "number") {
         setUnreadCount(event.unread_count);
       }
     },
-    [setNotifications, setUnreadCount]
+    [setNotifications, setUnreadCount, setNotificationMeta]
   );
 
   /**

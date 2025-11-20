@@ -217,6 +217,15 @@ export const chatwootNotificationUnreadCountAtom = atom<number>({
   default: 0,
 });
 
+// Notification meta (count and unread_count from API)
+export const chatwootNotificationMetaAtom = atom<{
+  count: number;
+  unread_count: number;
+}>({
+  key: "frontdesk.chatwoot.notificationMeta",
+  default: { count: 0, unread_count: 0 },
+});
+
 // Notification Connection State
 // Tracks whether we're connected to notification WebSocket events
 export const chatwootNotificationConnectionAtom = atom<boolean>({
