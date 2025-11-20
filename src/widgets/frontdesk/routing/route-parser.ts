@@ -145,6 +145,7 @@ const parseChatwootSettingsSubpage = (subpageParam?: string): ChatwootSettingsSu
     "inboxes": ChatwootSettingsSubpage.INBOXES,
     "teams": ChatwootSettingsSubpage.TEAMS,
     "labels": ChatwootSettingsSubpage.LABELS,
+    "warnings": ChatwootSettingsSubpage.WARNINGS,
     "profile": ChatwootSettingsSubpage.PROFILE,
     "webhook-test": ChatwootSettingsSubpage.WEBHOOK_TEST,
     "old-frontdesk": ChatwootSettingsSubpage.OLD_FRONTDESK,
