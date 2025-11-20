@@ -75,7 +75,7 @@ export const AssignDocumentModal: React.FC<AssignDocumentModalProps> = ({
     customerId,
     requiresCustomerId,
     searchTerm: debouncedSearchTerm,
-    enabled: open && !!actionConfig?.documentType,
+    enabled: open && actionConfig?.documentType !== undefined,
     pageSize: 100,
   });
 
@@ -279,6 +279,7 @@ export const AssignDocumentModal: React.FC<AssignDocumentModalProps> = ({
                       defaultValue: "Search by number, customer, date, status, or amount...",
                     })}
                     value={null}
+                    inputValue={searchTerm}
                     onChange={() => {}}
                     onInputChange={(_e: React.SyntheticEvent, value: string) => {
                       setSearchTerm(value || "");

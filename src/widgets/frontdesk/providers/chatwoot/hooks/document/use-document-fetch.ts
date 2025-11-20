@@ -56,7 +56,7 @@ export function useDocumentFetch({
   const [error, setError] = useState<string | null>(null);
 
   const fetchDocuments = useCallback(async () => {
-    if (!documentType || !enabled) {
+    if (documentType === undefined || !enabled) {
       setDocuments([]);
       return;
     }
