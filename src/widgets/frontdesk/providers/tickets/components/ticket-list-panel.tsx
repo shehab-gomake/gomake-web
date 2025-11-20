@@ -221,22 +221,6 @@ export const TicketListPanel: React.FC<TicketListPanelProps> = ({
           />
         </Box>
 
-              category: "GENERAL" as any,
-              usageCount: 0,
-              isSystem: false,
-              printHouseId: "",
-              createdAt: "",
-            }))}
-            onRemoveTag={(tag) => {
-              const newTags = filters.tags?.filter((t) => t !== tag.name) || [];
-              onApplyFilters({ ...filters, tags: newTags.length > 0 ? newTags : undefined, page: 1 });
-            }}
-            onClearAll={() => {
-              onApplyFilters({ ...filters, tags: undefined, page: 1 });
-            }}
-          />
-        )}
-
         {/* Ticket List */}
         <PanelContent padding="none" scrollable sx={{ flex: 1 }}>
           {isLoading && tickets.length === 0 ? (
