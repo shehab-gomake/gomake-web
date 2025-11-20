@@ -327,17 +327,21 @@ const uploadPrintHouseMaterialApi: ICallAndSetData = async (
 };
 
 
-const addDocumentItemFromMaterialApi: ICallAndSetData = async (
-  callApi,
-  callBack,
-  data
+const addDocumentItemFromMaterialApi = async (
+  callApi: any,
+  callBack: any,
+  data: any,
+  documentType: number
 ) => {
+  const url = `${ADD_DOCUMENT_ITEM_FROM_MATERIALS}/${documentType}`;
+  // Remove documentType from data if it exists (for backward compatibility)
+  const { documentType: _, ...requestData } = data || {};
   return await getSetApiData(
     callApi,
     EHttpMethod.POST,
-    ADD_DOCUMENT_ITEM_FROM_MATERIALS,
+    url,
     callBack,
-    data
+    requestData
   );
 };
 
