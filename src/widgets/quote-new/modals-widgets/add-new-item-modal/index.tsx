@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { GoMakeDialog, GomakeTextInput } from "@/components";
+import { GoMakeModal, GomakeTextInput, GoMakeDialog } from "@/components";
 import { useStyle } from "./style";
 import { GoMakeTreeSelect } from "@/components/auto-complete/tree-select";
 import "primereact/resources/themes/saga-blue/theme.css";
@@ -11,6 +11,7 @@ import { Stack, RadioGroup, FormControlLabel, Radio } from "@mui/material";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { ETab } from "@/pages-components/admin/home/widgets/quote-widget/enums";
 import { Permissions } from "@/components/CheckPermission/enum";
+import { CompositeProductsDialog } from "../composite-products-dialog";
 
 const ProductTypeSelector = ({ active, onChange, primaryColor, t }) => (
   <RadioGroup
@@ -91,7 +92,21 @@ const AddNewItemModal = ({ openModal, onClose, documentType, getQuote, getCalcul
     CheckPermission,
     selectedTab,
     setSelectedTab,
-  } = useAddNewItem({ onClose, getQuote, documentType, getCalculateQuoteItem, isMaterial, isNewCreation, isPurchaseOrder, isCanIntake });
+    // Composite products
+    compositeDialogOpen,
+    compositeProducts,
+    quantityMultiplier,
+    mainJobName,
+    isLoadingCompositeProducts,
+    compositeErrors,
+    isSubmittingComposite,
+    handleCompositeCancel,
+    handleMainJobNameChange,
+    handleMultiplierChange,
+    handleProductQuantityChange,
+    updateCompositeProduct,
+    handleCompositeConfirm,
+  } = useAddNewItem({ onClose, getQuote, documentType, getCalculateQuoteItem, isMaterial, isNewCreation, isPurchaseOrder, isCanIntake});
 
   const handlePrimaryAction = () => {
     if (isDisabled) {
@@ -113,7 +128,6 @@ const AddNewItemModal = ({ openModal, onClose, documentType, getQuote, getCalcul
       onClickCreateQuoteForCustomer();
     }
   };
-
   return (
     <>
       <GoMakeDialog
@@ -185,6 +199,22 @@ const AddNewItemModal = ({ openModal, onClose, documentType, getQuote, getCalcul
           <div style={classes.errorMsgStyle}>{_renderErrorMessage()}</div>
         </Popover>
       </GoMakeDialog>
+      <CompositeProductsDialog
+          open={compositeDialogOpen}
+          onClose={handleCompositeCancel}
+          onConfirm={handleCompositeConfirm}
+          isLoading={isLoadingCompositeProducts}
+          compositeProducts={compositeProducts}
+          quantityMultiplier={quantityMultiplier}
+          mainJobName={mainJobName}
+          compositeErrors={compositeErrors}
+          onMultiplierChange={handleMultiplierChange}
+          onMainJobNameChange={handleMainJobNameChange}
+          onProductQuantityChange={handleProductQuantityChange}
+          onProductJobNameChange={(index, value) =>
+              updateCompositeProduct(index, "jobName", value)
+          }
+      />
     </>
   );
 };
