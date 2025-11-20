@@ -88,9 +88,11 @@ export const ChatwootConversationDetailPanel: React.FC<ChatwootConversationDetai
     accountId,
     onActionComplete: (actionType, updatedConversation) => {
       console.log("[ChatwootConversationDetailPanel] Quick action completed:", actionType, updatedConversation);
-      // Update conversation with the response from the API
-      if (onConversationUpdate && updatedConversation) {
-        onConversationUpdate(updatedConversation);
+      // Update conversation cache across all views with refreshed conversation
+      if (updatedConversation) {
+        updateConversationCache(updatedConversation.id!, updatedConversation);
+        // Also notify parent for local state update
+        onConversationUpdate?.(updatedConversation);
       }
     },
     onActionError: (actionType, error) => {
