@@ -195,3 +195,30 @@ export enum ShowPricesEnum {
   HideTotalPriceOnly = 1,
   HidePrices = 2,
 }
+
+
+export enum PurchaseOrderType
+{
+    Products,
+    Materials
+}
+
+export enum ItemCalculationType {
+  Amount = 0,
+  UnitPrice = 1,
+  Discount = 2,
+  finalPrice = 3,
+  Currency = 4,
+  PackagesQuantity = 5,
+  QuantityInPackage = 6,
+}
+
+
+export enum PurchaseOrderStatuses
+{
+    UnderCreation = 0,
+    SentToSupplier= 10,
+    Received =11,
+    SupplierRequestingApproval =12,
+    Closed =8,
+}

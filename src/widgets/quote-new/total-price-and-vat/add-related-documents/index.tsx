@@ -1,49 +1,78 @@
-import { GoMakeAutoComplate, GoMakeModal, GomakePrimaryButton, GomakeTextInput } from "@/components";
+import { GoMakeAutoComplate, GoMakeDialog, GomakeTextInput } from "@/components";
 
-import { useaddRelatedDocuments } from "./use-add-related-documents";
+import { useAddRelatedDocuments } from "./use-add-related-documents";
 import { useStyle } from "./style";
+import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 
-const AddRelatedDocumentsModal = ({ openModal, onClose }: {
+interface AddRelatedDocumentsModalProps {
   openModal: boolean;
   onClose: () => void;
-}) => {
+  documentId?: string;
+  onSuccess?: () => void;
+  docType?: DOCUMENT_TYPE;
+}
+
+const AddRelatedDocumentsModal = ({
+  openModal,
+  onClose,
+  documentId,
+  onSuccess,
+  docType
+}: AddRelatedDocumentsModalProps) => {
   const { clasess } = useStyle();
   const {
     t,
-    onChangeSelectedDocumentTyp,
-    onChangetDocumentNumber,
-    documentTypeOptions
-  } = useaddRelatedDocuments()
+    documentTypeOptions,
+    documentNumber,
+    selectedDocumentType,
+    isSubmitting,
+    isPrimaryDisabled,
+    handleSelectDocumentType,
+    handleDocumentNumberChange,
+    handleSubmit,
+    resetForm,
+  } = useAddRelatedDocuments({
+    documentId,
+    onSuccess,
+    onClose,
+    docType,
+  });
+
+  const handleClose = () => {
+    resetForm();
+    onClose();
+  };
 
   return (
-    <>
-      <GoMakeModal
-        openModal={openModal}
-        modalTitle={t("sales.quote.addRelatedDocument")}
-        onClose={onClose}
-        insideStyle={clasess.insideStyle}
-      >
-        <div style={clasess.inputsContainer}>
-          <GoMakeAutoComplate
-            options={documentTypeOptions}
-            style={clasess.dropDownListStyle}
-            placeholder={t("reports.chooseDocumentType")}
-            onChange={(e: any, item: any) => {
-              onChangeSelectedDocumentTyp(item)
-
-            }}
-          />
-          <GomakeTextInput
-            style={clasess.textInputStyle}
-            placeholder={t("reports.documentNumber")}
-            onChange={(e) => onChangetDocumentNumber(e)}
-          />
-          <div style={clasess.addNewBtnContainer}>
-            <GomakePrimaryButton style={clasess.addBtnStyle}>{t('mailingSettings.addNew')}</GomakePrimaryButton>
-          </div>
-        </div>
-      </GoMakeModal>
-    </>
+    <GoMakeDialog
+      open={openModal}
+      onClose={handleClose}
+      title={t("sales.quote.addRelatedDocumentModal")}
+      primaryButtonLabel={t("mailingSettings.addNew")}
+      onPrimaryAction={handleSubmit}
+      primaryButtonDisabled={isPrimaryDisabled}
+      primaryButtonLoading={isSubmitting}
+      maxWidth="xs"
+      fullWidth={true}
+    >
+      <div style={clasess.inputsContainer}>
+        <GoMakeAutoComplate
+          options={documentTypeOptions}
+          style={clasess.dropDownListStyle}
+          placeholder={t("reports.chooseDocumentType")}
+          value={selectedDocumentType}
+          onChange={(e: any, item: any) => {
+            handleSelectDocumentType(item);
+          }}
+        />
+        <GomakeTextInput
+          style={clasess.textInputStyle}
+          placeholder={t("reports.documentNumber")}
+          value={documentNumber}
+          onChange={handleDocumentNumberChange}
+        />
+      </div>
+    </GoMakeDialog>
   );
 };
 export { AddRelatedDocumentsModal };

@@ -33,6 +33,7 @@ const MoreMenuWidget = ({
   onClickSendToCustomerEmail,
   onClickSendToCustomerSMS,
   onClickSendToCustomerWhatsApp,
+  onClickOpenInventoryIntakeModal,
 }: any) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -67,6 +68,7 @@ const MoreMenuWidget = ({
     onClickSendToCustomerSMS,
     onClickSendToCustomerWhatsApp,
     classes,
+    onClickOpenInventoryIntakeModal,
   });
 
   return (

@@ -1,6 +1,8 @@
 import { useRecoilState, useRecoilValue } from "recoil";
 import { DuplicateItemModal } from "@/widgets/quote-new/modals-widgets/duplicate-item-modal";
 import { AddNewItemModal } from "@/widgets/quote-new/modals-widgets/add-new-item-modal";
+import { InventoryIntakeModal } from "@/widgets/quote-new/modals-widgets/inventory-intake-modal";
+import { PurchaseOrderTypeModal } from "@/widgets/quote-new/modals-widgets/purchase-order-type-modal";
 import { ButtonsContainer } from "@/widgets/quote-new/buttons-container";
 import { BusinessNewWidget } from "@/widgets/quote-new/business-widget";
 import { ContactNewWidget } from "@/widgets/quote-new/contact-widget";
@@ -10,6 +12,7 @@ import {
   GoMakeAlertModal,
   GoMakeAutoComplate,
   GoMakeDeleteModal,
+  GoMakeMenu,
 } from "@/components";
 import { HeaderTitle } from "@/widgets";
 import { ArrowDownNewIcon, BudgetIcon } from "@/icons";
@@ -20,8 +23,11 @@ import { CancelBtnMenu } from "@/widgets/quote-new/cancel-btn-menu";
 import { SendBtnMenu } from "@/widgets/quote-new/send-btn-menu";
 import { _renderQuoteStatus } from "@/utils/constants";
 import {
+  Button,
+  CircularProgress,
   FormControlLabel,
   IconButton,
+  MenuItem,
   Radio,
   RadioGroup,
   Skeleton,
@@ -34,7 +40,7 @@ import { CopyFromOrderModal } from "@/widgets/quote-new/modals-widgets/copy-from
 import { ReceiptsTable } from "@/widgets/quote-new/receipts-table";
 import { useRouter } from "next/router";
 import { usePaymentsTable } from "@/widgets/quote-new/receipts-table/use-payments-table";
-import { useEffect, useState } from "react";
+import { useEffect, useState, MouseEvent } from "react";
 import {
   checksRowState,
   CheckData,
@@ -92,11 +98,13 @@ const QuoteNewPageWidget = ({
   const [quoteItemValue, setQuoteItemValue] =
     useRecoilState<any>(quoteItemState);
 
+  console.log("ssssssssssssssssss", quoteItemValue);
+
   useEffect(() => {
     setQuoteItemValue({});
   }, []);
 
-  const {} = updateQuoteStatusSocketIo({
+  const { } = updateQuoteStatusSocketIo({
     setUserQuote: null,
     setQuoteId: null,
     setQuoteNumber: null,
@@ -330,6 +338,10 @@ const QuoteNewPageWidget = ({
     isMoveToReady,
     handleCheckboxChange,
     isPurchaseDocument,
+    isPurchaseOrder,
+    purchaseOrderStatusOptions,
+    updatePurchaseOrderStatus,
+    isUpdatingPurchaseStatus,
     isOpenRelatedDocuments,
     setIsOpenRelatedDocuments,
     isPurchaseInvoice,
@@ -380,6 +392,18 @@ const QuoteNewPageWidget = ({
     isEmailComposerOpen,
     emailData,
     closeEmailComposer,
+    isMaterial,
+    isMaterialPurchaseOrder,
+    isCanIntake,
+    openInventoryIntakeModal,
+    onClickOpenInventoryIntakeModal,
+    onClickCloseInventoryIntakeModal,
+    inventoryData,
+    inventoryLoading,
+    openPurchaseOrderTypeModal,
+    onOpenPurchaseOrderTypeModal,
+    onClosePurchaseOrderTypeModal,
+    handleSelectPurchaseOrderType,
   } = useQuoteNew({
     docType: documentType,
     isQuoteConfirmation: isQuoteConfirmation,
@@ -387,11 +411,41 @@ const QuoteNewPageWidget = ({
   });
   const { getQuoteConfirmation } = useQuoteConfirmation();
   if (documentType == DOCUMENT_TYPE.quote) {
-    const {} = useQuotesSocketIo({ getQuote });
+    const { } = useQuotesSocketIo({ getQuote });
   }
   if (documentType == DOCUMENT_TYPE.order) {
-    const {} = useOrdersSocketIo({ getQuote });
+    const { } = useOrdersSocketIo({ getQuote });
   }
+
+  const [purchaseStatusAnchorEl, setPurchaseStatusAnchorEl] =
+    useState<null | HTMLElement>(null);
+  const isPurchaseStatusMenuOpen = Boolean(purchaseStatusAnchorEl);
+  const currentPurchaseOrderStatus = quoteItemValue?.documentStatus;
+  const currentPurchaseOrderStatusLabel = purchaseOrderStatusOptions.find(
+    (option) => option.value === currentPurchaseOrderStatus
+  )?.label;
+
+  const handleOpenPurchaseStatusMenu = (event: MouseEvent<HTMLElement>) => {
+    if(quoteItemValue?.documentStatus === 8) return;
+    event.preventDefault();
+    event.stopPropagation();
+    setPurchaseStatusAnchorEl(event.currentTarget);
+  };
+
+  const handleClosePurchaseStatusMenu = () => {
+    setPurchaseStatusAnchorEl(null);
+  };
+
+  const handleSelectPurchaseStatus = (statusValue: number) => {
+    handleClosePurchaseStatusMenu();
+    if (
+      statusValue === currentPurchaseOrderStatus ||
+      isUpdatingPurchaseStatus
+    ) {
+      return;
+    }
+    updatePurchaseOrderStatus(statusValue);
+  };
 
   const dir: "rtl" | "ltr" = t("direction");
 
@@ -492,8 +546,8 @@ const QuoteNewPageWidget = ({
                     title={
                       router?.query?.isNewCreation
                         ? `${t(
-                            "properties.create"
-                          )} ${documentTitle.toLowerCase()}`
+                          "properties.create"
+                        )} ${documentTitle.toLowerCase()}`
                         : documentTitle
                     }
                     marginBottom={1}
@@ -573,7 +627,7 @@ const QuoteNewPageWidget = ({
                     {isQuote && (
                       <>
                         {quoteItemValue?.signImageUrl &&
-                        quoteItemValue?.signerName ? (
+                          quoteItemValue?.signerName ? (
                           <div
                             style={classes.signatureApproval}
                             onClick={onClickOpenSignatureApprovalModal}
@@ -586,7 +640,7 @@ const QuoteNewPageWidget = ({
                               <div style={classes.quoteStatusContainer}>
                                 {_renderQuoteStatus(
                                   quoteState?.[
-                                    isReceipt ? "status" : "documentStatus"
+                                  isReceipt ? "status" : "documentStatus"
                                   ],
                                   quoteState,
                                   t
@@ -596,6 +650,46 @@ const QuoteNewPageWidget = ({
                           </>
                         )}
                       </>
+                    )}
+                    {isPurchaseOrder && !isNewCreation && (
+                      <div style={classes.quoteStatusContainer}>
+                        <span
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 8,
+                            cursor: "pointer",
+                          }}
+                          onClick={handleOpenPurchaseStatusMenu}
+                        >
+                          {currentPurchaseOrderStatusLabel ||
+                            t("sales.quote.status")}
+                          {isUpdatingPurchaseStatus && (
+                            <CircularProgress size={16} />
+                          )}
+                        </span>
+                        <GoMakeMenu
+                          open={isPurchaseStatusMenuOpen}
+                          anchorEl={purchaseStatusAnchorEl}
+                          handleClose={handleClosePurchaseStatusMenu}
+                          noListPadding
+                        >
+                          {purchaseOrderStatusOptions.map((option) => (
+                            <MenuItem
+                              key={option.value}
+                              selected={
+                                option.value === currentPurchaseOrderStatus
+                              }
+                              onClick={() =>
+                                handleSelectPurchaseStatus(option.value)
+                              }
+                              disabled={isUpdatingPurchaseStatus}
+                            >
+                              {option.label}
+                            </MenuItem>
+                          ))}
+                        </GoMakeMenu>
+                      </div>
                     )}
                     {!isQuote && !isNewCreation && renderCreateNewButton()}
                     {isShowSettingIcon && (
@@ -651,11 +745,11 @@ const QuoteNewPageWidget = ({
                   />
                   {documentType !== DOCUMENT_TYPE.purchaseOrder &&
                     (isQuote &&
-                    !selectDate &&
-                    (!CheckPreferenceValue(
-                      EPreferences.DELIVERY_DATE_REQUIRED_IN_QUOTE
-                    ) ||
-                      quoteItemValue?.dueDateUpdatedByUser) ? (
+                      !selectDate &&
+                      (!CheckPreferenceValue(
+                        EPreferences.DELIVERY_DATE_REQUIRED_IN_QUOTE
+                      ) ||
+                        quoteItemValue?.dueDateUpdatedByUser) ? (
                       <Skeleton variant="text" width={200} height={40} />
                     ) : (
                       <DateField
@@ -693,7 +787,7 @@ const QuoteNewPageWidget = ({
                       }}
                       isEditable={quoteItemValue?.isEditable}
                       inputRef={taxDateRef}
-                      // preventOpenCondition={!quoteState.client}
+                    // preventOpenCondition={!quoteState.client}
                     />
                   )}
                   {(documentType === DOCUMENT_TYPE.order ||
@@ -845,6 +939,7 @@ const QuoteNewPageWidget = ({
                   onChangeSelectedItemRowForQoute={
                     onChangeSelectedItemRowForQoute
                   }
+                  isMaterialPurchaseOrder={isMaterialPurchaseOrder}
                 />
               )}
               {isPrePaymentPage && (
@@ -911,6 +1006,8 @@ const QuoteNewPageWidget = ({
                 }
                 deliveryDate={selectDate}
                 handleExportToExcel={handleExportToExcel}
+                isCanIntake={isCanIntake}
+                onClickOpenInventoryIntakeModal={onClickOpenInventoryIntakeModal}
               />
             </div>
           )}
@@ -935,6 +1032,23 @@ const QuoteNewPageWidget = ({
         documentType={documentType}
         getQuote={getQuote}
         getCalculateQuoteItem={getCalculateQuoteItem}
+        isMaterial={isMaterial}
+        isNewCreation={isNewCreation}
+        isPurchaseOrder={documentType === DOCUMENT_TYPE.purchaseOrder}
+        isCanIntake={isCanIntake}
+      />
+      <InventoryIntakeModal
+        open={openInventoryIntakeModal}
+        onClose={onClickCloseInventoryIntakeModal}
+        inventoryData={inventoryData}
+        loading={inventoryLoading}
+        purchaseOrderId={router.query?.Id as string}
+      />
+      <PurchaseOrderTypeModal
+        open={openPurchaseOrderTypeModal}
+        onClose={onClosePurchaseOrderTypeModal}
+        onSelectProduct={() => handleSelectPurchaseOrderType(false)}
+        onSelectMaterial={() => handleSelectPurchaseOrderType(true)}
       />
       <AddNewContactModal
         openModal={openAddNewContactModal}
@@ -1216,6 +1330,9 @@ const QuoteNewPageWidget = ({
       <AddRelatedDocumentsModal
         openModal={openRelatedDocumentsModal}
         onClose={onClickCloseRelatedDocumentsModal}
+        documentId={quoteItemValue?.id}
+        onSuccess={getQuote}
+        docType={documentType}
       />
       <GoMakeDeleteModal
         modalType={ModalType.WARNING}
@@ -1285,7 +1402,7 @@ const QuoteNewPageWidget = ({
         openModal={openAddAttachmentsModal}
         onClose={onCloseAddAttachmentsModal}
         documentType={documentType}
-        getQuote={isQuoteConfirmation ? () => {} : getQuote}
+        getQuote={isQuoteConfirmation ? () => { } : getQuote}
         isQuoteConfirmation={isQuoteConfirmation}
         quoteConfirm={quoteState}
         onFileUploadStart={onFileUploadStart}

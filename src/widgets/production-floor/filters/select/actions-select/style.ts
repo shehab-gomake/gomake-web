@@ -8,7 +8,7 @@ import { useMediaQuery } from "@mui/material";
 
 const useStyle = ({ source }: any) => {
   const { t } = useTranslation();
-  const { secondColor, theme } = useGomakeTheme();
+  const { secondColor, theme, primaryColor } = useGomakeTheme();
   const dir: "rtl" | "ltr" = t("direction");
   const oppositeDir = dir === "rtl" ? "ltr" : "rtl";
   const finalDir = source === Source.PRODUCTION_FLOOR ? oppositeDir : dir;
@@ -137,6 +137,33 @@ const useStyle = ({ source }: any) => {
         justifyContent: "center",
         alignItems: "center",
         borderRadius: "8px",
+      },
+      actionButtonStyle: {
+        width: "fit-content",
+        padding: 1,
+        gap: "5px",
+        alignItems: "center",
+        display: "flex",
+        height: "32px",
+      },
+      jobTimeAlertsButtonStyle: {
+        width: "fit-content",
+        padding: 1,
+        gap: "5px",
+        alignItems: "center",
+        display: "flex",
+        height: "32px",
+        marginBottom: "8px",
+      },
+      actionIconStyle: {
+        height: "14px",
+        width: "14px",
+        padding: 0,
+      },
+      actionButtonTextStyle: {
+        paddingTop: "2px",
+        color: primaryColor(700) ?? "#344054",
+        fontSize: 12,
       },
     };
   }, [theme, isMobile]);

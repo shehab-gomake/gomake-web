@@ -4,7 +4,14 @@ import {
   useGomakeRouter,
   useSnackBar,
 } from "@/hooks";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  MouseEvent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { useTranslation } from "react-i18next";
 import {
   ApprovalStatus,
@@ -37,6 +44,7 @@ import {
   ExportDocumentTableToPdfApi,
   getAllDocumentLogsApi,
   getAllDocumentsApi,
+  getDocumentInventoryApi,
   getDocumentPdfApi,
   manuallyCloseDocumentApi,
   moveOrderToReadyApi,
@@ -46,6 +54,7 @@ import {
   removeDraftDocumentApi,
   startOrderProductionApi,
   updateDocumentApi,
+  updateDocumentStatusApi,
 } from "@/services/api-service/generic-doc/documents-api";
 import { DOCUMENT_TYPE } from "./enums";
 import { useQuoteGetData } from "../quote-new/use-quote-get-data";
@@ -67,7 +76,7 @@ import {
 } from "@/widgets/settings-documenting/documentDesign/enums/document-type";
 import {
   AStatus,
-  BoardMissionStatusForFilter,
+  BoardMissionStatusForFilter, DocumentCloseStatus,
   PStatus,
   ReceiptAccountingStatus,
 } from "../board-missions/widgets/enums";
@@ -87,7 +96,7 @@ import { useRouter } from "next/router";
 import { ICard } from "./widgets/statistics-section/statistics-sections";
 import { ClickableStatusButton } from "./widgets/delivery-status-button/delivery-status-button";
 import { DocumentDeliveryStatuses } from "./widgets/delivery-status-button/delivery-status-modal/use-delivery-status-modal";
-import { EMessageStatus } from "@/enums/document-type-enum";
+import {EMessageStatus, PurchaseOrderStatuses} from "@/enums/document-type-enum";
 import { useDocumentsTableSocketIo } from "@/hooks/socket-io/use-documents-table-socket-io";
 import { QuoteIfExistState } from "../quote-new/store/quote";
 import { userQuoteState } from "@/store/user-qoute-state";
@@ -99,7 +108,7 @@ import {
   exportDeliveryTicketPDFApi,
   printDeliveryTicketPDFApi,
 } from "@/services/api-service/generic-doc/orders-api";
-import { GomakeTextInput } from "@/components";
+import { GomakeTextInput, GoMakeMenu } from "@/components";
 import { downloadPdf } from "@/utils/helpers";
 import { PAYMENT_TYPE } from "../deposit/enums";
 import { useListPagination } from "@/hooks/use-list-pagination";
@@ -113,7 +122,7 @@ import {
   OrdersTableColumns,
   QuotesTableColumns,
 } from "./enums/document-table-columns-enum";
-import { Typography } from "@mui/material";
+import { CircularProgress, MenuItem, Typography } from "@mui/material";
 import { currenciesState } from "@/widgets/materials-widget/state";
 import { getCurrencies } from "@/services/api-service/general/enums";
 import { useFrontDeskEmailIntegration } from "./hooks/use-frontdesk-email-integration";
@@ -195,6 +204,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const [customerId, setCustomerId] = useState<any>();
   const [isCanceledState, setIsCanceledState] = useState(false);
   const [isPausedOrders, setIsPausedOrders] = useState(false);
+  const [openPurchaseOrderTypeModal, setOpenPurchaseOrderTypeModal] = useState(false);
   const [dateRange, setDateRange] = useState<any>();
   const [agentId, setAgentId] = useState<any>();
   const [allQuotes, setAllQuotes] = useState<any[] | undefined>(undefined);
@@ -295,6 +305,21 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     label: string;
     value: any;
   } | null>();
+
+  const purchaseOrderStatusOptions = useMemo(
+    () =>
+      Object.keys(PurchaseOrderStatuses)
+        .filter((key) => isNaN(Number(key)))
+        .map((key) => ({
+          value:
+            PurchaseOrderStatuses[
+            key as keyof typeof PurchaseOrderStatuses
+            ],
+          label: t(`documentStatus.PurchaseOrder.${key}`),
+        })),
+    [t]
+  );
+  const [statusUpdatingId, setStatusUpdatingId] = useState<string | null>(null);
 
   const [productsList, setProductsList] = useState([]);
   const [productIds, setProductIds] = useState<string[]>([]);
@@ -867,7 +892,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             ? `${quote?.totalPrice} ${getCurrencyUnitText(quote?.currency)}`
             : `${getCurrencyUnitText(quote?.currency)} ${quote?.totalPrice}`,
           notes: quote?.notes,
-          status: _renderStatus(docType, quote, t),
+          status: renderStatusCell(quote),
           more: (
             <MoreMenuWidget
               quote={quote}
@@ -901,6 +926,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               onClickSendToCustomerEmail={onClickSendToCustomerEmail}
               onClickSendToCustomerSMS={onClickSendToCustomerSMS}
               onClickSendToCustomerWhatsApp={onClickSendToCustomerWhatsApp}
+              onClickOpenInventoryIntakeModal={onClickOpenInventoryIntakeModal}
             />
           ),
         };
@@ -1053,7 +1079,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             isInvoice && quote?.isDraft ? (
               <span style={{ color: "#e77676" }}>{t("sales.quote.draft")}</span>
             ) : (
-              _renderStatus(docType, quote, t)
+              renderStatusCell(quote)
             ),
         };
       });
@@ -1306,7 +1332,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 : `${getCurrencyUnitText(quote?.currency)} ${quote?.totalPrice
                 }`,
               notes: quote?.notes,
-              status: _renderStatus(docType, quote, t),
+              status: renderStatusCell(quote),
               more: (
                 <MoreMenuWidget
                   quote={quote}
@@ -1379,7 +1405,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                       {t("sales.quote.draft")}
                     </span>
                   ) : (
-                    _renderStatus(docType, quote, t)
+                    renderStatusCell(quote)
                   ),
               };
             }
@@ -1816,7 +1842,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               ? `${quote?.totalPrice} ${getCurrencyUnitText(quote?.currency)}`
               : `${getCurrencyUnitText(quote?.currency)} ${quote?.totalPrice}`,
             notes: quote?.notes,
-            status: _renderStatus(docType, quote, t),
+            status: renderStatusCell(quote),
             more: (
               <MoreMenuWidget
                 quote={quote}
@@ -2095,6 +2121,96 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       setIsDocumentTableLoading(false);
     }
   };
+
+  const handlePurchaseOrderStatusChange = useCallback(
+    async (documentId: string, nextStatus: number) => {
+      setStatusUpdatingId(documentId);
+      try {
+        const response = await updateDocumentStatusApi(callApi, () => { }, {
+          documentType: docType,
+          documentId,
+          status: nextStatus,
+        });
+
+        if (response?.success) {
+          alertSuccessUpdate();
+          await getAllQuotes(undefined, true);
+        } else {
+          alertFaultUpdate();
+        }
+      } catch (error) {
+        alertFaultUpdate();
+      } finally {
+        setStatusUpdatingId(null);
+      }
+    },
+    [alertFaultUpdate, alertSuccessUpdate, callApi, docType, getAllQuotes]
+  );
+
+  function PurchaseOrderStatusCell({ document }: { document: any }) {
+    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+    const isLoading = statusUpdatingId === document?.id;
+
+    const handleOpen = (event: MouseEvent<HTMLElement>) => {
+      event.stopPropagation();
+      setAnchorEl(event.currentTarget);
+    };
+
+    const handleClose = () => {
+      setAnchorEl(null);
+    };
+
+    const handleSelect = (event: MouseEvent<HTMLElement>, value: number) => {
+      event.stopPropagation();
+      handleClose();
+      if (value === document?.status || isLoading) {
+        return;
+      }
+      void handlePurchaseOrderStatusChange(document?.id, value);
+    };
+
+    return (
+      <>
+        <span
+          onClick={handleOpen}
+          style={{
+            cursor: "pointer",
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 8,
+            fontWeight: 600,
+          }}
+        >
+          {_renderStatus(docType, document, t)}
+          {isLoading && <CircularProgress size={16} />}
+        </span>
+        <GoMakeMenu
+          open={Boolean(anchorEl)}
+          anchorEl={anchorEl}
+          handleClose={handleClose}
+          noListPadding
+        >
+          {purchaseOrderStatusOptions.map(({ value, label }) => (
+            <MenuItem
+              key={value}
+              selected={document?.status === value}
+              onClick={(event) => handleSelect(event, value)}
+              disabled={isLoading}
+            >
+              {label}
+            </MenuItem>
+          ))}
+        </GoMakeMenu>
+      </>
+    );
+  }
+
+  function renderStatusCell(document: any) {
+    if (isPurchaseOrder && document?.status !== 8) {
+      return <PurchaseOrderStatusCell document={document} />;
+    }
+    return _renderStatus(docType, document, t);
+  }
 
   const { isSocketUpdateDocumentsTable, setIsSocketUpdateDocumentsTable } =
     useDocumentsTableSocketIo(docType);
@@ -2497,6 +2613,22 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     await createNewDocumentApi(callApi, callBack, { documentType: 0 });
   };
 
+  const onOpenPurchaseOrderTypeModal = () => {
+    setOpenPurchaseOrderTypeModal(true);
+  };
+
+  const onClosePurchaseOrderTypeModal = () => {
+    setOpenPurchaseOrderTypeModal(false);
+  };
+
+  const handleSelectPurchaseOrderType = (isForMaterial: boolean) => {
+    setOpenPurchaseOrderTypeModal(false);
+    const url = isForMaterial
+      ? `/${documentPath}?isNewCreation=true&isMaterial=true`
+      : `/${documentPath}?isNewCreation=true`;
+    navigate(url);
+  };
+
   // table in home page
   const getAllDocuments = async (docType) => {
     const callBack = (res) => {
@@ -2532,7 +2664,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                     : classes.closeBtnStyle
                 }
               >
-                {_renderStatus(docType, document, t)}
+                {renderStatusCell(document)}
               </h2>
             </div>,
           ];
@@ -2973,14 +3105,48 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
           { label: t("sales.quote.closed"), value: AStatus.CLOSED },
           { label: t("sales.quote.draft"), value: AStatus.DRAFT },
         ]
-        : [
-          { label: t("sales.quote.open"), value: AStatus.OPEN },
+        : isPurchaseOrder ? [
+          {
+            label: t("documentStatus.PurchaseOrder.UnderCreation"),
+            value: DocumentCloseStatus.Open,
+          },
           {
             label: t("sales.quote.partialClosed"),
-            value: AStatus.PARTIAL_CLOSED,
+            value: DocumentCloseStatus.PartialClosed,
           },
-          { label: t("sales.quote.closed"), value: AStatus.CLOSED },
-        ];
+          {
+            label: t("sales.quote.closed"),
+            value: DocumentCloseStatus.Closed
+          },
+          // {
+          //   label: t("documentStatus.PurchaseOrder.Draft"),
+          //   value: DocumentCloseStatus.Draft
+          // },
+          {
+            label: t("documentStatus.PurchaseOrder.SentToSupplier"),
+            value: DocumentCloseStatus.SentToSupplier
+          },
+          {
+            label: t("documentStatus.PurchaseOrder.Received"),
+            value: DocumentCloseStatus.Received
+          },
+          {
+            label: t("documentStatus.PurchaseOrder.SupplierRequestingApproval"),
+            value: DocumentCloseStatus.SupplierRequestingApproval
+          },
+
+        ]
+          : [
+            {
+              label: t("sales.quote.open"),
+              value: AStatus.OPEN,
+            },
+            {
+              label: t("sales.quote.partialClosed"),
+              value: AStatus.PARTIAL_CLOSED,
+            },
+            { label: t("sales.quote.closed"), value: AStatus.CLOSED },
+          ];
 
   const deliveryStatuses = useMemo(
     () => [
@@ -3171,6 +3337,39 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const onClickCloseDeliveryTimeModal = () => {
     setSelectedDocument(null);
     setOpenDeliveryTimeCancelModal(false);
+  };
+
+  // Inventory Intake Modal State
+  const [openInventoryIntakeModal, setOpenInventoryIntakeModal] =
+    useState(false);
+  const [inventoryData, setInventoryData] = useState<any[]>([]);
+  const [inventoryLoading, setInventoryLoading] = useState(false);
+
+  const onClickOpenInventoryIntakeModal = async (quote) => {
+    setSelectedDocument(quote);
+    setOpenInventoryIntakeModal(true);
+    setInventoryLoading(true);
+
+    const callBack = (res) => {
+      if (res?.success) {
+        setInventoryData(res?.data || []);
+      } else {
+        alertFaultGetData();
+      }
+      setInventoryLoading(false);
+    };
+
+    await getDocumentInventoryApi(callApi, callBack, {
+      documentType: docType,
+      documentId: quote?.id,
+      purchaseOrderId: quote?.id,
+    });
+  };
+
+  const onClickCloseInventoryIntakeModal = () => {
+    setOpenInventoryIntakeModal(false);
+    setInventoryData([]);
+    setSelectedDocument(null);
   };
 
   const MoveOrderToReady = useModal();
@@ -4336,6 +4535,10 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     setFromDate,
     setToDate,
     onClickOpenCustomerModal,
+    openInventoryIntakeModal,
+    onClickCloseInventoryIntakeModal,
+    inventoryData,
+    inventoryLoading,
     isPurchaseOrder,
     isMoveToReady,
     handleCheckboxChange,
@@ -4419,6 +4622,10 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     hideCheckboxes,
     preSelectedMethod,
     documentForEmail,
+    openPurchaseOrderTypeModal,
+    onOpenPurchaseOrderTypeModal,
+    onClosePurchaseOrderTypeModal,
+    handleSelectPurchaseOrderType,
   };
 };
 

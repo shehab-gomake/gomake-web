@@ -49,11 +49,15 @@ const UPDATE_PURCHASE_NUMBER_URL =
 const CHECK_PURCHASE_NUMBER_EXISTS_URL =
   "/v1/erp-service/documents/check-purchase-number-exists";
 const ADD_DELIVERY_URL = "/v1/erp-service/documents/add-delivery";
+const ADD_RELATED_DOCUMENT_URL =
+  "/v1/erp-service/documents/add-related-document";
 const CANCEL_DOCUMENT_URL = "/v1/erp-service/documents/cancel-document";
 const SEND_DOCUMENT_TO_CLIENT_URL =
   "/v1/erp-service/documents/send-document-to-client";
 const GET_DOCUMENT_MAIL_DATA_URL =
   "/v1/erp-service/documents/get-document-mail-data";
+const UPDATE_DOCUMENT_STATUS_URL =
+  "/v1/erp-service/documents/update-document-status";
 const SEND_ORDER_READY_TO_CLIENT_URL =
   "/v1/jobs-service/board-missions/send-order-ready-to-client";
 const SAVE_DOCUMENT_URL = "/v1/erp-service/documents/save-document";
@@ -167,6 +171,11 @@ const GET_DOCUMENT_TABLE_SETTINGS_URL =
   "/v1/erp-service/documents-table-settings/get-document-table-settings";
 
 const RE_CALCULATE_ITEM_URL = "/v1/erp-service/document/re-calculate-item";
+const UPDATE_QUOTE_CLIENT_NOTE_AS_SHOWN_URL =
+  "/v1/erp-service/documents/update-quote-client-note-as-shown";
+const GET_DOCUMENT_INVENTORY_URL =
+  "/v1/erp-service/documents/get-document-inventory";
+const ADD_COMPOSITE_PRODUCTS_URL = "/v1/erp-service/add-composite-products";
 
 const getDocumentApi: ICallAndSetData = async (
   callApi,
@@ -465,6 +474,20 @@ const addDeliveryApi: ICallAndSetData = async (callApi, setState, data) => {
   );
 };
 
+const addRelatedDocumentApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    ADD_RELATED_DOCUMENT_URL,
+    setState,
+    data
+  );
+};
+
 const cancelDocumentApi: ICallAndSetData = async (callApi, setState, data) => {
   return await getSetApiData(
     callApi,
@@ -472,6 +495,21 @@ const cancelDocumentApi: ICallAndSetData = async (callApi, setState, data) => {
     CANCEL_DOCUMENT_URL,
     setState,
     data
+  );
+};
+
+const updateDocumentStatusApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data: { documentType: DOCUMENT_TYPE; [key: string]: any }
+) => {
+  const { documentType, ...payload } = data || {};
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.PUT,
+    `${UPDATE_DOCUMENT_STATUS_URL}/${documentType}`,
+    setState,
+    payload
   );
 };
 
@@ -1400,6 +1438,64 @@ const reCalculateItemApi: ICallAndSetData = async (
   );
 };
 
+const updateQuoteClientNoteAsShownApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data: { quoteId: string }
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.PUT,
+    `${UPDATE_QUOTE_CLIENT_NOTE_AS_SHOWN_URL}/${data.quoteId}`,
+    setState,
+    {}
+  );
+};
+const getDocumentInventoryApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.GET,
+    GET_DOCUMENT_INVENTORY_URL,
+    setState,
+    data
+  );
+};
+const addCompositeProductsApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data: {
+    documentType: number;
+    clientId: string;
+    clientTypeId: string;
+    orderId: string;
+    compositeProducts: Array<{
+      id: string;
+      name: string;
+      quantity: number;
+      jobName: string;
+    }>;
+  }
+) => {
+  const url = `${ADD_COMPOSITE_PRODUCTS_URL}/${data.documentType}`;
+  const requestBody = {
+    clientId: data.clientId,
+    clientTypeId: data.clientTypeId,
+    orderId: data.orderId,
+    compositeProducts: data.compositeProducts,
+  };
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.PUT,
+    url,
+    setState,
+    requestBody
+  );
+};
+
 export {
   getDocumentApi,
   getAllDocumentsApi,
@@ -1421,6 +1517,8 @@ export {
   updatePurchaseNumberApi,
   checkPurchaseNumberExistsApi,
   addDeliveryApi,
+  addRelatedDocumentApi,
+  updateDocumentStatusApi,
   cancelDocumentApi,
   sendDocumentToClientApi,
   getDocumentMailDataApi,
@@ -1492,4 +1590,7 @@ export {
   saveDocumentTableSettingsApi,
   getDocumentTableSettingsApi,
   reCalculateItemApi,
+  updateQuoteClientNoteAsShownApi,
+  getDocumentInventoryApi,
+  addCompositeProductsApi,
 };

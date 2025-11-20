@@ -87,6 +87,7 @@ export interface GoMakeDialogProps extends Omit<DialogProps, "onClose" | "title"
     title?: React.CSSProperties;
     content?: React.CSSProperties;
     footer?: React.CSSProperties;
+    primaryButton?: React.CSSProperties;
   };
 
   /**
