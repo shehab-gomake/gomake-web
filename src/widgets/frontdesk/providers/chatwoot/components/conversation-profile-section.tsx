@@ -509,7 +509,7 @@ export const ConversationProfileSection: React.FC<ConversationProfileSectionProp
               </Box>
             )}
             {contactBlocked !== null && contactBlocked !== undefined && contactBlocked && (
-              <Typography variant="caption" sx={{ fontSize: 11, color: colorTokens.semantic.error.main }}>
+              <Typography variant="caption" sx={{ fontSize: 11, color: colorTokens.error[600] }}>
                 Blocked
               </Typography>
             )}
