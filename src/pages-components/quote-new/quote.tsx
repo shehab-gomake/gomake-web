@@ -1313,6 +1313,9 @@ const QuoteNewPageWidget = ({
       <AddRelatedDocumentsModal
         openModal={openRelatedDocumentsModal}
         onClose={onClickCloseRelatedDocumentsModal}
+        documentId={quoteItemValue?.id}
+        onSuccess={getQuote}
+        docType={documentType}
       />
       <GoMakeDeleteModal
         modalType={ModalType.WARNING}

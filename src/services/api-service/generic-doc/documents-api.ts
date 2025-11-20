@@ -49,6 +49,8 @@ const UPDATE_PURCHASE_NUMBER_URL =
 const CHECK_PURCHASE_NUMBER_EXISTS_URL =
   "/v1/erp-service/documents/check-purchase-number-exists";
 const ADD_DELIVERY_URL = "/v1/erp-service/documents/add-delivery";
+const ADD_RELATED_DOCUMENT_URL =
+  "/v1/erp-service/documents/add-related-document";
 const CANCEL_DOCUMENT_URL = "/v1/erp-service/documents/cancel-document";
 const SEND_DOCUMENT_TO_CLIENT_URL =
   "/v1/erp-service/documents/send-document-to-client";
@@ -462,6 +464,20 @@ const addDeliveryApi: ICallAndSetData = async (callApi, setState, data) => {
     callApi,
     EHttpMethod.POST,
     ADD_DELIVERY_URL,
+    setState,
+    data
+  );
+};
+
+const addRelatedDocumentApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    ADD_RELATED_DOCUMENT_URL,
     setState,
     data
   );
@@ -1437,6 +1453,7 @@ export {
   updatePurchaseNumberApi,
   checkPurchaseNumberExistsApi,
   addDeliveryApi,
+  addRelatedDocumentApi,
   updateDocumentStatusApi,
   cancelDocumentApi,
   sendDocumentToClientApi,
