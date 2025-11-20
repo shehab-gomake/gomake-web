@@ -50,15 +50,13 @@ export async function uploadFileResumable(
       // Retry logic for each chunk
       for (let attempt = 0; attempt < maxRetries; attempt++) {
         try {
+          // Note: Browsers automatically set the Origin header based on the page's origin
+          // JavaScript cannot set the Origin header - it's a forbidden header
+          // The bucket CORS configuration must allow the actual page origin
           const headers: HeadersInit = {
             'Content-Type': file.type || 'application/octet-stream',
             'Content-Range': contentRange,
           };
-
-          // Add Origin header for CORS if provided
-          if (origin) {
-            headers['Origin'] = origin;
-          }
 
           const response = await fetch(sessionUri, {
             method: 'PUT',
