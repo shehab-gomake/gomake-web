@@ -3773,9 +3773,18 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       // First, get contact information
       await onClickSendPaymentOld(document, true);
       // Then open email composer with document data
-      const contactEmail = sendPayment?.documentContacts?.[sendPayment?.selectedContactIndex]?.contactMail;
-      const contactPhone = sendPayment?.documentContacts?.[sendPayment?.selectedContactIndex]?.contactPhone;
-      await openEmailComposer(document?.id, contactEmail, contactPhone);
+      const selectedContact = sendPayment?.documentContacts?.[sendPayment?.selectedContactIndex];
+      const contactEmail = selectedContact?.contactMail;
+      const contactPhone = selectedContact?.contactPhone;
+      const contactName = selectedContact?.contactName || selectedContact?.name;
+      await openEmailComposer(
+        document?.id,
+        contactEmail,
+        contactPhone,
+        document?.customerId || document?.clientId,
+        document?.customerName || document?.clientName,
+        contactName
+      );
     } catch (error) {
       alertFaultGetData();
     }
