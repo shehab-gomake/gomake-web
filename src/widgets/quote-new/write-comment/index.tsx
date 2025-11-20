@@ -120,10 +120,9 @@ const WriteCommentComp = ({
                   const url = `/receipt?isOutgoingPayments=true&Id=${item.documentId}`;
                   window.open(url, "_blank");
                 } else {
-                  const url = `/${
-                    item.documentPath.charAt(0).toLowerCase() +
+                  const url = `/${item.documentPath.charAt(0).toLowerCase() +
                     item.documentPath.slice(1)
-                  }?Id=${item.documentId}`;
+                    }?Id=${item.documentId}`;
                   window.open(url, "_blank");
                 }
               }

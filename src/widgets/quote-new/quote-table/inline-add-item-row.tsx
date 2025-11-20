@@ -51,7 +51,7 @@ const InlineAddItemRow: React.FC<InlineAddItemRowProps> = ({
     selectedTab,
     setSelectedTab,
   } = useAddNewItem({
-    onClose: () => {},
+    onClose: () => { },
     getQuote: getQuote, // We don't need to refresh the quote here
     documentType,
     getCalculateQuoteItem,
