@@ -17,7 +17,7 @@ import type {
   CreateConversationPayload,
   getChannelRequirements,
 } from "@/services/frontdesk/api/chatwoot/types/compose.types";
-import type { ContactDetail, ContactCreatePayload } from "@/services/frontdesk/api/chatwoot/types/contacts.types";
+import type { ContactDetail, ContactCreatePayload, ContactUpdatePayload } from "@/services/frontdesk/api/chatwoot/types/contacts.types";
 import { extractContactPayload } from "@/services/frontdesk/api/chatwoot/types/contacts.types";
 import type { ContactableInbox } from "@/services/frontdesk/api/chatwoot/types/inboxes.types";
 import { getChannelRequirements as getReqs } from "@/services/frontdesk/api/chatwoot/types/compose.types";
@@ -66,6 +66,111 @@ export interface UseComposeConversationOptions {
   onSuccess?: (conversationId: number) => void;
   /** Callback on error */
   onError?: (error: Error) => void;
+}
+
+/**
+ * Sync Chatwoot contact with GoMake contact data
+ * Compares existing Chatwoot contact with fresh GoMake data and updates if needed
+ * 
+ * @param accountId - Chatwoot account ID
+ * @param chatwootContactId - Existing Chatwoot contact ID
+ * @param gomakeContact - Fresh contact data from GoMake
+ * @returns Updated ContactDetail
+ */
+async function syncContactWithGomakeData(
+  accountId: number,
+  chatwootContactId: number,
+  gomakeContact: GomakeContact
+): Promise<ContactDetail> {
+  try {
+    // Fetch current Chatwoot contact
+    const currentContact = await chatwootService.contacts.getContactDetails(
+      accountId,
+      chatwootContactId
+    );
+
+    // Check if update is needed
+    const currentCustomAttrs = (currentContact.custom_attributes || {}) as Record<string, unknown>;
+    
+    // Build expected values from GoMake contact
+    const expectedCustomAttrs: Record<string, unknown> = {
+      ...(gomakeContact.gomake_contact_id && { gomake_contact_id: gomakeContact.gomake_contact_id }),
+      ...(gomakeContact.gomake_customer_id && { gomake_customer_id: gomakeContact.gomake_customer_id }),
+      ...(gomakeContact.gomake_client_code && { gomake_client_code: gomakeContact.gomake_client_code }),
+      ...(gomakeContact.gomake_agent_id && { gomake_agent_id: gomakeContact.gomake_agent_id }),
+      gomake_is_main_contact: gomakeContact.gomake_is_main_contact || false,
+    };
+
+    // Check if basic fields or custom attributes changed
+    const nameChanged = currentContact.name !== gomakeContact.name;
+    const emailChanged = currentContact.email !== gomakeContact.email;
+    const phoneChanged = currentContact.phone_number !== gomakeContact.phone_number;
+    
+    const customAttrsChanged = 
+      currentCustomAttrs.gomake_contact_id !== expectedCustomAttrs.gomake_contact_id ||
+      currentCustomAttrs.gomake_customer_id !== expectedCustomAttrs.gomake_customer_id ||
+      currentCustomAttrs.gomake_client_code !== expectedCustomAttrs.gomake_client_code ||
+      currentCustomAttrs.gomake_agent_id !== expectedCustomAttrs.gomake_agent_id ||
+      currentCustomAttrs.gomake_is_main_contact !== expectedCustomAttrs.gomake_is_main_contact;
+
+    if (nameChanged || emailChanged || phoneChanged || customAttrsChanged) {
+      console.log(
+        `[syncContactWithGomakeData] Contact data changed for Chatwoot ID ${chatwootContactId}, updating...`,
+        {
+          nameChanged: nameChanged ? `"${currentContact.name}" → "${gomakeContact.name}"` : null,
+          emailChanged: emailChanged ? `"${currentContact.email}" → "${gomakeContact.email}"` : null,
+          phoneChanged: phoneChanged ? `"${currentContact.phone_number}" → "${gomakeContact.phone_number}"` : null,
+          customAttrsChanged,
+        }
+      );
+
+      const updatePayload: ContactUpdatePayload = {};
+
+      if (nameChanged) {
+        updatePayload.name = gomakeContact.name;
+      }
+      if (emailChanged) {
+        updatePayload.email = gomakeContact.email;
+      }
+      if (phoneChanged) {
+        updatePayload.phone_number = gomakeContact.phone_number;
+      }
+      if (customAttrsChanged) {
+        updatePayload.custom_attributes = expectedCustomAttrs;
+      }
+
+      // Update contact in Chatwoot
+      const updatedContact = await chatwootService.contacts.updateContact(
+        accountId,
+        chatwootContactId,
+        updatePayload
+      );
+
+      console.log(`[syncContactWithGomakeData] Contact ${chatwootContactId} synced successfully`);
+      return updatedContact;
+    } else {
+      console.log(
+        `[syncContactWithGomakeData] Contact data unchanged for Chatwoot ID ${chatwootContactId}, skipping sync`
+      );
+      return currentContact;
+    }
+  } catch (error) {
+    console.error(`[syncContactWithGomakeData] Failed to sync contact: ${error}`);
+    // Return the contact as-is if sync fails - don't block the flow
+    return {
+      id: chatwootContactId,
+      name: gomakeContact.name,
+      email: gomakeContact.email,
+      phone_number: gomakeContact.phone_number,
+      custom_attributes: {
+        ...(gomakeContact.gomake_contact_id && { gomake_contact_id: gomakeContact.gomake_contact_id }),
+        ...(gomakeContact.gomake_customer_id && { gomake_customer_id: gomakeContact.gomake_customer_id }),
+        ...(gomakeContact.gomake_client_code && { gomake_client_code: gomakeContact.gomake_client_code }),
+        ...(gomakeContact.gomake_agent_id && { gomake_agent_id: gomakeContact.gomake_agent_id }),
+        gomake_is_main_contact: gomakeContact.gomake_is_main_contact || false,
+      },
+    } as ContactDetail;
+  }
 }
 
 /**
@@ -512,19 +617,18 @@ export function useComposeConversation(options?: UseComposeConversationOptions) 
           const foundContacts = response.payload || [];
           
           if (foundContacts.length === 1) {
-            // Found existing contact in Chatwoot
+            // Found existing contact in Chatwoot - sync with latest GoMake data
             const foundContact = foundContacts[0];
-            // Ensure we have a ContactDetail with id - if filter returns ContactListItem, convert it
-            // Note: ContactListItem from filterContacts might not have all ContactDetail fields
-            chatwootContact = {
-              id: foundContact.id,
-              name: foundContact.name,
-              email: foundContact.email,
-              phone_number: foundContact.phone_number,
-              thumbnail: foundContact.thumbnail,
-              additional_attributes: foundContact.additional_attributes,
-              // If we need full contact details, we could fetch them here, but id should be enough for inbox fetch
-            } as ContactDetail;
+            console.log(
+              `[useComposeConversation] Found existing contact in Chatwoot (ID: ${foundContact.id}), syncing with GoMake data...`
+            );
+            
+            // Sync the contact with latest GoMake data before using it
+            chatwootContact = await syncContactWithGomakeData(
+              accountId,
+              foundContact.id,
+              contact
+            );
           } else if (foundContacts.length === 0) {
             // Not found by gomake_contact_id, use find-or-create pattern
             const createPayload: ContactCreatePayload = {
@@ -553,18 +657,16 @@ export function useComposeConversation(options?: UseComposeConversationOptions) 
           } else {
             // Multiple found (shouldn't happen, but handle it)
             console.warn(
-              `[useComposeConversation] Multiple contacts found with gomake_contact_id ${contact.gomake_contact_id}, using first one`
+              `[useComposeConversation] Multiple contacts found with gomake_contact_id ${contact.gomake_contact_id}, using first one and syncing`
             );
             const foundContact = foundContacts[0];
-            // Ensure we have a ContactDetail with id
-            chatwootContact = {
-              id: foundContact.id,
-              name: foundContact.name,
-              email: foundContact.email,
-              phone_number: foundContact.phone_number,
-              thumbnail: foundContact.thumbnail,
-              additional_attributes: foundContact.additional_attributes,
-            } as ContactDetail;
+            
+            // Sync the first contact with latest GoMake data
+            chatwootContact = await syncContactWithGomakeData(
+              accountId,
+              foundContact.id,
+              contact
+            );
           }
         } else {
           // No gomake_contact_id and no id, use find-or-create pattern
@@ -822,8 +924,10 @@ export function useComposeConversation(options?: UseComposeConversationOptions) 
       const payload = preparePayload();
       const response = await chatwootService.conversations.createConversation(accountId, payload);
 
-      // Extract conversation from response (check both data and payload fields)
-      const conversation = response.data || response.payload;
+      // Extract conversation from response
+      // Chatwoot returns conversation directly (not wrapped in data/payload)
+      // But also check for wrapped formats for compatibility
+      const conversation = response.data || response.payload || response;
       const conversationId = conversation?.id;
 
       if (conversationId) {

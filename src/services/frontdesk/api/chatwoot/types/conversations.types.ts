@@ -260,8 +260,11 @@ export interface ConversationListResponse {
 /**
  * Conversation Detail Response
  * Response structure for get conversation details endpoint
+ * 
+ * Note: Chatwoot returns the conversation directly (not wrapped),
+ * but we support both formats for compatibility
  */
-export interface ConversationDetailResponse {
+export interface ConversationDetailResponse extends Partial<ChatwootConversation> {
   data?: ChatwootConversation;
   payload?: ChatwootConversation;
 }
