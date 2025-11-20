@@ -1,13 +1,15 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useCallback } from "react";
 import { useRecoilValue } from "recoil";
 import { useTheme } from "@mui/material/styles";
 import { Box, Stack, Typography, IconButton, Tooltip } from "@mui/material";
 import ClearIcon from "@mui/icons-material/Clear";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { useChatwootTeams } from "../hooks/resources/use-chatwoot-teams";
+import { useChatwootLabels } from "../hooks/use-chatwoot-labels";
+import { useChatwootInboxes } from "../hooks/use-chatwoot-inboxes";
 import { ConversationStatus, ConversationListParams } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
 import { chatwootConversationCountsAtom, chatwootSelectedAccountAtom } from "@/store/frontdesk/atoms/chatwoot.atoms";
-import { ConversationFilterMenu, ConversationSortMenu, ConversationSearchBar, ConversationTabs, ConversationLabelsFilter, ConversationTeamsFilter } from "./conversation-list";
+import { ConversationFilterMenu, ConversationSortMenu, ConversationSearchBar, ConversationTabs, ConversationLabelsFilter, ConversationTeamsFilter, ActiveFilterChips } from "./conversation-list";
 
 interface ChatwootConversationListHeaderProps {
   status?: ConversationStatus;
@@ -43,6 +45,12 @@ export const ChatwootConversationListHeader: React.FC<ChatwootConversationListHe
   // Fetch teams for team filter
   const { teams } = useChatwootTeams(accountId);
 
+  // Fetch labels for label filter chips
+  const { labels } = useChatwootLabels(accountId);
+
+  // Fetch inboxes for inbox filter chips
+  const { inboxes } = useChatwootInboxes();
+
   // Use provided counts if available, otherwise use counts from API
   const counts = useMemo(() => {
     if (mineCount !== undefined && unassignedCount !== undefined && allCount !== undefined) {
@@ -60,6 +68,41 @@ export const ChatwootConversationListHeader: React.FC<ChatwootConversationListHe
         (filters.sort_by && filters.sort_by !== "latest_activity") // non-default sort
     );
   }, [filters]);
+
+  // Handler for removing individual filters
+  const handleRemoveFilter = useCallback(
+    (filterType: "status" | "team_id" | "labels" | "inbox_id" | "label", value?: string) => {
+      if (filterType === "status") {
+        const newFilters = { ...filters, status: undefined, page: 1 };
+        onFiltersChange(newFilters);
+      } else if (filterType === "team_id") {
+        const newFilters = { ...filters, team_id: undefined, page: 1 };
+        onFiltersChange(newFilters);
+      } else if (filterType === "inbox_id") {
+        const newFilters = { ...filters, inbox_id: undefined, page: 1 };
+        onFiltersChange(newFilters);
+      } else if (filterType === "label" && value) {
+        // Remove specific label from labels array
+        const currentLabels = Array.isArray(filters.labels)
+          ? filters.labels
+          : filters.labels
+          ? [filters.labels]
+          : [];
+        const newLabels = currentLabels.filter((l) => l !== value);
+        const newFilters = {
+          ...filters,
+          labels: newLabels.length > 0 ? newLabels : undefined,
+          page: 1,
+        };
+        onFiltersChange(newFilters);
+      } else if (filterType === "labels") {
+        // Clear all labels
+        const newFilters = { ...filters, labels: undefined, page: 1 };
+        onFiltersChange(newFilters);
+      }
+    },
+    [filters, onFiltersChange]
+  );
 
   return (
     <Box
@@ -158,6 +201,17 @@ export const ChatwootConversationListHeader: React.FC<ChatwootConversationListHe
           neutralColor={neutralColor}
         />
       </Box>
+
+      {/* Active Filter Chips */}
+      <ActiveFilterChips
+        filters={filters}
+        onRemoveFilter={handleRemoveFilter}
+        teams={teams}
+        labels={labels}
+        inboxes={inboxes}
+        primaryColor={primaryColor}
+        neutralColor={neutralColor}
+      />
 
       {/* Search Bar */}
       <Box sx={{ borderTop: `1px solid ${theme.palette.divider}` }}>

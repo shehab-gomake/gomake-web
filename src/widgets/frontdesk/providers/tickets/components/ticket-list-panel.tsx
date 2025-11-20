@@ -7,7 +7,6 @@ import {
   SearchInput,
   EmptyState,
   colorTokens,
-  TagFilterChips,
 } from "@/widgets/frontdesk/design-system";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
@@ -222,14 +221,6 @@ export const TicketListPanel: React.FC<TicketListPanelProps> = ({
           />
         </Box>
 
-        {/* Active Tag Filters */}
-        {filters.tags && filters.tags.length > 0 && (
-          <TagFilterChips
-            tags={filters.tags.map((tagName) => ({
-              id: tagName,
-              name: tagName,
-              displayName: tagName,
-              color: null,
               category: "GENERAL" as any,
               usageCount: 0,
               isSystem: false,
