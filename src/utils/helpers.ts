@@ -318,9 +318,10 @@ export const convertTitleUnits = (unit: string | null) => {
     case "mmPerSecond":
       return "inch/sec"; // cm/sec or mm/sec -> inch/sec
     case "meterPerMin":
-    case "meterPerHour":
       return "yd/min"; // meter/min or meter/hour -> yards/min (adjust if needed)
-
+      case "meterPerHour":
+      return "yd/hour";
+      //  yard/hour
     // AREA
     case "squareMeter":
     case "m²":

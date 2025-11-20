@@ -47,6 +47,14 @@ const useStyle = (isQuoteConfirmation) => {
         alignItems: "flex-start",
         gap:5
       },
+      addRelatedOption:{
+        display:"flex",
+        alignItems:"center",
+        gap:8,
+        ...FONT_FAMILY.Lexend(500,13),
+        color:"#475467",
+        padding:"4px"
+      },
       item2Container:{
         width: "40%",
         display: "flex",

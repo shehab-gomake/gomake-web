@@ -30,7 +30,9 @@ const CREATE_PURCHASE_ORDER_URL = "/v1/materials/create-purchase-order";
 const CREATE_DIE_CUT_FROM_TEMPLATE_MAKER_URL = "/v1/materials/create-die-cut-from-template-maker";
 const UPLOAD_PRINT_HOUSE_MATERIAL_IMAGE_URL = "/v1/materials/upload-print-house-material-image";
 const ADD_DOCUMENT_ITEM_FROM_MATERIALS = "/v1/printhouse-config/materials/add-document-item-from-material";
+const ADD_DOCUMENT_ITEM_FROM_MATERIAL_ROW = "/v1/printhouse-config/materials/add-document-item-from-material-row";
 const GET_DOCUMENT_ITEM_DATA_FROM_MATERIALS = "/v1/materials/get-document-item-data-from-material";
+const GET_DOCUMENT_ITEM_DATA_FROM_ROW_MATERIAL = "/v1/materials/get-document-item-data-from-row-material";
 
 const TOGGLE_MATERIAL_TYPE_ACTIVE_URL = "/v1/materials/toggle-material-type-active";
 const GET_GROUPED_MATERIAL_TYPES_URL = "/v1/materials/get-grouped-material-types";
@@ -343,6 +345,20 @@ const addDocumentItemFromMaterialApi = async (
   );
 };
 
+const addDocumentItemFromMaterialRowApi: ICallAndSetData = async (
+  callApi,
+  callBack,
+  data
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    ADD_DOCUMENT_ITEM_FROM_MATERIAL_ROW,
+    callBack,
+    data
+  );
+};
+
 
 const getDocumentItemDataFromMaterialApi: ICallAndSetData = async (
   callApi,
@@ -355,6 +371,23 @@ const getDocumentItemDataFromMaterialApi: ICallAndSetData = async (
     GET_DOCUMENT_ITEM_DATA_FROM_MATERIALS,
     callBack,
     data
+  );
+};
+
+const getDocumentItemDataFromRowMaterialApi: ICallAndSetData = async (
+  callApi,
+  callBack,
+  data: { printHouseMaterialId: string; supplierId?: string }
+) => {
+  let url = `${GET_DOCUMENT_ITEM_DATA_FROM_ROW_MATERIAL}/${data.printHouseMaterialId}`;
+  if (data.supplierId) {
+    url += `?supplierId=${data.supplierId}`;
+  }
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.GET,
+    url,
+    callBack
   );
 };
 
@@ -475,7 +508,9 @@ export {
   createDieCutFromTemplateMakerApi,
   uploadPrintHouseMaterialApi,
   addDocumentItemFromMaterialApi,
+  addDocumentItemFromMaterialRowApi,
   getDocumentItemDataFromMaterialApi,
+  getDocumentItemDataFromRowMaterialApi,
   updateMaterialCategoryNumberingApi,
   updateSupplierPriorityApi,
   toggleMaterialTypeActiveApi,
