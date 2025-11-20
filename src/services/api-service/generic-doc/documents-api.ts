@@ -169,6 +169,8 @@ const GET_DOCUMENT_TABLE_SETTINGS_URL =
   "/v1/erp-service/documents-table-settings/get-document-table-settings";
 
 const RE_CALCULATE_ITEM_URL = "/v1/erp-service/document/re-calculate-item";
+const UPDATE_QUOTE_CLIENT_NOTE_AS_SHOWN_URL =
+  "/v1/erp-service/documents/update-quote-client-note-as-shown";
 const GET_DOCUMENT_INVENTORY_URL =
   "/v1/erp-service/documents/get-document-inventory";
 
@@ -1418,6 +1420,19 @@ const reCalculateItemApi: ICallAndSetData = async (
   );
 };
 
+const updateQuoteClientNoteAsShownApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data: { quoteId: string }
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.PUT,
+    `${UPDATE_QUOTE_CLIENT_NOTE_AS_SHOWN_URL}/${data.quoteId}`,
+    setState,
+    {}
+  );
+};
 const getDocumentInventoryApi: ICallAndSetData = async (
   callApi,
   setState,
@@ -1431,7 +1446,6 @@ const getDocumentInventoryApi: ICallAndSetData = async (
     data
   );
 };
-
 export {
   getDocumentApi,
   getAllDocumentsApi,
@@ -1525,5 +1539,6 @@ export {
   saveDocumentTableSettingsApi,
   getDocumentTableSettingsApi,
   reCalculateItemApi,
+  updateQuoteClientNoteAsShownApi,
   getDocumentInventoryApi,
 };
