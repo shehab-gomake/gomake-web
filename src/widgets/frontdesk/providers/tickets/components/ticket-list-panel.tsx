@@ -7,7 +7,6 @@ import {
   SearchInput,
   EmptyState,
   colorTokens,
-  TagFilterChips,
 } from "@/widgets/frontdesk/design-system";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
@@ -221,30 +220,6 @@ export const TicketListPanel: React.FC<TicketListPanelProps> = ({
             showClear={searchQuery.length > 0}
           />
         </Box>
-
-        {/* Active Tag Filters */}
-        {filters.tags && filters.tags.length > 0 && (
-          <TagFilterChips
-            tags={filters.tags.map((tagName) => ({
-              id: tagName,
-              name: tagName,
-              displayName: tagName,
-              color: null,
-              category: "GENERAL" as any,
-              usageCount: 0,
-              isSystem: false,
-              printHouseId: "",
-              createdAt: "",
-            }))}
-            onRemoveTag={(tag) => {
-              const newTags = filters.tags?.filter((t) => t !== tag.name) || [];
-              onApplyFilters({ ...filters, tags: newTags.length > 0 ? newTags : undefined, page: 1 });
-            }}
-            onClearAll={() => {
-              onApplyFilters({ ...filters, tags: undefined, page: 1 });
-            }}
-          />
-        )}
 
         {/* Ticket List */}
         <PanelContent padding="none" scrollable sx={{ flex: 1 }}>

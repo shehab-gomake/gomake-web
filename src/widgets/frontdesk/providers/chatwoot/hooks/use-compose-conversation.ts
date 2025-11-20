@@ -422,19 +422,23 @@ export function useComposeConversation(options?: UseComposeConversationOptions) 
             const chatwootResult = await chatwootService.contacts.searchContacts(accountId, trimmedQuery);
             
             if (chatwootResult && chatwootResult.payload) {
-              chatwootContacts = (chatwootResult.payload || []).map((contact: ContactDetail) => ({
-                id: contact.id,
-                name: contact.name || "",
-                email: contact.email || "",
-                phone_number: contact.phone_number || "",
-                thumbnail: contact.thumbnail,
-                gomake_contact_id: undefined, // Chatwoot contacts don't have GoMake IDs
-                gomake_customer_id: undefined,
-                gomake_customer_name: undefined,
-                gomake_client_code: undefined,
-                gomake_agent_id: undefined,
-                gomake_is_main_contact: false,
-              } as GomakeContact));
+              chatwootContacts = (chatwootResult.payload || []).map((contact: ContactDetail) => {
+                const customAttrs = (contact.custom_attributes || {}) as Record<string, unknown>;
+                return {
+                  id: contact.id,
+                  name: contact.name || "",
+                  email: contact.email || "",
+                  phone_number: contact.phone_number || "",
+                  thumbnail: contact.thumbnail,
+                  // Preserve gomake custom attributes if they exist (contact might have been synced before)
+                  gomake_contact_id: customAttrs.gomake_contact_id as string | undefined,
+                  gomake_customer_id: customAttrs.gomake_customer_id as string | undefined,
+                  gomake_customer_name: undefined, // Not stored in custom_attributes
+                  gomake_client_code: customAttrs.gomake_client_code as string | undefined,
+                  gomake_agent_id: customAttrs.gomake_agent_id as string | undefined,
+                  gomake_is_main_contact: (customAttrs.gomake_is_main_contact as boolean) || false,
+                } as GomakeContact;
+              });
             }
           } catch (error) {
             console.error("[useComposeConversation] Chatwoot contact search failed:", error);
@@ -535,9 +539,22 @@ export function useComposeConversation(options?: UseComposeConversationOptions) 
       try {
         let chatwootContact: ContactDetail | null = null;
 
-        // If contact already has an id (already exists in Chatwoot), use it directly
+        // If contact already has an id (already exists in Chatwoot)
         if (contact.id) {
-          chatwootContact = contact as ContactDetail;
+          // If it's a GoMake contact, sync with latest GoMake data before using it
+          if (contact.gomake_contact_id) {
+            console.log(
+              `[useComposeConversation] Contact has Chatwoot ID ${contact.id} and gomake_contact_id ${contact.gomake_contact_id}, syncing with GoMake data...`
+            );
+            chatwootContact = await syncContactWithGomakeData(
+              accountId,
+              contact.id,
+              contact
+            );
+          } else {
+            // Not a GoMake contact, use it directly
+            chatwootContact = contact as ContactDetail;
+          }
         }
         // If contact has email/phone but no ID, search Chatwoot by email/phone first
         else if ((contact.email || contact.phone_number) && !contact.gomake_contact_id) {

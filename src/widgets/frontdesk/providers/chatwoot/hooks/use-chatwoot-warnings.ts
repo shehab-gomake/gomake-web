@@ -31,6 +31,7 @@ export interface Warning {
   inboxId?: number;
   inboxName?: string;
   actionLabel?: string;
+  actionRoute?: string;
 }
 
 /**

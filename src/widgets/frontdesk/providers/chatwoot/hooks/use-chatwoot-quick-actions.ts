@@ -213,11 +213,17 @@ export function useChatwootQuickActions(
           [attributeKeys.timestampKey]: new Date().toISOString(),
         };
 
-        // Update conversation custom attributes and get the updated conversation
-        const updatedConversation = await chatwootService.conversations.updateConversationCustomAttributes(
+        // Update conversation custom attributes
+        await chatwootService.conversations.updateConversationCustomAttributes(
           accountId,
           conversation.id,
           updatedAttributes
+        );
+
+        // Refetch the conversation to get the latest data including updated custom attributes
+        const refreshedConversation = await chatwootService.conversations.getConversationDetails(
+          accountId,
+          conversation.id
         );
 
         // Show success notification
@@ -227,11 +233,11 @@ export function useChatwootQuickActions(
           documentId,
           attributeKeys,
           updatedAttributes,
-          updatedConversation,
+          refreshedConversation,
         });
 
-        // Notify parent component with updated conversation
-        onActionComplete?.(selectedAction.type, updatedConversation);
+        // Notify parent component with refreshed conversation
+        onActionComplete?.(selectedAction.type, refreshedConversation as ChatwootConversation);
         setSelectedAction(null);
       } catch (error: any) {
         console.error('[useChatwootQuickActions] Error linking document:', error);
