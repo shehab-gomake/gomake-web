@@ -24,6 +24,7 @@ import PhoneIcon from "@mui/icons-material/Phone";
 import BusinessIcon from "@mui/icons-material/Business";
 import BadgeIcon from "@mui/icons-material/Badge";
 import StarIcon from "@mui/icons-material/Star";
+import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import Chip from "@mui/material/Chip";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { generateAvatarData } from "@/widgets/frontdesk/utils/avatar.utils";

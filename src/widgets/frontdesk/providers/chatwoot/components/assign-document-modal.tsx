@@ -279,7 +279,7 @@ export const AssignDocumentModal: React.FC<AssignDocumentModalProps> = ({
                       defaultValue: "Search by number, customer, date, status, or amount...",
                     })}
                     value={null}
-                    onChange={() => { }}
+                    onChange={() => {}}
                     onInputChange={(_e: React.SyntheticEvent, value: string) => {
                       setSearchTerm(value || "");
                     }}
@@ -288,18 +288,16 @@ export const AssignDocumentModal: React.FC<AssignDocumentModalProps> = ({
                     noOptionsText={
                       debouncedSearchTerm
                         ? t("frontdesk.noResultsFound", {
-                          defaultValue:
-                            "No matching documents found. Try searching by document number, customer name, date, status, or amount.",
-                        })
+                            defaultValue:
+                              "No matching documents found. Try searching by document number, customer name, date, status, or amount.",
+                          })
                         : t("frontdesk.startTypingToSearch", {
-                          defaultValue: "Start typing to search by number, customer, date, status, or amount...",
-                        })
+                            defaultValue: "Start typing to search by number, customer, date, status, or amount...",
+                          })
                     }
                     loading={loading}
                     disabled={!canConnectToExisting || !!error}
                     style={{ width: "100%" }}
-                  // clearOnBlur={false}
-                  // blurOnSelect={false}
                   />
                   {!loading && documents.length > 0 && (
                     <Box
@@ -344,8 +342,8 @@ export const AssignDocumentModal: React.FC<AssignDocumentModalProps> = ({
                       {requiresCustomerId
                         ? t("frontdesk.noDocumentsFound", { defaultValue: "No documents found for this customer" })
                         : t("frontdesk.connectToExistingNotAvailable", {
-                          defaultValue: "Connecting to existing documents is not available for this document type",
-                        })}
+                            defaultValue: "Connecting to existing documents is not available for this document type",
+                          })}
                     </Typography>
                   </Box>
                 )}

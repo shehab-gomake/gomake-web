@@ -148,6 +148,7 @@ const mapChatwootSettingsSubpageToQueryParam = (subpage: ChatwootSettingsSubpage
     [ChatwootSettingsSubpage.INBOXES]: "inboxes",
     [ChatwootSettingsSubpage.TEAMS]: "teams",
     [ChatwootSettingsSubpage.LABELS]: "labels",
+    [ChatwootSettingsSubpage.WARNINGS]: "warnings",
     [ChatwootSettingsSubpage.PROFILE]: "profile",
     [ChatwootSettingsSubpage.WEBHOOK_TEST]: "webhook-test",
     [ChatwootSettingsSubpage.OLD_FRONTDESK]: "old-frontdesk",
