@@ -13,11 +13,14 @@ import { v4 as uuidv4 } from "uuid";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { useRouter } from "next/router";
 import {
+  addCompositeProductsApi,
   addGenericProductToDocumentApi,
   addItemApi,
 } from "@/services/api-service/generic-doc/documents-api";
 import { useUserPermission } from "@/hooks/use-permission";
 import { ETab } from "@/pages-components/admin/home/widgets/quote-widget/enums";
+import { EProductStructureType } from "@/widgets/shared-admin-customers/add-product/settings/settings-data";
+import { getCompositeProductById } from "@/services/hooks/admin-side/products/get-set-product-by-id";
 
 const useAddNewItem = ({ onClose, getQuote, documentType, getCalculateQuoteItem }) => {
   const { callApi } = useGomakeAxios();
@@ -29,11 +32,34 @@ const useAddNewItem = ({ onClose, getQuote, documentType, getCalculateQuoteItem 
   const { CheckPermission } = useUserPermission();
   const [selectedFirstMaterial, setSelectedFirstMaterial] = useRecoilState<any>(selectedFirstMaterialState);
   const [combinedData, setCombinedData] = useState<any>([]);
+  const [products, setProducts] = useState([]);
   const [quoteItemValue, setQuoteItemValue] = useRecoilState<any>(quoteItemState);
 
   const [active, setActive] = useState(true);
   const [productName, setProductName] = useState("");
   const [productCode, setProductCode] = useState("");
+  
+  // Composite products modal state
+  const [compositeDialogOpen, setCompositeDialogOpen] = useState(false);
+  const [compositeProducts, setCompositeProducts] = useState<Array<{
+    id: string;
+    name: string;
+    quantity: number;
+    jobName: string;
+    baseQuantity: number;
+    isManuallyEdited: boolean;
+    isJobNameManuallyEdited: boolean;
+  }>>([]);
+  const [quantityMultiplier, setQuantityMultiplier] = useState<number>(1);
+  const [mainJobName, setMainJobName] = useState<string>("");
+  const [isLoadingCompositeProducts, setIsLoadingCompositeProducts] = useState(false);
+  const [compositeErrors, setCompositeErrors] = useState<{
+    [key: string]: {
+      quantity?: string;
+      jobName?: string;
+    };
+  }>({});
+  const [isSubmittingComposite, setIsSubmittingComposite] = useState(false);
 
   const handleChange = (event) => {
     setActive(event.target.value === "true");
@@ -52,6 +78,7 @@ const useAddNewItem = ({ onClose, getQuote, documentType, getCalculateQuoteItem 
     async (clientId, clientTypeId, selectedTab) => {
       const callBack = (res) => {
         if (res?.success) {
+          setProducts(res?.data?.products || []);
           const transformProducts = (products) => {
             return {
               value: ETab.PRODUCTS,
@@ -138,11 +165,16 @@ const useAddNewItem = ({ onClose, getQuote, documentType, getCalculateQuoteItem 
 
     const selectedNode = findNodeByKey(selectedValue, combinedData);
     if (selectedNode && !selectedNode.children) {
+      let matchedProduct = null;
+      if (selectedNode?.category === ProductCategoryType.PRODUCT) {
+        matchedProduct = products?.find((product) => product.id === selectedValue);
+      }
       setSelectedProduct({
         id: selectedValue,
         category: selectedNode?.category,
         name: selectedNode?.text,
         code: selectedNode?.code,
+        productStructureType: matchedProduct?.productStructureType,
       });
     } else {
       setSelectedProduct(null);
@@ -355,6 +387,213 @@ const useAddNewItem = ({ onClose, getQuote, documentType, getCalculateQuoteItem 
     });
   };
 
+  const isCompositeSelectedProduct =
+    selectedProduct?.category === ProductCategoryType.PRODUCT &&
+    selectedProduct?.productStructureType === EProductStructureType.COMPOSITE;
+
+  const openCompositeDialog = async () => {
+    setCompositeErrors({});
+    setCompositeDialogOpen(true);
+
+    if (selectedProduct?.id) {
+      setIsLoadingCompositeProducts(true);
+      try {
+        const result = await getCompositeProductById(callApi, null, {
+          Id: selectedProduct.id,
+        });
+
+        let productsData = null;
+        if (Array.isArray(result)) {
+          productsData = result;
+        } else if (result?.data) {
+          productsData = Array.isArray(result.data) ? result.data : result.data.data;
+        }
+
+        if (productsData && Array.isArray(productsData)) {
+          const baseQty = productsData[0]?.quantity || 1;
+          const products = productsData.map((product: any) => ({
+            id: product.id,
+            name: product.name,
+            baseQuantity: product.quantity || 1,
+            quantity: product.quantity || 1,
+            jobName: product.jobName || "",
+            isManuallyEdited: false,
+            isJobNameManuallyEdited: false,
+          }));
+          setCompositeProducts(products);
+          setQuantityMultiplier(1);
+        } else {
+          setCompositeProducts([]);
+          setQuantityMultiplier(1);
+        }
+      } catch (error) {
+        console.error("Error fetching composite products:", error);
+        setCompositeProducts([]);
+      } finally {
+        setIsLoadingCompositeProducts(false);
+      }
+    }
+  };
+
+  const handleCompositeCancel = () => {
+    if (isSubmittingComposite) {
+      return;
+    }
+    setCompositeDialogOpen(false);
+    setCompositeErrors({});
+    setCompositeProducts([]);
+    setQuantityMultiplier(1);
+    setMainJobName("");
+  };
+
+  const handleMainJobNameChange = (value: string) => {
+    setMainJobName(value);
+    setCompositeProducts((prev) =>
+      prev.map((product) => {
+        if (!product.isJobNameManuallyEdited) {
+          return {
+            ...product,
+            jobName: value,
+          };
+        }
+        return product;
+      })
+    );
+  };
+
+  const handleMultiplierChange = (value: number) => {
+    setQuantityMultiplier(value);
+    setCompositeProducts((prev) =>
+      prev.map((product) => ({
+        ...product,
+        quantity: product.baseQuantity * value,
+        isManuallyEdited: false,
+      }))
+    );
+  };
+
+  const handleProductQuantityChange = (index: number, value: number) => {
+    setCompositeProducts((prev) => {
+      const updated = [...prev];
+      updated[index] = {
+        ...updated[index],
+        quantity: value,
+        isManuallyEdited: true,
+      };
+      return updated;
+    });
+
+    if (compositeErrors[`${index}`]?.quantity) {
+      setCompositeErrors((prev) => {
+        const updated = { ...prev };
+        if (updated[`${index}`]) {
+          const productErrors = { ...updated[`${index}`] };
+          delete productErrors.quantity;
+          if (Object.keys(productErrors).length === 0) {
+            delete updated[`${index}`];
+          } else {
+            updated[`${index}`] = productErrors;
+          }
+        }
+        return updated;
+      });
+    }
+  };
+
+  const updateCompositeProduct = (index: number, field: "jobName", value: string) => {
+    setCompositeProducts((prev) => {
+      const updated = [...prev];
+      updated[index] = {
+        ...updated[index],
+        [field]: value,
+        isJobNameManuallyEdited: true,
+      };
+      return updated;
+    });
+
+    if (compositeErrors[`${index}`]?.[field]) {
+      setCompositeErrors((prev) => {
+        const updated = { ...prev };
+        if (updated[`${index}`]) {
+          const productErrors = { ...updated[`${index}`] };
+          delete productErrors[field];
+          if (Object.keys(productErrors).length === 0) {
+            delete updated[`${index}`];
+          } else {
+            updated[`${index}`] = productErrors;
+          }
+        }
+        return updated;
+      });
+    }
+  };
+
+  const handleCompositeConfirm = async () => {
+    const errors: { [key: string]: { quantity?: string; jobName?: string } } = {};
+    let hasErrors = false;
+
+    compositeProducts.forEach((product, index) => {
+      const productErrors: { quantity?: string; jobName?: string } = {};
+
+      if (!product.quantity || product.quantity <= 0) {
+        productErrors.quantity = t("products.addProduct.admin.quantityRequired");
+        hasErrors = true;
+      }
+
+      if (Object.keys(productErrors).length > 0) {
+        errors[`${index}`] = productErrors;
+      }
+    });
+
+    if (hasErrors) {
+      setCompositeErrors(errors);
+      return;
+    }
+
+    setIsSubmittingComposite(true);
+
+    const callBack = (res: any) => {
+      setIsSubmittingComposite(false);
+      if (res?.success) {
+        setCompositeDialogOpen(false);
+        setCompositeErrors({});
+        setCompositeProducts([]);
+        setQuantityMultiplier(1);
+        setMainJobName("");
+        alertSuccessAdded();
+        getQuote();
+        handleCloseModal();
+      } else {
+        alertFaultAdded();
+      }
+    };
+
+    await addCompositeProductsApi(
+      callApi,
+      callBack,
+      {
+        documentType: documentType,
+        clientId: quoteItemValue?.client?.id || quoteItemValue?.customerID,
+        clientTypeId: quoteItemValue?.client?.clientTypeId,
+        orderId: quoteItemValue?.id,
+        compositeProducts: compositeProducts.map((p) => ({
+          id: p.id,
+          name: p.name,
+          quantity: p.quantity,
+          jobName: p.jobName,
+        })),
+      }
+    );
+  };
+
+  const handleCreateCompositeAware = () => {
+    if (isCompositeSelectedProduct) {
+      openCompositeDialog();
+      return;
+    }
+    onClickCreateQuoteForCustomer();
+  };
+
   const onClickCreateQuoteForCustomer = () => {
     setSelectedFirstMaterial(true);
     if (router.query.isNewCreation) {
@@ -416,7 +655,7 @@ const useAddNewItem = ({ onClose, getQuote, documentType, getCalculateQuoteItem 
   };
 
   return {
-    onClickCreateQuoteForCustomer,
+    onClickCreateQuoteForCustomer: handleCreateCompositeAware,
     handleProductChange,
     combinedData,
     selectedProduct,
@@ -440,6 +679,21 @@ const useAddNewItem = ({ onClose, getQuote, documentType, getCalculateQuoteItem 
     CheckPermission,
     selectedTab,
     setSelectedTab,
+    // Composite products
+    isCompositeSelectedProduct,
+    compositeDialogOpen,
+    compositeProducts,
+    quantityMultiplier,
+    mainJobName,
+    isLoadingCompositeProducts,
+    compositeErrors,
+    isSubmittingComposite,
+    handleCompositeCancel,
+    handleMainJobNameChange,
+    handleMultiplierChange,
+    handleProductQuantityChange,
+    updateCompositeProduct,
+    handleCompositeConfirm,
   };
 };
 

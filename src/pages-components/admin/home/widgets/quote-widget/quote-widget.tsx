@@ -90,6 +90,7 @@ const QuoteWidget = ({ isMobileScreen = false, title }: QuoteWidgetProps) => {
     listClient,
     onclickCreateNew,
     onCustomerAddFromOption,
+    navigate,
   } = useQuoteWidget();
   const { secondColor } = useGomakeTheme();
   const { callApi } = useGomakeAxios();
@@ -309,12 +310,6 @@ const QuoteWidget = ({ isMobileScreen = false, title }: QuoteWidgetProps) => {
         hasErrors = true;
       }
 
-      // Validate job name (required)
-      if (!product.jobName.trim()) {
-        productErrors.jobName = t("products.addProduct.admin.jobNameRequired");
-        hasErrors = true;
-      }
-
       if (Object.keys(productErrors).length > 0) {
         errors[`${index}`] = productErrors;
       }
@@ -338,8 +333,8 @@ const QuoteWidget = ({ isMobileScreen = false, title }: QuoteWidgetProps) => {
         setQuantityMultiplier(1);
         setMainJobName("");
         alertSuccessAdded();
-        // Refresh the quote to show the new items
-        getAndSetExistQuote();
+        // Navigate to cart/quote page
+        navigate("/quote");
       } else {
         alertFaultAdded();
       }
@@ -754,7 +749,6 @@ const QuoteWidget = ({ isMobileScreen = false, title }: QuoteWidgetProps) => {
                     <div style={{ display: "flex", flexDirection: "column", gap: 8, flex: 1 }}>
                       <div style={{ fontWeight: 500 }}>
                         {t("products.addProduct.admin.jobNameLabel")}
-                        <span style={{ color: "red", marginLeft: 4 }}>*</span>
                       </div>
                       <GomakeTextInput
                         value={product.jobName}
