@@ -16,7 +16,7 @@ import {
   Warning as WarningIcon,
 } from '@mui/icons-material';
 import { colorTokens, shadowTokens } from '@/widgets/frontdesk/design-system/tokens';
-import { useChatwootWarnings, WarningSeverity } from '../../hooks/use-chatwoot-warnings';
+import { useChatwootWarnings } from '../../hooks/use-chatwoot-warnings';
 import { formatStatValue } from '../../utils';
 
 interface ChatwootWarningsCardProps {
@@ -30,27 +30,23 @@ export const ChatwootWarningsCard: React.FC<ChatwootWarningsCardProps> = ({
   const theme = useTheme();
   const warnings = useChatwootWarnings();
 
-  // Determine accent color based on highest severity
-  const hasErrors = warnings.some((w) => w.severity === WarningSeverity.ERROR);
-  const accentColor = hasErrors
-    ? colorTokens.error[600]
-    : warnings.length > 0
-      ? colorTokens.warning[600]
-      : colorTokens.neutral[600];
+  // Use warning/amber red accent for warnings (not error red)
+  // Warnings are informational, not critical errors
+  const accentColor = warnings.length > 0
+    ? '#F59E0B' // Amber/warning red - softer than error red
+    : colorTokens.neutral[600];
 
-  const iconBgColor = hasErrors
-    ? `${colorTokens.error[600]}15`
-    : warnings.length > 0
-      ? `${colorTokens.warning[600]}15`
-      : `${colorTokens.neutral[600]}15`;
+  const iconBgColor = warnings.length > 0
+    ? '#FEF3C7' // Light amber background
+    : `${colorTokens.neutral[600]}15`;
 
-  const iconColor = accentColor;
+  const iconColor = warnings.length > 0
+    ? '#D97706' // Darker amber for icon
+    : colorTokens.neutral[600];
 
   const description = warnings.length === 0 
     ? 'All systems operational' 
-    : hasErrors 
-      ? 'Need immediate attention'
-      : 'Requires configuration';
+    : 'Requires attention';
 
   return (
     <Box

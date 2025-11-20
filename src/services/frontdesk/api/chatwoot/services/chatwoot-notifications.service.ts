@@ -126,7 +126,7 @@ export class ChatwootNotificationsService extends BaseChatwootService {
 
   /**
    * Mark All Notifications as Read
-   * POST /api/accounts/notifications/mark_all_as_read
+   * POST /api/accounts/notifications/read_all
    *
    * Marks all unread notifications as read for the current user.
    * Returns 204 No Content on success.
@@ -140,7 +140,7 @@ export class ChatwootNotificationsService extends BaseChatwootService {
    * ```
    */
   async markAllAsRead(accountId: number): Promise<void> {
-    const url = `/api/accounts/notifications/mark_all_as_read`;
+    const url = `/api/accounts/notifications/read_all`;
     await this.post<void>(url, {});
   }
 
