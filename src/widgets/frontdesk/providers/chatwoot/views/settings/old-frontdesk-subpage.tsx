@@ -10,7 +10,6 @@ import React from "react";
 import { Box, Typography, Paper, Alert } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { BaseSettingsSubpage } from "../../components/settings";
-import HistoryIcon from "@mui/icons-material/History";
 
 export const OldFrontDeskSubpage: React.FC = () => {
   const theme = useTheme();
@@ -19,7 +18,6 @@ export const OldFrontDeskSubpage: React.FC = () => {
     <BaseSettingsSubpage
       title="Old FrontDesk"
       description="Access legacy FrontDesk features and navigation"
-      icon={<HistoryIcon />}
     >
       <Box sx={{ p: 3 }}>
         <Alert severity="info" sx={{ mb: 3 }}>

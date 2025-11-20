@@ -298,8 +298,6 @@ export const AssignDocumentModal: React.FC<AssignDocumentModalProps> = ({
                     loading={loading}
                     disabled={!canConnectToExisting || !!error}
                     style={{ width: "100%" }}
-                    clearOnBlur={false}
-                    blurOnSelect={false}
                   />
                   {!loading && documents.length > 0 && (
                     <Box

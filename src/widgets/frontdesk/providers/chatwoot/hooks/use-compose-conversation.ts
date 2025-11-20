@@ -107,7 +107,6 @@ async function findOrCreateContact(
           phone_number: exactMatch.phone_number,
           thumbnail: exactMatch.thumbnail,
           additional_attributes: exactMatch.additional_attributes,
-          custom_attributes: exactMatch.custom_attributes,
         } as ContactDetail;
       }
     } catch (searchError) {
@@ -121,21 +120,9 @@ async function findOrCreateContact(
   // Step 2: Try to create new contact
   try {
     const createResponse = await chatwootService.contacts.createContact(accountId, createPayload);
-    
-    // Extract contact from response (handle various response formats)
-    let extractedContact: ContactDetail | null = null;
-    if (createResponse?.payload?.contact) {
-      extractedContact = createResponse.payload.contact as ContactDetail;
-    } else if (createResponse?.data?.payload?.contact) {
-      extractedContact = createResponse.data.payload.contact as ContactDetail;
-    } else if (createResponse?.payload && (createResponse.payload as any).id) {
-      // Fallback: payload might be the contact directly
-      extractedContact = createResponse.payload as ContactDetail;
-    } else {
-      // Try extractContactPayload as last resort
-      extractedContact = extractContactPayload<ContactDetail>(createResponse);
-    }
-    contactToReturn = extractedContact;
+
+    // createContact returns ContactDetail directly
+    contactToReturn = createResponse;
   } catch (createError: any) {
     // Step 3: Handle 422 "Email has already been taken" by searching again
     if (createError?.status === 422 && createPayload.email?.trim()) {
@@ -162,7 +149,6 @@ async function findOrCreateContact(
             phone_number: exactMatch.phone_number,
             thumbnail: exactMatch.thumbnail,
             additional_attributes: exactMatch.additional_attributes,
-            custom_attributes: exactMatch.custom_attributes,
           } as ContactDetail;
 
           logger.log(
@@ -641,22 +627,8 @@ export function useComposeConversation(options?: UseComposeConversationOptions) 
 
       try {
         const createResponse = await chatwootService.contacts.createContact(accountId, payload);
-        // Extract contact from response
-        // Response structure: { payload: { contact: {...}, contact_inbox: {...} } }
-        // or: { data: { payload: { contact: {...} } } }
-        let extractedContact: ContactDetail | null = null;
-        if (createResponse?.payload?.contact) {
-          extractedContact = createResponse.payload.contact as ContactDetail;
-        } else if (createResponse?.data?.payload?.contact) {
-          extractedContact = createResponse.data.payload.contact as ContactDetail;
-        } else if (createResponse?.payload && (createResponse.payload as any).id) {
-          // Fallback: payload might be the contact directly
-          extractedContact = createResponse.payload as ContactDetail;
-        } else {
-          // Try extractContactPayload as last resort
-          extractedContact = extractContactPayload<ContactDetail>(createResponse);
-        }
-        return extractedContact;
+        // createContact returns ContactDetail directly
+        return createResponse;
       } catch (error) {
         console.error("[useComposeConversation] Failed to create contact:", error);
         // Re-throw error so CreateContactModal can handle field-specific errors (422)

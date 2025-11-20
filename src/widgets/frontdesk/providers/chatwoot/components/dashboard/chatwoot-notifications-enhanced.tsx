@@ -186,9 +186,7 @@ export const ChatwootNotificationsEnhanced: React.FC = () => {
 
     filteredNotifications.forEach((notification) => {
       const createdAt = notification.created_at
-        ? typeof notification.created_at === 'number'
-          ? new Date(notification.created_at * 1000)
-          : parseISO(notification.created_at.toString())
+        ? new Date(notification.created_at * 1000)
         : new Date();
 
       if (isToday(createdAt)) {
@@ -663,9 +661,7 @@ export const ChatwootNotificationsEnhanced: React.FC = () => {
                       const typeInfo = getNotificationTypeInfo(notification.notification_type);
                       const messagePreview = getMessagePreview(notification);
                       const timestamp = notification.created_at
-                        ? typeof notification.created_at === 'number'
-                          ? notification.created_at * 1000
-                          : parseISO(notification.created_at.toString()).getTime()
+                        ? notification.created_at * 1000
                         : Date.now();
 
                       return (
