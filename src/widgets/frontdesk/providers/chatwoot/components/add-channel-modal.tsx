@@ -128,6 +128,7 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
 
   // Ref to track if we've already attempted to fetch agents (prevents infinite loop)
   const hasAttemptedFetchRef = React.useRef(false);
+  const hasFetchedInboxAgentsRef = React.useRef(false);
 
   // Initialize with preloaded inbox data if provided
   useEffect(() => {
@@ -137,6 +138,7 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
       setCurrentStep(3); // Jump to step 3 (Add Agents)
       setSelectedChannel("preloaded"); // Mark as preloaded to skip channel selection
       hasAttemptedFetchRef.current = false; // Reset fetch flag for new inbox
+      hasFetchedInboxAgentsRef.current = false;
     } else if (open) {
       // Reset state when modal opens without preloaded data
       clearError();
@@ -147,6 +149,7 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
       setSelectedAgents([]);
       setAgentAssignmentError(null);
       hasAttemptedFetchRef.current = false; // Reset fetch flag
+      hasFetchedInboxAgentsRef.current = false;
     }
   }, [open, preloadedInboxId, preloadedAccountId, clearError]);
 
@@ -161,6 +164,7 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
       setSelectedAgents([]);
       setAgentAssignmentError(null);
       hasAttemptedFetchRef.current = false; // Reset fetch flag
+      hasFetchedInboxAgentsRef.current = false;
     }
   }, [open, clearError]);
 
@@ -177,6 +181,41 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
       hasAttemptedFetchRef.current = false;
     }
   }, [currentStep, newInboxData?.accountId, agentsLoading]);
+
+  // Fetch current inbox assignments when entering Step 3
+  useEffect(() => {
+    const fetchInboxAgents = async () => {
+      if (
+        currentStep === 3 && 
+        newInboxData?.accountId && 
+        newInboxData?.inboxId && 
+        !hasFetchedInboxAgentsRef.current
+      ) {
+        hasFetchedInboxAgentsRef.current = true;
+        console.log("[AddChannelModal] Fetching existing inbox agents");
+        
+        try {
+          const response = await chatwootService.inboxes.getInboxAgents(
+            newInboxData.accountId,
+            newInboxData.inboxId
+          );
+          
+          // Extract agent IDs from response
+          const inboxAgents = response?.payload || response || [];
+          const agentIds = inboxAgents.map((agent: any) => agent.id);
+          
+          console.log("[AddChannelModal] Found existing agents:", agentIds);
+          if (agentIds.length > 0) {
+            setSelectedAgents(agentIds);
+          }
+        } catch (error) {
+          console.error("[AddChannelModal] Failed to fetch inbox agents:", error);
+        }
+      }
+    };
+
+    fetchInboxAgents();
+  }, [currentStep, newInboxData]);
 
   // Auto-select current user when agents are loaded
   useEffect(() => {
@@ -270,11 +309,6 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
   };
 
   const handleAgentToggle = (agentId: number) => {
-    // Prevent deselecting the current user
-    if (agentId === profile?.id) {
-      return;
-    }
-    
     setSelectedAgents((prev) => {
       if (prev.includes(agentId)) {
         return prev.filter((id) => id !== agentId);
@@ -301,7 +335,11 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
 
     try {
       // Call agent assignment API
-      await chatwootService.agents.addAgentsToInbox(newInboxData.inboxId, selectedAgents);
+      await chatwootService.inboxes.addAgentsToInbox(
+        newInboxData.accountId,
+        newInboxData.inboxId,
+        selectedAgents
+      );
 
       // Fetch updated agents list and update Recoil state
       const response = await chatwootService.inboxes.getInboxAgents(
@@ -802,7 +840,7 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
                     lineHeight: 1.6,
                   }}
                 >
-                  Select additional agents to handle messages in this inbox. You are automatically assigned and cannot be removed.
+                  Select additional agents to handle messages in this inbox.
                 </Typography>
 
                 {/* Loading State */}
@@ -857,14 +895,14 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
                         return (
                           <Box
                             key={agent.id}
-                            onClick={() => !isCurrentUser && handleAgentToggle(agent.id!)}
+                            onClick={() => handleAgentToggle(agent.id!)}
                             sx={{
                               display: "flex",
                               alignItems: "center",
                               gap: 1.5,
                               px: 2,
                               py: 1.5,
-                              cursor: isCurrentUser ? "not-allowed" : "pointer",
+                              cursor: "pointer",
                               transition: "all 0.15s ease",
                               backgroundColor: isSelected
                                 ? alpha(primaryColor(50), 0.5)
@@ -872,15 +910,8 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
                                 ? "#ffffff"
                                 : neutralColor(25),
                               borderBottom: index < agents.length - 1 ? `1px solid ${neutralColor(100)}` : "none",
-                              opacity: isCurrentUser ? 0.7 : 1,
                               "&:hover": {
-                                backgroundColor: isCurrentUser
-                                  ? isSelected
-                                    ? alpha(primaryColor(50), 0.5)
-                                    : index % 2 === 0
-                                    ? "#ffffff"
-                                    : neutralColor(25)
-                                  : isSelected
+                                backgroundColor: isSelected
                                   ? alpha(primaryColor(100), 0.5)
                                   : alpha(neutralColor(100), 0.8),
                               },
@@ -889,12 +920,9 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
                             {/* Checkbox */}
                             <Checkbox
                               checked={isSelected}
-                              disabled={isCurrentUser}
                               onChange={(e) => {
                                 e.stopPropagation();
-                                if (!isCurrentUser) {
-                                  handleAgentToggle(agent.id!);
-                                }
+                                handleAgentToggle(agent.id!);
                               }}
                               size="small"
                               sx={{
@@ -902,9 +930,6 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
                                 color: neutralColor(400),
                                 "&.Mui-checked": {
                                   color: primaryColor(500),
-                                },
-                                "&.Mui-disabled": {
-                                  color: primaryColor(300),
                                 },
                               }}
                             />
