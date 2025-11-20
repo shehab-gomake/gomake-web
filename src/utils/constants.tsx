@@ -231,7 +231,11 @@ export const _renderStatus = (
     } else if (
       (document.documentNumbers && document.documentNumbers.length > 0) ||
       (document.secondDocumentNumbers &&
-        document.secondDocumentNumbers.length > 0)
+        document.secondDocumentNumbers.length > 0) ||
+      (document.thirdDocumentNumbers &&
+        document.thirdDocumentNumbers.length > 0) ||
+      (document.fourthDocumentNumbers &&
+        document.fourthDocumentNumbers.length > 0)
     ) {
       const firstDocuments = document.documentNumbers
         ? document.documentNumbers.map((item: any, index: number) => (
@@ -312,6 +316,30 @@ export const _renderStatus = (
           ))
         : [];
 
+      const fourthDocuments = document.fourthDocumentNumbers
+        ? document.fourthDocumentNumbers.map((item: any, index: number) => (
+            <span key={`fourth-${index}`}>
+              <a
+                style={{
+                  minWidth: "auto",
+                  height: "auto",
+                  padding: 0,
+                  color: "var(--theme-secondary-color, #2e3092)",
+                  cursor: "pointer",
+                  textDecoration: "none",
+                }}
+                href={`/${
+                  document.titleFourthDocumentNumber.charAt(0).toLowerCase() +
+                  document.titleFourthDocumentNumber.slice(1)
+                }?Id=${item.documentId}`}
+              >
+                {item.documentNumber}
+              </a>
+              {index < document.fourthDocumentNumbers.length - 1 && ", "}
+            </span>
+          ))
+        : [];
+
       let result: JSX.Element[] = [];
 
       if (firstDocuments.length > 0) {
@@ -355,6 +383,21 @@ export const _renderStatus = (
           >
             {t(`documentStatus.${document.titleThirdDocumentNumber}.title`)}:{" "}
             {thirdDocuments}
+          </div>
+        );
+      }
+
+      if (fourthDocuments.length > 0) {
+        result.push(
+          <div
+            key="fourth-documents"
+            style={{
+              color:
+                "var(--theme-table-body-color, var(--theme-text-primary, #2e3092))",
+            }}
+          >
+            {t(`documentStatus.${document.titleFourthDocumentNumber}.title`)}:{" "}
+            {fourthDocuments}
           </div>
         );
       }

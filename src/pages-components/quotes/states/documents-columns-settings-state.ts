@@ -51,7 +51,6 @@ export const documentColumnKeys: Record<string, string[]> = {
     "status",
     "more",
   ],
-  //!here Proforma Invoice
   proformaInvoices: [
     "creationDate",
     "client",
@@ -184,7 +183,6 @@ export const documentColumnWidthsMap: Record<string, Record<string, string>> = {
     status: "7%",
     more: "4%",
   },
-  //!here Proforma Invoice
   proformaInvoices: {
     creationDate: "7%",
     client: "7%",

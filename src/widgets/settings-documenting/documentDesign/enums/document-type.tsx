@@ -44,6 +44,8 @@ export function renderDocumentTypeForSourceDocumentNumber(
       return "SourceDocument.salesReport";
     case ERPDocumentsTypesEnum.supplierPayment:
       return "SourceDocument.supplierPayment";
+    case ERPDocumentsTypesEnum.proformaInvoice:
+      return "SourceDocument.proformaInvoice";
     default:
       return "SourceDocument.unknown";
   }
@@ -72,6 +74,8 @@ export function renderURLDocumentType(
       return "Foreign Journal Entry";
     case ERPDocumentsTypesEnum.deliveryNoteRefund:
       return `/deliveryNoteRefund?Id=${documentId}`;
+    case ERPDocumentsTypesEnum.proformaInvoice:
+      return `/proformaInvoice?Id=${documentId}`;
     default:
       return "Unknown Document Type";
   }

@@ -307,7 +307,7 @@ const QuotesListPageWidget = ({
     isEmailComposerOpen,
     emailData,
     closeEmailComposer,
-    documentForEmail
+    documentForEmail,
   } = useQuotes(documentType, isFromHomePage);
 
   // Get the main quotes pagination handler
@@ -813,7 +813,11 @@ const QuotesListPageWidget = ({
       />
       <GoMakeDeleteModal
         modalType={ModalType.WARNING}
-        title={t("sales.quote.printDeliveryNoteWithPrices")}
+        title={
+          isProformaInvoice
+            ? t("sales.quote.printProformaInvoiceWithPrices")
+            : t("sales.quote.printDeliveryNoteWithPrices")
+        }
         openModal={openPrintPDFModal}
         yesBtn={t("sales.quote.yesBtn")}
         cancelBtn={t("sales.quote.noBtn")}

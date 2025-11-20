@@ -135,7 +135,7 @@ const useCopyFromOrderModal = ({
     const documentTypeMapping = {
       [ERPDocumentsTypesEnum.order]: DOCUMENT_TYPE.order,
       [ERPDocumentsTypesEnum.deliveryNote]: DOCUMENT_TYPE.deliveryNote,
-      [ERPDocumentsTypesEnum.ProformaInvoice]: DOCUMENT_TYPE.proformaInvoice,
+      [ERPDocumentsTypesEnum.proformaInvoice]: DOCUMENT_TYPE.proformaInvoice,
       [ERPDocumentsTypesEnum.purchase]: DOCUMENT_TYPE.purchaseOrder,
     };
 

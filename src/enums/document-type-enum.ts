@@ -98,7 +98,7 @@ export enum ERPDocumentsTypesEnum {
   ledgerReport,
   salesReport,
   supplierPayment,
-  ProformaInvoice = 21,
+  proformaInvoice = 21,
 }
 
 export const mapERPTypeToDocumentType = (
@@ -119,7 +119,7 @@ export const mapERPTypeToDocumentType = (
     [ERPDocumentsTypesEnum.purchaseInvoiceRefund]:
       DocumentTypeEnums.PurchaseInvoiceRefund,
     [ERPDocumentsTypesEnum.boardMission]: DocumentTypeEnums.BoardMission,
-    [ERPDocumentsTypesEnum.ProformaInvoice]: DocumentTypeEnums.ProformaInvoice,
+    [ERPDocumentsTypesEnum.proformaInvoice]: DocumentTypeEnums.ProformaInvoice,
   };
 
   return mapping[erpType];

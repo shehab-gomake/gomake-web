@@ -74,7 +74,6 @@ const CloseBtnMenu = ({
               }
             },
           },
-          //!here Proforma Invoice
           {
             label: t("sales.quote.closeAsProformaInvoice"),
             action: () => {

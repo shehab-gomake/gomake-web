@@ -46,11 +46,14 @@ export enum DELIVERY_NOTE_STATUSES {
   ManualClose,
 }
 
-//!here Proforma Invoice
 export enum PROFORMA_INVOICE_STATUSES {
   Open = 0,
   Canceled,
   Created,
+  Refunded,
+  Confirmed,
+  Rejected,
+  PartialRefunded,
   ClosedAsInvoice,
   ClosedByMultiDocuments,
   ManualClose,
