@@ -25,7 +25,8 @@ import {
 } from '@mui/icons-material';
 import { BaseSettingsSubpage, SettingsSection } from '../../components/settings';
 import { useChatwootWarnings, WarningSeverity, Warning } from '../../hooks/use-chatwoot-warnings';
-import { useRouter } from 'next/router';
+import { useChatwootProvider } from '../../hooks/use-chatwoot-provider';
+import { ChatwootSettingsSubpage } from '@/widgets/frontdesk/routing/types';
 
 const getSeverityIcon = (severity: WarningSeverity, theme: any) => {
   const iconProps = { fontSize: 20 as const };
@@ -71,11 +72,15 @@ const getSeverityLabel = (severity: WarningSeverity): string => {
 export const WarningsSettingsView: React.FC = () => {
   const theme = useTheme();
   const warnings = useChatwootWarnings();
-  const router = useRouter();
+  const { router: chatwootRouter } = useChatwootProvider();
 
   const handleWarningAction = (warning: Warning) => {
-    if (warning.actionRoute) {
-      router.push(warning.actionRoute);
+    if (warning.inboxId) {
+      // Store the inboxId to auto-select it when navigating to inboxes settings
+      sessionStorage.setItem('chatwoot:selectInbox', warning.inboxId.toString());
+      // Navigate to Settings > Inboxes subpage
+      // The inboxes subpage will check sessionStorage and auto-select the inbox
+      chatwootRouter.navigateToSettings(ChatwootSettingsSubpage.INBOXES);
     }
   };
 
@@ -163,7 +168,7 @@ export const WarningsSettingsView: React.FC = () => {
                           </Typography>
                         )}
                       </Box>
-                      {warning.actionLabel && (
+                      {warning.actionLabel && warning.inboxId && (
                         <IconButton
                           onClick={() => handleWarningAction(warning)}
                           size="small"
@@ -173,6 +178,7 @@ export const WarningsSettingsView: React.FC = () => {
                               color: 'primary.main',
                             },
                           }}
+                          aria-label={warning.actionLabel}
                         >
                           <ChevronRightIcon fontSize="small" />
                         </IconButton>
@@ -234,7 +240,7 @@ export const WarningsSettingsView: React.FC = () => {
                           </Typography>
                         )}
                       </Box>
-                      {warning.actionLabel && (
+                      {warning.actionLabel && warning.inboxId && (
                         <IconButton
                           onClick={() => handleWarningAction(warning)}
                           size="small"
@@ -244,6 +250,7 @@ export const WarningsSettingsView: React.FC = () => {
                               color: 'primary.main',
                             },
                           }}
+                          aria-label={warning.actionLabel}
                         >
                           <ChevronRightIcon fontSize="small" />
                         </IconButton>
@@ -305,7 +312,7 @@ export const WarningsSettingsView: React.FC = () => {
                           </Typography>
                         )}
                       </Box>
-                      {warning.actionLabel && (
+                      {warning.actionLabel && warning.inboxId && (
                         <IconButton
                           onClick={() => handleWarningAction(warning)}
                           size="small"
@@ -315,6 +322,7 @@ export const WarningsSettingsView: React.FC = () => {
                               color: 'primary.main',
                             },
                           }}
+                          aria-label={warning.actionLabel}
                         >
                           <ChevronRightIcon fontSize="small" />
                         </IconButton>

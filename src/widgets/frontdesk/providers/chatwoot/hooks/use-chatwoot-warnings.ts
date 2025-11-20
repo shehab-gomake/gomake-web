@@ -31,7 +31,6 @@ export interface Warning {
   inboxId?: number;
   inboxName?: string;
   actionLabel?: string;
-  actionRoute?: string;
 }
 
 /**
@@ -69,7 +68,6 @@ export const useChatwootWarnings = (): Warning[] => {
           inboxId: inbox.id,
           inboxName: inbox.name,
           actionLabel: 'Assign Agents',
-          actionRoute: `/frontdesk?channel=chatwoot&view=channels&channelId=${inbox.id}&tab=settings`,
         });
       } 
       // Warning: No verified agents (all agents are unconfirmed)
@@ -83,7 +81,6 @@ export const useChatwootWarnings = (): Warning[] => {
           inboxId: inbox.id,
           inboxName: inbox.name,
           actionLabel: 'View Agents',
-          actionRoute: `/frontdesk?channel=chatwoot&view=channels&channelId=${inbox.id}&tab=settings`,
         });
       }
 
@@ -101,7 +98,6 @@ export const useChatwootWarnings = (): Warning[] => {
             inboxId: inbox.id,
             inboxName: inbox.name,
             actionLabel: 'Configure',
-            actionRoute: `/frontdesk?channel=chatwoot&view=channels&channelId=${inbox.id}&tab=settings`,
           });
         }
       }
@@ -119,7 +115,6 @@ export const useChatwootWarnings = (): Warning[] => {
             inboxId: inbox.id,
             inboxName: inbox.name,
             actionLabel: 'Configure',
-            actionRoute: `/frontdesk?channel=chatwoot&view=channels&channelId=${inbox.id}&tab=settings`,
           });
         }
       }

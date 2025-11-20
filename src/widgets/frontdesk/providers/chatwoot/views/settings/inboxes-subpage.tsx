@@ -82,6 +82,22 @@ export const InboxesSubpage: React.FC = () => {
     }
   }, [canAccessInboxes, chatwootRouter]);
 
+  // Auto-select inbox if coming from warnings (stored in sessionStorage)
+  useEffect(() => {
+    if (inboxes.length > 0 && !selectedInbox) {
+      const selectInboxId = sessionStorage.getItem('chatwoot:selectInbox');
+      if (selectInboxId) {
+        const inboxId = parseInt(selectInboxId, 10);
+        const inboxToSelect = inboxes.find(inbox => inbox.id === inboxId);
+        if (inboxToSelect) {
+          setSelectedInbox(inboxToSelect);
+          // Clear the sessionStorage after selecting
+          sessionStorage.removeItem('chatwoot:selectInbox');
+        }
+      }
+    }
+  }, [inboxes, selectedInbox]);
+
   // Open delete confirmation
   const handleDeleteClick = (e: React.MouseEvent, inbox: ChatwootInbox) => {
     e.stopPropagation(); // Prevent navigation to detail settings
