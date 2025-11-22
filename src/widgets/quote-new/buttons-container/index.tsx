@@ -67,6 +67,8 @@ const ButtonsContainer = ({
   clientType,
   deliveryDate,
   handleExportToExcel,
+  isCanIntake,
+  onClickOpenInventoryIntakeModal,
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -359,6 +361,15 @@ const ButtonsContainer = ({
             {quoteItemValue?.attachments?.length > 0
               ? t("sales.quote.editAttachments")
               : t("sales.quote.addAttachments")}
+          </GomakePrimaryButton>
+        )}
+        {isPurchaseOrder && isCanIntake && (
+          <GomakePrimaryButton
+            leftIcon={<PlusIcon stroke={"#344054"} />}
+            style={classes.btnContainer}
+            onClick={onClickOpenInventoryIntakeModal}
+          >
+            {t("sales.purchaseOrder.addInventoryIntake")}
           </GomakePrimaryButton>
         )}
         {isNewCreation && (isDeliveryNote || isInvoice) && (

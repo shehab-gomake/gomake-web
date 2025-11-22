@@ -1,5 +1,6 @@
 import { useStyle } from "./style";
 import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
+import { PlusIcon } from "@/icons";
 import { useWriteCommentComp } from "./use-character-details";
 import { useButtonsConfirmContainer } from "../buttons-cofirm-container/use-buttons-container";
 import { DOCUMENT_TYPE, QUOTE_STATUSES } from "@/pages-components/quotes/enums";
@@ -64,6 +65,7 @@ const WriteCommentComp = ({
       }
 
       groupedDocuments[title].push({
+        id: documentId,
         documentId,
         documentNumber,
         label: `${documentNumber}`,
@@ -78,6 +80,27 @@ const WriteCommentComp = ({
   };
 
   const relatedDocuments = mergeDocumentNumbers(documentState);
+  const relatedDocumentsOptions = Object.keys(relatedDocuments).flatMap(
+    (key) => [
+      {
+        id: `header-${key}`,
+        title: key,
+        isHeader: true,
+      },
+      ...relatedDocuments[key],
+    ]
+  );
+
+  const autoCompleteOptions = onClickOpenRelatedDocumentsModal
+    ? [
+      {
+        id: "add-related-document-action",
+        label: t("sales.quote.addRelatedDocumentModal"),
+        isAction: true,
+      },
+      ...relatedDocumentsOptions,
+    ]
+    : relatedDocumentsOptions;
 
   const canEditComments =
     documentState?.isEditable &&
@@ -103,13 +126,14 @@ const WriteCommentComp = ({
             {t("sales.quote.relatedDocuments")}
           </div>
           <GoMakeAutoComplate
-            options={Object.keys(relatedDocuments).flatMap((key) => [
-              { title: key, isHeader: true },
-              ...relatedDocuments[key],
-            ])}
+            options={autoCompleteOptions}
             style={classes.autoComplateStyle}
             placeholder={t("sales.quote.selectDocuments")}
             onChange={(e, item) => {
+              if (item?.isAction) {
+                onClickOpenRelatedDocumentsModal?.();
+                return;
+              }
               if (!item?.isHeader && item?.value) {
                 if (item?.documentType === ERPDocumentsTypesEnum.quote) {
                   const url = `/quotes?documentNumber=${item.documentNumber}`;
@@ -120,16 +144,28 @@ const WriteCommentComp = ({
                   const url = `/receipt?isOutgoingPayments=true&Id=${item.documentId}`;
                   window.open(url, "_blank");
                 } else {
-                  const url = `/${
-                    item.documentPath.charAt(0).toLowerCase() +
+                  const url = `/${item.documentPath.charAt(0).toLowerCase() +
                     item.documentPath.slice(1)
-                  }?Id=${item.documentId}`;
+                    }?Id=${item.documentId}`;
                   window.open(url, "_blank");
                 }
               }
             }}
             withArrow={true}
             renderOption={(props, option) => {
+              if (option.isAction) {
+                return (
+                  <li
+                    {...props}
+                    key={option.id}
+                  // className="add-related-document-option"
+                  >
+                    <div style={classes.addRelatedOption}>
+                      <span>{option.label}</span>
+                    </div>
+                  </li>
+                );
+              }
               if (option.isHeader) {
                 return (
                   <li

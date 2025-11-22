@@ -141,8 +141,11 @@ const useBusinessWidget = ({
     openChangeClientModalFromInvoice,
     setOpenChangeClientModalFromInvoice,
   ] = useState(false);
+  const [openSupplierChangeConfirmationModal, setOpenSupplierChangeConfirmationModal] = useState(false);
 
-  const [selectedClient, setSelectedClient] = useState({});
+  const [selectedClient, setSelectedClient] = useState<any>({});
+  const isMaterial = router.query.isMaterial === "true";
+  const isPurchaseOrder = documentType === DOCUMENT_TYPE.purchaseOrder;
 
   const onClickCloseChangeClientModal = () => {
     setOpenChangeClientModal(false);
@@ -152,12 +155,28 @@ const useBusinessWidget = ({
     setOpenChangeClientModalFromInvoice(false);
   };
 
+  const onClickCloseSupplierChangeConfirmationModal = () => {
+    setOpenSupplierChangeConfirmationModal(false);
+    setSelectedClient({});
+  };
+
   const onClickOpenChangeClientModal = (value) => {
     // If the selected client is the same as the current one, do nothing
     if (quoteStateValue?.client?.id === value?.id) {
       return;
     }
     setSelectedClient(value);
+
+    // Check if it's a purchase order with isMaterial=true and has items
+    if (
+      isPurchaseOrder &&
+      isMaterial &&
+      quoteStateValue?.documentItems &&
+      quoteStateValue.documentItems.length > 0
+    ) {
+      setOpenSupplierChangeConfirmationModal(true);
+      return;
+    }
 
     if (
       documentType === DOCUMENT_TYPE.invoice ||
@@ -216,6 +235,8 @@ const useBusinessWidget = ({
     onClickCloseChangeClientModalFromInvoice,
     openChangeClientModalFromInvoice,
     openChangeClientModal,
+    openSupplierChangeConfirmationModal,
+    onClickCloseSupplierChangeConfirmationModal,
     selectedClient,
     manuaLInvoiceNum,
     setManuaLInvoiceNum,

@@ -5,46 +5,49 @@ const useStyle = () => {
   const { secondColor } = useGomakeTheme();
   const clasess = useMemo(() => {
     return {
-      insideStyle: {
-        width: "30%",
-        borderRadius: 5,
-        height: "35%",
+      dialogStyles: {
+        paper: {
+          width: 420,
+          maxWidth: "90vw",
+          borderRadius: 12,
+        },
+        content: {
+          backgroundColor: "#FFFFFF",
+        },
       },
       inputsContainer: {
         display: "flex",
         flexDirection: "column" as "column",
         justifyContent: "flex-start",
         alignItems: "flex-start",
-        width:"100%",
-        gap:25,
-        marginTop:15
-       },
+        width: "100%",
+        gap: 24,
+        marginTop: 12,
+      },
       dropDownListStyle: {
         width: "100%",
-        borderRadius: 4,
-        height: 40,
+        borderRadius: 8,
+        height: 44,
         border: "0px",
       },
       textInputStyle: {
         width: "100%",
-        borderRadius: 4,
-        height: 40,
-       
+        borderRadius: 8,
+        height: 44,
       },
-      addNewBtnContainer:{
+      addNewBtnContainer: {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        alignSelf: "center",
-        width:"100%",
+        width: "100%",
       },
       addBtnStyle: {
-        height: 40,
-        backgroundColor:secondColor(500),
+        height: 44,
+        backgroundColor: secondColor(500),
         width: "60%",
-      }
+      },
     };
-  }, []);
+  }, [secondColor]);
   return {
     clasess,
   };

@@ -28,8 +28,8 @@ const ADD_MATERIAL_CATEGORY_ROW_URL =
   "/v1/printhouse-materials/add-printhouse-material-category-row";
 const ADD_PRINTHOUSE_MATERIAL_ROW_URL =
   "/v1/printhouse-materials/add-printhouse-material-row";
-const UPDATE_MATERIAL_CATEGORY_CATEGORY_NAME_URL =
-  "/v1/printhouse-materials/update-print-house-material-category-name";
+const UPDATE_MATERIAL_DISPLAY_NAME_URL =
+  "/v1/printhouse-materials/update-print-house-material-display-name";
 const DUPLICATE_MATERIAL_CATEGORY_URL =
   "/v1/printhouse-materials/duplicate-print-house-material-category";
 
@@ -64,6 +64,9 @@ const UPDATE_PRINT_HOUSE_MATERIAL_SUPPLIER_URL = "/v1/printhouse-materials/updat
 const ADD_PRINT_HOUSE_MATERIAL_SUPPLIER_URL = "/v1/printhouse-materials/add-print-house-material-supplier";
 const UPDATE_SUPPLIER_INVENTORIES_ACTION_URL = "/v1/printhouse-materials/update-supplier-inventories-action";
 const UPDATE_PRINTHOUSE_MATERIAL_SUPPLIERS_ACTION_URL = "/v1/printhouse-materials/update-printhouse-material-suppliers-action";
+const CALCULATE_PRICE_URL = "/v1/printhouse-materials/calculate-price";
+const ADD_SUPPLIER_INVENTORY_FOR_PURCHASE_ORDER_URL = "/v1/erp-service/documents/add-supplier-inventory-for-purchase-order";
+const RE_CALCULATE_DOCUMENT_ITEMS_DATA_FROM_ROW_MATERIALS_URL = "/v1/printhouse-materials/re-calculate-document-items-data-from-row-materials";
 
 const getPrintHouseMaterialCategoriesApi: ICallAndSetData = async (
   callApi,
@@ -250,6 +253,7 @@ const updatePrintHouseMaterialCategoryNameApi: ICallAndSetData = async (
   row: {
     materialTypeKey: string;
     categoryKey: string;
+    lang: string;
     displayName: string;
     defaultAttributeValues: {
       attributeName: string;
@@ -259,8 +263,8 @@ const updatePrintHouseMaterialCategoryNameApi: ICallAndSetData = async (
 ) => {
   return await getSetApiData(
     callApi,
-    EHttpMethod.POST,
-    UPDATE_MATERIAL_CATEGORY_CATEGORY_NAME_URL,
+    EHttpMethod.PUT,
+    UPDATE_MATERIAL_DISPLAY_NAME_URL,
     callBack,
     row
   );
@@ -594,6 +598,77 @@ const updatePrintHouseMaterialSuppliersActionApi: ICallAndSetData = async (
   );
 };
 
+const calculatePriceApi: ICallAndSetData = async (
+  callApi,
+  callBack,
+  data: {
+    printHouseMaterialId: string;
+    price: number;
+    currency: string;
+    priceIndex: number;
+    exchangeRate: number;
+    key: string;
+  }
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.PUT,
+    CALCULATE_PRICE_URL,
+    callBack,
+    data
+  );
+};
+
+const addSupplierInventoryForPurchaseOrderApi: ICallAndSetData = async (
+  callApi,
+  callBack,
+  data: {
+    documentType: number;
+    documentId: string;
+    inventories: Array<{
+      printHouseMaterialId: string;
+      code: string;
+      quantity: number;
+      isActive: boolean;
+      purchasePrice: number;
+      salePrice: number;
+      purchaseCurrency: string;
+      saleCurrency: string;
+      purchaseOrderItemId: string;
+    }>;
+  }
+) => {
+  // The endpoint uses path parameters, so we need to construct the URL with them
+  const url = `${ADD_SUPPLIER_INVENTORY_FOR_PURCHASE_ORDER_URL}/${data.documentType}/${data.documentId}`;
+  // The body should be just the inventories array
+  const body = data.inventories;
+  
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    url,
+    callBack,
+    body
+  );
+};
+
+const reCalculateDocumentItemsDataFromRowMaterialsApi: ICallAndSetData = async (
+  callApi,
+  callBack,
+  data: {
+    supplierId: string;
+    printHouseMaterialsIds: string[];
+  }
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    RE_CALCULATE_DOCUMENT_ITEMS_DATA_FROM_ROW_MATERIALS_URL,
+    callBack,
+    data
+  );
+};
+
 export {
   getPrintHouseMaterialCategoriesApi,
   getPrintHouseMaterialCategoryDataApi,
@@ -632,5 +707,11 @@ export {
   addPrintHouseMaterialSupplierApi,
   // New supplier action APIs
   updateSupplierInventoriesActionApi,
-  updatePrintHouseMaterialSuppliersActionApi
+  updatePrintHouseMaterialSuppliersActionApi,
+  // Price calculation API
+  calculatePriceApi,
+  // Add supplier inventory for purchase order API
+  addSupplierInventoryForPurchaseOrderApi,
+  // Re-calculate document items data from row materials API
+  reCalculateDocumentItemsDataFromRowMaterialsApi
 };
