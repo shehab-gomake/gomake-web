@@ -86,11 +86,23 @@ const result = await chatwootService.contacts.filterContacts(accountId, { payloa
    - Read `gomake_customer_id` from contact custom attributes
    - Display linked customer info
    - Enable quick actions (quotes, invoices, orders)
+   - **NEW (Nov 2025)**: When linking a customer, now updates all available custom attributes (`gomake_customer_id`, `gomake_client_code`, `gomake_agent_id`)
 
 ```typescript
 const customerId = 
   (conversation?.meta?.sender?.custom_attributes?.gomake_customer_id as string | undefined) ||
   (conversation?.custom_attributes?.gomake_customer_id as string | undefined);
+
+// When linking customer - now updates all available fields:
+const customAttributes: Record<string, any> = {
+  gomake_customer_id: customerId,
+};
+if (customerData?.code) {
+  customAttributes.gomake_client_code = customerData.code;
+}
+if (customerData?.agentId) {
+  customAttributes.gomake_agent_id = customerData.agentId;
+}
 ```
 
 3. **Contact Identification** (`ContactSelector.tsx`)
@@ -299,6 +311,15 @@ export const CHATWOOT_CUSTOM_ATTRIBUTES = {
 - **Hook**: `src/widgets/frontdesk/providers/chatwoot/hooks/use-compose-conversation.ts`
 - **Constants**: `src/widgets/frontdesk/constants/chatwoot-attributes.ts`
 - **Service**: `src/services/frontdesk/api/chatwoot/services/chatwoot-contacts.service.ts`
+
+---
+
+---
+
+## Recent Updates
+
+### November 23, 2025
+- **Enhanced Customer Linking**: When linking a customer to a contact in FrontDesk Chatwoot, the system now updates ALL available custom attributes (`gomake_customer_id`, `gomake_client_code`, `gomake_agent_id`), not just the customer ID. This ensures complete data synchronization between GoMake CRM and Chatwoot contacts.
 
 ---
 

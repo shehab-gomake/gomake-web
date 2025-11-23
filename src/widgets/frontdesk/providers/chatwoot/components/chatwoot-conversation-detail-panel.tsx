@@ -164,7 +164,7 @@ export const ChatwootConversationDetailPanel: React.FC<ChatwootConversationDetai
         contactCreatedAt={conversation.meta?.sender?.created_at}
         customerId={conversation.meta?.sender?.custom_attributes?.gomake_customer_id}
         accountId={accountId}
-        onCustomerLinked={async (customerId) => {
+        onCustomerLinked={async (customerId, customerData) => {
           if (!accountId) return;
 
           const contactId = conversation.meta?.sender?.id;
@@ -175,11 +175,24 @@ export const ChatwootConversationDetailPanel: React.FC<ChatwootConversationDetai
           }
 
           try {
+            // Build custom attributes from customer data
+            const customAttributes: Record<string, any> = {
+              gomake_customer_id: customerId,
+            };
+
+            // Add customer code if available
+            if (customerData?.code) {
+              customAttributes.gomake_client_code = customerData.code;
+            }
+
+            // Add agent ID if available
+            if (customerData?.agentId) {
+              customAttributes.gomake_agent_id = customerData.agentId;
+            }
+
             // ✅ CORRECT: Update contact custom_attributes (not conversation)
             await chatwootService.contacts.updateContact(accountId, contactId, {
-              custom_attributes: {
-                gomake_customer_id: customerId,
-              },
+              custom_attributes: customAttributes,
             });
 
             // Update local conversation state to reflect the change in sender's custom_attributes
@@ -191,7 +204,7 @@ export const ChatwootConversationDetailPanel: React.FC<ChatwootConversationDetai
                   ...conversation.meta?.sender,
                   custom_attributes: {
                     ...conversation.meta?.sender?.custom_attributes,
-                    gomake_customer_id: customerId,
+                    ...customAttributes,
                   },
                 },
               },

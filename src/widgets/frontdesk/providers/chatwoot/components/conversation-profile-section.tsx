@@ -75,7 +75,7 @@ interface ConversationProfileSectionProps {
   /** Account ID for Chatwoot operations */
   accountId?: number | null;
   /** Callback when customer is linked */
-  onCustomerLinked?: (customerId: string) => void;
+  onCustomerLinked?: (customerId: string, customerData?: any) => void;
 }
 
 export const ConversationProfileSection: React.FC<ConversationProfileSectionProps> = ({
@@ -175,9 +175,9 @@ export const ConversationProfileSection: React.FC<ConversationProfileSectionProp
           
           if (validCustomers.length === 1) {
             const foundCustomer = validCustomers[0];
-            // Auto-link the customer
+            // Auto-link the customer with full customer data
             if (onCustomerLinked) {
-              await onCustomerLinked(foundCustomer.id);
+              await onCustomerLinked(foundCustomer.id, foundCustomer);
             }
           }
         }
@@ -236,7 +236,7 @@ export const ConversationProfileSection: React.FC<ConversationProfileSectionProp
   const handleCustomerCreated = (newCustomer: any) => {
     if (newCustomer?.id) {
       setCustomer(newCustomer);
-      onCustomerLinked?.(newCustomer.id);
+      onCustomerLinked?.(newCustomer.id, newCustomer);
     }
     setOpenCreateModal(false);
     setTempCustomerData(null);
@@ -251,9 +251,9 @@ export const ConversationProfileSection: React.FC<ConversationProfileSectionProp
   const handleLinkCustomer = async (customerId: string, customerData: any) => {
     // Update local state
     setCustomer(customerData);
-    // Notify parent component
+    // Notify parent component with full customer data
     if (onCustomerLinked) {
-      onCustomerLinked(customerId);
+      await onCustomerLinked(customerId, customerData);
     }
   };
 
