@@ -21,6 +21,7 @@ import type { ContactDetail, ContactCreatePayload, ContactUpdatePayload } from "
 import { extractContactPayload } from "@/services/frontdesk/api/chatwoot/types/contacts.types";
 import type { ContactableInbox } from "@/services/frontdesk/api/chatwoot/types/inboxes.types";
 import { getChannelRequirements as getReqs } from "@/services/frontdesk/api/chatwoot/types/compose.types";
+import { getCapitalizedNameFromEmail } from "../utils/contact-utils";
 
 // Extended contact type with gomake contact DTO and customer info
 export interface GomakeContact extends ContactDetail {
@@ -452,7 +453,7 @@ export function useComposeConversation(options?: UseComposeConversationOptions) 
         if (allContacts.length === 0 && (isEmailQuery || isPhoneQuery)) {
           const createSuggestion: GomakeContact = {
             id: undefined,
-            name: trimmedQuery, // Use email/phone as name
+            name: isEmailQuery ? getCapitalizedNameFromEmail(trimmedQuery) : trimmedQuery, // Generate name from email, use phone as-is
             email: isEmailQuery ? trimmedQuery : undefined,
             phone_number: isPhoneQuery ? trimmedQuery : undefined,
             gomake_contact_id: undefined,
@@ -581,10 +582,18 @@ export function useComposeConversation(options?: UseComposeConversationOptions) 
               // Found existing contact
               chatwootContact = exactMatch;
             } else {
-              // Not found - create new contact, using email/phone as name if name is empty or equals email/phone
-              const contactName = contact.name && contact.name !== contact.email && contact.name !== contact.phone_number
-                ? contact.name
-                : (contact.email || contact.phone_number || "Unnamed Contact");
+              // Not found - create new contact, generating name from email if needed
+              let contactName: string;
+              if (contact.name && contact.name !== contact.email && contact.name !== contact.phone_number) {
+                // Use provided name if it's different from email/phone
+                contactName = contact.name;
+              } else if (contact.email) {
+                // Generate name from email (Chatwoot behavior)
+                contactName = getCapitalizedNameFromEmail(contact.email);
+              } else {
+                // Fallback to phone number or default
+                contactName = contact.phone_number || "Unnamed Contact";
+              }
               
               const createPayload: ContactCreatePayload = {
                 name: contactName,
@@ -596,10 +605,18 @@ export function useComposeConversation(options?: UseComposeConversationOptions) 
             }
           } catch (searchError) {
             console.error("[useComposeConversation] Failed to search Chatwoot contacts:", searchError);
-            // Fall through to create new contact
-            const contactName = contact.name && contact.name !== contact.email && contact.name !== contact.phone_number
-              ? contact.name
-              : (contact.email || contact.phone_number || "Unnamed Contact");
+            // Fall through to create new contact, generating name from email if needed
+            let contactName: string;
+            if (contact.name && contact.name !== contact.email && contact.name !== contact.phone_number) {
+              // Use provided name if it's different from email/phone
+              contactName = contact.name;
+            } else if (contact.email) {
+              // Generate name from email (Chatwoot behavior)
+              contactName = getCapitalizedNameFromEmail(contact.email);
+            } else {
+              // Fallback to phone number or default
+              contactName = contact.phone_number || "Unnamed Contact";
+            }
             
             const createPayload: ContactCreatePayload = {
               name: contactName,
@@ -648,8 +665,14 @@ export function useComposeConversation(options?: UseComposeConversationOptions) 
             );
           } else if (foundContacts.length === 0) {
             // Not found by gomake_contact_id, use find-or-create pattern
+            // Generate name from email if name is empty or equals email
+            let contactName: string = contact.name;
+            if (!contactName || contactName === contact.email) {
+              contactName = contact.email ? getCapitalizedNameFromEmail(contact.email) : (contact.phone_number || "Unnamed Contact");
+            }
+            
             const createPayload: ContactCreatePayload = {
-              name: contact.name,
+              name: contactName,
               email: contact.email,
               phone_number: contact.phone_number || undefined,
               // All gomake fields go in custom_attributes only (DTO is fixed)
@@ -687,8 +710,14 @@ export function useComposeConversation(options?: UseComposeConversationOptions) 
           }
         } else {
           // No gomake_contact_id and no id, use find-or-create pattern
+          // Generate name from email if name is empty or equals email
+          let contactName: string = contact.name;
+          if (!contactName || contactName === contact.email) {
+            contactName = contact.email ? getCapitalizedNameFromEmail(contact.email) : (contact.phone_number || "Unnamed Contact");
+          }
+          
           const createPayload: ContactCreatePayload = {
-            name: contact.name,
+            name: contactName,
             email: contact.email,
             phone_number: contact.phone_number || undefined,
             // All gomake fields go in custom_attributes only (DTO is fixed)
