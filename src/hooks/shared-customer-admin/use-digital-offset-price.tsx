@@ -537,6 +537,7 @@ const useDigitalOffsetPrice = ({
     // setSelectedWorkFlowCalculatedIsLoaded(true)
     const docType = router?.query?.documentType ?? "0";
     const documentItemId = router?.query?.documentItemId;
+    debugger
     let url = `/v1/erp-service/productItemValueDrafts/get-selected-work-flow?signalRConnectionId=${connectionId}&productId=${productId || (router?.query?.productId ?? productItemCalculationException)
       }&ignoreCalculatedWorkflows=${ignoreCalculatedWorkflows ? ignoreCalculatedWorkflows : false
       }`;
@@ -3197,12 +3198,13 @@ const useDigitalOffsetPrice = ({
     : undefined;
 
   useEffect(() => {
+    const qty = getQuantityParameterValue();
     const itemQuantity =
-      quantity &&
-        quantity.values &&
-        quantity.values.length &&
-        quantity?.values[0]
-        ? +quantity?.values[0]
+        qty &&
+        qty.values &&
+        qty.values.length &&
+        qty?.values[0]
+        ? +qty?.values[0]
         : 1;
     if (!isNaN(sliderCurrentProductItemValueTotalPrice) && itemQuantity) {
       const productItemValue = {
@@ -8106,11 +8108,12 @@ const useDigitalOffsetPrice = ({
       navigate(`/products/profits?actionId=${router?.query?.actionId}`);
     }
   }, [router, pricingDefaultValue, selectedWorkFlow]);
-  const quantity = useMemo(() => {
+  
+  const getQuantityParameterValue = () => {
     if (subProducts) {
       const generalParameters = subProducts.find((x) => !x.type)?.parameters;
       let quantityParam = generalParameters?.find(
-        (item) => item?.parameterId === "4991945c-5e07-4773-8f11-2e3483b70b53"
+          (item) => item?.parameterId === "4991945c-5e07-4773-8f11-2e3483b70b53" || item?.isQuantityParameter === true
       );
       if (quantityParam == null) {
         quantityParam = {
@@ -8118,13 +8121,17 @@ const useDigitalOffsetPrice = ({
         };
       }
       if (
-        quantityParam &&
-        (quantityParam.values == null || quantityParam.values.length == 0)
+          quantityParam &&
+          (quantityParam.values == null || quantityParam.values.length == 0)
       ) {
         quantityParam.values = ["0"];
       }
       return quantityParam;
     }
+    return  0;
+  }
+  const quantity = useMemo(() => {
+    return getQuantityParameterValue();
   }, [subProducts]);
   const setQuantityParameter = useMemo(() => {
     if (subProducts) {
@@ -8919,6 +8926,9 @@ const useDigitalOffsetPrice = ({
   }, [router, productTemplate]);
 
   const validateWorkflows = (data) => {
+    if(!data){
+      return { isValid: true, errors: [] };
+    }
     const errors = [];
     if (!data?.actions || data?.actions?.length === 0) {
       errors.push(t("validateWorkflows.noAction"));
