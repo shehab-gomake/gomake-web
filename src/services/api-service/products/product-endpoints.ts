@@ -543,6 +543,27 @@ const updateProductSectionNameApi: ICallAndSetData = async (
   );
 };
 
+const ADD_DOCUMENT_ITEM_FROM_PRODUCT_URL =
+  "/v1/erp-service/documents/add-document-item-from-product";
+
+const addDocumentItemFromProductApi = async (
+  callApi: any,
+  callBack: any,
+  data: any,
+  documentType: number
+) => {
+  const url = `${ADD_DOCUMENT_ITEM_FROM_PRODUCT_URL}/${documentType}`;
+  // Remove documentType from data if it exists (for backward compatibility)
+  const { documentType: _, ...requestData } = data || {};
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.PUT,
+    url,
+    callBack,
+    requestData
+  );
+};
+
 export {
   addProductProfitRuleApi,
   getProductProfitRulesApi,
@@ -578,4 +599,5 @@ export {
   reOrderProductHotFolderProfitRulesApi,
   copyProductHotFolderRulesApi,
   addProductHotFolderRuleApi,
+  addDocumentItemFromProductApi,
 };

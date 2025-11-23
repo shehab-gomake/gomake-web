@@ -25,6 +25,7 @@ import { prevSelectedClientState, ProductCategoryType } from "./states";
 import { EProductStructureType } from "@/widgets/shared-admin-customers/add-product/settings/settings-data";
 import { getAllProductAndMaterialsApi } from "@/services/api-service/products/product-endpoints";
 import { addDocumentItemFromMaterialApi } from "@/services/api-service/materials/materials-endpoints";
+import { addDocumentItemFromProductApi } from "@/services/api-service/products/product-endpoints";
 import { ETab } from "@/pages-components/admin/home/widgets/quote-widget/enums";
 import { EStatisticsLabels } from "@/pages-components/quotes/enums";
 import { Permissions } from "@/components/CheckPermission/enum";
@@ -438,6 +439,7 @@ const useQuoteWidget = () => {
         category: selectedNode?.category,
         productStructureType: matchedProduct?.productStructureType,
         name: matchedProduct?.name,
+        isEmptyProduct: matchedProduct?.isEmptyProduct,
       });
     } else {
       setSelectedProduct(null);
@@ -459,6 +461,21 @@ const useQuoteWidget = () => {
     }, 0); // DOCUMENT_TYPE.quote
   };
 
+  const addDocumentItemFromProduct = async () => {
+    const callBack = (res) => {
+      if (res.success) {
+        alertSuccessAdded();
+        navigate("/quote");
+      } else {
+        alertFaultAdded();
+      }
+    };
+    await addDocumentItemFromProductApi(callApi, callBack, {
+      clientId: selectedClient?.id,
+      productId: selectedProduct?.id,
+    }, 0); // DOCUMENT_TYPE.quote
+  };
+
   const onSelectTab = (v) => {
     setSelectedTab(v);
     localStorage.setItem("homePageSelectedTab", JSON.stringify(v));
@@ -475,6 +492,12 @@ const useQuoteWidget = () => {
   }) => {
     if (selectedProduct?.category === ProductCategoryType.MATERIAL) {
       addDocumentItemFromMaterial();
+      return;
+    }
+
+    // If product is empty, use the new endpoint to add document item directly
+    if (selectedProduct?.isEmptyProduct === true) {
+      addDocumentItemFromProduct();
       return;
     }
 

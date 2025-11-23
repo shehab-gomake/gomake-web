@@ -49,11 +49,11 @@ const useCharacterDetails = ({
   };
   const formatContent = (str: string) => {
     // First replace closing </p> tags with <br/>
-    let formatted = str.replace(/<\/p>/g, "<br/>");
+    let formatted = str?.replace(/<\/p>/g, "<br/>");
     // Then remove remaining <p> tags
-    formatted = formatted.replace(/<p>/g, "");
+    formatted = formatted?.replace(/<p>/g, "");
     // Keep <strong> tags and <br/> tags, remove any other HTML tags
-    formatted = formatted.replace(/<(?!\/?strong|\/?br\/?)[^>]+>/g, "");
+    formatted = formatted?.replace(/<(?!\/?strong|\/?br\/?)[^>]+>/g, "");
     return formatted;
   };
 

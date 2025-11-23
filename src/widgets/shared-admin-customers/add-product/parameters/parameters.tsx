@@ -300,8 +300,8 @@ const ParameterWidget = () => {
         onClose={handleCloseAddSubSectionDialog}
         title={t("products.addProduct.admin.addSubSection") || "Add SubSection"}
         onPrimaryAction={handleAddSubSection}
-        primaryButtonLabel={t("common.add") || "Add"}
-        cancelButtonLabel={t("modal.cancel") || "Cancel"}
+        primaryButtonLabel={t("sales.quote.add")}
+        cancelButtonLabel={t("modal.cancel")}
         primaryButtonDisabled={!subSectionName.trim()}
         maxWidth="sm"
         fullWidth
