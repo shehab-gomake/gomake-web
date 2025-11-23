@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState, useMemo } from "react";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { EmailComposer } from "@/widgets/frontdesk/providers/email/components/email-composer";
 import {
@@ -8,19 +8,16 @@ import {
 } from "@/widgets/frontdesk/providers/email/types/email.types";
 import { useSnackBar } from "@/hooks/use-snack-bar";
 import {
-    chatwootService,
     contactResolutionService,
     conversationComposerService,
-    inboxResolutionService,
 } from "@/services/frontdesk";
 import { chatwootProfileAtom, chatwootSelectedAccountAtom } from "@/store/frontdesk/atoms/chatwoot.atoms";
 import { DOCUMENT_TYPE } from "../enums";
 import { useChatwootProfile } from "@/widgets/frontdesk/providers/chatwoot/hooks/use-chatwoot-profile";
-import { useGomakeAxios } from "@/hooks/use-gomake-axios";
-import type { ContactDetail } from "@/services/frontdesk/api/chatwoot/types/contacts.types";
-import type { ContactableInbox } from "@/services/frontdesk/api/chatwoot/types/inboxes.types";
+import { useChatwootInboxes } from "@/widgets/frontdesk/providers/chatwoot/hooks/use-chatwoot-inboxes";
 import { ChannelType } from "@/services/frontdesk/api/chatwoot/types/inboxes.types";
-import type { InboxSourceIdMap } from "@/services/frontdesk/api/chatwoot/services/chatwoot-inbox-resolution.service";
+import type { ContactCreatePayload } from "@/services/frontdesk/api/chatwoot/types/contacts.types";
+import { getCapitalizedNameFromEmail } from "@/widgets/frontdesk/providers/chatwoot/utils/contact-utils";
 
 // Helper function to convert HTML to plain text
 const htmlToPlainText = (html: string): string => {
@@ -69,148 +66,54 @@ export const FrontDeskEmailComposerWrapper: React.FC<FrontDeskEmailComposerWrapp
     documentType,
 }) => {
     const { alertSuccessSend, alertFaultSend } = useSnackBar();
-    const { callApi } = useGomakeAxios();
     const selectedAccountId = useRecoilValue(chatwootSelectedAccountAtom);
     const setSelectedAccountId = useSetRecoilState(chatwootSelectedAccountAtom);
     const currentUser = useRecoilValue(chatwootProfileAtom);
     const { profile: profileUser, loading: profileLoading, fetchProfile } = useChatwootProfile();
+    const { inboxes } = useChatwootInboxes(); // Fetch inboxes independently (same as FrontDesk Chatwoot)
     const [isSending, setIsSending] = React.useState(false);
-    const [isLoadingContact, setIsLoadingContact] = React.useState(false);
-    const [senderOptions, setSenderOptions] = useState<EmailSenderOption[]>([]);
-    const [defaultSenderOption, setDefaultSenderOption] = useState<EmailSenderOption | null>(null);
-    const [resolvedContact, setResolvedContact] = useState<ContactDetail | null>(null);
-    const [contactableInboxes, setContactableInboxes] = useState<ContactableInbox[]>([]);
-    const resolvedContactRef = React.useRef<string | null>(null); // Track what we've resolved
-    
-    // Map to track inbox ID to contact's source_id (email) for API calls
-    // Key: inboxId, Value: contact's email (source_id from contactable inbox)
-    const [inboxToSourceIdMap, setInboxToSourceIdMap] = useState<Map<number, string>>(new Map());
 
-    const dedupeOptions = useCallback((options: EmailSenderOption[]) => {
-        const map = new Map<string, EmailSenderOption>();
-        options.forEach((option) => {
-            const key = `${option.inboxId}:${option.sourceId.toLowerCase()}`;
-            if (!map.has(key)) {
-                map.set(key, option);
-            }
-        });
-        return Array.from(map.values());
-    }, []);
-
-
-    /**
-     * Resolve Chatwoot contact from GoMake customer data using ContactResolutionService
-     */
-    const resolveContactFromGomakeCustomer = useCallback(async (
-        customerId?: string | number,
-        contactEmail?: string,
-        contactName?: string,
-        contactPhone?: string
-    ) => {
-        if (!open || !selectedAccountId) return;
-
-        // Create a unique key for this resolution attempt
-        const resolutionKey = `${customerId || ''}_${contactEmail || ''}_${selectedAccountId}`;
-
-        // Skip if we've already resolved for this combination
-        if (resolvedContactRef.current === resolutionKey) {
-            return;
+    // Build sender options from all email inboxes (independent of contact)
+    // Same pattern as FrontDesk Chatwoot - fetch inboxes independently
+    const senderOptions = useMemo(() => {
+        if (!inboxes || inboxes.length === 0) {
+            return [];
         }
 
-        if (!customerId && !contactEmail) {
-            console.warn("[FrontDeskEmailComposerWrapper] No customer ID or contact email provided");
-            return;
-        }
+        // Filter only email inboxes
+        const emailInboxes = inboxes.filter(
+            (inbox) => inbox.channel_type === ChannelType.EMAIL || inbox.channel_type === "Channel::Email"
+        );
 
-        // Mark that we're resolving this combination
-        resolvedContactRef.current = resolutionKey;
-        setIsLoadingContact(true);
-        try {
-            // Step 1: Resolve contact from GoMake customer using ContactResolutionService
-            const chatwootContact = await contactResolutionService.resolveContactFromGomakeCustomer(
-                selectedAccountId,
-                { callApi },
-                {
-                    customerId,
-                    contactEmail,
-                    contactName,
-                    contactPhone,
-                }
-            );
+        // Build sender options from email inboxes (same logic as InboxResolutionService)
+        const options: EmailSenderOption[] = emailInboxes
+            .map((inbox) => {
+                // Get the inbox's sending email address from various possible properties
+                // For OAuth email inboxes, the email is often in the `name` field
+                // For SMTP email inboxes, it might be in `forward_to_email` or `email`
+                const inboxEmail =
+                    inbox.name || // OAuth inboxes store email in name
+                    (inbox as any).forward_to_email || // Forward-to email
+                    (inbox as any).email || // Direct email property
+                    (inbox as any)._emailAccount?.email || // OAuth email account
+                    `inbox-${inbox.id}@mail.gomake.com`; // Fallback generated email
 
-            if (chatwootContact?.id) {
-                setResolvedContact(chatwootContact);
+                return {
+                    inboxId: inbox.id,
+                    inboxName: inbox.name || `Inbox ${inbox.id}`,
+                    sourceId: inboxEmail, // Display email in dropdown
+                    channelType: inbox.channel_type,
+                } as EmailSenderOption;
+            })
+            .filter((option): option is EmailSenderOption => option !== null);
 
-                // Step 2: Fetch contactable inboxes and build sender options using InboxResolutionService
-                try {
-                    const { senderOptions, sourceIdMap, defaultSenderOption, contactableInboxes } =
-                        await inboxResolutionService.resolveInboxesForContact(
-                            chatwootContact.id,
-                            ChannelType.EMAIL
-                        );
+        return options;
+    }, [inboxes]);
 
-                    setContactableInboxes(contactableInboxes);
-                    setInboxToSourceIdMap(sourceIdMap);
-                    setSenderOptions(senderOptions);
-                    setDefaultSenderOption(defaultSenderOption);
-
-                    console.log(`[FrontDeskEmailComposerWrapper] Found ${senderOptions.length} email inbox(es) for contact.`, senderOptions);
-                } catch (error) {
-                    console.error("[FrontDeskEmailComposerWrapper] Failed to fetch contactable inboxes:", error);
-                    // Don't block the flow - contact is still resolved even if inbox fetch fails
-                }
-            }
-        } catch (error) {
-            console.error("[FrontDeskEmailComposerWrapper] Failed to resolve contact:", error);
-            alertFaultSend();
-            // Reset ref on error so we can retry
-            resolvedContactRef.current = null;
-        } finally {
-            setIsLoadingContact(false);
-        }
-    }, [open, selectedAccountId, callApi, alertFaultSend]);
-
-    // Reset when modal closes
-    useEffect(() => {
-        if (!open) {
-            resolvedContactRef.current = null;
-            setResolvedContact(null);
-            setContactableInboxes([]);
-            setSenderOptions([]);
-            setDefaultSenderOption(null);
-            setInboxToSourceIdMap(new Map());
-        }
-    }, [open]);
-
-    useEffect(() => {
-        if (!open || !emailData) {
-            return;
-        }
-
-        // Only resolve if we have the required data and haven't resolved yet
-        const customerId = emailData.customerId;
-        const contactEmail = emailData.contactEmail;
-        const contactName = emailData.contactName;
-        const contactPhone = emailData.contactPhone;
-        
-        if (!selectedAccountId) {
-            return; // Wait for account ID
-        }
-
-        const resolutionKey = `${customerId || ''}_${contactEmail || ''}_${selectedAccountId}`;
-        
-        if (resolvedContactRef.current !== resolutionKey && (customerId || contactEmail)) {
-            resolveContactFromGomakeCustomer(customerId, contactEmail, contactName, contactPhone);
-        }
-    }, [
-        open,
-        emailData?.customerId,
-        emailData?.contactEmail,
-        emailData?.contactName,
-        emailData?.contactPhone,
-        selectedAccountId,
-        resolveContactFromGomakeCustomer
-    ]);
+    // Default sender option (first email inbox)
+    const defaultSenderOption = useMemo(() => {
+        return senderOptions.length > 0 ? senderOptions[0] : null;
+    }, [senderOptions]);
 
     useEffect(() => {
         if (!profileUser && !profileLoading) {
@@ -317,23 +220,12 @@ export const FrontDeskEmailComposerWrapper: React.FC<FrontDeskEmailComposerWrapp
 
         try {
             const senderOption = resolveSenderOption(draft.sender ?? defaultSenderOption);
-            const contactId = resolvedContact?.id ?? emailData?.contactId ?? null;
 
             if (!senderOption) {
                 console.error("[FrontDeskEmailComposerWrapper] Missing sender option", {
                     draftSender: draft.sender,
                     defaultSenderOption,
                     senderOptions,
-                });
-                alertFaultSend();
-                setIsSending(false);
-                return false;
-            }
-
-            if (!contactId) {
-                console.error("[FrontDeskEmailComposerWrapper] Missing contact ID", {
-                    resolvedContact,
-                    emailData,
                 });
                 alertFaultSend();
                 setIsSending(false);
@@ -369,14 +261,35 @@ export const FrontDeskEmailComposerWrapper: React.FC<FrontDeskEmailComposerWrapp
             const bccEmails = draft.bcc?.map((recipient) => recipient.email).filter(Boolean) ?? [];
             const attachments = draft.attachments?.map(convertAttachmentToFile).filter(Boolean) as File[];
 
-            // Get the contact's source_id (email) for this inbox from our map
-            const contactSourceId = inboxToSourceIdMap.get(senderOption.inboxId) || emailData?.contactEmail || "";
+            // Get contact email from TO field (primary recipient)
+            const contactEmail = emailData?.contactEmail || toEmails[0] || "";
 
-            if (!contactSourceId) {
-                console.error("[FrontDeskEmailComposerWrapper] Missing contact source_id for inbox", {
-                    inboxId: senderOption.inboxId,
-                    inboxToSourceIdMap,
-                    emailData
+            if (!contactEmail) {
+                console.error("[FrontDeskEmailComposerWrapper] Missing contact email", {
+                    emailData,
+                    toEmails,
+                });
+                alertFaultSend();
+                setIsSending(false);
+                return false;
+            }
+
+            // Find or create contact from email (same pattern as compose conversation modal)
+            // Generate name from email if not provided
+            const contactName = emailData?.contactName || getCapitalizedNameFromEmail(contactEmail);
+            
+            const contactPayload: ContactCreatePayload = {
+                name: contactName,
+                email: contactEmail,
+                phone_number: emailData?.contactPhone || undefined,
+            };
+
+            const contact = await contactResolutionService.findOrCreateContact(accountId, contactPayload);
+
+            if (!contact?.id) {
+                console.error("[FrontDeskEmailComposerWrapper] Failed to find or create contact", {
+                    contactEmail,
+                    contact,
                 });
                 alertFaultSend();
                 setIsSending(false);
@@ -386,8 +299,8 @@ export const FrontDeskEmailComposerWrapper: React.FC<FrontDeskEmailComposerWrapp
             // Prepare payload using ConversationComposerService
             const conversationId = await conversationComposerService.composeAndCreate(accountId, {
                 inboxId: senderOption.inboxId,
-                contactId,
-                sourceId: contactSourceId,
+                contactId: contact.id,
+                sourceId: contactEmail,
                 message: messageContent,
                 subject: draft.subject,
                 ccEmails,
@@ -424,14 +337,16 @@ export const FrontDeskEmailComposerWrapper: React.FC<FrontDeskEmailComposerWrapp
     // Convert emailData to EmailDraft format
     const draft: EmailDraft | undefined = emailData
         ? {
-            to: (emailData.tos || []).map(email => ({ email })),
+            // Use contactEmail from API if provided, otherwise use tos array
+            to: emailData.contactEmail
+                ? [{ email: emailData.contactEmail }]
+                : (emailData.tos || []).map(email => ({ email })),
             cc: (emailData.ccs || []).map((email) => ({ email })),
             bcc: (emailData.bccs || []).map((email) => ({ email })),
             subject: emailData.subject || "",
             message: htmlToPlainText(emailData.body || ""),
             attachments: emailData.attachments,
             sender: defaultSenderOption,
-            contactId: resolvedContact?.id ?? emailData.contactId ?? null,
         }
         : undefined;
 
@@ -441,10 +356,9 @@ export const FrontDeskEmailComposerWrapper: React.FC<FrontDeskEmailComposerWrapp
             onClose={onClose}
             onSend={handleSend}
             draft={draft}
-            isSending={isSending || isLoadingContact}
+            isSending={isSending}
             fromOptions={senderOptions}
             defaultSenderOption={defaultSenderOption}
-            contactId={resolvedContact?.id ?? emailData?.contactId ?? null}
         />
     );
 };
