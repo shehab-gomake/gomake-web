@@ -5,62 +5,66 @@
  * Eliminates duplicate implementations across components.
  */
 
-import { DOCUMENT_TYPE } from '@/pages-components/quotes/enums';
-import { NormalizedDocument } from '../../types/document.types';
+import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
+import { NormalizedDocument } from "../../types/document.types";
 
 /**
  * Format a date value for display
  * Handles ISO strings, timestamps (seconds), and Date objects
  */
-export function formatDocumentDate(dateValue: string | number | Date | undefined): string {
-  if (!dateValue) return '';
+export function formatDocumentDate(
+  dateValue: string | number | Date | undefined
+): string {
+  if (!dateValue) return "";
 
   try {
     let date: Date;
 
-    if (typeof dateValue === 'number') {
+    if (typeof dateValue === "number") {
       // Handle Unix timestamp in seconds
       date = new Date(dateValue * 1000);
-    } else if (typeof dateValue === 'string') {
+    } else if (typeof dateValue === "string") {
       date = new Date(dateValue);
     } else {
       date = dateValue;
     }
 
-    if (isNaN(date.getTime())) return '';
+    if (isNaN(date.getTime())) return "";
 
-    return new Intl.DateTimeFormat('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
+    return new Intl.DateTimeFormat("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
     }).format(date);
   } catch {
-    return '';
+    return "";
   }
 }
 
 /**
  * Format a date value as locale date string (shorter format)
  */
-export function formatDocumentDateShort(dateValue: string | number | Date | undefined): string {
-  if (!dateValue) return '';
+export function formatDocumentDateShort(
+  dateValue: string | number | Date | undefined
+): string {
+  if (!dateValue) return "";
 
   try {
     let date: Date;
 
-    if (typeof dateValue === 'number') {
+    if (typeof dateValue === "number") {
       date = new Date(dateValue * 1000);
-    } else if (typeof dateValue === 'string') {
+    } else if (typeof dateValue === "string") {
       date = new Date(dateValue);
     } else {
       date = dateValue;
     }
 
-    if (isNaN(date.getTime())) return '';
+    if (isNaN(date.getTime())) return "";
 
     return date.toLocaleDateString();
   } catch {
-    return '';
+    return "";
   }
 }
 
@@ -73,9 +77,9 @@ export function formatDocumentPrice(
   currency: string | undefined,
   currencyUnits?: Array<{ value: string; text: string }>
 ): string {
-  if (amount === undefined || amount === null) return '';
+  if (amount === undefined || amount === null) return "";
 
-  let currencySymbol = currency || '';
+  let currencySymbol = currency || "";
 
   // Look up currency symbol from units if provided
   if (currencyUnits && currency) {
@@ -85,12 +89,14 @@ export function formatDocumentPrice(
     }
   }
 
-  const formattedAmount = amount.toLocaleString('en-US', {
+  const formattedAmount = amount.toLocaleString("en-US", {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   });
 
-  return currencySymbol ? `${currencySymbol} ${formattedAmount}` : formattedAmount;
+  return currencySymbol
+    ? `${currencySymbol} ${formattedAmount}`
+    : formattedAmount;
 }
 
 /**
@@ -101,9 +107,9 @@ export function formatDocumentPriceCompact(
   currency: string | undefined,
   currencyUnits?: Array<{ value: string; text: string }>
 ): string {
-  if (amount === undefined || amount === null) return '';
+  if (amount === undefined || amount === null) return "";
 
-  let currencySymbol = currency || '';
+  let currencySymbol = currency || "";
 
   if (currencyUnits && currency) {
     const foundCurrency = currencyUnits.find((c) => c.value === currency);
@@ -112,9 +118,11 @@ export function formatDocumentPriceCompact(
     }
   }
 
-  const formattedAmount = amount.toLocaleString('en-US');
+  const formattedAmount = amount.toLocaleString("en-US");
 
-  return currencySymbol ? `${currencySymbol} ${formattedAmount}` : formattedAmount;
+  return currencySymbol
+    ? `${currencySymbol} ${formattedAmount}`
+    : formattedAmount;
 }
 
 /**
@@ -122,28 +130,32 @@ export function formatDocumentPriceCompact(
  */
 export function getDocumentTypeTitle(documentType: DOCUMENT_TYPE): string {
   const titles: Record<DOCUMENT_TYPE, string> = {
-    [DOCUMENT_TYPE.quote]: 'Quote',
-    [DOCUMENT_TYPE.invoice]: 'Invoice',
-    [DOCUMENT_TYPE.order]: 'Order',
-    [DOCUMENT_TYPE.receipt]: 'Receipt',
-    [DOCUMENT_TYPE.deliveryNote]: 'Delivery Note',
-    [DOCUMENT_TYPE.purchaseOrder]: 'Purchase Order',
-    [DOCUMENT_TYPE.purchaseInvoice]: 'Purchase Invoice',
-    [DOCUMENT_TYPE.deliveryNoteRefund]: 'Delivery Note Refund',
-    [DOCUMENT_TYPE.invoiceRefund]: 'Invoice Refund',
-    [DOCUMENT_TYPE.generalLedgerReport]: 'General Ledger Report',
-    [DOCUMENT_TYPE.purchaseInvoiceRefund]: 'Purchase Invoice Refund',
-    [DOCUMENT_TYPE.boardMission]: 'Board Mission',
-    [DOCUMENT_TYPE.customerChat]: 'Customer Chat',
-    [DOCUMENT_TYPE.supplierPayments]: 'Supplier Payments',
+    [DOCUMENT_TYPE.quote]: "Quote",
+    [DOCUMENT_TYPE.invoice]: "Invoice",
+    [DOCUMENT_TYPE.order]: "Order",
+    [DOCUMENT_TYPE.receipt]: "Receipt",
+    [DOCUMENT_TYPE.deliveryNote]: "Delivery Note",
+    [DOCUMENT_TYPE.proformaInvoice]: "Proforma Invoice",
+    [DOCUMENT_TYPE.purchaseOrder]: "Purchase Order",
+    [DOCUMENT_TYPE.purchaseInvoice]: "Purchase Invoice",
+    [DOCUMENT_TYPE.deliveryNoteRefund]: "Delivery Note Refund",
+    [DOCUMENT_TYPE.invoiceRefund]: "Invoice Refund",
+    [DOCUMENT_TYPE.generalLedgerReport]: "General Ledger Report",
+    [DOCUMENT_TYPE.purchaseInvoiceRefund]: "Purchase Invoice Refund",
+    [DOCUMENT_TYPE.boardMission]: "Board Mission",
+    [DOCUMENT_TYPE.customerChat]: "Customer Chat",
+    [DOCUMENT_TYPE.supplierPayments]: "Supplier Payments",
   };
-  return titles[documentType] || 'Document';
+  return titles[documentType] || "Document";
 }
 
 /**
  * Get the route path for a document
  */
-export function getDocumentRoute(documentType: DOCUMENT_TYPE, documentId: string): string {
+export function getDocumentRoute(
+  documentType: DOCUMENT_TYPE,
+  documentId: string
+): string {
   const routes: Partial<Record<DOCUMENT_TYPE, string>> = {
     [DOCUMENT_TYPE.quote]: `/quote?Id=${documentId}`,
     [DOCUMENT_TYPE.invoice]: `/invoice?Id=${documentId}`,
@@ -154,22 +166,28 @@ export function getDocumentRoute(documentType: DOCUMENT_TYPE, documentId: string
     [DOCUMENT_TYPE.purchaseInvoice]: `/purchaseInvoices?Id=${documentId}`,
   };
 
-  return routes[documentType] || '/quotes';
+  return routes[documentType] || "/quotes";
 }
 
 /**
  * Get full URL for a document (for opening in new tab)
  */
-export function getDocumentUrl(documentType: DOCUMENT_TYPE, documentId: string): string {
+export function getDocumentUrl(
+  documentType: DOCUMENT_TYPE,
+  documentId: string
+): string {
   return getDocumentRoute(documentType, documentId);
 }
 
 /**
  * Open document in a new browser tab
  */
-export function openDocumentInNewTab(documentType: DOCUMENT_TYPE, documentId: string): void {
+export function openDocumentInNewTab(
+  documentType: DOCUMENT_TYPE,
+  documentId: string
+): void {
   const route = getDocumentRoute(documentType, documentId);
-  window.open(route, '_blank');
+  window.open(route, "_blank");
 }
 
 /**
@@ -192,7 +210,11 @@ export function formatDocumentForUI(
     number: document.number,
     clientName: document.client.name,
     date: formatDocumentDate(document.createdDate),
-    amount: formatDocumentPrice(document.totalPrice, document.currency, currencyUnits),
+    amount: formatDocumentPrice(
+      document.totalPrice,
+      document.currency,
+      currencyUnits
+    ),
     status: document.status,
     hasStatus: !!document.status,
     hasAmount: document.totalPrice > 0,

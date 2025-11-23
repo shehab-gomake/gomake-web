@@ -321,10 +321,6 @@ const QuotesListPageWidget = ({
     onOpenPurchaseOrderTypeModal,
     onClosePurchaseOrderTypeModal,
     handleSelectPurchaseOrderType,
-    isEmailComposerOpen,
-    emailData,
-    closeEmailComposer,
-    documentForEmail
   } = useQuotes(documentType, isFromHomePage);
 
   // Get the main quotes pagination handler
@@ -511,16 +507,16 @@ const QuotesListPageWidget = ({
                     isOrder
                       ? onclickCreateNew
                       : isSupplierPayments
-                        ? () => navigate(`/${documentPath}`)
-                        : isPurchaseOrder
-                          ? () => {
-                            setSelectedItems([]);
-                            onOpenPurchaseOrderTypeModal();
-                          }
-                          : () => {
-                            setSelectedItems([]);
-                            navigate(`/${documentPath}?isNewCreation=true`);
-                          }
+                      ? () => navigate(`/${documentPath}`)
+                      : isPurchaseOrder
+                      ? () => {
+                          setSelectedItems([]);
+                          onOpenPurchaseOrderTypeModal();
+                        }
+                      : () => {
+                          setSelectedItems([]);
+                          navigate(`/${documentPath}?isNewCreation=true`);
+                        }
                   )}
               </div>
             </div>
