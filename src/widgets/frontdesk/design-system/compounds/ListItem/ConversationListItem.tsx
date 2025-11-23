@@ -274,7 +274,7 @@ export const ConversationListItem = React.memo<ConversationListItemProps>(({
         onContextMenu={handleContextMenu}
         sx={getListItemButtonStyles(isSelected)}
       >
-        <Stack direction="row" alignItems="flex-start" spacing={1} sx={{ width: '100%', px: 1.5 }}>
+        <Stack direction="row" alignItems="center" spacing={1} sx={{ width: '100%', px: 1.5 }}>
           {/* Contact Avatar */}
           <Avatar
             size="sm"
