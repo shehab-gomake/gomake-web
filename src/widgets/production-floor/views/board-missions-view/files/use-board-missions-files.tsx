@@ -18,6 +18,7 @@ const useBoardMissionsFiles = () => {
   const { query } = router;
 
   const getAllBoardMissionsFiles = async () => {
+    setFiles([])
     if (abortController) {
       abortController.abort();
     }
