@@ -1,8 +1,7 @@
 import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
 import { EHttpMethod } from "@/services/api-service/enums";
-import { getAllSubProducts } from "@/services/hooks/admin-side/products/get-all-sub-products";
 import { useRouter } from "next/router";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 const useMoreCircle = ({ updatedProduct, item, getActions }) => {
@@ -22,19 +21,15 @@ const useMoreCircle = ({ updatedProduct, item, getActions }) => {
   const { t } = useTranslation();
   const { setSnackbarStateValue, alertFaultAdded, alertSuccessAdded, alertSuccessDelete, alertFaultDelete, alertFaultDuplicate } =
     useSnackBar();
-  const [selectProduct, setSelectProduct] = useState<any>();
-  const [setAllProducts, setSetAllProducts] = useState<any>([]);
 
   const { navigate } = useGomakeRouter();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
-    setSelectProduct(item);
   };
   const handleClose = () => {
     setAnchorEl(null);
-    setSelectProduct(null);
   };
   const [openDeleteRowModal, setOpenDeleteRowModal] = useState<boolean>(false);
   const [openDuplicateRowModal, setOpenDuplicateRowModal] = useState<boolean>(false);
@@ -110,17 +105,6 @@ const useMoreCircle = ({ updatedProduct, item, getActions }) => {
     }
   }, [item]);
 
-  const getSubProducts = useCallback(async () => {
-    if (selectProduct?.id && !router.query.productId) {
-      await getAllSubProducts(callApi, setSetAllProducts, {
-        productId: selectProduct?.id,
-      });
-    }
-  }, [selectProduct]);
-  useEffect(() => {
-    getSubProducts();
-  }, [selectProduct]);
-
   const deleteProductById = useCallback(
     async () => {
       const res = await callApi(
@@ -152,7 +136,6 @@ const useMoreCircle = ({ updatedProduct, item, getActions }) => {
     callApi,
     updatedProductInside,
     createSubProduct,
-    setAllProducts,
     openPopover,
     anchorElPopover,
     idPopover,

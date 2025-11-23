@@ -800,7 +800,8 @@ const QuotesListPageWidget = ({
         isSendToClient={isSendToClient}
         isSendOrderReadyToClient={isSendOrderReadyToClient}
         showAlertModal={showAlertModal}
-        hideCheckboxes={true}
+        // !here for branch 5062957516
+        //  hideCheckboxes={true}
       />
       <GoMakeAlertModal
         openModal={alertNotVerifiedMailModal.isOpen}

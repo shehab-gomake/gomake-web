@@ -229,6 +229,13 @@ const useStyle = () => {
         backgroundColor: "#FFF",
         color: "black",
       },
+      subProductRowStyle: {
+        backgroundColor: "#F9FAFB",
+        paddingLeft: 40,
+      },
+      subProductCellStyle: {
+        paddingLeft: 40,
+      },
     };
   }, []);
   return {

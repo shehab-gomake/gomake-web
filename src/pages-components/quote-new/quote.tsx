@@ -1102,6 +1102,7 @@ const QuoteNewPageWidget = ({
         onClose={onCloseDeleteItemModal}
         onClickDelete={deleteQuoteItem}
       />
+
       <SendBtnMenu
         handleClose={handleSendBtnClose}
         open={openSendBtn}
@@ -1112,7 +1113,8 @@ const QuoteNewPageWidget = ({
         documentState={quoteItemValue}
         documentType={documentType}
         openReceiptModal={openReceiptModal}
-        onClickSendEmailViaComposer={onClickSendEmailViaComposer}
+        // !here for branch 5062957516
+        // onClickSendEmailViaComposer={onClickSendEmailViaComposer}
       />
       <WhatsAppWebModal
         openModal={openWhatsAppModal}
