@@ -80,7 +80,10 @@ import {
   CheckData,
 } from "@/widgets/quote-new/buttons-container/states";
 import { QuoteStatuses } from "@/widgets/quote-new/total-price-and-vat/enums";
-import { isSelectedCLoseAsDeliveryNoteState } from "@/pages/customers/customer-states";
+import {
+  isSelectedCLoseAsDeliveryNoteState,
+  isSelectedCLoseAsProformaInvoiceState,
+} from "@/pages/customers/customer-states";
 import {
   checkArrayNotEmptyOrEmailNotEmpty,
   checkArrayNotEmptyOrPhoneNotEmpty,
@@ -102,6 +105,7 @@ import { Button } from "@mui/material";
 import { PlusIcon } from "../quotes/widgets/icons/header-section-icons";
 import { useStyle } from "./style";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { useFrontDeskEmailIntegration } from "../quotes/hooks/use-frontdesk-email-integration";
 import { PurchaseOrderType, ShowDocumentDetailsEnum, ShowPricesEnum, ItemCalculationType, PurchaseOrderStatuses } from "@/enums";
 
 export enum MessageType {
@@ -177,6 +181,14 @@ const useQuoteNew = ({
     isPurchaseInvoiceRefund ||
     isSupplierPayments ||
     isOutgoingPayments;
+
+  // FrontDesk Email Integration
+  const {
+    isEmailComposerOpen,
+    emailData,
+    openEmailComposer,
+    closeEmailComposer,
+  } = useFrontDeskEmailIntegration({ documentType: docType });
 
   const purchaseOrderStatusOptions = useMemo(
     () =>
@@ -468,6 +480,9 @@ const useQuoteNew = ({
   const [selectedDocument, setSelectedDocument] = useState<any>({});
   const isSelectedCLoseAsDeliveryNote = useRecoilValue(
     isSelectedCLoseAsDeliveryNoteState
+  );
+  const isSelectedCLoseAsProformaInvoice = useRecoilValue(
+    isSelectedCLoseAsProformaInvoiceState
   );
   const onClickCloseChangeProductionStatusModal = () => {
     setOpenChangeProductionStatusModal(false);
@@ -1997,6 +2012,28 @@ const useQuoteNew = ({
     alertNotVerifiedMail.open();
   };
 
+  // New handler for email - opens FrontDesk composer
+  const onClickSendEmailViaComposer = async () => {
+    if (!isSelectedAtLeastOne && docType === DOCUMENT_TYPE.quote) {
+      alertFault("reports.pleaseSelectOneItem");
+      return;
+    }
+
+    const contacts = quoteItemValue?.documentContacts;
+    const emailValid = checkArrayNotEmptyOrEmailNotEmpty(contacts);
+
+    if (!emailValid) {
+      alertFault("sales.quote.mailContectErrorMsg");
+      return;
+    }
+
+    // Get first valid email from contacts
+    const contactEmail = contacts?.find(c => c.contactMail)?.contactMail;
+    const contactPhone = contacts?.find(c => c.contactPhone)?.contactPhone;
+
+    await openEmailComposer(quoteItemValue?.id, contactEmail, contactPhone);
+  };
+
   const onClickSendQuoteToClient = async (messageType: MessageType) => {
     if (!isSelectedAtLeastOne && docType === DOCUMENT_TYPE.quote) {
       alertFault("reports.pleaseSelectOneItem");
@@ -2664,11 +2701,15 @@ const useQuoteNew = ({
           navigate(
             `/deliveryNote?isNewCreation=true&orderId=${selectedDocument?.id}`
           );
+        } else if (isSelectedCLoseAsProformaInvoice) {
+          const path = isOrder
+            ? `/proformaInvoice?isNewCreation=true&orderId=${selectedDocument?.id}`
+            : `/proformaInvoice?isNewCreation=true&deliveryNoteId=${selectedDocument?.id}`;
+          navigate(path);
         } else {
-          const path =
-            docType === DOCUMENT_TYPE.order
-              ? `/invoice?isNewCreation=true&orderId=${selectedDocument?.id}`
-              : `/invoice?isNewCreation=true&deliveryNoteId=${selectedDocument?.id}`;
+          const path = isOrder
+            ? `/invoice?isNewCreation=true&orderId=${selectedDocument?.id}`
+            : `/invoice?isNewCreation=true&deliveryNoteId=${selectedDocument?.id}`;
           navigate(path);
         }
       } else {
@@ -3128,6 +3169,7 @@ const useQuoteNew = ({
     onClickCloseChangeProductionStatusModal,
     selectedDocument,
     isSelectedCLoseAsDeliveryNote,
+    isSelectedCLoseAsProformaInvoice,
     navigate,
     moveOrderToReady,
     allClientActiveBudgets,
@@ -3203,6 +3245,11 @@ const useQuoteNew = ({
     onConfirmVatMismatchModal,
     estimatedProductionDate,
     handleExportToExcel,
+    // FrontDesk Email Integration
+    onClickSendEmailViaComposer,
+    isEmailComposerOpen,
+    emailData,
+    closeEmailComposer,
     isMaterial,
     isMaterialPurchaseOrder,
     isCanIntake,

@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { IconButton, Badge, MenuItem, ListItemText, Box, Typography, Button, Divider } from '@mui/material';
-import FilterListIcon from '@mui/icons-material/FilterList';
-import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
-import RadioButtonCheckedIcon from '@mui/icons-material/RadioButtonChecked';
-import CircleIcon from '@mui/icons-material/Circle';
-import LocalOfferOutlinedIcon from '@mui/icons-material/LocalOfferOutlined';
-import { TicketFilters, TicketStatus, TicketPriority, Tag } from '../types/api.types';
-import { formatTicketStatus } from '../types/transformers';
-import { DropdownMenu, MenuSubheader } from '@/widgets/frontdesk/components/dropdown-menu';
-import { Chip, colorTokens } from '@/widgets/frontdesk/design-system';
+import React, { useState, useEffect } from "react";
+import { IconButton, Badge, MenuItem, ListItemText, Box, Typography, Button, Divider } from "@mui/material";
+import FilterListIcon from "@mui/icons-material/FilterList";
+import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
+import RadioButtonCheckedIcon from "@mui/icons-material/RadioButtonChecked";
+import CircleIcon from "@mui/icons-material/Circle";
+import LocalOfferOutlinedIcon from "@mui/icons-material/LocalOfferOutlined";
+import { TicketFilters, TicketStatus, TicketPriority, Tag } from "../types/api.types";
+import { formatTicketStatus } from "../types/transformers";
+import { DropdownMenu, MenuSubheader } from "@/widgets/frontdesk/components/dropdown-menu";
+import { Chip, colorTokens } from "@/widgets/frontdesk/design-system";
 
 interface TicketFiltersMenuProps {
   filters: TicketFilters;
@@ -19,8 +19,8 @@ interface TicketFiltersMenuProps {
   onFetchPopularTags?: () => void;
 }
 
-const STATUSES: TicketStatus[] = ['OPEN', 'IN_PROGRESS', 'PENDING', 'RESOLVED', 'CLOSED', 'REOPENED'];
-const PRIORITIES: TicketPriority[] = ['LOW', 'MEDIUM', 'HIGH', 'URGENT'];
+const STATUSES: TicketStatus[] = ["OPEN", "IN_PROGRESS", "PENDING", "RESOLVED", "CLOSED", "REOPENED"];
+const PRIORITIES: TicketPriority[] = ["LOW", "MEDIUM", "HIGH", "URGENT"];
 
 // Status colors
 const STATUS_COLORS: Record<TicketStatus, string> = {
@@ -89,9 +89,7 @@ export const TicketFiltersMenu: React.FC<TicketFiltersMenuProps> = ({
   };
 
   const handleToggleTag = (tagName: string) => {
-    const newTags = tags.includes(tagName)
-      ? tags.filter((t) => t !== tagName)
-      : [...tags, tagName];
+    const newTags = tags.includes(tagName) ? tags.filter((t) => t !== tagName) : [...tags, tagName];
 
     setTags(newTags);
     // Apply immediately
@@ -115,7 +113,7 @@ export const TicketFiltersMenu: React.FC<TicketFiltersMenuProps> = ({
         aria-label="Filter tickets"
         sx={{
           color: colorTokens.semantic.text.secondary,
-          '&:hover': {
+          "&:hover": {
             backgroundColor: colorTokens.neutral[100],
           },
         }}
@@ -125,12 +123,7 @@ export const TicketFiltersMenu: React.FC<TicketFiltersMenuProps> = ({
         </Badge>
       </IconButton>
 
-      <DropdownMenu
-        anchorEl={anchorEl}
-        open={Boolean(anchorEl)}
-        onClose={handleClose}
-        width={280}
-      >
+      <DropdownMenu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose} width={280}>
         {/* Status Section */}
         <Box sx={{ mb: 2 }}>
           <MenuSubheader>STATUS</MenuSubheader>
@@ -141,8 +134,8 @@ export const TicketFiltersMenu: React.FC<TicketFiltersMenuProps> = ({
             sx={{
               py: 1,
               px: 2,
-              display: 'flex',
-              alignItems: 'center',
+              display: "flex",
+              alignItems: "center",
               gap: 1.5,
             }}
           >
@@ -170,8 +163,8 @@ export const TicketFiltersMenu: React.FC<TicketFiltersMenuProps> = ({
                 sx={{
                   py: 1,
                   px: 2,
-                  display: 'flex',
-                  alignItems: 'center',
+                  display: "flex",
+                  alignItems: "center",
                   gap: 1.5,
                 }}
               >
@@ -205,8 +198,8 @@ export const TicketFiltersMenu: React.FC<TicketFiltersMenuProps> = ({
             sx={{
               py: 1,
               px: 2,
-              display: 'flex',
-              alignItems: 'center',
+              display: "flex",
+              alignItems: "center",
               gap: 1.5,
             }}
           >
@@ -234,8 +227,8 @@ export const TicketFiltersMenu: React.FC<TicketFiltersMenuProps> = ({
                 sx={{
                   py: 1,
                   px: 2,
-                  display: 'flex',
-                  alignItems: 'center',
+                  display: "flex",
+                  alignItems: "center",
                   gap: 1.5,
                 }}
               >
@@ -262,7 +255,7 @@ export const TicketFiltersMenu: React.FC<TicketFiltersMenuProps> = ({
           <>
             <Divider sx={{ my: 1 }} />
             <Box sx={{ mb: 1 }}>
-              <Box sx={{ px: 2, py: 1, display: 'flex', alignItems: 'center', gap: 0.5 }}>
+              <Box sx={{ px: 2, py: 1, display: "flex", alignItems: "center", gap: 0.5 }}>
                 <LocalOfferOutlinedIcon sx={{ fontSize: 14, color: colorTokens.semantic.text.secondary }} />
                 <Typography
                   variant="caption"
@@ -270,8 +263,8 @@ export const TicketFiltersMenu: React.FC<TicketFiltersMenuProps> = ({
                     color: colorTokens.semantic.text.secondary,
                     fontSize: 10,
                     fontWeight: 600,
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.5px',
+                    textTransform: "uppercase",
+                    letterSpacing: "0.5px",
                   }}
                 >
                   Tags {tags.length > 0 && `(${tags.length})`}
@@ -279,21 +272,21 @@ export const TicketFiltersMenu: React.FC<TicketFiltersMenuProps> = ({
               </Box>
 
               {/* Tag Chips */}
-              <Box sx={{ px: 2, pb: 1, display: 'flex', flexWrap: 'wrap', gap: 0.75 }}>
+              <Box sx={{ px: 2, pb: 1, display: "flex", flexWrap: "wrap", gap: 0.75 }}>
                 {popularTags.slice(0, 12).map((tag) => {
                   const isSelected = tags.includes(tag.name);
                   return (
                     <Chip
                       key={tag.id}
                       label={tag.displayName}
-                      variant={isSelected ? 'filled' : 'outlined'}
-                      color={isSelected ? 'primary' : 'neutral'}
+                      variant={isSelected ? "filled" : "outlined"}
+                      color={isSelected ? "primary" : "neutral"}
                       size="small"
                       onClick={() => handleToggleTag(tag.name)}
                       sx={{
-                        cursor: 'pointer',
+                        cursor: "pointer",
                         fontSize: 11,
-                        transition: 'all 0.15s ease',
+                        transition: "all 0.15s ease",
                         ...(tag.color && !isSelected
                           ? {
                               borderColor: tag.color,
@@ -306,8 +299,8 @@ export const TicketFiltersMenu: React.FC<TicketFiltersMenuProps> = ({
                               borderColor: tag.color,
                             }
                           : {}),
-                        '&:hover': {
-                          transform: 'scale(1.05)',
+                        "&:hover": {
+                          transform: "scale(1.05)",
                         },
                       }}
                     />
@@ -330,8 +323,8 @@ export const TicketFiltersMenu: React.FC<TicketFiltersMenuProps> = ({
                   fontSize: 12,
                   fontWeight: 500,
                   color: colorTokens.neutral[600],
-                  textTransform: 'none',
-                  '&:hover': {
+                  textTransform: "none",
+                  "&:hover": {
                     backgroundColor: colorTokens.neutral[100],
                   },
                 }}

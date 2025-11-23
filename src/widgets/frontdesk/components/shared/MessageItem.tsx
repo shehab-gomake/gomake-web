@@ -46,14 +46,22 @@ export const MessageItem: React.FC<MessageItemProps> = ({
   const initials = getInitials(message.author.name);
 
   // Smart format content - handles both HTML and plain text
+  // SECURITY: All HTML is sanitized by smartFormatContent using DOMPurify
+  // to prevent XSS attacks. See: src/widgets/frontdesk/utils/html-sanitizer.ts
   const content = smartFormatContent(message.content, message.html);
+
+  // Only highlight outbound messages for email variant
+  // For tickets, don't highlight to avoid confusion between:
+  // - INBOUND email you received (ticket created from it)
+  // - OUTBOUND reply you sent
+  const shouldHighlight = variant === "email" && isOwn;
 
   return (
     <Box
       sx={{
         p: 2,
         borderBottom: isLast ? "none" : `1px solid ${neutralColor(200)}`,
-        backgroundColor: isOwn ? alpha(primaryColor(50), 0.3) : "transparent",
+        backgroundColor: shouldHighlight ? alpha(primaryColor(50), 0.3) : "transparent",
       }}
     >
       <Stack spacing={2}>
@@ -69,7 +77,7 @@ export const MessageItem: React.FC<MessageItemProps> = ({
                   variant="body1"
                   sx={{
                     fontWeight: 600,
-                    color: isOwn ? primaryColor(700) : neutralColor(800),
+                    color: shouldHighlight ? primaryColor(700) : neutralColor(800),
                   }}
                 >
                   {message.author.name}
@@ -132,6 +140,9 @@ export const MessageItem: React.FC<MessageItemProps> = ({
         </Stack>
 
         {/* Message Content */}
+        {/* SECURITY NOTE: HTML content is pre-sanitized by smartFormatContent() using DOMPurify.
+            All JavaScript, dangerous attributes, and unsafe tags are stripped before rendering.
+            See: src/widgets/frontdesk/utils/html-sanitizer.ts for security configuration. */}
         <Box
           sx={{
             pl: "56px", // Align with avatar

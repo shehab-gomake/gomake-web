@@ -88,6 +88,8 @@ import { useQuoteGetData } from "@/pages-components/quote-new/use-quote-get-data
 import { useDateFormat } from "@/hooks/use-date-format";
 import { MoreMenuWidget } from "@/pages-components/board-missions/widgets/more-circle";
 import { Permissions } from "@/components/CheckPermission/enum";
+import { useFrontDeskEmailIntegration } from "@/pages-components/quotes/hooks/use-frontdesk-email-integration";
+import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 
 const useProductionFloorData = () => {
   const { t } = useTranslation();
@@ -275,10 +277,10 @@ const useProductionFloorData = () => {
               filterGroups.map((x) =>
                 x.id === "all"
                   ? {
-                      ...x,
-                      stuckCount: res?.data?.boradMisstionsStuckCount,
-                      inProcessCount: res?.data?.boradMisstionsNotStuckCount,
-                    }
+                    ...x,
+                    stuckCount: res?.data?.boradMisstionsStuckCount,
+                    inProcessCount: res?.data?.boradMisstionsNotStuckCount,
+                  }
                   : x
               )
             );
@@ -328,7 +330,7 @@ const useProductionFloorData = () => {
 
     let data = jobId;
     if (productType) {
-       data = data + "?productType=" + productType;
+      data = data + "?productType=" + productType;
     }
 
     await printJobUsingPrintNodeApi(callApi, callBack, data);
@@ -484,7 +486,7 @@ const useProductionFloorData = () => {
           const mapData = _data.data?.map((mission: any) => {
             const itemCalculatedPrice =
               mission?.calculatedPrice &&
-              mission?.calculatedPrice != mission?.price
+                mission?.calculatedPrice != mission?.price
                 ? mission?.calculatedPrice
                 : 0;
             return [
@@ -510,11 +512,10 @@ const useProductionFloorData = () => {
               formatISODateTime(mission?.readyDate),
               <div style={{ cursor: "pointer" }}>{mission?.clientName}</div>,
               mission?.productType
-                ? `${mission?.number} / ${
-                    mission?.productTypeName
-                      ? mission?.productTypeName
-                      : mission?.productType
-                  }`
+                ? `${mission?.number} / ${mission?.productTypeName
+                  ? mission?.productTypeName
+                  : mission?.productType
+                }`
                 : mission?.number,
               <a href={`/order?Id=${mission?.orderID}`}>
                 {mission?.orderNumber}
@@ -522,8 +523,8 @@ const useProductionFloorData = () => {
               mission?.outSourceType === null
                 ? `${t("boardMissions." + EWorkSource[0])}`
                 : `${t(
-                    "boardMissions." + EWorkSource[mission?.outSourceType]
-                  )}`,
+                  "boardMissions." + EWorkSource[mission?.outSourceType]
+                )}`,
               mission?.quantity,
               // ...(CheckPermission(Permissions.SHOW_COSTS_IN_BOARD_MISSIONS)
               //   ? [
@@ -623,8 +624,8 @@ const useProductionFloorData = () => {
         pageSize: pageSizeInput ?? pageSize,
         search:
           patternSearchInput !== null &&
-          patternSearchInput !== undefined &&
-          patternSearchInput !== ""
+            patternSearchInput !== undefined &&
+            patternSearchInput !== ""
             ? patternSearchInput
             : "",
         customerId: doneJobsCustomer?.id || null,
@@ -761,20 +762,20 @@ const useProductionFloorData = () => {
           data.map((s) =>
             s.boardMissionStatus.boardMissionStatus.id === payload.statusId
               ? {
-                  ...s,
-                  boardMissions: s.boardMissions?.map((board) => {
-                    const match = updatedBoards?.find(
-                      (updatedBoard) => updatedBoard.id === board.id
-                    );
-                    if (match) {
-                      return {
-                        ...board,
-                        priority: match.priority,
-                      };
-                    }
-                    return board;
-                  }),
-                }
+                ...s,
+                boardMissions: s.boardMissions?.map((board) => {
+                  const match = updatedBoards?.find(
+                    (updatedBoard) => updatedBoard.id === board.id
+                  );
+                  if (match) {
+                    return {
+                      ...board,
+                      priority: match.priority,
+                    };
+                  }
+                  return board;
+                }),
+              }
               : s
           )
         );
@@ -879,8 +880,14 @@ const useProductionFloorData = () => {
       });
     });
   };
+  const {
+    isEmailComposerOpen,
+    emailData,
+    openEmailComposer,
+    closeEmailComposer,
+  } = useFrontDeskEmailIntegration({ documentType: DOCUMENT_TYPE.boardMission });
 
-  const onClickMoveBoardMissionToDone = async (sendMessage: boolean,ignoreProductType:boolean = false) => {
+  const onClickMoveBoardMissionToDone = async (sendMessage: boolean, ignoreProductType: boolean = false) => {
     const callBack = (res) => {
       setOpenMarkReadyModal(false);
       if (res?.success) {
@@ -890,6 +897,9 @@ const useProductionFloorData = () => {
           !selectedMission.productType
         ) {
           setOpenPackagesModal(true);
+        }
+        if (sendMessage) {
+          openEmailComposer(selectedMission.id);
         }
         // handleRemoveBoardMission(selectedMissionId);
       } else {
@@ -1053,17 +1063,17 @@ const useProductionFloorData = () => {
       data.map((status) =>
         status.boardMissions.find((b) => b.id === boardMisionId)
           ? {
-              ...status,
-              boardMissions: status.boardMissions.map((bm) =>
-                bm.id === boardMisionId
-                  ? { ...bm, dueDate: formattedDueDate }
-                  : bm
-              ),
-            }
+            ...status,
+            boardMissions: status.boardMissions.map((bm) =>
+              bm.id === boardMisionId
+                ? { ...bm, dueDate: formattedDueDate }
+                : bm
+            ),
+          }
           : status
       )
     );
-    const callBack = () => {};
+    const callBack = () => { };
     updateJobDueDateApi(callApi, callBack, {
       boardMissionId: boardMisionId,
       dueDate: utcDueDate,
@@ -1134,6 +1144,10 @@ const useProductionFloorData = () => {
     onCloseDoneScopeModal,
     onClickDoneScopeAllJobs,
     onClickDoneScopeProductType,
+    isEmailComposerOpen,
+    emailData,
+    openEmailComposer,
+    closeEmailComposer,
     openReturnToProdModal,
     onOpenReturnToProdModal,
     onCloseReturnToProdModal,

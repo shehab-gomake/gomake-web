@@ -79,6 +79,7 @@ import { AddAttachmentsPurchaseModal } from "@/widgets/quote-new/modals-widgets/
 import { EPreferences } from "@/enums/prefernces";
 import { updateQuoteStatusSocketIo } from "@/hooks/socket-io/update-quote-status-socket-io";
 import { useQuoteConfirmation } from "@/pages-components/quote-confirmation/use-quote-confirmation";
+import { FrontDeskEmailComposerWrapper } from "../quotes/components/frontdesk-email-composer-wrapper";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -315,6 +316,7 @@ const QuoteNewPageWidget = ({
     onClickCloseChangeProductionStatusModal,
     selectedDocument,
     isSelectedCLoseAsDeliveryNote,
+    isSelectedCLoseAsProformaInvoice,
     allClientActiveBudgets,
     moveOrderToReady,
     navigate,
@@ -386,6 +388,10 @@ const QuoteNewPageWidget = ({
     onConfirmVatMismatchModal,
     estimatedProductionDate,
     handleExportToExcel,
+    onClickSendEmailViaComposer,
+    isEmailComposerOpen,
+    emailData,
+    closeEmailComposer,
     isMaterial,
     isMaterialPurchaseOrder,
     isCanIntake,
@@ -1104,6 +1110,7 @@ const QuoteNewPageWidget = ({
         documentState={quoteItemValue}
         documentType={documentType}
         openReceiptModal={openReceiptModal}
+        onClickSendEmailViaComposer={onClickSendEmailViaComposer}
       />
       <WhatsAppWebModal
         openModal={openWhatsAppModal}
@@ -1221,12 +1228,16 @@ const QuoteNewPageWidget = ({
         title={
           isSelectedCLoseAsDeliveryNote
             ? "customers.modal.closeOrderAsDeliveryNote"
+            : isSelectedCLoseAsProformaInvoice
+            ? "customers.modal.closeOrderAsProformaInvoice"
             : "customers.modal.closeOrderAsInvoice"
         }
         subTitle={"customers.modal.thisOrderIsAlreadyInProcess"}
         yesBtn={
           isSelectedCLoseAsDeliveryNote
             ? t("customers.modal.closeAsDeliveryNote")
+            : isSelectedCLoseAsProformaInvoice
+            ? t("customers.modal.closeAsProformaInvoice")
             : t("customers.modal.closeAsInvoice")
         }
         openModal={openChangeProductionStatusModal}
@@ -1235,18 +1246,24 @@ const QuoteNewPageWidget = ({
           isMoveToReady
             ? () => moveOrderToReady(moveToReadyOption === "withMessage")
             : () => {
-              if (isSelectedCLoseAsDeliveryNote) {
-                navigate(
-                  `/deliveryNote?isNewCreation=true&orderId=${selectedDocument?.id}`
-                );
-              } else {
-                const path =
-                  documentType === DOCUMENT_TYPE.order
-                    ? `/invoice?isNewCreation=true&orderId=${selectedDocument?.id}`
-                    : `/invoice?isNewCreation=true&deliveryNoteId=${selectedDocument?.id}`;
-                navigate(path);
+                if (isSelectedCLoseAsDeliveryNote) {
+                  navigate(
+                    `/deliveryNote?isNewCreation=true&orderId=${selectedDocument?.id}`
+                  );
+                } else if (isSelectedCLoseAsProformaInvoice) {
+                  const path =
+                    documentType === DOCUMENT_TYPE.order
+                      ? `/proformaInvoice?isNewCreation=true&orderId=${selectedDocument?.id}`
+                      : `/proformaInvoice?isNewCreation=true&deliveryNoteId=${selectedDocument?.id}`;
+                  navigate(path);
+                } else {
+                  const path =
+                    documentType === DOCUMENT_TYPE.order
+                      ? `/invoice?isNewCreation=true&orderId=${selectedDocument?.id}`
+                      : `/invoice?isNewCreation=true&deliveryNoteId=${selectedDocument?.id}`;
+                  navigate(path);
+                }
               }
-            }
         }
       >
         <Stack alignItems={"center"}>
@@ -1440,6 +1457,16 @@ const QuoteNewPageWidget = ({
         onClose={onClickCloseChangeStatusModal}
         onClickDelete={() => updateQuoteStatus()}
       />
+      {/* FrontDesk Email Composer */}
+      {isEmailComposerOpen && (
+        <FrontDeskEmailComposerWrapper
+          open={isEmailComposerOpen}
+          onClose={closeEmailComposer}
+          emailData={emailData}
+          documentId={quoteItemValue?.id}
+          documentType={documentType}
+        />
+      )}
     </>
   );
 };

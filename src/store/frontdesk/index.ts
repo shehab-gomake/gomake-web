@@ -86,3 +86,19 @@ export {
   highPriorityConversationsSelector,
   providerConnectionStatusSelector
 } from './selectors/aggregation.selectors';
+
+// Chatwoot atoms
+export {
+  chatwootProfileAtom,
+  chatwootProfileLoadingAtom,
+  chatwootAccountsAtom,
+  chatwootSelectedAccountAtom,
+  chatwootAccountsLoadingAtom,
+  chatwootConversationsAtom,
+  chatwootSelectedConversationAtom,
+  chatwootConversationsLoadingAtom,
+  chatwootConversationsErrorAtom,
+  chatwootMessagesAtom,
+  chatwootMessagesLoadingAtom,
+  chatwootMessagesErrorAtom,
+} from './atoms/chatwoot.atoms';

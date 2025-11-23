@@ -42,6 +42,8 @@ import { useModal } from "@/hooks/use-modal";
 import { PrintPackingSlipModalWidget } from "./views/board-missions-view/navigation-buttons/print-packing-slip-modal-widget";
 import { getAllBoardMissionStatusApi } from "@/services/api-service/board-missions/board-mission-station-filter-groups";
 import { statusesListState } from "./state/boards";
+import { FrontDeskEmailComposerWrapper } from "@/pages-components/quotes/components/frontdesk-email-composer-wrapper";
+import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { setBoardFiltersApi } from "@/services/api-service/production-floor/production-floor-endpoints";
 
 const ProductionFloorWidget = () => {
@@ -74,6 +76,11 @@ const ProductionFloorWidget = () => {
     getStationFilterGroups,
     setSelectedGroupId,
     onClickMoveBoardMissionToDone,
+    isEmailComposerOpen,
+    emailData,
+    openEmailComposer,
+    closeEmailComposer,
+    onOpenMarkReadyModalForHasJobs,
     openPackagesModal,
     onClosePrintDeliverTicketModal,
     selectedMission,
@@ -383,15 +390,15 @@ const ProductionFloorWidget = () => {
         noBtn={"boardMissions.markDoneModalNo"}
         openModal={isOpenDoneModal.isOpen}
         onClose={() => isOpenDoneModal.close()}
-        onClickYes={() => onClickMoveBoardMissionToDone(true,true)}
-        onClickNo={() => onClickMoveBoardMissionToDone(false,true)}
+        onClickYes={() => onClickMoveBoardMissionToDone(true, true)}
+        onClickNo={() => onClickMoveBoardMissionToDone(false, true)}
         style={
           isMobile
             ? {
-                width: "95vw",
-                maxWidth: 600,
-                minWidth: "unset",
-              }
+              width: "95vw",
+              maxWidth: 600,
+              minWidth: "unset",
+            }
             : undefined
         }
       />
@@ -405,6 +412,15 @@ const ProductionFloorWidget = () => {
         qrCodeListenerFrom={QR_CODE_LISTENER_FROM.PRODUCTION_FLOOR}
         onIsLastStationDetect={() => isOpenDoneModal.open()}
       />
+      {isEmailComposerOpen && (
+        <FrontDeskEmailComposerWrapper
+          open={isEmailComposerOpen}
+          onClose={closeEmailComposer}
+          emailData={emailData}
+          documentId={selectedMission?.id}
+          documentType={DOCUMENT_TYPE.boardMission}
+        />
+      )}
       <GoMakeDeleteModal
         modalType={ModalType.WARNING}
         title={t("boardMissions.unReadyModalTitle")}
@@ -421,11 +437,11 @@ const ProductionFloorWidget = () => {
         subTitle={
           pendingPrintParams?.productType
             ? t("boardMissions.askPrintType", {
-                productType:
-                  pendingPrintParams?.productTypeName ||
-                  pendingPrintParams?.productName ||
-                  pendingPrintParams?.productType,
-              })
+              productType:
+                pendingPrintParams?.productTypeName ||
+                pendingPrintParams?.productName ||
+                pendingPrintParams?.productType,
+            })
             : ""
         }
         yesBtn={"boardMissions.printAllJobs"}

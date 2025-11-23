@@ -104,9 +104,9 @@ export const TicketSortMenu: React.FC<TicketSortMenuProps> = ({
         width={240}
         disableContentPadding
       >
-        <MenuSubheader>SORT BY</MenuSubheader>
-
-        {SORT_OPTIONS.map((option) => {
+        {[
+          <MenuSubheader key="header">SORT BY</MenuSubheader>,
+          ...SORT_OPTIONS.map((option) => {
           const isSelected = sortBy === option.field && sortOrder === option.order;
 
           return (
@@ -137,7 +137,8 @@ export const TicketSortMenu: React.FC<TicketSortMenuProps> = ({
               )}
             </MenuItem>
           );
-        })}
+        })
+        ]}
       </DropdownMenu>
     </>
   );

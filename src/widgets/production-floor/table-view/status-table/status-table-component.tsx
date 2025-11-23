@@ -52,6 +52,8 @@ import {
 } from "../../state/production-floor-coulmns-table-settings";
 import React from "react";
 import { TableVirtuoso } from "react-virtuoso";
+import { FrontDeskEmailComposerWrapper } from "@/pages-components/quotes/components/frontdesk-email-composer-wrapper";
+import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 
 interface IProps {
   status: IProductionStatus;
@@ -160,6 +162,10 @@ const StatusTableComponent = ({
     openMarkReadyModal,
     onCloseMarkReadyModal,
     onClickMoveBoardMissionToDone,
+    isEmailComposerOpen,
+    emailData,
+    openEmailComposer,
+    closeEmailComposer,
     openPackagesModal,
     onClosePrintDeliverTicketModal,
     onOpenPrintDeliverTicketModal,
@@ -977,6 +983,15 @@ const StatusTableComponent = ({
           setStuckReason={setStuckReason}
         />
       </GoMakeDeleteModal>
+      {isEmailComposerOpen && (
+        <FrontDeskEmailComposerWrapper
+          open={isEmailComposerOpen}
+          onClose={closeEmailComposer}
+          emailData={emailData}
+          documentId={selectedMission?.id}
+          documentType={DOCUMENT_TYPE.boardMission}
+        />
+      )}
     </Stack>
   );
 };
