@@ -9,7 +9,10 @@ import {
   manuallyCloseDocumentApi,
   sendQuoteApprovalToManagerApi,
 } from "@/services/api-service/generic-doc/documents-api";
-import { DOCUMENT_TYPE, StatusTitleText } from "@/pages-components/quotes/enums";
+import {
+  DOCUMENT_TYPE,
+  StatusTitleText,
+} from "@/pages-components/quotes/enums";
 import {
   cancelReceiptApi,
   createReceiptApi,
@@ -17,7 +20,11 @@ import {
   getReceiptPdfApi,
   printReceiptChecksApi,
 } from "@/services/api-service/generic-doc/receipts-api";
-import { allocatedSumsState, checkedItemsIdsState, finalTotalPaymentState } from "./states";
+import {
+  allocatedSumsState,
+  checkedItemsIdsState,
+  finalTotalPaymentState,
+} from "./states";
 import {
   checkArrayNotEmptyOrEmailNotEmpty,
   checkArrayNotEmptyOrPhoneNotEmpty,
@@ -27,16 +34,27 @@ import {
 import { useRouter } from "next/router";
 import { useUserPermission } from "@/hooks/use-permission";
 import { DocumentPermission } from "@/components/CheckPermission/enum";
-import { getAllUsersCanApproveQuoteApi, getEmployeeApi, getAllUsersApi } from "@/services/api-service/users/users-api";
+import {
+  getAllUsersCanApproveQuoteApi,
+  getEmployeeApi,
+  getAllUsersApi,
+} from "@/services/api-service/users/users-api";
 import { newOrderIdToPrintJobsState } from "@/store/new-order-id-to-print-jobs-state";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { EPreferences } from "@/enums/prefernces";
 import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
 import { useModal } from "@/hooks/use-modal";
-import { addressModalState, addressTypeState, EAddressType } from "../business-widget/address-widget/state";
+import {
+  addressModalState,
+  addressTypeState,
+  EAddressType,
+} from "../business-widget/address-widget/state";
 import { validateAddressApi } from "@/services/api-service/customers/customers-api";
 import { createInvoiceFromOrderIdApi } from "@/services/api-service/generic-doc/invoices";
-import { openOrderModalState, shouldReopenOrderModalState } from "@/store/order-modal-states";
+import {
+  openOrderModalState,
+  shouldReopenOrderModalState,
+} from "@/store/order-modal-states";
 import {
   checkIfCanMakeGroupedBoardMissionsUsingOrderIdApi,
   getGroupJobsUsingOrderIdApi,
@@ -60,9 +78,11 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
   const { CheckDocumentPermission, CheckPermission } = useUserPermission();
   const { CheckPreferenceValue } = usePrintHousePreferences();
   const setOpenAddressModal = useSetRecoilState<boolean>(addressModalState);
-  const setSelectedAddressType = useSetRecoilState<EAddressType>(addressTypeState);
+  const setSelectedAddressType =
+    useSetRecoilState<EAddressType>(addressTypeState);
 
-  const [quoteItemValue, setQuoteItemValue] = useRecoilState<any>(quoteItemState);
+  const [quoteItemValue, setQuoteItemValue] =
+    useRecoilState<any>(quoteItemState);
   const {
     alertFault,
     alertFaultSend,
@@ -79,7 +99,8 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
 
   const [selectedTabIndex, setSelectedTabIndex] = useState<number>(0);
   const [openPaymentModal, setOpenPaymentModal] = useState(false);
-  const [openOrderNowModal, setOpenOrderNowModal] = useRecoilState<boolean>(openOrderModalState);
+  const [openOrderNowModal, setOpenOrderNowModal] =
+    useRecoilState<boolean>(openOrderModalState);
 
   const CheckoutOptionModal = useModal();
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
@@ -87,9 +108,11 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
   const [isSelectedAtLeastOne, setIsSelectedAtLeastOne] = useState(null);
   const [openMangerApprovalModal, setOpenMangerApprovalModal] = useState(false);
   const [, setShowPrintJobsModal] = useRecoilState(newOrderIdToPrintJobsState);
-  const [openReceiptCreationModal, setOpenReceiptCreationModal] = useRecoilState(openReceiptCreationModalState);
+  const [openReceiptCreationModal, setOpenReceiptCreationModal] =
+    useRecoilState(openReceiptCreationModalState);
 
-  const [openOrderNowPrePaymentModal, setOpenOrderNowPrePaymentModal] = useState(false);
+  const [openOrderNowPrePaymentModal, setOpenOrderNowPrePaymentModal] =
+    useState(false);
 
   const onClickCloseOrderNowPreModal = () => {
     setOpenOrderNowPrePaymentModal(false);
@@ -129,8 +152,11 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
       return;
     }
 
-    const isAddressRequired = CheckPreferenceValue(EPreferences.ADDRESSES_REQUIRED_FOR_ORDER);
-    const noBillingAddress = (quoteItemValue?.documentBillingAddresses?.length ?? 0) === 0;
+    const isAddressRequired = CheckPreferenceValue(
+      EPreferences.ADDRESSES_REQUIRED_FOR_ORDER
+    );
+    const noBillingAddress =
+      (quoteItemValue?.documentBillingAddresses?.length ?? 0) === 0;
 
     if (isAddressRequired && noBillingAddress && !addressChecked) {
       setSelectedAddressType(EAddressType.BILLING);
@@ -142,13 +168,19 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     }
 
     // Validate required fields (for US addresses) and validate address
-    if (CheckPreferenceValue(EPreferences.ADDRESSES_REQUIRED_FOR_ORDER) && quoteItemValue?.isUsedStripe) {
+    if (
+      CheckPreferenceValue(EPreferences.ADDRESSES_REQUIRED_FOR_ORDER) &&
+      quoteItemValue?.isUsedStripe
+    ) {
       const billingAddress = quoteItemValue.documentBillingAddresses?.[0];
 
       if (billingAddress) {
-        const { isValid, missingFields } = validateUsAddressFields(billingAddress);
+        const { isValid, missingFields } =
+          validateUsAddressFields(billingAddress);
         if (!isValid) {
-          const translatedFields = missingFields.map((fieldKey) => t(fieldKey)).join(", ");
+          const translatedFields = missingFields
+            .map((fieldKey) => t(fieldKey))
+            .join(", ");
           alertFault(`${t("modal.RequiredFields")}: ${translatedFields}`);
           setSelectedAddressType(EAddressType.BILLING);
           setTimeout(() => {
@@ -159,7 +191,9 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
 
         const validateRes = await validateAddress(billingAddress);
         if (!validateRes?.success || validateRes?.data?.ErrorMessage) {
-          alertFault(validateRes?.data?.ErrorMessage || "Address validation failed.");
+          alertFault(
+            validateRes?.data?.ErrorMessage || "Address validation failed."
+          );
           setSelectedAddressType(EAddressType.BILLING);
           setTimeout(() => {
             setOpenAddressModal(true);
@@ -191,8 +225,12 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
       return;
     }
 
-    const hasValidPhone = checkArrayNotEmptyOrPhoneNotEmpty(quoteItemValue?.documentContacts || []);
-    const hasValidEmail = checkArrayNotEmptyOrEmailNotEmpty(quoteItemValue?.documentContacts || []);
+    const hasValidPhone = checkArrayNotEmptyOrPhoneNotEmpty(
+      quoteItemValue?.documentContacts || []
+    );
+    const hasValidEmail = checkArrayNotEmptyOrEmailNotEmpty(
+      quoteItemValue?.documentContacts || []
+    );
 
     // Ensure phone or email is provided
     if (!hasValidPhone && !hasValidEmail) {
@@ -244,7 +282,12 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
   } | null>(null);
   const [pendingOrderData, setPendingOrderData] = useState(null);
 
-  const sendBodyCommingFromOrder = (res, sendMessage, isPrepaymentClient, isStripeCash) => {
+  const sendBodyCommingFromOrder = (
+    res,
+    sendMessage,
+    isPrepaymentClient,
+    isStripeCash
+  ) => {
     if (quoteItemValue?.isUsedStripe) {
       if (!sendMessage) {
         navigate(`/orders?finalPatternSearch=${res?.data?.number}`);
@@ -282,7 +325,10 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     isStripeCash
   ) => {
     const callBack = (result) => {
-      if (result?.success && CheckPreferenceValue(EPreferences.ASK_TO_GROUP_SIMILAR_JOBS)) {
+      if (
+        result?.success &&
+        CheckPreferenceValue(EPreferences.ASK_TO_GROUP_SIMILAR_JOBS)
+      ) {
         if (result?.data?.item1) {
           setPendingOrderData({
             orderId: orderId,
@@ -293,14 +339,28 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
           });
           isOpenGroupJobsModal.open();
         } else {
-          sendBodyCommingFromOrder(res, sendMessage, isPrepaymentClient, isStripeCash);
+          sendBodyCommingFromOrder(
+            res,
+            sendMessage,
+            isPrepaymentClient,
+            isStripeCash
+          );
         }
       } else {
-        sendBodyCommingFromOrder(res, sendMessage, isPrepaymentClient, isStripeCash);
+        sendBodyCommingFromOrder(
+          res,
+          sendMessage,
+          isPrepaymentClient,
+          isStripeCash
+        );
       }
     };
 
-    await checkIfCanMakeGroupedBoardMissionsUsingOrderIdApi(callApi, callBack, orderId);
+    await checkIfCanMakeGroupedBoardMissionsUsingOrderIdApi(
+      callApi,
+      callBack,
+      orderId
+    );
   };
 
   const handleGetGroupJobsUsingOrderId = async (pendingOrderData) => {
@@ -320,7 +380,11 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
       }
     };
 
-    await getGroupJobsUsingOrderIdApi(callApi, callBack, pendingOrderData?.orderId);
+    await getGroupJobsUsingOrderIdApi(
+      callApi,
+      callBack,
+      pendingOrderData?.orderId
+    );
   };
   const isOpenGroupJobsModal = useModal();
 
@@ -361,7 +425,9 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
       if (res?.success) {
         const DocumentNumber = res.data.docEntry;
         const ClientId = res.data.client.id;
-        navigate(`/receipt?isNewCreation=true&documentNumber=${DocumentNumber}&ClientId=${ClientId}`);
+        navigate(
+          `/receipt?isNewCreation=true&documentNumber=${DocumentNumber}&ClientId=${ClientId}`
+        );
         CheckoutModalOpen.close();
       }
     };
@@ -369,8 +435,10 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     await createInvoiceFromOrderIdApi(callApi, callBack, orderId);
   };
 
-  const onClickConfirmWithoutNotification = () => handleOrderConfirmation(false);
-  const onClickConfirmWithNotification = (isStripeCash: boolean) => handleOrderConfirmation(true, false, 0, !!isStripeCash);
+  const onClickConfirmWithoutNotification = () =>
+    handleOrderConfirmation(false);
+  const onClickConfirmWithNotification = (isStripeCash: boolean) =>
+    handleOrderConfirmation(true, false, 0, !!isStripeCash);
 
   const onClickPrint = async (withInvoices?: boolean) => {
     const downloadPdf = (url) => {
@@ -419,7 +487,9 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
   };
 
   const getFormattedDocumentPath = (docType: DOCUMENT_TYPE): string => {
-    const documentPath = isOutgoingPayments ? "supplierPayment" : DOCUMENT_TYPE[docType];
+    const documentPath = isOutgoingPayments
+      ? "supplierPayment"
+      : DOCUMENT_TYPE[docType];
     return documentPath.charAt(0).toUpperCase() + documentPath.slice(1);
   };
 
@@ -429,7 +499,9 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
 
   const filteredReceiptItems = Object.keys(checkedItemsIds)
     .map((key) => {
-      const item = quoteItemValue?.receiptItems?.find((item) => item.id === checkedItemsIds[key]);
+      const item = quoteItemValue?.receiptItems?.find(
+        (item) => item.id === checkedItemsIds[key]
+      );
       const sumApplied = allocatedSums[key] || 0;
       return item ? { ...item, sumApplied } : null;
     })
@@ -491,6 +563,7 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
   const isNewCreation = router?.query?.isNewCreation;
   const isInvoice = docType === DOCUMENT_TYPE.invoice;
   const isDeliveryNote = docType === DOCUMENT_TYPE.deliveryNote;
+  const isProformaInvoice = docType === DOCUMENT_TYPE.proformaInvoice;
   const isQuote = docType === DOCUMENT_TYPE.quote;
   const isOrder = docType === DOCUMENT_TYPE.order;
   const isOutgoingPayments = router.query.isOutgoingPayments === "true";
@@ -501,7 +574,11 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
   const canCancelReceipt = CheckPermission(Permissions.CANCEL_RECEIPT);
 
   const canEditDocument =
-    quoteItemValue?.isEditable && CheckDocumentPermission(docType.toString(), DocumentPermission.EDIT_DOCUMENT);
+    quoteItemValue?.isEditable &&
+    CheckDocumentPermission(
+      docType.toString(),
+      DocumentPermission.EDIT_DOCUMENT
+    );
   const canAddDelivery =
     docType === DOCUMENT_TYPE.quote ||
     docType === DOCUMENT_TYPE.order ||
@@ -510,7 +587,8 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     docType === DOCUMENT_TYPE.deliveryNote ||
     docType === DOCUMENT_TYPE.deliveryNoteRefund;
 
-  const showAddNewItemBtn = canEditDocument && docType !== DOCUMENT_TYPE.receipt;
+  const showAddNewItemBtn =
+    canEditDocument && docType !== DOCUMENT_TYPE.receipt;
 
   const onClickCloseMangerApprovalModal = () => {
     setOpenMangerApprovalModal(false);
@@ -548,12 +626,15 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
             // console.log(`Creating separate conversation for participant ID: ${participantId}`);
             try {
               // Create separate conversation for each manager
-              const { conversation } = await directMessagesService.createConversation({
-                participantIds: [participantId],
-                name: `Quote Approval - ${quoteItemValue?.number || quoteItemValue?.id}`,
-                contextId: quoteItemValue?.id,
-                contextType: 'QUOTE'
-              });
+              const { conversation } =
+                await directMessagesService.createConversation({
+                  participantIds: [participantId],
+                  name: `Quote Approval - ${
+                    quoteItemValue?.number || quoteItemValue?.id
+                  }`,
+                  contextId: quoteItemValue?.id,
+                  contextType: "QUOTE",
+                });
 
               // Send the approval request message
               const messageContent = `📋 Quote Approval Request
@@ -568,17 +649,27 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
                 metadata: { type: "text" },
               });
 
-              console.log(`Separate message sent successfully to participant ${participantId}`);
+              console.log(
+                `Separate message sent successfully to participant ${participantId}`
+              );
             } catch (messageError) {
-              console.error(`Failed to send message to participant ${participantId}:`, messageError);
+              console.error(
+                `Failed to send message to participant ${participantId}:`,
+                messageError
+              );
             }
           } else {
-            console.warn(`Could not get employee details for employeeId: ${managerId}`);
+            console.warn(
+              `Could not get employee details for employeeId: ${managerId}`
+            );
           }
         };
         await getEmployeeApi(callApi, employeeCallBack, managerId);
       } catch (error) {
-        console.error(`Failed to send FrontDesk message to manager ${managerId}:`, error);
+        console.error(
+          `Failed to send FrontDesk message to manager ${managerId}:`,
+          error
+        );
         // Continue anyway - don't block the main approval flow
       }
     }
@@ -599,7 +690,9 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     });
   };
 
-  const [anchorElCloseBtn, setAnchorElCloseBtn] = useState<null | HTMLElement>(null);
+  const [anchorElCloseBtn, setAnchorElCloseBtn] = useState<null | HTMLElement>(
+    null
+  );
   const openCloseBtn = Boolean(anchorElCloseBtn);
 
   const handleCloseBtnClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -612,7 +705,8 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
 
   const isShowCloseButton =
     quoteItemValue?.isCanClose &&
-    ((isOrder && quoteItemValue?.statusTitleText !== StatusTitleText.OrderCanceled) ||
+    ((isOrder &&
+      quoteItemValue?.statusTitleText !== StatusTitleText.OrderCanceled) ||
       isInvoice ||
       isDeliveryNote ||
       isPurchaseOrder ||
@@ -670,7 +764,8 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     }
   };
 
-  const [openExportReceiptPdfModal, setOpenExportReceiptPdfModal] = useState<boolean>(false);
+  const [openExportReceiptPdfModal, setOpenExportReceiptPdfModal] =
+    useState<boolean>(false);
 
   const onOpenExportReceiptPdfModal = () => {
     setOpenExportReceiptPdfModal(true);
@@ -712,8 +807,11 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     });
   };
 
-  const [openCloseOrderNotesModal, setOpenCloseOrderNotesModal] = useState(false);
-  const [onClickCloseOrderCallback, setOnClickCloseOrderCallback] = useState<(() => void) | null>(null);
+  const [openCloseOrderNotesModal, setOpenCloseOrderNotesModal] =
+    useState(false);
+  const [onClickCloseOrderCallback, setOnClickCloseOrderCallback] = useState<
+    (() => void) | null
+  >(null);
 
   const onClickOpenCloseOrderNotesModal = (onClickCloseOrder: () => void) => {
     setOnClickCloseOrderCallback(() => onClickCloseOrder);
@@ -727,9 +825,11 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
   // Send Payment Modal State
   const [openSendPaymentModal, setOpenSendPaymentModal] = useState(false);
   const [isSendToClient, setIsSendToClient] = useState(false);
-  const [isSendOrderReadyToClient, setIsSendOrderReadyToClient] = useState(false);
+  const [isSendOrderReadyToClient, setIsSendOrderReadyToClient] =
+    useState(false);
   const [paymentModalTitle, setPaymentModalTitle] = useState("");
-  const [sendPayment, setSendPayment] = useRecoilState<StatePayment>(sendPaymentState);
+  const [sendPayment, setSendPayment] =
+    useRecoilState<StatePayment>(sendPaymentState);
 
   const onClickCloseSendPaymentModal = () => {
     setOpenSendPaymentModal(false);
@@ -835,6 +935,7 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     onClickSendAndChat,
     canAddDelivery,
     isInvoice,
+    isProformaInvoice,
     isShowCloseButton,
     anchorElCloseBtn,
     handleCloseBtnClose,

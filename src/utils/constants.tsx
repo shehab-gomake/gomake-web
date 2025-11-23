@@ -17,6 +17,7 @@ import {
   ApprovalStatus,
   DELIVERY_NOTE_STATUSES,
   DOCUMENT_TYPE,
+  PROFORMA_INVOICE_STATUSES,
   QUOTE_STATUSES,
 } from "@/pages-components/quotes/enums";
 import { ECalculationLogType } from "@/widgets/product-pricing-widget/enums";
@@ -134,6 +135,28 @@ export const _renderDocumentStatus = (status: number, t: any) => {
   }
 };
 
+// for proforma invoice
+export const _renderProformaInvoiceStatus = (status: number, t: any) => {
+  if (status === PROFORMA_INVOICE_STATUSES.Open) {
+    return t("sales.quote.open");
+  }
+  if (status === PROFORMA_INVOICE_STATUSES.Canceled) {
+    return t("sales.quote.canceled");
+  }
+  if (status === PROFORMA_INVOICE_STATUSES.Created) {
+    return t("sales.quote.created");
+  }
+  if (status === PROFORMA_INVOICE_STATUSES.ClosedAsInvoice) {
+    return t("sales.quote.closedAsInvoice");
+  }
+  if (status === PROFORMA_INVOICE_STATUSES.ClosedByMultiDocuments) {
+    return t("sales.quote.closedByMultiDocuments");
+  }
+  if (status === PROFORMA_INVOICE_STATUSES.ManualClose) {
+    return t("sales.quote.manualClose");
+  }
+};
+
 export const _renderStatus = (
   docType: DOCUMENT_TYPE,
   document: any,
@@ -209,7 +232,11 @@ export const _renderStatus = (
     } else if (
       (document.documentNumbers && document.documentNumbers.length > 0) ||
       (document.secondDocumentNumbers &&
-        document.secondDocumentNumbers.length > 0)
+        document.secondDocumentNumbers.length > 0) ||
+      (document.thirdDocumentNumbers &&
+        document.thirdDocumentNumbers.length > 0) ||
+      (document.fourthDocumentNumbers &&
+        document.fourthDocumentNumbers.length > 0)
     ) {
       const firstDocuments = document.documentNumbers
         ? document.documentNumbers.map((item: any, index: number) => (
@@ -287,6 +314,30 @@ export const _renderStatus = (
         ))
         : [];
 
+      const fourthDocuments = document.fourthDocumentNumbers
+        ? document.fourthDocumentNumbers.map((item: any, index: number) => (
+            <span key={`fourth-${index}`}>
+              <a
+                style={{
+                  minWidth: "auto",
+                  height: "auto",
+                  padding: 0,
+                  color: "var(--theme-secondary-color, #2e3092)",
+                  cursor: "pointer",
+                  textDecoration: "none",
+                }}
+                href={`/${
+                  document.titleFourthDocumentNumber.charAt(0).toLowerCase() +
+                  document.titleFourthDocumentNumber.slice(1)
+                }?Id=${item.documentId}`}
+              >
+                {item.documentNumber}
+              </a>
+              {index < document.fourthDocumentNumbers.length - 1 && ", "}
+            </span>
+          ))
+        : [];
+
       let result: JSX.Element[] = [];
 
       if (firstDocuments.length > 0) {
@@ -312,6 +363,21 @@ export const _renderStatus = (
           <div key="third-documents">
             {t(`documentStatus.${document.titleThirdDocumentNumber}.title`)}:{" "}
             {thirdDocuments}
+          </div>
+        );
+      }
+
+      if (fourthDocuments.length > 0) {
+        result.push(
+          <div
+            key="fourth-documents"
+            style={{
+              color:
+                "var(--theme-table-body-color, var(--theme-text-primary, #2e3092))",
+            }}
+          >
+            {t(`documentStatus.${document.titleFourthDocumentNumber}.title`)}:{" "}
+            {fourthDocuments}
           </div>
         );
       }

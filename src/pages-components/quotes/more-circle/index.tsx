@@ -30,10 +30,10 @@ const MoreMenuWidget = ({
   handleGetTaxConfirmNo,
   onClickOpenMoveOrderToReadyModal,
   onOpenPackagesModal,
-  onClickOpenInventoryIntakeModal,
   onClickSendToCustomerEmail,
   onClickSendToCustomerSMS,
   onClickSendToCustomerWhatsApp,
+  onClickOpenInventoryIntakeModal,
 }: any) => {
   const { classes } = useStyle();
   const { t } = useTranslation();

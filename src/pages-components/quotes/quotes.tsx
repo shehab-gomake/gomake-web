@@ -214,6 +214,7 @@ const QuotesListPageWidget = ({
     isFetching,
     openChangeProductionStatusModal,
     isSelectedCLoseAsDeliveryNote,
+    isSelectedCLoseAsProformaInvoice,
     onClickCloseChangeProductionStatusModal,
     moveOrderToReady,
     onChangeDocumentSearch,
@@ -232,6 +233,7 @@ const QuotesListPageWidget = ({
     isOrder,
     isQuote,
     isDeliveryNote,
+    isProformaInvoice,
     isInvoice,
     deliveryStatuses,
     deliveryStatus,
@@ -311,6 +313,10 @@ const QuotesListPageWidget = ({
     createScheduledReport,
     handlePageChange: handleScheduledReportsPageChange,
     handlePageSizeChangeScheduledReports: handleScheduledReportsPageSizeChange,
+    isEmailComposerOpen,
+    emailData,
+    closeEmailComposer,
+    documentForEmail,
     openPurchaseOrderTypeModal,
     onOpenPurchaseOrderTypeModal,
     onClosePurchaseOrderTypeModal,
@@ -438,7 +444,7 @@ const QuotesListPageWidget = ({
   useEffect(() => {
     const loadDocumentColumnSettings = async () => {
       try {
-        const res = await getDocumentTableSettingsApi(callApi, () => { }, {
+        const res = await getDocumentTableSettingsApi(callApi, () => {}, {
           documentType,
         });
         const saved: ColumnSetting[] = res?.data;
@@ -545,6 +551,7 @@ const QuotesListPageWidget = ({
               handleAccountingStatusChange={handleAccountingStatusChange}
               accountingStatuses={accountingStatuses}
               isDeliveryNote={isDeliveryNote}
+              isProformaInvoice={isProformaInvoice}
               isInvoice={isInvoice}
               deliveryStatus={deliveryStatus}
               setDeliveryStatus={setDeliveryStatus}
@@ -828,7 +835,11 @@ const QuotesListPageWidget = ({
       />
       <GoMakeDeleteModal
         modalType={ModalType.WARNING}
-        title={t("sales.quote.printDeliveryNoteWithPrices")}
+        title={
+          isProformaInvoice
+            ? t("sales.quote.printProformaInvoiceWithPrices")
+            : t("sales.quote.printDeliveryNoteWithPrices")
+        }
         openModal={openPrintPDFModal}
         yesBtn={t("sales.quote.yesBtn")}
         cancelBtn={t("sales.quote.noBtn")}
@@ -854,12 +865,16 @@ const QuotesListPageWidget = ({
         title={
           isSelectedCLoseAsDeliveryNote
             ? "customers.modal.closeOrderAsDeliveryNote"
+            : isSelectedCLoseAsProformaInvoice
+            ? "customers.modal.closeOrderAsProformaInvoice"
             : "customers.modal.closeOrderAsInvoice"
         }
         subTitle={"customers.modal.thisOrderIsAlreadyInProcess"}
         yesBtn={
           isSelectedCLoseAsDeliveryNote
             ? t("customers.modal.closeAsDeliveryNote")
+            : isSelectedCLoseAsProformaInvoice
+            ? t("customers.modal.closeAsProformaInvoice")
             : t("customers.modal.closeAsInvoice")
         }
         openModal={openChangeProductionStatusModal}
@@ -870,6 +885,11 @@ const QuotesListPageWidget = ({
           } else {
             if (isSelectedCLoseAsDeliveryNote) {
               const path = `/deliveryNote?isNewCreation=true&orderId=${selectedDocument?.id}`;
+              window.open(path, "_blank");
+            } else if (isSelectedCLoseAsProformaInvoice) {
+              const path = isOrder
+                ? `/proformaInvoice?isNewCreation=true&orderId=${selectedDocument?.id}`
+                : `/proformaInvoice?isNewCreation=true&deliveryNoteId=${selectedDocument?.id}`;
               window.open(path, "_blank");
             } else {
               const path = isOrder
@@ -1058,6 +1078,16 @@ const QuotesListPageWidget = ({
         printPackingSlip={printPackingSlip}
         isPrintHouseUsePrintNode={isPrintHouseHasPackagingSlipPrinter}
       />
+      {/* FrontDesk Email Composer */}
+      {isEmailComposerOpen && (
+        <FrontDeskEmailComposerWrapper
+          open={isEmailComposerOpen}
+          onClose={closeEmailComposer}
+          emailData={emailData}
+          documentId={documentForEmail?.id}
+          documentType={documentType}
+        />
+      )}
       <PurchaseOrderTypeModal
         open={openPurchaseOrderTypeModal}
         onClose={onClosePurchaseOrderTypeModal}

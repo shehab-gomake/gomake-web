@@ -191,8 +191,10 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
   };
 
   // Quality Issue Modal state and handlers
-  const [openQualityIssueModal, setOpenQualityIssueModal] = useState<boolean>(false);
-  const [selectedMissionForQualityIssue, setSelectedMissionForQualityIssue] = useState<any>(null);
+  const [openQualityIssueModal, setOpenQualityIssueModal] =
+    useState<boolean>(false);
+  const [selectedMissionForQualityIssue, setSelectedMissionForQualityIssue] =
+    useState<any>(null);
 
   const onOpenQualityIssueModal = (mission: any) => {
     setSelectedMissionForQualityIssue(mission);
@@ -205,8 +207,12 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
   };
 
   // Change Status Modal state for quality issue
-  const [openChangeStatusModalForQualityIssue, setOpenChangeStatusModalForQualityIssue] = useState<boolean>(false);
-  const [selectedQuoteIdForQualityIssue, setSelectedQuoteIdForQualityIssue] = useState<string | null>(null);
+  const [
+    openChangeStatusModalForQualityIssue,
+    setOpenChangeStatusModalForQualityIssue,
+  ] = useState<boolean>(false);
+  const [selectedQuoteIdForQualityIssue, setSelectedQuoteIdForQualityIssue] =
+    useState<string | null>(null);
 
   const onClickOpenChangeStatusModalForQualityIssue = (quoteId: string) => {
     setSelectedQuoteIdForQualityIssue(quoteId);
@@ -268,7 +274,9 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
 
     await createQuoteFromQualityIssueApi(callApi, callBack, {
       boardMissionId: selectedMissionForQualityIssue.id,
-      orderItemId: selectedMissionForQualityIssue.orderItemId || selectedMissionForQualityIssue.orderId,
+      orderItemId:
+        selectedMissionForQualityIssue.orderItemId ||
+        selectedMissionForQualityIssue.orderId,
       qualityIssueReason: reason,
     });
   };
@@ -1959,10 +1967,10 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
   }, []);
 
   const ExportJobsTableToExcel = async () => {
-    if (!fromDate && !toDate) {
-      alertFault(t("boardMissions.dateFilterRequired"));
-      return;
-    }
+    // if (!fromDate && !toDate) {
+    //   alertFault(t("boardMissions.dateFilterRequired"));
+    //   return;
+    // }
     const callBack = (res) => {
       if (res?.success) {
         if (res?.data) {
@@ -2042,6 +2050,35 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
       ? Number(router.query.pageSize)
       : pageSize;
 
+    // Check for boardMissionsIds filter when applyBoardMissionsFilter is true
+    let exportBoardMissionsIds: string[] | undefined = undefined;
+    if (router.query.applyBoardMissionsFilter === "1") {
+      // Try to get from sessionStorage first (dashboard filter)
+      const filterKey = "boardMissionsFilterFromDashboard";
+      const storedFilter = sessionStorage.getItem(filterKey);
+      if (storedFilter) {
+        try {
+          const filterData = JSON.parse(storedFilter);
+          if (
+            filterData.boardMissionsIds &&
+            filterData.boardMissionsIds.length > 0
+          ) {
+            exportBoardMissionsIds = filterData.boardMissionsIds;
+          }
+        } catch (e) {
+          // If parsing fails, fall back to state
+        }
+      }
+      // Fall back to state if not found in sessionStorage
+      if (
+        !exportBoardMissionsIds &&
+        boardMissionsIds &&
+        boardMissionsIds.length > 0
+      ) {
+        exportBoardMissionsIds = boardMissionsIds;
+      }
+    }
+
     const data = {
       clientId: router?.query?.clientId || customer?.id,
       agentId: router?.query?.agentId || agent?.id,
@@ -2073,6 +2110,12 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
       pageSize: currentPageSize,
       orderNumber: router?.query?.orderNumber,
       exampleTypes: currentProofTypes,
+      // Include boardMissionsIds when applyBoardMissionsFilter is true
+      ...(router.query.applyBoardMissionsFilter === "1" &&
+      exportBoardMissionsIds &&
+      exportBoardMissionsIds.length > 0
+        ? { boardMissionsIds: exportBoardMissionsIds }
+        : {}),
     };
 
     // Use different API based on whether it's purchase jobs or regular jobs

@@ -316,6 +316,7 @@ const QuoteNewPageWidget = ({
     onClickCloseChangeProductionStatusModal,
     selectedDocument,
     isSelectedCLoseAsDeliveryNote,
+    isSelectedCLoseAsProformaInvoice,
     allClientActiveBudgets,
     moveOrderToReady,
     navigate,
@@ -387,6 +388,10 @@ const QuoteNewPageWidget = ({
     onConfirmVatMismatchModal,
     estimatedProductionDate,
     handleExportToExcel,
+    onClickSendEmailViaComposer,
+    isEmailComposerOpen,
+    emailData,
+    closeEmailComposer,
     isMaterial,
     isMaterialPurchaseOrder,
     isCanIntake,
@@ -1227,12 +1232,16 @@ const QuoteNewPageWidget = ({
         title={
           isSelectedCLoseAsDeliveryNote
             ? "customers.modal.closeOrderAsDeliveryNote"
+            : isSelectedCLoseAsProformaInvoice
+            ? "customers.modal.closeOrderAsProformaInvoice"
             : "customers.modal.closeOrderAsInvoice"
         }
         subTitle={"customers.modal.thisOrderIsAlreadyInProcess"}
         yesBtn={
           isSelectedCLoseAsDeliveryNote
             ? t("customers.modal.closeAsDeliveryNote")
+            : isSelectedCLoseAsProformaInvoice
+            ? t("customers.modal.closeAsProformaInvoice")
             : t("customers.modal.closeAsInvoice")
         }
         openModal={openChangeProductionStatusModal}
@@ -1241,18 +1250,24 @@ const QuoteNewPageWidget = ({
           isMoveToReady
             ? () => moveOrderToReady(moveToReadyOption === "withMessage")
             : () => {
-              if (isSelectedCLoseAsDeliveryNote) {
-                navigate(
-                  `/deliveryNote?isNewCreation=true&orderId=${selectedDocument?.id}`
-                );
-              } else {
-                const path =
-                  documentType === DOCUMENT_TYPE.order
-                    ? `/invoice?isNewCreation=true&orderId=${selectedDocument?.id}`
-                    : `/invoice?isNewCreation=true&deliveryNoteId=${selectedDocument?.id}`;
-                navigate(path);
+                if (isSelectedCLoseAsDeliveryNote) {
+                  navigate(
+                    `/deliveryNote?isNewCreation=true&orderId=${selectedDocument?.id}`
+                  );
+                } else if (isSelectedCLoseAsProformaInvoice) {
+                  const path =
+                    documentType === DOCUMENT_TYPE.order
+                      ? `/proformaInvoice?isNewCreation=true&orderId=${selectedDocument?.id}`
+                      : `/proformaInvoice?isNewCreation=true&deliveryNoteId=${selectedDocument?.id}`;
+                  navigate(path);
+                } else {
+                  const path =
+                    documentType === DOCUMENT_TYPE.order
+                      ? `/invoice?isNewCreation=true&orderId=${selectedDocument?.id}`
+                      : `/invoice?isNewCreation=true&deliveryNoteId=${selectedDocument?.id}`;
+                  navigate(path);
+                }
               }
-            }
         }
       >
         <Stack alignItems={"center"}>

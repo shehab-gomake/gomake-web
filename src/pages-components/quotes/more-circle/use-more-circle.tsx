@@ -27,6 +27,7 @@ import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   closeOrderAsInvoiceOrDeliveryNoteState,
   isSelectedCLoseAsDeliveryNoteState,
+  isSelectedCLoseAsProformaInvoiceState,
 } from "@/pages/customers/customer-states";
 import { PauseIcon } from "@/icons/pause-icon";
 import { ResumeIcon } from "@/icons/resume-icon";
@@ -48,6 +49,7 @@ import { PackageIcon } from "@/icons/package-icon";
 import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
 import { EPreferences } from "@/enums/prefernces";
 import { SendToCustomerSubmenu } from "./send-to-customer-submenu";
+import { CloseDocumentSubmenu } from "./close-document-submenu";
 import { MailIcon } from "./icons/mail";
 
 const useMoreCircle = () => {
@@ -67,6 +69,9 @@ const useMoreCircle = () => {
   const [connectionId] = useRecoilState(fileUploaderConnectionIdState);
   const setIsSelectedCLoseAsDeliveryNote = useSetRecoilState(
     isSelectedCLoseAsDeliveryNoteState
+  );
+  const setIsSelectedCLoseAsProformaInvoice = useSetRecoilState(
+    isSelectedCLoseAsProformaInvoiceState
   );
 
   const setCloseAsInvoiceOrDeliveryNote = useSetRecoilState(
@@ -104,6 +109,7 @@ const useMoreCircle = () => {
     onClickSendToCustomerSMS,
     onClickSendToCustomerWhatsApp,
     classes,
+    onClickOpenInventoryIntakeModal,
   }) => {
     const isEditableDocument = quote?.isEditable;
     const documentPath = DOCUMENT_TYPE[documentType];
@@ -193,11 +199,95 @@ const useMoreCircle = () => {
       EPreferences.ASK_TO_PRINT_WITH_PRICES_IN_DELIVERY_NOTES
     );
 
+    // Close Document Handlers - extracted for better organization
+    const handleCloseAsDeliveryNote = () => {
+      setCloseAsInvoiceOrDeliveryNote(true);
+      if (quote?.productionStatus) {
+        if (quote?.closeOrderNotes?.trim()) {
+          onClickOpenCloseOrderNotesModal(quote, "closeAsDeliveryNote", () =>
+            navigate(`/deliveryNote?isNewCreation=true&orderId=${quote?.id}`)
+          );
+        } else
+          navigate(`/deliveryNote?isNewCreation=true&orderId=${quote?.id}`);
+      } else {
+        onClickOpenChangeProductionStatusModal(quote);
+        setIsSelectedCLoseAsDeliveryNote(true);
+        setIsSelectedCLoseAsProformaInvoice(false);
+      }
+    };
+
+    const handleCloseAsProformaInvoice = () => {
+      if (isOrder) {
+        setCloseAsInvoiceOrDeliveryNote(true);
+        if (quote?.productionStatus) {
+          if (quote?.closeOrderNotes?.trim()) {
+            onClickOpenCloseOrderNotesModal(
+              quote,
+              "closeAsProformaInvoice",
+              () =>
+                navigate(
+                  `/proformaInvoice?isNewCreation=true&orderId=${quote?.id}`
+                )
+            );
+          } else
+            navigate(
+              `/proformaInvoice?isNewCreation=true&orderId=${quote?.id}`
+            );
+        } else {
+          onClickOpenChangeProductionStatusModal(quote);
+          setIsSelectedCLoseAsDeliveryNote(false);
+          setIsSelectedCLoseAsProformaInvoice(true);
+        }
+      } else {
+        navigate(
+          `/proformaInvoice?isNewCreation=true&deliveryNoteId=${quote?.id}`
+        );
+      }
+    };
+
+    const handleCloseAsInvoice = () => {
+      if (isOrder) {
+        setCloseAsInvoiceOrDeliveryNote(true);
+        if (quote?.productionStatus) {
+          if (quote?.closeOrderNotes?.trim()) {
+            onClickOpenCloseOrderNotesModal(quote, "closeAsInvoice", () =>
+              navigate(`/invoice?isNewCreation=true&orderId=${quote?.id}`)
+            );
+          } else navigate(`/invoice?isNewCreation=true&orderId=${quote?.id}`);
+        } else {
+          onClickOpenChangeProductionStatusModal(quote);
+          setIsSelectedCLoseAsDeliveryNote(false);
+          setIsSelectedCLoseAsProformaInvoice(false);
+        }
+      } else if (isDeliveryNote) {
+        navigate(`/invoice?isNewCreation=true&deliveryNoteId=${quote?.id}`);
+      } else {
+        navigate(`/invoice?isNewCreation=true&proformaInvoiceId=${quote?.id}`);
+      }
+    };
+
+    const handleCreateDeliveryNoteRefund = () => {
+      navigate(
+        `/deliveryNoteRefund?isNewCreation=true&documentId=${quote?.id}`
+      );
+    };
+
+    const handleCreateInvoiceRefund = () => {
+      navigate(`/invoiceRefund?isNewCreation=true&documentId=${quote?.id}`);
+    };
+
+    const handleCreatePurchaseInvoiceRefund = () => {
+      navigate(
+        `/purchaseInvoiceRefund?isNewCreation=true&documentId=${quote?.id}`
+      );
+    };
+
     const isQuote = documentType === DOCUMENT_TYPE.quote;
     const isOrder = documentType === DOCUMENT_TYPE.order;
     const isDeliveryNote = documentType === DOCUMENT_TYPE.deliveryNote;
     const isDeliveryNoteRefund =
       documentType === DOCUMENT_TYPE.deliveryNoteRefund;
+    const isProformaInvoice = documentType === DOCUMENT_TYPE.proformaInvoice;
     const isInvoice = documentType === DOCUMENT_TYPE.invoice;
     const isInvoiceRefund = documentType === DOCUMENT_TYPE.invoiceRefund;
     const isPurchaseInvoice = documentType === DOCUMENT_TYPE.purchaseInvoice;
@@ -211,10 +301,16 @@ const useMoreCircle = () => {
       quote?.statusTitleText === StatusTitleText.OrderCanceled;
     const isClosedDeliveryNote =
       quote?.statusTitleText === StatusTitleText.DeliveryNoteClosed;
+    const isClosedProformaInvoice =
+      quote?.statusTitleText === StatusTitleText.ProformaInvoiceClosed;
     const isClosedInvoice =
       quote?.statusTitleText === StatusTitleText.InvoiceClosed;
     const showNewDuplicate =
-      isDeliveryNote || isDeliveryNoteRefund || isInvoice || isInvoiceRefund;
+      isDeliveryNote ||
+      isDeliveryNoteRefund ||
+      isProformaInvoice ||
+      isInvoice ||
+      isInvoiceRefund;
     const isOrdersTracking = pathname === "/ordersTracking";
     const isCanceledPurchaseOrder =
       quote?.statusTitleText === StatusTitleText.PurchaseOrderCanceled;
@@ -241,6 +337,7 @@ const useMoreCircle = () => {
       CheckPermission(Permissions.CAN_OPEN_CLOSED_DOCUMENTS) &&
       ((isOrder && isClosedOrder) ||
         (isDeliveryNote && isClosedDeliveryNote) ||
+        (isProformaInvoice && isClosedProformaInvoice) ||
         (isInvoice && isClosedInvoice));
 
     const isSendOrderReadyToClient = isOrder && quote?.productionStatus;
@@ -316,7 +413,7 @@ const useMoreCircle = () => {
         name: t("sales.quote.loggers"),
       },
       {
-        condition: !isPauseOrder && isDeliveryNote,
+        condition: !isPauseOrder && (isDeliveryNote || isProformaInvoice),
         onClick: () =>
           askToPrintWithPricesInDeliveryNotes
             ? onClickOpenPrintPDFModal(quote)
@@ -326,7 +423,7 @@ const useMoreCircle = () => {
       },
 
       {
-        condition: !isPauseOrder && !isDeliveryNote,
+        condition: !isPauseOrder && !isDeliveryNote && !isProformaInvoice,
         onClick: () =>
           onClickPdf(isReceipt || isSupplierPayments ? quote : quote?.id),
         icon: <PDFIcon color={primaryLavender(500)} />,
@@ -400,69 +497,66 @@ const useMoreCircle = () => {
       },
       {
         condition:
-          !isPauseOrder &&
-          isOrder &&
-          quote?.isCanClose &&
-          !isCanceledOrder &&
-          isEditableDocument,
-        onClick: () => {
-          setCloseAsInvoiceOrDeliveryNote(true); //!new change must check this
-          if (quote?.productionStatus) {
-            if (quote?.closeOrderNotes?.trim()) {
-              onClickOpenCloseOrderNotesModal(
-                quote,
-                "closeAsDeliveryNote",
-                () =>
-                  navigate(
-                    `/deliveryNote?isNewCreation=true&orderId=${quote?.id}`
-                  )
-              );
-            } else
-              navigate(`/deliveryNote?isNewCreation=true&orderId=${quote?.id}`);
-          } else {
-            onClickOpenChangeProductionStatusModal(quote);
-            setIsSelectedCLoseAsDeliveryNote(true);
-          }
-        },
-        icon: <TickIcon color={primaryLavender(500)} />,
-        name: t("sales.quote.closeAsDeliveryNote"),
-        isLink: quote?.productionStatus && !quote?.closeOrderNotes?.trim(),
-        href: `/deliveryNote?isNewCreation=true&orderId=${quote?.id}`,
-      },
-      {
-        condition:
-          ((!isPauseOrder &&
+          (!isPauseOrder &&
             isOrder &&
             quote?.isCanClose &&
-            !isCanceledOrder) ||
-            (isDeliveryNote && quote?.isCanClose)) &&
-          isEditableDocument,
-        onClick: () => {
-          if (isOrder) {
-            setCloseAsInvoiceOrDeliveryNote(true);
-            if (quote?.productionStatus) {
-              if (quote?.closeOrderNotes?.trim()) {
-                onClickOpenCloseOrderNotesModal(quote, "closeAsInvoice", () =>
-                  navigate(`/invoice?isNewCreation=true&orderId=${quote?.id}`)
-                );
-              } else
-                navigate(`/invoice?isNewCreation=true&orderId=${quote?.id}`);
-            } else {
-              onClickOpenChangeProductionStatusModal(quote);
-              setIsSelectedCLoseAsDeliveryNote(false);
+            !isCanceledOrder &&
+            isEditableDocument) ||
+          (isDeliveryNote && quote?.isCanClose && isEditableDocument) ||
+          (isProformaInvoice && quote?.isCanClose && isEditableDocument) ||
+          (isInvoice && quote?.isCanClose && isEditableDocument) ||
+          (isPurchaseInvoice && quote?.isCanClose),
+        component: (closeMenu: () => void) => (
+          <CloseDocumentSubmenu
+            documentType={documentType}
+            document={quote}
+            onCloseDocument={onClickOpenCloseOrderModal}
+            onCloseAsDeliveryNote={
+              isOrder &&
+              quote?.isCanClose &&
+              !isCanceledOrder &&
+              isEditableDocument
+                ? handleCloseAsDeliveryNote
+                : undefined
             }
-          } else {
-            navigate(`/invoice?isNewCreation=true&deliveryNoteId=${quote?.id}`);
-          }
-        },
-        icon: <TickIcon color={primaryLavender(500)} />,
-        name: t("sales.quote.closeAsInvoice"),
-        isLink: isOrder
-          ? quote?.productionStatus && !quote?.closeOrderNotes?.trim()
-          : true,
-        href: isOrder
-          ? `/invoice?isNewCreation=true&orderId=${quote?.id}`
-          : `/invoice?isNewCreation=true&deliveryNoteId=${quote?.id}`,
+            onCloseAsProformaInvoice={
+              (isOrder &&
+                quote?.isCanClose &&
+                !isCanceledOrder &&
+                isEditableDocument) ||
+              (isDeliveryNote && quote?.isCanClose && isEditableDocument)
+                ? handleCloseAsProformaInvoice
+                : undefined
+            }
+            onCloseAsInvoice={
+              ((isOrder && quote?.isCanClose && !isCanceledOrder) ||
+                (isDeliveryNote && quote?.isCanClose) ||
+                (isProformaInvoice && quote?.isCanClose)) &&
+              isEditableDocument
+                ? handleCloseAsInvoice
+                : undefined
+            }
+            onCreateDeliveryNoteRefund={
+              isDeliveryNote && quote?.isCanClose
+                ? handleCreateDeliveryNoteRefund
+                : undefined
+            }
+            onCreateInvoiceRefund={
+              isInvoice && quote?.isCanClose
+                ? handleCreateInvoiceRefund
+                : undefined
+            }
+            onCreatePurchaseInvoiceRefund={
+              isPurchaseInvoice && quote?.isCanClose
+                ? handleCreatePurchaseInvoiceRefund
+                : undefined
+            }
+            onClickOpenCloseOrderNotesModal={onClickOpenCloseOrderNotesModal}
+            menuItemStyle={classes.menuRowStyle}
+            rowTextStyle={classes.rowTextStyle}
+            onCloseParentMenu={closeMenu}
+          />
+        ),
       },
       {
         condition: !isPauseOrder && isOrder && !quote?.productionStatus,
@@ -491,37 +585,6 @@ const useMoreCircle = () => {
         icon: <TickMoveIcon color={primaryLavender(500)} />,
         name: t("sales.quote.purchaseOrders"),
       },
-      {
-        condition: !isPauseOrder && isDeliveryNote && quote?.isCanClose,
-        onClick: () =>
-          navigate(
-            `/deliveryNoteRefund?isNewCreation=true&documentId=${quote?.id}`
-          ),
-        icon: <TickIcon color={primaryLavender(500)} />,
-        name: t("sales.quote.createDeliveryNoteRefund"),
-        isLink: true,
-        href: `/deliveryNoteRefund?isNewCreation=true&documentId=${quote?.id}`,
-      },
-      {
-        condition: !isPauseOrder && isInvoice && quote?.isCanClose,
-        onClick: () =>
-          navigate(`/invoiceRefund?isNewCreation=true&documentId=${quote?.id}`),
-        icon: <TickIcon color={primaryLavender(500)} />,
-        name: t("sales.quote.createInvoiceRefund"),
-        isLink: true,
-        href: `/invoiceRefund?isNewCreation=true&documentId=${quote?.id}`,
-      },
-      {
-        condition: !isPauseOrder && isPurchaseInvoice && quote?.isCanClose,
-        onClick: () =>
-          navigate(
-            `/purchaseInvoiceRefund?isNewCreation=true&documentId=${quote?.id}`
-          ),
-        icon: <TickIcon color={primaryLavender(500)} />,
-        name: t("sales.quote.createPurchaseInvoiceRefund"),
-        isLink: true,
-        href: `/purchaseInvoiceRefund?isNewCreation=true&documentId=${quote?.id}`,
-      },
 
       {
         condition: isInvoice && quote?.isCanGetTaxConfirmationNumber,
@@ -546,6 +609,7 @@ const useMoreCircle = () => {
             quote?.isCanClose &&
             !isCanceledOrder) ||
             (isDeliveryNote && quote?.isCanClose) ||
+            (isProformaInvoice && quote?.isCanClose) ||
             (isInvoice && quote?.isCanClose)) &&
           isEditableDocument &&
           canCloseDocumentManually,
@@ -614,8 +678,8 @@ const useMoreCircle = () => {
           isOrder
             ? onClickOpenIrrelevantModal(quote)
             : quote?.creditCardTotal > 0
-              ? onOpenCancelReceiptModalRefund(quote)
-              : onOpenCancelReceiptModal(quote),
+            ? onOpenCancelReceiptModalRefund(quote)
+            : onOpenCancelReceiptModal(quote),
         icon: <TickCancelIcon color={primaryLavender(500)} />,
         name: t("sales.quote.cancel"),
       },
@@ -627,7 +691,9 @@ const useMoreCircle = () => {
         name: t("sales.quote.cancel"),
       },
       {
-        condition: (isInvoice || isPurchaseInvoice) && quote?.isCanClose,
+        condition:
+          (isInvoice || isProformaInvoice || isPurchaseInvoice) &&
+          quote?.isCanClose,
         onClick: () =>
           navigate(
             isPurchaseInvoice
@@ -641,10 +707,11 @@ const useMoreCircle = () => {
           ? `/receipt?isOutgoingPayments=true&isNewCreation=true&documentNumber=${quote?.number}&ClientId=${quote?.customerId}`
           : `/receipt?isNewCreation=true&documentNumber=${quote?.accountingNumber}&ClientId=${quote?.customerId}`,
       },
-      // !here
       {
         condition:
-          ((!isPauseOrder && isOrder && !isCanceledOrder) || isInvoice) &&
+          ((!isPauseOrder && isOrder && !isCanceledOrder) ||
+            isInvoice ||
+            isProformaInvoice) &&
           quote?.isCanClose &&
           isSendPaymentToClient,
         onClick: () => onClickSendPayment(quote, false),
