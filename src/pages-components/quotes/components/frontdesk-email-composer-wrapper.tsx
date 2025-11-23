@@ -285,6 +285,7 @@ export const FrontDeskEmailComposerWrapper: React.FC<FrontDeskEmailComposerWrapp
       }
 
       // Prepare payload using ConversationComposerService
+      // Don't assign conversation to user - leave it unassigned
       const conversationId = await conversationComposerService.composeAndCreate(accountId, {
         inboxId: senderOption.inboxId,
         contactId: contact.id,
@@ -295,7 +296,7 @@ export const FrontDeskEmailComposerWrapper: React.FC<FrontDeskEmailComposerWrapp
         bccEmails,
         toEmails,
         attachments,
-        assigneeId: currentUser?.id,
+        // assigneeId: undefined, // Leave conversation unassigned
         channelType: ChannelType.EMAIL,
         contentType: "input_email",
         additionalAttributes: {

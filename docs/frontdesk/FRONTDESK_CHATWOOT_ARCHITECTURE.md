@@ -67,13 +67,25 @@ src/widgets/frontdesk/providers/chatwoot/
 │   ├── use-chatwoot-conversations.ts # Conversation management
 │   ├── use-chatwoot-messages.ts      # Message handling
 │   └── ...
-├── views/                             # 6 distinct views
+├── views/                             # 9 distinct views
 │   ├── dashboard-view.tsx            # Stats & activity
 │   ├── my-inbox-view.tsx             # Assigned conversations
 │   ├── all-conversations-view.tsx    # Team conversations
 │   ├── mentions-view.tsx             # Mentions
 │   ├── unattended-view.tsx          # Unassigned
-│   └── channels-view.tsx             # Inbox-specific
+│   ├── channels-view.tsx             # Inbox-specific
+│   ├── settings-view.tsx             # Settings management
+│   ├── oauth-callback-view.tsx       # OAuth callback handler
+│   ├── webhook-test-view.tsx         # Webhook testing
+│   └── settings/                     # Settings subpages
+│       ├── general-settings-subpage.tsx
+│       ├── profile-settings-subpage.tsx
+│       ├── inboxes-subpage.tsx
+│       ├── inbox-detail-settings.tsx
+│       ├── agents-subpage.tsx
+│       ├── teams-subpage.tsx
+│       ├── labels-subpage.tsx
+│       └── tabs/                     # Inbox detail tabs
 ├── utils/                             # Utility functions
 ├── config/                            # Configuration
 └── types/                             # TypeScript types
@@ -81,15 +93,20 @@ src/widgets/frontdesk/providers/chatwoot/
 src/services/frontdesk/api/chatwoot/
 ├── chatwoot.service.ts                # Main aggregator service
 ├── chatwoot-http-client.ts            # Base HTTP client
-├── services/                           # 8 API service groups
-│   ├── chatwoot-profile.service.ts
-│   ├── chatwoot-conversations.service.ts
-│   ├── chatwoot-messages.service.ts
-│   ├── chatwoot-inboxes.service.ts
-│   ├── chatwoot-contacts.service.ts
-│   ├── chatwoot-notifications.service.ts
-│   ├── chatwoot-agents.service.ts
-│   └── chatwoot-teams.service.ts
+├── services/                           # 13 API services (10 main + 3 helpers)
+│   ├── chatwoot-profile.service.ts         # User profile
+│   ├── chatwoot-conversations.service.ts   # Conversation management
+│   ├── chatwoot-messages.service.ts        # Message operations
+│   ├── chatwoot-inboxes.service.ts         # Inbox/channel management
+│   ├── chatwoot-contacts.service.ts        # Contact management
+│   ├── chatwoot-notifications.service.ts   # Notification operations
+│   ├── chatwoot-agents.service.ts          # Agent/user management
+│   ├── chatwoot-teams.service.ts           # Team management
+│   ├── chatwoot-labels.service.ts          # Label management
+│   ├── chatwoot-oauth.service.ts           # OAuth authorization
+│   ├── chatwoot-contact-resolution.service.ts      # Helper: Contact resolution
+│   ├── chatwoot-inbox-resolution.service.ts        # Helper: Inbox resolution
+│   └── chatwoot-conversation-composer.service.ts   # Helper: Compose validation
 └── types/                              # TypeScript types
 
 src/store/frontdesk/atoms/
@@ -132,6 +149,8 @@ const { profile, conversations, selectedAccountId, router } = useChatwootProvide
 - `notifications` - Notification operations
 - `agents` - Agent/user management
 - `teams` - Team management
+- `labels` - Label management
+- `oauth` - OAuth authorization (Gmail/Outlook)
 
 **Usage:**
 
@@ -257,14 +276,19 @@ class ConversationApi extends ApiClient {
 ### ✅ Complete Features
 
 - **Profile Management** - User profile, account switching
-- **Conversation Management** - List, filter, search, pagination
-- **Message Operations** - View, send, delete messages
-- **Inbox Management** - List inboxes, channel support
-- **Contact Management** - List, search, filter contacts
-- **Notifications** - Notification list and management
+- **Conversation Management** - List, filter, search, pagination, labels, status changes
+- **Message Operations** - View, send, delete messages, attachments, translations
+- **Inbox Management** - List, create, update inboxes, channel support, webhooks, agents
+- **Contact Management** - List, search, filter, create, update contacts
+- **Notifications** - Notification list, mark read, unread count, snooze
+- **Agent Management** - List, update agents, availability status, inbox assignments
+- **Team Management** - List, create, update teams, member management
+- **Label Management** - List, create, update, delete labels
+- **OAuth Integration** - Gmail/Outlook channel authorization
 - **Multi-Account Support** - Account switching, scoping
-- **Filtering** - Status, assignee, inbox, team, labels, search
-- **Views** - Dashboard, My Inbox, All Conversations, Mentions, Unattended, Channels
+- **Filtering** - Status, assignee, inbox, team, labels, search, priority
+- **Settings UI** - Account settings, inbox settings (6 tabs), profile settings
+- **Views** - Dashboard, My Inbox, All Conversations, Mentions, Unattended, Channels, Settings, OAuth Callback, Webhook Testing
 
 ### 📋 Available for Enhancement
 
@@ -371,5 +395,5 @@ const inboxes = await chatwootService.inboxes.listAllInboxes();
 
 ---
 
-**Last Updated:** 2025-01-27  
+**Last Updated:** 2025-11-23
 **Maintained By:** FrontDesk Team
