@@ -204,6 +204,7 @@ const AddNewItemModal = ({ openModal, onClose, documentType, getQuote, getCalcul
         onClose={handleCompositeCancel}
         onConfirm={handleCompositeConfirm}
         isLoading={isLoadingCompositeProducts}
+        isSubmitting={isSubmittingComposite}
         compositeProducts={compositeProducts}
         quantityMultiplier={quantityMultiplier}
         mainJobName={mainJobName}

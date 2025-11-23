@@ -591,6 +591,7 @@ const QuoteWidget = ({ isMobileScreen = false, title }: QuoteWidgetProps) => {
         onClose={handleCompositeCancel}
         onConfirm={handleCompositeConfirm}
         isLoading={isLoadingCompositeProducts}
+        isSubmitting={isSubmittingComposite}
         compositeProducts={compositeProducts}
         quantityMultiplier={quantityMultiplier}
         mainJobName={mainJobName}
