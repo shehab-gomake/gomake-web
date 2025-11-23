@@ -15,6 +15,7 @@ interface CompositeProductsDialogProps {
   onClose: () => void;
   onConfirm: () => void;
   isLoading: boolean;
+  isSubmitting?: boolean;
   compositeProducts: CompositeProduct[];
   quantityMultiplier: number;
   mainJobName: string;
@@ -35,6 +36,7 @@ const CompositeProductsDialog = ({
   onClose,
   onConfirm,
   isLoading,
+  isSubmitting = false,
   compositeProducts,
   quantityMultiplier,
   mainJobName,
@@ -46,6 +48,8 @@ const CompositeProductsDialog = ({
 }: CompositeProductsDialogProps) => {
   const { t } = useTranslation();
   const { secondColor } = useGomakeTheme();
+  const direction: "rtl" | "ltr" = t("direction");
+  const isRTL = direction === "rtl";
 
   return (
     <GoMakeDialog
@@ -56,6 +60,9 @@ const CompositeProductsDialog = ({
       cancelButtonLabel={t("modal.cancel")}
       onPrimaryAction={onConfirm}
       onCancel={onClose}
+      primaryButtonLoading={isSubmitting}
+      primaryButtonDisabled={isSubmitting}
+      cancelButtonDisabled={isSubmitting}
       maxWidth="md"
       customStyles={{
         primaryButton: {
@@ -296,7 +303,15 @@ const CompositeProductsDialog = ({
                   >
                     <div style={{ fontWeight: 500 }}>
                       {t("products.addProduct.admin.quantityLabel")}
-                      <span style={{ color: "red", marginLeft: 4 }}>*</span>
+                      <span
+                        style={{
+                          color: "red",
+                          marginLeft: isRTL ? 0 : 4,
+                          marginRight: isRTL ? 4 : 0,
+                        }}
+                      >
+                        *
+                      </span>
                     </div>
                     <GomakeTextInput
                       value={product.quantity.toString()}

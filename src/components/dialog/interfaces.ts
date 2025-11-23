@@ -113,8 +113,15 @@ export interface GoMakeDialogProps extends Omit<DialogProps, "onClose" | "title"
   hidePrimaryButton?: boolean;
 
   /**
+   * Whether to disable the cancel button
+   * @default false
+   */
+  cancelButtonDisabled?: boolean;
+
+  /**
    * Additional custom buttons to display in footer (left side)
    */
   additionalButtons?: ReactNode;
 }
 
+    
