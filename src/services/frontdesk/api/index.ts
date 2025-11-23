@@ -13,3 +13,6 @@ export * from './notifications.service';
 
 // Export Chatwoot integration
 export * from './chatwoot';
+
+// Export utilities
+export * from '../utils/email-validation.utils';

@@ -7,7 +7,14 @@
 
 import { useState, useCallback, useMemo } from "react";
 import { useRecoilValue } from "recoil";
-import { chatwootService } from "@/services/frontdesk";
+import {
+  chatwootService,
+  contactResolutionService,
+  conversationComposerService,
+  looksLikeEmail,
+  looksLikePhone,
+  validateEmails,
+} from "@/services/frontdesk";
 import { chatwootSelectedAccountAtom, chatwootProfileAtom } from "@/store/frontdesk/atoms/chatwoot.atoms";
 import { useGomakeAxios } from "@/hooks/use-gomake-axios";
 import { getAndSetClientContacts } from "@/services/hooks/cart-side/customers/get-client-contacts";
@@ -17,21 +24,15 @@ import type {
   CreateConversationPayload,
   getChannelRequirements,
 } from "@/services/frontdesk/api/chatwoot/types/compose.types";
-import type { ContactDetail, ContactCreatePayload, ContactUpdatePayload } from "@/services/frontdesk/api/chatwoot/types/contacts.types";
+import type { ContactDetail, ContactCreatePayload } from "@/services/frontdesk/api/chatwoot/types/contacts.types";
 import { extractContactPayload } from "@/services/frontdesk/api/chatwoot/types/contacts.types";
 import type { ContactableInbox } from "@/services/frontdesk/api/chatwoot/types/inboxes.types";
 import { getChannelRequirements as getReqs } from "@/services/frontdesk/api/chatwoot/types/compose.types";
 import { getCapitalizedNameFromEmail } from "../utils/contact-utils";
+import type { GomakeContact } from "@/services/frontdesk/api/chatwoot/services/chatwoot-contact-resolution.service";
 
-// Extended contact type with gomake contact DTO and customer info
-export interface GomakeContact extends ContactDetail {
-  gomake_contact_id?: string; // ID from gomake CRM system (contact DTO id)
-  gomake_customer_id?: string; // Customer ID from gomake CRM system
-  gomake_customer_name?: string; // Customer name for display
-  gomake_client_code?: string; // Client code from gomake CRM system (maps to gomake_client_code custom attribute)
-  gomake_agent_id?: string; // Agent ID from gomake CRM system
-  gomake_is_main_contact?: boolean; // Whether this is the main contact for the customer
-}
+// Re-export GomakeContact for convenience
+export type { GomakeContact };
 
 // Debounce utility
 function debounce<T extends (...args: any[]) => any>(func: T, wait: number): T {
@@ -42,24 +43,6 @@ function debounce<T extends (...args: any[]) => any>(func: T, wait: number): T {
   }) as T;
 }
 
-/**
- * Check if query looks like an email address
- */
-function looksLikeEmail(query: string): boolean {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(query.trim());
-}
-
-/**
- * Check if query looks like a phone number
- */
-function looksLikePhone(query: string): boolean {
-  // Remove common phone formatting characters
-  const cleaned = query.trim().replace(/[\s\-\(\)]/g, "");
-  // Check if it starts with + and has digits, or just has enough digits
-  return /^\+?\d{7,}$/.test(cleaned);
-}
-
 export interface UseComposeConversationOptions {
   /** Account ID to use for operations */
   accountId: number | null;
@@ -67,214 +50,6 @@ export interface UseComposeConversationOptions {
   onSuccess?: (conversationId: number) => void;
   /** Callback on error */
   onError?: (error: Error) => void;
-}
-
-/**
- * Sync Chatwoot contact with GoMake contact data
- * Compares existing Chatwoot contact with fresh GoMake data and updates if needed
- * 
- * @param accountId - Chatwoot account ID
- * @param chatwootContactId - Existing Chatwoot contact ID
- * @param gomakeContact - Fresh contact data from GoMake
- * @returns Updated ContactDetail
- */
-async function syncContactWithGomakeData(
-  accountId: number,
-  chatwootContactId: number,
-  gomakeContact: GomakeContact
-): Promise<ContactDetail> {
-  try {
-    // Fetch current Chatwoot contact
-    const currentContact = await chatwootService.contacts.getContactDetails(
-      accountId,
-      chatwootContactId
-    );
-
-    // Check if update is needed
-    const currentCustomAttrs = (currentContact.custom_attributes || {}) as Record<string, unknown>;
-    
-    // Build expected values from GoMake contact
-    const expectedCustomAttrs: Record<string, unknown> = {
-      ...(gomakeContact.gomake_contact_id && { gomake_contact_id: gomakeContact.gomake_contact_id }),
-      ...(gomakeContact.gomake_customer_id && { gomake_customer_id: gomakeContact.gomake_customer_id }),
-      ...(gomakeContact.gomake_client_code && { gomake_client_code: gomakeContact.gomake_client_code }),
-      ...(gomakeContact.gomake_agent_id && { gomake_agent_id: gomakeContact.gomake_agent_id }),
-      gomake_is_main_contact: gomakeContact.gomake_is_main_contact || false,
-    };
-
-    // Check if basic fields or custom attributes changed
-    const nameChanged = currentContact.name !== gomakeContact.name;
-    const emailChanged = currentContact.email !== gomakeContact.email;
-    const phoneChanged = currentContact.phone_number !== gomakeContact.phone_number;
-    
-    const customAttrsChanged = 
-      currentCustomAttrs.gomake_contact_id !== expectedCustomAttrs.gomake_contact_id ||
-      currentCustomAttrs.gomake_customer_id !== expectedCustomAttrs.gomake_customer_id ||
-      currentCustomAttrs.gomake_client_code !== expectedCustomAttrs.gomake_client_code ||
-      currentCustomAttrs.gomake_agent_id !== expectedCustomAttrs.gomake_agent_id ||
-      currentCustomAttrs.gomake_is_main_contact !== expectedCustomAttrs.gomake_is_main_contact;
-
-    if (nameChanged || emailChanged || phoneChanged || customAttrsChanged) {
-      console.log(
-        `[syncContactWithGomakeData] Contact data changed for Chatwoot ID ${chatwootContactId}, updating...`,
-        {
-          nameChanged: nameChanged ? `"${currentContact.name}" → "${gomakeContact.name}"` : null,
-          emailChanged: emailChanged ? `"${currentContact.email}" → "${gomakeContact.email}"` : null,
-          phoneChanged: phoneChanged ? `"${currentContact.phone_number}" → "${gomakeContact.phone_number}"` : null,
-          customAttrsChanged,
-        }
-      );
-
-      const updatePayload: ContactUpdatePayload = {};
-
-      if (nameChanged) {
-        updatePayload.name = gomakeContact.name;
-      }
-      if (emailChanged) {
-        updatePayload.email = gomakeContact.email;
-      }
-      if (phoneChanged) {
-        updatePayload.phone_number = gomakeContact.phone_number;
-      }
-      if (customAttrsChanged) {
-        updatePayload.custom_attributes = expectedCustomAttrs;
-      }
-
-      // Update contact in Chatwoot
-      const updatedContact = await chatwootService.contacts.updateContact(
-        accountId,
-        chatwootContactId,
-        updatePayload
-      );
-
-      console.log(`[syncContactWithGomakeData] Contact ${chatwootContactId} synced successfully`);
-      return updatedContact;
-    } else {
-      console.log(
-        `[syncContactWithGomakeData] Contact data unchanged for Chatwoot ID ${chatwootContactId}, skipping sync`
-      );
-      return currentContact;
-    }
-  } catch (error) {
-    console.error(`[syncContactWithGomakeData] Failed to sync contact: ${error}`);
-    // Return the contact as-is if sync fails - don't block the flow
-    return {
-      id: chatwootContactId,
-      name: gomakeContact.name,
-      email: gomakeContact.email,
-      phone_number: gomakeContact.phone_number,
-      custom_attributes: {
-        ...(gomakeContact.gomake_contact_id && { gomake_contact_id: gomakeContact.gomake_contact_id }),
-        ...(gomakeContact.gomake_customer_id && { gomake_customer_id: gomakeContact.gomake_customer_id }),
-        ...(gomakeContact.gomake_client_code && { gomake_client_code: gomakeContact.gomake_client_code }),
-        ...(gomakeContact.gomake_agent_id && { gomake_agent_id: gomakeContact.gomake_agent_id }),
-        gomake_is_main_contact: gomakeContact.gomake_is_main_contact || false,
-      },
-    } as ContactDetail;
-  }
-}
-
-/**
- * Helper function to find existing contact by email or create new one
- * Implements the "find-or-create" pattern with 422 error recovery
- * 
- * @param accountId - Chatwoot account ID
- * @param createPayload - Contact creation payload
- * @returns ContactDetail if found/created, null otherwise
- */
-async function findOrCreateContact(
-  accountId: number,
-  createPayload: ContactCreatePayload
-): Promise<ContactDetail | null> {
-  const logger = { log: console.log };
-  let contactToReturn: ContactDetail | null = null;
-
-  // Step 1: If email is provided, search for existing contact first
-  if (createPayload.email?.trim()) {
-    try {
-      const searchResults = await chatwootService.contacts.searchContacts(
-        accountId,
-        createPayload.email.trim()
-      );
-
-      // Find exact email match (case-insensitive)
-      const exactMatch = searchResults.payload?.find(
-        (c) => c.email?.toLowerCase() === createPayload.email?.toLowerCase()
-      );
-
-      if (exactMatch?.id) {
-        logger.log(
-          `[findOrCreateContact] Found existing contact with email ${createPayload.email}, ID: ${exactMatch.id}`
-        );
-        return {
-          id: exactMatch.id,
-          name: exactMatch.name,
-          email: exactMatch.email,
-          phone_number: exactMatch.phone_number,
-          thumbnail: exactMatch.thumbnail,
-          additional_attributes: exactMatch.additional_attributes,
-        } as ContactDetail;
-      }
-    } catch (searchError) {
-      // Log search error but continue to creation attempt
-      console.warn(
-        `[findOrCreateContact] Failed to search for existing contact: ${searchError}`
-      );
-    }
-  }
-
-  // Step 2: Try to create new contact
-  try {
-    const createResponse = await chatwootService.contacts.createContact(accountId, createPayload);
-
-    // createContact returns ContactDetail directly
-    contactToReturn = createResponse;
-  } catch (createError: any) {
-    // Step 3: Handle 422 "Email has already been taken" by searching again
-    if (createError?.status === 422 && createPayload.email?.trim()) {
-      console.warn(
-        `[findOrCreateContact] Contact creation failed with 422, attempting to find existing contact by email`
-      );
-
-      try {
-        const searchResults = await chatwootService.contacts.searchContacts(
-          accountId,
-          createPayload.email.trim()
-        );
-
-        // Find exact email match
-        const exactMatch = searchResults.payload?.find(
-          (c) => c.email?.toLowerCase() === createPayload.email?.toLowerCase()
-        );
-
-        if (exactMatch?.id) {
-          contactToReturn = {
-            id: exactMatch.id,
-            name: exactMatch.name,
-            email: exactMatch.email,
-            phone_number: exactMatch.phone_number,
-            thumbnail: exactMatch.thumbnail,
-            additional_attributes: exactMatch.additional_attributes,
-          } as ContactDetail;
-
-          logger.log(
-            `[findOrCreateContact] Successfully recovered by finding existing contact ID: ${exactMatch.id}`
-          );
-        } else {
-          // Couldn't find the contact even after 422 error - re-throw
-          throw createError;
-        }
-      } catch (fallbackError) {
-        // If fallback search also fails, throw the original creation error
-        throw createError;
-      }
-    } else {
-      // Not a 422 error or no email - re-throw
-      throw createError;
-    }
-  }
-
-  return contactToReturn;
 }
 
 export function useComposeConversation(options?: UseComposeConversationOptions) {
@@ -547,9 +322,9 @@ export function useComposeConversation(options?: UseComposeConversationOptions) 
             console.log(
               `[useComposeConversation] Contact has Chatwoot ID ${contact.id} and gomake_contact_id ${contact.gomake_contact_id}, syncing with GoMake data...`
             );
-            chatwootContact = await syncContactWithGomakeData(
+            chatwootContact = await contactResolutionService.syncContactWithGomakeData(
               accountId,
-              contact.id,
+              contact.id!,
               contact
             );
           } else {
@@ -601,7 +376,7 @@ export function useComposeConversation(options?: UseComposeConversationOptions) 
                 phone_number: contact.phone_number || undefined,
               };
 
-              chatwootContact = await findOrCreateContact(accountId, createPayload);
+              chatwootContact = await contactResolutionService.findOrCreateContact(accountId, createPayload);
             }
           } catch (searchError) {
             console.error("[useComposeConversation] Failed to search Chatwoot contacts:", searchError);
@@ -617,14 +392,14 @@ export function useComposeConversation(options?: UseComposeConversationOptions) 
               // Fallback to phone number or default
               contactName = contact.phone_number || "Unnamed Contact";
             }
-            
+
             const createPayload: ContactCreatePayload = {
               name: contactName,
               email: contact.email || undefined,
               phone_number: contact.phone_number || undefined,
             };
 
-            chatwootContact = await findOrCreateContact(accountId, createPayload);
+            chatwootContact = await contactResolutionService.findOrCreateContact(accountId, createPayload);
           }
         }
         // If contact has gomake_contact_id, search Chatwoot for it
@@ -656,11 +431,11 @@ export function useComposeConversation(options?: UseComposeConversationOptions) 
             console.log(
               `[useComposeConversation] Found existing contact in Chatwoot (ID: ${foundContact.id}), syncing with GoMake data...`
             );
-            
+
             // Sync the contact with latest GoMake data before using it
-            chatwootContact = await syncContactWithGomakeData(
+            chatwootContact = await contactResolutionService.syncContactWithGomakeData(
               accountId,
-              foundContact.id,
+              foundContact.id!,
               contact
             );
           } else if (foundContacts.length === 0) {
@@ -670,7 +445,7 @@ export function useComposeConversation(options?: UseComposeConversationOptions) 
             if (!contactName || contactName === contact.email) {
               contactName = contact.email ? getCapitalizedNameFromEmail(contact.email) : (contact.phone_number || "Unnamed Contact");
             }
-            
+
             const createPayload: ContactCreatePayload = {
               name: contactName,
               email: contact.email,
@@ -693,18 +468,18 @@ export function useComposeConversation(options?: UseComposeConversationOptions) 
               },
             };
 
-            chatwootContact = await findOrCreateContact(accountId, createPayload);
+            chatwootContact = await contactResolutionService.findOrCreateContact(accountId, createPayload);
           } else {
             // Multiple found (shouldn't happen, but handle it)
             console.warn(
               `[useComposeConversation] Multiple contacts found with gomake_contact_id ${contact.gomake_contact_id}, using first one and syncing`
             );
             const foundContact = foundContacts[0];
-            
+
             // Sync the first contact with latest GoMake data
-            chatwootContact = await syncContactWithGomakeData(
+            chatwootContact = await contactResolutionService.syncContactWithGomakeData(
               accountId,
-              foundContact.id,
+              foundContact.id!,
               contact
             );
           }
@@ -715,7 +490,7 @@ export function useComposeConversation(options?: UseComposeConversationOptions) 
           if (!contactName || contactName === contact.email) {
             contactName = contact.email ? getCapitalizedNameFromEmail(contact.email) : (contact.phone_number || "Unnamed Contact");
           }
-          
+
           const createPayload: ContactCreatePayload = {
             name: contactName,
             email: contact.email,
@@ -735,7 +510,7 @@ export function useComposeConversation(options?: UseComposeConversationOptions) 
             },
           };
 
-          chatwootContact = await findOrCreateContact(accountId, createPayload);
+          chatwootContact = await contactResolutionService.findOrCreateContact(accountId, createPayload);
         }
 
         if (chatwootContact && chatwootContact.id) {
@@ -850,7 +625,7 @@ export function useComposeConversation(options?: UseComposeConversationOptions) 
   }, [formState]);
 
   /**
-   * Prepare payload for conversation creation
+   * Prepare payload for conversation creation using ConversationComposerService
    */
   const preparePayload = useCallback((): FormData | CreateConversationPayload => {
     const { contact, selectedContactableInbox, message, subject, ccEmails, bccEmails, attachments } =
@@ -860,77 +635,18 @@ export function useComposeConversation(options?: UseComposeConversationOptions) 
       throw new Error("Contact and inbox are required");
     }
 
-    const hasAttachments = attachments.length > 0;
-    const channelType = selectedContactableInbox.inbox.channel_type;
-
-    if (hasAttachments) {
-      // Use FormData for attachments
-      const formData = new FormData();
-      formData.append("inbox_id", selectedContactableInbox.inbox.id.toString());
-      formData.append("contact_id", contact.id.toString());
-      formData.append("source_id", selectedContactableInbox.source_id);
-      formData.append("status", "open");
-
-      // Auto-assign to current user
-      if (currentUser?.id) {
-        formData.append("assignee_id", currentUser.id.toString());
-      }
-
-      // Message
-      if (message) {
-        formData.append("message[content]", message);
-      }
-
-      // Email-specific fields
-      if (channelType === "Channel::Email") {
-        if (subject) {
-          formData.append("additional_attributes[mail_subject]", subject);
-        }
-        if (ccEmails) {
-          formData.append("message[cc_emails]", ccEmails);
-        }
-        if (bccEmails) {
-          formData.append("message[bcc_emails]", bccEmails);
-        }
-      }
-
-      // Attachments
-      attachments.forEach((file) => {
-        formData.append("message[attachments][]", file);
-      });
-
-      return formData;
-    } else {
-      // Use JSON for no attachments
-      const payload: CreateConversationPayload = {
-        inbox_id: selectedContactableInbox.inbox.id,
-        contact_id: contact.id,
-        source_id: selectedContactableInbox.source_id,
-        status: "open",
-        ...(currentUser?.id && { assignee_id: currentUser.id }),
-      };
-
-      // Message
-      if (message || ccEmails || bccEmails) {
-        payload.message = {
-          content: message,
-        };
-
-        if (channelType === "Channel::Email") {
-          if (ccEmails) payload.message.cc_emails = ccEmails;
-          if (bccEmails) payload.message.bcc_emails = bccEmails;
-        }
-      }
-
-      // Email subject
-      if (channelType === "Channel::Email" && subject) {
-        payload.additional_attributes = {
-          mail_subject: subject,
-        };
-      }
-
-      return payload;
-    }
+    return conversationComposerService.prepareConversationPayload({
+      inboxId: selectedContactableInbox.inbox.id,
+      contactId: contact.id,
+      sourceId: selectedContactableInbox.source_id,
+      message,
+      subject,
+      ccEmails,
+      bccEmails,
+      attachments,
+      assigneeId: currentUser?.id,
+      channelType: selectedContactableInbox.inbox.channel_type,
+    });
   }, [formState, currentUser]);
 
   /**
@@ -952,7 +668,7 @@ export function useComposeConversation(options?: UseComposeConversationOptions) 
   }, []);
 
   /**
-   * Submit form and create conversation
+   * Submit form and create conversation using ConversationComposerService
    */
   const submit = useCallback(async (): Promise<number | null> => {
     if (!accountId) {
@@ -968,13 +684,7 @@ export function useComposeConversation(options?: UseComposeConversationOptions) 
     setIsSubmitting(true);
     try {
       const payload = preparePayload();
-      const response = await chatwootService.conversations.createConversation(accountId, payload);
-
-      // Extract conversation from response
-      // Chatwoot returns conversation directly (not wrapped in data/payload)
-      // But also check for wrapped formats for compatibility
-      const conversation = response.data || response.payload || response;
-      const conversationId = conversation?.id;
+      const conversationId = await conversationComposerService.createConversation(accountId, payload);
 
       if (conversationId) {
         options?.onSuccess?.(conversationId);
@@ -983,7 +693,7 @@ export function useComposeConversation(options?: UseComposeConversationOptions) 
         return conversationId;
       }
 
-      console.error("[useComposeConversation] No conversation ID in response:", response);
+      console.error("[useComposeConversation] Failed to create conversation: No conversation ID returned");
       return null;
     } catch (error) {
       console.error("[useComposeConversation] Failed to create conversation:", error);
@@ -1019,13 +729,4 @@ export function useComposeConversation(options?: UseComposeConversationOptions) 
     submit,
     resetForm,
   };
-}
-
-/**
- * Validate comma-separated email addresses
- */
-function validateEmails(emails: string): boolean {
-  const emailList = emails.split(",").map((e) => e.trim());
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailList.every((email) => emailRegex.test(email));
 }
