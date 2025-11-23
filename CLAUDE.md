@@ -157,25 +157,35 @@ providers/{name}/
 ```
 providers/chatwoot/
 ├── chatwoot-provider-view.tsx          # Main router
-├── views/                              # 6 distinct views
+├── views/                              # 9 distinct views
 │   ├── dashboard-view.tsx              # Stats & activity
 │   ├── my-inbox-view.tsx               # Assigned conversations
 │   ├── all-conversations-view.tsx      # Team conversations
 │   ├── mentions-view.tsx               # Mentions
 │   ├── unattended-view.tsx             # Unassigned
-│   └── channels-view.tsx               # Inbox-specific
-├── components/                         # 30+ UI components
-├── hooks/                              # 10+ domain hooks
+│   ├── channels-view.tsx               # Inbox-specific
+│   ├── settings-view.tsx               # Settings management
+│   ├── oauth-callback-view.tsx         # OAuth callback handler
+│   ├── webhook-test-view.tsx           # Webhook testing
+│   └── settings/                       # Settings subpages (7 pages)
+├── components/                         # 40+ UI components
+├── hooks/                              # 30+ hooks
 │   ├── use-chatwoot-provider.ts        # Main orchestrator
 │   ├── use-chatwoot-conversations.ts   # Conversation management
 │   ├── use-chatwoot-messages.ts        # Message handling
 │   ├── use-chatwoot-inboxes.ts         # Channel/inbox management
-│   └── core/                           # Reusable base hooks
+│   ├── actions/                        # Action hooks
+│   ├── core/                           # Reusable base hooks
+│   └── resources/                      # Resource management hooks
+├── config/                             # Channel features, inbox settings
+├── contexts/                           # React contexts
 └── utils/                              # Filter, validation, helpers
 ```
 
 **Services (`src/services/frontdesk/api/chatwoot/`):**
-- 8 API service groups: profile, conversations, messages, inboxes, notifications, contacts, agents, teams
+- 13 API services (10 main + 3 helpers)
+- **Main services:** profile, conversations, messages, inboxes, notifications, contacts, agents, teams, labels, oauth
+- **Helper services:** contact-resolution, inbox-resolution, conversation-composer
 - Base URL: `http://localhost:8080/api/v1/`
 - All operations are account-scoped (require `accountId`)
 - OpenAPI-generated client available in `@/chatwoot` (for reference)
@@ -240,15 +250,15 @@ import {
   ticketSocketService,    // WebSocket for Tickets
   directMessagesService,  // REST API for DMs
   ticketsService,         // REST API for Tickets
-  chatwootService         // REST API for Chatwoot (8 service groups)
+  chatwootService         // REST API for Chatwoot (10 main services + 3 helpers)
 } from '@/services/frontdesk';
 ```
 
 ### Chatwoot Service Usage
 ```typescript
-// Chatwoot service has 8 specialized sub-services
-const { profile, conversations, messages, inboxes,
-        notifications, contacts, agents, teams } = chatwootService;
+// Chatwoot service has 10 specialized sub-services
+const { profile, conversations, messages, inboxes, notifications,
+        contacts, agents, teams, labels, oauth } = chatwootService;
 
 // Example: Fetch conversations
 const convos = await chatwootService.conversations.listConversations(

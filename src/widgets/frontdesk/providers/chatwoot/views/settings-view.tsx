@@ -11,8 +11,9 @@ import { useTheme } from "@mui/material/styles";
 import { useChatwootProvider } from "../hooks/use-chatwoot-provider";
 import { useChatwootPermissions } from "../hooks/use-chatwoot-permissions";
 import { useChatwootWarnings } from "../hooks/use-chatwoot-warnings";
-import { VIEW_PERMISSIONS } from "../constants/permissions.constants";
+import { VIEW_PERMISSIONS, SETTINGS_PERMISSIONS } from "../constants/permissions.constants";
 import { ChatwootSettingsSubpage } from "@/widgets/frontdesk/routing/types";
+import type { PermissionConfig } from "../constants/permissions.constants";
 import {
   People as AgentsIcon,
   Inbox as InboxesIcon,
@@ -39,6 +40,7 @@ interface SettingsMenuItem {
   subpage: ChatwootSettingsSubpage;
   label: string;
   icon: React.ReactNode;
+  permissionConfig?: PermissionConfig; // Optional permission check - if undefined, accessible to all
 }
 
 const SETTINGS_MENU_ITEMS: SettingsMenuItem[] = [
@@ -46,41 +48,49 @@ const SETTINGS_MENU_ITEMS: SettingsMenuItem[] = [
     subpage: ChatwootSettingsSubpage.AGENTS,
     label: "Agents",
     icon: <AgentsIcon />,
+    permissionConfig: SETTINGS_PERMISSIONS.agents, // Administrator only
   },
   {
     subpage: ChatwootSettingsSubpage.INBOXES,
     label: "Inboxes",
     icon: <InboxesIcon />,
+    permissionConfig: SETTINGS_PERMISSIONS.inboxes, // Administrator only
   },
   {
     subpage: ChatwootSettingsSubpage.TEAMS,
     label: "Teams",
     icon: <TeamsIcon />,
+    permissionConfig: SETTINGS_PERMISSIONS.teams, // Administrator only
   },
   {
     subpage: ChatwootSettingsSubpage.LABELS,
     label: "Labels",
     icon: <LabelsIcon />,
+    permissionConfig: SETTINGS_PERMISSIONS.labels, // Administrator only
   },
   {
     subpage: ChatwootSettingsSubpage.WARNINGS,
     label: "Warnings",
     icon: <WarningIcon />,
+    // No permission config - accessible to all
   },
   {
     subpage: ChatwootSettingsSubpage.PROFILE,
     label: "Profile Settings",
     icon: <ProfileIcon />,
+    // No permission config - accessible to all (uses VIEW_PERMISSIONS.settings which includes agents)
   },
   {
     subpage: ChatwootSettingsSubpage.WEBHOOK_TEST,
     label: "Webhook Test",
     icon: <WebhookIcon />,
+    // No permission config - accessible to all
   },
   {
     subpage: ChatwootSettingsSubpage.OLD_FRONTDESK,
     label: "Old FrontDesk",
     icon: <HistoryIcon />,
+    // No permission config - accessible to all
   },
 ];
 
@@ -102,12 +112,71 @@ export const SettingsView: React.FC = () => {
     }
   }, [canAccessSettings, chatwootRouter]);
 
-  // Get current subpage or default to AGENTS
-  const currentSubpage = chatwootRouter.currentSettingsSubpage || ChatwootSettingsSubpage.AGENTS;
+  // Filter menu items based on permissions
+  const visibleMenuItems = React.useMemo(() => {
+    return SETTINGS_MENU_ITEMS.filter((item) => {
+      // If no permission config, item is accessible to all
+      if (!item.permissionConfig) {
+        return true;
+      }
+      // Check if user has permission to access this item
+      return canAccess(item.permissionConfig);
+    });
+  }, [canAccess]);
+
+  // Get the first accessible subpage (prefer WARNINGS, then PROFILE, then first item)
+  const getFirstAccessibleSubpage = React.useCallback((): ChatwootSettingsSubpage => {
+    const warningsItem = visibleMenuItems.find(
+      (item) => item.subpage === ChatwootSettingsSubpage.WARNINGS
+    );
+    if (warningsItem) return ChatwootSettingsSubpage.WARNINGS;
+
+    const profileItem = visibleMenuItems.find(
+      (item) => item.subpage === ChatwootSettingsSubpage.PROFILE
+    );
+    if (profileItem) return ChatwootSettingsSubpage.PROFILE;
+
+    return visibleMenuItems[0]?.subpage || ChatwootSettingsSubpage.WARNINGS;
+  }, [visibleMenuItems]);
+
+  // Determine current subpage: use router value if accessible, otherwise use first accessible
+  const currentSubpage = React.useMemo(() => {
+    const routerSubpage = chatwootRouter.currentSettingsSubpage;
+    if (routerSubpage) {
+      // Check if router subpage is accessible
+      const isAccessible = visibleMenuItems.some((item) => item.subpage === routerSubpage);
+      if (isAccessible) {
+        return routerSubpage;
+      }
+    }
+    // Router subpage not accessible or not set - use first accessible
+    return getFirstAccessibleSubpage();
+  }, [chatwootRouter.currentSettingsSubpage, visibleMenuItems, getFirstAccessibleSubpage]);
+
+  // Redirect if current router subpage is not accessible
+  useEffect(() => {
+    if (!canAccessSettings) return; // Already handled above
+
+    const routerSubpage = chatwootRouter.currentSettingsSubpage;
+    if (routerSubpage && currentSubpage !== routerSubpage) {
+      // Router subpage is not accessible - redirect to accessible one
+      console.warn(
+        `[SettingsView] User cannot access ${routerSubpage} - redirecting to ${currentSubpage}`
+      );
+      chatwootRouter.navigateToSettings(currentSubpage);
+    }
+  }, [canAccessSettings, chatwootRouter, currentSubpage]);
 
   // Render the appropriate subpage component
   const renderSubpage = () => {
-    switch (currentSubpage) {
+    // Safety check: ensure currentSubpage is accessible (should always be true due to redirect logic)
+    const subpageToRender = visibleMenuItems.some(
+      (item) => item.subpage === currentSubpage
+    )
+      ? currentSubpage
+      : getFirstAccessibleSubpage();
+
+    switch (subpageToRender) {
       case ChatwootSettingsSubpage.AGENTS:
         return <AgentsSubpage />;
       case ChatwootSettingsSubpage.INBOXES:
@@ -125,10 +194,11 @@ export const SettingsView: React.FC = () => {
       case ChatwootSettingsSubpage.OLD_FRONTDESK:
         return <OldFrontDeskSubpage />;
       case ChatwootSettingsSubpage.GENERAL:
-        // General Settings removed - redirect to Agents
-        return <AgentsSubpage />;
+        // General Settings removed - fallback to Warnings
+        return <WarningsSettingsView />;
       default:
-        return <AgentsSubpage />;
+        // Unknown subpage - fallback to Warnings
+        return <WarningsSettingsView />;
     }
   };
 
@@ -174,7 +244,7 @@ export const SettingsView: React.FC = () => {
         </Box>
         <Divider />
         <List sx={{ flex: 1, py: 1 }}>
-          {SETTINGS_MENU_ITEMS.map((item) => {
+          {visibleMenuItems.map((item) => {
             const isSelected = currentSubpage === item.subpage;
             const showBadge = item.subpage === ChatwootSettingsSubpage.WARNINGS && warningCount > 0;
             return (

@@ -6,40 +6,91 @@ This directory contains the Chatwoot provider implementation for FrontDesk. The 
 
 ```
 chatwoot/
-├── hooks/
-│   ├── core/                    # Reusable base hooks
+├── hooks/                        # React hooks (30+ hooks)
+│   ├── core/                     # Reusable base hooks
 │   │   ├── use-chatwoot-data-fetch.ts    # Base data fetching hook
-│   │   ├── use-chatwoot-filters.ts      # Base filter management hook
-│   │   └── index.ts                      # Public API exports
+│   │   ├── use-chatwoot-filters.ts       # Base filter management hook
+│   │   └── index.ts
 │   │
-│   ├── domain/                  # Domain-specific hooks
+│   ├── actions/                  # Action hooks (user interactions)
+│   ├── document/                 # Document-related hooks
+│   ├── resources/                # Resource management hooks
+│   ├── utils/                    # Utility hooks
+│   │
+│   ├── Domain-specific hooks:
 │   │   ├── use-chatwoot-conversations.ts
 │   │   ├── use-chatwoot-inboxes.ts
 │   │   ├── use-chatwoot-messages.ts
 │   │   ├── use-chatwoot-notifications.ts
-│   │   ├── use-chatwoot-provider.ts
-│   │   └── use-chatwoot-router.ts
+│   │   ├── use-chatwoot-provider.ts      # Main orchestrator
+│   │   ├── use-chatwoot-router.ts
+│   │   ├── use-chatwoot-profile.ts
+│   │   ├── use-chatwoot-labels.ts
+│   │   ├── use-chatwoot-dashboard-stats.ts
+│   │   ├── use-chatwoot-oauth.ts
+│   │   ├── use-chatwoot-permissions.ts
+│   │   ├── use-chatwoot-warnings.ts
+│   │   ├── use-compose-conversation.ts
+│   │   ├── use-message-sender.ts
+│   │   └── ...
 │   │
-│   └── index.ts                 # Main hooks export
+│   └── index.ts                  # Main hooks export
+│
+├── components/                   # UI components (40+ components)
+│   ├── chatwoot-conversation-list.tsx
+│   ├── chatwoot-message-viewer.tsx
+│   ├── chatwoot-reply-composer.tsx
+│   ├── chatwoot-conversation-filters.tsx
+│   ├── chatwoot-notifications-view.tsx
+│   ├── compose/                  # Compose conversation components
+│   ├── conversation-list/        # Conversation list components
+│   ├── dashboard/                # Dashboard components
+│   ├── filters/                  # Filter components
+│   ├── notifications/            # Notification components
+│   └── ...
+│
+├── views/                        # View components (9 views)
+│   ├── dashboard-view.tsx
+│   ├── my-inbox-view.tsx
+│   ├── all-conversations-view.tsx
+│   ├── mentions-view.tsx
+│   ├── unattended-view.tsx
+│   ├── channels-view.tsx
+│   ├── settings-view.tsx
+│   ├── oauth-callback-view.tsx
+│   ├── webhook-test-view.tsx
+│   └── settings/                 # Settings subpages
+│       ├── general-settings-subpage.tsx
+│       ├── profile-settings-subpage.tsx
+│       ├── inboxes-subpage.tsx
+│       ├── inbox-detail-settings.tsx
+│       ├── agents-subpage.tsx
+│       ├── teams-subpage.tsx
+│       ├── labels-subpage.tsx
+│       └── tabs/                 # Inbox detail tabs
 │
 ├── utils/                        # Utility functions
-│   ├── filter-utils.ts          # Filter-related utilities
-│   ├── api-response-utils.ts    # API response parsing utilities
-│   └── index.ts                 # Public API exports
+│   ├── filter-utils.ts           # Filter-related utilities
+│   ├── api-response-utils.ts     # API response parsing utilities
+│   ├── validation-utils.ts       # Validation utilities
+│   ├── format-utils.ts           # Formatting utilities
+│   └── index.ts
+│
+├── config/                       # Configuration
+│   ├── channel-features.config.ts     # Feature flags per channel
+│   └── inbox-settings.config.ts       # Inbox settings configuration
 │
 ├── constants/                    # Shared constants
 │   └── index.ts
 │
-├── components/                  # UI components
-│   ├── chatwoot-conversation-filters.tsx
-│   ├── chatwoot-conversation-list.tsx
-│   ├── chatwoot-message-viewer.tsx
-│   └── ...
+├── contexts/                     # React contexts
+│   └── chatwoot-provider-context.tsx
 │
-├── views/                       # View components
-│   ├── all-conversations-view.tsx
-│   ├── channels-view.tsx
-│   └── ...
+├── styles/                       # Shared styles
+│   └── compose-styles.ts         # Compose modal styles
+│
+├── types/                        # TypeScript types
+│   └── index.ts
 │
 └── README.md                     # This file
 ```
@@ -97,6 +148,48 @@ const { filters, updateFilters, resetFilters } = useChatwootFilters({
 - `extractPaginationInfo()` - Extract pagination info from metadata
 - `extractCounts()` - Extract counts from metadata
 
+## Configuration
+
+### Channel Features (`config/channel-features.config.ts`)
+
+Feature flags that determine which features are available per channel type:
+- Message attachments
+- Rich text editor
+- Email-specific fields (to, cc, bcc)
+- WhatsApp templates
+- File upload types
+
+**Usage:**
+```typescript
+import { getChannelFeatures } from './config/channel-features.config';
+
+const features = getChannelFeatures(channelType);
+if (features.supportsAttachments) {
+  // Show attachment button
+}
+```
+
+### Inbox Settings (`config/inbox-settings.config.ts`)
+
+Configuration for inbox settings tabs and fields:
+- General settings (name, greeting message, enable/disable)
+- Business hours configuration
+- CSAT survey settings
+- Advanced configuration
+- Bot configuration
+- Collaborators management
+
+## Contexts
+
+### `ChatwootProviderContext`
+
+React context for sharing provider state across components without prop drilling:
+- Profile data
+- Selected account
+- Inboxes
+- Filters
+- Router methods
+
 ## Constants
 
 Shared constants are defined in `constants/index.ts`:
@@ -104,6 +197,8 @@ Shared constants are defined in `constants/index.ts`:
 - API response keys
 - Refresh intervals
 - Cache keys
+- Channel types
+- View names
 
 ## Best Practices
 
@@ -132,6 +227,7 @@ When adding new features:
 2. Use utility functions for common operations
 3. Follow the established patterns for consistency
 4. Update this README if you add new patterns
+
 
 
 
