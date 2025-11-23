@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
 import { useTranslation } from "react-i18next";
-import { getAllProductAndMaterialsApi } from "@/services/api-service/products/product-endpoints";
+import { getAllProductAndMaterialsApi, addDocumentItemFromProductApi } from "@/services/api-service/products/product-endpoints";
 import { ProductCategoryType } from "@/pages-components/admin/home/widgets/quote-widget/states";
 import { useRecoilState } from "recoil";
 import { quoteItemState, selectedFirstMaterialState } from "@/store";
@@ -252,6 +252,7 @@ const useAddNewItem = ({ onClose, getQuote, documentType, getCalculateQuoteItem,
         name: selectedNode?.text,
         code: selectedNode?.code,
         productStructureType: matchedProduct?.productStructureType,
+        isEmptyProduct: matchedProduct?.isEmptyProduct,
       });
     } else {
       setSelectedProduct(null);
@@ -286,6 +287,23 @@ const useAddNewItem = ({ onClose, getQuote, documentType, getCalculateQuoteItem,
         documentId: quoteItemValue?.id,
       }, documentType);
     }
+  };
+
+  const addDocumentItemFromProduct = async () => {
+    const callBack = (res) => {
+      if (res.success) {
+        alertSuccessAdded();
+        getQuote();
+        handleCloseModal();
+      } else {
+        alertFaultAdded();
+      }
+    };
+    await addDocumentItemFromProductApi(callApi, callBack, {
+      clientId: quoteItemValue?.customerID,
+      productId: selectedProduct?.id,
+      documentId: quoteItemValue?.id,
+    }, documentType);
   };
 
   const [isDisabled, setIsDisabled] = useState(true);
@@ -763,6 +781,9 @@ const useAddNewItem = ({ onClose, getQuote, documentType, getCalculateQuoteItem,
         } else {
           if (selectedProduct?.category === ProductCategoryType.MATERIAL) {
             addDocumentItemFromMaterial();
+          } else if (selectedProduct?.isEmptyProduct === true) {
+            // If product is empty, use the new endpoint to add document item directly
+            addDocumentItemFromProduct();
           } else {
             const hasSelectedClient = !!quoteItemValue?.client?.id;
             if (hasSelectedClient) {
