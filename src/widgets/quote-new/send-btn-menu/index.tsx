@@ -14,6 +14,7 @@ const SendBtnMenu = ({
   documentType,
   onClickSendReceiptToClient,
   openReceiptModal,
+  onClickSendEmailViaComposer
 }) => {
   const { t } = useTranslation();
   const isReceipt = documentType === DOCUMENT_TYPE.receipt;
@@ -57,9 +58,9 @@ const SendBtnMenu = ({
                 handleClose();
               });
             } else {
-              onClickSendQuoteToClient(MessageType.SMS);
+              //onClickSendQuoteToClient(MessageType.SMS);
               // !here for branch 5062957516 - Use FrontDesk email composer
-              //  onClickSendEmailViaComposer?.();
+              onClickSendEmailViaComposer?.();
             }
             handleClose();
           }}

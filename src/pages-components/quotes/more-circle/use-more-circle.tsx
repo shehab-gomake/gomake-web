@@ -716,20 +716,20 @@ const useMoreCircle = () => {
         icon: <PayIcon color={primaryLavender(500)} />,
         name: t("sales.quote.sendPayment"),
       },
-      // !here for branch 5062957516
-      // {
-      //   condition: true,
-      //   component: (closeMenu: () => void) => (
-      //     <SendToCustomerSubmenu
-      //       onClickEmail={() => onClickSendToCustomerEmail(quote)}
-      //       onClickSMS={() => onClickSendToCustomerSMS(quote)}
-      //       onClickWhatsApp={() => onClickSendToCustomerWhatsApp(quote)}
-      //       menuItemStyle={classes.menuRowStyle}
-      //       rowTextStyle={classes.rowTextStyle}
-      //       onCloseParentMenu={closeMenu}
-      //     />
-      //   ),
-      // },
+     // !here for branch 5062957516
+      {
+        condition: true,
+        component: (closeMenu: () => void) => (
+          <SendToCustomerSubmenu
+            onClickEmail={() => onClickSendToCustomerEmail(quote)}
+            onClickSMS={() => onClickSendToCustomerSMS(quote)}
+            onClickWhatsApp={() => onClickSendToCustomerWhatsApp(quote)}
+            menuItemStyle={classes.menuRowStyle}
+            rowTextStyle={classes.rowTextStyle}
+            onCloseParentMenu={closeMenu}
+          />
+        ),
+      },
       {
         condition: true,
         onClick: () =>
