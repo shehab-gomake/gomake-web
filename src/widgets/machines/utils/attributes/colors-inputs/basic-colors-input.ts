@@ -10,7 +10,7 @@ const basicColorsInput = (state: Record<string, any>) => {
             required: true,
             parameterKey: "basicsColors",
             value: state?.attributes?.basicsColors,
-            options: [{value: 1, text: 'Black'}, {value: 2, text: 'CMYK'}],
+            options: [{value: 1, text: 'Black'}, {value: 2, text: 'CMYK'}, {value: 3, text: 'Special Colors Only'}],
             machineInputType: 'input',
             isValid: true
         },
