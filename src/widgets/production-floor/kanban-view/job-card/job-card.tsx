@@ -19,6 +19,9 @@ import { SketchPicker } from "react-color";
 import { useTranslation } from "react-i18next";
 import { ModalType } from "@/enums/tabs-icon-enums";
 import { STATUS_COLUMNS } from "../constants/status-columns";
+import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
+import { EPreferences } from "@/enums/prefernces";
+import { toRgba } from "@/utils/helpers";
 
 interface IProps {
   mission: IBoardMissions;
@@ -42,6 +45,13 @@ const JobCard: React.FC<IProps> = ({
   const colorPickerRef = useRef<HTMLDivElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
   const { alertFaultUpdate, alertSuccessUpdate } = useSnackBar();
+  const { CheckPreferenceValue } = usePrintHousePreferences();
+
+  // Get highlighting style preference (default: "border_and_background")
+  const highlightingStyle = CheckPreferenceValue(
+    EPreferences.KANBAN_HIGHLIGHTING_STYLE
+  ) as string | undefined;
+  const isBackgroundOnly = highlightingStyle === "background_only";
 
   // Get current direction for RTL support
   const dir: "rtl" | "ltr" = t("direction");
@@ -268,12 +278,21 @@ const JobCard: React.FC<IProps> = ({
       onClick={openNextStationModal ? undefined : handleOpenMission}
       onContextMenu={handleContextMenu}
       sx={{
-        backgroundColor: "white",
-        border: `2px solid ${
-          isDisabled
-            ? upcomingWorksColor
-            : color || mission.productionFloorJobColor || "#e0e0e0"
-        }`,
+        backgroundColor: isDisabled
+          ? "white"
+          : isBackgroundOnly
+          ? color || mission.productionFloorJobColor || "#ffffff"
+          : "white",
+        border: isDisabled
+          ? `2px solid ${upcomingWorksColor}`
+          : isBackgroundOnly
+          ? `1px solid ${toRgba(
+              color || mission.productionFloorJobColor || "#000000",
+              0.2
+            )}`
+          : `2px solid ${
+              color || mission.productionFloorJobColor || "#e0e0e0"
+            }`,
         borderRadius: "8px",
         padding: "12px",
         cursor: isDisabled
@@ -288,13 +307,36 @@ const JobCard: React.FC<IProps> = ({
         flexDirection: "column",
         justifyContent: "space-between",
         position: "relative",
+        boxShadow:
+          isBackgroundOnly && !isDisabled
+            ? `0 2px 8px ${toRgba(
+                color || mission.productionFloorJobColor || "#000000",
+                0.25
+              )}, inset 0 1px 0 ${toRgba("#ffffff", 0.1)}`
+            : isDisabled
+            ? "none"
+            : "0 1px 3px rgba(0,0,0,0.08)",
         "&:hover": {
-          boxShadow: isDisabled ? "none" : "0 4px 12px rgba(0,0,0,0.15)",
+          boxShadow: isDisabled
+            ? "none"
+            : isBackgroundOnly
+            ? `0 4px 16px ${toRgba(
+                color || mission.productionFloorJobColor || "#000000",
+                0.35
+              )}, inset 0 1px 0 ${toRgba("#ffffff", 0.15)}`
+            : "0 4px 12px rgba(0,0,0,0.15)",
           transform: isDisabled
             ? "none"
             : isDragging
             ? "none"
             : "translateY(-2px)",
+          border:
+            isBackgroundOnly && !isDisabled
+              ? `1px solid ${toRgba(
+                  color || mission.productionFloorJobColor || "#000000",
+                  0.3
+                )}`
+              : undefined,
         },
         // Add disabled overlay effect
         "&::before": isDisabled
@@ -367,6 +409,8 @@ const JobCard: React.FC<IProps> = ({
               fontWeight: 700,
               color: isDisabled
                 ? upcomingWorksColor
+                : isBackgroundOnly && (color || mission.productionFloorJobColor)
+                ? "white"
                 : color || mission.productionFloorJobColor || "#1976d2",
               fontSize: isMobile ? "0.8rem" : "0.9rem",
               lineHeight: 1.2,
@@ -381,7 +425,12 @@ const JobCard: React.FC<IProps> = ({
               variant="body2"
               sx={{
                 fontWeight: 500,
-                color: isDisabled ? upcomingWorksColor : "#6c757d",
+                color: isDisabled
+                  ? upcomingWorksColor
+                  : isBackgroundOnly &&
+                    (color || mission.productionFloorJobColor)
+                  ? "white"
+                  : "#6c757d",
                 fontSize: isMobile ? "0.65rem" : "0.75rem",
                 fontStyle: "italic",
                 lineHeight: 1.2,
@@ -405,6 +454,17 @@ const JobCard: React.FC<IProps> = ({
             marginLeft: "4px",
             flexShrink: 0,
             opacity: isDisabled ? 0.6 : 1,
+            border:
+              isBackgroundOnly && !isDisabled
+                ? `1px solid ${toRgba("#ffffff", 0.5)}`
+                : "none",
+            boxShadow:
+              isBackgroundOnly && !isDisabled
+                ? `0 0 4px ${toRgba(
+                    getPriorityColor(mission.priority || 0),
+                    0.6
+                  )}`
+                : "none",
           }}
         />
       </Box>
@@ -423,7 +483,11 @@ const JobCard: React.FC<IProps> = ({
           variant="body2"
           sx={{
             fontWeight: 500,
-            color: isDisabled ? upcomingWorksColor : "#495057",
+            color: isDisabled
+              ? upcomingWorksColor
+              : isBackgroundOnly && (color || mission.productionFloorJobColor)
+              ? "white"
+              : "#495057",
             fontSize: isMobile ? "0.7rem" : "0.8rem",
             maxWidth: "60%",
             overflow: "hidden",
@@ -440,7 +504,11 @@ const JobCard: React.FC<IProps> = ({
           variant="body2"
           sx={{
             fontWeight: 500,
-            color: isDisabled ? upcomingWorksColor : "#6c757d",
+            color: isDisabled
+              ? upcomingWorksColor
+              : isBackgroundOnly && (color || mission.productionFloorJobColor)
+              ? "white"
+              : "#6c757d",
             fontSize: isMobile ? "0.7rem" : "0.8rem",
             textAlign: "right",
             opacity: isDisabled ? 0.7 : 1,
@@ -463,7 +531,11 @@ const JobCard: React.FC<IProps> = ({
           variant="body2"
           sx={{
             fontWeight: 700,
-            color: isDisabled ? upcomingWorksColor : "#495057",
+            color: isDisabled
+              ? upcomingWorksColor
+              : isBackgroundOnly && (color || mission.productionFloorJobColor)
+              ? "white"
+              : "#495057",
             fontSize: isMobile ? "0.7rem" : "0.8rem",
             maxWidth: "60%",
             overflow: "hidden",
@@ -487,9 +559,21 @@ const JobCard: React.FC<IProps> = ({
               fontSize: isMobile ? "0.65rem" : "0.7rem",
               backgroundColor: isDisabled
                 ? upcomingWorksBgColor
+                : isBackgroundOnly
+                ? toRgba("#ffffff", 0.25)
                 : color || mission.productionFloorJobColor || "#e3f2fd",
-              color: isDisabled ? upcomingWorksColor : "white",
+              color: isDisabled
+                ? upcomingWorksColor
+                : isBackgroundOnly
+                ? "white"
+                : "white",
               fontWeight: 600,
+              border:
+                isBackgroundOnly && !isDisabled
+                  ? `1px solid ${toRgba("#ffffff", 0.3)}`
+                  : "none",
+              backdropFilter:
+                isBackgroundOnly && !isDisabled ? "blur(4px)" : "none",
             }}
           />
         )}
