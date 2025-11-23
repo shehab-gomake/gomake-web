@@ -6,6 +6,11 @@ import { useRouter } from "next/router";
 import { SideBarContainer } from "@/components/containers/side-container/side-bar-container";
 import { IListItem } from "@/components/containers/interface";
 import { useUserPermission } from "@/hooks/use-permission";
+import { useSetRecoilState } from "recoil";
+import {
+  EWidgetProductSettingsTabs,
+  selectedProductsTabState,
+} from "@/widgets/products-settings-widget/enums";
 
 const SettingsWidget = () => {
   const { t } = useTranslation();
@@ -13,20 +18,27 @@ const SettingsWidget = () => {
   const { settingsRoute, id, productId } = query;
   const [selected, setSelected] = useState<IListItem>();
   const { CheckPermission } = useUserPermission();
+  const setProductsTab = useSetRecoilState(selectedProductsTabState);
   const onSelectItem = (value: string) => {
     const selectedItem = list.find((item) => item.value === value);
+    if (selectedItem?.path === "products") {
+      setProductsTab(EWidgetProductSettingsTabs.PRODUCT_MANAGMENT);
+    }
     push("/settings/" + selectedItem.path).then();
   };
 
   useEffect(() => {
     if (settingsRoute) {
       const item = list.find((item) => item.path === settingsRoute);
-      if (id && !item.editComponent) {
+      if (id && !item?.editComponent) {
         push("/settings/" + item.path).then();
       }
-      setSelected(!!item ? item : list[0]);
+      if (item?.path === "products") {
+        setProductsTab(EWidgetProductSettingsTabs.PRODUCT_MANAGMENT);
+      }
+      setSelected(item ?? list[0]);
     }
-  }, [settingsRoute, id]);
+  }, [settingsRoute, id, push, setProductsTab]);
 
   const Side = () => {
     return (

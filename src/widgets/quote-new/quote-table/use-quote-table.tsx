@@ -2,6 +2,7 @@ import { useSnackBar } from "@/hooks";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { ItemCalculationType } from "@/enums/document-type-enum";
 
 const useQuoteTable = ({
   getCalculateQuoteItem,
@@ -19,6 +20,8 @@ const useQuoteTable = ({
   const [isUpdatePrice, setIsUpdatePrice] = useState(null);
   const [isUpdateFinalPrice, setIsUpdateFinalPrice] = useState(null);
   const [isUpdateApproveAmount, setIsUpdateApproveAmount] = useState(null);
+  const [isUpdatePackagesQuantity, setIsUpdatePackagesQuantity] = useState(null);
+  const [isUpdateQuantityInPackage, setIsUpdateQuantityInPackage] = useState(null);
 
   const isDeliveryNote =
     documentType === DOCUMENT_TYPE.deliveryNote ||
@@ -51,7 +54,7 @@ const useQuoteTable = ({
       setTimeout(() => {
         getCalculateQuoteItem(
           { ...item, quantity: originalQuantity },
-          0,
+          ItemCalculationType.Amount,
           originalQuantity
         );
       }, 0);
@@ -60,7 +63,7 @@ const useQuoteTable = ({
       return;
     }
 
-    getCalculateQuoteItem(item, 0, item.quantity);
+    getCalculateQuoteItem(item, ItemCalculationType.Amount, item.quantity);
     setIsUpdateAmount(null);
   };
 
@@ -69,7 +72,7 @@ const useQuoteTable = ({
   };
 
   const onBlurDiscount = async () => {
-    getCalculateQuoteItem(item, 2, item.discount);
+    getCalculateQuoteItem(item, ItemCalculationType.Discount, item.discount);
     setIsUpdateDiscount(null);
   };
 
@@ -77,7 +80,7 @@ const useQuoteTable = ({
     changeDocumentItems(index, "discount", e);
   };
   const onBlurPrice = async () => {
-    getCalculateQuoteItem(item, 1, item.price);
+    getCalculateQuoteItem(item, ItemCalculationType.UnitPrice, item.price);
     setIsUpdatePrice(null);
   };
   const onInputChangePrice = (e) => {
@@ -85,11 +88,47 @@ const useQuoteTable = ({
   };
 
   const onBlurFinalPrice = async () => {
-    getCalculateQuoteItem(item, 3, item.finalPrice);
+    getCalculateQuoteItem(item, ItemCalculationType.finalPrice, item.finalPrice);
     setIsUpdateFinalPrice(null);
   };
   const onInputChangeFinalPrice = (e) => {
     changeDocumentItems(index, "finalPrice", e);
+  };
+
+  const onBlurPackagesQuantity = async () => {
+    const packagesQuantity = parseFloat(item?.packagesQuantity || item?.packageQuantity || "0") || 0;
+    const quantityInPackage = parseFloat(item?.quantityInPackage || item?.quantityPerPackage || "0") || 0;
+    const totalQuantity = packagesQuantity * quantityInPackage;
+    
+    if (totalQuantity > 0) {
+      changeDocumentItems(index, "quantity", totalQuantity);
+      // Update the item with the new quantity before calculating
+      const updatedItem = { ...item, quantity: totalQuantity };
+      getCalculateQuoteItem(updatedItem, ItemCalculationType.PackagesQuantity, packagesQuantity);
+    }
+    setIsUpdatePackagesQuantity(null);
+  };
+
+  const onInputChangePackagesQuantity = (e) => {
+    changeDocumentItems(index, "packagesQuantity", e);
+  };
+
+  const onBlurQuantityInPackage = async () => {
+    const packagesQuantity = parseFloat(item?.packagesQuantity || item?.packageQuantity || "0") || 0;
+    const quantityInPackage = parseFloat(item?.quantityInPackage || item?.quantityPerPackage || "0") || 0;
+    const totalQuantity = packagesQuantity * quantityInPackage;
+    
+    if (totalQuantity > 0) {
+      changeDocumentItems(index, "quantity", totalQuantity);
+      // Update the item with the new quantity before calculating
+      const updatedItem = { ...item, quantity: totalQuantity };
+      getCalculateQuoteItem(updatedItem, ItemCalculationType.QuantityInPackage, quantityInPackage);
+    }
+    setIsUpdateQuantityInPackage(null);
+  };
+
+  const onInputChangeQuantityInPackage = (e) => {
+    changeDocumentItems(index, "quantityInPackage", e);
   };
 
   return {
@@ -113,6 +152,14 @@ const useQuoteTable = ({
     onBlurApproveAmount,
     isUpdateApproveAmount,
     setIsUpdateApproveAmount,
+    isUpdatePackagesQuantity,
+    setIsUpdatePackagesQuantity,
+    onBlurPackagesQuantity,
+    onInputChangePackagesQuantity,
+    isUpdateQuantityInPackage,
+    setIsUpdateQuantityInPackage,
+    onBlurQuantityInPackage,
+    onInputChangeQuantityInPackage,
   };
 };
 

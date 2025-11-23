@@ -7,33 +7,69 @@ import { useRecoilState } from "recoil";
 import { quoteItemState, selectedFirstMaterialState } from "@/store";
 import {
   addDocumentItemFromMaterialApi,
+  addDocumentItemFromMaterialRowApi,
   getDocumentItemDataFromMaterialApi,
+  getDocumentItemDataFromRowMaterialApi,
 } from "@/services/api-service/materials/materials-endpoints";
 import { v4 as uuidv4 } from "uuid";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { useRouter } from "next/router";
 import {
+  addCompositeProductsApi,
   addGenericProductToDocumentApi,
   addItemApi,
 } from "@/services/api-service/generic-doc/documents-api";
 import { useUserPermission } from "@/hooks/use-permission";
 import { ETab } from "@/pages-components/admin/home/widgets/quote-widget/enums";
+import { EProductStructureType } from "@/widgets/shared-admin-customers/add-product/settings/settings-data";
+import { getCompositeProductById } from "@/services/hooks/admin-side/products/get-set-product-by-id";
+import {ItemCalculationType} from "@/enums";
 
-const useAddNewItem = ({ onClose, getQuote, documentType, getCalculateQuoteItem }) => {
+const useAddNewItem = ({ onClose, getQuote, documentType, getCalculateQuoteItem, isMaterial, isNewCreation, isPurchaseOrder, isCanIntake }: {
+  onClose: () => void, getQuote: () => void,
+  documentType: DOCUMENT_TYPE,
+  getCalculateQuoteItem: (item: any, quantity: number, price: number, quoteValue: any, isNewCreation?: boolean) => void,
+  isMaterial?: boolean,
+  isNewCreation?: boolean,
+  isPurchaseOrder?: boolean,
+  isCanIntake?: boolean
+}) => {
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
   const [selectedProduct, setSelectedProduct] = useState<any>({});
-  const { alertFaultAdded, alertSuccessAdded } = useSnackBar();
+  const { alertFaultAdded, alertSuccessAdded, alertFault } = useSnackBar();
   const { navigate } = useGomakeRouter();
   const router = useRouter();
   const { CheckPermission } = useUserPermission();
   const [selectedFirstMaterial, setSelectedFirstMaterial] = useRecoilState<any>(selectedFirstMaterialState);
   const [combinedData, setCombinedData] = useState<any>([]);
+  const [products, setProducts] = useState([]);
   const [quoteItemValue, setQuoteItemValue] = useRecoilState<any>(quoteItemState);
-
   const [active, setActive] = useState(true);
   const [productName, setProductName] = useState("");
   const [productCode, setProductCode] = useState("");
+  
+  // Composite products modal state
+  const [compositeDialogOpen, setCompositeDialogOpen] = useState(false);
+  const [compositeProducts, setCompositeProducts] = useState<Array<{
+    id: string;
+    name: string;
+    quantity: number;
+    jobName: string;
+    baseQuantity: number;
+    isManuallyEdited: boolean;
+    isJobNameManuallyEdited: boolean;
+  }>>([]);
+  const [quantityMultiplier, setQuantityMultiplier] = useState<number>(1);
+  const [mainJobName, setMainJobName] = useState<string>("");
+  const [isLoadingCompositeProducts, setIsLoadingCompositeProducts] = useState(false);
+  const [compositeErrors, setCompositeErrors] = useState<{
+    [key: string]: {
+      quantity?: string;
+      jobName?: string;
+    };
+  }>({});
+  const [isSubmittingComposite, setIsSubmittingComposite] = useState(false);
 
   const handleChange = (event) => {
     setActive(event.target.value === "true");
@@ -46,12 +82,32 @@ const useAddNewItem = ({ onClose, getQuote, documentType, getCalculateQuoteItem 
     setProductCode("");
     setActive(true);
   };
-  const [selectedTab, setSelectedTab] = useState<ETab>(ETab.PRODUCTS);
+
+  // Check if isMaterial is in URL query parameters
+  const isMaterialInUrl = router.query.isMaterial === "true";
+
+  // Determine if materials should be shown
+  // If isCanIntake is true (after creation), show materials regardless of isMaterial
+  // If isNewCreation is true, show materials only if isMaterial is true (from prop or URL)
+  // Otherwise, show products
+  const shouldShowMaterials = isCanIntake === true
+    ? true
+    : isNewCreation === true && (isMaterial === true || isMaterialInUrl);
+
+  // Set initial tab based on shouldShowMaterials for purchase orders
+  const initialTab = documentType === DOCUMENT_TYPE.purchaseOrder && shouldShowMaterials
+    ? ETab.MATERIALS
+    : documentType === DOCUMENT_TYPE.purchaseOrder && !shouldShowMaterials
+      ? ETab.PRODUCTS
+      : ETab.PRODUCTS;
+
+  const [selectedTab, setSelectedTab] = useState<ETab>(initialTab);
 
   const getAllProductsAndMaterials = useCallback(
     async (clientId, clientTypeId, selectedTab) => {
       const callBack = (res) => {
         if (res?.success) {
+          setProducts(res?.data?.products || []);
           const transformProducts = (products) => {
             return {
               value: ETab.PRODUCTS,
@@ -102,11 +158,59 @@ const useAddNewItem = ({ onClose, getQuote, documentType, getCalculateQuoteItem 
             };
           };
 
+          const attachParentReferences = (nodes, parent = null) => {
+            if (!Array.isArray(nodes)) return [];
+
+            return nodes.map((node) => {
+              const newNode = { ...node, parent };
+              if (newNode.children) {
+                newNode.children = attachParentReferences(
+                  newNode.children,
+                  newNode
+                );
+              }
+              return newNode;
+            });
+          };
+
           const transformedProducts = transformProducts(res?.data?.products);
           const transformedMaterials = transformMaterials(res?.data?.materials);
+          
+          // Attach parent references for proper search functionality
+          transformedProducts.children = attachParentReferences(
+            transformedProducts.children,
+            transformedProducts
+          );
+          transformedMaterials.children = attachParentReferences(
+            transformedMaterials.children,
+            transformedMaterials
+          );
 
-          // Combine the transformed data
-          const combinedFinalData = [transformedProducts, transformedMaterials];
+          // Check if isMaterial is in URL query parameters
+          const isMaterialInUrl = router.query.isMaterial === "true";
+
+          // Determine if materials should be shown
+          // If isCanIntake is true (after creation), show materials regardless of isMaterial
+          // If isNewCreation is true, show materials only if isMaterial is true (from prop or URL)
+          // Otherwise, show products
+          const shouldShowMaterials = isCanIntake === true
+            ? true
+            : isNewCreation === true && (isMaterial === true || isMaterialInUrl);
+
+          // Filter data based on purchase order type and material visibility
+          let combinedFinalData;
+          if (documentType === DOCUMENT_TYPE.purchaseOrder) {
+            if (shouldShowMaterials) {
+              // Show only materials for material purchase orders
+              combinedFinalData = [transformedMaterials];
+            } else {
+              // Show only products for product purchase orders
+              combinedFinalData = [transformedProducts];
+            }
+          } else {
+            // Combine both for other document types
+            combinedFinalData = [transformedProducts, transformedMaterials];
+          }
           setCombinedData(combinedFinalData);
         }
       };
@@ -116,7 +220,7 @@ const useAddNewItem = ({ onClose, getQuote, documentType, getCalculateQuoteItem 
         selectionType: selectedTab,
       });
     },
-    []
+    [isNewCreation, isMaterial, isPurchaseOrder, isCanIntake, documentType]
   );
 
   const handleProductChange = (e) => {
@@ -138,11 +242,16 @@ const useAddNewItem = ({ onClose, getQuote, documentType, getCalculateQuoteItem 
 
     const selectedNode = findNodeByKey(selectedValue, combinedData);
     if (selectedNode && !selectedNode.children) {
+      let matchedProduct = null;
+      if (selectedNode?.category === ProductCategoryType.PRODUCT) {
+        matchedProduct = products?.find((product) => product.id === selectedValue);
+      }
       setSelectedProduct({
         id: selectedValue,
         category: selectedNode?.category,
         name: selectedNode?.text,
         code: selectedNode?.code,
+        productStructureType: matchedProduct?.productStructureType,
       });
     } else {
       setSelectedProduct(null);
@@ -161,12 +270,22 @@ const useAddNewItem = ({ onClose, getQuote, documentType, getCalculateQuoteItem 
       }
     };
 
-    await addDocumentItemFromMaterialApi(callApi, callBack, {
-      clientId: quoteItemValue?.customerID,
-      printHouseMaterialId: selectedProduct?.id,
-      documentType,
-      documentId: quoteItemValue?.id,
-    });
+    // Use new endpoint if isCanIntake is true and it's a purchase order
+    // Otherwise use the existing endpoint
+    if (isCanIntake && isPurchaseOrder) {
+      await addDocumentItemFromMaterialRowApi(callApi, callBack, {
+        clientId: quoteItemValue?.customerID,
+        printHouseMaterialId: selectedProduct?.id,
+        documentType,
+        documentId: quoteItemValue?.id,
+      });
+    } else {
+      await addDocumentItemFromMaterialApi(callApi, callBack, {
+        clientId: quoteItemValue?.customerID,
+        printHouseMaterialId: selectedProduct?.id,
+        documentId: quoteItemValue?.id,
+      }, documentType);
+    }
   };
 
   const [isDisabled, setIsDisabled] = useState(true);
@@ -241,6 +360,11 @@ const useAddNewItem = ({ onClose, getQuote, documentType, getCalculateQuoteItem 
           isSelected: false,
           productType: 0,
           productID: selectedMaterial?.productId,
+          // Add fields for material purchase orders
+          packagesQuantity: selectedMaterial?.packagesQuantity || 0,
+          quantityInPackage: selectedMaterial?.quantityInPackage || 1,
+          // Include unit object when available (for purchase orders)
+          ...(selectedMaterial?.unit && { unit: selectedMaterial.unit }),
         };
 
         const updatedQuoteItemValue = { ...quoteItemValue };
@@ -252,7 +376,7 @@ const useAddNewItem = ({ onClose, getQuote, documentType, getCalculateQuoteItem 
         setQuoteItemValue(updatedQuoteItemValue);
         getCalculateQuoteItem(
           newItem,
-          1,
+          ItemCalculationType.UnitPrice,
           newItem.price,
           updatedQuoteItemValue,
           true
@@ -263,10 +387,46 @@ const useAddNewItem = ({ onClose, getQuote, documentType, getCalculateQuoteItem 
         alertFaultAdded();
       }
     };
-    await getDocumentItemDataFromMaterialApi(callApi, callBack, {
-      printHouseMaterialId: selectedProduct?.id,
-    });
+
+    // Determine if we should use the new endpoint with supplierId
+    // Conditions: purchaseOrder AND (isNewCreation ? isMaterial : isCanIntake)
+    const shouldUseRowMaterialEndpoint =
+      documentType === DOCUMENT_TYPE.purchaseOrder &&
+      (isNewCreation ? isMaterial : isCanIntake);
+
+    if (shouldUseRowMaterialEndpoint) {
+      // Use the new endpoint with supplierId if available
+      const supplierId = quoteItemValue?.client?.id;
+      await getDocumentItemDataFromRowMaterialApi(callApi, callBack, {
+        printHouseMaterialId: selectedProduct?.id,
+        ...(supplierId && { supplierId }),
+      });
+    } else {
+      // Use the original endpoint
+      await getDocumentItemDataFromMaterialApi(callApi, callBack, {
+        printHouseMaterialId: selectedProduct?.id,
+      });
+    }
   };
+
+  // Update selectedTab when shouldShowMaterials changes
+  useEffect(() => {
+    // Check if isMaterial is in URL query parameters
+    const isMaterialInUrl = router.query.isMaterial === "true";
+
+    // Determine if materials should be shown
+    // If isCanIntake is true (after creation), show materials regardless of isMaterial
+    // If isNewCreation is true, show materials only if isMaterial is true (from prop or URL)
+    // Otherwise, show products
+    const shouldShowMaterials = isCanIntake === true
+      ? true
+      : isNewCreation === true && (isMaterial === true || isMaterialInUrl);
+
+    if (documentType === DOCUMENT_TYPE.purchaseOrder) {
+      const newTab = shouldShowMaterials ? ETab.MATERIALS : ETab.PRODUCTS;
+      setSelectedTab(newTab);
+    }
+  }, [isNewCreation, isMaterial, isCanIntake, documentType, router.query.isMaterial]);
 
   useEffect(() => {
     // if (quoteItemValue?.client?.id) {
@@ -281,7 +441,7 @@ const useAddNewItem = ({ onClose, getQuote, documentType, getCalculateQuoteItem 
       quoteItemValue?.client?.clientTypeId,
       selectedTab
     );
-  }, [quoteItemValue?.client?.id, selectedTab]);
+  }, [quoteItemValue?.client?.id, selectedTab, getAllProductsAndMaterials]);
 
   const item = {
     id: uuidv4(),
@@ -355,10 +515,228 @@ const useAddNewItem = ({ onClose, getQuote, documentType, getCalculateQuoteItem 
     });
   };
 
+  const isCompositeSelectedProduct =
+    selectedProduct?.category === ProductCategoryType.PRODUCT &&
+    selectedProduct?.productStructureType === EProductStructureType.COMPOSITE;
+
+  const openCompositeDialog = async () => {
+    setCompositeErrors({});
+    setCompositeDialogOpen(true);
+
+    if (selectedProduct?.id) {
+      setIsLoadingCompositeProducts(true);
+      try {
+        const result = await getCompositeProductById(callApi, null, {
+          Id: selectedProduct.id,
+        });
+
+        let productsData = null;
+        if (Array.isArray(result)) {
+          productsData = result;
+        } else if (result?.data) {
+          productsData = Array.isArray(result.data) ? result.data : result.data.data;
+        }
+
+        if (productsData && Array.isArray(productsData)) {
+          const baseQty = productsData[0]?.quantity || 1;
+          const products = productsData.map((product: any) => ({
+            id: product.id,
+            name: product.name,
+            baseQuantity: product.quantity || 1,
+            quantity: product.quantity || 1,
+            jobName: product.jobName || "",
+            isManuallyEdited: false,
+            isJobNameManuallyEdited: false,
+          }));
+          setCompositeProducts(products);
+          setQuantityMultiplier(1);
+        } else {
+          setCompositeProducts([]);
+          setQuantityMultiplier(1);
+        }
+      } catch (error) {
+        console.error("Error fetching composite products:", error);
+        setCompositeProducts([]);
+      } finally {
+        setIsLoadingCompositeProducts(false);
+      }
+    }
+  };
+
+  const handleCompositeCancel = () => {
+    if (isSubmittingComposite) {
+      return;
+    }
+    setCompositeDialogOpen(false);
+    setCompositeErrors({});
+    setCompositeProducts([]);
+    setQuantityMultiplier(1);
+    setMainJobName("");
+  };
+
+  const handleMainJobNameChange = (value: string) => {
+    setMainJobName(value);
+    setCompositeProducts((prev) =>
+      prev.map((product) => {
+        if (!product.isJobNameManuallyEdited) {
+          return {
+            ...product,
+            jobName: value,
+          };
+        }
+        return product;
+      })
+    );
+  };
+
+  const handleMultiplierChange = (value: number) => {
+    setQuantityMultiplier(value);
+    setCompositeProducts((prev) =>
+      prev.map((product) => ({
+        ...product,
+        quantity: product.baseQuantity * value,
+        isManuallyEdited: false,
+      }))
+    );
+  };
+
+  const handleProductQuantityChange = (index: number, value: number) => {
+    setCompositeProducts((prev) => {
+      const updated = [...prev];
+      updated[index] = {
+        ...updated[index],
+        quantity: value,
+        isManuallyEdited: true,
+      };
+      return updated;
+    });
+
+    if (compositeErrors[`${index}`]?.quantity) {
+      setCompositeErrors((prev) => {
+        const updated = { ...prev };
+        if (updated[`${index}`]) {
+          const productErrors = { ...updated[`${index}`] };
+          delete productErrors.quantity;
+          if (Object.keys(productErrors).length === 0) {
+            delete updated[`${index}`];
+          } else {
+            updated[`${index}`] = productErrors;
+          }
+        }
+        return updated;
+      });
+    }
+  };
+
+  const updateCompositeProduct = (index: number, field: "jobName", value: string) => {
+    setCompositeProducts((prev) => {
+      const updated = [...prev];
+      updated[index] = {
+        ...updated[index],
+        [field]: value,
+        isJobNameManuallyEdited: true,
+      };
+      return updated;
+    });
+
+    if (compositeErrors[`${index}`]?.[field]) {
+      setCompositeErrors((prev) => {
+        const updated = { ...prev };
+        if (updated[`${index}`]) {
+          const productErrors = { ...updated[`${index}`] };
+          delete productErrors[field];
+          if (Object.keys(productErrors).length === 0) {
+            delete updated[`${index}`];
+          } else {
+            updated[`${index}`] = productErrors;
+          }
+        }
+        return updated;
+      });
+    }
+  };
+
+  const handleCompositeConfirm = async () => {
+    const errors: { [key: string]: { quantity?: string; jobName?: string } } = {};
+    let hasErrors = false;
+
+    compositeProducts.forEach((product, index) => {
+      const productErrors: { quantity?: string; jobName?: string } = {};
+
+      if (!product.quantity || product.quantity <= 0) {
+        productErrors.quantity = t("products.addProduct.admin.quantityRequired");
+        hasErrors = true;
+      }
+
+      if (Object.keys(productErrors).length > 0) {
+        errors[`${index}`] = productErrors;
+      }
+    });
+
+    if (hasErrors) {
+      setCompositeErrors(errors);
+      return;
+    }
+
+    setIsSubmittingComposite(true);
+
+    const callBack = (res: any) => {
+      setIsSubmittingComposite(false);
+      if (res?.success) {
+        setCompositeDialogOpen(false);
+        setCompositeErrors({});
+        setCompositeProducts([]);
+        setQuantityMultiplier(1);
+        setMainJobName("");
+        alertSuccessAdded();
+        getQuote();
+        handleCloseModal();
+      } else {
+        alertFaultAdded();
+      }
+    };
+
+    await addCompositeProductsApi(
+      callApi,
+      callBack,
+      {
+        documentType: documentType,
+        clientId: quoteItemValue?.client?.id || quoteItemValue?.customerID,
+        clientTypeId: quoteItemValue?.client?.clientTypeId,
+        orderId: quoteItemValue?.id,
+        compositeProducts: compositeProducts.map((p) => ({
+          id: p.id,
+          name: p.name,
+          quantity: p.quantity,
+          jobName: p.jobName,
+        })),
+      }
+    );
+  };
+
+  const handleCreateCompositeAware = () => {
+    if (isCompositeSelectedProduct) {
+      openCompositeDialog();
+      return;
+    }
+    onClickCreateQuoteForCustomer();
+  };
+
   const onClickCreateQuoteForCustomer = () => {
     setSelectedFirstMaterial(true);
     if (router.query.isNewCreation) {
       if (selectedProduct?.category === ProductCategoryType.MATERIAL) {
+        // Validate supplier selection for purchase order material items
+        // Only validate when it's a purchase order, creating new, and isMaterial is true
+        if (
+          documentType === DOCUMENT_TYPE.purchaseOrder &&
+          isMaterial &&
+          !quoteItemValue?.client?.id
+        ) {
+          alertFault(t("home.admin.pleaseSelectSupplier"));
+          // Don't close modal, let user select supplier and try again
+          return;
+        }
         setSelectedFirstMaterial(true);
         getDocumentItemDataFromMaterial();
       } else {
@@ -416,7 +794,7 @@ const useAddNewItem = ({ onClose, getQuote, documentType, getCalculateQuoteItem 
   };
 
   return {
-    onClickCreateQuoteForCustomer,
+    onClickCreateQuoteForCustomer: handleCreateCompositeAware,
     handleProductChange,
     combinedData,
     selectedProduct,
@@ -440,6 +818,21 @@ const useAddNewItem = ({ onClose, getQuote, documentType, getCalculateQuoteItem 
     CheckPermission,
     selectedTab,
     setSelectedTab,
+    // Composite products
+    isCompositeSelectedProduct,
+    compositeDialogOpen,
+    compositeProducts,
+    quantityMultiplier,
+    mainJobName,
+    isLoadingCompositeProducts,
+    compositeErrors,
+    isSubmittingComposite,
+    handleCompositeCancel,
+    handleMainJobNameChange,
+    handleMultiplierChange,
+    handleProductQuantityChange,
+    updateCompositeProduct,
+    handleCompositeConfirm,
   };
 };
 

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import lodashClonedeep from "lodash.clonedeep";
 import { useTranslation } from "react-i18next";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
@@ -55,6 +55,7 @@ import {
   updateDocumentCurrencyApi,
   updateDocumentPreferenceApi,
   updateDocumentTitleApi,
+  updateDocumentStatusApi,
   updateDocumentVatStatusApi,
   updateDueDateApi,
   updateExchangeRateApi,
@@ -62,6 +63,8 @@ import {
   updatePurchaseNumberApi,
   checkPurchaseNumberExistsApi,
   updateQuoteItemQuantityApi,
+  updateQuoteClientNoteAsShownApi,
+  getDocumentInventoryApi,
 } from "@/services/api-service/generic-doc/documents-api";
 import { DOCUMENT_TYPE } from "../quotes/enums";
 import { useRouter } from "next/router";
@@ -99,7 +102,7 @@ import { Button } from "@mui/material";
 import { PlusIcon } from "../quotes/widgets/icons/header-section-icons";
 import { useStyle } from "./style";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
-import { ShowDocumentDetailsEnum, ShowPricesEnum } from "@/enums";
+import { PurchaseOrderType, ShowDocumentDetailsEnum, ShowPricesEnum, ItemCalculationType, PurchaseOrderStatuses } from "@/enums";
 
 export enum MessageType {
   Email = 0,
@@ -174,6 +177,22 @@ const useQuoteNew = ({
     isPurchaseInvoiceRefund ||
     isSupplierPayments ||
     isOutgoingPayments;
+
+  const purchaseOrderStatusOptions = useMemo(
+    () =>
+      Object.keys(PurchaseOrderStatuses)
+        .filter((key) => isNaN(Number(key)))
+        .map((key) => ({
+          value:
+            PurchaseOrderStatuses[
+              key as keyof typeof PurchaseOrderStatuses
+            ],
+          label: t(`documentStatus.PurchaseOrder.${key}`),
+        })),
+    [t]
+  );
+  const [isUpdatingPurchaseStatus, setIsUpdatingPurchaseStatus] =
+    useState(false);
 
   const [creationDate, setCreationDate] = useState(
     isQuoteConfirmation
@@ -274,6 +293,7 @@ const useQuoteNew = ({
     docType === DOCUMENT_TYPE.invoiceRefund;
   const isReceipt = docType === DOCUMENT_TYPE.receipt;
   const isNewCreation = router.query.isNewCreation === "true";
+  const isMaterial = router.query.isMaterial === "true";
 
   const [openWhatsAppModal, setOpenWatsAppModal] = useState(false);
   const [isSelectedAtLeastOne, setIsSelectedAtLeastOne] = useState(null);
@@ -300,8 +320,29 @@ const useQuoteNew = ({
   const onClickOpenNewItemNotesModal = () => {
     setOpenNewItemNotesModal(true);
   };
-  const onClickCloseNewItemNotesModal = () => {
+  const onClickCloseNewItemNotesModal = async () => {
     setOpenNewItemNotesModal(false);
+
+    // Call API to update isClientNoteShown flag when closing the modal
+    // Only call if flag is null or false (hasn't been set yet)
+    if (
+      quoteItemValue?.id &&
+      docType === DOCUMENT_TYPE.quote &&
+      (quoteItemValue?.client?.isClientNoteShown === null ||
+        quoteItemValue?.client?.isClientNoteShown === false ||
+        quoteItemValue?.isClientNoteShown === null ||
+        quoteItemValue?.isClientNoteShown === false)
+    ) {
+      const callBack = (res) => {
+        if (res?.success) {
+          // Refresh the quote to get updated flag
+          getQuote();
+        }
+      };
+      await updateQuoteClientNoteAsShownApi(callApi, callBack, {
+        quoteId: quoteItemValue?.id,
+      });
+    }
   };
 
   useEffect(() => {
@@ -309,7 +350,11 @@ const useQuoteNew = ({
       quoteItemValue?.client?.newItemNotes &&
       quoteItemValue?.client?.newItemNotes.trim() !== "" &&
       quoteItemValue?.client?.newItemNotes.trim() !== null &&
-      docType === DOCUMENT_TYPE.quote
+      docType === DOCUMENT_TYPE.quote &&
+      (quoteItemValue?.client?.isClientNoteShown === null ||
+        quoteItemValue?.client?.isClientNoteShown === false ||
+        quoteItemValue?.isClientNoteShown === null ||
+        quoteItemValue?.isClientNoteShown === false)
     ) {
       onClickOpenNewItemNotesModal();
     }
@@ -432,6 +477,39 @@ const useQuoteNew = ({
     setSelectedDocument(order);
     setOpenChangeProductionStatusModal(true);
   };
+
+  // Inventory Intake Modal State
+  const [openInventoryIntakeModal, setOpenInventoryIntakeModal] =
+    useState(false);
+  const [inventoryData, setInventoryData] = useState<any[]>([]);
+  const [inventoryLoading, setInventoryLoading] = useState(false);
+  const [openPurchaseOrderTypeModal, setOpenPurchaseOrderTypeModal] = useState(false);
+
+  const onClickOpenInventoryIntakeModal = async () => {
+    setOpenInventoryIntakeModal(true);
+    setInventoryLoading(true);
+
+    const callBack = (res) => {
+      if (res?.success) {
+        setInventoryData(res?.data || []);
+      } else {
+        alertFault(t("alerts.failedToLoadData"));
+      }
+      setInventoryLoading(false);
+    };
+
+    await getDocumentInventoryApi(callApi, callBack, {
+      documentType: docType,
+      documentId: quoteItemValue?.id,
+      purchaseOrderId: quoteItemValue?.id, // For purchase orders table
+    });
+  };
+
+  const onClickCloseInventoryIntakeModal = () => {
+    setOpenInventoryIntakeModal(false);
+    setInventoryData([]);
+  };
+
   const { CheckPreferenceValue } = usePrintHousePreferences();
 
   const source = isQuoteConfirmation ? quoteConfirm : quoteItemValue;
@@ -440,24 +518,45 @@ const useQuoteNew = ({
 
   const showPrices = source?.showPrices !== ShowPricesEnum.HidePrices;
 
+  const isCanIntake = source?.isCanIntake === true;
+  const isMaterialPurchaseOrder =
+    (isPurchaseOrder && isNewCreation && isMaterial) ||
+    (isPurchaseOrder && isCanIntake);
+
   const tableHeaders = [
     "#",
     isDeliveryNote || isInvoice ? t("products.profits.documentNumber") : null,
     !CheckPreferenceValue(EPreferences.HIDE_ITEM_CODE_FROM_DOCUMENT_CART) &&
-      t("sales.quote.itemCode"),
+    t("sales.quote.itemCode"),
     !CheckPreferenceValue(EPreferences.HIDE_ITEM_CODE_FROM_DOCUMENT_CART) &&
-      t("products.profits.itemName"),
+    t("products.profits.itemName"),
     CheckPreferenceValue(EPreferences.HIDE_ITEM_CODE_FROM_DOCUMENT_CART) &&
-      t("products.profits.itemName"),
+    t("products.profits.itemName"),
     showDetails ? t("products.profits.details") : null,
-    t("sales.quote.amount"),
+    isMaterialPurchaseOrder ? t("sales.purchaseOrder.packagesQuantity") : null,
+    isMaterialPurchaseOrder ? t("sales.purchaseOrder.quantityInPackage") : null,
+    isMaterialPurchaseOrder ? t("sales.purchaseOrder.totalQuantity") : t("sales.quote.amount"),
+    isMaterialPurchaseOrder ? t("sales.purchaseOrder.unit") : null,
     showPrices ? t("products.profits.pricingListWidget.unitPrice") : null,
     showPrices ? t("sales.quote.discount") : null,
     showPrices ? t("products.offsetPrice.admin.finalPrice") : null,
     t("products.profits.more"),
   ].filter(Boolean);
 
-  const columnWidths = [
+  const columnWidths = isMaterialPurchaseOrder ? [
+    "5%", // "#"
+    "9%", // Item Code
+    "10%", // Item Name
+    "15%", // Details column (optional)
+    "9%", // Amount
+    "9%", // Amount
+    "9%", // Amount
+    "5%", // Unit Price
+    showPrices ? "8%" : null, // Unit Price
+    showPrices ? "8%" : null, // Discount
+    showPrices ? "8%" : null, // Final Price
+    "5%", // More
+  ] : [
     "5%", // "#"
     isDeliveryNote || isInvoice ? "10%" : null, // Document Number
     !CheckPreferenceValue(EPreferences.HIDE_ITEM_CODE_FROM_DOCUMENT_CART)
@@ -467,8 +566,8 @@ const useQuoteNew = ({
     source?.showDetails === ShowDocumentDetailsEnum.All
       ? "25%"
       : source?.showDetails === ShowDocumentDetailsEnum.ShowJobNameOnly
-      ? "10%"
-      : null, // Details column (optional)
+        ? "10%"
+        : null, // Details column (optional)
     "10%", // Amount
     showPrices ? "10%" : null, // Unit Price
     showPrices ? "10%" : null, // Discount
@@ -727,7 +826,7 @@ const useQuoteNew = ({
 
       getCalculateQuoteItem(
         updatedQuoteItemValue,
-        4,
+        ItemCalculationType.Currency,
         quoteItemValue.price,
         updatedQuoteItemValue
       );
@@ -762,7 +861,7 @@ const useQuoteNew = ({
       setIsUpdateVatStatus(null);
       getCalculateQuoteItem(
         updatedQuoteItemValue,
-        2,
+        ItemCalculationType.Discount,
         quoteItemValue.discount,
         updatedQuoteItemValue
       );
@@ -987,6 +1086,7 @@ const useQuoteNew = ({
 
       if (res?.success) {
         const _data = res?.data?.data?.result || {};
+        const isNewCreation = router?.query?.isNewCreation === "true";
 
         if (clientChangeSource === ClientChangeSource.SAVE_AND_START_NEW_DOC) {
           const {
@@ -1021,12 +1121,66 @@ const useQuoteNew = ({
             discountAmount: prevDocumentItem?.discountAmount,
             totalVAT: prevDocumentItem?.totalVAT,
           });
+        } else if (
+          prevDocumentItem &&
+          prevDocumentItem?.documentItems &&
+          Array.isArray(prevDocumentItem.documentItems) &&
+          prevDocumentItem.documentItems.length > 0
+        ) {
+          // Merge re-calculated items from supplier change
+          const updatedQuoteItemValue = {
+            ..._data,
+            documentItems: prevDocumentItem.documentItems,
+          };
+          setQuoteItemValue(updatedQuoteItemValue);
+
+          // Recalculate totals after updating document items
+          if (isNewCreation) {
+            const calculateRes = await callApi(
+              EHttpMethod.POST,
+              `/v1/erp-service/documents/calculate-document-new`,
+              {
+                documentType: docType,
+                document: {
+                  exchangeRate:
+                    updatedQuoteItemValue?.exchangeRate === 0
+                      ? 1
+                      : updatedQuoteItemValue?.exchangeRate,
+                  totalPrice: updatedQuoteItemValue?.totalPrice,
+                  data: updatedQuoteItemValue?.discount || 0,
+                  calculationType: 0,
+                  totalPriceAfterDiscount: updatedQuoteItemValue?.totalPriceAfterDiscount,
+                  discount: updatedQuoteItemValue?.discount || 0,
+                  discountAmount: updatedQuoteItemValue?.discountAmount || 0,
+                  totalPayment: updatedQuoteItemValue?.totalPayment,
+                  vat: updatedQuoteItemValue?.vat || 0.17,
+                  totalVAT: updatedQuoteItemValue?.totalVAT || 0,
+                  roundPrices: updatedQuoteItemValue?.client?.roundPrices,
+                  documentItems: updatedQuoteItemValue.documentItems?.map((item) => ({
+                    finalPrice: item.finalPrice,
+                  })),
+                },
+              }
+            );
+            if (calculateRes?.success) {
+              const calculatedData = calculateRes?.data?.data?.data;
+              setQuoteItemValue({
+                ...updatedQuoteItemValue,
+                discount: calculatedData.discount,
+                discountAmount: calculatedData.discountAmount,
+                totalPayment: calculatedData.totalPayment,
+                totalPrice: calculatedData.totalPrice,
+                totalPriceAfterDiscount: calculatedData.totalPriceAfterDiscount,
+                totalVAT: calculatedData.totalVAT,
+                vat: calculatedData.vat,
+              });
+            }
+          }
         } else {
           setQuoteItemValue(_data);
         }
 
         // Check if the client vat Exempt and show modal if needed
-        const isNewCreation = router?.query?.isNewCreation === "true";
         const isCorrectPage =
           router.pathname === "/invoice" || router.pathname === "/deliveryNote";
         const isVATMismatch = Math.abs(systemVAT - _data?.vat) > 0.001;
@@ -1273,42 +1427,58 @@ const useQuoteNew = ({
       const quoteItemEdit = newQuoteItemValue.documentItems.find(
         (item) => item.id === quoteItem.id
       );
+
+      // Prepare document payload
+      const documentPayload: any = {
+        exchangeRate:
+          newQuoteItemValue?.exchangeRate == 0
+            ? 1
+            : newQuoteItemValue?.exchangeRate,
+        price: quoteItem?.price,
+        discount: quoteItem?.discount,
+        isPrintHouseMaterialItem:
+          quoteItem?.printHouseMaterialId &&
+            (isPrintHouseMaterialItem || selectedFirstMaterial)
+            ? true
+            : false,
+        finalPrice: quoteItemEdit?.finalPrice,
+        quantity: quoteItem?.quantity,
+        roundPrices: newQuoteItemValue?.client?.roundPrices,
+        document: {
+          totalPrice: newQuoteItemValue?.totalPrice,
+          totalPriceAfterDiscount:
+            newQuoteItemValue?.totalPriceAfterDiscount,
+          discount: +newQuoteItemValue?.discount,
+          discountAmount: newQuoteItemValue?.discountAmount,
+          totalPayment: newQuoteItemValue?.totalPayment,
+          vat: newQuoteItemValue?.vat,
+          vatStatus: newQuoteItemValue?.vatStatus,
+          totalVAT: newQuoteItemValue?.totalVAT,
+        },
+        data: data,
+        calculationType: calculationType,
+        currency: newQuoteItemValue?.currency,
+        fromCurrency: newQuoteItemValue?.fromCurrency,
+      };
+
+      // When updating PackagesQuantity, QuantityInPackage, or Amount for material items,
+      // include packagesQuantity and quantityInPackage in the payload
+      if (
+        (calculationType === ItemCalculationType.PackagesQuantity ||
+          calculationType === ItemCalculationType.QuantityInPackage ||
+          calculationType === ItemCalculationType.Amount) &&
+        quoteItem?.printHouseMaterialId
+      ) {
+        documentPayload.packagesQuantity = quoteItem?.packagesQuantity || quoteItem?.packageQuantity || 0;
+        documentPayload.quantityInPackage = quoteItem?.quantityInPackage || quoteItem?.quantityPerPackage || 0;
+      }
+
       const res = await callApi(
         EHttpMethod.POST,
         `/v1/erp-service/documents/calculate-item`,
         {
           documentType: docType,
-          document: {
-            exchangeRate:
-              newQuoteItemValue?.exchangeRate == 0
-                ? 1
-                : newQuoteItemValue?.exchangeRate,
-            price: quoteItem?.price,
-            discount: quoteItem?.discount,
-            isPrintHouseMaterialItem:
-              quoteItem?.printHouseMaterialId &&
-              (isPrintHouseMaterialItem || selectedFirstMaterial)
-                ? true
-                : false,
-            finalPrice: quoteItemEdit?.finalPrice,
-            quantity: quoteItem?.quantity,
-            roundPrices: newQuoteItemValue?.client?.roundPrices,
-            document: {
-              totalPrice: newQuoteItemValue?.totalPrice,
-              totalPriceAfterDiscount:
-                newQuoteItemValue?.totalPriceAfterDiscount,
-              discount: +newQuoteItemValue?.discount,
-              discountAmount: newQuoteItemValue?.discountAmount,
-              totalPayment: newQuoteItemValue?.totalPayment,
-              vat: newQuoteItemValue?.vat,
-              vatStatus: newQuoteItemValue?.vatStatus,
-              totalVAT: newQuoteItemValue?.totalVAT,
-            },
-            data: data,
-            calculationType: calculationType,
-            currency: newQuoteItemValue?.currency,
-            fromCurrency: newQuoteItemValue?.fromCurrency,
-          },
+          document: documentPayload,
         },
         false
       );
@@ -1354,13 +1524,26 @@ const useQuoteNew = ({
             documentItems: newQuoteItemValue.documentItems.map(
               (documentItem) => {
                 if (documentItem.id === quoteItem.id) {
-                  return {
+                  // Preserve packagesQuantity and quantityInPackage when updating PackagesQuantity or QuantityInPackage
+                  const updatedItem: any = {
                     ...documentItem,
                     finalPrice: _data.finalPrice,
                     price: _data.price,
                     quantity: _data.quantity,
                     discount: _data.discount,
                   };
+
+                  // Preserve packagesQuantity and quantityInPackage if they exist in the response or in the original item
+                  if (
+                    calculationType === ItemCalculationType.PackagesQuantity ||
+                    calculationType === ItemCalculationType.QuantityInPackage ||
+                    calculationType === ItemCalculationType.Amount
+                  ) {
+                    updatedItem.packagesQuantity = _data.packagesQuantity ?? quoteItem.packagesQuantity ?? quoteItem.packageQuantity ?? documentItem.packagesQuantity ?? documentItem.packageQuantity;
+                    updatedItem.quantityInPackage = _data.quantityInPackage ?? quoteItem.quantityInPackage ?? quoteItem.quantityPerPackage ?? documentItem.quantityInPackage ?? documentItem.quantityPerPackage;
+                  }
+
+                  return updatedItem;
                 } else {
                   return documentItem;
                 }
@@ -1530,7 +1713,7 @@ const useQuoteNew = ({
           alertSuccessDelete();
           onCloseDeleteItemModal();
           quoteItemValue?.documentItems?.length === 1 ||
-          res?.data?.succ === false
+            res?.data?.succ === false
             ? navigate("/home")
             : getQuote();
         } else {
@@ -1918,7 +2101,7 @@ const useQuoteNew = ({
   const receiptSendModal = useModal();
   const [modalCallback, setModalCallback] = useState<
     (includeInvoices: boolean) => void
-  >(() => () => {});
+  >(() => () => { });
 
   const openReceiptModal = (callback: (includeInvoices: boolean) => void) => {
     receiptSendModal.open();
@@ -2115,6 +2298,7 @@ const useQuoteNew = ({
         exchangeRate:
           quoteItemValue.exchangeRate === 0 ? 1 : quoteItemValue.exchangeRate,
         isOpenRelatedDocuments: isOpenRelatedDocuments,
+        type: isMaterialPurchaseOrder ? PurchaseOrderType.Materials : PurchaseOrderType.Products,
       },
     });
   };
@@ -2546,6 +2730,41 @@ const useQuoteNew = ({
     [docType, quoteItemValue, allClientActiveBudgets]
   );
 
+  const updatePurchaseOrderStatus = useCallback(
+    async (status: number) => {
+      if (!isPurchaseOrder || !quoteItemValue?.id) {
+        return;
+      }
+      setIsUpdatingPurchaseStatus(true);
+      try {
+        const response = await updateDocumentStatusApi(callApi, () => {}, {
+          documentType: docType,
+          documentId: quoteItemValue.id,
+          status,
+        });
+        if (response?.success) {
+          alertSuccessUpdate();
+          await getQuote();
+        } else {
+          alertFaultUpdate();
+        }
+      } catch (error) {
+        alertFaultUpdate();
+      } finally {
+        setIsUpdatingPurchaseStatus(false);
+      }
+    },
+    [
+      alertFaultUpdate,
+      alertSuccessUpdate,
+      callApi,
+      docType,
+      getQuote,
+      isPurchaseOrder,
+      quoteItemValue?.id,
+    ]
+  );
+
   const handleSendUsingWhatsAppWeb = (sendWithInvoices = false) => {
     let checkPhones = checkArrayNotEmptyOrPhoneNotEmpty(
       quoteItemValue?.documentContacts
@@ -2630,6 +2849,22 @@ const useQuoteNew = ({
     await createNewDocumentApi(callApi, callBack, { documentType: 0 });
   };
 
+  const onOpenPurchaseOrderTypeModal = () => {
+    setOpenPurchaseOrderTypeModal(true);
+  };
+
+  const onClosePurchaseOrderTypeModal = () => {
+    setOpenPurchaseOrderTypeModal(false);
+  };
+
+  const handleSelectPurchaseOrderType = (isForMaterial: boolean) => {
+    setOpenPurchaseOrderTypeModal(false);
+    const url = isForMaterial
+      ? `/${documentPath}?isNewCreation=true&isMaterial=true`
+      : `/${documentPath}?isNewCreation=true`;
+    navigate(url);
+  };
+
   const renderCreateNewButton = () => (
     <Button
       sx={{
@@ -2640,15 +2875,19 @@ const useQuoteNew = ({
             : { marginRight: "4px", marginLeft: 0 }),
         },
       }}
-      onClick={() =>
-        isOrder
-          ? onclickCreateNew()
-          : navigate(
-              isOutgoingPayments
-                ? `/${documentPath}?isOutgoingPayments=true&isNewCreation=true`
-                : `/${documentPath}?isNewCreation=true`
-            )
-      }
+      onClick={() => {
+        if (isPurchaseOrder) {
+          onOpenPurchaseOrderTypeModal();
+        } else if (isOrder) {
+          onclickCreateNew();
+        } else {
+          navigate(
+            isOutgoingPayments
+              ? `/${documentPath}?isOutgoingPayments=true&isNewCreation=true`
+              : `/${documentPath}?isNewCreation=true`
+          );
+        }
+      }}
       startIcon={<PlusIcon />}
     >
       {t("sales.quote.createNew")}
@@ -2912,6 +3151,10 @@ const useQuoteNew = ({
     handleCheckboxChange,
     isDeliveryNote,
     isPurchaseDocument,
+    isPurchaseOrder,
+    purchaseOrderStatusOptions,
+    updatePurchaseOrderStatus,
+    isUpdatingPurchaseStatus,
     isOpenRelatedDocuments,
     setIsOpenRelatedDocuments,
     isPurchaseInvoice,
@@ -2960,6 +3203,18 @@ const useQuoteNew = ({
     onConfirmVatMismatchModal,
     estimatedProductionDate,
     handleExportToExcel,
+    isMaterial,
+    isMaterialPurchaseOrder,
+    isCanIntake,
+    openInventoryIntakeModal,
+    onClickOpenInventoryIntakeModal,
+    onClickCloseInventoryIntakeModal,
+    inventoryData,
+    inventoryLoading,
+    openPurchaseOrderTypeModal,
+    onOpenPurchaseOrderTypeModal,
+    onClosePurchaseOrderTypeModal,
+    handleSelectPurchaseOrderType,
   };
 };
 

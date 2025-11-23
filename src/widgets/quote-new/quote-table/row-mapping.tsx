@@ -30,6 +30,7 @@ import { useTranslation } from "react-i18next";
 import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
 import { EPreferences } from "@/enums/prefernces";
 import { QuoteQuantityCell } from "./quantity-cell";
+import { MaterialStockUnit } from "@/widgets/materials-widget/enums";
 
 const RowMappingWidget = ({
   item,
@@ -52,8 +53,10 @@ const RowMappingWidget = ({
   isShowChilds,
   setIsShowChilds,
   _renderIconcalculationStatus,
-  updateItemStatus
+  updateItemStatus,
+  isMaterialPurchaseOrder,
 }) => {
+  console.log("item", item);
   const router = useRouter();
   const { t } = useTranslation();
   const { classes } = useStyle({ headerHeight });
@@ -91,6 +94,14 @@ const RowMappingWidget = ({
     onBlurApproveAmount,
     isUpdateApproveAmount,
     setIsUpdateApproveAmount,
+    isUpdatePackagesQuantity,
+    setIsUpdatePackagesQuantity,
+    onBlurPackagesQuantity,
+    onInputChangePackagesQuantity,
+    isUpdateQuantityInPackage,
+    setIsUpdateQuantityInPackage,
+    onBlurQuantityInPackage,
+    onInputChangeQuantityInPackage,
   } = useQuoteTable({
     getCalculateQuoteItem,
     getCalculateQuoteConfirmationItem,
@@ -274,9 +285,47 @@ const RowMappingWidget = ({
           />
         </PrimaryTableCell>
       )}
+      {isMaterialPurchaseOrder && (
+        <PrimaryTableCell
+          style={{
+            width: columnWidths[quoteItems?.showDetails !== ShowDocumentDetailsEnum.HideDetails ? 4 : 3],
+            ...classes.cellContainerStyle,
+            borderBottom: item?.childsDocumentItems && "none",
+          }}
+        >
+          <div style={classes.cellTextInputStyle}>
+            <InputUpdatedValues
+              value={item?.packagesQuantity || item?.packageQuantity || (item?.amount ? "1" : "0")}
+              onBlur={onBlurPackagesQuantity}
+              isUpdate={canUpdate && isUpdatePackagesQuantity && !isPrePaymentPage}
+              setIsUpdate={setIsUpdatePackagesQuantity}
+              onInputChange={(e) => onInputChangePackagesQuantity(e)}
+            />
+          </div>
+        </PrimaryTableCell>
+      )}
+      {isMaterialPurchaseOrder && (
+        <PrimaryTableCell
+          style={{
+            width: columnWidths[quoteItems?.showDetails !== ShowDocumentDetailsEnum.HideDetails ? 5 : 4],
+            ...classes.cellContainerStyle,
+            borderBottom: item?.childsDocumentItems && "none",
+          }}
+        >
+          <div style={classes.cellTextInputStyle}>
+            <InputUpdatedValues
+              value={item?.quantityInPackage || item?.quantityPerPackage || (item?.amount ? item.amount.toString() : "1")}
+              onBlur={onBlurQuantityInPackage}
+              isUpdate={canUpdate && isUpdateQuantityInPackage && !isPrePaymentPage}
+              setIsUpdate={setIsUpdateQuantityInPackage}
+              onInputChange={(e) => onInputChangeQuantityInPackage(e)}
+            />
+          </div>
+        </PrimaryTableCell>
+      )}
       <PrimaryTableCell
         style={{
-          width: columnWidths[5],
+          width: columnWidths[isMaterialPurchaseOrder ? (quoteItems?.showDetails !== ShowDocumentDetailsEnum.HideDetails ? 6 : 5) : 5],
           ...classes.cellContainerStyle,
           borderBottom: item?.childsDocumentItems && "none",
         }}
@@ -299,10 +348,28 @@ const RowMappingWidget = ({
           t={t}
         />
       </PrimaryTableCell>
+      {isMaterialPurchaseOrder && (
+        <PrimaryTableCell
+          style={{
+            width: columnWidths[isMaterialPurchaseOrder ? (quoteItems?.showDetails !== ShowDocumentDetailsEnum.HideDetails ? 7 : 6) : 6],
+            ...classes.cellContainerStyle,
+            borderBottom: item?.childsDocumentItems && "none",
+          }}
+        >
+          {item?.unit?.value ||
+            (typeof item?.unit === 'string' ? item?.unit : null) ||
+            item?.packagesUnit ||
+            (item?.stockUnit !== undefined && item?.stockUnit !== null
+              ? (typeof item.stockUnit === 'number'
+                ? t(`boardMissions.${MaterialStockUnit[item.stockUnit]}`) || MaterialStockUnit[item.stockUnit]
+                : item.stockUnit)
+              : "")}
+        </PrimaryTableCell>
+      )}
       {quoteItems?.showPrices !== ShowPricesEnum.HidePrices && (
         <PrimaryTableCell
           style={{
-            width: columnWidths[5],
+            width: columnWidths[isMaterialPurchaseOrder ? (quoteItems?.showDetails !== ShowDocumentDetailsEnum.HideDetails ? 8 : 7) : 5],
             ...classes.cellContainerStyle,
             borderBottom: item?.childsDocumentItems && "none",
           }}
@@ -330,7 +397,7 @@ const RowMappingWidget = ({
       {quoteItems?.showPrices !== ShowPricesEnum.HidePrices && (
         <PrimaryTableCell
           style={{
-            width: columnWidths[6],
+            width: columnWidths[isMaterialPurchaseOrder ? (quoteItems?.showDetails !== ShowDocumentDetailsEnum.HideDetails ? 9 : 8) : 6],
             ...classes.cellContainerStyle,
             borderBottom: item?.childsDocumentItems && "none",
           }}
@@ -358,7 +425,7 @@ const RowMappingWidget = ({
       {quoteItems?.showPrices !== ShowPricesEnum.HidePrices && (
         <PrimaryTableCell
           style={{
-            width: columnWidths[7],
+            width: columnWidths[isMaterialPurchaseOrder ? (quoteItems?.showDetails !== ShowDocumentDetailsEnum.HideDetails ? 10 : 9) : 7],
             ...classes.cellContainerStyle,
             borderBottom: item?.childsDocumentItems && "none",
           }}

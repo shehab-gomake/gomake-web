@@ -4,19 +4,19 @@ import {mediaWidthSettings} from "@/widgets/machines/utils/attributes/media-inpu
 
 const letterSidesBendingMachine = (state: Record<string, any>) => {
     return [
-        {
-            name: "mediaType",
-            label: "machineAttributes.mediaType",
-            type: "select",
-            placeholder: "machineAttributes.mediaType",
-            required: true,
-            parameterKey: "mediaType",
-            value: state?.attributes?.mediaType,
-            options: [],
-            machineInputType: 'input',
-            isValid: true,
-            optionsUrl: '/v1/materials/get-all-print-house-material-categories?material=lettersAndLightBoxSideRoll'
-        },
+        // {
+        //     name: "mediaType",
+        //     label: "machineAttributes.mediaType",
+        //     type: "select",
+        //     placeholder: "machineAttributes.mediaType",
+        //     required: true,
+        //     parameterKey: "mediaType",
+        //     value: state?.attributes?.mediaType,
+        //     options: [],
+        //     machineInputType: 'input',
+        //     isValid: true,
+        //     optionsUrl: '/v1/materials/get-all-print-house-material-categories?material=lettersAndLightBoxSideRoll'
+        // },
         ...mediaWidthSettings(state, EMeasurementUnits.CM),
         ...mediaThicknessSettings(state,EMeasurementUnits.MM),
     ]
