@@ -249,8 +249,9 @@ export const FrontDeskEmailComposerWrapper: React.FC<FrontDeskEmailComposerWrapp
       const bccEmails = draft.bcc?.map((recipient) => recipient.email).filter(Boolean) ?? [];
       const attachments = draft.attachments?.map(convertAttachmentToFile).filter(Boolean) as File[];
 
-      // Get contact email from emailData or TO field (primary recipient)
-      const contactEmail = emailData?.contactEmail || toEmails[0] || "";
+      // IMPORTANT: Prioritize the email from the UI (toEmails[0]) over emailData.contactEmail
+      // This ensures we use the updated email if the user changed it in the composer
+      const contactEmail = toEmails[0] || emailData?.contactEmail || "";
 
       if (!contactEmail) {
         console.error("[FrontDeskEmailComposerWrapper] Missing contact email", {
@@ -263,9 +264,8 @@ export const FrontDeskEmailComposerWrapper: React.FC<FrontDeskEmailComposerWrapp
       }
 
       // Find or create contact from email (same pattern as compose conversation modal)
-      // Always generate name from email - use TO email if contactEmail is not available
-      const emailForNameGeneration = emailData?.contactEmail || toEmails[0] || contactEmail;
-      const contactName = getCapitalizedNameFromEmail(emailForNameGeneration);
+      // Always use the contact email (which is now the updated email from the UI)
+      const contactName = getCapitalizedNameFromEmail(contactEmail);
 
       const contactPayload: ContactCreatePayload = {
         name: contactName,
