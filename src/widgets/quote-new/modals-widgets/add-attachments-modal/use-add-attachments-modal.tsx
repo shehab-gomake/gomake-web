@@ -398,14 +398,6 @@ const useAddAttachmentsModal = ({
     while (offset < file.size) {
       const end = Math.min(offset + chunkSize, file.size);
       const chunk = file.slice(offset, end);
-      /*const res = await fetch(sessionUri, {
-        method: "PUT",
-        headers: {
-          "Content-Type": file.type || "application/octet-stream",
-          "Content-Range": `bytes ${offset}-${end - 1}/${file.size}`,
-        },
-        body: chunk,
-      });*/
       const res = await fetch(sessionUri, {
         method: "PUT",
         headers: {

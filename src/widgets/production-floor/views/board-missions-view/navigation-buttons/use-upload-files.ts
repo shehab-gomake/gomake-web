@@ -1,4 +1,4 @@
-import { getUserToken } from "@/services/storage-data";
+import {getTempUserToken, getUserToken} from "@/services/storage-data";
 import { useRecoilState } from "recoil";
 import { printHouseProfile } from "@/store/print-house-profile";
 import {
@@ -15,6 +15,7 @@ import { useGomakeAxios } from "@/hooks";
 import { EPreferences } from "@/enums/prefernces";
 import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
 import {useEffect, useState} from "react";
+import axios from "axios";
 
 const useUploadFiles = (
   orderItemId, 
@@ -113,6 +114,64 @@ const useUploadFiles = (
     // Get the fileId specific to this upload
     const fileId = initialStatusResponse?.data?.data?.data;
 
+    if(companyProfile.filesApiAddress === "https://gomake-cloud-files-api-il-683372436778.me-west1.run.app"){
+      let userToken = getUserToken();
+      const response = await axios.post(
+          `${companyProfile.filesApiAddress}/api/Files/CreateUploadSession`,
+          { fileName: file?.name, contentType: file.type},
+          {
+            headers: {
+              authorization: "Bearer " + userToken,
+            },
+          }
+      );
+      const sessionUri = response.data.sessionUri;
+      const bucketName = response.data.bucketName;
+      const fileUrl = response.data.fileUrl;
+      await uploadFileToGCS(sessionUri, file, (progress) => {});
+      const response2 = await axios.post(
+          `${companyProfile.filesApiAddress}/api/Files/SendFileToPrintHouseFileApp`,
+          {
+            orderItemId:orderItemId,
+            fileName: file?.name,
+            fileType: fileType,
+            productType: productType,
+            bucketKey:bucketName,
+          },
+          {
+            headers: {
+              authorization: "Bearer " + userToken,
+            },
+          }
+      );
+      setUploadingFiles(prev =>
+          prev.map((fg) =>
+              fg.orderItemId === orderItemId && fg.productType === productType
+                  ? {
+                    ...fg,
+                    filesInfo: fg.filesInfo.map(fileInfo =>
+                        fileInfo.uploadId === uploadId
+                            ? { ...fileInfo, fileStatus: EUploadingFileStatus.UploadedToGoogleCloud }
+                            : fileInfo
+                    ),
+                  }
+                  : fg
+          )
+      );
+
+      await setOrderItemFileStatus({
+        orderItemId,
+        filename: file?.name,
+        source: finalPath,
+        screenShot: "",
+        productType: !!productType ? productType.toString() : "",
+        signalRConnectId: connectionId,
+        status: EUploadingFileStatus.UploadedToGoogleCloud,
+        fileType,
+        fileId: fileId
+      });
+      return;
+    }
     // File upload logic
     const totalChunks = Math.ceil(file.size / CHUNK_SIZE);
     let currentChunk = 0;
@@ -238,7 +297,31 @@ const useUploadFiles = (
       }
     }
   };
+  async function uploadFileToGCS(
+      sessionUri: string,
+      file: File,
+      onProgress?: (n: number) => void
+  ) {
+    const chunkSize = 8 * 1024 * 1024; // 8 MiB; tune to 8–32 MiB
+    let offset = 0;
 
+    while (offset < file.size) {
+      const end = Math.min(offset + chunkSize, file.size);
+      const chunk = file.slice(offset, end);
+      const res = await fetch(sessionUri, {
+        method: "PUT",
+        headers: {
+          "Content-Type": file.type || "application/octet-stream",
+          "Content-Range": `bytes ${offset}-${end - 1}/${file.size}`,
+        },
+        body: chunk,
+      });
+      if (!(res.ok || res.status === 308))
+        throw new Error(`Upload failed: ${res.status}`);
+      offset = end;
+      onProgress?.(Math.round((offset / file.size) * 100));
+    }
+  }
   const uploadChunk = async (
     chunk,
     chunkIndex,
@@ -250,6 +333,7 @@ const useUploadFiles = (
     fileId, // Now passed as parameter
     uploadId // For tracking
   ) => {
+    
     const formData = new FormData();
     formData.append("file", chunk);
     formData.append("uploadFileRequestId", uploadId);
