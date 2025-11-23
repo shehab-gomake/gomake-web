@@ -143,7 +143,7 @@ const ParameterWidget = () => {
                             }}>
                               <GomakePrimaryButton
                                 onClick={() => handleOpenAddSubSectionDialog(section?.id)}
-                                style={{ minWidth: "200px", height: "40px" }}
+                                style={{ minWidth: "200px", maxWidth: "200px", height: "40px" }}
                               >
                                 {t("products.addProduct.admin.addSubSection") || "Add SubSection"}
                               </GomakePrimaryButton>
