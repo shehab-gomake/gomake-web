@@ -47,13 +47,13 @@ const JobCard: React.FC<IProps> = ({
   const colorPickerRef = useRef<HTMLDivElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
   const { alertFaultUpdate, alertSuccessUpdate } = useSnackBar();
-  const { CheckPreferenceValue } = usePrintHousePreferences();
+  const { GetPreferenceValueKey } = usePrintHousePreferences();
   const { tryMoveBoardMissionsToDone } = useProductionFloorData();
 
   // Get highlighting style preference (default: "border_and_background")
-  const highlightingStyle = CheckPreferenceValue(
+  const highlightingStyle = GetPreferenceValueKey(
     EPreferences.KANBAN_CARD_HIGHLIGHTING_STYLE
-  ) as string | undefined;
+  );
   const isBackgroundOnly = highlightingStyle === "background_only";
 
   // Get current direction for RTL support
