@@ -1545,7 +1545,6 @@ const useAddProduct = ({ classes }) => {
     onCloseExternalIdsModal,
     openExternalIdsModal,
     removeProductParamete,
-    productState,
     addSubSectionToProduct,
   };
 };
