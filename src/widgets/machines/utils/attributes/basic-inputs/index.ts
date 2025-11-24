@@ -26,7 +26,7 @@ const getCategoryBasicInputs = (categoryId: string, state: Record<string, any>) 
         case ECategoryId.LAMINATION_MACHINE:
             return laminationMachine(state);
         case ECategoryId.ANALOG_ENHANCEMENT_MACHINE:
-        case ECategoryId.JOINTING_MACHINES:
+        case ECategoryId.STRIPPING_MACHINES:
             return basicSettingResolution(state);
         case ECategoryId.MANUAL_PEELING_STICKERS:
             return manualPeelingMachine(state);

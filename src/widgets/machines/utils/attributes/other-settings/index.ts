@@ -40,7 +40,7 @@ const getCategoryInputs = (categoryId: string, state: Record<string, any>): any[
             return rollLaserCutMachine(state);
         case ECategoryId.ANALOG_ENHANCEMENT_MACHINE:
             return analogEnhancementMachine(state);
-        case ECategoryId.JOINTING_MACHINES:
+        case ECategoryId.STRIPPING_MACHINES:
             return [];
         case ECategoryId.COLLECTOR:
             return collectorMachine(state);

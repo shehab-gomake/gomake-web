@@ -30,7 +30,7 @@ const getCategoryColorsInputs = (categoryId: string, state: Record<string, any>)
         case ECategoryId.DIGITAL_ENHANCEMENT_MACHINE:
             return enhancementMachine(state);
         case ECategoryId.ANALOG_ENHANCEMENT_MACHINE:
-        case ECategoryId.JOINTING_MACHINES:
+        case ECategoryId.STRIPPING_MACHINES:
             return enhancementMachine(state);
         case ECategoryId.SIDE_COLORING:
             return sideColoringMachine(state);

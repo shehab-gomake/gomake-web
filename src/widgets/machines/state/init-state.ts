@@ -198,8 +198,8 @@ const initState: Record<string, Record<string, any>> = {
             varnish: false
         }
     },
-    [ECategoryId.JOINTING_MACHINES]: {
-        category: ECategoryId.JOINTING_MACHINES,
+    [ECategoryId.STRIPPING_MACHINES]: {
+        category: ECategoryId.STRIPPING_MACHINES,
         price: {price: 0, currency: 0},
         attributes: {
             resolution: 0,
