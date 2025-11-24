@@ -84,6 +84,11 @@ export const machineCategoriesState = atom<IMachineCategory[]>({
       color: defaultTheme.warning.light["300"],
     },
     {
+      id: ECategoryId.STRIPPING_MACHINES,
+      name: "machinesCategories.strippingMachines",
+      color: defaultTheme.warning.light["300"],
+    },
+    {
       id: ECategoryId.ENCAPSULATION_MACHINE,
       name: "machinesCategories.encapsulation",
       color: defaultTheme.warning.light["200"],
