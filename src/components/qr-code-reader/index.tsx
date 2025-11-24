@@ -180,7 +180,7 @@ const QrCodeReader = (props: IProps) => {
                 setOpenPackagesModal(true);
                 // handleRemoveBoardMission(selectedMissionId);
                 if (sendMessage) {
-                    openEmailComposer(selectedMission.id);
+                   // openEmailComposer(selectedMission.id);
                 }
             } else {
                 alertFaultUpdate();
