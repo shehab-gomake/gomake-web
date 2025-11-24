@@ -327,7 +327,7 @@ const JobCard: React.FC<IProps> = ({
           : "pointer",
         transition: "all 0.2s ease",
         opacity: isDragging ? 0.5 : isDisabled ? 0.8 : 1,
-        minHeight: "90px",
+        minHeight: isMobile ? "100px" : "105px",
         display: "flex",
         flexDirection: "column",
         justifyContent: "space-between",
@@ -569,8 +569,10 @@ const JobCard: React.FC<IProps> = ({
       <Box
         sx={{
           display: "flex",
+          flexWrap: "wrap",
           justifyContent: "space-between",
           alignItems: "flex-end",
+          gap: "4px",
           minWidth: 0, // Allow flex children to shrink below their content size
         }}
       >
@@ -586,11 +588,15 @@ const JobCard: React.FC<IProps> = ({
                 ? "white"
                 : "#495057",
               fontSize: isMobile ? "0.7rem" : "0.8rem",
-              maxWidth: "60%",
+              flex: "1 1 auto",
+              minWidth: 0,
               overflow: "hidden",
-              textOverflow: "ellipsis",
-              whiteSpace: "nowrap",
+              display: "-webkit-box",
+              WebkitLineClamp: 2,
+              WebkitBoxOrient: "vertical",
               opacity: isDisabled ? 0.7 : 1,
+              wordBreak: "break-word",
+              lineHeight: 1.3,
             }}
           >
             {mission.productName}
@@ -607,6 +613,8 @@ const JobCard: React.FC<IProps> = ({
             sx={{
               height: "18px",
               fontSize: isMobile ? "0.65rem" : "0.7rem",
+              flexShrink: 0,
+              alignSelf: "flex-end",
               backgroundColor: isDisabled
                 ? upcomingWorksBgColor
                 : isBackgroundOnly

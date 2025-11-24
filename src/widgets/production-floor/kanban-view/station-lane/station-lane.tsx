@@ -401,9 +401,10 @@ const StationLane: React.FC<IProps> = ({
               display: "flex",
               flexDirection: "column",
               gap: "8px",
-              overflow: "auto",
-              maxHeight: hasMultipleCards ? "302px" : "118px",
-              minHeight: hasMultipleCards ? "302px" : "118px",
+              overflow: hasMultipleCards ? "auto" : "hidden",
+              maxHeight: hasMultipleCards ? "302px" : "none",
+              minHeight: hasMultipleCards ? "302px" : "auto",
+              height: hasMultipleCards ? "302px" : "auto",
               // Border styling - use outline for hover states to avoid conflicts
               borderRight: "1px solid #e0e0e0",
               outline:
