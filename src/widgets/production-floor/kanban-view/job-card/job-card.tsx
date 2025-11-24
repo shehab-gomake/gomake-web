@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Box, Typography, Chip, Popover } from "@mui/material";
+import { Box, Typography, Chip, Popover, Tooltip } from "@mui/material";
 import { createPortal } from "react-dom";
 import { IBoardMissions } from "@/widgets/production-floor/interfaces/board-missions";
 import { useRouter } from "next/router";
@@ -48,7 +48,7 @@ const JobCard: React.FC<IProps> = ({
   const cardRef = useRef<HTMLDivElement>(null);
   const { alertFaultUpdate, alertSuccessUpdate } = useSnackBar();
   const { CheckPreferenceValue } = usePrintHousePreferences();
-  const { tryMoveBoardMissionsToDone } = useProductionFloorData(); //!here
+  const { tryMoveBoardMissionsToDone } = useProductionFloorData();
 
   // Get highlighting style preference (default: "border_and_background")
   const highlightingStyle = CheckPreferenceValue(
@@ -415,6 +415,7 @@ const JobCard: React.FC<IProps> = ({
           marginBottom: "8px",
           position: "relative",
           zIndex: 3, // Above overlay
+          minWidth: 0, // Allow flex children to shrink below their content size
         }}
       >
         {/* Job Code and Job Name */}
@@ -425,45 +426,64 @@ const JobCard: React.FC<IProps> = ({
             gap: "8px",
             flex: 1,
             alignItems: "center",
+            minWidth: 0, // Allow text truncation
+            overflow: "hidden", // Ensure children respect overflow
           }}
         >
           {/* Job Code - Bold and prominent */}
-          <Typography
-            variant="body2"
-            sx={{
-              fontWeight: 700,
-              color: isDisabled
-                ? upcomingWorksColor
-                : isBackgroundOnly && (color || mission.productionFloorJobColor)
-                ? "white"
-                : color || mission.productionFloorJobColor || "#1976d2",
-              fontSize: isMobile ? "0.8rem" : "0.9rem",
-              lineHeight: 1.2,
-            }}
+          <Tooltip
+            title={`${mission.boardMissionNumber}/${mission.orderNumber}`}
+            arrow
+            placement="top"
           >
-            {mission.boardMissionNumber}/{mission.orderNumber}
-          </Typography>
-
-          {/* Job Name - if exists */}
-          {mission.jobName && (
             <Typography
               variant="body2"
               sx={{
-                fontWeight: 500,
+                fontWeight: 700,
                 color: isDisabled
                   ? upcomingWorksColor
                   : isBackgroundOnly &&
                     (color || mission.productionFloorJobColor)
                   ? "white"
-                  : "#6c757d",
-                fontSize: isMobile ? "0.65rem" : "0.75rem",
-                fontStyle: "italic",
+                  : color || mission.productionFloorJobColor || "#1976d2",
+                fontSize: isMobile ? "0.8rem" : "0.9rem",
                 lineHeight: 1.2,
-                opacity: isDisabled ? 0.7 : 1,
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+                maxWidth: "100%",
               }}
             >
-              {mission.jobName}
+              {mission.boardMissionNumber}/{mission.orderNumber}
             </Typography>
+          </Tooltip>
+
+          {/* Job Name - if exists */}
+          {mission.jobName && (
+            <Tooltip title={mission.jobName} arrow placement="top">
+              <Typography
+                variant="body2"
+                sx={{
+                  fontWeight: 500,
+                  color: isDisabled
+                    ? upcomingWorksColor
+                    : isBackgroundOnly &&
+                      (color || mission.productionFloorJobColor)
+                    ? "white"
+                    : "#6c757d",
+                  fontSize: isMobile ? "0.65rem" : "0.75rem",
+                  fontStyle: "italic",
+                  lineHeight: 1.2,
+                  opacity: isDisabled ? 0.7 : 1,
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                  maxWidth: "100%",
+                }}
+              >
+                {mission.jobName}
+              </Typography>
+            </Tooltip>
           )}
         </Box>
 
@@ -504,25 +524,27 @@ const JobCard: React.FC<IProps> = ({
         }}
       >
         {/* Customer Name */}
-        <Typography
-          variant="body2"
-          sx={{
-            fontWeight: 500,
-            color: isDisabled
-              ? upcomingWorksColor
-              : isBackgroundOnly && (color || mission.productionFloorJobColor)
-              ? "white"
-              : "#495057",
-            fontSize: isMobile ? "0.7rem" : "0.8rem",
-            maxWidth: "60%",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-            whiteSpace: "nowrap",
-            opacity: isDisabled ? 0.7 : 1,
-          }}
-        >
-          {mission.clientName}
-        </Typography>
+        <Tooltip title={mission.clientName} arrow placement="top">
+          <Typography
+            variant="body2"
+            sx={{
+              fontWeight: 500,
+              color: isDisabled
+                ? upcomingWorksColor
+                : isBackgroundOnly && (color || mission.productionFloorJobColor)
+                ? "white"
+                : "#495057",
+              fontSize: isMobile ? "0.7rem" : "0.8rem",
+              maxWidth: "60%",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap",
+              opacity: isDisabled ? 0.7 : 1,
+            }}
+          >
+            {mission.clientName}
+          </Typography>
+        </Tooltip>
 
         {/* Due Date */}
         <Typography
@@ -549,28 +571,31 @@ const JobCard: React.FC<IProps> = ({
           display: "flex",
           justifyContent: "space-between",
           alignItems: "flex-end",
+          minWidth: 0, // Allow flex children to shrink below their content size
         }}
       >
         {/* Product Name - Bold */}
-        <Typography
-          variant="body2"
-          sx={{
-            fontWeight: 700,
-            color: isDisabled
-              ? upcomingWorksColor
-              : isBackgroundOnly && (color || mission.productionFloorJobColor)
-              ? "white"
-              : "#495057",
-            fontSize: isMobile ? "0.7rem" : "0.8rem",
-            maxWidth: "60%",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-            whiteSpace: "nowrap",
-            opacity: isDisabled ? 0.7 : 1,
-          }}
-        >
-          {mission.productName}
-        </Typography>
+        <Tooltip title={mission.productName} arrow placement="top">
+          <Typography
+            variant="body2"
+            sx={{
+              fontWeight: 700,
+              color: isDisabled
+                ? upcomingWorksColor
+                : isBackgroundOnly && (color || mission.productionFloorJobColor)
+                ? "white"
+                : "#495057",
+              fontSize: isMobile ? "0.7rem" : "0.8rem",
+              maxWidth: "60%",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap",
+              opacity: isDisabled ? 0.7 : 1,
+            }}
+          >
+            {mission.productName}
+          </Typography>
+        </Tooltip>
 
         {/* Jobs in Order badge */}
         {mission.numberOfJobsInOrder && (
