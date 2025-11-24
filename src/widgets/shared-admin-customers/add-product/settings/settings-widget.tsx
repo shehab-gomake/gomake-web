@@ -87,6 +87,36 @@ const SettingsWidget = ({
   const isCompositeStructure =
     selectedProductStructure?.id === EProductStructureType.COMPOSITE;
 
+  // Combined pricing type options: Composite first, then templates
+  const pricingTypeOptions = useMemo(() => {
+    const compositeOption = {
+      id: "COMPOSITE",
+      name: t("products.addProduct.admin.composite"),
+      isComposite: true,
+    };
+    const templateOptions = allTemplate?.map((template: any) => ({
+      ...template,
+      isComposite: false,
+    })) || [];
+    return [compositeOption, ...templateOptions];
+  }, [allTemplate, t]);
+
+  // Determine selected pricing type value
+  const selectedPricingType = useMemo(() => {
+    if (isCompositeStructure) {
+      return pricingTypeOptions[0]; // Composite option
+    }
+    if (productState?.templateId) {
+      const templateId = typeof productState?.templateId === "object"
+        ? productState?.templateId?.id
+        : productState?.templateId;
+      return pricingTypeOptions.find(
+        (option: any) => option.id === templateId && !option.isComposite
+      ) || defultTemplate || null;
+    }
+    return defultTemplate || null;
+  }, [isCompositeStructure, productState?.templateId, pricingTypeOptions, defultTemplate]);
+
   useEffect(() => {
     if (!isCompositeStructure) {
       return;
@@ -289,57 +319,11 @@ const SettingsWidget = ({
             )}
           </div>
         </div>
-        <div style={clasess.itemOnFirstContainer}>
-          <div style={clasess.labelTitleStyle}>
-            {t("products.addProduct.admin.productStructureType")}
-            <span style={clasess.requierdInput}>*</span>
-          </div>
-          <div style={{ width: "100%" }}>
-            <GoMakeAutoComplate
-              options={productStructureOptions}
-              placeholder={t("products.addProduct.admin.productStructureType")}
-              style={clasess.dropDownListStyle}
-              onChange={(e: any, value: any) => {
-                const structureType =
-                  value?.id ?? EProductStructureType.BASE;
-                onChangeStateProduct("productStructureType", structureType);
-                if (structureType === EProductStructureType.COMPOSITE) {
-                  if (!Array.isArray(productState?.compositeProductIds)) {
-                    onChangeStateProduct("compositeProductIds", []);
-                  }
-                } else {
-                  onChangeStateProduct("compositeProductIds", []);
-                }
-              }}
-              value={selectedProductStructure}
-            />
-          </div>
-        </div>
         {isCompositeStructure ? (
-          <div style={clasess.itemGropupsContainer}>
-            <div style={clasess.labelTitleStyle}>
-              {t("boardMissions.products")}
-              <span style={clasess.requierdInput}>*</span>
-            </div>
-            <ProductMultiSelect
-              products={productsList ?? []}
-              selectedProductIds={productState?.compositeProductIds ?? []}
-              onProductChange={(ids) => {
-                onChangeStateProduct("compositeProductIds", ids);
-              }}
-              placeholder={t(
-                "boardMissions.selectProducts"
-              )}
-              containerStyle={{ width: "100%" }}
-              selectStyle={{ width: "100%" }}
-            />
-          </div>
-        ) : (
           <>
             <div style={clasess.itemOnFirstContainer}>
               <div style={clasess.labelTitleStyle}>
                 {t("products.addProduct.admin.pricingType")}
-                <span style={clasess.requierdInput}>*</span>
               </div>
               <div style={{ width: "100%" }}>
                 {allTemplate && (
@@ -350,18 +334,96 @@ const SettingsWidget = ({
                     style={clasess.dropDownListStyle}
                     getOptionLabel={(option: any) => option.name}
                     value={
-                      typeof productState?.templateId != "object"
-                        ? defultTemplate
-                        : productState?.templateId
+                      productState?.productStructureType === EProductStructureType.COMPOSITE ? {
+                        label: t("products.addProduct.admin.composite"),
+                        id: "COMPOSITE",
+                        name: t("products.addProduct.admin.composite"),
+                        isComposite: true,
+                      } :
+                        typeof productState?.templateId != "object"
+                          ? defultTemplate
+                          : productState?.templateId
                     }
                     onChange={(e: any, value: any) => {
-                      if (isUpdate) {
-                        onClickOpenPricingType(value);
-                      } else {
-                        onChangeStateProduct("templateId", value);
+                      console.log("value", value);
+                      // Store templateId for display but don't send in payload
+                      onChangeStateProduct("templateId", value);
+                      // If templateId is cleared and not composite, set to BASE
+                      if (!value && productState?.productStructureType === EProductStructureType.COMPOSITE) {
+                        onChangeStateProduct("productStructureType", EProductStructureType.BASE);
+                        onChangeStateProduct("compositeProductIds", []);
+                      }
+                      else {
+                        onChangeStateProduct("productStructureType", EProductStructureType.BASE);
+                        onChangeStateProduct("compositeProductIds", []);
                       }
                     }}
-                  //disabled={isUpdate && !query?.isSubProducts}
+                  />
+                )}
+              </div>
+            </div>
+            <div style={clasess.itemGropupsContainer}>
+              <div style={clasess.labelTitleStyle}>
+                {t("boardMissions.products")}
+                <span style={clasess.requierdInput}>*</span>
+              </div>
+              <ProductMultiSelect
+                products={productsList ?? []}
+                selectedProductIds={productState?.compositeProductIds ?? []}
+                onProductChange={(ids) => {
+                  onChangeStateProduct("compositeProductIds", ids);
+                }}
+                placeholder={t(
+                  "boardMissions.selectProducts"
+                )}
+                containerStyle={{ width: "100%" }}
+                selectStyle={{ width: "100%" }}
+              />
+            </div>
+          </>
+        ) : (
+          <>
+            <div style={clasess.itemOnFirstContainer}>
+              <div style={clasess.labelTitleStyle}>
+                {t("products.addProduct.admin.pricingType")}
+                <span style={clasess.requierdInput}>*</span>
+              </div>
+              <div style={{ width: "100%" }}>
+                {pricingTypeOptions && pricingTypeOptions.length > 0 && (
+                  <GoMakeAutoComplate
+                    key={selectedPricingType ? String(selectedPricingType.id) : "pricing-type"}
+                    options={pricingTypeOptions}
+                    placeholder={t("products.addProduct.admin.pricingType")}
+                    style={clasess.dropDownListStyle}
+                    getOptionLabel={(option: any) => option.name}
+                    value={selectedPricingType}
+                    onChange={(e: any, value: any) => {
+                      if (!value) {
+                        // Value cleared: reset to BASE (1)
+                        onChangeStateProduct("productStructureType", EProductStructureType.BASE);
+                        onChangeStateProduct("compositeProductIds", []);
+                        onChangeStateProduct("templateId", null);
+                        return;
+                      }
+                      if (value?.isComposite) {
+                        // ONLY when Composite is selected: set productStructureType to COMPOSITE (2)
+                        onChangeStateProduct("productStructureType", EProductStructureType.COMPOSITE);
+                        if (!Array.isArray(productState?.compositeProductIds)) {
+                          onChangeStateProduct("compositeProductIds", []);
+                        }
+                        // Clear templateId when selecting Composite
+                        onChangeStateProduct("templateId", null);
+                      } else {
+                        // When selecting ANY template option: set productStructureType to BASE (1)
+                        onChangeStateProduct("productStructureType", EProductStructureType.BASE);
+                        onChangeStateProduct("compositeProductIds", []);
+                        if (isUpdate) {
+                          onClickOpenPricingType(value);
+                        } else {
+                          onChangeStateProduct("templateId", value);
+                        }
+                      }
+                    }}
                   />
                 )}
               </div>
