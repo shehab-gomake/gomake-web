@@ -52,7 +52,7 @@ const JobCard: React.FC<IProps> = ({
 
   // Get highlighting style preference (default: "border_and_background")
   const highlightingStyle = CheckPreferenceValue(
-    EPreferences.KANBAN_HIGHLIGHTING_STYLE
+    EPreferences.KANBAN_CARD_HIGHLIGHTING_STYLE
   ) as string | undefined;
   const isBackgroundOnly = highlightingStyle === "background_only";
 
