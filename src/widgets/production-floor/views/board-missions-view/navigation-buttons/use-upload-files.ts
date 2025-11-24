@@ -118,7 +118,7 @@ const useUploadFiles = (
       let userToken = getUserToken();
       const response = await axios.post(
           `${companyProfile.filesApiAddress}/api/Files/CreateUploadSession`,
-          { fileName: file?.name, contentType: file.type},
+          { fileName: file?.name, contentType: file.type ,origin:"http://localhost:3004"},
           {
             headers: {
               authorization: "Bearer " + userToken,
@@ -168,7 +168,8 @@ const useUploadFiles = (
         signalRConnectId: connectionId,
         status: EUploadingFileStatus.UploadedToGoogleCloud,
         fileType,
-        fileId: fileId
+        fileId: fileId,
+        bucketKey: bucketName,
       });
       return;
     }
