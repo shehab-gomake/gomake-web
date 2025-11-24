@@ -14,6 +14,7 @@ export default function QuickSetupMachinesRequiredPage() {
                                          ECategoryId.GLUING_MACHINE,
                                          ECategoryId.FLATBED_CUTTING_MACHINE,
                                          ECategoryId.ANALOG_ENHANCEMENT_MACHINE,
+                                         ECategoryId.JOINTING_MACHINES,
                                          ECategoryId.AUTO_BOOK_CUTTING_MACHINE,
                                          ECategoryId.GUILLOTINE
                                      ]}/>

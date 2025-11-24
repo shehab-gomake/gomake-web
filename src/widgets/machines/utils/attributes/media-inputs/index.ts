@@ -155,6 +155,7 @@ const getCategoryMediaInputs = (categoryId: string, state: Record<string, any>) 
         case ECategoryId.THERMAL_PLATE_PROCESSOR:
             return thermalPlateProcessorMachine(state);
         case ECategoryId.ANALOG_ENHANCEMENT_MACHINE:
+        case ECategoryId.JOINTING_MACHINES:
             return analogEnhacmentMachine(state);
         case ECategoryId.CREATING_DIES_MACHINE:
             return creatingDiesMachine(state);

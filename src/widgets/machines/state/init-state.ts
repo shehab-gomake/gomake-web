@@ -198,6 +198,17 @@ const initState: Record<string, Record<string, any>> = {
             varnish: false
         }
     },
+    [ECategoryId.JOINTING_MACHINES]: {
+        category: ECategoryId.JOINTING_MACHINES,
+        price: {price: 0, currency: 0},
+        attributes: {
+            resolution: 0,
+            doubleHead: false,
+            coatingUnit: false,
+            basicsColors: 1,
+            varnish: false
+        }
+    },
     [ECategoryId.ENCAPSULATION_MACHINE]: {
         category: ECategoryId.ENCAPSULATION_MACHINE,
         price: {price: 0, currency: 0},
