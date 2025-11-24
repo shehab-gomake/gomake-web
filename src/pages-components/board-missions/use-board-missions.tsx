@@ -1667,7 +1667,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
           setMarkAllReady(false);
         }
         if (sendMessage) {
-          openEmailComposer(selectedMission.id);
+          //openEmailComposer(selectedMission.id);
         }
       } else {
         alertFaultUpdate();
@@ -1700,6 +1700,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
       productType: selectedMission?.productType ?? "",
     });
   };
+  
   const onClosePrintTypeModal = () => {
     setOpenPrintTypeModal(false);
     setPendingPrintParams(null);

@@ -50,6 +50,7 @@ import {digitalPrinting} from "@/widgets/machines/utils/attributes/speed-inputs/
 import {ofssetPrinting} from "@/widgets/machines/utils/attributes/speed-inputs/ofsset-printing";
 import {thermalPlateProcessor} from "@/widgets/machines/utils/attributes/speed-inputs/thermal-plate-processor";
 import {analogEnhancement} from "@/widgets/machines/utils/attributes/speed-inputs/analog-enhancement";
+import {strippingMachineSpeed} from "@/widgets/machines/utils/attributes/speed-inputs/stripping-machine";
 import {creatingDiesMachine} from "@/widgets/machines/utils/attributes/speed-inputs/creating-dies-machines";
 import {meshProcessorMachines} from "@/widgets/machines/utils/attributes/speed-inputs/mesh-processors-machines";
 import {silkPrinter} from "@/widgets/machines/utils/attributes/speed-inputs/silk-printer";
@@ -171,6 +172,8 @@ const getCategorySpeedInputs = (categoryId: string, state: Record<string, any>) 
             return thermalPlateProcessor(state);
         case ECategoryId.ANALOG_ENHANCEMENT_MACHINE:
             return analogEnhancement(state);
+        case ECategoryId.STRIPPING_MACHINES:
+            return strippingMachineSpeed(state);
         case ECategoryId.CREATING_DIES_MACHINE:
             return creatingDiesMachine(state);
         case ECategoryId.MESH_PROCESSORS:
