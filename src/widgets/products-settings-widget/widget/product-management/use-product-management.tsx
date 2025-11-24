@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { matchSorter } from "match-sorter";
 import { getAllProductsMongoDB, getAlltProductSKU } from "@/services/hooks";
@@ -19,6 +19,9 @@ import { EnterArrow, PlusIcon } from "@/icons";
 import { addProductProfitRuleApi } from "@/services/api-service/products/product-endpoints";
 import { EditingIcon } from "../more-circle/icons/editing";
 import { useAllProductTypesDropDownList } from "@/hooks/use-product-types-drop-down-list";
+import { IconButton } from "@mui/material";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 
 const useProductManagement = () => {
   const router = useRouter();
@@ -39,6 +42,10 @@ const useProductManagement = () => {
     useState<string>("");
   const [openEditProfitRule, setEditProfitRule] = useState<boolean>(false);
   const [editProductId, setEditProductId] = useState<string>("");
+  const [expandedProducts, setExpandedProducts] = useState<Set<string>>(
+    new Set()
+  );
+  const getActionsRef = useRef<(() => Promise<void>) | null>(null);
   const getAllProductsSKU = useCallback(async () => {
     await getAlltProductSKU(callApi, setAllProductSKU);
   }, []);
@@ -113,14 +120,175 @@ const useProductManagement = () => {
         id: EProductProfits.BY_RULE,
       },
     ],
-    []
+    [t]
+  );
+
+  const toggleProductExpansion = useCallback((productId: string) => {
+    setExpandedProducts((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(productId)) {
+        newSet.delete(productId);
+      } else {
+        newSet.add(productId);
+      }
+      return newSet;
+    });
+  }, []);
+
+  const _mapSubProductToRow = useCallback(
+    (subProduct: any, parentProduct: any) => {
+      const dir: "rtl" | "ltr" = t("direction");
+      const templateId =
+        typeof subProduct?.templateId === "object"
+          ? subProduct?.templateId?.id
+          : subProduct?.templateId;
+      const template = allProductTypes?.find((t: any) => t.id === templateId);
+      const templateName = template?.label || template?.name || "";
+
+      return {
+        row: [
+          <div
+            style={{
+              paddingLeft: dir === "rtl" ? 0 : 40,
+              paddingRight: dir === "rtl" ? 40 : 0,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              width: "100%",
+            }}
+          >
+            {subProduct?.code}
+          </div>,
+          subProduct?.name,
+          templateName,
+          _renderPricingType(subProduct.pricingType),
+          <div style={classes.profitProductsCellStyle}>
+            <div
+              style={{
+                textAlignLast: "center",
+                width: 100,
+                display: "inline-table",
+              }}
+            >
+              <GoMakeAutoComplate
+                key={subProduct?.id}
+                options={productProfitesList}
+                placeholder={""}
+                style={classes.dropDownListByTableStyle}
+                value={productProfitesList?.find(
+                  (profit) => profit.id === subProduct.profitsModal
+                )}
+                disableClearable={true}
+                onChange={(e: any, value: any) => {
+                  setSelectProfitsModal(value);
+                  UpdateProfitsModal(subProduct, value);
+                  if (value?.id === EProductProfits.BY_RULE) {
+                    setOpenProfitRule(true);
+                    setProductAddProfitRuleId(subProduct?.id);
+                  }
+                }}
+              />
+            </div>
+            {(subProduct.profitsModal === EProductProfits.BY_PRODUCT ||
+              subProduct.profitsModal === EProductProfits.BY_RULE) && (
+                <div
+                  style={{ display: "inline-flex", cursor: "pointer" }}
+                  onClick={() => {
+                    subProduct.profitsModal === EProductProfits.BY_PRODUCT
+                      ? window.open(
+                        `/products/profits?productId=${subProduct?.id}&productName=${subProduct?.name}`,
+                        "_blank"
+                      )
+                      : setEditProfitRule(true);
+                    setEditProductId(subProduct?.id);
+                  }}
+                >
+                  <SettingIcon />
+                </div>
+              )}
+          </div>,
+          <div
+            style={{ display: "inline-flex" }}
+            onClick={() => {
+              window.open(
+                `/products/profits?productId=${subProduct?.id}&productName=${subProduct?.name}&isOutSource=true`,
+                "_blank"
+              );
+            }}
+          >
+            {subProduct?.isHaveOutSourceSettings ? (
+              <div
+                style={{
+                  display: "inline-flex",
+                  cursor: "pointer",
+                  alignItems: "center",
+                  gap: 10,
+                }}
+              >
+                <EditingIcon />
+                {t("materials.buttons.edit")}
+              </div>
+            ) : (
+              <div
+                style={{
+                  display: "inline-flex",
+                  cursor: "pointer",
+                  alignItems: "center",
+                  gap: 10,
+                }}
+              >
+                <PlusIcon stroke="#8283BE" /> {t("materials.buttons.add")}{" "}
+              </div>
+            )}
+          </div>,
+          <div style={{ display: "inline-flex" }}>
+            {subProduct?.status === false ? (
+              <div style={classes.inActiveTabStyle}>
+                {t("usersSettings.inactive")}
+              </div>
+            ) : (
+              <div style={classes.activeTabStyle}>
+                {t("usersSettings.active")}
+              </div>
+            )}
+          </div>,
+          <MoreMenuWidget
+            item={subProduct}
+            updatedProduct={updatedProduct}
+            getActions={() => {
+              if (getActionsRef.current) {
+                return getActionsRef.current();
+              }
+              return Promise.resolve();
+            }}
+            isSubProduct={true}
+          />,
+        ],
+        isSubProduct: true,
+        parentId: parentProduct?.id,
+        originalData: subProduct,
+      };
+    },
+    [
+      allProductTypes,
+      productProfitesList,
+      classes,
+      t,
+      UpdateProfitsModal,
+      setSelectProfitsModal,
+      setOpenProfitRule,
+      setProductAddProfitRuleId,
+      setEditProfitRule,
+      setEditProductId,
+      updatedProduct,
+    ]
   );
 
   const getActions = useCallback(async () => {
     const data = router.query.productId
       ? await getAllSubProducts(callApi, setAllProducts, {
-          productId: router.query.productId,
-        })
+        productId: router.query.productId,
+      })
       : await getAllProductsMongoDB(callApi, setAllProducts);
 
     const mapData = data?.map((item) => {
@@ -132,9 +300,33 @@ const useProductManagement = () => {
       const template = allProductTypes?.find((t: any) => t.id === templateId);
       const templateName = template?.label || template?.name || "";
 
+      const hasSubProducts = item?.subProducts && item?.subProducts.length > 0;
+      // Use current expandedProducts state, but don't include it in dependencies
+      const isExpanded = expandedProducts.has(item?.id);
+
       return {
         row: [
-          item?.code,
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
+            {hasSubProducts ? (
+              <IconButton
+                size="small"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  toggleProductExpansion(item?.id);
+                }}
+                style={{ padding: 4 }}
+              >
+                {isExpanded ? (
+                  <ExpandLessIcon style={{ fontSize: 20 }} />
+                ) : (
+                  <ExpandMoreIcon style={{ fontSize: 20 }} />
+                )}
+              </IconButton>
+            ) : (
+              <div style={{ width: 32, height: 32 }} /> // Empty placeholder to maintain alignment
+            )}
+            {item?.code}
+          </div>,
           item?.name,
           templateName,
           _renderPricingType(item.pricingType),
@@ -167,21 +359,21 @@ const useProductManagement = () => {
             </div>
             {(item.profitsModal === EProductProfits.BY_PRODUCT ||
               item.profitsModal === EProductProfits.BY_RULE) && (
-              <div
-                style={{ display: "inline-flex", cursor: "pointer" }}
-                onClick={() => {
-                  item.profitsModal === EProductProfits.BY_PRODUCT
-                    ? window.open(
+                <div
+                  style={{ display: "inline-flex", cursor: "pointer" }}
+                  onClick={() => {
+                    item.profitsModal === EProductProfits.BY_PRODUCT
+                      ? window.open(
                         `/products/profits?productId=${item?.id}&productName=${item?.name}`,
                         "_blank"
                       )
-                    : setEditProfitRule(true);
-                  setEditProductId(item?.id);
-                }}
-              >
-                <SettingIcon />
-              </div>
-            )}
+                      : setEditProfitRule(true);
+                    setEditProductId(item?.id);
+                  }}
+                >
+                  <SettingIcon />
+                </div>
+              )}
           </div>,
           <div
             style={{ display: "inline-flex" }}
@@ -217,18 +409,6 @@ const useProductManagement = () => {
               </div>
             )}
           </div>,
-          <div
-            style={classes.subPrductContainer}
-            onClick={(e: any) =>
-              item.subProductsCount > 0 &&
-              navigate(
-                `/settings/products/sub-product/${item?.id}?productName=${item?.name}&isSubProducts=true`
-              )
-            }
-          >
-            <EnterArrow stroke="#8283BE" />
-            <div style={{ width: 35 }}>{item?.subProductsCount}</div>
-          </div>,
 
           <div style={{ display: "inline-flex" }}>
             {item?.status === false ? (
@@ -249,15 +429,59 @@ const useProductManagement = () => {
         ],
         subProducts: item?.subProducts,
         templateId: templateId,
+        id: item?.id,
+        isExpanded: isExpanded,
+        originalData: item,
       };
     });
     setAllProducts(mapData);
-  }, [allProductTypes]);
+  }, [
+    allProductTypes,
+    productProfitesList,
+    classes,
+    t,
+    UpdateProfitsModal,
+    setSelectProfitsModal,
+    setOpenProfitRule,
+    setProductAddProfitRuleId,
+    setEditProfitRule,
+    setEditProductId,
+    updatedProduct,
+    navigate,
+    router.query.productId,
+    callApi,
+    // Note: expandedProducts is intentionally NOT in dependencies to prevent API calls on expand/collapse
+  ]);
+
+  // Update ref when getActions changes - this allows _mapSubProductToRow to access it
+  useEffect(() => {
+    getActionsRef.current = getActions;
+  }, [getActions]);
 
   useEffect(() => {
     getActions();
     getAllProductsSKU();
   }, [getActions, getAllProductsSKU]);
+
+  // Update UI when expansion state changes (no API call)
+  // This only updates the isExpanded flag, the actual rendering happens in the component
+  useEffect(() => {
+    if (allProducts && allProducts.length > 0) {
+      setAllProducts((prevProducts: any) => {
+        return prevProducts.map((product: any) => {
+          const isExpanded = expandedProducts.has(product?.id);
+          // Only update if expansion state actually changed
+          if (product.isExpanded !== isExpanded) {
+            return {
+              ...product,
+              isExpanded,
+            };
+          }
+          return product;
+        });
+      });
+    }
+  }, [expandedProducts]);
 
   const tableHeaders = [
     t("products.productManagement.admin.productCode"),
@@ -266,7 +490,6 @@ const useProductManagement = () => {
     t("products.addProduct.admin.byCustomerGroup"),
     t("tabs.profits"),
     t("products.actions.outSource"),
-    t("products.addProduct.admin.subProducts"),
     t("products.productManagement.admin.status"),
     t("products.productManagement.admin.more"),
   ];
@@ -312,6 +535,37 @@ const useProductManagement = () => {
         selectedSKU,
         selectedTemplateId
       );
+
+      // Auto-expand products if search matches sub-products
+      if (term || selectedSKU || selectedTemplateId) {
+        const productsToExpand = new Set<string>();
+        temp.forEach((product) => {
+          const hasMatchingSubProduct = product?.subProducts?.some(
+            (subProduct: any) => {
+              const subProductMatches =
+                term &&
+                (subProduct?.name
+                  ?.toLowerCase()
+                  ?.includes(term?.toLowerCase()) ||
+                  subProduct?.code
+                    ?.toLowerCase()
+                    ?.includes(term?.toLowerCase()));
+              return subProductMatches;
+            }
+          );
+          if (hasMatchingSubProduct && product?.id) {
+            productsToExpand.add(product.id);
+          }
+        });
+        if (productsToExpand.size > 0) {
+          setExpandedProducts((prev) => {
+            const newSet = new Set(prev);
+            productsToExpand.forEach((id) => newSet.add(id));
+            return newSet;
+          });
+        }
+      }
+
       setProductSearched(temp);
     }
   }, [term, allProducts, selectedSKU, selectedTemplateId]);
@@ -366,6 +620,9 @@ const useProductManagement = () => {
     open,
     anchorEl,
     onClickClearFilter,
+    expandedProducts,
+    toggleProductExpansion,
+    _mapSubProductToRow,
   };
 };
 

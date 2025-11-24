@@ -14,7 +14,7 @@ import { DuplicateIcon } from "@/components/icons/icons";
 import { ModalType } from "@/enums";
 
 
-const MoreMenuWidget = ({ item, updatedProduct, getActions }: any) => {
+const MoreMenuWidget = ({ item, updatedProduct, getActions, isSubProduct }: any) => {
   const { clasess } = useStyle();
   const { t } = useTranslation();
   const {
@@ -26,7 +26,6 @@ const MoreMenuWidget = ({ item, updatedProduct, getActions }: any) => {
     navigate,
     updatedProductInside,
     createSubProduct,
-    setAllProducts,
     idPopover,
     openPopover,
     anchorElPopover,
@@ -78,7 +77,7 @@ const MoreMenuWidget = ({ item, updatedProduct, getActions }: any) => {
               </div>
             </div>
           </MenuItem>
-          {!router.query.productId && (
+          {!router.query.productId && !router.query.isSubProducts && !isSubProduct && (
             <>
               <MenuItem onClick={() => createSubProduct(item)}>
                 <div style={clasess.menuRowStyle}>
@@ -88,24 +87,6 @@ const MoreMenuWidget = ({ item, updatedProduct, getActions }: any) => {
                   </div>
                 </div>
               </MenuItem>
-              <MenuItem>
-                <div
-                  style={clasess.menuRowStyle}
-                  onClick={(e: any) =>
-                    setAllProducts?.length > 0
-                      ? navigate(
-                        `/settings/products/sub-product/${item?.id}?productName=${item?.name}`
-                      )
-                      : handleClickPopover(e)
-                  }
-                >
-                  <DocumentIcon />
-                  <div style={clasess.rowTextStyle}>
-                    {t("remainWords.goToSubProducts")}
-                  </div>
-                </div>
-              </MenuItem>
-
             </>
           )}
           <MenuItem>

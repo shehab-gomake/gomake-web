@@ -177,7 +177,7 @@ export const channelRequirements = {
  */
 export function getChannelRequirements(channelType: string) {
   return (
-    channelRequirements[channelType as keyof typeof channelRequirements] ||
-    channelRequirements["Channel::Api"]
+      channelRequirements[channelType as keyof typeof channelRequirements] ||
+      channelRequirements["Channel::Api"]
   );
 }

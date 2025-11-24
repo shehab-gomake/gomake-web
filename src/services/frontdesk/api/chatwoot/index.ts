@@ -1,17 +1,17 @@
 /**
  * Chatwoot API Services
  * Centralized export for all Chatwoot API services and types
- * 
+ *
  * This is the main entry point for Chatwoot integration.
- * 
+ *
  * @example
  * ```typescript
  * // Import main service (recommended)
  * import { chatwootService } from '@/services/frontdesk/api/chatwoot';
- * 
+ *
  * // Or import specific services
  * import { ChatwootProfileService } from '@/services/frontdesk/api/chatwoot';
- * 
+ *
  * // Or import types
  * import { ChatwootUser } from '@/services/frontdesk/api/chatwoot';
  * ```
