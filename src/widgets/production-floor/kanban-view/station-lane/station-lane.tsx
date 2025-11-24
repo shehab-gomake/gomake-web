@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState, useCallback } from "react";
 import { Stack, Typography, Box } from "@mui/material";
 import { IStatusesBoardsMissions } from "@/widgets/production-floor/interfaces/production-floor-data-response";
 import { IStation } from "../types/kanban-types";
@@ -39,6 +39,141 @@ const StationLane: React.FC<IProps> = ({
   // Use fixed status columns that match the header
   const statusColumns = STATUS_COLUMNS;
 
+  // Helper function to get missions for a specific status
+  const getMissionsForStatus = (statusName: string) => {
+    const possibleNames = STATUS_NAME_MAPPING[statusName] || [statusName];
+
+    // Find the status group that matches our status name
+    const matchingStatusGroup = missions.find((statusGroup) => {
+      const statusGroupName =
+        statusGroup.boardMissionStatus.boardMissionStatus.name;
+      return possibleNames.includes(statusGroupName);
+    });
+
+    if (matchingStatusGroup) {
+      return matchingStatusGroup.boardMissions || [];
+    }
+
+    return [];
+  };
+
+  // Row resizing functionality
+  const SINGLE_CARD_HEIGHT = 110; // Height for single card (card minHeight + padding + gap)
+  // Height for multiple cards: 2.5 cards visible by default
+  // Card height (~105px) * 2.5 + padding (8px top + 8px bottom) + gap (8px between cards) ≈ 287px
+  const MULTIPLE_CARDS_HEIGHT = 287; // Height for multiple cards (shows 2.5 cards)
+
+  // Calculate default height based on max cards in any column
+  const calculateDefaultHeight = useCallback(() => {
+    let maxCardsInAnyColumn = 0;
+    statusColumns.forEach((col) => {
+      const statusMissions = getMissionsForStatus(col.name);
+      maxCardsInAnyColumn = Math.max(
+        maxCardsInAnyColumn,
+        statusMissions.length
+      );
+    });
+
+    const contentHeight =
+      maxCardsInAnyColumn === 0 || maxCardsInAnyColumn === 1
+        ? SINGLE_CARD_HEIGHT
+        : MULTIPLE_CARDS_HEIGHT;
+
+    // Total height = content height (header is auto, so we don't need to add it)
+    return contentHeight;
+  }, [statusColumns, missions]);
+
+  // Get stored height from localStorage or use default
+  const getStoredHeight = () => {
+    if (typeof window === "undefined") return null;
+    const stored = localStorage.getItem(`kanban-station-height-${station.id}`);
+    return stored ? parseInt(stored, 10) : null;
+  };
+
+  const [rowHeight, setRowHeight] = useState<number>(() => {
+    const stored = getStoredHeight();
+    return stored || calculateDefaultHeight();
+  });
+
+  const [isResizing, setIsResizing] = useState(false);
+  const resizeHandleRef = useRef<HTMLDivElement>(null);
+  const rowRef = useRef<HTMLDivElement>(null);
+
+  // Handle resize mouse down
+  const handleMouseDown = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsResizing(true);
+  }, []);
+
+  // Handle resize mouse move
+  const handleMouseMove = useCallback(
+    (e: MouseEvent) => {
+      if (!isResizing || !rowRef.current) return;
+
+      const rect = rowRef.current.getBoundingClientRect();
+      const newHeight = e.clientY - rect.top;
+      const minHeight = SINGLE_CARD_HEIGHT; // Minimum content height
+      const maxHeight = 600; // Max 600px for content
+
+      if (newHeight >= minHeight && newHeight <= maxHeight) {
+        setRowHeight(newHeight);
+      }
+    },
+    [isResizing]
+  );
+
+  // Handle resize mouse up
+  const handleMouseUp = useCallback(() => {
+    if (isResizing) {
+      setIsResizing(false);
+      // Save to localStorage
+      if (typeof window !== "undefined") {
+        localStorage.setItem(
+          `kanban-station-height-${station.id}`,
+          rowHeight.toString()
+        );
+      }
+    }
+  }, [isResizing, rowHeight, station.id]);
+
+  // Attach/detach mouse event listeners
+  useEffect(() => {
+    if (isResizing) {
+      document.addEventListener("mousemove", handleMouseMove);
+      document.addEventListener("mouseup", handleMouseUp);
+      document.body.style.cursor = "row-resize";
+      document.body.style.userSelect = "none";
+    } else {
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseup", handleMouseUp);
+      document.body.style.cursor = "";
+      document.body.style.userSelect = "";
+    }
+
+    return () => {
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseup", handleMouseUp);
+      document.body.style.cursor = "";
+      document.body.style.userSelect = "";
+    };
+  }, [isResizing, handleMouseMove, handleMouseUp]);
+
+  // Check if any column has multiple cards
+  const hasMultipleCardsInAnyColumn = statusColumns.some((col) => {
+    const missions = getMissionsForStatus(col.name);
+    return missions.length > 1;
+  });
+
+  // Recalculate default height when missions change
+  useEffect(() => {
+    const stored = getStoredHeight();
+    if (!stored) {
+      const defaultHeight = calculateDefaultHeight();
+      setRowHeight(defaultHeight);
+    }
+  }, [missions, calculateDefaultHeight]);
+
   // Helper function to get the actual status ID for a given status name
   const getStatusIdForName = (statusName: string): string | null => {
     const possibleNames = STATUS_NAME_MAPPING[statusName] || [statusName];
@@ -78,24 +213,6 @@ const StationLane: React.FC<IProps> = ({
     // If still not found, return null instead of using mock data
     console.warn(`No status ID found for status name: ${statusName}`);
     return null;
-  };
-
-  // Helper function to get missions for a specific status
-  const getMissionsForStatus = (statusName: string) => {
-    const possibleNames = STATUS_NAME_MAPPING[statusName] || [statusName];
-
-    // Find the status group that matches our status name
-    const matchingStatusGroup = missions.find((statusGroup) => {
-      const statusGroupName =
-        statusGroup.boardMissionStatus.boardMissionStatus.name;
-      return possibleNames.includes(statusGroupName);
-    });
-
-    if (matchingStatusGroup) {
-      return matchingStatusGroup.boardMissions || [];
-    }
-
-    return [];
   };
 
   // Helper function to get station info from missions
@@ -218,13 +335,24 @@ const StationLane: React.FC<IProps> = ({
     }
   };
 
+  // Calculate status column height
+  // Since header is auto-height, rowHeight already represents the content area
+  // For multi-card rows, we use the full rowHeight; for single-card rows, it's auto
+  const statusColumnHeight = rowHeight;
+
   return (
     <Stack
+      ref={rowRef}
       direction="row"
       spacing={0}
       sx={{
         borderBottom: "5px solid #e0e0e0",
-        minHeight: "120px",
+        height: hasMultipleCardsInAnyColumn ? `${rowHeight}px` : "auto",
+        minHeight: hasMultipleCardsInAnyColumn ? `${rowHeight}px` : "auto",
+        maxHeight: hasMultipleCardsInAnyColumn ? `${rowHeight}px` : "none",
+        position: "relative",
+        overflow: "hidden",
+        boxSizing: "border-box",
       }}
     >
       {/* Station Header */}
@@ -233,6 +361,8 @@ const StationLane: React.FC<IProps> = ({
         sx={{
           width: isMobile ? "120px" : "200px",
           minWidth: isMobile ? "120px" : "200px",
+          // height: `${DEFAULT_HEADER_HEIGHT}px`,
+          flexShrink: 0,
           backgroundColor:
             isHeaderOver && canHeaderDrop
               ? "#f0f8ff"
@@ -250,6 +380,7 @@ const StationLane: React.FC<IProps> = ({
               : isHeaderOver && !canHeaderDrop
               ? "2px dashed #f44336"
               : "none",
+          boxSizing: "border-box",
         }}
       >
         <Typography
@@ -319,8 +450,11 @@ const StationLane: React.FC<IProps> = ({
       {statusColumns.map((status, index) => {
         const statusMissions = getMissionsForStatus(status.name);
 
-        // Check if any status column has more than 1 mission to determine height
-        const hasMultipleCards = statusColumns.some((col) => {
+        // Check if this specific column has multiple cards
+        const hasMultipleCardsInThisColumn = statusMissions.length > 1;
+
+        // Check if any status column has more than 1 mission to determine row height
+        const hasMultipleCardsInAnyColumn = statusColumns.some((col) => {
           const missions = getMissionsForStatus(col.name);
           return missions.length > 1;
         });
@@ -401,10 +535,17 @@ const StationLane: React.FC<IProps> = ({
               display: "flex",
               flexDirection: "column",
               gap: "8px",
-              overflow: hasMultipleCards ? "auto" : "hidden",
-              maxHeight: hasMultipleCards ? "302px" : "none",
-              minHeight: hasMultipleCards ? "302px" : "auto",
-              height: hasMultipleCards ? "302px" : "auto",
+              overflow: hasMultipleCardsInThisColumn ? "auto" : "hidden",
+              height: hasMultipleCardsInAnyColumn
+                ? `${statusColumnHeight}px`
+                : "auto",
+              maxHeight: hasMultipleCardsInAnyColumn
+                ? `${statusColumnHeight}px`
+                : "none",
+              minHeight: hasMultipleCardsInAnyColumn
+                ? `${statusColumnHeight}px`
+                : "auto",
+              boxSizing: "border-box",
               // Border styling - use outline for hover states to avoid conflicts
               borderRight: "1px solid #e0e0e0",
               outline:
@@ -480,6 +621,37 @@ const StationLane: React.FC<IProps> = ({
           </Box>
         );
       })}
+
+      {/* Resize Handle */}
+      <Box
+        ref={resizeHandleRef}
+        onMouseDown={handleMouseDown}
+        sx={{
+          position: "absolute",
+          bottom: 0,
+          left: 0,
+          right: 0,
+          height: "8px",
+          cursor: "row-resize",
+          backgroundColor: "transparent",
+          zIndex: 10,
+          "&:hover": {
+            backgroundColor: "rgba(25, 118, 210, 0.1)",
+          },
+          "&::after": {
+            content: '""',
+            position: "absolute",
+            bottom: "3px",
+            left: "50%",
+            transform: "translateX(-50%)",
+            width: "40px",
+            height: "2px",
+            backgroundColor: isResizing ? "#1976d2" : "#bdbdbd",
+            borderRadius: "1px",
+            transition: "background-color 0.2s",
+          },
+        }}
+      />
     </Stack>
   );
 };
