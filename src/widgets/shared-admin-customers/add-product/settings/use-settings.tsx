@@ -215,6 +215,7 @@ const useSettings = ({
         typeof productState?.productSKUId === "string"
           ? productState?.productSKUId
           : productState?.productSKUId?.id;
+      // Don't send templateId when Composite is selected
     } else {
       payload.productSKUId =
         typeof productState?.productSKUId === "string"
@@ -306,6 +307,7 @@ const useSettings = ({
         typeof productState?.productSKUId === "string"
           ? productState?.productSKUId
           : productState?.productSKUId?.id;
+      // Don't send templateId when Composite is selected
     } else {
       payload.productSKUId =
         typeof productState?.productSKUId === "string"
@@ -401,6 +403,7 @@ const useSettings = ({
         typeof productState?.productSKUId === "string"
           ? productState?.productSKUId
           : productState?.productSKUId?.id;
+      // Don't send templateId when Composite is selected
     } else {
       payload.productSKUId =
         typeof productState?.productSKUId === "string"

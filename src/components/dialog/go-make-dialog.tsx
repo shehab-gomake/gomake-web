@@ -13,6 +13,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import { useTranslation } from "react-i18next";
 import { GoMakeDialogProps } from "./interfaces";
 import { useStyle } from "./style";
+import { GomakePrimaryButton } from "../button";
 
 /**
  * GoMakeDialog - A reusable dialog component with header, body, and footer
@@ -69,6 +70,7 @@ const GoMakeDialog: React.FC<GoMakeDialogProps> = ({
     onCancel,
     primaryButtonDisabled = false,
     primaryButtonLoading = false,
+    cancelButtonDisabled = false,   // Added this line to handle cancel button disabled
     customFooter,
     customStyles,
     primaryButtonIcon,
@@ -87,7 +89,7 @@ const GoMakeDialog: React.FC<GoMakeDialogProps> = ({
 
     // Default button labels
     const primaryLabel = primaryButtonLabel || t("common.save") || "Save";
-    const cancelLabel = cancelButtonLabel || t("modal.cancel") || "Cancel";
+    const cancelLabel = cancelButtonLabel || t("common.cancel") || "Cancel";
 
     // Handle cancel action
     const handleCancel = () => {
@@ -166,10 +168,10 @@ const GoMakeDialog: React.FC<GoMakeDialogProps> = ({
                                         {!hidePrimaryButton && (
 
 
-                                            <div
+                                            <GomakePrimaryButton
                                                 onClick={handlePrimaryAction}
                                                 style={{ ...classes.primaryButton, ...customStyles?.primaryButton }}
-                                            // disabled={primaryButtonDisabled || primaryButtonLoading}
+                                                disabled={primaryButtonDisabled}
                                             >
                                                 <div style={classes.primaryButtonContainer}>
                                                     {primaryButtonIcon || primaryButtonLoading && <div >
@@ -185,7 +187,7 @@ const GoMakeDialog: React.FC<GoMakeDialogProps> = ({
                                                         {primaryButtonLoading ? t("common.loading") || "Loading..." : primaryLabel}
                                                     </div>
                                                 </div>
-                                            </div>
+                                            </GomakePrimaryButton>
 
 
                                         )}
@@ -196,6 +198,7 @@ const GoMakeDialog: React.FC<GoMakeDialogProps> = ({
                                                 onClick={handleCancel}
                                                 sx={classes.cancelButton}
                                                 startIcon={cancelButtonIcon}
+                                                disabled={cancelButtonDisabled}
                                             >
                                                 {cancelLabel}
                                             </Button>
