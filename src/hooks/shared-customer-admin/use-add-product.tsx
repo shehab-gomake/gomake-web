@@ -239,6 +239,27 @@ const useAddProduct = ({ classes }) => {
     [router]
   );
 
+  const addSubSectionToProduct = useCallback(
+    async (sectionId: string, subSectionName: string) => {
+      const res = await callApi(
+        "POST",
+        `/v1/printhouse-config/products/add-subsection-to-product`,
+        {
+          productId: router?.query?.id,
+          sectionId: sectionId,
+          subSectionName: subSectionName,
+        }
+      );
+      if (res?.success) {
+        alertSuccessAdded();
+        getProductById();
+      } else {
+        alertFaultAdded();
+      }
+    },
+    [router]
+  );
+
   const updatedProductParameterShowToClient = useCallback(
     async (
       sectionId: string,
@@ -1524,6 +1545,8 @@ const useAddProduct = ({ classes }) => {
     onCloseExternalIdsModal,
     openExternalIdsModal,
     removeProductParamete,
+    productState,
+    addSubSectionToProduct,
   };
 };
 
