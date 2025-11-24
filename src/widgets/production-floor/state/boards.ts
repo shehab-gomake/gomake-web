@@ -71,3 +71,18 @@ export const pendingPrintParamsState = atom<any>({
   key: "pendingPrintParamsState",
   default: null,
 });
+
+export const openMarkReadyModalState = atom<boolean>({
+  key: "openMarkReadyModalState",
+  default: false,
+});
+
+export const openMarkReadyModalForHasJobsState = atom<boolean>({
+  key: "openMarkReadyModalForHasJobsState",
+  default: false,
+});
+
+export const openDoneScopeModalState = atom<boolean>({
+  key: "openDoneScopeModalState",
+  default: false,
+});

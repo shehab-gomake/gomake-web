@@ -22,6 +22,9 @@ import {
   openReturnToProdModalState,
   openPrintTypeModalState,
   pendingPrintParamsState,
+  openMarkReadyModalState,
+  openMarkReadyModalForHasJobsState,
+  openDoneScopeModalState,
 } from "@/widgets/production-floor/state/boards";
 import {
   doneJobsCustomerState,
@@ -277,10 +280,10 @@ const useProductionFloorData = () => {
               filterGroups.map((x) =>
                 x.id === "all"
                   ? {
-                    ...x,
-                    stuckCount: res?.data?.boradMisstionsStuckCount,
-                    inProcessCount: res?.data?.boradMisstionsNotStuckCount,
-                  }
+                      ...x,
+                      stuckCount: res?.data?.boradMisstionsStuckCount,
+                      inProcessCount: res?.data?.boradMisstionsNotStuckCount,
+                    }
                   : x
               )
             );
@@ -486,7 +489,7 @@ const useProductionFloorData = () => {
           const mapData = _data.data?.map((mission: any) => {
             const itemCalculatedPrice =
               mission?.calculatedPrice &&
-                mission?.calculatedPrice != mission?.price
+              mission?.calculatedPrice != mission?.price
                 ? mission?.calculatedPrice
                 : 0;
             return [
@@ -512,10 +515,11 @@ const useProductionFloorData = () => {
               formatISODateTime(mission?.readyDate),
               <div style={{ cursor: "pointer" }}>{mission?.clientName}</div>,
               mission?.productType
-                ? `${mission?.number} / ${mission?.productTypeName
-                  ? mission?.productTypeName
-                  : mission?.productType
-                }`
+                ? `${mission?.number} / ${
+                    mission?.productTypeName
+                      ? mission?.productTypeName
+                      : mission?.productType
+                  }`
                 : mission?.number,
               <a href={`/order?Id=${mission?.orderID}`}>
                 {mission?.orderNumber}
@@ -523,8 +527,8 @@ const useProductionFloorData = () => {
               mission?.outSourceType === null
                 ? `${t("boardMissions." + EWorkSource[0])}`
                 : `${t(
-                  "boardMissions." + EWorkSource[mission?.outSourceType]
-                )}`,
+                    "boardMissions." + EWorkSource[mission?.outSourceType]
+                  )}`,
               mission?.quantity,
               // ...(CheckPermission(Permissions.SHOW_COSTS_IN_BOARD_MISSIONS)
               //   ? [
@@ -624,8 +628,8 @@ const useProductionFloorData = () => {
         pageSize: pageSizeInput ?? pageSize,
         search:
           patternSearchInput !== null &&
-            patternSearchInput !== undefined &&
-            patternSearchInput !== ""
+          patternSearchInput !== undefined &&
+          patternSearchInput !== ""
             ? patternSearchInput
             : "",
         customerId: doneJobsCustomer?.id || null,
@@ -762,20 +766,20 @@ const useProductionFloorData = () => {
           data.map((s) =>
             s.boardMissionStatus.boardMissionStatus.id === payload.statusId
               ? {
-                ...s,
-                boardMissions: s.boardMissions?.map((board) => {
-                  const match = updatedBoards?.find(
-                    (updatedBoard) => updatedBoard.id === board.id
-                  );
-                  if (match) {
-                    return {
-                      ...board,
-                      priority: match.priority,
-                    };
-                  }
-                  return board;
-                }),
-              }
+                  ...s,
+                  boardMissions: s.boardMissions?.map((board) => {
+                    const match = updatedBoards?.find(
+                      (updatedBoard) => updatedBoard.id === board.id
+                    );
+                    if (match) {
+                      return {
+                        ...board,
+                        priority: match.priority,
+                      };
+                    }
+                    return board;
+                  }),
+                }
               : s
           )
         );
@@ -786,18 +790,17 @@ const useProductionFloorData = () => {
     await updateBoardsMissionsOrderApi(callApi, callBack, payload);
   };
 
-  const [, setSelectedMissionId] = useState<any>(null);
-  const [openMarkReadyModal, setOpenMarkReadyModal] = useState<boolean>(false);
+  const [openMarkReadyModal, setOpenMarkReadyModal] = useRecoilState<boolean>(
+    openMarkReadyModalState
+  );
   const [openMarkReadyModalForHasJobs, setOpenMarkReadyModalForHasJobs] =
-    useState<boolean>(false);
+    useRecoilState<boolean>(openMarkReadyModalForHasJobsState);
 
   const onCloseMarkReadyModal = () => {
-    setSelectedMissionId(null);
     setOpenMarkReadyModal(false);
   };
 
   const onCloseMarkReadyModalForHasJobs = () => {
-    setSelectedMissionId(null);
     setOpenMarkReadyModalForHasJobs(false);
   };
 
@@ -807,8 +810,8 @@ const useProductionFloorData = () => {
       if (res.success) {
         if (boardMission.productType) {
           // Ask whether to mark all jobs or only product type
-          //setOpenDoneScopeModal(true);
-          moveBoardMissionToDone(boardMission);
+          setOpenDoneScopeModal(true);
+          // moveBoardMissionToDone(boardMission);
         } else {
           if (res.data) {
             onOpenMarkReadyModalForHasJobs(boardMission);
@@ -829,7 +832,9 @@ const useProductionFloorData = () => {
   };
 
   // ===== Done scope modal (All jobs vs Product type only) =====
-  const [openDoneScopeModal, setOpenDoneScopeModal] = useState<boolean>(false);
+  const [openDoneScopeModal, setOpenDoneScopeModal] = useRecoilState<boolean>(
+    openDoneScopeModalState
+  );
 
   const onCloseDoneScopeModal = () => {
     setOpenDoneScopeModal(false);
@@ -855,7 +860,6 @@ const useProductionFloorData = () => {
   };
 
   const onOpenMarkReadyModalForHasJobs = (missionId) => {
-    setSelectedMissionId(missionId);
     setOpenMarkReadyModalForHasJobs(true);
   };
 
@@ -880,14 +884,21 @@ const useProductionFloorData = () => {
       });
     });
   };
+
+  //!here
   const {
     isEmailComposerOpen,
     emailData,
     openEmailComposer,
     closeEmailComposer,
-  } = useFrontDeskEmailIntegration({ documentType: DOCUMENT_TYPE.boardMission });
+  } = useFrontDeskEmailIntegration({
+    documentType: DOCUMENT_TYPE.boardMission,
+  });
 
-  const onClickMoveBoardMissionToDone = async (sendMessage: boolean, ignoreProductType: boolean = false) => {
+  const onClickMoveBoardMissionToDone = async (
+    sendMessage: boolean,
+    ignoreProductType: boolean = false
+  ) => {
     const callBack = (res) => {
       setOpenMarkReadyModal(false);
       if (res?.success) {
@@ -1063,17 +1074,17 @@ const useProductionFloorData = () => {
       data.map((status) =>
         status.boardMissions.find((b) => b.id === boardMisionId)
           ? {
-            ...status,
-            boardMissions: status.boardMissions.map((bm) =>
-              bm.id === boardMisionId
-                ? { ...bm, dueDate: formattedDueDate }
-                : bm
-            ),
-          }
+              ...status,
+              boardMissions: status.boardMissions.map((bm) =>
+                bm.id === boardMisionId
+                  ? { ...bm, dueDate: formattedDueDate }
+                  : bm
+              ),
+            }
           : status
       )
     );
-    const callBack = () => { };
+    const callBack = () => {};
     updateJobDueDateApi(callApi, callBack, {
       boardMissionId: boardMisionId,
       dueDate: utcDueDate,

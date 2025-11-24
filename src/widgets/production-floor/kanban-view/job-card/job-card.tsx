@@ -14,7 +14,9 @@ import {
 } from "@/services/api-service/production-floor/production-floor-endpoints";
 import { ColoredCycle, GoMakeDeleteModal } from "@/components";
 import { ResetColorIcon } from "../../table-view/status-table/table-row/more-circle/icons/reset-color";
+import TaskAltRoundedIcon from "@mui/icons-material/TaskAltRounded";
 import { ArrowRightIcon } from "@/icons";
+import { useProductionFloorData } from "../../use-production-floor-data";
 import { SketchPicker } from "react-color";
 import { useTranslation } from "react-i18next";
 import { ModalType } from "@/enums/tabs-icon-enums";
@@ -46,6 +48,7 @@ const JobCard: React.FC<IProps> = ({
   const cardRef = useRef<HTMLDivElement>(null);
   const { alertFaultUpdate, alertSuccessUpdate } = useSnackBar();
   const { CheckPreferenceValue } = usePrintHousePreferences();
+  const { tryMoveBoardMissionsToDone } = useProductionFloorData(); //!here
 
   // Get highlighting style preference (default: "border_and_background")
   const highlightingStyle = CheckPreferenceValue(
@@ -55,7 +58,7 @@ const JobCard: React.FC<IProps> = ({
 
   // Get current direction for RTL support
   const dir: "rtl" | "ltr" = t("direction");
-
+  const isRTL = dir === "rtl";
   // Get "Upcoming Works" status colors
   const upcomingWorksStatus = STATUS_COLUMNS.find(
     (status) => status.name === "Upcoming Works"
@@ -178,6 +181,13 @@ const JobCard: React.FC<IProps> = ({
     setShowColorPicker(true);
   };
 
+  const handleMoveToDone = async () => {
+    if (!isDisabled) {
+      await tryMoveBoardMissionsToDone(mission);
+      handleCloseContextMenu();
+    }
+  };
+
   const getColorPickerPosition = () => {
     if (cardRef.current) {
       const rect = cardRef.current.getBoundingClientRect();
@@ -211,7 +221,14 @@ const JobCard: React.FC<IProps> = ({
       ? [
           {
             label: t("productionFloor.nextStation"),
-            icon: <ArrowRightIcon />,
+            icon: (
+              <ArrowRightIcon
+                color="#000000"
+                style={{
+                  transform: isRTL ? "scaleX(-1)" : "none",
+                }}
+              />
+            ),
             onClick: (e: any) => {
               e.stopPropagation();
               handleOpenNextStationModal();
@@ -220,6 +237,14 @@ const JobCard: React.FC<IProps> = ({
           },
         ]
       : []),
+    {
+      label: t("productionFloor.moveToDone"),
+      icon: <TaskAltRoundedIcon style={{ fontSize: "16px" }} />,
+      onClick: (e: any) => {
+        e.stopPropagation();
+        handleMoveToDone();
+      },
+    },
   ];
 
   const handleColorPickerClose = () => {
@@ -361,7 +386,7 @@ const JobCard: React.FC<IProps> = ({
           sx={{
             position: "absolute",
             top: "4px",
-            ...(dir === "rtl" ? { left: "4px" } : { right: "4px" }),
+            ...(isRTL ? { left: "4px" } : { right: "4px" }),
             width: "16px",
             height: "16px",
             borderRadius: "50%",
