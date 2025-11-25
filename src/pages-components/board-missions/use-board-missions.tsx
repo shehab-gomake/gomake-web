@@ -59,7 +59,7 @@ import {
   columnOrderStateFamily,
   columnVisibilityStateFamily,
 } from "./states/board-missions-columns-settings-state";
-import { printHouseUsePrintNode } from "@/store/print-house-profile";
+import {printHouseHasFrontDeskFeature, printHouseUsePrintNode} from "@/store/print-house-profile";
 import { useScheduledReports } from "@/hooks/use-scheduled-reports";
 import { DocumentTypeEnums } from "@/enums/document-type-enum";
 import { useFrontDeskEmailIntegration } from "../quotes/hooks/use-frontdesk-email-integration";
@@ -103,6 +103,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
   const { classes } = useStyle();
   const { callApi } = useGomakeAxios();
   const isPrintHouseUsePrintNode = useRecoilValue(printHouseUsePrintNode);
+  const hasFrontDeskFeature = useRecoilValue(printHouseHasFrontDeskFeature);
   const [selectedMission, setSelectedMission] = useRecoilState<any>(
     selectedMissionsState
   );
@@ -1726,8 +1727,8 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
           onOpenPackagesModal(selectedMission);
           setMarkAllReady(false);
         }
-        if (sendMessage) {
-          //openEmailComposer(selectedMission.id);
+        if (sendMessage && hasFrontDeskFeature ) {
+          openEmailComposer(selectedMission.id);
         }
       } else {
         alertFaultUpdate();
