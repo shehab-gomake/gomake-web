@@ -133,11 +133,11 @@ export const EmailRecipientsSection: React.FC<EmailRecipientsSectionProps> = ({
                 }
                 return (
                   <Box sx={{ display: "flex", flexDirection: "column" }}>
-                    <Typography variant="body2" sx={{ lineHeight: 1.2 }}>
-                      {option.sourceId}
+                    <Typography variant="body2" sx={{ lineHeight: 1.2, fontWeight: 500 }}>
+                      {option.inboxName}
                     </Typography>
                     <Typography variant="caption" sx={{ color: "#777" }}>
-                      {option.inboxName}
+                      {option.sourceId}
                     </Typography>
                   </Box>
                 );
@@ -166,11 +166,11 @@ export const EmailRecipientsSection: React.FC<EmailRecipientsSectionProps> = ({
                   }}
                 >
                   <Box sx={{ display: "flex", flexDirection: "column" }}>
-                    <Typography variant="body2" sx={{ lineHeight: 1.2 }}>
-                      {option.sourceId}
+                    <Typography variant="body2" sx={{ lineHeight: 1.2, fontWeight: 500 }}>
+                      {option.inboxName}
                     </Typography>
                     <Typography variant="caption" sx={{ color: "#777" }}>
-                      {option.inboxName}
+                      {option.sourceId}
                     </Typography>
                   </Box>
                 </MenuItem>

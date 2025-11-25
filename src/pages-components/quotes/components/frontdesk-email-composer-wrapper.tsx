@@ -81,19 +81,22 @@ export const FrontDeskEmailComposerWrapper: React.FC<FrontDeskEmailComposerWrapp
     const options: EmailSenderOption[] = emailInboxes
       .map((inbox) => {
         // Get the inbox's sending email address from various possible properties
-        // For OAuth email inboxes, the email is often in the `name` field
-        // For SMTP email inboxes, it might be in `forward_to_email` or `email`
+        // For SMTP email inboxes, it's in `smtp_email` or `imap_email`
+        // For OAuth email inboxes, it's in `_emailAccount.email`
+        // NOTE: inbox.name is the display name, NOT the email address
         const inboxEmail =
-          inbox.name || // OAuth inboxes store email in name
-          (inbox as any).forward_to_email || // Forward-to email
+          (inbox as any).smtp_email || // SMTP sending email (most common)
+          (inbox as any).imap_email || // IMAP email address
           (inbox as any).email || // Direct email property
+          (inbox as any).forward_to_email || // Forward-to email
           (inbox as any)._emailAccount?.email || // OAuth email account
+          (inbox as any).sender_email || // Alternative sender field
           `inbox-${inbox.id}@mail.gomake.com`; // Fallback generated email
 
         return {
           inboxId: inbox.id,
-          inboxName: inbox.name || `Inbox ${inbox.id}`,
-          sourceId: inboxEmail, // Display email in dropdown
+          inboxName: inbox.name || `Inbox ${inbox.id}`, // Display name
+          sourceId: inboxEmail, // Email address for sending
           channelType: inbox.channel_type,
         } as EmailSenderOption;
       })
