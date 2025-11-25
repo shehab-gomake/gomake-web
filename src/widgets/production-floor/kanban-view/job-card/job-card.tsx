@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, memo } from "react";
 import { Box, Typography, Chip, Popover, Tooltip } from "@mui/material";
 import { createPortal } from "react-dom";
 import { IBoardMissions } from "@/widgets/production-floor/interfaces/board-missions";
@@ -727,4 +727,21 @@ const JobCard: React.FC<IProps> = ({
   );
 };
 
-export { JobCard };
+// Memoize JobCard to prevent unnecessary re-renders when parent updates
+// Only re-render if props actually change
+const JobCardMemoized = memo(JobCard, (prevProps, nextProps) => {
+  // Custom comparison function for better performance
+  return (
+    prevProps.mission.id === nextProps.mission.id &&
+    prevProps.mission.productionFloorJobColor ===
+      nextProps.mission.productionFloorJobColor &&
+    prevProps.isMobile === nextProps.isMobile &&
+    prevProps.stationId === nextProps.stationId &&
+    prevProps.categoryName === nextProps.categoryName &&
+    prevProps.isDisabled === nextProps.isDisabled
+  );
+});
+
+JobCardMemoized.displayName = "JobCard";
+
+export { JobCardMemoized as JobCard };

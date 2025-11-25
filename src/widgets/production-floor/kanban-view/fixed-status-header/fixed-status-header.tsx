@@ -54,8 +54,15 @@ const FixedStatusHeader: React.FC<IProps> = ({ isMobile }) => {
         <Box
           key={status.name}
           sx={{
-            flex: 1,
-            minWidth: isMobile ? "120px" : "150px",
+            flex: status.name === "Waiting" ? 2 : 1,
+            minWidth:
+              status.name === "Waiting"
+                ? isMobile
+                  ? "240px"
+                  : "300px"
+                : isMobile
+                ? "120px"
+                : "150px",
             backgroundColor: status.bgColor,
             borderRight: "1px solid #e0e0e0", // Always show right border
             borderLeft: index === 0 ? "none" : "1px solid #e0e0e0", // Show left border except for first column
