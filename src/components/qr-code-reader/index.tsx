@@ -88,6 +88,10 @@ const QrCodeReader = (props: IProps) => {
 
     const handleBoardMissionsQRCodeAction = async (barcode: string) => {
         return new Promise(async (resolve, reject) => {
+            if(barcode && barcode.startsWith("https")) {
+                window.open(barcode, "_blank");
+                return;
+            }
             barcode = barcode.replace(/½/g, '-');
             const callBack = async (res) => {
                 setSelectedMission(res?.data);
