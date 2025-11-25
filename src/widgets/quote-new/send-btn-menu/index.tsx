@@ -48,7 +48,11 @@ const SendBtnMenu = ({
                 handleClose();
               });
             } else {
-              onClickSendQuoteToClient(MessageType.Email);
+              if(hasFrontDeskFeature){
+                onClickSendEmailViaComposer?.();
+              }else {
+                onClickSendQuoteToClient(MessageType.SMS);
+              }
             }
             handleClose();
           }}
