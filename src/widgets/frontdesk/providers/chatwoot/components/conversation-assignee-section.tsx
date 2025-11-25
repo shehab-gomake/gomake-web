@@ -215,12 +215,12 @@ export const ConversationAssigneeSection: React.FC<ConversationAssigneeSectionPr
                 (() => {
                   const avatarData = generateAgentAvatar(assignee);
                   return (
-                    <Avatar 
-                      src={avatarData.src} 
-                      sx={{ 
-                        width: 32, 
+                    <Avatar
+                      src={avatarData.src}
+                      sx={{
+                        width: 32,
                         height: 32,
-                        bgcolor: avatarData.backgroundColor 
+                        bgcolor: avatarData.backgroundColor,
                       }}
                       alt={avatarData.displayName}
                       title={avatarData.displayName}
@@ -334,13 +334,13 @@ export const ConversationAssigneeSection: React.FC<ConversationAssigneeSectionPr
                   const avatarData = generateAgentAvatar(agent);
                   return (
                     <>
-                      <Avatar 
-                        src={avatarData.src} 
-                        sx={{ 
-                          width: 24, 
-                          height: 24, 
+                      <Avatar
+                        src={avatarData.src}
+                        sx={{
+                          width: 24,
+                          height: 24,
                           mr: 1.5,
-                          bgcolor: avatarData.backgroundColor 
+                          bgcolor: avatarData.backgroundColor,
                         }}
                         alt={avatarData.displayName}
                         title={avatarData.displayName}

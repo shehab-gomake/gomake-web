@@ -119,6 +119,14 @@ function getConversationSnippet(conversation: any): string {
 }
 
 /**
+ * Checks if the conversation has attachments in the last message
+ */
+function hasAttachments(conversation: any): boolean {
+  const lastMessage = conversation.last_non_activity_message || conversation.messages?.[0];
+  return Array.isArray(lastMessage?.attachments) && lastMessage.attachments.length > 0;
+}
+
+/**
  * Extracts participant names from conversation
  */
 function getParticipantNames(conversation: any): string[] {
@@ -207,6 +215,7 @@ const ChatwootConversationListItemComponent: React.FC<ChatwootConversationListIt
       appliedSla: conversation.applied_sla || conversation.appliedSla || null,
       conversationTimestamp: conversation.timestamp || conversation.created_at || null,
       lastActivityAt: conversation.last_activity_at || conversation.lastActivityAt || null,
+      hasAttachments: hasAttachments(conversation),
     };
   }, [conversation, inbox, hideAssigneeAvatar]);
 
@@ -251,7 +260,7 @@ const ChatwootConversationListItemComponent: React.FC<ChatwootConversationListIt
         isRead={conversationData.unreadCount === 0}
         isSelected={isSelected}
         unreadCount={conversationData.unreadCount}
-        hasAttachments={false}
+        hasAttachments={conversationData.hasAttachments}
         isStarred={false}
         avatarSrc={conversationData.avatarSrc}
         presence={conversationData.presence}
