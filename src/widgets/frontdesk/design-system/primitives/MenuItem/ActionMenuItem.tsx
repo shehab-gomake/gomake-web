@@ -1,6 +1,6 @@
-import React from 'react';
-import { MenuItem, Box, Typography } from '@mui/material';
-import { colorTokens, radiusTokens } from '../../tokens';
+import React from "react";
+import { MenuItem, Box, Typography } from "@mui/material";
+import { colorTokens, radiusTokens } from "../../tokens";
 
 export interface ActionMenuItemProps {
   /** Unique identifier */
@@ -56,43 +56,50 @@ export const ActionMenuItem: React.FC<ActionMenuItemProps> = ({
       onClick={onClick}
       disabled={disabled}
       sx={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: 1.5,
+        display: "flex",
+        alignItems: "center",
+        gap: 1.25,
         px: 2,
-        py: 1.5,
-        borderRadius: radiusTokens.md,
-        backgroundColor: isSelected
-          ? colorTokens.primary[100]
-          : 'transparent',
-        cursor: disabled ? 'not-allowed' : 'pointer',
-        transition: 'background-color 0.15s ease',
-        '&:hover': {
-          backgroundColor: isSelected
-            ? colorTokens.primary[100]
-            : disabled
-            ? 'transparent'
-            : colorTokens.primary[50],
+        py: 0.875,
+        mx: 0.5,
+        borderRadius: radiusTokens.sm,
+        backgroundColor: isSelected ? colorTokens.primary[100] : "transparent",
+        cursor: disabled ? "not-allowed" : "pointer",
+        transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+        position: "relative",
+        "&:hover": {
+          backgroundColor: isSelected ? colorTokens.primary[100] : disabled ? "transparent" : "rgba(59, 130, 246, 0.08)",
+          transform: disabled ? "none" : "translateX(2px)",
         },
-        '&.Mui-disabled': {
-          opacity: 0.5,
+        "&:active": {
+          backgroundColor: colorTokens.semantic.interactive.active,
+          transform: "translateX(1px)",
+          transition: "all 0.1s ease",
+        },
+        "&.Mui-disabled": {
+          opacity: 0.4,
+          cursor: "not-allowed",
         },
         ...sx,
       }}
     >
-      {/* Icon Container (20x20) */}
+      {/* Icon Container (18x18) */}
       {icon && (
         <Box
           sx={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            width: 20,
-            height: 20,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            width: 18,
+            height: 18,
             flexShrink: 0,
-            color: disabled
-              ? colorTokens.semantic.text.tertiary
-              : colorTokens.primary[600],
+            "& svg": {
+              transition: "transform 0.15s ease, color 0.15s ease",
+              color: disabled ? `${colorTokens.semantic.text.tertiary} !important` : "inherit",
+            },
+            "&:hover svg": {
+              transform: disabled ? "none" : "scale(1.05)",
+            },
           }}
         >
           {icon}
@@ -105,14 +112,14 @@ export const ActionMenuItem: React.FC<ActionMenuItemProps> = ({
         <Typography
           variant="body2"
           sx={{
-            fontSize: 14,
+            fontSize: 13,
             fontWeight: 500,
-            color: disabled
-              ? colorTokens.semantic.text.tertiary
-              : colorTokens.semantic.text.primary,
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
+            letterSpacing: "-0.01em",
+            color: disabled ? colorTokens.semantic.text.tertiary : colorTokens.semantic.text.primary,
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
+            lineHeight: 1.35,
           }}
         >
           {label}
@@ -125,9 +132,9 @@ export const ActionMenuItem: React.FC<ActionMenuItemProps> = ({
             sx={{
               fontSize: 11,
               color: colorTokens.semantic.text.secondary,
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap",
             }}
           >
             {secondaryText}
@@ -140,8 +147,8 @@ export const ActionMenuItem: React.FC<ActionMenuItemProps> = ({
         <Box
           sx={{
             flexShrink: 0,
-            display: 'flex',
-            alignItems: 'center',
+            display: "flex",
+            alignItems: "center",
           }}
         >
           {rightElement}

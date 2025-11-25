@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Divider, Box, CircularProgress, Menu } from '@mui/material';
+import React, { useState } from "react";
+import { Divider, Box, CircularProgress, Menu } from "@mui/material";
 import {
   MarkEmailUnread as MarkUnreadIcon,
   MarkEmailRead as MarkReadIcon,
@@ -14,12 +14,14 @@ import {
   ContentCopy as ContentCopyIcon,
   Delete as DeleteIcon,
   ChevronRight as ChevronRightIcon,
-  Snooze as SnoozeIcon,
   Warning as WarningIcon,
-} from '@mui/icons-material';
-import { DropdownMenu } from '../dropdown-menu';
-import { ActionMenuItem } from '@/widgets/frontdesk/design-system/primitives/MenuItem';
-import { colorTokens, shadowTokens, radiusTokens } from '@/widgets/frontdesk/design-system/tokens';
+} from "@mui/icons-material";
+import { DropdownMenu } from "../dropdown-menu";
+import { ActionMenuItem } from "@/widgets/frontdesk/design-system/primitives/MenuItem";
+import { colorTokens, shadowTokens, radiusTokens } from "@/widgets/frontdesk/design-system/tokens";
+import { createLogger } from "@/services/frontdesk/utils/logger";
+
+const logger = createLogger("ConversationContextMenu");
 
 /**
  * Context Menu Action Definition
@@ -50,22 +52,21 @@ export interface ConversationContextMenuProps {
 }
 
 /**
- * Map icon names to MUI icons
+ * Map icon names to MUI icons with consistent styling
  */
 const iconMap: Record<string, React.ReactNode> = {
-  'mail': <MarkReadIcon sx={{ fontSize: 18 }} />,
-  'mail-unread': <MarkUnreadIcon sx={{ fontSize: 18 }} />,
-  'checkmark': <ResolveIcon sx={{ fontSize: 18 }} />,
-  'arrow-redo': <ReopenIcon sx={{ fontSize: 18 }} />,
-  'book-clock': <ScheduleIcon sx={{ fontSize: 18 }} />,
-  'snooze': <SnoozeIcon sx={{ fontSize: 18 }} />,
-  'warning': <WarningIcon sx={{ fontSize: 18 }} />,
-  'tag': <LabelIcon sx={{ fontSize: 18 }} />,
-  'person-add': <PersonAddIcon sx={{ fontSize: 18 }} />,
-  'people-team-add': <GroupAddIcon sx={{ fontSize: 18 }} />,
-  'open': <OpenInNewIcon sx={{ fontSize: 18 }} />,
-  'copy': <ContentCopyIcon sx={{ fontSize: 18 }} />,
-  'delete': <DeleteIcon sx={{ fontSize: 18 }} />,
+  mail: <MarkReadIcon sx={{ fontSize: 18, color: colorTokens.primary[600] }} />,
+  "mail-unread": <MarkUnreadIcon sx={{ fontSize: 18, color: colorTokens.primary[600] }} />,
+  checkmark: <ResolveIcon sx={{ fontSize: 18, color: colorTokens.success[600] }} />,
+  "arrow-redo": <ReopenIcon sx={{ fontSize: 18, color: colorTokens.primary[600] }} />,
+  "book-clock": <ScheduleIcon sx={{ fontSize: 18, color: colorTokens.primary[600] }} />,
+  warning: <WarningIcon sx={{ fontSize: 18, color: colorTokens.warning[600] }} />,
+  tag: <LabelIcon sx={{ fontSize: 18, color: colorTokens.primary[600] }} />,
+  "person-add": <PersonAddIcon sx={{ fontSize: 18, color: colorTokens.primary[600] }} />,
+  "people-team-add": <GroupAddIcon sx={{ fontSize: 18, color: colorTokens.primary[600] }} />,
+  open: <OpenInNewIcon sx={{ fontSize: 18, color: colorTokens.primary[600] }} />,
+  copy: <ContentCopyIcon sx={{ fontSize: 18, color: colorTokens.primary[600] }} />,
+  delete: <DeleteIcon sx={{ fontSize: 18, color: colorTokens.error[600] }} />,
 };
 
 /**
@@ -73,7 +74,7 @@ const iconMap: Record<string, React.ReactNode> = {
  */
 const getIcon = (iconName?: string): React.ReactNode => {
   if (!iconName) return undefined;
-  return iconMap[iconName] || <PriorityIcon sx={{ fontSize: 18 }} />;
+  return iconMap[iconName] || <PriorityIcon sx={{ fontSize: 18, color: colorTokens.primary[600] }} />;
 };
 
 /**
@@ -122,7 +123,7 @@ export const ConversationContextMenu: React.FC<ConversationContextMenuProps> = (
     if (!onActionClick) return;
 
     // Client-side actions don't need loading state
-    const clientSideActions = ['open-new-tab', 'copy-link'];
+    const clientSideActions = ["open-new-tab", "copy-link"];
     const needsLoading = !clientSideActions.includes(actionId);
 
     try {
@@ -142,7 +143,7 @@ export const ConversationContextMenu: React.FC<ConversationContextMenuProps> = (
         onClose();
       }
     } catch (error) {
-      console.error('Context menu action failed:', error);
+      logger.error("Context menu action failed", error instanceof Error ? error : new Error(String(error)));
       // Keep menu open on error so user can retry
     } finally {
       if (needsLoading) {
@@ -186,29 +187,29 @@ export const ConversationContextMenu: React.FC<ConversationContextMenuProps> = (
   // Use anchorPosition (mouse coordinates) if provided, otherwise fall back to anchorEl
   const menuProps = anchorPosition
     ? {
-        anchorReference: 'anchorPosition' as const,
+        anchorReference: "anchorPosition" as const,
         anchorPosition: {
           top: anchorPosition.top,
           left: anchorPosition.left,
         },
         anchorOrigin: {
-          vertical: 'top' as const,
-          horizontal: 'left' as const,
+          vertical: "top" as const,
+          horizontal: "left" as const,
         },
         transformOrigin: {
-          vertical: 'top' as const,
-          horizontal: 'left' as const,
+          vertical: "top" as const,
+          horizontal: "left" as const,
         },
       }
     : {
         anchorEl: anchorEl || undefined,
         anchorOrigin: {
-          vertical: 'bottom' as const,
-          horizontal: 'right' as const,
+          vertical: "bottom" as const,
+          horizontal: "right" as const,
         },
         transformOrigin: {
-          vertical: 'top' as const,
-          horizontal: 'right' as const,
+          vertical: "top" as const,
+          horizontal: "right" as const,
         },
       };
 
@@ -220,75 +221,102 @@ export const ConversationContextMenu: React.FC<ConversationContextMenuProps> = (
         {...menuProps}
         disableContentPadding
         width={240}
+        slotProps={{
+          paper: {
+            sx: {
+              background: "rgba(255, 255, 255, 0.85)",
+              backdropFilter: "blur(20px) saturate(180%)",
+              WebkitBackdropFilter: "blur(20px) saturate(180%)",
+              border: `0.5px solid rgba(229, 231, 235, 0.8)`,
+            },
+          },
+        }}
       >
         {loading || isProcessing ? (
           <Box
             sx={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
               py: 3,
             }}
           >
-            <CircularProgress size={24} />
+            <CircularProgress size={20} />
           </Box>
         ) : (
-          actions.map((action, index) => {
-            // Render divider
-            if (action.divider) {
+          <Box
+            sx={{
+              py: 0.25,
+            }}
+          >
+            {actions.map((action) => {
+              // Render divider
+              if (action.divider) {
+                return (
+                  <Divider
+                    key={action.id}
+                    sx={{
+                      my: 0.25,
+                      mx: 1,
+                      borderColor: "rgba(229, 231, 235, 0.6)",
+                      borderWidth: 0.5,
+                      opacity: 0.5,
+                    }}
+                  />
+                );
+              }
+
+              const hasSubmenu = action.submenu && action.submenu.length > 0;
+              const isDeleteAction = action.id === "delete-conversation";
+
               return (
-                <Divider
+                <ActionMenuItem
                   key={action.id}
+                  id={action.id}
+                  label={action.label}
+                  icon={getIcon(action.icon)}
+                  disabled={action.disabled}
+                  onClick={(e) => {
+                    if (hasSubmenu) {
+                      handleSubmenuOpen(e as React.MouseEvent<HTMLElement>, action.submenu!);
+                    } else {
+                      handleActionClick(action.id);
+                    }
+                  }}
+                  rightElement={
+                    hasSubmenu ? (
+                      <Box
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          color: colorTokens.semantic.text.tertiary,
+                          opacity: 0.6,
+                        }}
+                      >
+                        <ChevronRightIcon sx={{ fontSize: 14 }} />
+                      </Box>
+                    ) : undefined
+                  }
                   sx={{
-                    my: 0.5,
-                    borderColor: colorTokens.semantic.border.default,
+                    ...(isDeleteAction && {
+                      color: colorTokens.error[600],
+                      "&:hover": {
+                        backgroundColor: colorTokens.error[50],
+                        color: colorTokens.error[700],
+                      },
+                    }),
+                    ...(action.requiresAdmin && {
+                      color: colorTokens.error[600],
+                      "&:hover": {
+                        backgroundColor: colorTokens.error[50],
+                        color: colorTokens.error[700],
+                      },
+                    }),
                   }}
                 />
               );
-            }
-
-            const hasSubmenu = action.submenu && action.submenu.length > 0;
-
-            return (
-              <ActionMenuItem
-                key={action.id}
-                id={action.id}
-                label={action.label}
-                icon={getIcon(action.icon)}
-                disabled={action.disabled}
-                onClick={(e) => {
-                  if (hasSubmenu) {
-                    handleSubmenuOpen(e as React.MouseEvent<HTMLElement>, action.submenu!);
-                  } else {
-                    handleActionClick(action.id);
-                  }
-                }}
-                rightElement={
-                  hasSubmenu ? (
-                    <Box
-                      sx={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        color: colorTokens.semantic.text.secondary,
-                      }}
-                    >
-                      <ChevronRightIcon sx={{ fontSize: 16 }} />
-                    </Box>
-                  ) : undefined
-                }
-                sx={
-                  action.requiresAdmin
-                    ? {
-                        color: '#DC2626',
-                        '&:hover': {
-                          backgroundColor: '#FEF2F2',
-                        },
-                      }
-                    : undefined
-                }
-              />
-            );
-          })
+            })}
+          </Box>
         )}
       </DropdownMenu>
 
@@ -298,37 +326,67 @@ export const ConversationContextMenu: React.FC<ConversationContextMenuProps> = (
         anchorEl={submenuAnchorEl}
         onClose={handleSubmenuClose}
         anchorOrigin={{
-          vertical: 'top',
-          horizontal: 'right',
+          vertical: "top",
+          horizontal: "right",
         }}
         transformOrigin={{
-          vertical: 'top',
-          horizontal: 'left',
+          vertical: "top",
+          horizontal: "left",
         }}
         slotProps={{
           paper: {
-            elevation: 8,
+            elevation: 0,
             sx: {
               width: 200,
               ml: 0.5,
               borderRadius: `${radiusTokens.md}px`,
-              boxShadow: shadowTokens.md,
+              boxShadow: shadowTokens.xl,
+              border: `0.5px solid rgba(229, 231, 235, 0.8)`,
+              mt: 0.5,
+              background: "rgba(255, 255, 255, 0.9)",
+              backdropFilter: "blur(20px) saturate(180%)",
+              WebkitBackdropFilter: "blur(20px) saturate(180%)",
+              overflow: "hidden",
             },
           },
         }}
       >
-        {activeSubmenu.map((subAction) => (
-          <ActionMenuItem
-            key={subAction.id}
-            id={subAction.id}
-            label={subAction.label}
-            icon={getIcon(subAction.icon)}
-            disabled={subAction.disabled}
-            onClick={() => handleSubmenuActionClick(subAction.id)}
-          />
-        ))}
+        <Box
+          sx={{
+            py: 0.25,
+            background: "transparent",
+          }}
+        >
+          {activeSubmenu.map((subAction) => {
+            // Render divider
+            if (subAction.divider) {
+              return (
+                <Divider
+                  key={subAction.id}
+                  sx={{
+                    my: 0.25,
+                    mx: 1,
+                    borderColor: "rgba(229, 231, 235, 0.6)",
+                    borderWidth: 0.5,
+                    opacity: 0.5,
+                  }}
+                />
+              );
+            }
+
+            return (
+              <ActionMenuItem
+                key={subAction.id}
+                id={subAction.id}
+                label={subAction.label}
+                icon={getIcon(subAction.icon)}
+                disabled={subAction.disabled}
+                onClick={() => handleSubmenuActionClick(subAction.id)}
+              />
+            );
+          })}
+        </Box>
       </Menu>
     </>
   );
 };
-
