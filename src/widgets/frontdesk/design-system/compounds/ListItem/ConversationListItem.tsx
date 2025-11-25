@@ -219,6 +219,8 @@ export const ConversationListItem = React.memo<ConversationListItemProps>(({
   appliedSla,
   conversationTimestamp,
   lastActivityAt,
+  subject,
+  recipient,
 }) => {
   // ========================================================================
   // Memoized Values
@@ -340,6 +342,27 @@ export const ConversationListItem = React.memo<ConversationListItemProps>(({
             <Typography variant="body2" sx={getTitleStyles(isSelected, isUnread)}>
               {title}
             </Typography>
+
+            {/* Subject Row (for email conversations) */}
+            {subject && (
+              <Typography
+                variant="body2"
+                sx={{
+                  color: isSelected
+                    ? colorTokens.primary[700]
+                    : colorTokens.semantic.text.secondary,
+                  fontSize: 12,
+                  fontWeight: 500,
+                  lineHeight: 1.3,
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                  opacity: 0.9,
+                }}
+              >
+                {subject}
+              </Typography>
+            )}
 
             {/* Third Row: Message Preview | Unread Count */}
             <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={0.75}>

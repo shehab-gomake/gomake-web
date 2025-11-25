@@ -33,6 +33,7 @@ interface ChatwootConversationListItemProps {
 function extractEmailSubject(conversation: any): string | null {
   return (
     conversation.additional_attributes?.subject ||
+    conversation.additional_attributes?.mail_subject ||
     conversation.custom_attributes?.subject ||
     conversation.messages?.[0]?.content_attributes?.subject ||
     conversation.messages?.[0]?.content_attributes?.email?.subject ||
