@@ -7,6 +7,8 @@ import { useChatwootProfile } from "./use-chatwoot-profile";
 import { useChatwootInboxes } from "./use-chatwoot-inboxes";
 import { useChatwootCache } from "./use-chatwoot-cache";
 import { useChatwootConversationUpdater } from "./use-chatwoot-conversation-updater";
+import { useChatwootConversationWebSocket } from "./use-chatwoot-conversation-websocket";
+import { useSnackBar } from "@/hooks";
 import {
   ConversationListParams,
   ConversationStatus,
@@ -31,20 +33,20 @@ function createStableKey<T = any>(params: T): string {
     return String(params);
   }
 
-  if (typeof params !== 'object') {
+  if (typeof params !== "object") {
     return String(params);
   }
 
   // Sort keys recursively for nested objects
   const sortKeys = (obj: any): any => {
     if (obj === null || obj === undefined) return obj;
-    if (typeof obj !== 'object') return obj;
+    if (typeof obj !== "object") return obj;
     if (Array.isArray(obj)) return obj.map(sortKeys);
 
     const sorted: Record<string, any> = {};
     Object.keys(obj)
       .sort()
-      .forEach(key => {
+      .forEach((key) => {
         sorted[key] = sortKeys(obj[key]);
       });
     return sorted;
@@ -68,6 +70,9 @@ export const useChatwootProvider = () => {
   const [conversationsList, setConversationsList] = useRecoilState(chatwootConversationsAtom);
   const selectedInboxId = useRecoilValue(chatwootSelectedInboxIdAtom);
   const setCounts = useSetRecoilState(chatwootConversationCountsAtom);
+
+  // Toast notifications
+  const { setSnackbarStateValue } = useSnackBar();
 
   // Use the custom hook to get profile state (prevents multiple API calls)
   const { profile, loading: profileLoading, error: profileError, fetchProfile } = useChatwootProfile();
@@ -98,6 +103,70 @@ export const useChatwootProvider = () => {
   // Cache-aware conversation updater (updates all caches, not just legacy atom)
   const { updateConversation: updateConversationCache } = useChatwootConversationUpdater();
 
+  // Helper to show toast notifications safely
+  const showToast = useCallback(
+    (message: string, type: "success" | "error" | "warning" = "success") => {
+      try {
+        setSnackbarStateValue({
+          state: true,
+          message,
+          type,
+        });
+      } catch (err) {
+        // Silently fail if snackbar isn't available
+        logger.warn("Failed to show toast notification:", err);
+      }
+    },
+    [setSnackbarStateValue]
+  );
+
+  // Real-time WebSocket for conversation updates (new conversations, messages, status changes)
+  // This enables instant updates without manual refresh
+  const websocket = useChatwootConversationWebSocket({
+    accountId: currentAccountId,
+    enabled: true, // Enable real-time updates
+    onNewConversation: useCallback(
+      (conversation: ChatwootConversation) => {
+        // Safety check for conversation data
+        if (!conversation?.id) {
+          logger.warn("Received invalid conversation in WebSocket event");
+          return;
+        }
+
+        const senderName = conversation.meta?.sender?.name || "Unknown";
+        const inboxChannel = conversation.meta?.channel || "";
+        const conversationId = conversation.id;
+
+        logger.info("New conversation received via WebSocket:", {
+          id: conversationId,
+          sender: senderName,
+          channel: inboxChannel,
+        });
+
+        // Show toast notification for new conversation
+        const channelIcon = inboxChannel === "Channel::Email" ? "📧" : inboxChannel === "Channel::Whatsapp" ? "💬" : "🔔";
+        showToast(`${channelIcon} New conversation from ${senderName}`, "success");
+      },
+      [showToast]
+    ),
+    onNewMessage: useCallback(
+      (conversationId: number, message: any) => {
+        // Safety check
+        if (!conversationId) {
+          return;
+        }
+
+        logger.debug("New message received via WebSocket:", {
+          conversationId,
+          messageId: message?.id,
+        });
+        // Note: We don't show toast for every message to avoid notification spam
+        // Toast is only shown for new conversations
+      },
+      []
+    ),
+  });
+
   // Debounce timer for filter changes to batch rapid updates
   const filterDebounceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -105,7 +174,7 @@ export const useChatwootProvider = () => {
   // This is the single source of truth for filter state
   const filterKey = useMemo(() => {
     const route = router.currentRoute;
-    if (!route) return '';
+    if (!route) return "";
 
     return createStableKey({
       view: route.view,
@@ -129,16 +198,12 @@ export const useChatwootProvider = () => {
     // Parse status with validation and defaults
     const urlStatus = route.filters?.status as ConversationStatus | undefined;
     const validStatuses = Object.values(ConversationStatus);
-    const statusFilter = urlStatus && validStatuses.includes(urlStatus)
-      ? urlStatus
-      : ConversationStatus.OPEN;
+    const statusFilter = urlStatus && validStatuses.includes(urlStatus) ? urlStatus : ConversationStatus.OPEN;
 
     // Parse assignee type with validation and defaults
     const urlAssignee = route.filters?.assigneeType as ConversationAssigneeType | undefined;
     const validTypes = Object.values(ConversationAssigneeType);
-    const assigneeFilter = urlAssignee && validTypes.includes(urlAssignee)
-      ? urlAssignee
-      : ConversationAssigneeType.ME;
+    const assigneeFilter = urlAssignee && validTypes.includes(urlAssignee) ? urlAssignee : ConversationAssigneeType.ME;
 
     // Parse inbox ID from channelId
     const inboxId = route.channelId ? parseInt(route.channelId, 10) : null;
@@ -161,8 +226,11 @@ export const useChatwootProvider = () => {
     // Parse labels (comma-separated string to array)
     const labelsString = route.filters?.labels;
     let labels: string[] | undefined = undefined;
-    if (typeof labelsString === 'string' && labelsString.trim()) {
-      labels = labelsString.split(',').map(l => l.trim()).filter(l => l.length > 0);
+    if (typeof labelsString === "string" && labelsString.trim()) {
+      labels = labelsString
+        .split(",")
+        .map((l) => l.trim())
+        .filter((l) => l.length > 0);
     }
 
     // Set conversation_type based on view
@@ -225,7 +293,7 @@ export const useChatwootProvider = () => {
         // Generate the same cache key that useChatwootConversations uses
         const cacheKey = createFilterKey(currentAccountId, filters);
         const cache = snapshot.getLoadable(chatwootConversationsCacheFamily(cacheKey));
-        return cache.state === 'hasValue' ? cache.getValue().conversations : [];
+        return cache.state === "hasValue" ? cache.getValue().conversations : [];
       },
     [currentAccountId, filters]
   );
@@ -251,9 +319,7 @@ export const useChatwootProvider = () => {
     // Try to find conversation in the current list first (fast path - instant transition)
     // Get latest conversations from cache (bypasses stale ref, always fresh)
     const latestConversations = getLatestConversations();
-    const convInList = latestConversations.find(
-      (c) => c.id.toString() === conversationIdFromUrl
-    );
+    const convInList = latestConversations.find((c) => c.id.toString() === conversationIdFromUrl);
 
     if (convInList) {
       // Use conversation from list immediately for smooth transition
@@ -294,8 +360,8 @@ export const useChatwootProvider = () => {
     fetchConversationFromApi();
   }, [
     router.currentRoute?.conversationId, // URL source of truth
-    currentAccountId,                     // Account context
-    setSelectedConversation,              // Setter (stable)
+    currentAccountId, // Account context
+    setSelectedConversation, // Setter (stable)
     // REMOVED: selectedConversation - breaks circular dependency, prevents unnecessary re-runs
     // REMOVED: conversations.conversations - ref handles this, prevents duplicate fetches
   ]);
@@ -312,9 +378,7 @@ export const useChatwootProvider = () => {
       // Navigate to conversation - URL will become source of truth
       // Only pass inbox_id when in CHANNELS view
       // For ALL_CONVERSATIONS, MY_INBOX, MENTIONS, UNATTENDED - don't pass it
-      const inboxId = router.isChannelsView
-        ? conversation.inbox_id?.toString()
-        : undefined;
+      const inboxId = router.isChannelsView ? conversation.inbox_id?.toString() : undefined;
       router.navigateToConversation(conversation.id.toString(), inboxId);
 
       // Mark conversation as read (business logic - independent of navigation state)
@@ -458,17 +522,19 @@ export const useChatwootProvider = () => {
 
       // Update selected conversation
       if (selectedConversation?.id === updatedConversation.id) {
-        const matchesAllFilters = statusMatches && (() => {
-          const newAssigneeId = updatedConversation.meta?.assignee?.id;
-          if (assigneeFilter === ConversationAssigneeType.ME) {
-            return newAssigneeId === currentUserId;
-          } else if (assigneeFilter === ConversationAssigneeType.UNASSIGNED) {
-            return !newAssigneeId;
-          } else if (assigneeFilter === ConversationAssigneeType.ASSIGNED) {
-            return !!newAssigneeId;
-          }
-          return true; // ALL
-        })();
+        const matchesAllFilters =
+          statusMatches &&
+          (() => {
+            const newAssigneeId = updatedConversation.meta?.assignee?.id;
+            if (assigneeFilter === ConversationAssigneeType.ME) {
+              return newAssigneeId === currentUserId;
+            } else if (assigneeFilter === ConversationAssigneeType.UNASSIGNED) {
+              return !newAssigneeId;
+            } else if (assigneeFilter === ConversationAssigneeType.ASSIGNED) {
+              return !!newAssigneeId;
+            }
+            return true; // ALL
+          })();
 
         if (!matchesAllFilters) {
           // If conversation no longer matches filter, deselect it
@@ -478,7 +544,16 @@ export const useChatwootProvider = () => {
         }
       }
     },
-    [updateConversationCache, setConversationsList, selectedConversation, setSelectedConversation, statusFilter, assigneeFilter, profile, setCounts]
+    [
+      updateConversationCache,
+      setConversationsList,
+      selectedConversation,
+      setSelectedConversation,
+      statusFilter,
+      assigneeFilter,
+      profile,
+      setCounts,
+    ]
   );
 
   // OPTIMIZED: Handle filter changes with simplified dependencies
@@ -494,8 +569,8 @@ export const useChatwootProvider = () => {
       // Function to apply filter changes to URL
       const applyFilters = () => {
         // Start with current URL values (read from route)
-        let statusToSet = filters.status as ConversationStatus || ConversationStatus.OPEN;
-        let assigneeToSet = filters.assignee_type as ConversationAssigneeType || ConversationAssigneeType.ME;
+        let statusToSet = (filters.status as ConversationStatus) || ConversationStatus.OPEN;
+        let assigneeToSet = (filters.assignee_type as ConversationAssigneeType) || ConversationAssigneeType.ME;
         let searchToSet = filters.q || "";
         let teamToSet = filters.team_id;
         let sortToSet = filters.sort_by;
@@ -536,9 +611,7 @@ export const useChatwootProvider = () => {
         }
 
         // Get inbox ID from current route
-        const currentInboxId = router.currentRoute?.channelId
-          ? parseInt(router.currentRoute.channelId, 10)
-          : null;
+        const currentInboxId = router.currentRoute?.channelId ? parseInt(router.currentRoute.channelId, 10) : null;
 
         // Build URL filters object (omit defaults to keep URL clean)
         const urlFilters: any = {};
@@ -640,6 +713,13 @@ export const useChatwootProvider = () => {
       invalidate: cache.invalidateCaches,
       getStats: cache.getStats,
       count: cache.cacheCount,
+    },
+
+    // Real-time WebSocket status
+    websocket: {
+      connected: websocket.connected,
+      error: websocket.error,
+      typing: websocket.typing,
     },
   };
 };

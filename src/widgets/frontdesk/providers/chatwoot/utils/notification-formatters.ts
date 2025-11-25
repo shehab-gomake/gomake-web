@@ -4,9 +4,11 @@
  */
 
 import { ChatwootNotification } from "@/services/frontdesk/api/chatwoot/types/notifications.types";
+import { generateNotificationAvatar } from "./avatar.utils";
 
 /**
  * Notification sender information
+ * @deprecated Use generateNotificationAvatar() directly for type-safe avatar data
  */
 export interface NotificationSender {
   name: string;
@@ -26,45 +28,19 @@ export interface NotificationAssignee {
 }
 
 /**
- * Avatar color palette for consistent user identification
- */
-const AVATAR_COLORS = [
-  "#1976D2", // Primary blue
-  "#3B82F6", // Blue
-  "#10B981", // Green
-  "#F59E0B", // Amber
-  "#EF4444", // Red
-  "#8B5CF6", // Purple
-];
-
-/**
  * Get notification sender information (the actual contact who sent the message)
+ * 
+ * @deprecated Use generateNotificationAvatar() from avatar.utils.ts for consistent avatar generation
+ * This function is kept for backward compatibility but will be removed in future versions
  */
 export function getNotificationSender(notification: ChatwootNotification, fallbackColor: string): NotificationSender {
   const primaryActor = notification.primary_actor as any;
   const secondaryActor = notification.secondary_actor as any;
 
-  // Priority order for sender name:
-  // 1. secondary_actor.name (message sender - most accurate)
-  // 2. secondary_actor.email (message sender email)
-  // 3. primary_actor.meta.sender.name (contact name from conversation meta)
-  // 4. primary_actor.meta.sender.email (contact email from conversation meta)
-  // 5. secondary_actor.sender.name (nested sender object)
-  // 6. primary_actor.name (conversation/contact name)
-  // 7. primary_actor.email (conversation/contact email)
-  // 8. Fallback to "Unknown"
-  
-  const senderName = 
-    secondaryActor?.name ||
-    secondaryActor?.email ||
-    primaryActor?.meta?.sender?.name ||
-    primaryActor?.meta?.sender?.email ||
-    secondaryActor?.sender?.name ||
-    secondaryActor?.sender?.email ||
-    primaryActor?.name ||
-    primaryActor?.email ||
-    "Unknown";
+  // Use the unified avatar generator
+  const avatarData = generateNotificationAvatar(notification);
 
+  // Extract email for backward compatibility
   const senderEmail = 
     secondaryActor?.email ||
     primaryActor?.meta?.sender?.email ||
@@ -72,35 +48,12 @@ export function getNotificationSender(notification: ChatwootNotification, fallba
     primaryActor?.email ||
     "";
 
-  const senderThumbnail = 
-    secondaryActor?.thumbnail ||
-    secondaryActor?.avatar_url ||
-    secondaryActor?.sender?.thumbnail ||
-    primaryActor?.meta?.sender?.thumbnail ||
-    primaryActor?.avatar_url ||
-    "";
-
-  const name = senderName;
-  const email = senderEmail;
-  const thumbnail = senderThumbnail;
-
-  const initials = name
-    .split(" ")
-    .map((n: string) => n[0])
-    .join("")
-    .toUpperCase()
-    .slice(0, 2);
-
-  // Generate consistent color based on name
-  const colors = [fallbackColor, ...AVATAR_COLORS];
-  const colorIndex = name.charCodeAt(0) % colors.length;
-
   return {
-    name,
-    email,
-    thumbnail,
-    initials,
-    color: colors[colorIndex],
+    name: avatarData.displayName,
+    email: senderEmail,
+    thumbnail: avatarData.src || "",
+    initials: avatarData.initials,
+    color: avatarData.backgroundColor,
   };
 }
 

@@ -29,7 +29,8 @@ import InboxIcon from '@mui/icons-material/Inbox';
 import type { ChatwootNotification } from '@/services/frontdesk/api/chatwoot/types/notifications.types';
 import { DASHBOARD_LIMITS } from '../../constants/dashboard.constants';
 import { formatTimeAgo } from '../../utils/date-utils';
-import { getNotificationSender, getMessagePreview } from '../../utils/notification-formatters';
+import { getMessagePreview } from '../../utils/notification-formatters';
+import { generateNotificationAvatar } from '../../utils/avatar.utils';
 
 type FilterType = 'unread' | 'mentions' | 'assignments' | 'all';
 
@@ -83,16 +84,6 @@ export const ChatwootNotificationsCompact: React.FC = () => {
       all: notifications.length,
     };
   }, [notifications]);
-
-  // Helper function to get sender info using the shared formatter
-  const getSenderInfo = (notification: ChatwootNotification) => {
-    const sender = getNotificationSender(notification, primaryColor(500));
-    return {
-      name: sender.name,
-      initials: sender.initials,
-      color: sender.color,
-    };
-  };
 
 
   const getNotificationTypeLabel = (notificationType?: string) => {
@@ -223,7 +214,7 @@ export const ChatwootNotificationsCompact: React.FC = () => {
         ) : (
           <List sx={{ py: 0.5 }}>
             {filteredNotifications.map((notification) => {
-              const sender = getSenderInfo(notification);
+              const avatarData = generateNotificationAvatar(notification);
               const isUnread = !notification.read_at;
               const primaryActor = notification.primary_actor as any;
               const messagePreview = getMessagePreview(notification, 80);
@@ -256,19 +247,21 @@ export const ChatwootNotificationsCompact: React.FC = () => {
                   >
                     {/* Avatar (16px - more compact) */}
                     <Avatar
-                      src={(primaryActor?.meta?.sender?.thumbnail || primaryActor?.avatar_url) as string | undefined}
+                      src={avatarData.src}
                       sx={{
                         width: 16,
                         height: 16,
-                        bgcolor: sender.color,
+                        bgcolor: avatarData.backgroundColor,
                         color: 'white',
                         fontSize: '0.563rem',
                         fontWeight: 600,
                         flexShrink: 0,
                         mt: 0.25,
                       }}
+                      alt={avatarData.displayName}
+                      title={avatarData.displayName}
                     >
-                      {sender.initials}
+                      {avatarData.initials}
                     </Avatar>
 
                     {/* Content */}

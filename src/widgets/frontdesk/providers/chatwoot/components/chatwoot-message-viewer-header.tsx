@@ -56,6 +56,18 @@ export const ChatwootMessageViewerHeader: React.FC<ChatwootMessageViewerHeaderPr
   // Get sender name from conversation using utility function
   const senderName = getConversationName(conversation);
 
+  // Extract email subject from conversation metadata
+  const subject = useMemo(() => {
+    return (
+      conversation.additional_attributes?.subject ||
+      conversation.additional_attributes?.mail_subject ||
+      conversation.custom_attributes?.subject ||
+      conversation.messages?.[0]?.content_attributes?.subject ||
+      conversation.messages?.[0]?.content_attributes?.email?.subject ||
+      null
+    );
+  }, [conversation]);
+
   // Get inbox for the conversation
   const inbox = useMemo(() => {
     if (!conversation.inbox_id || !inboxes.length) {
@@ -87,8 +99,8 @@ export const ChatwootMessageViewerHeader: React.FC<ChatwootMessageViewerHeaderPr
       }}
     >
       <Stack direction="row" alignItems="center" justifyContent="space-between">
-        {/* Left: Sender Name and Inbox Info */}
-        <Stack direction="column" spacing={0.5}>
+        {/* Left: Sender Name, Subject, and Inbox Info */}
+        <Stack direction="column" spacing={0.5} sx={{ flex: 1, minWidth: 0 }}>
           {/* Sender Name */}
           <Typography
             variant="body1"
@@ -100,6 +112,23 @@ export const ChatwootMessageViewerHeader: React.FC<ChatwootMessageViewerHeaderPr
           >
             {senderName}
           </Typography>
+
+          {/* Subject (for email conversations) */}
+          {subject && (
+            <Typography
+              variant="body2"
+              sx={{
+                fontWeight: 400,
+                color: neutralColor(700),
+                fontSize: "0.8125rem",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+              }}
+            >
+              {subject}
+            </Typography>
+          )}
 
           {/* Inbox Name and Icon */}
           {inbox && (

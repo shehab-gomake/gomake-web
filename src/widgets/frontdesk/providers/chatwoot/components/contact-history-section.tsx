@@ -1,14 +1,21 @@
 /**
  * Contact History Section
  *
- * Displays the conversation history for the selected contact.
- * Enhanced with rich card-based UI showing status, priority, assignee, and message previews.
- * Features date grouping, current ticket highlighting, and improved visual hierarchy.
+ * Displays conversation history for a contact with infinite scroll.
+ * Features:
+ * - Date-grouped conversations (Today, Yesterday, This Week, Older)
+ * - Hidden scrollbar with visual scroll indicators
+ * - Smooth infinite scroll with Intersection Observer
+ * - Performance optimized with memoization
  */
 
-import React, { useState, useEffect, useMemo } from "react";
-import { Box, Typography, CircularProgress, Collapse, IconButton, Button } from "@mui/material";
-import { ConfirmationNumber as TicketIcon, ExpandMore as ExpandMoreIcon } from "@mui/icons-material";
+import React, { useState, useEffect, useMemo, useRef, useCallback } from "react";
+import { Box, Typography, CircularProgress, Collapse, IconButton } from "@mui/material";
+import { 
+  ConfirmationNumber as TicketIcon, 
+  ExpandMore as ExpandMoreIcon,
+  KeyboardArrowDown as ArrowDownIcon
+} from "@mui/icons-material";
 import { chatwootService } from "@/services/frontdesk";
 import { colorTokens } from "@/widgets/frontdesk/design-system";
 import type { ChatwootConversation } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
@@ -16,12 +23,16 @@ import type { ChatwootInbox } from "@/services/frontdesk/api/chatwoot/types/inbo
 import type { useChatwootRouter } from "../hooks/use-chatwoot-router";
 import { TicketHistoryCard } from "./ticket-history-card";
 
+// ============================================================================
+// Types & Constants
+// ============================================================================
+
 interface ContactHistorySectionProps {
   contactId?: number;
   accountId?: number;
   router: ReturnType<typeof useChatwootRouter>;
-  currentConversationId?: number; // ID of the conversation currently being viewed
-  inboxes?: ChatwootInbox[]; // Inboxes list to get inbox names
+  currentConversationId?: number;
+  inboxes?: ChatwootInbox[];
 }
 
 interface GroupedConversations {
@@ -31,7 +42,69 @@ interface GroupedConversations {
   older: ChatwootConversation[];
 }
 
-const INITIAL_DISPLAY_LIMIT = 3;
+const CONFIG = {
+  INITIAL_LIMIT: 5,
+  LOAD_INCREMENT: 10,
+  MAX_HEIGHT: 500,
+  SCROLL_TRIGGER_MARGIN: "50px",
+} as const;
+
+// ============================================================================
+// Utility Functions
+// ============================================================================
+
+/**
+ * Group conversations by date buckets
+ */
+const groupByDate = (conversations: ChatwootConversation[]): GroupedConversations => {
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const yesterday = new Date(today.getTime() - 24 * 60 * 60 * 1000);
+  const weekStart = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
+
+  const grouped: GroupedConversations = {
+    today: [],
+    yesterday: [],
+    thisWeek: [],
+    older: [],
+  };
+
+  conversations.forEach((conv) => {
+    const timestamp = conv.last_activity_at || conv.created_at;
+    if (!timestamp) {
+      grouped.older.push(conv);
+      return;
+    }
+
+    const date = new Date(typeof timestamp === "number" ? timestamp * 1000 : timestamp);
+    if (isNaN(date.getTime())) {
+      grouped.older.push(conv);
+      return;
+    }
+
+    if (date >= today) grouped.today.push(conv);
+    else if (date >= yesterday) grouped.yesterday.push(conv);
+    else if (date >= weekStart) grouped.thisWeek.push(conv);
+    else grouped.older.push(conv);
+  });
+
+  return grouped;
+};
+
+/**
+ * Sort conversations by activity (newest first)
+ */
+const sortByActivity = (conversations: ChatwootConversation[]): ChatwootConversation[] => {
+  return [...conversations].sort((a, b) => {
+    const aTime = (a as any).last_activity_at || (a as any).created_at || 0;
+    const bTime = (b as any).last_activity_at || (b as any).created_at || 0;
+    return bTime - aTime;
+  });
+};
+
+// ============================================================================
+// Main Component
+// ============================================================================
 
 export const ContactHistorySection: React.FC<ContactHistorySectionProps> = ({
   contactId,
@@ -40,35 +113,37 @@ export const ContactHistorySection: React.FC<ContactHistorySectionProps> = ({
   currentConversationId,
   inboxes = [],
 }) => {
+  // State
   const [conversations, setConversations] = useState<ChatwootConversation[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isExpanded, setIsExpanded] = useState(true);
-  const [displayLimit, setDisplayLimit] = useState(INITIAL_DISPLAY_LIMIT);
+  const [displayLimit, setDisplayLimit] = useState(CONFIG.INITIAL_LIMIT);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+
+  // Refs
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const loadTriggerRef = useRef<HTMLDivElement>(null);
+  const observerRef = useRef<IntersectionObserver | null>(null);
+
+  // ============================================================================
+  // Data Fetching
+  // ============================================================================
 
   useEffect(() => {
-    if (!contactId || !accountId) {
-      return;
-    }
+    if (!contactId || !accountId) return;
 
     const fetchHistory = async () => {
       setLoading(true);
       setError(null);
+      
       try {
         const response = await chatwootService.contacts.getContactConversations(accountId, contactId);
-
-        // Sort conversations by last_activity_at (most recent first)
-        // Type assertion is safe here as the API returns conversations with full metadata
-        const sortedConversations = (response.payload || []).sort((a, b) => {
-          const aTime = (a as any).last_activity_at || (a as any).created_at || 0;
-          const bTime = (b as any).last_activity_at || (b as any).created_at || 0;
-          return bTime - aTime; // Descending order (newest first)
-        }) as ChatwootConversation[];
-
-        setConversations(sortedConversations);
+        const sorted = sortByActivity(response.payload || []);
+        setConversations(sorted);
       } catch (err) {
         setError("Failed to load contact history.");
-        console.error(err);
+        console.error("[ContactHistory] Fetch error:", err);
       } finally {
         setLoading(false);
       }
@@ -77,244 +152,325 @@ export const ContactHistorySection: React.FC<ContactHistorySectionProps> = ({
     fetchHistory();
   }, [contactId, accountId]);
 
-  // Reset display limit when contact changes
+  // Reset on contact change
   useEffect(() => {
-    setDisplayLimit(INITIAL_DISPLAY_LIMIT);
+    setDisplayLimit(CONFIG.INITIAL_LIMIT);
   }, [contactId]);
 
-  const handleConversationClick = (conversation: ChatwootConversation) => {
-    router.navigateToConversation(conversation.id.toString(), conversation.inbox_id?.toString());
-  };
+  // ============================================================================
+  // Computed Values
+  // ============================================================================
 
-  /**
-   * Group conversations by date (Today, Yesterday, This Week, Older)
-   */
-  const groupConversationsByDate = (convs: ChatwootConversation[]): GroupedConversations => {
-    const now = new Date();
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const yesterday = new Date(today.getTime() - 24 * 60 * 60 * 1000);
-    const thisWeekStart = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
-
-    const grouped: GroupedConversations = {
-      today: [],
-      yesterday: [],
-      thisWeek: [],
-      older: [],
-    };
-
-    convs.forEach((conversation) => {
-      const rawTimestamp = conversation.last_activity_at || conversation.created_at;
-
-      if (!rawTimestamp) {
-        grouped.older.push(conversation);
-        return;
-      }
-
-      // Convert Unix timestamp (seconds) to Date
-      const timestamp = new Date(typeof rawTimestamp === "number" ? rawTimestamp * 1000 : rawTimestamp);
-
-      if (isNaN(timestamp.getTime())) {
-        grouped.older.push(conversation);
-        return;
-      }
-
-      if (timestamp >= today) {
-        grouped.today.push(conversation);
-      } else if (timestamp >= yesterday) {
-        grouped.yesterday.push(conversation);
-      } else if (timestamp >= thisWeekStart) {
-        grouped.thisWeek.push(conversation);
-      } else {
-        grouped.older.push(conversation);
-      }
-    });
-
-    return grouped;
-  };
-
-  /**
-   * Format date header label
-   */
-  const formatDateHeader = (label: string, count: number): string => {
-    return `${label} (${count})`;
-  };
-
-  /**
-   * Get grouped and limited conversations for display
-   */
-  const { groupedConversations, totalCount, hasMore } = useMemo(() => {
-    const grouped = groupConversationsByDate(conversations);
-    const allConversations = [...grouped.today, ...grouped.yesterday, ...grouped.thisWeek, ...grouped.older];
-
-    const limited = allConversations.slice(0, displayLimit);
-    const limitedGrouped = groupConversationsByDate(limited);
-
+  const { displayedConversations, totalCount, remainingCount, hasMore } = useMemo(() => {
+    const limited = conversations.slice(0, displayLimit);
     return {
-      groupedConversations: limitedGrouped,
+      displayedConversations: groupByDate(limited),
       totalCount: conversations.length,
-      hasMore: conversations.length > displayLimit,
+      remainingCount: conversations.length - displayLimit,
+      hasMore: displayLimit < conversations.length,
     };
   }, [conversations, displayLimit]);
 
-  const renderContent = () => {
-    if (loading) {
-      return (
-        <Box sx={{ display: "flex", justifyContent: "center", py: 3 }}>
-          <CircularProgress size={24} />
-        </Box>
+  // ============================================================================
+  // Handlers
+  // ============================================================================
+
+  const handleConversationClick = useCallback(
+    (conversation: ChatwootConversation) => {
+      router.navigateToConversation(
+        conversation.id.toString(),
+        conversation.inbox_id?.toString()
       );
+    },
+    [router]
+  );
+
+  const loadMore = useCallback(() => {
+    if (isLoadingMore || !hasMore) return;
+
+    setIsLoadingMore(true);
+    requestAnimationFrame(() => {
+      setDisplayLimit((prev) => 
+        Math.min(prev + CONFIG.LOAD_INCREMENT, conversations.length)
+      );
+      setIsLoadingMore(false);
+    });
+  }, [isLoadingMore, hasMore, conversations.length]);
+
+  // ============================================================================
+  // Infinite Scroll Setup
+  // ============================================================================
+
+  useEffect(() => {
+    if (observerRef.current) {
+      observerRef.current.disconnect();
     }
 
-    if (error) {
-      return (
-        <Box
-          sx={{
-            p: 2,
-            textAlign: "center",
-            backgroundColor: colorTokens.error[50],
-            borderRadius: "6px",
-            border: `1px solid ${colorTokens.error[200]}`,
-          }}
-        >
-          <Typography variant="body2" color="error" sx={{ fontSize: 12 }}>
-            {error}
-          </Typography>
-        </Box>
-      );
+    if (!isExpanded || !hasMore) return;
+
+    const options: IntersectionObserverInit = {
+      root: scrollContainerRef.current,
+      rootMargin: CONFIG.SCROLL_TRIGGER_MARGIN,
+      threshold: 0,
+    };
+
+    observerRef.current = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !isLoadingMore) {
+          loadMore();
+        }
+      },
+      options
+    );
+
+    if (loadTriggerRef.current) {
+      observerRef.current.observe(loadTriggerRef.current);
     }
 
-    if (conversations.length === 0) {
-      return (
+    return () => {
+      observerRef.current?.disconnect();
+    };
+  }, [isExpanded, hasMore, isLoadingMore, loadMore]);
+
+  // ============================================================================
+  // Render Helpers
+  // ============================================================================
+
+  const renderDateGroup = (
+    label: string,
+    conversations: ChatwootConversation[]
+  ) => {
+    if (conversations.length === 0) return null;
+
+    return (
+      <Box key={label} sx={{ mb: 2 }}>
+        {/* Date Header */}
         <Box
           sx={{
-            p: 3,
-            textAlign: "center",
-            backgroundColor: colorTokens.neutral[50],
-            borderRadius: "8px",
-            border: `1px solid ${colorTokens.semantic.border.default}`,
+            display: "flex",
+            alignItems: "center",
+            gap: 1,
+            mb: 1,
           }}
         >
-          <TicketIcon
-            sx={{
-              fontSize: 32,
-              color: colorTokens.neutral[400],
-              mb: 1,
-            }}
-          />
-          <Typography
-            variant="body2"
-            sx={{
-              fontWeight: 600,
-              fontSize: 12,
-              color: colorTokens.semantic.text.primary,
-              mb: 0.5,
-            }}
-          >
-            No previous tickets
-          </Typography>
           <Typography
             variant="caption"
             sx={{
-              fontSize: 11,
-              color: colorTokens.semantic.text.tertiary,
+              fontWeight: 700,
+              fontSize: 10,
+              color: colorTokens.semantic.text.secondary,
+              textTransform: "uppercase",
+              letterSpacing: "0.5px",
             }}
           >
-            This contact's ticket history will appear here
+            {label} ({conversations.length})
           </Typography>
-        </Box>
-      );
-    }
-
-    const renderGroup = (label: string, convos: ChatwootConversation[], isLast: boolean) => {
-      if (convos.length === 0) return null;
-
-      return (
-        <Box key={label} sx={{ mb: isLast ? 0 : 1.5 }}>
-          {/* Date Header */}
           <Box
             sx={{
-              display: "flex",
-              alignItems: "center",
-              gap: 0.75,
-              mb: 0.5,
+              flex: 1,
+              height: 1,
+              backgroundColor: colorTokens.neutral[200],
             }}
-          >
-            <Typography
-              variant="caption"
-              sx={{
-                fontWeight: 700,
-                fontSize: 10,
-                color: colorTokens.semantic.text.secondary,
-                textTransform: "uppercase",
-                letterSpacing: "0.5px",
-              }}
-            >
-              {formatDateHeader(label, convos.length)}
-            </Typography>
-            <Box
-              sx={{
-                flex: 1,
-                height: 1,
-                backgroundColor: colorTokens.neutral[200],
-              }}
-            />
-          </Box>
-
-          {/* Conversation Cards */}
-          <Box sx={{ display: "flex", flexDirection: "column", gap: 0.5 }}>
-            {convos.map((convo) => (
-              <TicketHistoryCard
-                key={convo.id}
-                conversation={convo}
-                onClick={handleConversationClick}
-                isActive={currentConversationId === convo.id}
-                inboxes={inboxes}
-              />
-            ))}
-          </Box>
+          />
         </Box>
-      );
-    };
+
+        {/* Conversation Cards */}
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 0.75 }}>
+          {conversations.map((conversation) => (
+            <TicketHistoryCard
+              key={conversation.id}
+              conversation={conversation}
+              onClick={handleConversationClick}
+              isActive={currentConversationId === conversation.id}
+              inboxes={inboxes}
+            />
+          ))}
+        </Box>
+      </Box>
+    );
+  };
+
+  const renderEmptyState = () => (
+    <Box
+      sx={{
+        p: 4,
+        textAlign: "center",
+        backgroundColor: colorTokens.neutral[50],
+        borderRadius: "8px",
+        border: `1px solid ${colorTokens.semantic.border.default}`,
+      }}
+    >
+      <TicketIcon
+        sx={{
+          fontSize: 40,
+          color: colorTokens.neutral[400],
+          mb: 1.5,
+        }}
+      />
+      <Typography
+        variant="body2"
+        sx={{
+          fontWeight: 600,
+          fontSize: 13,
+          color: colorTokens.semantic.text.primary,
+          mb: 0.5,
+        }}
+      >
+        No previous tickets
+      </Typography>
+      <Typography
+        variant="caption"
+        sx={{
+          fontSize: 11,
+          color: colorTokens.semantic.text.tertiary,
+        }}
+      >
+        This contact's ticket history will appear here
+      </Typography>
+    </Box>
+  );
+
+  const renderError = () => (
+    <Box
+      sx={{
+        p: 2,
+        textAlign: "center",
+        backgroundColor: colorTokens.error[50],
+        borderRadius: "6px",
+        border: `1px solid ${colorTokens.error[200]}`,
+      }}
+    >
+      <Typography variant="body2" color="error" sx={{ fontSize: 12 }}>
+        {error}
+      </Typography>
+    </Box>
+  );
+
+  const renderLoadingState = () => (
+    <Box sx={{ display: "flex", justifyContent: "center", py: 3 }}>
+      <CircularProgress size={24} />
+    </Box>
+  );
+
+  const renderScrollIndicator = () => (
+    <Box
+      sx={{
+        position: "absolute",
+        bottom: 12,
+        left: "50%",
+        transform: "translateX(-50%)",
+        zIndex: 2,
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        gap: 0.5,
+        pointerEvents: "none",
+      }}
+    >
+      {/* Arrow Circle */}
+      <Box
+        sx={{
+          width: 20,
+          height: 20,
+          borderRadius: "50%",
+          backgroundColor: colorTokens.primary[500],
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          boxShadow: `0 1px 4px ${colorTokens.primary[400]}40`,
+        }}
+      >
+        <ArrowDownIcon
+          sx={{
+            fontSize: 14,
+            color: "white",
+          }}
+        />
+      </Box>
+
+      {/* Count Badge */}
+      <Box
+        sx={{
+          px: 1,
+          py: 0.25,
+          backgroundColor: "white",
+          borderRadius: "10px",
+          boxShadow: `0 1px 4px ${colorTokens.neutral[300]}`,
+          border: `1px solid ${colorTokens.neutral[200]}`,
+        }}
+      >
+        <Typography
+          variant="caption"
+          sx={{
+            fontSize: 9.5,
+            fontWeight: 600,
+            color: colorTokens.semantic.text.primary,
+          }}
+        >
+          +{remainingCount} more
+        </Typography>
+      </Box>
+    </Box>
+  );
+
+  const renderLoadingIndicator = () => (
+    <Box
+      sx={{
+        position: "absolute",
+        bottom: 16,
+        left: "50%",
+        transform: "translateX(-50%)",
+        zIndex: 2,
+        display: "flex",
+        alignItems: "center",
+        gap: 1,
+        backgroundColor: "white",
+        px: 2,
+        py: 1,
+        borderRadius: "20px",
+        boxShadow: `0 2px 12px ${colorTokens.neutral[300]}`,
+        border: `1px solid ${colorTokens.neutral[200]}`,
+      }}
+    >
+      <CircularProgress size={14} thickness={5} />
+      <Typography
+        variant="caption"
+        sx={{
+          fontSize: 11,
+          color: colorTokens.semantic.text.secondary,
+          fontWeight: 500,
+        }}
+      >
+        Loading...
+      </Typography>
+    </Box>
+  );
+
+  // ============================================================================
+  // Main Render
+  // ============================================================================
+
+  const renderContent = () => {
+    if (loading) return renderLoadingState();
+    if (error) return renderError();
+    if (conversations.length === 0) return renderEmptyState();
 
     return (
-      <Box>
-        {renderGroup("Today", groupedConversations.today, false)}
-        {renderGroup("Yesterday", groupedConversations.yesterday, false)}
-        {renderGroup("This Week", groupedConversations.thisWeek, false)}
-        {renderGroup("Older", groupedConversations.older, !hasMore)}
+      <>
+        {renderDateGroup("Today", displayedConversations.today)}
+        {renderDateGroup("Yesterday", displayedConversations.yesterday)}
+        {renderDateGroup("This Week", displayedConversations.thisWeek)}
+        {renderDateGroup("Older", displayedConversations.older)}
 
-        {/* Expand Button */}
-        {hasMore && (
-          <Box sx={{ mt: 1.5, display: "flex", justifyContent: "center" }}>
-            <Button
-              size="small"
-              variant="outlined"
-              onClick={() => setDisplayLimit(totalCount)}
-              startIcon={<ExpandMoreIcon />}
-              sx={{
-                fontSize: 11,
-                textTransform: "none",
-                py: 0.5,
-                px: 2,
-                borderColor: colorTokens.semantic.border.default,
-                color: colorTokens.semantic.text.secondary,
-                "&:hover": {
-                  borderColor: colorTokens.primary[400],
-                  backgroundColor: colorTokens.primary[50],
-                },
-              }}
-            >
-              Show {totalCount - displayLimit} More {totalCount - displayLimit === 1 ? 'Ticket' : 'Tickets'}
-            </Button>
-          </Box>
-        )}
-      </Box>
+        {/* Infinite Scroll Trigger */}
+        {hasMore && <Box ref={loadTriggerRef} sx={{ height: 1, py: 2 }} />}
+      </>
     );
   };
 
   return (
     <Box sx={{ mb: 2 }}>
-      {/* Header with Collapse Toggle */}
+      {/* Header */}
       <Box
         sx={{
           display: "flex",
@@ -323,6 +479,9 @@ export const ContactHistorySection: React.FC<ContactHistorySectionProps> = ({
           mb: isExpanded ? 1 : 0,
           cursor: "pointer",
           userSelect: "none",
+          "&:hover .expand-icon": {
+            color: colorTokens.semantic.text.secondary,
+          },
         }}
         onClick={() => setIsExpanded(!isExpanded)}
       >
@@ -340,9 +499,10 @@ export const ContactHistorySection: React.FC<ContactHistorySectionProps> = ({
 
         <IconButton
           size="small"
+          className="expand-icon"
           sx={{
             transform: isExpanded ? "rotate(180deg)" : "rotate(0deg)",
-            transition: "transform 0.2s ease",
+            transition: "all 0.2s ease",
             p: 0.5,
           }}
         >
@@ -350,14 +510,59 @@ export const ContactHistorySection: React.FC<ContactHistorySectionProps> = ({
             sx={{
               fontSize: 16,
               color: colorTokens.semantic.text.tertiary,
+              transition: "color 0.2s ease",
             }}
           />
         </IconButton>
       </Box>
 
-      {/* Collapsible Content */}
+      {/* Content with Infinite Scroll */}
       <Collapse in={isExpanded} timeout="auto" unmountOnExit>
-        {renderContent()}
+        <Box sx={{ position: "relative" }}>
+          {/* Scrollable Container */}
+          <Box
+            ref={scrollContainerRef}
+            sx={{
+              maxHeight: `${CONFIG.MAX_HEIGHT}px`,
+              overflowY: "auto",
+              overflowX: "hidden",
+              // Hide scrollbar
+              scrollbarWidth: "none",
+              msOverflowStyle: "none",
+              "&::-webkit-scrollbar": {
+                display: "none",
+              },
+              // Smooth scrolling
+              scrollBehavior: "smooth",
+              WebkitOverflowScrolling: "touch",
+            }}
+          >
+            {renderContent()}
+          </Box>
+
+          {/* Bottom Gradient Overlay */}
+          {hasMore && (
+            <Box
+              sx={{
+                position: "absolute",
+                bottom: 0,
+                left: 0,
+                right: 0,
+                height: "80px",
+                background: `linear-gradient(to bottom, 
+                  transparent 0%, 
+                  ${colorTokens.neutral[50]}80 50%, 
+                  ${colorTokens.neutral[50]} 100%)`,
+                pointerEvents: "none",
+                zIndex: 1,
+              }}
+            />
+          )}
+
+          {/* Scroll Indicators */}
+          {hasMore && !isLoadingMore && renderScrollIndicator()}
+          {hasMore && isLoadingMore && renderLoadingIndicator()}
+        </Box>
       </Collapse>
     </Box>
   );

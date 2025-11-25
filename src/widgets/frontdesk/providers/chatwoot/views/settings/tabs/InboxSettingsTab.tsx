@@ -41,6 +41,7 @@ export const InboxSettingsTab: React.FC<InboxSettingsTabProps> = ({ inbox, accou
     greeting_message: inbox.greeting_message || "",
     enable_email_collect: inbox.enable_email_collect || false,
     sender_name_type: inbox.sender_name_type || "friendly",
+    business_name: inbox.business_name || "",
     enable_auto_assignment: inbox.enable_auto_assignment || true,
     allow_messages_after_resolved: inbox.allow_messages_after_resolved || true,
     lock_to_single_conversation: inbox.lock_to_single_conversation || false,
@@ -242,13 +243,29 @@ export const InboxSettingsTab: React.FC<InboxSettingsTabProps> = ({ inbox, accou
                     borderRadius: 1,
                   }}
                 >
-                  <Avatar sx={{ width: 24, height: 24, fontSize: 12 }}>{inbox.name?.[0]}</Avatar>
+                  <Avatar sx={{ width: 24, height: 24, fontSize: 12 }}>{formData.business_name?.[0] || inbox.name?.[0]}</Avatar>
                   <Typography variant="caption">
-                    <strong>{inbox.name}</strong>
+                    <strong>{formData.business_name || inbox.name}</strong>
                   </Typography>
                 </Box>
               </CardContent>
             </Card>
+          </Box>
+
+          {/* Business Name Input */}
+          <Box sx={{ mt: 3 }}>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+              Configure your business name for professional email sender
+            </Typography>
+            <TextField
+              fullWidth
+              value={formData.business_name}
+              onChange={(e) => handleFieldChange("business_name", e.target.value)}
+              placeholder="Enter your business name"
+              disabled={isSaving}
+              sx={{ maxWidth: 500 }}
+              helperText="This name will be used when 'Professional' sender type is selected"
+            />
           </Box>
         </SettingsSection>
       )}

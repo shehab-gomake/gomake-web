@@ -5,7 +5,7 @@
  * Handles connection lifecycle, event listening, and state management.
  */
 
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useMemo } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import {
   chatwootWebSocketStateAtom,
@@ -34,7 +34,17 @@ export const useChatwootWebSocketTest = () => {
 
   // Profile and account data
   const profile = useRecoilValue(chatwootProfileAtom);
-  const selectedAccountId = useRecoilValue(chatwootSelectedAccountAtom);
+  const rawSelectedAccountId = useRecoilValue(chatwootSelectedAccountAtom);
+
+  // Auto-select first account if not selected (same logic as useChatwootProvider)
+  // This prevents race conditions when navigating directly to this page
+  const selectedAccountId = useMemo(() => {
+    if (rawSelectedAccountId) return rawSelectedAccountId;
+    if (profile?.accounts && profile.accounts.length > 0) {
+      return profile.accounts[0].id;
+    }
+    return null;
+  }, [rawSelectedAccountId, profile]);
 
   // Refs for handlers to avoid stale closures
   const statsIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);

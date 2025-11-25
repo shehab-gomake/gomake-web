@@ -72,13 +72,16 @@ export const DropdownMenu: React.FC<DropdownMenuProps> = ({
       }}
       slotProps={{
         paper: {
-          elevation: 8,
+          elevation: 0,
           sx: {
             width: width,
             mt: isUsingAnchorPosition ? 0 : 1,
             borderRadius: "8px",
-            boxShadow: shadowTokens.md,
-            border: `1px solid ${colorTokens.semantic.border.default}`,
+            boxShadow: shadowTokens.xl,
+            border: `0.5px solid ${colorTokens.semantic.border.default}`,
+            background: 'rgba(255, 255, 255, 0.9)',
+            backdropFilter: 'blur(12px) saturate(180%)',
+            WebkitBackdropFilter: 'blur(12px) saturate(180%)',
             // Fix distortion: disable transform animations
             transform: "none !important",
             transformOrigin: "top right",
@@ -86,6 +89,8 @@ export const DropdownMenu: React.FC<DropdownMenuProps> = ({
             // Ensure smooth rendering
             backfaceVisibility: "hidden",
             WebkitFontSmoothing: "antialiased",
+            overflow: 'hidden',
+            ...props.slotProps?.paper?.sx,
           },
         },
       }}

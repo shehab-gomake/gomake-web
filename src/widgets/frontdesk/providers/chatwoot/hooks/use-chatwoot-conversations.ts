@@ -35,7 +35,6 @@ export const useChatwootConversations = (accountId: number | null, options: Part
     options?.inbox_id,
     options?.status,
     options?.assignee_type,
-    options?.conversation_type, // Include conversation_type for proper cache invalidation
     options?.q,
     options?.team_id,
     options?.labels,
@@ -62,7 +61,7 @@ export const useChatwootConversations = (accountId: number | null, options: Part
   const metrics = useChatwootMetrics();
 
   // Fetch deduplication to prevent redundant API calls
-  const { shouldFetch, markFetchStart, markFetchComplete, markFetchFailed} = useFetchDeduplication<ConversationListParams>();
+  const { shouldFetch, markFetchStart, markFetchComplete, markFetchFailed } = useFetchDeduplication<ConversationListParams>();
 
   // Track if this is the first mount
   const isFirstMountRef = useRef(true);
@@ -82,7 +81,7 @@ export const useChatwootConversations = (accountId: number | null, options: Part
   // CACHE-FIRST: Track this cache key
   useEffect(() => {
     if (stableFilterKey && !cacheKeys.has(stableFilterKey)) {
-      setCacheKeys(prev => new Set([...Array.from(prev), stableFilterKey]));
+      setCacheKeys((prev) => new Set([...Array.from(prev), stableFilterKey]));
     }
   }, [stableFilterKey, cacheKeys, setCacheKeys]);
 
@@ -108,7 +107,7 @@ export const useChatwootConversations = (accountId: number | null, options: Part
         if (isCacheFresh) {
           console.log(`[useChatwootConversations] ✨ Using fresh cache (age: ${Math.round(cacheAge / 1000)}s)`);
           // Track cache hit
-          metrics.trackCacheHit('conversations.list', 500);
+          metrics.trackCacheHit("conversations.list", 500);
           // Update legacy atom for backward compatibility
           setConversations(cache.conversations);
           return;
@@ -123,7 +122,6 @@ export const useChatwootConversations = (accountId: number | null, options: Part
         ...(options.status && { status: options.status }),
         ...(options.inbox_id && { inbox_id: options.inbox_id }),
         ...(options.assignee_type && { assignee_type: options.assignee_type }),
-        ...(options.conversation_type && { conversation_type: options.conversation_type }),
         ...(options.sort_by && { sort_by: options.sort_by }),
         ...(options.q && { q: options.q }),
         ...(options.team_id && { team_id: options.team_id }),
@@ -182,7 +180,7 @@ export const useChatwootConversations = (accountId: number | null, options: Part
         const response = await chatwootService.conversations.listConversations(accountId, listParams);
 
         // Track successful API call
-        metrics.trackAPICall('conversations.list', 'GET', apiStartTime, true, false, listParams);
+        metrics.trackAPICall("conversations.list", "GET", apiStartTime, true, false, listParams);
 
         // Chatwoot API returns: { data: { payload: [...], meta: {...} } }
         // Handle nested structure
@@ -196,7 +194,7 @@ export const useChatwootConversations = (accountId: number | null, options: Part
           : conversationsList.length >= limit;
 
         // CACHE-FIRST: Update cache with new data
-        setCache(prev => ({
+        setCache((prev) => ({
           conversations: append ? [...prev.conversations, ...conversationsList] : conversationsList,
           timestamp: Date.now(),
           hasMore: hasMoreData,
@@ -226,10 +224,10 @@ export const useChatwootConversations = (accountId: number | null, options: Part
         setError(errorMessage);
 
         // Track failed API call
-        metrics.trackAPICall('conversations.list', 'GET', apiStartTime, false, false, listParams);
+        metrics.trackAPICall("conversations.list", "GET", apiStartTime, false, false, listParams);
 
         // CACHE-FIRST: Store error in cache
-        setCache(prev => ({
+        setCache((prev) => ({
           ...prev,
           error: errorMessage,
         }));
@@ -263,9 +261,9 @@ export const useChatwootConversations = (accountId: number | null, options: Part
       options.q,
       options.team_id,
       options.labels,
-      cache,           // CACHE-FIRST: Added cache dependency
-      setCache,        // CACHE-FIRST: Added setCache dependency
-      metrics,         // METRICS: Added metrics tracking
+      cache, // CACHE-FIRST: Added cache dependency
+      setCache, // CACHE-FIRST: Added setCache dependency
+      metrics, // METRICS: Added metrics tracking
       setConversations,
       setLoadingState,
       setLoadingType,
@@ -325,7 +323,7 @@ export const useChatwootConversations = (accountId: number | null, options: Part
       );
 
       // Update cache
-      setCache(prev => ({
+      setCache((prev) => ({
         ...prev,
         conversations: updatedConversations,
       }));
@@ -348,7 +346,7 @@ export const useChatwootConversations = (accountId: number | null, options: Part
           );
 
           // Update cache
-          setCache(prev => ({
+          setCache((prev) => ({
             ...prev,
             conversations: syncedConversations,
           }));
@@ -370,7 +368,7 @@ export const useChatwootConversations = (accountId: number | null, options: Part
         );
 
         // Revert cache
-        setCache(prev => ({
+        setCache((prev) => ({
           ...prev,
           conversations: revertedConversations,
         }));

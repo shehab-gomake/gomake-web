@@ -55,6 +55,7 @@ import { EmptyState } from '@/widgets/frontdesk/design-system';
 import type { ChatwootNotification } from '@/services/frontdesk/api/chatwoot/types/notifications.types';
 import { NotificationType } from '@/services/frontdesk/api/chatwoot/types/notifications.types';
 import { DASHBOARD_LIMITS } from '../../constants/dashboard.constants';
+import { generateNotificationAvatar } from '../../utils/avatar.utils';
 
 type FilterType = 'unread' | 'mentions' | 'assignments' | 'all';
 
@@ -257,30 +258,9 @@ export const ChatwootNotificationsEnhanced: React.FC = () => {
     };
   };
 
-  // Get sender info for avatar
-  const getSenderInfo = (notification: ChatwootNotification) => {
-    const primaryActor = notification.primary_actor;
-    if (!primaryActor) {
-      return { name: 'System', initials: 'S', color: neutralColor(400), avatar: null };
-    }
-
-    const name = primaryActor.name || primaryActor.email || 'Unknown';
-    const initials = name
-      .split(' ')
-      .map((n: string) => n[0])
-      .join('')
-      .toUpperCase()
-      .slice(0, 2);
-
-    const colors = [primaryColor(500), '#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6'];
-    const colorIndex = name.charCodeAt(0) % colors.length;
-
-    return {
-      name,
-      initials,
-      color: colors[colorIndex],
-      avatar: primaryActor.avatar_url || primaryActor.meta?.sender?.thumbnail || null,
-    };
+  // Get sender info for avatar (using unified avatar utility)
+  const getSenderAvatarData = (notification: ChatwootNotification) => {
+    return generateNotificationAvatar(notification);
   };
 
   // Format time ago
@@ -657,7 +637,7 @@ export const ChatwootNotificationsEnhanced: React.FC = () => {
                     group.notifications.map((notification, index) => {
                       const isUnread = !notification.read_at;
                       const isNew = newNotificationIds.has(notification.id);
-                      const sender = getSenderInfo(notification);
+                      const avatarData = getSenderAvatarData(notification);
                       const typeInfo = getNotificationTypeInfo(notification.notification_type);
                       const messagePreview = getMessagePreview(notification);
                       const timestamp = notification.created_at
@@ -693,18 +673,20 @@ export const ChatwootNotificationsEnhanced: React.FC = () => {
                             <Stack direction="row" spacing={1.5} sx={{ width: '100%', alignItems: 'flex-start' }}>
                               {/* Avatar */}
                               <Avatar
-                                src={sender.avatar || undefined}
+                                src={avatarData.src}
                                 sx={{
                                   width: 32,
                                   height: 32,
-                                  bgcolor: sender.color,
+                                  bgcolor: avatarData.backgroundColor,
                                   color: 'white',
                                   fontSize: '0.75rem',
                                   fontWeight: 600,
                                   flexShrink: 0,
                                 }}
+                                alt={avatarData.displayName}
+                                title={avatarData.displayName}
                               >
-                                {sender.initials}
+                                {avatarData.initials}
                               </Avatar>
 
                               {/* Content */}

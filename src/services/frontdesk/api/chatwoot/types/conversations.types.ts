@@ -196,6 +196,23 @@ export interface ChatwootContentAttributes {
 }
 
 /**
+ * Chatwoot Attachment
+ * Represents a file attachment on a message
+ */
+export interface ChatwootAttachment {
+  id: number;
+  message_id: number;
+  file_type: "image" | "audio" | "video" | "file" | "location" | "contact" | "fallback";
+  account_id: number;
+  extension?: string | null;
+  data_url: string;
+  thumb_url?: string;
+  file_size?: number;
+  width?: number;
+  height?: number;
+}
+
+/**
  * Chatwoot Message (simplified)
  * Used within conversations
  */
@@ -224,6 +241,8 @@ export interface ChatwootMessage {
     email?: string;
     avatar_url?: string;
   };
+  /** Message attachments (images, files, etc.) */
+  attachments?: ChatwootAttachment[];
 }
 
 /**

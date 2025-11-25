@@ -66,12 +66,11 @@ import { ColumnSetting } from "@/widgets/production-floor/state/production-floor
 import { FONT_FAMILY } from "@/utils/font-family";
 import { QR_CODE_LISTENER_FROM } from "@/hooks/use-qr-code-listener";
 import QrCodeReader from "@/components/qr-code-reader";
-import {useRecoilValue, useSetRecoilState} from "recoil";
+import { useSetRecoilState } from "recoil";
 import { selectedItemsState } from "@/store";
 import { FrontDeskEmailComposerWrapper } from "./components/frontdesk-email-composer-wrapper";
 import { PrintPackingSlipModalWidget } from "@/widgets/production-floor/views/board-missions-view/navigation-buttons/print-packing-slip-modal-widget";
 import { useParameters } from "@/hooks/use-parameters";
-import {printHouseHasFrontDeskFeature} from "@/store/print-house-profile";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -84,7 +83,6 @@ const QuotesListPageWidget = ({
 }: IProps) => {
   const { classes } = useStyle();
   const router = useRouter();
-  const hasFrontDeskFeature = useRecoilValue(printHouseHasFrontDeskFeature);
   const { getClientContacts, clientContacts } = useClientContactsList();
   const {
     onClickCloseModal,
@@ -216,7 +214,6 @@ const QuotesListPageWidget = ({
     isFetching,
     openChangeProductionStatusModal,
     isSelectedCLoseAsDeliveryNote,
-    isSelectedCLoseAsProformaInvoice,
     onClickCloseChangeProductionStatusModal,
     moveOrderToReady,
     onChangeDocumentSearch,
@@ -235,7 +232,6 @@ const QuotesListPageWidget = ({
     isOrder,
     isQuote,
     isDeliveryNote,
-    isProformaInvoice,
     isInvoice,
     deliveryStatuses,
     deliveryStatus,
@@ -315,14 +311,15 @@ const QuotesListPageWidget = ({
     createScheduledReport,
     handlePageChange: handleScheduledReportsPageChange,
     handlePageSizeChangeScheduledReports: handleScheduledReportsPageSizeChange,
-    isEmailComposerOpen,
-    emailData,
-    closeEmailComposer,
-    documentForEmail,
     openPurchaseOrderTypeModal,
     onOpenPurchaseOrderTypeModal,
     onClosePurchaseOrderTypeModal,
     handleSelectPurchaseOrderType,
+    isEmailComposerOpen,
+    emailData,
+    isLoadingEmailData,
+    closeEmailComposer,
+    documentForEmail
   } = useQuotes(documentType, isFromHomePage);
 
   // Get the main quotes pagination handler
@@ -442,7 +439,7 @@ const QuotesListPageWidget = ({
   useEffect(() => {
     const loadDocumentColumnSettings = async () => {
       try {
-        const res = await getDocumentTableSettingsApi(callApi, () => {}, {
+        const res = await getDocumentTableSettingsApi(callApi, () => { }, {
           documentType,
         });
         const saved: ColumnSetting[] = res?.data;
@@ -509,16 +506,16 @@ const QuotesListPageWidget = ({
                     isOrder
                       ? onclickCreateNew
                       : isSupplierPayments
-                      ? () => navigate(`/${documentPath}`)
-                      : isPurchaseOrder
-                      ? () => {
-                          setSelectedItems([]);
-                          onOpenPurchaseOrderTypeModal();
-                        }
-                      : () => {
-                          setSelectedItems([]);
-                          navigate(`/${documentPath}?isNewCreation=true`);
-                        }
+                        ? () => navigate(`/${documentPath}`)
+                        : isPurchaseOrder
+                          ? () => {
+                            setSelectedItems([]);
+                            onOpenPurchaseOrderTypeModal();
+                          }
+                          : () => {
+                            setSelectedItems([]);
+                            navigate(`/${documentPath}?isNewCreation=true`);
+                          }
                   )}
               </div>
             </div>
@@ -549,7 +546,6 @@ const QuotesListPageWidget = ({
               handleAccountingStatusChange={handleAccountingStatusChange}
               accountingStatuses={accountingStatuses}
               isDeliveryNote={isDeliveryNote}
-              isProformaInvoice={isProformaInvoice}
               isInvoice={isInvoice}
               deliveryStatus={deliveryStatus}
               setDeliveryStatus={setDeliveryStatus}
@@ -802,7 +798,7 @@ const QuotesListPageWidget = ({
         isSendToClient={isSendToClient}
         isSendOrderReadyToClient={isSendOrderReadyToClient}
         showAlertModal={showAlertModal}
-        hideCheckboxes={hasFrontDeskFeature}
+        hideCheckboxes={true}
       />
       <GoMakeAlertModal
         openModal={alertNotVerifiedMailModal.isOpen}
@@ -833,11 +829,7 @@ const QuotesListPageWidget = ({
       />
       <GoMakeDeleteModal
         modalType={ModalType.WARNING}
-        title={
-          isProformaInvoice
-            ? t("sales.quote.printProformaInvoiceWithPrices")
-            : t("sales.quote.printDeliveryNoteWithPrices")
-        }
+        title={t("sales.quote.printDeliveryNoteWithPrices")}
         openModal={openPrintPDFModal}
         yesBtn={t("sales.quote.yesBtn")}
         cancelBtn={t("sales.quote.noBtn")}
@@ -863,16 +855,12 @@ const QuotesListPageWidget = ({
         title={
           isSelectedCLoseAsDeliveryNote
             ? "customers.modal.closeOrderAsDeliveryNote"
-            : isSelectedCLoseAsProformaInvoice
-            ? "customers.modal.closeOrderAsProformaInvoice"
             : "customers.modal.closeOrderAsInvoice"
         }
         subTitle={"customers.modal.thisOrderIsAlreadyInProcess"}
         yesBtn={
           isSelectedCLoseAsDeliveryNote
             ? t("customers.modal.closeAsDeliveryNote")
-            : isSelectedCLoseAsProformaInvoice
-            ? t("customers.modal.closeAsProformaInvoice")
             : t("customers.modal.closeAsInvoice")
         }
         openModal={openChangeProductionStatusModal}
@@ -883,11 +871,6 @@ const QuotesListPageWidget = ({
           } else {
             if (isSelectedCLoseAsDeliveryNote) {
               const path = `/deliveryNote?isNewCreation=true&orderId=${selectedDocument?.id}`;
-              window.open(path, "_blank");
-            } else if (isSelectedCLoseAsProformaInvoice) {
-              const path = isOrder
-                ? `/proformaInvoice?isNewCreation=true&orderId=${selectedDocument?.id}`
-                : `/proformaInvoice?isNewCreation=true&deliveryNoteId=${selectedDocument?.id}`;
               window.open(path, "_blank");
             } else {
               const path = isOrder
@@ -1076,16 +1059,6 @@ const QuotesListPageWidget = ({
         printPackingSlip={printPackingSlip}
         isPrintHouseUsePrintNode={isPrintHouseHasPackagingSlipPrinter}
       />
-      {/* FrontDesk Email Composer */}
-      {isEmailComposerOpen && (
-        <FrontDeskEmailComposerWrapper
-          open={isEmailComposerOpen}
-          onClose={closeEmailComposer}
-          emailData={emailData}
-          documentId={documentForEmail?.id}
-          documentType={documentType}
-        />
-      )}
       <PurchaseOrderTypeModal
         open={openPurchaseOrderTypeModal}
         onClose={onClosePurchaseOrderTypeModal}
@@ -1108,6 +1081,7 @@ const QuotesListPageWidget = ({
           emailData={emailData}
           documentId={documentForEmail?.id}
           documentType={documentType}
+          isLoading={isLoadingEmailData}
         />
       )}
     </>

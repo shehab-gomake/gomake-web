@@ -29,10 +29,32 @@ export enum ChannelType {
 export type InboxProvider = "email" | "facebook" | "whatsapp" | "sms" | "twitter" | "telegram" | "line" | "twilio" | "api" | "web_widget";
 
 /**
+ * Email Channel Configuration
+ * Specific properties for email inboxes (SMTP/IMAP)
+ */
+export interface EmailChannelConfig {
+  /** SMTP email address for sending */
+  smtp_email?: string;
+  /** IMAP email address */
+  imap_email?: string;
+  /** Direct email property */
+  email?: string;
+  /** Forward-to email address */
+  forward_to_email?: string;
+  /** Sender email address */
+  sender_email?: string;
+  /** OAuth email account (nested) */
+  _emailAccount?: {
+    email?: string;
+    [key: string]: unknown;
+  };
+}
+
+/**
  * Chatwoot Inbox
  * Represents an inbox (channel) in Chatwoot
  */
-export interface ChatwootInbox {
+export interface ChatwootInbox extends Partial<EmailChannelConfig> {
   /** Inbox ID */
   id: number;
 
@@ -63,11 +85,32 @@ export interface ChatwootInbox {
   /** Enable auto-assignment */
   enable_auto_assignment?: boolean;
 
+  /** Business name (for professional sender name type) */
+  business_name?: string;
+
+  /** Sender name type (friendly or professional) */
+  sender_name_type?: "friendly" | "professional";
+
+  /** Greeting enabled */
+  greeting_enabled?: boolean;
+
+  /** Greeting message */
+  greeting_message?: string;
+
+  /** Enable email collection (for web widgets) */
+  enable_email_collect?: boolean;
+
+  /** Allow messages after conversation is resolved */
+  allow_messages_after_resolved?: boolean;
+
+  /** Lock to single conversation (WhatsApp) */
+  lock_to_single_conversation?: boolean;
+
   /** Working hours enabled */
   working_hours_enabled?: boolean;
 
   /** Working hours configuration */
-  working_hours?: Record<string, any>;
+  working_hours?: Record<string, unknown>;
 
   /** Timezone */
   timezone?: string;
@@ -85,7 +128,7 @@ export interface ChatwootInbox {
   updated_at?: number;
 
   /** Additional attributes */
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 /**

@@ -81,12 +81,11 @@ export const ActiveFilterChips: React.FC<ActiveFilterChipsProps> = ({
     <Box
       sx={{
         px: 1.5,
-        py: 1,
+        py: 0.75,
         display: "flex",
         flexWrap: "wrap",
         gap: 0.75,
-        borderTop: `1px solid ${neutralColor(200)}`,
-        backgroundColor: neutralColor(0),
+        backgroundColor: neutralColor(50),
       }}
     >
       {/* Status Filter Chip */}
@@ -100,7 +99,7 @@ export const ActiveFilterChips: React.FC<ActiveFilterChipsProps> = ({
         />
       )}
 
-      {/* Team Filter Chip */}
+      {/* Team Filter Chip - Indigo color to distinguish from status */}
       {selectedTeam && (
         <Chip
           label={`Team: ${selectedTeam.name}`}
@@ -108,6 +107,17 @@ export const ActiveFilterChips: React.FC<ActiveFilterChipsProps> = ({
           color="primary"
           onDelete={() => onRemoveFilter("team_id")}
           size="small"
+          sx={{
+            backgroundColor: "#4338ca20",
+            borderColor: "#4338ca40",
+            color: "#4338ca",
+            "& .MuiChip-deleteIcon": {
+              color: "#4338ca",
+              "&:hover": {
+                color: "#3730a3",
+              },
+            },
+          }}
         />
       )}
 
