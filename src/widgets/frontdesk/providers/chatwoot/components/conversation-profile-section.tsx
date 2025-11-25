@@ -34,6 +34,7 @@ import { CustomerCardWidget } from "@/widgets/customer-card-modal";
 import { CLIENT_TYPE, CUSTOMER_ACTIONS, CLIENT_TYPE_Id } from "@/pages/customers/enums";
 import { LinkCustomerModal } from "./link-customer-modal";
 import { useClientTypesList } from "@/hooks/use-client-types";
+import { generateContactAvatar } from "../utils/avatar.utils";
 
 interface Customer {
   id: string;
@@ -102,6 +103,15 @@ export const ConversationProfileSection: React.FC<ConversationProfileSectionProp
   const [openCreateModal, setOpenCreateModal] = useState(false);
   const [openLinkModal, setOpenLinkModal] = useState(false);
   const [clientType, setClientType] = useState<CLIENT_TYPE>(CLIENT_TYPE.CUSTOMER);
+  
+  // Generate avatar data for contact
+  const contactAvatarData = React.useMemo(() => generateContactAvatar({
+    id: contactId,
+    name: contactName,
+    email: contactEmail,
+    thumbnail: contactAvatarUrl,
+    availability_status: contactAvailabilityStatus,
+  }), [contactId, contactName, contactEmail, contactAvatarUrl, contactAvailabilityStatus]);
   const [tempCustomerData, setTempCustomerData] = useState<any>(null);
   const [isAutoSearching, setIsAutoSearching] = useState(false);
   const [hasAutoSearched, setHasAutoSearched] = useState(false);
@@ -313,8 +323,17 @@ export const ConversationProfileSection: React.FC<ConversationProfileSectionProp
         >
           {/* Customer Name with Avatar */}
           <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 2 }}>
-            <Avatar src={contactAvatarUrl || undefined} sx={{ width: 40, height: 40 }}>
-              {customer.name?.charAt(0)}
+            <Avatar 
+              src={contactAvatarData.src} 
+              sx={{ 
+                width: 40, 
+                height: 40,
+                bgcolor: contactAvatarData.backgroundColor 
+              }}
+              alt={contactAvatarData.displayName}
+              title={contactAvatarData.displayName}
+            >
+              {contactAvatarData.initials}
             </Avatar>
             <Typography
               variant="body2"
@@ -464,8 +483,17 @@ export const ConversationProfileSection: React.FC<ConversationProfileSectionProp
               mb: 1,
             }}
           >
-            <Avatar src={contactAvatarUrl || undefined} sx={{ width: 32, height: 32 }}>
-              {contactName?.charAt(0) || contactEmail?.charAt(0) || "?"}
+            <Avatar 
+              src={contactAvatarData.src} 
+              sx={{ 
+                width: 32, 
+                height: 32,
+                bgcolor: contactAvatarData.backgroundColor 
+              }}
+              alt={contactAvatarData.displayName}
+              title={contactAvatarData.displayName}
+            >
+              {contactAvatarData.initials}
             </Avatar>
             <Box sx={{ flex: 1, minWidth: 0 }}>
               <Typography

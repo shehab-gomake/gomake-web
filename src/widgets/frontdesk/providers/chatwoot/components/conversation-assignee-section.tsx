@@ -23,6 +23,7 @@ import { prepareAgentsForAssignment } from "../utils/agent-helpers";
 import type { Agent } from "@/services/frontdesk/api/chatwoot/types/agents.types";
 import type { Team } from "@/services/frontdesk/api/chatwoot/types/teams.types";
 import type { ChatwootConversation } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
+import { generateAgentAvatar } from "../utils/avatar.utils";
 
 interface ConversationAssigneeSectionProps {
   /** Type of assignment: "agent" or "team" */
@@ -211,9 +212,23 @@ export const ConversationAssigneeSection: React.FC<ConversationAssigneeSectionPr
           ) : (
             <>
               {type === "agent" && assignee ? (
-                <Avatar src={assignee.thumbnail} sx={{ width: 32, height: 32 }}>
-                  {assignee.name?.charAt(0) || assignee.available_name?.charAt(0) || "A"}
-                </Avatar>
+                (() => {
+                  const avatarData = generateAgentAvatar(assignee);
+                  return (
+                    <Avatar 
+                      src={avatarData.src} 
+                      sx={{ 
+                        width: 32, 
+                        height: 32,
+                        bgcolor: avatarData.backgroundColor 
+                      }}
+                      alt={avatarData.displayName}
+                      title={avatarData.displayName}
+                    >
+                      {avatarData.initials}
+                    </Avatar>
+                  );
+                })()
               ) : (
                 <GroupIcon sx={{ width: 32, height: 32, color: colorTokens.semantic.text.secondary }} />
               )}
@@ -315,34 +330,49 @@ export const ConversationAssigneeSection: React.FC<ConversationAssigneeSectionPr
                 </Typography>
               ) : (
                 // Regular agent with avatar and availability indicator
-                <>
-                  <Avatar src={agent.thumbnail} sx={{ width: 24, height: 24, mr: 1.5 }}>
-                    {agent.name?.charAt(0) || agent.available_name?.charAt(0) || "A"}
-                  </Avatar>
-                  <Box sx={{ flex: 1 }}>
-                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                      <Typography variant="body2" sx={{ fontSize: 13 }}>
-                        {agent.name || agent.available_name || "Agent"}
-                      </Typography>
-                      {/* Availability indicator (matches Chatwoot) */}
-                      {agent.availability_status && (
-                        <Box
-                          sx={{
-                            width: 8,
-                            height: 8,
-                            borderRadius: "50%",
-                            backgroundColor:
-                              agent.availability_status === "online"
-                                ? "#22c55e" // green
-                                : agent.availability_status === "busy"
-                                ? "#f59e0b" // amber
-                                : "#6b7280", // gray
-                          }}
-                        />
-                      )}
-                    </Box>
-                  </Box>
-                </>
+                (() => {
+                  const avatarData = generateAgentAvatar(agent);
+                  return (
+                    <>
+                      <Avatar 
+                        src={avatarData.src} 
+                        sx={{ 
+                          width: 24, 
+                          height: 24, 
+                          mr: 1.5,
+                          bgcolor: avatarData.backgroundColor 
+                        }}
+                        alt={avatarData.displayName}
+                        title={avatarData.displayName}
+                      >
+                        {avatarData.initials}
+                      </Avatar>
+                      <Box sx={{ flex: 1 }}>
+                        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                          <Typography variant="body2" sx={{ fontSize: 13 }}>
+                            {avatarData.displayName}
+                          </Typography>
+                          {/* Availability indicator (matches Chatwoot) */}
+                          {agent.availability_status && (
+                            <Box
+                              sx={{
+                                width: 8,
+                                height: 8,
+                                borderRadius: "50%",
+                                backgroundColor:
+                                  agent.availability_status === "online"
+                                    ? "#22c55e" // green
+                                    : agent.availability_status === "busy"
+                                    ? "#f59e0b" // amber
+                                    : "#6b7280", // gray
+                              }}
+                            />
+                          )}
+                        </Box>
+                      </Box>
+                    </>
+                  );
+                })()
               )}
             </MenuItem>
           ))}

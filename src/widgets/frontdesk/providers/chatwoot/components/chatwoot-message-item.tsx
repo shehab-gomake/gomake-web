@@ -12,10 +12,11 @@ import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { useTheme } from "@mui/material/styles";
 import { alpha } from "@mui/material";
 import { ChatwootMessage } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
-import { formatMessageDate, getAvatarColor, getEmailInitials } from "@/widgets/frontdesk/utils";
+import { formatMessageDate } from "@/widgets/frontdesk/utils";
 import { sanitizeHtml, isHtmlContent } from "@/widgets/frontdesk/utils/html-sanitizer";
 import { ActivityBubble } from "@/widgets/frontdesk/components/shared/ActivityBubble";
 import { MessageAttachments } from "./attachments";
+import { generateMessageSenderAvatar } from "../utils/avatar.utils";
 
 // ============================================================================
 // Constants
@@ -157,11 +158,13 @@ export const ChatwootMessageItem: React.FC<ChatwootMessageItemProps> = React.mem
       avatar_url: undefined,
     };
     const senderName = sender.name || (isMe ? "You" : "Unknown");
-    const senderEmail = sender.email || "";
-    const avatarColor = getAvatarColor(senderEmail || senderName);
-    const initials = getEmailInitials(senderEmail || senderName);
-    const avatarInitial =
-      senderName?.[0]?.toUpperCase() || initials?.[0]?.toUpperCase() || "?";
+    
+    // Generate avatar data using unified utility
+    const avatarData = useMemo(
+      () => generateMessageSenderAvatar(sender),
+      [sender]
+    );
+    const avatarInitial = avatarData.initials[0] || "?";
 
     // Timestamp
     const timestamp = message.created_at
@@ -255,12 +258,12 @@ export const ChatwootMessageItem: React.FC<ChatwootMessageItemProps> = React.mem
       () => ({
         width: 32,
         height: 32,
-        bgcolor: isMe ? primaryColor(500) : avatarColor,
+        bgcolor: isMe ? primaryColor(500) : avatarData.backgroundColor,
         color: "white",
         fontSize: "0.75rem",
         fontWeight: 600,
       }),
-      [isMe, primaryColor, avatarColor]
+      [isMe, primaryColor, avatarData.backgroundColor]
     );
 
     return (
@@ -273,8 +276,13 @@ export const ChatwootMessageItem: React.FC<ChatwootMessageItemProps> = React.mem
       >
         {/* Avatar (left for incoming) */}
         {!isMe && (
-          <Avatar sx={avatarStyles} src={sender.avatar_url}>
-            {shouldShowAvatar && !sender.avatar_url && avatarInitial}
+          <Avatar 
+            sx={avatarStyles} 
+            src={avatarData.src}
+            alt={avatarData.displayName}
+            title={avatarData.displayName}
+          >
+            {shouldShowAvatar && !avatarData.src && avatarInitial}
           </Avatar>
         )}
 
