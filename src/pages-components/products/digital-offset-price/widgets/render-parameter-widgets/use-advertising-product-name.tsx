@@ -45,6 +45,13 @@ const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial, 
     }
   }, [parameter, isRenderData, lastOption])
 
+  // Initialize customDimensions when modal opens or category changes
+  useEffect(() => {
+    if (openGenerateModal && !isView && !isViewInfoAfterGenerate) {
+      setCustomDimensions(initializeCustomDimensions());
+    }
+  }, [openGenerateModal, category, subProducts])
+
   const onAddCategory = async () => {
     const callBack = (res) => {
       if (res.success) {
@@ -179,6 +186,10 @@ const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial, 
             value: newDieCutSelect.rowData.finalUnitHeight.value
           },
           {
+            valueId: "dieUnitFlapLength_FOLD",
+            value: newDieCutSelect.rowData.dieUnitFlapLength_FOLD?.value || newDieCutSelect.rowData.dieUnitFlapLength?.value || ""
+          },
+          {
             valueId: "columnsAmount",
             value: newDieCutSelect.rowData.columnsAmount.value
           },
@@ -211,11 +222,7 @@ const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial, 
   const [pdfUrl, setPdfUrl] = useState(null)
   const [dxfUrl, setDxfUrl] = useState(null)
   const [openCustomModal, setOpenCustomModal] = useState(false)
-  const [customDimensions, setCustomDimensions] = useState({
-    finalUnitWidth: "",
-    finalUnitLength: "",
-    finalUnitHeight: ""
-  })
+  const [customDimensions, setCustomDimensions] = useState<any>({})
   const [openErrorModal, setOpenErrorModal] = useState(false)
   const [errorMessage, setErrorMessage] = useState("")
   const createNewTemplateEndPoint = async () => {
@@ -308,6 +315,10 @@ const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial, 
                 value: res?.data?.data?.rowData?.finalUnitHeight?.value
               },
               {
+                valueId: "dieUnitFlapLength_FOLD",
+                value: res?.data?.data?.rowData?.dieUnitFlapLength_FOLD?.value || res?.data?.data?.rowData?.dieUnitFlapLength?.value || ""
+              },
+              {
                 valueId: "columnsAmount",
                 value: res?.data?.data?.rowData?.columnsAmount?.value
               },
@@ -361,48 +372,205 @@ const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial, 
     await createDieCutFromTemplateMakerApi(callApi, callBack, reqObj);
   }
 
+  // Function to get dynamic parameters from productTemplate based on category
+  const getDynamicParameters = () => {
+    if (!productTemplate?.sections) return [];
+
+    // Parameters to exclude (hide)
+    const excludedParameterCodes = ["Width", "Height"];
+
+    const dynamicParameterCodes = [
+      // Basic dimensions
+      "DieUnitWidth", "DieUnitLength", "DieUnitHeight",
+      "finalUnitWidth", "finalUnitLength", "finalUnitHeight",
+      "FinalProductWidth", "FinalProductLength", "FinalProductHeight",
+
+      // Flap parameters
+      "FlapLength", "DieUnitFlapLength",
+      "DieUnitFlapLength_FOLD", "FlapLength_FOLD",
+
+      // Lid parameters
+      "LidHeight", "DieUnitLidHeight", "DieUnitLidHeight_LID",
+      "LidHeight_LID", "LidOverlap", "DieUnitLidOverlap_O",
+
+      // Bottom parameters
+      "BottomOverlap", "DieUnitBottomOverlap_O",
+      "BottomLength", "DieUnitBottomLength_V",
+      "BottomWidth", "DieUnitBottomWidth_J",
+
+      // Front/Back parameters
+      "FrontHeight", "DieUnitFrontHeight_F",
+
+      // Diameter and sides
+      "Diameter", "DieUnitDiameter_D",
+      "NumberOfSides", "DieUnitNumberOfSides_N",
+
+      // Handle parameters
+      "HandleFlapHeight", "DieUnitHandleFlapHeight_Z",
+
+      // Base/Thickness parameters
+      "BaseThickness", "DieUnitBaseThickness_B",
+
+      // Roof parameters
+      "RoofHeight", "DieUnitRoofHeight_ROOF",
+
+      // Draft angle
+      "DraftAngle", "DieUnitDraftAngle_DRAFT",
+
+      // Flap dimensions
+      "FlapHeight", "DieUnitFlapHeight_A",
+      "FlapWidth", "DieUnitFlapWidth_B",
+    ];
+
+    const foundParameters: any[] = [];
+
+    productTemplate.sections.forEach((section: any) => {
+      section.subSections?.forEach((subSection: any) => {
+        subSection.parameters?.forEach((param: any) => {
+          // Exclude Width and Height parameters
+          if (
+            dynamicParameterCodes.includes(param.code) &&
+            !param.isHidden &&
+            !excludedParameterCodes.includes(param.code)
+          ) {
+            foundParameters.push(param);
+          }
+        });
+      });
+    });
+
+    return foundParameters;
+  };
+
+  // Function to map parameter code to API field name
+  const mapParameterToApiField = (paramCode: string): string | null => {
+    const mapping: Record<string, string> = {
+      "DieUnitWidth": "dieUnitWidth",
+      "finalUnitWidth": "dieUnitWidth",
+      "FinalProductWidth": "dieUnitWidth",
+      "FinalProductWidth_FOLD": "dieUnitWidth",
+
+      "DieUnitLength": "dieUnitLength",
+      "finalUnitLength": "dieUnitLength",
+      "FinalProductLength": "dieUnitLength",
+      "FinalProductLength_FOLD": "dieUnitLength",
+
+      // Height mappings - map to dieUnitHeight for API
+      "DieUnitHeight": "dieUnitHeight",
+      "finalUnitHeight": "dieUnitHeight",
+      "FinalProductHeight": "dieUnitHeight",
+      "FinalProductHeight_FOLD": "dieUnitHeight",
+
+      // Flap Length mappings - map to dieUnitFlapLength_FOLD for API
+      "FlapLength": "dieUnitFlapLength_FOLD",
+      "DieUnitFlapLength": "dieUnitFlapLength_FOLD",
+      "DieUnitFlapLength_FOLD": "dieUnitFlapLength_FOLD",
+      "FlapLength_FOLD": "dieUnitFlapLength_FOLD",
+
+      // Lid Height mappings
+      "LidHeight": "dieUnitLidHeight_LID",
+      "DieUnitLidHeight": "dieUnitLidHeight_LID",
+      "DieUnitLidHeight_LID": "dieUnitLidHeight_LID",
+      "LidHeight_LID": "dieUnitLidHeight_LID",
+
+      // Bottom Overlap mappings
+      "BottomOverlap": "dieUnitBottomOverlap_O",
+      "DieUnitBottomOverlap_O": "dieUnitBottomOverlap_O",
+
+      // Front Height mappings
+      "FrontHeight": "dieUnitFrontHeight_F",
+      "DieUnitFrontHeight_F": "dieUnitFrontHeight_F",
+
+      // Diameter mappings
+      "Diameter": "dieUnitDiameter_D",
+      "DieUnitDiameter_D": "dieUnitDiameter_D",
+
+      // Number of Sides mappings
+      "NumberOfSides": "dieUnitNumberOfSides_N",
+      "DieUnitNumberOfSides_N": "dieUnitNumberOfSides_N",
+
+      // Handle Flap Height mappings
+      "HandleFlapHeight": "dieUnitHandleFlapHeight_Z",
+      "DieUnitHandleFlapHeight_Z": "dieUnitHandleFlapHeight_Z",
+
+      // Base Thickness mappings
+      "BaseThickness": "dieUnitBaseThickness_B",
+      "DieUnitBaseThickness_B": "dieUnitBaseThickness_B",
+
+      // Lid Overlap mappings
+      "LidOverlap": "dieUnitLidOverlap_O",
+      "DieUnitLidOverlap_O": "dieUnitLidOverlap_O",
+
+      // Roof Height mappings
+      "RoofHeight": "dieUnitRoofHeight_ROOF",
+      "DieUnitRoofHeight_ROOF": "dieUnitRoofHeight_ROOF",
+
+      // Draft Angle mappings
+      "DraftAngle": "dieUnitDraftAngle_DRAFT",
+      "DieUnitDraftAngle_DRAFT": "dieUnitDraftAngle_DRAFT",
+
+      // Flap Height mappings
+      "FlapHeight": "dieUnitFlapHeight_A",
+      "DieUnitFlapHeight_A": "dieUnitFlapHeight_A",
+
+      // Flap Width mappings
+      "FlapWidth": "dieUnitFlapWidth_B",
+      "DieUnitFlapWidth_B": "dieUnitFlapWidth_B",
+
+      // Bottom Length mappings
+      "BottomLength": "dieUnitBottomLength_V",
+      "DieUnitBottomLength_V": "dieUnitBottomLength_V",
+
+      // Bottom Width mappings
+      "BottomWidth": "dieUnitBottomWidth_J",
+      "DieUnitBottomWidth_J": "dieUnitBottomWidth_J",
+    };
+
+    return mapping[paramCode] || null;
+  };
+
+  // Function to initialize customDimensions with existing values from subProducts
+  const initializeCustomDimensions = () => {
+    const dynamicParams = getDynamicParameters();
+    const initialDimensions: any = {};
+
+    dynamicParams.forEach((param: any) => {
+      const existingParam = subProducts
+        .flatMap((item: any) => item.parameters)
+        .find((p: any) => p.parameterCode === param.code);
+
+      if (existingParam?.values?.[0]) {
+        initialDimensions[param.code] = existingParam.values[0];
+      } else {
+        initialDimensions[param.code] = "";
+      }
+    });
+
+    return initialDimensions;
+  };
+
   const resetModalStates = () => {
     setIsViewInfoAfterGenerate(false);
     setIsView(false);
     setPdfUrl(null);
     setDxfUrl(null);
-    setCustomDimensions({
-      finalUnitWidth: "",
-      finalUnitLength: "",
-      finalUnitHeight: ""
-    });
+    setCustomDimensions(initializeCustomDimensions());
   };
 
   const createNewTemplate = () => {
     // Reset modal states before opening new modal
     resetModalStates();
 
-    // For special templateId, skip custom modal and go directly to generate modal
-    if (productTemplate?.templateId === "b47bf700-e3fc-4dff-a5fd-638821dc9e25") {
-      setOpenGenerateModal(true);
-      return;
-    }
+    // Initialize customDimensions with dynamic parameters
+    setCustomDimensions(initializeCustomDimensions());
 
-    const result = checkRequiredParameters(subProducts);
-    if (result) {
-      setOpenGenerateModal(true)
-    } else {
-      // Use custom error modal instead of alertFault
-      setErrorMessage(t("products.offsetPrice.admin.errorMakerTemplate1"));
-
-      // Close all other modals before showing error modal
-      setOpenCustomModal(false);
-      setOpenGenerateModal(false);
-      setOpenModal(false);
-      setIsOpenDieCutModal(false);
-      setOpenErrorModal(true);
-    }
+    // Always open generate modal
+    setOpenGenerateModal(true);
   }
 
   const createNewTemplateWithCustomDimensions = async () => {
     setIsView(true)
     setOpenCustomModal(false)
-    // Keep generate modal open since we're already in it for special templateId
 
     const sheetWeight = subProducts.flatMap((item: any) => item.parameters).find((param: any) => param.parameterCode === "SheetWeight")?.values[0];
     const sheetcategory = subProducts.flatMap((item: any) => item.parameters).find((param: any) => param.parameterCode === "Sheetcategory")?.values[0];
@@ -410,17 +578,26 @@ const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial, 
     const unit = subProducts.flatMap((item: any) => item.parameters).find((param: any) => param.parameterCode === "DieUnitWidth")?.unitKey;
     const lidHeight = subProducts.flatMap((item: any) => item.parameters).find((param: any) => param.parameterCode === "LidHeight")?.values[0];
 
-    const reqObj = {
+    // Get dynamic parameters and build reqObj dynamically
+    const dynamicParams = getDynamicParameters();
+    const reqObj: any = {
       dieCutCategory: category,
-      unitWidth: Number(customDimensions.finalUnitWidth),
-      unitLength: Number(customDimensions.finalUnitLength),
-      unitHeight: Number(customDimensions.finalUnitHeight),
-      lidHeight: lidHeight,
       sheetsWeight: sheetWeight,
       sheetsCategory: sheetcategory,
       sheetsColor: sheetColor,
       unit: unit,
-    }
+    };
+
+    // Map dynamic parameters to API field names
+    dynamicParams.forEach((param: any) => {
+      const value = customDimensions[param.code];
+      if (value !== undefined && value !== "" && value !== null) {
+        const apiFieldName = mapParameterToApiField(param.code);
+        if (apiFieldName) {
+          reqObj[apiFieldName] = Number(value);
+        }
+      }
+    });
 
     const callBack = (res) => {
       if (res?.isOkay) {
@@ -488,6 +665,10 @@ const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial, 
               {
                 valueId: "finalUnitHeight",
                 value: res?.data?.data?.rowData?.finalUnitHeight?.value
+              },
+              {
+                valueId: "dieUnitFlapLength_FOLD",
+                value: res?.data?.data?.rowData?.dieUnitFlapLength_FOLD?.value || res?.data?.data?.rowData?.dieUnitFlapLength?.value || ""
               },
               {
                 valueId: "columnsAmount",
@@ -642,7 +823,9 @@ const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial, 
     openErrorModal,
     setOpenErrorModal,
     errorMessage,
-    resetModalStates
+    resetModalStates,
+    getDynamicParameters,
+    initializeCustomDimensions
   };
 };
 

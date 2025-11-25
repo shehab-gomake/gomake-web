@@ -3200,7 +3200,7 @@ const useDigitalOffsetPrice = ({
   useEffect(() => {
     const qty = getQuantityParameterValue();
     const itemQuantity =
-        qty &&
+      qty &&
         qty.values &&
         qty.values.length &&
         qty?.values[0]
@@ -5735,6 +5735,7 @@ const useDigitalOffsetPrice = ({
     parameterCode: string,
     dieCut: any
   ) => {
+    console.log("dieCut", dieCut);
     let copySubProducts = cloneDeep(subProducts);
     const targetSubProduct = copySubProducts.find(
       (item) => item.type === subSectionType
@@ -6651,6 +6652,13 @@ const useDigitalOffsetPrice = ({
                     );
                     return item ? item.value + "" : "";
                   };
+                  // Also check rowData if additionalAttribute doesn't have the value
+                  const getValueFromRowData = (id) => {
+                    if (dieCut.rowData && dieCut.rowData[id]?.value) {
+                      return dieCut.rowData[id].value + "";
+                    }
+                    return "";
+                  };
                   let width = getValue("width");
                   let length = getValue("length");
                   let unitWidth = getValue("unitWidth");
@@ -6660,6 +6668,16 @@ const useDigitalOffsetPrice = ({
                   let finalUnitWidth = getValue("finalUnitWidth");
                   let finalUnitLength = getValue("finalUnitLength");
                   let finalUnitHeight = getValue("finalUnitHeight");
+                  // Get flap length - check both additionalAttribute and rowData (with exact case from API)
+                  let dieUnitFlapLength = getValue("dieUnitFlapLength_FOLD") ||
+                    getValue("DieUnitFlapLength_FOLD") ||
+                    getValue("dieUnitFlapLength") ||
+                    getValue("flapLength") ||
+                    getValueFromRowData("DieUnitFlapLength_FOLD") ||
+                    getValueFromRowData("dieUnitFlapLength_FOLD") ||
+                    getValueFromRowData("dieUnitFlapLength") ||
+                    getValueFromRowData("flapLength") ||
+                    "";
 
                   const dieCutSizesParametersArray = [];
                   dieCutSizesParametersArray.push({
@@ -6681,6 +6699,11 @@ const useDigitalOffsetPrice = ({
                   dieCutSizesParametersArray.push({
                     parameterCode: "DieUnitHeight",
                     value: finalUnitHeight,
+                  });
+                  // Add flap length - always add like width, length, height
+                  dieCutSizesParametersArray.push({
+                    parameterCode: "DieUnitFlapLength_FOLD",
+                    value: dieUnitFlapLength,
                   });
                   dieCutSizesParametersArray.forEach((dieCutSizeParameter) => {
                     let dieCutSizeSubProductParameter = temp.find(
@@ -6783,6 +6806,22 @@ const useDigitalOffsetPrice = ({
             let finalUnitWidth = getValue("finalUnitWidth");
             let finalUnitLength = getValue("finalUnitLength");
             let finalUnitHeight = getValue("finalUnitHeight");
+            // Get flap length - check both additionalAttribute and rowData (with exact case from API)
+            const getValueFromRowData = (id) => {
+              if (dieCut.rowData && dieCut.rowData[id]?.value) {
+                return dieCut.rowData[id].value + "";
+              }
+              return "";
+            };
+            let dieUnitFlapLength = getValue("dieUnitFlapLength_FOLD") ||
+              getValue("DieUnitFlapLength_FOLD") ||
+              getValue("dieUnitFlapLength") ||
+              getValue("flapLength") ||
+              getValueFromRowData("DieUnitFlapLength_FOLD") ||
+              getValueFromRowData("dieUnitFlapLength_FOLD") ||
+              getValueFromRowData("dieUnitFlapLength") ||
+              getValueFromRowData("flapLength") ||
+              "";
             const dieCutSizesParametersArray = [];
             dieCutSizesParametersArray.push({
               parameterCode: "Width",
@@ -6803,6 +6842,11 @@ const useDigitalOffsetPrice = ({
             dieCutSizesParametersArray.push({
               parameterCode: "DieUnitHeight",
               value: finalUnitHeight,
+            });
+            // Add flap length - always add like width, length, height
+            dieCutSizesParametersArray.push({
+              parameterCode: "DieUnitFlapLength_FOLD",
+              value: dieUnitFlapLength,
             });
             dieCutSizesParametersArray.forEach((dieCutSizeParameter) => {
               let dieCutSizeSubProductParameter = temp.find(
@@ -6854,6 +6898,11 @@ const useDigitalOffsetPrice = ({
             let finalUnitWidth = dieCut.rowData.finalUnitWidth.value + "";
             let finalUnitLength = dieCut.rowData.finalUnitLength.value + "";
             let finalUnitHeight = dieCut.rowData.finalUnitHeight.value + "";
+            // Get flap length from rowData - check exact case from API response
+            let dieUnitFlapLength = (dieCut.rowData.DieUnitFlapLength_FOLD?.value ||
+              dieCut.rowData.dieUnitFlapLength_FOLD?.value ||
+              dieCut.rowData.dieUnitFlapLength?.value ||
+              dieCut.rowData.flapLength?.value || "") + "";
             const dieCutSizesParametersArray = [];
             dieCutSizesParametersArray.push({
               parameterCode: "Width",
@@ -6874,6 +6923,11 @@ const useDigitalOffsetPrice = ({
             dieCutSizesParametersArray.push({
               parameterCode: "DieUnitHeight",
               value: finalUnitHeight,
+            });
+            // Add flap length - always add like width, length, height
+            dieCutSizesParametersArray.push({
+              parameterCode: "DieUnitFlapLength_FOLD",
+              value: dieUnitFlapLength,
             });
             dieCutSizesParametersArray.forEach((dieCutSizeParameter) => {
               let dieCutSizeSubProductParameter = temp.find(
@@ -8108,12 +8162,12 @@ const useDigitalOffsetPrice = ({
       navigate(`/products/profits?actionId=${router?.query?.actionId}`);
     }
   }, [router, pricingDefaultValue, selectedWorkFlow]);
-  
+
   const getQuantityParameterValue = () => {
     if (subProducts) {
       const generalParameters = subProducts.find((x) => !x.type)?.parameters;
       let quantityParam = generalParameters?.find(
-          (item) => item?.parameterId === "4991945c-5e07-4773-8f11-2e3483b70b53" || item?.isQuantityParameter === true
+        (item) => item?.parameterId === "4991945c-5e07-4773-8f11-2e3483b70b53" || item?.isQuantityParameter === true
       );
       if (quantityParam == null) {
         quantityParam = {
@@ -8121,14 +8175,14 @@ const useDigitalOffsetPrice = ({
         };
       }
       if (
-          quantityParam &&
-          (quantityParam.values == null || quantityParam.values.length == 0)
+        quantityParam &&
+        (quantityParam.values == null || quantityParam.values.length == 0)
       ) {
         quantityParam.values = ["0"];
       }
       return quantityParam;
     }
-    return  0;
+    return 0;
   }
   const quantity = useMemo(() => {
     return getQuantityParameterValue();
@@ -8926,7 +8980,7 @@ const useDigitalOffsetPrice = ({
   }, [router, productTemplate]);
 
   const validateWorkflows = (data) => {
-    if(!data){
+    if (!data) {
       return { isValid: true, errors: [] };
     }
     const errors = [];

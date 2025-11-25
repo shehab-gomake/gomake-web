@@ -69,7 +69,9 @@ const AdvertisingProductNameParameterWidget = ({
     openErrorModal,
     setOpenErrorModal,
     errorMessage,
-    resetModalStates
+    resetModalStates,
+    getDynamicParameters,
+    initializeCustomDimensions
   } = useAdvertisingProductName({ parameter, getProductById, getAllMaterial, newDieCutSelect, temp, productTemplate })
   const categoryImage = selectedDieCutTypeValue?.additionalAttribute?.find(attr => attr.valueId === 'categoryImage')?.value;
   const image = selectedDieCutTypeValue?.additionalAttribute?.find(attr => attr.valueId === 'image')?.value;
@@ -426,99 +428,103 @@ const AdvertisingProductNameParameterWidget = ({
           }
         </>
         {!isView && !isViewInfoAfterGenerate && <Stack gap={"5px"} justifyContent={'flex-start'} margin={'auto'}>
-          {/* Show custom dimension inputs for special templateId */}
-          {productTemplate?.templateId === "b47bf700-e3fc-4dff-a5fd-638821dc9e25" ? (
-            <>
-              <div style={clasess.modalContentImage}>
-                {(image || categoryImage) && <img
-                  src={categoryImage != "" ? categoryImage : image}
-                  alt="parameter image"
-                  style={clasess.modalContentImageItem2}
-                />
-                }
-                <div style={clasess.modalContentDataItem2}>
-                  <div style={{ marginBottom: 15 }}>
-                    <div style={{ marginBottom: 8, fontWeight: 500, fontSize: 14 }}>
-                      {t("products.offsetPrice.admin.finalUnitWidth")}: {unit && <small>({unit})</small>}
-                      <span style={{ color: 'red' }}> *</span>
-                    </div>
-                    <GomakeTextInput
-                      value={customDimensions.finalUnitWidth}
-                      onChange={(e) => setCustomDimensions(prev => ({ ...prev, finalUnitWidth: e.target.value }))}
-                      placeholder={t("products.offsetPrice.admin.finalUnitWidth")}
-                      style={{ width: '100%', height: "35px" }}
-                      type="number"
+          {/* Show dynamic dimension inputs based on category */}
+          {(() => {
+            const dynamicParams = getDynamicParameters();
+            const hasDynamicParams = dynamicParams.length > 0;
+
+            if (hasDynamicParams) {
+              // Check if all required fields are filled
+              const requiredParams = dynamicParams.filter((param: any) => param.isRequired !== false);
+              const allFieldsFilled = requiredParams.length === 0 || requiredParams.every((param: any) => {
+                const value = customDimensions[param.code];
+                return value !== undefined && value !== "" && value !== null;
+              });
+
+              return (
+                <>
+                  <div style={clasess.modalContentImage}>
+                    {(image || categoryImage) && <img
+                      src={categoryImage != "" ? categoryImage : image}
+                      alt="parameter image"
+                      style={clasess.modalContentImageItem2}
                     />
-                  </div>
-                  <div style={{ marginBottom: 15 }}>
-                    <div style={{ marginBottom: 8, fontWeight: 500, fontSize: 14 }}>
-                      {t("products.offsetPrice.admin.finalUnitLength")}: {unit && <small>({unit})</small>}
-                      <span style={{ color: 'red' }}> *</span>
+                    }
+                    <div style={{
+                      ...clasess.modalContentDataItem2,
+                      maxHeight: "400px",
+                      overflowY: "auto",
+                      overflowX: "hidden",
+                      paddingRight: "8px",
+                    }}>
+                      {dynamicParams.map((param: any) => {
+                        const paramValue = customDimensions[param.code] || "";
+                        const paramUnit = param.unitKey || unit;
+                        const isRequired = param.isRequired !== false;
+
+                        return (
+                          <div key={param.code} style={{ marginBottom: 15 }}>
+                            <div style={{ marginBottom: 8, fontWeight: 500, fontSize: 14 }}>
+                              {param.name || param.code}: {paramUnit && <small>({paramUnit})</small>}
+                              {isRequired && <span style={{ color: 'red' }}> *</span>}
+                            </div>
+                            <GomakeTextInput
+                              value={paramValue}
+                              onChange={(e) => setCustomDimensions((prev: any) => ({ ...prev, [param.code]: e.target.value }))}
+                              placeholder={param.name || param.code}
+                              style={{ width: '100%', height: "35px" }}
+                              type="number"
+                            />
+                          </div>
+                        );
+                      })}
                     </div>
-                    <GomakeTextInput
-                      value={customDimensions.finalUnitLength}
-                      onChange={(e) => setCustomDimensions(prev => ({ ...prev, finalUnitLength: e.target.value }))}
-                      placeholder={t("products.offsetPrice.admin.finalUnitLength")}
-                      style={{ width: '100%', height: "35px" }}
-                      type="number"
-                    />
                   </div>
-                  <div style={{ marginBottom: 15 }}>
-                    <div style={{ marginBottom: 8, fontWeight: 500, fontSize: 14 }}>
-                      {t("products.offsetPrice.admin.finalUnitHeight")}: {unit && <small>({unit})</small>}
-                      <span style={{ color: 'red' }}> *</span>
+                  <div style={clasess.modalContentButton2}>
+                    <h4>{t("products.offsetPrice.admin.numberCanBeGenerated")}: 12</h4>
+                    <div style={clasess.modalContentButtonItem2}>
+                      <GomakePrimaryButton
+                        sx={{
+                          width: "fit-content",
+                          height: 40,
+                          backgroundColor: !allFieldsFilled ? "#ccc" : "#2E3092"
+                        }}
+                        disabled={!allFieldsFilled}
+                        onClick={createNewTemplateWithCustomDimensions}
+                      >
+                        {t("products.offsetPrice.admin.generate")}
+                      </GomakePrimaryButton>
                     </div>
-                    <GomakeTextInput
-                      value={customDimensions.finalUnitHeight}
-                      onChange={(e) => setCustomDimensions(prev => ({ ...prev, finalUnitHeight: e.target.value }))}
-                      placeholder={t("products.offsetPrice.admin.finalUnitHeight")}
-                      style={{ width: '100%', height: "35px" }}
-                      type="number"
-                    />
                   </div>
-                </div>
-              </div>
-              <div style={clasess.modalContentButton2}>
-                <h4>{t("products.offsetPrice.admin.numberCanBeGenerated")}: 12</h4>
-                <div style={clasess.modalContentButtonItem2}>
-                  <GomakePrimaryButton
-                    sx={{
-                      width: "fit-content",
-                      height: 40,
-                      backgroundColor: (!customDimensions.finalUnitWidth || !customDimensions.finalUnitLength || !customDimensions.finalUnitHeight) ? "#ccc" : "#2E3092"
-                    }}
-                    disabled={!customDimensions.finalUnitWidth || !customDimensions.finalUnitLength || !customDimensions.finalUnitHeight}
-                    onClick={createNewTemplateWithCustomDimensions}
-                  >
-                    {t("products.offsetPrice.admin.generate")}
-                  </GomakePrimaryButton>
-                </div>
-              </div>
-            </>
-          ) : (
-            /* Show normal image and parameters for other templates */
-            <>
-              <div style={clasess.modalContentImage}>
-                {(image || categoryImage) && <img
-                  src={categoryImage != "" ? categoryImage : image}
-                  alt="parameter image"
-                  style={clasess.modalContentImageItem2}
-                />
-                }
-                <div style={clasess.modalContentDataItem2}>
-                  {viewRequiredParameters(subProducts).parameterInfo.map((item: any) => {
-                    return <div>{item}</div>
-                  })}
-                </div>
-              </div>
-              <div style={clasess.modalContentButton2}>
-                <h4>{t("products.offsetPrice.admin.numberCanBeGenerated")}: 12</h4>
-                <div style={clasess.modalContentButtonItem2}>
-                  <GomakePrimaryButton sx={{ width: "fit-content", height: 40 }} onClick={createNewTemplateEndPoint}>{t("products.offsetPrice.admin.generate")}</GomakePrimaryButton>
-                </div>
-              </div>
-            </>
-          )}
+                </>
+              );
+            } else {
+              // Fallback to normal view if no dynamic parameters found
+              return (
+                <>
+                  <div style={clasess.modalContentImage}>
+                    {(image || categoryImage) && <img
+                      src={categoryImage != "" ? categoryImage : image}
+                      alt="parameter image"
+                      style={clasess.modalContentImageItem2}
+                    />
+                    }
+                    <div style={clasess.modalContentDataItem2}>
+                      {viewRequiredParameters(subProducts).parameterInfo.map((item: any, index: number) => {
+                        return <div key={index}>{item}</div>
+                      })}
+                    </div>
+                  </div>
+                  <div style={clasess.modalContentButton2}>
+                    <h4>{t("products.offsetPrice.admin.numberCanBeGenerated")}: 12</h4>
+                    <div style={clasess.modalContentButtonItem2}>
+                      <GomakePrimaryButton sx={{ width: "fit-content", height: 40 }} onClick={createNewTemplateEndPoint}>{t("products.offsetPrice.admin.generate")}</GomakePrimaryButton>
+                    </div>
+                  </div>
+                </>
+              );
+            }
+          })()}
         </Stack>}
         {isView && !isViewInfoAfterGenerate && <div style={clasess.modalContentIcon}>
           <TestIcon />
