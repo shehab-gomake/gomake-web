@@ -433,16 +433,31 @@ export const useChatwootConversationWebSocket = (
 
   /**
    * Register all event handlers
+   * IMPORTANT: First unregisters any existing handlers to prevent duplicates
    */
   const registerHandlers = useCallback(() => {
-    if (handlersRegisteredRef.current) {
-      logger.debug("Handlers already registered");
-      return;
+    // First, unregister any existing handlers to prevent duplicates
+    const existingHandlers = registeredHandlersRef.current;
+    if (existingHandlers.conversationCreated) {
+      chatwootConversationsWebSocketHelper.offConversationCreated(existingHandlers.conversationCreated);
+    }
+    if (existingHandlers.conversationUpdated) {
+      chatwootConversationsWebSocketHelper.offConversationUpdated(existingHandlers.conversationUpdated);
+    }
+    if (existingHandlers.statusChanged) {
+      chatwootConversationsWebSocketHelper.offStatusChanged(existingHandlers.statusChanged);
+    }
+    if (existingHandlers.messageCreated) {
+      chatwootConversationsWebSocketHelper.offMessageCreated(existingHandlers.messageCreated);
+    }
+    if (existingHandlers.assigneeChanged) {
+      chatwootConversationsWebSocketHelper.offAssigneeChanged(existingHandlers.assigneeChanged);
+    }
+    if (existingHandlers.typing) {
+      chatwootConversationsWebSocketHelper.offTyping(existingHandlers.typing);
     }
 
-    logger.info("Registering conversation WebSocket handlers");
-
-    // Store references to the exact handlers we're registering
+    // Now register new handlers
     registeredHandlersRef.current = {
       conversationCreated: handleConversationCreated,
       conversationUpdated: handleConversationUpdated,
@@ -474,12 +489,6 @@ export const useChatwootConversationWebSocket = (
    * Unregister all event handlers
    */
   const unregisterHandlers = useCallback(() => {
-    if (!handlersRegisteredRef.current) {
-      return;
-    }
-
-    logger.info("Unregistering conversation WebSocket handlers");
-
     // Unregister the exact handlers we registered (from refs)
     const handlers = registeredHandlersRef.current;
     if (handlers.conversationCreated) {

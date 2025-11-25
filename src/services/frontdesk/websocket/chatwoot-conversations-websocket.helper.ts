@@ -230,7 +230,7 @@ export class ChatwootConversationsWebSocketHelper {
       }, EVENT_DEDUP_TTL_MS);
     }
 
-    // Register handlers with the main WebSocket service
+    // Register handlers with the main WebSocket service (use bound methods to ensure same reference)
     chatwootWebSocketService.on(
       ChatwootWebSocketEvent.CONVERSATION_CREATED,
       this.handleConversationCreated
@@ -334,10 +334,6 @@ export class ChatwootConversationsWebSocketHelper {
 
       // Filter by account ID if set
       if (this.currentAccountId && event.account_id !== this.currentAccountId) {
-        logger.debug("Ignoring conversation.created for different account:", {
-          eventAccountId: event.account_id,
-          currentAccountId: this.currentAccountId,
-        });
         return;
       }
 
@@ -543,7 +539,13 @@ export class ChatwootConversationsWebSocketHelper {
   // Public API - Event Registration
   // ============================================================================
 
+  /**
+   * Register handler for conversation created events
+   * Note: Clears existing handlers to ensure only one handler per registration
+   */
   public onConversationCreated(handler: ConversationCreatedHandler): void {
+    // Clear existing handlers to prevent duplicates (only one consumer should handle events)
+    this.conversationCreatedHandlers.clear();
     this.conversationCreatedHandlers.add(handler);
   }
 
@@ -551,7 +553,11 @@ export class ChatwootConversationsWebSocketHelper {
     this.conversationCreatedHandlers.delete(handler);
   }
 
+  /**
+   * Register handler for conversation updated events
+   */
   public onConversationUpdated(handler: ConversationUpdatedHandler): void {
+    this.conversationUpdatedHandlers.clear();
     this.conversationUpdatedHandlers.add(handler);
   }
 
@@ -559,7 +565,11 @@ export class ChatwootConversationsWebSocketHelper {
     this.conversationUpdatedHandlers.delete(handler);
   }
 
+  /**
+   * Register handler for status changed events
+   */
   public onStatusChanged(handler: ConversationStatusChangedHandler): void {
+    this.statusChangedHandlers.clear();
     this.statusChangedHandlers.add(handler);
   }
 
@@ -567,7 +577,11 @@ export class ChatwootConversationsWebSocketHelper {
     this.statusChangedHandlers.delete(handler);
   }
 
+  /**
+   * Register handler for message created events
+   */
   public onMessageCreated(handler: MessageCreatedHandler): void {
+    this.messageCreatedHandlers.clear();
     this.messageCreatedHandlers.add(handler);
   }
 
@@ -575,7 +589,11 @@ export class ChatwootConversationsWebSocketHelper {
     this.messageCreatedHandlers.delete(handler);
   }
 
+  /**
+   * Register handler for assignee changed events
+   */
   public onAssigneeChanged(handler: AssigneeChangedHandler): void {
+    this.assigneeChangedHandlers.clear();
     this.assigneeChangedHandlers.add(handler);
   }
 
@@ -583,7 +601,11 @@ export class ChatwootConversationsWebSocketHelper {
     this.assigneeChangedHandlers.delete(handler);
   }
 
+  /**
+   * Register handler for typing events
+   */
   public onTyping(handler: TypingHandler): void {
+    this.typingHandlers.clear();
     this.typingHandlers.add(handler);
   }
 
