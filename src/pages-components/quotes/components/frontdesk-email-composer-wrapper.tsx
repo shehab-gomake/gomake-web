@@ -133,24 +133,49 @@ export const FrontDeskEmailComposerWrapper: React.FC<FrontDeskEmailComposerWrapp
     }
   }, [selectedAccountId, currentUser, profileUser, setSelectedAccountId]);
 
-  const convertAttachmentToFile = (attachment: EmailAttachment): File | null => {
+  /**
+   * Convert attachment to File object
+   * Handles both base64-encoded content and URL-based attachments
+   */
+  const convertAttachmentToFile = async (attachment: EmailAttachment): Promise<File | null> => {
     const base64 = attachment.content ?? attachment.data;
-    if (!base64) return null;
+    const mimeType = attachment.contentType ?? attachment.mimeType ?? "application/octet-stream";
 
-    try {
-      const byteCharacters = window.atob(base64);
-      const byteNumbers = new Array(byteCharacters.length);
-      for (let i = 0; i < byteCharacters.length; i++) {
-        byteNumbers[i] = byteCharacters.charCodeAt(i);
+    // Handle base64-encoded content
+    if (base64) {
+      try {
+        const byteCharacters = window.atob(base64);
+        const byteNumbers = new Array(byteCharacters.length);
+        for (let i = 0; i < byteCharacters.length; i++) {
+          byteNumbers[i] = byteCharacters.charCodeAt(i);
+        }
+        const byteArray = new Uint8Array(byteNumbers);
+        const blob = new Blob([byteArray], { type: mimeType });
+        return new File([blob], attachment.filename, { type: mimeType });
+      } catch (error) {
+        console.error("[FrontDeskEmailComposerWrapper] Failed to convert base64 attachment to file", error);
+        return null;
       }
-      const byteArray = new Uint8Array(byteNumbers);
-      const mimeType = attachment.contentType ?? attachment.mimeType ?? "application/octet-stream";
-      const blob = new Blob([byteArray], { type: mimeType });
-      return new File([blob], attachment.filename, { type: mimeType });
-    } catch (error) {
-      console.error("Failed to convert attachment to file", error);
-      return null;
     }
+
+    // Handle URL-based attachments
+    if (attachment.url) {
+      try {
+        console.log(`[FrontDeskEmailComposerWrapper] Fetching attachment from URL: ${attachment.url}`);
+        const response = await fetch(attachment.url);
+        if (!response.ok) {
+          throw new Error(`Failed to fetch attachment: ${response.status}`);
+        }
+        const blob = await response.blob();
+        return new File([blob], attachment.filename, { type: mimeType });
+      } catch (error) {
+        console.error("[FrontDeskEmailComposerWrapper] Failed to fetch URL attachment", error);
+        return null;
+      }
+    }
+
+    console.warn("[FrontDeskEmailComposerWrapper] Attachment has no content, data, or url", attachment);
+    return null;
   };
 
   const resolveSenderOption = useCallback(
@@ -250,7 +275,13 @@ export const FrontDeskEmailComposerWrapper: React.FC<FrontDeskEmailComposerWrapp
       const toEmails = draft.to?.map((recipient) => recipient.email).filter(Boolean) ?? [];
       const ccEmails = draft.cc?.map((recipient) => recipient.email).filter(Boolean) ?? [];
       const bccEmails = draft.bcc?.map((recipient) => recipient.email).filter(Boolean) ?? [];
-      const attachments = draft.attachments?.map(convertAttachmentToFile).filter(Boolean) as File[];
+      
+      // Convert attachments - now async to handle URL-based attachments
+      const attachmentPromises = draft.attachments?.map(convertAttachmentToFile) ?? [];
+      const attachmentResults = await Promise.all(attachmentPromises);
+      const attachments = attachmentResults.filter((file): file is File => file !== null);
+      
+      console.log(`[FrontDeskEmailComposerWrapper] Converted ${attachments.length} attachments from ${draft.attachments?.length ?? 0} originals`);
 
       // Validate at least one TO recipient
       if (toEmails.length === 0) {

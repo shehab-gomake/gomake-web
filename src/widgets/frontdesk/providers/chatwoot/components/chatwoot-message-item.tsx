@@ -1,10 +1,22 @@
-import React from "react";
-import { Box, Stack, Typography, Avatar, Paper, Chip } from "@mui/material";
+import React, { useState } from "react";
+import { Box, Stack, Typography, Avatar, Paper, Chip, IconButton, Modal, Backdrop } from "@mui/material";
 import LockIcon from "@mui/icons-material/Lock";
+import DownloadIcon from "@mui/icons-material/Download";
+import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
+import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
+import AudioFileIcon from "@mui/icons-material/AudioFile";
+import VideoFileIcon from "@mui/icons-material/VideoFile";
+import DescriptionIcon from "@mui/icons-material/Description";
+import TableChartIcon from "@mui/icons-material/TableChart";
+import FolderZipIcon from "@mui/icons-material/FolderZip";
+import LocationOnIcon from "@mui/icons-material/LocationOn";
+import ContactPageIcon from "@mui/icons-material/ContactPage";
+import PlayCircleIcon from "@mui/icons-material/PlayCircle";
+import CloseIcon from "@mui/icons-material/Close";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { useTheme } from "@mui/material/styles";
 import { alpha } from "@mui/material";
-import { ChatwootMessage } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
+import { ChatwootMessage, ChatwootAttachment } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
 import { formatMessageDate, getAvatarColor, getEmailInitials } from "@/widgets/frontdesk/utils";
 import { sanitizeHtml, isHtmlContent } from "@/widgets/frontdesk/utils/html-sanitizer";
 import { ActivityBubble } from "@/widgets/frontdesk/components/shared/ActivityBubble";
@@ -19,6 +31,424 @@ const MESSAGE_TYPES = {
   ACTIVITY: 2,    // System activity message (status changes, assignments, etc.)
   TEMPLATE: 3,    // Template message
 } as const;
+
+/**
+ * Format file size for display
+ */
+const formatFileSize = (bytes?: number): string => {
+  if (!bytes) return "";
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+};
+
+/**
+ * Get file name from URL
+ */
+const getFileNameFromUrl = (url: string): string => {
+  try {
+    const decoded = decodeURIComponent(url);
+    const parts = decoded.split("/");
+    return parts[parts.length - 1] || "File";
+  } catch {
+    return "File";
+  }
+};
+
+/**
+ * Get file extension from URL or filename
+ */
+const getFileExtension = (url: string, extension?: string | null): string => {
+  if (extension) return extension.toLowerCase();
+  const fileName = getFileNameFromUrl(url);
+  const parts = fileName.split(".");
+  return parts.length > 1 ? parts[parts.length - 1].toLowerCase() : "";
+};
+
+/**
+ * Get appropriate icon for file type
+ */
+const getFileIcon = (fileType: string, extension: string) => {
+  // PDF
+  if (extension === "pdf") {
+    return <PictureAsPdfIcon sx={{ fontSize: 28, color: "#E53935" }} />;
+  }
+  
+  // Word documents
+  if (["doc", "docx", "odt", "rtf"].includes(extension)) {
+    return <DescriptionIcon sx={{ fontSize: 28, color: "#2196F3" }} />;
+  }
+  
+  // Excel/Spreadsheets
+  if (["xls", "xlsx", "csv", "ods"].includes(extension)) {
+    return <TableChartIcon sx={{ fontSize: 28, color: "#4CAF50" }} />;
+  }
+  
+  // Archives
+  if (["zip", "rar", "7z", "tar", "gz"].includes(extension)) {
+    return <FolderZipIcon sx={{ fontSize: 28, color: "#FF9800" }} />;
+  }
+  
+  // Audio
+  if (fileType === "audio" || ["mp3", "wav", "ogg", "m4a", "aac"].includes(extension)) {
+    return <AudioFileIcon sx={{ fontSize: 28, color: "#9C27B0" }} />;
+  }
+  
+  // Video
+  if (fileType === "video" || ["mp4", "mov", "avi", "mkv", "webm"].includes(extension)) {
+    return <VideoFileIcon sx={{ fontSize: 28, color: "#F44336" }} />;
+  }
+  
+  // Location
+  if (fileType === "location") {
+    return <LocationOnIcon sx={{ fontSize: 28, color: "#4CAF50" }} />;
+  }
+  
+  // Contact
+  if (fileType === "contact" || extension === "vcf") {
+    return <ContactPageIcon sx={{ fontSize: 28, color: "#00BCD4" }} />;
+  }
+  
+  // Default file icon
+  return <InsertDriveFileIcon sx={{ fontSize: 28, color: "#607D8B" }} />;
+};
+
+/**
+ * Attachment Image Preview Component
+ */
+interface AttachmentImageProps {
+  attachment: ChatwootAttachment;
+  onClick: () => void;
+}
+
+const AttachmentImage: React.FC<AttachmentImageProps> = ({ attachment, onClick }) => {
+  const { neutralColor } = useGomakeTheme();
+  
+  return (
+    <Box
+      onClick={onClick}
+      sx={{
+        position: "relative",
+        cursor: "pointer",
+        borderRadius: 1.5,
+        overflow: "hidden",
+        maxWidth: 200,
+        maxHeight: 200,
+        "&:hover": {
+          opacity: 0.9,
+        },
+      }}
+    >
+      <img
+        src={attachment.thumb_url || attachment.data_url}
+        alt="Attachment"
+        style={{
+          display: "block",
+          maxWidth: "100%",
+          maxHeight: 200,
+          objectFit: "cover",
+          borderRadius: 6,
+        }}
+      />
+      {attachment.file_size && (
+        <Typography
+          variant="caption"
+          sx={{
+            position: "absolute",
+            bottom: 4,
+            right: 4,
+            bgcolor: "rgba(0,0,0,0.6)",
+            color: "#fff",
+            px: 0.75,
+            py: 0.25,
+            borderRadius: 1,
+            fontSize: "0.65rem",
+          }}
+        >
+          {formatFileSize(attachment.file_size)}
+        </Typography>
+      )}
+    </Box>
+  );
+};
+
+/**
+ * Audio Attachment Component with inline player
+ */
+interface AttachmentAudioProps {
+  attachment: ChatwootAttachment;
+  isOutgoing: boolean;
+}
+
+const AttachmentAudio: React.FC<AttachmentAudioProps> = ({ attachment, isOutgoing }) => {
+  const { neutralColor, primaryColor } = useGomakeTheme();
+  const fileName = getFileNameFromUrl(attachment.data_url);
+  
+  return (
+    <Box
+      sx={{
+        p: 1.5,
+        borderRadius: 1.5,
+        bgcolor: isOutgoing ? primaryColor(50) : neutralColor(100),
+        minWidth: 250,
+        maxWidth: 300,
+      }}
+    >
+      <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 1 }}>
+        <AudioFileIcon sx={{ fontSize: 24, color: "#9C27B0" }} />
+        <Typography
+          variant="body2"
+          sx={{
+            fontWeight: 500,
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
+            flex: 1,
+          }}
+        >
+          {fileName}
+        </Typography>
+      </Stack>
+      <audio
+        controls
+        src={attachment.data_url}
+        style={{ width: "100%", height: 36 }}
+      />
+      {attachment.file_size && (
+        <Typography variant="caption" sx={{ color: neutralColor(500), mt: 0.5, display: "block" }}>
+          {formatFileSize(attachment.file_size)}
+        </Typography>
+      )}
+    </Box>
+  );
+};
+
+/**
+ * Video Attachment Component with inline player
+ */
+interface AttachmentVideoProps {
+  attachment: ChatwootAttachment;
+  onClick: () => void;
+}
+
+const AttachmentVideo: React.FC<AttachmentVideoProps> = ({ attachment, onClick }) => {
+  const { neutralColor } = useGomakeTheme();
+  
+  return (
+    <Box
+      sx={{
+        position: "relative",
+        borderRadius: 1.5,
+        overflow: "hidden",
+        maxWidth: 300,
+        cursor: "pointer",
+        "&:hover .play-overlay": {
+          bgcolor: "rgba(0,0,0,0.5)",
+        },
+      }}
+      onClick={onClick}
+    >
+      <video
+        src={attachment.data_url}
+        style={{
+          display: "block",
+          maxWidth: "100%",
+          maxHeight: 200,
+          borderRadius: 6,
+        }}
+      />
+      <Box
+        className="play-overlay"
+        sx={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          bgcolor: "rgba(0,0,0,0.3)",
+          transition: "background-color 0.2s",
+        }}
+      >
+        <PlayCircleIcon sx={{ fontSize: 48, color: "#fff" }} />
+      </Box>
+      {attachment.file_size && (
+        <Typography
+          variant="caption"
+          sx={{
+            position: "absolute",
+            bottom: 4,
+            right: 4,
+            bgcolor: "rgba(0,0,0,0.6)",
+            color: "#fff",
+            px: 0.75,
+            py: 0.25,
+            borderRadius: 1,
+            fontSize: "0.65rem",
+          }}
+        >
+          {formatFileSize(attachment.file_size)}
+        </Typography>
+      )}
+    </Box>
+  );
+};
+
+/**
+ * Attachment File Preview Component (for documents, archives, etc.)
+ */
+interface AttachmentFileProps {
+  attachment: ChatwootAttachment;
+  isOutgoing: boolean;
+}
+
+const AttachmentFile: React.FC<AttachmentFileProps> = ({ attachment, isOutgoing }) => {
+  const { neutralColor, primaryColor } = useGomakeTheme();
+  const fileName = getFileNameFromUrl(attachment.data_url);
+  const extension = getFileExtension(attachment.data_url, attachment.extension);
+  
+  return (
+    <Box
+      component="a"
+      href={attachment.data_url}
+      target="_blank"
+      rel="noopener noreferrer"
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        gap: 1.5,
+        p: 1.5,
+        borderRadius: 1.5,
+        bgcolor: isOutgoing ? primaryColor(50) : neutralColor(100),
+        textDecoration: "none",
+        color: "inherit",
+        minWidth: 200,
+        maxWidth: 280,
+        "&:hover": {
+          bgcolor: isOutgoing ? primaryColor(100) : neutralColor(150),
+        },
+      }}
+    >
+      {getFileIcon(attachment.file_type, extension)}
+      <Box sx={{ flex: 1, minWidth: 0 }}>
+        <Typography
+          variant="body2"
+          sx={{
+            fontWeight: 500,
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
+          }}
+        >
+          {fileName}
+        </Typography>
+        <Stack direction="row" spacing={1} alignItems="center">
+          {extension && (
+            <Typography
+              variant="caption"
+              sx={{
+                color: neutralColor(600),
+                textTransform: "uppercase",
+                fontWeight: 600,
+                fontSize: "0.65rem",
+              }}
+            >
+              {extension}
+            </Typography>
+          )}
+          {attachment.file_size && (
+            <Typography variant="caption" sx={{ color: neutralColor(500) }}>
+              • {formatFileSize(attachment.file_size)}
+            </Typography>
+          )}
+        </Stack>
+      </Box>
+      <IconButton
+        size="small"
+        sx={{
+          bgcolor: neutralColor(200),
+          "&:hover": { bgcolor: neutralColor(300) },
+        }}
+      >
+        <DownloadIcon sx={{ fontSize: 18, color: neutralColor(600) }} />
+      </IconButton>
+    </Box>
+  );
+};
+
+/**
+ * Full-screen Media Modal (supports both images and videos)
+ */
+interface MediaModalProps {
+  open: boolean;
+  onClose: () => void;
+  mediaUrl: string;
+  mediaType: "image" | "video";
+}
+
+const MediaModal: React.FC<MediaModalProps> = ({ open, onClose, mediaUrl, mediaType }) => {
+  return (
+    <Modal
+      open={open}
+      onClose={onClose}
+      closeAfterTransition
+      BackdropComponent={Backdrop}
+      BackdropProps={{ timeout: 300 }}
+    >
+      <Box
+        sx={{
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          maxWidth: "90vw",
+          maxHeight: "90vh",
+          outline: "none",
+        }}
+      >
+        <IconButton
+          onClick={onClose}
+          sx={{
+            position: "absolute",
+            top: -40,
+            right: 0,
+            color: "#fff",
+            bgcolor: "rgba(0,0,0,0.5)",
+            "&:hover": { bgcolor: "rgba(0,0,0,0.7)" },
+            zIndex: 1,
+          }}
+        >
+          <CloseIcon />
+        </IconButton>
+        {mediaType === "image" ? (
+          <img
+            src={mediaUrl}
+            alt="Full size"
+            style={{
+              maxWidth: "90vw",
+              maxHeight: "90vh",
+              objectFit: "contain",
+              borderRadius: 8,
+            }}
+          />
+        ) : (
+          <video
+            src={mediaUrl}
+            controls
+            autoPlay
+            style={{
+              maxWidth: "90vw",
+              maxHeight: "90vh",
+              borderRadius: 8,
+            }}
+          />
+        )}
+      </Box>
+    </Modal>
+  );
+};
 
 interface ChatwootMessageItemProps {
   message: ChatwootMessage;
@@ -37,6 +467,16 @@ export const ChatwootMessageItem: React.FC<ChatwootMessageItemProps> = ({
 }) => {
   const { primaryColor, neutralColor } = useGomakeTheme();
   const theme = useTheme();
+  const [selectedMedia, setSelectedMedia] = useState<{ url: string; type: "image" | "video" } | null>(null);
+
+  // Get attachments from message and categorize them
+  const attachments = message.attachments || [];
+  const imageAttachments = attachments.filter((a) => a.file_type === "image");
+  const videoAttachments = attachments.filter((a) => a.file_type === "video");
+  const audioAttachments = attachments.filter((a) => a.file_type === "audio");
+  const fileAttachments = attachments.filter((a) => 
+    !["image", "video", "audio"].includes(a.file_type)
+  );
 
   // Early return for ACTIVITY messages - render as centered activity bubble
   if (message.message_type === MESSAGE_TYPES.ACTIVITY) {
@@ -331,6 +771,7 @@ export const ChatwootMessageItem: React.FC<ChatwootMessageItemProps> = ({
           elevation={0}
           sx={getMessageBubbleStyles(isMe)}
         >
+          {/* Text Content */}
           {isHtml && processedContent ? (
             <Box
               dangerouslySetInnerHTML={{ __html: processedContent }}
@@ -350,7 +791,7 @@ export const ChatwootMessageItem: React.FC<ChatwootMessageItemProps> = ({
             >
               {processedContent}
             </Typography>
-          ) : (
+          ) : attachments.length === 0 ? (
             <Typography
               variant="body2"
               sx={{
@@ -363,6 +804,74 @@ export const ChatwootMessageItem: React.FC<ChatwootMessageItemProps> = ({
             >
               (Empty message)
             </Typography>
+          ) : null}
+
+          {/* Image Attachments */}
+          {imageAttachments.length > 0 && (
+            <Stack
+              direction="row"
+              flexWrap="wrap"
+              gap={1}
+              sx={{ mt: processedContent ? 1.5 : 0 }}
+            >
+              {imageAttachments.map((attachment) => (
+                <AttachmentImage
+                  key={attachment.id}
+                  attachment={attachment}
+                  onClick={() => setSelectedMedia({ url: attachment.data_url, type: "image" })}
+                />
+              ))}
+            </Stack>
+          )}
+
+          {/* Video Attachments */}
+          {videoAttachments.length > 0 && (
+            <Stack
+              direction="row"
+              flexWrap="wrap"
+              gap={1}
+              sx={{ mt: processedContent || imageAttachments.length > 0 ? 1.5 : 0 }}
+            >
+              {videoAttachments.map((attachment) => (
+                <AttachmentVideo
+                  key={attachment.id}
+                  attachment={attachment}
+                  onClick={() => setSelectedMedia({ url: attachment.data_url, type: "video" })}
+                />
+              ))}
+            </Stack>
+          )}
+
+          {/* Audio Attachments */}
+          {audioAttachments.length > 0 && (
+            <Stack
+              spacing={1}
+              sx={{ mt: processedContent || imageAttachments.length > 0 || videoAttachments.length > 0 ? 1.5 : 0 }}
+            >
+              {audioAttachments.map((attachment) => (
+                <AttachmentAudio
+                  key={attachment.id}
+                  attachment={attachment}
+                  isOutgoing={isMe}
+                />
+              ))}
+            </Stack>
+          )}
+
+          {/* File Attachments (documents, archives, etc.) */}
+          {fileAttachments.length > 0 && (
+            <Stack
+              spacing={1}
+              sx={{ mt: processedContent || imageAttachments.length > 0 || videoAttachments.length > 0 || audioAttachments.length > 0 ? 1.5 : 0 }}
+            >
+              {fileAttachments.map((attachment) => (
+                <AttachmentFile
+                  key={attachment.id}
+                  attachment={attachment}
+                  isOutgoing={isMe}
+                />
+              ))}
+            </Stack>
           )}
           
           {/* Private message indicator icon - positioned at bottom right */}
@@ -384,6 +893,16 @@ export const ChatwootMessageItem: React.FC<ChatwootMessageItemProps> = ({
             </Box>
           )}
         </Paper>
+
+        {/* Media Modal for full-size preview (images and videos) */}
+        {selectedMedia && (
+          <MediaModal
+            open={!!selectedMedia}
+            onClose={() => setSelectedMedia(null)}
+            mediaUrl={selectedMedia.url}
+            mediaType={selectedMedia.type}
+          />
+        )}
 
         <Typography
           variant="caption"
