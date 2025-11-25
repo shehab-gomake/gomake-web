@@ -7,7 +7,7 @@
 
 /**
  * Supported file types in Chatwoot
- * @see https://www.chatwoot.com/docs/user-guide/features/attachments
+ * @see https://developers.chatwoot.com/self-hosted/supported-features#outgoing-attachments-supported-file-types
  */
 export type AttachmentFileType =
   | "image"
@@ -62,47 +62,63 @@ export type FileCategory =
 
 /**
  * Map of file extensions to categories
+ * Based on official Chatwoot supported file types:
+ * @see https://developers.chatwoot.com/self-hosted/supported-features#outgoing-attachments-supported-file-types
+ *
+ * Standard File Types:
+ * - Video: ogg, mp4, mov, webm, quicktime, avi
+ * - Audio: mp3, mpeg, opus, ogg, amr, aac, m4a, wav
+ * - Image: png, jpeg, gif, bmp, webp
+ * - Document: pdf, doc, docx, xls, xlsx, ppt, pptx, zip, 7z, rar, tar, xml, csv, json, rtf, txt
  */
 export const FILE_EXTENSION_MAP: Record<string, FileCategory> = {
   // PDF
   pdf: "pdf",
-  // Word documents
+  // Word documents (official: doc, docx, msword)
   doc: "word",
   docx: "word",
-  odt: "word",
   rtf: "word",
-  // Excel/Spreadsheets
+  txt: "word",
+  // Excel/Spreadsheets (official: xls, xlsx, csv)
   xls: "excel",
   xlsx: "excel",
   csv: "excel",
-  ods: "excel",
-  // Archives
+  // PowerPoint (official: ppt, pptx)
+  ppt: "word",
+  pptx: "word",
+  // Archives (official: zip, 7z, rar, tar)
   zip: "archive",
   rar: "archive",
   "7z": "archive",
   tar: "archive",
   gz: "archive",
-  // Audio
+  // Audio (official: mp3, mpeg, opus, ogg, amr, aac, m4a, wav)
   mp3: "audio",
-  wav: "audio",
+  mpeg: "audio",
+  opus: "audio",
   ogg: "audio",
-  m4a: "audio",
+  amr: "audio",
   aac: "audio",
+  m4a: "audio",
+  wav: "audio",
   flac: "audio",
-  // Video
+  // Video (official: ogg, mp4, mov, webm, quicktime, avi)
   mp4: "video",
   mov: "video",
+  webm: "video",
   avi: "video",
   mkv: "video",
-  webm: "video",
-  // Images
+  // Images (official: png, jpeg, gif, bmp, webp)
   jpg: "image",
   jpeg: "image",
   png: "image",
   gif: "image",
-  webp: "image",
-  svg: "image",
   bmp: "image",
+  webp: "image",
+  svg: "image", // Not in official list but commonly used
+  // Data formats (official: xml, json)
+  xml: "word",
+  json: "word",
   // Contact
   vcf: "contact",
 };
@@ -127,37 +143,73 @@ export const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
 
 /**
  * Supported image MIME types
+ * Official: png, jpeg, gif, bmp, webp
+ * @see https://developers.chatwoot.com/self-hosted/supported-features#outgoing-attachments-supported-file-types
  */
 export const IMAGE_MIME_TYPES = [
-  "image/jpeg",
   "image/png",
+  "image/jpeg",
   "image/gif",
-  "image/webp",
-  "image/svg+xml",
   "image/bmp",
+  "image/webp",
+  "image/svg+xml", // Not official but commonly used
 ] as const;
 
 /**
  * Supported video MIME types
+ * Official: ogg, mp4, mov, webm, quicktime, avi
+ * @see https://developers.chatwoot.com/self-hosted/supported-features#outgoing-attachments-supported-file-types
  */
 export const VIDEO_MIME_TYPES = [
+  "video/ogg",
   "video/mp4",
-  "video/quicktime",
-  "video/x-msvideo",
-  "video/x-matroska",
+  "video/quicktime", // mov
   "video/webm",
+  "video/x-msvideo", // avi
+  "video/x-matroska", // mkv (not official but common)
 ] as const;
 
 /**
  * Supported audio MIME types
+ * Official: mp3, mpeg, opus, ogg, amr, aac, m4a, wav
+ * @see https://developers.chatwoot.com/self-hosted/supported-features#outgoing-attachments-supported-file-types
  */
 export const AUDIO_MIME_TYPES = [
-  "audio/mpeg",
-  "audio/wav",
+  "audio/mpeg", // mp3
+  "audio/opus",
   "audio/ogg",
-  "audio/mp4",
+  "audio/amr",
   "audio/aac",
-  "audio/flac",
+  "audio/mp4", // m4a
+  "audio/x-m4a", // m4a alternative
+  "audio/wav",
+  "audio/x-wav",
+  "audio/flac", // Not official but common
+] as const;
+
+/**
+ * Supported document MIME types
+ * Official: pdf, doc, docx, xls, xlsx, ppt, pptx, zip, 7z, rar, tar, xml, csv, json, rtf, txt
+ * @see https://developers.chatwoot.com/self-hosted/supported-features#outgoing-attachments-supported-file-types
+ */
+export const DOCUMENT_MIME_TYPES = [
+  "application/pdf",
+  "application/msword", // doc
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document", // docx
+  "application/vnd.ms-excel", // xls
+  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", // xlsx
+  "application/vnd.ms-powerpoint", // ppt
+  "application/vnd.openxmlformats-officedocument.presentationml.presentation", // pptx
+  "application/zip",
+  "application/x-7z-compressed", // 7z
+  "application/vnd.rar", // rar
+  "application/x-tar", // tar
+  "application/xml",
+  "text/xml",
+  "text/csv",
+  "application/json",
+  "application/rtf",
+  "text/plain", // txt
 ] as const;
 
 /**

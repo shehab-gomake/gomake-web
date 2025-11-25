@@ -342,23 +342,32 @@ export const convertAttachmentsToFiles = async (
 
 /**
  * Image file extensions
+ * Official Chatwoot: png, jpeg, gif, bmp, webp
+ * @see https://developers.chatwoot.com/self-hosted/supported-features#outgoing-attachments-supported-file-types
  */
 const IMAGE_EXTENSIONS = new Set([
-  "jpg", "jpeg", "png", "gif", "webp", "svg", "bmp", "ico", "tiff", "tif"
+  "png", "jpg", "jpeg", "gif", "bmp", "webp",
+  "svg", "ico", "tiff", "tif" // Additional common formats
 ]);
 
 /**
  * Video file extensions
+ * Official Chatwoot: ogg, mp4, mov, webm, quicktime, avi
+ * @see https://developers.chatwoot.com/self-hosted/supported-features#outgoing-attachments-supported-file-types
  */
 const VIDEO_EXTENSIONS = new Set([
-  "mp4", "webm", "mov", "avi", "mkv", "wmv", "flv", "m4v", "ogv"
+  "ogg", "mp4", "mov", "webm", "avi",
+  "mkv", "wmv", "flv", "m4v", "ogv" // Additional common formats
 ]);
 
 /**
  * Audio file extensions
+ * Official Chatwoot: mp3, mpeg, opus, ogg, amr, aac, m4a, wav
+ * @see https://developers.chatwoot.com/self-hosted/supported-features#outgoing-attachments-supported-file-types
  */
 const AUDIO_EXTENSIONS = new Set([
-  "mp3", "wav", "ogg", "aac", "flac", "m4a", "wma", "opus"
+  "mp3", "mpeg", "opus", "ogg", "amr", "aac", "m4a", "wav",
+  "flac", "wma" // Additional common formats
 ]);
 
 /**
