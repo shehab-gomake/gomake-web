@@ -33,6 +33,26 @@ export type {
   UnreadCountChangeHandler,
 } from './chatwoot-notifications-websocket.helper';
 
+// Chatwoot Conversations WebSocket Helper
+export {
+  chatwootConversationsWebSocketHelper,
+  ChatwootConversationsWebSocketHelper,
+} from './chatwoot-conversations-websocket.helper';
+export type {
+  ConversationCreatedEvent,
+  ConversationUpdatedEvent,
+  ConversationStatusChangedEvent,
+  MessageCreatedEvent,
+  AssigneeChangedEvent,
+  TypingEvent,
+  ConversationCreatedHandler,
+  ConversationUpdatedHandler,
+  ConversationStatusChangedHandler,
+  MessageCreatedHandler,
+  AssigneeChangedHandler,
+  TypingHandler,
+} from './chatwoot-conversations-websocket.helper';
+
 // Re-export types for convenience (rename Message to avoid conflicts with API types)
 export type {
   Message as WebSocketMessage,

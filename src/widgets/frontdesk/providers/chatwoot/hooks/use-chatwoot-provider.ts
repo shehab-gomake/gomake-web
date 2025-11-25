@@ -7,6 +7,8 @@ import { useChatwootProfile } from "./use-chatwoot-profile";
 import { useChatwootInboxes } from "./use-chatwoot-inboxes";
 import { useChatwootCache } from "./use-chatwoot-cache";
 import { useChatwootConversationUpdater } from "./use-chatwoot-conversation-updater";
+import { useChatwootConversationWebSocket } from "./use-chatwoot-conversation-websocket";
+import { useSnackBar } from "@/hooks";
 import {
   ConversationListParams,
   ConversationStatus,
@@ -69,6 +71,9 @@ export const useChatwootProvider = () => {
   const selectedInboxId = useRecoilValue(chatwootSelectedInboxIdAtom);
   const setCounts = useSetRecoilState(chatwootConversationCountsAtom);
 
+  // Toast notifications
+  const { setSnackbarStateValue } = useSnackBar();
+
   // Use the custom hook to get profile state (prevents multiple API calls)
   const { profile, loading: profileLoading, error: profileError, fetchProfile } = useChatwootProfile();
 
@@ -97,6 +102,70 @@ export const useChatwootProvider = () => {
 
   // Cache-aware conversation updater (updates all caches, not just legacy atom)
   const { updateConversation: updateConversationCache } = useChatwootConversationUpdater();
+
+  // Helper to show toast notifications safely
+  const showToast = useCallback(
+    (message: string, type: "success" | "error" | "warning" = "success") => {
+      try {
+        setSnackbarStateValue({
+          state: true,
+          message,
+          type,
+        });
+      } catch (err) {
+        // Silently fail if snackbar isn't available
+        logger.warn("Failed to show toast notification:", err);
+      }
+    },
+    [setSnackbarStateValue]
+  );
+
+  // Real-time WebSocket for conversation updates (new conversations, messages, status changes)
+  // This enables instant updates without manual refresh
+  const websocket = useChatwootConversationWebSocket({
+    accountId: currentAccountId,
+    enabled: true, // Enable real-time updates
+    onNewConversation: useCallback(
+      (conversation: ChatwootConversation) => {
+        // Safety check for conversation data
+        if (!conversation?.id) {
+          logger.warn("Received invalid conversation in WebSocket event");
+          return;
+        }
+
+        const senderName = conversation.meta?.sender?.name || "Unknown";
+        const inboxChannel = conversation.meta?.channel || "";
+        const conversationId = conversation.id;
+
+        logger.info("New conversation received via WebSocket:", {
+          id: conversationId,
+          sender: senderName,
+          channel: inboxChannel,
+        });
+
+        // Show toast notification for new conversation
+        const channelIcon = inboxChannel === "Channel::Email" ? "📧" : inboxChannel === "Channel::Whatsapp" ? "💬" : "🔔";
+        showToast(`${channelIcon} New conversation from ${senderName}`, "success");
+      },
+      [showToast]
+    ),
+    onNewMessage: useCallback(
+      (conversationId: number, message: any) => {
+        // Safety check
+        if (!conversationId) {
+          return;
+        }
+
+        logger.debug("New message received via WebSocket:", {
+          conversationId,
+          messageId: message?.id,
+        });
+        // Note: We don't show toast for every message to avoid notification spam
+        // Toast is only shown for new conversations
+      },
+      []
+    ),
+  });
 
   // Debounce timer for filter changes to batch rapid updates
   const filterDebounceTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -644,6 +713,13 @@ export const useChatwootProvider = () => {
       invalidate: cache.invalidateCaches,
       getStats: cache.getStats,
       count: cache.cacheCount,
+    },
+
+    // Real-time WebSocket status
+    websocket: {
+      connected: websocket.connected,
+      error: websocket.error,
+      typing: websocket.typing,
     },
   };
 };
