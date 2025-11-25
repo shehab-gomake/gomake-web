@@ -126,6 +126,54 @@ const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial, 
   };
   useEffect(() => {
     if (newDieCutSelect && parameter?.code === "DieCutter") {
+      // List of all dynamic API fields that should be included in additionalAttribute
+      const dynamicApiFields = [
+        "dieUnitWidth", "dieUnitLength", "dieUnitHeight",
+        "dieUnitLidHeight_LID", "dieUnitFlapLength_FOLD",
+        "dieUnitBottomOverlap_O", "dieUnitFrontHeight_F",
+        "dieUnitDiameter_D", "dieUnitNumberOfSides_N",
+        "dieUnitHandleFlapHeight_Z", "dieUnitBaseThickness_B",
+        "dieUnitLidOverlap_O", "dieUnitRoofHeight_ROOF",
+        "dieUnitDraftAngle_DRAFT", "dieUnitFlapHeight_A",
+        "dieUnitFlapWidth_B", "dieUnitBottomLength_V",
+        "dieUnitBottomWidth_J"
+      ];
+
+      // Base attributes that are always included
+      const baseAttributes = [
+        { valueId: "name", value: newDieCutSelect.rowData.name.value },
+        { valueId: "image", value: newDieCutSelect.rowData.image.value },
+        { valueId: "width", value: newDieCutSelect.rowData.width.value },
+        { valueId: "length", value: newDieCutSelect.rowData.length.value },
+        { valueId: "code", value: newDieCutSelect.rowData.code.value },
+        { valueId: "shape", value: newDieCutSelect.rowData.shape.value },
+        { valueId: "type", value: newDieCutSelect.rowData.type.value },
+        { valueId: "unitWidth", value: newDieCutSelect.rowData.unitWidth.value },
+        { valueId: "unitLength", value: newDieCutSelect.rowData.unitLength.value },
+        { valueId: "finalUnitWidth", value: newDieCutSelect.rowData.finalUnitWidth.value },
+        { valueId: "finalUnitLength", value: newDieCutSelect.rowData.finalUnitLength.value },
+        { valueId: "finalUnitHeight", value: newDieCutSelect.rowData.finalUnitHeight.value },
+        { valueId: "columnsAmount", value: newDieCutSelect.rowData.columnsAmount.value },
+        { valueId: "linesAmount", value: newDieCutSelect.rowData.linesAmount.value },
+        { valueId: "cuttingLineLength", value: newDieCutSelect.rowData.cuttingLineLength.value },
+        { valueId: "scoringLineLength", value: newDieCutSelect.rowData.scoringLineLength.value },
+        { valueId: "perforationLineLength", value: newDieCutSelect.rowData.perforationLineLength.value },
+      ];
+
+      // Dynamically add all API fields that have values
+      const dynamicAttributes = dynamicApiFields
+        .map(fieldName => {
+          // Check both exact case and variations
+          const value = newDieCutSelect.rowData[fieldName]?.value ||
+            newDieCutSelect.rowData[fieldName.charAt(0).toUpperCase() + fieldName.slice(1)]?.value ||
+            newDieCutSelect.rowData[fieldName.toLowerCase()]?.value;
+          if (value !== undefined && value !== null && value !== "") {
+            return { valueId: fieldName, value: value };
+          }
+          return null;
+        })
+        .filter(attr => attr !== null);
+
       const formattedData = {
         id: newDieCutSelect.rowData.code.value,
         activateAction: false,
@@ -136,80 +184,7 @@ const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial, 
         selectedParameterValues: null,
         updateName: newDieCutSelect.rowData.name.value,
         values: [newDieCutSelect.rowData.name.value],
-        additionalAttribute: [
-          {
-            valueId: "name",
-            value: newDieCutSelect.rowData.name.value
-          },
-          {
-            valueId: "image",
-            value: newDieCutSelect.rowData.image.value
-          },
-          {
-            valueId: "width",
-            value: newDieCutSelect.rowData.width.value
-          },
-          {
-            valueId: "length",
-            value: newDieCutSelect.rowData.length.value
-          },
-          {
-            valueId: "code",
-            value: newDieCutSelect.rowData.code.value
-          },
-          {
-            valueId: "shape",
-            value: newDieCutSelect.rowData.shape.value
-          },
-          {
-            valueId: "type",
-            value: newDieCutSelect.rowData.type.value
-          },
-          {
-            valueId: "unitWidth",
-            value: newDieCutSelect.rowData.unitWidth.value
-          },
-          {
-            valueId: "unitLength",
-            value: newDieCutSelect.rowData.unitLength.value
-          },
-          {
-            valueId: "finalUnitWidth",
-            value: newDieCutSelect.rowData.finalUnitWidth.value
-          },
-          {
-            valueId: "finalUnitLength",
-            value: newDieCutSelect.rowData.finalUnitLength.value
-          },
-          {
-            valueId: "finalUnitHeight",
-            value: newDieCutSelect.rowData.finalUnitHeight.value
-          },
-          {
-            valueId: "dieUnitFlapLength_FOLD",
-            value: newDieCutSelect.rowData.dieUnitFlapLength_FOLD?.value || newDieCutSelect.rowData.dieUnitFlapLength?.value || ""
-          },
-          {
-            valueId: "columnsAmount",
-            value: newDieCutSelect.rowData.columnsAmount.value
-          },
-          {
-            valueId: "linesAmount",
-            value: newDieCutSelect.rowData.linesAmount.value
-          },
-          {
-            valueId: "cuttingLineLength",
-            value: newDieCutSelect.rowData.cuttingLineLength.value
-          },
-          {
-            valueId: "scoringLineLength",
-            value: newDieCutSelect.rowData.scoringLineLength.value
-          },
-          {
-            valueId: "perforationLineLength",
-            value: newDieCutSelect.rowData.perforationLineLength.value
-          },
-        ],
+        additionalAttribute: [...baseAttributes, ...dynamicAttributes],
         currency: newDieCutSelect.rowData.currency.value
       };
       setSearchResult((prev: any) => {
@@ -576,7 +551,28 @@ const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial, 
     const sheetcategory = subProducts.flatMap((item: any) => item.parameters).find((param: any) => param.parameterCode === "Sheetcategory")?.values[0];
     const sheetColor = subProducts.flatMap((item: any) => item.parameters).find((param: any) => param.parameterCode === "SheetColor")?.values[0];
     const unit = subProducts.flatMap((item: any) => item.parameters).find((param: any) => param.parameterCode === "DieUnitWidth")?.unitKey;
-    const lidHeight = subProducts.flatMap((item: any) => item.parameters).find((param: any) => param.parameterCode === "LidHeight")?.values[0];
+
+    // List of all possible API fields that can be dynamically added
+    const allApiFields = [
+      "dieUnitWidth",
+      "dieUnitLength",
+      "dieUnitHeight",
+      "dieUnitLidHeight_LID",
+      "dieUnitFlapLength_FOLD",
+      "dieUnitBottomOverlap_O",
+      "dieUnitFrontHeight_F",
+      "dieUnitDiameter_D",
+      "dieUnitNumberOfSides_N",
+      "dieUnitHandleFlapHeight_Z",
+      "dieUnitBaseThickness_B",
+      "dieUnitLidOverlap_O",
+      "dieUnitRoofHeight_ROOF",
+      "dieUnitDraftAngle_DRAFT",
+      "dieUnitFlapHeight_A",
+      "dieUnitFlapWidth_B",
+      "dieUnitBottomLength_V",
+      "dieUnitBottomWidth_J",
+    ];
 
     // Get dynamic parameters and build reqObj dynamically
     const dynamicParams = getDynamicParameters();
@@ -588,12 +584,12 @@ const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial, 
       unit: unit,
     };
 
-    // Map dynamic parameters to API field names
+    // Map dynamic parameters to API field names and add if they have values
     dynamicParams.forEach((param: any) => {
       const value = customDimensions[param.code];
       if (value !== undefined && value !== "" && value !== null) {
         const apiFieldName = mapParameterToApiField(param.code);
-        if (apiFieldName) {
+        if (apiFieldName && allApiFields.includes(apiFieldName)) {
           reqObj[apiFieldName] = Number(value);
         }
       }
@@ -607,6 +603,54 @@ const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial, 
           // getProductById(materials);
         });
         if (parameter?.code === "DieCutter") {
+          // List of all dynamic API fields that should be included in additionalAttribute
+          const dynamicApiFields = [
+            "dieUnitWidth", "dieUnitLength", "dieUnitHeight",
+            "dieUnitLidHeight_LID", "dieUnitFlapLength_FOLD",
+            "dieUnitBottomOverlap_O", "dieUnitFrontHeight_F",
+            "dieUnitDiameter_D", "dieUnitNumberOfSides_N",
+            "dieUnitHandleFlapHeight_Z", "dieUnitBaseThickness_B",
+            "dieUnitLidOverlap_O", "dieUnitRoofHeight_ROOF",
+            "dieUnitDraftAngle_DRAFT", "dieUnitFlapHeight_A",
+            "dieUnitFlapWidth_B", "dieUnitBottomLength_V",
+            "dieUnitBottomWidth_J"
+          ];
+
+          // Base attributes that are always included
+          const baseAttributes = [
+            { valueId: "name", value: res.data.data.rowData.name.value },
+            { valueId: "image", value: res.data.data.rowData.image.value },
+            { valueId: "width", value: res.data.data.rowData.width.value },
+            { valueId: "length", value: res.data.data.rowData.length.value },
+            { valueId: "code", value: res.data.data.rowData.code.value },
+            { valueId: "shape", value: res.data.data.rowData.shape.value },
+            { valueId: "type", value: res.data.data.rowData.type.value },
+            { valueId: "unitWidth", value: res?.data?.data?.rowData?.unitWidth?.value },
+            { valueId: "unitLength", value: res?.data?.data?.rowData?.unitLength?.value },
+            { valueId: "finalUnitWidth", value: res?.data?.data?.rowData?.finalUnitWidth?.value },
+            { valueId: "finalUnitLength", value: res?.data?.data?.rowData?.finalUnitLength?.value },
+            { valueId: "finalUnitHeight", value: res?.data?.data?.rowData?.finalUnitHeight?.value },
+            { valueId: "columnsAmount", value: res?.data?.data?.rowData?.columnsAmount?.value },
+            { valueId: "linesAmount", value: res?.data?.data?.rowData?.linesAmount?.value },
+            { valueId: "cuttingLineLength", value: res?.data?.data?.rowData?.cuttingLineLength?.value },
+            { valueId: "scoringLineLength", value: res?.data?.data?.rowData?.scoringLineLength?.value },
+            { valueId: "perforationLineLength", value: res?.data?.data?.rowData?.perforationLineLength?.value },
+          ];
+
+          // Dynamically add all API fields that have values
+          const dynamicAttributes = dynamicApiFields
+            .map(fieldName => {
+              // Check both exact case and variations
+              const value = res?.data?.data?.rowData?.[fieldName]?.value ||
+                res?.data?.data?.rowData?.[fieldName.charAt(0).toUpperCase() + fieldName.slice(1)]?.value ||
+                res?.data?.data?.rowData?.[fieldName.toLowerCase()]?.value;
+              if (value !== undefined && value !== null && value !== "") {
+                return { valueId: fieldName, value: value };
+              }
+              return null;
+            })
+            .filter(attr => attr !== null);
+
           const formattedData = {
             id: res.data.data.id,
             activateAction: false,
@@ -617,80 +661,7 @@ const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial, 
             selectedParameterValues: null,
             updateName: res.data.data.rowData.name.value,
             values: [res.data.data.rowData.name.value],
-            additionalAttribute: [
-              {
-                valueId: "name",
-                value: res.data.data.rowData.name.value
-              },
-              {
-                valueId: "image",
-                value: res.data.data.rowData.image.value
-              },
-              {
-                valueId: "width",
-                value: res.data.data.rowData.width.value
-              },
-              {
-                valueId: "length",
-                value: res.data.data.rowData.length.value
-              },
-              {
-                valueId: "code",
-                value: res.data.data.rowData.code.value
-              },
-              {
-                valueId: "shape",
-                value: res.data.data.rowData.shape.value
-              },
-              {
-                valueId: "type",
-                value: res.data.data.rowData.type.value
-              },
-              {
-                valueId: "unitWidth",
-                value: res?.data?.data?.rowData?.unitWidth?.value
-              },
-              {
-                valueId: "unitLength",
-                value: res?.data?.data?.rowData?.unitLength?.value
-              },
-              {
-                valueId: "finalUnitWidth",
-                value: res?.data?.data?.rowData?.finalUnitWidth?.value
-              },
-              {
-                valueId: "finalUnitLength",
-                value: res?.data?.data?.rowData?.finalUnitLength?.value
-              },
-              {
-                valueId: "finalUnitHeight",
-                value: res?.data?.data?.rowData?.finalUnitHeight?.value
-              },
-              {
-                valueId: "dieUnitFlapLength_FOLD",
-                value: res?.data?.data?.rowData?.dieUnitFlapLength_FOLD?.value || res?.data?.data?.rowData?.dieUnitFlapLength?.value || ""
-              },
-              {
-                valueId: "columnsAmount",
-                value: res?.data?.data?.rowData?.columnsAmount?.value
-              },
-              {
-                valueId: "linesAmount",
-                value: res?.data?.data?.rowData?.linesAmount?.value
-              },
-              {
-                valueId: "cuttingLineLength",
-                value: res?.data?.data?.rowData?.cuttingLineLength?.value
-              },
-              {
-                valueId: "scoringLineLength",
-                value: res?.data?.data?.rowData?.scoringLineLength?.value
-              },
-              {
-                valueId: "perforationLineLength",
-                value: res?.data?.data?.rowData?.perforationLineLength?.value
-              },
-            ],
+            additionalAttribute: [...baseAttributes, ...dynamicAttributes],
           };
           setSearchResult((prev: any) => {
             return [formattedData, ...prev,] // Add the new item to the data list

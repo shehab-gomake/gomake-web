@@ -6133,19 +6133,140 @@ const useDigitalOffsetPrice = ({
             subSectionParameter?.code === "DieCutter") &&
           hasDieCutOrDieKissCut
         ) {
-          const parametersToRemove = [
+          // Dynamic list of all API fields that can be populated from DieCut
+          const dynamicApiFields: Record<string, string[]> = {
+            "DieUnitWidth": ["finalUnitWidth", "dieUnitWidth", "unitWidth", "width"],
+            "DieUnitLength": ["finalUnitLength", "dieUnitLength", "unitLength", "length"],
+            "DieUnitHeight": ["finalUnitHeight", "dieUnitHeight", "unitHeight", "height"],
+            "DieUnitFlapLength_FOLD": ["DieUnitFlapLength_FOLD", "dieUnitFlapLength_FOLD", "dieUnitFlapLength", "flapLength"],
+            "DieUnitLidHeight_LID": ["DieUnitLidHeight_LID", "dieUnitLidHeight_LID", "LidHeight_LID", "lidHeight_LID", "LidHeight", "lidHeight"],
+            "DieUnitBottomOverlap_O": ["DieUnitBottomOverlap_O", "dieUnitBottomOverlap_O", "BottomOverlap", "bottomOverlap"],
+            "DieUnitFrontHeight_F": ["DieUnitFrontHeight_F", "dieUnitFrontHeight_F", "FrontHeight", "frontHeight"],
+            "DieUnitDiameter_D": ["DieUnitDiameter_D", "dieUnitDiameter_D", "Diameter", "diameter"],
+            "DieUnitNumberOfSides_N": ["DieUnitNumberOfSides_N", "dieUnitNumberOfSides_N", "NumberOfSides", "numberOfSides"],
+            "DieUnitHandleFlapHeight_Z": ["DieUnitHandleFlapHeight_Z", "dieUnitHandleFlapHeight_Z", "HandleFlapHeight", "handleFlapHeight"],
+            "DieUnitBaseThickness_B": ["DieUnitBaseThickness_B", "dieUnitBaseThickness_B", "BaseThickness", "baseThickness"],
+            "DieUnitLidOverlap_O": ["DieUnitLidOverlap_O", "dieUnitLidOverlap_O", "LidOverlap", "lidOverlap"],
+            "DieUnitRoofHeight_ROOF": ["DieUnitRoofHeight_ROOF", "dieUnitRoofHeight_ROOF", "RoofHeight", "roofHeight"],
+            "DieUnitDraftAngle_DRAFT": ["DieUnitDraftAngle_DRAFT", "dieUnitDraftAngle_DRAFT", "DraftAngle", "draftAngle"],
+            "DieUnitFlapHeight_A": ["DieUnitFlapHeight_A", "dieUnitFlapHeight_A", "FlapHeight", "flapHeight"],
+            "DieUnitFlapWidth_B": ["DieUnitFlapWidth_B", "dieUnitFlapWidth_B", "FlapWidth", "flapWidth"],
+            "DieUnitBottomLength_V": ["DieUnitBottomLength_V", "dieUnitBottomLength_V", "BottomLength", "bottomLength"],
+            "DieUnitBottomWidth_J": ["DieUnitBottomWidth_J", "dieUnitBottomWidth_J", "BottomWidth", "bottomWidth"],
+          };
+
+          // List of all parameters that can be removed if not present in new selection
+          const parametersToCheck = [
             "Height",
             "Width",
-            "size",
             "DieUnitWidth",
             "DieUnitLength",
             "DieUnitHeight",
-            // "DieCutter"
+            "DieUnitFlapLength_FOLD",
+            "DieUnitLidHeight_LID",
+            "DieUnitBottomOverlap_O",
+            "DieUnitFrontHeight_F",
+            "DieUnitDiameter_D",
+            "DieUnitNumberOfSides_N",
+            "DieUnitHandleFlapHeight_Z",
+            "DieUnitBaseThickness_B",
+            "DieUnitLidOverlap_O",
+            "DieUnitRoofHeight_ROOF",
+            "DieUnitDraftAngle_DRAFT",
+            "DieUnitFlapHeight_A",
+            "DieUnitFlapWidth_B",
+            "DieUnitBottomLength_V",
+            "DieUnitBottomWidth_J",
           ];
 
-          // temp = temp.filter(
-          //   (param) => !parametersToRemove.includes(param.parameterCode)
-          // );
+          // Get the new dieCut value from valueConfig or dieCut parameter
+          let newDieCutValue = null;
+          if (valueConfig && valueConfig.additionalAttribute) {
+            newDieCutValue = valueConfig;
+          } else if (dieCut) {
+            newDieCutValue = dieCut;
+          } else if (subSectionParameter?.code === "DiecutType") {
+            // When DiecutType changes, try to get the current DieCutter value
+            const dieCutterParameter = subSection.parameters.find(
+              (p) => p.code === "DieCutter" || p.code === "DieCut"
+            );
+            if (dieCutterParameter) {
+              const dieCutterSubProductParam = temp.find(
+                (p) => p.parameterId === dieCutterParameter.id && p.actionIndex === dieCutterParameter.actionIndex
+              );
+              if (dieCutterSubProductParam && dieCutterSubProductParam.valueIds && dieCutterSubProductParam.valueIds.length > 0) {
+                const dieCutterValueConfig = dieCutterParameter.valuesConfigs?.find(
+                  (vc) => vc.id === dieCutterSubProductParam.valueIds[0]
+                );
+                if (dieCutterValueConfig && (dieCutterValueConfig.additionalAttribute || dieCutterValueConfig.rowData)) {
+                  newDieCutValue = dieCutterValueConfig;
+                }
+              }
+            }
+          }
+
+          // Helper function to check if a value exists in the new dieCut
+          const getValueFromDieCut = (fieldNames: string[]) => {
+            if (!newDieCutValue) return "";
+
+            // Check additionalAttribute first
+            if (newDieCutValue.additionalAttribute) {
+              for (const fieldName of fieldNames) {
+                const item = newDieCutValue.additionalAttribute.find(
+                  (attr) => attr.valueId === fieldName
+                );
+                if (item && item.value) return item.value + "";
+              }
+            }
+
+            // Check rowData if available
+            if (newDieCutValue.rowData) {
+              for (const fieldName of fieldNames) {
+                if (newDieCutValue.rowData[fieldName]?.value) {
+                  return newDieCutValue.rowData[fieldName].value + "";
+                }
+              }
+            }
+
+            return "";
+          };
+
+          // Determine which parameters are valid for the new selection
+          const validParameters = new Set<string>();
+
+          // Always include Width and Height if they have values
+          if (getValueFromDieCut(["unitWidth", "dieUnitWidth", "finalUnitWidth", "width"])) {
+            validParameters.add("Width");
+          }
+          if (getValueFromDieCut(["unitLength", "dieUnitLength", "finalUnitLength", "length"])) {
+            validParameters.add("Height");
+          }
+
+          // Check each dynamic API field
+          Object.keys(dynamicApiFields).forEach((parameterCode) => {
+            const fieldNames = dynamicApiFields[parameterCode];
+            const value = getValueFromDieCut(fieldNames);
+            if (value) {
+              validParameters.add(parameterCode);
+            }
+          });
+
+          // Remove parameters that are not valid for the new selection
+          // Only remove if we have a new dieCut value (not when clearing)
+          if (newDieCutValue && data?.valueIds && data?.values) {
+            temp = temp.filter((param) => {
+              // Keep parameters that are not in the check list
+              if (!parametersToCheck.includes(param.parameterCode)) {
+                return true;
+              }
+              // Keep parameters that are valid for the new selection
+              if (validParameters.has(param.parameterCode)) {
+                return true;
+              }
+              // Remove parameters that are not valid
+              return false;
+            });
+          }
 
           // Find and handle size parameter after DieCut removal
           let sizeParameter = subSection.parameters.find(
@@ -6197,8 +6318,8 @@ const useDigitalOffsetPrice = ({
             }
           }
 
-          // Remove locked status from other parameters that were removed
-          parametersToRemove.forEach((paramCode) => {
+          // Remove locked status from remaining parameters
+          parametersToCheck.forEach((paramCode) => {
             const paramToUnlock = temp.find(
               (p) => p.parameterCode === paramCode
             );
@@ -6217,6 +6338,7 @@ const useDigitalOffsetPrice = ({
             data?.values === "" ||
             data?.valueIds === null)
         ) {
+          // Dynamic list of all API fields that should be removed/unlocked when DieCut is removed
           const parametersToRemove = [
             "Height",
             "Width",
@@ -6224,6 +6346,21 @@ const useDigitalOffsetPrice = ({
             "DieUnitWidth",
             "DieUnitLength",
             "DieUnitHeight",
+            "DieUnitFlapLength_FOLD",
+            "DieUnitLidHeight_LID",
+            "DieUnitBottomOverlap_O",
+            "DieUnitFrontHeight_F",
+            "DieUnitDiameter_D",
+            "DieUnitNumberOfSides_N",
+            "DieUnitHandleFlapHeight_Z",
+            "DieUnitBaseThickness_B",
+            "DieUnitLidOverlap_O",
+            "DieUnitRoofHeight_ROOF",
+            "DieUnitDraftAngle_DRAFT",
+            "DieUnitFlapHeight_A",
+            "DieUnitFlapWidth_B",
+            "DieUnitBottomLength_V",
+            "DieUnitBottomWidth_J",
           ];
 
           // Remove the parameters from temp
@@ -6659,6 +6796,16 @@ const useDigitalOffsetPrice = ({
                     }
                     return "";
                   };
+
+                  // Helper to get value from either source with multiple field name variations
+                  const getValueDynamic = (fieldNames: string[]) => {
+                    for (const fieldName of fieldNames) {
+                      const value = getValue(fieldName) || getValueFromRowData(fieldName);
+                      if (value) return value;
+                    }
+                    return "";
+                  };
+
                   let width = getValue("width");
                   let length = getValue("length");
                   let unitWidth = getValue("unitWidth");
@@ -6668,18 +6815,31 @@ const useDigitalOffsetPrice = ({
                   let finalUnitWidth = getValue("finalUnitWidth");
                   let finalUnitLength = getValue("finalUnitLength");
                   let finalUnitHeight = getValue("finalUnitHeight");
-                  // Get flap length - check both additionalAttribute and rowData (with exact case from API)
-                  let dieUnitFlapLength = getValue("dieUnitFlapLength_FOLD") ||
-                    getValue("DieUnitFlapLength_FOLD") ||
-                    getValue("dieUnitFlapLength") ||
-                    getValue("flapLength") ||
-                    getValueFromRowData("DieUnitFlapLength_FOLD") ||
-                    getValueFromRowData("dieUnitFlapLength_FOLD") ||
-                    getValueFromRowData("dieUnitFlapLength") ||
-                    getValueFromRowData("flapLength") ||
-                    "";
+
+                  // List of all dynamic API fields that can be populated
+                  const dynamicApiFields: Record<string, string[]> = {
+                    "DieUnitWidth": ["finalUnitWidth", "dieUnitWidth", "unitWidth", "width"],
+                    "DieUnitLength": ["finalUnitLength", "dieUnitLength", "unitLength", "length"],
+                    "DieUnitHeight": ["finalUnitHeight", "dieUnitHeight", "unitHeight", "height"],
+                    "DieUnitFlapLength_FOLD": ["DieUnitFlapLength_FOLD", "dieUnitFlapLength_FOLD", "dieUnitFlapLength", "flapLength"],
+                    "DieUnitLidHeight_LID": ["DieUnitLidHeight_LID", "dieUnitLidHeight_LID", "LidHeight_LID", "lidHeight_LID", "LidHeight", "lidHeight"],
+                    "DieUnitBottomOverlap_O": ["DieUnitBottomOverlap_O", "dieUnitBottomOverlap_O", "BottomOverlap", "bottomOverlap"],
+                    "DieUnitFrontHeight_F": ["DieUnitFrontHeight_F", "dieUnitFrontHeight_F", "FrontHeight", "frontHeight"],
+                    "DieUnitDiameter_D": ["DieUnitDiameter_D", "dieUnitDiameter_D", "Diameter", "diameter"],
+                    "DieUnitNumberOfSides_N": ["DieUnitNumberOfSides_N", "dieUnitNumberOfSides_N", "NumberOfSides", "numberOfSides"],
+                    "DieUnitHandleFlapHeight_Z": ["DieUnitHandleFlapHeight_Z", "dieUnitHandleFlapHeight_Z", "HandleFlapHeight", "handleFlapHeight"],
+                    "DieUnitBaseThickness_B": ["DieUnitBaseThickness_B", "dieUnitBaseThickness_B", "BaseThickness", "baseThickness"],
+                    "DieUnitLidOverlap_O": ["DieUnitLidOverlap_O", "dieUnitLidOverlap_O", "LidOverlap", "lidOverlap"],
+                    "DieUnitRoofHeight_ROOF": ["DieUnitRoofHeight_ROOF", "dieUnitRoofHeight_ROOF", "RoofHeight", "roofHeight"],
+                    "DieUnitDraftAngle_DRAFT": ["DieUnitDraftAngle_DRAFT", "dieUnitDraftAngle_DRAFT", "DraftAngle", "draftAngle"],
+                    "DieUnitFlapHeight_A": ["DieUnitFlapHeight_A", "dieUnitFlapHeight_A", "FlapHeight", "flapHeight"],
+                    "DieUnitFlapWidth_B": ["DieUnitFlapWidth_B", "dieUnitFlapWidth_B", "FlapWidth", "flapWidth"],
+                    "DieUnitBottomLength_V": ["DieUnitBottomLength_V", "dieUnitBottomLength_V", "BottomLength", "bottomLength"],
+                    "DieUnitBottomWidth_J": ["DieUnitBottomWidth_J", "dieUnitBottomWidth_J", "BottomWidth", "bottomWidth"],
+                  };
 
                   const dieCutSizesParametersArray = [];
+                  // Add Width and Height (legacy fields)
                   dieCutSizesParametersArray.push({
                     parameterCode: "Width",
                     value: dieUnitWidth || unitWidth || width,
@@ -6688,22 +6848,17 @@ const useDigitalOffsetPrice = ({
                     parameterCode: "Height",
                     value: dieUnitLength || unitLength || length,
                   });
-                  dieCutSizesParametersArray.push({
-                    parameterCode: "DieUnitWidth",
-                    value: finalUnitWidth,
-                  });
-                  dieCutSizesParametersArray.push({
-                    parameterCode: "DieUnitLength",
-                    value: finalUnitLength,
-                  });
-                  dieCutSizesParametersArray.push({
-                    parameterCode: "DieUnitHeight",
-                    value: finalUnitHeight,
-                  });
-                  // Add flap length - always add like width, length, height
-                  dieCutSizesParametersArray.push({
-                    parameterCode: "DieUnitFlapLength_FOLD",
-                    value: dieUnitFlapLength,
+
+                  // Dynamically add all fields that have values
+                  Object.keys(dynamicApiFields).forEach((parameterCode) => {
+                    const fieldNames = dynamicApiFields[parameterCode];
+                    const value = getValueDynamic(fieldNames);
+                    if (value) {
+                      dieCutSizesParametersArray.push({
+                        parameterCode: parameterCode,
+                        value: value,
+                      });
+                    }
                   });
                   dieCutSizesParametersArray.forEach((dieCutSizeParameter) => {
                     let dieCutSizeSubProductParameter = temp.find(
@@ -6797,32 +6952,52 @@ const useDigitalOffsetPrice = ({
               );
               return item ? item.value + "" : "";
             };
-            let width = getValue("width");
-            let length = getValue("length");
-            let unitWidth = getValue("unitWidth");
-            let unitLength = getValue("unitLength");
-            let dieUnitWidth = getValue("dieUnitWidth");
-            let dieUnitLength = getValue("dieUnitLength");
-            let finalUnitWidth = getValue("finalUnitWidth");
-            let finalUnitLength = getValue("finalUnitLength");
-            let finalUnitHeight = getValue("finalUnitHeight");
-            // Get flap length - check both additionalAttribute and rowData (with exact case from API)
+            // Helper to get value from either source with multiple field name variations
             const getValueFromRowData = (id) => {
               if (dieCut.rowData && dieCut.rowData[id]?.value) {
                 return dieCut.rowData[id].value + "";
               }
               return "";
             };
-            let dieUnitFlapLength = getValue("dieUnitFlapLength_FOLD") ||
-              getValue("DieUnitFlapLength_FOLD") ||
-              getValue("dieUnitFlapLength") ||
-              getValue("flapLength") ||
-              getValueFromRowData("DieUnitFlapLength_FOLD") ||
-              getValueFromRowData("dieUnitFlapLength_FOLD") ||
-              getValueFromRowData("dieUnitFlapLength") ||
-              getValueFromRowData("flapLength") ||
-              "";
+            const getValueDynamic = (fieldNames: string[]) => {
+              for (const fieldName of fieldNames) {
+                const value = getValue(fieldName) || getValueFromRowData(fieldName);
+                if (value) return value;
+              }
+              return "";
+            };
+
+            let width = getValue("width");
+            let length = getValue("length");
+            let unitWidth = getValue("unitWidth");
+            let unitLength = getValue("unitLength");
+            let dieUnitWidth = getValue("dieUnitWidth");
+            let dieUnitLength = getValue("dieUnitLength");
+
+            // List of all dynamic API fields that can be populated
+            const dynamicApiFields: Record<string, string[]> = {
+              "DieUnitWidth": ["finalUnitWidth", "dieUnitWidth", "unitWidth", "width"],
+              "DieUnitLength": ["finalUnitLength", "dieUnitLength", "unitLength", "length"],
+              "DieUnitHeight": ["finalUnitHeight", "dieUnitHeight", "unitHeight", "height"],
+              "DieUnitFlapLength_FOLD": ["DieUnitFlapLength_FOLD", "dieUnitFlapLength_FOLD", "dieUnitFlapLength", "flapLength"],
+              "DieUnitLidHeight_LID": ["DieUnitLidHeight_LID", "dieUnitLidHeight_LID", "LidHeight_LID", "lidHeight_LID", "LidHeight", "lidHeight"],
+              "DieUnitBottomOverlap_O": ["DieUnitBottomOverlap_O", "dieUnitBottomOverlap_O", "BottomOverlap", "bottomOverlap"],
+              "DieUnitFrontHeight_F": ["DieUnitFrontHeight_F", "dieUnitFrontHeight_F", "FrontHeight", "frontHeight"],
+              "DieUnitDiameter_D": ["DieUnitDiameter_D", "dieUnitDiameter_D", "Diameter", "diameter"],
+              "DieUnitNumberOfSides_N": ["DieUnitNumberOfSides_N", "dieUnitNumberOfSides_N", "NumberOfSides", "numberOfSides"],
+              "DieUnitHandleFlapHeight_Z": ["DieUnitHandleFlapHeight_Z", "dieUnitHandleFlapHeight_Z", "HandleFlapHeight", "handleFlapHeight"],
+              "DieUnitBaseThickness_B": ["DieUnitBaseThickness_B", "dieUnitBaseThickness_B", "BaseThickness", "baseThickness"],
+              "DieUnitLidOverlap_O": ["DieUnitLidOverlap_O", "dieUnitLidOverlap_O", "LidOverlap", "lidOverlap"],
+              "DieUnitRoofHeight_ROOF": ["DieUnitRoofHeight_ROOF", "dieUnitRoofHeight_ROOF", "RoofHeight", "roofHeight"],
+              "DieUnitDraftAngle_DRAFT": ["DieUnitDraftAngle_DRAFT", "dieUnitDraftAngle_DRAFT", "DraftAngle", "draftAngle"],
+              "DieUnitFlapHeight_A": ["DieUnitFlapHeight_A", "dieUnitFlapHeight_A", "FlapHeight", "flapHeight"],
+              "DieUnitFlapWidth_B": ["DieUnitFlapWidth_B", "dieUnitFlapWidth_B", "FlapWidth", "flapWidth"],
+              "DieUnitBottomLength_V": ["DieUnitBottomLength_V", "dieUnitBottomLength_V", "BottomLength", "bottomLength"],
+              "DieUnitBottomWidth_J": ["DieUnitBottomWidth_J", "dieUnitBottomWidth_J", "BottomWidth", "bottomWidth"],
+            };
+
             const dieCutSizesParametersArray = [];
+            // Add Width and Height (legacy fields)
             dieCutSizesParametersArray.push({
               parameterCode: "Width",
               value: width || unitWidth || dieUnitWidth,
@@ -6831,22 +7006,17 @@ const useDigitalOffsetPrice = ({
               parameterCode: "Height",
               value: length || unitLength || dieUnitLength,
             });
-            dieCutSizesParametersArray.push({
-              parameterCode: "DieUnitWidth",
-              value: finalUnitWidth,
-            });
-            dieCutSizesParametersArray.push({
-              parameterCode: "DieUnitLength",
-              value: finalUnitLength,
-            });
-            dieCutSizesParametersArray.push({
-              parameterCode: "DieUnitHeight",
-              value: finalUnitHeight,
-            });
-            // Add flap length - always add like width, length, height
-            dieCutSizesParametersArray.push({
-              parameterCode: "DieUnitFlapLength_FOLD",
-              value: dieUnitFlapLength,
+
+            // Dynamically add all fields that have values
+            Object.keys(dynamicApiFields).forEach((parameterCode) => {
+              const fieldNames = dynamicApiFields[parameterCode];
+              const value = getValueDynamic(fieldNames);
+              if (value) {
+                dieCutSizesParametersArray.push({
+                  parameterCode: parameterCode,
+                  value: value,
+                });
+              }
             });
             dieCutSizesParametersArray.forEach((dieCutSizeParameter) => {
               let dieCutSizeSubProductParameter = temp.find(
@@ -6893,41 +7063,62 @@ const useDigitalOffsetPrice = ({
               subSectionParameter.code === "DieCut") &&
             dieCut?.rowData
           ) {
-            let dieUnitWidth = dieCut.rowData.dieUnitWidth.value + "";
-            let dieUnitLength = dieCut.rowData.dieUnitLength.value + "";
-            let finalUnitWidth = dieCut.rowData.finalUnitWidth.value + "";
-            let finalUnitLength = dieCut.rowData.finalUnitLength.value + "";
-            let finalUnitHeight = dieCut.rowData.finalUnitHeight.value + "";
-            // Get flap length from rowData - check exact case from API response
-            let dieUnitFlapLength = (dieCut.rowData.DieUnitFlapLength_FOLD?.value ||
-              dieCut.rowData.dieUnitFlapLength_FOLD?.value ||
-              dieCut.rowData.dieUnitFlapLength?.value ||
-              dieCut.rowData.flapLength?.value || "") + "";
+            // Helper to get value from rowData with multiple field name variations
+            const getValueFromRowData = (fieldNames: string[]) => {
+              for (const fieldName of fieldNames) {
+                if (dieCut.rowData[fieldName]?.value) {
+                  return dieCut.rowData[fieldName].value + "";
+                }
+              }
+              return "";
+            };
+
+            // List of all dynamic API fields that can be populated from rowData
+            const dynamicApiFields: Record<string, string[]> = {
+              "DieUnitWidth": ["finalUnitWidth", "dieUnitWidth"],
+              "DieUnitLength": ["finalUnitLength", "dieUnitLength"],
+              "DieUnitHeight": ["finalUnitHeight", "dieUnitHeight"],
+              "DieUnitFlapLength_FOLD": ["DieUnitFlapLength_FOLD", "dieUnitFlapLength_FOLD", "dieUnitFlapLength", "flapLength"],
+              "DieUnitLidHeight_LID": ["DieUnitLidHeight_LID", "dieUnitLidHeight_LID", "LidHeight_LID", "lidHeight_LID"],
+              "DieUnitBottomOverlap_O": ["DieUnitBottomOverlap_O", "dieUnitBottomOverlap_O"],
+              "DieUnitFrontHeight_F": ["DieUnitFrontHeight_F", "dieUnitFrontHeight_F"],
+              "DieUnitDiameter_D": ["DieUnitDiameter_D", "dieUnitDiameter_D"],
+              "DieUnitNumberOfSides_N": ["DieUnitNumberOfSides_N", "dieUnitNumberOfSides_N"],
+              "DieUnitHandleFlapHeight_Z": ["DieUnitHandleFlapHeight_Z", "dieUnitHandleFlapHeight_Z"],
+              "DieUnitBaseThickness_B": ["DieUnitBaseThickness_B", "dieUnitBaseThickness_B"],
+              "DieUnitLidOverlap_O": ["DieUnitLidOverlap_O", "dieUnitLidOverlap_O"],
+              "DieUnitRoofHeight_ROOF": ["DieUnitRoofHeight_ROOF", "dieUnitRoofHeight_ROOF"],
+              "DieUnitDraftAngle_DRAFT": ["DieUnitDraftAngle_DRAFT", "dieUnitDraftAngle_DRAFT"],
+              "DieUnitFlapHeight_A": ["DieUnitFlapHeight_A", "dieUnitFlapHeight_A"],
+              "DieUnitFlapWidth_B": ["DieUnitFlapWidth_B", "dieUnitFlapWidth_B"],
+              "DieUnitBottomLength_V": ["DieUnitBottomLength_V", "dieUnitBottomLength_V"],
+              "DieUnitBottomWidth_J": ["DieUnitBottomWidth_J", "dieUnitBottomWidth_J"],
+            };
+
             const dieCutSizesParametersArray = [];
+            // Add Width and Height (legacy fields) - get from rowData
+            const widthValue = getValueFromRowData(["dieUnitWidth", "finalUnitWidth", "unitWidth", "width"]);
+            const lengthValue = getValueFromRowData(["dieUnitLength", "finalUnitLength", "unitLength", "length"]);
+
             dieCutSizesParametersArray.push({
               parameterCode: "Width",
-              value: dieUnitWidth,
+              value: widthValue || "",
             });
             dieCutSizesParametersArray.push({
               parameterCode: "Height",
-              value: dieUnitLength,
+              value: lengthValue || "",
             });
-            dieCutSizesParametersArray.push({
-              parameterCode: "DieUnitWidth",
-              value: finalUnitWidth,
-            });
-            dieCutSizesParametersArray.push({
-              parameterCode: "DieUnitLength",
-              value: finalUnitLength,
-            });
-            dieCutSizesParametersArray.push({
-              parameterCode: "DieUnitHeight",
-              value: finalUnitHeight,
-            });
-            // Add flap length - always add like width, length, height
-            dieCutSizesParametersArray.push({
-              parameterCode: "DieUnitFlapLength_FOLD",
-              value: dieUnitFlapLength,
+
+            // Dynamically add all fields that have values from rowData
+            Object.keys(dynamicApiFields).forEach((parameterCode) => {
+              const fieldNames = dynamicApiFields[parameterCode];
+              const value = getValueFromRowData(fieldNames);
+              if (value) {
+                dieCutSizesParametersArray.push({
+                  parameterCode: parameterCode,
+                  value: value,
+                });
+              }
             });
             dieCutSizesParametersArray.forEach((dieCutSizeParameter) => {
               let dieCutSizeSubProductParameter = temp.find(
@@ -7069,6 +7260,119 @@ const useDigitalOffsetPrice = ({
                     subSectionParameter?.isGeneralInfoInProductionFloor,
                 });
               }
+            });
+          }
+
+          // Clean up parameters that are not valid for the current DieCut/DieCutter selection
+          if (
+            dieCut &&
+            (subSectionParameter?.code === "DieCutter" ||
+              subSectionParameter?.code === "DieCut" ||
+              subSectionParameter?.code === "DieKissCut")
+          ) {
+            // List of all dynamic API fields that can be populated
+            const dynamicApiFields: Record<string, string[]> = {
+              "DieUnitWidth": ["finalUnitWidth", "dieUnitWidth", "unitWidth", "width"],
+              "DieUnitLength": ["finalUnitLength", "dieUnitLength", "unitLength", "length"],
+              "DieUnitHeight": ["finalUnitHeight", "dieUnitHeight", "unitHeight", "height"],
+              "DieUnitFlapLength_FOLD": ["DieUnitFlapLength_FOLD", "dieUnitFlapLength_FOLD", "dieUnitFlapLength", "flapLength"],
+              "DieUnitLidHeight_LID": ["DieUnitLidHeight_LID", "dieUnitLidHeight_LID", "LidHeight_LID", "lidHeight_LID", "LidHeight", "lidHeight"],
+              "DieUnitBottomOverlap_O": ["DieUnitBottomOverlap_O", "dieUnitBottomOverlap_O", "BottomOverlap", "bottomOverlap"],
+              "DieUnitFrontHeight_F": ["DieUnitFrontHeight_F", "dieUnitFrontHeight_F", "FrontHeight", "frontHeight"],
+              "DieUnitDiameter_D": ["DieUnitDiameter_D", "dieUnitDiameter_D", "Diameter", "diameter"],
+              "DieUnitNumberOfSides_N": ["DieUnitNumberOfSides_N", "dieUnitNumberOfSides_N", "NumberOfSides", "numberOfSides"],
+              "DieUnitHandleFlapHeight_Z": ["DieUnitHandleFlapHeight_Z", "dieUnitHandleFlapHeight_Z", "HandleFlapHeight", "handleFlapHeight"],
+              "DieUnitBaseThickness_B": ["DieUnitBaseThickness_B", "dieUnitBaseThickness_B", "BaseThickness", "baseThickness"],
+              "DieUnitLidOverlap_O": ["DieUnitLidOverlap_O", "dieUnitLidOverlap_O", "LidOverlap", "lidOverlap"],
+              "DieUnitRoofHeight_ROOF": ["DieUnitRoofHeight_ROOF", "dieUnitRoofHeight_ROOF", "RoofHeight", "roofHeight"],
+              "DieUnitDraftAngle_DRAFT": ["DieUnitDraftAngle_DRAFT", "dieUnitDraftAngle_DRAFT", "DraftAngle", "draftAngle"],
+              "DieUnitFlapHeight_A": ["DieUnitFlapHeight_A", "dieUnitFlapHeight_A", "FlapHeight", "flapHeight"],
+              "DieUnitFlapWidth_B": ["DieUnitFlapWidth_B", "dieUnitFlapWidth_B", "FlapWidth", "flapWidth"],
+              "DieUnitBottomLength_V": ["DieUnitBottomLength_V", "dieUnitBottomLength_V", "BottomLength", "bottomLength"],
+              "DieUnitBottomWidth_J": ["DieUnitBottomWidth_J", "dieUnitBottomWidth_J", "BottomWidth", "bottomWidth"],
+            };
+
+            const parametersToCheck = [
+              "Height",
+              "Width",
+              "DieUnitWidth",
+              "DieUnitLength",
+              "DieUnitHeight",
+              "DieUnitFlapLength_FOLD",
+              "DieUnitLidHeight_LID",
+              "DieUnitBottomOverlap_O",
+              "DieUnitFrontHeight_F",
+              "DieUnitDiameter_D",
+              "DieUnitNumberOfSides_N",
+              "DieUnitHandleFlapHeight_Z",
+              "DieUnitBaseThickness_B",
+              "DieUnitLidOverlap_O",
+              "DieUnitRoofHeight_ROOF",
+              "DieUnitDraftAngle_DRAFT",
+              "DieUnitFlapHeight_A",
+              "DieUnitFlapWidth_B",
+              "DieUnitBottomLength_V",
+              "DieUnitBottomWidth_J",
+            ];
+
+            // Helper function to check if a value exists in the dieCut
+            const getValueFromDieCut = (fieldNames: string[]) => {
+              if (!dieCut) return "";
+
+              // Check additionalAttribute first
+              if (dieCut.additionalAttribute) {
+                for (const fieldName of fieldNames) {
+                  const item = dieCut.additionalAttribute.find(
+                    (attr) => attr.valueId === fieldName
+                  );
+                  if (item && item.value) return item.value + "";
+                }
+              }
+
+              // Check rowData if available
+              if (dieCut.rowData) {
+                for (const fieldName of fieldNames) {
+                  if (dieCut.rowData[fieldName]?.value) {
+                    return dieCut.rowData[fieldName].value + "";
+                  }
+                }
+              }
+
+              return "";
+            };
+
+            // Determine which parameters are valid for the current selection
+            const validParameters = new Set<string>();
+
+            // Check Width and Height
+            if (getValueFromDieCut(["unitWidth", "dieUnitWidth", "finalUnitWidth", "width"])) {
+              validParameters.add("Width");
+            }
+            if (getValueFromDieCut(["unitLength", "dieUnitLength", "finalUnitLength", "length"])) {
+              validParameters.add("Height");
+            }
+
+            // Check each dynamic API field
+            Object.keys(dynamicApiFields).forEach((parameterCode) => {
+              const fieldNames = dynamicApiFields[parameterCode];
+              const value = getValueFromDieCut(fieldNames);
+              if (value) {
+                validParameters.add(parameterCode);
+              }
+            });
+
+            // Remove parameters that are not valid for the current selection
+            temp = temp.filter((param) => {
+              // Keep parameters that are not in the check list
+              if (!parametersToCheck.includes(param.parameterCode)) {
+                return true;
+              }
+              // Keep parameters that are valid for the current selection
+              if (validParameters.has(param.parameterCode)) {
+                return true;
+              }
+              // Remove parameters that are not valid
+              return false;
             });
           }
 
