@@ -37,14 +37,21 @@ export const ConversationTabs: React.FC<ConversationTabsProps> = React.memo(({
   neutralColor,
 }) => {
   // Get permission checking functions
-  const { canAccess } = useChatwootPermissions();
+  const { canAccess, isAgent, isAdministrator } = useChatwootPermissions();
 
   // Check which tabs are visible based on permissions
+  // NOTE: In Chatwoot, agents can see all tabs (Mine/Unassigned/All)
+  // The backend automatically filters conversations based on the agent's assigned inboxes
+  // Only hide tabs if user has restricted custom role permissions
   const visibleTabs = useMemo(() => ({
-    mine: canAccess(ASSIGNEE_TAB_PERMISSIONS.me), // Always true - all users can see Mine
-    unassigned: canAccess(ASSIGNEE_TAB_PERMISSIONS.unassigned), // Admin or conversation_unassigned_manage
-    all: canAccess(ASSIGNEE_TAB_PERMISSIONS.all), // Admin or conversation_participating_manage
-  }), [canAccess]);
+    mine: true, // Always visible - all users can see Mine
+    // Unassigned: Show for admins, agents, and users with unassigned permission
+    // Agents can see unassigned conversations from their assigned inboxes (backend filtered)
+    unassigned: isAdministrator || isAgent || canAccess(ASSIGNEE_TAB_PERMISSIONS.unassigned),
+    // All: Show for admins, agents, and users with participating permission
+    // Agents can see all conversations from their assigned inboxes (backend filtered)
+    all: isAdministrator || isAgent || canAccess(ASSIGNEE_TAB_PERMISSIONS.all),
+  }), [canAccess, isAgent, isAdministrator]);
 
   const getCurrentTab = (): string => {
     if (filters.assignee_type === ConversationAssigneeType.ME) return "mine";

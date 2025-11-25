@@ -85,6 +85,27 @@ export interface ChatwootInbox extends Partial<EmailChannelConfig> {
   /** Enable auto-assignment */
   enable_auto_assignment?: boolean;
 
+  /** Business name (for professional sender name type) */
+  business_name?: string;
+
+  /** Sender name type (friendly or professional) */
+  sender_name_type?: "friendly" | "professional";
+
+  /** Greeting enabled */
+  greeting_enabled?: boolean;
+
+  /** Greeting message */
+  greeting_message?: string;
+
+  /** Enable email collection (for web widgets) */
+  enable_email_collect?: boolean;
+
+  /** Allow messages after conversation is resolved */
+  allow_messages_after_resolved?: boolean;
+
+  /** Lock to single conversation (WhatsApp) */
+  lock_to_single_conversation?: boolean;
+
   /** Working hours enabled */
   working_hours_enabled?: boolean;
 
