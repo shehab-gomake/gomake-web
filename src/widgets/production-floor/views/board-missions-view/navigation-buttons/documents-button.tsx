@@ -26,6 +26,7 @@ import { adaptPaddingRight } from "@/utils/adapter";
 import { useFrontDeskEmailIntegration } from "@/pages-components/quotes/hooks/use-frontdesk-email-integration";
 import { FrontDeskEmailComposerWrapper } from "@/pages-components/quotes/components/frontdesk-email-composer-wrapper";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
+import {printHouseHasFrontDeskFeature} from "@/store/print-house-profile";
 
 const DocumentsButton = ({ isMobile = false }) => {
   const [boardMissions] = useRecoilState(boardMissionsDetailsState);
@@ -40,6 +41,8 @@ const DocumentsButton = ({ isMobile = false }) => {
   const [pendingPrintMission, setPendingPrintMission] = useState(null);
 
   const isReady = useRecoilValue(isReadyBoardMissionsState);
+  const hasFrontDeskFeature = useRecoilValue(printHouseHasFrontDeskFeature);
+
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
   const dir = t("direction");
@@ -189,7 +192,7 @@ const DocumentsButton = ({ isMobile = false }) => {
       }
       if (res?.success) {
         alertSuccessUpdate();
-        if (sendMessage) {
+        if (sendMessage && hasFrontDeskFeature) {
           openEmailComposer(boardMissions.boardMissionId);
         }
       } else {
