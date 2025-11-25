@@ -217,6 +217,11 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
     openChangeStatusModalForQualityIssue,
     onClickCloseChangeStatusModalForQualityIssue,
     updateQuoteStatusForQualityIssue,
+    // Start Production Modal
+    openStartProductionModal,
+    onOpenStartProductionModal,
+    onCloseStartProductionModal,
+    handleStartProductionConfirm,
   } = useBoardMissions({ isPurchaseJobs });
   const { callApi } = useGomakeAxios();
   const [companyProfile] = useRecoilState(printHouseProfile);
@@ -254,7 +259,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
       }
 
       if (connectionId) {
-        const callBack = (res) => { };
+        const callBack = (res) => {};
         addOrderBoardMissionsToFileUploaderApi(callApi, callBack, {
           orderId: newOrderId,
           connectionId: connectionId,
@@ -271,7 +276,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
           !CheckPreferenceValue(EPreferences.USE_PRINTNODE_AFTER_UPLOAD_FILE)
         )
       ) {
-        printNodeModalShowLog(callApi, () => { }, {
+        printNodeModalShowLog(callApi, () => {}, {
           orderId: newOrderId,
         }).then();
         setOpenPrintNodeModal(true);
@@ -299,7 +304,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
   useEffect(() => {
     const loadDocumentColumnSettings = async () => {
       try {
-        const res = await getJobsTableSettingsApi(callApi, () => { }, {
+        const res = await getJobsTableSettingsApi(callApi, () => {}, {
           isPurchaseJobs,
         });
         const saved: ColumnSetting[] = res?.data;
@@ -502,12 +507,12 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
               ) || inputValue === ""
                 ? storageList
                 : [
-                  {
-                    storage: `Add "${inputValue}" as a new storage`,
-                    id: "new",
-                  },
-                  ...storageList,
-                ]
+                    {
+                      storage: `Add "${inputValue}" as a new storage`,
+                      id: "new",
+                    },
+                    ...storageList,
+                  ]
             }
             placeholder={t("boardMissions.selectStorage")}
             key={defaultValue}
@@ -548,12 +553,12 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
               ) || inputValue === ""
                 ? storageList
                 : [
-                  {
-                    storage: `Add "${inputValue}" as a new storage`,
-                    id: "new",
-                  },
-                  ...storageList,
-                ]
+                    {
+                      storage: `Add "${inputValue}" as a new storage`,
+                      id: "new",
+                    },
+                    ...storageList,
+                  ]
             }
             placeholder={t("boardMissions.selectStorage")}
             key={defaultValue}
@@ -612,7 +617,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
         subTitle={" "}
         yesBtn={t("sales.quote.print")}
         openModal={openPrintNodeModal}
-        onClose={() => { }}
+        onClose={() => {}}
         onClickDelete={() => {
           setOpenPrintNodeModal(false);
           printOrderJobsUsingPrintNode(printNodeOrderId).then();
@@ -670,12 +675,12 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
               ) || inputValue === ""
                 ? storageList
                 : [
-                  {
-                    storage: `Add "${inputValue}" as a new storage`,
-                    id: "new",
-                  },
-                  ...storageList,
-                ]
+                    {
+                      storage: `Add "${inputValue}" as a new storage`,
+                      id: "new",
+                    },
+                    ...storageList,
+                  ]
             }
             placeholder={t("boardMissions.selectStorage")}
             key={defaultValue}
@@ -707,11 +712,11 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
         subTitle={
           pendingPrintParams?.productType
             ? t("boardMissions.askPrintType", {
-              productType:
-                pendingPrintParams?.productTypeName ||
-                pendingPrintParams?.productName ||
-                pendingPrintParams?.productType,
-            })
+                productType:
+                  pendingPrintParams?.productTypeName ||
+                  pendingPrintParams?.productName ||
+                  pendingPrintParams?.productType,
+              })
             : ""
         }
         yesBtn={"boardMissions.printAllJobs"}
@@ -731,10 +736,10 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
         subTitle={
           pendingMarkReadyParams?.productType
             ? t("boardMissions.askMarkReadyType", {
-              productType:
-                pendingMarkReadyParams.productTypeName ||
-                pendingMarkReadyParams.productType,
-            })
+                productType:
+                  pendingMarkReadyParams.productTypeName ||
+                  pendingMarkReadyParams.productType,
+              })
             : ""
         }
         yesBtn={t("boardMissions.markAllJobsReady")}
@@ -882,6 +887,15 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
         openModal={openChangeStatusModalForQualityIssue}
         onClose={onClickCloseChangeStatusModalForQualityIssue}
         onClickDelete={updateQuoteStatusForQualityIssue}
+      />
+      <GoMakeDeleteModal
+        modalType={ModalType.WARNING}
+        openModal={openStartProductionModal}
+        onClose={onCloseStartProductionModal}
+        onClickDelete={handleStartProductionConfirm}
+        title={t("boardMissions.startProduction")}
+        subTitle={t("boardMissions.startProductionConfirmMessage")}
+        yesBtn={t("boardMissions.startProduction")}
       />
     </>
   );
