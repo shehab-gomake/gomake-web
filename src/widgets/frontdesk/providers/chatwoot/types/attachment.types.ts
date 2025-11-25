@@ -119,6 +119,9 @@ export const FILE_EXTENSION_MAP: Record<string, FileCategory> = {
   // Data formats (official: xml, json)
   xml: "word",
   json: "word",
+  // Markdown files
+  md: "word",
+  markdown: "word",
   // Contact
   vcf: "contact",
 };

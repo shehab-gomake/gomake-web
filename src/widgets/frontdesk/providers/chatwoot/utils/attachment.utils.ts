@@ -235,21 +235,136 @@ export const urlToFile = async (
 };
 
 /**
+ * MIME type mapping from extensions
+ * Used when contentType is not provided
+ */
+const EXTENSION_TO_MIME: Record<string, string> = {
+  // Documents
+  pdf: "application/pdf",
+  doc: "application/msword",
+  docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  xls: "application/vnd.ms-excel",
+  xlsx: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  ppt: "application/vnd.ms-powerpoint",
+  pptx: "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+  txt: "text/plain",
+  rtf: "application/rtf",
+  csv: "text/csv",
+  json: "application/json",
+  xml: "application/xml",
+  md: "text/markdown",
+  // Images
+  png: "image/png",
+  jpg: "image/jpeg",
+  jpeg: "image/jpeg",
+  gif: "image/gif",
+  webp: "image/webp",
+  bmp: "image/bmp",
+  svg: "image/svg+xml",
+  // Audio
+  mp3: "audio/mpeg",
+  wav: "audio/wav",
+  ogg: "audio/ogg",
+  m4a: "audio/mp4",
+  aac: "audio/aac",
+  // Video
+  mp4: "video/mp4",
+  webm: "video/webm",
+  mov: "video/quicktime",
+  avi: "video/x-msvideo",
+  // Archives
+  zip: "application/zip",
+  rar: "application/vnd.rar",
+  "7z": "application/x-7z-compressed",
+  tar: "application/x-tar",
+  gz: "application/gzip",
+};
+
+/**
+ * Get MIME type from file extension
+ * @param extension - File extension (without dot)
+ * @returns MIME type string
+ */
+const getMimeTypeFromExtension = (extension: string): string => {
+  const ext = extension.toLowerCase().replace(/^\./, "");
+  return EXTENSION_TO_MIME[ext] || "application/octet-stream";
+};
+
+/**
+ * Ensure filename has the correct extension
+ * Extracts extension from URL if filename doesn't have one
+ * @param filename - Original filename
+ * @param url - URL to extract extension from (if needed)
+ * @returns Filename with extension
+ */
+const ensureFilenameExtension = (filename: string, url?: string): { filename: string; extension: string } => {
+  // Check if filename already has an extension
+  const filenameParts = filename.split(".");
+  if (filenameParts.length > 1 && filenameParts[filenameParts.length - 1].length <= 5) {
+    // Filename has extension
+    return {
+      filename,
+      extension: filenameParts[filenameParts.length - 1].toLowerCase(),
+    };
+  }
+
+  // Try to extract extension from URL
+  if (url) {
+    try {
+      const urlPath = new URL(url).pathname;
+      const urlParts = urlPath.split(".");
+      if (urlParts.length > 1) {
+        const ext = urlParts[urlParts.length - 1].toLowerCase().split("?")[0];
+        if (ext.length <= 5 && /^[a-z0-9]+$/.test(ext)) {
+          return {
+            filename: `${filename}.${ext}`,
+            extension: ext,
+          };
+        }
+      }
+    } catch {
+      // URL parsing failed, continue without extension
+    }
+  }
+
+  // No extension found
+  return { filename, extension: "" };
+};
+
+/**
  * Convert attachment source to File object
  * Handles base64, URL, and data URL formats
+ * Automatically detects MIME type and ensures filename has extension
  * @param source - Attachment source data
  * @returns Conversion result with file or error
  */
 export const convertAttachmentToFile = async (
   source: AttachmentSource
 ): Promise<AttachmentConversionResult> => {
-  const mimeType =
-    source.contentType || source.mimeType || "application/octet-stream";
+  // Ensure filename has extension (extract from URL if needed)
+  const { filename: correctedFilename, extension } = ensureFilenameExtension(
+    source.filename,
+    source.url
+  );
+
+  // Determine MIME type: use provided, detect from extension, or fallback
+  let mimeType = source.contentType || source.mimeType;
+  if (!mimeType || mimeType === "application/octet-stream") {
+    if (extension) {
+      mimeType = getMimeTypeFromExtension(extension);
+      console.log(`[attachment.utils] Detected MIME type from extension: ${extension} -> ${mimeType}`);
+    } else {
+      mimeType = "application/octet-stream";
+    }
+  }
+
+  console.log(`[attachment.utils] Converting: ${source.filename} -> ${correctedFilename} (${mimeType})`);
+
   const base64 = source.content || source.data;
 
   // Try base64 first
   if (base64) {
-    const file = base64ToFile(base64, source.filename, mimeType);
+    const file = base64ToFile(base64, correctedFilename, mimeType);
     if (file) {
       return {
         success: true,
@@ -267,7 +382,7 @@ export const convertAttachmentToFile = async (
 
   // Try URL
   if (source.url) {
-    const file = await urlToFile(source.url, source.filename, mimeType);
+    const file = await urlToFile(source.url, correctedFilename, mimeType);
     if (file) {
       return {
         success: true,

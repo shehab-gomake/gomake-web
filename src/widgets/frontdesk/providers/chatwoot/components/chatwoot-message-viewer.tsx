@@ -311,24 +311,21 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
 
     setIsSending(true);
     try {
+      // Note: For email channels, cc/bcc/to are passed as separate fields
+      // These are required for proper email delivery with attachments
       await chatwootService.messages.createMessage(accountId, conversation.id, {
         content,
         message_type: "outgoing",
         private: isPrivate,
-        content_type: recipientEmails ? "input_email" : "text",
-        // Include email metadata if provided
-        ...(recipientEmails && {
-          content_attributes: {
-            email: {
-              to: recipientEmails.to,
-              cc: recipientEmails.cc,
-              bcc: recipientEmails.bcc,
-            },
-          },
-        }),
         // Include attachments if provided
         ...(attachments && attachments.length > 0 && {
           attachments,
+        }),
+        // Include email recipient fields for email channels
+        ...(recipientEmails && {
+          ...(recipientEmails.cc && { cc_emails: recipientEmails.cc }),
+          ...(recipientEmails.bcc && { bcc_emails: recipientEmails.bcc }),
+          ...(recipientEmails.to && { to_emails: recipientEmails.to }),
         }),
       });
 

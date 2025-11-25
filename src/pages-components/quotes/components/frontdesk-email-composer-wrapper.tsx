@@ -305,6 +305,8 @@ export const FrontDeskEmailComposerWrapper: React.FC<FrontDeskEmailComposerWrapp
 
             // 2. Create conversation for this specific recipient
             // Note: Each recipient gets their own conversation per Chatwoot's architecture
+            // IMPORTANT: Do NOT set contentType for email channels - it defaults to "text"
+            // "input_email" is for widget email collection, not for sending emails
             const conversationId = await conversationComposerService.composeAndCreate(accountId, {
               inboxId: senderOption.inboxId,
               contactId: contact.id, // This recipient's contact
@@ -316,7 +318,7 @@ export const FrontDeskEmailComposerWrapper: React.FC<FrontDeskEmailComposerWrapp
               toEmails: [recipientEmail], // Only this recipient as primary TO
               attachments,
               channelType: ChannelType.EMAIL,
-              contentType: "input_email",
+              // DO NOT set contentType - let Chatwoot use default "text"
               additionalAttributes: {
                 gomake_document: {
                   id: documentId,

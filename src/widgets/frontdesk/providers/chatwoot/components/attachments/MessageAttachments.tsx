@@ -580,11 +580,30 @@ export const MessageAttachments: React.FC<MessageAttachmentsProps> = React.memo(
   ({ attachments, isOutgoing, hasContent }) => {
     const [previewMedia, setPreviewMedia] = useState<MediaModalState | null>(null);
 
+    // Debug: Log attachments for troubleshooting
+    React.useEffect(() => {
+      if (attachments.length > 0) {
+        console.log("[MessageAttachments] Raw attachments:", attachments.map(a => ({
+          id: a.id,
+          file_type: a.file_type,
+          extension: a.extension,
+          data_url: a.data_url?.substring(0, 100) + '...',
+          file_size: a.file_size,
+        })));
+      }
+    }, [attachments]);
+
     // Categorize attachments
-    const { images, videos, audios, files } = useMemo(
-      () => categorizeAttachments(attachments),
-      [attachments]
-    );
+    const { images, videos, audios, files } = useMemo(() => {
+      const result = categorizeAttachments(attachments);
+      console.log("[MessageAttachments] Categorized:", {
+        images: result.images.length,
+        videos: result.videos.length,
+        audios: result.audios.length,
+        files: result.files.length,
+      });
+      return result;
+    }, [attachments]);
 
     // Handlers
     const handleImagePreview = useCallback((url: string) => {

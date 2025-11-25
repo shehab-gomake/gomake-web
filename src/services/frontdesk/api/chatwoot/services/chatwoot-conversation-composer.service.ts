@@ -166,9 +166,9 @@ export class ConversationComposerService {
         }
       });
 
-      // Attachments
+      // Attachments - pass file.name for proper MIME type detection
       attachments.forEach((file) => {
-        formData.append("message[attachments][]", file);
+        formData.append("message[attachments][]", file, file.name);
       });
 
       return formData;

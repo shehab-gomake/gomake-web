@@ -59,6 +59,10 @@ export interface ConversationMessageCreatePayload {
     processed_params?: Record<string, unknown>;
   };
   attachments?: File[]; // Support for file attachments
+  // Email channel specific fields
+  cc_emails?: string;  // Comma-separated CC email addresses
+  bcc_emails?: string; // Comma-separated BCC email addresses
+  to_emails?: string;  // Comma-separated TO email addresses (for email channels)
 }
 
 // Message type aliases for convenience
