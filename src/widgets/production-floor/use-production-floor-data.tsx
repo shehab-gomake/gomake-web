@@ -90,6 +90,7 @@ import { MoreMenuWidget } from "@/pages-components/board-missions/widgets/more-c
 import { Permissions } from "@/components/CheckPermission/enum";
 import { useFrontDeskEmailIntegration } from "@/pages-components/quotes/hooks/use-frontdesk-email-integration";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
+import {printHouseHasFrontDeskFeature} from "@/store/print-house-profile";
 
 const useProductionFloorData = () => {
   const { t } = useTranslation();
@@ -118,6 +119,7 @@ const useProductionFloorData = () => {
   const [filtersState, setFilters] = useRecoilState(
     productionFloorFiltersState
   );
+  const hasFrontDeskFeature = useRecoilValue(printHouseHasFrontDeskFeature);
   const setTags = useSetRecoilState(tagsState);
   const setUserGroups = useSetRecoilState(userProductionFloorGroupsState);
   const setPath = useSetRecoilState(productionFloorPathsState);
@@ -898,7 +900,7 @@ const useProductionFloorData = () => {
         ) {
           setOpenPackagesModal(true);
         }
-        if (sendMessage) {
+        if (sendMessage && hasFrontDeskFeature) {
           openEmailComposer(selectedMission.id);
         }
         // handleRemoveBoardMission(selectedMissionId);
