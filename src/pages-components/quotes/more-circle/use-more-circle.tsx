@@ -23,7 +23,7 @@ import { Permissions } from "@/components/CheckPermission/enum";
 import { useRouter } from "next/router";
 import { TrackingIcon } from "./icons/tracking";
 import { UnLockIcon } from "./icons/unlock";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import {useRecoilState, useRecoilValue, useSetRecoilState} from "recoil";
 import {
   closeOrderAsInvoiceOrDeliveryNoteState,
   isSelectedCLoseAsDeliveryNoteState,
@@ -33,7 +33,7 @@ import { PauseIcon } from "@/icons/pause-icon";
 import { ResumeIcon } from "@/icons/resume-icon";
 import { PayIcon } from "./icons/pay";
 import { StartProductionIcon } from "./icons/start-productions";
-import { printHouseProfile } from "@/store/print-house-profile";
+import {printHouseHasFrontDeskFeature, printHouseProfile} from "@/store/print-house-profile";
 import { addOrderBoardMissionsToFileUploaderApi } from "@/services/api-service/board-missions/board-missions-table";
 import {
   fileUploaderConnectionIdState,
@@ -58,7 +58,7 @@ const useMoreCircle = () => {
   const { CheckPermission } = useUserPermission();
   const { CheckPreferenceValue } = usePrintHousePreferences();
   const { primaryColor, primaryLavender } = useGomakeTheme();
-
+  const hasFrontDeskFeature = useRecoilValue(printHouseHasFrontDeskFeature);
   const canCloseDocumentManually = CheckPermission(
     Permissions.CAN_CLOSE_MANUALLY
   );
@@ -716,20 +716,20 @@ const useMoreCircle = () => {
         icon: <PayIcon color={primaryLavender(500)} />,
         name: t("sales.quote.sendPayment"),
       },
-      // !here for branch 5062957516
-      // {
-      //   condition: true,
-      //   component: (closeMenu: () => void) => (
-      //     <SendToCustomerSubmenu
-      //       onClickEmail={() => onClickSendToCustomerEmail(quote)}
-      //       onClickSMS={() => onClickSendToCustomerSMS(quote)}
-      //       onClickWhatsApp={() => onClickSendToCustomerWhatsApp(quote)}
-      //       menuItemStyle={classes.menuRowStyle}
-      //       rowTextStyle={classes.rowTextStyle}
-      //       onCloseParentMenu={closeMenu}
-      //     />
-      //   ),
-      // },
+      hasFrontDeskFeature ?   
+      {
+         condition: true,
+         component: (closeMenu: () => void) => (
+           <SendToCustomerSubmenu
+             onClickEmail={() => onClickSendToCustomerEmail(quote)}
+             onClickSMS={() => onClickSendToCustomerSMS(quote)}
+             onClickWhatsApp={() => onClickSendToCustomerWhatsApp(quote)}
+             menuItemStyle={classes.menuRowStyle}
+             rowTextStyle={classes.rowTextStyle}
+             onCloseParentMenu={closeMenu}
+           />
+         ),
+      } :
       {
         condition: true,
         onClick: () =>

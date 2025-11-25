@@ -1113,8 +1113,7 @@ const QuoteNewPageWidget = ({
         documentState={quoteItemValue}
         documentType={documentType}
         openReceiptModal={openReceiptModal}
-        // !here for branch 5062957516
-        // onClickSendEmailViaComposer={onClickSendEmailViaComposer}
+        onClickSendEmailViaComposer={onClickSendEmailViaComposer}
       />
       <WhatsAppWebModal
         openModal={openWhatsAppModal}
