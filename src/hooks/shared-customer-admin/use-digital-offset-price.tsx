@@ -190,7 +190,6 @@ const useDigitalOffsetPrice = ({
     subProductsParametersState
   );
 
-  console.log("subProducts", subProducts);
   const [isMigratedFromOldSystem, setIsMigratedFromOldSystem] = useState(false);
   const [ignoreCalculatedWorkflows, setIgnoreCalculatedWorkflows] = useState(
     productTemplate?.ignoreCalculatedWorkflows
@@ -1233,10 +1232,32 @@ const useDigitalOffsetPrice = ({
         if (!relatedConfig.activateByAllValues) {
           // Convert boolean value to string for comparison if needed
           const valueToCheck = String(booleanValue);
-          const hasMatchingValue =
-            relatedConfig.selectedValueIds.includes(valueToCheck);
 
-          if (!hasMatchingValue) {
+          // Check if selectedValueIds exists and has values
+          if (
+            relatedConfig.selectedValueIds &&
+            relatedConfig.selectedValueIds.length > 0
+          ) {
+            // Use selectedValueIds: show when selected value is in selectedValueIds
+            const hasMatchingValue =
+              relatedConfig.selectedValueIds.includes(valueToCheck);
+
+            if (!hasMatchingValue) {
+              return false;
+            }
+          } else if (
+            relatedConfig.notSelectedValueIds &&
+            relatedConfig.notSelectedValueIds.length > 0
+          ) {
+            // Use notSelectedValueIds: show when selected value is NOT in notSelectedValueIds (reverse logic)
+            const isInNotSelected =
+              relatedConfig.notSelectedValueIds.includes(valueToCheck);
+
+            if (isInNotSelected) {
+              return false;
+            }
+          } else {
+            // If neither selectedValueIds nor notSelectedValueIds is provided, hide the parameter
             return false;
           }
         }
@@ -1256,13 +1277,35 @@ const useDigitalOffsetPrice = ({
           // If activateByAllValues is true, any selection of parent activates this parameter
           continue;
         } else {
-          // Check if the selected value is in the selectedValueIds
-          const hasMatchingValue = parentSelection.valueIds.some(
-            (selectedValueId) =>
-              relatedConfig.selectedValueIds.includes(selectedValueId)
-          );
+          // Check if selectedValueIds exists and has values
+          if (
+            relatedConfig.selectedValueIds &&
+            relatedConfig.selectedValueIds.length > 0
+          ) {
+            // Use selectedValueIds: show when selected value is in selectedValueIds
+            const hasMatchingValue = parentSelection.valueIds.some(
+              (selectedValueId) =>
+                relatedConfig.selectedValueIds.includes(selectedValueId)
+            );
 
-          if (!hasMatchingValue) {
+            if (!hasMatchingValue) {
+              return false;
+            }
+          } else if (
+            relatedConfig.notSelectedValueIds &&
+            relatedConfig.notSelectedValueIds.length > 0
+          ) {
+            // Use notSelectedValueIds: show when selected value is NOT in notSelectedValueIds (reverse logic)
+            const hasMatchingNotSelected = parentSelection.valueIds.some(
+              (selectedValueId) =>
+                relatedConfig.notSelectedValueIds.includes(selectedValueId)
+            );
+
+            if (hasMatchingNotSelected) {
+              return false;
+            }
+          } else {
+            // If neither selectedValueIds nor notSelectedValueIds is provided, hide the parameter
             return false;
           }
         }
@@ -4877,11 +4920,41 @@ const useDigitalOffsetPrice = ({
         parameter?.parameterType === EParameterTypes.SELECT_MATERIALS ||
         parameter?.parameterType === EParameterTypes.MACHINES_SELECT
       ) {
-        const valueInArray = relatedParameter.selectedValueIds?.find(
-          (c) => c == parm?.valueIds
-        );
+        // Check if selectedValueIds exists and has values
+        let shouldShow = false;
 
-        if (valueInArray) {
+        if (
+          relatedParameter.selectedValueIds &&
+          relatedParameter.selectedValueIds.length > 0
+        ) {
+          // Use selectedValueIds: show when selected value is in selectedValueIds
+          const valueIdsToCheck = Array.isArray(parm?.valueIds)
+            ? parm.valueIds
+            : parm?.valueIds ? [parm.valueIds] : [];
+          const valueInArray = valueIdsToCheck.some(
+            (valueId) => relatedParameter.selectedValueIds.includes(valueId)
+          );
+          if (valueInArray) {
+            shouldShow = true;
+          }
+        } else if (
+          relatedParameter.notSelectedValueIds &&
+          relatedParameter.notSelectedValueIds.length > 0
+        ) {
+          // Use notSelectedValueIds: show when selected value is NOT in notSelectedValueIds (reverse logic)
+          const valueIdsToCheck = Array.isArray(parm?.valueIds)
+            ? parm.valueIds
+            : parm?.valueIds ? [parm.valueIds] : [];
+          const valueInNotSelectedArray = valueIdsToCheck.some(
+            (valueId) => relatedParameter.notSelectedValueIds.includes(valueId)
+          );
+          // Show if value is NOT in notSelectedValueIds
+          if (!valueInNotSelectedArray && parm?.valueIds) {
+            shouldShow = true;
+          }
+        }
+
+        if (shouldShow) {
           const sectionCopy = productTemplate.sections?.find(
             (x) => x.id === section.id
           );
@@ -4980,19 +5053,52 @@ const useDigitalOffsetPrice = ({
           );
         }
       } else {
-        const valueInArray = relatedParameter.selectedValueIds?.find(
-          (c) =>
-            c == (parm?.ParameterType === 11 ? parm?.valueIds : parm?.values) ||
-            (c == "false" && !parm?.values)
-        );
+        // Check if selectedValueIds exists and has values
+        let shouldShow = false;
+
         if (
-          (valueInArray && myParameter) ||
-          (!parm &&
-            relatedParameter &&
-            relatedParameter.selectedValueIds &&
-            relatedParameter.selectedValueIds.length > 0 &&
-            relatedParameter.selectedValueIds[0] === "false")
+          relatedParameter.selectedValueIds &&
+          relatedParameter.selectedValueIds.length > 0
         ) {
+          // Use selectedValueIds: show when selected value is in selectedValueIds
+          const valueToCheck = parm?.ParameterType === 11 ? parm?.valueIds : parm?.values;
+          const valuesToCheck = Array.isArray(valueToCheck)
+            ? valueToCheck
+            : valueToCheck ? [valueToCheck] : [];
+          const valueInArray = valuesToCheck.some(
+            (value) => relatedParameter.selectedValueIds.includes(value)
+          ) || (relatedParameter.selectedValueIds.includes("false") && !parm?.values);
+          if (
+            (valueInArray && myParameter) ||
+            (!parm &&
+              relatedParameter &&
+              relatedParameter.selectedValueIds &&
+              relatedParameter.selectedValueIds.length > 0 &&
+              relatedParameter.selectedValueIds[0] === "false")
+          ) {
+            shouldShow = true;
+          }
+        } else if (
+          relatedParameter.notSelectedValueIds &&
+          relatedParameter.notSelectedValueIds.length > 0
+        ) {
+          // Use notSelectedValueIds: show when selected value is NOT in notSelectedValueIds (reverse logic)
+          const valueToCheck = parm?.ParameterType === 11 ? parm?.valueIds : parm?.values;
+          const valuesToCheck = Array.isArray(valueToCheck)
+            ? valueToCheck
+            : valueToCheck ? [valueToCheck] : [];
+          const valueInNotSelectedArray = valuesToCheck.some(
+            (value) => relatedParameter.notSelectedValueIds.includes(value)
+          );
+          // Show if value is NOT in notSelectedValueIds
+          // Only show if there's a selection AND the value is not in notSelectedValueIds
+          if (!valueInNotSelectedArray && myParameter && valueToCheck && valuesToCheck.length > 0) {
+            shouldShow = true;
+          }
+          // If no value selected (!parm), shouldShow remains false (parameter stays hidden)
+        }
+
+        if (shouldShow) {
           const sectionCopy = productTemplate.sections?.find(
             (x) => x.id === section.id
           );
@@ -8999,12 +9105,36 @@ const useDigitalOffsetPrice = ({
               if (!relatedConfig.activateByAllValues) {
                 const parentValueIds = parentSelection.valueIds ||
                   parentSelection.values || [parentSelection.value];
-                const hasMatchingValue = parentValueIds.some(
-                  (selectedValueId) =>
-                    relatedConfig.selectedValueIds?.includes(selectedValueId)
-                );
 
-                if (!hasMatchingValue) {
+                // Check if selectedValueIds exists and has values
+                if (
+                  relatedConfig.selectedValueIds &&
+                  relatedConfig.selectedValueIds.length > 0
+                ) {
+                  // Use selectedValueIds: show when selected value is in selectedValueIds
+                  const hasMatchingValue = parentValueIds.some(
+                    (selectedValueId) =>
+                      relatedConfig.selectedValueIds.includes(selectedValueId)
+                  );
+
+                  if (!hasMatchingValue) {
+                    return false;
+                  }
+                } else if (
+                  relatedConfig.notSelectedValueIds &&
+                  relatedConfig.notSelectedValueIds.length > 0
+                ) {
+                  // Use notSelectedValueIds: show when selected value is NOT in notSelectedValueIds (reverse logic)
+                  const hasMatchingNotSelected = parentValueIds.some(
+                    (selectedValueId) =>
+                      relatedConfig.notSelectedValueIds.includes(selectedValueId)
+                  );
+
+                  if (hasMatchingNotSelected) {
+                    return false;
+                  }
+                } else {
+                  // If neither selectedValueIds nor notSelectedValueIds is provided, hide the parameter
                   return false;
                 }
               }
@@ -9173,11 +9303,36 @@ const useDigitalOffsetPrice = ({
             if (!relatedConfig.activateByAllValues) {
               const parentValueIds = parentSelection.valueIds ||
                 parentSelection.values || [parentSelection.value];
-              const hasMatchingValue = parentValueIds.some((selectedValueId) =>
-                relatedConfig.selectedValueIds?.includes(selectedValueId)
-              );
 
-              if (!hasMatchingValue) {
+              // Check if selectedValueIds exists and has values
+              if (
+                relatedConfig.selectedValueIds &&
+                relatedConfig.selectedValueIds.length > 0
+              ) {
+                // Use selectedValueIds: show when selected value is in selectedValueIds
+                const hasMatchingValue = parentValueIds.some((selectedValueId) =>
+                  relatedConfig.selectedValueIds.includes(selectedValueId)
+                );
+
+                if (!hasMatchingValue) {
+                  shouldShow = false;
+                  break;
+                }
+              } else if (
+                relatedConfig.notSelectedValueIds &&
+                relatedConfig.notSelectedValueIds.length > 0
+              ) {
+                // Use notSelectedValueIds: show when selected value is NOT in notSelectedValueIds (reverse logic)
+                const hasMatchingNotSelected = parentValueIds.some((selectedValueId) =>
+                  relatedConfig.notSelectedValueIds.includes(selectedValueId)
+                );
+
+                if (hasMatchingNotSelected) {
+                  shouldShow = false;
+                  break;
+                }
+              } else {
+                // If neither selectedValueIds nor notSelectedValueIds is provided, hide the parameter
                 shouldShow = false;
                 break;
               }
