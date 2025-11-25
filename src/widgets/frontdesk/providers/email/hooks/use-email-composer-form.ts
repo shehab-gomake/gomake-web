@@ -1,3 +1,10 @@
+/**
+ * Email Composer Form Hook
+ *
+ * Manages form state for the email composer component.
+ * Handles draft initialization, validation, and send preparation.
+ */
+
 import { useState, useCallback, useEffect } from "react";
 import { EmailDraft, EmailMessage, EmailAttachment, EmailSenderOption } from "../types/email.types";
 import { parseEmails, formatReplySubject, formatEmailDisplay } from "../utils/email-utils";
@@ -103,8 +110,25 @@ export const useEmailComposerForm = ({
     return await onSend(emailDraft);
   }, [to, cc, bcc, subject, message, attachments, replyToMessage, draft, onSend, senderOption, contactId, fromOptions]);
 
-  const formatText = useCallback((command: string) => {
-    document.execCommand(command, false);
+  /**
+   * Format text handler
+   *
+   * Note: This is currently a no-op because the email body uses a controlled
+   * InputBase component, not a contentEditable element. Rich text formatting
+   * would require migrating to a proper rich text editor (e.g., Tiptap, Slate, Draft.js).
+   *
+   * The formatting buttons are kept in the UI for visual consistency with
+   * standard email clients, but they don't affect the message content.
+   *
+   * @param _command - Formatting command (bold, italic, underline) - currently unused
+   */
+  const formatText = useCallback((_command: string) => {
+    // Rich text formatting not supported with current InputBase implementation
+    // To enable formatting, migrate to a contentEditable div or rich text editor
+    console.debug(
+      "[useEmailComposerForm] Text formatting not supported. " +
+        "Consider using a rich text editor for formatting support."
+    );
   }, []);
 
   const canSend = !!(to.trim() && message.trim() && (!fromOptions?.length || senderOption));

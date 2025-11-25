@@ -15,7 +15,7 @@ import { chatwootProfileAtom, chatwootSelectedAccountAtom } from "@/store/frontd
 import { DOCUMENT_TYPE } from "../enums";
 import { useChatwootProfile } from "@/widgets/frontdesk/providers/chatwoot/hooks/use-chatwoot-profile";
 import { useChatwootInboxes } from "@/widgets/frontdesk/providers/chatwoot/hooks/use-chatwoot-inboxes";
-import { ChannelType } from "@/services/frontdesk/api/chatwoot/types/inboxes.types";
+import { ChannelType, ChatwootInbox } from "@/services/frontdesk/api/chatwoot/types/inboxes.types";
 import type { ContactCreatePayload } from "@/services/frontdesk/api/chatwoot/types/contacts.types";
 import { getCapitalizedNameFromEmail } from "@/widgets/frontdesk/providers/chatwoot/utils/contact-utils";
 import { convertAttachmentsToFiles } from "@/widgets/frontdesk/providers/chatwoot/utils/attachment.utils";
@@ -54,6 +54,23 @@ const mapToAttachmentSource = (attachment: EmailAttachment): AttachmentSource =>
   contentType: attachment.contentType,
   size: attachment.size,
 });
+
+/**
+ * Extract email address from inbox configuration
+ * Checks multiple possible properties where email might be stored
+ */
+const getInboxEmailAddress = (inbox: ChatwootInbox): string => {
+  // Priority order for email address resolution
+  return (
+    inbox.smtp_email ||        // SMTP sending email (most common)
+    inbox.imap_email ||        // IMAP email address
+    inbox.email ||             // Direct email property
+    inbox.forward_to_email ||  // Forward-to email
+    inbox._emailAccount?.email || // OAuth email account
+    inbox.sender_email ||      // Alternative sender field
+    `inbox-${inbox.id}@mail.gomake.com` // Fallback generated email
+  );
+};
 
 interface FrontDeskEmailComposerWrapperProps {
   open: boolean;
@@ -98,42 +115,25 @@ export const FrontDeskEmailComposerWrapper: React.FC<FrontDeskEmailComposerWrapp
 
   // Build sender options from all email inboxes (independent of contact)
   // Same pattern as FrontDesk Chatwoot - fetch inboxes independently
-  const senderOptions = useMemo(() => {
+  const senderOptions = useMemo((): EmailSenderOption[] => {
     if (!inboxes || inboxes.length === 0) {
       return [];
     }
 
     // Filter only email inboxes
     const emailInboxes = inboxes.filter(
-      (inbox) => inbox.channel_type === ChannelType.EMAIL || inbox.channel_type === "Channel::Email"
+      (inbox): inbox is ChatwootInbox =>
+        inbox.channel_type === ChannelType.EMAIL ||
+        inbox.channel_type === "Channel::Email"
     );
 
-    // Build sender options from email inboxes (same logic as InboxResolutionService)
-    const options: EmailSenderOption[] = emailInboxes
-      .map((inbox) => {
-        // Get the inbox's sending email address from various possible properties
-        // For SMTP email inboxes, it's in `smtp_email` or `imap_email`
-        // For OAuth email inboxes, it's in `_emailAccount.email`
-        // NOTE: inbox.name is the display name, NOT the email address
-        const inboxEmail =
-          (inbox as any).smtp_email || // SMTP sending email (most common)
-          (inbox as any).imap_email || // IMAP email address
-          (inbox as any).email || // Direct email property
-          (inbox as any).forward_to_email || // Forward-to email
-          (inbox as any)._emailAccount?.email || // OAuth email account
-          (inbox as any).sender_email || // Alternative sender field
-          `inbox-${inbox.id}@mail.gomake.com`; // Fallback generated email
-
-        return {
-          inboxId: inbox.id,
-          inboxName: inbox.name || `Inbox ${inbox.id}`, // Display name
-          sourceId: inboxEmail, // Email address for sending
-          channelType: inbox.channel_type,
-        } as EmailSenderOption;
-      })
-      .filter((option): option is EmailSenderOption => option !== null);
-
-    return options;
+    // Build sender options from email inboxes
+    return emailInboxes.map((inbox) => ({
+      inboxId: inbox.id,
+      inboxName: inbox.name || `Inbox ${inbox.id}`,
+      sourceId: getInboxEmailAddress(inbox),
+      channelType: inbox.channel_type as string,
+    }));
   }, [inboxes]);
 
   // Default sender option (first email inbox)

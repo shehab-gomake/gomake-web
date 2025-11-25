@@ -29,10 +29,32 @@ export enum ChannelType {
 export type InboxProvider = "email" | "facebook" | "whatsapp" | "sms" | "twitter" | "telegram" | "line" | "twilio" | "api" | "web_widget";
 
 /**
+ * Email Channel Configuration
+ * Specific properties for email inboxes (SMTP/IMAP)
+ */
+export interface EmailChannelConfig {
+  /** SMTP email address for sending */
+  smtp_email?: string;
+  /** IMAP email address */
+  imap_email?: string;
+  /** Direct email property */
+  email?: string;
+  /** Forward-to email address */
+  forward_to_email?: string;
+  /** Sender email address */
+  sender_email?: string;
+  /** OAuth email account (nested) */
+  _emailAccount?: {
+    email?: string;
+    [key: string]: unknown;
+  };
+}
+
+/**
  * Chatwoot Inbox
  * Represents an inbox (channel) in Chatwoot
  */
-export interface ChatwootInbox {
+export interface ChatwootInbox extends Partial<EmailChannelConfig> {
   /** Inbox ID */
   id: number;
 
@@ -67,7 +89,7 @@ export interface ChatwootInbox {
   working_hours_enabled?: boolean;
 
   /** Working hours configuration */
-  working_hours?: Record<string, any>;
+  working_hours?: Record<string, unknown>;
 
   /** Timezone */
   timezone?: string;
@@ -85,7 +107,7 @@ export interface ChatwootInbox {
   updated_at?: number;
 
   /** Additional attributes */
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 /**
