@@ -74,6 +74,8 @@ export const ChatwootProfileCard: React.FC<ChatwootProfileCardProps> = ({ isColl
               height: 36,
               bgcolor: avatarData.backgroundColor,
               border: `2px solid ${neutralColor(200)}`,
+              fontSize: "0.813rem",
+              fontWeight: 600,
             }}
             alt={avatarData.displayName}
             title={avatarData.displayName}
@@ -91,6 +93,8 @@ export const ChatwootProfileCard: React.FC<ChatwootProfileCardProps> = ({ isColl
                 height: 40,
                 bgcolor: avatarData.backgroundColor,
                 border: `2px solid ${neutralColor(200)}`,
+                fontSize: "0.875rem",
+                fontWeight: 600,
               }}
               alt={avatarData.displayName}
               title={avatarData.displayName}

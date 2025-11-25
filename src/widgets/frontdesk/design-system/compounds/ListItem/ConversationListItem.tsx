@@ -50,6 +50,10 @@ export interface ConversationListItemProps {
   isStarred?: boolean;
   /** Avatar URL */
   avatarSrc?: string;
+  /** Avatar background color (for consistent coloring) */
+  avatarBackgroundColor?: string;
+  /** Avatar initials (for consistent display) */
+  avatarInitials?: string;
   /** Presence status */
   presence?: PresenceStatus;
   /** Priority indicator */
@@ -205,6 +209,8 @@ export const ConversationListItem = React.memo<ConversationListItemProps>(
     unreadCount = 0,
     hasAttachments = false,
     avatarSrc,
+    avatarBackgroundColor,
+    avatarInitials,
     presence,
     priority,
     onClick,
@@ -278,6 +284,7 @@ export const ConversationListItem = React.memo<ConversationListItemProps>(
               size="sm"
               name={participantName}
               src={avatarSrc}
+              backgroundColor={avatarBackgroundColor}
               sx={{
                 width: AVATAR_SIZE,
                 height: AVATAR_SIZE,
@@ -286,7 +293,9 @@ export const ConversationListItem = React.memo<ConversationListItemProps>(
                 border: `1.5px solid ${colorTokens.semantic.border.default}`,
                 boxShadow: "0 1px 2px rgba(0, 0, 0, 0.06)",
               }}
-            />
+            >
+              {avatarInitials}
+            </Avatar>
 
             {/* Content Section */}
             <Stack flex={1} spacing={0.4} sx={{ minWidth: 0 }}>

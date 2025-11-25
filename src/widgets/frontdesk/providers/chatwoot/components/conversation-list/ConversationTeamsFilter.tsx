@@ -2,7 +2,7 @@
  * Conversation Teams Filter Component
  *
  * Button with dropdown menu that displays teams and allows filtering conversations by team.
- * Shows selected team as a visible chip outside the dropdown.
+ * Selected team is shown in ActiveFilterChips below the tabs.
  * Allows creating new teams if user is admin (similar to labels).
  */
 
@@ -22,7 +22,6 @@ import {
 import GroupsIcon from '@mui/icons-material/Groups';
 import CheckIcon from '@mui/icons-material/Check';
 import AddIcon from '@mui/icons-material/Add';
-import CloseIcon from '@mui/icons-material/Close';
 import { useChatwootTeams } from '../../hooks/resources/use-chatwoot-teams';
 import { useChatwootPermissions } from '../../hooks/use-chatwoot-permissions';
 import { SETTINGS_PERMISSIONS } from '../../constants/permissions.constants';
@@ -169,60 +168,6 @@ export const ConversationTeamsFilter: React.FC<ConversationTeamsFilterProps> = (
           </Badge>
         </IconButton>
       </Tooltip>
-
-      {/* Selected Team Chip (visible outside dropdown) */}
-      {selectedTeam && (
-        <Box
-          sx={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: 0.5,
-            px: 1,
-            py: 0.25,
-            borderRadius: 1,
-            backgroundColor: `${primaryColor(600)}15`,
-            border: `1px solid ${primaryColor(600)}30`,
-            cursor: 'pointer',
-            '&:hover': {
-              backgroundColor: `${primaryColor(600)}25`,
-            },
-          }}
-          onClick={(e) => {
-            setMenuAnchor(e.currentTarget);
-            onTeamClick?.();
-          }}
-        >
-          <GroupsIcon sx={{ fontSize: 14, color: primaryColor(600) }} />
-          <Typography
-            variant="caption"
-            sx={{
-              fontSize: '0.75rem',
-              fontWeight: 500,
-              color: primaryColor(700),
-            }}
-          >
-            {selectedTeam.name}
-          </Typography>
-          <IconButton
-            size="small"
-            onClick={(e) => {
-              e.stopPropagation();
-              handleTeamToggle(undefined);
-            }}
-            sx={{
-              width: 16,
-              height: 16,
-              padding: 0,
-              color: primaryColor(600),
-              '&:hover': {
-                backgroundColor: `${primaryColor(600)}20`,
-              },
-            }}
-          >
-            <CloseIcon sx={{ fontSize: 12 }} />
-          </IconButton>
-        </Box>
-      )}
 
       {/* Teams Menu */}
       <Menu

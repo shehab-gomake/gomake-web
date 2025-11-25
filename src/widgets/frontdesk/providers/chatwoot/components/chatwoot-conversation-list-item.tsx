@@ -6,6 +6,7 @@ import { ConversationContextMenu } from "@/widgets/frontdesk/components/shared";
 import { useConversationContextMenu } from "@/widgets/frontdesk/hooks/use-conversation-context-menu";
 import { useChatwootContextMenu } from "../hooks/use-chatwoot-context-menu";
 import { formatChatwootTimestamp } from "../utils/conversation-helpers";
+import { generateContactAvatar } from "../utils/avatar.utils";
 import type { ChatwootConversation } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
 import type { ChatwootInbox } from "@/services/frontdesk/api/chatwoot/types/inboxes.types";
 
@@ -187,6 +188,19 @@ const ChatwootConversationListItemComponent: React.FC<ChatwootConversationListIt
     return inboxes.find((inbox) => inbox.id === conversation.inbox_id) || null;
   }, [conversation.inbox_id, inboxes]);
 
+  // Generate consistent avatar data using unified utility
+  const senderAvatarData = useMemo(() => {
+    const sender = conversation.meta?.sender;
+    return generateContactAvatar({
+      id: sender?.id,
+      name: sender?.name,
+      email: sender?.email,
+      thumbnail: sender?.thumbnail,
+      avatar_url: sender?.avatar_url,
+      availability_status: sender?.availability_status || sender?.availabilityStatus,
+    });
+  }, [conversation.meta?.sender]);
+
   const conversationData = useMemo(() => {
     const sender = conversation.meta?.sender;
 
@@ -199,7 +213,9 @@ const ChatwootConversationListItemComponent: React.FC<ChatwootConversationListIt
       recipient: extractEmailRecipient(conversation),
       unreadCount: conversation.unread_count || 0,
       presence: sender?.availability_status || sender?.availabilityStatus || null,
-      avatarSrc: sender?.avatar_url,
+      avatarSrc: senderAvatarData.src,
+      avatarBackgroundColor: senderAvatarData.backgroundColor,
+      avatarInitials: senderAvatarData.initials,
       priority: conversation.priority || null,
       inboxChannelType: inbox?.channel_type || conversation.meta?.channel || null,
       inboxMedium: (inbox as any)?.medium || null,
@@ -217,7 +233,7 @@ const ChatwootConversationListItemComponent: React.FC<ChatwootConversationListIt
       lastActivityAt: conversation.last_activity_at || conversation.lastActivityAt || null,
       hasAttachments: hasAttachments(conversation),
     };
-  }, [conversation, inbox, hideAssigneeAvatar]);
+  }, [conversation, inbox, hideAssigneeAvatar, senderAvatarData]);
 
   // ========================================================================
   // Event Handlers
@@ -263,6 +279,8 @@ const ChatwootConversationListItemComponent: React.FC<ChatwootConversationListIt
         hasAttachments={conversationData.hasAttachments}
         isStarred={false}
         avatarSrc={conversationData.avatarSrc}
+        avatarBackgroundColor={conversationData.avatarBackgroundColor}
+        avatarInitials={conversationData.avatarInitials}
         presence={conversationData.presence}
         priority={conversationData.priority}
         onClick={handleSelect}

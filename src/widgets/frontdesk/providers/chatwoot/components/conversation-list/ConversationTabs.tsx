@@ -93,27 +93,27 @@ export const ConversationTabs: React.FC<ConversationTabsProps> = React.memo(({
   const currentTab = getCurrentTab();
 
   return (
-    <Box sx={{ px: 1.5, py: 0.5 }}>
+    <Box sx={{ px: 1.5, pt: 1, pb: 0 }}>
       <Tabs
         value={currentTab}
         onChange={handleTabChange}
         sx={{
-          minHeight: "auto",
+          minHeight: 36,
           "& .MuiTab-root": {
-            minHeight: "auto",
-            py: 0.25,
-            px: 1.5,
+            minHeight: 36,
+            py: 1,
+            px: 2,
             textTransform: "none",
             fontSize: "0.875rem",
-            fontWeight: 400,
+            fontWeight: 500,
             color: neutralColor(600),
             "&.Mui-selected": {
-              color: primaryColor(700),
-              fontWeight: 500,
+              color: neutralColor(900),
+              fontWeight: 600,
             },
           },
           "& .MuiTabs-indicator": {
-            backgroundColor: primaryColor(500),
+            backgroundColor: primaryColor(600),
             height: 2,
           },
         }}
@@ -122,18 +122,19 @@ export const ConversationTabs: React.FC<ConversationTabsProps> = React.memo(({
         {visibleTabs.mine && (
           <Tab
             label={
-              <Stack direction="row" alignItems="center" spacing={0.75}>
-                <Typography sx={{ fontSize: "0.875rem", color: "inherit" }}>Mine</Typography>
+              <Stack direction="row" alignItems="center" spacing={1}>
+                <Typography sx={{ fontSize: "0.875rem", color: "inherit", fontWeight: "inherit" }}>Mine</Typography>
                 <Chip
                   label={counts.mine}
                   size="small"
                   sx={{
-                    height: 18,
-                    minWidth: 18,
-                    fontSize: "0.688rem",
-                    fontWeight: 500,
-                    backgroundColor: currentTab === "mine" ? primaryColor(100) : neutralColor(100),
-                    color: currentTab === "mine" ? primaryColor(700) : neutralColor(700),
+                    height: 20,
+                    minWidth: 20,
+                    fontSize: "0.75rem",
+                    fontWeight: 600,
+                    backgroundColor: currentTab === "mine" ? neutralColor(200) : neutralColor(100),
+                    color: currentTab === "mine" ? neutralColor(800) : neutralColor(600),
+                    borderRadius: "10px",
                     "& .MuiChip-label": {
                       px: 0.75,
                       py: 0,
@@ -150,18 +151,19 @@ export const ConversationTabs: React.FC<ConversationTabsProps> = React.memo(({
         {visibleTabs.unassigned && (
           <Tab
             label={
-              <Stack direction="row" alignItems="center" spacing={0.75}>
-                <Typography sx={{ fontSize: "0.875rem", color: "inherit" }}>Unassigned</Typography>
+              <Stack direction="row" alignItems="center" spacing={1}>
+                <Typography sx={{ fontSize: "0.875rem", color: "inherit", fontWeight: "inherit" }}>Unassigned</Typography>
                 <Chip
                   label={counts.unassigned}
                   size="small"
                   sx={{
-                    height: 18,
-                    minWidth: 18,
-                    fontSize: "0.688rem",
-                    fontWeight: 500,
-                    backgroundColor: currentTab === "unassigned" ? primaryColor(100) : neutralColor(100),
-                    color: currentTab === "unassigned" ? primaryColor(700) : neutralColor(700),
+                    height: 20,
+                    minWidth: 20,
+                    fontSize: "0.75rem",
+                    fontWeight: 600,
+                    backgroundColor: currentTab === "unassigned" ? neutralColor(200) : neutralColor(100),
+                    color: currentTab === "unassigned" ? neutralColor(800) : neutralColor(600),
+                    borderRadius: "10px",
                     "& .MuiChip-label": {
                       px: 0.75,
                       py: 0,
@@ -178,18 +180,19 @@ export const ConversationTabs: React.FC<ConversationTabsProps> = React.memo(({
         {visibleTabs.all && (
           <Tab
             label={
-              <Stack direction="row" alignItems="center" spacing={0.75}>
-                <Typography sx={{ fontSize: "0.875rem", color: "inherit" }}>All</Typography>
+              <Stack direction="row" alignItems="center" spacing={1}>
+                <Typography sx={{ fontSize: "0.875rem", color: "inherit", fontWeight: "inherit" }}>All</Typography>
                 <Chip
                   label={counts.all}
                   size="small"
                   sx={{
-                    height: 18,
-                    minWidth: 18,
-                    fontSize: "0.688rem",
-                    fontWeight: 500,
-                    backgroundColor: currentTab === "all" ? primaryColor(100) : neutralColor(100),
-                    color: currentTab === "all" ? primaryColor(700) : neutralColor(700),
+                    height: 20,
+                    minWidth: 20,
+                    fontSize: "0.75rem",
+                    fontWeight: 600,
+                    backgroundColor: currentTab === "all" ? neutralColor(200) : neutralColor(100),
+                    color: currentTab === "all" ? neutralColor(800) : neutralColor(600),
+                    borderRadius: "10px",
                     "& .MuiChip-label": {
                       px: 0.75,
                       py: 0,

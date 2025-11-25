@@ -328,7 +328,9 @@ export const ConversationProfileSection: React.FC<ConversationProfileSectionProp
               sx={{ 
                 width: 40, 
                 height: 40,
-                bgcolor: contactAvatarData.backgroundColor 
+                bgcolor: contactAvatarData.backgroundColor,
+                fontSize: "0.875rem",
+                fontWeight: 600,
               }}
               alt={contactAvatarData.displayName}
               title={contactAvatarData.displayName}
@@ -488,7 +490,9 @@ export const ConversationProfileSection: React.FC<ConversationProfileSectionProp
               sx={{ 
                 width: 32, 
                 height: 32,
-                bgcolor: contactAvatarData.backgroundColor 
+                bgcolor: contactAvatarData.backgroundColor,
+                fontSize: "0.75rem",
+                fontWeight: 600,
               }}
               alt={contactAvatarData.displayName}
               title={contactAvatarData.displayName}

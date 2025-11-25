@@ -40,14 +40,30 @@ export const CHATWOOT_AVATAR_COLORS = [
 
 /**
  * Default avatar sizes for different contexts
+ * fontSize is proportional to avatar size for consistent appearance
  */
 export const AVATAR_SIZES = {
-  xs: { width: 16, height: 16, fontSize: "0.563rem" },
-  sm: { width: 24, height: 24, fontSize: "0.65rem" },
-  md: { width: 32, height: 32, fontSize: "0.75rem" },
-  lg: { width: 40, height: 40, fontSize: "0.875rem" },
-  xl: { width: 48, height: 48, fontSize: "1rem" },
+  xs: { width: 16, height: 16, fontSize: "0.5rem" },    // 8px
+  sm: { width: 24, height: 24, fontSize: "0.65rem" },   // 10.4px
+  md: { width: 32, height: 32, fontSize: "0.75rem" },   // 12px
+  lg: { width: 40, height: 40, fontSize: "0.875rem" },  // 14px
+  xl: { width: 48, height: 48, fontSize: "1rem" },      // 16px
+  xxl: { width: 64, height: 64, fontSize: "1.25rem" },  // 20px
 } as const;
+
+/**
+ * Get font size for a custom avatar dimension
+ * Uses a ratio of approximately 30% of avatar size
+ * @param width - Avatar width in pixels
+ * @returns Font size as rem string
+ */
+export function getAvatarFontSize(width: number): string {
+  // Base ratio: fontSize is approximately 30% of avatar width
+  const fontSizePx = Math.round(width * 0.3);
+  // Convert to rem (assuming 16px base)
+  const fontSizeRem = fontSizePx / 16;
+  return `${fontSizeRem}rem`;
+}
 
 // ============================================================================
 // Core Avatar Data Interface

@@ -221,6 +221,8 @@ export const ConversationAssigneeSection: React.FC<ConversationAssigneeSectionPr
                         width: 32,
                         height: 32,
                         bgcolor: avatarData.backgroundColor,
+                        fontSize: "0.75rem",
+                        fontWeight: 600,
                       }}
                       alt={avatarData.displayName}
                       title={avatarData.displayName}
@@ -341,6 +343,8 @@ export const ConversationAssigneeSection: React.FC<ConversationAssigneeSectionPr
                           height: 24,
                           mr: 1.5,
                           bgcolor: avatarData.backgroundColor,
+                          fontSize: "0.65rem",
+                          fontWeight: 600,
                         }}
                         alt={avatarData.displayName}
                         title={avatarData.displayName}

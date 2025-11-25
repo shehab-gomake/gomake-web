@@ -200,18 +200,18 @@ export const ChatwootConversationListHeader: React.FC<ChatwootConversationListHe
           primaryColor={primaryColor}
           neutralColor={neutralColor}
         />
-      </Box>
 
-      {/* Active Filter Chips */}
-      <ActiveFilterChips
-        filters={filters}
-        onRemoveFilter={handleRemoveFilter}
-        teams={teams}
-        labels={labels}
-        inboxes={inboxes}
-        primaryColor={primaryColor}
-        neutralColor={neutralColor}
-      />
+        {/* Active Filter Chips - directly under tabs */}
+        <ActiveFilterChips
+          filters={filters}
+          onRemoveFilter={handleRemoveFilter}
+          teams={teams}
+          labels={labels}
+          inboxes={inboxes}
+          primaryColor={primaryColor}
+          neutralColor={neutralColor}
+        />
+      </Box>
 
       {/* Search Bar */}
       <Box sx={{ borderTop: `1px solid ${theme.palette.divider}` }}>
