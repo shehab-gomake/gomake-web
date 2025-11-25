@@ -1727,7 +1727,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
           setMarkAllReady(false);
         }
         if (sendMessage) {
-          //openEmailComposer(selectedMission.id);
+          openEmailComposer(selectedMission.id);
         }
       } else {
         alertFaultUpdate();

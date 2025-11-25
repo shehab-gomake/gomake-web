@@ -899,7 +899,7 @@ const useProductionFloorData = () => {
           setOpenPackagesModal(true);
         }
         if (sendMessage) {
-          //openEmailComposer(selectedMission.id);
+          openEmailComposer(selectedMission.id);
         }
         // handleRemoveBoardMission(selectedMissionId);
       } else {
