@@ -5,7 +5,7 @@
  * Handles draft initialization, validation, and send preparation.
  */
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { EmailDraft, EmailMessage, EmailAttachment, EmailSenderOption } from "../types/email.types";
 import { parseEmails, formatReplySubject, formatEmailDisplay } from "../utils/email-utils";
 
@@ -46,6 +46,52 @@ export const useEmailComposerForm = ({
 
   const [showCc, setShowCc] = useState(false);
   const [showBcc, setShowBcc] = useState(false);
+
+  // Track if we've populated from draft to avoid overwriting user edits
+  const hasPopulatedFromDraft = useRef(false);
+
+  // Update form fields when draft changes (e.g., after async loading)
+  useEffect(() => {
+    // Skip if no draft or already populated
+    if (!draft) {
+      // Reset flag when draft becomes undefined (for re-opening)
+      hasPopulatedFromDraft.current = false;
+      return;
+    }
+
+    // Skip if already populated from this draft
+    if (hasPopulatedFromDraft.current) return;
+
+    // Update all fields from draft
+    const newTo = draft.to?.map((r) => r.email).join(", ") || "";
+    const newCc = draft.cc?.map((r) => r.email).join(", ") || "";
+    const newBcc = draft.bcc?.map((r) => r.email).join(", ") || "";
+    const newSubject = draft.subject || "";
+    const newMessage = draft.text || draft.body || draft.message || "";
+    const newAttachments = draft.attachments || [];
+
+    // Set form fields from draft data
+    setTo(newTo);
+    setCc(newCc);
+    setBcc(newBcc);
+    setSubject(newSubject);
+    setMessage(newMessage);
+    setAttachments(newAttachments);
+
+    // Show CC/BCC fields if they have values
+    if (newCc) setShowCc(true);
+    if (newBcc) setShowBcc(true);
+
+    // Mark as populated
+    hasPopulatedFromDraft.current = true;
+    
+    console.log("[useEmailComposerForm] Populated form from draft:", {
+      to: newTo,
+      subject: newSubject,
+      messageLength: newMessage.length,
+      attachments: newAttachments.length,
+    });
+  }, [draft]);
 
   // Update selected sender if options change
   useEffect(() => {

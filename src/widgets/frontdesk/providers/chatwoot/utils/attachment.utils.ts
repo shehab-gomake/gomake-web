@@ -285,7 +285,7 @@ const EXTENSION_TO_MIME: Record<string, string> = {
  * @param extension - File extension (without dot)
  * @returns MIME type string
  */
-const getMimeTypeFromExtension = (extension: string): string => {
+export const getMimeTypeFromExtension = (extension: string): string => {
   const ext = extension.toLowerCase().replace(/^\./, "");
   return EXTENSION_TO_MIME[ext] || "application/octet-stream";
 };

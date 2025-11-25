@@ -317,6 +317,7 @@ const QuotesListPageWidget = ({
     handleSelectPurchaseOrderType,
     isEmailComposerOpen,
     emailData,
+    isLoadingEmailData,
     closeEmailComposer,
     documentForEmail
   } = useQuotes(documentType, isFromHomePage);
@@ -1080,6 +1081,7 @@ const QuotesListPageWidget = ({
           emailData={emailData}
           documentId={documentForEmail?.id}
           documentType={documentType}
+          isLoading={isLoadingEmailData}
         />
       )}
     </>

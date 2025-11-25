@@ -7,7 +7,7 @@
  * @see https://developers.chatwoot.com/self-hosted/supported-features#outgoing-attachments-supported-file-types
  */
 
-import React, { useRef, useState, useCallback, useMemo } from "react";
+import React, { useRef, useState, useCallback, useMemo, forwardRef, useImperativeHandle } from "react";
 import {
   Box,
   IconButton,
@@ -179,18 +179,33 @@ interface FileValidationError {
 }
 
 // ============================================================================
+// Handle Type for ref
+// ============================================================================
+
+export interface EmailAttachmentPickerHandle {
+  openFilePicker: () => void;
+}
+
+// ============================================================================
 // Component
 // ============================================================================
 
-export const EmailAttachmentPicker: React.FC<EmailAttachmentPickerProps> = ({
+export const EmailAttachmentPicker = forwardRef<EmailAttachmentPickerHandle, EmailAttachmentPickerProps>(({
   attachments,
   onAttachmentsChange,
   maxFileSize = MAX_FILE_SIZE_BYTES,
   maxFiles = MAX_FILES,
-}) => {
+}, ref) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [errors, setErrors] = useState<FileValidationError[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+
+  // Expose openFilePicker method via ref
+  useImperativeHandle(ref, () => ({
+    openFilePicker: () => {
+      fileInputRef.current?.click();
+    },
+  }));
 
   /**
    * Validate a single file
@@ -447,6 +462,9 @@ export const EmailAttachmentPicker: React.FC<EmailAttachmentPickerProps> = ({
       )}
     </Box>
   );
-};
+});
+
+// Display name for debugging
+EmailAttachmentPicker.displayName = "EmailAttachmentPicker";
 
 export default EmailAttachmentPicker;

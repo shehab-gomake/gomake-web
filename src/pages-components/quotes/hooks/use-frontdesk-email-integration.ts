@@ -8,6 +8,7 @@ import { chatwootSelectedAccountAtom } from "@/store/frontdesk/atoms/chatwoot.at
 import { ChannelType, type ContactableInbox } from "@/services/frontdesk/api/chatwoot/types/inboxes.types";
 import { EmailAttachment, EmailSenderOption } from "@/widgets/frontdesk/providers/email/types/email.types";
 import { DOCUMENT_TYPE } from "../enums";
+import { getFileExtension, getMimeTypeFromExtension } from "@/widgets/frontdesk/providers/chatwoot/utils/attachment.utils";
 
 interface EmailData {
   tos: string[];
@@ -66,7 +67,10 @@ export const useFrontDeskEmailIntegration = ({
       customerName?: string,
       contactName?: string
     ) => {
+      // Open modal immediately with loading state - better UX
+      setIsEmailComposerOpen(true);
       setIsLoadingEmailData(true);
+      setEmailData(null); // Clear previous data
       
       try {
         await getDocumentMailDataApi(
@@ -74,15 +78,31 @@ export const useFrontDeskEmailIntegration = ({
           async (res) => {
             if (res?.success && res?.data) {
               const normalizedAttachments = Array.isArray(res.data.attachments)
-                ? res.data.attachments.map((attachment: EmailAttachment) => ({
-                    id: attachment.id,
-                    filename: attachment.filename,
-                    mimeType: attachment.mimeType,
-                    contentType: attachment.contentType,
-                    size: attachment.size,
-                    url: attachment.url,
-                    content: attachment.content ?? attachment.data,
-                  }))
+                ? res.data.attachments.map((attachment: EmailAttachment) => {
+                    // Extract extension from URL if filename doesn't have one
+                    let filename = attachment.filename || "document";
+                    const extension = getFileExtension(attachment.url || "", null);
+                    
+                    // Add extension to filename if missing
+                    if (extension && !filename.includes(".")) {
+                      filename = `${filename}.${extension}`;
+                    }
+                    
+                    // Get MIME type from extension if not provided
+                    const mimeType = attachment.mimeType || 
+                                     attachment.contentType || 
+                                     (extension ? getMimeTypeFromExtension(extension) : "application/octet-stream");
+                    
+                    return {
+                      id: attachment.id,
+                      filename,
+                      mimeType,
+                      contentType: mimeType,
+                      size: attachment.size,
+                      url: attachment.url,
+                      content: attachment.content ?? attachment.data,
+                    };
+                  })
                 : [];
 
               const sender = typeof res.data.sender === "string" ? res.data.sender : undefined;
@@ -108,9 +128,9 @@ export const useFrontDeskEmailIntegration = ({
               };
 
               setEmailData(normalizedEmailData);
-              setIsEmailComposerOpen(true);
             } else {
               alertFault("Failed to load email data");
+              setIsEmailComposerOpen(false); // Close modal on error
             }
             setIsLoadingEmailData(false);
           },
@@ -127,6 +147,7 @@ export const useFrontDeskEmailIntegration = ({
         console.error("Error fetching email data:", error);
         alertFault("Failed to load email data");
         setIsLoadingEmailData(false);
+        setIsEmailComposerOpen(false); // Close modal on error
       }
     },
     [callApi, documentType, alertFault, normalizeRecipients]
