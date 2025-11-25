@@ -1,4 +1,11 @@
-import React, { useCallback, useEffect, useState, useMemo } from "react";
+/**
+ * FrontDesk Email Composer Wrapper
+ *
+ * Wrapper component that integrates the EmailComposer with Chatwoot's
+ * conversation creation flow for sending quotes via email.
+ */
+
+import React, { useCallback, useEffect, useMemo } from "react";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { EmailComposer } from "@/widgets/frontdesk/providers/email/components/email-composer";
 import { EmailAttachment, EmailDraft, EmailSenderOption } from "@/widgets/frontdesk/providers/email/types/email.types";
@@ -9,20 +16,44 @@ import { DOCUMENT_TYPE } from "../enums";
 import { useChatwootProfile } from "@/widgets/frontdesk/providers/chatwoot/hooks/use-chatwoot-profile";
 import { useChatwootInboxes } from "@/widgets/frontdesk/providers/chatwoot/hooks/use-chatwoot-inboxes";
 import { ChannelType } from "@/services/frontdesk/api/chatwoot/types/inboxes.types";
-import type { ContactCreatePayload, ContactDetail } from "@/services/frontdesk/api/chatwoot/types/contacts.types";
+import type { ContactCreatePayload } from "@/services/frontdesk/api/chatwoot/types/contacts.types";
 import { getCapitalizedNameFromEmail } from "@/widgets/frontdesk/providers/chatwoot/utils/contact-utils";
+import { convertAttachmentsToFiles } from "@/widgets/frontdesk/providers/chatwoot/utils/attachment.utils";
+import type { AttachmentSource } from "@/widgets/frontdesk/providers/chatwoot/types/attachment.types";
 
-// Helper function to convert HTML to plain text
+// ============================================================================
+// Constants
+// ============================================================================
+
+const LOG_PREFIX = "[FrontDeskEmailComposerWrapper]";
+
+// ============================================================================
+// Helper Functions
+// ============================================================================
+
+/**
+ * Convert HTML to plain text
+ * Used for message preview in draft
+ */
 const htmlToPlainText = (html: string): string => {
   if (!html) return "";
-
-  // Create a temporary div element
   const temp = document.createElement("div");
   temp.innerHTML = html;
-
-  // Get text content (automatically strips HTML tags)
   return temp.textContent || temp.innerText || "";
 };
+
+/**
+ * Map EmailAttachment to AttachmentSource for conversion
+ */
+const mapToAttachmentSource = (attachment: EmailAttachment): AttachmentSource => ({
+  content: attachment.content,
+  data: attachment.data,
+  url: attachment.url,
+  filename: attachment.filename,
+  mimeType: attachment.mimeType,
+  contentType: attachment.contentType,
+  size: attachment.size,
+});
 
 interface FrontDeskEmailComposerWrapperProps {
   open: boolean;
@@ -134,50 +165,8 @@ export const FrontDeskEmailComposerWrapper: React.FC<FrontDeskEmailComposerWrapp
   }, [selectedAccountId, currentUser, profileUser, setSelectedAccountId]);
 
   /**
-   * Convert attachment to File object
-   * Handles both base64-encoded content and URL-based attachments
+   * Resolve sender option from available options
    */
-  const convertAttachmentToFile = async (attachment: EmailAttachment): Promise<File | null> => {
-    const base64 = attachment.content ?? attachment.data;
-    const mimeType = attachment.contentType ?? attachment.mimeType ?? "application/octet-stream";
-
-    // Handle base64-encoded content
-    if (base64) {
-      try {
-        const byteCharacters = window.atob(base64);
-        const byteNumbers = new Array(byteCharacters.length);
-        for (let i = 0; i < byteCharacters.length; i++) {
-          byteNumbers[i] = byteCharacters.charCodeAt(i);
-        }
-        const byteArray = new Uint8Array(byteNumbers);
-        const blob = new Blob([byteArray], { type: mimeType });
-        return new File([blob], attachment.filename, { type: mimeType });
-      } catch (error) {
-        console.error("[FrontDeskEmailComposerWrapper] Failed to convert base64 attachment to file", error);
-        return null;
-      }
-    }
-
-    // Handle URL-based attachments
-    if (attachment.url) {
-      try {
-        console.log(`[FrontDeskEmailComposerWrapper] Fetching attachment from URL: ${attachment.url}`);
-        const response = await fetch(attachment.url);
-        if (!response.ok) {
-          throw new Error(`Failed to fetch attachment: ${response.status}`);
-        }
-        const blob = await response.blob();
-        return new File([blob], attachment.filename, { type: mimeType });
-      } catch (error) {
-        console.error("[FrontDeskEmailComposerWrapper] Failed to fetch URL attachment", error);
-        return null;
-      }
-    }
-
-    console.warn("[FrontDeskEmailComposerWrapper] Attachment has no content, data, or url", attachment);
-    return null;
-  };
-
   const resolveSenderOption = useCallback(
     (option?: EmailSenderOption | null): EmailSenderOption | null => {
       const normalizedSource = option?.sourceId?.toLowerCase();
@@ -238,7 +227,7 @@ export const FrontDeskEmailComposerWrapper: React.FC<FrontDeskEmailComposerWrapp
       const senderOption = resolveSenderOption(draft.sender ?? defaultSenderOption);
 
       if (!senderOption) {
-        console.error("[FrontDeskEmailComposerWrapper] Missing sender option", {
+        console.error(`${LOG_PREFIX} Missing sender option`, {
           draftSender: draft.sender,
           defaultSenderOption,
           senderOptions,
@@ -251,7 +240,7 @@ export const FrontDeskEmailComposerWrapper: React.FC<FrontDeskEmailComposerWrapp
       const resolvedAccountId = await ensureAccountId();
 
       if (!resolvedAccountId) {
-        console.error("[FrontDeskEmailComposerWrapper] Unable to resolve Chatwoot account", {
+        console.error(`${LOG_PREFIX} Unable to resolve Chatwoot account`, {
           selectedAccountId,
           currentUser,
           profileUser,
@@ -263,7 +252,7 @@ export const FrontDeskEmailComposerWrapper: React.FC<FrontDeskEmailComposerWrapp
 
       const accountId = Number(resolvedAccountId);
       if (Number.isNaN(accountId)) {
-        console.error("[FrontDeskEmailComposerWrapper] Resolved account ID is not a number", {
+        console.error(`${LOG_PREFIX} Resolved account ID is not a number`, {
           resolvedAccountId,
         });
         alertFaultSend();
@@ -275,20 +264,16 @@ export const FrontDeskEmailComposerWrapper: React.FC<FrontDeskEmailComposerWrapp
       const toEmails = draft.to?.map((recipient) => recipient.email).filter(Boolean) ?? [];
       const ccEmails = draft.cc?.map((recipient) => recipient.email).filter(Boolean) ?? [];
       const bccEmails = draft.bcc?.map((recipient) => recipient.email).filter(Boolean) ?? [];
-      
-      // Convert attachments - now async to handle URL-based attachments
-      const attachmentPromises = draft.attachments?.map(convertAttachmentToFile) ?? [];
-      const attachmentResults = await Promise.all(attachmentPromises);
-      const attachments = attachmentResults.filter((file): file is File => file !== null);
-      
-      console.log(`[FrontDeskEmailComposerWrapper] Converted ${attachments.length} attachments from ${draft.attachments?.length ?? 0} originals`);
+
+      // Convert attachments using the utility function
+      const attachmentSources = (draft.attachments || []).map(mapToAttachmentSource);
+      const attachments = await convertAttachmentsToFiles(attachmentSources);
+
+      console.log(`${LOG_PREFIX} Converted ${attachments.length} attachments from ${draft.attachments?.length ?? 0} originals`);
 
       // Validate at least one TO recipient
       if (toEmails.length === 0) {
-        console.error("[FrontDeskEmailComposerWrapper] Missing TO recipients", {
-          emailData,
-          toEmails,
-        });
+        console.error(`${LOG_PREFIX} Missing TO recipients`, { emailData, toEmails });
         alertFaultSend();
         setIsSending(false);
         return false;
@@ -296,12 +281,12 @@ export const FrontDeskEmailComposerWrapper: React.FC<FrontDeskEmailComposerWrapp
 
       // Process EACH TO recipient individually
       // Create separate contact and conversation for each recipient
-      console.log(`[FrontDeskEmailComposerWrapper] Processing ${toEmails.length} recipients:`, toEmails);
+      console.log(`${LOG_PREFIX} Processing ${toEmails.length} recipients:`, toEmails);
 
       const results = await Promise.allSettled(
         toEmails.map(async (recipientEmail) => {
           try {
-            console.log(`[FrontDeskEmailComposerWrapper] Processing recipient: ${recipientEmail}`);
+            console.log(`${LOG_PREFIX} Processing recipient: ${recipientEmail}`);
 
             // 1. Find or create contact for this recipient
             const contactName = getCapitalizedNameFromEmail(recipientEmail);
@@ -316,7 +301,7 @@ export const FrontDeskEmailComposerWrapper: React.FC<FrontDeskEmailComposerWrapp
               throw new Error(`Failed to find or create contact for ${recipientEmail}`);
             }
 
-            console.log(`[FrontDeskEmailComposerWrapper] Contact resolved: ${contact.id} for ${recipientEmail}`);
+            console.log(`${LOG_PREFIX} Contact resolved: ${contact.id} for ${recipientEmail}`);
 
             // 2. Create conversation for this specific recipient
             // Note: Each recipient gets their own conversation per Chatwoot's architecture
@@ -344,7 +329,7 @@ export const FrontDeskEmailComposerWrapper: React.FC<FrontDeskEmailComposerWrapp
               throw new Error(`Failed to create conversation for ${recipientEmail}`);
             }
 
-            console.log(`[FrontDeskEmailComposerWrapper] Conversation created: ${conversationId} for ${recipientEmail}`);
+            console.log(`${LOG_PREFIX} Conversation created: ${conversationId} for ${recipientEmail}`);
 
             return {
               recipientEmail,
@@ -353,7 +338,7 @@ export const FrontDeskEmailComposerWrapper: React.FC<FrontDeskEmailComposerWrapp
               success: true,
             };
           } catch (error) {
-            console.error(`[FrontDeskEmailComposerWrapper] Error processing ${recipientEmail}:`, error);
+            console.error(`${LOG_PREFIX} Error processing ${recipientEmail}:`, error);
             return {
               recipientEmail,
               success: false,
@@ -371,16 +356,15 @@ export const FrontDeskEmailComposerWrapper: React.FC<FrontDeskEmailComposerWrapp
         (result) => result.status === "rejected" || (result.status === "fulfilled" && !result.value.success)
       );
 
-      console.log(`[FrontDeskEmailComposerWrapper] Results: ${successfulSends.length} successful, ${failedSends.length} failed`);
+      console.log(`${LOG_PREFIX} Results: ${successfulSends.length} successful, ${failedSends.length} failed`);
 
       if (successfulSends.length > 0) {
         // At least some emails were sent successfully
         if (failedSends.length > 0) {
-          console.warn(`[FrontDeskEmailComposerWrapper] Partial success: ${failedSends.length} recipients failed`);
-          // Log failed recipients
+          console.warn(`${LOG_PREFIX} Partial success: ${failedSends.length} recipients failed`);
           failedSends.forEach((result) => {
             if (result.status === "fulfilled") {
-              console.error(`[FrontDeskEmailComposerWrapper] Failed recipient: ${result.value.recipientEmail}`, result.value.error);
+              console.error(`${LOG_PREFIX} Failed recipient: ${result.value.recipientEmail}`, result.value.error);
             }
           });
         }
@@ -389,11 +373,11 @@ export const FrontDeskEmailComposerWrapper: React.FC<FrontDeskEmailComposerWrapp
       }
 
       // All sends failed
-      console.error("[FrontDeskEmailComposerWrapper] All recipients failed");
+      console.error(`${LOG_PREFIX} All recipients failed`);
       alertFaultSend();
       return false;
     } catch (error) {
-      console.error("[FrontDeskEmailComposerWrapper] Unexpected error:", error);
+      console.error(`${LOG_PREFIX} Unexpected error:`, error);
       alertFaultSend();
       return false;
     } finally {
