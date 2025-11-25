@@ -21,10 +21,9 @@ import { useFetchDeduplication } from "./use-chatwoot-initialization";
 import { useChatwootMetrics } from "./use-chatwoot-metrics";
 import { createFilterKey } from "../utils/filter-utils";
 
-// Global flag to prevent concurrent conversation fetches across all instances
-// Similar to globalTeamsFetchInProgress pattern used in useChatwootTeams
-let globalConversationsFetchInProgress = false;
-let globalLastFetchParamsKey: string | null = null;
+// Global tracking of active fetch keys to prevent duplicate requests for the EXACT SAME parameters
+// while allowing concurrent fetches for DIFFERENT parameters (e.g., different accounts or filters)
+const globalActiveFetchKeys = new Set<string>();
 
 export const useChatwootConversations = (accountId: number | null, options: Partial<ConversationListParams> = {}) => {
   // CACHE-FIRST: Create stable filter key for caching
@@ -136,19 +135,14 @@ export const useChatwootConversations = (accountId: number | null, options: Part
       // Global deduplication guard (prevents concurrent requests across all component instances)
       // This check happens FIRST to prevent race conditions
       if (!append) {
-        if (globalConversationsFetchInProgress) {
-          console.log("[useChatwootConversations] ⏭️ Global fetch already in progress, skipping duplicate");
+        // Check if THIS SPECIFIC REQUEST is already in progress
+        if (globalActiveFetchKeys.has(paramsKey)) {
+          console.log("[useChatwootConversations] ⏭️ Global fetch already in progress for these params, skipping duplicate");
           return;
         }
 
-        // Check if same params as last successful fetch
-        if (paramsKey === globalLastFetchParamsKey) {
-          console.log("[useChatwootConversations] ⏭️ Same params as last fetch, skipping duplicate");
-          return;
-        }
-
-        // Mark global fetch as in progress
-        globalConversationsFetchInProgress = true;
+        // Mark global fetch as in progress for these params
+        globalActiveFetchKeys.add(paramsKey);
       }
 
       // Instance-level deduplication check (backup)
@@ -217,9 +211,8 @@ export const useChatwootConversations = (accountId: number | null, options: Part
         // Mark fetch as complete to prevent duplicate calls
         if (!append) {
           markFetchComplete(listParams);
-          // Update global state
-          globalLastFetchParamsKey = paramsKey;
-          globalConversationsFetchInProgress = false;
+          // Remove from active keys
+          globalActiveFetchKeys.delete(paramsKey);
         }
       } catch (err: any) {
         const errorMessage = err.message || "Failed to load conversations";
@@ -238,7 +231,7 @@ export const useChatwootConversations = (accountId: number | null, options: Part
         markFetchFailed();
         // Reset global flag on error
         if (!append) {
-          globalConversationsFetchInProgress = false;
+          globalActiveFetchKeys.delete(paramsKey);
         }
       } finally {
         // Reset all loading states
@@ -248,8 +241,8 @@ export const useChatwootConversations = (accountId: number | null, options: Part
           loadingMore: false,
         });
         // Ensure global flag is reset even if something goes wrong
-        if (!append && globalConversationsFetchInProgress) {
-          globalConversationsFetchInProgress = false;
+        if (!append) {
+          globalActiveFetchKeys.delete(paramsKey);
         }
       }
     },
