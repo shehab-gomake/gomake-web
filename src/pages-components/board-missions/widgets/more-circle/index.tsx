@@ -10,16 +10,29 @@ interface IBoardMissionsProps {
   onClickMarksAsDone?: (mission?: any, markAllReady?: boolean) => void;
   onClickReturnToProduction?: (mission?: any) => void;
   onClickOrderSummeryPdf?: (id: string) => void;
-  onClickWorkMissionPdf?: (id: string, actionId: string, productType: string, productName: string) => void;
+  onClickWorkMissionPdf?: (
+    id: string,
+    actionId: string,
+    productType: string,
+    productName: string
+  ) => void;
   onOpenModal?: (mission?: any) => void;
   onClickPrintPackagingSlip?: (mission?: any) => void;
   onClickMarksAsDoneForProductType?: (mission?: any) => void;
   isDoneJobs?: boolean;
   handleClickBackToProcess?: (mission?: any) => void;
-  onOpenMarkReadyModalForHasJobs?: (mission?: any, markAllReady?: boolean) => void;
-  printJobUsingPrintNode?: (jobId: string, productType?: string, productName?: string) => void;
+  onOpenMarkReadyModalForHasJobs?: (
+    mission?: any,
+    markAllReady?: boolean
+  ) => void;
+  printJobUsingPrintNode?: (
+    jobId: string,
+    productType?: string,
+    productName?: string
+  ) => void;
   onOpenMarkReadyTypeModal?: (mission?: any) => void;
   onReportQualityIssue?: (mission?: any) => void;
+  onOpenStartProductionModal?: (mission?: any) => void;
 }
 const MoreMenuWidget = ({
   mission,
@@ -37,13 +50,22 @@ const MoreMenuWidget = ({
   onOpenMarkReadyModalForHasJobs,
   printJobUsingPrintNode,
   onOpenMarkReadyTypeModal,
-  onReportQualityIssue
+  onReportQualityIssue,
+  onOpenStartProductionModal,
 }: IBoardMissionsProps) => {
   const { classes } = useStyle();
 
   const handleClickEdit = (boardMissions) => {
-    return `/products/edit?clientTypeId=${boardMissions.clientTypeId}&customerId=${boardMissions.customerID}&customerName=${boardMissions.clientName}&productId=${boardMissions.productID}&documentItemId=${boardMissions.orderItemId}&documentType=${1}&documentNumber=${boardMissions?.orderNumber}&documentId=${boardMissions.orderID}`;
-  }
+    return `/products/edit?clientTypeId=${
+      boardMissions.clientTypeId
+    }&customerId=${boardMissions.customerID}&customerName=${
+      boardMissions.clientName
+    }&productId=${boardMissions.productID}&documentItemId=${
+      boardMissions.orderItemId
+    }&documentType=${1}&documentNumber=${
+      boardMissions?.orderNumber
+    }&documentId=${boardMissions.orderID}`;
+  };
   const { t, menuList } = useMoreCircle({
     mission,
     onClickDuplicate,
@@ -61,24 +83,26 @@ const MoreMenuWidget = ({
     onOpenMarkReadyModalForHasJobs,
     printJobUsingPrintNode,
     onOpenMarkReadyTypeModal,
-    onReportQualityIssue
+    onReportQualityIssue,
+    onOpenStartProductionModal,
   });
 
   return (
     <>
       <OptionsButton>
-        {menuList.map((item, index) => (
-          item.condition && (
-            <MenuItem
-              style={classes.menuItemContainer}
-              key={index}
-              onClick={item?.onclick}
-            >
-              {item?.icon}
-              <div style={classes.menuTitleStyle}>{item?.name}</div>
-            </MenuItem>
-          )
-        ))}
+        {menuList.map(
+          (item, index) =>
+            item.condition && (
+              <MenuItem
+                style={classes.menuItemContainer}
+                key={index}
+                onClick={item?.onclick}
+              >
+                {item?.icon}
+                <div style={classes.menuTitleStyle}>{item?.name}</div>
+              </MenuItem>
+            )
+        )}
       </OptionsButton>
     </>
   );

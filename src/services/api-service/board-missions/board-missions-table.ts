@@ -42,6 +42,8 @@ const SAVE_JOBS_TABLE_SETTINGS_URL =
   "/v1/job-service/production-floor-table-settings/save-jobs-table-settings";
 const GET_JOBS_TABLE_SETTINGS_URL =
   "/v1/job-service/production-floor-table-settings/get-jobs-table-settings";
+const START_JOB_PRODUCTION_URL =
+  "/v1/job-service/board-missions/start-job-production/";
 
 const setBoardMissionsFiltersApi: ICallAndSetData = async (
   callApi,
@@ -314,6 +316,19 @@ const checkIfProductIsLabelInRollsApi: ICallAndSetData = async (
   );
 };
 
+const startJobProductionApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  boardMissionId: string
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.GET,
+    `${START_JOB_PRODUCTION_URL}${boardMissionId}`,
+    setState
+  );
+};
+
 export {
   setBoardMissionsFiltersApi,
   getOrderSummeryPdfApi,
@@ -335,4 +350,5 @@ export {
   saveJobsTableSettingsApi,
   getJobsTableSettingsApi,
   checkIfProductIsLabelInRollsApi,
+  startJobProductionApi,
 };
