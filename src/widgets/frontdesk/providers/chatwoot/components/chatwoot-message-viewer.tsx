@@ -411,8 +411,10 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
         sx={{
           flex: 1,
           overflow: "auto",
-          background: `linear-gradient(to bottom, ${neutralColor(25)}, ${neutralColor(50)})`,
-          p: 2,
+          background: theme.palette.mode === "dark"
+            ? `linear-gradient(to bottom, ${neutralColor(900)}, ${neutralColor(850)})`
+            : `linear-gradient(to bottom, ${neutralColor(25)}, ${neutralColor(50)})`,
+          p: 2.5,
           opacity: loading && messages.length === 0 ? 0.5 : 1,
           transition: "opacity 0.2s ease-in-out",
         }}
@@ -435,7 +437,7 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
           />
         ) : (
           <Fade in={!isTransitioning} timeout={200}>
-            <Stack spacing={2}>
+            <Stack spacing={0.5}>
               {/* Load More Button - Show at top */}
               {hasMoreMessages && (
                 <Box sx={{ display: "flex", justifyContent: "center", pt: 1 }}>

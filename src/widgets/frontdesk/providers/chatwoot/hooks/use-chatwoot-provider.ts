@@ -31,20 +31,20 @@ function createStableKey<T = any>(params: T): string {
     return String(params);
   }
 
-  if (typeof params !== 'object') {
+  if (typeof params !== "object") {
     return String(params);
   }
 
   // Sort keys recursively for nested objects
   const sortKeys = (obj: any): any => {
     if (obj === null || obj === undefined) return obj;
-    if (typeof obj !== 'object') return obj;
+    if (typeof obj !== "object") return obj;
     if (Array.isArray(obj)) return obj.map(sortKeys);
 
     const sorted: Record<string, any> = {};
     Object.keys(obj)
       .sort()
-      .forEach(key => {
+      .forEach((key) => {
         sorted[key] = sortKeys(obj[key]);
       });
     return sorted;
@@ -105,7 +105,7 @@ export const useChatwootProvider = () => {
   // This is the single source of truth for filter state
   const filterKey = useMemo(() => {
     const route = router.currentRoute;
-    if (!route) return '';
+    if (!route) return "";
 
     return createStableKey({
       view: route.view,
@@ -129,16 +129,12 @@ export const useChatwootProvider = () => {
     // Parse status with validation and defaults
     const urlStatus = route.filters?.status as ConversationStatus | undefined;
     const validStatuses = Object.values(ConversationStatus);
-    const statusFilter = urlStatus && validStatuses.includes(urlStatus)
-      ? urlStatus
-      : ConversationStatus.OPEN;
+    const statusFilter = urlStatus && validStatuses.includes(urlStatus) ? urlStatus : ConversationStatus.OPEN;
 
     // Parse assignee type with validation and defaults
     const urlAssignee = route.filters?.assigneeType as ConversationAssigneeType | undefined;
     const validTypes = Object.values(ConversationAssigneeType);
-    const assigneeFilter = urlAssignee && validTypes.includes(urlAssignee)
-      ? urlAssignee
-      : ConversationAssigneeType.ME;
+    const assigneeFilter = urlAssignee && validTypes.includes(urlAssignee) ? urlAssignee : ConversationAssigneeType.ME;
 
     // Parse inbox ID from channelId
     const inboxId = route.channelId ? parseInt(route.channelId, 10) : null;
@@ -161,8 +157,11 @@ export const useChatwootProvider = () => {
     // Parse labels (comma-separated string to array)
     const labelsString = route.filters?.labels;
     let labels: string[] | undefined = undefined;
-    if (typeof labelsString === 'string' && labelsString.trim()) {
-      labels = labelsString.split(',').map(l => l.trim()).filter(l => l.length > 0);
+    if (typeof labelsString === "string" && labelsString.trim()) {
+      labels = labelsString
+        .split(",")
+        .map((l) => l.trim())
+        .filter((l) => l.length > 0);
     }
 
     // Set conversation_type based on view
@@ -225,7 +224,7 @@ export const useChatwootProvider = () => {
         // Generate the same cache key that useChatwootConversations uses
         const cacheKey = createFilterKey(currentAccountId, filters);
         const cache = snapshot.getLoadable(chatwootConversationsCacheFamily(cacheKey));
-        return cache.state === 'hasValue' ? cache.getValue().conversations : [];
+        return cache.state === "hasValue" ? cache.getValue().conversations : [];
       },
     [currentAccountId, filters]
   );
@@ -251,9 +250,7 @@ export const useChatwootProvider = () => {
     // Try to find conversation in the current list first (fast path - instant transition)
     // Get latest conversations from cache (bypasses stale ref, always fresh)
     const latestConversations = getLatestConversations();
-    const convInList = latestConversations.find(
-      (c) => c.id.toString() === conversationIdFromUrl
-    );
+    const convInList = latestConversations.find((c) => c.id.toString() === conversationIdFromUrl);
 
     if (convInList) {
       // Use conversation from list immediately for smooth transition
@@ -294,8 +291,8 @@ export const useChatwootProvider = () => {
     fetchConversationFromApi();
   }, [
     router.currentRoute?.conversationId, // URL source of truth
-    currentAccountId,                     // Account context
-    setSelectedConversation,              // Setter (stable)
+    currentAccountId, // Account context
+    setSelectedConversation, // Setter (stable)
     // REMOVED: selectedConversation - breaks circular dependency, prevents unnecessary re-runs
     // REMOVED: conversations.conversations - ref handles this, prevents duplicate fetches
   ]);
@@ -312,9 +309,7 @@ export const useChatwootProvider = () => {
       // Navigate to conversation - URL will become source of truth
       // Only pass inbox_id when in CHANNELS view
       // For ALL_CONVERSATIONS, MY_INBOX, MENTIONS, UNATTENDED - don't pass it
-      const inboxId = router.isChannelsView
-        ? conversation.inbox_id?.toString()
-        : undefined;
+      const inboxId = router.isChannelsView ? conversation.inbox_id?.toString() : undefined;
       router.navigateToConversation(conversation.id.toString(), inboxId);
 
       // Mark conversation as read (business logic - independent of navigation state)
@@ -458,17 +453,19 @@ export const useChatwootProvider = () => {
 
       // Update selected conversation
       if (selectedConversation?.id === updatedConversation.id) {
-        const matchesAllFilters = statusMatches && (() => {
-          const newAssigneeId = updatedConversation.meta?.assignee?.id;
-          if (assigneeFilter === ConversationAssigneeType.ME) {
-            return newAssigneeId === currentUserId;
-          } else if (assigneeFilter === ConversationAssigneeType.UNASSIGNED) {
-            return !newAssigneeId;
-          } else if (assigneeFilter === ConversationAssigneeType.ASSIGNED) {
-            return !!newAssigneeId;
-          }
-          return true; // ALL
-        })();
+        const matchesAllFilters =
+          statusMatches &&
+          (() => {
+            const newAssigneeId = updatedConversation.meta?.assignee?.id;
+            if (assigneeFilter === ConversationAssigneeType.ME) {
+              return newAssigneeId === currentUserId;
+            } else if (assigneeFilter === ConversationAssigneeType.UNASSIGNED) {
+              return !newAssigneeId;
+            } else if (assigneeFilter === ConversationAssigneeType.ASSIGNED) {
+              return !!newAssigneeId;
+            }
+            return true; // ALL
+          })();
 
         if (!matchesAllFilters) {
           // If conversation no longer matches filter, deselect it
@@ -478,7 +475,16 @@ export const useChatwootProvider = () => {
         }
       }
     },
-    [updateConversationCache, setConversationsList, selectedConversation, setSelectedConversation, statusFilter, assigneeFilter, profile, setCounts]
+    [
+      updateConversationCache,
+      setConversationsList,
+      selectedConversation,
+      setSelectedConversation,
+      statusFilter,
+      assigneeFilter,
+      profile,
+      setCounts,
+    ]
   );
 
   // OPTIMIZED: Handle filter changes with simplified dependencies
@@ -494,8 +500,8 @@ export const useChatwootProvider = () => {
       // Function to apply filter changes to URL
       const applyFilters = () => {
         // Start with current URL values (read from route)
-        let statusToSet = filters.status as ConversationStatus || ConversationStatus.OPEN;
-        let assigneeToSet = filters.assignee_type as ConversationAssigneeType || ConversationAssigneeType.ME;
+        let statusToSet = (filters.status as ConversationStatus) || ConversationStatus.OPEN;
+        let assigneeToSet = (filters.assignee_type as ConversationAssigneeType) || ConversationAssigneeType.ME;
         let searchToSet = filters.q || "";
         let teamToSet = filters.team_id;
         let sortToSet = filters.sort_by;
@@ -536,9 +542,7 @@ export const useChatwootProvider = () => {
         }
 
         // Get inbox ID from current route
-        const currentInboxId = router.currentRoute?.channelId
-          ? parseInt(router.currentRoute.channelId, 10)
-          : null;
+        const currentInboxId = router.currentRoute?.channelId ? parseInt(router.currentRoute.channelId, 10) : null;
 
         // Build URL filters object (omit defaults to keep URL clean)
         const urlFilters: any = {};

@@ -6,15 +6,7 @@
  */
 
 import React, { useState, useCallback, useMemo } from "react";
-import {
-  Box,
-  Stack,
-  Typography,
-  IconButton,
-  Modal,
-  Backdrop,
-  CircularProgress,
-} from "@mui/material";
+import { Box, Stack, Typography, Modal, Backdrop, CircularProgress, IconButton, alpha, useTheme } from "@mui/material";
 import DownloadIcon from "@mui/icons-material/Download";
 import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
@@ -28,12 +20,7 @@ import ContactPageIcon from "@mui/icons-material/ContactPage";
 import PlayCircleIcon from "@mui/icons-material/PlayCircle";
 import CloseIcon from "@mui/icons-material/Close";
 import BrokenImageIcon from "@mui/icons-material/BrokenImage";
-import { useGomakeTheme } from "@/hooks/use-gomake-thme";
-import {
-  ChatwootAttachment,
-  MediaModalState,
-  FileCategory,
-} from "../../types/attachment.types";
+import { ChatwootAttachment, MediaModalState, FileCategory } from "../../types/attachment.types";
 import {
   formatFileSize,
   getFileNameFromUrl,
@@ -41,6 +28,7 @@ import {
   getFileCategory,
   categorizeAttachments,
 } from "../../utils/attachment.utils";
+import { useSafeColors } from "@/widgets/frontdesk/utils/theme.utils";
 
 // ============================================================================
 // Icon Mapping
@@ -83,115 +71,94 @@ interface ImageAttachmentProps {
   onPreview: (url: string) => void;
 }
 
-const ImageAttachment: React.FC<ImageAttachmentProps> = React.memo(
-  ({ attachment, onPreview }) => {
-    const { neutralColor } = useGomakeTheme();
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(false);
+const ImageAttachment: React.FC<ImageAttachmentProps> = React.memo(({ attachment, onPreview }) => {
+  const { safeNeutralColor } = useSafeColors();
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
-    const handleLoad = useCallback(() => {
-      setLoading(false);
-      setError(false);
-    }, []);
+  const handleLoad = useCallback(() => {
+    setLoading(false);
+    setError(false);
+  }, []);
 
-    const handleError = useCallback(() => {
-      setLoading(false);
-      setError(true);
-    }, []);
+  const handleError = useCallback(() => {
+    setLoading(false);
+    setError(true);
+  }, []);
 
-    const handleClick = useCallback(() => {
-      if (!error) {
-        onPreview(attachment.data_url);
-      }
-    }, [error, onPreview, attachment.data_url]);
+  const handleClick = useCallback(() => {
+    if (!error) {
+      onPreview(attachment.data_url);
+    }
+  }, [error, onPreview, attachment.data_url]);
 
-    const imageUrl = attachment.thumb_url || attachment.data_url;
+  const imageUrl = attachment.thumb_url || attachment.data_url;
 
-    return (
-      <Box
-        onClick={handleClick}
-        sx={{
-          position: "relative",
-          cursor: error ? "default" : "pointer",
-          borderRadius: 1.5,
-          overflow: "hidden",
-          maxWidth: 200,
-          maxHeight: 200,
-          minWidth: 80,
-          minHeight: 80,
-          bgcolor: neutralColor(100),
-          "&:hover": error ? {} : { opacity: 0.9 },
-        }}
-      >
-        {loading && (
-          <Box
-            sx={{
-              position: "absolute",
-              inset: 0,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <CircularProgress size={24} />
-          </Box>
-        )}
+  return (
+    <Box
+      onClick={handleClick}
+      sx={{
+        position: "relative",
+        cursor: error ? "default" : "pointer",
+        borderRadius: 2,
+        overflow: "hidden",
+        maxWidth: 220,
+        maxHeight: 220,
+        minWidth: 80,
+        minHeight: 80,
+        bgcolor: safeNeutralColor(100),
+        "&:hover": error ? {} : { opacity: 0.95 },
+      }}
+    >
+      {loading && (
+        <Box
+          sx={{
+            position: "absolute",
+            inset: 0,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <CircularProgress size={24} />
+        </Box>
+      )}
 
-        {error ? (
-          <Box
-            sx={{
-              width: 100,
-              height: 100,
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: 0.5,
-            }}
-          >
-            <BrokenImageIcon sx={{ fontSize: 32, color: neutralColor(400) }} />
-            <Typography variant="caption" color="text.secondary">
-              Failed to load
-            </Typography>
-          </Box>
-        ) : (
-          <img
-            src={imageUrl}
-            alt={getFileNameFromUrl(attachment.data_url)}
-            onLoad={handleLoad}
-            onError={handleError}
-            style={{
-              display: loading ? "none" : "block",
-              maxWidth: "100%",
-              maxHeight: 200,
-              objectFit: "cover",
-              borderRadius: 6,
-            }}
-          />
-        )}
-
-        {!loading && !error && attachment.file_size && (
-          <Typography
-            variant="caption"
-            sx={{
-              position: "absolute",
-              bottom: 4,
-              right: 4,
-              bgcolor: "rgba(0,0,0,0.6)",
-              color: "#fff",
-              px: 0.75,
-              py: 0.25,
-              borderRadius: 1,
-              fontSize: "0.65rem",
-            }}
-          >
-            {formatFileSize(attachment.file_size)}
+      {error ? (
+        <Box
+          sx={{
+            width: 100,
+            height: 100,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: 0.5,
+          }}
+        >
+          <BrokenImageIcon sx={{ fontSize: 32, color: safeNeutralColor(400) }} />
+          <Typography variant="caption" color="text.secondary">
+            Failed to load
           </Typography>
-        )}
-      </Box>
-    );
-  }
-);
+        </Box>
+      ) : (
+        <img
+          src={imageUrl}
+          alt={getFileNameFromUrl(attachment.data_url)}
+          onLoad={handleLoad}
+          onError={handleError}
+          style={{
+            display: loading ? "none" : "block",
+            maxWidth: "100%",
+            maxHeight: 220,
+            objectFit: "cover",
+            borderRadius: 8,
+          }}
+        />
+      )}
+    </Box>
+  );
+});
 
 ImageAttachment.displayName = "ImageAttachment";
 
@@ -204,128 +171,107 @@ interface VideoAttachmentProps {
   onPreview: (url: string) => void;
 }
 
-const VideoAttachment: React.FC<VideoAttachmentProps> = React.memo(
-  ({ attachment, onPreview }) => {
-    const { neutralColor } = useGomakeTheme();
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(false);
+const VideoAttachment: React.FC<VideoAttachmentProps> = React.memo(({ attachment, onPreview }) => {
+  const { safeNeutralColor } = useSafeColors();
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
-    const handleLoadedData = useCallback(() => {
-      setLoading(false);
-    }, []);
+  const handleLoadedData = useCallback(() => {
+    setLoading(false);
+  }, []);
 
-    const handleError = useCallback(() => {
-      setLoading(false);
-      setError(true);
-    }, []);
+  const handleError = useCallback(() => {
+    setLoading(false);
+    setError(true);
+  }, []);
 
-    const handleClick = useCallback(() => {
-      if (!error) {
-        onPreview(attachment.data_url);
-      }
-    }, [error, onPreview, attachment.data_url]);
+  const handleClick = useCallback(() => {
+    if (!error) {
+      onPreview(attachment.data_url);
+    }
+  }, [error, onPreview, attachment.data_url]);
 
-    return (
-      <Box
-        sx={{
-          position: "relative",
-          borderRadius: 1.5,
-          overflow: "hidden",
-          maxWidth: 300,
-          cursor: error ? "default" : "pointer",
-          bgcolor: neutralColor(900),
-          "&:hover .play-overlay": error ? {} : { bgcolor: "rgba(0,0,0,0.5)" },
-        }}
-        onClick={handleClick}
-      >
-        {loading && (
-          <Box
-            sx={{
-              width: 200,
-              height: 120,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <CircularProgress size={24} sx={{ color: "#fff" }} />
-          </Box>
-        )}
+  return (
+    <Box
+      sx={{
+        position: "relative",
+        borderRadius: 2,
+        overflow: "hidden",
+        maxWidth: 280,
+        cursor: error ? "default" : "pointer",
+        bgcolor: safeNeutralColor(900),
+        "&:hover .play-overlay": error ? {} : { bgcolor: "rgba(0,0,0,0.4)" },
+      }}
+      onClick={handleClick}
+    >
+      {loading && (
+        <Box
+          sx={{
+            width: 200,
+            height: 120,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <CircularProgress size={24} sx={{ color: "#fff" }} />
+        </Box>
+      )}
 
-        {error ? (
-          <Box
-            sx={{
-              width: 200,
-              height: 120,
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: 0.5,
-            }}
-          >
-            <VideoFileIcon sx={{ fontSize: 32, color: neutralColor(400) }} />
-            <Typography variant="caption" sx={{ color: neutralColor(400) }}>
-              Failed to load video
-            </Typography>
-          </Box>
-        ) : (
-          <>
-            <video
-              src={attachment.data_url}
-              onLoadedData={handleLoadedData}
-              onError={handleError}
-              style={{
-                display: loading ? "none" : "block",
-                maxWidth: "100%",
-                maxHeight: 200,
-                borderRadius: 6,
-              }}
-            />
-            {!loading && (
-              <Box
-                className="play-overlay"
-                sx={{
-                  position: "absolute",
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  bgcolor: "rgba(0,0,0,0.3)",
-                  transition: "background-color 0.2s",
-                }}
-              >
-                <PlayCircleIcon sx={{ fontSize: 48, color: "#fff" }} />
-              </Box>
-            )}
-          </>
-        )}
-
-        {!loading && !error && attachment.file_size && (
-          <Typography
-            variant="caption"
-            sx={{
-              position: "absolute",
-              bottom: 4,
-              right: 4,
-              bgcolor: "rgba(0,0,0,0.6)",
-              color: "#fff",
-              px: 0.75,
-              py: 0.25,
-              borderRadius: 1,
-              fontSize: "0.65rem",
-            }}
-          >
-            {formatFileSize(attachment.file_size)}
+      {error ? (
+        <Box
+          sx={{
+            width: 200,
+            height: 120,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: 0.5,
+          }}
+        >
+          <VideoFileIcon sx={{ fontSize: 32, color: safeNeutralColor(400) }} />
+          <Typography variant="caption" sx={{ color: safeNeutralColor(400) }}>
+            Failed to load video
           </Typography>
-        )}
-      </Box>
-    );
-  }
-);
+        </Box>
+      ) : (
+        <>
+          <video
+            src={attachment.data_url}
+            onLoadedData={handleLoadedData}
+            onError={handleError}
+            style={{
+              display: loading ? "none" : "block",
+              maxWidth: "100%",
+              maxHeight: 200,
+              borderRadius: 8,
+            }}
+          />
+          {!loading && (
+            <Box
+              className="play-overlay"
+              sx={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                bgcolor: "rgba(0,0,0,0.3)",
+                transition: "background-color 0.15s",
+              }}
+            >
+              <PlayCircleIcon sx={{ fontSize: 48, color: "#fff" }} />
+            </Box>
+          )}
+        </>
+      )}
+    </Box>
+  );
+});
 
 VideoAttachment.displayName = "VideoAttachment";
 
@@ -338,55 +284,52 @@ interface AudioAttachmentProps {
   isOutgoing: boolean;
 }
 
-const AudioAttachment: React.FC<AudioAttachmentProps> = React.memo(
-  ({ attachment, isOutgoing }) => {
-    const { neutralColor, primaryColor } = useGomakeTheme();
-    const fileName = getFileNameFromUrl(attachment.data_url);
+const AudioAttachment: React.FC<AudioAttachmentProps> = React.memo(({ attachment }) => {
+  const { safeNeutralColor } = useSafeColors();
+  const theme = useTheme();
+  const fileName = getFileNameFromUrl(attachment.data_url);
 
-    return (
-      <Box
-        sx={{
-          p: 1.5,
-          borderRadius: 1.5,
-          bgcolor: isOutgoing ? primaryColor(50) : neutralColor(100),
-          minWidth: 250,
-          maxWidth: 300,
-        }}
-      >
-        <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 1 }}>
-          <AudioFileIcon sx={{ fontSize: 24, color: "#9C27B0" }} />
-          <Typography
-            variant="body2"
-            sx={{
-              fontWeight: 500,
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-              whiteSpace: "nowrap",
-              flex: 1,
-            }}
-            title={fileName}
-          >
-            {fileName}
-          </Typography>
-        </Stack>
-        <audio
-          controls
-          src={attachment.data_url}
-          style={{ width: "100%", height: 36 }}
-          preload="metadata"
-        />
-        {attachment.file_size && (
-          <Typography
-            variant="caption"
-            sx={{ color: neutralColor(500), mt: 0.5, display: "block" }}
-          >
-            {formatFileSize(attachment.file_size)}
-          </Typography>
-        )}
-      </Box>
-    );
-  }
-);
+  return (
+    <Box
+      sx={{
+        p: 1,
+        borderRadius: 1.5,
+        bgcolor: theme.palette.mode === "dark"
+          ? alpha(safeNeutralColor(700), 0.4)
+          : alpha(safeNeutralColor(100), 0.8),
+        border: `1px solid ${theme.palette.mode === "dark"
+          ? alpha(safeNeutralColor(600), 0.3)
+          : safeNeutralColor(200)}`,
+        minWidth: 240,
+        maxWidth: 280,
+      }}
+    >
+      <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 1 }}>
+        <AudioFileIcon sx={{ fontSize: 24, color: "#9C27B0" }} />
+        <Typography
+          variant="body2"
+          sx={{
+            fontWeight: 500,
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
+            flex: 1,
+            fontSize: "0.8125rem",
+          }}
+          title={fileName}
+        >
+          {fileName}
+        </Typography>
+      </Stack>
+      <audio controls src={attachment.data_url} style={{ width: "100%", height: 36 }} preload="metadata" />
+      {attachment.file_size && (
+        <Typography variant="caption" sx={{ color: safeNeutralColor(500), mt: 0.5, display: "block", fontSize: "0.6875rem" }}>
+          {formatFileSize(attachment.file_size)}
+        </Typography>
+      )}
+    </Box>
+  );
+});
 
 AudioAttachment.displayName = "AudioAttachment";
 
@@ -399,92 +342,90 @@ interface FileAttachmentProps {
   isOutgoing: boolean;
 }
 
-const FileAttachment: React.FC<FileAttachmentProps> = React.memo(
-  ({ attachment, isOutgoing }) => {
-    const { neutralColor, primaryColor } = useGomakeTheme();
-    const fileName = getFileNameFromUrl(attachment.data_url);
-    const extension = getFileExtension(attachment.data_url, attachment.extension);
-    const category = getFileCategory(attachment.file_type, extension);
+const FileAttachment: React.FC<FileAttachmentProps> = React.memo(({ attachment }) => {
+  const theme = useTheme();
+  const { safeNeutralColor } = useSafeColors();
+  const fileName = getFileNameFromUrl(attachment.data_url);
+  const extension = getFileExtension(attachment.data_url, attachment.extension);
+  const category = getFileCategory(attachment.file_type, extension);
 
-    const handleDownload = useCallback(
-      (e: React.MouseEvent) => {
-        e.stopPropagation();
-        window.open(attachment.data_url, "_blank", "noopener,noreferrer");
-      },
-      [attachment.data_url]
-    );
-
-    return (
-      <Box
-        component="a"
-        href={attachment.data_url}
-        target="_blank"
-        rel="noopener noreferrer"
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          gap: 1.5,
-          p: 1.5,
-          borderRadius: 1.5,
-          bgcolor: isOutgoing ? primaryColor(50) : neutralColor(100),
-          textDecoration: "none",
-          color: "inherit",
-          minWidth: 200,
-          maxWidth: 280,
-          "&:hover": {
-            bgcolor: isOutgoing ? primaryColor(100) : neutralColor(150),
-          },
-        }}
-      >
+  return (
+    <Box
+      component="a"
+      href={attachment.data_url}
+      target="_blank"
+      rel="noopener noreferrer"
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        gap: 1.25,
+        py: 1,
+        px: 1.25,
+        borderRadius: 1.5,
+        bgcolor: theme.palette.mode === "dark"
+          ? alpha(safeNeutralColor(700), 0.4)
+          : alpha(safeNeutralColor(100), 0.8),
+        border: `1px solid ${theme.palette.mode === "dark"
+          ? alpha(safeNeutralColor(600), 0.3)
+          : safeNeutralColor(200)}`,
+        textDecoration: "none",
+        color: "inherit",
+        minWidth: 180,
+        maxWidth: 260,
+        transition: "background-color 0.15s ease",
+        "&:hover": {
+          bgcolor: theme.palette.mode === "dark"
+            ? alpha(safeNeutralColor(600), 0.5)
+            : safeNeutralColor(100),
+        },
+      }}
+    >
+      {/* File Icon */}
+      <Box sx={{ flexShrink: 0, display: "flex", alignItems: "center" }}>
         {getFileIcon(category)}
-        <Box sx={{ flex: 1, minWidth: 0 }}>
-          <Typography
-            variant="body2"
-            sx={{
-              fontWeight: 500,
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-              whiteSpace: "nowrap",
-            }}
-            title={fileName}
-          >
-            {fileName}
-          </Typography>
-          <Stack direction="row" spacing={1} alignItems="center">
-            {extension && (
-              <Typography
-                variant="caption"
-                sx={{
-                  color: neutralColor(600),
-                  textTransform: "uppercase",
-                  fontWeight: 600,
-                  fontSize: "0.65rem",
-                }}
-              >
-                {extension}
-              </Typography>
-            )}
-            {attachment.file_size && (
-              <Typography variant="caption" sx={{ color: neutralColor(500) }}>
-                • {formatFileSize(attachment.file_size)}
-              </Typography>
-            )}
-          </Stack>
-        </Box>
-        <IconButton
-          size="small"
-          onClick={handleDownload}
+      </Box>
+
+      {/* File Info */}
+      <Box sx={{ flex: 1, minWidth: 0 }}>
+        <Typography
+          variant="body2"
           sx={{
-            bgcolor: neutralColor(200),
-            "&:hover": { bgcolor: neutralColor(300) },
+            fontWeight: 500,
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
+            fontSize: "0.8125rem",
+            color: theme.palette.mode === "dark" ? safeNeutralColor(100) : safeNeutralColor(900),
+            lineHeight: 1.4,
+          }}
+          title={fileName}
+        >
+          {fileName}
+        </Typography>
+        <Typography
+          variant="caption"
+          sx={{
+            color: safeNeutralColor(500),
+            fontSize: "0.6875rem",
+            textTransform: "uppercase",
+            letterSpacing: "0.3px",
           }}
         >
-          <DownloadIcon sx={{ fontSize: 18, color: neutralColor(600) }} />
-        </IconButton>
+          {extension}{attachment.file_size ? ` • ${formatFileSize(attachment.file_size)}` : ""}
+        </Typography>
       </Box>
-    );
-  }
-);
+
+      {/* Download Icon */}
+      <DownloadIcon
+        sx={{
+          fontSize: 18,
+          color: safeNeutralColor(400),
+          flexShrink: 0,
+        }}
+      />
+    </Box>
+  );
+});
 
 FileAttachment.displayName = "FileAttachment";
 
@@ -498,71 +439,69 @@ interface MediaPreviewModalProps {
   media: MediaModalState | null;
 }
 
-const MediaPreviewModal: React.FC<MediaPreviewModalProps> = React.memo(
-  ({ open, onClose, media }) => {
-    if (!media) return null;
+const MediaPreviewModal: React.FC<MediaPreviewModalProps> = React.memo(({ open, onClose, media }) => {
+  if (!media) return null;
 
-    return (
-      <Modal
-        open={open}
-        onClose={onClose}
-        closeAfterTransition
-        BackdropComponent={Backdrop}
-        BackdropProps={{ timeout: 300, sx: { bgcolor: "rgba(0,0,0,0.9)" } }}
+  return (
+    <Modal
+      open={open}
+      onClose={onClose}
+      closeAfterTransition
+      BackdropComponent={Backdrop}
+      BackdropProps={{ timeout: 300, sx: { bgcolor: "rgba(0,0,0,0.9)" } }}
+    >
+      <Box
+        sx={{
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          maxWidth: "90vw",
+          maxHeight: "90vh",
+          outline: "none",
+        }}
       >
-        <Box
+        <IconButton
+          onClick={onClose}
           sx={{
             position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            maxWidth: "90vw",
-            maxHeight: "90vh",
-            outline: "none",
+            top: -48,
+            right: 0,
+            color: "#fff",
+            bgcolor: "rgba(255,255,255,0.1)",
+            "&:hover": { bgcolor: "rgba(255,255,255,0.2)" },
           }}
         >
-          <IconButton
-            onClick={onClose}
-            sx={{
-              position: "absolute",
-              top: -48,
-              right: 0,
-              color: "#fff",
-              bgcolor: "rgba(255,255,255,0.1)",
-              "&:hover": { bgcolor: "rgba(255,255,255,0.2)" },
-            }}
-          >
-            <CloseIcon />
-          </IconButton>
+          <CloseIcon />
+        </IconButton>
 
-          {media.type === "image" ? (
-            <img
-              src={media.url}
-              alt="Preview"
-              style={{
-                maxWidth: "90vw",
-                maxHeight: "90vh",
-                objectFit: "contain",
-                borderRadius: 8,
-              }}
-            />
-          ) : (
-            <video
-              src={media.url}
-              controls
-              autoPlay
-              style={{
-                maxWidth: "90vw",
-                maxHeight: "90vh",
-                borderRadius: 8,
-              }}
-            />
-          )}
-        </Box>
-      </Modal>
-    );
-  }
-);
+        {media.type === "image" ? (
+          <img
+            src={media.url}
+            alt="Preview"
+            style={{
+              maxWidth: "90vw",
+              maxHeight: "90vh",
+              objectFit: "contain",
+              borderRadius: 8,
+            }}
+          />
+        ) : (
+          <video
+            src={media.url}
+            controls
+            autoPlay
+            style={{
+              maxWidth: "90vw",
+              maxHeight: "90vh",
+              borderRadius: 8,
+            }}
+          />
+        )}
+      </Box>
+    </Modal>
+  );
+});
 
 MediaPreviewModal.displayName = "MediaPreviewModal";
 
@@ -576,143 +515,85 @@ interface MessageAttachmentsProps {
   hasContent: boolean;
 }
 
-export const MessageAttachments: React.FC<MessageAttachmentsProps> = React.memo(
-  ({ attachments, isOutgoing, hasContent }) => {
-    const [previewMedia, setPreviewMedia] = useState<MediaModalState | null>(null);
+export const MessageAttachments: React.FC<MessageAttachmentsProps> = React.memo(({ attachments, isOutgoing, hasContent }) => {
+  const [previewMedia, setPreviewMedia] = useState<MediaModalState | null>(null);
 
-    // Debug: Log attachments for troubleshooting
-    React.useEffect(() => {
-      if (attachments.length > 0) {
-        console.log("[MessageAttachments] Raw attachments:", attachments.map(a => ({
-          id: a.id,
-          file_type: a.file_type,
-          extension: a.extension,
-          data_url: a.data_url?.substring(0, 100) + '...',
-          file_size: a.file_size,
-        })));
-      }
-    }, [attachments]);
+  // Categorize attachments
+  const { images, videos, audios, files } = useMemo(
+    () => categorizeAttachments(attachments),
+    [attachments]
+  );
 
-    // Categorize attachments
-    const { images, videos, audios, files } = useMemo(() => {
-      const result = categorizeAttachments(attachments);
-      console.log("[MessageAttachments] Categorized:", {
-        images: result.images.length,
-        videos: result.videos.length,
-        audios: result.audios.length,
-        files: result.files.length,
-      });
-      return result;
-    }, [attachments]);
+  // Handlers
+  const handleImagePreview = useCallback((url: string) => {
+    setPreviewMedia({ url, type: "image" });
+  }, []);
 
-    // Handlers
-    const handleImagePreview = useCallback((url: string) => {
-      setPreviewMedia({ url, type: "image" });
-    }, []);
+  const handleVideoPreview = useCallback((url: string) => {
+    setPreviewMedia({ url, type: "video" });
+  }, []);
 
-    const handleVideoPreview = useCallback((url: string) => {
-      setPreviewMedia({ url, type: "video" });
-    }, []);
+  const handleClosePreview = useCallback(() => {
+    setPreviewMedia(null);
+  }, []);
 
-    const handleClosePreview = useCallback(() => {
-      setPreviewMedia(null);
-    }, []);
+  // Don't render if no attachments
+  if (attachments.length === 0) return null;
 
-    // Don't render if no attachments
-    if (attachments.length === 0) return null;
+  return (
+    <>
+      {/* Image Attachments */}
+      {images.length > 0 && (
+        <Stack direction="row" flexWrap="wrap" gap={1} sx={{ mt: hasContent ? 1.5 : 0 }}>
+          {images.map((attachment) => (
+            <ImageAttachment key={attachment.id} attachment={attachment} onPreview={handleImagePreview} />
+          ))}
+        </Stack>
+      )}
 
-    return (
-      <>
-        {/* Image Attachments */}
-        {images.length > 0 && (
-          <Stack
-            direction="row"
-            flexWrap="wrap"
-            gap={1}
-            sx={{ mt: hasContent ? 1.5 : 0 }}
-          >
-            {images.map((attachment) => (
-              <ImageAttachment
-                key={attachment.id}
-                attachment={attachment}
-                onPreview={handleImagePreview}
-              />
-            ))}
-          </Stack>
-        )}
+      {/* Video Attachments */}
+      {videos.length > 0 && (
+        <Stack direction="row" flexWrap="wrap" gap={1} sx={{ mt: hasContent || images.length > 0 ? 1.5 : 0 }}>
+          {videos.map((attachment) => (
+            <VideoAttachment key={attachment.id} attachment={attachment} onPreview={handleVideoPreview} />
+          ))}
+        </Stack>
+      )}
 
-        {/* Video Attachments */}
-        {videos.length > 0 && (
-          <Stack
-            direction="row"
-            flexWrap="wrap"
-            gap={1}
-            sx={{ mt: hasContent || images.length > 0 ? 1.5 : 0 }}
-          >
-            {videos.map((attachment) => (
-              <VideoAttachment
-                key={attachment.id}
-                attachment={attachment}
-                onPreview={handleVideoPreview}
-              />
-            ))}
-          </Stack>
-        )}
+      {/* Audio Attachments */}
+      {audios.length > 0 && (
+        <Stack
+          spacing={1}
+          sx={{
+            mt: hasContent || images.length > 0 || videos.length > 0 ? 1.5 : 0,
+          }}
+        >
+          {audios.map((attachment) => (
+            <AudioAttachment key={attachment.id} attachment={attachment} isOutgoing={isOutgoing} />
+          ))}
+        </Stack>
+      )}
 
-        {/* Audio Attachments */}
-        {audios.length > 0 && (
-          <Stack
-            spacing={1}
-            sx={{
-              mt: hasContent || images.length > 0 || videos.length > 0 ? 1.5 : 0,
-            }}
-          >
-            {audios.map((attachment) => (
-              <AudioAttachment
-                key={attachment.id}
-                attachment={attachment}
-                isOutgoing={isOutgoing}
-              />
-            ))}
-          </Stack>
-        )}
+      {/* File Attachments */}
+      {files.length > 0 && (
+        <Stack
+          spacing={1}
+          sx={{
+            mt: hasContent || images.length > 0 || videos.length > 0 || audios.length > 0 ? 1.5 : 0,
+          }}
+        >
+          {files.map((attachment) => (
+            <FileAttachment key={attachment.id} attachment={attachment} isOutgoing={isOutgoing} />
+          ))}
+        </Stack>
+      )}
 
-        {/* File Attachments */}
-        {files.length > 0 && (
-          <Stack
-            spacing={1}
-            sx={{
-              mt:
-                hasContent ||
-                images.length > 0 ||
-                videos.length > 0 ||
-                audios.length > 0
-                  ? 1.5
-                  : 0,
-            }}
-          >
-            {files.map((attachment) => (
-              <FileAttachment
-                key={attachment.id}
-                attachment={attachment}
-                isOutgoing={isOutgoing}
-              />
-            ))}
-          </Stack>
-        )}
-
-        {/* Preview Modal */}
-        <MediaPreviewModal
-          open={!!previewMedia}
-          onClose={handleClosePreview}
-          media={previewMedia}
-        />
-      </>
-    );
-  }
-);
+      {/* Preview Modal */}
+      <MediaPreviewModal open={!!previewMedia} onClose={handleClosePreview} media={previewMedia} />
+    </>
+  );
+});
 
 MessageAttachments.displayName = "MessageAttachments";
 
 export default MessageAttachments;
-

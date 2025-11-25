@@ -6,9 +6,8 @@
  */
 
 import React, { useMemo } from "react";
-import { Box, Stack, Typography, Avatar, Paper, Chip } from "@mui/material";
+import { Box, Stack, Typography, Avatar, Paper } from "@mui/material";
 import LockIcon from "@mui/icons-material/Lock";
-import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { useTheme } from "@mui/material/styles";
 import { alpha } from "@mui/material";
 import { ChatwootMessage } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
@@ -17,6 +16,7 @@ import { sanitizeHtml, isHtmlContent } from "@/widgets/frontdesk/utils/html-sani
 import { ActivityBubble } from "@/widgets/frontdesk/components/shared/ActivityBubble";
 import { MessageAttachments } from "./attachments";
 import { generateMessageSenderAvatar } from "../utils/avatar.utils";
+import { useSafeColors } from "@/widgets/frontdesk/utils/theme.utils";
 
 // ============================================================================
 // Constants
@@ -86,9 +86,7 @@ const isFullHtmlDocument = (content: string, hasEmailHtml: boolean): boolean => 
 /**
  * Process message content for display
  */
-const processMessageContent = (
-  message: ChatwootMessage
-): { content: string; isHtml: boolean } => {
+const processMessageContent = (message: ChatwootMessage): { content: string; isHtml: boolean } => {
   const emailHtml = message.content_attributes?.email?.html_content?.full;
   const emailText = message.content_attributes?.email?.text_content?.full;
 
@@ -112,11 +110,7 @@ const processMessageContent = (
       isHtmlContent(rawContent));
 
   // Process content
-  const processedContent = isFullDoc
-    ? rawContent
-    : shouldRenderHtml && rawContent
-    ? sanitizeHtml(rawContent)
-    : rawContent;
+  const processedContent = isFullDoc ? rawContent : shouldRenderHtml && rawContent ? sanitizeHtml(rawContent) : rawContent;
 
   return { content: processedContent, isHtml: shouldRenderHtml };
 };
@@ -127,19 +121,15 @@ const processMessageContent = (
 
 export const ChatwootMessageItem: React.FC<ChatwootMessageItemProps> = React.memo(
   ({ message, isLast = false, isFirst = false, showAvatar = true, previousMessage = null }) => {
-    const { primaryColor, neutralColor } = useGomakeTheme();
     const theme = useTheme();
+    const { safeNeutralColor } = useSafeColors();
 
     // Early return for ACTIVITY messages
     if (message.message_type === MESSAGE_TYPES.ACTIVITY) {
       return (
         <ActivityBubble
           content={message.content || ""}
-          timestamp={
-            message.created_at
-              ? new Date(message.created_at * 1000).toISOString()
-              : undefined
-          }
+          timestamp={message.created_at ? new Date(message.created_at * 1000).toISOString() : undefined}
           isHtml={isHtmlContent(message.content || "")}
         />
       );
@@ -158,24 +148,16 @@ export const ChatwootMessageItem: React.FC<ChatwootMessageItemProps> = React.mem
       avatar_url: undefined,
     };
     const senderName = sender.name || (isMe ? "You" : "Unknown");
-    
+
     // Generate avatar data using unified utility
-    const avatarData = useMemo(
-      () => generateMessageSenderAvatar(sender),
-      [sender]
-    );
+    const avatarData = useMemo(() => generateMessageSenderAvatar(sender), [sender]);
     const avatarInitial = avatarData.initials[0] || "?";
 
     // Timestamp
-    const timestamp = message.created_at
-      ? formatMessageDate(new Date(message.created_at * 1000).toISOString())
-      : "";
+    const timestamp = message.created_at ? formatMessageDate(new Date(message.created_at * 1000).toISOString()) : "";
 
     // Process content
-    const { content: processedContent, isHtml } = useMemo(
-      () => processMessageContent(message),
-      [message]
-    );
+    const { content: processedContent, isHtml } = useMemo(() => processMessageContent(message), [message]);
 
     // Attachments
     const attachments = message.attachments || [];
@@ -193,132 +175,175 @@ export const ChatwootMessageItem: React.FC<ChatwootMessageItemProps> = React.mem
     // Email message check
     const isEmailMessage = !!message.content_attributes?.email;
 
-    // Styles
+    // Styles - Professional colors: light blue for outgoing (like iMessage), white for incoming
     const messageBubbleStyles = useMemo(
       () => ({
         bgcolor: isPrivate
-          ? "rgba(251, 191, 36, 0.12)"
+          ? "rgba(251, 191, 36, 0.1)"
           : isMe
-          ? primaryColor(100)
-          : neutralColor(50),
-        color: isMe ? primaryColor(900) : neutralColor(800),
-        border: isPrivate ? "1px solid rgba(251, 191, 36, 0.3)" : "none",
-        borderRadius: isMe ? "18px 18px 4px 18px" : "18px 18px 18px 4px",
+          ? "#DCF8C6" // WhatsApp-style light green, or use "#E3F2FD" for light blue
+          : theme.palette.mode === "dark"
+          ? safeNeutralColor(800)
+          : "#FFFFFF",
+        color: isMe
+          ? safeNeutralColor(900)
+          : theme.palette.mode === "dark"
+          ? safeNeutralColor(100)
+          : safeNeutralColor(900),
+        border: isPrivate
+          ? `1px solid ${alpha("#F59E0B", 0.25)}`
+          : isMe
+          ? "none"
+          : `1px solid ${alpha(safeNeutralColor(300), 0.4)}`,
+        borderRadius: isMe ? "16px 16px 4px 16px" : "16px 16px 16px 4px",
         px: 2,
         py: 1.5,
         position: "relative" as const,
-        boxShadow: `0 1px 2px ${alpha(theme.palette.common.black, 0.08)}`,
-        transition: theme.transitions.create(
-          ["box-shadow", "transform", "background-color", "border-color"],
-          { duration: theme.transitions.duration.short }
-        ),
-        "&:hover": {
-          boxShadow: `0 2px 4px ${alpha(theme.palette.common.black, 0.12)}`,
-        },
+        boxShadow: isPrivate
+          ? `0 1px 3px ${alpha("#F59E0B", 0.15)}`
+          : `0 1px 2px ${alpha(theme.palette.common.black, 0.08)}`,
         // HTML content styling
-        "& p": { margin: 0, marginBottom: "0.5em", "&:last-child": { marginBottom: 0 } },
-        "& a": {
-          color: isMe ? primaryColor(700) : primaryColor(600),
-          textDecoration: "none",
-          "&:hover": { textDecoration: "underline" },
+        "& p": {
+          margin: 0,
+          marginBottom: "0.625em",
+          fontSize: "0.9375rem",
+          lineHeight: 1.6,
+          "&:last-child": { marginBottom: 0 },
         },
-        "& ul, & ol": { paddingLeft: "20px", marginTop: "0.25em", marginBottom: "0.25em" },
-        "& li": { marginBottom: "0.25em" },
-        "& blockquote": {
-          borderLeft: `3px solid ${isMe ? primaryColor(300) : neutralColor(300)}`,
-          paddingLeft: "12px",
-          marginLeft: 0,
+        "& a": {
+          color: "#1976D2",
+          textDecoration: "none",
+          fontWeight: 500,
+          "&:hover": {
+            textDecoration: "underline",
+          },
+        },
+        "& ul, & ol": {
+          paddingLeft: "24px",
           marginTop: "0.5em",
           marginBottom: "0.5em",
+          "& li": {
+            marginBottom: "0.375em",
+            lineHeight: 1.6,
+          },
+        },
+        "& blockquote": {
+          borderLeft: `3px solid ${safeNeutralColor(400)}`,
+          paddingLeft: "16px",
+          marginLeft: 0,
+          marginTop: "0.75em",
+          marginBottom: "0.75em",
           fontStyle: "italic",
+          opacity: 0.85,
+          backgroundColor: alpha(safeNeutralColor(100), 0.5),
+          paddingTop: "0.5em",
+          paddingBottom: "0.5em",
+          borderRadius: "4px",
         },
         "& img": {
           maxWidth: "100%",
           height: "auto",
           borderRadius: "8px",
-          marginTop: "8px",
-          marginBottom: "8px",
+          marginTop: "10px",
+          marginBottom: "10px",
           display: "block",
+          boxShadow: `0 2px 8px ${alpha(theme.palette.common.black, 0.1)}`,
         },
-        "& table": { borderCollapse: "collapse", width: "100%", border: "none", margin: 0 },
-        "& th, & td": { border: "none", padding: "4px", textAlign: "left" as const },
-        "& h1, & h2, & h3, & h4, & h5, & h6": {
+        "& table": {
+          borderCollapse: "collapse",
+          width: "100%",
+          border: `1px solid ${alpha(safeNeutralColor(300), 0.3)}`,
           marginTop: "0.5em",
-          marginBottom: "0.25em",
+          marginBottom: "0.5em",
+          borderRadius: "6px",
+          overflow: "hidden",
+        },
+        "& th, & td": {
+          border: `1px solid ${alpha(safeNeutralColor(300), 0.2)}`,
+          padding: "8px 12px",
+          textAlign: "left" as const,
+        },
+        "& th": {
+          backgroundColor: alpha(safeNeutralColor(100), 0.5),
+          fontWeight: 600,
+        },
+        "& h1, & h2, & h3, & h4, & h5, & h6": {
+          marginTop: "0.75em",
+          marginBottom: "0.5em",
           lineHeight: 1.3,
           fontWeight: 600,
           "&:first-child": { marginTop: 0 },
         },
-        lineHeight: 1.5,
+        "& code": {
+          backgroundColor: alpha(safeNeutralColor(200), 0.4),
+          padding: "2px 6px",
+          borderRadius: "4px",
+          fontSize: "0.875em",
+          fontFamily: "monospace",
+        },
+        "& pre": {
+          backgroundColor: alpha(safeNeutralColor(100), 0.5),
+          padding: "12px",
+          borderRadius: "6px",
+          overflow: "auto",
+          marginTop: "0.5em",
+          marginBottom: "0.5em",
+          "& code": {
+            backgroundColor: "transparent",
+            padding: 0,
+          },
+        },
+        lineHeight: 1.6,
+        fontSize: "0.9375rem",
       }),
-      [isPrivate, isMe, primaryColor, neutralColor, theme]
+      [isPrivate, isMe, safeNeutralColor, theme]
     );
 
     const avatarStyles = useMemo(
       () => ({
         width: 32,
         height: 32,
-        bgcolor: isMe ? primaryColor(500) : avatarData.backgroundColor,
+        bgcolor: avatarData.backgroundColor,
         color: "white",
         fontSize: "0.75rem",
         fontWeight: 600,
+        border: `2px solid ${safeNeutralColor(100)}`,
       }),
-      [isMe, primaryColor, avatarData.backgroundColor]
+      [avatarData.backgroundColor, safeNeutralColor]
     );
 
     return (
       <Stack
         direction="row"
-        spacing={1}
+        spacing={1.5}
         justifyContent={isMe ? "flex-end" : "flex-start"}
         alignItems="flex-end"
-        sx={{ mb: 0.5 }}
+        sx={{
+          mb: shouldShowAvatar ? 2 : 1,
+          px: 0.5,
+        }}
       >
         {/* Avatar (left for incoming) */}
         {!isMe && (
-          <Avatar 
-            sx={avatarStyles} 
-            src={avatarData.src}
-            alt={avatarData.displayName}
-            title={avatarData.displayName}
-          >
+          <Avatar sx={avatarStyles} src={avatarData.src} alt={avatarData.displayName} title={avatarData.displayName}>
             {shouldShowAvatar && !avatarData.src && avatarInitial}
           </Avatar>
         )}
 
-        <Stack
-          maxWidth={isEmailMessage ? "85%" : "70%"}
-          alignItems={isMe ? "flex-end" : "flex-start"}
-          spacing={0.5}
-        >
-          {/* Sender Name Chip */}
-          {shouldShowAvatar && (
-            <Chip
-              label={
-                isPrivate
-                  ? `🔒 ${isMe ? "You" : senderName} (Private)`
-                  : isMe
-                  ? "You"
-                  : senderName
-              }
-              size="small"
-              variant="outlined"
+        <Stack maxWidth={isEmailMessage ? "85%" : "70%"} alignItems={isMe ? "flex-end" : "flex-start"} spacing={0.5}>
+          {/* Sender Name Chip - only for incoming messages */}
+          {!isMe && shouldShowAvatar && (
+            <Typography
+              variant="caption"
               sx={{
-                height: 20,
-                fontSize: "0.7rem",
-                borderColor: isPrivate
-                  ? neutralColor(400)
-                  : isMe
-                  ? primaryColor(300)
-                  : neutralColor(300),
-                color: isPrivate
-                  ? neutralColor(600)
-                  : isMe
-                  ? primaryColor(700)
-                  : neutralColor(700),
-                bgcolor: "transparent",
+                fontSize: "0.75rem",
+                fontWeight: 500,
+                color: isPrivate ? "#F59E0B" : safeNeutralColor(600),
+                px: 0.5,
               }}
-            />
+            >
+              {isPrivate ? `🔒 ${senderName} (Private)` : senderName}
+            </Typography>
           )}
 
           {/* Message Bubble */}
@@ -335,7 +360,12 @@ export const ChatwootMessageItem: React.FC<ChatwootMessageItemProps> = React.mem
             ) : processedContent ? (
               <Typography
                 variant="body2"
-                sx={{ whiteSpace: "pre-wrap", lineHeight: 1.5, wordBreak: "break-word" }}
+                sx={{
+                  whiteSpace: "pre-wrap",
+                  lineHeight: 1.6,
+                  wordBreak: "break-word",
+                  fontSize: "0.9375rem",
+                }}
               >
                 {processedContent}
               </Typography>
@@ -344,10 +374,11 @@ export const ChatwootMessageItem: React.FC<ChatwootMessageItemProps> = React.mem
                 variant="body2"
                 sx={{
                   whiteSpace: "pre-wrap",
-                  lineHeight: 1.5,
+                  lineHeight: 1.6,
                   wordBreak: "break-word",
                   fontStyle: "italic",
-                  opacity: 0.7,
+                  opacity: 0.6,
+                  fontSize: "0.875rem",
                 }}
               >
                 (Empty message)
@@ -355,11 +386,7 @@ export const ChatwootMessageItem: React.FC<ChatwootMessageItemProps> = React.mem
             ) : null}
 
             {/* Attachments */}
-            <MessageAttachments
-              attachments={attachments}
-              isOutgoing={isMe}
-              hasContent={hasContent}
-            />
+            <MessageAttachments attachments={attachments} isOutgoing={isMe} hasContent={hasContent} />
 
             {/* Private Message Indicator */}
             {isPrivate && (
@@ -384,16 +411,16 @@ export const ChatwootMessageItem: React.FC<ChatwootMessageItemProps> = React.mem
           {/* Timestamp */}
           <Typography
             variant="caption"
-            sx={{ color: neutralColor(500), fontSize: "0.7rem", px: 0.5 }}
+            sx={{
+              color: safeNeutralColor(500),
+              fontSize: "0.6875rem",
+              px: 0.5,
+              fontWeight: 400,
+            }}
           >
             {timestamp}
           </Typography>
         </Stack>
-
-        {/* Avatar (right for outgoing) */}
-        {isMe && (
-          <Avatar sx={avatarStyles}>{shouldShowAvatar ? "Y" : ""}</Avatar>
-        )}
       </Stack>
     );
   }

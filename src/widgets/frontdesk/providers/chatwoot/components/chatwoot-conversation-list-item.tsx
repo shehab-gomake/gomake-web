@@ -58,7 +58,7 @@ function extractEmailRecipient(conversation: any): string | null {
 
 /**
  * Extracts and formats the conversation timestamp
- * 
+ *
  * Uses the shared formatChatwootTimestamp utility for consistent conversion.
  */
 function getFormattedTimestamp(conversation: any): string {
@@ -74,7 +74,7 @@ function getFormattedTimestamp(conversation: any): string {
     isoTimestamp = formatChatwootTimestamp(conversation.updated_at);
   } else if (conversation.created_at) {
     isoTimestamp = formatChatwootTimestamp(conversation.created_at);
-  } else if (typeof conversation.timestamp === 'number') {
+  } else if (typeof conversation.timestamp === "number") {
     // Handle numeric timestamp (Unix seconds)
     isoTimestamp = formatChatwootTimestamp(conversation.timestamp);
   } else {
@@ -220,13 +220,15 @@ const ChatwootConversationListItemComponent: React.FC<ChatwootConversationListIt
       inboxChannelType: inbox?.channel_type || conversation.meta?.channel || null,
       inboxMedium: (inbox as any)?.medium || null,
       inboxName: inbox?.name || null,
-      assignee: hideAssigneeAvatar ? null : (conversation.meta?.assignee
+      assignee: hideAssigneeAvatar
+        ? null
+        : conversation.meta?.assignee
         ? {
             name: conversation.meta.assignee.name,
             avatarSrc: conversation.meta.assignee.avatar_url,
             presence: conversation.meta.assignee.availability_status || null,
           }
-        : null),
+        : null,
       labels: conversation.labels || [],
       appliedSla: conversation.applied_sla || conversation.appliedSla || null,
       conversationTimestamp: conversation.timestamp || conversation.created_at || null,

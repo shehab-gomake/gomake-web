@@ -1,11 +1,14 @@
 /**
  * ConversationSortMenu Component
- * Handles conversation sort options
+ *
+ * Handles conversation sort options.
+ * Uses unified filter trigger for consistent styling.
  */
 
-import React, { useState } from "react";
-import { IconButton, Tooltip, Menu, Box, Typography } from "@mui/material";
+import React, { useState, useCallback, useMemo } from "react";
 import SwapVertIcon from "@mui/icons-material/SwapVert";
+import { FilterIconButton, UnifiedListDropdown } from "../unified-list";
+import type { GenericListItem } from "../unified-list";
 import {
   ConversationListParams,
   ConversationSortBy,
@@ -19,109 +22,73 @@ interface ConversationSortMenuProps {
   neutralColor: (shade: number) => string;
 }
 
-const SORT_OPTIONS = [
-  { label: "Last Activity (Newest)", value: ConversationSortBy.LAST_ACTIVITY_AT_DESC },
-  { label: "Last Activity (Oldest)", value: ConversationSortBy.LAST_ACTIVITY_AT_ASC },
-  { label: "Created (Newest)", value: ConversationSortBy.CREATED_AT_DESC },
-  { label: "Created (Oldest)", value: ConversationSortBy.CREATED_AT_ASC },
+const SORT_OPTIONS: GenericListItem[] = [
+  { type: 'generic', id: ConversationSortBy.LAST_ACTIVITY_AT_DESC, label: "Last Activity (Newest)", value: ConversationSortBy.LAST_ACTIVITY_AT_DESC },
+  { type: 'generic', id: ConversationSortBy.LAST_ACTIVITY_AT_ASC, label: "Last Activity (Oldest)", value: ConversationSortBy.LAST_ACTIVITY_AT_ASC },
+  { type: 'generic', id: ConversationSortBy.CREATED_AT_DESC, label: "Created (Newest)", value: ConversationSortBy.CREATED_AT_DESC },
+  { type: 'generic', id: ConversationSortBy.CREATED_AT_ASC, label: "Created (Oldest)", value: ConversationSortBy.CREATED_AT_ASC },
 ];
 
 export const ConversationSortMenu: React.FC<ConversationSortMenuProps> = React.memo(({
   filters,
   onFiltersChange,
   onSortClick,
-  primaryColor,
-  neutralColor,
 }) => {
-  const [sortMenuAnchor, setSortMenuAnchor] = useState<null | HTMLElement>(null);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
 
-  const handleSortSelect = (sortBy: ConversationSortBy) => {
-    onFiltersChange({ ...filters, sort_by: sortBy });
-    setSortMenuAnchor(null);
-  };
+  const handleOpen = useCallback((event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+    onSortClick?.();
+  }, [onSortClick]);
+
+  const handleClose = useCallback(() => {
+    setAnchorEl(null);
+  }, []);
+
+  const handleSelect = useCallback((id: string | number | null) => {
+    if (id) {
+      onFiltersChange({ ...filters, sort_by: id as ConversationSortBy });
+    }
+    handleClose();
+  }, [filters, onFiltersChange, handleClose]);
+
+  // Check if sort is non-default (has a value set)
+  const isActive = !!filters.sort_by;
+
+  // Get current sort label for tooltip
+  const currentSort = useMemo(
+    () => SORT_OPTIONS.find((o) => o.id === filters.sort_by),
+    [filters.sort_by]
+  );
 
   return (
     <>
-      {/* Sort Button */}
-      <Tooltip title="Sort">
-        <IconButton
-          size="small"
-          onClick={(e) => {
-            setSortMenuAnchor(e.currentTarget);
-            onSortClick?.();
-          }}
-          sx={{
-            color: neutralColor(600),
-            "&:hover": {
-              backgroundColor: neutralColor(100),
-              color: neutralColor(900),
-            },
-            width: 28,
-            height: 28,
-            padding: 0.5,
-            transition: "all 0.2s ease-in-out",
-          }}
-        >
-          <SwapVertIcon sx={{ fontSize: 16 }} />
-        </IconButton>
-      </Tooltip>
+      <FilterIconButton
+        icon={<SwapVertIcon />}
+        tooltip={currentSort ? `Sort: ${currentSort.label}` : "Sort"}
+        isActive={isActive}
+        onClick={handleOpen}
+      />
 
-      {/* Sort Menu */}
-      <Menu
-        anchorEl={sortMenuAnchor}
-        open={Boolean(sortMenuAnchor)}
-        onClose={() => setSortMenuAnchor(null)}
-        anchorOrigin={{
-          vertical: "bottom",
-          horizontal: "right",
-        }}
-        transformOrigin={{
-          vertical: "top",
-          horizontal: "right",
-        }}
-        PaperProps={{
-          sx: {
-            mt: 1,
-            minWidth: 200,
-            backgroundColor: neutralColor(0),
-            border: `1px solid ${neutralColor(200)}`,
-            boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.1)",
-          },
-        }}
-      >
-        <Box sx={{ p: 1 }}>
-          {SORT_OPTIONS.map((option) => (
-            <Box
-              key={option.value}
-              onClick={() => handleSortSelect(option.value)}
-              sx={{
-                px: 2,
-                py: 1,
-                cursor: "pointer",
-                color: filters.sort_by === option.value ? primaryColor(700) : neutralColor(900),
-                fontWeight: filters.sort_by === option.value ? 600 : 400,
-                "&:hover": {
-                  backgroundColor: neutralColor(100),
-                },
-                borderRadius: 1,
-              }}
-            >
-              <Typography variant="body2" sx={{ fontSize: "0.875rem" }}>
-                {option.label}
-              </Typography>
-            </Box>
-          ))}
-        </Box>
-      </Menu>
+      <UnifiedListDropdown
+        open={open}
+        anchorEl={anchorEl}
+        onClose={handleClose}
+        items={SORT_OPTIONS}
+        selectionMode="single"
+        selectedValue={filters.sort_by ?? null}
+        onSelect={handleSelect}
+        headerText="Sort By"
+        minWidth={200}
+        maxWidth={260}
+      />
     </>
   );
 }, (prevProps, nextProps) => {
-  // Custom comparison: only re-render if sort filter or callbacks changed
   return (
     prevProps.filters.sort_by === nextProps.filters.sort_by &&
     prevProps.onFiltersChange === nextProps.onFiltersChange &&
-    prevProps.onSortClick === nextProps.onSortClick &&
-    prevProps.primaryColor === nextProps.primaryColor &&
-    prevProps.neutralColor === nextProps.neutralColor
+    prevProps.onSortClick === nextProps.onSortClick
   );
 });
