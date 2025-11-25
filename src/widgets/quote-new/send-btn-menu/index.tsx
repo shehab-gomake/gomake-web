@@ -51,7 +51,7 @@ const SendBtnMenu = ({
               if(hasFrontDeskFeature){
                 onClickSendEmailViaComposer?.();
               }else {
-                onClickSendQuoteToClient(MessageType.SMS);
+                onClickSendQuoteToClient(MessageType.Email);
               }
             }
             handleClose();
@@ -69,11 +69,7 @@ const SendBtnMenu = ({
                 handleClose();
               });
             } else {
-              if(hasFrontDeskFeature){
-                onClickSendEmailViaComposer?.();
-              }else {
-                onClickSendQuoteToClient(MessageType.SMS);
-              }
+              onClickSendQuoteToClient(MessageType.SMS);
             }
             handleClose();
           }}
