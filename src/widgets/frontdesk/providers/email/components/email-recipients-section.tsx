@@ -14,6 +14,7 @@ import {
 } from "@mui/material";
 import { Close as CloseIcon } from "@mui/icons-material";
 import { EmailSenderOption } from "../types/email.types";
+import { EmailRecipientsChipField } from "./EmailRecipientsChipField";
 
 interface EmailRecipientsSectionProps {
   to: string;
@@ -66,56 +67,6 @@ export const EmailRecipientsSection: React.FC<EmailRecipientsSectionProps> = ({
     }
     return Array.from(map.values());
   }, [fromOptions, selectedFromOption]);
-
-  const RecipientField: React.FC<{
-    label: string;
-    value: string;
-    placeholder: string;
-    onChange: (value: string) => void;
-    showClose?: boolean;
-    onClose?: () => void;
-  }> = ({ label, value, placeholder, onChange, showClose = false, onClose }) => (
-    <Box sx={{ display: "flex", alignItems: "center", minHeight: 36 }}>
-      <Typography
-        variant="body2"
-        sx={{
-          color: "#777",
-          minWidth: 50,
-          fontSize: "14px",
-        }}
-      >
-        {label}
-      </Typography>
-      <InputBase
-        fullWidth
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder={placeholder}
-        sx={{
-          fontSize: "14px",
-          ml: 1,
-          "& input": {
-            p: 0,
-          },
-        }}
-      />
-      {showClose && (
-        <IconButton
-          size="small"
-          onClick={onClose}
-          sx={{
-            p: 0.5,
-            color: "#5f6368",
-            "&:hover": {
-              backgroundColor: "#f1f3f4",
-            },
-          }}
-        >
-          <CloseIcon sx={{ fontSize: 16 }} />
-        </IconButton>
-      )}
-    </Box>
-  );
 
   return (
     <Box sx={{ px: 2, pt: 1 }}>
@@ -241,19 +192,9 @@ export const EmailRecipientsSection: React.FC<EmailRecipientsSectionProps> = ({
         >
           To
         </Typography>
-        <InputBase
-          fullWidth
-          value={to}
-          onChange={(e) => onToChange(e.target.value)}
-          placeholder="Recipients"
-          sx={{
-            fontSize: "14px",
-            ml: 1,
-            "& input": {
-              p: 0,
-            },
-          }}
-        />
+        <Box sx={{ flex: 1, ml: 1 }}>
+          <EmailRecipientsChipField emails={to} onChange={onToChange} placeholder="Recipients" />
+        </Box>
         <Stack direction="row" spacing={0.5}>
           {!showCc && (
             <Button
@@ -296,32 +237,72 @@ export const EmailRecipientsSection: React.FC<EmailRecipientsSectionProps> = ({
 
       {/* CC Field */}
       <Collapse in={showCc}>
-        <RecipientField
-          label="Cc"
-          value={cc}
-          placeholder="Cc recipients"
-          onChange={onCcChange}
-          showClose
-          onClose={() => {
-            onShowCc(false);
-            onCcChange("");
-          }}
-        />
+        <Box sx={{ display: "flex", alignItems: "center", minHeight: 36 }}>
+          <Typography
+            variant="body2"
+            sx={{
+              color: "#777",
+              minWidth: 50,
+              fontSize: "14px",
+            }}
+          >
+            Cc
+          </Typography>
+          <Box sx={{ flex: 1, ml: 1 }}>
+            <EmailRecipientsChipField emails={cc} onChange={onCcChange} placeholder="Cc recipients" />
+          </Box>
+          <IconButton
+            size="small"
+            onClick={() => {
+              onShowCc(false);
+              onCcChange("");
+            }}
+            sx={{
+              p: 0.5,
+              color: "#5f6368",
+              "&:hover": {
+                backgroundColor: "#f1f3f4",
+              },
+            }}
+          >
+            <CloseIcon sx={{ fontSize: 16 }} />
+          </IconButton>
+        </Box>
       </Collapse>
 
       {/* BCC Field */}
       <Collapse in={showBcc}>
-        <RecipientField
-          label="Bcc"
-          value={bcc}
-          placeholder="Bcc recipients"
-          onChange={onBccChange}
-          showClose
-          onClose={() => {
-            onShowBcc(false);
-            onBccChange("");
-          }}
-        />
+        <Box sx={{ display: "flex", alignItems: "center", minHeight: 36 }}>
+          <Typography
+            variant="body2"
+            sx={{
+              color: "#777",
+              minWidth: 50,
+              fontSize: "14px",
+            }}
+          >
+            Bcc
+          </Typography>
+          <Box sx={{ flex: 1, ml: 1 }}>
+            <EmailRecipientsChipField emails={bcc} onChange={onBccChange} placeholder="Bcc recipients" />
+          </Box>
+          <IconButton
+            size="small"
+            onClick={() => {
+              onShowBcc(false);
+              onBccChange("");
+            }}
+            sx={{
+              p: 0.5,
+              color: "#5f6368",
+              "&:hover": {
+                backgroundColor: "#f1f3f4",
+              },
+            }}
+          >
+            <CloseIcon sx={{ fontSize: 16 }} />
+          </IconButton>
+        </Box>
       </Collapse>
 
       <Divider sx={{ my: 1 }} />

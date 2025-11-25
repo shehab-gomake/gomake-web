@@ -9,7 +9,7 @@ import { DOCUMENT_TYPE } from "../enums";
 import { useChatwootProfile } from "@/widgets/frontdesk/providers/chatwoot/hooks/use-chatwoot-profile";
 import { useChatwootInboxes } from "@/widgets/frontdesk/providers/chatwoot/hooks/use-chatwoot-inboxes";
 import { ChannelType } from "@/services/frontdesk/api/chatwoot/types/inboxes.types";
-import type { ContactCreatePayload } from "@/services/frontdesk/api/chatwoot/types/contacts.types";
+import type { ContactCreatePayload, ContactDetail } from "@/services/frontdesk/api/chatwoot/types/contacts.types";
 import { getCapitalizedNameFromEmail } from "@/widgets/frontdesk/providers/chatwoot/utils/contact-utils";
 
 // Helper function to convert HTML to plain text
@@ -249,12 +249,9 @@ export const FrontDeskEmailComposerWrapper: React.FC<FrontDeskEmailComposerWrapp
       const bccEmails = draft.bcc?.map((recipient) => recipient.email).filter(Boolean) ?? [];
       const attachments = draft.attachments?.map(convertAttachmentToFile).filter(Boolean) as File[];
 
-      // IMPORTANT: Prioritize the email from the UI (toEmails[0]) over emailData.contactEmail
-      // This ensures we use the updated email if the user changed it in the composer
-      const contactEmail = toEmails[0] || emailData?.contactEmail || "";
-
-      if (!contactEmail) {
-        console.error("[FrontDeskEmailComposerWrapper] Missing contact email", {
+      // Validate at least one TO recipient
+      if (toEmails.length === 0) {
+        console.error("[FrontDeskEmailComposerWrapper] Missing TO recipients", {
           emailData,
           toEmails,
         });
@@ -263,59 +260,106 @@ export const FrontDeskEmailComposerWrapper: React.FC<FrontDeskEmailComposerWrapp
         return false;
       }
 
-      // Find or create contact from email (same pattern as compose conversation modal)
-      // Always use the contact email (which is now the updated email from the UI)
-      const contactName = getCapitalizedNameFromEmail(contactEmail);
+      // Process EACH TO recipient individually
+      // Create separate contact and conversation for each recipient
+      console.log(`[FrontDeskEmailComposerWrapper] Processing ${toEmails.length} recipients:`, toEmails);
 
-      const contactPayload: ContactCreatePayload = {
-        name: contactName,
-        email: contactEmail,
-      };
+      const results = await Promise.allSettled(
+        toEmails.map(async (recipientEmail) => {
+          try {
+            console.log(`[FrontDeskEmailComposerWrapper] Processing recipient: ${recipientEmail}`);
 
-      const contact = await contactResolutionService.findOrCreateContact(accountId, contactPayload);
+            // 1. Find or create contact for this recipient
+            const contactName = getCapitalizedNameFromEmail(recipientEmail);
+            const contactPayload: ContactCreatePayload = {
+              name: contactName,
+              email: recipientEmail,
+            };
 
-      if (!contact?.id) {
-        console.error("[FrontDeskEmailComposerWrapper] Failed to find or create contact", {
-          contactEmail,
-          contact,
-        });
-        alertFaultSend();
-        setIsSending(false);
-        return false;
-      }
+            const contact = await contactResolutionService.findOrCreateContact(accountId, contactPayload);
 
-      // Prepare payload using ConversationComposerService
-      // Don't assign conversation to user - leave it unassigned
-      const conversationId = await conversationComposerService.composeAndCreate(accountId, {
-        inboxId: senderOption.inboxId,
-        contactId: contact.id,
-        sourceId: contactEmail,
-        message: messageContent,
-        subject: draft.subject,
-        ccEmails,
-        bccEmails,
-        toEmails,
-        attachments,
-        // assigneeId: undefined, // Leave conversation unassigned
-        channelType: ChannelType.EMAIL,
-        contentType: "input_email",
-        additionalAttributes: {
-          gomake_document: {
-            id: documentId,
-            type: documentType,
-          },
-        },
-      });
+            if (!contact?.id) {
+              throw new Error(`Failed to find or create contact for ${recipientEmail}`);
+            }
 
-      if (conversationId) {
+            console.log(`[FrontDeskEmailComposerWrapper] Contact resolved: ${contact.id} for ${recipientEmail}`);
+
+            // 2. Create conversation for this specific recipient
+            // Note: Each recipient gets their own conversation per Chatwoot's architecture
+            const conversationId = await conversationComposerService.composeAndCreate(accountId, {
+              inboxId: senderOption.inboxId,
+              contactId: contact.id, // This recipient's contact
+              sourceId: recipientEmail, // This recipient's email
+              message: messageContent,
+              subject: draft.subject,
+              ccEmails,
+              bccEmails,
+              toEmails: [recipientEmail], // Only this recipient as primary TO
+              attachments,
+              channelType: ChannelType.EMAIL,
+              contentType: "input_email",
+              additionalAttributes: {
+                gomake_document: {
+                  id: documentId,
+                  type: documentType,
+                },
+              },
+            });
+
+            if (!conversationId) {
+              throw new Error(`Failed to create conversation for ${recipientEmail}`);
+            }
+
+            console.log(`[FrontDeskEmailComposerWrapper] Conversation created: ${conversationId} for ${recipientEmail}`);
+
+            return {
+              recipientEmail,
+              contactId: contact.id,
+              conversationId,
+              success: true,
+            };
+          } catch (error) {
+            console.error(`[FrontDeskEmailComposerWrapper] Error processing ${recipientEmail}:`, error);
+            return {
+              recipientEmail,
+              success: false,
+              error: error instanceof Error ? error.message : "Unknown error",
+            };
+          }
+        })
+      );
+
+      // Check results
+      const successfulSends = results.filter(
+        (result) => result.status === "fulfilled" && result.value.success
+      );
+      const failedSends = results.filter(
+        (result) => result.status === "rejected" || (result.status === "fulfilled" && !result.value.success)
+      );
+
+      console.log(`[FrontDeskEmailComposerWrapper] Results: ${successfulSends.length} successful, ${failedSends.length} failed`);
+
+      if (successfulSends.length > 0) {
+        // At least some emails were sent successfully
+        if (failedSends.length > 0) {
+          console.warn(`[FrontDeskEmailComposerWrapper] Partial success: ${failedSends.length} recipients failed`);
+          // Log failed recipients
+          failedSends.forEach((result) => {
+            if (result.status === "fulfilled") {
+              console.error(`[FrontDeskEmailComposerWrapper] Failed recipient: ${result.value.recipientEmail}`, result.value.error);
+            }
+          });
+        }
         alertSuccessSend();
         return true;
       }
 
+      // All sends failed
+      console.error("[FrontDeskEmailComposerWrapper] All recipients failed");
       alertFaultSend();
       return false;
     } catch (error) {
-      console.error("Error sending email:", error);
+      console.error("[FrontDeskEmailComposerWrapper] Unexpected error:", error);
       alertFaultSend();
       return false;
     } finally {
