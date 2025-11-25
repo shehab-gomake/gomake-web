@@ -575,7 +575,10 @@ export class ChatwootWebSocketService {
    * Reconnect with current configuration using exponential backoff
    */
   public async reconnect(): Promise<void> {
-    if (!this.currentConfig) {
+    // Save config BEFORE disconnect clears it
+    const savedConfig = this.currentConfig;
+    
+    if (!savedConfig) {
       throw new Error("No previous configuration to reconnect with");
     }
 
@@ -598,7 +601,7 @@ export class ChatwootWebSocketService {
 
     this.stats.reconnectionAttempts++;
 
-    // Disconnect cleanly before reconnecting
+    // Disconnect cleanly before reconnecting (this clears currentConfig)
     this.isManualDisconnect = true;
     this.disconnect();
     this.isManualDisconnect = false;
@@ -606,7 +609,8 @@ export class ChatwootWebSocketService {
     // Wait before reconnecting (exponential backoff)
     await new Promise((resolve) => setTimeout(resolve, delay));
 
-    return this.connect(this.currentConfig);
+    // Use saved config since disconnect cleared currentConfig
+    return this.connect(savedConfig);
   }
 
   /**
