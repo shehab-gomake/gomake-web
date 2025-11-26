@@ -395,7 +395,7 @@ Use Task tool with subagent_type: "frontdesk-orchestrator"
 - **Multi-account pattern**: All operations require `accountId` parameter (except profile).
 - **Account scoping**: URLs follow pattern `/api/v1/accounts/{accountId}/...`.
 - **Channel features**: Use `channel-features.config.ts` to determine available features per channel type.
-- **Fetch deduplication**: Use `useChatwootInitialization` pattern to prevent duplicate API calls.
+- **Fetch deduplication**: Use `useFetchLock` hook from `hooks/core/use-fetch-lock.ts` for centralized fetch locking.
 - **Filter stability**: Use `createFilterKey()` utility for stable filter keys to prevent unnecessary refetches.
 - **No WebSocket**: Real-time updates not implemented - use REST polling or manual refresh.
 - **Performance patterns**: Always use `useMemo`/`useCallback` for derived state and callbacks.
@@ -406,6 +406,14 @@ Use Task tool with subagent_type: "frontdesk-orchestrator"
   - Component structure: `components/widgets/`
   - State management: `store/modules/`
   - Routing patterns: `routes/dashboard/`
+
+### State Management Best Practices (2025 Fixes)
+- **Centralized fetch locks**: Use `useFetchLock` hook instead of scattered global flags or refs for deduplication.
+- **LRU cache eviction**: Use explicit `> 0` checks for timestamps (not `||` operator which treats `0` as falsy).
+- **Recoil callbacks**: Read state from snapshot inside `useRecoilCallback`, not from closure variables.
+- **Event listener cleanup**: Use named function references (not arrow functions) for `on()` and `off()` calls.
+- **Persistence deserialize**: Custom deserializers in `persistToLocalStorage` are properly applied to inner values.
+- **Pagination state**: `appendItems()` properly clears loading/error states after successful operations.
 
 ### Workflow
 1.  Read this file first to understand scope.

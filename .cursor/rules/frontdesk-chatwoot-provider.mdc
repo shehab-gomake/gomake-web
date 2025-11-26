@@ -287,16 +287,21 @@ export const useChatwootConversations = () => {
    );
    ```
 
-4. **Prevent duplicate fetches**
+4. **Prevent duplicate fetches (Use centralized fetch lock)**
    ```typescript
-   // Use ref to track fetch state
-   const fetchedRef = useRef(false);
+   // ✅ RECOMMENDED - Centralized fetch lock
+   import { useFetchLock, FETCH_LOCK_KEYS } from './core/use-fetch-lock';
    
-   useEffect(() => {
-     if (fetchedRef.current) return;
-     fetchedRef.current = true;
-     fetchData();
-   }, []);
+   const { acquireLock, releaseLock } = useFetchLock();
+   
+   const fetchData = async () => {
+     if (!acquireLock(FETCH_LOCK_KEYS.PROFILE)) return;
+     try {
+       await api.fetchProfile();
+     } finally {
+       releaseLock(FETCH_LOCK_KEYS.PROFILE);
+     }
+   };
    ```
 
 ### Common Pitfalls to Avoid
@@ -316,6 +321,21 @@ const filtered = useMemo(
 // ✅ CORRECT
 const onClick = useCallback(() => handleClick(id), [id]);
 <Button onClick={onClick} />
+
+// ❌ WRONG - Using || for timestamp (0 is falsy!)
+const time = entry.lastAccessed || entry.timestamp || 0;
+
+// ✅ CORRECT - Explicit > 0 check
+const time = entry.lastAccessed > 0 ? entry.lastAccessed : entry.timestamp > 0 ? entry.timestamp : 0;
+
+// ❌ WRONG - Arrow functions in event cleanup (memory leak!)
+service.on('event', () => handler());
+return () => service.off('event', () => handler()); // Different reference!
+
+// ✅ CORRECT - Named function references
+const handleEvent = () => handler();
+service.on('event', handleEvent);
+return () => service.off('event', handleEvent); // Same reference
 ```
 
 ## 🔍 Channel Features
@@ -426,6 +446,13 @@ Before submitting code, verify:
 - ✅ Refactored compose components for maintainability
 - ✅ Centralized style constants and error messages
 - ✅ Enhanced accessibility with ARIA labels
+- ✅ **State Management Fixes:**
+  - Centralized fetch locks (`useFetchLock` hook)
+  - LRU cache sorting (explicit `> 0` checks)
+  - Recoil callback closures (read from snapshot)
+  - Event listener cleanup (named function references)
+  - Persistence deserialize parameter fix
+  - Pagination state clearing (`appendItems`)
 
 ### Known Limitations
 - ❌ Real-time updates (WebSocket not implemented) - use REST polling

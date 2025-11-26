@@ -396,6 +396,94 @@ const data = await chatwootService.conversations.listConversations(accountId);
 4. **State updates**: Always use Recoil atoms, not local state for shared data
 5. **Reference patterns**: Always check Chatwoot frontend demo first
 
+## 🔧 State Management Bug Fixes (2025)
+
+### Fetch Deduplication
+Use centralized `useFetchLock` hook instead of scattered refs/global flags:
+
+```typescript
+import { useFetchLock, FETCH_LOCK_KEYS } from './core/use-fetch-lock';
+
+const { acquireLock, releaseLock, isLocked } = useFetchLock();
+
+const fetchData = async () => {
+  if (!acquireLock(FETCH_LOCK_KEYS.PROFILE)) {
+    return; // Another component is fetching
+  }
+  try {
+    const data = await chatwootService.profile.getProfile();
+  } finally {
+    releaseLock(FETCH_LOCK_KEYS.PROFILE);
+  }
+};
+```
+
+### LRU Cache Sorting
+Use explicit `> 0` checks (not `||` operator which treats `0` as falsy):
+
+```typescript
+// ❌ Wrong - 0 is falsy, falls back incorrectly
+const time = entry.lastAccessed || entry.timestamp || 0;
+
+// ✅ Correct - explicit check
+const time = entry.lastAccessed > 0 ? entry.lastAccessed : entry.timestamp > 0 ? entry.timestamp : 0;
+```
+
+### Recoil Callback Closures
+Read from snapshot inside callbacks, not closure variables:
+
+```typescript
+// ❌ Wrong - stale closure
+const getCacheEntries = useRecoilCallback(({ snapshot }) => () => {
+  cacheKeys.forEach(key => { ... }); // Stale!
+}, [cacheKeys]);
+
+// ✅ Correct - read from snapshot
+const getCacheEntries = useRecoilCallback(({ snapshot }) => () => {
+  const currentKeys = snapshot.getLoadable(cacheKeysAtom).getValue();
+  currentKeys.forEach(key => { ... });
+}, []);
+```
+
+### Event Listener Cleanup
+Use named function references (not arrow functions):
+
+```typescript
+// ❌ Wrong - different references, memory leak!
+service.on('event', () => handler());
+return () => service.off('event', () => handler());
+
+// ✅ Correct - same reference
+const handleEvent = () => handler();
+service.on('event', handleEvent);
+return () => service.off('event', handleEvent);
+```
+
+### Persistence Serialize/Deserialize Contract
+`saveToStorage` must serialize only the inner value, not the wrapper:
+
+```typescript
+// ❌ Wrong - serialize received entire wrapper
+const wrapper = { value, version, timestamp };
+localStorage.setItem(key, serialize(wrapper)); // Breaks deserialize contract!
+
+// ✅ Correct - serialize inner value only, wrap with JSON
+const serializedValue = serialize(value);  // Inner value only
+const wrapper = { value: serializedValue, version, timestamp };
+localStorage.setItem(key, JSON.stringify(wrapper));  // Wrapper is always JSON
+```
+
+### Falsy Check for Optional Numbers
+Use `!== undefined` instead of `?` for optional number parameters:
+
+```typescript
+// ❌ Wrong - 0 is falsy, falls back incorrectly
+const target = count ? currentSize - count : defaultValue;
+
+// ✅ Correct - explicit undefined check
+const target = count !== undefined ? currentSize - count : defaultValue;
+```
+
 ## 📞 Quick Help
 
 - **Architecture**: `docs/frontdesk/FRONTDESK_CHATWOOT_ARCHITECTURE.md`

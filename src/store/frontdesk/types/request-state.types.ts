@@ -1,170 +1,416 @@
 /**
- * Request State Types
+ * RequestState Types and Utilities
  *
- * Generic types for managing async request state (loading, error, data).
- * This pattern reduces the number of atoms needed and provides a consistent
- * way to handle async operations throughout the application.
+ * Provides a unified pattern for managing async resource state in Recoil.
+ * Combines data, loading, error, and cache metadata into a single atom.
  *
- * @example
- * ```typescript
- * // Before (3 atoms):
- * const conversationsAtom = atom<ChatwootConversation[]>([]);
- * const conversationsLoadingAtom = atom<boolean>(false);
- * const conversationsErrorAtom = atom<string | null>(null);
- *
- * // After (1 atom):
- * const conversationsRequestAtom = atom<RequestState<ChatwootConversation[]>>({
- *   data: [],
- *   loading: false,
- *   error: null,
- * });
- * ```
+ * Benefits:
+ * - Reduces atom count (3 atoms → 1)
+ * - Atomic state updates
+ * - Consistent error handling
+ * - Built-in cache validation
+ * - Type-safe state transitions
  */
 
+// ============================================================================
+// CORE TYPES
+// ============================================================================
+
 /**
- * Request State
- *
- * Represents the state of an async request with data, loading, and error states.
- *
- * @template T - The type of data being loaded
+ * Enhanced RequestState interface
+ * Combines data, loading, error, and cache metadata
  */
 export interface RequestState<T> {
-  /** The loaded data (or initial/default value) */
-  data: T;
-  /** Whether the request is currently loading */
+  /** The data payload */
+  data: T | null;
+  /** Whether a fetch is in progress */
   loading: boolean;
-  /** Error message if the request failed, null otherwise */
+  /** Error from the last failed operation */
   error: string | null;
+  /** Timestamp of last successful fetch (ms) */
+  lastFetch: number;
+  /** Time-to-live for cache (ms) */
+  ttl: number;
+  /** Whether initial fetch has been attempted */
+  hasAttempted: boolean;
 }
 
 /**
- * Creates an initial RequestState with default values
- *
- * @template T - The type of data
- * @param initialData - The initial data value
- * @returns A RequestState with loading=false and error=null
- *
- * @example
- * ```typescript
- * const initialState = createRequestState<ChatwootConversation[]>([]);
- * ```
+ * Extended RequestState with pagination support
  */
-export function createRequestState<T>(initialData: T): RequestState<T> {
-  return {
-    data: initialData,
-    loading: false,
-    error: null,
+export interface PaginatedRequestState<T> extends RequestState<T[]> {
+  pagination: {
+    currentPage: number;
+    totalPages: number;
+    totalCount: number;
+    hasMore: boolean;
+    loadingMore: boolean;
   };
 }
 
 /**
- * Creates a loading RequestState
+ * RequestState with granular loading states
+ */
+export interface GranularLoadingRequestState<T> extends RequestState<T> {
+  loadingState: {
+    initial: boolean;
+    filtering: boolean;
+    loadingMore: boolean;
+    refreshing: boolean;
+  };
+}
+
+// ============================================================================
+// FACTORY FUNCTIONS
+// ============================================================================
+
+/**
+ * Default TTL values for different resource types
+ */
+export const DEFAULT_TTL = {
+  SHORT: 30 * 1000, // 30 seconds - frequently changing data
+  MEDIUM: 2 * 60 * 1000, // 2 minutes - moderately changing data
+  STANDARD: 5 * 60 * 1000, // 5 minutes - infrequently changing data
+  LONG: 10 * 60 * 1000, // 10 minutes - rarely changing data
+  VERY_LONG: 30 * 60 * 1000, // 30 minutes - very stable data
+} as const;
+
+/**
+ * Creates an initial RequestState with default values
  *
- * @template T - The type of data
- * @param currentData - The current data to preserve during loading
- * @returns A RequestState with loading=true and error=null
+ * @param ttl - Time-to-live in milliseconds (default: 5 minutes)
+ * @returns Initial RequestState
  *
  * @example
  * ```typescript
- * setConversations(toLoadingState(conversations.data));
+ * const profileAtom = atom<RequestState<Profile>>({
+ *   key: 'profile',
+ *   default: createRequestState<Profile>(DEFAULT_TTL.STANDARD),
+ * });
  * ```
  */
-export function toLoadingState<T>(currentData: T): RequestState<T> {
+export function createRequestState<T>(ttl: number = DEFAULT_TTL.STANDARD): RequestState<T> {
   return {
-    data: currentData,
+    data: null,
+    loading: false,
+    error: null,
+    lastFetch: 0,
+    ttl,
+    hasAttempted: false,
+  };
+}
+
+/**
+ * Creates an initial PaginatedRequestState
+ *
+ * @param ttl - Time-to-live in milliseconds
+ * @returns Initial PaginatedRequestState
+ */
+export function createPaginatedRequestState<T>(ttl: number = DEFAULT_TTL.SHORT): PaginatedRequestState<T> {
+  return {
+    data: null,
+    loading: false,
+    error: null,
+    lastFetch: 0,
+    ttl,
+    hasAttempted: false,
+    pagination: {
+      currentPage: 1,
+      totalPages: 0,
+      totalCount: 0,
+      hasMore: true,
+      loadingMore: false,
+    },
+  };
+}
+
+/**
+ * Creates a RequestState with granular loading states
+ *
+ * @param ttl - Time-to-live in milliseconds
+ * @returns Initial GranularLoadingRequestState
+ */
+export function createGranularLoadingRequestState<T>(ttl: number = DEFAULT_TTL.SHORT): GranularLoadingRequestState<T> {
+  return {
+    data: null,
+    loading: false,
+    error: null,
+    lastFetch: 0,
+    ttl,
+    hasAttempted: false,
+    loadingState: {
+      initial: false,
+      filtering: false,
+      loadingMore: false,
+      refreshing: false,
+    },
+  };
+}
+
+// ============================================================================
+// STATE TRANSITION HELPERS
+// ============================================================================
+
+/**
+ * Start loading - sets loading to true and clears error
+ */
+export function startLoading<T>(state: RequestState<T>): RequestState<T> {
+  return {
+    ...state,
     loading: true,
     error: null,
   };
 }
 
 /**
- * Creates a success RequestState with new data
- *
- * @template T - The type of data
- * @param data - The successfully loaded data
- * @returns A RequestState with the new data, loading=false, and error=null
- *
- * @example
- * ```typescript
- * setConversations(toSuccessState(newConversations));
- * ```
+ * Set success - stores data and updates cache timestamp
  */
-export function toSuccessState<T>(data: T): RequestState<T> {
+export function setSuccess<T>(state: RequestState<T>, data: T): RequestState<T> {
   return {
+    ...state,
     data,
     loading: false,
     error: null,
+    lastFetch: Date.now(),
+    hasAttempted: true,
   };
 }
 
 /**
- * Creates an error RequestState
- *
- * @template T - The type of data
- * @param currentData - The current data to preserve during error
- * @param error - The error message
- * @returns A RequestState with loading=false and the error message
- *
- * @example
- * ```typescript
- * setConversations(toErrorState(conversations.data, err.message));
- * ```
+ * Set error - stores error message and stops loading
  */
-export function toErrorState<T>(currentData: T, error: string): RequestState<T> {
+export function setError<T>(state: RequestState<T>, error: string | Error): RequestState<T> {
   return {
-    data: currentData,
+    ...state,
     loading: false,
-    error,
+    error: typeof error === "string" ? error : error.message,
+    hasAttempted: true,
   };
 }
 
 /**
- * Type guard to check if a RequestState is loading
+ * Reset state to initial values (keeps TTL)
+ */
+export function resetState<T>(state: RequestState<T>): RequestState<T> {
+  return {
+    ...state,
+    data: null,
+    loading: false,
+    error: null,
+    lastFetch: 0,
+    hasAttempted: false,
+  };
+}
+
+// ============================================================================
+// CACHE VALIDATION
+// ============================================================================
+
+/**
+ * Check if cached data is still valid
  *
  * @param state - The RequestState to check
- * @returns True if the state is loading
- *
- * @example
- * ```typescript
- * if (isLoading(conversationsState)) {
- *   return <Spinner />;
- * }
- * ```
+ * @returns true if cache is valid, false if stale or empty
  */
-export function isLoading<T>(state: RequestState<T>): boolean {
+export function isCacheValid<T>(state: RequestState<T>): boolean {
+  if (!state.data || state.lastFetch === 0) return false;
+  return Date.now() - state.lastFetch < state.ttl;
+}
+
+/**
+ * Check if data should be fetched
+ * Returns true if: no data, cache is stale, or there was an error
+ *
+ * @param state - The RequestState to check
+ * @returns true if fetch should proceed
+ */
+export function shouldFetch<T>(state: RequestState<T>): boolean {
+  // Don't fetch if already loading
+  if (state.loading) return false;
+
+  // Fetch if no data and haven't attempted
+  if (!state.data && !state.hasAttempted) return true;
+
+  // Fetch if cache is stale
+  if (!isCacheValid(state)) return true;
+
+  return false;
+}
+
+/**
+ * Get cache age in milliseconds
+ */
+export function getCacheAge<T>(state: RequestState<T>): number {
+  if (state.lastFetch === 0) return Infinity;
+  return Date.now() - state.lastFetch;
+}
+
+/**
+ * Check if cache will expire soon (within threshold)
+ */
+export function isCacheExpiringSoon<T>(state: RequestState<T>, threshold: number = 10000): boolean {
+  if (!state.data || state.lastFetch === 0) return false;
+  const remainingTime = state.ttl - getCacheAge(state);
+  return remainingTime > 0 && remainingTime < threshold;
+}
+
+// ============================================================================
+// PAGINATION HELPERS
+// ============================================================================
+
+/**
+ * Start loading more items in paginated state
+ */
+export function startLoadingMore<T>(state: PaginatedRequestState<T>): PaginatedRequestState<T> {
+  return {
+    ...state,
+    pagination: {
+      ...state.pagination,
+      loadingMore: true,
+    },
+  };
+}
+
+/**
+ * Append more items to paginated state
+ *
+ * Properly clears loading and error states after successful pagination,
+ * consistent with setFirstPage behavior.
+ *
+ * Note: When state.data is null (initial state before first fetch), this
+ * initializes data with the items array. After this call, data will always
+ * be an array (never null). Consumers should use this function only after
+ * confirming a successful API response.
+ */
+export function appendItems<T>(
+  state: PaginatedRequestState<T>,
+  items: T[],
+  hasMore: boolean,
+  totalPages?: number,
+  totalCount?: number
+): PaginatedRequestState<T> {
+  // Ensure we always produce an array, explicitly handling null -> array transition
+  const existingData = state.data ?? [];
+  return {
+    ...state,
+    data: [...existingData, ...items],
+    loading: false, // Clear loading state after successful append
+    error: null, // Clear any previous error after successful append
+    lastFetch: Date.now(),
+    hasAttempted: true,
+    pagination: {
+      ...state.pagination,
+      currentPage: state.pagination.currentPage + 1,
+      hasMore,
+      loadingMore: false,
+      ...(totalPages !== undefined && { totalPages }),
+      ...(totalCount !== undefined && { totalCount }),
+    },
+  };
+}
+
+/**
+ * Set first page of paginated data
+ */
+export function setFirstPage<T>(
+  state: PaginatedRequestState<T>,
+  items: T[],
+  hasMore: boolean,
+  totalPages?: number,
+  totalCount?: number
+): PaginatedRequestState<T> {
+  return {
+    ...state,
+    data: items,
+    loading: false,
+    error: null,
+    lastFetch: Date.now(),
+    hasAttempted: true,
+    pagination: {
+      currentPage: 1,
+      hasMore,
+      loadingMore: false,
+      totalPages: totalPages ?? state.pagination.totalPages,
+      totalCount: totalCount ?? state.pagination.totalCount,
+    },
+  };
+}
+
+// ============================================================================
+// SELECTOR HELPERS
+// ============================================================================
+
+/**
+ * Extract just the data from RequestState
+ * Useful for components that only need the data
+ */
+export function selectData<T>(state: RequestState<T>): T | null {
+  return state.data;
+}
+
+/**
+ * Extract loading state
+ */
+export function selectLoading<T>(state: RequestState<T>): boolean {
   return state.loading;
 }
 
 /**
- * Type guard to check if a RequestState has an error
- *
- * @param state - The RequestState to check
- * @returns True if the state has an error
- *
- * @example
- * ```typescript
- * if (hasError(conversationsState)) {
- *   return <ErrorMessage error={conversationsState.error} />;
- * }
- * ```
+ * Extract error state
  */
-export function hasError<T>(state: RequestState<T>): boolean {
-  return state.error !== null;
+export function selectError<T>(state: RequestState<T>): string | null {
+  return state.error;
 }
 
 /**
- * Type guard to check if a RequestState has successfully loaded data
- *
- * @param state - The RequestState to check
- * @returns True if the state has data and is not loading/errored
- *
- * @example
- * ```typescript
- * if (hasData(conversationsState)) {
- *   return <ConversationList data={conversationsState.data} />;
- * }
- * ```
+ * Check if state has valid data (not loading, no error)
  */
-export function hasData<T>(state: RequestState<T>): boolean {
-  return !state.loading && state.error === null;
+export function hasValidData<T>(state: RequestState<T>): state is RequestState<T> & { data: T } {
+  return state.data !== null && !state.loading && !state.error;
 }
+
+/**
+ * Check if state is in error state
+ */
+export function isErrorState<T>(state: RequestState<T>): boolean {
+  return state.error !== null && !state.loading;
+}
+
+/**
+ * Check if state is empty (no data, not loading, no error)
+ */
+export function isEmptyState<T>(state: RequestState<T>): boolean {
+  return state.data === null && !state.loading && !state.error && state.hasAttempted;
+}
+
+// ============================================================================
+// TYPE GUARDS
+// ============================================================================
+
+/**
+ * Type guard to check if state is RequestState
+ */
+export function isRequestState<T>(state: unknown): state is RequestState<T> {
+  return (
+    typeof state === "object" &&
+    state !== null &&
+    "data" in state &&
+    "loading" in state &&
+    "error" in state &&
+    "lastFetch" in state &&
+    "ttl" in state
+  );
+}
+
+/**
+ * Type guard to check if state is PaginatedRequestState
+ */
+export function isPaginatedRequestState<T>(state: unknown): state is PaginatedRequestState<T> {
+  return isRequestState<T[]>(state) && "pagination" in state;
+}
+
+// ============================================================================
+// EXPORTS
+// ============================================================================
+
+export type { RequestState as default };
