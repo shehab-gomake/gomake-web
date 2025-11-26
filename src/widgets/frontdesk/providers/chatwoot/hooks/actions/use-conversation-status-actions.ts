@@ -13,7 +13,7 @@ export type ConversationStatusType = "open" | "resolved" | "pending" | "snoozed"
 interface UseConversationStatusActionsProps {
   accountId: number | null;
   conversation: ChatwootConversation | null;
-  updateConversation: (updates: Partial<ChatwootConversation>) => void;
+  updateConversation: (conversationId: number, updates: Partial<ChatwootConversation>) => void;
 }
 
 export const useConversationStatusActions = ({
@@ -36,7 +36,7 @@ export const useConversationStatusActions = ({
 
       try {
         // Optimistic update
-        updateConversation({ unread_count: markAsRead ? 0 : 1 });
+        updateConversation(conversation.id, { unread_count: markAsRead ? 0 : 1 });
 
         if (markAsRead) {
           await chatwootService.conversations.markConversationAsRead(accountId, conversation.id);
@@ -47,7 +47,7 @@ export const useConversationStatusActions = ({
         showNotification(`Conversation marked as ${action}`, "success");
       } catch (error: any) {
         // Revert on failure
-        updateConversation({ unread_count: originalUnreadCount });
+        updateConversation(conversation.id, { unread_count: originalUnreadCount });
         showNotification(`Failed to mark conversation as ${action}`, "error");
         console.error(`Failed to mark conversation as ${action}:`, error);
       }
@@ -61,30 +61,52 @@ export const useConversationStatusActions = ({
   const handleUpdateStatus = useCallback(
     async (status: ConversationStatusType, snoozedUntil?: string) => {
       if (!accountId || !conversation?.id) {
-        showNotification("Cannot perform action: Missing account or conversation", "error");
+        showNotification("Cannot update status: Missing account or conversation", "error");
         return;
       }
 
       const oldStatus = conversation.status;
 
+      // User-friendly status messages
+      const statusMessages = {
+        open: "reopened",
+        resolved: "marked as resolved",
+        pending: "marked as pending",
+        snoozed: snoozedUntil ? "snoozed until specified time" : "snoozed until next reply",
+      };
+
       try {
-        // Optimistic update
-        updateConversation({
+        // Optimistic update - immediately update UI
+        updateConversation(conversation.id, {
           status,
           ...(snoozedUntil && { snoozed_until: new Date(snoozedUntil).getTime() }),
         });
 
-        await chatwootService.conversations.updateConversationStatus(accountId, conversation.id, {
+        // Make API call
+        const response = await chatwootService.conversations.updateConversationStatus(accountId, conversation.id, {
           status,
           ...(snoozedUntil && { snoozed_until: snoozedUntil }),
         });
 
-        showNotification(`Conversation ${status}`, "success");
+        // Verify success
+        if (response.payload?.success) {
+          const message = statusMessages[status] || status;
+          showNotification(`Conversation ${message}`, "success");
+        } else {
+          throw new Error("Status update failed: Unexpected response from server");
+        }
       } catch (error: any) {
         // Revert on failure
-        updateConversation({ status: oldStatus });
-        showNotification(`Failed to update conversation status`, "error");
-        console.error("Failed to update conversation status:", error);
+        updateConversation(conversation.id, { status: oldStatus });
+        
+        const errorMessage = error.message || "Failed to update conversation status";
+        showNotification(errorMessage, "error");
+        console.error("Failed to update conversation status:", {
+          conversationId: conversation.id,
+          oldStatus,
+          newStatus: status,
+          error: errorMessage,
+        });
       }
     },
     [accountId, conversation, updateConversation]

@@ -11,11 +11,20 @@ chatwoot/
 ├── core/
 │   ├── base-chatwoot-service.ts   # Base class with account-scoped URL helpers
 │   └── index.ts
-├── services/
-│   ├── chatwoot-profile.service.ts      # Profile endpoints (no account_id)
-│   ├── chatwoot-conversations.service.ts # Conversation management
-│   ├── chatwoot-contacts.service.ts      # Contact management
-│   ├── chatwoot-messages.service.ts      # Message operations
+├── services/                               # 13 service files
+│   ├── chatwoot-profile.service.ts         # User profile (no account_id)
+│   ├── chatwoot-conversations.service.ts   # Conversation management
+│   ├── chatwoot-contacts.service.ts        # Contact management
+│   ├── chatwoot-messages.service.ts        # Message operations
+│   ├── chatwoot-inboxes.service.ts         # Inbox/channel management
+│   ├── chatwoot-agents.service.ts          # Agent/user management
+│   ├── chatwoot-teams.service.ts           # Team management
+│   ├── chatwoot-labels.service.ts          # Label management
+│   ├── chatwoot-notifications.service.ts   # Notification operations
+│   ├── chatwoot-oauth.service.ts           # OAuth authorization
+│   ├── chatwoot-contact-resolution.service.ts      # Helper: Contact resolution
+│   ├── chatwoot-inbox-resolution.service.ts        # Helper: Inbox resolution
+│   ├── chatwoot-conversation-composer.service.ts   # Helper: Compose validation
 │   └── index.ts
 ├── types/
 │   ├── profile.types.ts   # Profile-related types
@@ -182,27 +191,37 @@ try {
 
 ## Available API Groups
 
-### ✅ Implemented
-- **Profile** - User profile endpoints
-- **Conversations** - Conversation management (list, create, update, filter, labels, etc.)
-- **Contacts** - Contact management (list, create, update, delete, search, filter)
-- **Messages** - Message operations (list, create, delete)
+### ✅ Implemented (10 Main Services)
 
-### 📋 Available for Implementation
-Based on `/Users/omarsabbah/Desktop/gomake-services/messaging-hub-v2/api/chatwoot/docs`:
+1. **Profile** - User profile endpoints (no account_id needed)
+2. **Conversations** - Conversation management (list, create, update, filter, search, labels, status changes, toggle, assign)
+3. **Contacts** - Contact management (list, create, update, delete, search, filter, conversations)
+4. **Messages** - Message operations (list, create, delete, translations, attachments)
+5. **Inboxes** - Inbox/channel configuration (list, create, update, webhooks, agents)
+6. **Agents** - Agent/user management (list, update, availability status, inbox assignments)
+7. **Teams** - Team management (list, create, update, members)
+8. **Labels** - Label management (list, create, update, delete)
+9. **Notifications** - Notification operations (list, mark read, unread count, snooze, delete)
+10. **OAuth** - OAuth authorization for Gmail/Outlook channel connections
 
-- **Accounts** - Account management
-- **Agents** - Agent/user management
-- **Inboxes** - Inbox configuration
-- **Teams** - Team management
+### 🔧 Helper Services (3 Services)
+
+1. **Contact Resolution** - Resolve contacts by email or phone number
+2. **Inbox Resolution** - Resolve inboxes by channel type
+3. **Conversation Composer** - Create conversations with validation and error handling
+
+### 📋 Available for Future Implementation
+
+Based on Chatwoot API documentation:
+
+- **Accounts** - Account management endpoints
 - **Automation** - Automation rules
 - **Canned Responses** - Template messages
-- **Custom Attributes** - Custom fields
-- **Integrations** - Integration management
+- **Custom Attributes** - Custom fields for contacts/conversations
+- **Integrations** - Third-party integration management
 - **Reports** - Analytics and reporting
-- **Webhooks** - Webhook management
-- **Help Center** - Knowledge base
-- **Audit Logs** - Activity logs
+- **Help Center** - Knowledge base management
+- **Audit Logs** - Activity tracking and logs
 
 ## Patterns & Best Practices
 

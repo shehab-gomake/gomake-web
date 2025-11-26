@@ -36,6 +36,25 @@ const usePrintHousePreferences = () => {
 
   const GetPreferenceValueKey = (key: string): string | undefined => {
     const preference = preferences.find((pref: any) => pref.code === key);
+
+    if (!preference) {
+      return undefined;
+    }
+
+    // If preference has preferenceValues array, find the matching value by ID
+    if (
+      preference.preferenceValues &&
+      Array.isArray(preference.preferenceValues)
+    ) {
+      const matchedValue = preference.preferenceValues.find(
+        (opt: any) => opt.id === preference.value
+      );
+
+      // Return valueKey if available, otherwise return value
+      return matchedValue?.valueKey || matchedValue?.value;
+    }
+
+    // Fallback to direct valueKey if no preferenceValues array
     return preference?.valueKey;
   };
 

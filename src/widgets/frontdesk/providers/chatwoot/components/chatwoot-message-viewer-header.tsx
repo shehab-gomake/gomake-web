@@ -1,152 +1,94 @@
-import React, { useState } from "react";
-import { Box, Stack, Typography, Menu, MenuItem, ListItemIcon, ListItemText, IconButton, Tooltip, Button } from "@mui/material";
+import React, { useMemo } from "react";
+import { Box, Stack, Typography, IconButton, Tooltip } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-import {
-  ArrowBack as BackIcon,
-  Star as StarIcon,
-  StarBorder as StarBorderIcon,
-  Print as PrintIcon,
-  Archive as ArchiveIcon,
-  Delete as DeleteIcon,
-  Reply as ReplyIcon,
-  MoreVert as MoreIcon,
-  ArrowDropDown as ArrowDropDownIcon,
-  AccessTime as SnoozeIcon,
-  Pending as PendingIcon,
-  CheckCircle as ResolveIcon,
-} from "@mui/icons-material";
+import { ChevronRight, ChevronLeft } from "@mui/icons-material";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
-import { ChatwootConversation } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
-import { formatMessageDate } from "@/widgets/frontdesk/utils";
-import { useRecoilValue } from "recoil";
-import { chatwootProfileAtom } from "@/store/frontdesk/atoms/chatwoot.atoms";
+import { ChatwootConversation, ConversationPriority } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
+import { ConversationStatusSelector } from "./conversation-status-selector";
+import { ConversationPrioritySelector } from "./conversation-priority-selector";
+import type { ChatwootInbox } from "@/services/frontdesk/api/chatwoot/types/inboxes.types";
+import { InboxIcon } from "../utils/inbox-icons";
+import { getConversationName } from "../utils/conversation-utils";
+
+type PriorityValue =
+  | ConversationPriority.URGENT
+  | ConversationPriority.HIGH
+  | ConversationPriority.MEDIUM
+  | ConversationPriority.LOW
+  | null;
 
 interface ChatwootMessageViewerHeaderProps {
   conversation: ChatwootConversation | null;
   accountId?: number;
   onBack: () => void;
-  onReply?: () => void;
   onReopen?: () => void;
   onResolve?: () => void;
   onSnooze?: () => void;
   onMarkAsPending?: () => void;
-  onArchive?: () => void;
-  onDelete?: () => void;
-  onStar?: () => void;
-  onPrint?: () => void;
-  isStarred?: boolean;
+  onStatusChange?: (status: string) => void;
+  onPriorityChange?: (priority: PriorityValue) => void;
+  updating?: boolean;
+  inboxes?: ChatwootInbox[];
+  isSidebarVisible?: boolean;
+  onToggleSidebar?: () => void;
 }
 
 export const ChatwootMessageViewerHeader: React.FC<ChatwootMessageViewerHeaderProps> = ({
   conversation,
   accountId,
   onBack,
-  onReply,
   onReopen,
   onResolve,
   onSnooze,
   onMarkAsPending,
-  onArchive,
-  onDelete,
-  onStar,
-  onPrint,
-  isStarred = false,
+  onStatusChange,
+  onPriorityChange,
+  updating = false,
+  inboxes = [],
+  isSidebarVisible = true,
+  onToggleSidebar,
 }) => {
   const theme = useTheme();
-  const { primaryColor, neutralColor } = useGomakeTheme();
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [reopenMenuAnchor, setReopenMenuAnchor] = useState<null | HTMLElement>(null);
-  const [resolveMenuAnchor, setResolveMenuAnchor] = useState<null | HTMLElement>(null);
-  const open = Boolean(anchorEl);
-  const reopenMenuOpen = Boolean(reopenMenuAnchor);
-  const resolveMenuOpen = Boolean(resolveMenuAnchor);
-  const profile = useRecoilValue(chatwootProfileAtom);
+  const { neutralColor } = useGomakeTheme();
 
   if (!conversation) return null;
 
-  const sender = conversation.meta?.sender;
-  const senderName = sender?.name || sender?.email || "Unknown";
-  const senderEmail = sender?.email || "";
+  // Get sender name from conversation using utility function
+  const senderName = getConversationName(conversation);
 
-  // Get current user display name (from profile)
-  const currentUserName = profile?.name || profile?.available_name || profile?.email || "";
-  const userNameInitials = currentUserName
-    .split(" ")
-    .map((n) => n[0])
-    .join("")
-    .toUpperCase()
-    .slice(0, 2);
+  // Extract email subject from conversation metadata
+  const subject = useMemo(() => {
+    return (
+      conversation.additional_attributes?.subject ||
+      conversation.additional_attributes?.mail_subject ||
+      conversation.custom_attributes?.subject ||
+      conversation.messages?.[0]?.content_attributes?.subject ||
+      conversation.messages?.[0]?.content_attributes?.email?.subject ||
+      null
+    );
+  }, [conversation]);
 
-  // Format conversation date
-  const conversationDate = conversation.updated_at || conversation.created_at || conversation.timestamp
-    ? formatMessageDate(
-        conversation.updated_at
-          ? new Date(conversation.updated_at * 1000).toISOString()
-          : conversation.created_at
-          ? new Date(conversation.created_at * 1000).toISOString()
-          : conversation.timestamp
-      )
-    : "";
-
-  const handleMoreActionsClick = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleMoreActionsClose = () => {
-    setAnchorEl(null);
-  };
-
-  const handleReopenMenuClick = (event: React.MouseEvent<HTMLElement>) => {
-    setReopenMenuAnchor(event.currentTarget);
-  };
-
-  const handleReopenMenuClose = () => {
-    setReopenMenuAnchor(null);
-  };
-
-  const handleMenuAction = (action: () => void) => {
-    action();
-    handleMoreActionsClose();
-  };
-
-  const handleReopenClick = () => {
-    if (onReopen) {
-      onReopen();
+  // Get inbox for the conversation
+  const inbox = useMemo(() => {
+    if (!conversation.inbox_id || !inboxes.length) {
+      return null;
     }
-    handleReopenMenuClose();
+    return inboxes.find((inbox) => inbox.id === conversation.inbox_id) || null;
+  }, [conversation.inbox_id, inboxes]);
+
+  // Convert string priority to enum value
+  const getPriorityValue = (priority: string | undefined | null): PriorityValue => {
+    if (!priority) return null;
+    const priorityMap: Record<string, PriorityValue> = {
+      [ConversationPriority.URGENT]: ConversationPriority.URGENT,
+      [ConversationPriority.HIGH]: ConversationPriority.HIGH,
+      [ConversationPriority.MEDIUM]: ConversationPriority.MEDIUM,
+      [ConversationPriority.LOW]: ConversationPriority.LOW,
+    };
+    return priorityMap[priority] || null;
   };
 
-  const handleResolveMenuClick = (event: React.MouseEvent<HTMLElement>) => {
-    setResolveMenuAnchor(event.currentTarget);
-  };
-
-  const handleResolveMenuClose = () => {
-    setResolveMenuAnchor(null);
-  };
-
-  const handleResolveClick = () => {
-    if (onResolve) {
-      onResolve();
-    }
-    handleResolveMenuClose();
-  };
-
-  const handleSnoozeClick = () => {
-    if (onSnooze) {
-      onSnooze();
-    }
-    handleResolveMenuClose();
-  };
-
-  const handleMarkAsPendingClick = () => {
-    if (onMarkAsPending) {
-      onMarkAsPending();
-    }
-    handleResolveMenuClose();
-  };
-
-  const isResolved = conversation.status === "resolved";
-  const isOpen = conversation.status === "open";
+  const currentPriority = getPriorityValue(conversation.priority);
 
   return (
     <Box
@@ -156,200 +98,94 @@ export const ChatwootMessageViewerHeader: React.FC<ChatwootMessageViewerHeaderPr
         backgroundColor: neutralColor(0), // Light background
       }}
     >
-      <Stack spacing={1.5}>
-        {/* Top Row: User Display and Actions */}
-        <Stack direction="row" alignItems="center" justifyContent="space-between">
-          {/* Left: Current User Name */}
-          <Typography 
-            variant="body1" 
-            sx={{ 
-              fontWeight: 500, 
+      <Stack direction="row" alignItems="center" justifyContent="space-between">
+        {/* Left: Sender Name, Subject, and Inbox Info */}
+        <Stack direction="column" spacing={0.5} sx={{ flex: 1, minWidth: 0 }}>
+          {/* Sender Name */}
+          <Typography
+            variant="body1"
+            sx={{
+              fontWeight: 500,
               color: neutralColor(800),
               fontSize: "0.875rem",
             }}
           >
-            {currentUserName || "User"}
+            {senderName}
           </Typography>
 
-          {/* Right: Action Buttons */}
-          <Stack direction="row" spacing={0.5} alignItems="center">
-            {/* Resolve Button with Dropdown (only when not resolved) */}
-            {!isResolved && onResolve && (
-              <>
-                <Button
-                  variant="contained"
-                  size="small"
-                  onClick={handleResolveMenuClick}
-                  endIcon={<ArrowDropDownIcon />}
-                  sx={{
-                    textTransform: "none",
-                    backgroundColor: primaryColor(600),
-                    color: "white",
-                    fontSize: "0.8125rem",
-                    fontWeight: 500,
-                    px: 1.5,
-                    py: 0.5,
-                    minWidth: "auto",
-                    "&:hover": {
-                      backgroundColor: primaryColor(700),
-                    },
-                  }}
-                >
-                  Close
-                </Button>
-                <Menu
-                  anchorEl={resolveMenuAnchor}
-                  open={resolveMenuOpen}
-                  onClose={handleResolveMenuClose}
-                  anchorOrigin={{
-                    vertical: "bottom",
-                    horizontal: "right",
-                  }}
-                  transformOrigin={{
-                    vertical: "top",
-                    horizontal: "right",
-                  }}
-                >
-                  <MenuItem onClick={handleResolveClick}>
-                    <ListItemIcon>
-                      <ResolveIcon fontSize="small" />
-                    </ListItemIcon>
-                    <ListItemText>Close</ListItemText>
-                  </MenuItem>
-                  <MenuItem onClick={handleSnoozeClick}>
-                    <ListItemIcon>
-                      <SnoozeIcon fontSize="small" />
-                    </ListItemIcon>
-                    <ListItemText>Snooze</ListItemText>
-                  </MenuItem>
-                  <MenuItem onClick={handleMarkAsPendingClick}>
-                    <ListItemIcon>
-                      <PendingIcon fontSize="small" />
-                    </ListItemIcon>
-                    <ListItemText>Mark as pending</ListItemText>
-                  </MenuItem>
-                </Menu>
-              </>
-            )}
+          {/* Subject (for email conversations) */}
+          {subject && (
+            <Typography
+              variant="body2"
+              sx={{
+                fontWeight: 400,
+                color: neutralColor(700),
+                fontSize: "0.8125rem",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+              }}
+            >
+              {subject}
+            </Typography>
+          )}
 
-            {/* Reopen Button (only when resolved) */}
-            {isResolved && onReopen && (
-              <>
-                <Button
-                  variant="outlined"
-                  size="small"
-                  onClick={handleReopenMenuClick}
-                  endIcon={<ArrowDropDownIcon />}
-                  sx={{
-                    textTransform: "none",
-                    borderColor: neutralColor(300),
-                    color: neutralColor(700),
-                    fontSize: "0.8125rem",
-                    px: 1.5,
-                    py: 0.5,
-                    minWidth: "auto",
-                    "&:hover": {
-                      backgroundColor: neutralColor(50),
-                      borderColor: neutralColor(400),
-                    },
-                  }}
-                >
-                  Reopen
-                </Button>
-                <Menu
-                  anchorEl={reopenMenuAnchor}
-                  open={reopenMenuOpen}
-                  onClose={handleReopenMenuClose}
-                  anchorOrigin={{
-                    vertical: "bottom",
-                    horizontal: "right",
-                  }}
-                  transformOrigin={{
-                    vertical: "top",
-                    horizontal: "right",
-                  }}
-                >
-                  <MenuItem onClick={handleReopenClick}>
-                    <ListItemText>Reopen Ticket</ListItemText>
-                  </MenuItem>
-                </Menu>
-              </>
-            )}
+          {/* Inbox Name and Icon */}
+          {inbox && (
+            <Stack direction="row" alignItems="center" spacing={0.5}>
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  color: neutralColor(600),
+                }}
+              >
+                <InboxIcon channelType={inbox.channel_type} medium={inbox.medium as string | undefined} size={14} />
+              </Box>
+              <Typography
+                variant="caption"
+                sx={{
+                  color: neutralColor(600),
+                  fontSize: "0.75rem",
+                }}
+              >
+                {inbox.name}
+              </Typography>
+            </Stack>
+          )}
+        </Stack>
 
-            {/* More Actions */}
-            <Tooltip title="More actions">
+        {/* Right: Status, Priority Selectors, and Sidebar Toggle */}
+        <Stack direction="row" alignItems="center" spacing={1}>
+          {onStatusChange && (
+            <ConversationStatusSelector
+              status={conversation.status || "open"}
+              onStatusChange={onStatusChange}
+              updating={updating}
+            />
+          )}
+          {onPriorityChange && (
+            <ConversationPrioritySelector priority={currentPriority} onPriorityChange={onPriorityChange} updating={updating} />
+          )}
+          {onToggleSidebar && (
+            <Tooltip title={isSidebarVisible ? "Hide sidebar" : "Show sidebar"}>
               <IconButton
                 size="small"
-                onClick={handleMoreActionsClick}
+                onClick={onToggleSidebar}
                 sx={{
                   color: neutralColor(600),
                   "&:hover": {
+                    color: neutralColor(800),
                     backgroundColor: neutralColor(100),
-                    color: primaryColor(600),
                   },
                 }}
               >
-                <MoreIcon fontSize="small" />
+                {isSidebarVisible ? <ChevronRight fontSize="small" /> : <ChevronLeft fontSize="small" />}
               </IconButton>
             </Tooltip>
-          </Stack>
+          )}
         </Stack>
-
       </Stack>
-
-      {/* More Actions Dropdown Menu */}
-      <Menu anchorEl={anchorEl} open={open} onClose={handleMoreActionsClose}>
-        {onStar && (
-          <MenuItem onClick={() => handleMenuAction(onStar)}>
-            <ListItemIcon>
-              {isStarred ? <StarIcon fontSize="small" /> : <StarBorderIcon fontSize="small" />}
-            </ListItemIcon>
-            <ListItemText>{isStarred ? "Unstar" : "Star"}</ListItemText>
-          </MenuItem>
-        )}
-        {onReply && (
-          <MenuItem onClick={() => handleMenuAction(onReply)}>
-            <ListItemIcon>
-              <ReplyIcon fontSize="small" />
-            </ListItemIcon>
-            <ListItemText>Reply</ListItemText>
-          </MenuItem>
-        )}
-        {onArchive && (
-          <MenuItem onClick={() => handleMenuAction(onArchive)}>
-            <ListItemIcon>
-              <ArchiveIcon fontSize="small" />
-            </ListItemIcon>
-            <ListItemText>Archive</ListItemText>
-          </MenuItem>
-        )}
-        {onPrint && (
-          <MenuItem onClick={() => handleMenuAction(onPrint)}>
-            <ListItemIcon>
-              <PrintIcon fontSize="small" />
-            </ListItemIcon>
-            <ListItemText>Print</ListItemText>
-          </MenuItem>
-        )}
-        {onDelete && (
-          <MenuItem
-            onClick={() => handleMenuAction(onDelete)}
-            sx={{
-              color: "error.main",
-              "&:hover": {
-                backgroundColor: "error.light",
-                color: "error.dark",
-              },
-            }}
-          >
-            <ListItemIcon>
-              <DeleteIcon fontSize="small" sx={{ color: "error.main" }} />
-            </ListItemIcon>
-            <ListItemText>Delete</ListItemText>
-          </MenuItem>
-        )}
-      </Menu>
     </Box>
   );
 };
-

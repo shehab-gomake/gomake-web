@@ -8,7 +8,6 @@ import React from "react";
 import { Stack, IconButton, Tooltip } from "@mui/material";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import SwapVertIcon from "@mui/icons-material/SwapVert";
-import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 
 export interface ConversationListActionsProps {
@@ -18,8 +17,6 @@ export interface ConversationListActionsProps {
   onSortClick: (event: React.MouseEvent<HTMLElement>) => void;
   /** Callback when compose button is clicked (optional) */
   onComposeClick?: () => void;
-  /** Callback when next button is clicked (optional) */
-  onNextClick?: () => void;
   /** Neutral color function */
   neutralColor: (shade: number) => string;
   /** Primary color function (optional) */
@@ -30,7 +27,6 @@ export const ConversationListActions: React.FC<ConversationListActionsProps> = (
   onFilterClick,
   onSortClick,
   onComposeClick,
-  onNextClick,
   neutralColor,
   primaryColor,
 }) => {
@@ -94,27 +90,6 @@ export const ConversationListActions: React.FC<ConversationListActionsProps> = (
           <SwapVertIcon fontSize="small" />
         </IconButton>
       </Tooltip>
-
-      {/* Next Button (optional) */}
-      {onNextClick && (
-        <Tooltip title="Next">
-          <IconButton
-            size="small"
-            onClick={onNextClick}
-            sx={{
-              color: neutralColor(600),
-              backgroundColor: neutralColor(100),
-              "&:hover": {
-                backgroundColor: neutralColor(200),
-              },
-              width: 32,
-              height: 32,
-            }}
-          >
-            <ArrowForwardIosIcon fontSize="small" />
-          </IconButton>
-        </Tooltip>
-      )}
     </Stack>
   );
 };

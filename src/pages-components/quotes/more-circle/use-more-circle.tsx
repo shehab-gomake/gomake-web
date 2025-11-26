@@ -104,11 +104,11 @@ const useMoreCircle = () => {
     handleGetTaxConfirmNo,
     onClickOpenMoveOrderToReadyModal,
     onOpenPackagesModal,
+    onClickOpenInventoryIntakeModal,
     onClickSendToCustomerEmail,
     onClickSendToCustomerSMS,
     onClickSendToCustomerWhatsApp,
     classes,
-    onClickOpenInventoryIntakeModal,
   }) => {
     const isEditableDocument = quote?.isEditable;
     const documentPath = DOCUMENT_TYPE[documentType];

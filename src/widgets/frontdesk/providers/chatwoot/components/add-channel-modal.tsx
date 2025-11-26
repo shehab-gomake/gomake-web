@@ -24,6 +24,7 @@ import {
   FormGroup,
   Avatar,
 } from "@mui/material";
+import { useSetRecoilState } from "recoil";
 import { Close as CloseIcon } from "@mui/icons-material";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import { Google as GoogleIcon } from "@mui/icons-material";
@@ -34,11 +35,14 @@ import { useChatwootInboxes } from "@/widgets/frontdesk/providers/chatwoot/hooks
 import { useChatwootAgents } from "@/widgets/frontdesk/providers/chatwoot/hooks/resources/use-chatwoot-agents";
 import { useChatwootProfile } from "@/widgets/frontdesk/providers/chatwoot/hooks/use-chatwoot-profile";
 import { chatwootService } from "@/services/frontdesk";
+import { chatwootInboxAgentsMapAtom } from "@/store/frontdesk/atoms/chatwoot.atoms";
 
 interface AddChannelModalProps {
   open: boolean;
   onClose: () => void;
   error?: string | null;
+  preloadedInboxId?: number | null;
+  preloadedAccountId?: number | null;
 }
 
 interface ChannelOption {
@@ -76,7 +80,13 @@ const getSteps = (currentStep: number) => [
   },
 ];
 
-export const AddChannelModal: React.FC<AddChannelModalProps> = ({ open, onClose, error }) => {
+export const AddChannelModal: React.FC<AddChannelModalProps> = ({ 
+  open, 
+  onClose, 
+  error,
+  preloadedInboxId = null,
+  preloadedAccountId = null,
+}) => {
   const [selectedChannel, setSelectedChannel] = useState<string | null>(null);
   const [currentStep, setCurrentStep] = useState<number>(1);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
@@ -90,6 +100,7 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({ open, onClose,
   const { refresh: refreshInboxes } = useChatwootInboxes();
   const { profile } = useChatwootProfile();
   const { agents, loading: agentsLoading, error: agentsError, refresh: refreshAgents } = useChatwootAgents(newInboxData?.accountId ?? null, false);
+  const setInboxAgentsMap = useSetRecoilState(chatwootInboxAgentsMapAtom);
 
   const channels: ChannelOption[] = [
     {
@@ -115,7 +126,34 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({ open, onClose,
     },
   ];
 
-  // Reset state when modal opens/closes
+  // Ref to track if we've already attempted to fetch agents (prevents infinite loop)
+  const hasAttemptedFetchRef = React.useRef(false);
+  const hasFetchedInboxAgentsRef = React.useRef(false);
+
+  // Initialize with preloaded inbox data if provided
+  useEffect(() => {
+    if (open && preloadedInboxId && preloadedAccountId) {
+      console.log("[AddChannelModal] Preloaded inbox data:", { preloadedInboxId, preloadedAccountId });
+      setNewInboxData({ accountId: preloadedAccountId, inboxId: preloadedInboxId });
+      setCurrentStep(3); // Jump to step 3 (Add Agents)
+      setSelectedChannel("preloaded"); // Mark as preloaded to skip channel selection
+      hasAttemptedFetchRef.current = false; // Reset fetch flag for new inbox
+      hasFetchedInboxAgentsRef.current = false;
+    } else if (open) {
+      // Reset state when modal opens without preloaded data
+      clearError();
+      setSuccessMessage(null);
+      setSelectedChannel(null);
+      setCurrentStep(1);
+      setNewInboxData(null);
+      setSelectedAgents([]);
+      setAgentAssignmentError(null);
+      hasAttemptedFetchRef.current = false; // Reset fetch flag
+      hasFetchedInboxAgentsRef.current = false;
+    }
+  }, [open, preloadedInboxId, preloadedAccountId, clearError]);
+
+  // Reset state when modal closes
   useEffect(() => {
     if (!open) {
       clearError();
@@ -125,15 +163,59 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({ open, onClose,
       setNewInboxData(null);
       setSelectedAgents([]);
       setAgentAssignmentError(null);
+      hasAttemptedFetchRef.current = false; // Reset fetch flag
+      hasFetchedInboxAgentsRef.current = false;
     }
   }, [open, clearError]);
 
-  // Fetch agents when we reach Step 3
+  // Fetch agents when we reach Step 3 (one-time fetch per inbox)
   useEffect(() => {
-    if (currentStep === 3 && newInboxData?.accountId && !agentsLoading) {
+    if (currentStep === 3 && newInboxData?.accountId && !agentsLoading && !hasAttemptedFetchRef.current) {
+      hasAttemptedFetchRef.current = true;
+      console.log("[AddChannelModal] Fetching agents for step 3");
       refreshAgents();
     }
-  }, [currentStep, newInboxData, agentsLoading, refreshAgents]);
+    
+    // Reset the ref when step changes away from 3
+    if (currentStep !== 3) {
+      hasAttemptedFetchRef.current = false;
+    }
+  }, [currentStep, newInboxData?.accountId, agentsLoading]);
+
+  // Fetch current inbox assignments when entering Step 3
+  useEffect(() => {
+    const fetchInboxAgents = async () => {
+      if (
+        currentStep === 3 && 
+        newInboxData?.accountId && 
+        newInboxData?.inboxId && 
+        !hasFetchedInboxAgentsRef.current
+      ) {
+        hasFetchedInboxAgentsRef.current = true;
+        console.log("[AddChannelModal] Fetching existing inbox agents");
+        
+        try {
+          const response = await chatwootService.inboxes.getInboxAgents(
+            newInboxData.accountId,
+            newInboxData.inboxId
+          );
+          
+          // Extract agent IDs from response
+          const inboxAgents = response?.payload || response || [];
+          const agentIds = inboxAgents.map((agent: any) => agent.id);
+          
+          console.log("[AddChannelModal] Found existing agents:", agentIds);
+          if (agentIds.length > 0) {
+            setSelectedAgents(agentIds);
+          }
+        } catch (error) {
+          console.error("[AddChannelModal] Failed to fetch inbox agents:", error);
+        }
+      }
+    };
+
+    fetchInboxAgents();
+  }, [currentStep, newInboxData]);
 
   // Auto-select current user when agents are loaded
   useEffect(() => {
@@ -237,8 +319,14 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({ open, onClose,
   };
 
   const handleAddAgents = async () => {
-    if (!newInboxData || selectedAgents.length === 0) {
-      setAgentAssignmentError("Please select at least one agent to continue.");
+    if (!newInboxData) {
+      setAgentAssignmentError("Invalid inbox data.");
+      return;
+    }
+    
+    // Current user should always be in the selected agents
+    if (selectedAgents.length === 0) {
+      setAgentAssignmentError("At least one agent must be assigned to the inbox.");
       return;
     }
 
@@ -247,7 +335,24 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({ open, onClose,
 
     try {
       // Call agent assignment API
-      await chatwootService.agents.addAgentsToInbox(newInboxData.inboxId, selectedAgents);
+      await chatwootService.inboxes.addAgentsToInbox(
+        newInboxData.accountId,
+        newInboxData.inboxId,
+        selectedAgents
+      );
+
+      // Fetch updated agents list and update Recoil state
+      const response = await chatwootService.inboxes.getInboxAgents(
+        newInboxData.accountId,
+        newInboxData.inboxId
+      );
+      const updatedAgents = response?.payload || [];
+      
+      // Update the agents map in Recoil state
+      setInboxAgentsMap((prev) => ({
+        ...prev,
+        [newInboxData.inboxId]: updatedAgents,
+      }));
 
       // Move to Step 4 (Success)
       setCurrentStep(4);
@@ -735,7 +840,7 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({ open, onClose,
                     lineHeight: 1.6,
                   }}
                 >
-                  Select at least one agent to handle messages in this inbox. The current user is automatically selected.
+                  Select additional agents to handle messages in this inbox.
                 </Typography>
 
                 {/* Loading State */}
@@ -752,117 +857,159 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({ open, onClose,
                   </Alert>
                 )}
 
-                {/* Agents List */}
+                {/* Agents List - Compact Modern Design */}
                 {!agentsLoading && !agentsError && agents.length > 0 && (
-                  <FormGroup sx={{ mb: 3 }}>
-                    {agents.map((agent) => {
-                      const isSelected = selectedAgents.includes(agent.id!);
-                      const isCurrentUser = agent.id === profile?.id;
+                  <Paper
+                    variant="outlined"
+                    sx={{
+                      mb: 3,
+                      borderRadius: 2,
+                      overflow: "hidden",
+                      border: `1px solid ${neutralColor(200)}`,
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        maxHeight: 400,
+                        overflowY: "auto",
+                        "&::-webkit-scrollbar": {
+                          width: "8px",
+                        },
+                        "&::-webkit-scrollbar-track": {
+                          backgroundColor: neutralColor(50),
+                        },
+                        "&::-webkit-scrollbar-thumb": {
+                          backgroundColor: neutralColor(300),
+                          borderRadius: "4px",
+                          "&:hover": {
+                            backgroundColor: neutralColor(400),
+                          },
+                        },
+                      }}
+                    >
+                      {agents.map((agent, index) => {
+                        const isSelected = selectedAgents.includes(agent.id!);
+                        const isCurrentUser = agent.id === profile?.id;
+                        const isAdministrator = agent.role === "administrator";
 
-                      return (
-                        <Paper
-                          key={agent.id}
-                          sx={{
-                            p: 2,
-                            mb: 1.5,
-                            border: isSelected
-                              ? `2px solid ${primaryColor(500)}`
-                              : `1px solid ${neutralColor(200)}`,
-                            borderRadius: 2,
-                            cursor: "pointer",
-                            transition: "all 0.2s ease",
-                            backgroundColor: isSelected ? alpha(primaryColor(50), 0.5) : "#ffffff",
-                            "&:hover": {
-                              borderColor: isSelected ? primaryColor(600) : neutralColor(300),
-                              boxShadow: `0 2px 8px ${alpha(neutralColor(900), 0.08)}`,
-                            },
-                          }}
-                          onClick={() => handleAgentToggle(agent.id!)}
-                        >
-                          <FormControlLabel
-                            control={
-                              <Checkbox
-                                checked={isSelected}
-                                onChange={() => handleAgentToggle(agent.id!)}
-                                sx={{
-                                  color: neutralColor(400),
-                                  "&.Mui-checked": {
-                                    color: primaryColor(500),
-                                  },
-                                }}
-                              />
-                            }
-                            label={
-                              <Box sx={{ display: "flex", alignItems: "center", gap: 2, ml: 1 }}>
-                                <Avatar
-                                  src={agent.thumbnail}
-                                  alt={agent.name || agent.email}
+                        return (
+                          <Box
+                            key={agent.id}
+                            onClick={() => handleAgentToggle(agent.id!)}
+                            sx={{
+                              display: "flex",
+                              alignItems: "center",
+                              gap: 1.5,
+                              px: 2,
+                              py: 1.5,
+                              cursor: "pointer",
+                              transition: "all 0.15s ease",
+                              backgroundColor: isSelected
+                                ? alpha(primaryColor(50), 0.5)
+                                : index % 2 === 0
+                                ? "#ffffff"
+                                : neutralColor(25),
+                              borderBottom: index < agents.length - 1 ? `1px solid ${neutralColor(100)}` : "none",
+                              "&:hover": {
+                                backgroundColor: isSelected
+                                  ? alpha(primaryColor(100), 0.5)
+                                  : alpha(neutralColor(100), 0.8),
+                              },
+                            }}
+                          >
+                            {/* Checkbox */}
+                            <Checkbox
+                              checked={isSelected}
+                              onChange={(e) => {
+                                e.stopPropagation();
+                                handleAgentToggle(agent.id!);
+                              }}
+                              size="small"
+                              sx={{
+                                p: 0.5,
+                                color: neutralColor(400),
+                                "&.Mui-checked": {
+                                  color: primaryColor(500),
+                                },
+                              }}
+                            />
+
+                            {/* Avatar */}
+                            <Avatar
+                              src={agent.thumbnail}
+                              alt={agent.name || agent.email}
+                              sx={{
+                                width: 32,
+                                height: 32,
+                                bgcolor: isSelected ? primaryColor(500) : primaryColor(100),
+                                color: isSelected ? "#ffffff" : primaryColor(700),
+                                fontSize: "0.75rem",
+                                fontWeight: 600,
+                              }}
+                            >
+                              {(agent.name || agent.email || "?").charAt(0).toUpperCase()}
+                            </Avatar>
+
+                            {/* Agent Info */}
+                            <Box sx={{ flex: 1, minWidth: 0, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                              <Box sx={{ display: "flex", alignItems: "center", gap: 1, minWidth: 0 }}>
+                                <Typography
                                   sx={{
-                                    width: 40,
-                                    height: 40,
-                                    bgcolor: primaryColor(100),
-                                    color: primaryColor(700),
-                                    fontSize: "0.875rem",
                                     fontWeight: 600,
+                                    color: neutralColor(900),
+                                    fontSize: "0.875rem",
+                                    lineHeight: 1.2,
+                                    overflow: "hidden",
+                                    textOverflow: "ellipsis",
+                                    whiteSpace: "nowrap",
                                   }}
                                 >
-                                  {(agent.name || agent.email || "?").charAt(0).toUpperCase()}
-                                </Avatar>
-                                <Box sx={{ flex: 1 }}>
-                                  <Typography
+                                  {agent.name || agent.available_name || "Unknown"}
+                                </Typography>
+                                {isCurrentUser && (
+                                  <Box
+                                    component="span"
                                     sx={{
+                                      fontSize: "0.688rem",
+                                      color: primaryColor(700),
                                       fontWeight: 600,
-                                      color: neutralColor(900),
-                                      fontSize: "0.938rem",
+                                      px: 0.75,
+                                      py: 0.25,
+                                      borderRadius: 0.75,
+                                      backgroundColor: primaryColor(100),
+                                      lineHeight: 1,
+                                      flexShrink: 0,
                                     }}
                                   >
-                                    {agent.name || agent.available_name || "Unknown"}
-                                    {isCurrentUser && (
-                                      <Typography
-                                        component="span"
-                                        sx={{
-                                          ml: 1,
-                                          fontSize: "0.75rem",
-                                          color: primaryColor(600),
-                                          fontWeight: 500,
-                                          px: 1,
-                                          py: 0.5,
-                                          borderRadius: 1,
-                                          backgroundColor: primaryColor(50),
-                                        }}
-                                      >
-                                        You
-                                      </Typography>
-                                    )}
-                                  </Typography>
-                                  <Typography
-                                    sx={{
-                                      fontSize: "0.813rem",
-                                      color: neutralColor(600),
-                                    }}
-                                  >
-                                    {agent.email}
-                                  </Typography>
-                                  {agent.role && (
-                                    <Typography
-                                      sx={{
-                                        fontSize: "0.75rem",
-                                        color: neutralColor(500),
-                                        textTransform: "capitalize",
-                                      }}
-                                    >
-                                      {agent.role}
-                                    </Typography>
-                                  )}
-                                </Box>
+                                    YOU
+                                  </Box>
+                                )}
                               </Box>
-                            }
-                            sx={{ m: 0, width: "100%" }}
-                          />
-                        </Paper>
-                      );
-                    })}
-                  </FormGroup>
+                              {isAdministrator && (
+                                <Box
+                                  component="span"
+                                  sx={{
+                                    fontSize: "0.688rem",
+                                    color: neutralColor(700),
+                                    fontWeight: 600,
+                                    px: 0.75,
+                                    py: 0.25,
+                                    borderRadius: 0.75,
+                                    backgroundColor: neutralColor(200),
+                                    lineHeight: 1,
+                                    textTransform: "uppercase",
+                                    flexShrink: 0,
+                                  }}
+                                >
+                                  ADMIN
+                                </Box>
+                              )}
+                            </Box>
+                          </Box>
+                        );
+                      })}
+                    </Box>
+                  </Paper>
                 )}
 
                 {/* No Agents State */}

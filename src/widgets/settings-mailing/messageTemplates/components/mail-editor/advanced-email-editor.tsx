@@ -538,6 +538,7 @@ const AdvancedEmailEditor = ({ value, setValue }: IProps) => {
                     padding: '12px',
                 }}
             >
+                <EditorContent editor={editor} className="tiptap-editor" />
                 <EditorContent editor={editor}
                 // className={classes.editorContent as string} 
                 />

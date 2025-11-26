@@ -194,4 +194,35 @@ try {
 5. ❌ Forgetting to use extractPayload() for API responses
 6. ❌ Not memoizing callbacks/derived state
 7. ❌ Ignoring error states in components
+8. ❌ Creating new objects/arrays in render (causes infinite loops)
+9. ❌ Not preventing duplicate API calls with refs
+10. ❌ Missing dependencies in useEffect
+
+## 🔧 Quick Fixes
+
+### Fix: Infinite Loop
+```
+1. Check useEffect dependencies
+2. Memoize filter objects with useMemo
+3. Use createFilterKey() for stable keys
+4. Add ref to prevent duplicate calls
+```
+
+### Fix: Multiple API Calls
+```
+1. Use useChatwootDataFetch base hook
+2. Add isFetchingRef check
+3. Check filter key hasn't changed
+4. Use shared hook at provider level
+```
+
+### Fix: Component Not Updating
+```
+1. Check Recoil hooks are used (not useState)
+2. Verify atom key is correct
+3. Check state updates are happening
+4. Use Recoil DevTools to inspect
+```
+
+See `troubleshooting.md` for detailed solutions.
 

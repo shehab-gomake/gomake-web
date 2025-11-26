@@ -1,21 +1,15 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useCallback } from "react";
 import { useRecoilValue } from "recoil";
 import { useTheme } from "@mui/material/styles";
-import { Box, Stack, Typography, Chip, IconButton, Tooltip } from "@mui/material";
-import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
-import RefreshIcon from "@mui/icons-material/Refresh";
+import { Box, Stack, Typography, IconButton, Tooltip } from "@mui/material";
 import ClearIcon from "@mui/icons-material/Clear";
-import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { useChatwootTeams } from "../hooks/resources/use-chatwoot-teams";
+import { useChatwootLabels } from "../hooks/use-chatwoot-labels";
+import { useChatwootInboxes } from "../hooks/use-chatwoot-inboxes";
 import { ConversationStatus, ConversationListParams } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
 import { chatwootConversationCountsAtom, chatwootSelectedAccountAtom } from "@/store/frontdesk/atoms/chatwoot.atoms";
-import {
-  ConversationFilterMenu,
-  ConversationSortMenu,
-  ConversationSearchBar,
-  ConversationTabs,
-} from "./conversation-list";
+import { ConversationFilterMenu, ConversationSortMenu, ConversationSearchBar, ConversationTabs, ConversationLabelsFilter, ConversationTeamsFilter, ActiveFilterChips } from "./conversation-list";
 
 interface ChatwootConversationListHeaderProps {
   status?: ConversationStatus;
@@ -23,10 +17,7 @@ interface ChatwootConversationListHeaderProps {
   onFiltersChange?: (filters: Partial<ConversationListParams>) => void;
   onFilterClick?: () => void;
   onSortClick?: () => void;
-  onNextClick?: () => void;
-  onRefresh?: () => void;
   onClearFilters?: () => void;
-  onComposeClick?: () => void;
   conversations?: any[];
   mineCount?: number;
   unassignedCount?: number;
@@ -39,10 +30,7 @@ export const ChatwootConversationListHeader: React.FC<ChatwootConversationListHe
   onFiltersChange = () => {},
   onFilterClick,
   onSortClick,
-  onNextClick,
-  onRefresh,
   onClearFilters,
-  onComposeClick,
   mineCount,
   unassignedCount,
   allCount,
@@ -57,6 +45,12 @@ export const ChatwootConversationListHeader: React.FC<ChatwootConversationListHe
   // Fetch teams for team filter
   const { teams } = useChatwootTeams(accountId);
 
+  // Fetch labels for label filter chips
+  const { labels } = useChatwootLabels(accountId);
+
+  // Fetch inboxes for inbox filter chips
+  const { inboxes } = useChatwootInboxes();
+
   // Use provided counts if available, otherwise use counts from API
   const counts = useMemo(() => {
     if (mineCount !== undefined && unassignedCount !== undefined && allCount !== undefined) {
@@ -65,28 +59,50 @@ export const ChatwootConversationListHeader: React.FC<ChatwootConversationListHe
     return apiCounts;
   }, [mineCount, unassignedCount, allCount, apiCounts]);
 
-  // Get status label - memoized to prevent recreation on every render
-  const statusLabel = useMemo(() => {
-    if (!status || status === ConversationStatus.ALL) return "All";
-    const labels: Record<ConversationStatus, string> = {
-      [ConversationStatus.OPEN]: "Open",
-      [ConversationStatus.RESOLVED]: "Closed",
-      [ConversationStatus.PENDING]: "Pending",
-      [ConversationStatus.SNOOZED]: "Snoozed",
-      [ConversationStatus.ALL]: "All",
-    };
-    return labels[status] || "All";
-  }, [status]);
-
   // Check if any non-default filters are active
   const hasActiveFilters = useMemo(() => {
     return Boolean(
       filters.q || // search query
-      filters.team_id || // team filter
-      filters.labels || // labels filter
-      (filters.sort_by && filters.sort_by !== "latest_activity") // non-default sort
+        filters.team_id || // team filter
+        filters.labels || // labels filter
+        (filters.sort_by && filters.sort_by !== "latest_activity") // non-default sort
     );
   }, [filters]);
+
+  // Handler for removing individual filters
+  const handleRemoveFilter = useCallback(
+    (filterType: "status" | "team_id" | "labels" | "inbox_id" | "label", value?: string) => {
+      if (filterType === "status") {
+        const newFilters = { ...filters, status: undefined, page: 1 };
+        onFiltersChange(newFilters);
+      } else if (filterType === "team_id") {
+        const newFilters = { ...filters, team_id: undefined, page: 1 };
+        onFiltersChange(newFilters);
+      } else if (filterType === "inbox_id") {
+        const newFilters = { ...filters, inbox_id: undefined, page: 1 };
+        onFiltersChange(newFilters);
+      } else if (filterType === "label" && value) {
+        // Remove specific label from labels array
+        const currentLabels = Array.isArray(filters.labels)
+          ? filters.labels
+          : filters.labels
+          ? [filters.labels]
+          : [];
+        const newLabels = currentLabels.filter((l) => l !== value);
+        const newFilters = {
+          ...filters,
+          labels: newLabels.length > 0 ? newLabels : undefined,
+          page: 1,
+        };
+        onFiltersChange(newFilters);
+      } else if (filterType === "labels") {
+        // Clear all labels
+        const newFilters = { ...filters, labels: undefined, page: 1 };
+        onFiltersChange(newFilters);
+      }
+    },
+    [filters, onFiltersChange]
+  );
 
   return (
     <Box
@@ -105,99 +121,33 @@ export const ChatwootConversationListHeader: React.FC<ChatwootConversationListHe
           py: 1,
         }}
       >
-        <Stack direction="row" alignItems="center" spacing={1}>
-          <Typography
-            variant="h6"
-            sx={{
-              fontWeight: 600,
-              fontSize: "1rem",
-              color: neutralColor(900),
-            }}
-          >
-            Tickets
-          </Typography>
-          {status && status !== ConversationStatus.ALL && (
-            <Chip
-              label={statusLabel}
-              size="small"
-              sx={{
-                height: 24,
-                fontSize: "0.75rem",
-                fontWeight: 500,
-                backgroundColor: neutralColor(100),
-                color: neutralColor(700),
-                border: `1px solid ${neutralColor(300)}`,
-                "& .MuiChip-label": {
-                  px: 1.5,
-                },
-              }}
-            />
-          )}
-        </Stack>
+        <Typography
+          variant="h6"
+          sx={{
+            fontWeight: 600,
+            fontSize: "1rem",
+            color: neutralColor(900),
+          }}
+        >
+          Tickets
+        </Typography>
 
-        <Stack direction="row" spacing={0.5}>
-          {/* New Conversation Button */}
-          {onComposeClick && (
-            <Tooltip title="New Conversation">
-              <IconButton
-                size="small"
-                onClick={onComposeClick}
-                sx={{
-                  color: "white",
-                  backgroundColor: primaryColor(600),
-                  "&:hover": {
-                    backgroundColor: primaryColor(700),
-                  },
-                  width: 32,
-                  height: 32,
-                }}
-              >
-                <AddCircleOutlineIcon fontSize="small" />
-              </IconButton>
-            </Tooltip>
-          )}
+        <Stack direction="row" spacing={0.25} alignItems="center">
+          <ConversationLabelsFilter
+            accountId={accountId}
+            filters={filters}
+            onFiltersChange={onFiltersChange}
+            primaryColor={primaryColor}
+            neutralColor={neutralColor}
+          />
 
-          {/* Refresh Button */}
-          {onRefresh && (
-            <Tooltip title="Refresh">
-              <IconButton
-                size="small"
-                onClick={onRefresh}
-                sx={{
-                  color: neutralColor(600),
-                  backgroundColor: neutralColor(100),
-                  "&:hover": {
-                    backgroundColor: neutralColor(200),
-                  },
-                  width: 32,
-                  height: 32,
-                }}
-              >
-                <RefreshIcon fontSize="small" />
-              </IconButton>
-            </Tooltip>
-          )}
-
-          {/* Clear Filters Button - only show when filters are active */}
-          {hasActiveFilters && onClearFilters && (
-            <Tooltip title="Clear Filters">
-              <IconButton
-                size="small"
-                onClick={onClearFilters}
-                sx={{
-                  color: primaryColor(600),
-                  backgroundColor: primaryColor(50),
-                  "&:hover": {
-                    backgroundColor: primaryColor(100),
-                  },
-                  width: 32,
-                  height: 32,
-                }}
-              >
-                <ClearIcon fontSize="small" />
-              </IconButton>
-            </Tooltip>
-          )}
+          <ConversationTeamsFilter
+            accountId={accountId}
+            filters={filters}
+            onFiltersChange={onFiltersChange}
+            primaryColor={primaryColor}
+            neutralColor={neutralColor}
+          />
 
           <ConversationFilterMenu
             filters={filters}
@@ -216,24 +166,28 @@ export const ChatwootConversationListHeader: React.FC<ChatwootConversationListHe
             neutralColor={neutralColor}
           />
 
-          {/* Next/Navigation Button */}
-          <Tooltip title="Next">
-            <IconButton
-              size="small"
-              onClick={onNextClick}
-              sx={{
-                color: neutralColor(600),
-                backgroundColor: neutralColor(100),
-                "&:hover": {
-                  backgroundColor: neutralColor(200),
-                },
-                width: 32,
-                height: 32,
-              }}
-            >
-              <ArrowForwardIosIcon fontSize="small" />
-            </IconButton>
-          </Tooltip>
+          {/* Clear Filters Button - moved to next button position */}
+          {hasActiveFilters && onClearFilters && (
+            <Tooltip title="Clear Filters">
+              <IconButton
+                size="small"
+                onClick={onClearFilters}
+                sx={{
+                  color: neutralColor(600),
+                  "&:hover": {
+                    backgroundColor: neutralColor(100),
+                    color: primaryColor(600),
+                  },
+                  width: 28,
+                  height: 28,
+                  padding: 0.5,
+                  transition: "all 0.2s ease-in-out",
+                }}
+              >
+                <ClearIcon sx={{ fontSize: 16 }} />
+              </IconButton>
+            </Tooltip>
+          )}
         </Stack>
       </Stack>
 
@@ -246,6 +200,17 @@ export const ChatwootConversationListHeader: React.FC<ChatwootConversationListHe
           primaryColor={primaryColor}
           neutralColor={neutralColor}
         />
+
+        {/* Active Filter Chips - directly under tabs */}
+        <ActiveFilterChips
+          filters={filters}
+          onRemoveFilter={handleRemoveFilter}
+          teams={teams}
+          labels={labels}
+          inboxes={inboxes}
+          primaryColor={primaryColor}
+          neutralColor={neutralColor}
+        />
       </Box>
 
       {/* Search Bar */}
@@ -255,4 +220,3 @@ export const ChatwootConversationListHeader: React.FC<ChatwootConversationListHe
     </Box>
   );
 };
-

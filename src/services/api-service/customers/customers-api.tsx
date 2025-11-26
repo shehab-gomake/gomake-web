@@ -7,49 +7,27 @@ import { getSetApiData } from "@/services/api-service/get-set-api-data";
 import { EHttpMethod } from "@/services/api-service/enums";
 import { ISetState } from "@/services/hooks/call-api.interface";
 const GET_CUSTOMER_BY_ID_URL = "/v1/customers/get-customer";
-const TOGGLE_CUSTOMER_STATUS_URL =
-  "/v1/crm-service/customer/update-customer-status/";
+const TOGGLE_CUSTOMER_STATUS_URL = "/v1/crm-service/customer/update-customer-status/";
 const IMPORT_CLIENT_URL = "/v1/crm-service/customer/import-client";
 // const EXPORT_CLIENT_URL = "/v1/crm-service/customer/export-client";
 const GET_ALL_SIMILAR_CUSTOMER_URL = "/v1/customers/search-similar-clients";
 const GET_CLIENT_CONTACTS_URL = "/v1/crm-service/customer/get-client-contacts";
 const GET_CLIENT_BALANCE_URL = "/v1/crm-service/customer/get-client-balance/";
-const VALIDATE_ADDRESS_URL =
-  "/v1/crm-service/customer/validate-address-with-google";
+const VALIDATE_ADDRESS_URL = "/v1/crm-service/customer/validate-address-with-google";
+const GET_MOST_RELEVANT_CUSTOMER_BY_EMAIL_URL = "/v1/crm-service/customer/get-most-relevant-customer-by-email";
+const GET_MOST_RELEVANT_CUSTOMER_BY_PHONE_URL = "/v1/crm-service/customer/get-most-relevant-customer-by-phone";
 
 const importClientApi: ICallAndSetData = async (callApi, setState, data) => {
-  return await getSetApiData(
-    callApi,
-    EHttpMethod.POST,
-    IMPORT_CLIENT_URL,
-    setState,
-    data
-  );
+  return await getSetApiData(callApi, EHttpMethod.POST, IMPORT_CLIENT_URL, setState, data);
 };
 
 //get by id
-const getAndSetCustomerById: ICallAndSetData = async (
-  callApi,
-  setState,
-  data
-) => {
-  return await getSetApiData(
-    callApi,
-    EHttpMethod.GET,
-    GET_CUSTOMER_BY_ID_URL,
-    setState,
-    data
-  );
+const getAndSetCustomerById: ICallAndSetData = async (callApi, setState, data) => {
+  return await getSetApiData(callApi, EHttpMethod.GET, GET_CUSTOMER_BY_ID_URL, setState, data);
 };
 
 //helper function
-const customerMapFunction = (
-  customer,
-  onClick,
-  onClickStatus,
-  activeText,
-  inActiveText
-) => {
+const customerMapFunction = (customer, onClick, onClickStatus, activeText, inActiveText) => {
   return {
     createDate: customer.createDate?.split("T")[0],
     customerCode: customer.code,
@@ -81,13 +59,7 @@ const customerMapFunction = (
         )}
       </div>
     ),
-    hashTag: (
-      <MoreMenuWidget
-        item={customer}
-        onClickEdit={onClick}
-        updatedStatus={onClickStatus}
-      />
-    ),
+    hashTag: <MoreMenuWidget item={customer} onClickEdit={onClick} updatedStatus={onClickStatus} />,
   };
 };
 
@@ -101,20 +73,10 @@ const getAndSetCustomersPagination = async (
   activeText?: any,
   inActiveText?: any
 ) => {
-  const result: any = await callApi(
-    "GET",
-    "/v1/customers/get-customers-pagination",
-    data
-  );
+  const result: any = await callApi("GET", "/v1/customers/get-customers-pagination", data);
   const _data = returnResult(result, undefined);
   const mapData = _data.data?.map((customer: any) =>
-    customerMapFunction(
-      customer,
-      onClick,
-      onClickStatus,
-      activeText,
-      inActiveText
-    )
+    customerMapFunction(customer, onClick, onClickStatus, activeText, inActiveText)
   );
   if (setState) {
     setState(mapData);
@@ -122,69 +84,32 @@ const getAndSetCustomersPagination = async (
   return _data.totalItems;
 };
 
-const toggleCustomerStatus: ICallAndSetData = async (
-  callApi,
-  setState,
-  data
-) => {
-  return await getSetApiData(
-    callApi,
-    EHttpMethod.PUT,
-    TOGGLE_CUSTOMER_STATUS_URL,
-    setState,
-    data
-  );
+const toggleCustomerStatus: ICallAndSetData = async (callApi, setState, data) => {
+  return await getSetApiData(callApi, EHttpMethod.PUT, TOGGLE_CUSTOMER_STATUS_URL, setState, data);
 };
 
-const getAllSimilarCustomerApi: ICallAndSetData = async (
-  callApi,
-  setState,
-  data
-) => {
-  return await getSetApiData(
-    callApi,
-    EHttpMethod.POST,
-    GET_ALL_SIMILAR_CUSTOMER_URL,
-    setState,
-    data
-  );
+const getAllSimilarCustomerApi: ICallAndSetData = async (callApi, setState, data) => {
+  return await getSetApiData(callApi, EHttpMethod.POST, GET_ALL_SIMILAR_CUSTOMER_URL, setState, data);
 };
 
-const getClientContactsApi: ICallAndSetData = async (
-  callApi,
-  setState,
-  data
-) => {
-  return await getSetApiData(
-    callApi,
-    EHttpMethod.GET,
-    GET_CLIENT_CONTACTS_URL,
-    setState,
-    data
-  );
+const getClientContactsApi: ICallAndSetData = async (callApi, setState, data) => {
+  return await getSetApiData(callApi, EHttpMethod.GET, GET_CLIENT_CONTACTS_URL, setState, data);
 };
 
-const getClientBalanceApi: ICallAndSetData = async (
-  callApi,
-  setState,
-  data
-) => {
-  return await getSetApiData(
-    callApi,
-    EHttpMethod.GET,
-    GET_CLIENT_BALANCE_URL + data,
-    setState
-  );
+const getClientBalanceApi: ICallAndSetData = async (callApi, setState, data) => {
+  return await getSetApiData(callApi, EHttpMethod.GET, GET_CLIENT_BALANCE_URL + data, setState);
 };
 
 const validateAddressApi: ICallAndSetData = async (callApi, setState, data) => {
-  return await getSetApiData(
-    callApi,
-    EHttpMethod.POST,
-    VALIDATE_ADDRESS_URL,
-    setState,
-    data
-  );
+  return await getSetApiData(callApi, EHttpMethod.POST, VALIDATE_ADDRESS_URL, setState, data);
+};
+
+const getMostRelevantCustomerByEmailApi: ICallAndSetData = async (callApi, setState, data) => {
+  return await getSetApiData(callApi, EHttpMethod.POST, GET_MOST_RELEVANT_CUSTOMER_BY_EMAIL_URL, setState, data);
+};
+
+const getMostRelevantCustomerByPhoneApi: ICallAndSetData = async (callApi, setState, data) => {
+  return await getSetApiData(callApi, EHttpMethod.POST, GET_MOST_RELEVANT_CUSTOMER_BY_PHONE_URL, setState, data);
 };
 
 export {
@@ -197,4 +122,6 @@ export {
   getClientContactsApi,
   getClientBalanceApi,
   validateAddressApi,
+  getMostRelevantCustomerByEmailApi,
+  getMostRelevantCustomerByPhoneApi,
 };

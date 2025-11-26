@@ -217,7 +217,12 @@ const useAddProduct = ({ classes }) => {
   };
 
   const removeProductParamete = useCallback(
-    async (sectionId: string, subSectionId: string, parameter: any, updateType: UpdateTypes) => {
+    async (
+      sectionId: string,
+      subSectionId: string,
+      parameter: any,
+      updateType: UpdateTypes
+    ) => {
       const res = await callApi(
         "PUT",
         `/v1/printhouse-config/products/remove-parameter-from-product`,
@@ -226,7 +231,7 @@ const useAddProduct = ({ classes }) => {
           sectionId: sectionId,
           subSectionId: subSectionId,
           parameterId: parameter?.id,
-          updateType: updateType || 0
+          updateType: updateType || 0,
         }
       );
       if (res?.success) {
@@ -335,7 +340,6 @@ const useAddProduct = ({ classes }) => {
     },
     [router]
   );
-
 
   const updatedProductParameteName = useCallback(
     async (sectionId: string, subSectionId: string, parameter: any) => {
@@ -699,16 +703,18 @@ const useAddProduct = ({ classes }) => {
     subSectionId
   ) => {
     if (!parameter?.productParametersExternalValues) {
-      parameter.productParametersExternalValues = []
+      parameter.productParametersExternalValues = [];
     }
     //Check if parameterType is material
     const isMaterial =
       parameter?.parameterType === EParameterTypes.SELECT_MATERIALS ||
       parameter?.parameterType ===
-      EParameterTypes.ADVERTISING_PRODUCT_CATEGORY ||
+        EParameterTypes.ADVERTISING_PRODUCT_CATEGORY ||
       parameter?.parameterType === EParameterTypes.ADVERTISING_PRODUCT_NAME;
     const isSwitch = parameter?.parameterType === EParameterTypes.SWITCH;
-    const isInput = parameter?.parameterType === EParameterTypes.INPUT_TEXT || parameter?.parameterType === EParameterTypes.INPUT_NUMBER;
+    const isInput =
+      parameter?.parameterType === EParameterTypes.INPUT_TEXT ||
+      parameter?.parameterType === EParameterTypes.INPUT_NUMBER;
     // Creating new valuesConfigs for materials
     let materialsOptions = [];
     const materialPath = parameter.materialPath;
@@ -804,10 +810,12 @@ const useAddProduct = ({ classes }) => {
             },
           ];
         } else {
-          valuesConfigs = parameter?.productParametersExternalValues.map((x) => ({
-            updateName: x.valueId,
-            externalValue: x.externalCode
-          }));
+          valuesConfigs = parameter?.productParametersExternalValues.map(
+            (x) => ({
+              updateName: x.valueId,
+              externalValue: x.externalCode,
+            })
+          );
         }
       }
       // Set the parameter with updated valuesConfigs
@@ -1157,13 +1165,11 @@ const useAddProduct = ({ classes }) => {
           }}
         />
       );
-    }
-    else if (
+    } else if (
       parameter?.parameterType === EParameterTypes.SELECT_MATERIALS ||
       parameter?.parameterType ===
-      EParameterTypes.ADVERTISING_PRODUCT_CATEGORY ||
+        EParameterTypes.ADVERTISING_PRODUCT_CATEGORY ||
       parameter?.parameterType === EParameterTypes.ADVERTISING_PRODUCT_NAME
-
     ) {
       if (allMaterials?.length > 0) {
         const defailtObjectValue = parameter?.valuesConfigs?.find(
@@ -1316,9 +1322,10 @@ const useAddProduct = ({ classes }) => {
           />
         );
       }
-    }
-
-    else if (parameter?.parameterType === EParameterTypes.SELECT_FIXED_VALUES_WITH_IMAGES) {
+    } else if (
+      parameter?.parameterType ===
+      EParameterTypes.SELECT_FIXED_VALUES_WITH_IMAGES
+    ) {
       const defaultObject = parameter.valuesConfigs.find(
         (item) => item.isDefault === true
       );
@@ -1355,11 +1362,18 @@ const useAddProduct = ({ classes }) => {
                     {...props}
                     style={{ width: "100%", alignSelf: "center", marginTop: 5 }}
                   >
-                    {option?.imageUrl && <img
-                      src={option?.imageUrl}
-                      alt={option.updateName}
-                      style={{ width: '40px', height: '40px', margin: '10px', objectFit: "cover" }}
-                    />}
+                    {option?.imageUrl && (
+                      <img
+                        src={option?.imageUrl}
+                        alt={option.updateName}
+                        style={{
+                          width: "40px",
+                          height: "40px",
+                          margin: "10px",
+                          objectFit: "cover",
+                        }}
+                      />
+                    )}
                     {option.updateName}
                   </div>
                   <div>
@@ -1439,9 +1453,8 @@ const useAddProduct = ({ classes }) => {
             </div>
           )}
         </div>
-      )
-    }
-    else if (parameter?.parameterType === EParameterTypes.BUTTON) {
+      );
+    } else if (parameter?.parameterType === EParameterTypes.BUTTON) {
       return (
         <ButtonParameterWidget
           classes={classes}

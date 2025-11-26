@@ -1,0 +1,448 @@
+# FrontDesk Core Architecture Rules
+
+## Overview
+FrontDesk is a unified messaging hub that consolidates multiple communication channels into a single interface. This file defines the core architectural patterns and rules that apply across ALL providers.
+
+## 🏗️ Architecture Overview
+
+### Three-Layer Architecture
+```
+┌─────────────────────────────────────────┐
+│         UI Layer (Widgets)              │
+│    src/widgets/frontdesk/providers/     │
+│    - Components, Views, Hooks           │
+└─────────────────┬───────────────────────┘
+                  │
+┌─────────────────▼───────────────────────┐
+│      State Layer (Recoil)               │
+│    src/store/frontdesk/atoms/           │
+│    - Atoms, Selectors                   │
+└─────────────────┬───────────────────────┘
+                  │
+┌─────────────────▼───────────────────────┐
+│      Service Layer (APIs)               │
+│    src/services/frontdesk/              │
+│    - REST APIs, WebSocket               │
+└─────────────────────────────────────────┘
+```
+
+## 📂 Directory Structure
+
+### Core Structure
+```
+src/
+├── widgets/frontdesk/               # UI Components
+│   ├── frontdesk-widget.tsx         # Main router
+│   ├── layouts/
+│   │   └── three-column/            # Standard layout
+│   ├── providers/                   # Provider implementations
+│   │   ├── internal/                # Direct Messages
+│   │   ├── email/                   # Gmail integration
+│   │   ├── whatsapp/                # WhatsApp (mock)
+│   │   ├── tickets/                 # Ticket system
+│   │   ├── chatwoot/                # Chatwoot integration
+│   │   └── unified/                 # Unified inbox
+│   └── components/                  # Shared UI components
+│
+├── store/frontdesk/                 # State Management
+│   └── atoms/
+│       ├── internal.atoms.ts
+│       ├── email.atoms.ts
+│       ├── tickets.atoms.ts
+│       ├── chatwoot.atoms.ts
+│       └── unified.atoms.ts
+│
+└── services/frontdesk/              # Services Layer
+    ├── api/                         # REST endpoints
+    │   ├── direct-messages/
+    │   ├── tickets/
+    │   └── chatwoot/
+    └── websocket/                   # Real-time
+        ├── messaging-service.ts     # DMs WebSocket
+        └── ticket-socket.service.ts # Tickets WebSocket
+```
+
+## 🔌 Provider Pattern
+
+### Standard Provider Structure
+Every provider MUST follow this structure:
+
+```
+providers/{provider-name}/
+├── {provider}-provider-view.tsx     # Main view/router
+├── components/                      # Provider-specific components
+│   ├── conversation-list/
+│   ├── message-view/
+│   └── compose/
+├── hooks/                          # Custom hooks
+│   ├── use-{provider}-provider.ts  # Main hook
+│   └── use-{feature}.ts           # Feature hooks
+├── utils/                          # Utilities
+│   ├── filter-utils.ts
+│   └── validation-utils.ts
+└── types/                          # TypeScript types
+    └── {provider}.types.ts
+```
+
+### Provider Registration
+To add a new provider:
+
+1. **Create provider structure** following the pattern above
+2. **Add Recoil atoms** in `src/store/frontdesk/atoms/{provider}.atoms.ts`
+3. **Create API service** in `src/services/frontdesk/api/{provider}/`
+4. **Register in router** in `frontdesk-widget.tsx`
+5. **Add navigation** in sidebar component
+
+## 📦 State Management Rules
+
+### Atom Naming Convention
+**Pattern**: `frontdesk.{provider}.{data}`
+
+```typescript
+// ✅ CORRECT
+frontdesk.internal.conversations
+frontdesk.email.accounts
+frontdesk.tickets.selectedTicketId
+frontdesk.chatwoot.conversations
+
+// ❌ WRONG
+internalConversations
+emailAccountState
+ticketId
+```
+
+### State Organization
+```typescript
+// One atom per data domain
+export const emailAccountsAtom = atom<EmailAccount[]>({
+  key: 'frontdesk.email.accounts',
+  default: []
+});
+
+export const emailSelectedAccountIdAtom = atom<string | null>({
+  key: 'frontdesk.email.selectedAccountId',
+  default: null
+});
+
+// Use selectors for derived state
+export const emailSelectedAccountSelector = selector({
+  key: 'frontdesk.email.selectedAccount',
+  get: ({ get }) => {
+    const accounts = get(emailAccountsAtom);
+    const selectedId = get(emailSelectedAccountIdAtom);
+    return accounts.find(a => a.id === selectedId);
+  }
+});
+```
+
+### State Best Practices
+1. **Use Recoil for shared state** across components
+2. **Use useState for local UI state** (form inputs, modals, etc.)
+3. **Normalize data** - avoid duplication in atoms
+4. **Use selectors** for computed/derived state
+5. **Update atomically** - batch related state updates
+
+## 🌐 Service Layer Rules
+
+### Service Import Pattern
+**ALWAYS** use the unified import from `@/services/frontdesk`:
+
+```typescript
+// ✅ CORRECT - Single unified import
+import {
+  messagingService,       // WebSocket for DMs
+  ticketSocketService,    // WebSocket for Tickets
+  directMessagesService,  // REST API for DMs
+  ticketsService,         // REST API for Tickets
+  chatwootService         // REST API for Chatwoot
+} from '@/services/frontdesk';
+
+// ❌ WRONG - Direct imports
+import { messagingService } from '@/services/frontdesk/websocket/messaging-service';
+```
+
+### Service Implementation Pattern
+```typescript
+// src/services/frontdesk/api/{provider}/{provider}.service.ts
+import { httpClient } from '@/services/frontdesk/http-client';
+
+export class MyProviderService {
+  private baseUrl = '/api/v1/my-provider';
+
+  async getItems(filters?: FilterParams): Promise<Item[]> {
+    const response = await httpClient.get<Item[]>(this.baseUrl, { params: filters });
+    return response.data;
+  }
+
+  async getItem(id: string): Promise<Item> {
+    const response = await httpClient.get<Item>(`${this.baseUrl}/${id}`);
+    return response.data;
+  }
+
+  async createItem(data: CreateItemDto): Promise<Item> {
+    const response = await httpClient.post<Item>(this.baseUrl, data);
+    return response.data;
+  }
+
+  async updateItem(id: string, data: UpdateItemDto): Promise<Item> {
+    const response = await httpClient.patch<Item>(`${this.baseUrl}/${id}`, data);
+    return response.data;
+  }
+
+  async deleteItem(id: string): Promise<void> {
+    await httpClient.delete(`${this.baseUrl}/${id}`);
+  }
+}
+
+export const myProviderService = new MyProviderService();
+```
+
+## 🎨 Component Patterns
+
+### Standard Component Structure
+```typescript
+import React, { useCallback, useMemo } from 'react';
+import { useRecoilValue } from 'recoil';
+import { Box, Typography } from '@mui/material';
+import { useMyProvider } from '../hooks/use-my-provider';
+
+interface MyComponentProps {
+  // Props interface
+}
+
+export const MyComponent: React.FC<MyComponentProps> = ({ ...props }) => {
+  // 1. Hooks (Recoil, custom hooks)
+  const { data, loading, error } = useMyProvider();
+
+  // 2. Memoized derived state
+  const filteredData = useMemo(() => 
+    data.filter(item => item.active),
+    [data]
+  );
+
+  // 3. Memoized callbacks
+  const handleClick = useCallback((id: string) => {
+    // Handle click
+  }, []);
+
+  // 4. Early returns
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error.message}</div>;
+  if (!data.length) return <div>No data</div>;
+
+  // 5. Main render
+  return (
+    <Box>
+      <Typography variant="h6">My Component</Typography>
+      {filteredData.map(item => (
+        <div key={item.id} onClick={() => handleClick(item.id)}>
+          {item.name}
+        </div>
+      ))}
+    </Box>
+  );
+};
+```
+
+### Hook Pattern
+```typescript
+import { useCallback, useEffect, useState } from 'react';
+import { useRecoilState } from 'recoil';
+import { myProviderService } from '@/services/frontdesk';
+import { myDataAtom } from '@/store/frontdesk/atoms/my-provider.atoms';
+
+export const useMyProvider = () => {
+  const [data, setData] = useRecoilState(myDataAtom);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
+
+  const fetchData = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const result = await myProviderService.getItems();
+      setData(result);
+    } catch (err) {
+      setError(err as Error);
+    } finally {
+      setLoading(false);
+    }
+  }, [setData]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  const createItem = useCallback(async (data: CreateItemDto) => {
+    try {
+      const newItem = await myProviderService.createItem(data);
+      setData(prev => [...prev, newItem]);
+      return newItem;
+    } catch (err) {
+      throw err;
+    }
+  }, [setData]);
+
+  return {
+    data,
+    loading,
+    error,
+    refresh: fetchData,
+    createItem
+  };
+};
+```
+
+## 🔄 Real-Time Updates
+
+### WebSocket Pattern
+For providers with real-time updates (DMs, Tickets):
+
+```typescript
+// In hook
+useEffect(() => {
+  if (!conversationId) return;
+
+  // Subscribe to events
+  const handleNewMessage = (message: Message) => {
+    setMessages(prev => [...prev, message]);
+  };
+
+  messagingService.on('message:new', handleNewMessage);
+
+  // Cleanup
+  return () => {
+    messagingService.off('message:new', handleNewMessage);
+  };
+}, [conversationId]);
+```
+
+### Optimistic Updates Pattern
+```typescript
+const sendMessage = async (content: string) => {
+  const tempId = `temp-${Date.now()}`;
+  
+  // 1. Update UI immediately (optimistic)
+  setMessages(prev => [...prev, {
+    id: tempId,
+    content,
+    status: 'pending',
+    timestamp: new Date()
+  }]);
+
+  try {
+    // 2. Make API call
+    const message = await myProviderService.sendMessage(content);
+    
+    // 3. Replace temp message with real message
+    setMessages(prev => prev.map(m => 
+      m.id === tempId ? message : m
+    ));
+  } catch (error) {
+    // 4. Remove temp message on failure
+    setMessages(prev => prev.filter(m => m.id !== tempId));
+    throw error;
+  }
+};
+```
+
+## 🎯 Routing Pattern
+
+### URL Structure
+```
+/frontdesk?channel={provider}&view={view}&conversationId={id}
+```
+
+### Router Implementation
+```typescript
+// In provider view
+const searchParams = useSearchParams();
+const channel = searchParams.get('channel');
+const view = searchParams.get('view');
+const conversationId = searchParams.get('conversationId');
+
+// Navigate programmatically
+const router = useRouter();
+router.push(`/frontdesk?channel=email&view=inbox&conversationId=${id}`);
+```
+
+## 🔍 Common Patterns
+
+### Loading States
+```typescript
+if (loading) {
+  return <LoadingSpinner />;
+}
+```
+
+### Error States
+```typescript
+if (error) {
+  return (
+    <ErrorMessage 
+      message={error.message}
+      onRetry={refresh}
+    />
+  );
+}
+```
+
+### Empty States
+```typescript
+if (!data || data.length === 0) {
+  return (
+    <EmptyState 
+      message="No conversations found"
+      action={<Button onClick={handleCreate}>Start Conversation</Button>}
+    />
+  );
+}
+```
+
+### Pagination
+```typescript
+const [page, setPage] = useState(1);
+const [hasMore, setHasMore] = useState(true);
+
+const loadMore = useCallback(async () => {
+  const nextPage = page + 1;
+  const result = await service.getItems({ page: nextPage });
+  
+  setData(prev => [...prev, ...result.data]);
+  setHasMore(result.hasMore);
+  setPage(nextPage);
+}, [page]);
+```
+
+## 🚫 What NOT to Do
+
+1. **Never modify shared components** without approval
+2. **Never use provider-specific logic** in shared components
+3. **Never skip error handling** in async operations
+4. **Never hardcode API URLs** - use service layer
+5. **Never put business logic** in components - use hooks
+6. **Never use inline styles** - use MUI theme/sx prop
+7. **Never skip loading states** - always show loading UI
+
+## ✅ Development Checklist
+
+Before submitting code:
+- [ ] Followed provider pattern
+- [ ] Used Recoil atoms with correct naming
+- [ ] Imported services from `@/services/frontdesk`
+- [ ] Added loading, error, and empty states
+- [ ] Used `useMemo` for derived state
+- [ ] Used `useCallback` for event handlers
+- [ ] Cleaned up WebSocket subscriptions
+- [ ] Added TypeScript types
+- [ ] Tested with different data scenarios
+- [ ] Updated navigation if adding new views
+
+## 📚 Related Documentation
+
+- `frontdesk-chatwoot-provider.mdc` - Chatwoot-specific rules
+- `recoil-state.mdc` - State management patterns
+- `mui-theming.mdc` - Material-UI usage
+- `websocket-realtime.mdc` - WebSocket patterns
+- `CLAUDE.md` - Complete development guidelines
+- `docs/frontdesk/README.md` - Documentation index

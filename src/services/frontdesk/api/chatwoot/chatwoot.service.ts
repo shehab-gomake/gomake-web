@@ -14,17 +14,26 @@
  * // Conversation operations
  * const conversations = await chatwootService.conversations.listConversations(accountId);
  *
- * // Inbox operations
- * const inboxes = await chatwootService.inboxes.listAllInboxes();
- *
  * // Contact operations
  * const contacts = await chatwootService.contacts.listContacts(accountId);
  *
  * // Message operations
  * const messages = await chatwootService.messages.listMessages(accountId, conversationId);
  *
+ * // Agent operations
+ * const agents = await chatwootService.agents.listAgents(accountId);
+ *
+ * // Inbox operations
+ * const inboxes = await chatwootService.inboxes.listAllInboxes();
+ *
+ * // Team operations
+ * const teams = await chatwootService.teams.listTeams(accountId);
+ *
+ * // Label operations
+ * const labels = await chatwootService.labels.listLabels(accountId);
+ *
  * // Notification operations
- * const notifications = await chatwootService.notifications.listNotifications({ page: 1, sort_order: 'desc' });
+ * const notifications = await chatwootService.notifications.listNotifications(accountId, { page: 1, sort_order: 'desc' });
  * ```
  */
 
@@ -60,12 +69,6 @@ export class ChatwootService {
   public readonly conversations: ChatwootConversationsService;
 
   /**
-   * Inboxes service
-   * Handles all inbox (channel) related endpoints
-   */
-  public readonly inboxes: ChatwootInboxesService;
-
-  /**
    * Contacts service
    * Handles all contact-related endpoints
    */
@@ -78,16 +81,16 @@ export class ChatwootService {
   public readonly messages: ChatwootMessagesService;
 
   /**
-   * Notifications service
-   * Handles all notification-related endpoints
-   */
-  public readonly notifications: ChatwootNotificationsService;
-
-  /**
    * Agents service
    * Handles all agent-related endpoints
    */
   public readonly agents: ChatwootAgentsService;
+
+  /**
+   * Inboxes service
+   * Handles all inbox (channel) related endpoints
+   */
+  public readonly inboxes: ChatwootInboxesService;
 
   /**
    * Teams service
@@ -100,6 +103,12 @@ export class ChatwootService {
    * Handles all label-related endpoints
    */
   public readonly labels: ChatwootLabelsService;
+
+  /**
+   * Notifications service
+   * Handles all notification-related endpoints
+   */
+  public readonly notifications: ChatwootNotificationsService;
 
   /**
    * OAuth service

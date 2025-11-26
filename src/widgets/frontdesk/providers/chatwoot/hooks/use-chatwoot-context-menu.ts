@@ -10,28 +10,33 @@
  */
 
 import { useCallback, useMemo } from "react";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilValue } from "recoil";
 import { chatwootService } from "@/services/frontdesk";
 import { ChatwootConversation } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
-import { Agent } from "@/services/frontdesk/api/chatwoot/types/agents.types";
-import { Team } from "@/services/frontdesk/api/chatwoot/types/teams.types";
-import {
-  chatwootSelectedAccountAtom,
-  chatwootConversationsAtom,
-  chatwootSelectedConversationAtom,
-} from "@/store/frontdesk/atoms/chatwoot.atoms";
-import { useChatwootAgents, useChatwootTeams, useChatwootInboxAgents } from "./resources";
+import { chatwootSelectedAccountAtom } from "@/store/frontdesk/atoms/chatwoot.atoms";
+import { useChatwootTeams, useChatwootInboxAgents } from "./resources";
 import { useConversationAssignmentActions } from "./actions/use-conversation-assignment-actions";
 import { useChatwootProfile } from "./use-chatwoot-profile";
 import { prepareAgentsForAssignment } from "../utils/agent-helpers";
+import { useChatwootConversationUpdater } from "./use-chatwoot-conversation-updater";
+import { useChatwootRouter } from "./use-chatwoot-router";
+import { RouteBuilder, buildRoutePath } from "@/widgets/frontdesk/routing/route-builder";
+import { ChatwootView } from "@/widgets/frontdesk/routing/types";
+import { createLogger } from "@/services/frontdesk/utils/logger";
+
+const logger = createLogger("useChatwootContextMenu");
 
 /**
  * Simple notification utility
- * TODO: Replace with proper toast library when available
+ * Note: In production, this should integrate with a toast library (notistack, react-toastify, etc.)
+ * For now, it logs to console in development and can be extended to show UI notifications
  */
-const showNotification = (message: string, type: 'success' | 'error' | 'info' = 'info') => {
-  console.log(`[${type.toUpperCase()}] ${message}`);
-  // TODO: Integrate with toast library (notistack, react-toastify, etc.)
+const showNotification = (message: string, type: "success" | "error" | "info" = "info") => {
+  if (process.env.NODE_ENV !== "production") {
+    logger.info(`Notification [${type.toUpperCase()}]: ${message}`);
+  }
+  // TODO: Integrate with toast library when available
+  // Example: toast[type](message);
 };
 
 /**
@@ -50,20 +55,21 @@ export interface ContextMenuAction {
 /**
  * Priority Levels
  */
-export type PriorityLevel = 'urgent' | 'high' | 'medium' | 'low' | null;
+export type PriorityLevel = "urgent" | "high" | "medium" | "low" | null;
 
 /**
  * Conversation Status
  */
-export type ConversationStatusType = 'open' | 'resolved' | 'pending' | 'snoozed';
+export type ConversationStatusType = "open" | "resolved" | "pending" | "snoozed";
 
 /**
  * Custom hook for Chatwoot conversation context menu
  */
 export const useChatwootContextMenu = (conversation: ChatwootConversation | null) => {
   const accountId = useRecoilValue(chatwootSelectedAccountAtom);
-  const [conversations, setConversations] = useRecoilState(chatwootConversationsAtom);
-  const [selectedConversation, setSelectedConversation] = useRecoilState(chatwootSelectedConversationAtom);
+
+  // Get router context for building proper conversation links
+  const { currentRoute, currentView, currentFilters } = useChatwootRouter();
 
   // Get current user profile for presence updates
   const { profile } = useChatwootProfile();
@@ -83,52 +89,37 @@ export const useChatwootContextMenu = (conversation: ChatwootConversation | null
     return prepareAgentsForAssignment(agents, profile, accountId, false);
   }, [agents, profile, accountId]);
 
+  // Use cache-aware updater for mutations
+  const { updateConversation: updateConversationCache, removeConversation: removeConversationCache } =
+    useChatwootConversationUpdater();
+
   /**
-   * Update a conversation in the list (optimistic update)
+   * Update a conversation in the list (cache-aware)
    */
   const updateConversationInList = useCallback(
-    (updatedConversation: Partial<ChatwootConversation>) => {
-      if (!conversation?.id) return;
-
-      setConversations((prev) =>
-        prev.map((conv) =>
-          conv.id === conversation.id
-            ? { ...conv, ...updatedConversation }
-            : conv
-        )
-      );
-
-      // Update selected conversation if it's the one being modified
-      if (selectedConversation?.id === conversation.id) {
-        setSelectedConversation((prev) =>
-          prev ? { ...prev, ...updatedConversation } : prev
-        );
-      }
+    (conversationId: number, updatedConversation: Partial<ChatwootConversation>) => {
+      updateConversationCache(conversationId, updatedConversation);
     },
-    [conversation?.id, setConversations, selectedConversation?.id, setSelectedConversation]
+    [updateConversationCache]
   );
 
   /**
-   * Remove a conversation from the list
+   * Remove a conversation from the list (cache-aware)
    */
   const removeConversationFromList = useCallback(
     (conversationId: number) => {
-      setConversations((prev) => prev.filter((conv) => conv.id !== conversationId));
-
-      // Clear selected conversation if it's the one being deleted
-      if (selectedConversation?.id === conversationId) {
-        setSelectedConversation(null);
-      }
+      removeConversationCache(conversationId);
     },
-    [setConversations, selectedConversation?.id, setSelectedConversation]
+    [removeConversationCache]
   );
 
   // Use centralized assignment actions hook (must be after updateConversationInList is defined)
-  const { handleAssignAgent: handleAssignAgentAction, handleAssignTeam: handleAssignTeamAction } = useConversationAssignmentActions({
-    accountId,
-    conversation,
-    updateConversation: updateConversationInList,
-  });
+  const { handleAssignAgent: handleAssignAgentAction, handleAssignTeam: handleAssignTeamAction } =
+    useConversationAssignmentActions({
+      accountId,
+      conversation,
+      updateConversation: updateConversationInList,
+    });
 
   /**
    * Handle Mark as Read/Unread
@@ -144,7 +135,7 @@ export const useChatwootContextMenu = (conversation: ChatwootConversation | null
 
       try {
         // Optimistic update
-        updateConversationInList({ unread_count: markAsRead ? 0 : 1 });
+        updateConversationInList(conversation.id, { unread_count: markAsRead ? 0 : 1 });
 
         if (markAsRead) {
           await chatwootService.conversations.markConversationAsRead(accountId, conversation.id);
@@ -153,11 +144,11 @@ export const useChatwootContextMenu = (conversation: ChatwootConversation | null
         }
 
         showNotification(`Conversation marked as ${action}`, "success");
-      } catch (error: any) {
+      } catch (error) {
         // Revert on failure
-        updateConversationInList({ unread_count: conversation.unread_count });
+        updateConversationInList(conversation.id, { unread_count: conversation.unread_count });
         showNotification(`Failed to mark conversation as ${action}`, "error");
-        console.error(`Failed to mark conversation as ${action}:`, error);
+        logger.error(`Failed to mark conversation as ${action}`, error instanceof Error ? error : new Error(String(error)));
       }
     },
     [accountId, conversation, updateConversationInList]
@@ -169,27 +160,47 @@ export const useChatwootContextMenu = (conversation: ChatwootConversation | null
   const handleUpdateStatus = useCallback(
     async (status: ConversationStatusType, snoozedUntil?: string) => {
       if (!accountId || !conversation?.id) {
-        showNotification("Cannot perform action: Missing account or conversation", "error");
+        showNotification("Cannot update status: Missing account or conversation", "error");
         return;
       }
 
       const oldStatus = conversation.status;
 
-      try {
-        // Optimistic update
-        updateConversationInList({ status, ...(snoozedUntil && { snoozed_until: new Date(snoozedUntil).getTime() }) });
+      // User-friendly status messages
+      const statusMessages = {
+        open: "reopened",
+        resolved: "marked as resolved",
+        pending: "marked as pending",
+        snoozed: snoozedUntil ? "snoozed until specified time" : "snoozed until next reply",
+      };
 
-        await chatwootService.conversations.updateConversationStatus(accountId, conversation.id, {
+      try {
+        // Optimistic update - immediately update UI
+        updateConversationInList(conversation.id, {
+          status,
+          ...(snoozedUntil && { snoozed_until: new Date(snoozedUntil).getTime() }),
+        });
+
+        // Make API call
+        const response = await chatwootService.conversations.updateConversationStatus(accountId, conversation.id, {
           status,
           ...(snoozedUntil && { snoozed_until: snoozedUntil }),
         });
 
-        showNotification(`Conversation ${status}`, "success");
-      } catch (error: any) {
+        // Verify success
+        if (response.payload?.success) {
+          const message = statusMessages[status] || status;
+          showNotification(`Conversation ${message}`, "success");
+        } else {
+          throw new Error("Status update failed: Unexpected response from server");
+        }
+      } catch (error) {
         // Revert on failure
-        updateConversationInList({ status: oldStatus });
-        showNotification(`Failed to update conversation status`, "error");
-        console.error("Failed to update conversation status:", error);
+        updateConversationInList(conversation.id, { status: oldStatus });
+        
+        const errorMessage = error instanceof Error ? error.message : "Failed to update conversation status";
+        showNotification(errorMessage, "error");
+        logger.error("Failed to update conversation status", error instanceof Error ? error : new Error(String(error)));
       }
     },
     [accountId, conversation, updateConversationInList]
@@ -209,17 +220,17 @@ export const useChatwootContextMenu = (conversation: ChatwootConversation | null
 
       try {
         // Optimistic update
-        updateConversationInList({ priority: priority || undefined });
+        updateConversationInList(conversation.id, { priority: priority || undefined });
 
         await chatwootService.conversations.updateConversationPriority(accountId, conversation.id, { priority });
 
-        const priorityLabel = priority || 'none';
+        const priorityLabel = priority || "none";
         showNotification(`Priority set to ${priorityLabel}`, "success");
-      } catch (error: any) {
+      } catch (error) {
         // Revert on failure
-        updateConversationInList({ priority: oldPriority });
+        updateConversationInList(conversation.id, { priority: oldPriority });
         showNotification(`Failed to update priority`, "error");
-        console.error("Failed to update priority:", error);
+        logger.error("Failed to update priority", error instanceof Error ? error : new Error(String(error)));
       }
     },
     [accountId, conversation, updateConversationInList]
@@ -232,17 +243,20 @@ export const useChatwootContextMenu = (conversation: ChatwootConversation | null
   const handleAssignAgent = useCallback(
     async (assigneeId: number | null) => {
       // Find agent data for optimistic update
-      const agentData = assigneeId
-        ? agents.find(a => a.id === assigneeId)
-        : undefined;
+      const agentData = assigneeId ? agents.find((a) => a.id === assigneeId) : undefined;
 
       // Use centralized hook with proper agent data
-      await handleAssignAgentAction(assigneeId, agentData ? {
-        id: agentData.id!,
-        name: agentData.name,
-        email: agentData.email,
-        thumbnail: agentData.thumbnail,
-      } : undefined);
+      await handleAssignAgentAction(
+        assigneeId,
+        agentData
+          ? {
+              id: agentData.id!,
+              name: agentData.name,
+              email: agentData.email,
+              thumbnail: agentData.thumbnail,
+            }
+          : undefined
+      );
     },
     [agents, handleAssignAgentAction]
   );
@@ -254,16 +268,19 @@ export const useChatwootContextMenu = (conversation: ChatwootConversation | null
   const handleAssignTeam = useCallback(
     async (teamId: number | null) => {
       // Find team data for optimistic update
-      const teamData = teamId
-        ? teams.find(t => t.id === teamId)
-        : undefined;
+      const teamData = teamId ? teams.find((t) => t.id === teamId) : undefined;
 
       // Use centralized hook with proper team data
-      await handleAssignTeamAction(teamId, teamData ? {
-        id: teamData.id!,
-        name: teamData.name,
-        description: teamData.description,
-      } : undefined);
+      await handleAssignTeamAction(
+        teamId,
+        teamData
+          ? {
+              id: teamData.id!,
+              name: teamData.name,
+              description: teamData.description,
+            }
+          : undefined
+      );
     },
     [teams, handleAssignTeamAction]
   );
@@ -282,16 +299,16 @@ export const useChatwootContextMenu = (conversation: ChatwootConversation | null
 
       try {
         // Optimistic update
-        updateConversationInList({ labels });
+        updateConversationInList(conversation.id, { labels });
 
         await chatwootService.conversations.addConversationLabels(accountId, conversation.id, labels);
 
         showNotification(`Labels updated`, "success");
-      } catch (error: any) {
+      } catch (error) {
         // Revert on failure
-        updateConversationInList({ labels: oldLabels });
+        updateConversationInList(conversation.id, { labels: oldLabels });
         showNotification(`Failed to update labels`, "error");
-        console.error("Failed to update labels:", error);
+        logger.error("Failed to update labels", error instanceof Error ? error : new Error(String(error)));
       }
     },
     [accountId, conversation, updateConversationInList]
@@ -300,35 +317,45 @@ export const useChatwootContextMenu = (conversation: ChatwootConversation | null
   /**
    * Handle Delete Conversation (Admin Only)
    */
-  const handleDeleteConversation = useCallback(
-    async () => {
-      if (!accountId || !conversation?.id) {
-        showNotification("Cannot perform action: Missing account or conversation", "error");
-        return;
-      }
+  const handleDeleteConversation = useCallback(async () => {
+    if (!accountId || !conversation?.id) {
+      showNotification("Cannot perform action: Missing account or conversation", "error");
+      return;
+    }
 
-      // Confirm deletion
-      const confirmed = window.confirm(
-        "Are you sure you want to delete this conversation? This action cannot be undone."
-      );
+    // Confirm deletion
+    const confirmed = window.confirm("Are you sure you want to delete this conversation? This action cannot be undone.");
 
-      if (!confirmed) return;
+    if (!confirmed) return;
 
-      try {
-        // Optimistically remove from list
-        removeConversationFromList(conversation.id);
+    try {
+      // Optimistically remove from list
+      removeConversationFromList(conversation.id);
 
-        await chatwootService.conversations.deleteConversation(accountId, conversation.id);
+      await chatwootService.conversations.deleteConversation(accountId, conversation.id);
 
         showNotification("Conversation deleted", "success");
-      } catch (error: any) {
-        // TODO: Re-add to list on failure (requires proper state management)
+      } catch (error) {
+        // Note: Re-adding to list on failure would require proper state management
+        // For now, the optimistic update remains removed
         showNotification(`Failed to delete conversation`, "error");
-        console.error("Failed to delete conversation:", error);
-      }
-    },
-    [accountId, conversation, removeConversationFromList]
-  );
+        logger.error("Failed to delete conversation", error instanceof Error ? error : new Error(String(error)));
+    }
+  }, [accountId, conversation, removeConversationFromList]);
+
+  /**
+   * Build a shareable link for the conversation
+   * Preserves current view context and filters so the link opens in the same state
+   */
+  const buildConversationLink = useCallback(() => {
+    if (!conversation?.id) return null;
+
+    // Build route with current view, conversation, channel, and filters
+    const channelId = currentRoute?.channelId || (conversation.inbox_id ? String(conversation.inbox_id) : undefined);
+    const route = RouteBuilder.chatwoot(currentView || ChatwootView.MY_INBOX, String(conversation.id), channelId, currentFilters);
+    const path = buildRoutePath(route);
+    return `${window.location.origin}${path}`;
+  }, [conversation?.id, conversation?.inbox_id, currentView, currentRoute?.channelId, currentFilters]);
 
   /**
    * Handle Copy Conversation Link
@@ -336,8 +363,11 @@ export const useChatwootContextMenu = (conversation: ChatwootConversation | null
   const handleCopyLink = useCallback(() => {
     if (!accountId || !conversation?.id) return;
 
-    const hostUrl = window.location.origin;
-    const conversationUrl = `${hostUrl}/frontdesk/chatwoot?conversation=${conversation.id}`;
+    const conversationUrl = buildConversationLink();
+    if (!conversationUrl) {
+      showNotification("Failed to build conversation link", "error");
+      return;
+    }
 
     navigator.clipboard.writeText(conversationUrl).then(
       () => {
@@ -345,10 +375,10 @@ export const useChatwootContextMenu = (conversation: ChatwootConversation | null
       },
       (error) => {
         showNotification("Failed to copy link", "error");
-        console.error("Failed to copy link:", error);
+        logger.error("Failed to copy link", error instanceof Error ? error : new Error(String(error)));
       }
     );
-  }, [accountId, conversation]);
+  }, [accountId, conversation?.id, buildConversationLink]);
 
   /**
    * Handle Open in New Tab
@@ -356,10 +386,14 @@ export const useChatwootContextMenu = (conversation: ChatwootConversation | null
   const handleOpenInNewTab = useCallback(() => {
     if (!accountId || !conversation?.id) return;
 
-    const hostUrl = window.location.origin;
-    const conversationUrl = `${hostUrl}/frontdesk/chatwoot?conversation=${conversation.id}`;
+    const conversationUrl = buildConversationLink();
+    if (!conversationUrl) {
+      showNotification("Failed to build conversation link", "error");
+      return;
+    }
+
     window.open(conversationUrl, "_blank");
-  }, [accountId, conversation]);
+  }, [accountId, conversation?.id, buildConversationLink]);
 
   /**
    * Get available actions based on conversation state
@@ -373,139 +407,136 @@ export const useChatwootContextMenu = (conversation: ChatwootConversation | null
 
     // 1. Mark as Read/Unread
     actions.push({
-      id: hasUnread ? 'mark-read' : 'mark-unread',
-      label: hasUnread ? 'Mark as read' : 'Mark as unread',
-      icon: hasUnread ? 'mail' : 'mail-unread',
+      id: hasUnread ? "mark-read" : "mark-unread",
+      label: hasUnread ? "Mark as read" : "Mark as unread",
+      icon: hasUnread ? "mail" : "mail-unread",
     });
 
     // Separator
-    actions.push({ id: 'divider-1', label: '', divider: true });
+    actions.push({ id: "divider-1", label: "", divider: true });
 
     // 2. Status Actions - only show statuses that are not current
-    if (status !== 'resolved') {
+    if (status !== "resolved") {
       actions.push({
-        id: 'resolve',
-        label: 'Resolve',
-        icon: 'checkmark',
+        id: "resolve",
+        label: "Resolve",
+        icon: "checkmark",
       });
     }
 
-    if (status !== 'open') {
+    if (status !== "open") {
       actions.push({
-        id: 'reopen',
-        label: 'Reopen',
-        icon: 'arrow-redo',
+        id: "reopen",
+        label: "Reopen",
+        icon: "arrow-redo",
       });
     }
 
-    if (status !== 'pending') {
+    if (status !== "pending") {
       actions.push({
-        id: 'pending',
-        label: 'Mark as pending',
-        icon: 'book-clock',
-      });
-    }
-
-    // 3. Snooze - only for open conversations
-    if (status === 'open') {
-      actions.push({
-        id: 'snooze',
-        label: 'Snooze',
-        icon: 'snooze',
+        id: "pending",
+        label: "Mark as pending",
+        icon: "book-clock",
       });
     }
 
     // Separator
-    actions.push({ id: 'divider-2', label: '', divider: true });
+    actions.push({ id: "divider-2", label: "", divider: true });
 
     // 4. Priority Submenu
-    const priorities: PriorityLevel[] = ['urgent', 'high', 'medium', 'low', null];
+    const priorities: PriorityLevel[] = ["urgent", "high", "medium", "low", null];
     const currentPriority = conversation.priority || null;
     const prioritySubmenu: ContextMenuAction[] = priorities
       .filter((p) => p !== currentPriority)
       .map((p) => ({
-        id: `priority-${p || 'none'}`,
-        label: p ? p.charAt(0).toUpperCase() + p.slice(1) : 'None',
+        id: `priority-${p || "none"}`,
+        label: p ? p.charAt(0).toUpperCase() + p.slice(1) : "None",
       }));
 
     actions.push({
-      id: 'priority',
-      label: 'Set priority',
-      icon: 'warning',
+      id: "priority",
+      label: "Set priority",
+      icon: "warning",
       submenu: prioritySubmenu,
     });
 
-    // 5. Assign Label (placeholder - needs label data)
+    // 5. Assign Label
+    // Note: Currently disabled - enable when label management is implemented
     actions.push({
-      id: 'assign-label',
-      label: 'Assign label',
-      icon: 'tag',
-      disabled: true, // TODO: Enable when label data is available
+      id: "assign-label",
+      label: "Assign label",
+      icon: "tag",
+      disabled: true,
     });
 
     // 6. Assign Agent Submenu
     // Use processedAgents which are already sorted by availability (online → busy → offline)
     const currentAssigneeId = conversation.meta?.assignee?.id;
+    const availableAgents = processedAgents
+      .filter((agent) => agent.id !== currentAssigneeId)
+      .map((agent) => ({
+        id: `assign-agent-${agent.id}`,
+        label: agent.name || agent.email || `Agent ${agent.id}`,
+      }));
+
     const agentSubmenu: ContextMenuAction[] = [
-      { id: 'assign-agent-none', label: 'Unassign' },
-      ...processedAgents
-        .filter((agent) => agent.id !== currentAssigneeId)
-        .map((agent) => ({
-          id: `assign-agent-${agent.id}`,
-          label: agent.name || agent.email || `Agent ${agent.id}`,
-        }))
+      { id: "assign-agent-none", label: "Unassign" },
+      ...(availableAgents.length > 0 ? [{ id: "assign-agent-divider", label: "", divider: true }] : []),
+      ...availableAgents,
     ];
 
     actions.push({
-      id: 'assign-agent',
-      label: 'Assign agent',
-      icon: 'person-add',
+      id: "assign-agent",
+      label: "Assign agent",
+      icon: "person-add",
       disabled: processedAgents.length === 0 || agentsLoading,
       submenu: agentSubmenu,
     });
 
     // 7. Assign Team Submenu
+    const availableTeams = teams.map((team) => ({
+      id: `assign-team-${team.id}`,
+      label: team.name || `Team ${team.id}`,
+    }));
+
     const teamSubmenu: ContextMenuAction[] = [
-      { id: 'assign-team-none', label: 'Unassign' },
-      ...teams.map((team) => ({
-        id: `assign-team-${team.id}`,
-        label: team.name || `Team ${team.id}`,
-      }))
+      { id: "assign-team-none", label: "Unassign" },
+      ...(availableTeams.length > 0 ? [{ id: "assign-team-divider", label: "", divider: true }] : []),
+      ...availableTeams,
     ];
 
     actions.push({
-      id: 'assign-team',
-      label: 'Assign team',
-      icon: 'people-team-add',
+      id: "assign-team",
+      label: "Assign team",
+      icon: "people-team-add",
       disabled: teams.length === 0 || agentsLoading,
       submenu: teamSubmenu,
     });
 
     // Separator
-    actions.push({ id: 'divider-3', label: '', divider: true });
+    actions.push({ id: "divider-3", label: "", divider: true });
 
     // 8. Open in New Tab
     actions.push({
-      id: 'open-new-tab',
-      label: 'Open in new tab',
-      icon: 'open',
+      id: "open-new-tab",
+      label: "Open in new tab",
+      icon: "open",
     });
 
     // 9. Copy Conversation Link
     actions.push({
-      id: 'copy-link',
-      label: 'Copy conversation link',
-      icon: 'copy',
+      id: "copy-link",
+      label: "Copy conversation link",
+      icon: "copy",
     });
 
     // 10. Delete (Admin Only)
-    // TODO: Check user role when profile includes role information
+    // Note: Admin check should be implemented when user role information is available in profile
     actions.push({
-      id: 'delete',
-      label: 'Delete conversation',
-      icon: 'delete',
+      id: "delete",
+      label: "Delete conversation",
+      icon: "delete",
       requiresAdmin: true,
-      // disabled: !isAdmin, // TODO: Implement when we have user role
     });
 
     return actions;
@@ -519,71 +550,71 @@ export const useChatwootContextMenu = (conversation: ChatwootConversation | null
       if (!conversation) return;
 
       switch (actionId) {
-        case 'mark-read':
+        case "mark-read":
           await handleMarkReadUnread(true);
           break;
-        case 'mark-unread':
+        case "mark-unread":
           await handleMarkReadUnread(false);
           break;
-        case 'resolve':
-          await handleUpdateStatus('resolved');
+        case "resolve":
+          await handleUpdateStatus("resolved");
           break;
-        case 'reopen':
-          await handleUpdateStatus('open');
+        case "reopen":
+          await handleUpdateStatus("open");
           break;
-        case 'pending':
-          await handleUpdateStatus('pending');
+        case "pending":
+          await handleUpdateStatus("pending");
           break;
-        case 'snooze':
-          // TODO: Show snooze dialog to select time
-          showNotification('Snooze dialog not yet implemented', "info");
+        case "priority-urgent":
+          await handleSetPriority("urgent");
           break;
-        case 'priority-urgent':
-          await handleSetPriority('urgent');
+        case "priority-high":
+          await handleSetPriority("high");
           break;
-        case 'priority-high':
-          await handleSetPriority('high');
+        case "priority-medium":
+          await handleSetPriority("medium");
           break;
-        case 'priority-medium':
-          await handleSetPriority('medium');
+        case "priority-low":
+          await handleSetPriority("low");
           break;
-        case 'priority-low':
-          await handleSetPriority('low');
-          break;
-        case 'priority-none':
+        case "priority-none":
           await handleSetPriority(null);
           break;
-        case 'assign-label':
-          // TODO: Show label selector
-          showNotification('Label assignment not yet implemented', "info");
+        case "assign-label":
+          // Label assignment will be implemented when label management is available
+          showNotification("Label assignment not yet implemented", "info");
           break;
-        case 'open-new-tab':
+        case "open-new-tab":
           handleOpenInNewTab();
           break;
-        case 'copy-link':
+        case "copy-link":
           handleCopyLink();
           break;
-        case 'delete':
+        case "delete":
           await handleDeleteConversation();
           break;
         default:
           // Handle agent assignment submenu items
-          if (actionId.startsWith('assign-agent-')) {
-            const agentIdStr = actionId.replace('assign-agent-', '');
-            const agentId = agentIdStr === 'none' ? null : parseInt(agentIdStr, 10);
+          if (actionId.startsWith("assign-agent-")) {
+            const agentIdStr = actionId.replace("assign-agent-", "");
+            // Skip divider actions
+            if (agentIdStr === "divider") break;
+            const agentId = agentIdStr === "none" ? null : parseInt(agentIdStr, 10);
             await handleAssignAgent(agentId);
             break;
           }
 
           // Handle team assignment submenu items
-          if (actionId.startsWith('assign-team-')) {
-            const teamIdStr = actionId.replace('assign-team-', '');
-            const teamId = teamIdStr === 'none' ? null : parseInt(teamIdStr, 10);
+          if (actionId.startsWith("assign-team-")) {
+            const teamIdStr = actionId.replace("assign-team-", "");
+            // Skip divider actions
+            if (teamIdStr === "divider") break;
+            const teamId = teamIdStr === "none" ? null : parseInt(teamIdStr, 10);
             await handleAssignTeam(teamId);
             break;
           }
 
-          console.warn(`Unknown action: ${actionId}`);
+          logger.warn(`Unknown action: ${actionId}`);
       }
     },
     [
@@ -591,6 +622,8 @@ export const useChatwootContextMenu = (conversation: ChatwootConversation | null
       handleMarkReadUnread,
       handleUpdateStatus,
       handleSetPriority,
+      handleAssignAgent,
+      handleAssignTeam,
       handleOpenInNewTab,
       handleCopyLink,
       handleDeleteConversation,

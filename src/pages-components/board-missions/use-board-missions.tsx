@@ -1756,6 +1756,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
       productType: selectedMission?.productType ?? "",
     });
   };
+  
   const onClosePrintTypeModal = () => {
     setOpenPrintTypeModal(false);
     setPendingPrintParams(null);

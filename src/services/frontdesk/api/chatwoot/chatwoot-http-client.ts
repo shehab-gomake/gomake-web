@@ -40,15 +40,36 @@ export class ChatwootHttpClient {
       : `/${endpoint}`;
     const url = `${this.baseUrl}${normalizedEndpoint}`;
 
+    // Check if body is FormData - if so, don't set Content-Type (browser will set it with boundary)
+    const isFormData = options.body instanceof FormData;
+    
+    // Build headers
+    const headers: Record<string, string> = {
+      Authorization: `Bearer ${token}`,
+    };
+    
+    // Only set Content-Type for non-FormData requests
+    if (!isFormData) {
+      headers["Content-Type"] = "application/json";
+    }
+    
+    // Merge with any custom headers (but filter out empty Content-Type for FormData)
+    if (options.headers) {
+      const customHeaders = options.headers as Record<string, string>;
+      Object.entries(customHeaders).forEach(([key, value]) => {
+        // Skip empty Content-Type (used by FormData requests to signal "don't set it")
+        if (key.toLowerCase() === 'content-type' && (!value || value === '')) {
+          return;
+        }
+        headers[key] = value;
+      });
+    }
+
     let response: Response;
     try {
       response = await fetch(url, {
         ...options,
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-          ...options.headers,
-        },
+        headers,
       });
     } catch (error) {
       // Network error (CORS, connection refused, DNS failure, etc.)
@@ -75,7 +96,16 @@ export class ChatwootHttpClient {
         errorData,
       });
 
-      throw new Error(errorMessage);
+      // Create error with additional properties for error handling
+      const error = new Error(errorMessage) as Error & {
+        status?: number;
+        errorData?: any;
+        attributes?: string[];
+      };
+      error.status = response.status;
+      error.errorData = errorData;
+      error.attributes = errorData.attributes || [];
+      throw error;
     }
 
     // Handle binary responses (like file downloads)
@@ -104,46 +134,58 @@ export class ChatwootHttpClient {
 
   /**
    * POST request helper
+   * Handles both JSON and FormData payloads automatically
    */
   protected async post<T>(
     endpoint: string,
     body?: any,
     options: RequestInit = {}
   ): Promise<T> {
+    // Check if body is FormData - if so, pass it directly without stringifying
+    const isFormData = body instanceof FormData;
+    
     return this.request<T>(endpoint, {
       ...options,
       method: "POST",
-      body: body ? JSON.stringify(body) : undefined,
+      body: body ? (isFormData ? body : JSON.stringify(body)) : undefined,
     });
   }
 
   /**
    * PUT request helper
+   * Handles both JSON and FormData payloads automatically
    */
   protected async put<T>(
     endpoint: string,
     body?: any,
     options: RequestInit = {}
   ): Promise<T> {
+    // Check if body is FormData - if so, pass it directly without stringifying
+    const isFormData = body instanceof FormData;
+    
     return this.request<T>(endpoint, {
       ...options,
       method: "PUT",
-      body: body ? JSON.stringify(body) : undefined,
+      body: body ? (isFormData ? body : JSON.stringify(body)) : undefined,
     });
   }
 
   /**
    * PATCH request helper
+   * Handles both JSON and FormData payloads automatically
    */
   protected async patch<T>(
     endpoint: string,
     body?: any,
     options: RequestInit = {}
   ): Promise<T> {
+    // Check if body is FormData - if so, pass it directly without stringifying
+    const isFormData = body instanceof FormData;
+    
     return this.request<T>(endpoint, {
       ...options,
       method: "PATCH",
-      body: body ? JSON.stringify(body) : undefined,
+      body: body ? (isFormData ? body : JSON.stringify(body)) : undefined,
     });
   }
 

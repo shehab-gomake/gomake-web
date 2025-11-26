@@ -30,7 +30,7 @@ export interface UseChatwootQuickActionsOptions {
   onBeforeAction?: (actionType: QuickActionType) => void;
 
   /** Callback when action completes */
-  onActionComplete?: (actionType: QuickActionType) => void;
+  onActionComplete?: (actionType: QuickActionType, updatedConversation?: ChatwootConversation) => void;
 
   /** Callback when action fails */
   onActionError?: (actionType: QuickActionType, error: string) => void;
@@ -70,8 +70,13 @@ export function useChatwootQuickActions(
   const { alertSuccess, alertFault } = useSnackBar();
 
   // Extract customer ID from conversation custom attributes
+  // Check both conversation-level and contact-level custom attributes
+  // Priority: contact-level (where it's actually stored when linking) > conversation-level
   const customerId = useMemo(() => {
-    return conversation?.custom_attributes?.[CHATWOOT_CUSTOM_ATTRIBUTES.CUSTOMER_ID] as string | undefined;
+    return (
+      (conversation?.meta?.sender?.custom_attributes?.[CHATWOOT_CUSTOM_ATTRIBUTES.CUSTOMER_ID] as string | undefined) ||
+      (conversation?.custom_attributes?.[CHATWOOT_CUSTOM_ATTRIBUTES.CUSTOMER_ID] as string | undefined)
+    );
   }, [conversation]);
 
   // Extract customer info from conversation meta
@@ -197,25 +202,42 @@ export function useChatwootQuickActions(
           throw new Error(`Unknown document type for action: ${selectedAction.type}`);
         }
 
-        // Update conversation custom attributes with document ID and timestamp
+        // Get document type from action config
+        const documentType = selectedAction.documentType;
+
+        // Update conversation custom attributes with document ID, type, and timestamp
         const updatedAttributes = {
           ...conversation.custom_attributes,
           [attributeKeys.idKey]: documentId,
+          [attributeKeys.typeKey]: documentType,
           [attributeKeys.timestampKey]: new Date().toISOString(),
         };
 
+        // Update conversation custom attributes
         await chatwootService.conversations.updateConversationCustomAttributes(
           accountId,
           conversation.id,
           updatedAttributes
         );
 
+        // Refetch the conversation to get the latest data including updated custom attributes
+        const refreshedConversation = await chatwootService.conversations.getConversationDetails(
+          accountId,
+          conversation.id
+        );
+
         // Show success notification
         alertSuccess('frontdesk.documentLinkedSuccess');
 
-        console.log(`[useChatwootQuickActions] Successfully linked document ${documentId}`);
+        console.log(`[useChatwootQuickActions] Successfully linked document ${documentId}`, {
+          documentId,
+          attributeKeys,
+          updatedAttributes,
+          refreshedConversation,
+        });
 
-        onActionComplete?.(selectedAction.type);
+        // Notify parent component with refreshed conversation
+        onActionComplete?.(selectedAction.type, refreshedConversation as ChatwootConversation);
         setSelectedAction(null);
       } catch (error: any) {
         console.error('[useChatwootQuickActions] Error linking document:', error);

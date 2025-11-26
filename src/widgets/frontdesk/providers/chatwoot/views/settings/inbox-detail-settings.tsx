@@ -15,10 +15,12 @@ import {
   Alert,
   Snackbar,
 } from "@mui/material";
+import { useSetRecoilState } from "recoil";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import type { ChatwootInbox } from "@/services/frontdesk/api/chatwoot/types/inboxes.types";
 import { chatwootService } from "@/services/frontdesk";
 import { useChatwootProvider } from "../../hooks/use-chatwoot-provider";
+import { chatwootInboxAgentsMapAtom } from "@/store/frontdesk/atoms/chatwoot.atoms";
 import {
   InboxSettingsTab,
   InboxCollaboratorsTab,
@@ -36,6 +38,7 @@ export const InboxDetailSettings: React.FC<InboxDetailSettingsProps> = ({
   onBack,
 }) => {
   const { selectedAccountId } = useChatwootProvider();
+  const setInboxAgentsMap = useSetRecoilState(chatwootInboxAgentsMapAtom);
   const [activeTab, setActiveTab] = useState<SettingsTab>("settings");
   const [isSaving, setIsSaving] = useState(false);
   const [notification, setNotification] = useState<{
@@ -74,54 +77,6 @@ export const InboxDetailSettings: React.FC<InboxDetailSettingsProps> = ({
     }
   };
 
-  // Handle avatar upload
-  const handleAvatarUpload = async (file: File) => {
-    if (!accountId) return;
-
-    setIsSaving(true);
-    try {
-      await chatwootService.inboxes.uploadAvatar(accountId, inbox.id, file);
-      setNotification({
-        open: true,
-        message: "Avatar uploaded successfully",
-        severity: "success",
-      });
-    } catch (error) {
-      console.error("Failed to upload avatar:", error);
-      setNotification({
-        open: true,
-        message: "Failed to upload avatar. Please try again.",
-        severity: "error",
-      });
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
-  // Handle avatar delete
-  const handleAvatarDelete = async () => {
-    if (!accountId) return;
-
-    setIsSaving(true);
-    try {
-      await chatwootService.inboxes.deleteAvatar(accountId, inbox.id);
-      setNotification({
-        open: true,
-        message: "Avatar deleted successfully",
-        severity: "success",
-      });
-    } catch (error) {
-      console.error("Failed to delete avatar:", error);
-      setNotification({
-        open: true,
-        message: "Failed to delete avatar. Please try again.",
-        severity: "error",
-      });
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
   // Handle agent updates
   const handleUpdateAgents = async (agentIds: number[]) => {
     if (!accountId) return;
@@ -133,6 +88,20 @@ export const InboxDetailSettings: React.FC<InboxDetailSettingsProps> = ({
         inbox.id,
         agentIds
       );
+      
+      // Fetch updated agents list and update Recoil state
+      const response = await chatwootService.inboxes.getInboxAgents(
+        accountId,
+        inbox.id
+      );
+      const updatedAgents = response?.payload || [];
+      
+      // Update the agents map in Recoil state
+      setInboxAgentsMap((prev) => ({
+        ...prev,
+        [inbox.id]: updatedAgents,
+      }));
+      
       setNotification({
         open: true,
         message: "Agents updated successfully",
@@ -232,8 +201,6 @@ export const InboxDetailSettings: React.FC<InboxDetailSettingsProps> = ({
             inbox={inbox}
             accountId={accountId}
             onSave={handleSaveSettings}
-            onAvatarUpload={handleAvatarUpload}
-            onAvatarDelete={handleAvatarDelete}
             isSaving={isSaving}
           />
         )}

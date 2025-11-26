@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Paper, Typography, Stack, alpha, Button, CircularProgress } from "@mui/material";
+import { Box, Paper, Typography, Stack, alpha, Button, CircularProgress, Fade } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { PanelContent, EmptyState } from "@/widgets/frontdesk/design-system";
@@ -11,7 +11,10 @@ import { useChatwootMessages } from "../hooks/use-chatwoot-messages";
 import {
   ChatwootConversation,
   ConversationStatus,
+  ConversationPriority,
 } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
+
+type PriorityValue = ConversationPriority.URGENT | ConversationPriority.HIGH | ConversationPriority.MEDIUM | ConversationPriority.LOW | null;
 import type { ChatwootInbox } from "@/services/frontdesk/api/chatwoot/types/inboxes.types";
 import { chatwootService } from "@/services/frontdesk";
 // New Chatwoot-specific loading and empty states
@@ -26,6 +29,8 @@ interface ChatwootMessageViewerProps {
   currentStatusFilter?: ConversationStatus;
   inboxes?: ChatwootInbox[];
   inboxesLoading?: boolean;
+  isSidebarVisible?: boolean;
+  onToggleSidebar?: () => void;
 }
 
 export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
@@ -36,15 +41,40 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
   currentStatusFilter,
   inboxes = [],
   inboxesLoading = false,
+  isSidebarVisible = true,
+  onToggleSidebar,
 }) => {
   const theme = useTheme();
   const { neutralColor } = useGomakeTheme();
   const [isSending, setIsSending] = React.useState(false);
+  
+  // Track previous conversation for smooth transitions
+  const previousConversationIdRef = React.useRef<number | null>(null);
+  const [isTransitioning, setIsTransitioning] = React.useState(false);
 
   const { messages, loading, error, refresh, loadMoreMessages, hasMoreMessages, isLoadingMore } = useChatwootMessages({
     conversation,
     accountId: accountId || null,
   });
+
+  // Detect conversation changes for transition animation
+  React.useEffect(() => {
+    if (conversation?.id && previousConversationIdRef.current !== conversation.id) {
+      if (previousConversationIdRef.current !== null) {
+        setIsTransitioning(true);
+      }
+      previousConversationIdRef.current = conversation.id;
+    }
+  }, [conversation?.id]);
+
+  // Reset transition state when messages finish loading
+  React.useEffect(() => {
+    if (!loading && messages.length > 0 && isTransitioning) {
+      // Small delay to ensure smooth fade-in
+      const timer = setTimeout(() => setIsTransitioning(false), 100);
+      return () => clearTimeout(timer);
+    }
+  }, [loading, messages.length, isTransitioning]);
 
   // Get inbox for the conversation from props
   const inbox = React.useMemo(() => {
@@ -81,36 +111,36 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
     );
   }
 
-  // Show full skeleton while loading conversation
-  if (loading && messages.length === 0) {
-    return <MessageViewerSkeleton messageCount={5} />;
-  }
+  // Show full skeleton only on initial load (no previous messages)
+  const showFullSkeleton = loading && messages.length === 0 && previousConversationIdRef.current === null;
 
   // Helper to update conversation after status change (similar to Vue store.dispatch('toggleStatus'))
   const handleStatusChange = async (newStatus: string) => {
     if (!accountId || !conversation.id) return;
     
     try {
-      // Update conversation via API
-      const response = await chatwootService.conversations.updateConversation(accountId, conversation.id, {
-        status: newStatus,
-      });
+      // Update conversation status via toggle_status API
+      const response = await chatwootService.conversations.updateConversationStatus(
+        accountId,
+        conversation.id,
+        { status: newStatus as 'open' | 'resolved' | 'pending' | 'snoozed' }
+      );
       
-      // Get updated conversation from response
-      const updatedConversation = response.payload || response.data || conversation;
-      const finalConversation = {
-        ...conversation,
-        ...updatedConversation,
-        status: newStatus,
-      };
-      
-      // Update in list (similar to Vue: commit(types.CHANGE_CONVERSATION_STATUS))
-      if (onConversationUpdate) {
-        onConversationUpdate(finalConversation);
+      // Verify success
+      if (response.payload?.success) {
+        // Update conversation with new status
+        const finalConversation = {
+          ...conversation,
+          status: response.payload.current_status,
+        };
+        
+        // Update in list (similar to Vue: commit(types.CHANGE_CONVERSATION_STATUS))
+        if (onConversationUpdate) {
+          onConversationUpdate(finalConversation);
+        }
+      } else {
+        throw new Error("Status update failed: Unexpected response from server");
       }
-      
-      // Refresh messages
-      refresh();
     } catch (err) {
       console.error(`Failed to update conversation status to ${newStatus}:`, err);
       throw err;
@@ -153,6 +183,39 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
       await handleStatusChange("pending");
     } catch (err) {
       console.error("Failed to mark conversation as pending:", err);
+    }
+  };
+
+  const handlePriorityChange = async (newPriority: PriorityValue) => {
+    if (!accountId || !conversation.id) return;
+
+    try {
+      // Convert enum value to string for API (API expects string)
+      const priorityString = newPriority || null;
+      
+      // Update conversation via API
+      const response = await chatwootService.conversations.updateConversation(accountId, conversation.id, {
+        priority: priorityString,
+      });
+
+      // Get updated conversation from response
+      const updatedConversation = response.payload || response.data || conversation;
+      const finalConversation = {
+        ...conversation,
+        ...updatedConversation,
+        priority: priorityString,
+      };
+
+      // Update in list
+      if (onConversationUpdate) {
+        onConversationUpdate(finalConversation);
+      }
+
+      // Refresh messages
+      refresh();
+    } catch (err) {
+      console.error(`Failed to update conversation priority to ${newPriority}:`, err);
+      throw err;
     }
   };
 
@@ -248,24 +311,21 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
 
     setIsSending(true);
     try {
+      // Note: For email channels, cc/bcc/to are passed as separate fields
+      // These are required for proper email delivery with attachments
       await chatwootService.messages.createMessage(accountId, conversation.id, {
         content,
         message_type: "outgoing",
         private: isPrivate,
-        content_type: recipientEmails ? "input_email" : "text",
-        // Include email metadata if provided
-        ...(recipientEmails && {
-          content_attributes: {
-            email: {
-              to: recipientEmails.to,
-              cc: recipientEmails.cc,
-              bcc: recipientEmails.bcc,
-            },
-          },
-        }),
         // Include attachments if provided
         ...(attachments && attachments.length > 0 && {
           attachments,
+        }),
+        // Include email recipient fields for email channels
+        ...(recipientEmails && {
+          ...(recipientEmails.cc && { cc_emails: recipientEmails.cc }),
+          ...(recipientEmails.bcc && { bcc_emails: recipientEmails.bcc }),
+          ...(recipientEmails.to && { to_emails: recipientEmails.to }),
         }),
       });
 
@@ -279,6 +339,10 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
     }
   };
 
+  if (showFullSkeleton) {
+    return <MessageViewerSkeleton messageCount={5} />;
+  }
+
   return (
     <Paper
       elevation={2}
@@ -291,31 +355,68 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
         borderRadius: 2,
         backgroundColor: neutralColor(0),
         boxShadow: `0 2px 8px ${alpha(theme.palette.common.black, 0.06)}, 0 1px 3px ${alpha(theme.palette.common.black, 0.04)}`,
+        position: "relative",
       }}
     >
+      {/* Loading overlay - subtle indicator during transition */}
+      {loading && messages.length > 0 && (
+        <Fade in={loading} timeout={200}>
+          <Box
+            sx={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              right: 0,
+              height: 4,
+              zIndex: 10,
+              background: `linear-gradient(90deg, transparent, ${theme.palette.primary.main}, transparent)`,
+              backgroundSize: "200% 100%",
+              animation: "shimmer 1.5s ease-in-out infinite",
+              "@keyframes shimmer": {
+                "0%": {
+                  backgroundPosition: "-200% 0",
+                },
+                "100%": {
+                  backgroundPosition: "200% 0",
+                },
+              },
+            }}
+          />
+        </Fade>
+      )}
+
       {/* Header */}
-      <ChatwootMessageViewerHeader
-        conversation={conversation}
-        accountId={accountId}
-        onBack={onBack}
-        onReopen={handleReopen}
-        onResolve={handleResolve}
-        onSnooze={handleSnooze}
-        onMarkAsPending={handleMarkAsPending}
-        onArchive={handleArchive}
-        onDelete={handleDelete}
-        onStar={handleStar}
-        onPrint={handlePrint}
-        isStarred={false}
-      />
+      <Fade in={!isTransitioning} timeout={200}>
+        <Box>
+          <ChatwootMessageViewerHeader
+            conversation={conversation}
+            accountId={accountId}
+            onBack={onBack}
+            onReopen={handleReopen}
+            onResolve={handleResolve}
+            onSnooze={handleSnooze}
+            onMarkAsPending={handleMarkAsPending}
+            onStatusChange={handleStatusChange}
+            onPriorityChange={handlePriorityChange}
+            updating={isSending}
+            inboxes={inboxes}
+            isSidebarVisible={isSidebarVisible}
+            onToggleSidebar={onToggleSidebar}
+          />
+        </Box>
+      </Fade>
 
       {/* Messages */}
       <Box
         sx={{
           flex: 1,
           overflow: "auto",
-          background: `linear-gradient(to bottom, ${neutralColor(25)}, ${neutralColor(50)})`,
-          p: 2,
+          background: theme.palette.mode === "dark"
+            ? `linear-gradient(to bottom, ${neutralColor(900)}, ${neutralColor(850)})`
+            : `linear-gradient(to bottom, ${neutralColor(25)}, ${neutralColor(50)})`,
+          p: 2.5,
+          opacity: loading && messages.length === 0 ? 0.5 : 1,
+          transition: "opacity 0.2s ease-in-out",
         }}
         className="custom-scrollbar"
       >
@@ -335,93 +436,99 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
             onStartConversation={handleStartConversation}
           />
         ) : (
-          <Stack spacing={2}>
-            {/* Load More Button - Show at top */}
-            {hasMoreMessages && (
-              <Box sx={{ display: "flex", justifyContent: "center", pt: 1 }}>
-                <Button
-                  variant="outlined"
-                  size="small"
-                  onClick={loadMoreMessages}
-                  disabled={isLoadingMore}
-                  startIcon={isLoadingMore ? <CircularProgress size={16} /> : null}
-                  sx={{
-                    borderRadius: 2,
-                    textTransform: "none",
-                    borderColor: neutralColor(200),
-                    color: neutralColor(700),
-                    "&:hover": {
-                      borderColor: theme.palette.primary.main,
-                      backgroundColor: alpha(theme.palette.primary.main, 0.05),
-                    },
-                  }}
-                >
-                  {isLoadingMore ? "Loading..." : "Load Older Messages"}
-                </Button>
-              </Box>
-            )}
+          <Fade in={!isTransitioning} timeout={200}>
+            <Stack spacing={0.5}>
+              {/* Load More Button - Show at top */}
+              {hasMoreMessages && (
+                <Box sx={{ display: "flex", justifyContent: "center", pt: 1 }}>
+                  <Button
+                    variant="outlined"
+                    size="small"
+                    onClick={loadMoreMessages}
+                    disabled={isLoadingMore}
+                    startIcon={isLoadingMore ? <CircularProgress size={16} /> : null}
+                    sx={{
+                      borderRadius: 2,
+                      textTransform: "none",
+                      borderColor: neutralColor(200),
+                      color: neutralColor(700),
+                      "&:hover": {
+                        borderColor: theme.palette.primary.main,
+                        backgroundColor: alpha(theme.palette.primary.main, 0.05),
+                      },
+                    }}
+                  >
+                    {isLoadingMore ? "Loading..." : "Load Older Messages"}
+                  </Button>
+                </Box>
+              )}
 
-            {(() => {
-              // Filter messages: Keep ALL activity messages, filter empty content for others
-              const visibleMessages = messages.filter((message) => {
-                // Activity messages (message_type 2) should ALWAYS be shown
-                // even if content is empty - they may use metadata or other fields
-                // (e.g., resolved/reopened messages may not have content but should still display)
-                if (message.message_type === 2) {
-                  return true; // Keep all activity messages
+              {(() => {
+                // Filter messages: Keep ALL activity messages, filter empty content for others
+                const visibleMessages = messages.filter((message) => {
+                  // Activity messages (message_type 2) should ALWAYS be shown
+                  // even if content is empty - they may use metadata or other fields
+                  // (e.g., resolved/reopened messages may not have content but should still display)
+                  if (message.message_type === 2) {
+                    return true; // Keep all activity messages
+                  }
+
+                  // For regular messages (incoming/outgoing), filter out empty content
+                  const hasContent = message.content && message.content.trim().length > 0;
+                  return hasContent;
+                });
+
+                if (visibleMessages.length === 0) {
+                  return (
+                    <Box sx={{ p: 3, textAlign: "center" }}>
+                      <Typography variant="body2" sx={{ color: neutralColor(500) }}>
+                        No messages to display
+                      </Typography>
+                    </Box>
+                  );
                 }
 
-                // For regular messages (incoming/outgoing), filter out empty content
-                const hasContent = message.content && message.content.trim().length > 0;
-                return hasContent;
-              });
+                return visibleMessages.map((message, index) => {
+                  // Determine if avatar should be shown (sender changed from previous visible message)
+                  const previousMessage = index > 0 ? visibleMessages[index - 1] : null;
+                  const showAvatar = index === 0 || 
+                    !previousMessage ||
+                    previousMessage.sender?.id !== message.sender?.id ||
+                    previousMessage.message_type !== message.message_type ||
+                    previousMessage.sender_type !== message.sender_type;
 
-              if (visibleMessages.length === 0) {
-                return (
-                  <Box sx={{ p: 3, textAlign: "center" }}>
-                    <Typography variant="body2" sx={{ color: neutralColor(500) }}>
-                      No messages to display
-                    </Typography>
-                  </Box>
-                );
-              }
-
-              return visibleMessages.map((message, index) => {
-                // Determine if avatar should be shown (sender changed from previous visible message)
-                const previousMessage = index > 0 ? visibleMessages[index - 1] : null;
-                const showAvatar = index === 0 || 
-                  !previousMessage ||
-                  previousMessage.sender?.id !== message.sender?.id ||
-                  previousMessage.message_type !== message.message_type ||
-                  previousMessage.sender_type !== message.sender_type;
-
-                return (
-                  <ChatwootMessageItem
-                    key={message.id || `msg-${index}`}
-                    message={message}
-                    isLast={index === visibleMessages.length - 1}
-                    isFirst={index === 0}
-                    showAvatar={showAvatar}
-                    previousMessage={previousMessage}
-                  />
-                );
-              });
-            })()}
-            {/* Resolution Status Bar - show after messages if conversation is resolved */}
-            {conversation.status === "resolved" && (
-              <ChatwootResolutionStatusBar conversation={conversation} />
-            )}
-          </Stack>
+                  return (
+                    <ChatwootMessageItem
+                      key={message.id || `msg-${index}`}
+                      message={message}
+                      isLast={index === visibleMessages.length - 1}
+                      isFirst={index === 0}
+                      showAvatar={showAvatar}
+                      previousMessage={previousMessage}
+                    />
+                  );
+                });
+              })()}
+              {/* Resolution Status Bar - show after messages if conversation is resolved */}
+              {conversation.status === "resolved" && (
+                <ChatwootResolutionStatusBar conversation={conversation} />
+              )}
+            </Stack>
+          </Fade>
         )}
       </Box>
 
       {/* Reply Composer */}
-      <ChatwootReplyComposer
-        conversation={conversation}
-        inbox={inbox}
-        onSend={handleSendMessage}
-        isSending={isSending}
-      />
+      <Fade in={!isTransitioning} timeout={200}>
+        <Box>
+          <ChatwootReplyComposer
+            conversation={conversation}
+            inbox={inbox}
+            onSend={handleSendMessage}
+            isSending={isSending}
+          />
+        </Box>
+      </Fade>
     </Paper>
   );
 };

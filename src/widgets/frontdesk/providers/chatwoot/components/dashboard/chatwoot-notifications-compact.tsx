@@ -28,6 +28,9 @@ import { EmptyState } from '@/widgets/frontdesk/design-system';
 import InboxIcon from '@mui/icons-material/Inbox';
 import type { ChatwootNotification } from '@/services/frontdesk/api/chatwoot/types/notifications.types';
 import { DASHBOARD_LIMITS } from '../../constants/dashboard.constants';
+import { formatTimeAgo } from '../../utils/date-utils';
+import { getMessagePreview } from '../../utils/notification-formatters';
+import { generateNotificationAvatar } from '../../utils/avatar.utils';
 
 type FilterType = 'unread' | 'mentions' | 'assignments' | 'all';
 
@@ -82,55 +85,6 @@ export const ChatwootNotificationsCompact: React.FC = () => {
     };
   }, [notifications]);
 
-  // Helper functions
-  const getNotificationSender = (notification: ChatwootNotification) => {
-    const primaryActor = notification.primary_actor;
-    if (!primaryActor) return { name: 'System', initials: 'S', color: neutralColor(400) };
-
-    const name = primaryActor.name || primaryActor.email || 'Unknown';
-    const initials = name
-      .split(' ')
-      .map((n: string) => n[0])
-      .join('')
-      .toUpperCase()
-      .slice(0, 2);
-
-    const colors = [primaryColor(500), '#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6'];
-    const colorIndex = name.charCodeAt(0) % colors.length;
-
-    return { name, initials, color: colors[colorIndex] };
-  };
-
-  const formatTimeAgo = (dateString?: string) => {
-    if (!dateString) return '';
-    const date = new Date(dateString);
-    const now = new Date();
-    const diffMs = now.getTime() - date.getTime();
-    const diffMins = Math.floor(diffMs / 60000);
-    const diffHours = Math.floor(diffMs / 3600000);
-    const diffDays = Math.floor(diffMs / 86400000);
-
-    if (diffMins < 1) return 'Just now';
-    if (diffMins < 60) return `${diffMins}m`;
-    if (diffHours < 24) return `${diffHours}h`;
-    if (diffDays < 7) return `${diffDays}d`;
-    return date.toLocaleDateString();
-  };
-
-  const getMessagePreview = (notification: ChatwootNotification) => {
-    const pushMessageBody =
-      notification.meta?.pushMessageBody ||
-      (notification.primary_actor as any)?.meta?.pushMessageBody ||
-      notification.meta?.message?.content ||
-      '';
-
-    if (!pushMessageBody) {
-      return notification.notification_type || 'Notification';
-    }
-
-    const plainText = pushMessageBody.replace(/<[^>]*>/g, '').trim();
-    return plainText.length > 80 ? plainText.substring(0, 80) + '...' : plainText;
-  };
 
   const getNotificationTypeLabel = (notificationType?: string) => {
     const typeMap: Record<string, string> = {
@@ -260,15 +214,16 @@ export const ChatwootNotificationsCompact: React.FC = () => {
         ) : (
           <List sx={{ py: 0.5 }}>
             {filteredNotifications.map((notification) => {
-              const sender = getNotificationSender(notification);
+              const avatarData = generateNotificationAvatar(notification);
               const isUnread = !notification.read_at;
               const primaryActor = notification.primary_actor as any;
-              const messagePreview = getMessagePreview(notification);
+              const messagePreview = getMessagePreview(notification, 80);
               const typeLabel = getNotificationTypeLabel(notification.notification_type);
-              const lastActivityAt =
+              // Use created_at (Unix timestamp in seconds) as primary source
+              // formatTimeAgo handles Unix timestamps (numbers) and ISO strings correctly
+              const timestamp = notification.created_at || 
                 primaryActor?.last_activity_at ||
-                notification.updated_at ||
-                notification.created_at;
+                notification.updated_at;
 
               return (
                 <ListItem
@@ -292,19 +247,21 @@ export const ChatwootNotificationsCompact: React.FC = () => {
                   >
                     {/* Avatar (16px - more compact) */}
                     <Avatar
-                      src={(primaryActor?.meta?.sender?.thumbnail || primaryActor?.avatar_url) as string | undefined}
+                      src={avatarData.src}
                       sx={{
                         width: 16,
                         height: 16,
-                        bgcolor: sender.color,
+                        bgcolor: avatarData.backgroundColor,
                         color: 'white',
                         fontSize: '0.563rem',
                         fontWeight: 600,
                         flexShrink: 0,
                         mt: 0.25,
                       }}
+                      alt={avatarData.displayName}
+                      title={avatarData.displayName}
                     >
-                      {sender.initials}
+                      {avatarData.initials}
                     </Avatar>
 
                     {/* Content */}
@@ -383,7 +340,7 @@ export const ChatwootNotificationsCompact: React.FC = () => {
                             whiteSpace: 'nowrap',
                           }}
                         >
-                          {formatTimeAgo(lastActivityAt)}
+                          {formatTimeAgo(timestamp)}
                         </Typography>
                       </Stack>
                     </Box>

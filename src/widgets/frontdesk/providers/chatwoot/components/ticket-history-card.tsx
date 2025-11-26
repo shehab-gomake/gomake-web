@@ -5,12 +5,13 @@
  * Shows status, priority, message preview, assignee, channel, and metadata
  */
 
-import React from 'react';
-import { Box, Typography } from '@mui/material';
-import { colorTokens, radiusTokens } from '@/widgets/frontdesk/design-system/tokens';
-import { Chip } from '@/widgets/frontdesk/design-system/primitives/Chip';
-import { Avatar } from '@/widgets/frontdesk/design-system/primitives/Avatar';
-import type { ChatwootConversation } from '@/services/frontdesk/api/chatwoot/types/conversations.types';
+import React from "react";
+import { Box, Typography } from "@mui/material";
+import { colorTokens, radiusTokens } from "@/widgets/frontdesk/design-system/tokens";
+import { Chip } from "@/widgets/frontdesk/design-system/primitives/Chip";
+import { Avatar } from "@/widgets/frontdesk/design-system/primitives/Avatar";
+import type { ChatwootConversation } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
+import type { ChatwootInbox } from "@/services/frontdesk/api/chatwoot/types/inboxes.types";
 import {
   AccessTime as TimeIcon,
   Email as EmailIcon,
@@ -19,24 +20,26 @@ import {
   Sms as SmsIcon,
   WhatsApp as WhatsAppIcon,
   Flag as PriorityIcon,
-} from '@mui/icons-material';
+} from "@mui/icons-material";
 
 interface TicketHistoryCardProps {
   conversation: ChatwootConversation;
   onClick: (conversation: ChatwootConversation) => void;
+  isActive?: boolean; // Whether this is the currently viewed conversation
+  inboxes?: ChatwootInbox[]; // Inboxes list to get inbox names
 }
 
 /**
  * Get status color and label
  */
 const getStatusInfo = (status?: string) => {
-  const statusMap: Record<string, { label: string; color: 'primary' | 'success' | 'warning' | 'neutral' }> = {
-    open: { label: 'Open', color: 'primary' },
-    pending: { label: 'Pending', color: 'warning' },
-    resolved: { label: 'Resolved', color: 'success' },
-    snoozed: { label: 'Snoozed', color: 'neutral' },
+  const statusMap: Record<string, { label: string; color: "primary" | "success" | "warning" | "neutral" }> = {
+    open: { label: "Open", color: "primary" },
+    pending: { label: "Pending", color: "warning" },
+    resolved: { label: "Resolved", color: "success" },
+    snoozed: { label: "Snoozed", color: "neutral" },
   };
-  return statusMap[status || 'open'] || { label: status || 'Open', color: 'neutral' };
+  return statusMap[status || "open"] || { label: status || "Open", color: "neutral" };
 };
 
 /**
@@ -46,10 +49,10 @@ const getPriorityInfo = (priority?: string | null) => {
   if (!priority) return null;
 
   const priorityMap: Record<string, { label: string; color: string }> = {
-    urgent: { label: 'Urgent', color: colorTokens.semantic.priority.urgent },
-    high: { label: 'High', color: colorTokens.semantic.priority.high },
-    medium: { label: 'Medium', color: colorTokens.semantic.priority.medium },
-    low: { label: 'Low', color: colorTokens.semantic.priority.low },
+    urgent: { label: "Urgent", color: colorTokens.semantic.priority.urgent },
+    high: { label: "High", color: colorTokens.semantic.priority.high },
+    medium: { label: "Medium", color: colorTokens.semantic.priority.medium },
+    low: { label: "Low", color: colorTokens.semantic.priority.low },
   };
 
   return priorityMap[priority.toLowerCase()] || { label: priority, color: colorTokens.neutral[600] };
@@ -59,35 +62,48 @@ const getPriorityInfo = (priority?: string | null) => {
  * Get channel icon based on channel type
  */
 const getChannelIcon = (channel?: string) => {
-  const channelLower = channel?.toLowerCase() || '';
+  const channelLower = channel?.toLowerCase() || "";
 
-  if (channelLower.includes('email')) return <EmailIcon sx={{ fontSize: 12 }} />;
-  if (channelLower.includes('whatsapp')) return <WhatsAppIcon sx={{ fontSize: 12 }} />;
-  if (channelLower.includes('sms')) return <SmsIcon sx={{ fontSize: 12 }} />;
-  if (channelLower.includes('phone')) return <PhoneIcon sx={{ fontSize: 12 }} />;
+  if (channelLower.includes("email")) return <EmailIcon sx={{ fontSize: 12 }} />;
+  if (channelLower.includes("whatsapp")) return <WhatsAppIcon sx={{ fontSize: 12 }} />;
+  if (channelLower.includes("sms")) return <SmsIcon sx={{ fontSize: 12 }} />;
+  if (channelLower.includes("phone")) return <PhoneIcon sx={{ fontSize: 12 }} />;
 
   return <ChatIcon sx={{ fontSize: 12 }} />;
 };
 
 /**
- * Format channel name for display
+ * Get inbox name from inbox_id
  */
-const formatChannelName = (channel?: string) => {
-  if (!channel) return 'Chat';
+const getInboxName = (inboxId?: number, inboxes: ChatwootInbox[] = []): string => {
+  if (!inboxId || !inboxes.length) return "Unknown Inbox";
 
-  // Convert from snake_case or handle special cases
-  const formatted = channel
-    .replace(/_/g, ' ')
-    .replace(/\b\w/g, (char) => char.toUpperCase());
+  const inbox = inboxes.find((inbox) => inbox.id === inboxId);
+  return inbox?.name || "Unknown Inbox";
+};
 
-  return formatted;
+/**
+ * Get inbox icon based on channel type
+ */
+const getInboxIcon = (inboxId?: number, inboxes: ChatwootInbox[] = []) => {
+  if (!inboxId || !inboxes.length) return <ChatIcon sx={{ fontSize: 12 }} />;
+
+  const inbox = inboxes.find((inbox) => inbox.id === inboxId);
+  const channelType = inbox?.channel_type?.toLowerCase() || "";
+
+  if (channelType.includes("email")) return <EmailIcon sx={{ fontSize: 12 }} />;
+  if (channelType.includes("whatsapp")) return <WhatsAppIcon sx={{ fontSize: 12 }} />;
+  if (channelType.includes("sms")) return <SmsIcon sx={{ fontSize: 12 }} />;
+  if (channelType.includes("phone")) return <PhoneIcon sx={{ fontSize: 12 }} />;
+
+  return <ChatIcon sx={{ fontSize: 12 }} />;
 };
 
 /**
  * Get relative time string
  */
 const getRelativeTime = (timestamp?: number) => {
-  if (!timestamp) return 'Unknown';
+  if (!timestamp) return "Unknown";
 
   const now = Date.now();
   const diff = now - timestamp * 1000; // Convert to milliseconds
@@ -98,7 +114,7 @@ const getRelativeTime = (timestamp?: number) => {
   const weeks = Math.floor(days / 7);
   const months = Math.floor(days / 30);
 
-  if (seconds < 60) return 'Just now';
+  if (seconds < 60) return "Just now";
   if (minutes < 60) return `${minutes}m ago`;
   if (hours < 24) return `${hours}h ago`;
   if (days < 7) return `${days}d ago`;
@@ -107,7 +123,7 @@ const getRelativeTime = (timestamp?: number) => {
 
   // For older dates, show formatted date
   const date = new Date(timestamp * 1000);
-  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  return date.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
 };
 
 /**
@@ -123,236 +139,168 @@ const getMessagePreview = (conversation: ChatwootConversation): string => {
     content = lastMessage.content;
   }
 
-  if (!content) return 'No messages';
+  if (!content) return "No messages";
 
   // Strip HTML tags
-  const stripped = content.replace(/<[^>]*>/g, '');
+  const stripped = content.replace(/<[^>]*>/g, "");
 
   // Decode HTML entities
   const decoded = stripped
-    .replace(/&nbsp;/g, ' ')
-    .replace(/&amp;/g, '&')
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>')
+    .replace(/&nbsp;/g, " ")
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
     .replace(/&quot;/g, '"')
     .replace(/&#39;/g, "'");
 
   // Clean up whitespace
-  const cleaned = decoded.replace(/\s+/g, ' ').trim();
+  const cleaned = decoded.replace(/\s+/g, " ").trim();
 
   // Truncate to ~80 characters
   if (cleaned.length > 80) {
-    return cleaned.substring(0, 77) + '...';
+    return cleaned.substring(0, 77) + "...";
   }
 
-  return cleaned || 'No messages';
+  return cleaned || "No messages";
 };
 
 /**
  * Ticket History Card Component
  */
-export const TicketHistoryCard: React.FC<TicketHistoryCardProps> = ({ conversation, onClick }) => {
+export const TicketHistoryCard: React.FC<TicketHistoryCardProps> = ({
+  conversation,
+  onClick,
+  isActive = false,
+  inboxes = [],
+}) => {
   const statusInfo = getStatusInfo(conversation.status);
-  const priorityInfo = getPriorityInfo(conversation.priority);
   const messagePreview = getMessagePreview(conversation);
   const relativeTime = getRelativeTime(conversation.last_activity_at || conversation.created_at);
-  const channelName = formatChannelName(conversation.meta?.channel);
-  const channelIcon = getChannelIcon(conversation.meta?.channel);
-  const assigneeName = conversation.meta?.assignee?.name || 'Unassigned';
-  const assigneeThumbnail = conversation.meta?.assignee?.thumbnail;
 
-  // Get labels (show first 2, indicate if more)
-  const labels = conversation.labels || [];
-  const displayLabels = labels.slice(0, 2);
-  const remainingLabels = labels.length - displayLabels.length;
+  // Get inbox name and icon
+  const inboxName = getInboxName(conversation.inbox_id, inboxes);
+  const inboxIcon = getInboxIcon(conversation.inbox_id, inboxes);
+
+  // Contact information
+  const contactName = conversation.meta?.sender?.name || conversation.meta?.sender?.email || "Unknown";
+  const contactAvatar = conversation.meta?.sender?.avatar_url;
 
   return (
     <Box
       onClick={() => onClick(conversation)}
       sx={{
-        p: 1.5,
-        mb: 1.5,
-        backgroundColor: colorTokens.neutral[50],
-        border: `1px solid ${colorTokens.semantic.border.default}`,
-        borderRadius: radiusTokens.md,
-        cursor: 'pointer',
-        transition: 'all 0.2s ease',
-        '&:hover': {
-          backgroundColor: colorTokens.neutral[100],
-          borderColor: colorTokens.primary[300],
-          boxShadow: `0 2px 8px ${colorTokens.neutral[200]}`,
+        p: 0.875,
+        backgroundColor: isActive ? colorTokens.primary[50] : colorTokens.neutral[50],
+        border: `1px solid ${isActive ? colorTokens.primary[300] : colorTokens.semantic.border.default}`,
+        borderRadius: "6px",
+        cursor: "pointer",
+        transition: "all 0.15s ease",
+        "&:hover": {
+          backgroundColor: isActive ? colorTokens.primary[100] : colorTokens.neutral[100],
+          borderColor: isActive ? colorTokens.primary[400] : colorTokens.primary[300],
+          boxShadow: `0 1px 3px ${colorTokens.neutral[200]}`,
         },
       }}
     >
-      {/* Header: Status and Priority */}
+      {/* Row 1: Status ... Ticket ID */}
       <Box
         sx={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          mb: 1,
-        }}
-      >
-        <Chip
-          label={statusInfo.label}
-          color={statusInfo.color}
-          variant="soft"
-          size="small"
-        />
-
-        {priorityInfo && (
-          <Box
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 0.5,
-              color: priorityInfo.color,
-              fontSize: 11,
-              fontWeight: 600,
-            }}
-          >
-            <PriorityIcon sx={{ fontSize: 12 }} />
-            {priorityInfo.label}
-          </Box>
-        )}
-      </Box>
-
-      {/* Ticket ID */}
-      <Typography
-        variant="subtitle2"
-        sx={{
-          fontWeight: 600,
-          fontSize: 12,
-          color: colorTokens.semantic.text.primary,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
           mb: 0.5,
         }}
       >
-        Ticket #{conversation.id}
-      </Typography>
+        <Chip label={statusInfo.label} color={statusInfo.color} variant="soft" size="small" sx={{ fontSize: 10, height: 20 }} />
+        <Typography
+          variant="caption"
+          sx={{
+            fontWeight: 600,
+            fontSize: 10,
+            color: isActive ? colorTokens.primary[700] : colorTokens.semantic.text.secondary,
+            fontFamily: "monospace",
+          }}
+        >
+          #{conversation.id}
+        </Typography>
+      </Box>
 
-      {/* Message Preview */}
-      <Typography
-        variant="body2"
-        sx={{
-          fontSize: 12,
-          color: colorTokens.semantic.text.secondary,
-          mb: 1,
-          overflow: 'hidden',
-          textOverflow: 'ellipsis',
-          display: '-webkit-box',
-          WebkitLineClamp: 2,
-          WebkitBoxOrient: 'vertical',
-          lineHeight: 1.4,
-        }}
-      >
-        {messagePreview}
-      </Typography>
-
-      {/* Metadata Row: Assignee, Channel, Time */}
+      {/* Row 2: Contact name and icon ... datetime */}
       <Box
         sx={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: 1.5,
-          mb: labels.length > 0 ? 1 : 0,
-          flexWrap: 'wrap',
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          mb: 0.5,
         }}
       >
-        {/* Assignee */}
         <Box
           sx={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 0.5,
+            display: "flex",
+            alignItems: "center",
+            gap: 0.625,
           }}
         >
-          <Avatar
-            size="xs"
-            name={assigneeName}
-            src={assigneeThumbnail}
-          />
+          <Avatar size="xs" name={contactName} src={contactAvatar} />
           <Typography
-            variant="caption"
+            variant="body2"
             sx={{
               fontSize: 10,
-              color: colorTokens.semantic.text.tertiary,
+              color: colorTokens.semantic.text.primary,
+              fontWeight: 500,
             }}
           >
-            {assigneeName}
+            {contactName}
           </Typography>
         </Box>
 
-        {/* Channel */}
         <Box
           sx={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 0.5,
+            display: "flex",
+            alignItems: "center",
+            gap: 0.375,
             color: colorTokens.semantic.text.tertiary,
           }}
         >
-          {channelIcon}
-          <Typography
-            variant="caption"
-            sx={{ fontSize: 10 }}
-          >
-            {channelName}
-          </Typography>
-        </Box>
-
-        {/* Time */}
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 0.5,
-            color: colorTokens.semantic.text.tertiary,
-          }}
-        >
-          <TimeIcon sx={{ fontSize: 12 }} />
-          <Typography
-            variant="caption"
-            sx={{ fontSize: 10 }}
-          >
+          <TimeIcon sx={{ fontSize: 11 }} />
+          <Typography variant="caption" sx={{ fontSize: 9 }}>
             {relativeTime}
           </Typography>
         </Box>
       </Box>
 
-      {/* Labels */}
-      {labels.length > 0 && (
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 0.5,
-            flexWrap: 'wrap',
-          }}
-        >
-          {displayLabels.map((label) => (
-            <Chip
-              key={label}
-              label={label}
-              variant="soft"
-              color="neutral"
-              size="small"
-              sx={{ fontSize: 9, height: 18 }}
-            />
-          ))}
-          {remainingLabels > 0 && (
-            <Typography
-              variant="caption"
-              sx={{
-                fontSize: 9,
-                color: colorTokens.semantic.text.tertiary,
-                fontWeight: 600,
-              }}
-            >
-              +{remainingLabels} more
-            </Typography>
-          )}
-        </Box>
-      )}
+      {/* Row 3: Message preview */}
+      <Typography
+        variant="body2"
+        sx={{
+          fontSize: 11,
+          color: colorTokens.semantic.text.secondary,
+          mb: 0.5,
+          overflow: "hidden",
+          textOverflow: "ellipsis",
+          display: "-webkit-box",
+          WebkitLineClamp: 1,
+          WebkitBoxOrient: "vertical",
+          lineHeight: 1.3,
+        }}
+      >
+        {messagePreview}
+      </Typography>
+
+      {/* Row 4: Inbox with icon and name */}
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          gap: 0.375,
+          color: colorTokens.semantic.text.tertiary,
+        }}
+      >
+        {inboxIcon}
+        <Typography variant="caption" sx={{ fontSize: 9 }}>
+          {inboxName}
+        </Typography>
+      </Box>
     </Box>
   );
 };

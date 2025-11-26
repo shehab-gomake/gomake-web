@@ -62,12 +62,6 @@ interface IProps {
   onClickClient?: (clientId: any) => void;
   allBoardMissions?: IBoardMissions[];
   setFilters?: any;
-  storageList?: any;
-  inputValue?: any;
-  defaultValue?: any;
-  addPrintHouseJobsStorage?: any;
-  handleStorageChange?: any;
-  setInputValue?: any;
   employeesCategories?: any;
   visibleColumns: string[];
   isVirtualizing?: boolean;
@@ -80,12 +74,6 @@ const StatusTableComponent = ({
   allBoardMissions,
   onClickClient,
   setFilters,
-  storageList,
-  inputValue,
-  defaultValue,
-  addPrintHouseJobsStorage,
-  handleStorageChange,
-  setInputValue,
   employeesCategories,
   visibleColumns,
   isVirtualizing = false,
@@ -158,9 +146,6 @@ const StatusTableComponent = ({
     t,
     RTL,
     updateStatus,
-    onOpenMarkReadyModal,
-    openMarkReadyModal,
-    onCloseMarkReadyModal,
     onClickMoveBoardMissionToDone,
     isEmailComposerOpen,
     emailData,
@@ -172,15 +157,6 @@ const StatusTableComponent = ({
     tryMoveBoardMissionsToDone,
     updateJobDueDate,
     selectedMission,
-    onOpenMarkReadyModalForHasJobs,
-    openMarkReadyModalForHasJobs,
-    onCloseMarkReadyModalForHasJobs,
-    onClickMarkReadyModalForHasJobs,
-    // Done scope modal
-    openDoneScopeModal,
-    onCloseDoneScopeModal,
-    onClickDoneScopeAllJobs,
-    onClickDoneScopeProductType,
   } = useProductionFloorData();
 
   const {
@@ -815,91 +791,7 @@ const StatusTableComponent = ({
         </Collapse>
       )}
 
-      {/* All modals remain the same */}
-      <ThreeOptionsModal
-        modalType={ModalType.WARNING}
-        title={t("boardMissions.markDoneModalTitle")}
-        subTitle={t("boardMissions.markDoneModalSubTitle")}
-        yesBtn={"boardMissions.markDoneModalYes"}
-        noBtn={"boardMissions.markDoneModalNo"}
-        openModal={openMarkReadyModal}
-        onClose={onCloseMarkReadyModal}
-        onClickYes={() => onClickMoveBoardMissionToDone(true)}
-        onClickNo={() => onClickMoveBoardMissionToDone(false)}
-      >
-        <div style={{ width: "100%", minWidth: 300 }}>
-          <GoMakeAutoComplate
-            options={
-              storageList?.find(
-                (option: any) => option.storage === inputValue
-              ) || inputValue === ""
-                ? storageList
-                : [
-                    {
-                      storage: `Add "${inputValue}" as a new storage`,
-                      id: "new",
-                    },
-                    ...storageList,
-                  ]
-            }
-            placeholder={t("boardMissions.selectStorage")}
-            key={defaultValue}
-            style={{
-              width: "100%",
-              border: "none",
-              height: 45,
-            }}
-            getOptionLabel={(option: any) => option?.storage}
-            value={defaultValue}
-            onChange={(e: any, value: any) => {
-              if (value?.id === "new") {
-                addPrintHouseJobsStorage(inputValue);
-                setInputValue("");
-              } else {
-                handleStorageChange(e, value);
-                setInputValue("");
-              }
-            }}
-            onInputChange={(event: any, newInputValue: string) => {
-              setInputValue(newInputValue);
-            }}
-          />
-        </div>
-      </ThreeOptionsModal>
-
-      {/* Done scope selection when productType exists */}
-      <ThreeOptionsModal
-        modalType={ModalType.WARNING}
-        title={"Select Jobs to Mark as Ready"}
-        subTitle={
-          selectedMission?.productType
-            ? t("boardMissions.askDoneScope", {
-                productType:
-                  selectedMission?.productTypeName ||
-                  selectedMission?.productType,
-              })
-            : ""
-        }
-        yesBtn={t("boardMissions.markAllJobsReady", {
-          defaultValue: "Mark All Jobs Ready",
-        })}
-        noBtn={
-          selectedMission?.productType
-            ? t("boardMissions.markProductTypeOnly", {
-                productType:
-                  selectedMission?.productTypeName ||
-                  selectedMission?.productType,
-                defaultValue: `Mark ${
-                  selectedMission?.productType || "Product Type"
-                } Only`,
-              })
-            : undefined
-        }
-        openModal={openDoneScopeModal}
-        onClose={onCloseDoneScopeModal}
-        onClickYes={onClickDoneScopeAllJobs}
-        onClickNo={onClickDoneScopeProductType}
-      />
+      {/* Modals are now in production-floor-widget.tsx to avoid duplication */}
 
       <PrintPackingSlipModalWidget
         openModal={openPackagesModal}
@@ -918,56 +810,6 @@ const StatusTableComponent = ({
         onClickDelete={handleConfirm}
         onClickCancel={handleCloseModal}
       />
-
-      <GoMakeDeleteModal
-        title={t("boardMissions.markAsReadyJobsModalTitle")}
-        yesBtn={t("modal.yes")}
-        modalType={ModalType.WARNING}
-        subTitle={" "}
-        openModal={openMarkReadyModalForHasJobs}
-        onClose={onCloseMarkReadyModalForHasJobs}
-        onClickDelete={onClickMarkReadyModalForHasJobs}
-        onClickCancel={onCloseMarkReadyModalForHasJobs}
-      >
-        <div style={{ width: "100%", minWidth: 300 }}>
-          <GoMakeAutoComplate
-            options={
-              storageList?.find(
-                (option: any) => option.storage === inputValue
-              ) || inputValue === ""
-                ? storageList
-                : [
-                    {
-                      storage: `Add "${inputValue}" as a new storage`,
-                      id: "new",
-                    },
-                    ...storageList,
-                  ]
-            }
-            placeholder={t("boardMissions.selectStorage")}
-            key={defaultValue}
-            style={{
-              width: "100%",
-              border: "none",
-              height: 45,
-            }}
-            getOptionLabel={(option: any) => option?.storage}
-            value={defaultValue}
-            onChange={(e: any, value: any) => {
-              if (value?.id === "new") {
-                addPrintHouseJobsStorage(inputValue);
-                setInputValue("");
-              } else {
-                handleStorageChange(e, value);
-                setInputValue("");
-              }
-            }}
-            onInputChange={(event: any, newInputValue: string) => {
-              setInputValue(newInputValue);
-            }}
-          />
-        </div>
-      </GoMakeDeleteModal>
 
       <GoMakeDeleteModal
         title={t("sales.quote.stuckReasonTitleModal")}

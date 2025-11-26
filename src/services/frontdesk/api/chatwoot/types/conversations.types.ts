@@ -18,6 +18,18 @@ export enum ConversationStatus {
 }
 
 /**
+ * Conversation Priority Enum
+ * Priority levels for conversations
+ */
+export enum ConversationPriority {
+  URGENT = "urgent",
+  HIGH = "high",
+  MEDIUM = "medium",
+  LOW = "low",
+  NONE = "none",
+}
+
+/**
  * Conversation Assignee Type Enum
  * Filter by assignee
  */
@@ -40,6 +52,19 @@ export enum ConversationSortBy {
 }
 
 /**
+ * Conversation Type Enum
+ * Pre-defined filter types that translate to specific backend queries
+ */
+export enum ConversationType {
+  /** Shows conversations that require attention (never replied to OR waiting for contact response) */
+  UNATTENDED = "unattended",
+  /** Shows conversations where the current user has been mentioned */
+  MENTION = "mention",
+  /** Shows conversations the user is actively involved in (participating) */
+  PARTICIPATING = "participating",
+}
+
+/**
  * Conversation List Query Parameters
  * Query parameters for GET /api/accounts/conversations
  */
@@ -49,6 +74,9 @@ export interface ConversationListParams {
 
   /** Filter by assignee */
   assignee_type?: ConversationAssigneeType;
+
+  /** Pre-defined conversation type filter (unattended, mention, participating) */
+  conversation_type?: ConversationType;
 
   /** Sort order */
   sort_by?: ConversationSortBy | string;
@@ -144,6 +172,8 @@ export interface ChatwootConversation {
  * Note: Chatwoot API returns snake_case properties
  */
 export interface ChatwootEmailContent {
+  /** Email subject line */
+  subject?: string;
   /** HTML version of the email */
   html_content?: {
     full?: string;
@@ -168,6 +198,23 @@ export interface ChatwootContentAttributes {
 }
 
 /**
+ * Chatwoot Attachment
+ * Represents a file attachment on a message
+ */
+export interface ChatwootAttachment {
+  id: number;
+  message_id: number;
+  file_type: "image" | "audio" | "video" | "file" | "location" | "contact" | "fallback";
+  account_id: number;
+  extension?: string | null;
+  data_url: string;
+  thumb_url?: string;
+  file_size?: number;
+  width?: number;
+  height?: number;
+}
+
+/**
  * Chatwoot Message (simplified)
  * Used within conversations
  */
@@ -180,7 +227,10 @@ export interface ChatwootMessage {
   message_type?: number;
   created_at?: number;
   updated_at?: number;
+  /** Private flag - API may return as _private or private */
   _private?: boolean;
+  /** Private flag - API may return as _private or private */
+  private?: boolean;
   status?: string;
   source_id?: string;
   content_type?: string;
@@ -193,6 +243,8 @@ export interface ChatwootMessage {
     email?: string;
     avatar_url?: string;
   };
+  /** Message attachments (images, files, etc.) */
+  attachments?: ChatwootAttachment[];
 }
 
 /**
@@ -229,8 +281,24 @@ export interface ConversationListResponse {
 /**
  * Conversation Detail Response
  * Response structure for get conversation details endpoint
+ * 
+ * Note: Chatwoot returns the conversation directly (not wrapped),
+ * but we support both formats for compatibility
  */
-export interface ConversationDetailResponse {
+export interface ConversationDetailResponse extends Partial<ChatwootConversation> {
   data?: ChatwootConversation;
   payload?: ChatwootConversation;
+}
+
+/**
+ * Response from toggle_status endpoint
+ * POST /api/accounts/conversations/{conversation_id}/toggle_status
+ */
+export interface ConversationStatusToggleResponse {
+  meta: Record<string, any>;
+  payload: {
+    success: boolean;
+    current_status: string;
+    conversation_id: number;
+  };
 }

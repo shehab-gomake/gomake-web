@@ -3,6 +3,7 @@
  *
  * Handles file selection and displays attachment previews.
  * Used for email and web widget channels that support attachments.
+ * Matches Chatwoot's attachment upload patterns with file size validation.
  */
 
 import React, { useRef } from "react";
@@ -11,6 +12,23 @@ import AttachFileIcon from "@mui/icons-material/AttachFile";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { AttachmentPreviews } from "./AttachmentPreview";
 import { createFieldContainerStyles, createSectionLabelStyles, createOutlinedButtonStyles } from "../../styles/compose-styles";
+import { createLogger } from "@/services/frontdesk/utils/logger";
+
+const logger = createLogger("AttachmentUploader");
+
+// Maximum file upload size in MB (matching Chatwoot's MAXIMUM_FILE_UPLOAD_SIZE)
+const MAXIMUM_FILE_UPLOAD_SIZE_MB = 40;
+
+// Convert MB to bytes
+const fileSizeInMegaBytes = (bytes: number): number => {
+  return bytes / (1024 * 1024);
+};
+
+// Check if file size is within limit
+const checkFileSizeLimit = (file: File, maximumUploadLimitMB: number): boolean => {
+  const fileSizeInMB = fileSizeInMegaBytes(file.size);
+  return fileSizeInMB <= maximumUploadLimitMB;
+};
 
 export interface AttachmentUploaderProps {
   /** Currently selected files */
@@ -34,9 +52,32 @@ export const AttachmentUploader = React.memo<AttachmentUploaderProps>(
 
     const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
       const selectedFiles = Array.from(e.target.files || []);
-      if (selectedFiles.length > 0) {
-        onFilesSelect([...files, ...selectedFiles]);
+      if (selectedFiles.length === 0) return;
+
+      const validFiles: File[] = [];
+      const invalidFiles: string[] = [];
+
+      selectedFiles.forEach((file) => {
+        if (checkFileSizeLimit(file, MAXIMUM_FILE_UPLOAD_SIZE_MB)) {
+          validFiles.push(file);
+        } else {
+          invalidFiles.push(file.name);
+          logger.warn(`File ${file.name} exceeds size limit of ${MAXIMUM_FILE_UPLOAD_SIZE_MB}MB`);
+        }
+      });
+
+      if (invalidFiles.length > 0) {
+        // TODO: Show user-friendly error toast/snackbar
+        console.warn(
+          `The following files exceed the ${MAXIMUM_FILE_UPLOAD_SIZE_MB}MB limit: ${invalidFiles.join(", ")}`
+        );
       }
+
+      if (validFiles.length > 0) {
+        onFilesSelect([...files, ...validFiles]);
+        logger.debug(`Added ${validFiles.length} valid file(s)`);
+      }
+
       // Reset input to allow selecting the same file again
       if (fileInputRef.current) {
         fileInputRef.current.value = "";

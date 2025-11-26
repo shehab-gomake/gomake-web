@@ -4,9 +4,11 @@
  */
 
 import { ChatwootNotification } from "@/services/frontdesk/api/chatwoot/types/notifications.types";
+import { generateNotificationAvatar } from "./avatar.utils";
 
 /**
  * Notification sender information
+ * @deprecated Use generateNotificationAvatar() directly for type-safe avatar data
  */
 export interface NotificationSender {
   name: string;
@@ -26,46 +28,32 @@ export interface NotificationAssignee {
 }
 
 /**
- * Avatar color palette for consistent user identification
- */
-const AVATAR_COLORS = [
-  "#1976D2", // Primary blue
-  "#3B82F6", // Blue
-  "#10B981", // Green
-  "#F59E0B", // Amber
-  "#EF4444", // Red
-  "#8B5CF6", // Purple
-];
-
-/**
  * Get notification sender information (the actual contact who sent the message)
+ * 
+ * @deprecated Use generateNotificationAvatar() from avatar.utils.ts for consistent avatar generation
+ * This function is kept for backward compatibility but will be removed in future versions
  */
 export function getNotificationSender(notification: ChatwootNotification, fallbackColor: string): NotificationSender {
   const primaryActor = notification.primary_actor as any;
+  const secondaryActor = notification.secondary_actor as any;
 
-  // Try to get the actual contact/sender from meta
-  const sender = primaryActor?.meta?.sender || notification.secondary_actor?.sender;
-  const name = sender?.name || sender?.email || primaryActor?.name || "Unknown";
-  const email = sender?.email || primaryActor?.meta?.sender?.email || "";
-  const thumbnail = sender?.thumbnail || primaryActor?.meta?.sender?.thumbnail || "";
+  // Use the unified avatar generator
+  const avatarData = generateNotificationAvatar(notification);
 
-  const initials = name
-    .split(" ")
-    .map((n: string) => n[0])
-    .join("")
-    .toUpperCase()
-    .slice(0, 2);
-
-  // Generate consistent color based on name
-  const colors = [fallbackColor, ...AVATAR_COLORS];
-  const colorIndex = name.charCodeAt(0) % colors.length;
+  // Extract email for backward compatibility
+  const senderEmail = 
+    secondaryActor?.email ||
+    primaryActor?.meta?.sender?.email ||
+    secondaryActor?.sender?.email ||
+    primaryActor?.email ||
+    "";
 
   return {
-    name,
-    email,
-    thumbnail,
-    initials,
-    color: colors[colorIndex],
+    name: avatarData.displayName,
+    email: senderEmail,
+    thumbnail: avatarData.src || "",
+    initials: avatarData.initials,
+    color: avatarData.backgroundColor,
   };
 }
 
@@ -197,9 +185,56 @@ export function getNotificationTypeDetails(
     "conversation.created": { icon: "add_comment", label: "New Ticket", color: colors.primary },
     "conversation.updated": { icon: "edit", label: "Updated", color: colors.neutral },
     "message.created": { icon: "message", label: "New Message", color: colors.primary },
+    // Handle compound notification types
+    "assigned_conversation_new_message": { icon: "message", label: "New Message", color: colors.primary },
+    "unassigned_conversation_new_message": { icon: "message", label: "New Message", color: colors.primary },
   };
 
-  return typeMap[notificationType] || { icon: "notifications", label: notificationType, color: colors.neutral };
+  // Check exact match first
+  if (typeMap[notificationType]) {
+    return typeMap[notificationType];
+  }
+
+  // Handle patterns for better user experience
+  // Priority: Check for message-related notifications first (most common)
+  if (notificationType.includes("new_message") || notificationType.includes("message.created") || notificationType.includes("message")) {
+    return { icon: "message", label: "New Message", color: colors.primary };
+  }
+
+  // Pattern: "conversation.mention" or "mention" -> "Mention"
+  if (notificationType.includes("mention")) {
+    return { icon: "alternate_email", label: "Mention", color: colors.primary };
+  }
+
+  // Pattern: "conversation.created" or "created" -> "New Conversation"
+  if (notificationType.includes("created")) {
+    return { icon: "add_comment", label: "New Conversation", color: colors.primary };
+  }
+
+  // Pattern: "conversation.assigned" or "assigned" -> "Assignment"
+  // (but not if it's about a message, which we already handled above)
+  if (notificationType.includes("assigned") && !notificationType.includes("unassigned")) {
+    return { icon: "person_add", label: "Assignment", color: colors.primary };
+  }
+
+  // Pattern: "conversation.updated" or "updated" -> "Updated"
+  if (notificationType.includes("updated")) {
+    return { icon: "edit", label: "Updated", color: colors.neutral };
+  }
+
+  // Fallback: Try to format the notification type nicely
+  // Convert snake_case to Title Case and clean up common patterns
+  const formattedLabel = notificationType
+    .replace(/_/g, " ")
+    .replace(/\b\w/g, (char) => char.toUpperCase())
+    .replace(/\s+/g, " ")
+    .trim();
+
+  return {
+    icon: "notifications",
+    label: formattedLabel || "Notification",
+    color: colors.neutral,
+  };
 }
 
 /**

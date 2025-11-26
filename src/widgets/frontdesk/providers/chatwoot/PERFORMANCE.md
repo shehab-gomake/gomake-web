@@ -80,10 +80,17 @@ export const ConversationListItem = React.memo<ConversationListItemProps>(({
 });
 ```
 
-**Candidates for memoization:**
-- `ChatwootConversationListItem`
-- `ChatwootMessageItem`
-- Small reusable components
+**Implemented in:**
+- `ChatwootConversationListItem` (with custom comparison)
+- `ChatwootConversationList`
+- `ConversationSortMenu`
+- `ConversationTabs`
+- `ConversationSearchBar`
+- `ConversationFilterMenu`
+- `AttachmentPreview`
+- `AttachmentUploader`
+- `ContactSelectionField`
+- `EmailCompositionFields`
 
 ---
 
@@ -281,16 +288,22 @@ const ChatwootNotificationsView = React.lazy(() =>
 **Solution:** Debounce search input.
 
 ```typescript
-// ✅ Using lodash debounce or custom hook
-import { debounce } from 'lodash';
+// ✅ Using custom useDebouncedValue hook
+import { useDebouncedValue } from './hooks/use-debounced-value';
 
-const debouncedSearch = useMemo(
-  () => debounce((query: string) => {
-    onFiltersChange({ q: query });
-  }, 300),
-  [onFiltersChange]
-);
+const [searchQuery, setSearchQuery] = useState('');
+const debouncedSearch = useDebouncedValue(searchQuery, 300);
+
+useEffect(() => {
+  if (debouncedSearch) {
+    onFiltersChange({ q: debouncedSearch });
+  }
+}, [debouncedSearch]);
 ```
+
+**Implemented in:**
+- `use-debounced-value.ts` - Custom hook for value debouncing
+- Search inputs across the provider
 
 ---
 
@@ -411,13 +424,13 @@ npx lighthouse http://localhost:3004/frontdesk
 1. ✅ Implement RequestState pattern
 2. ✅ Add useMemo/useCallback to hooks
 3. ✅ Create utility functions
-4. ⏳ Virtual scrolling for long lists
-5. ⏳ Lazy load heavy components
+4. ✅ Implement React.memo for list items
+5. ✅ Debounced search (useDebouncedValue hook)
+6. ⏳ Virtual scrolling for long lists
+7. ⏳ Lazy load heavy components
 
 ### Medium Priority
-6. ⏳ Implement React.memo for list items
-7. ⏳ Add request cancellation
-8. ⏳ Debounced search
+8. ⏳ Add request cancellation (AbortController)
 9. ⏳ Service Worker for offline support
 10. ⏳ IndexedDB caching
 
