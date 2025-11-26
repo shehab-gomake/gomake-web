@@ -15,7 +15,7 @@ import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { useRouter } from "next/router";
 import { useTranslation } from 'react-i18next';
 import { GoMakeAlertModal, QRErrorModal } from "../modal";
-import { ThreeOptionsModal } from "@/components";
+import { GoMakeDeleteModal } from "@/components";
 import {
     PrintPackingSlipModalWidget
 } from "@/widgets/production-floor/views/board-missions-view/navigation-buttons/print-packing-slip-modal-widget";
@@ -178,15 +178,15 @@ const QrCodeReader = (props: IProps) => {
         closeEmailComposer,
     } = useFrontDeskEmailIntegration({ documentType: DOCUMENT_TYPE.boardMission });
 
-    const onClickMoveBoardMissionToDone = async (sendMessage: boolean) => {
+    const onClickMoveBoardMissionToDone = async () => {
         const callBack = (res) => {
             setOpenMoveToReadyModal(false);
             if (res?.success) {
                 alertSuccessUpdate();
                 setOpenPackagesModal(true);
-                // handleRemoveBoardMission(selectedMissionId);
-                if (sendMessage && hasFrontDeskFeature) {
-                    openEmailComposer(selectedMission.id);
+                // Always open email composer after marking ready (if FrontDesk is enabled)
+                if (hasFrontDeskFeature) {
+                    openEmailComposer(selectedMission.id || selectedMission.boardMissionId);
                 }
             } else {
                 alertFaultUpdate();
@@ -197,12 +197,13 @@ const QrCodeReader = (props: IProps) => {
         if (selectedMission?.qrCodeAction === QrCodeAction.OrderToReady) {
             await moveOrderToDoneApi(callApi, callBack, {
                 orderId: selectedMission.orderId,
-                isSendMessage: sendMessage,
+                isSendMessage: false, // Don't send automatically - let user decide in composer
             });
         } else {
+            // Mark as ready without sending message - user will decide in email composer
             await moveBoardMissionToDoneApi(callApi, callBack, {
                 boardMissionId: selectedMission.id || selectedMission.boardMissionId,
-                sendMessage,
+                sendMessage: false, // Don't send automatically - let user decide in composer
                 productType: "",
                 storage: selectedMission.storage ?? "",
             });
@@ -224,16 +225,14 @@ const QrCodeReader = (props: IProps) => {
                 yesBtn="modal.ok"
                 withCancelBtn={true}
             />
-            <ThreeOptionsModal
+            <GoMakeDeleteModal
                 modalType={ModalType.WARNING}
                 title={t("boardMissions.markDoneModalTitle")}
                 subTitle={t("boardMissions.markDoneModalSubTitle")}
-                yesBtn={"boardMissions.markDoneModalYes"}
-                noBtn={"boardMissions.markDoneModalNo"}
                 openModal={openMoveToReadyModal}
                 onClose={() => setOpenMoveToReadyModal(false)}
-                onClickYes={() => onClickMoveBoardMissionToDone(true)}
-                onClickNo={() => onClickMoveBoardMissionToDone(false)}
+                onClickDelete={onClickMoveBoardMissionToDone}
+                onClickCancel={() => setOpenMoveToReadyModal(false)}
                 style={
                     isMobile
                         ? {

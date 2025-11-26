@@ -407,16 +407,14 @@ const ProductionFloorWidget = () => {
       />
 
       <QRScannerFab />
-      <ThreeOptionsModal
+      <GoMakeDeleteModal
         modalType={ModalType.WARNING}
         title={t("boardMissions.markDoneModalTitle")}
         subTitle={t("boardMissions.markDoneModalSubTitle")}
-        yesBtn={"boardMissions.markDoneModalYes"}
-        noBtn={"boardMissions.markDoneModalNo"}
         openModal={isOpenDoneModal.isOpen}
         onClose={() => isOpenDoneModal.close()}
-        onClickYes={() => onClickMoveBoardMissionToDone(true, true)}
-        onClickNo={() => onClickMoveBoardMissionToDone(false, true)}
+        onClickDelete={() => onClickMoveBoardMissionToDone(true)}
+        onClickCancel={() => isOpenDoneModal.close()}
         style={
           isMobile
             ? {
@@ -485,12 +483,10 @@ const ProductionFloorWidget = () => {
         modalType={ModalType.WARNING}
         title={t("boardMissions.markDoneModalTitle")}
         subTitle={t("boardMissions.markDoneModalSubTitle")}
-        yesBtn={"boardMissions.markDoneModalYes"}
-        noBtn={"boardMissions.markDoneModalNo"}
         openModal={openMarkReadyModal}
         onClose={onCloseMarkReadyModal}
-        onClickYes={() => onClickMoveBoardMissionToDone(true)}
-        onClickNo={() => onClickMoveBoardMissionToDone(false)}
+        onClickDelete={() => onClickMoveBoardMissionToDone()}
+        onClickCancel={onCloseMarkReadyModal}
         style={
           isMobile
             ? {
@@ -502,16 +498,14 @@ const ProductionFloorWidget = () => {
         }
       /> */}
       {/* Mark Ready Modal - Simple version (no jobs) */}
-      <ThreeOptionsModal
+      <GoMakeDeleteModal
         modalType={ModalType.WARNING}
         title={t("boardMissions.markDoneModalTitle")}
         subTitle={t("boardMissions.markDoneModalSubTitle")}
-        yesBtn={"boardMissions.markDoneModalYes"}
-        noBtn={"boardMissions.markDoneModalNo"}
         openModal={openMarkReadyModal}
         onClose={onCloseMarkReadyModal}
-        onClickYes={() => onClickMoveBoardMissionToDone(true)}
-        onClickNo={() => onClickMoveBoardMissionToDone(false)}
+        onClickDelete={() => onClickMoveBoardMissionToDone()}
+        onClickCancel={onCloseMarkReadyModal}
       >
         <div style={{ width: "100%", minWidth: 300 }}>
           <GoMakeAutoComplate

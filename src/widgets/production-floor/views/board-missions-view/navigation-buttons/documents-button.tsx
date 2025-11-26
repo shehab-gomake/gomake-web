@@ -16,7 +16,7 @@ import { PDFIcon } from "@/pages-components/quotes/more-circle/icons/pdf";
 import { ClickOutside } from "@/components/click-out-side/click-out-side";
 import { getOrderSummeryPdfApi } from "@/services/api-service/board-missions/board-missions-table";
 import { PackageIcon } from "@/icons/package-icon";
-import { ThreeOptionsModal } from "@/components";
+import { GoMakeDeleteModal } from "@/components";
 import { isReadyBoardMissionsState } from "@/widgets/production-floor/views/board-missions-view/stations/state";
 import { moveBoardMissionToDoneApi } from "@/services/api-service/production-floor/production-floor-endpoints";
 import { PrintPackingSlipModalWidget } from "@/widgets/production-floor/views/board-missions-view/navigation-buttons/print-packing-slip-modal-widget";
@@ -184,7 +184,7 @@ const DocumentsButton = ({ isMobile = false }) => {
     closeEmailComposer,
   } = useFrontDeskEmailIntegration({ documentType: DOCUMENT_TYPE.boardMission });
 
-  const onClickMoveBoardMissionToDone = async (sendMessage: boolean) => {
+  const onClickMoveBoardMissionToDone = async () => {
     const callBack = (res) => {
       setOpenMarkReadyModal(false);
       if (boardMissions.productType === "" || !boardMissions.productType) {
@@ -192,16 +192,18 @@ const DocumentsButton = ({ isMobile = false }) => {
       }
       if (res?.success) {
         alertSuccessUpdate();
-        if (sendMessage && hasFrontDeskFeature) {
+        // Always open email composer after marking ready (if FrontDesk is enabled)
+        if (hasFrontDeskFeature) {
           openEmailComposer(boardMissions.boardMissionId);
         }
       } else {
         alertFaultUpdate();
       }
     };
+    // Mark as ready without sending message - user will decide in email composer
     await moveBoardMissionToDoneApi(callApi, callBack, {
       boardMissionId: boardMissions?.boardMissionId,
-      sendMessage,
+      sendMessage: false, // Don't send automatically - let user decide in composer
       productType: boardMissions?.productType
     });
   };
@@ -347,16 +349,14 @@ const DocumentsButton = ({ isMobile = false }) => {
             : undefined
         }
       />
-      <ThreeOptionsModal
+      <GoMakeDeleteModal
         modalType={ModalType.WARNING}
         title={t("boardMissions.markDoneModalTitle")}
         subTitle={t("boardMissions.markDoneModalSubTitle")}
-        yesBtn={"boardMissions.markDoneModalYes"}
-        noBtn={"boardMissions.markDoneModalNo"}
         openModal={openMarkReadyModal}
         onClose={() => setOpenMarkReadyModal(false)}
-        onClickYes={() => onClickMoveBoardMissionToDone(true)}
-        onClickNo={() => onClickMoveBoardMissionToDone(false)}
+        onClickDelete={onClickMoveBoardMissionToDone}
+        onClickCancel={() => setOpenMarkReadyModal(false)}
         style={
           isMobile
             ? {

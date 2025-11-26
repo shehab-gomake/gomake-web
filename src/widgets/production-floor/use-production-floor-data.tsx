@@ -898,7 +898,6 @@ const useProductionFloorData = () => {
   });
 
   const onClickMoveBoardMissionToDone = async (
-    sendMessage: boolean,
     ignoreProductType: boolean = false
   ) => {
     const callBack = (res) => {
@@ -911,17 +910,19 @@ const useProductionFloorData = () => {
         ) {
           setOpenPackagesModal(true);
         }
-        if (sendMessage && hasFrontDeskFeature) {
-          openEmailComposer(selectedMission.id);
+        // Always open email composer after marking ready (if FrontDesk is enabled)
+        if (hasFrontDeskFeature) {
+          openEmailComposer(selectedMission.id || selectedMission.boardMissionId);
         }
         // handleRemoveBoardMission(selectedMissionId);
       } else {
         alertFaultUpdate();
       }
     };
+    // Mark as ready without sending message - user will decide in email composer
     await moveBoardMissionToDoneApi(callApi, callBack, {
       boardMissionId: selectedMission.id || selectedMission.boardMissionId,
-      sendMessage,
+      sendMessage: false, // Don't send automatically - let user decide in composer
       productType: ignoreProductType ? "" : selectedMission.productType ?? "",
       storage: selectedMission.storage ?? "",
     });

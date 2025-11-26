@@ -260,7 +260,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
       }
 
       if (connectionId) {
-        const callBack = (res) => {};
+        const callBack = (res) => { };
         addOrderBoardMissionsToFileUploaderApi(callApi, callBack, {
           orderId: newOrderId,
           connectionId: connectionId,
@@ -277,7 +277,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
           !CheckPreferenceValue(EPreferences.USE_PRINTNODE_AFTER_UPLOAD_FILE)
         )
       ) {
-        printNodeModalShowLog(callApi, () => {}, {
+        printNodeModalShowLog(callApi, () => { }, {
           orderId: newOrderId,
         }).then();
         setOpenPrintNodeModal(true);
@@ -305,7 +305,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
   useEffect(() => {
     const loadDocumentColumnSettings = async () => {
       try {
-        const res = await getJobsTableSettingsApi(callApi, () => {}, {
+        const res = await getJobsTableSettingsApi(callApi, () => { }, {
           isPurchaseJobs,
         });
         const saved: ColumnSetting[] = res?.data;
@@ -489,16 +489,14 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
           )
         }
       />
-      <ThreeOptionsModal
+      <GoMakeDeleteModal
         modalType={ModalType.WARNING}
         title={t("boardMissions.markDoneModalTitle")}
         subTitle={t("boardMissions.markDoneModalSubTitle")}
-        yesBtn={"boardMissions.markDoneModalYes"}
-        noBtn={"boardMissions.markDoneModalNo"}
         openModal={openMarkReadyModal}
         onClose={onCloseMarkReadyModal}
-        onClickYes={() => onClickMoveBoardMissionToDone(true)}
-        onClickNo={() => onClickMoveBoardMissionToDone(false)}
+        onClickDelete={onClickMoveBoardMissionToDone}
+        onClickCancel={onCloseMarkReadyModal}
       >
         <div style={{ width: "100%", minWidth: 300 }}>
           <GoMakeAutoComplate
@@ -508,12 +506,12 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
               ) || inputValue === ""
                 ? storageList
                 : [
-                    {
-                      storage: `Add "${inputValue}" as a new storage`,
-                      id: "new",
-                    },
-                    ...storageList,
-                  ]
+                  {
+                    storage: `Add "${inputValue}" as a new storage`,
+                    id: "new",
+                  },
+                  ...storageList,
+                ]
             }
             placeholder={t("boardMissions.selectStorage")}
             key={defaultValue}
@@ -534,7 +532,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
             }}
           />
         </div>
-      </ThreeOptionsModal>
+      </GoMakeDeleteModal>
       <GoMakeDeleteModal
         modalType={ModalType.WARNING}
         title={t("boardMissions.markDoneModalTitle2", {
@@ -544,7 +542,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
         yesBtn={"modal.yes"}
         openModal={openMarkReadyModalForProductType}
         onClose={onCloseMarkReadyModalForProductType}
-        onClickDelete={() => onClickMoveBoardMissionToDone(false)}
+        onClickDelete={() => onClickMoveBoardMissionToDone()}
       >
         <div style={{ width: "100%", minWidth: 300 }}>
           <GoMakeAutoComplate
@@ -554,12 +552,12 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
               ) || inputValue === ""
                 ? storageList
                 : [
-                    {
-                      storage: `Add "${inputValue}" as a new storage`,
-                      id: "new",
-                    },
-                    ...storageList,
-                  ]
+                  {
+                    storage: `Add "${inputValue}" as a new storage`,
+                    id: "new",
+                  },
+                  ...storageList,
+                ]
             }
             placeholder={t("boardMissions.selectStorage")}
             key={defaultValue}
@@ -618,7 +616,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
         subTitle={" "}
         yesBtn={t("sales.quote.print")}
         openModal={openPrintNodeModal}
-        onClose={() => {}}
+        onClose={() => { }}
         onClickDelete={() => {
           setOpenPrintNodeModal(false);
           printOrderJobsUsingPrintNode(printNodeOrderId).then();
@@ -665,7 +663,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
         subTitle={" "}
         openModal={openMarkReadyModalForHasJobs}
         onClose={onCloseMarkReadyModalForHasJobs}
-        onClickDelete={() => onClickMoveBoardMissionToDone(false)}
+        onClickDelete={() => onClickMoveBoardMissionToDone()}
         onClickCancel={onCloseMarkReadyModalForHasJobs}
       >
         <div style={{ width: "100%", minWidth: 300 }}>
@@ -676,12 +674,12 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
               ) || inputValue === ""
                 ? storageList
                 : [
-                    {
-                      storage: `Add "${inputValue}" as a new storage`,
-                      id: "new",
-                    },
-                    ...storageList,
-                  ]
+                  {
+                    storage: `Add "${inputValue}" as a new storage`,
+                    id: "new",
+                  },
+                  ...storageList,
+                ]
             }
             placeholder={t("boardMissions.selectStorage")}
             key={defaultValue}
@@ -713,11 +711,11 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
         subTitle={
           pendingPrintParams?.productType
             ? t("boardMissions.askPrintType", {
-                productType:
-                  pendingPrintParams?.productTypeName ||
-                  pendingPrintParams?.productName ||
-                  pendingPrintParams?.productType,
-              })
+              productType:
+                pendingPrintParams?.productTypeName ||
+                pendingPrintParams?.productName ||
+                pendingPrintParams?.productType,
+            })
             : ""
         }
         yesBtn={"boardMissions.printAllJobs"}
@@ -737,10 +735,10 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
         subTitle={
           pendingMarkReadyParams?.productType
             ? t("boardMissions.askMarkReadyType", {
-                productType:
-                  pendingMarkReadyParams.productTypeName ||
-                  pendingMarkReadyParams.productType,
-              })
+              productType:
+                pendingMarkReadyParams.productTypeName ||
+                pendingMarkReadyParams.productType,
+            })
             : ""
         }
         yesBtn={t("boardMissions.markAllJobsReady")}

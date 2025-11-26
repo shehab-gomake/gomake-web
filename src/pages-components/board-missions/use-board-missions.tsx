@@ -1707,13 +1707,13 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     openEmailComposer,
     closeEmailComposer,
   } = useFrontDeskEmailIntegration({
-    documentType: DOCUMENT_TYPE.order,
+    documentType: DOCUMENT_TYPE.boardMission,
   });
 
   const [pendingOrderIdForComposer, setPendingOrderIdForComposer] = useState<string | null>(null);
   const composerOpenedRef = useRef(false);
 
-  const onClickMoveBoardMissionToDone = async (sendMessage: boolean) => {
+  const onClickMoveBoardMissionToDone = async () => {
     const callBack = (res) => {
       if (res?.success) {
         alertSuccessUpdate();
@@ -1722,8 +1722,19 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
           onOpenPackagesModal(selectedMission);
           setMarkAllReady(false);
         }
-        if (sendMessage && hasFrontDeskFeature) {
-          openEmailComposer(selectedMission.id);
+        // Always open email composer after marking ready (if FrontDesk is enabled)
+        if (hasFrontDeskFeature) {
+          openEmailComposer(
+            selectedMission.id,
+            selectedMission?.contactEmail,
+            selectedMission?.contactPhone,
+            undefined, // messageType - not needed, will use default
+            undefined, // sendMailIfNotVerifiedAgent - will use default true
+            undefined, // sendWithInvoices - will use default false
+            selectedMission?.customerId,
+            selectedMission?.customerName,
+            selectedMission?.contactName
+          );
         }
       } else {
         alertFaultUpdate();
@@ -1732,9 +1743,10 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     if (selectedMission?.isReady) {
       onClickBackToProcess();
     } else {
+      // Mark as ready without sending message - user will decide in email composer
       await moveBoardMissionToDoneApi(callApi, callBack, {
         boardMissionId: selectedMission?.id,
-        sendMessage,
+        sendMessage: false, // Don't send automatically - let user decide in composer
         productType: markAllReady ? "" : selectedMission?.productType ?? "",
         storage: selectedMission?.storage ?? "",
       });
@@ -1756,7 +1768,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
       productType: selectedMission?.productType ?? "",
     });
   };
-  
+
   const onClosePrintTypeModal = () => {
     setOpenPrintTypeModal(false);
     setPendingPrintParams(null);
