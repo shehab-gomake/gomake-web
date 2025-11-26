@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState, useRef } from "react";
 import { useRecoilState } from "recoil";
 import { chatwootService } from "@/services/frontdesk";
 import { chatwootProfileAtom, chatwootProfileLoadingAtom } from "@/store/frontdesk/atoms/chatwoot.atoms";
+import { useApiWithRetry } from "./core/use-api-with-retry";
 
 /**
  * Custom hook for managing Chatwoot profile state
@@ -18,6 +19,9 @@ export const useChatwootProfile = () => {
   const hasAttemptedRef = useRef(false);
   const isFetchingRef = useRef(false);
 
+  // Setup retryable fetch
+  const { execute: fetchProfileWithRetry } = useApiWithRetry(useCallback(() => chatwootService.profile.getProfile(), []));
+
   const fetchProfile = useCallback(async () => {
     // Atomic check-and-set to prevent race conditions
     // Using ref instead of global flag for better isolation and SSR compatibility
@@ -31,7 +35,7 @@ export const useChatwootProfile = () => {
     setLoading(true);
     setError(null);
     try {
-      const profileData = await chatwootService.profile.getProfile();
+      const profileData = await fetchProfileWithRetry();
       console.log("[useChatwootProfile] ✅ Profile fetched successfully");
       setProfile(profileData);
       hasAttemptedRef.current = true;
@@ -47,7 +51,7 @@ export const useChatwootProfile = () => {
       setLoading(false);
       isFetchingRef.current = false;
     }
-  }, [setProfile, setLoading, loading]);
+  }, [setProfile, setLoading, loading, fetchProfileWithRetry]);
 
   // Initial fetch on mount - only if not already loaded/attempted
   useEffect(() => {

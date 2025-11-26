@@ -15,11 +15,11 @@ import {
   ChatwootConversationsLoadingState,
   chatwootConversationsCacheFamily,
   chatwootCacheKeysAtom,
-  CONVERSATION_CACHE_STALE_TIME,
 } from "@/store/frontdesk/atoms/chatwoot.atoms";
 import { useFetchDeduplication } from "./use-chatwoot-initialization";
 import { useChatwootMetrics } from "./use-chatwoot-metrics";
 import { createFilterKey } from "../utils/filter-utils";
+import { CHATWOOT_CONSTANTS } from "../config/constants";
 
 // Global flag to prevent concurrent conversation fetches across all instances
 // Similar to globalTeamsFetchInProgress pattern used in useChatwootTeams
@@ -102,7 +102,7 @@ export const useChatwootConversations = (accountId: number | null, options: Part
       // CACHE-FIRST: Check if we have fresh cache (unless force refresh or append)
       if (!append && !forceRefresh && cache.conversations.length > 0) {
         const cacheAge = Date.now() - cache.timestamp;
-        const isCacheFresh = cacheAge < CONVERSATION_CACHE_STALE_TIME;
+        const isCacheFresh = cacheAge < CHATWOOT_CONSTANTS.CACHE_STALE_TIME;
 
         if (isCacheFresh) {
           console.log(`[useChatwootConversations] ✨ Using fresh cache (age: ${Math.round(cacheAge / 1000)}s)`);
@@ -118,7 +118,7 @@ export const useChatwootConversations = (accountId: number | null, options: Part
 
       const listParams: ConversationListParams = {
         page,
-        limit: options.limit || 20,
+        limit: options.limit || CHATWOOT_CONSTANTS.DEFAULT_PAGE_SIZE,
         ...(options.status && { status: options.status }),
         ...(options.inbox_id && { inbox_id: options.inbox_id }),
         ...(options.assignee_type && { assignee_type: options.assignee_type }),
@@ -185,7 +185,7 @@ export const useChatwootConversations = (accountId: number | null, options: Part
         // Chatwoot API returns: { data: { payload: [...], meta: {...} } }
         // Handle nested structure
         const conversationsList = response.data?.payload || response.payload || [];
-        const limit = listParams.limit || 20;
+        const limit = listParams.limit || CHATWOOT_CONSTANTS.DEFAULT_PAGE_SIZE;
 
         // Check if there are more pages
         const meta = response.data?.meta || response.meta || {};
@@ -436,21 +436,24 @@ export const useChatwootConversations = (accountId: number | null, options: Part
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [stableFilterKey]); // Only depend on stableFilterKey - fetchConversations is stable enough via its own deps
 
-  return {
-    conversations,
-    loading: loadingState,
-    error,
-    hasMore,
-    loadMore,
-    refresh,
-    fetchConversations,
-    updateConversationStatus,
-    // Performance metrics
-    metrics: {
-      getStats: metrics.getStats,
-      logStats: metrics.logStats,
-      clearMetrics: metrics.clearMetrics,
-      enabled: metrics.enabled,
-    },
-  };
+  return useMemo(
+    () => ({
+      conversations,
+      loading: loadingState,
+      error,
+      hasMore,
+      loadMore,
+      refresh,
+      fetchConversations,
+      updateConversationStatus,
+      // Performance metrics
+      metrics: {
+        getStats: metrics.getStats,
+        logStats: metrics.logStats,
+        clearMetrics: metrics.clearMetrics,
+        enabled: metrics.enabled,
+      },
+    }),
+    [conversations, loadingState, error, hasMore, loadMore, refresh, fetchConversations, updateConversationStatus, metrics]
+  );
 };
