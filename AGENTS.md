@@ -160,6 +160,33 @@ src/services/
 - WebSocket events update Recoil atoms for real-time sync
 - Provider hooks encapsulate state logic and expose consistent APIs
 
+### State Management Best Practices (2025 Fixes)
+
+**Fetch Deduplication**: Use centralized `useFetchLock` hook from `hooks/core/use-fetch-lock.ts`:
+```typescript
+const { acquireLock, releaseLock } = useFetchLock();
+if (!acquireLock(FETCH_LOCK_KEYS.PROFILE)) return; // Skip if already fetching
+```
+
+**LRU Cache Sorting**: Use explicit `> 0` checks (not `||` which treats `0` as falsy):
+```typescript
+const time = entry.lastAccessed > 0 ? entry.lastAccessed : entry.timestamp > 0 ? entry.timestamp : 0;
+```
+
+**Recoil Callbacks**: Read from snapshot inside callbacks, not closure variables:
+```typescript
+const getCacheEntries = useRecoilCallback(({ snapshot }) => () => {
+  const keys = snapshot.getLoadable(cacheKeysAtom).getValue(); // ✅ Fresh
+});
+```
+
+**Event Listener Cleanup**: Use named function references (not arrow functions):
+```typescript
+const handleEvent = () => handler();
+service.on('event', handleEvent);
+return () => service.off('event', handleEvent); // Same reference
+```
+
 ### Provider Implementation Pattern
 
 Each provider follows this structure:

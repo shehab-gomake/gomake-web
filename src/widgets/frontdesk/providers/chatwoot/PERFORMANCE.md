@@ -313,18 +313,33 @@ useEffect(() => {
 
 **Problem:** Event listeners and subscriptions leak memory.
 
-**Solution:** Return cleanup functions from `useEffect`.
+**Solution:** Return cleanup functions from `useEffect` with **stable function references**.
 
 ```typescript
-// ✅ Good: Cleanup on unmount
+// ✅ Good: Cleanup on unmount with stable references
 useEffect(() => {
-  const subscription = messagingService.subscribe(handleMessage);
+  // Named handler to ensure same reference for on/off
+  const handleMessage = (msg) => console.log(msg);
+  
+  messagingService.on('message', handleMessage);
 
   return () => {
-    subscription.unsubscribe();
+    // Must use SAME reference for cleanup
+    messagingService.off('message', handleMessage);
+  };
+}, []);
+
+// ❌ Bad: Arrow functions create new references (memory leak!)
+useEffect(() => {
+  messagingService.on('message', () => console.log('msg')); // Reference A
+  
+  return () => {
+    messagingService.off('message', () => console.log('msg')); // Reference B ≠ A
   };
 }, []);
 ```
+
+**Bug Fixed (2025):** The `syncWebSocketStateEffect` was creating new arrow function instances in cleanup, preventing listeners from being removed. Fixed by using named function references.
 
 ### 2. Clear Large Data on Unmount
 
@@ -418,6 +433,61 @@ npx lighthouse http://localhost:3004/frontdesk
 
 ---
 
+## Bug Fixes (2025)
+
+### LRU Cache Sorting Bug
+
+**Problem:** The LRU eviction sorting used `||` operator which treats `0` as falsy:
+
+```typescript
+// ❌ Bug: 0 is falsy, so new entries with lastAccessed=0 incorrectly use timestamp
+const aTime = a.entry.lastAccessed || a.entry.timestamp || 0;
+```
+
+**Solution:** Use explicit `> 0` checks:
+
+```typescript
+// ✅ Fixed: Explicitly check if value is greater than 0
+const aTime = a.entry.lastAccessed > 0 ? a.entry.lastAccessed : a.entry.timestamp > 0 ? a.entry.timestamp : 0;
+```
+
+### Cache Keys Stale Closure Bug
+
+**Problem:** `getCacheEntriesWithMetadata` captured `cacheKeys` from component scope, causing stale data when called from other `useRecoilCallback` functions.
+
+**Solution:** Read `cacheKeys` directly from Recoil snapshot:
+
+```typescript
+// ✅ Fixed: Read from snapshot, not closure
+const currentCacheKeys = snapshot.getLoadable(chatwootCacheKeysAtom).getValue();
+```
+
+### Persistence Serialize/Deserialize Contract Bug
+
+**Problem:** `saveToStorage` passed the entire wrapper object (`PersistedData<T>`) to `serialize`, but `serialize` expected only the inner value `T`. Custom deserializers were never invoked because `loadFromStorage` checked `typeof rawData.value === "string"` which failed after JSON.parse.
+
+**Solution:** Serialize only the inner value, wrap with JSON for metadata:
+
+```typescript
+// ✅ Fixed: Serialize inner value only, wrap with JSON
+const serializedValue = serialize(value);  // Inner value only
+const wrapper = { value: serializedValue, version, timestamp };
+localStorage.setItem(key, JSON.stringify(wrapper));  // Wrapper is JSON
+```
+
+### evictLRU Count Falsy Check Bug
+
+**Problem:** `evictLRU(count)` used `count ?` which treated `0` as falsy. Calling `evictLRU(0)` would incorrectly use `evictionThreshold` instead of evicting zero items.
+
+**Solution:** Use explicit undefined check:
+
+```typescript
+// ✅ Fixed: Distinguish "not provided" from "explicitly zero"
+const targetSize = count !== undefined ? currentSize - count : cacheConfig.evictionThreshold;
+```
+
+---
+
 ## Future Optimizations
 
 ### High Priority
@@ -426,8 +496,13 @@ npx lighthouse http://localhost:3004/frontdesk
 3. ✅ Create utility functions
 4. ✅ Implement React.memo for list items
 5. ✅ Debounced search (useDebouncedValue hook)
-6. ⏳ Virtual scrolling for long lists
-7. ⏳ Lazy load heavy components
+6. ✅ Fix LRU cache sorting bug (falsy 0 handling)
+7. ✅ Fix cache keys stale closure bug
+8. ✅ Fix persistence serialize/deserialize contract bug
+9. ✅ Fix evictLRU count falsy check bug
+10. ✅ Document appendItems null-to-array transition
+11. ⏳ Virtual scrolling for long lists
+12. ⏳ Lazy load heavy components
 
 ### Medium Priority
 8. ⏳ Add request cancellation (AbortController)

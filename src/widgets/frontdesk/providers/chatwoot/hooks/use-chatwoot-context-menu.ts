@@ -28,15 +28,22 @@ const logger = createLogger("useChatwootContextMenu");
 
 /**
  * Simple notification utility
- * Note: In production, this should integrate with a toast library (notistack, react-toastify, etc.)
- * For now, it logs to console in development and can be extended to show UI notifications
+ *
+ * NOTE: For components that need toast notifications, use the `useSnackBar` hook
+ * from `@/hooks` instead of this utility. This is kept for legacy compatibility
+ * and for use in non-hook contexts.
+ *
+ * Standard pattern for toast notifications:
+ * ```typescript
+ * const { setSnackbarStateValue } = useSnackBar();
+ * setSnackbarStateValue({ state: true, message: 'Success!', type: 'success' });
+ * ```
  */
 const showNotification = (message: string, type: "success" | "error" | "info" = "info") => {
   if (process.env.NODE_ENV !== "production") {
     logger.info(`Notification [${type.toUpperCase()}]: ${message}`);
   }
-  // TODO: Integrate with toast library when available
-  // Example: toast[type](message);
+  // For hook-based components, use useSnackBar instead
 };
 
 /**
@@ -197,7 +204,7 @@ export const useChatwootContextMenu = (conversation: ChatwootConversation | null
       } catch (error) {
         // Revert on failure
         updateConversationInList(conversation.id, { status: oldStatus });
-        
+
         const errorMessage = error instanceof Error ? error.message : "Failed to update conversation status";
         showNotification(errorMessage, "error");
         logger.error("Failed to update conversation status", error instanceof Error ? error : new Error(String(error)));
@@ -334,12 +341,12 @@ export const useChatwootContextMenu = (conversation: ChatwootConversation | null
 
       await chatwootService.conversations.deleteConversation(accountId, conversation.id);
 
-        showNotification("Conversation deleted", "success");
-      } catch (error) {
-        // Note: Re-adding to list on failure would require proper state management
-        // For now, the optimistic update remains removed
-        showNotification(`Failed to delete conversation`, "error");
-        logger.error("Failed to delete conversation", error instanceof Error ? error : new Error(String(error)));
+      showNotification("Conversation deleted", "success");
+    } catch (error) {
+      // Note: Re-adding to list on failure would require proper state management
+      // For now, the optimistic update remains removed
+      showNotification(`Failed to delete conversation`, "error");
+      logger.error("Failed to delete conversation", error instanceof Error ? error : new Error(String(error)));
     }
   }, [accountId, conversation, removeConversationFromList]);
 

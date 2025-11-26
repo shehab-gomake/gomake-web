@@ -2,36 +2,41 @@ import { useCallback, useEffect, useState, useRef } from "react";
 import { useRecoilState } from "recoil";
 import { chatwootService } from "@/services/frontdesk";
 import { chatwootProfileAtom, chatwootProfileLoadingAtom } from "@/store/frontdesk/atoms/chatwoot.atoms";
+import { useApiWithRetry } from "./core/use-api-with-retry";
+import { useFetchLock, FETCH_LOCK_KEYS } from "./core/use-fetch-lock";
 
 /**
  * Custom hook for managing Chatwoot profile state
  * Follows the Email provider pattern to prevent multiple API calls
  * Includes error handling for network issues
  *
- * Production-ready pattern: Uses useRef instead of global flag for fetch deduplication
- * This ensures proper isolation across multiple component instances and SSR compatibility
+ * Production-ready pattern: Uses centralized fetch lock for deduplication across all component instances
+ * This prevents duplicate API calls during initial page load when multiple components mount
  */
 export const useChatwootProfile = () => {
   const [profile, setProfile] = useRecoilState(chatwootProfileAtom);
   const [loading, setLoading] = useRecoilState(chatwootProfileLoadingAtom);
   const [error, setError] = useState<Error | null>(null);
   const hasAttemptedRef = useRef(false);
-  const isFetchingRef = useRef(false);
+
+  // Centralized fetch lock
+  const { acquireLock, releaseLock, isLocked } = useFetchLock();
+
+  // Setup retryable fetch
+  const { execute: fetchProfileWithRetry } = useApiWithRetry(useCallback(() => chatwootService.profile.getProfile(), []));
 
   const fetchProfile = useCallback(async () => {
-    // Atomic check-and-set to prevent race conditions
-    // Using ref instead of global flag for better isolation and SSR compatibility
-    if (loading || isFetchingRef.current) {
+    // Centralized deduplication check - prevents duplicate calls across ALL component instances
+    if (!acquireLock(FETCH_LOCK_KEYS.PROFILE)) {
       console.log("[useChatwootProfile] ⏭️ Fetch already in progress, skipping duplicate call");
       return;
     }
 
     console.log("[useChatwootProfile] 🚀 Starting profile fetch...");
-    isFetchingRef.current = true;
     setLoading(true);
     setError(null);
     try {
-      const profileData = await chatwootService.profile.getProfile();
+      const profileData = await fetchProfileWithRetry();
       console.log("[useChatwootProfile] ✅ Profile fetched successfully");
       setProfile(profileData);
       hasAttemptedRef.current = true;
@@ -45,14 +50,15 @@ export const useChatwootProfile = () => {
       return null;
     } finally {
       setLoading(false);
-      isFetchingRef.current = false;
+      releaseLock(FETCH_LOCK_KEYS.PROFILE);
     }
-  }, [setProfile, setLoading, loading]);
+  }, [setProfile, setLoading, fetchProfileWithRetry, acquireLock, releaseLock]);
 
   // Initial fetch on mount - only if not already loaded/attempted
   useEffect(() => {
     // Guard: Only fetch if profile is not already loaded, not currently loading, and haven't attempted yet
-    if (profile === null && !loading && !hasAttemptedRef.current && !isFetchingRef.current) {
+    const profileLocked = isLocked(FETCH_LOCK_KEYS.PROFILE);
+    if (profile === null && !loading && !hasAttemptedRef.current && !profileLocked) {
       fetchProfile();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

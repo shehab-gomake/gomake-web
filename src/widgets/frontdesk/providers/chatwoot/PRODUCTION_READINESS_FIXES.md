@@ -477,6 +477,266 @@ React.memo(Component, (prev, next) => {
 
 ---
 
-**Last Updated:** 2025-01-12
+## Phase 5: State Management Bug Fixes ✅
+
+**Date:** 2025-01-26
+
+### 5.1 Fixed LRU Cache Sorting Bug
+**File:** `use-chatwoot-cache.ts`
+**Severity:** MEDIUM
+
+**Problem:** LRU eviction sorting used `||` operator which treats `0` as falsy. Since `0` is a valid timestamp value and a valid initial `lastAccessed`, this caused newly cached entries to be sorted by `timestamp` instead of `lastAccessed`, breaking LRU ordering.
+
+**Solution:**
+```typescript
+// Before (buggy)
+const aTime = a.entry.lastAccessed || a.entry.timestamp || 0;
+
+// After (fixed)
+const aTime = a.entry.lastAccessed > 0 ? a.entry.lastAccessed : a.entry.timestamp > 0 ? a.entry.timestamp : 0;
+```
+
+**Impact:** Correct LRU cache eviction order for all cache entries.
+
+---
+
+### 5.2 Fixed WebSocket Event Listener Memory Leak
+**File:** `chatwoot-websocket.effect.ts`
+**Severity:** HIGH
+
+**Problem:** The cleanup function in `syncWebSocketStateEffect` created new arrow function instances instead of reusing the same references. Event emitters require the exact same function reference to remove listeners via `off()`. This resulted in listeners never being unregistered, causing memory leaks and duplicate event handling.
+
+**Solution:**
+```typescript
+// Before (buggy) - new arrow functions in cleanup
+chatwootWebSocketService.on("connected", () => handleStateChange("connected"));
+return () => {
+  chatwootWebSocketService.off("connected", () => handleStateChange("connected")); // Different reference!
+};
+
+// After (fixed) - named function references
+const handleConnected = () => { setSelf(mapConnectionState("connected")); };
+chatwootWebSocketService.on("connected", handleConnected);
+return () => {
+  chatwootWebSocketService.off("connected", handleConnected); // Same reference!
+};
+```
+
+**Impact:** Prevents memory leaks and duplicate event handlers in WebSocket effects.
+
+---
+
+### 5.3 Fixed Ignored Deserialize Parameter
+**File:** `chatwoot-persistence.effect.ts`
+**Severity:** MEDIUM
+
+**Problem:** The `loadFromStorage` function accepted a `deserialize` parameter but never used it. Instead, it always called `JSON.parse()` directly, making custom deserializers completely ignored and breaking the deserialization contract.
+
+**Solution:**
+```typescript
+// Before (buggy)
+const data = JSON.parse(stored) as PersistedData<T>;
+
+// After (fixed)
+const rawData = JSON.parse(stored);
+const data: PersistedData<T> = {
+  value: typeof rawData.value === "string" ? deserialize(rawData.value) : rawData.value,
+  version: rawData.version,
+  timestamp: rawData.timestamp,
+};
+```
+
+**Impact:** Custom deserializers now work correctly for persisted state.
+
+---
+
+### 5.4 Fixed Stale Cache Keys in Recoil Callbacks
+**File:** `use-chatwoot-cache.ts`
+**Severity:** MEDIUM
+
+**Problem:** The `getCacheEntriesWithMetadata` callback captured `cacheKeys` from component scope but was called inside other `useRecoilCallback` functions (`evictLRU`, `evictStale`, `getStats`). This caused it to iterate over a stale `cacheKeys` variable rather than reading from the current Recoil snapshot context.
+
+**Solution:**
+```typescript
+// Before (buggy) - used stale closure
+cacheKeys.forEach((key) => { ... });
+
+// After (fixed) - reads from snapshot
+const currentCacheKeys = snapshot.getLoadable(chatwootCacheKeysAtom).getValue();
+currentCacheKeys.forEach((key) => { ... });
+```
+
+**Impact:** Cache operations now always use fresh state, preventing evicting wrong entries or reading inconsistent cache state.
+
+---
+
+### 5.5 Fixed Missing State Clearing in Pagination
+**File:** `request-state.types.ts`
+**Severity:** LOW
+
+**Problem:** The `appendItems` function spread the entire previous state but didn't explicitly set `loading: false` and `error: null`. This meant after successfully appending paginated items, any existing loading state or error from a previous operation would persist.
+
+**Solution:**
+```typescript
+// Before (buggy) - didn't clear loading/error
+return {
+  ...state,
+  data: state.data ? [...state.data, ...items] : items,
+  lastFetch: Date.now(),
+  // Missing: loading: false, error: null
+};
+
+// After (fixed)
+return {
+  ...state,
+  data: state.data ? [...state.data, ...items] : items,
+  loading: false,
+  error: null,
+  hasAttempted: true,
+  lastFetch: Date.now(),
+};
+```
+
+**Impact:** "Load more" operations now correctly clear loading/error states.
+
+---
+
+## Files Modified (Phase 5)
+
+| File | Changes | LOC Changed |
+|------|---------|-------------|
+| `use-chatwoot-cache.ts` | LRU sorting fix, stale closure fix | ~15 lines |
+| `chatwoot-websocket.effect.ts` | Named function references for cleanup | ~20 lines |
+| `chatwoot-persistence.effect.ts` | Use deserialize parameter | ~10 lines |
+| `request-state.types.ts` | Clear loading/error in appendItems | ~5 lines |
+
+**Total:** 4 files, ~50 lines changed
+
+---
+
+## Phase 6: Additional State Management Fixes ✅
+
+### 6.1 Fixed Persistence Serialize/Deserialize Contract
+**File:** `chatwoot-persistence.effect.ts`
+**Severity:** HIGH
+
+**Problem:** `saveToStorage` passed the entire wrapper object (`PersistedData<T>` containing version, timestamp, and value) to the `serialize` function, but serialize expected only the inner value `T`. This broke the deserialization contract - custom deserializers were never invoked because `loadFromStorage`'s check `typeof rawData.value === "string"` failed (after JSON.parse, `rawData.value` was already an object).
+
+**Solution:**
+```typescript
+// Before (buggy) - serialize received wrapper object
+const data: PersistedData<T> = { value, version, timestamp };
+localStorage.setItem(key, serialize(data as unknown as T));  // Wrong!
+
+// After (fixed) - serialize only inner value
+const serializedValue = serialize(value);  // Serialize inner value only
+const wrapper = { value: serializedValue, version, timestamp };
+localStorage.setItem(key, JSON.stringify(wrapper));  // Wrapper is always JSON
+```
+
+**Impact:** Custom serializers/deserializers now work correctly for persisted state.
+
+---
+
+### 6.2 Fixed evictLRU Count Falsy Check
+**File:** `use-chatwoot-cache.ts`
+**Severity:** MEDIUM
+
+**Problem:** `evictLRU(count)` used `count ?` which treats `0` as falsy. Calling `evictLRU(0)` (to check if eviction is needed without evicting) incorrectly fell back to `evictionThreshold` instead of evicting zero items.
+
+**Solution:**
+```typescript
+// Before (buggy) - 0 treated as falsy
+const targetSize = count ? currentSize - count : cacheConfig.evictionThreshold;
+
+// After (fixed) - explicit undefined check
+const targetSize = count !== undefined ? currentSize - count : cacheConfig.evictionThreshold;
+```
+
+**Impact:** `evictLRU(0)` now correctly returns 0 instead of using default threshold.
+
+---
+
+### 6.3 Documented appendItems Null-to-Array Transition
+**File:** `request-state.types.ts`
+**Severity:** LOW (Documentation)
+
+**Problem:** `appendItems` transitions `data` from `null` to `T[]` when appending the first page. While functional, this could surprise consumers expecting consistent array types.
+
+**Solution:**
+```typescript
+// Before - implicit null handling
+data: state.data ? [...state.data, ...items] : items,
+
+// After - explicit null handling with documentation
+const existingData = state.data ?? [];
+return {
+  ...state,
+  data: [...existingData, ...items],
+  // JSDoc documents: "When state.data is null (initial state before first fetch),
+  // this initializes data with the items array"
+};
+```
+
+**Impact:** Clearer code intention and better type safety documentation.
+
+---
+
+## Files Modified (Phase 6)
+
+| File | Changes | LOC Changed |
+|------|---------|-------------|
+| `chatwoot-persistence.effect.ts` | Fix serialize/deserialize contract | ~25 lines |
+| `use-chatwoot-cache.ts` | Fix evictLRU count falsy check | ~3 lines |
+| `request-state.types.ts` | Document appendItems null handling | ~8 lines |
+
+**Total:** 3 files, ~36 lines changed
+
+---
+
+## Phase 7: Fetch Lock Stability Fix ✅
+
+### 7.1 Fixed useFetchLock Return Object Stability
+**File:** `hooks/core/use-fetch-lock.ts`
+**Severity:** HIGH
+
+**Problem:** The `useFetchLock` hook returned an object with function references that were recreated on every render. Specifically, `isLocked` and `getStats` used `useCallback` with `locks` (from `useRecoilValue`) in dependencies. When any component modified locks, these functions were recreated, triggering `useEffect` re-executions in consumers like `use-chatwoot-labels.ts` and potentially causing infinite fetch loops.
+
+**Solution:**
+```typescript
+// Before (buggy) - isLocked recreated when locks change
+const locks = useRecoilValue(chatwootFetchLocksAtom);
+const isLocked = useCallback((key: string) => {
+  const lock = locks.get(key);  // Dependency on locks causes recreation
+  return lock && !isLockExpired(lock);
+}, [locks, ...]);  // locks in deps = new reference on every lock change
+
+// After (fixed) - reads from snapshot, stable reference
+const isLocked = useRecoilCallback(({ snapshot }) => (key: string) => {
+  const locks = snapshot.getLoadable(chatwootFetchLocksAtom).getValue();
+  return locks.get(key) && !isLockExpired(lock);
+}, [buildKey, isLockExpired]);  // No locks dep = stable reference
+
+// Also memoized the entire return object
+return useMemo(() => ({
+  acquireLock, releaseLock, isLocked, getStats, cleanupExpiredLocks
+}), [...]);
+```
+
+**Impact:** Prevents infinite fetch loops and unnecessary effect re-executions when lock state changes.
+
+---
+
+## Files Modified (Phase 7)
+
+| File | Changes | LOC Changed |
+|------|---------|-------------|
+| `use-fetch-lock.ts` | useRecoilCallback for isLocked/getStats, memoized return | ~30 lines |
+
+**Total:** 1 file, ~30 lines changed
+
+---
+
+**Last Updated:** 2025-01-26
 **Reviewed By:** Claude Code (Automated Code Review)
 **Approved By:** [Pending Developer Sign-Off]
