@@ -214,6 +214,7 @@ const QuotesListPageWidget = ({
     isFetching,
     openChangeProductionStatusModal,
     isSelectedCLoseAsDeliveryNote,
+    isSelectedCLoseAsProformaInvoice,
     onClickCloseChangeProductionStatusModal,
     moveOrderToReady,
     onChangeDocumentSearch,
@@ -320,7 +321,7 @@ const QuotesListPageWidget = ({
     emailData,
     isLoadingEmailData,
     closeEmailComposer,
-    documentForEmail
+    documentForEmail,
   } = useQuotes(documentType, isFromHomePage);
 
   // Get the main quotes pagination handler
@@ -440,7 +441,7 @@ const QuotesListPageWidget = ({
   useEffect(() => {
     const loadDocumentColumnSettings = async () => {
       try {
-        const res = await getDocumentTableSettingsApi(callApi, () => { }, {
+        const res = await getDocumentTableSettingsApi(callApi, () => {}, {
           documentType,
         });
         const saved: ColumnSetting[] = res?.data;
@@ -507,16 +508,16 @@ const QuotesListPageWidget = ({
                     isOrder
                       ? onclickCreateNew
                       : isSupplierPayments
-                        ? () => navigate(`/${documentPath}`)
-                        : isPurchaseOrder
-                          ? () => {
-                            setSelectedItems([]);
-                            onOpenPurchaseOrderTypeModal();
-                          }
-                          : () => {
-                            setSelectedItems([]);
-                            navigate(`/${documentPath}?isNewCreation=true`);
-                          }
+                      ? () => navigate(`/${documentPath}`)
+                      : isPurchaseOrder
+                      ? () => {
+                          setSelectedItems([]);
+                          onOpenPurchaseOrderTypeModal();
+                        }
+                      : () => {
+                          setSelectedItems([]);
+                          navigate(`/${documentPath}?isNewCreation=true`);
+                        }
                   )}
               </div>
             </div>
@@ -852,17 +853,22 @@ const QuotesListPageWidget = ({
         onClose={onCloseCancelReceiptModal}
         onClickDelete={onClickCancelReceipt}
       />
+      {/* !here */}
       <GoMakeDeleteModal
         modalType={ModalType.WARNING}
         title={
           isSelectedCLoseAsDeliveryNote
             ? "customers.modal.closeOrderAsDeliveryNote"
+            : isSelectedCLoseAsProformaInvoice
+            ? "customers.modal.closeOrderAsProformaInvoice"
             : "customers.modal.closeOrderAsInvoice"
         }
         subTitle={"customers.modal.thisOrderIsAlreadyInProcess"}
         yesBtn={
           isSelectedCLoseAsDeliveryNote
             ? t("customers.modal.closeAsDeliveryNote")
+            : isSelectedCLoseAsProformaInvoice
+            ? t("customers.modal.closeAsProformaInvoice")
             : t("customers.modal.closeAsInvoice")
         }
         openModal={openChangeProductionStatusModal}
@@ -873,6 +879,11 @@ const QuotesListPageWidget = ({
           } else {
             if (isSelectedCLoseAsDeliveryNote) {
               const path = `/deliveryNote?isNewCreation=true&orderId=${selectedDocument?.id}`;
+              window.open(path, "_blank");
+            } else if (isSelectedCLoseAsProformaInvoice) {
+              const path = isOrder
+                ? `/proformaInvoice?isNewCreation=true&orderId=${selectedDocument?.id}`
+                : `/proformaInvoice?isNewCreation=true&deliveryNoteId=${selectedDocument?.id}`;
               window.open(path, "_blank");
             } else {
               const path = isOrder
