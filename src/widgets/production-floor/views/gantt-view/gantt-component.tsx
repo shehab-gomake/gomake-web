@@ -37,11 +37,10 @@ import ViewWeekIcon from "@mui/icons-material/ViewWeek";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
-import BoltIcon from "@mui/icons-material/Bolt";
-import RestoreIcon from "@mui/icons-material/Restore";
 import EventIcon from "@mui/icons-material/Event";
-import RefreshIcon from "@mui/icons-material/Refresh";
 import { TimeFrameTabs } from "./state";
+import { ExpandCollapseControls } from "./components/expand-collapse-controls";
+import { TimelineActionButtons } from "./components/timeline-action-buttons";
 import {
   adaptLeft,
   adaptMarginLeft,
@@ -79,6 +78,8 @@ const TimelineWidget = () => {
     handleItemMove,
     currentMonth,
     toggleGroup,
+    expandAllGroups,
+    collapseAllGroups,
     handleZoom,
     onTimeChange,
     visibleTimeRange,
@@ -493,102 +494,24 @@ const TimelineWidget = () => {
             })}
           </Stack>
 
-          <Stack direction="row" gap={1}>
-            <Button
-              variant="contained"
-              startIcon={<BoltIcon />}
-              disabled={!hasLocalChanges() || isSubmitting || isTimeLineLocked}
-              onClick={() => setShowRescheduleModal(true)}
-              sx={{
-                backgroundColor: "#FD7E14",
-                "&:hover": { backgroundColor: "#E8690B" },
-                "&:disabled": {
-                  backgroundColor: "#ccc",
-                  color: "#666",
-                },
-                "& .MuiButton-startIcon": {
-                  marginRight: isRTL ? 0 : "8px",
-                  marginLeft: isRTL ? "8px" : 0,
-                },
-                textTransform: "none",
-                fontWeight: 600,
-              }}
-            >
-              {isSubmitting ? "Submitting..." : t("productionFloor.reSchedule")}
-            </Button>
-
-            <Button
-              variant="contained"
-              startIcon={<RestoreIcon />}
-              disabled={isRecovering || isTimeLineLocked}
-              onClick={() => setShowRecoverModal(true)}
-              sx={{
-                backgroundColor: "#DC3545",
-                "&:hover": { backgroundColor: "#C82333" },
-                "&:disabled": {
-                  backgroundColor: "#ccc",
-                  color: "#666",
-                },
-                "& .MuiButton-startIcon": {
-                  marginRight: isRTL ? 0 : "8px",
-                  marginLeft: isRTL ? "8px" : 0,
-                },
-                textTransform: "none",
-                fontWeight: 600,
-              }}
-            >
-              {isRecovering
-                ? "Recovering..."
-                : t("productionFloor.recoverOverdue")}
-            </Button>
-
-            <Button
-              variant="outlined"
-              startIcon={<RefreshIcon />}
-              disabled={
-                (!hasLocalChanges() && !rescheduleSuccess) || isTimeLineLocked
-              }
-              onClick={async () => {
-                if (hasLocalChanges()) {
-                  // Case 1: Reset local changes (current behavior)
-                  clearAllLocalChanges();
-                  setRescheduleSuccess(false); // Reset success state when clearing local changes
-                  getData(currentMonth.clone().month());
-                } else if (rescheduleSuccess) {
-                  // Case 2: Restore old board after successful reschedule
-                  await restoreOldBoardApi(callApi, (res) => {
-                    if (res.success) {
-                      alertSuccessUpdate();
-                      setRescheduleSuccess(false);
-                      getData(currentMonth.clone().month());
-                    } else {
-                      alertFaultUpdate();
-                    }
-                  });
-                }
-              }}
-              sx={{
-                borderColor: "#6C757D",
-                color: "#6C757D",
-                "&:hover": {
-                  borderColor: "#495057",
-                  backgroundColor: "#F8F9FA",
-                  color: "#495057",
-                },
-                "&:disabled": {
-                  borderColor: "#ccc",
-                  color: "#ccc",
-                },
-                "& .MuiButton-startIcon": {
-                  marginRight: isRTL ? 0 : "8px",
-                  marginLeft: isRTL ? "8px" : 0,
-                },
-                textTransform: "none",
-                fontWeight: 600,
-              }}
-            >
-              {t("productionFloor.resetChanges")}
-            </Button>
+          <Stack direction="row" gap={1} alignItems="center">
+            <TimelineActionButtons
+              hasLocalChanges={hasLocalChanges}
+              isSubmitting={isSubmitting}
+              isRecovering={isRecovering}
+              isTimeLineLocked={isTimeLineLocked}
+              rescheduleSuccess={rescheduleSuccess}
+              isRTL={isRTL}
+              onRescheduleClick={() => setShowRescheduleModal(true)}
+              onRecoverClick={() => setShowRecoverModal(true)}
+              clearAllLocalChanges={clearAllLocalChanges}
+              setRescheduleSuccess={setRescheduleSuccess}
+              getData={getData}
+              currentMonth={currentMonth}
+              callApi={callApi}
+              alertSuccessUpdate={alertSuccessUpdate}
+              alertFaultUpdate={alertFaultUpdate}
+            />
           </Stack>
         </Stack>
       </Box>
@@ -738,9 +661,36 @@ const TimelineWidget = () => {
                         color: "#495057",
                       }}
                     >
-                      <Typography variant="subtitle2" fontWeight={600}>
-                        {t("productionFloor.stations")}
-                      </Typography>
+                      <Stack
+                        direction="row"
+                        alignItems="center"
+                        gap={1}
+                        sx={{
+                          pointerEvents: "auto",
+                          position: "relative",
+                          zIndex: 10,
+                        }}
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <Typography variant="subtitle2" fontWeight={600}>
+                          {t("productionFloor.stations")}
+                        </Typography>
+                        <Box
+                          sx={{
+                            pointerEvents: "auto",
+                            position: "relative",
+                            zIndex: 11,
+                          }}
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <ExpandCollapseControls
+                            groups={groups}
+                            openGroups={openGroups}
+                            onExpandAll={expandAllGroups}
+                            onCollapseAll={collapseAllGroups}
+                          />
+                        </Box>
+                      </Stack>
                       <Stack
                         direction={"row"}
                         alignItems={"center"}

@@ -378,6 +378,26 @@ const useGantt = (reschedulingHook?: any) => {
     setOpenGroups((prevState) => ({ ...prevState, [id]: !prevState[id] }));
   };
 
+  // Expand all root groups
+  const expandAllGroups = () => {
+    const rootGroups = groups.filter((group) => group.isRoot);
+    const newOpenGroups = { ...openGroups };
+    rootGroups.forEach((group) => {
+      newOpenGroups[group.id] = true;
+    });
+    setOpenGroups(newOpenGroups);
+  };
+
+  // Collapse all root groups
+  const collapseAllGroups = () => {
+    const rootGroups = groups.filter((group) => group.isRoot);
+    const newOpenGroups = { ...openGroups };
+    rootGroups.forEach((group) => {
+      newOpenGroups[group.id] = false;
+    });
+    setOpenGroups(newOpenGroups);
+  };
+
   const handleZoom = ({ visibleTimeStart, visibleTimeEnd }) => {
     const startTime = moment(visibleTimeStart);
     const endTime = moment(visibleTimeEnd);
@@ -699,6 +719,8 @@ const useGantt = (reschedulingHook?: any) => {
     handleItemResize,
     handleItemMove,
     toggleGroup,
+    expandAllGroups,
+    collapseAllGroups,
     handleZoom,
     currentMonth,
     setCurrentMonth,

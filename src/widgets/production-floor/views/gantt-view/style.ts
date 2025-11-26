@@ -130,6 +130,57 @@ const useStyle = () => {
         fontWeight: 600,
       },
 
+      // Gantt action buttons styles
+      rescheduleButton: (isRTL: boolean) => ({
+        backgroundColor: "#FD7E14",
+        "&:hover": { backgroundColor: "#E8690B" },
+        "&:disabled": {
+          backgroundColor: "#ccc",
+          color: "#666",
+        },
+        "& .MuiButton-startIcon": {
+          marginRight: isRTL ? 0 : "8px",
+          marginLeft: isRTL ? "8px" : 0,
+        },
+        textTransform: "none",
+        fontWeight: 600,
+      }),
+
+      recoverButton: (isRTL: boolean) => ({
+        backgroundColor: "#DC3545",
+        "&:hover": { backgroundColor: "#C82333" },
+        "&:disabled": {
+          backgroundColor: "#ccc",
+          color: "#666",
+        },
+        "& .MuiButton-startIcon": {
+          marginRight: isRTL ? 0 : "8px",
+          marginLeft: isRTL ? "8px" : 0,
+        },
+        textTransform: "none",
+        fontWeight: 600,
+      }),
+
+      resetChangesButton: (isRTL: boolean) => ({
+        borderColor: "#6C757D",
+        color: "#6C757D",
+        "&:hover": {
+          borderColor: "#495057",
+          backgroundColor: "#F8F9FA",
+          color: "#495057",
+        },
+        "&:disabled": {
+          borderColor: "#ccc",
+          color: "#ccc",
+        },
+        "& .MuiButton-startIcon": {
+          marginRight: isRTL ? 0 : "8px",
+          marginLeft: isRTL ? "8px" : 0,
+        },
+        textTransform: "none",
+        fontWeight: 600,
+      }),
+
       // Timeline content styles
       timelineContainer: {
         padding: "24px",
@@ -317,6 +368,30 @@ const useStyle = () => {
         textAlign: "center" as const,
         padding: "20px",
         borderRadius: "8px",
+      },
+
+      // Expand/Collapse controls styles
+      expandCollapseContainer: {
+        direction: "row",
+        gap: 0.5,
+        marginRight: 1,
+      },
+
+      expandCollapseButton: {
+        backgroundColor: "#F8F9FA",
+        border: "2px solid #E9ECEF",
+        padding: "4px",
+        minWidth: "24px",
+        width: "24px",
+        height: "24px",
+        "&:hover": {
+          backgroundColor: "#E9ECEF",
+        },
+      },
+
+      expandCollapseIcon: {
+        fontSize: "16px",
+        color: "#495057",
       },
     };
   }, []);
