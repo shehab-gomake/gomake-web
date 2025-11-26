@@ -1,5 +1,5 @@
 import React from "react";
-import { Menu, MenuProps, Box, Typography, Divider } from "@mui/material";
+import { Menu, MenuProps, Box, Typography, Divider, SxProps, Theme } from "@mui/material";
 import { colorTokens, shadowTokens, spacingTokens } from "@/widgets/frontdesk/design-system";
 
 /**
@@ -47,7 +47,14 @@ export const DropdownMenu: React.FC<DropdownMenuProps> = ({
 
   // Only set default anchorOrigin/transformOrigin if not using anchorPosition
   const isUsingAnchorPosition = props.anchorReference === 'anchorPosition';
-  
+
+  // Extract paper sx from slotProps if provided (handle both object and function forms)
+  const paperSlotProps = props.slotProps?.paper;
+  const paperSx: SxProps<Theme> | undefined =
+    paperSlotProps && typeof paperSlotProps === 'object' && 'sx' in paperSlotProps
+      ? (paperSlotProps.sx as SxProps<Theme>)
+      : undefined;
+
   const defaultMenuProps = isUsingAnchorPosition
     ? {}
     : {
@@ -90,7 +97,7 @@ export const DropdownMenu: React.FC<DropdownMenuProps> = ({
             backfaceVisibility: "hidden",
             WebkitFontSmoothing: "antialiased",
             overflow: 'hidden',
-            ...props.slotProps?.paper?.sx,
+            ...(paperSx as object),
           },
         },
       }}
