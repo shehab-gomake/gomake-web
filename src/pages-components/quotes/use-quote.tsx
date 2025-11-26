@@ -932,6 +932,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               onClickSendToCustomerEmail={onClickSendToCustomerEmail}
               onClickSendToCustomerSMS={onClickSendToCustomerSMS}
               onClickSendToCustomerWhatsApp={onClickSendToCustomerWhatsApp}
+              onClickSendPaymentEmail={onClickSendPaymentEmail}
+              onClickSendPaymentSMS={onClickSendPaymentSMS}
+              onClickSendPaymentWhatsApp={onClickSendPaymentWhatsApp}
             />
           ),
         };
@@ -2088,6 +2091,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               onClickSendToCustomerEmail={onClickSendToCustomerEmail}
               onClickSendToCustomerSMS={onClickSendToCustomerSMS}
               onClickSendToCustomerWhatsApp={onClickSendToCustomerWhatsApp}
+              onClickSendPaymentEmail={onClickSendPaymentEmail}
+              onClickSendPaymentSMS={onClickSendPaymentSMS}
+              onClickSendPaymentWhatsApp={onClickSendPaymentWhatsApp}
             />
           ),
         }));
@@ -2726,6 +2732,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               onClickSendToCustomerEmail={onClickSendToCustomerEmail}
               onClickSendToCustomerSMS={onClickSendToCustomerSMS}
               onClickSendToCustomerWhatsApp={onClickSendToCustomerWhatsApp}
+              onClickSendPaymentEmail={onClickSendPaymentEmail}
+              onClickSendPaymentSMS={onClickSendPaymentSMS}
+              onClickSendPaymentWhatsApp={onClickSendPaymentWhatsApp}
             />
           );
 
@@ -3872,6 +3881,84 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     }
   };
 
+  // Send Payment - Email Handler
+  const onClickSendPaymentEmail = async (document: any) => {
+    try {
+      await onClickSendPaymentOld(document, false);
+      // Wait a bit to ensure state is updated, then update only the send method flags
+      setSendPayment((prev) => ({
+        ...prev,
+        sendByMail: true,
+        sendBySms: false,
+        sendByWhatsapp: false,
+        selectedContactIndex: prev.documentContacts?.length > 0 ? 0 : prev.selectedContactIndex,
+      }));
+      setPaymentModalTitle(
+        `${t("prePayment.paymentPageFor")} ${t(
+          `sales.quote.${DOCUMENT_TYPE[docType]}`
+        ).toLowerCase()} ${t("sales.quote.number")} - ${document?.number}`
+      );
+      setIsSendToClient(false);
+      setHideCheckboxes(true);
+      setPreSelectedMethod(null);
+      setOpenPaymentModal(true);
+    } catch (error) {
+      alertFaultGetData();
+    }
+  };
+
+  // Send Payment - SMS Handler
+  const onClickSendPaymentSMS = async (document: any) => {
+    try {
+      await onClickSendPaymentOld(document, false);
+      // Wait a bit to ensure state is updated, then update only the send method flags
+      setSendPayment((prev) => ({
+        ...prev,
+        sendBySms: true,
+        sendByMail: false,
+        sendByWhatsapp: false,
+        selectedContactIndex: prev.documentContacts?.length > 0 ? 0 : prev.selectedContactIndex,
+      }));
+      setPaymentModalTitle(
+        `${t("prePayment.paymentPageFor")} ${t(
+          `sales.quote.${DOCUMENT_TYPE[docType]}`
+        ).toLowerCase()} ${t("sales.quote.number")} - ${document?.number}`
+      );
+      setIsSendToClient(false);
+      setHideCheckboxes(true);
+      setPreSelectedMethod("sms");
+      setOpenPaymentModal(true);
+    } catch (error) {
+      alertFaultGetData();
+    }
+  };
+
+  // Send Payment - WhatsApp Handler
+  const onClickSendPaymentWhatsApp = async (document: any) => {
+    try {
+      await onClickSendPaymentOld(document, false);
+      // Wait a bit to ensure state is updated, then update only the send method flags
+      setSendPayment((prev) => ({
+        ...prev,
+        sendByWhatsapp: true,
+        sendByMail: false,
+        sendBySms: false,
+        selectedContactIndex: prev.documentContacts?.length > 0 ? 0 : prev.selectedContactIndex,
+      }));
+      setPaymentModalTitle(
+        `${t("prePayment.paymentPageFor")} ${t(
+          `sales.quote.${DOCUMENT_TYPE[docType]}`
+        ).toLowerCase()} ${t("sales.quote.number")} - ${document?.number}`
+      );
+      setIsSendToClient(false);
+      setHideCheckboxes(true);
+      setPreSelectedMethod("whatsapp");
+      setOpenPaymentModal(true);
+    } catch (error) {
+      alertFaultGetData();
+    }
+  };
+
   const [openMakePaymentModal, setOpenMakePaymentModal] = useState(false);
   const onClickMakePayment = (order) => {
     setSelectedQuoteItemValue(order);
@@ -4659,6 +4746,10 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     onClickSendToCustomerEmail,
     onClickSendToCustomerSMS,
     onClickSendToCustomerWhatsApp,
+    // Send Payment handlers
+    onClickSendPaymentEmail,
+    onClickSendPaymentSMS,
+    onClickSendPaymentWhatsApp,
     // Email composer state
     isEmailComposerOpen,
     emailData,

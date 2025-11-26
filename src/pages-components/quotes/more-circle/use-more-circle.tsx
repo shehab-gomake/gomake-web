@@ -49,6 +49,7 @@ import { PackageIcon } from "@/icons/package-icon";
 import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
 import { EPreferences } from "@/enums/prefernces";
 import { SendToCustomerSubmenu } from "./send-to-customer-submenu";
+import { SendPaymentSubmenu } from "./send-payment-submenu";
 import { CloseDocumentSubmenu } from "./close-document-submenu";
 import { MailIcon } from "./icons/mail";
 
@@ -108,6 +109,9 @@ const useMoreCircle = () => {
     onClickSendToCustomerEmail,
     onClickSendToCustomerSMS,
     onClickSendToCustomerWhatsApp,
+    onClickSendPaymentEmail,
+    onClickSendPaymentSMS,
+    onClickSendPaymentWhatsApp,
     classes,
   }) => {
     const isEditableDocument = quote?.isEditable;
@@ -712,9 +716,16 @@ const useMoreCircle = () => {
             isProformaInvoice) &&
           quote?.isCanClose &&
           isSendPaymentToClient,
-        onClick: () => onClickSendPayment(quote, false),
-        icon: <PayIcon color={primaryLavender(500)} />,
-        name: t("sales.quote.sendPayment"),
+        component: (closeMenu: () => void) => (
+          <SendPaymentSubmenu
+            onClickEmail={() => onClickSendPaymentEmail(quote)}
+            onClickSMS={() => onClickSendPaymentSMS(quote)}
+            onClickWhatsApp={() => onClickSendPaymentWhatsApp(quote)}
+            menuItemStyle={classes.menuRowStyle}
+            rowTextStyle={classes.rowTextStyle}
+            onCloseParentMenu={closeMenu}
+          />
+        ),
       },
       hasFrontDeskFeature ?   
       {
