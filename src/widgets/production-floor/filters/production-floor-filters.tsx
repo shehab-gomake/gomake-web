@@ -9,7 +9,7 @@ import {
 import { Permissions } from "@/components/CheckPermission/enum";
 import { useProductionFloorFilters } from "@/widgets/production-floor/filters/use-production-floor-filters";
 import { SearchInputComponent } from "@/components/form-inputs/search-input-component";
-import { GoMakeDatepicker } from "@/components/date-picker/date-picker-component";
+import { ControlledDateRangePicker } from "@/components/datepicker/controlled-date-range-picker";
 import { fetchS3JsonContent } from "@/utils/S3Content";
 import { IFilterGroupsList } from "../interfaces/borad-missions-filter-groups";
 import { useStyle } from "./style";
@@ -51,9 +51,10 @@ const ProductionFloorFilters = ({
     dir,
     onSelectDeliveryTimeDates,
     onSelectCreateDates,
+    onSelectEstimatedProductionTimeDates,
     createDateFilter,
     deliveryDateFilter,
-    isRTL,
+    estimatedProductionTimeFilter,
     anchorElMenu,
     openMenu,
     handleClickMenu,
@@ -89,11 +90,9 @@ const ProductionFloorFilters = ({
     searchInputFilterRef,
     getAllData,
     debouncedSearchValue,
-    globalSearch,
     setGlobalSearch,
     localSearch,
     setLocalSearch,
-    debouncedSearch,
   } = useProductionFloorFilters({
     getStationFilterGroups: getStationFilterGroups,
     connectionId: connectionId,
@@ -268,17 +267,64 @@ const ProductionFloorFilters = ({
           <AgentsList onClickApply={handleAgentChange} applyButton={true} />
         )}
       {view !== EProductionFloorView.DONE_JOBS && (
-        <GoMakeDatepicker
-          value={deliveryDateFilter}
-          onChange={onSelectDeliveryTimeDates}
+        <ControlledDateRangePicker
+          startDate={
+            deliveryDateFilter?.fromDate
+              ? new Date(deliveryDateFilter.fromDate)
+              : null
+          }
+          endDate={
+            deliveryDateFilter?.toDate
+              ? new Date(deliveryDateFilter.toDate)
+              : null
+          }
+          onChange={(startDate, endDate) =>
+            onSelectDeliveryTimeDates(startDate, endDate)
+          }
           placeholder={t("sales.quote.deliveryDate")}
+          buttonStyle={{
+            height: "36px",
+          }}
         />
       )}
       {view !== EProductionFloorView.DONE_JOBS && (
-        <GoMakeDatepicker
-          value={createDateFilter}
-          onChange={onSelectCreateDates}
+        <ControlledDateRangePicker
+          startDate={
+            createDateFilter?.fromDate
+              ? new Date(createDateFilter.fromDate)
+              : null
+          }
+          endDate={
+            createDateFilter?.toDate ? new Date(createDateFilter.toDate) : null
+          }
+          onChange={(startDate, endDate) =>
+            onSelectCreateDates(startDate, endDate)
+          }
           placeholder={t("productionFloor.createTime")}
+          buttonStyle={{
+            height: "36px",
+          }}
+        />
+      )}
+      {view !== EProductionFloorView.DONE_JOBS && (
+        <ControlledDateRangePicker
+          startDate={
+            estimatedProductionTimeFilter?.fromDate
+              ? new Date(estimatedProductionTimeFilter.fromDate)
+              : null
+          }
+          endDate={
+            estimatedProductionTimeFilter?.toDate
+              ? new Date(estimatedProductionTimeFilter.toDate)
+              : null
+          }
+          onChange={(startDate, endDate) =>
+            onSelectEstimatedProductionTimeDates(startDate, endDate)
+          }
+          placeholder={t("productionFloor.estimatedProductionTime")}
+          buttonStyle={{
+            height: "36px",
+          }}
         />
       )}
       <Box sx={{ flexGrow: 1 }} />

@@ -222,7 +222,11 @@ const useProductionFloorFilters = ({
     }
   };
 
-  const onSelectDeliveryTimeDates = async (fromDate: Date, toDate: Date) => {
+  //!here date filter
+  const onSelectDeliveryTimeDates = async (
+    fromDate: Date | null,
+    toDate: Date | null
+  ) => {
     let fromDateMom: string = null;
     let toDateMom: string = null;
     if (fromDate) {
@@ -245,7 +249,10 @@ const useProductionFloorFilters = ({
     }
   };
 
-  const onSelectCreateDates = async (fromDate: Date, toDate: Date) => {
+  const onSelectCreateDates = async (
+    fromDate: Date | null,
+    toDate: Date | null
+  ) => {
     let fromDateMom: string = null;
     let toDateMom: string = null;
     if (fromDate) {
@@ -322,6 +329,40 @@ const useProductionFloorFilters = ({
     () => ({
       fromDate: filtersState?.fromDeliveryTime,
       toDate: filtersState?.toDeliveryTime,
+    }),
+    [filtersState]
+  );
+
+  const onSelectEstimatedProductionTimeDates = async (
+    fromDate: Date | null,
+    toDate: Date | null
+  ) => {
+    let fromDateMom: string = null;
+    let toDateMom: string = null;
+    if (fromDate) {
+      fromDateMom = moment(fromDate).format("YYYY-MM-DD HH:mm:ss");
+    }
+    if (toDate) {
+      toDateMom = moment(toDate).format("YYYY-MM-DD HH:mm:ss");
+    }
+    const newFilters = {
+      ...filtersState,
+      fromEstimatedProductionTime: fromDateMom,
+      toEstimatedProductionTime: toDateMom,
+    };
+
+    // For Gantt/Timeline view, just update state without calling API
+    if (view === EProductionFloorView.GANTT) {
+      setFiltersState(newFilters);
+    } else {
+      await setFilters(newFilters, view);
+    }
+  };
+
+  const estimatedProductionTimeFilter = useMemo(
+    () => ({
+      fromDate: filtersState?.fromEstimatedProductionTime,
+      toDate: filtersState?.toEstimatedProductionTime,
     }),
     [filtersState]
   );
@@ -662,11 +703,13 @@ const useProductionFloorFilters = ({
     onTagsChange,
     onSelectDeliveryTimeDates,
     onSelectCreateDates,
+    onSelectEstimatedProductionTimeDates,
     handleGroupsFilterChange,
     initGroupsFilters,
     hasGroupsFilters,
     createDateFilter,
     deliveryDateFilter,
+    estimatedProductionTimeFilter,
     setGroupFromPath,
     onStationsChange,
     isRTL,
