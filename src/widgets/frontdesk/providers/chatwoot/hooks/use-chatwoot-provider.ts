@@ -47,8 +47,8 @@ export const useChatwootProvider = () => {
   // Cache Management
   const cache = useChatwootCache(currentAccountId);
 
-  // Filter Management
-  const { filters, handleFiltersChange } = useConversationFilters();
+  // Filter Management - also get isRouterReady to control when fetching starts
+  const { filters, handleFiltersChange, isRouterReady } = useConversationFilters();
 
   // Selection Management
   const { handleConversationSelect, handleBack } = useConversationSelection(currentAccountId, filters);
@@ -98,8 +98,11 @@ export const useChatwootProvider = () => {
     }, []),
   });
 
-  // Conversations Data
-  const conversations = useChatwootConversations(currentAccountId, filters);
+  // Conversations Data - only fetch when router is ready (filters are reliable)
+  const conversations = useChatwootConversations(currentAccountId, {
+    ...filters,
+    enabled: isRouterReady,
+  });
 
   // Auto-select account effect
   useEffect(() => {

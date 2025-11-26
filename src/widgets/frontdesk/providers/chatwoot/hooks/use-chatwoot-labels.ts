@@ -17,6 +17,10 @@ import {
 } from "@/store/frontdesk/atoms/chatwoot.atoms";
 import { useChatwootProvider } from "./use-chatwoot-provider";
 
+// Global deduplication flag to prevent concurrent label fetches across ALL component instances
+// This prevents duplicate API calls when multiple components mount simultaneously
+let globalLabelsFetchInProgress = false;
+
 export interface UseChatwootLabelsReturn {
   /** List of labels */
   labels: ChatwootLabel[];
@@ -65,7 +69,6 @@ export const useChatwootLabels = (
   const [error, setError] = useRecoilState(chatwootLabelsErrorAtom);
 
   // Fetch deduplication
-  const isFetchingRef = useRef(false);
   const hasAttemptedRef = useRef(false);
 
   // Use provided accountId or fall back to selected account
@@ -77,11 +80,13 @@ export const useChatwootLabels = (
       return;
     }
 
-    if (isFetchingRef.current) {
+    // Global deduplication check - prevents duplicate calls across ALL component instances
+    if (globalLabelsFetchInProgress) {
+      console.log("[useChatwootLabels] ⏭️ Global fetch already in progress, skipping duplicate call");
       return;
     }
 
-    isFetchingRef.current = true;
+    globalLabelsFetchInProgress = true;
     setLoading(true);
     setError(null);
 
@@ -103,7 +108,7 @@ export const useChatwootLabels = (
       setLabels([]);
     } finally {
       setLoading(false);
-      isFetchingRef.current = false;
+      globalLabelsFetchInProgress = false;
     }
   }, [effectiveAccountId, setLabels, setLoading, setError]);
 
@@ -198,7 +203,7 @@ export const useChatwootLabels = (
 
   // Auto-fetch on mount if enabled
   useEffect(() => {
-    if (autoFetch && effectiveAccountId && !hasAttemptedRef.current && !isFetchingRef.current) {
+    if (autoFetch && effectiveAccountId && !hasAttemptedRef.current && !globalLabelsFetchInProgress) {
       fetchLabels();
     }
   }, [autoFetch, effectiveAccountId, fetchLabels]);

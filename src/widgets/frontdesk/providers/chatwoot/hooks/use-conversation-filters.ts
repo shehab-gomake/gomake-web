@@ -188,5 +188,7 @@ export const useConversationFilters = () => {
   return {
     filters,
     handleFiltersChange,
+    // Expose router readiness so consumers know when filters are reliable
+    isRouterReady: router.isRouterReady,
   };
 };

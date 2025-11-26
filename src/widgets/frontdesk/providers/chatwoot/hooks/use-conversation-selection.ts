@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { useRecoilState, useRecoilCallback, useRecoilValue } from "recoil";
 import { ChatwootConversation, ConversationListParams } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
 import { RouteType } from "@/widgets/frontdesk/routing/types";
@@ -13,6 +13,10 @@ import { createFilterKey } from "../utils/filter-utils";
 import { useChatwootRouter } from "./use-chatwoot-router";
 
 const logger = createLogger("useConversationSelection");
+
+// Global deduplication for conversation detail fetches
+// Stores the conversation ID currently being fetched (null if none)
+let globalConversationDetailFetchInProgress: string | null = null;
 
 /**
  * Hook for managing conversation selection and navigation
@@ -68,6 +72,14 @@ export const useConversationSelection = (currentAccountId: number | null, filter
     const fetchConversationFromApi = async () => {
       if (!currentAccountId) return;
 
+      // Global deduplication check - prevent duplicate fetches of the same conversation
+      if (globalConversationDetailFetchInProgress === conversationIdFromUrl) {
+        logger.debug(`⏭️ Conversation ${conversationIdFromUrl} fetch already in progress, skipping duplicate`);
+        return;
+      }
+
+      globalConversationDetailFetchInProgress = conversationIdFromUrl;
+
       try {
         logger.debug(`Fetching conversation ${conversationIdFromUrl} from API (deep link)`);
         const response = await chatwootService.conversations.getConversationDetails(
@@ -81,6 +93,11 @@ export const useConversationSelection = (currentAccountId: number | null, filter
         }
       } catch (error) {
         logger.error(`Failed to fetch conversation ${conversationIdFromUrl}:`, error);
+      } finally {
+        // Reset global flag only if this fetch's conversation ID is still in progress
+        if (globalConversationDetailFetchInProgress === conversationIdFromUrl) {
+          globalConversationDetailFetchInProgress = null;
+        }
       }
     };
 
