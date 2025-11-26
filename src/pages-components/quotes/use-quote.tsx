@@ -146,6 +146,8 @@ interface Query {
   maxPrice?: string;
   fromDate?: string;
   toDate?: string;
+  checkFromDate?: string;
+  checkToDate?: string;
   accountingStatus?: string;
   deliveryStatus?: string;
   productionStatus?: string;
@@ -289,6 +291,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const [resetDatePicker, setResetDatePicker] = useState<boolean>(false);
   const [fromDate, setFromDate] = useState<Date>();
   const [toDate, setToDate] = useState<Date>();
+  const [checkFromDate, setCheckFromDate] = useState<Date>();
+  const [checkToDate, setCheckToDate] = useState<Date>();
   const [documentIdLogState, setDocumentIdLogState] = useState<string>();
   const [documentLogsData, setDocumentLogsData] = useState<any>();
   const [employeeId, setEmployeeId] = useState<any>();
@@ -483,6 +487,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     setMaxPrice("");
     setFromDate(null);
     setToDate(null);
+    setCheckFromDate(null);
+    setCheckToDate(null);
     setPaymentType(null);
 
     // Clear URL query parameters
@@ -1280,6 +1286,124 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     );
   };
 
+  const ChecksCell = ({
+    checkNumbers,
+    checkDates,
+    expanded,
+    onToggle,
+    isRTL = false,
+  }: {
+    checkNumbers: string[] | null | undefined;
+    checkDates: string[] | null | undefined;
+    expanded: boolean;
+    onToggle: () => void;
+    isRTL?: boolean;
+  }) => {
+    const { t } = useTranslation();
+    const MAX_VISIBLE = 2;
+
+    const safeCheckNumbers = Array.isArray(checkNumbers) ? checkNumbers : [];
+    const safeCheckDates = Array.isArray(checkDates) ? checkDates : [];
+
+    // Pair check numbers with dates (they should be in parallel/ordered)
+    const checks = safeCheckNumbers.map((number, index) => ({
+      number: number || "-",
+      date: safeCheckDates[index] || "-",
+    }));
+
+    const visibleItems = expanded ? checks : checks.slice(0, MAX_VISIBLE);
+
+    return (
+      <div
+        style={{
+          maxHeight: expanded ? "none" : "40px",
+          ...classes.checkCellContainer,
+        }}
+      >
+        {visibleItems.map((check, index) => (
+          <div
+            key={index}
+            style={{
+              marginBottom: index < visibleItems.length - 1 ? "4px" : "0",
+            }}
+          >
+            {check.number}
+          </div>
+        ))}
+        {checks.length > MAX_VISIBLE && (
+          <Typography
+            onClick={onToggle}
+            sx={{
+              ...classes.showMoreLink,
+              [isRTL ? "mr" : "ml"]: 1,
+            }}
+          >
+            {expanded ? t("sales.quote.showLess") : t("sales.quote.showMore")}
+          </Typography>
+        )}
+      </div>
+    );
+  };
+
+  const CheckDatesCell = ({
+    checkNumbers,
+    checkDates,
+    expanded,
+    onToggle,
+    isRTL = false,
+  }: {
+    checkNumbers: string[] | null | undefined;
+    checkDates: string[] | null | undefined;
+    expanded: boolean;
+    onToggle: () => void;
+    isRTL?: boolean;
+  }) => {
+    const { t } = useTranslation();
+    const MAX_VISIBLE = 2;
+
+    const safeCheckNumbers = Array.isArray(checkNumbers) ? checkNumbers : [];
+    const safeCheckDates = Array.isArray(checkDates) ? checkDates : [];
+
+    // Pair check numbers with dates (they should be in parallel/ordered)
+    const checks = safeCheckNumbers.map((number, index) => ({
+      number: number || "-",
+      date: safeCheckDates[index] || "-",
+    }));
+
+    const visibleItems = expanded ? checks : checks.slice(0, MAX_VISIBLE);
+
+    return (
+      <div
+        style={{
+          maxHeight: expanded ? "none" : "40px",
+          ...classes.checkCellContainer,
+        }}
+      >
+        {visibleItems.map((check, index) => (
+          <div
+            key={index}
+            style={{
+              marginBottom: index < visibleItems.length - 1 ? "4px" : "0",
+            }}
+          >
+            {check.date}
+          </div>
+        ))}
+        {checks.length > MAX_VISIBLE && (
+          <Typography
+            onClick={onToggle}
+            sx={{
+              ...classes.showMoreLink,
+              [isRTL ? "mr" : "ml"]: 1,
+            }}
+          >
+            {expanded ? t("sales.quote.showLess") : t("sales.quote.showMore")}
+          </Typography>
+        )}
+      </div>
+    );
+  };
+
   const getAllQuotes = useCallback(
     async (order?: any, invokedBySocket: boolean = false) => {
       const sortOrder = order || currentSortOrder;
@@ -1545,54 +1669,89 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
           });
 
           // For receipts
-          const mapReceiptData = data?.map((quote: any) => ({
-            creationDate: formatCustomDateTime(quote?.creationDate).split(
-              " "
-            )[0],
-            [isSupplierPayments ? "supplier" : "client"]: (
-              <div
-                style={{ cursor: "pointer" }}
-                onClick={() => onClickOpenCustomerModal(quote?.customerId)}
-              >
-                {quote?.customerName}
-              </div>
-            ),
-            supplier: (
-              <div
-                style={{ cursor: "pointer" }}
-                onClick={() => onClickOpenCustomerModal(quote?.customerId)}
-              >
-                {quote?.customerName}
-              </div>
-            ),
-            agent: quote?.agentName,
-            number: quote?.number,
-            paymentMethod: _renderPaymentType(quote?.paymentType),
-            totalPrice: isRTL
-              ? `${quote?.totalPrice} ${getCurrencyUnitText(quote?.currency)}`
-              : `${getCurrencyUnitText(quote?.currency)} ${quote?.totalPrice}`,
-            notes: quote?.notes,
-            status: t(`documentStatus.${quote?.status}`),
-            more: (
-              <MoreMenuWidget
-                quote={quote}
-                documentType={docType}
-                onClickPdf={onOpenExportReceiptPdfModal}
-                onClickDuplicate={onClickDocumentDuplicate}
-                onClickLoggers={onClickDocumentLogs}
-                onClickOpenPrintPDFModal={onClickOpenPrintPDFModal}
-                onOpenCancelReceiptModal={onOpenCancelReceiptModal}
-                onOpenCancelReceiptModalRefund={onOpenCancelReceiptModalRefund}
-                onClickOpenChangeProductionStatusModal={
-                  onClickOpenChangeProductionStatusModal
-                }
-                onClickSendPayment={onClickSendPayment}
-                onClickSendToCustomerEmail={onClickSendToCustomerEmail}
-                onClickSendToCustomerSMS={onClickSendToCustomerSMS}
-                onClickSendToCustomerWhatsApp={onClickSendToCustomerWhatsApp}
-              />
-            ),
-          }));
+          const mapReceiptData = data?.map((quote: any) => {
+            const baseReceiptRow = {
+              creationDate: formatCustomDateTime(quote?.creationDate).split(
+                " "
+              )[0],
+              [isSupplierPayments ? "supplier" : "client"]: (
+                <div
+                  style={{ cursor: "pointer" }}
+                  onClick={() => onClickOpenCustomerModal(quote?.customerId)}
+                >
+                  {quote?.customerName}
+                </div>
+              ),
+              supplier: (
+                <div
+                  style={{ cursor: "pointer" }}
+                  onClick={() => onClickOpenCustomerModal(quote?.customerId)}
+                >
+                  {quote?.customerName}
+                </div>
+              ),
+              agent: quote?.agentName,
+              number: quote?.number,
+              paymentMethod: _renderPaymentType(quote?.paymentType),
+              totalPrice: isRTL
+                ? `${quote?.totalPrice} ${getCurrencyUnitText(quote?.currency)}`
+                : `${getCurrencyUnitText(quote?.currency)} ${
+                    quote?.totalPrice
+                  }`,
+              notes: quote?.notes,
+              status: t(`documentStatus.${quote?.status}`),
+              more: (
+                <MoreMenuWidget
+                  quote={quote}
+                  documentType={docType}
+                  onClickPdf={onOpenExportReceiptPdfModal}
+                  onClickDuplicate={onClickDocumentDuplicate}
+                  onClickLoggers={onClickDocumentLogs}
+                  onClickOpenPrintPDFModal={onClickOpenPrintPDFModal}
+                  onOpenCancelReceiptModal={onOpenCancelReceiptModal}
+                  onOpenCancelReceiptModalRefund={
+                    onOpenCancelReceiptModalRefund
+                  }
+                  onClickOpenChangeProductionStatusModal={
+                    onClickOpenChangeProductionStatusModal
+                  }
+                  onClickSendPayment={onClickSendPayment}
+                  onClickSendToCustomerEmail={onClickSendToCustomerEmail}
+                  onClickSendToCustomerSMS={onClickSendToCustomerSMS}
+                  onClickSendToCustomerWhatsApp={onClickSendToCustomerWhatsApp}
+                />
+              ),
+            };
+
+            // Add check fields for receipts and supplier payments
+            if (isReceipt || isSupplierPayments) {
+              return {
+                ...baseReceiptRow,
+                checkNumber: (
+                  <ChecksCell
+                    key={`check-number-${quote?.id}`}
+                    checkNumbers={quote?.checkNumbers || quote?.CheckNumbers}
+                    checkDates={quote?.checkDates || quote?.CheckDates}
+                    expanded={cellsExpanded[quote?.id] || false}
+                    onToggle={() => toggleCellsExpanded(quote?.id)}
+                    isRTL={isRTL}
+                  />
+                ),
+                checkDueDate: (
+                  <CheckDatesCell
+                    key={`check-date-${quote?.id}`}
+                    checkNumbers={quote?.checkNumbers || quote?.CheckNumbers}
+                    checkDates={quote?.checkDates || quote?.CheckDates}
+                    expanded={cellsExpanded[quote?.id] || false}
+                    onToggle={() => toggleCellsExpanded(quote?.id)}
+                    isRTL={isRTL}
+                  />
+                ),
+              };
+            }
+
+            return baseReceiptRow;
+          });
 
           // Store original data for re-mapping when cellsExpanded changes
           setOriginalData(data);
@@ -1634,6 +1793,22 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               Array.isArray(router.query.toDate)
                 ? router.query.toDate[0]
                 : router.query.toDate
+            )
+          : null;
+
+        const currentCheckFromDate = router.query.checkFromDate
+          ? new Date(
+              Array.isArray(router.query.checkFromDate)
+                ? router.query.checkFromDate[0]
+                : router.query.checkFromDate
+            )
+          : null;
+
+        const currentCheckToDate = router.query.checkToDate
+          ? new Date(
+              Array.isArray(router.query.checkToDate)
+                ? router.query.checkToDate[0]
+                : router.query.checkToDate
             )
           : null;
 
@@ -1695,6 +1870,16 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               ? { fromDate: GetDateFormat(currentFromDate) }
               : {}),
             ...(currentToDate ? { toDate: GetDateFormat(currentToDate) } : {}),
+            ...(currentCheckFromDate
+              ? { checkFromDate: GetDateFormat(currentCheckFromDate) }
+              : checkFromDate
+              ? { checkFromDate: GetDateFormat(checkFromDate) }
+              : {}),
+            ...(currentCheckToDate
+              ? { checkToDate: GetDateFormat(currentCheckToDate) }
+              : checkToDate
+              ? { checkToDate: GetDateFormat(checkToDate) }
+              : {}),
 
             ...(currentMinPrice && currentMinPrice !== ""
               ? { minPrice: currentMinPrice }
@@ -2283,6 +2468,14 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     if (toDate instanceof Date) query.toDate = toDate.toISOString();
     else delete query.toDate;
 
+    if (checkFromDate instanceof Date)
+      query.checkFromDate = checkFromDate.toISOString();
+    else delete query.checkFromDate;
+
+    if (checkToDate instanceof Date)
+      query.checkToDate = checkToDate.toISOString();
+    else delete query.checkToDate;
+
     if (accountingStatus)
       query.accountingStatus = accountingStatus.value.toString();
     else delete query.accountingStatus;
@@ -2338,6 +2531,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     setProductionStatus(null);
     setFromDate(null);
     setToDate(null);
+    setCheckFromDate(null);
+    setCheckToDate(null);
     setResetDatePicker(true);
     setIsCanceledState(false);
     setIsPausedOrders(false);
@@ -2444,6 +2639,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         isReceipt || isSupplierPayments
           ? t("sales.quote.paymentMethod")
           : t("sales.quote.worksName"),
+        (isReceipt || isSupplierPayments) && t("sales.quote.checkNumber"),
+        (isReceipt || isSupplierPayments) && t("sales.quote.checkDueDate"),
         isOrdersTracking
           ? t("customers.modal.paymentStatus")
           : t("sales.quote.totalPrice"),
@@ -2788,6 +2985,31 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     } else {
       setFromDate(null);
       setToDate(null);
+    }
+  };
+
+  const onSelectCheckDueDateRange = (value) => {
+    if (value && value.length === 2) {
+      const [firstDate, secondDate] = value;
+
+      // Handle null values
+      if (!firstDate || !secondDate) {
+        setCheckFromDate(null);
+        setCheckToDate(null);
+        return;
+      }
+
+      // Ensure checkFromDate is always the earlier date and checkToDate is always the later date
+      if (firstDate <= secondDate) {
+        setCheckFromDate(firstDate);
+        setCheckToDate(secondDate);
+      } else {
+        setCheckFromDate(secondDate);
+        setCheckToDate(firstDate);
+      }
+    } else {
+      setCheckFromDate(null);
+      setCheckToDate(null);
     }
   };
 
@@ -3245,6 +3467,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       fromDate: fromDate,
       toDate: toDate,
       currency: currencyFilter?.value,
+      checkFromDate:
+        isReceipt || isSupplierPayments ? checkFromDate : undefined,
+      checkToDate: isReceipt || isSupplierPayments ? checkToDate : undefined,
       // paymentType: paymentType?.value && paymentType?.value,
     };
 
@@ -3282,11 +3507,14 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     productIds,
     fromDate,
     toDate,
+    checkFromDate,
+    checkToDate,
     paymentType,
     currencyFilter,
     currentSortOrder,
     page,
     pageSize,
+    isSupplierPayments,
   ]);
 
   const [openIrrelevantCancelModal, setOpenIrrelevantCancelModal] =
@@ -4006,6 +4234,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       setProductionStatus(null);
       setFromDate(null);
       setToDate(null);
+      setCheckFromDate(null);
+      setCheckToDate(null);
       setResetDatePicker(true);
       setIsCanceledState(false);
       setIsPausedOrders(false);
@@ -4029,6 +4259,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       maxPrice,
       fromDate,
       toDate,
+      checkFromDate,
+      checkToDate,
       finalPatternSearch,
       accountingStatus,
       deliveryStatus,
@@ -4092,6 +4324,11 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     if (fromDate && typeof fromDate === "string")
       setFromDate(new Date(fromDate));
     if (toDate && typeof toDate === "string") setToDate(new Date(toDate));
+
+    if (checkFromDate && typeof checkFromDate === "string")
+      setCheckFromDate(new Date(checkFromDate));
+    if (checkToDate && typeof checkToDate === "string")
+      setCheckToDate(new Date(checkToDate));
 
     if (finalPatternSearch && typeof finalPatternSearch === "string") {
       if (
@@ -4483,6 +4720,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     documentPath,
     resetDatePicker,
     onSelectDeliveryTimeDates,
+    checkFromDate,
+    checkToDate,
+    onSelectCheckDueDateRange,
     employeeId,
     handleSelectEmployee,
     resetLogsDatePicker,

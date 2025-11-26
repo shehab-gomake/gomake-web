@@ -204,6 +204,9 @@ const QuotesListPageWidget = ({
     openPrintPDFModal,
     fromDate,
     toDate,
+    checkFromDate,
+    checkToDate,
+    onSelectCheckDueDateRange,
     getAllQuotes,
     openCancelReceiptModal,
     onCloseCancelReceiptModal,
@@ -320,7 +323,7 @@ const QuotesListPageWidget = ({
     emailData,
     isLoadingEmailData,
     closeEmailComposer,
-    documentForEmail
+    documentForEmail,
   } = useQuotes(documentType, isFromHomePage);
 
   // Get the main quotes pagination handler
@@ -440,7 +443,7 @@ const QuotesListPageWidget = ({
   useEffect(() => {
     const loadDocumentColumnSettings = async () => {
       try {
-        const res = await getDocumentTableSettingsApi(callApi, () => { }, {
+        const res = await getDocumentTableSettingsApi(callApi, () => {}, {
           documentType,
         });
         const saved: ColumnSetting[] = res?.data;
@@ -507,16 +510,16 @@ const QuotesListPageWidget = ({
                     isOrder
                       ? onclickCreateNew
                       : isSupplierPayments
-                        ? () => navigate(`/${documentPath}`)
-                        : isPurchaseOrder
-                          ? () => {
-                            setSelectedItems([]);
-                            onOpenPurchaseOrderTypeModal();
-                          }
-                          : () => {
-                            setSelectedItems([]);
-                            navigate(`/${documentPath}?isNewCreation=true`);
-                          }
+                      ? () => navigate(`/${documentPath}`)
+                      : isPurchaseOrder
+                      ? () => {
+                          setSelectedItems([]);
+                          onOpenPurchaseOrderTypeModal();
+                        }
+                      : () => {
+                          setSelectedItems([]);
+                          navigate(`/${documentPath}?isNewCreation=true`);
+                        }
                   )}
               </div>
             </div>
@@ -577,6 +580,9 @@ const QuotesListPageWidget = ({
               fromDate={fromDate}
               toDate={toDate}
               onSelectDeliveryTimeDates={onSelectDeliveryTimeDates}
+              checkFromDate={checkFromDate}
+              checkToDate={checkToDate}
+              onSelectCheckDueDateRange={onSelectCheckDueDateRange}
               patternSearch={patternSearch}
               onChangeDocumentSearch={onChangeDocumentSearch}
               onClickClearFilter={onClickClearFilter}
