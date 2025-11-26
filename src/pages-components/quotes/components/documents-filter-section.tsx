@@ -55,6 +55,7 @@ interface IDocumentsFilterSectionProps {
 
   // Delivery status
   isDeliveryNote: boolean;
+  isProformaInvoice: boolean;
   isInvoice: boolean;
   deliveryStatus: any;
   setDeliveryStatus: (value: any) => void;
@@ -146,6 +147,7 @@ const DocumentsFilterSection: React.FC<IDocumentsFilterSectionProps> = ({
   handleAccountingStatusChange,
   accountingStatuses,
   isDeliveryNote,
+  isProformaInvoice,
   isInvoice,
   deliveryStatus,
   setDeliveryStatus,
@@ -369,7 +371,7 @@ const DocumentsFilterSection: React.FC<IDocumentsFilterSectionProps> = ({
         ]
       : []),
     // Delivery status filter
-    ...(isOrder || isDeliveryNote || isInvoice
+    ...(isOrder || isDeliveryNote || isProformaInvoice || isInvoice
       ? [
           {
             id: "deliveryStatus",

@@ -1,7 +1,10 @@
 import { GoMakeMenu } from "@/components";
 import { useGomakeRouter } from "@/hooks/use-gomake-router";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
-import { isSelectedCLoseAsDeliveryNoteState } from "@/pages/customers/customer-states";
+import {
+  isSelectedCLoseAsDeliveryNoteState,
+  isSelectedCLoseAsProformaInvoiceState,
+} from "@/pages/customers/customer-states";
 import { MenuItem } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { useSetRecoilState } from "recoil";
@@ -31,6 +34,9 @@ const CloseBtnMenu = ({
   const { navigate } = useGomakeRouter();
   const setIsSelectedCLoseAsDeliveryNote = useSetRecoilState(
     isSelectedCLoseAsDeliveryNoteState
+  );
+  const setIsSelectedCLoseAsProformaInvoice = useSetRecoilState(
+    isSelectedCLoseAsProformaInvoiceState
   );
 
   const getMenuOptions = () => {
@@ -64,6 +70,28 @@ const CloseBtnMenu = ({
               } else {
                 onClickOpenChangeProductionStatusModal(documentState);
                 setIsSelectedCLoseAsDeliveryNote(true);
+                setIsSelectedCLoseAsProformaInvoice(false);
+              }
+            },
+          },
+          {
+            label: t("sales.quote.closeAsProformaInvoice"),
+            action: () => {
+              if (documentState?.productionStatus) {
+                if (documentState?.closeOrderNotes?.trim()) {
+                  onClickOpenCloseOrderNotesModal(() =>
+                    navigate(
+                      `/proformaInvoice?isNewCreation=true&orderId=${documentState?.id}`
+                    )
+                  );
+                } else
+                  navigate(
+                    `/proformaInvoice?isNewCreation=true&orderId=${documentState?.id}`
+                  );
+              } else {
+                onClickOpenChangeProductionStatusModal(documentState);
+                setIsSelectedCLoseAsDeliveryNote(false);
+                setIsSelectedCLoseAsProformaInvoice(true);
               }
             },
           },
@@ -84,6 +112,7 @@ const CloseBtnMenu = ({
               } else {
                 onClickOpenChangeProductionStatusModal(documentState);
                 setIsSelectedCLoseAsDeliveryNote(false);
+                setIsSelectedCLoseAsProformaInvoice(false);
               }
             },
           },
@@ -93,6 +122,13 @@ const CloseBtnMenu = ({
           {
             label: t("sales.quote.close"),
             action: () => onClickClose(documentState?.id),
+          },
+          {
+            label: t("sales.quote.closeAsProformaInvoice"),
+            action: () =>
+              navigate(
+                `/proformaInvoice?isNewCreation=true&deliveryNoteId=${documentState?.id}`
+              ),
           },
           {
             label: t("sales.quote.closeAsInvoice"),
@@ -147,6 +183,20 @@ const CloseBtnMenu = ({
             action: () =>
               navigate(
                 `/purchaseInvoiceRefund?isNewCreation=true&documentId=${documentState?.id}`
+              ),
+          },
+        ];
+      case DOCUMENT_TYPE.proformaInvoice:
+        return [
+          {
+            label: t("sales.quote.close"),
+            action: () => onClickClose(documentState?.id),
+          },
+          {
+            label: t("sales.quote.closeAsInvoice"),
+            action: () =>
+              navigate(
+                `/invoice?isNewCreation=true&proformaInvoiceId=${documentState?.id}`
               ),
           },
         ];

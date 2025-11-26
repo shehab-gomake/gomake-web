@@ -17,6 +17,7 @@ import {
   ApprovalStatus,
   DELIVERY_NOTE_STATUSES,
   DOCUMENT_TYPE,
+  PROFORMA_INVOICE_STATUSES,
   QUOTE_STATUSES,
 } from "@/pages-components/quotes/enums";
 import { ECalculationLogType } from "@/widgets/product-pricing-widget/enums";
@@ -134,6 +135,28 @@ export const _renderDocumentStatus = (status: number, t: any) => {
   }
 };
 
+// for proforma invoice
+export const _renderProformaInvoiceStatus = (status: number, t: any) => {
+  if (status === PROFORMA_INVOICE_STATUSES.Open) {
+    return t("sales.quote.open");
+  }
+  if (status === PROFORMA_INVOICE_STATUSES.Canceled) {
+    return t("sales.quote.canceled");
+  }
+  if (status === PROFORMA_INVOICE_STATUSES.Created) {
+    return t("sales.quote.created");
+  }
+  if (status === PROFORMA_INVOICE_STATUSES.ClosedAsInvoice) {
+    return t("sales.quote.closedAsInvoice");
+  }
+  if (status === PROFORMA_INVOICE_STATUSES.ClosedByMultiDocuments) {
+    return t("sales.quote.closedByMultiDocuments");
+  }
+  if (status === PROFORMA_INVOICE_STATUSES.ManualClose) {
+    return t("sales.quote.manualClose");
+  }
+};
+
 export const _renderStatus = (
   docType: DOCUMENT_TYPE,
   document: any,
@@ -209,23 +232,26 @@ export const _renderStatus = (
     } else if (
       (document.documentNumbers && document.documentNumbers.length > 0) ||
       (document.secondDocumentNumbers &&
-        document.secondDocumentNumbers.length > 0)
+        document.secondDocumentNumbers.length > 0) ||
+      (document.thirdDocumentNumbers &&
+        document.thirdDocumentNumbers.length > 0) ||
+      (document.fourthDocumentNumbers &&
+        document.fourthDocumentNumbers.length > 0)
     ) {
       const firstDocuments = document.documentNumbers
         ? document.documentNumbers.map((item: any, index: number) => (
-            <span key={index}>
-              <a
-                style={{
-                  minWidth: "auto",
-                  height: "auto",
-                  padding: 0,
-                  color: "var(--theme-secondary-color, #2e3092)",
-                  cursor: "pointer",
-                  textDecoration: "none",
-                }}
-                href={`/${
-                  document.titleDocumentNumber.charAt(0).toLowerCase() +
-                  document.titleDocumentNumber.slice(1)
+          <span key={index}>
+            <a
+              style={{
+                minWidth: "auto",
+                height: "auto",
+                padding: 0,
+                color: "var(--theme-secondary-color, #2e3092)",
+                cursor: "pointer",
+                textDecoration: "none",
+              }}
+              href={`/${document.titleDocumentNumber.charAt(0).toLowerCase() +
+                document.titleDocumentNumber.slice(1)
                 }?Id=${item.documentId}`}
             >
               {item.documentNumber}
@@ -244,30 +270,53 @@ export const _renderStatus = (
             document.titleSecondDocumentNumber.slice(1)
             }?Id=${item.documentId}`;
 
-            return (
-              <span key={index}>
-                <a
-                  style={{
-                    minWidth: "auto",
-                    height: "auto",
-                    padding: 0,
-                    color: "var(--theme-secondary-color, #2e3092)",
-                    cursor: "pointer",
-                    textDecoration: "none",
-                  }}
-                  href={href}
-                >
-                  {item.documentNumber}
-                </a>
-                {index < document.secondDocumentNumbers.length - 1 && ", "}
-              </span>
-            );
-          })
+          return (
+            <span key={index}>
+              <a
+                style={{
+                  minWidth: "auto",
+                  height: "auto",
+                  padding: 0,
+                  color: "var(--theme-secondary-color, #2e3092)",
+                  cursor: "pointer",
+                  textDecoration: "none",
+                }}
+                href={href}
+              >
+                {item.documentNumber}
+              </a>
+              {index < document.secondDocumentNumbers.length - 1 && ", "}
+            </span>
+          );
+        })
         : [];
 
       const thirdDocuments = document.thirdDocumentNumbers
         ? document.thirdDocumentNumbers.map((item: any, index: number) => (
-            <span key={`third-${index}`}>
+          <span key={`third-${index}`}>
+            <a
+              style={{
+                minWidth: "auto",
+                height: "auto",
+                padding: 0,
+                color: "var(--theme-secondary-color, #2e3092)",
+                cursor: "pointer",
+                textDecoration: "none",
+              }}
+              href={`/${document.titleThirdDocumentNumber.charAt(0).toLowerCase() +
+                document.titleThirdDocumentNumber.slice(1)
+                }?Id=${item.documentId}`}
+            >
+              {item.documentNumber}
+            </a>
+            {index < document.thirdDocumentNumbers.length - 1 && ", "}
+          </span>
+        ))
+        : [];
+
+      const fourthDocuments = document.fourthDocumentNumbers
+        ? document.fourthDocumentNumbers.map((item: any, index: number) => (
+            <span key={`fourth-${index}`}>
               <a
                 style={{
                   minWidth: "auto",
@@ -278,28 +327,22 @@ export const _renderStatus = (
                   textDecoration: "none",
                 }}
                 href={`/${
-                  document.titleThirdDocumentNumber.charAt(0).toLowerCase() +
-                  document.titleThirdDocumentNumber.slice(1)
+                  document.titleFourthDocumentNumber.charAt(0).toLowerCase() +
+                  document.titleFourthDocumentNumber.slice(1)
                 }?Id=${item.documentId}`}
-            >
-              {item.documentNumber}
-            </a>
-            {index < document.thirdDocumentNumbers.length - 1 && ", "}
-          </span>
-        ))
+              >
+                {item.documentNumber}
+              </a>
+              {index < document.fourthDocumentNumbers.length - 1 && ", "}
+            </span>
+          ))
         : [];
 
       let result: JSX.Element[] = [];
 
       if (firstDocuments.length > 0) {
         result.push(
-          <div
-            key="first-documents"
-            style={{
-              color:
-                "var(--theme-table-body-color, var(--theme-text-primary, #2e3092))",
-            }}
-          >
+          <div key="first-documents">
             {t(`documentStatus.${document.titleDocumentNumber}.title`)}:{" "}
             {firstDocuments}
           </div>
@@ -308,13 +351,7 @@ export const _renderStatus = (
 
       if (secondDocuments.length > 0) {
         result.push(
-          <div
-            key="second-documents"
-            style={{
-              color:
-                "var(--theme-table-body-color, var(--theme-text-primary, #2e3092))",
-            }}
-          >
+          <div key="second-documents">
             {t(`documentStatus.${document.titleSecondDocumentNumber}.title`)}:{" "}
             {secondDocuments}
           </div>
@@ -323,15 +360,24 @@ export const _renderStatus = (
 
       if (thirdDocuments.length > 0) {
         result.push(
+          <div key="third-documents">
+            {t(`documentStatus.${document.titleThirdDocumentNumber}.title`)}:{" "}
+            {thirdDocuments}
+          </div>
+        );
+      }
+
+      if (fourthDocuments.length > 0) {
+        result.push(
           <div
-            key="third-documents"
+            key="fourth-documents"
             style={{
               color:
                 "var(--theme-table-body-color, var(--theme-text-primary, #2e3092))",
             }}
           >
-            {t(`documentStatus.${document.titleThirdDocumentNumber}.title`)}:{" "}
-            {thirdDocuments}
+            {t(`documentStatus.${document.titleFourthDocumentNumber}.title`)}:{" "}
+            {fourthDocuments}
           </div>
         );
       }

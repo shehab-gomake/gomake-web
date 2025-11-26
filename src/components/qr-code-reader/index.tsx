@@ -8,7 +8,7 @@ import {
 import { moveOrderToDoneApi } from "@/services/api-service/generic-doc/documents-api";
 import { ModalType, QrCodeAction } from "@/enums";
 import { QR_CODE_LISTENER_FROM } from "@/hooks/use-qr-code-listener";
-import { useRecoilState } from "recoil";
+import {useRecoilState, useRecoilValue} from "recoil";
 import { selectedMissionsState } from "@/widgets/production-floor/state/boards";
 import { boardMissionsStationsState } from "@/widgets/production-floor/views/board-missions-view/stations/state";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
@@ -20,6 +20,10 @@ import {
     PrintPackingSlipModalWidget
 } from "@/widgets/production-floor/views/board-missions-view/navigation-buttons/print-packing-slip-modal-widget";
 import { useIsMobile } from "@/hooks/use-responsive";
+import { useFrontDeskEmailIntegration } from '@/pages-components/quotes/hooks/use-frontdesk-email-integration';
+import { FrontDeskEmailComposerWrapper } from '@/pages-components/quotes/components/frontdesk-email-composer-wrapper';
+import { DOCUMENT_TYPE } from '@/pages-components/quotes/enums';
+import {printHouseHasFrontDeskFeature} from "@/store/print-house-profile";
 
 interface IProps {
     qrCodeListenerFrom: QR_CODE_LISTENER_FROM;
@@ -31,6 +35,7 @@ const QrCodeReader = (props: IProps) => {
     const { callApi } = useGomakeAxios();
     const router = useRouter();
     const isMobile = useIsMobile();
+    const hasFrontDeskFeature = useRecoilValue(printHouseHasFrontDeskFeature);
     const [selectedMission, setSelectedMission] = useRecoilState<any>(selectedMissionsState);
     const [stations, setStations] = useRecoilState(boardMissionsStationsState);
     const [myState, setMyState] = useState("helll");
@@ -165,6 +170,14 @@ const QrCodeReader = (props: IProps) => {
             router.push(url);
         }
     };
+
+    const {
+        isEmailComposerOpen,
+        emailData,
+        openEmailComposer,
+        closeEmailComposer,
+    } = useFrontDeskEmailIntegration({ documentType: DOCUMENT_TYPE.boardMission });
+
     const onClickMoveBoardMissionToDone = async (sendMessage: boolean) => {
         const callBack = (res) => {
             setOpenMoveToReadyModal(false);
@@ -172,6 +185,9 @@ const QrCodeReader = (props: IProps) => {
                 alertSuccessUpdate();
                 setOpenPackagesModal(true);
                 // handleRemoveBoardMission(selectedMissionId);
+                if (sendMessage && hasFrontDeskFeature) {
+                    openEmailComposer(selectedMission.id);
+                }
             } else {
                 alertFaultUpdate();
             }
@@ -240,6 +256,15 @@ const QrCodeReader = (props: IProps) => {
                 errorMessage={qrErrorMessage}
                 errorKey={qrErrorKey}
             />
+            {isEmailComposerOpen && (
+                <FrontDeskEmailComposerWrapper
+                    open={isEmailComposerOpen}
+                    onClose={closeEmailComposer}
+                    emailData={emailData}
+                    documentId={selectedMission?.id}
+                    documentType={DOCUMENT_TYPE.boardMission}
+                />
+            )}
         </div>
     )
 }

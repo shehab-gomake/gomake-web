@@ -22,6 +22,9 @@ import {
   openReturnToProdModalState,
   openPrintTypeModalState,
   pendingPrintParamsState,
+  openMarkReadyModalState,
+  openMarkReadyModalForHasJobsState,
+  openDoneScopeModalState,
 } from "@/widgets/production-floor/state/boards";
 import {
   doneJobsCustomerState,
@@ -88,6 +91,9 @@ import { useQuoteGetData } from "@/pages-components/quote-new/use-quote-get-data
 import { useDateFormat } from "@/hooks/use-date-format";
 import { MoreMenuWidget } from "@/pages-components/board-missions/widgets/more-circle";
 import { Permissions } from "@/components/CheckPermission/enum";
+import { useFrontDeskEmailIntegration } from "@/pages-components/quotes/hooks/use-frontdesk-email-integration";
+import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
+import {printHouseHasFrontDeskFeature} from "@/store/print-house-profile";
 
 const useProductionFloorData = () => {
   const { t } = useTranslation();
@@ -116,6 +122,7 @@ const useProductionFloorData = () => {
   const [filtersState, setFilters] = useRecoilState(
     productionFloorFiltersState
   );
+  const hasFrontDeskFeature = useRecoilValue(printHouseHasFrontDeskFeature);
   const setTags = useSetRecoilState(tagsState);
   const setUserGroups = useSetRecoilState(userProductionFloorGroupsState);
   const setPath = useSetRecoilState(productionFloorPathsState);
@@ -328,7 +335,7 @@ const useProductionFloorData = () => {
 
     let data = jobId;
     if (productType) {
-       data = data + "?productType=" + productType;
+      data = data + "?productType=" + productType;
     }
 
     await printJobUsingPrintNodeApi(callApi, callBack, data);
@@ -785,18 +792,17 @@ const useProductionFloorData = () => {
     await updateBoardsMissionsOrderApi(callApi, callBack, payload);
   };
 
-  const [, setSelectedMissionId] = useState<any>(null);
-  const [openMarkReadyModal, setOpenMarkReadyModal] = useState<boolean>(false);
+  const [openMarkReadyModal, setOpenMarkReadyModal] = useRecoilState<boolean>(
+    openMarkReadyModalState
+  );
   const [openMarkReadyModalForHasJobs, setOpenMarkReadyModalForHasJobs] =
-    useState<boolean>(false);
+    useRecoilState<boolean>(openMarkReadyModalForHasJobsState);
 
   const onCloseMarkReadyModal = () => {
-    setSelectedMissionId(null);
     setOpenMarkReadyModal(false);
   };
 
   const onCloseMarkReadyModalForHasJobs = () => {
-    setSelectedMissionId(null);
     setOpenMarkReadyModalForHasJobs(false);
   };
 
@@ -806,8 +812,8 @@ const useProductionFloorData = () => {
       if (res.success) {
         if (boardMission.productType) {
           // Ask whether to mark all jobs or only product type
-          //setOpenDoneScopeModal(true);
-          moveBoardMissionToDone(boardMission);
+          setOpenDoneScopeModal(true);
+          // moveBoardMissionToDone(boardMission);
         } else {
           if (res.data) {
             onOpenMarkReadyModalForHasJobs(boardMission);
@@ -828,7 +834,9 @@ const useProductionFloorData = () => {
   };
 
   // ===== Done scope modal (All jobs vs Product type only) =====
-  const [openDoneScopeModal, setOpenDoneScopeModal] = useState<boolean>(false);
+  const [openDoneScopeModal, setOpenDoneScopeModal] = useRecoilState<boolean>(
+    openDoneScopeModalState
+  );
 
   const onCloseDoneScopeModal = () => {
     setOpenDoneScopeModal(false);
@@ -854,7 +862,6 @@ const useProductionFloorData = () => {
   };
 
   const onOpenMarkReadyModalForHasJobs = (missionId) => {
-    setSelectedMissionId(missionId);
     setOpenMarkReadyModalForHasJobs(true);
   };
 
@@ -880,7 +887,20 @@ const useProductionFloorData = () => {
     });
   };
 
-  const onClickMoveBoardMissionToDone = async (sendMessage: boolean,ignoreProductType:boolean = false) => {
+  //!here
+  const {
+    isEmailComposerOpen,
+    emailData,
+    openEmailComposer,
+    closeEmailComposer,
+  } = useFrontDeskEmailIntegration({
+    documentType: DOCUMENT_TYPE.boardMission,
+  });
+
+  const onClickMoveBoardMissionToDone = async (
+    sendMessage: boolean,
+    ignoreProductType: boolean = false
+  ) => {
     const callBack = (res) => {
       setOpenMarkReadyModal(false);
       if (res?.success) {
@@ -890,6 +910,9 @@ const useProductionFloorData = () => {
           !selectedMission.productType
         ) {
           setOpenPackagesModal(true);
+        }
+        if (sendMessage && hasFrontDeskFeature) {
+          openEmailComposer(selectedMission.id);
         }
         // handleRemoveBoardMission(selectedMissionId);
       } else {
@@ -1134,6 +1157,10 @@ const useProductionFloorData = () => {
     onCloseDoneScopeModal,
     onClickDoneScopeAllJobs,
     onClickDoneScopeProductType,
+    isEmailComposerOpen,
+    emailData,
+    openEmailComposer,
+    closeEmailComposer,
     openReturnToProdModal,
     onOpenReturnToProdModal,
     onCloseReturnToProdModal,

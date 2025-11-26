@@ -1294,7 +1294,6 @@
     "materialsList": "قائمة المواد",
     "machineMaterialsList": "قائمة مواد الجهاز",
     "coreMaxWidth": "أقصى عرض للنواة",
-    "category": "الفئة",
     "editMachine": "تحرير الجهاز",
     "edit": "تحرير",
     "machines": "ماكينات",
@@ -2443,5 +2442,32 @@
   "logs": {
     "CLOSE": "تم إغلاق المستند",
     "CLOSE2": "تم إغلاقه كـ {{documentType}}"
+  },
+  "frontdesk": {
+    "assignTo": "تعيين إلى",
+    "customer": "العميل",
+    "connect": "ربط",
+    "createNew": "إنشاء جديد",
+    "connectToExisting": "الاتصال بالموجود",
+    "or": "أو",
+    "loadingDocuments": "جاري تحميل المستندات...",
+    "searchDocuments": "البحث في المستندات...",
+    "noDocumentsFound": "لم يتم العثور على مستندات لهذا العميل",
+    "connectToExistingNotAvailable": "الاتصال بالمستندات الموجودة غير متاح لهذا النوع من المستندات",
+    "customerRequired": "يجب ربط العميل بالمحادثة أولاً",
+    "documentLinkedSuccess": "تم ربط المستند بنجاح",
+    "documentLinkFailed": "فشل في ربط المستند",
+    "errorFetchingDocuments": "حدث خطأ أثناء تحميل المستندات",
+    "retry": "إعادة المحاولة",
+    "navigatingToDocument": "جاري فتح صفحة المستند...",
+    "navigationFailed": "فشل في الانتقال إلى صفحة المستند",
+    "noResultsFound": "لم يتم العثور على مستندات مطابقة",
+    "startTypingToSearch": "ابدأ الكتابة للبحث...",
+    "selectedDocument": "المستند المحدد",
+    "linkDocument": "ربط المستند",
+    "selectDocumentFirst": "حدد مستندًا للربط",
+    "createForCustomer": "إنشاء لـ {{customer}}",
+    "startFresh": "ابدأ بمستند فارغ",
+    "createNewDocument": "إنشاء مستند جديد"
   }
 }

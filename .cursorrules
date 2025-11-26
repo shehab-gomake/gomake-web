@@ -3,6 +3,52 @@
 You are assisting with the GoMake Web FrontDesk messaging hub inside a Next.js 13 (Pages Router) workspace.
 Leverage the available MCP knowledge bases (Archon, Serena, MUI) for up-to-date architecture, workflow, and design answers before guessing.
 
+## 🏢 Workspace Context - CRITICAL
+
+This project is part of a multi-project workspace focused on FrontDesk Chatwoot integration:
+
+### Related Projects (ALWAYS CONSIDER)
+1. **gomake-web** (THIS PROJECT) - Frontend application
+   - Focus: FrontDesk Chatwoot provider implementation
+   - Location: `/Users/omarsabbah/Desktop/gomake-services/gomake-web`
+
+2. **messaging-hub-v2** - NestJS proxy service
+   - Purpose: Proxy between FrontDesk and Chatwoot backend
+   - Location: `/Users/omarsabbah/Desktop/gomake-services/messaging-hub-v2`
+   - Docs: See `messaging-hub-v2/CLAUDE.md` for proxy architecture
+
+3. **chatwoot** - Customer support platform (Reference Implementation)
+   - Purpose: Backend API + Frontend demo (USE AS REFERENCE)
+   - Location: `/Users/omarsabbah/Desktop/messaging/chatwoot`
+   - Reference: `app/javascript/dashboard/` - Use Chatwoot's frontend as reference for UI patterns
+
+### Connection Flow
+```
+FrontDesk Chatwoot Provider (gomake-web)
+    ↓ JWT Bearer Token
+messaging-hub-v2 (NestJS Proxy)
+    ↓ Auto-provisioning + Path Transformation
+Chatwoot Backend (Rails API)
+```
+
+### Mandatory Documentation (READ FIRST)
+- `CLAUDE.md` - Complete development guidelines
+- `docs/frontdesk/FRONTDESK_CHATWOOT_ARCHITECTURE.md` - Architecture guide
+- `docs/frontdesk/README.md` - Documentation index
+- `.cursor/ai-dev-acceleration.md` - **AI development acceleration guide (START HERE)**
+- `.cursor/api-reference.md` - Complete API reference
+- `.cursor/quick-decision-tree.md` - Quick decision tree for common tasks
+- `.cursor/code-snippets.ts` - Copy-paste ready code patterns
+- Chatwoot Reference: `/Users/omarsabbah/Desktop/messaging/chatwoot/app/javascript/dashboard/`
+
+**IMPORTANT:** When implementing Chatwoot features:
+1. **AUTOMATICALLY** check `.cursor/ai-dev-acceleration.md` for patterns and snippets
+2. **AUTOMATICALLY** use `.cursor/api-reference.md` for API endpoints
+3. **AUTOMATICALLY** use `.cursor/quick-decision-tree.md` for decision making
+4. **AUTOMATICALLY** reference the Chatwoot frontend demo for UI patterns
+
+**AUTO-LOADING:** All acceleration files are loaded automatically based on context. No manual loading needed.
+
 ## Project Snapshot
 - React 18 + TypeScript 5 (non-strict)
 - Recoil 0.7.7 maintains shared state in `src/store`
@@ -27,13 +73,20 @@ Leverage the available MCP knowledge bases (Archon, Serena, MUI) for up-to-date 
 - When touching OAuth or auth flows, follow the redirect + token handling sequence defined in the FrontDesk docs and reuse `getUserToken()` helpers.
 - Cross-reference the `.cursor/rules/` modules for provider, UI, Recoil, and Socket.IO specifics before writing code.
 
-## Reference Rule Modules
-- frontdesk-architecture.mdc
-- frontdesk-messaging-ui.mdc
-- frontdesk-email-integration.mdc
-- frontdesk-internal-messaging.mdc
-- mcp-integrations.mdc
-- mui-theming.mdc
-- recoil-state.mdc
-- typescript-patterns.mdc
-- websocket-realtime.mdc
+## 📋 Reference Rule Modules (`.cursor/rules/`)
+
+### FrontDesk Core Rules
+- **`frontdesk-architecture.mdc`** - Core architecture patterns for ALL providers
+- **`frontdesk-chatwoot-provider.mdc`** - Chatwoot-specific development rules
+- **`chatwoot-skills-integration.mdc`** - How to use Chatwoot skills for adaptation
+
+### Skills Reference (`.claude/skills/chatwoot/`)
+When implementing Chatwoot features, ALWAYS check skills first:
+- **Core Skills**: `core-architecture.md`, `api-patterns.md`, `state-management.md`, `component-patterns.md`
+- **Flow Skills**: `flows/message-sending-flow.md`, `flows/conversation-list-filtering.md`, `flows/contact-management.md`, `flows/new-conversation-creation.md`
+
+### Quick Access Pattern
+1. Check `.cursor/ai-dev-acceleration.md` for quick patterns
+2. Check `.cursor/rules/` for architectural guidance
+3. Check `.claude/skills/chatwoot/` for Chatwoot reference patterns
+4. Check Chatwoot demo: `/Users/omarsabbah/Desktop/messaging/chatwoot/app/javascript/dashboard/`

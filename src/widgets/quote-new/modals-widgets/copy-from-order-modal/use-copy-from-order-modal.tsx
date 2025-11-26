@@ -59,19 +59,20 @@ const useCopyFromOrderModal = ({
   const [selectedItems, setSelectedItems] = useRecoilState(selectedItemsState);
   const [totalPrice, setTotalPrice] = useState(0);
   const [documentItems, setDocumentItems] = useState([]);
-  const { orderId, deliveryNoteId } = router.query;
+  const { orderId, deliveryNoteId, proformaInvoiceId } = router.query;
   const [currentDocumentId, setCurrentDocumentId] = useState<string | null>(
     null
   );
 
-  console.log("selectedItems", { selectedItems, quoteItemValue, documentItems });
   useEffect(() => {
     if (orderId) {
       setCurrentDocumentId(orderId as string);
     } else if (deliveryNoteId) {
       setCurrentDocumentId(deliveryNoteId as string);
+    } else if (proformaInvoiceId) {
+      setCurrentDocumentId(proformaInvoiceId as string);
     }
-  }, [orderId, deliveryNoteId]);
+  }, [orderId, deliveryNoteId, proformaInvoiceId]);
 
   const modalLabel = () => {
     switch (copyFromDocumentType) {
@@ -79,6 +80,8 @@ const useCopyFromOrderModal = ({
         return t("tabs.orders");
       case DOCUMENT_TYPE.deliveryNote:
         return t("tabs.deliveryNotes");
+      case DOCUMENT_TYPE.proformaInvoice:
+        return t("tabs.proformaInvoices");
       case DOCUMENT_TYPE.purchaseOrder:
         return t("tabs.purchaseOrders");
       default:
@@ -92,6 +95,8 @@ const useCopyFromOrderModal = ({
         return t("sales.cart.noOrders");
       case DOCUMENT_TYPE.deliveryNote:
         return t("sales.cart.noDeliveryNotes");
+      case DOCUMENT_TYPE.proformaInvoice:
+        return t("sales.cart.noProformaInvoices");
       case DOCUMENT_TYPE.purchaseOrder:
         return t("sales.cart.noOrders");
       default:
@@ -105,6 +110,8 @@ const useCopyFromOrderModal = ({
         return t("customers.modal.invoice");
       case DOCUMENT_TYPE.deliveryNote:
         return t("customers.modal.deliveryNote");
+      case DOCUMENT_TYPE.proformaInvoice:
+        return t("sales.quote.proformaInvoice");
       case DOCUMENT_TYPE.purchaseInvoice:
         return t("sales.quote.purchaseInvoice");
       default:
@@ -128,6 +135,7 @@ const useCopyFromOrderModal = ({
     const documentTypeMapping = {
       [ERPDocumentsTypesEnum.order]: DOCUMENT_TYPE.order,
       [ERPDocumentsTypesEnum.deliveryNote]: DOCUMENT_TYPE.deliveryNote,
+      [ERPDocumentsTypesEnum.proformaInvoice]: DOCUMENT_TYPE.proformaInvoice,
       [ERPDocumentsTypesEnum.purchase]: DOCUMENT_TYPE.purchaseOrder,
     };
 
@@ -149,7 +157,9 @@ const useCopyFromOrderModal = ({
     }
   }, [router.query.isNewCreation]);
   const handleItemSelect = (item) => {
-    const isAlreadySelected = selectedItems.some((selectedItem) => selectedItem.id === item.id);
+    const isAlreadySelected = selectedItems.some(
+      (selectedItem) => selectedItem.id === item.id
+    );
 
     if (isAlreadySelected) {
       // If the item is already selected, remove it
@@ -164,7 +174,8 @@ const useCopyFromOrderModal = ({
 
   const handleSelectAll = (documentItem) => {
     const selectedIds = new Set(selectedItems.map((item) => item.id));
-    const sectionItemIds = documentItem?.orderItems?.map((item) => item.id) || [];
+    const sectionItemIds =
+      documentItem?.orderItems?.map((item) => item.id) || [];
 
     const allSelected = sectionItemIds.every((id) => selectedIds.has(id));
 
@@ -187,15 +198,19 @@ const useCopyFromOrderModal = ({
     }
 
     // Get all items from all documents
-    const allDocumentItems = filteredDocumentItems.flatMap(doc => doc.orderItems || []);
+    const allDocumentItems = filteredDocumentItems.flatMap(
+      (doc) => doc.orderItems || []
+    );
     const selectedIds = new Set(selectedItems.map((item) => item.id));
 
     // Check if all items are selected
-    const allSelected = allDocumentItems.every((item) => selectedIds.has(item.id));
+    const allSelected = allDocumentItems.every((item) =>
+      selectedIds.has(item.id)
+    );
 
     if (allSelected) {
       // If all items are selected, remove all document items
-      const documentItemIds = allDocumentItems.map(item => item.id);
+      const documentItemIds = allDocumentItems.map((item) => item.id);
       setSelectedItems(
         selectedItems.filter((item) => !documentItemIds.includes(item.id))
       );
@@ -209,7 +224,9 @@ const useCopyFromOrderModal = ({
   };
 
   const areAllItemsSelected = (documentItemId) => {
-    const documentItem = documentItems.find((item) => item.id === documentItemId);
+    const documentItem = documentItems.find(
+      (item) => item.id === documentItemId
+    );
     if (!documentItem?.orderItems?.length) {
       return false;
     }
@@ -222,14 +239,18 @@ const useCopyFromOrderModal = ({
 
   // Helper function to check if an item is already in quote's documentItems
   const isItemInQuote = (itemId) => {
-    return quoteItemValue.documentItems.some((docItem) => docItem.sourceDocumentItemId === itemId);
+    return quoteItemValue.documentItems.some(
+      (docItem) => docItem.sourceDocumentItemId === itemId
+    );
   };
 
   // Helper function to check if all documents are selected
   const areAllDocumentsSelected = () => {
     if (!documentItems.length) return false;
 
-    const allDocumentItems = documentItems.flatMap(doc => doc.orderItems || []);
+    const allDocumentItems = documentItems.flatMap(
+      (doc) => doc.orderItems || []
+    );
     if (!allDocumentItems.length) return false;
 
     return allDocumentItems.every((item) =>
@@ -249,6 +270,8 @@ const useCopyFromOrderModal = ({
       docType = DOCUMENT_TYPE.order;
     } else if (copyFromDocumentType === DOCUMENT_TYPE.deliveryNote) {
       docType = DOCUMENT_TYPE.deliveryNote;
+    } else if (copyFromDocumentType === DOCUMENT_TYPE.proformaInvoice) {
+      docType = DOCUMENT_TYPE.proformaInvoice;
     } else if (copyFromDocumentType === DOCUMENT_TYPE.purchaseOrder) {
       docType = DOCUMENT_TYPE.purchaseOrder;
     }
@@ -273,12 +296,12 @@ const useCopyFromOrderModal = ({
         setDocumentItems(updatedData);
 
         // Select only items that are already in quoteItemValue.documentItems
-        const allItems = updatedData.flatMap(doc => doc.orderItems || []);
+        const allItems = updatedData.flatMap((doc) => doc.orderItems || []);
         const existingQuoteSourceItemIds = new Set(
-          quoteItemValue.documentItems.map(item => item.sourceDocumentItemId)
+          quoteItemValue.documentItems.map((item) => item.sourceDocumentItemId)
         );
 
-        const itemsToSelect = allItems.filter(item =>
+        const itemsToSelect = allItems.filter((item) =>
           existingQuoteSourceItemIds.has(item.id)
         );
 
@@ -309,14 +332,18 @@ const useCopyFromOrderModal = ({
     });
 
     // Filter out existing documentItems that have sourceDocumentItemId matching current orderItems
-    const existingDocumentItems = quoteItemValue.documentItems.filter((item) => {
-      // Keep items that are not from the current source documents
-      return !orderItemIds.has(item.sourceDocumentItemId);
-    });
+    const existingDocumentItems = quoteItemValue.documentItems.filter(
+      (item) => {
+        // Keep items that are not from the current source documents
+        return !orderItemIds.has(item.sourceDocumentItemId);
+      }
+    );
 
     // Get selectedItems that are not already in existing documentItems
     const newSelectedItems = selectedItems.filter((selectedItem) => {
-      return !existingDocumentItems.some((existingItem) => existingItem.sourceDocumentItemId === selectedItem.id);
+      return !existingDocumentItems.some(
+        (existingItem) => existingItem.sourceDocumentItemId === selectedItem.id
+      );
     });
 
     // Merge existing items with new selected items (no duplicates)
@@ -354,7 +381,8 @@ const useCopyFromOrderModal = ({
       updatedQuoteItemValue.discountAmount = _data.discountAmount;
       updatedQuoteItemValue.totalPayment = _data.totalPayment;
       updatedQuoteItemValue.totalPrice = _data.totalPrice;
-      updatedQuoteItemValue.totalPriceAfterDiscount = _data.totalPriceAfterDiscount;
+      updatedQuoteItemValue.totalPriceAfterDiscount =
+        _data.totalPriceAfterDiscount;
       updatedQuoteItemValue.totalVAT = _data.totalVAT;
       updatedQuoteItemValue.vat = _data.vat;
       updatedQuoteItemValue.exchangeRate = documentItems[0]?.exchangeRate;
@@ -441,7 +469,7 @@ const useCopyFromOrderModal = ({
     noDocumentData,
     handleSelectAllDocuments,
     isItemInQuote,
-    areAllDocumentsSelected
+    areAllDocumentsSelected,
   };
 };
 

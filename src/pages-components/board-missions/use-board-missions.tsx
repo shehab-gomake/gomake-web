@@ -22,6 +22,7 @@ import {
   printNodeModalCancelLog,
   printOrderJobUsingPrintNodeApi,
   setBoardMissionsFiltersApi,
+  startJobProductionApi,
 } from "@/services/api-service/board-missions/board-missions-table";
 import { createQuoteFromQualityIssueApi } from "@/services/api-service/quotes/qoutes-endpoints";
 import { useDateFormat } from "@/hooks/use-date-format";
@@ -58,9 +59,10 @@ import {
   columnOrderStateFamily,
   columnVisibilityStateFamily,
 } from "./states/board-missions-columns-settings-state";
-import { printHouseUsePrintNode } from "@/store/print-house-profile";
+import {printHouseHasFrontDeskFeature, printHouseUsePrintNode} from "@/store/print-house-profile";
 import { useScheduledReports } from "@/hooks/use-scheduled-reports";
 import { DocumentTypeEnums } from "@/enums/document-type-enum";
+import { useFrontDeskEmailIntegration } from "../quotes/hooks/use-frontdesk-email-integration";
 
 type StatusOption = {
   label: string;
@@ -101,6 +103,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
   const { classes } = useStyle();
   const { callApi } = useGomakeAxios();
   const isPrintHouseUsePrintNode = useRecoilValue(printHouseUsePrintNode);
+  const hasFrontDeskFeature = useRecoilValue(printHouseHasFrontDeskFeature);
   const [selectedMission, setSelectedMission] = useRecoilState<any>(
     selectedMissionsState
   );
@@ -213,6 +216,14 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
   const [selectedQuoteIdForQualityIssue, setSelectedQuoteIdForQualityIssue] =
     useState<string | null>(null);
 
+  // Start Production Modal State
+  const [openStartProductionModal, setOpenStartProductionModal] =
+    useState<boolean>(false);
+  const [
+    selectedMissionForStartProduction,
+    setSelectedMissionForStartProduction,
+  ] = useState<any | null>(null);
+
   const onClickOpenChangeStatusModalForQualityIssue = (quoteId: string) => {
     setSelectedQuoteIdForQualityIssue(quoteId);
     setOpenChangeStatusModalForQualityIssue(true);
@@ -245,6 +256,37 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
         documentId: selectedQuoteIdForQualityIssue,
       },
     });
+  };
+
+  // Start Production Modal Handlers
+  const onOpenStartProductionModal = (mission: any) => {
+    setSelectedMissionForStartProduction(mission);
+    setOpenStartProductionModal(true);
+  };
+
+  const onCloseStartProductionModal = () => {
+    setOpenStartProductionModal(false);
+    setSelectedMissionForStartProduction(null);
+  };
+
+  const handleStartProductionConfirm = async () => {
+    if (!selectedMissionForStartProduction) return;
+
+    const callBack = (res) => {
+      if (res?.success) {
+        alertSuccessUpdate();
+        onCloseStartProductionModal();
+        getAllData(isPurchaseJobs, false);
+      } else {
+        alertFaultUpdate();
+      }
+    };
+
+    await startJobProductionApi(
+      callApi,
+      callBack,
+      selectedMissionForStartProduction.id
+    );
   };
 
   const handleQualityIssueConfirm = async (reason: string) => {
@@ -1070,6 +1112,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
                 printJobUsingPrintNode={printJobUsingPrintNode}
                 onOpenMarkReadyTypeModal={onOpenMarkReadyTypeModal}
                 onReportQualityIssue={onOpenQualityIssueModal}
+                onOpenStartProductionModal={onOpenStartProductionModal}
               />
             ),
           };
@@ -1284,6 +1327,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
                 printJobUsingPrintNode={printJobUsingPrintNode}
                 onOpenMarkReadyTypeModal={onOpenMarkReadyTypeModal}
                 onReportQualityIssue={onOpenQualityIssueModal}
+                onOpenStartProductionModal={onOpenStartProductionModal}
               />
             ),
           };
@@ -1665,6 +1709,14 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     setMissionItem(mission);
     setOpenModal(true);
   };
+  const {
+    isEmailComposerOpen,
+    emailData,
+    openEmailComposer,
+    closeEmailComposer,
+  } = useFrontDeskEmailIntegration({
+    documentType: DOCUMENT_TYPE.boardMission,
+  });
 
   const onClickMoveBoardMissionToDone = async (sendMessage: boolean) => {
     const callBack = (res) => {
@@ -1674,6 +1726,9 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
         if (!selectedMission?.productType) {
           onOpenPackagesModal(selectedMission);
           setMarkAllReady(false);
+        }
+        if (sendMessage && hasFrontDeskFeature ) {
+          openEmailComposer(selectedMission.id);
         }
       } else {
         alertFaultUpdate();
@@ -1706,6 +1761,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
       productType: selectedMission?.productType ?? "",
     });
   };
+  
   const onClosePrintTypeModal = () => {
     setOpenPrintTypeModal(false);
     setPendingPrintParams(null);
@@ -2491,6 +2547,11 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     onDeleteScheduledReport,
     handleScheduledReportsPageChange,
     handleScheduledReportsPageSizeChange,
+
+    isEmailComposerOpen,
+    emailData,
+    openEmailComposer,
+    closeEmailComposer,
     // Quality Issue Modal
     openQualityIssueModal,
     onOpenQualityIssueModal,
@@ -2501,6 +2562,11 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     openChangeStatusModalForQualityIssue,
     onClickCloseChangeStatusModalForQualityIssue,
     updateQuoteStatusForQualityIssue,
+    // Start Production Modal
+    openStartProductionModal,
+    onOpenStartProductionModal,
+    onCloseStartProductionModal,
+    handleStartProductionConfirm,
   };
 };
 

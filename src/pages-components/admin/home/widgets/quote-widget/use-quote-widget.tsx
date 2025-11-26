@@ -23,7 +23,10 @@ import { selectedClientState } from "@/pages-components/quotes/states";
 import { CLIENT_TYPE_Id } from "@/pages/customers/enums";
 import { prevSelectedClientState, ProductCategoryType } from "./states";
 import { EProductStructureType } from "@/widgets/shared-admin-customers/add-product/settings/settings-data";
-import { getAllProductAndMaterialsApi } from "@/services/api-service/products/product-endpoints";
+import {
+  getAllProductAndMaterialsApi,
+  addDocumentItemFromProductApi,
+} from "@/services/api-service/products/product-endpoints";
 import { addDocumentItemFromMaterialApi } from "@/services/api-service/materials/materials-endpoints";
 import { ETab } from "@/pages-components/admin/home/widgets/quote-widget/enums";
 import { EStatisticsLabels } from "@/pages-components/quotes/enums";
@@ -431,13 +434,16 @@ const useQuoteWidget = () => {
     if (selectedNode && !selectedNode.children) {
       let matchedProduct = null;
       if (selectedNode?.category === ProductCategoryType.PRODUCT) {
-        matchedProduct = products?.find((product) => product.id === selectedValue);
+        matchedProduct = products?.find(
+          (product) => product.id === selectedValue
+        );
       }
       setSelectedProduct({
         id: selectedValue,
         category: selectedNode?.category,
         productStructureType: matchedProduct?.productStructureType,
         name: matchedProduct?.name,
+        isEmptyProduct: matchedProduct?.isEmptyProduct,
       });
     } else {
       setSelectedProduct(null);
@@ -453,10 +459,35 @@ const useQuoteWidget = () => {
         alertFaultAdded();
       }
     };
-    await addDocumentItemFromMaterialApi(callApi, callBack, {
-      clientId: selectedClient?.id,
-      printHouseMaterialId: selectedProduct?.id,
-    }, 0); // DOCUMENT_TYPE.quote
+    await addDocumentItemFromMaterialApi(
+      callApi,
+      callBack,
+      {
+        clientId: selectedClient?.id,
+        printHouseMaterialId: selectedProduct?.id,
+      },
+      0
+    ); // DOCUMENT_TYPE.quote
+  };
+
+  const addDocumentItemFromProduct = async () => {
+    const callBack = (res) => {
+      if (res.success) {
+        alertSuccessAdded();
+        navigate("/quote");
+      } else {
+        alertFaultAdded();
+      }
+    };
+    await addDocumentItemFromProductApi(
+      callApi,
+      callBack,
+      {
+        clientId: selectedClient?.id,
+        productId: selectedProduct?.id,
+      },
+      0
+    ); // DOCUMENT_TYPE.quote
   };
 
   const onSelectTab = (v) => {
@@ -478,6 +509,12 @@ const useQuoteWidget = () => {
       return;
     }
 
+    // If product is empty, use the new endpoint to add document item directly
+    if (selectedProduct?.isEmptyProduct === true) {
+      addDocumentItemFromProduct();
+      return;
+    }
+
     const hasSelectedClient = !!selectedClient?.id;
 
     if (hasSelectedClient) {
@@ -496,11 +533,18 @@ const useQuoteWidget = () => {
       params.append("customerName", clientName);
       params.append("productId", String(selectedProduct.id));
       if (
-        selectedProduct?.productStructureType === EProductStructureType.COMPOSITE
+        selectedProduct?.productStructureType ===
+        EProductStructureType.COMPOSITE
       ) {
         // Handle new format with compositeProducts array
-        if (compositeData?.compositeProducts && Array.isArray(compositeData.compositeProducts)) {
-          params.append("compositeProducts", JSON.stringify(compositeData.compositeProducts));
+        if (
+          compositeData?.compositeProducts &&
+          Array.isArray(compositeData.compositeProducts)
+        ) {
+          params.append(
+            "compositeProducts",
+            JSON.stringify(compositeData.compositeProducts)
+          );
         } else {
           // Handle old format for backward compatibility
           if (compositeData?.workName) {
@@ -522,11 +566,18 @@ const useQuoteWidget = () => {
       const params = new URLSearchParams();
       params.append("productId", String(selectedProduct.id));
       if (
-        selectedProduct?.productStructureType === EProductStructureType.COMPOSITE
+        selectedProduct?.productStructureType ===
+        EProductStructureType.COMPOSITE
       ) {
         // Handle new format with compositeProducts array
-        if (compositeData?.compositeProducts && Array.isArray(compositeData.compositeProducts)) {
-          params.append("compositeProducts", JSON.stringify(compositeData.compositeProducts));
+        if (
+          compositeData?.compositeProducts &&
+          Array.isArray(compositeData.compositeProducts)
+        ) {
+          params.append(
+            "compositeProducts",
+            JSON.stringify(compositeData.compositeProducts)
+          );
         } else {
           // Handle old format for backward compatibility
           if (compositeData?.workName) {

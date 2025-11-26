@@ -1,11 +1,7 @@
 import React, { useState } from "react";
-import { Stack, Paper, Box, Typography, Fab, Tooltip } from "@mui/material";
+import { Stack, Paper, Fab, Tooltip } from "@mui/material";
 import { Edit as ComposeIcon } from "@mui/icons-material";
-import {
-  EmptyState,
-  Panel,
-  PanelContent,
-} from "@/widgets/frontdesk/design-system";
+import { EmptyState, Panel, PanelContent } from "@/widgets/frontdesk/design-system";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { EmailAuthModal } from "./components/email-auth-modal";
 import { EmailSidebar } from "./components/email-sidebar";
@@ -149,10 +145,7 @@ export const EmailProviderView: React.FC = () => {
           <div style={{ width: 320, minWidth: 320, height: "100%" }}>
             <Panel elevation={0} border="default">
               <PanelContent padding="lg">
-                <EmptyState
-                  title="Connect an account"
-                  description="Add an email account to view conversations"
-                />
+                <EmptyState title="Connect an account" description="Add an email account to view conversations" />
               </PanelContent>
             </Panel>
           </div>
@@ -231,10 +224,7 @@ export const EmailProviderView: React.FC = () => {
           ) : (
             <Panel elevation={0} border="default" sx={{ height: "100%" }}>
               <PanelContent padding="lg">
-                <EmptyState
-                  title="Select an account"
-                  description="Choose an email account to view conversations"
-                />
+                <EmptyState title="Select an account" description="Choose an email account to view conversations" />
               </PanelContent>
             </Panel>
           )}
@@ -255,6 +245,7 @@ export const EmailProviderView: React.FC = () => {
         >
           {selectedConversation ? (
             <EmailMessageViewer
+              key={selectedConversation.id} /* Force remount when conversation changes */
               conversation={selectedConversation}
               accountId={selectedAccountId}
               onBack={handleBack}

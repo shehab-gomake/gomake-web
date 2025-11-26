@@ -28,6 +28,7 @@ import {
   agentsCategoriesState,
   closeOrderAsInvoiceOrDeliveryNoteState,
   isSelectedCLoseAsDeliveryNoteState,
+  isSelectedCLoseAsProformaInvoiceState,
 } from "@/pages/customers/customer-states";
 import { getAndSetEmployees2 } from "@/services/api-service/customers/employees-api";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
@@ -75,7 +76,8 @@ import {
 } from "@/widgets/settings-documenting/documentDesign/enums/document-type";
 import {
   AStatus,
-  BoardMissionStatusForFilter, DocumentCloseStatus,
+  BoardMissionStatusForFilter,
+  DocumentCloseStatus,
   PStatus,
   ReceiptAccountingStatus,
 } from "../board-missions/widgets/enums";
@@ -95,7 +97,10 @@ import { useRouter } from "next/router";
 import { ICard } from "./widgets/statistics-section/statistics-sections";
 import { ClickableStatusButton } from "./widgets/delivery-status-button/delivery-status-button";
 import { DocumentDeliveryStatuses } from "./widgets/delivery-status-button/delivery-status-modal/use-delivery-status-modal";
-import {EMessageStatus, PurchaseOrderStatuses} from "@/enums/document-type-enum";
+import {
+  EMessageStatus,
+  PurchaseOrderStatuses,
+} from "@/enums/document-type-enum";
 import { useDocumentsTableSocketIo } from "@/hooks/socket-io/use-documents-table-socket-io";
 import { QuoteIfExistState } from "../quote-new/store/quote";
 import { userQuoteState } from "@/store/user-qoute-state";
@@ -124,6 +129,7 @@ import {
 import { CircularProgress, MenuItem, Typography } from "@mui/material";
 import { currenciesState } from "@/widgets/materials-widget/state";
 import { getCurrencies } from "@/services/api-service/general/enums";
+import { useFrontDeskEmailIntegration } from "./hooks/use-frontdesk-email-integration";
 
 type PaymentTypeOption = {
   label: string;
@@ -203,7 +209,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const [customerId, setCustomerId] = useState<any>();
   const [isCanceledState, setIsCanceledState] = useState(false);
   const [isPausedOrders, setIsPausedOrders] = useState(false);
-  const [openPurchaseOrderTypeModal, setOpenPurchaseOrderTypeModal] = useState(false);
+  const [openPurchaseOrderTypeModal, setOpenPurchaseOrderTypeModal] =
+    useState(false);
   const [dateRange, setDateRange] = useState<any>();
   const [agentId, setAgentId] = useState<any>();
   const [allQuotes, setAllQuotes] = useState<any[] | undefined>(undefined);
@@ -311,9 +318,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         .filter((key) => isNaN(Number(key)))
         .map((key) => ({
           value:
-            PurchaseOrderStatuses[
-            key as keyof typeof PurchaseOrderStatuses
-            ],
+            PurchaseOrderStatuses[key as keyof typeof PurchaseOrderStatuses],
           label: t(`documentStatus.PurchaseOrder.${key}`),
         })),
     [t]
@@ -329,8 +334,20 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const [selectedQuoteItemValue, setSelectedQuoteItemValue] = useState<any>();
   const [documentCloseNumber, setDocumentCloseNumber] = useState("");
   const selectedClient = useRecoilValue<any>(selectedClientState);
+
+  // FrontDesk Email Integration
+  const {
+    isEmailComposerOpen,
+    emailData,
+    isLoadingEmailData,
+    openEmailComposer,
+    closeEmailComposer,
+  } = useFrontDeskEmailIntegration({ documentType: docType });
   const isSelectedCLoseAsDeliveryNote = useRecoilValue(
     isSelectedCLoseAsDeliveryNoteState
+  );
+  const isSelectedCLoseAsProformaInvoice = useRecoilValue(
+    isSelectedCLoseAsProformaInvoiceState
   );
   const [paymentType, setPaymentType] = useState<PaymentTypeOption | null>(
     null
@@ -358,6 +375,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const isSupplierPayments = docType === DOCUMENT_TYPE.supplierPayments;
   const isDeliveryNote = docType === DOCUMENT_TYPE.deliveryNote;
   const isDeliveryNoteRefund = docType === DOCUMENT_TYPE.deliveryNoteRefund;
+  const isProformaInvoice = docType === DOCUMENT_TYPE.proformaInvoice;
   const isInvoice = docType === DOCUMENT_TYPE.invoice;
   const isInvoiceRefund = docType === DOCUMENT_TYPE.invoiceRefund;
   const isPurchaseOrder = docType === DOCUMENT_TYPE.purchaseOrder;
@@ -911,6 +929,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               onOpenDuplicateModal={onOpenDuplicateModal}
               handleGetTaxConfirmNo={handleGetTaxConfirmNo}
               onClickOpenInventoryIntakeModal={onClickOpenInventoryIntakeModal}
+              onClickSendToCustomerEmail={onClickSendToCustomerEmail}
+              onClickSendToCustomerSMS={onClickSendToCustomerSMS}
+              onClickSendToCustomerWhatsApp={onClickSendToCustomerWhatsApp}
             />
           ),
         };
@@ -988,10 +1009,12 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             quote?.jobs
           );
 
-          const paymentStatus = `${isRTL
-            ? `${quote?.sumApplied} ${getCurrencyUnitText(quote?.currency)}`
-            : `${getCurrencyUnitText(quote?.currency)} ${quote?.sumApplied}`
-            }/${isRTL
+          const paymentStatus = `${
+            isRTL
+              ? `${quote?.sumApplied} ${getCurrencyUnitText(quote?.currency)}`
+              : `${getCurrencyUnitText(quote?.currency)} ${quote?.sumApplied}`
+          }/${
+            isRTL
               ? `${quote?.totalPrice} ${getCurrencyUnitText(quote?.currency)}`
               : `${getCurrencyUnitText(quote?.currency)} ${quote?.totalPrice}`
           }`;
@@ -1351,6 +1374,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                   }
                   onOpenDuplicateModal={onOpenDuplicateModal}
                   handleGetTaxConfirmNo={handleGetTaxConfirmNo}
+                  onClickSendToCustomerEmail={onClickSendToCustomerEmail}
+                  onClickSendToCustomerSMS={onClickSendToCustomerSMS}
+                  onClickSendToCustomerWhatsApp={onClickSendToCustomerWhatsApp}
                 />
               ),
             };
@@ -1427,13 +1453,16 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 quote?.jobs
               );
 
-              const paymentStatus = `${isRTL
-                ? `${quote?.sumApplied} ${getCurrencyUnitText(
-                  quote?.currency
-                )}`
-                : `${getCurrencyUnitText(quote?.currency)} ${quote?.sumApplied
-                }`
-                }/${isRTL
+              const paymentStatus = `${
+                isRTL
+                  ? `${quote?.sumApplied} ${getCurrencyUnitText(
+                      quote?.currency
+                    )}`
+                  : `${getCurrencyUnitText(quote?.currency)} ${
+                      quote?.sumApplied
+                    }`
+              }/${
+                isRTL
                   ? `${quote?.totalPrice} ${getCurrencyUnitText(
                       quote?.currency
                     )}`
@@ -1558,6 +1587,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                   onClickOpenChangeProductionStatusModal
                 }
                 onClickSendPayment={onClickSendPayment}
+                onClickSendToCustomerEmail={onClickSendToCustomerEmail}
+                onClickSendToCustomerSMS={onClickSendToCustomerSMS}
+                onClickSendToCustomerWhatsApp={onClickSendToCustomerWhatsApp}
               />
             ),
           }));
@@ -1857,6 +1889,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 }
                 onOpenDuplicateModal={onOpenDuplicateModal}
                 handleGetTaxConfirmNo={handleGetTaxConfirmNo}
+                onClickSendToCustomerEmail={onClickSendToCustomerEmail}
+                onClickSendToCustomerSMS={onClickSendToCustomerSMS}
+                onClickSendToCustomerWhatsApp={onClickSendToCustomerWhatsApp}
               />
             ),
           };
@@ -1933,10 +1968,12 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               quote?.jobs
             );
 
-            const paymentStatus = `${isRTL
-              ? `${quote?.sumApplied} ${getCurrencyUnitText(quote?.currency)}`
-              : `${getCurrencyUnitText(quote?.currency)} ${quote?.sumApplied}`
-              }/${isRTL
+            const paymentStatus = `${
+              isRTL
+                ? `${quote?.sumApplied} ${getCurrencyUnitText(quote?.currency)}`
+                : `${getCurrencyUnitText(quote?.currency)} ${quote?.sumApplied}`
+            }/${
+              isRTL
                 ? `${quote?.totalPrice} ${getCurrencyUnitText(quote?.currency)}`
                 : `${getCurrencyUnitText(quote?.currency)} ${quote?.totalPrice}`
             }`;
@@ -2048,6 +2085,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               }
               onClickSendPayment={onClickSendPayment}
               onOpenDuplicateModal={onOpenDuplicateModal}
+              onClickSendToCustomerEmail={onClickSendToCustomerEmail}
+              onClickSendToCustomerSMS={onClickSendToCustomerSMS}
+              onClickSendToCustomerWhatsApp={onClickSendToCustomerWhatsApp}
             />
           ),
         }));
@@ -2102,7 +2142,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     async (documentId: string, nextStatus: number) => {
       setStatusUpdatingId(documentId);
       try {
-        const response = await updateDocumentStatusApi(callApi, () => { }, {
+        const response = await updateDocumentStatusApi(callApi, () => {}, {
           documentType: docType,
           documentId,
           status: nextStatus,
@@ -2490,6 +2530,10 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       value: DOCUMENT_TYPE.deliveryNote,
     },
     {
+      label: t("sales.quote.proformaInvoiceList"),
+      value: DOCUMENT_TYPE.proformaInvoice,
+    },
+    {
       label: t("sales.quote.receiptList"),
       value: DOCUMENT_TYPE.receipt,
     },
@@ -2679,6 +2723,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               }
               onOpenPackagesModal={onOpenPackagesModal}
               onOpenDuplicateModal={onOpenDuplicateModal}
+              onClickSendToCustomerEmail={onClickSendToCustomerEmail}
+              onClickSendToCustomerSMS={onClickSendToCustomerSMS}
+              onClickSendToCustomerWhatsApp={onClickSendToCustomerWhatsApp}
             />
           );
 
@@ -3078,7 +3125,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
           { label: t("sales.quote.closed"), value: AStatus.CLOSED },
           { label: t("sales.quote.draft"), value: AStatus.DRAFT },
         ]
-        : isPurchaseOrder ? [
+      : isPurchaseOrder
+      ? [
           {
             label: t("documentStatus.PurchaseOrder.UnderCreation"),
             value: DocumentCloseStatus.Open,
@@ -3089,7 +3137,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
           },
           {
             label: t("sales.quote.closed"),
-            value: DocumentCloseStatus.Closed
+            value: DocumentCloseStatus.Closed,
           },
           // {
           //   label: t("documentStatus.PurchaseOrder.Draft"),
@@ -3097,29 +3145,28 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
           // },
           {
             label: t("documentStatus.PurchaseOrder.SentToSupplier"),
-            value: DocumentCloseStatus.SentToSupplier
+            value: DocumentCloseStatus.SentToSupplier,
           },
           {
             label: t("documentStatus.PurchaseOrder.Received"),
-            value: DocumentCloseStatus.Received
+            value: DocumentCloseStatus.Received,
           },
           {
             label: t("documentStatus.PurchaseOrder.SupplierRequestingApproval"),
-            value: DocumentCloseStatus.SupplierRequestingApproval
+            value: DocumentCloseStatus.SupplierRequestingApproval,
           },
-
         ]
-          : [
-            {
-              label: t("sales.quote.open"),
-              value: AStatus.OPEN,
-            },
-            {
-              label: t("sales.quote.partialClosed"),
-              value: AStatus.PARTIAL_CLOSED,
-            },
-            { label: t("sales.quote.closed"), value: AStatus.CLOSED },
-          ];
+      : [
+          {
+            label: t("sales.quote.open"),
+            value: AStatus.OPEN,
+          },
+          {
+            label: t("sales.quote.partialClosed"),
+            value: AStatus.PARTIAL_CLOSED,
+          },
+          { label: t("sales.quote.closed"), value: AStatus.CLOSED },
+        ];
 
   const deliveryStatuses = useMemo(
     () => [
@@ -3657,6 +3704,10 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const [isSendToClient, setIsSendToClient] = useState(false);
   const [isSendOrderReadyToClient, setIsSendOrderReadyToClient] =
     useState(false);
+  const [hideCheckboxes, setHideCheckboxes] = useState(false);
+  const [preSelectedMethod, setPreSelectedMethod] = useState<
+    "sms" | "whatsapp" | null
+  >(null);
 
   const [paymentModalTitle, setPaymentModalTitle] = useState("");
   const [sendPayment, setSendPayment] =
@@ -3664,6 +3715,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
 
   const onClickClosePaymentModal = () => {
     setOpenPaymentModal(false);
+    setHideCheckboxes(false);
+    setPreSelectedMethod(null);
   };
 
   const onClickSendPaymentOld = (
@@ -3740,6 +3793,83 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       documentId,
       documentType: docType,
     });
+  };
+  const [documentForEmail, setDocumentForEmail] = useState<any>(null);
+  // Send to Customer - Email Handler
+  const onClickSendToCustomerEmail = async (document: any) => {
+    setDocumentForEmail(document);
+    try {
+      // First, get contact information
+      await onClickSendPaymentOld(document, true);
+      // Then open email composer with document data
+      const selectedContact =
+        sendPayment?.documentContacts?.[sendPayment?.selectedContactIndex];
+      const contactEmail = selectedContact?.contactMail;
+      const contactPhone = selectedContact?.contactPhone;
+      const contactName = selectedContact?.contactName || selectedContact?.name;
+      await openEmailComposer(
+        document?.id,
+        contactEmail,
+        contactPhone,
+        document?.customerId || document?.clientId,
+        document?.customerName || document?.clientName,
+        contactName
+      );
+    } catch (error) {
+      alertFaultGetData();
+    }
+  };
+
+  // Send to Customer - SMS Handler
+  const onClickSendToCustomerSMS = async (document: any) => {
+    try {
+      await onClickSendPaymentOld(document, true);
+      // Pre-select SMS checkbox
+      const newSendPaymentState = {
+        ...sendPayment,
+        sendBySms: true,
+        sendByMail: false,
+        sendByWhatsapp: false,
+      };
+      setSendPayment(newSendPaymentState);
+      setPaymentModalTitle(
+        `${t("sales.quote.sendToClient")} - ${t(
+          `sales.quote.${DOCUMENT_TYPE[docType]}`
+        ).toLowerCase()} ${t("sales.quote.number")} - ${document?.number}`
+      );
+      setIsSendToClient(true);
+      setHideCheckboxes(true);
+      setPreSelectedMethod("sms");
+      setOpenPaymentModal(true);
+    } catch (error) {
+      alertFaultGetData();
+    }
+  };
+
+  // Send to Customer - WhatsApp Handler
+  const onClickSendToCustomerWhatsApp = async (document: any) => {
+    try {
+      await onClickSendPaymentOld(document, true);
+      // Pre-select WhatsApp checkbox
+      const newSendPaymentState = {
+        ...sendPayment,
+        sendByWhatsapp: true,
+        sendByMail: false,
+        sendBySms: false,
+      };
+      setSendPayment(newSendPaymentState);
+      setPaymentModalTitle(
+        `${t("sales.quote.sendToClient")} - ${t(
+          `sales.quote.${DOCUMENT_TYPE[docType]}`
+        ).toLowerCase()} ${t("sales.quote.number")} - ${document?.number}`
+      );
+      setIsSendToClient(true);
+      setHideCheckboxes(true);
+      setPreSelectedMethod("whatsapp");
+      setOpenPaymentModal(true);
+    } catch (error) {
+      alertFaultGetData();
+    }
   };
 
   const [openMakePaymentModal, setOpenMakePaymentModal] = useState(false);
@@ -4065,6 +4195,11 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         if (isSelectedCLoseAsDeliveryNote) {
           const path = `/deliveryNote?isNewCreation=true&orderId=${selectedDocument?.id}`;
           window.open(path, "_blank");
+        } else if (isSelectedCLoseAsProformaInvoice) {
+          const path = isOrder
+            ? `/proformaInvoice?isNewCreation=true&orderId=${selectedDocument?.id}`
+            : `/proformaInvoice?isNewCreation=true&deliveryNoteId=${selectedDocument?.id}`;
+          window.open(path, "_blank");
         } else {
           const path = isOrder
             ? `/invoice?isNewCreation=true&orderId=${selectedDocument?.id}`
@@ -4251,6 +4386,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     [DOCUMENT_TYPE.order]: "orders",
     [DOCUMENT_TYPE.deliveryNote]: "deliveryNotes",
     [DOCUMENT_TYPE.deliveryNoteRefund]: "deliveryNotes",
+    [DOCUMENT_TYPE.proformaInvoice]: "proformaInvoices",
     [DOCUMENT_TYPE.invoice]: "invoices",
     [DOCUMENT_TYPE.invoiceRefund]: "invoices",
     [DOCUMENT_TYPE.purchaseOrder]: "purchaseOrders",
@@ -4410,6 +4546,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     isFetching,
     openChangeProductionStatusModal,
     isSelectedCLoseAsDeliveryNote,
+    isSelectedCLoseAsProformaInvoice,
     onClickCloseChangeProductionStatusModal,
     moveOrderToReady,
     onChangeDocumentSearch,
@@ -4430,6 +4567,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     isReceipt,
     isSupplierPayments,
     isDeliveryNote,
+    isProformaInvoice,
     isInvoice,
     deliveryStatuses,
     deliveryStatus,
@@ -4517,6 +4655,19 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     onOpenPurchaseOrderTypeModal,
     onClosePurchaseOrderTypeModal,
     handleSelectPurchaseOrderType,
+    // Send to Customer handlers
+    onClickSendToCustomerEmail,
+    onClickSendToCustomerSMS,
+    onClickSendToCustomerWhatsApp,
+    // Email composer state
+    isEmailComposerOpen,
+    emailData,
+    isLoadingEmailData,
+    closeEmailComposer,
+    // Send to customer modal state
+    hideCheckboxes,
+    preSelectedMethod,
+    documentForEmail,
   };
 };
 

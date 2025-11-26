@@ -1,0 +1,390 @@
+# Chatwoot Skills Integration Rules
+
+## Overview
+This file defines how to use the Chatwoot skills located in `.claude/skills/chatwoot/` to accelerate FrontDesk Chatwoot development. These skills document Chatwoot's frontend patterns (Vue 3 + Vuex) to help adapt them to FrontDesk's React + Recoil architecture.
+
+## 🎯 Philosophy
+
+**Chatwoot is our blueprint** - We adapt proven patterns instead of reinventing them.
+
+When implementing ANY Chatwoot feature:
+1. **Reference First**: Check `.claude/skills/chatwoot/` for the pattern
+2. **Understand the Flow**: Learn how Chatwoot implements it
+3. **Adapt to React/Recoil**: Translate Vue/Vuex to React/Recoil
+4. **Follow FrontDesk Conventions**: Use our project patterns
+
+## 📚 Available Skills
+
+### Core Skills
+
+| Skill | File | When to Use |
+|-------|------|-------------|
+| **Core Architecture** | `core-architecture.md` | Understanding Chatwoot's overall structure, directory layout, tech stack |
+| **API Patterns** | `api-patterns.md` | Implementing API calls, understanding account-scoped URLs, CRUD operations |
+| **State Management** | `state-management.md` | Managing global state, async operations, optimistic updates |
+| **Component Patterns** | `component-patterns.md` | Building components, understanding Vue patterns to adapt |
+
+### Feature Flow Skills
+
+| Skill | File | When to Use |
+|-------|------|-------------|
+| **Message Sending** | `flows/message-sending-flow.md` | Implementing message composer, send functionality, optimistic updates |
+| **Conversation Filtering** | `flows/conversation-list-filtering.md` | Building inbox views, conversation lists, filter controls |
+| **Contact Management** | `flows/contact-management.md` | Implementing contact views, search, CRUD operations |
+| **New Conversation** | `flows/new-conversation-creation.md` | Building "New Conversation" or "Compose" UI flows |
+
+## 🔄 Adaptation Workflow
+
+### Step 1: Identify the Pattern
+When starting a new feature:
+
+```bash
+# Check if skill exists for your feature
+ls .claude/skills/chatwoot/flows/
+
+# Read relevant skill
+cat .claude/skills/chatwoot/flows/message-sending-flow.md
+```
+
+### Step 2: Study Chatwoot Implementation
+Each skill provides:
+- **Chatwoot file locations** - Exact paths to reference files
+- **Code snippets** - Key patterns with examples
+- **Flow diagrams** - Step-by-step user/data flow
+- **Key concepts** - Important patterns to understand
+
+### Step 3: Create Adaptation Blueprint
+Before coding, create a mapping table:
+
+| Chatwoot (Vue/Vuex) | → | FrontDesk (React/Recoil) |
+|---------------------|---|--------------------------|
+| `ReplyBox.vue` | → | `MessageComposer.tsx` |
+| `conversations/actions.js` | → | `useChatwootMessages()` hook |
+| `MessageApi.create()` | → | `chatwootService.messages.createMessage()` |
+| Vuex mutation | → | Recoil atom update |
+
+### Step 4: Implement
+Follow the adapted pattern using FrontDesk conventions.
+
+## 📖 How to Read Skills
+
+### Skill File Structure
+```markdown
+---
+name: chatwoot-{skill-name}
+description: When to use this skill
+---
+
+# Skill Title
+
+## When to Use This Skill
+- Scenario 1
+- Scenario 2
+
+## Chatwoot Implementation
+[How Chatwoot does it]
+
+### Key Files
+- File path 1
+- File path 2
+
+### Code Snippets
+[Code examples]
+
+## Key Patterns
+[Summary of important concepts]
+
+## References
+[Links to files]
+```
+
+### Focus Areas
+When reading a skill, focus on:
+1. **Data flow** - How data moves through the system
+2. **State management** - How state is structured and updated
+3. **API calls** - What endpoints are called and when
+4. **User interaction** - The complete user flow
+5. **Optimistic updates** - How UI updates before API response
+
+## 🔍 Common Translation Patterns
+
+### Vue Component → React Component
+
+**Chatwoot (Vue):**
+```vue
+<script setup>
+import { ref, computed, onMounted } from 'vue';
+import { useStore } from 'vuex';
+
+const store = useStore();
+const message = ref('');
+const conversations = computed(() => store.getters['conversations/getAll']);
+
+const sendMessage = async () => {
+  await store.dispatch('conversations/sendMessage', message.value);
+};
+
+onMounted(() => {
+  store.dispatch('conversations/fetch');
+});
+</script>
+```
+
+**FrontDesk (React):**
+```typescript
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { chatwootConversationsAtom } from '@/store/frontdesk/atoms/chatwoot.atoms';
+import { useChatwootConversations } from '../hooks/use-chatwoot-conversations';
+
+export const MessageComposer: React.FC = () => {
+  const [message, setMessage] = useState('');
+  const conversations = useRecoilValue(chatwootConversationsAtom);
+  const { sendMessage: send } = useChatwootConversations();
+
+  const handleSend = useCallback(async () => {
+    await send(message);
+    setMessage('');
+  }, [message, send]);
+
+  return (
+    <div>
+      <input value={message} onChange={e => setMessage(e.target.value)} />
+      <button onClick={handleSend}>Send</button>
+    </div>
+  );
+};
+```
+
+### Vuex Store → Recoil Atoms + Hooks
+
+**Chatwoot (Vuex Module):**
+```javascript
+// store/modules/conversations/actions.js
+export const actions = {
+  async sendMessage({ commit }, { conversationId, message }) {
+    // Optimistic update
+    const tempId = Date.now();
+    commit('ADD_MESSAGE', { id: tempId, content: message, status: 'pending' });
+    
+    try {
+      const response = await MessageApi.create({ conversationId, message });
+      commit('UPDATE_MESSAGE', { tempId, message: response.data });
+    } catch (error) {
+      commit('REMOVE_MESSAGE', tempId);
+      throw error;
+    }
+  }
+};
+```
+
+**FrontDesk (Hook + Atom):**
+```typescript
+// hooks/use-chatwoot-messages.ts
+import { useCallback } from 'react';
+import { useRecoilState } from 'recoil';
+import { chatwootMessagesAtom } from '@/store/frontdesk/atoms/chatwoot.atoms';
+import { chatwootService } from '@/services/frontdesk';
+
+export const useChatwootMessages = (accountId: number, conversationId: number) => {
+  const [messages, setMessages] = useRecoilState(chatwootMessagesAtom);
+
+  const sendMessage = useCallback(async (content: string) => {
+    const tempId = `temp-${Date.now()}`;
+    
+    // Optimistic update
+    setMessages(prev => [...prev, {
+      id: tempId,
+      content,
+      status: 'pending',
+      conversation_id: conversationId
+    }]);
+
+    try {
+      const message = await chatwootService.messages.createMessage(
+        accountId,
+        conversationId,
+        { content, message_type: 'outgoing' }
+      );
+      
+      // Replace temp with real message
+      setMessages(prev => prev.map(m => 
+        m.id === tempId ? message : m
+      ));
+    } catch (error) {
+      // Remove on failure
+      setMessages(prev => prev.filter(m => m.id !== tempId));
+      throw error;
+    }
+  }, [accountId, conversationId, setMessages]);
+
+  return { messages, sendMessage };
+};
+```
+
+### Vue API Client → FrontDesk Service
+
+**Chatwoot (API Client):**
+```javascript
+// api/inbox/message.js
+class MessageApi extends ApiClient {
+  create({ conversationId, message, private: isPrivate }) {
+    return axios.post(`${this.url}/${conversationId}/messages`, {
+      content: message,
+      private: isPrivate
+    });
+  }
+}
+```
+
+**FrontDesk (Service):**
+```typescript
+// services/frontdesk/api/chatwoot/services/chatwoot-messages.service.ts
+export class ChatwootMessagesService {
+  private baseUrl = '/api/v1/accounts';
+
+  async createMessage(
+    accountId: number,
+    conversationId: number,
+    data: CreateMessageDto
+  ): Promise<Message> {
+    const url = `${this.baseUrl}/${accountId}/conversations/${conversationId}/messages`;
+    const response = await httpClient.post<Message>(url, data);
+    return response.data;
+  }
+}
+```
+
+## 🎨 Pattern Translation Cheat Sheet
+
+| Chatwoot Pattern | FrontDesk Equivalent |
+|-----------------|---------------------|
+| `<script setup>` | `React.FC` component |
+| `ref()` | `useState()` |
+| `computed()` | `useMemo()` |
+| `watch()` | `useEffect()` |
+| `onMounted()` | `useEffect(() => {}, [])` |
+| `onUnmounted()` | `return () => {}` in useEffect |
+| Vuex `store.state` | Recoil `atom` |
+| Vuex `getters` | Recoil `selector` |
+| Vuex `actions` | Custom hooks |
+| Vuex `mutations` | `useSetRecoilState()` |
+| `store.dispatch()` | Call hook method |
+| `store.commit()` | `setAtom()` |
+| Vue `props` | React `props` |
+| Vue `emit` | Callback props |
+| `v-if` | `condition &&` |
+| `v-for` | `.map()` |
+| `@click` | `onClick` |
+| `:class` | `className` or `sx` |
+
+## 📝 Example: Implementing Message Sending
+
+### 1. Read the Skill
+```bash
+cat .claude/skills/chatwoot/flows/message-sending-flow.md
+```
+
+### 2. Study Chatwoot Files
+From skill, identify key files:
+- `app/javascript/dashboard/components/widgets/conversation/ReplyBox.vue`
+- `app/javascript/dashboard/store/modules/conversations/actions.js`
+- `app/javascript/dashboard/api/inbox/message.js`
+
+### 3. Create Adaptation Plan
+| Chatwoot | FrontDesk |
+|----------|-----------|
+| `ReplyBox.vue` | `MessageComposer.tsx` |
+| `sendMessageAsReply` action | `useChatwootMessages().sendMessage` |
+| `MessageApi.create()` | `chatwootService.messages.createMessage()` |
+| `ADD_MESSAGE` mutation | `setMessages(prev => [...prev, message])` |
+
+### 4. Implement Following FrontDesk Patterns
+```typescript
+// components/messages/message-composer.tsx
+export const MessageComposer: React.FC<{ conversationId: number }> = ({ conversationId }) => {
+  const accountId = useRecoilValue(chatwootSelectedAccountAtom);
+  const { sendMessage } = useChatwootMessages(accountId!, conversationId);
+  const [content, setContent] = useState('');
+
+  const handleSend = useCallback(async () => {
+    if (!content.trim()) return;
+    await sendMessage(content);
+    setContent('');
+  }, [content, sendMessage]);
+
+  return (
+    <Box>
+      <TextField
+        value={content}
+        onChange={e => setContent(e.target.value)}
+        placeholder="Type a message..."
+      />
+      <Button onClick={handleSend}>Send</Button>
+    </Box>
+  );
+};
+```
+
+## 🚫 Common Mistakes
+
+### ❌ WRONG: Direct Copy-Paste
+```typescript
+// Don't copy Vue code directly
+import { ref } from 'vue'; // ❌ Wrong framework
+const message = ref('');
+```
+
+### ✅ CORRECT: Adapt to React
+```typescript
+import { useState } from 'react';
+const [message, setMessage] = useState('');
+```
+
+### ❌ WRONG: Ignoring Account Scoping
+```typescript
+// Chatwoot extracts accountId from URL
+const accountId = window.location.pathname.split('/')[3]; // ❌ Don't do this
+```
+
+### ✅ CORRECT: Use Recoil Atom
+```typescript
+const accountId = useRecoilValue(chatwootSelectedAccountAtom);
+```
+
+## ✅ Skills Usage Checklist
+
+When implementing a feature:
+- [ ] Checked if skill exists for this feature
+- [ ] Read and understood the Chatwoot pattern
+- [ ] Created adaptation blueprint (Vue → React mapping)
+- [ ] Identified Chatwoot files to reference
+- [ ] Understood the complete data flow
+- [ ] Adapted to React/Recoil patterns
+- [ ] Followed FrontDesk naming conventions
+- [ ] Used FrontDesk service layer
+- [ ] Added proper error handling
+- [ ] Tested the implementation
+
+## 📚 References
+
+### Internal Documentation
+- `.claude/skills/chatwoot/README.md` - Skills overview
+- `frontdesk-chatwoot-provider.mdc` - Chatwoot provider rules
+- `frontdesk-architecture.mdc` - Core architecture rules
+- `CLAUDE.md` - Complete development guidelines
+- `GEMINI.md` - Gemini-specific guidelines
+
+### External References
+- **Chatwoot Demo**: `/Users/omarsabbah/Desktop/messaging/chatwoot/app/javascript/dashboard/`
+- **Chatwoot Docs**: https://www.chatwoot.com/docs
+
+## 🔄 Continuous Learning
+
+As you implement features:
+1. **Document new patterns** - Share what you learned
+2. **Update skills** - If you find better Chatwoot patterns
+3. **Improve translations** - Refine Vue → React mappings
+4. **Ask questions** - When patterns are unclear
+
+Remember: Skills are living documentation. They improve as we learn more about Chatwoot's patterns.

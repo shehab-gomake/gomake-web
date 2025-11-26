@@ -184,7 +184,8 @@ const PrimaryTable = ({
   onSortChange,
   defaultSortIndex,
   defaultSortDirection,
-}: ITableProps) => {
+  rowMetadata, // Optional. Array of booleans indicating if each row is a sub-product
+}: ITableProps & { rowMetadata?: boolean[] }) => {
   const { t } = useTranslation();
   const dir: "rtl" | "ltr" = t("direction");
   const { classes } = useStyle(maxHeight, dir);
@@ -198,9 +199,9 @@ const PrimaryTable = ({
   } | null>(
     withSort && defaultSortIndex !== undefined
       ? {
-          key: defaultSortIndex as number,
-          direction: defaultSortDirection || "desc",
-        }
+        key: defaultSortIndex as number,
+        direction: defaultSortDirection || "desc",
+      }
       : null
   );
   const sortConfig = externalSortConfig ?? internalSortConfig;
@@ -236,17 +237,17 @@ const PrimaryTable = ({
     variant === "ClassicTable"
       ? ClassicTableCell
       : variant === "RoundTable"
-      ? RoundTableCell
-      : PrimaryTableCell;
+        ? RoundTableCell
+        : PrimaryTableCell;
 
   const TableRow =
     variant === "ClassicTable"
       ? ClassicTableRow
       : variant === "OddEvenTable"
-      ? OddEvenTableRow
-      : variant === "RoundTable"
-      ? RoundTableRow
-      : PrimaryTableRow;
+        ? OddEvenTableRow
+        : variant === "RoundTable"
+          ? RoundTableRow
+          : PrimaryTableRow;
 
   // Sorting logic
   const sortedRows = useMemo(() => {
@@ -259,10 +260,10 @@ const PrimaryTable = ({
       const result = sortFn
         ? sortFn(a, b)
         : a[key] < b[key]
-        ? -1
-        : a[key] > b[key]
-        ? 1
-        : 0;
+          ? -1
+          : a[key] > b[key]
+            ? 1
+            : 0;
       return direction === "asc" ? result : -result;
     });
   }, [rows, sortConfig, customSortFns]);
@@ -404,49 +405,56 @@ const PrimaryTable = ({
           </TableHead>
           <TableBody>
             {/* Row Checkbox */}
-            {sortedRows?.map((row, rowIndex) => (
-              <TableRow
-                key={`row_${rowIndex}`}
-                style={{
-                  backgroundColor:
-                    isAgingeport && isAgingDetailedReport && row[0] == " "
-                      ? "#F6F6F6"
-                      : isLastItemTotal && rowIndex === rows.length - 1
-                      ? "#EFDDFF"
-                      : "inherit",
-                }}
-              >
-                {enableCheckboxes && (
-                  <TableCell padding="checkbox">
-                    {rowCheckboxCondition(row) ? (
-                      <PrimaryCheckbox
-                        checked={selectedRows.has(rowIndex)}
-                        onChange={() => handleRowSelection(rowIndex)}
-                        inputProps={{ "aria-label": `select row ${rowIndex}` }}
-                      />
-                    ) : null}
-                  </TableCell>
-                )}
-                {row.map((cell, cellIndex) => {
-                  const cellStyle = columnWidths
-                    ? { width: columnWidths[cellIndex] }
-                    : {};
-                  if (cellIndex === 0 && stickyFirstCol) {
-                    return <TableCell style={classes.sticky}>{cell}</TableCell>;
-                  } else {
-                    return (
-                      <TableCell
-                        align="center"
-                        style={cellStyle}
-                        key={cellIndex}
-                      >
-                        {cell}
-                      </TableCell>
-                    );
-                  }
-                })}
-              </TableRow>
-            ))}
+            {sortedRows?.map((row, rowIndex) => {
+              // Check if this row is a sub-product row
+              const isSubProductRow = rowMetadata && rowMetadata[rowIndex];
+
+              return (
+                <TableRow
+                  key={`row_${rowIndex}`}
+                  style={{
+                    backgroundColor:
+                      isSubProductRow
+                        ? "#EBECFF"
+                        : isAgingeport && isAgingDetailedReport && row[0] == " "
+                          ? "#F6F6F6"
+                          : isLastItemTotal && rowIndex === rows.length - 1
+                            ? "#EFDDFF"
+                            : "inherit",
+                  }}
+                >
+                  {enableCheckboxes && (
+                    <TableCell padding="checkbox">
+                      {rowCheckboxCondition(row) ? (
+                        <PrimaryCheckbox
+                          checked={selectedRows.has(rowIndex)}
+                          onChange={() => handleRowSelection(rowIndex)}
+                          inputProps={{ "aria-label": `select row ${rowIndex}` }}
+                        />
+                      ) : null}
+                    </TableCell>
+                  )}
+                  {row.map((cell, cellIndex) => {
+                    const cellStyle = columnWidths
+                      ? { width: columnWidths[cellIndex] }
+                      : {};
+                    if (cellIndex === 0 && stickyFirstCol) {
+                      return <TableCell style={classes.sticky}>{cell}</TableCell>;
+                    } else {
+                      return (
+                        <TableCell
+                          align="center"
+                          style={cellStyle}
+                          key={cellIndex}
+                        >
+                          {cell}
+                        </TableCell>
+                      );
+                    }
+                  })}
+                </TableRow>
+              );
+            })}
           </TableBody>
         </Table>
       </StyledTableContainer>

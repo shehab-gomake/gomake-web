@@ -60,7 +60,7 @@ export enum DiscountType {
 }
 
 export enum DocumentTypeEnums {
-  Quote,
+  Quote = 0,
   Order,
   DeliveryNote,
   Invoice,
@@ -72,6 +72,9 @@ export enum DocumentTypeEnums {
   PurchaseInvoice,
   PurchaseInvoiceRefund,
   BoardMission,
+  CustomerChat,
+  SupplierPayments,
+  ProformaInvoice = 14,
 }
 
 export enum ERPDocumentsTypesEnum {
@@ -95,6 +98,7 @@ export enum ERPDocumentsTypesEnum {
   ledgerReport,
   salesReport,
   supplierPayment,
+  proformaInvoice = 21,
 }
 
 export const mapERPTypeToDocumentType = (
@@ -115,6 +119,7 @@ export const mapERPTypeToDocumentType = (
     [ERPDocumentsTypesEnum.purchaseInvoiceRefund]:
       DocumentTypeEnums.PurchaseInvoiceRefund,
     [ERPDocumentsTypesEnum.boardMission]: DocumentTypeEnums.BoardMission,
+    [ERPDocumentsTypesEnum.proformaInvoice]: DocumentTypeEnums.ProformaInvoice,
   };
 
   return mapping[erpType];

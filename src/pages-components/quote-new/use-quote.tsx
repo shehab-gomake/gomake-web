@@ -80,7 +80,10 @@ import {
   CheckData,
 } from "@/widgets/quote-new/buttons-container/states";
 import { QuoteStatuses } from "@/widgets/quote-new/total-price-and-vat/enums";
-import { isSelectedCLoseAsDeliveryNoteState } from "@/pages/customers/customer-states";
+import {
+  isSelectedCLoseAsDeliveryNoteState,
+  isSelectedCLoseAsProformaInvoiceState,
+} from "@/pages/customers/customer-states";
 import {
   checkArrayNotEmptyOrEmailNotEmpty,
   checkArrayNotEmptyOrPhoneNotEmpty,
@@ -102,7 +105,14 @@ import { Button } from "@mui/material";
 import { PlusIcon } from "../quotes/widgets/icons/header-section-icons";
 import { useStyle } from "./style";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
-import { PurchaseOrderType, ShowDocumentDetailsEnum, ShowPricesEnum, ItemCalculationType, PurchaseOrderStatuses } from "@/enums";
+import { useFrontDeskEmailIntegration } from "../quotes/hooks/use-frontdesk-email-integration";
+import {
+  PurchaseOrderType,
+  ShowDocumentDetailsEnum,
+  ShowPricesEnum,
+  ItemCalculationType,
+  PurchaseOrderStatuses,
+} from "@/enums";
 
 export enum MessageType {
   Email = 0,
@@ -178,15 +188,21 @@ const useQuoteNew = ({
     isSupplierPayments ||
     isOutgoingPayments;
 
+  // FrontDesk Email Integration
+  const {
+    isEmailComposerOpen,
+    emailData,
+    openEmailComposer,
+    closeEmailComposer,
+  } = useFrontDeskEmailIntegration({ documentType: docType });
+
   const purchaseOrderStatusOptions = useMemo(
     () =>
       Object.keys(PurchaseOrderStatuses)
         .filter((key) => isNaN(Number(key)))
         .map((key) => ({
           value:
-            PurchaseOrderStatuses[
-              key as keyof typeof PurchaseOrderStatuses
-            ],
+            PurchaseOrderStatuses[key as keyof typeof PurchaseOrderStatuses],
           label: t(`documentStatus.PurchaseOrder.${key}`),
         })),
     [t]
@@ -469,6 +485,9 @@ const useQuoteNew = ({
   const isSelectedCLoseAsDeliveryNote = useRecoilValue(
     isSelectedCLoseAsDeliveryNoteState
   );
+  const isSelectedCLoseAsProformaInvoice = useRecoilValue(
+    isSelectedCLoseAsProformaInvoiceState
+  );
   const onClickCloseChangeProductionStatusModal = () => {
     setOpenChangeProductionStatusModal(false);
     setIsMoveToReady(false);
@@ -483,7 +502,8 @@ const useQuoteNew = ({
     useState(false);
   const [inventoryData, setInventoryData] = useState<any[]>([]);
   const [inventoryLoading, setInventoryLoading] = useState(false);
-  const [openPurchaseOrderTypeModal, setOpenPurchaseOrderTypeModal] = useState(false);
+  const [openPurchaseOrderTypeModal, setOpenPurchaseOrderTypeModal] =
+    useState(false);
 
   const onClickOpenInventoryIntakeModal = async () => {
     setOpenInventoryIntakeModal(true);
@@ -527,15 +547,17 @@ const useQuoteNew = ({
     "#",
     isDeliveryNote || isInvoice ? t("products.profits.documentNumber") : null,
     !CheckPreferenceValue(EPreferences.HIDE_ITEM_CODE_FROM_DOCUMENT_CART) &&
-    t("sales.quote.itemCode"),
+      t("sales.quote.itemCode"),
     !CheckPreferenceValue(EPreferences.HIDE_ITEM_CODE_FROM_DOCUMENT_CART) &&
-    t("products.profits.itemName"),
+      t("products.profits.itemName"),
     CheckPreferenceValue(EPreferences.HIDE_ITEM_CODE_FROM_DOCUMENT_CART) &&
-    t("products.profits.itemName"),
+      t("products.profits.itemName"),
     showDetails ? t("products.profits.details") : null,
     isMaterialPurchaseOrder ? t("sales.purchaseOrder.packagesQuantity") : null,
     isMaterialPurchaseOrder ? t("sales.purchaseOrder.quantityInPackage") : null,
-    isMaterialPurchaseOrder ? t("sales.purchaseOrder.totalQuantity") : t("sales.quote.amount"),
+    isMaterialPurchaseOrder
+      ? t("sales.purchaseOrder.totalQuantity")
+      : t("sales.quote.amount"),
     isMaterialPurchaseOrder ? t("sales.purchaseOrder.unit") : null,
     showPrices ? t("products.profits.pricingListWidget.unitPrice") : null,
     showPrices ? t("sales.quote.discount") : null,
@@ -543,37 +565,39 @@ const useQuoteNew = ({
     t("products.profits.more"),
   ].filter(Boolean);
 
-  const columnWidths = isMaterialPurchaseOrder ? [
-    "5%", // "#"
-    "9%", // Item Code
-    "10%", // Item Name
-    "15%", // Details column (optional)
-    "9%", // Amount
-    "9%", // Amount
-    "9%", // Amount
-    "5%", // Unit Price
-    showPrices ? "8%" : null, // Unit Price
-    showPrices ? "8%" : null, // Discount
-    showPrices ? "8%" : null, // Final Price
-    "5%", // More
-  ] : [
-    "5%", // "#"
-    isDeliveryNote || isInvoice ? "10%" : null, // Document Number
-    !CheckPreferenceValue(EPreferences.HIDE_ITEM_CODE_FROM_DOCUMENT_CART)
-      ? "10%"
-      : null, // Item Code
-    "12%", // Item Name
-    source?.showDetails === ShowDocumentDetailsEnum.All
-      ? "25%"
-      : source?.showDetails === ShowDocumentDetailsEnum.ShowJobNameOnly
-        ? "10%"
-        : null, // Details column (optional)
-    "10%", // Amount
-    showPrices ? "10%" : null, // Unit Price
-    showPrices ? "10%" : null, // Discount
-    showPrices ? "10%" : null, // Final Price
-    "8%", // More
-  ].filter(Boolean);
+  const columnWidths = isMaterialPurchaseOrder
+    ? [
+        "5%", // "#"
+        "9%", // Item Code
+        "10%", // Item Name
+        "15%", // Details column (optional)
+        "9%", // Amount
+        "9%", // Amount
+        "9%", // Amount
+        "5%", // Unit Price
+        showPrices ? "8%" : null, // Unit Price
+        showPrices ? "8%" : null, // Discount
+        showPrices ? "8%" : null, // Final Price
+        "5%", // More
+      ]
+    : [
+        "5%", // "#"
+        isDeliveryNote || isInvoice ? "10%" : null, // Document Number
+        !CheckPreferenceValue(EPreferences.HIDE_ITEM_CODE_FROM_DOCUMENT_CART)
+          ? "10%"
+          : null, // Item Code
+        "12%", // Item Name
+        source?.showDetails === ShowDocumentDetailsEnum.All
+          ? "25%"
+          : source?.showDetails === ShowDocumentDetailsEnum.ShowJobNameOnly
+          ? "10%"
+          : null, // Details column (optional)
+        "10%", // Amount
+        showPrices ? "10%" : null, // Unit Price
+        showPrices ? "10%" : null, // Discount
+        showPrices ? "10%" : null, // Final Price
+        "8%", // More
+      ].filter(Boolean);
 
   // const columnWidths = ["5%", "10%", "12%", "25%", "10%", "10%", "10%", "10%"];
   const headerHeight = "44px";
@@ -1149,16 +1173,19 @@ const useQuoteNew = ({
                   totalPrice: updatedQuoteItemValue?.totalPrice,
                   data: updatedQuoteItemValue?.discount || 0,
                   calculationType: 0,
-                  totalPriceAfterDiscount: updatedQuoteItemValue?.totalPriceAfterDiscount,
+                  totalPriceAfterDiscount:
+                    updatedQuoteItemValue?.totalPriceAfterDiscount,
                   discount: updatedQuoteItemValue?.discount || 0,
                   discountAmount: updatedQuoteItemValue?.discountAmount || 0,
                   totalPayment: updatedQuoteItemValue?.totalPayment,
                   vat: updatedQuoteItemValue?.vat || 0.17,
                   totalVAT: updatedQuoteItemValue?.totalVAT || 0,
                   roundPrices: updatedQuoteItemValue?.client?.roundPrices,
-                  documentItems: updatedQuoteItemValue.documentItems?.map((item) => ({
-                    finalPrice: item.finalPrice,
-                  })),
+                  documentItems: updatedQuoteItemValue.documentItems?.map(
+                    (item) => ({
+                      finalPrice: item.finalPrice,
+                    })
+                  ),
                 },
               }
             );
@@ -1438,7 +1465,7 @@ const useQuoteNew = ({
         discount: quoteItem?.discount,
         isPrintHouseMaterialItem:
           quoteItem?.printHouseMaterialId &&
-            (isPrintHouseMaterialItem || selectedFirstMaterial)
+          (isPrintHouseMaterialItem || selectedFirstMaterial)
             ? true
             : false,
         finalPrice: quoteItemEdit?.finalPrice,
@@ -1446,8 +1473,7 @@ const useQuoteNew = ({
         roundPrices: newQuoteItemValue?.client?.roundPrices,
         document: {
           totalPrice: newQuoteItemValue?.totalPrice,
-          totalPriceAfterDiscount:
-            newQuoteItemValue?.totalPriceAfterDiscount,
+          totalPriceAfterDiscount: newQuoteItemValue?.totalPriceAfterDiscount,
           discount: +newQuoteItemValue?.discount,
           discountAmount: newQuoteItemValue?.discountAmount,
           totalPayment: newQuoteItemValue?.totalPayment,
@@ -1469,8 +1495,10 @@ const useQuoteNew = ({
           calculationType === ItemCalculationType.Amount) &&
         quoteItem?.printHouseMaterialId
       ) {
-        documentPayload.packagesQuantity = quoteItem?.packagesQuantity || quoteItem?.packageQuantity || 0;
-        documentPayload.quantityInPackage = quoteItem?.quantityInPackage || quoteItem?.quantityPerPackage || 0;
+        documentPayload.packagesQuantity =
+          quoteItem?.packagesQuantity || quoteItem?.packageQuantity || 0;
+        documentPayload.quantityInPackage =
+          quoteItem?.quantityInPackage || quoteItem?.quantityPerPackage || 0;
       }
 
       const res = await callApi(
@@ -1539,8 +1567,18 @@ const useQuoteNew = ({
                     calculationType === ItemCalculationType.QuantityInPackage ||
                     calculationType === ItemCalculationType.Amount
                   ) {
-                    updatedItem.packagesQuantity = _data.packagesQuantity ?? quoteItem.packagesQuantity ?? quoteItem.packageQuantity ?? documentItem.packagesQuantity ?? documentItem.packageQuantity;
-                    updatedItem.quantityInPackage = _data.quantityInPackage ?? quoteItem.quantityInPackage ?? quoteItem.quantityPerPackage ?? documentItem.quantityInPackage ?? documentItem.quantityPerPackage;
+                    updatedItem.packagesQuantity =
+                      _data.packagesQuantity ??
+                      quoteItem.packagesQuantity ??
+                      quoteItem.packageQuantity ??
+                      documentItem.packagesQuantity ??
+                      documentItem.packageQuantity;
+                    updatedItem.quantityInPackage =
+                      _data.quantityInPackage ??
+                      quoteItem.quantityInPackage ??
+                      quoteItem.quantityPerPackage ??
+                      documentItem.quantityInPackage ??
+                      documentItem.quantityPerPackage;
                   }
 
                   return updatedItem;
@@ -1713,7 +1751,7 @@ const useQuoteNew = ({
           alertSuccessDelete();
           onCloseDeleteItemModal();
           quoteItemValue?.documentItems?.length === 1 ||
-            res?.data?.succ === false
+          res?.data?.succ === false
             ? navigate("/home")
             : getQuote();
         } else {
@@ -1997,6 +2035,28 @@ const useQuoteNew = ({
     alertNotVerifiedMail.open();
   };
 
+  // New handler for email - opens FrontDesk composer
+  const onClickSendEmailViaComposer = async () => {
+    if (!isSelectedAtLeastOne && docType === DOCUMENT_TYPE.quote) {
+      alertFault("reports.pleaseSelectOneItem");
+      return;
+    }
+
+    const contacts = quoteItemValue?.documentContacts;
+    const emailValid = checkArrayNotEmptyOrEmailNotEmpty(contacts);
+
+    if (!emailValid) {
+      alertFault("sales.quote.mailContectErrorMsg");
+      return;
+    }
+
+    // Get first valid email from contacts
+    const contactEmail = contacts?.find((c) => c.contactMail)?.contactMail;
+    const contactPhone = contacts?.find((c) => c.contactPhone)?.contactPhone;
+
+    await openEmailComposer(quoteItemValue?.id, contactEmail, contactPhone);
+  };
+
   const onClickSendQuoteToClient = async (messageType: MessageType) => {
     if (!isSelectedAtLeastOne && docType === DOCUMENT_TYPE.quote) {
       alertFault("reports.pleaseSelectOneItem");
@@ -2101,7 +2161,7 @@ const useQuoteNew = ({
   const receiptSendModal = useModal();
   const [modalCallback, setModalCallback] = useState<
     (includeInvoices: boolean) => void
-  >(() => () => { });
+  >(() => () => {});
 
   const openReceiptModal = (callback: (includeInvoices: boolean) => void) => {
     receiptSendModal.open();
@@ -2298,7 +2358,9 @@ const useQuoteNew = ({
         exchangeRate:
           quoteItemValue.exchangeRate === 0 ? 1 : quoteItemValue.exchangeRate,
         isOpenRelatedDocuments: isOpenRelatedDocuments,
-        type: isMaterialPurchaseOrder ? PurchaseOrderType.Materials : PurchaseOrderType.Products,
+        type: isMaterialPurchaseOrder
+          ? PurchaseOrderType.Materials
+          : PurchaseOrderType.Products,
       },
     });
   };
@@ -2664,11 +2726,15 @@ const useQuoteNew = ({
           navigate(
             `/deliveryNote?isNewCreation=true&orderId=${selectedDocument?.id}`
           );
+        } else if (isSelectedCLoseAsProformaInvoice) {
+          const path = isOrder
+            ? `/proformaInvoice?isNewCreation=true&orderId=${selectedDocument?.id}`
+            : `/proformaInvoice?isNewCreation=true&deliveryNoteId=${selectedDocument?.id}`;
+          navigate(path);
         } else {
-          const path =
-            docType === DOCUMENT_TYPE.order
-              ? `/invoice?isNewCreation=true&orderId=${selectedDocument?.id}`
-              : `/invoice?isNewCreation=true&deliveryNoteId=${selectedDocument?.id}`;
+          const path = isOrder
+            ? `/invoice?isNewCreation=true&orderId=${selectedDocument?.id}`
+            : `/invoice?isNewCreation=true&deliveryNoteId=${selectedDocument?.id}`;
           navigate(path);
         }
       } else {
@@ -3128,6 +3194,7 @@ const useQuoteNew = ({
     onClickCloseChangeProductionStatusModal,
     selectedDocument,
     isSelectedCLoseAsDeliveryNote,
+    isSelectedCLoseAsProformaInvoice,
     navigate,
     moveOrderToReady,
     allClientActiveBudgets,
@@ -3203,6 +3270,11 @@ const useQuoteNew = ({
     onConfirmVatMismatchModal,
     estimatedProductionDate,
     handleExportToExcel,
+    // FrontDesk Email Integration
+    onClickSendEmailViaComposer,
+    isEmailComposerOpen,
+    emailData,
+    closeEmailComposer,
     isMaterial,
     isMaterialPurchaseOrder,
     isCanIntake,

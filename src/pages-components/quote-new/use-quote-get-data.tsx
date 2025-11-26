@@ -169,6 +169,9 @@ const useQuoteGetData = (
           ...(router?.query.deliveryNoteId && {
             deliveryNoteID: router.query.deliveryNoteId,
           }),
+          ...(router?.query.proformaInvoiceId && {
+            proformaInvoiceId: router.query.proformaInvoiceId,
+          }),
           ...(router?.query.documentToDuplicateId && {
             documentToDuplicateId: router.query.documentToDuplicateId,
           }),

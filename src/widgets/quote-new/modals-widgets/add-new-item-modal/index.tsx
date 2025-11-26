@@ -106,7 +106,7 @@ const AddNewItemModal = ({ openModal, onClose, documentType, getQuote, getCalcul
     handleProductQuantityChange,
     updateCompositeProduct,
     handleCompositeConfirm,
-  } = useAddNewItem({ onClose, getQuote, documentType, getCalculateQuoteItem, isMaterial, isNewCreation, isPurchaseOrder, isCanIntake});
+  } = useAddNewItem({ onClose, getQuote, documentType, getCalculateQuoteItem, isMaterial, isNewCreation, isPurchaseOrder, isCanIntake });
 
   const handlePrimaryAction = () => {
     if (isDisabled) {
@@ -200,20 +200,21 @@ const AddNewItemModal = ({ openModal, onClose, documentType, getQuote, getCalcul
         </Popover>
       </GoMakeDialog>
       <CompositeProductsDialog
-          open={compositeDialogOpen}
-          onClose={handleCompositeCancel}
-          onConfirm={handleCompositeConfirm}
-          isLoading={isLoadingCompositeProducts}
-          compositeProducts={compositeProducts}
-          quantityMultiplier={quantityMultiplier}
-          mainJobName={mainJobName}
-          compositeErrors={compositeErrors}
-          onMultiplierChange={handleMultiplierChange}
-          onMainJobNameChange={handleMainJobNameChange}
-          onProductQuantityChange={handleProductQuantityChange}
-          onProductJobNameChange={(index, value) =>
-              updateCompositeProduct(index, "jobName", value)
-          }
+        open={compositeDialogOpen}
+        onClose={handleCompositeCancel}
+        onConfirm={handleCompositeConfirm}
+        isLoading={isLoadingCompositeProducts}
+        isSubmitting={isSubmittingComposite}
+        compositeProducts={compositeProducts}
+        quantityMultiplier={quantityMultiplier}
+        mainJobName={mainJobName}
+        compositeErrors={compositeErrors}
+        onMultiplierChange={handleMultiplierChange}
+        onMainJobNameChange={handleMainJobNameChange}
+        onProductQuantityChange={handleProductQuantityChange}
+        onProductJobNameChange={(index, value) =>
+          updateCompositeProduct(index, "jobName", value)
+        }
       />
     </>
   );

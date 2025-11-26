@@ -1,0 +1,13 @@
+{
+  "folders": [
+	{
+		"path": "../../messaging-hub-v2"
+	},
+	{
+		"path": ".."
+	},
+	{
+		"path": "../../../messaging/chatwoot"
+	}
+]
+}

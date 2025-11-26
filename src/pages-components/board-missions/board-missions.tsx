@@ -5,6 +5,7 @@ import { useBoardMissions } from "./use-board-missions";
 import {
   GoMakeAutoComplate,
   GoMakeDeleteModal,
+  GomakeTextInput,
   ThreeOptionsModal,
 } from "@/components";
 import { useEffect, useState } from "react";
@@ -46,6 +47,9 @@ import { ColumnSetting } from "@/widgets/production-floor/state/production-floor
 import { AddRuleModal } from "../products/profits-new/widgets/add-rule-modal";
 import { ScheduledReportsTable } from "../quotes/widgets/scheduled-reports-table/scheduled-reports-table";
 import { JobsFiltersSection } from "./components/jobs-filters-section";
+import { PrimaryButton } from "@/components/button/primary-button";
+import { FrontDeskEmailComposerWrapper } from "../quotes/components/frontdesk-email-composer-wrapper";
+import { DOCUMENT_TYPE } from "../quotes/enums";
 import { PrintPackingSlipModalWidget } from "@/widgets/production-floor/views/board-missions-view/navigation-buttons/print-packing-slip-modal-widget";
 import { QualityIssueModal } from "@/widgets/production-floor/table-view/status-table/table-row/more-circle/quality-issue-modal";
 import { useParameters } from "@/hooks/use-parameters";
@@ -117,6 +121,10 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
     onCloseMarkReadyThenPrintModal,
     onOpenMarkReadyThenPrintModal,
     onClickMoveBoardMissionToDone,
+    isEmailComposerOpen,
+    emailData,
+    openEmailComposer,
+    closeEmailComposer,
     onClickBackToProcess,
     handleClick,
     handleClose,
@@ -209,6 +217,11 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
     openChangeStatusModalForQualityIssue,
     onClickCloseChangeStatusModalForQualityIssue,
     updateQuoteStatusForQualityIssue,
+    // Start Production Modal
+    openStartProductionModal,
+    onOpenStartProductionModal,
+    onCloseStartProductionModal,
+    handleStartProductionConfirm,
   } = useBoardMissions({ isPurchaseJobs });
   const { callApi } = useGomakeAxios();
   const [companyProfile] = useRecoilState(printHouseProfile);
@@ -246,7 +259,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
       }
 
       if (connectionId) {
-        const callBack = (res) => { };
+        const callBack = (res) => {};
         addOrderBoardMissionsToFileUploaderApi(callApi, callBack, {
           orderId: newOrderId,
           connectionId: connectionId,
@@ -263,7 +276,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
           !CheckPreferenceValue(EPreferences.USE_PRINTNODE_AFTER_UPLOAD_FILE)
         )
       ) {
-        printNodeModalShowLog(callApi, () => { }, {
+        printNodeModalShowLog(callApi, () => {}, {
           orderId: newOrderId,
         }).then();
         setOpenPrintNodeModal(true);
@@ -291,7 +304,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
   useEffect(() => {
     const loadDocumentColumnSettings = async () => {
       try {
-        const res = await getJobsTableSettingsApi(callApi, () => { }, {
+        const res = await getJobsTableSettingsApi(callApi, () => {}, {
           isPurchaseJobs,
         });
         const saved: ColumnSetting[] = res?.data;
@@ -494,12 +507,12 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
               ) || inputValue === ""
                 ? storageList
                 : [
-                  {
-                    storage: `Add "${inputValue}" as a new storage`,
-                    id: "new",
-                  },
-                  ...storageList,
-                ]
+                    {
+                      storage: `Add "${inputValue}" as a new storage`,
+                      id: "new",
+                    },
+                    ...storageList,
+                  ]
             }
             placeholder={t("boardMissions.selectStorage")}
             key={defaultValue}
@@ -540,12 +553,12 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
               ) || inputValue === ""
                 ? storageList
                 : [
-                  {
-                    storage: `Add "${inputValue}" as a new storage`,
-                    id: "new",
-                  },
-                  ...storageList,
-                ]
+                    {
+                      storage: `Add "${inputValue}" as a new storage`,
+                      id: "new",
+                    },
+                    ...storageList,
+                  ]
             }
             placeholder={t("boardMissions.selectStorage")}
             key={defaultValue}
@@ -604,7 +617,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
         subTitle={" "}
         yesBtn={t("sales.quote.print")}
         openModal={openPrintNodeModal}
-        onClose={() => { }}
+        onClose={() => {}}
         onClickDelete={() => {
           setOpenPrintNodeModal(false);
           printOrderJobsUsingPrintNode(printNodeOrderId).then();
@@ -662,12 +675,12 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
               ) || inputValue === ""
                 ? storageList
                 : [
-                  {
-                    storage: `Add "${inputValue}" as a new storage`,
-                    id: "new",
-                  },
-                  ...storageList,
-                ]
+                    {
+                      storage: `Add "${inputValue}" as a new storage`,
+                      id: "new",
+                    },
+                    ...storageList,
+                  ]
             }
             placeholder={t("boardMissions.selectStorage")}
             key={defaultValue}
@@ -699,11 +712,11 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
         subTitle={
           pendingPrintParams?.productType
             ? t("boardMissions.askPrintType", {
-              productType:
-                pendingPrintParams?.productTypeName ||
-                pendingPrintParams?.productName ||
-                pendingPrintParams?.productType,
-            })
+                productType:
+                  pendingPrintParams?.productTypeName ||
+                  pendingPrintParams?.productName ||
+                  pendingPrintParams?.productType,
+              })
             : ""
         }
         yesBtn={"boardMissions.printAllJobs"}
@@ -723,10 +736,10 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
         subTitle={
           pendingMarkReadyParams?.productType
             ? t("boardMissions.askMarkReadyType", {
-              productType:
-                pendingMarkReadyParams.productTypeName ||
-                pendingMarkReadyParams.productType,
-            })
+                productType:
+                  pendingMarkReadyParams.productTypeName ||
+                  pendingMarkReadyParams.productType,
+              })
             : ""
         }
         yesBtn={t("boardMissions.markAllJobsReady")}
@@ -816,6 +829,51 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
         onPageChange={handleScheduledReportsPageChange}
         onPageSizeChange={handleScheduledReportsPageSizeChange}
       />
+
+      {/* Email Export Modal */}
+      {/* <GoMakeModal
+        openModal={showEmailModal}
+        onClose={handleEmailModalClose}
+        modalTitle={t("boardMissions.exportToExcel")}
+        insideStyle={{ width: "400px", height: "fit-content" }}
+      >
+        <div style={{ padding: "20px", display: "flex", flexDirection: "column", gap: "20px" }}>
+          <div>
+            <h4>{t("boardMissions.enterEmailForExport")}</h4>
+            <GomakeTextInput
+              placeholder={t("boardMissions.emailPlaceholder")}
+              value={exportEmail}
+              onChange={(e) => setExportEmail(e.target.value)}
+              type="email"
+              style={{ width: "100%" }}
+            />
+          </div>
+          <div style={{ display: "flex", gap: "10px", justifyContent: "flex-end" }}>
+            <PrimaryButton
+              variant="outlined"
+              onClick={handleEmailModalClose}
+            >
+              {t("modal.cancel")}
+            </PrimaryButton>
+            <PrimaryButton
+              variant="contained"
+              onClick={handleExportWithEmail}
+              disabled={!exportEmail || !exportEmail.includes("@")}
+            >
+              {t("boardMissions.sendToEmail")}
+            </PrimaryButton>
+          </div>
+        </div>
+      </GoMakeModal> */}
+      {isEmailComposerOpen && (
+        <FrontDeskEmailComposerWrapper
+          open={isEmailComposerOpen}
+          onClose={closeEmailComposer}
+          emailData={emailData}
+          documentId={selectedMission?.id}
+          documentType={DOCUMENT_TYPE.boardMission}
+        />
+      )}
       <QualityIssueModal
         openModal={openQualityIssueModal}
         onClose={onCloseQualityIssueModal}
@@ -829,6 +887,15 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
         openModal={openChangeStatusModalForQualityIssue}
         onClose={onClickCloseChangeStatusModalForQualityIssue}
         onClickDelete={updateQuoteStatusForQualityIssue}
+      />
+      <GoMakeDeleteModal
+        modalType={ModalType.WARNING}
+        openModal={openStartProductionModal}
+        onClose={onCloseStartProductionModal}
+        onClickDelete={handleStartProductionConfirm}
+        title={t("boardMissions.startProduction")}
+        subTitle={t("boardMissions.startProductionConfirmMessage")}
+        yesBtn={t("boardMissions.startProduction")}
       />
     </>
   );

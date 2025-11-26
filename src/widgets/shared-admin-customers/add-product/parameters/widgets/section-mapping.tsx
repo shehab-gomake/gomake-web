@@ -55,6 +55,7 @@ const SectionMappingWidget = ({
   getProductById,
   removeProductParamete,
 }) => {
+  console.log("subSection", subSection);
   const { t } = useTranslation();
   const { alertFault, alertWarning } = useSnackBar();
   const router = useRouter();

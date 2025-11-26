@@ -3,6 +3,12 @@ import { MenuItem } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { MessageType } from "@/pages-components/quote-new/use-quote";
+import {
+  GOMAKE_AI_FEATURE_ID,
+  printHouseHasCustomizeAIFeature,
+  printHouseHasFrontDeskFeature
+} from "@/store/print-house-profile";
+import {useRecoilValue} from "recoil";
 
 const SendBtnMenu = ({
   handleClose,
@@ -14,9 +20,11 @@ const SendBtnMenu = ({
   documentType,
   onClickSendReceiptToClient,
   openReceiptModal,
+  onClickSendEmailViaComposer
 }) => {
   const { t } = useTranslation();
   const isReceipt = documentType === DOCUMENT_TYPE.receipt;
+  const hasFrontDeskFeature = useRecoilValue(printHouseHasFrontDeskFeature);
 
   return (
     <GoMakeMenu
@@ -40,7 +48,11 @@ const SendBtnMenu = ({
                 handleClose();
               });
             } else {
-              onClickSendQuoteToClient(MessageType.Email);
+              if(hasFrontDeskFeature){
+                onClickSendEmailViaComposer?.();
+              }else {
+                onClickSendQuoteToClient(MessageType.Email);
+              }
             }
             handleClose();
           }}

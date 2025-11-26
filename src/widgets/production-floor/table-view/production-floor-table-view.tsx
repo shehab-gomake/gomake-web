@@ -38,7 +38,10 @@ import { ThreeOptionsModal } from "@/components/modal-deleted/three-options-moda
 import { ModalType } from "@/enums";
 import { useModal } from "@/hooks/use-modal";
 import { GoMakeAutoComplate, GoMakeDeleteModal } from "@/components";
-import { isPrintNodeModalOpenState, jobsToPrintState } from "../views/board-missions-view/stations/state";
+import {
+  isPrintNodeModalOpenState,
+  jobsToPrintState,
+} from "../views/board-missions-view/stations/state";
 import { printJobUsingPrintNodeApi } from "@/services/api-service/board-missions/board-missions-table";
 
 const DEBOUNCE_DELAY = 300; // Debounce search and filter operations
@@ -77,8 +80,11 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
     handleStorageChange,
     setInputValue,
   } = useStorageList();
+
   const { employeesCategories } = useEmployeeList();
-  const [isPrintNodeModalOpen, setIsPrintNodeModalOpen] = useRecoilState(isPrintNodeModalOpenState);
+  const [isPrintNodeModalOpen, setIsPrintNodeModalOpen] = useRecoilState(
+    isPrintNodeModalOpenState
+  );
   const jobsToPrint = useRecoilValue(jobsToPrintState);
 
   useEffect(() => {
@@ -106,8 +112,10 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
     });
   }, [data, selectedChipId]);
 
-
-  const printJobUsingPrintNode = async (jobId: string, productType?: string) => {
+  const printJobUsingPrintNode = async (
+    jobId: string,
+    productType?: string
+  ) => {
     const callBack = (res) => {
       if (res.success) {
       }
@@ -499,12 +507,6 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
               onClickClient={getCustomerForEdit}
               allBoardMissions={allBoardMissions}
               setFilters={setFilters}
-              storageList={storageList}
-              inputValue={inputValue}
-              defaultValue={defaultValue}
-              addPrintHouseJobsStorage={addPrintHouseJobsStorage}
-              handleStorageChange={handleStorageChange}
-              setInputValue={setInputValue}
               employeesCategories={employeesCategories}
               visibleColumns={visibleColumns}
               isVirtualizing={false}
@@ -528,12 +530,6 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
     filteredDataByMachine,
     getCustomerForEdit,
     setFilters,
-    storageList,
-    inputValue,
-    defaultValue,
-    addPrintHouseJobsStorage,
-    handleStorageChange,
-    setInputValue,
     employeesCategories,
     visibleColumns,
     handleSortBE,
@@ -563,6 +559,7 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
         t={t}
       />
 
+      {/* !here what is this  */}
       <ThreeOptionsModal
         modalType={ModalType.WARNING}
         title={t("boardMissions.markDoneModalTitle")}
@@ -642,15 +639,19 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
         subTitle={" "}
         yesBtn={t("sales.quote.print")}
         openModal={isPrintNodeModalOpen}
-        onClose={() => { setIsPrintNodeModalOpen(false) }}
+        onClose={() => {
+          setIsPrintNodeModalOpen(false);
+        }}
         style={{
           zIndex: 999999999999999,
         }}
         onClickDelete={() => {
           setIsPrintNodeModalOpen(false);
-          printJobUsingPrintNode(jobsToPrint?.boardMissionId as string, jobsToPrint?.productType as string).then();
+          printJobUsingPrintNode(
+            jobsToPrint?.boardMissionId as string,
+            jobsToPrint?.productType as string
+          ).then();
         }}
-
         cancelBtn={t("modal.cancel")}
       />
     </Stack>

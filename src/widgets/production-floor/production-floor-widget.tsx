@@ -30,8 +30,13 @@ import {
   abortControllerStationState,
   getBoardMissionsByIdState,
 } from "./views/board-missions-view/stations/state";
-import { GoMakeDeleteModal, ThreeOptionsModal } from "@/components";
+import {
+  GoMakeDeleteModal,
+  ThreeOptionsModal,
+  GoMakeAutoComplate,
+} from "@/components";
 import { ModalType } from "@/enums/tabs-icon-enums";
+import { useStorageList } from "@/hooks/use-storage-list";
 import { updateBoardMissionCurrentStationApi } from "@/services/api-service/production-floor/production-floor-endpoints";
 import { useGomakeAxios } from "@/hooks/use-gomake-axios";
 import { useSnackBar } from "@/hooks/use-snack-bar";
@@ -42,6 +47,8 @@ import { useModal } from "@/hooks/use-modal";
 import { PrintPackingSlipModalWidget } from "./views/board-missions-view/navigation-buttons/print-packing-slip-modal-widget";
 import { getAllBoardMissionStatusApi } from "@/services/api-service/board-missions/board-mission-station-filter-groups";
 import { statusesListState } from "./state/boards";
+import { FrontDeskEmailComposerWrapper } from "@/pages-components/quotes/components/frontdesk-email-composer-wrapper";
+import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { setBoardFiltersApi } from "@/services/api-service/production-floor/production-floor-endpoints";
 
 const ProductionFloorWidget = () => {
@@ -74,6 +81,17 @@ const ProductionFloorWidget = () => {
     getStationFilterGroups,
     setSelectedGroupId,
     onClickMoveBoardMissionToDone,
+    isEmailComposerOpen,
+    emailData,
+    openEmailComposer,
+    closeEmailComposer,
+    onOpenMarkReadyModalForHasJobs,
+    openMarkReadyModal,
+    onOpenMarkReadyModal,
+    onCloseMarkReadyModal,
+    openMarkReadyModalForHasJobs,
+    onCloseMarkReadyModalForHasJobs,
+    onClickMarkReadyModalForHasJobs,
     openPackagesModal,
     onClosePrintDeliverTicketModal,
     selectedMission,
@@ -84,7 +102,21 @@ const ProductionFloorWidget = () => {
     onClosePrintTypeModal,
     handlePrintTypeChoice,
     pendingPrintParams,
+    openDoneScopeModal,
+    onCloseDoneScopeModal,
+    onClickDoneScopeAllJobs,
+    onClickDoneScopeProductType,
   } = useProductionFloorData();
+
+  // Storage functionality for mark ready modal
+  const {
+    storageList,
+    inputValue,
+    defaultValue,
+    addPrintHouseJobsStorage,
+    handleStorageChange,
+    setInputValue,
+  } = useStorageList();
 
   useEffect(() => {
     getStationFilterGroups();
@@ -383,8 +415,8 @@ const ProductionFloorWidget = () => {
         noBtn={"boardMissions.markDoneModalNo"}
         openModal={isOpenDoneModal.isOpen}
         onClose={() => isOpenDoneModal.close()}
-        onClickYes={() => onClickMoveBoardMissionToDone(true,true)}
-        onClickNo={() => onClickMoveBoardMissionToDone(false,true)}
+        onClickYes={() => onClickMoveBoardMissionToDone(true, true)}
+        onClickNo={() => onClickMoveBoardMissionToDone(false, true)}
         style={
           isMobile
             ? {
@@ -405,6 +437,15 @@ const ProductionFloorWidget = () => {
         qrCodeListenerFrom={QR_CODE_LISTENER_FROM.PRODUCTION_FLOOR}
         onIsLastStationDetect={() => isOpenDoneModal.open()}
       />
+      {isEmailComposerOpen && (
+        <FrontDeskEmailComposerWrapper
+          open={isEmailComposerOpen}
+          onClose={closeEmailComposer}
+          emailData={emailData}
+          documentId={selectedMission?.id}
+          documentType={DOCUMENT_TYPE.boardMission}
+        />
+      )}
       <GoMakeDeleteModal
         modalType={ModalType.WARNING}
         title={t("boardMissions.unReadyModalTitle")}
@@ -438,6 +479,163 @@ const ProductionFloorWidget = () => {
         onClose={onClosePrintTypeModal}
         onClickYes={() => handlePrintTypeChoice(true)}
         onClickNo={() => handlePrintTypeChoice(false)}
+      />
+
+      {/* <ThreeOptionsModal
+        modalType={ModalType.WARNING}
+        title={t("boardMissions.markDoneModalTitle")}
+        subTitle={t("boardMissions.markDoneModalSubTitle")}
+        yesBtn={"boardMissions.markDoneModalYes"}
+        noBtn={"boardMissions.markDoneModalNo"}
+        openModal={openMarkReadyModal}
+        onClose={onCloseMarkReadyModal}
+        onClickYes={() => onClickMoveBoardMissionToDone(true)}
+        onClickNo={() => onClickMoveBoardMissionToDone(false)}
+        style={
+          isMobile
+            ? {
+                width: "95vw",
+                maxWidth: 600,
+                minWidth: "unset",
+              }
+            : undefined
+        }
+      /> */}
+      {/* Mark Ready Modal - Simple version (no jobs) */}
+      <ThreeOptionsModal
+        modalType={ModalType.WARNING}
+        title={t("boardMissions.markDoneModalTitle")}
+        subTitle={t("boardMissions.markDoneModalSubTitle")}
+        yesBtn={"boardMissions.markDoneModalYes"}
+        noBtn={"boardMissions.markDoneModalNo"}
+        openModal={openMarkReadyModal}
+        onClose={onCloseMarkReadyModal}
+        onClickYes={() => onClickMoveBoardMissionToDone(true)}
+        onClickNo={() => onClickMoveBoardMissionToDone(false)}
+      >
+        <div style={{ width: "100%", minWidth: 300 }}>
+          <GoMakeAutoComplate
+            options={
+              storageList?.find(
+                (option: any) => option.storage === inputValue
+              ) || inputValue === ""
+                ? storageList
+                : [
+                    {
+                      storage: `Add "${inputValue}" as a new storage`,
+                      id: "new",
+                    },
+                    ...storageList,
+                  ]
+            }
+            placeholder={t("boardMissions.selectStorage")}
+            key={defaultValue}
+            style={{
+              width: "100%",
+              border: "none",
+              height: 45,
+            }}
+            getOptionLabel={(option: any) => option?.storage}
+            value={defaultValue}
+            onChange={(e: any, value: any) => {
+              if (value?.id === "new") {
+                addPrintHouseJobsStorage(inputValue);
+                setInputValue("");
+              } else {
+                handleStorageChange(e, value);
+                setInputValue("");
+              }
+            }}
+            onInputChange={(event: any, newInputValue: string) => {
+              setInputValue(newInputValue);
+            }}
+          />
+        </div>
+      </ThreeOptionsModal>
+
+      {/* Mark Ready Modal - With jobs (requires storage selection) */}
+      <GoMakeDeleteModal
+        title={t("boardMissions.markAsReadyJobsModalTitle")}
+        yesBtn={t("modal.yes")}
+        modalType={ModalType.WARNING}
+        subTitle={" "}
+        openModal={openMarkReadyModalForHasJobs}
+        onClose={onCloseMarkReadyModalForHasJobs}
+        onClickDelete={onClickMarkReadyModalForHasJobs}
+        onClickCancel={onCloseMarkReadyModalForHasJobs}
+      >
+        <div style={{ width: "100%", minWidth: 300 }}>
+          <GoMakeAutoComplate
+            options={
+              storageList?.find(
+                (option: any) => option.storage === inputValue
+              ) || inputValue === ""
+                ? storageList
+                : [
+                    {
+                      storage: `Add "${inputValue}" as a new storage`,
+                      id: "new",
+                    },
+                    ...storageList,
+                  ]
+            }
+            placeholder={t("boardMissions.selectStorage")}
+            key={defaultValue}
+            style={{
+              width: "100%",
+              border: "none",
+              height: 45,
+            }}
+            getOptionLabel={(option: any) => option?.storage}
+            value={defaultValue}
+            onChange={(e: any, value: any) => {
+              if (value?.id === "new") {
+                addPrintHouseJobsStorage(inputValue);
+                setInputValue("");
+              } else {
+                handleStorageChange(e, value);
+                setInputValue("");
+              }
+            }}
+            onInputChange={(event: any, newInputValue: string) => {
+              setInputValue(newInputValue);
+            }}
+          />
+        </div>
+      </GoMakeDeleteModal>
+
+      {/* Done Scope Modal (All jobs vs Product type only) */}
+      <ThreeOptionsModal
+        modalType={ModalType.WARNING}
+        title={"Select Jobs to Mark as Ready"}
+        subTitle={
+          selectedMission?.productType
+            ? t("boardMissions.askDoneScope", {
+                productType:
+                  selectedMission?.productTypeName ||
+                  selectedMission?.productType,
+              })
+            : ""
+        }
+        yesBtn={t("boardMissions.markAllJobsReady", {
+          defaultValue: "Mark All Jobs Ready",
+        })}
+        noBtn={
+          selectedMission?.productType
+            ? t("boardMissions.markProductTypeOnly", {
+                productType:
+                  selectedMission?.productTypeName ||
+                  selectedMission?.productType,
+                defaultValue: `Mark ${
+                  selectedMission?.productType || "Product Type"
+                } Only`,
+              })
+            : undefined
+        }
+        openModal={openDoneScopeModal}
+        onClose={onCloseDoneScopeModal}
+        onClickYes={onClickDoneScopeAllJobs}
+        onClickNo={onClickDoneScopeProductType}
       />
     </Stack>
   );

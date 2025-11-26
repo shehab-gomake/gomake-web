@@ -3,6 +3,9 @@ import { atom, selector } from "recoil";
 const PRINT_NODE_FEATURE_ID = "5623506c-9e43-429b-89e1-b5f1d63df62b";
 export const GOMAKE_MIS_FEATURE_ID = "c242bb4f-1221-4999-b3f3-5c8a8adb090f";
 export const GOMAKE_AI_FEATURE_ID = "61bcac05-de33-45ed-ab01-bee49346e8de";
+
+export const FRONT_DESK_FEATURE_ID = "74c6d31c-c120-4246-a24e-0a1854b1cbfb";
+
 export const CUSTOMIZE_GOMAKE_AI_FEATURE_ID =
   "bee4c55f-fb7a-4c6b-81da-56cbc651eac5";
 
@@ -66,7 +69,16 @@ export const printHouseHasCustomizeAIFeature = selector<boolean>({
     );
   },
 });
-
+// Selector to check if print house has Gomake MIS feature
+export const printHouseHasFrontDeskFeature = selector<boolean>({
+  key: "printHouseHasFrontDeskFeatureSelector",
+  get: ({ get }) => {
+    const profileState = get(printHouseProfile);
+    return (
+        profileState.allowedFeaturesId?.includes(FRONT_DESK_FEATURE_ID) ?? false
+    );
+  },
+});
 export const isUsPrintHouseState = atom<boolean>({
   key: "isUsPrintHouseState",
   default: false,

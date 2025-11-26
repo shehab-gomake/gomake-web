@@ -1,11 +1,8 @@
-// ============================================
-// COMPLETE use-more-circle.tsx UPDATE
-// ============================================
-
 import { DuplicateMenuIcon } from "./icons/duplicate-menu";
 import { LoggerIcon } from "./icons/logger";
 import { useTranslation } from "react-i18next";
 import { PDFIcon } from "./icons/pdf-icon";
+import { StartProductionIcon } from "./icons/start-production";
 import TaskAltOutlinedIcon from "@mui/icons-material/TaskAltOutlined";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import { useStyle } from "./style";
@@ -33,6 +30,7 @@ import {
   tryMoveBoardMissionToDoneApi,
 } from "@/services/api-service/production-floor/production-floor-endpoints";
 import { selectedMissionsState } from "@/widgets/production-floor/state/boards";
+import { ORDER_STATUSES } from "@/enums";
 
 const useMoreCircle = ({
   mission,
@@ -50,7 +48,8 @@ const useMoreCircle = ({
   onOpenMarkReadyModalForHasJobs,
   printJobUsingPrintNode,
   onOpenMarkReadyTypeModal,
-  onReportQualityIssue, // ✅ ADD THIS NEW PROP
+  onReportQualityIssue,
+  onOpenStartProductionModal,
 }: any) => {
   const { t } = useTranslation();
   const { classes } = useStyle();
@@ -167,14 +166,16 @@ const useMoreCircle = ({
           style={classes.menuTitleStyle}
           href={
             mission?.groupedInJobId !== null
-              ? `/production-floor?boardMissionsId=${mission?.groupedInJobId}${mission?.productType
-                ? `&productType=${mission?.productType}`
-                : ""
-              }&step=stations`
-              : `/production-floor?boardMissionsId=${mission?.id}${mission?.productType
-                ? `&productType=${mission?.productType}`
-                : ""
-              }&step=stations`
+              ? `/production-floor?boardMissionsId=${mission?.groupedInJobId}${
+                  mission?.productType
+                    ? `&productType=${mission?.productType}`
+                    : ""
+                }&step=stations`
+              : `/production-floor?boardMissionsId=${mission?.id}${
+                  mission?.productType
+                    ? `&productType=${mission?.productType}`
+                    : ""
+                }&step=stations`
           }
           target="_blank"
         >
@@ -182,7 +183,7 @@ const useMoreCircle = ({
         </a>
       ),
       icon: <VisibilityOutlinedIcon style={classes.iconStyle} />,
-      onclick: () => { },
+      onclick: () => {},
     },
     {
       condition: mission?.isEditable && isCanEditJob,
@@ -233,7 +234,7 @@ const useMoreCircle = ({
       icon: <PackageIcon />,
       onclick:
         mission?.status !== BoardMissionStatusForFilter.DONE &&
-          !mission?.isReady
+        !mission?.isReady
           ? () => onOpenModal(mission)
           : () => onClickPrintPackagingSlip(mission),
     },
@@ -244,7 +245,8 @@ const useMoreCircle = ({
       onclick: () => onClickDuplicate(mission),
     },
     {
-      condition: true && isSendPaymentToClient && onReportQualityIssue && !isDoneJobs,
+      condition:
+        true && isSendPaymentToClient && onReportQualityIssue && !isDoneJobs,
       name: t("productionFloor.reportQualityIssue"),
       icon: <QualityIssueIcon />,
       onclick: () => onReportQualityIssue?.(mission),
@@ -254,6 +256,14 @@ const useMoreCircle = ({
       name: t("boardMissions.backToProcess"),
       icon: <MarkAsUnReadyIcon />,
       onclick: () => handleClickBackToProcess(mission),
+    },
+    {
+      condition:
+        mission?.orderStatus === ORDER_STATUSES.WaitingForPayment &&
+        onOpenStartProductionModal,
+      name: t("boardMissions.startProduction"),
+      icon: <StartProductionIcon />,
+      onclick: () => onOpenStartProductionModal?.(mission),
     },
     {
       condition: isSendPaymentToClient,
@@ -273,7 +283,8 @@ const useMoreCircle = ({
       icon: <LoggerIcon />,
       onclick: () => {
         window.open(
-          `/production-floor?boardMissionsId=${mission?.id}${mission?.productType ? `&productType=${mission.productType}` : ""
+          `/production-floor?boardMissionsId=${mission?.id}${
+            mission?.productType ? `&productType=${mission.productType}` : ""
           }&step=stations`,
           "_blank"
         );
@@ -284,7 +295,11 @@ const useMoreCircle = ({
       name: t("sales.quote.print"),
       icon: <PDFIcon />,
       onclick: () =>
-        printJobUsingPrintNode(mission?.id, mission?.productType, mission?.productTypeName).then(),
+        printJobUsingPrintNode(
+          mission?.id,
+          mission?.productType,
+          mission?.productTypeName
+        ).then(),
     },
     !!companyProfile.filesApiAddress && {
       condition: true && isSendPaymentToClient,

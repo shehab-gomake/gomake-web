@@ -5,7 +5,19 @@
  * Handles all URL patterns and query parameters for deep linking.
  */
 
-import { ParsedRoute, FrontDeskRoute, RouteType, FrontDeskChannel, FrontDeskSection, TicketView, RouteQueryParams } from './types';
+import {
+  ParsedRoute,
+  FrontDeskRoute,
+  RouteType,
+  FrontDeskChannel,
+  FrontDeskSection,
+  TicketView,
+  RouteQueryParams,
+  ChatwootView,
+  ChatwootRoute,
+  ChatwootFilters,
+  ChatwootSettingsSubpage,
+} from "./types";
 
 /**
  * Next.js router query interface
@@ -16,6 +28,19 @@ export interface NextRouterQuery {
   view?: string | string[];
   ticket?: string | string[];
   conversation?: string | string[];
+  channel?: string | string[];
+  // OAuth callback parameters
+  accountId?: string | string[];
+  inboxId?: string | string[];
+  // Chatwoot filter parameters
+  status?: string | string[];
+  assigneeType?: string | string[];
+  teamId?: string | string[];
+  sortBy?: string | string[];
+  search?: string | string[];
+  labels?: string | string[];
+  // Settings subpage
+  subpage?: string | string[];
 }
 
 /**
@@ -35,7 +60,7 @@ const normalizeParam = (param: string | string[] | undefined): string | undefine
  */
 const isTicketId = (value: string): boolean => {
   // Format 1: TICKET-XXXXX (legacy display format)
-  if (value.startsWith('TICKET-')) return true;
+  if (value.startsWith("TICKET-")) return true;
 
   // Format 2: Pure numeric ID
   if (/^\d+$/.test(value)) return true;
@@ -52,23 +77,28 @@ const isTicketId = (value: string): boolean => {
  * Parse frontdeskRoute segment to determine route type and parameters
  */
 const parseFrontDeskRoute = (frontdeskRoute?: string): Partial<FrontDeskRoute> => {
-  if (!frontdeskRoute || frontdeskRoute === 'inbox') {
+  if (!frontdeskRoute || frontdeskRoute === "inbox") {
     return { type: RouteType.INBOX };
   }
 
   // Check if it's a ticket route
-  if (frontdeskRoute === 'tickets') {
+  if (frontdeskRoute === "tickets") {
     return { type: RouteType.TICKET_LIST };
   }
 
+  // Check if it's a Chatwoot route
+  if (frontdeskRoute === "chatwoot") {
+    return { type: RouteType.CHATWOOT };
+  }
+
   // Check if it's a section route
-  if (frontdeskRoute === 'assigned') {
+  if (frontdeskRoute === "assigned") {
     return { type: RouteType.SECTION, section: FrontDeskSection.ASSIGNED };
   }
-  if (frontdeskRoute === 'admin') {
+  if (frontdeskRoute === "admin") {
     return { type: RouteType.SECTION, section: FrontDeskSection.ADMIN };
   }
-  if (frontdeskRoute === 'settings') {
+  if (frontdeskRoute === "settings") {
     return { type: RouteType.SECTION, section: FrontDeskSection.SETTINGS };
   }
 
@@ -77,10 +107,64 @@ const parseFrontDeskRoute = (frontdeskRoute?: string): Partial<FrontDeskRoute> =
 };
 
 /**
+ * Parse Chatwoot view from query param
+ */
+const parseChatwootView = (viewParam?: string): ChatwootView => {
+  if (!viewParam) {
+    return ChatwootView.DASHBOARD;
+  }
+
+  // Map query param values to ChatwootView enum
+  const viewMap: Record<string, ChatwootView> = {
+    "dashboard": ChatwootView.DASHBOARD,
+    "my-inbox": ChatwootView.MY_INBOX,
+    "all-conversations": ChatwootView.ALL_CONVERSATIONS,
+    "mentions": ChatwootView.MENTIONS,
+    "unattended": ChatwootView.UNATTENDED,
+    "channels": ChatwootView.CHANNELS,
+    "webhook-test": ChatwootView.WEBHOOK_TEST,
+    "settings": ChatwootView.SETTINGS,
+    "oauth-callback": ChatwootView.OAUTH_CALLBACK,
+  };
+
+  return viewMap[viewParam] || ChatwootView.DASHBOARD;
+};
+
+/**
+ * Parse Chatwoot settings subpage from query param
+ */
+const parseChatwootSettingsSubpage = (subpageParam?: string): ChatwootSettingsSubpage | undefined => {
+  if (!subpageParam) {
+    return undefined;
+  }
+
+  // Map query param values to ChatwootSettingsSubpage enum
+  const subpageMap: Record<string, ChatwootSettingsSubpage> = {
+    "general": ChatwootSettingsSubpage.GENERAL,
+    "agents": ChatwootSettingsSubpage.AGENTS,
+    "inboxes": ChatwootSettingsSubpage.INBOXES,
+    "teams": ChatwootSettingsSubpage.TEAMS,
+    "labels": ChatwootSettingsSubpage.LABELS,
+    "warnings": ChatwootSettingsSubpage.WARNINGS,
+    "profile": ChatwootSettingsSubpage.PROFILE,
+    "webhook-test": ChatwootSettingsSubpage.WEBHOOK_TEST,
+    "old-frontdesk": ChatwootSettingsSubpage.OLD_FRONTDESK,
+  };
+
+  return subpageMap[subpageParam];
+};
+
+/**
  * Parse provider segment to determine channel or ticket details
  */
 const parseProvider = (provider?: string, baseRoute?: Partial<FrontDeskRoute>): Partial<FrontDeskRoute> => {
   if (!provider) return baseRoute || {};
+
+  // If we're in Chatwoot route context, view is now in query params
+  // So we don't parse from provider segment anymore
+  if (baseRoute?.type === RouteType.CHATWOOT) {
+    return baseRoute; // Return as-is, view will be parsed from query params
+  }
 
   // If we're in ticket route context
   if (baseRoute?.type === RouteType.TICKET_LIST) {
@@ -94,11 +178,11 @@ const parseProvider = (provider?: string, baseRoute?: Partial<FrontDeskRoute>): 
 
     // Otherwise it's a ticket view
     const ticketViewMap: Record<string, TicketView> = {
-      'my-tickets': TicketView.MY_TICKETS,
-      'unassigned': TicketView.UNASSIGNED,
-      'all-tickets': TicketView.ALL_TICKETS,
-      'done': TicketView.DONE,
-      'archived': TicketView.ARCHIVED,
+      "my-tickets": TicketView.MY_TICKETS,
+      unassigned: TicketView.UNASSIGNED,
+      "all-tickets": TicketView.ALL_TICKETS,
+      done: TicketView.DONE,
+      archived: TicketView.ARCHIVED,
     };
 
     const view = ticketViewMap[provider];
@@ -112,10 +196,11 @@ const parseProvider = (provider?: string, baseRoute?: Partial<FrontDeskRoute>): 
 
   // Check if provider is a channel
   const channelMap: Record<string, FrontDeskChannel> = {
-    'unified': FrontDeskChannel.ALL,
-    'email': FrontDeskChannel.EMAIL,
-    'whatsapp': FrontDeskChannel.WHATSAPP,
-    'internal': FrontDeskChannel.INTERNAL,
+    unified: FrontDeskChannel.ALL,
+    email: FrontDeskChannel.EMAIL,
+    whatsapp: FrontDeskChannel.WHATSAPP,
+    internal: FrontDeskChannel.INTERNAL,
+    chatwoot: FrontDeskChannel.CHATWOOT,
   };
 
   const channel = channelMap[provider];
@@ -130,13 +215,53 @@ const parseProvider = (provider?: string, baseRoute?: Partial<FrontDeskRoute>): 
 };
 
 /**
+ * Parse Chatwoot filter parameters from query
+ */
+const parseChatwootFilters = (query: NextRouterQuery): ChatwootFilters | undefined => {
+  const filters: ChatwootFilters = {};
+  let hasFilters = false;
+
+  if (query.status) {
+    filters.status = normalizeParam(query.status);
+    hasFilters = true;
+  }
+  if (query.assigneeType) {
+    filters.assigneeType = normalizeParam(query.assigneeType);
+    hasFilters = true;
+  }
+  if (query.inboxId) {
+    filters.inboxId = normalizeParam(query.inboxId);
+    hasFilters = true;
+  }
+  if (query.teamId) {
+    filters.teamId = normalizeParam(query.teamId);
+    hasFilters = true;
+  }
+  if (query.sortBy) {
+    filters.sortBy = normalizeParam(query.sortBy);
+    hasFilters = true;
+  }
+  if (query.search) {
+    filters.search = normalizeParam(query.search);
+    hasFilters = true;
+  }
+  if (query.labels) {
+    filters.labels = normalizeParam(query.labels);
+    hasFilters = true;
+  }
+
+  return hasFilters ? filters : undefined;
+};
+
+/**
  * Parse query parameters for additional context
  */
-const parseQueryParams = (query: NextRouterQuery): RouteQueryParams => {
+const parseQueryParams = (query: NextRouterQuery): RouteQueryParams & { channel?: string } => {
   return {
     view: normalizeParam(query.view),
     ticket: normalizeParam(query.ticket),
     conversation: normalizeParam(query.conversation),
+    channel: normalizeParam(query.channel),
   };
 };
 
@@ -144,17 +269,36 @@ const parseQueryParams = (query: NextRouterQuery): RouteQueryParams => {
  * Apply query parameter overrides to route
  * Query params (from notifications) take precedence
  */
-const applyQueryParamOverrides = (
-  route: Partial<FrontDeskRoute>,
-  queryParams: RouteQueryParams
-): FrontDeskRoute => {
+const applyQueryParamOverrides = (route: Partial<FrontDeskRoute>, queryParams: RouteQueryParams & { channel?: string }, query: NextRouterQuery): FrontDeskRoute => {
+  // Handle Chatwoot-specific query params
+  if (route.type === RouteType.CHATWOOT) {
+    const chatwootRoute = route as Partial<ChatwootRoute>;
+    // Parse view from query params, fallback to route view or default
+    const view = queryParams.view ? parseChatwootView(queryParams.view) : (chatwootRoute.view || ChatwootView.DASHBOARD);
+
+    // Parse filters from query params
+    const filters = parseChatwootFilters(query);
+
+    // Parse settings subpage if view is SETTINGS
+    const settingsSubpage = view === ChatwootView.SETTINGS ? parseChatwootSettingsSubpage(normalizeParam(query.subpage)) : undefined;
+
+    return {
+      type: RouteType.CHATWOOT,
+      view,
+      conversationId: queryParams.conversation || chatwootRoute.conversationId,
+      channelId: queryParams.channel || chatwootRoute.channelId,
+      filters: filters || chatwootRoute.filters,
+      settingsSubpage: settingsSubpage || chatwootRoute.settingsSubpage,
+    };
+  }
+
   // Handle view query param (from notifications)
   if (queryParams.view) {
     // Check if it's a channel view
     const channelMap: Record<string, FrontDeskChannel> = {
-      'internal': FrontDeskChannel.INTERNAL,
-      'email': FrontDeskChannel.EMAIL,
-      'whatsapp': FrontDeskChannel.WHATSAPP,
+      internal: FrontDeskChannel.INTERNAL,
+      email: FrontDeskChannel.EMAIL,
+      whatsapp: FrontDeskChannel.WHATSAPP,
     };
 
     if (channelMap[queryParams.view]) {
@@ -168,11 +312,11 @@ const applyQueryParamOverrides = (
 
     // Check if it's a ticket view
     const ticketViewMap: Record<string, TicketView> = {
-      'my-tickets': TicketView.MY_TICKETS,
-      'unassigned': TicketView.UNASSIGNED,
-      'all-tickets': TicketView.ALL_TICKETS,
-      'done': TicketView.DONE,
-      'archived': TicketView.ARCHIVED,
+      "my-tickets": TicketView.MY_TICKETS,
+      unassigned: TicketView.UNASSIGNED,
+      "all-tickets": TicketView.ALL_TICKETS,
+      done: TicketView.DONE,
+      archived: TicketView.ARCHIVED,
     };
 
     if (ticketViewMap[queryParams.view]) {
@@ -232,7 +376,7 @@ const ensureValidRoute = (route: Partial<FrontDeskRoute>): FrontDeskRoute => {
   if (route.type === RouteType.TICKET_DETAIL) {
     return {
       type: RouteType.TICKET_DETAIL,
-      ticketId: (route as any).ticketId || '',
+      ticketId: (route as any).ticketId || "",
       view: (route as any).view,
     };
   }
@@ -241,6 +385,16 @@ const ensureValidRoute = (route: Partial<FrontDeskRoute>): FrontDeskRoute => {
     return {
       type: RouteType.SECTION,
       section: (route as any).section || FrontDeskSection.SETTINGS,
+    };
+  }
+
+  if (route.type === RouteType.CHATWOOT) {
+    return {
+      type: RouteType.CHATWOOT,
+      view: (route as any).view || ChatwootView.DASHBOARD,
+      conversationId: (route as any).conversationId,
+      channelId: (route as any).channelId,
+      settingsSubpage: (route as any).settingsSubpage,
     };
   }
 
@@ -271,8 +425,8 @@ export const parseRoute = (query: NextRouterQuery): ParsedRoute => {
   // Parse provider segment if present
   route = parseProvider(provider, route);
 
-  // Apply query parameter overrides (from notifications)
-  const finalRoute = applyQueryParamOverrides(route, queryParams);
+  // Apply query parameter overrides (from notifications) and parse filters
+  const finalRoute = applyQueryParamOverrides(route, queryParams, query);
 
   return {
     route: finalRoute,
@@ -283,25 +437,28 @@ export const parseRoute = (query: NextRouterQuery): ParsedRoute => {
 /**
  * Helper: Get current section from route (for backward compatibility)
  */
-export const getSectionFromRoute = (route: FrontDeskRoute): 'inbox' | 'assigned' | 'admin' | 'settings' => {
+export const getSectionFromRoute = (route: FrontDeskRoute): "inbox" | "assigned" | "admin" | "settings" => {
   if (route.type === RouteType.SECTION) {
     return route.section as any;
   }
-  return 'inbox';
+  return "inbox";
 };
 
 /**
  * Helper: Get current channel from route (for backward compatibility)
  */
-export const getChannelFromRoute = (route: FrontDeskRoute): 'all' | 'email' | 'whatsapp' | 'internal' => {
+export const getChannelFromRoute = (route: FrontDeskRoute): "all" | "email" | "whatsapp" | "internal" | "chatwoot" => {
   if (route.type === RouteType.CHANNEL) {
     return route.channel as any;
   }
+  if (route.type === RouteType.CHATWOOT) {
+    return "chatwoot";
+  }
   if (route.type === RouteType.INBOX) {
-    return 'all';
+    return "all";
   }
   // For ticket routes or other sections, return 'all'
-  return 'all';
+  return "all";
 };
 
 /**
@@ -324,4 +481,4 @@ export const isTicketRoute = (route: FrontDeskRoute): boolean => {
   return route.type === RouteType.TICKET_LIST || route.type === RouteType.TICKET_DETAIL;
 };
 
-import { InboxRoute, ChannelRoute, TicketListRoute, TicketDetailRoute } from './types';
+import { InboxRoute, ChannelRoute, TicketListRoute, TicketDetailRoute } from "./types";

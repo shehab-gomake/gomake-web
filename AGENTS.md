@@ -1,5 +1,24 @@
 # Autonomous Agent Playbook: A Strategic Guide to Using Serena MCP
 
+## Workspace Structure
+
+This repository is part of a larger workspace with two projects:
+
+- **Messaging Hub** - Backend application
+  - **Location:** `/Users/omarsabbah/Desktop/gomake-services/Messaging-Hub`
+  - **Technology:** NestJS, PostgreSQL, Prisma ORM, BullMQ, Redis, Socket.IO
+  - **Purpose:** Multi-tenant messaging system providing REST APIs, WebSocket connections, and background job processing
+  - **Key Features:** Email sync, WhatsApp integration, real-time messaging, OAuth integration
+- **gomake-web (THIS PROJECT)** - Frontend application
+  - **Location:** `/Users/omarsabbah/Desktop/gomake-services/gomake-web`
+  - **Technology:** Next.js, React, TypeScript, Recoil state management
+  - **Purpose:** User interface for the messaging system (FrontDesk)
+  - **Key Features:** Unified inbox, multi-channel messaging UI, real-time updates
+
+**Integration:** This frontend application consumes APIs and WebSocket connections provided by the Messaging Hub backend service.
+
+---
+
 You are an autonomous software engineering agent. Your primary objective is to solve software development tasks from start to finish. [cite_start]You are equipped with Serena, a toolkit that gives you **semantic, IDE-like capabilities**[cite: 37]. Your success depends not on generating code, but on methodically using these tools to **understand, plan, execute, and verify** your work.
 
 You must follow this playbook for every task you receive.

@@ -9,10 +9,7 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import { prevSelectedClientState } from "@/pages-components/admin/home/widgets/quote-widget/states";
 import { systemCurrencyState } from "@/store/user";
 import { resetPassModalState } from "./state";
-import {
-  clientGroupsCategoriesState,
-  clientTypesCategoriesState,
-} from "@/pages/customers/customer-states";
+import { clientGroupsCategoriesState, clientTypesCategoriesState } from "@/pages/customers/customer-states";
 import { gomakeUserState } from "./components/gomakeUser-tab/gomakeUserState";
 import { languageOptionsState, languagesState } from "@/store/languages";
 import { useEditCustomer } from "@/pages/customers/edit-customer/use-edit-customer";
@@ -51,25 +48,19 @@ const useCustomerCard = ({
   const { alertFaultGetData } = useSnackBar();
   const [showTable, setShowTable] = useState(false);
   const [customerTableRows, setCustomerTableRows] = useState([]);
-  const [showInActiveCustomers, setShowInActiveCustomers] =
-    useState<boolean>(false);
-  const [selectedClient, setSelectedClient] =
-    useRecoilState(selectedClientState);
+  const [showInActiveCustomers, setShowInActiveCustomers] = useState<boolean>(false);
+  const [selectedClient, setSelectedClient] = useRecoilState(selectedClientState);
   const { alertRequiredFields, alertFault } = useSnackBar();
   const systemCurrency = useRecoilValue<any>(systemCurrencyState);
-  const [resetPassModal, setResetPassModalModal] =
-    useRecoilState<boolean>(resetPassModalState);
+  const [resetPassModal, setResetPassModalModal] = useRecoilState<boolean>(resetPassModalState);
   const clientTypesCategories = useRecoilValue(clientTypesCategoriesState);
   const gomakeUser = useRecoilValue<any>(gomakeUserState);
   // const languagesOptions = useRecoilValue(languagesState);
   const languagesOptions = useRecoilValue(languageOptionsState);
-  const { CheckPreferenceValue, GetPreferenceValueKey } =
-    usePrintHousePreferences();
+  const { CheckPreferenceValue, GetPreferenceValueKey } = usePrintHousePreferences();
   const { CheckPermission } = useUserPermission();
   const printHouseCountry = useRecoilValue<string>(printHouseCountryState);
-  const [shipmentTypes, setShipmentTypes] = useState<
-    { value: string; text: string }[]
-  >([]);
+  const [shipmentTypes, setShipmentTypes] = useState<{ value: string; text: string }[]>([]);
 
   const customerTableHeaders = [
     t("customers.customerCode"),
@@ -83,9 +74,7 @@ const useCustomerCard = ({
 
   const handleHideTable = () => setShowTable(false);
 
-  const [previousClient, setPreviousClient] = useRecoilState<any>(
-    prevSelectedClientState
-  );
+  const [previousClient, setPreviousClient] = useRecoilState<any>(prevSelectedClientState);
 
   const handleOpenModal = (newClient) => {
     //setPreviousClient(selectedClient ? selectedClient : previousClient );
@@ -95,11 +84,7 @@ const useCustomerCard = ({
   };
 
   const handleChooseCustomer = (customer) => {
-    if (
-      userQuote?.client?.id != null &&
-      customer?.id != null &&
-      userQuote?.client?.id !== customer?.id
-    ) {
+    if (userQuote?.client?.id != null && customer?.id != null && userQuote?.client?.id !== customer?.id) {
       handleOpenModal(customer);
     } else {
       setSelectedClient(customer);
@@ -139,9 +124,7 @@ const useCustomerCard = ({
 
   const mapCustomerData = (customer) => {
     const { code, name, mail, phone, isActive } = customer;
-    const statusText = isActive
-      ? t("usersSettings.active")
-      : t("usersSettings.inactive");
+    const statusText = isActive ? t("usersSettings.active") : t("usersSettings.inactive");
     const statusColor = isActive ? "#40CC4E" : "#D92C2C";
 
     return [
@@ -171,9 +154,7 @@ const useCustomerCard = ({
   const getAllSimilarCustomersData = useCallback(() => {
     let customersArray = [...customerTableRows];
     if (customersArray?.length > 0) {
-      return showInActiveCustomers
-        ? customersArray
-        : customersArray?.filter((user: any) => user.isActive);
+      return showInActiveCustomers ? customersArray : customersArray?.filter((user: any) => user.isActive);
     }
     return customersArray;
   }, [customerTableRows, showInActiveCustomers]);
@@ -183,8 +164,7 @@ const useCustomerCard = ({
   };
 
   const [open, setOpen] = useState(false);
-  const validateEmail = (state: any, fieldName: string) =>
-    !!state?.[fieldName] ? emailRegex.test(state?.[fieldName]) : true;
+  const validateEmail = (state: any, fieldName: string) => (!!state?.[fieldName] ? emailRegex.test(state?.[fieldName]) : true);
   const { addNewCustomer } = useAddCustomer();
   const { editCustomer } = useEditCustomer();
   const { updateUserPassword } = useUserProfile();
@@ -208,9 +188,7 @@ const useCustomerCard = ({
     //     (field) => field === null || field === undefined || field === ""
     //   );
 
-    const emptyProps = Object.values(otherProps)?.every(
-      (prop) => prop === null || prop === "" || prop === " "
-    );
+    const emptyProps = Object.values(otherProps)?.every((prop) => prop === null || prop === "" || prop === " ");
 
     return emptyProps;
   };
@@ -224,24 +202,15 @@ const useCustomerCard = ({
     setShowInActiveCustomers(false);
   };
 
-  const clientTypeLabel =
-    typeClient === "C"
-      ? t("customers.modal.clientType")
-      : t("suppliers.supplierType");
+  const clientTypeLabel = typeClient === "C" ? t("customers.modal.clientType") : t("suppliers.supplierType");
 
-  const clientTypeId =
-    typeClient === "C" ? CLIENT_TYPE_Id.CUSTOMER : CLIENT_TYPE_Id.SUPPLIER;
+  const clientTypeId = typeClient === "C" ? CLIENT_TYPE_Id.CUSTOMER : CLIENT_TYPE_Id.SUPPLIER;
 
   const handleAddCustomer = async () => {
-    const filteredContacts = contacts?.filter(
-      (contact) => !isNameIndexOnly(contact)
-    );
-    const filteredAddresses = addresses?.filter(
-      (address) => !isNameIndexOnly(address)
-    );
+    const filteredContacts = contacts?.filter((contact) => !isNameIndexOnly(contact));
+    const filteredAddresses = addresses?.filter((address) => !isNameIndexOnly(address));
     const filteredUsers = users?.filter((user) => !isNameIndexOnly(user));
-    const cardTypeId =
-      typeClient === "C" ? CLIENT_TYPE_Id.CUSTOMER : CLIENT_TYPE_Id.SUPPLIER;
+    const cardTypeId = typeClient === "C" ? CLIENT_TYPE_Id.CUSTOMER : CLIENT_TYPE_Id.SUPPLIER;
     const updatedCustomer = {
       ...customer,
       contacts: filteredContacts,
@@ -255,9 +224,7 @@ const useCustomerCard = ({
 
     // Check if email is valid
     if (filteredUsers && filteredUsers?.length > 0) {
-      const areEmailsValid = filteredUsers?.every((user) =>
-        validateEmail(user, "email")
-      );
+      const areEmailsValid = filteredUsers?.every((user) => validateEmail(user, "email"));
       if (!areEmailsValid) {
         alertFault("customers.invalidEmail");
         return;
@@ -282,21 +249,13 @@ const useCustomerCard = ({
         isFromCartPage && onChangeSelectBusiness(x);
       });
     } else {
-      alertFault(
-        `${t("modal.RequiredFields")}: ${missingFields
-          .map((field) => [t(field)])
-          .join(", ")}`
-      );
+      alertFault(`${t("modal.RequiredFields")}: ${missingFields.map((field) => [t(field)]).join(", ")}`);
     }
   };
 
   const handleEditCustomer = () => {
-    const filteredContacts = contacts?.filter(
-      (contact) => !isNameIndexOnly(contact)
-    );
-    const filteredAddresses = addresses?.filter(
-      (address) => !isNameIndexOnly(address)
-    );
+    const filteredContacts = contacts?.filter((contact) => !isNameIndexOnly(contact));
+    const filteredAddresses = addresses?.filter((address) => !isNameIndexOnly(address));
     const filteredUsers = users?.filter((user) => !isNameIndexOnly(user));
     const updatedCustomer = {
       ...customer,
@@ -308,9 +267,7 @@ const useCustomerCard = ({
     };
 
     // Check if email is valid
-    const areEmailsValid = filteredUsers?.every((user) =>
-      validateEmail(user, "email")
-    );
+    const areEmailsValid = filteredUsers?.every((user) => validateEmail(user, "email"));
     if (!areEmailsValid) {
       alertFault("customers.invalidEmail");
       return;
@@ -341,11 +298,7 @@ const useCustomerCard = ({
         handleClose();
       });
     } else {
-      alertFault(
-        `${t("modal.RequiredFields")}: ${missingFields
-          .map((field) => [t(field)])
-          .join(", ")}`
-      );
+      alertFault(`${t("modal.RequiredFields")}: ${missingFields.map((field) => [t(field)]).join(", ")}`);
     }
   };
 
@@ -419,11 +372,7 @@ const useCustomerCard = ({
 
   const updateContact = (index, updatedContactData) => {
     setContacts((prevContacts) =>
-      prevContacts.map((contact) =>
-        contact.index === index
-          ? { ...contact, ...updatedContactData }
-          : contact
-      )
+      prevContacts.map((contact) => (contact.index === index ? { ...contact, ...updatedContactData } : contact))
     );
   };
 
@@ -521,11 +470,7 @@ const useCustomerCard = ({
   };
 
   const updateUser = (index, updatedUserData) => {
-    setUsers((prevUsers) =>
-      prevUsers.map((user) =>
-        user.index === index ? { ...user, ...updatedUserData } : user
-      )
-    );
+    setUsers((prevUsers) => prevUsers.map((user) => (user.index === index ? { ...user, ...updatedUserData } : user)));
   };
 
   const onChangeInputs = (key, value) => {
@@ -534,17 +479,8 @@ const useCustomerCard = ({
     setCustomer({ ...customer, [key]: newValue });
   };
 
-  const onUpdatePass = async (
-    currentPass: any,
-    newPass: any,
-    confirmPass: any
-  ) => {
-    const res = await updateUserPassword(
-      currentPass,
-      newPass,
-      confirmPass,
-      gomakeUser?.id
-    );
+  const onUpdatePass = async (currentPass: any, newPass: any, confirmPass: any) => {
+    const res = await updateUserPassword(currentPass, newPass, confirmPass, gomakeUser?.id);
     setResetPassModalModal(!res);
   };
 
@@ -564,15 +500,10 @@ const useCustomerCard = ({
   };
 
   const handleShowTable = async () => {
-    const filteredContacts = contacts?.filter(
-      (contact) => !isNameIndexOnly(contact)
-    );
-    const filteredAddresses = addresses?.filter(
-      (address) => !isNameIndexOnly(address)
-    );
+    const filteredContacts = contacts?.filter((contact) => !isNameIndexOnly(contact));
+    const filteredAddresses = addresses?.filter((address) => !isNameIndexOnly(address));
     const filteredUsers = users?.filter((user) => !isNameIndexOnly(user));
-    const cardTypeId =
-      typeClient === "C" ? CLIENT_TYPE_Id.CUSTOMER : CLIENT_TYPE_Id.SUPPLIER;
+    const cardTypeId = typeClient === "C" ? CLIENT_TYPE_Id.CUSTOMER : CLIENT_TYPE_Id.SUPPLIER;
     const updatedCustomer = {
       ...customer,
       contacts: filteredContacts,
@@ -583,9 +514,7 @@ const useCustomerCard = ({
 
     // Check if email is valid
     if (filteredUsers && filteredUsers?.length > 0) {
-      const areEmailsValid = filteredUsers?.every((user) =>
-        validateEmail(user, "email")
-      );
+      const areEmailsValid = filteredUsers?.every((user) => validateEmail(user, "email"));
       if (!areEmailsValid) {
         alertFault("customers.invalidEmail");
         return;
@@ -604,9 +533,7 @@ const useCustomerCard = ({
     });
   };
 
-  const [clientGroupList, setClientGroupList] = useRecoilState(
-    clientGroupsCategoriesState
-  );
+  const [clientGroupList, setClientGroupList] = useRecoilState(clientGroupsCategoriesState);
 
   const getClientsGroups = async () => {
     const callBack = (res) => {
@@ -625,13 +552,9 @@ const useCustomerCard = ({
 
   const [newGroupId, setNewGroupId] = useState("");
   const addGroupName = useCallback(async (data: string) => {
-    const res: any = await callApi(
-      "POST",
-      "/v1/crm-service/customer/add-client-group",
-      {
-        groupName: data,
-      }
-    );
+    const res: any = await callApi("POST", "/v1/crm-service/customer/add-client-group", {
+      groupName: data,
+    });
     if (res?.success) {
       getClientsGroups();
       setNewGroupId(res?.data?.data?.data);
@@ -639,9 +562,7 @@ const useCustomerCard = ({
     }
   }, []);
 
-  const defaultPaymentTerm = GetPreferenceValueKey(
-    EPreferences.DEFAULT_PAYMENT_TERMS
-  );
+  const defaultPaymentTerm = GetPreferenceValueKey(EPreferences.DEFAULT_PAYMENT_TERMS);
 
   return {
     customerTableHeaders,

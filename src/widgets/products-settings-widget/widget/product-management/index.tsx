@@ -17,11 +17,32 @@ import {
   EValueType,
 } from "@/pages-components/products/profits-new/enums/profites-enum";
 import { EditProductProfitRulesModal } from "@/widgets/properties/properties-modals/edit-rule-modal/edit-product-rule-modal";
-import { IconButton } from "@mui/material";
+import { IconButton, TableRow, TableCell, TableBody } from "@mui/material";
 import { InputAdornment } from "@mui/material";
 import TuneIcon from "@mui/icons-material/Tune";
 import { DotIcon } from "@/icons";
 import { useParameters } from "@/hooks/use-parameters";
+import { useMemo } from "react";
+
+const ProductTableWithSubProducts = ({ rows, headers }: any) => {
+  const processedRows = useMemo(() => {
+    return rows.map((item: any) => ({
+      row: item.row,
+      isSubProduct: item.isSubProduct,
+    }));
+  }, [rows]);
+
+  return (
+    <PrimaryTable
+      stickyFirstCol={false}
+      rows={processedRows.map((item: any) => item.row)}
+      headers={headers}
+      maxHeight={"calc(100vh - 303px)"}
+      stickyHeader={true}
+      rowMetadata={processedRows.map((item: any) => item.isSubProduct)}
+    />
+  );
+};
 
 const ProductManagementWidget = () => {
   const { t } = useTranslation();
@@ -54,6 +75,9 @@ const ProductManagementWidget = () => {
     open,
     anchorEl,
     onClickClearFilter,
+    expandedProducts,
+    toggleProductExpansion,
+    _mapSubProductToRow,
   } = useProductManagement();
   const { parametersStateValue } = useParameters();
 
@@ -175,22 +199,62 @@ const ProductManagementWidget = () => {
       </div>
       <>
         {term || selectedSKU || selectedTemplateId ? (
-          <PrimaryTable
-            stickyFirstCol={false}
-            // rows={productSearched}
-            rows={productSearched.map((item) => item.row)} // Only pass the row data
+          <ProductTableWithSubProducts
+            rows={(() => {
+              const flatRows: any[] = [];
+              productSearched.forEach((product) => {
+                // Add main product row
+                flatRows.push({ row: product.row, isSubProduct: false });
+                // Add sub-product rows if expanded
+                if (
+                  product.isExpanded &&
+                  product.subProducts &&
+                  product.subProducts.length > 0
+                ) {
+                  product.subProducts.forEach((subProduct: any) => {
+                    const subProductRow = _mapSubProductToRow(
+                      subProduct,
+                      product.originalData || product
+                    );
+                    flatRows.push({
+                      row: subProductRow.row,
+                      isSubProduct: true,
+                    });
+                  });
+                }
+              });
+              return flatRows;
+            })()}
             headers={tableHeaders}
-            maxHeight={"calc(100vh - 303px)"}
-            stickyHeader={true}
           />
         ) : (
-          <PrimaryTable
-            stickyFirstCol={false}
-            // rows={allProducts}
-            rows={allProducts?.map((product) => product?.row) || []} // Only pass the row data
+          <ProductTableWithSubProducts
+            rows={(() => {
+              const flatRows: any[] = [];
+              allProducts?.forEach((product) => {
+                // Add main product row
+                flatRows.push({ row: product?.row, isSubProduct: false });
+                // Add sub-product rows if expanded
+                if (
+                  product?.isExpanded &&
+                  product?.subProducts &&
+                  product?.subProducts.length > 0
+                ) {
+                  product.subProducts.forEach((subProduct: any) => {
+                    const subProductRow = _mapSubProductToRow(
+                      subProduct,
+                      product?.originalData || product
+                    );
+                    flatRows.push({
+                      row: subProductRow.row,
+                      isSubProduct: true,
+                    });
+                  });
+                }
+              });
+              return flatRows;
+            })()}
             headers={tableHeaders}
-            maxHeight={"calc(100vh - 303px)"}
-            stickyHeader={true}
           />
         )}
       </>

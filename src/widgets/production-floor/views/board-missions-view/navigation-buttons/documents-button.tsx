@@ -23,6 +23,10 @@ import { PrintPackingSlipModalWidget } from "@/widgets/production-floor/views/bo
 import { ModalType } from "@/enums";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { adaptPaddingRight } from "@/utils/adapter";
+import { useFrontDeskEmailIntegration } from "@/pages-components/quotes/hooks/use-frontdesk-email-integration";
+import { FrontDeskEmailComposerWrapper } from "@/pages-components/quotes/components/frontdesk-email-composer-wrapper";
+import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
+import {printHouseHasFrontDeskFeature} from "@/store/print-house-profile";
 
 const DocumentsButton = ({ isMobile = false }) => {
   const [boardMissions] = useRecoilState(boardMissionsDetailsState);
@@ -37,6 +41,8 @@ const DocumentsButton = ({ isMobile = false }) => {
   const [pendingPrintMission, setPendingPrintMission] = useState(null);
 
   const isReady = useRecoilValue(isReadyBoardMissionsState);
+  const hasFrontDeskFeature = useRecoilValue(printHouseHasFrontDeskFeature);
+
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
   const dir = t("direction");
@@ -171,6 +177,13 @@ const DocumentsButton = ({ isMobile = false }) => {
     await GetPrintingTicketPDFApi(callApi, callBack, { boardMissionId });
   };
 
+  const {
+    isEmailComposerOpen,
+    emailData,
+    openEmailComposer,
+    closeEmailComposer,
+  } = useFrontDeskEmailIntegration({ documentType: DOCUMENT_TYPE.boardMission });
+
   const onClickMoveBoardMissionToDone = async (sendMessage: boolean) => {
     const callBack = (res) => {
       setOpenMarkReadyModal(false);
@@ -179,6 +192,9 @@ const DocumentsButton = ({ isMobile = false }) => {
       }
       if (res?.success) {
         alertSuccessUpdate();
+        if (sendMessage && hasFrontDeskFeature) {
+          openEmailComposer(boardMissions.boardMissionId);
+        }
       } else {
         alertFaultUpdate();
       }
@@ -351,6 +367,15 @@ const DocumentsButton = ({ isMobile = false }) => {
             : undefined
         }
       />
+      {isEmailComposerOpen && (
+        <FrontDeskEmailComposerWrapper
+          open={isEmailComposerOpen}
+          onClose={closeEmailComposer}
+          emailData={emailData}
+          documentId={boardMissions?.boardMissionId}
+          documentType={DOCUMENT_TYPE.boardMission}
+        />
+      )}
     </div>
   );
 };
