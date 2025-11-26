@@ -450,13 +450,15 @@ const AdvertisingProductNameParameterWidget = ({
                       style={clasess.modalContentImageItem2}
                     />
                     }
-                    <div style={{
-                      ...clasess.modalContentDataItem2,
-                      maxHeight: "400px",
-                      overflowY: "auto",
-                      overflowX: "hidden",
-                      paddingRight: "8px",
-                    }}>
+                    <div
+                      className="custom-scrollbar"
+                      style={{
+                        ...clasess.modalContentDataItem2,
+                        maxHeight: "380px",
+                        overflowY: "auto",
+                        overflowX: "hidden",
+                        paddingRight: "8px",
+                      }}>
                       {dynamicParams.map((param: any) => {
                         const paramValue = customDimensions[param.code] || "";
                         const paramUnit = param.unitKey || unit;
@@ -465,14 +467,14 @@ const AdvertisingProductNameParameterWidget = ({
                         return (
                           <div key={param.code} style={{ marginBottom: 15 }}>
                             <div style={{ marginBottom: 8, fontWeight: 500, fontSize: 14 }}>
-                              {param.name || param.code}: {paramUnit && <small>({paramUnit})</small>}
+                              {param.name || param.code} {paramUnit && <small>{paramUnit}</small>}
                               {isRequired && <span style={{ color: 'red' }}> *</span>}
                             </div>
                             <GomakeTextInput
                               value={paramValue}
                               onChange={(e) => setCustomDimensions((prev: any) => ({ ...prev, [param.code]: e.target.value }))}
                               placeholder={param.name || param.code}
-                              style={{ width: '100%', height: "35px" }}
+                              style={{ width: '100%', height: "35px", minWidth: "200px" }}
                               type="number"
                             />
                           </div>
