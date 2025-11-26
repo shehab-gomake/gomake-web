@@ -13,7 +13,8 @@ import { mailInputs, mailInputs1, mailInputs2, mailInputs3 } from "./inputs";
 import { FormInput } from "@/components/form-inputs/form-input";
 import { IInput } from "@/components/form-inputs/interfaces";
 import { Checkbox, Stack } from "@mui/material";
-import { AdvancedEmailEditor } from "./advanced-email-editor";
+import { QuillEditor } from "./quill-editor";
+//import { AdvancedEmailEditor } from "./advanced-email-editor";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { languageOptionsState } from "@/store/languages";
 import {
@@ -140,11 +141,13 @@ const EmailSettings = ({ onClickSave, onOpenDeleteModal }: IProps) => {
       </div>
       <div style={classes.subSection}>
         <h3 style={classes.subSectionHeader}>{t("mailingSettings.subject")}</h3>
-        <AdvancedEmailEditor value={subject} setValue={setSubject} />
+        <QuillEditor value={subject} setValue={setSubject} />
+        {/*<AdvancedEmailEditor value={subject} setValue={setSubject} />*/}
       </div>
       <div style={classes.subSection}>
         <h3 style={classes.subSectionHeader}>{t("mailingSettings.body")}</h3>
-        <AdvancedEmailEditor value={body} setValue={setBody} />
+        <QuillEditor value={body} setValue={setBody} />
+        {/*<AdvancedEmailEditor value={body} setValue={setBody} />*/}
       </div>
       <div style={classes.subSection}>
         {/* <h3 style={classes.subSectionHeader}>
@@ -211,12 +214,18 @@ const EmailSettings = ({ onClickSave, onOpenDeleteModal }: IProps) => {
                     ]?.toLowerCase()}Body`
                   )}
                 </h3>
-                <AdvancedEmailEditor
+                <QuillEditor
+                    value={body.body || ""}
+                    setValue={(content) =>
+                        handleBodyContentChange(body.type, content)
+                    }
+                />
+                {/*<AdvancedEmailEditor
                   value={body.body || ""}
                   setValue={(content) =>
                     handleBodyContentChange(body.type, content)
                   }
-                />
+                />*/}
               </div>
             );
           })}
