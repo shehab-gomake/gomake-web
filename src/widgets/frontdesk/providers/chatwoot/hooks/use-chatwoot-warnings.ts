@@ -88,8 +88,8 @@ export const useChatwootWarnings = (): Warning[] => {
       // Check inbox configuration based on channel type
       // Email inboxes need proper email configuration
       if (inbox.channel_type === 'Channel::Email') {
-        const emailConfig = inbox.email;
-        if (!emailConfig?.email || !emailConfig?.imap_enabled) {
+        // Check if email is configured and IMAP is enabled for receiving
+        if (!inbox.email || !inbox.imap_enabled) {
           warnings.push({
             id: `email-config-${inbox.id}`,
             type: WarningType.INBOX_NOT_CONFIGURED,

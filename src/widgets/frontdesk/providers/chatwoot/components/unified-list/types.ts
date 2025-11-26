@@ -127,9 +127,11 @@ export interface InboxListItem extends ListItemWithIcon {
 /**
  * Generic option item for simple lists
  */
-export interface GenericListItem extends BaseListItem, ListItemWithIcon, Partial<ListItemWithColor> {
+export interface GenericListItem extends BaseListItem, ListItemWithIcon {
   type: 'generic';
   value?: string | number | null;
+  /** Optional color (from ListItemWithColor) */
+  color?: string;
 }
 
 /**

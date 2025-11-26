@@ -120,9 +120,9 @@ export const NotificationListItem: React.FC<NotificationListItemProps> = ({
                 textOverflow: "ellipsis",
                 whiteSpace: "nowrap",
               }}
-              title={sender.name}
+              title={avatarData.displayName}
             >
-              {sender.name}
+              {avatarData.displayName}
             </Typography>
 
             {/* Conversation ID Badge */}

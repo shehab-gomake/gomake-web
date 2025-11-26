@@ -172,6 +172,8 @@ export interface ChatwootConversation {
  * Note: Chatwoot API returns snake_case properties
  */
 export interface ChatwootEmailContent {
+  /** Email subject line */
+  subject?: string;
   /** HTML version of the email */
   html_content?: {
     full?: string;

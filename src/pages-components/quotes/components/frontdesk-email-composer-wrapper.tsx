@@ -58,15 +58,17 @@ const mapToAttachmentSource = (attachment: EmailAttachment): AttachmentSource =>
 /**
  * Extract email address from inbox configuration
  * Checks multiple possible properties where email might be stored
+ * Based on Chatwoot's inbox API response structure
  */
 const getInboxEmailAddress = (inbox: ChatwootInbox): string => {
   // Priority order for email address resolution
+  // Chatwoot returns: email, imap_login, smtp_login, forward_to_email
   return (
-    inbox.smtp_email ||        // SMTP sending email (most common)
-    inbox.imap_email ||        // IMAP email address
-    inbox.email ||             // Direct email property
+    inbox.email ||             // Direct email property (primary)
+    inbox.imap_login ||        // IMAP login (usually same as email)
+    inbox.smtp_login ||        // SMTP login (usually same as email)
     inbox.forward_to_email ||  // Forward-to email
-    inbox._emailAccount?.email || // OAuth email account
+    inbox._emailAccount?.email || // OAuth email account (internal)
     inbox.sender_email ||      // Alternative sender field
     `inbox-${inbox.id}@mail.gomake.com` // Fallback generated email
   );

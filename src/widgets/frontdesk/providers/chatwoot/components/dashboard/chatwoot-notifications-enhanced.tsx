@@ -722,7 +722,7 @@ export const ChatwootNotificationsEnhanced: React.FC = () => {
                                         whiteSpace: 'nowrap',
                                       }}
                                     >
-                                      {sender.name}
+                                      {avatarData.displayName}
                                     </Typography>
                                     {/* Unread Indicator */}
                                     {isUnread && (

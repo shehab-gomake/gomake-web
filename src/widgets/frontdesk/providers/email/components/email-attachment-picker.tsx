@@ -111,7 +111,7 @@ const ACCEPT_FILE_TYPES = [
 /**
  * Get icon for file type
  */
-const getFileIcon = (mimeType: string): React.ReactNode => {
+const getFileIcon = (mimeType: string): React.ReactElement => {
   if (mimeType.startsWith("image/")) {
     return <ImageIcon fontSize="small" sx={{ color: "#4CAF50" }} />;
   }

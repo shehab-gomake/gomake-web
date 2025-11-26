@@ -118,7 +118,7 @@ export const ContactHistorySection: React.FC<ContactHistorySectionProps> = ({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isExpanded, setIsExpanded] = useState(true);
-  const [displayLimit, setDisplayLimit] = useState(CONFIG.INITIAL_LIMIT);
+  const [displayLimit, setDisplayLimit] = useState<number>(CONFIG.INITIAL_LIMIT);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
 
   // Refs
