@@ -18,6 +18,10 @@ import { useDeliveriesSocketIo } from "@/hooks/socket-io/use-deliveries-socket-i
 import { useListPagination } from "@/hooks/use-list-pagination";
 import { useModal } from "@/hooks/use-modal";
 import { moveOrderToReadyApi } from "@/services/api-service/generic-doc/documents-api";
+import { useRecoilValue } from "recoil";
+import { printHouseHasFrontDeskFeature } from "@/store/print-house-profile";
+import { useFrontDeskEmailIntegration } from "@/pages-components/quotes/hooks/use-frontdesk-email-integration";
+import { FrontDeskEmailComposerWrapper } from "@/pages-components/quotes/components/frontdesk-email-composer-wrapper";
 
 interface Query {
   customerId?: string;
@@ -266,6 +270,17 @@ const useDeliveries = () => {
 
   const MoveOrderToReady = useModal();
   const [selectedDocument, setSelectedDocument] = useState<any>({});
+  const hasFrontDeskFeature = useRecoilValue(printHouseHasFrontDeskFeature);
+  
+  const {
+    isEmailComposerOpen,
+    emailData,
+    isLoadingEmailData,
+    openEmailComposer,
+    closeEmailComposer,
+  } = useFrontDeskEmailIntegration({
+    documentType: DOCUMENT_TYPE.order,
+  });
 
   const onClickOpenMoveOrderToReadyModal = (order) => {
     // Assume orderId is already being extracted from the URL query ( scanning case )
@@ -278,17 +293,38 @@ const useDeliveries = () => {
     MoveOrderToReady.close();
   };
 
-  const moveOrderToReady = async (isSendMessage: boolean = false) => {
+  const moveOrderToReady = async () => {
     const callBack = (res) => {
       if (res?.success) {
         getDeliveriesTable();
+        // Always open email composer after marking ready (if FrontDesk is enabled)
+        if (hasFrontDeskFeature && selectedDocument?.id) {
+          const contactEmail = selectedDocument?.contactEmail || selectedDocument?.contactMail;
+          const contactPhone = selectedDocument?.contactPhone;
+          const customerId = selectedDocument?.customerId || selectedDocument?.clientId;
+          const customerName = selectedDocument?.customerName || selectedDocument?.clientName;
+          const contactName = selectedDocument?.contactName;
+          
+          openEmailComposer(
+            selectedDocument.id,
+            contactEmail,
+            contactPhone,
+            undefined, // messageType - will use default
+            undefined, // sendMailIfNotVerifiedAgent - will use default true
+            undefined, // sendWithInvoices - will use default false
+            customerId,
+            customerName,
+            contactName
+          );
+        }
       } else {
         alertFaultUpdate();
       }
     };
+    // Mark as ready without sending message - user will decide in email composer
     await moveOrderToReadyApi(callApi, callBack, {
       orderId: selectedDocument?.id,
-      isSendMessage: isSendMessage,
+      isSendMessage: false, // Don't send automatically - let user decide in composer
     });
   };
 
@@ -461,6 +497,12 @@ const useDeliveries = () => {
     onClickCloseMoveOrderToReadyModal,
     onClickOpenMoveOrderToReadyModal,
     moveOrderToReady,
+    // FrontDesk email composer state
+    isEmailComposerOpen,
+    emailData,
+    isLoadingEmailData,
+    closeEmailComposer,
+    selectedDocument, // Expose selectedDocument for FrontDeskEmailComposerWrapper
   };
 };
 

@@ -869,7 +869,7 @@ const QuotesListPageWidget = ({
         onClose={onClickCloseChangeProductionStatusModal}
         onClickDelete={() => {
           if (isMoveToReady) {
-            moveOrderToReady(moveToReadyOption === "withMessage");
+            moveOrderToReady();
           } else {
             if (isSelectedCLoseAsDeliveryNote) {
               const path = `/deliveryNote?isNewCreation=true&orderId=${selectedDocument?.id}`;
@@ -1035,16 +1035,15 @@ const QuotesListPageWidget = ({
         onClose={onClickCloseMoveOrderToReadyModal}
         onClickDelete={moveOrderToReady}
       /> */}
-      <ThreeOptionsModal
+      <GoMakeDeleteModal
         modalType={ModalType.WARNING}
         title={t("boardMissions.markDoneModalTitle")}
         subTitle={t("boardMissions.markDoneModalSubTitle")}
-        yesBtn={"boardMissions.markDoneModalYes"}
-        noBtn={"boardMissions.markDoneModalNo"}
+        yesBtn={t("modal.confirm")}
         openModal={MoveOrderToReady.isOpen}
         onClose={onClickCloseMoveOrderToReadyModal}
-        onClickYes={() => moveOrderToReady(true)}
-        onClickNo={() => moveOrderToReady(false)}
+        onClickDelete={() => moveOrderToReady()}
+        onClickCancel={onClickCloseMoveOrderToReadyModal}
       />
       <PrintPackingSlipModal
         openPackagesModal={openPackagesModal}

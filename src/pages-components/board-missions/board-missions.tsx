@@ -493,6 +493,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
         modalType={ModalType.WARNING}
         title={t("boardMissions.markDoneModalTitle")}
         subTitle={t("boardMissions.markDoneModalSubTitle")}
+        yesBtn={t("modal.confirm")}
         openModal={openMarkReadyModal}
         onClose={onCloseMarkReadyModal}
         onClickDelete={onClickMoveBoardMissionToDone}
@@ -539,7 +540,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
           jobNumber: selectedMission?.number,
           productType: selectedMission?.productTypeName,
         })}
-        yesBtn={"modal.yes"}
+        yesBtn={t("modal.confirm")}
         openModal={openMarkReadyModalForProductType}
         onClose={onCloseMarkReadyModalForProductType}
         onClickDelete={() => onClickMoveBoardMissionToDone()}
@@ -658,7 +659,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
       />
       <GoMakeDeleteModal
         title={t("boardMissions.markAsReadyJobsModalTitle")}
-        yesBtn={t("modal.yes")}
+        yesBtn={t("modal.confirm")}
         modalType={ModalType.WARNING}
         subTitle={" "}
         openModal={openMarkReadyModalForHasJobs}
