@@ -99,7 +99,7 @@ export const useFrontDeskEmailIntegration = ({
   }, []);
 
   const openEmailComposer = useCallback(
-    async (documentId: string | number, contactEmail?: string, contactPhone?: string) => {
+    async (documentId: string | number, contactEmail?: string, contactPhone?: string, messageType?: number, sendMailIfNotVerifiedAgent?: boolean, sendWithInvoices?: boolean) => {
       setIsLoadingEmailData(true);
       
       try {
@@ -363,6 +363,9 @@ export const useFrontDeskEmailIntegration = ({
               documentId,
               ...(contactEmail && { contactEmail }),
               ...(contactPhone && { contactPhone }),
+              messageType: messageType ?? 0,
+              sendMailIfNotVerifiedAgent: sendMailIfNotVerifiedAgent ?? true,
+              sendWithInvoices: sendWithInvoices ?? false,
             },
           }
         );

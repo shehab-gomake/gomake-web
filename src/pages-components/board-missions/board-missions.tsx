@@ -125,6 +125,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
     emailData,
     openEmailComposer,
     closeEmailComposer,
+    pendingOrderIdForComposer,
     onClickBackToProcess,
     handleClick,
     handleClose,
@@ -870,8 +871,8 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
           open={isEmailComposerOpen}
           onClose={closeEmailComposer}
           emailData={emailData}
-          documentId={selectedMission?.id}
-          documentType={DOCUMENT_TYPE.boardMission}
+          documentId={pendingOrderIdForComposer || selectedMission?.orderId || selectedMission?.id}
+          documentType={DOCUMENT_TYPE.order}
         />
       )}
       <QualityIssueModal

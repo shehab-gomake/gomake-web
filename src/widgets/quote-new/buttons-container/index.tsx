@@ -95,6 +95,7 @@ const ButtonsContainer = ({
     onClickOpenOrderNowModal,
     onClickConfirmWithoutNotification,
     onClickConfirmWithNotification,
+    onClickConfirm,
     onClickPrint,
     onClickClosePaymentModal,
     onClickOpenPaymentModal,
@@ -612,6 +613,7 @@ const ButtonsContainer = ({
           isUsedStripe={quoteItemValue?.isUsedStripe}
           isConnectedToStripe={quoteItemValue?.isConnectedToStripe}
           CheckoutOptionModal={CheckoutOptionModal}
+          onConfirm={onClickConfirm}
         />
         <ManagerApprovalModal
           openModal={openMangerApprovalModal}
@@ -766,7 +768,8 @@ const ButtonsContainer = ({
               pendingOrderData?.res,
               pendingOrderData?.sendMessage,
               pendingOrderData?.isPrepaymentClient,
-              pendingOrderData?.isStripeCash
+              pendingOrderData?.isStripeCash,
+              pendingOrderData?.shouldOpenComposer
             );
             isOpenGroupJobsModal.close();
           }}

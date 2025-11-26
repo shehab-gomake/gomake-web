@@ -83,7 +83,7 @@ export const EmailComposer: React.FC<EmailComposerProps> = ({
           position: "fixed",
           bottom: 0,
           right: 16,
-          // zIndex: 1400,
+          zIndex: 2,
           width: isMinimized ? 260 : 450,
           transition: "all 0.2s ease",
         }}
