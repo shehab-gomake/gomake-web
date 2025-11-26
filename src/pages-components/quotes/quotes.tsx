@@ -204,6 +204,9 @@ const QuotesListPageWidget = ({
     openPrintPDFModal,
     fromDate,
     toDate,
+    checkFromDate,
+    checkToDate,
+    onSelectCheckDueDateRange,
     getAllQuotes,
     openCancelReceiptModal,
     onCloseCancelReceiptModal,
@@ -578,6 +581,9 @@ const QuotesListPageWidget = ({
               fromDate={fromDate}
               toDate={toDate}
               onSelectDeliveryTimeDates={onSelectDeliveryTimeDates}
+              checkFromDate={checkFromDate}
+              checkToDate={checkToDate}
+              onSelectCheckDueDateRange={onSelectCheckDueDateRange}
               patternSearch={patternSearch}
               onChangeDocumentSearch={onChangeDocumentSearch}
               onClickClearFilter={onClickClearFilter}
