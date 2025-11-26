@@ -5,25 +5,29 @@
  * Follows the same structure as the unified dashboard but specifically for Chatwoot data.
  */
 
-import React from 'react';
-import { Box, Typography, Paper, Chip, Stack } from '@mui/material';
-import { useTheme } from '@mui/material/styles';
-import HistoryIcon from '@mui/icons-material/History';
-import { colorTokens } from '@/widgets/frontdesk/design-system/tokens';
-import { useGomakeTheme } from '@/hooks/use-gomake-thme';
-import { ChatwootSettingsSubpage } from '@/widgets/frontdesk/routing/types';
-import { useChatwootProvider } from '../hooks/use-chatwoot-provider';
-import { useAgentDashboardStats, useAdminDashboardStats } from '../hooks/use-chatwoot-dashboard-stats';
-import { useChatwootDashboardType } from '../hooks/use-chatwoot-dashboard-type';
-import { AgentStatsCards } from '../components/dashboard/agent-stats-cards';
-import { AdminStatsCards } from '../components/dashboard/admin-stats-cards';
-import { ChatwootActivityFeed } from '../components/dashboard/chatwoot-activity-feed';
-import { ChatwootNotificationsWidget } from '../components/dashboard/chatwoot-notifications-widget';
-import { useRecoilValue } from 'recoil';
-import { chatwootConversationsAtom, chatwootSelectedConversationAtom } from '@/store/frontdesk/atoms/chatwoot.atoms';
-import { ErrorBoundary } from '@/widgets/frontdesk/components/shared/ErrorBoundary';
-import { RouteBuilder } from '@/widgets/frontdesk/routing/route-builder';
-import { ChatwootView } from '@/widgets/frontdesk/routing/types';
+import React from "react";
+import { Box, Typography, Paper, Chip, Stack } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
+import HistoryIcon from "@mui/icons-material/History";
+import { colorTokens } from "@/widgets/frontdesk/design-system/tokens";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { ChatwootSettingsSubpage } from "@/widgets/frontdesk/routing/types";
+import { useChatwootProvider } from "../hooks/use-chatwoot-provider";
+import { useAgentDashboardStats, useAdminDashboardStats } from "../hooks/use-chatwoot-dashboard-stats";
+import { useChatwootDashboardType } from "../hooks/use-chatwoot-dashboard-type";
+import { AgentStatsCards } from "../components/dashboard/agent-stats-cards";
+import { AdminStatsCards } from "../components/dashboard/admin-stats-cards";
+import { ChatwootActivityFeed } from "../components/dashboard/chatwoot-activity-feed";
+import { ChatwootNotificationsWidget } from "../components/dashboard/chatwoot-notifications-widget";
+import { useRecoilValue } from "recoil";
+import {
+  chatwootConversationsAtom,
+  chatwootConversationsLoadingLegacyAtom,
+  chatwootSelectedConversationAtom,
+} from "@/store/frontdesk/atoms/chatwoot.atoms";
+import { ErrorBoundary } from "@/widgets/frontdesk/components/shared/ErrorBoundary";
+import { RouteBuilder } from "@/widgets/frontdesk/routing/route-builder";
+import { ChatwootView } from "@/widgets/frontdesk/routing/types";
 
 export const DashboardView: React.FC = () => {
   const theme = useTheme();
@@ -36,71 +40,72 @@ export const DashboardView: React.FC = () => {
   const adminStats = useAdminDashboardStats();
 
   // Select stats based on dashboard type
-  const stats = dashboardType === 'admin' ? adminStats : agentStats;
+  const stats = dashboardType === "admin" ? adminStats : agentStats;
 
   // Get conversations and selection state
   const conversations = useRecoilValue(chatwootConversationsAtom);
   const selectedConversation = useRecoilValue(chatwootSelectedConversationAtom);
+  const conversationsLoading = useRecoilValue(chatwootConversationsLoadingLegacyAtom);
 
   // Navigation handlers with smart filters
   const handleCardClick = (cardType: string) => {
     switch (cardType) {
       // Agent-specific navigation
-      case 'my-open-tickets':
+      case "my-open-tickets":
         // Navigate to My Inbox with filters for open tickets assigned to me
         chatwootRouter.navigate(
           RouteBuilder.chatwoot(ChatwootView.MY_INBOX, undefined, undefined, {
-            status: 'open',
-            assigneeType: 'me',
+            status: "open",
+            assigneeType: "me",
           })
         );
         break;
-      case 'my-resolved-today':
+      case "my-resolved-today":
         // Navigate to My Inbox with filters for resolved tickets
         chatwootRouter.navigate(
           RouteBuilder.chatwoot(ChatwootView.MY_INBOX, undefined, undefined, {
-            status: 'resolved',
+            status: "resolved",
           })
         );
         break;
-      case 'my-response-time':
+      case "my-response-time":
         chatwootRouter.navigateToMyInbox();
         break;
-      
+
       // Admin-specific navigation
-      case 'total-open-tickets':
+      case "total-open-tickets":
         // Navigate to All Conversations with filters for open tickets
         chatwootRouter.navigate(
           RouteBuilder.chatwoot(ChatwootView.ALL_CONVERSATIONS, undefined, undefined, {
-            status: 'open',
+            status: "open",
           })
         );
         break;
-      case 'unassigned-tickets':
+      case "unassigned-tickets":
         chatwootRouter.navigateToUnattended();
         break;
-      case 'team-response-time':
+      case "team-response-time":
         chatwootRouter.navigateToAllConversations();
         break;
-      case 'active-today':
+      case "active-today":
         chatwootRouter.navigateToAllConversations();
         break;
-      
+
       // Common navigation
-      case 'unread-conversations':
+      case "unread-conversations":
         chatwootRouter.navigateToMyInbox();
         break;
-      case 'open-conversations':
+      case "open-conversations":
         chatwootRouter.navigateToAllConversations();
         break;
-      case 'mentions':
+      case "mentions":
         chatwootRouter.navigateToMentions();
         break;
-      case 'unattended':
+      case "unattended":
         chatwootRouter.navigateToUnattended();
         break;
       default:
-        console.warn('[DashboardView] Unknown card type:', cardType);
+        console.warn("[DashboardView] Unknown card type:", cardType);
         break;
     }
   };
@@ -113,11 +118,11 @@ export const DashboardView: React.FC = () => {
   return (
     <Box
       sx={{
-        height: '100%',
-        display: 'flex',
-        flexDirection: 'column',
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
         backgroundColor: theme.palette.background.paper,
-        overflow: 'hidden',
+        overflow: "hidden",
       }}
     >
       {/* Header */}
@@ -132,7 +137,7 @@ export const DashboardView: React.FC = () => {
           variant="h5"
           sx={{
             fontWeight: 700,
-            fontSize: '1.5rem',
+            fontSize: "1.5rem",
             color: colorTokens.neutral[900],
           }}
         >
@@ -143,12 +148,10 @@ export const DashboardView: React.FC = () => {
           sx={{
             color: colorTokens.neutral[600],
             mt: 0.5,
-            fontSize: '0.875rem',
+            fontSize: "0.875rem",
           }}
         >
-          {dashboardType === 'admin'
-            ? 'Team performance and operational overview'
-            : 'Your personal performance and tasks'}
+          {dashboardType === "admin" ? "Team performance and operational overview" : "Your personal performance and tasks"}
         </Typography>
       </Box>
 
@@ -161,9 +164,9 @@ export const DashboardView: React.FC = () => {
             backgroundColor: theme.palette.background.paper,
           }}
         >
-          {dashboardType === 'admin' ? (
-            <AdminStatsCards 
-              stats={adminStats} 
+          {dashboardType === "admin" ? (
+            <AdminStatsCards
+              stats={adminStats}
               onCardClick={handleCardClick}
               onWarningsClick={() => {
                 // Navigate to warnings settings subpage using the proper router method
@@ -171,8 +174,8 @@ export const DashboardView: React.FC = () => {
               }}
             />
           ) : (
-            <AgentStatsCards 
-              stats={agentStats} 
+            <AgentStatsCards
+              stats={agentStats}
               onCardClick={handleCardClick}
               onWarningsClick={() => {
                 // Navigate to warnings settings subpage using the proper router method
@@ -187,9 +190,9 @@ export const DashboardView: React.FC = () => {
       <Box
         sx={{
           flex: 1,
-          display: 'flex',
+          display: "flex",
           gap: 2,
-          overflow: 'hidden',
+          overflow: "hidden",
           minHeight: 0,
           px: 3,
           py: 2,
@@ -202,9 +205,9 @@ export const DashboardView: React.FC = () => {
             elevation={0}
             sx={{
               flex: 1,
-              display: 'flex',
-              flexDirection: 'column',
-              overflow: 'hidden',
+              display: "flex",
+              flexDirection: "column",
+              overflow: "hidden",
               border: `1px solid ${colorTokens.neutral[200]}`,
               borderRadius: 2,
               backgroundColor: theme.palette.background.paper,
@@ -216,9 +219,9 @@ export const DashboardView: React.FC = () => {
                 py: 2,
                 borderBottom: `1px solid ${colorTokens.neutral[200]}`,
                 backgroundColor: colorTokens.neutral[50],
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
               }}
             >
               <Stack direction="row" spacing={1} alignItems="center">
@@ -227,7 +230,7 @@ export const DashboardView: React.FC = () => {
                   variant="h6"
                   sx={{
                     fontWeight: 600,
-                    fontSize: '1rem',
+                    fontSize: "1rem",
                     color: colorTokens.neutral[900],
                   }}
                 >
@@ -239,20 +242,21 @@ export const DashboardView: React.FC = () => {
                     size="small"
                     sx={{
                       height: 20,
-                      fontSize: '0.688rem',
+                      fontSize: "0.688rem",
                       fontWeight: 600,
                       backgroundColor: primaryColor(600),
-                      color: 'white',
+                      color: "white",
                     }}
                   />
                 )}
               </Stack>
             </Box>
-            <Box sx={{ flex: 1, overflow: 'hidden' }}>
+            <Box sx={{ flex: 1, overflow: "hidden" }}>
               <ChatwootActivityFeed
                 conversations={conversations}
                 selectedId={selectedConversation?.id}
                 onSelect={handleConversationSelect}
+                isLoading={conversationsLoading}
               />
             </Box>
           </Paper>
@@ -264,9 +268,9 @@ export const DashboardView: React.FC = () => {
             elevation={0}
             sx={{
               flex: 1,
-              display: 'flex',
-              flexDirection: 'column',
-              overflow: 'hidden',
+              display: "flex",
+              flexDirection: "column",
+              overflow: "hidden",
               border: `1px solid ${colorTokens.neutral[200]}`,
               borderRadius: 2,
               backgroundColor: theme.palette.background.paper,

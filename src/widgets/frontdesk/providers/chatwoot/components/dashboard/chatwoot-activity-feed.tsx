@@ -12,6 +12,7 @@ import { ConversationListItem, EmptyState } from '@/widgets/frontdesk/design-sys
 import { colorTokens } from '@/widgets/frontdesk/design-system/tokens';
 import InboxIcon from '@mui/icons-material/Inbox';
 import type { ChatwootConversation } from '@/services/frontdesk/api/chatwoot/types/conversations.types';
+import { LoadingOverlay } from '@/widgets/frontdesk/components/shared';
 import {
   getConversationName,
   getLastMessage,
@@ -164,11 +165,17 @@ export const ChatwootActivityFeed: React.FC<ChatwootActivityFeedProps> = ({
   return (
     <Box
       sx={{
+        position: 'relative',
         height: '100%',
-        overflow: 'auto',
-        backgroundColor: theme.palette.background.paper,
       }}
     >
+      <Box
+        sx={{
+          height: '100%',
+          overflow: 'auto',
+          backgroundColor: theme.palette.background.paper,
+        }}
+      >
       {/* Today */}
       {groupedConversations.today.length > 0 && (
         <>
@@ -268,6 +275,8 @@ export const ChatwootActivityFeed: React.FC<ChatwootActivityFeedProps> = ({
           ))}
         </>
       )}
+      </Box>
+      <LoadingOverlay loading={isLoading} message="Loading recent activity..." />
     </Box>
   );
 };
