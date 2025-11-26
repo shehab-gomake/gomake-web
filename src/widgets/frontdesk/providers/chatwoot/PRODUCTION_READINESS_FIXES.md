@@ -694,6 +694,49 @@ return {
 
 ---
 
+## Phase 7: Fetch Lock Stability Fix ✅
+
+### 7.1 Fixed useFetchLock Return Object Stability
+**File:** `hooks/core/use-fetch-lock.ts`
+**Severity:** HIGH
+
+**Problem:** The `useFetchLock` hook returned an object with function references that were recreated on every render. Specifically, `isLocked` and `getStats` used `useCallback` with `locks` (from `useRecoilValue`) in dependencies. When any component modified locks, these functions were recreated, triggering `useEffect` re-executions in consumers like `use-chatwoot-labels.ts` and potentially causing infinite fetch loops.
+
+**Solution:**
+```typescript
+// Before (buggy) - isLocked recreated when locks change
+const locks = useRecoilValue(chatwootFetchLocksAtom);
+const isLocked = useCallback((key: string) => {
+  const lock = locks.get(key);  // Dependency on locks causes recreation
+  return lock && !isLockExpired(lock);
+}, [locks, ...]);  // locks in deps = new reference on every lock change
+
+// After (fixed) - reads from snapshot, stable reference
+const isLocked = useRecoilCallback(({ snapshot }) => (key: string) => {
+  const locks = snapshot.getLoadable(chatwootFetchLocksAtom).getValue();
+  return locks.get(key) && !isLockExpired(lock);
+}, [buildKey, isLockExpired]);  // No locks dep = stable reference
+
+// Also memoized the entire return object
+return useMemo(() => ({
+  acquireLock, releaseLock, isLocked, getStats, cleanupExpiredLocks
+}), [...]);
+```
+
+**Impact:** Prevents infinite fetch loops and unnecessary effect re-executions when lock state changes.
+
+---
+
+## Files Modified (Phase 7)
+
+| File | Changes | LOC Changed |
+|------|---------|-------------|
+| `use-fetch-lock.ts` | useRecoilCallback for isLocked/getStats, memoized return | ~30 lines |
+
+**Total:** 1 file, ~30 lines changed
+
+---
+
 **Last Updated:** 2025-01-26
 **Reviewed By:** Claude Code (Automated Code Review)
 **Approved By:** [Pending Developer Sign-Off]

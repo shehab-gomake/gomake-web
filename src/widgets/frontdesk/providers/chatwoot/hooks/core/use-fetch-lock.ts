@@ -29,8 +29,8 @@
  * ```
  */
 
-import { useCallback } from "react";
-import { useRecoilCallback, useRecoilValue } from "recoil";
+import { useCallback, useMemo } from "react";
+import { useRecoilCallback } from "recoil";
 import {
   chatwootFetchLocksAtom,
   chatwootFetchLockStatsAtom,
@@ -86,7 +86,6 @@ export interface UseFetchLockReturn {
  */
 export const useFetchLock = (options: UseFetchLockOptions = {}): UseFetchLockReturn => {
   const { timeout = FETCH_LOCK_TIMEOUT, prefix = "" } = options;
-  const locks = useRecoilValue(chatwootFetchLocksAtom);
 
   /**
    * Build the full key with optional prefix
@@ -174,15 +173,20 @@ export const useFetchLock = (options: UseFetchLockOptions = {}): UseFetchLockRet
 
   /**
    * Check if a resource is currently locked (and not expired)
+   *
+   * Uses useRecoilCallback to read from snapshot, ensuring stable function reference.
+   * This prevents unnecessary re-renders and useEffect re-executions when locks change.
    */
-  const isLocked = useCallback(
-    (key: string): boolean => {
-      const fullKey = buildKey(key);
-      const lock = locks.get(fullKey);
-      if (!lock) return false;
-      return !isLockExpired(lock);
-    },
-    [locks, buildKey, isLockExpired]
+  const isLocked = useRecoilCallback(
+    ({ snapshot }) =>
+      (key: string): boolean => {
+        const fullKey = buildKey(key);
+        const locks = snapshot.getLoadable(chatwootFetchLocksAtom).getValue();
+        const lock = locks.get(fullKey);
+        if (!lock) return false;
+        return !isLockExpired(lock);
+      },
+    [buildKey, isLockExpired]
   );
 
   /**
@@ -222,21 +226,36 @@ export const useFetchLock = (options: UseFetchLockOptions = {}): UseFetchLockRet
 
   /**
    * Get current lock statistics
+   *
+   * Uses useRecoilCallback to read from snapshot for stable reference.
    */
-  const getStats = useCallback(() => {
-    return {
-      activeLocks: Array.from(locks.keys()),
-      totalLocks: locks.size,
-    };
-  }, [locks]);
+  const getStats = useRecoilCallback(
+    ({ snapshot }) =>
+      () => {
+        const locks = snapshot.getLoadable(chatwootFetchLocksAtom).getValue();
+        return {
+          activeLocks: Array.from(locks.keys()),
+          totalLocks: locks.size,
+        };
+      },
+    []
+  );
 
-  return {
-    acquireLock,
-    releaseLock,
-    isLocked,
-    getStats,
-    cleanupExpiredLocks,
-  };
+  /**
+   * Memoize return object to ensure stable references across renders.
+   * This prevents useEffect dependency arrays from triggering on every render
+   * when consumers include functions like `isLocked` as dependencies.
+   */
+  return useMemo(
+    () => ({
+      acquireLock,
+      releaseLock,
+      isLocked,
+      getStats,
+      cleanupExpiredLocks,
+    }),
+    [acquireLock, releaseLock, isLocked, getStats, cleanupExpiredLocks]
+  );
 };
 
 /**
@@ -263,4 +282,3 @@ export const createConversationsLockKey = (filterKey: string): string => {
 };
 
 export default useFetchLock;
-

@@ -484,6 +484,24 @@ const target = count ? currentSize - count : defaultValue;
 const target = count !== undefined ? currentSize - count : defaultValue;
 ```
 
+### Hook Return Object Stability
+Memoize hook return objects and use `useRecoilCallback` for functions that read atoms:
+
+```typescript
+// ❌ Wrong - isLocked recreated when locks change, causes useEffect loops
+const locks = useRecoilValue(locksAtom);
+const isLocked = useCallback((key) => locks.get(key), [locks]);
+return { isLocked };  // New object every render!
+
+// ✅ Correct - stable references
+const isLocked = useRecoilCallback(({ snapshot }) => (key) => {
+  const locks = snapshot.getLoadable(locksAtom).getValue();
+  return locks.get(key);
+}, []);
+
+return useMemo(() => ({ isLocked }), [isLocked]);
+```
+
 ## 📞 Quick Help
 
 - **Architecture**: `docs/frontdesk/FRONTDESK_CHATWOOT_ARCHITECTURE.md`
