@@ -15,10 +15,24 @@ import { CHATWOOT_CONSTANTS } from "../config/constants";
  *
  * Handles parsing filters from URL, debounced updates, and filter validation.
  * The URL is treated as the single source of truth for filter state.
+ *
+ * @returns {Object} filters - Current parsed filters from URL
+ * @returns {Function} handleFiltersChange - Function to update filters with optional debounce
  */
 export const useConversationFilters = () => {
   const router = useChatwootRouter();
   const filterDebounceTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  /**
+   * Clear any pending debounce timer
+   * Safe to call multiple times - only clears if timer exists
+   */
+  const clearDebounceTimer = useCallback(() => {
+    if (filterDebounceTimerRef.current !== null) {
+      clearTimeout(filterDebounceTimerRef.current);
+      filterDebounceTimerRef.current = null;
+    }
+  }, []);
 
   // Stable key for current filter state (used for caching)
   const filterKey = useMemo(() => {
@@ -92,16 +106,22 @@ export const useConversationFilters = () => {
   /**
    * Update filters in URL
    *
-   * @param newFilters - Partial filter updates
-   * @param immediate - Whether to skip debounce (e.g. for status changes)
+   * Uses debouncing for search queries to prevent excessive URL updates.
+   * Other filter changes (status, assignee, etc.) are applied immediately.
+   *
+   * @param newFilters - Partial filter updates to apply
+   * @param immediate - When true, skip debounce even for search queries
    */
   const handleFiltersChange = useCallback(
     (newFilters: Partial<ConversationListParams>, immediate: boolean = false) => {
-      if (filterDebounceTimerRef.current) {
-        clearTimeout(filterDebounceTimerRef.current);
-      }
+      // Always clear any pending debounce timer before proceeding
+      // This prevents race conditions when rapid filter changes occur
+      clearDebounceTimer();
 
       const applyFilters = () => {
+        // Clear the ref after execution (timer has completed)
+        filterDebounceTimerRef.current = null;
+
         let statusToSet = (filters.status as ConversationStatus) || ConversationStatus.OPEN;
         let assigneeToSet = (filters.assignee_type as ConversationAssigneeType) || ConversationAssigneeType.ME;
         let searchToSet = filters.q || "";
@@ -133,7 +153,7 @@ export const useConversationFilters = () => {
 
         const currentInboxId = router.currentRoute?.channelId ? parseInt(router.currentRoute.channelId, 10) : null;
 
-        const urlFilters: any = {};
+        const urlFilters: Record<string, string | undefined> = {};
         if (statusToSet !== ConversationStatus.OPEN) urlFilters.status = statusToSet;
         if (assigneeToSet !== ConversationAssigneeType.ME) urlFilters.assigneeType = assigneeToSet;
         if (currentInboxId) urlFilters.inboxId = currentInboxId.toString();
@@ -145,6 +165,7 @@ export const useConversationFilters = () => {
         router.updateFilters(urlFilters);
       };
 
+      // Only debounce search queries (user is typing)
       const shouldDebounce = "q" in newFilters && !immediate;
 
       if (shouldDebounce) {
@@ -153,16 +174,16 @@ export const useConversationFilters = () => {
         applyFilters();
       }
     },
-    [filters, router]
+    [filters, router, clearDebounceTimer]
   );
 
+  // Cleanup effect: Clear any pending timer when component unmounts
+  // This prevents memory leaks and ensures no stale callbacks execute
   useEffect(() => {
     return () => {
-      if (filterDebounceTimerRef.current) {
-        clearTimeout(filterDebounceTimerRef.current);
-      }
+      clearDebounceTimer();
     };
-  }, []);
+  }, [clearDebounceTimer]);
 
   return {
     filters,

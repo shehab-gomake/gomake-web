@@ -12,6 +12,7 @@ import {
   ConversationStatus,
   ConversationAssigneeType,
 } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
+import type { Message } from "@/services/frontdesk/api/chatwoot/types/messages.types";
 import { createLogger } from "@/services/frontdesk/utils/logger";
 import { chatwootSelectedAccountAtom, chatwootSelectedConversationAtom } from "@/store/frontdesk/atoms/chatwoot.atoms";
 
@@ -92,7 +93,7 @@ export const useChatwootProvider = () => {
       },
       [showToast]
     ),
-    onNewMessage: useCallback((conversationId: number, message: any) => {
+    onNewMessage: useCallback((conversationId: number, message: Message) => {
       logger.debug("New message received via WebSocket:", { conversationId, messageId: message?.id });
     }, []),
   });

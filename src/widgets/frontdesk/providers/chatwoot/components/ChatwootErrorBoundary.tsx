@@ -59,8 +59,12 @@ export class ChatwootErrorBoundary extends Component<Props, State> {
       this.props.onError(error, errorInfo);
     }
 
-    // TODO: Send error to monitoring service (Sentry, etc.)
-    // Example: Sentry.captureException(error, { contexts: { react: errorInfo, context: this.props.context } });
+    // FUTURE: Send error to monitoring service (Sentry, LogRocket, etc.)
+    // When monitoring is set up, uncomment and configure:
+    // Sentry.captureException(error, {
+    //   contexts: { react: errorInfo, component: this.props.context },
+    //   tags: { feature: 'frontdesk-chatwoot' }
+    // });
   }
 
   handleReset = () => {

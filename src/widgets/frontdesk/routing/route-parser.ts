@@ -116,14 +116,14 @@ const parseChatwootView = (viewParam?: string): ChatwootView => {
 
   // Map query param values to ChatwootView enum
   const viewMap: Record<string, ChatwootView> = {
-    "dashboard": ChatwootView.DASHBOARD,
+    dashboard: ChatwootView.DASHBOARD,
     "my-inbox": ChatwootView.MY_INBOX,
     "all-conversations": ChatwootView.ALL_CONVERSATIONS,
-    "mentions": ChatwootView.MENTIONS,
-    "unattended": ChatwootView.UNATTENDED,
-    "channels": ChatwootView.CHANNELS,
+    mentions: ChatwootView.MENTIONS,
+    unattended: ChatwootView.UNATTENDED,
+    channels: ChatwootView.CHANNELS,
     "webhook-test": ChatwootView.WEBHOOK_TEST,
-    "settings": ChatwootView.SETTINGS,
+    settings: ChatwootView.SETTINGS,
     "oauth-callback": ChatwootView.OAUTH_CALLBACK,
   };
 
@@ -140,13 +140,13 @@ const parseChatwootSettingsSubpage = (subpageParam?: string): ChatwootSettingsSu
 
   // Map query param values to ChatwootSettingsSubpage enum
   const subpageMap: Record<string, ChatwootSettingsSubpage> = {
-    "general": ChatwootSettingsSubpage.GENERAL,
-    "agents": ChatwootSettingsSubpage.AGENTS,
-    "inboxes": ChatwootSettingsSubpage.INBOXES,
-    "teams": ChatwootSettingsSubpage.TEAMS,
-    "labels": ChatwootSettingsSubpage.LABELS,
-    "warnings": ChatwootSettingsSubpage.WARNINGS,
-    "profile": ChatwootSettingsSubpage.PROFILE,
+    general: ChatwootSettingsSubpage.GENERAL,
+    agents: ChatwootSettingsSubpage.AGENTS,
+    inboxes: ChatwootSettingsSubpage.INBOXES,
+    teams: ChatwootSettingsSubpage.TEAMS,
+    labels: ChatwootSettingsSubpage.LABELS,
+    warnings: ChatwootSettingsSubpage.WARNINGS,
+    profile: ChatwootSettingsSubpage.PROFILE,
     "webhook-test": ChatwootSettingsSubpage.WEBHOOK_TEST,
     "old-frontdesk": ChatwootSettingsSubpage.OLD_FRONTDESK,
   };
@@ -269,18 +269,23 @@ const parseQueryParams = (query: NextRouterQuery): RouteQueryParams & { channel?
  * Apply query parameter overrides to route
  * Query params (from notifications) take precedence
  */
-const applyQueryParamOverrides = (route: Partial<FrontDeskRoute>, queryParams: RouteQueryParams & { channel?: string }, query: NextRouterQuery): FrontDeskRoute => {
+const applyQueryParamOverrides = (
+  route: Partial<FrontDeskRoute>,
+  queryParams: RouteQueryParams & { channel?: string },
+  query: NextRouterQuery
+): FrontDeskRoute => {
   // Handle Chatwoot-specific query params
   if (route.type === RouteType.CHATWOOT) {
     const chatwootRoute = route as Partial<ChatwootRoute>;
     // Parse view from query params, fallback to route view or default
-    const view = queryParams.view ? parseChatwootView(queryParams.view) : (chatwootRoute.view || ChatwootView.DASHBOARD);
+    const view = queryParams.view ? parseChatwootView(queryParams.view) : chatwootRoute.view || ChatwootView.DASHBOARD;
 
     // Parse filters from query params
     const filters = parseChatwootFilters(query);
 
     // Parse settings subpage if view is SETTINGS
-    const settingsSubpage = view === ChatwootView.SETTINGS ? parseChatwootSettingsSubpage(normalizeParam(query.subpage)) : undefined;
+    const settingsSubpage =
+      view === ChatwootView.SETTINGS ? parseChatwootSettingsSubpage(normalizeParam(query.subpage)) : undefined;
 
     return {
       type: RouteType.CHATWOOT,
@@ -403,6 +408,15 @@ const ensureValidRoute = (route: Partial<FrontDeskRoute>): FrontDeskRoute => {
 };
 
 /**
+ * Default route to use when parsing fails or for invalid URLs
+ * Falls back to Chatwoot dashboard as the safest default
+ */
+const DEFAULT_PARSED_ROUTE: ParsedRoute = {
+  route: { type: RouteType.CHATWOOT, view: ChatwootView.DASHBOARD },
+  queryParams: {},
+};
+
+/**
  * Main parser function - converts Next.js query to FrontDesk route
  *
  * URL Patterns:
@@ -413,25 +427,44 @@ const ensureValidRoute = (route: Partial<FrontDeskRoute>): FrontDeskRoute => {
  * - /frontdesk/tickets/TICKET-123 → Ticket detail
  * - /frontdesk/assigned → Assigned section
  * - /frontdesk/inbox?view=email&conversation=456 → Deep link from notification
+ *
+ * @param query - Next.js router query object
+ * @returns Parsed route with safe defaults on parsing errors
  */
 export const parseRoute = (query: NextRouterQuery): ParsedRoute => {
-  const frontdeskRoute = normalizeParam(query.frontdeskRoute);
-  const provider = normalizeParam(query.provider);
-  const queryParams = parseQueryParams(query);
+  try {
+    // Guard against null/undefined query object
+    if (!query || typeof query !== "object") {
+      console.warn("[RouteParser] Invalid query object, using default route");
+      return DEFAULT_PARSED_ROUTE;
+    }
 
-  // Parse base route from frontdeskRoute segment
-  let route = parseFrontDeskRoute(frontdeskRoute);
+    const frontdeskRoute = normalizeParam(query.frontdeskRoute);
+    const provider = normalizeParam(query.provider);
+    const queryParams = parseQueryParams(query);
 
-  // Parse provider segment if present
-  route = parseProvider(provider, route);
+    // Parse base route from frontdeskRoute segment
+    let route = parseFrontDeskRoute(frontdeskRoute);
 
-  // Apply query parameter overrides (from notifications) and parse filters
-  const finalRoute = applyQueryParamOverrides(route, queryParams, query);
+    // Parse provider segment if present
+    route = parseProvider(provider, route);
 
-  return {
-    route: finalRoute,
-    queryParams,
-  };
+    // Apply query parameter overrides (from notifications) and parse filters
+    const finalRoute = applyQueryParamOverrides(route, queryParams, query);
+
+    return {
+      route: finalRoute,
+      queryParams,
+    };
+  } catch (error) {
+    // Log error for debugging but don't crash the app
+    console.error("[RouteParser] Failed to parse route:", error, {
+      query: JSON.stringify(query, null, 2),
+    });
+
+    // Return safe default route to prevent app crash
+    return DEFAULT_PARSED_ROUTE;
+  }
 };
 
 /**

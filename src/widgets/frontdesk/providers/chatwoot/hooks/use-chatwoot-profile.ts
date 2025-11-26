@@ -25,7 +25,8 @@ export const useChatwootProfile = () => {
   const fetchProfile = useCallback(async () => {
     // Atomic check-and-set to prevent race conditions
     // Using ref instead of global flag for better isolation and SSR compatibility
-    if (loading || isFetchingRef.current) {
+    // Note: We only check isFetchingRef here (not loading state) to keep callback stable
+    if (isFetchingRef.current) {
       console.log("[useChatwootProfile] ⏭️ Fetch already in progress, skipping duplicate call");
       return;
     }
@@ -51,7 +52,7 @@ export const useChatwootProfile = () => {
       setLoading(false);
       isFetchingRef.current = false;
     }
-  }, [setProfile, setLoading, loading, fetchProfileWithRetry]);
+  }, [setProfile, setLoading, fetchProfileWithRetry]);
 
   // Initial fetch on mount - only if not already loaded/attempted
   useEffect(() => {
