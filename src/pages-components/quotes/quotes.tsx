@@ -232,6 +232,7 @@ const QuotesListPageWidget = ({
     isOrder,
     isQuote,
     isDeliveryNote,
+    isProformaInvoice,
     isInvoice,
     deliveryStatuses,
     deliveryStatus,
@@ -547,6 +548,7 @@ const QuotesListPageWidget = ({
               accountingStatuses={accountingStatuses}
               isDeliveryNote={isDeliveryNote}
               isInvoice={isInvoice}
+              isProformaInvoice={isProformaInvoice}
               deliveryStatus={deliveryStatus}
               setDeliveryStatus={setDeliveryStatus}
               deliveryStatuses={deliveryStatuses}
