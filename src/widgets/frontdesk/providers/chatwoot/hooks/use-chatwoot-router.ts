@@ -6,7 +6,7 @@
  */
 
 import { useRouter } from "next/router";
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import { useRecoilState } from "recoil";
 import { createLogger } from "@/services/frontdesk/utils/logger";
 
@@ -43,13 +43,19 @@ export const useChatwootRouter = () => {
   }, [router.query]);
 
   // Current view
-  const currentView = currentRoute?.view || ChatwootView.MY_INBOX;
+  const currentView = currentRoute?.view || ChatwootView.DASHBOARD;
 
   // Current filters from URL
   const currentFilters = currentRoute?.filters;
 
   // Current settings subpage
   const currentSettingsSubpage = currentRoute?.settingsSubpage;
+
+  // Use ref to always get latest filter values (prevents stale closure in callbacks)
+  const currentFiltersRef = useRef(currentFilters);
+  useEffect(() => {
+    currentFiltersRef.current = currentFilters;
+  }, [currentFilters]);
 
   /**
    * Navigate to a Chatwoot route
@@ -186,14 +192,18 @@ export const useChatwootRouter = () => {
 
   /**
    * Navigate to a specific conversation
+   * Preserves current view and filters to maintain the active tab (My Inbox/All Conversations/etc)
+   * Uses ref to avoid stale closure when filters change
    */
   const navigateToConversation = useCallback(
     (conversationId: string, channelId?: string, options?: NavigationOptions) => {
-      const view = channelId ? ChatwootView.CHANNELS : ChatwootView.ALL_CONVERSATIONS;
-      const route = RouteBuilder.chatwoot(view, conversationId, channelId);
+      // Preserve current view, but use CHANNELS if channelId is provided
+      const view = channelId ? ChatwootView.CHANNELS : currentView;
+      // Use ref to get latest filter values (prevents stale closure)
+      const route = RouteBuilder.chatwoot(view, conversationId, channelId, currentFiltersRef.current);
       navigate(route, options);
     },
-    [navigate]
+    [navigate, currentView]
   );
 
   /**
@@ -275,7 +285,7 @@ export const useChatwootRouter = () => {
         logger.debug("Syncing channelId from URL to Recoil", { channelId: currentRoute.channelId, inboxId });
         setSelectedInboxId(inboxId);
       }
-    } else if (currentRoute.view === ChatwootView.ALL_CONVERSATIONS || currentRoute.view === ChatwootView.MY_INBOX) {
+    } else if (currentRoute.view === ChatwootView.DASHBOARD || currentRoute.view === ChatwootView.ALL_CONVERSATIONS || currentRoute.view === ChatwootView.MY_INBOX) {
       // Clear inbox selection for views that don't need it
       if (selectedInboxId !== null) {
         logger.debug("Clearing selectedInboxId for non-channel view", { view: currentRoute.view });

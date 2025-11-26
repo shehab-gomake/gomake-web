@@ -6,7 +6,6 @@ import {
   FormatItalic as ItalicIcon,
   FormatUnderlined as UnderlineIcon,
   AttachFile as AttachIcon,
-  InsertEmoticon as EmojiIcon,
   Delete as DeleteIcon,
 } from "@mui/icons-material";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
@@ -15,6 +14,7 @@ interface EmailComposerToolbarProps {
   onSend: () => void;
   onClose: () => void;
   onFormatText: (command: string) => void;
+  onAttach?: () => void;
   canSend: boolean;
   isSending: boolean;
 }
@@ -23,6 +23,7 @@ export const EmailComposerToolbar: React.FC<EmailComposerToolbarProps> = ({
   onSend,
   onClose,
   onFormatText,
+  onAttach,
   canSend,
   isSending,
 }) => {
@@ -117,35 +118,23 @@ export const EmailComposerToolbar: React.FC<EmailComposerToolbarProps> = ({
           </Tooltip>
         </Stack>
 
-        <Tooltip title="Attach files">
-          <IconButton
-            size="small"
-            sx={{
-              p: 1,
-              color: "#5f6368",
-              "&:hover": {
-                backgroundColor: "#e8eaed",
-              },
-            }}
-          >
-            <AttachIcon sx={{ fontSize: 18 }} />
-          </IconButton>
-        </Tooltip>
-
-        <Tooltip title="Insert emoji">
-          <IconButton
-            size="small"
-            sx={{
-              p: 1,
-              color: "#5f6368",
-              "&:hover": {
-                backgroundColor: "#e8eaed",
-              },
-            }}
-          >
-            <EmojiIcon sx={{ fontSize: 18 }} />
-          </IconButton>
-        </Tooltip>
+        {onAttach && (
+          <Tooltip title="Attach files">
+            <IconButton
+              size="small"
+              onClick={onAttach}
+              sx={{
+                p: 1,
+                color: "#5f6368",
+                "&:hover": {
+                  backgroundColor: "#e8eaed",
+                },
+              }}
+            >
+              <AttachIcon sx={{ fontSize: 18 }} />
+            </IconButton>
+          </Tooltip>
+        )}
       </Stack>
 
       <Tooltip title="Discard draft">

@@ -1,13 +1,5 @@
 import React, { useState } from "react";
-import {
-  Badge,
-  IconButton,
-  Stack,
-  Box,
-  Typography,
-  CircularProgress,
-  Button,
-} from "@mui/material";
+import { Badge, IconButton, Stack, Box, Typography, CircularProgress, Button } from "@mui/material";
 import HeadsetMicOutlinedIcon from "@mui/icons-material/HeadsetMicOutlined";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
@@ -16,10 +8,7 @@ import { GoMakeMenu } from "@/components";
 import { CustomTooltip } from "@/widgets/header";
 import { PrimaryButton } from "@/components/button/primary-button";
 import { FONT_FAMILY } from "@/utils/font-family";
-import {
-  NotificationTabs,
-  TabPanel,
-} from "@/widgets/frontdesk-notifications/components/notification-tabs";
+import { NotificationTabs, TabPanel } from "@/widgets/frontdesk-notifications/components/notification-tabs";
 import { MessageNotificationItem } from "@/widgets/frontdesk-notifications/components/message-notification-item";
 import { TicketNotificationItem } from "@/widgets/frontdesk-notifications/components/ticket-notification-item";
 import { InfiniteScrollObserver } from "@/widgets/frontdesk-notifications/components/infinite-scroll-observer";
@@ -55,8 +44,7 @@ const FrontDeskNav = () => {
   const FrontDeskIcon = getIconOverride("FrontDeskIcon");
 
   // Make background color theme-aware: transparent for HP theme, default gray for others
-  const iconButtonBackground =
-    currentTheme === "hp-client" ? "transparent" : "#f6f6f6";
+  const iconButtonBackground = currentTheme === "hp-client" ? "transparent" : "#f6f6f6";
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -86,16 +74,11 @@ const FrontDeskNav = () => {
 
   const renderIconButton = () => (
     <CustomTooltip title="FrontDesk" arrow>
-      <IconButton
-        style={{ backgroundColor: iconButtonBackground, padding: "8px" }}
-        onClick={handleClick}
-      >
+      <IconButton style={{ backgroundColor: iconButtonBackground, padding: "8px" }} onClick={handleClick}>
         {FrontDeskIcon ? (
           <FrontDeskIcon width={20} height={20} />
         ) : (
-          <EmailOutlinedIcon
-            style={{ color: "#2e3092", width: 22, height: 22 }}
-          />
+          <EmailOutlinedIcon style={{ color: "#2e3092", width: 22, height: 22 }} />
         )}
       </IconButton>
     </CustomTooltip>
@@ -113,11 +96,7 @@ const FrontDeskNav = () => {
       }}
     >
       <CircularProgress size={40} sx={{ color: primaryColor(500) }} />
-      <Typography
-        sx={{ ...FONT_FAMILY.Lexend(400, 14), color: neutralColor(600) }}
-      >
-        Loading notifications...
-      </Typography>
+      <Typography sx={{ ...FONT_FAMILY.Lexend(400, 14), color: neutralColor(600) }}>Loading notifications...</Typography>
     </Box>
   );
 
@@ -134,14 +113,8 @@ const FrontDeskNav = () => {
       }}
     >
       <ErrorOutlineIcon sx={{ fontSize: 48, color: "#EF4444" }} />
-      <Typography
-        sx={{ ...FONT_FAMILY.Lexend(600, 16), color: neutralColor(900) }}
-      >
-        Failed to load notifications
-      </Typography>
-      <Typography
-        sx={{ ...FONT_FAMILY.Lexend(400, 13), color: neutralColor(600) }}
-      >
+      <Typography sx={{ ...FONT_FAMILY.Lexend(600, 16), color: neutralColor(900) }}>Failed to load notifications</Typography>
+      <Typography sx={{ ...FONT_FAMILY.Lexend(400, 13), color: neutralColor(600) }}>
         {error || "An error occurred while fetching notifications"}
       </Typography>
       <Button
@@ -171,29 +144,19 @@ const FrontDeskNav = () => {
       }}
     >
       <Typography sx={{ ...FONT_FAMILY.Lexend(400, 14) }}>
-        {type === "messages"
-          ? "No new message notifications"
-          : "No new ticket notifications"}
+        {type === "messages" ? "No new message notifications" : "No new ticket notifications"}
       </Typography>
     </Box>
   );
 
   const renderTabContent = () => {
     // Show loading state on first load
-    if (
-      loading &&
-      messageNotifications.length === 0 &&
-      ticketNotifications.length === 0
-    ) {
+    if (loading && messageNotifications.length === 0 && ticketNotifications.length === 0) {
       return renderLoadingState();
     }
 
     // Show error state if error exists and no notifications loaded
-    if (
-      error &&
-      messageNotifications.length === 0 &&
-      ticketNotifications.length === 0
-    ) {
+    if (error && messageNotifications.length === 0 && ticketNotifications.length === 0) {
       return renderErrorState();
     }
 
@@ -217,11 +180,7 @@ const FrontDeskNav = () => {
                 />
               ))}
               {/* Infinite scroll loader */}
-              <InfiniteScrollObserver
-                onLoadMore={loadMore}
-                hasMore={hasMore}
-                isLoading={isLoadingMore}
-              />
+              <InfiniteScrollObserver onLoadMore={loadMore} hasMore={hasMore} isLoading={isLoadingMore} />
             </Stack>
           ) : (
             renderEmptyState("messages")
@@ -232,18 +191,10 @@ const FrontDeskNav = () => {
           {ticketNotifications.length > 0 ? (
             <Stack>
               {ticketNotifications.map((notification) => (
-                <TicketNotificationItem
-                  key={notification.id}
-                  notification={notification}
-                  onClick={handleNotificationItemClick}
-                />
+                <TicketNotificationItem key={notification.id} notification={notification} onClick={handleNotificationItemClick} />
               ))}
               {/* Infinite scroll loader */}
-              <InfiniteScrollObserver
-                onLoadMore={loadMore}
-                hasMore={hasMore}
-                isLoading={isLoadingMore}
-              />
+              <InfiniteScrollObserver onLoadMore={loadMore} hasMore={hasMore} isLoading={isLoadingMore} />
             </Stack>
           ) : (
             renderEmptyState("tickets")
@@ -294,16 +245,8 @@ const FrontDeskNav = () => {
         </Box>
 
         {/* Tabs - hide during loading or error on initial load */}
-        {!(
-          loading &&
-          messageNotifications.length === 0 &&
-          ticketNotifications.length === 0
-        ) &&
-          !(
-            error &&
-            messageNotifications.length === 0 &&
-            ticketNotifications.length === 0
-          ) && (
+        {!(loading && messageNotifications.length === 0 && ticketNotifications.length === 0) &&
+          !(error && messageNotifications.length === 0 && ticketNotifications.length === 0) && (
             <NotificationTabs
               activeTab={activeTab}
               onTabChange={handleTabChange}

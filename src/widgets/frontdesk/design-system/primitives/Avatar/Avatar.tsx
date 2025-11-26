@@ -81,12 +81,9 @@ const getAvatarColor = (name: string): string => {
 };
 
 /**
- * Avatar Component
- *
- * Displays user avatar with support for images, initials fallback,
- * presence indicators, and unread count badges.
+ * Avatar Component Implementation
  */
-export const Avatar: React.FC<AvatarProps> = ({
+const AvatarMain: React.ForwardRefRenderFunction<HTMLDivElement, AvatarProps> = ({
   size = 'md',
   name = '',
   src,
@@ -97,13 +94,14 @@ export const Avatar: React.FC<AvatarProps> = ({
   children,
   sx = {},
   ...rest
-}) => {
+}, ref) => {
   const avatarSize = sizeMap[size];
   const fontSize = fontSizeMap[size];
   const safeName = name ? String(name) : '';
   const initials = safeName ? getInitials(safeName) : '';
   const bgColor = backgroundColor || (safeName ? getAvatarColor(safeName) : colorTokens.neutral[400]);
 
+  // If no wrapper is needed, apply ref directly to MuiAvatar
   const avatarContent = (
     <MuiAvatar
       src={src}
@@ -118,6 +116,8 @@ export const Avatar: React.FC<AvatarProps> = ({
         ...sx,
       }}
       {...rest}
+      // Only apply ref here if this is the outermost element
+      ref={!unreadCount && !presence ? ref : undefined}
     >
       {children || initials}
     </MuiAvatar>
@@ -127,6 +127,7 @@ export const Avatar: React.FC<AvatarProps> = ({
   if (unreadCount && unreadCount > 0) {
     return (
       <Badge
+        ref={ref}
         overlap="circular"
         anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
         badgeContent={unreadCount > 99 ? '99+' : unreadCount}
@@ -169,6 +170,7 @@ export const Avatar: React.FC<AvatarProps> = ({
   if (presence) {
     return (
       <Badge
+        ref={ref}
         overlap="circular"
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
         variant="dot"
@@ -189,3 +191,6 @@ export const Avatar: React.FC<AvatarProps> = ({
 
   return avatarContent;
 };
+
+export const Avatar = React.forwardRef(AvatarMain);
+Avatar.displayName = 'Avatar';

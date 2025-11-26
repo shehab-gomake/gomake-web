@@ -1,4 +1,11 @@
-import { useState, useCallback, useEffect } from "react";
+/**
+ * Email Composer Form Hook
+ *
+ * Manages form state for the email composer component.
+ * Handles draft initialization, validation, and send preparation.
+ */
+
+import { useState, useCallback, useEffect, useRef } from "react";
 import { EmailDraft, EmailMessage, EmailAttachment, EmailSenderOption } from "../types/email.types";
 import { parseEmails, formatReplySubject, formatEmailDisplay } from "../utils/email-utils";
 
@@ -39,6 +46,52 @@ export const useEmailComposerForm = ({
 
   const [showCc, setShowCc] = useState(false);
   const [showBcc, setShowBcc] = useState(false);
+
+  // Track if we've populated from draft to avoid overwriting user edits
+  const hasPopulatedFromDraft = useRef(false);
+
+  // Update form fields when draft changes (e.g., after async loading)
+  useEffect(() => {
+    // Skip if no draft or already populated
+    if (!draft) {
+      // Reset flag when draft becomes undefined (for re-opening)
+      hasPopulatedFromDraft.current = false;
+      return;
+    }
+
+    // Skip if already populated from this draft
+    if (hasPopulatedFromDraft.current) return;
+
+    // Update all fields from draft
+    const newTo = draft.to?.map((r) => r.email).join(", ") || "";
+    const newCc = draft.cc?.map((r) => r.email).join(", ") || "";
+    const newBcc = draft.bcc?.map((r) => r.email).join(", ") || "";
+    const newSubject = draft.subject || "";
+    const newMessage = draft.text || draft.body || draft.message || "";
+    const newAttachments = draft.attachments || [];
+
+    // Set form fields from draft data
+    setTo(newTo);
+    setCc(newCc);
+    setBcc(newBcc);
+    setSubject(newSubject);
+    setMessage(newMessage);
+    setAttachments(newAttachments);
+
+    // Show CC/BCC fields if they have values
+    if (newCc) setShowCc(true);
+    if (newBcc) setShowBcc(true);
+
+    // Mark as populated
+    hasPopulatedFromDraft.current = true;
+    
+    console.log("[useEmailComposerForm] Populated form from draft:", {
+      to: newTo,
+      subject: newSubject,
+      messageLength: newMessage.length,
+      attachments: newAttachments.length,
+    });
+  }, [draft]);
 
   // Update selected sender if options change
   useEffect(() => {
@@ -103,8 +156,25 @@ export const useEmailComposerForm = ({
     return await onSend(emailDraft);
   }, [to, cc, bcc, subject, message, attachments, replyToMessage, draft, onSend, senderOption, contactId, fromOptions]);
 
-  const formatText = useCallback((command: string) => {
-    document.execCommand(command, false);
+  /**
+   * Format text handler
+   *
+   * Note: This is currently a no-op because the email body uses a controlled
+   * InputBase component, not a contentEditable element. Rich text formatting
+   * would require migrating to a proper rich text editor (e.g., Tiptap, Slate, Draft.js).
+   *
+   * The formatting buttons are kept in the UI for visual consistency with
+   * standard email clients, but they don't affect the message content.
+   *
+   * @param _command - Formatting command (bold, italic, underline) - currently unused
+   */
+  const formatText = useCallback((_command: string) => {
+    // Rich text formatting not supported with current InputBase implementation
+    // To enable formatting, migrate to a contentEditable div or rich text editor
+    console.debug(
+      "[useEmailComposerForm] Text formatting not supported. " +
+        "Consider using a rich text editor for formatting support."
+    );
   }, []);
 
   const canSend = !!(to.trim() && message.trim() && (!fromOptions?.length || senderOption));

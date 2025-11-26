@@ -3,9 +3,11 @@
  *
  * Full CRUD interface for managing Chatwoot teams, including team members
  * and team-assigned conversations.
+ *
+ * RBAC: Only administrators can access this page.
  */
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Typography,
@@ -36,14 +38,28 @@ import {
   type AddEditTeamData,
 } from "../../components/settings";
 import { useChatwootProvider } from "../../hooks/use-chatwoot-provider";
+import { useChatwootPermissions } from "../../hooks/use-chatwoot-permissions";
+import { SETTINGS_PERMISSIONS } from "../../constants/permissions.constants";
 import { useChatwootTeams } from "../../hooks/resources/use-chatwoot-teams";
 import { chatwootService } from "@/services/frontdesk";
 import type { Team } from "@/services/frontdesk/api/chatwoot/services/chatwoot-teams.service";
 import type { Agent } from "@/services/frontdesk/api/chatwoot/services/chatwoot-agents.service";
 
 export const TeamsSubpage: React.FC = () => {
-  const { selectedAccountId } = useChatwootProvider();
+  const { selectedAccountId, router: chatwootRouter } = useChatwootProvider();
   const { teams, loading, error, refresh } = useChatwootTeams(selectedAccountId);
+
+  // Defense-in-depth: Check if user has permission to access Teams settings
+  const { canAccess } = useChatwootPermissions();
+  const canAccessTeams = canAccess(SETTINGS_PERMISSIONS.teams);
+
+  // Redirect unauthorized users to My Inbox
+  useEffect(() => {
+    if (!canAccessTeams) {
+      console.warn("[TeamsSubpage] Unauthorized access attempt - redirecting to My Inbox");
+      chatwootRouter.navigateToMyInbox();
+    }
+  }, [canAccessTeams, chatwootRouter]);
 
   const [showAddEditModal, setShowAddEditModal] = useState(false);
   const [editingTeam, setEditingTeam] = useState<Team | null>(null);

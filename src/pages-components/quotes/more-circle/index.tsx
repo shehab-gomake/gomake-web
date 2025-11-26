@@ -64,11 +64,11 @@ const MoreMenuWidget = ({
     handleGetTaxConfirmNo,
     onClickOpenMoveOrderToReadyModal,
     onOpenPackagesModal,
+    onClickOpenInventoryIntakeModal,
     onClickSendToCustomerEmail,
     onClickSendToCustomerSMS,
     onClickSendToCustomerWhatsApp,
     classes,
-    onClickOpenInventoryIntakeModal,
   });
 
   return (

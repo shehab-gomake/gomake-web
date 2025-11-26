@@ -7,38 +7,39 @@
  * Note: This service connects directly to Chatwoot server, not Messaging Hub.
  */
 
-import { createConsumer, Consumer, Subscription } from '@rails/actioncable';
-import config from '@/config';
+import { createConsumer, Consumer, Subscription } from "@rails/actioncable";
+import configModule from "@/config";
+import { getUserToken } from "@/services/storage-data";
 
 /**
  * Chatwoot WebSocket Event Types
  * Based on NOTIFICATIONS_FRONTEND_API_GUIDE.md and Chatwoot ActionCable events
  */
 export enum ChatwootWebSocketEvent {
-  MESSAGE_CREATED = 'message.created',
-  MESSAGE_UPDATED = 'message.updated',
-  CONVERSATION_CREATED = 'conversation.created',
-  CONVERSATION_UPDATED = 'conversation.updated',
-  CONVERSATION_STATUS_CHANGED = 'conversation.status_changed',
-  ASSIGNEE_CHANGED = 'assignee_changed',
-  CONVERSATION_TYPING_ON = 'conversation.typing_on',
-  CONVERSATION_TYPING_OFF = 'conversation.typing_off',
+  MESSAGE_CREATED = "message.created",
+  MESSAGE_UPDATED = "message.updated",
+  CONVERSATION_CREATED = "conversation.created",
+  CONVERSATION_UPDATED = "conversation.updated",
+  CONVERSATION_STATUS_CHANGED = "conversation.status_changed",
+  ASSIGNEE_CHANGED = "assignee_changed",
+  CONVERSATION_TYPING_ON = "conversation.typing_on",
+  CONVERSATION_TYPING_OFF = "conversation.typing_off",
   // Notification events (from NOTIFICATIONS_FRONTEND_API_GUIDE.md)
-  NOTIFICATION_CREATED = 'notification.created',
-  NOTIFICATION_UPDATED = 'notification.updated',
-  NOTIFICATION_DELETED = 'notification.deleted',
+  NOTIFICATION_CREATED = "notification.created",
+  NOTIFICATION_UPDATED = "notification.updated",
+  NOTIFICATION_DELETED = "notification.deleted",
   // Presence
-  PRESENCE_UPDATE = 'presence.update',
+  PRESENCE_UPDATE = "presence.update",
 }
 
 /**
  * Connection State
  */
 export enum ConnectionState {
-  DISCONNECTED = 'disconnected',
-  CONNECTING = 'connecting',
-  CONNECTED = 'connected',
-  ERROR = 'error',
+  DISCONNECTED = "disconnected",
+  CONNECTING = "connecting",
+  CONNECTED = "connected",
+  ERROR = "error",
 }
 
 /**
@@ -75,6 +76,26 @@ export interface ConnectionStats {
   disconnectedAt: number | null;
   reconnectionAttempts: number;
   lastEventAt: number | null;
+  lastHeartbeatAt: number | null;
+}
+
+/**
+ * Retry Configuration
+ */
+export interface RetryConfig {
+  maxRetries: number;
+  initialDelayMs: number;
+  maxDelayMs: number;
+  backoffMultiplier: number;
+}
+
+/**
+ * Connection Health Status
+ */
+export enum ConnectionHealth {
+  HEALTHY = "healthy",
+  DEGRADED = "degraded",
+  UNHEALTHY = "unhealthy",
 }
 
 /**
@@ -99,23 +120,46 @@ export class ChatwootWebSocketService {
     disconnectedAt: null,
     reconnectionAttempts: 0,
     lastEventAt: null,
+    lastHeartbeatAt: null,
   };
+
+  // Retry configuration
+  private retryConfig: RetryConfig = {
+    maxRetries: 5,
+    initialDelayMs: 1000,
+    maxDelayMs: 30000,
+    backoffMultiplier: 2,
+  };
+
+  // Heartbeat interval
+  private heartbeatInterval: NodeJS.Timeout | null = null;
+  private readonly heartbeatIntervalMs = 30000; // 30 seconds
+  private readonly heartbeatTimeoutMs = 60000; // 60 seconds
+
+  // Auto-reconnect flag
+  private autoReconnect: boolean = true;
+  private isManualDisconnect: boolean = false;
 
   // Debug mode
   private debugEnabled: boolean = false;
 
   constructor() {
     // Construct WebSocket URL from Chatwoot server config
-    const baseUrl = config.chatwoot_server || 'http://localhost:8080';
-    this.websocketUrl = this.constructWebSocketUrl(baseUrl);
+    // NOTE: WebSocket goes through proxy (messaging-hub-v2)
+    // The proxy requires GoMake Bearer token for authentication
+    const baseUrl = configModule.chatwoot_server || "http://localhost:8080";
+    const token = getUserToken();
+    this.websocketUrl = this.constructWebSocketUrl(baseUrl, token);
 
     // Enable debug mode if needed
     this.debugEnabled = this.isDebugEnabled();
 
     if (this.debugEnabled) {
-      console.log('[ChatwootWS] Service initialized', {
-        websocketUrl: this.websocketUrl,
+      console.log("[ChatwootWS] Service initialized", {
+        websocketUrl: this.websocketUrl.replace(/token=[^&]*/, "token=***"), // Hide token in logs
         baseUrl,
+        hasToken: !!token,
+        note: "WebSocket goes through proxy - Bearer token included for authentication",
       });
     }
   }
@@ -125,32 +169,41 @@ export class ChatwootWebSocketService {
    */
   private isDebugEnabled(): boolean {
     try {
-      const w: any = typeof window !== 'undefined' ? window : {};
+      const w: any = typeof window !== "undefined" ? window : {};
+      // Only enable debug in development or when explicitly requested
       return (
-        process.env.NEXT_PUBLIC_CHATWOOT_DEBUG === 'true' ||
-        w.CHATWOOT_DEBUG === true
+        process.env.NEXT_PUBLIC_CHATWOOT_DEBUG === "true" ||
+        w.CHATWOOT_DEBUG === true ||
+        process.env.NODE_ENV === "development"
       );
     } catch {
-      return false;
+      return false; // Disable by default in production
     }
   }
 
   /**
    * Construct WebSocket URL from base HTTP URL
+   * Includes GoMake Bearer token as query parameter for authentication
    */
-  private constructWebSocketUrl(baseUrl: string): string {
+  private constructWebSocketUrl(baseUrl: string, token?: string): string {
     let wsUrl = baseUrl;
 
     // Replace HTTP with WS
-    if (wsUrl.startsWith('https://')) {
-      wsUrl = wsUrl.replace('https://', 'wss://');
-    } else if (wsUrl.startsWith('http://')) {
-      wsUrl = wsUrl.replace('http://', 'ws://');
+    if (wsUrl.startsWith("https://")) {
+      wsUrl = wsUrl.replace("https://", "wss://");
+    } else if (wsUrl.startsWith("http://")) {
+      wsUrl = wsUrl.replace("http://", "ws://");
     }
 
     // Ensure it ends with /cable
-    if (!wsUrl.endsWith('/cable')) {
-      wsUrl = wsUrl.replace(/\/$/, '') + '/cable';
+    if (!wsUrl.endsWith("/cable")) {
+      wsUrl = wsUrl.replace(/\/$/, "") + "/cable";
+    }
+
+    // Add Bearer token as query parameter for messaging-hub-v2 authentication
+    if (token) {
+      const separator = wsUrl.includes("?") ? "&" : "?";
+      wsUrl = `${wsUrl}${separator}token=${encodeURIComponent(token)}`;
     }
 
     return wsUrl;
@@ -164,7 +217,7 @@ export class ChatwootWebSocketService {
       this.connectionState = state;
 
       if (this.debugEnabled) {
-        console.log('[ChatwootWS] State changed:', state);
+        console.log("[ChatwootWS] State changed:", state);
       }
 
       // Update stats
@@ -176,7 +229,7 @@ export class ChatwootWebSocketService {
       }
 
       // Notify handlers
-      this.stateHandlers.forEach(handler => handler(state));
+      this.stateHandlers.forEach((handler) => handler(state));
     }
   }
 
@@ -185,19 +238,45 @@ export class ChatwootWebSocketService {
    */
   private emitError(error: string): void {
     if (this.debugEnabled) {
-      console.error('[ChatwootWS] Error:', error);
+      console.error("[ChatwootWS] Error:", error);
     }
 
-    this.errorHandlers.forEach(handler => handler(error));
+    this.errorHandlers.forEach((handler) => handler(error));
   }
 
   /**
    * Handle received event from ActionCable
+   *
+   * According to Chatwoot WebSocket docs:
+   * https://www.chatwoot.com/hc/user-guide/articles/1677691027-how-to-setup-a-web_socket-connection
+   *
+   * Events arrive as: {"message": {"event": "event.name", "data": {...}}}
+   * ActionCable unwraps the outer "message" wrapper and passes the inner object to received()
+   * So payload should be: {"event": "event.name", "data": {...}}
    */
   private handleReceivedEvent = (payload: any): void => {
-    if (!payload || !payload.event) {
+    // Handle both formats: direct payload or wrapped in message
+    let eventName: string | undefined;
+    let eventData: any;
+
+    if (payload?.message) {
+      // Wrapped format: {message: {event: "...", data: {...}}}
+      eventName = payload.message.event;
+      eventData = payload.message.data || payload.message;
+    } else if (payload?.event) {
+      // Direct format: {event: "...", data: {...}}
+      eventName = payload.event;
+      eventData = payload.data || payload;
+    } else {
       if (this.debugEnabled) {
-        console.warn('[ChatwootWS] Received invalid payload:', payload);
+        console.warn("[ChatwootWS] Received invalid payload (no event field):", payload);
+      }
+      return;
+    }
+
+    if (!eventName) {
+      if (this.debugEnabled) {
+        console.warn("[ChatwootWS] Received payload without event name:", payload);
       }
       return;
     }
@@ -206,29 +285,29 @@ export class ChatwootWebSocketService {
     this.stats.eventsReceived++;
     this.stats.lastEventAt = Date.now();
 
-    const eventData: ChatwootWebSocketEventData = {
-      event: payload.event,
-      data: payload.data || payload,
+    const eventDataWrapper: ChatwootWebSocketEventData = {
+      event: eventName,
+      data: eventData,
       timestamp: Date.now(),
     };
 
     if (this.debugEnabled) {
-      console.log('[ChatwootWS] Event received:', {
-        event: eventData.event,
-        data: eventData.data,
+      console.log("[ChatwootWS] Event received:", {
+        event: eventDataWrapper.event,
+        data: eventDataWrapper.data,
       });
     }
 
     // Emit to specific event handlers
-    const handlers = this.eventHandlers.get(payload.event);
+    const handlers = this.eventHandlers.get(eventName);
     if (handlers) {
-      handlers.forEach(handler => handler(eventData));
+      handlers.forEach((handler) => handler(eventDataWrapper));
     }
 
     // Emit to wildcard handlers (listen to all events)
-    const wildcardHandlers = this.eventHandlers.get('*');
+    const wildcardHandlers = this.eventHandlers.get("*");
     if (wildcardHandlers) {
-      wildcardHandlers.forEach(handler => handler(eventData));
+      wildcardHandlers.forEach((handler) => handler(eventDataWrapper));
     }
   };
 
@@ -240,7 +319,7 @@ export class ChatwootWebSocketService {
       try {
         if (this.consumer && this.connectionState === ConnectionState.CONNECTED) {
           if (this.debugEnabled) {
-            console.log('[ChatwootWS] Already connected');
+            console.log("[ChatwootWS] Already connected");
           }
           resolve();
           return;
@@ -249,47 +328,108 @@ export class ChatwootWebSocketService {
         this.setConnectionState(ConnectionState.CONNECTING);
         this.currentConfig = config;
 
-        // Create ActionCable consumer
-        this.consumer = createConsumer(this.websocketUrl);
-
-        if (this.debugEnabled) {
-          console.log('[ChatwootWS] Connecting...', {
-            url: this.websocketUrl,
-            accountId: config.accountId,
-            userId: config.userId,
-          });
+        // Get fresh token (in case it changed)
+        const token = getUserToken();
+        if (!token) {
+          const error = "No GoMake Bearer token available for WebSocket authentication";
+          console.error("[ChatwootWS] ❌", error);
+          this.setConnectionState(ConnectionState.ERROR);
+          this.emitError(error);
+          reject(new Error(error));
+          return;
         }
+
+        // Reconstruct URL with fresh token (use imported configModule, not parameter)
+        const baseUrl = configModule.chatwoot_server || "http://localhost:8080";
+        const wsUrl = this.constructWebSocketUrl(baseUrl, token);
+
+        // Create ActionCable consumer
+        console.log("[ChatwootWS] Creating ActionCable consumer...", {
+          url: wsUrl.replace(/token=[^&]*/, "token=***"), // Hide token in logs
+          accountId: config.accountId,
+          userId: config.userId,
+          pubsubToken: config.pubsubToken ? "present" : "missing",
+          hasGoMakeToken: !!token,
+        });
+
+        this.consumer = createConsumer(wsUrl);
+
+        console.log("[ChatwootWS] Consumer created, subscribing to RoomChannel...", {
+          url: this.websocketUrl,
+          accountId: config.accountId,
+          userId: config.userId,
+        });
 
         // Subscribe to RoomChannel
         this.subscription = this.consumer.subscriptions.create(
           {
-            channel: 'RoomChannel',
+            channel: "RoomChannel",
             pubsub_token: config.pubsubToken,
             account_id: config.accountId,
             user_id: config.userId,
           },
           {
             connected: () => {
-              if (this.debugEnabled) {
-                console.log('[ChatwootWS] Connected successfully');
-              }
+              console.log("[ChatwootWS] ✅ Connected successfully to WebSocket");
               this.setConnectionState(ConnectionState.CONNECTED);
               this.stats.reconnectionAttempts = 0;
+              this.isManualDisconnect = false;
+              // Start heartbeat monitoring
+              this.startHeartbeat();
               resolve();
             },
 
             disconnected: () => {
               if (this.debugEnabled) {
-                console.log('[ChatwootWS] Disconnected');
+                console.log("[ChatwootWS] Disconnected");
               }
+              this.stopHeartbeat();
               this.setConnectionState(ConnectionState.DISCONNECTED);
+
+              // Auto-reconnect if not manually disconnected
+              if (this.autoReconnect && !this.isManualDisconnect) {
+                if (this.debugEnabled) {
+                  console.log("[ChatwootWS] Auto-reconnecting...");
+                }
+                this.reconnect().catch((err) => {
+                  if (this.debugEnabled) {
+                    console.error("[ChatwootWS] Auto-reconnect failed:", err);
+                  }
+                });
+              }
             },
 
             rejected: () => {
-              const error = 'Connection rejected (invalid credentials or permissions)';
+              const error = "Connection rejected (invalid credentials or permissions)";
               this.setConnectionState(ConnectionState.ERROR);
               this.emitError(error);
               reject(new Error(error));
+            },
+
+            error: (error: any) => {
+              const errorMessage = error?.message || "WebSocket connection error";
+              console.error("[ChatwootWS] ❌ WebSocket connection error:", error);
+              console.error("[ChatwootWS] Error details:", {
+                message: errorMessage,
+                error: error,
+                url: this.websocketUrl,
+                accountId: config.accountId,
+                userId: config.userId,
+              });
+
+              this.setConnectionState(ConnectionState.ERROR);
+              this.emitError(errorMessage);
+
+              // Log helpful error message for 404 (proxy not configured)
+              if (errorMessage.includes("404") || errorMessage.includes("Unexpected response code")) {
+                console.warn("[ChatwootWS] WebSocket endpoint not found (404). This usually means:");
+                console.warn("  1. The proxy (messaging-hub-v2) does not support WebSocket /cable endpoint yet");
+                console.warn("  2. Or the Chatwoot server URL is incorrect");
+                console.warn("  3. Real-time notifications will not work until WebSocket is configured");
+                console.warn("  Solution: Implement WebSocket gateway in messaging-hub-v2 or connect directly to Chatwoot");
+              }
+
+              reject(new Error(errorMessage));
             },
 
             received: this.handleReceivedEvent,
@@ -299,14 +439,20 @@ export class ChatwootWebSocketService {
         // Add timeout for connection
         setTimeout(() => {
           if (this.connectionState === ConnectionState.CONNECTING) {
+            console.error("[ChatwootWS] ⏱️ Connection timeout after 10 seconds");
+            console.error("[ChatwootWS] Connection details:", {
+              url: this.websocketUrl,
+              accountId: config.accountId,
+              userId: config.userId,
+              state: this.connectionState,
+            });
             this.setConnectionState(ConnectionState.ERROR);
-            this.emitError('Connection timeout');
-            reject(new Error('Connection timeout'));
+            this.emitError("Connection timeout");
+            reject(new Error("Connection timeout"));
           }
         }, 10000); // 10 second timeout
-
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        const errorMessage = error instanceof Error ? error.message : "Unknown error";
         this.setConnectionState(ConnectionState.ERROR);
         this.emitError(errorMessage);
         reject(error);
@@ -315,20 +461,96 @@ export class ChatwootWebSocketService {
   }
 
   /**
+   * Start heartbeat monitoring
+   */
+  private startHeartbeat(): void {
+    this.stopHeartbeat();
+
+    this.heartbeatInterval = setInterval(() => {
+      this.stats.lastHeartbeatAt = Date.now();
+
+      // Check if connection is healthy
+      const health = this.getConnectionHealth();
+      if (health === ConnectionHealth.UNHEALTHY && this.autoReconnect && !this.isManualDisconnect) {
+        if (this.debugEnabled) {
+          console.warn("[ChatwootWS] Connection unhealthy, attempting reconnect...");
+        }
+        this.reconnect().catch((err) => {
+          if (this.debugEnabled) {
+            console.error("[ChatwootWS] Heartbeat reconnect failed:", err);
+          }
+        });
+      }
+    }, this.heartbeatIntervalMs);
+  }
+
+  /**
+   * Stop heartbeat monitoring
+   */
+  private stopHeartbeat(): void {
+    if (this.heartbeatInterval) {
+      clearInterval(this.heartbeatInterval);
+      this.heartbeatInterval = null;
+    }
+  }
+
+  /**
+   * Get connection health status
+   */
+  public getConnectionHealth(): ConnectionHealth {
+    if (this.connectionState !== ConnectionState.CONNECTED) {
+      return ConnectionHealth.UNHEALTHY;
+    }
+
+    const now = Date.now();
+    const lastEventOrHeartbeat = Math.max(
+      this.stats.lastEventAt || 0,
+      this.stats.lastHeartbeatAt || 0,
+      this.stats.connectedAt || 0
+    );
+
+    const timeSinceLastActivity = now - lastEventOrHeartbeat;
+
+    if (timeSinceLastActivity > this.heartbeatTimeoutMs) {
+      return ConnectionHealth.UNHEALTHY;
+    } else if (timeSinceLastActivity > this.heartbeatIntervalMs) {
+      return ConnectionHealth.DEGRADED;
+    }
+
+    return ConnectionHealth.HEALTHY;
+  }
+
+  /**
    * Disconnect from Chatwoot WebSocket
    */
   public disconnect(): void {
+    this.isManualDisconnect = true;
+
     if (this.debugEnabled) {
-      console.log('[ChatwootWS] Disconnecting...');
+      console.log("[ChatwootWS] Disconnecting...");
     }
 
+    this.stopHeartbeat();
+
     if (this.subscription) {
-      this.subscription.unsubscribe();
+      try {
+        this.subscription.unsubscribe();
+      } catch (err) {
+        if (this.debugEnabled) {
+          console.warn("[ChatwootWS] Error unsubscribing:", err);
+        }
+      }
       this.subscription = null;
     }
 
     if (this.consumer) {
-      this.consumer.disconnect();
+      try {
+        this.consumer.disconnect();
+      } catch (err) {
+        if (this.debugEnabled) {
+          console.warn("[ChatwootWS] Error disconnecting consumer:", err);
+        }
+      }
       this.consumer = null;
     }
 
@@ -337,20 +559,58 @@ export class ChatwootWebSocketService {
   }
 
   /**
-   * Reconnect with current configuration
+   * Calculate exponential backoff delay
+   */
+  private calculateBackoffDelay(attempt: number): number {
+    const delay = Math.min(
+      this.retryConfig.initialDelayMs * Math.pow(this.retryConfig.backoffMultiplier, attempt),
+      this.retryConfig.maxDelayMs
+    );
+    // Add jitter (±20%) to prevent thundering herd
+    const jitter = delay * 0.2 * (Math.random() * 2 - 1);
+    return Math.floor(delay + jitter);
+  }
+
+  /**
+   * Reconnect with current configuration using exponential backoff
    */
   public async reconnect(): Promise<void> {
-    if (!this.currentConfig) {
-      throw new Error('No previous configuration to reconnect with');
+    // Save config BEFORE disconnect clears it
+    const savedConfig = this.currentConfig;
+    
+    if (!savedConfig) {
+      throw new Error("No previous configuration to reconnect with");
+    }
+
+    this.isManualDisconnect = false;
+
+    // Don't exceed max retries
+    if (this.stats.reconnectionAttempts >= this.retryConfig.maxRetries) {
+      const error = `Max reconnection attempts (${this.retryConfig.maxRetries}) exceeded`;
+      this.emitError(error);
+      throw new Error(error);
+    }
+
+    const delay = this.calculateBackoffDelay(this.stats.reconnectionAttempts);
+
+    if (this.debugEnabled) {
+      console.log(
+        `[ChatwootWS] Reconnecting in ${delay}ms (attempt ${this.stats.reconnectionAttempts + 1}/${this.retryConfig.maxRetries})`
+      );
     }
 
     this.stats.reconnectionAttempts++;
+
+    // Disconnect cleanly before reconnecting (this clears currentConfig)
+    this.isManualDisconnect = true;
     this.disconnect();
+    this.isManualDisconnect = false;
 
-    // Wait a bit before reconnecting
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    // Wait before reconnecting (exponential backoff)
+    await new Promise((resolve) => setTimeout(resolve, delay));
 
-    return this.connect(this.currentConfig);
+    // Use saved config since disconnect cleared currentConfig
+    return this.connect(savedConfig);
   }
 
   /**
@@ -439,7 +699,39 @@ export class ChatwootWebSocketService {
       disconnectedAt: this.stats.disconnectedAt,
       reconnectionAttempts: 0,
       lastEventAt: null,
+      lastHeartbeatAt: null,
     };
+  }
+
+  /**
+   * Configure retry behavior
+   */
+  public setRetryConfig(config: Partial<RetryConfig>): void {
+    this.retryConfig = {
+      ...this.retryConfig,
+      ...config,
+    };
+  }
+
+  /**
+   * Get current retry configuration
+   */
+  public getRetryConfig(): RetryConfig {
+    return { ...this.retryConfig };
+  }
+
+  /**
+   * Enable/disable auto-reconnect
+   */
+  public setAutoReconnect(enabled: boolean): void {
+    this.autoReconnect = enabled;
+  }
+
+  /**
+   * Check if auto-reconnect is enabled
+   */
+  public isAutoReconnectEnabled(): boolean {
+    return this.autoReconnect;
   }
 
   /**
@@ -466,7 +758,7 @@ export class ChatwootWebSocketService {
    */
   public setDebug(enabled: boolean): void {
     this.debugEnabled = enabled;
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       (window as any).CHATWOOT_DEBUG = enabled;
     }
   }

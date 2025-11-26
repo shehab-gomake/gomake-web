@@ -23,7 +23,7 @@ import { useUserPermission } from "@/hooks/use-permission";
 import { ETab } from "@/pages-components/admin/home/widgets/quote-widget/enums";
 import { EProductStructureType } from "@/widgets/shared-admin-customers/add-product/settings/settings-data";
 import { getCompositeProductById } from "@/services/hooks/admin-side/products/get-set-product-by-id";
-import {ItemCalculationType} from "@/enums";
+import { ItemCalculationType } from "@/enums";
 
 const useAddNewItem = ({ onClose, getQuote, documentType, getCalculateQuoteItem, isMaterial, isNewCreation, isPurchaseOrder, isCanIntake }: {
   onClose: () => void, getQuote: () => void,
@@ -48,7 +48,7 @@ const useAddNewItem = ({ onClose, getQuote, documentType, getCalculateQuoteItem,
   const [active, setActive] = useState(true);
   const [productName, setProductName] = useState("");
   const [productCode, setProductCode] = useState("");
-  
+
   // Composite products modal state
   const [compositeDialogOpen, setCompositeDialogOpen] = useState(false);
   const [compositeProducts, setCompositeProducts] = useState<Array<{
@@ -175,7 +175,7 @@ const useAddNewItem = ({ onClose, getQuote, documentType, getCalculateQuoteItem,
 
           const transformedProducts = transformProducts(res?.data?.products);
           const transformedMaterials = transformMaterials(res?.data?.materials);
-          
+
           // Attach parent references for proper search functionality
           transformedProducts.children = attachParentReferences(
             transformedProducts.children,

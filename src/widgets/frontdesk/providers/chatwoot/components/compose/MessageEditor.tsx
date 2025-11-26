@@ -37,6 +37,8 @@ interface MessageEditorProps {
   disabled?: boolean;
   /** Minimum height */
   minHeight?: number;
+  /** Whether this is a private note (affects background color) */
+  isPrivateNote?: boolean;
 }
 
 export const MessageEditor: React.FC<MessageEditorProps> = ({
@@ -46,6 +48,7 @@ export const MessageEditor: React.FC<MessageEditorProps> = ({
   error,
   disabled = false,
   minHeight = 200,
+  isPrivateNote = false,
 }) => {
   const { neutralColor, primaryColor } = useGomakeTheme();
 
@@ -147,18 +150,33 @@ export const MessageEditor: React.FC<MessageEditorProps> = ({
     return null;
   }
 
+  // Background color for private note mode - use a warm, subtle amber/yellow tint
+  // to clearly indicate private mode without being too distracting
+  const backgroundColor = isPrivateNote 
+    ? "rgba(251, 191, 36, 0.08)" // Light amber/yellow tint (amber-400 with 8% opacity)
+    : neutralColor(0);
+
   return (
     <Box
       sx={{
         display: "flex",
         flexDirection: "column",
         minHeight,
-        border: error ? `1px solid #ef4444` : `1px solid ${neutralColor(200)}`,
+        border: error 
+          ? `1px solid #ef4444` 
+          : isPrivateNote 
+            ? `1px solid rgba(251, 191, 36, 0.3)` // Amber border for private notes
+            : `1px solid ${neutralColor(200)}`,
         borderRadius: 1,
         overflow: "hidden",
-        backgroundColor: neutralColor(0),
+        backgroundColor,
+        transition: "background-color 0.2s ease, border-color 0.2s ease",
         "&:focus-within": {
-          borderColor: error ? "#ef4444" : primaryColor(500),
+          borderColor: error 
+            ? "#ef4444" 
+            : isPrivateNote 
+              ? "rgba(251, 191, 36, 0.5)" // Slightly darker amber on focus
+              : primaryColor(500),
         },
       }}
     >
@@ -303,6 +321,7 @@ export const MessageEditor: React.FC<MessageEditorProps> = ({
           flex: 1,
           p: 2,
           overflow: "auto",
+          backgroundColor: "transparent", // Inherit from parent Box
           "& .message-editor-content": {
             outline: "none",
             minHeight: minHeight - 60,
@@ -310,6 +329,7 @@ export const MessageEditor: React.FC<MessageEditorProps> = ({
             fontSize: "0.938rem",
             lineHeight: 1.6,
             fontFamily: "inherit",
+            backgroundColor: "transparent", // Inherit from parent Box
 
             // Placeholder styling
             "& p.is-editor-empty:first-of-type::before": {

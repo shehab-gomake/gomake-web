@@ -1,12 +1,12 @@
 /**
  * Chatwoot Unattended View
  *
- * Displays unassigned or unattended conversations that need attention.
- * Uses the same layout as All Conversations but filters for unassigned conversations.
+ * Displays conversations that require attention:
+ * - Brand new conversations that have never been replied to
+ * - Conversations where the last reply was from an agent and waiting for contact response
  *
- * TODO: Add unattended filtering logic
- * Need to filter by assignee_type=none or unassigned status
- * This may require updating the useChatwootProvider hook to support different filter modes
+ * Uses conversation_type=unattended parameter which translates to backend .unattended scope.
+ * The filter is automatically set by useChatwootProvider based on the current view.
  */
 
 import React from "react";

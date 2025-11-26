@@ -10,13 +10,12 @@ import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Alert, Stack
 import CloseIcon from "@mui/icons-material/Close";
 import SendIcon from "@mui/icons-material/Send";
 import { ContactSelectionField } from "./ContactSelectionField";
-import { CreateContactModal } from "./CreateContactModal";
 import { MessageEditor } from "./MessageEditor";
 import { EmailCompositionFields } from "./EmailCompositionFields";
 import { AttachmentUploader } from "./AttachmentUploader";
 import { InboxSelector } from "./InboxSelector";
 import { ConfirmDialog } from "../settings/ConfirmDialog";
-import { useComposeConversation } from "../../hooks/use-compose-conversation";
+import { useComposeConversation, type GomakeContact } from "../../hooks/use-compose-conversation";
 import { getChannelRequirements } from "@/services/frontdesk/api/chatwoot/types/compose.types";
 import { useSnackBar } from "@/hooks/use-snack-bar";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
@@ -39,7 +38,6 @@ export const ComposeConversationModal: React.FC<ComposeConversationModalProps> =
 }) => {
   const { primaryColor, neutralColor } = useGomakeTheme();
   const { setSnackbarStateValue } = useSnackBar();
-  const [showCreateContact, setShowCreateContact] = useState(false);
   const [showTemplateSelector, setShowTemplateSelector] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showExitConfirm, setShowExitConfirm] = useState(false);
@@ -113,17 +111,6 @@ export const ComposeConversationModal: React.FC<ComposeConversationModalProps> =
     // Success is handled by onSuccess callback
   };
 
-  const handleCreateContact = async (contactData: {
-    name: string;
-    email?: string;
-    phone_number?: string;
-  }) => {
-    const newContact = await compose.createContact(contactData);
-    if (newContact) {
-      compose.selectContact(newContact);
-      setShowCreateContact(false);
-    }
-  };
 
   const canSubmit = useMemo(
     () =>
@@ -257,9 +244,9 @@ export const ComposeConversationModal: React.FC<ComposeConversationModalProps> =
               isSearching={compose.isSearching}
               onSearch={compose.searchContacts}
               onSelectContact={compose.selectContact}
-              onCreateContact={() => setShowCreateContact(true)}
               error={compose.validationErrors.contact}
             />
+
 
             {/* Inbox Selection - Show after contact is selected */}
             {compose.formState.contact && (
@@ -497,13 +484,6 @@ export const ComposeConversationModal: React.FC<ComposeConversationModalProps> =
         }}
       />
 
-      {/* Create Contact Modal */}
-      <CreateContactModal
-        open={showCreateContact}
-        onClose={() => setShowCreateContact(false)}
-        onSubmit={handleCreateContact}
-        isSubmitting={compose.isSubmitting}
-      />
     </>
   );
 };

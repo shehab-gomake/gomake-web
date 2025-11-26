@@ -193,9 +193,22 @@ export class ChatwootMessagesService extends BaseChatwootService {
       formData.append('template_params', JSON.stringify(payload.template_params));
     }
 
+    // Add email channel specific fields (cc, bcc, to emails)
+    // These must be added BEFORE attachments for proper email handling
+    if (payload.cc_emails) {
+      formData.append('cc_emails', payload.cc_emails);
+    }
+    if (payload.bcc_emails) {
+      formData.append('bcc_emails', payload.bcc_emails);
+    }
+    if (payload.to_emails) {
+      formData.append('to_emails', payload.to_emails);
+    }
+
     // Add attachments using array notation (matching Chatwoot backend expectation)
+    // Pass file with filename to ensure proper MIME type detection
     payload.attachments!.forEach((file) => {
-      formData.append('attachments[]', file);
+      formData.append('attachments[]', file, file.name);
     });
 
     // Make request with FormData (don't set Content-Type, browser will set it with boundary)

@@ -19,6 +19,7 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import {
   chatwootNotificationsAtom,
   chatwootNotificationUnreadCountAtom,
+  chatwootNotificationMetaAtom,
   chatwootNotificationConnectionAtom,
   chatwootSelectedAccountAtom,
   chatwootProfileAtom,
@@ -27,6 +28,7 @@ import {
   chatwootNotificationsWebSocketHelper,
   chatwootWebSocketService,
 } from "@/services/frontdesk";
+import { ConnectionState } from "@/services/frontdesk/websocket/chatwoot-websocket.service";
 import type {
   NotificationCreatedEvent,
   NotificationUpdatedEvent,
@@ -88,6 +90,7 @@ export const useChatwootNotificationWebSocket = (
   const profile = useRecoilValue(chatwootProfileAtom);
   const [notifications, setNotifications] = useRecoilState(chatwootNotificationsAtom);
   const setUnreadCount = useSetRecoilState(chatwootNotificationUnreadCountAtom);
+  const setNotificationMeta = useSetRecoilState(chatwootNotificationMetaAtom);
   const [connected, setConnected] = useRecoilState(chatwootNotificationConnectionAtom);
 
   // Local error state (not using Recoil to avoid interference with API errors)
@@ -147,12 +150,18 @@ export const useChatwootNotificationWebSocket = (
         );
       }
 
-      // Update unread count from WebSocket event
-      if (typeof event.unread_count === "number") {
+      // Update unread count and meta from WebSocket event
+      if (typeof event.unread_count === "number" && typeof event.count === "number") {
+        setUnreadCount(event.unread_count);
+        setNotificationMeta({
+          count: event.count,
+          unread_count: event.unread_count,
+        });
+      } else if (typeof event.unread_count === "number") {
         setUnreadCount(event.unread_count);
       }
     },
-    [setNotifications, setUnreadCount]
+    [setNotifications, setUnreadCount, setNotificationMeta]
   );
 
   /**
@@ -169,12 +178,18 @@ export const useChatwootNotificationWebSocket = (
         setNotifications((prev) => prev.filter((n) => n.id !== event.notification.id));
       }
 
-      // Update unread count from WebSocket event
-      if (typeof event.unread_count === "number") {
+      // Update unread count and meta from WebSocket event
+      if (typeof event.unread_count === "number" && typeof event.count === "number") {
+        setUnreadCount(event.unread_count);
+        setNotificationMeta({
+          count: event.count,
+          unread_count: event.unread_count,
+        });
+      } else if (typeof event.unread_count === "number") {
         setUnreadCount(event.unread_count);
       }
     },
-    [setNotifications, setUnreadCount]
+    [setNotifications, setUnreadCount, setNotificationMeta]
   );
 
   /**
@@ -276,6 +291,24 @@ export const useChatwootNotificationWebSocket = (
       // Register handlers before connecting
       registerHandlers();
 
+      // Listen to connection state changes from the WebSocket service
+      const handleStateChange = (state: ConnectionState) => {
+        logger.debug("WebSocket state changed", { state });
+        if (state === ConnectionState.CONNECTED) {
+          isConnectedRef.current = true;
+          setConnected(true);
+          logger.info("Successfully connected to Chatwoot WebSocket for notifications");
+        } else if (state === ConnectionState.DISCONNECTED || state === ConnectionState.ERROR) {
+          isConnectedRef.current = false;
+          setConnected(false);
+          if (state === ConnectionState.ERROR) {
+            logger.error("WebSocket connection error");
+          }
+        }
+      };
+
+      chatwootWebSocketService.onStateChange(handleStateChange);
+
       // Connect to WebSocket (this uses the main WebSocket service)
       await chatwootWebSocketService.connect({
         accountId: selectedAccountId,
@@ -283,10 +316,16 @@ export const useChatwootNotificationWebSocket = (
         pubsubToken: profile.pubsub_token,
       });
 
-      isConnectedRef.current = true;
-      setConnected(true);
+      // Check initial state (connection might be synchronous)
+      const currentState = chatwootWebSocketService.getConnectionState();
+      if (currentState === ConnectionState.CONNECTED) {
+        isConnectedRef.current = true;
+        setConnected(true);
+        logger.info("Successfully connected to Chatwoot WebSocket for notifications");
+      }
 
-      logger.info("Successfully connected to Chatwoot WebSocket for notifications");
+      // Store handler for cleanup
+      (connect as any).__stateHandler = handleStateChange;
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : "Failed to connect to WebSocket";
       logger.error("Failed to connect to WebSocket", err);
@@ -310,6 +349,13 @@ export const useChatwootNotificationWebSocket = (
 
     logger.info("Disconnecting from Chatwoot WebSocket");
 
+    // Unregister state change handler if it exists
+    const stateHandler = (connect as any).__stateHandler;
+    if (stateHandler) {
+      chatwootWebSocketService.offStateChange(stateHandler);
+      delete (connect as any).__stateHandler;
+    }
+
     // Unregister handlers
     unregisterHandlers();
 
@@ -325,12 +371,32 @@ export const useChatwootNotificationWebSocket = (
    */
   useEffect(() => {
     if (!enabled || !autoConnect) {
+      logger.debug("WebSocket disabled or autoConnect=false, skipping");
       return;
     }
 
+    // Log connection requirements for debugging
+    logger.debug("WebSocket connection requirements check", {
+      selectedAccountId,
+      hasProfile: !!profile,
+      hasPubsubToken: !!profile?.pubsub_token,
+      profileId: profile?.id,
+    });
+
     // Only connect if we have the required data
     if (selectedAccountId && profile?.pubsub_token) {
+      logger.info("All requirements met, connecting to WebSocket");
       connect();
+    } else {
+      if (!selectedAccountId) {
+        logger.warn("Cannot connect: No account ID selected");
+      } else if (!profile) {
+        logger.warn("Cannot connect: Profile not loaded yet");
+      } else if (!profile.pubsub_token) {
+        logger.warn("Cannot connect: Profile missing pubsub_token", {
+          profileKeys: Object.keys(profile),
+        });
+      }
     }
 
     // Cleanup on unmount

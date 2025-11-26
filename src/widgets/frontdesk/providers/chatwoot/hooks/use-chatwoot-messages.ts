@@ -34,27 +34,74 @@ export const useChatwootMessages = ({ conversation, accountId }: UseChatwootMess
   // Fetch deduplication: Prevent concurrent duplicate requests
   const isFetchingRef = useRef(false);
   const isLoadingMoreRef = useRef(false);
+  
+  // Track previous conversation ID to preserve messages during transition
+  const previousConversationIdRef = useRef<number | null>(null);
+  const previousMessagesRef = useRef<ChatwootMessage[]>([]);
+
+  // Track conversation ID separately to avoid unnecessary refetches when conversation object changes
+  const conversationId = conversation?.id;
+
+  // OPTIMIZED: Extract only needed metadata from conversation (avoids dependency on entire object)
+  // Only recreates when conversation ID changes, not when other properties update
+  const conversationMetadata = useRef({
+    id: conversation?.id,
+    subject: conversation?.additional_attributes?.mail_subject,
+    initiatedAt: conversation?.additional_attributes?.initiated_at?.timestamp,
+    createdAt: conversation?.created_at,
+    timestamp: conversation?.timestamp,
+    lastNonActivityMessage: conversation?.last_non_activity_message,
+    sender: conversation?.meta?.sender,
+  });
+
+  // Update metadata ref when conversation ID changes
+  useEffect(() => {
+    conversationMetadata.current = {
+      id: conversation?.id,
+      subject: conversation?.additional_attributes?.mail_subject,
+      initiatedAt: conversation?.additional_attributes?.initiated_at?.timestamp,
+      createdAt: conversation?.created_at,
+      timestamp: conversation?.timestamp,
+      lastNonActivityMessage: conversation?.last_non_activity_message,
+      sender: conversation?.meta?.sender,
+    };
+  }, [conversation?.id]); // Only update when ID changes
 
   /**
    * Load initial batch of messages for a conversation
    */
   const loadMessages = useCallback(async () => {
-    if (!conversation?.id || !accountId) {
-      setMessages([]);
-      setPagination({
-        hasMoreOlder: false,
-        hasMoreNewer: false,
-        oldestMessageId: null,
-        newestMessageId: null,
-        isLoadingMore: false,
-      });
+    if (!conversationId || !accountId) {
+      // Clear messages only if conversation is actually null (not just switching)
+      if (!conversation) {
+        setMessages([]);
+        previousMessagesRef.current = [];
+        previousConversationIdRef.current = null;
+        setPagination({
+          hasMoreOlder: false,
+          hasMoreNewer: false,
+          oldestMessageId: null,
+          newestMessageId: null,
+          isLoadingMore: false,
+        });
+      }
       return;
     }
+
+    // Check if this is a conversation switch
+    const isConversationSwitch = previousConversationIdRef.current !== null && 
+                                  previousConversationIdRef.current !== conversationId;
 
     // Prevent duplicate concurrent requests
     if (isFetchingRef.current) {
       logger.debug("Load messages already in progress, skipping duplicate call");
       return;
+    }
+
+    // Preserve previous messages during transition for smooth UX
+    if (isConversationSwitch && previousMessagesRef.current.length > 0) {
+      // Keep showing previous messages until new ones load
+      setMessages(previousMessagesRef.current);
     }
 
     isFetchingRef.current = true;
@@ -65,7 +112,7 @@ export const useChatwootMessages = ({ conversation, accountId }: UseChatwootMess
       // Load initial batch of messages using listMessages API with pagination
       const response = await chatwootService.messages.listMessages(
         accountId,
-        conversation.id
+        conversationId
       );
 
       let apiMessages: ChatwootMessage[] = response.payload || [];
@@ -73,7 +120,7 @@ export const useChatwootMessages = ({ conversation, accountId }: UseChatwootMess
       // Debug: Log message types received from API
       logger.debug("Messages from API:", {
         total: apiMessages.length,
-        conversationId: conversation.id,
+        conversationId: conversationMetadata.current.id,
         byType: apiMessages.reduce((acc: any, msg: any) => {
           const type = msg.message_type ?? "unknown";
           acc[type] = (acc[type] || 0) + 1;
@@ -96,21 +143,22 @@ export const useChatwootMessages = ({ conversation, accountId }: UseChatwootMess
 
       // If we have conversation metadata with mail_subject, create the original email message
       // as the first message if it doesn't exist
-      if (conversation.additional_attributes?.mail_subject) {
+      if (conversationMetadata.current.subject) {
         const firstMsgSubject =
           (sortedMessages[0]?.content_attributes?.email as any)?.subject ||
           sortedMessages[0]?.content_attributes?.subject;
 
-        if (!firstMsgSubject || firstMsgSubject !== conversation.additional_attributes.mail_subject) {
+        if (!firstMsgSubject || firstMsgSubject !== conversationMetadata.current.subject) {
           // Try multiple sources for original email content
           let originalContent = "";
 
           // 1. Check last_non_activity_message - this might be the original
+          const lastNonActivityMsg = conversationMetadata.current.lastNonActivityMessage;
           if (
-            conversation.last_non_activity_message?.content &&
-            conversation.last_non_activity_message.message_type !== 1
+            lastNonActivityMsg?.content &&
+            lastNonActivityMsg.message_type !== 1
           ) {
-            originalContent = conversation.last_non_activity_message.content;
+            originalContent = lastNonActivityMsg.content;
           }
           // 2. Check first message if it looks like original email
           else if (sortedMessages.length > 0) {
@@ -129,26 +177,26 @@ export const useChatwootMessages = ({ conversation, accountId }: UseChatwootMess
 
           // Create the original email message from conversation metadata
           const originalEmailMessage: ChatwootMessage = {
-            id: -(conversation.id || 0), // Negative ID to avoid conflicts with real messages
+            id: -(conversationMetadata.current.id || 0), // Negative ID to avoid conflicts with real messages
             content: originalContent,
             content_type: "text",
             content_attributes: {
               email: {
-                subject: conversation.additional_attributes.mail_subject,
+                subject: conversationMetadata.current.subject,
                 ...(recipientEmail && { to: recipientEmail }),
               } as any,
             },
             message_type: 0, // Incoming (from customer)
-            created_at: conversation.additional_attributes?.initiated_at?.timestamp
-              ? new Date(conversation.additional_attributes.initiated_at.timestamp).getTime() / 1000
-              : Number(conversation.created_at) ||
-                Number(conversation.timestamp) ||
+            created_at: conversationMetadata.current.initiatedAt
+              ? new Date(conversationMetadata.current.initiatedAt).getTime() / 1000
+              : Number(conversationMetadata.current.createdAt) ||
+                Number(conversationMetadata.current.timestamp) ||
                 (sortedMessages[0]?.created_at || Date.now() / 1000),
-            sender: conversation.meta?.sender
+            sender: conversationMetadata.current.sender
               ? {
-                  name: conversation.meta.sender.name,
-                  email: conversation.meta.sender.email,
-                  avatar_url: conversation.meta.sender.avatar_url || "",
+                  name: conversationMetadata.current.sender.name,
+                  email: conversationMetadata.current.sender.email,
+                  avatar_url: conversationMetadata.current.sender.avatar_url || "",
                 }
               : undefined,
           };
@@ -157,7 +205,10 @@ export const useChatwootMessages = ({ conversation, accountId }: UseChatwootMess
         }
       }
 
+      // Update messages and track for next transition
       setMessages(sortedMessages);
+      previousMessagesRef.current = sortedMessages;
+      previousConversationIdRef.current = conversationId;
 
       // Update pagination cursors
       if (sortedMessages.length > 0) {
@@ -173,8 +224,8 @@ export const useChatwootMessages = ({ conversation, accountId }: UseChatwootMess
 
       // Mark conversation as read after loading messages
       try {
-        await chatwootService.conversations.markConversationAsRead(accountId, conversation.id);
-        logger.debug("Marked conversation as read", { conversationId: conversation.id });
+        await chatwootService.conversations.markConversationAsRead(accountId, conversationId);
+        logger.debug("Marked conversation as read", { conversationId });
       } catch (readError) {
         // Don't fail the whole operation if marking as read fails
         logger.warn("Failed to mark conversation as read", readError);
@@ -182,12 +233,15 @@ export const useChatwootMessages = ({ conversation, accountId }: UseChatwootMess
     } catch (err: any) {
       logger.error("Failed to load messages", err);
       setError(err?.message || "Failed to load messages");
-      setMessages([]);
+      // Only clear messages on error if we don't have previous messages to show
+      if (previousMessagesRef.current.length === 0) {
+        setMessages([]);
+      }
     } finally {
       setLoading(false);
       isFetchingRef.current = false;
     }
-  }, [conversation, accountId]);
+  }, [conversationId, accountId]); // OPTIMIZED: Removed conversation dependency - metadata handled via ref
 
   /**
    * Load more older messages (pagination)

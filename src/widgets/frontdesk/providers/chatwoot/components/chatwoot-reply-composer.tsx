@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Box } from "@mui/material";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import type { ChatwootConversation } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
@@ -14,6 +14,20 @@ import { AttachmentPreviews } from "./compose/AttachmentPreview";
 import { MessageEditor } from "./compose/MessageEditor";
 
 const logger = createLogger("ChatwootReplyComposer");
+
+// Maximum file upload size in MB (matching Chatwoot's MAXIMUM_FILE_UPLOAD_SIZE)
+const MAXIMUM_FILE_UPLOAD_SIZE_MB = 40;
+
+// Convert MB to bytes
+const fileSizeInMegaBytes = (bytes: number): number => {
+  return bytes / (1024 * 1024);
+};
+
+// Check if file size is within limit
+const checkFileSizeLimit = (file: File, maximumUploadLimitMB: number): boolean => {
+  const fileSizeInMB = fileSizeInMegaBytes(file.size);
+  return fileSizeInMB <= maximumUploadLimitMB;
+};
 
 interface ChatwootReplyComposerProps {
   conversation: ChatwootConversation | null;
@@ -45,6 +59,7 @@ export const ChatwootReplyComposer: React.FC<ChatwootReplyComposerProps> = ({
   const [messageContent, setMessageContent] = useState("");
   const [toEmails, setToEmails] = useState("");
   const [ccEmails, setCcEmails] = useState("");
+  const [showCc, setShowCc] = useState(false);
   const [showBcc, setShowBcc] = useState(false);
   const [bccEmails, setBccEmails] = useState("");
   const [attachments, setAttachments] = useState<File[]>([]);
@@ -56,27 +71,108 @@ export const ChatwootReplyComposer: React.FC<ChatwootReplyComposerProps> = ({
   // Extract recipient email from conversation
   const defaultRecipient = conversation?.meta?.sender?.email || "";
 
+  // Reset form fields when conversation changes
   React.useEffect(() => {
     if (conversation) {
       setToEmails(defaultRecipient);
+      // Clear CC and BCC fields when switching conversations
+      setCcEmails("");
+      setBccEmails("");
+      setShowCc(false);
+      setShowBcc(false);
+      // Also clear message content and attachments
+      setMessageContent("");
+      setAttachments([]);
     }
-  }, [conversation, defaultRecipient]);
+  }, [conversation?.id, defaultRecipient]);
+
+  // Show CC field if it has content
+  React.useEffect(() => {
+    if (ccEmails && !showCc) {
+      setShowCc(true);
+    }
+  }, [ccEmails, showCc]);
 
   const handleTabChange = (newValue: TabValue) => {
     setActiveTab(newValue);
   };
 
+  // Handle file selection with size validation
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = Array.from(e.target.files || []);
-    if (selectedFiles.length > 0) {
-      setAttachments([...attachments, ...selectedFiles]);
-      logger.debug(`Added ${selectedFiles.length} file(s), total: ${attachments.length + selectedFiles.length}`);
+    if (selectedFiles.length === 0) return;
+
+    const validFiles: File[] = [];
+    const invalidFiles: string[] = [];
+
+    selectedFiles.forEach((file) => {
+      if (checkFileSizeLimit(file, MAXIMUM_FILE_UPLOAD_SIZE_MB)) {
+        validFiles.push(file);
+      } else {
+        invalidFiles.push(file.name);
+        logger.warn(`File ${file.name} exceeds size limit of ${MAXIMUM_FILE_UPLOAD_SIZE_MB}MB`);
+      }
+    });
+
+    if (invalidFiles.length > 0) {
+      // TODO: Show user-friendly error toast/snackbar
+      console.warn(
+        `The following files exceed the ${MAXIMUM_FILE_UPLOAD_SIZE_MB}MB limit: ${invalidFiles.join(", ")}`
+      );
     }
+
+    if (validFiles.length > 0) {
+      setAttachments([...attachments, ...validFiles]);
+      logger.debug(`Added ${validFiles.length} file(s), total: ${attachments.length + validFiles.length}`);
+    }
+
     // Reset input to allow selecting the same file again
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
   };
+
+  // Handle clipboard paste for images (matching Chatwoot's behavior)
+  useEffect(() => {
+    const handleClipboardPaste = async (e: ClipboardEvent) => {
+      // Only handle paste if file upload is supported and not in private note mode
+      if (!channelFeatures.supportsFileUpload || activeTab === "private") {
+        return;
+      }
+
+      const items = e.clipboardData?.items;
+      if (!items) return;
+
+      const imageFiles: File[] = [];
+
+      for (let i = 0; i < items.length; i++) {
+        const item = items[i];
+        if (item.type.startsWith("image/")) {
+          const file = item.getAsFile();
+          if (file) {
+            // Validate file size
+            if (checkFileSizeLimit(file, MAXIMUM_FILE_UPLOAD_SIZE_MB)) {
+              imageFiles.push(file);
+            } else {
+              logger.warn(`Pasted image exceeds size limit of ${MAXIMUM_FILE_UPLOAD_SIZE_MB}MB`);
+              // TODO: Show user-friendly error toast/snackbar
+            }
+          }
+        }
+      }
+
+      if (imageFiles.length > 0) {
+        e.preventDefault(); // Prevent default paste behavior
+        setAttachments([...attachments, ...imageFiles]);
+        logger.debug(`Pasted ${imageFiles.length} image(s) from clipboard`);
+      }
+    };
+
+    document.addEventListener("paste", handleClipboardPaste);
+    return () => {
+      document.removeEventListener("paste", handleClipboardPaste);
+    };
+  }, [attachments, channelFeatures.supportsFileUpload, activeTab]);
 
   const handleFileRemove = (index: number) => {
     setAttachments(attachments.filter((_, i) => i !== index));
@@ -156,10 +252,11 @@ export const ChatwootReplyComposer: React.FC<ChatwootReplyComposerProps> = ({
           toEmails={toEmails}
           ccEmails={ccEmails}
           bccEmails={bccEmails}
+          showCc={showCc}
           showBcc={showBcc}
-          onToChange={setToEmails}
           onCcChange={setCcEmails}
           onBccChange={setBccEmails}
+          onToggleCc={() => setShowCc(!showCc)}
           onToggleBcc={() => setShowBcc(!showBcc)}
           borderColor={borderColor}
           textColor={textColor}
@@ -175,6 +272,7 @@ export const ChatwootReplyComposer: React.FC<ChatwootReplyComposerProps> = ({
           placeholder={activeTab === "private" ? "Write a private note..." : "Type your reply..."}
           disabled={isSending}
           minHeight={150}
+          isPrivateNote={activeTab === "private"}
         />
       </Box>
 

@@ -294,14 +294,6 @@ const FrontdeskWidget: React.FC = () => {
               </Typography>
             </Box>
           );
-        case "settings":
-          return (
-            <Box sx={{ p: 2 }}>
-              <Typography variant="body2" color="text.secondary">
-                Settings options
-              </Typography>
-            </Box>
-          );
         default:
           return null;
       }
@@ -373,15 +365,6 @@ const FrontdeskWidget: React.FC = () => {
               <Typography variant="h4">Admin</Typography>
               <Typography variant="body1" sx={{ mt: 2 }}>
                 Provider accounts management
-              </Typography>
-            </Box>
-          );
-        case "settings":
-          return (
-            <Box sx={{ p: 3 }}>
-              <Typography variant="h4">Settings</Typography>
-              <Typography variant="body1" sx={{ mt: 2 }}>
-                User settings
               </Typography>
             </Box>
           );

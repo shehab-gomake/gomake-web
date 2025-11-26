@@ -10,6 +10,9 @@ export * from './date.utils';
 // Avatar utilities
 export * from './avatar.utils';
 
+// Theme utilities
+export * from './theme.utils';
+
 // String utilities
 export * from './string.utils';
 
