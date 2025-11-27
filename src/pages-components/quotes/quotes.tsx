@@ -66,12 +66,12 @@ import { ColumnSetting } from "@/widgets/production-floor/state/production-floor
 import { FONT_FAMILY } from "@/utils/font-family";
 import { QR_CODE_LISTENER_FROM } from "@/hooks/use-qr-code-listener";
 import QrCodeReader from "@/components/qr-code-reader";
-import {useRecoilValue, useSetRecoilState} from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import { selectedItemsState } from "@/store";
 import { FrontDeskEmailComposerWrapper } from "./components/frontdesk-email-composer-wrapper";
 import { PrintPackingSlipModalWidget } from "@/widgets/production-floor/views/board-missions-view/navigation-buttons/print-packing-slip-modal-widget";
 import { useParameters } from "@/hooks/use-parameters";
-import {printHouseHasFrontDeskFeature} from "@/store/print-house-profile";
+import { printHouseHasFrontDeskFeature } from "@/store/print-house-profile";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -726,7 +726,11 @@ const QuotesListPageWidget = ({
         yesBtn={t("sales.quote.yesBtn")}
         openModal={openIrrelevantCancelModal}
         onClose={onClickCloseIrrelevantModal}
-        subTitle={t("sales.quote.subTitleCancelModal")}
+        subTitle={`${t("sales.quote.subTitleCancelModal", {
+          documentName: t(
+            `sales.quote.${DOCUMENT_TYPE[documentType]}`
+          ).toLowerCase(),
+        })}`}
         cancelBtn={t("sales.quote.cancelBtn")}
         onClickDelete={() =>
           updateCancelQuote(QuoteStatuses.CANCELED_IRRELEVANT)
@@ -738,7 +742,11 @@ const QuotesListPageWidget = ({
         yesBtn={t("sales.quote.yesBtn")}
         openModal={openPriceCancelModal}
         onClose={onClickClosePriceModal}
-        subTitle={t("sales.quote.subTitleCancelModal")}
+        subTitle={`${t("sales.quote.subTitleCancelModal", {
+          documentName: t(
+            `sales.quote.${DOCUMENT_TYPE[documentType]}`
+          ).toLowerCase(),
+        })}`}
         cancelBtn={t("sales.quote.cancelBtn")}
         onClickDelete={() => updateCancelQuote(QuoteStatuses.CANCELED_PRICE)}
       />
@@ -769,7 +777,11 @@ const QuotesListPageWidget = ({
         yesBtn={t("sales.quote.yesBtn")}
         openModal={openDeliveryTimeCancelModal}
         onClose={onClickCloseDeliveryTimeModal}
-        subTitle={t("sales.quote.subTitleCancelModal")}
+        subTitle={`${t("sales.quote.subTitleCancelModal", {
+          documentName: t(
+            `sales.quote.${DOCUMENT_TYPE[documentType]}`
+          ).toLowerCase(),
+        })}`}
         cancelBtn={t("sales.quote.cancelBtn")}
         onClickDelete={() =>
           updateCancelQuote(QuoteStatuses.CANCELED_DELIVERY_TIME)

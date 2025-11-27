@@ -6,7 +6,7 @@ import { CancelBtnMenu } from "@/widgets/quote-new/cancel-btn-menu";
 import { GoMakeDeleteModal } from "@/components";
 import { QuoteStatuses } from "@/widgets/quote-new/total-price-and-vat/enums";
 import { OtherReasonModal } from "@/widgets/quote-new/total-price-and-vat/other-reason-modal";
-import { QUOTE_STATUSES } from "@/pages-components/quotes/enums";
+import { DOCUMENT_TYPE, QUOTE_STATUSES } from "@/pages-components/quotes/enums";
 import { ApproveSignatureModal } from "@/widgets/quote-new/total-price-and-vat/approve-signature-modal";
 import { ModalType } from "@/enums";
 import { AddAttachmentsModal } from "@/widgets/quote-new/modals-widgets/add-attachments-modal/add-attachments-modal";
@@ -109,7 +109,11 @@ const ButtonsConfirmContainer = ({ isMobile }) => {
           yesBtn={t("sales.quote.yesBtn")}
           openModal={openRejectModal}
           onClose={onClickCloseRejectModal}
-          subTitle={t("sales.quote.subTitleCancelModal")}
+          subTitle={`${t("sales.quote.subTitleCancelModal", {
+            documentName: t(
+              `sales.quote.${DOCUMENT_TYPE[DOCUMENT_TYPE.quote]}`
+            ).toLowerCase(),
+          })}`}
           cancelBtn={t("sales.quote.cancelBtn")}
           onClickDelete={onClickReject}
           style={{ width: "unset" }}

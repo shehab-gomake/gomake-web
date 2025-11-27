@@ -5,7 +5,12 @@ import {
   useSnackBar,
 } from "@/hooks";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
-import { DOCUMENT_TYPE, QUOTE_STATUSES, StatusTitleText } from "../enums";
+import {
+  DOCUMENT_TYPE,
+  PROFORMA_INVOICE_STATUSES,
+  QUOTE_STATUSES,
+  StatusTitleText,
+} from "../enums";
 import { LoggerIcon } from "@/pages-components/admin/home/widgets/more-circle/icons/logger";
 import { EditingIcon } from "./icons/editing";
 import { PDFIcon } from "./icons/pdf";
@@ -317,6 +322,9 @@ const useMoreCircle = () => {
     const isOrdersTracking = pathname === "/ordersTracking";
     const isCanceledPurchaseOrder =
       quote?.statusTitleText === StatusTitleText.PurchaseOrderCanceled;
+    const isCanceledProformaInvoice =
+      isProformaInvoice &&
+      quote?.documentStatus === PROFORMA_INVOICE_STATUSES.Canceled;
     const isClosedPurchaseOrder =
       quote?.statusTitleText === StatusTitleText.PurchaseOrderClosed;
     const isShowLogs = CheckPermission(Permissions.SHOW_LOGS);
@@ -650,12 +658,17 @@ const useMoreCircle = () => {
             isOrder &&
             quote?.isCanClose &&
             !isCanceledOrder) ||
+            (isProformaInvoice &&
+              quote?.isCanClose &&
+              !isCanceledProformaInvoice) ||
             (isReceipt &&
               !!canCancelReceipt &&
               quote?.status !== "Receipt.Canceled")) &&
           isEditableDocument,
         onClick: () =>
           isOrder
+            ? onClickOpenIrrelevantModal(quote)
+            : isProformaInvoice
             ? onClickOpenIrrelevantModal(quote)
             : quote?.creditCardTotal > 0
             ? onOpenCancelReceiptModalRefund(quote)

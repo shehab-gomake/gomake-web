@@ -18,7 +18,7 @@ const OtherReasonModal = ({
   onClose: () => void;
   setReasonText: (text: string) => void;
   onClickCancelOffer: () => void;
-  style?: React.CSSProperties | null; 
+  style?: React.CSSProperties | null;
 }) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
@@ -28,8 +28,10 @@ const OtherReasonModal = ({
         openModal={openModal}
         modalTitle={t("sales.quote.reasonForCancellation")}
         onClose={onClose}
-        insideStyle={style ? { ...clasess.insideStyle, ...style } : clasess.insideStyle}
-        >
+        insideStyle={
+          style ? { ...clasess.insideStyle, ...style } : clasess.insideStyle
+        }
+      >
         <div style={clasess.mainModalContainer}>
           <GomakeTextInput
             multiline={6}
@@ -44,7 +46,7 @@ const OtherReasonModal = ({
               style={clasess.sendBtn}
               onClick={onClickCancelOffer}
             >
-              {t("sales.quote.cancelOffer")}
+              {t("sales.quote.cancel")}
             </GomakePrimaryButton>
           </div>
         </div>
