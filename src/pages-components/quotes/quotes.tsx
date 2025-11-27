@@ -66,11 +66,12 @@ import { ColumnSetting } from "@/widgets/production-floor/state/production-floor
 import { FONT_FAMILY } from "@/utils/font-family";
 import { QR_CODE_LISTENER_FROM } from "@/hooks/use-qr-code-listener";
 import QrCodeReader from "@/components/qr-code-reader";
-import { useSetRecoilState } from "recoil";
+import {useRecoilValue, useSetRecoilState} from "recoil";
 import { selectedItemsState } from "@/store";
 import { FrontDeskEmailComposerWrapper } from "./components/frontdesk-email-composer-wrapper";
 import { PrintPackingSlipModalWidget } from "@/widgets/production-floor/views/board-missions-view/navigation-buttons/print-packing-slip-modal-widget";
 import { useParameters } from "@/hooks/use-parameters";
+import {printHouseHasFrontDeskFeature} from "@/store/print-house-profile";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -83,6 +84,7 @@ const QuotesListPageWidget = ({
 }: IProps) => {
   const { classes } = useStyle();
   const router = useRouter();
+  const hasFrontDeskFeature = useRecoilValue(printHouseHasFrontDeskFeature);
   const { getClientContacts, clientContacts } = useClientContactsList();
   const {
     onClickCloseModal,
@@ -807,7 +809,7 @@ const QuotesListPageWidget = ({
         isSendToClient={isSendToClient}
         isSendOrderReadyToClient={isSendOrderReadyToClient}
         showAlertModal={showAlertModal}
-        hideCheckboxes={true}
+        hideCheckboxes={hasFrontDeskFeature}
       />
       <GoMakeAlertModal
         openModal={alertNotVerifiedMailModal.isOpen}

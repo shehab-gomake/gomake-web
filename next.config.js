@@ -39,6 +39,13 @@ const nextConfig = {
       net: false,
       tls: false,
     };
+    
+    // Explicitly resolve @rails/actioncable to the ESM module
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      '@rails/actioncable': require.resolve('@rails/actioncable/app/assets/javascripts/actioncable.esm.js'),
+    };
+    
     return config;
   },
   productionBrowserSourceMaps: true,

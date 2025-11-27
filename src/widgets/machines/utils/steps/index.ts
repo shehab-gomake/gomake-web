@@ -16,6 +16,7 @@ import {foldingGluingMachineSteps} from "@/widgets/machines/utils/steps/folding-
 import {digitalEnhancementMachineSteps} from "@/widgets/machines/utils/steps/digital-enhancement-machine-steps";
 import {punchingMachineSteps} from "@/widgets/machines/utils/steps/punching-machine-steps";
 import {analogEnhancementMachineSteps} from "@/widgets/machines/utils/steps/analog-enhancement-machine-steps";
+import {windowPatchingMachineSteps} from "@/widgets/machines/utils/steps/window-patching-machine-steps";
 import {strippingMachineSteps} from "@/widgets/machines/utils/steps/stripping-machine-steps";
 import {encapsulationMachineSteps} from "@/widgets/machines/utils/steps/encapsulation-machine-steps";
 import {sideColoringMachineSteps} from "@/widgets/machines/utils/steps/side-coloring-machine-steps";
@@ -124,6 +125,9 @@ const getSteps = (categoryId: ECategoryId, isAdmin: boolean , CheckPermission?:a
             break;
         case ECategoryId.ANALOG_ENHANCEMENT_MACHINE:
             steps = analogEnhancementMachineSteps;
+            break;
+        case ECategoryId.WINDOW_PATCHING_MACHINE:
+            steps = windowPatchingMachineSteps;
             break;
         case ECategoryId.STRIPPING_MACHINES:
             steps = strippingMachineSteps;

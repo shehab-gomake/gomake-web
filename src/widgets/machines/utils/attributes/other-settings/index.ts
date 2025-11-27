@@ -40,6 +40,9 @@ const getCategoryInputs = (categoryId: string, state: Record<string, any>): any[
             return rollLaserCutMachine(state);
         case ECategoryId.ANALOG_ENHANCEMENT_MACHINE:
             return analogEnhancementMachine(state);
+        case ECategoryId.WINDOW_PATCHING_MACHINE:
+            // Window Patching Machine doesn't have Die types section
+            return [];
         case ECategoryId.STRIPPING_MACHINES:
             return [];
         case ECategoryId.COLLECTOR:
