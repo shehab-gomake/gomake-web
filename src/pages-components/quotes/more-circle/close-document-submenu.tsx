@@ -244,7 +244,7 @@ export const CloseDocumentSubmenu: React.FC<CloseDocumentSubmenuProps> = ({
         style={menuItemStyle}
         onClick={handleMenuItemClick(closeOptions[0].onClick)}
       >
-        <CustomLockIcon color="#8283BE" />
+        <TickIcon color="#8283BE" />
         <div style={rowTextStyle}>{closeOptions[0].label}</div>
       </MenuItem>
     );
@@ -253,7 +253,8 @@ export const CloseDocumentSubmenu: React.FC<CloseDocumentSubmenuProps> = ({
   return (
     <>
       <MenuItem style={menuItemStyle}>
-        <CustomLockIcon color="#8283BE" />
+        {/* <CustomLockIcon color="#8283BE" /> */}
+        <TickIcon color="#8283BE" />
         <div style={rowTextStyle}>{t("sales.quote.closeDocument")}</div>
         <div
           onMouseEnter={handleClick}
