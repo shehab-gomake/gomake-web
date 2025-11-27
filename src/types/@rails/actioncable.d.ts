@@ -14,6 +14,7 @@ declare module '@rails/actioncable' {
           disconnected?: () => void;
           received?: (data: any) => void;
           rejected?: () => void;
+          error?: (error:any) => void;
         }
       ): Subscription;
     };
