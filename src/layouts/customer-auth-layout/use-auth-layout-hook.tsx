@@ -22,6 +22,7 @@ import { ActionsIcon } from "@/icons/side-list-icons/actions";
 import { SettingsIcon } from "@/icons/side-list-icons/settings";
 import { CustomerServiceIcon } from "@/icons/side-list-icons/customer-service";
 import { AIIcon } from "@/icons/side-list-icons/ai";
+import { HpIndigoIcon } from "@/icons/side-list-icons/hp-indigo";
 import { getUserToken } from "@/services/storage-data";
 
 const useAuthLayoutHook = (
@@ -340,6 +341,11 @@ const useAuthLayoutHook = (
             title: "mailingSettings.messageLogs",
             path: "/mailing-logs",
             Permission: Permissions.SHOW_MAILING_LOGS,
+          },
+          {
+            key: "hpIndigoReport",
+            title: "HP Indigo Report",
+            path: "/hp-comparison",
           },
         ],
         icon: () => {
