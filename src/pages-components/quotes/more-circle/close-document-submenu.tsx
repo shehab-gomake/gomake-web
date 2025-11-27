@@ -3,7 +3,6 @@ import { MenuItem, Menu, ListItemIcon, ListItemText } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import LockIcon from "@mui/icons-material/Lock";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { TickIcon } from "@/icons";

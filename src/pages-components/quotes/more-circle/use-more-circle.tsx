@@ -23,7 +23,7 @@ import { Permissions } from "@/components/CheckPermission/enum";
 import { useRouter } from "next/router";
 import { TrackingIcon } from "./icons/tracking";
 import { UnLockIcon } from "./icons/unlock";
-import {useRecoilState, useRecoilValue, useSetRecoilState} from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import {
   closeOrderAsInvoiceOrDeliveryNoteState,
   isSelectedCLoseAsDeliveryNoteState,
@@ -33,7 +33,10 @@ import { PauseIcon } from "@/icons/pause-icon";
 import { ResumeIcon } from "@/icons/resume-icon";
 import { PayIcon } from "./icons/pay";
 import { StartProductionIcon } from "./icons/start-productions";
-import {printHouseHasFrontDeskFeature, printHouseProfile} from "@/store/print-house-profile";
+import {
+  printHouseHasFrontDeskFeature,
+  printHouseProfile,
+} from "@/store/print-house-profile";
 import { addOrderBoardMissionsToFileUploaderApi } from "@/services/api-service/board-missions/board-missions-table";
 import {
   fileUploaderConnectionIdState,
@@ -603,27 +606,6 @@ const useMoreCircle = () => {
         href: `/purchaseInvoice?isNewCreation=true&orderId=${quote?.id}`,
       },
       {
-        condition:
-          ((!isPauseOrder &&
-            isOrder &&
-            quote?.isCanClose &&
-            !isCanceledOrder) ||
-            (isDeliveryNote && quote?.isCanClose) ||
-            (isProformaInvoice && quote?.isCanClose) ||
-            (isInvoice && quote?.isCanClose)) &&
-          isEditableDocument &&
-          canCloseDocumentManually,
-        onClick: () =>
-          quote?.closeOrderNotes && quote?.closeOrderNotes.trim() !== ""
-            ? onClickOpenCloseOrderNotesModal(quote, "closeManually", () =>
-                onClickOpenCloseOrderModal(quote)
-              )
-            : onClickOpenCloseOrderModal(quote),
-        icon: <LockIcon color={primaryLavender(500)} />,
-        name: t("sales.quote.close"),
-      },
-
-      {
         condition: isPurchaseOrder && quote?.isCanIntake,
         onClick: () => onClickOpenInventoryIntakeModal(quote),
         icon: <PackageIcon />,
@@ -716,31 +698,33 @@ const useMoreCircle = () => {
         icon: <PayIcon color={primaryLavender(500)} />,
         name: t("sales.quote.sendPayment"),
       },
-      hasFrontDeskFeature ?   
-      {
-         condition: true,
-         component: (closeMenu: () => void) => (
-           <SendToCustomerSubmenu
-             onClickEmail={() => onClickSendToCustomerEmail(quote)}
-             onClickSMS={() => onClickSendToCustomerSMS(quote)}
-             onClickWhatsApp={() => onClickSendToCustomerWhatsApp(quote)}
-             menuItemStyle={classes.menuRowStyle}
-             rowTextStyle={classes.rowTextStyle}
-             onCloseParentMenu={closeMenu}
-           />
-         ),
-      } :
-      {
-        condition: true,
-        onClick: () =>
-          onClickSendPayment(quote, true, !!isSendOrderReadyToClient),
-        icon: <MailIcon color={primaryLavender(500)} />,
-        name: t(
-          `sales.quote.${
-            isSendOrderReadyToClient ? "sendOrderReadyToClient" : "sendToClient"
-          }`
-        ),
-      },
+      hasFrontDeskFeature
+        ? {
+            condition: true,
+            component: (closeMenu: () => void) => (
+              <SendToCustomerSubmenu
+                onClickEmail={() => onClickSendToCustomerEmail(quote)}
+                onClickSMS={() => onClickSendToCustomerSMS(quote)}
+                onClickWhatsApp={() => onClickSendToCustomerWhatsApp(quote)}
+                menuItemStyle={classes.menuRowStyle}
+                rowTextStyle={classes.rowTextStyle}
+                onCloseParentMenu={closeMenu}
+              />
+            ),
+          }
+        : {
+            condition: true,
+            onClick: () =>
+              onClickSendPayment(quote, true, !!isSendOrderReadyToClient),
+            icon: <MailIcon color={primaryLavender(500)} />,
+            name: t(
+              `sales.quote.${
+                isSendOrderReadyToClient
+                  ? "sendOrderReadyToClient"
+                  : "sendToClient"
+              }`
+            ),
+          },
       {
         condition:
           !isPauseOrder &&
