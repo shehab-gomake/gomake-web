@@ -3,10 +3,10 @@ import { MenuItem, Menu, ListItemIcon, ListItemText } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import PhoneAndroidIcon from "@mui/icons-material/PhoneAndroid";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import { FONT_FAMILY } from "@/utils/font-family";
+import MailOutlineRoundedIcon from "@mui/icons-material/MailOutlineRounded";
 
 interface SendToCustomerSubmenuProps {
   onClickEmail: () => void;
@@ -51,25 +51,31 @@ export const SendToCustomerSubmenu: React.FC<SendToCustomerSubmenuProps> = ({
 
   return (
     <>
-      <MenuItem
-        style={menuItemStyle}
-        onClick={handleClick}
-        onMouseEnter={handleClick}
-      >
-        <EmailOutlinedIcon
+      <MenuItem style={menuItemStyle}>
+        <MailOutlineRoundedIcon
           sx={{
-            fontSize: 20,
-            mr: isRTL ? 0 : 1,
-            ml: isRTL ? 1 : 0,
+            fontSize: 19,
             color: "#8283BE",
           }}
         />
         <div style={rowTextStyle}>{t("sales.quote.sendToClient")}</div>
-        {isRTL ? (
-          <ChevronLeftIcon sx={{ mr: "auto", fontSize: 20 }} />
-        ) : (
-          <ChevronRightIcon sx={{ ml: "auto", fontSize: 20 }} />
-        )}
+        <div
+          onMouseEnter={handleClick}
+          onClick={handleClick}
+          style={{
+            marginLeft: isRTL ? 0 : "auto",
+            marginRight: isRTL ? "auto" : 0,
+            cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
+          }}
+        >
+          {isRTL ? (
+            <ChevronLeftIcon sx={{ fontSize: 20 }} />
+          ) : (
+            <ChevronRightIcon sx={{ fontSize: 20 }} />
+          )}
+        </div>
       </MenuItem>
 
       <Menu
@@ -99,7 +105,7 @@ export const SendToCustomerSubmenu: React.FC<SendToCustomerSubmenuProps> = ({
           <ListItemIcon
             sx={{ minWidth: "auto", mr: isRTL ? 0 : 0.5, ml: isRTL ? 0.5 : 0 }}
           >
-            <EmailOutlinedIcon sx={{ fontSize: 20, color: "#8283BE" }} />
+            <MailOutlineRoundedIcon sx={{ fontSize: 20, color: "#8283BE" }} />
           </ListItemIcon>
           <ListItemText
             primary={t("sales.quote.email")}
