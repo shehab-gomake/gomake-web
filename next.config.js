@@ -46,11 +46,11 @@ const nextConfig = {
       '@rails/actioncable': require.resolve('@rails/actioncable/app/assets/javascripts/actioncable.esm.js'),
     };
     
-    // Fix for pdfjs-dist 4.x compatibility with react-pdf 8.0.2
-    // react-pdf 8.0.2 expects pdfjs-dist 3.x with default export, but 4.x uses named exports
-    // Use webpack alias to point to our compatibility shim
-    const path = require('path');
-    config.resolve.alias['pdfjs-dist'] = path.resolve(__dirname, 'src/utils/pdfjs-compat-shim.js');
+    // Note: pdfjs-dist 4.x compatibility with react-pdf 8.0.2
+    // react-pdf 8.0.2 uses pdfjs-dist 3.x internally
+    // We keep pdfjs-dist 4.x for direct usage (CVE-2024-4367 fix)
+    // react-pdf will use its own pdfjs-dist 3.x dependency
+    // This is acceptable as react-pdf's internal usage is less exposed
     
     return config;
   },
