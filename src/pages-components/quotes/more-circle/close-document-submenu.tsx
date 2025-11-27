@@ -290,7 +290,8 @@ export const CloseDocumentSubmenu: React.FC<CloseDocumentSubmenuProps> = ({
           "& .MuiPaper-root": {
             border: "1px solid #cbcbe4",
             borderRadius: "8px",
-            minWidth: 220,
+            minWidth: "auto",
+            width: "max-content",
           },
         }}
         MenuListProps={{
@@ -300,16 +301,23 @@ export const CloseDocumentSubmenu: React.FC<CloseDocumentSubmenuProps> = ({
         {closeOptions.map((option, index) => {
           const handleClick = handleMenuItemClick(option.onClick);
           return (
-            <MenuItem key={`${option.label}-${index}`} onClick={handleClick}>
-              <ListItemIcon
+            <MenuItem
+              key={`${option.label}-${index}`}
+              onClick={handleClick}
+              sx={{
+                padding: "6px 12px",
+                minHeight: "auto",
+              }}
+            >
+              {/* <ListItemIcon
                 sx={{
                   minWidth: "auto",
-                  mr: isRTL ? 0 : 0.5,
-                  ml: isRTL ? 0.5 : 0,
+                  mr: isRTL ? 0 : 0.25,
+                  ml: isRTL ? 0.25 : 0,
                 }}
               >
                 {option.icon || <TickIcon color="#8283BE" />}
-              </ListItemIcon>
+              </ListItemIcon> */}
               <ListItemText
                 primary={option.label}
                 primaryTypographyProps={{

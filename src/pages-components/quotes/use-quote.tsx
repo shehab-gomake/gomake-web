@@ -917,6 +917,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               onClickOpenRemoveDraftModal={onClickOpenRemoveDraftModal}
               onClickOpenDeliveryTimeModal={onClickOpenDeliveryTimeModal}
               onClickOpenPriceModal={onClickOpenPriceModal}
+              onClickOpenModal={onClickOpenOtherReasonModal}
               onClickMakePayment={onClickMakePayment}
               onClickPauseOrResume={onClickPauseOrResume}
               onClickStartProduction={onClickOpenStartProductionModal}
@@ -1361,6 +1362,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                   onClickOpenRemoveDraftModal={onClickOpenRemoveDraftModal}
                   onClickOpenDeliveryTimeModal={onClickOpenDeliveryTimeModal}
                   onClickOpenPriceModal={onClickOpenPriceModal}
+                  onClickOpenModal={onClickOpenOtherReasonModal}
                   onClickMakePayment={onClickMakePayment}
                   onClickPauseOrResume={onClickPauseOrResume}
                   onClickStartProduction={onClickOpenStartProductionModal}
@@ -1876,6 +1878,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 onClickOpenRemoveDraftModal={onClickOpenRemoveDraftModal}
                 onClickOpenDeliveryTimeModal={onClickOpenDeliveryTimeModal}
                 onClickOpenPriceModal={onClickOpenPriceModal}
+                onClickOpenModal={onClickOpenOtherReasonModal}
                 onClickMakePayment={onClickMakePayment}
                 onClickPauseOrResume={onClickPauseOrResume}
                 onClickStartProduction={onClickOpenStartProductionModal}
@@ -2709,6 +2712,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               onClickOpenPrintPDFModal={onClickOpenPrintPDFModal}
               onClickOpenDeliveryTimeModal={onClickOpenDeliveryTimeModal}
               onClickOpenPriceModal={onClickOpenPriceModal}
+              onClickOpenModal={onClickOpenOtherReasonModal}
               onClickOpenCloseOrderModal={onClickOpenCloseOrderModal}
               onClickOpenCloseOrderNotesModal={onClickOpenCloseOrderNotesModal}
               onClickSendPayment={onClickSendPayment}
@@ -3295,6 +3299,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const [openCloseOrderModal, setOpenCloseOrderModal] = useState(false);
   const [openDeliveryTimeCancelModal, setOpenDeliveryTimeCancelModal] =
     useState(false);
+  const [openOtherReasonModal, setOpenOtherReasonModal] = useState(false);
+  const [reasonText, setReasonText] = useState("");
   const [openStartProductionModal, setOpenStartProductionModal] =
     useState(false);
 
@@ -3357,6 +3363,21 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const onClickCloseDeliveryTimeModal = () => {
     setSelectedDocument(null);
     setOpenDeliveryTimeCancelModal(false);
+  };
+
+  const onClickOpenOtherReasonModal = (order) => {
+    setSelectedDocument(order);
+    setReasonText("");
+    setOpenOtherReasonModal(true);
+  };
+  const onClickCloseOtherReasonModal = () => {
+    setSelectedDocument(null);
+    setReasonText("");
+    setOpenOtherReasonModal(false);
+  };
+
+  const onClickCancelOffer = async () => {
+    await updateCancelQuote(QUOTE_STATUSES.CanceledOther, reasonText);
   };
 
   // Inventory Intake Modal State
@@ -3586,11 +3607,18 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     ));
   }, [quantityOfPackages, packageQuantities]);
 
-  const updateCancelQuote = async (quoteStatus: number) => {
+  const updateCancelQuote = async (
+    quoteStatus: number,
+    cancelText?: string
+  ) => {
     const callBack = (res) => {
       if (res?.success) {
         alertSuccessUpdate();
         getAllQuotes();
+        if (cancelText) {
+          setReasonText("");
+          setOpenOtherReasonModal(false);
+        }
       } else {
         alertFaultUpdate();
       }
@@ -3600,6 +3628,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       Document: {
         documentId: selectedDocument?.id,
         quoteStatus: quoteStatus,
+        ...(cancelText && { cancelText }),
       },
     });
   };
@@ -4423,6 +4452,12 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     openDeliveryTimeCancelModal,
     onClickCloseDeliveryTimeModal,
     onClickClosePriceModal,
+    openOtherReasonModal,
+    onClickOpenOtherReasonModal,
+    onClickCloseOtherReasonModal,
+    onClickCancelOffer,
+    setReasonText,
+    reasonText,
     t,
     patternSearch,
     tableHeaders,

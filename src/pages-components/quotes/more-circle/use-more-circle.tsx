@@ -58,6 +58,7 @@ import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
 import { EPreferences } from "@/enums/prefernces";
 import { SendToCustomerSubmenu } from "./send-to-customer-submenu";
 import { CloseDocumentSubmenu } from "./close-document-submenu";
+import { CancelDocumentSubmenu } from "./cancel-document-submenu";
 import { MailIcon } from "./icons/mail";
 
 const useMoreCircle = () => {
@@ -94,6 +95,9 @@ const useMoreCircle = () => {
     onClickDuplicate,
     onClickLoggers,
     onClickOpenIrrelevantModal,
+    onClickOpenPriceModal,
+    onClickOpenDeliveryTimeModal,
+    onClickOpenModal,
     onClickSendPayment,
     onClickOpenCloseOrderModal,
     onClickOpenCloseOrderNotesModal,
@@ -660,17 +664,29 @@ const useMoreCircle = () => {
             !isCanceledOrder) ||
             (isProformaInvoice &&
               quote?.isCanClose &&
-              !isCanceledProformaInvoice) ||
-            (isReceipt &&
-              !!canCancelReceipt &&
-              quote?.status !== "Receipt.Canceled")) &&
+              !isCanceledProformaInvoice)) &&
+          isEditableDocument,
+        component: (closeMenu: () => void) => (
+          <CancelDocumentSubmenu
+            quote={quote}
+            onClickOpenIrrelevantModal={onClickOpenIrrelevantModal}
+            onClickOpenPriceModal={onClickOpenPriceModal}
+            onClickOpenDeliveryTimeModal={onClickOpenDeliveryTimeModal}
+            onClickOpenModal={onClickOpenModal}
+            menuItemStyle={classes.menuRowStyle}
+            rowTextStyle={classes.rowTextStyle}
+            onCloseParentMenu={closeMenu}
+          />
+        ),
+      },
+      {
+        condition:
+          isReceipt &&
+          !!canCancelReceipt &&
+          quote?.status !== "Receipt.Canceled" &&
           isEditableDocument,
         onClick: () =>
-          isOrder
-            ? onClickOpenIrrelevantModal(quote)
-            : isProformaInvoice
-            ? onClickOpenIrrelevantModal(quote)
-            : quote?.creditCardTotal > 0
+          quote?.creditCardTotal > 0
             ? onOpenCancelReceiptModalRefund(quote)
             : onOpenCancelReceiptModal(quote),
         icon: <TickCancelIcon color={primaryLavender(500)} />,

@@ -32,6 +32,7 @@ import { AddRuleModal } from "../products/profits-new/widgets/add-rule-modal";
 import { useEffect, useRef } from "react";
 import { ScheduledReportsTable } from "./widgets/scheduled-reports-table/scheduled-reports-table";
 import { QuoteStatuses } from "@/widgets/quote-new/total-price-and-vat/enums";
+import { OtherReasonModal } from "@/widgets/quote-new/total-price-and-vat/other-reason-modal";
 import { CustomerCardWidget } from "@/widgets/customer-card-modal";
 import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 import { useRouter } from "next/router";
@@ -173,6 +174,10 @@ const QuotesListPageWidget = ({
     openDeliveryTimeCancelModal,
     onClickCloseDeliveryTimeModal,
     onClickClosePriceModal,
+    openOtherReasonModal,
+    onClickCloseOtherReasonModal,
+    onClickCancelOffer,
+    setReasonText,
     showCustomerModal,
     customerForEdit,
     setCustomerForEdit,
@@ -786,6 +791,12 @@ const QuotesListPageWidget = ({
         onClickDelete={() =>
           updateCancelQuote(QuoteStatuses.CANCELED_DELIVERY_TIME)
         }
+      />
+      <OtherReasonModal
+        openModal={openOtherReasonModal}
+        onClose={onClickCloseOtherReasonModal}
+        setReasonText={setReasonText}
+        onClickCancelOffer={onClickCancelOffer}
       />
       <CustomerCardWidget
         customerAction={CUSTOMER_ACTIONS.Edit}
