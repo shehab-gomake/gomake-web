@@ -94,6 +94,7 @@
     "react-international-phone": "^4.0.4",
     "react-payment-inputs": "^1.1.9",
     "react-pdf": "^8.0.2",
+    "pdfjs-dist": "^4.2.67",
     "react-phone-input-2": "^2.15.1",
     "react-qr-scanner": "^1.0.0-alpha.11",
     "react-quill": "^2.0.0",
@@ -130,5 +131,8 @@
     "jest": "29.5.0",
     "jest-environment-jsdom": "29.5.0",
     "typescript": "5.4.3"
+  },
+  "overrides": {
+    "pdfjs-dist": "^4.2.67"
   }
 }
