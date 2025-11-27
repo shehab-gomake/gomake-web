@@ -1189,7 +1189,7 @@ const QuoteNewPageWidget = ({
             `sales.quote.${DOCUMENT_TYPE[documentType]}`
           ).toLowerCase(),
         })}`}
-        cancelBtn={t("sales.quote.cancelBtn")}
+        cancelBtn={t("sales.quote.noBtn")}
         onClickDelete={() =>
           updateCancelQuote(QuoteStatuses.CANCELED_IRRELEVANT)
         }
@@ -1205,7 +1205,7 @@ const QuoteNewPageWidget = ({
             `sales.quote.${DOCUMENT_TYPE[documentType]}`
           ).toLowerCase(),
         })}`}
-        cancelBtn={t("sales.quote.cancelBtn")}
+        cancelBtn={t("sales.quote.noBtn")}
         onClickDelete={() => updateCancelQuote(QuoteStatuses.CANCELED_PRICE)}
       />
       <GoMakeDeleteModal
@@ -1219,7 +1219,7 @@ const QuoteNewPageWidget = ({
             `sales.quote.${DOCUMENT_TYPE[documentType]}`
           ).toLowerCase(),
         })}`}
-        cancelBtn={t("sales.quote.cancelBtn")}
+        cancelBtn={t("sales.quote.noBtn")}
         onClickDelete={() =>
           updateCancelQuote(QuoteStatuses.CANCELED_DELIVERY_TIME)
         }

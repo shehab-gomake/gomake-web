@@ -114,7 +114,7 @@ const ButtonsConfirmContainer = ({ isMobile }) => {
               `sales.quote.${DOCUMENT_TYPE[DOCUMENT_TYPE.quote]}`
             ).toLowerCase(),
           })}`}
-          cancelBtn={t("sales.quote.cancelBtn")}
+          cancelBtn={t("sales.quote.noBtn")}
           onClickDelete={onClickReject}
           style={{ width: "unset" }}
         />

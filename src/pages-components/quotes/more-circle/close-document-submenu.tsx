@@ -252,18 +252,26 @@ export const CloseDocumentSubmenu: React.FC<CloseDocumentSubmenuProps> = ({
 
   return (
     <>
-      <MenuItem
-        style={menuItemStyle}
-        onClick={handleClick}
-        onMouseEnter={handleClick}
-      >
+      <MenuItem style={menuItemStyle}>
         <CustomLockIcon color="#8283BE" />
         <div style={rowTextStyle}>{t("sales.quote.closeDocument")}</div>
-        {isRTL ? (
-          <ChevronLeftIcon sx={{ mr: "auto", fontSize: 20 }} />
-        ) : (
-          <ChevronRightIcon sx={{ ml: "auto", fontSize: 20 }} />
-        )}
+        <div
+          onMouseEnter={handleClick}
+          onClick={handleClick}
+          style={{
+            marginLeft: isRTL ? 0 : "auto",
+            marginRight: isRTL ? "auto" : 0,
+            cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
+          }}
+        >
+          {isRTL ? (
+            <ChevronLeftIcon sx={{ fontSize: 20 }} />
+          ) : (
+            <ChevronRightIcon sx={{ fontSize: 20 }} />
+          )}
+        </div>
       </MenuItem>
 
       <Menu
