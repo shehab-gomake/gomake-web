@@ -1872,15 +1872,10 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             ...(currentToDate ? { toDate: GetDateFormat(currentToDate) } : {}),
             ...(currentCheckFromDate
               ? { checkFromDate: GetDateFormat(currentCheckFromDate) }
-              : checkFromDate
-              ? { checkFromDate: GetDateFormat(checkFromDate) }
               : {}),
             ...(currentCheckToDate
               ? { checkToDate: GetDateFormat(currentCheckToDate) }
-              : checkToDate
-              ? { checkToDate: GetDateFormat(checkToDate) }
               : {}),
-
             ...(currentMinPrice && currentMinPrice !== ""
               ? { minPrice: currentMinPrice }
               : {}),
