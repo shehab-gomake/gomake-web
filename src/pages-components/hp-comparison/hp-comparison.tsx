@@ -112,6 +112,10 @@ const HpComparisonWidget = () => {
   const printingCostSavings = printingSummary?.totalPrintingCostSavingsIfHpChosen || 0;
   const printingTimeSavings = printingSummary?.totalPrintingTimeSavingsIfHpChosenMinutes || 0;
 
+  // Format values for the highlight section
+  const fullWorkflowCostSavings = formatCurrency(costSavings, meta?.currency || "USD");
+  const fullWorkflowTimeSavings = formatMinutesToHours(timeSavings);
+
   return (
     <div className={styles.hpRoiPageBackground}>
       <div className={styles.hpRoiContainer}>
@@ -161,27 +165,56 @@ const HpComparisonWidget = () => {
             </div>
           </div>
 
-          {/* Summary Explanation */}
-          <div className={styles.hpRoiSummaryExplanation}>
-            <p className={styles.hpRoiBodyText}>
-              HP Indigo provides a cost-effective or faster alternative in {hpCheaper} out of {totalJobs} jobs analyzed.
-            </p>
-            {hpCheaper > 0 && (
-              <p className={styles.hpRoiBodyText}>
-                If HP Indigo workflows were chosen for all applicable jobs, the total cost savings would be {formatCurrency(costSavings, meta?.currency || "USD")} with a time savings of {formatMinutesToHours(timeSavings)} hours.
-              </p>
-            )}
-            {hpFaster > 0 && (
-              <p className={styles.hpRoiBodyText}>
-                Additionally, HP Indigo workflows are faster in {hpFaster} jobs, providing operational efficiency benefits.
-              </p>
-            )}
-            {hpCheaper === 0 && (
-              <p className={styles.hpRoiBodyText}>
-                No significant cost or time advantages were found in the analyzed jobs.
-              </p>
-            )}
-          </div>
+          {/* Prominent Highlight Section */}
+          <section className="mt-6">
+            <div className="rounded-2xl bg-gradient-to-r from-indigo-600 via-indigo-500 to-sky-500 text-white p-6 md:p-8 flex flex-col md:flex-row gap-6 items-start md:items-center">
+              <div className="flex-1">
+                <h2 className="mt-1 text-2xl md:text-3xl font-bold">
+                  HP Indigo delivers strong cost and time savings.
+                </h2>
+                <p className="mt-3 text-sm md:text-base text-indigo-50">
+                  HP Indigo provides a cost-effective or faster alternative in
+                  <span className="font-semibold"> {hpCheaper} out of {totalJobs} jobs</span> analyzed.
+                  {hpCheaper > 0 && (
+                    <>
+                      {" "}If HP Indigo workflows were chosen for all applicable jobs, the total cost savings would be
+                      <span className="font-semibold"> {fullWorkflowCostSavings}</span>
+                      {" "}with a time savings of
+                      <span className="font-semibold"> {fullWorkflowTimeSavings} hours</span>.
+                    </>
+                  )}
+                  {hpFaster > 0 && (
+                    <>
+                      {" "}Additionally, HP Indigo workflows are faster in
+                      <span className="font-semibold"> {hpFaster} jobs</span>, providing operational efficiency benefits.
+                    </>
+                  )}
+                  {hpCheaper === 0 && (
+                    <> No significant cost or time advantages were found in the analyzed jobs.</>
+                  )}
+                </p>
+              </div>
+
+              <div className="flex flex-col gap-3 min-w-[220px]">
+                <div className="rounded-xl bg-white/10 px-4 py-3">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-indigo-100">
+                    Total Cost Savings (Full Workflow)
+                  </p>
+                  <p className="mt-1 text-2xl font-extrabold">
+                    {fullWorkflowCostSavings}
+                  </p>
+                </div>
+                <div className="rounded-xl bg-white/10 px-4 py-3">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-indigo-100">
+                    Total Time Savings (Full Workflow)
+                  </p>
+                  <p className="mt-1 text-2xl font-extrabold">
+                    {fullWorkflowTimeSavings} hours
+                  </p>
+                </div>
+              </div>
+            </div>
+          </section>
         </section>
 
         {/* SECTION 2 - JOB COMPARISON TABLE */}
