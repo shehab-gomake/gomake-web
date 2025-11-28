@@ -241,6 +241,13 @@ const HpComparisonWidget = () => {
                   const costDiff = job.fullFlowCostDiff;
                   const timeDiff = job.fullFlowTimeDiffMinutes;
                   
+                  // HP is better if costDiff > 0 (HP cheaper) OR timeDiff > 0 (HP faster)
+                  // Note: costDiff = client - hp, so positive means HP is cheaper
+                  //       timeDiff = client - hp, so positive means HP is faster
+                  const isHpBetter = 
+                    (costDiff !== null && costDiff !== undefined && costDiff > 0) ||
+                    (timeDiff !== null && timeDiff !== undefined && timeDiff > 0);
+                  
                   // Color logic per user requirement:
                   // diff < 0: HP is cheaper/faster (green)
                   // diff > 0: HP is more expensive/slower (red)
@@ -264,7 +271,10 @@ const HpComparisonWidget = () => {
                       : styles.hpRoiNeutral;
 
                   return (
-                    <tr key={job.jobId}>
+                    <tr 
+                      key={job.jobId}
+                      className={isHpBetter ? "bg-green-50 hover:bg-green-100" : ""}
+                    >
                       <td className={styles.hpRoiTableCellBold}>{job.jobName}</td>
                       <td>{job.segment || "-"}</td>
                       <td>{job.clientBest?.printingMachineName || "-"}</td>
