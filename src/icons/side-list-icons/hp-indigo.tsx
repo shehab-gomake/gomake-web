@@ -29,3 +29,4 @@ const HpIndigoIcon = ({ width, height, color }: IIconProps) => {
 
 export { HpIndigoIcon };
 
+

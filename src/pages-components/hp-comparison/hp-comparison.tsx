@@ -1,33 +1,14 @@
-import { useState, useEffect, useMemo } from "react";
-import { Box, CircularProgress, Typography } from "@mui/material";
-import { useStyle } from "./style";
+import { useState, useEffect } from "react";
 import { useGomakeAxios } from "@/hooks/use-gomake-axios";
-import {
-  HpComparisonResponseDto,
-  HpJobComparisonDto,
-  HpPrintingMachineAggregateDto,
-  HpWorkflowDto,
-} from "./interfaces";
-import {
-  formatCurrency,
-  formatMinutesToHours,
-  formatDate,
-  classNames,
-} from "./utils";
-import { PrimaryTable } from "@/components/tables/primary-table";
-
-type TabType = "overview" | "jobs" | "machines" | "workflows";
+import { HpComparisonResponseDto } from "./interfaces";
+import { formatCurrency, formatMinutesToHours } from "./utils";
+import styles from "./hp-comparison.module.css";
 
 const HpComparisonWidget = () => {
-  const { classes } = useStyle();
   const { callApi } = useGomakeAxios();
   const [data, setData] = useState<HpComparisonResponseDto | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<TabType>("overview");
-  const [jobSearchTerm, setJobSearchTerm] = useState("");
-  const [selectedSegment, setSelectedSegment] = useState<string>("all");
-  const [workflowFilter, setWorkflowFilter] = useState<"all" | "hp" | "client">("all");
 
   useEffect(() => {
     async function load() {
@@ -36,15 +17,47 @@ const HpComparisonWidget = () => {
         setError(null);
         const res = await callApi(
           "POST",
-          "/ui/hp-comparison/run",
+          "/v1/erp-service/run-comparison",
           {},
           true
         );
-        if (res?.success && res?.data) {
-          setData(res.data);
+        
+        console.log("🔵 HP Comparison: Full API Response:", JSON.stringify(res, null, 2));
+        console.log("🔵 HP Comparison: res.success:", res?.success);
+        console.log("🔵 HP Comparison: res.data:", res?.data);
+        console.log("🔵 HP Comparison: res.data.status:", res?.data?.status);
+        console.log("🔵 HP Comparison: res.data.data:", res?.data?.data);
+        console.log("🔵 HP Comparison: res.data.data.data:", res?.data?.data?.data);
+        
+        // Backend response structure: { status: "success", data: { data: {...} } }
+        // After api-request: res.data = backend response body
+        // So we need: res.data.data.data (the innermost data)
+        const backendResponse = res?.data;
+        const actualData = backendResponse?.data?.data;
+        
+        // Check if request was successful
+        const isSuccess = res?.success === true && actualData;
+        
+        if (isSuccess) {
+          console.log("✅ HP Comparison: Setting data:", actualData);
+          console.log("✅ HP Comparison: Data keys:", Object.keys(actualData || {}));
+          console.log("✅ HP Comparison: Has meta:", !!actualData?.meta);
+          console.log("✅ HP Comparison: Has totals:", !!actualData?.totals);
+          console.log("✅ HP Comparison: Has jobs:", !!actualData?.jobs);
+          console.log("✅ HP Comparison: Jobs count:", actualData?.jobs?.length);
+          setData(actualData);
         } else {
+          console.error("❌ HP Comparison: Failed to load data:", {
+            resSuccess: res?.success,
+            backendStatus: backendResponse?.status,
+            hasBackendData: !!backendResponse?.data,
+            hasNestedData: !!backendResponse?.data?.data,
+            hasActualData: !!actualData,
+            message: res?.message || backendResponse?.message,
+            fullResponse: res,
+          });
           throw new Error(
-            res?.message || res?.msg || "Failed to load HP comparison"
+            res?.message || backendResponse?.message || "Failed to load HP comparison"
           );
         }
       } catch (err: any) {
@@ -56,70 +69,26 @@ const HpComparisonWidget = () => {
     load();
   }, []);
 
-  // Get unique segments for filter
-  const uniqueSegments = useMemo(() => {
-    if (!data?.jobs) return [];
-    const segments = new Set(
-      data.jobs.map((j) => j.segment).filter((s): s is string => s !== null)
-    );
-    return Array.from(segments).sort();
-  }, [data]);
-
-  // Filter jobs
-  const filteredJobs = useMemo(() => {
-    if (!data?.jobs) return [];
-    return data.jobs.filter((job) => {
-      const matchesSearch =
-        job.jobName.toLowerCase().includes(jobSearchTerm.toLowerCase()) ||
-        job.jobId.toLowerCase().includes(jobSearchTerm.toLowerCase());
-      const matchesSegment =
-        selectedSegment === "all" || job.segment === selectedSegment;
-      return matchesSearch && matchesSegment;
-    });
-  }, [data, jobSearchTerm, selectedSegment]);
-
-  // Filter workflows
-  const filteredWorkflows = useMemo(() => {
-    if (!data?.workflows) return [];
-    return data.workflows.filter((wf) => {
-      if (workflowFilter === "all") return true;
-      if (workflowFilter === "hp") return wf.isHpIndigo;
-      return !wf.isHpIndigo;
-    });
-  }, [data, workflowFilter]);
-
-  // Machine summary
-  const machineSummary = useMemo(() => {
-    if (!data?.printingMachines) return { hp: { jobs: 0, cost: 0, time: 0 }, nonHp: { jobs: 0, cost: 0, time: 0 } };
-    const hp = data.printingMachines.filter((m) => m.isHpIndigo);
-    const nonHp = data.printingMachines.filter((m) => !m.isHpIndigo);
-    return {
-      hp: {
-        jobs: hp.reduce((sum, m) => sum + m.jobsCount, 0),
-        cost: hp.reduce((sum, m) => sum + m.totalPrintingCost, 0),
-        time: hp.reduce((sum, m) => sum + m.totalPrintingTimeMinutes, 0),
-      },
-      nonHp: {
-        jobs: nonHp.reduce((sum, m) => sum + m.jobsCount, 0),
-        cost: nonHp.reduce((sum, m) => sum + m.totalPrintingCost, 0),
-        time: nonHp.reduce((sum, m) => sum + m.totalPrintingTimeMinutes, 0),
-      },
-    };
-  }, [data]);
-
   if (loading) {
     return (
-      <Box sx={classes.loadingContainer}>
-        <CircularProgress />
-      </Box>
+      <div className={styles.hpRoiPageBackground}>
+        <div className={styles.hpRoiLoadingContainer}>
+          <p className={styles.hpRoiBodyText}>Loading HP Indigo ROI Comparison...</p>
+        </div>
+      </div>
     );
   }
 
   if (error) {
     return (
-      <Box sx={classes.errorContainer}>
-        <Typography sx={classes.errorText}>Error: {error}</Typography>
-      </Box>
+      <div className={styles.hpRoiPageBackground}>
+        <div className={styles.hpRoiErrorContainer}>
+          <div className={styles.hpRoiErrorBox}>
+            <h3 className={styles.hpRoiErrorTitle}>Error Loading Data</h3>
+            <p className={styles.hpRoiErrorText}>{error}</p>
+          </div>
+        </div>
+      </div>
     );
   }
 
@@ -127,452 +96,219 @@ const HpComparisonWidget = () => {
     return null;
   }
 
-  const renderHeader = () => (
-    <Box sx={classes.header}>
-      <Typography sx={classes.title}>HP Indigo ROI Comparison</Typography>
-      <Typography sx={classes.subtitle}>
-        Based on real production data from {data.meta.printHouseName}
-      </Typography>
-      <Box sx={classes.metaInfo}>
-        <Typography sx={classes.pill}>
-          Generated: {formatDate(data.meta.generatedAtUtc)}
-        </Typography>
-        <Typography sx={classes.pill}>
-          {data.meta.jobsSource} • Last {data.meta.lastMonths} months
-        </Typography>
-      </Box>
-    </Box>
-  );
+  const totals = data.totals;
+  const fullSummary = data.fullWorkflowSummary;
+  const printingSummary = data.printingOnlySummary;
+  const meta = data.meta;
+  const jobs = data.jobs || [];
+  const machines = data.printingMachines || [];
 
-  const renderSummaryCards = () => (
-    <Box sx={classes.cardsGrid}>
-      <Box sx={classes.card}>
-        <Typography sx={classes.cardLabel}>Total Jobs</Typography>
-        <Typography sx={classes.cardValue}>{data.totals.totalJobs}</Typography>
-      </Box>
-      <Box sx={classes.card}>
-        <Typography sx={classes.cardLabel}>Jobs with HP Alternative</Typography>
-        <Typography sx={classes.cardValue}>
-          {data.totals.jobsWithHpAlternative}
-        </Typography>
-        <Typography sx={classes.cardSubtext}>
-          {((data.totals.jobsWithHpAlternative / data.totals.totalJobs) * 100).toFixed(1)}% of total
-        </Typography>
-      </Box>
-      <Box sx={[classes.card, classes.cardPositive]}>
-        <Typography sx={[classes.cardLabel, classes.cardPositiveLabel]}>
-          Jobs Where HP is Cheaper (Full Workflow)
-        </Typography>
-        <Typography sx={[classes.cardValue, classes.cardPositiveValue]}>
-          {data.totals.jobsWhereHpFullFlowCheaper}
-        </Typography>
-        <Typography sx={classes.cardSubtext}>
-          {((data.totals.jobsWhereHpFullFlowCheaper / data.totals.totalJobs) * 100).toFixed(1)}% of total
-        </Typography>
-      </Box>
-      <Box sx={[classes.card, classes.cardPositive]}>
-        <Typography sx={[classes.cardLabel, classes.cardPositiveLabel]}>
-          Jobs Where HP is Faster (Full Workflow)
-        </Typography>
-        <Typography sx={[classes.cardValue, classes.cardPositiveValue]}>
-          {data.totals.jobsWhereHpFullFlowFaster}
-        </Typography>
-        <Typography sx={classes.cardSubtext}>
-          {((data.totals.jobsWhereHpFullFlowFaster / data.totals.totalJobs) * 100).toFixed(1)}% of total
-        </Typography>
-      </Box>
-      <Box sx={[classes.card, classes.cardPositive]}>
-        <Typography sx={[classes.cardLabel, classes.cardPositiveLabel]}>
-          Total Cost Savings (Full Workflow)
-        </Typography>
-        <Typography sx={[classes.cardValue, classes.cardPositiveValue]}>
-          {formatCurrency(
-            data.fullWorkflowSummary.totalCostSavingsIfHpChosen,
-            data.meta.currency
-          )}
-        </Typography>
-        <Typography sx={classes.cardSubtext}>
-          If HP was chosen for all applicable jobs
-        </Typography>
-      </Box>
-      <Box sx={[classes.card, classes.cardPositive]}>
-        <Typography sx={[classes.cardLabel, classes.cardPositiveLabel]}>
-          Total Time Savings (Full Workflow)
-        </Typography>
-        <Typography sx={[classes.cardValue, classes.cardPositiveValue]}>
-          {formatMinutesToHours(
-            data.fullWorkflowSummary.totalTimeSavingsIfHpChosenMinutes
-          )} hours
-        </Typography>
-        <Typography sx={classes.cardSubtext}>
-          If HP was chosen for all applicable jobs
-        </Typography>
-      </Box>
-    </Box>
-  );
-
-  const renderWasteComparison = () => (
-    <Box sx={classes.wastePanel}>
-      <Typography sx={classes.wasteLabel}>Waste Comparison</Typography>
-      <Box sx={classes.wasteRow}>
-        <Typography sx={classes.wasteLabel}>
-          Avg waste – Current machines:
-        </Typography>
-        <Box sx={classes.wasteBarContainer}>
-          <Box
-            sx={[classes.wasteBar, classes.wasteBarClient]}
-            style={{
-              width: `${Math.min(data.fullWorkflowSummary.averageWastePercentClient, 100)}%`,
-            }}
-          />
-        </Box>
-        <Typography sx={classes.wastePercent}>
-          {data.fullWorkflowSummary.averageWastePercentClient.toFixed(1)}%
-        </Typography>
-      </Box>
-      <Box sx={classes.wasteRow}>
-        <Typography sx={classes.wasteLabel}>Avg waste – HP Indigo:</Typography>
-        <Box sx={classes.wasteBarContainer}>
-          <Box
-            sx={[classes.wasteBar, classes.wasteBarHp]}
-            style={{
-              width: `${Math.min(data.fullWorkflowSummary.averageWastePercentHp, 100)}%`,
-            }}
-          />
-        </Box>
-        <Typography sx={classes.wastePercent}>
-          {data.fullWorkflowSummary.averageWastePercentHp.toFixed(1)}%
-        </Typography>
-      </Box>
-    </Box>
-  );
-
-  const renderPrintingOnlySummary = () => (
-    <Box sx={classes.cardsGrid} style={{ gridTemplateColumns: "repeat(2, 1fr)" }}>
-      <Box sx={classes.card}>
-        <Typography sx={classes.cardLabel}>
-          Total Printing Cost Savings
-        </Typography>
-        <Typography sx={[classes.cardValue, classes.badgePositive]}>
-          {formatCurrency(
-            data.printingOnlySummary.totalPrintingCostSavingsIfHpChosen,
-            data.meta.currency
-          )}
-        </Typography>
-      </Box>
-      <Box sx={classes.card}>
-        <Typography sx={classes.cardLabel}>
-          Total Printing Time Savings
-        </Typography>
-        <Typography sx={[classes.cardValue, classes.badgePositive]}>
-          {formatMinutesToHours(
-            data.printingOnlySummary.totalPrintingTimeSavingsIfHpChosenMinutes
-          )} hours
-        </Typography>
-      </Box>
-    </Box>
-  );
-
-  const renderTabs = () => (
-    <Box sx={{ width: "100%" }}>
-      <Box sx={classes.tabsContainer}>
-        <Box
-          sx={[classes.tab, activeTab === "overview" && classes.tabActive]}
-          onClick={() => setActiveTab("overview")}
-        >
-          Overview
-        </Box>
-        <Box
-          sx={[classes.tab, activeTab === "jobs" && classes.tabActive]}
-          onClick={() => setActiveTab("jobs")}
-        >
-          By Job
-        </Box>
-        <Box
-          sx={[classes.tab, activeTab === "machines" && classes.tabActive]}
-          onClick={() => setActiveTab("machines")}
-        >
-          By Machine
-        </Box>
-        {data.workflows && data.workflows.length > 0 && (
-          <Box
-            sx={[classes.tab, activeTab === "workflows" && classes.tabActive]}
-            onClick={() => setActiveTab("workflows")}
-          >
-            Raw Workflows
-          </Box>
-        )}
-      </Box>
-      <Box sx={classes.tabContent}>
-        {activeTab === "overview" && renderOverviewTab()}
-        {activeTab === "jobs" && renderJobsTab()}
-        {activeTab === "machines" && renderMachinesTab()}
-        {activeTab === "workflows" && renderWorkflowsTab()}
-      </Box>
-    </Box>
-  );
-
-  const renderOverviewTab = () => (
-    <Box>
-      <Typography sx={classes.summaryText}>
-        HP Indigo provides a cheaper or faster alternative on{" "}
-        {data.totals.jobsWhereHpFullFlowCheaper} of {data.totals.totalJobs} jobs
-        analyzed.
-      </Typography>
-      <Box sx={classes.chartContainer}>
-        <Box sx={classes.chartBar}>
-          <Typography sx={classes.chartLabel}>
-            Jobs where HP is cheaper (full workflow)
-          </Typography>
-          <Box sx={classes.chartBarContainer}>
-            <Box
-              sx={classes.chartBarFill}
-              style={{
-                width: `${
-                  (data.totals.jobsWhereHpFullFlowCheaper / data.totals.totalJobs) * 100
-                }%`,
-              }}
-            >
-              <Typography sx={classes.chartPercent}>
-                {((data.totals.jobsWhereHpFullFlowCheaper / data.totals.totalJobs) * 100).toFixed(1)}%
-              </Typography>
-            </Box>
-          </Box>
-        </Box>
-        <Box sx={classes.chartBar}>
-          <Typography sx={classes.chartLabel}>
-            Jobs where HP is cheaper (printing only)
-          </Typography>
-          <Box sx={classes.chartBarContainer}>
-            <Box
-              sx={classes.chartBarFill}
-              style={{
-                width: `${
-                  (data.totals.jobsWhereHpPrintingCheaper / data.totals.totalJobs) * 100
-                }%`,
-              }}
-            >
-              <Typography sx={classes.chartPercent}>
-                {((data.totals.jobsWhereHpPrintingCheaper / data.totals.totalJobs) * 100).toFixed(1)}%
-              </Typography>
-            </Box>
-          </Box>
-        </Box>
-      </Box>
-    </Box>
-  );
-
-  const renderJobsTab = () => {
-    const headers = [
-      { name: "Job Name", id: "jobName" },
-      { name: "Segment", id: "segment" },
-      { name: "Client Machine", id: "clientMachine" },
-      { name: "HP Machine", id: "hpMachine" },
-      { name: "Full-Flow Cost Client", id: "clientCost" },
-      { name: "Full-Flow Cost HP", id: "hpCost" },
-      { name: "Cost Diff", id: "costDiff" },
-      { name: "Time Diff (hours)", id: "timeDiff" },
-    ];
-
-    const rows = filteredJobs.map((job) => ({
-      jobName: job.jobName,
-      segment: job.segment || "-",
-      clientMachine: job.clientBest?.printingMachineName || "-",
-      hpMachine: job.hpBest?.printingMachineName || "-",
-      clientCost: job.clientBest
-        ? formatCurrency(job.clientBest.totalCost, data.meta.currency)
-        : "-",
-      hpCost: job.hpBest
-        ? formatCurrency(job.hpBest.totalCost, data.meta.currency)
-        : "-",
-      costDiff: job.fullFlowCostDiff !== null && job.fullFlowCostDiff !== undefined
-        ? (
-            <Typography
-              sx={
-                job.fullFlowCostDiff > 0
-                  ? classes.badgePositive
-                  : classes.badgeNegative
-              }
-            >
-              {job.fullFlowCostDiff > 0 ? "+" : ""}
-              {formatCurrency(job.fullFlowCostDiff, data.meta.currency)}
-            </Typography>
-          )
-        : "-",
-      timeDiff: job.fullFlowTimeDiffMinutes !== null && job.fullFlowTimeDiffMinutes !== undefined
-        ? (
-            <Typography
-              sx={
-                job.fullFlowTimeDiffMinutes > 0
-                  ? classes.badgePositive
-                  : classes.badgeNegative
-              }
-            >
-              {job.fullFlowTimeDiffMinutes > 0 ? "+" : ""}
-              {formatMinutesToHours(job.fullFlowTimeDiffMinutes)}h
-            </Typography>
-          )
-        : "-",
-    }));
-
-    return (
-      <Box>
-        <Box sx={classes.filtersContainer}>
-          <input
-            type="text"
-            placeholder="Search by job name or ID..."
-            value={jobSearchTerm}
-            onChange={(e) => setJobSearchTerm(e.target.value)}
-            style={classes.filterInput}
-          />
-          <select
-            value={selectedSegment}
-            onChange={(e) => setSelectedSegment(e.target.value)}
-            style={classes.filterSelect}
-          >
-            <option value="all">All Segments</option>
-            {uniqueSegments.map((seg) => (
-              <option key={seg} value={seg}>
-                {seg}
-              </option>
-            ))}
-          </select>
-        </Box>
-        <Box sx={classes.tableContainer}>
-          <PrimaryTable rows={rows} headers={headers} />
-        </Box>
-      </Box>
-    );
-  };
-
-  const renderMachinesTab = () => {
-    const headers = [
-      { name: "Machine Name", id: "machineName" },
-      { name: "Type", id: "type" },
-      { name: "Jobs Count", id: "jobsCount" },
-      { name: "Total Printing Cost", id: "totalCost" },
-      { name: "Total Printing Time (hours)", id: "totalTime" },
-    ];
-
-    const rows = data.printingMachines.map((machine) => ({
-      machineName: machine.machineName,
-      type: machine.isHpIndigo ? (
-        <Typography sx={[classes.badge, classes.badgeHp]}>HP Indigo</Typography>
-      ) : (
-        "Client Machine"
-      ),
-      jobsCount: machine.jobsCount,
-      totalCost: formatCurrency(machine.totalPrintingCost, data.meta.currency),
-      totalTime: formatMinutesToHours(machine.totalPrintingTimeMinutes),
-    }));
-
-    return (
-      <Box>
-        <Box sx={classes.cardsGrid} style={{ gridTemplateColumns: "repeat(2, 1fr)", marginBottom: 24 }}>
-          <Box sx={classes.card}>
-            <Typography sx={classes.cardLabel}>HP Indigo Machines</Typography>
-            <Typography sx={classes.cardValue}>{machineSummary.hp.jobs}</Typography>
-            <Typography sx={classes.cardSubtext}>
-              {formatCurrency(machineSummary.hp.cost, data.meta.currency)} •{" "}
-              {formatMinutesToHours(machineSummary.hp.time)}h
-            </Typography>
-          </Box>
-          <Box sx={classes.card}>
-            <Typography sx={classes.cardLabel}>Client Machines</Typography>
-            <Typography sx={classes.cardValue}>{machineSummary.nonHp.jobs}</Typography>
-            <Typography sx={classes.cardSubtext}>
-              {formatCurrency(machineSummary.nonHp.cost, data.meta.currency)} •{" "}
-              {formatMinutesToHours(machineSummary.nonHp.time)}h
-            </Typography>
-          </Box>
-        </Box>
-        <Box sx={classes.tableContainer}>
-          <PrimaryTable rows={rows} headers={headers} />
-        </Box>
-      </Box>
-    );
-  };
-
-  const renderWorkflowsTab = () => {
-    if (!data.workflows || data.workflows.length === 0) {
-      return <Typography>No workflow data available.</Typography>;
-    }
-
-    const headers = [
-      { name: "Job Name", id: "jobName" },
-      { name: "Workflow ID", id: "workflowId" },
-      { name: "Printing Machine", id: "machine" },
-      { name: "Type", id: "type" },
-      { name: "Total Cost", id: "totalCost" },
-      { name: "Total Time (hours)", id: "totalTime" },
-      { name: "Waste %", id: "waste" },
-    ];
-
-    const rows = filteredWorkflows.map((wf) => ({
-      jobName: wf.jobName,
-      workflowId: wf.workflowId,
-      machine: wf.printingMachineName,
-      type: wf.isHpIndigo ? (
-        <Typography sx={[classes.badge, classes.badgeHp]}>HP Indigo</Typography>
-      ) : (
-        "Client"
-      ),
-      totalCost: formatCurrency(wf.totalCost, data.meta.currency),
-      totalTime: formatMinutesToHours(wf.totalTimeMinutes),
-      waste: `${wf.wastePercent.toFixed(1)}%`,
-    }));
-
-    return (
-      <Box>
-        <Box sx={classes.filtersContainer}>
-          <label>
-            <input
-              type="radio"
-              value="all"
-              checked={workflowFilter === "all"}
-              onChange={(e) => setWorkflowFilter(e.target.value as any)}
-              style={{ marginRight: 8 }}
-            />
-            All
-          </label>
-          <label>
-            <input
-              type="radio"
-              value="hp"
-              checked={workflowFilter === "hp"}
-              onChange={(e) => setWorkflowFilter(e.target.value as any)}
-              style={{ marginRight: 8 }}
-            />
-            HP Indigo Only
-          </label>
-          <label>
-            <input
-              type="radio"
-              value="client"
-              checked={workflowFilter === "client"}
-              onChange={(e) => setWorkflowFilter(e.target.value as any)}
-              style={{ marginRight: 8 }}
-            />
-            Client Machines Only
-          </label>
-        </Box>
-        <Box sx={classes.tableContainer}>
-          <PrimaryTable rows={rows} headers={headers} />
-        </Box>
-      </Box>
-    );
-  };
+  // Extract summary values
+  const totalJobs = totals?.totalJobs || 0;
+  const hpCheaper = totals?.jobsWhereHpFullFlowCheaper || 0;
+  const hpFaster = totals?.jobsWhereHpFullFlowFaster || 0;
+  const costSavings = fullSummary?.totalCostSavingsIfHpChosen || 0;
+  const timeSavings = fullSummary?.totalTimeSavingsIfHpChosenMinutes || 0;
+  const printingCostSavings = printingSummary?.totalPrintingCostSavingsIfHpChosen || 0;
+  const printingTimeSavings = printingSummary?.totalPrintingTimeSavingsIfHpChosenMinutes || 0;
 
   return (
-    <Box sx={classes.mainContainer}>
-      {renderHeader()}
-      {renderSummaryCards()}
-      {renderWasteComparison()}
-      {renderPrintingOnlySummary()}
-      {renderTabs()}
-    </Box>
+    <div className={styles.hpRoiPageBackground}>
+      <div className={styles.hpRoiContainer}>
+        <h1 className={styles.hpRoiHeader}>HP Indigo ROI Comparison</h1>
+
+        {/* SECTION 1 - SUMMARY WITH CARDS */}
+        <section>
+          <h2 className={styles.hpRoiSectionTitle}>Summary</h2>
+          
+          {/* Summary Cards */}
+          <div className={styles.hpRoiSummaryCards}>
+            <div className={styles.hpRoiSummaryCard}>
+              <div className={styles.hpRoiSummaryCardLabel}>Total Jobs</div>
+              <div className={styles.hpRoiSummaryCardValue}>{totalJobs}</div>
+            </div>
+            <div className={styles.hpRoiSummaryCard}>
+              <div className={styles.hpRoiSummaryCardLabel}>HP Cheaper Jobs</div>
+              <div className={styles.hpRoiSummaryCardValue}>{hpCheaper}</div>
+            </div>
+            <div className={styles.hpRoiSummaryCard}>
+              <div className={styles.hpRoiSummaryCardLabel}>HP Faster Jobs</div>
+              <div className={styles.hpRoiSummaryCardValue}>{hpFaster}</div>
+            </div>
+            <div className={styles.hpRoiSummaryCard}>
+              <div className={styles.hpRoiSummaryCardLabel}>Full Workflow Cost Savings</div>
+              <div className={styles.hpRoiSummaryCardValue}>
+                {formatCurrency(costSavings, meta?.currency || "USD")}
+              </div>
+            </div>
+            <div className={styles.hpRoiSummaryCard}>
+              <div className={styles.hpRoiSummaryCardLabel}>Full Workflow Time Savings</div>
+              <div className={styles.hpRoiSummaryCardValue}>
+                {formatMinutesToHours(timeSavings)} hours
+              </div>
+            </div>
+            <div className={styles.hpRoiSummaryCard}>
+              <div className={styles.hpRoiSummaryCardLabel}>Printing-Only Cost Savings</div>
+              <div className={styles.hpRoiSummaryCardValue}>
+                {formatCurrency(printingCostSavings, meta?.currency || "USD")}
+              </div>
+            </div>
+            <div className={styles.hpRoiSummaryCard}>
+              <div className={styles.hpRoiSummaryCardLabel}>Printing-Only Time Savings</div>
+              <div className={styles.hpRoiSummaryCardValue}>
+                {formatMinutesToHours(printingTimeSavings)} hours
+              </div>
+            </div>
+          </div>
+
+          {/* Summary Explanation */}
+          <div className={styles.hpRoiSummaryExplanation}>
+            <p className={styles.hpRoiBodyText}>
+              HP Indigo provides a cost-effective or faster alternative in {hpCheaper} out of {totalJobs} jobs analyzed.
+            </p>
+            {hpCheaper > 0 && (
+              <p className={styles.hpRoiBodyText}>
+                If HP Indigo workflows were chosen for all applicable jobs, the total cost savings would be {formatCurrency(costSavings, meta?.currency || "USD")} with a time savings of {formatMinutesToHours(timeSavings)} hours.
+              </p>
+            )}
+            {hpFaster > 0 && (
+              <p className={styles.hpRoiBodyText}>
+                Additionally, HP Indigo workflows are faster in {hpFaster} jobs, providing operational efficiency benefits.
+              </p>
+            )}
+            {hpCheaper === 0 && (
+              <p className={styles.hpRoiBodyText}>
+                No significant cost or time advantages were found in the analyzed jobs.
+              </p>
+            )}
+          </div>
+        </section>
+
+        {/* SECTION 2 - JOB COMPARISON TABLE */}
+        <section>
+          <h2 className={styles.hpRoiSectionTitle}>Job Comparison</h2>
+          <div className={styles.hpRoiTableContainer}>
+            <table className={styles.hpRoiTable}>
+              <thead>
+                <tr>
+                  <th>Job Name</th>
+                  <th>Segment</th>
+                  <th>Client Machine</th>
+                  <th className={styles.hpRoiTableHeaderNumeric}>Client Total Cost</th>
+                  <th className={styles.hpRoiTableHeaderNumeric}>Client Total Time</th>
+                  <th>HP Machine</th>
+                  <th className={styles.hpRoiTableHeaderNumeric}>HP Total Cost</th>
+                  <th className={styles.hpRoiTableHeaderNumeric}>HP Total Time</th>
+                  <th className={styles.hpRoiTableHeaderNumeric}>Cost Diff</th>
+                  <th className={styles.hpRoiTableHeaderNumeric}>Time Diff (hours)</th>
+                </tr>
+              </thead>
+              <tbody>
+                {jobs.map((job) => {
+                  const costDiff = job.fullFlowCostDiff;
+                  const timeDiff = job.fullFlowTimeDiffMinutes;
+                  
+                  // Color logic per user requirement:
+                  // diff < 0: HP is cheaper/faster (green)
+                  // diff > 0: HP is more expensive/slower (red)
+                  // Note: Assuming diff = client - hp, so negative means HP is cheaper
+                  const costDiffClass =
+                    costDiff === null || costDiff === undefined
+                      ? styles.hpRoiNeutral
+                      : costDiff < 0
+                      ? styles.hpRoiPositive
+                      : costDiff > 0
+                      ? styles.hpRoiNegative
+                      : styles.hpRoiNeutral;
+                  
+                  const timeDiffClass =
+                    timeDiff === null || timeDiff === undefined
+                      ? styles.hpRoiNeutral
+                      : timeDiff < 0
+                      ? styles.hpRoiPositive
+                      : timeDiff > 0
+                      ? styles.hpRoiNegative
+                      : styles.hpRoiNeutral;
+
+                  return (
+                    <tr key={job.jobId}>
+                      <td className={styles.hpRoiTableCellBold}>{job.jobName}</td>
+                      <td>{job.segment || "-"}</td>
+                      <td>{job.clientBest?.printingMachineName || "-"}</td>
+                      <td className={styles.hpRoiTableCellNumeric}>
+                        {job.clientBest
+                          ? formatCurrency(job.clientBest.totalCost, meta?.currency || "USD")
+                          : "-"}
+                      </td>
+                      <td className={styles.hpRoiTableCellNumeric}>
+                        {job.clientBest
+                          ? formatMinutesToHours(job.clientBest.totalTimeMinutes) + "h"
+                          : "-"}
+                      </td>
+                      <td>{job.hpBest?.printingMachineName || "-"}</td>
+                      <td className={styles.hpRoiTableCellNumeric}>
+                        {job.hpBest
+                          ? formatCurrency(job.hpBest.totalCost, meta?.currency || "USD")
+                          : "-"}
+                      </td>
+                      <td className={styles.hpRoiTableCellNumeric}>
+                        {job.hpBest
+                          ? formatMinutesToHours(job.hpBest.totalTimeMinutes) + "h"
+                          : "-"}
+                      </td>
+                      <td className={`${styles.hpRoiTableCellNumeric} ${costDiffClass}`}>
+                        {costDiff !== null && costDiff !== undefined
+                          ? `${costDiff > 0 ? "+" : ""}${formatCurrency(costDiff, meta?.currency || "USD")}`
+                          : "-"}
+                      </td>
+                      <td className={`${styles.hpRoiTableCellNumeric} ${timeDiffClass}`}>
+                        {timeDiff !== null && timeDiff !== undefined
+                          ? `${timeDiff > 0 ? "+" : ""}${formatMinutesToHours(timeDiff)}h`
+                          : "-"}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        {/* SECTION 3 - MACHINE SUMMARY TABLE */}
+        <section>
+          <h2 className={styles.hpRoiSectionTitle}>Machine Summary</h2>
+          <div className={styles.hpRoiTableContainer}>
+            <table className={styles.hpRoiTable}>
+              <thead>
+                <tr>
+                  <th>Machine Name</th>
+                  <th>Is HP Indigo</th>
+                  <th className={styles.hpRoiTableHeaderNumeric}>Jobs Count</th>
+                  <th className={styles.hpRoiTableHeaderNumeric}>Total Printing Cost</th>
+                  <th className={styles.hpRoiTableHeaderNumeric}>Total Printing Time (minutes)</th>
+                </tr>
+              </thead>
+              <tbody>
+                {machines.map((machine) => (
+                  <tr key={machine.machineId}>
+                    <td className={styles.hpRoiTableCellBold}>{machine.machineName}</td>
+                    <td>{machine.isHpIndigo ? "Yes" : "No"}</td>
+                    <td className={styles.hpRoiTableCellNumeric}>{machine.jobsCount}</td>
+                    <td className={styles.hpRoiTableCellNumeric}>
+                      {formatCurrency(machine.totalPrintingCost, meta?.currency || "USD")}
+                    </td>
+                    <td className={styles.hpRoiTableCellNumeric}>
+                      {machine.totalPrintingTimeMinutes}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+    </div>
   );
 };
 
 export { HpComparisonWidget };
-
