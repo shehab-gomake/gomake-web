@@ -62,6 +62,8 @@ const PriceListPageWidget = ({
     updateQuoteItem,
     setUrgentOrder,
     setPrintingNotes,
+    setQualityIssueReason,
+    qualityIssueReason,
     setPriceRecovery,
     onCloseMultiParameterModal,
     duplicateSection,
@@ -316,6 +318,8 @@ const PriceListPageWidget = ({
                 includeVAT={includeVAT}
                 setIncludeVAT={setIncludeVAT}
                 sampleType={sampleType}
+                qualityIssueReason={qualityIssueReason}
+                setQualityIssueReason={setQualityIssueReason}
                 errorMsg={errorMsg}
                 calculationProduct={calculationProduct}
                 subProducts={subProducts}
