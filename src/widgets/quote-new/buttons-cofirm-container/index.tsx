@@ -15,6 +15,7 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import { useSnackBar } from "@/hooks/use-snack-bar";
 import { areAllItemsChecked } from "@/utils/helpers";
 import { AddAttachmentsModal } from "@/widgets/quote-new/modals-widgets/add-attachments-modal/add-attachments-modal";
+import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 
 const ButtonsConfirmContainer = ({
   onClickOpenAddAttachmentsModal,
@@ -137,8 +138,12 @@ const ButtonsConfirmContainer = ({
         yesBtn={t("sales.quote.yesBtn")}
         openModal={openRejectModal}
         onClose={onClickCloseRejectModal}
-        subTitle={t("sales.quote.subTitleCancelModal")}
-        cancelBtn={t("sales.quote.cancelBtn")}
+        subTitle={`${t("sales.quote.subTitleCancelModal", {
+          documentName: t(
+            `sales.quote.${DOCUMENT_TYPE[DOCUMENT_TYPE.quote]}`
+          ).toLowerCase(),
+        })}?`}
+        cancelBtn={t("sales.quote.noBtn")}
         onClickDelete={onClickReject}
       />
 

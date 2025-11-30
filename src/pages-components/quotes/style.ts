@@ -234,6 +234,25 @@ const useStyle = () => {
         color: primaryColor(400),
         marginBottom: 7,
       },
+      checkCellContainer: {
+        overflow: "hidden",
+        lineHeight: "1.4",
+      },
+      checkItem: {
+        marginBottom: "4px",
+      },
+      checkItemLast: {
+        marginBottom: "0",
+      },
+      showMoreLink: {
+        cursor: "pointer",
+        color: "#000",
+        textDecoration: "underline",
+        display: "inline-block",
+        fontWeight: 500,
+        fontSize: "0.9rem",
+        "&:hover": { color: "#717273" },
+      },
     };
   }, [i18next.language, t, theme]);
   return {

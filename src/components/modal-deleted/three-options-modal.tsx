@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { IconButton, Modal, Tooltip } from "@mui/material";
+import { IconButton, Modal, Tooltip, Box } from "@mui/material";
 import { GomakePrimaryButton } from "../button";
 import { useStyle } from "./style";
 import { ModalType } from "@/enums";
@@ -24,6 +24,8 @@ const ThreeOptionsModal = ({
   withClose = true,
   withRoundedCloseIcon = false,
   children,
+  bottomActionLabel,
+  onBottomAction,
   ...props
 }: any) => {
   const { classes } = useStyle({ modalType: modalType });
@@ -97,6 +99,24 @@ const ThreeOptionsModal = ({
               {t(cancelBtn)}
             </GomakePrimaryButton>
           </div>
+          {bottomActionLabel && onBottomAction && (
+            <Box style={classes.bottomActionContainer}>
+              <Box
+                component="button"
+                onClick={() => {
+                  onClose();
+                  setTimeout(() => {
+                    onBottomAction();
+                  }, 100);
+                }}
+                style={classes.bottomActionButton}
+              >
+                {typeof bottomActionLabel === "string"
+                  ? t(bottomActionLabel)
+                  : bottomActionLabel}
+              </Box>
+            </Box>
+          )}
         </div>
       </div>
     </Modal>

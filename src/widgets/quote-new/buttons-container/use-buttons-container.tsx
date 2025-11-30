@@ -830,6 +830,8 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
   const [paymentModalTitle, setPaymentModalTitle] = useState("");
   const [sendPayment, setSendPayment] =
     useRecoilState<StatePayment>(sendPaymentState);
+  const [openAddProductWithAIModal, setOpenAddProductWithAIModal] =
+    useState(false);
 
   const onClickCloseSendPaymentModal = () => {
     setOpenSendPaymentModal(false);
@@ -994,6 +996,10 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     paymentModalTitle,
     isSendToClient,
     isSendOrderReadyToClient,
+    openAddProductWithAIModal,
+    onClickOpenAddProductWithAIModal: () => setOpenAddProductWithAIModal(true),
+    onClickCloseAddProductWithAIModal: () =>
+      setOpenAddProductWithAIModal(false),
   };
 };
 

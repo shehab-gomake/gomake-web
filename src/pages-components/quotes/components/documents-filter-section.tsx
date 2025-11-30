@@ -100,6 +100,11 @@ interface IDocumentsFilterSectionProps {
   toDate: Date | null;
   onSelectDeliveryTimeDates: (dates: any) => void;
 
+  // Check Due Date range (for receipts and supplier payments)
+  checkFromDate: Date | null;
+  checkToDate: Date | null;
+  onSelectCheckDueDateRange: (dates: any) => void;
+
   // Search
   patternSearch: string;
   onChangeDocumentSearch: (value: string) => void;
@@ -177,6 +182,9 @@ const DocumentsFilterSection: React.FC<IDocumentsFilterSectionProps> = ({
   fromDate,
   toDate,
   onSelectDeliveryTimeDates,
+  checkFromDate,
+  checkToDate,
+  onSelectCheckDueDateRange,
   patternSearch,
   onChangeDocumentSearch,
   onClickSearchFilter,
@@ -209,7 +217,9 @@ const DocumentsFilterSection: React.FC<IDocumentsFilterSectionProps> = ({
     minPrice ||
     maxPrice ||
     fromDate ||
-    toDate;
+    toDate ||
+    checkFromDate ||
+    checkToDate;
 
   const filters: IFilterItem[] = [
     {
@@ -556,6 +566,39 @@ const DocumentsFilterSection: React.FC<IDocumentsFilterSectionProps> = ({
         />
       ),
     },
+    // Check Due Date range filter (for receipts and supplier payments)
+    ...(isReceipt || isSupplierPayments
+      ? [
+          {
+            id: "checkDueDateRange",
+            label: t("supplierPayments.checkDueDateRange"),
+            component: (
+              <ControlledDateRangePicker
+                startDate={checkFromDate}
+                endDate={checkToDate}
+                onChange={(start, end) => {
+                  onSelectCheckDueDateRange([start, end]);
+                }}
+                allowClear={true}
+                allowManualInput={true}
+                buttonStyle={{
+                  borderRadius:
+                    "var(--theme-input-border-radius, var(--theme-radius-md, 4px))",
+                  border:
+                    "var(--theme-input-border, 1px solid var(--theme-border-color, transparent))",
+                  boxShadow:
+                    "var(--theme-input-shadow, 0px 1px 10px rgba(0, 0, 0, 0.08))",
+                  WebkitBoxShadow:
+                    "var(--theme-input-shadow, 0px 1px 10px rgba(0, 0, 0, 0.08))",
+                }}
+                textStyle={{
+                  ...FONT_FAMILY.Heebo(500, 13),
+                }}
+              />
+            ),
+          },
+        ]
+      : []),
   ];
 
   const actionButtons = (

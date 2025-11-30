@@ -1,11 +1,9 @@
 import { useTranslation } from "react-i18next";
-import {
-  GoMakeModal,
-  GomakePrimaryButton,
-  GomakeTextInput,
-} from "@/components";
+import { GoMakeModal, GomakeTextInput } from "@/components";
+import { PrimaryButton } from "@/components/button/primary-button";
 
 import { useStyle } from "./style";
+import { SecondaryButton } from "@/components/button/secondary-button";
 
 const OtherReasonModal = ({
   openModal,
@@ -18,34 +16,45 @@ const OtherReasonModal = ({
   onClose: () => void;
   setReasonText: (text: string) => void;
   onClickCancelOffer: () => void;
-  style?: React.CSSProperties | null; 
+  style?: React.CSSProperties | null;
 }) => {
   const { t } = useTranslation();
-  const { clasess } = useStyle();
+  const { classes } = useStyle();
   return (
     <>
       <GoMakeModal
         openModal={openModal}
         modalTitle={t("sales.quote.reasonForCancellation")}
         onClose={onClose}
-        insideStyle={style ? { ...clasess.insideStyle, ...style } : clasess.insideStyle}
-        >
-        <div style={clasess.mainModalContainer}>
+        insideStyle={
+          style ? { ...classes.insideStyle, ...style } : classes.insideStyle
+        }
+        modalTitleColor={"black"}
+      >
+        <div style={classes.mainModalContainer}>
           <GomakeTextInput
             multiline={6}
-            style={clasess.textInputStyle}
+            style={classes.textInputStyle}
             placeholder={t("sales.quote.reasonForCancellation")}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
               setReasonText(event.target.value)
             }
           />
-          <div style={clasess.btnContainer}>
-            <GomakePrimaryButton
-              style={clasess.sendBtn}
-              onClick={onClickCancelOffer}
+          <div style={classes.btnContainer}>
+            <PrimaryButton
+              style={classes.cancelBtn}
+              onClick={onClose}
+              variant="outlined"
             >
-              {t("sales.quote.cancelOffer")}
-            </GomakePrimaryButton>
+              {t("sales.quote.close")}
+            </PrimaryButton>
+            <SecondaryButton
+              style={classes.sendBtn}
+              onClick={onClickCancelOffer}
+              variant="contained"
+            >
+              {t("sales.quote.cancelBtn")}
+            </SecondaryButton>
           </div>
         </div>
       </GoMakeModal>
