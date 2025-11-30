@@ -79,7 +79,7 @@ export enum Permissions {
   SHOW_CPA_CODE = "showCpaCode",
   SHOW_GROUPS = "showGroups",
   SHOW_FRONT_DESK = "ShowFrontDesk",
-
+  SHOW_HP_INDIGO = "ShowHpIndigo",
   //orders group
   SHOW_ORDERS = "ShowOrders",
   SHOW_COSTS_IN_ORDERS = "IsShowCostsInOrders",

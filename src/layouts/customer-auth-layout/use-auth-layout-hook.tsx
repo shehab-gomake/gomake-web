@@ -346,7 +346,7 @@ const useAuthLayoutHook = (
             key: "hpIndigoReport",
             title: "HP Indigo Report",
             path: "/hp-comparison",
-            Permission: undefined, // No permission required - all users can access HP Indigo Report
+            Permission: Permissions.SHOW_HP_INDIGO, // No permission required - all users can access HP Indigo Report
           },
         ],
         icon: () => {
