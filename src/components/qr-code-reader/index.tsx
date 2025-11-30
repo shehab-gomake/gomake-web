@@ -8,7 +8,7 @@ import {
 import { moveOrderToDoneApi } from "@/services/api-service/generic-doc/documents-api";
 import { ModalType, QrCodeAction } from "@/enums";
 import { QR_CODE_LISTENER_FROM } from "@/hooks/use-qr-code-listener";
-import {useRecoilState, useRecoilValue} from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { selectedMissionsState } from "@/widgets/production-floor/state/boards";
 import { boardMissionsStationsState } from "@/widgets/production-floor/views/board-missions-view/stations/state";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
@@ -23,7 +23,7 @@ import { useIsMobile } from "@/hooks/use-responsive";
 import { useFrontDeskEmailIntegration } from '@/pages-components/quotes/hooks/use-frontdesk-email-integration';
 import { FrontDeskEmailComposerWrapper } from '@/pages-components/quotes/components/frontdesk-email-composer-wrapper';
 import { DOCUMENT_TYPE } from '@/pages-components/quotes/enums';
-import {printHouseHasFrontDeskFeature} from "@/store/print-house-profile";
+import { printHouseHasFrontDeskFeature } from "@/store/print-house-profile";
 
 interface IProps {
     qrCodeListenerFrom: QR_CODE_LISTENER_FROM;
@@ -93,7 +93,7 @@ const QrCodeReader = (props: IProps) => {
 
     const handleBoardMissionsQRCodeAction = async (barcode: string) => {
         return new Promise(async (resolve, reject) => {
-            if(barcode && barcode.startsWith("https")) {
+            if (barcode && barcode.startsWith("https")) {
                 window.open(barcode, "_blank");
                 return;
             }
@@ -178,16 +178,12 @@ const QrCodeReader = (props: IProps) => {
         closeEmailComposer,
     } = useFrontDeskEmailIntegration({ documentType: DOCUMENT_TYPE.boardMission });
 
-    const onClickMoveBoardMissionToDone = async () => {
+    const onClickMoveBoardMissionToDone = async (isSendMessage: boolean = false) => {
         const callBack = (res) => {
             setOpenMoveToReadyModal(false);
             if (res?.success) {
                 alertSuccessUpdate();
                 setOpenPackagesModal(true);
-                // Always open email composer after marking ready (if FrontDesk is enabled)
-                if (hasFrontDeskFeature) {
-                    openEmailComposer(selectedMission.id || selectedMission.boardMissionId);
-                }
             } else {
                 alertFaultUpdate();
             }
@@ -197,13 +193,13 @@ const QrCodeReader = (props: IProps) => {
         if (selectedMission?.qrCodeAction === QrCodeAction.OrderToReady) {
             await moveOrderToDoneApi(callApi, callBack, {
                 orderId: selectedMission.orderId,
-                isSendMessage: false, // Don't send automatically - let user decide in composer
+                isSendMessage: isSendMessage, // Don't send automatically - let user decide in composer
             });
         } else {
             // Mark as ready without sending message - user will decide in email composer
             await moveBoardMissionToDoneApi(callApi, callBack, {
                 boardMissionId: selectedMission.id || selectedMission.boardMissionId,
-                sendMessage: false, // Don't send automatically - let user decide in composer
+                sendMessage: isSendMessage, // Don't send automatically - let user decide in composer
                 productType: "",
                 storage: selectedMission.storage ?? "",
             });
@@ -231,8 +227,8 @@ const QrCodeReader = (props: IProps) => {
                 subTitle={t("boardMissions.markDoneModalSubTitle")}
                 openModal={openMoveToReadyModal}
                 onClose={() => setOpenMoveToReadyModal(false)}
-                onClickDelete={onClickMoveBoardMissionToDone}
-                onClickCancel={() => setOpenMoveToReadyModal(false)}
+                onClickDelete={() => onClickMoveBoardMissionToDone(true)}
+                onClickCancel={() => onClickMoveBoardMissionToDone(false)}
                 style={
                     isMobile
                         ? {

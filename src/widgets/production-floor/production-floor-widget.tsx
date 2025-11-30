@@ -413,8 +413,8 @@ const ProductionFloorWidget = () => {
         subTitle={t("boardMissions.markDoneModalSubTitle")}
         openModal={isOpenDoneModal.isOpen}
         onClose={() => isOpenDoneModal.close()}
-        onClickDelete={() => onClickMoveBoardMissionToDone(true)}
-        onClickCancel={() => isOpenDoneModal.close()}
+        onClickDelete={() => onClickMoveBoardMissionToDone(true, true)}
+        onClickNo={() => onClickMoveBoardMissionToDone(false, false)}
         style={
           isMobile
             ? {
@@ -504,8 +504,8 @@ const ProductionFloorWidget = () => {
         subTitle={t("boardMissions.markDoneModalSubTitle")}
         openModal={openMarkReadyModal}
         onClose={onCloseMarkReadyModal}
-        onClickDelete={() => onClickMoveBoardMissionToDone()}
-        onClickCancel={onCloseMarkReadyModal}
+        onClickYes={() => onClickMoveBoardMissionToDone(true, true)}
+        onClickNo={() => onClickMoveBoardMissionToDone(false, false)}
       >
         <div style={{ width: "100%", minWidth: 300 }}>
           <GoMakeAutoComplate
