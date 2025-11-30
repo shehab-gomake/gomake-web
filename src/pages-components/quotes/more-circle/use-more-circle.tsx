@@ -694,6 +694,19 @@ const useMoreCircle = () => {
       },
       {
         condition:
+          isSupplierPayments &&
+          !!canCancelReceipt &&
+          quote?.status !== "Receipt.Canceled" &&
+          isEditableDocument,
+        onClick: () =>
+          quote?.creditCardTotal > 0
+            ? onOpenCancelReceiptModalRefund(quote)
+            : onOpenCancelReceiptModal(quote),
+        icon: <TickCancelIcon color={primaryLavender(500)} />,
+        name: t("sales.quote.cancel"),
+      },
+      {
+        condition:
           isPurchaseOrder && !isCanceledPurchaseOrder && isEditableDocument,
         onClick: () => onClickOpenIrrelevantModal(quote),
         icon: <TickCancelIcon color={primaryLavender(500)} />,
