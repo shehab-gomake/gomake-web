@@ -28,8 +28,9 @@ export const boardMissionsSubWorkFlowsState = atom({
   default: [],
 });
 
+//!here why have no key ?
 export const isReadyBoardMissionsState = atom<boolean>({
-  key: "",
+  key: "isReadyBoardMissionsState",
   default: false,
 });
 
@@ -73,7 +74,10 @@ export const isPrintNodeModalOpenState = atom({
   default: false,
 });
 
-export const jobsToPrintState = atom<{ boardMissionId: string; productType: string }> ({
+export const jobsToPrintState = atom<{
+  boardMissionId: string;
+  productType: string;
+}>({
   key: "jobsToPrintState",
   default: {
     boardMissionId: "",
@@ -85,11 +89,3 @@ export const isPackagingModalOpenState = atom({
   key: "isPackagingModalOpenState",
   default: false,
 });
-
-
-
-
-
-
-
-

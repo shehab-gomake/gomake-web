@@ -110,6 +110,7 @@ export enum Permissions {
   //board missions group
   SHOW_BOARD_MISSIONS = "IsCanShowBoardMissions",
   SHOW_COSTS_IN_BOARD_MISSIONS = "IsShowCostsInBoardMissions",
+  ALLOW_PRINT_PACKAGING_SLIP_BEFORE_READY = "AllowPrintPackagingSlipBeforeReady",
 
   //administration group
   SHOW_ADMINISTRATION_PERMISSIONS = "ShowAdministrationPermissions",
