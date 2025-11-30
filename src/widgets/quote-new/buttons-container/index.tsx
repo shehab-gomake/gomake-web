@@ -39,6 +39,8 @@ import { SendPaymentModal } from "@/pages-components/quotes/widgets/send-payment
 import { PermissionCheck } from "@/components/CheckPermission";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { PayIcon } from "@/pages-components/quotes/more-circle/icons/pay";
+import { GomakeAiIcon } from "@/icons";
+import { AddProductWithAIModal } from "../modals-widgets/add-product-with-ai-modal";
 
 const ButtonsContainer = ({
   openSendBtn,
@@ -97,6 +99,9 @@ const ButtonsContainer = ({
     onClickConfirmWithoutNotification,
     onClickConfirmWithNotification,
     onClickPrint,
+    openAddProductWithAIModal,
+    onClickOpenAddProductWithAIModal,
+    onClickCloseAddProductWithAIModal,
     onClickClosePaymentModal,
     onClickOpenPaymentModal,
     openPaymentModal,
@@ -304,6 +309,17 @@ const ButtonsContainer = ({
           >
             {t("sales.quote.addNewItems")}
           </GomakePrimaryButton>
+        )}
+        {showAddNewItemBtn && isQuote && (
+          <PermissionCheck userPermission={Permissions.SHOW_ADD_PRODUCT_WITH_AI}>
+            <GomakePrimaryButton
+              leftIcon={<GomakeAiIcon width={20} height={20} />}
+              style={classes.btnContainer}
+              onClick={onClickOpenAddProductWithAIModal}
+            >
+              {t("sales.quote.addProductWithAI")}
+            </GomakePrimaryButton>
+          </PermissionCheck>
         )}
         {(isQuote || isOrder) && (
           <GomakePrimaryButton
@@ -801,6 +817,17 @@ const ButtonsContainer = ({
           isSendOrderReadyToClient={isSendOrderReadyToClient}
           showAlertModal={showAlertModal}
         />
+        {isQuote && (
+          <AddProductWithAIModal
+            open={openAddProductWithAIModal}
+            onClose={onClickCloseAddProductWithAIModal}
+            quoteId={quoteItemValue?.id}
+            onSuccess={() => {
+              // Refresh quote data if needed
+              window.location.reload();
+            }}
+          />
+        )}
       </div>
     </div>
   );

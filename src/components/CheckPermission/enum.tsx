@@ -33,7 +33,7 @@ export enum Permissions {
   SHOW_QUOTE_STATISTICS = "ShowQuotesStatistics",
   UPDATE_CALCULATED_PRICE = "UpdateCalculatedPrice",
   SHOW_PRICING_TAB = "ShowPricingTab",
-
+  SHOW_ADD_PRODUCT_WITH_AI = "ShowAddProductWithAI",
   //Materials group
   EDIT_MATERIAL = "EditMaterial",
   SHOW_MATERIALS = "Show Material",
