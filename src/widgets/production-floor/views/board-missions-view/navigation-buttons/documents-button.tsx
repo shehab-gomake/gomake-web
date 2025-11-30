@@ -184,7 +184,7 @@ const DocumentsButton = ({ isMobile = false }) => {
     closeEmailComposer,
   } = useFrontDeskEmailIntegration({ documentType: DOCUMENT_TYPE.boardMission });
 
-  const onClickMoveBoardMissionToDone = async () => {
+  const onClickMoveBoardMissionToDone = async (isSendMessage: boolean = false) => {
     const callBack = (res) => {
       setOpenMarkReadyModal(false);
       if (boardMissions.productType === "" || !boardMissions.productType) {
@@ -192,10 +192,6 @@ const DocumentsButton = ({ isMobile = false }) => {
       }
       if (res?.success) {
         alertSuccessUpdate();
-        // Always open email composer after marking ready (if FrontDesk is enabled)
-        if (hasFrontDeskFeature) {
-          openEmailComposer(boardMissions.boardMissionId);
-        }
       } else {
         alertFaultUpdate();
       }
@@ -203,7 +199,7 @@ const DocumentsButton = ({ isMobile = false }) => {
     // Mark as ready without sending message - user will decide in email composer
     await moveBoardMissionToDoneApi(callApi, callBack, {
       boardMissionId: boardMissions?.boardMissionId,
-      sendMessage: false, // Don't send automatically - let user decide in composer
+      sendMessage: isSendMessage, // Don't send automatically - let user decide in composer
       productType: boardMissions?.productType
     });
   };
@@ -355,8 +351,8 @@ const DocumentsButton = ({ isMobile = false }) => {
         subTitle={t("boardMissions.markDoneModalSubTitle")}
         openModal={openMarkReadyModal}
         onClose={() => setOpenMarkReadyModal(false)}
-        onClickDelete={onClickMoveBoardMissionToDone}
-        onClickCancel={() => setOpenMarkReadyModal(false)}
+        onClickDelete={() => onClickMoveBoardMissionToDone(true)}
+        onClickCancel={() => onClickMoveBoardMissionToDone(false)}
         style={
           isMobile
             ? {

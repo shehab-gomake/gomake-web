@@ -478,25 +478,6 @@ const ProductionFloorWidget = () => {
         onClickYes={() => handlePrintTypeChoice(true)}
         onClickNo={() => handlePrintTypeChoice(false)}
       />
-
-      {/* <ThreeOptionsModal
-        modalType={ModalType.WARNING}
-        title={t("boardMissions.markDoneModalTitle")}
-        subTitle={t("boardMissions.markDoneModalSubTitle")}
-        openModal={openMarkReadyModal}
-        onClose={onCloseMarkReadyModal}
-        onClickDelete={() => onClickMoveBoardMissionToDone()}
-        onClickCancel={onCloseMarkReadyModal}
-        style={
-          isMobile
-            ? {
-                width: "95vw",
-                maxWidth: 600,
-                minWidth: "unset",
-              }
-            : undefined
-        }
-      /> */}
       {/* Mark Ready Modal - Simple version (no jobs) */}
       <ThreeOptionsModal
         modalType={ModalType.WARNING}
