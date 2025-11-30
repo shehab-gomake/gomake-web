@@ -149,6 +149,9 @@ export const useFrontDeskEmailIntegration = ({
               messageType: messageType ?? 0,
               sendMailIfNotVerifiedAgent: sendMailIfNotVerifiedAgent ?? true,
               sendWithInvoices: sendWithInvoices ?? false,
+              ...(customerId && { customerId }),
+              ...(customerName && { customerName }),
+              ...(contactName && { contactName }),
             },
           }
         );

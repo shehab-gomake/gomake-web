@@ -3801,6 +3801,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       const contactEmail = selectedContact?.contactMail;
       const contactPhone = selectedContact?.contactPhone;
       const contactName = selectedContact?.contactName || selectedContact?.name;
+      const contactID = selectedContact?.contactID
       await openEmailComposer(
         document?.id,
         contactEmail,
@@ -3808,8 +3809,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         undefined, // messageType - not needed, will use default
         undefined, // sendMailIfNotVerifiedAgent - will use default true
         undefined, // sendWithInvoices - will use default false
-        document?.customerId || document?.clientId,
-        document?.customerName || document?.clientName,
+        contactID,
+        contactName,
         contactName
       );
     } catch (error) {
@@ -3868,28 +3869,38 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       alertFaultGetData();
     }
   };
-
+  console.log("sendPayment", sendPayment);
   // Send Payment - Email Handler
   const onClickSendPaymentEmail = async (document: any) => {
+    setDocumentForEmail(document);
     try {
+      // First, get contact information
       await onClickSendPaymentOld(document, false);
-      // Wait a bit to ensure state is updated, then update only the send method flags
-      setSendPayment((prev) => ({
-        ...prev,
-        sendByMail: true,
-        sendBySms: false,
-        sendByWhatsapp: false,
-        selectedContactIndex: prev.documentContacts?.length > 0 ? 0 : prev.selectedContactIndex,
-      }));
-      setPaymentModalTitle(
-        `${t("prePayment.paymentPageFor")} ${t(
-          `sales.quote.${DOCUMENT_TYPE[docType]}`
-        ).toLowerCase()} ${t("sales.quote.number")} - ${document?.number}`
+      // Then open email composer with document data
+      // Handle both documentContacts array and direct contact properties
+      const selectedContact =
+        sendPayment?.documentContacts?.[sendPayment?.selectedContactIndex];
+      const contactEmail =
+        selectedContact?.contactMail || sendPayment?.contactMail || "";
+      const contactPhone =
+        selectedContact?.contactPhone || sendPayment?.contactPhone || "";
+      const contactName =
+        selectedContact?.contactName ||
+        selectedContact?.name ||
+        document?.customerName ||
+        document?.clientName ||
+        "";
+      await openEmailComposer(
+        document?.id,
+        contactEmail,
+        contactPhone,
+        undefined, // messageType - not needed, will use default
+        undefined, // sendMailIfNotVerifiedAgent - will use default true
+        undefined, // sendWithInvoices - will use default false
+        document?.customerId || document?.clientId,
+        document?.customerName || document?.clientName,
+        contactName
       );
-      setIsSendToClient(false);
-      setHideCheckboxes(true);
-      setPreSelectedMethod(null);
-      setOpenPaymentModal(true);
     } catch (error) {
       alertFaultGetData();
     }
