@@ -4,6 +4,7 @@ import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { ModalType } from "@/enums";
 import { useIsMobile } from "@/hooks/use-responsive";
+import { adaptMarginLeft } from "@/utils/adapter";
 
 const useStyle = ({ modalType }: { modalType: ModalType }) => {
   const { t } = useTranslation();
@@ -120,6 +121,23 @@ const useStyle = ({ modalType }: { modalType: ModalType }) => {
         backgroundColor: "#FFF",
         color: "#272977",
         border: `1px solid #7375CD`,
+      },
+      bottomActionContainer: {
+        width: "100%",
+        display: "flex",
+        justifyContent: "flex-end",
+        marginTop: "8px",
+        paddingTop: "8px",
+        ...adaptMarginLeft(dir, 16),
+      },
+      bottomActionButton: {
+        background: "none",
+        border: "none",
+        cursor: "pointer",
+        textDecoration: "underline",
+        color: "#2E3092",
+        ...FONT_FAMILY.Lexend(500, 14),
+        padding: 0,
       },
     };
   }, [theme, RTL, modalType, isMobile]);
