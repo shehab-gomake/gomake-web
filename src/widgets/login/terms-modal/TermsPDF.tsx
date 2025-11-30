@@ -5,10 +5,11 @@ import { pdfjs, Document, Page } from "react-pdf";
 import { useStyle } from "./style";
 import { GomakeLoaderWidget } from "@/widgets/loading";
 
-pdfjs.GlobalWorkerOptions.workerSrc = new URL(
-    "../../../../node_modules/pdfjs-dist/build/pdf.worker.min.js",
-    import.meta.url
-).toString();
+// Set PDF.js worker source using CDN (works with pdfjs-dist 4.x)
+// This ensures compatibility after upgrading from 3.11.174 to 4.2.67+
+if (typeof window !== "undefined") {
+  pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
+}
 
 export default function TermsPDF() {
   const [numPages, setNumPages] = useState<number>();

@@ -118,7 +118,7 @@ const useUploadFiles = (
       let userToken = getUserToken();
       const response = await axios.post(
           `${companyProfile.filesApiAddress}/api/Files/CreateUploadSession`,
-          { fileName: file?.name, contentType: file.type ,origin:"http://localhost:3004"},
+          { fileName: file?.name, contentType: file.type},
           {
             headers: {
               authorization: "Bearer " + userToken,
@@ -144,6 +144,7 @@ const useUploadFiles = (
             },
           }
       );
+      const finalFilePath = response2.data.filePath;
       setUploadingFiles(prev =>
           prev.map((fg) =>
               fg.orderItemId === orderItemId && fg.productType === productType
@@ -151,7 +152,7 @@ const useUploadFiles = (
                     ...fg,
                     filesInfo: fg.filesInfo.map(fileInfo =>
                         fileInfo.uploadId === uploadId
-                            ? { ...fileInfo, fileStatus: EUploadingFileStatus.UploadedToGoogleCloud }
+                            ? { ...fileInfo, fileStatus: EUploadingFileStatus.UploadedToGoogleCloud,bucketKey:bucketName,downloadFilePath:finalFilePath }
                             : fileInfo
                     ),
                   }
@@ -162,7 +163,7 @@ const useUploadFiles = (
       await setOrderItemFileStatus({
         orderItemId,
         filename: file?.name,
-        source: finalPath,
+        source: finalFilePath,
         screenShot: "",
         productType: !!productType ? productType.toString() : "",
         signalRConnectId: connectionId,

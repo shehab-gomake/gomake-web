@@ -172,6 +172,8 @@ const getCategorySpeedInputs = (categoryId: string, state: Record<string, any>) 
             return thermalPlateProcessor(state);
         case ECategoryId.ANALOG_ENHANCEMENT_MACHINE:
             return analogEnhancement(state);
+        case ECategoryId.WINDOW_PATCHING_MACHINE:
+            return analogEnhancement(state);
         case ECategoryId.STRIPPING_MACHINES:
             return strippingMachineSpeed(state);
         case ECategoryId.CREATING_DIES_MACHINE:
