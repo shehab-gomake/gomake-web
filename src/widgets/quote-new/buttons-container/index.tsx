@@ -310,13 +310,15 @@ const ButtonsContainer = ({
           </GomakePrimaryButton>
         )}
         {showAddNewItemBtn && isQuote && (
-          <GomakePrimaryButton
-            leftIcon={<GomakeAiIcon width={20} height={20} />}
-            style={classes.btnContainer}
-            onClick={onClickOpenAddProductWithAIModal}
-          >
-            {t("sales.quote.addProductWithAI")}
-          </GomakePrimaryButton>
+          <PermissionCheck userPermission={Permissions.SHOW_ADD_PRODUCT_WITH_AI}>
+            <GomakePrimaryButton
+              leftIcon={<GomakeAiIcon width={20} height={20} />}
+              style={classes.btnContainer}
+              onClick={onClickOpenAddProductWithAIModal}
+            >
+              {t("sales.quote.addProductWithAI")}
+            </GomakePrimaryButton>
+          </PermissionCheck>
         )}
         {(isQuote || isOrder) && (
           <GomakePrimaryButton
