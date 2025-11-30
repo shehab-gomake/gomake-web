@@ -211,6 +211,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
     handleScheduledReportsPageSizeChange,
     // Quality Issue Modal
     openQualityIssueModal,
+    onOpenQualityIssueModal,
     onCloseQualityIssueModal,
     handleQualityIssueConfirm,
     // Change Status Modal for Quality Issue
@@ -466,6 +467,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
           initialPageSize={initialPageSize}
         />
       </Stack>
+      {/* Duplicate Modal */}
       <ThreeOptionsModal
         modalType={ModalType.DUPLICATE}
         title={t("boardMissions.duplicateModalTitle")}
@@ -487,6 +489,12 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
               : DuplicateType.NewBoardMissionNumber
           )
         }
+        bottomActionLabel={"productionFloor.reportQualityIssueButton"}
+        onBottomAction={() => {
+          if (missionItem) {
+            onOpenQualityIssueModal(missionItem);
+          }
+        }}
       />
       <ThreeOptionsModal
         modalType={ModalType.WARNING}
