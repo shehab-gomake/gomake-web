@@ -31,12 +31,11 @@ const OrderNowModal = ({
   );
 
   const confirmWithoutNotificationText = t(
-    `sales.quote.${
-      isUsedStripe
-        ? isConnectedToStripe
-          ? "continueWithoutCheckout"
-          : "continue"
-        : "confirmWithoutNotification"
+    `sales.quote.${isUsedStripe
+      ? isConnectedToStripe
+        ? "continueWithoutCheckout"
+        : "continue"
+      : "confirmWithoutNotification"
     }`
   );
 
@@ -80,7 +79,7 @@ const OrderNowModal = ({
                 style={classes.btnStyle}
                 onClick={onConfirm || confirmWithNotification}
               >
-                {t("sales.quote.confirm")}
+                {t("modal.confirm")}
               </GomakePrimaryButton>
             ) : (
               <>

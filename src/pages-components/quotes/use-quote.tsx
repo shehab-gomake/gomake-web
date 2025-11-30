@@ -3805,6 +3805,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         document?.id,
         contactEmail,
         contactPhone,
+        undefined, // messageType - not needed, will use default
+        undefined, // sendMailIfNotVerifiedAgent - will use default true
+        undefined, // sendWithInvoices - will use default false
         document?.customerId || document?.clientId,
         document?.customerName || document?.clientName,
         contactName
