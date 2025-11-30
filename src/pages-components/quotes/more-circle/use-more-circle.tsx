@@ -66,7 +66,7 @@ const useMoreCircle = () => {
   const { navigate } = useGomakeRouter();
   const { CheckPermission } = useUserPermission();
   const { CheckPreferenceValue } = usePrintHousePreferences();
-  const { primaryColor, primaryLavender } = useGomakeTheme();
+  const { primaryLavender } = useGomakeTheme();
   const hasFrontDeskFeature = useRecoilValue(printHouseHasFrontDeskFeature);
   const canCloseDocumentManually = CheckPermission(
     Permissions.CAN_CLOSE_MANUALLY
@@ -292,6 +292,10 @@ const useMoreCircle = () => {
       navigate(
         `/purchaseInvoiceRefund?isNewCreation=true&documentId=${quote?.id}`
       );
+    };
+
+    const handleCloseAsPurchaseInvoice = () => {
+      navigate(`/purchaseInvoice?isNewCreation=true&orderId=${quote?.id}`);
     };
 
     const isQuote = documentType === DOCUMENT_TYPE.quote;
@@ -520,7 +524,11 @@ const useMoreCircle = () => {
           (isDeliveryNote && quote?.isCanClose && isEditableDocument) ||
           (isProformaInvoice && quote?.isCanClose && isEditableDocument) ||
           (isInvoice && quote?.isCanClose && isEditableDocument) ||
-          (isPurchaseInvoice && quote?.isCanClose),
+          (isPurchaseInvoice && quote?.isCanClose) ||
+          (isPurchaseOrder &&
+            quote?.isCanClose &&
+            !isCanceledPurchaseOrder &&
+            isEditableDocument),
         component: (closeMenu: () => void) => (
           <CloseDocumentSubmenu
             documentType={documentType}
@@ -566,6 +574,15 @@ const useMoreCircle = () => {
                 ? handleCreatePurchaseInvoiceRefund
                 : undefined
             }
+            onCloseAsPurchaseInvoice={
+              isPurchaseOrder &&
+              quote?.isCanClose &&
+              !isCanceledPurchaseOrder &&
+              isEditableDocument
+                ? handleCloseAsPurchaseInvoice
+                : undefined
+            }
+            canCloseDocumentManually={canCloseDocumentManually}
             onClickOpenCloseOrderNotesModal={onClickOpenCloseOrderNotesModal}
             menuItemStyle={classes.menuRowStyle}
             rowTextStyle={classes.rowTextStyle}
@@ -609,30 +626,10 @@ const useMoreCircle = () => {
       },
 
       {
-        condition: isPurchaseOrder && quote?.isCanClose,
-        onClick: () =>
-          navigate(`/purchaseInvoice?isNewCreation=true&orderId=${quote?.id}`),
-        icon: <TickIcon color={primaryLavender(500)} />,
-        name: t("sales.quote.closeAsPurchaseInvoice"),
-        isLink: true,
-        href: `/purchaseInvoice?isNewCreation=true&orderId=${quote?.id}`,
-      },
-      {
         condition: isPurchaseOrder && quote?.isCanIntake,
         onClick: () => onClickOpenInventoryIntakeModal(quote),
         icon: <PackageIcon />,
         name: t("sales.purchaseOrder.addInventoryIntake"),
-      },
-      {
-        condition:
-          isPurchaseOrder &&
-          quote?.isCanClose &&
-          !isCanceledPurchaseOrder &&
-          isEditableDocument &&
-          canCloseDocumentManually,
-        onClick: () => onClickOpenCloseOrderModal(quote),
-        icon: <LockIcon color={primaryLavender(500)} />,
-        name: t("sales.quote.close"),
       },
 
       {
