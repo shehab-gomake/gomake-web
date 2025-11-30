@@ -26,7 +26,9 @@ import { adaptPaddingRight } from "@/utils/adapter";
 import { useFrontDeskEmailIntegration } from "@/pages-components/quotes/hooks/use-frontdesk-email-integration";
 import { FrontDeskEmailComposerWrapper } from "@/pages-components/quotes/components/frontdesk-email-composer-wrapper";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
-import {printHouseHasFrontDeskFeature} from "@/store/print-house-profile";
+import { printHouseHasFrontDeskFeature } from "@/store/print-house-profile";
+import { useUserPermission } from "@/hooks/use-permission";
+import { Permissions } from "@/components/CheckPermission/enum";
 
 const DocumentsButton = ({ isMobile = false }) => {
   const [boardMissions] = useRecoilState(boardMissionsDetailsState);
@@ -42,6 +44,11 @@ const DocumentsButton = ({ isMobile = false }) => {
 
   const isReady = useRecoilValue(isReadyBoardMissionsState);
   const hasFrontDeskFeature = useRecoilValue(printHouseHasFrontDeskFeature);
+
+  const { CheckPermission } = useUserPermission();
+  const hasPrintPackagingSlipPermission = CheckPermission(
+    Permissions.ALLOW_PRINT_PACKAGING_SLIP_BEFORE_READY
+  );
 
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
@@ -72,14 +79,14 @@ const DocumentsButton = ({ isMobile = false }) => {
         onclick: () => GetPrintingTicketPDF(boardMissions.boardMissionId),
       },
       {
-        condition: true,
+        condition: isReady || hasPrintPackagingSlipPermission,
         name: t("boardMissions.printPackagingSlip"),
         icon: <PackageIcon />,
         onclick: () =>
           isReady ? setOpenPackagesModal(true) : setOpenConfirmModal(true),
       },
     ],
-    [boardMissions]
+    [boardMissions, hasPrintPackagingSlipPermission, isReady]
   );
 
   const downloadPdf = (url) => {
@@ -182,7 +189,9 @@ const DocumentsButton = ({ isMobile = false }) => {
     emailData,
     openEmailComposer,
     closeEmailComposer,
-  } = useFrontDeskEmailIntegration({ documentType: DOCUMENT_TYPE.boardMission });
+  } = useFrontDeskEmailIntegration({
+    documentType: DOCUMENT_TYPE.boardMission,
+  });
 
   const onClickMoveBoardMissionToDone = async (sendMessage: boolean) => {
     const callBack = (res) => {
@@ -202,7 +211,7 @@ const DocumentsButton = ({ isMobile = false }) => {
     await moveBoardMissionToDoneApi(callApi, callBack, {
       boardMissionId: boardMissions?.boardMissionId,
       sendMessage,
-      productType: boardMissions?.productType
+      productType: boardMissions?.productType,
     });
   };
 
@@ -292,13 +301,17 @@ const DocumentsButton = ({ isMobile = false }) => {
         subTitle={
           pendingPrintMission?.productType
             ? t("boardMissions.askPrintType", {
-              productType: pendingPrintMission.productTypeName || pendingPrintMission.productType
-            })
+                productType:
+                  pendingPrintMission.productTypeName ||
+                  pendingPrintMission.productType,
+              })
             : ""
         }
         yesBtn={t("boardMissions.printAllJobs")}
         noBtn={t("boardMissions.printProductTypeOnly", {
-          productType: pendingPrintMission?.productTypeName || pendingPrintMission?.productType
+          productType:
+            pendingPrintMission?.productTypeName ||
+            pendingPrintMission?.productType,
         })}
         openModal={openPrintTypeModal}
         onClose={() => {
@@ -310,10 +323,10 @@ const DocumentsButton = ({ isMobile = false }) => {
         style={
           isMobile
             ? {
-              width: "95vw",
-              maxWidth: 600,
-              minWidth: "unset",
-            }
+                width: "95vw",
+                maxWidth: 600,
+                minWidth: "unset",
+              }
             : undefined
         }
       />
@@ -340,10 +353,10 @@ const DocumentsButton = ({ isMobile = false }) => {
         style={
           isMobile
             ? {
-              width: "95vw",
-              maxWidth: 600,
-              minWidth: "unset",
-            }
+                width: "95vw",
+                maxWidth: 600,
+                minWidth: "unset",
+              }
             : undefined
         }
       />
@@ -360,10 +373,10 @@ const DocumentsButton = ({ isMobile = false }) => {
         style={
           isMobile
             ? {
-              width: "95vw",
-              maxWidth: 600,
-              minWidth: "unset",
-            }
+                width: "95vw",
+                maxWidth: 600,
+                minWidth: "unset",
+              }
             : undefined
         }
       />
