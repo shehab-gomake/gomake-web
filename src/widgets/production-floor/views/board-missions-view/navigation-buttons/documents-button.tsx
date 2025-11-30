@@ -16,7 +16,7 @@ import { PDFIcon } from "@/pages-components/quotes/more-circle/icons/pdf";
 import { ClickOutside } from "@/components/click-out-side/click-out-side";
 import { getOrderSummeryPdfApi } from "@/services/api-service/board-missions/board-missions-table";
 import { PackageIcon } from "@/icons/package-icon";
-import { GoMakeDeleteModal } from "@/components";
+import { GoMakeDeleteModal, ThreeOptionsModal } from "@/components";
 import { isReadyBoardMissionsState } from "@/widgets/production-floor/views/board-missions-view/stations/state";
 import { moveBoardMissionToDoneApi } from "@/services/api-service/production-floor/production-floor-endpoints";
 import { PrintPackingSlipModalWidget } from "@/widgets/production-floor/views/board-missions-view/navigation-buttons/print-packing-slip-modal-widget";
@@ -26,7 +26,7 @@ import { adaptPaddingRight } from "@/utils/adapter";
 import { useFrontDeskEmailIntegration } from "@/pages-components/quotes/hooks/use-frontdesk-email-integration";
 import { FrontDeskEmailComposerWrapper } from "@/pages-components/quotes/components/frontdesk-email-composer-wrapper";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
-import {printHouseHasFrontDeskFeature} from "@/store/print-house-profile";
+import { printHouseHasFrontDeskFeature } from "@/store/print-house-profile";
 
 const DocumentsButton = ({ isMobile = false }) => {
   const [boardMissions] = useRecoilState(boardMissionsDetailsState);

@@ -418,10 +418,10 @@ const ProductionFloorWidget = () => {
         style={
           isMobile
             ? {
-                width: "95vw",
-                maxWidth: 600,
-                minWidth: "unset",
-              }
+              width: "95vw",
+              maxWidth: 600,
+              minWidth: "unset",
+            }
             : undefined
         }
       />
@@ -460,11 +460,11 @@ const ProductionFloorWidget = () => {
         subTitle={
           pendingPrintParams?.productType
             ? t("boardMissions.askPrintType", {
-                productType:
-                  pendingPrintParams?.productTypeName ||
-                  pendingPrintParams?.productName ||
-                  pendingPrintParams?.productType,
-              })
+              productType:
+                pendingPrintParams?.productTypeName ||
+                pendingPrintParams?.productName ||
+                pendingPrintParams?.productType,
+            })
             : ""
         }
         yesBtn={"boardMissions.printAllJobs"}
@@ -498,7 +498,7 @@ const ProductionFloorWidget = () => {
         }
       /> */}
       {/* Mark Ready Modal - Simple version (no jobs) */}
-      <GoMakeDeleteModal
+      <ThreeOptionsModal
         modalType={ModalType.WARNING}
         title={t("boardMissions.markDoneModalTitle")}
         subTitle={t("boardMissions.markDoneModalSubTitle")}
@@ -515,12 +515,12 @@ const ProductionFloorWidget = () => {
               ) || inputValue === ""
                 ? storageList
                 : [
-                    {
-                      storage: `Add "${inputValue}" as a new storage`,
-                      id: "new",
-                    },
-                    ...storageList,
-                  ]
+                  {
+                    storage: `Add "${inputValue}" as a new storage`,
+                    id: "new",
+                  },
+                  ...storageList,
+                ]
             }
             placeholder={t("boardMissions.selectStorage")}
             key={defaultValue}
@@ -566,12 +566,12 @@ const ProductionFloorWidget = () => {
               ) || inputValue === ""
                 ? storageList
                 : [
-                    {
-                      storage: `Add "${inputValue}" as a new storage`,
-                      id: "new",
-                    },
-                    ...storageList,
-                  ]
+                  {
+                    storage: `Add "${inputValue}" as a new storage`,
+                    id: "new",
+                  },
+                  ...storageList,
+                ]
             }
             placeholder={t("boardMissions.selectStorage")}
             key={defaultValue}
@@ -605,10 +605,10 @@ const ProductionFloorWidget = () => {
         subTitle={
           selectedMission?.productType
             ? t("boardMissions.askDoneScope", {
-                productType:
-                  selectedMission?.productTypeName ||
-                  selectedMission?.productType,
-              })
+              productType:
+                selectedMission?.productTypeName ||
+                selectedMission?.productType,
+            })
             : ""
         }
         yesBtn={t("boardMissions.markAllJobsReady", {
@@ -617,13 +617,12 @@ const ProductionFloorWidget = () => {
         noBtn={
           selectedMission?.productType
             ? t("boardMissions.markProductTypeOnly", {
-                productType:
-                  selectedMission?.productTypeName ||
-                  selectedMission?.productType,
-                defaultValue: `Mark ${
-                  selectedMission?.productType || "Product Type"
+              productType:
+                selectedMission?.productTypeName ||
+                selectedMission?.productType,
+              defaultValue: `Mark ${selectedMission?.productType || "Product Type"
                 } Only`,
-              })
+            })
             : undefined
         }
         openModal={openDoneScopeModal}
