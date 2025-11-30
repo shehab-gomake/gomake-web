@@ -3,47 +3,62 @@ import { useMemo } from "react";
 
 const useStyle = () => {
   const { secondColor } = useGomakeTheme();
-  const clasess = useMemo(() => {
+  const classes = useMemo(() => {
     return {
       insideStyle: {
-        width: "35%",
-        borderRadius: 5,
-        height: "35%",
+        width: "500px",
+        borderRadius: 8,
+        height: "fit-content",
+        maxHeight: "90vh",
       },
       mainModalContainer: {
         display: "flex",
         flexDirection: "column" as "column",
-        justifyContent: "space-between",
+        alignItems: "flex-start",
         width: "100%",
-        height: "100%",
+        gap: 20,
+        marginTop: 10,
+        paddingBottom: 10,
       },
       textInputStyle: {
         width: "100%",
-        border: "1px solid #2E3092",
-        borderRadius: 4,
-        height: 110,
-        overflow: "scroll",
-        marginTop: 20,
-        padding: 5,
+        border: "1px solid #E6E6E6",
+        borderRadius: 8,
+        minHeight: 120,
+        maxHeight: 200,
+        padding: "12px 16px",
+        fontSize: 14,
+        fontFamily: "Lexend",
+        resize: "vertical" as "vertical",
+        transition: "border-color 0.2s ease",
       },
       btnContainer: {
         display: "flex",
-        flexDirection: "column" as "column",
+        flexDirection: "row" as "row",
         justifyContent: "flex-end",
-        alignItems: "flex-end",
+        alignItems: "center",
+        gap: 12,
         width: "100%",
-        marginTop: 25,
+        marginTop: 8,
+      },
+      cancelBtn: {
         height: 40,
+        minWidth: 100,
+        width: "50%",
+        border: "2px solid #DEDEDE",
+        color: "#28293D",
+        backgroundColor: "transparent",
       },
       sendBtn: {
-        width: "30%",
-        lineHeight:"17px",
-        backgroundColor: secondColor(500),
+        height: 40,
+        minWidth: 100,
+        width: "50%",
+        lineHeight: "20px",
       },
     };
-  }, []);
+  }, [secondColor]);
   return {
-    clasess,
+    classes,
   };
 };
 export { useStyle };

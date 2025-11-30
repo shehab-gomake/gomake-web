@@ -3,7 +3,6 @@ import { MenuItem, Menu, ListItemIcon, ListItemText } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import LockIcon from "@mui/icons-material/Lock";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { TickIcon } from "@/icons";
@@ -245,7 +244,7 @@ export const CloseDocumentSubmenu: React.FC<CloseDocumentSubmenuProps> = ({
         style={menuItemStyle}
         onClick={handleMenuItemClick(closeOptions[0].onClick)}
       >
-        <CustomLockIcon color="#8283BE" />
+        <TickIcon color="#8283BE" />
         <div style={rowTextStyle}>{closeOptions[0].label}</div>
       </MenuItem>
     );
@@ -253,18 +252,27 @@ export const CloseDocumentSubmenu: React.FC<CloseDocumentSubmenuProps> = ({
 
   return (
     <>
-      <MenuItem
-        style={menuItemStyle}
-        onClick={handleClick}
-        onMouseEnter={handleClick}
-      >
-        <CustomLockIcon color="#8283BE" />
+      <MenuItem style={menuItemStyle}>
+        {/* <CustomLockIcon color="#8283BE" /> */}
+        <TickIcon color="#8283BE" />
         <div style={rowTextStyle}>{t("sales.quote.closeDocument")}</div>
-        {isRTL ? (
-          <ChevronLeftIcon sx={{ mr: "auto", fontSize: 20 }} />
-        ) : (
-          <ChevronRightIcon sx={{ ml: "auto", fontSize: 20 }} />
-        )}
+        <div
+          onMouseEnter={handleClick}
+          onClick={handleClick}
+          style={{
+            marginLeft: isRTL ? 0 : "auto",
+            marginRight: isRTL ? "auto" : 0,
+            cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
+          }}
+        >
+          {isRTL ? (
+            <ChevronLeftIcon sx={{ fontSize: 20 }} />
+          ) : (
+            <ChevronRightIcon sx={{ fontSize: 20 }} />
+          )}
+        </div>
       </MenuItem>
 
       <Menu
@@ -283,7 +291,8 @@ export const CloseDocumentSubmenu: React.FC<CloseDocumentSubmenuProps> = ({
           "& .MuiPaper-root": {
             border: "1px solid #cbcbe4",
             borderRadius: "8px",
-            minWidth: 220,
+            minWidth: "auto",
+            width: "max-content",
           },
         }}
         MenuListProps={{
@@ -293,16 +302,23 @@ export const CloseDocumentSubmenu: React.FC<CloseDocumentSubmenuProps> = ({
         {closeOptions.map((option, index) => {
           const handleClick = handleMenuItemClick(option.onClick);
           return (
-            <MenuItem key={`${option.label}-${index}`} onClick={handleClick}>
-              <ListItemIcon
+            <MenuItem
+              key={`${option.label}-${index}`}
+              onClick={handleClick}
+              sx={{
+                padding: "6px 12px",
+                minHeight: "auto",
+              }}
+            >
+              {/* <ListItemIcon
                 sx={{
                   minWidth: "auto",
-                  mr: isRTL ? 0 : 0.5,
-                  ml: isRTL ? 0.5 : 0,
+                  mr: isRTL ? 0 : 0.25,
+                  ml: isRTL ? 0.25 : 0,
                 }}
               >
                 {option.icon || <TickIcon color="#8283BE" />}
-              </ListItemIcon>
+              </ListItemIcon> */}
               <ListItemText
                 primary={option.label}
                 primaryTypographyProps={{

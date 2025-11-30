@@ -11,6 +11,7 @@ import { useButtonsContainer } from "./use-buttons-container";
 import {
   DELIVERY_NOTE_STATUSES,
   DOCUMENT_TYPE,
+  PROFORMA_INVOICE_STATUSES,
   PURCHASE_ORDER_STATUSES,
 } from "@/pages-components/quotes/enums";
 import { PaymentModal } from "./payment/payment-modal";
@@ -468,6 +469,10 @@ const ButtonsContainer = ({
         )}
         {(isQuote ||
           (isOrder && quoteItemValue?.documentStatus !== 1) ||
+          (isProformaInvoice &&
+            !isNewCreation &&
+            quoteItemValue?.documentStatus !==
+              PROFORMA_INVOICE_STATUSES.Canceled) ||
           (isPurchaseOrder &&
             !isNewCreation &&
             quoteItemValue?.documentStatus !==

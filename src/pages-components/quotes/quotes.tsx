@@ -32,6 +32,7 @@ import { AddRuleModal } from "../products/profits-new/widgets/add-rule-modal";
 import { useEffect, useRef } from "react";
 import { ScheduledReportsTable } from "./widgets/scheduled-reports-table/scheduled-reports-table";
 import { QuoteStatuses } from "@/widgets/quote-new/total-price-and-vat/enums";
+import { OtherReasonModal } from "@/widgets/quote-new/total-price-and-vat/other-reason-modal";
 import { CustomerCardWidget } from "@/widgets/customer-card-modal";
 import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 import { useRouter } from "next/router";
@@ -66,12 +67,12 @@ import { ColumnSetting } from "@/widgets/production-floor/state/production-floor
 import { FONT_FAMILY } from "@/utils/font-family";
 import { QR_CODE_LISTENER_FROM } from "@/hooks/use-qr-code-listener";
 import QrCodeReader from "@/components/qr-code-reader";
-import {useRecoilValue, useSetRecoilState} from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import { selectedItemsState } from "@/store";
 import { FrontDeskEmailComposerWrapper } from "./components/frontdesk-email-composer-wrapper";
 import { PrintPackingSlipModalWidget } from "@/widgets/production-floor/views/board-missions-view/navigation-buttons/print-packing-slip-modal-widget";
 import { useParameters } from "@/hooks/use-parameters";
-import {printHouseHasFrontDeskFeature} from "@/store/print-house-profile";
+import { printHouseHasFrontDeskFeature } from "@/store/print-house-profile";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -173,6 +174,10 @@ const QuotesListPageWidget = ({
     openDeliveryTimeCancelModal,
     onClickCloseDeliveryTimeModal,
     onClickClosePriceModal,
+    openOtherReasonModal,
+    onClickCloseOtherReasonModal,
+    onClickCancelOffer,
+    setReasonText,
     showCustomerModal,
     customerForEdit,
     setCustomerForEdit,
@@ -726,8 +731,12 @@ const QuotesListPageWidget = ({
         yesBtn={t("sales.quote.yesBtn")}
         openModal={openIrrelevantCancelModal}
         onClose={onClickCloseIrrelevantModal}
-        subTitle={t("sales.quote.subTitleCancelModal")}
-        cancelBtn={t("sales.quote.cancelBtn")}
+        subTitle={`${t("sales.quote.subTitleCancelModal", {
+          documentName: t(
+            `sales.quote.${DOCUMENT_TYPE[documentType]}`
+          ).toLowerCase(),
+        })}`}
+        cancelBtn={t("sales.quote.noBtn")}
         onClickDelete={() =>
           updateCancelQuote(QuoteStatuses.CANCELED_IRRELEVANT)
         }
@@ -738,8 +747,12 @@ const QuotesListPageWidget = ({
         yesBtn={t("sales.quote.yesBtn")}
         openModal={openPriceCancelModal}
         onClose={onClickClosePriceModal}
-        subTitle={t("sales.quote.subTitleCancelModal")}
-        cancelBtn={t("sales.quote.cancelBtn")}
+        subTitle={`${t("sales.quote.subTitleCancelModal", {
+          documentName: t(
+            `sales.quote.${DOCUMENT_TYPE[documentType]}`
+          ).toLowerCase(),
+        })}`}
+        cancelBtn={t("sales.quote.noBtn")}
         onClickDelete={() => updateCancelQuote(QuoteStatuses.CANCELED_PRICE)}
       />
       <GoMakeDeleteModal
@@ -769,11 +782,21 @@ const QuotesListPageWidget = ({
         yesBtn={t("sales.quote.yesBtn")}
         openModal={openDeliveryTimeCancelModal}
         onClose={onClickCloseDeliveryTimeModal}
-        subTitle={t("sales.quote.subTitleCancelModal")}
-        cancelBtn={t("sales.quote.cancelBtn")}
+        subTitle={`${t("sales.quote.subTitleCancelModal", {
+          documentName: t(
+            `sales.quote.${DOCUMENT_TYPE[documentType]}`
+          ).toLowerCase(),
+        })}`}
+        cancelBtn={t("sales.quote.noBtn")}
         onClickDelete={() =>
           updateCancelQuote(QuoteStatuses.CANCELED_DELIVERY_TIME)
         }
+      />
+      <OtherReasonModal
+        openModal={openOtherReasonModal}
+        onClose={onClickCloseOtherReasonModal}
+        setReasonText={setReasonText}
+        onClickCancelOffer={onClickCancelOffer}
       />
       <CustomerCardWidget
         customerAction={CUSTOMER_ACTIONS.Edit}
