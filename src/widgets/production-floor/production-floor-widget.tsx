@@ -536,8 +536,8 @@ const ProductionFloorWidget = () => {
         subTitle={" "}
         openModal={openMarkReadyModalForHasJobs}
         onClose={onCloseMarkReadyModalForHasJobs}
-        onClickDelete={onClickMarkReadyModalForHasJobs}
-        onClickCancel={onCloseMarkReadyModalForHasJobs}
+        onClickDelete={() => onClickMarkReadyModalForHasJobs(true)}
+        onClickCancel={() => onClickMarkReadyModalForHasJobs(false)}
       >
         <div style={{ width: "100%", minWidth: 300 }}>
           <GoMakeAutoComplate
@@ -608,8 +608,8 @@ const ProductionFloorWidget = () => {
         }
         openModal={openDoneScopeModal}
         onClose={onCloseDoneScopeModal}
-        onClickYes={onClickDoneScopeAllJobs}
-        onClickNo={onClickDoneScopeProductType}
+        onClickYes={() => onClickDoneScopeAllJobs(true)}
+        onClickNo={() => onClickDoneScopeProductType(true)}
       />
     </Stack>
   );

@@ -33,6 +33,20 @@ import {
   getBoardMissionActionMaterialsApi,
   updateBoardMissionsActionDoneWithMaterialsApi,
 } from "@/services/api-service/production-floor/production-floor-endpoints";
+import { getDocumentMailDataApi } from "@/services/api-service/generic-doc/documents-api";
+import { contactResolutionService, conversationComposerService } from "@/services/frontdesk";
+import { chatwootSelectedAccountAtom, chatwootProfileAtom } from "@/store/frontdesk/atoms/chatwoot.atoms";
+import { useChatwootProfile } from "@/widgets/frontdesk/providers/chatwoot/hooks/use-chatwoot-profile";
+import { useChatwootInboxes } from "@/widgets/frontdesk/providers/chatwoot/hooks/use-chatwoot-inboxes";
+import { ChannelType } from "@/services/frontdesk/api/chatwoot/types/inboxes.types";
+import type { ContactCreatePayload } from "@/services/frontdesk/api/chatwoot/types/contacts.types";
+import { getCapitalizedNameFromEmail } from "@/widgets/frontdesk/providers/chatwoot/utils/contact-utils";
+import { convertAttachmentsToFiles } from "@/widgets/frontdesk/providers/chatwoot/utils/attachment.utils";
+import type { AttachmentSource } from "@/widgets/frontdesk/providers/chatwoot/types/attachment.types";
+import { EmailAttachment } from "@/widgets/frontdesk/providers/email/types/email.types";
+import { getFileExtension, getMimeTypeFromExtension } from "@/widgets/frontdesk/providers/chatwoot/utils/attachment.utils";
+import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
+import { printHouseHasFrontDeskFeature } from "@/store/print-house-profile";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import Button from "@mui/material/Button";
@@ -142,6 +156,285 @@ const BoardMissionsStationActionItem = ({
 
   const [loading, setLoading] = useState<boolean>(false);
   const [isOrderCompleted] = useRecoilState(isOrderCompletedState);
+
+  // FrontDesk email sending setup for programmatic sending
+  const hasFrontDeskFeature = useRecoilValue(printHouseHasFrontDeskFeature);
+  const selectedAccountId = useRecoilValue(chatwootSelectedAccountAtom);
+  const setSelectedAccountId = useSetRecoilState(chatwootSelectedAccountAtom);
+  const currentUser = useRecoilValue(chatwootProfileAtom);
+  const { profile: profileUser, fetchProfile } = useChatwootProfile();
+  const { inboxes } = useChatwootInboxes();
+
+  // Helper function to send email programmatically without opening modal
+  const sendEmailProgrammatically = useCallback(
+    async (
+      boardMissionId: string | number,
+      contactEmail?: string,
+      contactPhone?: string,
+      contactName?: string,
+      customerId?: string | number,
+      customerName?: string
+    ): Promise<boolean> => {
+      if (!hasFrontDeskFeature) {
+        console.log("[sendEmailProgrammatically] FrontDesk feature not enabled, skipping email send");
+        return false;
+      }
+
+      try {
+        // Get email data from API
+        let emailData: any = null;
+        await new Promise<void>((resolve) => {
+          getDocumentMailDataApi(
+            callApi,
+            (res) => {
+              if (res?.success && res?.data) {
+                emailData = res.data;
+                console.log("[sendEmailProgrammatically] Email data received:", {
+                  tos: emailData.tos,
+                  subject: emailData.subject,
+                  hasBody: !!emailData.body,
+                  hasAttachments: !!emailData.attachments,
+                });
+              } else {
+                console.error("[sendEmailProgrammatically] API response error:", res);
+              }
+              resolve();
+            },
+            {
+              documentType: DOCUMENT_TYPE.boardMission,
+              document: {
+                boardMissionId,
+                ...(contactEmail && { contactEmail }),
+                ...(contactPhone && { contactPhone }),
+                messageType: 0,
+                sendMailIfNotVerifiedAgent: true,
+                sendWithInvoices: false,
+                ...(customerId && { customerId }),
+                ...(customerName && { customerName }),
+                ...(contactName && { contactName }),
+              },
+            }
+          );
+        });
+
+        if (!emailData) {
+          console.error("[sendEmailProgrammatically] Failed to load email data - emailData is null");
+          return false;
+        }
+
+        console.log("[sendEmailProgrammatically] Processing email data:", emailData);
+
+        // Resolve account ID
+        const extractAccountId = (profile: any) => {
+          if (!profile) return null;
+          return (
+            profile.account_id ||
+            profile.accountId ||
+            (profile.meta && (profile.meta.account_id || profile.meta.accountId)) ||
+            null
+          );
+        };
+
+        let resolvedAccountId =
+          typeof selectedAccountId === "number" ? selectedAccountId : null;
+        if (!resolvedAccountId) {
+          resolvedAccountId =
+            extractAccountId(currentUser) ?? extractAccountId(profileUser);
+        }
+        if (!resolvedAccountId) {
+          const refreshedProfile = await fetchProfile();
+          resolvedAccountId = extractAccountId(refreshedProfile);
+        }
+        if (resolvedAccountId) {
+          setSelectedAccountId(resolvedAccountId);
+        }
+
+        if (!resolvedAccountId) {
+          console.error("[sendEmailProgrammatically] Unable to resolve Chatwoot account");
+          return false;
+        }
+
+        const accountId = Number(resolvedAccountId);
+        if (Number.isNaN(accountId)) {
+          console.error("[sendEmailProgrammatically] Resolved account ID is not a number");
+          return false;
+        }
+
+        // Get sender inbox
+        const emailInboxes = inboxes?.filter(
+          (inbox) => inbox.channel_type === ChannelType.EMAIL
+        ) || [];
+        if (emailInboxes.length === 0) {
+          console.error("[sendEmailProgrammatically] No email inboxes found");
+          return false;
+        }
+        const senderInbox = emailInboxes[0];
+
+        // Prepare email data from API response
+        const toEmails = Array.isArray(emailData.tos)
+          ? emailData.tos.filter((email: string) => email && email.trim())
+          : emailData.tos && typeof emailData.tos === "string"
+            ? [emailData.tos.trim()].filter(Boolean)
+            : [];
+
+        const ccEmails = emailData.cc === null || emailData.cc === undefined
+          ? []
+          : Array.isArray(emailData.cc)
+            ? emailData.cc.filter((email: string) => email && email.trim())
+            : typeof emailData.cc === "string"
+              ? [emailData.cc.trim()].filter(Boolean)
+              : [];
+
+        const bccEmails = emailData.bcc === null || emailData.bcc === undefined
+          ? []
+          : Array.isArray(emailData.bcc)
+            ? emailData.bcc.filter((email: string) => email && email.trim())
+            : typeof emailData.bcc === "string"
+              ? [emailData.bcc.trim()].filter(Boolean)
+              : [];
+        const messageContent = emailData.body || emailData.html || emailData.text || "";
+        const subject = emailData.subject || "";
+
+        console.log("[sendEmailProgrammatically] Prepared email data:", {
+          toEmails,
+          ccEmails,
+          bccEmails,
+          subject,
+          messageLength: messageContent.length,
+        });
+
+        if (toEmails.length === 0) {
+          console.error("[sendEmailProgrammatically] No recipients found in tos array");
+          return false;
+        }
+
+        // Convert attachments
+        const mapToAttachmentSource = (attachment: EmailAttachment): AttachmentSource => ({
+          content: attachment.content,
+          data: attachment.data,
+          url: attachment.url,
+          filename: attachment.filename,
+          mimeType: attachment.mimeType,
+          contentType: attachment.contentType,
+          size: attachment.size,
+        });
+
+        const normalizedAttachments =
+          Array.isArray(emailData.attachments)
+            ? emailData.attachments.map((attachment: EmailAttachment) => {
+              let filename = attachment.filename || "document";
+              const extension = getFileExtension(attachment.url || "", null);
+              if (extension && !filename.includes(".")) {
+                filename = `${filename}.${extension}`;
+              }
+              const mimeType =
+                attachment.mimeType ||
+                attachment.contentType ||
+                (extension ? getMimeTypeFromExtension(extension) : "application/octet-stream");
+              return {
+                id: attachment.id,
+                filename,
+                mimeType,
+                contentType: mimeType,
+                size: attachment.size,
+                url: attachment.url,
+                content: attachment.content ?? attachment.data,
+              };
+            })
+            : [];
+
+        const attachmentSources = normalizedAttachments.map(mapToAttachmentSource);
+        const attachments = await convertAttachmentsToFiles(attachmentSources);
+
+        // Send email to each recipient via Chatwoot
+        console.log(`[sendEmailProgrammatically] Sending email to ${toEmails.length} recipient(s)`);
+        const results = await Promise.allSettled(
+          toEmails.map(async (recipientEmail: string) => {
+            try {
+              console.log(`[sendEmailProgrammatically] Processing recipient: ${recipientEmail}`);
+              const contactNameForEmail =
+                contactName || getCapitalizedNameFromEmail(recipientEmail);
+              const contactPayload: ContactCreatePayload = {
+                name: contactNameForEmail,
+                email: recipientEmail,
+              };
+
+              const contact = await contactResolutionService.findOrCreateContact(
+                accountId,
+                contactPayload
+              );
+
+              if (!contact?.id) {
+                throw new Error(`Failed to find or create contact for ${recipientEmail}`);
+              }
+
+              console.log(`[sendEmailProgrammatically] Contact created/found: ${contact.id} for ${recipientEmail}`);
+
+              const conversationId = await conversationComposerService.composeAndCreate(
+                accountId,
+                {
+                  inboxId: senderInbox.id,
+                  contactId: contact.id,
+                  sourceId: recipientEmail,
+                  message: messageContent,
+                  subject: subject,
+                  ccEmails,
+                  bccEmails,
+                  toEmails: [recipientEmail],
+                  attachments,
+                  channelType: ChannelType.EMAIL,
+                  additionalAttributes: {
+                    gomake_document: {
+                      id: boardMissionId,
+                      type: DOCUMENT_TYPE.boardMission,
+                    },
+                  },
+                }
+              );
+
+              if (!conversationId) {
+                throw new Error(`Failed to create conversation for ${recipientEmail}`);
+              }
+
+              console.log(`[sendEmailProgrammatically] Email sent successfully to ${recipientEmail}, conversationId: ${conversationId}`);
+              return { recipientEmail, success: true, conversationId };
+            } catch (error) {
+              console.error(`[sendEmailProgrammatically] Error sending email to ${recipientEmail}:`, error);
+              return { recipientEmail, success: false, error: error instanceof Error ? error.message : String(error) };
+            }
+          })
+        );
+
+        const successfulSends = results.filter(
+          (result) => result.status === "fulfilled" && result.value.success
+        );
+        const failedSends = results.filter(
+          (result) => result.status === "rejected" || (result.status === "fulfilled" && !result.value.success)
+        );
+
+        console.log(`[sendEmailProgrammatically] Email sending results: ${successfulSends.length} successful, ${failedSends.length} failed`);
+        if (failedSends.length > 0) {
+          console.error("[sendEmailProgrammatically] Failed sends:", failedSends);
+        }
+
+        return successfulSends.length > 0;
+      } catch (error) {
+        console.error("[sendEmailProgrammatically] Error sending email programmatically:", error);
+        return false;
+      }
+    },
+    [
+      callApi,
+      hasFrontDeskFeature,
+      selectedAccountId,
+      setSelectedAccountId,
+      currentUser,
+      profileUser,
+      fetchProfile,
+      inboxes,
+    ]
+  );
+
   const [chooseMachine, setChooseMachine] = useState<boolean>(false);
   const [chooseEmployee, setChooseEmployee] = useState<boolean>(false);
   const {
@@ -351,11 +644,31 @@ const BoardMissionsStationActionItem = ({
     sendMSgArg?: boolean
   ) => {
     setLoading(true);
-    const callBack = (res) => {
+    const callBack = async (res) => {
       setLoading(false);
       if (res.success) {
         setIsPrintNodeModalOpen(res.data.showPrintNodeModal);
         alertSuccessUpdate();
+
+        // If sendMSgArg is true, send email programmatically without opening modal
+        if (sendMSgArg && hasFrontDeskFeature) {
+          try {
+            const success = await sendEmailProgrammatically(
+              boardMissions?.boardMissionId,
+              boardMissions?.clientEmail,
+              boardMissions?.clientPhone,
+              boardMissions?.contactName,
+              boardMissions?.clientId,
+              boardMissions?.clientName
+            );
+            if (!success) {
+              console.warn("[performDoneWithMaterials] Failed to send email programmatically, but action was completed");
+            }
+          } catch (error) {
+            console.error("[performDoneWithMaterials] Error sending email programmatically:", error);
+          }
+        }
+
         const currentActionId = res?.data?.currentStationId;
         setStations(
           stations.map((station) => {
@@ -397,7 +710,7 @@ const BoardMissionsStationActionItem = ({
     await updateBoardMissionsActionDoneWithMaterialsApi(callApi, callBack, {
       updatedState: updatedStateArg,
       productType: productTypeArg,
-      isSendMessage: !!sendMSgArg,
+      isSendMessage: false, // Always false - we handle email sending programmatically via FrontDesk
     });
   };
 
