@@ -1,4 +1,8 @@
-import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
+import {
+  GoMakeAutoComplate,
+  GomakeTextInput,
+  QualityIssueSelector,
+} from "@/components";
 import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
 import {
   Checkbox,
@@ -66,6 +70,8 @@ const RightSideWidget = ({
   subProducts,
   setCanCalculation,
   showCalculationInCompletedAlert,
+  qualityIssueReason,
+  setQualityIssueReason,
 }: any) => {
   const {
     direction,
@@ -617,6 +623,15 @@ const RightSideWidget = ({
           </div>
           {activeTab === t("quality.production") ? (
             <div style={clasess.productionStatus}>
+              <div style={clasess.qualityIssueContainer}>
+                <div style={clasess.labelTextStyle}>
+                  {t("productionFloor.qualityIssueReasonLabel")}
+                </div>
+                <QualityIssueSelector
+                  value={qualityIssueReason}
+                  onChange={setQualityIssueReason}
+                />
+              </div>
               <div style={clasess.sampleTypeStyle}>
                 {t("products.offsetPrice.admin.proof")}
               </div>
@@ -631,7 +646,7 @@ const RightSideWidget = ({
                   }
                   getOptionLabel={(option: any) => option.text}
                   placeholder={t("products.offsetPrice.admin.proof")}
-                  style={clasess.dropDownListStyle}
+                  style={clasess.proofDropDownListStyle}
                   onChange={(e, value) => setSampleType(value)}
                   value={sampleType}
                 />

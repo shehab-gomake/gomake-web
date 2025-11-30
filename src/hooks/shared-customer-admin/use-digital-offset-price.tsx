@@ -126,7 +126,7 @@ const useDigitalOffsetPrice = ({
   widgetType,
   productId,
   sessionId,
-  interactionId
+  interactionId,
 }: {
   clasess: any;
   widgetType: any;
@@ -142,7 +142,7 @@ const useDigitalOffsetPrice = ({
       (
         pdfjs as any
       ).GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
-    } catch { }
+    } catch {}
   }
   const [, setOpenQuantityComponentModal] = useRecoilState<boolean>(
     openQuantityComponentModalState
@@ -180,6 +180,7 @@ const useDigitalOffsetPrice = ({
   const [makeShapeOpen, setMakeShapeOpen] = useState(false);
   const [urgentOrder, setUrgentOrder] = useRecoilState(productUrgentWorkState);
   const [printingNotes, setPrintingNotes] = useState("");
+  const [qualityIssueReason, setQualityIssueReason] = useState<string>("");
   const [graphicNotes, setGraphicNotes] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const [productTemplate, setProductTemplate] = useState<any>([]);
@@ -430,7 +431,7 @@ const useDigitalOffsetPrice = ({
     if (
       calculationResult &&
       calculationResult.productItemValueDraftId ===
-      currentCalculationSessionId &&
+        currentCalculationSessionId &&
       calculationResult.signalRConnectionId === currentSignalRConnectionId &&
       !productTemplate?.isHaveFixedAction
     ) {
@@ -536,13 +537,15 @@ const useDigitalOffsetPrice = ({
     // setSelectedWorkFlowCalculatedIsLoaded(true)
     const docType = router?.query?.documentType ?? "0";
     const documentItemId = router?.query?.documentItemId;
-    debugger
-    let url = `/v1/erp-service/productItemValueDrafts/get-selected-work-flow?signalRConnectionId=${connectionId}&productId=${productId || (router?.query?.productId ?? productItemCalculationException)
-      }&ignoreCalculatedWorkflows=${ignoreCalculatedWorkflows ? ignoreCalculatedWorkflows : false
-      }`;
+    let url = `/v1/erp-service/productItemValueDrafts/get-selected-work-flow?signalRConnectionId=${connectionId}&productId=${
+      productId || (router?.query?.productId ?? productItemCalculationException)
+    }&ignoreCalculatedWorkflows=${
+      ignoreCalculatedWorkflows ? ignoreCalculatedWorkflows : false
+    }`;
     if (documentItemId) {
-      url += `&documentItemId=${documentItemId}&docType=${docType}&restoreAdditonalProductPrice=${IsNeedPriceUpdate ? false : priceRecovery
-        }`;
+      url += `&documentItemId=${documentItemId}&docType=${docType}&restoreAdditonalProductPrice=${
+        IsNeedPriceUpdate ? false : priceRecovery
+      }`;
     }
 
     const res: any = await callApi("GET", url, {}, false);
@@ -562,8 +565,9 @@ const useDigitalOffsetPrice = ({
     const documentItemId = router?.query?.documentItemId;
     let url = `/v1/erp-service/productItemValueDrafts/get-selected-work-flow-delivery-date?signalRConnectionId=${connectionId}`;
     if (documentItemId) {
-      url += `&documentItemId=${documentItemId}&docType=${docType}&restoreAdditonalProductPrice=${IsNeedPriceUpdate ? false : priceRecovery
-        }`;
+      url += `&documentItemId=${documentItemId}&docType=${docType}&restoreAdditonalProductPrice=${
+        IsNeedPriceUpdate ? false : priceRecovery
+      }`;
     }
 
     const res: any = await callApi("GET", url, {}, false);
@@ -624,14 +628,14 @@ const useDigitalOffsetPrice = ({
     if (
       signalRPricingResult &&
       signalRPricingResult.productItemValueDraftId ===
-      currentCalculationSessionId &&
+        currentCalculationSessionId &&
       signalRPricingResult.signalRConnectionId === currentSignalRConnectionId
     ) {
       //setLoading(false);
       const totalWorkFlowsCount = signalRPricingResult.totalWorkFlows;
       const currentWorkFlowsCount =
         signalRPricingResult.currentWorkFlowIndex >
-          calculationProgress.currentWorkFlowsCount
+        calculationProgress.currentWorkFlowsCount
           ? signalRPricingResult.currentWorkFlowIndex
           : calculationProgress.currentWorkFlowsCount + 1;
       if (
@@ -697,9 +701,9 @@ const useDigitalOffsetPrice = ({
             flow.id === updatedSelectedWorkFlow?.id
               ? updatedSelectedWorkFlow
               : {
-                ...flow,
-                selected: false,
-              }
+                  ...flow,
+                  selected: false,
+                }
           )
         );
       } else {
@@ -1062,8 +1066,12 @@ const useDigitalOffsetPrice = ({
 
     // Automatically select the newly added section
     // Calculate the index of the new section among visible sections
-    const visibleSections = productTemplateCopy.sections.filter((s) => !s.isHidden);
-    const newSectionIndex = visibleSections.findIndex((s) => s.id === newSectionId);
+    const visibleSections = productTemplateCopy.sections.filter(
+      (s) => !s.isHidden
+    );
+    const newSectionIndex = visibleSections.findIndex(
+      (s) => s.id === newSectionId
+    );
 
     if (newSectionIndex !== -1) {
       // Use setTimeout to ensure state updates have completed before changing active index
@@ -1711,20 +1719,20 @@ const useDigitalOffsetPrice = ({
                           value?.activateAction === true
                             ? parameter?.actionId
                             : parameter?.parameterType ===
-                              EParameterTypes.SELECT_MATERIALS ||
+                                EParameterTypes.SELECT_MATERIALS ||
                               parameter?.parameterType ===
-                              EParameterTypes.ADVERTISING_PRODUCT_CATEGORY ||
+                                EParameterTypes.ADVERTISING_PRODUCT_CATEGORY ||
                               parameter?.parameterType ===
-                              EParameterTypes.ADVERTISING_PRODUCT_NAME
-                              ? parameter?.actionId
-                              : null,
+                                EParameterTypes.ADVERTISING_PRODUCT_NAME
+                            ? parameter?.actionId
+                            : null,
                         ...(data?.id > 0 && { material: data?.id }),
                         parameterType: parameter?.parameterType,
                         isQuantityParameter: parameter?.isQuantityParameter,
                         ...(value && {
                           valueIds: [
                             parameter?.parameterType ===
-                              EParameterTypes.MACHINES_SELECT
+                            EParameterTypes.MACHINES_SELECT
                               ? value?.updateName
                               : value?.id,
                           ],
@@ -1746,11 +1754,11 @@ const useDigitalOffsetPrice = ({
                   }
                 } else if (
                   parameter?.parameterType ===
-                  EParameterTypes.SELECT_MATERIALS ||
+                    EParameterTypes.SELECT_MATERIALS ||
                   parameter?.parameterType ===
-                  EParameterTypes.ADVERTISING_PRODUCT_CATEGORY ||
+                    EParameterTypes.ADVERTISING_PRODUCT_CATEGORY ||
                   parameter?.parameterType ===
-                  EParameterTypes.ADVERTISING_PRODUCT_NAME ||
+                    EParameterTypes.ADVERTISING_PRODUCT_NAME ||
                   parameter?.parameterType === EParameterTypes.BUTTON
                 ) {
                   const value = parameter?.valuesConfigs?.find(
@@ -1785,7 +1793,7 @@ const useDigitalOffsetPrice = ({
                         defaultValueIds = [value.materialValueIds[0]?.valueId];
                         defaultValues = [
                           value.updateName ||
-                          value.materialValueIds[0]?.valueId,
+                            value.materialValueIds[0]?.valueId,
                         ];
                       } else if (value.id) {
                         // For non-material parameters with default selection
@@ -1801,13 +1809,13 @@ const useDigitalOffsetPrice = ({
                             value?.activateAction === true
                               ? parameter?.actionId
                               : parameter?.parameterType ===
-                                EParameterTypes.SELECT_MATERIALS ||
+                                  EParameterTypes.SELECT_MATERIALS ||
                                 parameter?.parameterType ===
-                                EParameterTypes.ADVERTISING_PRODUCT_CATEGORY ||
+                                  EParameterTypes.ADVERTISING_PRODUCT_CATEGORY ||
                                 parameter?.parameterType ===
-                                EParameterTypes.ADVERTISING_PRODUCT_NAME
-                                ? parameter?.actionId
-                                : null,
+                                  EParameterTypes.ADVERTISING_PRODUCT_NAME
+                              ? parameter?.actionId
+                              : null,
                           ...(data?.id > 0 && { material: data?.id }),
                           parameterType: parameter?.parameterType,
                           isQuantityParameter: parameter?.isQuantityParameter,
@@ -1834,7 +1842,7 @@ const useDigitalOffsetPrice = ({
                     parameter?.valuesConfigs?.length === 1 &&
                     parameter?.isRequired &&
                     parameter?.parameterType !==
-                    EParameterTypes.ADVERTISING_PRODUCT_CATEGORY
+                      EParameterTypes.ADVERTISING_PRODUCT_CATEGORY
                   ) {
                     let existsSubProductParameter =
                       subProduct?.parameters?.find(
@@ -1902,7 +1910,7 @@ const useDigitalOffsetPrice = ({
                             valueIds: [value?.materialValueIds[0]?.valueId],
                             values: [
                               value?.updateName ||
-                              value?.materialValueIds[0]?.valueId,
+                                value?.materialValueIds[0]?.valueId,
                             ],
                           }),
                           sectionId: section?.id,
@@ -1946,13 +1954,13 @@ const useDigitalOffsetPrice = ({
                             value?.activateAction === true
                               ? parameter?.actionId
                               : parameter?.parameterType ===
-                                EParameterTypes.SELECT_MATERIALS ||
+                                  EParameterTypes.SELECT_MATERIALS ||
                                 parameter?.parameterType ===
-                                EParameterTypes.ADVERTISING_PRODUCT_CATEGORY ||
+                                  EParameterTypes.ADVERTISING_PRODUCT_CATEGORY ||
                                 parameter?.parameterType ===
-                                EParameterTypes.ADVERTISING_PRODUCT_NAME
-                                ? parameter?.actionId
-                                : null,
+                                  EParameterTypes.ADVERTISING_PRODUCT_NAME
+                              ? parameter?.actionId
+                              : null,
                           parameterType: parameter?.parameterType,
                           isQuantityParameter: parameter?.isQuantityParameter,
                           valueIds: [value?.id],
@@ -2007,13 +2015,13 @@ const useDigitalOffsetPrice = ({
                             value?.activateAction === true
                               ? parameter?.actionId
                               : parameter?.parameterType ===
-                                EParameterTypes.SELECT_MATERIALS ||
+                                  EParameterTypes.SELECT_MATERIALS ||
                                 parameter?.parameterType ===
-                                EParameterTypes.ADVERTISING_PRODUCT_CATEGORY ||
+                                  EParameterTypes.ADVERTISING_PRODUCT_CATEGORY ||
                                 parameter?.parameterType ===
-                                EParameterTypes.ADVERTISING_PRODUCT_NAME
-                                ? parameter?.actionId
-                                : null,
+                                  EParameterTypes.ADVERTISING_PRODUCT_NAME
+                              ? parameter?.actionId
+                              : null,
                           parameterType: parameter?.parameterType,
                           isQuantityParameter: parameter?.isQuantityParameter,
                           ...(isDieCutExisting?.valueIds[0] && {
@@ -2060,13 +2068,13 @@ const useDigitalOffsetPrice = ({
                             value?.activateAction === true
                               ? parameter?.actionId
                               : parameter?.parameterType ===
-                                EParameterTypes.SELECT_MATERIALS ||
+                                  EParameterTypes.SELECT_MATERIALS ||
                                 parameter?.parameterType ===
-                                EParameterTypes.ADVERTISING_PRODUCT_CATEGORY ||
+                                  EParameterTypes.ADVERTISING_PRODUCT_CATEGORY ||
                                 parameter?.parameterType ===
-                                EParameterTypes.ADVERTISING_PRODUCT_NAME
-                                ? parameter?.actionId
-                                : null,
+                                  EParameterTypes.ADVERTISING_PRODUCT_NAME
+                              ? parameter?.actionId
+                              : null,
                           parameterType: parameter?.parameterType,
                           isQuantityParameter: parameter?.isQuantityParameter,
                           ...(value && {
@@ -2112,13 +2120,13 @@ const useDigitalOffsetPrice = ({
                           value?.activateAction === true
                             ? parameter?.actionId
                             : parameter?.parameterType ===
-                              EParameterTypes.SELECT_MATERIALS ||
+                                EParameterTypes.SELECT_MATERIALS ||
                               parameter?.parameterType ===
-                              EParameterTypes.ADVERTISING_PRODUCT_CATEGORY ||
+                                EParameterTypes.ADVERTISING_PRODUCT_CATEGORY ||
                               parameter?.parameterType ===
-                              EParameterTypes.ADVERTISING_PRODUCT_NAME
-                              ? parameter?.actionId
-                              : null,
+                                EParameterTypes.ADVERTISING_PRODUCT_NAME
+                            ? parameter?.actionId
+                            : null,
                         parameterType: parameter?.parameterType,
                         isQuantityParameter: parameter?.isQuantityParameter,
                         ...(isDieCutExisting?.valueIds[0] && {
@@ -2206,24 +2214,24 @@ const useDigitalOffsetPrice = ({
                         isQuantityParameter: childParam?.isQuantityParameter,
                         values: item.defaultValue
                           ? [
-                            unitType === UNIT_TYPE.IMPERIAL &&
+                              unitType === UNIT_TYPE.IMPERIAL &&
                               childParam?.code != "Width" &&
                               childParam?.code != "Height"
-                              ? (
-                                item?.defaultValue * childParam?.factor
-                              ).toFixed(3)
-                              : item?.defaultValue,
-                          ]
+                                ? (
+                                    item?.defaultValue * childParam?.factor
+                                  ).toFixed(3)
+                                : item?.defaultValue,
+                            ]
                           : [
-                            unitType === UNIT_TYPE.IMPERIAL &&
+                              unitType === UNIT_TYPE.IMPERIAL &&
                               childParam?.code != "Width" &&
                               childParam?.code != "Height"
-                              ? (
-                                childParam?.defaultValue *
-                                childParam?.factor
-                              ).toFixed(3)
-                              : childParam?.defaultValue,
-                          ],
+                                ? (
+                                    childParam?.defaultValue *
+                                    childParam?.factor
+                                  ).toFixed(3)
+                                : childParam?.defaultValue,
+                            ],
                         sectionId: section?.id,
                         subSectionId: subSection?.id,
                         actionIndex: childParam?.actionIndex,
@@ -2288,7 +2296,7 @@ const useDigitalOffsetPrice = ({
                 // Special validation for SELECT_MATERIALS in EDIT/DUPLICATE mode
                 if (
                   parameter.parameterType ===
-                  EParameterTypes.SELECT_MATERIALS &&
+                    EParameterTypes.SELECT_MATERIALS &&
                   (widgetType === EWidgetProductType.EDIT ||
                     widgetType === EWidgetProductType.DUPLICATE)
                 ) {
@@ -2325,9 +2333,11 @@ const useDigitalOffsetPrice = ({
 
                       if (!isValid) {
                         // Save the removed parameter info
-                        const paramKey = `${parameter.parameterId}_${parameter.sectionId
-                          }_${parameter.subSectionId}_${parameter.actionIndex || 0
-                          }`;
+                        const paramKey = `${parameter.parameterId}_${
+                          parameter.sectionId
+                        }_${parameter.subSectionId}_${
+                          parameter.actionIndex || 0
+                        }`;
                         removedParams[paramKey] = {
                           parameterId: parameter.parameterId,
                           parameterName: parameter.parameterName,
@@ -2384,9 +2394,11 @@ const useDigitalOffsetPrice = ({
 
         // Calculate Quantity when Sets is enabled by default
         filteredSubProductsArray.forEach((subProduct) => {
-          if (!subProduct.type) { // General parameters
+          if (!subProduct.type) {
+            // General parameters
             const setsParam = subProduct.parameters.find(
-              (p) => p.parameterCode === "Sets" && p.values && p.values[0] === "true"
+              (p) =>
+                p.parameterCode === "Sets" && p.values && p.values[0] === "true"
             );
 
             if (setsParam) {
@@ -2401,7 +2413,8 @@ const useDigitalOffsetPrice = ({
               );
 
               if (setQuantityParam && setUnitsParam && quantityParam) {
-                const setQuantityValue = Number(setQuantityParam.values[0]) || 0;
+                const setQuantityValue =
+                  Number(setQuantityParam.values[0]) || 0;
                 const setUnitsValue = Number(setUnitsParam.values[0]) || 0;
                 const calculatedQuantity = setQuantityValue * setUnitsValue;
 
@@ -2496,8 +2509,12 @@ const useDigitalOffsetPrice = ({
           });
 
           // Combine existing and processed parameters, then remove duplicates
-          const combinedParameters = [...subProduct.parameters, ...processedParameters];
-          const uniqueParameters = removeDuplicateParameters(combinedParameters);
+          const combinedParameters = [
+            ...subProduct.parameters,
+            ...processedParameters,
+          ];
+          const uniqueParameters =
+            removeDuplicateParameters(combinedParameters);
 
           // Filter out parameters with empty GUID for both sectionId and subSectionId
           const finalParameters = uniqueParameters.filter(
@@ -2657,13 +2674,13 @@ const useDigitalOffsetPrice = ({
               if (
                 (parameter?.parameterType === EParameterTypes.DROP_DOWN_LIST ||
                   parameter?.parameterType ===
-                  EParameterTypes.MACHINES_SELECT ||
+                    EParameterTypes.MACHINES_SELECT ||
                   parameter?.parameterType ===
-                  EParameterTypes.SELECT_MATERIALS ||
+                    EParameterTypes.SELECT_MATERIALS ||
                   parameter?.parameterType ===
-                  EParameterTypes.ADVERTISING_PRODUCT_CATEGORY ||
+                    EParameterTypes.ADVERTISING_PRODUCT_CATEGORY ||
                   parameter?.parameterType ===
-                  EParameterTypes.ADVERTISING_PRODUCT_NAME) &&
+                    EParameterTypes.ADVERTISING_PRODUCT_NAME) &&
                 (!parameter?.valuesConfigs ||
                   parameter?.valuesConfigs.length === 0)
               ) {
@@ -2720,24 +2737,24 @@ const useDigitalOffsetPrice = ({
                       );
                       return existingConfig
                         ? {
-                          ...existingConfig,
-                          additionalAttribute: data.additionalAttribute,
-                          currency: data.currency,
-                        }
+                            ...existingConfig,
+                            additionalAttribute: data.additionalAttribute,
+                            currency: data.currency,
+                          }
                         : {
-                          id: data.valueId,
-                          isHidden: false,
-                          isDefault: false,
-                          updateName: null,
-                          activateAction: false,
-                          isDeleted: false,
-                          materialValueIds: null,
-                          values: null,
-                          selectedParameterValues: null,
-                          code: null, // Add code if needed
-                          additionalAttribute: data.additionalAttribute,
-                          currency: data.currency,
-                        };
+                            id: data.valueId,
+                            isHidden: false,
+                            isDefault: false,
+                            updateName: null,
+                            activateAction: false,
+                            isDeleted: false,
+                            materialValueIds: null,
+                            values: null,
+                            selectedParameterValues: null,
+                            code: null, // Add code if needed
+                            additionalAttribute: data.additionalAttribute,
+                            currency: data.currency,
+                          };
                     });
                   }
                 } else {
@@ -2824,9 +2841,8 @@ const useDigitalOffsetPrice = ({
                 }
                 if (materialData) {
                   if (parameter.isHiddenInSetting) {
-                    parameter.isHidden = true
-                  }
-                  else {
+                    parameter.isHidden = true;
+                  } else {
                     parameter.isHidden = false;
                   }
                   materialData.forEach((val) => {
@@ -2939,7 +2955,7 @@ const useDigitalOffsetPrice = ({
                           compareStrings(
                             m.valueId,
                             (x.valueIds && x.valueIds[0]) ||
-                            (x.values && x.values[0])
+                              (x.values && x.values[0])
                           )
                         )
                       );
@@ -3128,6 +3144,7 @@ const useDigitalOffsetPrice = ({
     setMakeShapeOpen(false);
     setPrintingNotes("");
     setGraphicNotes("");
+    setQualityIssueReason("");
     setErrorMsg("");
     setProductTemplate([]);
     setIsMigratedFromOldSystem(false);
@@ -3193,6 +3210,7 @@ const useDigitalOffsetPrice = ({
       if (documentItemByEdit) {
         setGraphicNotes(documentItemByEdit.graphicNotes);
         setPrintingNotes(documentItemByEdit.printingNotes);
+        setQualityIssueReason(documentItemByEdit.qualityIssueReason || "");
         if (documentItemByEdit?.exampleType) {
           setSampleType(getSampleType(documentItemByEdit?.exampleType));
         }
@@ -3243,10 +3261,7 @@ const useDigitalOffsetPrice = ({
   useEffect(() => {
     const qty = getQuantityParameterValue();
     const itemQuantity =
-      qty &&
-        qty.values &&
-        qty.values.length &&
-        qty?.values[0]
+      qty && qty.values && qty.values.length && qty?.values[0]
         ? +qty?.values[0]
         : 1;
     if (!isNaN(sliderCurrentProductItemValueTotalPrice) && itemQuantity) {
@@ -3273,6 +3288,7 @@ const useDigitalOffsetPrice = ({
         duplicateType: router?.query?.duplicateType,
         documentId: router?.query?.documentId,
         exampleType: sampleType && getSampleTypeValue(sampleType),
+        qualityIssueReason,
       };
       setCurrentProductItemValue(productItemValue);
     }
@@ -3290,6 +3306,7 @@ const useDigitalOffsetPrice = ({
     graphicNotes,
     billingMethod,
     sampleType,
+    qualityIssueReason,
   ]);
 
   const SelectWorkFlowById = async (data) => {
@@ -3785,8 +3802,9 @@ const useDigitalOffsetPrice = ({
       parameter?.parameterType === EParameterTypes.SELECT_MATERIALS ||
       parameter?.parameterType === EParameterTypes.ADVERTISING_PRODUCT_CATEGORY
     ) {
-      const paramKey = `${parameter.id}_${section.id}_${subSection.id}_${parameter.actionIndex || 0
-        }`;
+      const paramKey = `${parameter.id}_${section.id}_${subSection.id}_${
+        parameter.actionIndex || 0
+      }`;
       const removedParam = removedMaterialParameters[paramKey];
       Comp = (
         <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
@@ -3818,7 +3836,7 @@ const useDigitalOffsetPrice = ({
     } else if (
       parameter?.parameterType === EParameterTypes.ADVERTISING_PRODUCT_NAME ||
       parameter?.parameterType ===
-      EParameterTypes.SELECT_FIXED_VALUES_WITH_IMAGES
+        EParameterTypes.SELECT_FIXED_VALUES_WITH_IMAGES
     ) {
       Comp = (
         <AdvertisingProductNameParameterWidget
@@ -3937,16 +3955,16 @@ const useDigitalOffsetPrice = ({
               <div
                 style={
                   errorText &&
-                    parameter?.isRequired &&
-                    (value?.values?.[0]?.length === 0 || !value?.values?.[0])
+                  parameter?.isRequired &&
+                  (value?.values?.[0]?.length === 0 || !value?.values?.[0])
                     ? clasess.parameterRequierdLabelStyle
                     : value?.values?.[0] === "true"
-                      ? inunderParameter
-                        ? clasess.parameterunderParameterStyle
-                        : clasess.parameterType3ActiveLabelStyle
-                      : inunderParameter
-                        ? clasess.underParameterLabelStyle
-                        : clasess.parameterLabelStyle
+                    ? inunderParameter
+                      ? clasess.parameterunderParameterStyle
+                      : clasess.parameterType3ActiveLabelStyle
+                    : inunderParameter
+                    ? clasess.underParameterLabelStyle
+                    : clasess.parameterLabelStyle
                 }
               >
                 {parameter?.name}
@@ -4279,8 +4297,8 @@ const useDigitalOffsetPrice = ({
                             subSection?.id,
                             section?.id,
                             (target as any).ParameterType ??
-                            target.parameterType ??
-                            EParameterTypes.INPUT_NUMBER,
+                              target.parameterType ??
+                              EParameterTypes.INPUT_NUMBER,
                             target.parameterName ?? code,
                             target.actionId,
                             { values: inkLoad, valueIds: inkLoad },
@@ -4365,13 +4383,13 @@ const useDigitalOffsetPrice = ({
                       style={
                         inRow
                           ? {
-                            ...clasess.parameterRowContainer,
-                            position: "relative",
-                          }
+                              ...clasess.parameterRowContainer,
+                              position: "relative",
+                            }
                           : {
-                            ...clasess.parameterContainer,
-                            position: "relative",
-                          }
+                              ...clasess.parameterContainer,
+                              position: "relative",
+                            }
                       }
                     >
                       <div
@@ -4511,11 +4529,11 @@ const useDigitalOffsetPrice = ({
                           setProductTemplate(productCopy);
                         } else if (
                           parameter?.parameterType ===
-                          EParameterTypes.DROP_DOWN_LIST ||
+                            EParameterTypes.DROP_DOWN_LIST ||
                           parameter?.parameterType ===
-                          EParameterTypes.SELECT_MATERIALS ||
+                            EParameterTypes.SELECT_MATERIALS ||
                           parameter?.parameterType ===
-                          EParameterTypes.MACHINES_SELECT
+                            EParameterTypes.MACHINES_SELECT
                         ) {
                           const valueInArray =
                             relatedParameter.selectedValueIds?.find(
@@ -4774,7 +4792,9 @@ const useDigitalOffsetPrice = ({
           (x) => x.id === subSection.id
         );
         const param = subSectionCopy.parameters.find(
-          (x) => x.id === relatedParameter.parameterId && x.actionIndex === actionIndex
+          (x) =>
+            x.id === relatedParameter.parameterId &&
+            x.actionIndex === actionIndex
         );
         if (hasRelatedParams && hasChildParams && isHidden) {
           parameter.childsParameters.forEach((childParam) => {
@@ -4790,11 +4810,14 @@ const useDigitalOffsetPrice = ({
           if (param.relatedParameters) {
             for (let i = 0; i < param.relatedParameters.length; i++) {
               let relatedParameterId = param.relatedParameters[i].parameterId;
-              let relatedParamActionIndex = param.relatedParameters[i].actionIndex !== undefined
-                ? param.relatedParameters[i].actionIndex
-                : actionIndex;
+              let relatedParamActionIndex =
+                param.relatedParameters[i].actionIndex !== undefined
+                  ? param.relatedParameters[i].actionIndex
+                  : actionIndex;
               let relatedParameter = subSectionCopy.parameters.find(
-                (x) => x.id === relatedParameterId && x.actionIndex === relatedParamActionIndex
+                (x) =>
+                  x.id === relatedParameterId &&
+                  x.actionIndex === relatedParamActionIndex
               );
               if (relatedParameter) {
                 relatedParameter.isHidden = true;
@@ -4815,11 +4838,14 @@ const useDigitalOffsetPrice = ({
           if (x.type == subSection.type) {
             x = {
               ...x,
-              parameters: x.parameters.filter((p) =>
-                !(p.parameterId === param.id &&
-                  p.actionIndex === actionIndex &&
-                  p.sectionId === section.id &&
-                  p.subSectionId === subSection.id)
+              parameters: x.parameters.filter(
+                (p) =>
+                  !(
+                    p.parameterId === param.id &&
+                    p.actionIndex === actionIndex &&
+                    p.sectionId === section.id &&
+                    p.subSectionId === subSection.id
+                  )
               ),
             };
           }
@@ -4899,11 +4925,14 @@ const useDigitalOffsetPrice = ({
           if (x.type == subSection.type) {
             x = {
               ...x,
-              parameters: x.parameters.filter((p) =>
-                !(p.parameterId === param.id &&
-                  p.actionIndex === actionIndex &&
-                  p.sectionId === section.id &&
-                  p.subSectionId === subSection.id)
+              parameters: x.parameters.filter(
+                (p) =>
+                  !(
+                    p.parameterId === param.id &&
+                    p.actionIndex === actionIndex &&
+                    p.sectionId === section.id &&
+                    p.subSectionId === subSection.id
+                  )
               ),
             };
           }
@@ -4930,9 +4959,11 @@ const useDigitalOffsetPrice = ({
           // Use selectedValueIds: show when selected value is in selectedValueIds
           const valueIdsToCheck = Array.isArray(parm?.valueIds)
             ? parm.valueIds
-            : parm?.valueIds ? [parm.valueIds] : [];
-          const valueInArray = valueIdsToCheck.some(
-            (valueId) => relatedParameter.selectedValueIds.includes(valueId)
+            : parm?.valueIds
+            ? [parm.valueIds]
+            : [];
+          const valueInArray = valueIdsToCheck.some((valueId) =>
+            relatedParameter.selectedValueIds.includes(valueId)
           );
           if (valueInArray) {
             shouldShow = true;
@@ -4944,9 +4975,11 @@ const useDigitalOffsetPrice = ({
           // Use notSelectedValueIds: show when selected value is NOT in notSelectedValueIds (reverse logic)
           const valueIdsToCheck = Array.isArray(parm?.valueIds)
             ? parm.valueIds
-            : parm?.valueIds ? [parm.valueIds] : [];
-          const valueInNotSelectedArray = valueIdsToCheck.some(
-            (valueId) => relatedParameter.notSelectedValueIds.includes(valueId)
+            : parm?.valueIds
+            ? [parm.valueIds]
+            : [];
+          const valueInNotSelectedArray = valueIdsToCheck.some((valueId) =>
+            relatedParameter.notSelectedValueIds.includes(valueId)
           );
           // Show if value is NOT in notSelectedValueIds
           if (!valueInNotSelectedArray && parm?.valueIds) {
@@ -4990,17 +5023,22 @@ const useDigitalOffsetPrice = ({
             (x) => x.id === subSection.id
           );
           const param = subSectionCopy.parameters.find(
-            (x) => x.id === relatedParameter.parameterId && x.actionIndex === actionIndex
+            (x) =>
+              x.id === relatedParameter.parameterId &&
+              x.actionIndex === actionIndex
           );
           if (param.isHidden == true) {
             if (param.relatedParameters) {
               for (let i = 0; i < param.relatedParameters.length; i++) {
                 let relatedParameterId = param.relatedParameters[i].parameterId;
-                let relatedParamActionIndex = param.relatedParameters[i].actionIndex !== undefined
-                  ? param.relatedParameters[i].actionIndex
-                  : actionIndex;
+                let relatedParamActionIndex =
+                  param.relatedParameters[i].actionIndex !== undefined
+                    ? param.relatedParameters[i].actionIndex
+                    : actionIndex;
                 let relatedParameter = subSectionCopy.parameters.find(
-                  (x) => x.id === relatedParameterId && x.actionIndex === relatedParamActionIndex
+                  (x) =>
+                    x.id === relatedParameterId &&
+                    x.actionIndex === relatedParamActionIndex
                 );
                 if (relatedParameter) {
                   relatedParameter.isHidden = true;
@@ -5020,11 +5058,14 @@ const useDigitalOffsetPrice = ({
             if (x.type == subSection.type) {
               x = {
                 ...x,
-                parameters: x.parameters.filter((p) =>
-                  !(p.parameterId === param.id &&
-                    p.actionIndex === actionIndex &&
-                    p.sectionId === section.id &&
-                    p.subSectionId === subSection.id)
+                parameters: x.parameters.filter(
+                  (p) =>
+                    !(
+                      p.parameterId === param.id &&
+                      p.actionIndex === actionIndex &&
+                      p.sectionId === section.id &&
+                      p.subSectionId === subSection.id
+                    )
                 ),
               };
             }
@@ -5033,11 +5074,14 @@ const useDigitalOffsetPrice = ({
           if (param.relatedParameters) {
             for (let i = 0; i < param.relatedParameters.length; i++) {
               let relatedParameterId = param.relatedParameters[i].parameterId;
-              let relatedParamActionIndex = param.relatedParameters[i].actionIndex !== undefined
-                ? param.relatedParameters[i].actionIndex
-                : actionIndex;
+              let relatedParamActionIndex =
+                param.relatedParameters[i].actionIndex !== undefined
+                  ? param.relatedParameters[i].actionIndex
+                  : actionIndex;
               let relatedParameter = subSectionCopy.parameters.find(
-                (x) => x.id === relatedParameterId && x.actionIndex === relatedParamActionIndex
+                (x) =>
+                  x.id === relatedParameterId &&
+                  x.actionIndex === relatedParamActionIndex
               );
               if (relatedParameter) {
                 relatedParameter.isHidden = true;
@@ -5061,13 +5105,19 @@ const useDigitalOffsetPrice = ({
           relatedParameter.selectedValueIds.length > 0
         ) {
           // Use selectedValueIds: show when selected value is in selectedValueIds
-          const valueToCheck = parm?.ParameterType === 11 ? parm?.valueIds : parm?.values;
+          const valueToCheck =
+            parm?.ParameterType === 11 ? parm?.valueIds : parm?.values;
           const valuesToCheck = Array.isArray(valueToCheck)
             ? valueToCheck
-            : valueToCheck ? [valueToCheck] : [];
-          const valueInArray = valuesToCheck.some(
-            (value) => relatedParameter.selectedValueIds.includes(value)
-          ) || (relatedParameter.selectedValueIds.includes("false") && !parm?.values);
+            : valueToCheck
+            ? [valueToCheck]
+            : [];
+          const valueInArray =
+            valuesToCheck.some((value) =>
+              relatedParameter.selectedValueIds.includes(value)
+            ) ||
+            (relatedParameter.selectedValueIds.includes("false") &&
+              !parm?.values);
           if (
             (valueInArray && myParameter) ||
             (!parm &&
@@ -5083,16 +5133,24 @@ const useDigitalOffsetPrice = ({
           relatedParameter.notSelectedValueIds.length > 0
         ) {
           // Use notSelectedValueIds: show when selected value is NOT in notSelectedValueIds (reverse logic)
-          const valueToCheck = parm?.ParameterType === 11 ? parm?.valueIds : parm?.values;
+          const valueToCheck =
+            parm?.ParameterType === 11 ? parm?.valueIds : parm?.values;
           const valuesToCheck = Array.isArray(valueToCheck)
             ? valueToCheck
-            : valueToCheck ? [valueToCheck] : [];
-          const valueInNotSelectedArray = valuesToCheck.some(
-            (value) => relatedParameter.notSelectedValueIds.includes(value)
+            : valueToCheck
+            ? [valueToCheck]
+            : [];
+          const valueInNotSelectedArray = valuesToCheck.some((value) =>
+            relatedParameter.notSelectedValueIds.includes(value)
           );
           // Show if value is NOT in notSelectedValueIds
           // Only show if there's a selection AND the value is not in notSelectedValueIds
-          if (!valueInNotSelectedArray && myParameter && valueToCheck && valuesToCheck.length > 0) {
+          if (
+            !valueInNotSelectedArray &&
+            myParameter &&
+            valueToCheck &&
+            valuesToCheck.length > 0
+          ) {
             shouldShow = true;
           }
           // If no value selected (!parm), shouldShow remains false (parameter stays hidden)
@@ -5127,17 +5185,22 @@ const useDigitalOffsetPrice = ({
             (x) => x.id === subSection.id
           );
           const param = subSectionCopy.parameters.find(
-            (x) => x.id === relatedParameter.parameterId && x.actionIndex === actionIndex
+            (x) =>
+              x.id === relatedParameter.parameterId &&
+              x.actionIndex === actionIndex
           );
           if (param.isHidden == true) {
             if (param.relatedParameters) {
               for (let i = 0; i < param.relatedParameters.length; i++) {
                 let relatedParameterId = param.relatedParameters[i].parameterId;
-                let relatedParamActionIndex = param.relatedParameters[i].actionIndex !== undefined
-                  ? param.relatedParameters[i].actionIndex
-                  : actionIndex;
+                let relatedParamActionIndex =
+                  param.relatedParameters[i].actionIndex !== undefined
+                    ? param.relatedParameters[i].actionIndex
+                    : actionIndex;
                 let relatedParameter = subSectionCopy.parameters.find(
-                  (x) => x.id === relatedParameterId && x.actionIndex === relatedParamActionIndex
+                  (x) =>
+                    x.id === relatedParameterId &&
+                    x.actionIndex === relatedParamActionIndex
                 );
                 if (relatedParameter) {
                   relatedParameter.isHidden = true;
@@ -5157,11 +5220,14 @@ const useDigitalOffsetPrice = ({
             if (x.type == subSection.type) {
               x = {
                 ...x,
-                parameters: x.parameters.filter((p) =>
-                  !(p.parameterId === param.id &&
-                    p.actionIndex === actionIndex &&
-                    p.sectionId === section.id &&
-                    p.subSectionId === subSection.id)
+                parameters: x.parameters.filter(
+                  (p) =>
+                    !(
+                      p.parameterId === param.id &&
+                      p.actionIndex === actionIndex &&
+                      p.sectionId === section.id &&
+                      p.subSectionId === subSection.id
+                    )
                 ),
               };
             }
@@ -5169,11 +5235,14 @@ const useDigitalOffsetPrice = ({
           if (param.relatedParameters) {
             for (let i = 0; i < param.relatedParameters.length; i++) {
               let relatedParameterId = param.relatedParameters[i].parameterId;
-              let relatedParamActionIndex = param.relatedParameters[i].actionIndex !== undefined
-                ? param.relatedParameters[i].actionIndex
-                : actionIndex;
+              let relatedParamActionIndex =
+                param.relatedParameters[i].actionIndex !== undefined
+                  ? param.relatedParameters[i].actionIndex
+                  : actionIndex;
               let relatedParameter = subSectionCopy.parameters.find(
-                (x) => x.id === relatedParameterId && x.actionIndex === relatedParamActionIndex
+                (x) =>
+                  x.id === relatedParameterId &&
+                  x.actionIndex === relatedParamActionIndex
               );
               if (relatedParameter) {
                 relatedParameter.isHidden = true;
@@ -5372,7 +5441,7 @@ const useDigitalOffsetPrice = ({
               ) {
                 const materialPath =
                   relatedParameter.materialPath[
-                  relatedParameter.materialPath.length - 1
+                    relatedParameter.materialPath.length - 1
                   ];
                 const materialRelatedParameters = subSection.parameters.filter(
                   (x) =>
@@ -5635,24 +5704,24 @@ const useDigitalOffsetPrice = ({
                     );
                     return existingConfig
                       ? {
-                        ...existingConfig,
-                        additionalAttribute: data.additionalAttribute,
-                        currency: data.currency,
-                      }
+                          ...existingConfig,
+                          additionalAttribute: data.additionalAttribute,
+                          currency: data.currency,
+                        }
                       : {
-                        id: data.valueId,
-                        isHidden: false,
-                        isDefault: false,
-                        updateName: null,
-                        activateAction: false,
-                        isDeleted: false,
-                        materialValueIds: null,
-                        values: null,
-                        selectedParameterValues: null,
-                        code: null, // Add code if needed
-                        additionalAttribute: data.additionalAttribute,
-                        currency: data.currency,
-                      };
+                          id: data.valueId,
+                          isHidden: false,
+                          isDefault: false,
+                          updateName: null,
+                          activateAction: false,
+                          isDeleted: false,
+                          materialValueIds: null,
+                          values: null,
+                          selectedParameterValues: null,
+                          code: null, // Add code if needed
+                          additionalAttribute: data.additionalAttribute,
+                          currency: data.currency,
+                        };
                   });
                 }
               } else {
@@ -5697,7 +5766,7 @@ const useDigitalOffsetPrice = ({
             if (parameterDefaultValue) {
               const materialPath =
                 relatedParameter.materialPath[
-                relatedParameter.materialPath.length - 1
+                  relatedParameter.materialPath.length - 1
                 ];
               const materialRelatedParameters = subSection.parameters.filter(
                 (x) =>
@@ -5856,7 +5925,7 @@ const useDigitalOffsetPrice = ({
           item.subSectionId === subSectionId &&
           item.actionIndex === actionIndex
       );
-      setIsProductCalculated(false)
+      setIsProductCalculated(false);
       const productTemplateCopy = cloneDeep(productTemplate);
       const section = productTemplateCopy.sections.find(
         (section) => section.id === sectionId
@@ -5958,9 +6027,9 @@ const useDigitalOffsetPrice = ({
           valueIds: [data.valueIds],
           actionId:
             valueConfig &&
-              ParameterType !== EParameterTypes.SELECT_MATERIALS &&
-              ParameterType !== EParameterTypes.ADVERTISING_PRODUCT_CATEGORY &&
-              ParameterType !== EParameterTypes.ADVERTISING_PRODUCT_NAME
+            ParameterType !== EParameterTypes.SELECT_MATERIALS &&
+            ParameterType !== EParameterTypes.ADVERTISING_PRODUCT_CATEGORY &&
+            ParameterType !== EParameterTypes.ADVERTISING_PRODUCT_NAME
               ? valueConfig?.activateAction
                 ? subSectionParameter?.actionId
                 : null
@@ -6011,9 +6080,9 @@ const useDigitalOffsetPrice = ({
             valueIds: [data.valueIds].filter(Boolean), // Remove null and undefined
             actionId:
               valueConfig &&
-                ParameterType !== EParameterTypes.SELECT_MATERIALS &&
-                ParameterType !== EParameterTypes.ADVERTISING_PRODUCT_CATEGORY &&
-                ParameterType !== EParameterTypes.ADVERTISING_PRODUCT_NAME
+              ParameterType !== EParameterTypes.SELECT_MATERIALS &&
+              ParameterType !== EParameterTypes.ADVERTISING_PRODUCT_CATEGORY &&
+              ParameterType !== EParameterTypes.ADVERTISING_PRODUCT_NAME
                 ? valueConfig?.activateAction
                   ? subSectionParameter?.actionId
                   : null
@@ -6049,9 +6118,9 @@ const useDigitalOffsetPrice = ({
           parameterName: parameterName,
           actionId:
             valueConfig &&
-              ParameterType !== EParameterTypes.SELECT_MATERIALS &&
-              ParameterType !== EParameterTypes.ADVERTISING_PRODUCT_CATEGORY &&
-              ParameterType !== EParameterTypes.ADVERTISING_PRODUCT_NAME
+            ParameterType !== EParameterTypes.SELECT_MATERIALS &&
+            ParameterType !== EParameterTypes.ADVERTISING_PRODUCT_CATEGORY &&
+            ParameterType !== EParameterTypes.ADVERTISING_PRODUCT_NAME
               ? valueConfig?.activateAction
                 ? actionId
                 : null
@@ -6103,12 +6172,13 @@ const useDigitalOffsetPrice = ({
             if (data?.value === null && data?.values === undefined) {
               subSectionParameter.childsParameters?.forEach((childParam) => {
                 temp = temp.filter(
-                  (item) => !(
-                    item.parameterId === childParam.id &&
-                    item.actionIndex === actionIndex &&
-                    item.sectionId === sectionId &&
-                    item.subSectionId === subSectionId
-                  )
+                  (item) =>
+                    !(
+                      item.parameterId === childParam.id &&
+                      item.actionIndex === actionIndex &&
+                      item.sectionId === sectionId &&
+                      item.subSectionId === subSectionId
+                    )
                 );
               });
             }
@@ -6241,24 +6311,116 @@ const useDigitalOffsetPrice = ({
         ) {
           // Dynamic list of all API fields that can be populated from DieCut
           const dynamicApiFields: Record<string, string[]> = {
-            "DieUnitWidth": ["finalUnitWidth", "dieUnitWidth", "unitWidth", "width"],
-            "DieUnitLength": ["finalUnitLength", "dieUnitLength", "unitLength", "length"],
-            "DieUnitHeight": ["finalUnitHeight", "dieUnitHeight", "unitHeight", "height"],
-            "DieUnitFlapLength_FOLD": ["DieUnitFlapLength_FOLD", "dieUnitFlapLength_FOLD", "dieUnitFlapLength", "flapLength"],
-            "DieUnitLidHeight_LID": ["DieUnitLidHeight_LID", "dieUnitLidHeight_LID", "LidHeight_LID", "lidHeight_LID", "LidHeight", "lidHeight"],
-            "DieUnitBottomOverlap_O": ["DieUnitBottomOverlap_O", "dieUnitBottomOverlap_O", "BottomOverlap", "bottomOverlap"],
-            "DieUnitFrontHeight_F": ["DieUnitFrontHeight_F", "dieUnitFrontHeight_F", "FrontHeight", "frontHeight"],
-            "DieUnitDiameter_D": ["DieUnitDiameter_D", "dieUnitDiameter_D", "Diameter", "diameter"],
-            "DieUnitNumberOfSides_N": ["DieUnitNumberOfSides_N", "dieUnitNumberOfSides_N", "NumberOfSides", "numberOfSides"],
-            "DieUnitHandleFlapHeight_Z": ["DieUnitHandleFlapHeight_Z", "dieUnitHandleFlapHeight_Z", "HandleFlapHeight", "handleFlapHeight"],
-            "DieUnitBaseThickness_B": ["DieUnitBaseThickness_B", "dieUnitBaseThickness_B", "BaseThickness", "baseThickness"],
-            "DieUnitLidOverlap_O": ["DieUnitLidOverlap_O", "dieUnitLidOverlap_O", "LidOverlap", "lidOverlap"],
-            "DieUnitRoofHeight_ROOF": ["DieUnitRoofHeight_ROOF", "dieUnitRoofHeight_ROOF", "RoofHeight", "roofHeight"],
-            "DieUnitDraftAngle_DRAFT": ["DieUnitDraftAngle_DRAFT", "dieUnitDraftAngle_DRAFT", "DraftAngle", "draftAngle"],
-            "DieUnitFlapHeight_A": ["DieUnitFlapHeight_A", "dieUnitFlapHeight_A", "FlapHeight", "flapHeight"],
-            "DieUnitFlapWidth_B": ["DieUnitFlapWidth_B", "dieUnitFlapWidth_B", "FlapWidth", "flapWidth"],
-            "DieUnitBottomLength_V": ["DieUnitBottomLength_V", "dieUnitBottomLength_V", "BottomLength", "bottomLength"],
-            "DieUnitBottomWidth_J": ["DieUnitBottomWidth_J", "dieUnitBottomWidth_J", "BottomWidth", "bottomWidth"],
+            DieUnitWidth: [
+              "finalUnitWidth",
+              "dieUnitWidth",
+              "unitWidth",
+              "width",
+            ],
+            DieUnitLength: [
+              "finalUnitLength",
+              "dieUnitLength",
+              "unitLength",
+              "length",
+            ],
+            DieUnitHeight: [
+              "finalUnitHeight",
+              "dieUnitHeight",
+              "unitHeight",
+              "height",
+            ],
+            DieUnitFlapLength_FOLD: [
+              "DieUnitFlapLength_FOLD",
+              "dieUnitFlapLength_FOLD",
+              "dieUnitFlapLength",
+              "flapLength",
+            ],
+            DieUnitLidHeight_LID: [
+              "DieUnitLidHeight_LID",
+              "dieUnitLidHeight_LID",
+              "LidHeight_LID",
+              "lidHeight_LID",
+              "LidHeight",
+              "lidHeight",
+            ],
+            DieUnitBottomOverlap_O: [
+              "DieUnitBottomOverlap_O",
+              "dieUnitBottomOverlap_O",
+              "BottomOverlap",
+              "bottomOverlap",
+            ],
+            DieUnitFrontHeight_F: [
+              "DieUnitFrontHeight_F",
+              "dieUnitFrontHeight_F",
+              "FrontHeight",
+              "frontHeight",
+            ],
+            DieUnitDiameter_D: [
+              "DieUnitDiameter_D",
+              "dieUnitDiameter_D",
+              "Diameter",
+              "diameter",
+            ],
+            DieUnitNumberOfSides_N: [
+              "DieUnitNumberOfSides_N",
+              "dieUnitNumberOfSides_N",
+              "NumberOfSides",
+              "numberOfSides",
+            ],
+            DieUnitHandleFlapHeight_Z: [
+              "DieUnitHandleFlapHeight_Z",
+              "dieUnitHandleFlapHeight_Z",
+              "HandleFlapHeight",
+              "handleFlapHeight",
+            ],
+            DieUnitBaseThickness_B: [
+              "DieUnitBaseThickness_B",
+              "dieUnitBaseThickness_B",
+              "BaseThickness",
+              "baseThickness",
+            ],
+            DieUnitLidOverlap_O: [
+              "DieUnitLidOverlap_O",
+              "dieUnitLidOverlap_O",
+              "LidOverlap",
+              "lidOverlap",
+            ],
+            DieUnitRoofHeight_ROOF: [
+              "DieUnitRoofHeight_ROOF",
+              "dieUnitRoofHeight_ROOF",
+              "RoofHeight",
+              "roofHeight",
+            ],
+            DieUnitDraftAngle_DRAFT: [
+              "DieUnitDraftAngle_DRAFT",
+              "dieUnitDraftAngle_DRAFT",
+              "DraftAngle",
+              "draftAngle",
+            ],
+            DieUnitFlapHeight_A: [
+              "DieUnitFlapHeight_A",
+              "dieUnitFlapHeight_A",
+              "FlapHeight",
+              "flapHeight",
+            ],
+            DieUnitFlapWidth_B: [
+              "DieUnitFlapWidth_B",
+              "dieUnitFlapWidth_B",
+              "FlapWidth",
+              "flapWidth",
+            ],
+            DieUnitBottomLength_V: [
+              "DieUnitBottomLength_V",
+              "dieUnitBottomLength_V",
+              "BottomLength",
+              "bottomLength",
+            ],
+            DieUnitBottomWidth_J: [
+              "DieUnitBottomWidth_J",
+              "dieUnitBottomWidth_J",
+              "BottomWidth",
+              "bottomWidth",
+            ],
           };
 
           // List of all parameters that can be removed if not present in new selection
@@ -6298,13 +6460,24 @@ const useDigitalOffsetPrice = ({
             );
             if (dieCutterParameter) {
               const dieCutterSubProductParam = temp.find(
-                (p) => p.parameterId === dieCutterParameter.id && p.actionIndex === dieCutterParameter.actionIndex
+                (p) =>
+                  p.parameterId === dieCutterParameter.id &&
+                  p.actionIndex === dieCutterParameter.actionIndex
               );
-              if (dieCutterSubProductParam && dieCutterSubProductParam.valueIds && dieCutterSubProductParam.valueIds.length > 0) {
-                const dieCutterValueConfig = dieCutterParameter.valuesConfigs?.find(
-                  (vc) => vc.id === dieCutterSubProductParam.valueIds[0]
-                );
-                if (dieCutterValueConfig && (dieCutterValueConfig.additionalAttribute || dieCutterValueConfig.rowData)) {
+              if (
+                dieCutterSubProductParam &&
+                dieCutterSubProductParam.valueIds &&
+                dieCutterSubProductParam.valueIds.length > 0
+              ) {
+                const dieCutterValueConfig =
+                  dieCutterParameter.valuesConfigs?.find(
+                    (vc) => vc.id === dieCutterSubProductParam.valueIds[0]
+                  );
+                if (
+                  dieCutterValueConfig &&
+                  (dieCutterValueConfig.additionalAttribute ||
+                    dieCutterValueConfig.rowData)
+                ) {
                   newDieCutValue = dieCutterValueConfig;
                 }
               }
@@ -6341,10 +6514,24 @@ const useDigitalOffsetPrice = ({
           const validParameters = new Set<string>();
 
           // Always include Width and Height if they have values
-          if (getValueFromDieCut(["unitWidth", "dieUnitWidth", "finalUnitWidth", "width"])) {
+          if (
+            getValueFromDieCut([
+              "unitWidth",
+              "dieUnitWidth",
+              "finalUnitWidth",
+              "width",
+            ])
+          ) {
             validParameters.add("Width");
           }
-          if (getValueFromDieCut(["unitLength", "dieUnitLength", "finalUnitLength", "length"])) {
+          if (
+            getValueFromDieCut([
+              "unitLength",
+              "dieUnitLength",
+              "finalUnitLength",
+              "length",
+            ])
+          ) {
             validParameters.add("Height");
           }
 
@@ -6587,7 +6774,8 @@ const useDigitalOffsetPrice = ({
           // Set Quantity parameter changed
           // Check if quantity exists in temp array (not memoized value)
           let quantityParam = temp.find(
-            (item) => item?.parameterId === "4991945c-5e07-4773-8f11-2e3483b70b53"
+            (item) =>
+              item?.parameterId === "4991945c-5e07-4773-8f11-2e3483b70b53"
           );
 
           if (!quantityParam) {
@@ -6615,7 +6803,8 @@ const useDigitalOffsetPrice = ({
 
           // Get Set Units value from temp array
           const setUnitsParam = temp.find(
-            (item) => item?.parameterId === "91d3fe77-b852-4974-beb6-2da7d7616c78"
+            (item) =>
+              item?.parameterId === "91d3fe77-b852-4974-beb6-2da7d7616c78"
           );
           const setUnits = setUnitsParam ? Number(setUnitsParam.values[0]) : 0;
 
@@ -6631,7 +6820,8 @@ const useDigitalOffsetPrice = ({
           // Set Units parameter changed
           // Check if quantity exists in temp array (not memoized value)
           let quantityParam = temp.find(
-            (item) => item?.parameterId === "4991945c-5e07-4773-8f11-2e3483b70b53"
+            (item) =>
+              item?.parameterId === "4991945c-5e07-4773-8f11-2e3483b70b53"
           );
 
           if (!quantityParam) {
@@ -6659,9 +6849,12 @@ const useDigitalOffsetPrice = ({
 
           // Get Set Quantity value from temp array
           const setQuantityParam = temp.find(
-            (item) => item?.parameterId === "0fdbca1a-f250-447b-93e3-5b91909da59c"
+            (item) =>
+              item?.parameterId === "0fdbca1a-f250-447b-93e3-5b91909da59c"
           );
-          const setQuantity = setQuantityParam ? Number(setQuantityParam.values[0]) : 0;
+          const setQuantity = setQuantityParam
+            ? Number(setQuantityParam.values[0])
+            : 0;
 
           // Calculate and update Quantity = Set Units * Set Quantity
           const calculatedQuantity = Number(data.values) * setQuantity;
@@ -6676,11 +6869,14 @@ const useDigitalOffsetPrice = ({
           subSectionParameter.settingParameters.length > 0
         ) {
           subSectionParameter.settingParameters.forEach((settingParam) => {
-            temp = temp.filter((x) =>
-              !(x.parameterId === settingParam.id &&
-                x.actionIndex === actionIndex &&
-                x.sectionId === sectionId &&
-                x.subSectionId === subSectionId)
+            temp = temp.filter(
+              (x) =>
+                !(
+                  x.parameterId === settingParam.id &&
+                  x.actionIndex === actionIndex &&
+                  x.sectionId === sectionId &&
+                  x.subSectionId === subSectionId
+                )
             );
           });
         }
@@ -6693,7 +6889,7 @@ const useDigitalOffsetPrice = ({
         ) {
           const materialPath =
             subSectionParameter.materialPath[
-            subSectionParameter.materialPath.length - 1
+              subSectionParameter.materialPath.length - 1
             ];
           const materialRelatedParameters = subSection.parameters.filter(
             (x) =>
@@ -6906,7 +7102,8 @@ const useDigitalOffsetPrice = ({
                   // Helper to get value from either source with multiple field name variations
                   const getValueDynamic = (fieldNames: string[]) => {
                     for (const fieldName of fieldNames) {
-                      const value = getValue(fieldName) || getValueFromRowData(fieldName);
+                      const value =
+                        getValue(fieldName) || getValueFromRowData(fieldName);
                       if (value) return value;
                     }
                     return "";
@@ -6924,24 +7121,116 @@ const useDigitalOffsetPrice = ({
 
                   // List of all dynamic API fields that can be populated
                   const dynamicApiFields: Record<string, string[]> = {
-                    "DieUnitWidth": ["finalUnitWidth", "dieUnitWidth", "unitWidth", "width"],
-                    "DieUnitLength": ["finalUnitLength", "dieUnitLength", "unitLength", "length"],
-                    "DieUnitHeight": ["finalUnitHeight", "dieUnitHeight", "unitHeight", "height"],
-                    "DieUnitFlapLength_FOLD": ["DieUnitFlapLength_FOLD", "dieUnitFlapLength_FOLD", "dieUnitFlapLength", "flapLength"],
-                    "DieUnitLidHeight_LID": ["DieUnitLidHeight_LID", "dieUnitLidHeight_LID", "LidHeight_LID", "lidHeight_LID", "LidHeight", "lidHeight"],
-                    "DieUnitBottomOverlap_O": ["DieUnitBottomOverlap_O", "dieUnitBottomOverlap_O", "BottomOverlap", "bottomOverlap"],
-                    "DieUnitFrontHeight_F": ["DieUnitFrontHeight_F", "dieUnitFrontHeight_F", "FrontHeight", "frontHeight"],
-                    "DieUnitDiameter_D": ["DieUnitDiameter_D", "dieUnitDiameter_D", "Diameter", "diameter"],
-                    "DieUnitNumberOfSides_N": ["DieUnitNumberOfSides_N", "dieUnitNumberOfSides_N", "NumberOfSides", "numberOfSides"],
-                    "DieUnitHandleFlapHeight_Z": ["DieUnitHandleFlapHeight_Z", "dieUnitHandleFlapHeight_Z", "HandleFlapHeight", "handleFlapHeight"],
-                    "DieUnitBaseThickness_B": ["DieUnitBaseThickness_B", "dieUnitBaseThickness_B", "BaseThickness", "baseThickness"],
-                    "DieUnitLidOverlap_O": ["DieUnitLidOverlap_O", "dieUnitLidOverlap_O", "LidOverlap", "lidOverlap"],
-                    "DieUnitRoofHeight_ROOF": ["DieUnitRoofHeight_ROOF", "dieUnitRoofHeight_ROOF", "RoofHeight", "roofHeight"],
-                    "DieUnitDraftAngle_DRAFT": ["DieUnitDraftAngle_DRAFT", "dieUnitDraftAngle_DRAFT", "DraftAngle", "draftAngle"],
-                    "DieUnitFlapHeight_A": ["DieUnitFlapHeight_A", "dieUnitFlapHeight_A", "FlapHeight", "flapHeight"],
-                    "DieUnitFlapWidth_B": ["DieUnitFlapWidth_B", "dieUnitFlapWidth_B", "FlapWidth", "flapWidth"],
-                    "DieUnitBottomLength_V": ["DieUnitBottomLength_V", "dieUnitBottomLength_V", "BottomLength", "bottomLength"],
-                    "DieUnitBottomWidth_J": ["DieUnitBottomWidth_J", "dieUnitBottomWidth_J", "BottomWidth", "bottomWidth"],
+                    DieUnitWidth: [
+                      "finalUnitWidth",
+                      "dieUnitWidth",
+                      "unitWidth",
+                      "width",
+                    ],
+                    DieUnitLength: [
+                      "finalUnitLength",
+                      "dieUnitLength",
+                      "unitLength",
+                      "length",
+                    ],
+                    DieUnitHeight: [
+                      "finalUnitHeight",
+                      "dieUnitHeight",
+                      "unitHeight",
+                      "height",
+                    ],
+                    DieUnitFlapLength_FOLD: [
+                      "DieUnitFlapLength_FOLD",
+                      "dieUnitFlapLength_FOLD",
+                      "dieUnitFlapLength",
+                      "flapLength",
+                    ],
+                    DieUnitLidHeight_LID: [
+                      "DieUnitLidHeight_LID",
+                      "dieUnitLidHeight_LID",
+                      "LidHeight_LID",
+                      "lidHeight_LID",
+                      "LidHeight",
+                      "lidHeight",
+                    ],
+                    DieUnitBottomOverlap_O: [
+                      "DieUnitBottomOverlap_O",
+                      "dieUnitBottomOverlap_O",
+                      "BottomOverlap",
+                      "bottomOverlap",
+                    ],
+                    DieUnitFrontHeight_F: [
+                      "DieUnitFrontHeight_F",
+                      "dieUnitFrontHeight_F",
+                      "FrontHeight",
+                      "frontHeight",
+                    ],
+                    DieUnitDiameter_D: [
+                      "DieUnitDiameter_D",
+                      "dieUnitDiameter_D",
+                      "Diameter",
+                      "diameter",
+                    ],
+                    DieUnitNumberOfSides_N: [
+                      "DieUnitNumberOfSides_N",
+                      "dieUnitNumberOfSides_N",
+                      "NumberOfSides",
+                      "numberOfSides",
+                    ],
+                    DieUnitHandleFlapHeight_Z: [
+                      "DieUnitHandleFlapHeight_Z",
+                      "dieUnitHandleFlapHeight_Z",
+                      "HandleFlapHeight",
+                      "handleFlapHeight",
+                    ],
+                    DieUnitBaseThickness_B: [
+                      "DieUnitBaseThickness_B",
+                      "dieUnitBaseThickness_B",
+                      "BaseThickness",
+                      "baseThickness",
+                    ],
+                    DieUnitLidOverlap_O: [
+                      "DieUnitLidOverlap_O",
+                      "dieUnitLidOverlap_O",
+                      "LidOverlap",
+                      "lidOverlap",
+                    ],
+                    DieUnitRoofHeight_ROOF: [
+                      "DieUnitRoofHeight_ROOF",
+                      "dieUnitRoofHeight_ROOF",
+                      "RoofHeight",
+                      "roofHeight",
+                    ],
+                    DieUnitDraftAngle_DRAFT: [
+                      "DieUnitDraftAngle_DRAFT",
+                      "dieUnitDraftAngle_DRAFT",
+                      "DraftAngle",
+                      "draftAngle",
+                    ],
+                    DieUnitFlapHeight_A: [
+                      "DieUnitFlapHeight_A",
+                      "dieUnitFlapHeight_A",
+                      "FlapHeight",
+                      "flapHeight",
+                    ],
+                    DieUnitFlapWidth_B: [
+                      "DieUnitFlapWidth_B",
+                      "dieUnitFlapWidth_B",
+                      "FlapWidth",
+                      "flapWidth",
+                    ],
+                    DieUnitBottomLength_V: [
+                      "DieUnitBottomLength_V",
+                      "dieUnitBottomLength_V",
+                      "BottomLength",
+                      "bottomLength",
+                    ],
+                    DieUnitBottomWidth_J: [
+                      "DieUnitBottomWidth_J",
+                      "dieUnitBottomWidth_J",
+                      "BottomWidth",
+                      "bottomWidth",
+                    ],
                   };
 
                   const dieCutSizesParametersArray = [];
@@ -7067,7 +7356,8 @@ const useDigitalOffsetPrice = ({
             };
             const getValueDynamic = (fieldNames: string[]) => {
               for (const fieldName of fieldNames) {
-                const value = getValue(fieldName) || getValueFromRowData(fieldName);
+                const value =
+                  getValue(fieldName) || getValueFromRowData(fieldName);
                 if (value) return value;
               }
               return "";
@@ -7082,24 +7372,116 @@ const useDigitalOffsetPrice = ({
 
             // List of all dynamic API fields that can be populated
             const dynamicApiFields: Record<string, string[]> = {
-              "DieUnitWidth": ["finalUnitWidth", "dieUnitWidth", "unitWidth", "width"],
-              "DieUnitLength": ["finalUnitLength", "dieUnitLength", "unitLength", "length"],
-              "DieUnitHeight": ["finalUnitHeight", "dieUnitHeight", "unitHeight", "height"],
-              "DieUnitFlapLength_FOLD": ["DieUnitFlapLength_FOLD", "dieUnitFlapLength_FOLD", "dieUnitFlapLength", "flapLength"],
-              "DieUnitLidHeight_LID": ["DieUnitLidHeight_LID", "dieUnitLidHeight_LID", "LidHeight_LID", "lidHeight_LID", "LidHeight", "lidHeight"],
-              "DieUnitBottomOverlap_O": ["DieUnitBottomOverlap_O", "dieUnitBottomOverlap_O", "BottomOverlap", "bottomOverlap"],
-              "DieUnitFrontHeight_F": ["DieUnitFrontHeight_F", "dieUnitFrontHeight_F", "FrontHeight", "frontHeight"],
-              "DieUnitDiameter_D": ["DieUnitDiameter_D", "dieUnitDiameter_D", "Diameter", "diameter"],
-              "DieUnitNumberOfSides_N": ["DieUnitNumberOfSides_N", "dieUnitNumberOfSides_N", "NumberOfSides", "numberOfSides"],
-              "DieUnitHandleFlapHeight_Z": ["DieUnitHandleFlapHeight_Z", "dieUnitHandleFlapHeight_Z", "HandleFlapHeight", "handleFlapHeight"],
-              "DieUnitBaseThickness_B": ["DieUnitBaseThickness_B", "dieUnitBaseThickness_B", "BaseThickness", "baseThickness"],
-              "DieUnitLidOverlap_O": ["DieUnitLidOverlap_O", "dieUnitLidOverlap_O", "LidOverlap", "lidOverlap"],
-              "DieUnitRoofHeight_ROOF": ["DieUnitRoofHeight_ROOF", "dieUnitRoofHeight_ROOF", "RoofHeight", "roofHeight"],
-              "DieUnitDraftAngle_DRAFT": ["DieUnitDraftAngle_DRAFT", "dieUnitDraftAngle_DRAFT", "DraftAngle", "draftAngle"],
-              "DieUnitFlapHeight_A": ["DieUnitFlapHeight_A", "dieUnitFlapHeight_A", "FlapHeight", "flapHeight"],
-              "DieUnitFlapWidth_B": ["DieUnitFlapWidth_B", "dieUnitFlapWidth_B", "FlapWidth", "flapWidth"],
-              "DieUnitBottomLength_V": ["DieUnitBottomLength_V", "dieUnitBottomLength_V", "BottomLength", "bottomLength"],
-              "DieUnitBottomWidth_J": ["DieUnitBottomWidth_J", "dieUnitBottomWidth_J", "BottomWidth", "bottomWidth"],
+              DieUnitWidth: [
+                "finalUnitWidth",
+                "dieUnitWidth",
+                "unitWidth",
+                "width",
+              ],
+              DieUnitLength: [
+                "finalUnitLength",
+                "dieUnitLength",
+                "unitLength",
+                "length",
+              ],
+              DieUnitHeight: [
+                "finalUnitHeight",
+                "dieUnitHeight",
+                "unitHeight",
+                "height",
+              ],
+              DieUnitFlapLength_FOLD: [
+                "DieUnitFlapLength_FOLD",
+                "dieUnitFlapLength_FOLD",
+                "dieUnitFlapLength",
+                "flapLength",
+              ],
+              DieUnitLidHeight_LID: [
+                "DieUnitLidHeight_LID",
+                "dieUnitLidHeight_LID",
+                "LidHeight_LID",
+                "lidHeight_LID",
+                "LidHeight",
+                "lidHeight",
+              ],
+              DieUnitBottomOverlap_O: [
+                "DieUnitBottomOverlap_O",
+                "dieUnitBottomOverlap_O",
+                "BottomOverlap",
+                "bottomOverlap",
+              ],
+              DieUnitFrontHeight_F: [
+                "DieUnitFrontHeight_F",
+                "dieUnitFrontHeight_F",
+                "FrontHeight",
+                "frontHeight",
+              ],
+              DieUnitDiameter_D: [
+                "DieUnitDiameter_D",
+                "dieUnitDiameter_D",
+                "Diameter",
+                "diameter",
+              ],
+              DieUnitNumberOfSides_N: [
+                "DieUnitNumberOfSides_N",
+                "dieUnitNumberOfSides_N",
+                "NumberOfSides",
+                "numberOfSides",
+              ],
+              DieUnitHandleFlapHeight_Z: [
+                "DieUnitHandleFlapHeight_Z",
+                "dieUnitHandleFlapHeight_Z",
+                "HandleFlapHeight",
+                "handleFlapHeight",
+              ],
+              DieUnitBaseThickness_B: [
+                "DieUnitBaseThickness_B",
+                "dieUnitBaseThickness_B",
+                "BaseThickness",
+                "baseThickness",
+              ],
+              DieUnitLidOverlap_O: [
+                "DieUnitLidOverlap_O",
+                "dieUnitLidOverlap_O",
+                "LidOverlap",
+                "lidOverlap",
+              ],
+              DieUnitRoofHeight_ROOF: [
+                "DieUnitRoofHeight_ROOF",
+                "dieUnitRoofHeight_ROOF",
+                "RoofHeight",
+                "roofHeight",
+              ],
+              DieUnitDraftAngle_DRAFT: [
+                "DieUnitDraftAngle_DRAFT",
+                "dieUnitDraftAngle_DRAFT",
+                "DraftAngle",
+                "draftAngle",
+              ],
+              DieUnitFlapHeight_A: [
+                "DieUnitFlapHeight_A",
+                "dieUnitFlapHeight_A",
+                "FlapHeight",
+                "flapHeight",
+              ],
+              DieUnitFlapWidth_B: [
+                "DieUnitFlapWidth_B",
+                "dieUnitFlapWidth_B",
+                "FlapWidth",
+                "flapWidth",
+              ],
+              DieUnitBottomLength_V: [
+                "DieUnitBottomLength_V",
+                "dieUnitBottomLength_V",
+                "BottomLength",
+                "bottomLength",
+              ],
+              DieUnitBottomWidth_J: [
+                "DieUnitBottomWidth_J",
+                "dieUnitBottomWidth_J",
+                "BottomWidth",
+                "bottomWidth",
+              ],
             };
 
             const dieCutSizesParametersArray = [];
@@ -7181,30 +7563,83 @@ const useDigitalOffsetPrice = ({
 
             // List of all dynamic API fields that can be populated from rowData
             const dynamicApiFields: Record<string, string[]> = {
-              "DieUnitWidth": ["finalUnitWidth", "dieUnitWidth"],
-              "DieUnitLength": ["finalUnitLength", "dieUnitLength"],
-              "DieUnitHeight": ["finalUnitHeight", "dieUnitHeight"],
-              "DieUnitFlapLength_FOLD": ["DieUnitFlapLength_FOLD", "dieUnitFlapLength_FOLD", "dieUnitFlapLength", "flapLength"],
-              "DieUnitLidHeight_LID": ["DieUnitLidHeight_LID", "dieUnitLidHeight_LID", "LidHeight_LID", "lidHeight_LID"],
-              "DieUnitBottomOverlap_O": ["DieUnitBottomOverlap_O", "dieUnitBottomOverlap_O"],
-              "DieUnitFrontHeight_F": ["DieUnitFrontHeight_F", "dieUnitFrontHeight_F"],
-              "DieUnitDiameter_D": ["DieUnitDiameter_D", "dieUnitDiameter_D"],
-              "DieUnitNumberOfSides_N": ["DieUnitNumberOfSides_N", "dieUnitNumberOfSides_N"],
-              "DieUnitHandleFlapHeight_Z": ["DieUnitHandleFlapHeight_Z", "dieUnitHandleFlapHeight_Z"],
-              "DieUnitBaseThickness_B": ["DieUnitBaseThickness_B", "dieUnitBaseThickness_B"],
-              "DieUnitLidOverlap_O": ["DieUnitLidOverlap_O", "dieUnitLidOverlap_O"],
-              "DieUnitRoofHeight_ROOF": ["DieUnitRoofHeight_ROOF", "dieUnitRoofHeight_ROOF"],
-              "DieUnitDraftAngle_DRAFT": ["DieUnitDraftAngle_DRAFT", "dieUnitDraftAngle_DRAFT"],
-              "DieUnitFlapHeight_A": ["DieUnitFlapHeight_A", "dieUnitFlapHeight_A"],
-              "DieUnitFlapWidth_B": ["DieUnitFlapWidth_B", "dieUnitFlapWidth_B"],
-              "DieUnitBottomLength_V": ["DieUnitBottomLength_V", "dieUnitBottomLength_V"],
-              "DieUnitBottomWidth_J": ["DieUnitBottomWidth_J", "dieUnitBottomWidth_J"],
+              DieUnitWidth: ["finalUnitWidth", "dieUnitWidth"],
+              DieUnitLength: ["finalUnitLength", "dieUnitLength"],
+              DieUnitHeight: ["finalUnitHeight", "dieUnitHeight"],
+              DieUnitFlapLength_FOLD: [
+                "DieUnitFlapLength_FOLD",
+                "dieUnitFlapLength_FOLD",
+                "dieUnitFlapLength",
+                "flapLength",
+              ],
+              DieUnitLidHeight_LID: [
+                "DieUnitLidHeight_LID",
+                "dieUnitLidHeight_LID",
+                "LidHeight_LID",
+                "lidHeight_LID",
+              ],
+              DieUnitBottomOverlap_O: [
+                "DieUnitBottomOverlap_O",
+                "dieUnitBottomOverlap_O",
+              ],
+              DieUnitFrontHeight_F: [
+                "DieUnitFrontHeight_F",
+                "dieUnitFrontHeight_F",
+              ],
+              DieUnitDiameter_D: ["DieUnitDiameter_D", "dieUnitDiameter_D"],
+              DieUnitNumberOfSides_N: [
+                "DieUnitNumberOfSides_N",
+                "dieUnitNumberOfSides_N",
+              ],
+              DieUnitHandleFlapHeight_Z: [
+                "DieUnitHandleFlapHeight_Z",
+                "dieUnitHandleFlapHeight_Z",
+              ],
+              DieUnitBaseThickness_B: [
+                "DieUnitBaseThickness_B",
+                "dieUnitBaseThickness_B",
+              ],
+              DieUnitLidOverlap_O: [
+                "DieUnitLidOverlap_O",
+                "dieUnitLidOverlap_O",
+              ],
+              DieUnitRoofHeight_ROOF: [
+                "DieUnitRoofHeight_ROOF",
+                "dieUnitRoofHeight_ROOF",
+              ],
+              DieUnitDraftAngle_DRAFT: [
+                "DieUnitDraftAngle_DRAFT",
+                "dieUnitDraftAngle_DRAFT",
+              ],
+              DieUnitFlapHeight_A: [
+                "DieUnitFlapHeight_A",
+                "dieUnitFlapHeight_A",
+              ],
+              DieUnitFlapWidth_B: ["DieUnitFlapWidth_B", "dieUnitFlapWidth_B"],
+              DieUnitBottomLength_V: [
+                "DieUnitBottomLength_V",
+                "dieUnitBottomLength_V",
+              ],
+              DieUnitBottomWidth_J: [
+                "DieUnitBottomWidth_J",
+                "dieUnitBottomWidth_J",
+              ],
             };
 
             const dieCutSizesParametersArray = [];
             // Add Width and Height (legacy fields) - get from rowData
-            const widthValue = getValueFromRowData(["dieUnitWidth", "finalUnitWidth", "unitWidth", "width"]);
-            const lengthValue = getValueFromRowData(["dieUnitLength", "finalUnitLength", "unitLength", "length"]);
+            const widthValue = getValueFromRowData([
+              "dieUnitWidth",
+              "finalUnitWidth",
+              "unitWidth",
+              "width",
+            ]);
+            const lengthValue = getValueFromRowData([
+              "dieUnitLength",
+              "finalUnitLength",
+              "unitLength",
+              "length",
+            ]);
 
             dieCutSizesParametersArray.push({
               parameterCode: "Width",
@@ -7378,24 +7813,116 @@ const useDigitalOffsetPrice = ({
           ) {
             // List of all dynamic API fields that can be populated
             const dynamicApiFields: Record<string, string[]> = {
-              "DieUnitWidth": ["finalUnitWidth", "dieUnitWidth", "unitWidth", "width"],
-              "DieUnitLength": ["finalUnitLength", "dieUnitLength", "unitLength", "length"],
-              "DieUnitHeight": ["finalUnitHeight", "dieUnitHeight", "unitHeight", "height"],
-              "DieUnitFlapLength_FOLD": ["DieUnitFlapLength_FOLD", "dieUnitFlapLength_FOLD", "dieUnitFlapLength", "flapLength"],
-              "DieUnitLidHeight_LID": ["DieUnitLidHeight_LID", "dieUnitLidHeight_LID", "LidHeight_LID", "lidHeight_LID", "LidHeight", "lidHeight"],
-              "DieUnitBottomOverlap_O": ["DieUnitBottomOverlap_O", "dieUnitBottomOverlap_O", "BottomOverlap", "bottomOverlap"],
-              "DieUnitFrontHeight_F": ["DieUnitFrontHeight_F", "dieUnitFrontHeight_F", "FrontHeight", "frontHeight"],
-              "DieUnitDiameter_D": ["DieUnitDiameter_D", "dieUnitDiameter_D", "Diameter", "diameter"],
-              "DieUnitNumberOfSides_N": ["DieUnitNumberOfSides_N", "dieUnitNumberOfSides_N", "NumberOfSides", "numberOfSides"],
-              "DieUnitHandleFlapHeight_Z": ["DieUnitHandleFlapHeight_Z", "dieUnitHandleFlapHeight_Z", "HandleFlapHeight", "handleFlapHeight"],
-              "DieUnitBaseThickness_B": ["DieUnitBaseThickness_B", "dieUnitBaseThickness_B", "BaseThickness", "baseThickness"],
-              "DieUnitLidOverlap_O": ["DieUnitLidOverlap_O", "dieUnitLidOverlap_O", "LidOverlap", "lidOverlap"],
-              "DieUnitRoofHeight_ROOF": ["DieUnitRoofHeight_ROOF", "dieUnitRoofHeight_ROOF", "RoofHeight", "roofHeight"],
-              "DieUnitDraftAngle_DRAFT": ["DieUnitDraftAngle_DRAFT", "dieUnitDraftAngle_DRAFT", "DraftAngle", "draftAngle"],
-              "DieUnitFlapHeight_A": ["DieUnitFlapHeight_A", "dieUnitFlapHeight_A", "FlapHeight", "flapHeight"],
-              "DieUnitFlapWidth_B": ["DieUnitFlapWidth_B", "dieUnitFlapWidth_B", "FlapWidth", "flapWidth"],
-              "DieUnitBottomLength_V": ["DieUnitBottomLength_V", "dieUnitBottomLength_V", "BottomLength", "bottomLength"],
-              "DieUnitBottomWidth_J": ["DieUnitBottomWidth_J", "dieUnitBottomWidth_J", "BottomWidth", "bottomWidth"],
+              DieUnitWidth: [
+                "finalUnitWidth",
+                "dieUnitWidth",
+                "unitWidth",
+                "width",
+              ],
+              DieUnitLength: [
+                "finalUnitLength",
+                "dieUnitLength",
+                "unitLength",
+                "length",
+              ],
+              DieUnitHeight: [
+                "finalUnitHeight",
+                "dieUnitHeight",
+                "unitHeight",
+                "height",
+              ],
+              DieUnitFlapLength_FOLD: [
+                "DieUnitFlapLength_FOLD",
+                "dieUnitFlapLength_FOLD",
+                "dieUnitFlapLength",
+                "flapLength",
+              ],
+              DieUnitLidHeight_LID: [
+                "DieUnitLidHeight_LID",
+                "dieUnitLidHeight_LID",
+                "LidHeight_LID",
+                "lidHeight_LID",
+                "LidHeight",
+                "lidHeight",
+              ],
+              DieUnitBottomOverlap_O: [
+                "DieUnitBottomOverlap_O",
+                "dieUnitBottomOverlap_O",
+                "BottomOverlap",
+                "bottomOverlap",
+              ],
+              DieUnitFrontHeight_F: [
+                "DieUnitFrontHeight_F",
+                "dieUnitFrontHeight_F",
+                "FrontHeight",
+                "frontHeight",
+              ],
+              DieUnitDiameter_D: [
+                "DieUnitDiameter_D",
+                "dieUnitDiameter_D",
+                "Diameter",
+                "diameter",
+              ],
+              DieUnitNumberOfSides_N: [
+                "DieUnitNumberOfSides_N",
+                "dieUnitNumberOfSides_N",
+                "NumberOfSides",
+                "numberOfSides",
+              ],
+              DieUnitHandleFlapHeight_Z: [
+                "DieUnitHandleFlapHeight_Z",
+                "dieUnitHandleFlapHeight_Z",
+                "HandleFlapHeight",
+                "handleFlapHeight",
+              ],
+              DieUnitBaseThickness_B: [
+                "DieUnitBaseThickness_B",
+                "dieUnitBaseThickness_B",
+                "BaseThickness",
+                "baseThickness",
+              ],
+              DieUnitLidOverlap_O: [
+                "DieUnitLidOverlap_O",
+                "dieUnitLidOverlap_O",
+                "LidOverlap",
+                "lidOverlap",
+              ],
+              DieUnitRoofHeight_ROOF: [
+                "DieUnitRoofHeight_ROOF",
+                "dieUnitRoofHeight_ROOF",
+                "RoofHeight",
+                "roofHeight",
+              ],
+              DieUnitDraftAngle_DRAFT: [
+                "DieUnitDraftAngle_DRAFT",
+                "dieUnitDraftAngle_DRAFT",
+                "DraftAngle",
+                "draftAngle",
+              ],
+              DieUnitFlapHeight_A: [
+                "DieUnitFlapHeight_A",
+                "dieUnitFlapHeight_A",
+                "FlapHeight",
+                "flapHeight",
+              ],
+              DieUnitFlapWidth_B: [
+                "DieUnitFlapWidth_B",
+                "dieUnitFlapWidth_B",
+                "FlapWidth",
+                "flapWidth",
+              ],
+              DieUnitBottomLength_V: [
+                "DieUnitBottomLength_V",
+                "dieUnitBottomLength_V",
+                "BottomLength",
+                "bottomLength",
+              ],
+              DieUnitBottomWidth_J: [
+                "DieUnitBottomWidth_J",
+                "dieUnitBottomWidth_J",
+                "BottomWidth",
+                "bottomWidth",
+              ],
             };
 
             const parametersToCheck = [
@@ -7451,10 +7978,24 @@ const useDigitalOffsetPrice = ({
             const validParameters = new Set<string>();
 
             // Check Width and Height
-            if (getValueFromDieCut(["unitWidth", "dieUnitWidth", "finalUnitWidth", "width"])) {
+            if (
+              getValueFromDieCut([
+                "unitWidth",
+                "dieUnitWidth",
+                "finalUnitWidth",
+                "width",
+              ])
+            ) {
               validParameters.add("Width");
             }
-            if (getValueFromDieCut(["unitLength", "dieUnitLength", "finalUnitLength", "length"])) {
+            if (
+              getValueFromDieCut([
+                "unitLength",
+                "dieUnitLength",
+                "finalUnitLength",
+                "length",
+              ])
+            ) {
               validParameters.add("Height");
             }
 
@@ -7545,7 +8086,7 @@ const useDigitalOffsetPrice = ({
                   if (
                     sizeParameter?.childsParameters &&
                     productTemplate?.templateId ===
-                    "b47bf700-e3fc-4dff-a5fd-638821dc9e25"
+                      "b47bf700-e3fc-4dff-a5fd-638821dc9e25"
                   ) {
                     sizeParameter.childsParameters.forEach((childParam) => {
                       const childParameterDef = subSection.parameters.find(
@@ -7608,8 +8149,9 @@ const useDigitalOffsetPrice = ({
           widgetType === EWidgetProductType.DUPLICATE)
       ) {
         // Remove the current parameter from removedMaterialParameters
-        const paramKey = `${parameterId}_${sectionId}_${subSectionId}_${actionIndex || 0
-          }`;
+        const paramKey = `${parameterId}_${sectionId}_${subSectionId}_${
+          actionIndex || 0
+        }`;
 
         if (removedMaterialParameters[paramKey]) {
           setRemovedMaterialParameters((prev) => {
@@ -7634,9 +8176,9 @@ const useDigitalOffsetPrice = ({
                 param.sectionId === sectionId &&
                 param.subSectionId === subSectionId &&
                 param.actionIndex ===
-                (relatedParam.actionIndex !== undefined
-                  ? relatedParam.actionIndex
-                  : actionIndex)
+                  (relatedParam.actionIndex !== undefined
+                    ? relatedParam.actionIndex
+                    : actionIndex)
             );
 
             // If the related parameter exists and has values, remove it from removedMaterialParameters
@@ -7645,9 +8187,11 @@ const useDigitalOffsetPrice = ({
               relatedParamExists.values &&
               relatedParamExists.values.length > 0
             ) {
-              const relatedParamKey = `${relatedParam.parameterId
-                }_${sectionId}_${subSectionId}_${relatedParam.actionIndex || actionIndex || 0
-                }`;
+              const relatedParamKey = `${
+                relatedParam.parameterId
+              }_${sectionId}_${subSectionId}_${
+                relatedParam.actionIndex || actionIndex || 0
+              }`;
 
               if (removedMaterialParameters[relatedParamKey]) {
                 relatedParamKeysToRemove.push(relatedParamKey);
@@ -7670,13 +8214,13 @@ const useDigitalOffsetPrice = ({
         // Also check for material path related parameters (if it's a SELECT_MATERIALS type)
         if (
           subSectionParameter?.parameterType ===
-          EParameterTypes.SELECT_MATERIALS &&
+            EParameterTypes.SELECT_MATERIALS &&
           subSectionParameter?.materialPath &&
           subSectionParameter.materialPath.length > 0
         ) {
           const materialPath =
             subSectionParameter.materialPath[
-            subSectionParameter.materialPath.length - 1
+              subSectionParameter.materialPath.length - 1
             ];
           const section = productTemplateCopy.sections.find(
             (s) => s.id === sectionId
@@ -7710,9 +8254,11 @@ const useDigitalOffsetPrice = ({
                 materialParamExists.values &&
                 materialParamExists.values.length > 0
               ) {
-                const materialParamKey = `${materialParam.id
-                  }_${sectionId}_${subSectionId}_${materialParam.actionIndex || 0
-                  }`;
+                const materialParamKey = `${
+                  materialParam.id
+                }_${sectionId}_${subSectionId}_${
+                  materialParam.actionIndex || 0
+                }`;
 
                 if (removedMaterialParameters[materialParamKey]) {
                   materialRelatedKeysToRemove.push(materialParamKey);
@@ -7868,11 +8414,11 @@ const useDigitalOffsetPrice = ({
     },
     ...(isShowDetailsTab
       ? [
-        {
-          name: t("reports.details"),
-          onclick: () => onClickDetailsTab,
-        },
-      ]
+          {
+            name: t("reports.details"),
+            onclick: () => onClickDetailsTab,
+          },
+        ]
       : []),
     {
       name: t("quality.production"),
@@ -8199,7 +8745,9 @@ const useDigitalOffsetPrice = ({
         return true;
       }
       // Skip sections that are hidden OR hidden from UI
-      let sections = productTemplate?.sections.filter((x) => !x.isHidden && !x.hideFromUI);
+      let sections = productTemplate?.sections.filter(
+        (x) => !x.isHidden && !x.hideFromUI
+      );
       for (const section of sections) {
         for (const subSection of section.subSections) {
           // Skip subsections that are hidden from UI
@@ -8287,8 +8835,8 @@ const useDigitalOffsetPrice = ({
             param?.ParameterType === 5
               ? [param?.valueIds[0]]
               : param.values.map((value) =>
-                (parseFloat(value) / param.factor).toFixed(3)
-              ),
+                  (parseFloat(value) / param.factor).toFixed(3)
+                ),
         };
       }
       return param;
@@ -8349,7 +8897,7 @@ const useDigitalOffsetPrice = ({
             return;
           }
           setLoading(true);
-          setIsProductCalculated(false)
+          setIsProductCalculated(false);
           setErrorMsg("");
           const newCalculationSessionId = uuidv4();
           setCurrentCalculationSessionId(newCalculationSessionId);
@@ -8411,11 +8959,11 @@ const useDigitalOffsetPrice = ({
             const chatBotMetaDataObj = {
               sessionId,
               interactionId,
-            }
+            };
             const chatBotMetaDataJsonStr = JSON.stringify(chatBotMetaDataObj);
             calculationObj.calculationMetaData = {
-              additionalData: chatBotMetaDataJsonStr
-            }
+              additionalData: chatBotMetaDataJsonStr,
+            };
           }
           const res: any = await callApi(
             "POST",
@@ -8577,7 +9125,9 @@ const useDigitalOffsetPrice = ({
     if (subProducts) {
       const generalParameters = subProducts.find((x) => !x.type)?.parameters;
       let quantityParam = generalParameters?.find(
-        (item) => item?.parameterId === "4991945c-5e07-4773-8f11-2e3483b70b53" || item?.isQuantityParameter === true
+        (item) =>
+          item?.parameterId === "4991945c-5e07-4773-8f11-2e3483b70b53" ||
+          item?.isQuantityParameter === true
       );
       if (quantityParam == null) {
         quantityParam = {
@@ -8593,7 +9143,7 @@ const useDigitalOffsetPrice = ({
       return quantityParam;
     }
     return 0;
-  }
+  };
   const quantity = useMemo(() => {
     return getQuantityParameterValue();
   }, [subProducts]);
@@ -8736,23 +9286,23 @@ const useDigitalOffsetPrice = ({
           unitPrice:
             +sliderCurrentProductItemValueTotalPrice /
             (quantity &&
-              quantity.values &&
-              quantity.values.length > 0 &&
-              quantity?.values[0]
+            quantity.values &&
+            quantity.values.length > 0 &&
+            quantity?.values[0]
               ? +quantity?.values[0]
               : 1),
           finalPrice:
             (widgetType == EWidgetProductType.EDIT ||
               widgetType == EWidgetProductType.DUPLICATE) &&
-              localStateValue &&
-              localStateValue != null
+            localStateValue &&
+            localStateValue != null
               ? +localStateValue
               : +sliderCurrentProductItemValueTotalPrice,
           amount:
             quantity &&
-              quantity.values &&
-              quantity.values.length &&
-              quantity?.values[0]
+            quantity.values &&
+            quantity.values.length &&
+            quantity?.values[0]
               ? quantity?.values[0]
               : 0,
           isNeedGraphics: false,
@@ -8762,6 +9312,7 @@ const useDigitalOffsetPrice = ({
           exampleType: sampleType && getSampleTypeValue(sampleType),
           isNeedExample: false,
           isDuplicatedWithAnotherQuantity: false,
+          qualityIssueReason,
           saveCurrentStation: isFlowChanged ? isSaveCurrentStation : true,
         },
         DocumentType: router?.query?.documentType,
@@ -8871,14 +9422,19 @@ const useDigitalOffsetPrice = ({
             } else {
               // Check if ALL parameters in this subsection have BOTH flags set to true
               const allParametersHiddenInSettings = subSection.parameters.every(
-                (param) => param.isHidden === true && param.isHiddenInSetting === true
+                (param) =>
+                  param.isHidden === true && param.isHiddenInSetting === true
               );
 
               if (allParametersHiddenInSettings) {
                 subSection.hideFromUI = true;
               } else {
-                const hiddenCount = subSection.parameters.filter(p => p.isHidden === true && p.isHiddenInSetting === true).length;
-                const notHiddenParams = subSection.parameters.filter(p => !(p.isHidden === true && p.isHiddenInSetting === true));
+                const hiddenCount = subSection.parameters.filter(
+                  (p) => p.isHidden === true && p.isHiddenInSetting === true
+                ).length;
+                const notHiddenParams = subSection.parameters.filter(
+                  (p) => !(p.isHidden === true && p.isHiddenInSetting === true)
+                );
               }
             }
           } else {
@@ -8890,7 +9446,8 @@ const useDigitalOffsetPrice = ({
         // Then, check if ALL subsections should be hidden from UI
         // (either because they have hideFromUI=true OR isHidden=true)
         const allSubSectionsHiddenFromUI = section.subSections.every(
-          (subSection) => subSection.hideFromUI === true || subSection.isHidden === true
+          (subSection) =>
+            subSection.hideFromUI === true || subSection.isHidden === true
         );
 
         if (allSubSectionsHiddenFromUI && section.subSections.length > 0) {
@@ -8941,7 +9498,11 @@ const useDigitalOffsetPrice = ({
             if (parameter.activateByAllValues) {
               section.isHidden = false;
             } else {
-              if (matchingParameter && matchingParameter.valueIds && matchingParameter.valueIds.length > 0) {
+              if (
+                matchingParameter &&
+                matchingParameter.valueIds &&
+                matchingParameter.valueIds.length > 0
+              ) {
                 section.isHidden = !parameter.selectedValueIds.includes(
                   matchingParameter?.valueIds[0]
                 );
@@ -9015,11 +9576,16 @@ const useDigitalOffsetPrice = ({
 
         // Special case for parameterType 12
         if (matchingTemplateParam?.parameterType === 12) {
-          const selectedParam1 = allParams.find(p => p.parameterCode === "Foiloptions")
-          if (selectedParam1 && selectedParam1?.valueIds[0] !== "9836e77c-84b7-4d34-8935-073863f3c057") {
+          const selectedParam1 = allParams.find(
+            (p) => p.parameterCode === "Foiloptions"
+          );
+          if (
+            selectedParam1 &&
+            selectedParam1?.valueIds[0] !==
+              "9836e77c-84b7-4d34-8935-073863f3c057"
+          ) {
             return false;
-          }
-          else {
+          } else {
             return true;
           }
         }
@@ -9127,7 +9693,9 @@ const useDigitalOffsetPrice = ({
                   // Use notSelectedValueIds: show when selected value is NOT in notSelectedValueIds (reverse logic)
                   const hasMatchingNotSelected = parentValueIds.some(
                     (selectedValueId) =>
-                      relatedConfig.notSelectedValueIds.includes(selectedValueId)
+                      relatedConfig.notSelectedValueIds.includes(
+                        selectedValueId
+                      )
                   );
 
                   if (hasMatchingNotSelected) {
@@ -9208,12 +9776,15 @@ const useDigitalOffsetPrice = ({
       }
       // Special case for parameterType 12
       if (matchingTemplateParam?.parameterType === 12) {
-        const selectedParam1 = parameters.find(p => p.parameterCode === "Foiloptions")
-        if (selectedParam1 && selectedParam1?.valueIds[0] !== "9836e77c-84b7-4d34-8935-073863f3c057") {
+        const selectedParam1 = parameters.find(
+          (p) => p.parameterCode === "Foiloptions"
+        );
+        if (
+          selectedParam1 &&
+          selectedParam1?.valueIds[0] !== "9836e77c-84b7-4d34-8935-073863f3c057"
+        ) {
           continue;
-        }
-
-        else {
+        } else {
           updatedParameters.push(param);
           continue;
         }
@@ -9310,8 +9881,9 @@ const useDigitalOffsetPrice = ({
                 relatedConfig.selectedValueIds.length > 0
               ) {
                 // Use selectedValueIds: show when selected value is in selectedValueIds
-                const hasMatchingValue = parentValueIds.some((selectedValueId) =>
-                  relatedConfig.selectedValueIds.includes(selectedValueId)
+                const hasMatchingValue = parentValueIds.some(
+                  (selectedValueId) =>
+                    relatedConfig.selectedValueIds.includes(selectedValueId)
                 );
 
                 if (!hasMatchingValue) {
@@ -9323,8 +9895,9 @@ const useDigitalOffsetPrice = ({
                 relatedConfig.notSelectedValueIds.length > 0
               ) {
                 // Use notSelectedValueIds: show when selected value is NOT in notSelectedValueIds (reverse logic)
-                const hasMatchingNotSelected = parentValueIds.some((selectedValueId) =>
-                  relatedConfig.notSelectedValueIds.includes(selectedValueId)
+                const hasMatchingNotSelected = parentValueIds.some(
+                  (selectedValueId) =>
+                    relatedConfig.notSelectedValueIds.includes(selectedValueId)
                 );
 
                 if (hasMatchingNotSelected) {
@@ -9600,6 +10173,8 @@ const useDigitalOffsetPrice = ({
     updateQuoteItem,
     setUrgentOrder,
     setPrintingNotes,
+    setQualityIssueReason,
+    qualityIssueReason,
     setPriceRecovery,
     onCloseMultiParameterModal,
     duplicateSection,
@@ -9669,7 +10244,7 @@ const useDigitalOffsetPrice = ({
     SelectWorkFlowById,
     isOpenErrorsModal,
     isButtonDisabledState,
-    isProductCalculated
+    isProductCalculated,
   };
 };
 
