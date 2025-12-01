@@ -60,15 +60,16 @@ export const useFrontDeskEmailIntegration = ({
 
   const openEmailComposer = useCallback(
     async (
-      documentId: string | number,
-      contactEmail?: string,
-      contactPhone?: string,
+      documentId: string | number, 
+      contactEmail?: string, 
+      contactPhone?: string, 
+      messageType?: number, 
+      sendMailIfNotVerifiedAgent?: boolean, 
+      sendWithInvoices?: boolean,
       customerId?: string | number,
       customerName?: string,
       contactName?: string
     ) => {
-      // Open modal immediately with loading state - better UX
-      setIsEmailComposerOpen(true);
       setIsLoadingEmailData(true);
       setEmailData(null); // Clear previous data
       
@@ -128,6 +129,7 @@ export const useFrontDeskEmailIntegration = ({
               };
 
               setEmailData(normalizedEmailData);
+              setIsEmailComposerOpen(true); // Open email composer after data is loaded
             } else {
               alertFault("Failed to load email data");
               setIsEmailComposerOpen(false); // Close modal on error
@@ -137,9 +139,19 @@ export const useFrontDeskEmailIntegration = ({
           {
             documentType,
             document: {
-              documentId,
+              // For board missions, use boardMissionId instead of documentId
+              ...(documentType === DOCUMENT_TYPE.boardMission 
+                ? { boardMissionId: documentId }
+                : { documentId }
+              ),
               ...(contactEmail && { contactEmail }),
               ...(contactPhone && { contactPhone }),
+              messageType: messageType ?? 0,
+              sendMailIfNotVerifiedAgent: sendMailIfNotVerifiedAgent ?? true,
+              sendWithInvoices: sendWithInvoices ?? false,
+              ...(customerId && { customerId }),
+              ...(customerName && { customerName }),
+              ...(contactName && { contactName }),
             },
           }
         );

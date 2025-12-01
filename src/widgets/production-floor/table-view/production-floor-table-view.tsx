@@ -3,6 +3,8 @@ import { useProductionFloorTable } from "@/widgets/production-floor/table-view/u
 import Stack from "@mui/material/Stack";
 import { useEffect, useMemo, useState, useCallback } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
+import { useProductionFloorData } from "../use-production-floor-data";
+import { printHouseHasFrontDeskFeature } from "@/store/print-house-profile";
 import { selectedChipIdsState } from "../state/text-search";
 import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 import { CustomerCardWidget } from "@/widgets/customer-card-modal";
@@ -48,6 +50,8 @@ const DEBOUNCE_DELAY = 300; // Debounce search and filter operations
 
 const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
   const selectedChipId = useRecoilValue(selectedChipIdsState);
+  const hasFrontDeskFeature = useRecoilValue(printHouseHasFrontDeskFeature);
+  const { sendEmailProgrammatically } = useProductionFloorData();
   const {
     data,
     search,
@@ -350,8 +354,32 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
   const handleBulkMoveToDone = useCallback(
     async (selectedJobs, sendMessage) => {
       try {
-        const callBack = (res) => {
+        const callBack = async (res) => {
           if (res?.success) {
+            // If sendMessage is true and FrontDesk is enabled, send emails programmatically for each job
+            if (sendMessage && hasFrontDeskFeature) {
+              try {
+                await Promise.allSettled(
+                  selectedJobs.map(async (job) => {
+                    try {
+                      await sendEmailProgrammatically(
+                        job.id,
+                        job.contactEmail,
+                        job?.contactPhone,
+                        job?.contactName,
+                        job?.customerId,
+                        job?.customerName
+                      );
+                    } catch (error) {
+                      console.error(`Error sending email for job ${job.id}:`, error);
+                    }
+                  })
+                );
+              } catch (error) {
+                console.error("Error sending bulk emails:", error);
+              }
+            }
+
             setSelectedIds([]);
             getData();
           } else {
@@ -364,7 +392,7 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
         }));
 
         await moveBoardMissionListToDoneApi(callApi, callBack, {
-          sendMessage: sendMessage,
+          sendMessage: false, // Always false - we handle email sending programmatically via FrontDesk
           storage: inputValue,
           data: jobsData,
         });
@@ -373,7 +401,7 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
         alertFaultUpdate();
       }
     },
-    [callApi, setSelectedIds, getData, alertFaultUpdate, inputValue]
+    [callApi, setSelectedIds, getData, alertFaultUpdate, inputValue, hasFrontDeskFeature, sendEmailProgrammatically]
   );
 
   const handleClearSelection = useCallback(() => {
@@ -579,12 +607,12 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
               ) || inputValue === ""
                 ? storageList
                 : [
-                    {
-                      storage: `Add "${inputValue}" as a new storage`,
-                      id: "new",
-                    },
-                    ...storageList,
-                  ]
+                  {
+                    storage: `Add "${inputValue}" as a new storage`,
+                    id: "new",
+                  },
+                  ...storageList,
+                ]
             }
             placeholder={t("boardMissions.selectStorage")}
             key={defaultValue}

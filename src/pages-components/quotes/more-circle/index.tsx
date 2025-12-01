@@ -36,6 +36,9 @@ const MoreMenuWidget = ({
   onClickSendToCustomerEmail,
   onClickSendToCustomerSMS,
   onClickSendToCustomerWhatsApp,
+  onClickSendPaymentEmail,
+  onClickSendPaymentSMS,
+  onClickSendPaymentWhatsApp,
   onClickOpenInventoryIntakeModal,
 }: any) => {
   const { classes } = useStyle();
@@ -74,6 +77,9 @@ const MoreMenuWidget = ({
     onClickSendToCustomerEmail,
     onClickSendToCustomerSMS,
     onClickSendToCustomerWhatsApp,
+    onClickSendPaymentEmail,
+    onClickSendPaymentSMS,
+    onClickSendPaymentWhatsApp,
     classes,
   });
 

@@ -3,7 +3,8 @@ import { HeaderTitle } from "@/widgets";
 import { useDeliveries } from "./use-deliveries";
 import { Stack } from "@mui/material";
 import { GoMakePagination } from "@/components/pagination/gomake-pagination";
-import { GoMakeDeleteModal, ThreeOptionsModal } from "@/components";
+import { GoMakeDeleteModal } from "@/components";
+import { FrontDeskEmailComposerWrapper } from "@/pages-components/quotes/components/frontdesk-email-composer-wrapper";
 import { DeliveriesFiltersSection } from "./components/deliveries-filters-section";
 import { useStyle } from "./style";
 import { PrimaryTable } from "@/components/tables/primary-table";
@@ -51,6 +52,11 @@ const DeliveriesPageWidget = () => {
     onClickCloseMoveOrderToReadyModal,
     onClickOpenMoveOrderToReadyModal,
     moveOrderToReady,
+    isEmailComposerOpen,
+    emailData,
+    isLoadingEmailData,
+    closeEmailComposer,
+    selectedDocument,
   } = useDeliveries();
 
   const {
@@ -175,16 +181,14 @@ const DeliveriesPageWidget = () => {
         onClickOpenMoveOrderToReadyModal={onClickOpenMoveOrderToReadyModal}
       />
 
-      <ThreeOptionsModal
+      <GoMakeDeleteModal
         modalType={ModalType.WARNING}
         title={t("boardMissions.markDoneModalTitle")}
         subTitle={t("boardMissions.markDoneModalSubTitle")}
-        yesBtn={"boardMissions.markDoneModalYes"}
-        noBtn={"boardMissions.markDoneModalNo"}
         openModal={MoveOrderToReady.isOpen}
         onClose={onClickCloseMoveOrderToReadyModal}
-        onClickYes={() => moveOrderToReady(true)}
-        onClickNo={() => moveOrderToReady(false)}
+        onClickDelete={() => moveOrderToReady()}
+        onClickCancel={onClickCloseMoveOrderToReadyModal}
       />
 
       <GoMakeDeleteModal
@@ -193,6 +197,17 @@ const DeliveriesPageWidget = () => {
         onClose={onCloseDeleteModal}
         onClickDelete={() => removeDocumentDeliveryItem(selectedItem)}
       />
+      {/* FrontDesk Email Composer */}
+      {isEmailComposerOpen && selectedDocument?.id && (
+        <FrontDeskEmailComposerWrapper
+          open={isEmailComposerOpen}
+          onClose={closeEmailComposer}
+          emailData={emailData}
+          documentId={selectedDocument.id}
+          documentType={DOCUMENT_TYPE.order}
+          isLoading={isLoadingEmailData}
+        />
+      )}
     </>
   );
 };

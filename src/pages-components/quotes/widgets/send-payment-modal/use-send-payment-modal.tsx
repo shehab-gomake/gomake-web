@@ -28,6 +28,46 @@ const useSendPaymentModal = ({ openPaymentModal, documentType }) => {
     }
   }, [openPaymentModal]);
 
+  // CRITICAL: Sync contact fields when modal opens and contacts are available
+  useEffect(() => {
+    if (openPaymentModal && payState.documentContacts && payState.documentContacts.length > 0) {
+      const contactIndex =
+        payState.selectedContactIndex !== undefined &&
+          payState.selectedContactIndex >= 0 &&
+          payState.selectedContactIndex < payState.documentContacts.length
+          ? payState.selectedContactIndex
+          : 0;
+
+      if (contactIndex >= 0 && contactIndex < payState.documentContacts.length) {
+        const selectedContact = payState.documentContacts[contactIndex];
+        if (selectedContact) {
+          setPayState((prev) => {
+            // Always update to ensure fields are populated from contact data
+            const needsUpdate =
+              prev.selectedContactIndex !== contactIndex ||
+              !prev.contactPhone ||
+              prev.contactPhone !== selectedContact.contactPhone ||
+              !prev.contactMail ||
+              prev.contactMail !== selectedContact.contactMail ||
+              !prev.contactName ||
+              prev.contactName !== selectedContact.contactName;
+
+            if (needsUpdate) {
+              return {
+                ...prev,
+                selectedContactIndex: contactIndex,
+                contactName: (selectedContact.contactName || "").trim(),
+                contactPhone: (selectedContact.contactPhone || "").trim(),
+                contactMail: (selectedContact.contactMail || "").trim(),
+              };
+            }
+            return prev;
+          });
+        }
+      }
+    }
+  }, [openPaymentModal, payState.documentContacts, payState.selectedContactIndex]);
+
   const formatFloatValue = (value, decimals) => {
     const parsedValue = parseFloat(value);
     return isNaN(parsedValue) ? "" : parsedValue.toFixed(decimals);

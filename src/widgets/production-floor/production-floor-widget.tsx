@@ -407,23 +407,21 @@ const ProductionFloorWidget = () => {
       />
 
       <QRScannerFab />
-      <ThreeOptionsModal
+      <GoMakeDeleteModal
         modalType={ModalType.WARNING}
         title={t("boardMissions.markDoneModalTitle")}
         subTitle={t("boardMissions.markDoneModalSubTitle")}
-        yesBtn={"boardMissions.markDoneModalYes"}
-        noBtn={"boardMissions.markDoneModalNo"}
         openModal={isOpenDoneModal.isOpen}
         onClose={() => isOpenDoneModal.close()}
-        onClickYes={() => onClickMoveBoardMissionToDone(true, true)}
-        onClickNo={() => onClickMoveBoardMissionToDone(false, true)}
+        onClickDelete={() => onClickMoveBoardMissionToDone(true, true)}
+        onClickNo={() => onClickMoveBoardMissionToDone(false, false)}
         style={
           isMobile
             ? {
-                width: "95vw",
-                maxWidth: 600,
-                minWidth: "unset",
-              }
+              width: "95vw",
+              maxWidth: 600,
+              minWidth: "unset",
+            }
             : undefined
         }
       />
@@ -462,11 +460,11 @@ const ProductionFloorWidget = () => {
         subTitle={
           pendingPrintParams?.productType
             ? t("boardMissions.askPrintType", {
-                productType:
-                  pendingPrintParams?.productTypeName ||
-                  pendingPrintParams?.productName ||
-                  pendingPrintParams?.productType,
-              })
+              productType:
+                pendingPrintParams?.productTypeName ||
+                pendingPrintParams?.productName ||
+                pendingPrintParams?.productType,
+            })
             : ""
         }
         yesBtn={"boardMissions.printAllJobs"}
@@ -480,38 +478,17 @@ const ProductionFloorWidget = () => {
         onClickYes={() => handlePrintTypeChoice(true)}
         onClickNo={() => handlePrintTypeChoice(false)}
       />
-
-      {/* <ThreeOptionsModal
-        modalType={ModalType.WARNING}
-        title={t("boardMissions.markDoneModalTitle")}
-        subTitle={t("boardMissions.markDoneModalSubTitle")}
-        yesBtn={"boardMissions.markDoneModalYes"}
-        noBtn={"boardMissions.markDoneModalNo"}
-        openModal={openMarkReadyModal}
-        onClose={onCloseMarkReadyModal}
-        onClickYes={() => onClickMoveBoardMissionToDone(true)}
-        onClickNo={() => onClickMoveBoardMissionToDone(false)}
-        style={
-          isMobile
-            ? {
-                width: "95vw",
-                maxWidth: 600,
-                minWidth: "unset",
-              }
-            : undefined
-        }
-      /> */}
       {/* Mark Ready Modal - Simple version (no jobs) */}
       <ThreeOptionsModal
         modalType={ModalType.WARNING}
         title={t("boardMissions.markDoneModalTitle")}
         subTitle={t("boardMissions.markDoneModalSubTitle")}
-        yesBtn={"boardMissions.markDoneModalYes"}
-        noBtn={"boardMissions.markDoneModalNo"}
         openModal={openMarkReadyModal}
         onClose={onCloseMarkReadyModal}
-        onClickYes={() => onClickMoveBoardMissionToDone(true)}
-        onClickNo={() => onClickMoveBoardMissionToDone(false)}
+        onClickYes={() => onClickMoveBoardMissionToDone(true, true)}
+        onClickNo={() => onClickMoveBoardMissionToDone(false, false)}
+        yesBtn={t("boardMissions.markDoneModalYes")}
+        noBtn={t("boardMissions.markDoneModalNo")}
       >
         <div style={{ width: "100%", minWidth: 300 }}>
           <GoMakeAutoComplate
@@ -521,12 +498,12 @@ const ProductionFloorWidget = () => {
               ) || inputValue === ""
                 ? storageList
                 : [
-                    {
-                      storage: `Add "${inputValue}" as a new storage`,
-                      id: "new",
-                    },
-                    ...storageList,
-                  ]
+                  {
+                    storage: `Add "${inputValue}" as a new storage`,
+                    id: "new",
+                  },
+                  ...storageList,
+                ]
             }
             placeholder={t("boardMissions.selectStorage")}
             key={defaultValue}
@@ -561,8 +538,8 @@ const ProductionFloorWidget = () => {
         subTitle={" "}
         openModal={openMarkReadyModalForHasJobs}
         onClose={onCloseMarkReadyModalForHasJobs}
-        onClickDelete={onClickMarkReadyModalForHasJobs}
-        onClickCancel={onCloseMarkReadyModalForHasJobs}
+        onClickDelete={() => onClickMarkReadyModalForHasJobs(true)}
+        onClickCancel={() => onClickMarkReadyModalForHasJobs(false)}
       >
         <div style={{ width: "100%", minWidth: 300 }}>
           <GoMakeAutoComplate
@@ -572,12 +549,12 @@ const ProductionFloorWidget = () => {
               ) || inputValue === ""
                 ? storageList
                 : [
-                    {
-                      storage: `Add "${inputValue}" as a new storage`,
-                      id: "new",
-                    },
-                    ...storageList,
-                  ]
+                  {
+                    storage: `Add "${inputValue}" as a new storage`,
+                    id: "new",
+                  },
+                  ...storageList,
+                ]
             }
             placeholder={t("boardMissions.selectStorage")}
             key={defaultValue}
@@ -611,10 +588,10 @@ const ProductionFloorWidget = () => {
         subTitle={
           selectedMission?.productType
             ? t("boardMissions.askDoneScope", {
-                productType:
-                  selectedMission?.productTypeName ||
-                  selectedMission?.productType,
-              })
+              productType:
+                selectedMission?.productTypeName ||
+                selectedMission?.productType,
+            })
             : ""
         }
         yesBtn={t("boardMissions.markAllJobsReady", {
@@ -623,19 +600,18 @@ const ProductionFloorWidget = () => {
         noBtn={
           selectedMission?.productType
             ? t("boardMissions.markProductTypeOnly", {
-                productType:
-                  selectedMission?.productTypeName ||
-                  selectedMission?.productType,
-                defaultValue: `Mark ${
-                  selectedMission?.productType || "Product Type"
+              productType:
+                selectedMission?.productTypeName ||
+                selectedMission?.productType,
+              defaultValue: `Mark ${selectedMission?.productType || "Product Type"
                 } Only`,
-              })
+            })
             : undefined
         }
         openModal={openDoneScopeModal}
         onClose={onCloseDoneScopeModal}
-        onClickYes={onClickDoneScopeAllJobs}
-        onClickNo={onClickDoneScopeProductType}
+        onClickYes={() => onClickDoneScopeAllJobs(true)}
+        onClickNo={() => onClickDoneScopeProductType(true)}
       />
     </Stack>
   );
