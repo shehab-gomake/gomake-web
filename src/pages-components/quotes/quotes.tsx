@@ -66,12 +66,12 @@ import { ColumnSetting } from "@/widgets/production-floor/state/production-floor
 import { FONT_FAMILY } from "@/utils/font-family";
 import { QR_CODE_LISTENER_FROM } from "@/hooks/use-qr-code-listener";
 import QrCodeReader from "@/components/qr-code-reader";
-import {useRecoilValue, useSetRecoilState} from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import { selectedItemsState } from "@/store";
 import { FrontDeskEmailComposerWrapper } from "./components/frontdesk-email-composer-wrapper";
 import { PrintPackingSlipModalWidget } from "@/widgets/production-floor/views/board-missions-view/navigation-buttons/print-packing-slip-modal-widget";
 import { useParameters } from "@/hooks/use-parameters";
-import {printHouseHasFrontDeskFeature} from "@/store/print-house-profile";
+import { printHouseHasFrontDeskFeature } from "@/store/print-house-profile";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -443,7 +443,7 @@ const QuotesListPageWidget = ({
   useEffect(() => {
     const loadDocumentColumnSettings = async () => {
       try {
-        const res = await getDocumentTableSettingsApi(callApi, () => {}, {
+        const res = await getDocumentTableSettingsApi(callApi, () => { }, {
           documentType,
         });
         const saved: ColumnSetting[] = res?.data;
@@ -510,16 +510,16 @@ const QuotesListPageWidget = ({
                     isOrder
                       ? onclickCreateNew
                       : isSupplierPayments
-                      ? () => navigate(`/${documentPath}`)
-                      : isPurchaseOrder
-                      ? () => {
-                          setSelectedItems([]);
-                          onOpenPurchaseOrderTypeModal();
-                        }
-                      : () => {
-                          setSelectedItems([]);
-                          navigate(`/${documentPath}?isNewCreation=true`);
-                        }
+                        ? () => navigate(`/${documentPath}`)
+                        : isPurchaseOrder
+                          ? () => {
+                            setSelectedItems([]);
+                            onOpenPurchaseOrderTypeModal();
+                          }
+                          : () => {
+                            setSelectedItems([]);
+                            navigate(`/${documentPath}?isNewCreation=true`);
+                          }
                   )}
               </div>
             </div>
@@ -862,16 +862,16 @@ const QuotesListPageWidget = ({
           isSelectedCLoseAsDeliveryNote
             ? "customers.modal.closeOrderAsDeliveryNote"
             : isSelectedCLoseAsProformaInvoice
-            ? "customers.modal.closeOrderAsProformaInvoice"
-            : "customers.modal.closeOrderAsInvoice"
+              ? "customers.modal.closeOrderAsProformaInvoice"
+              : "customers.modal.closeOrderAsInvoice"
         }
         subTitle={"customers.modal.thisOrderIsAlreadyInProcess"}
         yesBtn={
           isSelectedCLoseAsDeliveryNote
             ? t("customers.modal.closeAsDeliveryNote")
             : isSelectedCLoseAsProformaInvoice
-            ? t("customers.modal.closeAsProformaInvoice")
-            : t("customers.modal.closeAsInvoice")
+              ? t("customers.modal.closeAsProformaInvoice")
+              : t("customers.modal.closeAsInvoice")
         }
         openModal={openChangeProductionStatusModal}
         onClose={onClickCloseChangeProductionStatusModal}

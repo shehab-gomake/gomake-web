@@ -3721,11 +3721,30 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       return new Promise<void>((resolve, reject) => {
         const callBack = (res) => {
           if (res?.success) {
-            const newSendPaymentState = { ...sendPayment };
-            newSendPaymentState.documentId = document?.id;
-            newSendPaymentState.documentContacts = res.data;
-            setSendPayment(newSendPaymentState);
-            resolve();
+            // Use functional update to avoid stale state
+            setSendPayment((prevState) => {
+              const newSendPaymentState = { ...prevState };
+              newSendPaymentState.documentId = document?.id;
+              newSendPaymentState.documentContacts = res.data || [];
+              
+              // CRITICAL: Set selectedContactIndex and populate contact fields
+              if (res.data && res.data.length > 0) {
+                const firstContact = res.data[0];
+                newSendPaymentState.selectedContactIndex = 0;
+                newSendPaymentState.contactName = (firstContact.contactName || "").trim();
+                newSendPaymentState.contactPhone = (firstContact.contactPhone || "").trim();
+                newSendPaymentState.contactMail = (firstContact.contactMail || "").trim();
+              } else {
+                newSendPaymentState.selectedContactIndex = -1;
+                newSendPaymentState.contactName = "";
+                newSendPaymentState.contactPhone = "";
+                newSendPaymentState.contactMail = "";
+              }
+              
+              return newSendPaymentState;
+            });
+            // Use requestAnimationFrame to ensure state update is processed
+            requestAnimationFrame(() => resolve());
           } else {
             reject(new Error("Failed to update payment state"));
           }
@@ -3822,14 +3841,27 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const onClickSendToCustomerSMS = async (document: any) => {
     try {
       await onClickSendPaymentOld(document, true);
-      // Pre-select SMS checkbox
-      const newSendPaymentState = {
-        ...sendPayment,
-        sendBySms: true,
-        sendByMail: false,
-        sendByWhatsapp: false,
-      };
-      setSendPayment(newSendPaymentState);
+      // Use functional update to get latest state after contacts are loaded
+      setSendPayment((prevState) => {
+        // Ensure contact fields are populated from documentContacts if they exist
+        let updatedState = { ...prevState };
+        if (prevState.documentContacts && prevState.documentContacts.length > 0) {
+          const contactIndex = prevState.selectedContactIndex >= 0 ? prevState.selectedContactIndex : 0;
+          const selectedContact = prevState.documentContacts[contactIndex];
+          if (selectedContact) {
+            updatedState.selectedContactIndex = contactIndex;
+            updatedState.contactName = (selectedContact.contactName || "").trim();
+            updatedState.contactPhone = (selectedContact.contactPhone || "").trim();
+            updatedState.contactMail = (selectedContact.contactMail || "").trim();
+          }
+        }
+        return {
+          ...updatedState,
+          sendBySms: true,
+          sendByMail: false,
+          sendByWhatsapp: false,
+        };
+      });
       setPaymentModalTitle(
         `${t("sales.quote.sendToClient")} - ${t(
           `sales.quote.${DOCUMENT_TYPE[docType]}`
@@ -3848,14 +3880,27 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const onClickSendToCustomerWhatsApp = async (document: any) => {
     try {
       await onClickSendPaymentOld(document, true);
-      // Pre-select WhatsApp checkbox
-      const newSendPaymentState = {
-        ...sendPayment,
-        sendByWhatsapp: true,
-        sendByMail: false,
-        sendBySms: false,
-      };
-      setSendPayment(newSendPaymentState);
+      // Use functional update to get latest state after contacts are loaded
+      setSendPayment((prevState) => {
+        // Ensure contact fields are populated from documentContacts if they exist
+        let updatedState = { ...prevState };
+        if (prevState.documentContacts && prevState.documentContacts.length > 0) {
+          const contactIndex = prevState.selectedContactIndex >= 0 ? prevState.selectedContactIndex : 0;
+          const selectedContact = prevState.documentContacts[contactIndex];
+          if (selectedContact) {
+            updatedState.selectedContactIndex = contactIndex;
+            updatedState.contactName = (selectedContact.contactName || "").trim();
+            updatedState.contactPhone = (selectedContact.contactPhone || "").trim();
+            updatedState.contactMail = (selectedContact.contactMail || "").trim();
+          }
+        }
+        return {
+          ...updatedState,
+          sendByWhatsapp: true,
+          sendByMail: false,
+          sendBySms: false,
+        };
+      });
       setPaymentModalTitle(
         `${t("sales.quote.sendToClient")} - ${t(
           `sales.quote.${DOCUMENT_TYPE[docType]}`
