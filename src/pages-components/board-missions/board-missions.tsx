@@ -871,7 +871,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
           onClose={closeEmailComposer}
           emailData={emailData}
           documentId={pendingOrderIdForComposer || selectedMission?.orderId || selectedMission?.id}
-          documentType={DOCUMENT_TYPE.order}
+          documentType={router.query.openComposer === "true" ? DOCUMENT_TYPE.order : DOCUMENT_TYPE.boardMission}
         />
       )}
       <QualityIssueModal

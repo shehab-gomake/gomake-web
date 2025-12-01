@@ -1707,7 +1707,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     openEmailComposer,
     closeEmailComposer,
   } = useFrontDeskEmailIntegration({
-    documentType: DOCUMENT_TYPE.boardMission,
+    documentType: router.query.openComposer === "true" ? DOCUMENT_TYPE.order : DOCUMENT_TYPE.boardMission,
   });
 
   const [pendingOrderIdForComposer, setPendingOrderIdForComposer] = useState<string | null>(null);
