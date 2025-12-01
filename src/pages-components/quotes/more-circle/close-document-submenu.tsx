@@ -19,7 +19,7 @@ interface CloseOption {
 interface CloseDocumentSubmenuProps {
   documentType: DOCUMENT_TYPE;
   document: any;
-  onCloseDocument: (id: string) => void;
+  onCloseDocument?: (id: string) => void;
   onCloseAsDeliveryNote?: () => void;
   onCloseAsProformaInvoice?: () => void;
   onCloseAsInvoice?: () => void;
@@ -32,7 +32,6 @@ interface CloseDocumentSubmenuProps {
     actionType: string,
     callback: () => void
   ) => void;
-  canCloseDocumentManually?: boolean;
   menuItemStyle?: any;
   rowTextStyle?: any;
   onCloseParentMenu?: () => void;
@@ -50,7 +49,6 @@ export const CloseDocumentSubmenu: React.FC<CloseDocumentSubmenuProps> = ({
   onCreateInvoiceRefund,
   onCreatePurchaseInvoiceRefund,
   onClickOpenCloseOrderNotesModal,
-  canCloseDocumentManually,
   menuItemStyle,
   rowTextStyle,
   onCloseParentMenu,
@@ -102,21 +100,23 @@ export const CloseDocumentSubmenu: React.FC<CloseDocumentSubmenuProps> = ({
     switch (documentType) {
       case DOCUMENT_TYPE.order:
         // Close order
-        options.push({
-          label: t("sales.quote.close"),
-          onClick: () => {
-            if (
-              document?.closeOrderNotes?.trim() &&
-              onClickOpenCloseOrderNotesModal
-            ) {
-              onClickOpenCloseOrderNotesModal(document, "closeManually", () =>
-                onCloseDocument(document)
-              );
-            } else {
-              onCloseDocument(document);
-            }
-          },
-        });
+        if (onCloseDocument) {
+          options.push({
+            label: t("sales.quote.close"),
+            onClick: () => {
+              if (
+                document?.closeOrderNotes?.trim() &&
+                onClickOpenCloseOrderNotesModal
+              ) {
+                onClickOpenCloseOrderNotesModal(document, "closeManually", () =>
+                  onCloseDocument(document)
+                );
+              } else {
+                onCloseDocument(document);
+              }
+            },
+          });
+        }
 
         // Close as Delivery Note
         if (onCloseAsDeliveryNote) {
@@ -163,10 +163,12 @@ export const CloseDocumentSubmenu: React.FC<CloseDocumentSubmenuProps> = ({
 
       case DOCUMENT_TYPE.deliveryNote:
         // Close delivery note
-        options.push({
-          label: t("sales.quote.close"),
-          onClick: () => onCloseDocument(document),
-        });
+        if (onCloseDocument) {
+          options.push({
+            label: t("sales.quote.close"),
+            onClick: () => onCloseDocument(document),
+          });
+        }
 
         // Close as Proforma Invoice
         if (onCloseAsProformaInvoice) {
@@ -203,10 +205,12 @@ export const CloseDocumentSubmenu: React.FC<CloseDocumentSubmenuProps> = ({
 
       case DOCUMENT_TYPE.proformaInvoice:
         // Close proforma invoice
-        options.push({
-          label: t("sales.quote.close"),
-          onClick: () => onCloseDocument(document),
-        });
+        if (onCloseDocument) {
+          options.push({
+            label: t("sales.quote.close"),
+            onClick: () => onCloseDocument(document),
+          });
+        }
 
         // Close as Invoice
         // Always navigates from proforma invoice, so always a link
@@ -222,10 +226,12 @@ export const CloseDocumentSubmenu: React.FC<CloseDocumentSubmenuProps> = ({
 
       case DOCUMENT_TYPE.invoice:
         // Close invoice
-        options.push({
-          label: t("sales.quote.close"),
-          onClick: () => onCloseDocument(document),
-        });
+        if (onCloseDocument) {
+          options.push({
+            label: t("sales.quote.close"),
+            onClick: () => onCloseDocument(document),
+          });
+        }
 
         // Create Invoice Refund
         // Always navigates, so always a link
@@ -240,8 +246,8 @@ export const CloseDocumentSubmenu: React.FC<CloseDocumentSubmenuProps> = ({
         break;
 
       case DOCUMENT_TYPE.purchaseOrder:
-        // Close purchase order - only show if user has permission
-        if (canCloseDocumentManually) {
+        // Close purchase order
+        if (onCloseDocument) {
           options.push({
             label: t("sales.quote.close"),
             onClick: () => onCloseDocument(document),
@@ -273,11 +279,13 @@ export const CloseDocumentSubmenu: React.FC<CloseDocumentSubmenuProps> = ({
         break;
 
       default:
-        // For other document types, just show close option
-        options.push({
-          label: t("sales.quote.close"),
-          onClick: () => onCloseDocument(document),
-        });
+        // For other document types, show close option
+        if (onCloseDocument) {
+          options.push({
+            label: t("sales.quote.close"),
+            onClick: () => onCloseDocument(document),
+          });
+        }
         break;
     }
 
@@ -295,6 +303,7 @@ export const CloseDocumentSubmenu: React.FC<CloseDocumentSubmenuProps> = ({
     onCreateInvoiceRefund,
     onCreatePurchaseInvoiceRefund,
     onClickOpenCloseOrderNotesModal,
+    onCloseDocument,
   ]);
 
   // Don't render if no options available

@@ -89,7 +89,10 @@ const LeftSideLayout = (customGap) => {
       })
       .map((tab: any) => {
         if (tab.isList && tab.list) {
-          tab.list = tab.list.filter((item: any) => item.Permission);
+          tab.list = tab.list.filter((item: any) => {
+            // Show item if it has no permission requirement OR user has the permission
+            return !item.Permission || CheckPermission(item.Permission);
+          });
         }
         return tab;
       });

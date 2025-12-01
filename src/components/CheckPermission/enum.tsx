@@ -33,7 +33,7 @@ export enum Permissions {
   SHOW_QUOTE_STATISTICS = "ShowQuotesStatistics",
   UPDATE_CALCULATED_PRICE = "UpdateCalculatedPrice",
   SHOW_PRICING_TAB = "ShowPricingTab",
-
+  SHOW_ADD_PRODUCT_WITH_AI = "ShowAddProductWithAI",
   //Materials group
   EDIT_MATERIAL = "EditMaterial",
   SHOW_MATERIALS = "Show Material",
@@ -79,7 +79,7 @@ export enum Permissions {
   SHOW_CPA_CODE = "showCpaCode",
   SHOW_GROUPS = "showGroups",
   SHOW_FRONT_DESK = "ShowFrontDesk",
-
+  SHOW_HP_INDIGO = "ShowHpIndigo",
   //orders group
   SHOW_ORDERS = "ShowOrders",
   SHOW_COSTS_IN_ORDERS = "IsShowCostsInOrders",
@@ -123,6 +123,7 @@ export enum Permissions {
   //sales group
   SHOW_DELIVERY_NOTES = "ShowDeliveryNotes",
   SHOW_DELIVERY_NOTES_REFUND = "ShowDeliveryNotesRefund",
+  SHOW_PROFORMA_INVOICES = "ShowProformaInvoices",
   SHOW_INVOICES = "ShowInvoices",
   SHOW_INVOICES_REFUND = "ShowInvoicesRefund",
   SHOW_ERP_DOCUMENTS_TABLE_SUMMERY = "ShowErpDocumentsTableSummery",
