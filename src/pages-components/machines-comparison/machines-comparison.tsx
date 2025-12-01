@@ -171,7 +171,7 @@ export const MachineComparisonReportUI: React.FC<UIProps> = ({ data }) => {
             <div className={styles.mcSummaryLabel}>Best mix total time</div>
             <div className={styles.mcSummaryValue}>
               {formatHours(data.global.bestMixTotalTime)}
-              <span className={styles.mcSummaryUnit}> hours</span>
+              <span className={styles.mcSummaryUnit}> minutes</span>
             </div>
             <div className={styles.mcSummaryHint}>
               Sum of minimal production times over all jobs.
@@ -276,7 +276,7 @@ export const MachineComparisonReportUI: React.FC<UIProps> = ({ data }) => {
                         </td>
                         <td className={getDeltaClass(m.deltaTimeVsBestMix)}>
                           {m.deltaTimeVsBestMix >= 0 ? "+" : ""}
-                          {formatHours(m.deltaTimeVsBestMix)} h
+                          {formatHours(m.deltaTimeVsBestMix)} min
                         </td>
                       </tr>
                     ))}
@@ -324,11 +324,11 @@ export const MachineComparisonReportUI: React.FC<UIProps> = ({ data }) => {
                     <div className={styles.mcMiniStat}>
                       <div className={styles.mcMiniStatLabel}>Scenario time</div>
                       <div className={styles.mcMiniStatValue}>
-                        {formatHours(selectedMachine.scenarioTotalTime)} h
+                        {formatHours(selectedMachine.scenarioTotalTime)} min
                       </div>
                       <div className={getDeltaClass(selectedMachine.deltaTimeVsBestMix)}>
                         {selectedMachine.deltaTimeVsBestMix >= 0 ? "+" : ""}
-                        {formatHours(selectedMachine.deltaTimeVsBestMix)} h vs best mix
+                        {formatHours(selectedMachine.deltaTimeVsBestMix)} min vs best mix
                       </div>
                     </div>
                   </div>
@@ -368,7 +368,7 @@ export const MachineComparisonReportUI: React.FC<UIProps> = ({ data }) => {
                               <td>{job.productType || "-"}</td>
                               <td>{job.quantity ?? "-"}</td>
                               <td>{formatCurrency(m.totalCost)}</td>
-                              <td>{formatHours(m.totalTimeInMinutes)} h</td>
+                              <td>{formatHours(m.totalTimeInMinutes)} min</td>
                               <td>
                                 <div className={styles.mcTagRow}>
                                   {m.isBestCost && (
@@ -408,6 +408,15 @@ export const MachineComparisonReportUI: React.FC<UIProps> = ({ data }) => {
           </div>
         </section>
       </div>
+      {/* Job-level modal */}
+      {selectedJob && (
+        <JobCompareModal
+          job={selectedJob}
+          onClose={() => setSelectedJob(null)}
+          formatCurrency={formatCurrency}
+          formatHours={formatHours}
+        />
+      )}
     </div>
   );
 };
@@ -425,55 +434,58 @@ const JobCompareModal: React.FC<JobModalProps> = ({
   formatCurrency,
   formatHours,
 }) => {
-  const feasibleMachines = job.machines.filter(m => m.isFeasible);
+  const feasibleMachines = job.machines.filter((m) => m.isFeasible);
   const bestCost = feasibleMachines.length
-    ? Math.min(...feasibleMachines.map(m => m.totalCost))
+    ? Math.min(...feasibleMachines.map((m) => m.totalCost))
     : null;
   const bestTime = feasibleMachines.length
-    ? Math.min(...feasibleMachines.map(m => m.totalTimeInMinutes))
+    ? Math.min(...feasibleMachines.map((m) => m.totalTimeInMinutes))
     : null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40">
-      <div className="mx-4 max-h-[90vh] w-full max-w-3xl overflow-hidden rounded-2xl bg-white shadow-xl">
-        <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3">
-          <div>
-            <div className="text-xs uppercase tracking-wide text-slate-500">
-              Job comparison
-            </div>
-            <div className="text-sm font-semibold text-slate-900">{job.jobName}</div>
-            <div className="text-[11px] text-slate-500">
+    <div className={styles.jobModalOverlay}>
+      <div className={styles.jobModal}>
+        {/* Header */}
+        <div className={styles.jobModalHeader}>
+          <div className={styles.jobModalHeaderText}>
+            <div className={styles.jobModalLabel}>Job comparison</div>
+            <div className={styles.jobModalTitle}>{job.jobName}</div>
+            <div className={styles.jobModalSubtitle}>
               {job.productType && <span>{job.productType} • </span>}
-              {typeof job.quantity === "number" && <span>Qty: {job.quantity}</span>}
+              {typeof job.quantity === "number" && (
+                <span>Qty: {job.quantity}</span>
+              )}
             </div>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="rounded-full border border-slate-200 px-3 py-1 text-xs text-slate-600 hover:bg-slate-50"
+            className={styles.jobModalClose}
           >
             Close
           </button>
         </div>
-        <div className="max-h-[70vh] overflow-y-auto px-4 py-3">
-          <table className="min-w-full text-left text-xs">
-            <thead className="border-b border-slate-100 bg-slate-50 text-[11px] uppercase tracking-wide text-slate-500">
+
+        {/* Table */}
+        <div className={styles.jobModalBody}>
+          <table className={styles.jobModalTable}>
+            <thead>
               <tr>
-                <th className="px-3 py-2">Machine</th>
-                <th className="px-3 py-2">Cost</th>
-                <th className="px-3 py-2">Time</th>
-                <th className="px-3 py-2">Δ cost vs best</th>
-                <th className="px-3 py-2">Δ time vs best</th>
-                <th className="px-3 py-2">Tags</th>
+                <th>Machine</th>
+                <th>Cost</th>
+                <th>Time</th>
+                <th>Δ cost vs best</th>
+                <th>Δ time vs best</th>
+                <th>Tags</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
-              {job.machines.map(m => {
+            <tbody>
+              {job.machines.map((m) => {
                 if (!m.isFeasible) {
                   return (
-                    <tr key={m.machineId} className="bg-slate-50/60">
-                      <td className="px-3 py-2 text-slate-500">{m.machineName}</td>
-                      <td className="px-3 py-2 text-slate-400" colSpan={5}>
+                    <tr key={m.machineId} className={styles.jobModalRowNotFeasible}>
+                      <td className={styles.jobModalCellMachine}>{m.machineName}</td>
+                      <td className={styles.jobModalCellNotFeasible} colSpan={5}>
                         Not feasible for this job
                       </td>
                     </tr>
@@ -487,58 +499,56 @@ const JobCompareModal: React.FC<JobModalProps> = ({
 
                 const deltaCostClass =
                   deltaCost < 0
-                    ? "text-emerald-600"
+                    ? styles.deltaGood
                     : deltaCost > 0
-                    ? "text-red-600"
-                    : "text-slate-700";
+                    ? styles.deltaBad
+                    : styles.deltaNeutral;
 
                 const deltaTimeClass =
                   deltaTime < 0
-                    ? "text-emerald-600"
+                    ? styles.deltaGood
                     : deltaTime > 0
-                    ? "text-red-600"
-                    : "text-slate-700";
+                    ? styles.deltaBad
+                    : styles.deltaNeutral;
 
                 return (
-                  <tr key={m.machineId} className="hover:bg-slate-50">
-                    <td className="px-3 py-2 text-slate-900">{m.machineName}</td>
-                    <td className="px-3 py-2 text-slate-700">
-                      {formatCurrency(m.totalCost)}
+                  <tr key={m.machineId} className={styles.jobModalRow}>
+                    <td className={styles.jobModalCellMachine}>{m.machineName}</td>
+                    <td className={styles.jobModalCell}>{formatCurrency(m.totalCost)}</td>
+                    <td className={styles.jobModalCell}>
+                      {formatHours(m.totalTimeInMinutes)} min
                     </td>
-                    <td className="px-3 py-2 text-slate-700">
-                      {formatHours(m.totalTimeInMinutes)} h
-                    </td>
-                    <td className={"px-3 py-2 " + deltaCostClass}>
+                    <td className={`${styles.jobModalCell} ${deltaCostClass}`}>
                       {deltaCost >= 0 ? "+" : ""}
                       {formatCurrency(deltaCost)}
                     </td>
-                    <td className={"px-3 py-2 " + deltaTimeClass}>
+                    <td className={`${styles.jobModalCell} ${deltaTimeClass}`}>
                       {deltaTime >= 0 ? "+" : ""}
-                      {formatHours(deltaTime)} h
+                      {formatHours(deltaTime)} min
                     </td>
-                    <td className="px-3 py-2">
-                      <span className="inline-flex flex-wrap gap-1">
+                    <td className={styles.jobModalCell}>
+                      <div className={styles.jobModalTagRow}>
                         {m.isBestCost && (
-                          <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] text-emerald-700">
+                          <span className={`${styles.jobTag} ${styles.jobTagBestCost}`}>
                             Best cost
                           </span>
                         )}
                         {m.isBestTime && (
-                          <span className="rounded-full bg-sky-50 px-2 py-0.5 text-[10px] text-sky-700">
+                          <span className={`${styles.jobTag} ${styles.jobTagBestTime}`}>
                             Best time
                           </span>
                         )}
                         {m.isGoodCost && !m.isBestCost && (
-                          <span className="rounded-full bg-amber-50 px-2 py-0.5 text-[10px] text-amber-700">
+                          <span className={`${styles.jobTag} ${styles.jobTagGood}`}>
                             Good cost
                           </span>
                         )}
                         {m.isGoodTime && !m.isBestTime && (
-                          <span className="rounded-full bg-indigo-50 px-2 py-0.5 text-[10px] text-indigo-700">
+                          <span className={`${styles.jobTag} ${styles.jobTagInfo}`}>
                             Good time
                           </span>
                         )}
-                      </span>
+                      </div>
                     </td>
                   </tr>
                 );
