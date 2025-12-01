@@ -8,6 +8,8 @@ import {
 import { MenuItem } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { useSetRecoilState } from "recoil";
+import { useUserPermission } from "@/hooks/use-permission";
+import { Permissions } from "@/components/CheckPermission/enum";
 
 interface ICloseMenuProps {
   handleClose: () => void;
@@ -37,6 +39,10 @@ const CloseBtnMenu = ({
   );
   const setIsSelectedCLoseAsProformaInvoice = useSetRecoilState(
     isSelectedCLoseAsProformaInvoiceState
+  );
+  const { CheckPermission } = useUserPermission();
+  const hasProformaInvoicePermission = CheckPermission(
+    Permissions.SHOW_PROFORMA_INVOICES
   );
 
   const getMenuOptions = () => {
@@ -74,27 +80,31 @@ const CloseBtnMenu = ({
               }
             },
           },
-          {
-            label: t("sales.quote.closeAsProformaInvoice"),
-            action: () => {
-              if (documentState?.productionStatus) {
-                if (documentState?.closeOrderNotes?.trim()) {
-                  onClickOpenCloseOrderNotesModal(() =>
-                    navigate(
-                      `/proformaInvoice?isNewCreation=true&orderId=${documentState?.id}`
-                    )
-                  );
-                } else
-                  navigate(
-                    `/proformaInvoice?isNewCreation=true&orderId=${documentState?.id}`
-                  );
-              } else {
-                onClickOpenChangeProductionStatusModal(documentState);
-                setIsSelectedCLoseAsDeliveryNote(false);
-                setIsSelectedCLoseAsProformaInvoice(true);
-              }
-            },
-          },
+          ...(hasProformaInvoicePermission
+            ? [
+                {
+                  label: t("sales.quote.closeAsProformaInvoice"),
+                  action: () => {
+                    if (documentState?.productionStatus) {
+                      if (documentState?.closeOrderNotes?.trim()) {
+                        onClickOpenCloseOrderNotesModal(() =>
+                          navigate(
+                            `/proformaInvoice?isNewCreation=true&orderId=${documentState?.id}`
+                          )
+                        );
+                      } else
+                        navigate(
+                          `/proformaInvoice?isNewCreation=true&orderId=${documentState?.id}`
+                        );
+                    } else {
+                      onClickOpenChangeProductionStatusModal(documentState);
+                      setIsSelectedCLoseAsDeliveryNote(false);
+                      setIsSelectedCLoseAsProformaInvoice(true);
+                    }
+                  },
+                },
+              ]
+            : []),
           {
             label: t("sales.quote.closeAsInvoice"),
             action: () => {
@@ -123,13 +133,17 @@ const CloseBtnMenu = ({
             label: t("sales.quote.close"),
             action: () => onClickClose(documentState?.id),
           },
-          {
-            label: t("sales.quote.closeAsProformaInvoice"),
-            action: () =>
-              navigate(
-                `/proformaInvoice?isNewCreation=true&deliveryNoteId=${documentState?.id}`
-              ),
-          },
+          ...(hasProformaInvoicePermission
+            ? [
+                {
+                  label: t("sales.quote.closeAsProformaInvoice"),
+                  action: () =>
+                    navigate(
+                      `/proformaInvoice?isNewCreation=true&deliveryNoteId=${documentState?.id}`
+                    ),
+                },
+              ]
+            : []),
           {
             label: t("sales.quote.closeAsInvoice"),
             action: () =>

@@ -137,8 +137,7 @@ const useAuthLayoutHook = (
             key: "proforma invoices",
             title: "tabs.proformaInvoices",
             path: "/proformaInvoices",
-            // Permission: Permissions.SHOW_PROFORMA_INVOICES, // Will be added in the future
-            Permission: Permissions.SHOW_DELIVERY_NOTES,
+            Permission: Permissions.SHOW_PROFORMA_INVOICES,
           },
           {
             key: "invoices",

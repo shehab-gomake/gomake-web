@@ -123,6 +123,7 @@ export enum Permissions {
   //sales group
   SHOW_DELIVERY_NOTES = "ShowDeliveryNotes",
   SHOW_DELIVERY_NOTES_REFUND = "ShowDeliveryNotesRefund",
+  SHOW_PROFORMA_INVOICES = "ShowProformaInvoices",
   SHOW_INVOICES = "ShowInvoices",
   SHOW_INVOICES_REFUND = "ShowInvoicesRefund",
   SHOW_ERP_DOCUMENTS_TABLE_SUMMERY = "ShowErpDocumentsTableSummery",

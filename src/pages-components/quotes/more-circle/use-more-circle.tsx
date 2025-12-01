@@ -72,6 +72,9 @@ const useMoreCircle = () => {
     Permissions.CAN_CLOSE_MANUALLY
   );
   const canCancelReceipt = CheckPermission(Permissions.CANCEL_RECEIPT);
+  const hasProformaInvoicePermission = CheckPermission(
+    Permissions.SHOW_PROFORMA_INVOICES
+  );
   const [companyProfile] = useRecoilState(printHouseProfile);
   const [, setOpenFileUploader] = useRecoilState(openFileUploaderList);
   const [, setShowFileUploader] = useRecoilState(pinFileUploaderState);
@@ -475,17 +478,6 @@ const useMoreCircle = () => {
         icon: <DuplicateIcon color={primaryLavender(700)} />,
         name: t("sales.quote.duplicate"),
       },
-      // {
-      //   condition: !isPauseOrder && showNewDuplicate,
-      //   onClick: () =>
-      //     navigate(
-      //       `/${documentPath}?isNewCreation=true&documentToDuplicateId=${quote?.id}`
-      //     ),
-      //   icon: <DuplicateIcon />,
-      //   name: t("sales.quote.duplicate"),
-      //   isLink: true,
-      //   href: `/${documentPath}?isNewCreation=true&documentToDuplicateId=${quote?.id}`,
-      // },
       {
         condition: !isPauseOrder && showNewDuplicate,
         onClick: () =>
@@ -543,11 +535,12 @@ const useMoreCircle = () => {
                 : undefined
             }
             onCloseAsProformaInvoice={
-              (isOrder &&
+              hasProformaInvoicePermission &&
+              ((isOrder &&
                 quote?.isCanClose &&
                 !isCanceledOrder &&
                 isEditableDocument) ||
-              (isDeliveryNote && quote?.isCanClose && isEditableDocument)
+                (isDeliveryNote && quote?.isCanClose && isEditableDocument))
                 ? handleCloseAsProformaInvoice
                 : undefined
             }
