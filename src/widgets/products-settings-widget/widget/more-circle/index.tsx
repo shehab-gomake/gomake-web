@@ -52,15 +52,19 @@ const MoreMenuWidget = ({ item, updatedProduct, getActions, isSubProduct }: any)
         </IconButton>
         <GoMakeMenu handleClose={handleClose} open={open} anchorEl={anchorEl}>
           <MenuItem
-            onClick={() =>
-              router?.query?.isSubProducts ?
-                navigate(
-                  `/settings/products/edit/${item?.id}?productName=${item?.name}&isSubProducts=true`
-                ) :
-                navigate(
-                  `/settings/products/edit/${item?.id}?productName=${item?.name}`
-                )
-            }
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              handleClose();
+
+              const url = router?.query?.isSubProducts
+                ? `/settings/products/edit/${item?.id}?productName=${encodeURIComponent(item?.name)}&isSubProducts=true`
+                : `/settings/products/edit/${item?.id}?productName=${encodeURIComponent(item?.name)}`;
+
+              // Force navigation using window.location to ensure clean state
+              // This ensures the page fully reloads and clears any search state
+              window.location.href = url;
+            }}
           >
             <div style={clasess.menuRowStyle}>
               <EditingIcon />
