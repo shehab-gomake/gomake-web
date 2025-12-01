@@ -7,6 +7,8 @@ import {
 import { useStyle } from "./style";
 import { OrderNowIcon } from "./icons";
 import { Stack } from "@mui/material";
+import { useRecoilValue } from "recoil";
+import { printHouseHasFrontDeskFeature } from "@/store/print-house-profile";
 
 const OrderNowModal = ({
   openModal,
@@ -16,22 +18,24 @@ const OrderNowModal = ({
   isUsedStripe,
   isConnectedToStripe,
   CheckoutOptionModal,
+  onConfirm,
 }: any) => {
   const { t } = useTranslation();
   const { classes } = useStyle();
+  const hasFrontDeskFeature = useRecoilValue(printHouseHasFrontDeskFeature);
   const showBtn = !isUsedStripe || (isConnectedToStripe && isUsedStripe);
+  const showSingleConfirmButton = hasFrontDeskFeature && !isUsedStripe;
 
   const confirmWithNotificationText = t(
     `sales.quote.${isUsedStripe ? "checkout" : "confirmWithNotification"}`
   );
 
   const confirmWithoutNotificationText = t(
-    `sales.quote.${
-      isUsedStripe
-        ? isConnectedToStripe
-          ? "continueWithoutCheckout"
-          : "continue"
-        : "confirmWithoutNotification"
+    `sales.quote.${isUsedStripe
+      ? isConnectedToStripe
+        ? "continueWithoutCheckout"
+        : "continue"
+      : "confirmWithoutNotification"
     }`
   );
 
@@ -70,24 +74,35 @@ const OrderNowModal = ({
               {t("sales.quote.cancel")}
             </GomakePrimaryButton>
 
-            <GomakePrimaryButton
-              style={showBtn ? classes.secondBtn : classes.btnStyle}
-              onClick={confirmWithoutNotification}
-            >
-              {confirmWithoutNotificationText}
-            </GomakePrimaryButton>
-
-            {showBtn && (
+            {showSingleConfirmButton ? (
               <GomakePrimaryButton
                 style={classes.btnStyle}
-                onClick={
-                  isUsedStripe
-                    ? CheckoutOptionModal.open
-                    : confirmWithNotification
-                }
+                onClick={onConfirm || confirmWithNotification}
               >
-                {confirmWithNotificationText}
+                {t("modal.confirm")}
               </GomakePrimaryButton>
+            ) : (
+              <>
+                <GomakePrimaryButton
+                  style={showBtn ? classes.secondBtn : classes.btnStyle}
+                  onClick={confirmWithoutNotification}
+                >
+                  {confirmWithoutNotificationText}
+                </GomakePrimaryButton>
+
+                {showBtn && (
+                  <GomakePrimaryButton
+                    style={classes.btnStyle}
+                    onClick={
+                      isUsedStripe
+                        ? CheckoutOptionModal.open
+                        : confirmWithNotification
+                    }
+                  >
+                    {confirmWithNotificationText}
+                  </GomakePrimaryButton>
+                )}
+              </>
             )}
           </div>
         </div>

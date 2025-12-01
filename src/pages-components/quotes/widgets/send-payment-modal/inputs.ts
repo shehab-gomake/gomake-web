@@ -1,9 +1,24 @@
 import { emailRegex } from "@/utils/regex";
 
 const PaymentInputs = (state) => {
+  // Safely get selected contact - handle undefined selectedContactIndex
+  const contactIndex = 
+    state?.selectedContactIndex !== undefined && state?.selectedContactIndex >= 0
+      ? state.selectedContactIndex
+      : (state?.documentContacts && state.documentContacts.length > 0 ? 0 : -1);
+  
   const selectedContact =
     state?.documentContacts &&
-    state.documentContacts[state?.selectedContactIndex];
+    contactIndex >= 0 &&
+    contactIndex < state.documentContacts.length
+      ? state.documentContacts[contactIndex]
+      : null;
+  
+  // Prioritize contact data from selectedContact, then fallback to state-level fields
+  const contactName = selectedContact?.contactName || state?.contactName || "";
+  const contactPhone = selectedContact?.contactPhone || state?.contactPhone || "";
+  const contactMail = selectedContact?.contactMail || state?.contactMail || "";
+  
   return [
     {
       name: "contactName",
@@ -12,7 +27,7 @@ const PaymentInputs = (state) => {
       placeholder: "sales.quote.contactName",
       required: false,
       parameterKey: "contactName",
-      value: selectedContact?.contactName || "",
+      value: contactName,
       options: [],
       isValid: true,
       readOnly: true,
@@ -24,7 +39,7 @@ const PaymentInputs = (state) => {
       placeholder: "sales.quote.contactPhone",
       required: false,
       parameterKey: "contactPhone",
-      value: selectedContact?.contactPhone || state?.contactPhone || "",
+      value: contactPhone,
       options: [],
       isValid: true,
       readOnly: false,
@@ -36,7 +51,7 @@ const PaymentInputs = (state) => {
       placeholder: "sales.quote.contactEmail",
       required: false,
       parameterKey: "contactMail",
-      value: selectedContact?.contactMail || state?.contactMail || "",
+      value: contactMail,
       options: [],
       isValid: true,
       readOnly: false,

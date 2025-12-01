@@ -23,6 +23,8 @@ import {
 } from "@/store/file-uploader-state";
 import { addBoardMissionsToFileUploaderApi } from "@/services/api-service/board-missions/board-missions-table";
 import { ungroupJobsApi } from "@/services/api-service/production-floor/production-floor-endpoints";
+import { useFrontDeskEmailIntegration } from "@/pages-components/quotes/hooks/use-frontdesk-email-integration";
+import { FrontDeskEmailComposerWrapper } from "@/pages-components/quotes/components/frontdesk-email-composer-wrapper";
 
 const MoreActionsButton = ({ isMobile = false }) => {
   const { t } = useTranslation();
@@ -40,6 +42,15 @@ const MoreActionsButton = ({ isMobile = false }) => {
   const [, setOpenFileUploader] = useRecoilState(openFileUploaderList);
   const [, setShowFileUploader] = useRecoilState(pinFileUploaderState);
   const [connectionId] = useRecoilState(fileUploaderConnectionIdState);
+
+  // Email composer integration with document type 16
+  const {
+    isEmailComposerOpen,
+    emailData,
+    isLoadingEmailData,
+    openEmailComposer,
+    closeEmailComposer,
+  } = useFrontDeskEmailIntegration({ documentType: 16 as any });
 
   const getBoardMissionChatRoomId = async (selectedContact, setLoading) => {
     setLoading(true);
@@ -87,13 +98,19 @@ const MoreActionsButton = ({ isMobile = false }) => {
   };
 
   const getDocumentContacts = async () => {
-    const callBack = (res) => {
-      if (res.success) {
-        setContacts(res.data);
-        setOpenSendGraphicFileModal(true);
-      }
-    };
-    await getDocumentContactsApi(callApi, callBack, boardMissions.orderId);
+    handleClose(); // Close the menu
+    // Open email composer with document type 16
+    await openEmailComposer(
+      boardMissions.boardMissionId,
+      boardMissions.clientEmail,
+      boardMissions.clientPhone,
+      undefined, // messageType
+      true, // sendMailIfNotVerifiedAgent
+      false, // sendWithInvoices
+      boardMissions.clientId,
+      boardMissions.clientName,
+      boardMissions.contactName
+    );
   };
 
   const handleClickUnGroupJob = async () => {
@@ -164,6 +181,16 @@ const MoreActionsButton = ({ isMobile = false }) => {
         contacts={contacts}
         openModal={openSendGraphicFileModal}
         onClose={() => setOpenSendGraphicFileModal(false)}
+      />
+
+      {/* Email Composer Wrapper for Graphics Approval */}
+      <FrontDeskEmailComposerWrapper
+        open={isEmailComposerOpen}
+        onClose={closeEmailComposer}
+        emailData={emailData}
+        documentId={boardMissions.boardMissionId}
+        documentType={16 as any}
+        isLoading={isLoadingEmailData}
       />
     </div>
   );
