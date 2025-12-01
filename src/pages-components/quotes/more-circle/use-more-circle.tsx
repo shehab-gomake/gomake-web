@@ -525,7 +525,9 @@ const useMoreCircle = () => {
           <CloseDocumentSubmenu
             documentType={documentType}
             document={quote}
-            onCloseDocument={onClickOpenCloseOrderModal}
+            onCloseDocument={
+              canCloseDocumentManually ? onClickOpenCloseOrderModal : undefined
+            }
             onCloseAsDeliveryNote={
               isOrder &&
               quote?.isCanClose &&
@@ -575,7 +577,6 @@ const useMoreCircle = () => {
                 ? handleCloseAsPurchaseInvoice
                 : undefined
             }
-            canCloseDocumentManually={canCloseDocumentManually}
             onClickOpenCloseOrderNotesModal={onClickOpenCloseOrderNotesModal}
             menuItemStyle={classes.menuRowStyle}
             rowTextStyle={classes.rowTextStyle}

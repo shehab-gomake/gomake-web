@@ -44,21 +44,28 @@ const CloseBtnMenu = ({
   const hasProformaInvoicePermission = CheckPermission(
     Permissions.SHOW_PROFORMA_INVOICES
   );
+  const canCloseDocumentManually = CheckPermission(
+    Permissions.CAN_CLOSE_MANUALLY
+  );
 
   const getMenuOptions = () => {
     switch (documentType) {
       case DOCUMENT_TYPE.order:
         return [
-          {
-            label: t("sales.quote.close"),
-            action: () => {
-              if (documentState?.closeOrderNotes?.trim()) {
-                onClickOpenCloseOrderNotesModal(() =>
-                  onClickClose(documentState?.id)
-                );
-              } else onClickClose(documentState?.id);
-            },
-          },
+          ...(canCloseDocumentManually
+            ? [
+                {
+                  label: t("sales.quote.close"),
+                  action: () => {
+                    if (documentState?.closeOrderNotes?.trim()) {
+                      onClickOpenCloseOrderNotesModal(() =>
+                        onClickClose(documentState?.id)
+                      );
+                    } else onClickClose(documentState?.id);
+                  },
+                },
+              ]
+            : []),
           {
             label: t("sales.quote.closeAsDeliveryNote"),
             action: () => {
@@ -129,10 +136,14 @@ const CloseBtnMenu = ({
         ];
       case DOCUMENT_TYPE.deliveryNote:
         return [
-          {
-            label: t("sales.quote.close"),
-            action: () => onClickClose(documentState?.id),
-          },
+          ...(canCloseDocumentManually
+            ? [
+                {
+                  label: t("sales.quote.close"),
+                  action: () => onClickClose(documentState?.id),
+                },
+              ]
+            : []),
           ...(hasProformaInvoicePermission
             ? [
                 {
@@ -161,10 +172,14 @@ const CloseBtnMenu = ({
         ];
       case DOCUMENT_TYPE.invoice:
         return [
-          {
-            label: t("sales.quote.close"),
-            action: () => onClickClose(documentState?.id),
-          },
+          ...(canCloseDocumentManually
+            ? [
+                {
+                  label: t("sales.quote.close"),
+                  action: () => onClickClose(documentState?.id),
+                },
+              ]
+            : []),
           {
             label: t("sales.quote.createInvoiceRefund"),
             action: () =>
@@ -175,12 +190,16 @@ const CloseBtnMenu = ({
         ];
       case DOCUMENT_TYPE.purchaseOrder:
         return [
-          {
-            label: t("sales.quote.close"),
-            action: () => {
-              onClickClose(documentState?.id);
-            },
-          },
+          ...(canCloseDocumentManually
+            ? [
+                {
+                  label: t("sales.quote.close"),
+                  action: () => {
+                    onClickClose(documentState?.id);
+                  },
+                },
+              ]
+            : []),
 
           {
             label: t("sales.quote.closeAsPurchaseInvoice"),
@@ -202,10 +221,14 @@ const CloseBtnMenu = ({
         ];
       case DOCUMENT_TYPE.proformaInvoice:
         return [
-          {
-            label: t("sales.quote.close"),
-            action: () => onClickClose(documentState?.id),
-          },
+          ...(canCloseDocumentManually
+            ? [
+                {
+                  label: t("sales.quote.close"),
+                  action: () => onClickClose(documentState?.id),
+                },
+              ]
+            : []),
           {
             label: t("sales.quote.closeAsInvoice"),
             action: () =>
