@@ -343,9 +343,9 @@ const useAuthLayoutHook = (
             Permission: Permissions.SHOW_MAILING_LOGS,
           },
           {
-            key: "hpIndigoReport",
-            title: "HP Indigo Report",
-            path: "/hp-comparison",
+            key: "roiReport",
+            title: "ROI Report",
+            path: "/machines-comparison",
             Permission: Permissions.SHOW_HP_INDIGO, // No permission required - all users can access HP Indigo Report
           },
         ],
