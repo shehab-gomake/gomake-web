@@ -87,6 +87,7 @@ const ScheduleSendWidget = ({
             { label: t("sales.list.lastWeek"), value: DateRangeTypeEnum.LastWeek },
             { label: t("sales.list.thisMonth"), value: DateRangeTypeEnum.ThisMonth },
             { label: t("sales.list.lastMonth"), value: DateRangeTypeEnum.LastMonth },
+            { label: t("sales.list.last180DaysEnding30DaysAgo"), value: DateRangeTypeEnum.Last180DaysEnding30DaysAgo },
         ];
     };
     const daysArray = Array.from({ length: 31 }, (v, k) => ({
@@ -151,6 +152,7 @@ const ScheduleSendWidget = ({
                 { label: t("sales.list.lastWeek"), value: DateRangeTypeEnum.LastWeek },
                 { label: t("sales.list.thisMonth"), value: DateRangeTypeEnum.ThisMonth },
                 { label: t("sales.list.lastMonth"), value: DateRangeTypeEnum.LastMonth },
+                { label: t("sales.list.last180DaysEnding30DaysAgo"), value: DateRangeTypeEnum.Last180DaysEnding30DaysAgo },
             ];
 
             // Add specific date filters for jobs table
@@ -172,6 +174,7 @@ const ScheduleSendWidget = ({
             { label: t("sales.list.lastWeek"), value: DateRangeTypeEnum.LastWeek },
             { label: t("sales.list.thisMonth"), value: DateRangeTypeEnum.ThisMonth },
             { label: t("sales.list.lastMonth"), value: DateRangeTypeEnum.LastMonth },
+            { label: t("sales.list.last180DaysEnding30DaysAgo"), value: DateRangeTypeEnum.Last180DaysEnding30DaysAgo },
         ];
 
         return baseOptions;
