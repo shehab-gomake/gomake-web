@@ -43,6 +43,7 @@ const useAuthLayoutHook = (
 
   const handleLogout = () => {
     localStorage.removeItem("auth-token");
+    localStorage.removeItem("refresh-token");
     changeRoute("/login");
   };
 
