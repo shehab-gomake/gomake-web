@@ -1,6 +1,9 @@
 import { useGomakeAxios, useGomakeRouter } from "@/hooks";
 import { useCustomer } from "@/hooks/use-customer";
-import { updateTokenStorage } from "@/services/storage-data";
+import {
+  updateTokenStorage,
+  updateRefreshTokenStorage,
+} from "@/services/storage-data";
 import { loadgingState } from "@/store/loading";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSetRecoilState } from "recoil";
@@ -29,6 +32,10 @@ const useGomakeAdminLogin = () => {
     });
     if (result?.data?.data?.customer?.token) {
       updateTokenStorage(result?.data?.data?.customer?.token);
+      if (result?.data?.data?.customer?.refreshToken) {
+        updateRefreshTokenStorage(result?.data?.data?.customer?.refreshToken);
+      }
+
       navigate("/admin");
     }
   }, [state]);

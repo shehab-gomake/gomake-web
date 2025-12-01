@@ -191,6 +191,7 @@ const HeaderWidget = ({
             style={classes.logoutContainer}
             onClick={() => {
               localStorage.removeItem("auth-token");
+              localStorage.removeItem("refresh-token");
               navigate("/login");
             }}
           >
