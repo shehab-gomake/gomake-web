@@ -487,6 +487,8 @@ const ProductionFloorWidget = () => {
         onClose={onCloseMarkReadyModal}
         onClickYes={() => onClickMoveBoardMissionToDone(true, true)}
         onClickNo={() => onClickMoveBoardMissionToDone(false, false)}
+        yesBtn={t("boardMissions.markDoneModalYes")}
+        noBtn={t("boardMissions.markDoneModalNo")}
       >
         <div style={{ width: "100%", minWidth: 300 }}>
           <GoMakeAutoComplate
