@@ -884,7 +884,6 @@ const QuotesListPageWidget = ({
         onClose={onCloseCancelReceiptModal}
         onClickDelete={onClickCancelReceipt}
       />
-      {/* !here */}
       <GoMakeDeleteModal
         modalType={ModalType.WARNING}
         title={

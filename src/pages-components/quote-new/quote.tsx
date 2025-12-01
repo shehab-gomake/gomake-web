@@ -98,8 +98,6 @@ const QuoteNewPageWidget = ({
   const [quoteItemValue, setQuoteItemValue] =
     useRecoilState<any>(quoteItemState);
 
-  console.log("ssssssssssssssssss", quoteItemValue);
-
   useEffect(() => {
     setQuoteItemValue({});
   }, []);
