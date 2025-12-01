@@ -5,13 +5,14 @@ import { QuotesListPageWidget } from "@/pages-components/quotes/quotes";
 import { useTranslation } from "react-i18next";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { useUserPermission } from "@/hooks/use-permission";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { Stack } from "@mui/material";
 import { ClientBalanceComponent } from "@/components/client-balance/client-balance";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { Tab, Tabs } from "@mui/material";
 import { styled } from "@mui/material/styles";
+import { getItem, setItem } from "@/services/storage-data";
 
 const StyledTabs = styled(Tabs)(() => {
   return {
@@ -124,7 +125,34 @@ const HomeTableWidget = ({
     },
   ].filter((tab) => tab.permission);
 
-  const [selectedTab, setSelectedTab] = useState<number>(0);
+  const STORAGE_KEY = "homePageDocumentTab";
+
+  // Initialize selectedTab from localStorage or default to 0
+  const getInitialTab = (tabsLength: number): number => {
+    try {
+      const savedTabStr = getItem(STORAGE_KEY);
+      if (savedTabStr) {
+        const savedTab = JSON.parse(savedTabStr);
+        if (typeof savedTab === "number" && savedTab >= 0) {
+          // Validate that the saved tab index is within bounds
+          return Math.max(0, Math.min(savedTab, tabsLength - 1));
+        }
+      }
+    } catch (error) {
+      // If parsing fails, default to 0
+      console.warn("Failed to load saved tab from localStorage:", error);
+    }
+    return 0;
+  };
+
+  const [selectedTab, setSelectedTab] = useState<number>(() =>
+    getInitialTab(tabs.length)
+  );
+
+  // Save tab to localStorage whenever it changes
+  useEffect(() => {
+    setItem(STORAGE_KEY, JSON.stringify(selectedTab));
+  }, [selectedTab]);
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setSelectedTab(newValue);
