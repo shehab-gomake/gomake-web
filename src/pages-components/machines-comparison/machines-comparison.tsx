@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { useGomakeAxios } from "@/hooks/use-gomake-axios";
+import styles from "./hp-comparison.module.css"; // أو machines-comparison.module.css لو فضلت
 
 import {
   MachinesCompareResult,
@@ -109,17 +110,25 @@ export const MachineComparisonReportUI: React.FC<UIProps> = ({ data }) => {
     );
   }, [data.jobs, selectedMachineId]);
 
-  const formatCurrency = (v: number) =>
-    v.toLocaleString(undefined, {
+  const formatCurrency = (v: number | undefined | null) => {
+    if (v === undefined || v === null || isNaN(v)) {
+      return "0.00";
+    }
+    return v.toLocaleString(undefined, {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
     });
+  };
 
-  const formatHours = (v: number) =>
-    v.toLocaleString(undefined, {
+  const formatHours = (v: number | undefined | null) => {
+    if (v === undefined || v === null || isNaN(v)) {
+      return "0.0";
+    }
+    return v.toLocaleString(undefined, {
       minimumFractionDigits: 1,
       maximumFractionDigits: 1,
     });
+  };
 
   const getDeltaClass = (delta: number) => {
     if (delta < 0) return "text-emerald-600";
@@ -128,128 +137,100 @@ export const MachineComparisonReportUI: React.FC<UIProps> = ({ data }) => {
   };
 
   return (
-    <div className="w-full min-h-screen bg-slate-50 p-6">
-      <div className="mx-auto max-w-7xl space-y-6">
-        {/* Header */}
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+    <div className={styles.mcRoot}>
+      <div className={styles.mcContainer}>
+        {/* HEADER */}
+        <header className={styles.mcHeader}>
           <div>
-            <h1 className="text-2xl font-semibold text-slate-900">
-              Machine Workflows Comparison
-            </h1>
-            <p className="text-sm text-slate-500">
+            <h1 className={styles.mcTitle}>Machine Workflows Comparison</h1>
+            <p className={styles.mcSubtitle}>
               Summary of all jobs and their best workflows per printing machine.
             </p>
           </div>
-        </div>
+        </header>
 
-        {/* Global summary cards */}
-        <div className="grid gap-4 sm:grid-cols-3">
-          <div className="rounded-2xl bg-white p-4 shadow-sm border border-slate-100">
-            <div className="text-xs font-medium uppercase tracking-wide text-slate-500">
-              Total jobs analyzed
-            </div>
-            <div className="mt-2 text-2xl font-semibold text-slate-900">
-              {data.global.totalJobs}
-            </div>
+        {/* SUMMARY CARDS */}
+        <section className={styles.mcSummarySection}>
+          <div className={styles.mcSummaryCard}>
+            <div className={styles.mcSummaryLabel}>Total jobs analyzed</div>
+            <div className={styles.mcSummaryValue}>{data.global.totalJobs}</div>
           </div>
 
-          <div className="rounded-2xl bg-white p-4 shadow-sm border border-slate-100">
-            <div className="text-xs font-medium uppercase tracking-wide text-slate-500">
-              Best mix total cost
+          <div className={styles.mcSummaryCard}>
+            <div className={styles.mcSummaryLabel}>Best mix total cost</div>
+            <div className={styles.mcSummaryValue}>
+              {formatCurrency(data.global.bestMixTotalCost)}
+              <span className={styles.mcSummaryUnit}> currency</span>
             </div>
-            <div className="mt-2 text-xl font-semibold text-slate-900">
-              {formatCurrency(data.global.bestMixTotalCost)}{" "}
-              <span className="text-sm font-normal text-slate-500">currency</span>
-            </div>
-            <p className="mt-1 text-xs text-slate-500">
+            <div className={styles.mcSummaryHint}>
               Each job printed on the cheapest feasible machine.
-            </p>
+            </div>
           </div>
 
-          <div className="rounded-2xl bg-white p-4 shadow-sm border border-slate-100">
-            <div className="text-xs font-medium uppercase tracking-wide text-slate-500">
-              Best mix total time
+          <div className={styles.mcSummaryCard}>
+            <div className={styles.mcSummaryLabel}>Best mix total time</div>
+            <div className={styles.mcSummaryValue}>
+              {formatHours(data.global.bestMixTotalTime)}
+              <span className={styles.mcSummaryUnit}> hours</span>
             </div>
-            <div className="mt-2 text-xl font-semibold text-slate-900">
-              {formatHours(data.global.bestMixTotalTime)}{" "}
-              <span className="text-sm font-normal text-slate-500">hours</span>
-            </div>
-            <p className="mt-1 text-xs text-slate-500">
+            <div className={styles.mcSummaryHint}>
               Sum of minimal production times over all jobs.
-            </p>
+            </div>
           </div>
-        </div>
+        </section>
 
-        {/* Main layout: machine cards + detail panel */}
-        <div className="grid gap-6 lg:grid-cols-3">
-          {/* Left: machine cards */}
-          <div className="space-y-3 lg:col-span-2">
-            <h2 className="text-sm font-semibold text-slate-700">
-              Machines overview
-            </h2>
-            <div className="grid gap-3 md:grid-cols-2">
+        {/* MAIN GRID */}
+        <section className={styles.mcMainGrid}>
+          {/* Machines overview (cards) */}
+          <div className={styles.mcMachinesColumn}>
+            <h2 className={styles.mcSectionTitle}>Machines overview</h2>
+            <div className={styles.mcMachinesGrid}>
               {data.machines.map(machine => (
                 <button
                   key={machine.machineId}
                   type="button"
+                  className={`${styles.mcMachineCard} ${
+                    selectedMachineId === machine.machineId ? styles.mcMachineCardActive : ""
+                  }`}
                   onClick={() =>
                     setSelectedMachineId(
                       selectedMachineId === machine.machineId ? null : machine.machineId
                     )
                   }
-                  className={`text-left rounded-2xl border p-4 shadow-sm transition hover:shadow-md bg-white ${
-                    selectedMachineId === machine.machineId
-                      ? "border-indigo-500 ring-2 ring-indigo-100"
-                      : "border-slate-100"
-                  }`}
                 >
-                  <div className="flex items-center justify-between gap-2">
+                  <div className={styles.mcMachineCardHeader}>
                     <div>
-                      <div className="text-sm font-semibold text-slate-900">
-                        {machine.machineName}
-                      </div>
-                      <div className="text-xs text-slate-500">
+                      <div className={styles.mcMachineName}>{machine.machineName}</div>
+                      <div className={styles.mcMachineFeasible}>
                         {machine.jobsFeasible} / {machine.totalJobs} jobs feasible
                       </div>
                     </div>
-                    <div className="rounded-full bg-indigo-50 px-3 py-1 text-xs font-medium text-indigo-600">
+                    <span className={styles.mcBadgePrimary}>
                       {machine.jobsCheapest} cheapest
+                    </span>
+                  </div>
+
+                  <div className={styles.mcMachineStatsRow}>
+                    <div className={styles.mcMiniStat}>
+                      <div className={styles.mcMiniStatLabel}>Good by cost</div>
+                      <div className={styles.mcMiniStatValue}>{machine.jobsGoodByCost}</div>
+                    </div>
+                    <div className={styles.mcMiniStat}>
+                      <div className={styles.mcMiniStatLabel}>Good by time</div>
+                      <div className={styles.mcMiniStatValue}>{machine.jobsGoodByTime}</div>
                     </div>
                   </div>
 
-                  <div className="mt-3 grid grid-cols-2 gap-2 text-xs text-slate-600">
-                    <div className="rounded-xl bg-slate-50 px-3 py-2">
-                      <div className="text-[10px] uppercase tracking-wide text-slate-400">
-                        Good by cost
-                      </div>
-                      <div className="font-semibold">
-                        {machine.jobsGoodByCost} jobs
-                      </div>
-                    </div>
-                    <div className="rounded-xl bg-slate-50 px-3 py-2">
-                      <div className="text-[10px] uppercase tracking-wide text-slate-400">
-                        Good by time
-                      </div>
-                      <div className="font-semibold">
-                        {machine.jobsGoodByTime} jobs
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="mt-3 flex items-center justify-between text-xs">
+                  <div className={styles.mcMachineFooter}>
                     <div>
-                      <div className="text-[10px] uppercase tracking-wide text-slate-400">
-                        Scenario cost (all feasible jobs)
-                      </div>
-                      <div className="font-semibold text-slate-900">
+                      <div className={styles.mcMiniStatLabel}>Scenario cost</div>
+                      <div className={styles.mcMiniStatValue}>
                         {formatCurrency(machine.scenarioTotalCost)}
                       </div>
                     </div>
-                    <div className="text-right">
-                      <div className="text-[10px] uppercase tracking-wide text-slate-400">
-                        vs best mix
-                      </div>
-                      <div className={getDeltaClass(machine.deltaCostVsBestMix) + " font-semibold"}>
+                    <div className={styles.mcMachineDelta}>
+                      <div className={styles.mcMiniStatLabel}>vs best mix</div>
+                      <div className={getDeltaClass(machine.deltaCostVsBestMix)}>
                         {machine.deltaCostVsBestMix >= 0 ? "+" : ""}
                         {formatCurrency(machine.deltaCostVsBestMix)}
                       </div>
@@ -259,45 +240,41 @@ export const MachineComparisonReportUI: React.FC<UIProps> = ({ data }) => {
               ))}
             </div>
 
-            {/* Machines comparison table */}
-            <div className="mt-5 rounded-2xl bg-white p-4 shadow-sm border border-slate-100">
-              <h3 className="mb-3 text-sm font-semibold text-slate-800">
-                Machines comparison table
-              </h3>
-              <div className="overflow-x-auto">
-                <table className="min-w-full text-left text-xs">
-                  <thead className="border-b border-slate-100 bg-slate-50 text-[11px] uppercase tracking-wide text-slate-500">
+            {/* Table */}
+            <div className={styles.mcTableWrapper}>
+              <h3 className={styles.mcSectionTitle}>Machines comparison table</h3>
+              <div className={styles.mcTableScroll}>
+                <table className={styles.mcTable}>
+                  <thead>
                     <tr>
-                      <th className="px-3 py-2">Machine</th>
-                      <th className="px-3 py-2">Feasible</th>
-                      <th className="px-3 py-2">Cheapest</th>
-                      <th className="px-3 py-2">Fastest</th>
-                      <th className="px-3 py-2">Good cost</th>
-                      <th className="px-3 py-2">Good time</th>
-                      <th className="px-3 py-2">Scenario cost</th>
-                      <th className="px-3 py-2">Δ cost vs mix</th>
-                      <th className="px-3 py-2">Δ time vs mix</th>
+                      <th>Machine</th>
+                      <th>Feasible</th>
+                      <th>Cheapest</th>
+                      <th>Fastest</th>
+                      <th>Good cost</th>
+                      <th>Good time</th>
+                      <th>Scenario cost</th>
+                      <th>Δ cost vs mix</th>
+                      <th>Δ time vs mix</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-100">
+                  <tbody>
                     {data.machines.map(m => (
-                      <tr key={m.machineId} className="hover:bg-slate-50">
-                        <td className="px-3 py-2 text-slate-900">{m.machineName}</td>
-                        <td className="px-3 py-2 text-slate-700">
+                      <tr key={m.machineId}>
+                        <td>{m.machineName}</td>
+                        <td>
                           {m.jobsFeasible} / {m.totalJobs}
                         </td>
-                        <td className="px-3 py-2 text-slate-700">{m.jobsCheapest}</td>
-                        <td className="px-3 py-2 text-slate-700">{m.jobsFastest}</td>
-                        <td className="px-3 py-2 text-slate-700">{m.jobsGoodByCost}</td>
-                        <td className="px-3 py-2 text-slate-700">{m.jobsGoodByTime}</td>
-                        <td className="px-3 py-2 text-slate-700">
-                          {formatCurrency(m.scenarioTotalCost)}
-                        </td>
-                        <td className={"px-3 py-2 " + getDeltaClass(m.deltaCostVsBestMix)}>
+                        <td>{m.jobsCheapest}</td>
+                        <td>{m.jobsFastest}</td>
+                        <td>{m.jobsGoodByCost}</td>
+                        <td>{m.jobsGoodByTime}</td>
+                        <td>{formatCurrency(m.scenarioTotalCost)}</td>
+                        <td className={getDeltaClass(m.deltaCostVsBestMix)}>
                           {m.deltaCostVsBestMix >= 0 ? "+" : ""}
                           {formatCurrency(m.deltaCostVsBestMix)}
                         </td>
-                        <td className={"px-3 py-2 " + getDeltaClass(m.deltaTimeVsBestMix)}>
+                        <td className={getDeltaClass(m.deltaTimeVsBestMix)}>
                           {m.deltaTimeVsBestMix >= 0 ? "+" : ""}
                           {formatHours(m.deltaTimeVsBestMix)} h
                         </td>
@@ -309,57 +286,47 @@ export const MachineComparisonReportUI: React.FC<UIProps> = ({ data }) => {
             </div>
           </div>
 
-          {/* Right: selected machine detail */}
-          <div className="space-y-3">
-            <h2 className="text-sm font-semibold text-slate-700">
-              Machine detail
-            </h2>
-
+          {/* Right column: machine detail */}
+          <div className={styles.mcDetailColumn}>
+            <h2 className={styles.mcSectionTitle}>Machine detail</h2>
             {!selectedMachine && (
-              <div className="rounded-2xl border border-dashed border-slate-200 bg-white p-4 text-sm text-slate-500">
+              <div className={styles.mcEmptyDetail}>
                 Select a machine on the left to see its jobs and scenario details.
               </div>
             )}
 
             {selectedMachine && (
-              <div className="space-y-4">
-                {/* Scenario summary */}
-                <div className="rounded-2xl bg-white p-4 shadow-sm border border-slate-100">
-                  <div className="flex items-center justify-between gap-2">
+              <>
+                <div className={styles.mcDetailCard}>
+                  <div className={styles.mcDetailHeader}>
                     <div>
-                      <div className="text-xs uppercase tracking-wide text-slate-500">
-                        Selected machine
-                      </div>
-                      <div className="text-base font-semibold text-slate-900">
+                      <div className={styles.mcDetailLabel}>Selected machine</div>
+                      <div className={styles.mcDetailMachineName}>
                         {selectedMachine.machineName}
                       </div>
-                    </div>
-                    <div className="rounded-full bg-slate-100 px-3 py-1 text-xs text-slate-600">
-                      {selectedMachine.jobsFeasible} / {selectedMachine.totalJobs} jobs feasible
+                      <div className={styles.mcDetailSub}>
+                        {selectedMachine.jobsFeasible} / {selectedMachine.totalJobs} jobs feasible
+                      </div>
                     </div>
                   </div>
 
-                  <div className="mt-3 grid grid-cols-2 gap-3 text-xs">
-                    <div className="rounded-xl bg-slate-50 px-3 py-2">
-                      <div className="text-[10px] uppercase tracking-wide text-slate-400">
-                        Scenario cost
-                      </div>
-                      <div className="text-sm font-semibold text-slate-900">
+                  <div className={styles.mcDetailStatsRow}>
+                    <div className={styles.mcMiniStat}>
+                      <div className={styles.mcMiniStatLabel}>Scenario cost</div>
+                      <div className={styles.mcMiniStatValue}>
                         {formatCurrency(selectedMachine.scenarioTotalCost)}
                       </div>
-                      <div className={getDeltaClass(selectedMachine.deltaCostVsBestMix) + " text-[11px]"}>
+                      <div className={getDeltaClass(selectedMachine.deltaCostVsBestMix)}>
                         {selectedMachine.deltaCostVsBestMix >= 0 ? "+" : ""}
                         {formatCurrency(selectedMachine.deltaCostVsBestMix)} vs best mix
                       </div>
                     </div>
-                    <div className="rounded-xl bg-slate-50 px-3 py-2">
-                      <div className="text-[10px] uppercase tracking-wide text-slate-400">
-                        Scenario time
-                      </div>
-                      <div className="text-sm font-semibold text-slate-900">
+                    <div className={styles.mcMiniStat}>
+                      <div className={styles.mcMiniStatLabel}>Scenario time</div>
+                      <div className={styles.mcMiniStatValue}>
                         {formatHours(selectedMachine.scenarioTotalTime)} h
                       </div>
-                      <div className={getDeltaClass(selectedMachine.deltaTimeVsBestMix) + " text-[11px]"}>
+                      <div className={getDeltaClass(selectedMachine.deltaTimeVsBestMix)}>
                         {selectedMachine.deltaTimeVsBestMix >= 0 ? "+" : ""}
                         {formatHours(selectedMachine.deltaTimeVsBestMix)} h vs best mix
                       </div>
@@ -367,73 +334,64 @@ export const MachineComparisonReportUI: React.FC<UIProps> = ({ data }) => {
                   </div>
                 </div>
 
-                {/* Jobs list for this machine */}
-                <div className="rounded-2xl bg-white p-4 shadow-sm border border-slate-100">
-                  <div className="mb-2 flex items-center justify-between">
-                    <h3 className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-                      Jobs for this machine
-                    </h3>
-                    <div className="text-[11px] text-slate-500">
+                <div className={styles.mcJobsCard}>
+                  <div className={styles.mcJobsHeader}>
+                    <span className={styles.mcDetailLabel}>Jobs for this machine</span>
+                    <span className={styles.mcJobsCount}>
                       {jobsForSelectedMachine.length} jobs
-                    </div>
+                    </span>
                   </div>
-                  <div className="max-h-[360px] overflow-y-auto">
-                    <table className="min-w-full text-left text-xs">
-                      <thead className="border-b border-slate-100 bg-slate-50 text-[11px] uppercase tracking-wide text-slate-500">
+                  <div className={styles.mcTableScroll}>
+                    <table className={styles.mcTableSmall}>
+                      <thead>
                         <tr>
-                          <th className="px-3 py-2">Job</th>
-                          <th className="px-3 py-2">Product</th>
-                          <th className="px-3 py-2">Qty</th>
-                          <th className="px-3 py-2">Cost</th>
-                          <th className="px-3 py-2">Time</th>
-                          <th className="px-3 py-2">Tags</th>
+                          <th>Job</th>
+                          <th>Product</th>
+                          <th>Qty</th>
+                          <th>Cost</th>
+                          <th>Time</th>
+                          <th>Tags</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-slate-100">
+                      <tbody>
                         {jobsForSelectedMachine.map(job => {
-                          const m = job.machines.find(x => x.machineId === selectedMachine.machineId)!;
+                          const m = job.machines.find(
+                            x => x.machineId === selectedMachine.machineId
+                          )!;
                           return (
                             <tr
                               key={job.jobId}
-                              className="cursor-pointer hover:bg-slate-50"
                               onClick={() => setSelectedJob(job)}
+                              className={styles.mcJobRow}
                             >
-                              <td className="px-3 py-2 text-slate-900">{job.jobName}</td>
-                              <td className="px-3 py-2 text-slate-600">
-                                {job.productType || "-"}
-                              </td>
-                              <td className="px-3 py-2 text-slate-600">
-                                {job.quantity ?? "-"}
-                              </td>
-                              <td className="px-3 py-2 text-slate-700">
-                                {formatCurrency(m.totalCost)}
-                              </td>
-                              <td className="px-3 py-2 text-slate-700">
-                                {formatHours(m.totalTimeHours)} h
-                              </td>
-                              <td className="px-3 py-2">
-                                <span className="inline-flex flex-wrap gap-1">
+                              <td>{job.jobName}</td>
+                              <td>{job.productType || "-"}</td>
+                              <td>{job.quantity ?? "-"}</td>
+                              <td>{formatCurrency(m.totalCost)}</td>
+                              <td>{formatHours(m.totalTimeInMinutes)} h</td>
+                              <td>
+                                <div className={styles.mcTagRow}>
                                   {m.isBestCost && (
-                                    <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] text-emerald-700">
+                                    <span className={`${styles.mcTag} ${styles.mcTagBestCost}`}>
                                       Best cost
                                     </span>
                                   )}
                                   {m.isBestTime && (
-                                    <span className="rounded-full bg-sky-50 px-2 py-0.5 text-[10px] text-sky-700">
+                                    <span className={`${styles.mcTag} ${styles.mcTagBestTime}`}>
                                       Best time
                                     </span>
                                   )}
                                   {m.isGoodCost && !m.isBestCost && (
-                                    <span className="rounded-full bg-amber-50 px-2 py-0.5 text-[10px] text-amber-700">
+                                    <span className={`${styles.mcTag} ${styles.mcTagGood}`}>
                                       Good cost
                                     </span>
                                   )}
                                   {m.isGoodTime && !m.isBestTime && (
-                                    <span className="rounded-full bg-indigo-50 px-2 py-0.5 text-[10px] text-indigo-700">
+                                    <span className={`${styles.mcTag} ${styles.mcTagInfo}`}>
                                       Good time
                                     </span>
                                   )}
-                                </span>
+                                </div>
                               </td>
                             </tr>
                           );
@@ -441,24 +399,14 @@ export const MachineComparisonReportUI: React.FC<UIProps> = ({ data }) => {
                       </tbody>
                     </table>
                   </div>
-                  <p className="mt-2 text-[11px] text-slate-500">
+                  <div className={styles.mcJobsHint}>
                     Click a job row to compare this job across all machines.
-                  </p>
+                  </div>
                 </div>
-              </div>
+              </>
             )}
           </div>
-        </div>
-
-        {/* Job-level modal */}
-        {selectedJob && (
-          <JobCompareModal
-            job={selectedJob}
-            onClose={() => setSelectedJob(null)}
-            formatCurrency={formatCurrency}
-            formatHours={formatHours}
-          />
-        )}
+        </section>
       </div>
     </div>
   );
@@ -467,8 +415,8 @@ export const MachineComparisonReportUI: React.FC<UIProps> = ({ data }) => {
 type JobModalProps = {
   job: JobCompareSummary;
   onClose: () => void;
-  formatCurrency: (v: number) => string;
-  formatHours: (v: number) => string;
+  formatCurrency: (v: number | undefined | null) => string;
+  formatHours: (v: number | undefined | null) => string;
 };
 
 const JobCompareModal: React.FC<JobModalProps> = ({
@@ -482,7 +430,7 @@ const JobCompareModal: React.FC<JobModalProps> = ({
     ? Math.min(...feasibleMachines.map(m => m.totalCost))
     : null;
   const bestTime = feasibleMachines.length
-    ? Math.min(...feasibleMachines.map(m => m.totalTimeHours))
+    ? Math.min(...feasibleMachines.map(m => m.totalTimeInMinutes))
     : null;
 
   return (
@@ -535,7 +483,7 @@ const JobCompareModal: React.FC<JobModalProps> = ({
                 const deltaCost =
                   bestCost !== null ? m.totalCost - bestCost : 0;
                 const deltaTime =
-                  bestTime !== null ? m.totalTimeHours - bestTime : 0;
+                  bestTime !== null ? m.totalTimeInMinutes - bestTime : 0;
 
                 const deltaCostClass =
                   deltaCost < 0
@@ -558,7 +506,7 @@ const JobCompareModal: React.FC<JobModalProps> = ({
                       {formatCurrency(m.totalCost)}
                     </td>
                     <td className="px-3 py-2 text-slate-700">
-                      {formatHours(m.totalTimeHours)} h
+                      {formatHours(m.totalTimeInMinutes)} h
                     </td>
                     <td className={"px-3 py-2 " + deltaCostClass}>
                       {deltaCost >= 0 ? "+" : ""}

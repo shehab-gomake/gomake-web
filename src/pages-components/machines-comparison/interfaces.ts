@@ -45,7 +45,7 @@ export interface JobMachineCompareItem {
   machineName: string;
 
   totalCost: number;
-  totalTimeHours: number;
+  totalTimeInMinutes: number;
 
   isFeasible: boolean;
   isBestCost: boolean;
