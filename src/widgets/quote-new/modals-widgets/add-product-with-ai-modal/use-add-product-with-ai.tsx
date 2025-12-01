@@ -39,57 +39,55 @@ export const useAddProductWithAI = ({
             const workbook = XLSX.read(data, { type: "array" });
             const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
             
-            // Convert sheet to JSON with header row
-            // Use raw: false to get formatted values, and blankrows: true to include empty rows
+            // Convert sheet to JSON - get all rows as arrays
             const jsonData = XLSX.utils.sheet_to_json(firstSheet, {
               header: 1,
               defval: "", // Default value for empty cells
               raw: false, // Get formatted values
-              blankrows: true, // Include blank rows
+              blankrows: false, // Don't include completely blank rows
             }) as any[][];
 
-            console.log(`Excel file parsed: ${jsonData.length} total rows (including header if present)`);
-            console.log(`First few rows:`, jsonData.slice(0, 3));
+            console.log(`Excel file parsed: ${jsonData.length} total rows`);
+            console.log(`All rows:`, jsonData);
 
-            // Extract prompts from first column
-            // Check if first row looks like a header (optional - we'll skip it if it doesn't contain data)
+            // Extract prompts from first column of all rows
             const prompts: string[] = [];
-            let startRow = 0;
             
-            // Check if first row is a header (all cells are strings and look like headers)
-            if (jsonData.length > 0 && jsonData[0] && Array.isArray(jsonData[0])) {
-              const firstRow = jsonData[0];
-              const firstCell = firstRow[0];
-              // If first cell looks like a header (short text, no numbers), skip it
-              if (firstCell && typeof firstCell === "string" && firstCell.trim().length < 50) {
-                startRow = 1;
-                console.log(`Detected header row, starting from row 2`);
-              }
-            }
-
-            // Extract prompts from all rows starting from startRow
-            for (let i = startRow; i < jsonData.length; i++) {
+            // Process all rows - don't skip any unless they're truly empty
+            for (let i = 0; i < jsonData.length; i++) {
               const row = jsonData[i];
-              if (row && Array.isArray(row)) {
-                // Get first column value
-                const firstCell = row[0];
-                if (firstCell !== null && firstCell !== undefined && firstCell !== "") {
-                  const promptText = String(firstCell).trim();
-                  if (promptText.length > 0) {
-                    prompts.push(promptText);
-                    console.log(`Row ${i + 1}: Extracted prompt: "${promptText}"`);
-                  } else {
-                    console.log(`Row ${i + 1}: Empty prompt after trim, skipping`);
-                  }
-                } else {
-                  console.log(`Row ${i + 1}: First cell is empty/null, skipping`);
-                }
+              
+              // Skip if row is not an array or is empty
+              if (!row || !Array.isArray(row) || row.length === 0) {
+                console.log(`Row ${i + 1}: Empty or invalid row, skipping`);
+                continue;
+              }
+              
+              // Get first column value
+              const firstCell = row[0];
+              
+              // Convert to string and trim
+              const cellValue = firstCell !== null && firstCell !== undefined 
+                ? String(firstCell).trim() 
+                : "";
+              
+              // Only add non-empty values
+              if (cellValue.length > 0) {
+                prompts.push(cellValue);
+                console.log(`Row ${i + 1}: Extracted prompt: "${cellValue}"`);
               } else {
-                console.log(`Row ${i + 1}: Invalid row format (not an array), skipping`);
+                console.log(`Row ${i + 1}: First cell is empty, skipping`);
               }
             }
 
             console.log(`Total prompts extracted from Excel: ${prompts.length}`);
+            console.log(`Prompts array:`, prompts);
+            
+            if (prompts.length === 0) {
+              reject(new Error("No valid prompts found in Excel file. Please ensure the first column contains data."));
+              return;
+            }
+            
             resolve(prompts);
           } catch (error) {
             console.error("Error processing Excel file:", error);
