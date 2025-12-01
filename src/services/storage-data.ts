@@ -33,6 +33,18 @@ export const updateTempUserTokenStorage = (token: string) => {
 export const removeTempUserTokenStorage = () => {
   removeItem("temp-auth-token");
 };
+
+// Refresh token functions
+export const getRefreshToken = () => {
+  return getItem("refresh-token");
+};
+export const updateRefreshTokenStorage = (refreshToken: string) => {
+  setItem("refresh-token", refreshToken);
+};
+export const removeRefreshTokenStorage = () => {
+  removeItem("refresh-token");
+};
+
 export const clearStorage = () => {
   localStorage.clear();
 };
