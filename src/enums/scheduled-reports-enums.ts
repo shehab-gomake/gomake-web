@@ -12,7 +12,8 @@ export enum DateRangeTypeEnum {
   ThisWeek = 5,
   LastWeek = 6,
   ThisMonth = 7,
-  LastMonth = 8
+  LastMonth = 8,
+  Last180DaysEnding30DaysAgo = 9
 }
 
 export enum DayOfWeek {
