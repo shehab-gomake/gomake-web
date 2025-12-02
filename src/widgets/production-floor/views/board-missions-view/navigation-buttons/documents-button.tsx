@@ -521,7 +521,7 @@ const DocumentsButton = ({ isMobile = false }) => {
     // Mark as ready - send email programmatically if isSendMessage is true
     await moveBoardMissionToDoneApi(callApi, callBack, {
       boardMissionId: boardMissions?.boardMissionId,
-      sendMessage: false, // Always false - we handle email sending programmatically via FrontDesk
+      sendMessage: hasFrontDeskFeature ? false : isSendMessage, // Always false - we handle email sending programmatically via FrontDesk
       productType: boardMissions?.productType
     });
   };
@@ -612,10 +612,10 @@ const DocumentsButton = ({ isMobile = false }) => {
         subTitle={
           pendingPrintMission?.productType
             ? t("boardMissions.askPrintType", {
-                productType:
-                  pendingPrintMission.productTypeName ||
-                  pendingPrintMission.productType,
-              })
+              productType:
+                pendingPrintMission.productTypeName ||
+                pendingPrintMission.productType,
+            })
             : ""
         }
         yesBtn={t("boardMissions.printAllJobs")}
@@ -634,10 +634,10 @@ const DocumentsButton = ({ isMobile = false }) => {
         style={
           isMobile
             ? {
-                width: "95vw",
-                maxWidth: 600,
-                minWidth: "unset",
-              }
+              width: "95vw",
+              maxWidth: 600,
+              minWidth: "unset",
+            }
             : undefined
         }
       />
@@ -664,10 +664,10 @@ const DocumentsButton = ({ isMobile = false }) => {
         style={
           isMobile
             ? {
-                width: "95vw",
-                maxWidth: 600,
-                minWidth: "unset",
-              }
+              width: "95vw",
+              maxWidth: 600,
+              minWidth: "unset",
+            }
             : undefined
         }
       />
@@ -682,10 +682,10 @@ const DocumentsButton = ({ isMobile = false }) => {
         style={
           isMobile
             ? {
-                width: "95vw",
-                maxWidth: 600,
-                minWidth: "unset",
-              }
+              width: "95vw",
+              maxWidth: 600,
+              minWidth: "unset",
+            }
             : undefined
         }
       />

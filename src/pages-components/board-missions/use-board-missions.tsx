@@ -1744,10 +1744,9 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
       onClickBackToProcess();
     } else {
       // When hasFrontDeskFeature is false, use sendMessage parameter
-      // When hasFrontDeskFeature is true, always use false (user decides in composer)
       await moveBoardMissionToDoneApi(callApi, callBack, {
         boardMissionId: selectedMission?.id,
-        sendMessage: sendMessage,
+        sendMessage: hasFrontDeskFeature ? false : sendMessage,
         productType: markAllReady ? "" : selectedMission?.productType ?? "",
         storage: selectedMission?.storage ?? "",
       });
