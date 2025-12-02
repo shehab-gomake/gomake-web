@@ -190,7 +190,7 @@ const useDigitalOffsetPrice = ({
   const [subProducts, setSubProducts] = useRecoilState<any>(
     subProductsParametersState
   );
-
+  console.log("subProducts", subProducts);
   const [isMigratedFromOldSystem, setIsMigratedFromOldSystem] = useState(false);
   const [ignoreCalculatedWorkflows, setIgnoreCalculatedWorkflows] = useState(
     productTemplate?.ignoreCalculatedWorkflows
@@ -6684,7 +6684,7 @@ const useDigitalOffsetPrice = ({
             });
           }
 
-          // Find and handle size parameter after DieCut removal
+          // Find and handle size parameter after DieCut selection
           let sizeParameter = subSection.parameters.find(
             (param) => param.code === "size"
           );
@@ -6697,7 +6697,10 @@ const useDigitalOffsetPrice = ({
             if (customValue) {
               // Check if size parameter already exists in temp
               let sizeSubProductParameter = temp.find(
-                (x) => x.parameterCode === "size"
+                (x) =>
+                  x.parameterCode === "size" &&
+                  x.sectionId === sectionId &&
+                  x.subSectionId === subSectionId
               );
 
               if (sizeSubProductParameter) {
@@ -6729,6 +6732,161 @@ const useDigitalOffsetPrice = ({
                   isLocked: false, // Ensure not locked
                   isGeneralInfoInProductionFloor:
                     sizeParameter?.isGeneralInfoInProductionFloor,
+                });
+              }
+
+              // After size is filled, check if Width and Height exist before showing child parameters
+              const widthParam = temp.find(
+                (p) =>
+                  p.parameterCode === "Width" &&
+                  p.sectionId === sectionId &&
+                  p.subSectionId === subSectionId
+              );
+              const heightParam = temp.find(
+                (p) =>
+                  p.parameterCode === "Height" &&
+                  p.sectionId === sectionId &&
+                  p.subSectionId === subSectionId
+              );
+
+              // Unhide Width and Height parameters in productTemplate if they exist in temp with values
+              if (widthParam && widthParam.values && widthParam.values[0]) {
+                const widthParamInTemplate = subSection.parameters.find(
+                  (p) => p.code === "Width" && p.id === widthParam.parameterId
+                );
+                if (widthParamInTemplate && widthParamInTemplate.isHidden) {
+                  widthParamInTemplate.isHidden = false;
+                }
+              }
+              if (heightParam && heightParam.values && heightParam.values[0]) {
+                const heightParamInTemplate = subSection.parameters.find(
+                  (p) => p.code === "Height" && p.id === heightParam.parameterId
+                );
+                if (heightParamInTemplate && heightParamInTemplate.isHidden) {
+                  heightParamInTemplate.isHidden = false;
+                }
+              }
+
+              // Only show child parameters if Width and Height exist
+              if (sizeParameter && sizeParameter?.childsParameters) {
+                // Use newDieCutValue if available, otherwise try valueConfig, then dieCut
+                const dieCutValueToUse = newDieCutValue || valueConfig || dieCut;
+
+                // Unhide size child parameters in productTemplate
+                sizeParameter.childsParameters.forEach((childParam) => {
+                  const childParamInTemplate = subSection.parameters.find(
+                    (p) => p.id === childParam.id
+                  );
+                  if (childParamInTemplate && childParamInTemplate.isHidden) {
+                    childParamInTemplate.isHidden = false;
+                  }
+                });
+
+                // Helper function to get value from DieCut
+                const getValueFromDieCutForSize = (fieldNames: string[]) => {
+                  if (!dieCutValueToUse) return "";
+
+                  if (dieCutValueToUse.additionalAttribute) {
+                    for (const fieldName of fieldNames) {
+                      const item = dieCutValueToUse.additionalAttribute.find(
+                        (attr) => attr.valueId === fieldName
+                      );
+                      if (item && item.value) return item.value + "";
+                    }
+                  }
+
+                  if (dieCutValueToUse.rowData) {
+                    for (const fieldName of fieldNames) {
+                      if (dieCutValueToUse.rowData[fieldName]?.value) {
+                        return dieCutValueToUse.rowData[fieldName].value + "";
+                      }
+                    }
+                  }
+
+                  return "";
+                };
+
+                // Map size child parameter codes to DieCut field names
+                const sizeChildParamToDieCutFields: Record<string, string[]> = {
+                  DieUnitWidth: [
+                    "finalUnitWidth",
+                    "dieUnitWidth",
+                    "unitWidth",
+                    "width",
+                  ],
+                  DieUnitLength: [
+                    "finalUnitLength",
+                    "dieUnitLength",
+                    "unitLength",
+                    "length",
+                  ],
+                  DieUnitHeight: [
+                    "finalUnitHeight",
+                    "dieUnitHeight",
+                    "unitHeight",
+                    "height",
+                  ],
+                  Width: [
+                    "unitWidth",
+                    "dieUnitWidth",
+                    "finalUnitWidth",
+                    "width",
+                  ],
+                  Height: [
+                    "unitLength",
+                    "dieUnitLength",
+                    "finalUnitLength",
+                    "length",
+                  ],
+                };
+
+                // Add size child parameters from DieCut
+                sizeParameter.childsParameters.forEach((childParam) => {
+                  const fieldNames =
+                    sizeChildParamToDieCutFields[childParam.code] || [];
+                  const paramValue = getValueFromDieCutForSize(fieldNames);
+
+                  const childIndex = temp.findIndex(
+                    (item) =>
+                      item?.parameterId === childParam?.id &&
+                      item?.sectionId === sectionId &&
+                      item?.subSectionId === subSectionId &&
+                      item?.actionIndex === childParam?.actionIndex
+                  );
+
+                  if (childIndex !== -1) {
+                    // Update existing child parameter
+                    temp[childIndex] = {
+                      ...temp[childIndex],
+                      values: paramValue ? [paramValue] : [""],
+                      isDisabled: paramValue ? true : false,
+                      isLocked: false,
+                    };
+                  } else {
+                    // Add new child parameter
+                    temp.push({
+                      parameterId: childParam.id,
+                      sectionId: sectionId,
+                      subSectionId: subSectionId,
+                      ParameterType: childParam.parameterType,
+                      isQuantityParameter: childParam?.isQuantityParameter,
+                      values: paramValue ? [paramValue] : [""],
+                      valueIds: [],
+                      actionIndex: childParam.actionIndex,
+                      parameterName: childParam.name,
+                      parameterCode: childParam.code,
+                      isDisabled: paramValue ? true : false,
+                      isLocked: false,
+                      factor: childParam?.factor,
+                      unitKey: childParam?.unitKey,
+                      defaultUnit: childParam?.defaultUnit,
+                      unitType: childParam?.unitType,
+                      actionId: childParam?.actionId,
+                      valuesConfigs: childParam?.valuesConfigs,
+                      isGeneralInfoInProductionFloor:
+                        childParam?.isGeneralInfoInProductionFloor,
+                    });
+                  }
                 });
               }
             }
@@ -7388,6 +7546,20 @@ const useDigitalOffsetPrice = ({
                         dieCutSizeParameter.value,
                       ];
                       dieCutSizeSubProductParameter.isDisabled = true;
+                      // Unhide Width and Height parameters in productTemplate when updated in temp
+                      if (
+                        (dieCutSizeParameter.parameterCode === "Width" ||
+                          dieCutSizeParameter.parameterCode === "Height") &&
+                        dieCutSizeParameter.value
+                      ) {
+                        const subSectionParameter = subSection.parameters.find(
+                          (param) =>
+                            param.code === dieCutSizeParameter.parameterCode
+                        );
+                        if (subSectionParameter && subSectionParameter.isHidden) {
+                          subSectionParameter.isHidden = false;
+                        }
+                      }
                     } else {
                       const subSectionParameter = subSection.parameters.find(
                         (param) =>
@@ -7416,6 +7588,16 @@ const useDigitalOffsetPrice = ({
                           isGeneralInfoInProductionFloor:
                             subSectionParameter?.isGeneralInfoInProductionFloor,
                         });
+                        // Unhide Width and Height parameters in productTemplate when added to temp
+                        if (
+                          (dieCutSizeParameter.parameterCode === "Width" ||
+                            dieCutSizeParameter.parameterCode === "Height") &&
+                          dieCutSizeParameter.value
+                        ) {
+                          if (subSectionParameter.isHidden) {
+                            subSectionParameter.isHidden = false;
+                          }
+                        }
                       }
                     }
                   });
@@ -7638,6 +7820,19 @@ const useDigitalOffsetPrice = ({
                   dieCutSizeParameter.value,
                 ];
                 dieCutSizeSubProductParameter.isDisabled = true;
+                // Unhide Width and Height parameters in productTemplate when updated in temp
+                if (
+                  (dieCutSizeParameter.parameterCode === "Width" ||
+                    dieCutSizeParameter.parameterCode === "Height") &&
+                  dieCutSizeParameter.value
+                ) {
+                  const subSectionParameter = subSection.parameters.find(
+                    (param) => param.code === dieCutSizeParameter.parameterCode
+                  );
+                  if (subSectionParameter && subSectionParameter.isHidden) {
+                    subSectionParameter.isHidden = false;
+                  }
+                }
               } else {
                 const subSectionParameter = subSection.parameters.find(
                   (param) => param.code === dieCutSizeParameter.parameterCode
@@ -7665,6 +7860,16 @@ const useDigitalOffsetPrice = ({
                     isGeneralInfoInProductionFloor:
                       subSectionParameter?.isGeneralInfoInProductionFloor,
                   });
+                  // Unhide Width and Height parameters in productTemplate when added to temp
+                  if (
+                    (dieCutSizeParameter.parameterCode === "Width" ||
+                      dieCutSizeParameter.parameterCode === "Height") &&
+                    dieCutSizeParameter.value
+                  ) {
+                    if (subSectionParameter.isHidden) {
+                      subSectionParameter.isHidden = false;
+                    }
+                  }
                 }
               }
             });
