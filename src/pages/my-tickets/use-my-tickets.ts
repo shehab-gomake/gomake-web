@@ -4,26 +4,14 @@ import { useTranslation } from "react-i18next";
 import { Ticket } from "@/services/api-service/tickets/tickets-api";
 import {
   getTickets,
-  createTicket,
-  getTicketById,
-  getTicketMessages,
-  addTicketMessage,
-  CreateTicketRequest,
 } from "@/services/api-service/tickets/tickets-api";
-import { useRecoilValue } from "recoil";
-import { printHouseProfile } from "@/store/print-house-profile";
-import { userProfileState } from "@/store/user-profile";
 import React from "react";
 
 export const useMyTickets = () => {
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
-  const printHouse = useRecoilValue(printHouseProfile);
-  const userProfile = useRecoilValue(userProfileState);
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [loading, setLoading] = useState(true);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
   const [filters, setFilters] = useState({
     status: "",
     priority: "",
@@ -54,7 +42,7 @@ export const useMyTickets = () => {
     t("tickets.createdAt"),
   ];
 
-  const getTicketsRows = useCallback(() => {
+  const getTicketsRows = useCallback((navigateToTicket: (ticketId: number) => void) => {
     return tickets.map((ticket) => [
       // Ticket ID as clickable link
       React.createElement(
@@ -70,7 +58,9 @@ export const useMyTickets = () => {
           title: t("tickets.clickToViewConversation"),
           onClick: (e: React.MouseEvent) => {
             e.stopPropagation();
-            setSelectedTicket(ticket);
+            if (ticket.id) {
+              navigateToTicket(ticket.id);
+            }
           },
         },
         ticket.ticketId
@@ -81,29 +71,7 @@ export const useMyTickets = () => {
       ticket.assignedEmployeeName || t("tickets.unassigned"),
       new Date(ticket.createdAt).toLocaleDateString(),
     ]);
-  }, [tickets, t, setSelectedTicket]);
-
-  const handleCreateTicket = async (ticketData: CreateTicketRequest) => {
-    try {
-      // Get username from userProfile (firstName + lastName) or fallback to email
-      const username = userProfile?.firstName && userProfile?.lastName
-        ? `${userProfile.firstName} ${userProfile.lastName}`
-        : userProfile?.email || "Unknown";
-
-      const data = {
-        ...ticketData,
-        printHouseId: ticketData.printHouseId || printHouse?.id || "",
-        printHouseName: ticketData.printHouseName || printHouse?.name || "",
-        createdByUserId: ticketData.createdByUserId || userProfile?.userId || userProfile?.id || "",
-        username: ticketData.username || username,
-      };
-      await createTicket(callApi, data);
-      await fetchTickets();
-    } catch (error) {
-      console.error("Error creating ticket:", error);
-      throw error;
-    }
-  };
+  }, [tickets, t]);
 
   return {
     tickets,
@@ -111,11 +79,6 @@ export const useMyTickets = () => {
     tableHeaders,
     getTicketsRows,
     fetchTickets,
-    isModalOpen,
-    setIsModalOpen,
-    selectedTicket,
-    setSelectedTicket,
-    handleCreateTicket,
     filters,
     setFilters,
   };
