@@ -29,19 +29,59 @@ const digitalPrinting = (state: Record<string, any>) => {
             machineInputType: 'input',
             isValid: !!state?.attributes?.maxSpeed,
         },
-        {
-            name: "doubleHead",
-            label: "machineAttributes.doubleHead",
-            type: "switch",
-            placeholder: "machineAttributes.doubleHead",
-            required: true,
-            parameterKey: "doubleHead",
-            value: state.attributes?.doubleHead,
-            options: [{value: false, text: 'No'}, {value: true, text: 'Yes'}],
-            machineInputType: 'input',
-            isValid: true,
-        },
-        ...printingGeneral(state)
+    {
+        name: "doubleHead",
+        label: "machineAttributes.doubleHead",
+        type: "switch",
+        placeholder: "machineAttributes.doubleHead",
+        required: true,
+        parameterKey: "doubleHead",
+        value: state.attributes?.doubleHead,
+        options: [{value: false, text: 'No'}, {value: true, text: 'Yes'}],
+        machineInputType: 'input',
+        isValid: true,
+    },
+    {
+        name: 'machineAttributes.speedBySheetCategories',
+        parameterKey: 'speedBySheetCategories',
+        value: state.attributes?.speedBySheetCategories || [],
+        machineInputType: 'multiArrayInput',
+        isValid: true,
+        inputs: [
+            {
+                name: "categories",
+                label: "machineAttributes.categories",
+                type: "select",
+                placeholder: "machineAttributes.categories",
+                required: true,
+                parameterKey: "categories",
+                options: [],
+                optionsUrl: '/v1/materials/get-all-print-house-material-categories?material=sheets',
+            },
+            {
+                name: "",
+                label: "machineAttributes.maxThickness",
+                type: "text",
+                placeholder: "machineAttributes.maxThickness",
+                required: false,
+                parameterKey: "thickness",
+                options: [],
+                unit: EMeasurementUnits.UM,
+                isValid: true
+            },
+            {
+                name: "speed",
+                label: "machineAttributes.speed",
+                type: "text",
+                placeholder: "machineAttributes.speed",
+                required: true,
+                parameterKey: "speed",
+                unit: EMeasurementUnits.PERCENTAGE,
+                options: []
+            },
+        ]
+    },
+    ...printingGeneral(state)
     ]
 }
 
