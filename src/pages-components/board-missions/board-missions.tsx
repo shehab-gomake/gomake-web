@@ -16,9 +16,9 @@ import { PrintPackingSlipModal } from "./widgets/print-packing-slip-modal";
 import QrListenerWidget from "@/widgets/qr-listener/qr-listener-widget";
 import { useUserPermission } from "@/hooks/use-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { newOrderIdToPrintJobsState } from "@/store/new-order-id-to-print-jobs-state";
-import { printHouseProfile } from "@/store/print-house-profile";
+import { printHouseProfile, printHouseHasFrontDeskFeature } from "@/store/print-house-profile";
 import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 import { CustomerCardWidget } from "@/widgets/customer-card-modal";
 import { createGlobalStyle } from "styled-components";
@@ -58,6 +58,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
   const { CheckPermission } = useUserPermission();
+  const hasFrontDeskFeature = useRecoilValue(printHouseHasFrontDeskFeature);
   const {
     storageList,
     inputValue,
@@ -497,51 +498,100 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
           }
         }}
       />
-      <GoMakeDeleteModal
-        modalType={ModalType.WARNING}
-        title={t("boardMissions.markDoneModalTitle")}
-        subTitle={t("boardMissions.markDoneModalSubTitle")}
-        yesBtn={t("modal.confirm")}
-        openModal={openMarkReadyModal}
-        onClose={onCloseMarkReadyModal}
-        onClickDelete={onClickMoveBoardMissionToDone}
-        onClickCancel={onCloseMarkReadyModal}
-      >
-        <div style={{ width: "100%", minWidth: 300 }}>
-          <GoMakeAutoComplate
-            options={
-              storageList?.find(
-                (option: any) => option.storage === inputValue
-              ) || inputValue === ""
-                ? storageList
-                : [
-                  {
-                    storage: `Add "${inputValue}" as a new storage`,
-                    id: "new",
-                  },
-                  ...storageList,
-                ]
-            }
-            placeholder={t("boardMissions.selectStorage")}
-            key={defaultValue}
-            style={classes.textInputStyle}
-            getOptionLabel={(option: any) => option?.storage}
-            value={defaultValue}
-            onChange={(e: any, value: any) => {
-              if (value?.id === "new") {
-                addPrintHouseJobsStorage(inputValue);
-                setInputValue("");
-              } else {
-                handleStorageChange(e, value);
-                setInputValue("");
+      {!hasFrontDeskFeature ? (
+        <GoMakeDeleteModal
+          modalType={ModalType.WARNING}
+          title={t("boardMissions.markDoneModalTitle")}
+          subTitle={t("boardMissions.markDoneModalSubTitle")}
+          yesBtn={t("modal.confirm")}
+          openModal={openMarkReadyModal}
+          onClose={onCloseMarkReadyModal}
+          onClickDelete={() => onClickMoveBoardMissionToDone(false)}
+          onClickCancel={onCloseMarkReadyModal}
+        >
+          <div style={{ width: "100%", minWidth: 300 }}>
+            <GoMakeAutoComplate
+              options={
+                storageList?.find(
+                  (option: any) => option.storage === inputValue
+                ) || inputValue === ""
+                  ? storageList
+                  : [
+                    {
+                      storage: `Add "${inputValue}" as a new storage`,
+                      id: "new",
+                    },
+                    ...storageList,
+                  ]
               }
-            }}
-            onInputChange={(event: any, newInputValue: string) => {
-              setInputValue(newInputValue);
-            }}
-          />
-        </div>
-      </GoMakeDeleteModal>
+              placeholder={t("boardMissions.selectStorage")}
+              key={defaultValue}
+              style={classes.textInputStyle}
+              getOptionLabel={(option: any) => option?.storage}
+              value={defaultValue}
+              onChange={(e: any, value: any) => {
+                if (value?.id === "new") {
+                  addPrintHouseJobsStorage(inputValue);
+                  setInputValue("");
+                } else {
+                  handleStorageChange(e, value);
+                  setInputValue("");
+                }
+              }}
+              onInputChange={(event: any, newInputValue: string) => {
+                setInputValue(newInputValue);
+              }}
+            />
+          </div>
+        </GoMakeDeleteModal>
+      ) : (
+        <ThreeOptionsModal
+          modalType={ModalType.WARNING}
+          title={t("boardMissions.markDoneModalTitle")}
+          subTitle={t("boardMissions.markDoneModalSubTitle")}
+          openModal={openMarkReadyModal}
+          onClose={onCloseMarkReadyModal}
+          onClickYes={() => onClickMoveBoardMissionToDone(true)}
+          onClickNo={() => onClickMoveBoardMissionToDone(false)}
+          yesBtn={t("boardMissions.markDoneModalYes")}
+          noBtn={t("boardMissions.markDoneModalNo")}
+        >
+          <div style={{ width: "100%", minWidth: 300 }}>
+            <GoMakeAutoComplate
+              options={
+                storageList?.find(
+                  (option: any) => option.storage === inputValue
+                ) || inputValue === ""
+                  ? storageList
+                  : [
+                    {
+                      storage: `Add "${inputValue}" as a new storage`,
+                      id: "new",
+                    },
+                    ...storageList,
+                  ]
+              }
+              placeholder={t("boardMissions.selectStorage")}
+              key={defaultValue}
+              style={classes.textInputStyle}
+              getOptionLabel={(option: any) => option?.storage}
+              value={defaultValue}
+              onChange={(e: any, value: any) => {
+                if (value?.id === "new") {
+                  addPrintHouseJobsStorage(inputValue);
+                  setInputValue("");
+                } else {
+                  handleStorageChange(e, value);
+                  setInputValue("");
+                }
+              }}
+              onInputChange={(event: any, newInputValue: string) => {
+                setInputValue(newInputValue);
+              }}
+            />
+          </div>
+        </ThreeOptionsModal>
+      )}
       <GoMakeDeleteModal
         modalType={ModalType.WARNING}
         title={t("boardMissions.markDoneModalTitle2", {

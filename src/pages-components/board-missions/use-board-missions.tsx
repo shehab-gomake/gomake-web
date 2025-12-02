@@ -1713,7 +1713,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
   const [pendingOrderIdForComposer, setPendingOrderIdForComposer] = useState<string | null>(null);
   const composerOpenedRef = useRef(false);
 
-  const onClickMoveBoardMissionToDone = async () => {
+  const onClickMoveBoardMissionToDone = async (sendMessage: boolean = false) => {
     const callBack = (res) => {
       if (res?.success) {
         alertSuccessUpdate();
@@ -1722,7 +1722,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
           onOpenPackagesModal(selectedMission);
           setMarkAllReady(false);
         }
-        // Always open email composer after marking ready (if FrontDesk is enabled)
+        // Open email composer after marking ready (if FrontDesk is enabled)
         if (hasFrontDeskFeature) {
           openEmailComposer(
             selectedMission.id,
@@ -1743,10 +1743,11 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     if (selectedMission?.isReady) {
       onClickBackToProcess();
     } else {
-      // Mark as ready without sending message - user will decide in email composer
+      // When hasFrontDeskFeature is false, use sendMessage parameter
+      // When hasFrontDeskFeature is true, always use false (user decides in composer)
       await moveBoardMissionToDoneApi(callApi, callBack, {
         boardMissionId: selectedMission?.id,
-        sendMessage: false, // Don't send automatically - let user decide in composer
+        sendMessage: sendMessage,
         productType: markAllReady ? "" : selectedMission?.productType ?? "",
         storage: selectedMission?.storage ?? "",
       });
