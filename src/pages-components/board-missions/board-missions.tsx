@@ -498,7 +498,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
           }
         }}
       />
-      {!hasFrontDeskFeature ? (
+      {hasFrontDeskFeature ? (
         <GoMakeDeleteModal
           modalType={ModalType.WARNING}
           title={t("boardMissions.markDoneModalTitle")}
