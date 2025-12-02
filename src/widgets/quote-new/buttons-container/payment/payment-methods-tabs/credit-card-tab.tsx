@@ -164,7 +164,7 @@ const CreditCardTab = ({
                       ...adaptPaddingRight(dir, 5),
                       direction: dir,
                     }}
-                    placeholder="Card number"
+                    placeholder={t("payment.cardNumber")}
                     value={creditCard?.cardNumber}
                   />
 
@@ -175,7 +175,7 @@ const CreditCardTab = ({
                       width: "20%",
                       direction: dir,
                     }}
-                    placeholder="MM/YY"
+                    placeholder={t("payment.mmYy")}
                     value={creditCard?.expDate_MMYY}
                   />
                   <input
@@ -185,7 +185,7 @@ const CreditCardTab = ({
                       width: "20%",
                       direction: dir,
                     }}
-                    placeholder="CVV"
+                    placeholder={t("payment.cvv")}
                     value={creditCard?.cvv}
                   />
                 </div>
@@ -220,7 +220,7 @@ const CreditCardTab = ({
                 <Stack style={{ width: "45%" }}>
                   <input
                     style={classes.creditSecondCardInputs}
-                    placeholder="Id"
+                    placeholder={t("payment.id")}
                     maxLength={9}
                     value={creditCard?.holderID}
                     onChange={(e) =>
@@ -239,7 +239,7 @@ const CreditCardTab = ({
                         : classes.creditCardInputsContainer.border,
                       width: "100%",
                     }}
-                    placeholder="Total"
+                    placeholder={t("payment.sum")}
                     value={totalCreditCard}
                     onChange={(e) => {
                       handleTotalCreditCardChange(e.target.value);
@@ -254,7 +254,7 @@ const CreditCardTab = ({
               <div style={classes.creditCardSecondInputsContainer}>
                 <input
                   style={classes.creditSecondCardInputs}
-                  placeholder="First name"
+                  placeholder={t("payment.firstName")}
                   value={creditCard?.customerName}
                   onChange={(e) =>
                     handleChangeInputs("customerName", e.target.value)
@@ -262,7 +262,7 @@ const CreditCardTab = ({
                 />
                 <input
                   style={classes.creditSecondCardInputs}
-                  placeholder="Last name"
+                  placeholder={t("payment.lastName")}
                   value={creditCard?.lastName}
                   onChange={(e) =>
                     handleChangeInputs("lastName", e.target.value)
@@ -272,7 +272,7 @@ const CreditCardTab = ({
               <div style={classes.creditCardSecondInputsContainer}>
                 <input
                   style={classes.creditSecondCardInputs}
-                  placeholder="Phone"
+                  placeholder={t("payment.phone")}
                   value={creditCard?.phoneNumber}
                   onChange={(e) =>
                     handleChangeInputs("phoneNumber", e.target.value)
@@ -285,7 +285,7 @@ const CreditCardTab = ({
                       ? "1.5px solid red"
                       : classes.creditCardInputsContainer.border,
                   }}
-                  placeholder="Email"
+                  placeholder={t("payment.email")}
                   value={creditCard?.customerEmail}
                   onChange={(e) =>
                     handleChangeInputs("customerEmail", e.target.value)
@@ -331,7 +331,7 @@ const CreditCardTab = ({
               <div style={classes.creditCardSecondInputsContainer}>
                 <input
                   style={classes.creditSecondCardInputs}
-                  placeholder="Card number"
+                  placeholder={t("payment.cardNumber")}
                   value={secondCreditCard?.creditCardNum}
                   onChange={(e) =>
                     handleChangeCreditCardInputs(
@@ -342,7 +342,7 @@ const CreditCardTab = ({
                 />
                 <input
                   style={classes.creditSecondCardInputs}
-                  placeholder="MM/YY"
+                  placeholder={t("payment.mmYy")}
                   value={secondCreditCard?.creditCardExpDate}
                   onChange={(e) =>
                     handleChangeCreditCardInputs(
@@ -356,7 +356,7 @@ const CreditCardTab = ({
                 <input
                   key={"Total-2"}
                   style={classes.creditSecondCardInputs}
-                  placeholder="Total"
+                  placeholder={t("payment.sum")}
                   value={totalCreditCard}
                   onChange={(e) => {
                     handleTotalCreditCardChange(e.target.value);
@@ -369,7 +369,7 @@ const CreditCardTab = ({
                 />
                 <input
                   style={classes.creditSecondCardInputs}
-                  placeholder="Voucher number"
+                  placeholder={t("payment.voucherNumber")}
                   value={secondCreditCard?.creditCardVoucherNumber}
                   onChange={(e) =>
                     handleChangeCreditCardInputs(
@@ -410,7 +410,7 @@ const CreditCardTab = ({
                         ? "1.5px solid red"
                         : classes.creditSecondCardInputs.border,
                     }}
-                    placeholder="Total"
+                    placeholder={t("payment.sum")}
                     value={totalCreditCard}
                     onChange={(e) => {
                       handleTotalCreditCardChange(e.target.value);

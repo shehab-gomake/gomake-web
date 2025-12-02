@@ -282,6 +282,7 @@ const RowMappingWidget = ({
             documentType={documentType}
             workName={item?.workName}
             isPrePaymentPage={isPrePaymentPage}
+            item={item}
           />
         </PrimaryTableCell>
       )}
