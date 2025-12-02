@@ -46,6 +46,27 @@ const TabsMappingWidget = ({
       return false;
     }
 
+    // Helper function to check if a parameter should be considered hidden
+    const isParameterHidden = (parameter, subSection) => {
+      // Check if parameter itself is hidden
+      if (parameter.isHidden === true || parameter.isHiddenInSetting === true) {
+        return true;
+      }
+      // Check if parameter is a child of a hidden parent parameter (through childsParameters)
+      const parentParameter = subSection.parameters.find((parentParam) => {
+        return (
+          parentParam.childsParameters &&
+          parentParam.childsParameters.some(
+            (childParam) => childParam.id === parameter.id
+          )
+        );
+      });
+      if (parentParameter && parentParameter.isHidden === true) {
+        return true; // Hide child if parent is hidden
+      }
+      return false;
+    };
+
     for (const subSection of item2.subSections) {
       // Find matching subProduct
       const subProduct = subProducts.find((sp) => sp.type === subSection?.type);
@@ -59,10 +80,13 @@ const TabsMappingWidget = ({
       // Check each parameter in the subSection
       if (Array.isArray(subSection?.parameters)) {
         for (const parameter of subSection.parameters) {
+          // Skip hidden parameters and children of hidden parents
+          if (isParameterHidden(parameter, subSection)) {
+            continue;
+          }
+
           const isParameterMissing =
             parameter.isRequired &&
-            !parameter.isHiddenInSetting &&
-            !parameter.isHidden &&
             !subProductParameters.some(p => p.parameterCode === parameter.code);
 
           if (isParameterMissing) {
