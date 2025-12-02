@@ -6,7 +6,9 @@ interface TicketChatbotContextType {
   closeChatbot: () => void;
   toggleChatbot: () => void;
   navigateToTicket: (ticketId: number) => void;
+  openNewTicket: () => void;
   setNavigateToTicketCallback: (callback: (ticketId: number) => void) => void;
+  setOpenNewTicketCallback: (callback: () => void) => void;
 }
 
 const TicketChatbotContext = createContext<TicketChatbotContextType | undefined>(
@@ -16,6 +18,7 @@ const TicketChatbotContext = createContext<TicketChatbotContextType | undefined>
 export const TicketChatbotProvider = ({ children }: { children: ReactNode }) => {
   const [isOpen, setIsOpen] = useState(false);
   const navigateCallbackRef = useRef<((ticketId: number) => void) | null>(null);
+  const openNewTicketCallbackRef = useRef<(() => void) | null>(null);
 
   const openChatbot = () => setIsOpen(true);
   const closeChatbot = () => setIsOpen(false);
@@ -28,8 +31,19 @@ export const TicketChatbotProvider = ({ children }: { children: ReactNode }) => 
     }
   };
 
+  const openNewTicket = () => {
+    setIsOpen(true);
+    if (openNewTicketCallbackRef.current) {
+      openNewTicketCallbackRef.current();
+    }
+  };
+
   const setNavigateToTicketCallback = (callback: (ticketId: number) => void) => {
     navigateCallbackRef.current = callback;
+  };
+
+  const setOpenNewTicketCallback = (callback: () => void) => {
+    openNewTicketCallbackRef.current = callback;
   };
 
   return (
@@ -40,7 +54,9 @@ export const TicketChatbotProvider = ({ children }: { children: ReactNode }) => 
         closeChatbot, 
         toggleChatbot,
         navigateToTicket,
+        openNewTicket,
         setNavigateToTicketCallback,
+        setOpenNewTicketCallback,
       }}
     >
       {children}
@@ -59,7 +75,9 @@ export const useTicketChatbot = () => {
         closeChatbot: () => {},
         toggleChatbot: () => {},
         navigateToTicket: () => {},
+        openNewTicket: () => {},
         setNavigateToTicketCallback: () => {},
+        setOpenNewTicketCallback: () => {},
       };
     }
     throw new Error(

@@ -1,19 +1,12 @@
 import i18next from "i18next";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import {
-  convertHeightToVH,
-  convertWidthToVW,
-  adaptPaddingLeft,
-  adaptPaddingRight,
-} from "@/utils/adapter";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 const useStyle = () => {
   const { t } = useTranslation();
-  const direction = t("direction");
-  const { primaryColor, secondColor } = useGomakeTheme();
+  const { primaryColor } = useGomakeTheme();
   const classes = useMemo(() => {
     return {
       mainContainer: {
@@ -22,12 +15,26 @@ const useStyle = () => {
         paddingLeft: 20,
         paddingRight: 20,
         paddingTop: 10,
-        gap: "20px",
         height: "100%",
+        overflowY: "auto" as "auto",
+      },
+      headerStyle: {
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        marginBottom: 20,
+        width: "100%",
       },
       title: {
-        ...FONT_FAMILY.Inter(600, 24),
+        ...FONT_FAMILY.Lexend(500, 22),
         color: primaryColor(900),
+        margin: 0,
+      },
+      tableContainer: {
+        width: "100%",
+        flex: 1,
+        display: "flex",
+        flexDirection: "column" as "column",
       },
     };
   }, [i18next.language, t, primaryColor]);
