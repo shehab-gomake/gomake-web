@@ -10238,7 +10238,6 @@ const useDigitalOffsetPrice = ({
     parameters,
     productTemplate
   ) {
-    console.log("parametersparametersparameters", parameters);
     // Create a new array to store the filtered parameters
     const updatedParameters = [];
 
