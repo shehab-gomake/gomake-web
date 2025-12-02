@@ -190,7 +190,6 @@ const useDigitalOffsetPrice = ({
   const [subProducts, setSubProducts] = useRecoilState<any>(
     subProductsParametersState
   );
-  console.log("subProducts", subProducts);
   const [isMigratedFromOldSystem, setIsMigratedFromOldSystem] = useState(false);
   const [ignoreCalculatedWorkflows, setIgnoreCalculatedWorkflows] = useState(
     productTemplate?.ignoreCalculatedWorkflows
@@ -6115,7 +6114,6 @@ const useDigitalOffsetPrice = ({
     parameterCode: string,
     dieCut: any
   ) => {
-    console.log("dieCut", dieCut);
     let copySubProducts = cloneDeep(subProducts);
     const targetSubProduct = copySubProducts.find(
       (item) => item.type === subSectionType
