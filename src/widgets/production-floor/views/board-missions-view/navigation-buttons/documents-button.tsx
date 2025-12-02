@@ -26,9 +26,9 @@ import { adaptPaddingRight } from "@/utils/adapter";
 import { useFrontDeskEmailIntegration } from "@/pages-components/quotes/hooks/use-frontdesk-email-integration";
 import { FrontDeskEmailComposerWrapper } from "@/pages-components/quotes/components/frontdesk-email-composer-wrapper";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
-import { printHouseHasFrontDeskFeature } from "@/store/print-house-profile";
 import { useUserPermission } from "@/hooks/use-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
+import { printHouseHasFrontDeskFeature } from "@/store/print-house-profile";
 import { getDocumentMailDataApi } from "@/services/api-service/generic-doc/documents-api";
 import { contactResolutionService, conversationComposerService } from "@/services/frontdesk";
 import { chatwootSelectedAccountAtom, chatwootProfileAtom } from "@/store/frontdesk/atoms/chatwoot.atoms";
@@ -521,7 +521,7 @@ const DocumentsButton = ({ isMobile = false }) => {
     // Mark as ready - send email programmatically if isSendMessage is true
     await moveBoardMissionToDoneApi(callApi, callBack, {
       boardMissionId: boardMissions?.boardMissionId,
-      sendMessage: false, // Always false - we handle email sending programmatically via FrontDesk
+      sendMessage: hasFrontDeskFeature ? false : isSendMessage, // Always false - we handle email sending programmatically via FrontDesk
       productType: boardMissions?.productType
     });
   };

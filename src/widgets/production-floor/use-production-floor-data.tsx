@@ -1229,7 +1229,7 @@ const useProductionFloorData = () => {
     // Mark as ready - send email programmatically if isSendMessage is true
     await moveBoardMissionToDoneApi(callApi, callBack, {
       boardMissionId: selectedMission.id || selectedMission.boardMissionId,
-      sendMessage: false, // Always false - we handle email sending programmatically via FrontDesk
+      sendMessage: hasFrontDeskFeature ? false : isSendMessage, // Always false - we handle email sending programmatically via FrontDesk
       productType: ignoreProductType ? "" : selectedMission.productType ?? "",
       storage: selectedMission.storage ?? "",
     });
@@ -1276,7 +1276,7 @@ const useProductionFloorData = () => {
     };
     await moveBoardMissionToDoneApi(callApi, callBack, {
       boardMissionId: selectedMission.id,
-      sendMessage: false, // Always false - we handle email sending programmatically via FrontDesk
+      sendMessage: hasFrontDeskFeature ? false : isSendMessage, // Always false - we handle email sending programmatically via FrontDesk
       productType: selectedMission.productType ?? "",
       storage: selectedMission.storage ?? "",
     });

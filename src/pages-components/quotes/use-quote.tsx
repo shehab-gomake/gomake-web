@@ -2631,6 +2631,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
           isReceipt || isSupplierPayments
             ? t("sales.quote.paymentMethod")
             : t("sales.quote.worksName"),
+          (isReceipt || isSupplierPayments) && t("sales.quote.checkNumber"),
+          (isReceipt || isSupplierPayments) && t("sales.quote.checkDueDate"),
           isOrdersTracking
             ? t("customers.modal.paymentStatus")
             : t("sales.quote.totalPrice"),
