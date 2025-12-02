@@ -27,7 +27,7 @@ import {
   getAllProductAndMaterialsApi,
   addDocumentItemFromProductApi,
 } from "@/services/api-service/products/product-endpoints";
-import { addDocumentItemFromMaterialApi } from "@/services/api-service/materials/materials-endpoints";
+import { addDocumentItemFromMaterialApi, addDocumentItemFromMaterialRowApi } from "@/services/api-service/materials/materials-endpoints";
 import { ETab } from "@/pages-components/admin/home/widgets/quote-widget/enums";
 import { EStatisticsLabels } from "@/pages-components/quotes/enums";
 import { Permissions } from "@/components/CheckPermission/enum";
@@ -226,7 +226,7 @@ const useQuoteWidget = () => {
   const [allStuckJobs, setAllStuckJobs] = useState(0);
   const user = useRecoilValue<any>(userState);
 
-  const {} = updateQuoteStatusSocketIo({
+  const { } = updateQuoteStatusSocketIo({
     setUserQuote,
     setQuoteId,
     setQuoteNumber,
@@ -459,15 +459,15 @@ const useQuoteWidget = () => {
         alertFaultAdded();
       }
     };
-    await addDocumentItemFromMaterialApi(
+    await addDocumentItemFromMaterialRowApi(
       callApi,
       callBack,
       {
         clientId: selectedClient?.id,
         printHouseMaterialId: selectedProduct?.id,
+        documentType: 0
       },
-      0
-    ); // DOCUMENT_TYPE.quote
+    );
   };
 
   const addDocumentItemFromProduct = async () => {
