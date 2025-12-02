@@ -11,9 +11,11 @@ import {
   addCustomerContactApi,
   addDocumentContactApi,
 } from "@/services/api-service/generic-doc/documents-api";
-import { useRecoilValue } from "recoil";
+import { useRecoilState } from "recoil";
 import { quoteItemState } from "@/store";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
+import { useRouter } from "next/router";
+import { v4 as uuidv4 } from "uuid";
 
 const AddContactNewWidget = ({
   clientContactsValue,
@@ -39,7 +41,10 @@ const AddContactNewWidget = ({
   const { classes } = useStyle();
   const { t } = useTranslation();
   const [newContactName, setNewContactName] = useState("");
-  const quoteItemValue = useRecoilValue<any>(quoteItemState);
+  const [quoteItemValue, setQuoteItemValue] =
+    useRecoilState<any>(quoteItemState);
+  const router = useRouter();
+  const isNewCreation = router.query.isNewCreation === "true";
 
   const { callApi } = useGomakeAxios();
   const { alertSuccessAdded, alertFaultAdded } = useSnackBar();
@@ -85,6 +90,50 @@ const AddContactNewWidget = ({
       clientId: quoteItemValue?.customerID,
     });
   };
+  // Save contact directly with the contact item (avoids state timing issues)
+  const saveContactDirectly = async (contactItem: any) => {
+    if (isNewCreation) {
+      const updatedQuoteItemValue = { ...quoteItemValue };
+      if (!Array.isArray(updatedQuoteItemValue.documentContacts)) {
+        updatedQuoteItemValue.documentContacts = [];
+      }
+      const newContact = {
+        id: uuidv4(),
+        contactID: contactItem?.id,
+        contactName: contactItem?.name,
+        contactMail: contactItem?.mail,
+        contactPhone: contactItem?.phone,
+        documentID: quoteItemValue?.id,
+      };
+      updatedQuoteItemValue.documentContacts = [
+        ...updatedQuoteItemValue.documentContacts,
+        newContact,
+      ];
+      setQuoteItemValue(updatedQuoteItemValue);
+      setIsDisplayWidget(false);
+    } else {
+      const callBack = (res) => {
+        if (res?.success) {
+          alertSuccessAdded();
+          setIsDisplayWidget(false);
+          getQuote();
+        } else {
+          alertFaultAdded();
+        }
+      };
+      await addDocumentContactApi(callApi, callBack, {
+        documentType: documentType,
+        contact: {
+          contactID: contactItem?.id,
+          contactName: contactItem?.name,
+          contactMail: contactItem?.mail,
+          contactPhone: contactItem?.phone,
+          documentID: quoteItemValue?.id,
+        },
+      });
+    }
+  };
+
   const onClickAddNewContactNew = () => {
     if (newContactName) {
       createNewContactNew();
@@ -120,7 +169,10 @@ const AddContactNewWidget = ({
               onOpenNewContact(true);
               setIsDisplayWidget(false);
             } else {
+              // Set selected contact for UI display
               setSelectedContactById(item);
+              // Automatically save directly with the contact item (avoids state timing issues)
+              saveContactDirectly(item);
             }
           }}
           onChangeTextField={(e) => setNewContactName(e.target.value)}
@@ -129,11 +181,12 @@ const AddContactNewWidget = ({
               {...props}
               style={{
                 ...props.style,
-                backgroundColor: option.id === "new" ? "#2E3092" : "transparent",
+                backgroundColor:
+                  option.id === "new" ? "#2E3092" : "transparent",
                 color: option.id === "new" ? "white" : "inherit",
                 fontWeight: option.id === "new" ? "500" : "normal",
                 minWidth: 200,
-                gap: 10
+                gap: 10,
               }}
             >
               <AddNewIcon color="white" />

@@ -284,7 +284,7 @@ const ContactMapping = ({
               </div>
             </div>
           )}
-          {index === displayedItems - 1 && (
+          {index === Math.min(displayedItems - 1, (items?.length || 0) - 1) && items?.length > 1 && (
             <div
               style={classes.addNewContactNameStyle}
               onClick={() => setIsDisplayWidget(true)}
