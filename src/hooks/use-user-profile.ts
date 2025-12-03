@@ -38,6 +38,7 @@ const useUserProfile = () => {
   const updateProfile = async () => {
     const callBack = (res) => {
       if (res.success) {
+        localStorage.setItem("systemLanguage", profileState.systemLang);
         i18n.changeLanguage(profileState.systemLang);
         alertSuccessUpdate();
       } else {
