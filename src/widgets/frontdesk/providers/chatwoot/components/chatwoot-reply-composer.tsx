@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Box } from "@mui/material";
-import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { colorTokens } from "@/widgets/frontdesk/design-system";
 import type { ChatwootConversation } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
 import type { ChatwootInbox } from "@/services/frontdesk/api/chatwoot/types/inboxes.types";
 import {
@@ -54,7 +54,6 @@ export const ChatwootReplyComposer: React.FC<ChatwootReplyComposerProps> = ({
   isSending = false,
   uiSettings = {},
 }) => {
-  const { primaryColor, neutralColor } = useGomakeTheme();
   const [activeTab, setActiveTab] = useState<TabValue>("reply");
   const [messageContent, setMessageContent] = useState("");
   const [toEmails, setToEmails] = useState("");
@@ -225,9 +224,9 @@ export const ChatwootReplyComposer: React.FC<ChatwootReplyComposerProps> = ({
     messageContent.length <= channelFeatures.maxMessageLength;
 
   // Theme colors - transparent/no background
-  const borderColor = neutralColor(200);
-  const textColor = neutralColor(900);
-  const lightGrayText = neutralColor(600);
+  const borderColor = colorTokens.neutral[200];
+  const textColor = colorTokens.neutral[900];
+  const lightGrayText = colorTokens.neutral[600];
 
   return (
     <Box
@@ -243,7 +242,7 @@ export const ChatwootReplyComposer: React.FC<ChatwootReplyComposerProps> = ({
         borderColor={borderColor}
         textColor={textColor}
         lightGrayText={lightGrayText}
-        neutralColor={neutralColor}
+        
       />
 
       {/* Email Header Fields (only for Email channels and Reply tab) */}
@@ -305,8 +304,8 @@ export const ChatwootReplyComposer: React.FC<ChatwootReplyComposerProps> = ({
         attachmentCount={attachments.length}
         borderColor={borderColor}
         lightGrayText={lightGrayText}
-        neutralColor={neutralColor}
-        primaryColor={primaryColor}
+        
+        
       />
     </Box>
   );

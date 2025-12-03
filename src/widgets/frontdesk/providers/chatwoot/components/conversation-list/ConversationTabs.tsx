@@ -16,6 +16,7 @@ import {
 } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
 import { useChatwootPermissions } from "../../hooks/use-chatwoot-permissions";
 import { ASSIGNEE_TAB_PERMISSIONS } from "../../constants/permissions.constants";
+import { colorTokens, radiusTokens, shadowTokens } from "@/widgets/frontdesk/design-system";
 
 interface ConversationTabsProps {
   filters: Partial<ConversationListParams>;
@@ -25,8 +26,8 @@ interface ConversationTabsProps {
     unassigned: number;
     all: number;
   };
-  primaryColor: (shade: number) => string;
-  neutralColor: (shade: number) => string;
+  primaryColor?: (shade: number) => string;
+  neutralColor?: (shade: number) => string;
 }
 
 export const ConversationTabs: React.FC<ConversationTabsProps> = React.memo(({
@@ -106,14 +107,14 @@ export const ConversationTabs: React.FC<ConversationTabsProps> = React.memo(({
             textTransform: "none",
             fontSize: "0.875rem",
             fontWeight: 500,
-            color: neutralColor(600),
+            color: colorTokens.neutral[600],
             "&.Mui-selected": {
-              color: neutralColor(900),
+              color: colorTokens.neutral[900],
               fontWeight: 600,
             },
           },
           "& .MuiTabs-indicator": {
-            backgroundColor: primaryColor(600),
+            backgroundColor: colorTokens.primary[600],
             height: 2,
           },
         }}
@@ -132,8 +133,8 @@ export const ConversationTabs: React.FC<ConversationTabsProps> = React.memo(({
                     minWidth: 20,
                     fontSize: "0.75rem",
                     fontWeight: 600,
-                    backgroundColor: currentTab === "mine" ? neutralColor(200) : neutralColor(100),
-                    color: currentTab === "mine" ? neutralColor(800) : neutralColor(600),
+                    backgroundColor: currentTab === "mine" ? colorTokens.neutral[200] : colorTokens.neutral[100],
+                    color: currentTab === "mine" ? colorTokens.neutral[800] : colorTokens.neutral[600],
                     borderRadius: "10px",
                     "& .MuiChip-label": {
                       px: 0.75,
@@ -161,8 +162,8 @@ export const ConversationTabs: React.FC<ConversationTabsProps> = React.memo(({
                     minWidth: 20,
                     fontSize: "0.75rem",
                     fontWeight: 600,
-                    backgroundColor: currentTab === "unassigned" ? neutralColor(200) : neutralColor(100),
-                    color: currentTab === "unassigned" ? neutralColor(800) : neutralColor(600),
+                    backgroundColor: currentTab === "unassigned" ? colorTokens.neutral[200] : colorTokens.neutral[100],
+                    color: currentTab === "unassigned" ? colorTokens.neutral[800] : colorTokens.neutral[600],
                     borderRadius: "10px",
                     "& .MuiChip-label": {
                       px: 0.75,
@@ -190,8 +191,8 @@ export const ConversationTabs: React.FC<ConversationTabsProps> = React.memo(({
                     minWidth: 20,
                     fontSize: "0.75rem",
                     fontWeight: 600,
-                    backgroundColor: currentTab === "all" ? neutralColor(200) : neutralColor(100),
-                    color: currentTab === "all" ? neutralColor(800) : neutralColor(600),
+                    backgroundColor: currentTab === "all" ? colorTokens.neutral[200] : colorTokens.neutral[100],
+                    color: currentTab === "all" ? colorTokens.neutral[800] : colorTokens.neutral[600],
                     borderRadius: "10px",
                     "& .MuiChip-label": {
                       px: 0.75,

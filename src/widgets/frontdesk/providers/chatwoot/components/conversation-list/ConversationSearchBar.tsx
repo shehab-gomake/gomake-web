@@ -9,11 +9,12 @@ import SearchIcon from "@mui/icons-material/Search";
 import CloseIcon from "@mui/icons-material/Close";
 import { ConversationListParams } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
 import { useDebouncedValue } from "../../hooks/use-debounced-value";
+import { colorTokens, radiusTokens, shadowTokens } from "@/widgets/frontdesk/design-system";
 
 interface ConversationSearchBarProps {
   filters: Partial<ConversationListParams>;
   onFiltersChange: (filters: Partial<ConversationListParams>) => void;
-  neutralColor: (shade: number) => string;
+  neutralColor?: (shade: number) => string;
   placeholder?: string;
 }
 
@@ -54,7 +55,7 @@ export const ConversationSearchBar: React.FC<ConversationSearchBarProps> = React
         InputProps={{
           startAdornment: (
             <InputAdornment position="start">
-              <SearchIcon sx={{ fontSize: 18, color: neutralColor(400) }} />
+              <SearchIcon sx={{ fontSize: 18, color: colorTokens.neutral[400] }} />
             </InputAdornment>
           ),
           endAdornment: searchValue ? (
@@ -68,7 +69,7 @@ export const ConversationSearchBar: React.FC<ConversationSearchBarProps> = React
         sx={{
           "& .MuiOutlinedInput-root": {
             fontSize: "0.875rem",
-            backgroundColor: neutralColor(0),
+            backgroundColor: colorTokens.semantic.background.primary,
           },
         }}
       />

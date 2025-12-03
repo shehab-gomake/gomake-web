@@ -27,10 +27,10 @@ import {
   Button,
   Chip,
   Stack,
+  useTheme,
   alpha,
 } from "@mui/material";
-import { useTheme } from "@mui/material/styles";
-import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { colorTokens, radiusTokens, shadowTokens } from "@/widgets/frontdesk/design-system";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import CloseIcon from "@mui/icons-material/Close";
 import { UnifiedListDropdown } from "../unified-list";
@@ -70,7 +70,6 @@ export const ChatwootMultiSelectFilter: React.FC<ChatwootMultiSelectFilterProps>
   disabled = false,
 }) => {
   const theme = useTheme();
-  const { neutralColor } = useGomakeTheme();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
@@ -127,8 +126,8 @@ export const ChatwootMultiSelectFilter: React.FC<ChatwootMultiSelectFilterProps>
         onClick={handleClick}
         disabled={disabled}
         sx={{
-          borderColor: neutralColor(300),
-          color: selectedValues.length > 0 ? theme.palette.primary.main : neutralColor(700),
+          borderColor: colorTokens.neutral[300],
+          color: selectedValues.length > 0 ? theme.palette.primary.main : colorTokens.neutral[700],
           fontWeight: selectedValues.length > 0 ? 600 : 400,
           textTransform: "none",
           "&:hover": {

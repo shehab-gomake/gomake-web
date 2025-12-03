@@ -14,25 +14,27 @@ import { ChatwootWarningsCard } from "./chatwoot-warnings-widget";
 import type { AdminDashboardStats } from "../../hooks/use-chatwoot-dashboard-stats";
 import { formatStatCardValue, getCardVariant } from "../../utils";
 
-// Modern card design tokens (shared with agent-stats-cards)
+import { colorTokens, radiusTokens, shadowTokens, semanticSpacing } from "@/widgets/frontdesk/design-system";
+
+// Modern card design tokens using design system
 const CARD_TOKENS = {
-  borderRadius: 14,
-  shadow: "0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02)",
-  shadowHover: "0 8px 24px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04)",
-  border: "1px solid rgba(0, 0, 0, 0.06)",
-  padding: 20,
-  gap: 16,
+  borderRadius: radiusTokens.lg,
+  shadow: shadowTokens.xs,
+  shadowHover: shadowTokens.lg,
+  border: `1px solid ${colorTokens.semantic.border.default}`,
+  padding: semanticSpacing.container.md,
+  gap: semanticSpacing.component.lg,
   colors: {
-    background: "#FFFFFF",
-    textPrimary: "#0F172A",
-    textSecondary: "#475569",
-    textMuted: "#94A3B8",
-    border: "#E2E8F0",
-    primary: { main: "#3B82F6", light: "#EFF6FF", dark: "#2563EB" },
-    success: { main: "#10B981", light: "#D1FAE5", dark: "#059669" },
-    warning: { main: "#F59E0B", light: "#FEF3C7", dark: "#D97706" },
-    error: { main: "#EF4444", light: "#FEE2E2", dark: "#DC2626" },
-    neutral: { main: "#64748B", light: "#F1F5F9", dark: "#475569" },
+    background: colorTokens.semantic.background.primary,
+    textPrimary: colorTokens.semantic.text.primary,
+    textSecondary: colorTokens.semantic.text.secondary,
+    textMuted: colorTokens.semantic.text.tertiary,
+    border: colorTokens.semantic.border.default,
+    primary: { main: colorTokens.primary[600], light: colorTokens.primary[50], dark: colorTokens.primary[700] },
+    success: { main: colorTokens.success[600], light: colorTokens.success[50], dark: colorTokens.success[700] },
+    warning: { main: colorTokens.warning[600], light: colorTokens.warning[50], dark: colorTokens.warning[700] },
+    error: { main: colorTokens.error[600], light: colorTokens.error[50], dark: colorTokens.error[700] },
+    neutral: { main: colorTokens.neutral[500], light: colorTokens.neutral[100], dark: colorTokens.neutral[600] },
   },
 };
 

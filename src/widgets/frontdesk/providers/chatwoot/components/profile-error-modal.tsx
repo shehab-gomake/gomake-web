@@ -6,10 +6,10 @@ import {
   Typography,
   Button,
   Stack,
+  useTheme,
   alpha,
 } from "@mui/material";
-import { useTheme } from "@mui/material/styles";
-import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { colorTokens, radiusTokens, shadowTokens } from "@/widgets/frontdesk/design-system";
 import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 import RefreshIcon from "@mui/icons-material/Refresh";
 
@@ -58,8 +58,6 @@ export const ProfileErrorModal: React.FC<ProfileErrorModalProps> = ({
   onRetry,
 }) => {
   const theme = useTheme();
-  const { neutralColor } = useGomakeTheme();
-
   return (
     <Dialog
       open={open}
@@ -109,7 +107,7 @@ export const ProfileErrorModal: React.FC<ProfileErrorModalProps> = ({
             variant="h6"
             sx={{
               fontWeight: 600,
-              color: neutralColor(900),
+              color: colorTokens.neutral[900],
             }}
           >
             Failed to load conversations
@@ -117,7 +115,7 @@ export const ProfileErrorModal: React.FC<ProfileErrorModalProps> = ({
           <Typography
             variant="body2"
             sx={{
-              color: neutralColor(600),
+              color: colorTokens.neutral[600],
               lineHeight: 1.6,
             }}
           >
@@ -155,7 +153,7 @@ export const ProfileErrorModal: React.FC<ProfileErrorModalProps> = ({
           variant="caption"
           sx={{
             mt: 4,
-            color: neutralColor(500),
+            color: colorTokens.neutral[500],
           }}
         >
           If this problem continues, please contact support

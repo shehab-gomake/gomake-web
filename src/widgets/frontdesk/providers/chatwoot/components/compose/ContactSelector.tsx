@@ -26,7 +26,7 @@ import BadgeIcon from "@mui/icons-material/Badge";
 import StarIcon from "@mui/icons-material/Star";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import Chip from "@mui/material/Chip";
-import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { colorTokens, radiusTokens, shadowTokens, semanticTypography } from "@/widgets/frontdesk/design-system";
 import { generateAvatarData } from "@/widgets/frontdesk/utils/avatar.utils";
 import type { ContactDetail } from "@/services/frontdesk/api/chatwoot/types/contacts.types";
 import type { GomakeContact } from "../../hooks/use-compose-conversation";
@@ -59,8 +59,6 @@ export const ContactSelector: React.FC<ContactSelectorProps> = ({
   onSelectContact,
   error,
 }) => {
-  const { neutralColor, primaryColor } = useGomakeTheme();
-
   return (
     <Autocomplete
       fullWidth
@@ -137,7 +135,7 @@ export const ContactSelector: React.FC<ContactSelectorProps> = ({
           helperText={error}
           InputProps={{
             ...params.InputProps,
-            startAdornment: <SearchIcon sx={{ color: neutralColor(500), mr: 1 }} />,
+            startAdornment: <SearchIcon sx={{ color: colorTokens.neutral[500], mr: 1 }} />,
             endAdornment: (
               <>
                 {isSearching ? <CircularProgress color="inherit" size={20} /> : null}
@@ -167,7 +165,7 @@ export const ContactSelector: React.FC<ContactSelectorProps> = ({
               display: "flex", 
               alignItems: "flex-start", 
               gap: 1,
-              borderBottom: `1px solid ${neutralColor(200)}`,
+              borderBottom: `1px solid ${colorTokens.neutral[200]}`,
               "&:last-child": {
                 borderBottom: "none",
               },

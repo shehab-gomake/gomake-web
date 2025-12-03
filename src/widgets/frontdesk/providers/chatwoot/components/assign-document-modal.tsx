@@ -17,7 +17,7 @@ import { useTranslation } from "react-i18next";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { QuickActionConfig } from "@/widgets/frontdesk/providers/tickets/types/quick-actions.types";
 import { useDocumentTitle } from "@/pages-components/quote-new/use-document-title";
-import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+
 import AddIcon from "@mui/icons-material/Add";
 import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 import CloseIcon from "@mui/icons-material/Close";
@@ -33,6 +33,7 @@ import {
   formatDocumentPrice,
   createDocumentLabel,
 } from "../utils/document/formatting.utils";
+import { colorTokens, radiusTokens, shadowTokens } from "@/widgets/frontdesk/design-system";
 
 interface AssignDocumentModalProps {
   open: boolean;
@@ -115,7 +116,6 @@ export const AssignDocumentModal: React.FC<AssignDocumentModalProps> = ({
     handleClose();
   };
 
-  const { primaryColor, neutralColor } = useGomakeTheme();
   const modalTitle = actionConfig
     ? `${t("frontdesk.assignTo", { defaultValue: "Assign to" })} ${documentTitle || actionConfig.label.replace("Assign to ", "")}`
     : "Assign Document";
@@ -148,30 +148,27 @@ export const AssignDocumentModal: React.FC<AssignDocumentModalProps> = ({
             display: "flex",
             alignItems: "center",
             gap: 1.5,
-            borderBottom: `1px solid ${neutralColor(200)}`,
+            borderBottom: `1px solid ${colorTokens.neutral[200]}`,
             "&:last-child": { borderBottom: "none" },
-            "&:hover": { backgroundColor: neutralColor(50) },
+            "&:hover": { backgroundColor: colorTokens.neutral[50] },
             cursor: "pointer",
           }}
         >
           <DocumentIcon
             size="medium"
             variant="neutral"
-            neutralColor={neutralColor}
           />
           <Box sx={{ flex: 1, minWidth: 0 }}>
             <DocumentInfoDisplay
               number={doc.number}
               amount={doc.totalPrice > 0 ? formatDocumentPrice(doc.totalPrice, doc.currency) : undefined}
               date={formatDocumentDate(doc.createdDate)}
-              neutralColor={neutralColor}
             >
               {doc.sourceDocuments.length > 0 && (
                 <SourceDocumentLinks
                   sourceDocuments={doc.sourceDocuments}
                   maxDisplay={2}
                   layout="inline"
-                  neutralColor={neutralColor}
                 />
               )}
             </DocumentInfoDisplay>
@@ -184,7 +181,7 @@ export const AssignDocumentModal: React.FC<AssignDocumentModalProps> = ({
         </Box>
       );
     },
-    [actionConfig?.documentType, neutralColor, t, handleDocumentSelect]
+    [actionConfig?.documentType, t, handleDocumentSelect]
   );
 
   return (
@@ -210,13 +207,13 @@ export const AssignDocumentModal: React.FC<AssignDocumentModalProps> = ({
           pb: 2,
           pt: 2.5,
           px: 3,
-          borderBottom: `1px solid ${neutralColor(200)}`,
+          borderBottom: `1px solid ${colorTokens.neutral[200]}`,
         }}
       >
         <Typography
           id="assign-document-modal-title"
           variant="h6"
-          sx={{ fontWeight: 600, fontSize: "1.125rem", color: neutralColor(900) }}
+          sx={{ fontWeight: 600, fontSize: "1.125rem", color: colorTokens.neutral[900] }}
         >
           {modalTitle}
         </Typography>
@@ -226,8 +223,8 @@ export const AssignDocumentModal: React.FC<AssignDocumentModalProps> = ({
           disabled={loading}
           aria-label="Close assign document modal"
           sx={{
-            color: neutralColor(600),
-            "&:hover": { bgcolor: neutralColor(100) },
+            color: colorTokens.neutral[600],
+            "&:hover": { bgcolor: colorTokens.neutral[100] },
           }}
         >
           <CloseIcon fontSize="small" />
@@ -248,7 +245,7 @@ export const AssignDocumentModal: React.FC<AssignDocumentModalProps> = ({
             <Typography
               sx={{
                 fontSize: "0.875rem",
-                color: neutralColor(800),
+                color: colorTokens.neutral[800],
                 fontWeight: 600,
                 mb: 1.5,
               }}
@@ -258,10 +255,10 @@ export const AssignDocumentModal: React.FC<AssignDocumentModalProps> = ({
 
             {loading ? (
               <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", py: 5 }}>
-                <CircularProgress size={36} sx={{ color: primaryColor(600) }} />
+                <CircularProgress size={36} sx={{ color: colorTokens.primary[600] }} />
                 <Typography
                   variant="body2"
-                  sx={{ mt: 2.5, fontSize: "0.875rem", color: neutralColor(600) }}
+                  sx={{ mt: 2.5, fontSize: "0.875rem", color: colorTokens.neutral[600] }}
                 >
                   {t("frontdesk.loadingDocuments", { defaultValue: "Loading documents..." })}
                 </Typography>
@@ -313,9 +310,9 @@ export const AssignDocumentModal: React.FC<AssignDocumentModalProps> = ({
                         variant="caption"
                         sx={{
                           fontSize: "0.75rem",
-                          color: neutralColor(600),
+                          color: colorTokens.neutral[600],
                           fontWeight: 500,
-                          backgroundColor: neutralColor(0),
+                          backgroundColor: colorTokens.semantic.background.primary,
                           px: 1,
                           py: 0.5,
                           borderRadius: "4px",
@@ -335,11 +332,11 @@ export const AssignDocumentModal: React.FC<AssignDocumentModalProps> = ({
                       mt: 2,
                       p: 2,
                       textAlign: "center",
-                      backgroundColor: neutralColor(50),
+                      backgroundColor: colorTokens.neutral[50],
                       borderRadius: "6px",
                     }}
                   >
-                    <Typography variant="body2" sx={{ fontSize: "0.875rem", color: neutralColor(600) }}>
+                    <Typography variant="body2" sx={{ fontSize: "0.875rem", color: colorTokens.neutral[600] }}>
                       {requiresCustomerId
                         ? t("frontdesk.noDocumentsFound", { defaultValue: "No documents found for this customer" })
                         : t("frontdesk.connectToExistingNotAvailable", {
@@ -355,7 +352,7 @@ export const AssignDocumentModal: React.FC<AssignDocumentModalProps> = ({
       </DialogContent>
 
       {/* Footer */}
-      <DialogActions sx={{ px: 3, py: 2, borderTop: `1px solid ${neutralColor(200)}`, gap: 1.5 }}>
+      <DialogActions sx={{ px: 3, py: 2, borderTop: `1px solid ${colorTokens.neutral[200]}`, gap: 1.5 }}>
         <Button onClick={handleCreateNew} variant="contained" startIcon={<AddIcon />} disabled={loading}>
           {t("frontdesk.createNewDocument", { defaultValue: "Create New Document" })}
         </Button>

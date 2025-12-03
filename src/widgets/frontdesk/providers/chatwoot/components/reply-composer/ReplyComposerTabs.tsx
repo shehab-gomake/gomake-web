@@ -7,6 +7,7 @@
 
 import React from "react";
 import { Box, ButtonBase } from "@mui/material";
+import { colorTokens, radiusTokens, shadowTokens } from "@/widgets/frontdesk/design-system";
 
 export type ReplyTabValue = "reply" | "private";
 
@@ -54,8 +55,8 @@ export const ReplyComposerTabs: React.FC<ReplyComposerTabsProps> = ({
         sx={{
           display: "inline-flex",
           borderRadius: 1,
-          backgroundColor: neutralColor(100),
-          border: `1px solid ${neutralColor(200)}`,
+          backgroundColor: colorTokens.neutral[100],
+          border: `1px solid ${colorTokens.neutral[200]}`,
           overflow: "hidden",
           gap: 0,
         }}
@@ -71,11 +72,11 @@ export const ReplyComposerTabs: React.FC<ReplyComposerTabsProps> = ({
             color: activeTab === "reply" ? textColor : lightGrayText,
             backgroundColor: activeTab === "reply" ? "white" : "transparent",
             borderRadius: activeTab === "reply" ? "8px 0 0 8px" : 0,
-            borderRight: `1px solid ${neutralColor(200)}`,
-            boxShadow: activeTab === "reply" ? `0 1px 2px ${neutralColor(200)}` : "none",
+            borderRight: `1px solid ${colorTokens.neutral[200]}`,
+            boxShadow: activeTab === "reply" ? `0 1px 2px ${colorTokens.neutral[200]}` : "none",
             transition: "all 0.2s ease",
             "&:hover": {
-              backgroundColor: activeTab === "reply" ? "white" : neutralColor(50),
+              backgroundColor: activeTab === "reply" ? "white" : colorTokens.neutral[50],
             },
           }}
         >
@@ -92,10 +93,10 @@ export const ReplyComposerTabs: React.FC<ReplyComposerTabsProps> = ({
             color: activeTab === "private" ? textColor : lightGrayText,
             backgroundColor: activeTab === "private" ? "white" : "transparent",
             borderRadius: activeTab === "private" ? "0 8px 8px 0" : 0,
-            boxShadow: activeTab === "private" ? `0 1px 2px ${neutralColor(200)}` : "none",
+            boxShadow: activeTab === "private" ? `0 1px 2px ${colorTokens.neutral[200]}` : "none",
             transition: "all 0.2s ease",
             "&:hover": {
-              backgroundColor: activeTab === "private" ? "white" : neutralColor(50),
+              backgroundColor: activeTab === "private" ? "white" : colorTokens.neutral[50],
             },
           }}
         >

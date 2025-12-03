@@ -15,9 +15,42 @@ A comprehensive, type-safe design system for building consistent UI across all F
 
 ```
 design-system/
-├── tokens/              # Design tokens (colors, spacing, typography, etc.)
+├── tokens/              # Design tokens (colors, spacing, typography, shadows, radius, layout)
+│   ├── colors.tokens.ts     # Color scales and semantic colors
+│   ├── spacing.tokens.ts    # Spacing scale and semantic spacing
+│   ├── typography.tokens.ts # Typography styles
+│   ├── shadows.tokens.ts    # Shadow definitions
+│   ├── radius.tokens.ts     # Border radius tokens
+│   ├── layout.tokens.ts     # Layout dimensions, z-index, transitions
+│   └── chatwoot.tokens.ts   # Chatwoot-specific semantic tokens
 ├── primitives/          # Base components (Button, Input, Avatar, etc.)
+│   ├── Avatar/              # User avatars with presence
+│   ├── Badge/               # Notification badges
+│   ├── Button/              # Primary action buttons
+│   ├── Chip/                # Tags, filters, status
+│   ├── Input/               # Text inputs
+│   ├── MenuItem/            # Menu items
+│   ├── StatusIndicator/     # Online/offline/busy status dots
+│   ├── Select/              # Dropdown select
+│   ├── TextArea/            # Multi-line input
+│   ├── FormField/           # Form field wrapper
+│   └── IconWrapper/         # Icon containers
 ├── compounds/           # Complex components (ListItem, Panel, etc.)
+│   ├── ListItem/            # Conversation list items
+│   ├── Panel/               # Container components
+│   ├── EmptyState/          # Empty state displays
+│   ├── MessageBubble/       # Chat message bubbles
+│   ├── PageHeader/          # Page/section headers
+│   ├── Card/                # Card containers
+│   ├── SidebarLayout/       # Sidebar navigation
+│   ├── ActionBar/           # Action button bars
+│   ├── FilterChip/          # Active filter chips
+│   └── SkeletonLoader/      # Loading skeletons
+├── styles/              # Reusable style patterns
+│   ├── common.styles.ts     # Shared patterns (ellipsis, hover, focus)
+│   ├── form.styles.ts       # Form element patterns
+│   ├── message.styles.ts    # Message/chat patterns
+│   └── conversation.styles.ts # Conversation list patterns
 ├── layouts/             # Layout components (ThreeColumnLayout, etc.)
 ├── theme.ts             # MUI theme configuration
 └── index.ts             # Main export

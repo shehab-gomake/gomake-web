@@ -1,8 +1,7 @@
 import React, { useMemo } from "react";
 import { Box, Stack, Typography, IconButton, Tooltip } from "@mui/material";
-import { useTheme } from "@mui/material/styles";
 import { ChevronRight, ChevronLeft } from "@mui/icons-material";
-import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { colorTokens } from "@/widgets/frontdesk/design-system";
 import { ChatwootConversation, ConversationPriority } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
 import { ConversationStatusSelector } from "./conversation-status-selector";
 import { ConversationPrioritySelector } from "./conversation-priority-selector";
@@ -48,9 +47,6 @@ export const ChatwootMessageViewerHeader: React.FC<ChatwootMessageViewerHeaderPr
   isSidebarVisible = true,
   onToggleSidebar,
 }) => {
-  const theme = useTheme();
-  const { neutralColor } = useGomakeTheme();
-
   if (!conversation) return null;
 
   // Get sender name from conversation using utility function
@@ -94,8 +90,8 @@ export const ChatwootMessageViewerHeader: React.FC<ChatwootMessageViewerHeaderPr
     <Box
       sx={{
         p: 2,
-        borderBottom: `1px solid ${theme.palette.divider}`,
-        backgroundColor: neutralColor(0), // Light background
+        borderBottom: `1px solid ${colorTokens.semantic.border.default}`,
+        backgroundColor: colorTokens.semantic.background.primary,
       }}
     >
       <Stack direction="row" alignItems="center" justifyContent="space-between">
@@ -106,7 +102,7 @@ export const ChatwootMessageViewerHeader: React.FC<ChatwootMessageViewerHeaderPr
             variant="body1"
             sx={{
               fontWeight: 500,
-              color: neutralColor(800),
+              color: colorTokens.neutral[800],
               fontSize: "0.875rem",
             }}
           >
@@ -119,7 +115,7 @@ export const ChatwootMessageViewerHeader: React.FC<ChatwootMessageViewerHeaderPr
               variant="body2"
               sx={{
                 fontWeight: 400,
-                color: neutralColor(700),
+                color: colorTokens.neutral[700],
                 fontSize: "0.8125rem",
                 overflow: "hidden",
                 textOverflow: "ellipsis",
@@ -137,7 +133,7 @@ export const ChatwootMessageViewerHeader: React.FC<ChatwootMessageViewerHeaderPr
                 sx={{
                   display: "flex",
                   alignItems: "center",
-                  color: neutralColor(600),
+                  color: colorTokens.neutral[600],
                 }}
               >
                 <InboxIcon channelType={inbox.channel_type} medium={inbox.medium as string | undefined} size={14} />
@@ -145,7 +141,7 @@ export const ChatwootMessageViewerHeader: React.FC<ChatwootMessageViewerHeaderPr
               <Typography
                 variant="caption"
                 sx={{
-                  color: neutralColor(600),
+                  color: colorTokens.neutral[600],
                   fontSize: "0.75rem",
                 }}
               >
@@ -173,10 +169,10 @@ export const ChatwootMessageViewerHeader: React.FC<ChatwootMessageViewerHeaderPr
                 size="small"
                 onClick={onToggleSidebar}
                 sx={{
-                  color: neutralColor(600),
+                  color: colorTokens.neutral[600],
                   "&:hover": {
-                    color: neutralColor(800),
-                    backgroundColor: neutralColor(100),
+                    color: colorTokens.neutral[800],
+                    backgroundColor: colorTokens.neutral[100],
                   },
                 }}
               >

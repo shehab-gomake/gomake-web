@@ -15,6 +15,7 @@ import {
   Code as CodeIcon,
 } from "@mui/icons-material";
 import type { UseChannelFeaturesReturn } from "../../hooks/use-channel-features";
+import { colorTokens, radiusTokens, shadowTokens } from "@/widgets/frontdesk/design-system";
 
 interface ReplyComposerBottomToolbarProps {
   channelFeatures: UseChannelFeaturesReturn;
@@ -26,8 +27,8 @@ interface ReplyComposerBottomToolbarProps {
   attachmentCount: number;
   borderColor: string;
   lightGrayText: string;
-  neutralColor: (shade: number) => string;
-  primaryColor: (shade: number) => string;
+  neutralColor?: (shade: number) => string;
+  primaryColor?: (shade: number) => string;
 }
 
 export const ReplyComposerBottomToolbar: React.FC<ReplyComposerBottomToolbarProps> = ({
@@ -47,8 +48,8 @@ export const ReplyComposerBottomToolbar: React.FC<ReplyComposerBottomToolbarProp
     color: lightGrayText,
     p: 0.75,
     "&:hover": {
-      backgroundColor: neutralColor(100),
-      color: primaryColor(600),
+      backgroundColor: colorTokens.neutral[100],
+      color: colorTokens.primary[600],
     },
   };
 
@@ -100,8 +101,8 @@ export const ReplyComposerBottomToolbar: React.FC<ReplyComposerBottomToolbarProp
               sx={{
                 ...iconButtonStyle,
                 ...(attachmentCount > 0 && {
-                  color: primaryColor(600),
-                  backgroundColor: `${primaryColor(600)}15`,
+                  color: colorTokens.primary[600],
+                  backgroundColor: `${colorTokens.primary[600]}15`,
                 }),
               }}
             >
@@ -113,7 +114,7 @@ export const ReplyComposerBottomToolbar: React.FC<ReplyComposerBottomToolbarProp
                     position: 'absolute',
                     top: 2,
                     right: 2,
-                    backgroundColor: primaryColor(600),
+                    backgroundColor: colorTokens.primary[600],
                     color: 'white',
                     borderRadius: '50%',
                     width: 14,
@@ -184,7 +185,7 @@ export const ReplyComposerBottomToolbar: React.FC<ReplyComposerBottomToolbarProp
           disabled={!canSend || isSending}
           startIcon={<SendIcon sx={{ fontSize: 16 }} />}
           sx={{
-            backgroundColor: primaryColor(600),
+            backgroundColor: colorTokens.primary[600],
             color: "white",
             textTransform: "none",
             fontSize: "0.8125rem",
@@ -192,11 +193,11 @@ export const ReplyComposerBottomToolbar: React.FC<ReplyComposerBottomToolbarProp
             py: 0.5,
             minHeight: 32,
             "&:hover": {
-              backgroundColor: primaryColor(700),
+              backgroundColor: colorTokens.primary[700],
             },
             "&:disabled": {
-              backgroundColor: neutralColor(200),
-              color: neutralColor(500),
+              backgroundColor: colorTokens.neutral[200],
+              color: colorTokens.neutral[500],
             },
           }}
         >

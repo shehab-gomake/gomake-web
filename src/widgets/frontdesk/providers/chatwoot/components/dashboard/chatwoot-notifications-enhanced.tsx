@@ -47,7 +47,6 @@ import {
   ErrorOutline as ErrorIcon,
 } from '@mui/icons-material';
 import { format, formatDistanceToNow, isToday, isYesterday, isThisWeek, parseISO } from 'date-fns';
-import { useGomakeTheme } from '@/hooks/use-gomake-thme';
 import { useChatwootNotifications } from '../../hooks/use-chatwoot-notifications';
 import { useChatwootProvider } from '../../hooks/use-chatwoot-provider';
 import { colorTokens } from '@/widgets/frontdesk/design-system/tokens';
@@ -65,7 +64,6 @@ interface NotificationGroup {
 }
 
 export const ChatwootNotificationsEnhanced: React.FC = () => {
-  const { primaryColor, neutralColor } = useGomakeTheme();
   const {
     notifications,
     loading,
@@ -226,7 +224,7 @@ export const ChatwootNotificationsEnhanced: React.FC = () => {
     const typeMap: Record<string, { icon: React.ReactNode; color: string; label: string }> = {
       [NotificationType.CONVERSATION_MENTION]: {
         icon: <MentionIcon sx={{ fontSize: 14 }} />,
-        color: primaryColor(600),
+        color: colorTokens.primary[600],
         label: 'Mention',
       },
       [NotificationType.CONVERSATION_ASSIGNMENT]: {
@@ -236,12 +234,12 @@ export const ChatwootNotificationsEnhanced: React.FC = () => {
       },
       [NotificationType.ASSIGNED_CONVERSATION_NEW_MESSAGE]: {
         icon: <MessageIcon sx={{ fontSize: 14 }} />,
-        color: primaryColor(500),
+        color: colorTokens.primary[500],
         label: 'New Message',
       },
       [NotificationType.PARTICIPATING_CONVERSATION_NEW_MESSAGE]: {
         icon: <MessageIcon sx={{ fontSize: 14 }} />,
-        color: primaryColor(500),
+        color: colorTokens.primary[500],
         label: 'New Message',
       },
       [NotificationType.CONVERSATION_CREATION]: {
@@ -253,7 +251,7 @@ export const ChatwootNotificationsEnhanced: React.FC = () => {
 
     return typeMap[notificationType] || {
       icon: <MessageIcon sx={{ fontSize: 14 }} />,
-      color: neutralColor(500),
+      color: colorTokens.neutral[500],
       label: 'Notification',
     };
   };
@@ -455,7 +453,7 @@ export const ChatwootNotificationsEnhanced: React.FC = () => {
                 height: 20,
                 fontSize: '0.688rem',
                 fontWeight: 600,
-                backgroundColor: primaryColor(600),
+                backgroundColor: colorTokens.primary[600],
                 color: 'white',
               }}
             />
@@ -469,11 +467,11 @@ export const ChatwootNotificationsEnhanced: React.FC = () => {
               sx={{
                 padding: '4px',
                 '&:hover': {
-                  backgroundColor: primaryColor(50),
+                  backgroundColor: colorTokens.primary[50],
                 },
               }}
             >
-              <ReadIcon sx={{ fontSize: 16, color: primaryColor(600) }} />
+              <ReadIcon sx={{ fontSize: 16, color: colorTokens.primary[600] }} />
             </IconButton>
           </Tooltip>
         )}
@@ -500,7 +498,7 @@ export const ChatwootNotificationsEnhanced: React.FC = () => {
               fontSize: '0.75rem',
               height: 24,
               '&:hover': {
-                backgroundColor: activeFilter === 'unread' ? undefined : primaryColor(50),
+                backgroundColor: activeFilter === 'unread' ? undefined : colorTokens.primary[50],
               },
             }}
           />
@@ -515,7 +513,7 @@ export const ChatwootNotificationsEnhanced: React.FC = () => {
               fontSize: '0.75rem',
               height: 24,
               '&:hover': {
-                backgroundColor: activeFilter === 'mentions' ? undefined : primaryColor(50),
+                backgroundColor: activeFilter === 'mentions' ? undefined : colorTokens.primary[50],
               },
             }}
           />
@@ -530,7 +528,7 @@ export const ChatwootNotificationsEnhanced: React.FC = () => {
               fontSize: '0.75rem',
               height: 24,
               '&:hover': {
-                backgroundColor: activeFilter === 'assignments' ? undefined : primaryColor(50),
+                backgroundColor: activeFilter === 'assignments' ? undefined : colorTokens.primary[50],
               },
             }}
           />
@@ -545,7 +543,7 @@ export const ChatwootNotificationsEnhanced: React.FC = () => {
               fontSize: '0.75rem',
               height: 24,
               '&:hover': {
-                backgroundColor: activeFilter === 'all' ? undefined : primaryColor(50),
+                backgroundColor: activeFilter === 'all' ? undefined : colorTokens.primary[50],
               },
             }}
           />
@@ -658,15 +656,15 @@ export const ChatwootNotificationsEnhanced: React.FC = () => {
                               px: 2,
                               py: 1.25,
                               cursor: 'pointer',
-                              backgroundColor: isUnread ? primaryColor(50) : 'white',
-                              borderLeft: isUnread ? `3px solid ${primaryColor(600)}` : '3px solid transparent',
+                              backgroundColor: isUnread ? colorTokens.primary[50] : 'white',
+                              borderLeft: isUnread ? `3px solid ${colorTokens.primary[600]}` : '3px solid transparent',
                               animation: isNew ? 'pulse 0.5s ease-in-out' : 'none',
                               '@keyframes pulse': {
-                                '0%': { backgroundColor: primaryColor(100) },
-                                '100%': { backgroundColor: isUnread ? primaryColor(50) : 'white' },
+                                '0%': { backgroundColor: colorTokens.primary[100] },
+                                '100%': { backgroundColor: isUnread ? colorTokens.primary[50] : 'white' },
                               },
                               '&:hover': {
-                                backgroundColor: isUnread ? primaryColor(100) : colorTokens.neutral[50],
+                                backgroundColor: isUnread ? colorTokens.primary[100] : colorTokens.neutral[50],
                               },
                             }}
                           >
@@ -729,7 +727,7 @@ export const ChatwootNotificationsEnhanced: React.FC = () => {
                                       <DotIcon
                                         sx={{
                                           fontSize: 8,
-                                          color: primaryColor(600),
+                                          color: colorTokens.primary[600],
                                           flexShrink: 0,
                                         }}
                                       />

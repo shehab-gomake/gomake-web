@@ -18,8 +18,8 @@ interface ConversationSortMenuProps {
   filters: Partial<ConversationListParams>;
   onFiltersChange: (filters: Partial<ConversationListParams>) => void;
   onSortClick?: () => void;
-  primaryColor: (shade: number) => string;
-  neutralColor: (shade: number) => string;
+  primaryColor?: (shade: number) => string;
+  neutralColor?: (shade: number) => string;
 }
 
 const SORT_OPTIONS: GenericListItem[] = [

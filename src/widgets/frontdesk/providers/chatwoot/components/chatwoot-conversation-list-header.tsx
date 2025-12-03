@@ -1,9 +1,8 @@
 import React, { useMemo, useCallback } from "react";
 import { useRecoilValue } from "recoil";
-import { useTheme } from "@mui/material/styles";
 import { Box, Stack, Typography, IconButton, Tooltip } from "@mui/material";
 import ClearIcon from "@mui/icons-material/Clear";
-import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { colorTokens } from "@/widgets/frontdesk/design-system";
 import { useChatwootTeams } from "../hooks/resources/use-chatwoot-teams";
 import { useChatwootLabels } from "../hooks/use-chatwoot-labels";
 import { useChatwootInboxes } from "../hooks/use-chatwoot-inboxes";
@@ -35,8 +34,6 @@ export const ChatwootConversationListHeader: React.FC<ChatwootConversationListHe
   unassignedCount,
   allCount,
 }) => {
-  const theme = useTheme();
-  const { primaryColor, neutralColor } = useGomakeTheme();
 
   // Get counts from API response (stored in atom)
   const apiCounts = useRecoilValue(chatwootConversationCountsAtom);
@@ -107,8 +104,8 @@ export const ChatwootConversationListHeader: React.FC<ChatwootConversationListHe
   return (
     <Box
       sx={{
-        backgroundColor: neutralColor(25),
-        borderBottom: `1px solid ${theme.palette.divider}`,
+        backgroundColor: colorTokens.neutral[25],
+        borderBottom: `1px solid ${colorTokens.semantic.border.default}`,
       }}
     >
       {/* Top Section: Title, Status Tag, Action Buttons */}
@@ -126,7 +123,7 @@ export const ChatwootConversationListHeader: React.FC<ChatwootConversationListHe
           sx={{
             fontWeight: 600,
             fontSize: "1rem",
-            color: neutralColor(900),
+            color: colorTokens.neutral[900],
           }}
         >
           Tickets
@@ -137,16 +134,12 @@ export const ChatwootConversationListHeader: React.FC<ChatwootConversationListHe
             accountId={accountId}
             filters={filters}
             onFiltersChange={onFiltersChange}
-            primaryColor={primaryColor}
-            neutralColor={neutralColor}
           />
 
           <ConversationTeamsFilter
             accountId={accountId}
             filters={filters}
             onFiltersChange={onFiltersChange}
-            primaryColor={primaryColor}
-            neutralColor={neutralColor}
           />
 
           <ConversationFilterMenu
@@ -154,16 +147,12 @@ export const ChatwootConversationListHeader: React.FC<ChatwootConversationListHe
             onFiltersChange={onFiltersChange}
             teams={teams}
             onFilterClick={onFilterClick}
-            primaryColor={primaryColor}
-            neutralColor={neutralColor}
           />
 
           <ConversationSortMenu
             filters={filters}
             onFiltersChange={onFiltersChange}
             onSortClick={onSortClick}
-            primaryColor={primaryColor}
-            neutralColor={neutralColor}
           />
 
           {/* Clear Filters Button - moved to next button position */}
@@ -173,10 +162,10 @@ export const ChatwootConversationListHeader: React.FC<ChatwootConversationListHe
                 size="small"
                 onClick={onClearFilters}
                 sx={{
-                  color: neutralColor(600),
+                  color: colorTokens.neutral[600],
                   "&:hover": {
-                    backgroundColor: neutralColor(100),
-                    color: primaryColor(600),
+                    backgroundColor: colorTokens.neutral[100],
+                    color: colorTokens.primary[600],
                   },
                   width: 28,
                   height: 28,
@@ -192,13 +181,11 @@ export const ChatwootConversationListHeader: React.FC<ChatwootConversationListHe
       </Stack>
 
       {/* Filter Tabs */}
-      <Box sx={{ borderTop: `1px solid ${theme.palette.divider}` }}>
+      <Box sx={{ borderTop: `1px solid ${colorTokens.semantic.border.default}` }}>
         <ConversationTabs
           filters={filters}
           onFiltersChange={onFiltersChange}
           counts={counts}
-          primaryColor={primaryColor}
-          neutralColor={neutralColor}
         />
 
         {/* Active Filter Chips - directly under tabs */}
@@ -208,14 +195,12 @@ export const ChatwootConversationListHeader: React.FC<ChatwootConversationListHe
           teams={teams}
           labels={labels}
           inboxes={inboxes}
-          primaryColor={primaryColor}
-          neutralColor={neutralColor}
         />
       </Box>
 
       {/* Search Bar */}
-      <Box sx={{ borderTop: `1px solid ${theme.palette.divider}` }}>
-        <ConversationSearchBar filters={filters} onFiltersChange={onFiltersChange} neutralColor={neutralColor} />
+      <Box sx={{ borderTop: `1px solid ${colorTokens.semantic.border.default}` }}>
+        <ConversationSearchBar filters={filters} onFiltersChange={onFiltersChange} />
       </Box>
     </Box>
   );

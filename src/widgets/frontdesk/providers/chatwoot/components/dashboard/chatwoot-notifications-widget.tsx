@@ -29,7 +29,7 @@ import {
   NotificationsNone as NotificationsNoneIcon,
 } from "@mui/icons-material";
 import { ToggleButton, ToggleButtonGroup } from "@mui/material";
-import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+
 import { useChatwootNotifications } from "../../hooks/use-chatwoot-notifications";
 import { useChatwootProvider } from "../../hooks/use-chatwoot-provider";
 import type { ChatwootNotification } from "@/services/frontdesk/api/chatwoot/types/notifications.types";
@@ -72,7 +72,6 @@ export const ChatwootNotificationsWidget: React.FC<ChatwootNotificationsWidgetPr
   showHeader = true,
   onViewAll,
 }) => {
-  const { primaryColor, neutralColor } = useGomakeTheme();
   const {
     notifications,
     loading,

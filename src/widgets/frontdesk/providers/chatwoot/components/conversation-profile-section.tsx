@@ -25,8 +25,7 @@ import {
   PersonAdd as PersonAddIcon,
   Business as BusinessIcon,
 } from "@mui/icons-material";
-import { useGomakeTheme } from "@/hooks/use-gomake-thme";
-import { colorTokens } from "@/widgets/frontdesk/design-system";
+import { colorTokens, radiusTokens, shadowTokens, semanticSpacing } from "@/widgets/frontdesk/design-system";
 import { getAndSetCustomerById, getMostRelevantCustomerByEmailApi, getMostRelevantCustomerByPhoneApi } from "@/services/api-service/customers/customers-api";
 import { useGomakeAxios } from "@/hooks/use-gomake-axios";
 import { useCustomerEdit } from "@/hooks/use-customer-edit";
@@ -96,7 +95,6 @@ export const ConversationProfileSection: React.FC<ConversationProfileSectionProp
   accountId,
   onCustomerLinked,
 }) => {
-  const { primaryColor } = useGomakeTheme();
   const { callApi } = useGomakeAxios();
   const [customer, setCustomer] = useState<Customer | null>(null);
   const [loading, setLoading] = useState(false);
@@ -350,8 +348,8 @@ export const ConversationProfileSection: React.FC<ConversationProfileSectionProp
                       width: 24,
                       height: 24,
                       "&:hover": {
-                        backgroundColor: primaryColor(50),
-                        color: primaryColor(600),
+                        backgroundColor: colorTokens.primary[50],
+                        color: colorTokens.primary[600],
                       },
                     }}
                   >
@@ -371,8 +369,8 @@ export const ConversationProfileSection: React.FC<ConversationProfileSectionProp
                       width: 24,
                       height: 24,
                       "&:hover": {
-                        backgroundColor: primaryColor(50),
-                        color: primaryColor(600),
+                        backgroundColor: colorTokens.primary[50],
+                        color: colorTokens.primary[600],
                       },
                     }}
                   >
@@ -393,8 +391,8 @@ export const ConversationProfileSection: React.FC<ConversationProfileSectionProp
                       width: 24,
                       height: 24,
                       "&:hover": {
-                        backgroundColor: primaryColor(50),
-                        color: primaryColor(600),
+                        backgroundColor: colorTokens.primary[50],
+                        color: colorTokens.primary[600],
                       },
                     }}
                   >
@@ -411,8 +409,8 @@ export const ConversationProfileSection: React.FC<ConversationProfileSectionProp
                       width: 24,
                       height: 24,
                       "&:hover": {
-                        backgroundColor: primaryColor(50),
-                        color: primaryColor(600),
+                        backgroundColor: colorTokens.primary[50],
+                        color: colorTokens.primary[600],
                       },
                     }}
                   >
@@ -429,8 +427,8 @@ export const ConversationProfileSection: React.FC<ConversationProfileSectionProp
                       width: 24,
                       height: 24,
                       "&:hover": {
-                        backgroundColor: primaryColor(50),
-                        color: primaryColor(600),
+                        backgroundColor: colorTokens.primary[50],
+                        color: colorTokens.primary[600],
                       },
                     }}
                   >

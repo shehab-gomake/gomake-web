@@ -9,7 +9,7 @@
 import React, { useRef } from "react";
 import { Box, Button, Typography } from "@mui/material";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
-import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+
 import { AttachmentPreviews } from "./AttachmentPreview";
 import { createFieldContainerStyles, createSectionLabelStyles, createOutlinedButtonStyles } from "../../styles/compose-styles";
 import { createLogger } from "@/services/frontdesk/utils/logger";
@@ -47,7 +47,6 @@ export interface AttachmentUploaderProps {
  */
 export const AttachmentUploader = React.memo<AttachmentUploaderProps>(
   ({ files, onFilesSelect, onFileRemove, disabled = false }) => {
-    const { neutralColor, primaryColor } = useGomakeTheme();
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -89,15 +88,15 @@ export const AttachmentUploader = React.memo<AttachmentUploaderProps>(
     };
 
     return (
-      <Box sx={createFieldContainerStyles(neutralColor, { backgroundColor: "light" })}>
+      <Box sx={createFieldContainerStyles({ backgroundColor: "light" })}>
         <Box sx={{ width: "100%" }}>
-          <Typography sx={createSectionLabelStyles(neutralColor)}>Attachments</Typography>
+          <Typography sx={createSectionLabelStyles()}>Attachments</Typography>
           <Button
             onClick={handleButtonClick}
             disabled={disabled}
             startIcon={<AttachFileIcon sx={{ fontSize: 18 }} />}
             variant="outlined"
-            sx={createOutlinedButtonStyles(neutralColor, primaryColor)}
+            sx={createOutlinedButtonStyles()}
             aria-label="Choose files to attach"
           >
             Choose Files

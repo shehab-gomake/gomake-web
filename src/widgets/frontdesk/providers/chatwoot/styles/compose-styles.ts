@@ -1,11 +1,18 @@
 /**
  * Shared Style Constants for Compose Conversation Components
  *
- * Centralized styling constants to ensure consistency across
- * the compose conversation modal and related components.
+ * Centralized styling constants using the FrontDesk Design System.
+ * All styles are based on design tokens for consistency.
  */
 
 import type { SxProps, Theme } from "@mui/material";
+import {
+  colorTokens,
+  radiusTokens,
+  shadowTokens,
+  semanticTypography,
+  semanticSpacing,
+} from "@/widgets/frontdesk/design-system";
 
 /**
  * Modal configuration constants
@@ -13,28 +20,28 @@ import type { SxProps, Theme } from "@mui/material";
 export const MODAL_CONFIG = {
   maxWidth: "md" as const,
   maxHeight: "90vh",
-  borderRadius: 2,
+  borderRadius: radiusTokens.lg,
 } as const;
 
 /**
- * Shadow configurations
+ * Shadow configurations using design tokens
  */
 export const SHADOWS = {
-  modal: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
-  button: "0 1px 3px rgba(0, 0, 0, 0.1)",
-  buttonHover: "0 4px 6px rgba(0, 0, 0, 0.1)",
+  modal: shadowTokens.xl,
+  button: shadowTokens.xs,
+  buttonHover: shadowTokens.sm,
 } as const;
 
 /**
- * Spacing configurations
+ * Spacing configurations using design tokens
  */
 export const SPACING = {
-  fieldPaddingX: 4,
-  fieldPaddingY: 3,
-  fieldPaddingYCompact: 2.5,
-  headerPaddingX: 4,
-  headerPaddingY: 3,
-  headerPaddingBottom: 2.5,
+  fieldPaddingX: semanticSpacing.container.lg / 4, // Convert to MUI spacing units
+  fieldPaddingY: semanticSpacing.container.md / 4,
+  fieldPaddingYCompact: semanticSpacing.container.sm / 4,
+  headerPaddingX: semanticSpacing.container.lg / 4,
+  headerPaddingY: semanticSpacing.container.md / 4,
+  headerPaddingBottom: semanticSpacing.container.sm / 4,
 } as const;
 
 /**
@@ -46,7 +53,7 @@ export const BORDER_WIDTH = {
 } as const;
 
 /**
- * Icon sizes
+ * Icon sizes using design tokens
  */
 export const ICON_SIZE = {
   badge: 40,
@@ -64,31 +71,19 @@ export const EDITOR = {
 } as const;
 
 /**
- * Typography configurations
+ * Typography configurations using design tokens
  */
 export const TYPOGRAPHY = {
-  fieldLabel: {
-    fontSize: "0.75rem",
-    fontWeight: 600,
-    textTransform: "uppercase" as const,
-    letterSpacing: "0.05em",
-  },
-  sectionTitle: {
-    fontSize: "1.375rem",
-    fontWeight: 600,
-  },
-  bodyText: {
-    fontSize: "0.875rem",
-  },
-  caption: {
-    fontSize: "0.75rem",
-  },
+  fieldLabel: semanticTypography.label.small,
+  sectionTitle: semanticTypography.heading.h3,
+  bodyText: semanticTypography.body.medium,
+  caption: semanticTypography.caption.medium,
   buttonText: {
-    fontSize: "0.875rem",
+    ...semanticTypography.label.medium,
     fontWeight: 500,
   },
   primaryButtonText: {
-    fontSize: "0.875rem",
+    ...semanticTypography.label.medium,
     fontWeight: 600,
   },
 } as const;
@@ -97,7 +92,6 @@ export const TYPOGRAPHY = {
  * Generate field container styles
  */
 export const createFieldContainerStyles = (
-  neutralColor: (shade: number) => string,
   options: {
     backgroundColor?: "light" | "white";
     padding?: "standard" | "compact";
@@ -110,60 +104,56 @@ export const createFieldContainerStyles = (
     alignItems: "flex-start",
     px: SPACING.fieldPaddingX,
     py: padding === "standard" ? SPACING.fieldPaddingY : SPACING.fieldPaddingYCompact,
-    borderBottom: `${BORDER_WIDTH.standard} solid ${neutralColor(200)}`,
-    backgroundColor: backgroundColor === "light" ? neutralColor(25) : neutralColor(0),
+    borderBottom: `${BORDER_WIDTH.standard} solid ${colorTokens.neutral[200]}`,
+    backgroundColor: backgroundColor === "light" ? colorTokens.neutral[25] : colorTokens.semantic.background.primary,
   };
 };
 
 /**
  * Generate field label styles
  */
-export const createFieldLabelStyles = (
-  neutralColor: (shade: number) => string,
-  options: { minWidth?: number } = {}
-): SxProps<Theme> => {
+export const createFieldLabelStyles = (options: { minWidth?: number } = {}): SxProps<Theme> => {
   return {
-    color: neutralColor(700),
+    color: colorTokens.neutral[700],
     minWidth: options.minWidth || 100,
     pt: 1,
     ...TYPOGRAPHY.fieldLabel,
+    textTransform: "uppercase",
+    letterSpacing: "0.05em",
   };
 };
 
 /**
  * Generate section label styles (for MESSAGE, ATTACHMENTS, etc.)
  */
-export const createSectionLabelStyles = (neutralColor: (shade: number) => string): SxProps<Theme> => {
+export const createSectionLabelStyles = (): SxProps<Theme> => {
   return {
-    color: neutralColor(700),
+    color: colorTokens.neutral[700],
     mb: 2,
     ...TYPOGRAPHY.fieldLabel,
+    textTransform: "uppercase",
+    letterSpacing: "0.05em",
   };
 };
 
 /**
  * Generate button styles
  */
-export const createPrimaryButtonStyles = (
-  primaryColor: (shade: number) => string,
-  neutralColor: (shade: number) => string
-): SxProps<Theme> => {
+export const createPrimaryButtonStyles = (): SxProps<Theme> => {
   return {
-    textTransform: "none",
-    backgroundColor: primaryColor(600),
+    backgroundColor: colorTokens.primary[600],
     color: "white",
-    ...TYPOGRAPHY.primaryButtonText,
-    px: 4,
-    py: 1.25,
-    borderRadius: 1,
+    textTransform: "none",
     boxShadow: SHADOWS.button,
+    borderRadius: radiusTokens.md,
+    ...TYPOGRAPHY.primaryButtonText,
     "&:hover": {
-      backgroundColor: primaryColor(700),
+      backgroundColor: colorTokens.primary[700],
       boxShadow: SHADOWS.buttonHover,
     },
     "&:disabled": {
-      backgroundColor: neutralColor(300),
-      color: neutralColor(500),
+      backgroundColor: colorTokens.neutral[300],
+      color: colorTokens.neutral[500],
     },
   };
 };
@@ -171,243 +161,264 @@ export const createPrimaryButtonStyles = (
 /**
  * Generate secondary button styles
  */
-export const createSecondaryButtonStyles = (neutralColor: (shade: number) => string): SxProps<Theme> => {
+export const createSecondaryButtonStyles = (): SxProps<Theme> => {
   return {
+    color: colorTokens.neutral[700],
     textTransform: "none",
-    color: neutralColor(700),
+    borderRadius: radiusTokens.md,
     ...TYPOGRAPHY.buttonText,
-    px: 3,
-    py: 1.25,
-    borderRadius: 1,
     "&:hover": {
-      backgroundColor: neutralColor(100),
-    },
-  };
-};
-
-/**
- * Generate danger button styles
- */
-export const createDangerButtonStyles = (theme?: Theme): SxProps<Theme> => {
-  return {
-    textTransform: "none",
-    backgroundColor: theme?.palette.error.main || "#ef4444",
-    color: "white",
-    ...TYPOGRAPHY.primaryButtonText,
-    px: 2.5,
-    boxShadow: "none",
-    "&:hover": {
-      backgroundColor: theme?.palette.error.dark || "#dc2626",
-      boxShadow: "none",
+      backgroundColor: colorTokens.neutral[100],
     },
   };
 };
 
 /**
  * Generate outlined button styles
+ * @deprecated Use createSecondaryButtonStyles instead - parameters are ignored
  */
 export const createOutlinedButtonStyles = (
-  neutralColor: (shade: number) => string,
-  primaryColor: (shade: number) => string
+  _neutralColor?: (shade: number) => string,
+  _primaryColor?: (shade: number) => string
 ): SxProps<Theme> => {
   return {
+    color: colorTokens.neutral[600],
     textTransform: "none",
+    borderRadius: radiusTokens.md,
+    border: `${BORDER_WIDTH.standard} solid ${colorTokens.semantic.border.default}`,
     ...TYPOGRAPHY.buttonText,
-    borderColor: neutralColor(300),
-    color: neutralColor(700),
     "&:hover": {
-      backgroundColor: neutralColor(50),
-      borderColor: neutralColor(400),
+      backgroundColor: colorTokens.neutral[50],
+      borderColor: colorTokens.neutral[400],
     },
   };
 };
 
 /**
- * Generate icon badge styles (e.g., Send icon in header)
+ * Generate dialog header styles
  */
-export const createIconBadgeStyles = (primaryColor: (shade: number) => string): SxProps<Theme> => {
+export const createDialogHeaderStyles = (): SxProps<Theme> => {
   return {
-    width: ICON_SIZE.badge,
-    height: ICON_SIZE.badge,
-    borderRadius: 2,
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: primaryColor(50),
-    color: primaryColor(600),
-  };
-};
-
-/**
- * Generate chip styles for selected items
- */
-export const createSelectedChipStyles = (primaryColor: (shade: number) => string): SxProps<Theme> => {
-  return {
-    backgroundColor: primaryColor(50),
-    color: primaryColor(700),
-    border: `${BORDER_WIDTH.standard} solid ${primaryColor(200)}`,
-    fontWeight: 500,
-    ...TYPOGRAPHY.bodyText,
-    "& .MuiChip-deleteIcon": {
-      color: primaryColor(600),
-      "&:hover": {
-        color: primaryColor(800),
-      },
-    },
-  };
-};
-
-/**
- * Generate close button styles
- */
-export const createCloseButtonStyles = (neutralColor: (shade: number) => string): SxProps<Theme> => {
-  return {
-    color: neutralColor(600),
-    "&:hover": {
-      backgroundColor: neutralColor(100),
-      color: neutralColor(900),
-    },
-  };
-};
-
-/**
- * Generate TextField standard variant styles (for subject, cc, bcc)
- */
-export const createStandardTextFieldStyles = (neutralColor: (shade: number) => string) => {
-  return {
-    InputProps: {
-      disableUnderline: true,
-      sx: {
-        ...TYPOGRAPHY.bodyText,
-        color: neutralColor(900),
-        mt: 0.5,
-      },
-    },
-    InputLabelProps: {
-      sx: {
-        color: neutralColor(700),
-        ...TYPOGRAPHY.fieldLabel,
-      },
-    },
-  };
-};
-
-/**
- * Generate error text styles
- */
-export const createErrorTextStyles = (theme?: Theme): SxProps<Theme> => {
-  return {
-    mt: 1,
-    ...TYPOGRAPHY.caption,
-    color: theme?.palette.error.main || "#ef4444",
-  };
-};
-
-/**
- * Generate loading state container styles
- */
-export const createLoadingStateStyles = (
-  neutralColor: (shade: number) => string,
-  primaryColor: (shade: number) => string
-): SxProps<Theme> => {
-  return {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    p: 3,
-    border: `${BORDER_WIDTH.standard} solid ${neutralColor(200)}`,
-    borderRadius: 1,
-    backgroundColor: neutralColor(25),
-  };
-};
-
-/**
- * Generate inbox selector button styles
- */
-export const createInboxSelectorButtonStyles = (
-  neutralColor: (shade: number) => string,
-  primaryColor: (shade: number) => string,
-  isSelected: boolean
-): SxProps<Theme> => {
-  return {
-    width: "100%",
+    px: SPACING.headerPaddingX,
+    pt: SPACING.headerPaddingY,
+    pb: SPACING.headerPaddingBottom,
+    borderBottom: `${BORDER_WIDTH.standard} solid ${colorTokens.semantic.border.default}`,
     display: "flex",
     alignItems: "center",
     justifyContent: "space-between",
-    p: 2,
-    border: `${BORDER_WIDTH.standard} solid ${isSelected ? primaryColor(400) : neutralColor(200)}`,
-    borderRadius: 1,
-    backgroundColor: isSelected ? primaryColor(25) : neutralColor(0),
-    textTransform: "none",
-    "&:hover": {
-      backgroundColor: isSelected ? primaryColor(50) : neutralColor(50),
-      borderColor: isSelected ? primaryColor(500) : neutralColor(300),
-    },
+    backgroundColor: colorTokens.semantic.background.primary,
   };
 };
 
 /**
- * Generate attachment preview container styles
+ * Generate dialog content styles
  */
-export const createAttachmentPreviewStyles = (neutralColor: (shade: number) => string): SxProps<Theme> => {
+export const createDialogContentStyles = (): SxProps<Theme> => {
   return {
-    display: "flex",
-    alignItems: "center",
-    gap: 1.5,
-    p: 1.5,
-    backgroundColor: neutralColor(25),
-    border: `${BORDER_WIDTH.standard} solid ${neutralColor(200)}`,
-    borderRadius: 1,
+    p: 0,
+    maxHeight: MODAL_CONFIG.maxHeight,
+    overflow: "auto",
+    "&::-webkit-scrollbar": {
+      width: 6,
+    },
+    "&::-webkit-scrollbar-track": {
+      backgroundColor: "transparent",
+    },
+    "&::-webkit-scrollbar-thumb": {
+      backgroundColor: colorTokens.neutral[300],
+      borderRadius: 3,
+    },
+    backgroundColor: colorTokens.semantic.background.secondary,
+  };
+};
+
+/**
+ * Generate dialog actions styles
+ */
+export const createDialogActionsStyles = (): SxProps<Theme> => {
+  return {
+    px: SPACING.fieldPaddingX,
+    py: 2,
+    borderTop: `${BORDER_WIDTH.standard} solid ${colorTokens.semantic.border.default}`,
+    backgroundColor: colorTokens.semantic.background.primary,
+    gap: 1,
+  };
+};
+
+/**
+ * Generate message editor container styles
+ */
+export const createMessageEditorContainerStyles = (): SxProps<Theme> => {
+  return {
+    px: SPACING.fieldPaddingX,
+    py: SPACING.fieldPaddingY,
+    backgroundColor: colorTokens.semantic.background.primary,
+    borderBottom: `${BORDER_WIDTH.standard} solid ${colorTokens.semantic.border.default}`,
+  };
+};
+
+/**
+ * Generate attachment preview styles
+ */
+export const createAttachmentPreviewStyles = (): SxProps<Theme> => {
+  return {
     position: "relative",
-    transition: "all 0.2s",
-    "&:hover": {
-      backgroundColor: neutralColor(50),
-      borderColor: neutralColor(300),
-    },
-  };
-};
-
-/**
- * Generate attachment thumbnail/icon container styles
- */
-export const createAttachmentIconContainerStyles = (
-  neutralColor: (shade: number) => string,
-  options: { isImage: boolean; color?: string } = { isImage: false }
-): SxProps<Theme> => {
-  return {
     width: ICON_SIZE.attachment,
     height: ICON_SIZE.attachment,
-    borderRadius: 1,
+    borderRadius: radiusTokens.sm,
     overflow: "hidden",
-    flexShrink: 0,
-    backgroundColor: options.isImage ? neutralColor(100) : `${options.color || neutralColor(200)}15`,
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    border: `${BORDER_WIDTH.standard} solid ${neutralColor(200)}`,
+    border: `${BORDER_WIDTH.standard} solid ${colorTokens.semantic.border.default}`,
+    backgroundColor: colorTokens.neutral[100],
   };
 };
 
 /**
- * File type colors for attachment previews
+ * Generate inbox selector card styles
  */
-export const FILE_TYPE_COLORS = {
-  image: "#10b981", // green
-  video: "#8b5cf6", // purple
-  audio: "#f59e0b", // amber
-  pdf: "#ef4444", // red
-  document: "#3b82f6", // blue
-  spreadsheet: "#059669", // emerald
-  default: "#6b7280", // gray
-} as const;
+export const createInboxCardStyles = (isSelected: boolean): SxProps<Theme> => {
+  return {
+    p: 2,
+    borderRadius: radiusTokens.md,
+    border: `${isSelected ? BORDER_WIDTH.prominent : BORDER_WIDTH.standard} solid ${
+      isSelected ? colorTokens.primary[500] : colorTokens.semantic.border.default
+    }`,
+    backgroundColor: isSelected ? colorTokens.primary[50] : colorTokens.semantic.background.primary,
+    cursor: "pointer",
+    transition: "all 0.2s ease",
+    "&:hover": {
+      borderColor: isSelected ? colorTokens.primary[600] : colorTokens.semantic.border.medium,
+      backgroundColor: isSelected ? colorTokens.primary[50] : colorTokens.semantic.interactive.hover,
+    },
+  };
+};
 
 /**
- * Format file size utility
+ * Generate contact chip styles
  */
-export const formatFileSize = (bytes: number): string => {
-  if (bytes === 0) return "0 B";
-  const k = 1024;
-  const sizes = ["B", "KB", "MB", "GB"];
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return `${Math.round((bytes / Math.pow(k, i)) * 100) / 100} ${sizes[i]}`;
+export const createContactChipStyles = (): SxProps<Theme> => {
+  return {
+    backgroundColor: colorTokens.primary[50],
+    color: colorTokens.primary[700],
+    border: `${BORDER_WIDTH.standard} solid ${colorTokens.primary[200]}`,
+    borderRadius: radiusTokens.full,
+    "& .MuiChip-deleteIcon": {
+      color: colorTokens.primary[400],
+      "&:hover": {
+        color: colorTokens.primary[600],
+      },
+    },
+  };
 };
+
+/**
+ * Generate selected chip styles (for contact/recipient selection)
+ * @deprecated Parameters are ignored - uses design tokens directly
+ */
+export const createSelectedChipStyles = (
+  _primaryColor?: (shade: number) => string,
+  _neutralColor?: (shade: number) => string
+): SxProps<Theme> => {
+  return {
+    backgroundColor: colorTokens.primary[50],
+    color: colorTokens.primary[700],
+    border: `${BORDER_WIDTH.standard} solid ${colorTokens.primary[200]}`,
+    borderRadius: radiusTokens.full,
+    "& .MuiChip-deleteIcon": {
+      color: colorTokens.primary[400],
+      "&:hover": {
+        color: colorTokens.primary[600],
+      },
+    },
+  };
+};
+
+/**
+ * Generate standard text field styles
+ * @deprecated Parameters are ignored - uses design tokens directly
+ */
+export const createStandardTextFieldStyles = (
+  _neutralColor?: (shade: number) => string
+): SxProps<Theme> => {
+  return {
+    "& .MuiOutlinedInput-root": {
+      borderRadius: radiusTokens.md,
+      backgroundColor: colorTokens.semantic.background.primary,
+      "& fieldset": {
+        borderColor: colorTokens.semantic.border.default,
+      },
+      "&:hover fieldset": {
+        borderColor: colorTokens.semantic.border.medium,
+      },
+      "&.Mui-focused fieldset": {
+        borderColor: colorTokens.primary[500],
+        borderWidth: BORDER_WIDTH.prominent,
+      },
+    },
+    "& .MuiInputLabel-root": {
+      color: colorTokens.neutral[600],
+      "&.Mui-focused": {
+        color: colorTokens.primary[600],
+      },
+    },
+  };
+};
+
+/**
+ * Generate error alert styles
+ */
+export const createErrorAlertStyles = (): SxProps<Theme> => {
+  return {
+    mx: SPACING.fieldPaddingX,
+    my: 2,
+    borderRadius: radiusTokens.md,
+    backgroundColor: colorTokens.error[50],
+    border: `${BORDER_WIDTH.standard} solid ${colorTokens.error[200]}`,
+    color: colorTokens.error[700],
+    "& .MuiAlert-icon": {
+      color: colorTokens.error[500],
+    },
+  };
+};
+
+/**
+ * Generate template selector styles
+ */
+export const createTemplateSelectorStyles = (): SxProps<Theme> => {
+  return {
+    backgroundColor: colorTokens.semantic.background.secondary,
+    borderRadius: radiusTokens.md,
+    border: `${BORDER_WIDTH.standard} solid ${colorTokens.semantic.border.default}`,
+    p: 2,
+    mb: 2,
+  };
+};
+
+/**
+ * Legacy wrapper functions for backward compatibility
+ * @deprecated Use the new functions without neutralColor/primaryColor parameters
+ */
+export const createFieldContainerStylesLegacy = (
+  neutralColor: (shade: number) => string,
+  options: {
+    backgroundColor?: "light" | "white";
+    padding?: "standard" | "compact";
+  } = {}
+): SxProps<Theme> => createFieldContainerStyles(options);
+
+export const createFieldLabelStylesLegacy = (
+  neutralColor: (shade: number) => string,
+  options: { minWidth?: number } = {}
+): SxProps<Theme> => createFieldLabelStyles(options);
+
+export const createSectionLabelStylesLegacy = (
+  neutralColor: (shade: number) => string
+): SxProps<Theme> => createSectionLabelStyles();
+
+export const createPrimaryButtonStylesLegacy = (
+  primaryColor: (shade: number) => string,
+  neutralColor: (shade: number) => string
+): SxProps<Theme> => createPrimaryButtonStyles();
+
+export const createSecondaryButtonStylesLegacy = (
+  neutralColor: (shade: number) => string
+): SxProps<Theme> => createSecondaryButtonStyles();

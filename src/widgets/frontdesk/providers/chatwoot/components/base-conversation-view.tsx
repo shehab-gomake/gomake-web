@@ -11,8 +11,8 @@
  */
 
 import React, { useMemo, useCallback, useState, useEffect } from "react";
-import { Stack, Box, Divider, useTheme } from "@mui/material";
-import { Panel, PanelContent, EmptyState } from "@/widgets/frontdesk/design-system";
+import { Stack, Box, Divider } from "@mui/material";
+import { Panel, PanelContent, EmptyState, colorTokens, layoutTokens } from "@/widgets/frontdesk/design-system";
 import { ChatwootConversationList } from "./chatwoot-conversation-list";
 import { ChatwootMessageViewer } from "./chatwoot-message-viewer";
 import { ChatwootConversationDetailPanel } from "./chatwoot-conversation-detail-panel";
@@ -53,7 +53,6 @@ export const BaseConversationView: React.FC<BaseConversationViewProps> = ({ empt
     router,
   } = useChatwootProvider();
 
-  const theme = useTheme();
   const [showComposeModal, setShowComposeModal] = useState(false);
   
   // Sidebar visibility state - persist to localStorage
@@ -111,14 +110,14 @@ export const BaseConversationView: React.FC<BaseConversationViewProps> = ({ empt
         elevation={1}
         border="none"
         sx={{
-          width: 400,
-          minWidth: 350,
-          maxWidth: 500,
+          width: layoutTokens.panel.conversationList.default,
+          minWidth: layoutTokens.panel.conversationList.compact,
+          maxWidth: layoutTokens.panel.conversationList.wide,
           overflow: "hidden",
           display: "flex",
           flexDirection: "column",
           height: "100%",
-          backgroundColor: "background.paper",
+          backgroundColor: colorTokens.semantic.background.primary,
         }}
       >
         <ChatwootConversationList
@@ -138,7 +137,7 @@ export const BaseConversationView: React.FC<BaseConversationViewProps> = ({ empt
       </Panel>
 
       {/* Divider between list and viewer */}
-      <Divider orientation="vertical" flexItem sx={{ borderColor: theme.palette.divider }} />
+      <Divider orientation="vertical" flexItem sx={{ borderColor: colorTokens.semantic.border.default }} />
 
       {/* Message Viewer - Conditionally show detail or empty state */}
       <Panel
@@ -151,7 +150,7 @@ export const BaseConversationView: React.FC<BaseConversationViewProps> = ({ empt
           flexDirection: "column",
           minWidth: 0,
           height: "100%",
-          backgroundColor: "background.paper",
+          backgroundColor: colorTokens.semantic.background.primary,
         }}
       >
         {selectedConversation ? (
@@ -174,7 +173,7 @@ export const BaseConversationView: React.FC<BaseConversationViewProps> = ({ empt
 
             {/* Divider between message viewer and detail panel - only show when sidebar is visible */}
             {isSidebarVisible && (
-              <Divider orientation="vertical" flexItem sx={{ borderColor: theme.palette.divider }} />
+              <Divider orientation="vertical" flexItem sx={{ borderColor: colorTokens.semantic.border.default }} />
             )}
 
             {/* Right Detail Panel - conditionally rendered */}

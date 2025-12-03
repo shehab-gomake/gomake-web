@@ -1,7 +1,6 @@
 import React from "react";
-import { Box, Typography, Button, Stack, alpha } from "@mui/material";
-import { useTheme } from "@mui/material/styles";
-import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { Box, Typography, Button, Stack, useTheme, alpha } from "@mui/material";
+import { colorTokens, radiusTokens, shadowTokens } from "@/widgets/frontdesk/design-system";
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
 import SendIcon from "@mui/icons-material/Send";
 
@@ -45,7 +44,6 @@ export const NoMessagesEmptyState: React.FC<NoMessagesEmptyStateProps> = ({
   contactName,
 }) => {
   const theme = useTheme();
-  const { neutralColor } = useGomakeTheme();
 
   const getMessage = () => {
     if (isNewConversation) {
@@ -102,7 +100,7 @@ export const NoMessagesEmptyState: React.FC<NoMessagesEmptyStateProps> = ({
           variant="h6"
           sx={{
             fontWeight: 600,
-            color: neutralColor(900),
+            color: colorTokens.neutral[900],
           }}
         >
           {title}
@@ -110,7 +108,7 @@ export const NoMessagesEmptyState: React.FC<NoMessagesEmptyStateProps> = ({
         <Typography
           variant="body2"
           sx={{
-            color: neutralColor(600),
+            color: colorTokens.neutral[600],
             lineHeight: 1.6,
           }}
         >

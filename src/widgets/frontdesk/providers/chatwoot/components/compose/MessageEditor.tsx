@@ -21,7 +21,7 @@ import FormatListBulletedIcon from "@mui/icons-material/FormatListBulleted";
 import FormatListNumberedIcon from "@mui/icons-material/FormatListNumbered";
 import UndoIcon from "@mui/icons-material/Undo";
 import RedoIcon from "@mui/icons-material/Redo";
-import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { colorTokens, radiusTokens } from "@/widgets/frontdesk/design-system";
 import { htmlToMarkdown, isEmptyHtml } from "@/utils/markdown-converter";
 
 interface MessageEditorProps {
@@ -50,8 +50,6 @@ export const MessageEditor: React.FC<MessageEditorProps> = ({
   minHeight = 200,
   isPrivateNote = false,
 }) => {
-  const { neutralColor, primaryColor } = useGomakeTheme();
-
   const editor = useEditor({
     immediatelyRender: false, // Fix SSR hydration issues in Next.js
     extensions: [
@@ -153,8 +151,8 @@ export const MessageEditor: React.FC<MessageEditorProps> = ({
   // Background color for private note mode - use a warm, subtle amber/yellow tint
   // to clearly indicate private mode without being too distracting
   const backgroundColor = isPrivateNote 
-    ? "rgba(251, 191, 36, 0.08)" // Light amber/yellow tint (amber-400 with 8% opacity)
-    : neutralColor(0);
+    ? colorTokens.warning[50] // Light amber/yellow tint for private notes
+    : colorTokens.semantic.background.primary;
 
   return (
     <Box
@@ -163,20 +161,20 @@ export const MessageEditor: React.FC<MessageEditorProps> = ({
         flexDirection: "column",
         minHeight,
         border: error 
-          ? `1px solid #ef4444` 
+          ? `1px solid colorTokens.error[500]` 
           : isPrivateNote 
             ? `1px solid rgba(251, 191, 36, 0.3)` // Amber border for private notes
-            : `1px solid ${neutralColor(200)}`,
+            : `1px solid ${colorTokens.neutral[200]}`,
         borderRadius: 1,
         overflow: "hidden",
         backgroundColor,
         transition: "background-color 0.2s ease, border-color 0.2s ease",
         "&:focus-within": {
           borderColor: error 
-            ? "#ef4444" 
+            ? "colorTokens.error[500]" 
             : isPrivateNote 
               ? "rgba(251, 191, 36, 0.5)" // Slightly darker amber on focus
-              : primaryColor(500),
+              : colorTokens.primary[500],
         },
       }}
     >
@@ -187,8 +185,8 @@ export const MessageEditor: React.FC<MessageEditorProps> = ({
         sx={{
           px: 1,
           py: 0.5,
-          borderBottom: `1px solid ${neutralColor(200)}`,
-          backgroundColor: neutralColor(25),
+          borderBottom: `1px solid ${colorTokens.neutral[200]}`,
+          backgroundColor: colorTokens.neutral[25],
         }}
       >
         <Tooltip title="Bold (Ctrl+B)">
@@ -197,10 +195,10 @@ export const MessageEditor: React.FC<MessageEditorProps> = ({
             onClick={toggleBold}
             disabled={disabled}
             sx={{
-              color: editor.isActive("bold") ? primaryColor(600) : neutralColor(600),
-              backgroundColor: editor.isActive("bold") ? primaryColor(50) : "transparent",
+              color: editor.isActive("bold") ? colorTokens.primary[600] : colorTokens.neutral[600],
+              backgroundColor: editor.isActive("bold") ? colorTokens.primary[50] : "transparent",
               "&:hover": {
-                backgroundColor: editor.isActive("bold") ? primaryColor(100) : neutralColor(100),
+                backgroundColor: editor.isActive("bold") ? colorTokens.primary[100] : colorTokens.neutral[100],
               },
             }}
           >
@@ -214,10 +212,10 @@ export const MessageEditor: React.FC<MessageEditorProps> = ({
             onClick={toggleItalic}
             disabled={disabled}
             sx={{
-              color: editor.isActive("italic") ? primaryColor(600) : neutralColor(600),
-              backgroundColor: editor.isActive("italic") ? primaryColor(50) : "transparent",
+              color: editor.isActive("italic") ? colorTokens.primary[600] : colorTokens.neutral[600],
+              backgroundColor: editor.isActive("italic") ? colorTokens.primary[50] : "transparent",
               "&:hover": {
-                backgroundColor: editor.isActive("italic") ? primaryColor(100) : neutralColor(100),
+                backgroundColor: editor.isActive("italic") ? colorTokens.primary[100] : colorTokens.neutral[100],
               },
             }}
           >
@@ -231,10 +229,10 @@ export const MessageEditor: React.FC<MessageEditorProps> = ({
             onClick={toggleBulletList}
             disabled={disabled}
             sx={{
-              color: editor.isActive("bulletList") ? primaryColor(600) : neutralColor(600),
-              backgroundColor: editor.isActive("bulletList") ? primaryColor(50) : "transparent",
+              color: editor.isActive("bulletList") ? colorTokens.primary[600] : colorTokens.neutral[600],
+              backgroundColor: editor.isActive("bulletList") ? colorTokens.primary[50] : "transparent",
               "&:hover": {
-                backgroundColor: editor.isActive("bulletList") ? primaryColor(100) : neutralColor(100),
+                backgroundColor: editor.isActive("bulletList") ? colorTokens.primary[100] : colorTokens.neutral[100],
               },
             }}
           >
@@ -248,10 +246,10 @@ export const MessageEditor: React.FC<MessageEditorProps> = ({
             onClick={toggleOrderedList}
             disabled={disabled}
             sx={{
-              color: editor.isActive("orderedList") ? primaryColor(600) : neutralColor(600),
-              backgroundColor: editor.isActive("orderedList") ? primaryColor(50) : "transparent",
+              color: editor.isActive("orderedList") ? colorTokens.primary[600] : colorTokens.neutral[600],
+              backgroundColor: editor.isActive("orderedList") ? colorTokens.primary[50] : "transparent",
               "&:hover": {
-                backgroundColor: editor.isActive("orderedList") ? primaryColor(100) : neutralColor(100),
+                backgroundColor: editor.isActive("orderedList") ? colorTokens.primary[100] : colorTokens.neutral[100],
               },
             }}
           >
@@ -265,10 +263,10 @@ export const MessageEditor: React.FC<MessageEditorProps> = ({
             onClick={setLink}
             disabled={disabled}
             sx={{
-              color: editor.isActive("link") ? primaryColor(600) : neutralColor(600),
-              backgroundColor: editor.isActive("link") ? primaryColor(50) : "transparent",
+              color: editor.isActive("link") ? colorTokens.primary[600] : colorTokens.neutral[600],
+              backgroundColor: editor.isActive("link") ? colorTokens.primary[50] : "transparent",
               "&:hover": {
-                backgroundColor: editor.isActive("link") ? primaryColor(100) : neutralColor(100),
+                backgroundColor: editor.isActive("link") ? colorTokens.primary[100] : colorTokens.neutral[100],
               },
             }}
           >
@@ -282,12 +280,12 @@ export const MessageEditor: React.FC<MessageEditorProps> = ({
             onClick={handleUndo}
             disabled={disabled || !editor.can().undo()}
             sx={{
-              color: neutralColor(600),
+              color: colorTokens.neutral[600],
               "&:hover": {
-                backgroundColor: neutralColor(100),
+                backgroundColor: colorTokens.neutral[100],
               },
               "&:disabled": {
-                color: neutralColor(300),
+                color: colorTokens.neutral[300],
               },
             }}
           >
@@ -301,12 +299,12 @@ export const MessageEditor: React.FC<MessageEditorProps> = ({
             onClick={handleRedo}
             disabled={disabled || !editor.can().redo()}
             sx={{
-              color: neutralColor(600),
+              color: colorTokens.neutral[600],
               "&:hover": {
-                backgroundColor: neutralColor(100),
+                backgroundColor: colorTokens.neutral[100],
               },
               "&:disabled": {
-                color: neutralColor(300),
+                color: colorTokens.neutral[300],
               },
             }}
           >
@@ -325,7 +323,7 @@ export const MessageEditor: React.FC<MessageEditorProps> = ({
           "& .message-editor-content": {
             outline: "none",
             minHeight: minHeight - 60,
-            color: neutralColor(900),
+            color: colorTokens.neutral[900],
             fontSize: "0.938rem",
             lineHeight: 1.6,
             fontFamily: "inherit",
@@ -335,7 +333,7 @@ export const MessageEditor: React.FC<MessageEditorProps> = ({
             "& p.is-editor-empty:first-of-type::before": {
               content: "attr(data-placeholder)",
               float: "left",
-              color: neutralColor(400),
+              color: colorTokens.neutral[400],
               pointerEvents: "none",
               height: 0,
             },
@@ -363,11 +361,11 @@ export const MessageEditor: React.FC<MessageEditorProps> = ({
               marginBottom: "0.25em",
             },
             "& a": {
-              color: primaryColor(600),
+              color: colorTokens.primary[600],
               textDecoration: "underline",
               cursor: "pointer",
               "&:hover": {
-                color: primaryColor(700),
+                color: colorTokens.primary[700],
               },
             },
           },
@@ -383,9 +381,9 @@ export const MessageEditor: React.FC<MessageEditorProps> = ({
             px: 2,
             py: 1,
             fontSize: "0.75rem",
-            color: "#ef4444",
+            color: "colorTokens.error[500]",
             backgroundColor: "rgba(239, 68, 68, 0.05)",
-            borderTop: `1px solid ${neutralColor(200)}`,
+            borderTop: `1px solid ${colorTokens.neutral[200]}`,
           }}
         >
           {error}
@@ -398,10 +396,10 @@ export const MessageEditor: React.FC<MessageEditorProps> = ({
           px: 2,
           py: 0.5,
           fontSize: "0.75rem",
-          color: neutralColor(500),
+          color: colorTokens.neutral[500],
           textAlign: "right",
-          borderTop: `1px solid ${neutralColor(200)}`,
-          backgroundColor: neutralColor(25),
+          borderTop: `1px solid ${colorTokens.neutral[200]}`,
+          backgroundColor: colorTokens.neutral[25],
         }}
       >
         {editor.storage.characterCount?.characters() || 0} characters

@@ -29,13 +29,14 @@ import { Close as CloseIcon } from "@mui/icons-material";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import { Google as GoogleIcon } from "@mui/icons-material";
 import { OutlookIcon } from "@/icons/outlook-icon";
-import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+
 import { useChatwootOAuth } from "@/widgets/frontdesk/providers/chatwoot/hooks/use-chatwoot-oauth";
 import { useChatwootInboxes } from "@/widgets/frontdesk/providers/chatwoot/hooks/use-chatwoot-inboxes";
 import { useChatwootAgents } from "@/widgets/frontdesk/providers/chatwoot/hooks/resources/use-chatwoot-agents";
 import { useChatwootProfile } from "@/widgets/frontdesk/providers/chatwoot/hooks/use-chatwoot-profile";
 import { chatwootService } from "@/services/frontdesk";
 import { chatwootInboxAgentsMapAtom } from "@/store/frontdesk/atoms/chatwoot.atoms";
+import { colorTokens, radiusTokens, shadowTokens } from "@/widgets/frontdesk/design-system";
 
 interface AddChannelModalProps {
   open: boolean;
@@ -95,7 +96,6 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
   const [isAssigningAgents, setIsAssigningAgents] = useState(false);
   const [agentAssignmentError, setAgentAssignmentError] = useState<string | null>(null);
 
-  const { primaryColor, neutralColor } = useGomakeTheme();
   const { authenticate, isAuthenticating, error: oauthError, clearError } = useChatwootOAuth();
   const { refresh: refreshInboxes } = useChatwootInboxes();
   const { profile } = useChatwootProfile();
@@ -107,21 +107,21 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
       id: "whatsapp",
       name: "WhatsApp",
       description: "Support your customers on WhatsApp. (Coming Soon)",
-      icon: <WhatsAppIcon sx={{ fontSize: 32, color: neutralColor(700) }} />,
+      icon: <WhatsAppIcon sx={{ fontSize: 32, color: colorTokens.neutral[700] }} />,
       provider: "whatsapp",
     },
     {
       id: "gmail",
       name: "Gmail",
       description: "Connect with Gmail account.",
-      icon: <GoogleIcon sx={{ fontSize: 32, color: neutralColor(700) }} />,
+      icon: <GoogleIcon sx={{ fontSize: 32, color: colorTokens.neutral[700] }} />,
       provider: "google",
     },
     {
       id: "outlook",
       name: "Outlook",
       description: "Connect with Outlook account.",
-      icon: <OutlookIcon size={32} color={neutralColor(700)} />,
+      icon: <OutlookIcon size={32} color={colorTokens.neutral[700]} />,
       provider: "microsoft",
     },
   ];
@@ -393,8 +393,8 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
       PaperProps={{
         sx: {
           borderRadius: 3,
-          border: `1px solid ${neutralColor(200)}`,
-          boxShadow: `0 8px 32px ${alpha(neutralColor(900), 0.12)}`,
+          border: `1px solid ${colorTokens.neutral[200]}`,
+          boxShadow: `0 8px 32px ${alpha(colorTokens.neutral[900], 0.12)}`,
           backgroundColor: "#ffffff",
           minHeight: "600px",
         },
@@ -404,8 +404,8 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
       <DialogTitle
         sx={{
           backgroundColor: "#ffffff",
-          borderBottom: `1px solid ${neutralColor(200)}`,
-          color: neutralColor(900),
+          borderBottom: `1px solid ${colorTokens.neutral[200]}`,
+          color: colorTokens.neutral[900],
           fontWeight: 600,
           fontSize: "1.25rem",
           py: 2.5,
@@ -421,7 +421,7 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
               width: 40,
               height: 40,
               borderRadius: 2,
-              backgroundColor: primaryColor(50),
+              backgroundColor: colorTokens.primary[50],
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
@@ -430,7 +430,7 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
             <Typography
               sx={{
                 fontSize: "1.5rem",
-                color: primaryColor(600),
+                color: colorTokens.primary[600],
                 fontWeight: 600,
               }}
             >
@@ -446,9 +446,9 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
           disabled={isAuthenticating}
           size="small"
           sx={{
-            color: neutralColor(600),
+            color: colorTokens.neutral[600],
             "&:hover": {
-              backgroundColor: alpha(neutralColor(100), 0.8),
+              backgroundColor: alpha(colorTokens.neutral[100], 0.8),
             },
             "&:disabled": {
               opacity: 0.5,
@@ -467,7 +467,7 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
             sx={{
               width: 300,
               minWidth: 300,
-              borderRight: `1px solid ${neutralColor(200)}`,
+              borderRight: `1px solid ${colorTokens.neutral[200]}`,
               backgroundColor: "#ffffff",
               p: 3,
               display: "flex",
@@ -493,8 +493,8 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    backgroundColor: step.active ? primaryColor(500) : neutralColor(200),
-                    color: step.active ? "#ffffff" : neutralColor(600),
+                    backgroundColor: step.active ? colorTokens.primary[500] : colorTokens.neutral[200],
+                    color: step.active ? "#ffffff" : colorTokens.neutral[600],
                     fontWeight: 600,
                     fontSize: "0.875rem",
                     flexShrink: 0,
@@ -507,7 +507,7 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
                   <Typography
                     sx={{
                       fontWeight: step.active ? 600 : 400,
-                      color: step.active ? primaryColor(500) : neutralColor(700),
+                      color: step.active ? colorTokens.primary[500] : colorTokens.neutral[700],
                       fontSize: "0.938rem",
                       mb: 0.5,
                     }}
@@ -517,7 +517,7 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
                   <Typography
                     sx={{
                       fontSize: "0.813rem",
-                      color: neutralColor(600),
+                      color: colorTokens.neutral[600],
                       lineHeight: 1.5,
                     }}
                   >
@@ -574,7 +574,7 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
                   variant="h6"
                   sx={{
                     fontWeight: 600,
-                    color: neutralColor(900),
+                    color: colorTokens.neutral[900],
                     mb: 3,
                   }}
                 >
@@ -600,23 +600,23 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
                         sx={{
                           p: 3,
                           cursor: isDisabled ? "not-allowed" : "pointer",
-                          border: isSelected ? `2px solid ${primaryColor(500)}` : `1px solid ${neutralColor(200)}`,
+                          border: isSelected ? `2px solid ${colorTokens.primary[500]}` : `1px solid ${colorTokens.neutral[200]}`,
                           borderRadius: 2,
                           display: "flex",
                           flexDirection: "column",
                           alignItems: "center",
                           gap: 2,
                           textAlign: "center",
-                          backgroundColor: isDisabled ? neutralColor(50) : "#ffffff",
+                          backgroundColor: isDisabled ? colorTokens.neutral[50] : "#ffffff",
                           opacity: isDisabled ? 0.6 : 1,
                           transition: "all 0.2s ease",
                           "&:hover": {
                             borderColor: isDisabled
-                              ? neutralColor(200)
+                              ? colorTokens.neutral[200]
                               : isSelected
-                              ? primaryColor(600)
-                              : neutralColor(300),
-                            boxShadow: isDisabled ? "none" : `0 4px 12px ${alpha(neutralColor(900), 0.08)}`,
+                              ? colorTokens.primary[600]
+                              : colorTokens.neutral[300],
+                            boxShadow: isDisabled ? "none" : `0 4px 12px ${alpha(colorTokens.neutral[900], 0.08)}`,
                           },
                         }}
                       >
@@ -629,7 +629,7 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
                             alignItems: "center",
                             justifyContent: "center",
                             borderRadius: 2,
-                            backgroundColor: neutralColor(50),
+                            backgroundColor: colorTokens.neutral[50],
                           }}
                         >
                           {channel.icon}
@@ -638,7 +638,7 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
                         <Typography
                           sx={{
                             fontWeight: 600,
-                            color: neutralColor(900),
+                            color: colorTokens.neutral[900],
                             fontSize: "1rem",
                           }}
                         >
@@ -648,7 +648,7 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
                         <Typography
                           sx={{
                             fontSize: "0.813rem",
-                            color: neutralColor(600),
+                            color: colorTokens.neutral[600],
                             lineHeight: 1.5,
                           }}
                         >
@@ -673,16 +673,16 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
                       onClick={() => setSelectedChannel(null)}
                       variant="outlined"
                       sx={{
-                        color: neutralColor(700),
-                        borderColor: neutralColor(300),
+                        color: colorTokens.neutral[700],
+                        borderColor: colorTokens.neutral[300],
                         px: 3,
                         py: 1.5,
                         borderRadius: 2,
                         fontWeight: 500,
                         textTransform: "none",
                         "&:hover": {
-                          backgroundColor: neutralColor(50),
-                          borderColor: neutralColor(400),
+                          backgroundColor: colorTokens.neutral[50],
+                          borderColor: colorTokens.neutral[400],
                         },
                       }}
                     >
@@ -693,7 +693,7 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
                       disabled={!selectedChannel}
                       variant="contained"
                       sx={{
-                        backgroundColor: primaryColor(500),
+                        backgroundColor: colorTokens.primary[500],
                         color: "#ffffff",
                         px: 4,
                         py: 1.5,
@@ -701,7 +701,7 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
                         fontWeight: 600,
                         textTransform: "none",
                         "&:hover": {
-                          backgroundColor: primaryColor(600),
+                          backgroundColor: colorTokens.primary[600],
                         },
                         "&:disabled": {
                           opacity: 0.5,
@@ -722,7 +722,7 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
                   variant="h5"
                   sx={{
                     fontWeight: 600,
-                    color: neutralColor(900),
+                    color: colorTokens.neutral[900],
                     mb: 2,
                   }}
                 >
@@ -732,7 +732,7 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
                 <Typography
                   sx={{
                     fontSize: "0.938rem",
-                    color: neutralColor(600),
+                    color: colorTokens.neutral[600],
                     mb: 4,
                     lineHeight: 1.6,
                   }}
@@ -749,7 +749,7 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
                     disabled={isAuthenticating}
                     variant="contained"
                     sx={{
-                      backgroundColor: primaryColor(500),
+                      backgroundColor: colorTokens.primary[500],
                       color: "#ffffff",
                       px: 4,
                       py: 1.5,
@@ -761,7 +761,7 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
                       gap: 1.5,
                       fontSize: "1rem",
                       "&:hover": {
-                        backgroundColor: primaryColor(600),
+                        backgroundColor: colorTokens.primary[600],
                       },
                       "&:disabled": {
                         opacity: 0.5,
@@ -796,16 +796,16 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
                     disabled={isAuthenticating}
                     variant="outlined"
                     sx={{
-                      color: neutralColor(700),
-                      borderColor: neutralColor(300),
+                      color: colorTokens.neutral[700],
+                      borderColor: colorTokens.neutral[300],
                       px: 3,
                       py: 1.5,
                       borderRadius: 2,
                       fontWeight: 500,
                       textTransform: "none",
                       "&:hover": {
-                        backgroundColor: neutralColor(50),
-                        borderColor: neutralColor(400),
+                        backgroundColor: colorTokens.neutral[50],
+                        borderColor: colorTokens.neutral[400],
                       },
                       "&:disabled": {
                         opacity: 0.5,
@@ -825,7 +825,7 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
                   variant="h5"
                   sx={{
                     fontWeight: 600,
-                    color: neutralColor(900),
+                    color: colorTokens.neutral[900],
                     mb: 2,
                   }}
                 >
@@ -835,7 +835,7 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
                 <Typography
                   sx={{
                     fontSize: "0.938rem",
-                    color: neutralColor(600),
+                    color: colorTokens.neutral[600],
                     mb: 4,
                     lineHeight: 1.6,
                   }}
@@ -865,7 +865,7 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
                       mb: 3,
                       borderRadius: 2,
                       overflow: "hidden",
-                      border: `1px solid ${neutralColor(200)}`,
+                      border: `1px solid ${colorTokens.neutral[200]}`,
                     }}
                   >
                     <Box
@@ -876,13 +876,13 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
                           width: "8px",
                         },
                         "&::-webkit-scrollbar-track": {
-                          backgroundColor: neutralColor(50),
+                          backgroundColor: colorTokens.neutral[50],
                         },
                         "&::-webkit-scrollbar-thumb": {
-                          backgroundColor: neutralColor(300),
+                          backgroundColor: colorTokens.neutral[300],
                           borderRadius: "4px",
                           "&:hover": {
-                            backgroundColor: neutralColor(400),
+                            backgroundColor: colorTokens.neutral[400],
                           },
                         },
                       }}
@@ -905,15 +905,15 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
                               cursor: "pointer",
                               transition: "all 0.15s ease",
                               backgroundColor: isSelected
-                                ? alpha(primaryColor(50), 0.5)
+                                ? alpha(colorTokens.primary[50], 0.5)
                                 : index % 2 === 0
                                 ? "#ffffff"
-                                : neutralColor(25),
-                              borderBottom: index < agents.length - 1 ? `1px solid ${neutralColor(100)}` : "none",
+                                : colorTokens.neutral[25],
+                              borderBottom: index < agents.length - 1 ? `1px solid ${colorTokens.neutral[100]}` : "none",
                               "&:hover": {
                                 backgroundColor: isSelected
-                                  ? alpha(primaryColor(100), 0.5)
-                                  : alpha(neutralColor(100), 0.8),
+                                  ? alpha(colorTokens.primary[100], 0.5)
+                                  : alpha(colorTokens.neutral[100], 0.8),
                               },
                             }}
                           >
@@ -927,9 +927,9 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
                               size="small"
                               sx={{
                                 p: 0.5,
-                                color: neutralColor(400),
+                                color: colorTokens.neutral[400],
                                 "&.Mui-checked": {
-                                  color: primaryColor(500),
+                                  color: colorTokens.primary[500],
                                 },
                               }}
                             />
@@ -941,8 +941,8 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
                               sx={{
                                 width: 32,
                                 height: 32,
-                                bgcolor: isSelected ? primaryColor(500) : primaryColor(100),
-                                color: isSelected ? "#ffffff" : primaryColor(700),
+                                bgcolor: isSelected ? colorTokens.primary[500] : colorTokens.primary[100],
+                                color: isSelected ? "#ffffff" : colorTokens.primary[700],
                                 fontSize: "0.75rem",
                                 fontWeight: 600,
                               }}
@@ -956,7 +956,7 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
                                 <Typography
                                   sx={{
                                     fontWeight: 600,
-                                    color: neutralColor(900),
+                                    color: colorTokens.neutral[900],
                                     fontSize: "0.875rem",
                                     lineHeight: 1.2,
                                     overflow: "hidden",
@@ -971,12 +971,12 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
                                     component="span"
                                     sx={{
                                       fontSize: "0.688rem",
-                                      color: primaryColor(700),
+                                      color: colorTokens.primary[700],
                                       fontWeight: 600,
                                       px: 0.75,
                                       py: 0.25,
                                       borderRadius: 0.75,
-                                      backgroundColor: primaryColor(100),
+                                      backgroundColor: colorTokens.primary[100],
                                       lineHeight: 1,
                                       flexShrink: 0,
                                     }}
@@ -990,12 +990,12 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
                                   component="span"
                                   sx={{
                                     fontSize: "0.688rem",
-                                    color: neutralColor(700),
+                                    color: colorTokens.neutral[700],
                                     fontWeight: 600,
                                     px: 0.75,
                                     py: 0.25,
                                     borderRadius: 0.75,
-                                    backgroundColor: neutralColor(200),
+                                    backgroundColor: colorTokens.neutral[200],
                                     lineHeight: 1,
                                     textTransform: "uppercase",
                                     flexShrink: 0,
@@ -1034,16 +1034,16 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
                     disabled={isAssigningAgents}
                     variant="outlined"
                     sx={{
-                      color: neutralColor(700),
-                      borderColor: neutralColor(300),
+                      color: colorTokens.neutral[700],
+                      borderColor: colorTokens.neutral[300],
                       px: 3,
                       py: 1.5,
                       borderRadius: 2,
                       fontWeight: 500,
                       textTransform: "none",
                       "&:hover": {
-                        backgroundColor: neutralColor(50),
-                        borderColor: neutralColor(400),
+                        backgroundColor: colorTokens.neutral[50],
+                        borderColor: colorTokens.neutral[400],
                       },
                       "&:disabled": {
                         opacity: 0.5,
@@ -1057,7 +1057,7 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
                     disabled={isAssigningAgents || selectedAgents.length === 0}
                     variant="contained"
                     sx={{
-                      backgroundColor: primaryColor(500),
+                      backgroundColor: colorTokens.primary[500],
                       color: "#ffffff",
                       px: 4,
                       py: 1.5,
@@ -1068,7 +1068,7 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
                       alignItems: "center",
                       gap: 1.5,
                       "&:hover": {
-                        backgroundColor: primaryColor(600),
+                        backgroundColor: colorTokens.primary[600],
                       },
                       "&:disabled": {
                         opacity: 0.5,
@@ -1105,7 +1105,7 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
                     width: 80,
                     height: 80,
                     borderRadius: "50%",
-                    backgroundColor: primaryColor(50),
+                    backgroundColor: colorTokens.primary[50],
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
@@ -1115,7 +1115,7 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
                   <Typography
                     sx={{
                       fontSize: "2.5rem",
-                      color: primaryColor(600),
+                      color: colorTokens.primary[600],
                     }}
                   >
                     ✓
@@ -1125,7 +1125,7 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
                   variant="h5"
                   sx={{
                     fontWeight: 600,
-                    color: neutralColor(900),
+                    color: colorTokens.neutral[900],
                     mb: 2,
                   }}
                 >
@@ -1134,7 +1134,7 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
                 <Typography
                   sx={{
                     fontSize: "0.938rem",
-                    color: neutralColor(600),
+                    color: colorTokens.neutral[600],
                   }}
                 >
                   You are all set to go!

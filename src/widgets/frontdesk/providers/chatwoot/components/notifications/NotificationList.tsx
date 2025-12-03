@@ -7,6 +7,7 @@ import React from "react";
 import { Box, Typography, List } from "@mui/material";
 import { ChatwootNotification } from "@/services/frontdesk/api/chatwoot/types/notifications.types";
 import { NotificationListItem } from "./NotificationListItem";
+import { colorTokens, radiusTokens, shadowTokens } from "@/widgets/frontdesk/design-system";
 
 interface NotificationListProps {
   notifications: ChatwootNotification[];
@@ -14,8 +15,8 @@ interface NotificationListProps {
   error: string | null;
   onNotificationClick: (notification: ChatwootNotification) => Promise<void>;
   onNotificationContextMenu: (event: React.MouseEvent<HTMLLIElement>, notification: ChatwootNotification) => void;
-  primaryColor: (shade: number) => string;
-  neutralColor: (shade: number) => string;
+  primaryColor?: (shade: number) => string;
+  neutralColor?: (shade: number) => string;
 }
 
 export const NotificationList: React.FC<NotificationListProps> = ({
@@ -42,7 +43,7 @@ export const NotificationList: React.FC<NotificationListProps> = ({
   if (loading && notifications.length === 0) {
     return (
       <Box sx={{ p: 3, textAlign: "center" }}>
-        <Typography variant="body2" sx={{ color: neutralColor(500) }}>
+        <Typography variant="body2" sx={{ color: colorTokens.neutral[500] }}>
           Loading notifications...
         </Typography>
       </Box>
@@ -53,7 +54,7 @@ export const NotificationList: React.FC<NotificationListProps> = ({
   if (notifications.length === 0) {
     return (
       <Box sx={{ p: 3, textAlign: "center" }}>
-        <Typography variant="body2" sx={{ color: neutralColor(500) }}>
+        <Typography variant="body2" sx={{ color: colorTokens.neutral[500] }}>
           No notifications found
         </Typography>
       </Box>
@@ -69,8 +70,8 @@ export const NotificationList: React.FC<NotificationListProps> = ({
           notification={notification}
           onClick={() => onNotificationClick(notification)}
           onContextMenu={(e) => onNotificationContextMenu(e, notification)}
-          primaryColor={primaryColor}
-          neutralColor={neutralColor}
+          
+          
         />
       ))}
     </List>

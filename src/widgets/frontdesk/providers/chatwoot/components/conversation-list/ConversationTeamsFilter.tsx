@@ -24,8 +24,10 @@ interface ConversationTeamsFilterProps {
   filters: Partial<ConversationListParams>;
   onFiltersChange: (filters: Partial<ConversationListParams>) => void;
   onTeamClick?: () => void;
-  primaryColor: (shade: number) => string;
-  neutralColor: (shade: number) => string;
+  /** @deprecated No longer used - colors are now from design tokens */
+  primaryColor?: (shade: number) => string;
+  /** @deprecated No longer used - colors are now from design tokens */
+  neutralColor?: (shade: number) => string;
 }
 
 export const ConversationTeamsFilter: React.FC<ConversationTeamsFilterProps> = ({

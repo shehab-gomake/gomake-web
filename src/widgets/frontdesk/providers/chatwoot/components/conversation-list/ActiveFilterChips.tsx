@@ -19,8 +19,8 @@ interface ActiveFilterChipsProps {
   teams?: Team[];
   labels?: ChatwootLabel[];
   inboxes?: ChatwootInbox[];
-  primaryColor: (shade: number) => string;
-  neutralColor: (shade: number) => string;
+  primaryColor?: (shade: number) => string;
+  neutralColor?: (shade: number) => string;
 }
 
 // Status labels
@@ -85,7 +85,7 @@ export const ActiveFilterChips: React.FC<ActiveFilterChipsProps> = ({
         display: "flex",
         flexWrap: "wrap",
         gap: 0.75,
-        backgroundColor: neutralColor(50),
+        backgroundColor: colorTokens.neutral[50],
       }}
     >
       {/* Status Filter Chip */}

@@ -14,12 +14,10 @@ import {
   AccordionSummary,
   AccordionDetails,
 } from "@mui/material";
-import { useTheme } from "@mui/material/styles";
 import {
   ExpandMore as ExpandMoreIcon,
 } from "@mui/icons-material";
-import { useGomakeTheme } from "@/hooks/use-gomake-thme";
-import { colorTokens } from "@/widgets/frontdesk/design-system";
+import { colorTokens, radiusTokens, shadowTokens } from "@/widgets/frontdesk/design-system";
 import { QuickActionButton } from "@/widgets/frontdesk/design-system/primitives/Button/QuickActionButton";
 import { QuickActionMenu, QuickActionItem } from "@/widgets/frontdesk/design-system/compounds/QuickActionMenu/QuickActionMenu";
 import { chatwootService } from "@/services/frontdesk";
@@ -50,8 +48,6 @@ export const ChatwootConversationDetailPanel: React.FC<ChatwootConversationDetai
   inboxes = [],
   onConversationUpdate,
 }) => {
-  const theme = useTheme();
-  const { primaryColor, neutralColor } = useGomakeTheme();
   const { router } = useChatwootProvider();
   const [quickActionsAnchor, setQuickActionsAnchor] = useState<null | HTMLElement>(null);
 
@@ -128,7 +124,7 @@ export const ChatwootConversationDetailPanel: React.FC<ChatwootConversationDetai
       sx={{
         width: 280,
         minWidth: 280,
-        backgroundColor: theme.palette.background.paper,
+        backgroundColor: colorTokens.semantic.background.primary,
         overflow: "auto",
         p: 2,
       }}

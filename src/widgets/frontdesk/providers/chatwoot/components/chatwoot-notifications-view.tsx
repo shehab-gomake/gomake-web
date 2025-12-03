@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Box, Stack, Typography, Paper } from "@mui/material";
-import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { colorTokens, radiusTokens, shadowTokens, semanticSpacing } from "@/widgets/frontdesk/design-system";
 import { useChatwootNotifications } from "../hooks/use-chatwoot-notifications";
 import { useChatwootNotificationContextMenu } from "../hooks/use-chatwoot-notification-context-menu";
 import { ChatwootNotification } from "@/services/frontdesk/api/chatwoot/types/notifications.types";
@@ -12,7 +12,6 @@ import {
 } from "./notifications";
 
 export const ChatwootNotificationsView: React.FC = () => {
-  const { primaryColor, neutralColor } = useGomakeTheme();
   const {
     notifications,
     loading,
@@ -85,19 +84,19 @@ export const ChatwootNotificationsView: React.FC = () => {
       elevation={0}
       sx={{
         height: "100%",
-        border: `1px solid ${neutralColor(200)}`,
+        border: `1px solid ${colorTokens.neutral[200]}`,
         borderRadius: 2,
         overflow: "hidden",
         display: "flex",
         flexDirection: "column",
-        backgroundColor: neutralColor(0),
+        backgroundColor: colorTokens.semantic.background.primary,
       }}
     >
       {/* Header */}
       <Box
         sx={{
-          backgroundColor: neutralColor(0),
-          borderBottom: `1px solid ${neutralColor(200)}`,
+          backgroundColor: colorTokens.semantic.background.primary,
+          borderBottom: `1px solid ${colorTokens.neutral[200]}`,
           px: 2,
           py: 1.5,
         }}
@@ -109,7 +108,7 @@ export const ChatwootNotificationsView: React.FC = () => {
               sx={{
                 fontWeight: 600,
                 fontSize: "1rem",
-                color: neutralColor(900),
+                color: colorTokens.neutral[900],
               }}
             >
               Inbox
@@ -117,7 +116,6 @@ export const ChatwootNotificationsView: React.FC = () => {
             <NotificationFilters
               filters={filters}
               onFiltersChange={updateFilters}
-              neutralColor={neutralColor}
             />
           </Stack>
 
@@ -126,7 +124,6 @@ export const ChatwootNotificationsView: React.FC = () => {
               onMarkAllAsRead={markAllAsRead}
               onDeleteAll={deleteAll}
               onDeleteAllRead={deleteAllRead}
-              neutralColor={neutralColor}
             />
           </Stack>
         </Stack>
@@ -137,7 +134,7 @@ export const ChatwootNotificationsView: React.FC = () => {
         sx={{
           flex: 1,
           overflow: "auto",
-          backgroundColor: neutralColor(0),
+          backgroundColor: colorTokens.semantic.background.primary,
           px: 1,
         }}
       >
@@ -147,8 +144,6 @@ export const ChatwootNotificationsView: React.FC = () => {
           error={error}
           onNotificationClick={handleNotificationClick}
           onNotificationContextMenu={handleNotificationContextMenu}
-          primaryColor={primaryColor}
-          neutralColor={neutralColor}
         />
       </Box>
 

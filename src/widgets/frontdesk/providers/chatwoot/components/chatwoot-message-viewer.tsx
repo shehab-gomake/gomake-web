@@ -1,8 +1,6 @@
 import React from "react";
-import { Box, Paper, Typography, Stack, alpha, Button, CircularProgress, Fade } from "@mui/material";
-import { useTheme } from "@mui/material/styles";
-import { useGomakeTheme } from "@/hooks/use-gomake-thme";
-import { PanelContent, EmptyState } from "@/widgets/frontdesk/design-system";
+import { Box, Paper, Typography, Stack, Button, CircularProgress, Fade, alpha, useTheme } from "@mui/material";
+import { PanelContent, EmptyState, colorTokens, radiusTokens } from "@/widgets/frontdesk/design-system";
 import { ChatwootMessageViewerHeader } from "./chatwoot-message-viewer-header";
 import { ChatwootMessageItem } from "./chatwoot-message-item";
 import { ChatwootResolutionStatusBar } from "./chatwoot-resolution-status-bar";
@@ -45,7 +43,6 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
   onToggleSidebar,
 }) => {
   const theme = useTheme();
-  const { neutralColor } = useGomakeTheme();
   const [isSending, setIsSending] = React.useState(false);
   
   // Track previous conversation for smooth transitions
@@ -99,8 +96,8 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
           flexDirection: "column",
           overflow: "hidden",
           height: "100%",
-          borderRadius: 2,
-          backgroundColor: neutralColor(0),
+          borderRadius: radiusTokens.lg,
+          backgroundColor: colorTokens.semantic.background.primary,
         }}
       >
         <EmptyState
@@ -353,7 +350,7 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
         overflow: "hidden",
         height: "100%",
         borderRadius: 2,
-        backgroundColor: neutralColor(0),
+        backgroundColor: colorTokens.semantic.background.primary,
         boxShadow: `0 2px 8px ${alpha(theme.palette.common.black, 0.06)}, 0 1px 3px ${alpha(theme.palette.common.black, 0.04)}`,
         position: "relative",
       }}
@@ -412,8 +409,8 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
           flex: 1,
           overflow: "auto",
           background: theme.palette.mode === "dark"
-            ? `linear-gradient(to bottom, ${neutralColor(900)}, ${neutralColor(850)})`
-            : `linear-gradient(to bottom, ${neutralColor(25)}, ${neutralColor(50)})`,
+            ? `linear-gradient(to bottom, ${colorTokens.neutral[900]}, ${colorTokens.neutral[800]})`
+            : `linear-gradient(to bottom, ${colorTokens.neutral[25]}, ${colorTokens.neutral[50]})`,
           p: 2.5,
           opacity: loading && messages.length === 0 ? 0.5 : 1,
           transition: "opacity 0.2s ease-in-out",
@@ -450,8 +447,8 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
                     sx={{
                       borderRadius: 2,
                       textTransform: "none",
-                      borderColor: neutralColor(200),
-                      color: neutralColor(700),
+                      borderColor: colorTokens.neutral[200],
+                      color: colorTokens.neutral[700],
                       "&:hover": {
                         borderColor: theme.palette.primary.main,
                         backgroundColor: alpha(theme.palette.primary.main, 0.05),
@@ -481,7 +478,7 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
                 if (visibleMessages.length === 0) {
                   return (
                     <Box sx={{ p: 3, textAlign: "center" }}>
-                      <Typography variant="body2" sx={{ color: neutralColor(500) }}>
+                      <Typography variant="body2" sx={{ color: colorTokens.neutral[500] }}>
                         No messages to display
                       </Typography>
                     </Box>
