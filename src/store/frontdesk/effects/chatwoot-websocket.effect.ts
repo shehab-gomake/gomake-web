@@ -28,6 +28,8 @@ import { ChatwootWebSocketState, ChatwootWebSocketStats } from "@/store/frontdes
 export interface WebSocketEffectConfig {
   /** Account ID to connect to */
   accountId: number | null;
+  /** User ID for authentication */
+  userId?: number;
   /** Pub/sub token for authentication */
   pubsubToken?: string;
   /** Auto-reconnect on disconnect */
@@ -100,14 +102,18 @@ export const createChatwootWebSocketEffect = <T>(getConfig: () => WebSocketEffec
 // ============================================================================
 
 function connectWebSocket(config: WebSocketEffectConfig, log: (message: string, ...args: unknown[]) => void) {
-  if (!config.accountId || !config.pubsubToken) {
-    log("Cannot connect: missing accountId or pubsubToken");
+  if (!config.accountId || !config.pubsubToken || !config.userId) {
+    log("Cannot connect: missing accountId, userId, or pubsubToken");
     return;
   }
 
   try {
-    log("Connecting to WebSocket", { accountId: config.accountId });
-    chatwootWebSocketService.connect(config.accountId, config.pubsubToken);
+    log("Connecting to WebSocket", { accountId: config.accountId, userId: config.userId });
+    chatwootWebSocketService.connect({
+      accountId: config.accountId,
+      userId: config.userId,
+      pubsubToken: config.pubsubToken,
+    });
   } catch (error) {
     log("Failed to connect", error);
   }

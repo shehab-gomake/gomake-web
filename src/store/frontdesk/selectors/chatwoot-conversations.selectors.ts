@@ -118,11 +118,11 @@ export const unreadConversationsSelector = selector<ChatwootConversation[]>({
 });
 
 /**
- * Total Unread Count Selector
+ * Chatwoot Total Unread Count Selector
  *
- * Returns sum of all unread messages across conversations.
+ * Returns sum of all unread messages across Chatwoot conversations.
  */
-export const totalUnreadCountSelector = selector<number>({
+export const chatwootTotalUnreadCountSelector = selector<number>({
   key: "chatwoot.conversations.totalUnreadCount",
   get: ({ get }) => {
     const conversations = get(chatwootConversationsAtom);
