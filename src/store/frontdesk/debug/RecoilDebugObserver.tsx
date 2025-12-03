@@ -78,7 +78,7 @@ export function RecoilDebugObserver({ config = {} }: RecoilDebugObserverProps) {
     // Find modified atoms
     const modifiedAtoms: Array<{ key: string; oldValue: unknown; newValue: unknown }> = [];
 
-    for (const node of snapshot.getNodes_UNSTABLE({ isModified: true })) {
+    for (const node of Array.from(snapshot.getNodes_UNSTABLE({ isModified: true }))) {
       const key = node.key;
 
       // Apply key filter
@@ -130,7 +130,7 @@ export function RecoilDebugObserver({ config = {} }: RecoilDebugObserverProps) {
 
     const snapshotMap = new Map<string, unknown>();
 
-    for (const node of snapshot.getNodes_UNSTABLE()) {
+    for (const node of Array.from(snapshot.getNodes_UNSTABLE())) {
       const loadable = snapshot.getLoadable(node);
       if (loadable.state === "hasValue") {
         snapshotMap.set(node.key, loadable.contents);
