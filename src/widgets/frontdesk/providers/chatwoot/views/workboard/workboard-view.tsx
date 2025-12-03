@@ -76,22 +76,14 @@ const WorkboardViewComponent: React.FC = () => {
     refreshBoard,
     handleDragEnd,
     resolveConversation,
-    snoozeConversation,
     assignConversation,
     setPriority,
-    enableAutoRefresh,
-    setEnableAutoRefresh,
   } = useKanbanBoard();
 
   // Handle refresh click
   const handleRefresh = useCallback(() => {
     refreshBoard();
   }, [refreshBoard]);
-
-  // Handle auto-refresh toggle
-  const handleAutoRefreshToggle = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setEnableAutoRefresh(e.target.checked);
-  }, [setEnableAutoRefresh]);
 
   // Total active conversations
   const activeCount = conversations.filter(c => c.status !== 'resolved').length;
@@ -111,7 +103,7 @@ const WorkboardViewComponent: React.FC = () => {
         sx={{
           backgroundColor: colorTokens.semantic.background.primary,
           borderBottom: `1px solid ${colorTokens.neutral[200]}`,
-          boxShadow: shadowTokens.sm,
+          boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
           zIndex: 10,
         }}
       >
@@ -121,39 +113,45 @@ const WorkboardViewComponent: React.FC = () => {
           justifyContent="space-between"
           alignItems="center"
           sx={{
-            padding: `${semanticSpacing.component.md}px ${semanticSpacing.component.lg}px`,
+            padding: '16px 24px',
           }}
         >
           <Stack direction="row" alignItems="center" spacing={2}>
+            {/* Icon Container - 44px with 12px radius */}
             <Box
               sx={{
-                width: 40,
-                height: 40,
-                borderRadius: `${radiusTokens.md}px`,
+                width: 44,
+                height: 44,
+                borderRadius: '12px',
                 backgroundColor: colorTokens.primary[50],
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
+                border: `1px solid ${colorTokens.primary[100]}`,
               }}
             >
-              <DashboardIcon sx={{ color: colorTokens.primary[600], fontSize: 24 }} />
+              <DashboardIcon sx={{ color: colorTokens.primary[600], fontSize: 22 }} />
             </Box>
             <Box>
+              {/* Title - 22px semibold */}
               <Typography
-                variant="h5"
                 sx={{
-                  fontWeight: 700,
+                  fontSize: '22px',
+                  fontWeight: 600,
                   color: colorTokens.semantic.text.primary,
-                  lineHeight: 1.2,
+                  lineHeight: 1.3,
+                  letterSpacing: '-0.02em',
                 }}
               >
                 Control Station
               </Typography>
+              {/* Subtitle - 13px muted gray */}
               <Typography
-                variant="body2"
                 sx={{
-                  color: colorTokens.semantic.text.secondary,
-                  fontSize: '0.85rem',
+                  fontSize: '13px',
+                  fontWeight: 500,
+                  color: colorTokens.neutral[500],
+                  marginTop: '2px',
                 }}
               >
                 {activeCount} active conversations • {agents.length} agents
@@ -161,60 +159,50 @@ const WorkboardViewComponent: React.FC = () => {
             </Box>
           </Stack>
 
-          <Stack direction="row" alignItems="center" spacing={2}>
+          <Stack direction="row" alignItems="center" spacing={2.5}>
             {/* View Toggle */}
             <ViewToggle
               viewMode={viewMode}
               onViewModeChange={setViewMode}
             />
 
-            <Divider orientation="vertical" flexItem sx={{ mx: 1 }} />
-
-            {/* Auto-refresh Toggle */}
-            <FormControlLabel
-              control={
-                <Switch
-                  size="small"
-                  checked={enableAutoRefresh}
-                  onChange={handleAutoRefreshToggle}
-                  sx={{
-                    '& .MuiSwitch-switchBase.Mui-checked': {
-                      color: colorTokens.primary[500],
-                    },
-                    '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
-                      backgroundColor: colorTokens.primary[400],
-                    },
-                  }}
-                />
-              }
-              label={
-                <Stack direction="row" alignItems="center" spacing={0.5}>
-                  <AutoRefreshIcon sx={{ fontSize: 16, color: enableAutoRefresh ? colorTokens.primary[500] : colorTokens.neutral[400] }} />
-                  <Typography variant="caption" sx={{ color: colorTokens.semantic.text.secondary }}>
-                    Auto
-                  </Typography>
-                </Stack>
-              }
-              sx={{ mr: 0 }}
+            <Divider 
+              orientation="vertical" 
+              flexItem 
+              sx={{ 
+                height: 28, 
+                alignSelf: 'center',
+                borderColor: colorTokens.neutral[200],
+              }} 
             />
 
-            {/* Refresh Button */}
+            {/* Refresh Button - refined styling */}
             <Tooltip title="Refresh now">
               <IconButton
                 onClick={handleRefresh}
                 disabled={isLoading}
                 sx={{
-                  color: colorTokens.semantic.text.secondary,
-                  backgroundColor: colorTokens.neutral[100],
+                  width: 36,
+                  height: 36,
+                  borderRadius: '10px',
+                  color: colorTokens.neutral[600],
+                  backgroundColor: colorTokens.neutral[50],
+                  border: `1px solid ${colorTokens.neutral[200]}`,
+                  transition: 'all 0.15s ease',
                   '&:hover': {
-                    backgroundColor: colorTokens.neutral[200],
+                    backgroundColor: colorTokens.neutral[100],
+                    borderColor: colorTokens.neutral[300],
+                  },
+                  '&:disabled': {
+                    backgroundColor: colorTokens.neutral[50],
+                    borderColor: colorTokens.neutral[200],
                   },
                 }}
               >
                 {isLoading ? (
-                  <CircularProgress size={20} sx={{ color: colorTokens.primary[500] }} />
+                  <CircularProgress size={18} sx={{ color: colorTokens.primary[500] }} />
                 ) : (
-                  <RefreshIcon />
+                  <RefreshIcon sx={{ fontSize: 18 }} />
                 )}
               </IconButton>
             </Tooltip>
@@ -266,7 +254,6 @@ const WorkboardViewComponent: React.FC = () => {
           onDragEnd={handleDragEnd}
           onRefresh={handleRefresh}
           onResolve={resolveConversation}
-          onSnooze={snoozeConversation}
           onAssign={assignConversation}
           onPriorityChange={setPriority}
         />

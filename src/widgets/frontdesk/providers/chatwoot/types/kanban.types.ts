@@ -20,7 +20,7 @@ import type { Agent } from '@/services/frontdesk/api/chatwoot/types/agents.types
 
 /**
  * Kanban view mode - determines how columns are organized
- * - 'status': Columns represent conversation statuses (open, pending, resolved, snoozed)
+ * - 'status': Columns represent conversation statuses (open, pending, resolved)
  * - 'assignee': Columns represent agents/team members
  */
 export type KanbanViewMode = 'status' | 'assignee';
@@ -76,6 +76,10 @@ export interface KanbanConversationFilters {
   labels?: string[];
   search?: string;
   teamId?: number;
+  /** Filter by assignee - use 'unassigned' for unassigned conversations, or agent ID */
+  assigneeId?: number | 'unassigned';
+  /** Filter by specific statuses (e.g., show only open and pending) */
+  statuses?: ConversationStatus[];
 }
 
 // ============================================
@@ -101,23 +105,21 @@ export interface KanbanBoardState {
 
 /**
  * Conversation status column configurations
- * Matches Chatwoot ConversationStatus enum
+ * Matches Chatwoot ConversationStatus enum (excluding snoozed)
  */
 export const CONVERSATION_STATUS_COLUMNS: StatusColumnConfig[] = [
   { status: ConversationStatus.OPEN, title: 'Open', order: 0 },
   { status: ConversationStatus.PENDING, title: 'Pending', order: 1 },
-  { status: ConversationStatus.SNOOZED, title: 'Snoozed', order: 2 },
-  { status: ConversationStatus.RESOLVED, title: 'Resolved', order: 3 },
+  { status: ConversationStatus.RESOLVED, title: 'Resolved', order: 2 },
 ];
 
 /**
- * Status to display name mapping
+ * Status to display name mapping (for workboard - excludes snoozed)
  */
-export const STATUS_DISPLAY_NAMES: Record<ConversationStatus, string> = {
+export const STATUS_DISPLAY_NAMES: Partial<Record<ConversationStatus, string>> = {
   [ConversationStatus.ALL]: 'All',
   [ConversationStatus.OPEN]: 'Open',
   [ConversationStatus.PENDING]: 'Pending',
-  [ConversationStatus.SNOOZED]: 'Snoozed',
   [ConversationStatus.RESOLVED]: 'Resolved',
 };
 

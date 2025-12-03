@@ -2,24 +2,24 @@
  * Kanban Board Component for Chatwoot Conversations
  * 
  * Main board layout with horizontal scrolling columns.
- * Wraps columns in DragDropContext for drag-and-drop functionality.
- * 
- * Uses FrontDesk design system tokens for consistent styling.
+ * Uses unified design system components for consistent styling.
  */
 
 import React, { memo, useCallback } from 'react';
 import { DragDropContext, DropResult } from 'react-beautiful-dnd';
-import { Box, Stack, CircularProgress, Typography, Button, alpha } from '@mui/material';
+import { Box, Stack, CircularProgress, Typography, alpha } from '@mui/material';
 import { 
   Refresh as RefreshIcon,
   Inbox as InboxIcon,
 } from '@mui/icons-material';
 
-// Design system
+// Design system - unified components and tokens
 import { 
-  colorTokens, 
-  semanticSpacing,
+  colorTokens,
   radiusTokens,
+  semanticTypography,
+  EmptyState,
+  Button,
 } from '@/widgets/frontdesk/design-system';
 
 // Components
@@ -46,13 +46,12 @@ export interface KanbanBoardProps {
   onDragEnd: (result: DropResult) => void;
   onRefresh: () => void;
   onResolve: (conversation: ChatwootConversation) => void;
-  onSnooze: (conversation: ChatwootConversation) => void;
   onAssign: (conversation: ChatwootConversation, agentId: number | null) => void;
   onPriorityChange: (conversation: ChatwootConversation, priority: ConversationPriority) => void;
 }
 
 // ============================================
-// Loading State
+// Loading State - Modern centered spinner
 // ============================================
 
 const LoadingState: React.FC = () => (
@@ -62,15 +61,21 @@ const LoadingState: React.FC = () => (
     sx={{
       height: '100%',
       minHeight: 400,
+      backgroundColor: colorTokens.neutral[50],
     }}
   >
-    <CircularProgress size={48} sx={{ color: colorTokens.primary[500] }} />
+    <CircularProgress 
+      size={36} 
+      thickness={3}
+      sx={{ 
+        color: colorTokens.primary[500],
+        marginBottom: '12px',
+      }} 
+    />
     <Typography
-      variant="body1"
       sx={{
-        mt: 2,
+        ...semanticTypography.body.medium,
         color: colorTokens.semantic.text.secondary,
-        fontWeight: 500,
       }}
     >
       Loading conversations...
@@ -79,7 +84,7 @@ const LoadingState: React.FC = () => (
 );
 
 // ============================================
-// Error State
+// Error State - Using design system components
 // ============================================
 
 interface ErrorStateProps {
@@ -88,115 +93,55 @@ interface ErrorStateProps {
 }
 
 const ErrorState: React.FC<ErrorStateProps> = ({ error, onRetry }) => (
-  <Stack
-    justifyContent="center"
-    alignItems="center"
+  <Box
     sx={{
       height: '100%',
       minHeight: 400,
-      padding: 4,
+      backgroundColor: colorTokens.neutral[50],
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
     }}
   >
-    <Box
-      sx={{
-        width: 64,
-        height: 64,
-        borderRadius: '50%',
-        backgroundColor: colorTokens.error[50],
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        mb: 2,
+    <EmptyState
+      icon={<InboxIcon />}
+      title="Failed to load board"
+      description={error}
+      action={{
+        label: 'Try Again',
+        onClick: onRetry,
       }}
-    >
-      <InboxIcon sx={{ fontSize: 32, color: colorTokens.error[500] }} />
-    </Box>
-    <Typography
-      variant="h6"
       sx={{
-        color: colorTokens.error[600],
-        fontWeight: 600,
-        mb: 1,
-      }}
-    >
-      Failed to load board
-    </Typography>
-    <Typography
-      variant="body2"
-      sx={{
-        color: colorTokens.semantic.text.secondary,
-        mb: 3,
-        textAlign: 'center',
-        maxWidth: 400,
-      }}
-    >
-      {error}
-    </Typography>
-    <Button
-      variant="contained"
-      startIcon={<RefreshIcon />}
-      onClick={onRetry}
-      sx={{
-        backgroundColor: colorTokens.primary[600],
-        '&:hover': {
-          backgroundColor: colorTokens.primary[700],
+        '& .MuiBox-root:first-of-type': {
+          backgroundColor: colorTokens.error[50],
+          color: colorTokens.error[500],
         },
       }}
-    >
-      Try Again
-    </Button>
-  </Stack>
+    />
+  </Box>
 );
 
 // ============================================
-// Empty State
+// Empty State - Using unified EmptyState component
 // ============================================
 
-const EmptyState: React.FC = () => (
-  <Stack
-    justifyContent="center"
-    alignItems="center"
+const BoardEmptyState: React.FC = () => (
+  <Box
     sx={{
       height: '100%',
       minHeight: 400,
-      padding: 4,
+      backgroundColor: colorTokens.neutral[50],
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
     }}
   >
-    <Box
-      sx={{
-        width: 80,
-        height: 80,
-        borderRadius: '50%',
-        backgroundColor: colorTokens.neutral[100],
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        mb: 2,
-      }}
-    >
-      <InboxIcon sx={{ fontSize: 40, color: colorTokens.neutral[400] }} />
-    </Box>
-    <Typography
-      variant="h6"
-      sx={{
-        color: colorTokens.semantic.text.secondary,
-        fontWeight: 600,
-        mb: 1,
-      }}
-    >
-      No conversations yet
-    </Typography>
-    <Typography
-      variant="body2"
-      sx={{
-        color: colorTokens.semantic.text.tertiary,
-        textAlign: 'center',
-        maxWidth: 400,
-      }}
-    >
-      Conversations will appear here when customers reach out. Check back soon or create a new conversation.
-    </Typography>
-  </Stack>
+    <EmptyState
+      icon={<InboxIcon />}
+      title="No conversations yet"
+      description="Conversations will appear here when customers reach out. Check back soon or create a new conversation."
+    />
+  </Box>
 );
 
 // ============================================
@@ -212,7 +157,6 @@ const KanbanBoardComponent: React.FC<KanbanBoardProps> = ({
   onDragEnd,
   onRefresh,
   onResolve,
-  onSnooze,
   onAssign,
   onPriorityChange,
 }) => {
@@ -221,7 +165,7 @@ const KanbanBoardComponent: React.FC<KanbanBoardProps> = ({
   // Handle card click - navigate to conversation
   const handleCardClick = useCallback((conversation: ChatwootConversation) => {
     if (conversation.id) {
-      navigateToConversation(conversation.id);
+      navigateToConversation(conversation.id.toString());
     }
   }, [navigateToConversation]);
 
@@ -240,7 +184,7 @@ const KanbanBoardComponent: React.FC<KanbanBoardProps> = ({
 
   // Show empty state
   if (totalConversations === 0) {
-    return <EmptyState />;
+    return <BoardEmptyState />;
   }
 
   return (
@@ -261,21 +205,24 @@ const KanbanBoardComponent: React.FC<KanbanBoardProps> = ({
               left: 0,
               right: 0,
               bottom: 0,
-              backgroundColor: alpha(colorTokens.semantic.background.primary, 0.7),
+              backgroundColor: alpha(colorTokens.semantic.background.primary, 0.8),
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               zIndex: 10,
-              backdropFilter: 'blur(2px)',
+              backdropFilter: 'blur(3px)',
             }}
           >
-            <Stack alignItems="center" spacing={1}>
-              <CircularProgress size={36} sx={{ color: colorTokens.primary[500] }} />
+            <Stack alignItems="center" spacing={1.5}>
+              <CircularProgress 
+                size={32} 
+                thickness={3}
+                sx={{ color: colorTokens.primary[500] }} 
+              />
               <Typography
-                variant="body2"
                 sx={{
+                  ...semanticTypography.body.medium,
                   color: colorTokens.semantic.text.secondary,
-                  fontWeight: 500,
                 }}
               >
                 Updating...
@@ -284,29 +231,28 @@ const KanbanBoardComponent: React.FC<KanbanBoardProps> = ({
           </Box>
         )}
 
-        {/* Columns container */}
+        {/* Columns container - unified spacing */}
         <Stack
           direction="row"
-          spacing={2}
+          spacing={2.5}
           sx={{
-            padding: `${semanticSpacing.component.lg}px`,
+            padding: '20px 24px',
             height: '100%',
             overflowX: 'auto',
             overflowY: 'hidden',
             alignItems: 'flex-start',
             backgroundColor: colorTokens.neutral[100],
             '&::-webkit-scrollbar': {
-              height: 8,
+              height: 6,
             },
             '&::-webkit-scrollbar-track': {
-              backgroundColor: colorTokens.neutral[200],
-              borderRadius: 4,
+              backgroundColor: 'transparent',
             },
             '&::-webkit-scrollbar-thumb': {
-              backgroundColor: colorTokens.neutral[400],
-              borderRadius: 4,
+              backgroundColor: colorTokens.neutral[300],
+              borderRadius: 3,
               '&:hover': {
-                backgroundColor: colorTokens.neutral[500],
+                backgroundColor: colorTokens.neutral[400],
               },
             },
           }}
@@ -318,7 +264,6 @@ const KanbanBoardComponent: React.FC<KanbanBoardProps> = ({
               agents={agents}
               onCardClick={handleCardClick}
               onResolve={onResolve}
-              onSnooze={onSnooze}
               onAssign={onAssign}
               onPriorityChange={onPriorityChange}
             />

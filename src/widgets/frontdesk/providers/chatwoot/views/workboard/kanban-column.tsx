@@ -43,7 +43,6 @@ export interface KanbanColumnProps {
   agents?: Agent[];
   onCardClick?: (conversation: ChatwootConversation) => void;
   onResolve?: (conversation: ChatwootConversation) => void;
-  onSnooze?: (conversation: ChatwootConversation) => void;
   onAssign?: (conversation: ChatwootConversation, agentId: number | null) => void;
   onPriorityChange?: (conversation: ChatwootConversation, priority: ConversationPriority) => void;
 }
@@ -71,8 +70,6 @@ const getStatusColor = (status?: ConversationStatus): string => {
       return conversationStatusColors.open.main;
     case ConversationStatus.PENDING:
       return conversationStatusColors.pending.main;
-    case ConversationStatus.SNOOZED:
-      return colorTokens.warning[500];
     case ConversationStatus.RESOLVED:
       return conversationStatusColors.resolved.main;
     default:
@@ -86,8 +83,6 @@ const getStatusBgColor = (status?: ConversationStatus): string => {
       return conversationStatusColors.open.bg;
     case ConversationStatus.PENDING:
       return conversationStatusColors.pending.bg;
-    case ConversationStatus.SNOOZED:
-      return colorTokens.warning[50];
     case ConversationStatus.RESOLVED:
       return conversationStatusColors.resolved.bg;
     default:
@@ -104,7 +99,6 @@ const KanbanColumnComponent: React.FC<KanbanColumnProps> = ({
   agents = [],
   onCardClick,
   onResolve,
-  onSnooze,
   onAssign,
   onPriorityChange,
 }) => {
@@ -116,39 +110,40 @@ const KanbanColumnComponent: React.FC<KanbanColumnProps> = ({
       sx={{
         display: 'flex',
         flexDirection: 'column',
-        width: 320,
-        minWidth: 320,
-        maxWidth: 320,
+        width: 310,
+        minWidth: 310,
+        maxWidth: 310,
         height: '100%',
-        backgroundColor: colorTokens.neutral[50],
-        borderRadius: `${radiusTokens.lg}px`,
+        backgroundColor: colorTokens.semantic.background.primary,
+        borderRadius: '14px',
         border: `1px solid ${colorTokens.neutral[200]}`,
+        boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
         overflow: 'hidden',
       }}
     >
-      {/* Column Header */}
+      {/* Column Header - Modern styling */}
       <Box
         sx={{
-          padding: `${semanticSpacing.component.md}px`,
+          padding: '16px',
           borderBottom: `1px solid ${colorTokens.neutral[200]}`,
           backgroundColor: column.status 
-            ? getStatusBgColor(column.status)
-            : colorTokens.semantic.background.primary,
+            ? alpha(getStatusBgColor(column.status), 0.7)
+            : colorTokens.neutral[50],
         }}
       >
         <Stack direction="row" justifyContent="space-between" alignItems="center">
-          <Stack direction="row" alignItems="center" spacing={1}>
+          <Stack direction="row" alignItems="center" spacing={1.5}>
             {/* Status Color Indicator or Avatar */}
             {column.status ? (
               // Status view - show color dot
               <Box
                 sx={{
-                  width: 12,
-                  height: 12,
+                  width: 10,
+                  height: 10,
                   borderRadius: '50%',
                   backgroundColor: columnColor,
                   flexShrink: 0,
-                  boxShadow: `0 0 0 3px ${alpha(columnColor, 0.2)}`,
+                  boxShadow: `0 0 0 3px ${alpha(columnColor, 0.15)}`,
                 }}
               />
             ) : hasAssignee ? (
@@ -160,7 +155,7 @@ const KanbanColumnComponent: React.FC<KanbanColumnProps> = ({
                   column.workload && (
                     <DotIcon
                       sx={{
-                        fontSize: 14,
+                        fontSize: 12,
                         color: getWorkloadColor(column.workload.loadLevel),
                         backgroundColor: colorTokens.semantic.background.primary,
                         borderRadius: '50%',
@@ -172,11 +167,13 @@ const KanbanColumnComponent: React.FC<KanbanColumnProps> = ({
                 <Avatar
                   src={column.assignee?.thumbnail}
                   sx={{
-                    width: layoutTokens.avatar.sm,
-                    height: layoutTokens.avatar.sm,
-                    fontSize: '0.75rem',
+                    width: 28,
+                    height: 28,
+                    fontSize: '11px',
+                    fontWeight: 600,
                     backgroundColor: colorTokens.primary[100],
                     color: colorTokens.primary[700],
+                    border: `1px solid ${colorTokens.neutral[200]}`,
                   }}
                 >
                   {column.assignee?.name?.charAt(0).toUpperCase()}
@@ -186,42 +183,46 @@ const KanbanColumnComponent: React.FC<KanbanColumnProps> = ({
               // Unassigned - show person icon
               <Avatar
                 sx={{
-                  width: layoutTokens.avatar.sm,
-                  height: layoutTokens.avatar.sm,
-                  backgroundColor: colorTokens.neutral[200],
+                  width: 28,
+                  height: 28,
+                  backgroundColor: colorTokens.neutral[100],
                   color: colorTokens.neutral[500],
+                  border: `1px solid ${colorTokens.neutral[200]}`,
                 }}
               >
-                <PersonIcon sx={{ fontSize: 16 }} />
+                <PersonIcon sx={{ fontSize: 14 }} />
               </Avatar>
             )}
 
-            {/* Column Title */}
+            {/* Column Title - 14-16px semibold */}
             <Box>
               <Typography
-                variant="subtitle2"
                 sx={{
+                  fontSize: '14px',
                   fontWeight: 600,
                   color: colorTokens.semantic.text.primary,
                   overflow: 'hidden',
                   textOverflow: 'ellipsis',
                   whiteSpace: 'nowrap',
-                  maxWidth: 180,
+                  maxWidth: 170,
+                  lineHeight: 1.3,
                 }}
               >
                 {column.title}
               </Typography>
+              {/* Email - 12px muted */}
               {column.assignee?.email && (
                 <Typography
-                  variant="caption"
                   sx={{
-                    color: colorTokens.semantic.text.secondary,
+                    fontSize: '11px',
+                    fontWeight: 400,
+                    color: colorTokens.neutral[500],
                     overflow: 'hidden',
                     textOverflow: 'ellipsis',
                     whiteSpace: 'nowrap',
                     display: 'block',
-                    maxWidth: 180,
-                    fontSize: '0.65rem',
+                    maxWidth: 170,
+                    marginTop: '1px',
                   }}
                 >
                   {column.assignee.email}
@@ -230,7 +231,7 @@ const KanbanColumnComponent: React.FC<KanbanColumnProps> = ({
             </Box>
           </Stack>
 
-          {/* Conversation Count Badge */}
+          {/* Conversation Count Badge - Refined */}
           <Tooltip 
             title={column.workload 
               ? `${column.workload.openCount} open / ${column.workload.totalCount} total`
@@ -239,21 +240,21 @@ const KanbanColumnComponent: React.FC<KanbanColumnProps> = ({
           >
             <Box
               sx={{
-                minWidth: 32,
-                height: 32,
-                borderRadius: `${radiusTokens.full}px`,
+                minWidth: 28,
+                height: 28,
+                borderRadius: '8px',
                 backgroundColor: column.count > 0 
-                  ? alpha(columnColor, 0.15)
+                  ? alpha(columnColor, 0.12)
                   : colorTokens.neutral[100],
                 color: column.count > 0 
                   ? columnColor
-                  : colorTokens.semantic.text.secondary,
+                  : colorTokens.neutral[500],
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                padding: '0 10px',
+                padding: '0 8px',
                 fontWeight: 700,
-                fontSize: '0.9rem',
+                fontSize: '13px',
               }}
             >
               {column.count}
@@ -263,23 +264,22 @@ const KanbanColumnComponent: React.FC<KanbanColumnProps> = ({
 
         {/* Workload indicator for assignee columns */}
         {column.workload && (
-          <Box sx={{ mt: 1.5 }}>
-            <Stack direction="row" justifyContent="space-between" alignItems="center" mb={0.5}>
+          <Box sx={{ marginTop: '12px' }}>
+            <Stack direction="row" justifyContent="space-between" alignItems="center" marginBottom="4px">
               <Typography
-                variant="caption"
                 sx={{
-                  fontSize: '0.65rem',
-                  color: colorTokens.semantic.text.secondary,
+                  fontSize: '11px',
+                  fontWeight: 500,
+                  color: colorTokens.neutral[500],
                 }}
               >
                 Workload
               </Typography>
               <Typography
-                variant="caption"
                 sx={{
-                  fontSize: '0.65rem',
+                  fontSize: '11px',
+                  fontWeight: 600,
                   color: getWorkloadColor(column.workload.loadLevel),
-                  fontWeight: 500,
                 }}
               >
                 {column.workload.openCount} open
@@ -315,16 +315,16 @@ const KanbanColumnComponent: React.FC<KanbanColumnProps> = ({
             {...provided.droppableProps}
             sx={{
               flex: 1,
-              padding: `${semanticSpacing.component.sm}px`,
+              padding: '12px',
               overflowY: 'auto',
               overflowX: 'hidden',
               backgroundColor: snapshot.isDraggingOver 
-                ? alpha(columnColor, 0.05)
-                : 'transparent',
+                ? alpha(columnColor, 0.04)
+                : colorTokens.neutral[50],
               transition: 'background-color 0.2s ease',
               minHeight: 200,
               '&::-webkit-scrollbar': {
-                width: 6,
+                width: 5,
               },
               '&::-webkit-scrollbar-track': {
                 backgroundColor: 'transparent',
@@ -347,14 +347,13 @@ const KanbanColumnComponent: React.FC<KanbanColumnProps> = ({
                 agents={agents}
                 onClick={onCardClick}
                 onResolve={onResolve}
-                onSnooze={onSnooze}
                 onAssign={onAssign}
                 onPriorityChange={onPriorityChange}
               />
             ))}
             {provided.placeholder}
 
-            {/* Empty State */}
+            {/* Empty State - Modern styling */}
             {column.conversations.length === 0 && !snapshot.isDraggingOver && (
               <Box
                 sx={{
@@ -362,15 +361,15 @@ const KanbanColumnComponent: React.FC<KanbanColumnProps> = ({
                   flexDirection: 'column',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  height: 120,
-                  color: colorTokens.semantic.text.disabled,
+                  height: 100,
+                  color: colorTokens.neutral[400],
                   textAlign: 'center',
                 }}
               >
-                <Typography variant="body2" sx={{ fontStyle: 'italic', fontSize: '0.85rem' }}>
+                <Typography sx={{ fontSize: '13px', fontWeight: 500 }}>
                   No conversations
                 </Typography>
-                <Typography variant="caption" sx={{ fontSize: '0.75rem', mt: 0.5 }}>
+                <Typography sx={{ fontSize: '12px', fontWeight: 400, marginTop: '4px' }}>
                   Drag here or create new
                 </Typography>
               </Box>
@@ -383,14 +382,14 @@ const KanbanColumnComponent: React.FC<KanbanColumnProps> = ({
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  height: 100,
+                  height: 80,
                   border: `2px dashed ${colorTokens.primary[300]}`,
-                  borderRadius: `${radiusTokens.md}px`,
+                  borderRadius: '12px',
                   color: colorTokens.primary[500],
                   backgroundColor: alpha(colorTokens.primary[50], 0.5),
                 }}
               >
-                <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                <Typography sx={{ fontSize: '13px', fontWeight: 500 }}>
                   Drop here
                 </Typography>
               </Box>

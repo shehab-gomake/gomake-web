@@ -2,27 +2,25 @@
  * Workload Header Component
  * 
  * Displays agent workload summary cards at the top of the Kanban board.
- * Shows each agent's open conversations and total workload.
- * 
- * Uses FrontDesk design system tokens for consistent styling.
+ * Uses unified design system components and tokens for consistency.
  */
 
 import React, { memo, useMemo } from 'react';
-import { Box, Typography, Stack, Avatar, Skeleton, Tooltip, alpha } from '@mui/material';
+import { Box, Stack, Tooltip } from '@mui/material';
 import { 
   Inbox as InboxIcon,
-  CheckCircleOutline as ResolvedIcon,
   PendingActions as PendingIcon,
 } from '@mui/icons-material';
 
-// Design system
+// Design system - unified components and tokens
 import { 
-  colorTokens, 
-  shadowTokens, 
-  radiusTokens, 
-  semanticSpacing,
-  layoutTokens,
+  colorTokens,
+  radiusTokens,
+  shadowTokens,
+  semanticTypography,
   slaColors,
+  Avatar,
+  StatsCardSkeleton,
 } from '@/widgets/frontdesk/design-system';
 
 // Types
@@ -65,65 +63,40 @@ const getWorkloadColor = (level: 'low' | 'medium' | 'high'): string => {
   }
 };
 
-const getWorkloadBg = (level: 'low' | 'medium' | 'high'): string => {
-  switch (level) {
-    case 'low':
-      return slaColors.onTrack.bg;
-    case 'medium':
-      return slaColors.warning.bg;
-    case 'high':
-      return slaColors.breached.bg;
-    default:
-      return colorTokens.neutral[100];
-  }
+// Status colors for conversation counts
+const statusColors = {
+  open: colorTokens.success[500],
+  pending: colorTokens.warning[500],
 };
 
 // ============================================
-// Loading Skeleton
+// Loading Skeleton - Using unified StatsCardSkeleton
 // ============================================
 
 const WorkloadSkeleton: React.FC = () => (
   <Stack
     direction="row"
-    spacing={2}
+    spacing={2.5}
     sx={{
-      padding: `${semanticSpacing.component.md}px`,
+      padding: '16px 24px',
       overflowX: 'auto',
       '&::-webkit-scrollbar': {
-        height: 6,
+        height: 4,
       },
       '&::-webkit-scrollbar-thumb': {
         backgroundColor: colorTokens.neutral[300],
-        borderRadius: 3,
+        borderRadius: 2,
       },
     }}
   >
     {[1, 2, 3, 4].map((i) => (
-      <Box
-        key={i}
-        sx={{
-          minWidth: 180,
-          padding: `${semanticSpacing.component.md}px`,
-          backgroundColor: colorTokens.semantic.background.primary,
-          borderRadius: `${radiusTokens.md}px`,
-          border: `1px solid ${colorTokens.neutral[200]}`,
-        }}
-      >
-        <Stack direction="row" spacing={1} alignItems="center" mb={1}>
-          <Skeleton variant="circular" width={32} height={32} />
-          <Skeleton variant="text" width={100} />
-        </Stack>
-        <Stack direction="row" spacing={2}>
-          <Skeleton variant="text" width={60} />
-          <Skeleton variant="text" width={60} />
-        </Stack>
-      </Box>
+      <StatsCardSkeleton key={i} sx={{ minWidth: 170 }} />
     ))}
   </Stack>
 );
 
 // ============================================
-// Agent Card Component
+// Agent Card Component - Using design system tokens
 // ============================================
 
 interface AgentCardProps {
@@ -140,115 +113,116 @@ const AgentCard: React.FC<AgentCardProps> = memo(({ summary }) => {
     >
       <Box
         sx={{
-          minWidth: 180,
-          maxWidth: 200,
-          padding: `${semanticSpacing.component.md}px`,
+          minWidth: 170,
+          maxWidth: 190,
+          padding: '16px',
           backgroundColor: colorTokens.semantic.background.primary,
-          borderRadius: `${radiusTokens.md}px`,
-          boxShadow: shadowTokens.xs,
-          border: `1px solid ${colorTokens.neutral[200]}`,
+          borderRadius: `${radiusTokens.lg}px`,
+          boxShadow: shadowTokens.card,
+          border: `1px solid ${colorTokens.semantic.border.default}`,
           borderLeft: `3px solid ${getWorkloadColor(loadLevel)}`,
-          transition: 'box-shadow 0.2s ease',
+          transition: 'transform 0.15s ease, box-shadow 0.15s ease',
           '&:hover': {
-            boxShadow: shadowTokens.sm,
+            transform: 'translateY(-1px)',
+            boxShadow: shadowTokens.cardHover,
           },
         }}
       >
-        {/* Agent Info */}
-        <Stack direction="row" spacing={1} alignItems="center" mb={1.5}>
+        {/* Agent Info - Using Avatar primitive */}
+        <Stack direction="row" spacing={1.5} alignItems="center" marginBottom="12px">
           <Avatar
+            name={agent.name || 'Agent'}
             src={agent.thumbnail}
-            sx={{
-              width: layoutTokens.avatar.sm,
-              height: layoutTokens.avatar.sm,
-              fontSize: '0.75rem',
-              backgroundColor: colorTokens.primary[100],
-              color: colorTokens.primary[700],
-            }}
-          >
-            {agent.name?.charAt(0).toUpperCase()}
-          </Avatar>
+            size="sm"
+          />
           <Box flex={1} minWidth={0}>
-            <Typography
-              variant="body2"
+            {/* Name - Using semantic typography */}
+            <Box
+              component="span"
               sx={{
-                fontWeight: 600,
+                ...semanticTypography.body.medium,
+                fontWeight: semanticTypography.heading.h5.fontWeight,
                 color: colorTokens.semantic.text.primary,
+                display: 'block',
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
                 whiteSpace: 'nowrap',
               }}
             >
               {agent.name}
-            </Typography>
-            <Typography
-              variant="caption"
+            </Box>
+            {/* Status */}
+            <Box
+              component="span"
               sx={{
+                ...semanticTypography.caption.small,
+                fontWeight: semanticTypography.label.small.fontWeight,
                 color: getWorkloadColor(loadLevel),
-                fontWeight: 500,
-                fontSize: '0.65rem',
+                display: 'block',
               }}
             >
               {loadLevel === 'low' && 'Available'}
               {loadLevel === 'medium' && 'Moderate'}
               {loadLevel === 'high' && 'Heavy Load'}
-            </Typography>
+            </Box>
           </Box>
         </Stack>
 
-        {/* Stats */}
-        <Stack direction="row" spacing={1.5}>
+        {/* Stats - Using semantic typography */}
+        <Stack direction="row" spacing={2}>
           <Stack direction="row" alignItems="center" spacing={0.5}>
-            <InboxIcon sx={{ fontSize: 14, color: conversationStatusColors.open.main }} />
-            <Typography
-              variant="caption"
+            <InboxIcon sx={{ fontSize: 13, color: statusColors.open }} />
+            <Box
+              component="span"
               sx={{
-                fontWeight: 600,
+                ...semanticTypography.body.small,
+                fontWeight: semanticTypography.heading.h5.fontWeight,
                 color: colorTokens.semantic.text.primary,
               }}
             >
               {openCount}
-            </Typography>
-            <Typography
-              variant="caption"
+            </Box>
+            <Box
+              component="span"
               sx={{
-                color: colorTokens.semantic.text.secondary,
-                fontSize: '0.65rem',
+                ...semanticTypography.caption.small,
+                color: colorTokens.semantic.text.tertiary,
               }}
             >
               open
-            </Typography>
+            </Box>
           </Stack>
           
           <Stack direction="row" alignItems="center" spacing={0.5}>
-            <PendingIcon sx={{ fontSize: 14, color: conversationStatusColors.pending.main }} />
-            <Typography
-              variant="caption"
+            <PendingIcon sx={{ fontSize: 13, color: statusColors.pending }} />
+            <Box
+              component="span"
               sx={{
-                fontWeight: 600,
+                ...semanticTypography.body.small,
+                fontWeight: semanticTypography.heading.h5.fontWeight,
                 color: colorTokens.semantic.text.primary,
               }}
             >
               {pendingCount}
-            </Typography>
-            <Typography
-              variant="caption"
+            </Box>
+            <Box
+              component="span"
               sx={{
-                color: colorTokens.semantic.text.secondary,
-                fontSize: '0.65rem',
+                ...semanticTypography.caption.small,
+                color: colorTokens.semantic.text.tertiary,
               }}
             >
               pending
-            </Typography>
+            </Box>
           </Stack>
         </Stack>
 
         {/* Workload Bar */}
-        <Box sx={{ mt: 1.5 }}>
+        <Box sx={{ marginTop: '12px' }}>
           <Box
             sx={{
               height: 4,
-              borderRadius: 2,
+              borderRadius: radiusTokens.sm,
               backgroundColor: colorTokens.neutral[200],
               overflow: 'hidden',
             }}
@@ -258,7 +232,7 @@ const AgentCard: React.FC<AgentCardProps> = memo(({ summary }) => {
                 height: '100%',
                 width: `${Math.min((openCount / WORKLOAD_THRESHOLDS.medium) * 100, 100)}%`,
                 backgroundColor: getWorkloadColor(loadLevel),
-                borderRadius: 2,
+                borderRadius: radiusTokens.sm,
                 transition: 'width 0.3s ease',
               }}
             />
@@ -268,13 +242,6 @@ const AgentCard: React.FC<AgentCardProps> = memo(({ summary }) => {
     </Tooltip>
   );
 });
-
-// Import conversation status colors
-const conversationStatusColors = {
-  open: { main: colorTokens.success[500] },
-  pending: { main: colorTokens.warning[500] },
-  resolved: { main: colorTokens.neutral[500] },
-};
 
 // ============================================
 // Main Component
@@ -299,7 +266,7 @@ const WorkloadHeaderComponent: React.FC<WorkloadHeaderProps> = ({
         totalCount: agentConvs.length,
         loadLevel: getWorkloadLevel(openCount),
       };
-    }).sort((a, b) => b.openCount - a.openCount); // Sort by open count descending
+    }).sort((a, b) => b.openCount - a.openCount);
   }, [agents, conversations]);
 
   // Calculate totals
@@ -323,40 +290,49 @@ const WorkloadHeaderComponent: React.FC<WorkloadHeaderProps> = ({
   return (
     <Box
       sx={{
-        padding: `${semanticSpacing.component.md}px`,
+        padding: '16px 24px',
         backgroundColor: colorTokens.neutral[50],
-        borderBottom: `1px solid ${colorTokens.neutral[200]}`,
+        borderBottom: `1px solid ${colorTokens.semantic.border.default}`,
       }}
     >
-      {/* Header */}
-      <Stack direction="row" justifyContent="space-between" alignItems="center" mb={1.5}>
-        <Typography
-          variant="subtitle2"
+      {/* Header - Using semantic typography */}
+      <Stack direction="row" justifyContent="space-between" alignItems="center" marginBottom="12px">
+        <Box
+          component="span"
           sx={{
-            fontWeight: 600,
+            ...semanticTypography.heading.h5,
             color: colorTokens.semantic.text.primary,
           }}
         >
           Team Workload
-        </Typography>
-        <Stack direction="row" spacing={2}>
-          <Typography
-            variant="caption"
+        </Box>
+        <Stack direction="row" spacing={2.5}>
+          <Box
+            component="span"
             sx={{
-              color: colorTokens.semantic.text.secondary,
+              ...semanticTypography.caption.medium,
+              color: colorTokens.semantic.text.tertiary,
+              '& strong': {
+                fontWeight: semanticTypography.heading.h5.fontWeight,
+                color: colorTokens.semantic.text.primary,
+              },
             }}
           >
             Total: <strong>{totals.total}</strong>
-          </Typography>
+          </Box>
           {totals.unassigned > 0 && (
-            <Typography
-              variant="caption"
+            <Box
+              component="span"
               sx={{
+                ...semanticTypography.caption.medium,
                 color: colorTokens.warning[600],
+                '& strong': {
+                  fontWeight: semanticTypography.heading.h5.fontWeight,
+                },
               }}
             >
               Unassigned: <strong>{totals.unassignedOpen}</strong> open
-            </Typography>
+            </Box>
           )}
         </Stack>
       </Stack>
@@ -364,22 +340,16 @@ const WorkloadHeaderComponent: React.FC<WorkloadHeaderProps> = ({
       {/* Agent Cards */}
       <Stack
         direction="row"
-        spacing={2}
+        spacing={2.5}
         sx={{
           overflowX: 'auto',
-          paddingBottom: 1,
+          paddingBottom: '4px',
           '&::-webkit-scrollbar': {
-            height: 6,
-          },
-          '&::-webkit-scrollbar-track': {
-            backgroundColor: 'transparent',
+            height: 4,
           },
           '&::-webkit-scrollbar-thumb': {
             backgroundColor: colorTokens.neutral[300],
-            borderRadius: 3,
-            '&:hover': {
-              backgroundColor: colorTokens.neutral[400],
-            },
+            borderRadius: 2,
           },
         }}
       >

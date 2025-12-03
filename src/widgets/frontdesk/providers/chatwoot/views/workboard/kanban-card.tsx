@@ -2,18 +2,13 @@
  * Kanban Card Component for Chatwoot Conversations
  * 
  * Draggable conversation card for the Kanban board.
- * Displays contact info, last message preview, priority, and time.
- * Includes quick action buttons on hover.
- * 
- * Uses FrontDesk design system tokens for consistent styling.
+ * Uses unified design system components and tokens for consistency.
  */
 
 import React, { memo, useCallback, useState } from 'react';
 import { Draggable } from 'react-beautiful-dnd';
 import { 
   Box, 
-  Typography, 
-  Avatar, 
   Tooltip, 
   Stack, 
   Chip,
@@ -23,7 +18,6 @@ import {
   ListItemIcon,
   ListItemText,
   Divider,
-  alpha,
 } from '@mui/material';
 import { 
   AccessTime as AccessTimeIcon,
@@ -34,24 +28,22 @@ import {
   CheckCircle as ResolveIcon,
   PersonAdd as AssignIcon,
   PriorityHigh as PriorityIcon,
-  Snooze as SnoozeIcon,
   OpenInNew as OpenIcon,
   Flag as FlagIcon,
-  LowPriority as LowPriorityIcon,
   Warning as UrgentIcon,
   ArrowUpward as HighIcon,
   Remove as MediumIcon,
   ArrowDownward as LowIcon,
 } from '@mui/icons-material';
 
-// Design system - import from centralized location
+// Design system - unified components and tokens
 import { 
   colorTokens, 
   shadowTokens, 
   radiusTokens, 
-  semanticSpacing,
-  layoutTokens,
+  semanticTypography,
   priorityColors,
+  Avatar,
 } from '@/widgets/frontdesk/design-system';
 
 // Types
@@ -71,7 +63,6 @@ export interface KanbanConversationCardProps {
   agents?: Agent[];
   onClick?: (conversation: ChatwootConversation) => void;
   onResolve?: (conversation: ChatwootConversation) => void;
-  onSnooze?: (conversation: ChatwootConversation) => void;
   onAssign?: (conversation: ChatwootConversation, agentId: number | null) => void;
   onPriorityChange?: (conversation: ChatwootConversation, priority: ConversationPriority) => void;
 }
@@ -83,7 +74,7 @@ export interface KanbanConversationCardProps {
 const formatRelativeTime = (timestamp?: number): string => {
   if (!timestamp) return '';
   
-  const date = new Date(timestamp * 1000); // Chatwoot uses seconds
+  const date = new Date(timestamp * 1000);
   const now = new Date();
   const diffMs = now.getTime() - date.getTime();
   const diffMins = Math.floor(diffMs / 60000);
@@ -123,10 +114,6 @@ const getChannelIcon = (channel?: string): React.ReactNode => {
     case 'channel::email':
     case 'email':
       return <EmailIcon sx={{ fontSize: 12 }} />;
-    case 'channel::api':
-    case 'api':
-    case 'channel::widget':
-    case 'widget':
     default:
       return <ChatIcon sx={{ fontSize: 12 }} />;
   }
@@ -156,7 +143,6 @@ const KanbanConversationCardComponent: React.FC<KanbanConversationCardProps> = (
   agents = [],
   onClick,
   onResolve,
-  onSnooze,
   onAssign,
   onPriorityChange,
 }) => {
@@ -166,7 +152,6 @@ const KanbanConversationCardComponent: React.FC<KanbanConversationCardProps> = (
   const [assignMenuAnchor, setAssignMenuAnchor] = useState<null | HTMLElement>(null);
 
   const handleClick = useCallback((e: React.MouseEvent) => {
-    // Don't trigger if clicking on menu
     if ((e.target as HTMLElement).closest('.card-menu')) return;
     onClick?.(conversation);
   }, [onClick, conversation]);
@@ -185,12 +170,6 @@ const KanbanConversationCardComponent: React.FC<KanbanConversationCardProps> = (
     handleMenuClose();
     onResolve?.(conversation);
   }, [conversation, onResolve, handleMenuClose]);
-
-  const handleSnooze = useCallback((e: React.MouseEvent) => {
-    e.stopPropagation();
-    handleMenuClose();
-    onSnooze?.(conversation);
-  }, [conversation, onSnooze, handleMenuClose]);
 
   const handlePriorityMenuOpen = useCallback((e: React.MouseEvent<HTMLElement>) => {
     e.stopPropagation();
@@ -232,12 +211,20 @@ const KanbanConversationCardComponent: React.FC<KanbanConversationCardProps> = (
   const hasUnread = (conversation.unread_count || 0) > 0;
   const isResolved = conversation.status === 'resolved';
   
-  // Get contact display info
   const contactName = contact?.name || contact?.email || 'Unknown Contact';
-  const contactInitial = contactName.charAt(0).toUpperCase();
-  
-  // Get last message preview
   const messagePreview = truncateText(lastMessage?.content, 60);
+
+  // Menu styling using design tokens
+  const menuPaperStyles = {
+    borderRadius: `${radiusTokens.lg}px`,
+    boxShadow: shadowTokens.lg,
+    border: `1px solid ${colorTokens.semantic.border.default}`,
+    marginTop: '4px',
+    '& .MuiMenuItem-root': {
+      ...semanticTypography.body.small,
+      padding: '8px 14px',
+    },
+  };
 
   return (
     <Draggable draggableId={conversation.id?.toString() || ''} index={index}>
@@ -251,21 +238,21 @@ const KanbanConversationCardComponent: React.FC<KanbanConversationCardProps> = (
           onMouseLeave={() => setIsHovered(false)}
           sx={{
             backgroundColor: colorTokens.semantic.background.primary,
-            borderRadius: `${radiusTokens.md}px`,
-            padding: `${semanticSpacing.component.md}px`,
-            marginBottom: `${semanticSpacing.component.sm}px`,
-            boxShadow: snapshot.isDragging ? shadowTokens.lg : shadowTokens.sm,
+            borderRadius: `${radiusTokens.xl}px`,
+            padding: '16px',
+            marginBottom: '10px',
+            boxShadow: snapshot.isDragging ? shadowTokens.lg : shadowTokens.card,
             border: `1px solid ${snapshot.isDragging ? colorTokens.primary[300] : colorTokens.semantic.border.default}`,
             borderLeft: priorityLabel 
               ? `3px solid ${priorityTokens.main}` 
               : `1px solid ${colorTokens.semantic.border.default}`,
             cursor: 'pointer',
-            transition: 'box-shadow 0.2s ease, border-color 0.2s ease',
+            transition: 'all 0.15s ease',
             transform: snapshot.isDragging ? 'rotate(2deg)' : 'none',
             position: 'relative',
-            opacity: isResolved ? 0.7 : 1,
+            opacity: isResolved ? 0.65 : 1,
             '&:hover': {
-              boxShadow: shadowTokens.md,
+              boxShadow: shadowTokens.cardHover,
               borderColor: colorTokens.primary[200],
             },
           }}
@@ -275,12 +262,13 @@ const KanbanConversationCardComponent: React.FC<KanbanConversationCardProps> = (
             <Box
               sx={{
                 position: 'absolute',
-                top: 8,
-                right: 8,
-                width: 8,
-                height: 8,
-                borderRadius: '50%',
+                top: 10,
+                right: 10,
+                width: 7,
+                height: 7,
+                borderRadius: radiusTokens.full,
                 backgroundColor: colorTokens.primary[500],
+                boxShadow: `0 0 0 2px ${colorTokens.semantic.background.primary}`,
               }}
             />
           )}
@@ -291,14 +279,15 @@ const KanbanConversationCardComponent: React.FC<KanbanConversationCardProps> = (
               className="card-menu"
               sx={{
                 position: 'absolute',
-                top: 4,
-                right: 4,
+                top: 6,
+                right: 6,
                 display: 'flex',
-                gap: 0.5,
-                backgroundColor: alpha(colorTokens.semantic.background.primary, 0.95),
-                borderRadius: `${radiusTokens.sm}px`,
-                padding: '2px',
-                boxShadow: shadowTokens.sm,
+                gap: '2px',
+                backgroundColor: colorTokens.semantic.background.primary,
+                borderRadius: `${radiusTokens.md}px`,
+                padding: '3px',
+                boxShadow: shadowTokens.md,
+                border: `1px solid ${colorTokens.semantic.border.default}`,
               }}
             >
               {!isResolved && (
@@ -307,14 +296,16 @@ const KanbanConversationCardComponent: React.FC<KanbanConversationCardProps> = (
                     size="small"
                     onClick={handleResolve}
                     sx={{
-                      padding: '4px',
-                      color: colorTokens.success[500],
+                      width: 26,
+                      height: 26,
+                      borderRadius: `${radiusTokens.sm}px`,
+                      color: colorTokens.success[600],
                       '&:hover': {
                         backgroundColor: colorTokens.success[50],
                       },
                     }}
                   >
-                    <ResolveIcon sx={{ fontSize: 16 }} />
+                    <ResolveIcon sx={{ fontSize: 15 }} />
                   </IconButton>
                 </Tooltip>
               )}
@@ -323,39 +314,37 @@ const KanbanConversationCardComponent: React.FC<KanbanConversationCardProps> = (
                   size="small"
                   onClick={handleMenuOpen}
                   sx={{
-                    padding: '4px',
-                    color: colorTokens.neutral[500],
+                    width: 26,
+                    height: 26,
+                    borderRadius: `${radiusTokens.sm}px`,
+                    color: colorTokens.semantic.text.secondary,
                     '&:hover': {
-                      backgroundColor: colorTokens.neutral[100],
+                      backgroundColor: colorTokens.semantic.interactive.hover,
                     },
                   }}
                 >
-                  <MoreIcon sx={{ fontSize: 16 }} />
+                  <MoreIcon sx={{ fontSize: 15 }} />
                 </IconButton>
               </Tooltip>
             </Box>
           )}
 
           {/* Header: Contact Avatar + Name + Channel */}
-          <Stack direction="row" spacing={1} alignItems="center" mb={1}>
+          <Stack direction="row" spacing={1.5} alignItems="center" marginBottom="10px">
+            {/* Using Avatar primitive from design system */}
             <Avatar
+              name={contactName}
               src={contact?.avatar_url}
-              sx={{
-                width: layoutTokens.avatar.sm,
-                height: layoutTokens.avatar.sm,
-                fontSize: '0.75rem',
-                backgroundColor: colorTokens.primary[100],
-                color: colorTokens.primary[700],
-              }}
-            >
-              {contactInitial}
-            </Avatar>
+              size="sm"
+            />
             <Box flex={1} minWidth={0}>
-              <Stack direction="row" alignItems="center" spacing={0.5}>
-                <Typography
-                  variant="body2"
+              <Stack direction="row" alignItems="center" spacing={0.75}>
+                {/* Name - Using semantic typography */}
+                <Box
+                  component="span"
                   sx={{
-                    fontWeight: 600,
+                    ...semanticTypography.body.medium,
+                    fontWeight: semanticTypography.heading.h5.fontWeight,
                     color: colorTokens.semantic.text.primary,
                     overflow: 'hidden',
                     textOverflow: 'ellipsis',
@@ -363,118 +352,126 @@ const KanbanConversationCardComponent: React.FC<KanbanConversationCardProps> = (
                   }}
                 >
                   {contactName}
-                </Typography>
+                </Box>
                 <Tooltip title={channel || 'Chat'}>
                   <Box
                     sx={{
                       display: 'flex',
                       alignItems: 'center',
-                      color: colorTokens.neutral[400],
+                      color: colorTokens.semantic.text.tertiary,
                     }}
                   >
                     {getChannelIcon(channel)}
                   </Box>
                 </Tooltip>
               </Stack>
+              {/* Email - Using semantic typography */}
               {contact?.email && contact.name && (
-                <Typography
-                  variant="caption"
+                <Box
+                  component="span"
                   sx={{
-                    color: colorTokens.semantic.text.secondary,
+                    ...semanticTypography.caption.medium,
+                    color: colorTokens.semantic.text.tertiary,
                     overflow: 'hidden',
                     textOverflow: 'ellipsis',
                     whiteSpace: 'nowrap',
                     display: 'block',
-                    fontSize: '0.7rem',
                   }}
                 >
                   {contact.email}
-                </Typography>
+                </Box>
               )}
             </Box>
           </Stack>
 
-          {/* Message Preview */}
+          {/* Message Preview - Using semantic typography */}
           {messagePreview && (
-            <Typography
-              variant="body2"
+            <Box
+              component="p"
               sx={{
+                ...semanticTypography.body.small,
                 color: colorTokens.semantic.text.secondary,
-                fontSize: '0.8rem',
-                lineHeight: 1.4,
-                mb: 1,
+                lineHeight: 1.45,
+                marginBottom: '10px',
                 display: '-webkit-box',
                 WebkitLineClamp: 2,
                 WebkitBoxOrient: 'vertical',
                 overflow: 'hidden',
+                margin: 0,
+                mb: '10px',
               }}
             >
               {messagePreview}
-            </Typography>
+            </Box>
           )}
 
           {/* Labels */}
           {conversation.labels && conversation.labels.length > 0 && (
-            <Stack direction="row" spacing={0.5} mb={1} flexWrap="wrap" sx={{ gap: 0.5 }}>
+            <Stack direction="row" spacing={0.75} marginBottom="10px" flexWrap="wrap" sx={{ gap: '6px' }}>
               {conversation.labels.slice(0, 2).map((label, idx) => (
                 <Chip
                   key={idx}
                   label={label}
                   size="small"
                   sx={{
-                    height: 18,
-                    fontSize: '0.65rem',
-                    fontWeight: 500,
-                    backgroundColor: colorTokens.neutral[100],
-                    color: colorTokens.neutral[700],
+                    height: 20,
+                    ...semanticTypography.caption.small,
+                    fontWeight: semanticTypography.label.small.fontWeight,
+                    borderRadius: `${radiusTokens.sm}px`,
+                    backgroundColor: colorTokens.semantic.background.secondary,
+                    color: colorTokens.semantic.text.secondary,
+                    border: `1px solid ${colorTokens.semantic.border.default}`,
                     '& .MuiChip-label': {
-                      px: 0.75,
+                      padding: '0 8px',
                     },
                   }}
                 />
               ))}
               {conversation.labels.length > 2 && (
-                <Typography
-                  variant="caption"
+                <Box
+                  component="span"
                   sx={{
-                    color: colorTokens.neutral[400],
-                    fontSize: '0.65rem',
+                    ...semanticTypography.caption.small,
+                    color: colorTokens.semantic.text.tertiary,
                     alignSelf: 'center',
                   }}
                 >
                   +{conversation.labels.length - 2}
-                </Typography>
+                </Box>
               )}
             </Stack>
           )}
 
           {/* Footer: Assignee + Priority + Time */}
           <Stack direction="row" justifyContent="space-between" alignItems="center">
-            {/* Assignee */}
-            <Stack direction="row" alignItems="center" spacing={0.5}>
+            {/* Assignee - Using Avatar primitive */}
+            <Stack direction="row" alignItems="center" spacing={0.75}>
               {assignee ? (
                 <Tooltip title={assignee.name || 'Assigned'}>
-                  <Avatar
-                    src={assignee.thumbnail}
-                    sx={{
-                      width: 20,
-                      height: 20,
-                      fontSize: '0.6rem',
-                      backgroundColor: colorTokens.success[100],
-                      color: colorTokens.success[700],
-                    }}
-                  >
-                    {assignee.name?.charAt(0).toUpperCase()}
-                  </Avatar>
+                  <span>
+                    <Avatar
+                      name={assignee.name || 'Agent'}
+                      src={assignee.thumbnail}
+                      size="xs"
+                    />
+                  </span>
                 </Tooltip>
               ) : (
                 <Tooltip title="Unassigned">
-                  <PersonIcon 
-                    sx={{ 
-                      fontSize: 14, 
-                      color: colorTokens.neutral[400],
-                    }} 
-                  />
+                  <Box
+                    sx={{
+                      width: 20,
+                      height: 20,
+                      borderRadius: radiusTokens.full,
+                      backgroundColor: colorTokens.semantic.background.secondary,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      border: `1px solid ${colorTokens.semantic.border.default}`,
+                    }}
+                  >
+                    <PersonIcon sx={{ fontSize: 12, color: colorTokens.semantic.text.tertiary }} />
+                  </Box>
                 </Tooltip>
               )}
             </Stack>
@@ -486,33 +483,29 @@ const KanbanConversationCardComponent: React.FC<KanbanConversationCardProps> = (
                   label={priorityLabel}
                   size="small"
                   sx={{
-                    height: 16,
-                    fontSize: '0.6rem',
-                    fontWeight: 600,
+                    height: 18,
+                    ...semanticTypography.caption.small,
+                    fontWeight: semanticTypography.heading.h6.fontWeight,
+                    borderRadius: `${radiusTokens.xs}px`,
                     backgroundColor: priorityTokens.bg,
                     color: priorityTokens.text,
                     '& .MuiChip-label': {
-                      px: 0.5,
+                      padding: '0 6px',
                     },
                   }}
                 />
               )}
-              <Stack direction="row" alignItems="center" spacing={0.25}>
-                <AccessTimeIcon 
-                  sx={{ 
-                    fontSize: 11, 
-                    color: colorTokens.neutral[400],
-                  }} 
-                />
-                <Typography
-                  variant="caption"
+              <Stack direction="row" alignItems="center" spacing={0.5}>
+                <AccessTimeIcon sx={{ fontSize: 12, color: colorTokens.semantic.text.tertiary }} />
+                <Box
+                  component="span"
                   sx={{
-                    fontSize: '0.65rem',
-                    color: colorTokens.neutral[400],
+                    ...semanticTypography.caption.medium,
+                    color: colorTokens.semantic.text.tertiary,
                   }}
                 >
                   {formatRelativeTime(conversation.last_activity_at)}
-                </Typography>
+                </Box>
               </Stack>
             </Stack>
           </Stack>
@@ -524,48 +517,36 @@ const KanbanConversationCardComponent: React.FC<KanbanConversationCardProps> = (
             onClose={handleMenuClose}
             transformOrigin={{ horizontal: 'right', vertical: 'top' }}
             anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-            PaperProps={{
-              sx: {
-                minWidth: 180,
-                boxShadow: shadowTokens.lg,
-              },
-            }}
+            PaperProps={{ sx: { ...menuPaperStyles, minWidth: 170 } }}
           >
             <MenuItem onClick={() => onClick?.(conversation)}>
-              <ListItemIcon>
-                <OpenIcon fontSize="small" />
+              <ListItemIcon sx={{ minWidth: 32 }}>
+                <OpenIcon sx={{ fontSize: 16 }} />
               </ListItemIcon>
               <ListItemText>Open</ListItemText>
             </MenuItem>
             
             {!isResolved && (
               <MenuItem onClick={handleResolve}>
-                <ListItemIcon>
-                  <ResolveIcon fontSize="small" sx={{ color: colorTokens.success[500] }} />
+                <ListItemIcon sx={{ minWidth: 32 }}>
+                  <ResolveIcon sx={{ fontSize: 16, color: colorTokens.success[500] }} />
                 </ListItemIcon>
                 <ListItemText>Mark Resolved</ListItemText>
               </MenuItem>
             )}
             
-            <MenuItem onClick={handleSnooze}>
-              <ListItemIcon>
-                <SnoozeIcon fontSize="small" sx={{ color: colorTokens.warning[500] }} />
-              </ListItemIcon>
-              <ListItemText>Snooze</ListItemText>
-            </MenuItem>
-            
-            <Divider />
+            <Divider sx={{ my: '4px' }} />
             
             <MenuItem onClick={handleAssignMenuOpen}>
-              <ListItemIcon>
-                <AssignIcon fontSize="small" />
+              <ListItemIcon sx={{ minWidth: 32 }}>
+                <AssignIcon sx={{ fontSize: 16 }} />
               </ListItemIcon>
               <ListItemText>Assign to...</ListItemText>
             </MenuItem>
             
             <MenuItem onClick={handlePriorityMenuOpen}>
-              <ListItemIcon>
-                <PriorityIcon fontSize="small" />
+              <ListItemIcon sx={{ minWidth: 32 }}>
+                <PriorityIcon sx={{ fontSize: 16 }} />
               </ListItemIcon>
               <ListItemText>Set Priority...</ListItemText>
             </MenuItem>
@@ -578,12 +559,7 @@ const KanbanConversationCardComponent: React.FC<KanbanConversationCardProps> = (
             onClose={handlePriorityMenuClose}
             transformOrigin={{ horizontal: 'left', vertical: 'top' }}
             anchorOrigin={{ horizontal: 'right', vertical: 'top' }}
-            PaperProps={{
-              sx: {
-                minWidth: 150,
-                boxShadow: shadowTokens.lg,
-              },
-            }}
+            PaperProps={{ sx: { ...menuPaperStyles, minWidth: 140 } }}
           >
             {PRIORITY_OPTIONS.map((option) => (
               <MenuItem 
@@ -591,7 +567,7 @@ const KanbanConversationCardComponent: React.FC<KanbanConversationCardProps> = (
                 onClick={() => handlePrioritySelect(option.value)}
                 selected={conversation.priority === option.value}
               >
-                <ListItemIcon sx={{ color: option.color }}>
+                <ListItemIcon sx={{ minWidth: 28, color: option.color }}>
                   {option.icon}
                 </ListItemIcon>
                 <ListItemText>{option.label}</ListItemText>
@@ -606,34 +582,27 @@ const KanbanConversationCardComponent: React.FC<KanbanConversationCardProps> = (
             onClose={handleAssignMenuClose}
             transformOrigin={{ horizontal: 'left', vertical: 'top' }}
             anchorOrigin={{ horizontal: 'right', vertical: 'top' }}
-            PaperProps={{
-              sx: {
-                minWidth: 180,
-                maxHeight: 300,
-                boxShadow: shadowTokens.lg,
-              },
-            }}
+            PaperProps={{ sx: { ...menuPaperStyles, minWidth: 170, maxHeight: 280 } }}
           >
             <MenuItem onClick={() => handleAssignSelect(null)}>
-              <ListItemIcon>
-                <PersonIcon fontSize="small" sx={{ color: colorTokens.neutral[400] }} />
+              <ListItemIcon sx={{ minWidth: 32 }}>
+                <PersonIcon sx={{ fontSize: 16, color: colorTokens.semantic.text.tertiary }} />
               </ListItemIcon>
               <ListItemText>Unassign</ListItemText>
             </MenuItem>
-            <Divider />
+            <Divider sx={{ my: '4px' }} />
             {agents.map((agent) => (
               <MenuItem 
                 key={agent.id} 
                 onClick={() => handleAssignSelect(agent.id)}
                 selected={assignee?.id === agent.id}
               >
-                <ListItemIcon>
+                <ListItemIcon sx={{ minWidth: 32 }}>
                   <Avatar 
+                    name={agent.name || 'Agent'}
                     src={agent.thumbnail} 
-                    sx={{ width: 24, height: 24, fontSize: '0.7rem' }}
-                  >
-                    {agent.name?.charAt(0)}
-                  </Avatar>
+                    size="xs"
+                  />
                 </ListItemIcon>
                 <ListItemText>{agent.name}</ListItemText>
               </MenuItem>

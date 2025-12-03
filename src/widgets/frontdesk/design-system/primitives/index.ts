@@ -10,8 +10,3 @@ export * from './Button';
 export * from './Chip';
 export * from './Input';
 export * from './MenuItem';
-export * from './StatusIndicator';
-export * from './Select';
-export * from './TextArea';
-export * from './FormField';
-export * from './IconWrapper';

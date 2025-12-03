@@ -7,9 +7,9 @@
  * Features:
  * - View mode switching (status/assignee)
  * - Drag and drop for status/assignment changes
- * - Quick actions (resolve, snooze, assign, priority)
- * - Filtering and search
- * - Auto-refresh capability
+ * - Quick actions (resolve, assign, priority)
+ * - Filtering and search (excludes snoozed conversations)
+ * - Real-time updates via WebSocket
  * 
  * Uses existing Chatwoot services and follows FrontDesk patterns.
  */
@@ -53,14 +53,12 @@ import { chatwootService } from '@/services/frontdesk';
 // Hooks
 import { useChatwootAgents } from './resources/use-chatwoot-agents';
 import { useChatwootInboxes } from './use-chatwoot-inboxes';
+import { useKanbanWebSocket } from './use-kanban-websocket';
 
 // Utilities
 import { createLogger } from '@/services/frontdesk/utils/logger';
 
 const logger = createLogger('useKanbanBoard');
-
-// Auto-refresh interval (30 seconds)
-const AUTO_REFRESH_INTERVAL = 30000;
 
 // ============================================
 // Hook Return Type
@@ -100,14 +98,9 @@ export interface UseKanbanBoardResult {
   
   // Quick Actions
   resolveConversation: (conversation: ChatwootConversation) => Promise<void>;
-  snoozeConversation: (conversation: ChatwootConversation, until?: Date) => Promise<void>;
   reopenConversation: (conversation: ChatwootConversation) => Promise<void>;
   assignConversation: (conversation: ChatwootConversation, agentId: number | null) => Promise<void>;
   setPriority: (conversation: ChatwootConversation, priority: ConversationPriority) => Promise<void>;
-  
-  // Auto-refresh
-  enableAutoRefresh: boolean;
-  setEnableAutoRefresh: (enable: boolean) => void;
 }
 
 // ============================================
@@ -134,19 +127,19 @@ export function useKanbanBoard(): UseKanbanBoardResult {
   const { agents, loading: agentsLoading, refresh: refreshAgents } = useChatwootAgents(accountId);
   const { inboxes, loading: inboxesLoading } = useChatwootInboxes();
   
-  // Auto-refresh state
-  const [enableAutoRefresh, setEnableAutoRefresh] = useState(true);
+  // WebSocket integration (always enabled)
+  useKanbanWebSocket(true);
 
   // Refs to prevent duplicate fetches
   const isFetchingRef = useRef(false);
-  const autoRefreshRef = useRef<NodeJS.Timeout | null>(null);
   
   // ============================================
   // Apply Filters
   // ============================================
   
   const filteredConversations = useMemo(() => {
-    let result = conversations;
+    // First, exclude snoozed conversations from the board
+    let result = conversations.filter(c => c.status !== 'snoozed');
     
     if (filters.priority) {
       result = result.filter(c => c.priority === filters.priority);
@@ -183,7 +176,6 @@ export function useKanbanBoard(): UseKanbanBoardResult {
     const grouped: Record<string, ChatwootConversation[]> = {
       [ConversationStatus.OPEN]: [],
       [ConversationStatus.PENDING]: [],
-      [ConversationStatus.SNOOZED]: [],
       [ConversationStatus.RESOLVED]: [],
     };
     
@@ -381,38 +373,6 @@ export function useKanbanBoard(): UseKanbanBoardResult {
     }
   }, [accountId, setConversations, setIsOperationLoading, refreshBoard]);
   
-  const snoozeConversation = useCallback(async (conversation: ChatwootConversation, until?: Date) => {
-    if (!accountId || !conversation.id) return;
-    
-    setIsOperationLoading(true);
-    
-    try {
-      // Default snooze until tomorrow 9 AM
-      const snoozedUntil = until || new Date(Date.now() + 24 * 60 * 60 * 1000);
-      snoozedUntil.setHours(9, 0, 0, 0);
-      
-      // Optimistic update
-      setConversations(prev => 
-        prev.map(c => c.id === conversation.id 
-          ? { ...c, status: 'snoozed', snoozed_until: Math.floor(snoozedUntil.getTime() / 1000) } 
-          : c
-        )
-      );
-      
-      await chatwootService.conversations.updateConversationStatus(accountId, conversation.id, {
-        status: 'snoozed',
-        snoozed_until: Math.floor(snoozedUntil.getTime() / 1000),
-      });
-      
-      logger.info(`Conversation ${conversation.id} snoozed until ${snoozedUntil}`);
-    } catch (err: any) {
-      logger.error('Failed to snooze conversation:', err);
-      refreshBoard(); // Revert on error
-    } finally {
-      setIsOperationLoading(false);
-    }
-  }, [accountId, setConversations, setIsOperationLoading, refreshBoard]);
-  
   const reopenConversation = useCallback(async (conversation: ChatwootConversation) => {
     if (!accountId || !conversation.id) return;
     
@@ -540,8 +500,8 @@ export function useKanbanBoard(): UseKanbanBoardResult {
     
     try {
       if (viewMode === 'status') {
-        // Moving between status columns
-        const newStatus = destColumnId as 'open' | 'resolved' | 'pending' | 'snoozed';
+        // Moving between status columns (snoozed not allowed)
+        const newStatus = destColumnId as 'open' | 'resolved' | 'pending';
         
         if (newStatus !== conversation.status) {
           // Optimistic update
@@ -620,26 +580,6 @@ export function useKanbanBoard(): UseKanbanBoardResult {
     }
   }, [viewMode, accountId, refreshAgents]);
   
-  // ============================================
-  // Auto-refresh
-  // ============================================
-  
-  useEffect(() => {
-    if (enableAutoRefresh && accountId) {
-      autoRefreshRef.current = setInterval(() => {
-        logger.debug('Auto-refreshing kanban board');
-        refreshBoard();
-      }, AUTO_REFRESH_INTERVAL);
-    }
-    
-    return () => {
-      if (autoRefreshRef.current) {
-        clearInterval(autoRefreshRef.current);
-        autoRefreshRef.current = null;
-      }
-    };
-  }, [enableAutoRefresh, accountId, refreshBoard]);
-  
   return {
     // View mode
     viewMode,
@@ -674,13 +614,8 @@ export function useKanbanBoard(): UseKanbanBoardResult {
     
     // Quick Actions
     resolveConversation,
-    snoozeConversation,
     reopenConversation,
     assignConversation,
     setPriority,
-    
-    // Auto-refresh
-    enableAutoRefresh,
-    setEnableAutoRefresh,
   };
 }

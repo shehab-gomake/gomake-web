@@ -57,22 +57,30 @@ const ViewToggleComponent: React.FC<ViewToggleProps> = ({
       size="small"
       sx={{
         backgroundColor: colorTokens.neutral[100],
-        borderRadius: `${radiusTokens.md}px`,
-        '& .MuiToggleButton-root': {
-          fontSize: '0.8rem',
-          fontWeight: 500,
-          color: colorTokens.semantic.text.secondary,
+        borderRadius: '10px',
+        padding: '3px',
+        border: `1px solid ${colorTokens.neutral[200]}`,
+        '& .MuiToggleButtonGroup-grouped': {
           border: 'none',
-          padding: '6px 12px',
+          borderRadius: '8px !important',
+          margin: 0,
+        },
+        '& .MuiToggleButton-root': {
+          fontSize: '13px',
+          fontWeight: 500,
+          color: colorTokens.neutral[600],
+          padding: '8px 14px',
           textTransform: 'none',
+          transition: 'all 0.15s ease',
           '&.Mui-selected': {
             backgroundColor: colorTokens.primary[600],
             color: colorTokens.semantic.text.inverse,
+            boxShadow: '0 1px 3px rgba(0,0,0,0.12)',
             '&:hover': {
               backgroundColor: colorTokens.primary[700],
             },
           },
-          '&:hover': {
+          '&:hover:not(.Mui-selected)': {
             backgroundColor: colorTokens.neutral[200],
           },
         },
@@ -80,13 +88,13 @@ const ViewToggleComponent: React.FC<ViewToggleProps> = ({
     >
       <Tooltip title="Group by conversation status">
         <ToggleButton value="status" aria-label="status view">
-          <StatusIcon sx={{ fontSize: 16, mr: 0.5 }} />
+          <StatusIcon sx={{ fontSize: 16, marginRight: '6px' }} />
           Status
         </ToggleButton>
       </Tooltip>
       <Tooltip title="Group by assigned agent">
         <ToggleButton value="assignee" aria-label="assignee view">
-          <AssigneeIcon sx={{ fontSize: 16, mr: 0.5 }} />
+          <AssigneeIcon sx={{ fontSize: 16, marginRight: '6px' }} />
           Assignee
         </ToggleButton>
       </Tooltip>
