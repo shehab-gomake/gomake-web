@@ -29,7 +29,6 @@ const DELETE_MATERIAL_CATEGORY_Row_URL = "/v1/materials/delete-material-category
 const CREATE_PURCHASE_ORDER_URL = "/v1/materials/create-purchase-order";
 const CREATE_DIE_CUT_FROM_TEMPLATE_MAKER_URL = "/v1/materials/create-die-cut-from-template-maker";
 const UPLOAD_PRINT_HOUSE_MATERIAL_IMAGE_URL = "/v1/materials/upload-print-house-material-image";
-const ADD_DOCUMENT_ITEM_FROM_MATERIALS = "/v1/printhouse-config/materials/add-document-item-from-material";
 const ADD_DOCUMENT_ITEM_FROM_MATERIAL_ROW = "/v1/printhouse-config/materials/add-document-item-from-material-row";
 const GET_DOCUMENT_ITEM_DATA_FROM_MATERIALS = "/v1/materials/get-document-item-data-from-material";
 const GET_DOCUMENT_ITEM_DATA_FROM_ROW_MATERIAL = "/v1/materials/get-document-item-data-from-row-material";
@@ -326,25 +325,6 @@ const uploadPrintHouseMaterialApi: ICallAndSetData = async (
   );
 };
 
-
-const addDocumentItemFromMaterialApi = async (
-  callApi: any,
-  callBack: any,
-  data: any,
-  documentType: number
-) => {
-  const url = `${ADD_DOCUMENT_ITEM_FROM_MATERIALS}/${documentType}`;
-  // Remove documentType from data if it exists (for backward compatibility)
-  const { documentType: _, ...requestData } = data || {};
-  return await getSetApiData(
-    callApi,
-    EHttpMethod.POST,
-    url,
-    callBack,
-    requestData
-  );
-};
-
 const addDocumentItemFromMaterialRowApi: ICallAndSetData = async (
   callApi,
   callBack,
@@ -507,7 +487,6 @@ export {
   createPurchaseOrderApi,
   createDieCutFromTemplateMakerApi,
   uploadPrintHouseMaterialApi,
-  addDocumentItemFromMaterialApi,
   addDocumentItemFromMaterialRowApi,
   getDocumentItemDataFromMaterialApi,
   getDocumentItemDataFromRowMaterialApi,
