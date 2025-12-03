@@ -70,6 +70,14 @@ export interface ICompanyProfile {
   checksSerialNumber?: number;
   mailingProviderType: any;
   appPassword?: string;
+  bankAccounts?: Array<{
+    id?: string;
+    code?: string;
+    name?: string;
+    bankName?: string;
+    bankBranch?: string;
+    bankAccountNUM?: string;
+  }>;
 }
 
 export enum CreditClearanceCompanies {
@@ -83,7 +91,7 @@ export enum IMailProviders {
   AMAZON,
   GMAIL,
   OUTLOOK,
-  OUTLOOK_GRAPH_API
+  OUTLOOK_GRAPH_API,
 }
 
 export const mailProviderOptions = [
@@ -91,5 +99,8 @@ export const mailProviderOptions = [
   { text: "profileSettings.aws", value: IMailProviders.AMAZON },
   { text: "profileSettings.gmail", value: IMailProviders.GMAIL },
   { text: "profileSettings.outlook", value: IMailProviders.OUTLOOK },
-  { text: "profileSettings.outlookApi", value: IMailProviders.OUTLOOK_GRAPH_API },
+  {
+    text: "profileSettings.outlookApi",
+    value: IMailProviders.OUTLOOK_GRAPH_API,
+  },
 ];

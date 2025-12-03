@@ -215,6 +215,13 @@ const useCompanyProfile = () => {
     });
   };
 
+  const updateBankAccountsState = (key, value: any) => {
+    profileChange({
+      ...profile,
+      bankAccounts: value,
+    });
+  };
+
   return {
     t,
     getProfile,
@@ -234,6 +241,7 @@ const useCompanyProfile = () => {
     onToggleWorkingDays,
     onWorkingTimeChange,
     updatePinPadState,
+    updateBankAccountsState,
     printHouseTaxLogout,
     alertLogOutModal,
     connectToStripe,
