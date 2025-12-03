@@ -1,6 +1,9 @@
 import { useCompanyProfile } from "@/hooks/use-company-profile";
 import { useTranslation } from "react-i18next";
-import { companyFinancialInputs } from "@/widgets/settings-profile-widget/components/profiles/inputs/company-financial-inputs";
+import {
+  companyFinancialInputs,
+  bankAccountsInputs,
+} from "@/widgets/settings-profile-widget/components/profiles/inputs/company-financial-inputs";
 import {
   companyCreditCardsInputs,
   pinPadsInputs,
@@ -8,6 +11,7 @@ import {
 import { FormInputsSectionComponent } from "@/components/form-inputs/form-inputs-section";
 import { FormInput } from "@/components/form-inputs/form-input";
 import { FormArrayInput } from "@/components/form-inputs/form-array-input";
+import { BankAccountsArrayInput } from "./bank-accounts-array-input";
 import { SecondaryButton } from "@/components/button/secondary-button";
 import { PermissionCheck } from "@/components/CheckPermission";
 import { Permissions } from "@/components/CheckPermission/enum";
@@ -38,6 +42,7 @@ const CompanyFinancialComponent = ({
     profileChange,
     updateProfileChanges,
     updatePinPadState,
+    updateBankAccountsState,
     alertLogOutModal,
     connectToStripe,
   } = useCompanyProfile();
@@ -47,6 +52,7 @@ const CompanyFinancialComponent = ({
   };
 
   const financialInputs = companyFinancialInputs(profile);
+  const bankAccounts = bankAccountsInputs(profile);
   const creditCardInputs = companyCreditCardsInputs(profile, t);
   const pinPads = pinPadsInputs(profile);
 
@@ -54,18 +60,36 @@ const CompanyFinancialComponent = ({
   return (
     <div style={classes.financialDiv} className="custom-scrollbar">
       {profile?.isShowFinance && (
-        <FormInputsSectionComponent
-          sectionTitle={t("profileSettings.financial")}
-        >
-          {[...financialInputs].map((input: any) => (
-            <FormInput
-              key={input.parameterKey}
-              input={input}
-              changeState={changeState}
-              error={(input.required && !input.value) || !input.isValid}
-            />
-          ))}
-        </FormInputsSectionComponent>
+        <>
+          <FormInputsSectionComponent
+            sectionTitle={t("profileSettings.financial")}
+          >
+            {bankAccounts.length > 0 && (
+              <div style={{ width: "100%", marginBottom: "16px" }}>
+                {bankAccounts.map((bankAccount) => (
+                  <BankAccountsArrayInput
+                    key={bankAccount.parameterKey}
+                    name={bankAccount.name}
+                    parameterKey={bankAccount.parameterKey}
+                    value={bankAccount.value}
+                    inputs={bankAccount.inputs ?? []}
+                    updateState={updateBankAccountsState}
+                    isValid={true}
+                    containerStyle={{ padding: "0px" }}
+                  />
+                ))}
+              </div>
+            )}
+            {[...financialInputs].map((input: any) => (
+              <FormInput
+                key={input.parameterKey}
+                input={input}
+                changeState={changeState}
+                error={(input.required && !input.value) || !input.isValid}
+              />
+            ))}
+          </FormInputsSectionComponent>
+        </>
       )}
 
       <FormInputsSectionComponent

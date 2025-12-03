@@ -27,6 +27,9 @@ export interface IInput {
   note?: string;
   dropdownStyle?: React.CSSProperties;
   isPriceObject?: boolean;
+  readonly?: boolean;
+  isCombinedField?: boolean;
+  combinedFields?: string[];
 }
 export interface ICustomStyles {
   textInput?: React.CSSProperties;
