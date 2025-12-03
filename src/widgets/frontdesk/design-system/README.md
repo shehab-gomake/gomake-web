@@ -2,6 +2,35 @@
 
 A comprehensive, type-safe design system for building consistent UI across all FrontDesk providers (Email, Direct Messages, WhatsApp, Tickets).
 
+## ⚠️ CRITICAL: Migration Complete (Dec 2025)
+
+The Chatwoot provider has been fully migrated to use this design system. **DO NOT use deprecated patterns:**
+
+```typescript
+// ❌ DEPRECATED - Never use these
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+const { neutralColor, primaryColor } = useGomakeTheme();
+backgroundColor: neutralColor(500);
+
+// ✅ CORRECT - Always use tokens
+import { colorTokens, semanticSpacing, radiusTokens, shadowTokens } from "@/widgets/frontdesk/design-system";
+backgroundColor: colorTokens.neutral[500];
+backgroundColor: colorTokens.semantic.background.primary; // replaces neutralColor(0)
+padding: semanticSpacing.component.md;
+borderRadius: radiusTokens.md;
+```
+
+### Migration Mapping
+
+| Old Pattern | New Pattern |
+|-------------|-------------|
+| `neutralColor(0)` | `colorTokens.semantic.background.primary` |
+| `neutralColor(500)` | `colorTokens.neutral[500]` |
+| `primaryColor(600)` | `colorTokens.primary[600]` |
+| `theme.palette.divider` | `colorTokens.semantic.border.default` |
+
+---
+
 ## 🎯 Goals
 
 - **Consistency**: Unified visual language across all providers

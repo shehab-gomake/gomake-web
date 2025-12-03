@@ -76,7 +76,7 @@ export const NotificationListItem: React.FC<NotificationListItemProps> = ({
       onClick={onClick}
       onContextMenu={onContextMenu}
       sx={{
-        px: 2,
+        px: 3, // 24px padding to match parent container
         py: 1.5,
         cursor: "pointer",
         backgroundColor: isUnread ? colorTokens.primary[50] : colorTokens.semantic.background.primary,
