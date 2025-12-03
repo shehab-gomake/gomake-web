@@ -159,10 +159,10 @@ export interface ChatwootInbox extends Partial<EmailChannelConfig> {
   /** Sender name type (friendly or professional) */
   sender_name_type?: "friendly" | "professional";
 
-  /** Greeting enabled */
+  /** Greeting enabled (GoMake always sets this to false) */
   greeting_enabled?: boolean;
 
-  /** Greeting message */
+  /** Greeting message (GoMake always sets this to empty string) */
   greeting_message?: string;
 
   /** CSAT survey enabled */

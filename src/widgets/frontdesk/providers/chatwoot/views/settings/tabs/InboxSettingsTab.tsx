@@ -1,14 +1,14 @@
 /**
  * Inbox Settings Tab
  *
- * Main settings for inbox: name, greeting, features, etc.
+ * Main settings for inbox: name, features, etc.
+ * Note: Channel Greeting is disabled by GoMake policy.
  */
 
 import React, { useState } from "react";
 import {
   Box,
   Typography,
-  TextField,
   Select,
   MenuItem,
   FormControl,
@@ -17,15 +17,12 @@ import {
   CardContent,
   Avatar,
 } from "@mui/material";
-import { useTheme } from "@mui/material/styles";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import type { ChatwootInbox } from "@/services/frontdesk/api/chatwoot/types/inboxes.types";
 import { 
-  RichTextEditor, 
   SettingsSection,
   CompactTextField,
   CompactPrimaryButton,
-  CompactLabel,
   CompactSwitch,
 } from "../../../components/settings";
 
@@ -37,11 +34,8 @@ interface InboxSettingsTabProps {
 }
 
 export const InboxSettingsTab: React.FC<InboxSettingsTabProps> = ({ inbox, accountId, onSave, isSaving }) => {
-  const theme = useTheme();
   const [formData, setFormData] = useState({
     name: inbox.name || "",
-    greeting_enabled: inbox.greeting_enabled || false,
-    greeting_message: inbox.greeting_message || "",
     enable_email_collect: inbox.enable_email_collect || false,
     sender_name_type: inbox.sender_name_type || "friendly",
     business_name: inbox.business_name || "",
@@ -57,7 +51,12 @@ export const InboxSettingsTab: React.FC<InboxSettingsTabProps> = ({ inbox, accou
   };
 
   const handleSave = async () => {
-    await onSave(formData);
+    // Note: GoMake always disables channel greeting
+    await onSave({
+      ...formData,
+      greeting_enabled: false,
+      greeting_message: "",
+    });
     setHasChanges(false);
   };
 
@@ -76,29 +75,6 @@ export const InboxSettingsTab: React.FC<InboxSettingsTabProps> = ({ inbox, accou
           disabled={isSaving}
           sx={{ maxWidth: 500 }}
         />
-      </SettingsSection>
-
-      {/* Greeting Message - Compact */}
-      <SettingsSection title="Channel Greeting" description="Auto-send greeting messages when customers start a conversation">
-        <Box sx={{ mb: 2 }}>
-          <CompactSwitch
-            label="Enable greeting message"
-            checked={formData.greeting_enabled}
-            onChange={(e) => handleFieldChange("greeting_enabled", e.target.checked)}
-            disabled={isSaving}
-          />
-        </Box>
-
-        {formData.greeting_enabled && (
-          <RichTextEditor
-            value={formData.greeting_message}
-            onChange={(value) => handleFieldChange("greeting_message", value)}
-            placeholder="Enter your greeting message..."
-            maxLength={isWebWidget ? 500 : 200}
-            minRows={3}
-            disabled={isSaving}
-          />
-        )}
       </SettingsSection>
 
       {/* Email Collection (Web Widget only) - Compact */}

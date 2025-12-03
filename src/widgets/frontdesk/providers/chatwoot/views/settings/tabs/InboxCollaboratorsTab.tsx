@@ -156,9 +156,6 @@ export const InboxCollaboratorsTab: React.FC<InboxCollaboratorsTabProps> = ({
                     }}
                   />
                   <Typography sx={{ fontSize: "0.813rem", flex: 1 }}>{agent.name}</Typography>
-                  <Typography variant="caption" sx={{ color: "#6b7280", fontSize: "0.75rem" }}>
-                    ({agent.email})
-                  </Typography>
                 </Box>
               </MenuItem>
             ))}

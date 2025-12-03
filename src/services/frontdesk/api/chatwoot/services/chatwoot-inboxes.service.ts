@@ -82,7 +82,10 @@ export class ChatwootInboxesService extends BaseChatwootService {
    * Update Inbox Settings
    * PATCH /api/accounts/inboxes/{inboxId}
    *
-   * Update inbox configuration including name, greeting message, features, etc.
+   * Update inbox configuration including name, features, etc.
+   * 
+   * Note: GoMake always disables channel greeting. The UI layer should always
+   * pass greeting_enabled: false and greeting_message: "" when updating inbox settings.
    *
    * @param accountId - The numeric ID of the account (not used in URL, kept for compatibility)
    * @param inboxId - The numeric ID of the inbox

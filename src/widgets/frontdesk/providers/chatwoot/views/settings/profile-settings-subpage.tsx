@@ -89,11 +89,8 @@ export const ProfileSettingsSubpage: React.FC = () => {
               {profile.name?.charAt(0).toUpperCase()}
             </Avatar>
             <Box sx={{ flex: 1, minWidth: 0 }}>
-              <Typography variant="subtitle1" sx={{ fontWeight: 600, fontSize: "0.938rem", color: "#1f2937", mb: 0.25 }}>
+              <Typography variant="subtitle1" sx={{ fontWeight: 600, fontSize: "0.938rem", color: "#1f2937", mb: 0.5 }}>
                 {profile.name || "Unknown User"}
-              </Typography>
-              <Typography variant="body2" sx={{ color: "#6b7280", fontSize: "0.813rem", mb: 0.5 }}>
-                {profile.email}
               </Typography>
               {profile.role && (
                 <Chip

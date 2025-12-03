@@ -10,10 +10,8 @@ import {
   Select,
   MenuItem,
   FormControl,
-  Link,
   Box,
 } from "@mui/material";
-import LockResetIcon from "@mui/icons-material/LockReset";
 import CircleIcon from "@mui/icons-material/Circle";
 import PersonIcon from "@mui/icons-material/Person";
 import type { Agent, AgentUpdatePayload } from "@/services/frontdesk/api/chatwoot/types/agents.types";
@@ -77,11 +75,6 @@ export const EditAgentModal: React.FC<EditAgentModalProps> = ({
     }
   };
 
-  const handleResetPassword = () => {
-    // TODO: Implement password reset functionality
-    console.log("Reset password for agent:", agent?.id);
-  };
-
   if (!agent) return null;
 
   const displayName = name || agent.name || agent.available_name || agent.email || "Unknown Agent";
@@ -95,42 +88,12 @@ export const EditAgentModal: React.FC<EditAgentModalProps> = ({
       error={error}
       disabled={saving || loading}
       actions={
-        <>
-          {/* Reset Password Link */}
-          <Link
-            component="button"
-            variant="body2"
-            onClick={handleResetPassword}
-            disabled={saving || loading}
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              gap: 0.5,
-              textDecoration: "none",
-              color: "#6366f1",
-              fontSize: "0.813rem",
-              fontWeight: 500,
-              marginRight: "auto",
-              "&:hover": {
-                textDecoration: "underline",
-                color: "#4f46e5",
-              },
-              "&.Mui-disabled": {
-                color: "#9ca3af",
-              },
-            }}
-          >
-            <LockResetIcon sx={{ fontSize: 16 }} />
-            Reset Password
-          </Link>
-          
-          <CompactModalActions
-            onCancel={onClose}
-            onSubmit={handleSave}
-            submitLabel="Save Changes"
-            isSubmitting={saving || loading}
-          />
-        </>
+        <CompactModalActions
+          onCancel={onClose}
+          onSubmit={handleSave}
+          submitLabel="Save Changes"
+          isSubmitting={saving || loading}
+        />
       }
     >
       <CompactFormSection>

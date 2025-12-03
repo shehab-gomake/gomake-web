@@ -135,28 +135,6 @@ export const LabelsSubpage: React.FC = () => {
         headerActions={headerActions}
         isLoading={loading && labels.length === 0}
       >
-        {/* Learn More Link - Compact */}
-        <Box sx={{ mb: 2 }}>
-          <Link
-            href="#"
-            onClick={(e) => {
-              e.preventDefault();
-              // TODO: Open help documentation or modal
-            }}
-            sx={{
-              color: "#6366f1",
-              textDecoration: "none",
-              fontWeight: 500,
-              fontSize: "0.813rem",
-              "&:hover": {
-                textDecoration: "underline",
-              },
-            }}
-          >
-            Learn more about labels →
-          </Link>
-        </Box>
-
         {/* Error Alert */}
         {error && (
           <Alert severity="error" sx={{ mb: 2, borderRadius: "6px" }}>
