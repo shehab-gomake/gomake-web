@@ -104,10 +104,7 @@ export function RecoilDebugObserver({ config = {} }: RecoilDebugObserverProps) {
 
     // Log changes
     if (modifiedAtoms.length > 0) {
-      console.groupCollapsed(
-        `%c[Recoil] ${modifiedAtoms.length} atom(s) modified`,
-        "color: #9c27b0; font-weight: bold;"
-      );
+      console.groupCollapsed(`%c[Recoil] ${modifiedAtoms.length} atom(s) modified`, "color: #9c27b0; font-weight: bold;");
 
       modifiedAtoms.forEach(({ key, oldValue, newValue }) => {
         const shortKey = key.replace("frontdesk.chatwoot.", "");
@@ -192,14 +189,15 @@ function getDiff(oldValue: unknown, newValue: unknown): Record<string, { old: un
   const diff: Record<string, { old: unknown; new: unknown }> = {};
   const allKeys = new Set([...Object.keys(oldValue), ...Object.keys(newValue)]);
 
-  for (const key of allKeys) {
+  // Convert Set to Array for iteration compatibility
+  Array.from(allKeys).forEach((key) => {
     const oldV = (oldValue as Record<string, unknown>)[key];
     const newV = (newValue as Record<string, unknown>)[key];
 
     if (JSON.stringify(oldV) !== JSON.stringify(newV)) {
       diff[key] = { old: oldV, new: newV };
     }
-  }
+  });
 
   return Object.keys(diff).length > 0 ? diff : "No change";
 }
@@ -236,12 +234,13 @@ export const recoilDebug = {
 
     const diff: Record<string, { old: unknown; new: unknown }> = {};
 
-    for (const [key, newValue] of snap2.snapshot) {
+    // Convert Map entries to Array for iteration compatibility
+    Array.from(snap2.snapshot.entries()).forEach(([key, newValue]) => {
       const oldValue = snap1.snapshot.get(key);
       if (JSON.stringify(oldValue) !== JSON.stringify(newValue)) {
         diff[key] = { old: oldValue, new: newValue };
       }
-    }
+    });
 
     return diff;
   },
@@ -300,4 +299,3 @@ if (typeof window !== "undefined" && process.env.NODE_ENV === "development") {
 }
 
 export default RecoilDebugObserver;
-

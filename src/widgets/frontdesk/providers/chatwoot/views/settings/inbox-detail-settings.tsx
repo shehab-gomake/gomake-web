@@ -209,7 +209,6 @@ export const InboxDetailSettings: React.FC<InboxDetailSettingsProps> = ({
           <InboxCollaboratorsTab
             inbox={inbox}
             accountId={accountId}
-            onSave={handleSaveSettings}
             onUpdateAgents={handleUpdateAgents}
             isSaving={isSaving}
           />

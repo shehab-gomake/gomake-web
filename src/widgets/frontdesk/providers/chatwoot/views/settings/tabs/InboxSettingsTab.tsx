@@ -42,7 +42,6 @@ export const InboxSettingsTab: React.FC<InboxSettingsTabProps> = ({ inbox, accou
     enable_email_collect: inbox.enable_email_collect || false,
     sender_name_type: inbox.sender_name_type || "friendly",
     business_name: inbox.business_name || "",
-    enable_auto_assignment: inbox.enable_auto_assignment || true,
     allow_messages_after_resolved: inbox.allow_messages_after_resolved || true,
     lock_to_single_conversation: inbox.lock_to_single_conversation || false,
   });
@@ -297,27 +296,12 @@ export const InboxSettingsTab: React.FC<InboxSettingsTabProps> = ({ inbox, accou
           <FormControlLabel
             control={
               <Switch
-                checked={formData.enable_auto_assignment}
-                onChange={(e) => handleFieldChange("enable_auto_assignment", e.target.checked)}
-                disabled={isSaving}
-              />
-            }
-            label="Enable auto assignment"
-          />
-          <Typography variant="caption" color="text.secondary" sx={{ ml: 5 }}>
-            Automatically assign new conversations to available agents
-          </Typography>
-
-          <FormControlLabel
-            control={
-              <Switch
                 checked={formData.allow_messages_after_resolved}
                 onChange={(e) => handleFieldChange("allow_messages_after_resolved", e.target.checked)}
                 disabled={isSaving}
               />
             }
             label="Allow messages after resolved"
-            sx={{ mt: 1 }}
           />
           <Typography variant="caption" color="text.secondary" sx={{ ml: 5 }}>
             Customers can send messages even after conversation is resolved
