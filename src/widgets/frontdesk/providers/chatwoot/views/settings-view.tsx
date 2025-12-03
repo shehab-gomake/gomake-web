@@ -15,16 +15,15 @@ import { VIEW_PERMISSIONS, SETTINGS_PERMISSIONS } from "../constants/permissions
 import { ChatwootSettingsSubpage } from "@/widgets/frontdesk/routing/types";
 import type { PermissionConfig } from "../constants/permissions.constants";
 import {
-  People as AgentsIcon,
-  Inbox as InboxesIcon,
-  Groups as TeamsIcon,
-  Label as LabelsIcon,
-  Warning as WarningIcon,
-  Person as ProfileIcon,
-  ArrowBack as ArrowBackIcon,
-  Webhook as WebhookIcon,
-  History as HistoryIcon,
-} from "@mui/icons-material";
+  ArrowLeftIcon,
+  UserGroupIcon,
+  InboxIcon,
+  UserIcon,
+  TagIcon,
+  ExclamationTriangleIcon,
+  LinkIcon,
+  ClockIcon,
+} from "@heroicons/react/24/outline";
 
 // Import subpage components
 import { AgentsSubpage } from "./settings/agents-subpage";
@@ -47,49 +46,49 @@ const SETTINGS_MENU_ITEMS: SettingsMenuItem[] = [
   {
     subpage: ChatwootSettingsSubpage.AGENTS,
     label: "Agents",
-    icon: <AgentsIcon />,
+    icon: <UserGroupIcon />,
     permissionConfig: SETTINGS_PERMISSIONS.agents, // Administrator only
   },
   {
     subpage: ChatwootSettingsSubpage.INBOXES,
     label: "Inboxes",
-    icon: <InboxesIcon />,
+    icon: <InboxIcon />,
     permissionConfig: SETTINGS_PERMISSIONS.inboxes, // Administrator only
   },
   {
     subpage: ChatwootSettingsSubpage.TEAMS,
     label: "Teams",
-    icon: <TeamsIcon />,
+    icon: <UserGroupIcon />,
     permissionConfig: SETTINGS_PERMISSIONS.teams, // Administrator only
   },
   {
     subpage: ChatwootSettingsSubpage.LABELS,
     label: "Labels",
-    icon: <LabelsIcon />,
+    icon: <TagIcon />,
     permissionConfig: SETTINGS_PERMISSIONS.labels, // Administrator only
   },
   {
     subpage: ChatwootSettingsSubpage.WARNINGS,
     label: "Warnings",
-    icon: <WarningIcon />,
+    icon: <ExclamationTriangleIcon />,
     // No permission config - accessible to all
   },
   {
     subpage: ChatwootSettingsSubpage.PROFILE,
     label: "Profile Settings",
-    icon: <ProfileIcon />,
+    icon: <UserIcon />,
     // No permission config - accessible to all (uses VIEW_PERMISSIONS.settings which includes agents)
   },
   {
     subpage: ChatwootSettingsSubpage.WEBHOOK_TEST,
     label: "Webhook Test",
-    icon: <WebhookIcon />,
+    icon: <LinkIcon />,
     // No permission config - accessible to all
   },
   {
     subpage: ChatwootSettingsSubpage.OLD_FRONTDESK,
     label: "Old FrontDesk",
-    icon: <HistoryIcon />,
+    icon: <ClockIcon />,
     // No permission config - accessible to all
   },
 ];
@@ -231,13 +230,15 @@ export const SettingsView: React.FC = () => {
               sx={{
                 color: "#9ca3af",
                 p: 0.375,
+                transition: "all 0.2s ease-in-out",
                 "&:hover": {
                   color: "#6366f1",
-                  backgroundColor: "transparent",
+                  backgroundColor: "rgba(99, 102, 241, 0.08)",
+                  transform: "translateX(-2px)",
                 },
               }}
             >
-              <ArrowBackIcon sx={{ fontSize: 16 }} />
+              <ArrowLeftIcon style={{ width: 16, height: 16 }} />
             </IconButton>
             <Typography 
               variant="overline" 
@@ -259,16 +260,17 @@ export const SettingsView: React.FC = () => {
             const isSelected = currentSubpage === item.subpage;
             const showBadge = item.subpage === ChatwootSettingsSubpage.WARNINGS && warningCount > 0;
             return (
-              <ListItem key={item.subpage} disablePadding sx={{ mb: 0.25 }}>
+              <ListItem key={item.subpage} disablePadding sx={{ mb: 0.5 }}>
                 <ListItemButton
                   selected={isSelected}
                   onClick={() => chatwootRouter.navigateToSettings(item.subpage)}
                   sx={{
-                    py: 0.875,
+                    py: 1.125,
                     px: 1.25,
                     borderRadius: "6px",
-                    minHeight: "36px",
+                    minHeight: "40px",
                     position: "relative",
+                    transition: "all 0.2s ease-in-out",
                     "&::before": isSelected ? {
                       content: '""',
                       position: "absolute",
@@ -284,7 +286,17 @@ export const SettingsView: React.FC = () => {
                       backgroundColor: "rgba(99, 102, 241, 0.08)",
                     },
                     "&:hover": {
-                      backgroundColor: isSelected ? "rgba(99, 102, 241, 0.12)" : "rgba(0,0,0,0.04)",
+                      backgroundColor: isSelected 
+                        ? "rgba(99, 102, 241, 0.12)" 
+                        : "rgba(0, 0, 0, 0.06)",
+                      transform: "translateX(2px)",
+                      "& .MuiListItemIcon-root": {
+                        color: isSelected ? "#6366f1" : "#6366f1",
+                      },
+                      "& .MuiListItemText-primary": {
+                        color: isSelected ? "#1f2937" : "#374151",
+                        fontWeight: 600,
+                      },
                     },
                   }}
                 >
@@ -292,6 +304,7 @@ export const SettingsView: React.FC = () => {
                     sx={{
                       minWidth: 32,
                       color: isSelected ? "#6366f1" : "#9ca3af",
+                      transition: "color 0.2s ease-in-out",
                     }}
                   >
                     {showBadge ? (
@@ -309,10 +322,14 @@ export const SettingsView: React.FC = () => {
                           },
                         }}
                       >
-                        {React.cloneElement(item.icon as React.ReactElement, { sx: { fontSize: 18 } })}
+                        {React.cloneElement(item.icon as React.ReactElement, { 
+                          style: { width: 16, height: 16 } 
+                        })}
                       </Badge>
                     ) : (
-                      React.cloneElement(item.icon as React.ReactElement, { sx: { fontSize: 18 } })
+                      React.cloneElement(item.icon as React.ReactElement, { 
+                        style: { width: 16, height: 16 } 
+                      })
                     )}
                   </ListItemIcon>
                   <ListItemText
@@ -321,7 +338,12 @@ export const SettingsView: React.FC = () => {
                       fontSize: "0.813rem",
                       fontWeight: isSelected ? 600 : 500,
                       color: isSelected ? "#1f2937" : "#6b7280",
-                      lineHeight: 1.4,
+                      lineHeight: 1.5,
+                    }}
+                    sx={{
+                      "& .MuiListItemText-primary": {
+                        transition: "all 0.2s ease-in-out",
+                      },
                     }}
                   />
                 </ListItemButton>

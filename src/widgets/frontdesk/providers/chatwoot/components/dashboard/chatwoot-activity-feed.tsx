@@ -1,16 +1,15 @@
 /**
- * Chatwoot Activity Feed Panel
+ * Chatwoot Activity Feed Panel - Modern SaaS Design
  *
  * Displays recent Chatwoot conversations grouped by time.
- * Based on ActivityFeedPanel from unified dashboard.
+ * Redesigned with better spacing, alignment, and modern aesthetics.
  */
 
 import React, { useMemo } from "react";
-import { Box, Typography } from "@mui/material";
-import { useTheme } from "@mui/material/styles";
+import { Box, Typography, Stack } from "@mui/material";
 import { ConversationListItem, EmptyState } from "@/widgets/frontdesk/design-system";
-import { colorTokens } from "@/widgets/frontdesk/design-system/tokens";
 import InboxIcon from "@mui/icons-material/Inbox";
+import ScheduleIcon from "@mui/icons-material/Schedule";
 import type { ChatwootConversation } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
 import { ConversationListSkeleton } from "../skeletons";
 import {
@@ -21,6 +20,27 @@ import {
   isConversationUnread,
   getUnreadCount,
 } from "../../utils/conversation-helpers";
+
+// Modern design tokens
+const FEED_TOKENS = {
+  colors: {
+    background: "#FFFFFF",
+    backgroundAlt: "#FAFBFC",
+    textPrimary: "#0F172A",
+    textSecondary: "#475569",
+    textMuted: "#94A3B8",
+    border: "#E2E8F0",
+    borderSubtle: "#F1F5F9",
+    primary: "#3B82F6",
+    primaryLight: "#EFF6FF",
+  },
+  spacing: {
+    itemPadding: 16,
+    headerPadding: 14,
+    groupGap: 2,
+  },
+  borderRadius: 8,
+};
 
 /**
  * Props for ChatwootActivityFeed component
@@ -93,31 +113,70 @@ const groupConversationsByDate = (conversations: ChatwootConversation[]): Groupe
   return grouped;
 };
 
-const TimeGroupHeader: React.FC<{ label: string; count: number }> = ({ label, count }) => {
+interface TimeGroupHeaderProps {
+  label: string;
+  count: number;
+  isFirst?: boolean;
+}
+
+const TimeGroupHeader: React.FC<TimeGroupHeaderProps> = ({ label, count, isFirst = false }) => {
   return (
     <Box
       sx={{
         px: 2,
-        py: 1.5,
-        backgroundColor: colorTokens.neutral[50],
-        borderBottom: `1px solid ${colorTokens.neutral[200]}`,
+        py: 1.25,
+        backgroundColor: FEED_TOKENS.colors.backgroundAlt,
+        borderBottom: `1px solid ${FEED_TOKENS.colors.borderSubtle}`,
+        borderTop: !isFirst ? `1px solid ${FEED_TOKENS.colors.borderSubtle}` : "none",
         position: "sticky",
         top: 0,
         zIndex: 1,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
       }}
     >
-      <Typography
-        variant="caption"
+      <Stack direction="row" spacing={1} alignItems="center">
+        <ScheduleIcon
+          sx={{
+            fontSize: 14,
+            color: FEED_TOKENS.colors.textMuted,
+          }}
+        />
+        <Typography
+          sx={{
+            color: FEED_TOKENS.colors.textSecondary,
+            fontWeight: 600,
+            fontSize: "0.6875rem",
+            textTransform: "uppercase",
+            letterSpacing: "0.05em",
+          }}
+        >
+          {label}
+        </Typography>
+      </Stack>
+      <Box
         sx={{
-          color: colorTokens.neutral[600],
-          fontWeight: 600,
-          fontSize: "0.75rem",
-          textTransform: "uppercase",
-          letterSpacing: 0.5,
+          minWidth: 20,
+          height: 20,
+          px: 0.75,
+          borderRadius: "10px",
+          backgroundColor: FEED_TOKENS.colors.borderSubtle,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
         }}
       >
-        {label} ({count})
-      </Typography>
+        <Typography
+          sx={{
+            fontSize: "0.6875rem",
+            fontWeight: 600,
+            color: FEED_TOKENS.colors.textMuted,
+          }}
+        >
+          {count}
+        </Typography>
+      </Box>
     </Box>
   );
 };
@@ -128,8 +187,6 @@ export const ChatwootActivityFeed: React.FC<ChatwootActivityFeedProps> = ({
   onSelect,
   isLoading = false,
 }) => {
-  const theme = useTheme();
-
   const groupedConversations = useMemo(() => groupConversationsByDate(conversations), [conversations]);
 
   // Handle loading state with Skeleton
@@ -150,17 +207,86 @@ export const ChatwootActivityFeed: React.FC<ChatwootActivityFeedProps> = ({
           alignItems: "center",
           justifyContent: "center",
           height: "100%",
-          p: 3,
+          p: 4,
         }}
       >
-        <EmptyState
-          icon={<InboxIcon sx={{ fontSize: 48 }} />}
-          title="No Activity"
-          description="You're all caught up! No conversations need attention."
-        />
+        <Box sx={{ textAlign: "center", maxWidth: 280 }}>
+          <Box
+            sx={{
+              width: 64,
+              height: 64,
+              borderRadius: "16px",
+              backgroundColor: FEED_TOKENS.colors.primaryLight,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              margin: "0 auto 16px",
+            }}
+          >
+            <InboxIcon sx={{ fontSize: 32, color: FEED_TOKENS.colors.primary }} />
+          </Box>
+          <Typography
+            sx={{
+              fontSize: "1rem",
+              fontWeight: 600,
+              color: FEED_TOKENS.colors.textPrimary,
+              mb: 1,
+            }}
+          >
+            No Activity
+          </Typography>
+          <Typography
+            sx={{
+              fontSize: "0.875rem",
+              color: FEED_TOKENS.colors.textMuted,
+              lineHeight: 1.5,
+            }}
+          >
+            You're all caught up! No conversations need attention right now.
+          </Typography>
+        </Box>
       </Box>
     );
   }
+
+  const renderConversationGroup = (
+    group: ChatwootConversation[],
+    label: string,
+    isFirst: boolean
+  ) => {
+    if (group.length === 0) return null;
+
+    return (
+      <React.Fragment key={label}>
+        <TimeGroupHeader label={label} count={group.length} isFirst={isFirst} />
+        {group.map((conversation) => (
+          <ConversationListItem
+            key={conversation.id}
+            id={conversation.id.toString()}
+            title={getConversationName(conversation)}
+            participants={getParticipants(conversation)}
+            snippet={getLastMessage(conversation)}
+            timestamp={getConversationTimestamp(conversation)}
+            isRead={!isConversationUnread(conversation)}
+            isSelected={selectedId === conversation.id}
+            unreadCount={getUnreadCount(conversation)}
+            hasAttachments={false}
+            onClick={() => onSelect(conversation.id, conversation.inbox_id)}
+          />
+        ))}
+      </React.Fragment>
+    );
+  };
+
+  // Determine which is the first non-empty group
+  const groups = [
+    { data: groupedConversations.today, label: "Today" },
+    { data: groupedConversations.yesterday, label: "Yesterday" },
+    { data: groupedConversations.thisWeek, label: "This Week" },
+    { data: groupedConversations.older, label: "Older" },
+  ];
+
+  let isFirst = true;
 
   return (
     <Box
@@ -173,96 +299,29 @@ export const ChatwootActivityFeed: React.FC<ChatwootActivityFeedProps> = ({
         sx={{
           height: "100%",
           overflow: "auto",
-          backgroundColor: theme.palette.background.paper,
+          backgroundColor: FEED_TOKENS.colors.background,
+          // Custom scrollbar styling
+          "&::-webkit-scrollbar": {
+            width: 6,
+          },
+          "&::-webkit-scrollbar-track": {
+            backgroundColor: "transparent",
+          },
+          "&::-webkit-scrollbar-thumb": {
+            backgroundColor: FEED_TOKENS.colors.border,
+            borderRadius: 3,
+            "&:hover": {
+              backgroundColor: FEED_TOKENS.colors.textMuted,
+            },
+          },
         }}
       >
-        {/* Today */}
-        {groupedConversations.today.length > 0 && (
-          <>
-            <TimeGroupHeader label="Today" count={groupedConversations.today.length} />
-            {groupedConversations.today.map((conversation) => (
-              <ConversationListItem
-                key={conversation.id}
-                id={conversation.id.toString()}
-                title={getConversationName(conversation)}
-                participants={getParticipants(conversation)}
-                snippet={getLastMessage(conversation)}
-                timestamp={getConversationTimestamp(conversation)}
-                isRead={!isConversationUnread(conversation)}
-                isSelected={selectedId === conversation.id}
-                unreadCount={getUnreadCount(conversation)}
-                hasAttachments={false}
-                onClick={() => onSelect(conversation.id, conversation.inbox_id)}
-              />
-            ))}
-          </>
-        )}
-
-        {/* Yesterday */}
-        {groupedConversations.yesterday.length > 0 && (
-          <>
-            <TimeGroupHeader label="Yesterday" count={groupedConversations.yesterday.length} />
-            {groupedConversations.yesterday.map((conversation) => (
-              <ConversationListItem
-                key={conversation.id}
-                id={conversation.id.toString()}
-                title={getConversationName(conversation)}
-                participants={getParticipants(conversation)}
-                snippet={getLastMessage(conversation)}
-                timestamp={getConversationTimestamp(conversation)}
-                isRead={!isConversationUnread(conversation)}
-                isSelected={selectedId === conversation.id}
-                unreadCount={getUnreadCount(conversation)}
-                hasAttachments={false}
-                onClick={() => onSelect(conversation.id, conversation.inbox_id)}
-              />
-            ))}
-          </>
-        )}
-
-        {/* This Week */}
-        {groupedConversations.thisWeek.length > 0 && (
-          <>
-            <TimeGroupHeader label="This Week" count={groupedConversations.thisWeek.length} />
-            {groupedConversations.thisWeek.map((conversation) => (
-              <ConversationListItem
-                key={conversation.id}
-                id={conversation.id.toString()}
-                title={getConversationName(conversation)}
-                participants={getParticipants(conversation)}
-                snippet={getLastMessage(conversation)}
-                timestamp={getConversationTimestamp(conversation)}
-                isRead={!isConversationUnread(conversation)}
-                isSelected={selectedId === conversation.id}
-                unreadCount={getUnreadCount(conversation)}
-                hasAttachments={false}
-                onClick={() => onSelect(conversation.id, conversation.inbox_id)}
-              />
-            ))}
-          </>
-        )}
-
-        {/* Older */}
-        {groupedConversations.older.length > 0 && (
-          <>
-            <TimeGroupHeader label="Older" count={groupedConversations.older.length} />
-            {groupedConversations.older.map((conversation) => (
-              <ConversationListItem
-                key={conversation.id}
-                id={conversation.id.toString()}
-                title={getConversationName(conversation)}
-                participants={getParticipants(conversation)}
-                snippet={getLastMessage(conversation)}
-                timestamp={getConversationTimestamp(conversation)}
-                isRead={!isConversationUnread(conversation)}
-                isSelected={selectedId === conversation.id}
-                unreadCount={getUnreadCount(conversation)}
-                hasAttachments={false}
-                onClick={() => onSelect(conversation.id, conversation.inbox_id)}
-              />
-            ))}
-          </>
-        )}
+        {groups.map((group) => {
+          if (group.data.length === 0) return null;
+          const result = renderConversationGroup(group.data, group.label, isFirst);
+          if (result) isFirst = false;
+          return result;
+        })}
       </Box>
     </Box>
   );

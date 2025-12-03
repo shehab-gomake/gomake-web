@@ -1,11 +1,11 @@
 /**
- * Chatwoot Notifications Widget
+ * Chatwoot Notifications Widget - Modern SaaS Design
  *
  * Compact notifications widget for dashboard display.
- * Shows recent notifications with real-time updates.
+ * Redesigned with improved empty state and modern aesthetics.
  */
 
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState } from "react";
 import {
   Box,
   Stack,
@@ -18,7 +18,7 @@ import {
   Tooltip,
   Menu,
   MenuItem,
-} from '@mui/material';
+} from "@mui/material";
 import {
   Notifications as NotificationsIcon,
   Circle as DotIcon,
@@ -26,17 +26,40 @@ import {
   WifiOff as OfflineIcon,
   ArrowForward as ArrowForwardIcon,
   MoreVert as MoreVertIcon,
-} from '@mui/icons-material';
-import { ToggleButton, ToggleButtonGroup } from '@mui/material';
-import { useGomakeTheme } from '@/hooks/use-gomake-thme';
-import { useChatwootNotifications } from '../../hooks/use-chatwoot-notifications';
-import { useChatwootProvider } from '../../hooks/use-chatwoot-provider';
-import { colorTokens } from '@/widgets/frontdesk/design-system/tokens';
-import { EmptyState } from '@/widgets/frontdesk/design-system';
-import type { ChatwootNotification } from '@/services/frontdesk/api/chatwoot/types/notifications.types';
-import { NotificationType } from '@/services/frontdesk/api/chatwoot/types/notifications.types';
-import { formatTimeAgo } from '../../utils/date-utils';
-import { getNotificationSender, getMessagePreview } from '../../utils/notification-formatters';
+  NotificationsNone as NotificationsNoneIcon,
+} from "@mui/icons-material";
+import { ToggleButton, ToggleButtonGroup } from "@mui/material";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { useChatwootNotifications } from "../../hooks/use-chatwoot-notifications";
+import { useChatwootProvider } from "../../hooks/use-chatwoot-provider";
+import type { ChatwootNotification } from "@/services/frontdesk/api/chatwoot/types/notifications.types";
+import { NotificationType } from "@/services/frontdesk/api/chatwoot/types/notifications.types";
+import { formatTimeAgo } from "../../utils/date-utils";
+import { getNotificationSender, getMessagePreview } from "../../utils/notification-formatters";
+
+// Modern design tokens
+const WIDGET_TOKENS = {
+  colors: {
+    background: "#FFFFFF",
+    backgroundAlt: "#FAFBFC",
+    textPrimary: "#0F172A",
+    textSecondary: "#475569",
+    textMuted: "#94A3B8",
+    border: "#E2E8F0",
+    borderSubtle: "#F1F5F9",
+    primary: "#3B82F6",
+    primaryLight: "#EFF6FF",
+    primaryDark: "#2563EB",
+    success: "#10B981",
+    error: "#EF4444",
+    errorLight: "#FEE2E2",
+  },
+  borderRadius: {
+    sm: 6,
+    md: 8,
+    lg: 12,
+  },
+};
 
 interface ChatwootNotificationsWidgetProps {
   maxItems?: number;
@@ -69,15 +92,13 @@ export const ChatwootNotificationsWidget: React.FC<ChatwootNotificationsWidgetPr
   const [menuAnchor, setMenuAnchor] = useState<null | HTMLElement>(null);
 
   // Check if showing all notifications (including read)
-  const showingAllNotifications = filters.includes?.includes('read') || false;
+  const showingAllNotifications = filters.includes?.includes("read") || false;
 
   // Get recent notifications based on filter
   const recentNotifications = useMemo(() => {
     if (showingAllNotifications) {
-      // Show all notifications (read + unread)
       return notifications.slice(0, maxItems);
     } else {
-      // Show only unread notifications
       const unread = notifications.filter((n) => !n.read_at);
       return unread.slice(0, maxItems);
     }
@@ -87,36 +108,38 @@ export const ChatwootNotificationsWidget: React.FC<ChatwootNotificationsWidgetPr
   const getNotificationTypeInfo = (notificationType: string) => {
     const typeMap: Record<string, { color: string; label: string }> = {
       [NotificationType.CONVERSATION_MENTION]: {
-        color: primaryColor(600),
-        label: 'Mention',
+        color: WIDGET_TOKENS.colors.primary,
+        label: "Mention",
       },
       [NotificationType.CONVERSATION_ASSIGNMENT]: {
-        color: '#3B82F6',
-        label: 'Assignment',
+        color: "#8B5CF6",
+        label: "Assignment",
       },
       [NotificationType.ASSIGNED_CONVERSATION_NEW_MESSAGE]: {
-        color: primaryColor(500),
-        label: 'Message',
+        color: WIDGET_TOKENS.colors.primary,
+        label: "Message",
       },
       [NotificationType.PARTICIPATING_CONVERSATION_NEW_MESSAGE]: {
-        color: primaryColor(500),
-        label: 'Message',
+        color: WIDGET_TOKENS.colors.primary,
+        label: "Message",
       },
       [NotificationType.CONVERSATION_CREATION]: {
-        color: '#10B981',
-        label: 'New',
+        color: WIDGET_TOKENS.colors.success,
+        label: "New",
       },
     };
 
-    return typeMap[notificationType] || {
-      color: neutralColor(500),
-      label: 'Notification',
-    };
+    return (
+      typeMap[notificationType] || {
+        color: WIDGET_TOKENS.colors.textMuted,
+        label: "Notification",
+      }
+    );
   };
 
   // Get sender info using shared formatter
   const getSenderInfo = (notification: ChatwootNotification) => {
-    const sender = getNotificationSender(notification, primaryColor(500));
+    const sender = getNotificationSender(notification, WIDGET_TOKENS.colors.primary);
     const primaryActor = notification.primary_actor as any;
     return {
       name: sender.name,
@@ -125,7 +148,6 @@ export const ChatwootNotificationsWidget: React.FC<ChatwootNotificationsWidgetPr
       avatar: sender.thumbnail || primaryActor?.avatar_url || null,
     };
   };
-
 
   // Handle notification click
   const handleNotificationClick = async (notification: ChatwootNotification) => {
@@ -137,13 +159,10 @@ export const ChatwootNotificationsWidget: React.FC<ChatwootNotificationsWidgetPr
       try {
         await markConversationAsRead(conversationId);
       } catch (err) {
-        console.error('Failed to mark conversation notifications as read:', err);
+        console.error("Failed to mark conversation notifications as read:", err);
       }
 
-      chatwootRouter.navigateToConversation(
-        conversationId.toString(),
-        inboxId?.toString()
-      );
+      chatwootRouter.navigateToConversation(conversationId.toString(), inboxId?.toString());
     }
   };
 
@@ -151,7 +170,6 @@ export const ChatwootNotificationsWidget: React.FC<ChatwootNotificationsWidgetPr
     if (onViewAll) {
       onViewAll();
     } else {
-      // Navigate to My Inbox view
       chatwootRouter.navigateToMyInbox();
     }
   };
@@ -171,7 +189,7 @@ export const ChatwootNotificationsWidget: React.FC<ChatwootNotificationsWidgetPr
       await markAllAsRead();
       await refresh();
     } catch (err) {
-      console.error('Failed to mark all as read:', err);
+      console.error("Failed to mark all as read:", err);
     }
   };
 
@@ -181,7 +199,7 @@ export const ChatwootNotificationsWidget: React.FC<ChatwootNotificationsWidgetPr
       await deleteAll();
       await refresh();
     } catch (err) {
-      console.error('Failed to delete all notifications:', err);
+      console.error("Failed to delete all notifications:", err);
     }
   };
 
@@ -191,21 +209,22 @@ export const ChatwootNotificationsWidget: React.FC<ChatwootNotificationsWidgetPr
       await deleteAllRead();
       await refresh();
     } catch (err) {
-      console.error('Failed to delete all read notifications:', err);
+      console.error("Failed to delete all read notifications:", err);
     }
   };
 
-  const handleFilterToggle = (_event: React.MouseEvent<HTMLElement>, value: 'unread' | 'all' | null) => {
+  const handleFilterToggle = (
+    _event: React.MouseEvent<HTMLElement>,
+    value: "unread" | "all" | null
+  ) => {
     if (value === null) return;
-    
-    if (value === 'all') {
-      // Show all notifications (including read)
+
+    if (value === "all") {
       updateFilters({
-        includes: ['read'],
+        includes: ["read"],
         page: 1,
       });
     } else {
-      // Show only unread notifications
       updateFilters({
         includes: undefined,
         page: 1,
@@ -216,10 +235,10 @@ export const ChatwootNotificationsWidget: React.FC<ChatwootNotificationsWidgetPr
   return (
     <Box
       sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        height: '100%',
-        overflow: 'hidden',
+        display: "flex",
+        flexDirection: "column",
+        height: "100%",
+        overflow: "hidden",
       }}
     >
       {/* Header */}
@@ -227,92 +246,122 @@ export const ChatwootNotificationsWidget: React.FC<ChatwootNotificationsWidgetPr
         <Box
           sx={{
             px: 3,
-            py: 2,
-            borderBottom: `1px solid ${colorTokens.neutral[200]}`,
-            backgroundColor: colorTokens.neutral[50],
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
+            py: 2.5,
+            borderBottom: `1px solid ${WIDGET_TOKENS.colors.border}`,
+            backgroundColor: WIDGET_TOKENS.colors.backgroundAlt,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
           }}
         >
-          <Stack direction="row" spacing={1} alignItems="center">
-            <NotificationsIcon sx={{ fontSize: 18, color: colorTokens.neutral[700] }} />
-            <Typography
-              variant="h6"
+          <Stack direction="row" spacing={1.5} alignItems="center">
+            <Box
               sx={{
-                fontWeight: 600,
-                fontSize: '1rem',
-                color: colorTokens.neutral[900],
+                width: 32,
+                height: 32,
+                borderRadius: `${WIDGET_TOKENS.borderRadius.md}px`,
+                backgroundColor: WIDGET_TOKENS.colors.primaryLight,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
               }}
             >
-              Notifications
-            </Typography>
-            {(() => {
-              // Use count and unread_count from API response
-              const displayCount = showingAllNotifications 
-                ? notificationMeta.count 
-                : notificationMeta.unread_count;
-              
-              // Only show counter if there are notifications
-              if (displayCount > 0) {
-                return (
-                  <Chip
-                    label={displayCount}
-                    size="small"
-                    sx={{
-                      height: 20,
-                      fontSize: '0.688rem',
-                      fontWeight: 600,
-                      backgroundColor: showingAllNotifications 
-                        ? colorTokens.neutral[500] 
-                        : primaryColor(600),
-                      color: 'white',
-                    }}
-                  />
-                );
-              }
-              return null;
-            })()}
-            <Tooltip 
-              title={
-                wsConnected 
-                  ? 'Real-time updates active' 
-                  : 'Real-time updates unavailable - WebSocket proxy not configured. Notifications will update on refresh.'
-              }
-            >
-              {wsConnected ? (
-                <OnlineIcon sx={{ fontSize: 14, color: '#10B981' }} />
-              ) : (
-                <OfflineIcon sx={{ fontSize: 14, color: colorTokens.neutral[400] }} />
-              )}
-            </Tooltip>
+              <NotificationsIcon sx={{ fontSize: 18, color: WIDGET_TOKENS.colors.primary }} />
+            </Box>
+            <Box>
+              <Stack direction="row" spacing={1} alignItems="center">
+                <Typography
+                  sx={{
+                    fontWeight: 600,
+                    fontSize: "0.9375rem",
+                    color: WIDGET_TOKENS.colors.textPrimary,
+                    letterSpacing: "-0.01em",
+                  }}
+                >
+                  Notifications
+                </Typography>
+                {(() => {
+                  const displayCount = showingAllNotifications
+                    ? notificationMeta.count
+                    : notificationMeta.unread_count;
+
+                  if (displayCount > 0) {
+                    return (
+                      <Chip
+                        label={displayCount}
+                        size="small"
+                        sx={{
+                          height: 20,
+                          minWidth: 20,
+                          fontSize: "0.6875rem",
+                          fontWeight: 600,
+                          backgroundColor: showingAllNotifications
+                            ? WIDGET_TOKENS.colors.textMuted
+                            : WIDGET_TOKENS.colors.primary,
+                          color: "white",
+                          borderRadius: `${WIDGET_TOKENS.borderRadius.sm}px`,
+                          "& .MuiChip-label": {
+                            px: 0.75,
+                          },
+                        }}
+                      />
+                    );
+                  }
+                  return null;
+                })()}
+                <Tooltip
+                  title={
+                    wsConnected
+                      ? "Real-time updates active"
+                      : "Real-time updates unavailable - Notifications will update on refresh."
+                  }
+                >
+                  {wsConnected ? (
+                    <OnlineIcon sx={{ fontSize: 12, color: WIDGET_TOKENS.colors.success }} />
+                  ) : (
+                    <OfflineIcon sx={{ fontSize: 12, color: WIDGET_TOKENS.colors.textMuted }} />
+                  )}
+                </Tooltip>
+              </Stack>
+              <Typography
+                sx={{
+                  fontSize: "0.75rem",
+                  color: WIDGET_TOKENS.colors.textMuted,
+                  mt: 0.25,
+                }}
+              >
+                Stay updated on conversations
+              </Typography>
+            </Box>
           </Stack>
           <Stack direction="row" spacing={1} alignItems="center">
             {/* Filter Toggle */}
             <ToggleButtonGroup
-              value={showingAllNotifications ? 'all' : 'unread'}
+              value={showingAllNotifications ? "all" : "unread"}
               exclusive
               onChange={handleFilterToggle}
               size="small"
               sx={{
                 height: 28,
-                '& .MuiToggleButton-root': {
-                  px: 1.5,
+                "& .MuiToggleButton-root": {
+                  px: 1.25,
                   py: 0.5,
-                  fontSize: '0.75rem',
+                  fontSize: "0.6875rem",
                   fontWeight: 500,
-                  border: `1px solid ${colorTokens.neutral[300]}`,
-                  color: colorTokens.neutral[700],
-                  '&.Mui-selected': {
-                    backgroundColor: primaryColor(600),
-                    color: 'white',
-                    borderColor: primaryColor(600),
-                    '&:hover': {
-                      backgroundColor: primaryColor(700),
+                  border: `1px solid ${WIDGET_TOKENS.colors.border}`,
+                  color: WIDGET_TOKENS.colors.textSecondary,
+                  textTransform: "none",
+                  borderRadius: `${WIDGET_TOKENS.borderRadius.sm}px !important`,
+                  "&.Mui-selected": {
+                    backgroundColor: WIDGET_TOKENS.colors.primary,
+                    color: "white",
+                    borderColor: WIDGET_TOKENS.colors.primary,
+                    "&:hover": {
+                      backgroundColor: WIDGET_TOKENS.colors.primaryDark,
                     },
                   },
-                  '&:hover': {
-                    backgroundColor: colorTokens.neutral[50],
+                  "&:hover": {
+                    backgroundColor: WIDGET_TOKENS.colors.borderSubtle,
                   },
                 },
               }}
@@ -324,32 +373,34 @@ export const ChatwootNotificationsWidget: React.FC<ChatwootNotificationsWidgetPr
                 All
               </ToggleButton>
             </ToggleButtonGroup>
-            
+
             {recentNotifications.length > 0 && (
               <>
                 <IconButton
                   size="small"
                   onClick={handleMenuOpen}
                   sx={{
-                    padding: '4px',
-                    '&:hover': {
-                      backgroundColor: colorTokens.neutral[100],
+                    padding: "4px",
+                    borderRadius: `${WIDGET_TOKENS.borderRadius.sm}px`,
+                    "&:hover": {
+                      backgroundColor: WIDGET_TOKENS.colors.borderSubtle,
                     },
                   }}
                 >
-                  <MoreVertIcon sx={{ fontSize: 18, color: colorTokens.neutral[700] }} />
+                  <MoreVertIcon sx={{ fontSize: 18, color: WIDGET_TOKENS.colors.textSecondary }} />
                 </IconButton>
                 <IconButton
                   size="small"
                   onClick={handleViewAllClick}
                   sx={{
-                    padding: '4px',
-                    '&:hover': {
-                      backgroundColor: primaryColor(50),
+                    padding: "4px",
+                    borderRadius: `${WIDGET_TOKENS.borderRadius.sm}px`,
+                    "&:hover": {
+                      backgroundColor: WIDGET_TOKENS.colors.primaryLight,
                     },
                   }}
                 >
-                  <ArrowForwardIcon sx={{ fontSize: 16, color: primaryColor(600) }} />
+                  <ArrowForwardIcon sx={{ fontSize: 16, color: WIDGET_TOKENS.colors.primary }} />
                 </IconButton>
               </>
             )}
@@ -363,19 +414,20 @@ export const ChatwootNotificationsWidget: React.FC<ChatwootNotificationsWidgetPr
         open={Boolean(menuAnchor)}
         onClose={handleMenuClose}
         anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'right',
+          vertical: "bottom",
+          horizontal: "right",
         }}
         transformOrigin={{
-          vertical: 'top',
-          horizontal: 'right',
+          vertical: "top",
+          horizontal: "right",
         }}
         PaperProps={{
           sx: {
             mt: 1,
             minWidth: 180,
-            borderRadius: 1,
-            boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+            borderRadius: `${WIDGET_TOKENS.borderRadius.md}px`,
+            boxShadow: "0 4px 16px rgba(0, 0, 0, 0.1), 0 2px 8px rgba(0, 0, 0, 0.06)",
+            border: `1px solid ${WIDGET_TOKENS.colors.borderSubtle}`,
           },
         }}
       >
@@ -383,10 +435,10 @@ export const ChatwootNotificationsWidget: React.FC<ChatwootNotificationsWidgetPr
           onClick={handleMarkAllAsRead}
           disabled={unreadCount === 0}
           sx={{
-            fontSize: '0.875rem',
-            py: 1.5,
-            '&:hover': {
-              backgroundColor: colorTokens.neutral[50],
+            fontSize: "0.8125rem",
+            py: 1.25,
+            "&:hover": {
+              backgroundColor: WIDGET_TOKENS.colors.borderSubtle,
             },
           }}
         >
@@ -396,10 +448,10 @@ export const ChatwootNotificationsWidget: React.FC<ChatwootNotificationsWidgetPr
           onClick={handleDeleteAllRead}
           disabled={notifications.filter((n) => n.read_at).length === 0}
           sx={{
-            fontSize: '0.875rem',
-            py: 1.5,
-            '&:hover': {
-              backgroundColor: colorTokens.neutral[50],
+            fontSize: "0.8125rem",
+            py: 1.25,
+            "&:hover": {
+              backgroundColor: WIDGET_TOKENS.colors.borderSubtle,
             },
           }}
         >
@@ -409,11 +461,11 @@ export const ChatwootNotificationsWidget: React.FC<ChatwootNotificationsWidgetPr
           onClick={handleDeleteAll}
           disabled={notifications.length === 0}
           sx={{
-            fontSize: '0.875rem',
-            py: 1.5,
-            color: 'error.main',
-            '&:hover': {
-              backgroundColor: colorTokens.error[50],
+            fontSize: "0.8125rem",
+            py: 1.25,
+            color: WIDGET_TOKENS.colors.error,
+            "&:hover": {
+              backgroundColor: WIDGET_TOKENS.colors.errorLight,
             },
           }}
         >
@@ -422,74 +474,153 @@ export const ChatwootNotificationsWidget: React.FC<ChatwootNotificationsWidgetPr
       </Menu>
 
       {/* Notifications List */}
-      <Box sx={{ flex: 1, overflow: 'auto', minHeight: 0 }}>
+      <Box
+        sx={{
+          flex: 1,
+          overflow: "auto",
+          minHeight: 0,
+          // Custom scrollbar styling
+          "&::-webkit-scrollbar": {
+            width: 6,
+          },
+          "&::-webkit-scrollbar-track": {
+            backgroundColor: "transparent",
+          },
+          "&::-webkit-scrollbar-thumb": {
+            backgroundColor: WIDGET_TOKENS.colors.border,
+            borderRadius: 3,
+            "&:hover": {
+              backgroundColor: WIDGET_TOKENS.colors.textMuted,
+            },
+          },
+        }}
+      >
         {error ? (
-          <Box sx={{ p: 2, textAlign: 'center' }}>
-            <Typography variant="body2" sx={{ color: 'error.main', fontSize: '0.813rem' }}>
+          <Box sx={{ p: 3, textAlign: "center" }}>
+            <Typography
+              sx={{
+                color: WIDGET_TOKENS.colors.error,
+                fontSize: "0.8125rem",
+              }}
+            >
               {error}
             </Typography>
           </Box>
         ) : loading && recentNotifications.length === 0 ? (
-          <Box sx={{ p: 2, textAlign: 'center' }}>
+          <Box sx={{ p: 3, textAlign: "center" }}>
             <Typography
-              variant="body2"
-              sx={{ color: colorTokens.neutral[500], fontSize: '0.813rem' }}
+              sx={{
+                color: WIDGET_TOKENS.colors.textMuted,
+                fontSize: "0.8125rem",
+              }}
             >
               Loading notifications...
             </Typography>
           </Box>
         ) : recentNotifications.length === 0 ? (
-          <Box sx={{ p: 3 }}>
-            <EmptyState
-              icon={<NotificationsIcon sx={{ fontSize: 32, color: colorTokens.neutral[300] }} />}
-              title={showingAllNotifications ? "No notifications" : "No unread notifications"}
-              description={showingAllNotifications ? "No notifications to display." : "All caught up! No new notifications."}
-            />
+          // Improved Empty State
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              height: "100%",
+              minHeight: 200,
+              p: 4,
+            }}
+          >
+            <Box sx={{ textAlign: "center", maxWidth: 260 }}>
+              <Box
+                sx={{
+                  width: 64,
+                  height: 64,
+                  borderRadius: `${WIDGET_TOKENS.borderRadius.lg}px`,
+                  backgroundColor: WIDGET_TOKENS.colors.borderSubtle,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  margin: "0 auto 20px",
+                }}
+              >
+                <NotificationsNoneIcon
+                  sx={{
+                    fontSize: 32,
+                    color: WIDGET_TOKENS.colors.textMuted,
+                  }}
+                />
+              </Box>
+              <Typography
+                sx={{
+                  fontSize: "0.9375rem",
+                  fontWeight: 600,
+                  color: WIDGET_TOKENS.colors.textPrimary,
+                  mb: 1,
+                }}
+              >
+                {showingAllNotifications ? "No notifications" : "No unread notifications"}
+              </Typography>
+              <Typography
+                sx={{
+                  fontSize: "0.8125rem",
+                  color: WIDGET_TOKENS.colors.textMuted,
+                  lineHeight: 1.5,
+                }}
+              >
+                {showingAllNotifications
+                  ? "Notifications will appear here when you receive them."
+                  : "All caught up! You have no new notifications."}
+              </Typography>
+            </Box>
           </Box>
         ) : (
-          <List sx={{ py: 0.5 }}>
-            {recentNotifications.map((notification) => {
+          <List sx={{ py: 0 }}>
+            {recentNotifications.map((notification, index) => {
               const sender = getSenderInfo(notification);
               const typeInfo = getNotificationTypeInfo(notification.notification_type);
               const messagePreview = getMessagePreview(notification, 60);
-              // created_at is Unix timestamp in seconds, formatTimeAgo handles it correctly
               const timestamp = notification.created_at;
+              const isUnread = !notification.read_at;
 
               return (
                 <ListItem
                   key={notification.id}
                   onClick={() => handleNotificationClick(notification)}
                   sx={{
-                    px: 2,
-                    py: 1,
-                    cursor: 'pointer',
-                    // Different background colors for read vs unread
-                    backgroundColor: notification.read_at 
-                      ? colorTokens.neutral[50] // Read: light gray background
-                      : primaryColor(50), // Unread: colored background
-                    '&:hover': {
-                      backgroundColor: notification.read_at
-                        ? colorTokens.neutral[100]
-                        : primaryColor(100),
+                    px: 2.5,
+                    py: 1.5,
+                    cursor: "pointer",
+                    backgroundColor: isUnread
+                      ? WIDGET_TOKENS.colors.primaryLight
+                      : WIDGET_TOKENS.colors.background,
+                    "&:hover": {
+                      backgroundColor: isUnread
+                        ? `${WIDGET_TOKENS.colors.primary}15`
+                        : WIDGET_TOKENS.colors.borderSubtle,
                     },
-                    borderBottom: `1px solid ${colorTokens.neutral[100]}`,
-                    // Add left border indicator for unread notifications
-                    borderLeft: notification.read_at 
-                      ? 'none' 
-                      : `3px solid ${primaryColor(600)}`,
-                    pl: notification.read_at ? 2 : 1.5, // Adjust padding when border is present
+                    borderBottom:
+                      index < recentNotifications.length - 1
+                        ? `1px solid ${WIDGET_TOKENS.colors.borderSubtle}`
+                        : "none",
+                    borderLeft: isUnread
+                      ? `3px solid ${WIDGET_TOKENS.colors.primary}`
+                      : "3px solid transparent",
+                    transition: "all 0.15s ease",
                   }}
                 >
-                  <Stack direction="row" spacing={1.5} sx={{ width: '100%', alignItems: 'flex-start' }}>
+                  <Stack
+                    direction="row"
+                    spacing={1.5}
+                    sx={{ width: "100%", alignItems: "flex-start" }}
+                  >
                     {/* Avatar */}
                     <Avatar
                       src={sender.avatar || undefined}
                       sx={{
-                        width: 28,
-                        height: 28,
+                        width: 32,
+                        height: 32,
                         bgcolor: sender.color,
-                        color: 'white',
-                        fontSize: '0.688rem',
+                        color: "white",
+                        fontSize: "0.75rem",
                         fontWeight: 600,
                         flexShrink: 0,
                       }}
@@ -508,26 +639,24 @@ export const ChatwootNotificationsWidget: React.FC<ChatwootNotificationsWidgetPr
                         sx={{ mb: 0.25 }}
                       >
                         <Typography
-                          variant="body2"
                           sx={{
-                            fontSize: '0.813rem',
-                            fontWeight: notification.read_at ? 400 : 600, // Bold for unread
-                            color: notification.read_at 
-                              ? colorTokens.neutral[600] // Lighter color for read
-                              : colorTokens.neutral[900], // Darker color for unread
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis',
-                            whiteSpace: 'nowrap',
+                            fontSize: "0.8125rem",
+                            fontWeight: isUnread ? 600 : 500,
+                            color: isUnread
+                              ? WIDGET_TOKENS.colors.textPrimary
+                              : WIDGET_TOKENS.colors.textSecondary,
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            whiteSpace: "nowrap",
                           }}
                         >
                           {sender.name}
                         </Typography>
                         <Typography
-                          variant="caption"
                           sx={{
-                            fontSize: '0.688rem',
-                            color: colorTokens.neutral[500],
-                            whiteSpace: 'nowrap',
+                            fontSize: "0.6875rem",
+                            color: WIDGET_TOKENS.colors.textMuted,
+                            whiteSpace: "nowrap",
                           }}
                         >
                           {formatTimeAgo(timestamp)}
@@ -536,19 +665,18 @@ export const ChatwootNotificationsWidget: React.FC<ChatwootNotificationsWidgetPr
 
                       {/* Message Preview */}
                       <Typography
-                        variant="body2"
                         sx={{
-                          fontSize: '0.813rem',
-                          fontWeight: notification.read_at ? 400 : 500, // Slightly bolder for unread
-                          color: notification.read_at 
-                            ? colorTokens.neutral[500] // Lighter color for read
-                            : colorTokens.neutral[700], // Darker color for unread
+                          fontSize: "0.8125rem",
+                          fontWeight: isUnread ? 500 : 400,
+                          color: isUnread
+                            ? WIDGET_TOKENS.colors.textSecondary
+                            : WIDGET_TOKENS.colors.textMuted,
                           lineHeight: 1.4,
-                          overflow: 'hidden',
-                          textOverflow: 'ellipsis',
-                          display: '-webkit-box',
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          display: "-webkit-box",
                           WebkitLineClamp: 2,
-                          WebkitBoxOrient: 'vertical',
+                          WebkitBoxOrient: "vertical",
                         }}
                         title={messagePreview}
                       >
@@ -556,12 +684,11 @@ export const ChatwootNotificationsWidget: React.FC<ChatwootNotificationsWidgetPr
                       </Typography>
 
                       {/* Type Label */}
-                      <Stack direction="row" alignItems="center" spacing={0.5} sx={{ mt: 0.25 }}>
+                      <Stack direction="row" alignItems="center" spacing={0.5} sx={{ mt: 0.5 }}>
                         <DotIcon sx={{ fontSize: 8, color: typeInfo.color }} />
                         <Typography
-                          variant="caption"
                           sx={{
-                            fontSize: '0.688rem',
+                            fontSize: "0.6875rem",
                             color: typeInfo.color,
                             fontWeight: 500,
                           }}
@@ -582,27 +709,30 @@ export const ChatwootNotificationsWidget: React.FC<ChatwootNotificationsWidgetPr
       {recentNotifications.length > 0 && (
         <Box
           sx={{
-            px: 2,
-            py: 1,
-            borderTop: `1px solid ${colorTokens.neutral[200]}`,
-            backgroundColor: colorTokens.neutral[50],
-            textAlign: 'center',
+            px: 2.5,
+            py: 1.5,
+            borderTop: `1px solid ${WIDGET_TOKENS.colors.border}`,
+            backgroundColor: WIDGET_TOKENS.colors.backgroundAlt,
+            textAlign: "center",
           }}
         >
           <Typography
-            variant="caption"
             onClick={handleViewAllClick}
             sx={{
-              fontSize: '0.75rem',
-              color: primaryColor(600),
-              cursor: 'pointer',
+              fontSize: "0.8125rem",
+              color: WIDGET_TOKENS.colors.primary,
+              cursor: "pointer",
               fontWeight: 500,
-              '&:hover': {
-                textDecoration: 'underline',
+              transition: "color 0.15s ease",
+              "&:hover": {
+                color: WIDGET_TOKENS.colors.primaryDark,
+                textDecoration: "underline",
               },
             }}
           >
-            View all notifications ({showingAllNotifications ? notificationMeta.count : notificationMeta.unread_count} {showingAllNotifications ? 'total' : 'unread'})
+            View all notifications (
+            {showingAllNotifications ? notificationMeta.count : notificationMeta.unread_count}{" "}
+            {showingAllNotifications ? "total" : "unread"})
           </Typography>
         </Box>
       )}
@@ -611,4 +741,3 @@ export const ChatwootNotificationsWidget: React.FC<ChatwootNotificationsWidgetPr
 };
 
 export default ChatwootNotificationsWidget;
-
