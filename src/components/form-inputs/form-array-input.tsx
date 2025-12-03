@@ -87,23 +87,25 @@ const FormArrayInput = ({
         )}
         {!disableAddValue && (
           <div style={classes.inputsRow}>
-            {inputs.map((input: IInput, index: number) => {
-              input.value = state[input.parameterKey]
-                ? state[input.parameterKey]
-                : "";
-              return (
-                <FormInput
-                  key={input.parameterKey + index}
-                  input={input}
-                  error={
-                    !!input.value && !!input.regex
-                      ? !input.regex.test(input.value)
-                      : !!(errors && errors[input.parameterKey]) || !isValid
-                  }
-                  changeState={handleInputChanges1}
-                />
-              );
-            })}
+            {inputs
+              .filter((input) => !(input.isCombinedField && input.readonly))
+              .map((input: IInput, index: number) => {
+                input.value = state[input.parameterKey]
+                  ? state[input.parameterKey]
+                  : "";
+                return (
+                  <FormInput
+                    key={input.parameterKey + index}
+                    input={input}
+                    error={
+                      !!input.value && !!input.regex
+                        ? !input.regex.test(input.value)
+                        : !!(errors && errors[input.parameterKey]) || !isValid
+                    }
+                    changeState={handleInputChanges1}
+                  />
+                );
+              })}
             <div style={classes.addColor}>
               <SecondaryButton
                 variant={"contained"}
@@ -123,24 +125,41 @@ const FormArrayInput = ({
                   key={"row" + index}
                   style={{ ...classes.inputsRow, paddingTop: 20 }}
                 >
-                  {inputs.map((input) => (
-                    <FormInput
-                      key={index}
-                      readonly={disableUpdateValues}
-                      input={{
-                        ...input,
-                        value: input.secondValue
-                          ? v[input.secondValue]
-                          : v[input.parameterKey],
-                        disabled: false,
-                        type: disableUpdateValues ? "text" : input.type,
-                      }}
-                      error={false}
-                      changeState={(key, value) => {
-                        handleValuesChange(key, value, index);
-                      }}
-                    />
-                  ))}
+                  {inputs.map((input) => {
+                    let computedValue = "";
+                    if (input.isCombinedField && input.combinedFields) {
+                      // Combine values from multiple fields (e.g., "code - name")
+                      const combinedValues = input.combinedFields
+                        .map((field: string) => v[field] || "")
+                        .filter((val: string) => val)
+                        .join(" - ");
+                      computedValue = combinedValues;
+                    } else {
+                      computedValue = input.secondValue
+                        ? v[input.secondValue]
+                        : v[input.parameterKey];
+                    }
+
+                    return (
+                      <FormInput
+                        key={`${input.parameterKey}-${index}`}
+                        readonly={disableUpdateValues || input.readonly}
+                        input={{
+                          ...input,
+                          value: computedValue,
+                          disabled: false,
+                          type:
+                            disableUpdateValues || input.readonly
+                              ? "text"
+                              : input.type,
+                        }}
+                        error={false}
+                        changeState={(key, value) => {
+                          handleValuesChange(key, value, index);
+                        }}
+                      />
+                    );
+                  })}
                   <RemoveSecondaryBtn onClick={() => handleRemoveRow(index)} />
                 </div>
               </Collapse>
