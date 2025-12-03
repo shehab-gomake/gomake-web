@@ -37,32 +37,33 @@ export const BaseSettingsSubpage: React.FC<BaseSettingsSubpageProps> = ({
         height: "100%",
         display: "flex",
         flexDirection: "column",
-        backgroundColor: theme.palette.background.default,
+        backgroundColor: "#f8f9fa", // Muted background
       }}
     >
-      {/* Header Section */}
+      {/* Compact Header Section */}
       <Box
         sx={{
           px: 3,
-          py: 2,
-          backgroundColor: theme.palette.background.paper,
-          borderBottom: `1px solid ${theme.palette.divider}`,
+          py: 1.5,
+          backgroundColor: "transparent",
         }}
       >
         <Box
           sx={{
             display: "flex",
-            alignItems: "center",
+            alignItems: "flex-start",
             justifyContent: "space-between",
+            gap: 2,
           }}
         >
-          <Box>
+          <Box sx={{ minWidth: 0 }}>
             <Typography
-              variant="h5"
+              variant="h6"
               sx={{
-                fontWeight: 700,
-                fontSize: "1.5rem",
-                color: theme.palette.text.primary,
+                fontWeight: 600,
+                fontSize: "1.125rem", // Smaller, more compact
+                color: "#1f2937", // Darker muted color
+                lineHeight: 1.3,
               }}
             >
               {title}
@@ -71,25 +72,28 @@ export const BaseSettingsSubpage: React.FC<BaseSettingsSubpageProps> = ({
               <Typography
                 variant="body2"
                 sx={{
-                  mt: 0.5,
-                  color: theme.palette.text.secondary,
-                  fontSize: "0.875rem",
+                  mt: 0.25,
+                  color: "#6b7280", // Muted gray
+                  fontSize: "0.813rem", // Smaller type
+                  lineHeight: 1.4,
                 }}
               >
                 {description}
               </Typography>
             )}
           </Box>
-          {headerActions && <Box>{headerActions}</Box>}
+          {headerActions && <Box sx={{ flexShrink: 0 }}>{headerActions}</Box>}
         </Box>
       </Box>
 
-      {/* Content Section */}
+      {/* Content Section - Floating White Card */}
       <Box
         sx={{
           flex: 1,
           overflow: "auto",
-          p: 3,
+          px: 3,
+          pb: 3,
+          pt: 1,
         }}
       >
         {isLoading ? (
@@ -99,12 +103,25 @@ export const BaseSettingsSubpage: React.FC<BaseSettingsSubpageProps> = ({
               alignItems: "center",
               justifyContent: "center",
               minHeight: 200,
+              backgroundColor: "#ffffff",
+              borderRadius: "8px",
+              boxShadow: "0 1px 3px rgba(0,0,0,0.08)", // Soft shadow
             }}
           >
-            <CircularProgress />
+            <CircularProgress size={32} sx={{ color: "#6366f1" }} />
           </Box>
         ) : (
-          children
+          <Box
+            sx={{
+              backgroundColor: "#ffffff",
+              borderRadius: "8px",
+              boxShadow: "0 1px 3px rgba(0,0,0,0.08)", // Soft shadow
+              p: 3,
+              minHeight: "calc(100% - 16px)",
+            }}
+          >
+            {children}
+          </Box>
         )}
       </Box>
     </Box>

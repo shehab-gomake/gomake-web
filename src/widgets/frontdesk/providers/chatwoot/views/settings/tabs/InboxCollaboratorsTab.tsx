@@ -2,13 +2,13 @@
  * Inbox Collaborators Tab
  *
  * Manage agents assigned to this inbox.
+ * Uses unified compact components for consistency.
  */
 
 import React, { useState, useEffect } from "react";
 import {
   Box,
   Typography,
-  Button,
   FormControl,
   InputLabel,
   Select,
@@ -19,7 +19,7 @@ import {
   CircularProgress,
 } from "@mui/material";
 import type { ChatwootInbox } from "@/services/frontdesk/api/chatwoot/types/inboxes.types";
-import { SettingsSection } from "../../../components/settings";
+import { SettingsSection, CompactPrimaryButton } from "../../../components/settings";
 import { useChatwootAgents } from "../../../hooks/resources/use-chatwoot-agents";
 import { chatwootService } from "@/services/frontdesk";
 
@@ -53,14 +53,12 @@ export const InboxCollaboratorsTab: React.FC<InboxCollaboratorsTabProps> = ({
         );
 
         // Extract agent IDs from response
-        // Response format: { payload: [...agents...] } or similar
         const inboxAgents = response?.payload || response || [];
         const agentIds = inboxAgents.map((agent: any) => agent.id);
 
         setSelectedAgentIds(agentIds);
       } catch (error) {
         console.error("Failed to load inbox agents:", error);
-        // Start with empty if API fails
         setSelectedAgentIds([]);
       } finally {
         setLoadingInboxAgents(false);
@@ -88,11 +86,11 @@ export const InboxCollaboratorsTab: React.FC<InboxCollaboratorsTabProps> = ({
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          minHeight: 200,
+          minHeight: 180,
         }}
       >
-        <CircularProgress />
-        <Typography variant="body2" sx={{ ml: 2, color: "text.secondary" }}>
+        <CircularProgress size={24} sx={{ color: "#6366f1" }} />
+        <Typography variant="body2" sx={{ ml: 2, color: "#6b7280", fontSize: "0.813rem" }}>
           {loadingAgents ? "Loading agents..." : "Loading inbox assignments..."}
         </Typography>
       </Box>
@@ -100,14 +98,14 @@ export const InboxCollaboratorsTab: React.FC<InboxCollaboratorsTabProps> = ({
   }
 
   return (
-    <Box sx={{ maxWidth: 800 }}>
-      {/* Agent Assignment */}
+    <Box>
+      {/* Agent Assignment - Compact */}
       <SettingsSection
         title="Assigned Agents"
         description="Select agents who can access and respond to conversations in this inbox"
       >
-        <FormControl fullWidth sx={{ mb: 2 }}>
-          <InputLabel>Select Agents</InputLabel>
+        <FormControl fullWidth size="small" sx={{ mb: 2 }}>
+          <InputLabel sx={{ fontSize: "0.813rem" }}>Select Agents</InputLabel>
           <Select
             multiple
             value={selectedAgentIds}
@@ -122,29 +120,43 @@ export const InboxCollaboratorsTab: React.FC<InboxCollaboratorsTabProps> = ({
                       key={agentId}
                       label={agent?.name || `Agent ${agentId}`}
                       size="small"
+                      sx={{
+                        fontSize: "0.75rem",
+                        height: 22,
+                        backgroundColor: "rgba(99, 102, 241, 0.1)",
+                        color: "#6366f1",
+                        border: "none",
+                      }}
                     />
                   );
                 })}
               </Box>
             )}
             disabled={isSaving}
+            sx={{
+              fontSize: "0.813rem",
+              "& .MuiSelect-select": {
+                py: 1,
+              },
+            }}
           >
             {agents.map((agent) => (
-              <MenuItem key={agent.id} value={agent.id}>
-                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+              <MenuItem key={agent.id} value={agent.id} sx={{ fontSize: "0.813rem", py: 1 }}>
+                <Box sx={{ display: "flex", alignItems: "center", gap: 0.75, width: "100%" }}>
                   <Box
                     sx={{
-                      width: 8,
-                      height: 8,
+                      width: 6,
+                      height: 6,
                       borderRadius: "50%",
                       bgcolor:
                         agent.availability_status === "online"
-                          ? "success.main"
-                          : "text.disabled",
+                          ? "#10b981"
+                          : "#d1d5db",
+                      flexShrink: 0,
                     }}
                   />
-                  <Typography>{agent.name}</Typography>
-                  <Typography variant="caption" color="text.secondary">
+                  <Typography sx={{ fontSize: "0.813rem", flex: 1 }}>{agent.name}</Typography>
+                  <Typography variant="caption" sx={{ color: "#6b7280", fontSize: "0.75rem" }}>
                     ({agent.email})
                   </Typography>
                 </Box>
@@ -154,18 +166,20 @@ export const InboxCollaboratorsTab: React.FC<InboxCollaboratorsTabProps> = ({
         </FormControl>
 
         {selectedAgentIds.length === 0 && (
-          <Alert severity="warning" sx={{ mb: 2 }}>
+          <Alert severity="warning" sx={{ mb: 2, borderRadius: "6px", fontSize: "0.813rem", py: 0.75 }}>
             At least one agent must be assigned to this inbox
           </Alert>
         )}
 
-        <Button
-          variant="outlined"
-          onClick={handleSaveAgents}
-          disabled={!hasAgentChanges || selectedAgentIds.length === 0 || isSaving}
-        >
-          {isSaving ? "Updating..." : "Update Agents"}
-        </Button>
+        <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 2 }}>
+          <CompactPrimaryButton
+            onClick={handleSaveAgents}
+            disabled={!hasAgentChanges || selectedAgentIds.length === 0 || isSaving}
+            loading={isSaving}
+          >
+            {isSaving ? "Saving..." : "Save Changes"}
+          </CompactPrimaryButton>
+        </Box>
       </SettingsSection>
     </Box>
   );

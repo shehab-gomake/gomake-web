@@ -104,7 +104,25 @@ export const LabelsSubpage: React.FC = () => {
   };
 
   const headerActions = (
-    <Button variant="contained" startIcon={<AddIcon />} onClick={handleAddClick} disabled={loading || !selectedAccountId}>
+    <Button 
+      variant="contained" 
+      startIcon={<AddIcon sx={{ fontSize: 16 }} />} 
+      onClick={handleAddClick} 
+      disabled={loading || !selectedAccountId}
+      sx={{
+        fontSize: "0.813rem",
+        fontWeight: 500,
+        textTransform: "none",
+        px: 1.5,
+        py: 0.5,
+        height: 30,
+        backgroundColor: "#6366f1",
+        "&:hover": {
+          backgroundColor: "#4f46e5",
+        },
+        boxShadow: "0 1px 2px rgba(0,0,0,0.05)",
+      }}
+    >
       Add label
     </Button>
   );
@@ -117,8 +135,8 @@ export const LabelsSubpage: React.FC = () => {
         headerActions={headerActions}
         isLoading={loading && labels.length === 0}
       >
-        {/* Learn More Link */}
-        <Box sx={{ mb: 3 }}>
+        {/* Learn More Link - Compact */}
+        <Box sx={{ mb: 2 }}>
           <Link
             href="#"
             onClick={(e) => {
@@ -126,21 +144,22 @@ export const LabelsSubpage: React.FC = () => {
               // TODO: Open help documentation or modal
             }}
             sx={{
-              color: "primary.main",
+              color: "#6366f1",
               textDecoration: "none",
               fontWeight: 500,
+              fontSize: "0.813rem",
               "&:hover": {
                 textDecoration: "underline",
               },
             }}
           >
-            Learn more about labels &gt;
+            Learn more about labels →
           </Link>
         </Box>
 
         {/* Error Alert */}
         {error && (
-          <Alert severity="error" sx={{ mb: 3 }}>
+          <Alert severity="error" sx={{ mb: 2, borderRadius: "6px" }}>
             {error}
           </Alert>
         )}
@@ -153,83 +172,122 @@ export const LabelsSubpage: React.FC = () => {
               flexDirection: "column",
               alignItems: "center",
               justifyContent: "center",
-              minHeight: 300,
+              minHeight: 260,
               textAlign: "center",
             }}
           >
-            <Typography variant="body1" color="text.secondary" sx={{ fontSize: "1rem" }}>
+            <Typography variant="body2" sx={{ color: "#6b7280", fontSize: "0.875rem" }}>
               There are no labels available in this account.
             </Typography>
           </Box>
         )}
 
-        {/* Labels Table */}
+        {/* Labels Table - Compact High-Density Design */}
         {labels.length > 0 && (
-          <TableContainer component={Paper} variant="outlined">
-            <Table>
+          <TableContainer 
+            component={Paper} 
+            variant="outlined"
+            sx={{
+              border: "1px solid rgba(0,0,0,0.06)",
+              borderRadius: "6px",
+              boxShadow: "none",
+            }}
+          >
+            <Table size="small">
               <TableHead>
-                <TableRow>
-                  <TableCell sx={{ fontWeight: 600 }}>Name</TableCell>
-                  <TableCell sx={{ fontWeight: 600 }}>Description</TableCell>
-                  <TableCell sx={{ fontWeight: 600 }}>Color</TableCell>
-                  <TableCell sx={{ fontWeight: 600 }}>Show on Sidebar</TableCell>
-                  <TableCell align="right" sx={{ fontWeight: 600 }}>
+                <TableRow sx={{ backgroundColor: "#f9fafb" }}>
+                  <TableCell sx={{ fontWeight: 600, fontSize: "0.75rem", color: "#4b5563", py: 1.25, borderBottom: "1px solid rgba(0,0,0,0.06)" }}>
+                    Name
+                  </TableCell>
+                  <TableCell sx={{ fontWeight: 600, fontSize: "0.75rem", color: "#4b5563", py: 1.25, borderBottom: "1px solid rgba(0,0,0,0.06)" }}>
+                    Description
+                  </TableCell>
+                  <TableCell sx={{ fontWeight: 600, fontSize: "0.75rem", color: "#4b5563", py: 1.25, borderBottom: "1px solid rgba(0,0,0,0.06)" }}>
+                    Color
+                  </TableCell>
+                  <TableCell sx={{ fontWeight: 600, fontSize: "0.75rem", color: "#4b5563", py: 1.25, borderBottom: "1px solid rgba(0,0,0,0.06)" }}>
+                    Show on Sidebar
+                  </TableCell>
+                  <TableCell align="right" sx={{ fontWeight: 600, fontSize: "0.75rem", color: "#4b5563", py: 1.25, borderBottom: "1px solid rgba(0,0,0,0.06)" }}>
                     Actions
                   </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {labels.map((label) => (
-                  <TableRow key={label.id}>
-                    <TableCell>
-                      <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                  <TableRow 
+                    key={label.id}
+                    sx={{
+                      "&:hover": {
+                        backgroundColor: "rgba(99, 102, 241, 0.02)",
+                      },
+                      "&:last-child td": {
+                        borderBottom: 0,
+                      },
+                    }}
+                  >
+                    <TableCell sx={{ py: 1.25, borderBottom: "1px solid rgba(0,0,0,0.04)" }}>
+                      <Typography variant="body2" sx={{ fontWeight: 500, fontSize: "0.813rem", color: "#1f2937" }}>
                         {label.title}
                       </Typography>
                     </TableCell>
-                    <TableCell>
-                      <Typography variant="body2" color="text.secondary">
+                    <TableCell sx={{ py: 1.25, borderBottom: "1px solid rgba(0,0,0,0.04)" }}>
+                      <Typography variant="body2" sx={{ color: "#6b7280", fontSize: "0.813rem" }}>
                         {label.description || "-"}
                       </Typography>
                     </TableCell>
-                    <TableCell>
-                      <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                    <TableCell sx={{ py: 1.25, borderBottom: "1px solid rgba(0,0,0,0.04)" }}>
+                      <Box sx={{ display: "flex", alignItems: "center", gap: 0.75 }}>
                         <Box
                           sx={{
-                            width: 20,
-                            height: 20,
-                            borderRadius: "4px",
+                            width: 16,
+                            height: 16,
+                            borderRadius: "3px",
                             bgcolor: label.color,
-                            border: "1px solid",
-                            borderColor: "divider",
+                            border: "1px solid rgba(0,0,0,0.1)",
                           }}
                         />
-                        <Typography variant="body2" color="text.secondary">
+                        <Typography variant="body2" sx={{ color: "#6b7280", fontSize: "0.75rem", fontFamily: "monospace" }}>
                           {label.color}
                         </Typography>
                       </Box>
                     </TableCell>
-                    <TableCell>
-                      <Typography variant="body2" color="text.secondary">
+                    <TableCell sx={{ py: 1.25, borderBottom: "1px solid rgba(0,0,0,0.04)" }}>
+                      <Typography variant="body2" sx={{ color: "#6b7280", fontSize: "0.813rem" }}>
                         {label.show_on_sidebar ? "Yes" : "No"}
                       </Typography>
                     </TableCell>
-                    <TableCell align="right">
-                      <Box sx={{ display: "flex", gap: 0.5, justifyContent: "flex-end" }}>
+                    <TableCell align="right" sx={{ py: 1.25, borderBottom: "1px solid rgba(0,0,0,0.04)" }}>
+                      <Box sx={{ display: "flex", gap: 0.25, justifyContent: "flex-end" }}>
                         <IconButton
                           size="small"
                           onClick={() => handleEditClick(label)}
                           disabled={loading}
-                          sx={{ color: "text.secondary" }}
+                          sx={{ 
+                            color: "#6b7280", 
+                            p: 0.5,
+                            "&:hover": { 
+                              color: "#6366f1",
+                              bgcolor: "rgba(99, 102, 241, 0.08)",
+                            } 
+                          }}
                         >
-                          <EditIcon fontSize="small" />
+                          <EditIcon sx={{ fontSize: 16 }} />
                         </IconButton>
                         <IconButton
                           size="small"
                           onClick={() => handleDeleteClick(label)}
                           disabled={loading}
-                          sx={{ color: "error.main" }}
+                          sx={{ 
+                            color: "#6b7280", 
+                            p: 0.5,
+                            "&:hover": { 
+                              color: "#ef4444",
+                              bgcolor: "rgba(239, 68, 68, 0.08)",
+                            } 
+                          }}
                         >
-                          <DeleteIcon fontSize="small" />
+                          <DeleteIcon sx={{ fontSize: 16 }} />
                         </IconButton>
                       </Box>
                     </TableCell>
@@ -243,7 +301,7 @@ export const LabelsSubpage: React.FC = () => {
         {/* Loading State (when refreshing with existing data) */}
         {loading && labels.length > 0 && (
           <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
-            <CircularProgress size={24} />
+            <CircularProgress size={20} sx={{ color: "#6366f1" }} />
           </Box>
         )}
       </BaseSettingsSubpage>

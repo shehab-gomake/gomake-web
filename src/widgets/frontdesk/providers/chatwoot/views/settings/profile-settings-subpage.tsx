@@ -8,7 +8,7 @@
  */
 
 import React, { useEffect } from "react";
-import { Box, Typography, Avatar, Alert } from "@mui/material";
+import { Box, Typography, Avatar, Alert, Chip } from "@mui/material";
 import PersonIcon from "@mui/icons-material/Person";
 import { BaseSettingsSubpage, SettingsSection } from "../../components/settings";
 import { useChatwootProvider } from "../../hooks/use-chatwoot-provider";
@@ -38,28 +38,28 @@ export const ProfileSettingsSubpage: React.FC = () => {
       isLoading={profileLoading}
     >
       {!profile ? (
-        /* No Profile State */
+        /* No Profile State - Compact */
         <Box
           sx={{
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
             justifyContent: "center",
-            minHeight: 300,
+            minHeight: 260,
             textAlign: "center",
-            gap: 2,
+            gap: 1.5,
           }}
         >
-          <PersonIcon sx={{ fontSize: 64, color: "text.secondary", opacity: 0.5 }} />
-          <Typography variant="h6" color="text.primary" fontWeight={600}>
+          <PersonIcon sx={{ fontSize: 48, color: "#9ca3af", opacity: 0.6 }} />
+          <Typography variant="subtitle1" sx={{ color: "#1f2937", fontWeight: 600, fontSize: "0.938rem" }}>
             No Profile Data
           </Typography>
-          <Typography variant="body2" color="text.secondary" sx={{ maxWidth: 400 }}>
+          <Typography variant="body2" sx={{ color: "#6b7280", maxWidth: 360, fontSize: "0.813rem", lineHeight: 1.5 }}>
             Unable to load profile information. Please try refreshing the page.
           </Typography>
         </Box>
       ) : (
-        /* Profile Display - Placeholder for future implementation */
+        /* Profile Display - Compact High-Density Design */
         <SettingsSection
           title="Profile Information"
           description="Your basic profile details"
@@ -68,33 +68,55 @@ export const ProfileSettingsSubpage: React.FC = () => {
             sx={{
               display: "flex",
               alignItems: "center",
-              gap: 3,
-              mb: 3,
+              gap: 2,
+              mb: 2.5,
+              p: 2,
+              backgroundColor: "#f9fafb",
+              borderRadius: "6px",
+              border: "1px solid rgba(0,0,0,0.06)",
             }}
           >
             <Avatar
               src={profile.avatar_url}
               alt={profile.name || "User"}
-              sx={{ width: 80, height: 80 }}
+              sx={{ 
+                width: 56, 
+                height: 56,
+                fontSize: "1.25rem",
+                fontWeight: 600,
+              }}
             >
               {profile.name?.charAt(0).toUpperCase()}
             </Avatar>
-            <Box>
-              <Typography variant="h6" fontWeight={600}>
+            <Box sx={{ flex: 1, minWidth: 0 }}>
+              <Typography variant="subtitle1" sx={{ fontWeight: 600, fontSize: "0.938rem", color: "#1f2937", mb: 0.25 }}>
                 {profile.name || "Unknown User"}
               </Typography>
-              <Typography variant="body2" color="text.secondary">
+              <Typography variant="body2" sx={{ color: "#6b7280", fontSize: "0.813rem", mb: 0.5 }}>
                 {profile.email}
               </Typography>
               {profile.role && (
-                <Typography variant="caption" color="text.secondary" sx={{ textTransform: "capitalize" }}>
-                  Role: {profile.role}
-                </Typography>
+                <Chip
+                  label={profile.role}
+                  size="small"
+                  sx={{
+                    fontSize: "0.688rem",
+                    fontWeight: 500,
+                    height: 20,
+                    textTransform: "capitalize",
+                    backgroundColor: "rgba(99, 102, 241, 0.1)",
+                    color: "#6366f1",
+                    border: "none",
+                    "& .MuiChip-label": {
+                      px: 0.75,
+                    },
+                  }}
+                />
               )}
             </Box>
           </Box>
 
-          <Typography variant="caption" color="text.disabled">
+          <Typography variant="caption" sx={{ color: "#9ca3af", fontSize: "0.75rem", fontStyle: "italic" }}>
             Profile editing and notification preferences UI are under development.
           </Typography>
         </SettingsSection>

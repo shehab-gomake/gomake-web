@@ -77,10 +77,11 @@ export const ConversationTeamsFilter: React.FC<ConversationTeamsFilterProps> = (
 
     setIsCreating(true);
     try {
+      // Note: GoMake always disables auto-assignment for teams
       const newTeam = await chatwootService.teams.createTeam(effectiveAccountId, {
         name: data.name,
         description: data.description,
-        allow_auto_assign: data.allow_auto_assign,
+        allow_auto_assign: false,
       });
 
       // Add members if provided
