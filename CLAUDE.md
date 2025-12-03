@@ -138,6 +138,51 @@ const msg = await chatwootService.messages.createMessage(accountId, convId, { co
 
 ---
 
+## 🎨 Design System (CRITICAL)
+
+**Location:** `src/widgets/frontdesk/design-system/`
+
+### ❌ NEVER Use (Deprecated)
+
+```typescript
+// DON'T - These are deprecated
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+const { neutralColor, primaryColor } = useGomakeTheme();
+backgroundColor: neutralColor(500);
+```
+
+### ✅ ALWAYS Use
+
+```typescript
+// DO - Use design system tokens
+import { colorTokens, semanticSpacing, radiusTokens, shadowTokens, semanticTypography } from "@/widgets/frontdesk/design-system";
+
+backgroundColor: colorTokens.neutral[500];
+backgroundColor: colorTokens.semantic.background.primary; // replaces neutralColor(0)
+padding: semanticSpacing.component.md;
+borderRadius: radiusTokens.md;
+boxShadow: shadowTokens.sm;
+```
+
+### Token Mapping
+
+| Old Pattern | New Pattern |
+|-------------|-------------|
+| `neutralColor(0)` | `colorTokens.semantic.background.primary` |
+| `neutralColor(500)` | `colorTokens.neutral[500]` |
+| `primaryColor(600)` | `colorTokens.primary[600]` |
+| `theme.palette.divider` | `colorTokens.semantic.border.default` |
+
+### Style Functions (compose-styles.ts)
+
+```typescript
+// DON'T pass color functions anymore
+createFieldContainerStyles({ backgroundColor: "light" }); // ✅ Good
+createFieldContainerStyles(neutralColor, { backgroundColor: "light" }); // ❌ Bad
+```
+
+---
+
 ## ⚡ Key Patterns
 
 ### Always Check accountId
@@ -187,6 +232,9 @@ const handleClick = useCallback(() => {
 | `response.data`              | `extractPayload(response)` |
 | `useState` for shared data   | Recoil atoms               |
 | Arrow functions in listeners | Named function refs        |
+| `useGomakeTheme()`           | `colorTokens` from design-system |
+| `neutralColor(500)`          | `colorTokens.neutral[500]` |
+| Hardcoded hex colors         | Design system tokens       |
 
 ---
 
@@ -204,6 +252,7 @@ npm run lint     # ESLint
 
 | Need           | Location                                                                 |
 | -------------- | ------------------------------------------------------------------------ |
+| **Design System** | `src/widgets/frontdesk/design-system/` (tokens, primitives, compounds) |
 | Quick patterns | `.cursor/ai-dev-acceleration.md`                                         |
 | API endpoints  | `.cursor/api-reference.md`                                               |
 | Decision tree  | `.cursor/quick-decision-tree.md`                                         |
