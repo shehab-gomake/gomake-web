@@ -1,17 +1,23 @@
 import { useTranslation } from "react-i18next";
-import {
-  GoMakeModal,
-  GomakePrimaryButton,
-  GomakeTextInput,
-} from "@/components";
+import { GomakePrimaryButton, GomakeTextInput } from "@/components";
 import { useStyle } from "./style";
 import { useState, useEffect } from "react";
 import { useGomakeAxios } from "@/hooks";
 import { getQualityIssueReasonsApi } from "@/services/api-service/quotes/qoutes-endpoints";
 import { useRecoilValue } from "recoil";
 import { printHouseProfile } from "@/store/print-house-profile";
-import { CircularProgress, Paper, MenuItem } from "@mui/material";
+import {
+  CircularProgress,
+  Paper,
+  MenuItem,
+  Modal,
+  IconButton,
+  Tooltip,
+} from "@mui/material";
 import { ClickOutside } from "@/components/click-out-side/click-out-side";
+import { CloseIcon } from "@/widgets/quote-new/receipts-table/Payment-methods-details/icons/close-icon";
+import { FONT_FAMILY } from "@/utils/font-family";
+import { QualityIssueIcon } from "@/icons";
 
 interface QualityIssueModalProps {
   openModal: boolean;
@@ -25,7 +31,7 @@ const QualityIssueModal = ({
   onConfirm,
 }: QualityIssueModalProps) => {
   const { t } = useTranslation();
-  const { clasess } = useStyle();
+  const { classes } = useStyle();
   const { callApi } = useGomakeAxios();
   const printHouse = useRecoilValue(printHouseProfile);
   const [reason, setReason] = useState<string>("");
@@ -51,7 +57,7 @@ const QualityIssueModal = ({
 
   const fetchExistingReasons = async () => {
     if (!printHouse?.id) return;
-    
+
     setLoading(true);
     const callBack = (res) => {
       if (res?.success && res?.data) {
@@ -108,83 +114,97 @@ const QualityIssueModal = ({
     !existingReasons.find((r) => r.toLowerCase() === inputValue.toLowerCase());
 
   return (
-    <GoMakeModal
-      openModal={openModal}
-      modalTitle={t("productionFloor.reportQualityIssue")}
+    <Modal
+      // disableEnforceFocus
+      open={openModal}
       onClose={handleClose}
-      insideStyle={clasess.insideStyle}
+      style={{ outline: "none", zIndex: 999999 }}
     >
-      <div style={clasess.mainModalContainer}>
-        {loading ? (
-          <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100%" }}>
-            <CircularProgress />
+      <div style={classes.container}>
+        <div style={classes.content}>
+          <div style={classes.closeIcon} onClick={handleClose}>
+            <Tooltip title={t("modal.close")}>
+              <IconButton>
+                <CloseIcon />
+              </IconButton>
+            </Tooltip>
           </div>
-        ) : (
-          <>
-            <div style={{ width: "100%", minWidth: 300, position: "relative" }}>
-              <GomakeTextInput
-                placeholder={t("productionFloor.qualityIssueReason")}
-                style={clasess.textInputStyle}
-                value={inputValue}
-                onChange={handleInputChange}
-                onClick={handleInputClick}
-              />
-              {openDropdown && (
-                <ClickOutside onClick={() => setOpenDropdown(false)}>
-                  <Paper
-                    sx={{
-                      position: "absolute",
-                      top: "100%",
-                      left: 0,
-                      right: 0,
-                      zIndex: 1300,
-                      maxHeight: 200,
-                      overflowY: "auto",
-                      marginTop: 1,
-                      boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
-                    }}
-                  >
-                    {isNewReason && (
-                      <MenuItem
-                        onClick={() => handleSelectReason(inputValue)}
-                        sx={{ fontWeight: 500 }}
-                      >
-                        {t("productionFloor.addNewReason")}: "{inputValue}"
-                      </MenuItem>
-                    )}
-                    {filteredReasons.map((reasonOption) => (
-                      <MenuItem
-                        key={reasonOption}
-                        onClick={() => handleSelectReason(reasonOption)}
-                        selected={reasonOption === reason}
-                      >
-                        {reasonOption}
-                      </MenuItem>
-                    ))}
-                    {filteredReasons.length === 0 && !isNewReason && (
-                      <MenuItem disabled>
-                        {t("productionFloor.noReasonsFound")}
-                      </MenuItem>
-                    )}
-                  </Paper>
-                </ClickOutside>
-              )}
+          <div style={classes.icon}>
+            <QualityIssueIcon />
+          </div>
+          <div style={classes.title}>
+            {t("productionFloor.reportQualityIssue")}
+          </div>
+          {loading ? (
+            <div style={classes.loadingContainer}>
+              <CircularProgress />
             </div>
-            <div style={clasess.btnContainer}>
-              <GomakePrimaryButton
-                style={clasess.sendBtn}
-                onClick={handleConfirm}
-                disabled={!reason.trim()}
-              >
-                {t("modal.confirm")}
-              </GomakePrimaryButton>
-            </div>
-          </>
-        )}
+          ) : (
+            <>
+              <div style={classes.inputContainer}>
+                <GomakeTextInput
+                  placeholder={t("productionFloor.qualityIssueReason")}
+                  style={classes.textInputStyle}
+                  value={inputValue}
+                  onChange={handleInputChange}
+                  onClick={handleInputClick}
+                />
+                {openDropdown && (
+                  <ClickOutside onClick={() => setOpenDropdown(false)}>
+                    <Paper style={classes.dropdownPaper}>
+                      {isNewReason && (
+                        <MenuItem
+                          onClick={() => handleSelectReason(inputValue)}
+                          sx={{ fontWeight: 500 }}
+                        >
+                          {t("productionFloor.addNewReason")}: "{inputValue}"
+                        </MenuItem>
+                      )}
+                      {filteredReasons.map((reasonOption) => (
+                        <MenuItem
+                          key={reasonOption}
+                          onClick={() => handleSelectReason(reasonOption)}
+                          selected={reasonOption === reason}
+                        >
+                          {reasonOption}
+                        </MenuItem>
+                      ))}
+                      {filteredReasons.length === 0 && !isNewReason && (
+                        <MenuItem disabled>
+                          {t("productionFloor.noReasonsFound")}
+                        </MenuItem>
+                      )}
+                    </Paper>
+                  </ClickOutside>
+                )}
+              </div>
+              <div style={classes.btnsContainer}>
+                <GomakePrimaryButton
+                  style={{
+                    ...classes.confirmBtn,
+                    ...(t("modal.confirm").length > 16
+                      ? FONT_FAMILY.Lexend(600, 14)
+                      : FONT_FAMILY.Lexend(600, 16)),
+                    ...(!reason.trim() && classes.disabledBtn),
+                  }}
+                  onClick={handleConfirm}
+                  disabled={!reason.trim()}
+                >
+                  {t("modal.confirm")}
+                </GomakePrimaryButton>
+                <GomakePrimaryButton
+                  style={classes.cancelBtn}
+                  onClick={handleClose}
+                >
+                  {t("modal.cancel")}
+                </GomakePrimaryButton>
+              </div>
+            </>
+          )}
+        </div>
       </div>
-    </GoMakeModal>
+    </Modal>
   );
 };
 
 export { QualityIssueModal };
-

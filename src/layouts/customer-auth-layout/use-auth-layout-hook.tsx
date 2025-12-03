@@ -22,6 +22,7 @@ import { ActionsIcon } from "@/icons/side-list-icons/actions";
 import { SettingsIcon } from "@/icons/side-list-icons/settings";
 import { CustomerServiceIcon } from "@/icons/side-list-icons/customer-service";
 import { AIIcon } from "@/icons/side-list-icons/ai";
+import { HpIndigoIcon } from "@/icons/side-list-icons/hp-indigo";
 import { getUserToken } from "@/services/storage-data";
 
 const useAuthLayoutHook = (
@@ -42,6 +43,7 @@ const useAuthLayoutHook = (
 
   const handleLogout = () => {
     localStorage.removeItem("auth-token");
+    localStorage.removeItem("refresh-token");
     changeRoute("/login");
   };
 
@@ -136,8 +138,7 @@ const useAuthLayoutHook = (
             key: "proforma invoices",
             title: "tabs.proformaInvoices",
             path: "/proformaInvoices",
-            // Permission: Permissions.SHOW_PROFORMA_INVOICES, // Will be added in the future
-            Permission: Permissions.SHOW_DELIVERY_NOTES,
+            Permission: Permissions.SHOW_PROFORMA_INVOICES,
           },
           {
             key: "invoices",
@@ -340,6 +341,12 @@ const useAuthLayoutHook = (
             title: "mailingSettings.messageLogs",
             path: "/mailing-logs",
             Permission: Permissions.SHOW_MAILING_LOGS,
+          },
+          {
+            key: "roiReport",
+            title: "ROI Report",
+            path: "/machines-comparison",
+            Permission: Permissions.SHOW_HP_INDIGO, // No permission required - all users can access HP Indigo Report
           },
         ],
         icon: () => {

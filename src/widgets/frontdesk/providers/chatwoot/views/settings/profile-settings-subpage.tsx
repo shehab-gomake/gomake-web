@@ -3,16 +3,33 @@
  *
  * Displays and manages user profile settings including
  * personal information, display preferences, and notification settings.
+ *
+ * RBAC: Only administrators can access Settings, but all users can view their own profile.
  */
 
-import React from "react";
+import React, { useEffect } from "react";
 import { Box, Typography, Avatar, Alert } from "@mui/material";
 import PersonIcon from "@mui/icons-material/Person";
 import { BaseSettingsSubpage, SettingsSection } from "../../components/settings";
 import { useChatwootProvider } from "../../hooks/use-chatwoot-provider";
+import { useChatwootPermissions } from "../../hooks/use-chatwoot-permissions";
+import { VIEW_PERMISSIONS } from "../../constants/permissions.constants";
 
 export const ProfileSettingsSubpage: React.FC = () => {
-  const { profile, profileLoading } = useChatwootProvider();
+  const { profile, profileLoading, router: chatwootRouter } = useChatwootProvider();
+
+  // Defense-in-depth: Check if user has permission to access Settings
+  // (Profile is within Settings, so must have Settings access)
+  const { canAccess } = useChatwootPermissions();
+  const canAccessSettings = canAccess(VIEW_PERMISSIONS.settings);
+
+  // Redirect unauthorized users to My Inbox
+  useEffect(() => {
+    if (!canAccessSettings) {
+      console.warn("[ProfileSettingsSubpage] Unauthorized access attempt - redirecting to My Inbox");
+      chatwootRouter.navigateToMyInbox();
+    }
+  }, [canAccessSettings, chatwootRouter]);
 
   return (
     <BaseSettingsSubpage

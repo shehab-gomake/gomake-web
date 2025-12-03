@@ -1,10 +1,18 @@
 # Chatwoot API Client Documentation
 
-This document provides a guide on how to use the auto-generated Chatwoot API client located in the `@/chatwoot` directory.
+This document provides a guide on the auto-generated Chatwoot API client located in the `@/chatwoot` directory.
+
+> **⚠️ IMPORTANT**: This OpenAPI-generated client is **for reference only**.
+>
+> **For actual implementation**, use the custom service layer at:
+> - `@/services/frontdesk/api/chatwoot/` - Custom Chatwoot services
+> - See `src/services/frontdesk/api/chatwoot/README.md` for implementation guide
+>
+> The custom service layer provides better integration with FrontDesk, proper authentication, and enhanced error handling.
 
 ## Overview
 
-The Chatwoot API client is generated using OpenAPI Generator. It provides a set of classes and types to interact with the Chatwoot API.
+The Chatwoot API client is generated using OpenAPI Generator. It provides reference types and documentation to understand the Chatwoot API structure.
 
 ### Key Files
 

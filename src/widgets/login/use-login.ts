@@ -1,5 +1,8 @@
 import { useGomakeAxios, useGomakeRouter } from "@/hooks";
-import { updateTokenStorage } from "@/services/storage-data";
+import {
+  updateTokenStorage,
+  updateRefreshTokenStorage,
+} from "@/services/storage-data";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSetRecoilState } from "recoil";
 import { companyProfileState } from "@/store/company-profile";
@@ -47,6 +50,9 @@ const useGomakeLogin = () => {
       if (result?.data?.data?.customer?.token) {
         showLoginModal(false);
         updateTokenStorage(result?.data?.data?.customer?.token);
+        if (result?.data?.data?.customer?.refreshToken) {
+          updateRefreshTokenStorage(result?.data?.data?.customer?.refreshToken);
+        }
 
         const urlParams = new URLSearchParams(window.location.search);
         const redirectPath = urlParams.get("redirect");

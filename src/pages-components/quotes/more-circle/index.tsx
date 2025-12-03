@@ -12,6 +12,9 @@ const MoreMenuWidget = ({
   onClickDuplicate,
   onClickLoggers,
   onClickOpenIrrelevantModal,
+  onClickOpenPriceModal,
+  onClickOpenDeliveryTimeModal,
+  onClickOpenModal,
   onClickSendPayment,
   onClickOpenCloseOrderModal,
   onClickOpenCloseOrderNotesModal,
@@ -33,6 +36,9 @@ const MoreMenuWidget = ({
   onClickSendToCustomerEmail,
   onClickSendToCustomerSMS,
   onClickSendToCustomerWhatsApp,
+  onClickSendPaymentEmail,
+  onClickSendPaymentSMS,
+  onClickSendPaymentWhatsApp,
   onClickOpenInventoryIntakeModal,
 }: any) => {
   const { classes } = useStyle();
@@ -46,6 +52,9 @@ const MoreMenuWidget = ({
     onClickDuplicate,
     onClickLoggers,
     onClickOpenIrrelevantModal,
+    onClickOpenPriceModal,
+    onClickOpenDeliveryTimeModal,
+    onClickOpenModal,
     onClickSendPayment,
     onClickOpenCloseOrderModal,
     onClickOpenCloseOrderNotesModal,
@@ -64,51 +73,60 @@ const MoreMenuWidget = ({
     handleGetTaxConfirmNo,
     onClickOpenMoveOrderToReadyModal,
     onOpenPackagesModal,
+    onClickOpenInventoryIntakeModal,
     onClickSendToCustomerEmail,
     onClickSendToCustomerSMS,
     onClickSendToCustomerWhatsApp,
+    onClickSendPaymentEmail,
+    onClickSendPaymentSMS,
+    onClickSendPaymentWhatsApp,
     classes,
-    onClickOpenInventoryIntakeModal,
   });
 
   return (
     <OptionsButton>
-      {(closeMenu: any) => menuList.map((item: any, index: number) =>
-        item?.condition ? (
-          item?.component ? (
-            // Render custom component (e.g., submenu) with close handler
-            <div key={index}>{typeof item.component === 'function' ? item.component(closeMenu) : item.component}</div>
-          ) : (
-            <MenuItem
-              style={classes.menuRowStyle}
-              key={index}
-              onClick={item.onClick}
-            >
-              {item?.isLink ? (
-                <Link
-                  href={item.href || "#"}
-                  rel="noopener noreferrer"
-                  style={{
-                    textDecoration: "none",
-                    display: "flex",
-                    alignItems: "center",
-                    width: "100%",
-                    gap: 8,
-                  }}
-                >
-                  {item.icon}
-                  <span style={classes.rowTextStyle}>{item.name}</span>
-                </Link>
-              ) : (
-                <>
-                  {item.icon}
-                  <div style={classes.rowTextStyle}>{item.name}</div>
-                </>
-              )}
-            </MenuItem>
-          )
-        ) : null
-      )}
+      {(closeMenu: any) =>
+        menuList.map((item: any, index: number) =>
+          item?.condition ? (
+            item?.component ? (
+              // Render custom component (e.g., submenu) with close handler
+              <div key={index}>
+                {typeof item.component === "function"
+                  ? item.component(closeMenu)
+                  : item.component}
+              </div>
+            ) : (
+              <MenuItem
+                style={classes.menuRowStyle}
+                key={index}
+                onClick={item.onClick}
+              >
+                {item?.isLink ? (
+                  <Link
+                    href={item.href || "#"}
+                    rel="noopener noreferrer"
+                    style={{
+                      textDecoration: "none",
+                      display: "flex",
+                      alignItems: "center",
+                      width: "100%",
+                      gap: 8,
+                    }}
+                  >
+                    {item.icon}
+                    <span style={classes.rowTextStyle}>{item.name}</span>
+                  </Link>
+                ) : (
+                  <>
+                    {item.icon}
+                    <div style={classes.rowTextStyle}>{item.name}</div>
+                  </>
+                )}
+              </MenuItem>
+            )
+          ) : null
+        )
+      }
     </OptionsButton>
   );
 };

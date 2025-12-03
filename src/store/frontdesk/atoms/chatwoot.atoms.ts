@@ -1,4 +1,4 @@
-import { atom, selector, selectorFamily } from "recoil";
+import { atom, selector, selectorFamily, atomFamily } from "recoil";
 import type {
   ChatwootUser,
   ChatwootUserAccount,
@@ -99,6 +99,56 @@ export const chatwootConversationCountsAtom = atom<{
   default: { mine: 0, unassigned: 0, all: 0 },
 });
 
+/**
+ * View-scoped Conversation Cache
+ *
+ * Caches conversations per view/filter combination to avoid refetching when
+ * navigating between views. Each cache entry is keyed by a stable filter key.
+ *
+ * Cache Strategy:
+ * - Store conversations per view/filter combination
+ * - Track timestamp for stale detection (30 second default)
+ * - Track pagination state (hasMore, current page)
+ * - Invalidate on explicit refresh or account switch
+ */
+export interface ConversationCacheEntry {
+  conversations: ChatwootConversation[];
+  timestamp: number;
+  hasMore: boolean;
+  totalPages: number;
+  error: string | null;
+}
+
+/**
+ * Atom family for caching conversations per filter key
+ * Key format: Stable JSON string of filter parameters
+ * Example: '{"accountId":1,"inboxId":null,"status":"open","assigneeType":"me"}'
+ */
+export const chatwootConversationsCacheFamily = atomFamily<ConversationCacheEntry, string>({
+  key: "frontdesk.chatwoot.conversationsCache",
+  default: {
+    conversations: [],
+    timestamp: 0,
+    hasMore: true,
+    totalPages: 0,
+    error: null,
+  },
+});
+
+/**
+ * Cache configuration
+ */
+export const CONVERSATION_CACHE_STALE_TIME = 30000; // 30 seconds
+
+/**
+ * Track active cache keys for cleanup/invalidation
+ * Used to clear all caches on account switch or manual refresh
+ */
+export const chatwootCacheKeysAtom = atom<Set<string>>({
+  key: "frontdesk.chatwoot.cacheKeys",
+  default: new Set(),
+});
+
 // Messages
 export const chatwootMessagesAtom = atom<ChatwootMessage[]>({
   key: "frontdesk.chatwoot.messages",
@@ -165,6 +215,15 @@ export const chatwootNotificationsFiltersAtom = atom<NotificationListParams>({
 export const chatwootNotificationUnreadCountAtom = atom<number>({
   key: "frontdesk.chatwoot.notificationUnreadCount",
   default: 0,
+});
+
+// Notification meta (count and unread_count from API)
+export const chatwootNotificationMetaAtom = atom<{
+  count: number;
+  unread_count: number;
+}>({
+  key: "frontdesk.chatwoot.notificationMeta",
+  default: { count: 0, unread_count: 0 },
 });
 
 // Notification Connection State
@@ -297,6 +356,18 @@ export const chatwootAgentsErrorAtom = atom<string | null>({
   default: null,
 });
 
+// Inbox Agents Mapping
+// Maps inboxId to list of agents assigned to that inbox
+export const chatwootInboxAgentsMapAtom = atom<Record<number, Agent[]>>({
+  key: "frontdesk.chatwoot.inboxAgentsMap",
+  default: {},
+});
+
+export const chatwootInboxAgentsLoadingAtom = atom<boolean>({
+  key: "frontdesk.chatwoot.inboxAgentsLoading",
+  default: false,
+});
+
 // Teams (Settings)
 export const chatwootTeamsAtom = atom<Team[]>({
   key: "frontdesk.chatwoot.teams",
@@ -352,5 +423,68 @@ export const chatwootOAuthErrorAtom = atom<string | null>({
 export const chatwootOAuthProviderAtom = atom<string | null>({
   key: "frontdesk.chatwoot.oauthProvider",
   default: null,
+});
+
+/**
+ * Navigation Count Selectors
+ * Efficient selectors for computing navigation bar counts
+ * These selectors compute derived data from conversations and cache results
+ */
+
+/**
+ * My Inbox Count Selector
+ * Counts open conversations assigned to the current user
+ */
+export const myInboxCountSelector = selector<number>({
+  key: "frontdesk.chatwoot.myInboxCount",
+  get: ({ get }) => {
+    const conversations = get(chatwootConversationsAtom);
+    const profile = get(chatwootProfileAtom);
+    const currentUserId = profile?.id;
+
+    if (!currentUserId) {
+      return 0;
+    }
+
+    return conversations.filter(
+      (conv) =>
+        conv.status === "open" &&
+        conv.meta?.assignee?.id === currentUserId
+    ).length;
+  },
+});
+
+/**
+ * Mentions Count Selector
+ * Counts conversations with unread messages (proxy for mentions)
+ * Note: Chatwoot API doesn't have a dedicated mentions filter yet,
+ * so we use unread_count > 0 as a proxy
+ */
+export const mentionsCountSelector = selector<number>({
+  key: "frontdesk.chatwoot.mentionsCount",
+  get: ({ get }) => {
+    const conversations = get(chatwootConversationsAtom);
+
+    return conversations.filter(
+      (conv) => (conv.unread_count || 0) > 0 && conv.meta?.sender?.name
+    ).length;
+  },
+});
+
+/**
+ * Unattended Count Selector
+ * Counts open conversations that are unassigned
+ */
+export const unattendedCountSelector = selector<number>({
+  key: "frontdesk.chatwoot.unattendedCount",
+  get: ({ get }) => {
+    const conversations = get(chatwootConversationsAtom);
+
+    return conversations.filter(
+      (conv) =>
+        conv.status === "open" &&
+        (!conv.meta?.assignee || conv.meta.assignee.id === null || conv.meta.assignee.id === undefined)
+    ).length;
+  },
 });
 

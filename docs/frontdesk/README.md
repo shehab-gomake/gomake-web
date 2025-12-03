@@ -11,10 +11,15 @@ This directory contains documentation for the FrontDesk unified messaging hub fe
 - **[01-providers/chatwoot/](./01-providers/chatwoot/)** - Chatwoot provider documentation
   - `TEAM_CREATION_GUIDE.md` - Guide for team creation feature
   - `TEAM_CREATION_QUICK_REFERENCE.md` - Quick reference for team creation
+  - `DASHBOARD_EVOLUTION_PLAN.md` - Three-phase plan for evolving the Chatwoot dashboard into a role-based, insight-driven command center
 
-### Integration Guides
+### Feature Implementation Guides
 - **[CHATWOOT_CHANNEL_CONNECTION_FLOW.md](./CHATWOOT_CHANNEL_CONNECTION_FLOW.md)** - Channel connection flow documentation
 - **[FRONTEND_CHANNEL_CONNECTION_IMPLEMENTATION.md](./FRONTEND_CHANNEL_CONNECTION_IMPLEMENTATION.md)** - Frontend channel connection implementation details
+- **[CHATWOOT_CUSTOM_ATTRIBUTES_GUIDE.md](./CHATWOOT_CUSTOM_ATTRIBUTES_GUIDE.md)** - Custom attributes feature guide
+- **[CUSTOM_ATTRIBUTES_FEATURES_IMPLEMENTATION.md](./CUSTOM_ATTRIBUTES_FEATURES_IMPLEMENTATION.md)** - Custom attributes implementation details
+- **[chatwoot/INBOX_SETTINGS_COMPARISON.md](./chatwoot/INBOX_SETTINGS_COMPARISON.md)** - Inbox settings comparison with Chatwoot reference
+- **[chatwoot/INBOX_SETTINGS_QUICK_REFERENCE.md](./chatwoot/INBOX_SETTINGS_QUICK_REFERENCE.md)** - Quick reference for inbox settings
 
 ## 🚀 Quick Start
 
@@ -27,7 +32,9 @@ This directory contains documentation for the FrontDesk unified messaging hub fe
 
 - **Code Documentation:**
   - `src/widgets/frontdesk/providers/chatwoot/README.md` - Chatwoot provider code organization
+  - `src/widgets/frontdesk/providers/chatwoot/PERFORMANCE.md` - Performance optimization guide
   - `src/services/frontdesk/api/chatwoot/README.md` - API service architecture
+  - `chatwoot/CHATWOOT_API_GUIDE.md` - OpenAPI client reference (for reference only)
 
 - **Workspace Documentation:**
   - `/Users/omarsabbah/Desktop/messaging/chatwoot/CLAUDE.md` - Chatwoot backend development guidelines

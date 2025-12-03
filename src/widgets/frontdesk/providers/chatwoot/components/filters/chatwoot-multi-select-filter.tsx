@@ -1,71 +1,11 @@
-import React, { useState } from "react";
-import {
-  Box,
-  Button,
-  Checkbox,
-  FormControlLabel,
-  Menu,
-  MenuItem,
-  Chip,
-  Stack,
-  Typography,
-  alpha,
-} from "@mui/material";
-import { useTheme } from "@mui/material/styles";
-import { useGomakeTheme } from "@/hooks/use-gomake-thme";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import CloseIcon from "@mui/icons-material/Close";
-
-export interface MultiSelectOption {
-  value: string;
-  label: string;
-  count?: number;
-  color?: string;
-}
-
-interface ChatwootMultiSelectFilterProps {
-  /**
-   * Label for the filter button
-   */
-  label: string;
-
-  /**
-   * Available options to select from
-   */
-  options: MultiSelectOption[];
-
-  /**
-   * Currently selected values
-   */
-  selectedValues: string[];
-
-  /**
-   * Callback when selection changes
-   */
-  onChange: (selected: string[]) => void;
-
-  /**
-   * Optional placeholder when nothing is selected
-   */
-  placeholder?: string;
-
-  /**
-   * Maximum number of chips to display before showing "+N more"
-   * @default 2
-   */
-  maxChips?: number;
-
-  /**
-   * Whether the filter is disabled
-   */
-  disabled?: boolean;
-}
-
 /**
  * Reusable multi-select filter component for Chatwoot
  *
  * Displays a button that opens a dropdown menu with checkboxes.
  * Selected items are shown as chips next to the button.
+ * Uses the unified list system internally.
+ *
+ * @deprecated Consider using UnifiedListDropdown or LabelSelect directly.
  *
  * @example
  * ```tsx
@@ -80,6 +20,46 @@ interface ChatwootMultiSelectFilterProps {
  * />
  * ```
  */
+
+import React, { useState, useCallback, useMemo } from "react";
+import {
+  Box,
+  Button,
+  Chip,
+  Stack,
+  alpha,
+} from "@mui/material";
+import { useTheme } from "@mui/material/styles";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import CloseIcon from "@mui/icons-material/Close";
+import { UnifiedListDropdown } from "../unified-list";
+import type { GenericListItem } from "../unified-list";
+
+export interface MultiSelectOption {
+  value: string;
+  label: string;
+  count?: number;
+  color?: string;
+}
+
+interface ChatwootMultiSelectFilterProps {
+  /** Label for the filter button */
+  label: string;
+  /** Available options to select from */
+  options: MultiSelectOption[];
+  /** Currently selected values */
+  selectedValues: string[];
+  /** Callback when selection changes */
+  onChange: (selected: string[]) => void;
+  /** Optional placeholder when nothing is selected */
+  placeholder?: string;
+  /** Maximum number of chips to display before showing "+N more" */
+  maxChips?: number;
+  /** Whether the filter is disabled */
+  disabled?: boolean;
+}
+
 export const ChatwootMultiSelectFilter: React.FC<ChatwootMultiSelectFilterProps> = ({
   label,
   options,
@@ -94,27 +74,35 @@ export const ChatwootMultiSelectFilter: React.FC<ChatwootMultiSelectFilterProps>
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
+  // Convert options to GenericListItem format
+  const listItems = useMemo<GenericListItem[]>(
+    () =>
+      options.map((opt) => ({
+        type: 'generic' as const,
+        id: opt.value,
+        label: opt.label,
+        description: opt.count !== undefined ? `${opt.count}` : undefined,
+        color: opt.color,
+      })),
+    [options]
+  );
+
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
+    if (!disabled) {
+      setAnchorEl(event.currentTarget);
+    }
   };
 
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     setAnchorEl(null);
-  };
+  }, []);
 
-  const handleToggle = (value: string) => {
-    const newSelected = selectedValues.includes(value)
-      ? selectedValues.filter((v) => v !== value)
-      : [...selectedValues, value];
-
-    onChange(newSelected);
-  };
-
-  const handleClearAll = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    onChange([]);
-    handleClose();
-  };
+  const handleMultiSelect = useCallback(
+    (values: Array<string | number>) => {
+      onChange(values.map(String));
+    },
+    [onChange]
+  );
 
   const handleRemoveChip = (value: string) => (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -191,110 +179,21 @@ export const ChatwootMultiSelectFilter: React.FC<ChatwootMultiSelectFilterProps>
         </Stack>
       )}
 
-      {/* Dropdown Menu */}
-      <Menu
-        anchorEl={anchorEl}
+      {/* Dropdown Menu - Using Unified List */}
+      <UnifiedListDropdown
         open={open}
+        anchorEl={anchorEl}
         onClose={handleClose}
-        PaperProps={{
-          sx: {
-            mt: 1,
-            minWidth: 200,
-            maxWidth: 300,
-            maxHeight: 400,
-            boxShadow: `0 4px 12px ${alpha(theme.palette.common.black, 0.15)}`,
-          },
-        }}
-      >
-        {/* Header with Clear All */}
-        {selectedValues.length > 0 && (
-          <Box
-            sx={{
-              px: 2,
-              py: 1,
-              borderBottom: `1px solid ${neutralColor(200)}`,
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            <Typography variant="caption" sx={{ color: neutralColor(600), fontWeight: 600 }}>
-              {selectedValues.length} selected
-            </Typography>
-            <Button
-              size="small"
-              onClick={handleClearAll}
-              sx={{
-                textTransform: "none",
-                fontSize: "0.75rem",
-                minWidth: "auto",
-                padding: "2px 8px",
-              }}
-            >
-              Clear all
-            </Button>
-          </Box>
-        )}
-
-        {/* Options */}
-        {options.length === 0 ? (
-          <MenuItem disabled>
-            <Typography variant="body2" sx={{ color: neutralColor(500) }}>
-              No options available
-            </Typography>
-          </MenuItem>
-        ) : (
-          options.map((option) => (
-            <MenuItem
-              key={option.value}
-              onClick={() => handleToggle(option.value)}
-              sx={{
-                py: 0.5,
-                "&:hover": {
-                  backgroundColor: alpha(theme.palette.primary.main, 0.04),
-                },
-              }}
-            >
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={selectedValues.includes(option.value)}
-                    size="small"
-                    sx={{
-                      color: neutralColor(400),
-                      "&.Mui-checked": {
-                        color: option.color || theme.palette.primary.main,
-                      },
-                    }}
-                  />
-                }
-                label={
-                  <Box sx={{ display: "flex", alignItems: "center", gap: 1, flex: 1 }}>
-                    <Typography variant="body2" sx={{ flex: 1 }}>
-                      {option.label}
-                    </Typography>
-                    {option.count !== undefined && (
-                      <Typography
-                        variant="caption"
-                        sx={{
-                          color: neutralColor(500),
-                          backgroundColor: neutralColor(100),
-                          px: 0.75,
-                          py: 0.25,
-                          borderRadius: "4px",
-                        }}
-                      >
-                        {option.count}
-                      </Typography>
-                    )}
-                  </Box>
-                }
-                sx={{ m: 0, flex: 1 }}
-              />
-            </MenuItem>
-          ))
-        )}
-      </Menu>
+        items={listItems}
+        selectionMode="multiple"
+        selectedValues={selectedValues}
+        onMultiSelect={handleMultiSelect}
+        showClearAll
+        emptyMessage="No options available"
+        minWidth={200}
+        maxWidth={300}
+        maxHeight={400}
+      />
     </Box>
   );
 };

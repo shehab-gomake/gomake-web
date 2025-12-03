@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
+import { printHouseHasFrontDeskFeature } from "@/store/print-house-profile";
 import {
   createOrderApi,
   getDocumentPdfApi,
@@ -77,6 +78,7 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
   const { push } = useRouter();
   const { CheckDocumentPermission, CheckPermission } = useUserPermission();
   const { CheckPreferenceValue } = usePrintHousePreferences();
+  const hasFrontDeskFeature = useRecoilValue(printHouseHasFrontDeskFeature);
   const setOpenAddressModal = useSetRecoilState<boolean>(addressModalState);
   const setSelectedAddressType =
     useSetRecoilState<EAddressType>(addressTypeState);
@@ -286,7 +288,8 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     res,
     sendMessage,
     isPrepaymentClient,
-    isStripeCash
+    isStripeCash,
+    shouldOpenComposer = false
   ) => {
     if (quoteItemValue?.isUsedStripe) {
       if (!sendMessage) {
@@ -312,7 +315,10 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
         CheckoutModalOpen.open();
       } else {
         setShowPrintJobsModal(res.data.orderID);
-        navigate(`/jobs?orderNumber=${res?.data?.number}`);
+        const queryParams = shouldOpenComposer 
+          ? `orderNumber=${res?.data?.number}&openComposer=true&orderId=${res?.data?.orderID}`
+          : `orderNumber=${res?.data?.number}`;
+        navigate(`/jobs?${queryParams}`);
       }
     }
   };
@@ -322,7 +328,8 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     res,
     sendMessage,
     isPrepaymentClient,
-    isStripeCash
+    isStripeCash,
+    shouldOpenComposer = false
   ) => {
     const callBack = (result) => {
       if (
@@ -336,6 +343,7 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
             sendMessage: sendMessage,
             isPrepaymentClient: isPrepaymentClient,
             isStripeCash: isStripeCash,
+            shouldOpenComposer: shouldOpenComposer,
           });
           isOpenGroupJobsModal.open();
         } else {
@@ -343,7 +351,8 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
             res,
             sendMessage,
             isPrepaymentClient,
-            isStripeCash
+            isStripeCash,
+            shouldOpenComposer
           );
         }
       } else {
@@ -351,7 +360,8 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
           res,
           sendMessage,
           isPrepaymentClient,
-          isStripeCash
+          isStripeCash,
+          shouldOpenComposer
         );
       }
     };
@@ -371,7 +381,8 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
           pendingOrderData?.res,
           pendingOrderData?.sendMessage,
           pendingOrderData?.isPrepaymentClient,
-          pendingOrderData?.isStripeCash
+          pendingOrderData?.isStripeCash,
+          pendingOrderData?.shouldOpenComposer
         );
       } else {
         isOpenGroupJobsModal.close();
@@ -392,7 +403,8 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     sendMessage: boolean,
     isPrepaymentClient: boolean = false,
     totalPrePaymentAmount: number = 0,
-    isStripeCash: boolean = false
+    isStripeCash: boolean = false,
+    shouldOpenComposer: boolean = false
   ) => {
     const callBack = (res) => {
       if (res?.success) {
@@ -403,7 +415,8 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
           res,
           sendMessage,
           isPrepaymentClient,
-          isStripeCash
+          isStripeCash,
+          shouldOpenComposer
         );
       } else {
         alertFaultUpdate();
@@ -439,6 +452,10 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     handleOrderConfirmation(false);
   const onClickConfirmWithNotification = (isStripeCash: boolean) =>
     handleOrderConfirmation(true, false, 0, !!isStripeCash);
+  const onClickConfirm = () => {
+    // When frontdesk is enabled, always open composer after order creation
+    handleOrderConfirmation(false, false, 0, false, hasFrontDeskFeature);
+  };
 
   const onClickPrint = async (withInvoices?: boolean) => {
     const downloadPdf = (url) => {
@@ -830,6 +847,8 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
   const [paymentModalTitle, setPaymentModalTitle] = useState("");
   const [sendPayment, setSendPayment] =
     useRecoilState<StatePayment>(sendPaymentState);
+  const [openAddProductWithAIModal, setOpenAddProductWithAIModal] =
+    useState(false);
 
   const onClickCloseSendPaymentModal = () => {
     setOpenSendPaymentModal(false);
@@ -900,6 +919,7 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     openOrderNowModal,
     onClickConfirmWithoutNotification,
     onClickConfirmWithNotification,
+    onClickConfirm,
     onClickOpenOrderNowModal,
     onClickCloseOrderNowModal,
     onClickPrint,
@@ -994,6 +1014,10 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     paymentModalTitle,
     isSendToClient,
     isSendOrderReadyToClient,
+    openAddProductWithAIModal,
+    onClickOpenAddProductWithAIModal: () => setOpenAddProductWithAIModal(true),
+    onClickCloseAddProductWithAIModal: () =>
+      setOpenAddProductWithAIModal(false),
   };
 };
 

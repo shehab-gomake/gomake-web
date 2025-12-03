@@ -11,20 +11,19 @@ import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { ContactSelector } from "./ContactSelector";
 import { createFieldContainerStyles, createFieldLabelStyles, createSelectedChipStyles } from "../../styles/compose-styles";
 import type { ContactDetail } from "@/services/frontdesk/api/chatwoot/types/contacts.types";
+import type { GomakeContact } from "../../hooks/use-compose-conversation";
 
 export interface ContactSelectionFieldProps {
   /** Selected contact (null if none selected) */
   selectedContact: ContactDetail | null;
-  /** Search results from contact search */
-  searchResults: ContactDetail[];
+  /** Search results from contact search (GomakeContact from customer search) */
+  searchResults: GomakeContact[];
   /** Loading state for search */
   isSearching: boolean;
   /** Search handler */
   onSearch: (query: string) => void;
   /** Select contact handler */
-  onSelectContact: (contact: ContactDetail | null) => void;
-  /** Create new contact handler */
-  onCreateContact: () => void;
+  onSelectContact: (contact: GomakeContact | null) => void;
   /** Validation error message */
   error?: string;
 }
@@ -34,7 +33,7 @@ export interface ContactSelectionFieldProps {
  * Displays selected contact or contact search input
  */
 export const ContactSelectionField = React.memo<ContactSelectionFieldProps>(
-  ({ selectedContact, searchResults, isSearching, onSearch, onSelectContact, onCreateContact, error }) => {
+  ({ selectedContact, searchResults, isSearching, onSearch, onSelectContact, error }) => {
     const { neutralColor, primaryColor } = useGomakeTheme();
 
     return (
@@ -54,7 +53,6 @@ export const ContactSelectionField = React.memo<ContactSelectionFieldProps>(
               isSearching={isSearching}
               onSearch={onSearch}
               onSelectContact={onSelectContact}
-              onCreateContact={onCreateContact}
               error={error}
             />
           )}

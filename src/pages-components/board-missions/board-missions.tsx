@@ -16,9 +16,9 @@ import { PrintPackingSlipModal } from "./widgets/print-packing-slip-modal";
 import QrListenerWidget from "@/widgets/qr-listener/qr-listener-widget";
 import { useUserPermission } from "@/hooks/use-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { newOrderIdToPrintJobsState } from "@/store/new-order-id-to-print-jobs-state";
-import { printHouseProfile } from "@/store/print-house-profile";
+import { printHouseProfile, printHouseHasFrontDeskFeature } from "@/store/print-house-profile";
 import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 import { CustomerCardWidget } from "@/widgets/customer-card-modal";
 import { createGlobalStyle } from "styled-components";
@@ -58,6 +58,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
   const { CheckPermission } = useUserPermission();
+  const hasFrontDeskFeature = useRecoilValue(printHouseHasFrontDeskFeature);
   const {
     storageList,
     inputValue,
@@ -125,6 +126,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
     emailData,
     openEmailComposer,
     closeEmailComposer,
+    pendingOrderIdForComposer,
     onClickBackToProcess,
     handleClick,
     handleClose,
@@ -211,6 +213,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
     handleScheduledReportsPageSizeChange,
     // Quality Issue Modal
     openQualityIssueModal,
+    onOpenQualityIssueModal,
     onCloseQualityIssueModal,
     handleQualityIssueConfirm,
     // Change Status Modal for Quality Issue
@@ -259,7 +262,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
       }
 
       if (connectionId) {
-        const callBack = (res) => {};
+        const callBack = (res) => { };
         addOrderBoardMissionsToFileUploaderApi(callApi, callBack, {
           orderId: newOrderId,
           connectionId: connectionId,
@@ -276,7 +279,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
           !CheckPreferenceValue(EPreferences.USE_PRINTNODE_AFTER_UPLOAD_FILE)
         )
       ) {
-        printNodeModalShowLog(callApi, () => {}, {
+        printNodeModalShowLog(callApi, () => { }, {
           orderId: newOrderId,
         }).then();
         setOpenPrintNodeModal(true);
@@ -304,7 +307,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
   useEffect(() => {
     const loadDocumentColumnSettings = async () => {
       try {
-        const res = await getJobsTableSettingsApi(callApi, () => {}, {
+        const res = await getJobsTableSettingsApi(callApi, () => { }, {
           isPurchaseJobs,
         });
         const saved: ColumnSetting[] = res?.data;
@@ -466,6 +469,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
           initialPageSize={initialPageSize}
         />
       </Stack>
+      {/* Duplicate Modal */}
       <ThreeOptionsModal
         modalType={ModalType.DUPLICATE}
         title={t("boardMissions.duplicateModalTitle")}
@@ -487,63 +491,117 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
               : DuplicateType.NewBoardMissionNumber
           )
         }
+        bottomActionLabel={"productionFloor.reportQualityIssueButton"}
+        onBottomAction={() => {
+          if (missionItem) {
+            onOpenQualityIssueModal(missionItem);
+          }
+        }}
       />
-      <ThreeOptionsModal
-        modalType={ModalType.WARNING}
-        title={t("boardMissions.markDoneModalTitle")}
-        subTitle={t("boardMissions.markDoneModalSubTitle")}
-        yesBtn={"boardMissions.markDoneModalYes"}
-        noBtn={"boardMissions.markDoneModalNo"}
-        openModal={openMarkReadyModal}
-        onClose={onCloseMarkReadyModal}
-        onClickYes={() => onClickMoveBoardMissionToDone(true)}
-        onClickNo={() => onClickMoveBoardMissionToDone(false)}
-      >
-        <div style={{ width: "100%", minWidth: 300 }}>
-          <GoMakeAutoComplate
-            options={
-              storageList?.find(
-                (option: any) => option.storage === inputValue
-              ) || inputValue === ""
-                ? storageList
-                : [
+      {hasFrontDeskFeature ? (
+        <GoMakeDeleteModal
+          modalType={ModalType.WARNING}
+          title={t("boardMissions.markDoneModalTitle")}
+          subTitle={t("boardMissions.markDoneModalSubTitle")}
+          yesBtn={t("modal.confirm")}
+          openModal={openMarkReadyModal}
+          onClose={onCloseMarkReadyModal}
+          onClickDelete={() => onClickMoveBoardMissionToDone(false)}
+          onClickCancel={onCloseMarkReadyModal}
+        >
+          <div style={{ width: "100%", minWidth: 300 }}>
+            <GoMakeAutoComplate
+              options={
+                storageList?.find(
+                  (option: any) => option.storage === inputValue
+                ) || inputValue === ""
+                  ? storageList
+                  : [
                     {
                       storage: `Add "${inputValue}" as a new storage`,
                       id: "new",
                     },
                     ...storageList,
                   ]
-            }
-            placeholder={t("boardMissions.selectStorage")}
-            key={defaultValue}
-            style={classes.textInputStyle}
-            getOptionLabel={(option: any) => option?.storage}
-            value={defaultValue}
-            onChange={(e: any, value: any) => {
-              if (value?.id === "new") {
-                addPrintHouseJobsStorage(inputValue);
-                setInputValue("");
-              } else {
-                handleStorageChange(e, value);
-                setInputValue("");
               }
-            }}
-            onInputChange={(event: any, newInputValue: string) => {
-              setInputValue(newInputValue);
-            }}
-          />
-        </div>
-      </ThreeOptionsModal>
+              placeholder={t("boardMissions.selectStorage")}
+              key={defaultValue}
+              style={classes.textInputStyle}
+              getOptionLabel={(option: any) => option?.storage}
+              value={defaultValue}
+              onChange={(e: any, value: any) => {
+                if (value?.id === "new") {
+                  addPrintHouseJobsStorage(inputValue);
+                  setInputValue("");
+                } else {
+                  handleStorageChange(e, value);
+                  setInputValue("");
+                }
+              }}
+              onInputChange={(event: any, newInputValue: string) => {
+                setInputValue(newInputValue);
+              }}
+            />
+          </div>
+        </GoMakeDeleteModal>
+      ) : (
+        <ThreeOptionsModal
+          modalType={ModalType.WARNING}
+          title={t("boardMissions.markDoneModalTitle")}
+          subTitle={t("boardMissions.markDoneModalSubTitle")}
+          openModal={openMarkReadyModal}
+          onClose={onCloseMarkReadyModal}
+          onClickYes={() => onClickMoveBoardMissionToDone(true)}
+          onClickNo={() => onClickMoveBoardMissionToDone(false)}
+          yesBtn={t("boardMissions.markDoneModalYes")}
+          noBtn={t("boardMissions.markDoneModalNo")}
+        >
+          <div style={{ width: "100%", minWidth: 300 }}>
+            <GoMakeAutoComplate
+              options={
+                storageList?.find(
+                  (option: any) => option.storage === inputValue
+                ) || inputValue === ""
+                  ? storageList
+                  : [
+                    {
+                      storage: `Add "${inputValue}" as a new storage`,
+                      id: "new",
+                    },
+                    ...storageList,
+                  ]
+              }
+              placeholder={t("boardMissions.selectStorage")}
+              key={defaultValue}
+              style={classes.textInputStyle}
+              getOptionLabel={(option: any) => option?.storage}
+              value={defaultValue}
+              onChange={(e: any, value: any) => {
+                if (value?.id === "new") {
+                  addPrintHouseJobsStorage(inputValue);
+                  setInputValue("");
+                } else {
+                  handleStorageChange(e, value);
+                  setInputValue("");
+                }
+              }}
+              onInputChange={(event: any, newInputValue: string) => {
+                setInputValue(newInputValue);
+              }}
+            />
+          </div>
+        </ThreeOptionsModal>
+      )}
       <GoMakeDeleteModal
         modalType={ModalType.WARNING}
         title={t("boardMissions.markDoneModalTitle2", {
           jobNumber: selectedMission?.number,
           productType: selectedMission?.productTypeName,
         })}
-        yesBtn={"modal.yes"}
+        yesBtn={t("modal.confirm")}
         openModal={openMarkReadyModalForProductType}
         onClose={onCloseMarkReadyModalForProductType}
-        onClickDelete={() => onClickMoveBoardMissionToDone(false)}
+        onClickDelete={() => onClickMoveBoardMissionToDone()}
       >
         <div style={{ width: "100%", minWidth: 300 }}>
           <GoMakeAutoComplate
@@ -553,12 +611,12 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
               ) || inputValue === ""
                 ? storageList
                 : [
-                    {
-                      storage: `Add "${inputValue}" as a new storage`,
-                      id: "new",
-                    },
-                    ...storageList,
-                  ]
+                  {
+                    storage: `Add "${inputValue}" as a new storage`,
+                    id: "new",
+                  },
+                  ...storageList,
+                ]
             }
             placeholder={t("boardMissions.selectStorage")}
             key={defaultValue}
@@ -617,7 +675,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
         subTitle={" "}
         yesBtn={t("sales.quote.print")}
         openModal={openPrintNodeModal}
-        onClose={() => {}}
+        onClose={() => { }}
         onClickDelete={() => {
           setOpenPrintNodeModal(false);
           printOrderJobsUsingPrintNode(printNodeOrderId).then();
@@ -659,12 +717,12 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
       />
       <GoMakeDeleteModal
         title={t("boardMissions.markAsReadyJobsModalTitle")}
-        yesBtn={t("modal.yes")}
+        yesBtn={t("modal.confirm")}
         modalType={ModalType.WARNING}
         subTitle={" "}
         openModal={openMarkReadyModalForHasJobs}
         onClose={onCloseMarkReadyModalForHasJobs}
-        onClickDelete={() => onClickMoveBoardMissionToDone(false)}
+        onClickDelete={() => onClickMoveBoardMissionToDone()}
         onClickCancel={onCloseMarkReadyModalForHasJobs}
       >
         <div style={{ width: "100%", minWidth: 300 }}>
@@ -675,12 +733,12 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
               ) || inputValue === ""
                 ? storageList
                 : [
-                    {
-                      storage: `Add "${inputValue}" as a new storage`,
-                      id: "new",
-                    },
-                    ...storageList,
-                  ]
+                  {
+                    storage: `Add "${inputValue}" as a new storage`,
+                    id: "new",
+                  },
+                  ...storageList,
+                ]
             }
             placeholder={t("boardMissions.selectStorage")}
             key={defaultValue}
@@ -712,11 +770,11 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
         subTitle={
           pendingPrintParams?.productType
             ? t("boardMissions.askPrintType", {
-                productType:
-                  pendingPrintParams?.productTypeName ||
-                  pendingPrintParams?.productName ||
-                  pendingPrintParams?.productType,
-              })
+              productType:
+                pendingPrintParams?.productTypeName ||
+                pendingPrintParams?.productName ||
+                pendingPrintParams?.productType,
+            })
             : ""
         }
         yesBtn={"boardMissions.printAllJobs"}
@@ -736,10 +794,10 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
         subTitle={
           pendingMarkReadyParams?.productType
             ? t("boardMissions.askMarkReadyType", {
-                productType:
-                  pendingMarkReadyParams.productTypeName ||
-                  pendingMarkReadyParams.productType,
-              })
+              productType:
+                pendingMarkReadyParams.productTypeName ||
+                pendingMarkReadyParams.productType,
+            })
             : ""
         }
         yesBtn={t("boardMissions.markAllJobsReady")}
@@ -870,8 +928,8 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
           open={isEmailComposerOpen}
           onClose={closeEmailComposer}
           emailData={emailData}
-          documentId={selectedMission?.id}
-          documentType={DOCUMENT_TYPE.boardMission}
+          documentId={pendingOrderIdForComposer || selectedMission?.orderId || selectedMission?.id}
+          documentType={router.query.openComposer === "true" ? DOCUMENT_TYPE.order : DOCUMENT_TYPE.boardMission}
         />
       )}
       <QualityIssueModal

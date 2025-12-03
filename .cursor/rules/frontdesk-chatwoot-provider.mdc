@@ -1,0 +1,457 @@
+# FrontDesk Chatwoot Provider Development Rules
+
+## Overview
+These rules govern development of the Chatwoot provider in FrontDesk. The Chatwoot provider is a production-ready customer communication platform integration with comprehensive conversation, message, inbox, and team management capabilities.
+
+## 🎯 Core Principles
+
+### 1. Account-Scoped Architecture
+- **ALL operations require `accountId`** (except profile endpoints)
+- Always check `accountId` exists before making API calls
+- URL pattern: `/api/v1/accounts/{accountId}/...`
+- Use `chatwootSelectedAccountAtom` to get current account ID
+
+```typescript
+// ✅ CORRECT
+const accountId = useRecoilValue(chatwootSelectedAccountAtom);
+if (!accountId) return;
+const conversations = await chatwootService.conversations.listConversations(accountId, filters);
+
+// ❌ WRONG - Missing accountId check
+const conversations = await chatwootService.conversations.listConversations(accountId, filters);
+```
+
+### 2. Service Layer Usage
+- **ALWAYS use custom service layer** from `@/services/frontdesk`, NOT the OpenAPI generated `@/chatwoot` client
+- The OpenAPI client is for **reference only**
+- Custom services provide better error handling and type safety
+
+```typescript
+// ✅ CORRECT
+import { chatwootService } from '@/services/frontdesk';
+const messages = await chatwootService.messages.listMessages(accountId, conversationId);
+
+// ❌ WRONG - Don't use OpenAPI generated client directly
+import { MessagesApi } from '@/chatwoot';
+const messages = await new MessagesApi().listMessages(accountId, conversationId);
+```
+
+### 3. Chatwoot Reference Pattern
+Before implementing ANY UI feature:
+1. **FIRST**: Check Chatwoot frontend demo at `/Users/omarsabbah/Desktop/messaging/chatwoot/app/javascript/dashboard/`
+2. Understand how Chatwoot implements it (Vue/Vuex)
+3. Reference `.claude/skills/chatwoot/` for documented patterns
+4. Adapt to React/Recoil following FrontDesk conventions
+
+**Key Chatwoot Reference Locations:**
+- Components: `app/javascript/dashboard/components/widgets/`
+- Modern Components: `app/javascript/dashboard/components-next/`
+- API Clients: `app/javascript/dashboard/api/`
+- State: `app/javascript/dashboard/store/modules/`
+
+## 📂 File Structure
+
+### Provider Directory Structure
+```
+src/widgets/frontdesk/providers/chatwoot/
+├── chatwoot-provider-view.tsx          # Main router
+├── views/                              # 6 distinct views
+│   ├── dashboard-view.tsx
+│   ├── my-inbox-view.tsx
+│   ├── all-conversations-view.tsx
+│   ├── mentions-view.tsx
+│   ├── unattended-view.tsx
+│   └── channels-view.tsx
+├── components/                         # 30+ UI components
+│   ├── conversations/
+│   ├── messages/
+│   ├── compose/
+│   ├── filters/
+│   └── shared/
+├── hooks/                              # 10+ domain hooks
+│   ├── use-chatwoot-provider.ts        # Main orchestrator
+│   ├── use-chatwoot-conversations.ts
+│   ├── use-chatwoot-messages.ts
+│   ├── use-chatwoot-inboxes.ts
+│   └── core/                           # Reusable base hooks
+└── utils/                              # Filter, validation, helpers
+```
+
+### Naming Conventions
+- Components: `PascalCase` with descriptive names
+- Hooks: `use{Feature}` pattern
+- Utils: `kebab-case.ts` with descriptive function names
+- Types: `PascalCase` for interfaces, `camelCase` for type aliases
+
+## 🔌 Service Integration
+
+### Service Structure
+Services are organized in `src/services/frontdesk/api/chatwoot/`:
+- **8 service groups**: profile, conversations, messages, inboxes, notifications, contacts, agents, teams
+- **Base URL**: `http://localhost:8080/api/v1/`
+- **Proxy**: Requests go through messaging-hub-v2 proxy
+
+### Import Pattern
+```typescript
+// Single unified import
+import { chatwootService } from '@/services/frontdesk';
+
+// Access specific service
+const { conversations, messages, inboxes } = chatwootService;
+```
+
+### Common Operations
+```typescript
+// Profile (no accountId)
+const user = await chatwootService.profile.getProfile();
+
+// List conversations
+const conversations = await chatwootService.conversations.listConversations(
+  accountId,
+  { status: ['open'], page: 1, per_page: 20 }
+);
+
+// Send message
+const message = await chatwootService.messages.createMessage(
+  accountId,
+  conversationId,
+  { content: 'Hello!', message_type: 'outgoing' }
+);
+
+// Get inbox details
+const inbox = await chatwootService.inboxes.getInboxDetails(accountId, inboxId);
+```
+
+## 🏗️ State Management
+
+### Recoil Atoms
+All Chatwoot state uses `frontdesk.chatwoot.*` naming convention:
+
+```typescript
+// Profile & Accounts
+chatwootProfileAtom
+chatwootSelectedAccountAtom
+chatwootAccountsAtom
+
+// Conversations
+chatwootConversationsAtom
+chatwootSelectedConversationAtom
+chatwootConversationFiltersAtom
+chatwootConversationCountsAtom
+
+// Messages
+chatwootMessagesAtom
+
+// Inboxes
+chatwootInboxesAtom
+chatwootSelectedInboxIdAtom
+
+// Notifications
+chatwootNotificationsAtom
+```
+
+### State Usage Pattern
+```typescript
+// Reading
+const conversations = useRecoilValue(chatwootConversationsAtom);
+const accountId = useRecoilValue(chatwootSelectedAccountAtom);
+
+// Writing
+const [conversations, setConversations] = useRecoilState(chatwootConversationsAtom);
+
+// Setting
+const setAccountId = useSetRecoilState(chatwootSelectedAccountAtom);
+```
+
+### State Best Practices
+1. Use Recoil for **shared state** across components
+2. Use `useState` for **local UI state** only
+3. Keep atoms **normalized** (avoid duplication)
+4. Use selectors for **derived state**
+5. Update atoms **synchronously** after successful API calls
+
+## 🎨 Component Patterns
+
+### Standard Component Structure
+```typescript
+import React, { useCallback, useMemo } from 'react';
+import { useRecoilValue } from 'recoil';
+import { chatwootSelectedAccountAtom } from '@/store/frontdesk/atoms/chatwoot.atoms';
+import { useChatwootConversations } from '../hooks/use-chatwoot-conversations';
+
+export const ConversationList: React.FC = () => {
+  const accountId = useRecoilValue(chatwootSelectedAccountAtom);
+  const { conversations, loading, error, refresh } = useChatwootConversations();
+
+  // Memoize derived state
+  const openConversations = useMemo(() => 
+    conversations.filter(c => c.status === 'open'),
+    [conversations]
+  );
+
+  // Memoize callbacks
+  const handleConversationClick = useCallback((id: number) => {
+    // Handle click
+  }, []);
+
+  if (!accountId) return <div>Select an account</div>;
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error.message}</div>;
+
+  return (
+    <div>
+      {openConversations.map(conv => (
+        <ConversationCard 
+          key={conv.id}
+          conversation={conv}
+          onClick={handleConversationClick}
+        />
+      ))}
+    </div>
+  );
+};
+```
+
+### Hook Pattern
+```typescript
+import { useCallback, useEffect, useState } from 'react';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { chatwootService } from '@/services/frontdesk';
+import {
+  chatwootConversationsAtom,
+  chatwootSelectedAccountAtom
+} from '@/store/frontdesk/atoms/chatwoot.atoms';
+
+export const useChatwootConversations = () => {
+  const accountId = useRecoilValue(chatwootSelectedAccountAtom);
+  const [conversations, setConversations] = useRecoilState(chatwootConversationsAtom);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
+
+  const fetchConversations = useCallback(async () => {
+    if (!accountId) return;
+
+    setLoading(true);
+    setError(null);
+    try {
+      const result = await chatwootService.conversations.listConversations(
+        accountId,
+        { status: ['open'], page: 1, per_page: 20 }
+      );
+      setConversations(result);
+    } catch (err) {
+      setError(err as Error);
+    } finally {
+      setLoading(false);
+    }
+  }, [accountId, setConversations]);
+
+  useEffect(() => {
+    fetchConversations();
+  }, [fetchConversations]);
+
+  return {
+    conversations,
+    loading,
+    error,
+    refresh: fetchConversations
+  };
+};
+```
+
+## ⚡ Performance Optimization
+
+### Required Patterns
+1. **Use `useMemo` for derived state**
+   ```typescript
+   const filteredConversations = useMemo(() => 
+     conversations.filter(c => c.status === filter),
+     [conversations, filter]
+   );
+   ```
+
+2. **Use `useCallback` for event handlers**
+   ```typescript
+   const handleClick = useCallback((id: number) => {
+     // handler logic
+   }, [dependencies]);
+   ```
+
+3. **Use stable filter keys**
+   ```typescript
+   import { createFilterKey } from '../utils/filter-utils';
+   
+   const filterKey = useMemo(() => 
+     createFilterKey(filters),
+     [filters]
+   );
+   ```
+
+4. **Prevent duplicate fetches**
+   ```typescript
+   // Use ref to track fetch state
+   const fetchedRef = useRef(false);
+   
+   useEffect(() => {
+     if (fetchedRef.current) return;
+     fetchedRef.current = true;
+     fetchData();
+   }, []);
+   ```
+
+### Common Pitfalls to Avoid
+```typescript
+// ❌ WRONG - Missing memoization
+const filtered = conversations.filter(c => c.status === 'open'); // Runs every render
+
+// ✅ CORRECT
+const filtered = useMemo(
+  () => conversations.filter(c => c.status === 'open'),
+  [conversations]
+);
+
+// ❌ WRONG - Inline function creates new reference
+<Button onClick={() => handleClick(id)} />
+
+// ✅ CORRECT
+const onClick = useCallback(() => handleClick(id), [id]);
+<Button onClick={onClick} />
+```
+
+## 🔍 Channel Features
+
+### Channel-Specific Features
+Use `channel-features.config.ts` to determine available features:
+
+```typescript
+import { getChannelFeatures } from '../config/channel-features.config';
+
+const features = getChannelFeatures(inbox.channel_type);
+
+if (features.supportsAttachments) {
+  // Show attachment upload
+}
+
+if (features.supportsRichText) {
+  // Show rich text editor
+}
+```
+
+### Supported Channels
+- Email (Gmail, Outlook)
+- WhatsApp
+- SMS
+- API
+- Web Widget
+- Twilio
+
+## 🧪 Testing Patterns
+
+### Component Testing
+```typescript
+import { render, screen, waitFor } from '@testing-library/react';
+import { RecoilRoot } from 'recoil';
+import { ConversationList } from './conversation-list';
+
+describe('ConversationList', () => {
+  it('renders conversations', async () => {
+    render(
+      <RecoilRoot>
+        <ConversationList />
+      </RecoilRoot>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('Conversation 1')).toBeInTheDocument();
+    });
+  });
+});
+```
+
+## 📚 Documentation References
+
+### Internal Docs
+- **Architecture**: `docs/frontdesk/FRONTDESK_CHATWOOT_ARCHITECTURE.md`
+- **API Guide**: `chatwoot/CHATWOOT_API_GUIDE.md`
+- **Code Organization**: `src/widgets/frontdesk/providers/chatwoot/README.md`
+- **Performance**: `src/widgets/frontdesk/providers/chatwoot/PERFORMANCE.md`
+- **API Services**: `src/services/frontdesk/api/chatwoot/README.md`
+
+### External References
+- **Chatwoot Demo**: `/Users/omarsabbah/Desktop/messaging/chatwoot/app/javascript/dashboard/`
+- **Proxy Service**: `/Users/omarsabbah/Desktop/gomake-services/messaging-hub-v2/CLAUDE.md`
+
+### Skills (.claude/skills/chatwoot/)
+- `core-architecture.md` - Overall Chatwoot structure
+- `api-patterns.md` - API client patterns
+- `state-management.md` - Vuex patterns
+- `component-patterns.md` - Vue component patterns
+- `flows/message-sending-flow.md` - Message sending implementation
+- `flows/conversation-list-filtering.md` - Conversation list patterns
+- `flows/contact-management.md` - Contact operations
+- `flows/new-conversation-creation.md` - New conversation flow
+
+## 🚫 What NOT to Do
+
+1. **Never use OpenAPI generated client directly** - Use custom service layer
+2. **Never skip accountId check** - All operations need it
+3. **Never use local state for shared data** - Use Recoil atoms
+4. **Never implement without checking Chatwoot reference** - Always check first
+5. **Never skip memoization** - Performance is critical
+6. **Never create duplicate service methods** - Use existing services
+7. **Never hardcode base URLs** - Use service configuration
+
+## ✅ Development Checklist
+
+Before submitting code, verify:
+- [ ] Checked Chatwoot reference implementation
+- [ ] Used custom service layer (not OpenAPI client)
+- [ ] Added accountId check before API calls
+- [ ] Used Recoil atoms for shared state
+- [ ] Added `useMemo` for derived state
+- [ ] Added `useCallback` for event handlers
+- [ ] Followed naming conventions
+- [ ] Added error handling
+- [ ] Added loading states
+- [ ] Tested with different account IDs
+- [ ] Verified channel feature support
+- [ ] Updated types if needed
+- [ ] Added comments for complex logic
+
+## 🔄 Recent Updates
+
+### January 2025
+- ✅ Compose conversation modal with rich text editor
+- ✅ Inbox settings management UI (6 tabs)
+- ✅ Refactored compose components for maintainability
+- ✅ Centralized style constants and error messages
+- ✅ Enhanced accessibility with ARIA labels
+
+### Known Limitations
+- ❌ Real-time updates (WebSocket not implemented) - use REST polling
+- ❌ Offline support
+- ❌ Virtual scrolling for large lists
+
+## 📞 Quick Help
+
+**Question**: How do I add a new API endpoint?
+**Answer**: 
+1. Add method to `src/services/frontdesk/api/chatwoot/services/chatwoot-{service}.service.ts`
+2. Add types to `types/{service}.types.ts`
+3. Use in hook with accountId check
+4. Reference Chatwoot implementation for guidance
+
+**Question**: How do I add a new view?
+**Answer**:
+1. Check Chatwoot reference for similar view
+2. Create view component in `views/`
+3. Create hook for data fetching
+4. Add route to `chatwoot-provider-view.tsx`
+5. Update navigation sidebar
+
+**Question**: Component is re-rendering too much?
+**Answer**:
+1. Add `useMemo` for derived state
+2. Add `useCallback` for event handlers
+3. Use `createFilterKey()` for stable filter keys
+4. Check if parent is passing new objects/functions on each render

@@ -90,6 +90,10 @@ const SystemHelp = () => {
       name: t("header.whatsNew"),
       onclick: handleWhatsNewClick,
     },
+    {
+      name: t("tabs.myTickets"),
+      onclick: () => navigate("/my-tickets"),
+    },
   ];
 
   return (
@@ -128,7 +132,7 @@ const SystemHelp = () => {
                 style={classes.menuItem}
               >
                 <div style={classes.logoutContainer}>{item?.name}</div>
-                {index === 3 && (
+                {index === 2 && (
                   <Badge
                     invisible={!version?.isShowWhatsNewBadge}
                     badgeContent={

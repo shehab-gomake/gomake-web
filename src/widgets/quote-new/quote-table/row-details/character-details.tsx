@@ -16,6 +16,7 @@ interface CharacterDetailsProps {
   documentType?: number;
   workName?: string;
   isPrePaymentPage?: boolean;
+  item?: any;
 }
 
 const CharacterDetails = ({
@@ -28,7 +29,8 @@ const CharacterDetails = ({
   canUpdate = true,
   documentType,
   workName,
-  isPrePaymentPage
+  isPrePaymentPage,
+  item
 }: CharacterDetailsProps) => {
   const {
     t,
@@ -53,6 +55,7 @@ const CharacterDetails = ({
     documentType,
     workName,
   });
+  console.log("item", item);
 
   const { classes } = useStyleCharacterDetails({ showAll, showLessHeightFit });
 
@@ -110,7 +113,7 @@ const CharacterDetails = ({
         onSend={handleSave}
         modalTitle={t("sales.cart.editDetails")}
         id={documentItemId}
-        isHaveJobName={true}
+        isHaveJobName={item?.printHouseMaterialId ? false : true}
         jobName={jobName}
         setJobName={setJobName}
         documentType={documentType}

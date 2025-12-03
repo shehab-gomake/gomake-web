@@ -8,7 +8,6 @@ import { ListItem, Stack, Avatar, Typography, Chip, Box, Tooltip } from "@mui/ma
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import { ChatwootNotification } from "@/services/frontdesk/api/chatwoot/types/notifications.types";
 import {
-  getNotificationSender,
   getAssigneeInfo,
   getConversationId,
   getEmailSubject,
@@ -21,6 +20,7 @@ import {
 import { formatTimeAgo } from "../../utils/date-utils";
 import { ConversationPriorityIcon } from "../conversation-priority-icon";
 import { InboxIcon } from "../../utils/inbox-icons";
+import { generateNotificationAvatar, generateAgentAvatar } from "../../utils/avatar.utils";
 
 interface NotificationListItemProps {
   notification: ChatwootNotification;
@@ -37,7 +37,7 @@ export const NotificationListItem: React.FC<NotificationListItemProps> = ({
   primaryColor,
   neutralColor,
 }) => {
-  const sender = getNotificationSender(notification, primaryColor(500));
+  const avatarData = generateNotificationAvatar(notification);
   const isUnread = !notification.read_at;
   const primaryActor = notification.primary_actor as any;
   const snoozeText = getSnoozeText(notification);
@@ -51,7 +51,11 @@ export const NotificationListItem: React.FC<NotificationListItemProps> = ({
   const messagePreview = getMessagePreview(notification);
   const statusLabel = getStatusLabel(primaryActor?.status);
   const statusColor = getStatusColor(primaryActor?.status, neutralColor(600));
-  const lastActivityAt = primaryActor?.last_activity_at || notification.updated_at || notification.created_at;
+  // Use created_at (Unix timestamp in seconds) as primary source, fallback to other timestamps
+  // chatwootTimestampToDate handles Unix timestamps (numbers) and ISO strings
+  const lastActivityAt = notification.created_at || 
+    (primaryActor?.last_activity_at ? primaryActor.last_activity_at : undefined) ||
+    notification.updated_at;
 
   // Extract conversation metadata
   const conversationMeta = primaryActor?.meta || {};
@@ -84,19 +88,21 @@ export const NotificationListItem: React.FC<NotificationListItemProps> = ({
       <Stack direction="row" spacing={1.5} sx={{ width: "100%", alignItems: "flex-start" }}>
         {/* Avatar */}
         <Avatar
-          src={sender.thumbnail}
+          src={avatarData.src}
           sx={{
             width: 32,
             height: 32,
-            bgcolor: sender.color,
+            bgcolor: avatarData.backgroundColor,
             color: "white",
             fontSize: "0.75rem",
             fontWeight: 600,
             flexShrink: 0,
             mt: 0.25,
           }}
+          alt={avatarData.displayName}
+          title={avatarData.displayName}
         >
-          {sender.initials}
+          {avatarData.initials}
         </Avatar>
 
         {/* Content */}
@@ -114,9 +120,9 @@ export const NotificationListItem: React.FC<NotificationListItemProps> = ({
                 textOverflow: "ellipsis",
                 whiteSpace: "nowrap",
               }}
-              title={sender.name}
+              title={avatarData.displayName}
             >
-              {sender.name}
+              {avatarData.displayName}
             </Typography>
 
             {/* Conversation ID Badge */}
@@ -182,40 +188,49 @@ export const NotificationListItem: React.FC<NotificationListItemProps> = ({
             {/* Left: Assignee + Status + Notification Type */}
             <Stack direction="row" alignItems="center" spacing={0.75} sx={{ flex: 1, minWidth: 0 }}>
               {/* Assignee */}
-              {assigneeInfo && (
-                <Tooltip title={`Assigned to ${assigneeInfo.name}`} arrow placement="top">
-                  <Chip
-                    label={assigneeInfo.name}
-                    size="small"
-                    avatar={
-                      <Avatar
-                        src={assigneeInfo.thumbnail}
-                        sx={{
-                          width: 16,
-                          height: 16,
-                          fontSize: "0.5rem",
-                        }}
-                      >
-                        {assigneeInfo.name.charAt(0)}
-                      </Avatar>
-                    }
-                    sx={{
-                      height: 20,
-                      fontSize: 11,
-                      backgroundColor: primaryColor(100),
-                      color: primaryColor(800),
-                      fontWeight: 500,
-                      flexShrink: 0,
-                      "& .MuiChip-label": {
-                        px: 0.5,
-                      },
-                      "& .MuiChip-avatar": {
-                        ml: 0.5,
-                      },
-                    }}
-                  />
-                </Tooltip>
-              )}
+              {assigneeInfo && (() => {
+                const assigneeAvatarData = generateAgentAvatar({
+                  id: assigneeInfo.id,
+                  name: assigneeInfo.name,
+                  thumbnail: assigneeInfo.thumbnail,
+                });
+                return (
+                  <Tooltip title={`Assigned to ${assigneeInfo.name}`} arrow placement="top">
+                    <Chip
+                      label={assigneeInfo.name}
+                      size="small"
+                      avatar={
+                        <Avatar
+                          src={assigneeAvatarData.src}
+                          sx={{
+                            width: 16,
+                            height: 16,
+                            fontSize: "0.5rem",
+                            bgcolor: assigneeAvatarData.backgroundColor,
+                          }}
+                          alt={assigneeAvatarData.displayName}
+                        >
+                          {assigneeAvatarData.initials}
+                        </Avatar>
+                      }
+                      sx={{
+                        height: 20,
+                        fontSize: 11,
+                        backgroundColor: primaryColor(100),
+                        color: primaryColor(800),
+                        fontWeight: 500,
+                        flexShrink: 0,
+                        "& .MuiChip-label": {
+                          px: 0.5,
+                        },
+                        "& .MuiChip-avatar": {
+                          ml: 0.5,
+                        },
+                      }}
+                    />
+                  </Tooltip>
+                );
+              })()}
 
               {/* Status Badge */}
               {statusLabel && (

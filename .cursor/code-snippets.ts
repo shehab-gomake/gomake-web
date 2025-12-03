@@ -81,31 +81,61 @@ const contacts = await chatwootService.contacts.listContacts(accountId, {
 // ============================================================================
 
 export const HOOK_PATTERNS = {
-  // Basic data fetching hook
+  // OPTIMIZED: Use base hook for data fetching (prevents duplicate requests)
+  useBaseDataFetch: `
+import { useChatwootDataFetch } from '@/widgets/frontdesk/providers/chatwoot/hooks/core/use-chatwoot-data-fetch';
+import { chatwootService } from '@/services/frontdesk';
+import { useRecoilValue } from 'recoil';
+import { chatwootSelectedAccountAtom } from '@/store/frontdesk/atoms/chatwoot.atoms';
+import { extractPayload } from '@/widgets/frontdesk/providers/chatwoot/utils/api-response-utils';
+
+export const useMyData = (filters?: any) => {
+  const accountId = useRecoilValue(chatwootSelectedAccountAtom);
+  
+  const { data, loading, error, refresh } = useChatwootDataFetch({
+    fetchFn: async () => {
+      if (!accountId) throw new Error('Account ID required');
+      return await chatwootService.myService.getData(accountId, filters);
+    },
+    filters,
+    extractData: extractPayload,
+  });
+
+  return { data, loading, error, refresh };
+};
+`,
+
+  // Basic data fetching hook (manual pattern)
   useDataFetch: `
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useRecoilValue } from 'recoil';
 import { chatwootSelectedAccountAtom } from '@/store/frontdesk/atoms/chatwoot.atoms';
 import { chatwootService } from '@/services/frontdesk';
+import { extractPayload } from '@/widgets/frontdesk/providers/chatwoot/utils/api-response-utils';
 
 export const useMyData = () => {
   const accountId = useRecoilValue(chatwootSelectedAccountAtom);
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const isFetchingRef = useRef(false); // Prevent duplicate requests
 
   const fetchData = useCallback(async () => {
     if (!accountId) return;
+    if (isFetchingRef.current) return; // Skip if already fetching
     
+    isFetchingRef.current = true;
     setLoading(true);
     setError(null);
     try {
-      const result = await chatwootService.myService.getData(accountId);
+      const response = await chatwootService.myService.getData(accountId);
+      const result = extractPayload(response);
       setData(result);
     } catch (err) {
-      setError(err);
+      setError(err instanceof Error ? err : new Error('Failed to fetch'));
     } finally {
       setLoading(false);
+      isFetchingRef.current = false;
     }
   }, [accountId]);
 
@@ -152,30 +182,82 @@ export const useFilteredConversations = (filters) => {
 };
 `,
 
-  // Hook with Recoil state
+  // Hook with Recoil state (with deduplication)
   useRecoilData: `
 import { useRecoilState, useRecoilValue } from 'recoil';
+import { useState, useCallback, useRef } from 'react';
 import { chatwootConversationsAtom, chatwootSelectedAccountAtom } from '@/store/frontdesk/atoms/chatwoot.atoms';
 import { chatwootService } from '@/services/frontdesk';
+import { extractPayload } from '@/widgets/frontdesk/providers/chatwoot/utils/api-response-utils';
 
 export const useConversations = () => {
   const accountId = useRecoilValue(chatwootSelectedAccountAtom);
   const [conversations, setConversations] = useRecoilState(chatwootConversationsAtom);
   const [loading, setLoading] = useState(false);
+  const isFetchingRef = useRef(false); // Prevent duplicate requests
 
   const fetchConversations = useCallback(async () => {
     if (!accountId) return;
+    if (isFetchingRef.current) return;
     
+    isFetchingRef.current = true;
     setLoading(true);
     try {
-      const result = await chatwootService.conversations.listConversations(accountId);
-      setConversations(result);
+      const response = await chatwootService.conversations.listConversations(accountId);
+      const data = extractPayload(response);
+      setConversations(data);
     } finally {
       setLoading(false);
+      isFetchingRef.current = false;
     }
   }, [accountId, setConversations]);
 
   return { conversations, loading, refresh: fetchConversations };
+};
+`,
+
+  // Hook with filter key caching (performance optimized)
+  useFilteredDataWithCache: `
+import { useState, useCallback, useMemo, useRef } from 'react';
+import { useRecoilValue } from 'recoil';
+import { chatwootSelectedAccountAtom } from '@/store/frontdesk/atoms/chatwoot.atoms';
+import { chatwootService } from '@/services/frontdesk';
+import { createFilterKey } from '@/widgets/frontdesk/providers/chatwoot/utils/filter-utils';
+import { extractPayload } from '@/widgets/frontdesk/providers/chatwoot/utils/api-response-utils';
+
+export const useFilteredConversations = (filters: any) => {
+  const accountId = useRecoilValue(chatwootSelectedAccountAtom);
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const lastFetchedKeyRef = useRef<string | null>(null);
+  const isFetchingRef = useRef(false);
+
+  // Create stable filter key to prevent unnecessary refetches
+  const filterKey = useMemo(() => createFilterKey(filters), [filters]);
+
+  const fetchData = useCallback(async () => {
+    if (!accountId) return;
+    if (isFetchingRef.current) return;
+    if (filterKey === lastFetchedKeyRef.current) return; // Skip if same filters
+    
+    isFetchingRef.current = true;
+    setLoading(true);
+    try {
+      const response = await chatwootService.conversations.listConversations(accountId, filters);
+      const result = extractPayload(response);
+      setData(result);
+      lastFetchedKeyRef.current = filterKey;
+    } finally {
+      setLoading(false);
+      isFetchingRef.current = false;
+    }
+  }, [accountId, filterKey, filters]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  return { data, loading, refresh: fetchData };
 };
 `,
 };

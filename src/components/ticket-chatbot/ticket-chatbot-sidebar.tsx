@@ -96,6 +96,7 @@ export const TicketChatbotSidebar = ({
   const [isCreatingTicket, setIsCreatingTicket] = useState(false);
   const [isSending, setIsSending] = useState(false);
   const [isLoadingMessages, setIsLoadingMessages] = useState(false);
+  const [skipAutoOpen, setSkipAutoOpen] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [uploadingFiles, setUploadingFiles] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -125,7 +126,7 @@ export const TicketChatbotSidebar = ({
   const printHouse = useRecoilValue(printHouseProfile);
   const { callApi } = useGomakeAxios();
   const { unreadTicketIds, firstUnreadTicketId, refreshNotifications } = useTicketNotifications();
-  const { setNavigateToTicketCallback } = useTicketChatbot();
+  const { setNavigateToTicketCallback, setOpenNewTicketCallback } = useTicketChatbot();
   const { getAcceptedRequest, removeAcceptedRequest } = useRequestNotification();
 
   // Restore remoteSessionRequest from sessionStorage on mount (for persistence across navigation)
@@ -154,6 +155,14 @@ export const TicketChatbotSidebar = ({
       setIsLoadingTickets(false);
     }
   }, [callApi]);
+
+  // Handle new ticket creation
+  const handleNewTicket = useCallback(() => {
+    setCurrentTicket(null);
+    setMessages([]);
+    setInputMessage("");
+    setSkipAutoOpen(true); // Prevent auto-opening unread ticket when explicitly opening new ticket
+  }, []);
 
   // Load messages for a ticket
   const loadTicketMessages = useCallback(
@@ -194,6 +203,13 @@ export const TicketChatbotSidebar = ({
       loadTicketMessages(ticketId);
     });
   }, [setNavigateToTicketCallback, loadTicketMessages]);
+
+  // Register open new ticket callback
+  useEffect(() => {
+    setOpenNewTicketCallback(() => {
+      handleNewTicket();
+    });
+  }, [setOpenNewTicketCallback, handleNewTicket]);
 
   // Load tickets when sidebar opens
   useEffect(() => {
@@ -778,13 +794,6 @@ export const TicketChatbotSidebar = ({
     }
   }, [isOpen]);
 
-  // Handle new ticket creation
-  const handleNewTicket = useCallback(() => {
-    setCurrentTicket(null);
-    setMessages([]);
-    setInputMessage("");
-  }, []);
-
   // Handle ticket selection
   const handleTicketSelect = useCallback(
     async (ticket: Ticket) => {
@@ -806,13 +815,17 @@ export const TicketChatbotSidebar = ({
 
   // Auto-open first unread ticket when sidebar opens and tickets are loaded
   useEffect(() => {
-    if (isOpen && tickets.length > 0 && firstUnreadTicketId && !currentTicket) {
+    if (isOpen && tickets.length > 0 && firstUnreadTicketId && !currentTicket && !skipAutoOpen) {
       const unreadTicket = tickets.find((t) => t.id === firstUnreadTicketId);
       if (unreadTicket) {
         handleTicketSelect(unreadTicket);
       }
     }
-  }, [isOpen, tickets, firstUnreadTicketId, currentTicket, handleTicketSelect]);
+    // Reset skip flag after auto-open check
+    if (skipAutoOpen) {
+      setSkipAutoOpen(false);
+    }
+  }, [isOpen, tickets, firstUnreadTicketId, currentTicket, skipAutoOpen, handleTicketSelect]);
 
   // Handle tab change
   const handleTabChange = useCallback(

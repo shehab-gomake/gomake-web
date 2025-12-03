@@ -37,7 +37,10 @@ import {
 } from "@/components";
 import { ModalType } from "@/enums/tabs-icon-enums";
 import { useStorageList } from "@/hooks/use-storage-list";
-import { updateBoardMissionCurrentStationApi } from "@/services/api-service/production-floor/production-floor-endpoints";
+import {
+  updateBoardMissionCurrentStationApi,
+  getBoardMissionsById,
+} from "@/services/api-service/production-floor/production-floor-endpoints";
 import { useGomakeAxios } from "@/hooks/use-gomake-axios";
 import { useSnackBar } from "@/hooks/use-snack-bar";
 import { useTranslation } from "react-i18next";
@@ -58,7 +61,14 @@ const ProductionFloorWidget = () => {
   );
   const { query, replace, pathname, push } = useRouter();
   const { connectionId } = useProductionFloorSocketIO(view);
-  const { groupsId, boardMissionsId, step, productType, isScanning } = query;
+  const {
+    groupsId,
+    boardMissionsId,
+    step,
+    productType,
+    isScanning,
+    openMoveToDoneModal,
+  } = query;
   const isMobile = useIsMobile();
   const mobileHeight = useMobileHeight();
   const prevViewRef = useRef<EProductionFloorView | null>(null);
@@ -106,6 +116,7 @@ const ProductionFloorWidget = () => {
     onCloseDoneScopeModal,
     onClickDoneScopeAllJobs,
     onClickDoneScopeProductType,
+    tryMoveBoardMissionsToDone,
   } = useProductionFloorData();
 
   // Storage functionality for mark ready modal
@@ -313,6 +324,52 @@ const ProductionFloorWidget = () => {
   }, []);
 
   const isOpenDoneModal = useModal();
+  const processedDeliveryRef = useRef<string | null>(null);
+
+  // Simple handler for DELIVERY action - open move to done modal
+  useEffect(() => {
+    const key = `${boardMissionsId}-${openMoveToDoneModal}`;
+    if (
+      openMoveToDoneModal === "true" &&
+      boardMissionsId &&
+      processedDeliveryRef.current !== key
+    ) {
+      processedDeliveryRef.current = key;
+      const loadMissionAndOpenModal = async () => {
+        const callBack = (res: any) => {
+          if (res?.success && res?.data) {
+            // Ensure the mission data has an id field (use boardMissionsId if id is missing)
+            const missionData = {
+              ...res.data,
+              id: res.data.id || res.data.boardMissionId || boardMissionsId,
+            };
+            tryMoveBoardMissionsToDone(missionData);
+            // Remove URL parameter
+            const newQuery = { ...query };
+            delete newQuery.openMoveToDoneModal;
+            replace({ pathname, query: newQuery }, undefined, {
+              shallow: true,
+            });
+            processedDeliveryRef.current = null;
+          }
+        };
+        await getBoardMissionsById(callApi, callBack, {
+          id: boardMissionsId as string,
+          productType: (productType as string) || "",
+        });
+      };
+      loadMissionAndOpenModal();
+    }
+  }, [
+    openMoveToDoneModal,
+    boardMissionsId,
+    callApi,
+    tryMoveBoardMissionsToDone,
+    query,
+    pathname,
+    replace,
+    productType,
+  ]);
 
   return (
     <Stack gap={"10px"} height={"100%"} maxHeight={"100%"} overflow={"hidden"}>
@@ -407,16 +464,14 @@ const ProductionFloorWidget = () => {
       />
 
       <QRScannerFab />
-      <ThreeOptionsModal
+      <GoMakeDeleteModal
         modalType={ModalType.WARNING}
         title={t("boardMissions.markDoneModalTitle")}
         subTitle={t("boardMissions.markDoneModalSubTitle")}
-        yesBtn={"boardMissions.markDoneModalYes"}
-        noBtn={"boardMissions.markDoneModalNo"}
         openModal={isOpenDoneModal.isOpen}
         onClose={() => isOpenDoneModal.close()}
-        onClickYes={() => onClickMoveBoardMissionToDone(true, true)}
-        onClickNo={() => onClickMoveBoardMissionToDone(false, true)}
+        onClickDelete={() => onClickMoveBoardMissionToDone(true, true)}
+        onClickNo={() => onClickMoveBoardMissionToDone(false, false)}
         style={
           isMobile
             ? {
@@ -480,38 +535,17 @@ const ProductionFloorWidget = () => {
         onClickYes={() => handlePrintTypeChoice(true)}
         onClickNo={() => handlePrintTypeChoice(false)}
       />
-
-      {/* <ThreeOptionsModal
-        modalType={ModalType.WARNING}
-        title={t("boardMissions.markDoneModalTitle")}
-        subTitle={t("boardMissions.markDoneModalSubTitle")}
-        yesBtn={"boardMissions.markDoneModalYes"}
-        noBtn={"boardMissions.markDoneModalNo"}
-        openModal={openMarkReadyModal}
-        onClose={onCloseMarkReadyModal}
-        onClickYes={() => onClickMoveBoardMissionToDone(true)}
-        onClickNo={() => onClickMoveBoardMissionToDone(false)}
-        style={
-          isMobile
-            ? {
-                width: "95vw",
-                maxWidth: 600,
-                minWidth: "unset",
-              }
-            : undefined
-        }
-      /> */}
       {/* Mark Ready Modal - Simple version (no jobs) */}
       <ThreeOptionsModal
         modalType={ModalType.WARNING}
         title={t("boardMissions.markDoneModalTitle")}
         subTitle={t("boardMissions.markDoneModalSubTitle")}
-        yesBtn={"boardMissions.markDoneModalYes"}
-        noBtn={"boardMissions.markDoneModalNo"}
         openModal={openMarkReadyModal}
         onClose={onCloseMarkReadyModal}
-        onClickYes={() => onClickMoveBoardMissionToDone(true)}
-        onClickNo={() => onClickMoveBoardMissionToDone(false)}
+        onClickYes={() => onClickMoveBoardMissionToDone(true, true)}
+        onClickNo={() => onClickMoveBoardMissionToDone(false, false)}
+        yesBtn={t("boardMissions.markDoneModalYes")}
+        noBtn={t("boardMissions.markDoneModalNo")}
       >
         <div style={{ width: "100%", minWidth: 300 }}>
           <GoMakeAutoComplate
@@ -552,7 +586,6 @@ const ProductionFloorWidget = () => {
           />
         </div>
       </ThreeOptionsModal>
-
       {/* Mark Ready Modal - With jobs (requires storage selection) */}
       <GoMakeDeleteModal
         title={t("boardMissions.markAsReadyJobsModalTitle")}
@@ -561,8 +594,7 @@ const ProductionFloorWidget = () => {
         subTitle={" "}
         openModal={openMarkReadyModalForHasJobs}
         onClose={onCloseMarkReadyModalForHasJobs}
-        onClickDelete={onClickMarkReadyModalForHasJobs}
-        onClickCancel={onCloseMarkReadyModalForHasJobs}
+        onClickDelete={() => onClickMarkReadyModalForHasJobs(false)}
       >
         <div style={{ width: "100%", minWidth: 300 }}>
           <GoMakeAutoComplate
@@ -634,8 +666,8 @@ const ProductionFloorWidget = () => {
         }
         openModal={openDoneScopeModal}
         onClose={onCloseDoneScopeModal}
-        onClickYes={onClickDoneScopeAllJobs}
-        onClickNo={onClickDoneScopeProductType}
+        onClickYes={() => onClickDoneScopeAllJobs(true)}
+        onClickNo={() => onClickDoneScopeProductType(true)}
       />
     </Stack>
   );

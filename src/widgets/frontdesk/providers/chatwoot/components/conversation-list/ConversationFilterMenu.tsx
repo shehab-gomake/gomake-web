@@ -1,21 +1,16 @@
 /**
  * ConversationFilterMenu Component
- * Handles team and status filter menu
+ *
+ * Handles team and status filter menu.
+ * Uses unified filter trigger and styles for consistent styling.
  */
 
-import React, { useState } from "react";
-import {
-  IconButton,
-  Tooltip,
-  Menu,
-  MenuItem,
-  ListItemText,
-  Divider,
-  Box,
-  Typography,
-} from "@mui/material";
+import React, { useState, useCallback } from "react";
+import { Box, Menu, MenuItem, ListItemText, Divider, Typography } from "@mui/material";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import CheckIcon from "@mui/icons-material/Check";
+import { FilterIconButton, filterStyles } from "../unified-list";
+import { colorTokens } from "@/widgets/frontdesk/design-system";
 import {
   ConversationStatus,
   ConversationListParams,
@@ -44,135 +39,81 @@ export const ConversationFilterMenu: React.FC<ConversationFilterMenuProps> = Rea
   onFiltersChange,
   teams = [],
   onFilterClick,
-  primaryColor,
-  neutralColor,
 }) => {
-  const [filterMenuAnchor, setFilterMenuAnchor] = useState<null | HTMLElement>(null);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
 
-  const handleTeamSelect = (teamId: number | undefined) => {
-    // When changing team, preserve assignee_type, status, inbox_id, search, and sort
+  const handleOpen = useCallback((event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+    onFilterClick?.();
+  }, [onFilterClick]);
+
+  const handleClose = useCallback(() => {
+    setAnchorEl(null);
+  }, []);
+
+  const handleTeamSelect = useCallback((teamId: number | undefined) => {
     onFiltersChange({ ...filters, team_id: teamId, page: 1 });
-  };
+  }, [filters, onFiltersChange]);
 
-  const handleStatusSelect = (status: ConversationStatus) => {
-    // When changing status, preserve assignee_type, inbox_id, and sort
-    // Clear contextual filters (search, team) to avoid confusion
+  const handleStatusSelect = useCallback((status: ConversationStatus) => {
     const newFilters: Partial<ConversationListParams> = {
       status: status === ConversationStatus.ALL ? undefined : status,
       page: 1,
     };
 
-    // Preserve assignee_type
+    // Preserve assignee_type, inbox_id, sort_by
     if (filters.assignee_type !== undefined) {
       newFilters.assignee_type = filters.assignee_type;
     }
-
-    // Preserve inbox_id (for channel-specific views)
     if (filters.inbox_id !== undefined) {
       newFilters.inbox_id = filters.inbox_id;
     }
-
-    // Preserve sort (orthogonal filter)
     if (filters.sort_by !== undefined) {
       newFilters.sort_by = filters.sort_by;
     }
 
     onFiltersChange(newFilters);
-    setFilterMenuAnchor(null);
-  };
+    handleClose();
+  }, [filters, onFiltersChange, handleClose]);
 
-  const isStatusSelected = (status: ConversationStatus): boolean => {
-    return (
-      filters.status === status || (Array.isArray(filters.status) && filters.status.includes(status))
-    );
-  };
+  // Check if any filter is active
+  const isActive = !!(filters.status || filters.team_id);
+  const activeCount = [filters.status, filters.team_id].filter(Boolean).length;
 
   return (
     <>
-      {/* Filter Button */}
-      <Tooltip title="Filter">
-        <IconButton
-          size="small"
-          onClick={(e) => {
-            setFilterMenuAnchor(e.currentTarget);
-            onFilterClick?.();
-          }}
-          sx={{
-            color: neutralColor(600),
-            backgroundColor: neutralColor(100),
-            "&:hover": {
-              backgroundColor: neutralColor(200),
-            },
-            width: 32,
-            height: 32,
-          }}
-        >
-          <FilterListIcon fontSize="small" />
-        </IconButton>
-      </Tooltip>
+      <FilterIconButton
+        icon={<FilterListIcon />}
+        tooltip="Filter"
+        isActive={isActive}
+        badgeCount={activeCount}
+        onClick={handleOpen}
+      />
 
-      {/* Filter Menu */}
       <Menu
-        anchorEl={filterMenuAnchor}
-        open={Boolean(filterMenuAnchor)}
-        onClose={() => setFilterMenuAnchor(null)}
-        anchorOrigin={{
-          vertical: "bottom",
-          horizontal: "right",
-        }}
-        transformOrigin={{
-          vertical: "top",
-          horizontal: "right",
-        }}
-        PaperProps={{
-          sx: {
-            mt: 1,
-            minWidth: 280,
-            backgroundColor: neutralColor(0),
-            border: `1px solid ${neutralColor(200)}`,
-            boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.1)",
-            maxHeight: 500,
-            overflow: "auto",
-          },
-        }}
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleClose}
+        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+        transformOrigin={{ vertical: "top", horizontal: "right" }}
+        PaperProps={{ sx: { ...filterStyles.menuPaper, minWidth: 280, maxHeight: 500 } }}
       >
         {/* Team Filter Section */}
         <Box sx={{ px: 2, py: 1 }}>
-          <Typography
-            variant="caption"
-            sx={{
-              fontSize: "0.688rem",
-              fontWeight: 600,
-              color: neutralColor(500),
-              textTransform: "uppercase",
-              letterSpacing: 0.5,
-            }}
-          >
+          <Typography variant="caption" sx={filterStyles.sectionHeader}>
             Team
           </Typography>
         </Box>
         <MenuItem
           onClick={() => handleTeamSelect(undefined)}
-          sx={{
-            py: 1,
-            px: 2,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            color: neutralColor(900),
-            "&:hover": {
-              backgroundColor: neutralColor(100),
-            },
-          }}
+          sx={{ py: 1, px: 2, display: "flex", justifyContent: "space-between" }}
         >
           <ListItemText
             primary="All Teams"
-            primaryTypographyProps={{
-              fontSize: "0.875rem",
-              fontWeight: !filters.team_id ? 600 : 400,
-            }}
+            primaryTypographyProps={{ fontSize: "0.875rem", fontWeight: !filters.team_id ? 600 : 400 }}
           />
-          {!filters.team_id && <CheckIcon sx={{ fontSize: 18, color: primaryColor(400) }} />}
+          {!filters.team_id && <CheckIcon sx={{ fontSize: 18, color: colorTokens.primary[600] }} />}
         </MenuItem>
         {teams.map((team) => {
           const isSelected = filters.team_id === team.id;
@@ -180,106 +121,52 @@ export const ConversationFilterMenu: React.FC<ConversationFilterMenuProps> = Rea
             <MenuItem
               key={team.id}
               onClick={() => handleTeamSelect(team.id)}
-              sx={{
-                py: 1,
-                px: 2,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                color: neutralColor(900),
-                "&:hover": {
-                  backgroundColor: neutralColor(100),
-                },
-              }}
+              sx={{ py: 1, px: 2, display: "flex", justifyContent: "space-between" }}
             >
               <ListItemText
                 primary={team.name || "Unknown Team"}
-                primaryTypographyProps={{
-                  fontSize: "0.875rem",
-                  fontWeight: isSelected ? 600 : 400,
-                }}
+                primaryTypographyProps={{ fontSize: "0.875rem", fontWeight: isSelected ? 600 : 400 }}
               />
-              {isSelected && <CheckIcon sx={{ fontSize: 18, color: primaryColor(400) }} />}
+              {isSelected && <CheckIcon sx={{ fontSize: 18, color: colorTokens.primary[600] }} />}
             </MenuItem>
           );
         })}
 
-        <Divider sx={{ my: 1, borderColor: neutralColor(200) }} />
+        <Divider sx={{ my: 1 }} />
 
         {/* Status Filter Section */}
         <Box sx={{ px: 2, py: 1 }}>
-          <Typography
-            variant="caption"
-            sx={{
-              fontSize: "0.688rem",
-              fontWeight: 600,
-              color: neutralColor(500),
-              textTransform: "uppercase",
-              letterSpacing: 0.5,
-            }}
-          >
+          <Typography variant="caption" sx={filterStyles.sectionHeader}>
             Status
           </Typography>
         </Box>
         {STATUS_OPTIONS.map((option) => {
-          const isSelected = isStatusSelected(option.value);
+          const isSelected = option.value === ConversationStatus.ALL
+            ? !filters.status
+            : filters.status === option.value;
           return (
             <MenuItem
               key={option.value}
               onClick={() => handleStatusSelect(option.value)}
-              sx={{
-                py: 1,
-                px: 2,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                color: neutralColor(900),
-                "&:hover": {
-                  backgroundColor: neutralColor(100),
-                },
-              }}
+              sx={{ py: 1, px: 2, display: "flex", justifyContent: "space-between" }}
             >
               <ListItemText
                 primary={option.label}
-                primaryTypographyProps={{
-                  fontSize: "0.875rem",
-                  fontWeight: isSelected ? 600 : 400,
-                }}
+                primaryTypographyProps={{ fontSize: "0.875rem", fontWeight: isSelected ? 600 : 400 }}
               />
-              {isSelected && <CheckIcon sx={{ fontSize: 18, color: primaryColor(400) }} />}
+              {isSelected && <CheckIcon sx={{ fontSize: 18, color: colorTokens.primary[600] }} />}
             </MenuItem>
           );
         })}
-
-        <Divider sx={{ my: 1, borderColor: neutralColor(200) }} />
-
-        {/* Additional Filters Placeholder */}
-        <Box sx={{ px: 2, py: 1 }}>
-          <Typography
-            variant="caption"
-            sx={{
-              fontSize: "0.688rem",
-              fontWeight: 600,
-              color: neutralColor(500),
-              textTransform: "uppercase",
-              letterSpacing: 0.5,
-            }}
-          >
-            Additional Filters
-          </Typography>
-        </Box>
       </Menu>
     </>
   );
 }, (prevProps, nextProps) => {
-  // Custom comparison: only re-render if filters, teams, or callbacks changed
   return (
     prevProps.filters.status === nextProps.filters.status &&
     prevProps.filters.team_id === nextProps.filters.team_id &&
     prevProps.teams === nextProps.teams &&
     prevProps.onFiltersChange === nextProps.onFiltersChange &&
-    prevProps.onFilterClick === nextProps.onFilterClick &&
-    prevProps.primaryColor === nextProps.primaryColor &&
-    prevProps.neutralColor === nextProps.neutralColor
+    prevProps.onFilterClick === nextProps.onFilterClick
   );
 });

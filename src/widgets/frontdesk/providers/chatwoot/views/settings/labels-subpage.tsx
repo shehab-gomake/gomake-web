@@ -4,9 +4,11 @@
  * Displays and manages Chatwoot labels for organizing and categorizing
  * conversations with color-coded tags.
  * Matches the Chatwoot labels page design but uses FrontDesk styling (no black background).
+ *
+ * RBAC: Only administrators can access this page.
  */
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Typography,
@@ -35,11 +37,25 @@ import { BaseSettingsSubpage } from "../../components/settings";
 import { AddEditLabelModal } from "../../components/settings/add-edit-label-modal";
 import { useChatwootLabels } from "../../hooks/use-chatwoot-labels";
 import { useChatwootProvider } from "../../hooks/use-chatwoot-provider";
+import { useChatwootPermissions } from "../../hooks/use-chatwoot-permissions";
+import { SETTINGS_PERMISSIONS } from "../../constants/permissions.constants";
 import type { ChatwootLabel } from "@/store/frontdesk/atoms/chatwoot.atoms";
 
 export const LabelsSubpage: React.FC = () => {
-  const { selectedAccountId } = useChatwootProvider();
+  const { selectedAccountId, router: chatwootRouter } = useChatwootProvider();
   const { labels, loading, error, createLabel, updateLabel, deleteLabel, refresh } = useChatwootLabels(selectedAccountId, true);
+
+  // Defense-in-depth: Check if user has permission to access Labels settings
+  const { canAccess } = useChatwootPermissions();
+  const canAccessLabels = canAccess(SETTINGS_PERMISSIONS.labels);
+
+  // Redirect unauthorized users to My Inbox
+  useEffect(() => {
+    if (!canAccessLabels) {
+      console.warn("[LabelsSubpage] Unauthorized access attempt - redirecting to My Inbox");
+      chatwootRouter.navigateToMyInbox();
+    }
+  }, [canAccessLabels, chatwootRouter]);
 
   const [addModalOpen, setAddModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);

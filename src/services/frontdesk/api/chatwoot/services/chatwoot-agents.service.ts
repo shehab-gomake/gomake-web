@@ -170,26 +170,46 @@ export class ChatwootAgentsService extends BaseChatwootService {
   }
 
   /**
-   * Add Agents to Inbox
-   * POST /api/inbox_members
+   * Update Inbox Agents (Add/Remove)
+   * PATCH /api/accounts/inbox_members
    *
-   * Assigns multiple agents to an inbox.
+   * Updates agents assigned to an inbox.
+   * 
+   * ⚠️ IMPORTANT: This is a REPLACEMENT operation, not additive.
+   * All agents except the ones passed in the agentIds array will be REMOVED from the inbox.
    * This is required for newly created inboxes to become operational.
    * At least one agent must be assigned for the inbox to handle messages.
+   * 
+   * Example:
+   * - Current agents: [13, 14, 15]
+   * - Call with agentIds: [13, 15]
+   * - Result: Agent 14 is removed, only [13, 15] remain
    *
-   * @param inboxId - The numeric ID of the inbox
-   * @param agentIds - Array of agent IDs to assign to the inbox
+   * @see https://developers.chatwoot.com/api-reference/inboxes/update-agents-in-inbox
+   * 
+   * Note: Goes through messaging-hub-v2 proxy which handles account context via JWT.
+   * Original Chatwoot endpoint: PATCH /api/v1/accounts/{account_id}/inbox_members
+   * 
+   * @param inboxId - The numeric ID of the inbox (sent in request body)
+   * @param agentIds - Array of agent IDs to assign to the inbox (REPLACES current assignments - agents not in this list will be removed)
    * @returns Promise that resolves when agents are assigned
    *
    * @example
    * ```typescript
-   * // Assign agents to inbox after OAuth
+   * // Update agents for inbox (e.g., after OAuth or in settings)
+   * // This will REPLACE the current agent list
    * await agentsService.addAgentsToInbox(7, [1, 2, 3]);
-   * console.log('Agents assigned to inbox successfully');
+   * console.log('Agents updated successfully');
+   * 
+   * // To remove an agent, fetch current list, filter it, then update
+   * const currentAgents = await inboxesService.getInboxAgents(accountId, 7);
+   * const currentIds = currentAgents.payload.map(a => a.id);
+   * const updatedIds = currentIds.filter(id => id !== 2); // Remove agent 2
+   * await agentsService.addAgentsToInbox(7, updatedIds);
    * ```
    */
   async addAgentsToInbox(inboxId: number, agentIds: number[]): Promise<void> {
-    return await this.post<void>("/api/inbox_members", {
+    return await this.patch<void>(`/api/accounts/inbox_members`, {
       inbox_id: inboxId,
       user_ids: agentIds,
     });

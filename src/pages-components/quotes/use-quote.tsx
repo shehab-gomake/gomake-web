@@ -76,7 +76,8 @@ import {
 } from "@/widgets/settings-documenting/documentDesign/enums/document-type";
 import {
   AStatus,
-  BoardMissionStatusForFilter, DocumentCloseStatus,
+  BoardMissionStatusForFilter,
+  DocumentCloseStatus,
   PStatus,
   ReceiptAccountingStatus,
 } from "../board-missions/widgets/enums";
@@ -96,7 +97,10 @@ import { useRouter } from "next/router";
 import { ICard } from "./widgets/statistics-section/statistics-sections";
 import { ClickableStatusButton } from "./widgets/delivery-status-button/delivery-status-button";
 import { DocumentDeliveryStatuses } from "./widgets/delivery-status-button/delivery-status-modal/use-delivery-status-modal";
-import {EMessageStatus, PurchaseOrderStatuses} from "@/enums/document-type-enum";
+import {
+  EMessageStatus,
+  PurchaseOrderStatuses,
+} from "@/enums/document-type-enum";
 import { useDocumentsTableSocketIo } from "@/hooks/socket-io/use-documents-table-socket-io";
 import { QuoteIfExistState } from "../quote-new/store/quote";
 import { userQuoteState } from "@/store/user-qoute-state";
@@ -126,6 +130,7 @@ import { CircularProgress, MenuItem, Typography } from "@mui/material";
 import { currenciesState } from "@/widgets/materials-widget/state";
 import { getCurrencies } from "@/services/api-service/general/enums";
 import { useFrontDeskEmailIntegration } from "./hooks/use-frontdesk-email-integration";
+import { printHouseHasFrontDeskFeature } from "@/store/print-house-profile";
 
 type PaymentTypeOption = {
   label: string;
@@ -142,6 +147,8 @@ interface Query {
   maxPrice?: string;
   fromDate?: string;
   toDate?: string;
+  checkFromDate?: string;
+  checkToDate?: string;
   accountingStatus?: string;
   deliveryStatus?: string;
   productionStatus?: string;
@@ -204,7 +211,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const [customerId, setCustomerId] = useState<any>();
   const [isCanceledState, setIsCanceledState] = useState(false);
   const [isPausedOrders, setIsPausedOrders] = useState(false);
-  const [openPurchaseOrderTypeModal, setOpenPurchaseOrderTypeModal] = useState(false);
+  const [openPurchaseOrderTypeModal, setOpenPurchaseOrderTypeModal] =
+    useState(false);
   const [dateRange, setDateRange] = useState<any>();
   const [agentId, setAgentId] = useState<any>();
   const [allQuotes, setAllQuotes] = useState<any[] | undefined>(undefined);
@@ -283,6 +291,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const [resetDatePicker, setResetDatePicker] = useState<boolean>(false);
   const [fromDate, setFromDate] = useState<Date>();
   const [toDate, setToDate] = useState<Date>();
+  const [checkFromDate, setCheckFromDate] = useState<Date>();
+  const [checkToDate, setCheckToDate] = useState<Date>();
   const [documentIdLogState, setDocumentIdLogState] = useState<string>();
   const [documentLogsData, setDocumentLogsData] = useState<any>();
   const [employeeId, setEmployeeId] = useState<any>();
@@ -312,9 +322,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         .filter((key) => isNaN(Number(key)))
         .map((key) => ({
           value:
-            PurchaseOrderStatuses[
-            key as keyof typeof PurchaseOrderStatuses
-            ],
+            PurchaseOrderStatuses[key as keyof typeof PurchaseOrderStatuses],
           label: t(`documentStatus.PurchaseOrder.${key}`),
         })),
     [t]
@@ -339,6 +347,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     openEmailComposer,
     closeEmailComposer,
   } = useFrontDeskEmailIntegration({ documentType: docType });
+  const hasFrontDeskFeature = useRecoilValue(printHouseHasFrontDeskFeature);
   const isSelectedCLoseAsDeliveryNote = useRecoilValue(
     isSelectedCLoseAsDeliveryNoteState
   );
@@ -479,6 +488,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     setMaxPrice("");
     setFromDate(null);
     setToDate(null);
+    setCheckFromDate(null);
+    setCheckToDate(null);
     setPaymentType(null);
 
     // Clear URL query parameters
@@ -912,6 +923,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               onClickOpenRemoveDraftModal={onClickOpenRemoveDraftModal}
               onClickOpenDeliveryTimeModal={onClickOpenDeliveryTimeModal}
               onClickOpenPriceModal={onClickOpenPriceModal}
+              onClickOpenModal={onClickOpenOtherReasonModal}
               onClickMakePayment={onClickMakePayment}
               onClickPauseOrResume={onClickPauseOrResume}
               onClickStartProduction={onClickOpenStartProductionModal}
@@ -923,10 +935,13 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               onClickOpenCloseOrderNotesModal={onClickOpenCloseOrderNotesModal}
               onOpenDuplicateModal={onOpenDuplicateModal}
               handleGetTaxConfirmNo={handleGetTaxConfirmNo}
+              onClickOpenInventoryIntakeModal={onClickOpenInventoryIntakeModal}
               onClickSendToCustomerEmail={onClickSendToCustomerEmail}
               onClickSendToCustomerSMS={onClickSendToCustomerSMS}
               onClickSendToCustomerWhatsApp={onClickSendToCustomerWhatsApp}
-              onClickOpenInventoryIntakeModal={onClickOpenInventoryIntakeModal}
+              onClickSendPaymentEmail={onClickSendPaymentEmail}
+              onClickSendPaymentSMS={onClickSendPaymentSMS}
+              onClickSendPaymentWhatsApp={onClickSendPaymentWhatsApp}
             />
           ),
         };
@@ -1273,6 +1288,124 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     );
   };
 
+  const ChecksCell = ({
+    checkNumbers,
+    checkDates,
+    expanded,
+    onToggle,
+    isRTL = false,
+  }: {
+    checkNumbers: string[] | null | undefined;
+    checkDates: string[] | null | undefined;
+    expanded: boolean;
+    onToggle: () => void;
+    isRTL?: boolean;
+  }) => {
+    const { t } = useTranslation();
+    const MAX_VISIBLE = 2;
+
+    const safeCheckNumbers = Array.isArray(checkNumbers) ? checkNumbers : [];
+    const safeCheckDates = Array.isArray(checkDates) ? checkDates : [];
+
+    // Pair check numbers with dates (they should be in parallel/ordered)
+    const checks = safeCheckNumbers.map((number, index) => ({
+      number: number || "-",
+      date: safeCheckDates[index] || "-",
+    }));
+
+    const visibleItems = expanded ? checks : checks.slice(0, MAX_VISIBLE);
+
+    return (
+      <div
+        style={{
+          maxHeight: expanded ? "none" : "40px",
+          ...classes.checkCellContainer,
+        }}
+      >
+        {visibleItems.map((check, index) => (
+          <div
+            key={index}
+            style={{
+              marginBottom: index < visibleItems.length - 1 ? "4px" : "0",
+            }}
+          >
+            {check.number}
+          </div>
+        ))}
+        {checks.length > MAX_VISIBLE && (
+          <Typography
+            onClick={onToggle}
+            sx={{
+              ...classes.showMoreLink,
+              [isRTL ? "mr" : "ml"]: 1,
+            }}
+          >
+            {expanded ? t("sales.quote.showLess") : t("sales.quote.showMore")}
+          </Typography>
+        )}
+      </div>
+    );
+  };
+
+  const CheckDatesCell = ({
+    checkNumbers,
+    checkDates,
+    expanded,
+    onToggle,
+    isRTL = false,
+  }: {
+    checkNumbers: string[] | null | undefined;
+    checkDates: string[] | null | undefined;
+    expanded: boolean;
+    onToggle: () => void;
+    isRTL?: boolean;
+  }) => {
+    const { t } = useTranslation();
+    const MAX_VISIBLE = 2;
+
+    const safeCheckNumbers = Array.isArray(checkNumbers) ? checkNumbers : [];
+    const safeCheckDates = Array.isArray(checkDates) ? checkDates : [];
+
+    // Pair check numbers with dates (they should be in parallel/ordered)
+    const checks = safeCheckNumbers.map((number, index) => ({
+      number: number || "-",
+      date: safeCheckDates[index] || "-",
+    }));
+
+    const visibleItems = expanded ? checks : checks.slice(0, MAX_VISIBLE);
+
+    return (
+      <div
+        style={{
+          maxHeight: expanded ? "none" : "40px",
+          ...classes.checkCellContainer,
+        }}
+      >
+        {visibleItems.map((check, index) => (
+          <div
+            key={index}
+            style={{
+              marginBottom: index < visibleItems.length - 1 ? "4px" : "0",
+            }}
+          >
+            {check.date}
+          </div>
+        ))}
+        {checks.length > MAX_VISIBLE && (
+          <Typography
+            onClick={onToggle}
+            sx={{
+              ...classes.showMoreLink,
+              [isRTL ? "mr" : "ml"]: 1,
+            }}
+          >
+            {expanded ? t("sales.quote.showLess") : t("sales.quote.showMore")}
+          </Typography>
+        )}
+      </div>
+    );
+  };
+
   const getAllQuotes = useCallback(
     async (order?: any, invokedBySocket: boolean = false) => {
       const sortOrder = order || currentSortOrder;
@@ -1352,6 +1485,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                   onClickOpenRemoveDraftModal={onClickOpenRemoveDraftModal}
                   onClickOpenDeliveryTimeModal={onClickOpenDeliveryTimeModal}
                   onClickOpenPriceModal={onClickOpenPriceModal}
+                  onClickOpenModal={onClickOpenOtherReasonModal}
                   onClickMakePayment={onClickMakePayment}
                   onClickPauseOrResume={onClickPauseOrResume}
                   onClickStartProduction={onClickOpenStartProductionModal}
@@ -1532,54 +1666,89 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
           });
 
           // For receipts
-          const mapReceiptData = data?.map((quote: any) => ({
-            creationDate: formatCustomDateTime(quote?.creationDate).split(
-              " "
-            )[0],
-            [isSupplierPayments ? "supplier" : "client"]: (
-              <div
-                style={{ cursor: "pointer" }}
-                onClick={() => onClickOpenCustomerModal(quote?.customerId)}
-              >
-                {quote?.customerName}
-              </div>
-            ),
-            supplier: (
-              <div
-                style={{ cursor: "pointer" }}
-                onClick={() => onClickOpenCustomerModal(quote?.customerId)}
-              >
-                {quote?.customerName}
-              </div>
-            ),
-            agent: quote?.agentName,
-            number: quote?.number,
-            paymentMethod: _renderPaymentType(quote?.paymentType),
-            totalPrice: isRTL
-              ? `${quote?.totalPrice} ${getCurrencyUnitText(quote?.currency)}`
-              : `${getCurrencyUnitText(quote?.currency)} ${quote?.totalPrice}`,
-            notes: quote?.notes,
-            status: t(`documentStatus.${quote?.status}`),
-            more: (
-              <MoreMenuWidget
-                quote={quote}
-                documentType={docType}
-                onClickPdf={onOpenExportReceiptPdfModal}
-                onClickDuplicate={onClickDocumentDuplicate}
-                onClickLoggers={onClickDocumentLogs}
-                onClickOpenPrintPDFModal={onClickOpenPrintPDFModal}
-                onOpenCancelReceiptModal={onOpenCancelReceiptModal}
-                onOpenCancelReceiptModalRefund={onOpenCancelReceiptModalRefund}
-                onClickOpenChangeProductionStatusModal={
-                  onClickOpenChangeProductionStatusModal
-                }
-                onClickSendPayment={onClickSendPayment}
-                onClickSendToCustomerEmail={onClickSendToCustomerEmail}
-                onClickSendToCustomerSMS={onClickSendToCustomerSMS}
-                onClickSendToCustomerWhatsApp={onClickSendToCustomerWhatsApp}
-              />
-            ),
-          }));
+          const mapReceiptData = data?.map((quote: any) => {
+            const baseReceiptRow = {
+              creationDate: formatCustomDateTime(quote?.creationDate).split(
+                " "
+              )[0],
+              [isSupplierPayments ? "supplier" : "client"]: (
+                <div
+                  style={{ cursor: "pointer" }}
+                  onClick={() => onClickOpenCustomerModal(quote?.customerId)}
+                >
+                  {quote?.customerName}
+                </div>
+              ),
+              supplier: (
+                <div
+                  style={{ cursor: "pointer" }}
+                  onClick={() => onClickOpenCustomerModal(quote?.customerId)}
+                >
+                  {quote?.customerName}
+                </div>
+              ),
+              agent: quote?.agentName,
+              number: quote?.number,
+              paymentMethod: _renderPaymentType(quote?.paymentType),
+              totalPrice: isRTL
+                ? `${quote?.totalPrice} ${getCurrencyUnitText(quote?.currency)}`
+                : `${getCurrencyUnitText(quote?.currency)} ${
+                    quote?.totalPrice
+                  }`,
+              notes: quote?.notes,
+              status: t(`documentStatus.${quote?.status}`),
+              more: (
+                <MoreMenuWidget
+                  quote={quote}
+                  documentType={docType}
+                  onClickPdf={onOpenExportReceiptPdfModal}
+                  onClickDuplicate={onClickDocumentDuplicate}
+                  onClickLoggers={onClickDocumentLogs}
+                  onClickOpenPrintPDFModal={onClickOpenPrintPDFModal}
+                  onOpenCancelReceiptModal={onOpenCancelReceiptModal}
+                  onOpenCancelReceiptModalRefund={
+                    onOpenCancelReceiptModalRefund
+                  }
+                  onClickOpenChangeProductionStatusModal={
+                    onClickOpenChangeProductionStatusModal
+                  }
+                  onClickSendPayment={onClickSendPayment}
+                  onClickSendToCustomerEmail={onClickSendToCustomerEmail}
+                  onClickSendToCustomerSMS={onClickSendToCustomerSMS}
+                  onClickSendToCustomerWhatsApp={onClickSendToCustomerWhatsApp}
+                />
+              ),
+            };
+
+            // Add check fields for receipts and supplier payments
+            if (isReceipt || isSupplierPayments) {
+              return {
+                ...baseReceiptRow,
+                checkNumber: (
+                  <ChecksCell
+                    key={`check-number-${quote?.id}`}
+                    checkNumbers={quote?.checkNumbers || quote?.CheckNumbers}
+                    checkDates={quote?.checkDates || quote?.CheckDates}
+                    expanded={cellsExpanded[quote?.id] || false}
+                    onToggle={() => toggleCellsExpanded(quote?.id)}
+                    isRTL={isRTL}
+                  />
+                ),
+                checkDueDate: (
+                  <CheckDatesCell
+                    key={`check-date-${quote?.id}`}
+                    checkNumbers={quote?.checkNumbers || quote?.CheckNumbers}
+                    checkDates={quote?.checkDates || quote?.CheckDates}
+                    expanded={cellsExpanded[quote?.id] || false}
+                    onToggle={() => toggleCellsExpanded(quote?.id)}
+                    isRTL={isRTL}
+                  />
+                ),
+              };
+            }
+
+            return baseReceiptRow;
+          });
 
           // Store original data for re-mapping when cellsExpanded changes
           setOriginalData(data);
@@ -1622,6 +1791,22 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               ? router.query.toDate[0]
               : router.query.toDate
           )
+          : null;
+
+        const currentCheckFromDate = router.query.checkFromDate
+          ? new Date(
+              Array.isArray(router.query.checkFromDate)
+                ? router.query.checkFromDate[0]
+                : router.query.checkFromDate
+            )
+          : null;
+
+        const currentCheckToDate = router.query.checkToDate
+          ? new Date(
+              Array.isArray(router.query.checkToDate)
+                ? router.query.checkToDate[0]
+                : router.query.checkToDate
+            )
           : null;
 
         const currentAccountingStatus = router.query.accountingStatus
@@ -1682,7 +1867,12 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               ? { fromDate: GetDateFormat(currentFromDate) }
               : {}),
             ...(currentToDate ? { toDate: GetDateFormat(currentToDate) } : {}),
-
+            ...(currentCheckFromDate
+              ? { checkFromDate: GetDateFormat(currentCheckFromDate) }
+              : {}),
+            ...(currentCheckToDate
+              ? { checkToDate: GetDateFormat(currentCheckToDate) }
+              : {}),
             ...(currentMinPrice && currentMinPrice !== ""
               ? { minPrice: currentMinPrice }
               : {}),
@@ -1862,6 +2052,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 onClickOpenRemoveDraftModal={onClickOpenRemoveDraftModal}
                 onClickOpenDeliveryTimeModal={onClickOpenDeliveryTimeModal}
                 onClickOpenPriceModal={onClickOpenPriceModal}
+                onClickOpenModal={onClickOpenOtherReasonModal}
                 onClickMakePayment={onClickMakePayment}
                 onClickPauseOrResume={onClickPauseOrResume}
                 onClickStartProduction={onClickOpenStartProductionModal}
@@ -2072,6 +2263,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               onClickSendToCustomerEmail={onClickSendToCustomerEmail}
               onClickSendToCustomerSMS={onClickSendToCustomerSMS}
               onClickSendToCustomerWhatsApp={onClickSendToCustomerWhatsApp}
+              onClickSendPaymentEmail={onClickSendPaymentEmail}
+              onClickSendPaymentSMS={onClickSendPaymentSMS}
+              onClickSendPaymentWhatsApp={onClickSendPaymentWhatsApp}
             />
           ),
         }));
@@ -2267,6 +2461,14 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     if (toDate instanceof Date) query.toDate = toDate.toISOString();
     else delete query.toDate;
 
+    if (checkFromDate instanceof Date)
+      query.checkFromDate = checkFromDate.toISOString();
+    else delete query.checkFromDate;
+
+    if (checkToDate instanceof Date)
+      query.checkToDate = checkToDate.toISOString();
+    else delete query.checkToDate;
+
     if (accountingStatus)
       query.accountingStatus = accountingStatus.value.toString();
     else delete query.accountingStatus;
@@ -2322,6 +2524,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     setProductionStatus(null);
     setFromDate(null);
     setToDate(null);
+    setCheckFromDate(null);
+    setCheckToDate(null);
     setResetDatePicker(true);
     setIsCanceledState(false);
     setIsPausedOrders(false);
@@ -2417,26 +2621,28 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               ? null
               : t("sales.quote.sourceDocument"),
 
-          isOrder && t("sales.quote.purchaseNumber"),
-          isOrder && t("sales.quote.productionStatus"),
-          isOrder && t("sales.quote.jobs"),
-          isOrder && CheckPermission(Permissions.SHOW_COSTS_IN_ORDERS) && (
-            <PermissionCheck userPermission={Permissions.SHOW_COSTS_IN_ORDERS}>
-              {t("sales.quote.cost")}
-            </PermissionCheck>
-          ),
-          isReceipt || isSupplierPayments
-            ? t("sales.quote.paymentMethod")
-            : t("sales.quote.worksName"),
-          isOrdersTracking
-            ? t("customers.modal.paymentStatus")
-            : t("sales.quote.totalPrice"),
-          t("sales.quote.notes"),
-          (isOrder ||
-            isInvoice ||
-            isInvoiceRefund ||
-            isDeliveryNote ||
-            isDeliveryNoteRefund) &&
+        isOrder && t("sales.quote.purchaseNumber"),
+        isOrder && t("sales.quote.productionStatus"),
+        isOrder && t("sales.quote.jobs"),
+        isOrder && CheckPermission(Permissions.SHOW_COSTS_IN_ORDERS) && (
+          <PermissionCheck userPermission={Permissions.SHOW_COSTS_IN_ORDERS}>
+            {t("sales.quote.cost")}
+          </PermissionCheck>
+        ),
+        isReceipt || isSupplierPayments
+          ? t("sales.quote.paymentMethod")
+          : t("sales.quote.worksName"),
+        (isReceipt || isSupplierPayments) && t("sales.quote.checkNumber"),
+        (isReceipt || isSupplierPayments) && t("sales.quote.checkDueDate"),
+        isOrdersTracking
+          ? t("customers.modal.paymentStatus")
+          : t("sales.quote.totalPrice"),
+        t("sales.quote.notes"),
+        (isOrder ||
+          isInvoice ||
+          isInvoiceRefund ||
+          isDeliveryNote ||
+          isDeliveryNoteRefund) &&
           t("sales.documentDeliveries.deliveryStatus"),
           t("sales.quote.status"),
           t("sales.quote.more"),
@@ -2693,6 +2899,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               onClickOpenPrintPDFModal={onClickOpenPrintPDFModal}
               onClickOpenDeliveryTimeModal={onClickOpenDeliveryTimeModal}
               onClickOpenPriceModal={onClickOpenPriceModal}
+              onClickOpenModal={onClickOpenOtherReasonModal}
               onClickOpenCloseOrderModal={onClickOpenCloseOrderModal}
               onClickOpenCloseOrderNotesModal={onClickOpenCloseOrderNotesModal}
               onClickSendPayment={onClickSendPayment}
@@ -2710,6 +2917,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               onClickSendToCustomerEmail={onClickSendToCustomerEmail}
               onClickSendToCustomerSMS={onClickSendToCustomerSMS}
               onClickSendToCustomerWhatsApp={onClickSendToCustomerWhatsApp}
+              onClickSendPaymentEmail={onClickSendPaymentEmail}
+              onClickSendPaymentSMS={onClickSendPaymentSMS}
+              onClickSendPaymentWhatsApp={onClickSendPaymentWhatsApp}
             />
           );
 
@@ -2772,6 +2982,31 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     } else {
       setFromDate(null);
       setToDate(null);
+    }
+  };
+
+  const onSelectCheckDueDateRange = (value) => {
+    if (value && value.length === 2) {
+      const [firstDate, secondDate] = value;
+
+      // Handle null values
+      if (!firstDate || !secondDate) {
+        setCheckFromDate(null);
+        setCheckToDate(null);
+        return;
+      }
+
+      // Ensure checkFromDate is always the earlier date and checkToDate is always the later date
+      if (firstDate <= secondDate) {
+        setCheckFromDate(firstDate);
+        setCheckToDate(secondDate);
+      } else {
+        setCheckFromDate(secondDate);
+        setCheckToDate(firstDate);
+      }
+    } else {
+      setCheckFromDate(null);
+      setCheckToDate(null);
     }
   };
 
@@ -3105,37 +3340,37 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
           { label: t("sales.quote.closed"), value: AStatus.CLOSED },
           { label: t("sales.quote.draft"), value: AStatus.DRAFT },
         ]
-        : isPurchaseOrder ? [
-          {
-            label: t("documentStatus.PurchaseOrder.UnderCreation"),
-            value: DocumentCloseStatus.Open,
-          },
-          {
-            label: t("sales.quote.partialClosed"),
-            value: DocumentCloseStatus.PartialClosed,
-          },
-          {
-            label: t("sales.quote.closed"),
-            value: DocumentCloseStatus.Closed
-          },
-          // {
-          //   label: t("documentStatus.PurchaseOrder.Draft"),
-          //   value: DocumentCloseStatus.Draft
-          // },
-          {
-            label: t("documentStatus.PurchaseOrder.SentToSupplier"),
-            value: DocumentCloseStatus.SentToSupplier
-          },
-          {
-            label: t("documentStatus.PurchaseOrder.Received"),
-            value: DocumentCloseStatus.Received
-          },
-          {
-            label: t("documentStatus.PurchaseOrder.SupplierRequestingApproval"),
-            value: DocumentCloseStatus.SupplierRequestingApproval
-          },
-
-        ]
+        : isPurchaseOrder
+          ? [
+            {
+              label: t("documentStatus.PurchaseOrder.UnderCreation"),
+              value: DocumentCloseStatus.Open,
+            },
+            {
+              label: t("sales.quote.partialClosed"),
+              value: DocumentCloseStatus.PartialClosed,
+            },
+            {
+              label: t("sales.quote.closed"),
+              value: DocumentCloseStatus.Closed,
+            },
+            // {
+            //   label: t("documentStatus.PurchaseOrder.Draft"),
+            //   value: DocumentCloseStatus.Draft
+            // },
+            {
+              label: t("documentStatus.PurchaseOrder.SentToSupplier"),
+              value: DocumentCloseStatus.SentToSupplier,
+            },
+            {
+              label: t("documentStatus.PurchaseOrder.Received"),
+              value: DocumentCloseStatus.Received,
+            },
+            {
+              label: t("documentStatus.PurchaseOrder.SupplierRequestingApproval"),
+              value: DocumentCloseStatus.SupplierRequestingApproval,
+            },
+          ]
           : [
             {
               label: t("sales.quote.open"),
@@ -3225,6 +3460,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       fromDate: fromDate,
       toDate: toDate,
       currency: currencyFilter?.value,
+      checkFromDate:
+        isReceipt || isSupplierPayments ? checkFromDate : undefined,
+      checkToDate: isReceipt || isSupplierPayments ? checkToDate : undefined,
       // paymentType: paymentType?.value && paymentType?.value,
     };
 
@@ -3262,11 +3500,14 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     productIds,
     fromDate,
     toDate,
+    checkFromDate,
+    checkToDate,
     paymentType,
     currencyFilter,
     currentSortOrder,
     page,
     pageSize,
+    isSupplierPayments,
   ]);
 
   const [openIrrelevantCancelModal, setOpenIrrelevantCancelModal] =
@@ -3275,6 +3516,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const [openCloseOrderModal, setOpenCloseOrderModal] = useState(false);
   const [openDeliveryTimeCancelModal, setOpenDeliveryTimeCancelModal] =
     useState(false);
+  const [openOtherReasonModal, setOpenOtherReasonModal] = useState(false);
+  const [reasonText, setReasonText] = useState("");
   const [openStartProductionModal, setOpenStartProductionModal] =
     useState(false);
 
@@ -3337,6 +3580,21 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const onClickCloseDeliveryTimeModal = () => {
     setSelectedDocument(null);
     setOpenDeliveryTimeCancelModal(false);
+  };
+
+  const onClickOpenOtherReasonModal = (order) => {
+    setSelectedDocument(order);
+    setReasonText("");
+    setOpenOtherReasonModal(true);
+  };
+  const onClickCloseOtherReasonModal = () => {
+    setSelectedDocument(null);
+    setReasonText("");
+    setOpenOtherReasonModal(false);
+  };
+
+  const onClickCancelOffer = async () => {
+    await updateCancelQuote(QUOTE_STATUSES.CanceledOther, reasonText);
   };
 
   // Inventory Intake Modal State
@@ -3566,11 +3824,18 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     ));
   }, [quantityOfPackages, packageQuantities]);
 
-  const updateCancelQuote = async (quoteStatus: number) => {
+  const updateCancelQuote = async (
+    quoteStatus: number,
+    cancelText?: string
+  ) => {
     const callBack = (res) => {
       if (res?.success) {
         alertSuccessUpdate();
         getAllQuotes();
+        if (cancelText) {
+          setReasonText("");
+          setOpenOtherReasonModal(false);
+        }
       } else {
         alertFaultUpdate();
       }
@@ -3580,6 +3845,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       Document: {
         documentId: selectedDocument?.id,
         quoteStatus: quoteStatus,
+        ...(cancelText && { cancelText }),
       },
     });
   };
@@ -3685,7 +3951,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const [isSendOrderReadyToClient, setIsSendOrderReadyToClient] =
     useState(false);
   const [hideCheckboxes, setHideCheckboxes] = useState(false);
-  const [preSelectedMethod, setPreSelectedMethod] = useState<"sms" | "whatsapp" | null>(null);
+  const [preSelectedMethod, setPreSelectedMethod] = useState<
+    "sms" | "whatsapp" | null
+  >(null);
 
   const [paymentModalTitle, setPaymentModalTitle] = useState("");
   const [sendPayment, setSendPayment] =
@@ -3705,11 +3973,30 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       return new Promise<void>((resolve, reject) => {
         const callBack = (res) => {
           if (res?.success) {
-            const newSendPaymentState = { ...sendPayment };
-            newSendPaymentState.documentId = document?.id;
-            newSendPaymentState.documentContacts = res.data;
-            setSendPayment(newSendPaymentState);
-            resolve();
+            // Use functional update to avoid stale state
+            setSendPayment((prevState) => {
+              const newSendPaymentState = { ...prevState };
+              newSendPaymentState.documentId = document?.id;
+              newSendPaymentState.documentContacts = res.data || [];
+              
+              // CRITICAL: Set selectedContactIndex and populate contact fields
+              if (res.data && res.data.length > 0) {
+                const firstContact = res.data[0];
+                newSendPaymentState.selectedContactIndex = 0;
+                newSendPaymentState.contactName = (firstContact.contactName || "").trim();
+                newSendPaymentState.contactPhone = (firstContact.contactPhone || "").trim();
+                newSendPaymentState.contactMail = (firstContact.contactMail || "").trim();
+              } else {
+                newSendPaymentState.selectedContactIndex = -1;
+                newSendPaymentState.contactName = "";
+                newSendPaymentState.contactPhone = "";
+                newSendPaymentState.contactMail = "";
+              }
+              
+              return newSendPaymentState;
+            });
+            // Use requestAnimationFrame to ensure state update is processed
+            requestAnimationFrame(() => resolve());
           } else {
             reject(new Error("Failed to update payment state"));
           }
@@ -3780,9 +4067,23 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       // First, get contact information
       await onClickSendPaymentOld(document, true);
       // Then open email composer with document data
-      const contactEmail = sendPayment?.documentContacts?.[sendPayment?.selectedContactIndex]?.contactMail;
-      const contactPhone = sendPayment?.documentContacts?.[sendPayment?.selectedContactIndex]?.contactPhone;
-      await openEmailComposer(document?.id, contactEmail, contactPhone);
+      const selectedContact =
+        sendPayment?.documentContacts?.[sendPayment?.selectedContactIndex];
+      const contactEmail = selectedContact?.contactMail;
+      const contactPhone = selectedContact?.contactPhone;
+      const contactName = selectedContact?.contactName || selectedContact?.name;
+      const contactID = selectedContact?.contactID
+      await openEmailComposer(
+        document?.id,
+        contactEmail,
+        contactPhone,
+        undefined, // messageType - not needed, will use default
+        undefined, // sendMailIfNotVerifiedAgent - will use default true
+        undefined, // sendWithInvoices - will use default false
+        contactID,
+        contactName,
+        contactName
+      );
     } catch (error) {
       alertFaultGetData();
     }
@@ -3792,9 +4093,27 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const onClickSendToCustomerSMS = async (document: any) => {
     try {
       await onClickSendPaymentOld(document, true);
-      // Pre-select SMS checkbox
-      const newSendPaymentState = { ...sendPayment, sendBySms: true, sendByMail: false, sendByWhatsapp: false };
-      setSendPayment(newSendPaymentState);
+      // Use functional update to get latest state after contacts are loaded
+      setSendPayment((prevState) => {
+        // Ensure contact fields are populated from documentContacts if they exist
+        let updatedState = { ...prevState };
+        if (prevState.documentContacts && prevState.documentContacts.length > 0) {
+          const contactIndex = prevState.selectedContactIndex >= 0 ? prevState.selectedContactIndex : 0;
+          const selectedContact = prevState.documentContacts[contactIndex];
+          if (selectedContact) {
+            updatedState.selectedContactIndex = contactIndex;
+            updatedState.contactName = (selectedContact.contactName || "").trim();
+            updatedState.contactPhone = (selectedContact.contactPhone || "").trim();
+            updatedState.contactMail = (selectedContact.contactMail || "").trim();
+          }
+        }
+        return {
+          ...updatedState,
+          sendBySms: true,
+          sendByMail: false,
+          sendByWhatsapp: false,
+        };
+      });
       setPaymentModalTitle(
         `${t("sales.quote.sendToClient")} - ${t(
           `sales.quote.${DOCUMENT_TYPE[docType]}`
@@ -3813,15 +4132,121 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const onClickSendToCustomerWhatsApp = async (document: any) => {
     try {
       await onClickSendPaymentOld(document, true);
-      // Pre-select WhatsApp checkbox
-      const newSendPaymentState = { ...sendPayment, sendByWhatsapp: true, sendByMail: false, sendBySms: false };
-      setSendPayment(newSendPaymentState);
+      // Use functional update to get latest state after contacts are loaded
+      setSendPayment((prevState) => {
+        // Ensure contact fields are populated from documentContacts if they exist
+        let updatedState = { ...prevState };
+        if (prevState.documentContacts && prevState.documentContacts.length > 0) {
+          const contactIndex = prevState.selectedContactIndex >= 0 ? prevState.selectedContactIndex : 0;
+          const selectedContact = prevState.documentContacts[contactIndex];
+          if (selectedContact) {
+            updatedState.selectedContactIndex = contactIndex;
+            updatedState.contactName = (selectedContact.contactName || "").trim();
+            updatedState.contactPhone = (selectedContact.contactPhone || "").trim();
+            updatedState.contactMail = (selectedContact.contactMail || "").trim();
+          }
+        }
+        return {
+          ...updatedState,
+          sendByWhatsapp: true,
+          sendByMail: false,
+          sendBySms: false,
+        };
+      });
       setPaymentModalTitle(
         `${t("sales.quote.sendToClient")} - ${t(
           `sales.quote.${DOCUMENT_TYPE[docType]}`
         ).toLowerCase()} ${t("sales.quote.number")} - ${document?.number}`
       );
       setIsSendToClient(true);
+      setHideCheckboxes(true);
+      setPreSelectedMethod("whatsapp");
+      setOpenPaymentModal(true);
+    } catch (error) {
+      alertFaultGetData();
+    }
+  };
+  console.log("sendPayment", sendPayment);
+  // Send Payment - Email Handler
+  const onClickSendPaymentEmail = async (document: any) => {
+    setDocumentForEmail(document);
+    try {
+      // First, get contact information
+      await onClickSendPaymentOld(document, false);
+      // Then open email composer with document data
+      // Handle both documentContacts array and direct contact properties
+      const selectedContact =
+        sendPayment?.documentContacts?.[sendPayment?.selectedContactIndex];
+      const contactEmail =
+        selectedContact?.contactMail || sendPayment?.contactMail || "";
+      const contactPhone =
+        selectedContact?.contactPhone || sendPayment?.contactPhone || "";
+      const contactName =
+        selectedContact?.contactName ||
+        selectedContact?.name ||
+        document?.customerName ||
+        document?.clientName ||
+        "";
+      await openEmailComposer(
+        document?.id,
+        contactEmail,
+        contactPhone,
+        undefined, // messageType - not needed, will use default
+        undefined, // sendMailIfNotVerifiedAgent - will use default true
+        undefined, // sendWithInvoices - will use default false
+        document?.customerId || document?.clientId,
+        document?.customerName || document?.clientName,
+        contactName
+      );
+    } catch (error) {
+      alertFaultGetData();
+    }
+  };
+
+  // Send Payment - SMS Handler
+  const onClickSendPaymentSMS = async (document: any) => {
+    try {
+      await onClickSendPaymentOld(document, false);
+      // Wait a bit to ensure state is updated, then update only the send method flags
+      setSendPayment((prev) => ({
+        ...prev,
+        sendBySms: true,
+        sendByMail: false,
+        sendByWhatsapp: false,
+        selectedContactIndex: prev.documentContacts?.length > 0 ? 0 : prev.selectedContactIndex,
+      }));
+      setPaymentModalTitle(
+        `${t("prePayment.paymentPageFor")} ${t(
+          `sales.quote.${DOCUMENT_TYPE[docType]}`
+        ).toLowerCase()} ${t("sales.quote.number")} - ${document?.number}`
+      );
+      setIsSendToClient(false);
+      setHideCheckboxes(true);
+      setPreSelectedMethod("sms");
+      setOpenPaymentModal(true);
+    } catch (error) {
+      alertFaultGetData();
+    }
+  };
+
+  // Send Payment - WhatsApp Handler
+  const onClickSendPaymentWhatsApp = async (document: any) => {
+    try {
+      await onClickSendPaymentOld(document, false);
+      // Wait a bit to ensure state is updated, then update only the send method flags
+      setSendPayment((prev) => ({
+        ...prev,
+        sendByWhatsapp: true,
+        sendByMail: false,
+        sendBySms: false,
+        selectedContactIndex: prev.documentContacts?.length > 0 ? 0 : prev.selectedContactIndex,
+      }));
+      setPaymentModalTitle(
+        `${t("prePayment.paymentPageFor")} ${t(
+          `sales.quote.${DOCUMENT_TYPE[docType]}`
+        ).toLowerCase()} ${t("sales.quote.number")} - ${document?.number}`
+      );
+      setIsSendToClient(false);
       setHideCheckboxes(true);
       setPreSelectedMethod("whatsapp");
       setOpenPaymentModal(true);
@@ -3964,6 +4389,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       setProductionStatus(null);
       setFromDate(null);
       setToDate(null);
+      setCheckFromDate(null);
+      setCheckToDate(null);
       setResetDatePicker(true);
       setIsCanceledState(false);
       setIsPausedOrders(false);
@@ -3987,6 +4414,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       maxPrice,
       fromDate,
       toDate,
+      checkFromDate,
+      checkToDate,
       finalPatternSearch,
       accountingStatus,
       deliveryStatus,
@@ -4050,6 +4479,11 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     if (fromDate && typeof fromDate === "string")
       setFromDate(new Date(fromDate));
     if (toDate && typeof toDate === "string") setToDate(new Date(toDate));
+
+    if (checkFromDate && typeof checkFromDate === "string")
+      setCheckFromDate(new Date(checkFromDate));
+    if (checkToDate && typeof checkToDate === "string")
+      setCheckToDate(new Date(checkToDate));
 
     if (finalPatternSearch && typeof finalPatternSearch === "string") {
       if (
@@ -4148,6 +4582,29 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             selectedDocument,
             closeOrderAsInvoiceOrDeliveryNote ? true : false
           );
+          // Always open email composer after marking ready (if FrontDesk is enabled)
+          if (hasFrontDeskFeature && selectedDocument?.id) {
+            // Set documentForEmail so FrontDeskEmailComposerWrapper can use it
+            setDocumentForEmail(selectedDocument);
+            // Get contact info from selectedDocument if available
+            const contactEmail = selectedDocument?.contactEmail || selectedDocument?.contactMail;
+            const contactPhone = selectedDocument?.contactPhone;
+            const customerId = selectedDocument?.customerId || selectedDocument?.clientId;
+            const customerName = selectedDocument?.customerName || selectedDocument?.clientName;
+            const contactName = selectedDocument?.contactName;
+
+            openEmailComposer(
+              selectedDocument.id,
+              contactEmail,
+              contactPhone,
+              undefined, // messageType - will use default
+              undefined, // sendMailIfNotVerifiedAgent - will use default true
+              undefined, // sendWithInvoices - will use default false
+              customerId,
+              customerName,
+              contactName
+            );
+          }
           return;
         }
         if (isSelectedCLoseAsDeliveryNote) {
@@ -4168,9 +4625,10 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         alertFaultUpdate();
       }
     };
+    // Mark as ready without sending message - user will decide in email composer
     await moveOrderToReadyApi(callApi, callBack, {
       orderId: selectedDocument?.id,
-      isSendMessage: isSendMessage,
+      isSendMessage: isSendMessage, // Don't send automatically - let user decide in composer
     });
   };
 
@@ -4381,6 +4839,12 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     openDeliveryTimeCancelModal,
     onClickCloseDeliveryTimeModal,
     onClickClosePriceModal,
+    openOtherReasonModal,
+    onClickOpenOtherReasonModal,
+    onClickCloseOtherReasonModal,
+    onClickCancelOffer,
+    setReasonText,
+    reasonText,
     t,
     patternSearch,
     tableHeaders,
@@ -4441,6 +4905,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     documentPath,
     resetDatePicker,
     onSelectDeliveryTimeDates,
+    checkFromDate,
+    checkToDate,
+    onSelectCheckDueDateRange,
     employeeId,
     handleSelectEmployee,
     resetLogsDatePicker,
@@ -4609,10 +5076,18 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     handlePageChange: handleScheduledReportsPageChange,
     handlePageSizeChangeScheduledReports: handleScheduledReportsPageSizeChange,
     scheduledReportsPageSize,
+    openPurchaseOrderTypeModal,
+    onOpenPurchaseOrderTypeModal,
+    onClosePurchaseOrderTypeModal,
+    handleSelectPurchaseOrderType,
     // Send to Customer handlers
     onClickSendToCustomerEmail,
     onClickSendToCustomerSMS,
     onClickSendToCustomerWhatsApp,
+    // Send Payment handlers
+    onClickSendPaymentEmail,
+    onClickSendPaymentSMS,
+    onClickSendPaymentWhatsApp,
     // Email composer state
     isEmailComposerOpen,
     emailData,
@@ -4622,10 +5097,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     hideCheckboxes,
     preSelectedMethod,
     documentForEmail,
-    openPurchaseOrderTypeModal,
-    onOpenPurchaseOrderTypeModal,
-    onClosePurchaseOrderTypeModal,
-    handleSelectPurchaseOrderType,
   };
 };
 

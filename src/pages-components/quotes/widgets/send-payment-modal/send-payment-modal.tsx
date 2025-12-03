@@ -87,7 +87,6 @@ const SendPaymentModal = ({
     isSendOrderReadyToClient = false,
     sendWithInvoices = false
   ) => {
-    debugger;
     const selectedContact =
       payState?.documentContacts &&
       payState.documentContacts[payState?.selectedContactIndex];

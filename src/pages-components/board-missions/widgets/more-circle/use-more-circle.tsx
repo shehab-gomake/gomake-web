@@ -158,6 +158,10 @@ const useMoreCircle = ({
 
   const isShowLogs = CheckPermission(Permissions.SHOW_LOGS);
 
+  const hasPrintPackagingSlipPermission = CheckPermission(
+    Permissions.ALLOW_PRINT_PACKAGING_SLIP_BEFORE_READY
+  );
+
   const menuList = [
     {
       condition: true && isSendPaymentToClient,
@@ -229,7 +233,12 @@ const useMoreCircle = ({
       onclick: () => GetPrintingTicketPDF(mission),
     },
     {
-      condition: true && isSendPaymentToClient && !isDoneJobs,
+      condition:
+        isSendPaymentToClient &&
+        !isDoneJobs &&
+        (mission?.status === BoardMissionStatusForFilter.DONE ||
+          mission?.isReady ||
+          hasPrintPackagingSlipPermission),
       name: t("boardMissions.printPackagingSlip"),
       icon: <PackageIcon />,
       onclick:

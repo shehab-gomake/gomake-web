@@ -65,9 +65,13 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
   const exampleTypeValues = useRecoilValue(exampleTypeState);
   const priceChangePercents = useRecoilValue(priceChangePercentsState);
   const [
-    sliderCurrentProductItemValueTotalPrice, setSliderCurrentProductItemValueTotalPrice] = useRecoilState<number>(sliderCurrentProductItemValuePriceState);
-  const [localStateValue, setLocalStateValue] = useRecoilState<number>(localStateValueState);
+    sliderCurrentProductItemValueTotalPrice,
+    setSliderCurrentProductItemValueTotalPrice,
+  ] = useRecoilState<number>(sliderCurrentProductItemValuePriceState);
+  const [localStateValue, setLocalStateValue] =
+    useRecoilState<number>(localStateValueState);
   const [priceIncludeVat, setPriceIncludeVat] = useState<any>();
+  const [qualityIssueReason, setQualityIssueReason] = useState<string>("");
 
   const [selectedProduct, setSelectedProduct] = useState<any>({});
   const [combinedData, setCombinedData] = useState<any>([]);
@@ -319,7 +323,7 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
             t.actionName === item.actionName &&
             t?.exception?.exceptionKey === item?.exception?.exceptionKey &&
             t?.exception?.exceptionMessage ===
-            item?.exception?.exceptionMessage &&
+              item?.exception?.exceptionMessage &&
             tValuesArray.sort().join(",") === itemValuesSorted
           );
         })
@@ -416,6 +420,8 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
     alertFault,
     t,
     deliveryPrice,
+    qualityIssueReason,
+    setQualityIssueReason,
   };
 };
 

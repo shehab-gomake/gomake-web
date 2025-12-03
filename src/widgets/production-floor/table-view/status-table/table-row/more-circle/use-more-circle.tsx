@@ -7,18 +7,41 @@ import { getBoardMissionDataForMenuApi } from "@/services/api-service/production
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { ExpandIcon } from "@/icons/expand-icon";
 import { DotIcon, LeftArrowIcon, MoreCircleIcon, SearchIcon } from "@/icons";
+import { useUserPermission } from "@/hooks/use-permission";
+import { Permissions } from "@/components/CheckPermission/enum";
 
-const useMoreCircle = ({ t, boardMission, onClickDone, onClickPrintJob, onClickPrintDTicket, onClickUnGroupJob }) => {
+const useMoreCircle = ({
+  t,
+  boardMission,
+  onClickDone,
+  onClickPrintJob,
+  onClickPrintDTicket,
+  onClickUnGroupJob,
+}) => {
   const { push } = useRouter();
   const { callApi } = useGomakeAxios();
   const { alertFaultGetData } = useSnackBar();
+  const { CheckPermission } = useUserPermission();
+  const hasPrintPackagingSlipPermission = CheckPermission(
+    Permissions.ALLOW_PRINT_PACKAGING_SLIP_BEFORE_READY
+  );
 
   const handleGetBoardMissionData = async (actionType) => {
     const callBack = (res) => {
       if (res.success) {
         const result = res?.data;
         if (actionType === "edit") {
-          push(`/products/edit?clientTypeId=${result.clientTypeId}&customerId=${result.clientId}&customerName=${result.clientName}&productId=${result?.productId}&documentItemId=${result?.orderItemId}&documentType=${1}&documentNumber=${boardMission?.orderNumber}&documentId=${result.orderId}`).then();
+          push(
+            `/products/edit?clientTypeId=${result.clientTypeId}&customerId=${
+              result.clientId
+            }&customerName=${result.clientName}&productId=${
+              result?.productId
+            }&documentItemId=${
+              result?.orderItemId
+            }&documentType=${1}&documentNumber=${
+              boardMission?.orderNumber
+            }&documentId=${result.orderId}`
+          ).then();
         }
         // if actionType === print
         else {
@@ -27,15 +50,17 @@ const useMoreCircle = ({ t, boardMission, onClickDone, onClickPrintJob, onClickP
       } else {
         alertFaultGetData();
       }
-    }
-    await getBoardMissionDataForMenuApi(callApi, callBack, { boardMissionId: boardMission?.id, });
-  }
+    };
+    await getBoardMissionDataForMenuApi(callApi, callBack, {
+      boardMissionId: boardMission?.id,
+    });
+  };
 
   const openJobModal = () => {
     push(
       `/production-floor?boardMissionsId=${boardMission?.id}&productType=${boardMission?.productType}&step=stations`
     ).then();
-  }
+  };
 
   const getMenuList = () => {
     return [
@@ -43,43 +68,43 @@ const useMoreCircle = ({ t, boardMission, onClickDone, onClickPrintJob, onClickP
         condition: true,
         onClick: () => openJobModal(),
         icon: <SearchIcon width={17} height={17} />,
-        name: t("productionFloor.openJob")
+        name: t("productionFloor.openJob"),
       },
       {
         condition: true,
         onClick: () => handleGetBoardMissionData("edit"),
         icon: <EditingIcon />,
-        name: t("sales.quote.edit")
+        name: t("sales.quote.edit"),
       },
       {
         condition: true,
         onClick: () => onClickPrintJob(boardMission),
         icon: <MachineIcon />,
-        name: t("productionFloor.printJob")
+        name: t("productionFloor.printJob"),
       },
       {
         condition: boardMission?.hasRelatedJobs,
         onClick: () => onClickUnGroupJob(boardMission),
         icon: <EditingIcon />,
-        name: t("productionFloor.unGroupJob")
+        name: t("productionFloor.unGroupJob"),
       },
       {
-        condition: true,
+        condition: boardMission?.isReady || hasPrintPackagingSlipPermission,
         onClick: () => handleGetBoardMissionData("print"),
         icon: <PDFIcon />,
-        name: t("productionFloor.printDeliverTicket")
+        name: t("productionFloor.printDeliverTicket"),
       },
       {
         condition: true,
         onClick: () => onClickDone(boardMission),
         icon: <DoneIcon />,
-        name: t("boardMissions.done")
+        name: t("boardMissions.done"),
       },
     ];
   };
 
   return {
-    getMenuList
+    getMenuList,
   };
 };
 

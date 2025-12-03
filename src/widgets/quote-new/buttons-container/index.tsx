@@ -11,6 +11,7 @@ import { useButtonsContainer } from "./use-buttons-container";
 import {
   DELIVERY_NOTE_STATUSES,
   DOCUMENT_TYPE,
+  PROFORMA_INVOICE_STATUSES,
   PURCHASE_ORDER_STATUSES,
 } from "@/pages-components/quotes/enums";
 import { PaymentModal } from "./payment/payment-modal";
@@ -38,6 +39,8 @@ import { SendPaymentModal } from "@/pages-components/quotes/widgets/send-payment
 import { PermissionCheck } from "@/components/CheckPermission";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { PayIcon } from "@/pages-components/quotes/more-circle/icons/pay";
+import { GomakeAiIcon } from "@/icons";
+import { AddProductWithAIModal } from "../modals-widgets/add-product-with-ai-modal";
 
 const ButtonsContainer = ({
   openSendBtn,
@@ -95,7 +98,11 @@ const ButtonsContainer = ({
     onClickOpenOrderNowModal,
     onClickConfirmWithoutNotification,
     onClickConfirmWithNotification,
+    onClickConfirm,
     onClickPrint,
+    openAddProductWithAIModal,
+    onClickOpenAddProductWithAIModal,
+    onClickCloseAddProductWithAIModal,
     onClickClosePaymentModal,
     onClickOpenPaymentModal,
     openPaymentModal,
@@ -304,6 +311,17 @@ const ButtonsContainer = ({
             {t("sales.quote.addNewItems")}
           </GomakePrimaryButton>
         )}
+        {showAddNewItemBtn && isQuote && (
+          <PermissionCheck userPermission={Permissions.SHOW_ADD_PRODUCT_WITH_AI}>
+            <GomakePrimaryButton
+              leftIcon={<GomakeAiIcon width={20} height={20} />}
+              style={classes.btnContainer}
+              onClick={onClickOpenAddProductWithAIModal}
+            >
+              {t("sales.quote.addProductWithAI")}
+            </GomakePrimaryButton>
+          </PermissionCheck>
+        )}
         {(isQuote || isOrder) && (
           <GomakePrimaryButton
             leftIcon={<PlusIcon stroke={"#344054"} />}
@@ -468,6 +486,10 @@ const ButtonsContainer = ({
         )}
         {(isQuote ||
           (isOrder && quoteItemValue?.documentStatus !== 1) ||
+          (isProformaInvoice &&
+            !isNewCreation &&
+            quoteItemValue?.documentStatus !==
+              PROFORMA_INVOICE_STATUSES.Canceled) ||
           (isPurchaseOrder &&
             !isNewCreation &&
             quoteItemValue?.documentStatus !==
@@ -612,6 +634,7 @@ const ButtonsContainer = ({
           isUsedStripe={quoteItemValue?.isUsedStripe}
           isConnectedToStripe={quoteItemValue?.isConnectedToStripe}
           CheckoutOptionModal={CheckoutOptionModal}
+          onConfirm={onClickConfirm}
         />
         <ManagerApprovalModal
           openModal={openMangerApprovalModal}
@@ -766,7 +789,8 @@ const ButtonsContainer = ({
               pendingOrderData?.res,
               pendingOrderData?.sendMessage,
               pendingOrderData?.isPrepaymentClient,
-              pendingOrderData?.isStripeCash
+              pendingOrderData?.isStripeCash,
+              pendingOrderData?.shouldOpenComposer
             );
             isOpenGroupJobsModal.close();
           }}
@@ -796,6 +820,17 @@ const ButtonsContainer = ({
           isSendOrderReadyToClient={isSendOrderReadyToClient}
           showAlertModal={showAlertModal}
         />
+        {isQuote && (
+          <AddProductWithAIModal
+            open={openAddProductWithAIModal}
+            onClose={onClickCloseAddProductWithAIModal}
+            quoteId={quoteItemValue?.id}
+            onSuccess={() => {
+              // Refresh quote data if needed
+              window.location.reload();
+            }}
+          />
+        )}
       </div>
     </div>
   );

@@ -85,7 +85,7 @@ export const InboxConfigurationTab: React.FC<InboxConfigurationTabProps> = ({
             description="Use this token to verify webhooks from WhatsApp"
           >
             <CodeDisplay
-              code={inbox.webhook_verify_token || "WEBHOOK_TOKEN_NOT_SET"}
+              code={(inbox.provider_config?.webhook_verify_token as string) || "WEBHOOK_TOKEN_NOT_SET"}
               label="Webhook Token"
             />
           </SettingsSection>
@@ -94,7 +94,7 @@ export const InboxConfigurationTab: React.FC<InboxConfigurationTabProps> = ({
             title="API Configuration"
             description="API key for WhatsApp Cloud API integration"
           >
-            <CodeDisplay code={inbox.api_key || "API_KEY_NOT_SET"} label="API Key" />
+            <CodeDisplay code={(inbox.provider_config?.api_key as string) || "API_KEY_NOT_SET"} label="API Key" />
             <Button variant="outlined" size="small" sx={{ mt: 2 }}>
               Sync Templates
             </Button>

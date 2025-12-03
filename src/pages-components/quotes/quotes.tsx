@@ -32,6 +32,7 @@ import { AddRuleModal } from "../products/profits-new/widgets/add-rule-modal";
 import { useEffect, useRef } from "react";
 import { ScheduledReportsTable } from "./widgets/scheduled-reports-table/scheduled-reports-table";
 import { QuoteStatuses } from "@/widgets/quote-new/total-price-and-vat/enums";
+import { OtherReasonModal } from "@/widgets/quote-new/total-price-and-vat/other-reason-modal";
 import { CustomerCardWidget } from "@/widgets/customer-card-modal";
 import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 import { useRouter } from "next/router";
@@ -66,12 +67,12 @@ import { ColumnSetting } from "@/widgets/production-floor/state/production-floor
 import { FONT_FAMILY } from "@/utils/font-family";
 import { QR_CODE_LISTENER_FROM } from "@/hooks/use-qr-code-listener";
 import QrCodeReader from "@/components/qr-code-reader";
-import {useRecoilValue, useSetRecoilState} from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import { selectedItemsState } from "@/store";
 import { FrontDeskEmailComposerWrapper } from "./components/frontdesk-email-composer-wrapper";
 import { PrintPackingSlipModalWidget } from "@/widgets/production-floor/views/board-missions-view/navigation-buttons/print-packing-slip-modal-widget";
 import { useParameters } from "@/hooks/use-parameters";
-import {printHouseHasFrontDeskFeature} from "@/store/print-house-profile";
+import { printHouseHasFrontDeskFeature } from "@/store/print-house-profile";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -173,6 +174,10 @@ const QuotesListPageWidget = ({
     openDeliveryTimeCancelModal,
     onClickCloseDeliveryTimeModal,
     onClickClosePriceModal,
+    openOtherReasonModal,
+    onClickCloseOtherReasonModal,
+    onClickCancelOffer,
+    setReasonText,
     showCustomerModal,
     customerForEdit,
     setCustomerForEdit,
@@ -206,6 +211,9 @@ const QuotesListPageWidget = ({
     openPrintPDFModal,
     fromDate,
     toDate,
+    checkFromDate,
+    checkToDate,
+    onSelectCheckDueDateRange,
     getAllQuotes,
     openCancelReceiptModal,
     onCloseCancelReceiptModal,
@@ -315,14 +323,15 @@ const QuotesListPageWidget = ({
     createScheduledReport,
     handlePageChange: handleScheduledReportsPageChange,
     handlePageSizeChangeScheduledReports: handleScheduledReportsPageSizeChange,
-    isEmailComposerOpen,
-    emailData,
-    closeEmailComposer,
-    documentForEmail,
     openPurchaseOrderTypeModal,
     onOpenPurchaseOrderTypeModal,
     onClosePurchaseOrderTypeModal,
     handleSelectPurchaseOrderType,
+    isEmailComposerOpen,
+    emailData,
+    isLoadingEmailData,
+    closeEmailComposer,
+    documentForEmail,
   } = useQuotes(documentType, isFromHomePage);
 
   // Get the main quotes pagination handler
@@ -442,7 +451,7 @@ const QuotesListPageWidget = ({
   useEffect(() => {
     const loadDocumentColumnSettings = async () => {
       try {
-        const res = await getDocumentTableSettingsApi(callApi, () => {}, {
+        const res = await getDocumentTableSettingsApi(callApi, () => { }, {
           documentType,
         });
         const saved: ColumnSetting[] = res?.data;
@@ -509,16 +518,16 @@ const QuotesListPageWidget = ({
                     isOrder
                       ? onclickCreateNew
                       : isSupplierPayments
-                      ? () => navigate(`/${documentPath}`)
-                      : isPurchaseOrder
-                      ? () => {
-                          setSelectedItems([]);
-                          onOpenPurchaseOrderTypeModal();
-                        }
-                      : () => {
-                          setSelectedItems([]);
-                          navigate(`/${documentPath}?isNewCreation=true`);
-                        }
+                        ? () => navigate(`/${documentPath}`)
+                        : isPurchaseOrder
+                          ? () => {
+                            setSelectedItems([]);
+                            onOpenPurchaseOrderTypeModal();
+                          }
+                          : () => {
+                            setSelectedItems([]);
+                            navigate(`/${documentPath}?isNewCreation=true`);
+                          }
                   )}
               </div>
             </div>
@@ -549,8 +558,8 @@ const QuotesListPageWidget = ({
               handleAccountingStatusChange={handleAccountingStatusChange}
               accountingStatuses={accountingStatuses}
               isDeliveryNote={isDeliveryNote}
-              isProformaInvoice={isProformaInvoice}
               isInvoice={isInvoice}
+              isProformaInvoice={isProformaInvoice}
               deliveryStatus={deliveryStatus}
               setDeliveryStatus={setDeliveryStatus}
               deliveryStatuses={deliveryStatuses}
@@ -579,6 +588,9 @@ const QuotesListPageWidget = ({
               fromDate={fromDate}
               toDate={toDate}
               onSelectDeliveryTimeDates={onSelectDeliveryTimeDates}
+              checkFromDate={checkFromDate}
+              checkToDate={checkToDate}
+              onSelectCheckDueDateRange={onSelectCheckDueDateRange}
               patternSearch={patternSearch}
               onChangeDocumentSearch={onChangeDocumentSearch}
               onClickClearFilter={onClickClearFilter}
@@ -725,8 +737,12 @@ const QuotesListPageWidget = ({
         yesBtn={t("sales.quote.yesBtn")}
         openModal={openIrrelevantCancelModal}
         onClose={onClickCloseIrrelevantModal}
-        subTitle={t("sales.quote.subTitleCancelModal")}
-        cancelBtn={t("sales.quote.cancelBtn")}
+        subTitle={`${t("sales.quote.subTitleCancelModal", {
+          documentName: t(
+            `sales.quote.${DOCUMENT_TYPE[documentType]}`
+          ).toLowerCase(),
+        })}`}
+        cancelBtn={t("sales.quote.noBtn")}
         onClickDelete={() =>
           updateCancelQuote(QuoteStatuses.CANCELED_IRRELEVANT)
         }
@@ -737,8 +753,12 @@ const QuotesListPageWidget = ({
         yesBtn={t("sales.quote.yesBtn")}
         openModal={openPriceCancelModal}
         onClose={onClickClosePriceModal}
-        subTitle={t("sales.quote.subTitleCancelModal")}
-        cancelBtn={t("sales.quote.cancelBtn")}
+        subTitle={`${t("sales.quote.subTitleCancelModal", {
+          documentName: t(
+            `sales.quote.${DOCUMENT_TYPE[documentType]}`
+          ).toLowerCase(),
+        })}`}
+        cancelBtn={t("sales.quote.noBtn")}
         onClickDelete={() => updateCancelQuote(QuoteStatuses.CANCELED_PRICE)}
       />
       <GoMakeDeleteModal
@@ -768,11 +788,21 @@ const QuotesListPageWidget = ({
         yesBtn={t("sales.quote.yesBtn")}
         openModal={openDeliveryTimeCancelModal}
         onClose={onClickCloseDeliveryTimeModal}
-        subTitle={t("sales.quote.subTitleCancelModal")}
-        cancelBtn={t("sales.quote.cancelBtn")}
+        subTitle={`${t("sales.quote.subTitleCancelModal", {
+          documentName: t(
+            `sales.quote.${DOCUMENT_TYPE[documentType]}`
+          ).toLowerCase(),
+        })}`}
+        cancelBtn={t("sales.quote.noBtn")}
         onClickDelete={() =>
           updateCancelQuote(QuoteStatuses.CANCELED_DELIVERY_TIME)
         }
+      />
+      <OtherReasonModal
+        openModal={openOtherReasonModal}
+        onClose={onClickCloseOtherReasonModal}
+        setReasonText={setReasonText}
+        onClickCancelOffer={onClickCancelOffer}
       />
       <CustomerCardWidget
         customerAction={CUSTOMER_ACTIONS.Edit}
@@ -833,11 +863,7 @@ const QuotesListPageWidget = ({
       />
       <GoMakeDeleteModal
         modalType={ModalType.WARNING}
-        title={
-          isProformaInvoice
-            ? t("sales.quote.printProformaInvoiceWithPrices")
-            : t("sales.quote.printDeliveryNoteWithPrices")
-        }
+        title={t("sales.quote.printDeliveryNoteWithPrices")}
         openModal={openPrintPDFModal}
         yesBtn={t("sales.quote.yesBtn")}
         cancelBtn={t("sales.quote.noBtn")}
@@ -864,22 +890,22 @@ const QuotesListPageWidget = ({
           isSelectedCLoseAsDeliveryNote
             ? "customers.modal.closeOrderAsDeliveryNote"
             : isSelectedCLoseAsProformaInvoice
-            ? "customers.modal.closeOrderAsProformaInvoice"
-            : "customers.modal.closeOrderAsInvoice"
+              ? "customers.modal.closeOrderAsProformaInvoice"
+              : "customers.modal.closeOrderAsInvoice"
         }
         subTitle={"customers.modal.thisOrderIsAlreadyInProcess"}
         yesBtn={
           isSelectedCLoseAsDeliveryNote
             ? t("customers.modal.closeAsDeliveryNote")
             : isSelectedCLoseAsProformaInvoice
-            ? t("customers.modal.closeAsProformaInvoice")
-            : t("customers.modal.closeAsInvoice")
+              ? t("customers.modal.closeAsProformaInvoice")
+              : t("customers.modal.closeAsInvoice")
         }
         openModal={openChangeProductionStatusModal}
         onClose={onClickCloseChangeProductionStatusModal}
         onClickDelete={() => {
           if (isMoveToReady) {
-            moveOrderToReady(moveToReadyOption === "withMessage");
+            moveOrderToReady();
           } else {
             if (isSelectedCLoseAsDeliveryNote) {
               const path = `/deliveryNote?isNewCreation=true&orderId=${selectedDocument?.id}`;
@@ -1051,16 +1077,26 @@ const QuotesListPageWidget = ({
         onClickDelete={moveOrderToReady}
       /> */}
       <ThreeOptionsModal
+          modalType={ModalType.WARNING}
+          title={t("boardMissions.markDoneModalTitle")}
+          subTitle={t("boardMissions.markDoneModalSubTitle")}
+          yesBtn={"boardMissions.markDoneModalYes"}
+          noBtn={"boardMissions.markDoneModalNo"}
+          openModal={MoveOrderToReady.isOpen}
+          onClose={onClickCloseMoveOrderToReadyModal}
+          onClickYes={() => moveOrderToReady(true)}
+          onClickNo={() => moveOrderToReady(false)}
+      />
+      {/*<GoMakeDeleteModal
         modalType={ModalType.WARNING}
         title={t("boardMissions.markDoneModalTitle")}
         subTitle={t("boardMissions.markDoneModalSubTitle")}
-        yesBtn={"boardMissions.markDoneModalYes"}
-        noBtn={"boardMissions.markDoneModalNo"}
+        yesBtn={t("modal.confirm")}
         openModal={MoveOrderToReady.isOpen}
         onClose={onClickCloseMoveOrderToReadyModal}
-        onClickYes={() => moveOrderToReady(true)}
-        onClickNo={() => moveOrderToReady(false)}
-      />
+        onClickDelete={() => moveOrderToReady()}
+        onClickCancel={onClickCloseMoveOrderToReadyModal}
+      />*/}
       <PrintPackingSlipModal
         openPackagesModal={openPackagesModal}
         onClosePackagesModal={onClosePackagesModal}
@@ -1076,16 +1112,6 @@ const QuotesListPageWidget = ({
         printPackingSlip={printPackingSlip}
         isPrintHouseUsePrintNode={isPrintHouseHasPackagingSlipPrinter}
       />
-      {/* FrontDesk Email Composer */}
-      {isEmailComposerOpen && (
-        <FrontDeskEmailComposerWrapper
-          open={isEmailComposerOpen}
-          onClose={closeEmailComposer}
-          emailData={emailData}
-          documentId={documentForEmail?.id}
-          documentType={documentType}
-        />
-      )}
       <PurchaseOrderTypeModal
         open={openPurchaseOrderTypeModal}
         onClose={onClosePurchaseOrderTypeModal}
@@ -1100,6 +1126,17 @@ const QuotesListPageWidget = ({
         purchaseOrderId={selectedInventoryDocument?.id}
         documentType={DOCUMENT_TYPE.purchaseOrder}
       />
+      {/* FrontDesk Email Composer */}
+      {isEmailComposerOpen && (
+        <FrontDeskEmailComposerWrapper
+          open={isEmailComposerOpen}
+          onClose={closeEmailComposer}
+          emailData={emailData}
+          documentId={documentForEmail?.id}
+          documentType={documentType}
+          isLoading={isLoadingEmailData}
+        />
+      )}
     </>
   );
 };

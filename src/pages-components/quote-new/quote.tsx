@@ -98,8 +98,6 @@ const QuoteNewPageWidget = ({
   const [quoteItemValue, setQuoteItemValue] =
     useRecoilState<any>(quoteItemState);
 
-  console.log("ssssssssssssssssss", quoteItemValue);
-
   useEffect(() => {
     setQuoteItemValue({});
   }, []);
@@ -1184,8 +1182,12 @@ const QuoteNewPageWidget = ({
         yesBtn={t("sales.quote.yesBtn")}
         openModal={openIrrelevantCancelModal}
         onClose={onClickCloseIrrelevantModal}
-        subTitle={t("sales.quote.subTitleCancelModal")}
-        cancelBtn={t("sales.quote.cancelBtn")}
+        subTitle={`${t("sales.quote.subTitleCancelModal", {
+          documentName: t(
+            `sales.quote.${DOCUMENT_TYPE[documentType]}`
+          ).toLowerCase(),
+        })}`}
+        cancelBtn={t("sales.quote.noBtn")}
         onClickDelete={() =>
           updateCancelQuote(QuoteStatuses.CANCELED_IRRELEVANT)
         }
@@ -1196,8 +1198,12 @@ const QuoteNewPageWidget = ({
         yesBtn={t("sales.quote.yesBtn")}
         openModal={openPriceCancelModal}
         onClose={onClickClosePriceModal}
-        subTitle={t("sales.quote.subTitleCancelModal")}
-        cancelBtn={t("sales.quote.cancelBtn")}
+        subTitle={`${t("sales.quote.subTitleCancelModal", {
+          documentName: t(
+            `sales.quote.${DOCUMENT_TYPE[documentType]}`
+          ).toLowerCase(),
+        })}`}
+        cancelBtn={t("sales.quote.noBtn")}
         onClickDelete={() => updateCancelQuote(QuoteStatuses.CANCELED_PRICE)}
       />
       <GoMakeDeleteModal
@@ -1206,8 +1212,12 @@ const QuoteNewPageWidget = ({
         yesBtn={t("sales.quote.yesBtn")}
         openModal={openDeliveryTimeCancelModal}
         onClose={onClickCloseDeliveryTimeModal}
-        subTitle={t("sales.quote.subTitleCancelModal")}
-        cancelBtn={t("sales.quote.cancelBtn")}
+        subTitle={`${t("sales.quote.subTitleCancelModal", {
+          documentName: t(
+            `sales.quote.${DOCUMENT_TYPE[documentType]}`
+          ).toLowerCase(),
+        })}`}
+        cancelBtn={t("sales.quote.noBtn")}
         onClickDelete={() =>
           updateCancelQuote(QuoteStatuses.CANCELED_DELIVERY_TIME)
         }

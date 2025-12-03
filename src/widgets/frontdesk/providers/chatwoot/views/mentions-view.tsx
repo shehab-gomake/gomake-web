@@ -1,11 +1,11 @@
 /**
  * Chatwoot Mentions View
  *
- * Displays conversations where the current user has been mentioned.
- * Uses the same layout as All Conversations but with mention filtering.
+ * Displays conversations where the current user has been explicitly mentioned
+ * by another agent (e.g., using @your-name).
  *
- * TODO: Add mention filtering logic when Chatwoot API supports it
- * For now, showing all conversations - will need to filter by mentions
+ * Uses conversation_type=mention parameter which filters conversations through
+ * the mentions table. The filter is automatically set by useChatwootProvider based on the current view.
  */
 
 import React from "react";

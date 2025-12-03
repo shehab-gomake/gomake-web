@@ -94,25 +94,19 @@ export interface ContactsListResponse {
 
 // Type guard for ContactDetail
 export function isContactDetail(value: unknown): value is ContactDetail {
-  if (!value || typeof value !== 'object') return false;
+  if (!value || typeof value !== "object") return false;
   const contact = value as ContactDetail;
-  return (
-    typeof contact.id === 'number' &&
-    (typeof contact.email === 'string' || typeof contact.phone_number === 'string')
-  );
+  return typeof contact.id === "number" && (typeof contact.email === "string" || typeof contact.phone_number === "string");
 }
 
 // Type guard for ContactListItem
 export function isContactListItem(value: unknown): value is ContactListItem {
-  if (!value || typeof value !== 'object') return false;
+  if (!value || typeof value !== "object") return false;
   const contact = value as ContactListItem;
-  return typeof contact.id === 'number';
+  return typeof contact.id === "number";
 }
 
 // Helper function to extract payload from response
-export function extractContactPayload<T>(response: {
-  data?: { payload?: T };
-  payload?: T;
-}): T | null {
+export function extractContactPayload<T>(response: { data?: { payload?: T }; payload?: T }): T | null {
   return response.data?.payload ?? response.payload ?? null;
 }

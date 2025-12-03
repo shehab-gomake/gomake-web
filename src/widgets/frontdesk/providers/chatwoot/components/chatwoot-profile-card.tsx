@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { Box, Avatar, Typography, Chip, Divider } from "@mui/material";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { useRecoilValue } from "recoil";
@@ -8,6 +8,7 @@ import {
   chatwootSelectedAccountAtom,
 } from "@/store/frontdesk/atoms/chatwoot.atoms";
 import PersonIcon from "@mui/icons-material/Person";
+import { generateUserAvatar } from "../utils/avatar.utils";
 
 interface ChatwootProfileCardProps {
   isCollapsed?: boolean;
@@ -52,7 +53,9 @@ export const ChatwootProfileCard: React.FC<ChatwootProfileCardProps> = ({ isColl
 
   const displayName = profile.name || profile.available_name || profile.email || "Unknown User";
   const email = profile.email || "";
-  const avatarUrl = profile.avatar_url;
+  
+  // Generate avatar data using unified utility
+  const avatarData = useMemo(() => generateUserAvatar(profile), [profile]);
 
   return (
     <Box
@@ -65,30 +68,38 @@ export const ChatwootProfileCard: React.FC<ChatwootProfileCardProps> = ({ isColl
       {isCollapsed ? (
         <Box sx={{ display: "flex", justifyContent: "center" }}>
           <Avatar
-            src={avatarUrl}
+            src={avatarData.src}
             sx={{
               width: 36,
               height: 36,
-              bgcolor: primaryColor(500),
+              bgcolor: avatarData.backgroundColor,
               border: `2px solid ${neutralColor(200)}`,
+              fontSize: "0.813rem",
+              fontWeight: 600,
             }}
+            alt={avatarData.displayName}
+            title={avatarData.displayName}
           >
-            {String(displayName).charAt(0).toUpperCase()}
+            {avatarData.initials}
           </Avatar>
         </Box>
       ) : (
         <>
           <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 1.5 }}>
             <Avatar
-              src={avatarUrl}
+              src={avatarData.src}
               sx={{
                 width: 40,
                 height: 40,
-                bgcolor: primaryColor(500),
+                bgcolor: avatarData.backgroundColor,
                 border: `2px solid ${neutralColor(200)}`,
+                fontSize: "0.875rem",
+                fontWeight: 600,
               }}
+              alt={avatarData.displayName}
+              title={avatarData.displayName}
             >
-              {String(displayName).charAt(0).toUpperCase()}
+              {avatarData.initials}
             </Avatar>
             <Box sx={{ flex: 1, minWidth: 0 }}>
               <Typography

@@ -126,7 +126,7 @@ const useDigitalOffsetPrice = ({
   widgetType,
   productId,
   sessionId,
-  interactionId
+  interactionId,
 }: {
   clasess: any;
   widgetType: any;
@@ -180,6 +180,7 @@ const useDigitalOffsetPrice = ({
   const [makeShapeOpen, setMakeShapeOpen] = useState(false);
   const [urgentOrder, setUrgentOrder] = useRecoilState(productUrgentWorkState);
   const [printingNotes, setPrintingNotes] = useState("");
+  const [qualityIssueReason, setQualityIssueReason] = useState<string>("");
   const [graphicNotes, setGraphicNotes] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const [productTemplate, setProductTemplate] = useState<any>([]);
@@ -189,8 +190,6 @@ const useDigitalOffsetPrice = ({
   const [subProducts, setSubProducts] = useRecoilState<any>(
     subProductsParametersState
   );
-
-  console.log("subProducts", subProducts);
   const [isMigratedFromOldSystem, setIsMigratedFromOldSystem] = useState(false);
   const [ignoreCalculatedWorkflows, setIgnoreCalculatedWorkflows] = useState(
     productTemplate?.ignoreCalculatedWorkflows
@@ -537,7 +536,6 @@ const useDigitalOffsetPrice = ({
     // setSelectedWorkFlowCalculatedIsLoaded(true)
     const docType = router?.query?.documentType ?? "0";
     const documentItemId = router?.query?.documentItemId;
-    debugger
     let url = `/v1/erp-service/productItemValueDrafts/get-selected-work-flow?signalRConnectionId=${connectionId}&productId=${productId || (router?.query?.productId ?? productItemCalculationException)
       }&ignoreCalculatedWorkflows=${ignoreCalculatedWorkflows ? ignoreCalculatedWorkflows : false
       }`;
@@ -1063,8 +1061,12 @@ const useDigitalOffsetPrice = ({
 
     // Automatically select the newly added section
     // Calculate the index of the new section among visible sections
-    const visibleSections = productTemplateCopy.sections.filter((s) => !s.isHidden);
-    const newSectionIndex = visibleSections.findIndex((s) => s.id === newSectionId);
+    const visibleSections = productTemplateCopy.sections.filter(
+      (s) => !s.isHidden
+    );
+    const newSectionIndex = visibleSections.findIndex(
+      (s) => s.id === newSectionId
+    );
 
     if (newSectionIndex !== -1) {
       // Use setTimeout to ensure state updates have completed before changing active index
@@ -1167,6 +1169,26 @@ const useDigitalOffsetPrice = ({
 
   // Function to check if a parameter should be visible based on related parameters
   function isParameterVisible(parameter, subProduct, section, subSection) {
+    // First, check if this parameter is a child of a hidden parent parameter
+    // Find parent parameters that have this parameter in their childsParameters array
+    const parentParameters = subSection.parameters.filter((parentParam) => {
+      return (
+        parentParam.childsParameters &&
+        parentParam.childsParameters.some(
+          (childParam) => childParam.id === parameter.id
+        )
+      );
+    });
+
+    // If this parameter has a parent and the parent is hidden, hide this parameter too
+    if (parentParameters.length > 0) {
+      for (const parentParam of parentParameters) {
+        if (parentParam.isHidden === true) {
+          return false;
+        }
+      }
+    }
+
     // Check if this parameter is controlled by any related parameters
     const controllingParameters = [];
 
@@ -1233,10 +1255,32 @@ const useDigitalOffsetPrice = ({
         if (!relatedConfig.activateByAllValues) {
           // Convert boolean value to string for comparison if needed
           const valueToCheck = String(booleanValue);
-          const hasMatchingValue =
-            relatedConfig.selectedValueIds.includes(valueToCheck);
 
-          if (!hasMatchingValue) {
+          // Check if selectedValueIds exists and has values
+          if (
+            relatedConfig.selectedValueIds &&
+            relatedConfig.selectedValueIds.length > 0
+          ) {
+            // Use selectedValueIds: show when selected value is in selectedValueIds
+            const hasMatchingValue =
+              relatedConfig.selectedValueIds.includes(valueToCheck);
+
+            if (!hasMatchingValue) {
+              return false;
+            }
+          } else if (
+            relatedConfig.notSelectedValueIds &&
+            relatedConfig.notSelectedValueIds.length > 0
+          ) {
+            // Use notSelectedValueIds: show when selected value is NOT in notSelectedValueIds (reverse logic)
+            const isInNotSelected =
+              relatedConfig.notSelectedValueIds.includes(valueToCheck);
+
+            if (isInNotSelected) {
+              return false;
+            }
+          } else {
+            // If neither selectedValueIds nor notSelectedValueIds is provided, hide the parameter
             return false;
           }
         }
@@ -1256,13 +1300,35 @@ const useDigitalOffsetPrice = ({
           // If activateByAllValues is true, any selection of parent activates this parameter
           continue;
         } else {
-          // Check if the selected value is in the selectedValueIds
-          const hasMatchingValue = parentSelection.valueIds.some(
-            (selectedValueId) =>
-              relatedConfig.selectedValueIds.includes(selectedValueId)
-          );
+          // Check if selectedValueIds exists and has values
+          if (
+            relatedConfig.selectedValueIds &&
+            relatedConfig.selectedValueIds.length > 0
+          ) {
+            // Use selectedValueIds: show when selected value is in selectedValueIds
+            const hasMatchingValue = parentSelection.valueIds.some(
+              (selectedValueId) =>
+                relatedConfig.selectedValueIds.includes(selectedValueId)
+            );
 
-          if (!hasMatchingValue) {
+            if (!hasMatchingValue) {
+              return false;
+            }
+          } else if (
+            relatedConfig.notSelectedValueIds &&
+            relatedConfig.notSelectedValueIds.length > 0
+          ) {
+            // Use notSelectedValueIds: show when selected value is NOT in notSelectedValueIds (reverse logic)
+            const hasMatchingNotSelected = parentSelection.valueIds.some(
+              (selectedValueId) =>
+                relatedConfig.notSelectedValueIds.includes(selectedValueId)
+            );
+
+            if (hasMatchingNotSelected) {
+              return false;
+            }
+          } else {
+            // If neither selectedValueIds nor notSelectedValueIds is provided, hide the parameter
             return false;
           }
         }
@@ -1334,7 +1400,38 @@ const useDigitalOffsetPrice = ({
         });
       });
       // Filter out items where isHidden === true
-      temp = temp.filter((item) => !item.isHidden);
+      temp = temp.filter((item) => {
+        if (item.isHidden === true) {
+          return false;
+        }
+        // Also filter out child parameters of hidden parents
+        // Find the section and subSection for this parameter
+        const section = productTemplate.sections.find((s) =>
+          s.subSections.some((subSection) =>
+            subSection.parameters.some((p) => p.id === item.id)
+          )
+        );
+        if (section) {
+          const subSection = section.subSections.find((subSection) =>
+            subSection.parameters.some((p) => p.id === item.id)
+          );
+          if (subSection) {
+            // Check if this parameter is a child of a hidden parent
+            const parentParameter = subSection.parameters.find((parentParam) => {
+              return (
+                parentParam.childsParameters &&
+                parentParam.childsParameters.some(
+                  (childParam) => childParam.id === item.id
+                )
+              );
+            });
+            if (parentParameter && parentParameter.isHidden === true) {
+              return false; // Hide child if parent is hidden
+            }
+          }
+        }
+        return true;
+      });
       setIsRequiredParameters(temp);
       setActiveSectionRequiredParameters(activeSectionTemp);
     }
@@ -2137,24 +2234,48 @@ const useDigitalOffsetPrice = ({
                         parameter?.isGeneralInfoInProductionFloor,
                     });
 
+                    // Check if parent parameter is locked from backend (isLocked)
+                    const parentIsLocked = parameter?.isLock;
+
+                    // Check if parent has a value selected with predefined child values (like size parameter logic)
+                    const parentParameterInSubProducts = subProduct?.parameters?.find(
+                      (item) => item.parameterCode === parameter?.code
+                    );
+                    let parentHasValueWithChildren = false;
+                    if (parentParameterInSubProducts?.valueIds && parentParameterInSubProducts.valueIds.length > 0) {
+                      const selectedValueConfig = parameter.valuesConfigs.find(
+                        (x) => x.id === parentParameterInSubProducts.valueIds[0]
+                      );
+                      // If the selected value has predefined child values (not custom), lock child parameters
+                      // This works exactly like size parameter - when parent has a value with child values, children are locked
+                      if (
+                        selectedValueConfig &&
+                        selectedValueConfig.values &&
+                        Object.keys(selectedValueConfig.values).length > 0
+                      ) {
+                        parentHasValueWithChildren = true;
+                      }
+                    }
+
+                    // Lock children if parent is locked from backend OR if parent has a value with predefined children
+                    const shouldLockChildren = parentIsLocked || parentHasValueWithChildren;
+
                     parameter?.childsParameters?.map((item) => {
                       const childParam = subSection.parameters.find(
                         (x) => x.id === item.id
                       );
-                      const sizeParameter = subProduct?.parameters?.find(
-                        (item) => item.parameterCode === "size"
-                      );
-                      const sizeParameterValueConfig =
-                        parameter.valuesConfigs.find(
-                          (x) => x.id === sizeParameter?.valueIds[0]
-                        );
                       let isDisabled = false;
-                      if (
-                        sizeParameterValueConfig &&
-                        Object.keys(sizeParameterValueConfig.values).length > 0
-                      ) {
+
+                      // Lock child parameters if parent has a value with predefined children (like size parameter)
+                      if (parentHasValueWithChildren) {
                         isDisabled = true;
                       }
+
+                      // Also lock if parent is locked from backend
+                      if (parentIsLocked) {
+                        isDisabled = true;
+                      }
+
                       subProduct.parameters.push({
                         parameterId: childParam?.id,
                         parameterName: childParam?.name,
@@ -2191,6 +2312,7 @@ const useDigitalOffsetPrice = ({
                         unitType: childParam?.unitType,
                         factor: childParam?.factor,
                         isDisabled: isDisabled,
+                        isLocked: shouldLockChildren,
                         isGeneralInfoInProductionFloor:
                           childParam?.isGeneralInfoInProductionFloor,
                       });
@@ -2341,9 +2463,11 @@ const useDigitalOffsetPrice = ({
 
         // Calculate Quantity when Sets is enabled by default
         filteredSubProductsArray.forEach((subProduct) => {
-          if (!subProduct.type) { // General parameters
+          if (!subProduct.type) {
+            // General parameters
             const setsParam = subProduct.parameters.find(
-              (p) => p.parameterCode === "Sets" && p.values && p.values[0] === "true"
+              (p) =>
+                p.parameterCode === "Sets" && p.values && p.values[0] === "true"
             );
 
             if (setsParam) {
@@ -2358,7 +2482,8 @@ const useDigitalOffsetPrice = ({
               );
 
               if (setQuantityParam && setUnitsParam && quantityParam) {
-                const setQuantityValue = Number(setQuantityParam.values[0]) || 0;
+                const setQuantityValue =
+                  Number(setQuantityParam.values[0]) || 0;
                 const setUnitsValue = Number(setUnitsParam.values[0]) || 0;
                 const calculatedQuantity = setQuantityValue * setUnitsValue;
 
@@ -2453,8 +2578,12 @@ const useDigitalOffsetPrice = ({
           });
 
           // Combine existing and processed parameters, then remove duplicates
-          const combinedParameters = [...subProduct.parameters, ...processedParameters];
-          const uniqueParameters = removeDuplicateParameters(combinedParameters);
+          const combinedParameters = [
+            ...subProduct.parameters,
+            ...processedParameters,
+          ];
+          const uniqueParameters =
+            removeDuplicateParameters(combinedParameters);
 
           // Filter out parameters with empty GUID for both sectionId and subSectionId
           const finalParameters = uniqueParameters.filter(
@@ -2576,6 +2705,17 @@ const useDigitalOffsetPrice = ({
               (!defaultValue || defaultValue === "false")
             ) {
               parameter.isHidden = true;
+              // Hide child parameters when parent parameter is hidden
+              if (parameter.childsParameters && parameter.childsParameters.length > 0) {
+                parameter.childsParameters.forEach((childParamId) => {
+                  const childParam = subSection.parameters.find(
+                    (p) => p.id === childParamId.id
+                  );
+                  if (childParam) {
+                    childParam.isHidden = true;
+                  }
+                });
+              }
             }
             const parameterDefaultValue = parameter.valuesConfigs?.find(
               (x) => x.isDefault
@@ -2609,6 +2749,17 @@ const useDigitalOffsetPrice = ({
               ) {
                 parameter.isHidden = true;
               }
+            }
+            // Hide child parameters when parent parameter is hidden
+            if (parameter.isHidden === true && parameter.childsParameters && parameter.childsParameters.length > 0) {
+              parameter.childsParameters.forEach((childParamId) => {
+                const childParam = subSection.parameters.find(
+                  (p) => p.id === childParamId.id
+                );
+                if (childParam) {
+                  childParam.isHidden = true;
+                }
+              });
             }
             if (!relatedToParameter) {
               if (
@@ -2781,9 +2932,8 @@ const useDigitalOffsetPrice = ({
                 }
                 if (materialData) {
                   if (parameter.isHiddenInSetting) {
-                    parameter.isHidden = true
-                  }
-                  else {
+                    parameter.isHidden = true;
+                  } else {
                     parameter.isHidden = false;
                   }
                   materialData.forEach((val) => {
@@ -3085,6 +3235,7 @@ const useDigitalOffsetPrice = ({
     setMakeShapeOpen(false);
     setPrintingNotes("");
     setGraphicNotes("");
+    setQualityIssueReason("");
     setErrorMsg("");
     setProductTemplate([]);
     setIsMigratedFromOldSystem(false);
@@ -3150,6 +3301,7 @@ const useDigitalOffsetPrice = ({
       if (documentItemByEdit) {
         setGraphicNotes(documentItemByEdit.graphicNotes);
         setPrintingNotes(documentItemByEdit.printingNotes);
+        setQualityIssueReason(documentItemByEdit.qualityIssueReason || "");
         if (documentItemByEdit?.exampleType) {
           setSampleType(getSampleType(documentItemByEdit?.exampleType));
         }
@@ -3200,10 +3352,7 @@ const useDigitalOffsetPrice = ({
   useEffect(() => {
     const qty = getQuantityParameterValue();
     const itemQuantity =
-        qty &&
-        qty.values &&
-        qty.values.length &&
-        qty?.values[0]
+      qty && qty.values && qty.values.length && qty?.values[0]
         ? +qty?.values[0]
         : 1;
     if (!isNaN(sliderCurrentProductItemValueTotalPrice) && itemQuantity) {
@@ -3230,6 +3379,7 @@ const useDigitalOffsetPrice = ({
         duplicateType: router?.query?.duplicateType,
         documentId: router?.query?.documentId,
         exampleType: sampleType && getSampleTypeValue(sampleType),
+        qualityIssueReason,
       };
       setCurrentProductItemValue(productItemValue);
     }
@@ -3247,6 +3397,7 @@ const useDigitalOffsetPrice = ({
     graphicNotes,
     billingMethod,
     sampleType,
+    qualityIssueReason,
   ]);
 
   const SelectWorkFlowById = async (data) => {
@@ -3280,6 +3431,69 @@ const useDigitalOffsetPrice = ({
         item?.actionIndex === parameter?.actionIndex
     );
     return temp[index];
+  };
+
+  // Helper function to check if a parameter is a child of a locked parent parameter
+  // Works like size parameter - locks child when parent has a value with predefined child values
+  const isChildOfLockedParent = (
+    parameter: any,
+    subSection: any,
+    section: any
+  ): boolean => {
+    // Check all parameters in the subsection to find if this parameter is a child
+    const parentParameter = subSection?.parameters?.find((parentParam: any) => {
+      // Check if this parameter is in the parent's childsParameters array
+      return (
+        parentParam?.childsParameters?.some(
+          (childParam: any) => childParam.id === parameter.id
+        ) &&
+        parentParam.id !== parameter.id // Make sure it's not the same parameter
+      );
+    });
+
+    if (!parentParameter) {
+      return false; // Not a child parameter
+    }
+
+    // Check if parent is locked in productTemplate (from backend)
+    if (parentParameter?.isLock) {
+      return true;
+    }
+
+    // Check if parent is locked in subProducts (from backend)
+    const allParameters = subProducts.flatMap((item) => item.parameters);
+    const parentSubProductParam = allParameters.find(
+      (item) =>
+        item?.parameterId === parentParameter?.id &&
+        item?.sectionId === section?.id &&
+        item?.subSectionId === subSection?.id &&
+        item?.actionIndex === parentParameter?.actionIndex
+    );
+
+    // Check if parent is locked from backend
+    if (parentSubProductParam?.isLocked) {
+      return true;
+    }
+
+    // Check if parent has a value selected with predefined child values (like size parameter logic)
+    // This locks child parameters when parent has ANY value with predefined child values
+    if (parentSubProductParam?.valueIds && parentSubProductParam.valueIds.length > 0) {
+      const selectedValueConfig = parentParameter?.valuesConfigs?.find(
+        (config: any) => config.id === parentSubProductParam.valueIds[0]
+      );
+
+      // If the selected value has predefined child values (not custom), lock child parameters
+      // This is how size parameter works - when size has a value with child values, children are locked
+      if (
+        selectedValueConfig &&
+        selectedValueConfig.values &&
+        Object.keys(selectedValueConfig.values).length > 0
+      ) {
+        return true;
+      }
+    }
+
+    return false;
   };
 
   useEffect(() => {
@@ -3538,6 +3752,15 @@ const useDigitalOffsetPrice = ({
         item.subSectionId === subSection?.id &&
         item?.actionIndex === parameter?.actionIndex
     );
+
+    // Check if this parameter is a child of a locked parent
+    const isChildLocked = isChildOfLockedParent(parameter, subSection, section);
+    // Parameter's own lock status (from backend) - only check isLocked, NOT child lock status
+    // Parent parameters should NOT be locked just because they have child parameters
+    const isParameterLocked = parameter?.isLock || temp[index]?.isLocked;
+    // Child parameters should be locked if parent has value with predefined children or if parent is locked
+    // Only apply this to child parameters, not to the parent itself
+    const shouldLockAsChild = isChildLocked;
     if (
       parameter?.parameterType === EParameterTypes.INPUT_NUMBER &&
       parameter?.code === "quantity"
@@ -3608,7 +3831,7 @@ const useDigitalOffsetPrice = ({
       Comp = (
         <InputNumberParameterWidget
           clasess={clasess}
-          parameter={parameter}
+          parameter={{ ...parameter, isLock: isParameterLocked || shouldLockAsChild }}
           index={index}
           temp={temp}
           onChangeSubProductsForPrice={onChangeSubProductsForPrice}
@@ -3626,7 +3849,7 @@ const useDigitalOffsetPrice = ({
       Comp = (
         <InputNumberParameterWidget
           clasess={clasess}
-          parameter={parameter}
+          parameter={{ ...parameter, isLock: isParameterLocked || shouldLockAsChild }}
           index={index}
           temp={temp}
           onChangeSubProductsForPrice={onChangeSubProductsForPrice}
@@ -3641,7 +3864,7 @@ const useDigitalOffsetPrice = ({
       Comp = (
         <InputNumberParameterWidget
           clasess={clasess}
-          parameter={parameter}
+          parameter={{ ...parameter, isLock: isParameterLocked || shouldLockAsChild }}
           index={index}
           temp={temp}
           onChangeSubProductsForPrice={onChangeSubProductsForPrice}
@@ -3656,7 +3879,7 @@ const useDigitalOffsetPrice = ({
       Comp = (
         <InputNumberParameterWidget
           clasess={clasess}
-          parameter={parameter}
+          parameter={{ ...parameter, isLock: isParameterLocked || shouldLockAsChild }}
           index={index}
           temp={temp}
           onChangeSubProductsForPrice={onChangeSubProductsForPrice}
@@ -3673,7 +3896,7 @@ const useDigitalOffsetPrice = ({
     ) {
       Comp = (
         <DropDownListParameterWidget
-          parameter={parameter}
+          parameter={{ ...parameter, isLock: isParameterLocked }}
           clasess={clasess}
           index={index}
           temp={temp}
@@ -3692,28 +3915,26 @@ const useDigitalOffsetPrice = ({
     } else if (
       parameter?.parameterType === EParameterTypes.SELECT_CHILDS_PARAMETERS
     ) {
-      let disabled = false;
-      const sizeParameter = getParameterByParameterCode(subProducts, "size");
-      if (sizeParameter && sizeParameter.isDisabled) {
-        disabled = true;
-      }
+      // SELECT_CHILDS_PARAMETERS is the parent parameter (like "Notebook size")
+      // It should NOT be locked just because it has child parameters
+      // Only lock if it's actually locked from backend
       Comp = (
         <SelectChildParameterWidget
-          parameter={parameter}
+          parameter={{ ...parameter, isLock: isParameterLocked }}
           clasess={clasess}
           index={index}
           temp={temp}
           onChangeSubProductsForPrice={onChangeSubProductsForPrice}
           subSection={subSection}
           section={section}
-          disabled={disabled}
+          disabled={false}
           multiParameterModal={multiParameterModal}
         />
       );
     } else if (parameter?.parameterType === EParameterTypes.SWITCH) {
       Comp = (
         <SWITCHParameterWidget
-          parameter={parameter}
+          parameter={{ ...parameter, isLock: isParameterLocked || shouldLockAsChild }}
           index={index}
           temp={temp}
           onChangeSubProductsForPrice={onChangeSubProductsForPrice}
@@ -4731,7 +4952,9 @@ const useDigitalOffsetPrice = ({
           (x) => x.id === subSection.id
         );
         const param = subSectionCopy.parameters.find(
-          (x) => x.id === relatedParameter.parameterId && x.actionIndex === actionIndex
+          (x) =>
+            x.id === relatedParameter.parameterId &&
+            x.actionIndex === actionIndex
         );
         if (hasRelatedParams && hasChildParams && isHidden) {
           parameter.childsParameters.forEach((childParam) => {
@@ -4744,14 +4967,28 @@ const useDigitalOffsetPrice = ({
           });
         }
         if (param.isHidden == true) {
+          // Hide child parameters when parent parameter is hidden
+          if (param.childsParameters && param.childsParameters.length > 0) {
+            param.childsParameters.forEach((childParamId) => {
+              const childParam = subSectionCopy.parameters.find(
+                (p) => p.id === childParamId.id
+              );
+              if (childParam) {
+                childParam.isHidden = true;
+              }
+            });
+          }
           if (param.relatedParameters) {
             for (let i = 0; i < param.relatedParameters.length; i++) {
               let relatedParameterId = param.relatedParameters[i].parameterId;
-              let relatedParamActionIndex = param.relatedParameters[i].actionIndex !== undefined
-                ? param.relatedParameters[i].actionIndex
-                : actionIndex;
+              let relatedParamActionIndex =
+                param.relatedParameters[i].actionIndex !== undefined
+                  ? param.relatedParameters[i].actionIndex
+                  : actionIndex;
               let relatedParameter = subSectionCopy.parameters.find(
-                (x) => x.id === relatedParameterId && x.actionIndex === relatedParamActionIndex
+                (x) =>
+                  x.id === relatedParameterId &&
+                  x.actionIndex === relatedParamActionIndex
               );
               if (relatedParameter) {
                 relatedParameter.isHidden = true;
@@ -4772,11 +5009,14 @@ const useDigitalOffsetPrice = ({
           if (x.type == subSection.type) {
             x = {
               ...x,
-              parameters: x.parameters.filter((p) =>
-                !(p.parameterId === param.id &&
-                  p.actionIndex === actionIndex &&
-                  p.sectionId === section.id &&
-                  p.subSectionId === subSection.id)
+              parameters: x.parameters.filter(
+                (p) =>
+                  !(
+                    p.parameterId === param.id &&
+                    p.actionIndex === actionIndex &&
+                    p.sectionId === section.id &&
+                    p.subSectionId === subSection.id
+                  )
               ),
             };
           }
@@ -4847,6 +5087,17 @@ const useDigitalOffsetPrice = ({
           return;
         }
         param.isHidden = true;
+        // Hide child parameters when parent parameter is hidden
+        if (param.childsParameters && param.childsParameters.length > 0) {
+          param.childsParameters.forEach((childParamId) => {
+            const childParam = subSectionCopy.parameters.find(
+              (p) => p.id === childParamId.id
+            );
+            if (childParam) {
+              childParam.isHidden = true;
+            }
+          });
+        }
         // subProducts.forEach(x => {
         //   if (x.type == subSection.type) {
         //     x.parameters = x.parameters.filter(p => p.parameterId != param.id)
@@ -4856,11 +5107,14 @@ const useDigitalOffsetPrice = ({
           if (x.type == subSection.type) {
             x = {
               ...x,
-              parameters: x.parameters.filter((p) =>
-                !(p.parameterId === param.id &&
-                  p.actionIndex === actionIndex &&
-                  p.sectionId === section.id &&
-                  p.subSectionId === subSection.id)
+              parameters: x.parameters.filter(
+                (p) =>
+                  !(
+                    p.parameterId === param.id &&
+                    p.actionIndex === actionIndex &&
+                    p.sectionId === section.id &&
+                    p.subSectionId === subSection.id
+                  )
               ),
             };
           }
@@ -4877,11 +5131,45 @@ const useDigitalOffsetPrice = ({
         parameter?.parameterType === EParameterTypes.SELECT_MATERIALS ||
         parameter?.parameterType === EParameterTypes.MACHINES_SELECT
       ) {
-        const valueInArray = relatedParameter.selectedValueIds?.find(
-          (c) => c == parm?.valueIds
-        );
+        // Check if selectedValueIds exists and has values
+        let shouldShow = false;
 
-        if (valueInArray) {
+        if (
+          relatedParameter.selectedValueIds &&
+          relatedParameter.selectedValueIds.length > 0
+        ) {
+          // Use selectedValueIds: show when selected value is in selectedValueIds
+          const valueIdsToCheck = Array.isArray(parm?.valueIds)
+            ? parm.valueIds
+            : parm?.valueIds
+              ? [parm.valueIds]
+              : [];
+          const valueInArray = valueIdsToCheck.some((valueId) =>
+            relatedParameter.selectedValueIds.includes(valueId)
+          );
+          if (valueInArray) {
+            shouldShow = true;
+          }
+        } else if (
+          relatedParameter.notSelectedValueIds &&
+          relatedParameter.notSelectedValueIds.length > 0
+        ) {
+          // Use notSelectedValueIds: show when selected value is NOT in notSelectedValueIds (reverse logic)
+          const valueIdsToCheck = Array.isArray(parm?.valueIds)
+            ? parm.valueIds
+            : parm?.valueIds
+              ? [parm.valueIds]
+              : [];
+          const valueInNotSelectedArray = valueIdsToCheck.some((valueId) =>
+            relatedParameter.notSelectedValueIds.includes(valueId)
+          );
+          // Show if value is NOT in notSelectedValueIds
+          if (!valueInNotSelectedArray && parm?.valueIds) {
+            shouldShow = true;
+          }
+        }
+
+        if (shouldShow) {
           const sectionCopy = productTemplate.sections?.find(
             (x) => x.id === section.id
           );
@@ -4917,17 +5205,22 @@ const useDigitalOffsetPrice = ({
             (x) => x.id === subSection.id
           );
           const param = subSectionCopy.parameters.find(
-            (x) => x.id === relatedParameter.parameterId && x.actionIndex === actionIndex
+            (x) =>
+              x.id === relatedParameter.parameterId &&
+              x.actionIndex === actionIndex
           );
           if (param.isHidden == true) {
             if (param.relatedParameters) {
               for (let i = 0; i < param.relatedParameters.length; i++) {
                 let relatedParameterId = param.relatedParameters[i].parameterId;
-                let relatedParamActionIndex = param.relatedParameters[i].actionIndex !== undefined
-                  ? param.relatedParameters[i].actionIndex
-                  : actionIndex;
+                let relatedParamActionIndex =
+                  param.relatedParameters[i].actionIndex !== undefined
+                    ? param.relatedParameters[i].actionIndex
+                    : actionIndex;
                 let relatedParameter = subSectionCopy.parameters.find(
-                  (x) => x.id === relatedParameterId && x.actionIndex === relatedParamActionIndex
+                  (x) =>
+                    x.id === relatedParameterId &&
+                    x.actionIndex === relatedParamActionIndex
                 );
                 if (relatedParameter) {
                   relatedParameter.isHidden = true;
@@ -4947,24 +5240,41 @@ const useDigitalOffsetPrice = ({
             if (x.type == subSection.type) {
               x = {
                 ...x,
-                parameters: x.parameters.filter((p) =>
-                  !(p.parameterId === param.id &&
-                    p.actionIndex === actionIndex &&
-                    p.sectionId === section.id &&
-                    p.subSectionId === subSection.id)
+                parameters: x.parameters.filter(
+                  (p) =>
+                    !(
+                      p.parameterId === param.id &&
+                      p.actionIndex === actionIndex &&
+                      p.sectionId === section.id &&
+                      p.subSectionId === subSection.id
+                    )
                 ),
               };
             }
           });
           param.isHidden = true;
+          // Hide child parameters when parent parameter is hidden
+          if (param.childsParameters && param.childsParameters.length > 0) {
+            param.childsParameters.forEach((childParamId) => {
+              const childParam = subSectionCopy.parameters.find(
+                (p) => p.id === childParamId.id
+              );
+              if (childParam) {
+                childParam.isHidden = true;
+              }
+            });
+          }
           if (param.relatedParameters) {
             for (let i = 0; i < param.relatedParameters.length; i++) {
               let relatedParameterId = param.relatedParameters[i].parameterId;
-              let relatedParamActionIndex = param.relatedParameters[i].actionIndex !== undefined
-                ? param.relatedParameters[i].actionIndex
-                : actionIndex;
+              let relatedParamActionIndex =
+                param.relatedParameters[i].actionIndex !== undefined
+                  ? param.relatedParameters[i].actionIndex
+                  : actionIndex;
               let relatedParameter = subSectionCopy.parameters.find(
-                (x) => x.id === relatedParameterId && x.actionIndex === relatedParamActionIndex
+                (x) =>
+                  x.id === relatedParameterId &&
+                  x.actionIndex === relatedParamActionIndex
               );
               if (relatedParameter) {
                 relatedParameter.isHidden = true;
@@ -4980,19 +5290,66 @@ const useDigitalOffsetPrice = ({
           );
         }
       } else {
-        const valueInArray = relatedParameter.selectedValueIds?.find(
-          (c) =>
-            c == (parm?.ParameterType === 11 ? parm?.valueIds : parm?.values) ||
-            (c == "false" && !parm?.values)
-        );
+        // Check if selectedValueIds exists and has values
+        let shouldShow = false;
+
         if (
-          (valueInArray && myParameter) ||
-          (!parm &&
-            relatedParameter &&
-            relatedParameter.selectedValueIds &&
-            relatedParameter.selectedValueIds.length > 0 &&
-            relatedParameter.selectedValueIds[0] === "false")
+          relatedParameter.selectedValueIds &&
+          relatedParameter.selectedValueIds.length > 0
         ) {
+          // Use selectedValueIds: show when selected value is in selectedValueIds
+          const valueToCheck =
+            parm?.ParameterType === 11 ? parm?.valueIds : parm?.values;
+          const valuesToCheck = Array.isArray(valueToCheck)
+            ? valueToCheck
+            : valueToCheck
+              ? [valueToCheck]
+              : [];
+          const valueInArray =
+            valuesToCheck.some((value) =>
+              relatedParameter.selectedValueIds.includes(value)
+            ) ||
+            (relatedParameter.selectedValueIds.includes("false") &&
+              !parm?.values);
+          if (
+            (valueInArray && myParameter) ||
+            (!parm &&
+              relatedParameter &&
+              relatedParameter.selectedValueIds &&
+              relatedParameter.selectedValueIds.length > 0 &&
+              relatedParameter.selectedValueIds[0] === "false")
+          ) {
+            shouldShow = true;
+          }
+        } else if (
+          relatedParameter.notSelectedValueIds &&
+          relatedParameter.notSelectedValueIds.length > 0
+        ) {
+          // Use notSelectedValueIds: show when selected value is NOT in notSelectedValueIds (reverse logic)
+          const valueToCheck =
+            parm?.ParameterType === 11 ? parm?.valueIds : parm?.values;
+          const valuesToCheck = Array.isArray(valueToCheck)
+            ? valueToCheck
+            : valueToCheck
+              ? [valueToCheck]
+              : [];
+          const valueInNotSelectedArray = valuesToCheck.some((value) =>
+            relatedParameter.notSelectedValueIds.includes(value)
+          );
+          // Show if value is NOT in notSelectedValueIds
+          // Only show if there's a selection AND the value is not in notSelectedValueIds
+          if (
+            !valueInNotSelectedArray &&
+            myParameter &&
+            valueToCheck &&
+            valuesToCheck.length > 0
+          ) {
+            shouldShow = true;
+          }
+          // If no value selected (!parm), shouldShow remains false (parameter stays hidden)
+        }
+
+        if (shouldShow) {
           const sectionCopy = productTemplate.sections?.find(
             (x) => x.id === section.id
           );
@@ -5021,17 +5378,33 @@ const useDigitalOffsetPrice = ({
             (x) => x.id === subSection.id
           );
           const param = subSectionCopy.parameters.find(
-            (x) => x.id === relatedParameter.parameterId && x.actionIndex === actionIndex
+            (x) =>
+              x.id === relatedParameter.parameterId &&
+              x.actionIndex === actionIndex
           );
           if (param.isHidden == true) {
+            // Hide child parameters when parent parameter is hidden
+            if (param.childsParameters && param.childsParameters.length > 0) {
+              param.childsParameters.forEach((childParamId) => {
+                const childParam = subSectionCopy.parameters.find(
+                  (p) => p.id === childParamId.id
+                );
+                if (childParam) {
+                  childParam.isHidden = true;
+                }
+              });
+            }
             if (param.relatedParameters) {
               for (let i = 0; i < param.relatedParameters.length; i++) {
                 let relatedParameterId = param.relatedParameters[i].parameterId;
-                let relatedParamActionIndex = param.relatedParameters[i].actionIndex !== undefined
-                  ? param.relatedParameters[i].actionIndex
-                  : actionIndex;
+                let relatedParamActionIndex =
+                  param.relatedParameters[i].actionIndex !== undefined
+                    ? param.relatedParameters[i].actionIndex
+                    : actionIndex;
                 let relatedParameter = subSectionCopy.parameters.find(
-                  (x) => x.id === relatedParameterId && x.actionIndex === relatedParamActionIndex
+                  (x) =>
+                    x.id === relatedParameterId &&
+                    x.actionIndex === relatedParamActionIndex
                 );
                 if (relatedParameter) {
                   relatedParameter.isHidden = true;
@@ -5051,11 +5424,14 @@ const useDigitalOffsetPrice = ({
             if (x.type == subSection.type) {
               x = {
                 ...x,
-                parameters: x.parameters.filter((p) =>
-                  !(p.parameterId === param.id &&
-                    p.actionIndex === actionIndex &&
-                    p.sectionId === section.id &&
-                    p.subSectionId === subSection.id)
+                parameters: x.parameters.filter(
+                  (p) =>
+                    !(
+                      p.parameterId === param.id &&
+                      p.actionIndex === actionIndex &&
+                      p.sectionId === section.id &&
+                      p.subSectionId === subSection.id
+                    )
                 ),
               };
             }
@@ -5063,11 +5439,14 @@ const useDigitalOffsetPrice = ({
           if (param.relatedParameters) {
             for (let i = 0; i < param.relatedParameters.length; i++) {
               let relatedParameterId = param.relatedParameters[i].parameterId;
-              let relatedParamActionIndex = param.relatedParameters[i].actionIndex !== undefined
-                ? param.relatedParameters[i].actionIndex
-                : actionIndex;
+              let relatedParamActionIndex =
+                param.relatedParameters[i].actionIndex !== undefined
+                  ? param.relatedParameters[i].actionIndex
+                  : actionIndex;
               let relatedParameter = subSectionCopy.parameters.find(
-                (x) => x.id === relatedParameterId && x.actionIndex === relatedParamActionIndex
+                (x) =>
+                  x.id === relatedParameterId &&
+                  x.actionIndex === relatedParamActionIndex
               );
               if (relatedParameter) {
                 relatedParameter.isHidden = true;
@@ -5749,7 +6128,7 @@ const useDigitalOffsetPrice = ({
           item.subSectionId === subSectionId &&
           item.actionIndex === actionIndex
       );
-      setIsProductCalculated(false)
+      setIsProductCalculated(false);
       const productTemplateCopy = cloneDeep(productTemplate);
       const section = productTemplateCopy.sections.find(
         (section) => section.id === sectionId
@@ -5976,6 +6355,37 @@ const useDigitalOffsetPrice = ({
         data?.values !== null &&
         data?.valueIds !== null
       ) {
+        // Check if parent parameter is locked from backend (isLocked)
+        const parentParamInSubProducts = temp.find((item) =>
+          item.parameterId === parameterId &&
+          item.sectionId === sectionId &&
+          item.subSectionId === subSectionId &&
+          item.actionIndex === actionIndex
+        );
+
+        const parentIsLocked = subSectionParameter?.isLock || parentParamInSubProducts?.isLocked;
+
+        // Check if parent has a value selected with predefined child values (like size parameter logic)
+        // This locks child parameters when parent has ANY value with predefined child values
+        let parentHasValueWithChildren = false;
+        if (data?.value && data?.valueIds) {
+          const selectedValueConfig = subSectionParameter?.valuesConfigs?.find(
+            (config: any) => config.id === data.valueIds
+          );
+          // If the selected value has predefined child values (not custom), lock child parameters
+          // This works exactly like size parameter - when size has a value with child values, children are locked
+          if (
+            selectedValueConfig &&
+            selectedValueConfig.values &&
+            Object.keys(selectedValueConfig.values).length > 0
+          ) {
+            parentHasValueWithChildren = true;
+          }
+        }
+
+        // Lock children if parent is locked from backend OR if parent has a value with predefined children
+        const shouldLockChildren = parentIsLocked || parentHasValueWithChildren;
+
         if (subSectionParameter?.childsParameters) {
           subSectionParameter?.childsParameters.forEach((myparameter) => {
             let values = myparameter?.valuesConfigs?.filter(
@@ -5996,12 +6406,13 @@ const useDigitalOffsetPrice = ({
             if (data?.value === null && data?.values === undefined) {
               subSectionParameter.childsParameters?.forEach((childParam) => {
                 temp = temp.filter(
-                  (item) => !(
-                    item.parameterId === childParam.id &&
-                    item.actionIndex === actionIndex &&
-                    item.sectionId === sectionId &&
-                    item.subSectionId === subSectionId
-                  )
+                  (item) =>
+                    !(
+                      item.parameterId === childParam.id &&
+                      item.actionIndex === actionIndex &&
+                      item.sectionId === sectionId &&
+                      item.subSectionId === subSectionId
+                    )
                 );
               });
             }
@@ -6014,7 +6425,8 @@ const useDigitalOffsetPrice = ({
                       parameterCode: myparameter?.code,
                       values: [values[0]?.updateName],
                       valueIds: [values[0]?.id],
-                      isDisabled: hasValues(data?.value),
+                      isDisabled: hasValues(data?.value) || shouldLockChildren,
+                      isLocked: shouldLockChildren,
                       factor: myparameter?.factor,
                     };
                   } else {
@@ -6034,7 +6446,8 @@ const useDigitalOffsetPrice = ({
                       ...temp[myindex],
                       parameterCode: myparameter?.code,
                       values: [resolvedValue ?? ""],
-                      isDisabled: hasValues(data?.value),
+                      isDisabled: hasValues(data?.value) || shouldLockChildren,
+                      isLocked: shouldLockChildren,
                       factor: myparameter?.factor,
                     };
                   }
@@ -6054,7 +6467,8 @@ const useDigitalOffsetPrice = ({
                     actionIndex: myparameter?.actionIndex,
                     parameterName: myparameter?.name,
                     parameterCode: myparameter?.code,
-                    isDisabled: hasValues(data?.value),
+                    isDisabled: hasValues(data?.value) || shouldLockChildren,
+                    isLocked: shouldLockChildren,
                     factor: myparameter?.factor,
                     unitKey: myparameter?.unitKey,
                     defaultUnit: myparameter?.defaultUnit,
@@ -6087,7 +6501,8 @@ const useDigitalOffsetPrice = ({
                     actionIndex: myparameter?.actionIndex,
                     parameterName: myparameter?.name,
                     parameterCode: myparameter?.code,
-                    isDisabled: hasValues(data?.value),
+                    isDisabled: hasValues(data?.value) || shouldLockChildren,
+                    isLocked: shouldLockChildren,
                     factor: myparameter?.factor,
                     unitKey: myparameter?.unitKey,
                     defaultUnit: myparameter?.defaultUnit,
@@ -6132,21 +6547,259 @@ const useDigitalOffsetPrice = ({
             subSectionParameter?.code === "DieCutter") &&
           hasDieCutOrDieKissCut
         ) {
-          const parametersToRemove = [
+          // Dynamic list of all API fields that can be populated from DieCut
+          const dynamicApiFields: Record<string, string[]> = {
+            DieUnitWidth: [
+              "finalUnitWidth",
+              "dieUnitWidth",
+              "unitWidth",
+              "width",
+            ],
+            DieUnitLength: [
+              "finalUnitLength",
+              "dieUnitLength",
+              "unitLength",
+              "length",
+            ],
+            DieUnitHeight: [
+              "finalUnitHeight",
+              "dieUnitHeight",
+              "unitHeight",
+              "height",
+            ],
+            DieUnitFlapLength_FOLD: [
+              "DieUnitFlapLength_FOLD",
+              "dieUnitFlapLength_FOLD",
+              "dieUnitFlapLength",
+              "flapLength",
+            ],
+            DieUnitLidHeight_LID: [
+              "DieUnitLidHeight_LID",
+              "dieUnitLidHeight_LID",
+              "LidHeight_LID",
+              "lidHeight_LID",
+              "LidHeight",
+              "lidHeight",
+            ],
+            DieUnitBottomOverlap_O: [
+              "DieUnitBottomOverlap_O",
+              "dieUnitBottomOverlap_O",
+              "BottomOverlap",
+              "bottomOverlap",
+            ],
+            DieUnitFrontHeight_F: [
+              "DieUnitFrontHeight_F",
+              "dieUnitFrontHeight_F",
+              "FrontHeight",
+              "frontHeight",
+            ],
+            DieUnitDiameter_D: [
+              "DieUnitDiameter_D",
+              "dieUnitDiameter_D",
+              "Diameter",
+              "diameter",
+            ],
+            DieUnitNumberOfSides_N: [
+              "DieUnitNumberOfSides_N",
+              "dieUnitNumberOfSides_N",
+              "NumberOfSides",
+              "numberOfSides",
+            ],
+            DieUnitHandleFlapHeight_Z: [
+              "DieUnitHandleFlapHeight_Z",
+              "dieUnitHandleFlapHeight_Z",
+              "HandleFlapHeight",
+              "handleFlapHeight",
+            ],
+            DieUnitBaseThickness_B: [
+              "DieUnitBaseThickness_B",
+              "dieUnitBaseThickness_B",
+              "BaseThickness",
+              "baseThickness",
+            ],
+            DieUnitLidOverlap_O: [
+              "DieUnitLidOverlap_O",
+              "dieUnitLidOverlap_O",
+              "LidOverlap",
+              "lidOverlap",
+            ],
+            DieUnitRoofHeight_ROOF: [
+              "DieUnitRoofHeight_ROOF",
+              "dieUnitRoofHeight_ROOF",
+              "RoofHeight",
+              "roofHeight",
+            ],
+            DieUnitDraftAngle_DRAFT: [
+              "DieUnitDraftAngle_DRAFT",
+              "dieUnitDraftAngle_DRAFT",
+              "DraftAngle",
+              "draftAngle",
+            ],
+            DieUnitFlapHeight_A: [
+              "DieUnitFlapHeight_A",
+              "dieUnitFlapHeight_A",
+              "FlapHeight",
+              "flapHeight",
+            ],
+            DieUnitFlapWidth_B: [
+              "DieUnitFlapWidth_B",
+              "dieUnitFlapWidth_B",
+              "FlapWidth",
+              "flapWidth",
+            ],
+            DieUnitBottomLength_V: [
+              "DieUnitBottomLength_V",
+              "dieUnitBottomLength_V",
+              "BottomLength",
+              "bottomLength",
+            ],
+            DieUnitBottomWidth_J: [
+              "DieUnitBottomWidth_J",
+              "dieUnitBottomWidth_J",
+              "BottomWidth",
+              "bottomWidth",
+            ],
+          };
+
+          // List of all parameters that can be removed if not present in new selection
+          const parametersToCheck = [
             "Height",
             "Width",
-            "size",
             "DieUnitWidth",
             "DieUnitLength",
             "DieUnitHeight",
-            // "DieCutter"
+            "DieUnitFlapLength_FOLD",
+            "DieUnitLidHeight_LID",
+            "DieUnitBottomOverlap_O",
+            "DieUnitFrontHeight_F",
+            "DieUnitDiameter_D",
+            "DieUnitNumberOfSides_N",
+            "DieUnitHandleFlapHeight_Z",
+            "DieUnitBaseThickness_B",
+            "DieUnitLidOverlap_O",
+            "DieUnitRoofHeight_ROOF",
+            "DieUnitDraftAngle_DRAFT",
+            "DieUnitFlapHeight_A",
+            "DieUnitFlapWidth_B",
+            "DieUnitBottomLength_V",
+            "DieUnitBottomWidth_J",
           ];
 
-          // temp = temp.filter(
-          //   (param) => !parametersToRemove.includes(param.parameterCode)
-          // );
+          // Get the new dieCut value from valueConfig or dieCut parameter
+          let newDieCutValue = null;
+          if (valueConfig && valueConfig.additionalAttribute) {
+            newDieCutValue = valueConfig;
+          } else if (dieCut) {
+            newDieCutValue = dieCut;
+          } else if (subSectionParameter?.code === "DiecutType") {
+            // When DiecutType changes, try to get the current DieCutter value
+            const dieCutterParameter = subSection.parameters.find(
+              (p) => p.code === "DieCutter" || p.code === "DieCut"
+            );
+            if (dieCutterParameter) {
+              const dieCutterSubProductParam = temp.find(
+                (p) =>
+                  p.parameterId === dieCutterParameter.id &&
+                  p.actionIndex === dieCutterParameter.actionIndex
+              );
+              if (
+                dieCutterSubProductParam &&
+                dieCutterSubProductParam.valueIds &&
+                dieCutterSubProductParam.valueIds.length > 0
+              ) {
+                const dieCutterValueConfig =
+                  dieCutterParameter.valuesConfigs?.find(
+                    (vc) => vc.id === dieCutterSubProductParam.valueIds[0]
+                  );
+                if (
+                  dieCutterValueConfig &&
+                  (dieCutterValueConfig.additionalAttribute ||
+                    dieCutterValueConfig.rowData)
+                ) {
+                  newDieCutValue = dieCutterValueConfig;
+                }
+              }
+            }
+          }
 
-          // Find and handle size parameter after DieCut removal
+          // Helper function to check if a value exists in the new dieCut
+          const getValueFromDieCut = (fieldNames: string[]) => {
+            if (!newDieCutValue) return "";
+
+            // Check additionalAttribute first
+            if (newDieCutValue.additionalAttribute) {
+              for (const fieldName of fieldNames) {
+                const item = newDieCutValue.additionalAttribute.find(
+                  (attr) => attr.valueId === fieldName
+                );
+                if (item && item.value) return item.value + "";
+              }
+            }
+
+            // Check rowData if available
+            if (newDieCutValue.rowData) {
+              for (const fieldName of fieldNames) {
+                if (newDieCutValue.rowData[fieldName]?.value) {
+                  return newDieCutValue.rowData[fieldName].value + "";
+                }
+              }
+            }
+
+            return "";
+          };
+
+          // Determine which parameters are valid for the new selection
+          const validParameters = new Set<string>();
+
+          // Always include Width and Height if they have values
+          if (
+            getValueFromDieCut([
+              "unitWidth",
+              "dieUnitWidth",
+              "finalUnitWidth",
+              "width",
+            ])
+          ) {
+            validParameters.add("Width");
+          }
+          if (
+            getValueFromDieCut([
+              "unitLength",
+              "dieUnitLength",
+              "finalUnitLength",
+              "length",
+            ])
+          ) {
+            validParameters.add("Height");
+          }
+
+          // Check each dynamic API field
+          Object.keys(dynamicApiFields).forEach((parameterCode) => {
+            const fieldNames = dynamicApiFields[parameterCode];
+            const value = getValueFromDieCut(fieldNames);
+            if (value) {
+              validParameters.add(parameterCode);
+            }
+          });
+
+          // Remove parameters that are not valid for the new selection
+          // Only remove if we have a new dieCut value (not when clearing)
+          if (newDieCutValue && data?.valueIds && data?.values) {
+            temp = temp.filter((param) => {
+              // Keep parameters that are not in the check list
+              if (!parametersToCheck.includes(param.parameterCode)) {
+                return true;
+              }
+              // Keep parameters that are valid for the new selection
+              if (validParameters.has(param.parameterCode)) {
+                return true;
+              }
+              // Remove parameters that are not valid
+              return false;
+            });
+          }
+
+          // Find and handle size parameter after DieCut selection
           let sizeParameter = subSection.parameters.find(
             (param) => param.code === "size"
           );
@@ -6159,7 +6812,10 @@ const useDigitalOffsetPrice = ({
             if (customValue) {
               // Check if size parameter already exists in temp
               let sizeSubProductParameter = temp.find(
-                (x) => x.parameterCode === "size"
+                (x) =>
+                  x.parameterCode === "size" &&
+                  x.sectionId === sectionId &&
+                  x.subSectionId === subSectionId
               );
 
               if (sizeSubProductParameter) {
@@ -6193,11 +6849,166 @@ const useDigitalOffsetPrice = ({
                     sizeParameter?.isGeneralInfoInProductionFloor,
                 });
               }
+
+              // After size is filled, check if Width and Height exist before showing child parameters
+              const widthParam = temp.find(
+                (p) =>
+                  p.parameterCode === "Width" &&
+                  p.sectionId === sectionId &&
+                  p.subSectionId === subSectionId
+              );
+              const heightParam = temp.find(
+                (p) =>
+                  p.parameterCode === "Height" &&
+                  p.sectionId === sectionId &&
+                  p.subSectionId === subSectionId
+              );
+
+              // Unhide Width and Height parameters in productTemplate if they exist in temp with values
+              if (widthParam && widthParam.values && widthParam.values[0]) {
+                const widthParamInTemplate = subSection.parameters.find(
+                  (p) => p.code === "Width" && p.id === widthParam.parameterId
+                );
+                if (widthParamInTemplate && widthParamInTemplate.isHidden) {
+                  widthParamInTemplate.isHidden = false;
+                }
+              }
+              if (heightParam && heightParam.values && heightParam.values[0]) {
+                const heightParamInTemplate = subSection.parameters.find(
+                  (p) => p.code === "Height" && p.id === heightParam.parameterId
+                );
+                if (heightParamInTemplate && heightParamInTemplate.isHidden) {
+                  heightParamInTemplate.isHidden = false;
+                }
+              }
+
+              // Only show child parameters if Width and Height exist
+              if (sizeParameter && sizeParameter?.childsParameters) {
+                // Use newDieCutValue if available, otherwise try valueConfig, then dieCut
+                const dieCutValueToUse = newDieCutValue || valueConfig || dieCut;
+
+                // Unhide size child parameters in productTemplate
+                sizeParameter.childsParameters.forEach((childParam) => {
+                  const childParamInTemplate = subSection.parameters.find(
+                    (p) => p.id === childParam.id
+                  );
+                  if (childParamInTemplate && childParamInTemplate.isHidden) {
+                    childParamInTemplate.isHidden = false;
+                  }
+                });
+
+                // Helper function to get value from DieCut
+                const getValueFromDieCutForSize = (fieldNames: string[]) => {
+                  if (!dieCutValueToUse) return "";
+
+                  if (dieCutValueToUse.additionalAttribute) {
+                    for (const fieldName of fieldNames) {
+                      const item = dieCutValueToUse.additionalAttribute.find(
+                        (attr) => attr.valueId === fieldName
+                      );
+                      if (item && item.value) return item.value + "";
+                    }
+                  }
+
+                  if (dieCutValueToUse.rowData) {
+                    for (const fieldName of fieldNames) {
+                      if (dieCutValueToUse.rowData[fieldName]?.value) {
+                        return dieCutValueToUse.rowData[fieldName].value + "";
+                      }
+                    }
+                  }
+
+                  return "";
+                };
+
+                // Map size child parameter codes to DieCut field names
+                const sizeChildParamToDieCutFields: Record<string, string[]> = {
+                  DieUnitWidth: [
+                    "finalUnitWidth",
+                    "dieUnitWidth",
+                    "unitWidth",
+                    "width",
+                  ],
+                  DieUnitLength: [
+                    "finalUnitLength",
+                    "dieUnitLength",
+                    "unitLength",
+                    "length",
+                  ],
+                  DieUnitHeight: [
+                    "finalUnitHeight",
+                    "dieUnitHeight",
+                    "unitHeight",
+                    "height",
+                  ],
+                  Width: [
+                    "unitWidth",
+                    "dieUnitWidth",
+                    "finalUnitWidth",
+                    "width",
+                  ],
+                  Height: [
+                    "unitLength",
+                    "dieUnitLength",
+                    "finalUnitLength",
+                    "length",
+                  ],
+                };
+
+                // Add size child parameters from DieCut
+                sizeParameter.childsParameters.forEach((childParam) => {
+                  const fieldNames =
+                    sizeChildParamToDieCutFields[childParam.code] || [];
+                  const paramValue = getValueFromDieCutForSize(fieldNames);
+
+                  const childIndex = temp.findIndex(
+                    (item) =>
+                      item?.parameterId === childParam?.id &&
+                      item?.sectionId === sectionId &&
+                      item?.subSectionId === subSectionId &&
+                      item?.actionIndex === childParam?.actionIndex
+                  );
+
+                  if (childIndex !== -1) {
+                    // Update existing child parameter
+                    temp[childIndex] = {
+                      ...temp[childIndex],
+                      values: paramValue ? [paramValue] : [""],
+                      isDisabled: paramValue ? true : false,
+                      isLocked: false,
+                    };
+                  } else {
+                    // Add new child parameter
+                    temp.push({
+                      parameterId: childParam.id,
+                      sectionId: sectionId,
+                      subSectionId: subSectionId,
+                      ParameterType: childParam.parameterType,
+                      isQuantityParameter: childParam?.isQuantityParameter,
+                      values: paramValue ? [paramValue] : [""],
+                      valueIds: [],
+                      actionIndex: childParam.actionIndex,
+                      parameterName: childParam.name,
+                      parameterCode: childParam.code,
+                      isDisabled: paramValue ? true : false,
+                      isLocked: false,
+                      factor: childParam?.factor,
+                      unitKey: childParam?.unitKey,
+                      defaultUnit: childParam?.defaultUnit,
+                      unitType: childParam?.unitType,
+                      actionId: childParam?.actionId,
+                      valuesConfigs: childParam?.valuesConfigs,
+                      isGeneralInfoInProductionFloor:
+                        childParam?.isGeneralInfoInProductionFloor,
+                    });
+                  }
+                });
+              }
             }
           }
 
-          // Remove locked status from other parameters that were removed
-          parametersToRemove.forEach((paramCode) => {
+          // Remove locked status from remaining parameters
+          parametersToCheck.forEach((paramCode) => {
             const paramToUnlock = temp.find(
               (p) => p.parameterCode === paramCode
             );
@@ -6216,6 +7027,7 @@ const useDigitalOffsetPrice = ({
             data?.values === "" ||
             data?.valueIds === null)
         ) {
+          // Dynamic list of all API fields that should be removed/unlocked when DieCut is removed
           const parametersToRemove = [
             "Height",
             "Width",
@@ -6223,6 +7035,21 @@ const useDigitalOffsetPrice = ({
             "DieUnitWidth",
             "DieUnitLength",
             "DieUnitHeight",
+            "DieUnitFlapLength_FOLD",
+            "DieUnitLidHeight_LID",
+            "DieUnitBottomOverlap_O",
+            "DieUnitFrontHeight_F",
+            "DieUnitDiameter_D",
+            "DieUnitNumberOfSides_N",
+            "DieUnitHandleFlapHeight_Z",
+            "DieUnitBaseThickness_B",
+            "DieUnitLidOverlap_O",
+            "DieUnitRoofHeight_ROOF",
+            "DieUnitDraftAngle_DRAFT",
+            "DieUnitFlapHeight_A",
+            "DieUnitFlapWidth_B",
+            "DieUnitBottomLength_V",
+            "DieUnitBottomWidth_J",
           ];
 
           // Remove the parameters from temp
@@ -6343,7 +7170,8 @@ const useDigitalOffsetPrice = ({
           // Set Quantity parameter changed
           // Check if quantity exists in temp array (not memoized value)
           let quantityParam = temp.find(
-            (item) => item?.parameterId === "4991945c-5e07-4773-8f11-2e3483b70b53"
+            (item) =>
+              item?.parameterId === "4991945c-5e07-4773-8f11-2e3483b70b53"
           );
 
           if (!quantityParam) {
@@ -6371,7 +7199,8 @@ const useDigitalOffsetPrice = ({
 
           // Get Set Units value from temp array
           const setUnitsParam = temp.find(
-            (item) => item?.parameterId === "91d3fe77-b852-4974-beb6-2da7d7616c78"
+            (item) =>
+              item?.parameterId === "91d3fe77-b852-4974-beb6-2da7d7616c78"
           );
           const setUnits = setUnitsParam ? Number(setUnitsParam.values[0]) : 0;
 
@@ -6387,7 +7216,8 @@ const useDigitalOffsetPrice = ({
           // Set Units parameter changed
           // Check if quantity exists in temp array (not memoized value)
           let quantityParam = temp.find(
-            (item) => item?.parameterId === "4991945c-5e07-4773-8f11-2e3483b70b53"
+            (item) =>
+              item?.parameterId === "4991945c-5e07-4773-8f11-2e3483b70b53"
           );
 
           if (!quantityParam) {
@@ -6415,9 +7245,12 @@ const useDigitalOffsetPrice = ({
 
           // Get Set Quantity value from temp array
           const setQuantityParam = temp.find(
-            (item) => item?.parameterId === "0fdbca1a-f250-447b-93e3-5b91909da59c"
+            (item) =>
+              item?.parameterId === "0fdbca1a-f250-447b-93e3-5b91909da59c"
           );
-          const setQuantity = setQuantityParam ? Number(setQuantityParam.values[0]) : 0;
+          const setQuantity = setQuantityParam
+            ? Number(setQuantityParam.values[0])
+            : 0;
 
           // Calculate and update Quantity = Set Units * Set Quantity
           const calculatedQuantity = Number(data.values) * setQuantity;
@@ -6432,11 +7265,14 @@ const useDigitalOffsetPrice = ({
           subSectionParameter.settingParameters.length > 0
         ) {
           subSectionParameter.settingParameters.forEach((settingParam) => {
-            temp = temp.filter((x) =>
-              !(x.parameterId === settingParam.id &&
-                x.actionIndex === actionIndex &&
-                x.sectionId === sectionId &&
-                x.subSectionId === subSectionId)
+            temp = temp.filter(
+              (x) =>
+                !(
+                  x.parameterId === settingParam.id &&
+                  x.actionIndex === actionIndex &&
+                  x.sectionId === sectionId &&
+                  x.subSectionId === subSectionId
+                )
             );
           });
         }
@@ -6651,6 +7487,24 @@ const useDigitalOffsetPrice = ({
                     );
                     return item ? item.value + "" : "";
                   };
+                  // Also check rowData if additionalAttribute doesn't have the value
+                  const getValueFromRowData = (id) => {
+                    if (dieCut.rowData && dieCut.rowData[id]?.value) {
+                      return dieCut.rowData[id].value + "";
+                    }
+                    return "";
+                  };
+
+                  // Helper to get value from either source with multiple field name variations
+                  const getValueDynamic = (fieldNames: string[]) => {
+                    for (const fieldName of fieldNames) {
+                      const value =
+                        getValue(fieldName) || getValueFromRowData(fieldName);
+                      if (value) return value;
+                    }
+                    return "";
+                  };
+
                   let width = getValue("width");
                   let length = getValue("length");
                   let unitWidth = getValue("unitWidth");
@@ -6661,7 +7515,122 @@ const useDigitalOffsetPrice = ({
                   let finalUnitLength = getValue("finalUnitLength");
                   let finalUnitHeight = getValue("finalUnitHeight");
 
+                  // List of all dynamic API fields that can be populated
+                  const dynamicApiFields: Record<string, string[]> = {
+                    DieUnitWidth: [
+                      "finalUnitWidth",
+                      "dieUnitWidth",
+                      "unitWidth",
+                      "width",
+                    ],
+                    DieUnitLength: [
+                      "finalUnitLength",
+                      "dieUnitLength",
+                      "unitLength",
+                      "length",
+                    ],
+                    DieUnitHeight: [
+                      "finalUnitHeight",
+                      "dieUnitHeight",
+                      "unitHeight",
+                      "height",
+                    ],
+                    DieUnitFlapLength_FOLD: [
+                      "DieUnitFlapLength_FOLD",
+                      "dieUnitFlapLength_FOLD",
+                      "dieUnitFlapLength",
+                      "flapLength",
+                    ],
+                    DieUnitLidHeight_LID: [
+                      "DieUnitLidHeight_LID",
+                      "dieUnitLidHeight_LID",
+                      "LidHeight_LID",
+                      "lidHeight_LID",
+                      "LidHeight",
+                      "lidHeight",
+                    ],
+                    DieUnitBottomOverlap_O: [
+                      "DieUnitBottomOverlap_O",
+                      "dieUnitBottomOverlap_O",
+                      "BottomOverlap",
+                      "bottomOverlap",
+                    ],
+                    DieUnitFrontHeight_F: [
+                      "DieUnitFrontHeight_F",
+                      "dieUnitFrontHeight_F",
+                      "FrontHeight",
+                      "frontHeight",
+                    ],
+                    DieUnitDiameter_D: [
+                      "DieUnitDiameter_D",
+                      "dieUnitDiameter_D",
+                      "Diameter",
+                      "diameter",
+                    ],
+                    DieUnitNumberOfSides_N: [
+                      "DieUnitNumberOfSides_N",
+                      "dieUnitNumberOfSides_N",
+                      "NumberOfSides",
+                      "numberOfSides",
+                    ],
+                    DieUnitHandleFlapHeight_Z: [
+                      "DieUnitHandleFlapHeight_Z",
+                      "dieUnitHandleFlapHeight_Z",
+                      "HandleFlapHeight",
+                      "handleFlapHeight",
+                    ],
+                    DieUnitBaseThickness_B: [
+                      "DieUnitBaseThickness_B",
+                      "dieUnitBaseThickness_B",
+                      "BaseThickness",
+                      "baseThickness",
+                    ],
+                    DieUnitLidOverlap_O: [
+                      "DieUnitLidOverlap_O",
+                      "dieUnitLidOverlap_O",
+                      "LidOverlap",
+                      "lidOverlap",
+                    ],
+                    DieUnitRoofHeight_ROOF: [
+                      "DieUnitRoofHeight_ROOF",
+                      "dieUnitRoofHeight_ROOF",
+                      "RoofHeight",
+                      "roofHeight",
+                    ],
+                    DieUnitDraftAngle_DRAFT: [
+                      "DieUnitDraftAngle_DRAFT",
+                      "dieUnitDraftAngle_DRAFT",
+                      "DraftAngle",
+                      "draftAngle",
+                    ],
+                    DieUnitFlapHeight_A: [
+                      "DieUnitFlapHeight_A",
+                      "dieUnitFlapHeight_A",
+                      "FlapHeight",
+                      "flapHeight",
+                    ],
+                    DieUnitFlapWidth_B: [
+                      "DieUnitFlapWidth_B",
+                      "dieUnitFlapWidth_B",
+                      "FlapWidth",
+                      "flapWidth",
+                    ],
+                    DieUnitBottomLength_V: [
+                      "DieUnitBottomLength_V",
+                      "dieUnitBottomLength_V",
+                      "BottomLength",
+                      "bottomLength",
+                    ],
+                    DieUnitBottomWidth_J: [
+                      "DieUnitBottomWidth_J",
+                      "dieUnitBottomWidth_J",
+                      "BottomWidth",
+                      "bottomWidth",
+                    ],
+                  };
+
                   const dieCutSizesParametersArray = [];
+                  // Add Width and Height (legacy fields)
                   dieCutSizesParametersArray.push({
                     parameterCode: "Width",
                     value: dieUnitWidth || unitWidth || width,
@@ -6670,17 +7639,17 @@ const useDigitalOffsetPrice = ({
                     parameterCode: "Height",
                     value: dieUnitLength || unitLength || length,
                   });
-                  dieCutSizesParametersArray.push({
-                    parameterCode: "DieUnitWidth",
-                    value: finalUnitWidth,
-                  });
-                  dieCutSizesParametersArray.push({
-                    parameterCode: "DieUnitLength",
-                    value: finalUnitLength,
-                  });
-                  dieCutSizesParametersArray.push({
-                    parameterCode: "DieUnitHeight",
-                    value: finalUnitHeight,
+
+                  // Dynamically add all fields that have values
+                  Object.keys(dynamicApiFields).forEach((parameterCode) => {
+                    const fieldNames = dynamicApiFields[parameterCode];
+                    const value = getValueDynamic(fieldNames);
+                    if (value) {
+                      dieCutSizesParametersArray.push({
+                        parameterCode: parameterCode,
+                        value: value,
+                      });
+                    }
                   });
                   dieCutSizesParametersArray.forEach((dieCutSizeParameter) => {
                     let dieCutSizeSubProductParameter = temp.find(
@@ -6692,6 +7661,20 @@ const useDigitalOffsetPrice = ({
                         dieCutSizeParameter.value,
                       ];
                       dieCutSizeSubProductParameter.isDisabled = true;
+                      // Unhide Width and Height parameters in productTemplate when updated in temp
+                      if (
+                        (dieCutSizeParameter.parameterCode === "Width" ||
+                          dieCutSizeParameter.parameterCode === "Height") &&
+                        dieCutSizeParameter.value
+                      ) {
+                        const subSectionParameter = subSection.parameters.find(
+                          (param) =>
+                            param.code === dieCutSizeParameter.parameterCode
+                        );
+                        if (subSectionParameter && subSectionParameter.isHidden) {
+                          subSectionParameter.isHidden = false;
+                        }
+                      }
                     } else {
                       const subSectionParameter = subSection.parameters.find(
                         (param) =>
@@ -6720,6 +7703,16 @@ const useDigitalOffsetPrice = ({
                           isGeneralInfoInProductionFloor:
                             subSectionParameter?.isGeneralInfoInProductionFloor,
                         });
+                        // Unhide Width and Height parameters in productTemplate when added to temp
+                        if (
+                          (dieCutSizeParameter.parameterCode === "Width" ||
+                            dieCutSizeParameter.parameterCode === "Height") &&
+                          dieCutSizeParameter.value
+                        ) {
+                          if (subSectionParameter.isHidden) {
+                            subSectionParameter.isHidden = false;
+                          }
+                        }
                       }
                     }
                   });
@@ -6774,16 +7767,145 @@ const useDigitalOffsetPrice = ({
               );
               return item ? item.value + "" : "";
             };
+            // Helper to get value from either source with multiple field name variations
+            const getValueFromRowData = (id) => {
+              if (dieCut.rowData && dieCut.rowData[id]?.value) {
+                return dieCut.rowData[id].value + "";
+              }
+              return "";
+            };
+            const getValueDynamic = (fieldNames: string[]) => {
+              for (const fieldName of fieldNames) {
+                const value =
+                  getValue(fieldName) || getValueFromRowData(fieldName);
+                if (value) return value;
+              }
+              return "";
+            };
+
             let width = getValue("width");
             let length = getValue("length");
             let unitWidth = getValue("unitWidth");
             let unitLength = getValue("unitLength");
             let dieUnitWidth = getValue("dieUnitWidth");
             let dieUnitLength = getValue("dieUnitLength");
-            let finalUnitWidth = getValue("finalUnitWidth");
-            let finalUnitLength = getValue("finalUnitLength");
-            let finalUnitHeight = getValue("finalUnitHeight");
+
+            // List of all dynamic API fields that can be populated
+            const dynamicApiFields: Record<string, string[]> = {
+              DieUnitWidth: [
+                "finalUnitWidth",
+                "dieUnitWidth",
+                "unitWidth",
+                "width",
+              ],
+              DieUnitLength: [
+                "finalUnitLength",
+                "dieUnitLength",
+                "unitLength",
+                "length",
+              ],
+              DieUnitHeight: [
+                "finalUnitHeight",
+                "dieUnitHeight",
+                "unitHeight",
+                "height",
+              ],
+              DieUnitFlapLength_FOLD: [
+                "DieUnitFlapLength_FOLD",
+                "dieUnitFlapLength_FOLD",
+                "dieUnitFlapLength",
+                "flapLength",
+              ],
+              DieUnitLidHeight_LID: [
+                "DieUnitLidHeight_LID",
+                "dieUnitLidHeight_LID",
+                "LidHeight_LID",
+                "lidHeight_LID",
+                "LidHeight",
+                "lidHeight",
+              ],
+              DieUnitBottomOverlap_O: [
+                "DieUnitBottomOverlap_O",
+                "dieUnitBottomOverlap_O",
+                "BottomOverlap",
+                "bottomOverlap",
+              ],
+              DieUnitFrontHeight_F: [
+                "DieUnitFrontHeight_F",
+                "dieUnitFrontHeight_F",
+                "FrontHeight",
+                "frontHeight",
+              ],
+              DieUnitDiameter_D: [
+                "DieUnitDiameter_D",
+                "dieUnitDiameter_D",
+                "Diameter",
+                "diameter",
+              ],
+              DieUnitNumberOfSides_N: [
+                "DieUnitNumberOfSides_N",
+                "dieUnitNumberOfSides_N",
+                "NumberOfSides",
+                "numberOfSides",
+              ],
+              DieUnitHandleFlapHeight_Z: [
+                "DieUnitHandleFlapHeight_Z",
+                "dieUnitHandleFlapHeight_Z",
+                "HandleFlapHeight",
+                "handleFlapHeight",
+              ],
+              DieUnitBaseThickness_B: [
+                "DieUnitBaseThickness_B",
+                "dieUnitBaseThickness_B",
+                "BaseThickness",
+                "baseThickness",
+              ],
+              DieUnitLidOverlap_O: [
+                "DieUnitLidOverlap_O",
+                "dieUnitLidOverlap_O",
+                "LidOverlap",
+                "lidOverlap",
+              ],
+              DieUnitRoofHeight_ROOF: [
+                "DieUnitRoofHeight_ROOF",
+                "dieUnitRoofHeight_ROOF",
+                "RoofHeight",
+                "roofHeight",
+              ],
+              DieUnitDraftAngle_DRAFT: [
+                "DieUnitDraftAngle_DRAFT",
+                "dieUnitDraftAngle_DRAFT",
+                "DraftAngle",
+                "draftAngle",
+              ],
+              DieUnitFlapHeight_A: [
+                "DieUnitFlapHeight_A",
+                "dieUnitFlapHeight_A",
+                "FlapHeight",
+                "flapHeight",
+              ],
+              DieUnitFlapWidth_B: [
+                "DieUnitFlapWidth_B",
+                "dieUnitFlapWidth_B",
+                "FlapWidth",
+                "flapWidth",
+              ],
+              DieUnitBottomLength_V: [
+                "DieUnitBottomLength_V",
+                "dieUnitBottomLength_V",
+                "BottomLength",
+                "bottomLength",
+              ],
+              DieUnitBottomWidth_J: [
+                "DieUnitBottomWidth_J",
+                "dieUnitBottomWidth_J",
+                "BottomWidth",
+                "bottomWidth",
+              ],
+            };
+
             const dieCutSizesParametersArray = [];
+            // Add Width and Height (legacy fields)
             dieCutSizesParametersArray.push({
               parameterCode: "Width",
               value: width || unitWidth || dieUnitWidth,
@@ -6792,17 +7914,17 @@ const useDigitalOffsetPrice = ({
               parameterCode: "Height",
               value: length || unitLength || dieUnitLength,
             });
-            dieCutSizesParametersArray.push({
-              parameterCode: "DieUnitWidth",
-              value: finalUnitWidth,
-            });
-            dieCutSizesParametersArray.push({
-              parameterCode: "DieUnitLength",
-              value: finalUnitLength,
-            });
-            dieCutSizesParametersArray.push({
-              parameterCode: "DieUnitHeight",
-              value: finalUnitHeight,
+
+            // Dynamically add all fields that have values
+            Object.keys(dynamicApiFields).forEach((parameterCode) => {
+              const fieldNames = dynamicApiFields[parameterCode];
+              const value = getValueDynamic(fieldNames);
+              if (value) {
+                dieCutSizesParametersArray.push({
+                  parameterCode: parameterCode,
+                  value: value,
+                });
+              }
             });
             dieCutSizesParametersArray.forEach((dieCutSizeParameter) => {
               let dieCutSizeSubProductParameter = temp.find(
@@ -6813,6 +7935,19 @@ const useDigitalOffsetPrice = ({
                   dieCutSizeParameter.value,
                 ];
                 dieCutSizeSubProductParameter.isDisabled = true;
+                // Unhide Width and Height parameters in productTemplate when updated in temp
+                if (
+                  (dieCutSizeParameter.parameterCode === "Width" ||
+                    dieCutSizeParameter.parameterCode === "Height") &&
+                  dieCutSizeParameter.value
+                ) {
+                  const subSectionParameter = subSection.parameters.find(
+                    (param) => param.code === dieCutSizeParameter.parameterCode
+                  );
+                  if (subSectionParameter && subSectionParameter.isHidden) {
+                    subSectionParameter.isHidden = false;
+                  }
+                }
               } else {
                 const subSectionParameter = subSection.parameters.find(
                   (param) => param.code === dieCutSizeParameter.parameterCode
@@ -6840,6 +7975,16 @@ const useDigitalOffsetPrice = ({
                     isGeneralInfoInProductionFloor:
                       subSectionParameter?.isGeneralInfoInProductionFloor,
                   });
+                  // Unhide Width and Height parameters in productTemplate when added to temp
+                  if (
+                    (dieCutSizeParameter.parameterCode === "Width" ||
+                      dieCutSizeParameter.parameterCode === "Height") &&
+                    dieCutSizeParameter.value
+                  ) {
+                    if (subSectionParameter.isHidden) {
+                      subSectionParameter.isHidden = false;
+                    }
+                  }
                 }
               }
             });
@@ -6849,31 +7994,115 @@ const useDigitalOffsetPrice = ({
               subSectionParameter.code === "DieCut") &&
             dieCut?.rowData
           ) {
-            let dieUnitWidth = dieCut.rowData.dieUnitWidth.value + "";
-            let dieUnitLength = dieCut.rowData.dieUnitLength.value + "";
-            let finalUnitWidth = dieCut.rowData.finalUnitWidth.value + "";
-            let finalUnitLength = dieCut.rowData.finalUnitLength.value + "";
-            let finalUnitHeight = dieCut.rowData.finalUnitHeight.value + "";
+            // Helper to get value from rowData with multiple field name variations
+            const getValueFromRowData = (fieldNames: string[]) => {
+              for (const fieldName of fieldNames) {
+                if (dieCut.rowData[fieldName]?.value) {
+                  return dieCut.rowData[fieldName].value + "";
+                }
+              }
+              return "";
+            };
+
+            // List of all dynamic API fields that can be populated from rowData
+            const dynamicApiFields: Record<string, string[]> = {
+              DieUnitWidth: ["finalUnitWidth", "dieUnitWidth"],
+              DieUnitLength: ["finalUnitLength", "dieUnitLength"],
+              DieUnitHeight: ["finalUnitHeight", "dieUnitHeight"],
+              DieUnitFlapLength_FOLD: [
+                "DieUnitFlapLength_FOLD",
+                "dieUnitFlapLength_FOLD",
+                "dieUnitFlapLength",
+                "flapLength",
+              ],
+              DieUnitLidHeight_LID: [
+                "DieUnitLidHeight_LID",
+                "dieUnitLidHeight_LID",
+                "LidHeight_LID",
+                "lidHeight_LID",
+              ],
+              DieUnitBottomOverlap_O: [
+                "DieUnitBottomOverlap_O",
+                "dieUnitBottomOverlap_O",
+              ],
+              DieUnitFrontHeight_F: [
+                "DieUnitFrontHeight_F",
+                "dieUnitFrontHeight_F",
+              ],
+              DieUnitDiameter_D: ["DieUnitDiameter_D", "dieUnitDiameter_D"],
+              DieUnitNumberOfSides_N: [
+                "DieUnitNumberOfSides_N",
+                "dieUnitNumberOfSides_N",
+              ],
+              DieUnitHandleFlapHeight_Z: [
+                "DieUnitHandleFlapHeight_Z",
+                "dieUnitHandleFlapHeight_Z",
+              ],
+              DieUnitBaseThickness_B: [
+                "DieUnitBaseThickness_B",
+                "dieUnitBaseThickness_B",
+              ],
+              DieUnitLidOverlap_O: [
+                "DieUnitLidOverlap_O",
+                "dieUnitLidOverlap_O",
+              ],
+              DieUnitRoofHeight_ROOF: [
+                "DieUnitRoofHeight_ROOF",
+                "dieUnitRoofHeight_ROOF",
+              ],
+              DieUnitDraftAngle_DRAFT: [
+                "DieUnitDraftAngle_DRAFT",
+                "dieUnitDraftAngle_DRAFT",
+              ],
+              DieUnitFlapHeight_A: [
+                "DieUnitFlapHeight_A",
+                "dieUnitFlapHeight_A",
+              ],
+              DieUnitFlapWidth_B: ["DieUnitFlapWidth_B", "dieUnitFlapWidth_B"],
+              DieUnitBottomLength_V: [
+                "DieUnitBottomLength_V",
+                "dieUnitBottomLength_V",
+              ],
+              DieUnitBottomWidth_J: [
+                "DieUnitBottomWidth_J",
+                "dieUnitBottomWidth_J",
+              ],
+            };
+
             const dieCutSizesParametersArray = [];
+            // Add Width and Height (legacy fields) - get from rowData
+            const widthValue = getValueFromRowData([
+              "dieUnitWidth",
+              "finalUnitWidth",
+              "unitWidth",
+              "width",
+            ]);
+            const lengthValue = getValueFromRowData([
+              "dieUnitLength",
+              "finalUnitLength",
+              "unitLength",
+              "length",
+            ]);
+
             dieCutSizesParametersArray.push({
               parameterCode: "Width",
-              value: dieUnitWidth,
+              value: widthValue || "",
             });
             dieCutSizesParametersArray.push({
               parameterCode: "Height",
-              value: dieUnitLength,
+              value: lengthValue || "",
             });
-            dieCutSizesParametersArray.push({
-              parameterCode: "DieUnitWidth",
-              value: finalUnitWidth,
-            });
-            dieCutSizesParametersArray.push({
-              parameterCode: "DieUnitLength",
-              value: finalUnitLength,
-            });
-            dieCutSizesParametersArray.push({
-              parameterCode: "DieUnitHeight",
-              value: finalUnitHeight,
+
+            // Dynamically add all fields that have values from rowData
+            Object.keys(dynamicApiFields).forEach((parameterCode) => {
+              const fieldNames = dynamicApiFields[parameterCode];
+              const value = getValueFromRowData(fieldNames);
+              if (value) {
+                dieCutSizesParametersArray.push({
+                  parameterCode: parameterCode,
+                  value: value,
+                });
+              }
             });
             dieCutSizesParametersArray.forEach((dieCutSizeParameter) => {
               let dieCutSizeSubProductParameter = temp.find(
@@ -7018,6 +8247,225 @@ const useDigitalOffsetPrice = ({
             });
           }
 
+          // Clean up parameters that are not valid for the current DieCut/DieCutter selection
+          if (
+            dieCut &&
+            (subSectionParameter?.code === "DieCutter" ||
+              subSectionParameter?.code === "DieCut" ||
+              subSectionParameter?.code === "DieKissCut")
+          ) {
+            // List of all dynamic API fields that can be populated
+            const dynamicApiFields: Record<string, string[]> = {
+              DieUnitWidth: [
+                "finalUnitWidth",
+                "dieUnitWidth",
+                "unitWidth",
+                "width",
+              ],
+              DieUnitLength: [
+                "finalUnitLength",
+                "dieUnitLength",
+                "unitLength",
+                "length",
+              ],
+              DieUnitHeight: [
+                "finalUnitHeight",
+                "dieUnitHeight",
+                "unitHeight",
+                "height",
+              ],
+              DieUnitFlapLength_FOLD: [
+                "DieUnitFlapLength_FOLD",
+                "dieUnitFlapLength_FOLD",
+                "dieUnitFlapLength",
+                "flapLength",
+              ],
+              DieUnitLidHeight_LID: [
+                "DieUnitLidHeight_LID",
+                "dieUnitLidHeight_LID",
+                "LidHeight_LID",
+                "lidHeight_LID",
+                "LidHeight",
+                "lidHeight",
+              ],
+              DieUnitBottomOverlap_O: [
+                "DieUnitBottomOverlap_O",
+                "dieUnitBottomOverlap_O",
+                "BottomOverlap",
+                "bottomOverlap",
+              ],
+              DieUnitFrontHeight_F: [
+                "DieUnitFrontHeight_F",
+                "dieUnitFrontHeight_F",
+                "FrontHeight",
+                "frontHeight",
+              ],
+              DieUnitDiameter_D: [
+                "DieUnitDiameter_D",
+                "dieUnitDiameter_D",
+                "Diameter",
+                "diameter",
+              ],
+              DieUnitNumberOfSides_N: [
+                "DieUnitNumberOfSides_N",
+                "dieUnitNumberOfSides_N",
+                "NumberOfSides",
+                "numberOfSides",
+              ],
+              DieUnitHandleFlapHeight_Z: [
+                "DieUnitHandleFlapHeight_Z",
+                "dieUnitHandleFlapHeight_Z",
+                "HandleFlapHeight",
+                "handleFlapHeight",
+              ],
+              DieUnitBaseThickness_B: [
+                "DieUnitBaseThickness_B",
+                "dieUnitBaseThickness_B",
+                "BaseThickness",
+                "baseThickness",
+              ],
+              DieUnitLidOverlap_O: [
+                "DieUnitLidOverlap_O",
+                "dieUnitLidOverlap_O",
+                "LidOverlap",
+                "lidOverlap",
+              ],
+              DieUnitRoofHeight_ROOF: [
+                "DieUnitRoofHeight_ROOF",
+                "dieUnitRoofHeight_ROOF",
+                "RoofHeight",
+                "roofHeight",
+              ],
+              DieUnitDraftAngle_DRAFT: [
+                "DieUnitDraftAngle_DRAFT",
+                "dieUnitDraftAngle_DRAFT",
+                "DraftAngle",
+                "draftAngle",
+              ],
+              DieUnitFlapHeight_A: [
+                "DieUnitFlapHeight_A",
+                "dieUnitFlapHeight_A",
+                "FlapHeight",
+                "flapHeight",
+              ],
+              DieUnitFlapWidth_B: [
+                "DieUnitFlapWidth_B",
+                "dieUnitFlapWidth_B",
+                "FlapWidth",
+                "flapWidth",
+              ],
+              DieUnitBottomLength_V: [
+                "DieUnitBottomLength_V",
+                "dieUnitBottomLength_V",
+                "BottomLength",
+                "bottomLength",
+              ],
+              DieUnitBottomWidth_J: [
+                "DieUnitBottomWidth_J",
+                "dieUnitBottomWidth_J",
+                "BottomWidth",
+                "bottomWidth",
+              ],
+            };
+
+            const parametersToCheck = [
+              "Height",
+              "Width",
+              "DieUnitWidth",
+              "DieUnitLength",
+              "DieUnitHeight",
+              "DieUnitFlapLength_FOLD",
+              "DieUnitLidHeight_LID",
+              "DieUnitBottomOverlap_O",
+              "DieUnitFrontHeight_F",
+              "DieUnitDiameter_D",
+              "DieUnitNumberOfSides_N",
+              "DieUnitHandleFlapHeight_Z",
+              "DieUnitBaseThickness_B",
+              "DieUnitLidOverlap_O",
+              "DieUnitRoofHeight_ROOF",
+              "DieUnitDraftAngle_DRAFT",
+              "DieUnitFlapHeight_A",
+              "DieUnitFlapWidth_B",
+              "DieUnitBottomLength_V",
+              "DieUnitBottomWidth_J",
+            ];
+
+            // Helper function to check if a value exists in the dieCut
+            const getValueFromDieCut = (fieldNames: string[]) => {
+              if (!dieCut) return "";
+
+              // Check additionalAttribute first
+              if (dieCut.additionalAttribute) {
+                for (const fieldName of fieldNames) {
+                  const item = dieCut.additionalAttribute.find(
+                    (attr) => attr.valueId === fieldName
+                  );
+                  if (item && item.value) return item.value + "";
+                }
+              }
+
+              // Check rowData if available
+              if (dieCut.rowData) {
+                for (const fieldName of fieldNames) {
+                  if (dieCut.rowData[fieldName]?.value) {
+                    return dieCut.rowData[fieldName].value + "";
+                  }
+                }
+              }
+
+              return "";
+            };
+
+            // Determine which parameters are valid for the current selection
+            const validParameters = new Set<string>();
+
+            // Check Width and Height
+            if (
+              getValueFromDieCut([
+                "unitWidth",
+                "dieUnitWidth",
+                "finalUnitWidth",
+                "width",
+              ])
+            ) {
+              validParameters.add("Width");
+            }
+            if (
+              getValueFromDieCut([
+                "unitLength",
+                "dieUnitLength",
+                "finalUnitLength",
+                "length",
+              ])
+            ) {
+              validParameters.add("Height");
+            }
+
+            // Check each dynamic API field
+            Object.keys(dynamicApiFields).forEach((parameterCode) => {
+              const fieldNames = dynamicApiFields[parameterCode];
+              const value = getValueFromDieCut(fieldNames);
+              if (value) {
+                validParameters.add(parameterCode);
+              }
+            });
+
+            // Remove parameters that are not valid for the current selection
+            temp = temp.filter((param) => {
+              // Keep parameters that are not in the check list
+              if (!parametersToCheck.includes(param.parameterCode)) {
+                return true;
+              }
+              // Keep parameters that are valid for the current selection
+              if (validParameters.has(param.parameterCode)) {
+                return true;
+              }
+              // Remove parameters that are not valid
+              return false;
+            });
+          }
+
           // Skip size parameter changes for DiecutType - only process for DieCut/DieKissCut parameters
           if (subSectionParameter?.code !== "DiecutType") {
             let sizeParameter = subSection.parameters.find(
@@ -7083,6 +8531,37 @@ const useDigitalOffsetPrice = ({
                     productTemplate?.templateId ===
                     "b47bf700-e3fc-4dff-a5fd-638821dc9e25"
                   ) {
+                    // Check if size parameter (parent) is locked from backend (isLocked)
+                    const sizeSubProductParam = temp.find((item) =>
+                      item.parameterCode === "size" &&
+                      item.sectionId === sectionId &&
+                      item.subSectionId === subSectionId &&
+                      item.actionIndex === sizeParameter.actionIndex
+                    );
+
+                    const sizeParamIsLocked = sizeParameter?.isLock || sizeSubProductParam?.isLocked;
+
+                    // Check if size parameter has a value selected with predefined child values (like size parameter logic)
+                    // This locks child parameters when size has ANY value with predefined child values
+                    let sizeHasValueWithChildren = false;
+                    if (sizeSubProductParam?.valueIds && sizeSubProductParam.valueIds.length > 0) {
+                      const selectedValueConfig = sizeParameter.valuesConfigs.find(
+                        (config: any) => config.id === sizeSubProductParam.valueIds[0]
+                      );
+                      // If the selected value has predefined child values (not custom), lock child parameters
+                      // This is how size parameter works - when size has a value with child values, children are locked
+                      if (
+                        selectedValueConfig &&
+                        selectedValueConfig.values &&
+                        Object.keys(selectedValueConfig.values).length > 0
+                      ) {
+                        sizeHasValueWithChildren = true;
+                      }
+                    }
+
+                    // Lock children if size is locked from backend OR if size has a value with predefined children
+                    const shouldLockSizeChildren = sizeParamIsLocked || sizeHasValueWithChildren;
+
                     sizeParameter.childsParameters.forEach((childParam) => {
                       const childParameterDef = subSection.parameters.find(
                         (p) => p.id === childParam.id
@@ -7124,7 +8603,8 @@ const useDigitalOffsetPrice = ({
                           defaultUnit: childParameterDef?.defaultUnit,
                           unitType: childParameterDef?.unitType,
                           factor: childParameterDef?.factor,
-                          isDisabled: false, // Enable child parameters for custom size
+                          isDisabled: shouldLockSizeChildren, // Lock child if parent is locked or has default value
+                          isLocked: shouldLockSizeChildren, // Lock child if parent is locked or has default value
                           isGeneralInfoInProductionFloor:
                             childParameterDef?.isGeneralInfoInProductionFloor,
                         });
@@ -7710,11 +9190,33 @@ const useDigitalOffsetPrice = ({
   const validateParameters = (currentSubProducts, sectionId?: string) => {
     let isValid = true;
     const allParameters = currentSubProducts.flatMap((item) => item.parameters);
+
+    // Helper function to check if a parameter should be considered hidden
+    const isParameterHidden = (parameter, subSection) => {
+      // Check if parameter itself is hidden
+      if (parameter.isHidden === true) {
+        return true;
+      }
+      // Check if parameter is a child of a hidden parent parameter (through childsParameters)
+      const parentParameter = subSection.parameters.find((parentParam) => {
+        return (
+          parentParam.childsParameters &&
+          parentParam.childsParameters.some(
+            (childParam) => childParam.id === parameter.id
+          )
+        );
+      });
+      if (parentParameter && parentParameter.isHidden === true) {
+        return true; // Hide child if parent is hidden
+      }
+      return false;
+    };
+
     if (sectionId) {
       let section = productTemplate.sections.find((x) => x.id === sectionId);
       for (const subSection of section.subSections) {
         for (const parameter of subSection.parameters) {
-          if (!parameter.isHidden && parameter.isRequired) {
+          if (!isParameterHidden(parameter, subSection) && parameter.isRequired) {
             const index = allParameters.findIndex(
               (par) =>
                 par.parameterId === parameter.id &&
@@ -7735,7 +9237,9 @@ const useDigitalOffsetPrice = ({
         return true;
       }
       // Skip sections that are hidden OR hidden from UI
-      let sections = productTemplate?.sections.filter((x) => !x.isHidden && !x.hideFromUI);
+      let sections = productTemplate?.sections.filter(
+        (x) => !x.isHidden && !x.hideFromUI
+      );
       for (const section of sections) {
         for (const subSection of section.subSections) {
           // Skip subsections that are hidden from UI
@@ -7743,7 +9247,7 @@ const useDigitalOffsetPrice = ({
             continue;
           }
           for (const parameter of subSection.parameters) {
-            if (!parameter.isHidden && parameter.isRequired) {
+            if (!isParameterHidden(parameter, subSection) && parameter.isRequired) {
               const index = allParameters.findIndex(
                 (par) =>
                   par.parameterId === parameter.id &&
@@ -7885,7 +9389,7 @@ const useDigitalOffsetPrice = ({
             return;
           }
           setLoading(true);
-          setIsProductCalculated(false)
+          setIsProductCalculated(false);
           setErrorMsg("");
           const newCalculationSessionId = uuidv4();
           setCurrentCalculationSessionId(newCalculationSessionId);
@@ -7947,11 +9451,11 @@ const useDigitalOffsetPrice = ({
             const chatBotMetaDataObj = {
               sessionId,
               interactionId,
-            }
+            };
             const chatBotMetaDataJsonStr = JSON.stringify(chatBotMetaDataObj);
             calculationObj.calculationMetaData = {
-              additionalData: chatBotMetaDataJsonStr
-            }
+              additionalData: chatBotMetaDataJsonStr,
+            };
           }
           const res: any = await callApi(
             "POST",
@@ -8108,12 +9612,14 @@ const useDigitalOffsetPrice = ({
       navigate(`/products/profits?actionId=${router?.query?.actionId}`);
     }
   }, [router, pricingDefaultValue, selectedWorkFlow]);
-  
+
   const getQuantityParameterValue = () => {
     if (subProducts) {
       const generalParameters = subProducts.find((x) => !x.type)?.parameters;
       let quantityParam = generalParameters?.find(
-          (item) => item?.parameterId === "4991945c-5e07-4773-8f11-2e3483b70b53" || item?.isQuantityParameter === true
+        (item) =>
+          item?.parameterId === "4991945c-5e07-4773-8f11-2e3483b70b53" ||
+          item?.isQuantityParameter === true
       );
       if (quantityParam == null) {
         quantityParam = {
@@ -8121,15 +9627,15 @@ const useDigitalOffsetPrice = ({
         };
       }
       if (
-          quantityParam &&
-          (quantityParam.values == null || quantityParam.values.length == 0)
+        quantityParam &&
+        (quantityParam.values == null || quantityParam.values.length == 0)
       ) {
         quantityParam.values = ["0"];
       }
       return quantityParam;
     }
-    return  0;
-  }
+    return 0;
+  };
   const quantity = useMemo(() => {
     return getQuantityParameterValue();
   }, [subProducts]);
@@ -8298,6 +9804,7 @@ const useDigitalOffsetPrice = ({
           exampleType: sampleType && getSampleTypeValue(sampleType),
           isNeedExample: false,
           isDuplicatedWithAnotherQuantity: false,
+          qualityIssueReason,
           saveCurrentStation: isFlowChanged ? isSaveCurrentStation : true,
         },
         DocumentType: router?.query?.documentType,
@@ -8407,14 +9914,19 @@ const useDigitalOffsetPrice = ({
             } else {
               // Check if ALL parameters in this subsection have BOTH flags set to true
               const allParametersHiddenInSettings = subSection.parameters.every(
-                (param) => param.isHidden === true && param.isHiddenInSetting === true
+                (param) =>
+                  param.isHidden === true && param.isHiddenInSetting === true
               );
 
               if (allParametersHiddenInSettings) {
                 subSection.hideFromUI = true;
               } else {
-                const hiddenCount = subSection.parameters.filter(p => p.isHidden === true && p.isHiddenInSetting === true).length;
-                const notHiddenParams = subSection.parameters.filter(p => !(p.isHidden === true && p.isHiddenInSetting === true));
+                const hiddenCount = subSection.parameters.filter(
+                  (p) => p.isHidden === true && p.isHiddenInSetting === true
+                ).length;
+                const notHiddenParams = subSection.parameters.filter(
+                  (p) => !(p.isHidden === true && p.isHiddenInSetting === true)
+                );
               }
             }
           } else {
@@ -8426,7 +9938,8 @@ const useDigitalOffsetPrice = ({
         // Then, check if ALL subsections should be hidden from UI
         // (either because they have hideFromUI=true OR isHidden=true)
         const allSubSectionsHiddenFromUI = section.subSections.every(
-          (subSection) => subSection.hideFromUI === true || subSection.isHidden === true
+          (subSection) =>
+            subSection.hideFromUI === true || subSection.isHidden === true
         );
 
         if (allSubSectionsHiddenFromUI && section.subSections.length > 0) {
@@ -8477,7 +9990,11 @@ const useDigitalOffsetPrice = ({
             if (parameter.activateByAllValues) {
               section.isHidden = false;
             } else {
-              if (matchingParameter && matchingParameter.valueIds && matchingParameter.valueIds.length > 0) {
+              if (
+                matchingParameter &&
+                matchingParameter.valueIds &&
+                matchingParameter.valueIds.length > 0
+              ) {
                 section.isHidden = !parameter.selectedValueIds.includes(
                   matchingParameter?.valueIds[0]
                 );
@@ -8551,11 +10068,16 @@ const useDigitalOffsetPrice = ({
 
         // Special case for parameterType 12
         if (matchingTemplateParam?.parameterType === 12) {
-          const selectedParam1 = allParams.find(p => p.parameterCode === "Foiloptions")
-          if (selectedParam1 && selectedParam1?.valueIds[0] !== "9836e77c-84b7-4d34-8935-073863f3c057") {
+          const selectedParam1 = allParams.find(
+            (p) => p.parameterCode === "Foiloptions"
+          );
+          if (
+            selectedParam1 &&
+            selectedParam1?.valueIds[0] !==
+            "9836e77c-84b7-4d34-8935-073863f3c057"
+          ) {
             return false;
-          }
-          else {
+          } else {
             return true;
           }
         }
@@ -8641,12 +10163,38 @@ const useDigitalOffsetPrice = ({
               if (!relatedConfig.activateByAllValues) {
                 const parentValueIds = parentSelection.valueIds ||
                   parentSelection.values || [parentSelection.value];
-                const hasMatchingValue = parentValueIds.some(
-                  (selectedValueId) =>
-                    relatedConfig.selectedValueIds?.includes(selectedValueId)
-                );
 
-                if (!hasMatchingValue) {
+                // Check if selectedValueIds exists and has values
+                if (
+                  relatedConfig.selectedValueIds &&
+                  relatedConfig.selectedValueIds.length > 0
+                ) {
+                  // Use selectedValueIds: show when selected value is in selectedValueIds
+                  const hasMatchingValue = parentValueIds.some(
+                    (selectedValueId) =>
+                      relatedConfig.selectedValueIds.includes(selectedValueId)
+                  );
+
+                  if (!hasMatchingValue) {
+                    return false;
+                  }
+                } else if (
+                  relatedConfig.notSelectedValueIds &&
+                  relatedConfig.notSelectedValueIds.length > 0
+                ) {
+                  // Use notSelectedValueIds: show when selected value is NOT in notSelectedValueIds (reverse logic)
+                  const hasMatchingNotSelected = parentValueIds.some(
+                    (selectedValueId) =>
+                      relatedConfig.notSelectedValueIds.includes(
+                        selectedValueId
+                      )
+                  );
+
+                  if (hasMatchingNotSelected) {
+                    return false;
+                  }
+                } else {
+                  // If neither selectedValueIds nor notSelectedValueIds is provided, hide the parameter
                   return false;
                 }
               }
@@ -8688,7 +10236,6 @@ const useDigitalOffsetPrice = ({
     parameters,
     productTemplate
   ) {
-    console.log("parametersparametersparameters", parameters);
     // Create a new array to store the filtered parameters
     const updatedParameters = [];
 
@@ -8720,12 +10267,15 @@ const useDigitalOffsetPrice = ({
       }
       // Special case for parameterType 12
       if (matchingTemplateParam?.parameterType === 12) {
-        const selectedParam1 = parameters.find(p => p.parameterCode === "Foiloptions")
-        if (selectedParam1 && selectedParam1?.valueIds[0] !== "9836e77c-84b7-4d34-8935-073863f3c057") {
+        const selectedParam1 = parameters.find(
+          (p) => p.parameterCode === "Foiloptions"
+        );
+        if (
+          selectedParam1 &&
+          selectedParam1?.valueIds[0] !== "9836e77c-84b7-4d34-8935-073863f3c057"
+        ) {
           continue;
-        }
-
-        else {
+        } else {
           updatedParameters.push(param);
           continue;
         }
@@ -8815,11 +10365,38 @@ const useDigitalOffsetPrice = ({
             if (!relatedConfig.activateByAllValues) {
               const parentValueIds = parentSelection.valueIds ||
                 parentSelection.values || [parentSelection.value];
-              const hasMatchingValue = parentValueIds.some((selectedValueId) =>
-                relatedConfig.selectedValueIds?.includes(selectedValueId)
-              );
 
-              if (!hasMatchingValue) {
+              // Check if selectedValueIds exists and has values
+              if (
+                relatedConfig.selectedValueIds &&
+                relatedConfig.selectedValueIds.length > 0
+              ) {
+                // Use selectedValueIds: show when selected value is in selectedValueIds
+                const hasMatchingValue = parentValueIds.some(
+                  (selectedValueId) =>
+                    relatedConfig.selectedValueIds.includes(selectedValueId)
+                );
+
+                if (!hasMatchingValue) {
+                  shouldShow = false;
+                  break;
+                }
+              } else if (
+                relatedConfig.notSelectedValueIds &&
+                relatedConfig.notSelectedValueIds.length > 0
+              ) {
+                // Use notSelectedValueIds: show when selected value is NOT in notSelectedValueIds (reverse logic)
+                const hasMatchingNotSelected = parentValueIds.some(
+                  (selectedValueId) =>
+                    relatedConfig.notSelectedValueIds.includes(selectedValueId)
+                );
+
+                if (hasMatchingNotSelected) {
+                  shouldShow = false;
+                  break;
+                }
+              } else {
+                // If neither selectedValueIds nor notSelectedValueIds is provided, hide the parameter
                 shouldShow = false;
                 break;
               }
@@ -8926,7 +10503,7 @@ const useDigitalOffsetPrice = ({
   }, [router, productTemplate]);
 
   const validateWorkflows = (data) => {
-    if(!data){
+    if (!data) {
       return { isValid: true, errors: [] };
     }
     const errors = [];
@@ -9087,6 +10664,8 @@ const useDigitalOffsetPrice = ({
     updateQuoteItem,
     setUrgentOrder,
     setPrintingNotes,
+    setQualityIssueReason,
+    qualityIssueReason,
     setPriceRecovery,
     onCloseMultiParameterModal,
     duplicateSection,
@@ -9156,7 +10735,7 @@ const useDigitalOffsetPrice = ({
     SelectWorkFlowById,
     isOpenErrorsModal,
     isButtonDisabledState,
-    isProductCalculated
+    isProductCalculated,
   };
 };
 

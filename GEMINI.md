@@ -13,6 +13,7 @@
 2.  `CLAUDE.md`
 3.  `docs/frontdesk/FRONTDESK_KNOWLEDGE_BASE.md`
 4.  `docs/frontdesk/README.md`
+5.  `.claude/skills/chatwoot/README.md`
 
 ---
 
@@ -89,7 +90,67 @@ src/
 
 ---
 
-## 4. 📋 Common Recipes & Patterns
+## 4. 🏛️ Chatwoot Blueprint Protocol
+
+This protocol is the **single source of truth** for developing Chatwoot provider features. It is a mandatory specialization of the core `Explore → Plan → Execute → Verify` workflow. Adherence is not optional.
+
+### Philosophy
+
+Chatwoot's frontend is our source of truth for feature implementation. We do not reinvent; we **adapt**. Your function is to act as an architect, translating their battle-tested Vue/Vuex patterns into clean, idiomatic React/Recoil code for FrontDesk.
+
+### Protocol Execution Steps
+
+For any Chatwoot feature, you **MUST** execute the following phases in order:
+
+---
+
+#### **Phase 1: Blueprint Analysis**
+
+1.  **Identify Goal:** Clarify the user's request (e.g., "implement message sending").
+2.  **Select Skill:** From the "Available Skills" table, identify and master the relevant `.claude/skills/chatwoot/` file(s). Start with `core-architecture.md` for foundational context.
+3.  **Deconstruct the Flow:** Analyze the Chatwoot implementation described in the skill. You must be able to answer:
+    *   Which **UI components** are involved?
+    *   How is **state managed** in Vuex (state, actions, mutations)?
+    *   What **API calls** are made and what is their structure?
+    *   What is the precise **user interaction flow**?
+
+---
+
+#### **Phase 2: Adaptation & Planning**
+
+1.  **Create the Adaptation Blueprint:** Before writing any implementation code, you **MUST** create a formal adaptation plan. This plan must include a mapping table that explicitly translates the Chatwoot architecture to the FrontDesk architecture.
+2.  **Share the Blueprint:** Present this mapping table to the user for confirmation before proceeding.
+
+**Mandatory Blueprint Format:**
+
+| Chatwoot (Vue/Vuex) | → | FrontDesk (React/Recoil) |
+| :--- | :-: | :--- |
+| *Example: `ReplyBox.vue`* | → | *Example: `MessageComposer.tsx`* |
+| *Example: `conversations` module* | → | *Example: `conversationAtoms.ts`* |
+| *Example: `MessageApi.create()`* | → | *Example: `chatwootMessagesService.create()`*|
+
+---
+
+#### **Phase 3 & 4: Implementation & Verification**
+
+1.  **Execute the Blueprint:** Implement the feature precisely according to the approved Adaptation Blueprint.
+2.  **Verify:** Run the standard project verification scripts to ensure quality and correctness: `npm run lint`, `npm run test`, `npm run build`.
+
+### Available Skills
+
+| Skill | Description | File |
+|:---|:---|:---|
+| **Core Architecture** | Overall frontend structure, directory organization, and tech stack. | `core-architecture.md` |
+| **API Patterns** | API client structure, account-scoped URLs, and CRUD operations. | `api-patterns.md` |
+| **State Management** | Vuex store patterns, actions, mutations, and optimistic updates. | `state-management.md` |
+| **Component Patterns** | Vue 3 Composition API, component organization, and communication. | `component-patterns.md` |
+| **Message Sending** | End-to-end flow for sending messages with optimistic updates. | `flows/message-sending-flow.md` |
+| **Conversation Filtering**| Building conversation lists with filtering, pagination, and real-time updates. | `flows/conversation-list-filtering.md` |
+| **Contact Management** | Contact CRUD, search, custom attributes, and profile views. | `flows/contact-management.md` |
+
+---
+
+## 5. 📋 Common Recipes & Patterns
 
 ### A) Add a New Provider
 1.  **Scaffold Directories**:
@@ -124,7 +185,7 @@ src/
 
 ---
 
-## 5. ✅ Agent Self-Check (Pre-Commit)
+## 6. ✅ Agent Self-Check (Pre-Commit)
 
 - [ ] **Scope Adherence**: All file modifications are within the `frontdesk` scope.
 - [ ] **Pattern Consistency**: Changes mirror existing patterns for components, hooks, and state management.

@@ -1,5 +1,5 @@
 import { IconButton } from "@mui/material";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import { MoreMenuWidget } from "../more-circle";
@@ -14,6 +14,7 @@ import {
   CreditCardData,
   ReceiptCreditCardData,
   checksRowState,
+  checksAccountCodeState,
   creditCardState,
   creditTransactionsState,
   receiptCreditCardState,
@@ -53,9 +54,11 @@ const usePaymentMethodsTabs = () => {
   const [totalChecks, setTotalChecks] =
     useRecoilState<number>(totalChecksState);
   const [data, setData] = useRecoilState<CheckData[]>(checksRowState);
-  // const quoteItemValue: any = useRecoilValue(quoteItemState);
   const [quoteItemValue, setQuoteItemValue]: any =
     useRecoilState(quoteItemState);
+  const [checkAccountCode, setCheckAccountCode] = useRecoilState<string>(
+    checksAccountCodeState
+  );
   const [dateErrors, setDateErrors] = useState<{ [key: number]: string }>({});
 
   const resetTotalBit = useResetRecoilState(totalBitState);
@@ -68,6 +71,16 @@ const usePaymentMethodsTabs = () => {
       : 0;
   }, [isOutgoingPayments, quoteItemValue]);
 
+  // Get selected bank account details
+  const selectedBankAccount = useMemo(() => {
+    if (!checkAccountCode || !quoteItemValue?.checksAccounts) {
+      return null;
+    }
+    return quoteItemValue.checksAccounts.find(
+      (account: any) => account.code === checkAccountCode
+    );
+  }, [checkAccountCode, quoteItemValue?.checksAccounts]);
+
   useEffect(() => {
     if (isOutgoingPayments && data.length === 1 && !data[0].checkNumber) {
       const initialRow = {
@@ -78,24 +91,88 @@ const usePaymentMethodsTabs = () => {
     }
   }, []);
 
+  // Track previous account code to detect changes
+  const prevAccountCodeRef = useRef<string>("");
+
+  // Handle initial auto-selection AND account changes: Fill bank details (only for supplier payments)
+  useEffect(() => {
+    if (
+      isOutgoingPayments &&
+      selectedBankAccount &&
+      data.length > 0 &&
+      checkAccountCode
+    ) {
+      const bankName = selectedBankAccount.bankName || "";
+      const branch = selectedBankAccount.bankBranch || "";
+      const accountNum = selectedBankAccount.bankAccountNUM || "";
+
+      // If account code changed (user selected different account)
+      if (
+        prevAccountCodeRef.current !== checkAccountCode &&
+        prevAccountCodeRef.current !== ""
+      ) {
+        // Update ALL checks with new bank account details
+        const updatedData = data.map((check) => ({
+          ...check,
+          bankCode: bankName,
+          branch: branch,
+          accountNum: accountNum,
+        }));
+        setData(updatedData);
+      }
+      // If initial load (account auto-selected) and checks don't have bank details
+      else if (prevAccountCodeRef.current === "") {
+        // Check if any checks need bank details filled
+        const needsUpdate = data.some(
+          (check) => !check.bankCode || !check.branch || !check.accountNum
+        );
+
+        if (needsUpdate) {
+          const updatedData = data.map((check) => ({
+            ...check,
+            bankCode: check.bankCode || bankName,
+            branch: check.branch || branch,
+            accountNum: check.accountNum || accountNum,
+          }));
+          setData(updatedData);
+        }
+      }
+
+      // Update ref after processing
+      if (checkAccountCode) {
+        prevAccountCodeRef.current = checkAccountCode;
+      }
+    }
+  }, [isOutgoingPayments, checkAccountCode, selectedBankAccount, data.length]);
+
   const addRow = () => {
     if (isOutgoingPayments) {
+      // Get bank details from selected account (only for supplier payments)
+      const bankName = selectedBankAccount?.bankName || "";
+      const branch = selectedBankAccount?.bankBranch || "";
+      const accountNum = selectedBankAccount?.bankAccountNUM || "";
+
       const lastRow = data.length > 0 ? data[data.length - 1] : null;
       const newRow = lastRow
         ? {
             ...lastRow,
             checkNumber: Number(checkNumberBase) + data.length,
+            // Auto-fill bank details if not already set
+            bankCode: lastRow.bankCode || bankName,
+            branch: lastRow.branch || branch,
+            accountNum: lastRow.accountNum || accountNum,
           }
         : {
             dueDate: new Date().toISOString().split("T")[0],
             checkNumber: Number(checkNumberBase),
-            bankCode: "",
-            branch: "",
-            accountNum: "",
+            bankCode: bankName,
+            branch: branch,
+            accountNum: accountNum,
             checkSum: 0,
           };
       setData((prevData) => [...prevData, newRow]);
     } else {
+      // Regular receipts: don't auto-fill bank details
       const newRow = {
         dueDate: new Date().toISOString().split("T")[0],
         checkNumber: 0,
@@ -282,7 +359,7 @@ const usePaymentMethodsTabs = () => {
       value={row.checkNumber}
       placeholder={t("payment.checkNumber")}
       onChange={(e) => handleInputChange(index, "checkNumber", e.target.value)}
-      readOnly={!!isOutgoingPayments && quoteItemValue?.checksSerialNumber}
+      //  readOnly={!!isOutgoingPayments && quoteItemValue?.checksSerialNumber}
     />,
     <input
       style={{ width: "100px" }}

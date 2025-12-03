@@ -240,19 +240,18 @@ export const _renderStatus = (
     ) {
       const firstDocuments = document.documentNumbers
         ? document.documentNumbers.map((item: any, index: number) => (
-            <span key={index}>
-              <a
-                style={{
-                  minWidth: "auto",
-                  height: "auto",
-                  padding: 0,
-                  color: "var(--theme-secondary-color, #2e3092)",
-                  cursor: "pointer",
-                  textDecoration: "none",
-                }}
-                href={`/${
-                  document.titleDocumentNumber.charAt(0).toLowerCase() +
-                  document.titleDocumentNumber.slice(1)
+          <span key={index}>
+            <a
+              style={{
+                minWidth: "auto",
+                height: "auto",
+                padding: 0,
+                color: "var(--theme-secondary-color, #2e3092)",
+                cursor: "pointer",
+                textDecoration: "none",
+              }}
+              href={`/${document.titleDocumentNumber.charAt(0).toLowerCase() +
+                document.titleDocumentNumber.slice(1)
                 }?Id=${item.documentId}`}
             >
               {item.documentNumber}
@@ -271,30 +270,8 @@ export const _renderStatus = (
             document.titleSecondDocumentNumber.slice(1)
             }?Id=${item.documentId}`;
 
-            return (
-              <span key={index}>
-                <a
-                  style={{
-                    minWidth: "auto",
-                    height: "auto",
-                    padding: 0,
-                    color: "var(--theme-secondary-color, #2e3092)",
-                    cursor: "pointer",
-                    textDecoration: "none",
-                  }}
-                  href={href}
-                >
-                  {item.documentNumber}
-                </a>
-                {index < document.secondDocumentNumbers.length - 1 && ", "}
-              </span>
-            );
-          })
-        : [];
-
-      const thirdDocuments = document.thirdDocumentNumbers
-        ? document.thirdDocumentNumbers.map((item: any, index: number) => (
-            <span key={`third-${index}`}>
+          return (
+            <span key={index}>
               <a
                 style={{
                   minWidth: "auto",
@@ -304,9 +281,30 @@ export const _renderStatus = (
                   cursor: "pointer",
                   textDecoration: "none",
                 }}
-                href={`/${
-                  document.titleThirdDocumentNumber.charAt(0).toLowerCase() +
-                  document.titleThirdDocumentNumber.slice(1)
+                href={href}
+              >
+                {item.documentNumber}
+              </a>
+              {index < document.secondDocumentNumbers.length - 1 && ", "}
+            </span>
+          );
+        })
+        : [];
+
+      const thirdDocuments = document.thirdDocumentNumbers
+        ? document.thirdDocumentNumbers.map((item: any, index: number) => (
+          <span key={`third-${index}`}>
+            <a
+              style={{
+                minWidth: "auto",
+                height: "auto",
+                padding: 0,
+                color: "var(--theme-secondary-color, #2e3092)",
+                cursor: "pointer",
+                textDecoration: "none",
+              }}
+              href={`/${document.titleThirdDocumentNumber.charAt(0).toLowerCase() +
+                document.titleThirdDocumentNumber.slice(1)
                 }?Id=${item.documentId}`}
             >
               {item.documentNumber}
@@ -344,13 +342,7 @@ export const _renderStatus = (
 
       if (firstDocuments.length > 0) {
         result.push(
-          <div
-            key="first-documents"
-            style={{
-              color:
-                "var(--theme-table-body-color, var(--theme-text-primary, #2e3092))",
-            }}
-          >
+          <div key="first-documents">
             {t(`documentStatus.${document.titleDocumentNumber}.title`)}:{" "}
             {firstDocuments}
           </div>
@@ -359,13 +351,7 @@ export const _renderStatus = (
 
       if (secondDocuments.length > 0) {
         result.push(
-          <div
-            key="second-documents"
-            style={{
-              color:
-                "var(--theme-table-body-color, var(--theme-text-primary, #2e3092))",
-            }}
-          >
+          <div key="second-documents">
             {t(`documentStatus.${document.titleSecondDocumentNumber}.title`)}:{" "}
             {secondDocuments}
           </div>
@@ -374,13 +360,7 @@ export const _renderStatus = (
 
       if (thirdDocuments.length > 0) {
         result.push(
-          <div
-            key="third-documents"
-            style={{
-              color:
-                "var(--theme-table-body-color, var(--theme-text-primary, #2e3092))",
-            }}
-          >
+          <div key="third-documents">
             {t(`documentStatus.${document.titleThirdDocumentNumber}.title`)}:{" "}
             {thirdDocuments}
           </div>

@@ -79,7 +79,7 @@ export function useChatwootAgents(
 
       // Skip if cache is valid and not forced
       if (!force && isCacheValid(agentsState)) {
-        console.log("[useChatwootAgents] Using cached agents");
+        console.log("[useChatwootAgents] ✅ Using cached agents");
         return;
       }
 
@@ -100,9 +100,9 @@ export function useChatwootAgents(
           ttl: 5 * 60 * 1000, // 5 minutes
         });
 
-        console.log(`[useChatwootAgents] Fetched ${agents.length} agents`);
+        console.log(`[useChatwootAgents] ✅ Fetched ${agents.length} agents`);
       } catch (error) {
-        console.error("[useChatwootAgents] Failed to fetch agents:", error);
+        console.error("[useChatwootAgents] ❌ Failed to fetch agents:", error);
         setAgentsState((prev) => ({
           ...prev,
           loading: false,

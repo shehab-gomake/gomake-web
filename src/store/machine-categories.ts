@@ -89,6 +89,11 @@ export const machineCategoriesState = atom<IMachineCategory[]>({
       color: defaultTheme.warning.light["300"],
     },
     {
+      id: ECategoryId.WINDOW_PATCHING_MACHINE,
+      name: "machinesCategories.windowPatchingMachine",
+      color: defaultTheme.warning.light["300"],
+    },
+    {
       id: ECategoryId.ENCAPSULATION_MACHINE,
       name: "machinesCategories.encapsulation",
       color: defaultTheme.warning.light["200"],

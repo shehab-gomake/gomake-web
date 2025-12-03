@@ -3,59 +3,55 @@ import { CustomerAuthLayout } from "@/layouts";
 import { useStyle } from "./style";
 import { useMyTickets } from "./use-my-tickets";
 import { AddTicketButton } from "./add-ticket-button";
-import Stack from "@mui/material/Stack";
 import { PrimaryTable } from "@/components/tables/primary-table";
-import { CreateTicketModal } from "./create-ticket-modal";
-import { TicketDetailModal } from "./ticket-detail-modal";
+import { useTicketChatbot } from "@/components/ticket-chatbot";
+import { useMemo } from "react";
 
-export default function MyTickets() {
+function MyTicketsContent() {
   const { t } = useTranslation();
   const { classes } = useStyle();
+  const { navigateToTicket, openNewTicket } = useTicketChatbot();
   const {
     tickets,
     loading,
     tableHeaders,
     getTicketsRows,
     fetchTickets,
-    isModalOpen,
-    setIsModalOpen,
-    selectedTicket,
-    setSelectedTicket,
-    handleCreateTicket,
   } = useMyTickets();
 
+  const rows = useMemo(() => {
+    return getTicketsRows(navigateToTicket);
+  }, [getTicketsRows, navigateToTicket]);
+
   return (
-    <CustomerAuthLayout>
-      <Stack direction="column" sx={classes.mainContainer}>
-        <Stack direction="row" justifyContent="space-between" alignItems="center">
-          <h1 style={classes.title}>{t("tabs.myTickets")}</h1>
-          <AddTicketButton onClick={() => setIsModalOpen(true)} />
-        </Stack>
+    <div style={classes.mainContainer}>
+      <div style={classes.headerStyle}>
+        <h1 style={classes.title}>{t("tabs.myTickets")}</h1>
+        <AddTicketButton onClick={() => openNewTicket()} />
+      </div>
 
-        <PrimaryTable
-          stickyFirstCol={false}
-          stickyHeader={true}
-          rows={getTicketsRows()}
-          headers={tableHeaders}
-          maxHeight={600}
-        />
+        <div style={classes.tableContainer}>
+          <PrimaryTable
+            stickyFirstCol={false}
+            stickyHeader={true}
+            rows={rows}
+            headers={tableHeaders}
+            maxHeight={"calc(100vh - 300px)"}
+          />
+        </div>
+    </div>
+  );
+}
 
-        <CreateTicketModal
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          onSubmit={async (data) => {
-            await handleCreateTicket(data);
-            setIsModalOpen(false);
-          }}
-        />
+export default function MyTickets() {
+  const { t } = useTranslation();
 
-        <TicketDetailModal
-          ticket={selectedTicket}
-          isOpen={!!selectedTicket}
-          onClose={() => setSelectedTicket(null)}
-          onUpdate={fetchTickets}
-        />
-      </Stack>
+  return (
+    <CustomerAuthLayout
+      staticPageTitle={t("tabs.myTickets")}
+      className={`custom-scrollbar`}
+    >
+      <MyTicketsContent />
     </CustomerAuthLayout>
   );
 }

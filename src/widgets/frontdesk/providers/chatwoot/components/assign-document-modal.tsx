@@ -1,23 +1,38 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { Box, Typography, CircularProgress, Divider, useTheme, Alert, Chip } from '@mui/material';
-import { GoMakeModal, GomakePrimaryButton, GoMakeAutoComplate } from '@/components';
-import { useTranslation } from 'react-i18next';
-import { DOCUMENT_TYPE } from '@/pages-components/quotes/enums';
-import { QuickActionConfig } from '@/widgets/frontdesk/providers/tickets/types/quick-actions.types';
-import { getClientDocumentsApi } from '@/services/api-service/generic-doc/documents-api';
-import { useGomakeAxios } from '@/hooks';
-import { useDocumentTitle } from '@/pages-components/quote-new/use-document-title';
-import AddIcon from '@mui/icons-material/Add';
-import LinkIcon from '@mui/icons-material/Link';
-import PersonIcon from '@mui/icons-material/Person';
-import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
-import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
-import SearchIcon from '@mui/icons-material/Search';
+import React, { useState, useMemo, useCallback } from "react";
 import {
-  DocumentListItem,
-  DocumentApiResponse,
-  DocumentAutocompleteOption,
-} from '../types/document.types';
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+  Box,
+  Typography,
+  CircularProgress,
+  Alert,
+  Stack,
+  IconButton,
+} from "@mui/material";
+import { GoMakeAutoComplate } from "@/components";
+import { useTranslation } from "react-i18next";
+import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
+import { QuickActionConfig } from "@/widgets/frontdesk/providers/tickets/types/quick-actions.types";
+import { useDocumentTitle } from "@/pages-components/quote-new/use-document-title";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import AddIcon from "@mui/icons-material/Add";
+import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
+import CloseIcon from "@mui/icons-material/Close";
+import { DocumentAutocompleteOption, NormalizedDocument } from "../types/document.types";
+import { useDebouncedValue } from "../hooks/use-debounced-value";
+import { useDocumentFetch } from "../hooks/document/use-document-fetch";
+import { _renderStatus } from "@/utils/constants";
+import { DocumentIcon } from "./document/DocumentIcon";
+import { DocumentInfoDisplay } from "./document/DocumentInfoDisplay";
+import { SourceDocumentLinks } from "./document/SourceDocumentLinks";
+import {
+  formatDocumentDate,
+  formatDocumentPrice,
+  createDocumentLabel,
+} from "../utils/document/formatting.utils";
 
 interface AssignDocumentModalProps {
   open: boolean;
@@ -34,554 +49,317 @@ export const AssignDocumentModal: React.FC<AssignDocumentModalProps> = ({
   onClose,
   actionConfig,
   customerId,
-  customerName,
   onConnectToExisting,
   onCreateNew,
 }) => {
   const { t } = useTranslation();
-  const { callApi } = useGomakeAxios();
-  const [selectedDocument, setSelectedDocument] = useState<DocumentAutocompleteOption | null>(null);
-  const [documents, setDocuments] = useState<DocumentListItem[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
 
-  const { documentTitle } = useDocumentTitle(
-    actionConfig?.documentType || DOCUMENT_TYPE.quote,
-    false
-  );
+  // Debounce search term for better performance (300ms delay)
+  const debouncedSearchTerm = useDebouncedValue(searchTerm, 300);
+
+  const { documentTitle } = useDocumentTitle(actionConfig?.documentType || DOCUMENT_TYPE.quote, false);
 
   // Check if customer ID is required for this document type
   const requiresCustomerId = actionConfig?.requiresCustomerId ?? false;
   const canConnectToExisting = requiresCustomerId ? !!customerId : true;
 
-  // Fetch documents when modal opens
-  const fetchDocuments = useCallback(async () => {
-    if (!actionConfig?.documentType) return;
+  // Use the new hook for fetching documents
+  const {
+    documents,
+    loading,
+    error,
+    clearError,
+  } = useDocumentFetch({
+    documentType: actionConfig?.documentType,
+    customerId,
+    requiresCustomerId,
+    searchTerm: debouncedSearchTerm,
+    enabled: open && actionConfig?.documentType !== undefined,
+    pageSize: 100,
+  });
 
-    // For documents that require customer ID, we need customerId
-    if (requiresCustomerId && !customerId) {
-      setDocuments([]);
-      setError(null);
-      return;
-    }
+  // Reset state when modal closes
+  const handleClose = useCallback(() => {
+    setSearchTerm("");
+    onClose();
+  }, [onClose]);
 
-    setLoading(true);
-    setError(null);
-
-    try {
-      const callBack = (res: DocumentApiResponse) => {
-        if (res?.success) {
-          // Filter documents by type
-          const filteredDocs = (res.data || []).filter(
-            (doc) => doc.documentType === actionConfig.documentType
-          );
-          setDocuments(filteredDocs);
-          setError(null);
-        } else {
-          // API returned error
-          setDocuments([]);
-          setError(res.message || t('frontdesk.errorFetchingDocuments', {
-            defaultValue: 'Failed to fetch documents'
-          }));
-        }
-        setLoading(false);
-      };
-
-      // Only fetch if we have customerId (for customer-scoped documents)
-      if (requiresCustomerId && customerId) {
-        await getClientDocumentsApi(callApi, callBack, {
-          documentType: actionConfig.documentType,
-          clientId: customerId,
-        });
-      } else {
-        // For purchase documents, we might need a different API endpoint
-        // For now, set empty array
-        setDocuments([]);
-        setLoading(false);
-      }
-    } catch (err: any) {
-      console.error('[AssignDocumentModal] Error fetching documents:', err);
-      setDocuments([]);
-      setError(err.message || t('frontdesk.errorFetchingDocuments', {
-        defaultValue: 'An error occurred while fetching documents'
-      }));
-      setLoading(false);
-    }
-  }, [actionConfig?.documentType, customerId, callApi, requiresCustomerId, t]);
-
-  useEffect(() => {
-    if (open && actionConfig?.documentType) {
-      fetchDocuments();
-    } else {
-      setDocuments([]);
-      setSelectedDocument(null);
-      setSearchTerm('');
-      setError(null);
-    }
-  }, [open, actionConfig?.documentType, fetchDocuments]);
-
-  // Format documents for autocomplete
+  // Convert normalized documents to autocomplete options
   const documentOptions = useMemo((): DocumentAutocompleteOption[] => {
     if (!documents.length) return [];
 
-    let filtered = documents;
-    if (searchTerm) {
-      const term = searchTerm.toLowerCase();
-      filtered = documents.filter(
-        (doc) =>
-          doc.number?.toLowerCase().includes(term) ||
-          doc.client?.name?.toLowerCase().includes(term)
-      );
-    }
+    // Sort by date (newest first) and limit to 50
+    const sortedDocs = [...documents].sort((a, b) => {
+      const dateA = new Date(a.createdDate || 0).getTime();
+      const dateB = new Date(b.createdDate || 0).getTime();
+      return dateB - dateA;
+    });
 
-    return filtered.map((doc) => ({
+    return sortedDocs.slice(0, 50).map((doc) => ({
       id: doc.id,
-      label: `${doc.number || 'N/A'} - ${doc.client?.name || 'Unknown'}`,
-      value: doc,
+      label: createDocumentLabel(doc),
+      value: doc as any, // Cast to DocumentListItem for compatibility
       documentNumber: doc.number,
       documentId: doc.id,
     }));
-  }, [documents, searchTerm]);
+  }, [documents]);
 
-  const handleConnect = () => {
-    if (selectedDocument?.documentId) {
-      onConnectToExisting(selectedDocument.documentId);
-      onClose();
-    }
-  };
+  const handleDocumentSelect = useCallback((documentId: string) => {
+    onConnectToExisting(documentId);
+    handleClose();
+  }, [onConnectToExisting, handleClose]);
 
   const handleCreateNew = () => {
     onCreateNew();
-    onClose();
+    handleClose();
   };
 
-  const theme = useTheme();
+  const { primaryColor, neutralColor } = useGomakeTheme();
   const modalTitle = actionConfig
-    ? `${t('frontdesk.assignTo', { defaultValue: 'Assign to' })} ${documentTitle || actionConfig.label.replace('Assign to ', '')}`
-    : 'Assign Document';
+    ? `${t("frontdesk.assignTo", { defaultValue: "Assign to" })} ${documentTitle || actionConfig.label.replace("Assign to ", "")}`
+    : "Assign Document";
 
-  return (
-    <GoMakeModal
-      openModal={open}
-      modalTitle={modalTitle}
-      onClose={onClose}
-      insideStyle={{
-        width: 650,
-        maxWidth: '92vw',
-        padding: '28px',
-        borderRadius: '16px',
-      }}
-    >
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-        {/* Customer Info - Only show if customer exists */}
-        {customerName && (
-          <Box
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 1.5,
-              p: 2.5,
-              borderRadius: '10px',
-              background: 'linear-gradient(135deg, #F9FAFB 0%, #F3F4F6 100%)',
-              border: `1px solid ${theme.palette.divider}`,
-            }}
-          >
-            <Box
-              sx={{
-                width: 40,
-                height: 40,
-                borderRadius: '10px',
-                backgroundColor: theme.palette.primary.main,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: 'white',
-              }}
-            >
-              <PersonIcon sx={{ fontSize: 22 }} />
-            </Box>
-            <Box sx={{ flex: 1 }}>
-              <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.5, fontSize: '0.75rem' }}>
-                {t('frontdesk.customer', { defaultValue: 'Customer' })}
-              </Typography>
-              <Typography variant="body1" fontWeight={600} sx={{ color: 'text.primary', fontSize: '1rem' }}>
-                {customerName}
-              </Typography>
-            </Box>
-          </Box>
-        )}
+  // Render document option in autocomplete dropdown
+  const renderDocumentOption = useCallback(
+    (props: React.HTMLAttributes<HTMLLIElement>, option: DocumentAutocompleteOption) => {
+      const doc = option.value as unknown as NormalizedDocument;
 
-        {/* Connect to Existing Section */}
+      // Status rendering
+      const statusElement = actionConfig?.documentType
+        ? actionConfig.documentType === DOCUMENT_TYPE.invoice && doc.isDraft
+          ? <span style={{ color: "#e77676" }}>{t("sales.quote.draft")}</span>
+          : _renderStatus(actionConfig.documentType, doc, t)
+        : null;
+
+      return (
         <Box
+          component="li"
+          {...props}
+          key={option.id}
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            handleDocumentSelect(option.documentId);
+          }}
           sx={{
-            p: 2.5,
-            borderRadius: '10px',
-            border: `1px solid ${theme.palette.divider}`,
-            backgroundColor: theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.02)' : '#FAFBFC',
+            py: 1.25,
+            px: 2,
+            display: "flex",
+            alignItems: "center",
+            gap: 1.5,
+            borderBottom: `1px solid ${neutralColor(200)}`,
+            "&:last-child": { borderBottom: "none" },
+            "&:hover": { backgroundColor: neutralColor(50) },
+            cursor: "pointer",
           }}
         >
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
-            <LinkIcon sx={{ color: 'primary.main', fontSize: 20 }} />
-            <Typography 
-              variant="h6" 
-              sx={{ 
-                fontWeight: 600,
-                fontSize: '1rem',
-                color: 'text.primary',
-              }}
+          <DocumentIcon
+            size="medium"
+            variant="neutral"
+            neutralColor={neutralColor}
+          />
+          <Box sx={{ flex: 1, minWidth: 0 }}>
+            <DocumentInfoDisplay
+              number={doc.number}
+              amount={doc.totalPrice > 0 ? formatDocumentPrice(doc.totalPrice, doc.currency) : undefined}
+              date={formatDocumentDate(doc.createdDate)}
+              neutralColor={neutralColor}
             >
-              {t('frontdesk.connectToExisting', { defaultValue: 'Connect to existing' })} {documentTitle}
-            </Typography>
+              {doc.sourceDocuments.length > 0 && (
+                <SourceDocumentLinks
+                  sourceDocuments={doc.sourceDocuments}
+                  maxDisplay={2}
+                  layout="inline"
+                  neutralColor={neutralColor}
+                />
+              )}
+            </DocumentInfoDisplay>
           </Box>
-
-          {error ? (
-            <Alert
-              severity="error"
-              icon={<ErrorOutlineIcon />}
-              sx={{ mb: 2 }}
-              action={
-                <GomakePrimaryButton
-                  onClick={fetchDocuments}
-                  size="small"
-                  sx={{ textTransform: 'none' }}
-                >
-                  {t('frontdesk.retry', { defaultValue: 'Retry' })}
-                </GomakePrimaryButton>
-              }
-            >
-              <Typography variant="body2">{error}</Typography>
-            </Alert>
-          ) : loading ? (
-            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', py: 5 }}>
-              <CircularProgress size={36} sx={{ color: 'primary.main' }} />
-              <Typography variant="body2" color="text.secondary" sx={{ mt: 2.5, fontSize: '0.875rem' }}>
-                {t('frontdesk.loadingDocuments', { defaultValue: 'Loading documents...' })}
-              </Typography>
+          {statusElement && (
+            <Box sx={{ display: "flex", alignItems: "center", flexShrink: 0 }}>
+              {statusElement}
             </Box>
-          ) : !canConnectToExisting ? (
-            <Box
+          )}
+        </Box>
+      );
+    },
+    [actionConfig?.documentType, neutralColor, t, handleDocumentSelect]
+  );
+
+  return (
+    <Dialog
+      open={open}
+      onClose={handleClose}
+      maxWidth="md"
+      fullWidth
+      aria-labelledby="assign-document-modal-title"
+      PaperProps={{
+        sx: {
+          borderRadius: "8px",
+          maxHeight: "90vh",
+        },
+      }}
+    >
+      {/* Header */}
+      <DialogTitle
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          pb: 2,
+          pt: 2.5,
+          px: 3,
+          borderBottom: `1px solid ${neutralColor(200)}`,
+        }}
+      >
+        <Typography
+          id="assign-document-modal-title"
+          variant="h6"
+          sx={{ fontWeight: 600, fontSize: "1.125rem", color: neutralColor(900) }}
+        >
+          {modalTitle}
+        </Typography>
+        <IconButton
+          onClick={handleClose}
+          size="small"
+          disabled={loading}
+          aria-label="Close assign document modal"
+          sx={{
+            color: neutralColor(600),
+            "&:hover": { bgcolor: neutralColor(100) },
+          }}
+        >
+          <CloseIcon fontSize="small" />
+        </IconButton>
+      </DialogTitle>
+
+      {/* Content */}
+      <DialogContent sx={{ pt: 3, px: 3, pb: 2 }}>
+        {error && (
+          <Alert severity="error" onClose={clearError} sx={{ mb: 2 }}>
+            {error}
+          </Alert>
+        )}
+
+        <Stack spacing={2}>
+          {/* Connect to Existing Section */}
+          <Box>
+            <Typography
               sx={{
-                p: 3,
-                borderRadius: '8px',
-                backgroundColor: theme.palette.mode === 'dark' ? 'rgba(239, 68, 68, 0.1)' : '#FEF2F2',
-                border: `1px solid ${theme.palette.mode === 'dark' ? 'rgba(239, 68, 68, 0.3)' : '#FEE2E2'}`,
-                textAlign: 'center',
+                fontSize: "0.875rem",
+                color: neutralColor(800),
+                fontWeight: 600,
+                mb: 1.5,
               }}
             >
-              <Typography variant="body2" color="error" sx={{ fontWeight: 500 }}>
-                {t('frontdesk.customerRequired', { defaultValue: 'Customer must be linked to conversation first' })}
-              </Typography>
-            </Box>
-          ) : (
-            <>
-              <Box sx={{ position: 'relative' }}>
-                <GoMakeAutoComplate
-                  options={documentOptions}
-                  placeholder={t('frontdesk.searchDocuments', { defaultValue: 'Search documents...' })}
-                  value={selectedDocument}
-                  onChange={(
-                    _e: React.SyntheticEvent,
-                    value: DocumentAutocompleteOption | null
-                  ) => {
-                    setSelectedDocument(value);
-                  }}
-                  onInputChange={(_e: React.SyntheticEvent, value: string) => {
-                    setSearchTerm(value || '');
-                  }}
-                  getOptionLabel={(option: DocumentAutocompleteOption) => option?.label || ''}
-                  renderOption={(
-                    props: React.HTMLAttributes<HTMLLIElement>,
-                    option: DocumentAutocompleteOption
-                  ) => (
+              {t("frontdesk.connectToExisting", { defaultValue: "Connect to existing" })} {documentTitle}
+            </Typography>
+
+            {loading ? (
+              <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", py: 5 }}>
+                <CircularProgress size={36} sx={{ color: primaryColor(600) }} />
+                <Typography
+                  variant="body2"
+                  sx={{ mt: 2.5, fontSize: "0.875rem", color: neutralColor(600) }}
+                >
+                  {t("frontdesk.loadingDocuments", { defaultValue: "Loading documents..." })}
+                </Typography>
+              </Box>
+            ) : !canConnectToExisting ? (
+              <Alert severity="warning" icon={<ErrorOutlineIcon />}>
+                {t("frontdesk.customerRequired", { defaultValue: "Customer must be linked to conversation first" })}
+              </Alert>
+            ) : (
+              <>
+                <Box sx={{ position: "relative" }}>
+                  <GoMakeAutoComplate
+                    options={documentOptions}
+                    placeholder={t("frontdesk.searchDocuments", {
+                      defaultValue: "Search by number, customer, date, status, or amount...",
+                    })}
+                    value={null}
+                    inputValue={searchTerm}
+                    onChange={() => {}}
+                    onInputChange={(_e: React.SyntheticEvent, value: string) => {
+                      setSearchTerm(value || "");
+                    }}
+                    getOptionLabel={(option: DocumentAutocompleteOption) => option?.label || ""}
+                    renderOption={renderDocumentOption}
+                    noOptionsText={
+                      debouncedSearchTerm
+                        ? t("frontdesk.noResultsFound", {
+                            defaultValue:
+                              "No matching documents found. Try searching by document number, customer name, date, status, or amount.",
+                          })
+                        : t("frontdesk.startTypingToSearch", {
+                            defaultValue: "Start typing to search by number, customer, date, status, or amount...",
+                          })
+                    }
+                    loading={loading}
+                    disabled={!canConnectToExisting || !!error}
+                    style={{ width: "100%" }}
+                  />
+                  {!loading && documents.length > 0 && (
                     <Box
-                      component="li"
-                      {...props}
-                      key={option.id}
                       sx={{
-                        py: 1.5,
-                        px: 2,
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 2,
-                        borderBottom: `1px solid ${theme.palette.divider}`,
-                        '&:last-child': {
-                          borderBottom: 'none',
-                        },
-                        '&:hover': {
-                          backgroundColor: theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.02)',
-                        },
+                        position: "absolute",
+                        top: "8px",
+                        right: "12px",
+                        zIndex: 1,
                       }}
                     >
-                      <Box
+                      <Typography
+                        variant="caption"
                         sx={{
-                          width: 36,
-                          height: 36,
-                          borderRadius: '8px',
-                          backgroundColor: theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.04)',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          flexShrink: 0,
+                          fontSize: "0.75rem",
+                          color: neutralColor(600),
+                          fontWeight: 500,
+                          backgroundColor: neutralColor(0),
+                          px: 1,
+                          py: 0.5,
+                          borderRadius: "4px",
                         }}
                       >
-                        <DescriptionOutlinedIcon sx={{ fontSize: 18, color: 'text.secondary' }} />
-                      </Box>
-                      <Box sx={{ flex: 1, minWidth: 0 }}>
-                        <Typography
-                          variant="body2"
-                          sx={{
-                            fontWeight: 600,
-                            color: 'text.primary',
-                            fontSize: '0.9375rem',
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis',
-                            whiteSpace: 'nowrap',
-                          }}
-                        >
-                          {option.documentNumber || 'N/A'}
-                        </Typography>
-                        <Typography
-                          variant="caption"
-                          sx={{
-                            color: 'text.secondary',
-                            fontSize: '0.8125rem',
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis',
-                            whiteSpace: 'nowrap',
-                            display: 'block',
-                          }}
-                        >
-                          {option.value.client?.name || 'Unknown Customer'}
-                        </Typography>
-                      </Box>
+                        {debouncedSearchTerm
+                          ? `${documentOptions.length} ${documentOptions.length === 1 ? "result" : "results"}`
+                          : `${documents.length} ${documents.length === 1 ? "document" : "documents"}`}
+                      </Typography>
                     </Box>
                   )}
-                  noOptionsText={
-                    searchTerm
-                      ? t('frontdesk.noResultsFound', { defaultValue: 'No matching documents found' })
-                      : t('frontdesk.startTypingToSearch', { defaultValue: 'Start typing to search...' })
-                  }
-                  loading={loading}
-                  disabled={!canConnectToExisting || !!error}
-                  style={{ width: '100%' }}
-                />
-                {!loading && documents.length > 0 && (
+                </Box>
+
+                {documents.length === 0 && !loading && canConnectToExisting && (
                   <Box
                     sx={{
-                      mt: 1.5,
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: 1,
+                      mt: 2,
+                      p: 2,
+                      textAlign: "center",
+                      backgroundColor: neutralColor(50),
+                      borderRadius: "6px",
                     }}
                   >
-                    <SearchIcon sx={{ fontSize: 16, color: 'text.secondary' }} />
-                    <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.8125rem' }}>
-                      {documentOptions.length} {documentOptions.length === 1 ? 'document' : 'documents'} available
+                    <Typography variant="body2" sx={{ fontSize: "0.875rem", color: neutralColor(600) }}>
+                      {requiresCustomerId
+                        ? t("frontdesk.noDocumentsFound", { defaultValue: "No documents found for this customer" })
+                        : t("frontdesk.connectToExistingNotAvailable", {
+                            defaultValue: "Connecting to existing documents is not available for this document type",
+                          })}
                     </Typography>
                   </Box>
                 )}
-              </Box>
-
-              {documents.length === 0 && !loading && canConnectToExisting && (
-                <Box
-                  sx={{
-                    mt: 2,
-                    p: 2.5,
-                    borderRadius: '8px',
-                    backgroundColor: theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.03)' : '#F9FAFB',
-                    textAlign: 'center',
-                    border: `1px dashed ${theme.palette.divider}`,
-                  }}
-                >
-                  <Typography variant="body2" color="text.secondary" sx={{ fontSize: '0.875rem' }}>
-                    {requiresCustomerId 
-                      ? t('frontdesk.noDocumentsFound', { defaultValue: 'No documents found for this customer' })
-                      : t('frontdesk.connectToExistingNotAvailable', { defaultValue: 'Connecting to existing documents is not available for this document type' })
-                    }
-                  </Typography>
-                </Box>
-              )}
-
-              {selectedDocument && (
-                <Box
-                  sx={{
-                    mt: 2,
-                    p: 2,
-                    borderRadius: '10px',
-                    backgroundColor: theme.palette.mode === 'dark' ? 'rgba(33, 150, 243, 0.1)' : 'rgba(33, 150, 243, 0.08)',
-                    border: `1px solid ${theme.palette.mode === 'dark' ? 'rgba(33, 150, 243, 0.3)' : 'rgba(33, 150, 243, 0.2)'}`,
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 1.5,
-                  }}
-                >
-                  <Box
-                    sx={{
-                      width: 40,
-                      height: 40,
-                      borderRadius: '8px',
-                      backgroundColor: theme.palette.primary.main,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      color: 'white',
-                      flexShrink: 0,
-                    }}
-                  >
-                    <DescriptionOutlinedIcon sx={{ fontSize: 20 }} />
-                  </Box>
-                  <Box sx={{ flex: 1, minWidth: 0 }}>
-                    <Typography variant="caption" sx={{ color: 'primary.main', fontWeight: 600, display: 'block', mb: 0.25, fontSize: '0.75rem' }}>
-                      {t('frontdesk.selectedDocument', { defaultValue: 'Selected Document' })}
-                    </Typography>
-                    <Typography
-                      variant="body2"
-                      sx={{
-                        fontWeight: 600,
-                        color: 'text.primary',
-                        fontSize: '0.9375rem',
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                        whiteSpace: 'nowrap',
-                      }}
-                    >
-                      {selectedDocument.documentNumber}
-                    </Typography>
-                  </Box>
-                </Box>
-              )}
-
-              <GomakePrimaryButton
-                onClick={handleConnect}
-                disabled={!selectedDocument || !canConnectToExisting}
-                startIcon={<LinkIcon />}
-                sx={{
-                  mt: selectedDocument ? 2 : 2.5,
-                  width: '100%',
-                  height: 48,
-                  borderRadius: '10px',
-                  fontSize: '0.9375rem',
-                  fontWeight: 600,
-                  textTransform: 'none',
-                  boxShadow: selectedDocument ? '0 4px 12px rgba(0, 0, 0, 0.15)' : 'none',
-                  '&:hover': {
-                    boxShadow: selectedDocument ? '0 6px 16px rgba(0, 0, 0, 0.2)' : 'none',
-                  },
-                }}
-              >
-                {selectedDocument
-                  ? t('frontdesk.linkDocument', { defaultValue: 'Link Document' })
-                  : t('frontdesk.selectDocumentFirst', { defaultValue: 'Select a document to connect' })}
-              </GomakePrimaryButton>
-            </>
-          )}
-        </Box>
-
-        {/* Divider */}
-        <Box sx={{ position: 'relative', my: 1 }}>
-          <Divider />
-          <Box
-            sx={{
-              position: 'absolute',
-              top: '50%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)',
-              px: 2,
-              backgroundColor: theme.palette.background.paper,
-            }}
-          >
-            <Typography 
-              variant="caption" 
-              sx={{ 
-                color: 'text.secondary',
-                fontWeight: 600,
-                fontSize: '0.75rem',
-                letterSpacing: '0.5px',
-              }}
-            >
-              {t('frontdesk.or', { defaultValue: 'OR' })}
-            </Typography>
+              </>
+            )}
           </Box>
-        </Box>
+        </Stack>
+      </DialogContent>
 
-        {/* Create New Section */}
-        <Box
-          sx={{
-            p: 3,
-            borderRadius: '12px',
-            border: `1px solid ${theme.palette.divider}`,
-            backgroundColor: theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.02)' : '#FAFBFC',
-            transition: 'all 0.2s ease',
-            '&:hover': {
-              borderColor: theme.palette.primary.main,
-              backgroundColor: theme.palette.mode === 'dark' ? 'rgba(33, 150, 243, 0.05)' : 'rgba(33, 150, 243, 0.02)',
-            },
-          }}
-        >
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 2.5 }}>
-            <Box
-              sx={{
-                width: 36,
-                height: 36,
-                borderRadius: '8px',
-                backgroundColor: theme.palette.mode === 'dark' ? 'rgba(76, 175, 80, 0.15)' : 'rgba(76, 175, 80, 0.1)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: theme.palette.success.main,
-              }}
-            >
-              <AddIcon sx={{ fontSize: 20 }} />
-            </Box>
-            <Box>
-              <Typography
-                variant="h6"
-                sx={{
-                  fontWeight: 600,
-                  fontSize: '1rem',
-                  color: 'text.primary',
-                  lineHeight: 1.3,
-                }}
-              >
-                {t('frontdesk.createNew', { defaultValue: 'Create new' })} {documentTitle}
-              </Typography>
-              <Typography
-                variant="caption"
-                sx={{
-                  color: 'text.secondary',
-                  fontSize: '0.8125rem',
-                  display: 'block',
-                  mt: 0.25,
-                }}
-              >
-                {customerName
-                  ? t('frontdesk.createForCustomer', { defaultValue: 'Create for {{customer}}', customer: customerName })
-                  : t('frontdesk.startFresh', { defaultValue: 'Start with a blank document' })}
-              </Typography>
-            </Box>
-          </Box>
-          <GomakePrimaryButton
-            onClick={handleCreateNew}
-            startIcon={<AddIcon />}
-            sx={{
-              width: '100%',
-              height: 48,
-              borderRadius: '10px',
-              fontSize: '0.9375rem',
-              fontWeight: 600,
-              textTransform: 'none',
-              backgroundColor: theme.palette.success.main,
-              '&:hover': {
-                backgroundColor: theme.palette.success.dark,
-              },
-            }}
-          >
-            {t('frontdesk.createNewDocument', { defaultValue: 'Create New Document' })}
-          </GomakePrimaryButton>
-        </Box>
-      </Box>
-    </GoMakeModal>
+      {/* Footer */}
+      <DialogActions sx={{ px: 3, py: 2, borderTop: `1px solid ${neutralColor(200)}`, gap: 1.5 }}>
+        <Button onClick={handleCreateNew} variant="contained" startIcon={<AddIcon />} disabled={loading}>
+          {t("frontdesk.createNewDocument", { defaultValue: "Create New Document" })}
+        </Button>
+      </DialogActions>
+    </Dialog>
   );
 };
-

@@ -198,6 +198,17 @@ const initState: Record<string, Record<string, any>> = {
             varnish: false
         }
     },
+    [ECategoryId.WINDOW_PATCHING_MACHINE]: {
+        category: ECategoryId.WINDOW_PATCHING_MACHINE,
+        price: {price: 0, currency: 0},
+        attributes: {
+            resolution: 0,
+            doubleHead: false,
+            coatingUnit: false,
+            basicsColors: 1,
+            varnish: false
+        }
+    },
     [ECategoryId.STRIPPING_MACHINES]: {
         category: ECategoryId.STRIPPING_MACHINES,
         price: {price: 0, currency: 0},

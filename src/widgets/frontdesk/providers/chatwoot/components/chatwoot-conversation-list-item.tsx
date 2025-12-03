@@ -5,6 +5,8 @@ import { htmlToPlainText, isHtmlContent } from "@/widgets/frontdesk/utils/html-s
 import { ConversationContextMenu } from "@/widgets/frontdesk/components/shared";
 import { useConversationContextMenu } from "@/widgets/frontdesk/hooks/use-conversation-context-menu";
 import { useChatwootContextMenu } from "../hooks/use-chatwoot-context-menu";
+import { formatChatwootTimestamp } from "../utils/conversation-helpers";
+import { generateContactAvatar } from "../utils/avatar.utils";
 import type { ChatwootConversation } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
 import type { ChatwootInbox } from "@/services/frontdesk/api/chatwoot/types/inboxes.types";
 
@@ -19,6 +21,7 @@ interface ChatwootConversationListItemProps {
   onContextMenuAction?: (actionId: string, conversationId: string | number) => void;
   inboxes?: ChatwootInbox[];
   inboxesLoading?: boolean;
+  hideAssigneeAvatar?: boolean;
 }
 
 // ============================================================================
@@ -31,6 +34,7 @@ interface ChatwootConversationListItemProps {
 function extractEmailSubject(conversation: any): string | null {
   return (
     conversation.additional_attributes?.subject ||
+    conversation.additional_attributes?.mail_subject ||
     conversation.custom_attributes?.subject ||
     conversation.messages?.[0]?.content_attributes?.subject ||
     conversation.messages?.[0]?.content_attributes?.email?.subject ||
@@ -53,14 +57,9 @@ function extractEmailRecipient(conversation: any): string | null {
 }
 
 /**
- * Formats Chatwoot Unix timestamp to ISO string
- */
-function formatChatwootTimestamp(timestamp: number): string {
-  return new Date(timestamp * 1000).toISOString();
-}
-
-/**
  * Extracts and formats the conversation timestamp
+ *
+ * Uses the shared formatChatwootTimestamp utility for consistent conversion.
  */
 function getFormattedTimestamp(conversation: any): string {
   const timestamp = conversation.updated_at || conversation.created_at || conversation.timestamp;
@@ -70,11 +69,18 @@ function getFormattedTimestamp(conversation: any): string {
   }
 
   // Chatwoot uses Unix timestamps (seconds), convert to ISO
-  const isoTimestamp = conversation.updated_at
-    ? formatChatwootTimestamp(conversation.updated_at)
-    : conversation.created_at
-    ? formatChatwootTimestamp(conversation.created_at)
-    : conversation.timestamp;
+  let isoTimestamp: string;
+  if (conversation.updated_at) {
+    isoTimestamp = formatChatwootTimestamp(conversation.updated_at);
+  } else if (conversation.created_at) {
+    isoTimestamp = formatChatwootTimestamp(conversation.created_at);
+  } else if (typeof conversation.timestamp === "number") {
+    // Handle numeric timestamp (Unix seconds)
+    isoTimestamp = formatChatwootTimestamp(conversation.timestamp);
+  } else {
+    // Already an ISO string
+    isoTimestamp = conversation.timestamp;
+  }
 
   return formatConversationDate(isoTimestamp);
 }
@@ -111,6 +117,14 @@ function getConversationSnippet(conversation: any): string {
   }
 
   return content;
+}
+
+/**
+ * Checks if the conversation has attachments in the last message
+ */
+function hasAttachments(conversation: any): boolean {
+  const lastMessage = conversation.last_non_activity_message || conversation.messages?.[0];
+  return Array.isArray(lastMessage?.attachments) && lastMessage.attachments.length > 0;
 }
 
 /**
@@ -155,6 +169,7 @@ const ChatwootConversationListItemComponent: React.FC<ChatwootConversationListIt
   onContextMenuAction,
   inboxes = [],
   inboxesLoading = false,
+  hideAssigneeAvatar = false,
 }) => {
   // Context menu position state (for right-click menu positioning)
   const { contextMenuPosition, handleContextMenu, handleCloseContextMenu } = useConversationContextMenu();
@@ -173,6 +188,19 @@ const ChatwootConversationListItemComponent: React.FC<ChatwootConversationListIt
     return inboxes.find((inbox) => inbox.id === conversation.inbox_id) || null;
   }, [conversation.inbox_id, inboxes]);
 
+  // Generate consistent avatar data using unified utility
+  const senderAvatarData = useMemo(() => {
+    const sender = conversation.meta?.sender;
+    return generateContactAvatar({
+      id: sender?.id,
+      name: sender?.name,
+      email: sender?.email,
+      thumbnail: sender?.thumbnail,
+      avatar_url: sender?.avatar_url,
+      availability_status: sender?.availability_status || sender?.availabilityStatus,
+    });
+  }, [conversation.meta?.sender]);
+
   const conversationData = useMemo(() => {
     const sender = conversation.meta?.sender;
 
@@ -185,12 +213,16 @@ const ChatwootConversationListItemComponent: React.FC<ChatwootConversationListIt
       recipient: extractEmailRecipient(conversation),
       unreadCount: conversation.unread_count || 0,
       presence: sender?.availability_status || sender?.availabilityStatus || null,
-      avatarSrc: sender?.avatar_url,
+      avatarSrc: senderAvatarData.src,
+      avatarBackgroundColor: senderAvatarData.backgroundColor,
+      avatarInitials: senderAvatarData.initials,
       priority: conversation.priority || null,
       inboxChannelType: inbox?.channel_type || conversation.meta?.channel || null,
       inboxMedium: (inbox as any)?.medium || null,
       inboxName: inbox?.name || null,
-      assignee: conversation.meta?.assignee
+      assignee: hideAssigneeAvatar
+        ? null
+        : conversation.meta?.assignee
         ? {
             name: conversation.meta.assignee.name,
             avatarSrc: conversation.meta.assignee.avatar_url,
@@ -201,8 +233,9 @@ const ChatwootConversationListItemComponent: React.FC<ChatwootConversationListIt
       appliedSla: conversation.applied_sla || conversation.appliedSla || null,
       conversationTimestamp: conversation.timestamp || conversation.created_at || null,
       lastActivityAt: conversation.last_activity_at || conversation.lastActivityAt || null,
+      hasAttachments: hasAttachments(conversation),
     };
-  }, [conversation, inbox]);
+  }, [conversation, inbox, hideAssigneeAvatar, senderAvatarData]);
 
   // ========================================================================
   // Event Handlers
@@ -245,9 +278,11 @@ const ChatwootConversationListItemComponent: React.FC<ChatwootConversationListIt
         isRead={conversationData.unreadCount === 0}
         isSelected={isSelected}
         unreadCount={conversationData.unreadCount}
-        hasAttachments={false}
+        hasAttachments={conversationData.hasAttachments}
         isStarred={false}
         avatarSrc={conversationData.avatarSrc}
+        avatarBackgroundColor={conversationData.avatarBackgroundColor}
+        avatarInitials={conversationData.avatarInitials}
         presence={conversationData.presence}
         priority={conversationData.priority}
         onClick={handleSelect}

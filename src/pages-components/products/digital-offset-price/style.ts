@@ -339,6 +339,13 @@ const useStyle = ({ isMobileScreen }: IProps) => {
         ...FONT_FAMILY.Lexend(500, 14),
         boxShadow: "none",
       },
+      proofDropDownListStyle: {
+        borderRadius: 4,
+        height: 40,
+        border: "0px",
+        backgroundColor: "#fff",
+        ...FONT_FAMILY.Lexend(500, 14),
+      },
       requiredDropDownListStyle: {
         width: "200px",
         borderRadius: 4,
@@ -705,6 +712,7 @@ const useStyle = ({ isMobileScreen }: IProps) => {
         justifyContent: "flex-start",
         alignItems: "flex-start",
         width: "100%",
+        overflow: "visible" as "visible",
       },
       sampleTypeStyle: {
         ...FONT_FAMILY.Lexend(500, 14),
@@ -717,6 +725,11 @@ const useStyle = ({ isMobileScreen }: IProps) => {
       },
       multiLineContainer: {
         width: "100%",
+        marginBottom: 20,
+      },
+      qualityIssueContainer: {
+        width: "100%",
+        marginBottom: 20,
       },
       multiLineTextInputStyle: {
         width: "100%",
