@@ -190,7 +190,6 @@ const useDigitalOffsetPrice = ({
   const [subProducts, setSubProducts] = useRecoilState<any>(
     subProductsParametersState
   );
-  console.log("subProducts", subProducts);
   const [isMigratedFromOldSystem, setIsMigratedFromOldSystem] = useState(false);
   const [ignoreCalculatedWorkflows, setIgnoreCalculatedWorkflows] = useState(
     productTemplate?.ignoreCalculatedWorkflows
@@ -1170,6 +1169,26 @@ const useDigitalOffsetPrice = ({
 
   // Function to check if a parameter should be visible based on related parameters
   function isParameterVisible(parameter, subProduct, section, subSection) {
+    // First, check if this parameter is a child of a hidden parent parameter
+    // Find parent parameters that have this parameter in their childsParameters array
+    const parentParameters = subSection.parameters.filter((parentParam) => {
+      return (
+        parentParam.childsParameters &&
+        parentParam.childsParameters.some(
+          (childParam) => childParam.id === parameter.id
+        )
+      );
+    });
+
+    // If this parameter has a parent and the parent is hidden, hide this parameter too
+    if (parentParameters.length > 0) {
+      for (const parentParam of parentParameters) {
+        if (parentParam.isHidden === true) {
+          return false;
+        }
+      }
+    }
+
     // Check if this parameter is controlled by any related parameters
     const controllingParameters = [];
 
@@ -1381,7 +1400,38 @@ const useDigitalOffsetPrice = ({
         });
       });
       // Filter out items where isHidden === true
-      temp = temp.filter((item) => !item.isHidden);
+      temp = temp.filter((item) => {
+        if (item.isHidden === true) {
+          return false;
+        }
+        // Also filter out child parameters of hidden parents
+        // Find the section and subSection for this parameter
+        const section = productTemplate.sections.find((s) =>
+          s.subSections.some((subSection) =>
+            subSection.parameters.some((p) => p.id === item.id)
+          )
+        );
+        if (section) {
+          const subSection = section.subSections.find((subSection) =>
+            subSection.parameters.some((p) => p.id === item.id)
+          );
+          if (subSection) {
+            // Check if this parameter is a child of a hidden parent
+            const parentParameter = subSection.parameters.find((parentParam) => {
+              return (
+                parentParam.childsParameters &&
+                parentParam.childsParameters.some(
+                  (childParam) => childParam.id === item.id
+                )
+              );
+            });
+            if (parentParameter && parentParameter.isHidden === true) {
+              return false; // Hide child if parent is hidden
+            }
+          }
+        }
+        return true;
+      });
       setIsRequiredParameters(temp);
       setActiveSectionRequiredParameters(activeSectionTemp);
     }
@@ -2655,6 +2705,17 @@ const useDigitalOffsetPrice = ({
               (!defaultValue || defaultValue === "false")
             ) {
               parameter.isHidden = true;
+              // Hide child parameters when parent parameter is hidden
+              if (parameter.childsParameters && parameter.childsParameters.length > 0) {
+                parameter.childsParameters.forEach((childParamId) => {
+                  const childParam = subSection.parameters.find(
+                    (p) => p.id === childParamId.id
+                  );
+                  if (childParam) {
+                    childParam.isHidden = true;
+                  }
+                });
+              }
             }
             const parameterDefaultValue = parameter.valuesConfigs?.find(
               (x) => x.isDefault
@@ -2688,6 +2749,17 @@ const useDigitalOffsetPrice = ({
               ) {
                 parameter.isHidden = true;
               }
+            }
+            // Hide child parameters when parent parameter is hidden
+            if (parameter.isHidden === true && parameter.childsParameters && parameter.childsParameters.length > 0) {
+              parameter.childsParameters.forEach((childParamId) => {
+                const childParam = subSection.parameters.find(
+                  (p) => p.id === childParamId.id
+                );
+                if (childParam) {
+                  childParam.isHidden = true;
+                }
+              });
             }
             if (!relatedToParameter) {
               if (
@@ -4895,6 +4967,17 @@ const useDigitalOffsetPrice = ({
           });
         }
         if (param.isHidden == true) {
+          // Hide child parameters when parent parameter is hidden
+          if (param.childsParameters && param.childsParameters.length > 0) {
+            param.childsParameters.forEach((childParamId) => {
+              const childParam = subSectionCopy.parameters.find(
+                (p) => p.id === childParamId.id
+              );
+              if (childParam) {
+                childParam.isHidden = true;
+              }
+            });
+          }
           if (param.relatedParameters) {
             for (let i = 0; i < param.relatedParameters.length; i++) {
               let relatedParameterId = param.relatedParameters[i].parameterId;
@@ -5004,6 +5087,17 @@ const useDigitalOffsetPrice = ({
           return;
         }
         param.isHidden = true;
+        // Hide child parameters when parent parameter is hidden
+        if (param.childsParameters && param.childsParameters.length > 0) {
+          param.childsParameters.forEach((childParamId) => {
+            const childParam = subSectionCopy.parameters.find(
+              (p) => p.id === childParamId.id
+            );
+            if (childParam) {
+              childParam.isHidden = true;
+            }
+          });
+        }
         // subProducts.forEach(x => {
         //   if (x.type == subSection.type) {
         //     x.parameters = x.parameters.filter(p => p.parameterId != param.id)
@@ -5159,6 +5253,17 @@ const useDigitalOffsetPrice = ({
             }
           });
           param.isHidden = true;
+          // Hide child parameters when parent parameter is hidden
+          if (param.childsParameters && param.childsParameters.length > 0) {
+            param.childsParameters.forEach((childParamId) => {
+              const childParam = subSectionCopy.parameters.find(
+                (p) => p.id === childParamId.id
+              );
+              if (childParam) {
+                childParam.isHidden = true;
+              }
+            });
+          }
           if (param.relatedParameters) {
             for (let i = 0; i < param.relatedParameters.length; i++) {
               let relatedParameterId = param.relatedParameters[i].parameterId;
@@ -5278,6 +5383,17 @@ const useDigitalOffsetPrice = ({
               x.actionIndex === actionIndex
           );
           if (param.isHidden == true) {
+            // Hide child parameters when parent parameter is hidden
+            if (param.childsParameters && param.childsParameters.length > 0) {
+              param.childsParameters.forEach((childParamId) => {
+                const childParam = subSectionCopy.parameters.find(
+                  (p) => p.id === childParamId.id
+                );
+                if (childParam) {
+                  childParam.isHidden = true;
+                }
+              });
+            }
             if (param.relatedParameters) {
               for (let i = 0; i < param.relatedParameters.length; i++) {
                 let relatedParameterId = param.relatedParameters[i].parameterId;
@@ -5998,7 +6114,6 @@ const useDigitalOffsetPrice = ({
     parameterCode: string,
     dieCut: any
   ) => {
-    console.log("dieCut", dieCut);
     let copySubProducts = cloneDeep(subProducts);
     const targetSubProduct = copySubProducts.find(
       (item) => item.type === subSectionType
@@ -9075,11 +9190,33 @@ const useDigitalOffsetPrice = ({
   const validateParameters = (currentSubProducts, sectionId?: string) => {
     let isValid = true;
     const allParameters = currentSubProducts.flatMap((item) => item.parameters);
+
+    // Helper function to check if a parameter should be considered hidden
+    const isParameterHidden = (parameter, subSection) => {
+      // Check if parameter itself is hidden
+      if (parameter.isHidden === true) {
+        return true;
+      }
+      // Check if parameter is a child of a hidden parent parameter (through childsParameters)
+      const parentParameter = subSection.parameters.find((parentParam) => {
+        return (
+          parentParam.childsParameters &&
+          parentParam.childsParameters.some(
+            (childParam) => childParam.id === parameter.id
+          )
+        );
+      });
+      if (parentParameter && parentParameter.isHidden === true) {
+        return true; // Hide child if parent is hidden
+      }
+      return false;
+    };
+
     if (sectionId) {
       let section = productTemplate.sections.find((x) => x.id === sectionId);
       for (const subSection of section.subSections) {
         for (const parameter of subSection.parameters) {
-          if (!parameter.isHidden && parameter.isRequired) {
+          if (!isParameterHidden(parameter, subSection) && parameter.isRequired) {
             const index = allParameters.findIndex(
               (par) =>
                 par.parameterId === parameter.id &&
@@ -9110,7 +9247,7 @@ const useDigitalOffsetPrice = ({
             continue;
           }
           for (const parameter of subSection.parameters) {
-            if (!parameter.isHidden && parameter.isRequired) {
+            if (!isParameterHidden(parameter, subSection) && parameter.isRequired) {
               const index = allParameters.findIndex(
                 (par) =>
                   par.parameterId === parameter.id &&
@@ -10099,7 +10236,6 @@ const useDigitalOffsetPrice = ({
     parameters,
     productTemplate
   ) {
-    console.log("parametersparametersparameters", parameters);
     // Create a new array to store the filtered parameters
     const updatedParameters = [];
 

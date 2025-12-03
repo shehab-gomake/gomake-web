@@ -32,6 +32,21 @@ const SectionMappingWidget = ({
   useEffect(() => {
     const groupedParameters = subSection?.parameters
       ?.filter((param: any) => !param.isHidden)
+      ?.filter((param: any) => {
+        // Check if this parameter is a child of a hidden parent parameter (through childsParameters)
+        const parentParameter = subSection?.parameters?.find((parentParam: any) => {
+          return (
+            parentParam.childsParameters &&
+            parentParam.childsParameters.some(
+              (childParam: any) => childParam.id === param.id
+            )
+          );
+        });
+        if (parentParameter && parentParameter.isHidden === true) {
+          return false; // Hide child if parent is hidden
+        }
+        return true;
+      })
       ?.filter((param: any) => !param.isUnderParameterId)
       ?.filter((param: any) => {
         return !relatedParameters.some(
@@ -215,6 +230,19 @@ const SectionMappingWidget = ({
           {subSection?.parameters
             ?.filter((param: any) => !param.isHidden)
             ?.filter((param: any) => {
+              // Check if this parameter is a child of a hidden parent parameter (through childsParameters)
+              const parentParameter = subSection?.parameters?.find((parentParam: any) => {
+                return (
+                  parentParam.childsParameters &&
+                  parentParam.childsParameters.some(
+                    (childParam: any) => childParam.id === param.id
+                  )
+                );
+              });
+              if (parentParameter && parentParameter.isHidden === true) {
+                return false; // Hide child if parent is hidden
+              }
+              
               // If parameter has isUnderParameterId, check if it exists in subSection?.parameters
               if (param.isUnderParameterId) {
                 const existsInParameters = subSection?.parameters?.find(
