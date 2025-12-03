@@ -763,6 +763,11 @@ const useMaterialsActions = (isAdmin: boolean) => {
               setDuplicatesData(res.data);
               setOpenDuplicatesModal(true);
             }
+
+            // Refresh categories after successful upload
+            if (materialType) {
+              getMaterialCategories(materialType).then();
+            }
           } else {
             const error = res?.errors;
             let userMessage = t("materials.inputs.uploadFailedTryAgain"); // default message
