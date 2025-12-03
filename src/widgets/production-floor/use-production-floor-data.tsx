@@ -95,8 +95,14 @@ import { useFrontDeskEmailIntegration } from "@/pages-components/quotes/hooks/us
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { printHouseHasFrontDeskFeature } from "@/store/print-house-profile";
 import { getDocumentMailDataApi } from "@/services/api-service/generic-doc/documents-api";
-import { contactResolutionService, conversationComposerService } from "@/services/frontdesk";
-import { chatwootSelectedAccountAtom, chatwootProfileAtom } from "@/store/frontdesk/atoms/chatwoot.atoms";
+import {
+  contactResolutionService,
+  conversationComposerService,
+} from "@/services/frontdesk";
+import {
+  chatwootSelectedAccountAtom,
+  chatwootProfileAtom,
+} from "@/store/frontdesk/atoms/chatwoot.atoms";
 import { useChatwootProfile } from "@/widgets/frontdesk/providers/chatwoot/hooks/use-chatwoot-profile";
 import { useChatwootInboxes } from "@/widgets/frontdesk/providers/chatwoot/hooks/use-chatwoot-inboxes";
 import { ChannelType } from "@/services/frontdesk/api/chatwoot/types/inboxes.types";
@@ -105,7 +111,10 @@ import { getCapitalizedNameFromEmail } from "@/widgets/frontdesk/providers/chatw
 import { convertAttachmentsToFiles } from "@/widgets/frontdesk/providers/chatwoot/utils/attachment.utils";
 import type { AttachmentSource } from "@/widgets/frontdesk/providers/chatwoot/types/attachment.types";
 import { EmailAttachment } from "@/widgets/frontdesk/providers/email/types/email.types";
-import { getFileExtension, getMimeTypeFromExtension } from "@/widgets/frontdesk/providers/chatwoot/utils/attachment.utils";
+import {
+  getFileExtension,
+  getMimeTypeFromExtension,
+} from "@/widgets/frontdesk/providers/chatwoot/utils/attachment.utils";
 
 const useProductionFloorData = () => {
   const { t } = useTranslation();
@@ -294,10 +303,10 @@ const useProductionFloorData = () => {
               filterGroups.map((x) =>
                 x.id === "all"
                   ? {
-                    ...x,
-                    stuckCount: res?.data?.boradMisstionsStuckCount,
-                    inProcessCount: res?.data?.boradMisstionsNotStuckCount,
-                  }
+                      ...x,
+                      stuckCount: res?.data?.boradMisstionsStuckCount,
+                      inProcessCount: res?.data?.boradMisstionsNotStuckCount,
+                    }
                   : x
               )
             );
@@ -503,7 +512,7 @@ const useProductionFloorData = () => {
           const mapData = _data.data?.map((mission: any) => {
             const itemCalculatedPrice =
               mission?.calculatedPrice &&
-                mission?.calculatedPrice != mission?.price
+              mission?.calculatedPrice != mission?.price
                 ? mission?.calculatedPrice
                 : 0;
             return [
@@ -529,10 +538,11 @@ const useProductionFloorData = () => {
               formatISODateTime(mission?.readyDate),
               <div style={{ cursor: "pointer" }}>{mission?.clientName}</div>,
               mission?.productType
-                ? `${mission?.number} / ${mission?.productTypeName
-                  ? mission?.productTypeName
-                  : mission?.productType
-                }`
+                ? `${mission?.number} / ${
+                    mission?.productTypeName
+                      ? mission?.productTypeName
+                      : mission?.productType
+                  }`
                 : mission?.number,
               <a href={`/order?Id=${mission?.orderID}`}>
                 {mission?.orderNumber}
@@ -540,8 +550,8 @@ const useProductionFloorData = () => {
               mission?.outSourceType === null
                 ? `${t("boardMissions." + EWorkSource[0])}`
                 : `${t(
-                  "boardMissions." + EWorkSource[mission?.outSourceType]
-                )}`,
+                    "boardMissions." + EWorkSource[mission?.outSourceType]
+                  )}`,
               mission?.quantity,
               // ...(CheckPermission(Permissions.SHOW_COSTS_IN_BOARD_MISSIONS)
               //   ? [
@@ -641,8 +651,8 @@ const useProductionFloorData = () => {
         pageSize: pageSizeInput ?? pageSize,
         search:
           patternSearchInput !== null &&
-            patternSearchInput !== undefined &&
-            patternSearchInput !== ""
+          patternSearchInput !== undefined &&
+          patternSearchInput !== ""
             ? patternSearchInput
             : "",
         customerId: doneJobsCustomer?.id || null,
@@ -779,20 +789,20 @@ const useProductionFloorData = () => {
           data.map((s) =>
             s.boardMissionStatus.boardMissionStatus.id === payload.statusId
               ? {
-                ...s,
-                boardMissions: s.boardMissions?.map((board) => {
-                  const match = updatedBoards?.find(
-                    (updatedBoard) => updatedBoard.id === board.id
-                  );
-                  if (match) {
-                    return {
-                      ...board,
-                      priority: match.priority,
-                    };
-                  }
-                  return board;
-                }),
-              }
+                  ...s,
+                  boardMissions: s.boardMissions?.map((board) => {
+                    const match = updatedBoards?.find(
+                      (updatedBoard) => updatedBoard.id === board.id
+                    );
+                    if (match) {
+                      return {
+                        ...board,
+                        priority: match.priority,
+                      };
+                    }
+                    return board;
+                  }),
+                }
               : s
           )
         );
@@ -815,6 +825,7 @@ const useProductionFloorData = () => {
 
   const onCloseMarkReadyModalForHasJobs = () => {
     setOpenMarkReadyModalForHasJobs(false);
+    setSelectedMission(null);
   };
 
   const tryMoveBoardMissionsToDone = async (boardMission) => {
@@ -856,7 +867,10 @@ const useProductionFloorData = () => {
   const onClickDoneScopeAllJobs = (isSendMessage: boolean = false) => {
     if (selectedMission) {
       // Call move to done with empty product type to mark entire job
-      moveBoardMissionToDone({ ...selectedMission, productType: "" }, isSendMessage);
+      moveBoardMissionToDone(
+        { ...selectedMission, productType: "" },
+        isSendMessage
+      );
       setOpenDoneScopeModal(false);
     }
   };
@@ -939,14 +953,20 @@ const useProductionFloorData = () => {
             (res) => {
               if (res?.success && res?.data) {
                 emailData = res.data;
-                console.log("[sendEmailProgrammatically] Email data received:", {
-                  tos: emailData.tos,
-                  subject: emailData.subject,
-                  hasBody: !!emailData.body,
-                  hasAttachments: !!emailData.attachments,
-                });
+                console.log(
+                  "[sendEmailProgrammatically] Email data received:",
+                  {
+                    tos: emailData.tos,
+                    subject: emailData.subject,
+                    hasBody: !!emailData.body,
+                    hasAttachments: !!emailData.attachments,
+                  }
+                );
               } else {
-                console.error("[sendEmailProgrammatically] API response error:", res);
+                console.error(
+                  "[sendEmailProgrammatically] API response error:",
+                  res
+                );
               }
               resolve();
             },
@@ -968,11 +988,16 @@ const useProductionFloorData = () => {
         });
 
         if (!emailData) {
-          console.error("[sendEmailProgrammatically] Failed to load email data - emailData is null");
+          console.error(
+            "[sendEmailProgrammatically] Failed to load email data - emailData is null"
+          );
           return false;
         }
 
-        console.log("[sendEmailProgrammatically] Processing email data:", emailData);
+        console.log(
+          "[sendEmailProgrammatically] Processing email data:",
+          emailData
+        );
 
         // 2. Resolve account ID
         const extractAccountId = (profile: any) => {
@@ -980,7 +1005,8 @@ const useProductionFloorData = () => {
           return (
             profile.account_id ||
             profile.accountId ||
-            (profile.meta && (profile.meta.account_id || profile.meta.accountId)) ||
+            (profile.meta &&
+              (profile.meta.account_id || profile.meta.accountId)) ||
             null
           );
         };
@@ -1011,9 +1037,10 @@ const useProductionFloorData = () => {
         }
 
         // 3. Get sender inbox (use first email inbox)
-        const emailInboxes = inboxes?.filter(
-          (inbox) => inbox.channel_type === ChannelType.EMAIL
-        ) || [];
+        const emailInboxes =
+          inboxes?.filter(
+            (inbox) => inbox.channel_type === ChannelType.EMAIL
+          ) || [];
         if (emailInboxes.length === 0) {
           console.error("No email inboxes found");
           return false;
@@ -1025,27 +1052,30 @@ const useProductionFloorData = () => {
         const toEmails = Array.isArray(emailData.tos)
           ? emailData.tos.filter((email: string) => email && email.trim())
           : emailData.tos && typeof emailData.tos === "string"
-            ? [emailData.tos.trim()].filter(Boolean)
-            : [];
+          ? [emailData.tos.trim()].filter(Boolean)
+          : [];
 
         // Handle cc - can be null, array, or string
-        const ccEmails = emailData.cc === null || emailData.cc === undefined
-          ? []
-          : Array.isArray(emailData.cc)
+        const ccEmails =
+          emailData.cc === null || emailData.cc === undefined
+            ? []
+            : Array.isArray(emailData.cc)
             ? emailData.cc.filter((email: string) => email && email.trim())
             : typeof emailData.cc === "string"
-              ? [emailData.cc.trim()].filter(Boolean)
-              : [];
+            ? [emailData.cc.trim()].filter(Boolean)
+            : [];
 
         // Handle bcc - can be null, array, or string
-        const bccEmails = emailData.bcc === null || emailData.bcc === undefined
-          ? []
-          : Array.isArray(emailData.bcc)
+        const bccEmails =
+          emailData.bcc === null || emailData.bcc === undefined
+            ? []
+            : Array.isArray(emailData.bcc)
             ? emailData.bcc.filter((email: string) => email && email.trim())
             : typeof emailData.bcc === "string"
-              ? [emailData.bcc.trim()].filter(Boolean)
-              : [];
-        const messageContent = emailData.body || emailData.html || emailData.text || "";
+            ? [emailData.bcc.trim()].filter(Boolean)
+            : [];
+        const messageContent =
+          emailData.body || emailData.html || emailData.text || "";
         const subject = emailData.subject || "";
 
         console.log("[sendEmailProgrammatically] Prepared email data:", {
@@ -1057,12 +1087,16 @@ const useProductionFloorData = () => {
         });
 
         if (toEmails.length === 0) {
-          console.error("[sendEmailProgrammatically] No recipients found in tos array");
+          console.error(
+            "[sendEmailProgrammatically] No recipients found in tos array"
+          );
           return false;
         }
 
         // 5. Convert attachments
-        const mapToAttachmentSource = (attachment: EmailAttachment): AttachmentSource => ({
+        const mapToAttachmentSource = (
+          attachment: EmailAttachment
+        ): AttachmentSource => ({
           content: attachment.content,
           data: attachment.data,
           url: attachment.url,
@@ -1072,9 +1106,8 @@ const useProductionFloorData = () => {
           size: attachment.size,
         });
 
-        const normalizedAttachments =
-          Array.isArray(emailData.attachments)
-            ? emailData.attachments.map((attachment: EmailAttachment) => {
+        const normalizedAttachments = Array.isArray(emailData.attachments)
+          ? emailData.attachments.map((attachment: EmailAttachment) => {
               let filename = attachment.filename || "document";
               const extension = getFileExtension(attachment.url || "", null);
               if (extension && !filename.includes(".")) {
@@ -1083,7 +1116,9 @@ const useProductionFloorData = () => {
               const mimeType =
                 attachment.mimeType ||
                 attachment.contentType ||
-                (extension ? getMimeTypeFromExtension(extension) : "application/octet-stream");
+                (extension
+                  ? getMimeTypeFromExtension(extension)
+                  : "application/octet-stream");
               return {
                 id: attachment.id,
                 filename,
@@ -1094,17 +1129,23 @@ const useProductionFloorData = () => {
                 content: attachment.content ?? attachment.data,
               };
             })
-            : [];
+          : [];
 
-        const attachmentSources = normalizedAttachments.map(mapToAttachmentSource);
+        const attachmentSources = normalizedAttachments.map(
+          mapToAttachmentSource
+        );
         const attachments = await convertAttachmentsToFiles(attachmentSources);
 
         // 6. Send email to each recipient via Chatwoot
-        console.log(`[sendEmailProgrammatically] Sending email to ${toEmails.length} recipient(s)`);
+        console.log(
+          `[sendEmailProgrammatically] Sending email to ${toEmails.length} recipient(s)`
+        );
         const results = await Promise.allSettled(
           toEmails.map(async (recipientEmail: string) => {
             try {
-              console.log(`[sendEmailProgrammatically] Processing recipient: ${recipientEmail}`);
+              console.log(
+                `[sendEmailProgrammatically] Processing recipient: ${recipientEmail}`
+              );
               const contactNameForEmail =
                 contactName || getCapitalizedNameFromEmail(recipientEmail);
               const contactPayload: ContactCreatePayload = {
@@ -1112,20 +1153,24 @@ const useProductionFloorData = () => {
                 email: recipientEmail,
               };
 
-              const contact = await contactResolutionService.findOrCreateContact(
-                accountId,
-                contactPayload
-              );
+              const contact =
+                await contactResolutionService.findOrCreateContact(
+                  accountId,
+                  contactPayload
+                );
 
               if (!contact?.id) {
-                throw new Error(`Failed to find or create contact for ${recipientEmail}`);
+                throw new Error(
+                  `Failed to find or create contact for ${recipientEmail}`
+                );
               }
 
-              console.log(`[sendEmailProgrammatically] Contact created/found: ${contact.id} for ${recipientEmail}`);
+              console.log(
+                `[sendEmailProgrammatically] Contact created/found: ${contact.id} for ${recipientEmail}`
+              );
 
-              const conversationId = await conversationComposerService.composeAndCreate(
-                accountId,
-                {
+              const conversationId =
+                await conversationComposerService.composeAndCreate(accountId, {
                   inboxId: senderInbox.id,
                   contactId: contact.id,
                   sourceId: recipientEmail,
@@ -1142,18 +1187,28 @@ const useProductionFloorData = () => {
                       type: DOCUMENT_TYPE.boardMission,
                     },
                   },
-                }
-              );
+                });
 
               if (!conversationId) {
-                throw new Error(`Failed to create conversation for ${recipientEmail}`);
+                throw new Error(
+                  `Failed to create conversation for ${recipientEmail}`
+                );
               }
 
-              console.log(`[sendEmailProgrammatically] Email sent successfully to ${recipientEmail}, conversationId: ${conversationId}`);
+              console.log(
+                `[sendEmailProgrammatically] Email sent successfully to ${recipientEmail}, conversationId: ${conversationId}`
+              );
               return { recipientEmail, success: true, conversationId };
             } catch (error) {
-              console.error(`[sendEmailProgrammatically] Error sending email to ${recipientEmail}:`, error);
-              return { recipientEmail, success: false, error: error instanceof Error ? error.message : String(error) };
+              console.error(
+                `[sendEmailProgrammatically] Error sending email to ${recipientEmail}:`,
+                error
+              );
+              return {
+                recipientEmail,
+                success: false,
+                error: error instanceof Error ? error.message : String(error),
+              };
             }
           })
         );
@@ -1162,12 +1217,19 @@ const useProductionFloorData = () => {
           (result) => result.status === "fulfilled" && result.value.success
         );
         const failedSends = results.filter(
-          (result) => result.status === "rejected" || (result.status === "fulfilled" && !result.value.success)
+          (result) =>
+            result.status === "rejected" ||
+            (result.status === "fulfilled" && !result.value.success)
         );
 
-        console.log(`[sendEmailProgrammatically] Email sending results: ${successfulSends.length} successful, ${failedSends.length} failed`);
+        console.log(
+          `[sendEmailProgrammatically] Email sending results: ${successfulSends.length} successful, ${failedSends.length} failed`
+        );
         if (failedSends.length > 0) {
-          console.error("[sendEmailProgrammatically] Failed sends:", failedSends);
+          console.error(
+            "[sendEmailProgrammatically] Failed sends:",
+            failedSends
+          );
         }
 
         return successfulSends.length > 0;
@@ -1209,7 +1271,9 @@ const useProductionFloorData = () => {
               selectedMission?.customerName
             );
             if (!success) {
-              console.warn("Failed to send email programmatically, but mission was marked as done");
+              console.warn(
+                "Failed to send email programmatically, but mission was marked as done"
+              );
             }
           } catch (error) {
             console.error("Error sending email programmatically:", error);
@@ -1257,7 +1321,9 @@ const useProductionFloorData = () => {
               selectedMission?.customerName
             );
             if (!success) {
-              console.warn("Failed to send email programmatically, but mission was marked as done");
+              console.warn(
+                "Failed to send email programmatically, but mission was marked as done"
+              );
             }
           } catch (error) {
             console.error("Error sending email programmatically:", error);
@@ -1407,17 +1473,17 @@ const useProductionFloorData = () => {
       data.map((status) =>
         status.boardMissions.find((b) => b.id === boardMisionId)
           ? {
-            ...status,
-            boardMissions: status.boardMissions.map((bm) =>
-              bm.id === boardMisionId
-                ? { ...bm, dueDate: formattedDueDate }
-                : bm
-            ),
-          }
+              ...status,
+              boardMissions: status.boardMissions.map((bm) =>
+                bm.id === boardMisionId
+                  ? { ...bm, dueDate: formattedDueDate }
+                  : bm
+              ),
+            }
           : status
       )
     );
-    const callBack = () => { };
+    const callBack = () => {};
     updateJobDueDateApi(callApi, callBack, {
       boardMissionId: boardMisionId,
       dueDate: utcDueDate,
