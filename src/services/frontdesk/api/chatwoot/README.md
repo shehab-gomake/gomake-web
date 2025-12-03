@@ -37,9 +37,12 @@ chatwoot/
 ## Configuration
 
 - **Base URL**: `http://localhost:8080` (configurable)
-- **API Version**: v1 (`/api/v1/*`)
+- **URL Pattern**: `/api/accounts/{resource}` (NO `/v1/`, NO `{accountId}`)
+  - Proxy automatically transforms to `/api/v1/accounts/{accountId}/{resource}`
 - **Authentication**: GoMake Bearer Token (automatically included)
 - **Content-Type**: `application/json`
+
+**⚠️ Important:** gomake-web sends URLs without `/v1/` and without `accountId`. The messaging-hub-v2 proxy handles the transformation automatically.
 
 ## Usage
 
@@ -98,6 +101,41 @@ import { ChatwootUser, ChatwootUserAccount } from '@/services/frontdesk';
 const user: ChatwootUser = await chatwootService.profile.getProfile();
 ```
 
+## ⚠️ CRITICAL: URL Pattern Rules
+
+**gomake-web sends URLs WITHOUT `/v1/` and WITHOUT `accountId`:**
+
+✅ **CORRECT Pattern:**
+```typescript
+// Account-scoped endpoints
+return await this.get("/api/accounts/conversations");
+return await this.get(`/api/accounts/conversations/${id}/messages`);
+
+// Profile endpoint (exception)
+return await this.get("/api/accounts/profile");
+```
+
+❌ **WRONG Pattern (DO NOT USE):**
+```typescript
+// DON'T include /v1/
+return await this.get("/api/v1/accounts/conversations");  // ❌
+
+// DON'T include accountId in URL
+return await this.get(`/api/accounts/${accountId}/conversations`);  // ❌
+
+// DON'T use accountScopedUrl() helper (it builds wrong URLs)
+this.accountScopedUrl(accountId, "conversations");  // ❌
+```
+
+**The messaging-hub-v2 proxy automatically:**
+1. Adds `/v1/` prefix
+2. Injects `accountId` from JWT context
+3. Transforms: `/api/accounts/conversations` → `/api/v1/accounts/{accountId}/conversations`
+
+**See:** `.cursor/FRONTDESK_CHATWOOT_COMPLETE_FLOW.md` for complete flow documentation
+
+---
+
 ## Adding New Endpoints
 
 The architecture makes it easy to add new endpoints:
@@ -109,9 +147,11 @@ If the endpoint belongs to an existing API group:
 ```typescript
 // In chatwoot-conversations.service.ts
 async myNewEndpoint(accountId: number, param: string): Promise<any> {
-  return await this.get<any>(
-    this.accountScopedUrl(accountId, `conversations/${param}`)
-  );
+  // ✅ Use direct path (no /v1/, no accountId)
+  return await this.get<any>(`/api/accounts/conversations/${param}`);
+  
+  // Note: accountId parameter is kept for API consistency but not used in URL
+  // The proxy injects accountId from JWT automatically
 }
 ```
 
@@ -133,9 +173,11 @@ export class ChatwootInboxesService extends BaseChatwootService {
   }
 
   async listInboxes(accountId: number): Promise<any> {
-    return await this.get<any>(
-      this.accountScopedUrl(accountId, "inboxes")
-    );
+    // ✅ Use direct path (no /v1/, no accountId)
+    return await this.get<any>("/api/accounts/inboxes");
+    
+    // Note: accountId parameter kept for API consistency
+    // Proxy injects accountId from JWT: /api/accounts/inboxes → /api/v1/accounts/{accountId}/inboxes
   }
 }
 
@@ -159,21 +201,37 @@ export interface ChatwootInbox {
 export * from "./inboxes.types";
 ```
 
-## URL Building Helpers
+## URL Pattern Examples
 
-The `BaseChatwootService` provides convenient URL builders:
+**✅ Correct Patterns:**
 
 ```typescript
-// Account-scoped URLs (most common)
-this.accountScopedUrl(accountId, "conversations")
-// => "/api/v1/accounts/123/conversations"
+// Account-scoped endpoints (most common)
+"/api/accounts/conversations"
+// Proxy transforms to: /api/v1/accounts/{accountId}/conversations
 
-this.accountScopedUrl(accountId, "conversations/456/messages")
-// => "/api/v1/accounts/123/conversations/456/messages"
+"/api/accounts/conversations/123/messages"
+// Proxy transforms to: /api/v1/accounts/{accountId}/conversations/123/messages
 
-// Global URLs (like profile)
-this.globalUrl("profile")
-// => "/api/v1/profile"
+"/api/accounts/contacts"
+// Proxy transforms to: /api/v1/accounts/{accountId}/contacts
+
+// Profile endpoint (exception - no accountId)
+"/api/accounts/profile"
+// Proxy transforms to: /api/v1/profile
+```
+
+**❌ Wrong Patterns (DO NOT USE):**
+
+```typescript
+// DON'T include /v1/
+"/api/v1/accounts/conversations"  // ❌
+
+// DON'T include accountId
+`/api/accounts/${accountId}/conversations`  // ❌
+
+// DON'T use deprecated helpers
+this.accountScopedUrl(accountId, "conversations")  // ❌ Deprecated
 ```
 
 ## Error Handling
