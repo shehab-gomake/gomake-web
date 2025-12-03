@@ -3,11 +3,18 @@
  *
  * Displays recent Chatwoot conversations grouped by time.
  * Redesigned with better spacing, alignment, and modern aesthetics.
+ * Uses centralized design system tokens for consistency.
  */
 
 import React, { useMemo } from "react";
 import { Box, Typography, Stack } from "@mui/material";
-import { ConversationListItem, EmptyState } from "@/widgets/frontdesk/design-system";
+import { 
+  ConversationListItem, 
+  EmptyState, 
+  colorTokens, 
+  radiusTokens,
+  semanticSpacing 
+} from "@/widgets/frontdesk/design-system";
 import InboxIcon from "@mui/icons-material/Inbox";
 import ScheduleIcon from "@mui/icons-material/Schedule";
 import type { ChatwootConversation } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
@@ -21,25 +28,26 @@ import {
   getUnreadCount,
 } from "../../utils/conversation-helpers";
 
-// Modern design tokens
+// Design tokens mapped from centralized design system
 const FEED_TOKENS = {
   colors: {
-    background: "#FFFFFF",
-    backgroundAlt: "#FAFBFC",
-    textPrimary: "#0F172A",
-    textSecondary: "#475569",
-    textMuted: "#94A3B8",
-    border: "#E2E8F0",
-    borderSubtle: "#F1F5F9",
-    primary: "#3B82F6",
-    primaryLight: "#EFF6FF",
+    background: colorTokens.semantic.background.primary,
+    backgroundAlt: colorTokens.neutral[50],
+    textPrimary: colorTokens.semantic.text.primary,
+    textSecondary: colorTokens.semantic.text.secondary,
+    textMuted: colorTokens.semantic.text.tertiary,
+    border: colorTokens.neutral[200], // Soft separator color (#E5E7EB)
+    borderSubtle: colorTokens.neutral[100],
+    primary: colorTokens.primary[500],
+    primaryLight: colorTokens.primary[50],
   },
   spacing: {
-    itemPadding: 16,
-    headerPadding: 14,
-    groupGap: 2,
+    itemPadding: 12,
+    headerPadding: 12,
+    groupGap: 4,
+    listPadding: 8,
   },
-  borderRadius: 8,
+  borderRadius: radiusTokens.lg,
 };
 
 /**
@@ -124,32 +132,47 @@ const TimeGroupHeader: React.FC<TimeGroupHeaderProps> = ({ label, count, isFirst
     <Box
       sx={{
         px: 2,
-        py: 1.25,
-        backgroundColor: FEED_TOKENS.colors.backgroundAlt,
-        borderBottom: `1px solid ${FEED_TOKENS.colors.borderSubtle}`,
-        borderTop: !isFirst ? `1px solid ${FEED_TOKENS.colors.borderSubtle}` : "none",
-        position: "sticky",
-        top: 0,
-        zIndex: 1,
+        py: 1,
+        mx: 1,
+        mt: isFirst ? 1 : 2,
+        mb: 0.5,
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
+        position: "sticky",
+        top: 0,
+        zIndex: 1,
+        backgroundColor: "rgba(255, 255, 255, 0.95)",
+        backdropFilter: "blur(8px)",
+        borderRadius: "8px",
       }}
     >
       <Stack direction="row" spacing={1} alignItems="center">
-        <ScheduleIcon
+        <Box
           sx={{
-            fontSize: 14,
-            color: FEED_TOKENS.colors.textMuted,
+            width: 24,
+            height: 24,
+            borderRadius: "6px",
+            backgroundColor: FEED_TOKENS.colors.borderSubtle,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
           }}
-        />
+        >
+          <ScheduleIcon
+            sx={{
+              fontSize: 14,
+              color: FEED_TOKENS.colors.textMuted,
+            }}
+          />
+        </Box>
         <Typography
           sx={{
             color: FEED_TOKENS.colors.textSecondary,
             fontWeight: 600,
-            fontSize: "0.6875rem",
+            fontSize: "0.75rem", // 12px
             textTransform: "uppercase",
-            letterSpacing: "0.05em",
+            letterSpacing: "0.04em",
           }}
         >
           {label}
@@ -157,21 +180,22 @@ const TimeGroupHeader: React.FC<TimeGroupHeaderProps> = ({ label, count, isFirst
       </Stack>
       <Box
         sx={{
-          minWidth: 20,
-          height: 20,
-          px: 0.75,
-          borderRadius: "10px",
-          backgroundColor: FEED_TOKENS.colors.borderSubtle,
+          minWidth: 24,
+          height: 22,
+          px: 1,
+          borderRadius: "11px",
+          backgroundColor: FEED_TOKENS.colors.primary,
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
+          boxShadow: "0 1px 3px rgba(59, 130, 246, 0.2)",
         }}
       >
         <Typography
           sx={{
-            fontSize: "0.6875rem",
+            fontSize: "0.6875rem", // 11px
             fontWeight: 600,
-            color: FEED_TOKENS.colors.textMuted,
+            color: colorTokens.semantic.text.inverse,
           }}
         >
           {count}
@@ -300,6 +324,7 @@ export const ChatwootActivityFeed: React.FC<ChatwootActivityFeedProps> = ({
           height: "100%",
           overflow: "auto",
           backgroundColor: FEED_TOKENS.colors.background,
+          pb: 2,
           // Custom scrollbar styling
           "&::-webkit-scrollbar": {
             width: 6,

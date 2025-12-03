@@ -1,7 +1,7 @@
 import React from "react";
-import { Box, Paper } from "@mui/material";
+import { Box } from "@mui/material";
 import { useRecoilValue } from "recoil";
-import { colorTokens, radiusTokens, shadowTokens } from "@/widgets/frontdesk/design-system";
+import { colorTokens } from "@/widgets/frontdesk/design-system";
 import { ChatwootConversationListItem } from "./chatwoot-conversation-list-item";
 import { ChatwootConversationListHeader } from "./chatwoot-conversation-list-header";
 import { LoadingOverlay } from "@/widgets/frontdesk/components/shared";
@@ -90,16 +90,13 @@ export const ChatwootConversationList: React.FC<ChatwootConversationListProps> =
     };
 
     return (
-      <Paper
-        elevation={hideHeader ? 0 : 2}
+      <Box
         sx={{
           height: "100%",
-          borderRadius: hideHeader ? 0 : radiusTokens.lg,
           overflow: "hidden",
           display: "flex",
           flexDirection: "column",
           backgroundColor: colorTokens.semantic.background.primary,
-          boxShadow: hideHeader ? "none" : shadowTokens.sm,
         }}
       >
         {!hideHeader && (
@@ -174,7 +171,7 @@ export const ChatwootConversationList: React.FC<ChatwootConversationListProps> =
             />
           )}
         </Box>
-      </Paper>
+      </Box>
     );
   },
   (prevProps, nextProps) => {

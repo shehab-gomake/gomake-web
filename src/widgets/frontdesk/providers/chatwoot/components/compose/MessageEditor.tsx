@@ -1,9 +1,15 @@
 /**
  * MessageEditor Component
  *
- * Rich text editor for composing messages using TipTap.
+ * Premium rich text editor for composing messages using TipTap.
  * Supports basic formatting (bold, italic, links) with keyboard shortcuts.
  * Outputs Markdown format compatible with Chatwoot's message storage.
+ * 
+ * Features:
+ * - Modern, clean design with subtle borders
+ * - Smooth focus states with ring effect
+ * - Consistent icon styling
+ * - Private note mode with amber accent
  */
 
 import React, { useCallback } from "react";
@@ -12,16 +18,15 @@ import StarterKit from "@tiptap/starter-kit";
 import Link from "@tiptap/extension-link";
 import Placeholder from "@tiptap/extension-placeholder";
 import CharacterCount from "@tiptap/extension-character-count";
-import { Box, Stack, IconButton, Tooltip, Typography } from "@mui/material";
+import { Box, Stack, IconButton, Tooltip, Typography, Divider } from "@mui/material";
 import FormatBoldIcon from "@mui/icons-material/FormatBold";
 import FormatItalicIcon from "@mui/icons-material/FormatItalic";
-import FormatUnderlinedIcon from "@mui/icons-material/FormatUnderlined";
 import LinkIcon from "@mui/icons-material/Link";
 import FormatListBulletedIcon from "@mui/icons-material/FormatListBulleted";
 import FormatListNumberedIcon from "@mui/icons-material/FormatListNumbered";
 import UndoIcon from "@mui/icons-material/Undo";
 import RedoIcon from "@mui/icons-material/Redo";
-import { colorTokens, radiusTokens } from "@/widgets/frontdesk/design-system";
+import { colorTokens, radiusTokens, shadowTokens } from "@/widgets/frontdesk/design-system";
 import { htmlToMarkdown, isEmptyHtml } from "@/utils/markdown-converter";
 
 interface MessageEditorProps {
@@ -154,6 +159,22 @@ export const MessageEditor: React.FC<MessageEditorProps> = ({
     ? colorTokens.warning[50] // Light amber/yellow tint for private notes
     : colorTokens.semantic.background.primary;
 
+  // Common icon button style for toolbar
+  const toolbarButtonStyle = (isActive: boolean) => ({
+    color: isActive ? colorTokens.primary[600] : colorTokens.neutral[500],
+    backgroundColor: isActive ? colorTokens.primary[50] : "transparent",
+    borderRadius: `${radiusTokens.sm}px`,
+    p: 0.75,
+    transition: "all 0.15s ease",
+    "&:hover": {
+      backgroundColor: isActive ? colorTokens.primary[100] : colorTokens.neutral[100],
+      color: isActive ? colorTokens.primary[700] : colorTokens.neutral[700],
+    },
+    "& .MuiSvgIcon-root": {
+      fontSize: 18,
+    },
+  });
+
   return (
     <Box
       sx={{
@@ -161,173 +182,152 @@ export const MessageEditor: React.FC<MessageEditorProps> = ({
         flexDirection: "column",
         minHeight,
         border: error 
-          ? `1px solid colorTokens.error[500]` 
+          ? `1px solid ${colorTokens.error[400]}` 
           : isPrivateNote 
-            ? `1px solid rgba(251, 191, 36, 0.3)` // Amber border for private notes
+            ? `1px solid ${colorTokens.warning[300]}` // Amber border for private notes
             : `1px solid ${colorTokens.neutral[200]}`,
-        borderRadius: 1,
+        borderRadius: `${radiusTokens.lg}px`,
         overflow: "hidden",
         backgroundColor,
-        transition: "background-color 0.2s ease, border-color 0.2s ease",
+        transition: "all 0.2s ease",
         "&:focus-within": {
           borderColor: error 
-            ? "colorTokens.error[500]" 
+            ? colorTokens.error[500] 
             : isPrivateNote 
-              ? "rgba(251, 191, 36, 0.5)" // Slightly darker amber on focus
-              : colorTokens.primary[500],
+              ? colorTokens.warning[400]
+              : colorTokens.primary[400],
+          boxShadow: error
+            ? `0 0 0 3px ${colorTokens.error[100]}`
+            : isPrivateNote
+              ? `0 0 0 3px ${colorTokens.warning[100]}`
+              : `0 0 0 3px ${colorTokens.primary[100]}`,
         },
       }}
     >
-      {/* Toolbar */}
+      {/* Toolbar - Clean, minimal design */}
       <Stack
         direction="row"
         spacing={0.5}
         sx={{
-          px: 1,
-          py: 0.5,
-          borderBottom: `1px solid ${colorTokens.neutral[200]}`,
-          backgroundColor: colorTokens.neutral[25],
+          px: 1.5,
+          py: 1,
+          borderBottom: `1px solid ${isPrivateNote ? colorTokens.warning[200] : colorTokens.neutral[200]}`,
+          backgroundColor: isPrivateNote ? colorTokens.warning[25] : colorTokens.neutral[50],
         }}
       >
-        <Tooltip title="Bold (Ctrl+B)">
+        <Tooltip title="Bold (Ctrl+B)" arrow>
           <IconButton
             size="small"
             onClick={toggleBold}
             disabled={disabled}
-            sx={{
-              color: editor.isActive("bold") ? colorTokens.primary[600] : colorTokens.neutral[600],
-              backgroundColor: editor.isActive("bold") ? colorTokens.primary[50] : "transparent",
-              "&:hover": {
-                backgroundColor: editor.isActive("bold") ? colorTokens.primary[100] : colorTokens.neutral[100],
-              },
-            }}
+            sx={toolbarButtonStyle(editor.isActive("bold"))}
           >
-            <FormatBoldIcon fontSize="small" />
+            <FormatBoldIcon />
           </IconButton>
         </Tooltip>
 
-        <Tooltip title="Italic (Ctrl+I)">
+        <Tooltip title="Italic (Ctrl+I)" arrow>
           <IconButton
             size="small"
             onClick={toggleItalic}
             disabled={disabled}
-            sx={{
-              color: editor.isActive("italic") ? colorTokens.primary[600] : colorTokens.neutral[600],
-              backgroundColor: editor.isActive("italic") ? colorTokens.primary[50] : "transparent",
-              "&:hover": {
-                backgroundColor: editor.isActive("italic") ? colorTokens.primary[100] : colorTokens.neutral[100],
-              },
-            }}
+            sx={toolbarButtonStyle(editor.isActive("italic"))}
           >
-            <FormatItalicIcon fontSize="small" />
+            <FormatItalicIcon />
           </IconButton>
         </Tooltip>
 
-        <Tooltip title="Bullet List">
+        <Divider orientation="vertical" flexItem sx={{ mx: 0.5, borderColor: colorTokens.neutral[200] }} />
+
+        <Tooltip title="Bullet List" arrow>
           <IconButton
             size="small"
             onClick={toggleBulletList}
             disabled={disabled}
-            sx={{
-              color: editor.isActive("bulletList") ? colorTokens.primary[600] : colorTokens.neutral[600],
-              backgroundColor: editor.isActive("bulletList") ? colorTokens.primary[50] : "transparent",
-              "&:hover": {
-                backgroundColor: editor.isActive("bulletList") ? colorTokens.primary[100] : colorTokens.neutral[100],
-              },
-            }}
+            sx={toolbarButtonStyle(editor.isActive("bulletList"))}
           >
-            <FormatListBulletedIcon fontSize="small" />
+            <FormatListBulletedIcon />
           </IconButton>
         </Tooltip>
 
-        <Tooltip title="Numbered List">
+        <Tooltip title="Numbered List" arrow>
           <IconButton
             size="small"
             onClick={toggleOrderedList}
             disabled={disabled}
-            sx={{
-              color: editor.isActive("orderedList") ? colorTokens.primary[600] : colorTokens.neutral[600],
-              backgroundColor: editor.isActive("orderedList") ? colorTokens.primary[50] : "transparent",
-              "&:hover": {
-                backgroundColor: editor.isActive("orderedList") ? colorTokens.primary[100] : colorTokens.neutral[100],
-              },
-            }}
+            sx={toolbarButtonStyle(editor.isActive("orderedList"))}
           >
-            <FormatListNumberedIcon fontSize="small" />
+            <FormatListNumberedIcon />
           </IconButton>
         </Tooltip>
 
-        <Tooltip title="Insert Link (Ctrl+K)">
+        <Divider orientation="vertical" flexItem sx={{ mx: 0.5, borderColor: colorTokens.neutral[200] }} />
+
+        <Tooltip title="Insert Link (Ctrl+K)" arrow>
           <IconButton
             size="small"
             onClick={setLink}
             disabled={disabled}
-            sx={{
-              color: editor.isActive("link") ? colorTokens.primary[600] : colorTokens.neutral[600],
-              backgroundColor: editor.isActive("link") ? colorTokens.primary[50] : "transparent",
-              "&:hover": {
-                backgroundColor: editor.isActive("link") ? colorTokens.primary[100] : colorTokens.neutral[100],
-              },
-            }}
+            sx={toolbarButtonStyle(editor.isActive("link"))}
           >
-            <LinkIcon fontSize="small" />
+            <LinkIcon />
           </IconButton>
         </Tooltip>
 
-        <Tooltip title="Undo (Ctrl+Z)">
+        {/* Spacer */}
+        <Box sx={{ flex: 1 }} />
+
+        <Tooltip title="Undo (Ctrl+Z)" arrow>
           <IconButton
             size="small"
             onClick={handleUndo}
             disabled={disabled || !editor.can().undo()}
             sx={{
-              color: colorTokens.neutral[600],
-              "&:hover": {
-                backgroundColor: colorTokens.neutral[100],
-              },
+              ...toolbarButtonStyle(false),
               "&:disabled": {
                 color: colorTokens.neutral[300],
+                backgroundColor: "transparent",
               },
             }}
           >
-            <UndoIcon fontSize="small" />
+            <UndoIcon />
           </IconButton>
         </Tooltip>
 
-        <Tooltip title="Redo (Ctrl+Shift+Z)">
+        <Tooltip title="Redo (Ctrl+Shift+Z)" arrow>
           <IconButton
             size="small"
             onClick={handleRedo}
             disabled={disabled || !editor.can().redo()}
             sx={{
-              color: colorTokens.neutral[600],
-              "&:hover": {
-                backgroundColor: colorTokens.neutral[100],
-              },
+              ...toolbarButtonStyle(false),
               "&:disabled": {
                 color: colorTokens.neutral[300],
+                backgroundColor: "transparent",
               },
             }}
           >
-            <RedoIcon fontSize="small" />
+            <RedoIcon />
           </IconButton>
         </Tooltip>
       </Stack>
 
-      {/* Editor Content */}
+      {/* Editor Content - Generous padding for comfortable typing */}
       <Box
         sx={{
           flex: 1,
-          p: 2,
+          px: 2.5,
+          py: 2,
           overflow: "auto",
-          backgroundColor: "transparent", // Inherit from parent Box
+          backgroundColor: "transparent",
           "& .message-editor-content": {
             outline: "none",
-            minHeight: minHeight - 60,
+            minHeight: minHeight - 80,
             color: colorTokens.neutral[900],
-            fontSize: "0.938rem",
-            lineHeight: 1.6,
+            fontSize: "0.9375rem",
+            lineHeight: 1.7,
             fontFamily: "inherit",
-            backgroundColor: "transparent", // Inherit from parent Box
+            backgroundColor: "transparent",
 
             // Placeholder styling
             "& p.is-editor-empty:first-of-type::before": {
@@ -336,12 +336,13 @@ export const MessageEditor: React.FC<MessageEditorProps> = ({
               color: colorTokens.neutral[400],
               pointerEvents: "none",
               height: 0,
+              fontStyle: "italic",
             },
 
             // Typography styles
             "& p": {
               marginTop: 0,
-              marginBottom: "0.75em",
+              marginBottom: "0.875em",
               "&:last-child": {
                 marginBottom: 0,
               },
@@ -355,10 +356,10 @@ export const MessageEditor: React.FC<MessageEditorProps> = ({
             "& ul, & ol": {
               paddingLeft: "1.5em",
               marginTop: "0.5em",
-              marginBottom: "0.75em",
+              marginBottom: "0.875em",
             },
             "& li": {
-              marginBottom: "0.25em",
+              marginBottom: "0.375em",
             },
             "& a": {
               color: colorTokens.primary[600],
@@ -381,29 +382,15 @@ export const MessageEditor: React.FC<MessageEditorProps> = ({
             px: 2,
             py: 1,
             fontSize: "0.75rem",
-            color: "colorTokens.error[500]",
-            backgroundColor: "rgba(239, 68, 68, 0.05)",
-            borderTop: `1px solid ${colorTokens.neutral[200]}`,
+            fontWeight: 500,
+            color: colorTokens.error[600],
+            backgroundColor: colorTokens.error[50],
+            borderTop: `1px solid ${colorTokens.error[200]}`,
           }}
         >
           {error}
         </Typography>
       )}
-
-      {/* Character Count (Optional) */}
-      <Typography
-        sx={{
-          px: 2,
-          py: 0.5,
-          fontSize: "0.75rem",
-          color: colorTokens.neutral[500],
-          textAlign: "right",
-          borderTop: `1px solid ${colorTokens.neutral[200]}`,
-          backgroundColor: colorTokens.neutral[25],
-        }}
-      >
-        {editor.storage.characterCount?.characters() || 0} characters
-      </Typography>
     </Box>
   );
 };

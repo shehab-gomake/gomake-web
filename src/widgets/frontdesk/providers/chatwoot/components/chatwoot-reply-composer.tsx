@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Box } from "@mui/material";
-import { colorTokens } from "@/widgets/frontdesk/design-system";
+import { colorTokens, radiusTokens, shadowTokens, semanticSpacing } from "@/widgets/frontdesk/design-system";
 import type { ChatwootConversation } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
 import type { ChatwootInbox } from "@/services/frontdesk/api/chatwoot/types/inboxes.types";
 import {
@@ -223,26 +223,37 @@ export const ChatwootReplyComposer: React.FC<ChatwootReplyComposerProps> = ({
     !isSending &&
     messageContent.length <= channelFeatures.maxMessageLength;
 
-  // Theme colors - transparent/no background
+  // Theme colors - modern light-gray background
+  const containerBgColor = colorTokens.neutral[100]; // Light gray background (#F3F4F6)
   const borderColor = colorTokens.neutral[200];
   const textColor = colorTokens.neutral[900];
-  const lightGrayText = colorTokens.neutral[600];
+  const lightGrayText = colorTokens.neutral[500];
 
   return (
     <Box
       sx={{
-        borderTop: `1px solid ${borderColor}`,
-        backgroundColor: "transparent",
+        mx: 2,
+        mb: 2,
+        mt: 1,
+        backgroundColor: containerBgColor,
+        borderRadius: `${radiusTokens["2xl"]}px`, // 16px rounded corners
+        border: `1px solid ${colorTokens.neutral[200]}`,
+        overflow: "hidden",
+        boxShadow: shadowTokens.sm,
+        transition: "box-shadow 0.2s ease, border-color 0.2s ease",
+        "&:focus-within": {
+          borderColor: colorTokens.primary[300],
+          boxShadow: `0 0 0 3px ${colorTokens.primary[100]}`,
+        },
       }}
     >
-      {/* Segmented Control (Chatwoot Style) */}
+      {/* Pill-style Segmented Control */}
       <ReplyComposerTabs
         activeTab={activeTab}
         onTabChange={handleTabChange}
         borderColor={borderColor}
         textColor={textColor}
         lightGrayText={lightGrayText}
-        
       />
 
       {/* Email Header Fields (only for Email channels and Reply tab) */}
@@ -270,14 +281,14 @@ export const ChatwootReplyComposer: React.FC<ChatwootReplyComposerProps> = ({
           onChange={setMessageContent}
           placeholder={activeTab === "private" ? "Write a private note..." : "Type your reply..."}
           disabled={isSending}
-          minHeight={150}
+          minHeight={120}
           isPrivateNote={activeTab === "private"}
         />
       </Box>
 
       {/* Attachment Previews (if any) */}
       {attachments.length > 0 && (
-        <Box sx={{ px: 2, py: 1 }}>
+        <Box sx={{ px: 2, py: 1.5 }}>
           <AttachmentPreviews files={attachments} onRemove={handleFileRemove} />
         </Box>
       )}
@@ -304,8 +315,6 @@ export const ChatwootReplyComposer: React.FC<ChatwootReplyComposerProps> = ({
         attachmentCount={attachments.length}
         borderColor={borderColor}
         lightGrayText={lightGrayText}
-        
-        
       />
     </Box>
   );

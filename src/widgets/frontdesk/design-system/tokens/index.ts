@@ -12,13 +12,14 @@ export * from './shadows.tokens';
 export * from './radius.tokens';
 export * from './layout.tokens';
 export * from './chatwoot.tokens';
+export * from './navigation.tokens';
 
 import { colorTokens, getColor, getSemanticColor } from './colors.tokens';
-import { spacingTokens, semanticSpacing, getSpacing, getSemanticSpacing } from './spacing.tokens';
+import { spacingTokens, semanticSpacing, getSpacing, getSemanticSpacing, SPACING_BASE_UNIT, GRID_CONFIG, getGridColumnWidth, getColumnWithGutter } from './spacing.tokens';
 import { typographyTokens, semanticTypography, getTypographyStyle } from './typography.tokens';
 import { shadowTokens, semanticShadows, getShadow, getSemanticShadow } from './shadows.tokens';
 import { radiusTokens, semanticRadius, getRadius, getSemanticRadius } from './radius.tokens';
-import { layoutTokens, zIndexTokens, transitionTokens, getLayout, getZIndex, getTransition } from './layout.tokens';
+import { layoutTokens, zIndexTokens, transitionTokens, getLayout, getZIndex, getTransition, gridConfig } from './layout.tokens';
 import {
   conversationStatusColors,
   messageTypeColors,
@@ -31,9 +32,25 @@ import {
   fileTypeColors,
   dashboardColors,
 } from './chatwoot.tokens';
+import {
+  navigationTokens,
+  navigationColors,
+  navigationSpacing,
+  navigationTypography,
+  navigationRadius,
+  navigationShadows,
+  navigationTransitions,
+  navigationStyles,
+} from './navigation.tokens';
 
 /**
  * Complete design token system
+ * 
+ * Redesigned with:
+ * - 8px base spacing unit (vertical rhythm)
+ * - 12-column responsive grid with 24px gutter
+ * - 14px card radius with soft shadows
+ * - Modern SaaS aesthetic
  */
 export const tokens = {
   colors: colorTokens,
@@ -44,6 +61,12 @@ export const tokens = {
   layout: layoutTokens,
   zIndex: zIndexTokens,
   transition: transitionTokens,
+  // Grid configuration
+  grid: {
+    config: gridConfig,
+    spacingBase: SPACING_BASE_UNIT,
+    gridConfig: GRID_CONFIG,
+  },
   semantic: {
     spacing: semanticSpacing,
     typography: semanticTypography,
@@ -62,6 +85,7 @@ export const tokens = {
     fileType: fileTypeColors,
     dashboard: dashboardColors,
   },
+  navigation: navigationTokens,
 } as const;
 
 /**
@@ -80,6 +104,9 @@ export const tokenUtils = {
   getLayout,
   getZIndex,
   getTransition,
+  // Grid utilities
+  getGridColumnWidth,
+  getColumnWithGutter,
 };
 
 /**
@@ -125,7 +152,7 @@ export const createFrontDeskTheme = () => ({
     fontFamily: typographyTokens.fontFamily.sans,
     fontSize: typographyTokens.fontSize.md,
   },
-  spacing: (factor: number) => spacingTokens[factor as keyof typeof spacingTokens] || factor * 4,
+  spacing: (factor: number) => spacingTokens[factor as keyof typeof spacingTokens] || factor * SPACING_BASE_UNIT,
   shape: {
     borderRadius: radiusTokens.md,
   },

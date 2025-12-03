@@ -12,29 +12,32 @@ import { colorTokens } from '@/widgets/frontdesk/design-system';
 
 // =============================================================================
 // FILTER STYLES (Toolbar icon buttons - Teams, Labels, Sort, etc.)
+// Modern SaaS design with consistent 16-18px icons and refined colors
 // =============================================================================
 
 export const filterStyles = {
   /** Icon button trigger for filters */
   iconButton: {
     base: {
-      width: 28,
-      height: 28,
+      width: 30,
+      height: 30,
       padding: 0.5,
-      transition: 'all 0.2s ease-in-out',
+      borderRadius: '8px',
+      transition: 'all 0.15s ease',
     },
     inactive: {
-      color: colorTokens.neutral[600],
+      color: colorTokens.neutral[500],
       '&:hover': {
         backgroundColor: colorTokens.neutral[100],
-        color: colorTokens.neutral[900],
+        color: colorTokens.neutral[700],
       },
     },
     active: {
-      color: colorTokens.primary[600],
+      color: colorTokens.primary[500],
+      backgroundColor: colorTokens.primary[50],
       '&:hover': {
-        backgroundColor: colorTokens.neutral[100],
-        color: colorTokens.primary[700],
+        backgroundColor: colorTokens.primary[100],
+        color: colorTokens.primary[600],
       },
     },
   },
@@ -44,21 +47,23 @@ export const filterStyles = {
       fontSize: '0.6rem',
       height: 14,
       minWidth: 14,
-      backgroundColor: colorTokens.primary[600],
+      backgroundColor: colorTokens.primary[500],
+      fontWeight: 600,
     },
   },
-  /** Icon size */
+  /** Icon size - consistent 16px for all toolbar icons */
   iconSize: 16,
-  /** Menu paper */
+  /** Menu paper - refined shadow and radius */
   menuPaper: {
-    mt: 1,
+    mt: 0.75,
     minWidth: 240,
     maxWidth: 320,
-    maxHeight: 360,
-    backgroundColor: colorTokens.neutral[0] || '#ffffff',
+    maxHeight: 400,
+    backgroundColor: colorTokens.semantic.background.primary,
     border: `1px solid ${colorTokens.neutral[200]}`,
-    boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
-    borderRadius: '8px',
+    boxShadow: '0 4px 16px -2px rgba(0, 0, 0, 0.08), 0 2px 6px -2px rgba(0, 0, 0, 0.04)',
+    borderRadius: '12px',
+    overflow: 'hidden',
   },
   /** Section header */
   sectionHeader: {
@@ -68,7 +73,7 @@ export const filterStyles = {
     textTransform: 'uppercase' as const,
     letterSpacing: 0.5,
     px: 2,
-    py: 1.25,
+    py: 1,
   },
 } as const;
 

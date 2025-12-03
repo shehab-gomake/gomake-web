@@ -1,6 +1,8 @@
 /**
  * ConversationTabs Component
- * Mine/Unassigned/All tabs with counts
+ * 
+ * Modern tab bar for filtering conversations by assignee type (Mine/Unassigned/All).
+ * Features clean design with equal spacing, soft radius, and clear visual indicators.
  *
  * RBAC: Tabs are filtered based on user permissions
  * - "Mine" tab: visible to all users
@@ -9,14 +11,18 @@
  */
 
 import React, { useMemo } from "react";
-import { Box, Tabs, Tab, Stack, Typography, Chip } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import {
   ConversationAssigneeType,
   ConversationListParams,
 } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
 import { useChatwootPermissions } from "../../hooks/use-chatwoot-permissions";
 import { ASSIGNEE_TAB_PERMISSIONS } from "../../constants/permissions.constants";
-import { colorTokens, radiusTokens, shadowTokens } from "@/widgets/frontdesk/design-system";
+import { colorTokens, radiusTokens, shadowTokens, semanticSpacing } from "@/widgets/frontdesk/design-system";
+
+// =============================================================================
+// Types
+// =============================================================================
 
 interface ConversationTabsProps {
   filters: Partial<ConversationListParams>;
@@ -26,31 +32,87 @@ interface ConversationTabsProps {
     unassigned: number;
     all: number;
   };
+  /** @deprecated No longer used - colors are now from design tokens */
   primaryColor?: (shade: number) => string;
+  /** @deprecated No longer used - colors are now from design tokens */
   neutralColor?: (shade: number) => string;
 }
+
+interface TabConfig {
+  id: string;
+  label: string;
+  value: ConversationAssigneeType;
+  count: number;
+}
+
+// =============================================================================
+// Styles
+// =============================================================================
+
+const TAB_HEIGHT = 32;
+const BADGE_HEIGHT = 18;
+const BADGE_MIN_WIDTH = 22;
+
+const getTabStyles = (isActive: boolean) => ({
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  gap: 0.5,
+  flex: 1,
+  px: 1,
+  py: 0.625,
+  borderRadius: `${radiusTokens.md}px`,
+  cursor: "pointer",
+  transition: "all 0.15s ease",
+  position: "relative" as const,
+  backgroundColor: isActive ? colorTokens.primary[50] : "transparent",
+  border: `1px solid ${isActive ? colorTokens.primary[200] : "transparent"}`,
+  "&:hover": {
+    backgroundColor: isActive ? colorTokens.primary[50] : colorTokens.neutral[50],
+  },
+});
+
+const getTabLabelStyles = (isActive: boolean) => ({
+  fontSize: "0.8125rem",
+  fontWeight: isActive ? 600 : 500,
+  color: isActive ? colorTokens.primary[700] : colorTokens.neutral[600],
+  lineHeight: 1,
+  letterSpacing: "-0.01em",
+  transition: "color 0.15s ease",
+});
+
+const getBadgeStyles = (isActive: boolean) => ({
+  display: "inline-flex",
+  alignItems: "center",
+  justifyContent: "center",
+  height: BADGE_HEIGHT,
+  minWidth: BADGE_MIN_WIDTH,
+  px: 0.75,
+  borderRadius: `${radiusTokens.full}px`,
+  fontSize: "0.6875rem",
+  fontWeight: 600,
+  lineHeight: 1,
+  backgroundColor: isActive ? colorTokens.primary[100] : colorTokens.neutral[100],
+  color: isActive ? colorTokens.primary[700] : colorTokens.neutral[500],
+  transition: "all 0.15s ease",
+});
+
+// =============================================================================
+// Component
+// =============================================================================
 
 export const ConversationTabs: React.FC<ConversationTabsProps> = React.memo(({
   filters,
   onFiltersChange,
   counts,
-  primaryColor,
-  neutralColor,
 }) => {
   // Get permission checking functions
   const { canAccess, isAgent, isAdministrator } = useChatwootPermissions();
 
   // Check which tabs are visible based on permissions
-  // NOTE: In Chatwoot, agents can see all tabs (Mine/Unassigned/All)
-  // The backend automatically filters conversations based on the agent's assigned inboxes
-  // Only hide tabs if user has restricted custom role permissions
   const visibleTabs = useMemo(() => ({
-    mine: true, // Always visible - all users can see Mine
-    // Unassigned: Show for admins, agents, and users with unassigned permission
-    // Agents can see unassigned conversations from their assigned inboxes (backend filtered)
+    mine: true,
     unassigned: isAdministrator || isAgent || canAccess(ASSIGNEE_TAB_PERMISSIONS.unassigned),
-    // All: Show for admins, agents, and users with participating permission
-    // Agents can see all conversations from their assigned inboxes (backend filtered)
     all: isAdministrator || isAgent || canAccess(ASSIGNEE_TAB_PERMISSIONS.all),
   }), [canAccess, isAgent, isAdministrator]);
 
@@ -60,30 +122,26 @@ export const ConversationTabs: React.FC<ConversationTabsProps> = React.memo(({
     return "all";
   };
 
-  const handleTabChange = (_event: React.SyntheticEvent, newValue: string) => {
+  const handleTabClick = (tabId: string) => {
     let assignee_type: ConversationAssigneeType | undefined;
 
-    if (newValue === "mine") {
+    if (tabId === "mine") {
       assignee_type = ConversationAssigneeType.ME;
-    } else if (newValue === "unassigned") {
+    } else if (tabId === "unassigned") {
       assignee_type = ConversationAssigneeType.UNASSIGNED;
-    } else if (newValue === "all") {
+    } else if (tabId === "all") {
       assignee_type = ConversationAssigneeType.ALL;
     }
 
-    // When switching tabs, only preserve status and inbox_id filters
-    // Clear contextual filters (search, team, sort) to avoid pollution
     const newFilters: Partial<ConversationListParams> = {
       assignee_type,
       page: 1,
     };
 
-    // Explicitly preserve status filter if present
     if (filters.status !== undefined) {
       newFilters.status = filters.status;
     }
 
-    // Explicitly preserve inbox_id if present (for channel-specific views)
     if (filters.inbox_id !== undefined) {
       newFilters.inbox_id = filters.inbox_id;
     }
@@ -93,133 +151,88 @@ export const ConversationTabs: React.FC<ConversationTabsProps> = React.memo(({
 
   const currentTab = getCurrentTab();
 
+  // Build tab configuration
+  const tabs: TabConfig[] = useMemo(() => {
+    const allTabs: TabConfig[] = [];
+    
+    if (visibleTabs.mine) {
+      allTabs.push({ id: "mine", label: "Mine", value: ConversationAssigneeType.ME, count: counts.mine });
+    }
+    if (visibleTabs.unassigned) {
+      allTabs.push({ id: "unassigned", label: "Unassigned", value: ConversationAssigneeType.UNASSIGNED, count: counts.unassigned });
+    }
+    if (visibleTabs.all) {
+      allTabs.push({ id: "all", label: "All", value: ConversationAssigneeType.ALL, count: counts.all });
+    }
+    
+    return allTabs;
+  }, [visibleTabs, counts]);
+
   return (
-    <Box sx={{ px: 1.5, pt: 1, pb: 0 }}>
-      <Tabs
-        value={currentTab}
-        onChange={handleTabChange}
+    <Box
+      sx={{
+        px: 1.5,
+        py: 1,
+      }}
+    >
+      {/* Tab Container with subtle background */}
+      <Box
         sx={{
-          minHeight: 36,
-          "& .MuiTab-root": {
-            minHeight: 36,
-            py: 1,
-            px: 2,
-            textTransform: "none",
-            fontSize: "0.875rem",
-            fontWeight: 500,
-            color: colorTokens.neutral[600],
-            "&.Mui-selected": {
-              color: colorTokens.neutral[900],
-              fontWeight: 600,
-            },
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "center",
+          gap: 0.5,
+          p: 0.5,
+          backgroundColor: colorTokens.neutral[50],
+          borderRadius: `${radiusTokens.lg}px`,
+          border: `1px solid ${colorTokens.neutral[100]}`,
+          width: "100%",
+          overflowX: "auto",
+          "&::-webkit-scrollbar": {
+            display: "none",
           },
-          "& .MuiTabs-indicator": {
-            backgroundColor: colorTokens.primary[600],
-            height: 2,
-          },
+          scrollbarWidth: "none",
         }}
+        role="tablist"
       >
-        {/* Mine tab - visible to all users */}
-        {visibleTabs.mine && (
-          <Tab
-            label={
-              <Stack direction="row" alignItems="center" spacing={1}>
-                <Typography sx={{ fontSize: "0.875rem", color: "inherit", fontWeight: "inherit" }}>Mine</Typography>
-                <Chip
-                  label={counts.mine}
-                  size="small"
-                  sx={{
-                    height: 20,
-                    minWidth: 20,
-                    fontSize: "0.75rem",
-                    fontWeight: 600,
-                    backgroundColor: currentTab === "mine" ? colorTokens.neutral[200] : colorTokens.neutral[100],
-                    color: currentTab === "mine" ? colorTokens.neutral[800] : colorTokens.neutral[600],
-                    borderRadius: "10px",
-                    "& .MuiChip-label": {
-                      px: 0.75,
-                      py: 0,
-                    },
-                  }}
-                />
-              </Stack>
-            }
-            value="mine"
-          />
-        )}
-
-        {/* Unassigned tab - visible to admins and users with conversation_unassigned_manage */}
-        {visibleTabs.unassigned && (
-          <Tab
-            label={
-              <Stack direction="row" alignItems="center" spacing={1}>
-                <Typography sx={{ fontSize: "0.875rem", color: "inherit", fontWeight: "inherit" }}>Unassigned</Typography>
-                <Chip
-                  label={counts.unassigned}
-                  size="small"
-                  sx={{
-                    height: 20,
-                    minWidth: 20,
-                    fontSize: "0.75rem",
-                    fontWeight: 600,
-                    backgroundColor: currentTab === "unassigned" ? colorTokens.neutral[200] : colorTokens.neutral[100],
-                    color: currentTab === "unassigned" ? colorTokens.neutral[800] : colorTokens.neutral[600],
-                    borderRadius: "10px",
-                    "& .MuiChip-label": {
-                      px: 0.75,
-                      py: 0,
-                    },
-                  }}
-                />
-              </Stack>
-            }
-            value="unassigned"
-          />
-        )}
-
-        {/* All tab - visible to admins and users with conversation_participating_manage */}
-        {visibleTabs.all && (
-          <Tab
-            label={
-              <Stack direction="row" alignItems="center" spacing={1}>
-                <Typography sx={{ fontSize: "0.875rem", color: "inherit", fontWeight: "inherit" }}>All</Typography>
-                <Chip
-                  label={counts.all}
-                  size="small"
-                  sx={{
-                    height: 20,
-                    minWidth: 20,
-                    fontSize: "0.75rem",
-                    fontWeight: 600,
-                    backgroundColor: currentTab === "all" ? colorTokens.neutral[200] : colorTokens.neutral[100],
-                    color: currentTab === "all" ? colorTokens.neutral[800] : colorTokens.neutral[600],
-                    borderRadius: "10px",
-                    "& .MuiChip-label": {
-                      px: 0.75,
-                      py: 0,
-                    },
-                  }}
-                />
-              </Stack>
-            }
-            value="all"
-          />
-        )}
-      </Tabs>
+        {tabs.map((tab) => {
+          const isActive = currentTab === tab.id;
+          
+          return (
+            <Box
+              key={tab.id}
+              onClick={() => handleTabClick(tab.id)}
+              sx={getTabStyles(isActive)}
+              role="tab"
+              aria-selected={isActive}
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  handleTabClick(tab.id);
+                }
+              }}
+            >
+              <Typography component="span" sx={getTabLabelStyles(isActive)}>
+                {tab.label}
+              </Typography>
+              <Box component="span" sx={getBadgeStyles(isActive)}>
+                {tab.count > 99 ? "99+" : tab.count}
+              </Box>
+            </Box>
+          );
+        })}
+      </Box>
     </Box>
   );
 }, (prevProps, nextProps) => {
-  // Custom comparison: only re-render if filters, counts, or callbacks changed
-  // IMPORTANT: Check all relevant filter properties to ensure re-renders when needed
   return (
     prevProps.filters.assignee_type === nextProps.filters.assignee_type &&
-    prevProps.filters.status === nextProps.filters.status && // Check status filter
-    prevProps.filters.inbox_id === nextProps.filters.inbox_id && // Check inbox filter
+    prevProps.filters.status === nextProps.filters.status &&
+    prevProps.filters.inbox_id === nextProps.filters.inbox_id &&
     prevProps.counts.mine === nextProps.counts.mine &&
     prevProps.counts.unassigned === nextProps.counts.unassigned &&
     prevProps.counts.all === nextProps.counts.all &&
-    prevProps.onFiltersChange === nextProps.onFiltersChange &&
-    prevProps.primaryColor === nextProps.primaryColor &&
-    prevProps.neutralColor === nextProps.neutralColor
+    prevProps.onFiltersChange === nextProps.onFiltersChange
   );
 });

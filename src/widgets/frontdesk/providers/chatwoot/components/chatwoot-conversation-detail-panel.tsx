@@ -2,7 +2,11 @@
  * Chatwoot Conversation Detail Panel
  *
  * Right sidebar showing conversation metadata and actions.
- * Mirrors the design and structure of ticket-detail-view's right column.
+ * Redesigned with:
+ * - Consistent 8px rhythm spacing
+ * - Modern card styling (14px radius, soft shadows)
+ * - Improved visual hierarchy
+ * - Better component grouping
  */
 
 import React, { useState, useCallback, Suspense } from "react";
@@ -17,7 +21,7 @@ import {
 import {
   ExpandMore as ExpandMoreIcon,
 } from "@mui/icons-material";
-import { colorTokens, radiusTokens, shadowTokens } from "@/widgets/frontdesk/design-system";
+import { colorTokens, radiusTokens, shadowTokens, semanticSpacing, layoutTokens } from "@/widgets/frontdesk/design-system";
 import { QuickActionButton } from "@/widgets/frontdesk/design-system/primitives/Button/QuickActionButton";
 import { QuickActionMenu, QuickActionItem } from "@/widgets/frontdesk/design-system/compounds/QuickActionMenu/QuickActionMenu";
 import { chatwootService } from "@/services/frontdesk";
@@ -122,27 +126,30 @@ export const ChatwootConversationDetailPanel: React.FC<ChatwootConversationDetai
   return (
     <Box
       sx={{
-        width: 280,
-        minWidth: 280,
+        width: "100%",
+        height: "100%",
         backgroundColor: colorTokens.semantic.background.primary,
         overflow: "auto",
-        p: 2,
+        p: `${semanticSpacing.container.lg}px`,  // Use design system container padding (24px)
       }}
       className="custom-scrollbar"
     >
       {/* Actions Button - Sales/Purchase Documents */}
-      <Box sx={{ mb: 2.5 }}>
+      <Box sx={{ mb: `${semanticSpacing.component.lg}px` }}>  {/* Use design system spacing */}
         <QuickActionButton
           size="sm"
           isOpen={Boolean(quickActionsAnchor)}
           onClick={(e) => setQuickActionsAnchor(e.currentTarget)}
-          sx={{ width: "100%" }}
+          sx={{ 
+            width: "100%",
+            borderRadius: `${radiusTokens.lg}px`,  // Use design system radius
+          }}
         >
           Actions
         </QuickActionButton>
       </Box>
 
-      <Divider sx={{ my: 2 }} />
+      <Divider sx={{ my: 2, borderColor: colorTokens.neutral[100] }} />
 
       {/* Contact Profile Section */}
       <ConversationProfileSection
@@ -263,7 +270,7 @@ export const ChatwootConversationDetailPanel: React.FC<ChatwootConversationDetai
 
       {/* Inbox Info */}
       {inbox && (
-        <Box sx={{ mb: 2.5 }}>
+        <Box sx={{ mb: `${semanticSpacing.component.lg}px` }}>  {/* Use design system spacing */}
           <Typography
             variant="caption"
             sx={{
@@ -273,16 +280,17 @@ export const ChatwootConversationDetailPanel: React.FC<ChatwootConversationDetai
               fontWeight: 600,
               textTransform: "uppercase",
               fontSize: 10,
+              letterSpacing: "0.05em",
             }}
           >
             Inbox
           </Typography>
           <Box
             sx={{
-              p: 1.5,
+              p: `${semanticSpacing.component.md}px`,  // Use design system padding
               backgroundColor: colorTokens.neutral[50],
-              borderRadius: "6px",
-              border: `1px solid ${colorTokens.semantic.border.default}`,
+              borderRadius: `${radiusTokens.lg}px`,    // Use design system radius
+              border: `1px solid ${colorTokens.semantic.border.light}`,
             }}
           >
             <Typography variant="body2" sx={{ fontWeight: 500, fontSize: 13 }}>
@@ -295,7 +303,7 @@ export const ChatwootConversationDetailPanel: React.FC<ChatwootConversationDetai
         </Box>
       )}
 
-      <Divider sx={{ my: 3 }} />
+      <Divider sx={{ my: 2.5, borderColor: colorTokens.neutral[100] }} />
 
       {/* Expandable Sections */}
       {/* Custom Attributes */}

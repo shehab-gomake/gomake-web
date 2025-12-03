@@ -2,99 +2,118 @@
  * FrontDesk Design System - Layout Tokens
  *
  * Consistent layout dimensions for panels, columns, and structural elements.
+ * Based on 12-column responsive grid with 24px gutter spacing.
  * All values in pixels for precise control.
  */
 
+// Grid configuration
+export const gridConfig = {
+  columns: 12,
+  gutter: 24,        // 24px gutter spacing between columns
+  margin: 24,        // 24px margin on edges
+  maxWidth: 1920,    // Maximum container width
+} as const;
+
 export const layoutTokens = {
-  // Panel widths
+  // Panel widths (adjusted for better breathing room)
   panel: {
     navigation: {
-      collapsed: 60,
-      default: 220,
+      collapsed: 64,
+      default: 240,
       expanded: 280,
     },
     conversationList: {
-      compact: 280,
-      default: 340,
-      wide: 400,
+      compact: 320,
+      default: 380,    // Wider for better scanning
+      wide: 440,
     },
     detailSidebar: {
-      compact: 280,
-      default: 320,
-      wide: 380,
+      compact: 300,
+      default: 340,    // Wider for better content display
+      wide: 400,
     },
     settings: {
-      sidebar: 240,
-      content: 800,
+      sidebar: 260,
+      content: 840,
     },
   },
 
-  // Header heights
+  // Header heights (8px rhythm)
   header: {
-    page: 56,
-    section: 48,
-    compact: 40,
-    toolbar: 44,
+    page: 64,          // 8 * 8 = 64px
+    section: 56,       // 7 * 8 = 56px
+    compact: 48,       // 6 * 8 = 48px
+    toolbar: 48,       // 6 * 8 = 48px
   },
 
   // Footer/action bar heights
   footer: {
-    actionBar: 52,
-    composer: 120,
+    actionBar: 56,     // 7 * 8 = 56px
+    composer: 128,     // 16 * 8 = 128px
     composerExpanded: 200,
   },
 
   // Modal dimensions
   modal: {
-    xs: { width: 320, maxHeight: '60vh' },
-    sm: { width: 440, maxHeight: '70vh' },
-    md: { width: 560, maxHeight: '80vh' },
-    lg: { width: 720, maxHeight: '85vh' },
-    xl: { width: 900, maxHeight: '90vh' },
+    xs: { width: 360, maxHeight: '60vh' },
+    sm: { width: 480, maxHeight: '70vh' },
+    md: { width: 600, maxHeight: '80vh' },
+    lg: { width: 760, maxHeight: '85vh' },
+    xl: { width: 960, maxHeight: '90vh' },
     fullscreen: { width: '100vw', maxHeight: '100vh' },
   },
 
   // Card dimensions
   card: {
-    minWidth: 200,
-    maxWidth: 400,
-    statsCard: { width: 180, height: 100 },
-    notificationCard: { minHeight: 72 },
+    minWidth: 240,
+    maxWidth: 440,
+    padding: 24,       // 20-24px padding as per design spec
+    radius: 14,        // 14px radius as per design spec
+    statsCard: { width: 200, height: 120 },
+    notificationCard: { minHeight: 80 },
   },
 
   // Message bubble dimensions
   messageBubble: {
     maxWidth: '70%',
-    minWidth: 80,
-    padding: { x: 12, y: 8 },
+    minWidth: 100,
+    padding: { x: 16, y: 12 },  // 8px rhythm
   },
 
-  // Avatar sizes (for reference, also in spacing)
+  // Avatar sizes (8px rhythm)
   avatar: {
-    xs: 20,
-    sm: 24,
-    md: 32,
-    lg: 40,
-    xl: 48,
-    xxl: 64,
+    xs: 24,
+    sm: 32,
+    md: 40,
+    lg: 48,
+    xl: 56,
+    xxl: 72,
   },
 
   // Icon container sizes
   iconContainer: {
     xs: 24,
-    sm: 28,
-    md: 32,
-    lg: 40,
-    xl: 48,
+    sm: 32,
+    md: 40,
+    lg: 48,
+    xl: 56,
   },
 
   // Breakpoints for responsive design
   breakpoints: {
     xs: 0,
-    sm: 600,
-    md: 900,
-    lg: 1200,
-    xl: 1536,
+    sm: 640,
+    md: 960,
+    lg: 1280,
+    xl: 1600,
+    xxl: 1920,
+  },
+
+  // Column gap (breathing room between columns)
+  columnGap: {
+    tight: 16,
+    default: 24,      // Standard gutter
+    spacious: 32,
   },
 } as const;
 
