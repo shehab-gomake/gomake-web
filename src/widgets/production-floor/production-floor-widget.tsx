@@ -586,7 +586,6 @@ const ProductionFloorWidget = () => {
           />
         </div>
       </ThreeOptionsModal>
-
       {/* Mark Ready Modal - With jobs (requires storage selection) */}
       <GoMakeDeleteModal
         title={t("boardMissions.markAsReadyJobsModalTitle")}
@@ -595,8 +594,7 @@ const ProductionFloorWidget = () => {
         subTitle={" "}
         openModal={openMarkReadyModalForHasJobs}
         onClose={onCloseMarkReadyModalForHasJobs}
-        onClickDelete={() => onClickMarkReadyModalForHasJobs(true)}
-        // onClickCancel={() => onClickMarkReadyModalForHasJobs(false)}
+        onClickDelete={() => onClickMarkReadyModalForHasJobs(false)}
       >
         <div style={{ width: "100%", minWidth: 300 }}>
           <GoMakeAutoComplate
