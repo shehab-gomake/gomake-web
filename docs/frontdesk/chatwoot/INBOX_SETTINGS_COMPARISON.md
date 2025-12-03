@@ -4,15 +4,19 @@ This document compares our current implementation against the comprehensive spec
 
 **Scope**: Email and WhatsApp channels only (Web Widget features excluded)
 
+> **Note**: Channel Greeting is disabled by GoMake policy. The greeting_enabled and greeting_message fields are always set to false/empty when saving inbox settings.
+
 ## 📊 Summary
 
 | Category | Implemented | Missing | Total |
 |----------|------------|---------|-------|
 | **Inbox Identity & Branding** | 1/2 | 1 | 2 |
 | **Channel-Specific Configurations** | 0/1 | 1 | 1 |
-| **Conversation Experience** | 2/3 | 1 | 3 |
+| **Conversation Experience** | 0/2 | 2 | 2 |
 | **Sender Name Configuration** | 1/2 | 1 | 2 |
-| **TOTAL** | **4/8** | **4** | **8** |
+| **TOTAL** | **2/7** | **5** | **7** |
+
+*Note: Channel Greeting removed from count - disabled by policy*
 
 ---
 
@@ -46,17 +50,10 @@ This document compares our current implementation against the comprehensive spec
 
 ### 3. Conversation Experience Settings
 
-#### ✅ Greeting Message (Enable/Disable)
-- **Status**: ✅ Implemented
-- **Location**: `InboxSettingsTab.tsx` lines 87-116
-- **Implementation**: Switch toggle with conditional editor
-- **API Support**: ✅ `greeting_enabled` field
-
-#### ✅ Greeting Message Content
-- **Status**: ✅ Implemented
-- **Location**: `InboxSettingsTab.tsx` lines 106-115
-- **Implementation**: RichTextEditor with channel-specific max length
-- **API Support**: ✅ `greeting_message` field
+#### ❌ Channel Greeting (DISABLED BY POLICY)
+- **Status**: ❌ Disabled by GoMake policy
+- **Note**: Channel Greeting is always disabled. The UI does not show greeting settings, and `greeting_enabled: false` / `greeting_message: ""` are always sent when saving inbox settings.
+- **API Fields**: `greeting_enabled` and `greeting_message` exist but are forced to false/empty
 
 #### ❌ Help Center Portal (Email & WhatsApp)
 - **Status**: ❌ Missing
@@ -98,8 +95,8 @@ For Email and WhatsApp, the payload structure is straightforward:
 ```typescript
 {
   name: string,
-  greeting_enabled: boolean,
-  greeting_message: string,
+  greeting_enabled: false,      // GoMake always disables greeting
+  greeting_message: "",         // GoMake always sets empty
   lock_to_single_conversation?: boolean, // WhatsApp only
   portal_id?: number, // Help Center portal
   sender_name_type?: "friendly" | "professional", // Email only

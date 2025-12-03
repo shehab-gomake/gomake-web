@@ -1,8 +1,7 @@
-import React, { useRef, useEffect } from "react";
-import { Box, Paper, alpha } from "@mui/material";
-import { useTheme } from "@mui/material/styles";
+import React from "react";
+import { Box } from "@mui/material";
 import { useRecoilValue } from "recoil";
-import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { colorTokens } from "@/widgets/frontdesk/design-system";
 import { ChatwootConversationListItem } from "./chatwoot-conversation-list-item";
 import { ChatwootConversationListHeader } from "./chatwoot-conversation-list-header";
 import { LoadingOverlay } from "@/widgets/frontdesk/components/shared";
@@ -61,9 +60,6 @@ export const ChatwootConversationList: React.FC<ChatwootConversationListProps> =
     hideHeader = false,
     hideAssigneeAvatars = false,
   }) => {
-    const theme = useTheme();
-    const { neutralColor } = useGomakeTheme();
-
     // Extract granular loading states
     const loadingState: ChatwootConversationsLoadingState =
       typeof loadingProp === "boolean" ? { initialLoading: loadingProp, filtering: false, loadingMore: false } : loadingProp;
@@ -94,18 +90,13 @@ export const ChatwootConversationList: React.FC<ChatwootConversationListProps> =
     };
 
     return (
-      <Paper
-        elevation={hideHeader ? 0 : 2}
+      <Box
         sx={{
           height: "100%",
-          borderRadius: hideHeader ? 0 : 2,
           overflow: "hidden",
           display: "flex",
           flexDirection: "column",
-          backgroundColor: neutralColor(0),
-          boxShadow: hideHeader
-            ? "none"
-            : `0 2px 8px ${alpha(theme.palette.common.black, 0.06)}, 0 1px 3px ${alpha(theme.palette.common.black, 0.04)}`,
+          backgroundColor: colorTokens.semantic.background.primary,
         }}
       >
         {!hideHeader && (
@@ -125,7 +116,7 @@ export const ChatwootConversationList: React.FC<ChatwootConversationListProps> =
           sx={{
             flex: 1,
             overflow: "hidden", // Virtuoso handles scrolling
-            backgroundColor: neutralColor(0),
+            backgroundColor: colorTokens.semantic.background.primary,
             px: 0,
             position: "relative",
           }}
@@ -180,7 +171,7 @@ export const ChatwootConversationList: React.FC<ChatwootConversationListProps> =
             />
           )}
         </Box>
-      </Paper>
+      </Box>
     );
   },
   (prevProps, nextProps) => {

@@ -122,6 +122,7 @@ const parseChatwootView = (viewParam?: string): ChatwootView => {
     mentions: ChatwootView.MENTIONS,
     unattended: ChatwootView.UNATTENDED,
     channels: ChatwootView.CHANNELS,
+    workboard: ChatwootView.WORKBOARD,
     "webhook-test": ChatwootView.WEBHOOK_TEST,
     settings: ChatwootView.SETTINGS,
     "oauth-callback": ChatwootView.OAUTH_CALLBACK,

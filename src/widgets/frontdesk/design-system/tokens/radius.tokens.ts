@@ -2,18 +2,19 @@
  * FrontDesk Design System - Border Radius Tokens
  *
  * Consistent border radius values for rounded corners.
- * Provides smooth, modern interface with appropriate roundness levels.
+ * Uses 14px as the standard card radius for a modern SaaS aesthetic.
  */
 
 export const radiusTokens = {
   none: 0,
   xs: 2,      // 2px - subtle rounding
   sm: 4,      // 4px - small elements
-  md: 6,      // 6px - default rounding
-  lg: 8,      // 8px - cards, panels
-  xl: 12,     // 12px - prominent elements
-  '2xl': 16,  // 16px - large cards
-  '3xl': 24,  // 24px - hero elements
+  md: 8,      // 8px - default rounding
+  lg: 12,     // 12px - buttons, inputs
+  xl: 14,     // 14px - cards (design spec)
+  '2xl': 16,  // 16px - panels
+  '3xl': 20,  // 20px - large cards
+  '4xl': 24,  // 24px - hero elements
   full: 9999, // Full circle/pill
 } as const;
 
@@ -21,26 +22,28 @@ export const radiusTokens = {
 export const semanticRadius = {
   // Component types
   component: {
-    button: radiusTokens.md,
-    buttonLarge: radiusTokens.lg,
-    input: radiusTokens.md,
-    card: radiusTokens.lg,
-    panel: radiusTokens.lg,
-    modal: radiusTokens.xl,
-    popover: radiusTokens.lg,
-    tooltip: radiusTokens.sm,
+    button: radiusTokens.md,       // 8px
+    buttonLarge: radiusTokens.lg,  // 12px
+    input: radiusTokens.md,        // 8px
+    card: radiusTokens.xl,         // 14px - design spec
+    cardSmall: radiusTokens.lg,    // 12px
+    panel: radiusTokens['2xl'],    // 16px
+    modal: radiusTokens['3xl'],    // 20px
+    popover: radiusTokens.xl,      // 14px
+    tooltip: radiusTokens.md,      // 8px
     badge: radiusTokens.full,
     chip: radiusTokens.full,
     avatar: radiusTokens.full,
-    image: radiusTokens.md,
+    image: radiusTokens.lg,        // 12px
+    listItem: radiusTokens.lg,     // 12px
   },
 
   // Interactive elements
   interactive: {
-    default: radiusTokens.md,
-    hover: radiusTokens.lg,
-    small: radiusTokens.sm,
-    large: radiusTokens.xl,
+    default: radiusTokens.md,      // 8px
+    hover: radiusTokens.lg,        // 12px
+    small: radiusTokens.sm,        // 4px
+    large: radiusTokens.xl,        // 14px
   },
 } as const;
 

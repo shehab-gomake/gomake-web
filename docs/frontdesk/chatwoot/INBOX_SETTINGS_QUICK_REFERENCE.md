@@ -2,14 +2,15 @@
 
 **Scope**: Email and WhatsApp channels only (Web Widget features excluded)
 
-## ✅ Currently Implemented (4/8)
+> **Note**: Channel Greeting is disabled by GoMake policy. The greeting_enabled and greeting_message fields are always set to false/empty when saving inbox settings.
+
+## ✅ Currently Implemented (2/6)
 
 | Feature | Status | Notes |
 |---------|--------|-------|
 | Inbox Name | ✅ | Fully working |
-| Greeting Enable/Disable | ✅ | Fully working |
-| Greeting Message Content | ✅ | Rich text editor with channel limits |
 | Sender Name Type | ✅ | Email only (Friendly/Professional cards) |
+| Channel Greeting | ❌ | Disabled by GoMake policy (always false) |
 
 ---
 
@@ -43,8 +44,8 @@ const isWhatsApp = inbox.channel_type?.includes("WhatsApp");
 // For Email inboxes
 {
   name: string,
-  greeting_enabled: boolean,
-  greeting_message: string,
+  greeting_enabled: false,        // GoMake always disables greeting
+  greeting_message: "",           // GoMake always sets empty
   sender_name_type: "friendly" | "professional",
   business_name?: string, // Required if sender_name_type = "professional"
   portal_id?: number
@@ -53,8 +54,8 @@ const isWhatsApp = inbox.channel_type?.includes("WhatsApp");
 // For WhatsApp inboxes
 {
   name: string,
-  greeting_enabled: boolean,
-  greeting_message: string,
+  greeting_enabled: false,        // GoMake always disables greeting
+  greeting_message: "",           // GoMake always sets empty
   lock_to_single_conversation: boolean,
   portal_id?: number
   // provider is read-only, comes from inbox object
@@ -138,10 +139,11 @@ Inbox Settings Tab
 ├── Channel-Specific (WhatsApp only)
 │   └── Provider Name (NEW - read-only)
 ├── Conversation Experience
-│   ├── Greeting Message ✅
 │   ├── Help Center Portal (NEW - optional)
 │   └── Lock to Single Conversation (NEW - WhatsApp only)
 └── Sender Name (Email only)
     ├── Sender Name Type ✅
     └── Business Name (NEW - conditional)
+
+Note: Channel Greeting is disabled by GoMake policy and not shown in UI.
 ```

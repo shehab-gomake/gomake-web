@@ -285,6 +285,7 @@ const mapChatwootViewToQueryParam = (view: ChatwootView): string => {
     [ChatwootView.MENTIONS]: "mentions",
     [ChatwootView.UNATTENDED]: "unattended",
     [ChatwootView.CHANNELS]: "channels",
+    [ChatwootView.WORKBOARD]: "workboard",
     [ChatwootView.WEBHOOK_TEST]: "webhook-test",
     [ChatwootView.SETTINGS]: "settings",
     [ChatwootView.OAUTH_CALLBACK]: "oauth-callback",
@@ -549,6 +550,12 @@ export const RouteBuilder = {
   chatwootChannels: (): FrontDeskRoute => RouteBuilder.chatwoot(ChatwootView.CHANNELS),
 
   /**
+   * Build Chatwoot Workboard (Kanban) route
+   * @returns Workboard route object
+   */
+  chatwootWorkboard: (): FrontDeskRoute => RouteBuilder.chatwoot(ChatwootView.WORKBOARD),
+
+  /**
    * Build Chatwoot Settings route
    * @param subpage - Optional settings subpage
    * @returns Settings route object
@@ -634,6 +641,7 @@ export const getRouteMetadata = (route: FrontDeskRoute) => {
         [ChatwootView.MENTIONS]: "Mentions",
         [ChatwootView.UNATTENDED]: "Unattended",
         [ChatwootView.CHANNELS]: "Channels",
+        [ChatwootView.WORKBOARD]: "Workboard",
         [ChatwootView.WEBHOOK_TEST]: "Webhook Test",
         [ChatwootView.SETTINGS]: "Settings",
       };

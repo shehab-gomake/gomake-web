@@ -1,7 +1,6 @@
 import React from "react";
-import { Box, Skeleton, Stack, Paper, Grid, alpha } from "@mui/material";
-import { useTheme } from "@mui/material/styles";
-import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { Box, Skeleton, Stack, Paper, Grid , useTheme, alpha } from "@mui/material";
+import { colorTokens, radiusTokens, shadowTokens } from "@/widgets/frontdesk/design-system";
 
 /**
  * Skeleton loader for Chatwoot dashboard view
@@ -19,16 +18,13 @@ import { useGomakeTheme } from "@/hooks/use-gomake-thme";
  * ```
  */
 export const DashboardSkeleton: React.FC = () => {
-  const theme = useTheme();
-  const { neutralColor } = useGomakeTheme();
-
   return (
     <Box
       sx={{
         padding: 3,
         height: "100%",
         overflow: "auto",
-        backgroundColor: neutralColor(50),
+        backgroundColor: colorTokens.neutral[50],
       }}
     >
       <Stack spacing={3}>
@@ -40,7 +36,7 @@ export const DashboardSkeleton: React.FC = () => {
             height={36}
             sx={{
               mb: 1,
-              bgcolor: neutralColor(300),
+              bgcolor: colorTokens.neutral[300],
             }}
           />
           <Skeleton
@@ -48,7 +44,7 @@ export const DashboardSkeleton: React.FC = () => {
             width="50%"
             height={20}
             sx={{
-              bgcolor: neutralColor(200),
+              bgcolor: colorTokens.neutral[200],
             }}
           />
         </Box>
@@ -87,15 +83,13 @@ export const DashboardSkeleton: React.FC = () => {
  */
 const StatsCardSkeleton: React.FC<{ index: number }> = ({ index }) => {
   const theme = useTheme();
-  const { neutralColor } = useGomakeTheme();
-
   return (
     <Paper
       elevation={2}
       sx={{
         padding: 2.5,
         borderRadius: 2,
-        backgroundColor: neutralColor(0),
+        backgroundColor: colorTokens.semantic.background.primary,
         boxShadow: `0 2px 8px ${alpha(theme.palette.common.black, 0.06)}`,
         animation: "pulse 1.5s ease-in-out infinite",
         animationDelay: `${index * 0.1}s`,
@@ -126,7 +120,7 @@ const StatsCardSkeleton: React.FC<{ index: number }> = ({ index }) => {
           width="60%"
           height={40}
           sx={{
-            bgcolor: neutralColor(300),
+            bgcolor: colorTokens.neutral[300],
           }}
         />
 
@@ -136,7 +130,7 @@ const StatsCardSkeleton: React.FC<{ index: number }> = ({ index }) => {
           width="80%"
           height={20}
           sx={{
-            bgcolor: neutralColor(200),
+            bgcolor: colorTokens.neutral[200],
           }}
         />
 
@@ -147,7 +141,7 @@ const StatsCardSkeleton: React.FC<{ index: number }> = ({ index }) => {
             width={16}
             height={16}
             sx={{
-              bgcolor: neutralColor(200),
+              bgcolor: colorTokens.neutral[200],
             }}
           />
           <Skeleton
@@ -155,7 +149,7 @@ const StatsCardSkeleton: React.FC<{ index: number }> = ({ index }) => {
             width={60}
             height={16}
             sx={{
-              bgcolor: neutralColor(200),
+              bgcolor: colorTokens.neutral[200],
             }}
           />
         </Box>
@@ -169,15 +163,13 @@ const StatsCardSkeleton: React.FC<{ index: number }> = ({ index }) => {
  */
 const ChartCardSkeleton: React.FC = () => {
   const theme = useTheme();
-  const { neutralColor } = useGomakeTheme();
-
   return (
     <Paper
       elevation={2}
       sx={{
         padding: 3,
         borderRadius: 2,
-        backgroundColor: neutralColor(0),
+        backgroundColor: colorTokens.semantic.background.primary,
         boxShadow: `0 2px 8px ${alpha(theme.palette.common.black, 0.06)}`,
         height: 400,
       }}
@@ -190,7 +182,7 @@ const ChartCardSkeleton: React.FC = () => {
             width="40%"
             height={28}
             sx={{
-              bgcolor: neutralColor(300),
+              bgcolor: colorTokens.neutral[300],
             }}
           />
           <Skeleton
@@ -199,7 +191,7 @@ const ChartCardSkeleton: React.FC = () => {
             height={36}
             sx={{
               borderRadius: 1,
-              bgcolor: neutralColor(100),
+              bgcolor: colorTokens.neutral[100],
             }}
           />
         </Box>
@@ -224,7 +216,7 @@ const ChartCardSkeleton: React.FC = () => {
                 width={30}
                 height={16}
                 sx={{
-                  bgcolor: neutralColor(200),
+                  bgcolor: colorTokens.neutral[200],
                 }}
               />
             ))}
@@ -270,7 +262,7 @@ const ChartCardSkeleton: React.FC = () => {
               width={40}
               height={16}
               sx={{
-                bgcolor: neutralColor(200),
+                bgcolor: colorTokens.neutral[200],
               }}
             />
           ))}
@@ -285,15 +277,13 @@ const ChartCardSkeleton: React.FC = () => {
  */
 const SideStatsCardSkeleton: React.FC = () => {
   const theme = useTheme();
-  const { neutralColor } = useGomakeTheme();
-
   return (
     <Paper
       elevation={2}
       sx={{
         padding: 3,
         borderRadius: 2,
-        backgroundColor: neutralColor(0),
+        backgroundColor: colorTokens.semantic.background.primary,
         boxShadow: `0 2px 8px ${alpha(theme.palette.common.black, 0.06)}`,
         height: 400,
       }}
@@ -305,7 +295,7 @@ const SideStatsCardSkeleton: React.FC = () => {
           width="70%"
           height={28}
           sx={{
-            bgcolor: neutralColor(300),
+            bgcolor: colorTokens.neutral[300],
           }}
         />
 
@@ -319,7 +309,7 @@ const SideStatsCardSkeleton: React.FC = () => {
                   width="50%"
                   height={18}
                   sx={{
-                    bgcolor: neutralColor(200),
+                    bgcolor: colorTokens.neutral[200],
                   }}
                 />
                 <Skeleton
@@ -327,7 +317,7 @@ const SideStatsCardSkeleton: React.FC = () => {
                   width="20%"
                   height={24}
                   sx={{
-                    bgcolor: neutralColor(300),
+                    bgcolor: colorTokens.neutral[300],
                   }}
                 />
               </Box>
@@ -338,7 +328,7 @@ const SideStatsCardSkeleton: React.FC = () => {
                 height={8}
                 sx={{
                   borderRadius: "4px",
-                  bgcolor: neutralColor(100),
+                  bgcolor: colorTokens.neutral[100],
                 }}
               />
             </Box>
@@ -354,15 +344,13 @@ const SideStatsCardSkeleton: React.FC = () => {
  */
 const RecentActivitySkeleton: React.FC = () => {
   const theme = useTheme();
-  const { neutralColor } = useGomakeTheme();
-
   return (
     <Paper
       elevation={2}
       sx={{
         padding: 3,
         borderRadius: 2,
-        backgroundColor: neutralColor(0),
+        backgroundColor: colorTokens.semantic.background.primary,
         boxShadow: `0 2px 8px ${alpha(theme.palette.common.black, 0.06)}`,
       }}
     >
@@ -374,7 +362,7 @@ const RecentActivitySkeleton: React.FC = () => {
             width="30%"
             height={28}
             sx={{
-              bgcolor: neutralColor(300),
+              bgcolor: colorTokens.neutral[300],
             }}
           />
           <Skeleton
@@ -382,7 +370,7 @@ const RecentActivitySkeleton: React.FC = () => {
             width={80}
             height={20}
             sx={{
-              bgcolor: neutralColor(200),
+              bgcolor: colorTokens.neutral[200],
             }}
           />
         </Box>
@@ -398,7 +386,7 @@ const RecentActivitySkeleton: React.FC = () => {
                 gap: 2,
                 padding: 2,
                 borderRadius: 1,
-                backgroundColor: neutralColor(50),
+                backgroundColor: colorTokens.neutral[50],
               }}
             >
               {/* Avatar */}
@@ -408,7 +396,7 @@ const RecentActivitySkeleton: React.FC = () => {
                 height={40}
                 sx={{
                   flexShrink: 0,
-                  bgcolor: neutralColor(200),
+                  bgcolor: colorTokens.neutral[200],
                 }}
               />
 
@@ -419,7 +407,7 @@ const RecentActivitySkeleton: React.FC = () => {
                   width="70%"
                   height={18}
                   sx={{
-                    bgcolor: neutralColor(300),
+                    bgcolor: colorTokens.neutral[300],
                   }}
                 />
                 <Skeleton
@@ -427,7 +415,7 @@ const RecentActivitySkeleton: React.FC = () => {
                   width="90%"
                   height={16}
                   sx={{
-                    bgcolor: neutralColor(200),
+                    bgcolor: colorTokens.neutral[200],
                   }}
                 />
                 <Skeleton
@@ -435,7 +423,7 @@ const RecentActivitySkeleton: React.FC = () => {
                   width="40%"
                   height={14}
                   sx={{
-                    bgcolor: neutralColor(200),
+                    bgcolor: colorTokens.neutral[200],
                   }}
                 />
               </Stack>
@@ -447,7 +435,7 @@ const RecentActivitySkeleton: React.FC = () => {
                 height={16}
                 sx={{
                   flexShrink: 0,
-                  bgcolor: neutralColor(200),
+                  bgcolor: colorTokens.neutral[200],
                 }}
               />
             </Box>
@@ -462,15 +450,13 @@ const RecentActivitySkeleton: React.FC = () => {
  * Compact dashboard skeleton with fewer elements
  */
 export const DashboardSkeletonCompact: React.FC = () => {
-  const { neutralColor } = useGomakeTheme();
-
   return (
     <Box
       sx={{
         padding: 2,
         height: "100%",
         overflow: "auto",
-        backgroundColor: neutralColor(50),
+        backgroundColor: colorTokens.neutral[50],
       }}
     >
       <Stack spacing={2}>

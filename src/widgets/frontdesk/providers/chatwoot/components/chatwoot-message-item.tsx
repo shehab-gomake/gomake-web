@@ -6,17 +6,21 @@
  */
 
 import React, { useMemo } from "react";
-import { Box, Stack, Typography, Avatar, Paper } from "@mui/material";
+import { Box, Stack, Typography, Avatar, Paper, alpha } from "@mui/material";
 import LockIcon from "@mui/icons-material/Lock";
-import { useTheme } from "@mui/material/styles";
-import { alpha } from "@mui/material";
 import { ChatwootMessage } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
 import { formatMessageDate } from "@/widgets/frontdesk/utils";
 import { sanitizeHtml, isHtmlContent } from "@/widgets/frontdesk/utils/html-sanitizer";
 import { ActivityBubble } from "@/widgets/frontdesk/components/shared/ActivityBubble";
 import { MessageAttachments } from "./attachments";
 import { generateMessageSenderAvatar } from "../utils/avatar.utils";
-import { useSafeColors } from "@/widgets/frontdesk/utils/theme.utils";
+import { 
+  colorTokens, 
+  radiusTokens, 
+  shadowTokens,
+  semanticTypography,
+  messageTypeColors 
+} from "@/widgets/frontdesk/design-system";
 
 // ============================================================================
 // Constants
@@ -121,8 +125,6 @@ const processMessageContent = (message: ChatwootMessage): { content: string; isH
 
 export const ChatwootMessageItem: React.FC<ChatwootMessageItemProps> = React.memo(
   ({ message, isLast = false, isFirst = false, showAvatar = true, previousMessage = null }) => {
-    const theme = useTheme();
-    const { safeNeutralColor } = useSafeColors();
 
     // Early return for ACTIVITY messages
     if (message.message_type === MESSAGE_TYPES.ACTIVITY) {
@@ -175,47 +177,43 @@ export const ChatwootMessageItem: React.FC<ChatwootMessageItemProps> = React.mem
     // Email message check
     const isEmailMessage = !!message.content_attributes?.email;
 
-    // Styles - Professional colors: light blue for outgoing (like iMessage), white for incoming
+    // Styles - Using design system tokens
     const messageBubbleStyles = useMemo(
       () => ({
         bgcolor: isPrivate
-          ? "rgba(251, 191, 36, 0.1)"
+          ? messageTypeColors.private_note.bg
           : isMe
-          ? "#DCF8C6" // WhatsApp-style light green, or use "#E3F2FD" for light blue
-          : theme.palette.mode === "dark"
-          ? safeNeutralColor(800)
-          : "#FFFFFF",
-        color: isMe
-          ? safeNeutralColor(900)
-          : theme.palette.mode === "dark"
-          ? safeNeutralColor(100)
-          : safeNeutralColor(900),
+          ? messageTypeColors.outgoing.bg
+          : messageTypeColors.incoming.bg,
+        color: isPrivate
+          ? messageTypeColors.private_note.text
+          : isMe
+          ? messageTypeColors.outgoing.text
+          : messageTypeColors.incoming.text,
         border: isPrivate
-          ? `1px solid ${alpha("#F59E0B", 0.25)}`
+          ? `1px solid ${messageTypeColors.private_note.border}`
           : isMe
-          ? "none"
-          : `1px solid ${alpha(safeNeutralColor(300), 0.4)}`,
-        borderRadius: isMe ? "16px 16px 4px 16px" : "16px 16px 16px 4px",
+          ? `1px solid ${messageTypeColors.outgoing.border}`
+          : `1px solid ${messageTypeColors.incoming.border}`,
+        borderRadius: isMe ? `${radiusTokens.lg}px ${radiusTokens.lg}px ${radiusTokens.xs}px ${radiusTokens.lg}px` : `${radiusTokens.lg}px ${radiusTokens.lg}px ${radiusTokens.lg}px ${radiusTokens.xs}px`,
         px: 2,
         py: 1.5,
         position: "relative" as const,
-        boxShadow: isPrivate
-          ? `0 1px 3px ${alpha("#F59E0B", 0.15)}`
-          : `0 1px 2px ${alpha(theme.palette.common.black, 0.08)}`,
+        boxShadow: shadowTokens.xs,
         // HTML content styling
         "& p": {
           margin: 0,
           marginBottom: "0.625em",
-          fontSize: "0.9375rem",
-          lineHeight: 1.6,
+          ...semanticTypography.body.medium,
           "&:last-child": { marginBottom: 0 },
         },
         "& a": {
-          color: "#1976D2",
+          color: colorTokens.semantic.text.link,
           textDecoration: "none",
           fontWeight: 500,
           "&:hover": {
             textDecoration: "underline",
+            color: colorTokens.semantic.text.linkHover,
           },
         },
         "& ul, & ol": {
@@ -228,43 +226,43 @@ export const ChatwootMessageItem: React.FC<ChatwootMessageItemProps> = React.mem
           },
         },
         "& blockquote": {
-          borderLeft: `3px solid ${safeNeutralColor(400)}`,
+          borderLeft: `3px solid ${colorTokens.neutral[400]}`,
           paddingLeft: "16px",
           marginLeft: 0,
           marginTop: "0.75em",
           marginBottom: "0.75em",
           fontStyle: "italic",
           opacity: 0.85,
-          backgroundColor: alpha(safeNeutralColor(100), 0.5),
+          backgroundColor: alpha(colorTokens.neutral[100], 0.5),
           paddingTop: "0.5em",
           paddingBottom: "0.5em",
-          borderRadius: "4px",
+          borderRadius: radiusTokens.xs,
         },
         "& img": {
           maxWidth: "100%",
           height: "auto",
-          borderRadius: "8px",
+          borderRadius: radiusTokens.md,
           marginTop: "10px",
           marginBottom: "10px",
           display: "block",
-          boxShadow: `0 2px 8px ${alpha(theme.palette.common.black, 0.1)}`,
+          boxShadow: shadowTokens.sm,
         },
         "& table": {
           borderCollapse: "collapse",
           width: "100%",
-          border: `1px solid ${alpha(safeNeutralColor(300), 0.3)}`,
+          border: `1px solid ${alpha(colorTokens.neutral[300], 0.3)}`,
           marginTop: "0.5em",
           marginBottom: "0.5em",
-          borderRadius: "6px",
+          borderRadius: radiusTokens.sm,
           overflow: "hidden",
         },
         "& th, & td": {
-          border: `1px solid ${alpha(safeNeutralColor(300), 0.2)}`,
+          border: `1px solid ${alpha(colorTokens.neutral[300], 0.2)}`,
           padding: "8px 12px",
           textAlign: "left" as const,
         },
         "& th": {
-          backgroundColor: alpha(safeNeutralColor(100), 0.5),
+          backgroundColor: alpha(colorTokens.neutral[100], 0.5),
           fontWeight: 600,
         },
         "& h1, & h2, & h3, & h4, & h5, & h6": {
@@ -275,16 +273,16 @@ export const ChatwootMessageItem: React.FC<ChatwootMessageItemProps> = React.mem
           "&:first-child": { marginTop: 0 },
         },
         "& code": {
-          backgroundColor: alpha(safeNeutralColor(200), 0.4),
+          backgroundColor: alpha(colorTokens.neutral[200], 0.4),
           padding: "2px 6px",
-          borderRadius: "4px",
+          borderRadius: radiusTokens.xs,
           fontSize: "0.875em",
           fontFamily: "monospace",
         },
         "& pre": {
-          backgroundColor: alpha(safeNeutralColor(100), 0.5),
+          backgroundColor: alpha(colorTokens.neutral[100], 0.5),
           padding: "12px",
-          borderRadius: "6px",
+          borderRadius: radiusTokens.sm,
           overflow: "auto",
           marginTop: "0.5em",
           marginBottom: "0.5em",
@@ -293,10 +291,9 @@ export const ChatwootMessageItem: React.FC<ChatwootMessageItemProps> = React.mem
             padding: 0,
           },
         },
-        lineHeight: 1.6,
-        fontSize: "0.9375rem",
+        ...semanticTypography.body.medium,
       }),
-      [isPrivate, isMe, safeNeutralColor, theme]
+      [isPrivate, isMe]
     );
 
     const avatarStyles = useMemo(
@@ -307,9 +304,9 @@ export const ChatwootMessageItem: React.FC<ChatwootMessageItemProps> = React.mem
         color: "white",
         fontSize: "0.75rem",
         fontWeight: 600,
-        border: `2px solid ${safeNeutralColor(100)}`,
+        border: `2px solid ${colorTokens.neutral[100]}`,
       }),
-      [avatarData.backgroundColor, safeNeutralColor]
+      [avatarData.backgroundColor]
     );
 
     return (
@@ -336,9 +333,9 @@ export const ChatwootMessageItem: React.FC<ChatwootMessageItemProps> = React.mem
             <Typography
               variant="caption"
               sx={{
-                fontSize: "0.75rem",
+                ...semanticTypography.caption.small,
                 fontWeight: 500,
-                color: isPrivate ? "#F59E0B" : safeNeutralColor(600),
+                color: isPrivate ? messageTypeColors.private_note.indicator : colorTokens.neutral[600],
                 px: 0.5,
               }}
             >
@@ -400,7 +397,7 @@ export const ChatwootMessageItem: React.FC<ChatwootMessageItemProps> = React.mem
                   justifyContent: "center",
                   width: 16,
                   height: 16,
-                  color: "rgba(251, 191, 36, 0.8)",
+                  color: alpha(messageTypeColors.private_note.indicator || colorTokens.warning[500], 0.8),
                 }}
               >
                 <LockIcon sx={{ fontSize: 14 }} />
@@ -412,10 +409,9 @@ export const ChatwootMessageItem: React.FC<ChatwootMessageItemProps> = React.mem
           <Typography
             variant="caption"
             sx={{
-              color: safeNeutralColor(500),
-              fontSize: "0.6875rem",
+              color: colorTokens.neutral[500],
+              ...semanticTypography.caption.small,
               px: 0.5,
-              fontWeight: 400,
             }}
           >
             {timestamp}

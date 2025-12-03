@@ -20,7 +20,7 @@ import {
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
-import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { colorTokens, radiusTokens, shadowTokens } from "@/widgets/frontdesk/design-system";
 
 interface CreateContactModalProps {
   open: boolean;
@@ -30,7 +30,6 @@ interface CreateContactModalProps {
 }
 
 export const CreateContactModal: React.FC<CreateContactModalProps> = ({ open, onClose, onSubmit, isSubmitting }) => {
-  const { primaryColor, neutralColor } = useGomakeTheme();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -142,7 +141,7 @@ export const CreateContactModal: React.FC<CreateContactModalProps> = ({ open, on
         sx: {
           borderRadius: 2,
           maxHeight: "90vh",
-          backgroundColor: neutralColor(0),
+          backgroundColor: colorTokens.semantic.background.primary,
           boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
         },
       }}
@@ -153,11 +152,11 @@ export const CreateContactModal: React.FC<CreateContactModalProps> = ({ open, on
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
-          borderBottom: `2px solid ${neutralColor(200)}`,
+          borderBottom: `2px solid ${colorTokens.neutral[200]}`,
           pb: 2.5,
           pt: 3,
           px: 4,
-          backgroundColor: neutralColor(0),
+          backgroundColor: colorTokens.semantic.background.primary,
         }}
       >
         <Stack direction="row" alignItems="center" spacing={2}>
@@ -169,8 +168,8 @@ export const CreateContactModal: React.FC<CreateContactModalProps> = ({ open, on
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              backgroundColor: primaryColor(50),
-              color: primaryColor(600),
+              backgroundColor: colorTokens.primary[50],
+              color: colorTokens.primary[600],
             }}
           >
             <PersonAddIcon />
@@ -180,7 +179,7 @@ export const CreateContactModal: React.FC<CreateContactModalProps> = ({ open, on
             variant="h5"
             sx={{
               fontWeight: 600,
-              color: neutralColor(900),
+              color: colorTokens.neutral[900],
               fontSize: "1.375rem",
             }}
           >
@@ -193,10 +192,10 @@ export const CreateContactModal: React.FC<CreateContactModalProps> = ({ open, on
           disabled={isSubmitting}
           aria-label="Close create contact modal"
           sx={{
-            color: neutralColor(600),
+            color: colorTokens.neutral[600],
             "&:hover": {
-              backgroundColor: neutralColor(100),
-              color: neutralColor(900),
+              backgroundColor: colorTokens.neutral[100],
+              color: colorTokens.neutral[900],
             },
           }}
         >
@@ -214,7 +213,7 @@ export const CreateContactModal: React.FC<CreateContactModalProps> = ({ open, on
                 mb: 1,
                 fontSize: "0.875rem",
                 fontWeight: 500,
-                color: neutralColor(700),
+                color: colorTokens.neutral[700],
               }}
             >
               Name <span style={{ color: "#DC2626" }}>*</span>
@@ -245,7 +244,7 @@ export const CreateContactModal: React.FC<CreateContactModalProps> = ({ open, on
                 mb: 1,
                 fontSize: "0.875rem",
                 fontWeight: 500,
-                color: neutralColor(700),
+                color: colorTokens.neutral[700],
               }}
             >
               Email
@@ -277,7 +276,7 @@ export const CreateContactModal: React.FC<CreateContactModalProps> = ({ open, on
                 mb: 1,
                 fontSize: "0.875rem",
                 fontWeight: 500,
-                color: neutralColor(700),
+                color: colorTokens.neutral[700],
               }}
             >
               Phone Number
@@ -302,7 +301,7 @@ export const CreateContactModal: React.FC<CreateContactModalProps> = ({ open, on
           </div>
 
           {/* Help Text */}
-          <Typography sx={{ fontSize: "0.75rem", color: neutralColor(600) }}>
+          <Typography sx={{ fontSize: "0.75rem", color: colorTokens.neutral[600] }}>
             Provide at least an email or phone number to create the contact.
           </Typography>
         </Stack>
@@ -311,10 +310,10 @@ export const CreateContactModal: React.FC<CreateContactModalProps> = ({ open, on
       {/* Footer */}
       <DialogActions
         sx={{
-          borderTop: `2px solid ${neutralColor(200)}`,
+          borderTop: `2px solid ${colorTokens.neutral[200]}`,
           px: 4,
           py: 2.5,
-          backgroundColor: neutralColor(0),
+          backgroundColor: colorTokens.semantic.background.primary,
         }}
       >
         <Button
@@ -322,17 +321,17 @@ export const CreateContactModal: React.FC<CreateContactModalProps> = ({ open, on
           disabled={isSubmitting}
           sx={{
             textTransform: "none",
-            color: neutralColor(700),
+            color: colorTokens.neutral[700],
             fontWeight: 500,
             fontSize: "0.875rem",
             px: 2.5,
             py: 0.75,
             borderRadius: 1,
             "&:hover": {
-              backgroundColor: neutralColor(50),
+              backgroundColor: colorTokens.neutral[50],
             },
             "&:disabled": {
-              color: neutralColor(400),
+              color: colorTokens.neutral[400],
             },
           }}
         >
@@ -346,7 +345,7 @@ export const CreateContactModal: React.FC<CreateContactModalProps> = ({ open, on
           aria-label={isSubmitting ? "Creating contact" : "Create contact"}
           sx={{
             textTransform: "none",
-            backgroundColor: primaryColor(600),
+            backgroundColor: colorTokens.primary[600],
             color: "white",
             fontWeight: 600,
             fontSize: "0.875rem",
@@ -355,12 +354,12 @@ export const CreateContactModal: React.FC<CreateContactModalProps> = ({ open, on
             borderRadius: 1,
             boxShadow: `0 1px 3px rgba(0, 0, 0, 0.1)`,
             "&:hover": {
-              backgroundColor: primaryColor(700),
+              backgroundColor: colorTokens.primary[700],
               boxShadow: `0 4px 6px rgba(0, 0, 0, 0.1)`,
             },
             "&:disabled": {
-              backgroundColor: neutralColor(300),
-              color: neutralColor(500),
+              backgroundColor: colorTokens.neutral[300],
+              color: colorTokens.neutral[500],
             },
           }}
         >

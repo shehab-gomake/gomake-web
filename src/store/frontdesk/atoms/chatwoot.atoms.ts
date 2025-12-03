@@ -749,6 +749,63 @@ export const chatwootProfileReadySelector = selector<boolean>({
   },
 });
 
+// ============================================================================
+// KANBAN BOARD ATOMS
+// For Workboard view managing conversations in Kanban format
+// ============================================================================
+
+import { KanbanViewMode, KanbanConversationFilters } from "@/widgets/frontdesk/providers/chatwoot/types/kanban.types";
+
+/**
+ * Kanban view mode - determines how columns are organized
+ * - 'status': Columns represent conversation statuses (open, pending, resolved, snoozed)
+ * - 'assignee': Columns represent agents/team members
+ */
+export const chatwootKanbanViewModeAtom = atom<KanbanViewMode>({
+  key: "frontdesk.chatwoot.kanban.viewMode",
+  default: "status",
+});
+
+/**
+ * Kanban board filters (separate from list filters)
+ */
+export const chatwootKanbanFiltersAtom = atom<KanbanConversationFilters>({
+  key: "frontdesk.chatwoot.kanban.filters",
+  default: {},
+});
+
+/**
+ * Kanban board loading state (for drag operations)
+ */
+export const chatwootKanbanOperationLoadingAtom = atom<boolean>({
+  key: "frontdesk.chatwoot.kanban.operationLoading",
+  default: false,
+});
+
+/**
+ * Kanban board conversations (all conversations for board display)
+ */
+export const chatwootKanbanConversationsAtom = atom<ChatwootConversation[]>({
+  key: "frontdesk.chatwoot.kanban.conversations",
+  default: [],
+});
+
+/**
+ * Kanban board loading state
+ */
+export const chatwootKanbanLoadingAtom = atom<boolean>({
+  key: "frontdesk.chatwoot.kanban.loading",
+  default: false,
+});
+
+/**
+ * Kanban board error state
+ */
+export const chatwootKanbanErrorAtom = atom<string | null>({
+  key: "frontdesk.chatwoot.kanban.error",
+  default: null,
+});
+
 /**
  * Selected inbox selector
  * Returns the currently selected inbox object

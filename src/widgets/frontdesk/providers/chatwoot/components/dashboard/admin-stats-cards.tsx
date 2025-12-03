@@ -1,22 +1,33 @@
 /**
- * Admin Stats Cards
+ * Admin Stats Cards - Modern Clean Design
  *
  * Displays admin/manager-specific team performance metrics for the dashboard.
- * Focuses on team-wide metrics and operational health.
+ * Features:
+ * - 16px rounded corners
+ * - Soft shadow with hover elevation
+ * - Consistent 22px padding
+ * - Icon in small rounded container with subtle background
+ * - Improved typography hierarchy
+ * - Subtle, calm accents (no loud border-top colors)
+ * - Muted description label below main value
+ * - Clean 4-column grid layout
  */
 
 import React, { useMemo } from "react";
-import { Box, Grid } from "@mui/material";
-import { StatCard } from "@/widgets/frontdesk/design-system";
+import { Box } from "@mui/material";
 import ForumIcon from "@mui/icons-material/Forum";
 import AssignmentLateIcon from "@mui/icons-material/AssignmentLate";
 import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 import { ChatwootWarningsCard } from "./chatwoot-warnings-widget";
 import type { AdminDashboardStats } from "../../hooks/use-chatwoot-dashboard-stats";
-import {
-  formatStatCardValue,
-  getCardVariant,
-} from "../../utils";
+import { formatStatCardValue, getCardVariant } from "../../utils";
+import { StatCard } from "@/widgets/frontdesk/design-system";
+
+// Grid layout tokens
+const GRID_TOKENS = {
+  columns: 4,
+  gap: 20, // Consistent gap between cards
+} as const;
 
 export interface AdminStatsCardsProps {
   stats: AdminDashboardStats;
@@ -25,11 +36,11 @@ export interface AdminStatsCardsProps {
   onWarningsClick?: () => void;
 }
 
-export const AdminStatsCards: React.FC<AdminStatsCardsProps> = ({ 
-  stats, 
-  isLoading = false, 
+export const AdminStatsCards: React.FC<AdminStatsCardsProps> = ({
+  stats,
+  isLoading = false,
   onCardClick,
-  onWarningsClick 
+  onWarningsClick,
 }) => {
   // Memoize card configurations to prevent unnecessary recalculations
   const cards = useMemo(
@@ -63,26 +74,27 @@ export const AdminStatsCards: React.FC<AdminStatsCardsProps> = ({
   );
 
   return (
-    <Box sx={{ mb: 3 }}>
-      <Grid container spacing={2}>
-        {cards.map((card) => (
-          <Grid item xs={12} sm={6} md={3} key={card.id}>
-            <StatCard
-              label={card.label}
-              value={card.value}
-              icon={card.icon}
-              variant={card.variant}
-              description={card.description}
-              isLoading={isLoading}
-              onClick={() => onCardClick?.(card.id)}
-            />
-          </Grid>
-        ))}
-        {/* System Warnings */}
-        <Grid item xs={12} sm={6} md={3}>
-          <ChatwootWarningsCard onClick={onWarningsClick} />
-        </Grid>
-      </Grid>
+    <Box
+      sx={{
+        display: "grid",
+        gridTemplateColumns: `repeat(${GRID_TOKENS.columns}, 1fr)`,
+        gap: `${GRID_TOKENS.gap}px`,
+      }}
+    >
+      {cards.map((card) => (
+        <StatCard
+          key={card.id}
+          label={card.label}
+          value={card.value}
+          icon={card.icon}
+          variant={card.variant}
+          description={card.description}
+          isLoading={isLoading}
+          onClick={() => onCardClick?.(card.id)}
+        />
+      ))}
+      {/* System Warnings */}
+      <ChatwootWarningsCard onClick={onWarningsClick} />
     </Box>
   );
 };

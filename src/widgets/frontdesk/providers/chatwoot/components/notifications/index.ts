@@ -4,6 +4,7 @@
  */
 
 export { NotificationFilters } from "./NotificationFilters";
+export { NotificationPillFilters } from "./NotificationPillFilters";
 export { NotificationSettingsMenu } from "./NotificationSettingsMenu";
 export { NotificationList } from "./NotificationList";
 export { NotificationListItem } from "./NotificationListItem";

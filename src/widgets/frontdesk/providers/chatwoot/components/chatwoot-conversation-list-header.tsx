@@ -1,15 +1,18 @@
 import React, { useMemo, useCallback } from "react";
 import { useRecoilValue } from "recoil";
-import { useTheme } from "@mui/material/styles";
 import { Box, Stack, Typography, IconButton, Tooltip } from "@mui/material";
 import ClearIcon from "@mui/icons-material/Clear";
-import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { colorTokens, radiusTokens, semanticSpacing } from "@/widgets/frontdesk/design-system";
 import { useChatwootTeams } from "../hooks/resources/use-chatwoot-teams";
 import { useChatwootLabels } from "../hooks/use-chatwoot-labels";
 import { useChatwootInboxes } from "../hooks/use-chatwoot-inboxes";
 import { ConversationStatus, ConversationListParams } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
 import { chatwootConversationCountsAtom, chatwootSelectedAccountAtom } from "@/store/frontdesk/atoms/chatwoot.atoms";
 import { ConversationFilterMenu, ConversationSortMenu, ConversationSearchBar, ConversationTabs, ConversationLabelsFilter, ConversationTeamsFilter, ActiveFilterChips } from "./conversation-list";
+
+// =============================================================================
+// Types
+// =============================================================================
 
 interface ChatwootConversationListHeaderProps {
   status?: ConversationStatus;
@@ -24,6 +27,16 @@ interface ChatwootConversationListHeaderProps {
   allCount?: number;
 }
 
+// =============================================================================
+// Constants
+// =============================================================================
+
+const HEADER_ICON_SIZE = 16;
+
+// =============================================================================
+// Component
+// =============================================================================
+
 export const ChatwootConversationListHeader: React.FC<ChatwootConversationListHeaderProps> = ({
   status,
   filters = {},
@@ -35,8 +48,6 @@ export const ChatwootConversationListHeader: React.FC<ChatwootConversationListHe
   unassignedCount,
   allCount,
 }) => {
-  const theme = useTheme();
-  const { primaryColor, neutralColor } = useGomakeTheme();
 
   // Get counts from API response (stored in atom)
   const apiCounts = useRecoilValue(chatwootConversationCountsAtom);
@@ -82,7 +93,6 @@ export const ChatwootConversationListHeader: React.FC<ChatwootConversationListHe
         const newFilters = { ...filters, inbox_id: undefined, page: 1 };
         onFiltersChange(newFilters);
       } else if (filterType === "label" && value) {
-        // Remove specific label from labels array
         const currentLabels = Array.isArray(filters.labels)
           ? filters.labels
           : filters.labels
@@ -96,7 +106,6 @@ export const ChatwootConversationListHeader: React.FC<ChatwootConversationListHe
         };
         onFiltersChange(newFilters);
       } else if (filterType === "labels") {
-        // Clear all labels
         const newFilters = { ...filters, labels: undefined, page: 1 };
         onFiltersChange(newFilters);
       }
@@ -107,46 +116,45 @@ export const ChatwootConversationListHeader: React.FC<ChatwootConversationListHe
   return (
     <Box
       sx={{
-        backgroundColor: neutralColor(25),
-        borderBottom: `1px solid ${theme.palette.divider}`,
+        backgroundColor: colorTokens.semantic.background.primary,
+        borderBottom: `1px solid ${colorTokens.neutral[200]}`,
       }}
     >
-      {/* Top Section: Title, Status Tag, Action Buttons */}
+      {/* Top Section: Title + Action Icons */}
       <Stack
         direction="row"
         alignItems="center"
         justifyContent="space-between"
         sx={{
           px: 1.5,
-          py: 1,
+          py: 1.25,
+          minHeight: 48,
         }}
       >
         <Typography
           variant="h6"
           sx={{
             fontWeight: 600,
-            fontSize: "1rem",
-            color: neutralColor(900),
+            fontSize: "0.9375rem",
+            color: colorTokens.neutral[900],
+            letterSpacing: "-0.01em",
           }}
         >
           Tickets
         </Typography>
 
-        <Stack direction="row" spacing={0.25} alignItems="center">
+        {/* Action Icons - consistent 16px size, equal spacing */}
+        <Stack direction="row" spacing={0.5} alignItems="center">
           <ConversationLabelsFilter
             accountId={accountId}
             filters={filters}
             onFiltersChange={onFiltersChange}
-            primaryColor={primaryColor}
-            neutralColor={neutralColor}
           />
 
           <ConversationTeamsFilter
             accountId={accountId}
             filters={filters}
             onFiltersChange={onFiltersChange}
-            primaryColor={primaryColor}
-            neutralColor={neutralColor}
           />
 
           <ConversationFilterMenu
@@ -154,69 +162,57 @@ export const ChatwootConversationListHeader: React.FC<ChatwootConversationListHe
             onFiltersChange={onFiltersChange}
             teams={teams}
             onFilterClick={onFilterClick}
-            primaryColor={primaryColor}
-            neutralColor={neutralColor}
           />
 
           <ConversationSortMenu
             filters={filters}
             onFiltersChange={onFiltersChange}
             onSortClick={onSortClick}
-            primaryColor={primaryColor}
-            neutralColor={neutralColor}
           />
 
-          {/* Clear Filters Button - moved to next button position */}
+          {/* Clear Filters Button */}
           {hasActiveFilters && onClearFilters && (
-            <Tooltip title="Clear Filters">
+            <Tooltip title="Clear all filters">
               <IconButton
                 size="small"
                 onClick={onClearFilters}
                 sx={{
-                  color: neutralColor(600),
+                  width: 30,
+                  height: 30,
+                  borderRadius: "8px",
+                  color: colorTokens.neutral[500],
+                  transition: "all 0.15s ease",
                   "&:hover": {
-                    backgroundColor: neutralColor(100),
-                    color: primaryColor(600),
+                    backgroundColor: colorTokens.error[50],
+                    color: colorTokens.error[600],
                   },
-                  width: 28,
-                  height: 28,
-                  padding: 0.5,
-                  transition: "all 0.2s ease-in-out",
                 }}
               >
-                <ClearIcon sx={{ fontSize: 16 }} />
+                <ClearIcon sx={{ fontSize: HEADER_ICON_SIZE }} />
               </IconButton>
             </Tooltip>
           )}
         </Stack>
       </Stack>
 
-      {/* Filter Tabs */}
-      <Box sx={{ borderTop: `1px solid ${theme.palette.divider}` }}>
-        <ConversationTabs
-          filters={filters}
-          onFiltersChange={onFiltersChange}
-          counts={counts}
-          primaryColor={primaryColor}
-          neutralColor={neutralColor}
-        />
+      {/* Tabs Section */}
+      <ConversationTabs
+        filters={filters}
+        onFiltersChange={onFiltersChange}
+        counts={counts}
+      />
 
-        {/* Active Filter Chips - directly under tabs */}
-        <ActiveFilterChips
-          filters={filters}
-          onRemoveFilter={handleRemoveFilter}
-          teams={teams}
-          labels={labels}
-          inboxes={inboxes}
-          primaryColor={primaryColor}
-          neutralColor={neutralColor}
-        />
-      </Box>
+      {/* Active Filter Chips - only shown when filters are active */}
+      <ActiveFilterChips
+        filters={filters}
+        onRemoveFilter={handleRemoveFilter}
+        teams={teams}
+        labels={labels}
+        inboxes={inboxes}
+      />
 
       {/* Search Bar */}
-      <Box sx={{ borderTop: `1px solid ${theme.palette.divider}` }}>
-        <ConversationSearchBar filters={filters} onFiltersChange={onFiltersChange} neutralColor={neutralColor} />
-      </Box>
+      <ConversationSearchBar filters={filters} onFiltersChange={onFiltersChange} />
     </Box>
   );
 };

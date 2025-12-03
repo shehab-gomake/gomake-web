@@ -24,8 +24,10 @@ interface ConversationTeamsFilterProps {
   filters: Partial<ConversationListParams>;
   onFiltersChange: (filters: Partial<ConversationListParams>) => void;
   onTeamClick?: () => void;
-  primaryColor: (shade: number) => string;
-  neutralColor: (shade: number) => string;
+  /** @deprecated No longer used - colors are now from design tokens */
+  primaryColor?: (shade: number) => string;
+  /** @deprecated No longer used - colors are now from design tokens */
+  neutralColor?: (shade: number) => string;
 }
 
 export const ConversationTeamsFilter: React.FC<ConversationTeamsFilterProps> = ({
@@ -77,10 +79,11 @@ export const ConversationTeamsFilter: React.FC<ConversationTeamsFilterProps> = (
 
     setIsCreating(true);
     try {
+      // Note: GoMake always disables auto-assignment for teams
       const newTeam = await chatwootService.teams.createTeam(effectiveAccountId, {
         name: data.name,
         description: data.description,
-        allow_auto_assign: data.allow_auto_assign,
+        allow_auto_assign: false,
       });
 
       // Add members if provided

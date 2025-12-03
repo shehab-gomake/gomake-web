@@ -143,86 +143,129 @@ export const InboxesSubpage: React.FC = () => {
       description="Manage communication channels and their settings"
       isLoading={loading}
       headerActions={
-        <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
+        <Box sx={{ display: "flex", gap: 0.75, alignItems: "center" }}>
           <Button
             variant="contained"
-            startIcon={<AddIcon />}
+            startIcon={<AddIcon sx={{ fontSize: 16 }} />}
             onClick={() => setShowAddChannelModal(true)}
             size="small"
             disabled={loading}
+            sx={{
+              fontSize: "0.813rem",
+              fontWeight: 500,
+              textTransform: "none",
+              px: 1.5,
+              py: 0.5,
+              height: 30,
+              backgroundColor: "#6366f1",
+              "&:hover": {
+                backgroundColor: "#4f46e5",
+              },
+              boxShadow: "0 1px 2px rgba(0,0,0,0.05)",
+            }}
           >
             Add Channel
           </Button>
-          <IconButton onClick={refresh} size="small" disabled={loading}>
-            <RefreshIcon />
+          <IconButton 
+            onClick={refresh} 
+            size="small" 
+            disabled={loading}
+            sx={{
+              color: "#6b7280",
+              p: 0.75,
+              "&:hover": {
+                color: "#6366f1",
+                bgcolor: "rgba(99, 102, 241, 0.08)",
+              },
+            }}
+          >
+            <RefreshIcon sx={{ fontSize: 18 }} />
           </IconButton>
         </Box>
       }
     >
       {error ? (
-        <Alert severity="error" sx={{ mb: 2 }}>
+        <Alert severity="error" sx={{ mb: 2, borderRadius: "6px" }}>
           {error || "Failed to load inboxes"}
         </Alert>
       ) : inboxes.length === 0 ? (
-        /* Empty State */
+        /* Empty State - Compact */
         <Box
           sx={{
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
             justifyContent: "center",
-            minHeight: 300,
+            minHeight: 260,
             textAlign: "center",
-            gap: 2,
+            gap: 1.5,
           }}
         >
-          <InboxIcon sx={{ fontSize: 64, color: "text.secondary", opacity: 0.5 }} />
-          <Typography variant="h6" color="text.primary" fontWeight={600}>
+          <InboxIcon sx={{ fontSize: 48, color: "#9ca3af", opacity: 0.6 }} />
+          <Typography variant="subtitle1" sx={{ color: "#1f2937", fontWeight: 600, fontSize: "0.938rem" }}>
             No Inboxes Found
           </Typography>
-          <Typography variant="body2" color="text.secondary" sx={{ maxWidth: 400 }}>
+          <Typography variant="body2" sx={{ color: "#6b7280", maxWidth: 360, fontSize: "0.813rem", lineHeight: 1.5 }}>
             Set up your first communication channel to start receiving messages.
             Supported channels include Email, WhatsApp, SMS, Web Chat, and more.
           </Typography>
           <Button
             variant="contained"
-            size="large"
+            size="small"
             startIcon={<AddIcon />}
             onClick={() => setShowAddChannelModal(true)}
-            sx={{ mt: 3 }}
+            sx={{ 
+              mt: 2,
+              fontSize: "0.813rem",
+              fontWeight: 500,
+              textTransform: "none",
+              px: 2,
+              py: 0.75,
+              backgroundColor: "#6366f1",
+              "&:hover": {
+                backgroundColor: "#4f46e5",
+              },
+              boxShadow: "0 1px 2px rgba(0,0,0,0.05)",
+            }}
           >
             Add Your First Channel
           </Button>
         </Box>
       ) : (
-        /* Inboxes List */
+        /* Inboxes List - Compact High-Density Design */
         <SettingsSection
           title={`Inboxes (${inboxes.length})`}
           description="Communication channels configured for this account"
         >
-          <List sx={{ width: "100%", bgcolor: "background.paper", p: 0 }}>
+          <List sx={{ width: "100%", bgcolor: "transparent", p: 0, m: 0 }}>
             {inboxes.map((inbox, index) => (
               <React.Fragment key={inbox.id}>
                 <ListItem
                   onClick={() => setSelectedInbox(inbox)}
                   sx={{
-                    py: 2,
-                    px: 0,
+                    py: 1.25,
+                    px: 1.5,
                     cursor: "pointer",
+                    borderBottom: index < inboxes.length - 1 ? "1px solid rgba(0,0,0,0.06)" : "none",
                     "&:hover": {
-                      bgcolor: "action.hover",
+                      bgcolor: "rgba(99, 102, 241, 0.02)",
                     },
                     display: "flex",
                     alignItems: "center",
+                    borderRadius: "4px",
+                    transition: "background-color 0.15s ease",
                   }}
                 >
-                  <ListItemAvatar>
+                  <ListItemAvatar sx={{ minWidth: 44 }}>
                     <Avatar
                       sx={{
-                        bgcolor: "grey.800",
-                        color: "grey.300",
-                        width: 40,
-                        height: 40,
+                        bgcolor: "#6366f1",
+                        color: "#ffffff",
+                        width: 34,
+                        height: 34,
+                        "& svg": {
+                          fontSize: 18,
+                        },
                       }}
                     >
                       {getChannelIcon(inbox.channel_type)}
@@ -230,12 +273,28 @@ export const InboxesSubpage: React.FC = () => {
                   </ListItemAvatar>
                   <ListItemText
                     primary={
-                      <Typography variant="subtitle2" sx={{ fontWeight: 500, color: "text.primary" }}>
+                      <Typography 
+                        variant="body2" 
+                        sx={{ 
+                          fontWeight: 500, 
+                          color: "#1f2937",
+                          fontSize: "0.813rem",
+                          lineHeight: 1.3,
+                        }}
+                      >
                         {inbox.name}
                       </Typography>
                     }
                     secondary={
-                      <Typography variant="body2" color="text.secondary" sx={{ fontSize: "0.875rem", mt: 0.5 }}>
+                      <Typography 
+                        variant="caption" 
+                        sx={{ 
+                          color: "#6b7280", 
+                          fontSize: "0.75rem", 
+                          mt: 0.25,
+                          display: "block",
+                        }}
+                      >
                         {getChannelTypeLabel(inbox.channel_type)}
                       </Typography>
                     }
@@ -246,16 +305,17 @@ export const InboxesSubpage: React.FC = () => {
                     aria-label={`Delete inbox ${inbox.name}`}
                     disabled={deleting || loading}
                     sx={{
-                      color: "text.secondary",
+                      color: "#6b7280",
+                      p: 0.5,
                       "&:hover": {
-                        color: "error.main",
+                        color: "#ef4444",
+                        bgcolor: "rgba(239, 68, 68, 0.08)",
                       },
                     }}
                   >
-                    <DeleteIcon fontSize="small" />
+                    <DeleteIcon sx={{ fontSize: 16 }} />
                   </IconButton>
                 </ListItem>
-                {index < inboxes.length - 1 && <Divider component="li" />}
               </React.Fragment>
             ))}
           </List>

@@ -7,7 +7,7 @@
 
 import React from "react";
 import { Box, Typography, Chip } from "@mui/material";
-import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+
 import { ContactSelector } from "./ContactSelector";
 import { createFieldContainerStyles, createFieldLabelStyles, createSelectedChipStyles } from "../../styles/compose-styles";
 import type { ContactDetail } from "@/services/frontdesk/api/chatwoot/types/contacts.types";
@@ -34,17 +34,15 @@ export interface ContactSelectionFieldProps {
  */
 export const ContactSelectionField = React.memo<ContactSelectionFieldProps>(
   ({ selectedContact, searchResults, isSearching, onSearch, onSelectContact, error }) => {
-    const { neutralColor, primaryColor } = useGomakeTheme();
-
     return (
-      <Box sx={createFieldContainerStyles(neutralColor, { backgroundColor: "light" })}>
-        <Typography sx={createFieldLabelStyles(neutralColor)}>Contact *</Typography>
+      <Box sx={createFieldContainerStyles({ backgroundColor: "light" })}>
+        <Typography sx={createFieldLabelStyles()}>Contact *</Typography>
         <Box sx={{ flex: 1 }}>
           {selectedContact ? (
             <Chip
               label={selectedContact.name || selectedContact.email || selectedContact.phone_number}
               onDelete={() => onSelectContact(null)}
-              sx={createSelectedChipStyles(primaryColor)}
+              sx={createSelectedChipStyles()}
             />
           ) : (
             <ContactSelector

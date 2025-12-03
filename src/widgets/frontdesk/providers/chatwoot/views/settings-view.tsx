@@ -15,16 +15,15 @@ import { VIEW_PERMISSIONS, SETTINGS_PERMISSIONS } from "../constants/permissions
 import { ChatwootSettingsSubpage } from "@/widgets/frontdesk/routing/types";
 import type { PermissionConfig } from "../constants/permissions.constants";
 import {
-  People as AgentsIcon,
-  Inbox as InboxesIcon,
-  Groups as TeamsIcon,
-  Label as LabelsIcon,
-  Warning as WarningIcon,
-  Person as ProfileIcon,
-  ArrowBack as ArrowBackIcon,
-  Webhook as WebhookIcon,
-  History as HistoryIcon,
-} from "@mui/icons-material";
+  ArrowLeftIcon,
+  UserGroupIcon,
+  InboxIcon,
+  UserIcon,
+  TagIcon,
+  ExclamationTriangleIcon,
+  LinkIcon,
+  ClockIcon,
+} from "@heroicons/react/24/outline";
 
 // Import subpage components
 import { AgentsSubpage } from "./settings/agents-subpage";
@@ -47,49 +46,49 @@ const SETTINGS_MENU_ITEMS: SettingsMenuItem[] = [
   {
     subpage: ChatwootSettingsSubpage.AGENTS,
     label: "Agents",
-    icon: <AgentsIcon />,
+    icon: <UserGroupIcon />,
     permissionConfig: SETTINGS_PERMISSIONS.agents, // Administrator only
   },
   {
     subpage: ChatwootSettingsSubpage.INBOXES,
     label: "Inboxes",
-    icon: <InboxesIcon />,
+    icon: <InboxIcon />,
     permissionConfig: SETTINGS_PERMISSIONS.inboxes, // Administrator only
   },
   {
     subpage: ChatwootSettingsSubpage.TEAMS,
     label: "Teams",
-    icon: <TeamsIcon />,
+    icon: <UserGroupIcon />,
     permissionConfig: SETTINGS_PERMISSIONS.teams, // Administrator only
   },
   {
     subpage: ChatwootSettingsSubpage.LABELS,
     label: "Labels",
-    icon: <LabelsIcon />,
+    icon: <TagIcon />,
     permissionConfig: SETTINGS_PERMISSIONS.labels, // Administrator only
   },
   {
     subpage: ChatwootSettingsSubpage.WARNINGS,
     label: "Warnings",
-    icon: <WarningIcon />,
+    icon: <ExclamationTriangleIcon />,
     // No permission config - accessible to all
   },
   {
     subpage: ChatwootSettingsSubpage.PROFILE,
     label: "Profile Settings",
-    icon: <ProfileIcon />,
+    icon: <UserIcon />,
     // No permission config - accessible to all (uses VIEW_PERMISSIONS.settings which includes agents)
   },
   {
     subpage: ChatwootSettingsSubpage.WEBHOOK_TEST,
     label: "Webhook Test",
-    icon: <WebhookIcon />,
+    icon: <LinkIcon />,
     // No permission config - accessible to all
   },
   {
     subpage: ChatwootSettingsSubpage.OLD_FRONTDESK,
     label: "Old FrontDesk",
-    icon: <HistoryIcon />,
+    icon: <ClockIcon />,
     // No permission config - accessible to all
   },
 ];
@@ -208,64 +207,104 @@ export const SettingsView: React.FC = () => {
         display: "flex",
         height: "100%",
         width: "100%",
-        backgroundColor: theme.palette.background.default,
+        backgroundColor: "#f8f9fa", // Muted background
       }}
     >
-      {/* Settings Sidebar */}
-      <Paper
-        elevation={0}
+      {/* Settings Sidebar - Minimalist Clean */}
+      <Box
         sx={{
-          width: 280,
-          minWidth: 280,
-          borderRight: `1px solid ${theme.palette.divider}`,
-          borderRadius: 0,
+          width: 200,
+          minWidth: 200,
+          borderRight: `1px solid rgba(0,0,0,0.08)`,
           display: "flex",
           flexDirection: "column",
+          backgroundColor: "#fafbfc",
         }}
       >
-        <Box sx={{ p: 2, display: "flex", alignItems: "center", gap: 1 }}>
-          <Tooltip title="Back to Dashboard">
+        {/* Compact Header */}
+        <Box sx={{ px: 2, py: 1.75, borderBottom: "1px solid rgba(0,0,0,0.08)" }}>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 0.5 }}>
             <IconButton
               size="small"
               onClick={() => chatwootRouter.navigateToDashboard()}
               sx={{
-                color: theme.palette.text.secondary,
+                color: "#9ca3af",
+                p: 0.375,
+                transition: "all 0.2s ease-in-out",
                 "&:hover": {
-                  backgroundColor: theme.palette.action.hover,
+                  color: "#6366f1",
+                  backgroundColor: "rgba(99, 102, 241, 0.08)",
+                  transform: "translateX(-2px)",
                 },
               }}
             >
-              <ArrowBackIcon fontSize="small" />
+              <ArrowLeftIcon style={{ width: 16, height: 16 }} />
             </IconButton>
-          </Tooltip>
-          <Typography variant="h6" fontWeight={600}>
-            Settings
-          </Typography>
+            <Typography 
+              variant="overline" 
+              sx={{ 
+                fontWeight: 700, 
+                fontSize: "0.688rem",
+                color: "#9ca3af",
+                letterSpacing: "0.1em",
+              }}
+            >
+              SETTINGS
+            </Typography>
+          </Box>
         </Box>
-        <Divider />
-        <List sx={{ flex: 1, py: 1 }}>
+
+        {/* Menu Items */}
+        <List sx={{ flex: 1, py: 1.5, px: 1.25 }}>
           {visibleMenuItems.map((item) => {
             const isSelected = currentSubpage === item.subpage;
             const showBadge = item.subpage === ChatwootSettingsSubpage.WARNINGS && warningCount > 0;
             return (
-              <ListItem key={item.subpage} disablePadding>
+              <ListItem key={item.subpage} disablePadding sx={{ mb: 0.5 }}>
                 <ListItemButton
                   selected={isSelected}
                   onClick={() => chatwootRouter.navigateToSettings(item.subpage)}
                   sx={{
+                    py: 1.125,
+                    px: 1.25,
+                    borderRadius: "6px",
+                    minHeight: "40px",
+                    position: "relative",
+                    transition: "all 0.2s ease-in-out",
+                    "&::before": isSelected ? {
+                      content: '""',
+                      position: "absolute",
+                      left: 0,
+                      top: "50%",
+                      transform: "translateY(-50%)",
+                      width: 3,
+                      height: "60%",
+                      backgroundColor: "#6366f1",
+                      borderRadius: "0 2px 2px 0",
+                    } : {},
                     "&.Mui-selected": {
-                      backgroundColor: theme.palette.action.selected,
-                      borderRight: `3px solid ${theme.palette.primary.main}`,
+                      backgroundColor: "rgba(99, 102, 241, 0.08)",
                     },
                     "&:hover": {
-                      backgroundColor: theme.palette.action.hover,
+                      backgroundColor: isSelected 
+                        ? "rgba(99, 102, 241, 0.12)" 
+                        : "rgba(0, 0, 0, 0.06)",
+                      transform: "translateX(2px)",
+                      "& .MuiListItemIcon-root": {
+                        color: isSelected ? "#6366f1" : "#6366f1",
+                      },
+                      "& .MuiListItemText-primary": {
+                        color: isSelected ? "#1f2937" : "#374151",
+                        fontWeight: 600,
+                      },
                     },
                   }}
                 >
                   <ListItemIcon
                     sx={{
-                      minWidth: 40,
-                      color: isSelected ? theme.palette.primary.main : theme.palette.text.secondary,
+                      minWidth: 32,
+                      color: isSelected ? "#6366f1" : "#9ca3af",
+                      transition: "color 0.2s ease-in-out",
                     }}
                   >
                     {showBadge ? (
@@ -276,23 +315,35 @@ export const SettingsView: React.FC = () => {
                         sx={{
                           '& .MuiBadge-badge': {
                             fontSize: '0.625rem',
-                            height: 16,
-                            minWidth: 16,
-                            padding: '0 4px',
+                            height: 14,
+                            minWidth: 14,
+                            padding: '0 3px',
+                            fontWeight: 600,
                           },
                         }}
                       >
-                        {item.icon}
+                        {React.cloneElement(item.icon as React.ReactElement, { 
+                          style: { width: 16, height: 16 } 
+                        })}
                       </Badge>
                     ) : (
-                      item.icon
+                      React.cloneElement(item.icon as React.ReactElement, { 
+                        style: { width: 16, height: 16 } 
+                      })
                     )}
                   </ListItemIcon>
                   <ListItemText
                     primary={item.label}
                     primaryTypographyProps={{
-                      fontSize: 14,
-                      fontWeight: isSelected ? 600 : 400,
+                      fontSize: "0.813rem",
+                      fontWeight: isSelected ? 600 : 500,
+                      color: isSelected ? "#1f2937" : "#6b7280",
+                      lineHeight: 1.5,
+                    }}
+                    sx={{
+                      "& .MuiListItemText-primary": {
+                        transition: "all 0.2s ease-in-out",
+                      },
                     }}
                   />
                 </ListItemButton>
@@ -300,7 +351,7 @@ export const SettingsView: React.FC = () => {
             );
           })}
         </List>
-      </Paper>
+      </Box>
 
       {/* Settings Content */}
       <Box
@@ -309,6 +360,7 @@ export const SettingsView: React.FC = () => {
           display: "flex",
           flexDirection: "column",
           overflow: "auto",
+          backgroundColor: "#f8f9fa", // Muted background
         }}
       >
         {renderSubpage()}

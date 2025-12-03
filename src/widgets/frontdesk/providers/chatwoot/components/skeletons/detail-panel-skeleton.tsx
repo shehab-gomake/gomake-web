@@ -1,7 +1,6 @@
 import React from "react";
-import { Box, Skeleton, Stack, Paper, Divider, alpha } from "@mui/material";
-import { useTheme } from "@mui/material/styles";
-import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { Box, Skeleton, Stack, Paper, Divider , useTheme, alpha } from "@mui/material";
+import { colorTokens, radiusTokens, shadowTokens } from "@/widgets/frontdesk/design-system";
 
 /**
  * Skeleton loader for Chatwoot conversation detail panel
@@ -19,27 +18,24 @@ import { useGomakeTheme } from "@/hooks/use-gomake-thme";
  * ```
  */
 export const DetailPanelSkeleton: React.FC = () => {
-  const theme = useTheme();
-  const { neutralColor } = useGomakeTheme();
-
   return (
     <Paper
       elevation={2}
       sx={{
         height: "100%",
-        borderRadius: 2,
+        borderRadius: radiusTokens.lg,
         overflow: "hidden",
         display: "flex",
         flexDirection: "column",
-        backgroundColor: neutralColor(0),
-        boxShadow: `0 2px 8px ${alpha(theme.palette.common.black, 0.06)}, 0 1px 3px ${alpha(theme.palette.common.black, 0.04)}`,
+        backgroundColor: colorTokens.semantic.background.primary,
+        boxShadow: shadowTokens.sm,
       }}
     >
       {/* Header */}
       <Box
         sx={{
           padding: 2,
-          borderBottom: `1px solid ${neutralColor(200)}`,
+          borderBottom: `1px solid ${colorTokens.neutral[200]}`,
         }}
       >
         <Skeleton
@@ -47,7 +43,7 @@ export const DetailPanelSkeleton: React.FC = () => {
           width="60%"
           height={28}
           sx={{
-            bgcolor: neutralColor(300),
+            bgcolor: colorTokens.neutral[300],
           }}
         />
       </Box>
@@ -64,22 +60,22 @@ export const DetailPanelSkeleton: React.FC = () => {
           {/* Contact Information Section */}
           <ContactInfoSkeleton />
 
-          <Divider sx={{ borderColor: neutralColor(200) }} />
+          <Divider sx={{ borderColor: colorTokens.neutral[200] }} />
 
           {/* Conversation Details Section */}
           <ConversationDetailsSkeleton />
 
-          <Divider sx={{ borderColor: neutralColor(200) }} />
+          <Divider sx={{ borderColor: colorTokens.neutral[200] }} />
 
           {/* Labels Section */}
           <LabelsSkeleton />
 
-          <Divider sx={{ borderColor: neutralColor(200) }} />
+          <Divider sx={{ borderColor: colorTokens.neutral[200] }} />
 
           {/* Custom Attributes Section */}
           <CustomAttributesSkeleton />
 
-          <Divider sx={{ borderColor: neutralColor(200) }} />
+          <Divider sx={{ borderColor: colorTokens.neutral[200] }} />
 
           {/* Actions Section */}
           <ActionsSkeleton />
@@ -93,8 +89,6 @@ export const DetailPanelSkeleton: React.FC = () => {
  * Contact information section skeleton
  */
 const ContactInfoSkeleton: React.FC = () => {
-  const { neutralColor } = useGomakeTheme();
-
   return (
     <Box>
       {/* Section Title */}
@@ -104,7 +98,7 @@ const ContactInfoSkeleton: React.FC = () => {
         height={20}
         sx={{
           mb: 1.5,
-          bgcolor: neutralColor(300),
+          bgcolor: colorTokens.neutral[300],
         }}
       />
 
@@ -115,7 +109,7 @@ const ContactInfoSkeleton: React.FC = () => {
           width={80}
           height={80}
           sx={{
-            bgcolor: neutralColor(200),
+            bgcolor: colorTokens.neutral[200],
           }}
         />
 
@@ -125,7 +119,7 @@ const ContactInfoSkeleton: React.FC = () => {
           width="70%"
           height={24}
           sx={{
-            bgcolor: neutralColor(300),
+            bgcolor: colorTokens.neutral[300],
           }}
         />
 
@@ -135,7 +129,7 @@ const ContactInfoSkeleton: React.FC = () => {
           width="80%"
           height={18}
           sx={{
-            bgcolor: neutralColor(200),
+            bgcolor: colorTokens.neutral[200],
           }}
         />
 
@@ -145,7 +139,7 @@ const ContactInfoSkeleton: React.FC = () => {
           width="60%"
           height={18}
           sx={{
-            bgcolor: neutralColor(200),
+            bgcolor: colorTokens.neutral[200],
           }}
         />
 
@@ -157,7 +151,7 @@ const ContactInfoSkeleton: React.FC = () => {
             height={32}
             sx={{
               borderRadius: 1,
-              bgcolor: neutralColor(200),
+              bgcolor: colorTokens.neutral[200],
             }}
           />
           <Skeleton
@@ -166,7 +160,7 @@ const ContactInfoSkeleton: React.FC = () => {
             height={32}
             sx={{
               borderRadius: 1,
-              bgcolor: neutralColor(200),
+              bgcolor: colorTokens.neutral[200],
             }}
           />
         </Box>
@@ -179,8 +173,6 @@ const ContactInfoSkeleton: React.FC = () => {
  * Conversation details section skeleton
  */
 const ConversationDetailsSkeleton: React.FC = () => {
-  const { neutralColor } = useGomakeTheme();
-
   return (
     <Box>
       {/* Section Title */}
@@ -190,7 +182,7 @@ const ConversationDetailsSkeleton: React.FC = () => {
         height={20}
         sx={{
           mb: 1.5,
-          bgcolor: neutralColor(300),
+          bgcolor: colorTokens.neutral[300],
         }}
       />
 
@@ -210,7 +202,7 @@ const ConversationDetailsSkeleton: React.FC = () => {
               width="40%"
               height={18}
               sx={{
-                bgcolor: neutralColor(200),
+                bgcolor: colorTokens.neutral[200],
               }}
             />
             <Skeleton
@@ -218,7 +210,7 @@ const ConversationDetailsSkeleton: React.FC = () => {
               width="50%"
               height={18}
               sx={{
-                bgcolor: neutralColor(300),
+                bgcolor: colorTokens.neutral[300],
               }}
             />
           </Box>
@@ -232,7 +224,7 @@ const ConversationDetailsSkeleton: React.FC = () => {
             height={16}
             sx={{
               mb: 0.5,
-              bgcolor: neutralColor(200),
+              bgcolor: colorTokens.neutral[200],
             }}
           />
           <Skeleton
@@ -241,7 +233,7 @@ const ConversationDetailsSkeleton: React.FC = () => {
             height={40}
             sx={{
               borderRadius: 1,
-              bgcolor: neutralColor(100),
+              bgcolor: colorTokens.neutral[100],
             }}
           />
         </Box>
@@ -253,7 +245,7 @@ const ConversationDetailsSkeleton: React.FC = () => {
             height={16}
             sx={{
               mb: 0.5,
-              bgcolor: neutralColor(200),
+              bgcolor: colorTokens.neutral[200],
             }}
           />
           <Skeleton
@@ -262,7 +254,7 @@ const ConversationDetailsSkeleton: React.FC = () => {
             height={40}
             sx={{
               borderRadius: 1,
-              bgcolor: neutralColor(100),
+              bgcolor: colorTokens.neutral[100],
             }}
           />
         </Box>
@@ -275,8 +267,6 @@ const ConversationDetailsSkeleton: React.FC = () => {
  * Labels section skeleton
  */
 const LabelsSkeleton: React.FC = () => {
-  const { neutralColor } = useGomakeTheme();
-
   return (
     <Box>
       {/* Section Title */}
@@ -286,7 +276,7 @@ const LabelsSkeleton: React.FC = () => {
         height={20}
         sx={{
           mb: 1.5,
-          bgcolor: neutralColor(300),
+          bgcolor: colorTokens.neutral[300],
         }}
       />
 
@@ -300,7 +290,7 @@ const LabelsSkeleton: React.FC = () => {
             height={28}
             sx={{
               borderRadius: "14px",
-              bgcolor: neutralColor(200),
+              bgcolor: colorTokens.neutral[200],
             }}
           />
         ))}
@@ -314,7 +304,7 @@ const LabelsSkeleton: React.FC = () => {
         sx={{
           mt: 1.5,
           borderRadius: 1,
-          bgcolor: neutralColor(100),
+          bgcolor: colorTokens.neutral[100],
         }}
       />
     </Box>
@@ -325,8 +315,6 @@ const LabelsSkeleton: React.FC = () => {
  * Custom attributes section skeleton
  */
 const CustomAttributesSkeleton: React.FC = () => {
-  const { neutralColor } = useGomakeTheme();
-
   return (
     <Box>
       {/* Section Title */}
@@ -336,7 +324,7 @@ const CustomAttributesSkeleton: React.FC = () => {
         height={20}
         sx={{
           mb: 1.5,
-          bgcolor: neutralColor(300),
+          bgcolor: colorTokens.neutral[300],
         }}
       />
 
@@ -350,7 +338,7 @@ const CustomAttributesSkeleton: React.FC = () => {
               height={16}
               sx={{
                 mb: 0.5,
-                bgcolor: neutralColor(200),
+                bgcolor: colorTokens.neutral[200],
               }}
             />
             <Skeleton
@@ -358,7 +346,7 @@ const CustomAttributesSkeleton: React.FC = () => {
               width="80%"
               height={18}
               sx={{
-                bgcolor: neutralColor(300),
+                bgcolor: colorTokens.neutral[300],
               }}
             />
           </Box>
@@ -372,8 +360,6 @@ const CustomAttributesSkeleton: React.FC = () => {
  * Actions section skeleton
  */
 const ActionsSkeleton: React.FC = () => {
-  const { neutralColor } = useGomakeTheme();
-
   return (
     <Box>
       {/* Section Title */}
@@ -383,7 +369,7 @@ const ActionsSkeleton: React.FC = () => {
         height={20}
         sx={{
           mb: 1.5,
-          bgcolor: neutralColor(300),
+          bgcolor: colorTokens.neutral[300],
         }}
       />
 
@@ -397,7 +383,7 @@ const ActionsSkeleton: React.FC = () => {
             height={40}
             sx={{
               borderRadius: 1,
-              bgcolor: neutralColor(100),
+              bgcolor: colorTokens.neutral[100],
             }}
           />
         ))}
@@ -411,8 +397,6 @@ const ActionsSkeleton: React.FC = () => {
  */
 export const DetailPanelSkeletonCompact: React.FC = () => {
   const theme = useTheme();
-  const { neutralColor } = useGomakeTheme();
-
   return (
     <Paper
       elevation={2}
@@ -422,14 +406,14 @@ export const DetailPanelSkeletonCompact: React.FC = () => {
         overflow: "hidden",
         display: "flex",
         flexDirection: "column",
-        backgroundColor: neutralColor(0),
+        backgroundColor: colorTokens.semantic.background.primary,
         boxShadow: `0 2px 8px ${alpha(theme.palette.common.black, 0.06)}`,
       }}
     >
       <Box sx={{ padding: 2 }}>
         <Stack spacing={2}>
           <ContactInfoSkeleton />
-          <Divider sx={{ borderColor: neutralColor(200) }} />
+          <Divider sx={{ borderColor: colorTokens.neutral[200] }} />
           <ConversationDetailsSkeleton />
         </Stack>
       </Box>

@@ -78,6 +78,7 @@ export interface AgentListItem extends ListItemWithAvailability, ListItemWithAva
 export interface TeamListItem extends BaseListItem {
   type: 'team';
   memberCount?: number;
+  /** @deprecated GoMake always disables auto-assignment for teams */
   allowAutoAssign?: boolean;
 }
 

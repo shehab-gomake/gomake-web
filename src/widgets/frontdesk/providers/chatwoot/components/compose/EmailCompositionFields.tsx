@@ -7,9 +7,10 @@
 
 import React, { useState } from "react";
 import { Box, Stack, TextField, Typography, Button } from "@mui/material";
-import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+
 import { createFieldContainerStyles, createStandardTextFieldStyles } from "../../styles/compose-styles";
 import type { ComposeValidationErrors } from "@/services/frontdesk/api/chatwoot/types/compose.types";
+import { colorTokens, radiusTokens, shadowTokens } from "@/widgets/frontdesk/design-system";
 
 export interface EmailCompositionFieldsProps {
   /** Email subject value */
@@ -34,15 +35,14 @@ export interface EmailCompositionFieldsProps {
  */
 export const EmailCompositionFields = React.memo<EmailCompositionFieldsProps>(
   ({ subject, ccEmails, bccEmails, errors, onSubjectChange, onCcChange, onBccChange }) => {
-    const { neutralColor, primaryColor } = useGomakeTheme();
     const [showBcc, setShowBcc] = useState(!!bccEmails);
 
-    const textFieldStyles = createStandardTextFieldStyles(neutralColor);
+    const textFieldStyles = createStandardTextFieldStyles();
 
     return (
       <>
         {/* Subject Field */}
-        <Box sx={createFieldContainerStyles(neutralColor, { backgroundColor: "light" })}>
+        <Box sx={createFieldContainerStyles({ backgroundColor: "light" })}>
           <TextField
             fullWidth
             variant="standard"
@@ -52,18 +52,18 @@ export const EmailCompositionFields = React.memo<EmailCompositionFieldsProps>(
             onChange={(e) => onSubjectChange(e.target.value)}
             error={!!errors.subject}
             helperText={errors.subject}
-            {...textFieldStyles}
+            sx={textFieldStyles}
           />
         </Box>
 
         {/* CC Field */}
-        <Box sx={createFieldContainerStyles(neutralColor, { backgroundColor: "white", padding: "compact" })}>
+        <Box sx={createFieldContainerStyles({ backgroundColor: "white", padding: "compact" })}>
           <Stack direction="row" alignItems="center" spacing={2} sx={{ width: "100%" }}>
             <Typography
               sx={{
                 minWidth: 50,
                 fontSize: "0.75rem",
-                color: neutralColor(700),
+                color: colorTokens.neutral[700],
                 fontWeight: 600,
                 textTransform: "uppercase",
                 letterSpacing: "0.05em",
@@ -80,7 +80,7 @@ export const EmailCompositionFields = React.memo<EmailCompositionFieldsProps>(
               error={!!errors.ccEmails}
               InputProps={{
                 disableUnderline: true,
-                sx: { fontSize: "0.875rem", color: neutralColor(900) },
+                sx: { fontSize: "0.875rem", color: colorTokens.neutral[900] },
               }}
             />
             {!showBcc && (
@@ -90,11 +90,11 @@ export const EmailCompositionFields = React.memo<EmailCompositionFieldsProps>(
                 sx={{
                   textTransform: "none",
                   fontSize: "0.8125rem",
-                  color: primaryColor(600),
+                  color: colorTokens.primary[600],
                   fontWeight: 500,
                   minWidth: "auto",
                   "&:hover": {
-                    backgroundColor: primaryColor(50),
+                    backgroundColor: colorTokens.primary[50],
                   },
                 }}
               >
@@ -106,13 +106,13 @@ export const EmailCompositionFields = React.memo<EmailCompositionFieldsProps>(
 
         {/* BCC Field */}
         {showBcc && (
-          <Box sx={createFieldContainerStyles(neutralColor, { backgroundColor: "white", padding: "compact" })}>
+          <Box sx={createFieldContainerStyles({ backgroundColor: "white", padding: "compact" })}>
             <Stack direction="row" alignItems="center" spacing={2} sx={{ width: "100%" }}>
               <Typography
                 sx={{
                   minWidth: 50,
                   fontSize: "0.75rem",
-                  color: neutralColor(700),
+                  color: colorTokens.neutral[700],
                   fontWeight: 600,
                   textTransform: "uppercase",
                   letterSpacing: "0.05em",
@@ -129,7 +129,7 @@ export const EmailCompositionFields = React.memo<EmailCompositionFieldsProps>(
                 error={!!errors.bccEmails}
                 InputProps={{
                   disableUnderline: true,
-                  sx: { fontSize: "0.875rem", color: neutralColor(900) },
+                  sx: { fontSize: "0.875rem", color: colorTokens.neutral[900] },
                 }}
               />
             </Stack>

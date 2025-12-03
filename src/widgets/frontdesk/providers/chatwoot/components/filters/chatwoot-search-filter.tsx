@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { TextField, InputAdornment, IconButton, alpha } from "@mui/material";
-import { useTheme } from "@mui/material/styles";
-import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { TextField, InputAdornment, IconButton , useTheme, alpha } from "@mui/material";
+import { colorTokens, radiusTokens } from "@/widgets/frontdesk/design-system";
 import SearchIcon from "@mui/icons-material/Search";
 import CloseIcon from "@mui/icons-material/Close";
 import { useDebouncedValue } from "../../hooks/use-debounced-value";
@@ -58,8 +57,6 @@ export const ChatwootSearchFilter: React.FC<ChatwootSearchFilterProps> = ({
   disabled = false,
 }) => {
   const theme = useTheme();
-  const { neutralColor } = useGomakeTheme();
-
   // Local state for immediate UI updates
   const [localValue, setLocalValue] = useState(value);
 
@@ -97,7 +94,7 @@ export const ChatwootSearchFilter: React.FC<ChatwootSearchFilterProps> = ({
       InputProps={{
         startAdornment: (
           <InputAdornment position="start">
-            <SearchIcon sx={{ color: neutralColor(400), fontSize: 20 }} />
+            <SearchIcon sx={{ color: colorTokens.neutral[400], fontSize: 20 }} />
           </InputAdornment>
         ),
         endAdornment: localValue ? (
@@ -120,7 +117,7 @@ export const ChatwootSearchFilter: React.FC<ChatwootSearchFilterProps> = ({
       sx={{
         minWidth: 250,
         "& .MuiOutlinedInput-root": {
-          backgroundColor: neutralColor(0),
+          backgroundColor: colorTokens.semantic.background.primary,
           "&:hover": {
             "& .MuiOutlinedInput-notchedOutline": {
               borderColor: theme.palette.primary.main,
