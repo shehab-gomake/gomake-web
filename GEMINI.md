@@ -11,9 +11,12 @@
 
 1.  `GEMINI.md` (This file)
 2.  `CLAUDE.md`
-3.  `docs/frontdesk/FRONTDESK_KNOWLEDGE_BASE.md`
-4.  `docs/frontdesk/README.md`
-5.  `.claude/skills/chatwoot/README.md`
+3.  `.cursor/rules/frontdesk-chatwoot-provider.mdc` (CRITICAL: Chatwoot-specific implementation rules)
+4.  `.cursor/rules/chatwoot-skills-integration.mdc` (CRITICAL: Adaptation workflow)
+5.  `.cursor/rules/production-ready-code.mdc` (CRITICAL: Quality standards)
+6.  `docs/frontdesk/FRONTDESK_KNOWLEDGE_BASE.md`
+7.  `docs/frontdesk/README.md`
+8.  `.claude/skills/chatwoot/README.md`
 
 ---
 
