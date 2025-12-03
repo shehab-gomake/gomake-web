@@ -127,7 +127,7 @@ const InlineAddItemRow: React.FC<InlineAddItemRowProps> = ({
           padding: " 8px 4px",
         }}
       >
-        <div style={{ minWidth: "200px" }}>
+        <div style={{ minWidth: "400px" }}>
           <GoMakeTreeSelect
             selectedTab={selectedTab}
             setSelectedTab={setSelectedTab}

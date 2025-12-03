@@ -6,7 +6,6 @@ import { ProductCategoryType } from "@/pages-components/admin/home/widgets/quote
 import { useRecoilState } from "recoil";
 import { quoteItemState, selectedFirstMaterialState } from "@/store";
 import {
-  addDocumentItemFromMaterialApi,
   addDocumentItemFromMaterialRowApi,
   getDocumentItemDataFromMaterialApi,
   getDocumentItemDataFromRowMaterialApi,
@@ -281,11 +280,12 @@ const useAddNewItem = ({ onClose, getQuote, documentType, getCalculateQuoteItem,
         documentId: quoteItemValue?.id,
       });
     } else {
-      await addDocumentItemFromMaterialApi(callApi, callBack, {
+      await addDocumentItemFromMaterialRowApi(callApi, callBack, {
         clientId: quoteItemValue?.customerID,
         printHouseMaterialId: selectedProduct?.id,
         documentId: quoteItemValue?.id,
-      }, documentType);
+        documentType
+      });
     }
   };
 
