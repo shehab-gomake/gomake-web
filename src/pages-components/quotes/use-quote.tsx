@@ -4572,7 +4572,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     closeOrderAsInvoiceOrDeliveryNoteState
   );
 
-  const moveOrderToReady = async () => {
+  const moveOrderToReady = async (isSendMessage: boolean = false) => {
     const callBack = (res) => {
       if (res?.success) {
         getAllQuotes();
@@ -4627,7 +4627,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     // Mark as ready without sending message - user will decide in email composer
     await moveOrderToReadyApi(callApi, callBack, {
       orderId: selectedDocument?.id,
-      isSendMessage: false, // Don't send automatically - let user decide in composer
+      isSendMessage: isSendMessage, // Don't send automatically - let user decide in composer
     });
   };
 

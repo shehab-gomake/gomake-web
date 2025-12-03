@@ -1076,7 +1076,18 @@ const QuotesListPageWidget = ({
         onClose={onClickCloseMoveOrderToReadyModal}
         onClickDelete={moveOrderToReady}
       /> */}
-      <GoMakeDeleteModal
+      <ThreeOptionsModal
+          modalType={ModalType.WARNING}
+          title={t("boardMissions.markDoneModalTitle")}
+          subTitle={t("boardMissions.markDoneModalSubTitle")}
+          yesBtn={"boardMissions.markDoneModalYes"}
+          noBtn={"boardMissions.markDoneModalNo"}
+          openModal={MoveOrderToReady.isOpen}
+          onClose={onClickCloseMoveOrderToReadyModal}
+          onClickYes={() => moveOrderToReady(true)}
+          onClickNo={() => moveOrderToReady(false)}
+      />
+      {/*<GoMakeDeleteModal
         modalType={ModalType.WARNING}
         title={t("boardMissions.markDoneModalTitle")}
         subTitle={t("boardMissions.markDoneModalSubTitle")}
@@ -1085,7 +1096,7 @@ const QuotesListPageWidget = ({
         onClose={onClickCloseMoveOrderToReadyModal}
         onClickDelete={() => moveOrderToReady()}
         onClickCancel={onClickCloseMoveOrderToReadyModal}
-      />
+      />*/}
       <PrintPackingSlipModal
         openPackagesModal={openPackagesModal}
         onClosePackagesModal={onClosePackagesModal}

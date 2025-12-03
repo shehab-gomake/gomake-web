@@ -18,6 +18,7 @@ import { getOrderIdFromQrCode } from "@/services/api-service/qr-scanner/qr-scann
 import { useGomakeAxios, useGomakeRouter } from "@/hooks";
 import { useStyle } from "./style";
 import { getBoardMissionsIdByQrCodeApi } from "@/services/api-service/production-floor/production-floor-endpoints";
+import { QrCodeAction } from "@/enums";
 import {
   QrCodeScanner,
   Refresh,
@@ -57,12 +58,36 @@ const QRScannerPage = () => {
             if (res?.success && res.data?.boardMissionId) {
               setScanResult(data.text);
               setScanStatus("success");
+
+              const action = res.data?.action;
+              const boardMissionId = res.data.boardMissionId;
+              const productType = res.data?.productType || "";
+
               setTimeout(() => {
-                navigate(
-                  `/production-floor?boardMissionsId=${
-                    res.data.boardMissionId
-                  }&step=stations&isScanning=${true}`
-                );
+                if (
+                  action === QrCodeAction.START ||
+                  action === QrCodeAction.FINISH
+                ) {
+                  // For START/FINISH: Navigate with productType in URL
+                  const url = `/production-floor?boardMissionsId=${boardMissionId}${
+                    productType ? `&productType=${productType}` : ""
+                  }&step=stations&isScanning=${true}`;
+                  navigate(url);
+                } else if (action === QrCodeAction.DELIVERY) {
+                  // For DELIVERY: Navigate to production floor and open move to done modal
+                  // Note: We don't set isScanning=true here to avoid opening the "move to next station" modal
+                  const url = `/production-floor?boardMissionsId=${boardMissionId}${
+                    productType ? `&productType=${productType}` : ""
+                  }&step=stations&openMoveToDoneModal=true`;
+                  navigate(url);
+                } else {
+                  // Default behavior (fallback)
+                  navigate(
+                    `/production-floor?boardMissionsId=${boardMissionId}${
+                      productType ? `&productType=${productType}` : ""
+                    }&step=stations&isScanning=${true}`
+                  );
+                }
               }, 1500);
             } else {
               setScanResult("Invalid QR Code or No Board Mission Found");
