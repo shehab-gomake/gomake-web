@@ -28,6 +28,7 @@ import ForumIcon from "@mui/icons-material/ForumOutlined";
 import AddIcon from "@mui/icons-material/Add";
 import CreateIcon from "@mui/icons-material/EditOutlined";
 import WarningIcon from "@mui/icons-material/WarningAmberOutlined";
+import ViewKanbanIcon from "@mui/icons-material/ViewKanbanOutlined";
 import CircularProgress from "@mui/material/CircularProgress";
 
 // Hooks and services
@@ -214,6 +215,7 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
     isMentionsView,
     isUnattendedView,
     isChannelsView,
+    isWorkboardView,
     isSettingsView,
   } = useChatwootRouter();
 
@@ -265,6 +267,12 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
     e.stopPropagation();
     e.preventDefault();
     handleNavigate(RouteBuilder.chatwootUnattended());
+  }, [handleNavigate]);
+
+  const handleWorkboardClick = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
+    handleNavigate(RouteBuilder.chatwootWorkboard());
   }, [handleNavigate]);
 
   const handleSettingsClick = useCallback((e: React.MouseEvent) => {
@@ -565,6 +573,28 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
               {!isCollapsed && (
                 <Typography sx={{ fontSize: `${navigationTypography.menuItem.fontSize}px`, fontWeight: isDashboardView ? 600 : 500 }}>
                   Dashboard
+                </Typography>
+              )}
+            </ListItemButton>
+          </Tooltip>
+
+          {/* Workboard (Kanban) */}
+          <Tooltip title="Workboard" placement="right" disableHoverListener={!isCollapsed}>
+            <ListItemButton
+              selected={isWorkboardView}
+              onClick={handleWorkboardClick}
+              sx={{
+                ...menuItemBaseStyles,
+                mx: 1,
+                px: isCollapsed ? 1.5 : 2,
+                justifyContent: isCollapsed ? "center" : "flex-start",
+                ...(isWorkboardView && menuItemActiveStyles),
+              }}
+            >
+              <ViewKanbanIcon sx={{ fontSize: navigationSpacing.menuItem.iconSize, color: isWorkboardView ? colorTokens.primary[600] : colorTokens.neutral[500] }} />
+              {!isCollapsed && (
+                <Typography sx={{ fontSize: `${navigationTypography.menuItem.fontSize}px`, fontWeight: isWorkboardView ? 600 : 500 }}>
+                  Workboard
                 </Typography>
               )}
             </ListItemButton>

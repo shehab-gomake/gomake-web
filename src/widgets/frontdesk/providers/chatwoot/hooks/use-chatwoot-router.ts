@@ -174,6 +174,17 @@ export const useChatwootRouter = () => {
   );
 
   /**
+   * Navigate to Workboard (Kanban) view
+   */
+  const navigateToWorkboard = useCallback(
+    (options?: NavigationOptions) => {
+      const route = RouteBuilder.chatwootWorkboard();
+      navigate(route, options);
+    },
+    [navigate]
+  );
+
+  /**
    * Navigate to Webhook Test view
    */
   const navigateToWebhookTest = useCallback(
@@ -339,6 +350,7 @@ export const useChatwootRouter = () => {
     isMentionsView: currentView === ChatwootView.MENTIONS,
     isUnattendedView: currentView === ChatwootView.UNATTENDED,
     isChannelsView: currentView === ChatwootView.CHANNELS,
+    isWorkboardView: currentView === ChatwootView.WORKBOARD,
     isWebhookTestView: currentView === ChatwootView.WEBHOOK_TEST,
     isSettingsView: currentView === ChatwootView.SETTINGS,
 
@@ -350,6 +362,7 @@ export const useChatwootRouter = () => {
     navigateToMentions,
     navigateToUnattended,
     navigateToChannels,
+    navigateToWorkboard,
     navigateToWebhookTest,
     navigateToSettings,
     navigateToChannel,

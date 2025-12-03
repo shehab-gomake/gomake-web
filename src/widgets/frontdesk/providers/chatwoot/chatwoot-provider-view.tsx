@@ -22,6 +22,7 @@ import { AllConversationsView } from "./views/all-conversations-view";
 import { MentionsView } from "./views/mentions-view";
 import { UnattendedView } from "./views/unattended-view";
 import { ChannelsView } from "./views/channels-view";
+import { WorkboardView } from "./views/workboard";
 import { WebhookTestView } from "./views/webhook-test-view";
 import { SettingsView } from "./views/settings-view";
 import { OAuthCallbackView } from "./views/oauth-callback-view";
@@ -70,6 +71,7 @@ const ChatwootProviderViewInternal: React.FC = () => {
       [ChatwootView.MENTIONS]: VIEW_PERMISSIONS.mentions,
       [ChatwootView.UNATTENDED]: VIEW_PERMISSIONS.unattended,
       [ChatwootView.CHANNELS]: VIEW_PERMISSIONS.channels,
+      [ChatwootView.WORKBOARD]: VIEW_PERMISSIONS.allConversations, // Same permissions as all conversations
       [ChatwootView.SETTINGS]: VIEW_PERMISSIONS.settings,
       [ChatwootView.WEBHOOK_TEST]: null, // No restrictions on test view
       [ChatwootView.OAUTH_CALLBACK]: null, // No restrictions on OAuth callback
@@ -161,6 +163,12 @@ const ChatwootProviderViewInternal: React.FC = () => {
         return (
           <ChatwootErrorBoundary context="Channels">
             <ChannelsView />
+          </ChatwootErrorBoundary>
+        );
+      case ChatwootView.WORKBOARD:
+        return (
+          <ChatwootErrorBoundary context="Workboard">
+            <WorkboardView />
           </ChatwootErrorBoundary>
         );
       case ChatwootView.WEBHOOK_TEST:

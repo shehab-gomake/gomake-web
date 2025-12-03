@@ -278,15 +278,17 @@ export const ChatwootActivityFeed: React.FC<ChatwootActivityFeedProps> = ({
     label: string,
     isFirst: boolean
   ) => {
-    if (group.length === 0) return null;
+    // Filter out conversations without valid IDs
+    const validConversations = group.filter((c) => c.id !== undefined && c.id !== null);
+    if (validConversations.length === 0) return null;
 
     return (
       <React.Fragment key={label}>
-        <TimeGroupHeader label={label} count={group.length} isFirst={isFirst} />
-        {group.map((conversation) => (
+        <TimeGroupHeader label={label} count={validConversations.length} isFirst={isFirst} />
+        {validConversations.map((conversation) => (
           <ConversationListItem
             key={conversation.id}
-            id={conversation.id.toString()}
+            id={String(conversation.id)}
             title={getConversationName(conversation)}
             participants={getParticipants(conversation)}
             snippet={getLastMessage(conversation)}
@@ -295,7 +297,7 @@ export const ChatwootActivityFeed: React.FC<ChatwootActivityFeedProps> = ({
             isSelected={selectedId === conversation.id}
             unreadCount={getUnreadCount(conversation)}
             hasAttachments={false}
-            onClick={() => onSelect(conversation.id, conversation.inbox_id)}
+            onClick={() => onSelect(conversation.id!, conversation.inbox_id)}
           />
         ))}
       </React.Fragment>
