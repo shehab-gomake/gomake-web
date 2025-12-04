@@ -8,7 +8,6 @@ export interface IProductionFloorFilter {
   toCreateDate?: string;
   fromDeliveryTime?: string;
   toDeliveryTime?: string;
-  //!here date filter
   fromEstimatedProductionTime?: string;
   toEstimatedProductionTime?: string;
   statusIds?: string[];

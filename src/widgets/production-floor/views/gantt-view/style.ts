@@ -6,7 +6,7 @@ const useStyle = () => {
       // Main container styles
       mainContainer: {
         backgroundColor: "#F8F9FA",
-        minHeight: "100vh",
+        // minHeight: "100vh",
       },
 
       // Header section styles

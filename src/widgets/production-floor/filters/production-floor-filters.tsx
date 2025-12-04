@@ -235,26 +235,28 @@ const ProductionFloorFilters = ({
                 }
               />
             )}
-            {view !== EProductionFloorView.DONE_JOBS && (
-              <SearchInputComponent
-                bgColor={"#F8F8F8"}
-                value={localSearch} // Use local state for immediate updates
-                onChange={handleSearchChange}
-                filtersButton={
-                  isSearchLoading && (
-                    <CircularProgress
-                      color="inherit"
-                      size={20}
-                      sx={{ ml: 2 }}
-                    />
-                  )
-                }
-              />
-            )}
+            {view !== EProductionFloorView.DONE_JOBS &&
+              view !== EProductionFloorView.GANTT && (
+                <SearchInputComponent
+                  bgColor={"#F8F8F8"}
+                  value={localSearch} // Use local state for immediate updates
+                  onChange={handleSearchChange}
+                  filtersButton={
+                    isSearchLoading && (
+                      <CircularProgress
+                        color="inherit"
+                        size={20}
+                        sx={{ ml: 2 }}
+                      />
+                    )
+                  }
+                />
+              )}
           </div>
           {getMissionsList().length !== 0 &&
             isListOpen &&
-            view !== EProductionFloorView.DONE_JOBS && (
+            view !== EProductionFloorView.DONE_JOBS &&
+            view !== EProductionFloorView.GANTT && (
               <SearchMissionList
                 missionsList={getMissionsList()}
                 handleMissionClick={handleMissionClick}

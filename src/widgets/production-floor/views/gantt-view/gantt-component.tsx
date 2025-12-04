@@ -7,7 +7,7 @@ import Timeline, {
   TodayMarker,
 } from "react-calendar-timeline";
 import { useGantt } from "@/widgets/production-floor/views/gantt-view/use-gantt";
-import { useRescheduling, useRecoverOverdue } from "./hooks";
+import { useRescheduling } from "./hooks";
 import { restoreOldBoardApi } from "@/services/api-service/jobs-time-line/jobs-time-line-endpoints";
 import { useGomakeAxios } from "@/hooks/use-gomake-axios";
 import { useSnackBar } from "@/hooks/use-snack-bar";
@@ -57,9 +57,6 @@ const TimelineWidget = () => {
   // Initialize rescheduling hook at component level
   const reschedulingHook = useRescheduling();
 
-  // Initialize recover overdue hook
-  const { recoverOverdue, isRecovering } = useRecoverOverdue();
-
   // Track if rescheduling was successful
   const [rescheduleSuccess, setRescheduleSuccess] = useState(false);
 
@@ -95,8 +92,6 @@ const TimelineWidget = () => {
     scrollTimeline,
     dir,
     isRTL,
-    showRecoverModal,
-    setShowRecoverModal,
     showRescheduleModal,
     setShowRescheduleModal,
     isTimeLineLocked,
@@ -498,12 +493,12 @@ const TimelineWidget = () => {
             <TimelineActionButtons
               hasLocalChanges={hasLocalChanges}
               isSubmitting={isSubmitting}
-              isRecovering={isRecovering}
               isTimeLineLocked={isTimeLineLocked}
               rescheduleSuccess={rescheduleSuccess}
               isRTL={isRTL}
-              onRescheduleClick={() => setShowRescheduleModal(true)}
-              onRecoverClick={() => setShowRecoverModal(true)}
+              onRescheduleClick={() => {
+                setShowRescheduleModal(true);
+              }}
               clearAllLocalChanges={clearAllLocalChanges}
               setRescheduleSuccess={setRescheduleSuccess}
               getData={getData}
@@ -742,10 +737,20 @@ const TimelineWidget = () => {
         modalType={ModalType.WARNING}
         openModal={showRescheduleModal}
         onClose={() => setShowRescheduleModal(false)}
-        title="productionFloor.confirmReschedule"
-        subTitle="productionFloor.confirmRescheduleMessage"
+        title={
+          hasLocalChanges()
+            ? "productionFloor.confirmReschedule"
+            : "productionFloor.confirmRecoverOverdue"
+        }
+        subTitle={
+          hasLocalChanges()
+            ? "productionFloor.confirmRescheduleMessage"
+            : "productionFloor.confirmRecoverOverdueMessage"
+        }
         onClickDelete={async () => {
-          const success = await submitRescheduleActions();
+          // If no local changes, call with empty array (acts like recover)
+          const forceEmptyArray = !hasLocalChanges();
+          const success = await submitRescheduleActions(forceEmptyArray);
           if (success) {
             // Success: refresh the data and enable restore button
             setRescheduleSuccess(true);
@@ -756,19 +761,6 @@ const TimelineWidget = () => {
             getData(currentMonth.clone().month()); // Refresh to get original data
             clearAllLocalChanges(); // Clear the local changes payload
           }
-        }}
-        yesBtn={t("sales.quote.Confirm")}
-      />
-      <GoMakeDeleteModal
-        modalType={ModalType.WARNING}
-        openModal={showRecoverModal}
-        onClose={() => setShowRecoverModal(false)}
-        title="productionFloor.confirmRecoverOverdue"
-        subTitle="productionFloor.confirmRecoverOverdueMessage"
-        onClickDelete={async () => {
-          await recoverOverdue(() => {
-            getData(currentMonth.clone().month());
-          });
         }}
         yesBtn={t("sales.quote.Confirm")}
       />

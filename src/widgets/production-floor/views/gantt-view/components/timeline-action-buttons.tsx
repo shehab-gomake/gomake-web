@@ -1,6 +1,5 @@
 import { Button, Stack } from "@mui/material";
 import BoltIcon from "@mui/icons-material/Bolt";
-import RestoreIcon from "@mui/icons-material/Restore";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import { useTranslation } from "react-i18next";
 import { useStyle } from "../style";
@@ -10,12 +9,10 @@ import moment from "moment";
 interface TimelineActionButtonsProps {
   hasLocalChanges: () => boolean;
   isSubmitting: boolean;
-  isRecovering: boolean;
   isTimeLineLocked: boolean;
   rescheduleSuccess: boolean;
   isRTL: boolean;
   onRescheduleClick: () => void;
-  onRecoverClick: () => void;
   clearAllLocalChanges: () => void;
   setRescheduleSuccess: (value: boolean) => void;
   getData: (month: number) => void;
@@ -28,12 +25,10 @@ interface TimelineActionButtonsProps {
 export const TimelineActionButtons = ({
   hasLocalChanges,
   isSubmitting,
-  isRecovering,
   isTimeLineLocked,
   rescheduleSuccess,
   isRTL,
   onRescheduleClick,
-  onRecoverClick,
   clearAllLocalChanges,
   setRescheduleSuccess,
   getData,
@@ -70,21 +65,11 @@ export const TimelineActionButtons = ({
       <Button
         variant="contained"
         startIcon={<BoltIcon />}
-        disabled={!hasLocalChanges() || isSubmitting || isTimeLineLocked}
+        disabled={isSubmitting || isTimeLineLocked}
         onClick={onRescheduleClick}
         sx={classes.rescheduleButton(isRTL)}
       >
         {isSubmitting ? "Submitting..." : t("productionFloor.reSchedule")}
-      </Button>
-
-      <Button
-        variant="contained"
-        startIcon={<RestoreIcon />}
-        disabled={isRecovering || isTimeLineLocked}
-        onClick={onRecoverClick}
-        sx={classes.recoverButton(isRTL)}
-      >
-        {isRecovering ? "Recovering..." : t("productionFloor.recoverOverdue")}
       </Button>
 
       <Button
