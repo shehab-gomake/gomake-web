@@ -18,8 +18,8 @@ import VideocamIcon from "@mui/icons-material/Videocam";
 import AudiotrackIcon from "@mui/icons-material/Audiotrack";
 import ArchiveIcon from "@mui/icons-material/Archive";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { useGomakeTheme } from "@/hooks/use-gomake-thme";
-import { FILE_TYPE_COLORS } from "../../styles/compose-styles";
+
+import { colorTokens, radiusTokens, shadowTokens } from "@/widgets/frontdesk/design-system";
 
 interface AttachmentPreviewProps {
   file: File;
@@ -83,7 +83,6 @@ const getFileIcon = (file: File) => {
  * Matches Chatwoot's image preview style
  */
 const ImageAttachmentPreview: React.FC<AttachmentPreviewProps> = ({ file, onRemove }) => {
-  const { neutralColor } = useGomakeTheme();
   const [thumbnail, setThumbnail] = useState<string | null>(null);
 
   useEffect(() => {
@@ -154,7 +153,6 @@ const ImageAttachmentPreview: React.FC<AttachmentPreviewProps> = ({ file, onRemo
  * Matches Chatwoot's file preview style
  */
 const FileAttachmentPreview: React.FC<AttachmentPreviewProps> = ({ file, onRemove }) => {
-  const { neutralColor } = useGomakeTheme();
   const icon = getFileIcon(file);
 
   return (
@@ -165,7 +163,7 @@ const FileAttachmentPreview: React.FC<AttachmentPreviewProps> = ({ file, onRemov
         height: 32,
         minWidth: 0,
         maxWidth: "18.75rem",
-        backgroundColor: neutralColor(50),
+        backgroundColor: colorTokens.neutral[50],
         borderRadius: 1.5,
         gap: 1.5,
         px: 1.5,
@@ -179,7 +177,7 @@ const FileAttachmentPreview: React.FC<AttachmentPreviewProps> = ({ file, onRemov
           alignItems: "center",
           justifyContent: "center",
           flexShrink: 0,
-          color: neutralColor(700),
+          color: colorTokens.neutral[700],
         }}
       >
         {icon || <InsertDriveFileIcon sx={{ fontSize: 20 }} />}
@@ -188,7 +186,7 @@ const FileAttachmentPreview: React.FC<AttachmentPreviewProps> = ({ file, onRemov
         sx={{
           fontSize: "0.875rem",
           fontWeight: 500,
-          color: neutralColor(900),
+          color: colorTokens.neutral[900],
           overflow: "hidden",
           textOverflow: "ellipsis",
           whiteSpace: "nowrap",
@@ -205,10 +203,10 @@ const FileAttachmentPreview: React.FC<AttachmentPreviewProps> = ({ file, onRemov
           flexShrink: 0,
           width: 20,
           height: 20,
-          color: neutralColor(600),
+          color: colorTokens.neutral[600],
           "&:hover": {
-            backgroundColor: neutralColor(100),
-            color: neutralColor(900),
+            backgroundColor: colorTokens.neutral[100],
+            color: colorTokens.neutral[900],
           },
         }}
       >
@@ -228,8 +226,6 @@ interface AttachmentPreviewsProps {
 }
 
 export const AttachmentPreviews: React.FC<AttachmentPreviewsProps> = ({ files, onRemove }) => {
-  const { neutralColor } = useGomakeTheme();
-
   // Separate images from other files
   const { imageFiles, nonImageFiles } = useMemo(() => {
     const images: File[] = [];

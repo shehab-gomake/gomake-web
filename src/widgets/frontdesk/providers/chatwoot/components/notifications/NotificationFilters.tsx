@@ -20,11 +20,12 @@ import { NotificationSortOrder } from "@/services/frontdesk/api/chatwoot/types/n
 import { NotificationListParams } from "@/services/frontdesk/api/chatwoot/types/notifications.types";
 import { buildNotificationFilters } from "../../utils/notification-filter-utils";
 import { DropdownMenu, MenuSubheader } from "@/widgets/frontdesk/components/dropdown-menu/dropdown-menu";
+import { colorTokens, radiusTokens, shadowTokens } from "@/widgets/frontdesk/design-system";
 
 interface NotificationFiltersProps {
   filters: Partial<NotificationListParams>;
   onFiltersChange: (filters: Partial<NotificationListParams>) => void;
-  neutralColor: (shade: number) => string;
+  neutralColor?: (shade: number) => string;
 }
 
 export const NotificationFilters: React.FC<NotificationFiltersProps> = ({
@@ -74,10 +75,10 @@ export const NotificationFilters: React.FC<NotificationFiltersProps> = ({
         size="small"
         onClick={(e) => setFilterMenuAnchor(e.currentTarget)}
         sx={{
-          color: neutralColor(600),
+          color: colorTokens.neutral[600],
           p: 0.5,
           "&:hover": {
-            backgroundColor: neutralColor(100),
+            backgroundColor: colorTokens.neutral[100],
           },
         }}
       >

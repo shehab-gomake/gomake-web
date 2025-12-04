@@ -133,12 +133,12 @@ export const InboxDetailSettings: React.FC<InboxDetailSettingsProps> = ({
         height: "100%",
         display: "flex",
         flexDirection: "column",
-        bgcolor: "background.default",
+        bgcolor: "#f8f9fa", // Muted background
       }}
     >
-      {/* Header */}
-      <Box sx={{ px: 3, pt: 2, pb: 1, borderBottom: "1px solid", borderColor: "divider" }}>
-        <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1 }}>
+      {/* Compact Header */}
+      <Box sx={{ px: 3, pt: 1.5, pb: 1, borderBottom: "1px solid rgba(0,0,0,0.06)" }}>
+        <Box sx={{ display: "flex", alignItems: "center", gap: 0.75, mb: 1 }}>
           <Link
             component="button"
             onClick={onBack}
@@ -146,46 +146,54 @@ export const InboxDetailSettings: React.FC<InboxDetailSettingsProps> = ({
               display: "flex",
               alignItems: "center",
               gap: 0.5,
-              color: "text.secondary",
+              color: "#6b7280",
               textDecoration: "none",
               "&:hover": {
+                color: "#6366f1",
                 textDecoration: "underline",
               },
               cursor: "pointer",
               border: "none",
               background: "none",
+              p: 0,
             }}
           >
-            <ArrowBackIcon sx={{ fontSize: 18 }} />
-            <Typography variant="body2">Back</Typography>
+            <ArrowBackIcon sx={{ fontSize: 16 }} />
+            <Typography variant="body2" sx={{ fontSize: "0.813rem", fontWeight: 500 }}>
+              Back
+            </Typography>
           </Link>
         </Box>
-        <Typography variant="h5" sx={{ fontWeight: 600, mb: 1 }}>
+        <Typography variant="h6" sx={{ fontWeight: 600, mb: 0.5, fontSize: "1.125rem", color: "#1f2937" }}>
           Inbox Settings
         </Typography>
-        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+        <Typography variant="body2" sx={{ color: "#6b7280", mb: 1.5, fontSize: "0.813rem" }}>
           {inboxDisplayName} • {inbox.channel_type}
         </Typography>
 
-        {/* Tabs */}
+        {/* Compact Tabs */}
         <Tabs
           value={activeTab}
           onChange={(_, newValue) => setActiveTab(newValue)}
           variant="scrollable"
           scrollButtons="auto"
           sx={{
-            borderBottom: "1px solid",
-            borderColor: "divider",
+            minHeight: 36,
             "& .MuiTab-root": {
               textTransform: "none",
               fontWeight: 500,
-              minHeight: 48,
+              fontSize: "0.813rem",
+              minHeight: 36,
+              py: 0.75,
+              px: 2,
+              color: "#6b7280",
             },
             "& .Mui-selected": {
-              color: "primary.main",
+              color: "#6366f1",
             },
             "& .MuiTabs-indicator": {
-              backgroundColor: "primary.main",
+              backgroundColor: "#6366f1",
+              height: 2,
             },
           }}
         >
@@ -194,26 +202,35 @@ export const InboxDetailSettings: React.FC<InboxDetailSettingsProps> = ({
         </Tabs>
       </Box>
 
-      {/* Content */}
-      <Box sx={{ flex: 1, overflow: "auto", p: 3, bgcolor: "background.default" }}>
-        {activeTab === "settings" && (
-          <InboxSettingsTab
-            inbox={inbox}
-            accountId={accountId}
-            onSave={handleSaveSettings}
-            isSaving={isSaving}
-          />
-        )}
+      {/* Content with White Card */}
+      <Box sx={{ flex: 1, overflow: "auto", p: 3 }}>
+        <Box
+          sx={{
+            backgroundColor: "#ffffff",
+            borderRadius: "8px",
+            boxShadow: "0 1px 3px rgba(0,0,0,0.08)",
+            p: 3,
+            minHeight: "100%",
+          }}
+        >
+          {activeTab === "settings" && (
+            <InboxSettingsTab
+              inbox={inbox}
+              accountId={accountId}
+              onSave={handleSaveSettings}
+              isSaving={isSaving}
+            />
+          )}
 
-        {activeTab === "collaborators" && (
-          <InboxCollaboratorsTab
-            inbox={inbox}
-            accountId={accountId}
-            onSave={handleSaveSettings}
-            onUpdateAgents={handleUpdateAgents}
-            isSaving={isSaving}
-          />
-        )}
+          {activeTab === "collaborators" && (
+            <InboxCollaboratorsTab
+              inbox={inbox}
+              accountId={accountId}
+              onUpdateAgents={handleUpdateAgents}
+              isSaving={isSaving}
+            />
+          )}
+        </Box>
       </Box>
 
       {/* Notification Snackbar */}
@@ -226,7 +243,11 @@ export const InboxDetailSettings: React.FC<InboxDetailSettingsProps> = ({
         <Alert
           onClose={() => setNotification({ ...notification, open: false })}
           severity={notification.severity}
-          sx={{ width: "100%" }}
+          sx={{ 
+            width: "100%",
+            borderRadius: "6px",
+            fontSize: "0.813rem",
+          }}
         >
           {notification.message}
         </Alert>

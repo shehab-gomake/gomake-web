@@ -182,25 +182,28 @@ export const useFilteredConversations = (filters) => {
 };
 `,
 
-  // Hook with Recoil state (with deduplication)
+  // Hook with Recoil state (with centralized fetch lock)
   useRecoilData: `
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback } from 'react';
 import { chatwootConversationsAtom, chatwootSelectedAccountAtom } from '@/store/frontdesk/atoms/chatwoot.atoms';
 import { chatwootService } from '@/services/frontdesk';
 import { extractPayload } from '@/widgets/frontdesk/providers/chatwoot/utils/api-response-utils';
+import { useFetchLock, FETCH_LOCK_KEYS } from './core/use-fetch-lock';
 
 export const useConversations = () => {
   const accountId = useRecoilValue(chatwootSelectedAccountAtom);
   const [conversations, setConversations] = useRecoilState(chatwootConversationsAtom);
   const [loading, setLoading] = useState(false);
-  const isFetchingRef = useRef(false); // Prevent duplicate requests
+  
+  // Centralized fetch lock (replaces isFetchingRef pattern)
+  const { acquireLock, releaseLock, isLocked } = useFetchLock();
 
   const fetchConversations = useCallback(async () => {
     if (!accountId) return;
-    if (isFetchingRef.current) return;
+    // Centralized deduplication across ALL component instances
+    if (!acquireLock(FETCH_LOCK_KEYS.CONVERSATIONS)) return;
     
-    isFetchingRef.current = true;
     setLoading(true);
     try {
       const response = await chatwootService.conversations.listConversations(accountId);
@@ -208,9 +211,9 @@ export const useConversations = () => {
       setConversations(data);
     } finally {
       setLoading(false);
-      isFetchingRef.current = false;
+      releaseLock(FETCH_LOCK_KEYS.CONVERSATIONS);
     }
-  }, [accountId, setConversations]);
+  }, [accountId, setConversations, acquireLock, releaseLock]);
 
   return { conversations, loading, refresh: fetchConversations };
 };

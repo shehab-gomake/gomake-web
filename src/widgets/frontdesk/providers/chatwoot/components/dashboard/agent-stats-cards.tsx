@@ -1,13 +1,20 @@
 /**
- * Agent Stats Cards
+ * Agent Stats Cards - Modern Clean Design
  *
  * Displays agent-specific performance metrics for the dashboard.
- * Focuses on personal productivity and immediate tasks.
+ * Features:
+ * - 16px rounded corners
+ * - Soft shadow with hover elevation
+ * - Consistent 22px padding
+ * - Icon in small rounded container with subtle background
+ * - Improved typography hierarchy
+ * - Subtle, calm accents (no loud border-top colors)
+ * - Muted description label below main value
+ * - Clean 4-column grid layout
  */
 
 import React, { useMemo } from "react";
-import { Box, Grid } from "@mui/material";
-import { StatCard } from "@/widgets/frontdesk/design-system";
+import { Box } from "@mui/material";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
@@ -18,6 +25,13 @@ import {
   formatResponseTime,
   getCardVariant,
 } from "../../utils";
+import { StatCard } from "@/widgets/frontdesk/design-system";
+
+// Grid layout tokens
+const GRID_TOKENS = {
+  columns: 4,
+  gap: 20, // Consistent gap between cards
+} as const;
 
 export interface AgentStatsCardsProps {
   stats: AgentDashboardStats;
@@ -41,10 +55,7 @@ export const AgentStatsCards: React.FC<AgentStatsCardsProps> = ({
         value: formatStatCardValue(stats.myOpenTickets),
         icon: <AssignmentIcon />,
         variant: getCardVariant(stats.myOpenTickets, "success", "primary"),
-        description:
-          stats.myOpenTickets === 0
-            ? "All caught up!"
-            : "Assigned to me",
+        description: stats.myOpenTickets === 0 ? "All caught up!" : "Assigned to me",
       },
       {
         id: "my-response-time" as const,
@@ -67,29 +78,29 @@ export const AgentStatsCards: React.FC<AgentStatsCardsProps> = ({
   );
 
   return (
-    <Box sx={{ mb: 3 }}>
-      <Grid container spacing={2}>
-        {cards.map((card) => (
-          <Grid item xs={12} sm={6} md={3} key={card.id}>
-            <StatCard
-              label={card.label}
-              value={card.value}
-              icon={card.icon}
-              variant={card.variant}
-              description={card.description}
-              isLoading={isLoading}
-              onClick={() => onCardClick?.(card.id)}
-            />
-          </Grid>
-        ))}
-        {/* System Warnings */}
-        <Grid item xs={12} sm={6} md={3}>
-          <ChatwootWarningsCard onClick={onWarningsClick} />
-        </Grid>
-      </Grid>
+    <Box
+      sx={{
+        display: "grid",
+        gridTemplateColumns: `repeat(${GRID_TOKENS.columns}, 1fr)`,
+        gap: `${GRID_TOKENS.gap}px`,
+      }}
+    >
+      {cards.map((card) => (
+        <StatCard
+          key={card.id}
+          label={card.label}
+          value={card.value}
+          icon={card.icon}
+          variant={card.variant}
+          description={card.description}
+          isLoading={isLoading}
+          onClick={() => onCardClick?.(card.id)}
+        />
+      ))}
+      {/* System Warnings */}
+      <ChatwootWarningsCard onClick={onWarningsClick} />
     </Box>
   );
 };
 
 export default AgentStatsCards;
-

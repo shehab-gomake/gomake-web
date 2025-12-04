@@ -1,8 +1,13 @@
 import React from "react";
-import { Box, Paper, Typography, Stack, alpha, Button, CircularProgress, Fade } from "@mui/material";
-import { useTheme } from "@mui/material/styles";
-import { useGomakeTheme } from "@/hooks/use-gomake-thme";
-import { PanelContent, EmptyState } from "@/widgets/frontdesk/design-system";
+import { Box, Typography, Stack, Button, CircularProgress, Fade, alpha, useTheme } from "@mui/material";
+import { 
+  PanelContent, 
+  EmptyState, 
+  colorTokens, 
+  shadowTokens,
+  semanticSpacing,
+  layoutTokens,
+} from "@/widgets/frontdesk/design-system";
 import { ChatwootMessageViewerHeader } from "./chatwoot-message-viewer-header";
 import { ChatwootMessageItem } from "./chatwoot-message-item";
 import { ChatwootResolutionStatusBar } from "./chatwoot-resolution-status-bar";
@@ -45,7 +50,6 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
   onToggleSidebar,
 }) => {
   const theme = useTheme();
-  const { neutralColor } = useGomakeTheme();
   const [isSending, setIsSending] = React.useState(false);
   
   // Track previous conversation for smooth transitions
@@ -91,23 +95,21 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
 
   if (!conversation) {
     return (
-      <Paper
-        elevation={2}
+      <Box
         sx={{
           flex: 1,
           display: "flex",
           flexDirection: "column",
           overflow: "hidden",
           height: "100%",
-          borderRadius: 2,
-          backgroundColor: neutralColor(0),
+          backgroundColor: colorTokens.semantic.background.primary,
         }}
       >
         <EmptyState
           title="No ticket selected"
           description="Choose a ticket from the list to start viewing messages"
         />
-      </Paper>
+      </Box>
     );
   }
 
@@ -344,17 +346,14 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
   }
 
   return (
-    <Paper
-      elevation={2}
+    <Box
       sx={{
         flex: 1,
         display: "flex",
         flexDirection: "column",
         overflow: "hidden",
         height: "100%",
-        borderRadius: 2,
-        backgroundColor: neutralColor(0),
-        boxShadow: `0 2px 8px ${alpha(theme.palette.common.black, 0.06)}, 0 1px 3px ${alpha(theme.palette.common.black, 0.04)}`,
+        backgroundColor: colorTokens.semantic.background.primary,
         position: "relative",
       }}
     >
@@ -406,15 +405,16 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
         </Box>
       </Fade>
 
-      {/* Messages */}
+      {/* Messages - Using design system spacing */}
       <Box
         sx={{
           flex: 1,
           overflow: "auto",
           background: theme.palette.mode === "dark"
-            ? `linear-gradient(to bottom, ${neutralColor(900)}, ${neutralColor(850)})`
-            : `linear-gradient(to bottom, ${neutralColor(25)}, ${neutralColor(50)})`,
-          p: 2.5,
+            ? colorTokens.neutral[900]
+            : colorTokens.neutral[50],
+          px: `${semanticSpacing.container.lg}px`,  // Use design system container padding
+          py: 2,
           opacity: loading && messages.length === 0 ? 0.5 : 1,
           transition: "opacity 0.2s ease-in-out",
         }}
@@ -437,24 +437,31 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
           />
         ) : (
           <Fade in={!isTransitioning} timeout={200}>
-            <Stack spacing={0.5}>
+            <Stack spacing={`${semanticSpacing.component.xxs}px`}>  {/* 4px tight message grouping */}
               {/* Load More Button - Show at top */}
               {hasMoreMessages && (
-                <Box sx={{ display: "flex", justifyContent: "center", pt: 1 }}>
+                <Box sx={{ display: "flex", justifyContent: "center", py: 1.5 }}>
                   <Button
                     variant="outlined"
                     size="small"
                     onClick={loadMoreMessages}
                     disabled={isLoadingMore}
-                    startIcon={isLoadingMore ? <CircularProgress size={16} /> : null}
+                    startIcon={isLoadingMore ? <CircularProgress size={14} /> : null}
                     sx={{
-                      borderRadius: 2,
+                      borderRadius: "8px",
                       textTransform: "none",
-                      borderColor: neutralColor(200),
-                      color: neutralColor(700),
+                      fontSize: "0.8125rem",
+                      fontWeight: 500,
+                      px: 2,
+                      py: 0.75,
+                      borderColor: colorTokens.neutral[200],
+                      color: colorTokens.neutral[600],
+                      backgroundColor: colorTokens.semantic.background.primary,
+                      boxShadow: shadowTokens.xs,
                       "&:hover": {
-                        borderColor: theme.palette.primary.main,
-                        backgroundColor: alpha(theme.palette.primary.main, 0.05),
+                        borderColor: colorTokens.primary[300],
+                        backgroundColor: colorTokens.primary[50],
+                        boxShadow: shadowTokens.sm,
                       },
                     }}
                   >
@@ -481,7 +488,7 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
                 if (visibleMessages.length === 0) {
                   return (
                     <Box sx={{ p: 3, textAlign: "center" }}>
-                      <Typography variant="body2" sx={{ color: neutralColor(500) }}>
+                      <Typography variant="body2" sx={{ color: colorTokens.neutral[500] }}>
                         No messages to display
                       </Typography>
                     </Box>
@@ -520,7 +527,12 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
 
       {/* Reply Composer */}
       <Fade in={!isTransitioning} timeout={200}>
-        <Box>
+        <Box
+          sx={{
+            borderTop: `1px solid ${colorTokens.neutral[100]}`,
+            backgroundColor: colorTokens.semantic.background.primary,
+          }}
+        >
           <ChatwootReplyComposer
             conversation={conversation}
             inbox={inbox}
@@ -529,7 +541,7 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
           />
         </Box>
       </Fade>
-    </Paper>
+    </Box>
   );
 };
 

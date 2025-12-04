@@ -172,12 +172,14 @@ if (features.supportsAttachments) {
 ### Inbox Settings (`config/inbox-settings.config.ts`)
 
 Configuration for inbox settings tabs and fields:
-- General settings (name, greeting message, enable/disable)
+- General settings (name, features)
 - Business hours configuration
 - CSAT survey settings
 - Advanced configuration
 - Bot configuration
 - Collaborators management
+
+Note: Channel Greeting is disabled by GoMake policy.
 
 ## Contexts
 

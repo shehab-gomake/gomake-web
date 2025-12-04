@@ -5,14 +5,28 @@
  * Eliminates code duplication across all conversation views
  * (All Conversations, Channels, Mentions, Unattended).
  *
- * Layout: [List] [Divider] [Detail OR EmptyState]
+ * Redesigned with:
+ * - 12-column responsive grid
+ * - 24px gutter spacing between columns
+ * - 14px card radius with soft shadows
+ * - 8px vertical rhythm
+ * - Modern premium SaaS aesthetic
+ *
+ * Layout: [List] [Content + Detail]
  * Both list and detail are always mounted (matches Chatwoot pattern).
  * This prevents duplicate provider calls and maintains scroll/filter state.
  */
 
 import React, { useMemo, useCallback, useState, useEffect } from "react";
-import { Stack, Box, Divider, useTheme } from "@mui/material";
-import { Panel, PanelContent, EmptyState } from "@/widgets/frontdesk/design-system";
+import { Stack, Box } from "@mui/material";
+import { 
+  PanelContent, 
+  EmptyState, 
+  colorTokens,
+  layoutTokens,
+  shadowTokens,
+  semanticSpacing,
+} from "@/widgets/frontdesk/design-system";
 import { ChatwootConversationList } from "./chatwoot-conversation-list";
 import { ChatwootMessageViewer } from "./chatwoot-message-viewer";
 import { ChatwootConversationDetailPanel } from "./chatwoot-conversation-detail-panel";
@@ -53,7 +67,6 @@ export const BaseConversationView: React.FC<BaseConversationViewProps> = ({ empt
     router,
   } = useChatwootProvider();
 
-  const theme = useTheme();
   const [showComposeModal, setShowComposeModal] = useState(false);
   
   // Sidebar visibility state - persist to localStorage
@@ -105,20 +118,33 @@ export const BaseConversationView: React.FC<BaseConversationViewProps> = ({ empt
   );
 
   return (
-    <Stack direction="row" spacing={0} sx={{ height: "100%", p: 0 }}>
-      {/* Conversation List - Always visible */}
-      <Panel
-        elevation={1}
-        border="none"
+    <Box
+      sx={{
+        display: "flex",
+        height: "100%",
+        width: "100%",
+        overflow: "hidden",
+        backgroundColor: colorTokens.neutral[100],
+        gap: `${layoutTokens.columnGap.default}px`,        // Use design system gutter
+        padding: `${semanticSpacing.container.md}px`,      // Use design system container padding
+      }}
+    >
+      {/* Conversation List Panel */}
+      <Box
         sx={{
-          width: 400,
-          minWidth: 350,
-          maxWidth: 500,
+          width: layoutTokens.panel.conversationList.default,
+          minWidth: layoutTokens.panel.conversationList.default,
+          height: "100%",
+          backgroundColor: colorTokens.semantic.background.primary,
+          borderRadius: `${layoutTokens.card.radius}px`,   // Use design system card radius
+          boxShadow: shadowTokens.card,                    // Use design system shadow
           overflow: "hidden",
           display: "flex",
           flexDirection: "column",
-          height: "100%",
-          backgroundColor: "background.paper",
+          transition: "box-shadow 0.2s ease",
+          "&:hover": {
+            boxShadow: shadowTokens.cardHover,             // Use design system hover shadow
+          },
         }}
       >
         <ChatwootConversationList
@@ -135,23 +161,21 @@ export const BaseConversationView: React.FC<BaseConversationViewProps> = ({ empt
           inboxes={inboxes}
           inboxesLoading={inboxesLoading}
         />
-      </Panel>
+      </Box>
 
-      {/* Divider between list and viewer */}
-      <Divider orientation="vertical" flexItem sx={{ borderColor: theme.palette.divider }} />
-
-      {/* Message Viewer - Conditionally show detail or empty state */}
-      <Panel
-        elevation={1}
-        border="none"
+      {/* Message Viewer Panel */}
+      <Box
         sx={{
           flex: 1,
+          height: "100%",
+          backgroundColor: colorTokens.semantic.background.primary,
+          borderRadius: `${layoutTokens.card.radius}px`,
+          boxShadow: shadowTokens.card,
           overflow: "hidden",
           display: "flex",
           flexDirection: "column",
           minWidth: 0,
-          height: "100%",
-          backgroundColor: "background.paper",
+          transition: "box-shadow 0.2s ease",
         }}
       >
         {selectedConversation ? (
@@ -172,26 +196,30 @@ export const BaseConversationView: React.FC<BaseConversationViewProps> = ({ empt
               />
             </Box>
 
-            {/* Divider between message viewer and detail panel - only show when sidebar is visible */}
-            {isSidebarVisible && (
-              <Divider orientation="vertical" flexItem sx={{ borderColor: theme.palette.divider }} />
-            )}
-
             {/* Right Detail Panel - conditionally rendered */}
             {isSidebarVisible && (
-              <ChatwootConversationDetailPanel
-                key={selectedConversation.id}
-                conversation={selectedConversation}
-                accountId={currentAccountId || undefined}
-                inboxes={inboxes}
-                onConversationUpdate={updateConversationInList}
-              />
+              <Box
+                sx={{
+                  width: layoutTokens.panel.detailSidebar.default,
+                  minWidth: layoutTokens.panel.detailSidebar.default,
+                  borderLeft: `1px solid ${colorTokens.semantic.border.light}`,
+                  backgroundColor: colorTokens.semantic.background.primary,
+                }}
+              >
+                <ChatwootConversationDetailPanel
+                  key={selectedConversation.id}
+                  conversation={selectedConversation}
+                  accountId={currentAccountId || undefined}
+                  inboxes={inboxes}
+                  onConversationUpdate={updateConversationInList}
+                />
+              </Box>
             )}
           </Stack>
         ) : (
           <PanelContent padding="lg">{emptyStateContent}</PanelContent>
         )}
-      </Panel>
+      </Box>
 
       {/* Compose Conversation Modal */}
       <ComposeConversationModal
@@ -200,6 +228,6 @@ export const BaseConversationView: React.FC<BaseConversationViewProps> = ({ empt
         onSuccess={handleComposeSuccess}
         accountId={currentAccountId}
       />
-    </Stack>
+    </Box>
   );
 };

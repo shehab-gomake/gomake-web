@@ -21,13 +21,14 @@ import { formatTimeAgo } from "../../utils/date-utils";
 import { ConversationPriorityIcon } from "../conversation-priority-icon";
 import { InboxIcon } from "../../utils/inbox-icons";
 import { generateNotificationAvatar, generateAgentAvatar } from "../../utils/avatar.utils";
+import { colorTokens, radiusTokens, shadowTokens } from "@/widgets/frontdesk/design-system";
 
 interface NotificationListItemProps {
   notification: ChatwootNotification;
   onClick: () => void;
   onContextMenu: (event: React.MouseEvent<HTMLLIElement>) => void;
-  primaryColor: (shade: number) => string;
-  neutralColor: (shade: number) => string;
+  primaryColor?: (shade: number) => string;
+  neutralColor?: (shade: number) => string;
 }
 
 export const NotificationListItem: React.FC<NotificationListItemProps> = ({
@@ -45,12 +46,12 @@ export const NotificationListItem: React.FC<NotificationListItemProps> = ({
   const notificationDetails = hasSnooze
     ? null
     : getNotificationTypeDetails(notification.notification_type, {
-        primary: primaryColor(600),
-        neutral: neutralColor(600),
+        primary: colorTokens.primary[600],
+        neutral: colorTokens.neutral[600],
       });
   const messagePreview = getMessagePreview(notification);
   const statusLabel = getStatusLabel(primaryActor?.status);
-  const statusColor = getStatusColor(primaryActor?.status, neutralColor(600));
+  const statusColor = getStatusColor(primaryActor?.status, colorTokens.neutral[600]);
   // Use created_at (Unix timestamp in seconds) as primary source, fallback to other timestamps
   // chatwootTimestampToDate handles Unix timestamps (numbers) and ISO strings
   const lastActivityAt = notification.created_at || 
@@ -75,14 +76,14 @@ export const NotificationListItem: React.FC<NotificationListItemProps> = ({
       onClick={onClick}
       onContextMenu={onContextMenu}
       sx={{
-        px: 2,
+        px: 3, // 24px padding to match parent container
         py: 1.5,
         cursor: "pointer",
-        backgroundColor: isUnread ? primaryColor(50) : neutralColor(0),
+        backgroundColor: isUnread ? colorTokens.primary[50] : colorTokens.semantic.background.primary,
         "&:hover": {
-          backgroundColor: isUnread ? primaryColor(100) : neutralColor(50),
+          backgroundColor: isUnread ? colorTokens.primary[100] : colorTokens.neutral[50],
         },
-        borderBottom: `1px solid ${neutralColor(100)}`,
+        borderBottom: `1px solid ${colorTokens.neutral[100]}`,
       }}
     >
       <Stack direction="row" spacing={1.5} sx={{ width: "100%", alignItems: "flex-start" }}>
@@ -114,7 +115,7 @@ export const NotificationListItem: React.FC<NotificationListItemProps> = ({
               sx={{
                 fontSize: 14,
                 fontWeight: isUnread ? 700 : 600,
-                color: neutralColor(900),
+                color: colorTokens.neutral[900],
                 lineHeight: 1.3,
                 overflow: "hidden",
                 textOverflow: "ellipsis",
@@ -134,8 +135,8 @@ export const NotificationListItem: React.FC<NotificationListItemProps> = ({
                   height: 16,
                   fontSize: 10,
                   fontWeight: 600,
-                  backgroundColor: neutralColor(100),
-                  color: neutralColor(600),
+                  backgroundColor: colorTokens.neutral[100],
+                  color: colorTokens.neutral[600],
                   flexShrink: 0,
                   "& .MuiChip-label": {
                     px: 0.75,
@@ -152,7 +153,7 @@ export const NotificationListItem: React.FC<NotificationListItemProps> = ({
               sx={{
                 fontSize: 13,
                 fontWeight: isUnread ? 600 : 500,
-                color: neutralColor(800),
+                color: colorTokens.neutral[800],
                 lineHeight: 1.3,
                 mb: 0.5,
                 overflow: "hidden",
@@ -171,7 +172,7 @@ export const NotificationListItem: React.FC<NotificationListItemProps> = ({
             sx={{
               fontSize: 12,
               fontWeight: 400,
-              color: neutralColor(600),
+              color: colorTokens.neutral[600],
               lineHeight: 1.4,
               mb: 0.75,
               overflow: "hidden",
@@ -216,8 +217,8 @@ export const NotificationListItem: React.FC<NotificationListItemProps> = ({
                       sx={{
                         height: 20,
                         fontSize: 11,
-                        backgroundColor: primaryColor(100),
-                        color: primaryColor(800),
+                        backgroundColor: colorTokens.primary[100],
+                        color: colorTokens.primary[800],
                         fontWeight: 500,
                         flexShrink: 0,
                         "& .MuiChip-label": {
@@ -240,9 +241,9 @@ export const NotificationListItem: React.FC<NotificationListItemProps> = ({
                   sx={{
                     height: 20,
                     fontSize: 11,
-                    backgroundColor: statusColor ? `${statusColor}20` : neutralColor(100),
-                    color: statusColor || neutralColor(700),
-                    border: `1px solid ${statusColor || neutralColor(300)}`,
+                    backgroundColor: statusColor ? `${statusColor}20` : colorTokens.neutral[100],
+                    color: statusColor || colorTokens.neutral[700],
+                    border: `1px solid ${statusColor || colorTokens.neutral[300]}`,
                     fontWeight: 500,
                     flexShrink: 0,
                     "& .MuiChip-label": {
@@ -258,7 +259,7 @@ export const NotificationListItem: React.FC<NotificationListItemProps> = ({
                   <AccessTimeIcon
                     sx={{
                       fontSize: 12,
-                      color: neutralColor(500),
+                      color: colorTokens.neutral[500],
                       flexShrink: 0,
                     }}
                   />
@@ -267,7 +268,7 @@ export const NotificationListItem: React.FC<NotificationListItemProps> = ({
                     sx={{
                       fontSize: 11,
                       fontWeight: 400,
-                      color: neutralColor(500),
+                      color: colorTokens.neutral[500],
                     }}
                   >
                     {snoozeText}
@@ -279,7 +280,7 @@ export const NotificationListItem: React.FC<NotificationListItemProps> = ({
                   sx={{
                     fontSize: 11,
                     fontWeight: 400,
-                    color: neutralColor(500),
+                    color: colorTokens.neutral[500],
                     overflow: "hidden",
                     textOverflow: "ellipsis",
                     whiteSpace: "nowrap",
@@ -303,7 +304,7 @@ export const NotificationListItem: React.FC<NotificationListItemProps> = ({
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
-                      color: neutralColor(500),
+                      color: colorTokens.neutral[500],
                       flexShrink: 0,
                     }}
                   >
@@ -317,7 +318,7 @@ export const NotificationListItem: React.FC<NotificationListItemProps> = ({
                 variant="caption"
                 sx={{
                   fontSize: 11,
-                  color: neutralColor(500),
+                  color: colorTokens.neutral[500],
                   whiteSpace: "nowrap",
                   fontWeight: 500,
                 }}

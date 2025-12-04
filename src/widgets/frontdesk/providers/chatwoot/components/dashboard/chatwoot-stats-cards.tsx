@@ -1,12 +1,15 @@
 /**
- * Chatwoot Stats Cards
+ * Chatwoot Stats Cards - Modern Clean Design
  *
  * Displays 4 stat cards showing Chatwoot-specific metrics.
- * Based on StatsOverviewCards from unified dashboard.
+ * Features:
+ * - Clean 4-column grid layout with consistent 20px gap
+ * - Uses unified StatCard component from design system
+ * - Responsive: 1 column on mobile, 2 on tablet, 4 on desktop
  */
 
 import React, { useMemo } from "react";
-import { Box, Grid } from "@mui/material";
+import { Box } from "@mui/material";
 import { StatCard } from "@/widgets/frontdesk/design-system";
 import ChatIcon from "@mui/icons-material/Chat";
 import ForumIcon from "@mui/icons-material/Forum";
@@ -18,6 +21,12 @@ import {
   formatNumberInText,
   getCardVariant,
 } from "../../utils";
+
+// Grid layout tokens
+const GRID_TOKENS = {
+  columns: 4,
+  gap: 20, // Consistent gap between cards
+} as const;
 
 export interface ChatwootStatsCardsProps {
   stats: ChatwootDashboardStats;
@@ -73,22 +82,30 @@ export const ChatwootStatsCards: React.FC<ChatwootStatsCardsProps> = ({
   );
 
   return (
-    <Box sx={{ mb: 3 }}>
-      <Grid container spacing={2}>
-        {cards.map((card) => (
-          <Grid item xs={12} sm={6} md={3} key={card.id}>
-            <StatCard
-              label={card.label}
-              value={card.value}
-              icon={card.icon}
-              variant={card.variant}
-              description={card.description}
-              isLoading={isLoading}
-              onClick={() => onCardClick?.(card.id)}
-            />
-          </Grid>
-        ))}
-      </Grid>
+    <Box
+      sx={{
+        display: "grid",
+        gridTemplateColumns: {
+          xs: "1fr",
+          sm: "repeat(2, 1fr)",
+          md: `repeat(${GRID_TOKENS.columns}, 1fr)`,
+        },
+        gap: `${GRID_TOKENS.gap}px`,
+        mb: 3,
+      }}
+    >
+      {cards.map((card) => (
+        <StatCard
+          key={card.id}
+          label={card.label}
+          value={card.value}
+          icon={card.icon}
+          variant={card.variant}
+          description={card.description}
+          isLoading={isLoading}
+          onClick={() => onCardClick?.(card.id)}
+        />
+      ))}
     </Box>
   );
 };

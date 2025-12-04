@@ -7,6 +7,7 @@
 import React from "react";
 import { Stack, Typography, Chip } from "@mui/material";
 import { ConversationStatus } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
+import { colorTokens, radiusTokens, shadowTokens } from "@/widgets/frontdesk/design-system";
 
 export interface ConversationListTitleProps {
   /** Current conversation status */
@@ -14,7 +15,7 @@ export interface ConversationListTitleProps {
   /** Get label for status */
   getStatusLabel: (status?: ConversationStatus) => string;
   /** Neutral color function */
-  neutralColor: (shade: number) => string;
+  neutralColor?: (shade: number) => string;
 }
 
 export const ConversationListTitle: React.FC<ConversationListTitleProps> = ({
@@ -29,7 +30,7 @@ export const ConversationListTitle: React.FC<ConversationListTitleProps> = ({
         sx={{
           fontWeight: 600,
           fontSize: "1rem",
-          color: neutralColor(900),
+          color: colorTokens.neutral[900],
         }}
       >
         Tickets
@@ -42,9 +43,9 @@ export const ConversationListTitle: React.FC<ConversationListTitleProps> = ({
             height: 24,
             fontSize: "0.75rem",
             fontWeight: 500,
-            backgroundColor: neutralColor(100),
-            color: neutralColor(700),
-            border: `1px solid ${neutralColor(300)}`,
+            backgroundColor: colorTokens.neutral[100],
+            color: colorTokens.neutral[700],
+            border: `1px solid ${colorTokens.neutral[300]}`,
             "& .MuiChip-label": {
               px: 1.5,
             },

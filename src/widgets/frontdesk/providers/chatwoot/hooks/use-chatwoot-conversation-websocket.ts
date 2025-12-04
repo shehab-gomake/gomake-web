@@ -33,10 +33,7 @@ import {
   chatwootSelectedConversationAtom,
   chatwootProfileAtom,
 } from "@/store/frontdesk/atoms/chatwoot.atoms";
-import {
-  chatwootConversationsWebSocketHelper,
-  chatwootWebSocketService,
-} from "@/services/frontdesk";
+import { chatwootConversationsWebSocketHelper, chatwootWebSocketService } from "@/services/frontdesk";
 import { ConnectionState } from "@/services/frontdesk/websocket/chatwoot-websocket.service";
 import type {
   ConversationCreatedEvent,
@@ -47,6 +44,7 @@ import type {
   TypingEvent,
 } from "@/services/frontdesk/websocket/chatwoot-conversations-websocket.helper";
 import type { ChatwootConversation } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
+import type { Message } from "@/services/frontdesk/api/chatwoot/types/messages.types";
 import { createLogger } from "@/services/frontdesk/utils/logger";
 
 const logger = createLogger("useChatwootConversationWebSocket");
@@ -74,7 +72,7 @@ export interface UseChatwootConversationWebSocketOptions {
   /**
    * Callback when a new message is received
    */
-  onNewMessage?: (conversationId: number, message: any) => void;
+  onNewMessage?: (conversationId: number, message: Message) => void;
 
   /**
    * Current filter key for cache updates
@@ -227,14 +225,10 @@ export const useChatwootConversationWebSocket = (
         status: conversation.status,
       });
 
-      updateAllCaches((prev) =>
-        prev.map((c) => (c.id === conversation.id ? { ...c, ...conversation } : c))
-      );
+      updateAllCaches((prev) => prev.map((c) => (c.id === conversation.id ? { ...c, ...conversation } : c)));
 
       // Update selected conversation if it's the one being updated
-      setSelectedConversation((prev) =>
-        prev?.id === conversation.id ? { ...prev, ...conversation } : prev
-      );
+      setSelectedConversation((prev) => (prev?.id === conversation.id ? { ...prev, ...conversation } : prev));
     },
     [updateAllCaches, setSelectedConversation]
   );
@@ -255,17 +249,13 @@ export const useChatwootConversationWebSocket = (
 
       updateAllCaches((prev) =>
         prev.map((c) =>
-          c.id === conversation.id
-            ? { ...c, ...conversation, status: event.current_status || conversation.status }
-            : c
+          c.id === conversation.id ? { ...c, ...conversation, status: event.current_status || conversation.status } : c
         )
       );
 
       // Update selected conversation
       setSelectedConversation((prev) =>
-        prev?.id === conversation.id
-          ? { ...prev, ...conversation, status: event.current_status || conversation.status }
-          : prev
+        prev?.id === conversation.id ? { ...prev, ...conversation, status: event.current_status || conversation.status } : prev
       );
     },
     [updateAllCaches, setSelectedConversation]
@@ -350,14 +340,10 @@ export const useChatwootConversationWebSocket = (
         assignee: event.assignee || null,
       };
 
-      updateAllCaches((prev) =>
-        prev.map((c) => (c.id === conversation.id ? { ...c, ...conversation, meta: updatedMeta } : c))
-      );
+      updateAllCaches((prev) => prev.map((c) => (c.id === conversation.id ? { ...c, ...conversation, meta: updatedMeta } : c)));
 
       // Update selected conversation
-      setSelectedConversation((prev) =>
-        prev?.id === conversation.id ? { ...prev, meta: updatedMeta } : prev
-      );
+      setSelectedConversation((prev) => (prev?.id === conversation.id ? { ...prev, meta: updatedMeta } : prev));
     },
     [updateAllCaches, setSelectedConversation]
   );
@@ -704,4 +690,3 @@ export const useChatwootConversationWebSocket = (
 };
 
 export default useChatwootConversationWebSocket;
-

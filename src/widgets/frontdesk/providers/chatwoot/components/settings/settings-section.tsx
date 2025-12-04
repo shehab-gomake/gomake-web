@@ -34,9 +34,9 @@ export const SettingsSection: React.FC<SettingsSectionProps> = ({
   return (
     <Box
       sx={{
-        mb: 3,
-        pb: showDivider ? 3 : 0,
-        borderBottom: showDivider ? `1px solid ${theme.palette.divider}` : "none",
+        mb: 2.5,
+        pb: showDivider ? 2.5 : 0,
+        borderBottom: showDivider ? `1px solid rgba(0,0,0,0.06)` : "none",
         "&:last-child": {
           mb: 0,
           pb: 0,
@@ -44,23 +44,24 @@ export const SettingsSection: React.FC<SettingsSectionProps> = ({
         },
       }}
     >
-      {/* Section Header */}
+      {/* Compact Section Header */}
       <Box
         sx={{
           display: "flex",
           alignItems: "flex-start",
           justifyContent: "space-between",
-          mb: 2,
+          mb: 1.5,
         }}
       >
-        <Box>
+        <Box sx={{ minWidth: 0 }}>
           <Typography
-            variant="h6"
+            variant="subtitle1"
             sx={{
-              fontSize: "1.125rem",
+              fontSize: "0.938rem", // Smaller, more compact
               fontWeight: 600,
-              color: theme.palette.text.primary,
-              mb: description ? 0.5 : 0,
+              color: "#1f2937", // Muted dark
+              mb: description ? 0.25 : 0,
+              lineHeight: 1.3,
             }}
           >
             {title}
@@ -69,15 +70,16 @@ export const SettingsSection: React.FC<SettingsSectionProps> = ({
             <Typography
               variant="body2"
               sx={{
-                color: theme.palette.text.secondary,
-                fontSize: "0.875rem",
+                color: "#6b7280", // Muted gray
+                fontSize: "0.75rem", // Smaller type
+                lineHeight: 1.4,
               }}
             >
               {description}
             </Typography>
           )}
         </Box>
-        {actions && <Box>{actions}</Box>}
+        {actions && <Box sx={{ flexShrink: 0 }}>{actions}</Box>}
       </Box>
 
       {/* Section Content */}

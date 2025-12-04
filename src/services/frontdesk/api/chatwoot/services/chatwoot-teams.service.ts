@@ -12,23 +12,28 @@ import { Agent } from "./chatwoot-agents.service";
 
 /**
  * Team interface matching Chatwoot API response
+ * 
+ * Note: GoMake always disables auto-assignment for teams (allow_auto_assign is always false).
  */
 export interface Team {
   id?: number;                    // Team ID
   name?: string;                  // Team name
   description?: string;           // Team description
-  allow_auto_assign?: boolean;    // Auto-assign conversations to agents
+  allow_auto_assign?: boolean;    // Auto-assign conversations (GoMake always sets this to false)
   account_id?: number;            // Account ID
   is_member?: boolean;            // Current user is member
 }
 
 /**
  * Request payload for creating or updating a team
+ * 
+ * Note: GoMake always disables auto-assignment for teams. The allow_auto_assign
+ * field should always be set to false when creating or updating teams.
  */
 export interface TeamCreateUpdatePayload {
   name: string;                   // Team name (required, unique per account)
   description?: string;           // Team description (optional)
-  allow_auto_assign?: boolean;    // Auto-assign conversations to agents (optional, default: true)
+  allow_auto_assign?: boolean;    // Auto-assign conversations to agents (GoMake always sets this to false)
 }
 
 /**
@@ -129,10 +134,11 @@ export class ChatwootTeamsService extends BaseChatwootService {
    *
    * @example
    * ```typescript
+   * // Note: GoMake always disables auto-assignment for teams
    * const newTeam = await teamsService.createTeam(123, {
    *   name: "Support Team",
    *   description: "Handles customer support inquiries",
-   *   allow_auto_assign: true
+   *   allow_auto_assign: false
    * });
    * console.log(newTeam); // { id: 789, name: 'support team', ... }
    * ```

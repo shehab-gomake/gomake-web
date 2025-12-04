@@ -1,9 +1,10 @@
 import React from "react";
 import { Box, Typography } from "@mui/material";
-import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+
 import { ChatwootConversation } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
 import { useRecoilValue } from "recoil";
 import { chatwootProfileAtom } from "@/store/frontdesk/atoms/chatwoot.atoms";
+import { colorTokens, radiusTokens, shadowTokens } from "@/widgets/frontdesk/design-system";
 
 interface ChatwootResolutionStatusBarProps {
   conversation: ChatwootConversation | null;
@@ -12,7 +13,6 @@ interface ChatwootResolutionStatusBarProps {
 export const ChatwootResolutionStatusBar: React.FC<ChatwootResolutionStatusBarProps> = ({
   conversation,
 }) => {
-  const { neutralColor } = useGomakeTheme();
   const profile = useRecoilValue(chatwootProfileAtom);
 
   if (!conversation || conversation.status !== "resolved") {
@@ -30,15 +30,15 @@ export const ChatwootResolutionStatusBar: React.FC<ChatwootResolutionStatusBarPr
       sx={{
         px: 2.5,
         py: 1.5,
-        borderTop: `1px solid ${neutralColor(200)}`,
-        borderBottom: `1px solid ${neutralColor(200)}`,
-        backgroundColor: neutralColor(50),
+        borderTop: `1px solid ${colorTokens.neutral[200]}`,
+        borderBottom: `1px solid ${colorTokens.neutral[200]}`,
+        backgroundColor: colorTokens.neutral[50],
       }}
     >
       <Typography
         variant="body2"
         sx={{
-          color: neutralColor(600),
+          color: colorTokens.neutral[600],
           fontSize: "0.8125rem",
           fontStyle: "italic",
         }}

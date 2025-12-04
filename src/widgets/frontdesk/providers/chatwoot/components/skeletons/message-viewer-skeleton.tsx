@@ -1,7 +1,6 @@
 import React from "react";
-import { Box, Skeleton, Stack, Paper, alpha } from "@mui/material";
-import { useTheme } from "@mui/material/styles";
-import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { Box, Skeleton, Stack, Paper , useTheme, alpha } from "@mui/material";
+import { colorTokens, radiusTokens, shadowTokens } from "@/widgets/frontdesk/design-system";
 
 interface MessageViewerSkeletonProps {
   /**
@@ -29,20 +28,17 @@ interface MessageViewerSkeletonProps {
 export const MessageViewerSkeleton: React.FC<MessageViewerSkeletonProps> = ({
   messageCount = 5,
 }) => {
-  const theme = useTheme();
-  const { neutralColor } = useGomakeTheme();
-
   return (
     <Paper
       elevation={2}
       sx={{
         height: "100%",
-        borderRadius: 2,
+        borderRadius: radiusTokens.lg,
         overflow: "hidden",
         display: "flex",
         flexDirection: "column",
-        backgroundColor: neutralColor(0),
-        boxShadow: `0 2px 8px ${alpha(theme.palette.common.black, 0.06)}, 0 1px 3px ${alpha(theme.palette.common.black, 0.04)}`,
+        backgroundColor: colorTokens.semantic.background.primary,
+        boxShadow: shadowTokens.sm,
       }}
     >
       {/* Header Skeleton */}
@@ -53,7 +49,7 @@ export const MessageViewerSkeleton: React.FC<MessageViewerSkeletonProps> = ({
         sx={{
           flex: 1,
           overflow: "hidden",
-          backgroundColor: neutralColor(50),
+          backgroundColor: colorTokens.neutral[50],
           padding: 2,
         }}
       >
@@ -78,17 +74,15 @@ export const MessageViewerSkeleton: React.FC<MessageViewerSkeletonProps> = ({
  * Message viewer header skeleton
  */
 const MessageViewerHeaderSkeleton: React.FC = () => {
-  const { neutralColor } = useGomakeTheme();
-
   return (
     <Box
       sx={{
         padding: 2,
-        borderBottom: `1px solid ${neutralColor(200)}`,
+        borderBottom: `1px solid ${colorTokens.neutral[200]}`,
         display: "flex",
         alignItems: "center",
         gap: 2,
-        backgroundColor: neutralColor(0),
+        backgroundColor: colorTokens.semantic.background.primary,
       }}
     >
       {/* Back button */}
@@ -97,7 +91,7 @@ const MessageViewerHeaderSkeleton: React.FC = () => {
         width={36}
         height={36}
         sx={{
-          bgcolor: neutralColor(200),
+          bgcolor: colorTokens.neutral[200],
         }}
       />
 
@@ -107,7 +101,7 @@ const MessageViewerHeaderSkeleton: React.FC = () => {
         width={40}
         height={40}
         sx={{
-          bgcolor: neutralColor(200),
+          bgcolor: colorTokens.neutral[200],
         }}
       />
 
@@ -118,7 +112,7 @@ const MessageViewerHeaderSkeleton: React.FC = () => {
           width="40%"
           height={24}
           sx={{
-            bgcolor: neutralColor(300),
+            bgcolor: colorTokens.neutral[300],
           }}
         />
         <Skeleton
@@ -126,7 +120,7 @@ const MessageViewerHeaderSkeleton: React.FC = () => {
           width="60%"
           height={16}
           sx={{
-            bgcolor: neutralColor(200),
+            bgcolor: colorTokens.neutral[200],
           }}
         />
       </Stack>
@@ -138,7 +132,7 @@ const MessageViewerHeaderSkeleton: React.FC = () => {
           width={36}
           height={36}
           sx={{
-            bgcolor: neutralColor(200),
+            bgcolor: colorTokens.neutral[200],
           }}
         />
         <Skeleton
@@ -146,7 +140,7 @@ const MessageViewerHeaderSkeleton: React.FC = () => {
           width={36}
           height={36}
           sx={{
-            bgcolor: neutralColor(200),
+            bgcolor: colorTokens.neutral[200],
           }}
         />
         <Skeleton
@@ -154,7 +148,7 @@ const MessageViewerHeaderSkeleton: React.FC = () => {
           width={36}
           height={36}
           sx={{
-            bgcolor: neutralColor(200),
+            bgcolor: colorTokens.neutral[200],
           }}
         />
       </Box>
@@ -170,8 +164,6 @@ const MessageItemSkeleton: React.FC<{ isIncoming: boolean; index: number }> = ({
   index,
 }) => {
   const theme = useTheme();
-  const { neutralColor } = useGomakeTheme();
-
   const messageWidth = `${50 + Math.random() * 30}%`; // Random width 50-80%
 
   return (
@@ -201,7 +193,7 @@ const MessageItemSkeleton: React.FC<{ isIncoming: boolean; index: number }> = ({
           height={32}
           sx={{
             flexShrink: 0,
-            bgcolor: neutralColor(200),
+            bgcolor: colorTokens.neutral[200],
           }}
         />
       )}
@@ -220,7 +212,7 @@ const MessageItemSkeleton: React.FC<{ isIncoming: boolean; index: number }> = ({
             height={16}
             sx={{
               mb: 0.5,
-              bgcolor: neutralColor(200),
+              bgcolor: colorTokens.neutral[200],
             }}
           />
         )}
@@ -228,7 +220,7 @@ const MessageItemSkeleton: React.FC<{ isIncoming: boolean; index: number }> = ({
         {/* Message content */}
         <Box
           sx={{
-            bgcolor: isIncoming ? neutralColor(100) : alpha(theme.palette.primary.main, 0.1),
+            bgcolor: isIncoming ? colorTokens.neutral[100] : alpha(theme.palette.primary.main, 0.1),
             borderRadius: 2,
             padding: 1.5,
           }}
@@ -239,7 +231,7 @@ const MessageItemSkeleton: React.FC<{ isIncoming: boolean; index: number }> = ({
               width="100%"
               height={16}
               sx={{
-                bgcolor: isIncoming ? neutralColor(200) : alpha(theme.palette.primary.main, 0.2),
+                bgcolor: isIncoming ? colorTokens.neutral[200] : alpha(theme.palette.primary.main, 0.2),
               }}
             />
             <Skeleton
@@ -247,7 +239,7 @@ const MessageItemSkeleton: React.FC<{ isIncoming: boolean; index: number }> = ({
               width="90%"
               height={16}
               sx={{
-                bgcolor: isIncoming ? neutralColor(200) : alpha(theme.palette.primary.main, 0.2),
+                bgcolor: isIncoming ? colorTokens.neutral[200] : alpha(theme.palette.primary.main, 0.2),
               }}
             />
             {Math.random() > 0.5 && ( // Random third line
@@ -256,7 +248,7 @@ const MessageItemSkeleton: React.FC<{ isIncoming: boolean; index: number }> = ({
                 width="70%"
                 height={16}
                 sx={{
-                  bgcolor: isIncoming ? neutralColor(200) : alpha(theme.palette.primary.main, 0.2),
+                  bgcolor: isIncoming ? colorTokens.neutral[200] : alpha(theme.palette.primary.main, 0.2),
                 }}
               />
             )}
@@ -270,7 +262,7 @@ const MessageItemSkeleton: React.FC<{ isIncoming: boolean; index: number }> = ({
           height={12}
           sx={{
             mt: 0.5,
-            bgcolor: neutralColor(200),
+            bgcolor: colorTokens.neutral[200],
             marginLeft: isIncoming ? 0 : "auto",
           }}
         />
@@ -285,8 +277,7 @@ const MessageItemSkeleton: React.FC<{ isIncoming: boolean; index: number }> = ({
  */
 const MessageComposerSkeleton: React.FC = () => {
   const theme = useTheme();
-  const { neutralColor, primaryColor } = useGomakeTheme();
-  const borderColor = neutralColor(200);
+  const borderColor = colorTokens.neutral[200];
 
   return (
     <Box
@@ -311,7 +302,7 @@ const MessageComposerSkeleton: React.FC = () => {
           height={28}
           sx={{
             borderRadius: "6px",
-            bgcolor: neutralColor(200),
+            bgcolor: colorTokens.neutral[200],
           }}
         />
         <Skeleton
@@ -320,7 +311,7 @@ const MessageComposerSkeleton: React.FC = () => {
           height={28}
           sx={{
             borderRadius: "6px",
-            bgcolor: neutralColor(100),
+            bgcolor: colorTokens.neutral[100],
           }}
         />
       </Box>
@@ -344,7 +335,7 @@ const MessageComposerSkeleton: React.FC = () => {
               width={24}
               height={24}
               sx={{
-                bgcolor: neutralColor(200),
+                bgcolor: colorTokens.neutral[200],
               }}
             />
           ))}
@@ -366,7 +357,7 @@ const MessageComposerSkeleton: React.FC = () => {
           height={96}
           sx={{
             borderRadius: 1,
-            bgcolor: neutralColor(50),
+            bgcolor: colorTokens.neutral[50],
             border: `1px solid ${borderColor}`,
           }}
         />
@@ -379,7 +370,7 @@ const MessageComposerSkeleton: React.FC = () => {
             position: "absolute",
             top: 8,
             right: 8,
-            bgcolor: neutralColor(200),
+            bgcolor: colorTokens.neutral[200],
           }}
         />
       </Box>
@@ -404,7 +395,7 @@ const MessageComposerSkeleton: React.FC = () => {
               width={32}
               height={32}
               sx={{
-                bgcolor: neutralColor(200),
+                bgcolor: colorTokens.neutral[200],
               }}
             />
           ))}
@@ -429,7 +420,7 @@ const MessageComposerSkeleton: React.FC = () => {
               width={60}
               height={16}
               sx={{
-                bgcolor: neutralColor(200),
+                bgcolor: colorTokens.neutral[200],
                 borderRadius: 1,
               }}
             />
@@ -441,7 +432,7 @@ const MessageComposerSkeleton: React.FC = () => {
             height={32}
             sx={{
               borderRadius: "6px",
-              bgcolor: primaryColor(600),
+              bgcolor: colorTokens.primary[600],
               opacity: 0.5,
             }}
           />

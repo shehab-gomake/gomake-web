@@ -184,20 +184,28 @@ export const AgentsSubpage: React.FC = () => {
         description="Manage team members, roles, and permissions"
         isLoading={loading}
         headerActions={
-          <Box sx={{ display: "flex", gap: 1 }}>
+          <Box sx={{ display: "flex", gap: 0.75 }}>
             <IconButton
               onClick={refresh}
               size="small"
               disabled={loading}
               aria-label="Refresh agents list"
+              sx={{
+                color: "#6b7280",
+                p: 0.75,
+                "&:hover": {
+                  color: "#6366f1",
+                  bgcolor: "rgba(99, 102, 241, 0.08)",
+                },
+              }}
             >
-              <RefreshIcon />
+              <RefreshIcon sx={{ fontSize: 18 }} />
             </IconButton>
           </Box>
         }
       >
         {error ? (
-          <Alert severity="error" sx={{ mb: 2 }}>
+          <Alert severity="error" sx={{ mb: 2, borderRadius: "6px" }}>
             {error.message || "Failed to load agents"}
           </Alert>
         ) : agents.length === 0 ? (
@@ -208,27 +216,27 @@ export const AgentsSubpage: React.FC = () => {
               flexDirection: "column",
               alignItems: "center",
               justifyContent: "center",
-              minHeight: 300,
+              minHeight: 260,
               textAlign: "center",
-              gap: 2,
+              gap: 1.5,
             }}
           >
-            <PeopleIcon sx={{ fontSize: 64, color: "text.secondary", opacity: 0.5 }} />
-            <Typography variant="h6" color="text.primary" fontWeight={600}>
+            <PeopleIcon sx={{ fontSize: 48, color: "#9ca3af", opacity: 0.6 }} />
+            <Typography variant="subtitle1" sx={{ color: "#1f2937", fontWeight: 600, fontSize: "0.938rem" }}>
               No Agents Found
             </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ maxWidth: 400 }}>
+            <Typography variant="body2" sx={{ color: "#6b7280", maxWidth: 360, fontSize: "0.813rem", lineHeight: 1.5 }}>
               Start by inviting team members to join your account. Agents can handle
               conversations, manage inboxes, and collaborate with teams.
             </Typography>
           </Box>
         ) : (
-          /* Agents List */
+          /* Agents List - Compact High-Density Design */
           <SettingsSection
             title={`Agents (${agents.length})`}
             description="Team members with access to this account"
           >
-            <List sx={{ width: "100%", bgcolor: "background.paper", p: 0 }}>
+            <List sx={{ width: "100%", bgcolor: "transparent", p: 0, m: 0 }}>
               {agents.map((agent, index) => {
                 const agentName = agent.name || agent.available_name || "Unknown Agent";
                 const avatarData = generateAvatarData({
@@ -243,26 +251,27 @@ export const AgentsSubpage: React.FC = () => {
                   <React.Fragment key={agent.id || index}>
                     <ListItem
                       sx={{
-                        py: 2,
-                        px: 0,
-                        borderBottom: index < agents.length - 1 ? "1px solid" : "none",
-                        borderColor: "divider",
+                        py: 1.25, // More compact
+                        px: 1.5,
+                        borderBottom: index < agents.length - 1 ? "1px solid rgba(0,0,0,0.06)" : "none",
                         "&:hover": {
-                          bgcolor: "action.hover",
+                          bgcolor: "rgba(99, 102, 241, 0.02)", // Subtle purple tint
                         },
                         display: "flex",
                         alignItems: "center",
+                        borderRadius: "4px",
+                        transition: "background-color 0.15s ease",
                       }}
                     >
-                      <ListItemAvatar>
+                      <ListItemAvatar sx={{ minWidth: 44 }}>
                         <Box sx={{ position: "relative" }}>
                           <Avatar
                             src={agent.thumbnail}
                             sx={{
                               bgcolor: avatarData.backgroundColor,
-                              width: 40,
-                              height: 40,
-                              fontSize: "1rem",
+                              width: 34, // Smaller avatar
+                              height: 34,
+                              fontSize: "0.875rem",
                               fontWeight: 600,
                             }}
                           >
@@ -273,39 +282,46 @@ export const AgentsSubpage: React.FC = () => {
                             <Box
                               sx={{
                                 position: "absolute",
-                                bottom: -2,
-                                right: -2,
-                                width: 14,
-                                height: 14,
-                                bgcolor: "success.main",
+                                bottom: -1,
+                                right: -1,
+                                width: 10,
+                                height: 10,
+                                bgcolor: "#10b981", // Green
                                 borderRadius: "50%",
-                                border: "2.5px solid",
-                                borderColor: "background.paper",
-                                boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
+                                border: "2px solid",
+                                borderColor: "#ffffff",
                               }}
                             />
                           )}
                         </Box>
                       </ListItemAvatar>
 
-                      <Box sx={{ flex: 1, minWidth: 0, mr: 2 }}>
-                        <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
-                          <Typography variant="subtitle2" sx={{ fontWeight: 500 }}>
+                      <Box sx={{ flex: 1, minWidth: 0, mr: 1.5 }}>
+                        <Box sx={{ display: "flex", alignItems: "center", gap: 0.75 }}>
+                          <Typography 
+                            variant="body2" 
+                            sx={{ 
+                              fontWeight: 500, 
+                              fontSize: "0.813rem",
+                              color: "#1f2937",
+                              lineHeight: 1.3,
+                            }}
+                          >
                             {agentName}
                           </Typography>
                           {agent.confirmed && (
                             <Box sx={{ display: "flex", alignItems: "center", gap: 0.25 }}>
                               <CheckCircleIcon
                                 sx={{
-                                  fontSize: 14,
-                                  color: "success.main",
+                                  fontSize: 12,
+                                  color: "#10b981",
                                 }}
                               />
                               <Typography
                                 variant="caption"
                                 sx={{
-                                  color: "success.main",
-                                  fontSize: "0.75rem",
+                                  color: "#10b981",
+                                  fontSize: "0.688rem",
                                   fontWeight: 500,
                                 }}
                               >
@@ -316,22 +332,24 @@ export const AgentsSubpage: React.FC = () => {
                         </Box>
                       </Box>
 
-                      {/* Edit/Delete actions - Only visible based on RBAC + business logic */}
+                      {/* Edit/Delete actions - Compact buttons */}
                       {(canEditSpecificAgent(agent) || canDeleteSpecificAgent(agent)) && (
-                        <Box sx={{ display: "flex", gap: 0.5, flexShrink: 0, mr: 2 }}>
+                        <Box sx={{ display: "flex", gap: 0.25, flexShrink: 0, mr: 1.5 }}>
                           {canEditSpecificAgent(agent) && (
                             <IconButton
                               onClick={() => handleEdit(agent)}
                               size="small"
                               aria-label={`Edit agent ${agentName}`}
                               sx={{
-                                color: "text.secondary",
+                                color: "#6b7280",
+                                p: 0.5,
                                 "&:hover": {
-                                  color: "primary.main",
+                                  color: "#6366f1", // Purple
+                                  bgcolor: "rgba(99, 102, 241, 0.08)",
                                 },
                               }}
                             >
-                              <EditIcon fontSize="small" />
+                              <EditIcon sx={{ fontSize: 16 }} />
                             </IconButton>
                           )}
                           {canDeleteSpecificAgent(agent) && (
@@ -340,13 +358,15 @@ export const AgentsSubpage: React.FC = () => {
                               size="small"
                               aria-label={`Delete agent ${agentName}`}
                               sx={{
-                                color: "text.secondary",
+                                color: "#6b7280",
+                                p: 0.5,
                                 "&:hover": {
-                                  color: "error.main",
+                                  color: "#ef4444",
+                                  bgcolor: "rgba(239, 68, 68, 0.08)",
                                 },
                               }}
                             >
-                              <DeleteIcon fontSize="small" />
+                              <DeleteIcon sx={{ fontSize: 16 }} />
                             </IconButton>
                           )}
                         </Box>
@@ -355,15 +375,25 @@ export const AgentsSubpage: React.FC = () => {
                       <Chip
                         label={
                           agent.role === "administrator" || agent.role === "admin"
-                            ? "Administrator"
+                            ? "Admin"
                             : "Agent"
                         }
                         size="small"
                         sx={{
-                          fontSize: "0.813rem",
+                          fontSize: "0.75rem",
                           fontWeight: 500,
-                          height: 24,
+                          height: 22,
                           flexShrink: 0,
+                          backgroundColor: agent.role === "administrator" || agent.role === "admin" 
+                            ? "rgba(99, 102, 241, 0.1)" 
+                            : "rgba(107, 114, 128, 0.1)",
+                          color: agent.role === "administrator" || agent.role === "admin" 
+                            ? "#6366f1" 
+                            : "#4b5563",
+                          border: "none",
+                          "& .MuiChip-label": {
+                            px: 1,
+                          },
                         }}
                       />
                     </ListItem>

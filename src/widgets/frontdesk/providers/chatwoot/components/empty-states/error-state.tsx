@@ -1,7 +1,6 @@
 import React from "react";
-import { Box, Typography, Button, Stack, Alert, alpha } from "@mui/material";
-import { useTheme } from "@mui/material/styles";
-import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { Box, Typography, Button, Stack, Alert, useTheme, alpha } from "@mui/material";
+import { colorTokens, radiusTokens, shadowTokens } from "@/widgets/frontdesk/design-system";
 import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import HomeIcon from "@mui/icons-material/Home";
@@ -73,8 +72,6 @@ export const ErrorState: React.FC<ErrorStateProps> = ({
   icon,
 }) => {
   const theme = useTheme();
-  const { neutralColor } = useGomakeTheme();
-
   const errorMessage = error instanceof Error ? error.message : typeof error === "string" ? error : "";
 
   return (
@@ -118,7 +115,7 @@ export const ErrorState: React.FC<ErrorStateProps> = ({
           variant="h6"
           sx={{
             fontWeight: 600,
-            color: neutralColor(900),
+            color: colorTokens.neutral[900],
           }}
         >
           {title}
@@ -126,7 +123,7 @@ export const ErrorState: React.FC<ErrorStateProps> = ({
         <Typography
           variant="body2"
           sx={{
-            color: neutralColor(600),
+            color: colorTokens.neutral[600],
             lineHeight: 1.6,
           }}
         >
@@ -192,8 +189,8 @@ export const ErrorState: React.FC<ErrorStateProps> = ({
             startIcon={<HomeIcon />}
             onClick={onGoHome}
             sx={{
-              borderColor: neutralColor(300),
-              color: neutralColor(700),
+              borderColor: colorTokens.neutral[300],
+              color: colorTokens.neutral[700],
               "&:hover": {
                 borderColor: theme.palette.primary.main,
                 backgroundColor: alpha(theme.palette.primary.main, 0.04),
@@ -210,7 +207,7 @@ export const ErrorState: React.FC<ErrorStateProps> = ({
         variant="caption"
         sx={{
           mt: 4,
-          color: neutralColor(500),
+          color: colorTokens.neutral[500],
         }}
       >
         If this problem continues, please contact support

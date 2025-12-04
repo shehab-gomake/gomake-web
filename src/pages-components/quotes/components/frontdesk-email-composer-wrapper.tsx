@@ -20,27 +20,13 @@ import type { ContactCreatePayload } from "@/services/frontdesk/api/chatwoot/typ
 import { getCapitalizedNameFromEmail } from "@/widgets/frontdesk/providers/chatwoot/utils/contact-utils";
 import { convertAttachmentsToFiles } from "@/widgets/frontdesk/providers/chatwoot/utils/attachment.utils";
 import type { AttachmentSource } from "@/widgets/frontdesk/providers/chatwoot/types/attachment.types";
+import { htmlToText } from "@/widgets/frontdesk/utils/string.utils";
 
 // ============================================================================
 // Constants
 // ============================================================================
 
 const LOG_PREFIX = "[FrontDeskEmailComposerWrapper]";
-
-// ============================================================================
-// Helper Functions
-// ============================================================================
-
-/**
- * Convert HTML to plain text
- * Used for message preview in draft
- */
-const htmlToPlainText = (html: string): string => {
-  if (!html) return "";
-  const temp = document.createElement("div");
-  temp.innerHTML = html;
-  return temp.textContent || temp.innerText || "";
-};
 
 /**
  * Map EmailAttachment to AttachmentSource for conversion
@@ -392,6 +378,7 @@ export const FrontDeskEmailComposerWrapper: React.FC<FrontDeskEmailComposerWrapp
   };
 
   // Convert emailData to EmailDraft format
+  // Use htmlToText to preserve line breaks from HTML block elements (p, br, div, etc.)
   const draft: EmailDraft | undefined = emailData
     ? {
         // Use contactEmail from API if provided, otherwise use tos array
@@ -399,7 +386,7 @@ export const FrontDeskEmailComposerWrapper: React.FC<FrontDeskEmailComposerWrapp
         cc: (emailData.ccs || []).map((email) => ({ email })),
         bcc: (emailData.bccs || []).map((email) => ({ email })),
         subject: emailData.subject || "",
-        message: htmlToPlainText(emailData.body || ""),
+        message: htmlToText(emailData.body || ""),
         attachments: emailData.attachments,
         sender: defaultSenderOption,
       }

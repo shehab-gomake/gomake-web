@@ -21,9 +21,7 @@ import {
   TableCell,
   TableContainer,
   Paper,
-  Chip,
   Tooltip,
-  CircularProgress,
 } from "@mui/material";
 import GroupsIcon from "@mui/icons-material/Groups";
 import RefreshIcon from "@mui/icons-material/Refresh";
@@ -87,10 +85,7 @@ export const TeamsSubpage: React.FC = () => {
 
     try {
       // Fetch current team members
-      const members = await chatwootService.teams.getTeamMembers(
-        selectedAccountId,
-        team.id
-      );
+      const members = await chatwootService.teams.getTeamMembers(selectedAccountId, team.id);
       setEditingTeam(team);
       setEditingTeamMembers(members || []);
       setShowAddEditModal(true);
@@ -111,43 +106,29 @@ export const TeamsSubpage: React.FC = () => {
     try {
       if (teamId) {
         // Update existing team
+        // Note: GoMake always disables auto-assignment for teams
         await chatwootService.teams.updateTeam(selectedAccountId, teamId, {
           name: data.name,
           description: data.description,
-          allow_auto_assign: data.allow_auto_assign,
+          allow_auto_assign: false,
         });
 
         // Update team members if provided
         if (data.member_ids !== undefined) {
           // Get current members
-          const currentMembers = await chatwootService.teams.getTeamMembers(
-            selectedAccountId,
-            teamId
-          );
+          const currentMembers = await chatwootService.teams.getTeamMembers(selectedAccountId, teamId);
           const currentMemberIds = currentMembers.map((m) => m.id);
 
           // Add new members
-          const toAdd = data.member_ids.filter(
-            (id) => !currentMemberIds.includes(id)
-          );
+          const toAdd = data.member_ids.filter((id) => !currentMemberIds.includes(id));
           if (toAdd.length > 0) {
-            await chatwootService.teams.addTeamMembers(
-              selectedAccountId,
-              teamId,
-              toAdd
-            );
+            await chatwootService.teams.addTeamMembers(selectedAccountId, teamId, toAdd);
           }
 
           // Remove members no longer in list
-          const toRemove = currentMemberIds.filter(
-            (id) => !data.member_ids!.includes(id)
-          );
+          const toRemove = currentMemberIds.filter((id) => !data.member_ids!.includes(id));
           for (const agentId of toRemove) {
-            await chatwootService.teams.removeTeamMember(
-              selectedAccountId,
-              teamId,
-              agentId
-            );
+            await chatwootService.teams.removeTeamMember(selectedAccountId, teamId, agentId);
           }
         }
 
@@ -157,22 +138,16 @@ export const TeamsSubpage: React.FC = () => {
         });
       } else {
         // Create new team
-        const newTeam = await chatwootService.teams.createTeam(
-          selectedAccountId,
-          {
-            name: data.name,
-            description: data.description,
-            allow_auto_assign: data.allow_auto_assign,
-          }
-        );
+        // Note: GoMake always disables auto-assignment for teams
+        const newTeam = await chatwootService.teams.createTeam(selectedAccountId, {
+          name: data.name,
+          description: data.description,
+          allow_auto_assign: false,
+        });
 
         // Add members if provided
         if (data.member_ids && data.member_ids.length > 0 && newTeam.id) {
-          await chatwootService.teams.addTeamMembers(
-            selectedAccountId,
-            newTeam.id,
-            data.member_ids
-          );
+          await chatwootService.teams.addTeamMembers(selectedAccountId, newTeam.id, data.member_ids);
         }
 
         setNotification({
@@ -225,18 +200,43 @@ export const TeamsSubpage: React.FC = () => {
         description="Manage teams and their members"
         isLoading={loading}
         headerActions={
-          <Box sx={{ display: "flex", gap: 1 }}>
+          <Box sx={{ display: "flex", gap: 0.75 }}>
             <Tooltip title="Refresh teams">
-              <IconButton onClick={refresh} size="small" disabled={loading}>
-                <RefreshIcon />
+              <IconButton
+                onClick={refresh}
+                size="small"
+                disabled={loading}
+                sx={{
+                  color: "#6b7280",
+                  p: 0.75,
+                  "&:hover": {
+                    color: "#6366f1",
+                    bgcolor: "rgba(99, 102, 241, 0.08)",
+                  },
+                }}
+              >
+                <RefreshIcon sx={{ fontSize: 18 }} />
               </IconButton>
             </Tooltip>
             <Button
               variant="contained"
-              startIcon={<AddIcon />}
+              startIcon={<AddIcon sx={{ fontSize: 16 }} />}
               onClick={handleCreateTeam}
               disabled={loading || !selectedAccountId}
               size="small"
+              sx={{
+                fontSize: "0.813rem",
+                fontWeight: 500,
+                textTransform: "none",
+                px: 1.5,
+                py: 0.5,
+                height: 30,
+                backgroundColor: "#6366f1",
+                "&:hover": {
+                  backgroundColor: "#4f46e5",
+                },
+                boxShadow: "0 1px 2px rgba(0,0,0,0.05)",
+              }}
             >
               Create Team
             </Button>
@@ -245,86 +245,136 @@ export const TeamsSubpage: React.FC = () => {
       >
         {/* Notifications */}
         {notification && (
-          <Alert
-            severity={notification.severity}
-            onClose={() => setNotification(null)}
-            sx={{ mb: 2 }}
-          >
+          <Alert severity={notification.severity} onClose={() => setNotification(null)} sx={{ mb: 2, borderRadius: "6px" }}>
             {notification.message}
           </Alert>
         )}
 
         {/* Error State */}
         {error ? (
-          <Alert severity="error" sx={{ mb: 2 }}>
+          <Alert severity="error" sx={{ mb: 2, borderRadius: "6px" }}>
             {error.message || "Failed to load teams"}
           </Alert>
         ) : teams.length === 0 ? (
-          /* Empty State */
+          /* Empty State - Compact */
           <Box
             sx={{
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
               justifyContent: "center",
-              minHeight: 300,
+              minHeight: 260,
               textAlign: "center",
-              gap: 2,
+              gap: 1.5,
             }}
           >
-            <GroupsIcon sx={{ fontSize: 64, color: "text.secondary", opacity: 0.5 }} />
-            <Typography variant="h6" color="text.primary" fontWeight={600}>
+            <GroupsIcon sx={{ fontSize: 48, color: "#9ca3af", opacity: 0.6 }} />
+            <Typography variant="subtitle1" sx={{ color: "#1f2937", fontWeight: 600, fontSize: "0.938rem" }}>
               No Teams Found
             </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ maxWidth: 400 }}>
-              Create teams to organize agents and route conversations efficiently.
-              Teams help distribute workload and maintain accountability.
+            <Typography variant="body2" sx={{ color: "#6b7280", maxWidth: 360, fontSize: "0.813rem", lineHeight: 1.5 }}>
+              Create teams to organize agents and route conversations efficiently. Teams help distribute workload and maintain
+              accountability.
             </Typography>
             <Button
               variant="contained"
               startIcon={<AddIcon />}
               onClick={handleCreateTeam}
-              sx={{ mt: 2 }}
+              sx={{
+                mt: 2,
+                fontSize: "0.813rem",
+                fontWeight: 500,
+                textTransform: "none",
+                px: 2,
+                py: 0.75,
+                backgroundColor: "#6366f1",
+                "&:hover": {
+                  backgroundColor: "#4f46e5",
+                },
+                boxShadow: "0 1px 2px rgba(0,0,0,0.05)",
+              }}
             >
               Create Your First Team
             </Button>
           </Box>
         ) : (
-          /* Teams Table */
-          <SettingsSection
-            title={`Teams (${teams.length})`}
-            description="Organize agents into teams for better collaboration"
-          >
-            <TableContainer component={Paper} variant="outlined">
-              <Table>
+          /* Teams Table - Compact High-Density Design */
+          <SettingsSection title={`Teams (${teams.length})`} description="Organize agents into teams for better collaboration">
+            <TableContainer
+              component={Paper}
+              variant="outlined"
+              sx={{
+                border: "1px solid rgba(0,0,0,0.06)",
+                borderRadius: "6px",
+                boxShadow: "none",
+              }}
+            >
+              <Table size="small">
                 <TableHead>
-                  <TableRow>
-                    <TableCell sx={{ fontWeight: 600 }}>Name</TableCell>
-                    <TableCell sx={{ fontWeight: 600 }}>Description</TableCell>
-                    <TableCell sx={{ fontWeight: 600 }} align="center">
-                      Auto-Assign
+                  <TableRow sx={{ backgroundColor: "#f9fafb" }}>
+                    <TableCell
+                      sx={{
+                        fontWeight: 600,
+                        fontSize: "0.75rem",
+                        color: "#4b5563",
+                        py: 1.25,
+                        borderBottom: "1px solid rgba(0,0,0,0.06)",
+                      }}
+                    >
+                      Name
                     </TableCell>
-                    <TableCell sx={{ fontWeight: 600 }} align="right">
+                    <TableCell
+                      sx={{
+                        fontWeight: 600,
+                        fontSize: "0.75rem",
+                        color: "#4b5563",
+                        py: 1.25,
+                        borderBottom: "1px solid rgba(0,0,0,0.06)",
+                      }}
+                    >
+                      Description
+                    </TableCell>
+                    <TableCell
+                      sx={{
+                        fontWeight: 600,
+                        fontSize: "0.75rem",
+                        color: "#4b5563",
+                        py: 1.25,
+                        borderBottom: "1px solid rgba(0,0,0,0.06)",
+                      }}
+                      align="right"
+                    >
                       Actions
                     </TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {teams.map((team) => (
-                    <TableRow key={team.id} hover>
-                      <TableCell>
-                        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                          <GroupsIcon color="action" fontSize="small" />
-                          <Typography variant="body2" fontWeight={500}>
+                    <TableRow
+                      key={team.id}
+                      sx={{
+                        "&:hover": {
+                          backgroundColor: "rgba(99, 102, 241, 0.02)",
+                        },
+                        "&:last-child td": {
+                          borderBottom: 0,
+                        },
+                      }}
+                    >
+                      <TableCell sx={{ py: 1.25, borderBottom: "1px solid rgba(0,0,0,0.04)" }}>
+                        <Box sx={{ display: "flex", alignItems: "center", gap: 0.75 }}>
+                          <GroupsIcon sx={{ fontSize: 16, color: "#6b7280" }} />
+                          <Typography variant="body2" sx={{ fontWeight: 500, fontSize: "0.813rem", color: "#1f2937" }}>
                             {team.name}
                           </Typography>
                         </Box>
                       </TableCell>
-                      <TableCell>
+                      <TableCell sx={{ py: 1.25, borderBottom: "1px solid rgba(0,0,0,0.04)" }}>
                         <Typography
                           variant="body2"
-                          color="text.secondary"
                           sx={{
+                            color: "#6b7280",
+                            fontSize: "0.813rem",
                             maxWidth: 300,
                             overflow: "hidden",
                             textOverflow: "ellipsis",
@@ -334,23 +384,23 @@ export const TeamsSubpage: React.FC = () => {
                           {team.description || "—"}
                         </Typography>
                       </TableCell>
-                      <TableCell align="center">
-                        <Chip
-                          label={team.allow_auto_assign ? "Enabled" : "Disabled"}
-                          size="small"
-                          color={team.allow_auto_assign ? "success" : "default"}
-                          variant="outlined"
-                        />
-                      </TableCell>
-                      <TableCell align="right">
-                        <Box sx={{ display: "flex", gap: 0.5, justifyContent: "flex-end" }}>
+                      <TableCell align="right" sx={{ py: 1.25, borderBottom: "1px solid rgba(0,0,0,0.04)" }}>
+                        <Box sx={{ display: "flex", gap: 0.25, justifyContent: "flex-end" }}>
                           <Tooltip title="Edit team">
                             <IconButton
                               size="small"
                               onClick={() => handleEditTeam(team)}
                               disabled={loading}
+                              sx={{
+                                color: "#6b7280",
+                                p: 0.5,
+                                "&:hover": {
+                                  color: "#6366f1",
+                                  bgcolor: "rgba(99, 102, 241, 0.08)",
+                                },
+                              }}
                             >
-                              <EditIcon fontSize="small" />
+                              <EditIcon sx={{ fontSize: 16 }} />
                             </IconButton>
                           </Tooltip>
                           <Tooltip title="Delete team">
@@ -358,9 +408,16 @@ export const TeamsSubpage: React.FC = () => {
                               size="small"
                               onClick={() => setDeletingTeam(team)}
                               disabled={loading}
-                              color="error"
+                              sx={{
+                                color: "#6b7280",
+                                p: 0.5,
+                                "&:hover": {
+                                  color: "#ef4444",
+                                  bgcolor: "rgba(239, 68, 68, 0.08)",
+                                },
+                              }}
                             >
-                              <DeleteIcon fontSize="small" />
+                              <DeleteIcon sx={{ fontSize: 16 }} />
                             </IconButton>
                           </Tooltip>
                         </Box>

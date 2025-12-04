@@ -7,12 +7,13 @@ import React, { useState } from "react";
 import { IconButton, MenuItem, ListItemText, Divider } from "@mui/material";
 import TuneIcon from "@mui/icons-material/Tune";
 import { DropdownMenu } from "@/widgets/frontdesk/components/dropdown-menu/dropdown-menu";
+import { colorTokens, radiusTokens, shadowTokens } from "@/widgets/frontdesk/design-system";
 
 interface NotificationSettingsMenuProps {
   onMarkAllAsRead: () => Promise<void>;
   onDeleteAll: () => Promise<void>;
   onDeleteAllRead: () => Promise<void>;
-  neutralColor: (shade: number) => string;
+  neutralColor?: (shade: number) => string;
 }
 
 export const NotificationSettingsMenu: React.FC<NotificationSettingsMenuProps> = ({
@@ -61,10 +62,10 @@ export const NotificationSettingsMenu: React.FC<NotificationSettingsMenuProps> =
         size="small"
         onClick={(e) => setSettingsMenuAnchor(e.currentTarget)}
         sx={{
-          color: neutralColor(600),
-          backgroundColor: neutralColor(100),
+          color: colorTokens.neutral[600],
+          backgroundColor: colorTokens.neutral[100],
           "&:hover": {
-            backgroundColor: neutralColor(200),
+            backgroundColor: colorTokens.neutral[200],
           },
           width: 32,
           height: 32,

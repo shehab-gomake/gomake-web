@@ -1,13 +1,29 @@
 /**
  * Reply Composer Email Fields Component
  *
- * Email recipient fields (TO, CC, BCC) for email-based conversations.
- * Only shown when replying (not for private notes).
+ * Premium email recipient fields (TO, CC, BCC) with cleaner dropdown toggle.
+ * Features modern styling with subtle backgrounds and smooth transitions.
  */
 
-import React from "react";
-import { Stack, Typography, TextField, Link, Chip, IconButton, Box } from "@mui/material";
+import React, { useState } from "react";
+import { 
+  Stack, 
+  Typography, 
+  TextField, 
+  Chip, 
+  IconButton, 
+  Box, 
+  Menu, 
+  MenuItem, 
+  ListItemIcon,
+  ListItemText,
+  Collapse,
+} from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
+import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
+import PersonAddOutlinedIcon from "@mui/icons-material/PersonAddOutlined";
+import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
+import { colorTokens, radiusTokens, shadowTokens, semanticSpacing } from "@/widgets/frontdesk/design-system";
 
 export interface ReplyComposerEmailFieldsProps {
   /** TO email addresses */
@@ -46,24 +62,26 @@ export const ReplyComposerEmailFields: React.FC<ReplyComposerEmailFieldsProps> =
   onBccChange,
   onToggleCc,
   onToggleBcc,
-  borderColor = "#E5E7EB",
-  textColor = "#111827",
-  lightGrayText = "#6B7280",
 }) => {
-  const fieldStyle = {
-    "& .MuiInput-root": {
-      backgroundColor: "transparent",
-      color: textColor,
-      fontSize: "0.875rem",
-      "&::placeholder": {
-        color: lightGrayText,
-        opacity: 1,
-      },
-    },
-    "& .MuiInputBase-input": {
-      py: 0.5,
-      px: 0,
-    },
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const menuOpen = Boolean(anchorEl);
+
+  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleAddCc = () => {
+    onToggleCc();
+    handleMenuClose();
+  };
+
+  const handleAddBcc = () => {
+    onToggleBcc();
+    handleMenuClose();
   };
 
   const handleCloseCc = () => {
@@ -76,188 +94,254 @@ export const ReplyComposerEmailFields: React.FC<ReplyComposerEmailFieldsProps> =
     onToggleBcc();
   };
 
+  // Field styling
+  const fieldContainerStyle = {
+    backgroundColor: colorTokens.semantic.background.primary,
+    borderRadius: `${radiusTokens.md}px`,
+    px: 1.5,
+    py: 0.75,
+    transition: "all 0.15s ease",
+    "&:focus-within": {
+      backgroundColor: colorTokens.semantic.background.primary,
+      boxShadow: `0 0 0 2px ${colorTokens.primary[100]}`,
+    },
+  };
+
+  const fieldInputStyle = {
+    "& .MuiInput-root": {
+      backgroundColor: "transparent",
+      color: colorTokens.neutral[900],
+      fontSize: "0.875rem",
+    },
+    "& .MuiInputBase-input": {
+      py: 0.25,
+      px: 0,
+      "&::placeholder": {
+        color: colorTokens.neutral[400],
+        opacity: 1,
+      },
+    },
+  };
+
+  const labelStyle = {
+    color: colorTokens.neutral[500],
+    fontSize: "0.75rem",
+    fontWeight: 600,
+    textTransform: "uppercase" as const,
+    letterSpacing: "0.03em",
+    minWidth: 32,
+  };
+
+  // Check if we can show the add button
+  const canAddMoreRecipients = !showCc || !showBcc;
+
   return (
     <Stack
-      spacing={0.5}
+      spacing={1}
       sx={{
         px: 2,
         py: 1.5,
-        borderBottom: `1px solid ${borderColor}`,
         backgroundColor: "transparent",
       }}
     >
-      {/* TO Field - Displayed as read-only chip */}
-      <Stack direction="row" alignItems="center" spacing={1} sx={{ minHeight: 32, width: "100%" }}>
-        <Typography
-          variant="body2"
-          sx={{
-            color: lightGrayText,
-            fontSize: "0.8125rem",
-            fontWeight: 500,
-            minWidth: 40,
-          }}
-        >
-          TO
-        </Typography>
-        {toEmails ? (
-          <Chip
-            label={toEmails}
-            size="small"
-            sx={{
-              height: 24,
-              fontSize: "0.875rem",
-              backgroundColor: "#E5E7EB",
-              color: textColor,
-              "& .MuiChip-label": {
-                px: 1.5,
-              },
-            }}
-          />
-        ) : (
-          <Typography
-            variant="body2"
-            sx={{
-              color: lightGrayText,
-              fontSize: "0.875rem",
-            }}
-          >
-            No recipient
-          </Typography>
+      {/* TO Field - Clean chip display with add button */}
+      <Stack direction="row" alignItems="center" spacing={1.5}>
+        <Typography sx={labelStyle}>To</Typography>
+        
+        <Box sx={{ flex: 1, display: "flex", alignItems: "center", gap: 1, flexWrap: "wrap" }}>
+          {toEmails ? (
+            <Chip
+              label={toEmails}
+              size="small"
+              sx={{
+                height: 28,
+                fontSize: "0.8125rem",
+                fontWeight: 500,
+                backgroundColor: colorTokens.primary[50],
+                color: colorTokens.primary[700],
+                border: `1px solid ${colorTokens.primary[200]}`,
+                borderRadius: `${radiusTokens.md}px`,
+                "& .MuiChip-label": {
+                  px: 1.5,
+                },
+              }}
+            />
+          ) : (
+            <Typography
+              sx={{
+                color: colorTokens.neutral[400],
+                fontSize: "0.875rem",
+                fontStyle: "italic",
+              }}
+            >
+              No recipient
+            </Typography>
+          )}
+        </Box>
+
+        {/* Add CC/BCC Dropdown Button */}
+        {canAddMoreRecipients && (
+          <>
+            <IconButton
+              size="small"
+              onClick={handleMenuOpen}
+              sx={{
+                color: colorTokens.neutral[400],
+                p: 0.75,
+                borderRadius: `${radiusTokens.md}px`,
+                border: `1px dashed ${colorTokens.neutral[300]}`,
+                transition: "all 0.15s ease",
+                "&:hover": {
+                  backgroundColor: colorTokens.neutral[100],
+                  borderColor: colorTokens.neutral[400],
+                  color: colorTokens.neutral[600],
+                },
+              }}
+              aria-label="Add CC or BCC"
+            >
+              <AddOutlinedIcon sx={{ fontSize: 18 }} />
+            </IconButton>
+
+            <Menu
+              anchorEl={anchorEl}
+              open={menuOpen}
+              onClose={handleMenuClose}
+              anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+              transformOrigin={{ vertical: "top", horizontal: "right" }}
+              PaperProps={{
+                sx: {
+                  mt: 0.5,
+                  minWidth: 160,
+                  borderRadius: `${radiusTokens.lg}px`,
+                  boxShadow: shadowTokens.lg,
+                  border: `1px solid ${colorTokens.neutral[200]}`,
+                },
+              }}
+            >
+              {!showCc && (
+                <MenuItem 
+                  onClick={handleAddCc}
+                  sx={{
+                    py: 1,
+                    px: 2,
+                    "&:hover": {
+                      backgroundColor: colorTokens.neutral[50],
+                    },
+                  }}
+                >
+                  <ListItemIcon sx={{ minWidth: 36 }}>
+                    <PersonAddOutlinedIcon sx={{ fontSize: 18, color: colorTokens.neutral[600] }} />
+                  </ListItemIcon>
+                  <ListItemText 
+                    primary="Add CC" 
+                    primaryTypographyProps={{ 
+                      fontSize: "0.875rem",
+                      fontWeight: 500,
+                    }} 
+                  />
+                </MenuItem>
+              )}
+              {!showBcc && (
+                <MenuItem 
+                  onClick={handleAddBcc}
+                  sx={{
+                    py: 1,
+                    px: 2,
+                    "&:hover": {
+                      backgroundColor: colorTokens.neutral[50],
+                    },
+                  }}
+                >
+                  <ListItemIcon sx={{ minWidth: 36 }}>
+                    <VisibilityOffOutlinedIcon sx={{ fontSize: 18, color: colorTokens.neutral[600] }} />
+                  </ListItemIcon>
+                  <ListItemText 
+                    primary="Add BCC" 
+                    primaryTypographyProps={{ 
+                      fontSize: "0.875rem",
+                      fontWeight: 500,
+                    }} 
+                  />
+                </MenuItem>
+              )}
+            </Menu>
+          </>
         )}
-        {/* Spacer to push buttons to the right */}
-        <Box sx={{ flex: 1 }} />
-        {/* CC and BCC buttons - shown together on the very right */}
-        <Stack direction="row" spacing={1}>
-          {!showCc && (
-            <Link
-              component="button"
-              onClick={onToggleCc}
-              underline="none"
-              sx={{
-                color: lightGrayText,
-                fontSize: "0.8125rem",
-                fontWeight: 500,
-                "&:hover": {
-                  color: textColor,
-                },
-              }}
-            >
-              CC
-            </Link>
-          )}
-          {!showBcc && (
-            <Link
-              component="button"
-              onClick={onToggleBcc}
-              underline="none"
-              sx={{
-                color: lightGrayText,
-                fontSize: "0.8125rem",
-                fontWeight: 500,
-                "&:hover": {
-                  color: textColor,
-                },
-              }}
-            >
-              BCC
-            </Link>
-          )}
-        </Stack>
       </Stack>
 
       {/* CC Field (conditional) */}
-      {showCc && (
-        <Stack direction="row" alignItems="center" spacing={1} sx={{ minHeight: 32, width: "100%" }}>
-          <Typography
-            variant="body2"
-            sx={{
-              color: lightGrayText,
-              fontSize: "0.8125rem",
-              fontWeight: 500,
-              minWidth: 40,
-            }}
-          >
-            CC
-          </Typography>
-          <Box sx={{ flex: 1, minWidth: 0 }}>
+      <Collapse in={showCc} timeout={200}>
+        <Stack direction="row" alignItems="center" spacing={1.5}>
+          <Typography sx={labelStyle}>Cc</Typography>
+          <Box sx={{ flex: 1, ...fieldContainerStyle }}>
             <TextField
               size="small"
               value={ccEmails}
               onChange={(e) => onCcChange(e.target.value)}
               variant="standard"
-              placeholder="Optional"
+              placeholder="Enter email addresses..."
               fullWidth
               InputProps={{
                 disableUnderline: true,
               }}
-              sx={fieldStyle}
+              sx={fieldInputStyle}
             />
           </Box>
-          {/* Close button on the very right */}
           <IconButton
             size="small"
             onClick={handleCloseCc}
             sx={{
-              padding: 0.5,
-              color: lightGrayText,
+              p: 0.5,
+              color: colorTokens.neutral[400],
+              borderRadius: `${radiusTokens.sm}px`,
               "&:hover": {
-                color: textColor,
-                backgroundColor: "transparent",
+                color: colorTokens.neutral[600],
+                backgroundColor: colorTokens.neutral[100],
               },
             }}
-            aria-label="Close CC field"
+            aria-label="Remove CC field"
           >
-            <CloseIcon fontSize="small" />
+            <CloseIcon sx={{ fontSize: 16 }} />
           </IconButton>
         </Stack>
-      )}
+      </Collapse>
 
       {/* BCC Field (conditional) */}
-      {showBcc && (
-        <Stack direction="row" alignItems="center" spacing={1} sx={{ minHeight: 32, width: "100%" }}>
-          <Typography
-            variant="body2"
-            sx={{
-              color: lightGrayText,
-              fontSize: "0.8125rem",
-              fontWeight: 500,
-              minWidth: 40,
-            }}
-          >
-            BCC
-          </Typography>
-          <Box sx={{ flex: 1, minWidth: 0 }}>
+      <Collapse in={showBcc} timeout={200}>
+        <Stack direction="row" alignItems="center" spacing={1.5}>
+          <Typography sx={labelStyle}>Bcc</Typography>
+          <Box sx={{ flex: 1, ...fieldContainerStyle }}>
             <TextField
               size="small"
               value={bccEmails}
               onChange={(e) => onBccChange(e.target.value)}
               variant="standard"
-              placeholder="Optional"
+              placeholder="Enter email addresses..."
               fullWidth
               InputProps={{
                 disableUnderline: true,
               }}
-              sx={fieldStyle}
+              sx={fieldInputStyle}
             />
           </Box>
-          {/* Close button */}
           <IconButton
             size="small"
             onClick={handleCloseBcc}
             sx={{
-              padding: 0.5,
-              color: lightGrayText,
+              p: 0.5,
+              color: colorTokens.neutral[400],
+              borderRadius: `${radiusTokens.sm}px`,
               "&:hover": {
-                color: textColor,
-                backgroundColor: "transparent",
+                color: colorTokens.neutral[600],
+                backgroundColor: colorTokens.neutral[100],
               },
             }}
-            aria-label="Close BCC field"
+            aria-label="Remove BCC field"
           >
-            <CloseIcon fontSize="small" />
+            <CloseIcon sx={{ fontSize: 16 }} />
           </IconButton>
         </Stack>
-      )}
+      </Collapse>
     </Stack>
   );
 };

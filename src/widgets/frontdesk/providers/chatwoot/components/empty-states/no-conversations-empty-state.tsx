@@ -1,9 +1,8 @@
 import React from "react";
 import { Box, Typography, Button, Stack, alpha } from "@mui/material";
-import { useTheme } from "@mui/material/styles";
-import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import InboxIcon from "@mui/icons-material/Inbox";
 import RefreshIcon from "@mui/icons-material/Refresh";
+import { colorTokens } from "@/widgets/frontdesk/design-system";
 
 interface NoConversationsEmptyStateProps {
   /**
@@ -51,8 +50,6 @@ export const NoConversationsEmptyState: React.FC<NoConversationsEmptyStateProps>
   onClearFilters,
   hasFilters = false,
 }) => {
-  const theme = useTheme();
-  const { primaryColor, neutralColor } = useGomakeTheme();
 
   // Context-aware messaging
   const getMessage = () => {
@@ -123,7 +120,7 @@ export const NoConversationsEmptyState: React.FC<NoConversationsEmptyStateProps>
           width: 120,
           height: 120,
           borderRadius: "50%",
-          backgroundColor: alpha(theme.palette.primary.main, 0.08),
+          backgroundColor: alpha(colorTokens.primary[500], 0.08),
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
@@ -133,7 +130,7 @@ export const NoConversationsEmptyState: React.FC<NoConversationsEmptyStateProps>
         <InboxIcon
           sx={{
             fontSize: 64,
-            color: alpha(theme.palette.primary.main, 0.4),
+            color: alpha(colorTokens.primary[500], 0.4),
           }}
         />
       </Box>
@@ -144,7 +141,7 @@ export const NoConversationsEmptyState: React.FC<NoConversationsEmptyStateProps>
           variant="h6"
           sx={{
             fontWeight: 600,
-            color: neutralColor(900),
+            color: colorTokens.neutral[900],
           }}
         >
           {title}
@@ -152,7 +149,7 @@ export const NoConversationsEmptyState: React.FC<NoConversationsEmptyStateProps>
         <Typography
           variant="body2"
           sx={{
-            color: neutralColor(600),
+            color: colorTokens.neutral[600],
             lineHeight: 1.6,
           }}
         >
@@ -169,13 +166,13 @@ export const NoConversationsEmptyState: React.FC<NoConversationsEmptyStateProps>
             startIcon={<RefreshIcon />}
             onClick={onRefresh}
             sx={{
-              borderColor: neutralColor(300),
-              color: neutralColor(700),
+              borderColor: colorTokens.neutral[300],
+              color: colorTokens.neutral[700],
               fontWeight: 400,
               textTransform: "none",
               "&:hover": {
-                borderColor: theme.palette.primary.main,
-                backgroundColor: alpha(theme.palette.primary.main, 0.04),
+                borderColor: colorTokens.primary[500],
+                backgroundColor: alpha(colorTokens.primary[500], 0.04),
               },
             }}
           >
@@ -189,12 +186,12 @@ export const NoConversationsEmptyState: React.FC<NoConversationsEmptyStateProps>
             size="small"
             onClick={onClearFilters}
             sx={{
-              backgroundColor: theme.palette.primary.main,
+              backgroundColor: colorTokens.primary[600],
               color: "white",
               fontWeight: 500,
               textTransform: "none",
               "&:hover": {
-                backgroundColor: theme.palette.primary.dark,
+                backgroundColor: colorTokens.primary[700],
               },
             }}
           >

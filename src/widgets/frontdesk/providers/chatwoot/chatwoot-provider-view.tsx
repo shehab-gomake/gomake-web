@@ -22,6 +22,7 @@ import { AllConversationsView } from "./views/all-conversations-view";
 import { MentionsView } from "./views/mentions-view";
 import { UnattendedView } from "./views/unattended-view";
 import { ChannelsView } from "./views/channels-view";
+import { WorkboardView } from "./views/workboard";
 import { WebhookTestView } from "./views/webhook-test-view";
 import { SettingsView } from "./views/settings-view";
 import { OAuthCallbackView } from "./views/oauth-callback-view";
@@ -58,18 +59,19 @@ const ChatwootProviderViewInternal: React.FC = () => {
 
     // CRITICAL: Skip check if profile hasn't loaded yet (prevents premature redirects)
     if (!profile) {
-      console.warn('[ChatwootProviderView] Profile not loaded yet, skipping permission check');
+      console.warn("[ChatwootProviderView] Profile not loaded yet, skipping permission check");
       return;
     }
 
     // Map views to their permission configs
-    const viewPermissionMap: Record<ChatwootView, typeof VIEW_PERMISSIONS[keyof typeof VIEW_PERMISSIONS] | null> = {
+    const viewPermissionMap: Record<ChatwootView, (typeof VIEW_PERMISSIONS)[keyof typeof VIEW_PERMISSIONS] | null> = {
       [ChatwootView.DASHBOARD]: VIEW_PERMISSIONS.dashboard,
       [ChatwootView.MY_INBOX]: VIEW_PERMISSIONS.myInbox,
       [ChatwootView.ALL_CONVERSATIONS]: VIEW_PERMISSIONS.allConversations,
       [ChatwootView.MENTIONS]: VIEW_PERMISSIONS.mentions,
       [ChatwootView.UNATTENDED]: VIEW_PERMISSIONS.unattended,
       [ChatwootView.CHANNELS]: VIEW_PERMISSIONS.channels,
+      [ChatwootView.WORKBOARD]: VIEW_PERMISSIONS.allConversations, // Same permissions as all conversations
       [ChatwootView.SETTINGS]: VIEW_PERMISSIONS.settings,
       [ChatwootView.WEBHOOK_TEST]: null, // No restrictions on test view
       [ChatwootView.OAUTH_CALLBACK]: null, // No restrictions on OAuth callback
@@ -80,15 +82,12 @@ const ChatwootProviderViewInternal: React.FC = () => {
     // If view has permission requirements, check them
     if (requiredPermissions && !canAccess(requiredPermissions)) {
       // Log RBAC violation for debugging and security monitoring
-      console.error(
-        `[ChatwootProviderView] RBAC Violation: User lacks permissions for ${currentView}`,
-        {
-          view: currentView,
-          userRole,
-          userPermissions,
-          requiredPermissions: requiredPermissions.permissions,
-        }
-      );
+      console.error(`[ChatwootProviderView] RBAC Violation: User lacks permissions for ${currentView}`, {
+        view: currentView,
+        userRole,
+        userPermissions,
+        requiredPermissions: requiredPermissions.permissions,
+      });
 
       // Redirect to safe default view with fallback
       // Defense-in-depth: Check if user can access My Inbox, else fallback to Dashboard
@@ -100,7 +99,7 @@ const ChatwootProviderViewInternal: React.FC = () => {
         chatwootRouter.navigateToDashboard({ replace: true });
       } else {
         // Should never happen, but log if it does
-        console.error('[ChatwootProviderView] User lacks access to all default views!');
+        console.error("[ChatwootProviderView] User lacks access to all default views!");
       }
     }
   }, [currentView, profile, canAccess, profileLoading, showProfileErrorModal, chatwootRouter, userRole, userPermissions]);
@@ -117,11 +116,11 @@ const ChatwootProviderViewInternal: React.FC = () => {
       return (
         <Box
           sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            height: '100%',
-            minHeight: '400px',
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "100%",
+            minHeight: "400px",
           }}
         >
           <CircularProgress />
@@ -131,38 +130,80 @@ const ChatwootProviderViewInternal: React.FC = () => {
 
     switch (currentView) {
       case ChatwootView.DASHBOARD:
-        return <DashboardView />;
+        return (
+          <ChatwootErrorBoundary context="Dashboard">
+            <DashboardView />
+          </ChatwootErrorBoundary>
+        );
       case ChatwootView.MY_INBOX:
-        return <MyInboxView />;
+        return (
+          <ChatwootErrorBoundary context="My Inbox">
+            <MyInboxView />
+          </ChatwootErrorBoundary>
+        );
       case ChatwootView.ALL_CONVERSATIONS:
-        return <AllConversationsView />;
+        return (
+          <ChatwootErrorBoundary context="All Conversations">
+            <AllConversationsView />
+          </ChatwootErrorBoundary>
+        );
       case ChatwootView.MENTIONS:
-        return <MentionsView />;
+        return (
+          <ChatwootErrorBoundary context="Mentions">
+            <MentionsView />
+          </ChatwootErrorBoundary>
+        );
       case ChatwootView.UNATTENDED:
-        return <UnattendedView />;
+        return (
+          <ChatwootErrorBoundary context="Unattended">
+            <UnattendedView />
+          </ChatwootErrorBoundary>
+        );
       case ChatwootView.CHANNELS:
-        return <ChannelsView />;
+        return (
+          <ChatwootErrorBoundary context="Channels">
+            <ChannelsView />
+          </ChatwootErrorBoundary>
+        );
+      case ChatwootView.WORKBOARD:
+        return (
+          <ChatwootErrorBoundary context="Workboard">
+            <WorkboardView />
+          </ChatwootErrorBoundary>
+        );
       case ChatwootView.WEBHOOK_TEST:
-        return <WebhookTestView />;
+        return (
+          <ChatwootErrorBoundary context="Webhook Test">
+            <WebhookTestView />
+          </ChatwootErrorBoundary>
+        );
       case ChatwootView.SETTINGS:
-        return <SettingsView />;
+        return (
+          <ChatwootErrorBoundary context="Settings">
+            <SettingsView />
+          </ChatwootErrorBoundary>
+        );
       case ChatwootView.OAUTH_CALLBACK:
-        return <OAuthCallbackView />;
+        return (
+          <ChatwootErrorBoundary context="OAuth Callback">
+            <OAuthCallbackView />
+          </ChatwootErrorBoundary>
+        );
       default:
         // Fallback to Dashboard
         console.warn("[ChatwootProviderView] Unknown view, falling back to Dashboard:", currentView);
-        return <DashboardView />;
+        return (
+          <ChatwootErrorBoundary context="Dashboard (Fallback)">
+            <DashboardView />
+          </ChatwootErrorBoundary>
+        );
     }
   };
 
   return (
     <>
       {/* Show error modal when profile fails to load */}
-      <ProfileErrorModal
-        open={showProfileErrorModal}
-        error={profileError}
-        onRetry={handleRetryProfile}
-      />
+      <ProfileErrorModal open={showProfileErrorModal} error={profileError} onRetry={handleRetryProfile} />
       {/* Render view content only if profile is loaded or still loading */}
       {!showProfileErrorModal && renderView()}
     </>
@@ -175,7 +216,7 @@ const ChatwootProviderViewInternal: React.FC = () => {
  */
 export const ChatwootProviderView: React.FC = () => {
   return (
-    <ChatwootErrorBoundary>
+    <ChatwootErrorBoundary context="Chatwoot Provider">
       <ChatwootProviderViewInternal />
     </ChatwootErrorBoundary>
   );

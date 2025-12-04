@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Box, IconButton, Menu, MenuItem, ListItemText, Badge, Typography, Divider } from "@mui/material";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import CheckIcon from "@mui/icons-material/Check";
-import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { colorTokens, radiusTokens, shadowTokens } from "@/widgets/frontdesk/design-system";
 import {
   ConversationStatus,
   ConversationAssigneeType,
@@ -16,7 +16,6 @@ interface ChatwootConversationFiltersProps {
 }
 
 export const ChatwootConversationFilters: React.FC<ChatwootConversationFiltersProps> = ({ filters, onFiltersChange }) => {
-  const { primaryColor, neutralColor } = useGomakeTheme();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
@@ -82,9 +81,9 @@ export const ChatwootConversationFilters: React.FC<ChatwootConversationFiltersPr
         size="small"
         onClick={handleClick}
         sx={{
-          color: neutralColor(600),
+          color: colorTokens.neutral[600],
           "&:hover": {
-            backgroundColor: neutralColor(100),
+            backgroundColor: colorTokens.neutral[100],
           },
         }}
       >
@@ -121,7 +120,7 @@ export const ChatwootConversationFilters: React.FC<ChatwootConversationFiltersPr
             sx={{
               fontSize: "0.688rem",
               fontWeight: 600,
-              color: neutralColor(600),
+              color: colorTokens.neutral[600],
               textTransform: "uppercase",
               letterSpacing: 0.5,
             }}
@@ -150,7 +149,7 @@ export const ChatwootConversationFilters: React.FC<ChatwootConversationFiltersPr
                   fontWeight: isSelected ? 600 : 400,
                 }}
               />
-              {isSelected && <CheckIcon sx={{ fontSize: 18, color: primaryColor(600) }} />}
+              {isSelected && <CheckIcon sx={{ fontSize: 18, color: colorTokens.primary[600] }} />}
             </MenuItem>
           );
         })}
@@ -164,7 +163,7 @@ export const ChatwootConversationFilters: React.FC<ChatwootConversationFiltersPr
             sx={{
               fontSize: "0.688rem",
               fontWeight: 600,
-              color: neutralColor(600),
+              color: colorTokens.neutral[600],
               textTransform: "uppercase",
               letterSpacing: 0.5,
             }}
@@ -189,7 +188,7 @@ export const ChatwootConversationFilters: React.FC<ChatwootConversationFiltersPr
               fontWeight: !filters.assignee_type ? 600 : 400,
             }}
           />
-          {!filters.assignee_type && <CheckIcon sx={{ fontSize: 18, color: primaryColor(600) }} />}
+          {!filters.assignee_type && <CheckIcon sx={{ fontSize: 18, color: colorTokens.primary[600] }} />}
         </MenuItem>
         {Object.values(ConversationAssigneeType).map((type) => {
           const isSelected = filters.assignee_type === type;
@@ -212,7 +211,7 @@ export const ChatwootConversationFilters: React.FC<ChatwootConversationFiltersPr
                   fontWeight: isSelected ? 600 : 400,
                 }}
               />
-              {isSelected && <CheckIcon sx={{ fontSize: 18, color: primaryColor(600) }} />}
+              {isSelected && <CheckIcon sx={{ fontSize: 18, color: colorTokens.primary[600] }} />}
             </MenuItem>
           );
         })}
@@ -226,7 +225,7 @@ export const ChatwootConversationFilters: React.FC<ChatwootConversationFiltersPr
             sx={{
               fontSize: "0.688rem",
               fontWeight: 600,
-              color: neutralColor(600),
+              color: colorTokens.neutral[600],
               textTransform: "uppercase",
               letterSpacing: 0.5,
             }}
@@ -251,7 +250,7 @@ export const ChatwootConversationFilters: React.FC<ChatwootConversationFiltersPr
               fontWeight: !filters.sort_by ? 600 : 400,
             }}
           />
-          {!filters.sort_by && <CheckIcon sx={{ fontSize: 18, color: primaryColor(600) }} />}
+          {!filters.sort_by && <CheckIcon sx={{ fontSize: 18, color: colorTokens.primary[600] }} />}
         </MenuItem>
         {Object.values(ConversationSortBy).map((sortBy) => {
           const isSelected = filters.sort_by === sortBy;
@@ -274,7 +273,7 @@ export const ChatwootConversationFilters: React.FC<ChatwootConversationFiltersPr
                   fontWeight: isSelected ? 600 : 400,
                 }}
               />
-              {isSelected && <CheckIcon sx={{ fontSize: 18, color: primaryColor(600) }} />}
+              {isSelected && <CheckIcon sx={{ fontSize: 18, color: colorTokens.primary[600] }} />}
             </MenuItem>
           );
         })}

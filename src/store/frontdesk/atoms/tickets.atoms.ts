@@ -10,8 +10,19 @@ import {
   transformApiTicketToUi,
   Tag,
   TicketViewStatus,
+  AgentWorkload,
 } from '@/widgets/frontdesk/providers/tickets/types';
 import { mockTickets, ticketViews } from '@/widgets/frontdesk/providers/tickets/mock-data/tickets.mock';
+
+// Ticket Kanban specific types (separate from Chatwoot conversation kanban)
+export type TicketKanbanViewMode = 'status' | 'assignee';
+export interface TicketKanbanFilters {
+  priority?: string;
+  assigneeId?: string;
+  search?: string;
+  tags?: string[];
+  channelType?: string;
+}
 
 /**
  * All tickets data (backend format - TicketWithDetails[])
@@ -352,5 +363,157 @@ export const activeFilterCountSelector = selector<number>({
     // Don't count sortBy/sortOrder/page/limit or other hidden filters
 
     return count;
+  },
+});
+
+// ============================================
+// Kanban Board Atoms
+// ============================================
+
+/**
+ * Kanban view mode - determines how columns are organized
+ * - 'status': Columns represent ticket statuses (OPEN, IN_PROGRESS, etc.)
+ * - 'assignee': Columns represent agents/team members
+ */
+export const kanbanViewModeAtom = atom<TicketKanbanViewMode>({
+  key: 'frontdesk.tickets.kanbanViewMode',
+  default: 'status',
+});
+
+/**
+ * Agent workload data for kanban header cards
+ * Fetched from GET /tickets/dashboard/workload
+ */
+export const agentWorkloadAtom = atom<AgentWorkload[]>({
+  key: 'frontdesk.tickets.agentWorkload',
+  default: [],
+});
+
+/**
+ * Agent workload loading state
+ */
+export const agentWorkloadLoadingAtom = atom<boolean>({
+  key: 'frontdesk.tickets.agentWorkloadLoading',
+  default: false,
+});
+
+/**
+ * Kanban board filters (separate from list filters)
+ */
+export const kanbanFiltersAtom = atom<TicketKanbanFilters>({
+  key: 'frontdesk.tickets.kanbanFilters',
+  default: {},
+});
+
+/**
+ * Kanban board loading state (for drag operations)
+ */
+export const kanbanOperationLoadingAtom = atom<boolean>({
+  key: 'frontdesk.tickets.kanbanOperationLoading',
+  default: false,
+});
+
+/**
+ * Selector: Get tickets grouped by status for kanban status view
+ */
+export const ticketsByStatusSelector = selector<Record<string, TicketWithDetails[]>>({
+  key: 'frontdesk.tickets.byStatus',
+  get: ({ get }) => {
+    const tickets = get(ticketsAtom);
+    const filters = get(kanbanFiltersAtom);
+    
+    // Apply kanban filters
+    let filteredTickets = tickets;
+    
+    if (filters.priority) {
+      filteredTickets = filteredTickets.filter(t => t.priority === filters.priority);
+    }
+    if (filters.assigneeId) {
+      filteredTickets = filteredTickets.filter(t => t.assigneeId === filters.assigneeId);
+    }
+    if (filters.search) {
+      const search = filters.search.toLowerCase();
+      filteredTickets = filteredTickets.filter(t => 
+        t.customerName?.toLowerCase().includes(search) ||
+        t.customerEmail?.toLowerCase().includes(search) ||
+        t.ticketNumber.toString().includes(search)
+      );
+    }
+    if (filters.tags && filters.tags.length > 0) {
+      filteredTickets = filteredTickets.filter(t => 
+        t.tags.some(tag => filters.tags!.includes(tag.name))
+      );
+    }
+    
+    // Group by status
+    const grouped: Record<string, TicketWithDetails[]> = {
+      OPEN: [],
+      IN_PROGRESS: [],
+      PENDING: [],
+      RESOLVED: [],
+      CLOSED: [],
+      REOPENED: [],
+    };
+    
+    filteredTickets.forEach(ticket => {
+      if (grouped[ticket.status]) {
+        grouped[ticket.status].push(ticket);
+      }
+    });
+    
+    return grouped;
+  },
+});
+
+/**
+ * Selector: Get tickets grouped by assignee for kanban assignee view
+ */
+export const ticketsByAssigneeSelector = selector<Record<string, TicketWithDetails[]>>({
+  key: 'frontdesk.tickets.byAssignee',
+  get: ({ get }) => {
+    const tickets = get(ticketsAtom);
+    const filters = get(kanbanFiltersAtom);
+    const workload = get(agentWorkloadAtom);
+    
+    // Apply kanban filters (except assigneeId since we're grouping by assignee)
+    let filteredTickets = tickets;
+    
+    if (filters.priority) {
+      filteredTickets = filteredTickets.filter(t => t.priority === filters.priority);
+    }
+    if (filters.search) {
+      const search = filters.search.toLowerCase();
+      filteredTickets = filteredTickets.filter(t => 
+        t.customerName?.toLowerCase().includes(search) ||
+        t.customerEmail?.toLowerCase().includes(search) ||
+        t.ticketNumber.toString().includes(search)
+      );
+    }
+    if (filters.tags && filters.tags.length > 0) {
+      filteredTickets = filteredTickets.filter(t => 
+        t.tags.some(tag => filters.tags!.includes(tag.name))
+      );
+    }
+    
+    // Initialize with unassigned column and known agents
+    const grouped: Record<string, TicketWithDetails[]> = {
+      'unassigned': [],
+    };
+    
+    // Add columns for all agents from workload
+    workload.forEach(w => {
+      grouped[w.agent.id] = [];
+    });
+    
+    // Group tickets
+    filteredTickets.forEach(ticket => {
+      const assigneeId = ticket.assigneeId || 'unassigned';
+      if (!grouped[assigneeId]) {
+        grouped[assigneeId] = [];
+      }
+      grouped[assigneeId].push(ticket);
+    });
+    
+    return grouped;
   },
 });

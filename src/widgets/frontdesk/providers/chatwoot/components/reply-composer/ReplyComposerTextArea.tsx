@@ -6,6 +6,7 @@
 import React, { KeyboardEvent } from "react";
 import { Box, IconButton, TextareaAutosize } from "@mui/material";
 import { Fullscreen as FullscreenIcon } from "@mui/icons-material";
+import { colorTokens, radiusTokens, shadowTokens } from "@/widgets/frontdesk/design-system";
 
 interface ReplyComposerTextAreaProps {
   messageContent: string;
@@ -17,8 +18,8 @@ interface ReplyComposerTextAreaProps {
   shouldUseRichEditor: boolean;
   textColor: string;
   lightGrayText: string;
-  neutralColor: (shade: number) => string;
-  primaryColor: (shade: number) => string;
+  neutralColor?: (shade: number) => string;
+  primaryColor?: (shade: number) => string;
   isPrivateNote?: boolean;
 }
 
@@ -46,8 +47,8 @@ export const ReplyComposerTextArea: React.FC<ReplyComposerTextAreaProps> = ({
 
   // Background color for private note mode - use a clearly visible shade
   // Use neutral gray background with a left border indicator
-  const backgroundColor = isPrivateNote ? neutralColor(100) : "transparent";
-  const borderColor = isPrivateNote ? primaryColor(300) : "transparent";
+  const backgroundColor = isPrivateNote ? colorTokens.neutral[100] : "transparent";
+  const borderColor = isPrivateNote ? colorTokens.primary[300] : "transparent";
 
   return (
     <Box
@@ -102,8 +103,8 @@ export const ReplyComposerTextArea: React.FC<ReplyComposerTextAreaProps> = ({
           color: lightGrayText,
           p: 0.5,
           "&:hover": {
-            backgroundColor: neutralColor(100),
-            color: primaryColor(600),
+            backgroundColor: colorTokens.neutral[100],
+            color: colorTokens.primary[600],
           },
         }}
       >

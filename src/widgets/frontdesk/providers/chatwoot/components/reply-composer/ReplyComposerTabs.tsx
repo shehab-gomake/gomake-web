@@ -1,12 +1,15 @@
 /**
  * Reply Composer Tabs Component
  *
- * Segmented control for switching between "Reply" and "Private Note" modes.
- * Follows Chatwoot's design patterns.
+ * Premium pill-style segmented control for switching between "Reply" and "Private Note" modes.
+ * Modern design with smooth transitions and clear visual feedback.
  */
 
 import React from "react";
-import { Box, ButtonBase } from "@mui/material";
+import { Box, ButtonBase, Stack } from "@mui/material";
+import { colorTokens, radiusTokens, shadowTokens, semanticSpacing } from "@/widgets/frontdesk/design-system";
+import SendOutlinedIcon from "@mui/icons-material/SendOutlined";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 
 export type ReplyTabValue = "reply" | "private";
 
@@ -21,84 +24,86 @@ export interface ReplyComposerTabsProps {
   textColor?: string;
   /** Light gray text color */
   lightGrayText?: string;
-  /** Neutral color function */
-  neutralColor?: (shade: number) => string;
 }
 
 export const ReplyComposerTabs: React.FC<ReplyComposerTabsProps> = ({
   activeTab,
   onTabChange,
-  borderColor = "#E5E7EB",
-  textColor = "#111827",
-  lightGrayText = "#6B7280",
-  neutralColor = (shade: number) => {
-    const colors: Record<number, string> = {
-      50: "#F9FAFB",
-      100: "#F3F4F6",
-      200: "#E5E7EB",
-    };
-    return colors[shade] || colors[200];
-  },
+  textColor = colorTokens.neutral[900],
+  lightGrayText = colorTokens.neutral[500],
 }) => {
   return (
     <Box
       sx={{
         px: 2,
         py: 1.5,
-        borderBottom: `1px solid ${borderColor}`,
         display: "flex",
         alignItems: "center",
       }}
     >
+      {/* Pill-style container */}
       <Box
         sx={{
           display: "inline-flex",
-          borderRadius: 1,
-          backgroundColor: neutralColor(100),
-          border: `1px solid ${neutralColor(200)}`,
-          overflow: "hidden",
-          gap: 0,
+          borderRadius: `${radiusTokens.full}px`,
+          backgroundColor: colorTokens.neutral[200],
+          padding: "3px",
+          gap: "2px",
         }}
       >
+        {/* Reply Tab */}
         <ButtonBase
           onClick={() => onTabChange("reply")}
           sx={{
-            px: 2,
-            py: 0.75,
-            fontSize: "0.875rem",
-            fontWeight: 500,
+            px: 2.5,
+            py: 0.875,
+            fontSize: "0.8125rem",
+            fontWeight: 600,
             textTransform: "none",
-            color: activeTab === "reply" ? textColor : lightGrayText,
-            backgroundColor: activeTab === "reply" ? "white" : "transparent",
-            borderRadius: activeTab === "reply" ? "8px 0 0 8px" : 0,
-            borderRight: `1px solid ${neutralColor(200)}`,
-            boxShadow: activeTab === "reply" ? `0 1px 2px ${neutralColor(200)}` : "none",
-            transition: "all 0.2s ease",
+            color: activeTab === "reply" ? colorTokens.neutral[900] : colorTokens.neutral[500],
+            backgroundColor: activeTab === "reply" ? colorTokens.semantic.background.primary : "transparent",
+            borderRadius: `${radiusTokens.full}px`,
+            boxShadow: activeTab === "reply" ? shadowTokens.sm : "none",
+            transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+            display: "flex",
+            alignItems: "center",
+            gap: 1,
             "&:hover": {
-              backgroundColor: activeTab === "reply" ? "white" : neutralColor(50),
+              backgroundColor: activeTab === "reply" 
+                ? colorTokens.semantic.background.primary 
+                : colorTokens.neutral[100],
             },
           }}
         >
+          <SendOutlinedIcon sx={{ fontSize: 16, strokeWidth: 1.5 }} />
           Reply
         </ButtonBase>
+
+        {/* Private Note Tab */}
         <ButtonBase
           onClick={() => onTabChange("private")}
           sx={{
-            px: 2,
-            py: 0.75,
-            fontSize: "0.875rem",
-            fontWeight: 500,
+            px: 2.5,
+            py: 0.875,
+            fontSize: "0.8125rem",
+            fontWeight: 600,
             textTransform: "none",
-            color: activeTab === "private" ? textColor : lightGrayText,
-            backgroundColor: activeTab === "private" ? "white" : "transparent",
-            borderRadius: activeTab === "private" ? "0 8px 8px 0" : 0,
-            boxShadow: activeTab === "private" ? `0 1px 2px ${neutralColor(200)}` : "none",
-            transition: "all 0.2s ease",
+            color: activeTab === "private" ? colorTokens.warning[700] : colorTokens.neutral[500],
+            backgroundColor: activeTab === "private" ? colorTokens.warning[50] : "transparent",
+            borderRadius: `${radiusTokens.full}px`,
+            boxShadow: activeTab === "private" ? shadowTokens.sm : "none",
+            transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+            display: "flex",
+            alignItems: "center",
+            gap: 1,
             "&:hover": {
-              backgroundColor: activeTab === "private" ? "white" : neutralColor(50),
+              backgroundColor: activeTab === "private" 
+                ? colorTokens.warning[50] 
+                : colorTokens.neutral[100],
             },
           }}
         >
+          <LockOutlinedIcon sx={{ fontSize: 16, strokeWidth: 1.5 }} />
           Private Note
         </ButtonBase>
       </Box>

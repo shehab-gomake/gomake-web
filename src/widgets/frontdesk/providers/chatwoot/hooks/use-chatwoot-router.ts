@@ -6,7 +6,7 @@
  */
 
 import { useRouter } from "next/router";
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRecoilState } from "recoil";
 import { createLogger } from "@/services/frontdesk/utils/logger";
 
@@ -23,24 +23,40 @@ import {
 } from "@/widgets/frontdesk/routing/types";
 import { RouteBuilder, buildRoute } from "@/widgets/frontdesk/routing/route-builder";
 import { parseRoute } from "@/widgets/frontdesk/routing/route-parser";
-import {
-  chatwootSelectedInboxIdAtom,
-  chatwootSelectedConversationAtom,
-} from "@/store/frontdesk/atoms/chatwoot.atoms";
+import { chatwootSelectedInboxIdAtom, chatwootSelectedConversationAtom } from "@/store/frontdesk/atoms/chatwoot.atoms";
 
 /**
  * Hook for Chatwoot-specific routing
+ *
+ * Waits for Next.js router to be ready before parsing route to prevent
+ * hydration issues where router.query is initially empty.
  */
 export const useChatwootRouter = () => {
   const router = useRouter();
   const [selectedInboxId, setSelectedInboxId] = useRecoilState(chatwootSelectedInboxIdAtom);
   const [selectedConversation, setSelectedConversation] = useRecoilState(chatwootSelectedConversationAtom);
+  const [isInitialized, setIsInitialized] = useState(false);
 
-  // Parse current route
+  // Parse current route - ONLY when router is ready
+  // This prevents hydration issues where router.query is initially empty
   const currentRoute = useMemo(() => {
+    // Don't parse route until router is ready (prevents empty query object during hydration)
+    if (!router.isReady) {
+      logger.debug("Router not ready, returning null for currentRoute");
+      return null;
+    }
+
     const parsed = parseRoute(router.query);
     return isChatwootRoute(parsed.route) ? parsed.route : null;
-  }, [router.query]);
+  }, [router.query, router.isReady]);
+
+  // Mark as initialized after first successful route parse
+  useEffect(() => {
+    if (router.isReady && !isInitialized) {
+      logger.debug("Router ready, marking as initialized");
+      setIsInitialized(true);
+    }
+  }, [router.isReady, isInitialized]);
 
   // Current view
   const currentView = currentRoute?.view || ChatwootView.DASHBOARD;
@@ -152,6 +168,17 @@ export const useChatwootRouter = () => {
   const navigateToChannels = useCallback(
     (options?: NavigationOptions) => {
       const route = RouteBuilder.chatwootChannels();
+      navigate(route, options);
+    },
+    [navigate]
+  );
+
+  /**
+   * Navigate to Workboard (Kanban) view
+   */
+  const navigateToWorkboard = useCallback(
+    (options?: NavigationOptions) => {
+      const route = RouteBuilder.chatwootWorkboard();
       navigate(route, options);
     },
     [navigate]
@@ -274,9 +301,12 @@ export const useChatwootRouter = () => {
    *
    * This is the ONLY place where navigation state flows from URL → Recoil.
    * Makes URL the authoritative source of truth, preventing sync loops.
+   *
+   * Guards with router.isReady to prevent syncing during hydration.
    */
   useEffect(() => {
-    if (!currentRoute) return;
+    // Don't sync until router is ready and route is parsed
+    if (!router.isReady || !currentRoute) return;
 
     // Sync channelId (URL) → selectedInboxId (Recoil)
     if (currentRoute.channelId !== undefined) {
@@ -285,7 +315,11 @@ export const useChatwootRouter = () => {
         logger.debug("Syncing channelId from URL to Recoil", { channelId: currentRoute.channelId, inboxId });
         setSelectedInboxId(inboxId);
       }
-    } else if (currentRoute.view === ChatwootView.DASHBOARD || currentRoute.view === ChatwootView.ALL_CONVERSATIONS || currentRoute.view === ChatwootView.MY_INBOX) {
+    } else if (
+      currentRoute.view === ChatwootView.DASHBOARD ||
+      currentRoute.view === ChatwootView.ALL_CONVERSATIONS ||
+      currentRoute.view === ChatwootView.MY_INBOX
+    ) {
       // Clear inbox selection for views that don't need it
       if (selectedInboxId !== null) {
         logger.debug("Clearing selectedInboxId for non-channel view", { view: currentRoute.view });
@@ -299,9 +333,13 @@ export const useChatwootRouter = () => {
       logger.debug("Clearing selectedConversation - not in URL");
       setSelectedConversation(null);
     }
-  }, [currentRoute, selectedInboxId, selectedConversation, setSelectedInboxId, setSelectedConversation]);
+  }, [router.isReady, currentRoute, selectedInboxId, selectedConversation, setSelectedInboxId, setSelectedConversation]);
 
   return {
+    // Router state
+    isRouterReady: router.isReady,
+    isInitialized,
+
     // Current state
     currentRoute,
     currentView,
@@ -312,6 +350,7 @@ export const useChatwootRouter = () => {
     isMentionsView: currentView === ChatwootView.MENTIONS,
     isUnattendedView: currentView === ChatwootView.UNATTENDED,
     isChannelsView: currentView === ChatwootView.CHANNELS,
+    isWorkboardView: currentView === ChatwootView.WORKBOARD,
     isWebhookTestView: currentView === ChatwootView.WEBHOOK_TEST,
     isSettingsView: currentView === ChatwootView.SETTINGS,
 
@@ -323,6 +362,7 @@ export const useChatwootRouter = () => {
     navigateToMentions,
     navigateToUnattended,
     navigateToChannels,
+    navigateToWorkboard,
     navigateToWebhookTest,
     navigateToSettings,
     navigateToChannel,
@@ -332,7 +372,7 @@ export const useChatwootRouter = () => {
     updateFilters,
     updateFilter,
     clearFilters,
-    
+
     // Settings subpage
     currentSettingsSubpage,
   };

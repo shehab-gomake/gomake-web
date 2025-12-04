@@ -66,7 +66,7 @@ import {
   extractVariables,
   getVariableLabels,
 } from "../../utils/whatsapp-template.utils";
-import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+
 import { TemplateCard } from "./whatsapp-template-card";
 import { TemplatePreview } from "./whatsapp-template-preview";
 import { TemplateVariableForm } from "./whatsapp-template-variable-form";
@@ -82,8 +82,6 @@ export const WhatsAppTemplateSelector: React.FC<WhatsAppTemplateSelectorProps> =
   initialTemplate,
   required = false,
 }) => {
-  const { primaryColor, neutralColor } = useGomakeTheme();
-
   // State management
   const [state, setState] = useState<TemplateSelectorState>({
     selectedTemplate: initialTemplate || null,

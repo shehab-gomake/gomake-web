@@ -19,7 +19,6 @@ import {
 import AddCommentIcon from '@mui/icons-material/AddComment';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import { useGomakeTheme } from '@/hooks/use-gomake-thme';
 import { useChatwootNotifications } from '../../hooks/use-chatwoot-notifications';
 import { useChatwootProvider } from '../../hooks/use-chatwoot-provider';
 import { Chip } from '@/widgets/frontdesk/design-system';
@@ -35,7 +34,6 @@ import { generateNotificationAvatar } from '../../utils/avatar.utils';
 type FilterType = 'unread' | 'mentions' | 'assignments' | 'all';
 
 export const ChatwootNotificationsCompact: React.FC = () => {
-  const { primaryColor, neutralColor } = useGomakeTheme();
   const {
     notifications,
     loading,
@@ -233,9 +231,9 @@ export const ChatwootNotificationsCompact: React.FC = () => {
                     px: 2,
                     py: 1,
                     cursor: 'pointer',
-                    backgroundColor: isUnread ? primaryColor(50) : 'white',
+                    backgroundColor: isUnread ? colorTokens.primary[50] : 'white',
                     '&:hover': {
-                      backgroundColor: isUnread ? primaryColor(100) : colorTokens.neutral[50],
+                      backgroundColor: isUnread ? colorTokens.primary[100] : colorTokens.neutral[50],
                     },
                     borderBottom: `1px solid ${colorTokens.neutral[100]}`,
                   }}
@@ -304,7 +302,7 @@ export const ChatwootNotificationsCompact: React.FC = () => {
                               height: 12,
                               borderRadius: 1,
                               backgroundColor: isUnread
-                                ? primaryColor(600)
+                                ? colorTokens.primary[600]
                                 : colorTokens.neutral[400],
                               display: 'flex',
                               alignItems: 'center',
@@ -320,7 +318,7 @@ export const ChatwootNotificationsCompact: React.FC = () => {
                               fontSize: 11,
                               fontWeight: 400,
                               color: isUnread
-                                ? primaryColor(600)
+                                ? colorTokens.primary[600]
                                 : colorTokens.neutral[500],
                               overflow: 'hidden',
                               textOverflow: 'ellipsis',
@@ -370,9 +368,9 @@ export const ChatwootNotificationsCompact: React.FC = () => {
             sx={{
               fontSize: '0.813rem',
               textTransform: 'none',
-              color: primaryColor(600),
+              color: colorTokens.primary[600],
               '&:hover': {
-                backgroundColor: primaryColor(50),
+                backgroundColor: colorTokens.primary[50],
               },
             }}
           >

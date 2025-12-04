@@ -11,6 +11,18 @@ export { AddAgentModal, type AddAgentModalProps, type AddAgentData } from "./add
 export { AddEditLabelModal } from "./add-edit-label-modal";
 export { AddEditTeamModal, type AddEditTeamData } from "./add-edit-team-modal";
 
+// Unified UI System - Use these for consistency
+export { CompactModal } from "./CompactModal";
+export {
+  CompactLabel,
+  CompactTextField,
+  CompactFormSection,
+  CompactPrimaryButton,
+  CompactSecondaryButton,
+  CompactModalActions,
+  CompactSwitch,
+} from "./CompactFormFields";
+
 // New shared components
 export { CodeDisplay, type CodeDisplayProps } from "./CodeDisplay";
 export { RichTextEditor, type RichTextEditorProps } from "./RichTextEditor";

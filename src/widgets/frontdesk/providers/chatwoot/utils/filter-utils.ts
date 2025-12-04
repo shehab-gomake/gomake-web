@@ -4,6 +4,14 @@
  * Common utilities for working with Chatwoot filters
  */
 
+/**
+ * Create a stable key from any object for caching/comparison
+ * This is a generic utility that can be used for any object
+ */
+export const createStableKey = <T = any>(params: T): string => {
+  return JSON.stringify(params);
+};
+
 import {
   ConversationStatus,
   ConversationAssigneeType,
@@ -55,10 +63,7 @@ export const getSortByLabel = (sortBy: ConversationSortBy | string): string => {
 /**
  * Check if a conversation matches the status filter
  */
-export const matchesStatusFilter = (
-  conversationStatus: string,
-  filterStatus?: ConversationStatus
-): boolean => {
+export const matchesStatusFilter = (conversationStatus: string, filterStatus?: ConversationStatus): boolean => {
   if (!filterStatus || filterStatus === ConversationStatus.ALL) return true;
   return conversationStatus === filterStatus;
 };
@@ -110,14 +115,11 @@ export const buildConversationFilters = (
 
 /**
  * Create a stable filter key for caching/comparison
- * 
+ *
  * Note: When status is undefined (meaning "All"), we explicitly set it to "ALL"
  * to ensure the filter key changes when switching to/from "All" status.
  */
-export const createFilterKey = (
-  accountId: number | null,
-  filters: Partial<ConversationListParams>
-): string => {
+export const createFilterKey = (accountId: number | null, filters: Partial<ConversationListParams>): string => {
   return JSON.stringify({
     accountId,
     // Explicitly handle undefined status as "ALL" to ensure filter key changes
@@ -132,4 +134,3 @@ export const createFilterKey = (
     limit: filters.limit || 20,
   });
 };
-

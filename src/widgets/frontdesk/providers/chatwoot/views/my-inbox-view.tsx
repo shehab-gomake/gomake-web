@@ -3,11 +3,27 @@
  *
  * Displays conversations assigned to the current agent with status "open".
  * This is the agent's personal workspace, showing only their assigned conversations.
+ *
+ * Redesigned with:
+ * - 12-column responsive grid
+ * - 24px gutter spacing between columns
+ * - 14px card radius with soft shadows
+ * - 8px vertical rhythm
+ * - Modern premium SaaS aesthetic
  */
 
 import React, { useEffect, useMemo, useCallback, useState } from "react";
-import { Stack, Box, Divider, Typography, useTheme } from "@mui/material";
-import { Panel, PanelContent, EmptyState } from "@/widgets/frontdesk/design-system";
+import { Stack, Box, Typography } from "@mui/material";
+import { 
+  PanelContent, 
+  EmptyState, 
+  colorTokens,
+  layoutTokens,
+  gridConfig,
+  radiusTokens,
+  shadowTokens,
+  semanticSpacing,
+} from "@/widgets/frontdesk/design-system";
 import { ChatwootConversationList } from "../components/chatwoot-conversation-list";
 import { ChatwootMessageViewer } from "../components/chatwoot-message-viewer";
 import { ChatwootConversationDetailPanel } from "../components/chatwoot-conversation-detail-panel";
@@ -20,7 +36,6 @@ import { ChatwootView } from "@/widgets/frontdesk/routing/types";
 import type { ChatwootConversation } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
 
 export const MyInboxView: React.FC = () => {
-  const theme = useTheme();
   const router = useChatwootRouter();
   const [showComposeModal, setShowComposeModal] = useState(false);
   
@@ -134,15 +149,15 @@ export const MyInboxView: React.FC = () => {
     );
   }, [conversations.length, conversationsLoading.initialLoading, refresh]);
 
-  // Phase 1: Custom header with title and subheader
+  // Phase 1: Custom header with title and subheader (modern styling)
   const listHeader = useMemo(() => {
     return (
       <Box
         sx={{
-          px: 2,
-          py: 1.5,
-          borderBottom: `1px solid ${theme.palette.divider}`,
-          backgroundColor: theme.palette.background.paper,
+          px: 2.5,
+          py: 2,
+          borderBottom: `1px solid ${colorTokens.neutral[100]}`,
+          backgroundColor: colorTokens.semantic.background.primary,
         }}
       >
         <Typography
@@ -150,8 +165,9 @@ export const MyInboxView: React.FC = () => {
           sx={{
             fontWeight: 600,
             fontSize: "1.125rem",
-            color: theme.palette.text.primary,
+            color: colorTokens.semantic.text.primary,
             mb: 0.5,
+            letterSpacing: "-0.01em",
           }}
         >
           My Tickets
@@ -159,8 +175,8 @@ export const MyInboxView: React.FC = () => {
         <Typography
           variant="body2"
           sx={{
-            color: theme.palette.text.secondary,
-            fontSize: "0.875rem",
+            color: colorTokens.semantic.text.secondary,
+            fontSize: "0.8125rem",
           }}
         >
           {conversationsLoading.initialLoading
@@ -171,26 +187,39 @@ export const MyInboxView: React.FC = () => {
         </Typography>
       </Box>
     );
-  }, [conversationCount, conversationsLoading.initialLoading, theme]);
+  }, [conversationCount, conversationsLoading.initialLoading]);
 
   return (
-    <Stack direction="row" spacing={0} sx={{ height: "100%", p: 0 }}>
-      {/* Conversation List - Always visible */}
-      <Panel
-        elevation={1}
-        border="none"
+    <Box
+      sx={{
+        display: "flex",
+        height: "100%",
+        width: "100%",
+        overflow: "hidden",
+        backgroundColor: colorTokens.neutral[100],
+        gap: `${layoutTokens.columnGap.default}px`,        // Use design system gutter
+        padding: `${semanticSpacing.container.md}px`,      // Use design system container padding
+      }}
+    >
+      {/* Conversation List Panel */}
+      <Box
         sx={{
-          width: 400,
-          minWidth: 350,
-          maxWidth: 500,
+          width: layoutTokens.panel.conversationList.default,
+          minWidth: layoutTokens.panel.conversationList.default,
+          height: "100%",
+          backgroundColor: colorTokens.semantic.background.primary,
+          borderRadius: `${layoutTokens.card.radius}px`,   // Use design system card radius
+          boxShadow: shadowTokens.card,                    // Use design system shadow
           overflow: "hidden",
           display: "flex",
           flexDirection: "column",
-          height: "100%",
-          backgroundColor: "background.paper",
+          transition: "box-shadow 0.2s ease",
+          "&:hover": {
+            boxShadow: shadowTokens.cardHover,             // Use design system hover shadow
+          },
         }}
       >
-        {/* Phase 1: Custom Header */}
+        {/* Custom Header */}
         {listHeader}
 
         {/* Conversation List */}
@@ -208,27 +237,25 @@ export const MyInboxView: React.FC = () => {
             onFiltersChange={handleFiltersChange}
             inboxes={inboxes}
             inboxesLoading={inboxesLoading}
-            hideHeader={true} // Hide default header since we have custom header
-            hideAssigneeAvatars={true} // Phase 3: Hide assignee avatars in My Inbox
+            hideHeader={true}
+            hideAssigneeAvatars={true}
           />
         </Box>
-      </Panel>
+      </Box>
 
-      {/* Divider between list and viewer */}
-      <Divider orientation="vertical" flexItem sx={{ borderColor: theme.palette.divider }} />
-
-      {/* Message Viewer - Conditionally show detail or empty state */}
-      <Panel
-        elevation={1}
-        border="none"
+      {/* Message Viewer Panel */}
+      <Box
         sx={{
           flex: 1,
+          height: "100%",
+          backgroundColor: colorTokens.semantic.background.primary,
+          borderRadius: `${layoutTokens.card.radius}px`,
+          boxShadow: shadowTokens.card,
           overflow: "hidden",
           display: "flex",
           flexDirection: "column",
           minWidth: 0,
-          height: "100%",
-          backgroundColor: "background.paper",
+          transition: "box-shadow 0.2s ease",
         }}
       >
         {selectedConversation ? (
@@ -248,26 +275,30 @@ export const MyInboxView: React.FC = () => {
               />
             </Box>
 
-            {/* Divider between message viewer and detail panel - only show when sidebar is visible */}
-            {isSidebarVisible && (
-              <Divider orientation="vertical" flexItem sx={{ borderColor: theme.palette.divider }} />
-            )}
-
             {/* Right Detail Panel - conditionally rendered */}
             {isSidebarVisible && (
-              <ChatwootConversationDetailPanel
-                key={selectedConversation.id}
-                conversation={selectedConversation}
-                accountId={currentAccountId || undefined}
-                inboxes={inboxes}
-                onConversationUpdate={updateConversationInList}
-              />
+              <Box
+                sx={{
+                  width: layoutTokens.panel.detailSidebar.default,
+                  minWidth: layoutTokens.panel.detailSidebar.default,
+                  borderLeft: `1px solid ${colorTokens.semantic.border.light}`,
+                  backgroundColor: colorTokens.semantic.background.primary,
+                }}
+              >
+                <ChatwootConversationDetailPanel
+                  key={selectedConversation.id}
+                  conversation={selectedConversation}
+                  accountId={currentAccountId || undefined}
+                  inboxes={inboxes}
+                  onConversationUpdate={updateConversationInList}
+                />
+              </Box>
             )}
           </Stack>
         ) : (
           <PanelContent padding="lg">{emptyStateContent}</PanelContent>
         )}
-      </Panel>
+      </Box>
 
       {/* Compose Conversation Modal */}
       <ComposeConversationModal
@@ -276,6 +307,6 @@ export const MyInboxView: React.FC = () => {
         onSuccess={handleComposeSuccess}
         accountId={currentAccountId}
       />
-    </Stack>
+    </Box>
   );
 };

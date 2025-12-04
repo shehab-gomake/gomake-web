@@ -20,7 +20,7 @@ import MessageIcon from "@mui/icons-material/Message";
 import PhoneIcon from "@mui/icons-material/Phone";
 import PublicIcon from "@mui/icons-material/Public";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
-import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { colorTokens, radiusTokens, shadowTokens } from "@/widgets/frontdesk/design-system";
 import type { ContactableInbox } from "@/services/frontdesk/api/chatwoot/types/inboxes.types";
 
 export interface InboxSelectorProps {
@@ -71,7 +71,6 @@ export const InboxSelector: React.FC<InboxSelectorProps> = ({
   onSelect,
   error,
 }) => {
-  const { neutralColor, primaryColor } = useGomakeTheme();
   const theme = useTheme();
 
   if (isLoading) {
@@ -82,13 +81,13 @@ export const InboxSelector: React.FC<InboxSelectorProps> = ({
           alignItems: "center",
           justifyContent: "center",
           p: 3,
-          border: `1px solid ${neutralColor(200)}`,
+          border: `1px solid ${colorTokens.neutral[200]}`,
           borderRadius: 2,
-          backgroundColor: neutralColor(25),
+          backgroundColor: colorTokens.neutral[25],
         }}
       >
-        <CircularProgress size={24} sx={{ color: primaryColor(600) }} />
-        <Typography sx={{ ml: 2, color: neutralColor(600) }}>
+        <CircularProgress size={24} sx={{ color: colorTokens.primary[600] }} />
+        <Typography sx={{ ml: 2, color: colorTokens.neutral[600] }}>
           Loading inboxes...
         </Typography>
       </Box>
@@ -100,10 +99,10 @@ export const InboxSelector: React.FC<InboxSelectorProps> = ({
       <Box
         sx={{
           p: 3,
-          border: `1px solid ${neutralColor(200)}`,
+          border: `1px solid ${colorTokens.neutral[200]}`,
           borderRadius: 2,
-          backgroundColor: neutralColor(25),
-          color: neutralColor(600),
+          backgroundColor: colorTokens.neutral[25],
+          color: colorTokens.neutral[600],
           textAlign: "center",
         }}
       >
@@ -127,14 +126,14 @@ export const InboxSelector: React.FC<InboxSelectorProps> = ({
                   display: "flex",
                   alignItems: "center",
                   cursor: "pointer",
-                  backgroundColor: isSelected ? primaryColor(25) : neutralColor(0),
+                  backgroundColor: isSelected ? colorTokens.primary[50] : colorTokens.semantic.background.primary,
                   border: `1px solid ${
-                    isSelected ? primaryColor(400) : neutralColor(200)
+                    isSelected ? colorTokens.primary[400] : colorTokens.neutral[200]
                   }`,
                   transition: "all 0.2s ease-in-out",
                   "&:hover": {
-                    borderColor: primaryColor(500),
-                    boxShadow: `0 0 0 2px ${primaryColor(100)}`,
+                    borderColor: colorTokens.primary[500],
+                    boxShadow: `0 0 0 2px ${colorTokens.primary[100]}`,
                   },
                 }}
               >
@@ -146,8 +145,8 @@ export const InboxSelector: React.FC<InboxSelectorProps> = ({
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    backgroundColor: isSelected ? primaryColor(100) : neutralColor(100),
-                    color: isSelected ? primaryColor(700) : neutralColor(600),
+                    backgroundColor: isSelected ? colorTokens.primary[100] : colorTokens.neutral[100],
+                    color: isSelected ? colorTokens.primary[700] : colorTokens.neutral[600],
                     mr: 2,
                   }}
                 >
@@ -158,12 +157,12 @@ export const InboxSelector: React.FC<InboxSelectorProps> = ({
                     variant="subtitle1"
                     sx={{
                       fontWeight: 600,
-                      color: isSelected ? primaryColor(800) : neutralColor(900),
+                      color: isSelected ? colorTokens.primary[800] : colorTokens.neutral[900],
                     }}
                   >
                     {inbox.inbox.name}
                   </Typography>
-                  <Typography variant="body2" sx={{ color: neutralColor(600) }}>
+                  <Typography variant="body2" sx={{ color: colorTokens.neutral[600] }}>
                     {getChannelTypeName(inbox.inbox.channel_type)}
                   </Typography>
                 </Box>

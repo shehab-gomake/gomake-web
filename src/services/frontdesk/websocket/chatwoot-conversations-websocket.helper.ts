@@ -541,11 +541,9 @@ export class ChatwootConversationsWebSocketHelper {
 
   /**
    * Register handler for conversation created events
-   * Note: Clears existing handlers to ensure only one handler per registration
+   * Note: Adds handler to existing handlers (supports multiple listeners)
    */
   public onConversationCreated(handler: ConversationCreatedHandler): void {
-    // Clear existing handlers to prevent duplicates (only one consumer should handle events)
-    this.conversationCreatedHandlers.clear();
     this.conversationCreatedHandlers.add(handler);
   }
 
@@ -557,7 +555,6 @@ export class ChatwootConversationsWebSocketHelper {
    * Register handler for conversation updated events
    */
   public onConversationUpdated(handler: ConversationUpdatedHandler): void {
-    this.conversationUpdatedHandlers.clear();
     this.conversationUpdatedHandlers.add(handler);
   }
 
@@ -569,7 +566,6 @@ export class ChatwootConversationsWebSocketHelper {
    * Register handler for status changed events
    */
   public onStatusChanged(handler: ConversationStatusChangedHandler): void {
-    this.statusChangedHandlers.clear();
     this.statusChangedHandlers.add(handler);
   }
 
@@ -581,7 +577,6 @@ export class ChatwootConversationsWebSocketHelper {
    * Register handler for message created events
    */
   public onMessageCreated(handler: MessageCreatedHandler): void {
-    this.messageCreatedHandlers.clear();
     this.messageCreatedHandlers.add(handler);
   }
 
@@ -593,7 +588,6 @@ export class ChatwootConversationsWebSocketHelper {
    * Register handler for assignee changed events
    */
   public onAssigneeChanged(handler: AssigneeChangedHandler): void {
-    this.assigneeChangedHandlers.clear();
     this.assigneeChangedHandlers.add(handler);
   }
 
@@ -605,7 +599,6 @@ export class ChatwootConversationsWebSocketHelper {
    * Register handler for typing events
    */
   public onTyping(handler: TypingHandler): void {
-    this.typingHandlers.clear();
     this.typingHandlers.add(handler);
   }
 

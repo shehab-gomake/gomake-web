@@ -224,14 +224,14 @@ export interface ChatwootMessage {
   account_id?: number;
   inbox_id?: number;
   conversation_id?: number;
-  message_type?: number;
+  message_type?: 0 | 1 | 2; // 0: incoming, 1: outgoing, 2: activity
   created_at?: number;
   updated_at?: number;
   /** Private flag - API may return as _private or private */
   _private?: boolean;
   /** Private flag - API may return as _private or private */
   private?: boolean;
-  status?: string;
+  status?: 'sent' | 'delivered' | 'read' | 'failed';
   source_id?: string;
   content_type?: string;
   content_attributes?: ChatwootContentAttributes;
