@@ -332,6 +332,8 @@ const QuotesListPageWidget = ({
     isLoadingEmailData,
     closeEmailComposer,
     documentForEmail,
+    hideCheckboxes,
+    preSelectedMethod,
   } = useQuotes(documentType, isFromHomePage);
 
   // Get the main quotes pagination handler
@@ -832,7 +834,8 @@ const QuotesListPageWidget = ({
         isSendToClient={isSendToClient}
         isSendOrderReadyToClient={isSendOrderReadyToClient}
         showAlertModal={showAlertModal}
-        hideCheckboxes={hasFrontDeskFeature}
+        hideCheckboxes={hideCheckboxes}
+        preSelectedMethod={preSelectedMethod}
       />
       <GoMakeAlertModal
         openModal={alertNotVerifiedMailModal.isOpen}
