@@ -21,6 +21,8 @@ import { useGomakeAxios } from "@/hooks/use-gomake-axios";
 import { useWhatsAppWeb } from "@/pages-components/quote-new/use-whats-app-web";
 import { MessageType } from "@/pages-components/quote-new/use-quote";
 import { emailRegex } from "@/utils/regex";
+import { useRecoilValue } from "recoil";
+import { printHouseHasFrontDeskFeature } from "@/store/print-house-profile";
 
 interface ISendPaymentProps {
   openPaymentModal?: any;
@@ -50,6 +52,7 @@ const SendPaymentModal = ({
   const { callApi } = useGomakeAxios();
   const { getWhatsWebUrl, openWhatsAppWebLink } = useWhatsAppWeb();
   const isReceipt = documentType === DOCUMENT_TYPE.receipt;
+  const hasFrontDeskFeature = useRecoilValue(printHouseHasFrontDeskFeature);
 
   const {
     t,
@@ -315,7 +318,7 @@ const SendPaymentModal = ({
                 )}
               </Stack>
             ))}
-        {!hideCheckboxes && (
+        {!hideCheckboxes && !hasFrontDeskFeature && (
           <Stack display="flex" flexWrap="wrap" direction="row" gap="10px">
             <div style={classes.inputLbl}>
               <SecondaryCheckBox

@@ -4039,6 +4039,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
           `sales.quote.${DOCUMENT_TYPE[docType]}`
         ).toLowerCase()} ${t("sales.quote.number")} - ${document?.number}`
       );
+      setHideCheckboxes(false); // Show checkboxes to allow selecting email/phone/WhatsApp
+      setPreSelectedMethod(null); // No pre-selected method
       setOpenPaymentModal(true);
     } catch (error) {
       alertFaultGetData();
@@ -4221,7 +4223,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         ).toLowerCase()} ${t("sales.quote.number")} - ${document?.number}`
       );
       setIsSendToClient(false);
-      setHideCheckboxes(true);
+      setHideCheckboxes(false); // Show checkboxes to allow selecting multiple methods
       setPreSelectedMethod("sms");
       setOpenPaymentModal(true);
     } catch (error) {
@@ -4247,7 +4249,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         ).toLowerCase()} ${t("sales.quote.number")} - ${document?.number}`
       );
       setIsSendToClient(false);
-      setHideCheckboxes(true);
+      setHideCheckboxes(false); // Show checkboxes to allow selecting multiple methods
       setPreSelectedMethod("whatsapp");
       setOpenPaymentModal(true);
     } catch (error) {
