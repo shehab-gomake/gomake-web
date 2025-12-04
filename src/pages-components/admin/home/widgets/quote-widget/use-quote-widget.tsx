@@ -27,7 +27,7 @@ import {
   getAllProductAndMaterialsApi,
   addDocumentItemFromProductApi,
 } from "@/services/api-service/products/product-endpoints";
-import { addDocumentItemFromMaterialApi, addDocumentItemFromMaterialRowApi } from "@/services/api-service/materials/materials-endpoints";
+import { addDocumentItemFromMaterialRowApi } from "@/services/api-service/materials/materials-endpoints";
 import { ETab } from "@/pages-components/admin/home/widgets/quote-widget/enums";
 import { EStatisticsLabels } from "@/pages-components/quotes/enums";
 import { Permissions } from "@/components/CheckPermission/enum";
