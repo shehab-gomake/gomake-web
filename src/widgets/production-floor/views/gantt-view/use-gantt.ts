@@ -28,6 +28,13 @@ const useGantt = (reschedulingHook?: any) => {
   const isFetching = useRef(false);
   const prevStationsRef = useRef(null);
   const prevGroupIdRef = useRef(null);
+  const prevFromCreateDateRef = useRef(null);
+  const prevToCreateDateRef = useRef(null);
+  const prevFromDeliveryTimeRef = useRef(null);
+  const prevToDeliveryTimeRef = useRef(null);
+  const prevFromEstimatedProductionTimeRef = useRef(null);
+  const prevToEstimatedProductionTimeRef = useRef(null);
+  const prevAgentIdsRef = useRef(null);
 
   // Modal state
   const [showRescheduleModal, setShowRescheduleModal] = useState(false);
@@ -64,73 +71,105 @@ const useGantt = (reschedulingHook?: any) => {
   const [currentMonth, setCurrentMonth] = useState(moment());
   const [isTimeLineLocked, setIsTimeLineLocked] = useState(false);
 
-  const getData = async (month, stationsOverride?, groupIdOverride?) => {
-    // Prevent concurrent API calls
-    if (isFetching.current) {
-      console.log("Already fetching, skipping duplicate call");
-      return;
-    }
-
-    isFetching.current = true;
-
-    // Calculate start and end dates for the selected month in UTC
-    const startOfMonth = moment()
-      .year(currentMonth.year()) // Ensure the year aligns with the selected month
-      .month(month) // Set the correct month
-      .startOf("month") // Start of the month
-      .utc() // Convert to UTC
-      .toISOString();
-
-    const endOfMonth = moment()
-      .year(currentMonth.year()) // Ensure the year aligns with the selected month
-      .month(month) // Set the correct month
-      .endOf("month") // End of the month
-      .utc() // Convert to UTC
-      .toISOString();
-
-    const callBack = (res) => {
-      if (res.success) {
-        setGroups(res.data.groups);
-        setItems(
-          res.data.items?.map((item) => ({
-            ...item,
-            start_time: moment(item.startTime).local(),
-            end_time: moment(item.endTime).local(),
-          }))
-        );
-        // Update isTimeLineLocked from API response
-        if (res.data.isTimeLineLocked !== undefined) {
-          setIsTimeLineLocked(res.data.isTimeLineLocked);
-        }
+  const getData = useCallback(
+    async (month, stationsOverride?, groupIdOverride?) => {
+      // Prevent concurrent API calls
+      if (isFetching.current) {
+        console.log("Already fetching, skipping duplicate call");
+        return;
       }
-      isFetching.current = false;
-    };
 
-    try {
-      const finalGroupId =
-        groupIdOverride !== undefined
-          ? groupIdOverride
-          : filtersState.groupId || null;
+      isFetching.current = true;
 
-      const finalStations =
-        stationsOverride !== undefined
-          ? stationsOverride
-          : filtersState.stations || [];
+      // Calculate start and end dates for the selected month in UTC
+      const startOfMonth = moment()
+        .year(currentMonth.year()) // Ensure the year aligns with the selected month
+        .month(month) // Set the correct month
+        .startOf("month") // Start of the month
+        .utc() // Convert to UTC
+        .toISOString();
 
-      await getTimeLineJobsApi(callApi, callBack, {
-        filter: {
+      const endOfMonth = moment()
+        .year(currentMonth.year()) // Ensure the year aligns with the selected month
+        .month(month) // Set the correct month
+        .endOf("month") // End of the month
+        .utc() // Convert to UTC
+        .toISOString();
+
+      const callBack = (res) => {
+        if (res.success) {
+          setGroups(res.data.groups);
+          setItems(
+            res.data.items?.map((item) => ({
+              ...item,
+              start_time: moment(item.startTime).local(),
+              end_time: moment(item.endTime).local(),
+            }))
+          );
+          // Update isTimeLineLocked from API response
+          if (res.data.isTimeLineLocked !== undefined) {
+            setIsTimeLineLocked(res.data.isTimeLineLocked);
+          }
+        }
+        isFetching.current = false;
+      };
+
+      try {
+        const finalGroupId =
+          groupIdOverride !== undefined
+            ? groupIdOverride
+            : filtersState.groupId || null;
+
+        const finalStations =
+          stationsOverride !== undefined
+            ? stationsOverride
+            : filtersState.stations || [];
+
+        // Build filter object and explicitly include date filters
+        const filterObject: any = {
           ...filtersState,
           stations: finalStations,
           groupId: finalGroupId,
-        },
-        startDate: startOfMonth,
-        endDate: endOfMonth,
-      });
-    } catch (error) {
-      console.error("Error fetching timeline data:", error);
-      isFetching.current = false;
-    }
-  };
+        };
+
+        // Explicitly include date filters if they exist in filtersState
+        if (filtersState.fromCreateDate !== undefined) {
+          filterObject.fromCreateDate = filtersState.fromCreateDate;
+        }
+        if (filtersState.toCreateDate !== undefined) {
+          filterObject.toCreateDate = filtersState.toCreateDate;
+        }
+        if (filtersState.fromDeliveryTime !== undefined) {
+          filterObject.fromDeliveryTime = filtersState.fromDeliveryTime;
+        }
+        if (filtersState.toDeliveryTime !== undefined) {
+          filterObject.toDeliveryTime = filtersState.toDeliveryTime;
+        }
+        if (filtersState.fromEstimatedProductionTime !== undefined) {
+          filterObject.fromEstimatedProductionTime =
+            filtersState.fromEstimatedProductionTime;
+        }
+        if (filtersState.toEstimatedProductionTime !== undefined) {
+          filterObject.toEstimatedProductionTime =
+            filtersState.toEstimatedProductionTime;
+        }
+        // Include agentIds if present
+        if (filtersState.agentIds !== undefined) {
+          filterObject.agentIds = filtersState.agentIds;
+        }
+
+        await getTimeLineJobsApi(callApi, callBack, {
+          filter: filterObject,
+          startDate: startOfMonth,
+          endDate: endOfMonth,
+        });
+      } catch (error) {
+        console.error("Error fetching timeline data:", error);
+        isFetching.current = false;
+      }
+    },
+    [filtersState, currentMonth, callApi]
+  );
 
   const handleItemResize = async (itemId, time, edge) => {
     setLoadingItemId(itemId);
@@ -191,7 +230,6 @@ const useGantt = (reschedulingHook?: any) => {
     setLoadingItemId("");
   };
 
-  //!here most important
   const handleItemMove = async (itemId, dragTime, newGroupOrder) => {
     const updatedItem = items.find((j) => j.id === itemId);
 
@@ -378,6 +416,26 @@ const useGantt = (reschedulingHook?: any) => {
     setOpenGroups((prevState) => ({ ...prevState, [id]: !prevState[id] }));
   };
 
+  // Expand all root groups
+  const expandAllGroups = () => {
+    const rootGroups = groups.filter((group) => group.isRoot);
+    const newOpenGroups = { ...openGroups };
+    rootGroups.forEach((group) => {
+      newOpenGroups[group.id] = true;
+    });
+    setOpenGroups(newOpenGroups);
+  };
+
+  // Collapse all root groups
+  const collapseAllGroups = () => {
+    const rootGroups = groups.filter((group) => group.isRoot);
+    const newOpenGroups = { ...openGroups };
+    rootGroups.forEach((group) => {
+      newOpenGroups[group.id] = false;
+    });
+    setOpenGroups(newOpenGroups);
+  };
+
   const handleZoom = ({ visibleTimeStart, visibleTimeEnd }) => {
     const startTime = moment(visibleTimeStart);
     const endTime = moment(visibleTimeEnd);
@@ -457,7 +515,7 @@ const useGantt = (reschedulingHook?: any) => {
   const getGanttData = useCallback(() => {
     // Use current filter values (stations and groupId from filtersState)
     getData(currentMonth.month()).then();
-  }, [currentMonth, filtersState.stations, filtersState.groupId]);
+  }, [currentMonth, getData]);
 
   // Initial load: Call API once with stations = [] and groupId = null
   // Note: filtersState is already reset by production-floor-widget.tsx before mounting
@@ -470,6 +528,17 @@ const useGantt = (reschedulingHook?: any) => {
       // Store current filter values to prevent subsequent triggers
       prevStationsRef.current = JSON.stringify(filtersState.stations || []);
       prevGroupIdRef.current = filtersState.groupId || null;
+      prevFromCreateDateRef.current = filtersState.fromCreateDate || null;
+      prevToCreateDateRef.current = filtersState.toCreateDate || null;
+      prevFromDeliveryTimeRef.current = filtersState.fromDeliveryTime || null;
+      prevToDeliveryTimeRef.current = filtersState.toDeliveryTime || null;
+      prevFromEstimatedProductionTimeRef.current =
+        filtersState.fromEstimatedProductionTime || null;
+      prevToEstimatedProductionTimeRef.current =
+        filtersState.toEstimatedProductionTime || null;
+      prevAgentIdsRef.current = filtersState.agentIds
+        ? JSON.stringify(filtersState.agentIds)
+        : null;
     }
   }, []);
 
@@ -478,18 +547,74 @@ const useGantt = (reschedulingHook?: any) => {
     if (!isInitialLoad.current && !isFetching.current) {
       const currentStations = JSON.stringify(filtersState.stations);
       const currentGroupId = filtersState.groupId;
+      const currentFromCreateDate = filtersState.fromCreateDate || null;
+      const currentToCreateDate = filtersState.toCreateDate || null;
+      const currentFromDeliveryTime = filtersState.fromDeliveryTime || null;
+      const currentToDeliveryTime = filtersState.toDeliveryTime || null;
+      const currentFromEstimatedProductionTime =
+        filtersState.fromEstimatedProductionTime || null;
+      const currentToEstimatedProductionTime =
+        filtersState.toEstimatedProductionTime || null;
+      const currentAgentIds = filtersState.agentIds
+        ? JSON.stringify(filtersState.agentIds)
+        : null;
 
       // Only call API if values actually changed
       const stationsChanged = prevStationsRef.current !== currentStations;
       const groupIdChanged = prevGroupIdRef.current !== currentGroupId;
+      const fromCreateDateChanged =
+        prevFromCreateDateRef.current !== currentFromCreateDate;
+      const toCreateDateChanged =
+        prevToCreateDateRef.current !== currentToCreateDate;
+      const fromDeliveryTimeChanged =
+        prevFromDeliveryTimeRef.current !== currentFromDeliveryTime;
+      const toDeliveryTimeChanged =
+        prevToDeliveryTimeRef.current !== currentToDeliveryTime;
+      const fromEstimatedProductionTimeChanged =
+        prevFromEstimatedProductionTimeRef.current !==
+        currentFromEstimatedProductionTime;
+      const toEstimatedProductionTimeChanged =
+        prevToEstimatedProductionTimeRef.current !==
+        currentToEstimatedProductionTime;
+      const agentIdsChanged = prevAgentIdsRef.current !== currentAgentIds;
 
-      if (stationsChanged || groupIdChanged) {
+      if (
+        stationsChanged ||
+        groupIdChanged ||
+        fromCreateDateChanged ||
+        toCreateDateChanged ||
+        fromDeliveryTimeChanged ||
+        toDeliveryTimeChanged ||
+        fromEstimatedProductionTimeChanged ||
+        toEstimatedProductionTimeChanged ||
+        agentIdsChanged
+      ) {
         prevStationsRef.current = currentStations;
         prevGroupIdRef.current = currentGroupId;
+        prevFromCreateDateRef.current = currentFromCreateDate;
+        prevToCreateDateRef.current = currentToCreateDate;
+        prevFromDeliveryTimeRef.current = currentFromDeliveryTime;
+        prevToDeliveryTimeRef.current = currentToDeliveryTime;
+        prevFromEstimatedProductionTimeRef.current =
+          currentFromEstimatedProductionTime;
+        prevToEstimatedProductionTimeRef.current =
+          currentToEstimatedProductionTime;
+        prevAgentIdsRef.current = currentAgentIds;
         getGanttData();
       }
     }
-  }, [filtersState.stations, filtersState.groupId, getGanttData]);
+  }, [
+    filtersState.stations,
+    filtersState.groupId,
+    filtersState.fromCreateDate,
+    filtersState.toCreateDate,
+    filtersState.fromDeliveryTime,
+    filtersState.toDeliveryTime,
+    filtersState.fromEstimatedProductionTime,
+    filtersState.toEstimatedProductionTime,
+    filtersState.agentIds,
+    getGanttData,
+  ]);
 
   // Socket.IO listener for updateTimeLineBoard event
   useEffect(() => {
@@ -699,6 +824,8 @@ const useGantt = (reschedulingHook?: any) => {
     handleItemResize,
     handleItemMove,
     toggleGroup,
+    expandAllGroups,
+    collapseAllGroups,
     handleZoom,
     currentMonth,
     setCurrentMonth,

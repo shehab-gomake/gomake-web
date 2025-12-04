@@ -5,12 +5,10 @@ import { useProductionFloorData } from "@/widgets/production-floor/use-productio
 import { printHouseProfile } from "@/store/print-house-profile";
 import { useRecoilValue } from "recoil";
 import { EProductionFloorView } from "@/widgets/production-floor/state/production-floor-view";
-import { productionFloorFiltersState } from "@/widgets/production-floor/state/production-floor-filters";
 
 const useProductionFloorSocketIO = (view: EProductionFloorView) => {
   const [connectionId, setConnectionId] = useState<any>();
   const profile = useRecoilValue(printHouseProfile);
-  const filters = useRecoilValue(productionFloorFiltersState);
   const {
     getData,
     getDataByGroups,
