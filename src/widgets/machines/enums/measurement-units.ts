@@ -31,6 +31,7 @@ export enum EMeasurementUnits {
     BENDING_P_H = 'bendingPH',
     BOOKLETS_P_MIN = 'bookletsPMin',
     BOOKS_P_MIN = 'booksPerMinute',
+    BOXES_P_MIN = 'boxesPerMinute',
     SETS_MIN = 'setsPerMinute',
     COVERS_P_H = "coversPH",
     PACKAGE_P_H = 'packagePH',

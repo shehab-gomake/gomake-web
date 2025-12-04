@@ -131,6 +131,10 @@ const useInputUnit = () => {
             imperialRatio: 1,
             imperialUnit: EMeasurementUnits.BOOKS_P_MIN
         },
+        [EMeasurementUnits.BOXES_P_MIN]: {
+            imperialRatio: 1,
+            imperialUnit: EMeasurementUnits.BOXES_P_MIN
+        },
         [EMeasurementUnits.SETS_MIN]: {
             imperialRatio: 1,
             imperialUnit: EMeasurementUnits.SETS_MIN
