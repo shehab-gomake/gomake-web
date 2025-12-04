@@ -1199,6 +1199,12 @@
     "Stackers": "Stackers",
     "additionalColorsCoast": "Additional colors",
     "setupTime": "Setup time",
+    "ledsAmountPerArea": "Leds amount per area",
+    "ledsLengthPerArea": "Leds length per area",
+    "ledUnitsInstallation": "LED Installation Parameters",
+    "ledRollInstallation": "LED Roll Installation",
+    "welding": "Welding",
+    "gluing": "Gluing",
     "upToMediaWeight": "Up to weight",
     "time": "Time",
     "stationWashTime": "Station wash time",
@@ -1470,7 +1476,13 @@
     "moreSettings": "More settings",
     "dieTypes": "Die types",
     "foldingUnit": "Folding unit",
-    "collectionInsideUnit": "Collection inside unit"
+    "collectionInsideUnit": "Collection inside unit",
+    "led": "LED",
+    "sidesInstall": "Sides Install",
+    "profileInstall": "Profile Install",
+    "flatbed": "Flatbed",
+    "flatbedBackgroundInstall": "Flatbed Background Install",
+    "background": "Background"
   },
   "products": {
     "profits": {

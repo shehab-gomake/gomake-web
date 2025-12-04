@@ -1085,6 +1085,12 @@
     "Stackers": "Stapler",
     "additionalColorsCoast": "Kosten für zusätzliche Farben",
     "setupTime": "Einrichtungszeit",
+    "ledsAmountPerArea": "LEDs Menge pro Fläche",
+    "ledsLengthPerArea": "LEDs Länge pro Fläche",
+    "ledUnitsInstallation": "LED-Installationsparameter",
+    "ledRollInstallation": "LED-Rolleninstallation",
+    "welding": "Schweißen",
+    "gluing": "Kleben",
     "upToMediaWeight": "Bis zu Gewicht",
     "time": "Zeit",
     "sheetsLost": "Verlorene Blätter",
@@ -1352,7 +1358,13 @@
     "laminationSettings": "Laminierungseinstellungen",
     "varnishSettings": "Lackeinstellungen",
     "bookDimensions": "Buchabmessungen",
-    "actions&materials": "Aktionen und Materialien"
+    "actions&materials": "Aktionen und Materialien",
+    "led": "LED",
+    "sidesInstall": "Seiteninstallation",
+    "profileInstall": "Profilinstallation",
+    "flatbed": "Flachbett",
+    "flatbedBackgroundInstall": "Flachbett-Hintergrundinstallation",
+    "background": "Hintergrund"
   },
   "products": {
     "profits": {

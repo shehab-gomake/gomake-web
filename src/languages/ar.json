@@ -1113,6 +1113,12 @@
     "Stackers": "مجمعات الورق",
     "additionalColorsCoast": "تكلفة الألوان الإضافية",
     "setupTime": "وقت الإعداد",
+    "ledsAmountPerArea": "عدد المصابيح لكل مساحة",
+    "ledsLengthPerArea": "طول المصابيح لكل مساحة",
+    "ledUnitsInstallation": "معاملات تركيب LED",
+    "ledRollInstallation": "تركيب لفة LED",
+    "welding": "اللحام",
+    "gluing": "اللصق",
     "upToMediaWeight": "حتى الوزن",
     "time": "الوقت",
     "sheetsLost": "الأوراق المفقودة",
@@ -1380,7 +1386,13 @@
     "laminationSettings": "إعدادات التغليف",
     "varnishSettings": "إعدادات التوريق",
     "bookDimensions": "أبعاد الكتاب",
-    "actions&materials": "الإجراءات والمواد"
+    "actions&materials": "الإجراءات والمواد",
+    "led": "LED",
+    "sidesInstall": "تثبيت الجوانب",
+    "profileInstall": "تثبيت الملف الشخصي",
+    "flatbed": "سطح مستو",
+    "flatbedBackgroundInstall": "تثبيت خلفية مسطحة",
+    "background": "الخلفية"
   },
   "products": {
     "profits": {
