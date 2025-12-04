@@ -1,53 +1,32 @@
 import {EMeasurementUnits} from "@/widgets/machines/enums/measurement-units";
-import {minMaxInput} from "@/widgets/machines/utils/attributes/media-inputs/min-max-input";
 
 const lightBoxesMachine = (state: Record<string, any>) => {
     return [
-        ...minMaxInput(state, 'backgroundSidesLetterMargin', 'sidesLetterMargin', EMeasurementUnits.CM),
-        ...minMaxInput(state, 'backgroundSpDownLetterMargin', 'upDownLetterMargin', EMeasurementUnits.CM),
         {
-            name: 'machineAttributes.profileInstallationTime',
-            parameterKey: 'backgroundInstallationTime',
-            machineInputType: 'multiInput',
-            value: state.attributes?.backgroundInstallationTime ? state.attributes?.backgroundInstallationTime : {},
+            name: "profileSetupTime",
+            label: "machineAttributes.setupTime",
+            type: "text",
+            placeholder: "machineAttributes.setupTime",
+            required: true,
+            parameterKey: "profileSetupTime",
+            value: state?.attributes?.profileSetupTime ? state?.attributes?.profileSetupTime : '',
+            options: [],
+            machineInputType: 'input',
             isValid: true,
-            inputs: [
-                {
-                    name: "setupTime",
-                    label: "machineAttributes.setupTime",
-                    type: "text",
-                    placeholder: "machineAttributes.setupTime",
-                    parameterKey: "setupTime",
-                    unit: EMeasurementUnits.MINUTE,
-                    options: [],
-                    value: state?.attributes?.backgroundInstallationTime?.setupTime ? state?.attributes?.backgroundInstallationTime?.setupTime : '',
-                    machineInputType: 'input',
-                },
-                {
-                    name: "speed",
-                    label: "machineAttributes.speed",
-                    type: "text",
-                    placeholder: "machineAttributes.speed",
-                    parameterKey: "speed",
-                    unit: EMeasurementUnits.LETTERS_PER_HOUR,
-                    options: [],
-                    value: state?.attributes?.backgroundInstallationTime?.speed ? state?.attributes?.backgroundInstallationTime?.speed : '',
-                    machineInputType: 'input',
-                },
-                {
-                    name: "adjustments",
-                    label: "machineAttributes.sidesAdjustments",
-                    type: "text",
-                    placeholder: "machineAttributes.sidesAdjustments",
-                    required: true,
-                    parameterKey: "adjustments",
-                    value: state?.attributes?.backgroundInstallationTime?.adjustments ? state?.attributes?.backgroundInstallationTime?.adjustments : '',
-                    options: [],
-                    machineInputType: 'input',
-                    isValid: true,
-                    unit: EMeasurementUnits.SQUARE_CM
-                },
-            ]
+            unit: EMeasurementUnits.MINUTE,
+        },
+        {
+            name: "profileSpeed",
+            label: "machineAttributes.speed",
+            type: "text",
+            placeholder: "machineAttributes.speed",
+            required: true,
+            parameterKey: "profileSpeed",
+            value: state?.attributes?.profileSpeed ? state?.attributes?.profileSpeed : '',
+            options: [],
+            machineInputType: 'input',
+            isValid: true,
+            unit: EMeasurementUnits.CM_P_MIN,
         },
         {
             name: 'machineAttributes.verticalProfiles',
@@ -56,16 +35,6 @@ const lightBoxesMachine = (state: Record<string, any>) => {
             value: state.attributes?.backgroundVerticalProfiles ? state.attributes?.backgroundVerticalProfiles : {},
             isValid: true,
             inputs: [
-                {
-                    name: "profilesNumber",
-                    label: "machineAttributes.profilesNumber",
-                    type: "text",
-                    placeholder: "machineAttributes.profilesNumber",
-                    parameterKey: "profilesNumber",
-                    options: [],
-                    value: state?.attributes?.backgroundVerticalProfiles?.profilesNumber ? state?.attributes?.backgroundVerticalProfiles?.profilesNumber : '',
-                    machineInputType: 'input',
-                },
                 {
                     name: "adjustments",
                     label: "machineAttributes.verticalProfileAdjustments",
@@ -89,23 +58,13 @@ const lightBoxesMachine = (state: Record<string, any>) => {
             isValid: true,
             inputs: [
                 {
-                    name: "horizontalProfilesNumber",
-                    label: "machineAttributes.horizontalProfilesNumber",
-                    type: "text",
-                    placeholder: "machineAttributes.horizontalProfilesNumber",
-                    parameterKey: "profilesNumber",
-                    options: [],
-                    value: state?.attributes?.backgroundHorizontalProfiles?.profilesNumber ? state?.attributes?.backgroundHorizontalProfiles?.profilesNumber : '',
-                    machineInputType: 'input',
-                },
-                {
                     name: "adjustments",
                     label: "machineAttributes.horizontalProfileAdjustments",
                     type: "text",
                     placeholder: "machineAttributes.horizontalProfileAdjustments",
                     required: true,
                     parameterKey: "adjustments",
-                    value: state?.attributes?.backgroundVerticalProfiles?.adjustments || '',
+                    value: state?.attributes?.backgroundHorizontalProfiles?.adjustments || '',
                     options: [],
                     machineInputType: 'input',
                     isValid: true,
