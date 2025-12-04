@@ -76,8 +76,7 @@ const AdvertisingProductNameParameterWidget = ({
   const categoryImage = selectedDieCutTypeValue?.additionalAttribute?.find(attr => attr.valueId === 'categoryImage')?.value;
   const image = selectedDieCutTypeValue?.additionalAttribute?.find(attr => attr.valueId === 'image')?.value;
   // Get unit from subProducts first, then fallback to productTemplate
-  const unitFromSubProducts = subProducts.flatMap((item: any) => item.parameters).find((param: any) => param.parameterCode === "Width" || param.parameterCode === "Height")?.unitKey;
-
+  const unitFromSubProducts = subProducts.flatMap((item: any) => item.parameters).find((param: any) => param.parameterCode === "Width" || param.parameterCode === "Height")?.defaultUnit;
   const getUnitFromTemplate = () => {
     if (unitFromSubProducts) return unitFromSubProducts;
 
@@ -87,11 +86,13 @@ const AdvertisingProductNameParameterWidget = ({
         subSection.parameters?.filter(param => param.code === "Width" || param.code === "Height")
       )
     ).find(param => param?.unitKey);
-
-    return widthParamFromTemplate?.unitKey;
+    return widthParamFromTemplate?.defaultUnit;
   };
 
+
   const unit = getUnitFromTemplate();
+
+
 
   // Regular options (scrollable)
   const regularDieCutTypeOptions = parameter?.valuesConfigs?.filter(value => {
@@ -369,20 +370,20 @@ const AdvertisingProductNameParameterWidget = ({
               <div style={clasess.modalContentImage}>
 
                 <div style={clasess.modalContentImageItem}>
-                  <img src={newDataGenerated?.rowData?.image?.value} alt="newDataGenerated" style={{ width: "100%", height: "100%", objectFit: "contain" }} />
+                  <img src={newDataGenerated?.rowData?.image?.value} alt="newDataGenerated" style={{ width: "100%", height: "100%", objectFit: "contain", maxHeight: "400px" }} />
                 </div>
                 <div style={clasess.modalContentDataItem}>
                   <h4>
-                    Name:{newDataGenerated?.rowData?.name?.value}
+                    {t("sales.quote.name")}: {newDataGenerated?.rowData?.name?.value}
                   </h4>
                   <h4>
-                    {t("products.offsetPrice.admin.cuttingLineLength")}:{newDataGenerated?.rowData?.cuttingLineLength?.value} {unit}
+                    {t("products.offsetPrice.admin.cuttingLineLength")}: {newDataGenerated?.rowData?.cuttingLineLength?.value} {unit}
                   </h4>
                   <h4>
-                    {t("products.offsetPrice.admin.scoringLineLength")}:{newDataGenerated?.rowData?.scoringLineLength?.value} {unit}
+                    {t("products.offsetPrice.admin.scoringLineLength")}: {newDataGenerated?.rowData?.scoringLineLength?.value} {unit}
                   </h4>
                   <h4>
-                    {t("products.offsetPrice.admin.perforationLineLength")}:{newDataGenerated?.rowData?.perforationLineLength?.value} {unit}
+                    {t("products.offsetPrice.admin.perforationLineLength")}: {newDataGenerated?.rowData?.perforationLineLength?.value} {unit}
                   </h4>
                 </div>
               </div>
@@ -461,7 +462,7 @@ const AdvertisingProductNameParameterWidget = ({
                       }}>
                       {dynamicParams.map((param: any) => {
                         const paramValue = customDimensions[param.code] || "";
-                        const paramUnit = param.unitKey || unit;
+                        const paramUnit = param.defaultUnit || unit;
                         const isRequired = param.isRequired !== false;
 
                         return (
