@@ -11,6 +11,7 @@ export enum PreferenceValueType {
   Number = 0,
   Select,
   Boolean,
+  Language,
 }
 
 const useGeneralSettings = () => {
@@ -113,8 +114,9 @@ const useGeneralSettings = () => {
   const updatePreferences = async (updatedPreference: {
     updatedValue: any;
     preferenceId: string;
+    secondaryValue?: any;
   }) => {
-    const { updatedValue, preferenceId } = updatedPreference;
+    const { updatedValue, preferenceId, secondaryValue } = updatedPreference;
     const callBack = (res: { success: boolean }) => {
       if (res?.success) {
         // getAllPreferences(); //old
@@ -147,7 +149,13 @@ const useGeneralSettings = () => {
                   ? t(`preferences.${displayValue}`)
                   : displayValue,
                 <GeneralSettingsMenu
-                  preferenceItem={{ ...item, value: updatedValue }}
+                  preferenceItem={{
+                    ...item,
+                    value: updatedValue,
+                    ...(secondaryValue !== undefined && {
+                      secondaryValue: secondaryValue,
+                    }),
+                  }}
                   onClickEdit={handleOpenModal}
                 />,
               ];
