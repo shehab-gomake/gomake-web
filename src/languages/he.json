@@ -1380,7 +1380,12 @@
     "laminationSettings": "הגדרות קריפוט",
     "varnishSettings": "הגדרות ציפוי",
     "bookDimensions": "מידות ספר",
-    "actions&materials": "פעולות וחומרים"
+    "actions&materials": "פעולות וחומרים",
+    "led": "LED",
+    "sidesInstall": "התקנת צדדים",
+    "profileInstall": "התקנת פרופיל",
+    "flatbed": "שטוח",
+    "background": "רקע"
   },
   "products": {
     "profits": {

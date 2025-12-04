@@ -1476,7 +1476,12 @@
     "moreSettings": "More settings",
     "dieTypes": "Die types",
     "foldingUnit": "Folding unit",
-    "collectionInsideUnit": "Collection inside unit"
+    "collectionInsideUnit": "Collection inside unit",
+    "led": "LED",
+    "sidesInstall": "Sides Install",
+    "profileInstall": "Profile Install",
+    "flatbed": "Flatbed",
+    "background": "Background"
   },
   "products": {
     "profits": {

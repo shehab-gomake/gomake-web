@@ -1386,7 +1386,12 @@
     "laminationSettings": "إعدادات التغليف",
     "varnishSettings": "إعدادات التوريق",
     "bookDimensions": "أبعاد الكتاب",
-    "actions&materials": "الإجراءات والمواد"
+    "actions&materials": "الإجراءات والمواد",
+    "led": "LED",
+    "sidesInstall": "تثبيت الجوانب",
+    "profileInstall": "تثبيت الملف الشخصي",
+    "flatbed": "سطح مستو",
+    "background": "الخلفية"
   },
   "products": {
     "profits": {

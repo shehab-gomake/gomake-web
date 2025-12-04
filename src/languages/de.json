@@ -1358,7 +1358,12 @@
     "laminationSettings": "Laminierungseinstellungen",
     "varnishSettings": "Lackeinstellungen",
     "bookDimensions": "Buchabmessungen",
-    "actions&materials": "Aktionen und Materialien"
+    "actions&materials": "Aktionen und Materialien",
+    "led": "LED",
+    "sidesInstall": "Seiteninstallation",
+    "profileInstall": "Profilinstallation",
+    "flatbed": "Flachbett",
+    "background": "Hintergrund"
   },
   "products": {
     "profits": {
