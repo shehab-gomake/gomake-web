@@ -23,8 +23,10 @@ interface ConversationLabelsFilterProps {
   filters: Partial<ConversationListParams>;
   onFiltersChange: (filters: Partial<ConversationListParams>) => void;
   onLabelClick?: () => void;
-  primaryColor: (shade: number) => string;
-  neutralColor: (shade: number) => string;
+  /** @deprecated No longer used - colors are now from design tokens */
+  primaryColor?: (shade: number) => string;
+  /** @deprecated No longer used - colors are now from design tokens */
+  neutralColor?: (shade: number) => string;
 }
 
 export const ConversationLabelsFilter: React.FC<ConversationLabelsFilterProps> = ({

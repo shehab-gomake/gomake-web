@@ -63,6 +63,10 @@ const useInputUnit = () => {
             imperialRatio: 0.00107639,
             imperialUnit: EMeasurementUnits.SQUARE_FEET
         },
+        [EMeasurementUnits.CM_PER_SQUARE_CM]: {
+            imperialRatio: 0.3937007874,
+            imperialUnit: 'inchPerSquareInch' as EMeasurementUnits
+        },
         [EMeasurementUnits.SETS_HOUR]: {
             imperialRatio: 1,
             imperialUnit: EMeasurementUnits.SETS_HOUR
@@ -103,6 +107,10 @@ const useInputUnit = () => {
             imperialRatio: 0.03937007874,
             imperialUnit: EMeasurementUnits.INCH_P_MIN
         },
+        [EMeasurementUnits.CM_P_MIN]: {
+            imperialRatio: 0.3937007874,
+            imperialUnit: EMeasurementUnits.INCH_P_MIN
+        },
         [EMeasurementUnits.PIERCING_PER_MIN]: {
             imperialRatio: 1,
             imperialUnit: EMeasurementUnits.PIERCING_PER_MIN
@@ -122,6 +130,10 @@ const useInputUnit = () => {
         [EMeasurementUnits.BOOKS_P_MIN]: {
             imperialRatio: 1,
             imperialUnit: EMeasurementUnits.BOOKS_P_MIN
+        },
+        [EMeasurementUnits.BOXES_P_MIN]: {
+            imperialRatio: 1,
+            imperialUnit: EMeasurementUnits.BOXES_P_MIN
         },
         [EMeasurementUnits.SETS_MIN]: {
             imperialRatio: 1,

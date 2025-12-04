@@ -28,7 +28,7 @@ import {
   getFileCategory,
   categorizeAttachments,
 } from "../../utils/attachment.utils";
-import { useSafeColors } from "@/widgets/frontdesk/utils/theme.utils";
+import { colorTokens, radiusTokens, shadowTokens, fileTypeColors } from "@/widgets/frontdesk/design-system";
 
 // ============================================================================
 // Icon Mapping
@@ -72,7 +72,6 @@ interface ImageAttachmentProps {
 }
 
 const ImageAttachment: React.FC<ImageAttachmentProps> = React.memo(({ attachment, onPreview }) => {
-  const { safeNeutralColor } = useSafeColors();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
@@ -106,7 +105,7 @@ const ImageAttachment: React.FC<ImageAttachmentProps> = React.memo(({ attachment
         maxHeight: 220,
         minWidth: 80,
         minHeight: 80,
-        bgcolor: safeNeutralColor(100),
+        bgcolor: colorTokens.neutral[100],
         "&:hover": error ? {} : { opacity: 0.95 },
       }}
     >
@@ -136,7 +135,7 @@ const ImageAttachment: React.FC<ImageAttachmentProps> = React.memo(({ attachment
             gap: 0.5,
           }}
         >
-          <BrokenImageIcon sx={{ fontSize: 32, color: safeNeutralColor(400) }} />
+          <BrokenImageIcon sx={{ fontSize: 32, color: colorTokens.neutral[400] }} />
           <Typography variant="caption" color="text.secondary">
             Failed to load
           </Typography>
@@ -172,7 +171,6 @@ interface VideoAttachmentProps {
 }
 
 const VideoAttachment: React.FC<VideoAttachmentProps> = React.memo(({ attachment, onPreview }) => {
-  const { safeNeutralColor } = useSafeColors();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
@@ -199,7 +197,7 @@ const VideoAttachment: React.FC<VideoAttachmentProps> = React.memo(({ attachment
         overflow: "hidden",
         maxWidth: 280,
         cursor: error ? "default" : "pointer",
-        bgcolor: safeNeutralColor(900),
+        bgcolor: colorTokens.neutral[900],
         "&:hover .play-overlay": error ? {} : { bgcolor: "rgba(0,0,0,0.4)" },
       }}
       onClick={handleClick}
@@ -230,8 +228,8 @@ const VideoAttachment: React.FC<VideoAttachmentProps> = React.memo(({ attachment
             gap: 0.5,
           }}
         >
-          <VideoFileIcon sx={{ fontSize: 32, color: safeNeutralColor(400) }} />
-          <Typography variant="caption" sx={{ color: safeNeutralColor(400) }}>
+          <VideoFileIcon sx={{ fontSize: 32, color: colorTokens.neutral[400] }} />
+          <Typography variant="caption" sx={{ color: colorTokens.neutral[400] }}>
             Failed to load video
           </Typography>
         </Box>
@@ -285,7 +283,6 @@ interface AudioAttachmentProps {
 }
 
 const AudioAttachment: React.FC<AudioAttachmentProps> = React.memo(({ attachment }) => {
-  const { safeNeutralColor } = useSafeColors();
   const theme = useTheme();
   const fileName = getFileNameFromUrl(attachment.data_url);
 
@@ -295,11 +292,11 @@ const AudioAttachment: React.FC<AudioAttachmentProps> = React.memo(({ attachment
         p: 1,
         borderRadius: 1.5,
         bgcolor: theme.palette.mode === "dark"
-          ? alpha(safeNeutralColor(700), 0.4)
-          : alpha(safeNeutralColor(100), 0.8),
+          ? alpha(colorTokens.neutral[700], 0.4)
+          : alpha(colorTokens.neutral[100], 0.8),
         border: `1px solid ${theme.palette.mode === "dark"
-          ? alpha(safeNeutralColor(600), 0.3)
-          : safeNeutralColor(200)}`,
+          ? alpha(colorTokens.neutral[600], 0.3)
+          : colorTokens.neutral[200]}`,
         minWidth: 240,
         maxWidth: 280,
       }}
@@ -323,7 +320,7 @@ const AudioAttachment: React.FC<AudioAttachmentProps> = React.memo(({ attachment
       </Stack>
       <audio controls src={attachment.data_url} style={{ width: "100%", height: 36 }} preload="metadata" />
       {attachment.file_size && (
-        <Typography variant="caption" sx={{ color: safeNeutralColor(500), mt: 0.5, display: "block", fontSize: "0.6875rem" }}>
+        <Typography variant="caption" sx={{ color: colorTokens.neutral[500], mt: 0.5, display: "block", fontSize: "0.6875rem" }}>
           {formatFileSize(attachment.file_size)}
         </Typography>
       )}
@@ -344,7 +341,6 @@ interface FileAttachmentProps {
 
 const FileAttachment: React.FC<FileAttachmentProps> = React.memo(({ attachment }) => {
   const theme = useTheme();
-  const { safeNeutralColor } = useSafeColors();
   const fileName = getFileNameFromUrl(attachment.data_url);
   const extension = getFileExtension(attachment.data_url, attachment.extension);
   const category = getFileCategory(attachment.file_type, extension);
@@ -363,11 +359,11 @@ const FileAttachment: React.FC<FileAttachmentProps> = React.memo(({ attachment }
         px: 1.25,
         borderRadius: 1.5,
         bgcolor: theme.palette.mode === "dark"
-          ? alpha(safeNeutralColor(700), 0.4)
-          : alpha(safeNeutralColor(100), 0.8),
+          ? alpha(colorTokens.neutral[700], 0.4)
+          : alpha(colorTokens.neutral[100], 0.8),
         border: `1px solid ${theme.palette.mode === "dark"
-          ? alpha(safeNeutralColor(600), 0.3)
-          : safeNeutralColor(200)}`,
+          ? alpha(colorTokens.neutral[600], 0.3)
+          : colorTokens.neutral[200]}`,
         textDecoration: "none",
         color: "inherit",
         minWidth: 180,
@@ -375,8 +371,8 @@ const FileAttachment: React.FC<FileAttachmentProps> = React.memo(({ attachment }
         transition: "background-color 0.15s ease",
         "&:hover": {
           bgcolor: theme.palette.mode === "dark"
-            ? alpha(safeNeutralColor(600), 0.5)
-            : safeNeutralColor(100),
+            ? alpha(colorTokens.neutral[600], 0.5)
+            : colorTokens.neutral[100],
         },
       }}
     >
@@ -395,7 +391,7 @@ const FileAttachment: React.FC<FileAttachmentProps> = React.memo(({ attachment }
             textOverflow: "ellipsis",
             whiteSpace: "nowrap",
             fontSize: "0.8125rem",
-            color: theme.palette.mode === "dark" ? safeNeutralColor(100) : safeNeutralColor(900),
+            color: theme.palette.mode === "dark" ? colorTokens.neutral[100] : colorTokens.neutral[900],
             lineHeight: 1.4,
           }}
           title={fileName}
@@ -405,7 +401,7 @@ const FileAttachment: React.FC<FileAttachmentProps> = React.memo(({ attachment }
         <Typography
           variant="caption"
           sx={{
-            color: safeNeutralColor(500),
+            color: colorTokens.neutral[500],
             fontSize: "0.6875rem",
             textTransform: "uppercase",
             letterSpacing: "0.3px",
@@ -419,7 +415,7 @@ const FileAttachment: React.FC<FileAttachmentProps> = React.memo(({ attachment }
       <DownloadIcon
         sx={{
           fontSize: 18,
-          color: safeNeutralColor(400),
+          color: colorTokens.neutral[400],
           flexShrink: 0,
         }}
       />

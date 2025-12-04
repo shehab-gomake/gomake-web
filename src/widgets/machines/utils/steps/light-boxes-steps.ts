@@ -9,9 +9,8 @@ const lightBoxesSteps: IStep[] = [
     {label: 'basic',  component: BasicInputsComponent},
     {label: 'led',  component: MachineDimensionsComponent},
     {label: 'sidesInstall',  component: MediaSettingComponent},
-    {label: 'welding',  component: SpeedComponent},
-    {label: 'background',  component: OtherSettingsInputsComponent},
-    {label: 'flatbed',  component: MachineRunComponent},
+    {label: 'profileInstall',  component: OtherSettingsInputsComponent},
+    {label: 'flatbedBackgroundInstall',  component: MachineRunComponent},
 ];
 
 export {lightBoxesSteps};

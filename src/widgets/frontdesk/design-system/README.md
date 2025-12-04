@@ -2,6 +2,35 @@
 
 A comprehensive, type-safe design system for building consistent UI across all FrontDesk providers (Email, Direct Messages, WhatsApp, Tickets).
 
+## ⚠️ CRITICAL: Migration Complete (Dec 2025)
+
+The Chatwoot provider has been fully migrated to use this design system. **DO NOT use deprecated patterns:**
+
+```typescript
+// ❌ DEPRECATED - Never use these
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+const { neutralColor, primaryColor } = useGomakeTheme();
+backgroundColor: neutralColor(500);
+
+// ✅ CORRECT - Always use tokens
+import { colorTokens, semanticSpacing, radiusTokens, shadowTokens } from "@/widgets/frontdesk/design-system";
+backgroundColor: colorTokens.neutral[500];
+backgroundColor: colorTokens.semantic.background.primary; // replaces neutralColor(0)
+padding: semanticSpacing.component.md;
+borderRadius: radiusTokens.md;
+```
+
+### Migration Mapping
+
+| Old Pattern | New Pattern |
+|-------------|-------------|
+| `neutralColor(0)` | `colorTokens.semantic.background.primary` |
+| `neutralColor(500)` | `colorTokens.neutral[500]` |
+| `primaryColor(600)` | `colorTokens.primary[600]` |
+| `theme.palette.divider` | `colorTokens.semantic.border.default` |
+
+---
+
 ## 🎯 Goals
 
 - **Consistency**: Unified visual language across all providers
@@ -15,9 +44,42 @@ A comprehensive, type-safe design system for building consistent UI across all F
 
 ```
 design-system/
-├── tokens/              # Design tokens (colors, spacing, typography, etc.)
+├── tokens/              # Design tokens (colors, spacing, typography, shadows, radius, layout)
+│   ├── colors.tokens.ts     # Color scales and semantic colors
+│   ├── spacing.tokens.ts    # Spacing scale and semantic spacing
+│   ├── typography.tokens.ts # Typography styles
+│   ├── shadows.tokens.ts    # Shadow definitions
+│   ├── radius.tokens.ts     # Border radius tokens
+│   ├── layout.tokens.ts     # Layout dimensions, z-index, transitions
+│   └── chatwoot.tokens.ts   # Chatwoot-specific semantic tokens
 ├── primitives/          # Base components (Button, Input, Avatar, etc.)
+│   ├── Avatar/              # User avatars with presence
+│   ├── Badge/               # Notification badges
+│   ├── Button/              # Primary action buttons
+│   ├── Chip/                # Tags, filters, status
+│   ├── Input/               # Text inputs
+│   ├── MenuItem/            # Menu items
+│   ├── StatusIndicator/     # Online/offline/busy status dots
+│   ├── Select/              # Dropdown select
+│   ├── TextArea/            # Multi-line input
+│   ├── FormField/           # Form field wrapper
+│   └── IconWrapper/         # Icon containers
 ├── compounds/           # Complex components (ListItem, Panel, etc.)
+│   ├── ListItem/            # Conversation list items
+│   ├── Panel/               # Container components
+│   ├── EmptyState/          # Empty state displays
+│   ├── MessageBubble/       # Chat message bubbles
+│   ├── PageHeader/          # Page/section headers
+│   ├── Card/                # Card containers
+│   ├── SidebarLayout/       # Sidebar navigation
+│   ├── ActionBar/           # Action button bars
+│   ├── FilterChip/          # Active filter chips
+│   └── SkeletonLoader/      # Loading skeletons
+├── styles/              # Reusable style patterns
+│   ├── common.styles.ts     # Shared patterns (ellipsis, hover, focus)
+│   ├── form.styles.ts       # Form element patterns
+│   ├── message.styles.ts    # Message/chat patterns
+│   └── conversation.styles.ts # Conversation list patterns
 ├── layouts/             # Layout components (ThreeColumnLayout, etc.)
 ├── theme.ts             # MUI theme configuration
 └── index.ts             # Main export

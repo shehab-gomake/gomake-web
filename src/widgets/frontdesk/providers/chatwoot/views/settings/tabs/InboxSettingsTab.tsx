@@ -1,14 +1,14 @@
 /**
  * Inbox Settings Tab
  *
- * Main settings for inbox: name, greeting, features, etc.
+ * Main settings for inbox: name, features, etc.
+ * Note: Channel Greeting is disabled by GoMake policy.
  */
 
 import React, { useState } from "react";
 import {
   Box,
   Typography,
-  TextField,
   Select,
   MenuItem,
   FormControl,
@@ -16,15 +16,15 @@ import {
   Card,
   CardContent,
   Avatar,
-  Button,
-  Alert,
-  Switch,
-  FormControlLabel,
 } from "@mui/material";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import { useTheme } from "@mui/material/styles";
 import type { ChatwootInbox } from "@/services/frontdesk/api/chatwoot/types/inboxes.types";
-import { RichTextEditor, SettingsSection } from "../../../components/settings";
+import { 
+  SettingsSection,
+  CompactTextField,
+  CompactPrimaryButton,
+  CompactSwitch,
+} from "../../../components/settings";
 
 interface InboxSettingsTabProps {
   inbox: ChatwootInbox;
@@ -34,15 +34,11 @@ interface InboxSettingsTabProps {
 }
 
 export const InboxSettingsTab: React.FC<InboxSettingsTabProps> = ({ inbox, accountId, onSave, isSaving }) => {
-  const theme = useTheme();
   const [formData, setFormData] = useState({
     name: inbox.name || "",
-    greeting_enabled: inbox.greeting_enabled || false,
-    greeting_message: inbox.greeting_message || "",
     enable_email_collect: inbox.enable_email_collect || false,
     sender_name_type: inbox.sender_name_type || "friendly",
     business_name: inbox.business_name || "",
-    enable_auto_assignment: inbox.enable_auto_assignment || true,
     allow_messages_after_resolved: inbox.allow_messages_after_resolved || true,
     lock_to_single_conversation: inbox.lock_to_single_conversation || false,
   });
@@ -55,7 +51,12 @@ export const InboxSettingsTab: React.FC<InboxSettingsTabProps> = ({ inbox, accou
   };
 
   const handleSave = async () => {
-    await onSave(formData);
+    // Note: GoMake always disables channel greeting
+    await onSave({
+      ...formData,
+      greeting_enabled: false,
+      greeting_message: "",
+    });
     setHasChanges(false);
   };
 
@@ -64,11 +65,10 @@ export const InboxSettingsTab: React.FC<InboxSettingsTabProps> = ({ inbox, accou
   const isWhatsApp = inbox.channel_type?.includes("WhatsApp");
 
   return (
-    <Box sx={{ maxWidth: 800 }}>
-      {/* Inbox Name */}
+    <Box>
+      {/* Inbox Name - Compact */}
       <SettingsSection title="Inbox Name" description="A friendly name to identify this inbox">
-        <TextField
-          fullWidth
+        <CompactTextField
           value={formData.name}
           onChange={(e) => handleFieldChange("name", e.target.value)}
           placeholder="Enter inbox name"
@@ -77,53 +77,22 @@ export const InboxSettingsTab: React.FC<InboxSettingsTabProps> = ({ inbox, accou
         />
       </SettingsSection>
 
-      {/* Greeting Message */}
-      <SettingsSection title="Channel Greeting" description="Auto-send greeting messages when customers start a conversation">
-        <FormControlLabel
-          control={
-            <Switch
-              checked={formData.greeting_enabled}
-              onChange={(e) => handleFieldChange("greeting_enabled", e.target.checked)}
-              disabled={isSaving}
-            />
-          }
-          label="Enable greeting message"
-          sx={{ mb: 2 }}
-        />
-
-        {formData.greeting_enabled && (
-          <RichTextEditor
-            value={formData.greeting_message}
-            onChange={(value) => handleFieldChange("greeting_message", value)}
-            placeholder="Enter your greeting message..."
-            maxLength={isWebWidget ? 500 : 200}
-            minRows={3}
-            disabled={isSaving}
-          />
-        )}
-      </SettingsSection>
-
-      {/* Email Collection (Web Widget only) */}
+      {/* Email Collection (Web Widget only) - Compact */}
       {isWebWidget && (
         <SettingsSection title="Collect Email" description="Ask visitors for their email before starting a conversation">
-          <FormControlLabel
-            control={
-              <Switch
-                checked={formData.enable_email_collect}
-                onChange={(e) => handleFieldChange("enable_email_collect", e.target.checked)}
-                disabled={isSaving}
-              />
-            }
+          <CompactSwitch
             label="Enable email collection"
+            checked={formData.enable_email_collect}
+            onChange={(e) => handleFieldChange("enable_email_collect", e.target.checked)}
+            disabled={isSaving}
           />
         </SettingsSection>
       )}
 
-      {/* WhatsApp Provider Name (WhatsApp only) */}
+      {/* WhatsApp Provider Name (WhatsApp only) - Compact */}
       {isWhatsApp && (
         <SettingsSection title="API Provider" description="The underlying API provider for this WhatsApp channel">
-          <TextField
-            fullWidth
+          <CompactTextField
             value={
               (inbox.provider as string) === "whatsapp_cloud"
                 ? "WhatsApp Cloud"
@@ -139,29 +108,31 @@ export const InboxSettingsTab: React.FC<InboxSettingsTabProps> = ({ inbox, accou
         </SettingsSection>
       )}
 
-      {/* Sender Name Type (Email only) */}
+      {/* Sender Name Type (Email only) - Compact */}
       {isEmail && (
         <SettingsSection title="Sender Name" description="Select the name shown to your customer in email headers">
-          <Box sx={{ display: "flex", gap: 2 }}>
-            {/* Friendly Card */}
+          <Box sx={{ display: "flex", gap: 1.5 }}>
+            {/* Friendly Card - Compact */}
             <Card
               onClick={() => !isSaving && handleFieldChange("sender_name_type", "friendly")}
               sx={{
                 flex: 1,
                 cursor: isSaving ? "not-allowed" : "pointer",
-                border: formData.sender_name_type === "friendly" ? "2px solid" : "1px solid",
-                borderColor: formData.sender_name_type === "friendly" ? "primary.main" : "divider",
-                bgcolor: formData.sender_name_type === "friendly" ? "primary.50" : "background.paper",
-                transition: "all 0.2s",
+                border: formData.sender_name_type === "friendly" ? "2px solid #6366f1" : "1px solid rgba(0,0,0,0.12)",
+                bgcolor: formData.sender_name_type === "friendly" ? "rgba(99, 102, 241, 0.04)" : "#ffffff",
+                transition: "all 0.15s",
                 opacity: isSaving ? 0.6 : 1,
+                borderRadius: "6px",
+                boxShadow: "none",
                 "&:hover": isSaving
                   ? {}
                   : {
-                      borderColor: "primary.main",
+                      borderColor: "#6366f1",
+                      boxShadow: "0 1px 3px rgba(99, 102, 241, 0.1)",
                     },
               }}
             >
-              <CardContent>
+              <CardContent sx={{ p: 2, "&:last-child": { pb: 2 } }}>
                 <Box
                   sx={{
                     display: "flex",
@@ -170,51 +141,54 @@ export const InboxSettingsTab: React.FC<InboxSettingsTabProps> = ({ inbox, accou
                     mb: 1,
                   }}
                 >
-                  <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
+                  <Typography variant="subtitle2" sx={{ fontWeight: 600, fontSize: "0.875rem", color: "#1f2937" }}>
                     Friendly
                   </Typography>
-                  {formData.sender_name_type === "friendly" && <CheckCircleIcon sx={{ color: "primary.main", fontSize: 20 }} />}
+                  {formData.sender_name_type === "friendly" && <CheckCircleIcon sx={{ color: "#6366f1", fontSize: 16 }} />}
                 </Box>
-                <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                <Typography variant="body2" sx={{ mb: 1.5, color: "#6b7280", fontSize: "0.75rem", lineHeight: 1.4 }}>
                   Add agent name in the sender field
                 </Typography>
                 <Box
                   sx={{
                     display: "flex",
                     alignItems: "center",
-                    gap: 1,
-                    p: 1.5,
-                    bgcolor: "background.paper",
-                    borderRadius: 1,
+                    gap: 0.75,
+                    p: 1,
+                    bgcolor: "#f9fafb",
+                    borderRadius: "4px",
+                    border: "1px solid rgba(0,0,0,0.06)",
                   }}
                 >
-                  <Avatar sx={{ width: 24, height: 24, fontSize: 12 }}>A</Avatar>
-                  <Typography variant="caption">
+                  <Avatar sx={{ width: 20, height: 20, fontSize: "0.688rem", bgcolor: "#6366f1" }}>A</Avatar>
+                  <Typography variant="caption" sx={{ fontSize: "0.75rem", color: "#1f2937" }}>
                     <strong>Agent Name</strong> from {inbox.name}
                   </Typography>
                 </Box>
               </CardContent>
             </Card>
 
-            {/* Professional Card */}
+            {/* Professional Card - Compact */}
             <Card
               onClick={() => !isSaving && handleFieldChange("sender_name_type", "professional")}
               sx={{
                 flex: 1,
                 cursor: isSaving ? "not-allowed" : "pointer",
-                border: formData.sender_name_type === "professional" ? "2px solid" : "1px solid",
-                borderColor: formData.sender_name_type === "professional" ? "primary.main" : "divider",
-                bgcolor: formData.sender_name_type === "professional" ? "primary.50" : "background.paper",
-                transition: "all 0.2s",
+                border: formData.sender_name_type === "professional" ? "2px solid #6366f1" : "1px solid rgba(0,0,0,0.12)",
+                bgcolor: formData.sender_name_type === "professional" ? "rgba(99, 102, 241, 0.04)" : "#ffffff",
+                transition: "all 0.15s",
                 opacity: isSaving ? 0.6 : 1,
+                borderRadius: "6px",
+                boxShadow: "none",
                 "&:hover": isSaving
                   ? {}
                   : {
-                      borderColor: "primary.main",
+                      borderColor: "#6366f1",
+                      boxShadow: "0 1px 3px rgba(99, 102, 241, 0.1)",
                     },
               }}
             >
-              <CardContent>
+              <CardContent sx={{ p: 2, "&:last-child": { pb: 2 } }}>
                 <Box
                   sx={{
                     display: "flex",
@@ -223,28 +197,31 @@ export const InboxSettingsTab: React.FC<InboxSettingsTabProps> = ({ inbox, accou
                     mb: 1,
                   }}
                 >
-                  <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
+                  <Typography variant="subtitle2" sx={{ fontWeight: 600, fontSize: "0.875rem", color: "#1f2937" }}>
                     Professional
                   </Typography>
                   {formData.sender_name_type === "professional" && (
-                    <CheckCircleIcon sx={{ color: "primary.main", fontSize: 20 }} />
+                    <CheckCircleIcon sx={{ color: "#6366f1", fontSize: 16 }} />
                   )}
                 </Box>
-                <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                <Typography variant="body2" sx={{ mb: 1.5, color: "#6b7280", fontSize: "0.75rem", lineHeight: 1.4 }}>
                   Use only the configured business name
                 </Typography>
                 <Box
                   sx={{
                     display: "flex",
                     alignItems: "center",
-                    gap: 1,
-                    p: 1.5,
-                    bgcolor: "background.paper",
-                    borderRadius: 1,
+                    gap: 0.75,
+                    p: 1,
+                    bgcolor: "#f9fafb",
+                    borderRadius: "4px",
+                    border: "1px solid rgba(0,0,0,0.06)",
                   }}
                 >
-                  <Avatar sx={{ width: 24, height: 24, fontSize: 12 }}>{formData.business_name?.[0] || inbox.name?.[0]}</Avatar>
-                  <Typography variant="caption">
+                  <Avatar sx={{ width: 20, height: 20, fontSize: "0.688rem", bgcolor: "#6366f1" }}>
+                    {formData.business_name?.[0] || inbox.name?.[0]}
+                  </Avatar>
+                  <Typography variant="caption" sx={{ fontSize: "0.75rem", color: "#1f2937" }}>
                     <strong>{formData.business_name || inbox.name}</strong>
                   </Typography>
                 </Box>
@@ -252,92 +229,84 @@ export const InboxSettingsTab: React.FC<InboxSettingsTabProps> = ({ inbox, accou
             </Card>
           </Box>
 
-          {/* Business Name Input */}
-          <Box sx={{ mt: 3 }}>
-            <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+          {/* Business Name Input - Compact */}
+          <Box sx={{ mt: 2 }}>
+            <Typography variant="body2" sx={{ mb: 1, color: "#6b7280", fontSize: "0.813rem" }}>
               Configure your business name for professional email sender
             </Typography>
-            <TextField
-              fullWidth
+            <CompactTextField
               value={formData.business_name}
               onChange={(e) => handleFieldChange("business_name", e.target.value)}
               placeholder="Enter your business name"
               disabled={isSaving}
               sx={{ maxWidth: 500 }}
-              helperText="This name will be used when 'Professional' sender type is selected"
             />
+            <Typography sx={{ mt: 0.5, fontSize: "0.75rem", color: "#9ca3af", lineHeight: 1.4 }}>
+              This name will be used when 'Professional' sender type is selected
+            </Typography>
           </Box>
         </SettingsSection>
       )}
 
-      {/* Lock to Single Conversation (WhatsApp only) */}
+      {/* Lock to Single Conversation (WhatsApp only) - Compact */}
       {isWhatsApp && (
         <SettingsSection
           title="Lock to single conversation"
           description="Enable or disable multiple conversations for the same contact in this inbox"
         >
-          <FormControl fullWidth sx={{ maxWidth: 500 }}>
-            <InputLabel>Lock to single conversation</InputLabel>
+          <FormControl fullWidth size="small" sx={{ maxWidth: 500 }}>
+            <InputLabel sx={{ fontSize: "0.813rem" }}>Lock to single conversation</InputLabel>
             <Select
               value={formData.lock_to_single_conversation ? "enabled" : "disabled"}
               onChange={(e) => handleFieldChange("lock_to_single_conversation", e.target.value === "enabled")}
               label="Lock to single conversation"
               disabled={isSaving}
+              sx={{ fontSize: "0.813rem" }}
             >
-              <MenuItem value="enabled">Enabled</MenuItem>
-              <MenuItem value="disabled">Disabled</MenuItem>
+              <MenuItem value="enabled" sx={{ fontSize: "0.813rem" }}>Enabled</MenuItem>
+              <MenuItem value="disabled" sx={{ fontSize: "0.813rem" }}>Disabled</MenuItem>
             </Select>
           </FormControl>
         </SettingsSection>
       )}
 
-      {/* Feature Toggles */}
+      {/* Feature Toggles - Compact */}
       <SettingsSection title="Features" description="Enable or disable inbox features" showDivider={false}>
-        <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
-          <FormControlLabel
-            control={
-              <Switch
-                checked={formData.enable_auto_assignment}
-                onChange={(e) => handleFieldChange("enable_auto_assignment", e.target.checked)}
-                disabled={isSaving}
-              />
-            }
-            label="Enable auto assignment"
-          />
-          <Typography variant="caption" color="text.secondary" sx={{ ml: 5 }}>
-            Automatically assign new conversations to available agents
-          </Typography>
-
-          <FormControlLabel
-            control={
-              <Switch
-                checked={formData.allow_messages_after_resolved}
-                onChange={(e) => handleFieldChange("allow_messages_after_resolved", e.target.checked)}
-                disabled={isSaving}
-              />
-            }
+        <Box
+          sx={{
+            p: 1.5,
+            borderRadius: "6px",
+            bgcolor: "#f9fafb",
+            border: "1px solid rgba(0,0,0,0.06)",
+          }}
+        >
+          <CompactSwitch
             label="Allow messages after resolved"
-            sx={{ mt: 1 }}
+            description="Customers can send messages even after conversation is resolved"
+            checked={formData.allow_messages_after_resolved}
+            onChange={(e) => handleFieldChange("allow_messages_after_resolved", e.target.checked)}
+            disabled={isSaving}
           />
-          <Typography variant="caption" color="text.secondary" sx={{ ml: 5 }}>
-            Customers can send messages even after conversation is resolved
-          </Typography>
         </Box>
       </SettingsSection>
 
-      {/* Save Button */}
+      {/* Compact Save Button */}
       <Box
         sx={{
-          mt: 4,
-          pt: 3,
-          borderTop: `1px solid ${theme.palette.divider}`,
+          mt: 3,
+          pt: 2,
+          borderTop: "1px solid rgba(0,0,0,0.06)",
           display: "flex",
           justifyContent: "flex-end",
         }}
       >
-        <Button variant="contained" onClick={handleSave} disabled={!hasChanges || isSaving} sx={{ minWidth: 120 }}>
-          {isSaving ? "Updating..." : "Update"}
-        </Button>
+        <CompactPrimaryButton 
+          onClick={handleSave} 
+          disabled={!hasChanges || isSaving}
+          loading={isSaving}
+        >
+          {isSaving ? "Saving..." : "Save Changes"}
+        </CompactPrimaryButton>
       </Box>
     </Box>
   );

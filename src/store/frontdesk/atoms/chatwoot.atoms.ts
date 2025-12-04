@@ -21,6 +21,59 @@ import type { Team } from "@/services/frontdesk/api/chatwoot/types/teams.types";
  * All atoms are properly typed for type safety
  */
 
+// ============================================================================
+// FETCH LOCK SYSTEM
+// Centralized deduplication for API calls across all component instances
+// ============================================================================
+
+/**
+ * Fetch Lock Entry
+ * Tracks individual lock with timeout for deadlock prevention
+ */
+export interface FetchLockEntry {
+  acquiredAt: number;
+  timeout: number; // Lock timeout in milliseconds
+}
+
+/**
+ * Centralized fetch lock atom
+ * Prevents duplicate API calls across all component instances
+ * Keys are resource identifiers (e.g., "profile", "conversations:filter-key", "labels")
+ */
+export const chatwootFetchLocksAtom = atom<Map<string, FetchLockEntry>>({
+  key: "frontdesk.chatwoot.fetchLocks",
+  default: new Map(),
+});
+
+/**
+ * Lock statistics for debugging
+ */
+export interface FetchLockStats {
+  totalLocks: number;
+  activeLocks: string[];
+  expiredLocks: number;
+  lastCleanup: number;
+}
+
+export const chatwootFetchLockStatsAtom = atom<FetchLockStats>({
+  key: "frontdesk.chatwoot.fetchLockStats",
+  default: {
+    totalLocks: 0,
+    activeLocks: [],
+    expiredLocks: 0,
+    lastCleanup: 0,
+  },
+});
+
+/**
+ * Default lock timeout (30 seconds) - prevents deadlocks
+ */
+export const FETCH_LOCK_TIMEOUT = 30000;
+
+// ============================================================================
+// PROFILE STATE
+// ============================================================================
+
 // Profile
 export const chatwootProfileAtom = atom<ChatwootUser | null>({
   key: "frontdesk.chatwoot.profile",
@@ -109,11 +162,13 @@ export const chatwootConversationCountsAtom = atom<{
  * - Store conversations per view/filter combination
  * - Track timestamp for stale detection (30 second default)
  * - Track pagination state (hasMore, current page)
+ * - Track lastAccessed for LRU eviction
  * - Invalidate on explicit refresh or account switch
  */
 export interface ConversationCacheEntry {
   conversations: ChatwootConversation[];
   timestamp: number;
+  lastAccessed: number; // LRU: Track when cache was last read
   hasMore: boolean;
   totalPages: number;
   error: string | null;
@@ -129,6 +184,7 @@ export const chatwootConversationsCacheFamily = atomFamily<ConversationCacheEntr
   default: {
     conversations: [],
     timestamp: 0,
+    lastAccessed: 0,
     hasMore: true,
     totalPages: 0,
     error: null,
@@ -141,12 +197,65 @@ export const chatwootConversationsCacheFamily = atomFamily<ConversationCacheEntr
 export const CONVERSATION_CACHE_STALE_TIME = 30000; // 30 seconds
 
 /**
+ * Cache configuration atom
+ * Allows runtime configuration of cache behavior
+ */
+export interface CacheConfig {
+  /** Maximum number of cache entries before LRU eviction (default: 50) */
+  maxSize: number;
+  /** Stale time in milliseconds (default: 30000) */
+  staleTime: number;
+  /** Enable LRU eviction (default: true) */
+  enableLRU: boolean;
+  /** Eviction threshold - trigger eviction when size exceeds this (default: 40) */
+  evictionThreshold: number;
+}
+
+export const chatwootCacheConfigAtom = atom<CacheConfig>({
+  key: "frontdesk.chatwoot.cacheConfig",
+  default: {
+    maxSize: 50,
+    staleTime: CONVERSATION_CACHE_STALE_TIME,
+    enableLRU: true,
+    evictionThreshold: 40,
+  },
+});
+
+/**
  * Track active cache keys for cleanup/invalidation
  * Used to clear all caches on account switch or manual refresh
  */
 export const chatwootCacheKeysAtom = atom<Set<string>>({
   key: "frontdesk.chatwoot.cacheKeys",
   default: new Set(),
+});
+
+/**
+ * Cache statistics for monitoring
+ */
+export interface CacheStatistics {
+  totalEntries: number;
+  totalConversations: number;
+  oldestEntry: number | null;
+  newestEntry: number | null;
+  hitCount: number;
+  missCount: number;
+  evictionCount: number;
+  lastEviction: number | null;
+}
+
+export const chatwootCacheStatsAtom = atom<CacheStatistics>({
+  key: "frontdesk.chatwoot.cacheStats",
+  default: {
+    totalEntries: 0,
+    totalConversations: 0,
+    oldestEntry: null,
+    newestEntry: null,
+    hitCount: 0,
+    missCount: 0,
+    evictionCount: 0,
+    lastEviction: null,
+  },
 });
 
 // Messages
@@ -488,3 +597,226 @@ export const unattendedCountSelector = selector<number>({
   },
 });
 
+// ============================================================================
+// UNIFIED REQUEST STATE ATOMS
+// ============================================================================
+
+import {
+  RequestState,
+  PaginatedRequestState,
+  createRequestState,
+  createPaginatedRequestState,
+  DEFAULT_TTL,
+} from "@/store/frontdesk/types/request-state.types";
+
+/**
+ * Unified Profile State
+ * Combines profile data with loading/error states
+ */
+export const chatwootProfileRequestAtom = atom<RequestState<ChatwootUser>>({
+  key: "frontdesk.chatwoot.profile.request",
+  default: createRequestState<ChatwootUser>(DEFAULT_TTL.STANDARD),
+});
+
+/**
+ * Backward compatibility selector: Extract profile from RequestState
+ */
+export const chatwootProfileFromRequestSelector = selector<ChatwootUser | null>({
+  key: "frontdesk.chatwoot.profile.fromRequest",
+  get: ({ get }) => get(chatwootProfileRequestAtom).data,
+});
+
+/**
+ * Unified Inboxes State
+ * Combines inboxes data with loading/error states
+ */
+export const chatwootInboxesRequestAtom = atom<RequestState<ChatwootInbox[]>>({
+  key: "frontdesk.chatwoot.inboxes.request",
+  default: createRequestState<ChatwootInbox[]>(DEFAULT_TTL.STANDARD),
+});
+
+/**
+ * Backward compatibility selector: Extract inboxes from RequestState
+ */
+export const chatwootInboxesFromRequestSelector = selector<ChatwootInbox[]>({
+  key: "frontdesk.chatwoot.inboxes.fromRequest",
+  get: ({ get }) => get(chatwootInboxesRequestAtom).data || [],
+});
+
+/**
+ * Unified Messages State
+ * Combines messages data with loading/error states
+ */
+export const chatwootMessagesRequestAtom = atom<RequestState<ChatwootMessage[]>>({
+  key: "frontdesk.chatwoot.messages.request",
+  default: createRequestState<ChatwootMessage[]>(DEFAULT_TTL.SHORT),
+});
+
+/**
+ * Backward compatibility selector: Extract messages from RequestState
+ */
+export const chatwootMessagesFromRequestSelector = selector<ChatwootMessage[]>({
+  key: "frontdesk.chatwoot.messages.fromRequest",
+  get: ({ get }) => get(chatwootMessagesRequestAtom).data || [],
+});
+
+/**
+ * Unified Notifications State
+ * Paginated notifications with loading/error states
+ */
+export const chatwootNotificationsRequestAtom = atom<PaginatedRequestState<ChatwootNotification>>({
+  key: "frontdesk.chatwoot.notifications.request",
+  default: createPaginatedRequestState<ChatwootNotification>(DEFAULT_TTL.SHORT),
+});
+
+/**
+ * Backward compatibility selector: Extract notifications from RequestState
+ */
+export const chatwootNotificationsFromRequestSelector = selector<ChatwootNotification[]>({
+  key: "frontdesk.chatwoot.notifications.fromRequest",
+  get: ({ get }) => get(chatwootNotificationsRequestAtom).data || [],
+});
+
+/**
+ * Unified Agents State
+ */
+export const chatwootAgentsRequestAtom = atom<RequestState<Agent[]>>({
+  key: "frontdesk.chatwoot.agents.request",
+  default: createRequestState<Agent[]>(DEFAULT_TTL.STANDARD),
+});
+
+/**
+ * Unified Teams State
+ */
+export const chatwootTeamsRequestAtom = atom<RequestState<Team[]>>({
+  key: "frontdesk.chatwoot.teams.request",
+  default: createRequestState<Team[]>(DEFAULT_TTL.STANDARD),
+});
+
+/**
+ * Unified Labels State
+ */
+export const chatwootLabelsRequestAtom = atom<RequestState<ChatwootLabel[]>>({
+  key: "frontdesk.chatwoot.labels.request",
+  default: createRequestState<ChatwootLabel[]>(DEFAULT_TTL.LONG),
+});
+
+// ============================================================================
+// REQUEST STATE HELPER SELECTORS
+// ============================================================================
+
+/**
+ * Combined loading state selector
+ * Returns true if any primary resource is loading
+ */
+export const chatwootAnyLoadingSelector = selector<boolean>({
+  key: "frontdesk.chatwoot.anyLoading",
+  get: ({ get }) => {
+    return (
+      get(chatwootProfileRequestAtom).loading ||
+      get(chatwootInboxesRequestAtom).loading ||
+      get(chatwootConversationsLoadingAtom).initialLoading ||
+      get(chatwootConversationsLoadingAtom).filtering
+    );
+  },
+});
+
+/**
+ * Combined error state selector
+ * Returns first error found, if any
+ */
+export const chatwootFirstErrorSelector = selector<string | null>({
+  key: "frontdesk.chatwoot.firstError",
+  get: ({ get }) => {
+    return (
+      get(chatwootProfileRequestAtom).error ||
+      get(chatwootInboxesRequestAtom).error ||
+      get(chatwootConversationsErrorAtom) ||
+      null
+    );
+  },
+});
+
+/**
+ * Profile ready selector
+ * Returns true when profile is loaded and valid
+ */
+export const chatwootProfileReadySelector = selector<boolean>({
+  key: "frontdesk.chatwoot.profileReady",
+  get: ({ get }) => {
+    const profileState = get(chatwootProfileRequestAtom);
+    return profileState.data !== null && !profileState.loading && !profileState.error;
+  },
+});
+
+// ============================================================================
+// KANBAN BOARD ATOMS
+// For Workboard view managing conversations in Kanban format
+// ============================================================================
+
+import { KanbanViewMode, KanbanConversationFilters } from "@/widgets/frontdesk/providers/chatwoot/types/kanban.types";
+
+/**
+ * Kanban view mode - determines how columns are organized
+ * - 'status': Columns represent conversation statuses (open, pending, resolved, snoozed)
+ * - 'assignee': Columns represent agents/team members
+ */
+export const chatwootKanbanViewModeAtom = atom<KanbanViewMode>({
+  key: "frontdesk.chatwoot.kanban.viewMode",
+  default: "status",
+});
+
+/**
+ * Kanban board filters (separate from list filters)
+ */
+export const chatwootKanbanFiltersAtom = atom<KanbanConversationFilters>({
+  key: "frontdesk.chatwoot.kanban.filters",
+  default: {},
+});
+
+/**
+ * Kanban board loading state (for drag operations)
+ */
+export const chatwootKanbanOperationLoadingAtom = atom<boolean>({
+  key: "frontdesk.chatwoot.kanban.operationLoading",
+  default: false,
+});
+
+/**
+ * Kanban board conversations (all conversations for board display)
+ */
+export const chatwootKanbanConversationsAtom = atom<ChatwootConversation[]>({
+  key: "frontdesk.chatwoot.kanban.conversations",
+  default: [],
+});
+
+/**
+ * Kanban board loading state
+ */
+export const chatwootKanbanLoadingAtom = atom<boolean>({
+  key: "frontdesk.chatwoot.kanban.loading",
+  default: false,
+});
+
+/**
+ * Kanban board error state
+ */
+export const chatwootKanbanErrorAtom = atom<string | null>({
+  key: "frontdesk.chatwoot.kanban.error",
+  default: null,
+});
+
+/**
+ * Selected inbox selector
+ * Returns the currently selected inbox object
+ */
+export const chatwootSelectedInboxSelector = selector<ChatwootInbox | null>({
+  key: "frontdesk.chatwoot.selectedInbox",
+  get: ({ get }) => {
+    const selectedId = get(chatwootSelectedInboxIdAtom);
+    if (!selectedId) return null;
+
+    const inboxesState = get(chatwootInboxesRequestAtom);
+    return inboxesState.data?.find((inbox) => inbox.id === selectedId) || null;
+  },
+});

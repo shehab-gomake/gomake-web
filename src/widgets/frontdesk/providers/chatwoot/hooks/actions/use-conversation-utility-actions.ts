@@ -33,12 +33,7 @@ export const useConversationUtilityActions = ({
 
     // Build route with current view, conversation, channel, and filters
     const channelId = currentRoute?.channelId || (conversation.inbox_id ? String(conversation.inbox_id) : undefined);
-    const route = RouteBuilder.chatwoot(
-      currentView || ChatwootView.MY_INBOX,
-      String(conversation.id),
-      channelId,
-      currentFilters
-    );
+    const route = RouteBuilder.chatwoot(currentView || ChatwootView.MY_INBOX, String(conversation.id), channelId, currentFilters);
     const path = buildRoutePath(route);
     return `${window.location.origin}${path}`;
   }, [conversation?.id, conversation?.inbox_id, currentView, currentRoute?.channelId, currentFilters]);
@@ -95,9 +90,7 @@ export const useConversationUtilityActions = ({
     }
 
     // Confirm deletion
-    const confirmed = window.confirm(
-      "Are you sure you want to delete this conversation? This action cannot be undone."
-    );
+    const confirmed = window.confirm("Are you sure you want to delete this conversation? This action cannot be undone.");
 
     if (!confirmed) return;
 
@@ -116,7 +109,13 @@ export const useConversationUtilityActions = ({
 
   /**
    * Handle Mute Conversation
-   * TODO: Implement when mute/unmute API endpoints are available
+   *
+   * BLOCKED: Waiting for backend API implementation
+   * The Chatwoot API supports mute/unmute but the messaging-hub-v2 proxy
+   * does not yet expose these endpoints. Once available, uncomment the
+   * implementation below.
+   *
+   * @see https://www.chatwoot.com/developers/api/#operation/mute-conversation
    */
   const handleMuteConversation = useCallback(async () => {
     if (!accountId || !conversation?.id) {
@@ -124,11 +123,11 @@ export const useConversationUtilityActions = ({
       return;
     }
 
-    // TODO: Uncomment when API is available
+    // BLOCKED: Enable when messaging-hub-v2 exposes mute endpoint
     // try {
     //   await chatwootService.conversations.muteConversation(accountId, conversation.id);
     //   showNotification("Conversation muted", "success");
-    // } catch (error: any) {
+    // } catch (error) {
     //   showNotification("Failed to mute conversation", "error");
     //   console.error("Failed to mute conversation:", error);
     // }
@@ -138,7 +137,13 @@ export const useConversationUtilityActions = ({
 
   /**
    * Handle Unmute Conversation
-   * TODO: Implement when mute/unmute API endpoints are available
+   *
+   * BLOCKED: Waiting for backend API implementation
+   * The Chatwoot API supports mute/unmute but the messaging-hub-v2 proxy
+   * does not yet expose these endpoints. Once available, uncomment the
+   * implementation below.
+   *
+   * @see https://www.chatwoot.com/developers/api/#operation/unmute-conversation
    */
   const handleUnmuteConversation = useCallback(async () => {
     if (!accountId || !conversation?.id) {
@@ -146,11 +151,11 @@ export const useConversationUtilityActions = ({
       return;
     }
 
-    // TODO: Uncomment when API is available
+    // BLOCKED: Enable when messaging-hub-v2 exposes unmute endpoint
     // try {
     //   await chatwootService.conversations.unmuteConversation(accountId, conversation.id);
     //   showNotification("Conversation unmuted", "success");
-    // } catch (error: any) {
+    // } catch (error) {
     //   showNotification("Failed to unmute conversation", "error");
     //   console.error("Failed to unmute conversation:", error);
     // }

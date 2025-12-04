@@ -18,7 +18,7 @@ import { ConfirmDialog } from "../settings/ConfirmDialog";
 import { useComposeConversation, type GomakeContact } from "../../hooks/use-compose-conversation";
 import { getChannelRequirements } from "@/services/frontdesk/api/chatwoot/types/compose.types";
 import { useSnackBar } from "@/hooks/use-snack-bar";
-import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { colorTokens, radiusTokens, shadowTokens } from "@/widgets/frontdesk/design-system";
 import type { ContactDetail } from "@/services/frontdesk/api/chatwoot/types/contacts.types";
 import { WhatsAppTemplateSelector, convertToTemplateParams, generateMessageContent } from "../templates";
 import type { WhatsAppTemplate, TemplateSelectorState } from "../templates";
@@ -36,7 +36,6 @@ export const ComposeConversationModal: React.FC<ComposeConversationModalProps> =
   onSuccess,
   accountId,
 }) => {
-  const { primaryColor, neutralColor } = useGomakeTheme();
   const { setSnackbarStateValue } = useSnackBar();
   const [showTemplateSelector, setShowTemplateSelector] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -163,7 +162,7 @@ export const ComposeConversationModal: React.FC<ComposeConversationModalProps> =
           sx: {
             borderRadius: 2,
             maxHeight: "90vh",
-            backgroundColor: neutralColor(0),
+            backgroundColor: colorTokens.semantic.background.primary,
             boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
           },
         }}
@@ -174,11 +173,11 @@ export const ComposeConversationModal: React.FC<ComposeConversationModalProps> =
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
-            borderBottom: `2px solid ${neutralColor(200)}`,
+            borderBottom: `2px solid ${colorTokens.neutral[200]}`,
             pb: 2.5,
             pt: 3,
             px: 4,
-            backgroundColor: neutralColor(0),
+            backgroundColor: colorTokens.semantic.background.primary,
           }}
         >
           <Stack direction="row" alignItems="center" spacing={2}>
@@ -190,8 +189,8 @@ export const ComposeConversationModal: React.FC<ComposeConversationModalProps> =
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                backgroundColor: primaryColor(50),
-                color: primaryColor(600),
+                backgroundColor: colorTokens.primary[50],
+                color: colorTokens.primary[600],
               }}
             >
               <SendIcon />
@@ -201,7 +200,7 @@ export const ComposeConversationModal: React.FC<ComposeConversationModalProps> =
               variant="h5"
               sx={{
                 fontWeight: 600,
-                color: neutralColor(900),
+                color: colorTokens.neutral[900],
                 fontSize: "1.375rem",
               }}
             >
@@ -214,10 +213,10 @@ export const ComposeConversationModal: React.FC<ComposeConversationModalProps> =
             disabled={compose.isSubmitting}
             aria-label="Close compose conversation modal"
             sx={{
-              color: neutralColor(600),
+              color: colorTokens.neutral[600],
               "&:hover": {
-                backgroundColor: neutralColor(100),
-                color: neutralColor(900),
+                backgroundColor: colorTokens.neutral[100],
+                color: colorTokens.neutral[900],
               },
             }}
           >
@@ -256,13 +255,13 @@ export const ComposeConversationModal: React.FC<ComposeConversationModalProps> =
                   alignItems: "flex-start",
                   px: 4,
                   py: 3,
-                  borderBottom: `1px solid ${neutralColor(200)}`,
-                  backgroundColor: neutralColor(0),
+                  borderBottom: `1px solid ${colorTokens.neutral[200]}`,
+                  backgroundColor: colorTokens.semantic.background.primary,
                 }}
               >
                 <Typography
                   sx={{
-                    color: neutralColor(700),
+                    color: colorTokens.neutral[700],
                     fontSize: "0.875rem",
                     minWidth: 100,
                     fontWeight: 600,
@@ -304,23 +303,23 @@ export const ComposeConversationModal: React.FC<ComposeConversationModalProps> =
 
                 {/* WhatsApp Template Button - Only for WhatsApp channels */}
                 {channelType === "Channel::WhatsApp" && (
-                  <Box sx={{ px: 3, py: 2.5, borderBottom: `1px solid ${neutralColor(200)}`, backgroundColor: neutralColor(0) }}>
+                  <Box sx={{ px: 3, py: 2.5, borderBottom: `1px solid ${colorTokens.neutral[200]}`, backgroundColor: colorTokens.semantic.background.primary }}>
                     <Button
                       fullWidth
                       variant="outlined"
                       onClick={() => setShowTemplateSelector(true)}
                       sx={{
                         textTransform: "none",
-                        borderColor: neutralColor(300),
-                        color: neutralColor(700),
+                        borderColor: colorTokens.neutral[300],
+                        color: colorTokens.neutral[700],
                         fontWeight: 500,
                         py: 1.5,
                         borderRadius: 1,
-                        backgroundColor: neutralColor(0),
+                        backgroundColor: colorTokens.semantic.background.primary,
                         "&:hover": {
-                          borderColor: primaryColor(400),
-                          backgroundColor: primaryColor(25),
-                          color: primaryColor(700),
+                          borderColor: colorTokens.primary[400],
+                          backgroundColor: colorTokens.primary[50],
+                          color: colorTokens.primary[700],
                         },
                       }}
                     >
@@ -332,7 +331,7 @@ export const ComposeConversationModal: React.FC<ComposeConversationModalProps> =
                       <Typography
                         variant="caption"
                         sx={{
-                          color: neutralColor(600),
+                          color: colorTokens.neutral[600],
                           mt: 1,
                           display: "block",
                           fontSize: "0.75rem",
@@ -345,11 +344,11 @@ export const ComposeConversationModal: React.FC<ComposeConversationModalProps> =
                 )}
 
                 {/* Message Field - Rich Text Editor */}
-                <Box sx={{ px: 4, py: 3, backgroundColor: neutralColor(0) }}>
+                <Box sx={{ px: 4, py: 3, backgroundColor: colorTokens.semantic.background.primary }}>
                   <Typography
                     sx={{
                       fontSize: "0.75rem",
-                      color: neutralColor(700),
+                      color: colorTokens.neutral[700],
                       fontWeight: 600,
                       textTransform: "uppercase",
                       letterSpacing: "0.05em",
@@ -392,11 +391,11 @@ export const ComposeConversationModal: React.FC<ComposeConversationModalProps> =
         {/* Footer */}
         <DialogActions
           sx={{
-            borderTop: `2px solid ${neutralColor(200)}`,
+            borderTop: `2px solid ${colorTokens.neutral[200]}`,
             px: 4,
             py: 3,
             justifyContent: "flex-end",
-            backgroundColor: neutralColor(0),
+            backgroundColor: colorTokens.semantic.background.primary,
             gap: 2,
           }}
         >
@@ -405,14 +404,14 @@ export const ComposeConversationModal: React.FC<ComposeConversationModalProps> =
             disabled={compose.isSubmitting}
             sx={{
               textTransform: "none",
-              color: neutralColor(700),
+              color: colorTokens.neutral[700],
               fontWeight: 500,
               fontSize: "0.875rem",
               px: 3,
               py: 1.25,
               borderRadius: 1,
               "&:hover": {
-                backgroundColor: neutralColor(100),
+                backgroundColor: colorTokens.neutral[100],
               },
             }}
           >
@@ -426,7 +425,7 @@ export const ComposeConversationModal: React.FC<ComposeConversationModalProps> =
             aria-label={compose.isSubmitting ? "Sending message" : "Send message"}
             sx={{
               textTransform: "none",
-              backgroundColor: primaryColor(600),
+              backgroundColor: colorTokens.primary[600],
               color: "white",
               fontWeight: 600,
               fontSize: "0.875rem",
@@ -435,12 +434,12 @@ export const ComposeConversationModal: React.FC<ComposeConversationModalProps> =
               borderRadius: 1,
               boxShadow: `0 1px 3px rgba(0, 0, 0, 0.1)`,
               "&:hover": {
-                backgroundColor: primaryColor(700),
+                backgroundColor: colorTokens.primary[700],
                 boxShadow: `0 4px 6px rgba(0, 0, 0, 0.1)`,
               },
               "&:disabled": {
-                backgroundColor: neutralColor(300),
-                color: neutralColor(500),
+                backgroundColor: colorTokens.neutral[300],
+                color: colorTokens.neutral[500],
               },
             }}
           >

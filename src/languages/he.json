@@ -1107,6 +1107,12 @@
     "Stackers": "מנפים",
     "additionalColorsCoast": "עלות צבעים נוספים",
     "setupTime": "זמן התקנה",
+    "ledsAmountPerArea": "כמות לדים לשטח",
+    "ledsLengthPerArea": "אורך לדים לשטח",
+    "ledUnitsInstallation": "פרמטרי התקנת LED",
+    "ledRollInstallation": "התקנת גליל LED",
+    "welding": "ריתוך",
+    "gluing": "הדבקה",
     "upToMediaWeight": "עד משקל",
     "time": "זמן",
     "sheetsLost": "מספר גיליונות אבודים",
@@ -1374,7 +1380,13 @@
     "laminationSettings": "הגדרות קריפוט",
     "varnishSettings": "הגדרות ציפוי",
     "bookDimensions": "מידות ספר",
-    "actions&materials": "פעולות וחומרים"
+    "actions&materials": "פעולות וחומרים",
+    "led": "LED",
+    "sidesInstall": "התקנת צדדים",
+    "profileInstall": "התקנת פרופיל",
+    "flatbed": "שטוח",
+    "flatbedBackgroundInstall": "התקנת רקע שטוח",
+    "background": "רקע"
   },
   "products": {
     "profits": {

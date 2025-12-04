@@ -16,13 +16,14 @@ import {
   FormatListNumbered as NumberedListIcon,
   Code as CodeIcon,
 } from "@mui/icons-material";
+import { colorTokens, radiusTokens, shadowTokens } from "@/widgets/frontdesk/design-system";
 
 interface ReplyComposerFormattingToolbarProps {
   onFormat: (command: string) => void;
   borderColor: string;
   lightGrayText: string;
-  neutralColor: (shade: number) => string;
-  primaryColor: (shade: number) => string;
+  neutralColor?: (shade: number) => string;
+  primaryColor?: (shade: number) => string;
 }
 
 const FORMATTING_BUTTONS = [
@@ -54,8 +55,8 @@ export const ReplyComposerFormattingToolbar: React.FC<ReplyComposerFormattingToo
     p: 0.5,
     color: lightGrayText,
     "&:hover": {
-      backgroundColor: neutralColor(100),
-      color: primaryColor(600),
+      backgroundColor: colorTokens.neutral[100],
+      color: colorTokens.primary[600],
     },
   };
 

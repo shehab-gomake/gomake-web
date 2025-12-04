@@ -2,24 +2,25 @@
  * Add Agent Modal
  *
  * Modal for inviting new agents to the account.
+ * Uses unified CompactModal system for consistency.
  */
 
 import React, { useState } from "react";
 import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Button,
-  TextField,
+  Box,
   Typography,
   FormControl,
   InputLabel,
   Select,
   MenuItem,
-  Alert,
-  Box,
 } from "@mui/material";
+import PersonAddIcon from "@mui/icons-material/PersonAdd";
+import { CompactModal } from "./CompactModal";
+import {
+  CompactFormSection,
+  CompactTextField,
+  CompactModalActions,
+} from "./CompactFormFields";
 
 export interface AddAgentModalProps {
   open: boolean;
@@ -54,8 +55,7 @@ export const AddAgentModal: React.FC<AddAgentModalProps> = ({
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async () => {
     setError(null);
 
     // Validation
@@ -69,7 +69,7 @@ export const AddAgentModal: React.FC<AddAgentModalProps> = ({
       return;
     }
 
-    // Basic email validation
+    // Email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(formData.email)) {
       setError("Please enter a valid email address");
@@ -87,116 +87,113 @@ export const AddAgentModal: React.FC<AddAgentModalProps> = ({
     }
   };
 
+  const canSubmit = !loading && formData.name.trim().length > 0 && formData.email.trim().length > 0;
+
   return (
-    <Dialog
+    <CompactModal
       open={open}
       onClose={handleClose}
-      maxWidth="sm"
-      fullWidth
-      PaperProps={{
-        sx: {
-          borderRadius: 2,
-        },
-      }}
+      title="Add New Agent"
+      icon={<PersonAddIcon />}
+      error={error}
+      disabled={loading}
+      actions={
+        <CompactModalActions
+          onCancel={handleClose}
+          onSubmit={handleSubmit}
+          submitLabel="Add Agent"
+          isSubmitting={loading}
+          submitDisabled={!canSubmit}
+          cancelDisabled={loading}
+        />
+      }
     >
-      <form onSubmit={handleSubmit}>
-        <DialogTitle>
-          <Typography variant="h6" sx={{ fontWeight: 600 }}>
-            Add New Agent
-          </Typography>
-          <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-            Invite a new team member to join your account
-          </Typography>
-        </DialogTitle>
+      <CompactFormSection>
+        {/* Name */}
+        <CompactTextField
+          label="Full Name"
+          required
+          value={formData.name}
+          onChange={(e) => setFormData((prev) => ({ ...prev, name: e.target.value }))}
+          placeholder="Enter agent's full name"
+          disabled={loading}
+          autoFocus
+        />
 
-        <DialogContent sx={{ pb: 1 }}>
-          {error && (
-            <Alert severity="error" sx={{ mb: 2 }}>
-              {error}
-            </Alert>
-          )}
-
-          <Box sx={{ display: "flex", flexDirection: "column", gap: 2.5, pt: 1 }}>
-            {/* Name Field */}
-            <TextField
-              fullWidth
-              label="Full Name"
-              value={formData.name}
-              onChange={(e) =>
-                setFormData((prev) => ({ ...prev, name: e.target.value }))
-              }
-              disabled={loading}
-              required
-              placeholder="Enter agent's full name"
-            />
-
-            {/* Email Field */}
-            <TextField
-              fullWidth
-              label="Email Address"
-              type="email"
-              value={formData.email}
-              onChange={(e) =>
-                setFormData((prev) => ({ ...prev, email: e.target.value }))
-              }
-              disabled={loading}
-              required
-              placeholder="agent@example.com"
-              helperText="An invitation email will be sent to this address"
-            />
-
-            {/* Role Selection */}
-            <FormControl fullWidth disabled={loading}>
-              <InputLabel>Role</InputLabel>
-              <Select
-                value={formData.role}
-                label="Role"
-                onChange={(e) =>
-                  setFormData((prev) => ({
-                    ...prev,
-                    role: e.target.value as "administrator" | "agent",
-                  }))
-                }
-              >
-                <MenuItem value="agent">
-                  <Box>
-                    <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                      Agent
-                    </Typography>
-                    <Typography variant="caption" color="text.secondary">
-                      Can handle conversations and access assigned inboxes
-                    </Typography>
-                  </Box>
-                </MenuItem>
-                <MenuItem value="administrator">
-                  <Box>
-                    <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                      Administrator
-                    </Typography>
-                    <Typography variant="caption" color="text.secondary">
-                      Full access to all account settings and features
-                    </Typography>
-                  </Box>
-                </MenuItem>
-              </Select>
-            </FormControl>
-          </Box>
-        </DialogContent>
-
-        <DialogActions sx={{ px: 3, pb: 2, pt: 2 }}>
-          <Button onClick={handleClose} disabled={loading} color="inherit">
-            Cancel
-          </Button>
-          <Button
-            type="submit"
-            variant="contained"
+        {/* Email */}
+        <Box>
+          <CompactTextField
+            label="Email Address"
+            required
+            type="email"
+            value={formData.email}
+            onChange={(e) => setFormData((prev) => ({ ...prev, email: e.target.value }))}
+            placeholder="agent@example.com"
             disabled={loading}
-            sx={{ minWidth: 100 }}
+          />
+          <Typography
+            sx={{
+              mt: 0.5,
+              fontSize: "0.75rem",
+              color: "#6b7280",
+              lineHeight: 1.4,
+            }}
           >
-            {loading ? "Adding..." : "Add Agent"}
-          </Button>
-        </DialogActions>
-      </form>
-    </Dialog>
+            An invitation email will be sent to this address
+          </Typography>
+        </Box>
+
+        {/* Role */}
+        <Box>
+          <Typography
+            sx={{
+              mb: 0.75,
+              fontSize: "0.75rem",
+              fontWeight: 600,
+              color: "#4b5563",
+              textTransform: "uppercase",
+              letterSpacing: "0.025em",
+            }}
+          >
+            Role <span style={{ color: "#ef4444", fontSize: "0.875rem" }}>*</span>
+          </Typography>
+          <FormControl fullWidth size="small" disabled={loading}>
+            <Select
+              value={formData.role}
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  role: e.target.value as "administrator" | "agent",
+                }))
+              }
+              sx={{
+                fontSize: "0.813rem",
+              }}
+            >
+              <MenuItem value="agent" sx={{ py: 1.5 }}>
+                <Box>
+                  <Typography variant="body2" sx={{ fontWeight: 500, fontSize: "0.813rem", color: "#1f2937" }}>
+                    Agent
+                  </Typography>
+                  <Typography variant="caption" sx={{ color: "#6b7280", fontSize: "0.75rem", lineHeight: 1.3 }}>
+                    Can handle conversations and access assigned inboxes
+                  </Typography>
+                </Box>
+              </MenuItem>
+              <MenuItem value="administrator" sx={{ py: 1.5 }}>
+                <Box>
+                  <Typography variant="body2" sx={{ fontWeight: 500, fontSize: "0.813rem", color: "#1f2937" }}>
+                    Administrator
+                  </Typography>
+                  <Typography variant="caption" sx={{ color: "#6b7280", fontSize: "0.75rem", lineHeight: 1.3 }}>
+                    Full access to all account settings and features
+                  </Typography>
+                </Box>
+              </MenuItem>
+            </Select>
+          </FormControl>
+        </Box>
+      </CompactFormSection>
+    </CompactModal>
   );
 };

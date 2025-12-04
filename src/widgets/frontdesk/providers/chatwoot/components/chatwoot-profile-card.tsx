@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { Box, Avatar, Typography, Chip, Divider } from "@mui/material";
-import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+
 import { useRecoilValue } from "recoil";
 import {
   chatwootProfileAtom,
@@ -9,13 +9,13 @@ import {
 } from "@/store/frontdesk/atoms/chatwoot.atoms";
 import PersonIcon from "@mui/icons-material/Person";
 import { generateUserAvatar } from "../utils/avatar.utils";
+import { colorTokens, radiusTokens, shadowTokens } from "@/widgets/frontdesk/design-system";
 
 interface ChatwootProfileCardProps {
   isCollapsed?: boolean;
 }
 
 export const ChatwootProfileCard: React.FC<ChatwootProfileCardProps> = ({ isCollapsed = false }) => {
-  const { primaryColor, neutralColor } = useGomakeTheme();
   const profile = useRecoilValue(chatwootProfileAtom);
   const profileLoading = useRecoilValue(chatwootProfileLoadingAtom);
   const selectedAccountId = useRecoilValue(chatwootSelectedAccountAtom);
@@ -27,21 +27,21 @@ export const ChatwootProfileCard: React.FC<ChatwootProfileCardProps> = ({ isColl
       <Box
         sx={{
           p: 2,
-          borderTop: `1px solid ${neutralColor(200)}`,
-          backgroundColor: neutralColor(25),
+          borderTop: `1px solid ${colorTokens.neutral[200]}`,
+          backgroundColor: colorTokens.neutral[25],
         }}
       >
         {isCollapsed ? (
           <Box sx={{ display: "flex", justifyContent: "center" }}>
-            <PersonIcon sx={{ color: neutralColor(400), fontSize: 24 }} />
+            <PersonIcon sx={{ color: colorTokens.neutral[400], fontSize: 24 }} />
           </Box>
         ) : (
           <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
-            <Avatar sx={{ width: 40, height: 40, bgcolor: neutralColor(200) }}>
-              <PersonIcon sx={{ color: neutralColor(500) }} />
+            <Avatar sx={{ width: 40, height: 40, bgcolor: colorTokens.neutral[200] }}>
+              <PersonIcon sx={{ color: colorTokens.neutral[500] }} />
             </Avatar>
             <Box sx={{ flex: 1 }}>
-              <Typography variant="body2" sx={{ color: neutralColor(600), fontSize: "0.75rem" }}>
+              <Typography variant="body2" sx={{ color: colorTokens.neutral[600], fontSize: "0.75rem" }}>
                 Loading...
               </Typography>
             </Box>
@@ -61,8 +61,8 @@ export const ChatwootProfileCard: React.FC<ChatwootProfileCardProps> = ({ isColl
     <Box
       sx={{
         p: isCollapsed ? 1.5 : 2,
-        borderTop: `1px solid ${neutralColor(200)}`,
-        backgroundColor: neutralColor(25),
+        borderTop: `1px solid ${colorTokens.neutral[200]}`,
+        backgroundColor: colorTokens.neutral[25],
       }}
     >
       {isCollapsed ? (
@@ -73,7 +73,7 @@ export const ChatwootProfileCard: React.FC<ChatwootProfileCardProps> = ({ isColl
               width: 36,
               height: 36,
               bgcolor: avatarData.backgroundColor,
-              border: `2px solid ${neutralColor(200)}`,
+              border: `2px solid ${colorTokens.neutral[200]}`,
               fontSize: "0.813rem",
               fontWeight: 600,
             }}
@@ -92,7 +92,7 @@ export const ChatwootProfileCard: React.FC<ChatwootProfileCardProps> = ({ isColl
                 width: 40,
                 height: 40,
                 bgcolor: avatarData.backgroundColor,
-                border: `2px solid ${neutralColor(200)}`,
+                border: `2px solid ${colorTokens.neutral[200]}`,
                 fontSize: "0.875rem",
                 fontWeight: 600,
               }}
@@ -107,7 +107,7 @@ export const ChatwootProfileCard: React.FC<ChatwootProfileCardProps> = ({ isColl
                 sx={{
                   fontWeight: 600,
                   fontSize: "0.875rem",
-                  color: neutralColor(900),
+                  color: colorTokens.neutral[900],
                   overflow: "hidden",
                   textOverflow: "ellipsis",
                   whiteSpace: "nowrap",
@@ -119,7 +119,7 @@ export const ChatwootProfileCard: React.FC<ChatwootProfileCardProps> = ({ isColl
                 <Typography
                   variant="caption"
                   sx={{
-                    color: neutralColor(600),
+                    color: colorTokens.neutral[600],
                     fontSize: "0.75rem",
                     display: "block",
                     overflow: "hidden",
@@ -135,12 +135,12 @@ export const ChatwootProfileCard: React.FC<ChatwootProfileCardProps> = ({ isColl
 
           {selectedAccount && (
             <>
-              <Divider sx={{ my: 1, borderColor: neutralColor(200) }} />
+              <Divider sx={{ my: 1, borderColor: colorTokens.neutral[200] }} />
               <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 1 }}>
                 <Typography
                   variant="caption"
                   sx={{
-                    color: neutralColor(600),
+                    color: colorTokens.neutral[600],
                     fontSize: "0.688rem",
                     fontWeight: 500,
                     textTransform: "uppercase",
@@ -155,8 +155,8 @@ export const ChatwootProfileCard: React.FC<ChatwootProfileCardProps> = ({ isColl
                   sx={{
                     height: 20,
                     fontSize: "0.688rem",
-                    bgcolor: primaryColor(50),
-                    color: primaryColor(700),
+                    bgcolor: colorTokens.primary[50],
+                    color: colorTokens.primary[700],
                     fontWeight: 500,
                     "& .MuiChip-label": {
                       px: 1,
@@ -169,7 +169,7 @@ export const ChatwootProfileCard: React.FC<ChatwootProfileCardProps> = ({ isColl
                   <Typography
                     variant="caption"
                     sx={{
-                      color: neutralColor(500),
+                      color: colorTokens.neutral[500],
                       fontSize: "0.688rem",
                       textTransform: "capitalize",
                     }}

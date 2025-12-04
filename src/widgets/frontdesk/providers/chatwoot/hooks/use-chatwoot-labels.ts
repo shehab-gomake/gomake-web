@@ -8,7 +8,7 @@
 import { useCallback, useEffect, useRef } from "react";
 import { useRecoilState } from "recoil";
 import { chatwootService } from "@/services/frontdesk";
-import type { Label, CreateLabelPayload, UpdateLabelPayload } from "@/services/frontdesk/api/chatwoot";
+import type { CreateLabelPayload, UpdateLabelPayload } from "@/services/frontdesk/api/chatwoot";
 import {
   chatwootLabelsAtom,
   chatwootLabelsLoadingAtom,
@@ -16,6 +16,7 @@ import {
   type ChatwootLabel,
 } from "@/store/frontdesk/atoms/chatwoot.atoms";
 import { useChatwootProvider } from "./use-chatwoot-provider";
+import { useFetchLock, FETCH_LOCK_KEYS } from "./core/use-fetch-lock";
 
 export interface UseChatwootLabelsReturn {
   /** List of labels */
@@ -55,17 +56,16 @@ export interface UseChatwootLabelsReturn {
  * });
  * ```
  */
-export const useChatwootLabels = (
-  accountId?: number | null,
-  autoFetch: boolean = true
-): UseChatwootLabelsReturn => {
+export const useChatwootLabels = (accountId?: number | null, autoFetch: boolean = true): UseChatwootLabelsReturn => {
   const { selectedAccountId } = useChatwootProvider();
   const [labels, setLabels] = useRecoilState(chatwootLabelsAtom);
   const [loading, setLoading] = useRecoilState(chatwootLabelsLoadingAtom);
   const [error, setError] = useRecoilState(chatwootLabelsErrorAtom);
 
+  // Centralized fetch lock
+  const { acquireLock, releaseLock, isLocked } = useFetchLock();
+
   // Fetch deduplication
-  const isFetchingRef = useRef(false);
   const hasAttemptedRef = useRef(false);
 
   // Use provided accountId or fall back to selected account
@@ -77,11 +77,12 @@ export const useChatwootLabels = (
       return;
     }
 
-    if (isFetchingRef.current) {
+    // Centralized deduplication check - prevents duplicate calls across ALL component instances
+    if (!acquireLock(FETCH_LOCK_KEYS.LABELS)) {
+      console.log("[useChatwootLabels] ⏭️ Fetch already in progress, skipping duplicate call");
       return;
     }
 
-    isFetchingRef.current = true;
     setLoading(true);
     setError(null);
 
@@ -103,9 +104,9 @@ export const useChatwootLabels = (
       setLabels([]);
     } finally {
       setLoading(false);
-      isFetchingRef.current = false;
+      releaseLock(FETCH_LOCK_KEYS.LABELS);
     }
-  }, [effectiveAccountId, setLabels, setLoading, setError]);
+  }, [effectiveAccountId, setLabels, setLoading, setError, acquireLock, releaseLock]);
 
   const createLabel = useCallback(
     async (payload: CreateLabelPayload): Promise<ChatwootLabel> => {
@@ -198,10 +199,11 @@ export const useChatwootLabels = (
 
   // Auto-fetch on mount if enabled
   useEffect(() => {
-    if (autoFetch && effectiveAccountId && !hasAttemptedRef.current && !isFetchingRef.current) {
+    const labelsLocked = isLocked(FETCH_LOCK_KEYS.LABELS);
+    if (autoFetch && effectiveAccountId && !hasAttemptedRef.current && !labelsLocked) {
       fetchLabels();
     }
-  }, [autoFetch, effectiveAccountId, fetchLabels]);
+  }, [autoFetch, effectiveAccountId, fetchLabels, isLocked]);
 
   return {
     labels,
@@ -214,4 +216,3 @@ export const useChatwootLabels = (
     refresh,
   };
 };
-

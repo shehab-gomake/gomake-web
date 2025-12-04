@@ -1,112 +1,132 @@
 /**
  * FrontDesk Design System - Spacing Tokens
  *
- * Consistent spacing scale based on 4px base unit.
+ * Consistent spacing scale based on 8px base unit for modern SaaS design.
+ * Follows 8px vertical rhythm for optimal visual harmony.
  * All spacing values are in pixels for precise control.
  */
 
+// Base unit for the spacing system
+export const SPACING_BASE_UNIT = 8;
+
+// Grid configuration for 12-column layout
+export const GRID_CONFIG = {
+  columns: 12,
+  gutter: 24, // 24px gutter spacing between columns
+  margin: 24, // 24px margin on edges
+} as const;
+
 export const spacingTokens = {
-  // Base spacing scale (4px increments)
+  // Base spacing scale (8px increments for vertical rhythm)
   0: 0,
-  0.5: 2,   // 0.5 * 4 = 2px
-  1: 4,     // 1 * 4 = 4px
-  1.5: 6,   // 1.5 * 4 = 6px
-  2: 8,     // 2 * 4 = 8px
-  2.5: 10,  // 2.5 * 4 = 10px
-  3: 12,    // 3 * 4 = 12px
-  3.5: 14,  // 3.5 * 4 = 14px
-  4: 16,    // 4 * 4 = 16px
-  5: 20,    // 5 * 4 = 20px
-  6: 24,    // 6 * 4 = 24px
-  7: 28,    // 7 * 4 = 28px
-  8: 32,    // 8 * 4 = 32px
-  9: 36,    // 9 * 4 = 36px
-  10: 40,   // 10 * 4 = 40px
-  12: 48,   // 12 * 4 = 48px
-  14: 56,   // 14 * 4 = 56px
-  16: 64,   // 16 * 4 = 64px
-  20: 80,   // 20 * 4 = 80px
-  24: 96,   // 24 * 4 = 96px
-  28: 112,  // 28 * 4 = 112px
-  32: 128,  // 32 * 4 = 128px
-  36: 144,  // 36 * 4 = 144px
-  40: 160,  // 40 * 4 = 160px
-  44: 176,  // 44 * 4 = 176px
-  48: 192,  // 48 * 4 = 192px
-  52: 208,  // 52 * 4 = 208px
-  56: 224,  // 56 * 4 = 224px
-  60: 240,  // 60 * 4 = 240px
-  64: 256,  // 64 * 4 = 256px
-  72: 288,  // 72 * 4 = 288px
-  80: 320,  // 80 * 4 = 320px
-  96: 384,  // 96 * 4 = 384px
+  0.5: 4,    // 0.5 * 8 = 4px - micro spacing
+  1: 8,      // 1 * 8 = 8px - base unit
+  1.5: 12,   // 1.5 * 8 = 12px
+  2: 16,     // 2 * 8 = 16px
+  2.5: 20,   // 2.5 * 8 = 20px
+  3: 24,     // 3 * 8 = 24px - gutter size
+  3.5: 28,   // 3.5 * 8 = 28px
+  4: 32,     // 4 * 8 = 32px
+  5: 40,     // 5 * 8 = 40px
+  6: 48,     // 6 * 8 = 48px
+  7: 56,     // 7 * 8 = 56px
+  8: 64,     // 8 * 8 = 64px
+  9: 72,     // 9 * 8 = 72px
+  10: 80,    // 10 * 8 = 80px
+  12: 96,    // 12 * 8 = 96px
+  14: 112,   // 14 * 8 = 112px
+  16: 128,   // 16 * 8 = 128px
+  20: 160,   // 20 * 8 = 160px
+  24: 192,   // 24 * 8 = 192px
+  28: 224,   // 28 * 8 = 224px
+  32: 256,   // 32 * 8 = 256px
+  36: 288,   // 36 * 8 = 288px
+  40: 320,   // 40 * 8 = 320px
+  44: 352,   // 44 * 8 = 352px
+  48: 384,   // 48 * 8 = 384px
+  52: 416,   // 52 * 8 = 416px
+  56: 448,   // 56 * 8 = 448px
+  60: 480,   // 60 * 8 = 480px
+  64: 512,   // 64 * 8 = 512px
+  72: 576,   // 72 * 8 = 576px
+  80: 640,   // 80 * 8 = 640px
+  96: 768,   // 96 * 8 = 768px
 } as const;
 
 // Semantic spacing for common UI patterns
 export const semanticSpacing = {
-  // Component internal spacing
+  // Component internal spacing (8px rhythm)
   component: {
-    xxs: spacingTokens[0.5],  // 2px - tight elements
-    xs: spacingTokens[1],      // 4px - icon-to-text
-    sm: spacingTokens[2],      // 8px - related items
-    md: spacingTokens[3],      // 12px - default spacing
-    lg: spacingTokens[4],      // 16px - section spacing
-    xl: spacingTokens[6],      // 24px - large sections
-    xxl: spacingTokens[8],     // 32px - major divisions
+    xxs: spacingTokens[0.5],  // 4px - micro spacing
+    xs: spacingTokens[1],      // 8px - icon-to-text
+    sm: spacingTokens[1.5],    // 12px - related items
+    md: spacingTokens[2],      // 16px - default spacing
+    lg: spacingTokens[3],      // 24px - section spacing
+    xl: spacingTokens[4],      // 32px - large sections
+    xxl: spacingTokens[6],     // 48px - major divisions
   },
 
-  // Container padding
+  // Container/Card padding (20-24px as per design spec)
   container: {
-    xs: spacingTokens[2],      // 8px - compact
-    sm: spacingTokens[3],      // 12px - small
-    md: spacingTokens[4],      // 16px - default
-    lg: spacingTokens[6],      // 24px - comfortable
-    xl: spacingTokens[8],      // 32px - spacious
+    xs: spacingTokens[1],      // 8px - compact
+    sm: spacingTokens[1.5],    // 12px - small
+    md: spacingTokens[2],      // 16px - default
+    lg: spacingTokens[3],      // 24px - comfortable (standard card padding)
+    xl: spacingTokens[4],      // 32px - spacious
   },
 
-  // Layout gaps
+  // Layout gaps (24px gutter as per design spec)
   layout: {
-    xs: spacingTokens[2],      // 8px - tight
-    sm: spacingTokens[4],      // 16px - default
-    md: spacingTokens[6],      // 24px - comfortable
-    lg: spacingTokens[8],      // 32px - spacious
+    xs: spacingTokens[1],      // 8px - tight
+    sm: spacingTokens[2],      // 16px - default
+    md: spacingTokens[3],      // 24px - comfortable (gutter size)
+    lg: spacingTokens[4],      // 32px - spacious
+    xl: spacingTokens[6],      // 48px - extra spacious
   },
 
-  // List item spacing
+  // List item spacing (improved for better scanning)
   listItem: {
-    compact: spacingTokens[2],    // 8px vertical
-    default: spacingTokens[3],    // 12px vertical
-    comfortable: spacingTokens[4], // 16px vertical
+    compact: spacingTokens[1],     // 8px vertical
+    default: spacingTokens[1.5],   // 12px vertical
+    comfortable: spacingTokens[2], // 16px vertical
+    spacious: spacingTokens[3],    // 24px vertical
   },
 
   // Icon sizes
   icon: {
-    xs: spacingTokens[3],      // 12px
-    sm: spacingTokens[4],      // 16px
-    md: spacingTokens[5],      // 20px
-    lg: spacingTokens[6],      // 24px
-    xl: spacingTokens[8],      // 32px
-    xxl: spacingTokens[12],    // 48px
+    xs: spacingTokens[1.5],    // 12px
+    sm: spacingTokens[2],      // 16px
+    md: spacingTokens[2.5],    // 20px
+    lg: spacingTokens[3],      // 24px
+    xl: spacingTokens[4],      // 32px
+    xxl: spacingTokens[6],     // 48px
   },
 
   // Avatar sizes
   avatar: {
-    xs: spacingTokens[5],      // 20px
-    sm: spacingTokens[6],      // 24px
-    md: spacingTokens[8],      // 32px
-    lg: spacingTokens[10],     // 40px
-    xl: spacingTokens[12],     // 48px
-    xxl: spacingTokens[16],    // 64px
+    xs: spacingTokens[2.5],    // 20px
+    sm: spacingTokens[3],      // 24px
+    md: spacingTokens[4],      // 32px
+    lg: spacingTokens[5],      // 40px
+    xl: spacingTokens[6],      // 48px
+    xxl: spacingTokens[8],     // 64px
   },
 
-  // Column widths (common layouts)
+  // Column widths (common layouts) - adjusted for 12-column grid
   column: {
-    navigation: spacingTokens[55],   // 220px
-    navigationCompact: spacingTokens[15], // 60px
-    list: spacingTokens[70],         // 280px
-    listWide: spacingTokens[80],     // 320px
-    sidebar: spacingTokens[60],      // 240px
-    sidebarWide: spacingTokens[65],  // 260px
+    navigation: 240,           // Navigation sidebar
+    navigationCompact: 64,     // Collapsed navigation
+    list: 360,                 // Conversation list (wider for better scanning)
+    listWide: 400,             // Wide list view
+    sidebar: 320,              // Detail sidebar
+    sidebarWide: 360,          // Wide detail sidebar
+  },
+  
+  // Card padding (20-24px as per design spec)
+  card: {
+    sm: spacingTokens[2],      // 16px
+    md: spacingTokens[2.5],    // 20px
+    lg: spacingTokens[3],      // 24px
   },
 } as const;
 
@@ -115,7 +135,7 @@ export type SemanticSpacingCategory = keyof typeof semanticSpacing;
 
 /**
  * Get spacing value
- * @example getSpacing(4) => 16
+ * @example getSpacing(4) => 32
  */
 export const getSpacing = (token: SpacingToken): number => {
   return spacingTokens[token];
@@ -123,11 +143,28 @@ export const getSpacing = (token: SpacingToken): number => {
 
 /**
  * Get semantic spacing value
- * @example getSemanticSpacing('component', 'md') => 12
+ * @example getSemanticSpacing('component', 'md') => 16
  */
 export const getSemanticSpacing = (
   category: SemanticSpacingCategory,
   variant: string
 ): number => {
   return semanticSpacing[category][variant as keyof typeof semanticSpacing[typeof category]];
+};
+
+/**
+ * Calculate grid column width
+ * @example getGridColumnWidth(3) => 25% (3 of 12 columns)
+ */
+export const getGridColumnWidth = (columns: number): string => {
+  return `${(columns / GRID_CONFIG.columns) * 100}%`;
+};
+
+/**
+ * Get responsive column width with gutter
+ * @example getColumnWithGutter(3) => 'calc(25% - 24px)'
+ */
+export const getColumnWithGutter = (columns: number): string => {
+  const percentage = (columns / GRID_CONFIG.columns) * 100;
+  return `calc(${percentage}% - ${GRID_CONFIG.gutter}px)`;
 };

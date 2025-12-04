@@ -48,5 +48,8 @@ export * from './components';
 // Layouts
 export * from './layouts';
 
+// Styles (reusable style patterns)
+export * from './styles';
+
 // Utilities
 export { default as themeConfig } from './theme';

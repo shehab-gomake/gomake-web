@@ -22,8 +22,10 @@ interface ConversationFilterMenuProps {
   onFiltersChange: (filters: Partial<ConversationListParams>) => void;
   teams?: Team[];
   onFilterClick?: () => void;
-  primaryColor: (shade: number) => string;
-  neutralColor: (shade: number) => string;
+  /** @deprecated No longer used - colors are now from design tokens */
+  primaryColor?: (shade: number) => string;
+  /** @deprecated No longer used - colors are now from design tokens */
+  neutralColor?: (shade: number) => string;
 }
 
 const STATUS_OPTIONS = [

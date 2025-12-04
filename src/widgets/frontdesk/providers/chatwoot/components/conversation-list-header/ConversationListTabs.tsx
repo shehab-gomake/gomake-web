@@ -8,6 +8,7 @@
 import React from "react";
 import { Box, Tabs, Tab } from "@mui/material";
 import { ConversationAssigneeType } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
+import { colorTokens, radiusTokens, shadowTokens } from "@/widgets/frontdesk/design-system";
 
 export interface ConversationCounts {
   mine: number;
@@ -23,9 +24,9 @@ export interface ConversationListTabsProps {
   /** Callback when tab changes */
   onTabChange: (event: React.SyntheticEvent, newValue: string) => void;
   /** Primary color function */
-  primaryColor: (shade: number) => string;
+  primaryColor?: (shade: number) => string;
   /** Neutral color function */
-  neutralColor: (shade: number) => string;
+  neutralColor?: (shade: number) => string;
 }
 
 export const ConversationListTabs: React.FC<ConversationListTabsProps> = ({
@@ -45,7 +46,7 @@ export const ConversationListTabs: React.FC<ConversationListTabsProps> = ({
     <Box
       sx={{
         px: 2,
-        borderBottom: `1px solid ${neutralColor(200)}`,
+        borderBottom: `1px solid ${colorTokens.neutral[200]}`,
       }}
     >
       <Tabs
@@ -54,7 +55,7 @@ export const ConversationListTabs: React.FC<ConversationListTabsProps> = ({
         sx={{
           minHeight: 44,
           "& .MuiTabs-indicator": {
-            backgroundColor: primaryColor(500),
+            backgroundColor: colorTokens.primary[500],
             height: 3,
           },
         }}
@@ -69,9 +70,9 @@ export const ConversationListTabs: React.FC<ConversationListTabsProps> = ({
             minHeight: 44,
             minWidth: "auto",
             px: 2,
-            color: neutralColor(600),
+            color: colorTokens.neutral[600],
             "&.Mui-selected": {
-              color: primaryColor(700),
+              color: colorTokens.primary[700],
               fontWeight: 600,
             },
           }}
@@ -86,9 +87,9 @@ export const ConversationListTabs: React.FC<ConversationListTabsProps> = ({
             minHeight: 44,
             minWidth: "auto",
             px: 2,
-            color: neutralColor(600),
+            color: colorTokens.neutral[600],
             "&.Mui-selected": {
-              color: primaryColor(700),
+              color: colorTokens.primary[700],
               fontWeight: 600,
             },
           }}
@@ -103,9 +104,9 @@ export const ConversationListTabs: React.FC<ConversationListTabsProps> = ({
             minHeight: 44,
             minWidth: "auto",
             px: 2,
-            color: neutralColor(600),
+            color: colorTokens.neutral[600],
             "&.Mui-selected": {
-              color: primaryColor(700),
+              color: colorTokens.primary[700],
               fontWeight: 600,
             },
           }}

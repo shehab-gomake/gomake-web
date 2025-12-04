@@ -1,303 +1,69 @@
-# FrontDesk Chatwoot API Reference
+# API Reference - FrontDesk Chatwoot
 
-Quick reference for all Chatwoot API endpoints available in FrontDesk.
+**Base**: `chatwootService` from `@/services/frontdesk`
 
-## Base Configuration
-
-- **Base URL**: `http://localhost:8080` (dev) or Cloud Run URL (prod)
-- **API Version**: v1 (`/api/v1/*`)
-- **Authentication**: JWT Bearer token (automatically included)
-- **Service**: `chatwootService` from `@/services/frontdesk`
-
-## Service Groups
-
+## Profile (no accountId)
 ```typescript
-import { chatwootService } from '@/services/frontdesk';
-
-// Available service groups:
-chatwootService.profile         // User profile (no accountId)
-chatwootService.conversations  // Conversation management
-chatwootService.messages       // Message operations
-chatwootService.inboxes        // Inbox/channel management
-chatwootService.contacts        // Contact management
-chatwootService.notifications  // Notification operations
-chatwootService.agents         // Agent/user management
-chatwootService.teams          // Team management
+chatwootService.profile.getProfile()  // GET /api/v1/profile
 ```
 
----
-
-## Profile Service
-
-**No accountId required**
-
-### `getProfile()`
+## Conversations (accountId required)
 ```typescript
-const user = await chatwootService.profile.getProfile();
+listConversations(accountId, filters?)       // GET conversations
+getConversationDetails(accountId, id)        // GET conversations/{id}
+updateConversation(accountId, id, data)      // PUT conversations/{id}
+searchConversations(accountId, query)        // GET conversations/search?q=
+updateLabels(accountId, id, labels)          // POST conversations/{id}/labels
 ```
-- **Endpoint**: `GET /api/v1/profile`
-- **Returns**: `ChatwootUser` with accounts array
-- **Use case**: Get current user profile and available accounts
 
----
-
-## Conversations Service
-
-**All methods require `accountId`**
-
-### `listConversations(accountId, filters?)`
+## Messages (accountId + conversationId required)
 ```typescript
-const conversations = await chatwootService.conversations.listConversations(
-  accountId,
-  {
-    status: ['open'],
-    assignee_type: 'me',
-    inbox_id: 1,
-    team_id: 1,
-    labels: ['label1'],
-    page: 1,
-    per_page: 20,
-    sort_by: 'last_activity_at',
-    sort_order: 'desc'
-  }
-);
+listMessages(accountId, convId)              // GET conversations/{id}/messages
+createMessage(accountId, convId, data)       // POST conversations/{id}/messages
+deleteMessage(accountId, convId, msgId)      // DELETE conversations/{id}/messages/{msgId}
 ```
-- **Endpoint**: `GET /api/v1/accounts/{accountId}/conversations`
-- **Returns**: `{ payload: ChatwootConversation[], meta: {...} }`
-- **Use case**: List conversations with filters
 
-### `getConversationDetails(accountId, conversationId)`
+## Inboxes (accountId required)
 ```typescript
-const conversation = await chatwootService.conversations.getConversationDetails(
-  accountId,
-  conversationId
-);
+listAllInboxes()                             // GET inboxes
+getInboxDetails(accountId, inboxId)          // GET inboxes/{id}
 ```
-- **Endpoint**: `GET /api/v1/accounts/{accountId}/conversations/{id}`
-- **Returns**: `ChatwootConversation`
-- **Use case**: Get single conversation details
 
-### `updateConversation(accountId, conversationId, data)`
+## Contacts (accountId required)
 ```typescript
-const updated = await chatwootService.conversations.updateConversation(
-  accountId,
-  conversationId,
-  { status: 'resolved' }
-);
+listContacts(accountId, filters?)            // GET contacts
+getContactDetails(accountId, contactId)      // GET contacts/{id}
+searchContacts(accountId, query)             // GET contacts/search?q=
+createContact(accountId, data)               // POST contacts
 ```
-- **Endpoint**: `PUT /api/v1/accounts/{accountId}/conversations/{id}`
-- **Returns**: `ChatwootConversation`
-- **Use case**: Update conversation status, assignee, etc.
 
-### `searchConversations(accountId, query)`
+## Other Services
 ```typescript
-const results = await chatwootService.conversations.searchConversations(
-  accountId,
-  'search query'
-);
+chatwootService.notifications.listNotifications(filters?)  // GET notifications
+chatwootService.agents.listAgents(accountId)               // GET agents
+chatwootService.teams.listTeams(accountId)                 // GET teams
 ```
-- **Endpoint**: `GET /api/v1/accounts/{accountId}/conversations/search?q={query}`
-- **Returns**: `{ payload: ChatwootConversation[] }`
-- **Use case**: Search conversations
 
-### `updateLabels(accountId, conversationId, labels)`
+## Filter Types
 ```typescript
-await chatwootService.conversations.updateLabels(
-  accountId,
-  conversationId,
-  ['label1', 'label2']
-);
-```
-- **Endpoint**: `POST /api/v1/accounts/{accountId}/conversations/{id}/labels`
-- **Returns**: `{ labels: ChatwootLabel[] }`
-- **Use case**: Update conversation labels
-
----
-
-## Messages Service
-
-**All methods require `accountId` and `conversationId`**
-
-### `listMessages(accountId, conversationId)`
-```typescript
-const messages = await chatwootService.messages.listMessages(
-  accountId,
-  conversationId
-);
-```
-- **Endpoint**: `GET /api/v1/accounts/{accountId}/conversations/{id}/messages`
-- **Returns**: `{ payload: ChatwootMessage[] }`
-- **Use case**: Get conversation messages
-
-### `createMessage(accountId, conversationId, data)`
-```typescript
-const message = await chatwootService.messages.createMessage(
-  accountId,
-  conversationId,
-  {
-    content: 'Hello!',
-    message_type: 'outgoing',
-    private: false
-  }
-);
-```
-- **Endpoint**: `POST /api/v1/accounts/{accountId}/conversations/{id}/messages`
-- **Returns**: `ChatwootMessage`
-- **Use case**: Send a message
-
-### `deleteMessage(accountId, conversationId, messageId)`
-```typescript
-await chatwootService.messages.deleteMessage(
-  accountId,
-  conversationId,
-  messageId
-);
-```
-- **Endpoint**: `DELETE /api/v1/accounts/{accountId}/conversations/{id}/messages/{messageId}`
-- **Returns**: `void`
-- **Use case**: Delete a message
-
----
-
-## Inboxes Service
-
-**All methods require `accountId`**
-
-### `listAllInboxes()`
-```typescript
-const inboxes = await chatwootService.inboxes.listAllInboxes();
-```
-- **Endpoint**: `GET /api/v1/accounts/{accountId}/inboxes`
-- **Returns**: `{ payload: ChatwootInbox[] }`
-- **Use case**: List all inboxes/channels
-
-### `getInboxDetails(accountId, inboxId)`
-```typescript
-const inbox = await chatwootService.inboxes.getInboxDetails(accountId, inboxId);
-```
-- **Endpoint**: `GET /api/v1/accounts/{accountId}/inboxes/{id}`
-- **Returns**: `ChatwootInbox`
-- **Use case**: Get inbox details
-
----
-
-## Contacts Service
-
-**All methods require `accountId`**
-
-### `listContacts(accountId, filters?)`
-```typescript
-const contacts = await chatwootService.contacts.listContacts(accountId, {
-  page: 1,
-  per_page: 20
-});
-```
-- **Endpoint**: `GET /api/v1/accounts/{accountId}/contacts`
-- **Returns**: `{ payload: ChatwootContact[] }`
-- **Use case**: List contacts
-
-### `getContactDetails(accountId, contactId)`
-```typescript
-const contact = await chatwootService.contacts.getContactDetails(accountId, contactId);
-```
-- **Endpoint**: `GET /api/v1/accounts/{accountId}/contacts/{id}`
-- **Returns**: `ChatwootContact`
-- **Use case**: Get contact details
-
----
-
-## Notifications Service
-
-**No accountId required**
-
-### `listNotifications(filters?)`
-```typescript
-const notifications = await chatwootService.notifications.listNotifications({
-  page: 1,
+const filters: ConversationListParams = {
+  status: [ConversationStatus.OPEN],
+  assignee_type: ConversationAssigneeType.ME,
+  inbox_id: number,
+  team_id: number,
+  labels: string[],
+  page: number,
+  per_page: number,
+  sort_by: 'last_activity_at',
   sort_order: 'desc'
-});
-```
-- **Endpoint**: `GET /api/v1/notifications`
-- **Returns**: `{ payload: ChatwootNotification[] }`
-- **Use case**: List user notifications
-
----
-
-## Agents Service
-
-**All methods require `accountId`**
-
-### `listAgents(accountId)`
-```typescript
-const agents = await chatwootService.agents.listAgents(accountId);
-```
-- **Endpoint**: `GET /api/v1/accounts/{accountId}/agents`
-- **Returns**: `{ payload: ChatwootAgent[] }`
-- **Use case**: List account agents
-
----
-
-## Teams Service
-
-**All methods require `accountId`**
-
-### `listTeams(accountId)`
-```typescript
-const teams = await chatwootService.teams.listTeams(accountId);
-```
-- **Endpoint**: `GET /api/v1/accounts/{accountId}/teams`
-- **Returns**: `{ payload: ChatwootTeam[] }`
-- **Use case**: List account teams
-
----
-
-## Common Patterns
-
-### Error Handling
-```typescript
-try {
-  const data = await chatwootService.conversations.listConversations(accountId);
-} catch (error) {
-  console.error('API Error:', error);
-  // Handle error
-}
+};
 ```
 
-### AccountId Check
-```typescript
-if (!accountId) {
-  return; // or show error
-}
-const data = await chatwootService.conversations.listConversations(accountId);
-```
-
-### Response Extraction
+## Response Extraction
 ```typescript
 import { extractPayload, extractMetadata } from '@/widgets/frontdesk/providers/chatwoot/utils/api-response-utils';
 
 const response = await chatwootService.conversations.listConversations(accountId);
-const conversations = extractPayload(response);
-const metadata = extractMetadata(response);
+const conversations = extractPayload(response);  // Data array
+const meta = extractMetadata(response);          // Pagination info
 ```
-
----
-
-## Type Definitions
-
-All types are available from:
-```typescript
-import {
-  ChatwootUser,
-  ChatwootConversation,
-  ChatwootMessage,
-  ChatwootInbox,
-  ChatwootContact,
-  ChatwootNotification,
-  ChatwootAgent,
-  ChatwootTeam,
-  ConversationStatus,
-  ConversationAssigneeType,
-  ConversationListParams
-} from '@/services/frontdesk/api/chatwoot/types';
-```
-

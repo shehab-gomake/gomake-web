@@ -1,8 +1,6 @@
 import React from "react";
 import { Box, Skeleton, Stack, ListItem, ListItemButton } from "@mui/material";
-import { useTheme } from "@mui/material/styles";
-import { useGomakeTheme } from "@/hooks/use-gomake-thme";
-import { colorTokens } from "@/widgets/frontdesk/design-system/tokens";
+import { colorTokens } from "@/widgets/frontdesk/design-system";
 
 interface ConversationListSkeletonProps {
   /**
@@ -57,8 +55,6 @@ export const ConversationListSkeleton: React.FC<ConversationListSkeletonProps> =
  * Matches the exact structure of ConversationListItem component
  */
 const ConversationItemSkeleton: React.FC<{ index: number }> = ({ index }) => {
-  const theme = useTheme();
-  const { neutralColor } = useGomakeTheme();
 
   // Consistent widths for each item (no randomness for better UX)
   const titleWidths = ["65%", "70%", "60%", "75%", "68%", "72%", "65%", "70%"];
@@ -87,7 +83,7 @@ const ConversationItemSkeleton: React.FC<{ index: number }> = ({ index }) => {
             height={AVATAR_SIZE}
             sx={{
               flexShrink: 0,
-              bgcolor: neutralColor(200),
+              bgcolor: colorTokens.neutral[200],
             }}
           />
 
@@ -101,7 +97,7 @@ const ConversationItemSkeleton: React.FC<{ index: number }> = ({ index }) => {
                 width={titleWidth}
                 height={20}
                 sx={{
-                  bgcolor: neutralColor(300),
+                  bgcolor: colorTokens.neutral[300],
                   borderRadius: 1,
                 }}
               />
@@ -115,7 +111,7 @@ const ConversationItemSkeleton: React.FC<{ index: number }> = ({ index }) => {
                     width={PRIORITY_ICON_SIZE}
                     height={PRIORITY_ICON_SIZE}
                     sx={{
-                      bgcolor: neutralColor(200),
+                      bgcolor: colorTokens.neutral[200],
                     }}
                   />
                 )}
@@ -126,7 +122,7 @@ const ConversationItemSkeleton: React.FC<{ index: number }> = ({ index }) => {
                   width={INBOX_ICON_SIZE}
                   height={INBOX_ICON_SIZE}
                   sx={{
-                    bgcolor: neutralColor(200),
+                    bgcolor: colorTokens.neutral[200],
                   }}
                 />
 
@@ -136,7 +132,7 @@ const ConversationItemSkeleton: React.FC<{ index: number }> = ({ index }) => {
                   width={50}
                   height={16}
                   sx={{
-                    bgcolor: neutralColor(200),
+                    bgcolor: colorTokens.neutral[200],
                     borderRadius: 1,
                   }}
                 />
@@ -151,7 +147,7 @@ const ConversationItemSkeleton: React.FC<{ index: number }> = ({ index }) => {
                 width={snippetWidth}
                 height={16}
                 sx={{
-                  bgcolor: neutralColor(200),
+                  bgcolor: colorTokens.neutral[200],
                   borderRadius: 1,
                 }}
               />
@@ -164,7 +160,7 @@ const ConversationItemSkeleton: React.FC<{ index: number }> = ({ index }) => {
                   height={UNREAD_BADGE_SIZE}
                   sx={{
                     flexShrink: 0,
-                    bgcolor: theme.palette.primary.main,
+                    bgcolor: colorTokens.primary[600],
                     opacity: 0.3,
                   }}
                 />
@@ -189,7 +185,7 @@ const ConversationItemSkeleton: React.FC<{ index: number }> = ({ index }) => {
                       height={18}
                       sx={{
                         borderRadius: "10px",
-                        bgcolor: neutralColor(200),
+                        bgcolor: colorTokens.neutral[200],
                       }}
                     />
                   )}
@@ -203,7 +199,7 @@ const ConversationItemSkeleton: React.FC<{ index: number }> = ({ index }) => {
                         height={18}
                         sx={{
                           borderRadius: "10px",
-                          bgcolor: neutralColor(200),
+                          bgcolor: colorTokens.neutral[200],
                         }}
                       />
                       {index % 8 === 0 && (
@@ -213,7 +209,7 @@ const ConversationItemSkeleton: React.FC<{ index: number }> = ({ index }) => {
                           height={18}
                           sx={{
                             borderRadius: "10px",
-                            bgcolor: neutralColor(200),
+                            bgcolor: colorTokens.neutral[200],
                           }}
                         />
                       )}
@@ -229,7 +225,7 @@ const ConversationItemSkeleton: React.FC<{ index: number }> = ({ index }) => {
                     height={ASSIGNEE_AVATAR_SIZE}
                     sx={{
                       flexShrink: 0,
-                      bgcolor: neutralColor(200),
+                      bgcolor: colorTokens.neutral[200],
                     }}
                   />
                 )}

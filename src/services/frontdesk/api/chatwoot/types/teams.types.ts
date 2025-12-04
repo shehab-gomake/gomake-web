@@ -2,6 +2,8 @@
  * Chatwoot Team Types
  *
  * Type definitions for Chatwoot teams and team-related operations.
+ * 
+ * Note: GoMake always disables auto-assignment for teams (allow_auto_assign is always false).
  */
 
 // Team interface matching Chatwoot API response
@@ -9,7 +11,7 @@ export interface Team {
   id?: number;
   name?: string;
   description?: string;
-  allow_auto_assign?: boolean;
+  allow_auto_assign?: boolean;    // GoMake always sets this to false
   account_id?: number;
   is_member?: boolean;
   conversations_count?: number;
