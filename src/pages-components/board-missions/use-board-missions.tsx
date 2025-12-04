@@ -46,7 +46,7 @@ import { useQuoteGetData } from "../quote-new/use-quote-get-data";
 import { getAndSetCustomerById } from "@/services/api-service/customers/customers-api";
 import { GomakeTextInput } from "@/components";
 import { useJobsTableSocketIo } from "@/hooks/socket-io/use-jobs-table-socket-io";
-import { Fab, Stack, Tooltip } from "@mui/material";
+import { Box, Fab, Stack, Tooltip } from "@mui/material";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { userQuoteState } from "@/store";
 import { updateDocumentApi } from "@/services/api-service/generic-doc/documents-api";
@@ -63,6 +63,8 @@ import { printHouseHasFrontDeskFeature, printHouseUsePrintNode } from "@/store/p
 import { useScheduledReports } from "@/hooks/use-scheduled-reports";
 import { DocumentTypeEnums } from "@/enums/document-type-enum";
 import { useFrontDeskEmailIntegration } from "../quotes/hooks/use-frontdesk-email-integration";
+import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
+import { EPreferences } from "@/enums/prefernces";
 
 type StatusOption = {
   label: string;
@@ -115,6 +117,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     alertSuccess,
   } = useSnackBar();
   const { navigate } = useGomakeRouter();
+  const { GetPreferenceValueKey } = usePrintHousePreferences();
   const [status, setStatus] = useState<{
     label: string;
     value: BoardMissionStatusForFilter;
@@ -1028,33 +1031,55 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
               ? `${mission?.number} / ${mission?.productTypeName ?? mission?.productType
               }`
               : mission?.number,
-            relatedDocuments: (
-              <Stack
-                direction="column"
-                spacing={0.5}
-                width="100%"
-                sx={{ textAlign: "center" }}
-              >
-                {mission?.quoteNumber && (
-                  <a
-                    href={`/quotes?finalPatternSearch=${mission?.quoteNumber}`}
-                    style={classes.tableAtagStyle}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {mission?.quoteNumber}
-                  </a>
-                )}
-                <a
-                  href={`/order?Id=${mission?.orderID}`}
-                  style={classes.tableAtagStyle}
-                  target="_blank"
-                  rel="noopener noreferrer"
+            relatedDocuments: (() => {
+              const clickBehavior = GetPreferenceValueKey(EPreferences.RELATED_DOCUMENT_CLICK_BEHAVIOR) || "openDocument";
+              
+              const handleOrderClick = (e: React.MouseEvent) => {
+                e.preventDefault();
+                if (clickBehavior === "openTable") {
+                  navigate(`/orders?finalPatternSearch=${mission?.orderNumber}`);
+                } else {
+                  navigate(`/order?Id=${mission?.orderID}`);
+                }
+              };
+
+              const handleQuoteClick = (e: React.MouseEvent) => {
+                e.preventDefault();
+                navigate(`/quotes?finalPatternSearch=${mission?.quoteNumber}`);
+              };
+
+              return (
+                <Stack
+                  direction="column"
+                  spacing={0.5}
+                  width="100%"
+                  sx={{ textAlign: "center" }}
                 >
-                  {mission?.orderNumber}
-                </a>
-              </Stack>
-            ),
+                  {mission?.quoteNumber && (
+                    <Box
+                      component="span"
+                      onClick={handleQuoteClick}
+                      sx={{
+                        ...classes.tableAtagStyle,
+                        cursor: "pointer",
+                      }}
+                    >
+                      {mission?.quoteNumber}
+                    </Box>
+                  )}
+                  <Box
+                    component="span"
+                    onClick={handleOrderClick}
+                    sx={{
+                      ...classes.tableAtagStyle,
+                      cursor: "pointer",
+                    }}
+                  >
+                    {mission?.orderNumber}
+                  </Box>
+                </Stack>
+              );
+            })(),
             purchaseNumber: mission?.purchaseNumber,
             sampleType: mission?.exampleType
               ? getSampleType(mission.exampleType)
