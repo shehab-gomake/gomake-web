@@ -32,14 +32,10 @@ const useMoreCircle = ({
         const result = res?.data;
         if (actionType === "edit") {
           push(
-            `/products/edit?clientTypeId=${result.clientTypeId}&customerId=${
-              result.clientId
-            }&customerName=${result.clientName}&productId=${
-              result?.productId
-            }&documentItemId=${
-              result?.orderItemId
-            }&documentType=${1}&documentNumber=${
-              boardMission?.orderNumber
+            `/products/edit?clientTypeId=${result.clientTypeId}&customerId=${result.clientId
+            }&customerName=${result.clientName}&productId=${result?.productId
+            }&documentItemId=${result?.orderItemId
+            }&documentType=${1}&documentNumber=${boardMission?.orderNumber
             }&documentId=${result.orderId}`
           ).then();
         }
@@ -63,10 +59,13 @@ const useMoreCircle = ({
   };
 
   const getMenuList = () => {
+    const openJobHref = `/production-floor?boardMissionsId=${boardMission?.id}&productType=${boardMission?.productType}&step=stations`;
+
     return [
       {
         condition: true,
         onClick: () => openJobModal(),
+        href: openJobHref,
         icon: <SearchIcon width={17} height={17} />,
         name: t("productionFloor.openJob"),
       },
