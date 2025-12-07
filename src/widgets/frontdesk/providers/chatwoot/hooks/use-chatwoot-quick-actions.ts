@@ -18,6 +18,8 @@ import {
   CHATWOOT_CUSTOM_ATTRIBUTES,
   getDocumentAttributeKeys,
 } from '@/widgets/frontdesk/constants/chatwoot-attributes';
+import { useGomakeAxios } from '@/hooks/use-gomake-axios';
+import { assignToTicketApi } from '@/services/api-service/generic-doc/documents-api';
 
 export interface UseChatwootQuickActionsOptions {
   /** Chatwoot conversation */
@@ -65,6 +67,7 @@ export function useChatwootQuickActions(
   const { conversation, accountId, onBeforeAction, onActionComplete, onActionError } = options;
 
   const { navigate } = useGomakeRouter();
+  const { callApi } = useGomakeAxios();
   const setSelectedClient = useSetRecoilState(selectedClientState);
   const [selectedAction, setSelectedAction] = useState<QuickActionConfig | null>(null);
   const { alertSuccess, alertFault } = useSnackBar();
@@ -205,6 +208,19 @@ export function useChatwootQuickActions(
         // Get document type from action config
         const documentType = selectedAction.documentType;
 
+        // 1. Assign document to ticket in ERP service
+        if (documentType !== undefined) {
+          const assignRes = await assignToTicketApi(callApi, () => {}, {
+            documentId,
+            ticketId: conversation.id.toString(),
+            documentType,
+          });
+
+          if (!assignRes.success) {
+            throw new Error('Failed to assign document to ticket in ERP service');
+          }
+        }
+
         // Update conversation custom attributes with document ID, type, and timestamp
         const updatedAttributes = {
           ...conversation.custom_attributes,
@@ -248,7 +264,7 @@ export function useChatwootQuickActions(
         );
       }
     },
-    [selectedAction, conversation, accountId, onActionComplete, onActionError, alertSuccess, alertFault]
+    [selectedAction, conversation, accountId, onActionComplete, onActionError, alertSuccess, alertFault, callApi]
   );
 
   /**
