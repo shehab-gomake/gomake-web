@@ -229,7 +229,6 @@ const useProductionFloorFilters = ({
     let fromDateMom: string = null;
     let toDateMom: string = null;
     if (fromDate) {
-      debugger;
       fromDateMom = moment(fromDate).utc().toISOString();
     }
     if (toDate) {
