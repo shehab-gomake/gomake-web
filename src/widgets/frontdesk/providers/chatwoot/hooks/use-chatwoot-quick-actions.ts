@@ -1,25 +1,19 @@
-import { useCallback, useMemo, useState } from 'react';
-import { useGomakeRouter } from '@/hooks/use-gomake-router';
-import { useSetRecoilState } from 'recoil';
-import { selectedClientState } from '@/pages-components/quotes/states';
+import { useCallback, useMemo, useState } from "react";
+import { useGomakeRouter } from "@/hooks/use-gomake-router";
+import { useSetRecoilState } from "recoil";
+import { selectedClientState } from "@/pages-components/quotes/states";
 import {
   QuickActionType,
   QuickActionConfig,
   UseQuickActionsResult,
-} from '@/widgets/frontdesk/providers/tickets/types/quick-actions.types';
-import {
-  getActionConfig,
-  getActionsExcludingTickets,
-} from '@/widgets/frontdesk/providers/tickets/utils/quick-actions-config';
-import type { ChatwootConversation } from '@/services/frontdesk/api/chatwoot/types/conversations.types';
-import { chatwootService } from '@/services/frontdesk';
-import { useSnackBar } from '@/hooks/use-snack-bar';
-import {
-  CHATWOOT_CUSTOM_ATTRIBUTES,
-  getDocumentAttributeKeys,
-} from '@/widgets/frontdesk/constants/chatwoot-attributes';
-import { useGomakeAxios } from '@/hooks/use-gomake-axios';
-import { assignToTicketApi } from '@/services/api-service/generic-doc/documents-api';
+} from "@/widgets/frontdesk/providers/tickets/types/quick-actions.types";
+import { getActionConfig, getActionsExcludingTickets } from "@/widgets/frontdesk/providers/tickets/utils/quick-actions-config";
+import type { ChatwootConversation } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
+import { chatwootService } from "@/services/frontdesk";
+import { useSnackBar } from "@/hooks/use-snack-bar";
+import { CHATWOOT_CUSTOM_ATTRIBUTES, getDocumentAttributeKeys } from "@/widgets/frontdesk/constants/chatwoot-attributes";
+import { useGomakeAxios } from "@/hooks/use-gomake-axios";
+import { assignToTicketApi } from "@/services/api-service/generic-doc/documents-api";
 
 export interface UseChatwootQuickActionsOptions {
   /** Chatwoot conversation */
@@ -41,16 +35,16 @@ export interface UseChatwootQuickActionsOptions {
 export interface UseChatwootQuickActionsResult extends UseQuickActionsResult {
   /** Currently selected action for modal */
   selectedAction: QuickActionConfig | null;
-  
+
   /** Open modal for action */
   openActionModal: (actionType: QuickActionType) => void;
-  
+
   /** Close modal */
   closeActionModal: () => void;
-  
+
   /** Connect to existing document */
   connectToExistingDocument: (documentId: string) => void;
-  
+
   /** Create new document */
   createNewDocument: () => void;
 }
@@ -61,9 +55,7 @@ export interface UseChatwootQuickActionsResult extends UseQuickActionsResult {
  * Handles quick action execution, navigation, and customer context management
  * for Chatwoot conversation-related operations
  */
-export function useChatwootQuickActions(
-  options: UseChatwootQuickActionsOptions
-): UseChatwootQuickActionsResult {
+export function useChatwootQuickActions(options: UseChatwootQuickActionsOptions): UseChatwootQuickActionsResult {
   const { conversation, accountId, onBeforeAction, onActionComplete, onActionError } = options;
 
   const { navigate } = useGomakeRouter();
@@ -128,15 +120,15 @@ export function useChatwootQuickActions(
     (actionType: QuickActionType): string | null => {
       const config = getActionConfig(actionType);
       if (!config) {
-        return 'Action not found';
+        return "Action not found";
       }
 
       if (config.enabled === false) {
-        return 'This action is not available';
+        return "This action is not available";
       }
 
       if (config.requiresCustomerId && !hasCustomer) {
-        return 'Customer must be linked to conversation first';
+        return "Customer must be linked to conversation first";
       }
 
       return null;
@@ -152,7 +144,7 @@ export function useChatwootQuickActions(
       const config = getActionConfig(actionType);
       if (!config) {
         console.error(`[useChatwootQuickActions] Action config not found: ${actionType}`);
-        onActionError?.(actionType, 'Action not found');
+        onActionError?.(actionType, "Action not found");
         return;
       }
 
@@ -160,7 +152,7 @@ export function useChatwootQuickActions(
       if (!canExecuteAction(actionType)) {
         const reason = getActionBlockReason(actionType);
         console.warn(`[useChatwootQuickActions] Cannot execute action: ${reason}`);
-        onActionError?.(actionType, reason || 'Cannot execute action');
+        onActionError?.(actionType, reason || "Cannot execute action");
         return;
       }
 
@@ -184,14 +176,14 @@ export function useChatwootQuickActions(
   const connectToExistingDocument = useCallback(
     async (documentId: string) => {
       if (!selectedAction) {
-        console.error('[useChatwootQuickActions] No action selected');
+        console.error("[useChatwootQuickActions] No action selected");
         return;
       }
 
       if (!conversation?.id || !accountId) {
-        console.error('[useChatwootQuickActions] Missing conversation ID or account ID');
-        alertFault('frontdesk.documentLinkFailed');
-        onActionError?.(selectedAction.type, 'Missing conversation or account information');
+        console.error("[useChatwootQuickActions] Missing conversation ID or account ID");
+        alertFault("frontdesk.documentLinkFailed");
+        onActionError?.(selectedAction.type, "Missing conversation or account information");
         return;
       }
 
@@ -217,7 +209,7 @@ export function useChatwootQuickActions(
           });
 
           if (!assignRes.success) {
-            throw new Error('Failed to assign document to ticket in ERP service');
+            throw new Error("Failed to assign document to ticket in ERP service");
           }
         }
 
@@ -230,20 +222,13 @@ export function useChatwootQuickActions(
         };
 
         // Update conversation custom attributes
-        await chatwootService.conversations.updateConversationCustomAttributes(
-          accountId,
-          conversation.id,
-          updatedAttributes
-        );
+        await chatwootService.conversations.updateConversationCustomAttributes(accountId, conversation.id, updatedAttributes);
 
         // Refetch the conversation to get the latest data including updated custom attributes
-        const refreshedConversation = await chatwootService.conversations.getConversationDetails(
-          accountId,
-          conversation.id
-        );
+        const refreshedConversation = await chatwootService.conversations.getConversationDetails(accountId, conversation.id);
 
         // Show success notification
-        alertSuccess('frontdesk.documentLinkedSuccess');
+        alertSuccess("frontdesk.documentLinkedSuccess");
 
         console.log(`[useChatwootQuickActions] Successfully linked document ${documentId}`, {
           documentId,
@@ -256,12 +241,9 @@ export function useChatwootQuickActions(
         onActionComplete?.(selectedAction.type, refreshedConversation as ChatwootConversation);
         setSelectedAction(null);
       } catch (error: any) {
-        console.error('[useChatwootQuickActions] Error linking document:', error);
-        alertFault('frontdesk.documentLinkFailed');
-        onActionError?.(
-          selectedAction.type,
-          error.message || 'Failed to link document to conversation'
-        );
+        console.error("[useChatwootQuickActions] Error linking document:", error);
+        alertFault("frontdesk.documentLinkFailed");
+        onActionError?.(selectedAction.type, error.message || "Failed to link document to conversation");
       }
     },
     [selectedAction, conversation, accountId, onActionComplete, onActionError, alertSuccess, alertFault, callApi]
@@ -272,7 +254,7 @@ export function useChatwootQuickActions(
    */
   const createNewDocument = useCallback(() => {
     if (!selectedAction) {
-      console.error('[useChatwootQuickActions] No action selected');
+      console.error("[useChatwootQuickActions] No action selected");
       return;
     }
 
@@ -286,12 +268,12 @@ export function useChatwootQuickActions(
 
         setSelectedClient({
           id: customerId,
-          name: customerName || customerEmail || 'Unknown Customer',
+          name: customerName || customerEmail || "Unknown Customer",
           email: customerEmail,
           phone: phoneNumber || undefined,
         });
 
-        console.log('[useChatwootQuickActions] Customer set in state:', {
+        console.log("[useChatwootQuickActions] Customer set in state:", {
           id: customerId,
           name: customerName || customerEmail,
           phone: phoneNumber,
@@ -300,18 +282,32 @@ export function useChatwootQuickActions(
 
       // Navigate to the document page
       console.log(`[useChatwootQuickActions] Navigating to: ${selectedAction.route}`);
-      navigate(selectedAction.route);
+      if (selectedAction.type === "create_invoice") {
+        const queryParams = new URLSearchParams({
+          isNewCreation: "true",
+          ...(customerId && { clientId: customerId }),
+          ...(conversation?.id && { ticketId: conversation.id.toString() }),
+        });
+
+        const routeWithParams = `${selectedAction.route}?${queryParams.toString()}`;
+        console.log(`[useChatwootQuickActions] Navigating to invoice with params: ${routeWithParams}`);
+        navigate(routeWithParams);
+      } else {
+        // Navigate to the document page (default behavior)
+        console.log(`[useChatwootQuickActions] Navigating to: ${selectedAction.route}`);
+        navigate(selectedAction.route);
+      }
 
       // Show info notification
-      alertSuccess('frontdesk.navigatingToDocument');
+      alertSuccess("frontdesk.navigatingToDocument");
 
       // Call success callback
       onActionComplete?.(selectedAction.type);
       setSelectedAction(null);
     } catch (error: any) {
-      console.error('[useChatwootQuickActions] Error creating document:', error);
-      alertFault('frontdesk.navigationFailed');
-      onActionError?.(selectedAction.type, error.message || 'Failed to create document');
+      console.error("[useChatwootQuickActions] Error creating document:", error);
+      alertFault("frontdesk.navigationFailed");
+      onActionError?.(selectedAction.type, error.message || "Failed to create document");
     }
   }, [
     selectedAction,
@@ -340,4 +336,3 @@ export function useChatwootQuickActions(
     createNewDocument,
   };
 }
-
