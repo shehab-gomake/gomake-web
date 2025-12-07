@@ -824,7 +824,7 @@ const useProductionFloorData = () => {
 
   const onCloseMarkReadyModalForHasJobs = () => {
     setOpenMarkReadyModalForHasJobs(false);
-    setSelectedMission(null);
+    // setSelectedMission(null);
   };
 
   const tryMoveBoardMissionsToDone = async (boardMission) => {
