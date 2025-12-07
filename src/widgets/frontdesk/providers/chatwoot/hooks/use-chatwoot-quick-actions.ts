@@ -88,9 +88,9 @@ export function useChatwootQuickActions(options: UseChatwootQuickActionsOptions)
     return !!customerId;
   }, [customerId]);
 
-  // Get available actions (only Sales and Purchase documents, excluding ticket actions and create_order)
+  // Get available actions (only Sales and Purchase documents, excluding ticket actions)
   const availableActions = useMemo(() => {
-    return getActionsExcludingTickets().filter((action) => action.type !== "create_order");
+    return getActionsExcludingTickets();
   }, []);
 
   /**
