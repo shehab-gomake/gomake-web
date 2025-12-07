@@ -62,7 +62,17 @@ const TabsMappingWidget = ({
         );
       });
       if (parentParameter && parentParameter.isHidden === true) {
-        return true; // Hide child if parent is hidden
+        // Exception: If parent has isHidden=true, isHiddenInSetting=true, and has default value, show child parameters
+        const hasDefaultValue = parentParameter.valuesConfigs?.some((x) => x.isDefault);
+        const shouldHideChild = !(
+          parentParameter.isHidden === true &&
+          parentParameter.isHiddenInSetting === true &&
+          hasDefaultValue
+        );
+        console.log("shouldHideChild3", { shouldHideChild, hasDefaultValue });
+        if (shouldHideChild) {
+          return true; // Hide child if parent is hidden (and exception doesn't apply)
+        }
       }
       return false;
     };
