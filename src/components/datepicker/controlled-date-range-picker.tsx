@@ -27,6 +27,7 @@ import "react-date-range/dist/theme/default.css";
 
 interface IControlledDateRangePicker {
   label?: string;
+  placeholder?: string;
   tooltip?: string | React.ReactNode;
   startDate: Date | null;
   endDate: Date | null;
@@ -41,6 +42,7 @@ interface IControlledDateRangePicker {
 // ? new component DATE RANGE PICKER USE THIS COMPONENT INSTEAD OF THE DATEPICKER COMPONENT
 const ControlledDateRangePicker = ({
   label = "",
+  placeholder,
   tooltip,
   startDate,
   endDate,
@@ -361,7 +363,7 @@ const ControlledDateRangePicker = ({
                     endDate,
                     dateFormat
                   )}`
-              : t("general.chooseDate")}
+              : placeholder || t("general.chooseDate")}
           </span>
           {allowClear && startDate && endDate && (
             <IconButton
