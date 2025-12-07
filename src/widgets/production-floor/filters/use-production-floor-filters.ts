@@ -226,14 +226,14 @@ const useProductionFloorFilters = ({
     fromDate: Date | null,
     toDate: Date | null
   ) => {
-    debugger;
     let fromDateMom: string = null;
     let toDateMom: string = null;
     if (fromDate) {
-      fromDateMom = moment(fromDate).format("YYYY-MM-DD HH:mm:ss");
+      debugger;
+      fromDateMom = moment(fromDate).utc().toISOString();
     }
     if (toDate) {
-      toDateMom = moment(toDate).format("YYYY-MM-DD HH:mm:ss");
+      toDateMom = moment(toDate).utc().toISOString();
     }
     const newFilters = {
       ...filtersState,
@@ -256,10 +256,10 @@ const useProductionFloorFilters = ({
     let fromDateMom: string = null;
     let toDateMom: string = null;
     if (fromDate) {
-      fromDateMom = moment(fromDate).format("YYYY-MM-DD HH:mm:ss");
+      fromDateMom = moment(fromDate).utc().toISOString();
     }
     if (toDate) {
-      toDateMom = moment(toDate).format("YYYY-MM-DD HH:mm:ss");
+      toDateMom = moment(toDate).utc().toISOString();
     }
     const newFilters = {
       ...filtersState,
@@ -340,10 +340,10 @@ const useProductionFloorFilters = ({
     let fromDateMom: string = null;
     let toDateMom: string = null;
     if (fromDate) {
-      fromDateMom = moment(fromDate).format("YYYY-MM-DD HH:mm:ss");
+      fromDateMom = moment(fromDate).utc().toISOString();
     }
     if (toDate) {
-      toDateMom = moment(toDate).format("YYYY-MM-DD HH:mm:ss");
+      toDateMom = moment(toDate).utc().toISOString();
     }
     const newFilters = {
       ...filtersState,
