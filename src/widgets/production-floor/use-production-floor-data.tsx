@@ -303,10 +303,10 @@ const useProductionFloorData = () => {
               filterGroups.map((x) =>
                 x.id === "all"
                   ? {
-                      ...x,
-                      stuckCount: res?.data?.boradMisstionsStuckCount,
-                      inProcessCount: res?.data?.boradMisstionsNotStuckCount,
-                    }
+                    ...x,
+                    stuckCount: res?.data?.boradMisstionsStuckCount,
+                    inProcessCount: res?.data?.boradMisstionsNotStuckCount,
+                  }
                   : x
               )
             );
@@ -512,7 +512,7 @@ const useProductionFloorData = () => {
           const mapData = _data.data?.map((mission: any) => {
             const itemCalculatedPrice =
               mission?.calculatedPrice &&
-              mission?.calculatedPrice != mission?.price
+                mission?.calculatedPrice != mission?.price
                 ? mission?.calculatedPrice
                 : 0;
             return [
@@ -538,11 +538,10 @@ const useProductionFloorData = () => {
               formatISODateTime(mission?.readyDate),
               <div style={{ cursor: "pointer" }}>{mission?.clientName}</div>,
               mission?.productType
-                ? `${mission?.number} / ${
-                    mission?.productTypeName
-                      ? mission?.productTypeName
-                      : mission?.productType
-                  }`
+                ? `${mission?.number} / ${mission?.productTypeName
+                  ? mission?.productTypeName
+                  : mission?.productType
+                }`
                 : mission?.number,
               <a href={`/order?Id=${mission?.orderID}`}>
                 {mission?.orderNumber}
@@ -550,8 +549,8 @@ const useProductionFloorData = () => {
               mission?.outSourceType === null
                 ? `${t("boardMissions." + EWorkSource[0])}`
                 : `${t(
-                    "boardMissions." + EWorkSource[mission?.outSourceType]
-                  )}`,
+                  "boardMissions." + EWorkSource[mission?.outSourceType]
+                )}`,
               mission?.quantity,
               // ...(CheckPermission(Permissions.SHOW_COSTS_IN_BOARD_MISSIONS)
               //   ? [
@@ -651,8 +650,8 @@ const useProductionFloorData = () => {
         pageSize: pageSizeInput ?? pageSize,
         search:
           patternSearchInput !== null &&
-          patternSearchInput !== undefined &&
-          patternSearchInput !== ""
+            patternSearchInput !== undefined &&
+            patternSearchInput !== ""
             ? patternSearchInput
             : "",
         customerId: doneJobsCustomer?.id || null,
@@ -789,20 +788,20 @@ const useProductionFloorData = () => {
           data.map((s) =>
             s.boardMissionStatus.boardMissionStatus.id === payload.statusId
               ? {
-                  ...s,
-                  boardMissions: s.boardMissions?.map((board) => {
-                    const match = updatedBoards?.find(
-                      (updatedBoard) => updatedBoard.id === board.id
-                    );
-                    if (match) {
-                      return {
-                        ...board,
-                        priority: match.priority,
-                      };
-                    }
-                    return board;
-                  }),
-                }
+                ...s,
+                boardMissions: s.boardMissions?.map((board) => {
+                  const match = updatedBoards?.find(
+                    (updatedBoard) => updatedBoard.id === board.id
+                  );
+                  if (match) {
+                    return {
+                      ...board,
+                      priority: match.priority,
+                    };
+                  }
+                  return board;
+                }),
+              }
               : s
           )
         );
@@ -825,7 +824,7 @@ const useProductionFloorData = () => {
 
   const onCloseMarkReadyModalForHasJobs = () => {
     setOpenMarkReadyModalForHasJobs(false);
-    setSelectedMission(null);
+    // setSelectedMission(null);
   };
 
   const tryMoveBoardMissionsToDone = async (boardMission) => {
@@ -1052,28 +1051,28 @@ const useProductionFloorData = () => {
         const toEmails = Array.isArray(emailData.tos)
           ? emailData.tos.filter((email: string) => email && email.trim())
           : emailData.tos && typeof emailData.tos === "string"
-          ? [emailData.tos.trim()].filter(Boolean)
-          : [];
+            ? [emailData.tos.trim()].filter(Boolean)
+            : [];
 
         // Handle cc - can be null, array, or string
         const ccEmails =
           emailData.cc === null || emailData.cc === undefined
             ? []
             : Array.isArray(emailData.cc)
-            ? emailData.cc.filter((email: string) => email && email.trim())
-            : typeof emailData.cc === "string"
-            ? [emailData.cc.trim()].filter(Boolean)
-            : [];
+              ? emailData.cc.filter((email: string) => email && email.trim())
+              : typeof emailData.cc === "string"
+                ? [emailData.cc.trim()].filter(Boolean)
+                : [];
 
         // Handle bcc - can be null, array, or string
         const bccEmails =
           emailData.bcc === null || emailData.bcc === undefined
             ? []
             : Array.isArray(emailData.bcc)
-            ? emailData.bcc.filter((email: string) => email && email.trim())
-            : typeof emailData.bcc === "string"
-            ? [emailData.bcc.trim()].filter(Boolean)
-            : [];
+              ? emailData.bcc.filter((email: string) => email && email.trim())
+              : typeof emailData.bcc === "string"
+                ? [emailData.bcc.trim()].filter(Boolean)
+                : [];
         const messageContent =
           emailData.body || emailData.html || emailData.text || "";
         const subject = emailData.subject || "";
@@ -1108,27 +1107,27 @@ const useProductionFloorData = () => {
 
         const normalizedAttachments = Array.isArray(emailData.attachments)
           ? emailData.attachments.map((attachment: EmailAttachment) => {
-              let filename = attachment.filename || "document";
-              const extension = getFileExtension(attachment.url || "", null);
-              if (extension && !filename.includes(".")) {
-                filename = `${filename}.${extension}`;
-              }
-              const mimeType =
-                attachment.mimeType ||
-                attachment.contentType ||
-                (extension
-                  ? getMimeTypeFromExtension(extension)
-                  : "application/octet-stream");
-              return {
-                id: attachment.id,
-                filename,
-                mimeType,
-                contentType: mimeType,
-                size: attachment.size,
-                url: attachment.url,
-                content: attachment.content ?? attachment.data,
-              };
-            })
+            let filename = attachment.filename || "document";
+            const extension = getFileExtension(attachment.url || "", null);
+            if (extension && !filename.includes(".")) {
+              filename = `${filename}.${extension}`;
+            }
+            const mimeType =
+              attachment.mimeType ||
+              attachment.contentType ||
+              (extension
+                ? getMimeTypeFromExtension(extension)
+                : "application/octet-stream");
+            return {
+              id: attachment.id,
+              filename,
+              mimeType,
+              contentType: mimeType,
+              size: attachment.size,
+              url: attachment.url,
+              content: attachment.content ?? attachment.data,
+            };
+          })
           : [];
 
         const attachmentSources = normalizedAttachments.map(
@@ -1393,7 +1392,7 @@ const useProductionFloorData = () => {
 
   const onClosePrintDeliverTicketModal = () => {
     handleRemoveBoardMission(
-      selectedMission.id || selectedMission.boardMissionId
+      selectedMission?.id || selectedMission?.boardMissionId
     );
     setSelectedMission(null);
     setOpenPackagesModal(false);
@@ -1473,17 +1472,17 @@ const useProductionFloorData = () => {
       data.map((status) =>
         status.boardMissions.find((b) => b.id === boardMisionId)
           ? {
-              ...status,
-              boardMissions: status.boardMissions.map((bm) =>
-                bm.id === boardMisionId
-                  ? { ...bm, dueDate: formattedDueDate }
-                  : bm
-              ),
-            }
+            ...status,
+            boardMissions: status.boardMissions.map((bm) =>
+              bm.id === boardMisionId
+                ? { ...bm, dueDate: formattedDueDate }
+                : bm
+            ),
+          }
           : status
       )
     );
-    const callBack = () => {};
+    const callBack = () => { };
     updateJobDueDateApi(callApi, callBack, {
       boardMissionId: boardMisionId,
       dueDate: utcDueDate,
