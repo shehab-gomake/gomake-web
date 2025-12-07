@@ -21,18 +21,6 @@ const lightBoxes = (state: Record<string, any>) => {
             isValid: true,
             inputs: [
                 {
-                    name: "ledAmount",
-                    label: "machineAttributes.ledsAmountPerArea",
-                    type: "text",
-                    placeholder: "machineAttributes.ledsAmountPerArea",
-                    required: true,
-                    parameterKey: "ledAmount",
-                    unit: EMeasurementUnits.SQUARE_CM,
-                    options: [],
-                    value: state.attributes?.ledUnitsInstallation?.ledAmount ? state.attributes?.ledUnitsInstallation?.ledAmount : '',
-                    machineInputType: 'input',
-                },
-                {
                     name: "speedLedInstall",
                     label: "machineAttributes.speedLedInstall",
                     type: "text",
@@ -65,18 +53,6 @@ const lightBoxes = (state: Record<string, any>) => {
             value: state.attributes?.ledRollInstallation ? state.attributes?.ledRollInstallation : {},
             isValid: true,
             inputs: [
-                {
-                    name: "ledsLengthPerArea",
-                    label: "machineAttributes.ledsLengthPerArea",
-                    type: "text",
-                    placeholder: "machineAttributes.ledsLengthPerArea",
-                    required: true,
-                    parameterKey: "ledsLengthPerArea",
-                    unit: EMeasurementUnits.CM_PER_SQUARE_CM,
-                    options: [],
-                    value: state.attributes?.ledRollInstallation?.ledsLengthPerArea ? state.attributes?.ledRollInstallation?.ledsLengthPerArea : '',
-                    machineInputType: 'input',
-                },
                 {
                     name: "speed",
                     label: "machineAttributes.speed",
