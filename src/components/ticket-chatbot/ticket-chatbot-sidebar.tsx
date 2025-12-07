@@ -126,7 +126,7 @@ export const TicketChatbotSidebar = ({
   const printHouse = useRecoilValue(printHouseProfile);
   const { callApi } = useGomakeAxios();
   const { unreadTicketIds, firstUnreadTicketId, refreshNotifications } = useTicketNotifications();
-  const { setNavigateToTicketCallback, setOpenNewTicketCallback } = useTicketChatbot();
+  const { setNavigateToTicketCallback, setOpenNewTicketCallback, setCurrentTicketId, currentTicketId: contextCurrentTicketId } = useTicketChatbot();
   const { getAcceptedRequest, removeAcceptedRequest } = useRequestNotification();
 
   // Restore remoteSessionRequest from sessionStorage on mount (for persistence across navigation)
@@ -159,6 +159,7 @@ export const TicketChatbotSidebar = ({
   // Handle new ticket creation
   const handleNewTicket = useCallback(() => {
     setCurrentTicket(null);
+    setCurrentTicketId(null);
     setMessages([]);
     setInputMessage("");
     setSkipAutoOpen(true); // Prevent auto-opening unread ticket when explicitly opening new ticket
@@ -175,18 +176,28 @@ export const TicketChatbotSidebar = ({
         messagesData.forEach((msg) => {
           sentMessageIdsRef.current.add(msg.id);
         });
-        // Find and set the current ticket
-        let ticket = tickets.find((t) => t.id === ticketId);
-        // If ticket not found in list, fetch it
-        if (!ticket) {
-          try {
+        // Find and set the current ticket by ID (not by index)
+        // Always fetch ticket by ID to ensure we get the correct one
+        let ticket: Ticket | undefined;
+        try {
+          // First try to find in loaded tickets
+          ticket = tickets.find((t) => t.id === ticketId);
+          // If not found, fetch it directly by ID
+          if (!ticket) {
             ticket = await getTicketById(callApi, ticketId);
-          } catch (error) {
-            console.error("Error fetching ticket:", error);
           }
-        }
-        if (ticket) {
-          setCurrentTicket(ticket);
+          // Validate that we got the correct ticket
+          if (ticket && ticket.id !== ticketId) {
+            console.error(`Ticket ID mismatch: expected ${ticketId}, got ${ticket.id}`);
+            // Fetch again to ensure correctness
+            ticket = await getTicketById(callApi, ticketId);
+          }
+          if (ticket) {
+            setCurrentTicket(ticket);
+            setCurrentTicketId(ticket.id || null);
+          }
+        } catch (error) {
+          console.error(`Error loading ticket ${ticketId}:`, error);
         }
       } catch (error) {
         console.error("Error loading ticket messages:", error);
@@ -199,10 +210,29 @@ export const TicketChatbotSidebar = ({
 
   // Register navigation callback
   useEffect(() => {
-    setNavigateToTicketCallback((ticketId: number) => {
-      loadTicketMessages(ticketId);
+    setNavigateToTicketCallback(async (ticketId: number) => {
+      // Validate ticketId is valid
+      if (!ticketId) {
+        console.error("Invalid ticketId in navigation callback:", ticketId);
+        return;
+      }
+      // Prevent auto-open from interfering with manual navigation
+      setSkipAutoOpen(true);
+      // Set currentTicketId IMMEDIATELY to prevent auto-open effect from triggering
+      setCurrentTicketId(ticketId);
+      // Load messages and select ticket (this will fetch ticket by ID, not by index)
+      await loadTicketMessages(ticketId);
+      // Mark ticket as read when navigated to
+      if (unreadTicketIds.has(ticketId)) {
+        try {
+          await markTicketAsRead(callApi, ticketId);
+          refreshNotifications();
+        } catch (error) {
+          console.error("Error marking ticket as read:", error);
+        }
+      }
     });
-  }, [setNavigateToTicketCallback, loadTicketMessages]);
+  }, [setNavigateToTicketCallback, loadTicketMessages, callApi, unreadTicketIds, refreshNotifications, setCurrentTicketId]);
 
   // Register open new ticket callback
   useEffect(() => {
@@ -779,6 +809,7 @@ export const TicketChatbotSidebar = ({
   useEffect(() => {
     if (!isOpen) {
       setCurrentTicket(null);
+      setCurrentTicketId(null);
       setMessages([]);
       setInputMessage("");
       sentMessageIdsRef.current.clear();
@@ -791,13 +822,16 @@ export const TicketChatbotSidebar = ({
       if (huddleSenderRef.current) {
         huddleSenderRef.current.stopAudio();
       }
+      // Refresh notifications to get accurate unread count when drawer closes
+      refreshNotifications();
     }
-  }, [isOpen]);
+  }, [isOpen, refreshNotifications, setCurrentTicketId]);
 
   // Handle ticket selection
   const handleTicketSelect = useCallback(
     async (ticket: Ticket) => {
       setCurrentTicket(ticket);
+      setCurrentTicketId(ticket.id || null);
       await loadTicketMessages(ticket.id!);
       
       // Mark ticket as read when selected
@@ -810,22 +844,29 @@ export const TicketChatbotSidebar = ({
         }
       }
     },
-    [loadTicketMessages, callApi, unreadTicketIds, refreshNotifications]
+    [loadTicketMessages, callApi, unreadTicketIds, refreshNotifications, setCurrentTicketId]
   );
 
   // Auto-open first unread ticket when sidebar opens and tickets are loaded
+  // Only auto-open if no ticket is currently selected and user hasn't manually navigated
   useEffect(() => {
-    if (isOpen && tickets.length > 0 && firstUnreadTicketId && !currentTicket && !skipAutoOpen) {
+    // Don't auto-open if skipAutoOpen is true (user manually navigated)
+    if (skipAutoOpen) {
+      return;
+    }
+    
+    // Don't auto-open if currentTicketId is already set (manual navigation in progress)
+    if (contextCurrentTicketId) {
+      return;
+    }
+    
+    if (isOpen && tickets.length > 0 && firstUnreadTicketId && !currentTicket) {
       const unreadTicket = tickets.find((t) => t.id === firstUnreadTicketId);
       if (unreadTicket) {
         handleTicketSelect(unreadTicket);
       }
     }
-    // Reset skip flag after auto-open check
-    if (skipAutoOpen) {
-      setSkipAutoOpen(false);
-    }
-  }, [isOpen, tickets, firstUnreadTicketId, currentTicket, skipAutoOpen, handleTicketSelect]);
+  }, [isOpen, tickets, firstUnreadTicketId, currentTicket, contextCurrentTicketId, skipAutoOpen, handleTicketSelect]);
 
   // Handle tab change
   const handleTabChange = useCallback(

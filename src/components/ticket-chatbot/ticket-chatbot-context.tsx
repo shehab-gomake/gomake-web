@@ -9,6 +9,8 @@ interface TicketChatbotContextType {
   openNewTicket: () => void;
   setNavigateToTicketCallback: (callback: (ticketId: number) => void) => void;
   setOpenNewTicketCallback: (callback: () => void) => void;
+  currentTicketId: number | null;
+  setCurrentTicketId: (ticketId: number | null) => void;
 }
 
 const TicketChatbotContext = createContext<TicketChatbotContextType | undefined>(
@@ -17,6 +19,7 @@ const TicketChatbotContext = createContext<TicketChatbotContextType | undefined>
 
 export const TicketChatbotProvider = ({ children }: { children: ReactNode }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [currentTicketId, setCurrentTicketId] = useState<number | null>(null);
   const navigateCallbackRef = useRef<((ticketId: number) => void) | null>(null);
   const openNewTicketCallbackRef = useRef<(() => void) | null>(null);
 
@@ -26,6 +29,7 @@ export const TicketChatbotProvider = ({ children }: { children: ReactNode }) => 
   
   const navigateToTicket = (ticketId: number) => {
     setIsOpen(true);
+    setCurrentTicketId(ticketId);
     if (navigateCallbackRef.current) {
       navigateCallbackRef.current(ticketId);
     }
@@ -33,6 +37,7 @@ export const TicketChatbotProvider = ({ children }: { children: ReactNode }) => 
 
   const openNewTicket = () => {
     setIsOpen(true);
+    setCurrentTicketId(null);
     if (openNewTicketCallbackRef.current) {
       openNewTicketCallbackRef.current();
     }
@@ -57,6 +62,8 @@ export const TicketChatbotProvider = ({ children }: { children: ReactNode }) => 
         openNewTicket,
         setNavigateToTicketCallback,
         setOpenNewTicketCallback,
+        currentTicketId,
+        setCurrentTicketId,
       }}
     >
       {children}
@@ -78,6 +85,8 @@ export const useTicketChatbot = () => {
         openNewTicket: () => {},
         setNavigateToTicketCallback: () => {},
         setOpenNewTicketCallback: () => {},
+        currentTicketId: null,
+        setCurrentTicketId: () => {},
       };
     }
     throw new Error(
