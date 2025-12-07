@@ -1888,7 +1888,9 @@ const useDigitalOffsetPrice = ({
                     parameter?.valuesConfigs?.length === 1 &&
                     parameter?.isRequired &&
                     parameter?.parameterType !==
-                    EParameterTypes.ADVERTISING_PRODUCT_CATEGORY
+                    EParameterTypes.ADVERTISING_PRODUCT_CATEGORY &&
+                    parameter?.code !== "DiecutType" &&
+                    parameter?.code !== "DieCutter"
                   ) {
                     let existsSubProductParameter =
                       subProduct?.parameters?.find(
@@ -3115,7 +3117,9 @@ const useDigitalOffsetPrice = ({
                         param?.valuesConfigs?.length === 1 &&
                         (param?.isRequired ||
                           param?.code == "FlatbedColor" ||
-                          param?.code == "SheetColor")
+                          param?.code == "SheetColor") &&
+                        param?.code !== "DiecutType" &&
+                        param?.code !== "DieCutter"
                       ) {
                         param.valuesConfigs[0].isDefault = true;
                       }
@@ -5595,7 +5599,9 @@ const useDigitalOffsetPrice = ({
               relatedParameter.valuesConfigs &&
               relatedParameter.valuesConfigs.length === 1 &&
               relatedParameter.valuesConfigs[0]?.values?.length > 0 &&
-              relatedParameter.isRequired
+              relatedParameter.isRequired &&
+              relatedParameter.code !== "DiecutType" &&
+              relatedParameter.code !== "DieCutter"
             ) {
               valueToAdd = relatedParameter.valuesConfigs[0]?.updateName;
               valueIds = relatedParameter.valuesConfigs[0]?.values[0];
@@ -5778,7 +5784,9 @@ const useDigitalOffsetPrice = ({
                     if (
                       param?.valuesConfigs &&
                       param?.valuesConfigs?.length === 1 &&
-                      param?.isRequired
+                      param?.isRequired &&
+                      param?.code !== "DiecutType" &&
+                      param?.code !== "DieCutter"
                     ) {
                       param.valuesConfigs[0].isDefault = true;
                       parameters.push({
@@ -6080,7 +6088,9 @@ const useDigitalOffsetPrice = ({
                     if (
                       param?.valuesConfigs &&
                       param?.valuesConfigs?.length === 1 &&
-                      param?.isRequired
+                      param?.isRequired &&
+                      param?.code !== "DiecutType" &&
+                      param?.code !== "DieCutter"
                     ) {
                       param.valuesConfigs[0].isDefault = true;
                     }
@@ -7456,7 +7466,9 @@ const useDigitalOffsetPrice = ({
               if (
                 param?.valuesConfigs &&
                 param?.valuesConfigs?.length === 1 &&
-                param?.isRequired
+                param?.isRequired &&
+                param?.code !== "DiecutType" &&
+                param?.code !== "DieCutter"
               ) {
                 param.valuesConfigs[0].isDefault = true;
                 temp.push({
