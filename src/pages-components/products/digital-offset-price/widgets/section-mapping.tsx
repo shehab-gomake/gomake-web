@@ -240,9 +240,19 @@ const SectionMappingWidget = ({
                 );
               });
               if (parentParameter && parentParameter.isHidden === true) {
-                return false; // Hide child if parent is hidden
+                // Exception: If parent has isHidden=true, isHiddenInSetting=true, and has default value, show child parameters
+                const hasDefaultValue = parentParameter.valuesConfigs?.some((x: any) => x.isDefault);
+                const shouldHideChild = !(
+                  parentParameter.isHidden === true &&
+                  parentParameter.isHiddenInSetting === true &&
+                  hasDefaultValue
+                );
+                console.log("shouldHideChild2", { shouldHideChild, hasDefaultValue });
+                if (shouldHideChild) {
+                  return false; // Hide child if parent is hidden (and exception doesn't apply)
+                }
               }
-              
+
               // If parameter has isUnderParameterId, check if it exists in subSection?.parameters
               if (param.isUnderParameterId) {
                 const existsInParameters = subSection?.parameters?.find(

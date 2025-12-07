@@ -2706,7 +2706,14 @@ const useDigitalOffsetPrice = ({
             ) {
               parameter.isHidden = true;
               // Hide child parameters when parent parameter is hidden
-              if (parameter.childsParameters && parameter.childsParameters.length > 0) {
+              // Exception: If parent has isHidden=true, isHiddenInSetting=true, and has default value, show child parameters
+              const hasDefaultValue = parameter.valuesConfigs?.some((x) => x.isDefault);
+              const shouldHideChildren = !(
+                parameter.isHidden === true &&
+                parameter.isHiddenInSetting === true &&
+                hasDefaultValue
+              );
+              if (parameter.childsParameters && parameter.childsParameters.length > 0 && shouldHideChildren) {
                 parameter.childsParameters.forEach((childParamId) => {
                   const childParam = subSection.parameters.find(
                     (p) => p.id === childParamId.id
@@ -2751,7 +2758,14 @@ const useDigitalOffsetPrice = ({
               }
             }
             // Hide child parameters when parent parameter is hidden
-            if (parameter.isHidden === true && parameter.childsParameters && parameter.childsParameters.length > 0) {
+            // Exception: If parent has isHidden=true, isHiddenInSetting=true, and has default value, show child parameters
+            const hasDefaultValue = parameter.valuesConfigs?.some((x) => x.isDefault);
+            const shouldHideChildren = !(
+              parameter.isHidden === true &&
+              parameter.isHiddenInSetting === true &&
+              hasDefaultValue
+            );
+            if (parameter.isHidden === true && parameter.childsParameters && parameter.childsParameters.length > 0 && shouldHideChildren) {
               parameter.childsParameters.forEach((childParamId) => {
                 const childParam = subSection.parameters.find(
                   (p) => p.id === childParamId.id
