@@ -88,9 +88,9 @@ export function useChatwootQuickActions(options: UseChatwootQuickActionsOptions)
     return !!customerId;
   }, [customerId]);
 
-  // Get available actions (only Sales and Purchase documents, excluding ticket actions)
+  // Get available actions (only Sales and Purchase documents, excluding ticket actions and create_order)
   const availableActions = useMemo(() => {
-    return getActionsExcludingTickets();
+    return getActionsExcludingTickets().filter((action) => action.type !== "create_order");
   }, []);
 
   /**
@@ -287,6 +287,7 @@ export function useChatwootQuickActions(options: UseChatwootQuickActionsOptions)
           isNewCreation: "true",
           ...(customerId && { clientId: customerId }),
           ...(conversation?.id && { ticketId: conversation.id.toString() }),
+          ...(accountId && { accountId: accountId.toString() }),
         });
 
         const routeWithParams = `${selectedAction.route}?${queryParams.toString()}`;
