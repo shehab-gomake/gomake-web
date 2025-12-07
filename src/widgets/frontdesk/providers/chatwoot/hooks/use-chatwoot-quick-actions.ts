@@ -316,6 +316,7 @@ export function useChatwootQuickActions(options: UseChatwootQuickActionsOptions)
     customerName,
     customerEmail,
     conversation,
+    accountId,
     navigate,
     setSelectedClient,
     onActionComplete,
