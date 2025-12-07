@@ -248,37 +248,18 @@ const AddMachineModal = ({ closeModal, allAdminMachines, loadAdminMachines }: Ad
                             }
                         }}
                         onClose={() => setAutoCompleteOpen(false)}
-                        options={
-                            filteredAdminMachines.length > 0
-                                ? filteredAdminMachines
-                                : ((state.machineName || '').trim().length >= 2 && !loading
-                                    ? [{
-                                        id: '__no_data__',
-                                        name: t('skeleton.noData'),
-                                        displayName: t('skeleton.noData'),
-                                        manufacturer: '',
-                                        model: '',
-                                        category: '',
-                                        categoryId: '',
-                                        isNoData: true
-                                    } as any]
-                                    : [])
-                        }
-                        noOptionsText={t('machineAttributes.noData')}
+                        options={filteredAdminMachines}
+                        noOptionsText=""
                         loadingText={t('machineAttributes.loadingMachines')}
                         inputValue={state.machineName}
                         filterOptions={(x) => x} // Keep custom filtering
                         isOptionEqualToValue={(option, value) => (option?.id || option?.name) === (value?.id || value?.name)}
-                        getOptionDisabled={(option) => (option as any)?.isNoData === true}
                         getOptionLabel={(option) => {
                             if (typeof option === 'string') return option;
                             return option.displayName || option.name || `${option.manufacturer} ${option.model}`;
                         }}
                         onChange={(e, value) => {
                             if (typeof value === 'object' && value) {
-                                if ((value as any)?.isNoData) {
-                                    return;
-                                }
                                 handleMachineSelect(value);
                             } else if (typeof value === 'string') {
                                 setState(prevState => ({ ...prevState, machineName: value }));
@@ -334,7 +315,7 @@ const AddMachineModal = ({ closeModal, allAdminMachines, loadAdminMachines }: Ad
                                     <div>
                                         <strong>{option.displayName || option.name || `${option.manufacturer} ${option.model}`}</strong>
                                         <br />
-                                        {option.id !== '__no_data__' && <small>{t('machineAttributes.category')}: {t(option.category)}</small>}
+                                        <small>{t('machineAttributes.category')}: {t(option.category)}</small>
                                     </div>
                                 </li>
                             )
