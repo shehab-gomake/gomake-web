@@ -24,7 +24,8 @@ import io, { Socket } from "socket.io-client";
 import config from "@/config";
 
 export const RequestNotificationModal = () => {
-  const { currentRequest, dismissRequest, addAcceptedRequest } = useRequestNotification();
+  const { currentRequest, dismissRequest, addAcceptedRequest } =
+    useRequestNotification();
   const { navigateToTicket } = useTicketChatbot();
   const { callApi } = useGomakeAxios();
   const userProfile = useRecoilValue(userProfileState);
@@ -45,12 +46,15 @@ export const RequestNotificationModal = () => {
         });
 
         socket.on("connect", () => {
-          socket.emit(`ticket:${currentRequest.ticketId}:remote_session_response`, {
-            ticketId: currentRequest.ticketId,
-            sessionId: currentRequest.sessionId,
-            accepted: true,
-            userId,
-          });
+          socket.emit(
+            `ticket:${currentRequest.ticketId}:remote_session_response`,
+            {
+              ticketId: currentRequest.ticketId,
+              sessionId: currentRequest.sessionId,
+              accepted: true,
+              userId,
+            }
+          );
           socket.disconnect();
         });
 
@@ -98,7 +102,14 @@ export const RequestNotificationModal = () => {
     } finally {
       setIsAccepting(false);
     }
-  }, [currentRequest, navigateToTicket, dismissRequest, callApi, userProfile, addAcceptedRequest]);
+  }, [
+    currentRequest,
+    navigateToTicket,
+    dismissRequest,
+    callApi,
+    userProfile,
+    addAcceptedRequest,
+  ]);
 
   const handleReject = useCallback(async () => {
     if (!currentRequest) return;
@@ -114,12 +125,15 @@ export const RequestNotificationModal = () => {
         });
 
         socket.on("connect", () => {
-          socket.emit(`ticket:${currentRequest.ticketId}:remote_session_response`, {
-            ticketId: currentRequest.ticketId,
-            sessionId: currentRequest.sessionId,
-            accepted: false,
-            userId,
-          });
+          socket.emit(
+            `ticket:${currentRequest.ticketId}:remote_session_response`,
+            {
+              ticketId: currentRequest.ticketId,
+              sessionId: currentRequest.sessionId,
+              accepted: false,
+              userId,
+            }
+          );
           socket.disconnect();
         });
       } else if (currentRequest.type === "huddle") {
@@ -179,7 +193,10 @@ export const RequestNotificationModal = () => {
               {isRemoteSession ? "Remote Session Request" : "Huddle Request"}
             </Typography>
             <Typography variant="body2" sx={{ color: "#666", mt: 0.5 }}>
-              Support wants to {isRemoteSession ? "start a remote session" : "start a voice call"}
+              Support wants to{" "}
+              {isRemoteSession
+                ? "start a remote session"
+                : "start a voice call"}
             </Typography>
           </Box>
         </Stack>
@@ -190,7 +207,10 @@ export const RequestNotificationModal = () => {
           {ticket && (
             <>
               <Box>
-                <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 0.5 }}>
+                <Typography
+                  variant="subtitle2"
+                  sx={{ fontWeight: 600, mb: 0.5 }}
+                >
                   Ticket #{ticket.ticketId || ticket.id}
                 </Typography>
                 {ticket.summary && (
@@ -227,7 +247,9 @@ export const RequestNotificationModal = () => {
         <Button
           variant="contained"
           color={isRemoteSession ? "primary" : "success"}
-          startIcon={isAccepting ? <CircularProgress size={16} /> : <CheckIcon />}
+          startIcon={
+            isAccepting ? <CircularProgress size={16} /> : <CheckIcon />
+          }
           onClick={handleAccept}
           disabled={isAccepting}
         >
@@ -237,4 +259,3 @@ export const RequestNotificationModal = () => {
     </Dialog>
   );
 };
-
