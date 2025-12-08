@@ -183,12 +183,15 @@ const useAddRuleModal = ({
   };
 
   const getAllMaterials = async () => {
-    const callBack = (res) => {
-      if (res.success) {
-        setMaterialsTypes(res.data);
-      }
-    };
-    await getMaterialsTypesApi(callApi, callBack);
+    return new Promise((resolve) => {
+      const callBack = (res) => {
+        if (res.success) {
+          setMaterialsTypes(res.data);
+        }
+        resolve(res);
+      };
+      getMaterialsTypesApi(callApi, callBack);
+    });
   };
   const [expression, setExpression] = useState(
     "Your rules will viewed here . . ."
@@ -276,12 +279,15 @@ const useAddRuleModal = ({
     useRecoilState<any>(actionEmployeesState);
 
   const getMachinesList = async () => {
-    const callBack = (res) => {
-      if (res.success) {
-        setAllMachincesList(res.data);
-      }
-    };
-    await getALLMachinesApi(callApi, callBack).then();
+    return new Promise((resolve) => {
+      const callBack = (res) => {
+        if (res.success) {
+          setAllMachincesList(res.data);
+        }
+        resolve(res);
+      };
+      getALLMachinesApi(callApi, callBack).then();
+    });
   };
 
   const getMachincesByActionId = useCallback(async () => {
@@ -289,18 +295,18 @@ const useAddRuleModal = ({
       await getAndSetMachincesByActionId(callApi, setMachincesList, {
         actionId: router.query.actionId,
       });
-      getMachinesList();
+      return await getMachinesList();
     } else {
-      getMachinesList();
+      return await getMachinesList();
     }
   }, [router]);
 
   const getProducts = useCallback(async () => {
-    await getAllProductsForDropDownList(callApi, setProductsState);
+    return await getAllProductsForDropDownList(callApi, setProductsState);
   }, []);
 
   const getClientTypes = useCallback(async () => {
-    await getAndSetClientTypes(callApi, setClientTypesState, {
+    return await getAndSetClientTypes(callApi, setClientTypesState, {
       cardType: CLIENT_TYPE_Id.CUSTOMER,
     });
   }, []);
@@ -313,19 +319,23 @@ const useAddRuleModal = ({
       label: item.name,
     }));
     setAllProductTypes(mappedResult);
+    return mappedResult;
   }, []);
 
   const getEmployeeCategories = async () => {
-    const callBack = (res) => {
-      if (res.success) {
-        const employeeList = res.data.map((employee) => ({
-          label: employee.text,
-          id: employee.value,
-        }));
-        setEmployeeList(employeeList);
-      }
-    };
-    await getAndSetEmployees2(callApi, callBack, { IsGraphicArtist: true });
+    return new Promise((resolve) => {
+      const callBack = (res) => {
+        if (res.success) {
+          const employeeList = res.data.map((employee) => ({
+            label: employee.text,
+            id: employee.value,
+          }));
+          setEmployeeList(employeeList);
+        }
+        resolve(res);
+      };
+      getAndSetEmployees2(callApi, callBack, { IsGraphicArtist: true });
+    });
   };
   const getEmployeesByActionId = async () => {
     if (router.query.actionId) {
@@ -344,15 +354,27 @@ const useAddRuleModal = ({
     }
   };
 
+  // Track loading state for all data
+  const [isDataLoading, setIsDataLoading] = useState(false);
+
   // ensuring it only renders when the 'Add Rule' modal is opened.
   useEffect(() => {
     if (openModal) {
-      getClientTypes();
-      getProducts();
-      getAllMaterials();
-      getAllProductTypes();
-      getEmployeeCategories();
-      getMachincesByActionId();
+      setIsDataLoading(true);
+      // Load all data in parallel and wait for all to complete
+      Promise.all([
+        getClientTypes(),
+        getProducts(),
+        getAllMaterials(),
+        getAllProductTypes(),
+        getEmployeeCategories(),
+        getMachincesByActionId(),
+      ]).finally(() => {
+        // Small delay to ensure state updates are complete
+        setTimeout(() => {
+          setIsDataLoading(false);
+        }, 100);
+      });
     }
   }, [openModal]);
 
@@ -999,8 +1021,30 @@ const useAddRuleModal = ({
 
   // Initialize rules from condition properties when duplicateRule is true
   useEffect(() => {
-    if (duplicateRule && openModal && pricingTableConditionProperties && pricingTableConditionProperties.length > 0 && !hasInitializedDuplicateRules.current && categories && categories.length > 0) {
-      // Wait longer for all data (categories, conditions, etc.) to be loaded
+    // Wait for all data to be loaded before mapping
+    const isAllDataLoaded = 
+      !isDataLoading && // Wait until data loading is complete
+      pricingTableConditionProperties && 
+      pricingTableConditionProperties.length > 0 && 
+      categories && 
+      categories.length > 0 &&
+      conditions && 
+      conditions.length > 0 &&
+      (Array.isArray(allMachincesList) ? allMachincesList.length >= 0 : allMachincesList !== undefined) && // Machines can be empty array
+      (Array.isArray(productsStateValue) ? productsStateValue.length >= 0 : productsStateValue !== undefined) && // Products can be empty array
+      (Array.isArray(allProductTypes) ? allProductTypes.length >= 0 : allProductTypes !== undefined) && // Product types can be empty array
+      (Array.isArray(clientTypesStateValue) ? clientTypesStateValue.length >= 0 : clientTypesStateValue !== undefined) && // Client types can be empty array
+      (Array.isArray(Outputs) ? Outputs.length >= 0 : Outputs !== undefined) && // Outputs can be empty array
+      (Array.isArray(parametersStateValue) ? parametersStateValue.length >= 0 : parametersStateValue !== undefined) && // Parameters can be empty array
+      (Array.isArray(materialsTypes) ? materialsTypes.length >= 0 : materialsTypes !== undefined); // Materials can be empty array
+
+    if (
+      duplicateRule && 
+      openModal && 
+      isAllDataLoaded &&
+      !hasInitializedDuplicateRules.current
+    ) {
+      // All data is loaded, now map the rules
       const timer = setTimeout(() => {
         const mappedRules = mapConditionPropertiesToRules();
         if (mappedRules && mappedRules.length > 0) {
@@ -1022,7 +1066,7 @@ const useAddRuleModal = ({
           setRules(rulesWithCategories);
           hasInitializedDuplicateRules.current = true;
         }
-      }, 300); // Increased timeout to ensure categories are loaded
+      }, 300); // Small delay to ensure all state updates are complete
       return () => clearTimeout(timer);
     } else if (openModal && !duplicateRule) {
       // Reset to initial rule when opening modal without duplicate
@@ -1035,7 +1079,21 @@ const useAddRuleModal = ({
       hasInitializedDuplicateRules.current = false;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [duplicateRule, openModal, categories]); // Include categories to ensure it's loaded before mapping
+  }, [
+    duplicateRule, 
+    openModal, 
+    isDataLoading, // Wait for data loading to complete
+    pricingTableConditionProperties,
+    categories, 
+    allMachincesList, 
+    productsStateValue, 
+    allProductTypes, 
+    clientTypesStateValue, 
+    Outputs, 
+    parametersStateValue, 
+    materialsTypes, 
+    conditions
+  ]);
 
   const createForHotFolderWidget = async () => {
     // Validation: check required fields
