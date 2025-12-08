@@ -355,12 +355,14 @@ export const CloseDocumentSubmenu: React.FC<CloseDocumentSubmenuProps> = ({
 
   return (
     <>
-      <MenuItem style={menuItemStyle}>
+      <MenuItem 
+        style={menuItemStyle}
+        onClick={handleClick}
+      >
         <TickIcon color="#8283BE" />
         <div style={rowTextStyle}>{t("sales.quote.closeDocument")}</div>
         <div
           onMouseEnter={handleClick}
-          onClick={handleClick}
           style={{
             marginLeft: isRTL ? 0 : "auto",
             marginRight: isRTL ? "auto" : 0,
