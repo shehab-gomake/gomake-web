@@ -7,3 +7,6 @@ export { RequestNotificationProvider, useRequestNotification } from './request-n
 export { RequestNotificationModal } from './RequestNotificationModal';
 export { useGlobalRequestListener } from './use-global-request-listener';
 export { useGlobalPopupMessageListener } from './use-global-popup-message-listener';
+export { SupportReplyCardsContainer } from './SupportReplyCardsContainer';
+export { SupportReplyCard } from './SupportReplyCard';
+export { useSupportReplyCards } from './use-support-reply-cards';
