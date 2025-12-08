@@ -411,9 +411,35 @@ const useGantt = (reschedulingHook?: any) => {
     setLoadingItemId("");
   };
 
+  // Helper function to generate unique key for groups
+  // For groups with same ID but different parents, we need a composite key
+  const getGroupKey = (group: IGanttGroup): string => {
+    // For root groups, use just the ID
+    if (group.isRoot) {
+      return group.id;
+    }
+    // For non-root groups, use parent + id to ensure uniqueness
+    return `${group.parent}-${group.id}`;
+  };
+
   // Toggle group expansion
-  const toggleGroup = (id) => {
-    setOpenGroups((prevState) => ({ ...prevState, [id]: !prevState[id] }));
+  const toggleGroup = (id: string, group?: IGanttGroup) => {
+    let key: string;
+    if (group) {
+      // If group is provided, use the unique key
+      key = getGroupKey(group);
+    } else {
+      // If only ID is provided, find the group(s) and use the first one
+      // This handles backward compatibility but may not work correctly for duplicate IDs
+      const foundGroup = groups.find((g) => g.id === id);
+      if (foundGroup) {
+        key = getGroupKey(foundGroup);
+      } else {
+        // Fallback to just ID if group not found (shouldn't happen)
+        key = id;
+      }
+    }
+    setOpenGroups((prevState) => ({ ...prevState, [key]: !prevState[key] }));
   };
 
   // Expand all root groups
@@ -421,7 +447,8 @@ const useGantt = (reschedulingHook?: any) => {
     const rootGroups = groups.filter((group) => group.isRoot);
     const newOpenGroups = { ...openGroups };
     rootGroups.forEach((group) => {
-      newOpenGroups[group.id] = true;
+      const key = getGroupKey(group);
+      newOpenGroups[key] = true;
     });
     setOpenGroups(newOpenGroups);
   };
@@ -431,7 +458,8 @@ const useGantt = (reschedulingHook?: any) => {
     const rootGroups = groups.filter((group) => group.isRoot);
     const newOpenGroups = { ...openGroups };
     rootGroups.forEach((group) => {
-      newOpenGroups[group.id] = false;
+      const key = getGroupKey(group);
+      newOpenGroups[key] = false;
     });
     setOpenGroups(newOpenGroups);
   };
@@ -826,6 +854,7 @@ const useGantt = (reschedulingHook?: any) => {
     toggleGroup,
     expandAllGroups,
     collapseAllGroups,
+    getGroupKey,
     handleZoom,
     currentMonth,
     setCurrentMonth,

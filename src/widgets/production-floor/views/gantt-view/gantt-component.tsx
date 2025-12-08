@@ -77,6 +77,7 @@ const TimelineWidget = () => {
     toggleGroup,
     expandAllGroups,
     collapseAllGroups,
+    getGroupKey,
     handleZoom,
     onTimeChange,
     visibleTimeRange,
@@ -209,13 +210,14 @@ const TimelineWidget = () => {
       )
       .map((group) => {
         const stats = getGroupStats(group.id);
+        const groupKey = getGroupKey(group);
         return {
           ...group,
           height: 50,
           title: group.isRoot ? (
             <Stack
-              bgcolor={openGroups[group.id] ? "#F8F9FA" : "#FFF"}
-              onClick={() => toggleGroup(group.id)}
+              bgcolor={openGroups[groupKey] ? "#F8F9FA" : "#FFF"}
+              onClick={() => toggleGroup(group.id, group)}
               direction="row"
               alignItems="center"
               justifyContent="space-between"
@@ -234,7 +236,7 @@ const TimelineWidget = () => {
               }}
             >
               <Stack direction="row" alignItems="center" gap={1}>
-                {openGroups[group.id] ? (
+                {openGroups[groupKey] ? (
                   <KeyboardArrowUpIcon
                     sx={{ color: "#6C757D", fontSize: 20 }}
                   />
@@ -597,8 +599,15 @@ const TimelineWidget = () => {
                   ]
             }
             items={items.filter((item) => {
-              const isGroupOpen = openGroups[item.group];
-              return isGroupOpen ? item.isEditable : true;
+              // Find the group for this item to get the correct key
+              const itemGroup = groups.find((g) => g.id === item.group);
+              if (itemGroup) {
+                const groupKey = getGroupKey(itemGroup);
+                const isGroupOpen = openGroups[groupKey];
+                return isGroupOpen ? item.isEditable : true;
+              }
+              // If group not found, show the item (fallback)
+              return true;
             })}
             defaultTimeStart={timeRange.defaultTimeStart}
             defaultTimeEnd={timeRange.defaultTimeEnd}
@@ -681,6 +690,7 @@ const TimelineWidget = () => {
                           <ExpandCollapseControls
                             groups={groups}
                             openGroups={openGroups}
+                            getGroupKey={getGroupKey}
                             onExpandAll={expandAllGroups}
                             onCollapseAll={collapseAllGroups}
                           />
