@@ -11,6 +11,7 @@ const PricingTableMappingMenu = ({
   selectedPricingTableItems,
   onClickOpenDeleteRowModal,
   onClickOpenAddNewRuleModal,
+  onClickOpenDuplicateNewRuleModal,
   setTypeExceptionSelected,
 }) => {
   const { clasess } = useStyle();
@@ -22,7 +23,11 @@ const PricingTableMappingMenu = ({
     {
       name: t("home.duplicate"),
       onclick: () => {
-        onClickOpenAddNewRuleModal();
+        if (onClickOpenDuplicateNewRuleModal) {
+          onClickOpenDuplicateNewRuleModal();
+        } else {
+          onClickOpenAddNewRuleModal();
+        }
         setTypeExceptionSelected(ETypeException.EDITBASE);
         handleClose();
       },

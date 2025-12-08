@@ -547,11 +547,11 @@ const useQuoteNew = ({
     "#",
     isDeliveryNote || isInvoice ? t("products.profits.documentNumber") : null,
     !CheckPreferenceValue(EPreferences.HIDE_ITEM_CODE_FROM_DOCUMENT_CART) &&
-      t("sales.quote.itemCode"),
+    t("sales.quote.itemCode"),
     !CheckPreferenceValue(EPreferences.HIDE_ITEM_CODE_FROM_DOCUMENT_CART) &&
-      t("products.profits.itemName"),
+    t("products.profits.itemName"),
     CheckPreferenceValue(EPreferences.HIDE_ITEM_CODE_FROM_DOCUMENT_CART) &&
-      t("products.profits.itemName"),
+    t("products.profits.itemName"),
     showDetails ? t("products.profits.details") : null,
     isMaterialPurchaseOrder ? t("sales.purchaseOrder.packagesQuantity") : null,
     isMaterialPurchaseOrder ? t("sales.purchaseOrder.quantityInPackage") : null,
@@ -567,37 +567,37 @@ const useQuoteNew = ({
 
   const columnWidths = isMaterialPurchaseOrder
     ? [
-        "5%", // "#"
-        "9%", // Item Code
-        "10%", // Item Name
-        "15%", // Details column (optional)
-        "9%", // Amount
-        "9%", // Amount
-        "9%", // Amount
-        "5%", // Unit Price
-        showPrices ? "8%" : null, // Unit Price
-        showPrices ? "8%" : null, // Discount
-        showPrices ? "8%" : null, // Final Price
-        "5%", // More
-      ]
+      "5%", // "#"
+      "9%", // Item Code
+      "10%", // Item Name
+      "15%", // Details column (optional)
+      "9%", // Amount
+      "9%", // Amount
+      "9%", // Amount
+      "5%", // Unit Price
+      showPrices ? "8%" : null, // Unit Price
+      showPrices ? "8%" : null, // Discount
+      showPrices ? "8%" : null, // Final Price
+      "5%", // More
+    ]
     : [
-        "5%", // "#"
-        isDeliveryNote || isInvoice ? "10%" : null, // Document Number
-        !CheckPreferenceValue(EPreferences.HIDE_ITEM_CODE_FROM_DOCUMENT_CART)
-          ? "10%"
-          : null, // Item Code
-        "12%", // Item Name
-        source?.showDetails === ShowDocumentDetailsEnum.All
-          ? "25%"
-          : source?.showDetails === ShowDocumentDetailsEnum.ShowJobNameOnly
+      "5%", // "#"
+      isDeliveryNote || isInvoice ? "10%" : null, // Document Number
+      !CheckPreferenceValue(EPreferences.HIDE_ITEM_CODE_FROM_DOCUMENT_CART)
+        ? "10%"
+        : null, // Item Code
+      "12%", // Item Name
+      source?.showDetails === ShowDocumentDetailsEnum.All
+        ? "25%"
+        : source?.showDetails === ShowDocumentDetailsEnum.ShowJobNameOnly
           ? "10%"
           : null, // Details column (optional)
-        "10%", // Amount
-        showPrices ? "10%" : null, // Unit Price
-        showPrices ? "10%" : null, // Discount
-        showPrices ? "10%" : null, // Final Price
-        "8%", // More
-      ].filter(Boolean);
+      "10%", // Amount
+      showPrices ? "10%" : null, // Unit Price
+      showPrices ? "10%" : null, // Discount
+      showPrices ? "10%" : null, // Final Price
+      "8%", // More
+    ].filter(Boolean);
 
   // const columnWidths = ["5%", "10%", "12%", "25%", "10%", "10%", "10%", "10%"];
   const headerHeight = "44px";
@@ -1416,6 +1416,15 @@ const useQuoteNew = ({
   };
 
   const onOpenNewItem = () => {
+    // Check if it's a material purchase order and supplier is required
+    if (
+      isPurchaseOrder &&
+      isNewCreation &&
+      !quoteItemValue?.client?.id
+    ) {
+      alertFault(t("home.admin.pleaseSelectSupplier"));
+      return;
+    }
     setOpenAddNewItemModal(true);
   };
   const onOpenNewContact = () => {
@@ -1465,7 +1474,7 @@ const useQuoteNew = ({
         discount: quoteItem?.discount,
         isPrintHouseMaterialItem:
           quoteItem?.printHouseMaterialId &&
-          (isPrintHouseMaterialItem || selectedFirstMaterial)
+            (isPrintHouseMaterialItem || selectedFirstMaterial)
             ? true
             : false,
         finalPrice: quoteItemEdit?.finalPrice,
@@ -1751,7 +1760,7 @@ const useQuoteNew = ({
           alertSuccessDelete();
           onCloseDeleteItemModal();
           quoteItemValue?.documentItems?.length === 1 ||
-          res?.data?.succ === false
+            res?.data?.succ === false
             ? navigate("/home")
             : getQuote();
         } else {
@@ -2161,7 +2170,7 @@ const useQuoteNew = ({
   const receiptSendModal = useModal();
   const [modalCallback, setModalCallback] = useState<
     (includeInvoices: boolean) => void
-  >(() => () => {});
+  >(() => () => { });
 
   const openReceiptModal = (callback: (includeInvoices: boolean) => void) => {
     receiptSendModal.open();
@@ -2803,7 +2812,7 @@ const useQuoteNew = ({
       }
       setIsUpdatingPurchaseStatus(true);
       try {
-        const response = await updateDocumentStatusApi(callApi, () => {}, {
+        const response = await updateDocumentStatusApi(callApi, () => { }, {
           documentType: docType,
           documentId: quoteItemValue.id,
           status,

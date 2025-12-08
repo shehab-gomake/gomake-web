@@ -20,6 +20,7 @@ import {
   RequestNotificationModal,
   useGlobalRequestListener,
   useGlobalPopupMessageListener,
+  SupportReplyCardsContainer,
 } from "@/components/ticket-chatbot";
 
 const CustomerAuthLayoutInner = ({
@@ -38,7 +39,7 @@ const CustomerAuthLayoutInner = ({
 
   // Set up global request listener (works even when chatbot is closed)
   useGlobalRequestListener();
-  
+
   // Set up global popup message listener (persists across navigation for remote control)
   useGlobalPopupMessageListener();
 
@@ -164,6 +165,7 @@ const CustomerAuthLayoutInner = ({
               </div>
               <TicketChatbotSidebar isOpen={isOpen} onClose={closeChatbot} />
             </div>
+            <SupportReplyCardsContainer />
             <FilesUploaderWidget />
             {profile?.isShowOnBoardingMenu && !isMobileScreen ? (
               <SetupSection />

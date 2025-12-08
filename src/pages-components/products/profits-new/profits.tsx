@@ -72,6 +72,7 @@ const ProfitsNewPageWidget = () => {
     getCalculateCaseProfits,
     updatePackageUnitQuantity,
     updatePricingByForActionPackage,
+    pricingTableConditionProperties,
   } = useNewProfits();
 
   return (
@@ -149,12 +150,7 @@ const ProfitsNewPageWidget = () => {
           />
         )}
         <ProfitRightSideWidget
-          minimumValue={minimumValue}
-          isUpdateMinimumValue={isUpdateMinimumValue}
-          onBlurMinimumValue={onBlurMinimumValue}
-          setIsUpdateMinimumValue={setIsUpdateMinimumValue}
-          onInputChangeMinimumValue={onInputChangeMinimumValue}
-          profitsPricingTables={profitsPricingTables}
+          pricingTableConditionProperties={pricingTableConditionProperties}
           anchorElPricingTables={anchorElPricingTables}
           openPricingTables={openPricingTables}
           handleClickPricingTables={handleClickPricingTables}

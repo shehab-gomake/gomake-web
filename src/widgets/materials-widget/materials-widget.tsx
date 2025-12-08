@@ -121,6 +121,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
     (category) => category.categoryKey === materialCategory?.toString()
   )?.categoryName;
 
+
   const handleFilterHeightChange = useCallback((height: number) => {
     setFilterBarHeight(height);
   }, []);
@@ -466,8 +467,15 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
                             </h4>
                           ) : (
                             <h4>
-                              {t("materials.sheetPaper.noDataFor")}{" "}
-                              {materialCategory}
+                              {subCategory ?
+                                <>
+                                  {t("materials.sheetPaper.noDataFor")}{" "}
+                                  {subCategory ?? ""}
+                                </> :
+                                <>
+                                  {t("materials.sheetPaper.noData2")}
+                                </>
+                              }
                             </h4>
                           )}
 
