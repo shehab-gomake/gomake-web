@@ -80,6 +80,7 @@ const PropertiesTable = () => {
           rows={propertiesDataSearched}
           headers={tableHeaders}
           onDragEnd={onDragEnd}
+          columnWidths={["10%", "15%", "10%", "20%", "25%", "10%", "10%",]}
         />
       ) : (
         <PrimaryTableWithDragAndDrop
@@ -88,6 +89,8 @@ const PropertiesTable = () => {
           rows={propertiesData}
           headers={tableHeaders}
           onDragEnd={onDragEnd}
+          columnWidths={["10%", "15%", "10%", "20%", "25%", "10%", "10%",]}
+
         />
       )}
 
