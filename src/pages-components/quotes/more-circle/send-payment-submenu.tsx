@@ -52,27 +52,25 @@ export const SendPaymentSubmenu: React.FC<SendPaymentSubmenuProps> = ({
 
   return (
     <>
-      <MenuItem
-        style={menuItemStyle}
-        onClick={handleClick}
-        onMouseEnter={handleClick}
-      >
+      <MenuItem style={menuItemStyle} onClick={handleClick}>
+        <PayIcon color="#8283BE" />
+        <div style={rowTextStyle}>{t("sales.quote.sendPayment")}</div>
         <div
+          onMouseEnter={handleClick}
           style={{
-            marginRight: isRTL ? 0 : 8,
-            marginLeft: isRTL ? 8 : 0,
+            marginLeft: isRTL ? 0 : "auto",
+            marginRight: isRTL ? "auto" : 0,
+            cursor: "pointer",
             display: "flex",
             alignItems: "center",
           }}
         >
-          <PayIcon color="#8283BE" />
+          {isRTL ? (
+            <ChevronLeftIcon sx={{ fontSize: 20 }} />
+          ) : (
+            <ChevronRightIcon sx={{ fontSize: 20 }} />
+          )}
         </div>
-        <div style={rowTextStyle}>{t("sales.quote.sendPayment")}</div>
-        {isRTL ? (
-          <ChevronLeftIcon sx={{ mr: "auto", fontSize: 20 }} />
-        ) : (
-          <ChevronRightIcon sx={{ ml: "auto", fontSize: 20 }} />
-        )}
       </MenuItem>
 
       <Menu
@@ -152,4 +150,3 @@ export const SendPaymentSubmenu: React.FC<SendPaymentSubmenuProps> = ({
     </>
   );
 };
-

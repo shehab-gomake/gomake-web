@@ -93,12 +93,11 @@ export const CancelDocumentSubmenu: React.FC<CancelDocumentSubmenuProps> = ({
 
   return (
     <>
-      <MenuItem style={menuItemStyle}>
+      <MenuItem style={menuItemStyle} onClick={handleClick}>
         <TickCancelIcon color="#8283BE" />
         <div style={rowTextStyle}>{t("sales.quote.cancel")}</div>
         <div
           onMouseEnter={handleClick}
-          onClick={handleClick}
           style={{
             marginLeft: isRTL ? 0 : "auto",
             marginRight: isRTL ? "auto" : 0,
