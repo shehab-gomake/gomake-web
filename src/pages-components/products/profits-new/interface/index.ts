@@ -140,11 +140,7 @@ export type AddStepModalProps = {
 };
 
 export type ProfitRightSideProps = {
-  minimumValue: number;
-  isUpdateMinimumValue: number;
-  onBlurMinimumValue: () => void;
-  setIsUpdateMinimumValue: (value: any) => void;
-  onInputChangeMinimumValue: (type: any) => void;
+  pricingTableConditionProperties?: any;
   profitsPricingTables?: ProfitsPricingTables[];
   anchorElPricingTables?: null | HTMLElement;
   openPricingTables?: boolean;
