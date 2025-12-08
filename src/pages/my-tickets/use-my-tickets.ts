@@ -71,11 +71,7 @@ export const useMyTickets = () => {
         ticket.assignedEmployeeName || t("tickets.unassigned"),
         new Date(ticket.createdAt).toLocaleDateString(),
         ticket.expectedDeliveryDate
-          ? new Date(ticket.expectedDeliveryDate).toLocaleDateString("en-US", {
-              year: "numeric",
-              month: "short",
-              day: "numeric",
-            })
+          ? new Date(ticket.expectedDeliveryDate).toLocaleDateString()
           : "-",
       ]);
     },
