@@ -76,6 +76,7 @@ const ProfitRightSideWidget = ({
     };
     const onClickCloseAddNewRuleModal = () => {
         setOpenAddNewRuleModal(false);
+        setDuplicateRule(false);
     };
     const { parametersStateValue } = useParameters();
     return (
@@ -198,6 +199,7 @@ const ProfitRightSideWidget = ({
                 selectedPricingTableItems={selectedPricingTableItems}
                 onClickOpenDeleteRowModal={onClickOpenDeleteRowModal}
                 onClickOpenAddNewRuleModal={onClickOpenAddNewRuleModal}
+                onClickOpenDuplicateNewRuleModal={onClickOpenDuplicateNewRuleModal}
                 setTypeExceptionSelected={setTypeExceptionSelected}
             />
             <AdditinalProfitMenu

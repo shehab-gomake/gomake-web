@@ -46,7 +46,9 @@ const AddRuleModal = ({
   filterDTO,
   boardMissionTableFilterDTO,
   availableDateFilters = [],
-  parametersStateValue
+  parametersStateValue,
+  pricingTableConditionProperties,
+  duplicateRule,
 }: any) => {
   const { clasess } = useStyle();
   const { t } = useTranslation();
@@ -124,7 +126,20 @@ const AddRuleModal = ({
     getProductHotFolderRules,
     documentType,
     detailsOption,
+    pricingTableConditionProperties,
+    duplicateRule,
+    parametersStateValue,
   });
+
+  // Update selectedCategories and selectedStatment2 only once when modal opens with duplicateRule
+  useEffect(() => {
+    if (duplicateRule && openModal && rules && rules.length > 0 && rules[0]?.category) {
+      setSelectedCategories(rules[0].category);
+      if (rules[0]?.statement2) {
+        setSelectedStatment2(rules[0].statement2);
+      }
+    }
+  }, [openModal, duplicateRule]); // Only depend on openModal and duplicateRule, not rules
 
   // Fetch hot folder names when modal opens
   useEffect(() => {
@@ -164,7 +179,7 @@ const AddRuleModal = ({
         return baseFilters;
     }
   };
-
+  console.log("rules", rules);
   const [selectedOutputs, setSelectedOutputs] =
     useState<selectedOutputsProps>();
   const [selectedParameters, setSelectedParameters] =
@@ -633,6 +648,7 @@ const AddRuleModal = ({
                       {t("properties.condtionBetween")}
                     </label>
                     <GoMakeAutoComplate
+                      key={`linkCondition-${index}-${openModal ? 'open' : 'closed'}`}
                       options={mainconditions}
                       style={clasess.dropDownListContainer}
                       placeholder={t("properties.condtion")}
@@ -654,10 +670,15 @@ const AddRuleModal = ({
                       {t("properties.category")}
                     </label>
                     <GoMakeAutoComplate
+                      key={`category-${index}-${rule.category?.id || 'empty'}-${openModal ? 'open' : 'closed'}`}
                       options={categories}
                       style={clasess.dropDownListContainer}
                       placeholder={t("properties.category")}
-                      value={rule.category}
+                      value={rule.category || null}
+                      isOptionEqualToValue={(option, value) => {
+                        if (!option || !value) return false;
+                        return option.id === value.id;
+                      }}
                       onChange={(e, value) => {
                         handleChange(index, "category", value);
                         handleChange(index, "statement2", null);
@@ -677,6 +698,7 @@ const AddRuleModal = ({
                               {t("properties.statment")}
                             </label>
                             <GoMakeAutoComplate
+                              key={`statement2-property-input-${index}-${rule.category?.id || ''}-${openModal ? 'open' : 'closed'}`}
                               options={parametersStateValue?.map((value) => {
                                 return {
                                   ...value,
@@ -706,6 +728,7 @@ const AddRuleModal = ({
                               {t("properties.statment")}
                             </label>
                             <GoMakeAutoComplate
+                              key={`statement2-property-output-${index}-${rule.category?.id || ''}-${openModal ? 'open' : 'closed'}`}
                               options={Outputs?.map((value) => {
                                 return {
                                   ...value,
@@ -736,9 +759,7 @@ const AddRuleModal = ({
                       {t("properties.condtion")}
                     </label>
                     <GoMakeAutoComplate
-                      key={
-                        selectedCategories?.id + index + selectedStatment2?.id
-                      }
+                      key={`condition-${index}-${rule.category?.id || ''}-${openModal ? 'open' : 'closed'}`}
                       options={conditions}
                       style={clasess.dropDownListContainer}
                       placeholder={t("properties.condtion")}
@@ -754,6 +775,7 @@ const AddRuleModal = ({
                         {t("properties.statment")}
                       </label>
                       <GoMakeAutoComplate
+                        key={`statement2-machine-${index}-${openModal ? 'open' : 'closed'}`}
                         options={
                           router.query.actionId
                             ? allMachincesList?.map((value) => {
@@ -813,11 +835,7 @@ const AddRuleModal = ({
                           {t("properties.statment")}
                         </label>
                         <GoMakeAutoComplate
-                          key={
-                            selectedCategories?.id +
-                            index +
-                            selectedStatment2?.id
-                          }
+                          key={`statement-property-output-machine-${index}-${rule.statement2?.id || ''}-${openModal ? 'open' : 'closed'}`}
                           options={
                             router.query.actionId
                               ? allMachincesList?.map((value) => {
@@ -906,6 +924,7 @@ const AddRuleModal = ({
                       </label>
 
                       <GoMakeAutoComplate
+                        key={`statement2-products-${index}-${openModal ? 'open' : 'closed'}`}
                         options={productsStateValue
                           ?.filter((item) => item.name !== null)
                           .map((value) => {
@@ -979,11 +998,7 @@ const AddRuleModal = ({
                             {t("properties.statment")}
                           </label>
                           <GoMakeAutoComplate
-                            key={
-                              selectedCategories?.id +
-                              index +
-                              selectedStatment2?.id
-                            }
+                            key={`statement-property-input-${index}-${rule.statement2?.id || ''}-${openModal ? 'open' : 'closed'}`}
                             options={rules[index]?.statement2?.values?.map(
                               (value) => ({
                                 ...value,
