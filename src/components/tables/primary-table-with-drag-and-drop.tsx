@@ -142,7 +142,11 @@ const PrimaryTableWithDragAndDrop = ({
                 <TableHead>
                   <TableRow>
                     {headers?.map((header, index) => (
-                      <TableCell key={`header_${index}`} align={"center"}>
+                      <TableCell 
+                        key={`header_${index}`} 
+                        align={index === 0 ? (dir === "rtl" ? "right" : "left") : "center"}
+                        style={index === 0 ? { paddingLeft: "10px", paddingRight: "10px" } : {}}
+                      >
                         {header}
                       </TableCell>
                     ))}
@@ -167,10 +171,15 @@ const PrimaryTableWithDragAndDrop = ({
                           {/* Add SortIcon as the drag handle */}
                           <TableCell
                             {...provided.dragHandleProps}
-                            align="center"
-                            style={{ width: "50px" }}
+                            align={dir === "rtl" ? "right" : "left"}
+                            style={{ width: "50px", paddingLeft: "10px", paddingRight: "10px" }}
                           >
-                            <SortIcon style={{ cursor: "grab" }} />
+                            <SortIcon 
+                              style={{ 
+                                cursor: "grab",
+                                transform: dir === "rtl" ? "scaleX(-1)" : "none"
+                              }} 
+                            />
                           </TableCell>
                           {row.map((cell, cellIndex) => {
                             const cellStyle = columnWidths
