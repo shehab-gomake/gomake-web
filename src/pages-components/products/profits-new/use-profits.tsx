@@ -24,6 +24,7 @@ import {
 import { getAndSetProfitsPricingTables } from "./services/get-profits-pricing-tables";
 import { getAndSetCalculateCaseProfits } from "./services/get-calculate-case-profits";
 import { getAndSetProductProfitByProductId } from "./services/get-product-profit-by-product-id";
+import { getAndSetPricingTableConditionProperties } from "./services/get-pricing-table-condition-properties";
 import { useRecoilValue } from "recoil";
 import { systemCurrencyState, userState } from "@/store";
 import { currencyUnitState } from "@/store/currency-units";
@@ -148,6 +149,10 @@ const useNewProfits = () => {
   const [calculateCaseValue, setSalculateCaseValue] = useState<any>();
   const [actionProfitRowChartData, setActionProfitRowChartData] =
     useState<ActionProfitRowChartData>();
+  const [pricingTableConditionProperties, setPricingTableConditionProperties] =
+    useState<any>();
+
+  console.log("pricingTableConditionProperties", pricingTableConditionProperties);
   const [actionProfitRowsList, setActionProfitRowsList] = useState([]);
   const [openAddStepModal, setOpenAddStepModal] = useState<boolean>(false);
   const [profitsPricingTables, setProfitsPricingTables] =
@@ -299,6 +304,18 @@ const useNewProfits = () => {
       getProfitsPricingTables();
     }
   }, [actionProfitByActionId]);
+
+  // Call endpoint when a pricing table item is selected
+  useEffect(() => {
+    if (selectedPricingTableItems?.id) {
+      getAndSetPricingTableConditionProperties(
+        callApi,
+        setPricingTableConditionProperties,
+        { id: selectedPricingTableItems.id }
+      );
+    }
+  }, [selectedPricingTableItems?.id, callApi]);
+
   const renderAdditionType = (additionType: number) => {
     if (additionType === EAdditionType.Percentage) {
       return "%"
@@ -1062,7 +1079,8 @@ const useNewProfits = () => {
     getAllActionProfitRowsByActionId,
     getCalculateCaseProfits,
     updatePackageUnitQuantity,
-    updatePricingByForActionPackage
+    updatePricingByForActionPackage,
+    pricingTableConditionProperties
   };
 };
 
