@@ -54,6 +54,7 @@ const ProfitRightSideWidget = ({
         useState<boolean>(false);
     const [openAddNewRuleModal, setOpenAddNewRuleModal] =
         useState<boolean>(false);
+    const [duplicateRule, setDuplicateRule] = useState<boolean>(false);
     const onClickOpenDeleteAdditionalRowModal = () => {
         setOpenDeleteAdditionalRowModal(true);
     };
@@ -68,6 +69,10 @@ const ProfitRightSideWidget = ({
     };
     const onClickOpenAddNewRuleModal = () => {
         setOpenAddNewRuleModal(true);
+    };
+    const onClickOpenDuplicateNewRuleModal = () => {
+        setOpenAddNewRuleModal(true);
+        setDuplicateRule(true);
     };
     const onClickCloseAddNewRuleModal = () => {
         setOpenAddNewRuleModal(false);
@@ -229,6 +234,7 @@ const ProfitRightSideWidget = ({
                 selectedPricingTableItems={selectedPricingTableItems}
                 parametersStateValue={parametersStateValue}
                 pricingTableConditionProperties={pricingTableConditionProperties}
+                duplicateRule={duplicateRule}
             />
         </div>
     );
