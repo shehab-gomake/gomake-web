@@ -13,6 +13,7 @@ import { getAndSetMachincesByActionId } from "@/services/hooks";
 import { EValueType } from "@/pages-components/products/profits-new/enums/profites-enum";
 import { useRecoilState } from "recoil";
 import { actionEmployeesState } from "@/store/action-employees-state";
+import { UpdateValueInput } from "@/components/text-input/update-value-input";
 
 const useProperites = ({ classes }) => {
   const { t } = useTranslation();
@@ -21,6 +22,7 @@ const useProperites = ({ classes }) => {
     "",
     t("properties.parameter"),
     t("properties.unit"),
+    t("properties.defaultOption"),
     t("properties.rule"),
     t("properties.type"),
     t("properties.more"),
@@ -41,6 +43,8 @@ const useProperites = ({ classes }) => {
   const [propertiesDataSearched, setProperitesDataSearched] = useState([]);
   const [actionId, setActionId] = useState("");
   const [actionEmployeeList, setActionEmployeeList] = useRecoilState<any>(actionEmployeesState)
+  const [editingDefaultValue, setEditingDefaultValue] = useState<{ propertyId: string; ruleType: number } | null>(null);
+  const [defaultValueInput, setDefaultValueInput] = useState<string>("");
 
   const { callApi } = useGomakeAxios();
   useEffect(() => {
@@ -65,6 +69,28 @@ const useProperites = ({ classes }) => {
   useEffect(() => {
     getMachincesByActionId()
   }, [])
+  const updatePropertyDefaultValue = useCallback(
+    async (data: any) => {
+      const res = await callApi(
+        EHttpMethod.PUT,
+        `/v1/printhouse-config/print-house-action/update-property-default-value`,
+        {
+          actionId: data.actionId,
+          propertyId: data.propertyId,
+          defaultValue: data.defaultValue,
+          ruleType: data.ruleType,
+        }
+      );
+      if (res?.success) {
+        alertSuccessUpdate();
+        getProperitesService();
+      } else {
+        alertFaultUpdate();
+      }
+    },
+    [callApi, alertSuccessUpdate, alertFaultUpdate, getProperitesService]
+  );
+
   const getSuccessEvent = (property, rule) => {
     if (property?.ruleType === 1) {
       const params = parameters.find(
@@ -96,10 +122,67 @@ const useProperites = ({ classes }) => {
       parameters,
       Outputs
     );
-    const mapData = updatedProperties?.map((property, index) =>
-      [
+    const mapData = updatedProperties?.map((property, index) => {
+      const isEditing = editingDefaultValue?.propertyId === property.propertyId && editingDefaultValue?.ruleType === property.ruleType;
+      const currentDefaultValue = property.defaultValue || "";
+
+      return [
         property.propertyName,
         property.defaultUnit || "-",
+        isEditing ? (
+          <div style={{ display: "flex", justifyContent: "center", width: "100%" }}>
+            <UpdateValueInput
+              value={defaultValueInput}
+              onInputChange={(value) => setDefaultValueInput(value)}
+              onUpdate={async () => {
+                if (defaultValueInput !== currentDefaultValue) {
+                  await updatePropertyDefaultValue({
+                    actionId: router.query.actionId as string,
+                    propertyId: property.propertyId,
+                    defaultValue: defaultValueInput,
+                    ruleType: property.ruleType,
+                  });
+                }
+                setEditingDefaultValue(null);
+                setDefaultValueInput("");
+              }}
+              onCancel={() => {
+                setEditingDefaultValue(null);
+                setDefaultValueInput("");
+              }}
+              clickedOut={async () => {
+                if (defaultValueInput !== currentDefaultValue) {
+                  await updatePropertyDefaultValue({
+                    actionId: router.query.actionId as string,
+                    propertyId: property.propertyId,
+                    defaultValue: defaultValueInput,
+                    ruleType: property.ruleType,
+                  });
+                }
+                setEditingDefaultValue(null);
+                setDefaultValueInput("");
+              }}
+            />
+          </div>
+        ) : (
+          <div
+            onClick={() => {
+              setEditingDefaultValue({ propertyId: property.propertyId, ruleType: property.ruleType });
+              setDefaultValueInput(currentDefaultValue);
+            }}
+            style={{
+              cursor: "pointer",
+              padding: "4px",
+              minHeight: "26px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              width: "100%"
+            }}
+          >
+            {currentDefaultValue || "-"}
+          </div>
+        ),
         <div style={classes.rowItem} className="scrollBlue">
           {property.actionRules
             ?.sort((a, b) => a.priority - b.priority)
@@ -130,8 +213,8 @@ const useProperites = ({ classes }) => {
         >
           <MoreCircleIcon />
         </IconButton>,
-      ]
-    );
+      ];
+    });
     setProperitesData(mapData);
     const hiddenData = updatedProperties?.map((property, index) => ({
       propertyId: property.propertyId,
@@ -140,7 +223,7 @@ const useProperites = ({ classes }) => {
     }));
 
     setHiddenData(hiddenData);
-  }, [parameters, Outputs, allProperties, allMachincesList]);
+  }, [parameters, Outputs, allProperties, allMachincesList, editingDefaultValue, defaultValueInput, updatePropertyDefaultValue, router.query.actionId, classes.rowItem, classes.item, t, actionEmployeeList]);
 
   const [openAddRule, setOpenAddRule] = useState<boolean>(false);
   const [openEditRule, setOpenEditRule] = useState<boolean>(false);
@@ -267,7 +350,6 @@ const useProperites = ({ classes }) => {
 
   }, [selectedProperties]);
 
-
   function updateProperties(allProperties, inputs, outputs) {
     allProperties.forEach((property) => {
       if (property.ruleType === 0) {
@@ -304,12 +386,23 @@ const useProperites = ({ classes }) => {
       setProperitesDataSearched(temp);
     }
   }, [term]);
+  const columnWidths = [
+    "50px",      // Empty (replaced by drag handle)
+    "15%",       // Parameter
+    "8%",        // Unit
+    "18%",       // Default Option (wider)
+    "20%",       // Rule (smaller)
+    "10%",       // Type
+    "5%",        // More
+  ];
+
   return {
     allProperties,
     actionId,
     openAddRule,
     openEditRule,
     tableHeaders,
+    columnWidths,
     router,
     anchorEl,
     open,
@@ -335,6 +428,7 @@ const useProperites = ({ classes }) => {
     updateIsHiddenFromWorkFlow,
     updateIsHiddenFromCalculation,
     ToggleIsShowInOutSourceDetails,
+    updatePropertyDefaultValue,
     parameters
   };
 };

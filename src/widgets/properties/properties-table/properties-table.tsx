@@ -25,6 +25,7 @@ const PropertiesTable = () => {
     selectedProperties,
     propertiesData,
     tableHeaders,
+    columnWidths,
     router,
     term,
     propertiesDataSearched,
@@ -79,6 +80,7 @@ const PropertiesTable = () => {
           stickyHeader={false}
           rows={propertiesDataSearched}
           headers={tableHeaders}
+          columnWidths={columnWidths}
           onDragEnd={onDragEnd}
         />
       ) : (
@@ -87,6 +89,7 @@ const PropertiesTable = () => {
           stickyHeader={false}
           rows={propertiesData}
           headers={tableHeaders}
+          columnWidths={columnWidths}
           onDragEnd={onDragEnd}
         />
       )}
