@@ -2,9 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useGomakeAxios } from "@/hooks/use-gomake-axios";
 import { useTranslation } from "react-i18next";
 import { Ticket } from "@/services/api-service/tickets/tickets-api";
-import {
-  getTickets,
-} from "@/services/api-service/tickets/tickets-api";
+import { getTickets } from "@/services/api-service/tickets/tickets-api";
 import React from "react";
 
 export const useMyTickets = () => {
@@ -40,38 +38,49 @@ export const useMyTickets = () => {
     t("tickets.priority"),
     t("tickets.assignedTo"),
     t("tickets.createdAt"),
+    t("tickets.expectation") || "Expectation",
   ];
 
-  const getTicketsRows = useCallback((navigateToTicket: (ticketId: number) => void) => {
-    return tickets.map((ticket) => [
-      // Ticket ID as clickable link
-      React.createElement(
-        "span",
-        {
-          key: ticket.id,
-          style: {
-            color: "#1976d2",
-            cursor: "pointer",
-            textDecoration: "underline",
-            fontWeight: 500,
+  const getTicketsRows = useCallback(
+    (navigateToTicket: (ticketId: number) => void) => {
+      return tickets.map((ticket) => [
+        // Ticket ID as clickable link
+        React.createElement(
+          "span",
+          {
+            key: ticket.id,
+            style: {
+              color: "#1976d2",
+              cursor: "pointer",
+              textDecoration: "underline",
+              fontWeight: 500,
+            },
+            title: t("tickets.clickToViewConversation"),
+            onClick: (e: React.MouseEvent) => {
+              e.stopPropagation();
+              if (ticket.id) {
+                navigateToTicket(ticket.id);
+              }
+            },
           },
-          title: t("tickets.clickToViewConversation"),
-          onClick: (e: React.MouseEvent) => {
-            e.stopPropagation();
-            if (ticket.id) {
-              navigateToTicket(ticket.id);
-            }
-          },
-        },
-        ticket.ticketId
-      ),
-      ticket.title,
-      ticket.status,
-      ticket.priority,
-      ticket.assignedEmployeeName || t("tickets.unassigned"),
-      new Date(ticket.createdAt).toLocaleDateString(),
-    ]);
-  }, [tickets, t]);
+          ticket.ticketId
+        ),
+        ticket.title,
+        ticket.status,
+        ticket.priority,
+        ticket.assignedEmployeeName || t("tickets.unassigned"),
+        new Date(ticket.createdAt).toLocaleDateString(),
+        ticket.expectedDeliveryDate
+          ? new Date(ticket.expectedDeliveryDate).toLocaleDateString("en-US", {
+              year: "numeric",
+              month: "short",
+              day: "numeric",
+            })
+          : "-",
+      ]);
+    },
+    [tickets, t]
+  );
 
   return {
     tickets,
@@ -83,4 +92,3 @@ export const useMyTickets = () => {
     setFilters,
   };
 };
-
