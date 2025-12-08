@@ -51,7 +51,7 @@ export const SendToCustomerSubmenu: React.FC<SendToCustomerSubmenuProps> = ({
 
   return (
     <>
-      <MenuItem style={menuItemStyle}>
+      <MenuItem style={menuItemStyle} onClick={handleClick}>
         <MailOutlineRoundedIcon
           sx={{
             fontSize: 19,
@@ -61,7 +61,6 @@ export const SendToCustomerSubmenu: React.FC<SendToCustomerSubmenuProps> = ({
         <div style={rowTextStyle}>{t("sales.quote.sendToClient")}</div>
         <div
           onMouseEnter={handleClick}
-          onClick={handleClick}
           style={{
             marginLeft: isRTL ? 0 : "auto",
             marginRight: isRTL ? "auto" : 0,
