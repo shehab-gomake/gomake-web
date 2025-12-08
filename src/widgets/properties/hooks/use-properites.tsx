@@ -6,7 +6,7 @@ import { getAndSetProperites } from "@/services/hooks/admin-side/profits/get-set
 import { EHttpMethod } from "@/services/api-service/enums";
 import { useOutputs } from "./use-outputs";
 import { useParameters } from "./use-parameters";
-import { IconButton, TextField } from "@mui/material";
+import { IconButton } from "@mui/material";
 import { MoreCircleIcon } from "@/icons";
 import { useTranslation } from "react-i18next";
 import { getAndSetMachincesByActionId } from "@/services/hooks";
@@ -130,45 +130,55 @@ const useProperites = ({ classes }) => {
         property.propertyName,
         property.defaultUnit || "-",
         isEditing ? (
-          <UpdateValueInput
-            value={defaultValueInput}
-            onInputChange={(value) => setDefaultValueInput(value)}
-            onUpdate={async () => {
-              if (defaultValueInput !== currentDefaultValue) {
-                await updatePropertyDefaultValue({
-                  actionId: router.query.actionId as string,
-                  propertyId: property.propertyId,
-                  defaultValue: defaultValueInput,
-                  ruleType: property.ruleType,
-                });
-              }
-              setEditingDefaultValue(null);
-              setDefaultValueInput("");
-            }}
-            onCancel={() => {
-              setEditingDefaultValue(null);
-              setDefaultValueInput("");
-            }}
-            clickedOut={async () => {
-              if (defaultValueInput !== currentDefaultValue) {
-                await updatePropertyDefaultValue({
-                  actionId: router.query.actionId as string,
-                  propertyId: property.propertyId,
-                  defaultValue: defaultValueInput,
-                  ruleType: property.ruleType,
-                });
-              }
-              setEditingDefaultValue(null);
-              setDefaultValueInput("");
-            }}
-          />
+          <div style={{ display: "flex", justifyContent: "center", width: "100%" }}>
+            <UpdateValueInput
+              value={defaultValueInput}
+              onInputChange={(value) => setDefaultValueInput(value)}
+              onUpdate={async () => {
+                if (defaultValueInput !== currentDefaultValue) {
+                  await updatePropertyDefaultValue({
+                    actionId: router.query.actionId as string,
+                    propertyId: property.propertyId,
+                    defaultValue: defaultValueInput,
+                    ruleType: property.ruleType,
+                  });
+                }
+                setEditingDefaultValue(null);
+                setDefaultValueInput("");
+              }}
+              onCancel={() => {
+                setEditingDefaultValue(null);
+                setDefaultValueInput("");
+              }}
+              clickedOut={async () => {
+                if (defaultValueInput !== currentDefaultValue) {
+                  await updatePropertyDefaultValue({
+                    actionId: router.query.actionId as string,
+                    propertyId: property.propertyId,
+                    defaultValue: defaultValueInput,
+                    ruleType: property.ruleType,
+                  });
+                }
+                setEditingDefaultValue(null);
+                setDefaultValueInput("");
+              }}
+            />
+          </div>
         ) : (
           <div
             onClick={() => {
               setEditingDefaultValue({ propertyId: property.propertyId, ruleType: property.ruleType });
               setDefaultValueInput(currentDefaultValue);
             }}
-            style={{ cursor: "pointer", padding: "4px", minHeight: "26px", display: "flex", alignItems: "center" }}
+            style={{
+              cursor: "pointer",
+              padding: "4px",
+              minHeight: "26px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              width: "100%"
+            }}
           >
             {currentDefaultValue || "-"}
           </div>
@@ -376,12 +386,23 @@ const useProperites = ({ classes }) => {
       setProperitesDataSearched(temp);
     }
   }, [term]);
+  const columnWidths = [
+    "50px",      // Empty (replaced by drag handle)
+    "15%",       // Parameter
+    "8%",        // Unit
+    "18%",       // Default Option (wider)
+    "20%",       // Rule (smaller)
+    "10%",       // Type
+    "5%",        // More
+  ];
+
   return {
     allProperties,
     actionId,
     openAddRule,
     openEditRule,
     tableHeaders,
+    columnWidths,
     router,
     anchorEl,
     open,
