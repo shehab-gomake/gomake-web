@@ -354,29 +354,40 @@ const useAddRuleModal = ({
     }
   };
 
-  // Track loading state for all data
+  // Track loading state for all data (only when duplicating)
   const [isDataLoading, setIsDataLoading] = useState(false);
 
   // ensuring it only renders when the 'Add Rule' modal is opened.
   useEffect(() => {
     if (openModal) {
-      setIsDataLoading(true);
-      // Load all data in parallel and wait for all to complete
-      Promise.all([
-        getClientTypes(),
-        getProducts(),
-        getAllMaterials(),
-        getAllProductTypes(),
-        getEmployeeCategories(),
-        getMachincesByActionId(),
-      ]).finally(() => {
-        // Small delay to ensure state updates are complete
-        setTimeout(() => {
-          setIsDataLoading(false);
-        }, 100);
-      });
+      // Only wait for all data when duplicating, otherwise load normally
+      if (duplicateRule) {
+        setIsDataLoading(true);
+        // Load all data in parallel and wait for all to complete (only for duplicate)
+        Promise.all([
+          getClientTypes(),
+          getProducts(),
+          getAllMaterials(),
+          getAllProductTypes(),
+          getEmployeeCategories(),
+          getMachincesByActionId(),
+        ]).finally(() => {
+          // Small delay to ensure state updates are complete
+          setTimeout(() => {
+            setIsDataLoading(false);
+          }, 100);
+        });
+      } else {
+        // Normal add - load data without waiting
+        getClientTypes();
+        getProducts();
+        getAllMaterials();
+        getAllProductTypes();
+        getEmployeeCategories();
+        getMachincesByActionId();
+      }
     }
-  }, [openModal]);
+  }, [openModal, duplicateRule]);
 
   useEffect(() => {
     getEmployeesByActionId();
@@ -1021,55 +1032,53 @@ const useAddRuleModal = ({
 
   // Initialize rules from condition properties when duplicateRule is true
   useEffect(() => {
-    // Wait for all data to be loaded before mapping
-    const isAllDataLoaded = 
-      !isDataLoading && // Wait until data loading is complete
-      pricingTableConditionProperties && 
-      pricingTableConditionProperties.length > 0 && 
-      categories && 
-      categories.length > 0 &&
-      conditions && 
-      conditions.length > 0 &&
-      (Array.isArray(allMachincesList) ? allMachincesList.length >= 0 : allMachincesList !== undefined) && // Machines can be empty array
-      (Array.isArray(productsStateValue) ? productsStateValue.length >= 0 : productsStateValue !== undefined) && // Products can be empty array
-      (Array.isArray(allProductTypes) ? allProductTypes.length >= 0 : allProductTypes !== undefined) && // Product types can be empty array
-      (Array.isArray(clientTypesStateValue) ? clientTypesStateValue.length >= 0 : clientTypesStateValue !== undefined) && // Client types can be empty array
-      (Array.isArray(Outputs) ? Outputs.length >= 0 : Outputs !== undefined) && // Outputs can be empty array
-      (Array.isArray(parametersStateValue) ? parametersStateValue.length >= 0 : parametersStateValue !== undefined) && // Parameters can be empty array
-      (Array.isArray(materialsTypes) ? materialsTypes.length >= 0 : materialsTypes !== undefined); // Materials can be empty array
+    // Only apply mapping logic when duplicateRule is true
+    if (duplicateRule && openModal) {
+      // Wait for all data to be loaded before mapping (only when duplicating)
+      const isAllDataLoaded = 
+        !isDataLoading && // Wait until data loading is complete
+        pricingTableConditionProperties && 
+        pricingTableConditionProperties.length > 0 && 
+        categories && 
+        categories.length > 0 &&
+        conditions && 
+        conditions.length > 0 &&
+        (Array.isArray(allMachincesList) ? allMachincesList.length >= 0 : allMachincesList !== undefined) && // Machines can be empty array
+        (Array.isArray(productsStateValue) ? productsStateValue.length >= 0 : productsStateValue !== undefined) && // Products can be empty array
+        (Array.isArray(allProductTypes) ? allProductTypes.length >= 0 : allProductTypes !== undefined) && // Product types can be empty array
+        (Array.isArray(clientTypesStateValue) ? clientTypesStateValue.length >= 0 : clientTypesStateValue !== undefined) && // Client types can be empty array
+        (Array.isArray(Outputs) ? Outputs.length >= 0 : Outputs !== undefined) && // Outputs can be empty array
+        (Array.isArray(parametersStateValue) ? parametersStateValue.length >= 0 : parametersStateValue !== undefined) && // Parameters can be empty array
+        (Array.isArray(materialsTypes) ? materialsTypes.length >= 0 : materialsTypes !== undefined); // Materials can be empty array
 
-    if (
-      duplicateRule && 
-      openModal && 
-      isAllDataLoaded &&
-      !hasInitializedDuplicateRules.current
-    ) {
-      // All data is loaded, now map the rules
-      const timer = setTimeout(() => {
-        const mappedRules = mapConditionPropertiesToRules();
-        if (mappedRules && mappedRules.length > 0) {
-          // Ensure all categories are properly set - find exact match from categories array
-          const rulesWithCategories = mappedRules.map((rule) => {
-            if (rule.category) {
-              // Always find the exact category object from the categories array to ensure reference match
-              const categoryId = typeof rule.category === 'string' ? rule.category : rule.category.id;
-              const categoryObj = categories.find((cat) => cat.id === categoryId);
-              if (categoryObj) {
-                rule.category = categoryObj; // Use exact reference from categories array
-              } else if (typeof rule.category === 'object' && rule.category.id) {
-                // Keep the object if it has the right structure
-                rule.category = rule.category;
+      if (isAllDataLoaded && !hasInitializedDuplicateRules.current) {
+        // All data is loaded, now map the rules
+        const timer = setTimeout(() => {
+          const mappedRules = mapConditionPropertiesToRules();
+          if (mappedRules && mappedRules.length > 0) {
+            // Ensure all categories are properly set - find exact match from categories array
+            const rulesWithCategories = mappedRules.map((rule) => {
+              if (rule.category) {
+                // Always find the exact category object from the categories array to ensure reference match
+                const categoryId = typeof rule.category === 'string' ? rule.category : rule.category.id;
+                const categoryObj = categories.find((cat) => cat.id === categoryId);
+                if (categoryObj) {
+                  rule.category = categoryObj; // Use exact reference from categories array
+                } else if (typeof rule.category === 'object' && rule.category.id) {
+                  // Keep the object if it has the right structure
+                  rule.category = rule.category;
+                }
               }
-            }
-            return rule;
-          });
-          setRules(rulesWithCategories);
-          hasInitializedDuplicateRules.current = true;
-        }
-      }, 300); // Small delay to ensure all state updates are complete
-      return () => clearTimeout(timer);
+              return rule;
+            });
+            setRules(rulesWithCategories);
+            hasInitializedDuplicateRules.current = true;
+          }
+        }, 300); // Small delay to ensure all state updates are complete
+        return () => clearTimeout(timer);
+      }
     } else if (openModal && !duplicateRule) {
-      // Reset to initial rule when opening modal without duplicate
+      // Normal add - reset to initial rule immediately (no waiting)
       setRules([initialRule]);
       hasInitializedDuplicateRules.current = false;
     }
@@ -1082,7 +1091,7 @@ const useAddRuleModal = ({
   }, [
     duplicateRule, 
     openModal, 
-    isDataLoading, // Wait for data loading to complete
+    isDataLoading, // Only relevant when duplicateRule is true
     pricingTableConditionProperties,
     categories, 
     allMachincesList, 
