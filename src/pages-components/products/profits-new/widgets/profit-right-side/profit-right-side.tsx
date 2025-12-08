@@ -16,11 +16,7 @@ import { ModalType } from "@/enums";
 import { useParameters } from "@/hooks/use-parameters";
 
 const ProfitRightSideWidget = ({
-    minimumValue,
-    isUpdateMinimumValue,
-    onBlurMinimumValue,
-    setIsUpdateMinimumValue,
-    onInputChangeMinimumValue,
+    pricingTableConditionProperties,
     anchorElPricingTables,
     openPricingTables,
     handleClickPricingTables,
@@ -232,6 +228,7 @@ const ProfitRightSideWidget = ({
                 getProfitsPricingTables={getProfitsPricingTables}
                 selectedPricingTableItems={selectedPricingTableItems}
                 parametersStateValue={parametersStateValue}
+                pricingTableConditionProperties={pricingTableConditionProperties}
             />
         </div>
     );
