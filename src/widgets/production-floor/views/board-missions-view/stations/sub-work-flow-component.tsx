@@ -10,12 +10,14 @@ import { BoardMissionsStationActionItem } from "./station-action-item";
 
 interface IProps extends IBoardMissionsSubWorkFlow {
   currentBoardMissionsActionId: string;
+  sectionName?: string;
 }
 
 const BoardMissionsSubWorkFlowComponent = ({
   actions,
   productType,
   currentBoardMissionsActionId,
+  sectionName,
 }: IProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const { classes } = useStyle();
@@ -38,7 +40,7 @@ const BoardMissionsSubWorkFlowComponent = ({
             alignItems={"center"}
             flexWrap={"wrap"}
           >
-            <span>{productType}</span>
+            <span>{sectionName}</span>
           </Stack>
           <Stack
             direction={"row"}
