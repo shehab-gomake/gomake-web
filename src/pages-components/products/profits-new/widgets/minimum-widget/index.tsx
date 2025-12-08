@@ -10,7 +10,7 @@ const MinimumWidget = ({
   onBlurMinimumValue,
   setIsUpdateMinimumValue,
   onInputChangeMinimumValue,
-}: ProfitRightSideProps) => {
+}: any) => {
   const { clasess } = useStyle();
   const { t } = useTranslation();
 

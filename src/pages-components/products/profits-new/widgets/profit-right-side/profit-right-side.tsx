@@ -16,11 +16,7 @@ import { ModalType } from "@/enums";
 import { useParameters } from "@/hooks/use-parameters";
 
 const ProfitRightSideWidget = ({
-    minimumValue,
-    isUpdateMinimumValue,
-    onBlurMinimumValue,
-    setIsUpdateMinimumValue,
-    onInputChangeMinimumValue,
+    pricingTableConditionProperties,
     anchorElPricingTables,
     openPricingTables,
     handleClickPricingTables,
@@ -58,6 +54,7 @@ const ProfitRightSideWidget = ({
         useState<boolean>(false);
     const [openAddNewRuleModal, setOpenAddNewRuleModal] =
         useState<boolean>(false);
+    const [duplicateRule, setDuplicateRule] = useState<boolean>(false);
     const onClickOpenDeleteAdditionalRowModal = () => {
         setOpenDeleteAdditionalRowModal(true);
     };
@@ -73,8 +70,13 @@ const ProfitRightSideWidget = ({
     const onClickOpenAddNewRuleModal = () => {
         setOpenAddNewRuleModal(true);
     };
+    const onClickOpenDuplicateNewRuleModal = () => {
+        setOpenAddNewRuleModal(true);
+        setDuplicateRule(true);
+    };
     const onClickCloseAddNewRuleModal = () => {
         setOpenAddNewRuleModal(false);
+        setDuplicateRule(false);
     };
     const { parametersStateValue } = useParameters();
     return (
@@ -197,6 +199,7 @@ const ProfitRightSideWidget = ({
                 selectedPricingTableItems={selectedPricingTableItems}
                 onClickOpenDeleteRowModal={onClickOpenDeleteRowModal}
                 onClickOpenAddNewRuleModal={onClickOpenAddNewRuleModal}
+                onClickOpenDuplicateNewRuleModal={onClickOpenDuplicateNewRuleModal}
                 setTypeExceptionSelected={setTypeExceptionSelected}
             />
             <AdditinalProfitMenu
@@ -232,6 +235,8 @@ const ProfitRightSideWidget = ({
                 getProfitsPricingTables={getProfitsPricingTables}
                 selectedPricingTableItems={selectedPricingTableItems}
                 parametersStateValue={parametersStateValue}
+                pricingTableConditionProperties={pricingTableConditionProperties}
+                duplicateRule={duplicateRule}
             />
         </div>
     );
