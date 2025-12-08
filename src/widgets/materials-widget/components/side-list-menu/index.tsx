@@ -35,6 +35,7 @@ const SideLeftMenuWidget = ({
             e.stopPropagation();
             setOpenAddCategoryModal(true);
             changeEditCategoryModalState(true)
+            changeDuplicateCategoryModalState(false)
             setSelectedCategoryModalState(category)
             handleClose();
           }}
@@ -50,6 +51,7 @@ const SideLeftMenuWidget = ({
             e.stopPropagation();
             setOpenAddCategoryModal(true);
             changeDuplicateCategoryModalState(true)
+            changeEditCategoryModalState(false)
             setSelectedCategoryModalState(category)
             handleClose();
           }}
