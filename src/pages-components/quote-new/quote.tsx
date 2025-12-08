@@ -15,7 +15,7 @@ import {
   GoMakeMenu,
 } from "@/components";
 import { HeaderTitle } from "@/widgets";
-import { ArrowDownNewIcon, BudgetIcon } from "@/icons";
+import { ArrowDownNewIcon, BudgetIcon, EditIcon } from "@/icons";
 import { useQuoteNew } from "./use-quote";
 import { quoteConfirmationState, quoteItemState } from "@/store";
 import { useStyle } from "./style";
@@ -102,7 +102,7 @@ const QuoteNewPageWidget = ({
     setQuoteItemValue({});
   }, []);
 
-  const {} = updateQuoteStatusSocketIo({
+  const { } = updateQuoteStatusSocketIo({
     setUserQuote: null,
     setQuoteId: null,
     setQuoteNumber: null,
@@ -409,10 +409,10 @@ const QuoteNewPageWidget = ({
   });
   const { getQuoteConfirmation } = useQuoteConfirmation();
   if (documentType == DOCUMENT_TYPE.quote) {
-    const {} = useQuotesSocketIo({ getQuote });
+    const { } = useQuotesSocketIo({ getQuote });
   }
   if (documentType == DOCUMENT_TYPE.order) {
-    const {} = useOrdersSocketIo({ getQuote });
+    const { } = useOrdersSocketIo({ getQuote });
   }
 
   const [purchaseStatusAnchorEl, setPurchaseStatusAnchorEl] =
@@ -544,8 +544,8 @@ const QuoteNewPageWidget = ({
                     title={
                       router?.query?.isNewCreation
                         ? `${t(
-                            "properties.create"
-                          )} ${documentTitle.toLowerCase()}`
+                          "properties.create"
+                        )} ${documentTitle.toLowerCase()}`
                         : documentTitle
                     }
                     marginBottom={1}
@@ -625,7 +625,7 @@ const QuoteNewPageWidget = ({
                     {isQuote && (
                       <>
                         {quoteItemValue?.signImageUrl &&
-                        quoteItemValue?.signerName ? (
+                          quoteItemValue?.signerName ? (
                           <div
                             style={classes.signatureApproval}
                             onClick={onClickOpenSignatureApprovalModal}
@@ -638,7 +638,7 @@ const QuoteNewPageWidget = ({
                               <div style={classes.quoteStatusContainer}>
                                 {_renderQuoteStatus(
                                   quoteState?.[
-                                    isReceipt ? "status" : "documentStatus"
+                                  isReceipt ? "status" : "documentStatus"
                                   ],
                                   quoteState,
                                   t
@@ -656,12 +656,15 @@ const QuoteNewPageWidget = ({
                             display: "flex",
                             alignItems: "center",
                             gap: 8,
-                            cursor: "pointer",
+                            cursor: quoteItemValue?.documentStatus === 8 ? "default" : "pointer",
                           }}
                           onClick={handleOpenPurchaseStatusMenu}
                         >
                           {currentPurchaseOrderStatusLabel ||
                             t("sales.quote.status")}
+                          {quoteItemValue?.documentStatus !== 8 && (
+                            <EditIcon width={14} height={14} stroke="#2E3092" />
+                          )}
                           {isUpdatingPurchaseStatus && (
                             <CircularProgress size={16} />
                           )}
@@ -743,11 +746,11 @@ const QuoteNewPageWidget = ({
                   />
                   {documentType !== DOCUMENT_TYPE.purchaseOrder &&
                     (isQuote &&
-                    !selectDate &&
-                    (!CheckPreferenceValue(
-                      EPreferences.DELIVERY_DATE_REQUIRED_IN_QUOTE
-                    ) ||
-                      quoteItemValue?.dueDateUpdatedByUser) ? (
+                      !selectDate &&
+                      (!CheckPreferenceValue(
+                        EPreferences.DELIVERY_DATE_REQUIRED_IN_QUOTE
+                      ) ||
+                        quoteItemValue?.dueDateUpdatedByUser) ? (
                       <Skeleton variant="text" width={200} height={40} />
                     ) : (
                       <DateField
@@ -785,7 +788,7 @@ const QuoteNewPageWidget = ({
                       }}
                       isEditable={quoteItemValue?.isEditable}
                       inputRef={taxDateRef}
-                      // preventOpenCondition={!quoteState.client}
+                    // preventOpenCondition={!quoteState.client}
                     />
                   )}
                   {(documentType === DOCUMENT_TYPE.order ||
@@ -1242,16 +1245,16 @@ const QuoteNewPageWidget = ({
           isSelectedCLoseAsDeliveryNote
             ? "customers.modal.closeOrderAsDeliveryNote"
             : isSelectedCLoseAsProformaInvoice
-            ? "customers.modal.closeOrderAsProformaInvoice"
-            : "customers.modal.closeOrderAsInvoice"
+              ? "customers.modal.closeOrderAsProformaInvoice"
+              : "customers.modal.closeOrderAsInvoice"
         }
         subTitle={"customers.modal.thisOrderIsAlreadyInProcess"}
         yesBtn={
           isSelectedCLoseAsDeliveryNote
             ? t("customers.modal.closeAsDeliveryNote")
             : isSelectedCLoseAsProformaInvoice
-            ? t("customers.modal.closeAsProformaInvoice")
-            : t("customers.modal.closeAsInvoice")
+              ? t("customers.modal.closeAsProformaInvoice")
+              : t("customers.modal.closeAsInvoice")
         }
         openModal={openChangeProductionStatusModal}
         onClose={onClickCloseChangeProductionStatusModal}
@@ -1259,24 +1262,24 @@ const QuoteNewPageWidget = ({
           isMoveToReady
             ? () => moveOrderToReady(moveToReadyOption === "withMessage")
             : () => {
-                if (isSelectedCLoseAsDeliveryNote) {
-                  navigate(
-                    `/deliveryNote?isNewCreation=true&orderId=${selectedDocument?.id}`
-                  );
-                } else if (isSelectedCLoseAsProformaInvoice) {
-                  const path =
-                    documentType === DOCUMENT_TYPE.order
-                      ? `/proformaInvoice?isNewCreation=true&orderId=${selectedDocument?.id}`
-                      : `/proformaInvoice?isNewCreation=true&deliveryNoteId=${selectedDocument?.id}`;
-                  navigate(path);
-                } else {
-                  const path =
-                    documentType === DOCUMENT_TYPE.order
-                      ? `/invoice?isNewCreation=true&orderId=${selectedDocument?.id}`
-                      : `/invoice?isNewCreation=true&deliveryNoteId=${selectedDocument?.id}`;
-                  navigate(path);
-                }
+              if (isSelectedCLoseAsDeliveryNote) {
+                navigate(
+                  `/deliveryNote?isNewCreation=true&orderId=${selectedDocument?.id}`
+                );
+              } else if (isSelectedCLoseAsProformaInvoice) {
+                const path =
+                  documentType === DOCUMENT_TYPE.order
+                    ? `/proformaInvoice?isNewCreation=true&orderId=${selectedDocument?.id}`
+                    : `/proformaInvoice?isNewCreation=true&deliveryNoteId=${selectedDocument?.id}`;
+                navigate(path);
+              } else {
+                const path =
+                  documentType === DOCUMENT_TYPE.order
+                    ? `/invoice?isNewCreation=true&orderId=${selectedDocument?.id}`
+                    : `/invoice?isNewCreation=true&deliveryNoteId=${selectedDocument?.id}`;
+                navigate(path);
               }
+            }
         }
       >
         <Stack alignItems={"center"}>
@@ -1415,7 +1418,7 @@ const QuoteNewPageWidget = ({
         openModal={openAddAttachmentsModal}
         onClose={onCloseAddAttachmentsModal}
         documentType={documentType}
-        getQuote={isQuoteConfirmation ? () => {} : getQuote}
+        getQuote={isQuoteConfirmation ? () => { } : getQuote}
         isQuoteConfirmation={isQuoteConfirmation}
         quoteConfirm={quoteState}
         onFileUploadStart={onFileUploadStart}
