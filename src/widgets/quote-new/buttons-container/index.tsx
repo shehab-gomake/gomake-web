@@ -387,7 +387,7 @@ const ButtonsContainer = ({
               : t("sales.quote.addAttachments")}
           </GomakePrimaryButton>
         )}
-        {isPurchaseOrder && isCanIntake && quoteItemValue?.documentStatus !== 0 && (
+        {isPurchaseOrder && isCanIntake && (
           <GomakePrimaryButton
             leftIcon={<PlusIcon stroke={"#344054"} />}
             style={classes.btnContainer}

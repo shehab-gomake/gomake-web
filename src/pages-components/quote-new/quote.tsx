@@ -1046,6 +1046,7 @@ const QuoteNewPageWidget = ({
         inventoryData={inventoryData}
         loading={inventoryLoading}
         purchaseOrderId={router.query?.Id as string}
+        status={quoteItemValue?.documentStatus}
       />
       <PurchaseOrderTypeModal
         open={openPurchaseOrderTypeModal}
