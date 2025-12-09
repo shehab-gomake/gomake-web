@@ -2892,6 +2892,13 @@
         "resolved": "Resolved"
       }
     },
+    "myInbox": {
+      "myTickets": "My Tickets",
+      "loadingConversations": "Loading your conversations...",
+      "allCaughtUp": "You're all caught up! No open conversations assigned to you.",
+      "showingConversations": "Showing {{count}} open conversation assigned to you",
+      "showingConversations_plural": "Showing {{count}} open conversations assigned to you"
+    },
     "emptyStates": {
       "noConversationSelected": "No conversation selected",
       "chooseConversationToPreview": "Choose a conversation from the list to preview",

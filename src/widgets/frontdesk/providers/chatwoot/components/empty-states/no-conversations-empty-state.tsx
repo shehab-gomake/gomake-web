@@ -45,12 +45,9 @@ interface NoConversationsEmptyStateProps {
  * )}
  * ```
  */
-export const NoConversationsEmptyState: React.FC<NoConversationsEmptyStateProps> = ({
-  filterContext,
-  onRefresh,
-  onClearFilters,
-  hasFilters = false,
-}) => {
+export const NoConversationsEmptyState: React.FC<
+  NoConversationsEmptyStateProps
+> = ({ filterContext, onRefresh, onClearFilters, hasFilters = false }) => {
   const { t } = useTranslation();
 
   // Context-aware messaging
@@ -87,7 +84,9 @@ export const NoConversationsEmptyState: React.FC<NoConversationsEmptyStateProps>
       case "unassigned":
         return {
           title: t("frontdesk.emptyStates.noUnassignedTickets"),
-          description: t("frontdesk.emptyStates.noUnassignedTicketsDescription"),
+          description: t(
+            "frontdesk.emptyStates.noUnassignedTicketsDescription"
+          ),
         };
       case "mentions":
         return {
@@ -138,7 +137,13 @@ export const NoConversationsEmptyState: React.FC<NoConversationsEmptyStateProps>
       </Box>
 
       {/* Text Content */}
-      <Stack spacing={1} sx={{ mb: 3, maxWidth: 400 }}>
+      <Stack
+        sx={{
+          gap: 1,
+          mb: 3,
+          maxWidth: 400,
+        }}
+      >
         <Typography
           variant="h6"
           sx={{
@@ -160,7 +165,12 @@ export const NoConversationsEmptyState: React.FC<NoConversationsEmptyStateProps>
       </Stack>
 
       {/* Actions */}
-      <Stack direction="row" spacing={2}>
+      <Stack
+        direction="row"
+        sx={{
+          gap: 2,
+        }}
+      >
         {onRefresh && (
           <Button
             variant="outlined"
