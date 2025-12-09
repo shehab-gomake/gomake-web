@@ -8,6 +8,7 @@ import Timeline, {
 } from "react-calendar-timeline";
 import { useGantt } from "@/widgets/production-floor/views/gantt-view/use-gantt";
 import { useRescheduling } from "./hooks";
+import { IGanttGroup } from "./interfaces";
 import { restoreOldBoardApi } from "@/services/api-service/jobs-time-line/jobs-time-line-endpoints";
 import { useGomakeAxios } from "@/hooks/use-gomake-axios";
 import { useSnackBar } from "@/hooks/use-snack-bar";
@@ -190,6 +191,7 @@ const TimelineWidget = () => {
       if (item.group === stationId) return true;
 
       // Include items in child groups of this station
+      // Only count children that belong to this specific station (by parent)
       const childGroups = groups.filter((group) => group.parent === stationId);
       return childGroups.some((childGroup) => item.group === childGroup.id);
     });
@@ -198,26 +200,42 @@ const TimelineWidget = () => {
   };
 
   const filteredGroups = useMemo(() => {
-    return groups
+    // First, deduplicate groups by (id, parent) combination to prevent true duplicates
+    const uniqueGroupsMap = new Map<string, IGanttGroup>();
+    groups.forEach((group) => {
+      const uniqueKey = getGroupKey(group);
+      if (!uniqueGroupsMap.has(uniqueKey)) {
+        uniqueGroupsMap.set(uniqueKey, group);
+      }
+    });
+    const deduplicatedGroups = Array.from(uniqueGroupsMap.values());
+
+    return deduplicatedGroups
       .filter(
         (group) =>
           group.isRoot ||
-          openGroups[group.parent] ||
+          openGroups[group.parent] === true ||
           items.some(
             (item) =>
               item.group === group.id && item.isHasSelected && item.selected
           )
       )
       .map((group) => {
-        const stats = getGroupStats(group.id);
         const groupKey = getGroupKey(group);
+        // Use original ID for stats calculation (items use original IDs)
+        const originalId = group.id;
+        const stats = getGroupStats(originalId);
         return {
           ...group,
+          // Use unique key as ID for Timeline component to prevent duplicate key issues
+          // Store original ID for reference
+          originalId: originalId,
+          id: groupKey,
           height: 50,
           title: group.isRoot ? (
             <Stack
               bgcolor={openGroups[groupKey] ? "#F8F9FA" : "#FFF"}
-              onClick={() => toggleGroup(group.id, group)}
+              onClick={() => toggleGroup(originalId, group)}
               direction="row"
               alignItems="center"
               justifyContent="space-between"
@@ -272,7 +290,7 @@ const TimelineWidget = () => {
                   </Typography>
                 </Tooltip>
                 <Chip
-                  label={groups.filter((g) => g.parent === group.id).length}
+                  label={groups.filter((g) => g.parent === originalId).length}
                   size="small"
                   sx={{
                     backgroundColor: getGroupColor(group.title),
@@ -354,7 +372,7 @@ const TimelineWidget = () => {
                 </Typography>
               </Tooltip>
               <Chip
-                label={getStationStats(group.id)}
+                label={getStationStats(originalId)}
                 size="small"
                 sx={{
                   backgroundColor: "#E9ECEF",
@@ -598,17 +616,30 @@ const TimelineWidget = () => {
                     },
                   ]
             }
-            items={items.filter((item) => {
-              // Find the group for this item to get the correct key
-              const itemGroup = groups.find((g) => g.id === item.group);
-              if (itemGroup) {
-                const groupKey = getGroupKey(itemGroup);
-                const isGroupOpen = openGroups[groupKey];
-                return isGroupOpen ? item.isEditable : true;
-              }
-              // If group not found, show the item (fallback)
-              return true;
-            })}
+            items={items
+              .filter((item) => {
+                // Find the group for this item to get the correct key
+                const itemGroup = groups.find((g) => g.id === item.group);
+                if (itemGroup) {
+                  const groupKey = getGroupKey(itemGroup);
+                  const isGroupOpen = openGroups[groupKey];
+                  return isGroupOpen ? item.isEditable : true;
+                }
+                // If group not found, show the item (fallback)
+                return true;
+              })
+              .map((item) => {
+                // Map item.group to use composite key for Timeline matching
+                const itemGroup = groups.find((g) => g.id === item.group);
+                if (itemGroup) {
+                  const groupKey = getGroupKey(itemGroup);
+                  return {
+                    ...item,
+                    group: groupKey, // Use composite key for Timeline matching
+                  };
+                }
+                return item;
+              })}
             defaultTimeStart={timeRange.defaultTimeStart}
             defaultTimeEnd={timeRange.defaultTimeEnd}
             sidebarWidth={240}
