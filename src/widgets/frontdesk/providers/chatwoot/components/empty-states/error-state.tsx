@@ -1,6 +1,19 @@
 import React from "react";
-import { Box, Typography, Button, Stack, Alert, useTheme, alpha } from "@mui/material";
-import { colorTokens, radiusTokens, shadowTokens } from "@/widgets/frontdesk/design-system";
+import {
+  Box,
+  Typography,
+  Button,
+  Stack,
+  Alert,
+  useTheme,
+  alpha,
+} from "@mui/material";
+import { useTranslation } from "react-i18next";
+import {
+  colorTokens,
+  radiusTokens,
+  shadowTokens,
+} from "@/widgets/frontdesk/design-system";
 import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import HomeIcon from "@mui/icons-material/Home";
@@ -63,16 +76,24 @@ interface ErrorStateProps {
  * ```
  */
 export const ErrorState: React.FC<ErrorStateProps> = ({
-  title = "Something went wrong",
-  message = "An unexpected error occurred. Please try again or contact support if the problem persists.",
+  title,
+  message,
   error,
   onRetry,
   onGoHome,
   showDetails = process.env.NODE_ENV === "development",
   icon,
 }) => {
+  const { t } = useTranslation();
   const theme = useTheme();
-  const errorMessage = error instanceof Error ? error.message : typeof error === "string" ? error : "";
+  const defaultTitle = title || t("frontdesk.errors.somethingWentWrong");
+  const defaultMessage = message || t("frontdesk.errors.unexpectedError");
+  const errorMessage =
+    error instanceof Error
+      ? error.message
+      : typeof error === "string"
+      ? error
+      : "";
 
   return (
     <Box
@@ -118,7 +139,7 @@ export const ErrorState: React.FC<ErrorStateProps> = ({
             color: colorTokens.neutral[900],
           }}
         >
-          {title}
+          {defaultTitle}
         </Typography>
         <Typography
           variant="body2"
@@ -127,7 +148,7 @@ export const ErrorState: React.FC<ErrorStateProps> = ({
             lineHeight: 1.6,
           }}
         >
-          {message}
+          {defaultMessage}
         </Typography>
       </Stack>
 
@@ -141,8 +162,12 @@ export const ErrorState: React.FC<ErrorStateProps> = ({
             textAlign: "left",
           }}
         >
-          <Typography variant="caption" component="div" sx={{ fontFamily: "monospace" }}>
-            <strong>Error Details:</strong>
+          <Typography
+            variant="caption"
+            component="div"
+            sx={{ fontFamily: "monospace" }}
+          >
+            <strong>{t("frontdesk.errors.errorDetails")}:</strong>
             <br />
             {errorMessage}
           </Typography>
@@ -179,7 +204,7 @@ export const ErrorState: React.FC<ErrorStateProps> = ({
               },
             }}
           >
-            Try Again
+            {t("frontdesk.tryAgain")}
           </Button>
         )}
 
@@ -197,7 +222,7 @@ export const ErrorState: React.FC<ErrorStateProps> = ({
               },
             }}
           >
-            Go Home
+            {t("frontdesk.errors.goHome")}
           </Button>
         )}
       </Stack>
@@ -210,7 +235,7 @@ export const ErrorState: React.FC<ErrorStateProps> = ({
           color: colorTokens.neutral[500],
         }}
       >
-        If this problem continues, please contact support
+        {t("frontdesk.errors.contactSupport")}
       </Typography>
     </Box>
   );
@@ -219,14 +244,14 @@ export const ErrorState: React.FC<ErrorStateProps> = ({
 /**
  * Network error state variant
  */
-export const NetworkErrorState: React.FC<Pick<ErrorStateProps, "onRetry" | "onGoHome">> = ({
-  onRetry,
-  onGoHome,
-}) => {
+export const NetworkErrorState: React.FC<
+  Pick<ErrorStateProps, "onRetry" | "onGoHome">
+> = ({ onRetry, onGoHome }) => {
+  const { t } = useTranslation();
   return (
     <ErrorState
-      title="Connection Error"
-      message="We couldn't connect to the server. Please check your internet connection and try again."
+      title={t("frontdesk.errors.connectionError")}
+      message={t("frontdesk.errors.connectionErrorDescription")}
       onRetry={onRetry}
       onGoHome={onGoHome}
     />
@@ -236,11 +261,14 @@ export const NetworkErrorState: React.FC<Pick<ErrorStateProps, "onRetry" | "onGo
 /**
  * Permission error state variant
  */
-export const PermissionErrorState: React.FC<Pick<ErrorStateProps, "onGoHome">> = ({ onGoHome }) => {
+export const PermissionErrorState: React.FC<
+  Pick<ErrorStateProps, "onGoHome">
+> = ({ onGoHome }) => {
+  const { t } = useTranslation();
   return (
     <ErrorState
-      title="Access Denied"
-      message="You don't have permission to view this content. Please contact your administrator."
+      title={t("frontdesk.errors.accessDenied")}
+      message={t("frontdesk.errors.accessDeniedDescription")}
       onGoHome={onGoHome}
     />
   );
@@ -249,11 +277,14 @@ export const PermissionErrorState: React.FC<Pick<ErrorStateProps, "onGoHome">> =
 /**
  * Not found error state variant
  */
-export const NotFoundErrorState: React.FC<Pick<ErrorStateProps, "onGoHome">> = ({ onGoHome }) => {
+export const NotFoundErrorState: React.FC<
+  Pick<ErrorStateProps, "onGoHome">
+> = ({ onGoHome }) => {
+  const { t } = useTranslation();
   return (
     <ErrorState
-      title="Not Found"
-      message="The content you're looking for doesn't exist or has been removed."
+      title={t("frontdesk.errors.notFound")}
+      message={t("frontdesk.errors.notFoundDescription")}
       onGoHome={onGoHome}
     />
   );

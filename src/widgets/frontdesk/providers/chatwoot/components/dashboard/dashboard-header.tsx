@@ -7,6 +7,7 @@
 
 import React from "react";
 import { Box, Typography, Stack, Chip } from "@mui/material";
+import { useTranslation } from "react-i18next";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 
 // Modern typography tokens
@@ -43,14 +44,15 @@ interface DashboardHeaderProps {
 }
 
 export const DashboardHeader: React.FC<DashboardHeaderProps> = ({ type }) => {
+  const { t } = useTranslation();
   const descriptions = {
-    admin: "Team performance and operational overview",
-    agent: "Your personal performance and tasks",
+    admin: t("frontdesk.dashboard.adminDescription"),
+    agent: t("frontdesk.dashboard.agentDescription"),
   };
 
   const badges = {
-    admin: "Admin View",
-    agent: "My Dashboard",
+    admin: t("frontdesk.dashboard.adminView"),
+    agent: t("frontdesk.dashboard.myDashboard"),
   };
 
   return (
@@ -91,7 +93,7 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({ type }) => {
               margin: 0,
             }}
           >
-            FrontDesk
+            {t("frontdesk.title")}
           </Typography>
           <Chip
             label={badges[type]}

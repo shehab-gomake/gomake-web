@@ -1,16 +1,17 @@
 /**
  * Kanban Card Component for Chatwoot Conversations
- * 
+ *
  * Draggable conversation card for the Kanban board.
  * Uses unified design system components and tokens for consistency.
  */
 
-import React, { memo, useCallback, useState } from 'react';
-import { Draggable } from 'react-beautiful-dnd';
-import { 
-  Box, 
-  Tooltip, 
-  Stack, 
+import React, { memo, useCallback, useState } from "react";
+import { Draggable } from "react-beautiful-dnd";
+import { useTranslation } from "react-i18next";
+import {
+  Box,
+  Tooltip,
+  Stack,
   Chip,
   IconButton,
   Menu,
@@ -18,8 +19,8 @@ import {
   ListItemIcon,
   ListItemText,
   Divider,
-} from '@mui/material';
-import { 
+} from "@mui/material";
+import {
   AccessTime as AccessTimeIcon,
   Person as PersonIcon,
   Email as EmailIcon,
@@ -34,24 +35,24 @@ import {
   ArrowUpward as HighIcon,
   Remove as MediumIcon,
   ArrowDownward as LowIcon,
-} from '@mui/icons-material';
+} from "@mui/icons-material";
 
 // Design system - unified components and tokens
-import { 
-  colorTokens, 
-  shadowTokens, 
-  radiusTokens, 
+import {
+  colorTokens,
+  shadowTokens,
+  radiusTokens,
   semanticTypography,
   priorityColors,
   Avatar,
-} from '@/widgets/frontdesk/design-system';
+} from "@/widgets/frontdesk/design-system";
 
 // Types
-import { 
-  ChatwootConversation, 
+import {
+  ChatwootConversation,
   ConversationPriority,
-} from '@/services/frontdesk/api/chatwoot/types/conversations.types';
-import type { Agent } from '@/services/frontdesk/api/chatwoot/types/agents.types';
+} from "@/services/frontdesk/api/chatwoot/types/conversations.types";
+import type { Agent } from "@/services/frontdesk/api/chatwoot/types/agents.types";
 
 // ============================================
 // Types
@@ -63,8 +64,14 @@ export interface KanbanConversationCardProps {
   agents?: Agent[];
   onClick?: (conversation: ChatwootConversation) => void;
   onResolve?: (conversation: ChatwootConversation) => void;
-  onAssign?: (conversation: ChatwootConversation, agentId: number | null) => void;
-  onPriorityChange?: (conversation: ChatwootConversation, priority: ConversationPriority) => void;
+  onAssign?: (
+    conversation: ChatwootConversation,
+    agentId: number | null
+  ) => void;
+  onPriorityChange?: (
+    conversation: ChatwootConversation,
+    priority: ConversationPriority
+  ) => void;
 }
 
 // ============================================
@@ -72,8 +79,8 @@ export interface KanbanConversationCardProps {
 // ============================================
 
 const formatRelativeTime = (timestamp?: number): string => {
-  if (!timestamp) return '';
-  
+  if (!timestamp) return "";
+
   const date = new Date(timestamp * 1000);
   const now = new Date();
   const diffMs = now.getTime() - date.getTime();
@@ -81,23 +88,23 @@ const formatRelativeTime = (timestamp?: number): string => {
   const diffHours = Math.floor(diffMins / 60);
   const diffDays = Math.floor(diffHours / 24);
 
-  if (diffMins < 1) return 'Just now';
+  if (diffMins < 1) return "Just now";
   if (diffMins < 60) return `${diffMins}m`;
   if (diffHours < 24) return `${diffHours}h`;
   if (diffDays < 7) return `${diffDays}d`;
-  
-  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+
+  return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
 };
 
 const getPriorityColorTokens = (priority?: string) => {
   switch (priority?.toLowerCase()) {
-    case 'urgent':
+    case "urgent":
       return priorityColors.urgent;
-    case 'high':
+    case "high":
       return priorityColors.high;
-    case 'medium':
+    case "medium":
       return priorityColors.medium;
-    case 'low':
+    case "low":
       return priorityColors.low;
     default:
       return priorityColors.none;
@@ -105,14 +112,14 @@ const getPriorityColorTokens = (priority?: string) => {
 };
 
 const getPriorityLabel = (priority?: string): string | null => {
-  if (!priority || priority === 'none') return null;
+  if (!priority || priority === "none") return null;
   return priority.charAt(0).toUpperCase() + priority.slice(1);
 };
 
 const getChannelIcon = (channel?: string): React.ReactNode => {
   switch (channel?.toLowerCase()) {
-    case 'channel::email':
-    case 'email':
+    case "channel::email":
+    case "email":
       return <EmailIcon sx={{ fontSize: 12 }} />;
     default:
       return <ChatIcon sx={{ fontSize: 12 }} />;
@@ -120,24 +127,51 @@ const getChannelIcon = (channel?: string): React.ReactNode => {
 };
 
 const truncateText = (text: string | undefined, maxLength: number): string => {
-  if (!text) return '';
+  if (!text) return "";
   if (text.length <= maxLength) return text;
-  return text.slice(0, maxLength) + '...';
+  return text.slice(0, maxLength) + "...";
 };
 
 const PRIORITY_OPTIONS = [
-  { value: ConversationPriority.URGENT, label: 'Urgent', icon: <UrgentIcon />, color: colorTokens.error[500] },
-  { value: ConversationPriority.HIGH, label: 'High', icon: <HighIcon />, color: colorTokens.warning[600] },
-  { value: ConversationPriority.MEDIUM, label: 'Medium', icon: <MediumIcon />, color: colorTokens.info[500] },
-  { value: ConversationPriority.LOW, label: 'Low', icon: <LowIcon />, color: colorTokens.success[500] },
-  { value: ConversationPriority.NONE, label: 'None', icon: <FlagIcon />, color: colorTokens.neutral[400] },
+  {
+    value: ConversationPriority.URGENT,
+    label: "Urgent",
+    icon: <UrgentIcon />,
+    color: colorTokens.error[500],
+  },
+  {
+    value: ConversationPriority.HIGH,
+    label: "High",
+    icon: <HighIcon />,
+    color: colorTokens.warning[600],
+  },
+  {
+    value: ConversationPriority.MEDIUM,
+    label: "Medium",
+    icon: <MediumIcon />,
+    color: colorTokens.info[500],
+  },
+  {
+    value: ConversationPriority.LOW,
+    label: "Low",
+    icon: <LowIcon />,
+    color: colorTokens.success[500],
+  },
+  {
+    value: ConversationPriority.NONE,
+    label: "None",
+    icon: <FlagIcon />,
+    color: colorTokens.neutral[400],
+  },
 ];
 
 // ============================================
 // Component
 // ============================================
 
-const KanbanConversationCardComponent: React.FC<KanbanConversationCardProps> = ({
+const KanbanConversationCardComponent: React.FC<
+  KanbanConversationCardProps
+> = ({
   conversation,
   index,
   agents = [],
@@ -146,15 +180,22 @@ const KanbanConversationCardComponent: React.FC<KanbanConversationCardProps> = (
   onAssign,
   onPriorityChange,
 }) => {
+  const { t } = useTranslation();
   const [isHovered, setIsHovered] = useState(false);
   const [menuAnchor, setMenuAnchor] = useState<null | HTMLElement>(null);
-  const [priorityMenuAnchor, setPriorityMenuAnchor] = useState<null | HTMLElement>(null);
-  const [assignMenuAnchor, setAssignMenuAnchor] = useState<null | HTMLElement>(null);
+  const [priorityMenuAnchor, setPriorityMenuAnchor] =
+    useState<null | HTMLElement>(null);
+  const [assignMenuAnchor, setAssignMenuAnchor] = useState<null | HTMLElement>(
+    null
+  );
 
-  const handleClick = useCallback((e: React.MouseEvent) => {
-    if ((e.target as HTMLElement).closest('.card-menu')) return;
-    onClick?.(conversation);
-  }, [onClick, conversation]);
+  const handleClick = useCallback(
+    (e: React.MouseEvent) => {
+      if ((e.target as HTMLElement).closest(".card-menu")) return;
+      onClick?.(conversation);
+    },
+    [onClick, conversation]
+  );
 
   const handleMenuOpen = useCallback((e: React.MouseEvent<HTMLElement>) => {
     e.stopPropagation();
@@ -165,41 +206,56 @@ const KanbanConversationCardComponent: React.FC<KanbanConversationCardProps> = (
     setMenuAnchor(null);
   }, []);
 
-  const handleResolve = useCallback((e: React.MouseEvent) => {
-    e.stopPropagation();
-    handleMenuClose();
-    onResolve?.(conversation);
-  }, [conversation, onResolve, handleMenuClose]);
+  const handleResolve = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation();
+      handleMenuClose();
+      onResolve?.(conversation);
+    },
+    [conversation, onResolve, handleMenuClose]
+  );
 
-  const handlePriorityMenuOpen = useCallback((e: React.MouseEvent<HTMLElement>) => {
-    e.stopPropagation();
-    handleMenuClose();
-    setPriorityMenuAnchor(e.currentTarget);
-  }, [handleMenuClose]);
+  const handlePriorityMenuOpen = useCallback(
+    (e: React.MouseEvent<HTMLElement>) => {
+      e.stopPropagation();
+      handleMenuClose();
+      setPriorityMenuAnchor(e.currentTarget);
+    },
+    [handleMenuClose]
+  );
 
   const handlePriorityMenuClose = useCallback(() => {
     setPriorityMenuAnchor(null);
   }, []);
 
-  const handlePrioritySelect = useCallback((priority: ConversationPriority) => {
-    handlePriorityMenuClose();
-    onPriorityChange?.(conversation, priority);
-  }, [conversation, onPriorityChange, handlePriorityMenuClose]);
+  const handlePrioritySelect = useCallback(
+    (priority: ConversationPriority) => {
+      handlePriorityMenuClose();
+      onPriorityChange?.(conversation, priority);
+    },
+    [conversation, onPriorityChange, handlePriorityMenuClose]
+  );
 
-  const handleAssignMenuOpen = useCallback((e: React.MouseEvent<HTMLElement>) => {
-    e.stopPropagation();
-    handleMenuClose();
-    setAssignMenuAnchor(e.currentTarget);
-  }, [handleMenuClose]);
+  const handleAssignMenuOpen = useCallback(
+    (e: React.MouseEvent<HTMLElement>) => {
+      e.stopPropagation();
+      handleMenuClose();
+      setAssignMenuAnchor(e.currentTarget);
+    },
+    [handleMenuClose]
+  );
 
   const handleAssignMenuClose = useCallback(() => {
     setAssignMenuAnchor(null);
   }, []);
 
-  const handleAssignSelect = useCallback((agentId: number | null) => {
-    handleAssignMenuClose();
-    onAssign?.(conversation, agentId);
-  }, [conversation, onAssign, handleAssignMenuClose]);
+  const handleAssignSelect = useCallback(
+    (agentId: number | null) => {
+      handleAssignMenuClose();
+      onAssign?.(conversation, agentId);
+    },
+    [conversation, onAssign, handleAssignMenuClose]
+  );
 
   const contact = conversation.meta?.sender;
   const assignee = conversation.meta?.assignee;
@@ -209,9 +265,9 @@ const KanbanConversationCardComponent: React.FC<KanbanConversationCardProps> = (
   const priorityTokens = getPriorityColorTokens(priority);
   const priorityLabel = getPriorityLabel(priority);
   const hasUnread = (conversation.unread_count || 0) > 0;
-  const isResolved = conversation.status === 'resolved';
-  
-  const contactName = contact?.name || contact?.email || 'Unknown Contact';
+  const isResolved = conversation.status === "resolved";
+
+  const contactName = contact?.name || contact?.email || "Unknown Contact";
   const messagePreview = truncateText(lastMessage?.content, 60);
 
   // Menu styling using design tokens
@@ -219,15 +275,15 @@ const KanbanConversationCardComponent: React.FC<KanbanConversationCardProps> = (
     borderRadius: `${radiusTokens.lg}px`,
     boxShadow: shadowTokens.lg,
     border: `1px solid ${colorTokens.semantic.border.default}`,
-    marginTop: '4px',
-    '& .MuiMenuItem-root': {
+    marginTop: "4px",
+    "& .MuiMenuItem-root": {
       ...semanticTypography.body.small,
-      padding: '8px 14px',
+      padding: "8px 14px",
     },
   };
 
   return (
-    <Draggable draggableId={conversation.id?.toString() || ''} index={index}>
+    <Draggable draggableId={conversation.id?.toString() || ""} index={index}>
       {(provided, snapshot) => (
         <Box
           ref={provided.innerRef}
@@ -239,19 +295,25 @@ const KanbanConversationCardComponent: React.FC<KanbanConversationCardProps> = (
           sx={{
             backgroundColor: colorTokens.semantic.background.primary,
             borderRadius: `${radiusTokens.xl}px`,
-            padding: '16px',
-            marginBottom: '10px',
-            boxShadow: snapshot.isDragging ? shadowTokens.lg : shadowTokens.card,
-            border: `1px solid ${snapshot.isDragging ? colorTokens.primary[300] : colorTokens.semantic.border.default}`,
-            borderLeft: priorityLabel 
-              ? `3px solid ${priorityTokens.main}` 
+            padding: "16px",
+            marginBottom: "10px",
+            boxShadow: snapshot.isDragging
+              ? shadowTokens.lg
+              : shadowTokens.card,
+            border: `1px solid ${
+              snapshot.isDragging
+                ? colorTokens.primary[300]
+                : colorTokens.semantic.border.default
+            }`,
+            borderLeft: priorityLabel
+              ? `3px solid ${priorityTokens.main}`
               : `1px solid ${colorTokens.semantic.border.default}`,
-            cursor: 'pointer',
-            transition: 'all 0.15s ease',
-            transform: snapshot.isDragging ? 'rotate(2deg)' : 'none',
-            position: 'relative',
+            cursor: "pointer",
+            transition: "all 0.15s ease",
+            transform: snapshot.isDragging ? "rotate(2deg)" : "none",
+            position: "relative",
             opacity: isResolved ? 0.65 : 1,
-            '&:hover': {
+            "&:hover": {
               boxShadow: shadowTokens.cardHover,
               borderColor: colorTokens.primary[200],
             },
@@ -261,7 +323,7 @@ const KanbanConversationCardComponent: React.FC<KanbanConversationCardProps> = (
           {hasUnread && (
             <Box
               sx={{
-                position: 'absolute',
+                position: "absolute",
                 top: 10,
                 right: 10,
                 width: 7,
@@ -278,20 +340,20 @@ const KanbanConversationCardComponent: React.FC<KanbanConversationCardProps> = (
             <Box
               className="card-menu"
               sx={{
-                position: 'absolute',
+                position: "absolute",
                 top: 6,
                 right: 6,
-                display: 'flex',
-                gap: '2px',
+                display: "flex",
+                gap: "2px",
                 backgroundColor: colorTokens.semantic.background.primary,
                 borderRadius: `${radiusTokens.md}px`,
-                padding: '3px',
+                padding: "3px",
                 boxShadow: shadowTokens.md,
                 border: `1px solid ${colorTokens.semantic.border.default}`,
               }}
             >
               {!isResolved && (
-                <Tooltip title="Mark Resolved">
+                <Tooltip title={t("frontdesk.workboard.markResolved")}>
                   <IconButton
                     size="small"
                     onClick={handleResolve}
@@ -300,7 +362,7 @@ const KanbanConversationCardComponent: React.FC<KanbanConversationCardProps> = (
                       height: 26,
                       borderRadius: `${radiusTokens.sm}px`,
                       color: colorTokens.success[600],
-                      '&:hover': {
+                      "&:hover": {
                         backgroundColor: colorTokens.success[50],
                       },
                     }}
@@ -318,7 +380,7 @@ const KanbanConversationCardComponent: React.FC<KanbanConversationCardProps> = (
                     height: 26,
                     borderRadius: `${radiusTokens.sm}px`,
                     color: colorTokens.semantic.text.secondary,
-                    '&:hover': {
+                    "&:hover": {
                       backgroundColor: colorTokens.semantic.interactive.hover,
                     },
                   }}
@@ -330,13 +392,14 @@ const KanbanConversationCardComponent: React.FC<KanbanConversationCardProps> = (
           )}
 
           {/* Header: Contact Avatar + Name + Channel */}
-          <Stack direction="row" spacing={1.5} alignItems="center" marginBottom="10px">
+          <Stack
+            direction="row"
+            spacing={1.5}
+            alignItems="center"
+            marginBottom="10px"
+          >
             {/* Using Avatar primitive from design system */}
-            <Avatar
-              name={contactName}
-              src={contact?.avatar_url}
-              size="sm"
-            />
+            <Avatar name={contactName} src={contact?.avatar_url} size="sm" />
             <Box flex={1} minWidth={0}>
               <Stack direction="row" alignItems="center" spacing={0.75}>
                 {/* Name - Using semantic typography */}
@@ -346,18 +409,18 @@ const KanbanConversationCardComponent: React.FC<KanbanConversationCardProps> = (
                     ...semanticTypography.body.medium,
                     fontWeight: semanticTypography.heading.h5.fontWeight,
                     color: colorTokens.semantic.text.primary,
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap',
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
                   }}
                 >
                   {contactName}
                 </Box>
-                <Tooltip title={channel || 'Chat'}>
+                <Tooltip title={channel || t("frontdesk.workboard.chat")}>
                   <Box
                     sx={{
-                      display: 'flex',
-                      alignItems: 'center',
+                      display: "flex",
+                      alignItems: "center",
                       color: colorTokens.semantic.text.tertiary,
                     }}
                   >
@@ -372,10 +435,10 @@ const KanbanConversationCardComponent: React.FC<KanbanConversationCardProps> = (
                   sx={{
                     ...semanticTypography.caption.medium,
                     color: colorTokens.semantic.text.tertiary,
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap',
-                    display: 'block',
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
+                    display: "block",
                   }}
                 >
                   {contact.email}
@@ -392,13 +455,13 @@ const KanbanConversationCardComponent: React.FC<KanbanConversationCardProps> = (
                 ...semanticTypography.body.small,
                 color: colorTokens.semantic.text.secondary,
                 lineHeight: 1.45,
-                marginBottom: '10px',
-                display: '-webkit-box',
+                marginBottom: "10px",
+                display: "-webkit-box",
                 WebkitLineClamp: 2,
-                WebkitBoxOrient: 'vertical',
-                overflow: 'hidden',
+                WebkitBoxOrient: "vertical",
+                overflow: "hidden",
                 margin: 0,
-                mb: '10px',
+                mb: "10px",
               }}
             >
               {messagePreview}
@@ -407,7 +470,13 @@ const KanbanConversationCardComponent: React.FC<KanbanConversationCardProps> = (
 
           {/* Labels */}
           {conversation.labels && conversation.labels.length > 0 && (
-            <Stack direction="row" spacing={0.75} marginBottom="10px" flexWrap="wrap" sx={{ gap: '6px' }}>
+            <Stack
+              direction="row"
+              spacing={0.75}
+              marginBottom="10px"
+              flexWrap="wrap"
+              sx={{ gap: "6px" }}
+            >
               {conversation.labels.slice(0, 2).map((label, idx) => (
                 <Chip
                   key={idx}
@@ -421,8 +490,8 @@ const KanbanConversationCardComponent: React.FC<KanbanConversationCardProps> = (
                     backgroundColor: colorTokens.semantic.background.secondary,
                     color: colorTokens.semantic.text.secondary,
                     border: `1px solid ${colorTokens.semantic.border.default}`,
-                    '& .MuiChip-label': {
-                      padding: '0 8px',
+                    "& .MuiChip-label": {
+                      padding: "0 8px",
                     },
                   }}
                 />
@@ -433,7 +502,7 @@ const KanbanConversationCardComponent: React.FC<KanbanConversationCardProps> = (
                   sx={{
                     ...semanticTypography.caption.small,
                     color: colorTokens.semantic.text.tertiary,
-                    alignSelf: 'center',
+                    alignSelf: "center",
                   }}
                 >
                   +{conversation.labels.length - 2}
@@ -443,14 +512,20 @@ const KanbanConversationCardComponent: React.FC<KanbanConversationCardProps> = (
           )}
 
           {/* Footer: Assignee + Priority + Time */}
-          <Stack direction="row" justifyContent="space-between" alignItems="center">
+          <Stack
+            direction="row"
+            justifyContent="space-between"
+            alignItems="center"
+          >
             {/* Assignee - Using Avatar primitive */}
             <Stack direction="row" alignItems="center" spacing={0.75}>
               {assignee ? (
-                <Tooltip title={assignee.name || 'Assigned'}>
+                <Tooltip
+                  title={assignee.name || t("frontdesk.workboard.assigned")}
+                >
                   <span>
                     <Avatar
-                      name={assignee.name || 'Agent'}
+                      name={assignee.name || "Agent"}
                       src={assignee.thumbnail}
                       size="xs"
                     />
@@ -463,14 +538,20 @@ const KanbanConversationCardComponent: React.FC<KanbanConversationCardProps> = (
                       width: 20,
                       height: 20,
                       borderRadius: radiusTokens.full,
-                      backgroundColor: colorTokens.semantic.background.secondary,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
+                      backgroundColor:
+                        colorTokens.semantic.background.secondary,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
                       border: `1px solid ${colorTokens.semantic.border.default}`,
                     }}
                   >
-                    <PersonIcon sx={{ fontSize: 12, color: colorTokens.semantic.text.tertiary }} />
+                    <PersonIcon
+                      sx={{
+                        fontSize: 12,
+                        color: colorTokens.semantic.text.tertiary,
+                      }}
+                    />
                   </Box>
                 </Tooltip>
               )}
@@ -489,14 +570,19 @@ const KanbanConversationCardComponent: React.FC<KanbanConversationCardProps> = (
                     borderRadius: `${radiusTokens.xs}px`,
                     backgroundColor: priorityTokens.bg,
                     color: priorityTokens.text,
-                    '& .MuiChip-label': {
-                      padding: '0 6px',
+                    "& .MuiChip-label": {
+                      padding: "0 6px",
                     },
                   }}
                 />
               )}
               <Stack direction="row" alignItems="center" spacing={0.5}>
-                <AccessTimeIcon sx={{ fontSize: 12, color: colorTokens.semantic.text.tertiary }} />
+                <AccessTimeIcon
+                  sx={{
+                    fontSize: 12,
+                    color: colorTokens.semantic.text.tertiary,
+                  }}
+                />
                 <Box
                   component="span"
                   sx={{
@@ -515,8 +601,8 @@ const KanbanConversationCardComponent: React.FC<KanbanConversationCardProps> = (
             anchorEl={menuAnchor}
             open={Boolean(menuAnchor)}
             onClose={handleMenuClose}
-            transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-            anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+            transformOrigin={{ horizontal: "right", vertical: "top" }}
+            anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
             PaperProps={{ sx: { ...menuPaperStyles, minWidth: 170 } }}
           >
             <MenuItem onClick={() => onClick?.(conversation)}>
@@ -525,25 +611,27 @@ const KanbanConversationCardComponent: React.FC<KanbanConversationCardProps> = (
               </ListItemIcon>
               <ListItemText>Open</ListItemText>
             </MenuItem>
-            
+
             {!isResolved && (
               <MenuItem onClick={handleResolve}>
                 <ListItemIcon sx={{ minWidth: 32 }}>
-                  <ResolveIcon sx={{ fontSize: 16, color: colorTokens.success[500] }} />
+                  <ResolveIcon
+                    sx={{ fontSize: 16, color: colorTokens.success[500] }}
+                  />
                 </ListItemIcon>
                 <ListItemText>Mark Resolved</ListItemText>
               </MenuItem>
             )}
-            
-            <Divider sx={{ my: '4px' }} />
-            
+
+            <Divider sx={{ my: "4px" }} />
+
             <MenuItem onClick={handleAssignMenuOpen}>
               <ListItemIcon sx={{ minWidth: 32 }}>
                 <AssignIcon sx={{ fontSize: 16 }} />
               </ListItemIcon>
               <ListItemText>Assign to...</ListItemText>
             </MenuItem>
-            
+
             <MenuItem onClick={handlePriorityMenuOpen}>
               <ListItemIcon sx={{ minWidth: 32 }}>
                 <PriorityIcon sx={{ fontSize: 16 }} />
@@ -557,13 +645,13 @@ const KanbanConversationCardComponent: React.FC<KanbanConversationCardProps> = (
             anchorEl={priorityMenuAnchor}
             open={Boolean(priorityMenuAnchor)}
             onClose={handlePriorityMenuClose}
-            transformOrigin={{ horizontal: 'left', vertical: 'top' }}
-            anchorOrigin={{ horizontal: 'right', vertical: 'top' }}
+            transformOrigin={{ horizontal: "left", vertical: "top" }}
+            anchorOrigin={{ horizontal: "right", vertical: "top" }}
             PaperProps={{ sx: { ...menuPaperStyles, minWidth: 140 } }}
           >
             {PRIORITY_OPTIONS.map((option) => (
-              <MenuItem 
-                key={option.value} 
+              <MenuItem
+                key={option.value}
                 onClick={() => handlePrioritySelect(option.value)}
                 selected={conversation.priority === option.value}
               >
@@ -580,27 +668,34 @@ const KanbanConversationCardComponent: React.FC<KanbanConversationCardProps> = (
             anchorEl={assignMenuAnchor}
             open={Boolean(assignMenuAnchor)}
             onClose={handleAssignMenuClose}
-            transformOrigin={{ horizontal: 'left', vertical: 'top' }}
-            anchorOrigin={{ horizontal: 'right', vertical: 'top' }}
-            PaperProps={{ sx: { ...menuPaperStyles, minWidth: 170, maxHeight: 280 } }}
+            transformOrigin={{ horizontal: "left", vertical: "top" }}
+            anchorOrigin={{ horizontal: "right", vertical: "top" }}
+            PaperProps={{
+              sx: { ...menuPaperStyles, minWidth: 170, maxHeight: 280 },
+            }}
           >
             <MenuItem onClick={() => handleAssignSelect(null)}>
               <ListItemIcon sx={{ minWidth: 32 }}>
-                <PersonIcon sx={{ fontSize: 16, color: colorTokens.semantic.text.tertiary }} />
+                <PersonIcon
+                  sx={{
+                    fontSize: 16,
+                    color: colorTokens.semantic.text.tertiary,
+                  }}
+                />
               </ListItemIcon>
               <ListItemText>Unassign</ListItemText>
             </MenuItem>
-            <Divider sx={{ my: '4px' }} />
+            <Divider sx={{ my: "4px" }} />
             {agents.map((agent) => (
-              <MenuItem 
-                key={agent.id} 
+              <MenuItem
+                key={agent.id}
                 onClick={() => handleAssignSelect(agent.id)}
                 selected={assignee?.id === agent.id}
               >
                 <ListItemIcon sx={{ minWidth: 32 }}>
-                  <Avatar 
-                    name={agent.name || 'Agent'}
-                    src={agent.thumbnail} 
+                  <Avatar
+                    name={agent.name || "Agent"}
+                    src={agent.thumbnail}
                     size="xs"
                   />
                 </ListItemIcon>

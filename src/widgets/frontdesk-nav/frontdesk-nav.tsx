@@ -3,6 +3,7 @@ import { Badge, IconButton, Stack, Box, Typography, CircularProgress, Button } f
 import HeadsetMicOutlinedIcon from "@mui/icons-material/HeadsetMicOutlined";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
+import { useTranslation } from "react-i18next";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { GoMakeMenu } from "@/components";
 import { CustomTooltip } from "@/widgets/header";
@@ -19,6 +20,7 @@ import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import { useTheme } from "@/contexts/theme/useTheme";
 
 const FrontDeskNav = () => {
+  const { t } = useTranslation();
   const { primaryColor, neutralColor } = useGomakeTheme();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [activeTab, setActiveTab] = useState(0);
@@ -73,7 +75,7 @@ const FrontDeskNav = () => {
   };
 
   const renderIconButton = () => (
-    <CustomTooltip title="FrontDesk" arrow>
+    <CustomTooltip title={t("frontdesk.title")} arrow>
       <IconButton style={{ backgroundColor: iconButtonBackground, padding: "8px" }} onClick={handleClick}>
         {FrontDeskIcon ? (
           <FrontDeskIcon width={20} height={20} />
@@ -96,7 +98,7 @@ const FrontDeskNav = () => {
       }}
     >
       <CircularProgress size={40} sx={{ color: primaryColor(500) }} />
-      <Typography sx={{ ...FONT_FAMILY.Lexend(400, 14), color: neutralColor(600) }}>Loading notifications...</Typography>
+      <Typography sx={{ ...FONT_FAMILY.Lexend(400, 14), color: neutralColor(600) }}>{t("frontdesk.notifications.loading")}</Typography>
     </Box>
   );
 
@@ -113,9 +115,9 @@ const FrontDeskNav = () => {
       }}
     >
       <ErrorOutlineIcon sx={{ fontSize: 48, color: "#EF4444" }} />
-      <Typography sx={{ ...FONT_FAMILY.Lexend(600, 16), color: neutralColor(900) }}>Failed to load notifications</Typography>
+      <Typography sx={{ ...FONT_FAMILY.Lexend(600, 16), color: neutralColor(900) }}>{t("frontdesk.notifications.failedToLoad")}</Typography>
       <Typography sx={{ ...FONT_FAMILY.Lexend(400, 13), color: neutralColor(600) }}>
-        {error || "An error occurred while fetching notifications"}
+        {error || t("frontdesk.notifications.errorOccurred")}
       </Typography>
       <Button
         onClick={handleRetry}
@@ -130,7 +132,7 @@ const FrontDeskNav = () => {
           },
         }}
       >
-        Retry
+        {t("frontdesk.retry")}
       </Button>
     </Box>
   );
@@ -144,7 +146,7 @@ const FrontDeskNav = () => {
       }}
     >
       <Typography sx={{ ...FONT_FAMILY.Lexend(400, 14) }}>
-        {type === "messages" ? "No new message notifications" : "No new ticket notifications"}
+        {type === "messages" ? t("frontdesk.notifications.noMessageNotifications") : t("frontdesk.notifications.noTicketNotifications")}
       </Typography>
     </Box>
   );
@@ -231,7 +233,7 @@ const FrontDeskNav = () => {
               color: primaryColor(900),
             }}
           >
-            FrontDesk Notifications
+            {t("frontdesk.notifications.title")}
           </Typography>
           <Typography
             sx={{
@@ -240,7 +242,7 @@ const FrontDeskNav = () => {
               marginTop: "4px",
             }}
           >
-            {counts.total} unread notification{counts.total !== 1 ? "s" : ""}
+            {t("frontdesk.notifications.unreadCount", { count: counts.total })}
           </Typography>
         </Box>
 
@@ -278,7 +280,7 @@ const FrontDeskNav = () => {
               borderRadius: "6px",
             }}
           >
-            Open FrontDesk
+            {t("frontdesk.openFrontDesk")}
           </PrimaryButton>
         </Box>
       </Stack>
