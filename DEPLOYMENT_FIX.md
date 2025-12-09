@@ -68,3 +68,4 @@ Deploy the new build to your production environment. The error should be resolve
 2. Monitor for `react-pdf@9.x` release which should support `pdfjs-dist@4.x`
 3. Consider alternative PDF libraries if security is critical
 
+
