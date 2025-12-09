@@ -10,6 +10,7 @@ interface UseInventoryIntakeModalProps {
   purchaseOrderId?: string;
   documentType?: number;
   onClose: () => void;
+  onIntakeSuccess?: () => void; // Callback to refresh document after successful intake
 }
 
 export const useInventoryIntakeModal = ({
@@ -18,6 +19,7 @@ export const useInventoryIntakeModal = ({
   purchaseOrderId,
   documentType = DOCUMENT_TYPE.purchaseOrder,
   onClose,
+  onIntakeSuccess,
 }: UseInventoryIntakeModalProps) => {
   const { callApi } = useGomakeAxios();
   const { alertSuccessUpdate, alertFaultUpdate, alertRequiredFields } = useSnackBar();
@@ -180,7 +182,10 @@ export const useInventoryIntakeModal = ({
       if (res?.success) {
         alertSuccessUpdate();
         onClose();
-        // Optionally refresh the data or close the modal
+        // Refresh document after successful intake
+        if (onIntakeSuccess) {
+          onIntakeSuccess();
+        }
       } else {
         alertFaultUpdate();
       }

@@ -38,6 +38,7 @@ interface InventoryIntakeModalProps {
   supplierId?: string;
   documentType?: number; // Document type (e.g., DOCUMENT_TYPE.purchaseOrder = 9)
   status?: number; // Document status (e.g., PurchaseOrderStatuses.UnderCreation = 0)
+  onIntakeSuccess?: () => void; // Callback to refresh document after successful intake
 }
 
 interface InventoryRowData {
@@ -191,6 +192,7 @@ const InventoryIntakeModal: React.FC<InventoryIntakeModalProps> = ({
   purchaseOrderId,
   documentType = DOCUMENT_TYPE.purchaseOrder, // Default to purchase order type
   status,
+  onIntakeSuccess,
 }) => {
   const { t } = useTranslation();
   const { classes } = useStyle();
@@ -213,6 +215,7 @@ const InventoryIntakeModal: React.FC<InventoryIntakeModalProps> = ({
     purchaseOrderId,
     documentType,
     onClose,
+    onIntakeSuccess,
   });
 
   // Intercept handleIntake to show confirmation modal if status is UnderCreation
