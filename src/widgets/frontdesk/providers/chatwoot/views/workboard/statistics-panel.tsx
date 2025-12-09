@@ -107,7 +107,13 @@ const StatisticsPanelComponent: React.FC<StatisticsPanelProps> = ({
           borderBottom: `1px solid ${colorTokens.semantic.border.default}`,
         }}
       >
-        <Stack direction="row" spacing={2.5} sx={{ overflowX: "auto" }}>
+        <Stack
+          direction="row"
+          sx={{
+            overflowX: "auto",
+            gap: 2.5,
+          }}
+        >
           {[1, 2, 3, 4, 5, 6].map((i) => (
             <StatsCardSkeleton key={i} sx={{ minWidth: 150 }} />
           ))}
@@ -127,10 +133,10 @@ const StatisticsPanelComponent: React.FC<StatisticsPanelProps> = ({
       {/* Cards container with unified spacing */}
       <Stack
         direction="row"
-        spacing={2.5}
         sx={{
           overflowX: "auto",
           paddingBottom: "4px",
+          gap: 2.5,
           "&::-webkit-scrollbar": {
             height: 4,
           },

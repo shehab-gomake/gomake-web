@@ -11,11 +11,12 @@
  * - Muted label below main value
  */
 
-import React from 'react';
-import { Box, Typography, Skeleton, alpha } from '@mui/material';
-import TrendingUpIcon from '@mui/icons-material/TrendingUp';
-import TrendingDownIcon from '@mui/icons-material/TrendingDown';
-import { colorTokens, radiusTokens, shadowTokens } from '../../tokens';
+import React from "react";
+import { Box, Typography, Skeleton, alpha } from "@mui/material";
+import { useTranslation } from "react-i18next";
+import TrendingUpIcon from "@mui/icons-material/TrendingUp";
+import TrendingDownIcon from "@mui/icons-material/TrendingDown";
+import { colorTokens, radiusTokens, shadowTokens } from "../../tokens";
 
 export interface StatCardProps {
   /**
@@ -50,7 +51,7 @@ export interface StatCardProps {
   /**
    * Color variant for the card accent
    */
-  variant?: 'primary' | 'success' | 'warning' | 'error' | 'neutral';
+  variant?: "primary" | "success" | "warning" | "error" | "neutral";
 
   /**
    * Loading state
@@ -70,20 +71,20 @@ export interface StatCardProps {
 
 // Modern card design tokens
 const STAT_CARD_TOKENS = {
-  borderRadius: radiusTokens['2xl'], // 16px
+  borderRadius: radiusTokens["2xl"], // 16px
   padding: 22, // 20-24px range
   minHeight: 148,
   iconSize: 44,
   iconBorderRadius: 12,
   shadow: {
-    default: '0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02)',
-    hover: '0 8px 25px rgba(0, 0, 0, 0.08), 0 3px 10px rgba(0, 0, 0, 0.04)',
+    default: "0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02)",
+    hover: "0 8px 25px rgba(0, 0, 0, 0.08), 0 3px 10px rgba(0, 0, 0, 0.04)",
   },
-  transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
+  transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)",
 } as const;
 
 // Variant color configurations with light backgrounds
-const getVariantColors = (variant: StatCardProps['variant']) => {
+const getVariantColors = (variant: StatCardProps["variant"]) => {
   const colorMap = {
     primary: {
       main: colorTokens.primary[600],
@@ -111,7 +112,7 @@ const getVariantColors = (variant: StatCardProps['variant']) => {
       hover: colorTokens.neutral[200],
     },
   };
-  return colorMap[variant || 'primary'];
+  return colorMap[variant || "primary"];
 };
 
 export const StatCard: React.FC<StatCardProps> = ({
@@ -120,66 +121,80 @@ export const StatCard: React.FC<StatCardProps> = ({
   icon,
   trend,
   description,
-  variant = 'primary',
+  variant = "primary",
   isLoading = false,
   onClick,
   backgroundColor,
 }) => {
+  const { t } = useTranslation();
+  const dir: "rtl" | "ltr" = t("direction");
+  const isRTL = dir === "rtl";
   const colors = getVariantColors(variant);
 
   // Trend color
-  const trendColor = trend && trend.value > 0
-    ? colorTokens.success[600]
-    : trend && trend.value < 0
-    ? colorTokens.error[600]
-    : colorTokens.neutral[500];
+  const trendColor =
+    trend && trend.value > 0
+      ? colorTokens.success[600]
+      : trend && trend.value < 0
+      ? colorTokens.error[600]
+      : colorTokens.neutral[500];
 
-  const TrendIcon = trend && trend.value > 0 ? TrendingUpIcon : TrendingDownIcon;
+  const TrendIcon =
+    trend && trend.value > 0 ? TrendingUpIcon : TrendingDownIcon;
 
   return (
     <Box
       onClick={onClick}
       sx={{
-        backgroundColor: backgroundColor || colorTokens.semantic.background.primary,
+        backgroundColor:
+          backgroundColor || colorTokens.semantic.background.primary,
         borderRadius: `${STAT_CARD_TOKENS.borderRadius}px`,
         border: `1px solid ${colorTokens.semantic.border.default}`,
         padding: `${STAT_CARD_TOKENS.padding}px`,
         minHeight: STAT_CARD_TOKENS.minHeight,
-        display: 'flex',
-        flexDirection: 'column',
+        display: "flex",
+        flexDirection: "column",
         gap: 1,
         transition: STAT_CARD_TOKENS.transition,
-        cursor: onClick ? 'pointer' : 'default',
+        cursor: onClick ? "pointer" : "default",
         boxShadow: STAT_CARD_TOKENS.shadow.default,
-        position: 'relative',
-        '&:hover': onClick ? {
-          boxShadow: STAT_CARD_TOKENS.shadow.hover,
-          transform: 'translateY(-2px)',
-          borderColor: alpha(colors.main, 0.3),
-          '& .stat-card-icon': {
-            backgroundColor: colors.hover,
-          },
-        } : {},
+        position: "relative",
+        "&:hover": onClick
+          ? {
+              boxShadow: STAT_CARD_TOKENS.shadow.hover,
+              transform: "translateY(-2px)",
+              borderColor: alpha(colors.main, 0.3),
+              "& .stat-card-icon": {
+                backgroundColor: colors.hover,
+              },
+            }
+          : {},
       }}
     >
       {/* Header Row - Label and Icon */}
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-        <Box sx={{ flex: 1, pr: 1 }}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "flex-start",
+        }}
+      >
+        <Box sx={{ flex: 1, [isRTL ? "paddingLeft" : "paddingRight"]: 1 }}>
           {isLoading ? (
-            <Skeleton 
-              variant="text" 
-              width="70%" 
-              height={18} 
-              sx={{ borderRadius: 1 }} 
+            <Skeleton
+              variant="text"
+              width="70%"
+              height={18}
+              sx={{ borderRadius: 1 }}
             />
           ) : (
             <Typography
               sx={{
                 color: colorTokens.semantic.text.secondary,
                 fontWeight: 500,
-                fontSize: '0.8125rem',
+                fontSize: "0.8125rem",
                 lineHeight: 1.4,
-                letterSpacing: '0.01em',
+                letterSpacing: "0.01em",
               }}
             >
               {label}
@@ -195,13 +210,13 @@ export const StatCard: React.FC<StatCardProps> = ({
               height: STAT_CARD_TOKENS.iconSize,
               borderRadius: `${STAT_CARD_TOKENS.iconBorderRadius}px`,
               backgroundColor: colors.light,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
               color: colors.main,
               flexShrink: 0,
               transition: STAT_CARD_TOKENS.transition,
-              '& > svg': {
+              "& > svg": {
                 fontSize: 22,
               },
             }}
@@ -216,23 +231,24 @@ export const StatCard: React.FC<StatCardProps> = ({
       </Box>
 
       {/* Value Display - Large prominent number */}
-      <Box sx={{ flex: 1, display: 'flex', alignItems: 'center' }}>
+      <Box sx={{ flex: 1, display: "flex", alignItems: "center" }}>
         {isLoading ? (
-          <Skeleton 
-            variant="text" 
-            width="45%" 
-            height={48} 
-            sx={{ borderRadius: 1 }} 
+          <Skeleton
+            variant="text"
+            width="45%"
+            height={48}
+            sx={{ borderRadius: 1 }}
           />
         ) : (
           <Typography
             sx={{
-              fontSize: '2.5rem',
+              fontSize: "2.5rem",
               fontWeight: 700,
               color: colorTokens.semantic.text.primary,
               lineHeight: 1,
-              letterSpacing: '-0.02em',
-              fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
+              letterSpacing: "-0.02em",
+              fontFamily:
+                "'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
             }}
           >
             {value}
@@ -241,21 +257,23 @@ export const StatCard: React.FC<StatCardProps> = ({
       </Box>
 
       {/* Footer Row - Trend or Description (muted label) */}
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, minHeight: 20 }}>
+      <Box
+        sx={{ display: "flex", alignItems: "center", gap: 1, minHeight: 20 }}
+      >
         {isLoading ? (
-          <Skeleton 
-            variant="text" 
-            width="55%" 
-            height={16} 
-            sx={{ borderRadius: 1 }} 
+          <Skeleton
+            variant="text"
+            width="55%"
+            height={16}
+            sx={{ borderRadius: 1 }}
           />
         ) : (
           <>
             {trend && (
               <Box
                 sx={{
-                  display: 'flex',
-                  alignItems: 'center',
+                  display: "flex",
+                  alignItems: "center",
                   gap: 0.5,
                   color: trendColor,
                 }}
@@ -263,7 +281,7 @@ export const StatCard: React.FC<StatCardProps> = ({
                 <TrendIcon sx={{ fontSize: 16 }} />
                 <Typography
                   sx={{
-                    fontSize: '0.8125rem',
+                    fontSize: "0.8125rem",
                     fontWeight: 600,
                   }}
                 >
@@ -272,9 +290,9 @@ export const StatCard: React.FC<StatCardProps> = ({
                 {trend.label && (
                   <Typography
                     sx={{
-                      fontSize: '0.8125rem',
+                      fontSize: "0.8125rem",
                       color: colorTokens.semantic.text.tertiary,
-                      ml: 0.5,
+                      [isRTL ? "marginRight" : "marginLeft"]: 0.5,
                     }}
                   >
                     {trend.label}
@@ -286,7 +304,7 @@ export const StatCard: React.FC<StatCardProps> = ({
             {description && !trend && (
               <Typography
                 sx={{
-                  fontSize: '0.8125rem',
+                  fontSize: "0.8125rem",
                   color: colorTokens.semantic.text.tertiary,
                   fontWeight: 400,
                 }}
