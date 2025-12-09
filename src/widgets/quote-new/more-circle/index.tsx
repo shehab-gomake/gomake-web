@@ -4,6 +4,7 @@ import { GoMakeMenu } from "@/components";
 import { useMoreCircle } from "./use-more-circle";
 import { useStyle } from "./style";
 import { useTranslation } from "react-i18next";
+import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 
 const MoreMenuWidget = ({
   quoteItem,
@@ -24,15 +25,38 @@ const MoreMenuWidget = ({
     onClickUndoItemIntake,
   });
 
+  // For purchase orders, ensure menu shows if item can be deleted or undone
+  const isPurchaseOrder = documentType === DOCUMENT_TYPE.purchaseOrder;
+  const canDelete = isPurchaseOrder && quoteItem?.isDeletable;
+  const canUndoIntake = isPurchaseOrder && quoteItem?.isIntake === true;
+  const hasDeleteOrUndo = canDelete || canUndoIntake;
+  
+  // Filter menu items - show items that meet their condition OR are special purchase order items
+  const filteredMenuList = menuList.filter((item: any) => {
+    if (item?.condition) return true;
+    // For purchase orders, show delete option if item is deletable (even if other conditions fail)
+    if (canDelete && item?.name === "delete") {
+      return true;
+    }
+    // For purchase orders, show undo intake ONLY if isIntake === true
+    if (canUndoIntake && item?.name === "undoItemIntake") {
+      return true;
+    }
+    return false;
+  });
+
+  // Show menu if there are items to display
+  const shouldShowMenu = filteredMenuList.length > 0;
+
   return (
     <>
-      {menuList?.length !== 0 && (
+      {shouldShowMenu && (
         <IconButton onClick={handleClick}>
           <MoreCircleIcon />
         </IconButton>
       )}
       <GoMakeMenu handleClose={handleClose} open={open} anchorEl={anchorEl}>
-        {menuList?.map((item, index) => {
+        {filteredMenuList.map((item, index) => {
           return (
             <div key={index}>
               {item.href ? (
@@ -64,7 +88,7 @@ const MoreMenuWidget = ({
                   </div>
                 </MenuItem>
               )}
-              {index !== menuList?.length - 1 ? (
+              {index !== filteredMenuList.length - 1 ? (
                 <div style={classes.lineStyle} />
               ) : null}
             </div>

@@ -482,7 +482,7 @@ const RowMappingWidget = ({
             borderBottom: item?.childsDocumentItems && "none",
           }}
         >
-          {canUpdate && (
+          {(canUpdate || (documentType === DOCUMENT_TYPE.purchaseOrder && (item?.isDeletable || item?.isIntake === true))) && (
             <MoreMenuWidget
               quoteItem={item}
               onClickDuplicateWithDifferentQTY={
