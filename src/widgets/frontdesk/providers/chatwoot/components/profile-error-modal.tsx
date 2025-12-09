@@ -9,6 +9,7 @@ import {
   useTheme,
   alpha,
 } from "@mui/material";
+import { useTranslation } from "react-i18next";
 import { colorTokens, radiusTokens, shadowTokens } from "@/widgets/frontdesk/design-system";
 import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 import RefreshIcon from "@mui/icons-material/Refresh";
@@ -57,6 +58,7 @@ export const ProfileErrorModal: React.FC<ProfileErrorModalProps> = ({
   error,
   onRetry,
 }) => {
+  const { t } = useTranslation();
   const theme = useTheme();
   return (
     <Dialog
@@ -110,7 +112,7 @@ export const ProfileErrorModal: React.FC<ProfileErrorModalProps> = ({
               color: colorTokens.neutral[900],
             }}
           >
-            Failed to load conversations
+            {t("frontdesk.errors.failedToLoadConversations")}
           </Typography>
           <Typography
             variant="body2"
@@ -119,7 +121,7 @@ export const ProfileErrorModal: React.FC<ProfileErrorModalProps> = ({
               lineHeight: 1.6,
             }}
           >
-            We couldn't load your conversations. Please check your connection and try again.
+            {t("frontdesk.errors.couldNotLoadConversations")}
           </Typography>
         </Stack>
 
@@ -143,7 +145,7 @@ export const ProfileErrorModal: React.FC<ProfileErrorModalProps> = ({
                 },
               }}
             >
-              Try Again
+              {t("frontdesk.tryAgain")}
             </Button>
           )}
         </Stack>
@@ -156,7 +158,7 @@ export const ProfileErrorModal: React.FC<ProfileErrorModalProps> = ({
             color: colorTokens.neutral[500],
           }}
         >
-          If this problem continues, please contact support
+          {t("frontdesk.errors.contactSupport")}
         </Typography>
       </DialogContent>
     </Dialog>

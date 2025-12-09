@@ -8,6 +8,7 @@
 
 import React, { useEffect } from "react";
 import { Box, CircularProgress } from "@mui/material";
+import { useTranslation } from "react-i18next";
 import { useChatwootProvider } from "./hooks/use-chatwoot-provider";
 import { useChatwootPermissions } from "./hooks/use-chatwoot-permissions";
 import { ChatwootView } from "@/widgets/frontdesk/routing/types";
@@ -28,8 +29,15 @@ import { SettingsView } from "./views/settings-view";
 import { OAuthCallbackView } from "./views/oauth-callback-view";
 
 const ChatwootProviderViewInternal: React.FC = () => {
+  const { t } = useTranslation();
   // Profile loading is handled by useChatwootProvider (via useChatwootProfile hook internally)
-  const { router: chatwootRouter, profileError, profileLoading, profile, fetchProfile } = useChatwootProvider();
+  const {
+    router: chatwootRouter,
+    profileError,
+    profileLoading,
+    profile,
+    fetchProfile,
+  } = useChatwootProvider();
 
   // Get permission checking functions and user role for logging
   const { canAccess, userRole, userPermissions } = useChatwootPermissions();
@@ -59,12 +67,17 @@ const ChatwootProviderViewInternal: React.FC = () => {
 
     // CRITICAL: Skip check if profile hasn't loaded yet (prevents premature redirects)
     if (!profile) {
-      console.warn("[ChatwootProviderView] Profile not loaded yet, skipping permission check");
+      console.warn(
+        "[ChatwootProviderView] Profile not loaded yet, skipping permission check"
+      );
       return;
     }
 
     // Map views to their permission configs
-    const viewPermissionMap: Record<ChatwootView, (typeof VIEW_PERMISSIONS)[keyof typeof VIEW_PERMISSIONS] | null> = {
+    const viewPermissionMap: Record<
+      ChatwootView,
+      (typeof VIEW_PERMISSIONS)[keyof typeof VIEW_PERMISSIONS] | null
+    > = {
       [ChatwootView.DASHBOARD]: VIEW_PERMISSIONS.dashboard,
       [ChatwootView.MY_INBOX]: VIEW_PERMISSIONS.myInbox,
       [ChatwootView.ALL_CONVERSATIONS]: VIEW_PERMISSIONS.allConversations,
@@ -82,12 +95,15 @@ const ChatwootProviderViewInternal: React.FC = () => {
     // If view has permission requirements, check them
     if (requiredPermissions && !canAccess(requiredPermissions)) {
       // Log RBAC violation for debugging and security monitoring
-      console.error(`[ChatwootProviderView] RBAC Violation: User lacks permissions for ${currentView}`, {
-        view: currentView,
-        userRole,
-        userPermissions,
-        requiredPermissions: requiredPermissions.permissions,
-      });
+      console.error(
+        `[ChatwootProviderView] RBAC Violation: User lacks permissions for ${currentView}`,
+        {
+          view: currentView,
+          userRole,
+          userPermissions,
+          requiredPermissions: requiredPermissions.permissions,
+        }
+      );
 
       // Redirect to safe default view with fallback
       // Defense-in-depth: Check if user can access My Inbox, else fallback to Dashboard
@@ -95,14 +111,27 @@ const ChatwootProviderViewInternal: React.FC = () => {
         console.warn(`[ChatwootProviderView] Redirecting to My Inbox`);
         chatwootRouter.navigateToMyInbox({ replace: true });
       } else if (canAccess(VIEW_PERMISSIONS.dashboard)) {
-        console.warn(`[ChatwootProviderView] Redirecting to Dashboard (fallback)`);
+        console.warn(
+          `[ChatwootProviderView] Redirecting to Dashboard (fallback)`
+        );
         chatwootRouter.navigateToDashboard({ replace: true });
       } else {
         // Should never happen, but log if it does
-        console.error("[ChatwootProviderView] User lacks access to all default views!");
+        console.error(
+          "[ChatwootProviderView] User lacks access to all default views!"
+        );
       }
     }
-  }, [currentView, profile, canAccess, profileLoading, showProfileErrorModal, chatwootRouter, userRole, userPermissions]);
+  }, [
+    currentView,
+    profile,
+    canAccess,
+    profileLoading,
+    showProfileErrorModal,
+    chatwootRouter,
+    userRole,
+    userPermissions,
+  ]);
 
   // Check permissions whenever the view changes
   useEffect(() => {
@@ -131,69 +160,76 @@ const ChatwootProviderViewInternal: React.FC = () => {
     switch (currentView) {
       case ChatwootView.DASHBOARD:
         return (
-          <ChatwootErrorBoundary context="Dashboard">
+          <ChatwootErrorBoundary context={t("frontdesk.views.dashboard")}>
             <DashboardView />
           </ChatwootErrorBoundary>
         );
       case ChatwootView.MY_INBOX:
         return (
-          <ChatwootErrorBoundary context="My Inbox">
+          <ChatwootErrorBoundary context={t("frontdesk.views.myInbox")}>
             <MyInboxView />
           </ChatwootErrorBoundary>
         );
       case ChatwootView.ALL_CONVERSATIONS:
         return (
-          <ChatwootErrorBoundary context="All Conversations">
+          <ChatwootErrorBoundary
+            context={t("frontdesk.views.allConversations")}
+          >
             <AllConversationsView />
           </ChatwootErrorBoundary>
         );
       case ChatwootView.MENTIONS:
         return (
-          <ChatwootErrorBoundary context="Mentions">
+          <ChatwootErrorBoundary context={t("frontdesk.views.mentions")}>
             <MentionsView />
           </ChatwootErrorBoundary>
         );
       case ChatwootView.UNATTENDED:
         return (
-          <ChatwootErrorBoundary context="Unattended">
+          <ChatwootErrorBoundary context={t("frontdesk.views.unattended")}>
             <UnattendedView />
           </ChatwootErrorBoundary>
         );
       case ChatwootView.CHANNELS:
         return (
-          <ChatwootErrorBoundary context="Channels">
+          <ChatwootErrorBoundary context={t("frontdesk.views.channels")}>
             <ChannelsView />
           </ChatwootErrorBoundary>
         );
       case ChatwootView.WORKBOARD:
         return (
-          <ChatwootErrorBoundary context="Workboard">
+          <ChatwootErrorBoundary context={t("frontdesk.views.workboard")}>
             <WorkboardView />
           </ChatwootErrorBoundary>
         );
       case ChatwootView.WEBHOOK_TEST:
         return (
-          <ChatwootErrorBoundary context="Webhook Test">
+          <ChatwootErrorBoundary context={t("frontdesk.views.webhookTest")}>
             <WebhookTestView />
           </ChatwootErrorBoundary>
         );
       case ChatwootView.SETTINGS:
         return (
-          <ChatwootErrorBoundary context="Settings">
+          <ChatwootErrorBoundary context={t("frontdesk.views.settings")}>
             <SettingsView />
           </ChatwootErrorBoundary>
         );
       case ChatwootView.OAUTH_CALLBACK:
         return (
-          <ChatwootErrorBoundary context="OAuth Callback">
+          <ChatwootErrorBoundary context={t("frontdesk.views.oauthCallback")}>
             <OAuthCallbackView />
           </ChatwootErrorBoundary>
         );
       default:
         // Fallback to Dashboard
-        console.warn("[ChatwootProviderView] Unknown view, falling back to Dashboard:", currentView);
+        console.warn(
+          "[ChatwootProviderView] Unknown view, falling back to Dashboard:",
+          currentView
+        );
         return (
-          <ChatwootErrorBoundary context="Dashboard (Fallback)">
+          <ChatwootErrorBoundary
+            context={t("frontdesk.views.dashboardFallback")}
+          >
             <DashboardView />
           </ChatwootErrorBoundary>
         );
@@ -203,7 +239,11 @@ const ChatwootProviderViewInternal: React.FC = () => {
   return (
     <>
       {/* Show error modal when profile fails to load */}
-      <ProfileErrorModal open={showProfileErrorModal} error={profileError} onRetry={handleRetryProfile} />
+      <ProfileErrorModal
+        open={showProfileErrorModal}
+        error={profileError}
+        onRetry={handleRetryProfile}
+      />
       {/* Render view content only if profile is loaded or still loading */}
       {!showProfileErrorModal && renderView()}
     </>
@@ -215,8 +255,9 @@ const ChatwootProviderViewInternal: React.FC = () => {
  * Wraps the internal view with error handling for production safety
  */
 export const ChatwootProviderView: React.FC = () => {
+  const { t } = useTranslation();
   return (
-    <ChatwootErrorBoundary context="Chatwoot Provider">
+    <ChatwootErrorBoundary context={t("frontdesk.chatwootProvider")}>
       <ChatwootProviderViewInternal />
     </ChatwootErrorBoundary>
   );
