@@ -2316,8 +2316,30 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     }
   };
 
+  // State for intake validation dialog
+  const [showIntakeValidationDialog, setShowIntakeValidationDialog] = useState(false);
+  const [pendingStatusChange, setPendingStatusChange] = useState<{ documentId: string; status: number } | null>(null);
+  const [selectedDocumentForValidation, setSelectedDocumentForValidation] = useState<any>(null);
+
   const handlePurchaseOrderStatusChange = useCallback(
-    async (documentId: string, nextStatus: number) => {
+    async (documentId: string, nextStatus: number, document?: any) => {
+      // Check if changing to Received status
+      if (nextStatus === PurchaseOrderStatuses.Received) {
+        // Check if document has documentItems with isIntake = false
+        const hasUnintakedItems = document?.documentItems?.some(
+          (item: any) => item.isIntake === false
+        );
+
+        if (hasUnintakedItems) {
+          // Show validation dialog
+          setPendingStatusChange({ documentId, status: nextStatus });
+          setSelectedDocumentForValidation(document);
+          setShowIntakeValidationDialog(true);
+          return;
+        }
+      }
+
+      // Proceed with status change
       setStatusUpdatingId(documentId);
       try {
         const response = await updateDocumentStatusApi(callApi, () => { }, {
@@ -2341,6 +2363,23 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     [alertFaultUpdate, alertSuccessUpdate, callApi, docType, getAllQuotes]
   );
 
+  // Handle intake validation dialog - open intake modal
+  const handleOpenIntakeFromValidation = () => {
+    if (selectedDocumentForValidation) {
+      setShowIntakeValidationDialog(false);
+      onClickOpenInventoryIntakeModal(selectedDocumentForValidation);
+      setPendingStatusChange(null);
+      setSelectedDocumentForValidation(null);
+    }
+  };
+
+  // Handle intake validation dialog - cancel
+  const handleCancelIntakeValidation = () => {
+    setShowIntakeValidationDialog(false);
+    setPendingStatusChange(null);
+    setSelectedDocumentForValidation(null);
+  };
+
   function PurchaseOrderStatusCell({ document }: { document: any }) {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const isLoading = statusUpdatingId === document?.id;
@@ -2360,7 +2399,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       if (value === document?.status || isLoading) {
         return;
       }
-      void handlePurchaseOrderStatusChange(document?.id, value);
+      void handlePurchaseOrderStatusChange(document?.id, value, document);
     };
 
     return (
@@ -5099,6 +5138,10 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     hideCheckboxes,
     preSelectedMethod,
     documentForEmail,
+    // Intake validation dialog
+    showIntakeValidationDialog,
+    handleOpenIntakeFromValidation,
+    handleCancelIntakeValidation,
   };
 };
 

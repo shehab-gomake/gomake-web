@@ -2805,11 +2805,32 @@ const useQuoteNew = ({
     [docType, quoteItemValue, allClientActiveBudgets]
   );
 
+  // State for intake validation dialog
+  const [showIntakeValidationDialog, setShowIntakeValidationDialog] = useState(false);
+  const [pendingStatusChange, setPendingStatusChange] = useState<number | null>(null);
+
   const updatePurchaseOrderStatus = useCallback(
     async (status: number) => {
       if (!isPurchaseOrder || !quoteItemValue?.id) {
         return;
       }
+
+      // Check if changing to Received status
+      if (status === PurchaseOrderStatuses.Received) {
+        // Check if any documentItems have isIntake = false
+        const hasUnintakedItems = quoteItemValue?.documentItems?.some(
+          (item: any) => item.isIntake === false
+        );
+
+        if (hasUnintakedItems) {
+          // Show validation dialog
+          setPendingStatusChange(status);
+          setShowIntakeValidationDialog(true);
+          return;
+        }
+      }
+
+      // Proceed with status change
       setIsUpdatingPurchaseStatus(true);
       try {
         const response = await updateDocumentStatusApi(callApi, () => { }, {
@@ -2837,8 +2858,21 @@ const useQuoteNew = ({
       getQuote,
       isPurchaseOrder,
       quoteItemValue?.id,
+      quoteItemValue?.documentItems,
     ]
   );
+
+  // Handle intake validation dialog - open intake modal
+  const handleOpenIntakeFromValidation = () => {
+    setShowIntakeValidationDialog(false);
+    onClickOpenInventoryIntakeModal();
+  };
+
+  // Handle intake validation dialog - cancel
+  const handleCancelIntakeValidation = () => {
+    setShowIntakeValidationDialog(false);
+    setPendingStatusChange(null);
+  };
 
   const handleSendUsingWhatsAppWeb = (sendWithInvoices = false) => {
     let checkPhones = checkArrayNotEmptyOrPhoneNotEmpty(
@@ -3296,6 +3330,10 @@ const useQuoteNew = ({
     onOpenPurchaseOrderTypeModal,
     onClosePurchaseOrderTypeModal,
     handleSelectPurchaseOrderType,
+    showIntakeValidationDialog,
+    handleOpenIntakeFromValidation,
+    handleCancelIntakeValidation,
+    pendingStatusChange,
   };
 };
 

@@ -14,6 +14,7 @@ import {
   GoMakeDeleteModal,
   GoMakeMenu,
 } from "@/components";
+import { GoMakeDialog } from "@/components/dialog/go-make-dialog";
 import { HeaderTitle } from "@/widgets";
 import { ArrowDownNewIcon, BudgetIcon, EditIcon } from "@/icons";
 import { useQuoteNew } from "./use-quote";
@@ -23,6 +24,7 @@ import { CancelBtnMenu } from "@/widgets/quote-new/cancel-btn-menu";
 import { SendBtnMenu } from "@/widgets/quote-new/send-btn-menu";
 import { _renderQuoteStatus } from "@/utils/constants";
 import {
+  Box,
   Button,
   CircularProgress,
   FormControlLabel,
@@ -31,6 +33,7 @@ import {
   Radio,
   RadioGroup,
   Skeleton,
+  Typography,
 } from "@mui/material";
 import { SettingQuoteMenu } from "@/widgets/quote-new/setting-quote-menu";
 import { AddDeliveryModal } from "@/widgets/quote-new/modals-widgets/add-delivery-modal/add-delivery-modal";
@@ -402,6 +405,9 @@ const QuoteNewPageWidget = ({
     onOpenPurchaseOrderTypeModal,
     onClosePurchaseOrderTypeModal,
     handleSelectPurchaseOrderType,
+    showIntakeValidationDialog,
+    handleOpenIntakeFromValidation,
+    handleCancelIntakeValidation,
   } = useQuoteNew({
     docType: documentType,
     isQuoteConfirmation: isQuoteConfirmation,
@@ -1061,6 +1067,24 @@ const QuoteNewPageWidget = ({
         getAllClientContacts={getAllClientContacts}
         documentType={documentType}
       />
+      {/* Intake Validation Dialog */}
+      <GoMakeDialog
+        open={showIntakeValidationDialog}
+        onClose={handleCancelIntakeValidation}
+        title={t("sales.purchaseOrder.intakeValidation") || "Intake Required"}
+        maxWidth="sm"
+        showFooter={true}
+        primaryButtonLabel={t("sales.purchaseOrder.intake")}
+        cancelButtonLabel={t("common.cancel")}
+        onPrimaryAction={handleOpenIntakeFromValidation}
+        hideCancelButton={false}
+      >
+        <Box sx={{ padding: "20px" }}>
+          <Typography variant="body1">
+            {t("sales.purchaseOrder.someItemsNotIntake") || "Some items not Intake"}
+          </Typography>
+        </Box>
+      </GoMakeDialog>
       {!isPrePaymentPage && (
         <AddDeliveryModal
           openModal={openAddDeliveryModal}
