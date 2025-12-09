@@ -1697,9 +1697,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               paymentMethod: _renderPaymentType(quote?.paymentType),
               totalPrice: isRTL
                 ? `${quote?.totalPrice} ${getCurrencyUnitText(quote?.currency)}`
-                : `${getCurrencyUnitText(quote?.currency)} ${
-                    quote?.totalPrice
-                  }`,
+                : `${getCurrencyUnitText(quote?.currency)} ${quote?.totalPrice
+                }`,
               notes: quote?.notes,
               status: t(`documentStatus.${quote?.status}`),
               more: (
@@ -1800,18 +1799,18 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
 
         const currentCheckFromDate = router.query.checkFromDate
           ? new Date(
-              Array.isArray(router.query.checkFromDate)
-                ? router.query.checkFromDate[0]
-                : router.query.checkFromDate
-            )
+            Array.isArray(router.query.checkFromDate)
+              ? router.query.checkFromDate[0]
+              : router.query.checkFromDate
+          )
           : null;
 
         const currentCheckToDate = router.query.checkToDate
           ? new Date(
-              Array.isArray(router.query.checkToDate)
-                ? router.query.checkToDate[0]
-                : router.query.checkToDate
-            )
+            Array.isArray(router.query.checkToDate)
+              ? router.query.checkToDate[0]
+              : router.query.checkToDate
+          )
           : null;
 
         const currentAccountingStatus = router.query.accountingStatus
@@ -2336,17 +2335,24 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
 
   const handlePurchaseOrderStatusChange = useCallback(
     async (documentId: string, nextStatus: number, document?: any, shouldUndoIntake: boolean | null = null) => {
-      const currentStatus = document?.documentStatus || document?.status;
+      // Get current status - use status property (as per API response structure)
+      const currentStatus = document?.status ?? document?.documentStatus ?? 0;
 
       // Check if changing FROM Received status to another status
       // Only show dialog if shouldUndoIntake is null (not explicitly set from dialog handlers)
       if (shouldUndoIntake === null && currentStatus === PurchaseOrderStatuses.Received && nextStatus !== PurchaseOrderStatuses.Received) {
-        // Check if document has any items with isIntake = true
-        const hasIntakedItems = document?.documentItems?.some(
+        // Use document data already available in the table (no need to fetch - avoids 500 error)
+        // Check document-level isIntake flag (available in list response)
+        const documentIsIntake = document?.isIntake === true;
+
+        // Also check if document has any items with isIntake = true (if available in list)
+        const documentItems = document?.documentItems || [];
+        const hasIntakedItems = documentItems.length > 0 && documentItems.some(
           (item: any) => item.isIntake === true
         );
 
-        if (hasIntakedItems) {
+        // Show dialog if document-level flag is true OR if any items have isIntake = true
+        if (documentIsIntake || hasIntakedItems) {
           // Show dialog asking if user wants to undo intake
           setPendingStatusChangeWithUndo({ documentId, status: nextStatus, shouldUndoIntake: false });
           setSelectedDocumentForValidation(document);
@@ -2360,8 +2366,10 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
 
       // Check if changing to Received status
       if (nextStatus === PurchaseOrderStatuses.Received) {
-        // Check if document has documentItems with isIntake = false
-        const hasUnintakedItems = document?.documentItems?.some(
+        // Use document data already available in the table (no need to fetch)
+        // Check if document has documentItems with isIntake = false (if available)
+        const documentItems = document?.documentItems || [];
+        const hasUnintakedItems = documentItems.length > 0 && documentItems.some(
           (item: any) => item.isIntake === false
         );
 
@@ -2790,28 +2798,28 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               ? null
               : t("sales.quote.sourceDocument"),
 
-        isOrder && t("sales.quote.purchaseNumber"),
-        isOrder && t("sales.quote.productionStatus"),
-        isOrder && t("sales.quote.jobs"),
-        isOrder && CheckPermission(Permissions.SHOW_COSTS_IN_ORDERS) && (
-          <PermissionCheck userPermission={Permissions.SHOW_COSTS_IN_ORDERS}>
-            {t("sales.quote.cost")}
-          </PermissionCheck>
-        ),
-        isReceipt || isSupplierPayments
-          ? t("sales.quote.paymentMethod")
-          : t("sales.quote.worksName"),
-        (isReceipt || isSupplierPayments) && t("sales.quote.checkNumber"),
-        (isReceipt || isSupplierPayments) && t("sales.quote.checkDueDate"),
-        isOrdersTracking
-          ? t("customers.modal.paymentStatus")
-          : t("sales.quote.totalPrice"),
-        t("sales.quote.notes"),
-        (isOrder ||
-          isInvoice ||
-          isInvoiceRefund ||
-          isDeliveryNote ||
-          isDeliveryNoteRefund) &&
+          isOrder && t("sales.quote.purchaseNumber"),
+          isOrder && t("sales.quote.productionStatus"),
+          isOrder && t("sales.quote.jobs"),
+          isOrder && CheckPermission(Permissions.SHOW_COSTS_IN_ORDERS) && (
+            <PermissionCheck userPermission={Permissions.SHOW_COSTS_IN_ORDERS}>
+              {t("sales.quote.cost")}
+            </PermissionCheck>
+          ),
+          isReceipt || isSupplierPayments
+            ? t("sales.quote.paymentMethod")
+            : t("sales.quote.worksName"),
+          (isReceipt || isSupplierPayments) && t("sales.quote.checkNumber"),
+          (isReceipt || isSupplierPayments) && t("sales.quote.checkDueDate"),
+          isOrdersTracking
+            ? t("customers.modal.paymentStatus")
+            : t("sales.quote.totalPrice"),
+          t("sales.quote.notes"),
+          (isOrder ||
+            isInvoice ||
+            isInvoiceRefund ||
+            isDeliveryNote ||
+            isDeliveryNoteRefund) &&
           t("sales.documentDeliveries.deliveryStatus"),
           t("sales.quote.status"),
           t("sales.quote.more"),
@@ -4149,7 +4157,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               const newSendPaymentState = { ...prevState };
               newSendPaymentState.documentId = document?.id;
               newSendPaymentState.documentContacts = res.data || [];
-              
+
               // CRITICAL: Set selectedContactIndex and populate contact fields
               if (res.data && res.data.length > 0) {
                 const firstContact = res.data[0];
@@ -4163,7 +4171,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 newSendPaymentState.contactPhone = "";
                 newSendPaymentState.contactMail = "";
               }
-              
+
               return newSendPaymentState;
             });
             // Use requestAnimationFrame to ensure state update is processed

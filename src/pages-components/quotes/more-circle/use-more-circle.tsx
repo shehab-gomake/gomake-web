@@ -626,7 +626,7 @@ const useMoreCircle = () => {
         condition: isPurchaseOrder && quote?.isCanIntake,
         onClick: () => onClickOpenInventoryIntakeModal(quote),
         icon: <PackageIcon />,
-        name: t("sales.purchaseOrder.addInventoryIntake"),
+        name: t("sales.purchaseOrder.inventoryIntake"),
       },
       {
         condition: isPurchaseOrder && quote?.documentItems?.some((item: any) => item.isIntake === true),

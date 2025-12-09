@@ -1138,7 +1138,7 @@ const QuotesListPageWidget = ({
         loading={inventoryLoading}
         purchaseOrderId={selectedInventoryDocument?.id}
         documentType={DOCUMENT_TYPE.purchaseOrder}
-        status={selectedInventoryDocument?.documentStatus}
+        status={selectedInventoryDocument?.status}
         onIntakeSuccess={getAllQuotes}
       />
       {/* FrontDesk Email Composer */}

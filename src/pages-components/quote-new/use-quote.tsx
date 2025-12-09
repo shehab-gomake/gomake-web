@@ -2846,7 +2846,8 @@ const useQuoteNew = ({
         return;
       }
 
-      const currentStatus = quoteItemValue?.documentStatus;
+      // Get current status - use status property (as per API response structure)
+      const currentStatus = quoteItemValue?.status ?? quoteItemValue?.documentStatus;
 
       // Check if changing FROM Received status to another status
       // Only show dialog if shouldUndoIntake is null (not explicitly set from dialog handlers)
