@@ -8,12 +8,13 @@
 
 import React, { useMemo } from "react";
 import { Box, Typography, Stack } from "@mui/material";
-import { 
-  ConversationListItem, 
-  EmptyState, 
-  colorTokens, 
+import { useTranslation } from "react-i18next";
+import {
+  ConversationListItem,
+  EmptyState,
+  colorTokens,
   radiusTokens,
-  semanticSpacing 
+  semanticSpacing,
 } from "@/widgets/frontdesk/design-system";
 import InboxIcon from "@mui/icons-material/Inbox";
 import ScheduleIcon from "@mui/icons-material/Schedule";
@@ -74,7 +75,9 @@ interface GroupedConversations {
   older: ChatwootConversation[];
 }
 
-const groupConversationsByDate = (conversations: ChatwootConversation[]): GroupedConversations => {
+const groupConversationsByDate = (
+  conversations: ChatwootConversation[]
+): GroupedConversations => {
   const now = new Date();
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   const yesterday = new Date(today.getTime() - 24 * 60 * 60 * 1000);
@@ -89,7 +92,10 @@ const groupConversationsByDate = (conversations: ChatwootConversation[]): Groupe
 
   conversations.forEach((conversation) => {
     // Get timestamp: priority updated_at > created_at > timestamp
-    const rawTimestamp = conversation.updated_at || conversation.created_at || conversation.timestamp;
+    const rawTimestamp =
+      conversation.updated_at ||
+      conversation.created_at ||
+      conversation.timestamp;
 
     let timestamp: Date;
     if (!rawTimestamp) {
@@ -127,7 +133,11 @@ interface TimeGroupHeaderProps {
   isFirst?: boolean;
 }
 
-const TimeGroupHeader: React.FC<TimeGroupHeaderProps> = ({ label, count, isFirst = false }) => {
+const TimeGroupHeader: React.FC<TimeGroupHeaderProps> = ({
+  label,
+  count,
+  isFirst = false,
+}) => {
   return (
     <Box
       sx={{
@@ -211,7 +221,11 @@ export const ChatwootActivityFeed: React.FC<ChatwootActivityFeedProps> = ({
   onSelect,
   isLoading = false,
 }) => {
-  const groupedConversations = useMemo(() => groupConversationsByDate(conversations), [conversations]);
+  const { t } = useTranslation();
+  const groupedConversations = useMemo(
+    () => groupConversationsByDate(conversations),
+    [conversations]
+  );
 
   // Handle loading state with Skeleton
   if (isLoading && conversations.length === 0) {
@@ -247,7 +261,9 @@ export const ChatwootActivityFeed: React.FC<ChatwootActivityFeedProps> = ({
               margin: "0 auto 16px",
             }}
           >
-            <InboxIcon sx={{ fontSize: 32, color: FEED_TOKENS.colors.primary }} />
+            <InboxIcon
+              sx={{ fontSize: 32, color: FEED_TOKENS.colors.primary }}
+            />
           </Box>
           <Typography
             sx={{
@@ -257,7 +273,7 @@ export const ChatwootActivityFeed: React.FC<ChatwootActivityFeedProps> = ({
               mb: 1,
             }}
           >
-            No Activity
+            {t("frontdesk.dashboard.noActivity")}
           </Typography>
           <Typography
             sx={{
@@ -266,7 +282,7 @@ export const ChatwootActivityFeed: React.FC<ChatwootActivityFeedProps> = ({
               lineHeight: 1.5,
             }}
           >
-            You're all caught up! No conversations need attention right now.
+            {t("frontdesk.dashboard.allCaughtUpNoConversations")}
           </Typography>
         </Box>
       </Box>
@@ -279,12 +295,18 @@ export const ChatwootActivityFeed: React.FC<ChatwootActivityFeedProps> = ({
     isFirst: boolean
   ) => {
     // Filter out conversations without valid IDs
-    const validConversations = group.filter((c) => c.id !== undefined && c.id !== null);
+    const validConversations = group.filter(
+      (c) => c.id !== undefined && c.id !== null
+    );
     if (validConversations.length === 0) return null;
 
     return (
       <React.Fragment key={label}>
-        <TimeGroupHeader label={label} count={validConversations.length} isFirst={isFirst} />
+        <TimeGroupHeader
+          label={label}
+          count={validConversations.length}
+          isFirst={isFirst}
+        />
         {validConversations.map((conversation) => (
           <ConversationListItem
             key={conversation.id}
@@ -306,10 +328,16 @@ export const ChatwootActivityFeed: React.FC<ChatwootActivityFeedProps> = ({
 
   // Determine which is the first non-empty group
   const groups = [
-    { data: groupedConversations.today, label: "Today" },
-    { data: groupedConversations.yesterday, label: "Yesterday" },
-    { data: groupedConversations.thisWeek, label: "This Week" },
-    { data: groupedConversations.older, label: "Older" },
+    { data: groupedConversations.today, label: t("frontdesk.dashboard.today") },
+    {
+      data: groupedConversations.yesterday,
+      label: t("frontdesk.dashboard.yesterday"),
+    },
+    {
+      data: groupedConversations.thisWeek,
+      label: t("frontdesk.dashboard.thisWeek"),
+    },
+    { data: groupedConversations.older, label: t("frontdesk.dashboard.older") },
   ];
 
   let isFirst = true;
@@ -345,7 +373,11 @@ export const ChatwootActivityFeed: React.FC<ChatwootActivityFeedProps> = ({
       >
         {groups.map((group) => {
           if (group.data.length === 0) return null;
-          const result = renderConversationGroup(group.data, group.label, isFirst);
+          const result = renderConversationGroup(
+            group.data,
+            group.label,
+            isFirst
+          );
           if (result) isFirst = false;
           return result;
         })}

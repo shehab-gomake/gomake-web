@@ -7,9 +7,14 @@
 
 import React from "react";
 import { Box, Typography, Chip } from "@mui/material";
+import { useTranslation } from "react-i18next";
 
 import { ContactSelector } from "./ContactSelector";
-import { createFieldContainerStyles, createFieldLabelStyles, createSelectedChipStyles } from "../../styles/compose-styles";
+import {
+  createFieldContainerStyles,
+  createFieldLabelStyles,
+  createSelectedChipStyles,
+} from "../../styles/compose-styles";
 import type { ContactDetail } from "@/services/frontdesk/api/chatwoot/types/contacts.types";
 import type { GomakeContact } from "../../hooks/use-compose-conversation";
 
@@ -33,14 +38,28 @@ export interface ContactSelectionFieldProps {
  * Displays selected contact or contact search input
  */
 export const ContactSelectionField = React.memo<ContactSelectionFieldProps>(
-  ({ selectedContact, searchResults, isSearching, onSearch, onSelectContact, error }) => {
+  ({
+    selectedContact,
+    searchResults,
+    isSearching,
+    onSearch,
+    onSelectContact,
+    error,
+  }) => {
+    const { t } = useTranslation();
     return (
       <Box sx={createFieldContainerStyles({ backgroundColor: "light" })}>
-        <Typography sx={createFieldLabelStyles()}>Contact *</Typography>
+        <Typography sx={createFieldLabelStyles()}>
+          {t("frontdesk.compose.contact")} *
+        </Typography>
         <Box sx={{ flex: 1 }}>
           {selectedContact ? (
             <Chip
-              label={selectedContact.name || selectedContact.email || selectedContact.phone_number}
+              label={
+                selectedContact.name ||
+                selectedContact.email ||
+                selectedContact.phone_number
+              }
               onDelete={() => onSelectContact(null)}
               sx={createSelectedChipStyles()}
             />

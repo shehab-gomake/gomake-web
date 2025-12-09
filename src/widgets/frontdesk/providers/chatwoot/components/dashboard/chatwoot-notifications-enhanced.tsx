@@ -12,6 +12,7 @@
  */
 
 import React, { useState, useMemo, useCallback, useRef, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Box,
   Stack,
@@ -64,6 +65,7 @@ interface NotificationGroup {
 }
 
 export const ChatwootNotificationsEnhanced: React.FC = () => {
+  const { t } = useTranslation();
   const {
     notifications,
     loading,
@@ -177,10 +179,10 @@ export const ChatwootNotificationsEnhanced: React.FC = () => {
   // Group notifications by time
   const groupedNotifications = useMemo((): NotificationGroup[] => {
     const groups: NotificationGroup[] = [
-      { label: 'Today', notifications: [] },
-      { label: 'Yesterday', notifications: [] },
-      { label: 'This Week', notifications: [] },
-      { label: 'Older', notifications: [] },
+      { label: t("frontdesk.dashboard.today"), notifications: [] },
+      { label: t("frontdesk.dashboard.yesterday"), notifications: [] },
+      { label: t("frontdesk.dashboard.thisWeek"), notifications: [] },
+      { label: t("frontdesk.dashboard.older"), notifications: [] },
     ];
 
     filteredNotifications.forEach((notification) => {
@@ -201,7 +203,7 @@ export const ChatwootNotificationsEnhanced: React.FC = () => {
 
     // Remove empty groups
     return groups.filter(group => group.notifications.length > 0);
-  }, [filteredNotifications]);
+  }, [filteredNotifications, t]);
 
   // Calculate filter counts
   const filterCounts = useMemo(() => {
@@ -225,34 +227,34 @@ export const ChatwootNotificationsEnhanced: React.FC = () => {
       [NotificationType.CONVERSATION_MENTION]: {
         icon: <MentionIcon sx={{ fontSize: 14 }} />,
         color: colorTokens.primary[600],
-        label: 'Mention',
+        label: t("frontdesk.dashboard.notificationTypes.mention"),
       },
       [NotificationType.CONVERSATION_ASSIGNMENT]: {
         icon: <AssignmentIcon sx={{ fontSize: 14 }} />,
         color: '#3B82F6',
-        label: 'Assignment',
+        label: t("frontdesk.dashboard.notificationTypes.assignment"),
       },
       [NotificationType.ASSIGNED_CONVERSATION_NEW_MESSAGE]: {
         icon: <MessageIcon sx={{ fontSize: 14 }} />,
         color: colorTokens.primary[500],
-        label: 'New Message',
+        label: t("frontdesk.dashboard.notificationTypes.newMessage"),
       },
       [NotificationType.PARTICIPATING_CONVERSATION_NEW_MESSAGE]: {
         icon: <MessageIcon sx={{ fontSize: 14 }} />,
         color: colorTokens.primary[500],
-        label: 'New Message',
+        label: t("frontdesk.dashboard.notificationTypes.newMessage"),
       },
       [NotificationType.CONVERSATION_CREATION]: {
         icon: <AssignmentAddIcon sx={{ fontSize: 14 }} />,
         color: '#10B981',
-        label: 'New Conversation',
+        label: t("frontdesk.dashboard.notificationTypes.newConversation"),
       },
     };
 
     return typeMap[notificationType] || {
       icon: <MessageIcon sx={{ fontSize: 14 }} />,
       color: colorTokens.neutral[500],
-      label: 'Notification',
+      label: t("frontdesk.dashboard.notificationTypes.notification"),
     };
   };
 
@@ -436,9 +438,9 @@ export const ChatwootNotificationsEnhanced: React.FC = () => {
               color: colorTokens.neutral[900],
             }}
           >
-            Notifications
+            {t("frontdesk.dashboard.notifications")}
           </Typography>
-          <Tooltip title={wsConnected ? 'Real-time updates active' : 'Real-time updates disconnected'}>
+          <Tooltip title={wsConnected ? t("frontdesk.dashboard.realTimeUpdatesActive") : t("frontdesk.dashboard.realTimeUpdatesDisconnected")}>
             {wsConnected ? (
               <OnlineIcon sx={{ fontSize: 14, color: '#10B981' }} />
             ) : (
@@ -460,7 +462,7 @@ export const ChatwootNotificationsEnhanced: React.FC = () => {
           )}
         </Stack>
         {unreadCount > 0 && (
-          <Tooltip title="Mark all as read">
+          <Tooltip title={t("frontdesk.dashboard.markAllAsRead")}>
             <IconButton
               size="small"
               onClick={markAllAsRead}
@@ -488,7 +490,7 @@ export const ChatwootNotificationsEnhanced: React.FC = () => {
       >
         <Stack direction="row" spacing={0.5} flexWrap="wrap" sx={{ gap: 0.5 }}>
           <Chip
-            label={`Unread ${filterCounts.unread > 0 ? `(${filterCounts.unread})` : ''}`}
+            label={`${t("frontdesk.dashboard.unread")} ${filterCounts.unread > 0 ? `(${filterCounts.unread})` : ''}`}
             variant={activeFilter === 'unread' ? 'filled' : 'outlined'}
             color="primary"
             size="small"
@@ -503,7 +505,7 @@ export const ChatwootNotificationsEnhanced: React.FC = () => {
             }}
           />
           <Chip
-            label={`Mentions ${filterCounts.mentions > 0 ? `(${filterCounts.mentions})` : ''}`}
+            label={`${t("frontdesk.dashboard.mentions")} ${filterCounts.mentions > 0 ? `(${filterCounts.mentions})` : ''}`}
             variant={activeFilter === 'mentions' ? 'filled' : 'outlined'}
             color="primary"
             size="small"
@@ -518,7 +520,7 @@ export const ChatwootNotificationsEnhanced: React.FC = () => {
             }}
           />
           <Chip
-            label={`Assignments ${filterCounts.assignments > 0 ? `(${filterCounts.assignments})` : ''}`}
+            label={`${t("frontdesk.dashboard.assignments")} ${filterCounts.assignments > 0 ? `(${filterCounts.assignments})` : ''}`}
             variant={activeFilter === 'assignments' ? 'filled' : 'outlined'}
             color="primary"
             size="small"
@@ -533,7 +535,7 @@ export const ChatwootNotificationsEnhanced: React.FC = () => {
             }}
           />
           <Chip
-            label="All"
+            label={t("frontdesk.dashboard.all")}
             variant={activeFilter === 'all' ? 'filled' : 'outlined'}
             color="primary"
             size="small"
@@ -555,7 +557,7 @@ export const ChatwootNotificationsEnhanced: React.FC = () => {
         {!currentAccountId ? (
           <Box sx={{ p: 3, textAlign: 'center' }}>
             <Typography variant="body2" sx={{ color: colorTokens.neutral[500], fontSize: '0.813rem' }}>
-              Waiting for account selection...
+              {t("frontdesk.dashboard.waitingForAccountSelection")}
             </Typography>
           </Box>
         ) : error ? (
@@ -572,7 +574,7 @@ export const ChatwootNotificationsEnhanced: React.FC = () => {
               variant="body2"
               sx={{ color: colorTokens.neutral[500], fontSize: '0.813rem', mt: 1 }}
             >
-              Loading notifications...
+              {t("frontdesk.dashboard.loadingNotifications")}
             </Typography>
           </Box>
         ) : groupedNotifications.length === 0 ? (
@@ -587,11 +589,11 @@ export const ChatwootNotificationsEnhanced: React.FC = () => {
           >
             <EmptyState
               icon={<NotificationsIcon sx={{ fontSize: 48, color: colorTokens.neutral[300] }} />}
-              title="No notifications"
+              title={t("frontdesk.dashboard.noNotifications")}
               description={
                 activeFilter === 'unread'
-                  ? "All caught up! No unread notifications."
-                  : `No ${activeFilter} notifications found.`
+                  ? t("frontdesk.dashboard.allCaughtUpNoUnreadNotifications")
+                  : t("frontdesk.dashboard.noNotificationsFound", { filter: activeFilter })
               }
             />
           </Box>
@@ -834,27 +836,27 @@ export const ChatwootNotificationsEnhanced: React.FC = () => {
                 <ListItemIcon>
                   <ReadIcon sx={{ fontSize: 18 }} />
                 </ListItemIcon>
-                <ListItemText>Mark as read</ListItemText>
+                <ListItemText>{t("frontdesk.dashboard.markAsRead")}</ListItemText>
               </MenuItem>
             ) : (
               <MenuItem onClick={() => handleMarkAsUnread(currentNotification)}>
                 <ListItemIcon>
                   <UnreadIcon sx={{ fontSize: 18 }} />
                 </ListItemIcon>
-                <ListItemText>Mark as unread</ListItemText>
+                <ListItemText>{t("frontdesk.dashboard.markAsUnread")}</ListItemText>
               </MenuItem>
             )}
             <MenuItem onClick={() => handleSnooze(currentNotification, 1)}>
               <ListItemIcon>
                 <SnoozeIcon sx={{ fontSize: 18 }} />
               </ListItemIcon>
-              <ListItemText>Snooze for 1 hour</ListItemText>
+              <ListItemText>{t("frontdesk.dashboard.snoozeFor1Hour")}</ListItemText>
             </MenuItem>
             <MenuItem onClick={() => handleSnooze(currentNotification, 24)}>
               <ListItemIcon>
                 <SnoozeIcon sx={{ fontSize: 18 }} />
               </ListItemIcon>
-              <ListItemText>Snooze for 24 hours</ListItemText>
+              <ListItemText>{t("frontdesk.dashboard.snoozeFor24Hours")}</ListItemText>
             </MenuItem>
             <Divider />
             <MenuItem
@@ -864,7 +866,7 @@ export const ChatwootNotificationsEnhanced: React.FC = () => {
               <ListItemIcon>
                 <DeleteIcon sx={{ fontSize: 18, color: 'error.main' }} />
               </ListItemIcon>
-              <ListItemText>Delete</ListItemText>
+              <ListItemText>{t("frontdesk.dashboard.delete")}</ListItemText>
             </MenuItem>
           </>
         )}
