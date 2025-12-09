@@ -890,7 +890,7 @@ const useNewProfits = () => {
   const reOrderPricingTables = useCallback(async (data: any) => {
     const res = await callApi(
       EHttpMethod.PUT,
-      `/v1/printhouse-config/profits/update-re-order-pricing-tables?actionIdOrProductId=${router.query.actionId
+      `/v1/printhouse-config/profits/update-re-order-pricing-tables?actionIdOrProductId=${router.query.actionId ?? router.query.productId
       }?isOutSourc=${router.query.isOutSource ? true : false}`,
       {
         data,
