@@ -265,6 +265,11 @@ const QuotesListPageWidget = ({
     showIntakeValidationDialog,
     handleOpenIntakeFromValidation,
     handleCancelIntakeValidation,
+    handleUndoDocumentIntake,
+    handleUndoItemIntake,
+    showUndoIntakeDialog,
+    handleConfirmUndoIntake,
+    handleCancelUndoIntake,
     isMoveToReady,
     handleCheckboxChange,
     handleSortBE,
@@ -1162,6 +1167,24 @@ const QuotesListPageWidget = ({
         <Box sx={{ padding: "20px" }}>
           <Typography variant="body1">
             {t("sales.purchaseOrder.someItemsNotIntake") || "Some items not Intake"}
+          </Typography>
+        </Box>
+      </GoMakeDialog>
+      {/* Undo Intake Dialog - when changing from Received status */}
+      <GoMakeDialog
+        open={showUndoIntakeDialog}
+        onClose={handleCancelUndoIntake}
+        title={t("sales.purchaseOrder.undoIntakeConfirmation") || "Undo Intake?"}
+        maxWidth="sm"
+        showFooter={true}
+        primaryButtonLabel={t("common.yes")}
+        cancelButtonLabel={t("common.no")}
+        onPrimaryAction={handleConfirmUndoIntake}
+        hideCancelButton={false}
+      >
+        <Box sx={{ padding: "20px" }}>
+          <Typography variant="body1">
+            {t("sales.purchaseOrder.undoIntakeMessage") || "Do you want to undo the intake before changing the status?"}
           </Typography>
         </Box>
       </GoMakeDialog>

@@ -20,6 +20,7 @@ const useMoreCircle = ({
   onClickQuickDuplicate,
   onClickDeleteQouteItem,
   documentType,
+  onClickUndoItemIntake,
 }) => {
   const router = useRouter();
   const { navigate } = useGomakeRouter();
@@ -134,6 +135,12 @@ const useMoreCircle = ({
             documentType,
             DocumentPermission.DELETE_DOCUMENT_ITEM
           )),
+    },
+    {
+      name: "undoItemIntake",
+      icon: <DeleteMenuIcon />,
+      onclick: () => onClickUndoItemIntake?.(quoteItem),
+      condition: quoteItem?.isIntake === true && documentType === DOCUMENT_TYPE.purchaseOrder,
     },
   ].filter((item) => item.condition);
 

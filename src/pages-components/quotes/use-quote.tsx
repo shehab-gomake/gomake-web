@@ -55,6 +55,8 @@ import {
   startOrderProductionApi,
   updateDocumentApi,
   updateDocumentStatusApi,
+  undoDocumentIntakeApi,
+  undoDocumentItemIntakeApi,
 } from "@/services/api-service/generic-doc/documents-api";
 import { DOCUMENT_TYPE } from "./enums";
 import { useQuoteGetData } from "../quote-new/use-quote-get-data";
@@ -936,6 +938,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               onOpenDuplicateModal={onOpenDuplicateModal}
               handleGetTaxConfirmNo={handleGetTaxConfirmNo}
               onClickOpenInventoryIntakeModal={onClickOpenInventoryIntakeModal}
+              onClickUndoDocumentIntake={handleUndoDocumentIntake}
               onClickSendToCustomerEmail={onClickSendToCustomerEmail}
               onClickSendToCustomerSMS={onClickSendToCustomerSMS}
               onClickSendToCustomerWhatsApp={onClickSendToCustomerWhatsApp}
@@ -1499,6 +1502,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                   }
                   onOpenDuplicateModal={onOpenDuplicateModal}
                   handleGetTaxConfirmNo={handleGetTaxConfirmNo}
+                  onClickOpenInventoryIntakeModal={onClickOpenInventoryIntakeModal}
+                  onClickUndoDocumentIntake={handleUndoDocumentIntake}
                   onClickSendToCustomerEmail={onClickSendToCustomerEmail}
                   onClickSendToCustomerSMS={onClickSendToCustomerSMS}
                   onClickSendToCustomerWhatsApp={onClickSendToCustomerWhatsApp}
@@ -2066,6 +2071,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 }
                 onOpenDuplicateModal={onOpenDuplicateModal}
                 handleGetTaxConfirmNo={handleGetTaxConfirmNo}
+                onClickOpenInventoryIntakeModal={onClickOpenInventoryIntakeModal}
+                onClickUndoDocumentIntake={handleUndoDocumentIntake}
                 onClickSendToCustomerEmail={onClickSendToCustomerEmail}
                 onClickSendToCustomerSMS={onClickSendToCustomerSMS}
                 onClickSendToCustomerWhatsApp={onClickSendToCustomerWhatsApp}
@@ -2260,6 +2267,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               }
               onClickSendPayment={onClickSendPayment}
               onOpenDuplicateModal={onOpenDuplicateModal}
+              onClickOpenInventoryIntakeModal={onClickOpenInventoryIntakeModal}
+              onClickUndoDocumentIntake={handleUndoDocumentIntake}
               onClickSendToCustomerEmail={onClickSendToCustomerEmail}
               onClickSendToCustomerSMS={onClickSendToCustomerSMS}
               onClickSendToCustomerWhatsApp={onClickSendToCustomerWhatsApp}
@@ -2321,8 +2330,34 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const [pendingStatusChange, setPendingStatusChange] = useState<{ documentId: string; status: number } | null>(null);
   const [selectedDocumentForValidation, setSelectedDocumentForValidation] = useState<any>(null);
 
+  // State for undo intake dialog when changing from Received status
+  const [showUndoIntakeDialog, setShowUndoIntakeDialog] = useState(false);
+  const [pendingStatusChangeWithUndo, setPendingStatusChangeWithUndo] = useState<{ documentId: string; status: number; shouldUndoIntake: boolean } | null>(null);
+
   const handlePurchaseOrderStatusChange = useCallback(
-    async (documentId: string, nextStatus: number, document?: any) => {
+    async (documentId: string, nextStatus: number, document?: any, shouldUndoIntake: boolean | null = null) => {
+      const currentStatus = document?.documentStatus || document?.status;
+
+      // Check if changing FROM Received status to another status
+      // Only show dialog if shouldUndoIntake is null (not explicitly set from dialog handlers)
+      if (shouldUndoIntake === null && currentStatus === PurchaseOrderStatuses.Received && nextStatus !== PurchaseOrderStatuses.Received) {
+        // Check if document has any items with isIntake = true
+        const hasIntakedItems = document?.documentItems?.some(
+          (item: any) => item.isIntake === true
+        );
+
+        if (hasIntakedItems) {
+          // Show dialog asking if user wants to undo intake
+          setPendingStatusChangeWithUndo({ documentId, status: nextStatus, shouldUndoIntake: false });
+          setSelectedDocumentForValidation(document);
+          setShowUndoIntakeDialog(true);
+          return;
+        }
+      }
+
+      // Default shouldUndoIntake to false if not explicitly set
+      const shouldUndo = shouldUndoIntake === null ? false : shouldUndoIntake;
+
       // Check if changing to Received status
       if (nextStatus === PurchaseOrderStatuses.Received) {
         // Check if document has documentItems with isIntake = false
@@ -2342,17 +2377,34 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       // Proceed with status change
       setStatusUpdatingId(documentId);
       try {
-        const response = await updateDocumentStatusApi(callApi, () => { }, {
-          documentType: docType,
-          documentId,
-          status: nextStatus,
-        });
-
-        if (response?.success) {
-          alertSuccessUpdate();
-          await getAllQuotes(undefined, true);
+        // If shouldUndo is true, call undo intake API (which also updates status)
+        if (shouldUndo && document) {
+          const undoResponse = await undoDocumentIntakeApi(callApi, () => { }, {
+            documentType: docType,
+            purchaseOrderId: documentId,
+            status: nextStatus,
+            shouldUndoIntake: true,
+          });
+          if (undoResponse?.success) {
+            alertSuccessUpdate();
+            await getAllQuotes(undefined, true);
+          } else {
+            alertFaultUpdate();
+          }
         } else {
-          alertFaultUpdate();
+          // If not undoing intake, just update status normally
+          const response = await updateDocumentStatusApi(callApi, () => { }, {
+            documentType: docType,
+            documentId,
+            status: nextStatus,
+          });
+
+          if (response?.success) {
+            alertSuccessUpdate();
+            await getAllQuotes(undefined, true);
+          } else {
+            alertFaultUpdate();
+          }
         }
       } catch (error) {
         alertFaultUpdate();
@@ -2363,15 +2415,93 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     [alertFaultUpdate, alertSuccessUpdate, callApi, docType, getAllQuotes]
   );
 
+  // Handle undo intake dialog - yes (undo intake)
+  const handleConfirmUndoIntake = () => {
+    if (pendingStatusChangeWithUndo && selectedDocumentForValidation) {
+      setShowUndoIntakeDialog(false);
+      handlePurchaseOrderStatusChange(
+        pendingStatusChangeWithUndo.documentId,
+        pendingStatusChangeWithUndo.status,
+        selectedDocumentForValidation,
+        true
+      );
+      setPendingStatusChangeWithUndo(null);
+      setSelectedDocumentForValidation(null);
+    }
+  };
+
+  // Handle undo intake dialog - no (don't undo intake)
+  const handleCancelUndoIntake = () => {
+    if (pendingStatusChangeWithUndo && selectedDocumentForValidation) {
+      setShowUndoIntakeDialog(false);
+      handlePurchaseOrderStatusChange(
+        pendingStatusChangeWithUndo.documentId,
+        pendingStatusChangeWithUndo.status,
+        selectedDocumentForValidation,
+        false
+      );
+      setPendingStatusChangeWithUndo(null);
+      setSelectedDocumentForValidation(null);
+    }
+  };
+
   // Handle intake validation dialog - open intake modal
   const handleOpenIntakeFromValidation = () => {
     if (selectedDocumentForValidation) {
       setShowIntakeValidationDialog(false);
       onClickOpenInventoryIntakeModal(selectedDocumentForValidation);
-      setPendingStatusChange(null);
-      setSelectedDocumentForValidation(null);
+      // Don't clear pendingStatusChange here - we'll use it in handleIntakeSuccess
     }
   };
+
+  // Handle undo document intake
+  const handleUndoDocumentIntake = useCallback(async (document: any) => {
+    if (!isPurchaseOrder || !document?.id) {
+      return;
+    }
+
+    setStatusUpdatingId(document.id);
+    try {
+      const response = await undoDocumentIntakeApi(callApi, () => { }, {
+        documentType: docType,
+        purchaseOrderId: document.id,
+        status: document.documentStatus || document.status || 0,
+        shouldUndoIntake: true,
+      });
+      if (response?.success) {
+        alertSuccessUpdate();
+        await getAllQuotes(undefined, true);
+      } else {
+        alertFaultUpdate();
+      }
+    } catch (error) {
+      alertFaultUpdate();
+    } finally {
+      setStatusUpdatingId(null);
+    }
+  }, [isPurchaseOrder, callApi, docType, getAllQuotes, alertSuccessUpdate, alertFaultUpdate]);
+
+  // Handle undo item intake
+  const handleUndoItemIntake = useCallback(async (item: any, document: any) => {
+    if (!isPurchaseOrder || !item?.id) {
+      return;
+    }
+
+    try {
+      const response = await undoDocumentItemIntakeApi(callApi, () => { }, {
+        documentType: docType,
+        itemId: item.id,
+      });
+      if (response?.success) {
+        alertSuccessUpdate();
+        await getAllQuotes(undefined, true);
+      } else {
+        alertFaultUpdate();
+      }
+    } catch (error) {
+      alertFaultUpdate();
+    }
+  }, [isPurchaseOrder, callApi, docType, getAllQuotes, alertSuccessUpdate, alertFaultUpdate]);
 
   // Handle intake validation dialog - cancel
   const handleCancelIntakeValidation = () => {
@@ -2953,6 +3083,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               }
               onOpenPackagesModal={onOpenPackagesModal}
               onOpenDuplicateModal={onOpenDuplicateModal}
+              onClickOpenInventoryIntakeModal={onClickOpenInventoryIntakeModal}
+              onClickUndoDocumentIntake={handleUndoDocumentIntake}
               onClickSendToCustomerEmail={onClickSendToCustomerEmail}
               onClickSendToCustomerSMS={onClickSendToCustomerSMS}
               onClickSendToCustomerWhatsApp={onClickSendToCustomerWhatsApp}
@@ -5142,6 +5274,12 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     showIntakeValidationDialog,
     handleOpenIntakeFromValidation,
     handleCancelIntakeValidation,
+    // Undo intake handlers
+    handleUndoDocumentIntake,
+    handleUndoItemIntake,
+    showUndoIntakeDialog,
+    handleConfirmUndoIntake,
+    handleCancelUndoIntake,
   };
 };
 

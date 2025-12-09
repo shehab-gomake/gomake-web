@@ -127,6 +127,7 @@ const useMoreCircle = () => {
     onClickSendPaymentEmail,
     onClickSendPaymentSMS,
     onClickSendPaymentWhatsApp,
+    onClickUndoDocumentIntake,
     classes,
   }) => {
     const isEditableDocument = quote?.isEditable;
@@ -628,6 +629,12 @@ const useMoreCircle = () => {
         onClick: () => onClickOpenInventoryIntakeModal(quote),
         icon: <PackageIcon />,
         name: t("sales.purchaseOrder.addInventoryIntake"),
+      },
+      {
+        condition: isPurchaseOrder && quote?.documentItems?.some((item: any) => item.isIntake === true),
+        onClick: () => onClickUndoDocumentIntake?.(quote),
+        icon: <PackageIcon />,
+        name: t("sales.purchaseOrder.undoDocumentIntake") || "Undo Document Intake",
       },
 
       {

@@ -40,6 +40,7 @@ const MoreMenuWidget = ({
   onClickSendPaymentSMS,
   onClickSendPaymentWhatsApp,
   onClickOpenInventoryIntakeModal,
+  onClickUndoDocumentIntake,
 }: any) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -80,6 +81,7 @@ const MoreMenuWidget = ({
     onClickSendPaymentEmail,
     onClickSendPaymentSMS,
     onClickSendPaymentWhatsApp,
+    onClickUndoDocumentIntake,
     classes,
   });
 

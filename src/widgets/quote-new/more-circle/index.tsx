@@ -11,6 +11,7 @@ const MoreMenuWidget = ({
   onClickQuickDuplicate,
   onClickDeleteQouteItem,
   documentType,
+  onClickUndoItemIntake,
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -20,6 +21,7 @@ const MoreMenuWidget = ({
     onClickQuickDuplicate,
     onClickDeleteQouteItem,
     documentType,
+    onClickUndoItemIntake,
   });
 
   return (

@@ -43,6 +43,7 @@ const RowMappingWidget = ({
   onClickDuplicateWithDifferentQTY,
   onClickQuickDuplicate,
   onClickDeleteQouteItem,
+  onClickUndoItemIntake,
   parentIndex,
   documentType,
   getQuote,
@@ -489,6 +490,7 @@ const RowMappingWidget = ({
               }
               onClickQuickDuplicate={onClickQuickDuplicate}
               onClickDeleteQouteItem={onClickDeleteQouteItem}
+              onClickUndoItemIntake={onClickUndoItemIntake}
               documentType={documentType}
             />
           )}

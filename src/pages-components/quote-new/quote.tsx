@@ -408,6 +408,11 @@ const QuoteNewPageWidget = ({
     showIntakeValidationDialog,
     handleOpenIntakeFromValidation,
     handleCancelIntakeValidation,
+    handleUndoDocumentIntake,
+    handleUndoItemIntake,
+    showUndoIntakeDialog,
+    handleConfirmUndoIntake,
+    handleCancelUndoIntake,
   } = useQuoteNew({
     docType: documentType,
     isQuoteConfirmation: isQuoteConfirmation,
@@ -934,6 +939,7 @@ const QuoteNewPageWidget = ({
                   }
                   onClickQuickDuplicate={onClickQuickDuplicate}
                   onClickDeleteQouteItem={onClickDeleteQouteItem}
+                  onClickUndoItemIntake={handleUndoItemIntake}
                   quoteItems={quoteItems}
                   changeQuoteItems={changeQuoteItems}
                   getCalculateQuote={getCalculateQuote}
@@ -1083,6 +1089,24 @@ const QuoteNewPageWidget = ({
         <Box sx={{ padding: "20px" }}>
           <Typography variant="body1">
             {t("sales.purchaseOrder.someItemsNotIntake") || "Some items not Intake"}
+          </Typography>
+        </Box>
+      </GoMakeDialog>
+      {/* Undo Intake Dialog - when changing from Received status */}
+      <GoMakeDialog
+        open={showUndoIntakeDialog}
+        onClose={handleCancelUndoIntake}
+        title={t("sales.purchaseOrder.undoIntakeConfirmation") || "Undo Intake?"}
+        maxWidth="sm"
+        showFooter={true}
+        primaryButtonLabel={t("common.yes")}
+        cancelButtonLabel={t("common.no")}
+        onPrimaryAction={handleConfirmUndoIntake}
+        hideCancelButton={false}
+      >
+        <Box sx={{ padding: "20px" }}>
+          <Typography variant="body1">
+            {t("sales.purchaseOrder.undoIntakeMessage") || "Do you want to undo the intake before changing the status?"}
           </Typography>
         </Box>
       </GoMakeDialog>
