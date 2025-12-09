@@ -6,7 +6,7 @@
  * Upgraded to use autocomplete with existing labels and inline label creation.
  */
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo } from "react";
 import {
   Box,
   Typography,
@@ -15,16 +15,17 @@ import {
   CircularProgress,
   IconButton,
   Button,
-} from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
-import CloseIcon from '@mui/icons-material/Close';
-import { colorTokens } from '@/widgets/frontdesk/design-system';
-import { chatwootService } from '@/services/frontdesk';
-import { extractErrorMessage } from '../utils/api-response-extractors';
-import { useChatwootLabels } from '../hooks/use-chatwoot-labels';
-import { AddEditLabelModal } from './settings/add-edit-label-modal';
-import type { ChatwootLabel } from '@/store/frontdesk/atoms/chatwoot.atoms';
-import type { CreateLabelPayload } from '@/services/frontdesk/api/chatwoot';
+} from "@mui/material";
+import { useTranslation } from "react-i18next";
+import AddIcon from "@mui/icons-material/Add";
+import CloseIcon from "@mui/icons-material/Close";
+import { colorTokens } from "@/widgets/frontdesk/design-system";
+import { chatwootService } from "@/services/frontdesk";
+import { extractErrorMessage } from "../utils/api-response-extractors";
+import { useChatwootLabels } from "../hooks/use-chatwoot-labels";
+import { AddEditLabelModal } from "./settings/add-edit-label-modal";
+import type { ChatwootLabel } from "@/store/frontdesk/atoms/chatwoot.atoms";
+import type { CreateLabelPayload } from "@/services/frontdesk/api/chatwoot";
 
 interface ConversationLabelsManagementProps {
   /** Current labels */
@@ -37,33 +38,39 @@ interface ConversationLabelsManagementProps {
   onLabelsChanged?: (newLabels: string[]) => void;
 }
 
-export const ConversationLabelsManagement: React.FC<ConversationLabelsManagementProps> = ({
-  labels = [],
-  accountId,
-  conversationId,
-  onLabelsChanged,
-}) => {
+export const ConversationLabelsManagement: React.FC<
+  ConversationLabelsManagementProps
+> = ({ labels = [], accountId, conversationId, onLabelsChanged }) => {
+  const { t } = useTranslation();
+  const dir: "rtl" | "ltr" = t("direction");
   // Fetch account labels (only when accountId is available)
-  const { labels: accountLabels = [], loading: labelsLoading, createLabel } = useChatwootLabels(accountId ?? undefined, !!accountId);
+  const {
+    labels: accountLabels = [],
+    loading: labelsLoading,
+    createLabel,
+  } = useChatwootLabels(accountId ?? undefined, !!accountId);
 
-  const [inputValue, setInputValue] = useState('');
-  const [selectedValue, setSelectedValue] = useState<ChatwootLabel | null>(null);
+  const [inputValue, setInputValue] = useState("");
+  const [selectedValue, setSelectedValue] = useState<ChatwootLabel | null>(
+    null
+  );
   const [updating, setUpdating] = useState(false);
   const [createModalOpen, setCreateModalOpen] = useState(false);
-  const [newLabelTitle, setNewLabelTitle] = useState('');
+  const [newLabelTitle, setNewLabelTitle] = useState("");
 
   // Get labels that are not already added to the conversation
   const availableLabels = useMemo(() => {
     if (!Array.isArray(accountLabels)) return [];
-    return accountLabels.filter(label => !labels.includes(label.title));
+    return accountLabels.filter((label) => !labels.includes(label.title));
   }, [accountLabels, labels]);
 
   // Get label objects for current conversation labels
   const conversationLabelObjects = useMemo(() => {
-    if (!Array.isArray(accountLabels)) return labels.map(title => ({ title, color: '#6B7280' }));
-    return labels.map(labelTitle => {
-      const found = accountLabels.find(al => al.title === labelTitle);
-      return found || { title: labelTitle, color: '#6B7280' };
+    if (!Array.isArray(accountLabels))
+      return labels.map((title) => ({ title, color: "#6B7280" }));
+    return labels.map((labelTitle) => {
+      const found = accountLabels.find((al) => al.title === labelTitle);
+      return found || { title: labelTitle, color: "#6B7280" };
     });
   }, [labels, accountLabels]);
 
@@ -73,7 +80,7 @@ export const ConversationLabelsManagement: React.FC<ConversationLabelsManagement
     // Prevent duplicate labels
     if (labels.includes(label.title)) {
       setSelectedValue(null);
-      setInputValue('');
+      setInputValue("");
       return;
     }
 
@@ -81,7 +88,7 @@ export const ConversationLabelsManagement: React.FC<ConversationLabelsManagement
     const updatedLabels = [...labels, label.title];
     onLabelsChanged?.(updatedLabels);
     setSelectedValue(null);
-    setInputValue('');
+    setInputValue("");
     setUpdating(true);
 
     try {
@@ -92,7 +99,7 @@ export const ConversationLabelsManagement: React.FC<ConversationLabelsManagement
       );
     } catch (error) {
       const errorMessage = extractErrorMessage(error);
-      console.error('[handleSelectLabel] Failed to add label:', errorMessage);
+      console.error("[handleSelectLabel] Failed to add label:", errorMessage);
       // Revert optimistic update on error
       onLabelsChanged?.(labels);
       // TODO: Show error toast with message: errorMessage
@@ -110,7 +117,7 @@ export const ConversationLabelsManagement: React.FC<ConversationLabelsManagement
     try {
       const newLabel = await createLabel(payload);
       setCreateModalOpen(false);
-      setNewLabelTitle('');
+      setNewLabelTitle("");
 
       // Add the newly created label to the conversation
       if (accountId && conversationId) {
@@ -126,7 +133,10 @@ export const ConversationLabelsManagement: React.FC<ConversationLabelsManagement
           );
         } catch (error) {
           const errorMessage = extractErrorMessage(error);
-          console.error('[handleCreateLabelSubmit] Failed to add new label to conversation:', errorMessage);
+          console.error(
+            "[handleCreateLabelSubmit] Failed to add new label to conversation:",
+            errorMessage
+          );
           // Revert optimistic update on error
           onLabelsChanged?.(labels);
         } finally {
@@ -135,7 +145,7 @@ export const ConversationLabelsManagement: React.FC<ConversationLabelsManagement
       }
     } catch (error) {
       // Error is handled by the modal
-      console.error('[handleCreateLabelSubmit] Failed to create label:', error);
+      console.error("[handleCreateLabelSubmit] Failed to create label:", error);
     }
   };
 
@@ -143,7 +153,7 @@ export const ConversationLabelsManagement: React.FC<ConversationLabelsManagement
     if (!accountId || !conversationId) return;
 
     // Optimistic update
-    const remainingLabels = labels.filter(l => l !== labelToRemove);
+    const remainingLabels = labels.filter((l) => l !== labelToRemove);
     onLabelsChanged?.(remainingLabels);
     setUpdating(true);
 
@@ -157,7 +167,10 @@ export const ConversationLabelsManagement: React.FC<ConversationLabelsManagement
       );
     } catch (error) {
       const errorMessage = extractErrorMessage(error);
-      console.error('[handleRemoveLabel] Failed to remove label:', errorMessage);
+      console.error(
+        "[handleRemoveLabel] Failed to remove label:",
+        errorMessage
+      );
       // Revert optimistic update on error
       onLabelsChanged?.(labels);
       // TODO: Show error toast with message: errorMessage
@@ -174,37 +187,37 @@ export const ConversationLabelsManagement: React.FC<ConversationLabelsManagement
           sx={{
             color: colorTokens.semantic.text.secondary,
             mb: 1,
-            display: 'block',
+            display: "block",
             fontWeight: 600,
-            textTransform: 'uppercase',
+            textTransform: "uppercase",
             fontSize: 10,
           }}
         >
-          Labels
+          {t("frontdesk.detailPanel.labels")}
         </Typography>
 
         <Box
           sx={{
             p: 1.5,
             backgroundColor: colorTokens.neutral[50],
-            borderRadius: '6px',
+            borderRadius: "6px",
             border: `1px solid ${colorTokens.semantic.border.default}`,
             minHeight: 60,
           }}
         >
           {/* Existing Labels */}
           {conversationLabelObjects.length > 0 && (
-            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mb: 1.5 }}>
+            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5, mb: 1.5 }}>
               {conversationLabelObjects.map((label, index) => (
                 <Box
                   key={index}
                   sx={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
+                    display: "inline-flex",
+                    alignItems: "center",
                     gap: 0.5,
                     backgroundColor: `${label.color}15`,
-                    borderRadius: '12px',
-                    padding: '4px 8px',
+                    borderRadius: "12px",
+                    padding: "4px 8px",
                     border: `1px solid ${label.color}40`,
                   }}
                 >
@@ -212,7 +225,7 @@ export const ConversationLabelsManagement: React.FC<ConversationLabelsManagement
                     sx={{
                       width: 8,
                       height: 8,
-                      borderRadius: '50%',
+                      borderRadius: "50%",
                       backgroundColor: label.color,
                       flexShrink: 0,
                     }}
@@ -237,7 +250,7 @@ export const ConversationLabelsManagement: React.FC<ConversationLabelsManagement
                       width: 14,
                       height: 14,
                       color: colorTokens.semantic.text.secondary,
-                      '&:hover': {
+                      "&:hover": {
                         color: colorTokens.semantic.text.primary,
                         backgroundColor: `${label.color}25`,
                       },
@@ -257,7 +270,11 @@ export const ConversationLabelsManagement: React.FC<ConversationLabelsManagement
             value={selectedValue}
             inputValue={inputValue}
             onChange={(_, newValue) => {
-              if (newValue && typeof newValue === 'object' && 'id' in newValue) {
+              if (
+                newValue &&
+                typeof newValue === "object" &&
+                "id" in newValue
+              ) {
                 // User selected an existing label
                 handleSelectLabel(newValue);
               }
@@ -267,7 +284,7 @@ export const ConversationLabelsManagement: React.FC<ConversationLabelsManagement
             }}
             options={availableLabels}
             getOptionLabel={(option) => {
-              if (typeof option === 'string') return option;
+              if (typeof option === "string") return option;
               return option.title;
             }}
             disabled={updating || labelsLoading}
@@ -277,17 +294,25 @@ export const ConversationLabelsManagement: React.FC<ConversationLabelsManagement
               // Safety check
               if (!Array.isArray(options)) return [];
 
-              const filtered = options.filter(option =>
-                option.title.toLowerCase().includes(params.inputValue.toLowerCase())
+              const filtered = options.filter((option) =>
+                option.title
+                  .toLowerCase()
+                  .includes(params.inputValue.toLowerCase())
               );
 
               // Show "Create new label" option if input doesn't match any existing label
               const inputValue = params.inputValue.trim();
-              const isExisting = options.some(option => option.title.toLowerCase() === inputValue.toLowerCase());
+              const isExisting = options.some(
+                (option) =>
+                  option.title.toLowerCase() === inputValue.toLowerCase()
+              );
 
-              if (inputValue !== '' && !isExisting) {
+              if (inputValue !== "" && !isExisting) {
                 // Add a special option for creating a new label
-                return [...filtered, { title: inputValue, color: '#6B7280', id: -1 } as any];
+                return [
+                  ...filtered,
+                  { title: inputValue, color: "#6B7280", id: -1 } as any,
+                ];
               }
 
               return filtered;
@@ -307,20 +332,30 @@ export const ConversationLabelsManagement: React.FC<ConversationLabelsManagement
                     }
                   }}
                   sx={{
-                    display: 'flex',
-                    alignItems: 'center',
+                    display: "flex",
+                    alignItems: "center",
                     gap: 1,
                     py: 1,
                     px: 1.5,
-                    '&:hover': {
-                      backgroundColor: isCreateNew ? colorTokens.neutral[100] : undefined,
+                    "&:hover": {
+                      backgroundColor: isCreateNew
+                        ? colorTokens.neutral[100]
+                        : undefined,
                     },
                   }}
                 >
                   {isCreateNew ? (
                     <>
-                      <AddIcon sx={{ fontSize: 16, color: colorTokens.semantic.text.secondary }} />
-                      <Typography variant="body2" sx={{ fontSize: 13, fontStyle: 'italic' }}>
+                      <AddIcon
+                        sx={{
+                          fontSize: 16,
+                          color: colorTokens.semantic.text.secondary,
+                        }}
+                      />
+                      <Typography
+                        variant="body2"
+                        sx={{ fontSize: 13, fontStyle: "italic" }}
+                      >
                         Create new label: &quot;{option.title}&quot;
                       </Typography>
                     </>
@@ -330,7 +365,7 @@ export const ConversationLabelsManagement: React.FC<ConversationLabelsManagement
                         sx={{
                           width: 12,
                           height: 12,
-                          borderRadius: '50%',
+                          borderRadius: "50%",
                           backgroundColor: option.color,
                           flexShrink: 0,
                         }}
@@ -346,7 +381,7 @@ export const ConversationLabelsManagement: React.FC<ConversationLabelsManagement
             renderInput={(params) => (
               <TextField
                 {...params}
-                placeholder="Add or search labels..."
+                placeholder={t("frontdesk.detailPanel.addOrSearchLabels")}
                 InputProps={{
                   ...params.InputProps,
                   endAdornment: (
@@ -357,7 +392,7 @@ export const ConversationLabelsManagement: React.FC<ConversationLabelsManagement
                   ),
                   sx: {
                     fontSize: 12,
-                    '& input': {
+                    "& input": {
                       py: 0.75,
                     },
                   },
@@ -372,12 +407,12 @@ export const ConversationLabelsManagement: React.FC<ConversationLabelsManagement
               sx={{
                 color: colorTokens.semantic.text.secondary,
                 fontSize: 11,
-                display: 'block',
-                textAlign: 'center',
+                display: "block",
+                textAlign: "center",
                 mt: 1,
               }}
             >
-              No labels yet
+              {t("frontdesk.detailPanel.noLabelsYet")}
             </Typography>
           )}
         </Box>
@@ -386,10 +421,18 @@ export const ConversationLabelsManagement: React.FC<ConversationLabelsManagement
       {/* Create Label Modal */}
       <AddEditLabelModal
         open={createModalOpen}
-        label={newLabelTitle ? { title: newLabelTitle, color: '#FF0000', show_on_sidebar: true } as any : null}
+        label={
+          newLabelTitle
+            ? ({
+                title: newLabelTitle,
+                color: "#FF0000",
+                show_on_sidebar: true,
+              } as any)
+            : null
+        }
         onClose={() => {
           setCreateModalOpen(false);
-          setNewLabelTitle('');
+          setNewLabelTitle("");
         }}
         onCreate={handleCreateLabelSubmit}
         onUpdate={async () => {}} // Not used for creation

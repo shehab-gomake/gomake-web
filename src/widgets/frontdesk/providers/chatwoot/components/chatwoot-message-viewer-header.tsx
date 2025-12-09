@@ -1,8 +1,12 @@
 import React, { useMemo } from "react";
 import { Box, Stack, Typography, IconButton, Tooltip } from "@mui/material";
+import { useTranslation } from "react-i18next";
 import { ChevronRight, ChevronLeft } from "@mui/icons-material";
 import { colorTokens } from "@/widgets/frontdesk/design-system";
-import { ChatwootConversation, ConversationPriority } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
+import {
+  ChatwootConversation,
+  ConversationPriority,
+} from "@/services/frontdesk/api/chatwoot/types/conversations.types";
 import { ConversationStatusSelector } from "./conversation-status-selector";
 import { ConversationPrioritySelector } from "./conversation-priority-selector";
 import type { ChatwootInbox } from "@/services/frontdesk/api/chatwoot/types/inboxes.types";
@@ -32,7 +36,9 @@ interface ChatwootMessageViewerHeaderProps {
   onToggleSidebar?: () => void;
 }
 
-export const ChatwootMessageViewerHeader: React.FC<ChatwootMessageViewerHeaderProps> = ({
+export const ChatwootMessageViewerHeader: React.FC<
+  ChatwootMessageViewerHeaderProps
+> = ({
   conversation,
   accountId,
   onBack,
@@ -47,6 +53,10 @@ export const ChatwootMessageViewerHeader: React.FC<ChatwootMessageViewerHeaderPr
   isSidebarVisible = true,
   onToggleSidebar,
 }) => {
+  const { t } = useTranslation();
+  const dir: "rtl" | "ltr" = t("direction");
+  const isRTL = dir === "rtl";
+
   if (!conversation) return null;
 
   // Get sender name from conversation using utility function
@@ -73,7 +83,9 @@ export const ChatwootMessageViewerHeader: React.FC<ChatwootMessageViewerHeaderPr
   }, [conversation.inbox_id, inboxes]);
 
   // Convert string priority to enum value
-  const getPriorityValue = (priority: string | undefined | null): PriorityValue => {
+  const getPriorityValue = (
+    priority: string | undefined | null
+  ): PriorityValue => {
     if (!priority) return null;
     const priorityMap: Record<string, PriorityValue> = {
       [ConversationPriority.URGENT]: ConversationPriority.URGENT,
@@ -94,9 +106,24 @@ export const ChatwootMessageViewerHeader: React.FC<ChatwootMessageViewerHeaderPr
         backgroundColor: colorTokens.semantic.background.primary,
       }}
     >
-      <Stack direction="row" alignItems="center" justifyContent="space-between">
+      <Stack
+        direction="row"
+        alignItems="center"
+        justifyContent="space-between"
+        sx={{
+          direction: dir,
+        }}
+      >
         {/* Left: Sender Name, Subject, and Inbox Info */}
-        <Stack direction="column" spacing={0.5} sx={{ flex: 1, minWidth: 0 }}>
+        <Stack
+          direction="column"
+          sx={{
+            flex: 1,
+            minWidth: 0,
+            gap: 0.5,
+            direction: dir,
+          }}
+        >
           {/* Sender Name */}
           <Typography
             variant="body1"
@@ -128,7 +155,13 @@ export const ChatwootMessageViewerHeader: React.FC<ChatwootMessageViewerHeaderPr
 
           {/* Inbox Name and Icon */}
           {inbox && (
-            <Stack direction="row" alignItems="center" spacing={0.5}>
+            <Stack
+              direction="row"
+              alignItems="center"
+              sx={{
+                gap: 0.5,
+              }}
+            >
               <Box
                 sx={{
                   display: "flex",
@@ -136,7 +169,11 @@ export const ChatwootMessageViewerHeader: React.FC<ChatwootMessageViewerHeaderPr
                   color: colorTokens.neutral[600],
                 }}
               >
-                <InboxIcon channelType={inbox.channel_type} medium={inbox.medium as string | undefined} size={14} />
+                <InboxIcon
+                  channelType={inbox.channel_type}
+                  medium={inbox.medium as string | undefined}
+                  size={14}
+                />
               </Box>
               <Typography
                 variant="caption"
@@ -152,7 +189,13 @@ export const ChatwootMessageViewerHeader: React.FC<ChatwootMessageViewerHeaderPr
         </Stack>
 
         {/* Right: Status, Priority Selectors, and Sidebar Toggle */}
-        <Stack direction="row" alignItems="center" spacing={1}>
+        <Stack
+          direction="row"
+          alignItems="center"
+          sx={{
+            gap: 1,
+          }}
+        >
           {onStatusChange && (
             <ConversationStatusSelector
               status={conversation.status || "open"}
@@ -161,7 +204,11 @@ export const ChatwootMessageViewerHeader: React.FC<ChatwootMessageViewerHeaderPr
             />
           )}
           {onPriorityChange && (
-            <ConversationPrioritySelector priority={currentPriority} onPriorityChange={onPriorityChange} updating={updating} />
+            <ConversationPrioritySelector
+              priority={currentPriority}
+              onPriorityChange={onPriorityChange}
+              updating={updating}
+            />
           )}
           {onToggleSidebar && (
             <Tooltip title={isSidebarVisible ? "Hide sidebar" : "Show sidebar"}>
@@ -176,7 +223,17 @@ export const ChatwootMessageViewerHeader: React.FC<ChatwootMessageViewerHeaderPr
                   },
                 }}
               >
-                {isSidebarVisible ? <ChevronRight fontSize="small" /> : <ChevronLeft fontSize="small" />}
+                {isSidebarVisible ? (
+                  !isRTL ? (
+                    <ChevronRight fontSize="small" />
+                  ) : (
+                    <ChevronLeft fontSize="small" />
+                  )
+                ) : !isRTL ? (
+                  <ChevronLeft fontSize="small" />
+                ) : (
+                  <ChevronRight fontSize="small" />
+                )}
               </IconButton>
             </Tooltip>
           )}

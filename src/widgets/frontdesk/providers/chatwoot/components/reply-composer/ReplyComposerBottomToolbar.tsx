@@ -1,19 +1,32 @@
 /**
  * ReplyComposerBottomToolbar Component
- * 
+ *
  * Premium bottom toolbar with modernized icons, consistent stroke weights,
  * improved spacing, and a polished send button.
  */
 
 import React from "react";
-import { Box, Stack, IconButton, Tooltip, Button, Typography, Divider } from "@mui/material";
+import {
+  Box,
+  Stack,
+  IconButton,
+  Tooltip,
+  Button,
+  Typography,
+  Divider,
+} from "@mui/material";
+import { useTranslation } from "react-i18next";
 import AttachFileOutlinedIcon from "@mui/icons-material/AttachFileOutlined";
-import AutoAwesomeOutlinedIcon from "@mui/icons-material/AutoAwesomeOutlined";
 import SendRoundedIcon from "@mui/icons-material/SendRounded";
 import CodeOutlinedIcon from "@mui/icons-material/CodeOutlined";
 import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 import type { UseChannelFeaturesReturn } from "../../hooks/use-channel-features";
-import { colorTokens, radiusTokens, shadowTokens, semanticSpacing } from "@/widgets/frontdesk/design-system";
+import {
+  colorTokens,
+  radiusTokens,
+  shadowTokens,
+  semanticSpacing,
+} from "@/widgets/frontdesk/design-system";
 
 interface ReplyComposerBottomToolbarProps {
   channelFeatures: UseChannelFeaturesReturn;
@@ -27,7 +40,9 @@ interface ReplyComposerBottomToolbarProps {
   lightGrayText: string;
 }
 
-export const ReplyComposerBottomToolbar: React.FC<ReplyComposerBottomToolbarProps> = ({
+export const ReplyComposerBottomToolbar: React.FC<
+  ReplyComposerBottomToolbarProps
+> = ({
   channelFeatures,
   messageContent,
   canSend,
@@ -37,6 +52,9 @@ export const ReplyComposerBottomToolbar: React.FC<ReplyComposerBottomToolbarProp
   attachmentCount,
   lightGrayText,
 }) => {
+  const { t } = useTranslation();
+  const dir: "rtl" | "ltr" = t("direction");
+  const isRTL = dir === "rtl";
   // Consistent icon button styling with modern appearance
   const iconButtonStyle = {
     color: colorTokens.neutral[500],
@@ -53,22 +71,6 @@ export const ReplyComposerBottomToolbar: React.FC<ReplyComposerBottomToolbarProp
     },
   };
 
-  // AI button with gradient styling
-  const aiButtonStyle = {
-    background: "linear-gradient(135deg, #8B5CF6 0%, #6366F1 100%)",
-    color: "white",
-    p: 1,
-    borderRadius: `${radiusTokens.md}px`,
-    transition: "all 0.15s ease",
-    "&:hover": {
-      background: "linear-gradient(135deg, #7C3AED 0%, #4F46E5 100%)",
-      transform: "scale(1.02)",
-    },
-    "& .MuiSvgIcon-root": {
-      fontSize: 20,
-    },
-  };
-
   return (
     <Box
       sx={{
@@ -78,28 +80,29 @@ export const ReplyComposerBottomToolbar: React.FC<ReplyComposerBottomToolbarProp
         alignItems: "center",
         justifyContent: "space-between",
         backgroundColor: "transparent",
+        direction: dir,
       }}
     >
       {/* Left Side Icons with improved spacing */}
-      <Stack direction="row" spacing={1} alignItems="center">
-        {/* AI Assist Button - Premium gradient */}
-        <Tooltip title="AI Assist" arrow>
-          <IconButton size="small" sx={aiButtonStyle}>
-            <AutoAwesomeOutlinedIcon />
-          </IconButton>
-        </Tooltip>
-
-        <Divider orientation="vertical" flexItem sx={{ mx: 0.5, borderColor: colorTokens.neutral[300] }} />
-
+      <Stack
+        direction="row"
+        alignItems="center"
+        sx={{
+          gap: 1,
+          flexDirection: isRTL ? "row-reverse" : "row",
+        }}
+      >
         {/* File upload - only if supported */}
         {channelFeatures.supportsFileUpload && (
           <Tooltip
             title={
               attachmentCount > 0
-                ? `${attachmentCount} file${attachmentCount > 1 ? "s" : ""} attached`
+                ? t("frontdesk.compose.filesAttached", {
+                    count: attachmentCount,
+                  })
                 : channelFeatures.supportsMultipleFileUpload
-                ? "Attach files"
-                : "Attach file"
+                ? t("frontdesk.compose.attachFiles")
+                : t("frontdesk.compose.attachFile")
             }
             arrow
           >
@@ -126,7 +129,7 @@ export const ReplyComposerBottomToolbar: React.FC<ReplyComposerBottomToolbarProp
                   sx={{
                     position: "absolute",
                     top: 4,
-                    right: 4,
+                    [isRTL ? "left" : "right"]: 4,
                     backgroundColor: colorTokens.primary[600],
                     color: "white",
                     borderRadius: `${radiusTokens.full}px`,
@@ -176,7 +179,14 @@ export const ReplyComposerBottomToolbar: React.FC<ReplyComposerBottomToolbarProp
       </Stack>
 
       {/* Right Side: Character Count and Send Button */}
-      <Stack direction="row" spacing={1.5} alignItems="center">
+      <Stack
+        direction="row"
+        alignItems="center"
+        sx={{
+          gap: 1.5,
+          flexDirection: isRTL ? "row-reverse" : "row",
+        }}
+      >
         {/* Character Count - subtle styling */}
         {messageContent.length > 0 && (
           <Typography
@@ -185,7 +195,8 @@ export const ReplyComposerBottomToolbar: React.FC<ReplyComposerBottomToolbarProp
               color:
                 messageContent.length > channelFeatures.maxMessageLength
                   ? colorTokens.error[600]
-                  : messageContent.length > channelFeatures.maxMessageLength * 0.9
+                  : messageContent.length >
+                    channelFeatures.maxMessageLength * 0.9
                   ? colorTokens.warning[600]
                   : colorTokens.neutral[400],
               fontSize: "0.75rem",
@@ -193,7 +204,8 @@ export const ReplyComposerBottomToolbar: React.FC<ReplyComposerBottomToolbarProp
               fontVariantNumeric: "tabular-nums",
             }}
           >
-            {messageContent.length.toLocaleString()} / {channelFeatures.maxMessageLength.toLocaleString()}
+            {messageContent.length.toLocaleString()} /{" "}
+            {channelFeatures.maxMessageLength.toLocaleString()}
           </Typography>
         )}
 
@@ -202,7 +214,13 @@ export const ReplyComposerBottomToolbar: React.FC<ReplyComposerBottomToolbarProp
           variant="contained"
           onClick={onSend}
           disabled={!canSend || isSending}
-          endIcon={<SendRoundedIcon sx={{ fontSize: 16, ml: -0.5 }} />}
+          {...(isRTL
+            ? {
+                startIcon: <SendRoundedIcon sx={{ fontSize: 16, ml: 1 }} />,
+              }
+            : {
+                endIcon: <SendRoundedIcon sx={{ fontSize: 16, ml: -0.5 }} />,
+              })}
           sx={{
             backgroundColor: colorTokens.primary[600],
             color: "white",
@@ -230,7 +248,7 @@ export const ReplyComposerBottomToolbar: React.FC<ReplyComposerBottomToolbarProp
             },
           }}
         >
-          Send
+          {t("frontdesk.compose.send")}
         </Button>
       </Stack>
     </Box>
