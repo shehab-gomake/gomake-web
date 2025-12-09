@@ -1,11 +1,17 @@
 /**
  * NavigationSidebar Constants
- * 
+ *
  * Centralized constants for styling, configuration, and accessibility
  */
 
 import { alpha } from "@mui/material";
-import { radiusTokens, shadowTokens } from "@/widgets/frontdesk/design-system/tokens";
+import {
+  radiusTokens,
+  shadowTokens,
+} from "@/widgets/frontdesk/design-system/tokens";
+
+// Note: A11Y_LABELS are now handled via translations in NavigationSidebar.tsx
+// This file is kept for backward compatibility but labels should use t() function
 
 // Sidebar dimensions
 export const SIDEBAR_WIDTHS = {
@@ -154,7 +160,9 @@ export const getIconColor = (
   if (isSelected) {
     return theme.palette.primary.main;
   }
-  const opacity = isHovered ? COLOR_OPACITIES.icon.hover : COLOR_OPACITIES.icon.default;
+  const opacity = isHovered
+    ? COLOR_OPACITIES.icon.hover
+    : COLOR_OPACITIES.icon.default;
   return alpha(theme.palette.text.secondary, opacity);
 };
 
@@ -166,7 +174,10 @@ export const getBackgroundColor = (
 ): string => {
   if (isSelected) {
     return isHovered
-      ? alpha(theme.palette.primary.main, COLOR_OPACITIES.background.selectedHover)
+      ? alpha(
+          theme.palette.primary.main,
+          COLOR_OPACITIES.background.selectedHover
+        )
       : alpha(theme.palette.primary.main, COLOR_OPACITIES.background.selected);
   }
   return isHovered ? theme.palette.action.hover : "transparent";
@@ -175,7 +186,8 @@ export const getBackgroundColor = (
 // Accessibility labels
 export const A11Y_LABELS = {
   sidebar: "Navigation sidebar",
-  toggleCollapse: (isCollapsed: boolean) => isCollapsed ? "Expand sidebar" : "Collapse sidebar",
+  toggleCollapse: (isCollapsed: boolean) =>
+    isCollapsed ? "Expand sidebar" : "Collapse sidebar",
   newTicket: "Create new ticket",
   dashboard: "Dashboard view",
   myTickets: "My tickets view",
@@ -187,4 +199,3 @@ export const A11Y_LABELS = {
   addChannel: "Add new channel",
   noAgentsWarning: "No agents assigned - Click to assign",
 } as const;
-

@@ -1,5 +1,6 @@
 import React from "react";
 import { Box, Typography, Button, Stack, alpha } from "@mui/material";
+import { useTranslation } from "react-i18next";
 import InboxIcon from "@mui/icons-material/Inbox";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import { colorTokens } from "@/widgets/frontdesk/design-system";
@@ -50,13 +51,14 @@ export const NoConversationsEmptyState: React.FC<NoConversationsEmptyStateProps>
   onClearFilters,
   hasFilters = false,
 }) => {
+  const { t } = useTranslation();
 
   // Context-aware messaging
   const getMessage = () => {
     if (hasFilters) {
       return {
-        title: "No tickets match your filters",
-        description: "Try adjusting your filters or clearing them to see all tickets.",
+        title: t("frontdesk.emptyStates.noTicketsMatchFilters"),
+        description: t("frontdesk.emptyStates.adjustFilters"),
       };
     }
 
@@ -64,38 +66,38 @@ export const NoConversationsEmptyState: React.FC<NoConversationsEmptyStateProps>
       case "open":
       case "mine":
         return {
-          title: "No open tickets",
-          description: "Great job! You've closed all your tickets. Take a break or check for new messages.",
+          title: t("frontdesk.emptyStates.noOpenTickets"),
+          description: t("frontdesk.emptyStates.allTicketsClosed"),
         };
       case "resolved":
         return {
-          title: "No closed tickets",
-          description: "You haven't closed any tickets yet. Keep working on those open ones!",
+          title: t("frontdesk.emptyStates.noClosedTickets"),
+          description: t("frontdesk.emptyStates.noClosedTicketsDescription"),
         };
       case "pending":
         return {
-          title: "No pending tickets",
-          description: "All tickets are either open or closed. Nothing is waiting for action.",
+          title: t("frontdesk.emptyStates.noPendingTickets"),
+          description: t("frontdesk.emptyStates.noPendingTicketsDescription"),
         };
       case "snoozed":
         return {
-          title: "No snoozed tickets",
-          description: "You haven't snoozed any tickets. Use snooze to temporarily hide tickets.",
+          title: t("frontdesk.emptyStates.noSnoozedTickets"),
+          description: t("frontdesk.emptyStates.noSnoozedTicketsDescription"),
         };
       case "unassigned":
         return {
-          title: "No unassigned tickets",
-          description: "All tickets have been assigned to team members. Great teamwork!",
+          title: t("frontdesk.emptyStates.noUnassignedTickets"),
+          description: t("frontdesk.emptyStates.noUnassignedTicketsDescription"),
         };
       case "mentions":
         return {
-          title: "No mentions",
-          description: "You haven't been mentioned in any tickets recently.",
+          title: t("frontdesk.emptyStates.noMentions"),
+          description: t("frontdesk.emptyStates.noMentionsDescription"),
         };
       default:
         return {
-          title: "No tickets yet",
-          description: "Start a ticket with a customer or wait for incoming messages.",
+          title: t("frontdesk.emptyStates.noTicketsYet"),
+          description: t("frontdesk.emptyStates.startTicketOrWait"),
         };
     }
   };
@@ -176,7 +178,7 @@ export const NoConversationsEmptyState: React.FC<NoConversationsEmptyStateProps>
               },
             }}
           >
-            Refresh
+            {t("frontdesk.refresh")}
           </Button>
         )}
 
@@ -195,7 +197,7 @@ export const NoConversationsEmptyState: React.FC<NoConversationsEmptyStateProps>
               },
             }}
           >
-            Clear Filters
+            {t("frontdesk.clearFilters")}
           </Button>
         )}
       </Stack>

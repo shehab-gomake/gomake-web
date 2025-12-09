@@ -1,19 +1,20 @@
 /**
  * Workload Header Component
- * 
+ *
  * Displays agent workload summary cards at the top of the Kanban board.
  * Uses unified design system components and tokens for consistency.
  */
 
-import React, { memo, useMemo } from 'react';
-import { Box, Stack, Tooltip } from '@mui/material';
-import { 
+import React, { memo, useMemo } from "react";
+import { Box, Stack, Tooltip } from "@mui/material";
+import { useTranslation } from "react-i18next";
+import {
   Inbox as InboxIcon,
   PendingActions as PendingIcon,
-} from '@mui/icons-material';
+} from "@mui/icons-material";
 
 // Design system - unified components and tokens
-import { 
+import {
   colorTokens,
   radiusTokens,
   shadowTokens,
@@ -21,12 +22,15 @@ import {
   slaColors,
   Avatar,
   StatsCardSkeleton,
-} from '@/widgets/frontdesk/design-system';
+} from "@/widgets/frontdesk/design-system";
 
 // Types
-import type { Agent } from '@/services/frontdesk/api/chatwoot/types/agents.types';
-import type { ChatwootConversation } from '@/services/frontdesk/api/chatwoot/types/conversations.types';
-import { getWorkloadLevel, WORKLOAD_THRESHOLDS } from '../../types/kanban.types';
+import type { Agent } from "@/services/frontdesk/api/chatwoot/types/agents.types";
+import type { ChatwootConversation } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
+import {
+  getWorkloadLevel,
+  WORKLOAD_THRESHOLDS,
+} from "../../types/kanban.types";
 
 // ============================================
 // Types
@@ -43,20 +47,20 @@ interface AgentWorkloadSummary {
   openCount: number;
   pendingCount: number;
   totalCount: number;
-  loadLevel: 'low' | 'medium' | 'high';
+  loadLevel: "low" | "medium" | "high";
 }
 
 // ============================================
 // Helper Functions
 // ============================================
 
-const getWorkloadColor = (level: 'low' | 'medium' | 'high'): string => {
+const getWorkloadColor = (level: "low" | "medium" | "high"): string => {
   switch (level) {
-    case 'low':
+    case "low":
       return slaColors.onTrack.main;
-    case 'medium':
+    case "medium":
       return slaColors.warning.main;
-    case 'high':
+    case "high":
       return slaColors.breached.main;
     default:
       return colorTokens.neutral[400];
@@ -78,12 +82,12 @@ const WorkloadSkeleton: React.FC = () => (
     direction="row"
     spacing={2.5}
     sx={{
-      padding: '16px 24px',
-      overflowX: 'auto',
-      '&::-webkit-scrollbar': {
+      padding: "16px 24px",
+      overflowX: "auto",
+      "&::-webkit-scrollbar": {
         height: 4,
       },
-      '&::-webkit-scrollbar-thumb': {
+      "&::-webkit-scrollbar-thumb": {
         backgroundColor: colorTokens.neutral[300],
         borderRadius: 2,
       },
@@ -104,34 +108,45 @@ interface AgentCardProps {
 }
 
 const AgentCard: React.FC<AgentCardProps> = memo(({ summary }) => {
+  const { t } = useTranslation();
   const { agent, openCount, pendingCount, totalCount, loadLevel } = summary;
-  
+
   return (
-    <Tooltip 
-      title={`${agent.name}: ${openCount} open, ${pendingCount} pending, ${totalCount} total`}
+    <Tooltip
+      title={t("frontdesk.workboard.agentWorkload", {
+        name: agent.name,
+        open: openCount,
+        pending: pendingCount,
+        total: totalCount,
+      })}
       placement="bottom"
     >
       <Box
         sx={{
           minWidth: 170,
           maxWidth: 190,
-          padding: '16px',
+          padding: "16px",
           backgroundColor: colorTokens.semantic.background.primary,
           borderRadius: `${radiusTokens.lg}px`,
           boxShadow: shadowTokens.card,
           border: `1px solid ${colorTokens.semantic.border.default}`,
           borderLeft: `3px solid ${getWorkloadColor(loadLevel)}`,
-          transition: 'transform 0.15s ease, box-shadow 0.15s ease',
-          '&:hover': {
-            transform: 'translateY(-1px)',
+          transition: "transform 0.15s ease, box-shadow 0.15s ease",
+          "&:hover": {
+            transform: "translateY(-1px)",
             boxShadow: shadowTokens.cardHover,
           },
         }}
       >
         {/* Agent Info - Using Avatar primitive */}
-        <Stack direction="row" spacing={1.5} alignItems="center" marginBottom="12px">
+        <Stack
+          direction="row"
+          spacing={1.5}
+          alignItems="center"
+          marginBottom="12px"
+        >
           <Avatar
-            name={agent.name || 'Agent'}
+            name={agent.name || "Agent"}
             src={agent.thumbnail}
             size="sm"
           />
@@ -143,10 +158,10 @@ const AgentCard: React.FC<AgentCardProps> = memo(({ summary }) => {
                 ...semanticTypography.body.medium,
                 fontWeight: semanticTypography.heading.h5.fontWeight,
                 color: colorTokens.semantic.text.primary,
-                display: 'block',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap',
+                display: "block",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
               }}
             >
               {agent.name}
@@ -158,12 +173,12 @@ const AgentCard: React.FC<AgentCardProps> = memo(({ summary }) => {
                 ...semanticTypography.caption.small,
                 fontWeight: semanticTypography.label.small.fontWeight,
                 color: getWorkloadColor(loadLevel),
-                display: 'block',
+                display: "block",
               }}
             >
-              {loadLevel === 'low' && 'Available'}
-              {loadLevel === 'medium' && 'Moderate'}
-              {loadLevel === 'high' && 'Heavy Load'}
+              {loadLevel === "low" && "Available"}
+              {loadLevel === "medium" && "Moderate"}
+              {loadLevel === "high" && "Heavy Load"}
             </Box>
           </Box>
         </Stack>
@@ -192,7 +207,7 @@ const AgentCard: React.FC<AgentCardProps> = memo(({ summary }) => {
               open
             </Box>
           </Stack>
-          
+
           <Stack direction="row" alignItems="center" spacing={0.5}>
             <PendingIcon sx={{ fontSize: 13, color: statusColors.pending }} />
             <Box
@@ -218,22 +233,25 @@ const AgentCard: React.FC<AgentCardProps> = memo(({ summary }) => {
         </Stack>
 
         {/* Workload Bar */}
-        <Box sx={{ marginTop: '12px' }}>
+        <Box sx={{ marginTop: "12px" }}>
           <Box
             sx={{
               height: 4,
               borderRadius: radiusTokens.sm,
               backgroundColor: colorTokens.neutral[200],
-              overflow: 'hidden',
+              overflow: "hidden",
             }}
           >
             <Box
               sx={{
-                height: '100%',
-                width: `${Math.min((openCount / WORKLOAD_THRESHOLDS.medium) * 100, 100)}%`,
+                height: "100%",
+                width: `${Math.min(
+                  (openCount / WORKLOAD_THRESHOLDS.medium) * 100,
+                  100
+                )}%`,
                 backgroundColor: getWorkloadColor(loadLevel),
                 borderRadius: radiusTokens.sm,
-                transition: 'width 0.3s ease',
+                transition: "width 0.3s ease",
               }}
             />
           </Box>
@@ -254,28 +272,34 @@ const WorkloadHeaderComponent: React.FC<WorkloadHeaderProps> = ({
 }) => {
   // Calculate workload for each agent
   const agentWorkloads = useMemo<AgentWorkloadSummary[]>(() => {
-    return agents.map(agent => {
-      const agentConvs = conversations.filter(c => c.meta?.assignee?.id === agent.id);
-      const openCount = agentConvs.filter(c => c.status === 'open').length;
-      const pendingCount = agentConvs.filter(c => c.status === 'pending').length;
-      
-      return {
-        agent,
-        openCount,
-        pendingCount,
-        totalCount: agentConvs.length,
-        loadLevel: getWorkloadLevel(openCount),
-      };
-    }).sort((a, b) => b.openCount - a.openCount);
+    return agents
+      .map((agent) => {
+        const agentConvs = conversations.filter(
+          (c) => c.meta?.assignee?.id === agent.id
+        );
+        const openCount = agentConvs.filter((c) => c.status === "open").length;
+        const pendingCount = agentConvs.filter(
+          (c) => c.status === "pending"
+        ).length;
+
+        return {
+          agent,
+          openCount,
+          pendingCount,
+          totalCount: agentConvs.length,
+          loadLevel: getWorkloadLevel(openCount),
+        };
+      })
+      .sort((a, b) => b.openCount - a.openCount);
   }, [agents, conversations]);
 
   // Calculate totals
   const totals = useMemo(() => {
-    const unassigned = conversations.filter(c => !c.meta?.assignee?.id);
+    const unassigned = conversations.filter((c) => !c.meta?.assignee?.id);
     return {
       total: conversations.length,
       unassigned: unassigned.length,
-      unassignedOpen: unassigned.filter(c => c.status === 'open').length,
+      unassignedOpen: unassigned.filter((c) => c.status === "open").length,
     };
   }, [conversations]);
 
@@ -290,13 +314,18 @@ const WorkloadHeaderComponent: React.FC<WorkloadHeaderProps> = ({
   return (
     <Box
       sx={{
-        padding: '16px 24px',
+        padding: "16px 24px",
         backgroundColor: colorTokens.neutral[50],
         borderBottom: `1px solid ${colorTokens.semantic.border.default}`,
       }}
     >
       {/* Header - Using semantic typography */}
-      <Stack direction="row" justifyContent="space-between" alignItems="center" marginBottom="12px">
+      <Stack
+        direction="row"
+        justifyContent="space-between"
+        alignItems="center"
+        marginBottom="12px"
+      >
         <Box
           component="span"
           sx={{
@@ -312,7 +341,7 @@ const WorkloadHeaderComponent: React.FC<WorkloadHeaderProps> = ({
             sx={{
               ...semanticTypography.caption.medium,
               color: colorTokens.semantic.text.tertiary,
-              '& strong': {
+              "& strong": {
                 fontWeight: semanticTypography.heading.h5.fontWeight,
                 color: colorTokens.semantic.text.primary,
               },
@@ -326,7 +355,7 @@ const WorkloadHeaderComponent: React.FC<WorkloadHeaderProps> = ({
               sx={{
                 ...semanticTypography.caption.medium,
                 color: colorTokens.warning[600],
-                '& strong': {
+                "& strong": {
                   fontWeight: semanticTypography.heading.h5.fontWeight,
                 },
               }}
@@ -342,12 +371,12 @@ const WorkloadHeaderComponent: React.FC<WorkloadHeaderProps> = ({
         direction="row"
         spacing={2.5}
         sx={{
-          overflowX: 'auto',
-          paddingBottom: '4px',
-          '&::-webkit-scrollbar': {
+          overflowX: "auto",
+          paddingBottom: "4px",
+          "&::-webkit-scrollbar": {
             height: 4,
           },
-          '&::-webkit-scrollbar-thumb': {
+          "&::-webkit-scrollbar-thumb": {
             backgroundColor: colorTokens.neutral[300],
             borderRadius: 2,
           },

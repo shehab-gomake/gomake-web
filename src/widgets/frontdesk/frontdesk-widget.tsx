@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Box, Typography, IconButton } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
+import { useTranslation } from "react-i18next";
 import { useRecoilValue, useRecoilState } from "recoil";
 
 // Three-column layout components
@@ -44,6 +45,7 @@ import { dmActiveConversationIdState } from "@/store/direct-messages";
 import { useFrontDeskRouter, RouteType, TicketView } from "./routing";
 
 const FrontdeskWidget: React.FC = () => {
+  const { t } = useTranslation();
   // NEW: Use centralized routing system
   const {
     currentRoute,
@@ -282,7 +284,7 @@ const FrontdeskWidget: React.FC = () => {
           return (
             <Box sx={{ p: 2 }}>
               <Typography variant="body2" color="text.secondary">
-                Assigned conversations will appear here
+                {t("frontdesk.assignedConversations")}
               </Typography>
             </Box>
           );
@@ -290,7 +292,7 @@ const FrontdeskWidget: React.FC = () => {
           return (
             <Box sx={{ p: 2 }}>
               <Typography variant="body2" color="text.secondary">
-                Admin options
+                {t("frontdesk.adminOptions")}
               </Typography>
             </Box>
           );
@@ -305,7 +307,7 @@ const FrontdeskWidget: React.FC = () => {
         return (
           <Box sx={{ p: 1 }}>
             <Typography variant="body2" color="text.secondary">
-              All conversations
+              {t("frontdesk.allConversations")}
             </Typography>
           </Box>
         );
@@ -313,7 +315,7 @@ const FrontdeskWidget: React.FC = () => {
         return (
           <Box sx={{ p: 1 }}>
             <Typography variant="body2" color="text.secondary">
-              Email conversations
+              {t("frontdesk.emailConversations")}
             </Typography>
           </Box>
         );
@@ -321,7 +323,7 @@ const FrontdeskWidget: React.FC = () => {
         return (
           <Box sx={{ p: 1 }}>
             <Typography variant="body2" color="text.secondary">
-              WhatsApp conversations
+              {t("frontdesk.whatsappConversations")}
             </Typography>
           </Box>
         );
@@ -329,7 +331,7 @@ const FrontdeskWidget: React.FC = () => {
         return (
           <Box sx={{ p: 1 }}>
             <Typography variant="body2" color="text.secondary">
-              Direct Messages
+              {t("frontdesk.directMessages")}
             </Typography>
           </Box>
         );
@@ -337,7 +339,7 @@ const FrontdeskWidget: React.FC = () => {
         return (
           <Box sx={{ p: 1 }}>
             <Typography variant="body2" color="text.secondary">
-              Chatwoot conversations
+              {t("frontdesk.chatwootConversations")}
             </Typography>
           </Box>
         );
@@ -353,18 +355,18 @@ const FrontdeskWidget: React.FC = () => {
         case "assigned":
           return (
             <Box sx={{ p: 3 }}>
-              <Typography variant="h4">Assigned to Me</Typography>
+              <Typography variant="h4">{t("frontdesk.assignedToMe")}</Typography>
               <Typography variant="body1" sx={{ mt: 2 }}>
-                Work board coming soon
+                {t("frontdesk.workBoardComingSoon")}
               </Typography>
             </Box>
           );
         case "admin":
           return (
             <Box sx={{ p: 3 }}>
-              <Typography variant="h4">Admin</Typography>
+              <Typography variant="h4">{t("frontdesk.admin")}</Typography>
               <Typography variant="body1" sx={{ mt: 2 }}>
-                Provider accounts management
+                {t("frontdesk.providerAccountsManagement")}
               </Typography>
             </Box>
           );
@@ -406,17 +408,17 @@ const FrontdeskWidget: React.FC = () => {
 
     switch (viewStr) {
       case "my-tickets":
-        return "My Tickets";
+        return t("frontdesk.tickets.myTickets");
       case "unassigned":
-        return "Unassigned";
+        return t("frontdesk.tickets.unassigned");
       case "all-tickets":
-        return "All Tickets";
+        return t("frontdesk.tickets.allTickets");
       case "done":
-        return "Done";
+        return t("frontdesk.tickets.done");
       case "archived":
-        return "Archived";
+        return t("frontdesk.tickets.archived");
       default:
-        return "Tickets";
+        return t("frontdesk.tickets.title");
     }
   };
 
@@ -598,7 +600,7 @@ const FrontdeskWidget: React.FC = () => {
                               flex: 1,
                             }}
                           >
-                            {tabTicket.conversation?.name || `Ticket #${tabTicket.ticketNumber}`}
+                            {tabTicket.conversation?.name || t("frontdesk.tickets.ticketNumber", { number: tabTicket.ticketNumber })}
                           </Typography>
                         </Box>
                         <IconButton
@@ -681,7 +683,7 @@ const FrontdeskWidget: React.FC = () => {
               ) : (
                 <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100%" }}>
                   <Typography variant="h6" color="text.secondary">
-                    Select a ticket to view details
+                    {t("frontdesk.tickets.selectTicketToView")}
                   </Typography>
                 </Box>
               )}

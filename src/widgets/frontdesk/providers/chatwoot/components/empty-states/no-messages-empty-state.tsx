@@ -1,5 +1,6 @@
 import React from "react";
 import { Box, Typography, Button, Stack, useTheme, alpha } from "@mui/material";
+import { useTranslation } from "react-i18next";
 import { colorTokens, radiusTokens, shadowTokens } from "@/widgets/frontdesk/design-system";
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
 import SendIcon from "@mui/icons-material/Send";
@@ -43,19 +44,20 @@ export const NoMessagesEmptyState: React.FC<NoMessagesEmptyStateProps> = ({
   onStartConversation,
   contactName,
 }) => {
+  const { t } = useTranslation();
   const theme = useTheme();
 
   const getMessage = () => {
     if (isNewConversation) {
       return {
-        title: contactName ? `Start a conversation with ${contactName}` : "Start a new conversation",
-        description: "Send the first message to begin this conversation. Your message will be delivered via the selected channel.",
+        title: contactName ? t("frontdesk.emptyStates.startConversationWith", { name: contactName }) : t("frontdesk.emptyStates.startNewConversation"),
+        description: t("frontdesk.emptyStates.sendFirstMessage"),
       };
     }
 
     return {
-      title: "No messages yet",
-      description: "This conversation doesn't have any messages. There may have been an issue loading them.",
+      title: t("frontdesk.emptyStates.noMessagesYet"),
+      description: t("frontdesk.emptyStates.noMessagesDescription"),
     };
   };
 
@@ -129,7 +131,7 @@ export const NoMessagesEmptyState: React.FC<NoMessagesEmptyStateProps> = ({
             },
           }}
         >
-          Start Conversation
+          {t("frontdesk.emptyStates.startConversation")}
         </Button>
       )}
     </Box>
