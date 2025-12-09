@@ -1,9 +1,11 @@
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
+import {useIsMobile} from "@/hooks/use-responsive";
 
 const useStyle = () => {
   const { secondColor } = useGomakeTheme();
+  const isMobile = useIsMobile();
   const classes = useMemo(() => {
     return {
       mainContainer: {
@@ -15,7 +17,7 @@ const useStyle = () => {
         height: "100%",
       },
       insideStyle: {
-        width: "50%",
+        width: isMobile ? "80%" : "50%",
         borderRadius: 5,
         height: "600px",
         minHeight: "300px",
