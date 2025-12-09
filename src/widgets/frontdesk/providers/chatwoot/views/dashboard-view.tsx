@@ -188,7 +188,13 @@ export const DashboardView: React.FC = () => {
                 justifyContent: "space-between",
               }}
             >
-              <Stack direction="row" spacing={1.5} alignItems="center">
+              <Stack
+                direction="row"
+                alignItems="center"
+                sx={{
+                  gap: 1.5,
+                }}
+              >
                 <Box
                   sx={{
                     width: 32,

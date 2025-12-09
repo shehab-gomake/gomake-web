@@ -1,5 +1,14 @@
 import React, { useCallback, useMemo } from "react";
-import { Box, ListItem, ListItemButton, Typography, Stack, Tooltip, type SxProps, type Theme } from "@mui/material";
+import {
+  Box,
+  ListItem,
+  ListItemButton,
+  Typography,
+  Stack,
+  Tooltip,
+  type SxProps,
+  type Theme,
+} from "@mui/material";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import { Avatar } from "../../primitives/Avatar";
@@ -7,7 +16,10 @@ import { colorTokens } from "../../tokens";
 import { InboxIcon } from "@/widgets/frontdesk/providers/chatwoot/utils/inbox-icons";
 import { ConversationPriorityIcon } from "@/widgets/frontdesk/providers/chatwoot/components/conversation-priority-icon";
 import { ConversationSLALabel } from "@/widgets/frontdesk/providers/chatwoot/components/conversation-sla-label";
-import { ConversationLabels, ConversationLabel } from "@/widgets/frontdesk/providers/chatwoot/components/conversation-labels";
+import {
+  ConversationLabels,
+  ConversationLabel,
+} from "@/widgets/frontdesk/providers/chatwoot/components/conversation-labels";
 import { PriorityLevel, PresenceStatus } from "../../types";
 
 // ============================================================================
@@ -91,21 +103,21 @@ export interface ConversationListItemProps {
 // Constants (8px rhythm, modern SaaS design)
 // ============================================================================
 
-const AVATAR_SIZE = 40;                // 5 * 8 = 40px
-const INBOX_ICON_CONTAINER_SIZE = 22;  // Slightly smaller for cleaner look
+const AVATAR_SIZE = 40; // 5 * 8 = 40px
+const INBOX_ICON_CONTAINER_SIZE = 22; // Slightly smaller for cleaner look
 const INBOX_ICON_SIZE = 13;
 const PRIORITY_ICON_SIZE = 14;
-const ASSIGNEE_AVATAR_SIZE = 22;       // Slightly smaller for balance
-const UNREAD_BADGE_SIZE = 20;          // Smaller, more modern pill badge
+const ASSIGNEE_AVATAR_SIZE = 22; // Slightly smaller for balance
+const UNREAD_BADGE_SIZE = 20; // Smaller, more modern pill badge
 const MAX_UNREAD_DISPLAY = 99;
 const ACTION_ICON_SIZE = 14;
 
 // Card styling constants (design spec: 12px radius, soft shadow)
-const CARD_RADIUS = 12;                // 12px for list items
-const CARD_PADDING_X = 16;             // 2 * 8 = 16px horizontal
-const CARD_PADDING_Y = 14;             // Slightly less vertical for density
-const ITEM_GAP = 8;                    // 8px gap between items
-const ACCENT_LINE_WIDTH = 3;           // Thin accent line for selected state
+const CARD_RADIUS = 12; // 12px for list items
+const CARD_PADDING_X = 16; // 2 * 8 = 16px horizontal
+const CARD_PADDING_Y = 14; // Slightly less vertical for density
+const ITEM_GAP = 8; // 8px gap between items
+const ACCENT_LINE_WIDTH = 3; // Thin accent line for selected state
 
 // Modern soft separator color - uses design system token
 const SEPARATOR_COLOR = colorTokens.neutral[100];
@@ -120,20 +132,22 @@ const getListItemButtonStyles = (isSelected: boolean): SxProps<Theme> => ({
   mx: `${ITEM_GAP}px`,
   my: `${ITEM_GAP / 2}px`,
   borderRadius: `${CARD_RADIUS}px`,
-  backgroundColor: isSelected 
-    ? colorTokens.semantic.background.primary 
+  backgroundColor: isSelected
+    ? colorTokens.semantic.background.primary
     : colorTokens.semantic.background.primary,
-  border: `1px solid ${isSelected ? colorTokens.primary[200] : colorTokens.neutral[100]}`,
+  border: `1px solid ${
+    isSelected ? colorTokens.primary[200] : colorTokens.neutral[100]
+  }`,
   // Soft shadow as per design spec - subtle and refined
-  boxShadow: isSelected 
-    ? "0 2px 8px -2px rgba(59, 130, 246, 0.12)" 
+  boxShadow: isSelected
+    ? "0 2px 8px -2px rgba(59, 130, 246, 0.12)"
     : "0 1px 3px rgba(0, 0, 0, 0.02)",
   "&:hover": {
-    backgroundColor: isSelected 
-      ? colorTokens.primary[50] 
+    backgroundColor: isSelected
+      ? colorTokens.primary[50]
       : colorTokens.neutral[50],
-    borderColor: isSelected 
-      ? colorTokens.primary[300] 
+    borderColor: isSelected
+      ? colorTokens.primary[300]
       : colorTokens.neutral[200],
     // Subtle hover elevation
     boxShadow: "0 4px 12px -4px rgba(0, 0, 0, 0.06)",
@@ -156,7 +170,10 @@ const getListItemButtonStyles = (isSelected: boolean): SxProps<Theme> => ({
     : {},
 });
 
-const getTitleStyles = (isSelected: boolean, isUnread: boolean): SxProps<Theme> => ({
+const getTitleStyles = (
+  isSelected: boolean,
+  isUnread: boolean
+): SxProps<Theme> => ({
   fontWeight: isUnread ? 600 : 500,
   color: colorTokens.semantic.text.primary,
   fontSize: "0.875rem", // 14px - semibold for name as per spec
@@ -271,24 +288,44 @@ export const ConversationListItem = React.memo<ConversationListItemProps>(
     // ========================================================================
 
     const participantName = useMemo(
-      () => (Array.isArray(participants) ? String(participants[0] || "") : String(participants || "")),
+      () =>
+        Array.isArray(participants)
+          ? String(participants[0] || "")
+          : String(participants || ""),
       [participants]
     );
 
-    const isUnread = useMemo(() => !isRead || (unreadCount ?? 0) > 0, [isRead, unreadCount]);
+    const isUnread = useMemo(
+      () => !isRead || (unreadCount ?? 0) > 0,
+      [isRead, unreadCount]
+    );
 
     const displayUnreadCount = useMemo(
-      () => (unreadCount && unreadCount > 0 ? (unreadCount > MAX_UNREAD_DISPLAY ? "99+" : unreadCount) : null),
+      () =>
+        unreadCount && unreadCount > 0
+          ? unreadCount > MAX_UNREAD_DISPLAY
+            ? "99+"
+            : unreadCount
+          : null,
       [unreadCount]
     );
 
     const hasMetadata = useMemo(
-      () => Boolean(appliedSla?.id || (labels && labels.length > 0) || assignee?.name),
+      () =>
+        Boolean(
+          appliedSla?.id || (labels && labels.length > 0) || assignee?.name
+        ),
       [appliedSla?.id, labels, assignee?.name]
     );
 
     const normalizedPriority = useMemo(
-      () => priority?.toLowerCase() as "urgent" | "high" | "medium" | "low" | undefined,
+      () =>
+        priority?.toLowerCase() as
+          | "urgent"
+          | "high"
+          | "medium"
+          | "low"
+          | undefined,
       [priority]
     );
 
@@ -317,7 +354,15 @@ export const ConversationListItem = React.memo<ConversationListItemProps>(
           onContextMenu={handleContextMenu}
           sx={getListItemButtonStyles(isSelected)}
         >
-          <Stack direction="row" alignItems="flex-start" spacing={1.5} sx={{ width: "100%", px: 1.5 }}>
+          <Stack
+            direction="row"
+            alignItems="flex-start"
+            sx={{
+              width: "100%",
+              px: 1.5,
+              gap: 1.5,
+            }}
+          >
             {/* Contact Avatar - Larger with better styling */}
             <Avatar
               size="md"
@@ -329,7 +374,11 @@ export const ConversationListItem = React.memo<ConversationListItemProps>(
                 height: AVATAR_SIZE,
                 fontSize: "0.875rem",
                 flexShrink: 0,
-                border: `2px solid ${isSelected ? colorTokens.primary[200] : colorTokens.neutral[200]}`,
+                border: `2px solid ${
+                  isSelected
+                    ? colorTokens.primary[200]
+                    : colorTokens.neutral[200]
+                }`,
                 boxShadow: "0 2px 4px rgba(0, 0, 0, 0.08)",
                 mt: 0.25,
               }}
@@ -338,19 +387,48 @@ export const ConversationListItem = React.memo<ConversationListItemProps>(
             </Avatar>
 
             {/* Content Section - Better spacing */}
-            <Stack flex={1} spacing={0.5} sx={{ minWidth: 0, py: 0.25 }}>
+            <Stack
+              flex={1}
+              sx={{
+                minWidth: 0,
+                py: 0.25,
+                gap: 0.5,
+              }}
+            >
               {/* First Row: Title/Name + Timestamp */}
-              <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1}>
-                <Stack direction="row" alignItems="center" spacing={1} sx={{ flex: 1, minWidth: 0 }}>
+              <Stack
+                direction="row"
+                alignItems="center"
+                justifyContent="space-between"
+                sx={{
+                  gap: 1,
+                }}
+              >
+                <Stack
+                  direction="row"
+                  alignItems="center"
+                  sx={{
+                    flex: 1,
+                    minWidth: 0,
+                    gap: 1,
+                  }}
+                >
                   {/* Inbox Icon in styled container */}
                   {inboxChannelType && (
                     <Box sx={inboxIconContainerStyles}>
-                      <InboxIcon channelType={inboxChannelType} medium={inboxMedium} size={INBOX_ICON_SIZE} />
+                      <InboxIcon
+                        channelType={inboxChannelType}
+                        medium={inboxMedium}
+                        size={INBOX_ICON_SIZE}
+                      />
                     </Box>
                   )}
-                  
+
                   {/* Contact Name - Primary text */}
-                  <Typography variant="body2" sx={getTitleStyles(isSelected, isUnread)}>
+                  <Typography
+                    variant="body2"
+                    sx={getTitleStyles(isSelected, isUnread)}
+                  >
                     {title}
                   </Typography>
                 </Stack>
@@ -382,7 +460,9 @@ export const ConversationListItem = React.memo<ConversationListItemProps>(
                 <Typography
                   variant="body2"
                   sx={{
-                    color: isSelected ? colorTokens.primary[700] : colorTokens.neutral[600],
+                    color: isSelected
+                      ? colorTokens.primary[700]
+                      : colorTokens.neutral[600],
                     fontSize: "0.8125rem", // 13px
                     fontWeight: isUnread ? 500 : 400,
                     lineHeight: 1.4,
@@ -397,8 +477,23 @@ export const ConversationListItem = React.memo<ConversationListItemProps>(
               )}
 
               {/* Message Preview Row */}
-              <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1}>
-                <Stack direction="row" alignItems="center" spacing={0.75} sx={{ flex: 1, minWidth: 0 }}>
+              <Stack
+                direction="row"
+                alignItems="center"
+                justifyContent="space-between"
+                sx={{
+                  gap: 1,
+                }}
+              >
+                <Stack
+                  direction="row"
+                  alignItems="center"
+                  sx={{
+                    flex: 1,
+                    minWidth: 0,
+                    gap: 0.75,
+                  }}
+                >
                   {hasAttachments && (
                     <AttachFileIcon
                       sx={{
@@ -415,33 +510,48 @@ export const ConversationListItem = React.memo<ConversationListItemProps>(
                 </Stack>
 
                 {/* Right side: Priority + Unread Badge */}
-                <Stack direction="row" alignItems="center" spacing={0.75}>
+                <Stack
+                  direction="row"
+                  alignItems="center"
+                  sx={{
+                    gap: 0.75,
+                  }}
+                >
                   {normalizedPriority && (
-                    <ConversationPriorityIcon priority={normalizedPriority} size={PRIORITY_ICON_SIZE} />
+                    <ConversationPriorityIcon
+                      priority={normalizedPriority}
+                      size={PRIORITY_ICON_SIZE}
+                    />
                   )}
-                  {displayUnreadCount && <Box sx={unreadBadgeStyles}>{displayUnreadCount}</Box>}
+                  {displayUnreadCount && (
+                    <Box sx={unreadBadgeStyles}>{displayUnreadCount}</Box>
+                  )}
                 </Stack>
               </Stack>
 
               {/* Metadata Row: SLA | Labels | Action Icons | Assignee */}
               {hasMetadata && (
-                <Stack 
-                  direction="row" 
-                  alignItems="center" 
-                  justifyContent="space-between" 
-                  spacing={1}
-                  sx={{ 
+                <Stack
+                  direction="row"
+                  alignItems="center"
+                  justifyContent="space-between"
+                  sx={{
                     mt: 0.5,
                     pt: 0.75,
                     borderTop: `1px solid ${colorTokens.neutral[100]}`,
+                    gap: 1,
                   }}
                 >
                   {/* Left: SLA & Labels */}
                   <Stack
                     direction="row"
                     alignItems="center"
-                    spacing={0.75}
-                    sx={{ flexWrap: "wrap", gap: 0.5, flex: 1, minWidth: 0 }}
+                    sx={{
+                      flexWrap: "wrap",
+                      gap: 0.75,
+                      flex: 1,
+                      minWidth: 0,
+                    }}
                   >
                     {appliedSla?.id && conversationTimestamp && (
                       <ConversationSLALabel
@@ -451,18 +561,29 @@ export const ConversationListItem = React.memo<ConversationListItemProps>(
                       />
                     )}
 
-                    {labels && labels.length > 0 && <ConversationLabels labels={labels} accountLabels={accountLabels} />}
+                    {labels && labels.length > 0 && (
+                      <ConversationLabels
+                        labels={labels}
+                        accountLabels={accountLabels}
+                      />
+                    )}
                   </Stack>
 
                   {/* Right: Action Icons + Assignee */}
-                  <Stack direction="row" alignItems="center" spacing={0.75}>
+                  <Stack
+                    direction="row"
+                    alignItems="center"
+                    sx={{
+                      gap: 0.75,
+                    }}
+                  >
                     {/* Assignment indicator */}
                     {assignee?.name && (
                       <Tooltip title="Assigned" arrow placement="top">
                         <PersonAddIcon sx={actionIconStyles} />
                       </Tooltip>
                     )}
-                    
+
                     {/* Assignee Avatar */}
                     {assignee?.name && (
                       <Tooltip title={assignee.name} arrow placement="top">

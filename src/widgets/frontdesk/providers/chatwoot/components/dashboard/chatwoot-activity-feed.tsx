@@ -157,7 +157,13 @@ const TimeGroupHeader: React.FC<TimeGroupHeaderProps> = ({
         borderRadius: "8px",
       }}
     >
-      <Stack direction="row" spacing={1} alignItems="center">
+      <Stack
+        direction="row"
+        alignItems="center"
+        sx={{
+          gap: 1,
+        }}
+      >
         <Box
           sx={{
             width: 24,
