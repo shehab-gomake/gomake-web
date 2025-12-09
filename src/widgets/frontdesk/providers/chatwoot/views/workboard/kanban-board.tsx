@@ -1,37 +1,40 @@
 /**
  * Kanban Board Component for Chatwoot Conversations
- * 
+ *
  * Main board layout with horizontal scrolling columns.
  * Uses unified design system components for consistent styling.
  */
 
-import React, { memo, useCallback } from 'react';
-import { DragDropContext, DropResult } from 'react-beautiful-dnd';
-import { Box, Stack, CircularProgress, Typography, alpha } from '@mui/material';
-import { 
+import React, { memo, useCallback } from "react";
+import { DragDropContext, DropResult } from "react-beautiful-dnd";
+import { Box, Stack, CircularProgress, Typography, alpha } from "@mui/material";
+import {
   Refresh as RefreshIcon,
   Inbox as InboxIcon,
-} from '@mui/icons-material';
+} from "@mui/icons-material";
 
 // Design system - unified components and tokens
-import { 
+import {
   colorTokens,
   radiusTokens,
   semanticTypography,
   EmptyState,
   Button,
-} from '@/widgets/frontdesk/design-system';
+} from "@/widgets/frontdesk/design-system";
 
 // Components
-import { KanbanColumn } from './kanban-column';
+import { KanbanColumn } from "./kanban-column";
 
 // Types
-import { KanbanConversationColumn } from '../../types/kanban.types';
-import { ChatwootConversation, ConversationPriority } from '@/services/frontdesk/api/chatwoot/types/conversations.types';
-import type { Agent } from '@/services/frontdesk/api/chatwoot/types/agents.types';
+import { KanbanConversationColumn } from "../../types/kanban.types";
+import {
+  ChatwootConversation,
+  ConversationPriority,
+} from "@/services/frontdesk/api/chatwoot/types/conversations.types";
+import type { Agent } from "@/services/frontdesk/api/chatwoot/types/agents.types";
 
 // Hooks
-import { useChatwootRouter } from '../../hooks/use-chatwoot-router';
+import { useChatwootRouter } from "../../hooks/use-chatwoot-router";
 
 // ============================================
 // Types
@@ -46,8 +49,14 @@ export interface KanbanBoardProps {
   onDragEnd: (result: DropResult) => void;
   onRefresh: () => void;
   onResolve: (conversation: ChatwootConversation) => void;
-  onAssign: (conversation: ChatwootConversation, agentId: number | null) => void;
-  onPriorityChange: (conversation: ChatwootConversation, priority: ConversationPriority) => void;
+  onAssign: (
+    conversation: ChatwootConversation,
+    agentId: number | null
+  ) => void;
+  onPriorityChange: (
+    conversation: ChatwootConversation,
+    priority: ConversationPriority
+  ) => void;
 }
 
 // ============================================
@@ -59,18 +68,18 @@ const LoadingState: React.FC = () => (
     justifyContent="center"
     alignItems="center"
     sx={{
-      height: '100%',
+      height: "100%",
       minHeight: 400,
       backgroundColor: colorTokens.neutral[50],
     }}
   >
-    <CircularProgress 
-      size={36} 
+    <CircularProgress
+      size={36}
       thickness={3}
-      sx={{ 
+      sx={{
         color: colorTokens.primary[500],
-        marginBottom: '12px',
-      }} 
+        marginBottom: "12px",
+      }}
     />
     <Typography
       sx={{
@@ -95,12 +104,12 @@ interface ErrorStateProps {
 const ErrorState: React.FC<ErrorStateProps> = ({ error, onRetry }) => (
   <Box
     sx={{
-      height: '100%',
+      height: "100%",
       minHeight: 400,
       backgroundColor: colorTokens.neutral[50],
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
     }}
   >
     <EmptyState
@@ -108,11 +117,11 @@ const ErrorState: React.FC<ErrorStateProps> = ({ error, onRetry }) => (
       title="Failed to load board"
       description={error}
       action={{
-        label: 'Try Again',
+        label: "Try Again",
         onClick: onRetry,
       }}
       sx={{
-        '& .MuiBox-root:first-of-type': {
+        "& .MuiBox-root:first-of-type": {
           backgroundColor: colorTokens.error[50],
           color: colorTokens.error[500],
         },
@@ -128,12 +137,12 @@ const ErrorState: React.FC<ErrorStateProps> = ({ error, onRetry }) => (
 const BoardEmptyState: React.FC = () => (
   <Box
     sx={{
-      height: '100%',
+      height: "100%",
       minHeight: 400,
       backgroundColor: colorTokens.neutral[50],
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
     }}
   >
     <EmptyState
@@ -163,11 +172,14 @@ const KanbanBoardComponent: React.FC<KanbanBoardProps> = ({
   const { navigateToConversation } = useChatwootRouter();
 
   // Handle card click - navigate to conversation
-  const handleCardClick = useCallback((conversation: ChatwootConversation) => {
-    if (conversation.id) {
-      navigateToConversation(conversation.id.toString());
-    }
-  }, [navigateToConversation]);
+  const handleCardClick = useCallback(
+    (conversation: ChatwootConversation) => {
+      if (conversation.id) {
+        navigateToConversation(conversation.id.toString());
+      }
+    },
+    [navigateToConversation]
+  );
 
   // Show loading state
   if (isLoading) {
@@ -191,33 +203,41 @@ const KanbanBoardComponent: React.FC<KanbanBoardProps> = ({
     <DragDropContext onDragEnd={onDragEnd}>
       <Box
         sx={{
-          position: 'relative',
-          height: '100%',
-          overflow: 'hidden',
+          position: "relative",
+          height: "100%",
+          overflow: "hidden",
         }}
       >
         {/* Operation loading overlay */}
         {isOperationLoading && (
           <Box
             sx={{
-              position: 'absolute',
+              position: "absolute",
               top: 0,
               left: 0,
               right: 0,
               bottom: 0,
-              backgroundColor: alpha(colorTokens.semantic.background.primary, 0.8),
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
+              backgroundColor: alpha(
+                colorTokens.semantic.background.primary,
+                0.8
+              ),
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
               zIndex: 10,
-              backdropFilter: 'blur(3px)',
+              backdropFilter: "blur(3px)",
             }}
           >
-            <Stack alignItems="center" spacing={1.5}>
-              <CircularProgress 
-                size={32} 
+            <Stack
+              alignItems="center"
+              sx={{
+                gap: 1.5,
+              }}
+            >
+              <CircularProgress
+                size={32}
                 thickness={3}
-                sx={{ color: colorTokens.primary[500] }} 
+                sx={{ color: colorTokens.primary[500] }}
               />
               <Typography
                 sx={{
@@ -234,24 +254,24 @@ const KanbanBoardComponent: React.FC<KanbanBoardProps> = ({
         {/* Columns container - unified spacing */}
         <Stack
           direction="row"
-          spacing={2.5}
           sx={{
-            padding: '20px 24px',
-            height: '100%',
-            overflowX: 'auto',
-            overflowY: 'hidden',
-            alignItems: 'flex-start',
+            gap: 2.5,
+            padding: "20px 24px",
+            height: "100%",
+            overflowX: "auto",
+            overflowY: "hidden",
+            alignItems: "flex-start",
             backgroundColor: colorTokens.neutral[100],
-            '&::-webkit-scrollbar': {
+            "&::-webkit-scrollbar": {
               height: 6,
             },
-            '&::-webkit-scrollbar-track': {
-              backgroundColor: 'transparent',
+            "&::-webkit-scrollbar-track": {
+              backgroundColor: "transparent",
             },
-            '&::-webkit-scrollbar-thumb': {
+            "&::-webkit-scrollbar-thumb": {
               backgroundColor: colorTokens.neutral[300],
               borderRadius: 3,
-              '&:hover': {
+              "&:hover": {
                 backgroundColor: colorTokens.neutral[400],
               },
             },

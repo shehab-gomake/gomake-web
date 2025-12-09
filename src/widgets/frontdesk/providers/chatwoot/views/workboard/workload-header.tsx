@@ -80,8 +80,8 @@ const statusColors = {
 const WorkloadSkeleton: React.FC = () => (
   <Stack
     direction="row"
-    spacing={2.5}
     sx={{
+      gap: 2.5,
       padding: "16px 24px",
       overflowX: "auto",
       "&::-webkit-scrollbar": {
@@ -141,9 +141,11 @@ const AgentCard: React.FC<AgentCardProps> = memo(({ summary }) => {
         {/* Agent Info - Using Avatar primitive */}
         <Stack
           direction="row"
-          spacing={1.5}
           alignItems="center"
           marginBottom="12px"
+          sx={{
+            gap: 1.5,
+          }}
         >
           <Avatar
             name={agent.name || "Agent"}
@@ -184,8 +186,19 @@ const AgentCard: React.FC<AgentCardProps> = memo(({ summary }) => {
         </Stack>
 
         {/* Stats - Using semantic typography */}
-        <Stack direction="row" spacing={2}>
-          <Stack direction="row" alignItems="center" spacing={0.5}>
+        <Stack
+          direction="row"
+          sx={{
+            gap: 2,
+          }}
+        >
+          <Stack
+            direction="row"
+            alignItems="center"
+            sx={{
+              gap: 0.5,
+            }}
+          >
             <InboxIcon sx={{ fontSize: 13, color: statusColors.open }} />
             <Box
               component="span"
@@ -208,7 +221,13 @@ const AgentCard: React.FC<AgentCardProps> = memo(({ summary }) => {
             </Box>
           </Stack>
 
-          <Stack direction="row" alignItems="center" spacing={0.5}>
+          <Stack
+            direction="row"
+            alignItems="center"
+            sx={{
+              gap: 0.5,
+            }}
+          >
             <PendingIcon sx={{ fontSize: 13, color: statusColors.pending }} />
             <Box
               component="span"
@@ -335,7 +354,12 @@ const WorkloadHeaderComponent: React.FC<WorkloadHeaderProps> = ({
         >
           Team Workload
         </Box>
-        <Stack direction="row" spacing={2.5}>
+        <Stack
+          direction="row"
+          sx={{
+            gap: 2.5,
+          }}
+        >
           <Box
             component="span"
             sx={{
@@ -369,8 +393,8 @@ const WorkloadHeaderComponent: React.FC<WorkloadHeaderProps> = ({
       {/* Agent Cards */}
       <Stack
         direction="row"
-        spacing={2.5}
         sx={{
+          gap: 2.5,
           overflowX: "auto",
           paddingBottom: "4px",
           "&::-webkit-scrollbar": {
