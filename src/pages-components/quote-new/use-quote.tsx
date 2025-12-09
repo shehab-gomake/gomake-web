@@ -68,7 +68,7 @@ import {
   undoDocumentIntakeApi,
   undoDocumentItemIntakeApi,
 } from "@/services/api-service/generic-doc/documents-api";
-import { DOCUMENT_TYPE } from "../quotes/enums";
+import { DOCUMENT_TYPE, StatusTitleText } from "../quotes/enums";
 import { useRouter } from "next/router";
 import {
   getAllCreditTransactionsApi,
@@ -1417,6 +1417,9 @@ const useQuoteNew = ({
     setOpenDeleteModalContact(false);
   };
 
+  // State for add item restriction dialog
+  const [showAddItemRestrictionDialog, setShowAddItemRestrictionDialog] = useState(false);
+
   const onOpenNewItem = () => {
     // Check if it's a material purchase order and supplier is required
     if (
@@ -1427,7 +1430,33 @@ const useQuoteNew = ({
       alertFault(t("home.admin.pleaseSelectSupplier"));
       return;
     }
+
+    // Check if purchase order status is Closed or Received
+    if (isPurchaseOrder && !isNewCreation) {
+      const isClosed = quoteItemValue?.statusTitleText === StatusTitleText.PurchaseOrderClosed;
+      const isReceived = quoteItemValue?.documentStatus === PurchaseOrderStatuses.Received;
+
+      if (isClosed || isReceived) {
+        setShowAddItemRestrictionDialog(true);
+        return;
+      }
+    }
+
     setOpenAddNewItemModal(true);
+  };
+
+  // Handle create new purchase order - open type selection modal
+  const handleCreateNewPurchaseOrder = () => {
+    setShowAddItemRestrictionDialog(false);
+    // Open purchase order type selection modal (same as "Create new" button)
+    onOpenPurchaseOrderTypeModal();
+  };
+
+  // Handle cancel - check if can save with same supplier
+  const handleCancelAddItemRestriction = () => {
+    setShowAddItemRestrictionDialog(false);
+    // If supplier exists, we could potentially save, but user chose not to create new PO
+    // Just close the dialog - no action needed as per requirements
   };
   const onOpenNewContact = () => {
     setOpenAddNewContactModal(true);
@@ -3452,6 +3481,10 @@ const useQuoteNew = ({
     showUndoIntakeDialog,
     handleConfirmUndoIntake,
     handleCancelUndoIntake,
+    // Add item restriction dialog
+    showAddItemRestrictionDialog,
+    handleCreateNewPurchaseOrder,
+    handleCancelAddItemRestriction,
   };
 };
 

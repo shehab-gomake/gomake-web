@@ -64,7 +64,7 @@ import { InvoiceCreationModal } from "@/widgets/quote-new/invoice-creation-modal
 import { useQuoteGetData } from "./use-quote-get-data";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { DateField } from "@/components/date-picker/date-filed";
-import { ModalType } from "@/enums";
+import { ModalType, PurchaseOrderStatuses } from "@/enums";
 import { DuplicateQuickModal } from "@/widgets/quote-new/modals-widgets/duplicate-quick-modal";
 import Stack from "@mui/material/Stack";
 import { ClientBalanceComponent } from "@/components/client-balance/client-balance";
@@ -413,6 +413,9 @@ const QuoteNewPageWidget = ({
     showUndoIntakeDialog,
     handleConfirmUndoIntake,
     handleCancelUndoIntake,
+    showAddItemRestrictionDialog,
+    handleCreateNewPurchaseOrder,
+    handleCancelAddItemRestriction,
   } = useQuoteNew({
     docType: documentType,
     isQuoteConfirmation: isQuoteConfirmation,
@@ -1107,6 +1110,25 @@ const QuoteNewPageWidget = ({
         <Box sx={{ padding: "20px" }}>
           <Typography variant="body1">
             {t("sales.purchaseOrder.undoIntakeMessage") || "Do you want to undo the intake before changing the status?"}
+          </Typography>
+        </Box>
+      </GoMakeDialog>
+      {/* Add Item Restriction Dialog - when status is Closed or Received */}
+      <GoMakeDialog
+        open={showAddItemRestrictionDialog}
+        onClose={handleCancelAddItemRestriction}
+        title={t("sales.purchaseOrder.cannotAddItem") || "Cannot Add Item"}
+        maxWidth="sm"
+        showFooter={true}
+        primaryButtonLabel={t("sales.purchaseOrder.createNewPurchaseOrder") || "Create New Purchase Order"}
+        cancelButtonLabel={t("common.cancel")}
+        onPrimaryAction={handleCreateNewPurchaseOrder}
+        hideCancelButton={false}
+      >
+        <Box sx={{ padding: "20px" }}>
+          <Typography variant="body1">
+            {t("sales.purchaseOrder.addItemRestrictionMessage", { status: quoteItemValue?.documentStatus === PurchaseOrderStatuses.Received ? t("documentStatus.PurchaseOrder.Received") : t("documentStatus.PurchaseOrder.Closed") }) ||
+              `You are in {{status}} status and cannot add new items. Would you like to create a new purchase order?`}
           </Typography>
         </Box>
       </GoMakeDialog>
