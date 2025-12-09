@@ -1,5 +1,5 @@
 import { useMessageTemplate } from '@/widgets/settings-mailing/useMessageTemplate';
-import React, { Suspense, lazy, useEffect, useRef, useContext, useMemo, useState } from 'react';
+import React, { Suspense, lazy, useEffect, useRef, useContext, useMemo, useState, useCallback } from 'react';
 import { useStyle } from './style';
 import { Stack, IconButton } from '@mui/material';
 import { useTranslation } from 'react-i18next';
@@ -56,6 +56,9 @@ const QuillEditor = ({ value, setValue }: IProps) => {
     const editorRef = useRef<any>();
     const [editorKey, setEditorKey] = useState(0);
     const [hasError, setHasError] = useState(false);
+    const isInternalUpdateRef = useRef(false);
+    const previousValueRef = useRef<string | null | undefined>(value);
+    const isInitializedRef = useRef(false);
     
     // Normalize and sanitize value to always be a valid string - this prevents null/undefined errors
     // Also ensures the HTML is safe for Quill to parse
@@ -158,6 +161,7 @@ const QuillEditor = ({ value, setValue }: IProps) => {
     useEffect(() => {
         if (hasError) {
             // Reset error state and remount editor after a short delay
+            isInitializedRef.current = false;
             const timer = setTimeout(() => {
                 setHasError(false);
                 setEditorKey(prev => prev + 1);
@@ -166,13 +170,35 @@ const QuillEditor = ({ value, setValue }: IProps) => {
         }
     }, [hasError]);
     
-    // Reset editor key when value changes significantly to ensure clean initialization
+    // Initialize previousValueRef on mount
     useEffect(() => {
-        // Force remount when value changes from/to null/undefined to handle edge cases
-        if (value !== normalizedValue && (value === null || value === undefined || normalizedValue === '')) {
-            setEditorKey(prev => prev + 1);
+        previousValueRef.current = value;
+    }, []);
+
+    // Reset editor key when value changes externally (not from internal updates)
+    useEffect(() => {
+        // Only remount if value changed externally (not due to our own setValue call)
+        if (!isInternalUpdateRef.current) {
+            const prevValue = previousValueRef.current;
+            const hasChanged = prevValue !== value;
+            
+            if (hasChanged) {
+                // Reset initialization flag when value changes externally
+                isInitializedRef.current = false;
+                
+                // Force remount when value changes from/to null/undefined to handle edge cases
+                const isNullishChange = 
+                    (prevValue === null || prevValue === undefined) !== (value === null || value === undefined);
+                
+                if (isNullishChange) {
+                    setEditorKey(prev => prev + 1);
+                }
+                previousValueRef.current = value;
+            }
         }
-    }, [value, normalizedValue]);
+        // Reset the flag after processing
+        isInternalUpdateRef.current = false;
+    }, [value]);
 
     type scrollVisibilityApiType = React.ContextType<typeof VisibilityContext>;
     const dir: 'rtl' | 'ltr' = t('direction');
@@ -217,6 +243,12 @@ const QuillEditor = ({ value, setValue }: IProps) => {
     // Simple ref callback - ReactQuill handles content initialization internally
     const handleEditorRef = (ref: any) => {
         editorRef.current = ref;
+        // Mark editor as initialized after a short delay to allow ReactQuill to finish setup
+        if (ref && !isInitializedRef.current) {
+            setTimeout(() => {
+                isInitializedRef.current = true;
+            }, 100);
+        }
     };
 
     // Add Ctrl + A / Cmd + A keyboard shortcut for Select All
@@ -238,9 +270,35 @@ const QuillEditor = ({ value, setValue }: IProps) => {
         }
     }, [editorRef]);
 
-    const handleChange = (value: string) => {
-        setValue(value);
-    };
+    const handleChange = useCallback((newValue: string) => {
+        // Prevent onChange during initial setup to avoid infinite loops
+        if (!isInitializedRef.current) {
+            return;
+        }
+        
+        // Prevent infinite loops by checking if value actually changed
+        const currentValue = value || '';
+        const normalizedNewValue = newValue || '';
+        
+        // Normalize HTML for comparison (remove empty tags, normalize whitespace)
+        const normalizeForComparison = (html: string) => {
+            if (!html) return '';
+            return html
+                .replace(/<p><br><\/p>/gi, '')
+                .replace(/<p><\/p>/gi, '')
+                .replace(/<br\s*\/?>/gi, '')
+                .trim();
+        };
+        
+        const normalizedCurrent = normalizeForComparison(currentValue);
+        const normalizedNew = normalizeForComparison(normalizedNewValue);
+        
+        // Only update if the value actually changed
+        if (normalizedCurrent !== normalizedNew) {
+            isInternalUpdateRef.current = true;
+            setValue(newValue);
+        }
+    }, [value, setValue]);
 
     // AddVariable function
     const AddVariable = (value) => {
