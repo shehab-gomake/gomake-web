@@ -1,10 +1,5 @@
 import React from "react";
 import {
-    Dialog,
-    DialogTitle,
-    DialogContent,
-    DialogActions,
-    Button,
     Table,
     TableBody,
     TableCell,
@@ -14,10 +9,10 @@ import {
     Paper,
     Box,
     Typography,
-    IconButton,
     CircularProgress,
 } from "@mui/material";
-import { TabCloseIcon } from "@/icons";
+import { useTranslation } from "react-i18next";
+import { GoMakeDialog } from "@/components/dialog/go-make-dialog";
 
 // Backend job data interface
 interface JobData {
@@ -44,47 +39,58 @@ interface JobsModalProps {
 }
 
 // Helper functions for mapping backend enum values
-const getDocumentTypeDisplay = (documentType: number): string => {
+// DocumentTypeEnum: Quote(0), Order(1), DeliveryNote(2), Invoice(3), Receipt(4),
+//                   DeliveryNoteRefund(5), InvoiceRefund(6), GeneralLedgerReport(7),
+//                   PurchaseOrder(8), PurchaseInvoice(9), PurchaseInvoiceRefund(10), BoardMission(11)
+const getDocumentTypeDisplay = (documentType: number, t: (key: string) => string): string => {
     switch (documentType) {
         case 0:
-            return "Quote";
+            return t("materials.jobsModal.documentType.quote");
         case 1:
-            return "Order";
+            return t("materials.jobsModal.documentType.order");
         case 2:
-            return "Invoice";
+            return t("materials.jobsModal.documentType.deliveryNote");
+        case 3:
+            return t("materials.jobsModal.documentType.invoice");
+        case 4:
+            return t("materials.jobsModal.documentType.receipt");
+        case 5:
+            return t("materials.jobsModal.documentType.deliveryNoteRefund");
+        case 6:
+            return t("materials.jobsModal.documentType.invoiceRefund");
+        case 7:
+            return t("materials.jobsModal.documentType.generalLedgerReport");
+        case 8:
+            return t("materials.jobsModal.documentType.purchaseOrder");
+        case 9:
+            return t("materials.jobsModal.documentType.purchaseInvoice");
+        case 10:
+            return t("materials.jobsModal.documentType.purchaseInvoiceRefund");
+        case 11:
+            return t("materials.jobsModal.documentType.boardMission");
         default:
-            return "Unknown";
+            return t("materials.jobsModal.documentType.unknown");
     }
 };
 
-const getStatusDisplay = (status: number): string => {
+// InventoryUsageStatus: HoldOn = 1, Done = 2
+const getStatusDisplay = (status: number, t: (key: string) => string): string => {
     switch (status) {
-        case 0:
-            return "Pending";
         case 1:
-            return "In Progress";
+            return t("materials.jobsModal.status.holdOn");
         case 2:
-            return "Completed";
-        case 3:
-            return "On Hold";
-        case 4:
-            return "Cancelled";
+            return t("materials.jobsModal.status.done");
         default:
-            return "Unknown";
+            return t("materials.jobsModal.status.unknown");
     }
 };
 
 const getStatusColor = (status: number): string => {
     switch (status) {
-        case 2: // Completed
+        case 2: // Done
             return "#4caf50"; // Green
-        case 1: // In Progress
+        case 1: // Hold On
             return "#ff9800"; // Orange
-        case 3: // On Hold
-        case 0: // Pending
-            return "#f44336"; // Red
-        case 4: // Cancelled
-            return "#9e9e9e"; // Grey
         default:
             return "#9e9e9e"; // Grey
     }
@@ -99,185 +105,155 @@ const JobsModal = ({
     jobsData,
     isLoading = false
 }: JobsModalProps) => {
+    const { t } = useTranslation();
     // Use the actual backend data
     const displayData = jobsData;
+
+    const title = `${materialName} · ${supplierName} · ${materialCode} — ${t("materials.jobsModal.title")}`;
+
     return (
-        <Dialog
+        <GoMakeDialog
             open={open}
             onClose={onClose}
+            title={title}
             maxWidth="xl"
-            fullWidth
-            PaperProps={{
-                sx: {
-                    borderRadius: "8px",
-                    minHeight: "400px"
-                }
-            }}
-        >
-            <DialogTitle sx={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                backgroundColor: "#f5f5f5",
-                borderBottom: "1px solid #e0e0e0"
-            }}>
-                <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-                    {materialName} · {supplierName} · {materialCode} — Jobs
-                </Typography>
-                <IconButton onClick={onClose} size="small">
-                    <TabCloseIcon />
-                </IconButton>
-            </DialogTitle>
+            fullWidth={true}
+            hidePrimaryButton={true}
 
-            <DialogContent sx={{ padding: 0 }}>
-                {isLoading ? (
-                    <Box sx={{ display: 'flex', justifyContent: 'center', padding: 4 }}>
-                        <CircularProgress />
-                    </Box>
-                ) : (
-                    <TableContainer component={Paper} sx={{ maxHeight: 400, width: '100%' }}>
-                        <Table stickyHeader>
-                            <TableHead>
-                                <TableRow sx={{ backgroundColor: "#EBECFF" }}>
-                                    <TableCell sx={{
-                                        textAlign: "center",
-                                        fontWeight: "bold",
-                                        whiteSpace: "nowrap",
-                                        backgroundColor: "#EBECFF"
-                                    }}>
-                                        CLIENT NAME
-                                    </TableCell>
-                                    <TableCell sx={{
-                                        textAlign: "center",
-                                        fontWeight: "bold",
-                                        whiteSpace: "nowrap",
-                                        backgroundColor: "#EBECFF"
-                                    }}>
-                                        DOCUMENT TYPE
-                                    </TableCell>
-                                    <TableCell sx={{
-                                        textAlign: "center",
-                                        fontWeight: "bold",
-                                        whiteSpace: "nowrap",
-                                        backgroundColor: "#EBECFF"
-                                    }}>
-                                        DOCUMENT NUMBER
-                                    </TableCell>
-                                    <TableCell sx={{
-                                        textAlign: "center",
-                                        fontWeight: "bold",
-                                        whiteSpace: "nowrap",
-                                        backgroundColor: "#EBECFF"
-                                    }}>
-                                        JOB NAME
-                                    </TableCell>
-                                    <TableCell sx={{
-                                        textAlign: "center",
-                                        fontWeight: "bold",
-                                        whiteSpace: "nowrap",
-                                        backgroundColor: "#EBECFF"
-                                    }}>
-                                        JOB NUMBER
-                                    </TableCell>
-                                    <TableCell sx={{
-                                        textAlign: "center",
-                                        fontWeight: "bold",
-                                        whiteSpace: "nowrap",
-                                        backgroundColor: "#EBECFF"
-                                    }}>
-                                        USED INVENTORY
-                                    </TableCell>
-                                    <TableCell sx={{
-                                        textAlign: "center",
-                                        fontWeight: "bold",
-                                        whiteSpace: "nowrap",
-                                        backgroundColor: "#EBECFF"
-                                    }}>
-                                        STATUS
+
+        >
+            {isLoading ? (
+                <Box sx={{ display: 'flex', justifyContent: 'center', padding: 4 }}>
+                    <CircularProgress />
+                </Box>
+            ) : (
+                <TableContainer component={Paper} sx={{ maxHeight: 400, width: '100%', marginTop: "10px" }}>
+                    <Table stickyHeader>
+                        <TableHead>
+                            <TableRow sx={{ backgroundColor: "#EBECFF" }}>
+                                <TableCell sx={{
+                                    textAlign: "center",
+                                    fontWeight: "bold",
+                                    whiteSpace: "nowrap",
+                                    backgroundColor: "#EBECFF"
+                                }}>
+                                    {t("materials.jobsModal.tableHeaders.clientName")}
+                                </TableCell>
+                                <TableCell sx={{
+                                    textAlign: "center",
+                                    fontWeight: "bold",
+                                    whiteSpace: "nowrap",
+                                    backgroundColor: "#EBECFF"
+                                }}>
+                                    {t("materials.jobsModal.tableHeaders.documentType")}
+                                </TableCell>
+                                <TableCell sx={{
+                                    textAlign: "center",
+                                    fontWeight: "bold",
+                                    whiteSpace: "nowrap",
+                                    backgroundColor: "#EBECFF"
+                                }}>
+                                    {t("materials.jobsModal.tableHeaders.documentNumber")}
+                                </TableCell>
+                                <TableCell sx={{
+                                    textAlign: "center",
+                                    fontWeight: "bold",
+                                    whiteSpace: "nowrap",
+                                    backgroundColor: "#EBECFF"
+                                }}>
+                                    {t("materials.jobsModal.tableHeaders.jobName")}
+                                </TableCell>
+                                <TableCell sx={{
+                                    textAlign: "center",
+                                    fontWeight: "bold",
+                                    whiteSpace: "nowrap",
+                                    backgroundColor: "#EBECFF"
+                                }}>
+                                    {t("materials.jobsModal.tableHeaders.jobNumber")}
+                                </TableCell>
+                                <TableCell sx={{
+                                    textAlign: "center",
+                                    fontWeight: "bold",
+                                    whiteSpace: "nowrap",
+                                    backgroundColor: "#EBECFF"
+                                }}>
+                                    {t("materials.jobsModal.tableHeaders.usedInventory")}
+                                </TableCell>
+                                <TableCell sx={{
+                                    textAlign: "center",
+                                    fontWeight: "bold",
+                                    whiteSpace: "nowrap",
+                                    backgroundColor: "#EBECFF"
+                                }}>
+                                    {t("materials.jobsModal.tableHeaders.status")}
+                                </TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {displayData?.length === 0 && !isLoading ? (
+                                <TableRow>
+                                    <TableCell colSpan={7} sx={{ textAlign: "center", padding: 4 }}>
+                                        <Typography variant="body2" color="text.secondary">
+                                            {t("materials.jobsModal.emptyState")}
+                                        </Typography>
                                     </TableCell>
                                 </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {displayData?.length === 0 && !isLoading ? (
-                                    <TableRow>
-                                        <TableCell colSpan={7} sx={{ textAlign: "center", padding: 4 }}>
-                                            <Typography variant="body2" color="text.secondary">
-                                                No jobs found for this material
+                            ) : (
+                                displayData?.map((job, index) => (
+                                    <TableRow key={job.id || index} hover>
+                                        <TableCell sx={{ textAlign: "center", whiteSpace: "nowrap" }}>
+                                            {job.clientName}
+                                        </TableCell>
+                                        <TableCell sx={{ textAlign: "center", whiteSpace: "nowrap" }}>
+                                            <Box
+                                                sx={{
+                                                    backgroundColor: "#f5f5f5",
+                                                    borderRadius: "16px",
+                                                    padding: "4px 8px",
+                                                    display: "inline-block",
+                                                    fontSize: "0.75rem"
+                                                }}
+                                            >
+                                                {getDocumentTypeDisplay(job.documentType, t)}
+                                            </Box>
+                                        </TableCell>
+                                        <TableCell sx={{ textAlign: "center", whiteSpace: "nowrap" }}>
+                                            {job.documentNumber}
+                                        </TableCell>
+                                        <TableCell sx={{ textAlign: "center", whiteSpace: "nowrap" }}>
+                                            {job.jobName}
+                                        </TableCell>
+                                        <TableCell sx={{ textAlign: "center", whiteSpace: "nowrap" }}>
+                                            {job.jobNumber}
+                                        </TableCell>
+                                        <TableCell sx={{ textAlign: "center", whiteSpace: "nowrap" }}>
+                                            <Typography variant="body2" sx={{ fontWeight: "bold" }}>
+                                                {job.usedInventory}
                                             </Typography>
                                         </TableCell>
+                                        <TableCell sx={{ textAlign: "center", whiteSpace: "nowrap" }}>
+                                            <Box
+                                                sx={{
+                                                    backgroundColor: getStatusColor(job.status),
+                                                    color: "white",
+                                                    borderRadius: "16px",
+                                                    padding: "4px 8px",
+                                                    display: "inline-block",
+                                                    fontSize: "0.75rem",
+                                                    fontWeight: "bold"
+                                                }}
+                                            >
+                                                {getStatusDisplay(job.status, t)}
+                                            </Box>
+                                        </TableCell>
                                     </TableRow>
-                                ) : (
-                                    displayData?.map((job, index) => (
-                                        <TableRow key={job.id || index} hover>
-                                            <TableCell sx={{ textAlign: "center", whiteSpace: "nowrap" }}>
-                                                {job.clientName}
-                                            </TableCell>
-                                            <TableCell sx={{ textAlign: "center", whiteSpace: "nowrap" }}>
-                                                <Box
-                                                    sx={{
-                                                        backgroundColor: "#f5f5f5",
-                                                        borderRadius: "16px",
-                                                        padding: "4px 8px",
-                                                        display: "inline-block",
-                                                        fontSize: "0.75rem"
-                                                    }}
-                                                >
-                                                    {getDocumentTypeDisplay(job.documentType)}
-                                                </Box>
-                                            </TableCell>
-                                            <TableCell sx={{ textAlign: "center", whiteSpace: "nowrap" }}>
-                                                {job.documentNumber}
-                                            </TableCell>
-                                            <TableCell sx={{ textAlign: "center", whiteSpace: "nowrap" }}>
-                                                {job.jobName}
-                                            </TableCell>
-                                            <TableCell sx={{ textAlign: "center", whiteSpace: "nowrap" }}>
-                                                {job.jobNumber}
-                                            </TableCell>
-                                            <TableCell sx={{ textAlign: "center", whiteSpace: "nowrap" }}>
-                                                <Typography variant="body2" sx={{ fontWeight: "bold" }}>
-                                                    {job.usedInventory}
-                                                </Typography>
-                                            </TableCell>
-                                            <TableCell sx={{ textAlign: "center", whiteSpace: "nowrap" }}>
-                                                <Box
-                                                    sx={{
-                                                        backgroundColor: getStatusColor(job.status),
-                                                        color: "white",
-                                                        borderRadius: "16px",
-                                                        padding: "4px 8px",
-                                                        display: "inline-block",
-                                                        fontSize: "0.75rem",
-                                                        fontWeight: "bold"
-                                                    }}
-                                                >
-                                                    {getStatusDisplay(job.status)}
-                                                </Box>
-                                            </TableCell>
-                                        </TableRow>
-                                    ))
-                                )}
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
-                )}
-            </DialogContent>
-
-            <DialogActions sx={{ padding: "16px", backgroundColor: "#f5f5f5" }}>
-                <Button
-                    onClick={onClose}
-                    variant="contained"
-                    sx={{
-                        backgroundColor: "#9c27b0",
-                        "&:hover": {
-                            backgroundColor: "#7b1fa2",
-                        }
-                    }}
-                >
-                    Close
-                </Button>
-            </DialogActions>
-        </Dialog>
+                                ))
+                            )}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+            )}
+        </GoMakeDialog>
     );
 };
 
