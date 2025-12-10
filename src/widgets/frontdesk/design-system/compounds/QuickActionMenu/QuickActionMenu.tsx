@@ -1,7 +1,20 @@
-import React from 'react';
-import { Menu, MenuProps, Typography, Box, Divider, Tooltip } from '@mui/material';
-import { ActionMenuItem } from '../../primitives/MenuItem';
-import { colorTokens, spacingTokens, radiusTokens, shadowTokens } from '../../tokens';
+import React from "react";
+import {
+  Menu,
+  MenuProps,
+  Typography,
+  Box,
+  Divider,
+  Tooltip,
+} from "@mui/material";
+import { useTranslation } from "react-i18next";
+import { ActionMenuItem } from "../../primitives/MenuItem";
+import {
+  colorTokens,
+  spacingTokens,
+  radiusTokens,
+  shadowTokens,
+} from "../../tokens";
 
 export interface QuickActionItem {
   /** Unique action identifier */
@@ -20,7 +33,7 @@ export interface QuickActionItem {
   group: string;
 }
 
-export interface QuickActionMenuProps extends Omit<MenuProps, 'onClose'> {
+export interface QuickActionMenuProps extends Omit<MenuProps, "onClose"> {
   /** Menu anchor element */
   anchorEl: HTMLElement | null;
   /** Whether menu is open */
@@ -35,6 +48,8 @@ export interface QuickActionMenuProps extends Omit<MenuProps, 'onClose'> {
   onActionClick: (action: QuickActionItem) => void;
   /** Whether any actions are loading */
   loading?: boolean;
+  /** RTL mode */
+  isRTL?: boolean;
 }
 
 /**
@@ -51,8 +66,12 @@ export const QuickActionMenu: React.FC<QuickActionMenuProps> = ({
   groupLabels = {},
   onActionClick,
   loading = false,
+  isRTL = false,
   ...menuProps
 }) => {
+  const { t } = useTranslation();
+  const dir: "rtl" | "ltr" = t("direction");
+  const effectiveRTL = isRTL || dir === "rtl";
   // Group actions by category
   const groupedActions = actions.reduce((acc, action) => {
     if (!acc[action.group]) {
@@ -77,12 +96,12 @@ export const QuickActionMenu: React.FC<QuickActionMenuProps> = ({
       open={open}
       onClose={onClose}
       anchorOrigin={{
-        vertical: 'bottom',
-        horizontal: 'right',
+        vertical: "bottom",
+        horizontal: effectiveRTL ? "left" : "right",
       }}
       transformOrigin={{
-        vertical: 'top',
-        horizontal: 'right',
+        vertical: "top",
+        horizontal: effectiveRTL ? "left" : "right",
       }}
       slotProps={{
         paper: {
@@ -93,14 +112,19 @@ export const QuickActionMenu: React.FC<QuickActionMenuProps> = ({
             borderRadius: radiusTokens.lg,
             boxShadow: shadowTokens.lg,
             border: `1px solid ${colorTokens.semantic.border.default}`,
+            direction: dir,
           },
         },
       }}
       {...menuProps}
     >
       {groups.length === 0 && (
-        <Box sx={{ px: 2, py: 3, textAlign: 'center' }}>
-          <Typography variant="body2" color="text.secondary" sx={{ fontSize: 13 }}>
+        <Box sx={{ px: 2, py: 3, textAlign: "center" }}>
+          <Typography
+            variant="body2"
+            color="text.secondary"
+            sx={{ fontSize: 13 }}
+          >
             No actions available
           </Typography>
         </Box>
@@ -122,9 +146,9 @@ export const QuickActionMenu: React.FC<QuickActionMenuProps> = ({
                 sx={{
                   color: colorTokens.semantic.text.secondary,
                   fontWeight: 600,
-                  textTransform: 'uppercase',
+                  textTransform: "uppercase",
                   fontSize: 10,
-                  letterSpacing: '0.5px',
+                  letterSpacing: "0.5px",
                 }}
               >
                 {groupLabels[group]}
@@ -135,7 +159,9 @@ export const QuickActionMenu: React.FC<QuickActionMenuProps> = ({
           {/* Group Actions */}
           {groupedActions[group].map((action) => {
             const isDisabled = action.disabled || loading;
-            const tooltipContent = action.disabled ? action.disabledReason || action.tooltip : action.tooltip;
+            const tooltipContent = action.disabled
+              ? action.disabledReason || action.tooltip
+              : action.tooltip;
 
             const menuItem = (
               <ActionMenuItem
@@ -150,7 +176,12 @@ export const QuickActionMenu: React.FC<QuickActionMenuProps> = ({
 
             // Wrap in tooltip if there's a tooltip or disabled reason
             return tooltipContent ? (
-              <Tooltip key={action.id} title={tooltipContent} placement="left" arrow>
+              <Tooltip
+                key={action.id}
+                title={tooltipContent}
+                placement={effectiveRTL ? "right" : "left"}
+                arrow
+              >
                 {/* Span wrapper needed for tooltip on disabled elements */}
                 <span>{menuItem}</span>
               </Tooltip>

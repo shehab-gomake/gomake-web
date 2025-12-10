@@ -1,11 +1,12 @@
 /**
  * Compact Form Fields - Unified Form Components
- * 
+ *
  * Provides consistent form field styling across all Chatwoot settings.
  * Includes labels, text fields, selects, and buttons.
  */
 
 import React from "react";
+import { useTranslation } from "react-i18next";
 import {
   Box,
   Typography,
@@ -27,38 +28,69 @@ interface CompactLabelProps {
   optional?: boolean;
 }
 
-export const CompactLabel: React.FC<CompactLabelProps> = ({ children, required, optional }) => (
-  <Typography
-    sx={{
-      mb: 0.75,
-      fontSize: "0.75rem",
-      fontWeight: 600,
-      color: "#4b5563",
-      textTransform: "uppercase",
-      letterSpacing: "0.025em",
-    }}
-  >
-    {children}
-    {required && <span style={{ color: "#ef4444", fontSize: "0.875rem", marginLeft: 4 }}>*</span>}
-    {optional && <span style={{ fontSize: "0.688rem", color: "#9ca3af", fontWeight: 400, marginLeft: 4 }}>(Optional)</span>}
-  </Typography>
-);
+export const CompactLabel: React.FC<CompactLabelProps> = ({
+  children,
+  required,
+  optional,
+}) => {
+  const { t } = useTranslation();
+  const dir: "rtl" | "ltr" = t("direction");
+  const isRTL = dir === "rtl";
+
+  return (
+    <Typography
+      sx={{
+        mb: 0.75,
+        fontSize: "0.75rem",
+        fontWeight: 600,
+        color: "#4b5563",
+        textTransform: "uppercase",
+        letterSpacing: "0.025em",
+        display: "flex",
+        alignItems: "center",
+        gap: 0.5,
+        direction: dir,
+      }}
+    >
+      {children}
+      {required && (
+        <span style={{ color: "#ef4444", fontSize: "0.875rem" }}>*</span>
+      )}
+      {optional && (
+        <span
+          style={{
+            fontSize: "0.688rem",
+            color: "#9ca3af",
+            fontWeight: 400,
+            textTransform: "none",
+          }}
+        >
+          ({t("frontdesk.teams.optional")})
+        </span>
+      )}
+    </Typography>
+  );
+};
 
 // Compact Text Field
-interface CompactTextFieldProps extends Omit<TextFieldProps, 'size'> {
+interface CompactTextFieldProps extends Omit<TextFieldProps, "size"> {
   label?: string;
   required?: boolean;
   optional?: boolean;
 }
 
-export const CompactTextField: React.FC<CompactTextFieldProps> = ({ 
-  label, 
-  required, 
-  optional, 
-  ...props 
+export const CompactTextField: React.FC<CompactTextFieldProps> = ({
+  label,
+  required,
+  optional,
+  ...props
 }) => (
   <Box>
-    {label && <CompactLabel required={required} optional={optional}>{label}</CompactLabel>}
+    {label && (
+      <CompactLabel required={required} optional={optional}>
+        {label}
+      </CompactLabel>
+    )}
     <TextField
       {...props}
       size="small"
@@ -80,29 +112,30 @@ interface CompactFormSectionProps {
   spacing?: number;
 }
 
-export const CompactFormSection: React.FC<CompactFormSectionProps> = ({ children, spacing = 2 }) => (
-  <Stack spacing={spacing}>
-    {children}
-  </Stack>
-);
+export const CompactFormSection: React.FC<CompactFormSectionProps> = ({
+  children,
+  spacing = 2,
+}) => <Stack sx={{ gap: spacing }}>{children}</Stack>;
 
 // Compact Primary Button
 interface CompactButtonProps extends ButtonProps {
   loading?: boolean;
 }
 
-export const CompactPrimaryButton: React.FC<CompactButtonProps> = ({ 
-  loading, 
-  children, 
+export const CompactPrimaryButton: React.FC<CompactButtonProps> = ({
+  loading,
+  children,
   disabled,
-  ...props 
+  ...props
 }) => (
   <Button
     {...props}
     variant="contained"
     size="small"
     disabled={disabled || loading}
-    startIcon={loading ? <CircularProgress size={14} color="inherit" /> : props.startIcon}
+    startIcon={
+      loading ? <CircularProgress size={14} color="inherit" /> : props.startIcon
+    }
     sx={{
       textTransform: "none",
       fontWeight: 500,
@@ -127,7 +160,10 @@ export const CompactPrimaryButton: React.FC<CompactButtonProps> = ({
 );
 
 // Compact Secondary Button
-export const CompactSecondaryButton: React.FC<ButtonProps> = ({ children, ...props }) => (
+export const CompactSecondaryButton: React.FC<ButtonProps> = ({
+  children,
+  ...props
+}) => (
   <Button
     {...props}
     variant="outlined"
@@ -152,12 +188,16 @@ export const CompactSecondaryButton: React.FC<ButtonProps> = ({ children, ...pro
 );
 
 // Compact Switch - Pixel Perfect
-interface CompactSwitchProps extends Omit<SwitchProps, 'size'> {
+interface CompactSwitchProps extends Omit<SwitchProps, "size"> {
   label?: string;
   description?: string;
 }
 
-export const CompactSwitch: React.FC<CompactSwitchProps> = ({ label, description, ...props }) => {
+export const CompactSwitch: React.FC<CompactSwitchProps> = ({
+  label,
+  description,
+  ...props
+}) => {
   const switchComponent = (
     <Switch
       {...props}
@@ -213,21 +253,31 @@ export const CompactSwitch: React.FC<CompactSwitchProps> = ({ label, description
       <FormControlLabel
         control={switchComponent}
         label={
-          <Box sx={{ ml: 1 }}>
-            <Typography sx={{ fontSize: "0.813rem", fontWeight: 500, color: "#1f2937", lineHeight: 1.4 }}>
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 0.25 }}>
+            <Typography
+              sx={{
+                fontSize: "0.813rem",
+                fontWeight: 500,
+                color: "#1f2937",
+                lineHeight: 1.4,
+              }}
+            >
               {label}
             </Typography>
             {description && (
-              <Typography sx={{ fontSize: "0.75rem", color: "#6b7280", mt: 0.25, lineHeight: 1.4 }}>
+              <Typography
+                sx={{ fontSize: "0.75rem", color: "#6b7280", lineHeight: 1.4 }}
+              >
                 {description}
               </Typography>
             )}
           </Box>
         }
-        sx={{ 
+        sx={{
           ml: 0,
           mr: 0,
           alignItems: "flex-start",
+          gap: "10px",
         }}
       />
     );
@@ -250,19 +300,36 @@ interface CompactModalActionsProps {
 export const CompactModalActions: React.FC<CompactModalActionsProps> = ({
   onCancel,
   onSubmit,
-  submitLabel = "Save Changes",
-  cancelLabel = "Cancel",
+  submitLabel,
+  cancelLabel,
   isSubmitting = false,
   submitDisabled = false,
   cancelDisabled = false,
-}) => (
-  <>
-    <CompactSecondaryButton onClick={onCancel} disabled={cancelDisabled || isSubmitting}>
-      {cancelLabel}
-    </CompactSecondaryButton>
-    <CompactPrimaryButton onClick={onSubmit} loading={isSubmitting} disabled={submitDisabled}>
-      {isSubmitting ? "Saving..." : submitLabel}
-    </CompactPrimaryButton>
-  </>
-);
+}) => {
+  const { t } = useTranslation();
+  const dir: "rtl" | "ltr" = t("direction");
 
+  const defaultSubmitLabel = submitLabel || t("frontdesk.common.saveChanges");
+  const defaultCancelLabel = cancelLabel || t("frontdesk.common.cancel");
+
+  return (
+    <Stack
+      direction="row"
+      sx={{ gap: 1, direction: dir, justifyContent: "flex-end" }}
+    >
+      <CompactSecondaryButton
+        onClick={onCancel}
+        disabled={cancelDisabled || isSubmitting}
+      >
+        {defaultCancelLabel}
+      </CompactSecondaryButton>
+      <CompactPrimaryButton
+        onClick={onSubmit}
+        loading={isSubmitting}
+        disabled={submitDisabled}
+      >
+        {isSubmitting ? t("frontdesk.common.saving") : defaultSubmitLabel}
+      </CompactPrimaryButton>
+    </Stack>
+  );
+};

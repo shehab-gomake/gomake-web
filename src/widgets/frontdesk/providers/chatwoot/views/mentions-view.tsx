@@ -9,14 +9,17 @@
  */
 
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { BaseConversationView } from "../components/base-conversation-view";
 
 export const MentionsView: React.FC = () => {
+  const { t } = useTranslation();
+
   return (
     <BaseConversationView
       emptyState={{
-        title: "No ticket selected",
-        description: "Choose a ticket where you've been mentioned",
+        title: t("frontdesk.emptyStates.noTicketSelected"),
+        description: t("frontdesk.emptyStates.chooseMentionedTicket"),
       }}
     />
   );

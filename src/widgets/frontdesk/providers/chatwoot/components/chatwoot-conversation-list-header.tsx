@@ -1,14 +1,33 @@
 import React, { useMemo, useCallback } from "react";
 import { useRecoilValue } from "recoil";
 import { Box, Stack, Typography, IconButton, Tooltip } from "@mui/material";
+import { useTranslation } from "react-i18next";
 import ClearIcon from "@mui/icons-material/Clear";
-import { colorTokens, radiusTokens, semanticSpacing } from "@/widgets/frontdesk/design-system";
+import {
+  colorTokens,
+  radiusTokens,
+  semanticSpacing,
+} from "@/widgets/frontdesk/design-system";
 import { useChatwootTeams } from "../hooks/resources/use-chatwoot-teams";
 import { useChatwootLabels } from "../hooks/use-chatwoot-labels";
 import { useChatwootInboxes } from "../hooks/use-chatwoot-inboxes";
-import { ConversationStatus, ConversationListParams } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
-import { chatwootConversationCountsAtom, chatwootSelectedAccountAtom } from "@/store/frontdesk/atoms/chatwoot.atoms";
-import { ConversationFilterMenu, ConversationSortMenu, ConversationSearchBar, ConversationTabs, ConversationLabelsFilter, ConversationTeamsFilter, ActiveFilterChips } from "./conversation-list";
+import {
+  ConversationStatus,
+  ConversationListParams,
+} from "@/services/frontdesk/api/chatwoot/types/conversations.types";
+import {
+  chatwootConversationCountsAtom,
+  chatwootSelectedAccountAtom,
+} from "@/store/frontdesk/atoms/chatwoot.atoms";
+import {
+  ConversationFilterMenu,
+  ConversationSortMenu,
+  ConversationSearchBar,
+  ConversationTabs,
+  ConversationLabelsFilter,
+  ConversationTeamsFilter,
+  ActiveFilterChips,
+} from "./conversation-list";
 
 // =============================================================================
 // Types
@@ -37,7 +56,9 @@ const HEADER_ICON_SIZE = 16;
 // Component
 // =============================================================================
 
-export const ChatwootConversationListHeader: React.FC<ChatwootConversationListHeaderProps> = ({
+export const ChatwootConversationListHeader: React.FC<
+  ChatwootConversationListHeaderProps
+> = ({
   status,
   filters = {},
   onFiltersChange = () => {},
@@ -48,6 +69,8 @@ export const ChatwootConversationListHeader: React.FC<ChatwootConversationListHe
   unassignedCount,
   allCount,
 }) => {
+  const { t } = useTranslation();
+  const dir: "rtl" | "ltr" = t("direction");
 
   // Get counts from API response (stored in atom)
   const apiCounts = useRecoilValue(chatwootConversationCountsAtom);
@@ -64,7 +87,11 @@ export const ChatwootConversationListHeader: React.FC<ChatwootConversationListHe
 
   // Use provided counts if available, otherwise use counts from API
   const counts = useMemo(() => {
-    if (mineCount !== undefined && unassignedCount !== undefined && allCount !== undefined) {
+    if (
+      mineCount !== undefined &&
+      unassignedCount !== undefined &&
+      allCount !== undefined
+    ) {
       return { mine: mineCount, unassigned: unassignedCount, all: allCount };
     }
     return apiCounts;
@@ -82,7 +109,10 @@ export const ChatwootConversationListHeader: React.FC<ChatwootConversationListHe
 
   // Handler for removing individual filters
   const handleRemoveFilter = useCallback(
-    (filterType: "status" | "team_id" | "labels" | "inbox_id" | "label", value?: string) => {
+    (
+      filterType: "status" | "team_id" | "labels" | "inbox_id" | "label",
+      value?: string
+    ) => {
       if (filterType === "status") {
         const newFilters = { ...filters, status: undefined, page: 1 };
         onFiltersChange(newFilters);
@@ -118,6 +148,7 @@ export const ChatwootConversationListHeader: React.FC<ChatwootConversationListHe
       sx={{
         backgroundColor: colorTokens.semantic.background.primary,
         borderBottom: `1px solid ${colorTokens.neutral[200]}`,
+        direction: dir,
       }}
     >
       {/* Top Section: Title + Action Icons */}
@@ -129,6 +160,7 @@ export const ChatwootConversationListHeader: React.FC<ChatwootConversationListHe
           px: 1.5,
           py: 1.25,
           minHeight: 48,
+          gap: 0.5,
         }}
       >
         <Typography
@@ -140,11 +172,11 @@ export const ChatwootConversationListHeader: React.FC<ChatwootConversationListHe
             letterSpacing: "-0.01em",
           }}
         >
-          Tickets
+          {t("frontdesk.tabs.tickets")}
         </Typography>
 
         {/* Action Icons - consistent 16px size, equal spacing */}
-        <Stack direction="row" spacing={0.5} alignItems="center">
+        <Stack direction="row" sx={{ gap: 0.5 }} alignItems="center">
           <ConversationLabelsFilter
             accountId={accountId}
             filters={filters}
@@ -172,7 +204,7 @@ export const ChatwootConversationListHeader: React.FC<ChatwootConversationListHe
 
           {/* Clear Filters Button */}
           {hasActiveFilters && onClearFilters && (
-            <Tooltip title="Clear all filters">
+            <Tooltip title={t("frontdesk.filters.clearAll")}>
               <IconButton
                 size="small"
                 onClick={onClearFilters}
@@ -212,7 +244,10 @@ export const ChatwootConversationListHeader: React.FC<ChatwootConversationListHe
       />
 
       {/* Search Bar */}
-      <ConversationSearchBar filters={filters} onFiltersChange={onFiltersChange} />
+      <ConversationSearchBar
+        filters={filters}
+        onFiltersChange={onFiltersChange}
+      />
     </Box>
   );
 };

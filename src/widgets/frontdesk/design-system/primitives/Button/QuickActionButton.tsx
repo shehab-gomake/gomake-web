@@ -1,12 +1,22 @@
-import React, { useState } from 'react';
-import { Button as MuiButton, ButtonProps as MuiButtonProps } from '@mui/material';
-import { colorTokens, radiusTokens, shadowTokens, semanticTypography } from '../../tokens';
-import FlashOnOutlinedIcon from '@mui/icons-material/FlashOnOutlined';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import React, { useState } from "react";
+import {
+  Button as MuiButton,
+  ButtonProps as MuiButtonProps,
+} from "@mui/material";
+import { useTranslation } from "react-i18next";
+import {
+  colorTokens,
+  radiusTokens,
+  shadowTokens,
+  semanticTypography,
+} from "../../tokens";
+import FlashOnOutlinedIcon from "@mui/icons-material/FlashOnOutlined";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 
-export interface QuickActionButtonProps extends Omit<MuiButtonProps, 'variant' | 'color' | 'size'> {
+export interface QuickActionButtonProps
+  extends Omit<MuiButtonProps, "variant" | "color" | "size"> {
   /** Button size */
-  size?: 'sm' | 'md' | 'lg';
+  size?: "sm" | "md" | "lg";
   /** Whether menu is open */
   isOpen?: boolean;
   /** Whether button shows loading state */
@@ -16,19 +26,19 @@ export interface QuickActionButtonProps extends Omit<MuiButtonProps, 'variant' |
 const sizeStyles = {
   sm: {
     height: 32,
-    padding: '0 12px',
+    padding: "0 12px",
     fontSize: semanticTypography.button.small.fontSize,
     fontWeight: semanticTypography.button.small.fontWeight,
   },
   md: {
     height: 36,
-    padding: '0 14px',
+    padding: "0 14px",
     fontSize: semanticTypography.button.medium.fontSize,
     fontWeight: semanticTypography.button.medium.fontWeight,
   },
   lg: {
     height: 40,
-    padding: '0 18px',
+    padding: "0 18px",
     fontSize: semanticTypography.button.large.fontSize,
     fontWeight: semanticTypography.button.large.fontWeight,
   },
@@ -41,7 +51,7 @@ const sizeStyles = {
  * Features lightning bolt icon and dropdown indicator
  */
 export const QuickActionButton: React.FC<QuickActionButtonProps> = ({
-  size = 'sm',
+  size = "sm",
   isOpen = false,
   loading = false,
   disabled = false,
@@ -49,43 +59,56 @@ export const QuickActionButton: React.FC<QuickActionButtonProps> = ({
   sx = {},
   ...rest
 }) => {
+  const { t } = useTranslation();
+  const dir: "rtl" | "ltr" = t("direction");
+  const isRTL = dir === "rtl";
   const sizeStyle = sizeStyles[size];
+
+  const arrowIcon = (
+    <KeyboardArrowDownIcon
+      sx={{
+        fontSize: 18,
+        transition: "transform 0.2s ease",
+        transform: isOpen ? "rotate(180deg)" : "rotate(0deg)",
+      }}
+    />
+  );
 
   return (
     <MuiButton
       disableElevation
-      startIcon={<FlashOnOutlinedIcon sx={{ fontSize: 18 }} />}
-      endIcon={
-        <KeyboardArrowDownIcon
-          sx={{
-            fontSize: 18,
-            transition: 'transform 0.2s ease',
-            transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
-          }}
-        />
-      }
+      {...(isRTL
+        ? {
+            endIcon: <FlashOnOutlinedIcon sx={{ fontSize: 18 }} />,
+            startIcon: arrowIcon,
+          }
+        : {
+            startIcon: <FlashOnOutlinedIcon sx={{ fontSize: 18 }} />,
+            endIcon: arrowIcon,
+          })}
       sx={{
         ...sizeStyle,
         backgroundColor: colorTokens.primary[600],
-        color: 'white',
-        border: 'none',
+        color: "white",
+        border: "none",
         borderRadius: radiusTokens.md,
-        textTransform: 'none',
-        transition: 'all 0.15s ease',
+        textTransform: "none",
+        transition: "all 0.15s ease",
         gap: 0.5,
-        '&:hover': {
+        direction: dir,
+        "&:hover": {
           backgroundColor: colorTokens.primary[700],
           boxShadow: shadowTokens.sm,
         },
-        '&:active': {
+        "&:active": {
           backgroundColor: colorTokens.primary[800],
         },
-        '&:disabled': {
+        "&:disabled": {
           backgroundColor: colorTokens.neutral[200],
           color: colorTokens.neutral[400],
           opacity: 0.6,
         },
-        '&:focus-visible': {
+        "&:focus-visible": {
           outline: `2px solid ${colorTokens.primary[600]}`,
           outlineOffset: 2,
         },
@@ -99,7 +122,7 @@ export const QuickActionButton: React.FC<QuickActionButtonProps> = ({
       disabled={disabled || loading}
       {...rest}
     >
-      {loading ? 'Loading...' : children || 'Quick Actions'}
+      {loading ? "Loading..." : children || "Quick Actions"}
     </MuiButton>
   );
 };
