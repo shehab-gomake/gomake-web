@@ -6,6 +6,8 @@ import { AddTicketButton } from "./add-ticket-button";
 import { PrimaryTable } from "@/components/tables/primary-table";
 import { useTicketChatbot } from "@/components/ticket-chatbot";
 import { useMemo } from "react";
+import { CircularProgress } from "@mui/material";
+import { GoMakeAutoComplate } from "@/components";
 
 function MyTicketsContent() {
   const { t } = useTranslation();
@@ -16,12 +18,36 @@ function MyTicketsContent() {
     loading,
     tableHeaders,
     getTicketsRows,
-    fetchTickets,
+    users,
+    loadingUsers,
+    selectedUserId,
+    setSelectedUserId,
+    canViewAllTickets,
   } = useMyTickets();
 
   const rows = useMemo(() => {
     return getTicketsRows(navigateToTicket);
   }, [getTicketsRows, navigateToTicket]);
+
+  // Create stable "All Users" option
+  const allUsersOption = useMemo(
+    () => ({ id: "", value: "", label: t("tickets.allUsers") || "All Users" }),
+    [t]
+  );
+
+  // Prepare options with "All Users" first
+  const userOptions = useMemo(
+    () => [allUsersOption, ...users.map((u) => ({ ...u, id: u.value }))],
+    [allUsersOption, users]
+  );
+
+  // Find selected option
+  const selectedOption = useMemo(() => {
+    if (!selectedUserId) {
+      return allUsersOption;
+    }
+    return userOptions.find((u) => u.value === selectedUserId) || allUsersOption;
+  }, [selectedUserId, userOptions, allUsersOption]);
 
   return (
     <div style={classes.mainContainer}>
@@ -30,15 +56,35 @@ function MyTicketsContent() {
         <AddTicketButton onClick={() => openNewTicket()} />
       </div>
 
-        <div style={classes.tableContainer}>
-          <PrimaryTable
-            stickyFirstCol={false}
-            stickyHeader={true}
-            rows={rows}
-            headers={tableHeaders}
-            maxHeight={"calc(100vh - 300px)"}
+      {canViewAllTickets && (
+        <div style={classes.filterContainer}>
+          <GoMakeAutoComplate
+            options={userOptions}
+            value={selectedOption}
+            onChange={(event: any, newValue: any) => {
+              setSelectedUserId(newValue ? newValue.value : "");
+            }}
+            getOptionLabel={(option: any) => option.label}
+            placeholder={t("tickets.chooseUser") || "Choose User"}
+            style={classes.userSelect}
+            disabled={loadingUsers}
+            loading={loadingUsers}
+            isOptionEqualToValue={(option: any, value: any) =>
+              option?.value === value?.value
+            }
           />
         </div>
+      )}
+
+      <div style={classes.tableContainer}>
+        <PrimaryTable
+          stickyFirstCol={false}
+          stickyHeader={true}
+          rows={rows}
+          headers={tableHeaders}
+          maxHeight={"calc(100vh - 300px)"}
+        />
+      </div>
     </div>
   );
 }

@@ -60,6 +60,7 @@ export const getTickets = async (
   const params: any = {};
   if (filters?.status) params.status = filters.status;
   if (filters?.priority) params.priority = filters.priority;
+  if (filters?.userId) params.userId = filters.userId;
 
   const res = await callApi("GET", "/api/tickets", params);
   return res?.data || [];
