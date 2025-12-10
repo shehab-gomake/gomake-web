@@ -6,6 +6,7 @@
  */
 
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Box,
   Typography,
@@ -56,20 +57,22 @@ const getSeverityChipColor = (severity: WarningSeverity): "error" | "warning" | 
   }
 };
 
-const getSeverityLabel = (severity: WarningSeverity): string => {
+const getSeverityLabel = (severity: WarningSeverity, t: (key: string) => string): string => {
   switch (severity) {
     case WarningSeverity.ERROR:
-      return 'Critical';
+      return t("frontdesk.settings.warningsSeverityCritical");
     case WarningSeverity.WARNING:
-      return 'Warning';
+      return t("frontdesk.settings.warningsSeverityWarning");
     case WarningSeverity.INFO:
-      return 'Info';
+      return t("frontdesk.settings.warningsSeverityInfo");
     default:
-      return 'Unknown';
+      return t("frontdesk.settings.warningsSeverityUnknown");
   }
 };
 
 export const WarningsSettingsView: React.FC = () => {
+  const { t } = useTranslation();
+  const dir: "rtl" | "ltr" = t("direction");
   const theme = useTheme();
   const warnings = useChatwootWarnings();
   const { router: chatwootRouter } = useChatwootProvider();
@@ -91,8 +94,8 @@ export const WarningsSettingsView: React.FC = () => {
 
   return (
     <BaseSettingsSubpage
-      title="System Warnings"
-      description="Configuration issues and alerts that need your attention"
+      title={t("frontdesk.settings.warningsTitle")}
+      description={t("frontdesk.settings.warningsDescription")}
     >
       {warnings.length === 0 ? (
         // No warnings state
@@ -105,26 +108,27 @@ export const WarningsSettingsView: React.FC = () => {
             minHeight: 300,
             textAlign: 'center',
             gap: 2,
+            direction: dir,
           }}
         >
           <CheckCircleIcon sx={{ fontSize: 64, color: 'success.main', opacity: 0.5 }} />
           <Typography variant="h6" color="text.primary" fontWeight={600}>
-            All Systems Operational
+            {t("frontdesk.settings.warningsEmptyTitle")}
           </Typography>
           <Typography variant="body2" color="text.secondary" sx={{ maxWidth: 400 }}>
-            No configuration issues or warnings detected
+            {t("frontdesk.settings.warningsEmptyDescription")}
           </Typography>
         </Box>
       ) : (
         // Warnings list
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, direction: dir }}>
           {/* Critical Issues Section */}
           {errorWarnings.length > 0 && (
             <SettingsSection
-              title={`Critical Issues (${errorWarnings.length})`}
-              description="These issues require immediate attention"
+              title={t("frontdesk.settings.warningsCriticalTitle", { count: errorWarnings.length })}
+              description={t("frontdesk.settings.warningsCriticalDescription")}
             >
-              <List sx={{ width: '100%', bgcolor: 'background.paper', p: 0 }}>
+              <List sx={{ width: '100%', bgcolor: 'background.paper', p: 0, direction: dir }}>
                 {errorWarnings.map((warning, index) => (
                   <React.Fragment key={warning.id}>
                     <ListItem
@@ -138,18 +142,19 @@ export const WarningsSettingsView: React.FC = () => {
                         },
                         display: 'flex',
                         alignItems: 'flex-start',
+                        direction: dir,
                       }}
                     >
                       <ListItemIcon sx={{ minWidth: 40, mt: 0.5 }}>
                         {getSeverityIcon(warning.severity, theme)}
                       </ListItemIcon>
-                      <Box sx={{ flex: 1, minWidth: 0, mr: 2 }}>
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
+                      <Box sx={{ flex: 1, minWidth: 0, [dir === "rtl" ? "ml" : "mr"]: 2 }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5, direction: dir }}>
                           <Typography variant="subtitle2" sx={{ fontWeight: 500 }}>
                             {warning.title}
                           </Typography>
                           <Chip
-                            label={getSeverityLabel(warning.severity)}
+                            label={getSeverityLabel(warning.severity, t)}
                             size="small"
                             color={getSeverityChipColor(warning.severity)}
                             sx={{
@@ -164,7 +169,7 @@ export const WarningsSettingsView: React.FC = () => {
                         </Typography>
                         {warning.inboxName && (
                           <Typography variant="caption" color="text.secondary">
-                            Affected Inbox: <strong>{warning.inboxName}</strong>
+                            {t("frontdesk.settings.warningsAffectedInbox", { name: warning.inboxName })}
                           </Typography>
                         )}
                       </Box>
@@ -177,6 +182,7 @@ export const WarningsSettingsView: React.FC = () => {
                             '&:hover': {
                               color: 'primary.main',
                             },
+                            transform: dir === "rtl" ? "rotate(180deg)" : "none",
                           }}
                           aria-label={warning.actionLabel}
                         >
@@ -193,10 +199,10 @@ export const WarningsSettingsView: React.FC = () => {
           {/* Warnings Section */}
           {warningWarnings.length > 0 && (
             <SettingsSection
-              title={`Configuration Warnings (${warningWarnings.length})`}
-              description="These warnings should be addressed soon"
+              title={t("frontdesk.settings.warningsWarningTitle", { count: warningWarnings.length })}
+              description={t("frontdesk.settings.warningsWarningDescription")}
             >
-              <List sx={{ width: '100%', bgcolor: 'background.paper', p: 0 }}>
+              <List sx={{ width: '100%', bgcolor: 'background.paper', p: 0, direction: dir }}>
                 {warningWarnings.map((warning, index) => (
                   <React.Fragment key={warning.id}>
                     <ListItem
@@ -210,18 +216,19 @@ export const WarningsSettingsView: React.FC = () => {
                         },
                         display: 'flex',
                         alignItems: 'flex-start',
+                        direction: dir,
                       }}
                     >
                       <ListItemIcon sx={{ minWidth: 40, mt: 0.5 }}>
                         {getSeverityIcon(warning.severity, theme)}
                       </ListItemIcon>
-                      <Box sx={{ flex: 1, minWidth: 0, mr: 2 }}>
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
+                      <Box sx={{ flex: 1, minWidth: 0, [dir === "rtl" ? "ml" : "mr"]: 2 }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5, direction: dir }}>
                           <Typography variant="subtitle2" sx={{ fontWeight: 500 }}>
                             {warning.title}
                           </Typography>
                           <Chip
-                            label={getSeverityLabel(warning.severity)}
+                            label={getSeverityLabel(warning.severity, t)}
                             size="small"
                             color={getSeverityChipColor(warning.severity)}
                             sx={{
@@ -236,7 +243,7 @@ export const WarningsSettingsView: React.FC = () => {
                         </Typography>
                         {warning.inboxName && (
                           <Typography variant="caption" color="text.secondary">
-                            Affected Inbox: <strong>{warning.inboxName}</strong>
+                            {t("frontdesk.settings.warningsAffectedInbox", { name: warning.inboxName })}
                           </Typography>
                         )}
                       </Box>
@@ -249,6 +256,7 @@ export const WarningsSettingsView: React.FC = () => {
                             '&:hover': {
                               color: 'primary.main',
                             },
+                            transform: dir === "rtl" ? "rotate(180deg)" : "none",
                           }}
                           aria-label={warning.actionLabel}
                         >
@@ -265,10 +273,10 @@ export const WarningsSettingsView: React.FC = () => {
           {/* Info Section */}
           {infoWarnings.length > 0 && (
             <SettingsSection
-              title={`Information (${infoWarnings.length})`}
-              description="Informational messages for your reference"
+              title={t("frontdesk.settings.warningsInfoTitle", { count: infoWarnings.length })}
+              description={t("frontdesk.settings.warningsInfoDescription")}
             >
-              <List sx={{ width: '100%', bgcolor: 'background.paper', p: 0 }}>
+              <List sx={{ width: '100%', bgcolor: 'background.paper', p: 0, direction: dir }}>
                 {infoWarnings.map((warning, index) => (
                   <React.Fragment key={warning.id}>
                     <ListItem
@@ -282,18 +290,19 @@ export const WarningsSettingsView: React.FC = () => {
                         },
                         display: 'flex',
                         alignItems: 'flex-start',
+                        direction: dir,
                       }}
                     >
                       <ListItemIcon sx={{ minWidth: 40, mt: 0.5 }}>
                         {getSeverityIcon(warning.severity, theme)}
                       </ListItemIcon>
-                      <Box sx={{ flex: 1, minWidth: 0, mr: 2 }}>
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
+                      <Box sx={{ flex: 1, minWidth: 0, [dir === "rtl" ? "ml" : "mr"]: 2 }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5, direction: dir }}>
                           <Typography variant="subtitle2" sx={{ fontWeight: 500 }}>
                             {warning.title}
                           </Typography>
                           <Chip
-                            label={getSeverityLabel(warning.severity)}
+                            label={getSeverityLabel(warning.severity, t)}
                             size="small"
                             color={getSeverityChipColor(warning.severity)}
                             sx={{
@@ -308,7 +317,7 @@ export const WarningsSettingsView: React.FC = () => {
                         </Typography>
                         {warning.inboxName && (
                           <Typography variant="caption" color="text.secondary">
-                            Affected Inbox: <strong>{warning.inboxName}</strong>
+                            {t("frontdesk.settings.warningsAffectedInbox", { name: warning.inboxName })}
                           </Typography>
                         )}
                       </Box>
@@ -321,6 +330,7 @@ export const WarningsSettingsView: React.FC = () => {
                             '&:hover': {
                               color: 'primary.main',
                             },
+                            transform: dir === "rtl" ? "rotate(180deg)" : "none",
                           }}
                           aria-label={warning.actionLabel}
                         >

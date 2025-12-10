@@ -8,6 +8,7 @@
  */
 
 import React, { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { Box, Typography, Avatar, Alert, Chip } from "@mui/material";
 import PersonIcon from "@mui/icons-material/Person";
 import { BaseSettingsSubpage, SettingsSection } from "../../components/settings";
@@ -16,6 +17,8 @@ import { useChatwootPermissions } from "../../hooks/use-chatwoot-permissions";
 import { VIEW_PERMISSIONS } from "../../constants/permissions.constants";
 
 export const ProfileSettingsSubpage: React.FC = () => {
+  const { t } = useTranslation();
+  const dir: "rtl" | "ltr" = t("direction");
   const { profile, profileLoading, router: chatwootRouter } = useChatwootProvider();
 
   // Defense-in-depth: Check if user has permission to access Settings
@@ -33,8 +36,8 @@ export const ProfileSettingsSubpage: React.FC = () => {
 
   return (
     <BaseSettingsSubpage
-      title="Profile Settings"
-      description="Manage your personal information and preferences"
+      title={t("frontdesk.settings.profileSettings")}
+      description={t("frontdesk.settings.profileSettingsDescription")}
       isLoading={profileLoading}
     >
       {!profile ? (
@@ -48,21 +51,22 @@ export const ProfileSettingsSubpage: React.FC = () => {
             minHeight: 260,
             textAlign: "center",
             gap: 1.5,
+            direction: dir,
           }}
         >
           <PersonIcon sx={{ fontSize: 48, color: "#9ca3af", opacity: 0.6 }} />
           <Typography variant="subtitle1" sx={{ color: "#1f2937", fontWeight: 600, fontSize: "0.938rem" }}>
-            No Profile Data
+            {t("frontdesk.settings.profileSettingsNoDataTitle")}
           </Typography>
           <Typography variant="body2" sx={{ color: "#6b7280", maxWidth: 360, fontSize: "0.813rem", lineHeight: 1.5 }}>
-            Unable to load profile information. Please try refreshing the page.
+            {t("frontdesk.settings.profileSettingsNoDataDescription")}
           </Typography>
         </Box>
       ) : (
         /* Profile Display - Compact High-Density Design */
         <SettingsSection
-          title="Profile Information"
-          description="Your basic profile details"
+          title={t("frontdesk.settings.profileSettingsSectionTitle")}
+          description={t("frontdesk.settings.profileSettingsSectionDescription")}
         >
           <Box
             sx={{
@@ -74,11 +78,12 @@ export const ProfileSettingsSubpage: React.FC = () => {
               backgroundColor: "#f9fafb",
               borderRadius: "6px",
               border: "1px solid rgba(0,0,0,0.06)",
+              direction: dir,
             }}
           >
             <Avatar
               src={profile.avatar_url}
-              alt={profile.name || "User"}
+              alt={profile.name || t("frontdesk.settings.profileSettingsUnknownUser")}
               sx={{ 
                 width: 56, 
                 height: 56,
@@ -90,7 +95,7 @@ export const ProfileSettingsSubpage: React.FC = () => {
             </Avatar>
             <Box sx={{ flex: 1, minWidth: 0 }}>
               <Typography variant="subtitle1" sx={{ fontWeight: 600, fontSize: "0.938rem", color: "#1f2937", mb: 0.5 }}>
-                {profile.name || "Unknown User"}
+                {profile.name || t("frontdesk.settings.profileSettingsUnknownUser")}
               </Typography>
               {profile.role && (
                 <Chip
@@ -113,8 +118,8 @@ export const ProfileSettingsSubpage: React.FC = () => {
             </Box>
           </Box>
 
-          <Typography variant="caption" sx={{ color: "#9ca3af", fontSize: "0.75rem", fontStyle: "italic" }}>
-            Profile editing and notification preferences UI are under development.
+          <Typography variant="caption" sx={{ color: "#9ca3af", fontSize: "0.75rem", fontStyle: "italic", direction: dir }}>
+            {t("frontdesk.settings.profileSettingsUnderDevelopment")}
           </Typography>
         </SettingsSection>
       )}

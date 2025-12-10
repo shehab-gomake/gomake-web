@@ -6,6 +6,7 @@
  */
 
 import React, { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Dialog,
   DialogTitle,
@@ -50,14 +51,20 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
   title,
   message,
   requireValue,
-  requireValueLabel = "Type to confirm",
-  confirmText = "Confirm",
+  requireValueLabel,
+  confirmText,
   confirmColor = "error",
   isLoading = false,
 }) => {
+  const { t } = useTranslation();
+  const dir: "rtl" | "ltr" = t("direction");
   const theme = useTheme();
   const [inputValue, setInputValue] = useState("");
   const [error, setError] = useState(false);
+
+  // Use translations for default values
+  const finalRequireValueLabel = requireValueLabel || t("frontdesk.common.typeToConfirm");
+  const finalConfirmText = confirmText || t("frontdesk.common.confirm");
 
   // Reset state when dialog closes
   useEffect(() => {
@@ -95,6 +102,7 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
       PaperProps={{
         sx: {
           borderRadius: 2,
+          direction: dir,
         },
       }}
     >
@@ -104,6 +112,7 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
           alignItems: "center",
           gap: 1.5,
           pb: 1,
+          direction: dir,
         }}
       >
         <WarningIcon
@@ -115,51 +124,53 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
             fontSize: 28,
           }}
         />
-        <Typography variant="h6" component="span" sx={{ fontWeight: 600 }}>
+        <Typography variant="h6" component="span" sx={{ fontWeight: 600, direction: dir }}>
           {title}
         </Typography>
       </DialogTitle>
 
-      <DialogContent>
+      <DialogContent sx={{ direction: dir }}>
         <Typography
           variant="body2"
           sx={{
             mb: requireValue ? 2 : 0,
             color: theme.palette.text.secondary,
             lineHeight: 1.6,
+            direction: dir,
           }}
         >
           {message}
         </Typography>
 
         {requireValue && (
-          <Box>
-            <Alert severity="warning" sx={{ mb: 2 }}>
-              This action cannot be undone. Please type{" "}
+          <Box sx={{ direction: dir }}>
+            <Alert severity="warning" sx={{ mb: 2, direction: dir }}>
+              {t("frontdesk.common.confirmDialogCannotUndo")}{" "}
               <Typography
                 component="strong"
                 sx={{ fontWeight: 700, fontFamily: "monospace" }}
               >
                 {requireValue}
               </Typography>{" "}
-              to confirm.
+              {t("frontdesk.common.confirmDialogToConfirm")}
             </Alert>
 
             <TextField
               fullWidth
               size="small"
-              label={requireValueLabel}
+              label={finalRequireValueLabel}
               value={inputValue}
               onChange={handleInputChange}
               error={error}
               helperText={
                 error
-                  ? `Must match exactly: ${requireValue}`
-                  : `Type "${requireValue}" to enable confirmation`
+                  ? `${t("frontdesk.common.confirmDialogMustMatch")} ${requireValue}`
+                  : t("frontdesk.common.confirmDialogTypeToEnable", { value: requireValue })
               }
               disabled={isLoading}
               autoFocus
               sx={{
+                direction: dir,
                 "& input": {
                   fontFamily: "monospace",
                 },
@@ -169,9 +180,9 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
         )}
       </DialogContent>
 
-      <DialogActions sx={{ px: 3, pb: 2 }}>
-        <Button onClick={onClose} disabled={isLoading} color="inherit">
-          Cancel
+      <DialogActions sx={{ px: 3, pb: 2, direction: dir }}>
+        <Button onClick={onClose} disabled={isLoading} color="inherit" sx={{ direction: dir }}>
+          {t("frontdesk.common.cancel")}
         </Button>
         <Button
           onClick={handleConfirm}
@@ -180,9 +191,10 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
           disabled={isConfirmDisabled}
           sx={{
             minWidth: 100,
+            direction: dir,
           }}
         >
-          {isLoading ? "Processing..." : confirmText}
+          {isLoading ? t("frontdesk.common.processing") : finalConfirmText}
         </Button>
       </DialogActions>
     </Dialog>

@@ -5,6 +5,7 @@
  */
 
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Box, Typography, Card, CardContent, Divider, Stack, Button } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { colorTokens } from '@/widgets/frontdesk/design-system/tokens';
@@ -25,11 +26,13 @@ export const WebSocketStatsCard: React.FC<WebSocketStatsCardProps> = ({
   isConnected,
   onResetStats,
 }) => {
+  const { t } = useTranslation();
+  const dir: "rtl" | "ltr" = t("direction");
   const theme = useTheme();
 
   // Format uptime
   const formatUptime = (ms: number | null): string => {
-    if (ms === null) return 'N/A';
+    if (ms === null) return t("frontdesk.settings.webhookTestStatsNA");
 
     const seconds = Math.floor(ms / 1000);
     const minutes = Math.floor(seconds / 60);
@@ -46,7 +49,7 @@ export const WebSocketStatsCard: React.FC<WebSocketStatsCardProps> = ({
 
   // Format last event time
   const formatLastEventTime = (timestamp: number | null): string => {
-    if (timestamp === null) return 'Never';
+    if (timestamp === null) return t("frontdesk.settings.webhookTestStatsNever");
 
     const now = Date.now();
     const diff = now - timestamp;
@@ -132,11 +135,12 @@ export const WebSocketStatsCard: React.FC<WebSocketStatsCardProps> = ({
         flexDirection: 'column',
         borderRadius: 2,
         boxShadow: theme.shadows[1],
+        direction: dir,
       }}
     >
       <CardContent sx={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 2, p: 3 }}>
         {/* Header */}
-        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', direction: dir }}>
           <Typography
             variant="h6"
             sx={{
@@ -145,7 +149,7 @@ export const WebSocketStatsCard: React.FC<WebSocketStatsCardProps> = ({
               color: colorTokens.neutral[900],
             }}
           >
-            Statistics
+            {t("frontdesk.settings.webhookTestStatsTitle")}
           </Typography>
 
           <Button
@@ -156,47 +160,48 @@ export const WebSocketStatsCard: React.FC<WebSocketStatsCardProps> = ({
               textTransform: 'none',
               fontSize: '0.75rem',
               minWidth: 'auto',
+              direction: dir,
             }}
           >
-            Reset
+            {t("frontdesk.settings.webhookTestStatsReset")}
           </Button>
         </Box>
 
         <Divider />
 
         {/* Stats Grid */}
-        <Stack spacing={1.5}>
+        <Stack sx={{ gap: 1.5, direction: dir }}>
           <StatItem
             icon={<TrendingUpIcon fontSize="small" />}
-            label="Events Received"
+            label={t("frontdesk.settings.webhookTestStatsEventsReceived")}
             value={stats.eventsReceived.toLocaleString()}
             color="#3b82f6"
           />
 
           <StatItem
             icon={<AccessTimeIcon fontSize="small" />}
-            label="Uptime"
+            label={t("frontdesk.settings.webhookTestStatsUptime")}
             value={formatUptime(stats.uptime)}
             color="#10b981"
           />
 
           <StatItem
             icon={<TrendingUpIcon fontSize="small" />}
-            label="Events/Second"
+            label={t("frontdesk.settings.webhookTestStatsEventsPerSecond")}
             value={getEventsPerSecond()}
             color="#f59e0b"
           />
 
           <StatItem
             icon={<ScheduleIcon fontSize="small" />}
-            label="Last Event"
+            label={t("frontdesk.settings.webhookTestStatsLastEvent")}
             value={formatLastEventTime(stats.lastEventAt)}
             color="#8b5cf6"
           />
 
           <StatItem
             icon={<RestartAltIcon fontSize="small" />}
-            label="Reconnections"
+            label={t("frontdesk.settings.webhookTestStatsReconnections")}
             value={stats.reconnectionAttempts}
             color={stats.reconnectionAttempts > 0 ? '#ef4444' : '#6b7280'}
           />
@@ -209,9 +214,10 @@ export const WebSocketStatsCard: React.FC<WebSocketStatsCardProps> = ({
               mt: 'auto',
               pt: 2,
               borderTop: `1px solid ${colorTokens.neutral[200]}`,
+              direction: dir,
             }}
           >
-            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 0.5 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 0.5, direction: dir }}>
               <Typography
                 variant="caption"
                 sx={{
@@ -222,7 +228,7 @@ export const WebSocketStatsCard: React.FC<WebSocketStatsCardProps> = ({
                   letterSpacing: 0.5,
                 }}
               >
-                Connection Quality
+                {t("frontdesk.settings.webhookTestStatsConnectionQuality")}
               </Typography>
               <Typography
                 variant="caption"
@@ -232,7 +238,7 @@ export const WebSocketStatsCard: React.FC<WebSocketStatsCardProps> = ({
                   fontWeight: 600,
                 }}
               >
-                {stats.reconnectionAttempts === 0 ? 'Excellent' : 'Fair'}
+                {stats.reconnectionAttempts === 0 ? t("frontdesk.settings.webhookTestStatsExcellent") : t("frontdesk.settings.webhookTestStatsFair")}
               </Typography>
             </Box>
 
@@ -264,7 +270,9 @@ export const WebSocketStatsCard: React.FC<WebSocketStatsCardProps> = ({
                   mt: 0.5,
                 }}
               >
-                Connection has experienced {stats.reconnectionAttempts} reconnection{stats.reconnectionAttempts !== 1 ? 's' : ''}
+                {stats.reconnectionAttempts === 1 
+                  ? t("frontdesk.settings.webhookTestStatsReconnectionMessage", { count: stats.reconnectionAttempts })
+                  : t("frontdesk.settings.webhookTestStatsReconnectionMessagePlural", { count: stats.reconnectionAttempts })}
               </Typography>
             )}
           </Box>
@@ -278,6 +286,7 @@ export const WebSocketStatsCard: React.FC<WebSocketStatsCardProps> = ({
               borderRadius: 1.5,
               backgroundColor: colorTokens.neutral[100],
               textAlign: 'center',
+              direction: dir,
             }}
           >
             <Typography
@@ -287,7 +296,7 @@ export const WebSocketStatsCard: React.FC<WebSocketStatsCardProps> = ({
                 color: colorTokens.neutral[600],
               }}
             >
-              Connect to view live statistics
+              {t("frontdesk.settings.webhookTestStatsConnectToView")}
             </Typography>
           </Box>
         )}

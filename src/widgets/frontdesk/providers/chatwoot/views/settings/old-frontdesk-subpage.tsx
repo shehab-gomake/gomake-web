@@ -7,22 +7,24 @@
  */
 
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { Box, Typography, Paper, Alert } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { BaseSettingsSubpage } from "../../components/settings";
 
 export const OldFrontDeskSubpage: React.FC = () => {
+  const { t } = useTranslation();
+  const dir: "rtl" | "ltr" = t("direction");
   const theme = useTheme();
 
   return (
     <BaseSettingsSubpage
-      title="Old FrontDesk"
-      description="Access legacy FrontDesk features and navigation"
+      title={t("frontdesk.settings.oldFrontDesk")}
+      description={t("frontdesk.settings.oldFrontDeskDescription")}
     >
-      <Box sx={{ p: 3 }}>
-        <Alert severity="info" sx={{ mb: 3 }}>
-          This section provides access to the original FrontDesk functionality.
-          Use the main navigation sidebar to access Dashboard, Ticket Views, and Live Chats.
+      <Box sx={{ p: 3, direction: dir }}>
+        <Alert severity="info" sx={{ mb: 3, direction: dir }}>
+          {t("frontdesk.settings.oldFrontDeskAlert")}
         </Alert>
 
         <Paper
@@ -31,33 +33,34 @@ export const OldFrontDeskSubpage: React.FC = () => {
             p: 3,
             border: `1px solid ${theme.palette.divider}`,
             borderRadius: 2,
+            direction: dir,
           }}
         >
-          <Typography variant="h6" gutterBottom>
-            Legacy Features
+          <Typography variant="h6" gutterBottom sx={{ direction: dir }}>
+            {t("frontdesk.settings.oldFrontDeskLegacyTitle")}
           </Typography>
-          <Typography variant="body2" color="text.secondary" paragraph>
-            The Old FrontDesk section includes:
+          <Typography variant="body2" color="text.secondary" paragraph sx={{ direction: dir }}>
+            {t("frontdesk.settings.oldFrontDeskLegacyDescription")}
           </Typography>
-          <Box component="ul" sx={{ pl: 3, mb: 2 }}>
+          <Box component="ul" sx={{ [dir === "rtl" ? "pr" : "pl"]: 3, mb: 2, direction: dir }}>
             <li>
-              <Typography variant="body2" color="text.secondary">
-                Dashboard - Unified inbox view
+              <Typography variant="body2" color="text.secondary" sx={{ direction: dir }}>
+                {t("frontdesk.settings.oldFrontDeskDashboard")}
               </Typography>
             </li>
             <li>
-              <Typography variant="body2" color="text.secondary">
-                Ticket Views - My Tickets, Unassigned, All Tickets, Done, Archived
+              <Typography variant="body2" color="text.secondary" sx={{ direction: dir }}>
+                {t("frontdesk.settings.oldFrontDeskTickets")}
               </Typography>
             </li>
             <li>
-              <Typography variant="body2" color="text.secondary">
-                Live Chats - Email, WhatsApp, Direct Messages
+              <Typography variant="body2" color="text.secondary" sx={{ direction: dir }}>
+                {t("frontdesk.settings.oldFrontDeskChats")}
               </Typography>
             </li>
           </Box>
-          <Typography variant="body2" color="text.secondary">
-            These features are accessible through the main navigation sidebar when collapsed or expanded.
+          <Typography variant="body2" color="text.secondary" sx={{ direction: dir }}>
+            {t("frontdesk.settings.oldFrontDeskAccessible")}
           </Typography>
         </Paper>
       </Box>

@@ -5,6 +5,7 @@
  */
 
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Box, Button, Typography, Card, CardContent, Chip, Stack, Divider } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { colorTokens } from '@/widgets/frontdesk/design-system/tokens';
@@ -41,6 +42,8 @@ export const WebSocketConnectionCard: React.FC<WebSocketConnectionCardProps> = (
   isConnected,
   isConnecting,
 }) => {
+  const { t } = useTranslation();
+  const dir: "rtl" | "ltr" = t("direction");
   const theme = useTheme();
 
   // Connection status configuration
@@ -49,21 +52,21 @@ export const WebSocketConnectionCard: React.FC<WebSocketConnectionCardProps> = (
       case ChatwootWebSocketState.CONNECTED:
         return {
           icon: <CheckCircleIcon />,
-          label: 'Connected',
+          label: t("frontdesk.settings.webhookTestConnectionConnected"),
           color: '#10b981',
           bgColor: '#d1fae5',
         };
       case ChatwootWebSocketState.CONNECTING:
         return {
           icon: <HourglassEmptyIcon />,
-          label: 'Connecting...',
+          label: t("frontdesk.settings.webhookTestConnectionConnecting"),
           color: '#f59e0b',
           bgColor: '#fef3c7',
         };
       case ChatwootWebSocketState.ERROR:
         return {
           icon: <ErrorIcon />,
-          label: 'Error',
+          label: t("frontdesk.settings.webhookTestConnectionError"),
           color: '#ef4444',
           bgColor: '#fee2e2',
         };
@@ -71,7 +74,7 @@ export const WebSocketConnectionCard: React.FC<WebSocketConnectionCardProps> = (
       default:
         return {
           icon: <CancelIcon />,
-          label: 'Disconnected',
+          label: t("frontdesk.settings.webhookTestConnectionDisconnected"),
           color: '#6b7280',
           bgColor: '#f3f4f6',
         };
@@ -88,6 +91,7 @@ export const WebSocketConnectionCard: React.FC<WebSocketConnectionCardProps> = (
         flexDirection: 'column',
         borderRadius: 2,
         boxShadow: theme.shadows[1],
+        direction: dir,
       }}
     >
       <CardContent sx={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 2, p: 3 }}>
@@ -100,7 +104,7 @@ export const WebSocketConnectionCard: React.FC<WebSocketConnectionCardProps> = (
             color: colorTokens.neutral[900],
           }}
         >
-          Connection
+          {t("frontdesk.settings.webhookTestConnectionTitle")}
         </Typography>
 
         <Divider />
@@ -114,6 +118,7 @@ export const WebSocketConnectionCard: React.FC<WebSocketConnectionCardProps> = (
             p: 2,
             borderRadius: 1.5,
             backgroundColor: statusConfig.bgColor,
+            direction: dir,
           }}
         >
           <Box sx={{ color: statusConfig.color, display: 'flex' }}>
@@ -147,8 +152,8 @@ export const WebSocketConnectionCard: React.FC<WebSocketConnectionCardProps> = (
         </Box>
 
         {/* Connection Info */}
-        <Stack spacing={1.5}>
-          <Box>
+        <Stack sx={{ gap: 1.5, direction: dir }}>
+          <Box sx={{ direction: dir }}>
             <Typography
               variant="caption"
               sx={{
@@ -159,12 +164,12 @@ export const WebSocketConnectionCard: React.FC<WebSocketConnectionCardProps> = (
                 letterSpacing: 0.5,
               }}
             >
-              Account
+              {t("frontdesk.settings.webhookTestConnectionAccount")}
             </Typography>
             <Box sx={{ mt: 0.5 }}>
               {accountId ? (
                 <Chip
-                  label={accountName || `Account #${accountId}`}
+                  label={accountName || t("frontdesk.settings.webhookTestConnectionAccount") + ` #${accountId}`}
                   size="small"
                   sx={{
                     fontSize: '0.813rem',
@@ -182,13 +187,13 @@ export const WebSocketConnectionCard: React.FC<WebSocketConnectionCardProps> = (
                     fontStyle: 'italic',
                   }}
                 >
-                  No account selected
+                  {t("frontdesk.settings.webhookTestConnectionAccountNotSelected")}
                 </Typography>
               )}
             </Box>
           </Box>
 
-          <Box>
+          <Box sx={{ direction: dir }}>
             <Typography
               variant="caption"
               sx={{
@@ -199,12 +204,12 @@ export const WebSocketConnectionCard: React.FC<WebSocketConnectionCardProps> = (
                 letterSpacing: 0.5,
               }}
             >
-              User
+              {t("frontdesk.settings.webhookTestConnectionUser")}
             </Typography>
             <Box sx={{ mt: 0.5 }}>
               {userId ? (
                 <Chip
-                  label={userName || `User #${userId}`}
+                  label={userName || t("frontdesk.settings.webhookTestConnectionUser") + ` #${userId}`}
                   size="small"
                   sx={{
                     fontSize: '0.813rem',
@@ -222,7 +227,7 @@ export const WebSocketConnectionCard: React.FC<WebSocketConnectionCardProps> = (
                     fontStyle: 'italic',
                   }}
                 >
-                  No user
+                  {t("frontdesk.settings.webhookTestConnectionNoUser")}
                 </Typography>
               )}
             </Box>
@@ -230,8 +235,8 @@ export const WebSocketConnectionCard: React.FC<WebSocketConnectionCardProps> = (
         </Stack>
 
         {/* Action Buttons */}
-        <Box sx={{ mt: 'auto', pt: 2 }}>
-          <Stack spacing={1}>
+        <Box sx={{ mt: 'auto', pt: 2, direction: dir }}>
+          <Stack spacing={1} sx={{ direction: dir }}>
             {!isConnected && !isConnecting && (
               <Button
                 variant="contained"
@@ -245,7 +250,7 @@ export const WebSocketConnectionCard: React.FC<WebSocketConnectionCardProps> = (
                   fontSize: '0.875rem',
                 }}
               >
-                Connect
+                {t("frontdesk.settings.webhookTestConnectionConnect")}
               </Button>
             )}
 
@@ -260,7 +265,7 @@ export const WebSocketConnectionCard: React.FC<WebSocketConnectionCardProps> = (
                   fontSize: '0.875rem',
                 }}
               >
-                Connecting...
+                {t("frontdesk.settings.webhookTestConnectionConnecting")}
               </Button>
             )}
 
@@ -277,7 +282,7 @@ export const WebSocketConnectionCard: React.FC<WebSocketConnectionCardProps> = (
                     fontSize: '0.875rem',
                   }}
                 >
-                  Disconnect
+                  {t("frontdesk.settings.webhookTestConnectionDisconnect")}
                 </Button>
                 <Button
                   variant="outlined"
@@ -289,7 +294,7 @@ export const WebSocketConnectionCard: React.FC<WebSocketConnectionCardProps> = (
                     fontSize: '0.875rem',
                   }}
                 >
-                  Reconnect
+                  {t("frontdesk.settings.webhookTestConnectionReconnect")}
                 </Button>
               </>
             )}
@@ -306,7 +311,7 @@ export const WebSocketConnectionCard: React.FC<WebSocketConnectionCardProps> = (
                 textAlign: 'center',
               }}
             >
-              Please select an account to connect
+              {t("frontdesk.settings.webhookTestConnectionSelectAccount")}
             </Typography>
           )}
         </Box>

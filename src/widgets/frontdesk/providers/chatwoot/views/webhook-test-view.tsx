@@ -6,6 +6,7 @@
  */
 
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Box, Typography, Alert } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { colorTokens } from '@/widgets/frontdesk/design-system/tokens';
@@ -15,6 +16,8 @@ import { WebSocketEventsLog } from '../components/websocket-test/websocket-event
 import { WebSocketStatsCard } from '../components/websocket-test/websocket-stats-card';
 
 export const WebhookTestView: React.FC = () => {
+  const { t } = useTranslation();
+  const dir: "rtl" | "ltr" = t("direction");
   const theme = useTheme();
 
   // WebSocket testing hook
@@ -51,6 +54,7 @@ export const WebhookTestView: React.FC = () => {
         flexDirection: 'column',
         backgroundColor: colorTokens.neutral[50],
         overflow: 'hidden',
+        direction: dir,
       }}
     >
       {/* Header */}
@@ -60,6 +64,7 @@ export const WebhookTestView: React.FC = () => {
           py: 2,
           backgroundColor: theme.palette.background.paper,
           borderBottom: `1px solid ${colorTokens.neutral[200]}`,
+          direction: dir,
         }}
       >
         <Typography
@@ -70,7 +75,7 @@ export const WebhookTestView: React.FC = () => {
             color: colorTokens.neutral[900],
           }}
         >
-          WebSocket Test
+          {t("frontdesk.settings.webhookTestTitle")}
         </Typography>
         <Typography
           variant="body2"
@@ -80,31 +85,31 @@ export const WebhookTestView: React.FC = () => {
             fontSize: '0.875rem',
           }}
         >
-          Test and monitor Chatwoot WebSocket connections in real-time
+          {t("frontdesk.settings.webhookTestDescription")}
         </Typography>
       </Box>
 
       {/* Info Alert */}
       {!profile && (
-        <Box sx={{ px: 3, pt: 2 }}>
+        <Box sx={{ px: 3, pt: 2, direction: dir }}>
           <Alert severity="info" sx={{ fontSize: '0.875rem' }}>
-            Loading profile... Please wait.
+            {t("frontdesk.settings.webhookTestLoadingProfile")}
           </Alert>
         </Box>
       )}
 
       {profile && !selectedAccountId && (
-        <Box sx={{ px: 3, pt: 2 }}>
+        <Box sx={{ px: 3, pt: 2, direction: dir }}>
           <Alert severity="warning" sx={{ fontSize: '0.875rem' }}>
-            Please select an account from the Chatwoot provider to connect to WebSocket.
+            {t("frontdesk.settings.webhookTestSelectAccount")}
           </Alert>
         </Box>
       )}
 
       {!profile?.pubsub_token && profile && (
-        <Box sx={{ px: 3, pt: 2 }}>
+        <Box sx={{ px: 3, pt: 2, direction: dir }}>
           <Alert severity="error" sx={{ fontSize: '0.875rem' }}>
-            Missing pubsub_token in user profile. Cannot connect to WebSocket. Please check your Chatwoot configuration.
+            {t("frontdesk.settings.webhookTestMissingToken")}
           </Alert>
         </Box>
       )}
@@ -114,11 +119,12 @@ export const WebhookTestView: React.FC = () => {
         sx={{
           flex: 1,
           display: 'grid',
-          gridTemplateColumns: '300px 1fr 320px',
+          gridTemplateColumns: dir === "rtl" ? '320px 1fr 300px' : '300px 1fr 320px',
           gap: 2,
           p: 3,
           overflow: 'hidden',
           minHeight: 0,
+          direction: dir,
         }}
       >
         {/* Left Column - Connection Controls */}
@@ -183,6 +189,7 @@ export const WebhookTestView: React.FC = () => {
           py: 1.5,
           backgroundColor: theme.palette.background.paper,
           borderTop: `1px solid ${colorTokens.neutral[200]}`,
+          direction: dir,
         }}
       >
         <Typography
@@ -192,7 +199,7 @@ export const WebhookTestView: React.FC = () => {
             color: colorTokens.neutral[500],
           }}
         >
-          WebSocket Protocol: ActionCable (Rails) • Technology: @rails/actioncable • Connection: Direct to Chatwoot Server
+          {t("frontdesk.settings.webhookTestFooter")}
         </Typography>
       </Box>
     </Box>

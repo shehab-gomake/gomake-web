@@ -8,6 +8,7 @@
  */
 
 import React, { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Box,
   Typography,
@@ -44,8 +45,11 @@ import type { Team } from "@/services/frontdesk/api/chatwoot/services/chatwoot-t
 import type { Agent } from "@/services/frontdesk/api/chatwoot/services/chatwoot-agents.service";
 
 export const TeamsSubpage: React.FC = () => {
+  const { t } = useTranslation();
+  const dir: "rtl" | "ltr" = t("direction");
   const { selectedAccountId, router: chatwootRouter } = useChatwootProvider();
-  const { teams, loading, error, refresh } = useChatwootTeams(selectedAccountId);
+  const { teams, loading, error, refresh } =
+    useChatwootTeams(selectedAccountId);
 
   // Defense-in-depth: Check if user has permission to access Teams settings
   const { canAccess } = useChatwootPermissions();
@@ -54,7 +58,9 @@ export const TeamsSubpage: React.FC = () => {
   // Redirect unauthorized users to My Inbox
   useEffect(() => {
     if (!canAccessTeams) {
-      console.warn("[TeamsSubpage] Unauthorized access attempt - redirecting to My Inbox");
+      console.warn(
+        "[TeamsSubpage] Unauthorized access attempt - redirecting to My Inbox"
+      );
       chatwootRouter.navigateToMyInbox();
     }
   }, [canAccessTeams, chatwootRouter]);
@@ -85,14 +91,17 @@ export const TeamsSubpage: React.FC = () => {
 
     try {
       // Fetch current team members
-      const members = await chatwootService.teams.getTeamMembers(selectedAccountId, team.id);
+      const members = await chatwootService.teams.getTeamMembers(
+        selectedAccountId,
+        team.id
+      );
       setEditingTeam(team);
       setEditingTeamMembers(members || []);
       setShowAddEditModal(true);
     } catch (error) {
       console.error("Failed to load team members:", error);
       setNotification({
-        message: "Failed to load team members. Please try again.",
+        message: t("frontdesk.settings.teamsFailedToLoadMembers"),
         severity: "error",
       });
     }
@@ -116,42 +125,64 @@ export const TeamsSubpage: React.FC = () => {
         // Update team members if provided
         if (data.member_ids !== undefined) {
           // Get current members
-          const currentMembers = await chatwootService.teams.getTeamMembers(selectedAccountId, teamId);
+          const currentMembers = await chatwootService.teams.getTeamMembers(
+            selectedAccountId,
+            teamId
+          );
           const currentMemberIds = currentMembers.map((m) => m.id);
 
           // Add new members
-          const toAdd = data.member_ids.filter((id) => !currentMemberIds.includes(id));
+          const toAdd = data.member_ids.filter(
+            (id) => !currentMemberIds.includes(id)
+          );
           if (toAdd.length > 0) {
-            await chatwootService.teams.addTeamMembers(selectedAccountId, teamId, toAdd);
+            await chatwootService.teams.addTeamMembers(
+              selectedAccountId,
+              teamId,
+              toAdd
+            );
           }
 
           // Remove members no longer in list
-          const toRemove = currentMemberIds.filter((id) => !data.member_ids!.includes(id));
+          const toRemove = currentMemberIds.filter(
+            (id) => !data.member_ids!.includes(id)
+          );
           for (const agentId of toRemove) {
-            await chatwootService.teams.removeTeamMember(selectedAccountId, teamId, agentId);
+            await chatwootService.teams.removeTeamMember(
+              selectedAccountId,
+              teamId,
+              agentId
+            );
           }
         }
 
         setNotification({
-          message: "Team updated successfully",
+          message: t("frontdesk.settings.teamsUpdatedSuccess"),
           severity: "success",
         });
       } else {
         // Create new team
         // Note: GoMake always disables auto-assignment for teams
-        const newTeam = await chatwootService.teams.createTeam(selectedAccountId, {
-          name: data.name,
-          description: data.description,
-          allow_auto_assign: false,
-        });
+        const newTeam = await chatwootService.teams.createTeam(
+          selectedAccountId,
+          {
+            name: data.name,
+            description: data.description,
+            allow_auto_assign: false,
+          }
+        );
 
         // Add members if provided
         if (data.member_ids && data.member_ids.length > 0 && newTeam.id) {
-          await chatwootService.teams.addTeamMembers(selectedAccountId, newTeam.id, data.member_ids);
+          await chatwootService.teams.addTeamMembers(
+            selectedAccountId,
+            newTeam.id,
+            data.member_ids
+          );
         }
 
         setNotification({
-          message: "Team created successfully",
+          message: t("frontdesk.settings.teamsCreatedSuccess"),
           severity: "success",
         });
       }
@@ -163,7 +194,9 @@ export const TeamsSubpage: React.FC = () => {
       await refresh();
     } catch (error: any) {
       console.error("Failed to save team:", error);
-      throw new Error(error.message || "Failed to save team. Please try again.");
+      throw new Error(
+        error.message || "Failed to save team. Please try again."
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -175,9 +208,12 @@ export const TeamsSubpage: React.FC = () => {
 
     setIsDeleting(true);
     try {
-      await chatwootService.teams.deleteTeam(selectedAccountId, deletingTeam.id);
+      await chatwootService.teams.deleteTeam(
+        selectedAccountId,
+        deletingTeam.id
+      );
       setNotification({
-        message: "Team deleted successfully",
+        message: t("frontdesk.settings.teamsDeletedSuccess"),
         severity: "success",
       });
       setDeletingTeam(null);
@@ -185,7 +221,7 @@ export const TeamsSubpage: React.FC = () => {
     } catch (error) {
       console.error("Failed to delete team:", error);
       setNotification({
-        message: "Failed to delete team. Please try again.",
+        message: t("frontdesk.settings.teamsFailedToDelete"),
         severity: "error",
       });
     } finally {
@@ -196,12 +232,12 @@ export const TeamsSubpage: React.FC = () => {
   return (
     <>
       <BaseSettingsSubpage
-        title="Teams"
-        description="Manage teams and their members"
+        title={t("frontdesk.settings.teams")}
+        description={t("frontdesk.settings.teamsDescription")}
         isLoading={loading}
         headerActions={
-          <Box sx={{ display: "flex", gap: 0.75 }}>
-            <Tooltip title="Refresh teams">
+          <Box sx={{ display: "flex", gap: 0.75, direction: dir }}>
+            <Tooltip title={t("frontdesk.settings.teamsRefresh")}>
               <IconButton
                 onClick={refresh}
                 size="small"
@@ -238,22 +274,29 @@ export const TeamsSubpage: React.FC = () => {
                 boxShadow: "0 1px 2px rgba(0,0,0,0.05)",
               }}
             >
-              Create Team
+              {t("frontdesk.settings.teamsCreateTeam")}
             </Button>
           </Box>
         }
       >
         {/* Notifications */}
         {notification && (
-          <Alert severity={notification.severity} onClose={() => setNotification(null)} sx={{ mb: 2, borderRadius: "6px" }}>
+          <Alert
+            severity={notification.severity}
+            onClose={() => setNotification(null)}
+            sx={{ mb: 2, borderRadius: "6px", direction: dir }}
+          >
             {notification.message}
           </Alert>
         )}
 
         {/* Error State */}
         {error ? (
-          <Alert severity="error" sx={{ mb: 2, borderRadius: "6px" }}>
-            {error.message || "Failed to load teams"}
+          <Alert
+            severity="error"
+            sx={{ mb: 2, borderRadius: "6px", direction: dir }}
+          >
+            {error.message || t("frontdesk.settings.teamsFailedToLoad")}
           </Alert>
         ) : teams.length === 0 ? (
           /* Empty State - Compact */
@@ -266,15 +309,26 @@ export const TeamsSubpage: React.FC = () => {
               minHeight: 260,
               textAlign: "center",
               gap: 1.5,
+              direction: dir,
             }}
           >
             <GroupsIcon sx={{ fontSize: 48, color: "#9ca3af", opacity: 0.6 }} />
-            <Typography variant="subtitle1" sx={{ color: "#1f2937", fontWeight: 600, fontSize: "0.938rem" }}>
-              No Teams Found
+            <Typography
+              variant="subtitle1"
+              sx={{ color: "#1f2937", fontWeight: 600, fontSize: "0.938rem" }}
+            >
+              {t("frontdesk.settings.teamsEmptyTitle")}
             </Typography>
-            <Typography variant="body2" sx={{ color: "#6b7280", maxWidth: 360, fontSize: "0.813rem", lineHeight: 1.5 }}>
-              Create teams to organize agents and route conversations efficiently. Teams help distribute workload and maintain
-              accountability.
+            <Typography
+              variant="body2"
+              sx={{
+                color: "#6b7280",
+                maxWidth: 360,
+                fontSize: "0.813rem",
+                lineHeight: 1.5,
+              }}
+            >
+              {t("frontdesk.settings.teamsEmptyDescription")}
             </Typography>
             <Button
               variant="contained"
@@ -294,12 +348,17 @@ export const TeamsSubpage: React.FC = () => {
                 boxShadow: "0 1px 2px rgba(0,0,0,0.05)",
               }}
             >
-              Create Your First Team
+              {t("frontdesk.settings.teamsCreateFirstTeam")}
             </Button>
           </Box>
         ) : (
           /* Teams Table - Compact High-Density Design */
-          <SettingsSection title={`Teams (${teams.length})`} description="Organize agents into teams for better collaboration">
+          <SettingsSection
+            title={t("frontdesk.settings.teamsSectionTitle", {
+              count: teams.length,
+            })}
+            description={t("frontdesk.settings.teamsSectionDescription")}
+          >
             <TableContainer
               component={Paper}
               variant="outlined"
@@ -307,44 +366,50 @@ export const TeamsSubpage: React.FC = () => {
                 border: "1px solid rgba(0,0,0,0.06)",
                 borderRadius: "6px",
                 boxShadow: "none",
+                direction: dir,
               }}
             >
               <Table size="small">
                 <TableHead>
                   <TableRow sx={{ backgroundColor: "#f9fafb" }}>
                     <TableCell
+                      align={dir === "rtl" ? "right" : "left"}
                       sx={{
                         fontWeight: 600,
                         fontSize: "0.75rem",
                         color: "#4b5563",
                         py: 1.25,
                         borderBottom: "1px solid rgba(0,0,0,0.06)",
+                        direction: dir,
                       }}
                     >
-                      Name
+                      {t("frontdesk.settings.teamsTableName")}
                     </TableCell>
                     <TableCell
+                      align={dir === "rtl" ? "right" : "left"}
                       sx={{
                         fontWeight: 600,
                         fontSize: "0.75rem",
                         color: "#4b5563",
                         py: 1.25,
                         borderBottom: "1px solid rgba(0,0,0,0.06)",
+                        direction: dir,
                       }}
                     >
-                      Description
+                      {t("frontdesk.settings.teamsTableDescription")}
                     </TableCell>
                     <TableCell
+                      align={dir === "rtl" ? "left" : "right"}
                       sx={{
                         fontWeight: 600,
                         fontSize: "0.75rem",
                         color: "#4b5563",
                         py: 1.25,
                         borderBottom: "1px solid rgba(0,0,0,0.06)",
+                        direction: dir,
                       }}
-                      align="right"
                     >
-                      Actions
+                      {t("frontdesk.settings.teamsTableActions")}
                     </TableCell>
                   </TableRow>
                 </TableHead>
@@ -361,15 +426,44 @@ export const TeamsSubpage: React.FC = () => {
                         },
                       }}
                     >
-                      <TableCell sx={{ py: 1.25, borderBottom: "1px solid rgba(0,0,0,0.04)" }}>
-                        <Box sx={{ display: "flex", alignItems: "center", gap: 0.75 }}>
+                      <TableCell
+                        align={dir === "rtl" ? "right" : "left"}
+                        sx={{
+                          py: 1.25,
+                          borderBottom: "1px solid rgba(0,0,0,0.04)",
+                          direction: dir,
+                        }}
+                      >
+                        <Box
+                          sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 0.75,
+                            direction: dir,
+                          }}
+                        >
                           <GroupsIcon sx={{ fontSize: 16, color: "#6b7280" }} />
-                          <Typography variant="body2" sx={{ fontWeight: 500, fontSize: "0.813rem", color: "#1f2937" }}>
+                          <Typography
+                            variant="body2"
+                            sx={{
+                              fontWeight: 500,
+                              fontSize: "0.813rem",
+                              color: "#1f2937",
+                              direction: dir,
+                            }}
+                          >
                             {team.name}
                           </Typography>
                         </Box>
                       </TableCell>
-                      <TableCell sx={{ py: 1.25, borderBottom: "1px solid rgba(0,0,0,0.04)" }}>
+                      <TableCell
+                        align={dir === "rtl" ? "right" : "left"}
+                        sx={{
+                          py: 1.25,
+                          borderBottom: "1px solid rgba(0,0,0,0.04)",
+                          direction: dir,
+                        }}
+                      >
                         <Typography
                           variant="body2"
                           sx={{
@@ -379,14 +473,30 @@ export const TeamsSubpage: React.FC = () => {
                             overflow: "hidden",
                             textOverflow: "ellipsis",
                             whiteSpace: "nowrap",
+                            direction: dir,
                           }}
                         >
                           {team.description || "—"}
                         </Typography>
                       </TableCell>
-                      <TableCell align="right" sx={{ py: 1.25, borderBottom: "1px solid rgba(0,0,0,0.04)" }}>
-                        <Box sx={{ display: "flex", gap: 0.25, justifyContent: "flex-end" }}>
-                          <Tooltip title="Edit team">
+                      <TableCell
+                        align={dir === "rtl" ? "left" : "right"}
+                        sx={{
+                          py: 1.25,
+                          borderBottom: "1px solid rgba(0,0,0,0.04)",
+                          direction: dir,
+                        }}
+                      >
+                        <Box
+                          sx={{
+                            display: "flex",
+                            gap: 0.25,
+                            justifyContent:
+                              dir === "rtl" ? "flex-start" : "flex-end",
+                            direction: dir,
+                          }}
+                        >
+                          <Tooltip title={t("frontdesk.settings.teamsEdit")}>
                             <IconButton
                               size="small"
                               onClick={() => handleEditTeam(team)}
@@ -403,7 +513,7 @@ export const TeamsSubpage: React.FC = () => {
                               <EditIcon sx={{ fontSize: 16 }} />
                             </IconButton>
                           </Tooltip>
-                          <Tooltip title="Delete team">
+                          <Tooltip title={t("frontdesk.settings.teamsDelete")}>
                             <IconButton
                               size="small"
                               onClick={() => setDeletingTeam(team)}
@@ -453,9 +563,11 @@ export const TeamsSubpage: React.FC = () => {
         open={!!deletingTeam}
         onClose={() => !isDeleting && setDeletingTeam(null)}
         onConfirm={handleDeleteTeam}
-        title="Delete Team?"
-        message={`Are you sure you want to delete "${deletingTeam?.name}"? This action cannot be undone.`}
-        confirmText="Delete"
+        title={t("frontdesk.settings.teamsDeleteTitle")}
+        message={t("frontdesk.settings.teamsDeleteMessage", {
+          name: deletingTeam?.name || "",
+        })}
+        confirmText={t("frontdesk.settings.teamsDeleteButton")}
         confirmColor="error"
         requireValue={deletingTeam?.name}
         isLoading={isDeleting}
