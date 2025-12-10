@@ -8,6 +8,7 @@ import { IGanttGroup } from "../interfaces";
 interface ExpandCollapseControlsProps {
   groups: IGanttGroup[];
   openGroups: Record<string, boolean>;
+  getGroupKey: (group: IGanttGroup) => string;
   onExpandAll: () => void;
   onCollapseAll: () => void;
 }
@@ -15,6 +16,7 @@ interface ExpandCollapseControlsProps {
 export const ExpandCollapseControls = ({
   groups,
   openGroups,
+  getGroupKey,
   onExpandAll,
   onCollapseAll,
 }: ExpandCollapseControlsProps) => {
@@ -25,7 +27,7 @@ export const ExpandCollapseControls = ({
   const rootGroups = groups.filter((group) => group.isRoot);
   const allExpanded =
     rootGroups.length > 0 &&
-    rootGroups.every((group) => openGroups[group.id] === true);
+    rootGroups.every((group) => openGroups[getGroupKey(group)] === true);
 
   const handleToggle = () => {
     if (allExpanded) {

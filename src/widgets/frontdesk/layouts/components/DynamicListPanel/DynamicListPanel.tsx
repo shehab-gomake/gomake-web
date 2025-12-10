@@ -1,8 +1,16 @@
-import React from 'react';
-import { Box, TextField, InputAdornment, Typography, CircularProgress, Paper } from '@mui/material';
-import { useTheme } from '@mui/material/styles';
-import SearchIcon from '@mui/icons-material/Search';
-import { Channel } from '../NavigationSidebar';
+import React from "react";
+import {
+  Box,
+  TextField,
+  InputAdornment,
+  Typography,
+  CircularProgress,
+  Paper,
+} from "@mui/material";
+import { useTheme } from "@mui/material/styles";
+import { useTranslation } from "react-i18next";
+import SearchIcon from "@mui/icons-material/Search";
+import { Channel } from "../NavigationSidebar";
 
 interface DynamicListPanelProps {
   channel: Channel;
@@ -20,31 +28,32 @@ interface DynamicListPanelProps {
 export const DynamicListPanel: React.FC<DynamicListPanelProps> = ({
   channel,
   content,
-  searchValue = '',
+  searchValue = "",
   onSearchChange,
   accountSelector,
   loading = false,
   error,
   title,
   headerActions,
-  className
+  className,
 }) => {
+  const { t } = useTranslation();
   const theme = useTheme();
 
   const getChannelTitle = () => {
     if (title) return title;
-    
+
     switch (channel) {
-      case 'all':
-        return 'All Conversations';
-      case 'email':
-        return 'Email';
-      case 'whatsapp':
-        return 'WhatsApp';
-      case 'internal':
-        return 'Direct Messages';
+      case "all":
+        return t("frontdesk.allConversations");
+      case "email":
+        return t("frontdesk.email");
+      case "whatsapp":
+        return t("frontdesk.whatsapp");
+      case "internal":
+        return t("frontdesk.directMessages");
       default:
-        return 'Conversations';
+        return t("frontdesk.conversations");
     }
   };
 
@@ -52,10 +61,10 @@ export const DynamicListPanel: React.FC<DynamicListPanelProps> = ({
     <Box
       className={className}
       sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        height: '100%',
-        backgroundColor: theme.palette.background.default
+        display: "flex",
+        flexDirection: "column",
+        height: "100%",
+        backgroundColor: theme.palette.background.default,
       }}
     >
       {/* Header */}
@@ -63,41 +72,37 @@ export const DynamicListPanel: React.FC<DynamicListPanelProps> = ({
         sx={{
           p: 2,
           borderBottom: `1px solid ${theme.palette.divider}`,
-          backgroundColor: theme.palette.background.paper
+          backgroundColor: theme.palette.background.paper,
         }}
       >
         {/* Title Row */}
         <Box
           sx={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            mb: accountSelector || onSearchChange ? 2 : 0
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            mb: accountSelector || onSearchChange ? 2 : 0,
           }}
         >
           <Typography variant="h6" sx={{ fontWeight: 600 }}>
             {getChannelTitle()}
           </Typography>
           {headerActions && (
-            <Box sx={{ display: 'flex', gap: 1 }}>
-              {headerActions}
-            </Box>
+            <Box sx={{ display: "flex", gap: 1 }}>{headerActions}</Box>
           )}
         </Box>
 
         {/* Account Selector */}
-        {accountSelector && (
-          <Box sx={{ mb: 2 }}>
-            {accountSelector}
-          </Box>
-        )}
+        {accountSelector && <Box sx={{ mb: 2 }}>{accountSelector}</Box>}
 
         {/* Search Bar */}
         {onSearchChange && (
           <TextField
             fullWidth
             size="small"
-            placeholder={`Search ${getChannelTitle().toLowerCase()}...`}
+            placeholder={t("frontdesk.searchPlaceholder", {
+              channel: getChannelTitle().toLowerCase(),
+            })}
             value={searchValue}
             onChange={(e) => onSearchChange(e.target.value)}
             InputProps={{
@@ -108,10 +113,10 @@ export const DynamicListPanel: React.FC<DynamicListPanelProps> = ({
               ),
               sx: {
                 backgroundColor: theme.palette.background.default,
-                '& .MuiOutlinedInput-notchedOutline': {
-                  borderColor: theme.palette.divider
-                }
-              }
+                "& .MuiOutlinedInput-notchedOutline": {
+                  borderColor: theme.palette.divider,
+                },
+              },
             }}
           />
         )}
@@ -121,27 +126,27 @@ export const DynamicListPanel: React.FC<DynamicListPanelProps> = ({
       <Box
         sx={{
           flex: 1,
-          overflow: 'auto',
-          position: 'relative',
+          overflow: "auto",
+          position: "relative",
           px: 2,
           py: 1,
           // Add fade animation for content changes
-          '& > *': {
-            animation: 'fadeIn 0.15s ease-in-out',
+          "& > *": {
+            animation: "fadeIn 0.15s ease-in-out",
           },
-          '@keyframes fadeIn': {
-            from: { opacity: 0, transform: 'translateY(10px)' },
-            to: { opacity: 1, transform: 'translateY(0)' }
-          }
+          "@keyframes fadeIn": {
+            from: { opacity: 0, transform: "translateY(10px)" },
+            to: { opacity: 1, transform: "translateY(0)" },
+          },
         }}
       >
         {loading && (
           <Box
             sx={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              height: '100%'
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              height: "100%",
             }}
           >
             <CircularProgress />
@@ -153,8 +158,8 @@ export const DynamicListPanel: React.FC<DynamicListPanelProps> = ({
             sx={{
               p: 2,
               mt: 2,
-              backgroundColor: theme.palette.error.light + '10',
-              borderLeft: `3px solid ${theme.palette.error.main}`
+              backgroundColor: theme.palette.error.light + "10",
+              borderLeft: `3px solid ${theme.palette.error.main}`,
             }}
           >
             <Typography color="error" variant="body2">
@@ -168,16 +173,16 @@ export const DynamicListPanel: React.FC<DynamicListPanelProps> = ({
         {!loading && !error && !content && (
           <Box
             sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              height: '100%',
-              color: theme.palette.text.secondary
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              height: "100%",
+              color: theme.palette.text.secondary,
             }}
           >
             <Typography variant="body2">
-              No conversations found
+              {t("frontdesk.noConversationsFound")}
             </Typography>
           </Box>
         )}

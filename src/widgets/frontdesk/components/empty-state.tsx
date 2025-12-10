@@ -1,5 +1,6 @@
 import React from "react";
 import { Stack, Typography } from "@mui/material";
+import { useTranslation } from "react-i18next";
 
 interface FrontdeskEmptyStateProps {
   title?: string;
@@ -7,17 +8,31 @@ interface FrontdeskEmptyStateProps {
 }
 
 const FrontdeskEmptyState: React.FC<FrontdeskEmptyStateProps> = ({
-  title = "No conversation selected",
-  subtitle = "Choose a conversation from the list to preview",
+  title,
+  subtitle,
 }) => {
+  const { t } = useTranslation();
+  const defaultTitle =
+    title || t("frontdesk.emptyStates.noConversationSelected");
+  const defaultSubtitle =
+    subtitle || t("frontdesk.emptyStates.chooseConversationToPreview");
   return (
-    <Stack alignItems="center" justifyContent="center" spacing={1.5} sx={{ flex: 1, py: 6 }}>
-      <Typography variant="subtitle1" color="text.primary" sx={{ fontWeight: 600 }}>
-        {title}
+    <Stack
+      alignItems="center"
+      justifyContent="center"
+      spacing={1.5}
+      sx={{ flex: 1, py: 6 }}
+    >
+      <Typography
+        variant="subtitle1"
+        color="text.primary"
+        sx={{ fontWeight: 600 }}
+      >
+        {defaultTitle}
       </Typography>
-      {subtitle && (
+      {defaultSubtitle && (
         <Typography variant="body2" color="text.secondary">
-          {subtitle}
+          {defaultSubtitle}
         </Typography>
       )}
     </Stack>
@@ -25,4 +40,3 @@ const FrontdeskEmptyState: React.FC<FrontdeskEmptyStateProps> = ({
 };
 
 export { FrontdeskEmptyState };
-

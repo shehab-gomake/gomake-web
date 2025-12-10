@@ -12,6 +12,7 @@ import {
   ListItemText,
   alpha,
 } from "@mui/material";
+import { useTranslation } from "react-i18next";
 
 // Icons
 import DashboardIcon from "@mui/icons-material/DashboardOutlined";
@@ -40,9 +41,15 @@ import { AddChannelModal } from "@/widgets/frontdesk/providers/chatwoot/componen
 import { ComposeConversationModal } from "@/widgets/frontdesk/providers/chatwoot/components/compose/ComposeConversationModal";
 import { InboxIcon as ChatwootInboxIcon } from "@/widgets/frontdesk/providers/chatwoot/utils/inbox-icons";
 import { useRouter } from "next/router";
-import { chatwootSelectedAccountAtom, chatwootInboxAgentsMapAtom } from "@/store/frontdesk/atoms/chatwoot.atoms";
+import {
+  chatwootSelectedAccountAtom,
+  chatwootInboxAgentsMapAtom,
+} from "@/store/frontdesk/atoms/chatwoot.atoms";
 import { useRecoilValue } from "recoil";
-import { RouteBuilder, buildRoute } from "@/widgets/frontdesk/routing/route-builder";
+import {
+  RouteBuilder,
+  buildRoute,
+} from "@/widgets/frontdesk/routing/route-builder";
 import { ChatwootView } from "@/widgets/frontdesk/routing/types";
 import type { Agent } from "@/services/frontdesk/api/chatwoot/types/agents.types";
 
@@ -62,7 +69,12 @@ import {
  */
 export type Channel = "all" | "email" | "whatsapp" | "internal" | "chatwoot";
 export type Section = "inbox" | "assigned" | "admin" | "settings";
-export type TicketView = "my-tickets" | "unassigned" | "all-tickets" | "done" | "archived";
+export type TicketView =
+  | "my-tickets"
+  | "unassigned"
+  | "all-tickets"
+  | "done"
+  | "archived";
 
 interface NavigationSidebarProps {
   selectedChannel: Channel;
@@ -115,7 +127,10 @@ const getChannelSource = (inbox: any): string | null => {
     return inbox.phone_number || null;
   }
 
-  if (inbox.channel_type === "Channel::WebWidget" || inbox.provider === "web_widget") {
+  if (
+    inbox.channel_type === "Channel::WebWidget" ||
+    inbox.provider === "web_widget"
+  ) {
     return inbox.website_url || null;
   }
 
@@ -191,18 +206,29 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
   onToggleCollapse,
   className,
 }) => {
+  const { t } = useTranslation();
   const router = useRouter();
-  const [chatwootConversationsExpanded, setChatwootConversationsExpanded] = useState(true);
-  const [chatwootChannelsExpanded, setChatwootChannelsExpanded] = useState(true);
+  const [chatwootConversationsExpanded, setChatwootConversationsExpanded] =
+    useState(true);
+  const [chatwootChannelsExpanded, setChatwootChannelsExpanded] =
+    useState(true);
   const [showAddChannelModal, setShowAddChannelModal] = useState(false);
   const [showComposeModal, setShowComposeModal] = useState(false);
-  const [preloadedInboxForModal, setPreloadedInboxForModal] = useState<{ accountId: number; inboxId: number } | null>(null);
+  const [preloadedInboxForModal, setPreloadedInboxForModal] = useState<{
+    accountId: number;
+    inboxId: number;
+  } | null>(null);
 
   // Get selected Chatwoot account
   const selectedAccount = useRecoilValue(chatwootSelectedAccountAtom);
 
   // Fetch Chatwoot inboxes (channels)
-  const { inboxes, loading: inboxesLoading, selectedInboxId, selectInbox } = useChatwootInboxes();
+  const {
+    inboxes,
+    loading: inboxesLoading,
+    selectedInboxId,
+    selectInbox,
+  } = useChatwootInboxes();
 
   // Get inbox agents map to check which inboxes have agents
   const inboxAgentsMap = useRecoilValue(chatwootInboxAgentsMapAtom);
@@ -224,100 +250,140 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
   const canCreateInbox = canPerformAction(ACTION_PERMISSIONS.createInbox);
 
   // Navigation handlers
-  const handleNavigate = useCallback((route: ReturnType<typeof RouteBuilder.chatwoot>, clearInbox = false) => {
-    if (clearInbox) {
-      selectInbox(null);
-    }
+  const handleNavigate = useCallback(
+    (route: ReturnType<typeof RouteBuilder.chatwoot>, clearInbox = false) => {
+      if (clearInbox) {
+        selectInbox(null);
+      }
 
-    const { path, options } = buildRoute(route, { replace: true });
+      const { path, options } = buildRoute(route, { replace: true });
 
-    if (selectedChannel !== "chatwoot") {
-      onSectionSelect("inbox");
-      onChannelSelect("chatwoot" as Channel);
-    }
+      if (selectedChannel !== "chatwoot") {
+        onSectionSelect("inbox");
+        onChannelSelect("chatwoot" as Channel);
+      }
 
-    router.replace(path, undefined, { shallow: options.scroll === false });
-  }, [selectedChannel, onSectionSelect, onChannelSelect, router, selectInbox]);
+      router.replace(path, undefined, { shallow: options.scroll === false });
+    },
+    [selectedChannel, onSectionSelect, onChannelSelect, router, selectInbox]
+  );
 
-  const handleDashboardClick = useCallback((e: React.MouseEvent) => {
-    e.stopPropagation();
-    e.preventDefault();
-    handleNavigate(RouteBuilder.chatwootDashboard());
-  }, [handleNavigate]);
+  const handleDashboardClick = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation();
+      e.preventDefault();
+      handleNavigate(RouteBuilder.chatwootDashboard());
+    },
+    [handleNavigate]
+  );
 
-  const handleMyTicketsClick = useCallback((e: React.MouseEvent) => {
-    e.stopPropagation();
-    e.preventDefault();
-    handleNavigate(RouteBuilder.chatwootMyInbox());
-  }, [handleNavigate]);
+  const handleMyTicketsClick = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation();
+      e.preventDefault();
+      handleNavigate(RouteBuilder.chatwootMyInbox());
+    },
+    [handleNavigate]
+  );
 
-  const handleAllTicketsClick = useCallback((e: React.MouseEvent) => {
-    e.stopPropagation();
-    e.preventDefault();
-    handleNavigate(RouteBuilder.chatwootAllConversations(), true);
-  }, [handleNavigate]);
+  const handleAllTicketsClick = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation();
+      e.preventDefault();
+      handleNavigate(RouteBuilder.chatwootAllConversations(), true);
+    },
+    [handleNavigate]
+  );
 
-  const handleMentionsClick = useCallback((e: React.MouseEvent) => {
-    e.stopPropagation();
-    e.preventDefault();
-    handleNavigate(RouteBuilder.chatwootMentions());
-  }, [handleNavigate]);
+  const handleMentionsClick = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation();
+      e.preventDefault();
+      handleNavigate(RouteBuilder.chatwootMentions());
+    },
+    [handleNavigate]
+  );
 
-  const handleUnattendedClick = useCallback((e: React.MouseEvent) => {
-    e.stopPropagation();
-    e.preventDefault();
-    handleNavigate(RouteBuilder.chatwootUnattended());
-  }, [handleNavigate]);
+  const handleUnattendedClick = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation();
+      e.preventDefault();
+      handleNavigate(RouteBuilder.chatwootUnattended());
+    },
+    [handleNavigate]
+  );
 
-  const handleWorkboardClick = useCallback((e: React.MouseEvent) => {
-    e.stopPropagation();
-    e.preventDefault();
-    handleNavigate(RouteBuilder.chatwootWorkboard());
-  }, [handleNavigate]);
+  const handleWorkboardClick = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation();
+      e.preventDefault();
+      handleNavigate(RouteBuilder.chatwootWorkboard());
+    },
+    [handleNavigate]
+  );
 
-  const handleSettingsClick = useCallback((e: React.MouseEvent) => {
-    e.stopPropagation();
-    e.preventDefault();
-    handleNavigate(RouteBuilder.chatwoot(ChatwootView.SETTINGS));
-  }, [handleNavigate]);
+  const handleSettingsClick = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation();
+      e.preventDefault();
+      handleNavigate(RouteBuilder.chatwoot(ChatwootView.SETTINGS));
+    },
+    [handleNavigate]
+  );
 
-  const handleChannelClick = useCallback((inbox: any) => (e: React.MouseEvent) => {
-    e.stopPropagation();
+  const handleChannelClick = useCallback(
+    (inbox: any) => (e: React.MouseEvent) => {
+      e.stopPropagation();
 
-    const route = RouteBuilder.chatwoot(ChatwootView.CHANNELS, undefined, inbox.id.toString());
-    const { path, options } = buildRoute(route, { replace: true });
+      const route = RouteBuilder.chatwoot(
+        ChatwootView.CHANNELS,
+        undefined,
+        inbox.id.toString()
+      );
+      const { path, options } = buildRoute(route, { replace: true });
 
-    if (selectedChannel !== "chatwoot") {
-      onSectionSelect("inbox");
-      onChannelSelect("chatwoot" as Channel);
-    } else if (selectedSection !== "inbox") {
-      onSectionSelect("inbox");
-    }
+      if (selectedChannel !== "chatwoot") {
+        onSectionSelect("inbox");
+        onChannelSelect("chatwoot" as Channel);
+      } else if (selectedSection !== "inbox") {
+        onSectionSelect("inbox");
+      }
 
-    router.replace(path, undefined, { shallow: options.scroll === false });
-  }, [selectedChannel, selectedSection, onSectionSelect, onChannelSelect, router]);
+      router.replace(path, undefined, { shallow: options.scroll === false });
+    },
+    [selectedChannel, selectedSection, onSectionSelect, onChannelSelect, router]
+  );
 
-  const handleComposeSuccess = useCallback((conversationId: number) => {
-    console.log("[NavigationSidebar] Conversation created:", conversationId);
-    setShowComposeModal(false);
+  const handleComposeSuccess = useCallback(
+    (conversationId: number) => {
+      console.log("[NavigationSidebar] Conversation created:", conversationId);
+      setShowComposeModal(false);
 
-    const route = RouteBuilder.chatwoot(ChatwootView.MY_INBOX, conversationId.toString());
-    const { path, options } = buildRoute(route, { replace: true });
+      const route = RouteBuilder.chatwoot(
+        ChatwootView.MY_INBOX,
+        conversationId.toString()
+      );
+      const { path, options } = buildRoute(route, { replace: true });
 
-    if (selectedChannel !== "chatwoot") {
-      onSectionSelect("inbox");
-      onChannelSelect("chatwoot" as Channel);
-    }
+      if (selectedChannel !== "chatwoot") {
+        onSectionSelect("inbox");
+        onChannelSelect("chatwoot" as Channel);
+      }
 
-    router.push(path, undefined, { shallow: options.scroll === false });
-  }, [selectedChannel, onSectionSelect, onChannelSelect, router]);
+      router.push(path, undefined, { shallow: options.scroll === false });
+    },
+    [selectedChannel, onSectionSelect, onChannelSelect, router]
+  );
 
   // Memoized channel list
   const channelList = useMemo(() => {
     if (inboxesLoading) {
       return (
         <Box sx={{ py: 2, display: "flex", justifyContent: "center" }}>
-          <CircularProgress size={16} sx={{ color: colorTokens.neutral[400] }} />
+          <CircularProgress
+            size={16}
+            sx={{ color: colorTokens.neutral[400] }}
+          />
         </Box>
       );
     }
@@ -332,7 +398,7 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
               fontStyle: "italic",
             }}
           >
-            No channels available
+            {t("frontdesk.navigation.noChannelsAvailable")}
           </Typography>
         </Box>
       );
@@ -345,7 +411,15 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
       const channelSource = getChannelSource(inbox);
 
       return (
-        <Tooltip key={inbox.id} title={hasAgents ? inbox.name : `${inbox.name} (No agents assigned)`} placement="right">
+        <Tooltip
+          key={inbox.id}
+          title={
+            hasAgents
+              ? inbox.name
+              : t("frontdesk.navigation.inboxNoAgents", { name: inbox.name })
+          }
+          placement="right"
+        >
           <ListItemButton
             selected={isSelected}
             onClick={handleChannelClick(inbox)}
@@ -366,17 +440,30 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
               },
             }}
           >
-            <Box sx={{ display: "flex", alignItems: "center", gap: `${navigationSpacing.channel.iconGap}px`, width: "100%" }}>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: `${navigationSpacing.channel.iconGap}px`,
+                width: "100%",
+              }}
+            >
               {/* Inbox Icon */}
               <Box
                 sx={{
                   display: "flex",
                   alignItems: "center",
-                  color: isSelected ? colorTokens.primary[600] : colorTokens.neutral[500],
+                  color: isSelected
+                    ? colorTokens.primary[600]
+                    : colorTokens.neutral[500],
                   flexShrink: 0,
                 }}
               >
-                <ChatwootInboxIcon channelType={inbox.channel_type} medium={inbox.medium} size={navigationSpacing.channel.iconSize} />
+                <ChatwootInboxIcon
+                  channelType={inbox.channel_type}
+                  medium={inbox.medium}
+                  size={navigationSpacing.channel.iconSize}
+                />
               </Box>
 
               {/* Inbox Name and Source */}
@@ -410,13 +497,19 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
 
               {/* Warning Badge for inboxes without agents */}
               {!hasAgents && (
-                <Tooltip title="No agents assigned - Click to assign" placement="top">
+                <Tooltip
+                  title={t("frontdesk.navigation.noAgentsAssigned")}
+                  placement="top"
+                >
                   <Box
                     component="span"
                     onClick={(e) => {
                       e.stopPropagation();
                       if (selectedAccount) {
-                        setPreloadedInboxForModal({ accountId: selectedAccount, inboxId: inbox.id });
+                        setPreloadedInboxForModal({
+                          accountId: selectedAccount,
+                          inboxId: inbox.id,
+                        });
                         setShowAddChannelModal(true);
                       }
                     }}
@@ -427,7 +520,9 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
                       "&:hover": { opacity: 0.8 },
                     }}
                   >
-                    <WarningIcon sx={{ fontSize: 16, color: colorTokens.warning[500] }} />
+                    <WarningIcon
+                      sx={{ fontSize: 16, color: colorTokens.warning[500] }}
+                    />
                   </Box>
                 </Tooltip>
               )}
@@ -436,7 +531,15 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
         </Tooltip>
       );
     });
-  }, [inboxes, inboxesLoading, inboxAgentsMap, isChannelsView, selectedInboxId, selectedAccount, handleChannelClick]);
+  }, [
+    inboxes,
+    inboxesLoading,
+    inboxAgentsMap,
+    isChannelsView,
+    selectedInboxId,
+    selectedAccount,
+    handleChannelClick,
+  ]);
 
   return (
     <Box
@@ -446,8 +549,12 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
         flexDirection: "column",
         height: "100%",
         backgroundColor: navigationColors.sidebar.background,
-        width: isCollapsed ? navigationSpacing.sidebar.widthCollapsed : navigationSpacing.sidebar.width,
-        minWidth: isCollapsed ? navigationSpacing.sidebar.widthCollapsed : navigationSpacing.sidebar.width,
+        width: isCollapsed
+          ? navigationSpacing.sidebar.widthCollapsed
+          : navigationSpacing.sidebar.width,
+        minWidth: isCollapsed
+          ? navigationSpacing.sidebar.widthCollapsed
+          : navigationSpacing.sidebar.width,
         transition: "width 0.25s cubic-bezier(0.4, 0, 0.2, 1)",
         borderRight: `1px solid ${navigationColors.sidebar.border}`,
         overflow: "hidden",
@@ -463,7 +570,14 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
             justifyContent: "flex-end",
           }}
         >
-          <Tooltip title={isCollapsed ? "Expand sidebar" : "Collapse sidebar"} placement="right">
+          <Tooltip
+            title={
+              isCollapsed
+                ? t("frontdesk.navigation.expandSidebar")
+                : t("frontdesk.navigation.collapseSidebar")
+            }
+            placement="right"
+          >
             <IconButton
               onClick={onToggleCollapse}
               size="small"
@@ -479,19 +593,34 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
                 },
               }}
             >
-              {isCollapsed ? <ChevronRightIcon sx={{ fontSize: 18 }} /> : <ChevronLeftIcon sx={{ fontSize: 18 }} />}
+              {isCollapsed ? (
+                <ChevronRightIcon sx={{ fontSize: 18 }} />
+              ) : (
+                <ChevronLeftIcon sx={{ fontSize: 18 }} />
+              )}
             </IconButton>
           </Tooltip>
         </Box>
       )}
 
       {/* Primary Action - New Ticket Button */}
-      <Box sx={{ px: `${navigationSpacing.primaryAction.marginX}px`, py: `${navigationSpacing.primaryAction.marginY}px` }}>
+      <Box
+        sx={{
+          px: `${navigationSpacing.primaryAction.marginX}px`,
+          py: `${navigationSpacing.primaryAction.marginY}px`,
+        }}
+      >
         {!isCollapsed ? (
           <Button
             fullWidth
             variant="contained"
-            startIcon={<CreateIcon sx={{ fontSize: `${navigationSpacing.primaryAction.iconSize}px` }} />}
+            startIcon={
+              <CreateIcon
+                sx={{
+                  fontSize: `${navigationSpacing.primaryAction.iconSize}px`,
+                }}
+              />
+            }
             onClick={() => setShowComposeModal(true)}
             sx={{
               textTransform: "none",
@@ -516,10 +645,13 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
               },
             }}
           >
-            New Ticket
+            {t("frontdesk.navigation.newTicket")}
           </Button>
         ) : (
-          <Tooltip title="New Ticket" placement="right">
+          <Tooltip
+            title={t("frontdesk.navigation.newTicket")}
+            placement="right"
+          >
             <IconButton
               onClick={() => setShowComposeModal(true)}
               sx={{
@@ -531,7 +663,8 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
                 height: 40,
                 borderRadius: `${navigationRadius.primaryAction}px`,
                 "&:hover": {
-                  backgroundColor: navigationColors.primaryAction.backgroundHover,
+                  backgroundColor:
+                    navigationColors.primaryAction.backgroundHover,
                   boxShadow: navigationShadows.primaryActionHover,
                   transform: "translateY(-1px)",
                 },
@@ -553,11 +686,17 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
           {/* NAVIGATION SECTION */}
           {/* ============================================ */}
           {!isCollapsed && (
-            <Typography sx={sectionHeaderStyles}>Navigation</Typography>
+            <Typography sx={sectionHeaderStyles}>
+              {t("frontdesk.navigation.title")}
+            </Typography>
           )}
 
           {/* Dashboard */}
-          <Tooltip title="Dashboard" placement="right" disableHoverListener={!isCollapsed}>
+          <Tooltip
+            title={t("frontdesk.views.dashboard")}
+            placement="right"
+            disableHoverListener={!isCollapsed}
+          >
             <ListItemButton
               selected={isDashboardView}
               onClick={handleDashboardClick}
@@ -569,17 +708,33 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
                 ...(isDashboardView && menuItemActiveStyles),
               }}
             >
-              <DashboardIcon sx={{ fontSize: navigationSpacing.menuItem.iconSize, color: isDashboardView ? colorTokens.primary[600] : colorTokens.neutral[500] }} />
+              <DashboardIcon
+                sx={{
+                  fontSize: navigationSpacing.menuItem.iconSize,
+                  color: isDashboardView
+                    ? colorTokens.primary[600]
+                    : colorTokens.neutral[500],
+                }}
+              />
               {!isCollapsed && (
-                <Typography sx={{ fontSize: `${navigationTypography.menuItem.fontSize}px`, fontWeight: isDashboardView ? 600 : 500 }}>
-                  Dashboard
+                <Typography
+                  sx={{
+                    fontSize: `${navigationTypography.menuItem.fontSize}px`,
+                    fontWeight: isDashboardView ? 600 : 500,
+                  }}
+                >
+                  {t("frontdesk.views.dashboard")}
                 </Typography>
               )}
             </ListItemButton>
           </Tooltip>
 
           {/* Workboard (Kanban) */}
-          <Tooltip title="Workboard" placement="right" disableHoverListener={!isCollapsed}>
+          <Tooltip
+            title={t("frontdesk.views.workboard")}
+            placement="right"
+            disableHoverListener={!isCollapsed}
+          >
             <ListItemButton
               selected={isWorkboardView}
               onClick={handleWorkboardClick}
@@ -591,17 +746,33 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
                 ...(isWorkboardView && menuItemActiveStyles),
               }}
             >
-              <ViewKanbanIcon sx={{ fontSize: navigationSpacing.menuItem.iconSize, color: isWorkboardView ? colorTokens.primary[600] : colorTokens.neutral[500] }} />
+              <ViewKanbanIcon
+                sx={{
+                  fontSize: navigationSpacing.menuItem.iconSize,
+                  color: isWorkboardView
+                    ? colorTokens.primary[600]
+                    : colorTokens.neutral[500],
+                }}
+              />
               {!isCollapsed && (
-                <Typography sx={{ fontSize: `${navigationTypography.menuItem.fontSize}px`, fontWeight: isWorkboardView ? 600 : 500 }}>
-                  Workboard
+                <Typography
+                  sx={{
+                    fontSize: `${navigationTypography.menuItem.fontSize}px`,
+                    fontWeight: isWorkboardView ? 600 : 500,
+                  }}
+                >
+                  {t("frontdesk.views.workboard")}
                 </Typography>
               )}
             </ListItemButton>
           </Tooltip>
 
           {/* My Tickets */}
-          <Tooltip title="My Tickets" placement="right" disableHoverListener={!isCollapsed}>
+          <Tooltip
+            title={t("frontdesk.tickets.myTickets")}
+            placement="right"
+            disableHoverListener={!isCollapsed}
+          >
             <ListItemButton
               selected={isMyInboxView}
               onClick={handleMyTicketsClick}
@@ -613,10 +784,22 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
                 ...(isMyInboxView && menuItemActiveStyles),
               }}
             >
-              <InboxIcon sx={{ fontSize: navigationSpacing.menuItem.iconSize, color: isMyInboxView ? colorTokens.primary[600] : colorTokens.neutral[500] }} />
+              <InboxIcon
+                sx={{
+                  fontSize: navigationSpacing.menuItem.iconSize,
+                  color: isMyInboxView
+                    ? colorTokens.primary[600]
+                    : colorTokens.neutral[500],
+                }}
+              />
               {!isCollapsed && (
-                <Typography sx={{ fontSize: `${navigationTypography.menuItem.fontSize}px`, fontWeight: isMyInboxView ? 600 : 500 }}>
-                  My Tickets
+                <Typography
+                  sx={{
+                    fontSize: `${navigationTypography.menuItem.fontSize}px`,
+                    fontWeight: isMyInboxView ? 600 : 500,
+                  }}
+                >
+                  {t("frontdesk.tickets.myTickets")}
                 </Typography>
               )}
             </ListItemButton>
@@ -628,18 +811,28 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
           {!isCollapsed && (
             <>
               <Box
-                onClick={() => setChatwootConversationsExpanded(!chatwootConversationsExpanded)}
+                onClick={() =>
+                  setChatwootConversationsExpanded(
+                    !chatwootConversationsExpanded
+                  )
+                }
                 sx={{
                   ...sectionHeaderStyles,
                   cursor: "pointer",
-                  "&:hover": { color: navigationColors.sectionHeader.textHover },
+                  "&:hover": {
+                    color: navigationColors.sectionHeader.textHover,
+                  },
                 }}
               >
                 <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                   <CommentIcon sx={{ fontSize: 14, opacity: 0.7 }} />
-                  <span>Tickets</span>
+                  <span>{t("frontdesk.tickets.title")}</span>
                 </Box>
-                {chatwootConversationsExpanded ? <ExpandLessIcon sx={{ fontSize: 16 }} /> : <ExpandMoreIcon sx={{ fontSize: 16 }} />}
+                {chatwootConversationsExpanded ? (
+                  <ExpandLessIcon sx={{ fontSize: 16 }} />
+                ) : (
+                  <ExpandMoreIcon sx={{ fontSize: 16 }} />
+                )}
               </Box>
 
               <Collapse in={chatwootConversationsExpanded}>
@@ -657,12 +850,16 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
                   >
                     <Typography
                       sx={{
-                        fontSize: `${navigationTypography.menuItem.fontSize - 1}px`,
-                        color: isAllConversationsView ? navigationColors.menuItem.textActive : colorTokens.neutral[600],
+                        fontSize: `${
+                          navigationTypography.menuItem.fontSize - 1
+                        }px`,
+                        color: isAllConversationsView
+                          ? navigationColors.menuItem.textActive
+                          : colorTokens.neutral[600],
                         fontWeight: isAllConversationsView ? 600 : 400,
                       }}
                     >
-                      All tickets
+                      {t("frontdesk.tickets.allTickets")}
                     </Typography>
                   </ListItemButton>
 
@@ -677,15 +874,26 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
                       ...(isMentionsView && menuItemActiveStyles),
                     }}
                   >
-                    <AlternateEmailIcon sx={{ fontSize: 14, color: isMentionsView ? colorTokens.primary[600] : colorTokens.neutral[500] }} />
+                    <AlternateEmailIcon
+                      sx={{
+                        fontSize: 14,
+                        color: isMentionsView
+                          ? colorTokens.primary[600]
+                          : colorTokens.neutral[500],
+                      }}
+                    />
                     <Typography
                       sx={{
-                        fontSize: `${navigationTypography.menuItem.fontSize - 1}px`,
-                        color: isMentionsView ? navigationColors.menuItem.textActive : colorTokens.neutral[600],
+                        fontSize: `${
+                          navigationTypography.menuItem.fontSize - 1
+                        }px`,
+                        color: isMentionsView
+                          ? navigationColors.menuItem.textActive
+                          : colorTokens.neutral[600],
                         fontWeight: isMentionsView ? 600 : 400,
                       }}
                     >
-                      Mentions
+                      {t("frontdesk.views.mentions")}
                     </Typography>
                   </ListItemButton>
 
@@ -700,15 +908,26 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
                       ...(isUnattendedView && menuItemActiveStyles),
                     }}
                   >
-                    <NotInterestedIcon sx={{ fontSize: 14, color: isUnattendedView ? colorTokens.primary[600] : colorTokens.neutral[500] }} />
+                    <NotInterestedIcon
+                      sx={{
+                        fontSize: 14,
+                        color: isUnattendedView
+                          ? colorTokens.primary[600]
+                          : colorTokens.neutral[500],
+                      }}
+                    />
                     <Typography
                       sx={{
-                        fontSize: `${navigationTypography.menuItem.fontSize - 1}px`,
-                        color: isUnattendedView ? navigationColors.menuItem.textActive : colorTokens.neutral[600],
+                        fontSize: `${
+                          navigationTypography.menuItem.fontSize - 1
+                        }px`,
+                        color: isUnattendedView
+                          ? navigationColors.menuItem.textActive
+                          : colorTokens.neutral[600],
                         fontWeight: isUnattendedView ? 600 : 400,
                       }}
                     >
-                      Unattended
+                      {t("frontdesk.views.unattended")}
                     </Typography>
                   </ListItemButton>
                 </List>
@@ -722,20 +941,27 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
           {!isCollapsed && (
             <>
               <Box
-                onClick={() => setChatwootChannelsExpanded(!chatwootChannelsExpanded)}
+                onClick={() =>
+                  setChatwootChannelsExpanded(!chatwootChannelsExpanded)
+                }
                 sx={{
                   ...sectionHeaderStyles,
                   cursor: "pointer",
-                  "&:hover": { color: navigationColors.sectionHeader.textHover },
+                  "&:hover": {
+                    color: navigationColors.sectionHeader.textHover,
+                  },
                 }}
               >
                 <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                   <ForumIcon sx={{ fontSize: 14, opacity: 0.7 }} />
-                  <span>Channels</span>
+                  <span>{t("frontdesk.views.channels")}</span>
                 </Box>
                 <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
                   {canCreateInbox && (
-                    <Tooltip title="Add Channel" placement="top">
+                    <Tooltip
+                      title={t("frontdesk.navigation.addChannel")}
+                      placement="top"
+                    >
                       <IconButton
                         size="small"
                         onClick={(e) => {
@@ -749,7 +975,10 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
                           borderRadius: `${navigationRadius.menuItem}px`,
                           transition: navigationTransitions.colors,
                           "&:hover": {
-                            backgroundColor: alpha(colorTokens.primary[600], 0.1),
+                            backgroundColor: alpha(
+                              colorTokens.primary[600],
+                              0.1
+                            ),
                           },
                         }}
                       >
@@ -758,7 +987,10 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
                     </Tooltip>
                   )}
                   {inboxesLoading ? (
-                    <CircularProgress size={14} sx={{ color: colorTokens.neutral[400] }} />
+                    <CircularProgress
+                      size={14}
+                      sx={{ color: colorTokens.neutral[400] }}
+                    />
                   ) : chatwootChannelsExpanded ? (
                     <ExpandLessIcon sx={{ fontSize: 16 }} />
                   ) : (
@@ -775,9 +1007,11 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
 
           {/* Collapsed Channels Icon */}
           {isCollapsed && (
-            <Tooltip title="Channels" placement="right">
+            <Tooltip title={t("frontdesk.views.channels")} placement="right">
               <ListItemButton
-                selected={selectedChannel === "chatwoot" && selectedInboxId !== null}
+                selected={
+                  selectedChannel === "chatwoot" && selectedInboxId !== null
+                }
                 onClick={() => {
                   onSectionSelect("inbox");
                   onChannelSelect("chatwoot" as Channel);
@@ -786,10 +1020,17 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
                   ...menuItemBaseStyles,
                   mx: 1,
                   justifyContent: "center",
-                  ...(selectedChannel === "chatwoot" && selectedInboxId !== null && menuItemActiveStyles),
+                  ...(selectedChannel === "chatwoot" &&
+                    selectedInboxId !== null &&
+                    menuItemActiveStyles),
                 }}
               >
-                <ForumIcon sx={{ fontSize: navigationSpacing.menuItem.iconSize, color: colorTokens.neutral[500] }} />
+                <ForumIcon
+                  sx={{
+                    fontSize: navigationSpacing.menuItem.iconSize,
+                    color: colorTokens.neutral[500],
+                  }}
+                />
               </ListItemButton>
             </Tooltip>
           )}
@@ -804,7 +1045,11 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
         }}
       >
         <List disablePadding>
-          <Tooltip title="Settings" placement="right" disableHoverListener={!isCollapsed}>
+          <Tooltip
+            title={t("frontdesk.views.settings")}
+            placement="right"
+            disableHoverListener={!isCollapsed}
+          >
             <ListItemButton
               selected={isSettingsView}
               onClick={handleSettingsClick}
@@ -816,10 +1061,22 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
                 ...(isSettingsView && menuItemActiveStyles),
               }}
             >
-              <SettingsIcon sx={{ fontSize: navigationSpacing.menuItem.iconSize, color: isSettingsView ? colorTokens.primary[600] : colorTokens.neutral[500] }} />
+              <SettingsIcon
+                sx={{
+                  fontSize: navigationSpacing.menuItem.iconSize,
+                  color: isSettingsView
+                    ? colorTokens.primary[600]
+                    : colorTokens.neutral[500],
+                }}
+              />
               {!isCollapsed && (
-                <Typography sx={{ fontSize: `${navigationTypography.menuItem.fontSize}px`, fontWeight: isSettingsView ? 600 : 500 }}>
-                  Settings
+                <Typography
+                  sx={{
+                    fontSize: `${navigationTypography.menuItem.fontSize}px`,
+                    fontWeight: isSettingsView ? 600 : 500,
+                  }}
+                >
+                  {t("frontdesk.views.settings")}
                 </Typography>
               )}
             </ListItemButton>
