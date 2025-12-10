@@ -108,7 +108,7 @@ export const useMyTickets = () => {
   const fetchTickets = useCallback(async () => {
     try {
       setLoading(true);
-      const ticketFilters = { ...filters };
+      const ticketFilters: any = { ...filters };
       
       // If user doesn't have permission, only show their own tickets
       if (!canViewAllTickets) {
