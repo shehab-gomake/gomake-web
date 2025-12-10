@@ -125,7 +125,7 @@ export const QuickActionMenu: React.FC<QuickActionMenuProps> = ({
             color="text.secondary"
             sx={{ fontSize: 13 }}
           >
-            No actions available
+            {t("frontdesk.detailPanel.noActionsAvailable")}
           </Typography>
         </Box>
       )}

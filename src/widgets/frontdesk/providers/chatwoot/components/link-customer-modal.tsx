@@ -44,6 +44,7 @@ export const LinkCustomerModal: React.FC<LinkCustomerModalProps> = ({
   onCustomerLinked,
 }) => {
   const { t } = useTranslation();
+  const dir: "rtl" | "ltr" = t("direction");
   const [selectedCustomer, setSelectedCustomer] = useState<any>(null);
   const [isLinking, setIsLinking] = useState(false);
 
@@ -97,13 +98,14 @@ export const LinkCustomerModal: React.FC<LinkCustomerModalProps> = ({
       PaperProps={{
         sx: {
           borderRadius: 2,
+          direction: dir,
         },
       }}
     >
-      <DialogTitle sx={{ pb: 1 }}>
-        <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+      <DialogTitle sx={{ pb: 1, direction: dir }}>
+        <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", direction: dir }}>
           <Typography variant="h6" sx={{ fontWeight: 600, fontSize: 18 }}>
-            Link Customer
+            {t("frontdesk.detailPanel.linkCustomer")}
           </Typography>
           <IconButton onClick={handleClose} size="small" disabled={isLinking}>
             <CloseIcon />
@@ -111,7 +113,7 @@ export const LinkCustomerModal: React.FC<LinkCustomerModalProps> = ({
         </Box>
       </DialogTitle>
 
-      <DialogContent>
+      <DialogContent sx={{ direction: dir }}>
         {/* Contact Info Display */}
         {(contactName || contactEmail) && (
           <Box
@@ -121,6 +123,7 @@ export const LinkCustomerModal: React.FC<LinkCustomerModalProps> = ({
               backgroundColor: colorTokens.neutral[50],
               borderRadius: 1,
               border: `1px solid ${colorTokens.semantic.border.default}`,
+              direction: dir,
             }}
           >
             <Typography
@@ -134,7 +137,7 @@ export const LinkCustomerModal: React.FC<LinkCustomerModalProps> = ({
                 mb: 0.5,
               }}
             >
-              Contact
+              {t("frontdesk.detailPanel.contact")}
             </Typography>
             {contactName && (
               <Typography variant="body2" sx={{ fontWeight: 500, fontSize: 14 }}>
@@ -153,7 +156,7 @@ export const LinkCustomerModal: React.FC<LinkCustomerModalProps> = ({
         )}
 
         {/* Customer Search */}
-        <Box sx={{ mb: 2 }}>
+        <Box sx={{ mb: 2, direction: dir }}>
           <Typography
             variant="caption"
             sx={{
@@ -164,7 +167,7 @@ export const LinkCustomerModal: React.FC<LinkCustomerModalProps> = ({
               mb: 1,
             }}
           >
-            Search and select a customer
+            {t("frontdesk.detailPanel.searchAndSelectCustomer")}
           </Typography>
           <ClientAutocomplete
             clientType={CLIENT_TYPE.CUSTOMER}
@@ -175,7 +178,7 @@ export const LinkCustomerModal: React.FC<LinkCustomerModalProps> = ({
             value={selectedCustomer}
             loading={isFetching}
             isFetching={isFetching}
-            placeholder="Search for a customer..."
+            placeholder={t("frontdesk.detailPanel.searchForCustomer")}
             defaultFiltering={false}
           />
         </Box>
@@ -188,6 +191,7 @@ export const LinkCustomerModal: React.FC<LinkCustomerModalProps> = ({
               backgroundColor: colorTokens.primary[50],
               borderRadius: 1,
               border: `1px solid ${colorTokens.primary[200]}`,
+              direction: dir,
             }}
           >
             <Typography
@@ -201,7 +205,7 @@ export const LinkCustomerModal: React.FC<LinkCustomerModalProps> = ({
                 mb: 0.5,
               }}
             >
-              Selected Customer
+              {t("frontdesk.detailPanel.selectedCustomer")}
             </Typography>
             <Typography variant="body2" sx={{ fontWeight: 500, fontSize: 14 }}>
               {selectedCustomer.name}
@@ -218,9 +222,9 @@ export const LinkCustomerModal: React.FC<LinkCustomerModalProps> = ({
         )}
       </DialogContent>
 
-      <DialogActions sx={{ px: 3, pb: 2 }}>
+      <DialogActions sx={{ px: 3, pb: 2, direction: dir }}>
         <Button onClick={handleClose} disabled={isLinking} color="inherit">
-          Cancel
+          {t("frontdesk.common.cancel")}
         </Button>
         <Button
           onClick={handleLink}
@@ -228,7 +232,7 @@ export const LinkCustomerModal: React.FC<LinkCustomerModalProps> = ({
           variant="contained"
           color="primary"
         >
-          {isLinking ? "Linking..." : "Link Customer"}
+          {isLinking ? t("frontdesk.detailPanel.linking") : t("frontdesk.detailPanel.linkCustomer")}
         </Button>
       </DialogActions>
     </Dialog>

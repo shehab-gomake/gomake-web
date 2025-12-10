@@ -75,9 +75,9 @@ export const TeamSelect: React.FC<TeamSelectProps> = ({
   loading = false,
   updating = false,
   variant = "inline",
-  label = "Assigned Team",
-  emptyText = "No teams available",
-  placeholder = "Assign to team",
+  label,
+  emptyText,
+  placeholder,
   disabled = false,
   canCreate = false,
   onCreateClick,
@@ -85,6 +85,12 @@ export const TeamSelect: React.FC<TeamSelectProps> = ({
   allOptionLabel = "All Teams",
 }) => {
   const { t } = useTranslation();
+  const dir: "rtl" | "ltr" = t("direction");
+  const finalLabel = label || t("frontdesk.detailPanel.assignedTeam");
+  const finalPlaceholder =
+    placeholder || t("frontdesk.detailPanel.assignToTeam");
+  const finalEmptyText = emptyText || t("frontdesk.teams.noTeamsAvailable");
+
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const open = Boolean(anchorEl);
 
@@ -178,11 +184,11 @@ export const TeamSelect: React.FC<TeamSelectProps> = ({
       {variant === "inline" && (
         <AssignmentTrigger
           type="team"
-          label={label}
+          label={finalLabel}
           valueName={selectedTeam?.name}
           valueDescription={selectedTeam?.description}
           hasValue={hasSelection}
-          placeholder={placeholder}
+          placeholder={finalPlaceholder}
           onClick={handleOpen}
           loading={updating}
           disabled={disabled}
@@ -206,7 +212,7 @@ export const TeamSelect: React.FC<TeamSelectProps> = ({
         headerText={t("frontdesk.teams.selectTeam")}
         footerActions={footerActions}
         loading={loading}
-        emptyMessage={emptyText}
+        emptyMessage={finalEmptyText}
         searchable={teams.length > 5}
         searchPlaceholder={t("frontdesk.teams.searchTeams")}
       />

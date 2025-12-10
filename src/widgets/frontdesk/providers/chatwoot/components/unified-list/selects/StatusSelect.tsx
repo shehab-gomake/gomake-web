@@ -8,6 +8,7 @@
  */
 
 import React, { useState, useCallback, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   OpenInNew as OpenIcon,
   Pending as PendingIcon,
@@ -49,11 +50,11 @@ const STATUS_ICONS: Record<string, React.ReactNode> = {
   [ConversationStatus.RESOLVED]: <ResolvedIcon sx={{ fontSize: 16 }} />,
 };
 
-const DEFAULT_STATUSES: StatusListItem[] = [
+const getDefaultStatuses = (t: (key: string) => string): StatusListItem[] => [
   {
     type: 'status',
     id: ConversationStatus.OPEN,
-    label: 'Open',
+    label: t('frontdesk.workboard.statusLabels.open'),
     value: ConversationStatus.OPEN,
     icon: STATUS_ICONS[ConversationStatus.OPEN],
     color: statusColors.open,
@@ -61,7 +62,7 @@ const DEFAULT_STATUSES: StatusListItem[] = [
   {
     type: 'status',
     id: ConversationStatus.PENDING,
-    label: 'Pending',
+    label: t('frontdesk.workboard.statusLabels.pending'),
     value: ConversationStatus.PENDING,
     icon: STATUS_ICONS[ConversationStatus.PENDING],
     color: statusColors.pending,
@@ -69,7 +70,7 @@ const DEFAULT_STATUSES: StatusListItem[] = [
   {
     type: 'status',
     id: ConversationStatus.RESOLVED,
-    label: 'Resolved',
+    label: t('frontdesk.workboard.statusLabels.resolved'),
     value: ConversationStatus.RESOLVED,
     icon: STATUS_ICONS[ConversationStatus.RESOLVED],
     color: statusColors.resolved,
@@ -77,7 +78,7 @@ const DEFAULT_STATUSES: StatusListItem[] = [
   {
     type: 'status',
     id: ConversationStatus.SNOOZED,
-    label: 'Snoozed',
+    label: t('frontdesk.filters.statusSnoozed'),
     value: ConversationStatus.SNOOZED,
     icon: STATUS_ICONS[ConversationStatus.SNOOZED],
     color: statusColors.snoozed,
@@ -93,14 +94,19 @@ export const StatusSelect: React.FC<StatusSelectProps> = ({
   onStatusChange,
   updating = false,
   disabled = false,
-  statuses = DEFAULT_STATUSES,
+  statuses,
 }) => {
+  const { t } = useTranslation();
+  const dir: "rtl" | "ltr" = t("direction");
+  const defaultStatuses = useMemo(() => getDefaultStatuses(t), [t]);
+  const finalStatuses = statuses || defaultStatuses;
+  
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const open = Boolean(anchorEl);
 
   const currentStatus = useMemo(
-    () => statuses.find((s) => s.value === status) || statuses[0],
-    [status, statuses]
+    () => finalStatuses.find((s) => s.value === status) || finalStatuses[0],
+    [status, finalStatuses]
   );
 
   const handleOpen = useCallback((event: React.MouseEvent<HTMLElement>) => {
@@ -116,14 +122,14 @@ export const StatusSelect: React.FC<StatusSelectProps> = ({
   const handleSelect = useCallback(
     (id: string | number | null) => {
       if (id !== null) {
-        const selectedStatus = statuses.find((s) => s.id === id);
+        const selectedStatus = finalStatuses.find((s) => s.id === id);
         if (selectedStatus) {
           onStatusChange(selectedStatus.value);
         }
       }
       handleClose();
     },
-    [statuses, onStatusChange, handleClose]
+    [finalStatuses, onStatusChange, handleClose]
   );
 
   const renderItem = useCallback(
@@ -148,7 +154,7 @@ export const StatusSelect: React.FC<StatusSelectProps> = ({
       <QuickSelectorTrigger
         icon={statusIcon}
         label={currentStatus.label}
-        tooltip={`Change status (currently: ${currentStatus.label})`}
+        tooltip={t("frontdesk.detailPanel.changeStatusTooltip", { status: currentStatus.label })}
         onClick={handleOpen}
         loading={updating}
         disabled={disabled}
@@ -158,7 +164,7 @@ export const StatusSelect: React.FC<StatusSelectProps> = ({
         open={open}
         anchorEl={anchorEl}
         onClose={handleClose}
-        items={statuses}
+        items={finalStatuses}
         selectionMode="single"
         selectedValue={status}
         onSelect={handleSelect}

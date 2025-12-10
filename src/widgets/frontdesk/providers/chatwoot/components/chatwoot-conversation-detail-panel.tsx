@@ -48,7 +48,7 @@ import { useChatwootProvider } from "../hooks/use-chatwoot-provider";
 import { useChatwootConversationUpdater } from "../hooks/use-chatwoot-conversation-updater";
 import {
   getActionsExcludingTickets,
-  GROUP_LABELS,
+  getTranslatedGroupLabels,
 } from "@/widgets/frontdesk/providers/tickets/utils/quick-actions-config";
 import { AssignDocumentModal } from "./assign-document-modal";
 import type { ChatwootConversation } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
@@ -138,13 +138,43 @@ export const ChatwootConversationDetailPanel: React.FC<
     (conversation?.custom_attributes?.gomake_customer_id as string | undefined);
   const customerName = conversation?.meta?.sender?.name;
 
+  // Translation map for action labels
+  const actionLabelMap: Record<string, string> = {
+    create_quote: t("frontdesk.detailPanel.assignToQuote"),
+    create_quote_with_ai: t("frontdesk.detailPanel.createQuoteWithAI"),
+    create_invoice: t("frontdesk.detailPanel.assignToInvoice"),
+    create_order: t("frontdesk.detailPanel.assignToOrder"),
+    create_receipt: t("frontdesk.detailPanel.assignToReceipt"),
+    create_delivery_note: t("frontdesk.detailPanel.assignToDeliveryNote"),
+    create_purchase_order: t("frontdesk.detailPanel.assignToPurchaseOrder"),
+    create_purchase_invoice: t("frontdesk.detailPanel.assignToPurchaseInvoice"),
+  };
+
+  // Translation map for action tooltips
+  const actionTooltipMap: Record<string, string> = {
+    create_quote: t("frontdesk.detailPanel.assignToQuoteTooltip"),
+    create_quote_with_ai: t("frontdesk.detailPanel.createQuoteWithAITooltip"),
+    create_invoice: t("frontdesk.detailPanel.assignToInvoiceTooltip"),
+    create_order: t("frontdesk.detailPanel.assignToOrderTooltip"),
+    create_receipt: t("frontdesk.detailPanel.assignToReceiptTooltip"),
+    create_delivery_note: t(
+      "frontdesk.detailPanel.assignToDeliveryNoteTooltip"
+    ),
+    create_purchase_order: t(
+      "frontdesk.detailPanel.assignToPurchaseOrderTooltip"
+    ),
+    create_purchase_invoice: t(
+      "frontdesk.detailPanel.assignToPurchaseInvoiceTooltip"
+    ),
+  };
+
   // Convert action configs to QuickActionItem format for the menu
   const quickActionMenuItems: QuickActionItem[] = availableActions.map(
     (action) => ({
       id: action.type,
-      label: action.label,
+      label: actionLabelMap[action.type] || action.label,
       icon: action.icon,
-      tooltip: action.tooltip,
+      tooltip: actionTooltipMap[action.type] || action.tooltip,
       disabled: !!getActionBlockReason(action.type),
       disabledReason: getActionBlockReason(action.type) || undefined,
       group: action.group,
@@ -163,13 +193,12 @@ export const ChatwootConversationDetailPanel: React.FC<
         backgroundColor: colorTokens.semantic.background.primary,
         overflow: "auto",
         p: `${semanticSpacing.container.lg}px`, // Use design system container padding (24px)
+        direction: dir, // RTL support
       }}
       className="custom-scrollbar"
     >
       {/* Actions Button - Sales/Purchase Documents */}
       <Box sx={{ mb: `${semanticSpacing.component.lg}px` }}>
-        {" "}
-        {/* Use design system spacing */}
         <QuickActionButton
           size="sm"
           isOpen={Boolean(quickActionsAnchor)}
@@ -310,9 +339,7 @@ export const ChatwootConversationDetailPanel: React.FC<
 
       {/* Inbox Info */}
       {inbox && (
-        <Box sx={{ mb: `${semanticSpacing.component.lg}px` }}>
-          {" "}
-          {/* Use design system spacing */}
+        <Box sx={{ mb: `${semanticSpacing.component.lg}px`, direction: dir }}>
           <Typography
             variant="caption"
             sx={{
@@ -325,7 +352,7 @@ export const ChatwootConversationDetailPanel: React.FC<
               letterSpacing: "0.05em",
             }}
           >
-            Inbox
+            {t("frontdesk.detailPanel.inbox")}
           </Typography>
           <Box
             sx={{
@@ -435,7 +462,7 @@ export const ChatwootConversationDetailPanel: React.FC<
         open={Boolean(quickActionsAnchor)}
         onClose={() => setQuickActionsAnchor(null)}
         actions={quickActionMenuItems}
-        groupLabels={GROUP_LABELS}
+        groupLabels={getTranslatedGroupLabels(t)}
         isRTL={isRTL}
         onActionClick={handleQuickActionClick}
       />

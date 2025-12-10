@@ -9,6 +9,7 @@
  */
 
 import React, { useMemo, useCallback } from "react";
+import { useTranslation } from "react-i18next";
 import { useChatwootInboxAgents, useChatwootTeams } from "../hooks/resources";
 import { useChatwootProfile } from "../hooks/use-chatwoot-profile";
 import { useConversationAssignmentActions } from "../hooks/actions/use-conversation-assignment-actions";
@@ -33,10 +34,15 @@ interface ConversationAssigneeSectionProps {
   /** Inbox ID for fetching inbox-specific agents */
   inboxId?: number;
   /** Callback to update the conversation in parent state */
-  updateConversation?: (conversationId: number, updates: Partial<ChatwootConversation>) => void;
+  updateConversation?: (
+    conversationId: number,
+    updates: Partial<ChatwootConversation>
+  ) => void;
 }
 
-export const ConversationAssigneeSection: React.FC<ConversationAssigneeSectionProps> = ({
+export const ConversationAssigneeSection: React.FC<
+  ConversationAssigneeSectionProps
+> = ({
   type = "agent",
   assignee,
   team,
@@ -45,6 +51,7 @@ export const ConversationAssigneeSection: React.FC<ConversationAssigneeSectionPr
   inboxId,
   updateConversation = (_id, _updates) => {},
 }) => {
+  const { t } = useTranslation();
   const selectedAccountId = useRecoilValue(chatwootSelectedAccountAtom);
   const effectiveAccountId = accountId ?? selectedAccountId;
 
@@ -123,9 +130,9 @@ export const ConversationAssigneeSection: React.FC<ConversationAssigneeSectionPr
         loading={loadingAgents}
         updating={isAssigning}
         variant="inline"
-        label="Assigned To"
-        placeholder="Assign to someone"
-        emptyText="No agents assigned to this inbox"
+        label={t("frontdesk.detailPanel.assignedTo")}
+        placeholder={t("frontdesk.detailPanel.assignToSomeone")}
+        emptyText={t("frontdesk.detailPanel.noAgentsAssignedToInbox")}
       />
     );
   }
@@ -138,9 +145,9 @@ export const ConversationAssigneeSection: React.FC<ConversationAssigneeSectionPr
       loading={loadingTeams}
       updating={isAssigningTeam}
       variant="inline"
-      label="Assigned Team"
-      placeholder="Assign to team"
-      emptyText="No teams available"
+      label={t("frontdesk.detailPanel.assignedTeam")}
+      placeholder={t("frontdesk.detailPanel.assignToTeam")}
+      emptyText={t("frontdesk.teams.noTeamsAvailable")}
     />
   );
 };

@@ -4,7 +4,16 @@
  */
 
 import React from "react";
-import { ListItem, Stack, Avatar, Typography, Chip, Box, Tooltip } from "@mui/material";
+import { useTranslation } from "react-i18next";
+import {
+  ListItem,
+  Stack,
+  Avatar,
+  Typography,
+  Chip,
+  Box,
+  Tooltip,
+} from "@mui/material";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import { ChatwootNotification } from "@/services/frontdesk/api/chatwoot/types/notifications.types";
 import {
@@ -20,8 +29,15 @@ import {
 import { formatTimeAgo } from "../../utils/date-utils";
 import { ConversationPriorityIcon } from "../conversation-priority-icon";
 import { InboxIcon } from "../../utils/inbox-icons";
-import { generateNotificationAvatar, generateAgentAvatar } from "../../utils/avatar.utils";
-import { colorTokens, radiusTokens, shadowTokens } from "@/widgets/frontdesk/design-system";
+import {
+  generateNotificationAvatar,
+  generateAgentAvatar,
+} from "../../utils/avatar.utils";
+import {
+  colorTokens,
+  radiusTokens,
+  shadowTokens,
+} from "@/widgets/frontdesk/design-system";
 
 interface NotificationListItemProps {
   notification: ChatwootNotification;
@@ -38,6 +54,8 @@ export const NotificationListItem: React.FC<NotificationListItemProps> = ({
   primaryColor,
   neutralColor,
 }) => {
+  const { t } = useTranslation();
+  const dir: "rtl" | "ltr" = t("direction");
   const avatarData = generateNotificationAvatar(notification);
   const isUnread = !notification.read_at;
   const primaryActor = notification.primary_actor as any;
@@ -51,19 +69,30 @@ export const NotificationListItem: React.FC<NotificationListItemProps> = ({
       });
   const messagePreview = getMessagePreview(notification);
   const statusLabel = getStatusLabel(primaryActor?.status);
-  const statusColor = getStatusColor(primaryActor?.status, colorTokens.neutral[600]);
+  const statusColor = getStatusColor(
+    primaryActor?.status,
+    colorTokens.neutral[600]
+  );
   // Use created_at (Unix timestamp in seconds) as primary source, fallback to other timestamps
   // chatwootTimestampToDate handles Unix timestamps (numbers) and ISO strings
-  const lastActivityAt = notification.created_at || 
-    (primaryActor?.last_activity_at ? primaryActor.last_activity_at : undefined) ||
+  const lastActivityAt =
+    notification.created_at ||
+    (primaryActor?.last_activity_at
+      ? primaryActor.last_activity_at
+      : undefined) ||
     notification.updated_at;
 
   // Extract conversation metadata
   const conversationMeta = primaryActor?.meta || {};
   const inboxChannelType =
-    conversationMeta.channel?.type || (primaryActor?.inbox_id ? conversationMeta.inbox?.channel_type || null : null);
-  const inboxMedium = conversationMeta.channel?.medium || conversationMeta.inbox?.medium;
-  const inboxName = conversationMeta.inbox?.name || conversationMeta.channel?.name;
+    conversationMeta.channel?.type ||
+    (primaryActor?.inbox_id
+      ? conversationMeta.inbox?.channel_type || null
+      : null);
+  const inboxMedium =
+    conversationMeta.channel?.medium || conversationMeta.inbox?.medium;
+  const inboxName =
+    conversationMeta.inbox?.name || conversationMeta.channel?.name;
   const priority = primaryActor?.priority;
 
   // Extract meaningful data
@@ -79,14 +108,26 @@ export const NotificationListItem: React.FC<NotificationListItemProps> = ({
         px: 3, // 24px padding to match parent container
         py: 1.5,
         cursor: "pointer",
-        backgroundColor: isUnread ? colorTokens.primary[50] : colorTokens.semantic.background.primary,
+        backgroundColor: isUnread
+          ? colorTokens.primary[50]
+          : colorTokens.semantic.background.primary,
         "&:hover": {
-          backgroundColor: isUnread ? colorTokens.primary[100] : colorTokens.neutral[50],
+          backgroundColor: isUnread
+            ? colorTokens.primary[100]
+            : colorTokens.neutral[50],
         },
         borderBottom: `1px solid ${colorTokens.neutral[100]}`,
       }}
     >
-      <Stack direction="row" spacing={1.5} sx={{ width: "100%", alignItems: "flex-start" }}>
+      <Stack
+        direction="row"
+        sx={{
+          width: "100%",
+          alignItems: "flex-start",
+          gap: 1.5,
+          direction: dir,
+        }}
+      >
         {/* Avatar */}
         <Avatar
           src={avatarData.src}
@@ -109,7 +150,12 @@ export const NotificationListItem: React.FC<NotificationListItemProps> = ({
         {/* Content */}
         <Box sx={{ flex: 1, minWidth: 0 }}>
           {/* Row 1: Contact Name + Conversation ID */}
-          <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1} sx={{ mb: 0.25 }}>
+          <Stack
+            direction="row"
+            alignItems="center"
+            justifyContent="space-between"
+            sx={{ mb: 0.25, gap: 1, direction: dir }}
+          >
             <Typography
               variant="body2"
               sx={{
@@ -185,53 +231,69 @@ export const NotificationListItem: React.FC<NotificationListItemProps> = ({
           </Typography>
 
           {/* Row 4: Meta Info */}
-          <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1}>
+          <Stack
+            direction="row"
+            alignItems="center"
+            justifyContent="space-between"
+            sx={{ gap: 1, direction: dir }}
+          >
             {/* Left: Assignee + Status + Notification Type */}
-            <Stack direction="row" alignItems="center" spacing={0.75} sx={{ flex: 1, minWidth: 0 }}>
+            <Stack
+              direction="row"
+              alignItems="center"
+              sx={{ flex: 1, minWidth: 0, gap: 0.75, direction: dir }}
+            >
               {/* Assignee */}
-              {assigneeInfo && (() => {
-                const assigneeAvatarData = generateAgentAvatar({
-                  id: assigneeInfo.id,
-                  name: assigneeInfo.name,
-                  thumbnail: assigneeInfo.thumbnail,
-                });
-                return (
-                  <Tooltip title={`Assigned to ${assigneeInfo.name}`} arrow placement="top">
-                    <Chip
-                      label={assigneeInfo.name}
-                      size="small"
-                      avatar={
-                        <Avatar
-                          src={assigneeAvatarData.src}
-                          sx={{
-                            width: 16,
-                            height: 16,
-                            fontSize: "0.5rem",
-                            bgcolor: assigneeAvatarData.backgroundColor,
-                          }}
-                          alt={assigneeAvatarData.displayName}
-                        >
-                          {assigneeAvatarData.initials}
-                        </Avatar>
-                      }
-                      sx={{
-                        height: 20,
-                        fontSize: 11,
-                        backgroundColor: colorTokens.primary[100],
-                        color: colorTokens.primary[800],
-                        fontWeight: 500,
-                        flexShrink: 0,
-                        "& .MuiChip-label": {
-                          px: 0.5,
-                        },
-                        "& .MuiChip-avatar": {
-                          ml: 0.5,
-                        },
-                      }}
-                    />
-                  </Tooltip>
-                );
-              })()}
+              {assigneeInfo &&
+                (() => {
+                  const assigneeAvatarData = generateAgentAvatar({
+                    id: assigneeInfo.id,
+                    name: assigneeInfo.name,
+                    thumbnail: assigneeInfo.thumbnail,
+                  });
+                  return (
+                    <Tooltip
+                      title={t("frontdesk.detailPanel.assignedToTooltip", {
+                        name: assigneeInfo.name,
+                      })}
+                      arrow
+                      placement="top"
+                    >
+                      <Chip
+                        label={assigneeInfo.name}
+                        size="small"
+                        avatar={
+                          <Avatar
+                            src={assigneeAvatarData.src}
+                            sx={{
+                              width: 16,
+                              height: 16,
+                              fontSize: "0.5rem",
+                              bgcolor: assigneeAvatarData.backgroundColor,
+                            }}
+                            alt={assigneeAvatarData.displayName}
+                          >
+                            {assigneeAvatarData.initials}
+                          </Avatar>
+                        }
+                        sx={{
+                          height: 20,
+                          fontSize: 11,
+                          backgroundColor: colorTokens.primary[100],
+                          color: colorTokens.primary[800],
+                          fontWeight: 500,
+                          flexShrink: 0,
+                          "& .MuiChip-label": {
+                            px: 0.5,
+                          },
+                          "& .MuiChip-avatar": {
+                            ml: 0.5,
+                          },
+                        }}
+                      />
+                    </Tooltip>
+                  );
+                })()}
 
               {/* Status Badge */}
               {statusLabel && (
@@ -241,9 +303,13 @@ export const NotificationListItem: React.FC<NotificationListItemProps> = ({
                   sx={{
                     height: 20,
                     fontSize: 11,
-                    backgroundColor: statusColor ? `${statusColor}20` : colorTokens.neutral[100],
+                    backgroundColor: statusColor
+                      ? `${statusColor}20`
+                      : colorTokens.neutral[100],
                     color: statusColor || colorTokens.neutral[700],
-                    border: `1px solid ${statusColor || colorTokens.neutral[300]}`,
+                    border: `1px solid ${
+                      statusColor || colorTokens.neutral[300]
+                    }`,
                     fontWeight: 500,
                     flexShrink: 0,
                     "& .MuiChip-label": {
@@ -255,7 +321,11 @@ export const NotificationListItem: React.FC<NotificationListItemProps> = ({
 
               {/* Notification Type or Snooze */}
               {hasSnooze ? (
-                <Stack direction="row" alignItems="center" spacing={0.5}>
+                <Stack
+                  direction="row"
+                  alignItems="center"
+                  sx={{ gap: 0.5, direction: dir }}
+                >
                   <AccessTimeIcon
                     sx={{
                       fontSize: 12,
@@ -292,9 +362,15 @@ export const NotificationListItem: React.FC<NotificationListItemProps> = ({
             </Stack>
 
             {/* Right: Priority | Inbox Icon | Timestamp */}
-            <Stack direction="row" alignItems="center" spacing={0.75} sx={{ flexShrink: 0 }}>
+            <Stack
+              direction="row"
+              alignItems="center"
+              sx={{ flexShrink: 0, gap: 0.75, direction: dir }}
+            >
               {/* Priority Icon */}
-              {priority && <ConversationPriorityIcon priority={priority} size={14} />}
+              {priority && (
+                <ConversationPriorityIcon priority={priority} size={14} />
+              )}
 
               {/* Inbox Icon */}
               {inboxChannelType && (
@@ -308,7 +384,11 @@ export const NotificationListItem: React.FC<NotificationListItemProps> = ({
                       flexShrink: 0,
                     }}
                   >
-                    <InboxIcon channelType={inboxChannelType} medium={inboxMedium} size={16} />
+                    <InboxIcon
+                      channelType={inboxChannelType}
+                      medium={inboxMedium}
+                      size={16}
+                    />
                   </Box>
                 </Tooltip>
               )}
