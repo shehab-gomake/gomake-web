@@ -36,6 +36,15 @@ const useStyle = () => {
         display: "flex",
         flexDirection: "column" as "column",
       },
+      filterContainer: {
+        display: "flex",
+        alignItems: "center",
+        marginBottom: 20,
+        width: "100%",
+      },
+      userSelect: {
+        minWidth: 250,
+      },
     };
   }, [i18next.language, t, primaryColor]);
   return {

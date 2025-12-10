@@ -6,6 +6,7 @@ import {
   getUnreadTicketIds,
   getTicketById,
   getTicketMessages,
+  markTicketAsRead,
   Ticket,
   TicketMessage,
 } from "@/services/api-service/tickets/tickets-api";
@@ -202,19 +203,32 @@ export const useSupportReplyCards = () => {
     };
   }, [userId, fetchSupportReplyCards]);
 
-  // Dismiss a card
-  const dismissCard = useCallback((ticketId: number) => {
-    const currentDismissedIds = dismissedIdsRef.current;
-    if (currentDismissedIds.includes(ticketId)) {
-      return; // Already dismissed
-    }
-    const newDismissedIds = [...currentDismissedIds, ticketId];
-    setDismissedIds(newDismissedIds);
-    dismissedIdsRef.current = newDismissedIds;
-    saveDismissedIds(newDismissedIds);
-    // Remove card from state immediately
-    setCards((prev) => prev.filter((card) => card.ticket.id !== ticketId));
-  }, []);
+  // Dismiss a card and mark ticket as read
+  const dismissCard = useCallback(
+    async (ticketId: number) => {
+      const currentDismissedIds = dismissedIdsRef.current;
+      if (currentDismissedIds.includes(ticketId)) {
+        return; // Already dismissed
+      }
+
+      try {
+        // Mark ticket as read on the backend
+        await markTicketAsRead(callApi, ticketId);
+      } catch (error) {
+        console.error(`Error marking ticket ${ticketId} as read:`, error);
+        // Continue with dismissal even if API call fails
+      }
+
+      // Update local state
+      const newDismissedIds = [...currentDismissedIds, ticketId];
+      setDismissedIds(newDismissedIds);
+      dismissedIdsRef.current = newDismissedIds;
+      saveDismissedIds(newDismissedIds);
+      // Remove card from state immediately
+      setCards((prev) => prev.filter((card) => card.ticket.id !== ticketId));
+    },
+    [callApi]
+  );
 
   // Clear dismissed IDs (useful for testing or reset)
   const clearDismissedIds = useCallback(() => {
