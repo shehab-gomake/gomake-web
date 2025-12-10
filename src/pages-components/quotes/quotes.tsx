@@ -25,6 +25,7 @@ import {
   RadioGroup,
   Skeleton,
   Stack,
+  Typography,
 } from "@mui/material";
 import { CardsSection } from "./widgets/statistics-section/statistics-sections";
 import { GoMakePagination } from "@/components/pagination/gomake-pagination";
@@ -36,6 +37,7 @@ import { OtherReasonModal } from "@/widgets/quote-new/total-price-and-vat/other-
 import { CustomerCardWidget } from "@/widgets/customer-card-modal";
 import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 import { useRouter } from "next/router";
+import { useTranslation } from "react-i18next";
 import { CloseOrderNotesModal } from "../products/profits-new/widgets/close-order-notes-modal";
 import { SendPaymentModal } from "./widgets/send-payment-modal/send-payment-modal";
 import { MakePaymentModal } from "./widgets/make-payment-modal/make-payment-modal";
@@ -260,6 +262,14 @@ const QuotesListPageWidget = ({
     inventoryData,
     inventoryLoading,
     selectedDocument: selectedInventoryDocument,
+    showIntakeValidationDialog,
+    handleOpenIntakeFromValidation,
+    handleCancelIntakeValidation,
+    handleUndoDocumentIntake,
+    handleUndoItemIntake,
+    showUndoIntakeDialog,
+    handleConfirmUndoIntake,
+    handleCancelUndoIntake,
     isMoveToReady,
     handleCheckboxChange,
     handleSortBE,
@@ -1080,15 +1090,15 @@ const QuotesListPageWidget = ({
         onClickDelete={moveOrderToReady}
       /> */}
       <ThreeOptionsModal
-          modalType={ModalType.WARNING}
-          title={t("boardMissions.markDoneModalTitle")}
-          subTitle={t("boardMissions.markDoneModalSubTitle")}
-          yesBtn={"boardMissions.markDoneModalYes"}
-          noBtn={"boardMissions.markDoneModalNo"}
-          openModal={MoveOrderToReady.isOpen}
-          onClose={onClickCloseMoveOrderToReadyModal}
-          onClickYes={() => moveOrderToReady(true)}
-          onClickNo={() => moveOrderToReady(false)}
+        modalType={ModalType.WARNING}
+        title={t("boardMissions.markDoneModalTitle")}
+        subTitle={t("boardMissions.markDoneModalSubTitle")}
+        yesBtn={"boardMissions.markDoneModalYes"}
+        noBtn={"boardMissions.markDoneModalNo"}
+        openModal={MoveOrderToReady.isOpen}
+        onClose={onClickCloseMoveOrderToReadyModal}
+        onClickYes={() => moveOrderToReady(true)}
+        onClickNo={() => moveOrderToReady(false)}
       />
       {/*<GoMakeDeleteModal
         modalType={ModalType.WARNING}
@@ -1128,6 +1138,8 @@ const QuotesListPageWidget = ({
         loading={inventoryLoading}
         purchaseOrderId={selectedInventoryDocument?.id}
         documentType={DOCUMENT_TYPE.purchaseOrder}
+        status={selectedInventoryDocument?.status}
+        onIntakeSuccess={getAllQuotes}
       />
       {/* FrontDesk Email Composer */}
       {isEmailComposerOpen && (
@@ -1140,6 +1152,42 @@ const QuotesListPageWidget = ({
           isLoading={isLoadingEmailData}
         />
       )}
+      {/* Intake Validation Dialog */}
+      <GoMakeDialog
+        open={showIntakeValidationDialog}
+        onClose={handleCancelIntakeValidation}
+        title={t("sales.purchaseOrder.intakeValidation") || "Intake Required"}
+        maxWidth="sm"
+        showFooter={true}
+        primaryButtonLabel={t("sales.purchaseOrder.intake")}
+        cancelButtonLabel={t("common.cancel")}
+        onPrimaryAction={handleOpenIntakeFromValidation}
+        hideCancelButton={false}
+      >
+        <Box sx={{ padding: "20px" }}>
+          <Typography variant="body1">
+            {t("sales.purchaseOrder.someItemsNotIntake") || "Some items not Intake need to Intake"}
+          </Typography>
+        </Box>
+      </GoMakeDialog>
+      {/* Undo Intake Dialog - when changing from Received status */}
+      <GoMakeDialog
+        open={showUndoIntakeDialog}
+        onClose={handleCancelUndoIntake}
+        title={t("sales.purchaseOrder.undoIntakeConfirmation") || "Undo Intake?"}
+        maxWidth="sm"
+        showFooter={true}
+        primaryButtonLabel={t("common.yes")}
+        cancelButtonLabel={t("common.no")}
+        onPrimaryAction={handleConfirmUndoIntake}
+        hideCancelButton={false}
+      >
+        <Box sx={{ padding: "20px" }}>
+          <Typography variant="body1">
+            {t("sales.purchaseOrder.undoIntakeMessage") || "Do you want to undo the intake before changing the status?"}
+          </Typography>
+        </Box>
+      </GoMakeDialog>
     </>
   );
 };

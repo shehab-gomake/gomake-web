@@ -14,6 +14,7 @@ import {
   GoMakeDeleteModal,
   GoMakeMenu,
 } from "@/components";
+import { GoMakeDialog } from "@/components/dialog/go-make-dialog";
 import { HeaderTitle } from "@/widgets";
 import { ArrowDownNewIcon, BudgetIcon, EditIcon } from "@/icons";
 import { useQuoteNew } from "./use-quote";
@@ -23,6 +24,7 @@ import { CancelBtnMenu } from "@/widgets/quote-new/cancel-btn-menu";
 import { SendBtnMenu } from "@/widgets/quote-new/send-btn-menu";
 import { _renderQuoteStatus } from "@/utils/constants";
 import {
+  Box,
   Button,
   CircularProgress,
   FormControlLabel,
@@ -31,6 +33,7 @@ import {
   Radio,
   RadioGroup,
   Skeleton,
+  Typography,
 } from "@mui/material";
 import { SettingQuoteMenu } from "@/widgets/quote-new/setting-quote-menu";
 import { AddDeliveryModal } from "@/widgets/quote-new/modals-widgets/add-delivery-modal/add-delivery-modal";
@@ -61,7 +64,7 @@ import { InvoiceCreationModal } from "@/widgets/quote-new/invoice-creation-modal
 import { useQuoteGetData } from "./use-quote-get-data";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { DateField } from "@/components/date-picker/date-filed";
-import { ModalType } from "@/enums";
+import { ModalType, PurchaseOrderStatuses } from "@/enums";
 import { DuplicateQuickModal } from "@/widgets/quote-new/modals-widgets/duplicate-quick-modal";
 import Stack from "@mui/material/Stack";
 import { ClientBalanceComponent } from "@/components/client-balance/client-balance";
@@ -402,6 +405,17 @@ const QuoteNewPageWidget = ({
     onOpenPurchaseOrderTypeModal,
     onClosePurchaseOrderTypeModal,
     handleSelectPurchaseOrderType,
+    showIntakeValidationDialog,
+    handleOpenIntakeFromValidation,
+    handleCancelIntakeValidation,
+    handleUndoDocumentIntake,
+    handleUndoItemIntake,
+    showUndoIntakeDialog,
+    handleConfirmUndoIntake,
+    handleCancelUndoIntake,
+    showAddItemRestrictionDialog,
+    handleCreateNewPurchaseOrder,
+    handleCancelAddItemRestriction,
   } = useQuoteNew({
     docType: documentType,
     isQuoteConfirmation: isQuoteConfirmation,
@@ -928,6 +942,7 @@ const QuoteNewPageWidget = ({
                   }
                   onClickQuickDuplicate={onClickQuickDuplicate}
                   onClickDeleteQouteItem={onClickDeleteQouteItem}
+                  onClickUndoItemIntake={handleUndoItemIntake}
                   quoteItems={quoteItems}
                   changeQuoteItems={changeQuoteItems}
                   getCalculateQuote={getCalculateQuote}
@@ -1046,6 +1061,8 @@ const QuoteNewPageWidget = ({
         inventoryData={inventoryData}
         loading={inventoryLoading}
         purchaseOrderId={router.query?.Id as string}
+        status={quoteItemValue?.status ?? quoteItemValue?.documentStatus}
+        onIntakeSuccess={getQuote}
       />
       <PurchaseOrderTypeModal
         open={openPurchaseOrderTypeModal}
@@ -1060,6 +1077,61 @@ const QuoteNewPageWidget = ({
         getAllClientContacts={getAllClientContacts}
         documentType={documentType}
       />
+      {/* Intake Validation Dialog */}
+      <GoMakeDialog
+        open={showIntakeValidationDialog}
+        onClose={handleCancelIntakeValidation}
+        title={t("sales.purchaseOrder.intakeValidation") || "Intake Required"}
+        maxWidth="sm"
+        showFooter={true}
+        primaryButtonLabel={t("sales.purchaseOrder.intake")}
+        cancelButtonLabel={t("common.cancel")}
+        onPrimaryAction={handleOpenIntakeFromValidation}
+        hideCancelButton={false}
+      >
+        <Box sx={{ padding: "20px" }}>
+          <Typography variant="body1">
+            {t("sales.purchaseOrder.someItemsNotIntake") || "Some items not Intake"}
+          </Typography>
+        </Box>
+      </GoMakeDialog>
+      {/* Undo Intake Dialog - when changing from Received status */}
+      <GoMakeDialog
+        open={showUndoIntakeDialog}
+        onClose={handleCancelUndoIntake}
+        title={t("sales.purchaseOrder.undoIntakeConfirmation") || "Undo Intake?"}
+        maxWidth="sm"
+        showFooter={true}
+        primaryButtonLabel={t("common.yes")}
+        cancelButtonLabel={t("common.no")}
+        onPrimaryAction={handleConfirmUndoIntake}
+        hideCancelButton={false}
+      >
+        <Box sx={{ padding: "20px" }}>
+          <Typography variant="body1">
+            {t("sales.purchaseOrder.undoIntakeMessage") || "Do you want to undo the intake before changing the status?"}
+          </Typography>
+        </Box>
+      </GoMakeDialog>
+      {/* Add Item Restriction Dialog - when status is Closed or Received */}
+      <GoMakeDialog
+        open={showAddItemRestrictionDialog}
+        onClose={handleCancelAddItemRestriction}
+        title={t("sales.purchaseOrder.cannotAddItem") || "Cannot Add Item"}
+        maxWidth="sm"
+        showFooter={true}
+        primaryButtonLabel={t("sales.purchaseOrder.createNewPurchaseOrder") || "Create New Purchase Order"}
+        cancelButtonLabel={t("common.cancel")}
+        onPrimaryAction={handleCreateNewPurchaseOrder}
+        hideCancelButton={false}
+      >
+        <Box sx={{ padding: "20px" }}>
+          <Typography variant="body1">
+            {t("sales.purchaseOrder.addItemRestrictionMessage", { status: quoteItemValue?.documentStatus === PurchaseOrderStatuses.Received ? t("documentStatus.PurchaseOrder.Received") : t("documentStatus.PurchaseOrder.Closed") }) ||
+              `You are in {{status}} status and cannot add new items. Would you like to create a new purchase order?`}
+          </Typography>
+        </Box>
+      </GoMakeDialog>
       {!isPrePaymentPage && (
         <AddDeliveryModal
           openModal={openAddDeliveryModal}

@@ -59,6 +59,10 @@ const GET_DOCUMENT_MAIL_DATA_URL =
   "/v1/erp-service/documents/get-document-mail-data";
 const UPDATE_DOCUMENT_STATUS_URL =
   "/v1/erp-service/documents/update-document-status";
+const UNDO_DOCUMENT_INTAKE_URL =
+  "/v1/erp-service/documents/undo-document-intake";
+const UNDO_DOCUMENT_ITEM_INTAKE_URL =
+  "/v1/erp-service/documents/undo-document-item-intake";
 const SEND_ORDER_READY_TO_CLIENT_URL =
   "/v1/jobs-service/board-missions/send-order-ready-to-client";
 const SAVE_DOCUMENT_URL = "/v1/erp-service/documents/save-document";
@@ -530,6 +534,36 @@ const updateDocumentStatusApi: ICallAndSetData = async (
     `${UPDATE_DOCUMENT_STATUS_URL}/${documentType}`,
     setState,
     payload
+  );
+};
+
+const undoDocumentIntakeApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data: { documentType: DOCUMENT_TYPE; purchaseOrderId: string; status: number; shouldUndoIntake: boolean }
+) => {
+  const { documentType, ...payload } = data || {};
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.PUT,
+    `${UNDO_DOCUMENT_INTAKE_URL}/${documentType}`,
+    setState,
+    payload
+  );
+};
+
+const undoDocumentItemIntakeApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data: { documentType: DOCUMENT_TYPE; itemId: string }
+) => {
+  const { documentType, itemId } = data || {};
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.PUT,
+    `${UNDO_DOCUMENT_ITEM_INTAKE_URL}/${documentType}/${itemId}`,
+    setState,
+    {}
   );
 };
 
@@ -1614,4 +1648,6 @@ export {
   getDocumentInventoryApi,
   addCompositeProductsApi,
   assignToTicketApi,
+  undoDocumentIntakeApi,
+  undoDocumentItemIntakeApi,
 };
