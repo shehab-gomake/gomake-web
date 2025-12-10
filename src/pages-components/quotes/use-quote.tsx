@@ -2364,14 +2364,12 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       // Default shouldUndoIntake to false if not explicitly set
       const shouldUndo = shouldUndoIntake === null ? false : shouldUndoIntake;
 
-      // Check if changing to Received status
-      if (nextStatus === PurchaseOrderStatuses.Received) {
+      // Check if changing from Under Creation to Received status
+      if (currentStatus === PurchaseOrderStatuses.UnderCreation && nextStatus === PurchaseOrderStatuses.Received) {
         // Use document data already available in the table (no need to fetch)
         // Check if document has documentItems with isIntake = false (if available)
-        const documentItems = document?.documentItems || [];
-        const hasUnintakedItems = documentItems.length > 0 && documentItems.some(
-          (item: any) => item.isIntake === false
-        );
+        const hasUnintakedItems = document?.isIntake === false;
+
 
         if (hasUnintakedItems) {
           // Show validation dialog

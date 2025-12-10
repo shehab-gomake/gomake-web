@@ -218,9 +218,9 @@ const InventoryIntakeModal: React.FC<InventoryIntakeModalProps> = ({
     onIntakeSuccess,
   });
 
-  // Intercept handleIntake to show confirmation modal if status is UnderCreation
+  // Intercept handleIntake to show confirmation modal if status is not Received
   const handleIntakeWithConfirmation = () => {
-    if (status === PurchaseOrderStatuses.UnderCreation) {
+    if (status !== PurchaseOrderStatuses.Received) {
       setShowConfirmationModal(true);
     } else {
       handleIntake();

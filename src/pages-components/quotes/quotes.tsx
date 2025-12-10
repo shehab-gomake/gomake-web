@@ -1166,7 +1166,7 @@ const QuotesListPageWidget = ({
       >
         <Box sx={{ padding: "20px" }}>
           <Typography variant="body1">
-            {t("sales.purchaseOrder.someItemsNotIntake") || "Some items not Intake"}
+            {t("sales.purchaseOrder.someItemsNotIntake") || "Some items not Intake need to Intake"}
           </Typography>
         </Box>
       </GoMakeDialog>
