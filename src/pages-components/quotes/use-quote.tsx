@@ -2345,14 +2345,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         // Check document-level isIntake flag (available in list response)
         const documentIsIntake = document?.isIntake === true;
 
-        // Also check if document has any items with isIntake = true (if available in list)
-        const documentItems = document?.documentItems || [];
-        const hasIntakedItems = documentItems.length > 0 && documentItems.some(
-          (item: any) => item.isIntake === true
-        );
-
         // Show dialog if document-level flag is true OR if any items have isIntake = true
-        if (documentIsIntake || hasIntakedItems) {
+        if (documentIsIntake) {
           // Show dialog asking if user wants to undo intake
           setPendingStatusChangeWithUndo({ documentId, status: nextStatus, shouldUndoIntake: false });
           setSelectedDocumentForValidation(document);
