@@ -1,7 +1,8 @@
-import React from 'react';
-import { Box, Typography, Stack, SxProps, Theme } from '@mui/material';
-import { colorTokens, semanticTypography } from '../../tokens';
-import { Button } from '../../primitives/Button';
+import React from "react";
+import { Box, Typography, Stack, SxProps, Theme } from "@mui/material";
+import { useTranslation } from "react-i18next";
+import { colorTokens, semanticTypography } from "../../tokens";
+import { Button } from "../../primitives/Button";
 
 export interface EmptyStateProps {
   /** Icon to display (React element) */
@@ -37,27 +38,37 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
   secondaryAction,
   sx = {},
 }) => {
+  const { t } = useTranslation();
+  const dir: "rtl" | "ltr" = t("direction");
+
   return (
     <Box
       sx={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
         minHeight: 200,
         p: 4,
-        textAlign: 'center',
+        textAlign: "center",
+        direction: dir,
         ...sx,
       }}
     >
-      <Stack alignItems="center" spacing={3} sx={{ maxWidth: 400 }}>
+      <Stack
+        alignItems="center"
+        sx={{
+          gap: 3,
+          maxWidth: 400,
+        }}
+      >
         {/* Icon */}
         {icon && (
           <Box
             sx={{
               fontSize: 64,
               color: colorTokens.neutral[300],
-              '& > svg': {
-                fontSize: 'inherit',
+              "& > svg": {
+                fontSize: "inherit",
               },
             }}
           >
@@ -93,7 +104,12 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
 
         {/* Actions */}
         {(action || secondaryAction) && (
-          <Stack direction="row" spacing={2}>
+          <Stack
+            direction="row"
+            sx={{
+              gap: 2,
+            }}
+          >
             {action && (
               <Button variant="primary" onClick={action.onClick}>
                 {action.label}

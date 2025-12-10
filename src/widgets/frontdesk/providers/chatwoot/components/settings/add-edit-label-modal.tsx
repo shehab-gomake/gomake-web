@@ -6,15 +6,15 @@
  */
 
 import React, { useState, useEffect } from "react";
-import {
-  Box,
-  Typography,
-  Tooltip,
-} from "@mui/material";
+import { useTranslation } from "react-i18next";
+import { Box, Typography, Tooltip } from "@mui/material";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import LabelIcon from "@mui/icons-material/Label";
 import type { ChatwootLabel } from "@/store/frontdesk/atoms/chatwoot.atoms";
-import type { CreateLabelPayload, UpdateLabelPayload } from "@/services/frontdesk/api/chatwoot";
+import type {
+  CreateLabelPayload,
+  UpdateLabelPayload,
+} from "@/services/frontdesk/api/chatwoot";
 import { CompactModal } from "./CompactModal";
 import {
   CompactFormSection,
@@ -34,14 +34,38 @@ interface AddEditLabelModalProps {
 
 // Simplified color palette
 const LABEL_COLORS = [
-  "#DC2626", "#EF4444", "#F87171", "#FCA5A5",
-  "#EA580C", "#F97316", "#FB923C", "#FDBA74",
-  "#D97706", "#F59E0B", "#FBBF24", "#FCD34D",
-  "#059669", "#10B981", "#34D399", "#6EE7B7",
-  "#2563EB", "#3B82F6", "#60A5FA", "#93C5FD",
-  "#7C3AED", "#8B5CF6", "#A78BFA", "#C4B5FD",
-  "#DB2777", "#EC4899", "#F472B6", "#F9A8D4",
-  "#374151", "#6B7280", "#9CA3AF", "#D1D5DB",
+  "#DC2626",
+  "#EF4444",
+  "#F87171",
+  "#FCA5A5",
+  "#EA580C",
+  "#F97316",
+  "#FB923C",
+  "#FDBA74",
+  "#D97706",
+  "#F59E0B",
+  "#FBBF24",
+  "#FCD34D",
+  "#059669",
+  "#10B981",
+  "#34D399",
+  "#6EE7B7",
+  "#2563EB",
+  "#3B82F6",
+  "#60A5FA",
+  "#93C5FD",
+  "#7C3AED",
+  "#8B5CF6",
+  "#A78BFA",
+  "#C4B5FD",
+  "#DB2777",
+  "#EC4899",
+  "#F472B6",
+  "#F9A8D4",
+  "#374151",
+  "#6B7280",
+  "#9CA3AF",
+  "#D1D5DB",
 ];
 
 export const AddEditLabelModal: React.FC<AddEditLabelModalProps> = ({
@@ -52,6 +76,9 @@ export const AddEditLabelModal: React.FC<AddEditLabelModalProps> = ({
   onUpdate,
   loading = false,
 }) => {
+  const { t } = useTranslation();
+  const dir: "rtl" | "ltr" = t("direction");
+  const isRTL = dir === "rtl";
   const isEditMode = !!label;
   const [title, setTitle] = useState<string>("");
   const [description, setDescription] = useState<string>("");
@@ -79,7 +106,7 @@ export const AddEditLabelModal: React.FC<AddEditLabelModalProps> = ({
 
   const handleSave = async () => {
     if (!title.trim()) {
-      setError("Label title is required");
+      setError(t("frontdesk.labels.labelTitleRequired"));
       return;
     }
 
@@ -104,7 +131,12 @@ export const AddEditLabelModal: React.FC<AddEditLabelModalProps> = ({
       }
       onClose();
     } catch (err: any) {
-      setError(err.message || `Failed to ${isEditMode ? "update" : "create"} label`);
+      setError(
+        err.message ||
+          (isEditMode
+            ? t("frontdesk.labels.failedToUpdateLabel")
+            : t("frontdesk.labels.failedToCreateLabel"))
+      );
     } finally {
       setSaving(false);
     }
@@ -116,7 +148,11 @@ export const AddEditLabelModal: React.FC<AddEditLabelModalProps> = ({
     <CompactModal
       open={open}
       onClose={onClose}
-      title={isEditMode ? "Edit Label" : "Create Label"}
+      title={
+        isEditMode
+          ? t("frontdesk.labels.editLabel")
+          : t("frontdesk.labels.createLabel")
+      }
       icon={<LabelIcon />}
       error={error}
       disabled={saving || loading}
@@ -124,7 +160,11 @@ export const AddEditLabelModal: React.FC<AddEditLabelModalProps> = ({
         <CompactModalActions
           onCancel={onClose}
           onSubmit={handleSave}
-          submitLabel={isEditMode ? "Save Changes" : "Create Label"}
+          submitLabel={
+            isEditMode
+              ? t("frontdesk.labels.saveChanges")
+              : t("frontdesk.labels.createLabel")
+          }
           isSubmitting={saving || loading}
           submitDisabled={!canSubmit}
         />
@@ -133,11 +173,11 @@ export const AddEditLabelModal: React.FC<AddEditLabelModalProps> = ({
       <CompactFormSection>
         {/* Label Title */}
         <CompactTextField
-          label="Label Title"
+          label={t("frontdesk.labels.labelTitle")}
           required
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          placeholder="e.g., Urgent, Follow-up, VIP"
+          placeholder={t("frontdesk.labels.labelTitlePlaceholder")}
           disabled={saving || loading}
           error={!!error && !title.trim()}
           autoFocus
@@ -145,18 +185,18 @@ export const AddEditLabelModal: React.FC<AddEditLabelModalProps> = ({
 
         {/* Description */}
         <CompactTextField
-          label="Description"
+          label={t("frontdesk.labels.description")}
           optional
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          placeholder="Add a brief description..."
+          placeholder={t("frontdesk.labels.descriptionPlaceholder")}
           multiline
           rows={2}
           disabled={saving || loading}
         />
 
         {/* Color Picker */}
-        <Box>
+        <Box sx={{ direction: dir }}>
           <Typography
             sx={{
               mb: 0.75,
@@ -167,12 +207,12 @@ export const AddEditLabelModal: React.FC<AddEditLabelModalProps> = ({
               letterSpacing: "0.025em",
             }}
           >
-            Label Color
+            {t("frontdesk.labels.labelColor")}
           </Typography>
 
           {/* Compact Color Grid */}
-          <Box 
-            sx={{ 
+          <Box
+            sx={{
               display: "grid",
               gridTemplateColumns: "repeat(16, 1fr)",
               gap: 0.5,
@@ -192,13 +232,17 @@ export const AddEditLabelModal: React.FC<AddEditLabelModalProps> = ({
                     borderRadius: "4px",
                     bgcolor: c,
                     cursor: saving || loading ? "default" : "pointer",
-                    border: color === c ? "2px solid #1f2937" : "1px solid rgba(0,0,0,0.1)",
+                    border:
+                      color === c
+                        ? "2px solid #1f2937"
+                        : "1px solid rgba(0,0,0,0.1)",
                     transition: "all 0.15s",
                     position: "relative",
                     flexShrink: 0,
                     "&:hover": {
                       transform: saving || loading ? "none" : "scale(1.1)",
-                      borderColor: saving || loading ? "rgba(0,0,0,0.1)" : "#1f2937",
+                      borderColor:
+                        saving || loading ? "rgba(0,0,0,0.1)" : "#1f2937",
                       zIndex: 1,
                     },
                   }}
@@ -229,11 +273,12 @@ export const AddEditLabelModal: React.FC<AddEditLabelModalProps> = ({
             borderRadius: "6px",
             bgcolor: "#f9fafb",
             border: "1px solid rgba(0,0,0,0.06)",
+            direction: dir,
           }}
         >
           <CompactSwitch
-            label="Show on sidebar"
-            description="Display in conversation sidebar"
+            label={t("frontdesk.labels.showOnSidebar")}
+            description={t("frontdesk.labels.showOnSidebarDescription")}
             checked={showOnSidebar}
             onChange={(e) => setShowOnSidebar(e.target.checked)}
             disabled={saving || loading}
@@ -248,6 +293,7 @@ export const AddEditLabelModal: React.FC<AddEditLabelModalProps> = ({
               borderRadius: "6px",
               bgcolor: "#f9fafb",
               border: "1px dashed rgba(0,0,0,0.12)",
+              direction: dir,
             }}
           >
             <Typography
@@ -260,7 +306,7 @@ export const AddEditLabelModal: React.FC<AddEditLabelModalProps> = ({
                 letterSpacing: "0.025em",
               }}
             >
-              Preview
+              {t("frontdesk.labels.preview")}
             </Typography>
             <Box
               sx={{

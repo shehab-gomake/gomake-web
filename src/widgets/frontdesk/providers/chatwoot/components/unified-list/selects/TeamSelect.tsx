@@ -7,14 +7,15 @@
  * @module unified-list/selects/TeamSelect
  */
 
-import React, { useState, useCallback, useMemo } from 'react';
-import GroupsIcon from '@mui/icons-material/Groups';
-import AddIcon from '@mui/icons-material/Add';
-import { UnifiedListDropdown } from '../UnifiedListDropdown';
-import { TeamListItemRenderer } from '../list-items';
-import { FilterIconButton, AssignmentTrigger } from '../triggers';
-import type { TeamListItem, ActionItem } from '../types';
-import type { Team } from '@/services/frontdesk/api/chatwoot/types/teams.types';
+import React, { useState, useCallback, useMemo } from "react";
+import { useTranslation } from "react-i18next";
+import GroupsIcon from "@mui/icons-material/Groups";
+import AddIcon from "@mui/icons-material/Add";
+import { UnifiedListDropdown } from "../UnifiedListDropdown";
+import { TeamListItemRenderer } from "../list-items";
+import { FilterIconButton, AssignmentTrigger } from "../triggers";
+import type { TeamListItem, ActionItem } from "../types";
+import type { Team } from "@/services/frontdesk/api/chatwoot/types/teams.types";
 
 // =============================================================================
 // TYPES
@@ -32,7 +33,7 @@ export interface TeamSelectProps {
   /** Whether selection is in progress */
   updating?: boolean;
   /** Trigger variant */
-  variant?: 'inline' | 'filter';
+  variant?: "inline" | "filter";
   /** Label text (for inline variant) */
   label?: string;
   /** Empty state text */
@@ -56,9 +57,9 @@ export interface TeamSelectProps {
 // =============================================================================
 
 const teamToListItem = (team: Team): TeamListItem => ({
-  type: 'team',
+  type: "team",
   id: team.id!,
-  label: team.name || 'Unknown Team',
+  label: team.name || "Unknown Team",
   description: team.description,
   allowAutoAssign: team.allow_auto_assign,
 });
@@ -73,16 +74,23 @@ export const TeamSelect: React.FC<TeamSelectProps> = ({
   onSelect,
   loading = false,
   updating = false,
-  variant = 'inline',
-  label = 'Assigned Team',
-  emptyText = 'No teams available',
-  placeholder = 'Assign to team',
+  variant = "inline",
+  label,
+  emptyText,
+  placeholder,
   disabled = false,
   canCreate = false,
   onCreateClick,
   showAllOption = false,
-  allOptionLabel = 'All Teams',
+  allOptionLabel = "All Teams",
 }) => {
+  const { t } = useTranslation();
+  const dir: "rtl" | "ltr" = t("direction");
+  const finalLabel = label || t("frontdesk.detailPanel.assignedTeam");
+  const finalPlaceholder =
+    placeholder || t("frontdesk.detailPanel.assignToTeam");
+  const finalEmptyText = emptyText || t("frontdesk.teams.noTeamsAvailable");
+
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const open = Boolean(anchorEl);
 
@@ -91,8 +99,8 @@ export const TeamSelect: React.FC<TeamSelectProps> = ({
     const items = teams.map(teamToListItem);
     if (showAllOption) {
       items.unshift({
-        type: 'team',
-        id: 'all',
+        type: "team",
+        id: "all",
         label: allOptionLabel,
       });
     }
@@ -104,21 +112,24 @@ export const TeamSelect: React.FC<TeamSelectProps> = ({
     if (!canCreate || !onCreateClick) return [];
     return [
       {
-        type: 'action',
-        id: 'create-team',
-        label: 'Add New Team',
+        type: "action",
+        id: "create-team",
+        label: t("frontdesk.teams.addNewTeam"),
         icon: <AddIcon sx={{ fontSize: 18 }} />,
-        variant: 'primary',
+        variant: "primary",
         onClick: onCreateClick,
       },
     ];
-  }, [canCreate, onCreateClick]);
+  }, [canCreate, onCreateClick, t]);
 
-  const handleOpen = useCallback((event: React.MouseEvent<HTMLElement>) => {
-    if (!disabled && !updating) {
-      setAnchorEl(event.currentTarget);
-    }
-  }, [disabled, updating]);
+  const handleOpen = useCallback(
+    (event: React.MouseEvent<HTMLElement>) => {
+      if (!disabled && !updating) {
+        setAnchorEl(event.currentTarget);
+      }
+    },
+    [disabled, updating]
+  );
 
   const handleClose = useCallback(() => {
     setAnchorEl(null);
@@ -126,7 +137,7 @@ export const TeamSelect: React.FC<TeamSelectProps> = ({
 
   const handleSelect = useCallback(
     (id: string | number | null) => {
-      if (id === null || id === 'all') {
+      if (id === null || id === "all") {
         onSelect(null, null);
       } else {
         const team = teams.find((t) => t.id === id);
@@ -154,10 +165,14 @@ export const TeamSelect: React.FC<TeamSelectProps> = ({
   return (
     <>
       {/* Filter Trigger */}
-      {variant === 'filter' && (
+      {variant === "filter" && (
         <FilterIconButton
           icon={<GroupsIcon />}
-          tooltip={selectedTeam ? `Team: ${selectedTeam.name}` : 'Filter by Team'}
+          tooltip={
+            selectedTeam
+              ? t("frontdesk.filters.teamTooltip", { name: selectedTeam.name })
+              : t("frontdesk.filters.filterByTeam")
+          }
           isActive={hasSelection}
           badgeCount={hasSelection ? 1 : 0}
           onClick={handleOpen}
@@ -166,14 +181,14 @@ export const TeamSelect: React.FC<TeamSelectProps> = ({
       )}
 
       {/* Inline Assignment Trigger */}
-      {variant === 'inline' && (
+      {variant === "inline" && (
         <AssignmentTrigger
           type="team"
-          label={label}
+          label={finalLabel}
           valueName={selectedTeam?.name}
           valueDescription={selectedTeam?.description}
           hasValue={hasSelection}
-          placeholder={placeholder}
+          placeholder={finalPlaceholder}
           onClick={handleOpen}
           loading={updating}
           disabled={disabled}
@@ -187,17 +202,19 @@ export const TeamSelect: React.FC<TeamSelectProps> = ({
         onClose={handleClose}
         items={teamItems}
         selectionMode="single"
-        selectedValue={showAllOption && !selectedTeam ? 'all' : (selectedTeam?.id ?? null)}
+        selectedValue={
+          showAllOption && !selectedTeam ? "all" : selectedTeam?.id ?? null
+        }
         onSelect={handleSelect}
         renderItem={renderItem}
         showNoneOption={!showAllOption && !!selectedTeam}
-        noneOptionLabel="Unassign"
-        headerText="Select Team"
+        noneOptionLabel={t("frontdesk.teams.unassign")}
+        headerText={t("frontdesk.teams.selectTeam")}
         footerActions={footerActions}
         loading={loading}
-        emptyMessage={emptyText}
+        emptyMessage={finalEmptyText}
         searchable={teams.length > 5}
-        searchPlaceholder="Search teams..."
+        searchPlaceholder={t("frontdesk.teams.searchTeams")}
       />
     </>
   );

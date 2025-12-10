@@ -6,14 +6,17 @@
  */
 
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { BaseConversationView } from "../components/base-conversation-view";
 
 export const AllConversationsView: React.FC = () => {
+  const { t } = useTranslation();
+
   return (
     <BaseConversationView
       emptyState={{
-        title: "No ticket selected",
-        description: "Choose a ticket from the list to start viewing messages",
+        title: t("frontdesk.emptyStates.noTicketSelected"),
+        description: t("frontdesk.emptyStates.chooseTicketFromList"),
       }}
     />
   );

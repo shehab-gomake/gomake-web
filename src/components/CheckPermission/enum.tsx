@@ -119,6 +119,7 @@ export enum Permissions {
   TRANSLATION_ADMIN = "TranslationAdmin",
   SHOW_PRINTHOUSES_TABLE = "ShowPrintHousesTable",
   SHOW_ADMIN_CUSTOMER_SERVICE = "ShowAdminCustomerService",
+  SHOW_ALL_SUPPORT_TICKETS = "ShowAllSupportTickets",
 
   //sales group
   SHOW_DELIVERY_NOTES = "ShowDeliveryNotes",

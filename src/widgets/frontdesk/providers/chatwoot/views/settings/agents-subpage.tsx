@@ -9,6 +9,7 @@
  */
 
 import React, { useState, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Box,
   Typography,
@@ -41,6 +42,8 @@ import { chatwootService } from "@/services/frontdesk";
 import { ACTION_PERMISSIONS } from "../../constants/permissions.constants";
 
 export const AgentsSubpage: React.FC = () => {
+  const { t } = useTranslation();
+  const dir: "rtl" | "ltr" = t("direction");
   const { selectedAccountId, profile } = useChatwootProvider();
   const { agents, loading, error, refresh } = useChatwootAgents(selectedAccountId);
 
@@ -180,16 +183,16 @@ export const AgentsSubpage: React.FC = () => {
   return (
     <>
       <BaseSettingsSubpage
-        title="Agents"
-        description="Manage team members, roles, and permissions"
+        title={t("frontdesk.settings.agents")}
+        description={t("frontdesk.settings.agentsDescription")}
         isLoading={loading}
         headerActions={
-          <Box sx={{ display: "flex", gap: 0.75 }}>
+          <Box sx={{ display: "flex", gap: 0.75, direction: dir }}>
             <IconButton
               onClick={refresh}
               size="small"
               disabled={loading}
-              aria-label="Refresh agents list"
+              aria-label={t("frontdesk.settings.agentsRefresh")}
               sx={{
                 color: "#6b7280",
                 p: 0.75,
@@ -205,8 +208,8 @@ export const AgentsSubpage: React.FC = () => {
         }
       >
         {error ? (
-          <Alert severity="error" sx={{ mb: 2, borderRadius: "6px" }}>
-            {error.message || "Failed to load agents"}
+          <Alert severity="error" sx={{ mb: 2, borderRadius: "6px", direction: dir }}>
+            {error.message || t("frontdesk.settings.agentsFailedToLoad")}
           </Alert>
         ) : agents.length === 0 ? (
           /* Empty State */
@@ -219,26 +222,26 @@ export const AgentsSubpage: React.FC = () => {
               minHeight: 260,
               textAlign: "center",
               gap: 1.5,
+              direction: dir,
             }}
           >
             <PeopleIcon sx={{ fontSize: 48, color: "#9ca3af", opacity: 0.6 }} />
             <Typography variant="subtitle1" sx={{ color: "#1f2937", fontWeight: 600, fontSize: "0.938rem" }}>
-              No Agents Found
+              {t("frontdesk.settings.agentsEmptyTitle")}
             </Typography>
             <Typography variant="body2" sx={{ color: "#6b7280", maxWidth: 360, fontSize: "0.813rem", lineHeight: 1.5 }}>
-              Start by inviting team members to join your account. Agents can handle
-              conversations, manage inboxes, and collaborate with teams.
+              {t("frontdesk.settings.agentsEmptyDescription")}
             </Typography>
           </Box>
         ) : (
           /* Agents List - Compact High-Density Design */
           <SettingsSection
-            title={`Agents (${agents.length})`}
-            description="Team members with access to this account"
+            title={t("frontdesk.settings.agentsSectionTitle", { count: agents.length })}
+            description={t("frontdesk.settings.agentsSectionDescription")}
           >
-            <List sx={{ width: "100%", bgcolor: "transparent", p: 0, m: 0 }}>
+            <List sx={{ width: "100%", bgcolor: "transparent", p: 0, m: 0, direction: dir }}>
               {agents.map((agent, index) => {
-                const agentName = agent.name || agent.available_name || "Unknown Agent";
+                const agentName = agent.name || agent.available_name || t("frontdesk.settings.agentsUnknown");
                 const avatarData = generateAvatarData({
                   name: agent.name || agent.available_name,
                   email: agent.email,
@@ -261,6 +264,7 @@ export const AgentsSubpage: React.FC = () => {
                         alignItems: "center",
                         borderRadius: "4px",
                         transition: "background-color 0.15s ease",
+                        direction: dir,
                       }}
                     >
                       <ListItemAvatar sx={{ minWidth: 44 }}>
@@ -296,8 +300,8 @@ export const AgentsSubpage: React.FC = () => {
                         </Box>
                       </ListItemAvatar>
 
-                      <Box sx={{ flex: 1, minWidth: 0, mr: 1.5 }}>
-                        <Box sx={{ display: "flex", alignItems: "center", gap: 0.75 }}>
+                      <Box sx={{ flex: 1, minWidth: 0, [dir === "rtl" ? "ml" : "mr"]: 1.5 }}>
+                        <Box sx={{ display: "flex", alignItems: "center", gap: 0.75, direction: dir }}>
                           <Typography 
                             variant="body2" 
                             sx={{ 
@@ -310,7 +314,7 @@ export const AgentsSubpage: React.FC = () => {
                             {agentName}
                           </Typography>
                           {agent.confirmed && (
-                            <Box sx={{ display: "flex", alignItems: "center", gap: 0.25 }}>
+                            <Box sx={{ display: "flex", alignItems: "center", gap: 0.25, direction: dir }}>
                               <CheckCircleIcon
                                 sx={{
                                   fontSize: 12,
@@ -325,7 +329,7 @@ export const AgentsSubpage: React.FC = () => {
                                   fontWeight: 500,
                                 }}
                               >
-                                Verified
+                                {t("frontdesk.settings.agentsVerified")}
                               </Typography>
                             </Box>
                           )}
@@ -334,12 +338,12 @@ export const AgentsSubpage: React.FC = () => {
 
                       {/* Edit/Delete actions - Compact buttons */}
                       {(canEditSpecificAgent(agent) || canDeleteSpecificAgent(agent)) && (
-                        <Box sx={{ display: "flex", gap: 0.25, flexShrink: 0, mr: 1.5 }}>
+                        <Box sx={{ display: "flex", gap: 0.25, flexShrink: 0, [dir === "rtl" ? "ml" : "mr"]: 1.5, direction: dir }}>
                           {canEditSpecificAgent(agent) && (
                             <IconButton
                               onClick={() => handleEdit(agent)}
                               size="small"
-                              aria-label={`Edit agent ${agentName}`}
+                              aria-label={t("frontdesk.settings.agentsEdit", { name: agentName })}
                               sx={{
                                 color: "#6b7280",
                                 p: 0.5,
@@ -356,7 +360,7 @@ export const AgentsSubpage: React.FC = () => {
                             <IconButton
                               onClick={() => handleDeleteClick(agent)}
                               size="small"
-                              aria-label={`Delete agent ${agentName}`}
+                              aria-label={t("frontdesk.settings.agentsDelete", { name: agentName })}
                               sx={{
                                 color: "#6b7280",
                                 p: 0.5,
@@ -375,8 +379,8 @@ export const AgentsSubpage: React.FC = () => {
                       <Chip
                         label={
                           agent.role === "administrator" || agent.role === "admin"
-                            ? "Admin"
-                            : "Agent"
+                            ? t("frontdesk.settings.agentsRoleAdmin")
+                            : t("frontdesk.settings.agentsRoleAgent")
                         }
                         size="small"
                         sx={{
@@ -425,26 +429,25 @@ export const AgentsSubpage: React.FC = () => {
         PaperProps={{
           sx: {
             borderRadius: "12px",
+            direction: dir,
           },
         }}
       >
-        <DialogTitle>
+        <DialogTitle sx={{ direction: dir }}>
           <Typography variant="h6" sx={{ fontWeight: 600 }}>
-            Delete Agent
+            {t("frontdesk.settings.agentsDeleteTitle")}
           </Typography>
         </DialogTitle>
-        <DialogContent>
+        <DialogContent sx={{ direction: dir }}>
           <Typography variant="body2" color="text.secondary">
-            Are you sure you want to delete{" "}
-            <strong>
-              {agentToDelete?.name || agentToDelete?.available_name || agentToDelete?.email}
-            </strong>
-            ? This action cannot be undone.
+            {t("frontdesk.settings.agentsDeleteMessage", {
+              name: agentToDelete?.name || agentToDelete?.available_name || agentToDelete?.email || ""
+            })}
           </Typography>
         </DialogContent>
-        <DialogActions sx={{ px: 3, pb: 2 }}>
+        <DialogActions sx={{ px: 3, pb: 2, direction: dir }}>
           <Button onClick={handleDeleteCancel} disabled={deleting} sx={{ textTransform: "none" }}>
-            Cancel
+            {t("frontdesk.common.cancel")}
           </Button>
           <Button
             onClick={handleDeleteConfirm}
@@ -453,7 +456,7 @@ export const AgentsSubpage: React.FC = () => {
             color="error"
             sx={{ textTransform: "none" }}
           >
-            {deleting ? "Deleting..." : "Delete"}
+            {deleting ? t("frontdesk.settings.agentsDeleting") : t("frontdesk.settings.agentsDeleteButton")}
           </Button>
         </DialogActions>
       </Dialog>

@@ -6,6 +6,7 @@
  */
 
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Box,
   Typography,
@@ -34,6 +35,8 @@ interface InboxSettingsTabProps {
 }
 
 export const InboxSettingsTab: React.FC<InboxSettingsTabProps> = ({ inbox, accountId, onSave, isSaving }) => {
+  const { t } = useTranslation();
+  const dir: "rtl" | "ltr" = t("direction");
   const [formData, setFormData] = useState({
     name: inbox.name || "",
     enable_email_collect: inbox.enable_email_collect || false,
@@ -65,13 +68,13 @@ export const InboxSettingsTab: React.FC<InboxSettingsTabProps> = ({ inbox, accou
   const isWhatsApp = inbox.channel_type?.includes("WhatsApp");
 
   return (
-    <Box>
+    <Box sx={{ direction: dir }}>
       {/* Inbox Name - Compact */}
-      <SettingsSection title="Inbox Name" description="A friendly name to identify this inbox">
+      <SettingsSection title={t("frontdesk.settings.inboxesSettingsNameTitle")} description={t("frontdesk.settings.inboxesSettingsNameDescription")}>
         <CompactTextField
           value={formData.name}
           onChange={(e) => handleFieldChange("name", e.target.value)}
-          placeholder="Enter inbox name"
+          placeholder={t("frontdesk.settings.inboxesSettingsNamePlaceholder")}
           disabled={isSaving}
           sx={{ maxWidth: 500 }}
         />
@@ -79,9 +82,9 @@ export const InboxSettingsTab: React.FC<InboxSettingsTabProps> = ({ inbox, accou
 
       {/* Email Collection (Web Widget only) - Compact */}
       {isWebWidget && (
-        <SettingsSection title="Collect Email" description="Ask visitors for their email before starting a conversation">
+        <SettingsSection title={t("frontdesk.settings.inboxesSettingsCollectEmailTitle")} description={t("frontdesk.settings.inboxesSettingsCollectEmailDescription")}>
           <CompactSwitch
-            label="Enable email collection"
+            label={t("frontdesk.settings.inboxesSettingsCollectEmailLabel")}
             checked={formData.enable_email_collect}
             onChange={(e) => handleFieldChange("enable_email_collect", e.target.checked)}
             disabled={isSaving}
@@ -91,7 +94,7 @@ export const InboxSettingsTab: React.FC<InboxSettingsTabProps> = ({ inbox, accou
 
       {/* WhatsApp Provider Name (WhatsApp only) - Compact */}
       {isWhatsApp && (
-        <SettingsSection title="API Provider" description="The underlying API provider for this WhatsApp channel">
+        <SettingsSection title={t("frontdesk.settings.inboxesSettingsApiProviderTitle")} description={t("frontdesk.settings.inboxesSettingsApiProviderDescription")}>
           <CompactTextField
             value={
               (inbox.provider as string) === "whatsapp_cloud"
@@ -110,8 +113,8 @@ export const InboxSettingsTab: React.FC<InboxSettingsTabProps> = ({ inbox, accou
 
       {/* Sender Name Type (Email only) - Compact */}
       {isEmail && (
-        <SettingsSection title="Sender Name" description="Select the name shown to your customer in email headers">
-          <Box sx={{ display: "flex", gap: 1.5 }}>
+        <SettingsSection title={t("frontdesk.settings.inboxesSettingsSenderNameTitle")} description={t("frontdesk.settings.inboxesSettingsSenderNameDescription")}>
+          <Box sx={{ display: "flex", gap: 1.5, direction: dir }}>
             {/* Friendly Card - Compact */}
             <Card
               onClick={() => !isSaving && handleFieldChange("sender_name_type", "friendly")}
@@ -142,12 +145,12 @@ export const InboxSettingsTab: React.FC<InboxSettingsTabProps> = ({ inbox, accou
                   }}
                 >
                   <Typography variant="subtitle2" sx={{ fontWeight: 600, fontSize: "0.875rem", color: "#1f2937" }}>
-                    Friendly
+                    {t("frontdesk.settings.inboxesSettingsSenderFriendly")}
                   </Typography>
                   {formData.sender_name_type === "friendly" && <CheckCircleIcon sx={{ color: "#6366f1", fontSize: 16 }} />}
                 </Box>
                 <Typography variant="body2" sx={{ mb: 1.5, color: "#6b7280", fontSize: "0.75rem", lineHeight: 1.4 }}>
-                  Add agent name in the sender field
+                  {t("frontdesk.settings.inboxesSettingsSenderFriendlyDescription")}
                 </Typography>
                 <Box
                   sx={{
@@ -158,11 +161,12 @@ export const InboxSettingsTab: React.FC<InboxSettingsTabProps> = ({ inbox, accou
                     bgcolor: "#f9fafb",
                     borderRadius: "4px",
                     border: "1px solid rgba(0,0,0,0.06)",
+                    direction: dir,
                   }}
                 >
                   <Avatar sx={{ width: 20, height: 20, fontSize: "0.688rem", bgcolor: "#6366f1" }}>A</Avatar>
                   <Typography variant="caption" sx={{ fontSize: "0.75rem", color: "#1f2937" }}>
-                    <strong>Agent Name</strong> from {inbox.name}
+                    <strong>Agent Name</strong> {t("frontdesk.common.from")} {inbox.name}
                   </Typography>
                 </Box>
               </CardContent>
@@ -198,14 +202,14 @@ export const InboxSettingsTab: React.FC<InboxSettingsTabProps> = ({ inbox, accou
                   }}
                 >
                   <Typography variant="subtitle2" sx={{ fontWeight: 600, fontSize: "0.875rem", color: "#1f2937" }}>
-                    Professional
+                    {t("frontdesk.settings.inboxesSettingsSenderProfessional")}
                   </Typography>
                   {formData.sender_name_type === "professional" && (
                     <CheckCircleIcon sx={{ color: "#6366f1", fontSize: 16 }} />
                   )}
                 </Box>
                 <Typography variant="body2" sx={{ mb: 1.5, color: "#6b7280", fontSize: "0.75rem", lineHeight: 1.4 }}>
-                  Use only the configured business name
+                  {t("frontdesk.settings.inboxesSettingsSenderProfessionalDescription")}
                 </Typography>
                 <Box
                   sx={{
@@ -230,19 +234,19 @@ export const InboxSettingsTab: React.FC<InboxSettingsTabProps> = ({ inbox, accou
           </Box>
 
           {/* Business Name Input - Compact */}
-          <Box sx={{ mt: 2 }}>
+          <Box sx={{ mt: 2, direction: dir }}>
             <Typography variant="body2" sx={{ mb: 1, color: "#6b7280", fontSize: "0.813rem" }}>
-              Configure your business name for professional email sender
+              {t("frontdesk.settings.inboxesSettingsBusinessNameLabel")}
             </Typography>
             <CompactTextField
               value={formData.business_name}
               onChange={(e) => handleFieldChange("business_name", e.target.value)}
-              placeholder="Enter your business name"
+              placeholder={t("frontdesk.settings.inboxesSettingsBusinessNamePlaceholder")}
               disabled={isSaving}
               sx={{ maxWidth: 500 }}
             />
             <Typography sx={{ mt: 0.5, fontSize: "0.75rem", color: "#9ca3af", lineHeight: 1.4 }}>
-              This name will be used when 'Professional' sender type is selected
+              {t("frontdesk.settings.inboxesSettingsBusinessNameHint")}
             </Typography>
           </Box>
         </SettingsSection>
@@ -251,38 +255,39 @@ export const InboxSettingsTab: React.FC<InboxSettingsTabProps> = ({ inbox, accou
       {/* Lock to Single Conversation (WhatsApp only) - Compact */}
       {isWhatsApp && (
         <SettingsSection
-          title="Lock to single conversation"
-          description="Enable or disable multiple conversations for the same contact in this inbox"
+          title={t("frontdesk.settings.inboxesSettingsLockSingleTitle")}
+          description={t("frontdesk.settings.inboxesSettingsLockSingleDescription")}
         >
-          <FormControl fullWidth size="small" sx={{ maxWidth: 500 }}>
-            <InputLabel sx={{ fontSize: "0.813rem" }}>Lock to single conversation</InputLabel>
+          <FormControl fullWidth size="small" sx={{ maxWidth: 500, direction: dir }}>
+            <InputLabel sx={{ fontSize: "0.813rem" }}>{t("frontdesk.settings.inboxesSettingsLockSingleLabel")}</InputLabel>
             <Select
               value={formData.lock_to_single_conversation ? "enabled" : "disabled"}
               onChange={(e) => handleFieldChange("lock_to_single_conversation", e.target.value === "enabled")}
-              label="Lock to single conversation"
+              label={t("frontdesk.settings.inboxesSettingsLockSingleLabel")}
               disabled={isSaving}
               sx={{ fontSize: "0.813rem" }}
             >
-              <MenuItem value="enabled" sx={{ fontSize: "0.813rem" }}>Enabled</MenuItem>
-              <MenuItem value="disabled" sx={{ fontSize: "0.813rem" }}>Disabled</MenuItem>
+              <MenuItem value="enabled" sx={{ fontSize: "0.813rem" }}>{t("frontdesk.settings.inboxesSettingsLockSingleEnabled")}</MenuItem>
+              <MenuItem value="disabled" sx={{ fontSize: "0.813rem" }}>{t("frontdesk.settings.inboxesSettingsLockSingleDisabled")}</MenuItem>
             </Select>
           </FormControl>
         </SettingsSection>
       )}
 
       {/* Feature Toggles - Compact */}
-      <SettingsSection title="Features" description="Enable or disable inbox features" showDivider={false}>
+      <SettingsSection title={t("frontdesk.settings.inboxesSettingsFeaturesTitle")} description={t("frontdesk.settings.inboxesSettingsFeaturesDescription")} showDivider={false}>
         <Box
           sx={{
             p: 1.5,
             borderRadius: "6px",
             bgcolor: "#f9fafb",
             border: "1px solid rgba(0,0,0,0.06)",
+            direction: dir,
           }}
         >
           <CompactSwitch
-            label="Allow messages after resolved"
-            description="Customers can send messages even after conversation is resolved"
+            label={t("frontdesk.settings.inboxesSettingsAllowMessagesLabel")}
+            description={t("frontdesk.settings.inboxesSettingsAllowMessagesDescription")}
             checked={formData.allow_messages_after_resolved}
             onChange={(e) => handleFieldChange("allow_messages_after_resolved", e.target.checked)}
             disabled={isSaving}
@@ -297,7 +302,8 @@ export const InboxSettingsTab: React.FC<InboxSettingsTabProps> = ({ inbox, accou
           pt: 2,
           borderTop: "1px solid rgba(0,0,0,0.06)",
           display: "flex",
-          justifyContent: "flex-end",
+          justifyContent: dir === "rtl" ? "flex-start" : "flex-end",
+          direction: dir,
         }}
       >
         <CompactPrimaryButton 
@@ -305,7 +311,7 @@ export const InboxSettingsTab: React.FC<InboxSettingsTabProps> = ({ inbox, accou
           disabled={!hasChanges || isSaving}
           loading={isSaving}
         >
-          {isSaving ? "Saving..." : "Save Changes"}
+          {isSaving ? t("frontdesk.settings.inboxesSettingsSaving") : t("frontdesk.settings.inboxesSettingsSaveChanges")}
         </CompactPrimaryButton>
       </Box>
     </Box>

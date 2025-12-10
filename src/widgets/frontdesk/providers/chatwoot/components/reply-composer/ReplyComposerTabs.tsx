@@ -7,7 +7,13 @@
 
 import React from "react";
 import { Box, ButtonBase, Stack } from "@mui/material";
-import { colorTokens, radiusTokens, shadowTokens, semanticSpacing } from "@/widgets/frontdesk/design-system";
+import { useTranslation } from "react-i18next";
+import {
+  colorTokens,
+  radiusTokens,
+  shadowTokens,
+  semanticSpacing,
+} from "@/widgets/frontdesk/design-system";
 import SendOutlinedIcon from "@mui/icons-material/SendOutlined";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 
@@ -32,6 +38,10 @@ export const ReplyComposerTabs: React.FC<ReplyComposerTabsProps> = ({
   textColor = colorTokens.neutral[900],
   lightGrayText = colorTokens.neutral[500],
 }) => {
+  const { t } = useTranslation();
+  const dir: "rtl" | "ltr" = t("direction");
+  const isRTL = dir === "rtl";
+
   return (
     <Box
       sx={{
@@ -39,6 +49,7 @@ export const ReplyComposerTabs: React.FC<ReplyComposerTabsProps> = ({
         py: 1.5,
         display: "flex",
         alignItems: "center",
+        direction: dir,
       }}
     >
       {/* Pill-style container */}
@@ -60,23 +71,31 @@ export const ReplyComposerTabs: React.FC<ReplyComposerTabsProps> = ({
             fontSize: "0.8125rem",
             fontWeight: 600,
             textTransform: "none",
-            color: activeTab === "reply" ? colorTokens.neutral[900] : colorTokens.neutral[500],
-            backgroundColor: activeTab === "reply" ? colorTokens.semantic.background.primary : "transparent",
+            color:
+              activeTab === "reply"
+                ? colorTokens.neutral[900]
+                : colorTokens.neutral[500],
+            backgroundColor:
+              activeTab === "reply"
+                ? colorTokens.semantic.background.primary
+                : "transparent",
             borderRadius: `${radiusTokens.full}px`,
             boxShadow: activeTab === "reply" ? shadowTokens.sm : "none",
             transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
             display: "flex",
             alignItems: "center",
+            flexDirection: isRTL ? "row-reverse" : "row",
             gap: 1,
             "&:hover": {
-              backgroundColor: activeTab === "reply" 
-                ? colorTokens.semantic.background.primary 
-                : colorTokens.neutral[100],
+              backgroundColor:
+                activeTab === "reply"
+                  ? colorTokens.semantic.background.primary
+                  : colorTokens.neutral[100],
             },
           }}
         >
           <SendOutlinedIcon sx={{ fontSize: 16, strokeWidth: 1.5 }} />
-          Reply
+          {t("frontdesk.compose.reply")}
         </ButtonBase>
 
         {/* Private Note Tab */}
@@ -88,23 +107,29 @@ export const ReplyComposerTabs: React.FC<ReplyComposerTabsProps> = ({
             fontSize: "0.8125rem",
             fontWeight: 600,
             textTransform: "none",
-            color: activeTab === "private" ? colorTokens.warning[700] : colorTokens.neutral[500],
-            backgroundColor: activeTab === "private" ? colorTokens.warning[50] : "transparent",
+            color:
+              activeTab === "private"
+                ? colorTokens.warning[700]
+                : colorTokens.neutral[500],
+            backgroundColor:
+              activeTab === "private" ? colorTokens.warning[50] : "transparent",
             borderRadius: `${radiusTokens.full}px`,
             boxShadow: activeTab === "private" ? shadowTokens.sm : "none",
             transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
             display: "flex",
             alignItems: "center",
+            flexDirection: isRTL ? "row-reverse" : "row",
             gap: 1,
             "&:hover": {
-              backgroundColor: activeTab === "private" 
-                ? colorTokens.warning[50] 
-                : colorTokens.neutral[100],
+              backgroundColor:
+                activeTab === "private"
+                  ? colorTokens.warning[50]
+                  : colorTokens.neutral[100],
             },
           }}
         >
           <LockOutlinedIcon sx={{ fontSize: 16, strokeWidth: 1.5 }} />
-          Private Note
+          {t("frontdesk.compose.privateNote")}
         </ButtonBase>
       </Box>
     </Box>

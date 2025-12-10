@@ -8,15 +8,16 @@
  * @deprecated Use LabelSelect from unified-list directly for new implementations.
  */
 
-import React, { useState, useCallback } from 'react';
-import { useChatwootLabels } from '../../hooks/use-chatwoot-labels';
-import { useChatwootPermissions } from '../../hooks/use-chatwoot-permissions';
-import { SETTINGS_PERMISSIONS } from '../../constants/permissions.constants';
-import { AddEditLabelModal } from '../settings/add-edit-label-modal';
-import { LabelSelect } from '../unified-list';
-import type { Label } from '../unified-list';
-import type { ConversationListParams } from '@/services/frontdesk/api/chatwoot/types/conversations.types';
-import type { CreateLabelPayload } from '@/services/frontdesk/api/chatwoot';
+import React, { useState, useCallback } from "react";
+import { useChatwootLabels } from "../../hooks/use-chatwoot-labels";
+import { useChatwootPermissions } from "../../hooks/use-chatwoot-permissions";
+import { SETTINGS_PERMISSIONS } from "../../constants/permissions.constants";
+import { AddEditLabelModal } from "../settings/add-edit-label-modal";
+import { LabelSelect } from "../unified-list";
+import type { Label } from "../unified-list";
+import type { ConversationListParams } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
+import type { CreateLabelPayload } from "@/services/frontdesk/api/chatwoot";
+import { useTranslation } from "react-i18next";
 
 interface ConversationLabelsFilterProps {
   accountId: number | null;
@@ -29,17 +30,16 @@ interface ConversationLabelsFilterProps {
   neutralColor?: (shade: number) => string;
 }
 
-export const ConversationLabelsFilter: React.FC<ConversationLabelsFilterProps> = ({
-  accountId,
-  filters,
-  onFiltersChange,
-  onLabelClick,
-}) => {
+export const ConversationLabelsFilter: React.FC<
+  ConversationLabelsFilterProps
+> = ({ accountId, filters, onFiltersChange, onLabelClick }) => {
+  const { t } = useTranslation();
   const [createModalOpen, setCreateModalOpen] = useState(false);
-  const { labels: allLabels = [], loading: labelsLoading, createLabel } = useChatwootLabels(
-    accountId ?? undefined,
-    !!accountId
-  );
+  const {
+    labels: allLabels = [],
+    loading: labelsLoading,
+    createLabel,
+  } = useChatwootLabels(accountId ?? undefined, !!accountId);
   const { canAccess } = useChatwootPermissions();
 
   // Check if user can manage labels (admin only)
@@ -53,7 +53,9 @@ export const ConversationLabelsFilter: React.FC<ConversationLabelsFilterProps> =
     : [];
 
   // Convert labels to the format expected by LabelSelect
-  const labelsForSelect: Label[] = (Array.isArray(allLabels) ? allLabels : []).map((label) => ({
+  const labelsForSelect: Label[] = (
+    Array.isArray(allLabels) ? allLabels : []
+  ).map((label) => ({
     id: label.id,
     title: label.title,
     color: label.color,
@@ -80,12 +82,17 @@ export const ConversationLabelsFilter: React.FC<ConversationLabelsFilterProps> =
       await createLabel(payload);
       setCreateModalOpen(false);
     } catch (error) {
-      console.error('[ConversationLabelsFilter] Failed to create label:', error);
+      console.error(
+        "[ConversationLabelsFilter] Failed to create label:",
+        error
+      );
     }
   };
 
   // Don't render if no sidebar labels and user can't create new ones
-  const sidebarLabels = labelsForSelect.filter((label) => label.show_on_sidebar === true);
+  const sidebarLabels = labelsForSelect.filter(
+    (label) => label.show_on_sidebar === true
+  );
   if (sidebarLabels.length === 0 && !canManageLabels) {
     return null;
   }
@@ -100,11 +107,11 @@ export const ConversationLabelsFilter: React.FC<ConversationLabelsFilterProps> =
         sidebarOnly
         canCreate={canManageLabels}
         onCreateClick={() => setCreateModalOpen(true)}
-        headerText="Filter by Labels (AND)"
+        headerText={t("frontdesk.filters.filterByLabelsAnd")}
         emptyText={
           canManageLabels
-            ? 'Create a label and enable "Show on sidebar"'
-            : 'No labels available'
+            ? t("frontdesk.filters.createLabelAndEnable")
+            : t("frontdesk.filters.noLabelsAvailable")
         }
       />
 

@@ -6,6 +6,7 @@
  */
 
 import React from "react";
+import { useTranslation } from "react-i18next";
 import {
   Dialog,
   DialogTitle,
@@ -44,6 +45,8 @@ export const CompactModal: React.FC<CompactModalProps> = ({
   maxWidth = "sm",
   disabled = false,
 }) => {
+  const { t } = useTranslation();
+  const dir: "rtl" | "ltr" = t("direction");
   const handleClose = () => {
     if (!disabled) {
       onClose();
@@ -60,6 +63,7 @@ export const CompactModal: React.FC<CompactModalProps> = ({
         sx: {
           borderRadius: "8px",
           boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
+          direction: dir,
         },
       }}
     >
@@ -73,9 +77,10 @@ export const CompactModal: React.FC<CompactModalProps> = ({
           pt: 2,
           px: 2.5,
           borderBottom: "1px solid rgba(0,0,0,0.06)",
+          direction: dir,
         }}
       >
-        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1, direction: dir }}>
           {icon && (
             <Box sx={{ display: "flex", alignItems: "center", color: "#6366f1" }}>
               {React.cloneElement(icon as React.ReactElement, { 

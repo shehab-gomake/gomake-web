@@ -45,6 +45,7 @@ interface DashboardHeaderProps {
 
 export const DashboardHeader: React.FC<DashboardHeaderProps> = ({ type }) => {
   const { t } = useTranslation();
+
   const descriptions = {
     admin: t("frontdesk.dashboard.adminDescription"),
     agent: t("frontdesk.dashboard.agentDescription"),
@@ -56,7 +57,13 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({ type }) => {
   };
 
   return (
-    <Box sx={{ display: "flex", alignItems: "flex-start", gap: 2 }}>
+    <Box
+      sx={{
+        display: "flex",
+        alignItems: "flex-start",
+        gap: 2,
+      }}
+    >
       {/* Icon Container */}
       <Box
         sx={{
@@ -80,11 +87,19 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({ type }) => {
 
       {/* Text Content */}
       <Box sx={{ flex: 1 }}>
-        <Stack direction="row" spacing={1.5} alignItems="center" sx={{ mb: 0.5 }}>
+        <Stack
+          direction="row"
+          alignItems="center"
+          sx={{
+            mb: 0.5,
+            gap: 1.5,
+          }}
+        >
           <Typography
             component="h1"
             sx={{
-              fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+              fontFamily:
+                "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
               fontSize: HEADER_TOKENS.title.fontSize,
               fontWeight: HEADER_TOKENS.title.fontWeight,
               letterSpacing: HEADER_TOKENS.title.letterSpacing,
@@ -115,7 +130,8 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({ type }) => {
         </Stack>
         <Typography
           sx={{
-            fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+            fontFamily:
+              "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
             fontSize: HEADER_TOKENS.subtitle.fontSize,
             fontWeight: HEADER_TOKENS.subtitle.fontWeight,
             lineHeight: HEADER_TOKENS.subtitle.lineHeight,

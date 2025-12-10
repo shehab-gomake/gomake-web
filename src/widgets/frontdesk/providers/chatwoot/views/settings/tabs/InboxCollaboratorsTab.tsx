@@ -6,6 +6,7 @@
  */
 
 import React, { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Box,
   Typography,
@@ -36,6 +37,8 @@ export const InboxCollaboratorsTab: React.FC<InboxCollaboratorsTabProps> = ({
   onUpdateAgents,
   isSaving,
 }) => {
+  const { t } = useTranslation();
+  const dir: "rtl" | "ltr" = t("direction");
   const { agents, loading: loadingAgents } = useChatwootAgents(accountId);
 
   const [selectedAgentIds, setSelectedAgentIds] = useState<number[]>([]);
@@ -87,38 +90,39 @@ export const InboxCollaboratorsTab: React.FC<InboxCollaboratorsTabProps> = ({
           alignItems: "center",
           justifyContent: "center",
           minHeight: 180,
+          direction: dir,
         }}
       >
         <CircularProgress size={24} sx={{ color: "#6366f1" }} />
-        <Typography variant="body2" sx={{ ml: 2, color: "#6b7280", fontSize: "0.813rem" }}>
-          {loadingAgents ? "Loading agents..." : "Loading inbox assignments..."}
+        <Typography variant="body2" sx={{ [dir === "rtl" ? "mr" : "ml"]: 2, color: "#6b7280", fontSize: "0.813rem" }}>
+          {loadingAgents ? t("frontdesk.settings.inboxesCollaboratorsLoadingAgents") : t("frontdesk.settings.inboxesCollaboratorsLoadingAssignments")}
         </Typography>
       </Box>
     );
   }
 
   return (
-    <Box>
+    <Box sx={{ direction: dir }}>
       {/* Agent Assignment - Compact */}
       <SettingsSection
-        title="Assigned Agents"
-        description="Select agents who can access and respond to conversations in this inbox"
+        title={t("frontdesk.settings.inboxesCollaboratorsTitle")}
+        description={t("frontdesk.settings.inboxesCollaboratorsDescription")}
       >
-        <FormControl fullWidth size="small" sx={{ mb: 2 }}>
-          <InputLabel sx={{ fontSize: "0.813rem" }}>Select Agents</InputLabel>
+        <FormControl fullWidth size="small" sx={{ mb: 2, direction: dir }}>
+          <InputLabel sx={{ fontSize: "0.813rem" }}>{t("frontdesk.settings.inboxesCollaboratorsSelectAgents")}</InputLabel>
           <Select
             multiple
             value={selectedAgentIds}
             onChange={handleAgentChange}
-            input={<OutlinedInput label="Select Agents" />}
+            input={<OutlinedInput label={t("frontdesk.settings.inboxesCollaboratorsSelectAgents")} />}
             renderValue={(selected) => (
-              <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
+              <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5, direction: dir }}>
                 {selected.map((agentId) => {
                   const agent = agents.find((a) => a.id === agentId);
                   return (
                     <Chip
                       key={agentId}
-                      label={agent?.name || `Agent ${agentId}`}
+                      label={agent?.name || t("frontdesk.settings.inboxesCollaboratorsAgent", { id: agentId })}
                       size="small"
                       sx={{
                         fontSize: "0.75rem",
@@ -142,7 +146,7 @@ export const InboxCollaboratorsTab: React.FC<InboxCollaboratorsTabProps> = ({
           >
             {agents.map((agent) => (
               <MenuItem key={agent.id} value={agent.id} sx={{ fontSize: "0.813rem", py: 1 }}>
-                <Box sx={{ display: "flex", alignItems: "center", gap: 0.75, width: "100%" }}>
+                <Box sx={{ display: "flex", alignItems: "center", gap: 0.75, width: "100%", direction: dir }}>
                   <Box
                     sx={{
                       width: 6,
@@ -163,18 +167,18 @@ export const InboxCollaboratorsTab: React.FC<InboxCollaboratorsTabProps> = ({
         </FormControl>
 
         {selectedAgentIds.length === 0 && (
-          <Alert severity="warning" sx={{ mb: 2, borderRadius: "6px", fontSize: "0.813rem", py: 0.75 }}>
-            At least one agent must be assigned to this inbox
+          <Alert severity="warning" sx={{ mb: 2, borderRadius: "6px", fontSize: "0.813rem", py: 0.75, direction: dir }}>
+            {t("frontdesk.settings.inboxesCollaboratorsAtLeastOneAgent")}
           </Alert>
         )}
 
-        <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 2 }}>
+        <Box sx={{ display: "flex", justifyContent: dir === "rtl" ? "flex-start" : "flex-end", mt: 2, direction: dir }}>
           <CompactPrimaryButton
             onClick={handleSaveAgents}
             disabled={!hasAgentChanges || selectedAgentIds.length === 0 || isSaving}
             loading={isSaving}
           >
-            {isSaving ? "Saving..." : "Save Changes"}
+            {isSaving ? t("frontdesk.settings.inboxesSettingsSaving") : t("frontdesk.settings.inboxesSettingsSaveChanges")}
           </CompactPrimaryButton>
         </Box>
       </SettingsSection>

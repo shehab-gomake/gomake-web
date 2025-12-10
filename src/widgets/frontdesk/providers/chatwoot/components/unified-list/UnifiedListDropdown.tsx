@@ -17,6 +17,7 @@
  */
 
 import React, { useState, useMemo, useCallback, useRef, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Box,
   Menu,
@@ -90,8 +91,8 @@ export function UnifiedListDropdown<T extends BaseListItem>({
   showClearAll = true,
   headerActions = [],
   // Base props
-  anchorOrigin = { vertical: 'bottom', horizontal: 'right' },
-  transformOrigin = { vertical: 'top', horizontal: 'right' },
+  anchorOrigin: providedAnchorOrigin,
+  transformOrigin: providedTransformOrigin,
   menuSx,
   minWidth = 240,
   maxWidth = 320,
@@ -106,6 +107,20 @@ export function UnifiedListDropdown<T extends BaseListItem>({
   closeOnSelect,
   sx,
 }: UnifiedListDropdownProps<T>) {
+  const { t } = useTranslation();
+  const dir: "rtl" | "ltr" = t("direction");
+  const isRTL = dir === "rtl";
+  
+  // RTL-aware positioning
+  const anchorOrigin = providedAnchorOrigin || {
+    vertical: 'bottom',
+    horizontal: isRTL ? 'left' : 'right',
+  };
+  const transformOrigin = providedTransformOrigin || {
+    vertical: 'top',
+    horizontal: isRTL ? 'left' : 'right',
+  };
+  
   const [searchQuery, setSearchQuery] = useState('');
   const searchInputRef = useRef<HTMLInputElement>(null);
 
@@ -213,6 +228,7 @@ export function UnifiedListDropdown<T extends BaseListItem>({
           overflow: 'hidden',
           display: 'flex',
           flexDirection: 'column',
+          direction: dir,
           ...menuSx,
         },
       }}
@@ -278,7 +294,7 @@ export function UnifiedListDropdown<T extends BaseListItem>({
 
           {/* Search Input */}
           {searchable && items.length > 5 && (
-            <Box sx={{ px: 1.5, py: 1 }}>
+            <Box sx={{ px: 1.5, py: 1, direction: dir }}>
               <TextField
                 inputRef={searchInputRef}
                 fullWidth
@@ -288,16 +304,18 @@ export function UnifiedListDropdown<T extends BaseListItem>({
                 onChange={(e) => setSearchQuery(e.target.value)}
                 InputProps={{
                   startAdornment: (
-                    <InputAdornment position="start">
+                    <InputAdornment position={isRTL ? "end" : "start"}>
                       <SearchIcon sx={{ fontSize: 18, color: colorTokens.neutral[400] }} />
                     </InputAdornment>
                   ),
                   sx: {
                     fontSize: 13,
+                    direction: dir,
                     '& input': { py: 0.75 },
                   },
                 }}
                 sx={{
+                  direction: dir,
                   '& .MuiOutlinedInput-root': {
                     borderRadius: '6px',
                     backgroundColor: colorTokens.neutral[50],

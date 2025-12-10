@@ -13,6 +13,7 @@
  */
 
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { Warning as WarningIcon, CheckCircle as CheckCircleIcon } from "@mui/icons-material";
 import { useChatwootWarnings } from "../../hooks/use-chatwoot-warnings";
 import { formatStatValue } from "../../utils";
@@ -29,17 +30,20 @@ export const ChatwootWarningsCard: React.FC<ChatwootWarningsCardProps> = ({
   onClick,
   isLoading = false,
 }) => {
+  const { t } = useTranslation();
   const warnings = useChatwootWarnings();
 
   // Use warning colors when there are warnings, success/green when all clear
   const hasWarnings = warnings.length > 0;
   const variant = hasWarnings ? "warning" : "success";
-  const description = hasWarnings ? "Requires attention" : "All systems operational";
+  const description = hasWarnings
+    ? t("frontdesk.dashboard.admin.requiresAttention")
+    : t("frontdesk.dashboard.admin.allSystemsOperational");
   const icon = hasWarnings ? <WarningIcon /> : <CheckCircleIcon />;
 
   return (
     <StatCard
-      label="System Warnings"
+      label={t("frontdesk.dashboard.admin.systemWarnings")}
       value={formatStatValue(warnings.length)}
       icon={icon}
       variant={variant}

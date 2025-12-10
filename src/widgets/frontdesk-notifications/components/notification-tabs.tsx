@@ -1,7 +1,16 @@
-import React from 'react';
-import { styled, Tabs, Tab, TabsProps, TabProps, Badge, Box } from '@mui/material';
-import { useGomakeTheme } from '@/hooks/use-gomake-thme';
-import { FONT_FAMILY } from '@/utils/font-family';
+import React from "react";
+import {
+  styled,
+  Tabs,
+  Tab,
+  TabsProps,
+  TabProps,
+  Badge,
+  Box,
+} from "@mui/material";
+import { useTranslation } from "react-i18next";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { FONT_FAMILY } from "@/utils/font-family";
 
 /**
  * Styled Tabs component following gomake patterns
@@ -10,16 +19,16 @@ const StyledTabs = styled(Tabs)<TabsProps>(() => {
   const { primaryColor, neutralColor } = useGomakeTheme();
 
   return {
-    minHeight: '48px',
+    minHeight: "48px",
     borderBottom: `1px solid ${neutralColor(200)}`,
 
-    '& .MuiTabs-indicator': {
+    "& .MuiTabs-indicator": {
       backgroundColor: primaryColor(500),
-      height: '2px',
+      height: "2px",
     },
 
-    '& .MuiButtonBase-root': {
-      textTransform: 'initial',
+    "& .MuiButtonBase-root": {
+      textTransform: "initial",
     },
   };
 });
@@ -31,18 +40,18 @@ const StyledTab = styled(Tab)<TabProps>(() => {
   const { primaryColor, neutralColor } = useGomakeTheme();
 
   return {
-    minWidth: 'auto',
-    minHeight: '48px',
-    padding: '12px 20px',
+    minWidth: "auto",
+    minHeight: "48px",
+    padding: "12px 20px",
     color: neutralColor(600),
     ...FONT_FAMILY.Lexend(500, 14),
 
-    '&:hover': {
+    "&:hover": {
       color: primaryColor(500),
       backgroundColor: `${primaryColor(500)}05`,
     },
 
-    '&.Mui-selected': {
+    "&.Mui-selected": {
       color: primaryColor(500),
       ...FONT_FAMILY.Lexend(600, 14),
     },
@@ -62,26 +71,39 @@ const NotificationTabs: React.FC<NotificationTabsProps> = ({
   messageBadgeCount = 0,
   ticketBadgeCount = 0,
 }) => {
+  const { t } = useTranslation();
+  const dir: "rtl" | "ltr" = t("direction");
   const { primaryColor } = useGomakeTheme();
 
   return (
-    <StyledTabs value={activeTab} onChange={onTabChange}>
+    <StyledTabs
+      value={activeTab}
+      onChange={onTabChange}
+      sx={{ direction: dir }}
+    >
       <StyledTab
         label={
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            Messages
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: 1,
+              direction: dir,
+            }}
+          >
+            {t("frontdesk.notifications.messages")}
             {messageBadgeCount > 0 && (
               <Badge
                 badgeContent={messageBadgeCount}
                 color="error"
                 sx={{
-                  '& .MuiBadge-badge': {
-                    position: 'relative',
-                    transform: 'none',
-                    fontSize: '0.688rem',
+                  "& .MuiBadge-badge": {
+                    position: "relative",
+                    transform: "none",
+                    fontSize: "0.688rem",
                     height: 18,
                     minWidth: 18,
-                    padding: '0 4px',
+                    padding: "0 4px",
                   },
                 }}
               />
@@ -91,20 +113,27 @@ const NotificationTabs: React.FC<NotificationTabsProps> = ({
       />
       <StyledTab
         label={
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            Tickets
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: 1,
+              direction: dir,
+            }}
+          >
+            {t("frontdesk.tabs.tickets")}
             {ticketBadgeCount > 0 && (
               <Badge
                 badgeContent={ticketBadgeCount}
                 color="error"
                 sx={{
-                  '& .MuiBadge-badge': {
-                    position: 'relative',
-                    transform: 'none',
-                    fontSize: '0.688rem',
+                  "& .MuiBadge-badge": {
+                    position: "relative",
+                    transform: "none",
+                    fontSize: "0.688rem",
                     height: 18,
                     minWidth: 18,
-                    padding: '0 4px',
+                    padding: "0 4px",
                   },
                 }}
               />

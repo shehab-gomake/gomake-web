@@ -9,12 +9,25 @@
  * - Performance optimized with memoization
  */
 
-import React, { useState, useEffect, useMemo, useRef, useCallback } from "react";
-import { Box, Typography, CircularProgress, Collapse, IconButton } from "@mui/material";
-import { 
-  ConfirmationNumber as TicketIcon, 
+import React, {
+  useState,
+  useEffect,
+  useMemo,
+  useRef,
+  useCallback,
+} from "react";
+import {
+  Box,
+  Typography,
+  CircularProgress,
+  Collapse,
+  IconButton,
+} from "@mui/material";
+import { useTranslation } from "react-i18next";
+import {
+  ConfirmationNumber as TicketIcon,
   ExpandMore as ExpandMoreIcon,
-  KeyboardArrowDown as ArrowDownIcon
+  KeyboardArrowDown as ArrowDownIcon,
 } from "@mui/icons-material";
 import { chatwootService } from "@/services/frontdesk";
 import { colorTokens } from "@/widgets/frontdesk/design-system";
@@ -56,7 +69,9 @@ const CONFIG = {
 /**
  * Group conversations by date buckets
  */
-const groupByDate = (conversations: ChatwootConversation[]): GroupedConversations => {
+const groupByDate = (
+  conversations: ChatwootConversation[]
+): GroupedConversations => {
   const now = new Date();
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   const yesterday = new Date(today.getTime() - 24 * 60 * 60 * 1000);
@@ -76,7 +91,9 @@ const groupByDate = (conversations: ChatwootConversation[]): GroupedConversation
       return;
     }
 
-    const date = new Date(typeof timestamp === "number" ? timestamp * 1000 : timestamp);
+    const date = new Date(
+      typeof timestamp === "number" ? timestamp * 1000 : timestamp
+    );
     if (isNaN(date.getTime())) {
       grouped.older.push(conv);
       return;
@@ -94,7 +111,9 @@ const groupByDate = (conversations: ChatwootConversation[]): GroupedConversation
 /**
  * Sort conversations by activity (newest first)
  */
-const sortByActivity = (conversations: ChatwootConversation[]): ChatwootConversation[] => {
+const sortByActivity = (
+  conversations: ChatwootConversation[]
+): ChatwootConversation[] => {
   return [...conversations].sort((a, b) => {
     const aTime = (a as any).last_activity_at || (a as any).created_at || 0;
     const bTime = (b as any).last_activity_at || (b as any).created_at || 0;
@@ -113,12 +132,18 @@ export const ContactHistorySection: React.FC<ContactHistorySectionProps> = ({
   currentConversationId,
   inboxes = [],
 }) => {
+  const { t } = useTranslation();
+  const dir: "rtl" | "ltr" = t("direction");
   // State
-  const [conversations, setConversations] = useState<ChatwootConversation[]>([]);
+  const [conversations, setConversations] = useState<ChatwootConversation[]>(
+    []
+  );
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isExpanded, setIsExpanded] = useState(true);
-  const [displayLimit, setDisplayLimit] = useState<number>(CONFIG.INITIAL_LIMIT);
+  const [displayLimit, setDisplayLimit] = useState<number>(
+    CONFIG.INITIAL_LIMIT
+  );
   const [isLoadingMore, setIsLoadingMore] = useState(false);
 
   // Refs
@@ -136,13 +161,16 @@ export const ContactHistorySection: React.FC<ContactHistorySectionProps> = ({
     const fetchHistory = async () => {
       setLoading(true);
       setError(null);
-      
+
       try {
-        const response = await chatwootService.contacts.getContactConversations(accountId, contactId);
+        const response = await chatwootService.contacts.getContactConversations(
+          accountId,
+          contactId
+        );
         const sorted = sortByActivity(response.payload || []);
         setConversations(sorted);
       } catch (err) {
-        setError("Failed to load contact history.");
+        setError(t("frontdesk.detailPanel.failedToLoadHistory"));
         console.error("[ContactHistory] Fetch error:", err);
       } finally {
         setLoading(false);
@@ -161,15 +189,16 @@ export const ContactHistorySection: React.FC<ContactHistorySectionProps> = ({
   // Computed Values
   // ============================================================================
 
-  const { displayedConversations, totalCount, remainingCount, hasMore } = useMemo(() => {
-    const limited = conversations.slice(0, displayLimit);
-    return {
-      displayedConversations: groupByDate(limited),
-      totalCount: conversations.length,
-      remainingCount: conversations.length - displayLimit,
-      hasMore: displayLimit < conversations.length,
-    };
-  }, [conversations, displayLimit]);
+  const { displayedConversations, totalCount, remainingCount, hasMore } =
+    useMemo(() => {
+      const limited = conversations.slice(0, displayLimit);
+      return {
+        displayedConversations: groupByDate(limited),
+        totalCount: conversations.length,
+        remainingCount: conversations.length - displayLimit,
+        hasMore: displayLimit < conversations.length,
+      };
+    }, [conversations, displayLimit]);
 
   // ============================================================================
   // Handlers
@@ -190,7 +219,7 @@ export const ContactHistorySection: React.FC<ContactHistorySectionProps> = ({
 
     setIsLoadingMore(true);
     requestAnimationFrame(() => {
-      setDisplayLimit((prev) => 
+      setDisplayLimit((prev) =>
         Math.min(prev + CONFIG.LOAD_INCREMENT, conversations.length)
       );
       setIsLoadingMore(false);
@@ -214,14 +243,11 @@ export const ContactHistorySection: React.FC<ContactHistorySectionProps> = ({
       threshold: 0,
     };
 
-    observerRef.current = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting && !isLoadingMore) {
-          loadMore();
-        }
-      },
-      options
-    );
+    observerRef.current = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting && !isLoadingMore) {
+        loadMore();
+      }
+    }, options);
 
     if (loadTriggerRef.current) {
       observerRef.current.observe(loadTriggerRef.current);
@@ -316,7 +342,7 @@ export const ContactHistorySection: React.FC<ContactHistorySectionProps> = ({
           mb: 0.5,
         }}
       >
-        No previous tickets
+        {t("frontdesk.detailPanel.noPreviousTickets")}
       </Typography>
       <Typography
         variant="caption"
@@ -325,7 +351,7 @@ export const ContactHistorySection: React.FC<ContactHistorySectionProps> = ({
           color: colorTokens.semantic.text.tertiary,
         }}
       >
-        This contact's ticket history will appear here
+        {t("frontdesk.detailPanel.ticketHistoryWillAppear")}
       </Typography>
     </Box>
   );
@@ -441,7 +467,7 @@ export const ContactHistorySection: React.FC<ContactHistorySectionProps> = ({
           fontWeight: 500,
         }}
       >
-        Loading...
+        {t("frontdesk.detailPanel.loading")}
       </Typography>
     </Box>
   );
@@ -457,10 +483,22 @@ export const ContactHistorySection: React.FC<ContactHistorySectionProps> = ({
 
     return (
       <>
-        {renderDateGroup("Today", displayedConversations.today)}
-        {renderDateGroup("Yesterday", displayedConversations.yesterday)}
-        {renderDateGroup("This Week", displayedConversations.thisWeek)}
-        {renderDateGroup("Older", displayedConversations.older)}
+        {renderDateGroup(
+          t("frontdesk.detailPanel.today"),
+          displayedConversations.today
+        )}
+        {renderDateGroup(
+          t("frontdesk.detailPanel.yesterday"),
+          displayedConversations.yesterday
+        )}
+        {renderDateGroup(
+          t("frontdesk.detailPanel.thisWeek"),
+          displayedConversations.thisWeek
+        )}
+        {renderDateGroup(
+          t("frontdesk.detailPanel.older"),
+          displayedConversations.older
+        )}
 
         {/* Infinite Scroll Trigger */}
         {hasMore && <Box ref={loadTriggerRef} sx={{ height: 1, py: 2 }} />}
@@ -494,7 +532,8 @@ export const ContactHistorySection: React.FC<ContactHistorySectionProps> = ({
             color: colorTokens.semantic.text.secondary,
           }}
         >
-          Ticket History {totalCount > 0 && `(${totalCount})`}
+          {t("frontdesk.detailPanel.ticketHistory")}{" "}
+          {totalCount > 0 && `(${totalCount})`}
         </Typography>
 
         <IconButton

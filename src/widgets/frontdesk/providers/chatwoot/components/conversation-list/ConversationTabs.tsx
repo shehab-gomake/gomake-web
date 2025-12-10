@@ -1,6 +1,6 @@
 /**
  * ConversationTabs Component
- * 
+ *
  * Modern tab bar for filtering conversations by assignee type (Mine/Unassigned/All).
  * Features clean design with equal spacing, soft radius, and clear visual indicators.
  *
@@ -12,13 +12,19 @@
 
 import React, { useMemo } from "react";
 import { Box, Typography } from "@mui/material";
+import { useTranslation } from "react-i18next";
 import {
   ConversationAssigneeType,
   ConversationListParams,
 } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
 import { useChatwootPermissions } from "../../hooks/use-chatwoot-permissions";
 import { ASSIGNEE_TAB_PERMISSIONS } from "../../constants/permissions.constants";
-import { colorTokens, radiusTokens, shadowTokens, semanticSpacing } from "@/widgets/frontdesk/design-system";
+import {
+  colorTokens,
+  radiusTokens,
+  shadowTokens,
+  semanticSpacing,
+} from "@/widgets/frontdesk/design-system";
 
 // =============================================================================
 // Types
@@ -68,7 +74,9 @@ const getTabStyles = (isActive: boolean) => ({
   backgroundColor: isActive ? colorTokens.primary[50] : "transparent",
   border: `1px solid ${isActive ? colorTokens.primary[200] : "transparent"}`,
   "&:hover": {
-    backgroundColor: isActive ? colorTokens.primary[50] : colorTokens.neutral[50],
+    backgroundColor: isActive
+      ? colorTokens.primary[50]
+      : colorTokens.neutral[50],
   },
 });
 
@@ -92,7 +100,9 @@ const getBadgeStyles = (isActive: boolean) => ({
   fontSize: "0.6875rem",
   fontWeight: 600,
   lineHeight: 1,
-  backgroundColor: isActive ? colorTokens.primary[100] : colorTokens.neutral[100],
+  backgroundColor: isActive
+    ? colorTokens.primary[100]
+    : colorTokens.neutral[100],
   color: isActive ? colorTokens.primary[700] : colorTokens.neutral[500],
   transition: "all 0.15s ease",
 });
@@ -101,138 +111,165 @@ const getBadgeStyles = (isActive: boolean) => ({
 // Component
 // =============================================================================
 
-export const ConversationTabs: React.FC<ConversationTabsProps> = React.memo(({
-  filters,
-  onFiltersChange,
-  counts,
-}) => {
-  // Get permission checking functions
-  const { canAccess, isAgent, isAdministrator } = useChatwootPermissions();
+export const ConversationTabs: React.FC<ConversationTabsProps> = React.memo(
+  ({ filters, onFiltersChange, counts }) => {
+    const { t } = useTranslation();
+    const dir: "rtl" | "ltr" = t("direction");
+    const isRTL = dir === "rtl";
+    // Get permission checking functions
+    const { canAccess, isAgent, isAdministrator } = useChatwootPermissions();
 
-  // Check which tabs are visible based on permissions
-  const visibleTabs = useMemo(() => ({
-    mine: true,
-    unassigned: isAdministrator || isAgent || canAccess(ASSIGNEE_TAB_PERMISSIONS.unassigned),
-    all: isAdministrator || isAgent || canAccess(ASSIGNEE_TAB_PERMISSIONS.all),
-  }), [canAccess, isAgent, isAdministrator]);
+    // Check which tabs are visible based on permissions
+    const visibleTabs = useMemo(
+      () => ({
+        mine: true,
+        unassigned:
+          isAdministrator ||
+          isAgent ||
+          canAccess(ASSIGNEE_TAB_PERMISSIONS.unassigned),
+        all:
+          isAdministrator || isAgent || canAccess(ASSIGNEE_TAB_PERMISSIONS.all),
+      }),
+      [canAccess, isAgent, isAdministrator]
+    );
 
-  const getCurrentTab = (): string => {
-    if (filters.assignee_type === ConversationAssigneeType.ME) return "mine";
-    if (filters.assignee_type === ConversationAssigneeType.UNASSIGNED) return "unassigned";
-    return "all";
-  };
-
-  const handleTabClick = (tabId: string) => {
-    let assignee_type: ConversationAssigneeType | undefined;
-
-    if (tabId === "mine") {
-      assignee_type = ConversationAssigneeType.ME;
-    } else if (tabId === "unassigned") {
-      assignee_type = ConversationAssigneeType.UNASSIGNED;
-    } else if (tabId === "all") {
-      assignee_type = ConversationAssigneeType.ALL;
-    }
-
-    const newFilters: Partial<ConversationListParams> = {
-      assignee_type,
-      page: 1,
+    const getCurrentTab = (): string => {
+      if (filters.assignee_type === ConversationAssigneeType.ME) return "mine";
+      if (filters.assignee_type === ConversationAssigneeType.UNASSIGNED)
+        return "unassigned";
+      return "all";
     };
 
-    if (filters.status !== undefined) {
-      newFilters.status = filters.status;
-    }
+    const handleTabClick = (tabId: string) => {
+      let assignee_type: ConversationAssigneeType | undefined;
 
-    if (filters.inbox_id !== undefined) {
-      newFilters.inbox_id = filters.inbox_id;
-    }
+      if (tabId === "mine") {
+        assignee_type = ConversationAssigneeType.ME;
+      } else if (tabId === "unassigned") {
+        assignee_type = ConversationAssigneeType.UNASSIGNED;
+      } else if (tabId === "all") {
+        assignee_type = ConversationAssigneeType.ALL;
+      }
 
-    onFiltersChange(newFilters);
-  };
+      const newFilters: Partial<ConversationListParams> = {
+        assignee_type,
+        page: 1,
+      };
 
-  const currentTab = getCurrentTab();
+      if (filters.status !== undefined) {
+        newFilters.status = filters.status;
+      }
 
-  // Build tab configuration
-  const tabs: TabConfig[] = useMemo(() => {
-    const allTabs: TabConfig[] = [];
-    
-    if (visibleTabs.mine) {
-      allTabs.push({ id: "mine", label: "Mine", value: ConversationAssigneeType.ME, count: counts.mine });
-    }
-    if (visibleTabs.unassigned) {
-      allTabs.push({ id: "unassigned", label: "Unassigned", value: ConversationAssigneeType.UNASSIGNED, count: counts.unassigned });
-    }
-    if (visibleTabs.all) {
-      allTabs.push({ id: "all", label: "All", value: ConversationAssigneeType.ALL, count: counts.all });
-    }
-    
-    return allTabs;
-  }, [visibleTabs, counts]);
+      if (filters.inbox_id !== undefined) {
+        newFilters.inbox_id = filters.inbox_id;
+      }
 
-  return (
-    <Box
-      sx={{
-        px: 1.5,
-        py: 1,
-      }}
-    >
-      {/* Tab Container with subtle background */}
+      onFiltersChange(newFilters);
+    };
+
+    const currentTab = getCurrentTab();
+
+    // Build tab configuration
+    const tabs: TabConfig[] = useMemo(() => {
+      const allTabs: TabConfig[] = [];
+
+      if (visibleTabs.mine) {
+        allTabs.push({
+          id: "mine",
+          label: t("frontdesk.tabs.mine"),
+          value: ConversationAssigneeType.ME,
+          count: counts.mine,
+        });
+      }
+      if (visibleTabs.unassigned) {
+        allTabs.push({
+          id: "unassigned",
+          label: t("frontdesk.tabs.unassigned"),
+          value: ConversationAssigneeType.UNASSIGNED,
+          count: counts.unassigned,
+        });
+      }
+      if (visibleTabs.all) {
+        allTabs.push({
+          id: "all",
+          label: t("frontdesk.tabs.all"),
+          value: ConversationAssigneeType.ALL,
+          count: counts.all,
+        });
+      }
+
+      return allTabs;
+    }, [visibleTabs, counts, t]);
+
+    return (
       <Box
         sx={{
-          display: "flex",
-          flexDirection: "row",
-          alignItems: "center",
-          gap: 0.5,
-          p: 0.5,
-          backgroundColor: colorTokens.neutral[50],
-          borderRadius: `${radiusTokens.lg}px`,
-          border: `1px solid ${colorTokens.neutral[100]}`,
-          width: "100%",
-          overflowX: "auto",
-          "&::-webkit-scrollbar": {
-            display: "none",
-          },
-          scrollbarWidth: "none",
+          px: 1.5,
+          py: 1,
+          direction: dir,
         }}
-        role="tablist"
       >
-        {tabs.map((tab) => {
-          const isActive = currentTab === tab.id;
-          
-          return (
-            <Box
-              key={tab.id}
-              onClick={() => handleTabClick(tab.id)}
-              sx={getTabStyles(isActive)}
-              role="tab"
-              aria-selected={isActive}
-              tabIndex={0}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  e.preventDefault();
-                  handleTabClick(tab.id);
-                }
-              }}
-            >
-              <Typography component="span" sx={getTabLabelStyles(isActive)}>
-                {tab.label}
-              </Typography>
-              <Box component="span" sx={getBadgeStyles(isActive)}>
-                {tab.count > 99 ? "99+" : tab.count}
+        {/* Tab Container with subtle background */}
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 0.5,
+            p: 0.5,
+            backgroundColor: colorTokens.neutral[50],
+            borderRadius: `${radiusTokens.lg}px`,
+            border: `1px solid ${colorTokens.neutral[100]}`,
+            width: "100%",
+            overflowX: "auto",
+            "&::-webkit-scrollbar": {
+              display: "none",
+            },
+            scrollbarWidth: "none",
+            direction: dir,
+          }}
+          role="tablist"
+        >
+          {tabs.map((tab) => {
+            const isActive = currentTab === tab.id;
+
+            return (
+              <Box
+                key={tab.id}
+                onClick={() => handleTabClick(tab.id)}
+                sx={getTabStyles(isActive)}
+                role="tab"
+                aria-selected={isActive}
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    handleTabClick(tab.id);
+                  }
+                }}
+              >
+                <Typography component="span" sx={getTabLabelStyles(isActive)}>
+                  {tab.label}
+                </Typography>
+                <Box component="span" sx={getBadgeStyles(isActive)}>
+                  {tab.count > 99 ? "99+" : tab.count}
+                </Box>
               </Box>
-            </Box>
-          );
-        })}
+            );
+          })}
+        </Box>
       </Box>
-    </Box>
-  );
-}, (prevProps, nextProps) => {
-  return (
-    prevProps.filters.assignee_type === nextProps.filters.assignee_type &&
-    prevProps.filters.status === nextProps.filters.status &&
-    prevProps.filters.inbox_id === nextProps.filters.inbox_id &&
-    prevProps.counts.mine === nextProps.counts.mine &&
-    prevProps.counts.unassigned === nextProps.counts.unassigned &&
-    prevProps.counts.all === nextProps.counts.all &&
-    prevProps.onFiltersChange === nextProps.onFiltersChange
-  );
-});
+    );
+  },
+  (prevProps, nextProps) => {
+    return (
+      prevProps.filters.assignee_type === nextProps.filters.assignee_type &&
+      prevProps.filters.status === nextProps.filters.status &&
+      prevProps.filters.inbox_id === nextProps.filters.inbox_id &&
+      prevProps.counts.mine === nextProps.counts.mine &&
+      prevProps.counts.unassigned === nextProps.counts.unassigned &&
+      prevProps.counts.all === nextProps.counts.all &&
+      prevProps.onFiltersChange === nextProps.onFiltersChange
+    );
+  }
+);

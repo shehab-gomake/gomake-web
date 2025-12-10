@@ -19,9 +19,11 @@
 
 import React, { useMemo, useCallback, useState, useEffect } from "react";
 import { Stack, Box } from "@mui/material";
-import { 
-  PanelContent, 
-  EmptyState, 
+import { useTranslation } from "react-i18next";
+import { Inbox as InboxIcon } from "@mui/icons-material";
+import {
+  PanelContent,
+  EmptyState,
   colorTokens,
   layoutTokens,
   shadowTokens,
@@ -46,7 +48,13 @@ interface BaseConversationViewProps {
   };
 }
 
-export const BaseConversationView: React.FC<BaseConversationViewProps> = ({ emptyState, messageViewerProps }) => {
+export const BaseConversationView: React.FC<BaseConversationViewProps> = ({
+  emptyState,
+  messageViewerProps,
+}) => {
+  const { t } = useTranslation();
+  const dir: "rtl" | "ltr" = t("direction");
+
   // Single provider call - prevents duplicate inbox fetches
   const {
     selectedAccountId: currentAccountId,
@@ -68,7 +76,7 @@ export const BaseConversationView: React.FC<BaseConversationViewProps> = ({ empt
   } = useChatwootProvider();
 
   const [showComposeModal, setShowComposeModal] = useState(false);
-  
+
   // Sidebar visibility state - persist to localStorage
   const [isSidebarVisible, setIsSidebarVisible] = useState(() => {
     if (typeof window !== "undefined") {
@@ -81,7 +89,10 @@ export const BaseConversationView: React.FC<BaseConversationViewProps> = ({ empt
   // Save sidebar visibility preference to localStorage
   useEffect(() => {
     if (typeof window !== "undefined") {
-      localStorage.setItem("chatwoot-sidebar-visible", String(isSidebarVisible));
+      localStorage.setItem(
+        "chatwoot-sidebar-visible",
+        String(isSidebarVisible)
+      );
     }
   }, [isSidebarVisible]);
 
@@ -113,7 +124,13 @@ export const BaseConversationView: React.FC<BaseConversationViewProps> = ({ empt
 
   // Memoize empty state to prevent unnecessary re-renders
   const emptyStateContent = useMemo(
-    () => <EmptyState icon="inbox" title={emptyState.title} description={emptyState.description} />,
+    () => (
+      <EmptyState
+        icon={<InboxIcon />}
+        title={emptyState.title}
+        description={emptyState.description}
+      />
+    ),
     [emptyState.title, emptyState.description]
   );
 
@@ -125,8 +142,9 @@ export const BaseConversationView: React.FC<BaseConversationViewProps> = ({ empt
         width: "100%",
         overflow: "hidden",
         backgroundColor: colorTokens.neutral[100],
-        gap: `${layoutTokens.columnGap.default}px`,        // Use design system gutter
-        padding: `${semanticSpacing.container.md}px`,      // Use design system container padding
+        gap: `${layoutTokens.columnGap.default}px`, // Use design system gutter
+        padding: `${semanticSpacing.container.md}px`, // Use design system container padding
+        direction: dir, // RTL support
       }}
     >
       {/* Conversation List Panel */}
@@ -136,14 +154,14 @@ export const BaseConversationView: React.FC<BaseConversationViewProps> = ({ empt
           minWidth: layoutTokens.panel.conversationList.default,
           height: "100%",
           backgroundColor: colorTokens.semantic.background.primary,
-          borderRadius: `${layoutTokens.card.radius}px`,   // Use design system card radius
-          boxShadow: shadowTokens.card,                    // Use design system shadow
+          borderRadius: `${layoutTokens.card.radius}px`, // Use design system card radius
+          boxShadow: shadowTokens.card, // Use design system shadow
           overflow: "hidden",
           display: "flex",
           flexDirection: "column",
           transition: "box-shadow 0.2s ease",
           "&:hover": {
-            boxShadow: shadowTokens.cardHover,             // Use design system hover shadow
+            boxShadow: shadowTokens.cardHover, // Use design system hover shadow
           },
         }}
       >
@@ -179,15 +197,31 @@ export const BaseConversationView: React.FC<BaseConversationViewProps> = ({ empt
         }}
       >
         {selectedConversation ? (
-          <Stack direction="row" spacing={0} sx={{ height: "100%", overflow: "hidden" }}>
+          <Stack
+            direction="row"
+            spacing={0}
+            sx={{ height: "100%", overflow: "hidden" }}
+          >
             {/* Main Message Area */}
-            <Box sx={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0, overflow: "hidden" }}>
+            <Box
+              sx={{
+                flex: 1,
+                display: "flex",
+                flexDirection: "column",
+                minWidth: 0,
+                overflow: "hidden",
+              }}
+            >
               <ChatwootMessageViewer
                 conversation={selectedConversation}
                 accountId={currentAccountId || undefined}
                 onBack={handleBack}
                 onConversationUpdate={updateConversationInList}
-                currentStatusFilter={Array.isArray(filters.status) ? filters.status[0] : filters.status}
+                currentStatusFilter={
+                  Array.isArray(filters.status)
+                    ? filters.status[0]
+                    : filters.status
+                }
                 inboxes={inboxes}
                 inboxesLoading={inboxesLoading}
                 isSidebarVisible={isSidebarVisible}
@@ -217,7 +251,9 @@ export const BaseConversationView: React.FC<BaseConversationViewProps> = ({ empt
             )}
           </Stack>
         ) : (
-          <PanelContent padding="lg">{emptyStateContent}</PanelContent>
+          <PanelContent padding="lg" sx={{ direction: dir }}>
+            {emptyStateContent}
+          </PanelContent>
         )}
       </Box>
 

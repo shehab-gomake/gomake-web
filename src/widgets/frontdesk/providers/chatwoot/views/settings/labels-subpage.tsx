@@ -9,6 +9,7 @@
  */
 
 import React, { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Box,
   Typography,
@@ -42,8 +43,18 @@ import { SETTINGS_PERMISSIONS } from "../../constants/permissions.constants";
 import type { ChatwootLabel } from "@/store/frontdesk/atoms/chatwoot.atoms";
 
 export const LabelsSubpage: React.FC = () => {
+  const { t } = useTranslation();
+  const dir: "rtl" | "ltr" = t("direction");
   const { selectedAccountId, router: chatwootRouter } = useChatwootProvider();
-  const { labels, loading, error, createLabel, updateLabel, deleteLabel, refresh } = useChatwootLabels(selectedAccountId, true);
+  const {
+    labels,
+    loading,
+    error,
+    createLabel,
+    updateLabel,
+    deleteLabel,
+    refresh,
+  } = useChatwootLabels(selectedAccountId, true);
 
   // Defense-in-depth: Check if user has permission to access Labels settings
   const { canAccess } = useChatwootPermissions();
@@ -52,7 +63,9 @@ export const LabelsSubpage: React.FC = () => {
   // Redirect unauthorized users to My Inbox
   useEffect(() => {
     if (!canAccessLabels) {
-      console.warn("[LabelsSubpage] Unauthorized access attempt - redirecting to My Inbox");
+      console.warn(
+        "[LabelsSubpage] Unauthorized access attempt - redirecting to My Inbox"
+      );
       chatwootRouter.navigateToMyInbox();
     }
   }, [canAccessLabels, chatwootRouter]);
@@ -60,7 +73,9 @@ export const LabelsSubpage: React.FC = () => {
   const [addModalOpen, setAddModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [selectedLabel, setSelectedLabel] = useState<ChatwootLabel | null>(null);
+  const [selectedLabel, setSelectedLabel] = useState<ChatwootLabel | null>(
+    null
+  );
   const [deleting, setDeleting] = useState(false);
 
   const handleAddClick = () => {
@@ -92,22 +107,27 @@ export const LabelsSubpage: React.FC = () => {
     }
   };
 
-  const handleCreateLabel = async (payload: Parameters<typeof createLabel>[0]) => {
+  const handleCreateLabel = async (
+    payload: Parameters<typeof createLabel>[0]
+  ) => {
     await createLabel(payload);
     setAddModalOpen(false);
   };
 
-  const handleUpdateLabel = async (labelId: number, payload: Parameters<typeof updateLabel>[1]) => {
+  const handleUpdateLabel = async (
+    labelId: number,
+    payload: Parameters<typeof updateLabel>[1]
+  ) => {
     await updateLabel(labelId, payload);
     setEditModalOpen(false);
     setSelectedLabel(null);
   };
 
   const headerActions = (
-    <Button 
-      variant="contained" 
-      startIcon={<AddIcon sx={{ fontSize: 16 }} />} 
-      onClick={handleAddClick} 
+    <Button
+      variant="contained"
+      startIcon={<AddIcon sx={{ fontSize: 16 }} />}
+      onClick={handleAddClick}
       disabled={loading || !selectedAccountId}
       sx={{
         fontSize: "0.813rem",
@@ -121,23 +141,27 @@ export const LabelsSubpage: React.FC = () => {
           backgroundColor: "#4f46e5",
         },
         boxShadow: "0 1px 2px rgba(0,0,0,0.05)",
+        direction: dir,
       }}
     >
-      Add label
+      {t("frontdesk.settings.labelsAddLabel")}
     </Button>
   );
 
   return (
     <>
       <BaseSettingsSubpage
-        title="Labels"
-        description="Labels help you categorize and prioritize conversations and leads. You can assign a label to a conversation or contact using the side panel."
+        title={t("frontdesk.settings.labels")}
+        description={t("frontdesk.settings.labelsDescription")}
         headerActions={headerActions}
         isLoading={loading && labels.length === 0}
       >
         {/* Error Alert */}
         {error && (
-          <Alert severity="error" sx={{ mb: 2, borderRadius: "6px" }}>
+          <Alert
+            severity="error"
+            sx={{ mb: 2, borderRadius: "6px", direction: dir }}
+          >
             {error}
           </Alert>
         )}
@@ -152,48 +176,103 @@ export const LabelsSubpage: React.FC = () => {
               justifyContent: "center",
               minHeight: 260,
               textAlign: "center",
+              direction: dir,
             }}
           >
-            <Typography variant="body2" sx={{ color: "#6b7280", fontSize: "0.875rem" }}>
-              There are no labels available in this account.
+            <Typography
+              variant="body2"
+              sx={{ color: "#6b7280", fontSize: "0.875rem" }}
+            >
+              {t("frontdesk.settings.labelsEmptyMessage")}
             </Typography>
           </Box>
         )}
 
         {/* Labels Table - Compact High-Density Design */}
         {labels.length > 0 && (
-          <TableContainer 
-            component={Paper} 
+          <TableContainer
+            component={Paper}
             variant="outlined"
             sx={{
               border: "1px solid rgba(0,0,0,0.06)",
               borderRadius: "6px",
               boxShadow: "none",
+              direction: dir,
             }}
           >
             <Table size="small">
               <TableHead>
                 <TableRow sx={{ backgroundColor: "#f9fafb" }}>
-                  <TableCell sx={{ fontWeight: 600, fontSize: "0.75rem", color: "#4b5563", py: 1.25, borderBottom: "1px solid rgba(0,0,0,0.06)" }}>
-                    Name
+                  <TableCell
+                    align={dir === "rtl" ? "right" : "left"}
+                    sx={{
+                      fontWeight: 600,
+                      fontSize: "0.75rem",
+                      color: "#4b5563",
+                      py: 1.25,
+                      borderBottom: "1px solid rgba(0,0,0,0.06)",
+                      direction: dir,
+                    }}
+                  >
+                    {t("frontdesk.settings.labelsTableName")}
                   </TableCell>
-                  <TableCell sx={{ fontWeight: 600, fontSize: "0.75rem", color: "#4b5563", py: 1.25, borderBottom: "1px solid rgba(0,0,0,0.06)" }}>
-                    Description
+                  <TableCell
+                    align={dir === "rtl" ? "right" : "left"}
+                    sx={{
+                      fontWeight: 600,
+                      fontSize: "0.75rem",
+                      color: "#4b5563",
+                      py: 1.25,
+                      borderBottom: "1px solid rgba(0,0,0,0.06)",
+                      direction: dir,
+                    }}
+                  >
+                    {t("frontdesk.settings.labelsTableDescription")}
                   </TableCell>
-                  <TableCell sx={{ fontWeight: 600, fontSize: "0.75rem", color: "#4b5563", py: 1.25, borderBottom: "1px solid rgba(0,0,0,0.06)" }}>
-                    Color
+                  <TableCell
+                    align={dir === "rtl" ? "right" : "left"}
+                    sx={{
+                      fontWeight: 600,
+                      fontSize: "0.75rem",
+                      color: "#4b5563",
+                      py: 1.25,
+                      borderBottom: "1px solid rgba(0,0,0,0.06)",
+                      direction: dir,
+                    }}
+                  >
+                    {t("frontdesk.settings.labelsTableColor")}
                   </TableCell>
-                  <TableCell sx={{ fontWeight: 600, fontSize: "0.75rem", color: "#4b5563", py: 1.25, borderBottom: "1px solid rgba(0,0,0,0.06)" }}>
-                    Show on Sidebar
+                  <TableCell
+                    align={dir === "rtl" ? "right" : "left"}
+                    sx={{
+                      fontWeight: 600,
+                      fontSize: "0.75rem",
+                      color: "#4b5563",
+                      py: 1.25,
+                      borderBottom: "1px solid rgba(0,0,0,0.06)",
+                      direction: dir,
+                    }}
+                  >
+                    {t("frontdesk.settings.labelsTableShowOnSidebar")}
                   </TableCell>
-                  <TableCell align="right" sx={{ fontWeight: 600, fontSize: "0.75rem", color: "#4b5563", py: 1.25, borderBottom: "1px solid rgba(0,0,0,0.06)" }}>
-                    Actions
+                  <TableCell
+                    align={dir === "rtl" ? "left" : "right"}
+                    sx={{
+                      fontWeight: 600,
+                      fontSize: "0.75rem",
+                      color: "#4b5563",
+                      py: 1.25,
+                      borderBottom: "1px solid rgba(0,0,0,0.06)",
+                      direction: dir,
+                    }}
+                  >
+                    {t("frontdesk.settings.labelsTableActions")}
                   </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {labels.map((label) => (
-                  <TableRow 
+                  <TableRow
                     key={label.id}
                     sx={{
                       "&:hover": {
@@ -204,18 +283,61 @@ export const LabelsSubpage: React.FC = () => {
                       },
                     }}
                   >
-                    <TableCell sx={{ py: 1.25, borderBottom: "1px solid rgba(0,0,0,0.04)" }}>
-                      <Typography variant="body2" sx={{ fontWeight: 500, fontSize: "0.813rem", color: "#1f2937" }}>
+                    <TableCell
+                      align={dir === "rtl" ? "right" : "left"}
+                      sx={{
+                        py: 1.25,
+                        borderBottom: "1px solid rgba(0,0,0,0.04)",
+                        direction: dir,
+                      }}
+                    >
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          fontWeight: 500,
+                          fontSize: "0.813rem",
+                          color: "#1f2937",
+                          direction: dir,
+                        }}
+                      >
                         {label.title}
                       </Typography>
                     </TableCell>
-                    <TableCell sx={{ py: 1.25, borderBottom: "1px solid rgba(0,0,0,0.04)" }}>
-                      <Typography variant="body2" sx={{ color: "#6b7280", fontSize: "0.813rem" }}>
+                    <TableCell
+                      align={dir === "rtl" ? "right" : "left"}
+                      sx={{
+                        py: 1.25,
+                        borderBottom: "1px solid rgba(0,0,0,0.04)",
+                        direction: dir,
+                      }}
+                    >
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          color: "#6b7280",
+                          fontSize: "0.813rem",
+                          direction: dir,
+                        }}
+                      >
                         {label.description || "-"}
                       </Typography>
                     </TableCell>
-                    <TableCell sx={{ py: 1.25, borderBottom: "1px solid rgba(0,0,0,0.04)" }}>
-                      <Box sx={{ display: "flex", alignItems: "center", gap: 0.75 }}>
+                    <TableCell
+                      align={dir === "rtl" ? "right" : "left"}
+                      sx={{
+                        py: 1.25,
+                        borderBottom: "1px solid rgba(0,0,0,0.04)",
+                        direction: dir,
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 0.75,
+                          direction: dir,
+                        }}
+                      >
                         <Box
                           sx={{
                             width: 16,
@@ -225,29 +347,68 @@ export const LabelsSubpage: React.FC = () => {
                             border: "1px solid rgba(0,0,0,0.1)",
                           }}
                         />
-                        <Typography variant="body2" sx={{ color: "#6b7280", fontSize: "0.75rem", fontFamily: "monospace" }}>
+                        <Typography
+                          variant="body2"
+                          sx={{
+                            color: "#6b7280",
+                            fontSize: "0.75rem",
+                            fontFamily: "monospace",
+                            direction: dir,
+                          }}
+                        >
                           {label.color}
                         </Typography>
                       </Box>
                     </TableCell>
-                    <TableCell sx={{ py: 1.25, borderBottom: "1px solid rgba(0,0,0,0.04)" }}>
-                      <Typography variant="body2" sx={{ color: "#6b7280", fontSize: "0.813rem" }}>
-                        {label.show_on_sidebar ? "Yes" : "No"}
+                    <TableCell
+                      align={dir === "rtl" ? "right" : "left"}
+                      sx={{
+                        py: 1.25,
+                        borderBottom: "1px solid rgba(0,0,0,0.04)",
+                        direction: dir,
+                      }}
+                    >
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          color: "#6b7280",
+                          fontSize: "0.813rem",
+                          direction: dir,
+                        }}
+                      >
+                        {label.show_on_sidebar
+                          ? t("frontdesk.settings.labelsYes")
+                          : t("frontdesk.settings.labelsNo")}
                       </Typography>
                     </TableCell>
-                    <TableCell align="right" sx={{ py: 1.25, borderBottom: "1px solid rgba(0,0,0,0.04)" }}>
-                      <Box sx={{ display: "flex", gap: 0.25, justifyContent: "flex-end" }}>
+                    <TableCell
+                      align={dir === "rtl" ? "left" : "right"}
+                      sx={{
+                        py: 1.25,
+                        borderBottom: "1px solid rgba(0,0,0,0.04)",
+                        direction: dir,
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          display: "flex",
+                          gap: 0.25,
+                          justifyContent:
+                            dir === "rtl" ? "flex-start" : "flex-end",
+                          direction: dir,
+                        }}
+                      >
                         <IconButton
                           size="small"
                           onClick={() => handleEditClick(label)}
                           disabled={loading}
-                          sx={{ 
-                            color: "#6b7280", 
+                          sx={{
+                            color: "#6b7280",
                             p: 0.5,
-                            "&:hover": { 
+                            "&:hover": {
                               color: "#6366f1",
                               bgcolor: "rgba(99, 102, 241, 0.08)",
-                            } 
+                            },
                           }}
                         >
                           <EditIcon sx={{ fontSize: 16 }} />
@@ -256,13 +417,13 @@ export const LabelsSubpage: React.FC = () => {
                           size="small"
                           onClick={() => handleDeleteClick(label)}
                           disabled={loading}
-                          sx={{ 
-                            color: "#6b7280", 
+                          sx={{
+                            color: "#6b7280",
                             p: 0.5,
-                            "&:hover": { 
+                            "&:hover": {
                               color: "#ef4444",
                               bgcolor: "rgba(239, 68, 68, 0.08)",
-                            } 
+                            },
                           }}
                         >
                           <DeleteIcon sx={{ fontSize: 16 }} />
@@ -308,16 +469,33 @@ export const LabelsSubpage: React.FC = () => {
       />
 
       {/* Delete Confirmation Dialog */}
-      <Dialog open={deleteDialogOpen} onClose={() => !deleting && setDeleteDialogOpen(false)} maxWidth="sm" fullWidth>
-        <DialogTitle>Delete Label</DialogTitle>
-        <DialogContent>
+      <Dialog
+        open={deleteDialogOpen}
+        onClose={() => !deleting && setDeleteDialogOpen(false)}
+        maxWidth="sm"
+        fullWidth
+        PaperProps={{
+          sx: {
+            direction: dir,
+          },
+        }}
+      >
+        <DialogTitle sx={{ direction: dir }}>
+          {t("frontdesk.settings.labelsDeleteTitle")}
+        </DialogTitle>
+        <DialogContent sx={{ direction: dir }}>
           <DialogContentText>
-            Are you sure you want to delete the label &quot;{selectedLabel?.title}&quot;? This action cannot be undone.
+            {t("frontdesk.settings.labelsDeleteMessage", {
+              title: selectedLabel?.title || "",
+            })}
           </DialogContentText>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setDeleteDialogOpen(false)} disabled={deleting}>
-            Cancel
+        <DialogActions sx={{ direction: dir }}>
+          <Button
+            onClick={() => setDeleteDialogOpen(false)}
+            disabled={deleting}
+          >
+            {t("frontdesk.common.cancel")}
           </Button>
           <Button
             onClick={handleDeleteConfirm}
@@ -326,7 +504,9 @@ export const LabelsSubpage: React.FC = () => {
             disabled={deleting}
             startIcon={deleting ? <CircularProgress size={16} /> : null}
           >
-            {deleting ? "Deleting..." : "Delete"}
+            {deleting
+              ? t("frontdesk.settings.labelsDeleting")
+              : t("frontdesk.settings.labelsDeleteButton")}
           </Button>
         </DialogActions>
       </Dialog>

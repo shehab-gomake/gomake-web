@@ -6,12 +6,29 @@
  */
 
 import React, { useEffect } from "react";
-import { Box, Paper, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Typography, Divider, IconButton, Tooltip, Badge } from "@mui/material";
+import {
+  Box,
+  Paper,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  Typography,
+  Divider,
+  IconButton,
+  Tooltip,
+  Badge,
+} from "@mui/material";
 import { useTheme } from "@mui/material/styles";
+import { useTranslation } from "react-i18next";
 import { useChatwootProvider } from "../hooks/use-chatwoot-provider";
 import { useChatwootPermissions } from "../hooks/use-chatwoot-permissions";
 import { useChatwootWarnings } from "../hooks/use-chatwoot-warnings";
-import { VIEW_PERMISSIONS, SETTINGS_PERMISSIONS } from "../constants/permissions.constants";
+import {
+  VIEW_PERMISSIONS,
+  SETTINGS_PERMISSIONS,
+} from "../constants/permissions.constants";
 import { ChatwootSettingsSubpage } from "@/widgets/frontdesk/routing/types";
 import type { PermissionConfig } from "../constants/permissions.constants";
 import {
@@ -37,63 +54,67 @@ import { OldFrontDeskSubpage } from "./settings/old-frontdesk-subpage";
 
 interface SettingsMenuItem {
   subpage: ChatwootSettingsSubpage;
-  label: string;
+  labelKey: string;
   icon: React.ReactNode;
   permissionConfig?: PermissionConfig; // Optional permission check - if undefined, accessible to all
 }
 
-const SETTINGS_MENU_ITEMS: SettingsMenuItem[] = [
+const getSettingsMenuItems = (
+  t: (key: string) => string
+): SettingsMenuItem[] => [
   {
     subpage: ChatwootSettingsSubpage.AGENTS,
-    label: "Agents",
+    labelKey: "frontdesk.settings.agents",
     icon: <UserGroupIcon />,
     permissionConfig: SETTINGS_PERMISSIONS.agents, // Administrator only
   },
   {
     subpage: ChatwootSettingsSubpage.INBOXES,
-    label: "Inboxes",
+    labelKey: "frontdesk.settings.inboxes",
     icon: <InboxIcon />,
     permissionConfig: SETTINGS_PERMISSIONS.inboxes, // Administrator only
   },
   {
     subpage: ChatwootSettingsSubpage.TEAMS,
-    label: "Teams",
+    labelKey: "frontdesk.settings.teams",
     icon: <UserGroupIcon />,
     permissionConfig: SETTINGS_PERMISSIONS.teams, // Administrator only
   },
   {
     subpage: ChatwootSettingsSubpage.LABELS,
-    label: "Labels",
+    labelKey: "frontdesk.settings.labels",
     icon: <TagIcon />,
     permissionConfig: SETTINGS_PERMISSIONS.labels, // Administrator only
   },
   {
     subpage: ChatwootSettingsSubpage.WARNINGS,
-    label: "Warnings",
+    labelKey: "frontdesk.settings.warnings",
     icon: <ExclamationTriangleIcon />,
     // No permission config - accessible to all
   },
   {
     subpage: ChatwootSettingsSubpage.PROFILE,
-    label: "Profile Settings",
+    labelKey: "frontdesk.settings.profileSettings",
     icon: <UserIcon />,
     // No permission config - accessible to all (uses VIEW_PERMISSIONS.settings which includes agents)
   },
   {
     subpage: ChatwootSettingsSubpage.WEBHOOK_TEST,
-    label: "Webhook Test",
+    labelKey: "frontdesk.settings.webhookTest",
     icon: <LinkIcon />,
     // No permission config - accessible to all
   },
   {
     subpage: ChatwootSettingsSubpage.OLD_FRONTDESK,
-    label: "Old FrontDesk",
+    labelKey: "frontdesk.settings.oldFrontDesk",
     icon: <ClockIcon />,
     // No permission config - accessible to all
   },
 ];
 
 export const SettingsView: React.FC = () => {
+  const { t } = useTranslation();
+  const dir: "rtl" | "ltr" = t("direction");
   const theme = useTheme();
   const { router: chatwootRouter } = useChatwootProvider();
   const warnings = useChatwootWarnings();
@@ -103,10 +124,15 @@ export const SettingsView: React.FC = () => {
   const { canAccess } = useChatwootPermissions();
   const canAccessSettings = canAccess(VIEW_PERMISSIONS.settings);
 
+  // Get menu items with translations
+  const SETTINGS_MENU_ITEMS = getSettingsMenuItems(t);
+
   // Redirect unauthorized users to My Inbox
   useEffect(() => {
     if (!canAccessSettings) {
-      console.warn("[SettingsView] Unauthorized access attempt - redirecting to My Inbox");
+      console.warn(
+        "[SettingsView] Unauthorized access attempt - redirecting to My Inbox"
+      );
       chatwootRouter.navigateToMyInbox();
     }
   }, [canAccessSettings, chatwootRouter]);
@@ -124,33 +150,40 @@ export const SettingsView: React.FC = () => {
   }, [canAccess]);
 
   // Get the first accessible subpage (prefer WARNINGS, then PROFILE, then first item)
-  const getFirstAccessibleSubpage = React.useCallback((): ChatwootSettingsSubpage => {
-    const warningsItem = visibleMenuItems.find(
-      (item) => item.subpage === ChatwootSettingsSubpage.WARNINGS
-    );
-    if (warningsItem) return ChatwootSettingsSubpage.WARNINGS;
+  const getFirstAccessibleSubpage =
+    React.useCallback((): ChatwootSettingsSubpage => {
+      const warningsItem = visibleMenuItems.find(
+        (item) => item.subpage === ChatwootSettingsSubpage.WARNINGS
+      );
+      if (warningsItem) return ChatwootSettingsSubpage.WARNINGS;
 
-    const profileItem = visibleMenuItems.find(
-      (item) => item.subpage === ChatwootSettingsSubpage.PROFILE
-    );
-    if (profileItem) return ChatwootSettingsSubpage.PROFILE;
+      const profileItem = visibleMenuItems.find(
+        (item) => item.subpage === ChatwootSettingsSubpage.PROFILE
+      );
+      if (profileItem) return ChatwootSettingsSubpage.PROFILE;
 
-    return visibleMenuItems[0]?.subpage || ChatwootSettingsSubpage.WARNINGS;
-  }, [visibleMenuItems]);
+      return visibleMenuItems[0]?.subpage || ChatwootSettingsSubpage.WARNINGS;
+    }, [visibleMenuItems]);
 
   // Determine current subpage: use router value if accessible, otherwise use first accessible
   const currentSubpage = React.useMemo(() => {
     const routerSubpage = chatwootRouter.currentSettingsSubpage;
     if (routerSubpage) {
       // Check if router subpage is accessible
-      const isAccessible = visibleMenuItems.some((item) => item.subpage === routerSubpage);
+      const isAccessible = visibleMenuItems.some(
+        (item) => item.subpage === routerSubpage
+      );
       if (isAccessible) {
         return routerSubpage;
       }
     }
     // Router subpage not accessible or not set - use first accessible
     return getFirstAccessibleSubpage();
-  }, [chatwootRouter.currentSettingsSubpage, visibleMenuItems, getFirstAccessibleSubpage]);
+  }, [
+    chatwootRouter.currentSettingsSubpage,
+    visibleMenuItems,
+    getFirstAccessibleSubpage,
+  ]);
 
   // Redirect if current router subpage is not accessible
   useEffect(() => {
@@ -208,6 +241,7 @@ export const SettingsView: React.FC = () => {
         height: "100%",
         width: "100%",
         backgroundColor: "#f8f9fa", // Muted background
+        direction: dir,
       }}
     >
       {/* Settings Sidebar - Minimalist Clean */}
@@ -215,15 +249,33 @@ export const SettingsView: React.FC = () => {
         sx={{
           width: 200,
           minWidth: 200,
-          borderRight: `1px solid rgba(0,0,0,0.08)`,
+          [dir === "rtl"
+            ? "borderLeft"
+            : "borderRight"]: `1px solid rgba(0,0,0,0.08)`,
           display: "flex",
           flexDirection: "column",
           backgroundColor: "#fafbfc",
+          direction: dir,
         }}
       >
         {/* Compact Header */}
-        <Box sx={{ px: 2, py: 1.75, borderBottom: "1px solid rgba(0,0,0,0.08)" }}>
-          <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 0.5 }}>
+        <Box
+          sx={{
+            px: 2,
+            py: 1.75,
+            borderBottom: "1px solid rgba(0,0,0,0.08)",
+            direction: dir,
+          }}
+        >
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: 1,
+              mb: 0.5,
+              direction: dir,
+            }}
+          >
             <IconButton
               size="small"
               onClick={() => chatwootRouter.navigateToDashboard()}
@@ -234,36 +286,41 @@ export const SettingsView: React.FC = () => {
                 "&:hover": {
                   color: "#6366f1",
                   backgroundColor: "rgba(99, 102, 241, 0.08)",
-                  transform: "translateX(-2px)",
+                  transform:
+                    dir === "rtl" ? "translateX(2px)" : "translateX(-2px)",
                 },
               }}
             >
               <ArrowLeftIcon style={{ width: 16, height: 16 }} />
             </IconButton>
-            <Typography 
-              variant="overline" 
-              sx={{ 
-                fontWeight: 700, 
+            <Typography
+              variant="overline"
+              sx={{
+                fontWeight: 700,
                 fontSize: "0.688rem",
                 color: "#9ca3af",
                 letterSpacing: "0.1em",
               }}
             >
-              SETTINGS
+              {t("frontdesk.settings.title").toUpperCase()}
             </Typography>
           </Box>
         </Box>
 
         {/* Menu Items */}
-        <List sx={{ flex: 1, py: 1.5, px: 1.25 }}>
+        <List sx={{ flex: 1, py: 1.5, px: 1.25, direction: dir }}>
           {visibleMenuItems.map((item) => {
             const isSelected = currentSubpage === item.subpage;
-            const showBadge = item.subpage === ChatwootSettingsSubpage.WARNINGS && warningCount > 0;
+            const showBadge =
+              item.subpage === ChatwootSettingsSubpage.WARNINGS &&
+              warningCount > 0;
             return (
               <ListItem key={item.subpage} disablePadding sx={{ mb: 0.5 }}>
                 <ListItemButton
                   selected={isSelected}
-                  onClick={() => chatwootRouter.navigateToSettings(item.subpage)}
+                  onClick={() =>
+                    chatwootRouter.navigateToSettings(item.subpage)
+                  }
                   sx={{
                     py: 1.125,
                     px: 1.25,
@@ -271,25 +328,30 @@ export const SettingsView: React.FC = () => {
                     minHeight: "40px",
                     position: "relative",
                     transition: "all 0.2s ease-in-out",
-                    "&::before": isSelected ? {
-                      content: '""',
-                      position: "absolute",
-                      left: 0,
-                      top: "50%",
-                      transform: "translateY(-50%)",
-                      width: 3,
-                      height: "60%",
-                      backgroundColor: "#6366f1",
-                      borderRadius: "0 2px 2px 0",
-                    } : {},
+                    direction: dir,
+                    "&::before": isSelected
+                      ? {
+                          content: '""',
+                          position: "absolute",
+                          [dir === "rtl" ? "right" : "left"]: 0,
+                          top: "50%",
+                          transform: "translateY(-50%)",
+                          width: 3,
+                          height: "60%",
+                          backgroundColor: "#6366f1",
+                          borderRadius:
+                            dir === "rtl" ? "2px 0 0 2px" : "0 2px 2px 0",
+                        }
+                      : {},
                     "&.Mui-selected": {
                       backgroundColor: "rgba(99, 102, 241, 0.08)",
                     },
                     "&:hover": {
-                      backgroundColor: isSelected 
-                        ? "rgba(99, 102, 241, 0.12)" 
+                      backgroundColor: isSelected
+                        ? "rgba(99, 102, 241, 0.12)"
                         : "rgba(0, 0, 0, 0.06)",
-                      transform: "translateX(2px)",
+                      transform:
+                        dir === "rtl" ? "translateX(-2px)" : "translateX(2px)",
                       "& .MuiListItemIcon-root": {
                         color: isSelected ? "#6366f1" : "#6366f1",
                       },
@@ -308,32 +370,32 @@ export const SettingsView: React.FC = () => {
                     }}
                   >
                     {showBadge ? (
-                      <Badge 
-                        badgeContent={warningCount} 
+                      <Badge
+                        badgeContent={warningCount}
                         color="error"
                         max={99}
                         sx={{
-                          '& .MuiBadge-badge': {
-                            fontSize: '0.625rem',
+                          "& .MuiBadge-badge": {
+                            fontSize: "0.625rem",
                             height: 14,
                             minWidth: 14,
-                            padding: '0 3px',
+                            padding: "0 3px",
                             fontWeight: 600,
                           },
                         }}
                       >
-                        {React.cloneElement(item.icon as React.ReactElement, { 
-                          style: { width: 16, height: 16 } 
+                        {React.cloneElement(item.icon as React.ReactElement, {
+                          style: { width: 16, height: 16 },
                         })}
                       </Badge>
                     ) : (
-                      React.cloneElement(item.icon as React.ReactElement, { 
-                        style: { width: 16, height: 16 } 
+                      React.cloneElement(item.icon as React.ReactElement, {
+                        style: { width: 16, height: 16 },
                       })
                     )}
                   </ListItemIcon>
                   <ListItemText
-                    primary={item.label}
+                    primary={t(item.labelKey)}
                     primaryTypographyProps={{
                       fontSize: "0.813rem",
                       fontWeight: isSelected ? 600 : 500,
@@ -361,6 +423,7 @@ export const SettingsView: React.FC = () => {
           flexDirection: "column",
           overflow: "auto",
           backgroundColor: "#f8f9fa", // Muted background
+          direction: dir,
         }}
       >
         {renderSubpage()}
@@ -368,4 +431,3 @@ export const SettingsView: React.FC = () => {
     </Box>
   );
 };
-

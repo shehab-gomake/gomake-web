@@ -38,6 +38,8 @@ const ViewToggleComponent: React.FC<ViewToggleProps> = ({
   onViewModeChange,
 }) => {
   const { t } = useTranslation();
+  const dir: "rtl" | "ltr" = t("direction");
+  const isRTL = dir === "rtl";
   const handleChange = (
     _event: React.MouseEvent<HTMLElement>,
     newViewMode: KanbanViewMode | null
@@ -59,6 +61,8 @@ const ViewToggleComponent: React.FC<ViewToggleProps> = ({
         borderRadius: "10px",
         padding: "3px",
         border: `1px solid ${colorTokens.neutral[200]}`,
+        gap: 0.5,
+        direction: dir,
         "& .MuiToggleButtonGroup-grouped": {
           border: "none",
           borderRadius: "8px !important",
@@ -71,6 +75,9 @@ const ViewToggleComponent: React.FC<ViewToggleProps> = ({
           padding: "8px 14px",
           textTransform: "none",
           transition: "all 0.15s ease",
+          display: "flex",
+          flexDirection: isRTL ? "row-reverse" : "row",
+          alignItems: "center",
           "&.Mui-selected": {
             backgroundColor: colorTokens.primary[600],
             color: colorTokens.semantic.text.inverse,
@@ -91,7 +98,7 @@ const ViewToggleComponent: React.FC<ViewToggleProps> = ({
           aria-label={t("frontdesk.workboard.statusView")}
         >
           <StatusIcon sx={{ fontSize: 16, marginRight: "6px" }} />
-          {t("frontdesk.workboard.status")}
+          {t("frontdesk.workboard.statusLabel")}
         </ToggleButton>
       </Tooltip>
       <Tooltip title={t("frontdesk.workboard.groupByAssignee")}>

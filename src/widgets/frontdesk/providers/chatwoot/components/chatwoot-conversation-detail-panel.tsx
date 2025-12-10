@@ -18,23 +18,38 @@ import {
   AccordionSummary,
   AccordionDetails,
 } from "@mui/material";
+import { useTranslation } from "react-i18next";
+import { ExpandMore as ExpandMoreIcon } from "@mui/icons-material";
 import {
-  ExpandMore as ExpandMoreIcon,
-} from "@mui/icons-material";
-import { colorTokens, radiusTokens, shadowTokens, semanticSpacing, layoutTokens } from "@/widgets/frontdesk/design-system";
+  colorTokens,
+  radiusTokens,
+  shadowTokens,
+  semanticSpacing,
+  layoutTokens,
+} from "@/widgets/frontdesk/design-system";
 import { QuickActionButton } from "@/widgets/frontdesk/design-system/primitives/Button/QuickActionButton";
-import { QuickActionMenu, QuickActionItem } from "@/widgets/frontdesk/design-system/compounds/QuickActionMenu/QuickActionMenu";
+import {
+  QuickActionMenu,
+  QuickActionItem,
+} from "@/widgets/frontdesk/design-system/compounds/QuickActionMenu/QuickActionMenu";
 import { chatwootService } from "@/services/frontdesk";
 import { ConversationProfileSection } from "./conversation-profile-section";
 import { ContactHistorySection } from "./contact-history-section";
 import { ConversationAssigneeSection } from "./conversation-assignee-section";
 import { ConversationLabelsManagement } from "./conversation-labels-management";
 import { LinkedDocumentsSection } from "./linked-documents-section";
-import { extractConversation, mergeConversationUpdate, extractErrorMessage } from "../utils/api-response-extractors";
+import {
+  extractConversation,
+  mergeConversationUpdate,
+  extractErrorMessage,
+} from "../utils/api-response-extractors";
 import { useChatwootQuickActions } from "../hooks/use-chatwoot-quick-actions";
 import { useChatwootProvider } from "../hooks/use-chatwoot-provider";
 import { useChatwootConversationUpdater } from "../hooks/use-chatwoot-conversation-updater";
-import { getActionsExcludingTickets, GROUP_LABELS } from "@/widgets/frontdesk/providers/tickets/utils/quick-actions-config";
+import {
+  getActionsExcludingTickets,
+  getTranslatedGroupLabels,
+} from "@/widgets/frontdesk/providers/tickets/utils/quick-actions-config";
 import { AssignDocumentModal } from "./assign-document-modal";
 import type { ChatwootConversation } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
 import type { ChatwootInbox } from "@/services/frontdesk/api/chatwoot/types/inboxes.types";
@@ -46,20 +61,22 @@ interface ChatwootConversationDetailPanelProps {
   onConversationUpdate?: (updatedConversation: ChatwootConversation) => void;
 }
 
-export const ChatwootConversationDetailPanel: React.FC<ChatwootConversationDetailPanelProps> = ({
-  conversation,
-  accountId,
-  inboxes = [],
-  onConversationUpdate,
-}) => {
+export const ChatwootConversationDetailPanel: React.FC<
+  ChatwootConversationDetailPanelProps
+> = ({ conversation, accountId, inboxes = [], onConversationUpdate }) => {
+  const { t } = useTranslation();
+  const dir: "rtl" | "ltr" = t("direction");
+  const isRTL = dir === "rtl";
   const { router } = useChatwootProvider();
-  const [quickActionsAnchor, setQuickActionsAnchor] = useState<null | HTMLElement>(null);
+  const [quickActionsAnchor, setQuickActionsAnchor] =
+    useState<null | HTMLElement>(null);
 
   // Get inbox info
   const inbox = inboxes.find((i) => i.id === conversation.inbox_id);
 
   // Use cache-aware updater
-  const { updateConversation: updateConversationCache } = useChatwootConversationUpdater();
+  const { updateConversation: updateConversationCache } =
+    useChatwootConversationUpdater();
 
   // Handle conversation updates from child components (cache-aware)
   const handleConversationChange = useCallback(
@@ -68,7 +85,10 @@ export const ChatwootConversationDetailPanel: React.FC<ChatwootConversationDetai
       updateConversationCache(conversationId, updates);
 
       // Also notify parent for local state update
-      const updatedConversation = mergeConversationUpdate(conversation, updates);
+      const updatedConversation = mergeConversationUpdate(
+        conversation,
+        updates
+      );
       onConversationUpdate?.(updatedConversation);
     },
     [conversation, onConversationUpdate, updateConversationCache]
@@ -87,7 +107,11 @@ export const ChatwootConversationDetailPanel: React.FC<ChatwootConversationDetai
     conversation,
     accountId,
     onActionComplete: (actionType, updatedConversation) => {
-      console.log("[ChatwootConversationDetailPanel] Quick action completed:", actionType, updatedConversation);
+      console.log(
+        "[ChatwootConversationDetailPanel] Quick action completed:",
+        actionType,
+        updatedConversation
+      );
       // Update conversation cache across all views with refreshed conversation
       if (updatedConversation) {
         updateConversationCache(updatedConversation.id!, updatedConversation);
@@ -96,28 +120,66 @@ export const ChatwootConversationDetailPanel: React.FC<ChatwootConversationDetai
       }
     },
     onActionError: (actionType, error) => {
-      console.error("[ChatwootConversationDetailPanel] Quick action error:", actionType, error);
+      console.error(
+        "[ChatwootConversationDetailPanel] Quick action error:",
+        actionType,
+        error
+      );
     },
   });
 
   // Extract customer info for modal
   // Check both conversation-level and contact-level custom attributes
   // Priority: contact-level (where it's actually stored when linking) > conversation-level
-  const customerId = 
-    (conversation?.meta?.sender?.custom_attributes?.gomake_customer_id as string | undefined) ||
+  const customerId =
+    (conversation?.meta?.sender?.custom_attributes?.gomake_customer_id as
+      | string
+      | undefined) ||
     (conversation?.custom_attributes?.gomake_customer_id as string | undefined);
   const customerName = conversation?.meta?.sender?.name;
 
+  // Translation map for action labels
+  const actionLabelMap: Record<string, string> = {
+    create_quote: t("frontdesk.detailPanel.assignToQuote"),
+    create_quote_with_ai: t("frontdesk.detailPanel.createQuoteWithAI"),
+    create_invoice: t("frontdesk.detailPanel.assignToInvoice"),
+    create_order: t("frontdesk.detailPanel.assignToOrder"),
+    create_receipt: t("frontdesk.detailPanel.assignToReceipt"),
+    create_delivery_note: t("frontdesk.detailPanel.assignToDeliveryNote"),
+    create_purchase_order: t("frontdesk.detailPanel.assignToPurchaseOrder"),
+    create_purchase_invoice: t("frontdesk.detailPanel.assignToPurchaseInvoice"),
+  };
+
+  // Translation map for action tooltips
+  const actionTooltipMap: Record<string, string> = {
+    create_quote: t("frontdesk.detailPanel.assignToQuoteTooltip"),
+    create_quote_with_ai: t("frontdesk.detailPanel.createQuoteWithAITooltip"),
+    create_invoice: t("frontdesk.detailPanel.assignToInvoiceTooltip"),
+    create_order: t("frontdesk.detailPanel.assignToOrderTooltip"),
+    create_receipt: t("frontdesk.detailPanel.assignToReceiptTooltip"),
+    create_delivery_note: t(
+      "frontdesk.detailPanel.assignToDeliveryNoteTooltip"
+    ),
+    create_purchase_order: t(
+      "frontdesk.detailPanel.assignToPurchaseOrderTooltip"
+    ),
+    create_purchase_invoice: t(
+      "frontdesk.detailPanel.assignToPurchaseInvoiceTooltip"
+    ),
+  };
+
   // Convert action configs to QuickActionItem format for the menu
-  const quickActionMenuItems: QuickActionItem[] = availableActions.map((action) => ({
-    id: action.type,
-    label: action.label,
-    icon: action.icon,
-    tooltip: action.tooltip,
-    disabled: !!getActionBlockReason(action.type),
-    disabledReason: getActionBlockReason(action.type) || undefined,
-    group: action.group,
-  }));
+  const quickActionMenuItems: QuickActionItem[] = availableActions.map(
+    (action) => ({
+      id: action.type,
+      label: actionLabelMap[action.type] || action.label,
+      icon: action.icon,
+      tooltip: actionTooltipMap[action.type] || action.tooltip,
+      disabled: !!getActionBlockReason(action.type),
+      disabledReason: getActionBlockReason(action.type) || undefined,
+      group: action.group,
+    })
+  );
 
   const handleQuickActionClick = (action: QuickActionItem) => {
     executeAction(action.id as any);
@@ -130,22 +192,24 @@ export const ChatwootConversationDetailPanel: React.FC<ChatwootConversationDetai
         height: "100%",
         backgroundColor: colorTokens.semantic.background.primary,
         overflow: "auto",
-        p: `${semanticSpacing.container.lg}px`,  // Use design system container padding (24px)
+        p: `${semanticSpacing.container.lg}px`, // Use design system container padding (24px)
+        direction: dir, // RTL support
       }}
       className="custom-scrollbar"
     >
       {/* Actions Button - Sales/Purchase Documents */}
-      <Box sx={{ mb: `${semanticSpacing.component.lg}px` }}>  {/* Use design system spacing */}
+      <Box sx={{ mb: `${semanticSpacing.component.lg}px` }}>
         <QuickActionButton
           size="sm"
           isOpen={Boolean(quickActionsAnchor)}
           onClick={(e) => setQuickActionsAnchor(e.currentTarget)}
-          sx={{ 
+          sx={{
             width: "100%",
-            borderRadius: `${radiusTokens.lg}px`,  // Use design system radius
+            borderRadius: `${radiusTokens.lg}px`, // Use design system radius
+            direction: dir,
           }}
         >
-          Actions
+          {t("frontdesk.detailPanel.actions")}
         </QuickActionButton>
       </Box>
 
@@ -159,13 +223,19 @@ export const ChatwootConversationDetailPanel: React.FC<ChatwootConversationDetai
         contactPhoneNumber={conversation.meta?.sender?.phone_number}
         contactId={conversation.meta?.sender?.id}
         contactIdentifier={conversation.meta?.sender?.identifier}
-        contactAvailabilityStatus={conversation.meta?.sender?.availability_status}
+        contactAvailabilityStatus={
+          conversation.meta?.sender?.availability_status
+        }
         contactBlocked={conversation.meta?.sender?.blocked}
-        contactAdditionalAttributes={conversation.meta?.sender?.additional_attributes}
+        contactAdditionalAttributes={
+          conversation.meta?.sender?.additional_attributes
+        }
         contactCustomAttributes={conversation.meta?.sender?.custom_attributes}
         contactLastActivityAt={conversation.meta?.sender?.last_activity_at}
         contactCreatedAt={conversation.meta?.sender?.created_at}
-        customerId={conversation.meta?.sender?.custom_attributes?.gomake_customer_id}
+        customerId={
+          conversation.meta?.sender?.custom_attributes?.gomake_customer_id
+        }
         accountId={accountId}
         onCustomerLinked={async (customerId, customerData) => {
           if (!accountId) return;
@@ -257,7 +327,6 @@ export const ChatwootConversationDetailPanel: React.FC<ChatwootConversationDetai
         updateConversation={handleConversationChange}
       />
 
-
       {/* Labels Management */}
       <ConversationLabelsManagement
         labels={conversation.labels}
@@ -270,7 +339,7 @@ export const ChatwootConversationDetailPanel: React.FC<ChatwootConversationDetai
 
       {/* Inbox Info */}
       {inbox && (
-        <Box sx={{ mb: `${semanticSpacing.component.lg}px` }}>  {/* Use design system spacing */}
+        <Box sx={{ mb: `${semanticSpacing.component.lg}px`, direction: dir }}>
           <Typography
             variant="caption"
             sx={{
@@ -283,20 +352,23 @@ export const ChatwootConversationDetailPanel: React.FC<ChatwootConversationDetai
               letterSpacing: "0.05em",
             }}
           >
-            Inbox
+            {t("frontdesk.detailPanel.inbox")}
           </Typography>
           <Box
             sx={{
-              p: `${semanticSpacing.component.md}px`,  // Use design system padding
+              p: `${semanticSpacing.component.md}px`, // Use design system padding
               backgroundColor: colorTokens.neutral[50],
-              borderRadius: `${radiusTokens.lg}px`,    // Use design system radius
+              borderRadius: `${radiusTokens.lg}px`, // Use design system radius
               border: `1px solid ${colorTokens.semantic.border.light}`,
             }}
           >
             <Typography variant="body2" sx={{ fontWeight: 500, fontSize: 13 }}>
               {inbox.name}
             </Typography>
-            <Typography variant="caption" sx={{ color: colorTokens.semantic.text.secondary, fontSize: 11 }}>
+            <Typography
+              variant="caption"
+              sx={{ color: colorTokens.semantic.text.secondary, fontSize: 11 }}
+            >
               {conversation.meta?.channel || "Unknown channel"}
             </Typography>
           </Box>
@@ -307,48 +379,62 @@ export const ChatwootConversationDetailPanel: React.FC<ChatwootConversationDetai
 
       {/* Expandable Sections */}
       {/* Custom Attributes */}
-      {conversation.custom_attributes && Object.keys(conversation.custom_attributes).length > 0 && (
-        <Accordion elevation={0} defaultExpanded={false} sx={{ "&:before": { display: "none" } }}>
-          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-            <Typography
-              variant="body2"
-              sx={{
-                fontWeight: 600,
-                fontSize: 11,
-                color: colorTokens.semantic.text.secondary,
-              }}
-            >
-              CUSTOM ATTRIBUTES
-            </Typography>
-          </AccordionSummary>
-          <AccordionDetails>
-            <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-              {Object.entries(conversation.custom_attributes).map(([key, value]) => (
-                <Box key={key}>
-                  <Typography
-                    variant="caption"
-                    sx={{
-                      color: colorTokens.semantic.text.secondary,
-                      fontSize: 10,
-                      textTransform: "uppercase",
-                      fontWeight: 600,
-                    }}
-                  >
-                    {key}
-                  </Typography>
-                  <Typography variant="body2" sx={{ fontSize: 13, mt: 0.5 }}>
-                    {String(value)}
-                  </Typography>
-                </Box>
-              ))}
-            </Box>
-          </AccordionDetails>
-        </Accordion>
-      )}
+      {conversation.custom_attributes &&
+        Object.keys(conversation.custom_attributes).length > 0 && (
+          <Accordion
+            elevation={0}
+            defaultExpanded={false}
+            sx={{ "&:before": { display: "none" } }}
+          >
+            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+              <Typography
+                variant="body2"
+                sx={{
+                  fontWeight: 600,
+                  fontSize: 11,
+                  color: colorTokens.semantic.text.secondary,
+                }}
+              >
+                CUSTOM ATTRIBUTES
+              </Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+                {Object.entries(conversation.custom_attributes).map(
+                  ([key, value]) => (
+                    <Box key={key}>
+                      <Typography
+                        variant="caption"
+                        sx={{
+                          color: colorTokens.semantic.text.secondary,
+                          fontSize: 10,
+                          textTransform: "uppercase",
+                          fontWeight: 600,
+                        }}
+                      >
+                        {key}
+                      </Typography>
+                      <Typography
+                        variant="body2"
+                        sx={{ fontSize: 13, mt: 0.5 }}
+                      >
+                        {String(value)}
+                      </Typography>
+                    </Box>
+                  )
+                )}
+              </Box>
+            </AccordionDetails>
+          </Accordion>
+        )}
 
       {/* SLA Information */}
       {conversation.applied_sla && (
-        <Accordion elevation={0} defaultExpanded={false} sx={{ "&:before": { display: "none" } }}>
+        <Accordion
+          elevation={0}
+          defaultExpanded={false}
+          sx={{ "&:before": { display: "none" } }}
+        >
           <AccordionSummary expandIcon={<ExpandMoreIcon />}>
             <Typography
               variant="body2"
@@ -376,7 +462,8 @@ export const ChatwootConversationDetailPanel: React.FC<ChatwootConversationDetai
         open={Boolean(quickActionsAnchor)}
         onClose={() => setQuickActionsAnchor(null)}
         actions={quickActionMenuItems}
-        groupLabels={GROUP_LABELS}
+        groupLabels={getTranslatedGroupLabels(t)}
+        isRTL={isRTL}
         onActionClick={handleQuickActionClick}
       />
 

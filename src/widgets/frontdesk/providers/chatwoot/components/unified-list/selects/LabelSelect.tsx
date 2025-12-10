@@ -7,13 +7,14 @@
  * @module unified-list/selects/LabelSelect
  */
 
-import React, { useState, useCallback, useMemo } from 'react';
-import LabelIcon from '@mui/icons-material/Label';
-import AddIcon from '@mui/icons-material/Add';
-import { UnifiedListDropdown } from '../UnifiedListDropdown';
-import { LabelListItemRenderer } from '../list-items';
-import { FilterIconButton } from '../triggers';
-import type { LabelListItem, ActionItem } from '../types';
+import React, { useState, useCallback, useMemo } from "react";
+import { useTranslation } from "react-i18next";
+import LabelIcon from "@mui/icons-material/Label";
+import AddIcon from "@mui/icons-material/Add";
+import { UnifiedListDropdown } from "../UnifiedListDropdown";
+import { LabelListItemRenderer } from "../list-items";
+import { FilterIconButton } from "../triggers";
+import type { LabelListItem, ActionItem } from "../types";
 
 // =============================================================================
 // TYPES
@@ -57,7 +58,7 @@ export interface LabelSelectProps {
 // =============================================================================
 
 const labelToListItem = (label: Label): LabelListItem => ({
-  type: 'label',
+  type: "label",
   id: label.id,
   label: label.title,
   description: label.description,
@@ -74,14 +75,15 @@ export const LabelSelect: React.FC<LabelSelectProps> = ({
   labels,
   onSelect,
   loading = false,
-  placeholder = 'Filter by Labels',
-  emptyText = 'No labels available',
+  placeholder = "Filter by Labels",
+  emptyText = "No labels available",
   disabled = false,
   sidebarOnly = true,
   canCreate = false,
   onCreateClick,
-  headerText = 'Filter by Labels (AND)',
+  headerText = "Filter by Labels (AND)",
 }) => {
+  const { t } = useTranslation();
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const open = Boolean(anchorEl);
 
@@ -106,10 +108,10 @@ export const LabelSelect: React.FC<LabelSelectProps> = ({
     // Clear all action
     if (selectedLabels.length > 0) {
       actions.push({
-        type: 'action',
-        id: 'clear-all',
-        label: 'Clear All Labels',
-        variant: 'secondary',
+        type: "action",
+        id: "clear-all",
+        label: t("frontdesk.labels.clearAllLabels"),
+        variant: "secondary",
         onClick: () => onSelect([], []),
       });
     }
@@ -117,23 +119,26 @@ export const LabelSelect: React.FC<LabelSelectProps> = ({
     // Create new label
     if (canCreate && onCreateClick) {
       actions.push({
-        type: 'action',
-        id: 'create-label',
-        label: 'Add New Label',
+        type: "action",
+        id: "create-label",
+        label: t("frontdesk.labels.addNewLabel"),
         icon: <AddIcon sx={{ fontSize: 18 }} />,
-        variant: 'primary',
+        variant: "primary",
         onClick: onCreateClick,
       });
     }
 
     return actions;
-  }, [selectedLabels.length, canCreate, onCreateClick, onSelect]);
+  }, [selectedLabels.length, canCreate, onCreateClick, onSelect, t]);
 
-  const handleOpen = useCallback((event: React.MouseEvent<HTMLElement>) => {
-    if (!disabled) {
-      setAnchorEl(event.currentTarget);
-    }
-  }, [disabled]);
+  const handleOpen = useCallback(
+    (event: React.MouseEvent<HTMLElement>) => {
+      if (!disabled) {
+        setAnchorEl(event.currentTarget);
+      }
+    },
+    [disabled]
+  );
 
   const handleClose = useCallback(() => {
     setAnchorEl(null);
@@ -187,7 +192,13 @@ export const LabelSelect: React.FC<LabelSelectProps> = ({
     <>
       <FilterIconButton
         icon={<LabelIcon />}
-        tooltip={hasSelection ? `Labels: ${selectedLabels.join(', ')}` : placeholder}
+        tooltip={
+          hasSelection
+            ? t("frontdesk.filters.labelsTooltip", {
+                labels: selectedLabels.join(", "),
+              })
+            : t("frontdesk.filters.filterByLabels")
+        }
         isActive={hasSelection}
         badgeCount={selectedLabels.length}
         onClick={handleOpen}
@@ -208,7 +219,7 @@ export const LabelSelect: React.FC<LabelSelectProps> = ({
         loading={loading}
         emptyMessage={
           sidebarOnly && labels.length > 0
-            ? 'No labels with sidebar enabled'
+            ? "No labels with sidebar enabled"
             : emptyText
         }
         closeOnSelect={false}

@@ -15,12 +15,17 @@ import {
   Radio,
   useTheme,
 } from "@mui/material";
+import { useTranslation } from "react-i18next";
 import MailIcon from "@mui/icons-material/Mail";
 import MessageIcon from "@mui/icons-material/Message";
 import PhoneIcon from "@mui/icons-material/Phone";
 import PublicIcon from "@mui/icons-material/Public";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
-import { colorTokens, radiusTokens, shadowTokens } from "@/widgets/frontdesk/design-system";
+import {
+  colorTokens,
+  radiusTokens,
+  shadowTokens,
+} from "@/widgets/frontdesk/design-system";
 import type { ContactableInbox } from "@/services/frontdesk/api/chatwoot/types/inboxes.types";
 
 export interface InboxSelectorProps {
@@ -72,6 +77,9 @@ export const InboxSelector: React.FC<InboxSelectorProps> = ({
   error,
 }) => {
   const theme = useTheme();
+  const { t } = useTranslation();
+  const dir: "rtl" | "ltr" = t("direction");
+  const isRTL = dir === "rtl";
 
   if (isLoading) {
     return (
@@ -88,7 +96,7 @@ export const InboxSelector: React.FC<InboxSelectorProps> = ({
       >
         <CircularProgress size={24} sx={{ color: colorTokens.primary[600] }} />
         <Typography sx={{ ml: 2, color: colorTokens.neutral[600] }}>
-          Loading inboxes...
+          {t("frontdesk.compose.loadingInboxes")}
         </Typography>
       </Box>
     );
@@ -106,7 +114,9 @@ export const InboxSelector: React.FC<InboxSelectorProps> = ({
           textAlign: "center",
         }}
       >
-        {disabled ? "Select a contact to see available inboxes" : "No inboxes available for this contact"}
+        {disabled
+          ? t("frontdesk.compose.selectContactToSeeInboxes")
+          : t("frontdesk.compose.noInboxesAvailable")}
       </Box>
     );
   }
@@ -126,9 +136,13 @@ export const InboxSelector: React.FC<InboxSelectorProps> = ({
                   display: "flex",
                   alignItems: "center",
                   cursor: "pointer",
-                  backgroundColor: isSelected ? colorTokens.primary[50] : colorTokens.semantic.background.primary,
+                  backgroundColor: isSelected
+                    ? colorTokens.primary[50]
+                    : colorTokens.semantic.background.primary,
                   border: `1px solid ${
-                    isSelected ? colorTokens.primary[400] : colorTokens.neutral[200]
+                    isSelected
+                      ? colorTokens.primary[400]
+                      : colorTokens.neutral[200]
                   }`,
                   transition: "all 0.2s ease-in-out",
                   "&:hover": {
@@ -145,9 +159,14 @@ export const InboxSelector: React.FC<InboxSelectorProps> = ({
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    backgroundColor: isSelected ? colorTokens.primary[100] : colorTokens.neutral[100],
-                    color: isSelected ? colorTokens.primary[700] : colorTokens.neutral[600],
-                    mr: 2,
+                    backgroundColor: isSelected
+                      ? colorTokens.primary[100]
+                      : colorTokens.neutral[100],
+                    color: isSelected
+                      ? colorTokens.primary[700]
+                      : colorTokens.neutral[600],
+                    marginRight: isRTL ? 0 : 2,
+                    marginLeft: isRTL ? 2 : 0,
                   }}
                 >
                   {getChannelIcon(inbox.inbox.channel_type)}
@@ -157,12 +176,17 @@ export const InboxSelector: React.FC<InboxSelectorProps> = ({
                     variant="subtitle1"
                     sx={{
                       fontWeight: 600,
-                      color: isSelected ? colorTokens.primary[800] : colorTokens.neutral[900],
+                      color: isSelected
+                        ? colorTokens.primary[800]
+                        : colorTokens.neutral[900],
                     }}
                   >
                     {inbox.inbox.name}
                   </Typography>
-                  <Typography variant="body2" sx={{ color: colorTokens.neutral[600] }}>
+                  <Typography
+                    variant="body2"
+                    sx={{ color: colorTokens.neutral[600] }}
+                  >
                     {getChannelTypeName(inbox.inbox.channel_type)}
                   </Typography>
                 </Box>

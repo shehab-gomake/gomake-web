@@ -1,16 +1,24 @@
 /**
  * ActiveFilterChips Component
- * 
+ *
  * Modern filter chip display for active conversation filters.
  * Features clean pill-style chips with consistent sizing and softer colors.
  * Shows: Status, Team, Labels, Inbox filters (excludes assignee_type which is handled by tabs).
  */
 
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { Box, IconButton } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import { colorTokens, radiusTokens, semanticSpacing } from "@/widgets/frontdesk/design-system";
-import { ConversationListParams, ConversationStatus } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
+import {
+  colorTokens,
+  radiusTokens,
+  semanticSpacing,
+} from "@/widgets/frontdesk/design-system";
+import {
+  ConversationListParams,
+  ConversationStatus,
+} from "@/services/frontdesk/api/chatwoot/types/conversations.types";
 import type { Team } from "@/services/frontdesk/api/chatwoot/types/teams.types";
 import type { ChatwootLabel } from "@/store/frontdesk/atoms/chatwoot.atoms";
 import type { ChatwootInbox } from "@/services/frontdesk/api/chatwoot/types/inboxes.types";
@@ -21,7 +29,10 @@ import type { ChatwootInbox } from "@/services/frontdesk/api/chatwoot/types/inbo
 
 interface ActiveFilterChipsProps {
   filters: Partial<ConversationListParams>;
-  onRemoveFilter: (filterType: "status" | "team_id" | "labels" | "inbox_id" | "label", value?: string) => void;
+  onRemoveFilter: (
+    filterType: "status" | "team_id" | "labels" | "inbox_id" | "label",
+    value?: string
+  ) => void;
   teams?: Team[];
   labels?: ChatwootLabel[];
   inboxes?: ChatwootInbox[];
@@ -46,14 +57,16 @@ const CHIP_HEIGHT = 24;
 const CHIP_RADIUS = 12; // 12px for pill shape
 const CLOSE_ICON_SIZE = 14;
 
-// Status labels
-const STATUS_LABELS: Record<ConversationStatus, string> = {
-  [ConversationStatus.ALL]: "All",
-  [ConversationStatus.OPEN]: "Open",
-  [ConversationStatus.RESOLVED]: "Resolved",
-  [ConversationStatus.PENDING]: "Pending",
-  [ConversationStatus.SNOOZED]: "Snoozed",
-};
+// Status labels - function to get translated labels
+const getStatusLabels = (
+  t: (key: string) => string
+): Record<ConversationStatus, string> => ({
+  [ConversationStatus.ALL]: t("frontdesk.filters.statusAll"),
+  [ConversationStatus.OPEN]: t("frontdesk.workboard.statusLabels.open"),
+  [ConversationStatus.RESOLVED]: t("frontdesk.workboard.statusLabels.resolved"),
+  [ConversationStatus.PENDING]: t("frontdesk.workboard.statusLabels.pending"),
+  [ConversationStatus.SNOOZED]: t("frontdesk.filters.statusSnoozed"),
+});
 
 // Status color configurations - softer, more refined colors
 const STATUS_COLORS: Record<ConversationStatus, ChipColorConfig> = {
@@ -158,24 +171,27 @@ interface FilterChipProps {
   onRemove: () => void;
 }
 
-const FilterChip: React.FC<FilterChipProps> = ({ label, colors, onRemove }) => (
-  <Box sx={getChipStyles(colors)}>
-    <Box component="span" sx={getChipLabelStyles(colors.text)}>
-      {label}
+const FilterChip: React.FC<FilterChipProps> = ({ label, colors, onRemove }) => {
+  const { t } = useTranslation();
+  return (
+    <Box sx={getChipStyles(colors)}>
+      <Box component="span" sx={getChipLabelStyles(colors.text)}>
+        {label}
+      </Box>
+      <IconButton
+        size="small"
+        onClick={(e) => {
+          e.stopPropagation();
+          onRemove();
+        }}
+        sx={getCloseButtonStyles(colors)}
+        aria-label={t("frontdesk.filters.removeFilter", { label })}
+      >
+        <CloseIcon sx={{ fontSize: CLOSE_ICON_SIZE }} />
+      </IconButton>
     </Box>
-    <IconButton
-      size="small"
-      onClick={(e) => {
-        e.stopPropagation();
-        onRemove();
-      }}
-      sx={getCloseButtonStyles(colors)}
-      aria-label={`Remove ${label} filter`}
-    >
-      <CloseIcon sx={{ fontSize: CLOSE_ICON_SIZE }} />
-    </IconButton>
-  </Box>
-);
+  );
+};
 
 // =============================================================================
 // Main Component
@@ -188,6 +204,10 @@ export const ActiveFilterChips: React.FC<ActiveFilterChipsProps> = ({
   labels = [],
   inboxes = [],
 }) => {
+  const { t } = useTranslation();
+  const dir: "rtl" | "ltr" = t("direction");
+  const STATUS_LABELS = getStatusLabels(t);
+
   // Get selected labels (can be string or string[])
   const selectedLabels: string[] = Array.isArray(filters.labels)
     ? filters.labels
@@ -196,7 +216,9 @@ export const ActiveFilterChips: React.FC<ActiveFilterChipsProps> = ({
     : [];
 
   // Get status (can be ConversationStatus or ConversationStatus[])
-  const status = Array.isArray(filters.status) ? filters.status[0] : filters.status;
+  const status = Array.isArray(filters.status)
+    ? filters.status[0]
+    : filters.status;
 
   // Get team name
   const selectedTeam = teams.find((t) => t.id === filters.team_id);
@@ -225,12 +247,15 @@ export const ActiveFilterChips: React.FC<ActiveFilterChipsProps> = ({
         gap: 0.75,
         backgroundColor: colorTokens.semantic.background.secondary,
         borderTop: `1px solid ${colorTokens.neutral[100]}`,
+        direction: dir,
       }}
     >
       {/* Status Filter Chip */}
       {status && status !== ConversationStatus.ALL && (
         <FilterChip
-          label={`Status: ${STATUS_LABELS[status]}`}
+          label={t("frontdesk.filters.statusLabel", {
+            status: STATUS_LABELS[status],
+          })}
           colors={STATUS_COLORS[status]}
           onRemove={() => onRemoveFilter("status")}
         />
@@ -239,7 +264,7 @@ export const ActiveFilterChips: React.FC<ActiveFilterChipsProps> = ({
       {/* Team Filter Chip */}
       {selectedTeam && (
         <FilterChip
-          label={`Team: ${selectedTeam.name}`}
+          label={t("frontdesk.filters.teamLabel", { name: selectedTeam.name })}
           colors={TEAM_COLORS}
           onRemove={() => onRemoveFilter("team_id")}
         />
@@ -248,7 +273,9 @@ export const ActiveFilterChips: React.FC<ActiveFilterChipsProps> = ({
       {/* Inbox Filter Chip */}
       {selectedInbox && (
         <FilterChip
-          label={`Inbox: ${selectedInbox.name}`}
+          label={t("frontdesk.filters.inboxLabel", {
+            name: selectedInbox.name,
+          })}
           colors={INBOX_COLORS}
           onRemove={() => onRemoveFilter("inbox_id")}
         />
@@ -283,4 +310,3 @@ export const ActiveFilterChips: React.FC<ActiveFilterChipsProps> = ({
     </Box>
   );
 };
-

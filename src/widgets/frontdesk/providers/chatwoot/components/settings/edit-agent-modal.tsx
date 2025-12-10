@@ -6,6 +6,7 @@
  */
 
 import React, { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Select,
   MenuItem,
@@ -39,6 +40,8 @@ export const EditAgentModal: React.FC<EditAgentModalProps> = ({
   onSave,
   loading = false,
 }) => {
+  const { t } = useTranslation();
+  const dir: "rtl" | "ltr" = t("direction");
   const [name, setName] = useState<string>("");
   const [role, setRole] = useState<string>("agent");
   const [availabilityStatus, setAvailabilityStatus] = useState<string>("offline");
@@ -69,7 +72,7 @@ export const EditAgentModal: React.FC<EditAgentModalProps> = ({
       });
       onClose();
     } catch (err: any) {
-      setError(err.message || "Failed to update agent");
+      setError(err.message || t("frontdesk.settings.agentsEditFailedToUpdate"));
     } finally {
       setSaving(false);
     }
@@ -77,13 +80,13 @@ export const EditAgentModal: React.FC<EditAgentModalProps> = ({
 
   if (!agent) return null;
 
-  const displayName = name || agent.name || agent.available_name || agent.email || "Unknown Agent";
+  const displayName = name || agent.name || agent.available_name || agent.email || t("frontdesk.settings.agentsUnknown");
 
   return (
     <CompactModal
       open={open}
       onClose={onClose}
-      title={`Edit agent - ${displayName}`}
+      title={t("frontdesk.settings.agentsEditTitle", { name: displayName })}
       icon={<PersonIcon />}
       error={error}
       disabled={saving || loading}
@@ -91,7 +94,7 @@ export const EditAgentModal: React.FC<EditAgentModalProps> = ({
         <CompactModalActions
           onCancel={onClose}
           onSubmit={handleSave}
-          submitLabel="Save Changes"
+          submitLabel={t("frontdesk.settings.agentsEditSaveChanges")}
           isSubmitting={saving || loading}
         />
       }
@@ -99,18 +102,18 @@ export const EditAgentModal: React.FC<EditAgentModalProps> = ({
       <CompactFormSection>
         {/* Agent Name */}
         <CompactTextField
-          label="Agent Name"
+          label={t("frontdesk.settings.agentsEditName")}
           required
           value={name}
           onChange={(e) => setName(e.target.value)}
           disabled={saving || loading}
-          placeholder="Enter agent name"
+          placeholder={t("frontdesk.settings.agentsEditNamePlaceholder")}
         />
 
         {/* Role */}
-        <Box>
-          <CompactLabel required>Role</CompactLabel>
-          <FormControl fullWidth size="small">
+        <Box sx={{ direction: dir }}>
+          <CompactLabel required>{t("frontdesk.settings.agentsEditRole")}</CompactLabel>
+          <FormControl fullWidth size="small" sx={{ direction: dir }}>
             <Select
               value={role}
               onChange={(e) => setRole(e.target.value)}
@@ -120,19 +123,19 @@ export const EditAgentModal: React.FC<EditAgentModalProps> = ({
               }}
             >
               <MenuItem value="administrator" sx={{ fontSize: "0.813rem" }}>
-                Administrator
+                {t("frontdesk.settings.agentsEditRoleAdministrator")}
               </MenuItem>
               <MenuItem value="agent" sx={{ fontSize: "0.813rem" }}>
-                Agent
+                {t("frontdesk.settings.agentsEditRoleAgent")}
               </MenuItem>
             </Select>
           </FormControl>
         </Box>
 
         {/* Availability */}
-        <Box>
-          <CompactLabel required>Availability</CompactLabel>
-          <FormControl fullWidth size="small">
+        <Box sx={{ direction: dir }}>
+          <CompactLabel required>{t("frontdesk.settings.agentsEditAvailability")}</CompactLabel>
+          <FormControl fullWidth size="small" sx={{ direction: dir }}>
             <Select
               value={availabilityStatus}
               onChange={(e) => setAvailabilityStatus(e.target.value)}
@@ -142,21 +145,21 @@ export const EditAgentModal: React.FC<EditAgentModalProps> = ({
               }}
             >
               <MenuItem value="online" sx={{ fontSize: "0.813rem" }}>
-                <Box sx={{ display: "flex", alignItems: "center", gap: 0.75 }}>
+                <Box sx={{ display: "flex", alignItems: "center", gap: 0.75, direction: dir }}>
                   <CircleIcon sx={{ fontSize: 8, color: "#10b981" }} />
-                  <span>Online</span>
+                  <span>{t("frontdesk.settings.agentsEditAvailabilityOnline")}</span>
                 </Box>
               </MenuItem>
               <MenuItem value="busy" sx={{ fontSize: "0.813rem" }}>
-                <Box sx={{ display: "flex", alignItems: "center", gap: 0.75 }}>
+                <Box sx={{ display: "flex", alignItems: "center", gap: 0.75, direction: dir }}>
                   <CircleIcon sx={{ fontSize: 8, color: "#f59e0b" }} />
-                  <span>Busy</span>
+                  <span>{t("frontdesk.settings.agentsEditAvailabilityBusy")}</span>
                 </Box>
               </MenuItem>
               <MenuItem value="offline" sx={{ fontSize: "0.813rem" }}>
-                <Box sx={{ display: "flex", alignItems: "center", gap: 0.75 }}>
+                <Box sx={{ display: "flex", alignItems: "center", gap: 0.75, direction: dir }}>
                   <CircleIcon sx={{ fontSize: 8, color: "#6b7280" }} />
-                  <span>Offline</span>
+                  <span>{t("frontdesk.settings.agentsEditAvailabilityOffline")}</span>
                 </Box>
               </MenuItem>
             </Select>
