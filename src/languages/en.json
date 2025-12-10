@@ -3206,6 +3206,68 @@
       "searchForCustomer": "Search for a customer...",
       "selectedCustomer": "Selected Customer"
     },
+    "addChannel": {
+      "title": "Add New Channel",
+      "step1": {
+        "title": "Choose Channel",
+        "description": "Choose the provider you want to integrate with Chatwoot.",
+        "heading": "Choose a channel to connect"
+      },
+      "step2": {
+        "title": "Create Inbox",
+        "description": "Authenticate your account and create an inbox.",
+        "signInDescription": "Click on the Sign in with {{provider}} button to get started. You will be redirected to the email sign in page. Once you accept the requested permissions, you would be redirected back to the inbox creation step.",
+        "signInWith": "Sign in with {{provider}}",
+        "connecting": "Connecting..."
+      },
+      "step3": {
+        "title": "Add Agents",
+        "description": "Add agents to the created inbox.",
+        "heading": "Add Agents to Inbox",
+        "descriptionText": "Select additional agents to handle messages in this inbox.",
+        "noAgentsFound": "No agents found in this account. Please contact your administrator.",
+        "failedToLoadAgents": "Failed to load agents. Please try again.",
+        "addingAgents": "Adding Agents...",
+        "continue": "Continue ({{count}} selected)",
+        "you": "YOU",
+        "admin": "ADMIN",
+        "unknown": "Unknown"
+      },
+      "step4": {
+        "title": "Voilà!",
+        "description": "You are all set to go!"
+      },
+      "channels": {
+        "whatsapp": {
+          "name": "WhatsApp",
+          "description": "Support your customers on WhatsApp. (Coming Soon)"
+        },
+        "gmail": {
+          "name": "Gmail",
+          "description": "Connect with Gmail account."
+        },
+        "outlook": {
+          "name": "Outlook",
+          "description": "Connect with Outlook account."
+        },
+        "googleEmail": "Google Email"
+      },
+      "buttons": {
+        "cancel": "Cancel",
+        "next": "Next",
+        "back": "Back"
+      },
+      "success": {
+        "connected": "Successfully connected {{provider}}! {{count}} account(s) added.",
+        "assignedAgents": "Successfully assigned {{count}} agent(s) to the inbox!"
+      },
+      "errors": {
+        "invalidInboxData": "Invalid inbox data.",
+        "atLeastOneAgent": "At least one agent must be assigned to the inbox.",
+        "failedToAssignAgents": "Failed to assign agents. Please try again.",
+        "whatsappComingSoon": "WhatsApp integration is coming soon!"
+      }
+    },
     "title": "FrontDesk",
     "chatwootProvider": "Chatwoot Provider",
     "openFrontDesk": "Open FrontDesk",

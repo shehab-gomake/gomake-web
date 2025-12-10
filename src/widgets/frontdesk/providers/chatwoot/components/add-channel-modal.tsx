@@ -6,6 +6,7 @@
  */
 
 import React, { useState, useEffect, useCallback } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Dialog,
   DialogTitle,
@@ -54,29 +55,29 @@ interface ChannelOption {
   provider: string;
 }
 
-const getSteps = (currentStep: number) => [
+const getSteps = (currentStep: number, t: (key: string) => string) => [
   {
     number: 1,
-    title: "Choose Channel",
-    description: "Choose the provider you want to integrate with Chatwoot.",
+    title: t("frontdesk.addChannel.step1.title"),
+    description: t("frontdesk.addChannel.step1.description"),
     active: currentStep === 1,
   },
   {
     number: 2,
-    title: "Create Inbox",
-    description: "Authenticate your account and create an inbox.",
+    title: t("frontdesk.addChannel.step2.title"),
+    description: t("frontdesk.addChannel.step2.description"),
     active: currentStep === 2,
   },
   {
     number: 3,
-    title: "Add Agents",
-    description: "Add agents to the created inbox.",
+    title: t("frontdesk.addChannel.step3.title"),
+    description: t("frontdesk.addChannel.step3.description"),
     active: currentStep === 3,
   },
   {
     number: 4,
-    title: "Voilà!",
-    description: "You are all set to go!",
+    title: t("frontdesk.addChannel.step4.title"),
+    description: t("frontdesk.addChannel.step4.description"),
     active: currentStep === 4,
   },
 ];
@@ -88,6 +89,8 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
   preloadedInboxId = null,
   preloadedAccountId = null,
 }) => {
+  const { t } = useTranslation();
+  const dir: "rtl" | "ltr" = t("direction");
   const [selectedChannel, setSelectedChannel] = useState<string | null>(null);
   const [currentStep, setCurrentStep] = useState<number>(1);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
@@ -105,22 +108,22 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
   const channels: ChannelOption[] = [
     {
       id: "whatsapp",
-      name: "WhatsApp",
-      description: "Support your customers on WhatsApp. (Coming Soon)",
+      name: t("frontdesk.addChannel.channels.whatsapp.name"),
+      description: t("frontdesk.addChannel.channels.whatsapp.description"),
       icon: <WhatsAppIcon sx={{ fontSize: 32, color: colorTokens.neutral[700] }} />,
       provider: "whatsapp",
     },
     {
       id: "gmail",
-      name: "Gmail",
-      description: "Connect with Gmail account.",
+      name: t("frontdesk.addChannel.channels.gmail.name"),
+      description: t("frontdesk.addChannel.channels.gmail.description"),
       icon: <GoogleIcon sx={{ fontSize: 32, color: colorTokens.neutral[700] }} />,
       provider: "google",
     },
     {
       id: "outlook",
-      name: "Outlook",
-      description: "Connect with Outlook account.",
+      name: t("frontdesk.addChannel.channels.outlook.name"),
+      description: t("frontdesk.addChannel.channels.outlook.description"),
       icon: <OutlookIcon size={32} color={colorTokens.neutral[700]} />,
       provider: "microsoft",
     },
@@ -282,9 +285,9 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
           // Fallback: If no inbox data, skip to success (legacy flow)
           setCurrentStep(4);
 
-          const providerName = provider === "google" ? "Gmail" : provider === "microsoft" ? "Outlook" : "Email";
+          const providerName = provider === "google" ? t("frontdesk.addChannel.channels.gmail.name") : provider === "microsoft" ? t("frontdesk.addChannel.channels.outlook.name") : "Email";
           setSuccessMessage(
-            `Successfully connected ${providerName}! ${result.accountsAdded} account(s) added.`
+            t("frontdesk.addChannel.success.connected", { provider: providerName, count: result.accountsAdded })
           );
 
           // Refresh inboxes to show new channels
@@ -300,7 +303,7 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
         }
       } else if (provider === "whatsapp") {
         // WhatsApp not implemented
-        throw new Error("WhatsApp integration is coming soon!");
+        throw new Error(t("frontdesk.addChannel.errors.whatsappComingSoon"));
       }
     } catch (err: any) {
       console.error("Channel connection failed:", err);
@@ -320,13 +323,13 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
 
   const handleAddAgents = async () => {
     if (!newInboxData) {
-      setAgentAssignmentError("Invalid inbox data.");
+      setAgentAssignmentError(t("frontdesk.addChannel.errors.invalidInboxData"));
       return;
     }
     
     // Current user should always be in the selected agents
     if (selectedAgents.length === 0) {
-      setAgentAssignmentError("At least one agent must be assigned to the inbox.");
+      setAgentAssignmentError(t("frontdesk.addChannel.errors.atLeastOneAgent"));
       return;
     }
 
@@ -356,7 +359,7 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
 
       // Move to Step 4 (Success)
       setCurrentStep(4);
-      setSuccessMessage(`Successfully assigned ${selectedAgents.length} agent(s) to the inbox!`);
+      setSuccessMessage(t("frontdesk.addChannel.success.assignedAgents", { count: selectedAgents.length }));
 
       // Refresh inboxes to show new channels
       await refreshInboxes();
@@ -373,7 +376,7 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
     } catch (err: any) {
       console.error("Agent assignment failed:", err);
       setAgentAssignmentError(
-        err.message || "Failed to assign agents. Please try again."
+        err.message || t("frontdesk.addChannel.errors.failedToAssignAgents")
       );
     } finally {
       setIsAssigningAgents(false);
@@ -382,7 +385,7 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
 
   const selectedChannelData = channels.find((c) => c.id === selectedChannel);
   const displayError = error || oauthError || agentAssignmentError;
-  const steps = getSteps(currentStep);
+  const steps = getSteps(currentStep, t);
 
   return (
     <Dialog
@@ -397,6 +400,7 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
           boxShadow: `0 8px 32px ${alpha(colorTokens.neutral[900], 0.12)}`,
           backgroundColor: "#ffffff",
           minHeight: "600px",
+          direction: dir,
         },
       }}
     >
@@ -413,9 +417,10 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
+          direction: dir,
         }}
       >
-        <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, direction: dir }}>
           <Box
             sx={{
               width: 40,
@@ -438,7 +443,7 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
             </Typography>
           </Box>
           <Typography variant="h6" sx={{ fontWeight: 600 }}>
-            Add New Channel
+            {t("frontdesk.addChannel.title")}
           </Typography>
         </Box>
         <IconButton
@@ -460,19 +465,20 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
       </DialogTitle>
 
       {/* Content */}
-      <DialogContent sx={{ p: 0, flex: 1, display: "flex", overflow: "hidden" }}>
-        <Box sx={{ display: "flex", width: "100%", height: "100%" }}>
+      <DialogContent sx={{ p: 0, flex: 1, display: "flex", overflow: "hidden", direction: dir }}>
+        <Box sx={{ display: "flex", width: "100%", height: "100%", direction: dir }}>
           {/* Left Column - Steps */}
           <Box
             sx={{
               width: 300,
               minWidth: 300,
-              borderRight: `1px solid ${colorTokens.neutral[200]}`,
+              [dir === "rtl" ? "borderLeft" : "borderRight"]: `1px solid ${colorTokens.neutral[200]}`,
               backgroundColor: "#ffffff",
               p: 3,
               display: "flex",
               flexDirection: "column",
               gap: 3,
+              direction: dir,
             }}
           >
             {steps.map((step) => (
@@ -482,6 +488,7 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
                   display: "flex",
                   gap: 2,
                   alignItems: "flex-start",
+                  direction: dir,
                 }}
               >
                 {/* Step Number */}
@@ -537,6 +544,7 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
               overflow: "auto",
               display: "flex",
               flexDirection: "column",
+              direction: dir,
             }}
           >
             {/* Success Message */}
@@ -578,7 +586,7 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
                     mb: 3,
                   }}
                 >
-                  Choose a channel to connect
+                  {t("frontdesk.addChannel.step1.heading")}
                 </Typography>
 
                 {/* Channel Grid */}
@@ -667,6 +675,7 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
                       display: "flex",
                       justifyContent: "flex-end",
                       gap: 2,
+                      direction: dir,
                     }}
                   >
                     <Button
@@ -686,7 +695,7 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
                         },
                       }}
                     >
-                      Cancel
+                      {t("frontdesk.addChannel.buttons.cancel")}
                     </Button>
                     <Button
                       onClick={handleNext}
@@ -708,7 +717,7 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
                         },
                       }}
                     >
-                      Next
+                      {t("frontdesk.addChannel.buttons.next")}
                     </Button>
                   </Box>
                 )}
@@ -726,7 +735,7 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
                     mb: 2,
                   }}
                 >
-                  {selectedChannelData.name === "Gmail" ? "Google Email" : selectedChannelData.name}
+                  {selectedChannelData.name === t("frontdesk.addChannel.channels.gmail.name") ? t("frontdesk.addChannel.channels.googleEmail") : selectedChannelData.name}
                 </Typography>
 
                 <Typography
@@ -737,9 +746,7 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
                     lineHeight: 1.6,
                   }}
                 >
-                  Click on the Sign in with {selectedChannelData.name} button to get started. You will be redirected to
-                  the email sign in page. Once you accept the requested permissions, you would be redirected back to
-                  the inbox creation step.
+                  {t("frontdesk.addChannel.step2.signInDescription", { provider: selectedChannelData.name })}
                 </Typography>
 
                 {/* Sign In Button */}
@@ -771,12 +778,12 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
                     {isAuthenticating ? (
                       <>
                         <CircularProgress size={20} sx={{ color: "#ffffff" }} />
-                        Connecting...
+                        {t("frontdesk.addChannel.step2.connecting")}
                       </>
                     ) : (
                       <>
                         {selectedChannelData.icon}
-                        Sign in with {selectedChannelData.name}
+                        {t("frontdesk.addChannel.step2.signInWith", { provider: selectedChannelData.name })}
                       </>
                     )}
                   </Button>
@@ -789,6 +796,7 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
                     pt: 4,
                     display: "flex",
                     justifyContent: "flex-start",
+                    direction: dir,
                   }}
                 >
                   <Button
@@ -812,7 +820,7 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
                       },
                     }}
                   >
-                    Back
+                    {t("frontdesk.addChannel.buttons.back")}
                   </Button>
                 </Box>
               </>
@@ -829,7 +837,7 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
                     mb: 2,
                   }}
                 >
-                  Add Agents to Inbox
+                  {t("frontdesk.addChannel.step3.heading")}
                 </Typography>
 
                 <Typography
@@ -840,7 +848,7 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
                     lineHeight: 1.6,
                   }}
                 >
-                  Select additional agents to handle messages in this inbox.
+                  {t("frontdesk.addChannel.step3.descriptionText")}
                 </Typography>
 
                 {/* Loading State */}
@@ -853,7 +861,7 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
                 {/* Error State */}
                 {agentsError && !agentsLoading && (
                   <Alert severity="error" sx={{ mb: 3 }}>
-                    Failed to load agents. Please try again.
+                    {t("frontdesk.addChannel.step3.failedToLoadAgents")}
                   </Alert>
                 )}
 
@@ -964,7 +972,7 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
                                     whiteSpace: "nowrap",
                                   }}
                                 >
-                                  {agent.name || agent.available_name || "Unknown"}
+                                  {agent.name || agent.available_name || t("frontdesk.addChannel.step3.unknown")}
                                 </Typography>
                                 {isCurrentUser && (
                                   <Box
@@ -981,7 +989,7 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
                                       flexShrink: 0,
                                     }}
                                   >
-                                    YOU
+                                    {t("frontdesk.addChannel.step3.you")}
                                   </Box>
                                 )}
                               </Box>
@@ -1001,7 +1009,7 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
                                     flexShrink: 0,
                                   }}
                                 >
-                                  ADMIN
+                                  {t("frontdesk.addChannel.step3.admin")}
                                 </Box>
                               )}
                             </Box>
@@ -1015,7 +1023,7 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
                 {/* No Agents State */}
                 {!agentsLoading && !agentsError && agents.length === 0 && (
                   <Alert severity="warning" sx={{ mb: 3 }}>
-                    No agents found in this account. Please contact your administrator.
+                    {t("frontdesk.addChannel.step3.noAgentsFound")}
                   </Alert>
                 )}
 
@@ -1027,6 +1035,7 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
                     display: "flex",
                     justifyContent: "flex-end",
                     gap: 2,
+                    direction: dir,
                   }}
                 >
                   <Button
@@ -1050,7 +1059,7 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
                       },
                     }}
                   >
-                    Back
+                    {t("frontdesk.addChannel.buttons.back")}
                   </Button>
                   <Button
                     onClick={handleAddAgents}
@@ -1078,10 +1087,10 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
                     {isAssigningAgents ? (
                       <>
                         <CircularProgress size={20} sx={{ color: "#ffffff" }} />
-                        Adding Agents...
+                        {t("frontdesk.addChannel.step3.addingAgents")}
                       </>
                     ) : (
-                      `Continue (${selectedAgents.length} selected)`
+                      t("frontdesk.addChannel.step3.continue", { count: selectedAgents.length })
                     )}
                   </Button>
                 </Box>
@@ -1129,7 +1138,7 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
                     mb: 2,
                   }}
                 >
-                  Voilà!
+                  {t("frontdesk.addChannel.step4.title")}
                 </Typography>
                 <Typography
                   sx={{
@@ -1137,7 +1146,7 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
                     color: colorTokens.neutral[600],
                   }}
                 >
-                  You are all set to go!
+                  {t("frontdesk.addChannel.step4.description")}
                 </Typography>
               </Box>
             )}
