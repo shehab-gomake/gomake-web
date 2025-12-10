@@ -10,14 +10,17 @@
  */
 
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { BaseConversationView } from "../components/base-conversation-view";
 
 export const UnattendedView: React.FC = () => {
+  const { t } = useTranslation();
+
   return (
     <BaseConversationView
       emptyState={{
-        title: "No ticket selected",
-        description: "Choose an unattended ticket to start responding",
+        title: t("frontdesk.emptyStates.noTicketSelected"),
+        description: t("frontdesk.emptyStates.chooseUnattendedTicket"),
       }}
     />
   );

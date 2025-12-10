@@ -6,6 +6,7 @@
  */
 
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Box,
   Typography,
@@ -37,6 +38,8 @@ export const InboxDetailSettings: React.FC<InboxDetailSettingsProps> = ({
   inbox,
   onBack,
 }) => {
+  const { t } = useTranslation();
+  const dir: "rtl" | "ltr" = t("direction");
   const { selectedAccountId } = useChatwootProvider();
   const setInboxAgentsMap = useSetRecoilState(chatwootInboxAgentsMapAtom);
   const [activeTab, setActiveTab] = useState<SettingsTab>("settings");
@@ -48,7 +51,7 @@ export const InboxDetailSettings: React.FC<InboxDetailSettingsProps> = ({
   }>({ open: false, message: "", severity: "success" });
 
   const accountId = selectedAccountId;
-  const inboxDisplayName = inbox.name || inbox.email || "Unknown Inbox";
+  const inboxDisplayName = inbox.name || inbox.email || t("frontdesk.settings.inboxesDetailUnknownInbox");
   const inboxEmail =
     inbox.email ||
     `${inbox.name?.toLowerCase().replace(/\s+/g, ".")}@gomake.net`;
@@ -62,14 +65,14 @@ export const InboxDetailSettings: React.FC<InboxDetailSettingsProps> = ({
       await chatwootService.inboxes.updateInbox(accountId, inbox.id, updates);
       setNotification({
         open: true,
-        message: "Settings saved successfully",
+        message: t("frontdesk.settings.inboxesDetailSettingsSaved"),
         severity: "success",
       });
     } catch (error) {
       console.error("Failed to save inbox settings:", error);
       setNotification({
         open: true,
-        message: "Failed to save settings. Please try again.",
+        message: t("frontdesk.settings.inboxesDetailSettingsFailed"),
         severity: "error",
       });
     } finally {
@@ -104,14 +107,14 @@ export const InboxDetailSettings: React.FC<InboxDetailSettingsProps> = ({
       
       setNotification({
         open: true,
-        message: "Agents updated successfully",
+        message: t("frontdesk.settings.inboxesDetailAgentsUpdated"),
         severity: "success",
       });
     } catch (error) {
       console.error("Failed to update agents:", error);
       setNotification({
         open: true,
-        message: "Failed to update agents. Please try again.",
+        message: t("frontdesk.settings.inboxesDetailAgentsFailed"),
         severity: "error",
       });
     } finally {
@@ -121,8 +124,8 @@ export const InboxDetailSettings: React.FC<InboxDetailSettingsProps> = ({
 
   if (!accountId) {
     return (
-      <Box sx={{ p: 3 }}>
-        <Alert severity="error">No account selected</Alert>
+      <Box sx={{ p: 3, direction: dir }}>
+        <Alert severity="error">{t("frontdesk.settings.inboxesDetailNoAccount")}</Alert>
       </Box>
     );
   }
@@ -134,11 +137,12 @@ export const InboxDetailSettings: React.FC<InboxDetailSettingsProps> = ({
         display: "flex",
         flexDirection: "column",
         bgcolor: "#f8f9fa", // Muted background
+        direction: dir,
       }}
     >
       {/* Compact Header */}
-      <Box sx={{ px: 3, pt: 1.5, pb: 1, borderBottom: "1px solid rgba(0,0,0,0.06)" }}>
-        <Box sx={{ display: "flex", alignItems: "center", gap: 0.75, mb: 1 }}>
+      <Box sx={{ px: 3, pt: 1.5, pb: 1, borderBottom: "1px solid rgba(0,0,0,0.06)", direction: dir }}>
+        <Box sx={{ display: "flex", alignItems: "center", gap: 0.75, mb: 1, direction: dir }}>
           <Link
             component="button"
             onClick={onBack}
@@ -156,16 +160,17 @@ export const InboxDetailSettings: React.FC<InboxDetailSettingsProps> = ({
               border: "none",
               background: "none",
               p: 0,
+              direction: dir,
             }}
           >
             <ArrowBackIcon sx={{ fontSize: 16 }} />
             <Typography variant="body2" sx={{ fontSize: "0.813rem", fontWeight: 500 }}>
-              Back
+              {t("frontdesk.settings.inboxesDetailBack")}
             </Typography>
           </Link>
         </Box>
         <Typography variant="h6" sx={{ fontWeight: 600, mb: 0.5, fontSize: "1.125rem", color: "#1f2937" }}>
-          Inbox Settings
+          {t("frontdesk.settings.inboxesDetailTitle")}
         </Typography>
         <Typography variant="body2" sx={{ color: "#6b7280", mb: 1.5, fontSize: "0.813rem" }}>
           {inboxDisplayName} • {inbox.channel_type}
@@ -179,6 +184,7 @@ export const InboxDetailSettings: React.FC<InboxDetailSettingsProps> = ({
           scrollButtons="auto"
           sx={{
             minHeight: 36,
+            direction: dir,
             "& .MuiTab-root": {
               textTransform: "none",
               fontWeight: 500,
@@ -197,8 +203,8 @@ export const InboxDetailSettings: React.FC<InboxDetailSettingsProps> = ({
             },
           }}
         >
-          <Tab label="Settings" value="settings" />
-          <Tab label="Collaborators" value="collaborators" />
+          <Tab label={t("frontdesk.settings.inboxesDetailTabSettings")} value="settings" />
+          <Tab label={t("frontdesk.settings.inboxesDetailTabCollaborators")} value="collaborators" />
         </Tabs>
       </Box>
 
@@ -238,7 +244,7 @@ export const InboxDetailSettings: React.FC<InboxDetailSettingsProps> = ({
         open={notification.open}
         autoHideDuration={6000}
         onClose={() => setNotification({ ...notification, open: false })}
-        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+        anchorOrigin={{ vertical: "bottom", horizontal: dir === "rtl" ? "left" : "right" }}
       >
         <Alert
           onClose={() => setNotification({ ...notification, open: false })}
@@ -247,6 +253,7 @@ export const InboxDetailSettings: React.FC<InboxDetailSettingsProps> = ({
             width: "100%",
             borderRadius: "6px",
             fontSize: "0.813rem",
+            direction: dir,
           }}
         >
           {notification.message}

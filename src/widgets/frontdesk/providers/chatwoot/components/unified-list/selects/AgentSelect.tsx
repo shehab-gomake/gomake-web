@@ -8,6 +8,7 @@
  */
 
 import React, { useState, useCallback, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import PersonIcon from '@mui/icons-material/Person';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import { UnifiedListDropdown } from '../UnifiedListDropdown';
@@ -90,11 +91,17 @@ export const AgentSelect: React.FC<AgentSelectProps> = ({
   loading = false,
   updating = false,
   variant = 'inline',
-  label = 'Assigned To',
-  emptyText = 'No agents available',
-  placeholder = 'Assign to someone',
+  label,
+  emptyText,
+  placeholder,
   disabled = false,
 }) => {
+  const { t } = useTranslation();
+  const dir: "rtl" | "ltr" = t("direction");
+  const finalLabel = label || t("frontdesk.detailPanel.assignedTo");
+  const finalPlaceholder = placeholder || t("frontdesk.detailPanel.assignToSomeone");
+  const finalEmptyText = emptyText || t("frontdesk.detailPanel.noAgentsAssignedToInbox");
+  
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const open = Boolean(anchorEl);
 
@@ -117,7 +124,7 @@ export const AgentSelect: React.FC<AgentSelectProps> = ({
       {
         type: 'action',
         id: 'self-assign',
-        label: 'Self Assign',
+        label: t("frontdesk.detailPanel.selfAssign"),
         icon: <PersonAddIcon sx={{ fontSize: 18 }} />,
         variant: 'primary',
         onClick: () => {
@@ -128,7 +135,7 @@ export const AgentSelect: React.FC<AgentSelectProps> = ({
         },
       },
     ];
-  }, [canSelfAssign, agents, currentUserId, onSelect]);
+  }, [canSelfAssign, agents, currentUserId, onSelect, t]);
 
   const handleOpen = useCallback((event: React.MouseEvent<HTMLElement>) => {
     if (!disabled && !updating) {
@@ -178,7 +185,7 @@ export const AgentSelect: React.FC<AgentSelectProps> = ({
       {variant === 'filter' && (
         <FilterIconButton
           icon={<PersonIcon />}
-          tooltip={selectedAgent ? `Assigned to: ${agentName}` : placeholder}
+          tooltip={selectedAgent ? t("frontdesk.detailPanel.assignedToTooltip", { name: agentName }) : finalPlaceholder}
           isActive={hasSelection}
           badgeCount={hasSelection ? 1 : 0}
           onClick={handleOpen}
@@ -190,13 +197,13 @@ export const AgentSelect: React.FC<AgentSelectProps> = ({
       {variant === 'inline' && (
         <AssignmentTrigger
           type="agent"
-          label={label}
+          label={finalLabel}
           valueName={agentName}
           avatarUrl={selectedAgent?.thumbnail}
           avatarInitials={agentInitials}
           avatarColor={avatarColor}
           hasValue={hasSelection}
-          placeholder={placeholder}
+          placeholder={finalPlaceholder}
           onClick={handleOpen}
           loading={updating}
           disabled={disabled}
@@ -214,13 +221,13 @@ export const AgentSelect: React.FC<AgentSelectProps> = ({
         onSelect={handleSelect}
         renderItem={renderItem}
         showNoneOption={!!selectedAgent}
-        noneOptionLabel="Unassign"
+        noneOptionLabel={t("frontdesk.detailPanel.unassign")}
         headerActions={headerActions}
-        headerText="Assign Agent"
+        headerText={t("frontdesk.detailPanel.assignAgent")}
         loading={loading}
-        emptyMessage={emptyText}
+        emptyMessage={finalEmptyText}
         searchable={agents.length > 5}
-        searchPlaceholder="Search agents..."
+        searchPlaceholder={t("frontdesk.detailPanel.searchAgents")}
       />
     </>
   );

@@ -6,24 +6,30 @@
  */
 
 import React, { useState } from "react";
-import { 
-  Stack, 
-  Typography, 
-  TextField, 
-  Chip, 
-  IconButton, 
-  Box, 
-  Menu, 
-  MenuItem, 
+import {
+  Stack,
+  Typography,
+  TextField,
+  Chip,
+  IconButton,
+  Box,
+  Menu,
+  MenuItem,
   ListItemIcon,
   ListItemText,
   Collapse,
 } from "@mui/material";
+import { useTranslation } from "react-i18next";
 import CloseIcon from "@mui/icons-material/Close";
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 import PersonAddOutlinedIcon from "@mui/icons-material/PersonAddOutlined";
 import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
-import { colorTokens, radiusTokens, shadowTokens, semanticSpacing } from "@/widgets/frontdesk/design-system";
+import {
+  colorTokens,
+  radiusTokens,
+  shadowTokens,
+  semanticSpacing,
+} from "@/widgets/frontdesk/design-system";
 
 export interface ReplyComposerEmailFieldsProps {
   /** TO email addresses */
@@ -52,7 +58,9 @@ export interface ReplyComposerEmailFieldsProps {
   lightGrayText?: string;
 }
 
-export const ReplyComposerEmailFields: React.FC<ReplyComposerEmailFieldsProps> = ({
+export const ReplyComposerEmailFields: React.FC<
+  ReplyComposerEmailFieldsProps
+> = ({
   toEmails,
   ccEmails,
   bccEmails,
@@ -63,6 +71,9 @@ export const ReplyComposerEmailFields: React.FC<ReplyComposerEmailFieldsProps> =
   onToggleCc,
   onToggleBcc,
 }) => {
+  const { t } = useTranslation();
+  const dir: "rtl" | "ltr" = t("direction");
+  const isRTL = dir === "rtl";
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const menuOpen = Boolean(anchorEl);
 
@@ -137,18 +148,33 @@ export const ReplyComposerEmailFields: React.FC<ReplyComposerEmailFieldsProps> =
 
   return (
     <Stack
-      spacing={1}
       sx={{
         px: 2,
         py: 1.5,
         backgroundColor: "transparent",
+        gap: 1,
+        // direction: dir,
       }}
     >
       {/* TO Field - Clean chip display with add button */}
-      <Stack direction="row" alignItems="center" spacing={1.5}>
-        <Typography sx={labelStyle}>To</Typography>
-        
-        <Box sx={{ flex: 1, display: "flex", alignItems: "center", gap: 1, flexWrap: "wrap" }}>
+      <Stack
+        direction="row"
+        alignItems="center"
+        sx={{
+          gap: 1.5,
+        }}
+      >
+        <Typography sx={labelStyle}>{t("frontdesk.compose.to")}</Typography>
+
+        <Box
+          sx={{
+            flex: 1,
+            display: "flex",
+            alignItems: "center",
+            gap: 1,
+            flexWrap: "wrap",
+          }}
+        >
           {toEmails ? (
             <Chip
               label={toEmails}
@@ -174,7 +200,7 @@ export const ReplyComposerEmailFields: React.FC<ReplyComposerEmailFieldsProps> =
                 fontStyle: "italic",
               }}
             >
-              No recipient
+              {t("frontdesk.compose.noRecipient")}
             </Typography>
           )}
         </Box>
@@ -219,7 +245,7 @@ export const ReplyComposerEmailFields: React.FC<ReplyComposerEmailFieldsProps> =
               }}
             >
               {!showCc && (
-                <MenuItem 
+                <MenuItem
                   onClick={handleAddCc}
                   sx={{
                     py: 1,
@@ -230,19 +256,21 @@ export const ReplyComposerEmailFields: React.FC<ReplyComposerEmailFieldsProps> =
                   }}
                 >
                   <ListItemIcon sx={{ minWidth: 36 }}>
-                    <PersonAddOutlinedIcon sx={{ fontSize: 18, color: colorTokens.neutral[600] }} />
+                    <PersonAddOutlinedIcon
+                      sx={{ fontSize: 18, color: colorTokens.neutral[600] }}
+                    />
                   </ListItemIcon>
-                  <ListItemText 
-                    primary="Add CC" 
-                    primaryTypographyProps={{ 
+                  <ListItemText
+                    primary={t("frontdesk.compose.addCc")}
+                    primaryTypographyProps={{
                       fontSize: "0.875rem",
                       fontWeight: 500,
-                    }} 
+                    }}
                   />
                 </MenuItem>
               )}
               {!showBcc && (
-                <MenuItem 
+                <MenuItem
                   onClick={handleAddBcc}
                   sx={{
                     py: 1,
@@ -253,14 +281,16 @@ export const ReplyComposerEmailFields: React.FC<ReplyComposerEmailFieldsProps> =
                   }}
                 >
                   <ListItemIcon sx={{ minWidth: 36 }}>
-                    <VisibilityOffOutlinedIcon sx={{ fontSize: 18, color: colorTokens.neutral[600] }} />
+                    <VisibilityOffOutlinedIcon
+                      sx={{ fontSize: 18, color: colorTokens.neutral[600] }}
+                    />
                   </ListItemIcon>
-                  <ListItemText 
-                    primary="Add BCC" 
-                    primaryTypographyProps={{ 
+                  <ListItemText
+                    primary={t("frontdesk.compose.addBcc")}
+                    primaryTypographyProps={{
                       fontSize: "0.875rem",
                       fontWeight: 500,
-                    }} 
+                    }}
                   />
                 </MenuItem>
               )}
@@ -271,15 +301,22 @@ export const ReplyComposerEmailFields: React.FC<ReplyComposerEmailFieldsProps> =
 
       {/* CC Field (conditional) */}
       <Collapse in={showCc} timeout={200}>
-        <Stack direction="row" alignItems="center" spacing={1.5}>
-          <Typography sx={labelStyle}>Cc</Typography>
+        <Stack
+          direction="row"
+          alignItems="center"
+          sx={{
+            gap: 1.5,
+            flexDirection: isRTL ? "row-reverse" : "row",
+          }}
+        >
+          <Typography sx={labelStyle}>{t("frontdesk.compose.cc")}</Typography>
           <Box sx={{ flex: 1, ...fieldContainerStyle }}>
             <TextField
               size="small"
               value={ccEmails}
               onChange={(e) => onCcChange(e.target.value)}
               variant="standard"
-              placeholder="Enter email addresses..."
+              placeholder={t("frontdesk.compose.enterEmailAddresses")}
               fullWidth
               InputProps={{
                 disableUnderline: true,
@@ -308,15 +345,22 @@ export const ReplyComposerEmailFields: React.FC<ReplyComposerEmailFieldsProps> =
 
       {/* BCC Field (conditional) */}
       <Collapse in={showBcc} timeout={200}>
-        <Stack direction="row" alignItems="center" spacing={1.5}>
-          <Typography sx={labelStyle}>Bcc</Typography>
+        <Stack
+          direction="row"
+          alignItems="center"
+          sx={{
+            gap: 1.5,
+            flexDirection: isRTL ? "row-reverse" : "row",
+          }}
+        >
+          <Typography sx={labelStyle}>{t("frontdesk.compose.bcc")}</Typography>
           <Box sx={{ flex: 1, ...fieldContainerStyle }}>
             <TextField
               size="small"
               value={bccEmails}
               onChange={(e) => onBccChange(e.target.value)}
               variant="standard"
-              placeholder="Enter email addresses..."
+              placeholder={t("frontdesk.compose.enterEmailAddresses")}
               fullWidth
               InputProps={{
                 disableUnderline: true,

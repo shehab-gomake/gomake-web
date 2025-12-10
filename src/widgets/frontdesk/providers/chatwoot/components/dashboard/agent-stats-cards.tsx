@@ -15,6 +15,7 @@
 
 import React, { useMemo } from "react";
 import { Box } from "@mui/material";
+import { useTranslation } from "react-i18next";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
@@ -46,35 +47,40 @@ export const AgentStatsCards: React.FC<AgentStatsCardsProps> = ({
   onCardClick,
   onWarningsClick,
 }) => {
+  const { t } = useTranslation();
+  
   // Memoize card configurations to prevent unnecessary recalculations
   const cards = useMemo(
     () => [
       {
         id: "my-open-tickets" as const,
-        label: "My Open Tickets",
+        label: t("frontdesk.dashboard.agent.myOpenTickets"),
         value: formatStatCardValue(stats.myOpenTickets),
         icon: <AssignmentIcon />,
         variant: getCardVariant(stats.myOpenTickets, "success", "primary"),
-        description: stats.myOpenTickets === 0 ? "All caught up!" : "Assigned to me",
+        description:
+          stats.myOpenTickets === 0
+            ? t("frontdesk.dashboard.agent.allCaughtUp")
+            : t("frontdesk.dashboard.agent.assignedToMe"),
       },
       {
         id: "my-response-time" as const,
-        label: "Avg Response Time",
+        label: t("frontdesk.dashboard.agent.avgResponseTime"),
         value: formatResponseTime(stats.myAverageResponseTime),
         icon: <AccessTimeIcon />,
         variant: "neutral" as const,
-        description: "My average",
+        description: t("frontdesk.dashboard.agent.myAverage"),
       },
       {
         id: "my-resolved-today" as const,
-        label: "Resolved Today",
+        label: t("frontdesk.dashboard.agent.resolvedToday"),
         value: formatStatCardValue(stats.myResolvedToday),
         icon: <CheckCircleIcon />,
         variant: "success" as const,
-        description: "Completed today",
+        description: t("frontdesk.dashboard.agent.completedToday"),
       },
     ],
-    [stats]
+    [stats, t]
   );
 
   return (

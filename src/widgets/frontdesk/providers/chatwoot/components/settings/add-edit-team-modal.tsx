@@ -6,6 +6,7 @@
  */
 
 import React, { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Box,
   Typography,
@@ -53,6 +54,9 @@ export const AddEditTeamModal: React.FC<AddEditTeamModalProps> = ({
   editingTeam,
   initialMembers = [],
 }) => {
+  const { t } = useTranslation();
+  const dir: "rtl" | "ltr" = t("direction");
+  const isRTL = dir === "rtl";
   const { agents, loading: loadingAgents } = useChatwootAgents(accountId);
 
   const [name, setName] = useState("");
@@ -82,7 +86,7 @@ export const AddEditTeamModal: React.FC<AddEditTeamModalProps> = ({
 
   const handleSubmit = async () => {
     if (!name.trim()) {
-      setError("Team name is required");
+      setError(t("frontdesk.teams.teamNameRequired"));
       return;
     }
 
@@ -100,7 +104,7 @@ export const AddEditTeamModal: React.FC<AddEditTeamModalProps> = ({
       );
       onClose();
     } catch (err: any) {
-      setError(err.message || "Failed to save team");
+      setError(err.message || t("frontdesk.teams.failedToSaveTeam"));
     } finally {
       setSaving(false);
     }
@@ -117,7 +121,7 @@ export const AddEditTeamModal: React.FC<AddEditTeamModalProps> = ({
     <CompactModal
       open={open}
       onClose={onClose}
-      title={isEditMode ? "Edit Team" : "Create Team"}
+      title={isEditMode ? t("frontdesk.teams.editTeam") : t("frontdesk.teams.createTeam")}
       icon={<GroupsIcon />}
       error={error}
       isLoading={loadingAgents}
@@ -126,7 +130,7 @@ export const AddEditTeamModal: React.FC<AddEditTeamModalProps> = ({
         <CompactModalActions
           onCancel={onClose}
           onSubmit={handleSubmit}
-          submitLabel={isEditMode ? "Save Changes" : "Create Team"}
+          submitLabel={isEditMode ? t("frontdesk.teams.saveChanges") : t("frontdesk.teams.createTeam")}
           isSubmitting={saving || isSubmitting}
           submitDisabled={!canSubmit}
           cancelDisabled={saving || isSubmitting}
@@ -136,29 +140,29 @@ export const AddEditTeamModal: React.FC<AddEditTeamModalProps> = ({
       <CompactFormSection>
         {/* Team Name */}
         <CompactTextField
-          label="Team Name"
+          label={t("frontdesk.teams.teamName")}
           required
           value={name}
           onChange={(e) => setName(e.target.value)}
-          placeholder="e.g., Support Team, Sales Team"
+          placeholder={t("frontdesk.teams.teamNamePlaceholder")}
           disabled={saving || isSubmitting}
           autoFocus
         />
 
         {/* Description */}
         <CompactTextField
-          label="Description"
+          label={t("frontdesk.teams.description")}
           optional
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          placeholder="Add a brief description..."
+          placeholder={t("frontdesk.teams.descriptionPlaceholder")}
           multiline
           rows={2}
           disabled={saving || isSubmitting}
         />
 
         {/* Team Members */}
-        <Box>
+        <Box sx={{ direction: dir }}>
           <Typography
             sx={{
               mb: 0.75,
@@ -169,15 +173,15 @@ export const AddEditTeamModal: React.FC<AddEditTeamModalProps> = ({
               letterSpacing: "0.025em",
             }}
           >
-            Team Members <span style={{ fontSize: "0.688rem", color: "#9ca3af", fontWeight: 400 }}>(Optional)</span>
+            {t("frontdesk.teams.teamMembers")} <span style={{ fontSize: "0.688rem", color: "#9ca3af", fontWeight: 400 }}>({t("frontdesk.teams.optional")})</span>
           </Typography>
-          <FormControl fullWidth size="small">
-            <InputLabel sx={{ fontSize: "0.813rem" }}>Select team members</InputLabel>
+          <FormControl fullWidth size="small" sx={{ direction: dir }}>
+            <InputLabel sx={{ fontSize: "0.813rem" }}>{t("frontdesk.teams.selectTeamMembers")}</InputLabel>
             <Select
               multiple
               value={selectedAgentIds}
               onChange={handleAgentChange}
-              input={<OutlinedInput label="Select team members" />}
+              input={<OutlinedInput label={t("frontdesk.teams.selectTeamMembers")} />}
               renderValue={(selected) => (
                 <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
                   {selected.map((agentId) => {

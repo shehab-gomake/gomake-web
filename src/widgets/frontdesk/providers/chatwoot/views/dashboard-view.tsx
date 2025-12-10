@@ -7,10 +7,14 @@
 
 import React from "react";
 import { Box, Paper, Chip, Stack, Typography } from "@mui/material";
+import { useTranslation } from "react-i18next";
 import HistoryIcon from "@mui/icons-material/History";
 import { ChatwootSettingsSubpage } from "@/widgets/frontdesk/routing/types";
 import { useChatwootProvider } from "../hooks/use-chatwoot-provider";
-import { useAgentDashboardStats, useAdminDashboardStats } from "../hooks/use-chatwoot-dashboard-stats";
+import {
+  useAgentDashboardStats,
+  useAdminDashboardStats,
+} from "../hooks/use-chatwoot-dashboard-stats";
 import { useChatwootDashboardType } from "../hooks/use-chatwoot-dashboard-type";
 import { useDashboardNavigation } from "../hooks/use-dashboard-navigation";
 import { AgentStatsCards } from "../components/dashboard/agent-stats-cards";
@@ -45,7 +49,8 @@ const DASHBOARD_TOKENS = {
   card: {
     borderRadius: 14,
     shadow: "0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02)",
-    shadowHover: "0 4px 12px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.04)",
+    shadowHover:
+      "0 4px 12px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.04)",
     border: "1px solid rgba(0, 0, 0, 0.06)",
   },
   // Background
@@ -67,9 +72,11 @@ const DASHBOARD_TOKENS = {
 } as const;
 
 export const DashboardView: React.FC = () => {
+  const { t } = useTranslation();
   const { router: chatwootRouter } = useChatwootProvider();
   const dashboardType = useChatwootDashboardType();
-  const { handleCardClick, handleConversationSelect } = useDashboardNavigation();
+  const { handleCardClick, handleConversationSelect } =
+    useDashboardNavigation();
 
   // Use role-specific stats hooks - only call the one we need
   const agentStats = useAgentDashboardStats();
@@ -78,7 +85,9 @@ export const DashboardView: React.FC = () => {
   // Get conversations and selection state
   const conversations = useRecoilValue(chatwootConversationsAtom);
   const selectedConversation = useRecoilValue(chatwootSelectedConversationAtom);
-  const conversationsLoading = useRecoilValue(chatwootConversationsLoadingLegacyAtom);
+  const conversationsLoading = useRecoilValue(
+    chatwootConversationsLoadingLegacyAtom
+  );
 
   return (
     <Box
@@ -116,13 +125,21 @@ export const DashboardView: React.FC = () => {
             <AdminStatsCards
               stats={adminStats}
               onCardClick={handleCardClick}
-              onWarningsClick={() => chatwootRouter.navigateToSettings(ChatwootSettingsSubpage.WARNINGS)}
+              onWarningsClick={() =>
+                chatwootRouter.navigateToSettings(
+                  ChatwootSettingsSubpage.WARNINGS
+                )
+              }
             />
           ) : (
             <AgentStatsCards
               stats={agentStats}
               onCardClick={handleCardClick}
-              onWarningsClick={() => chatwootRouter.navigateToSettings(ChatwootSettingsSubpage.WARNINGS)}
+              onWarningsClick={() =>
+                chatwootRouter.navigateToSettings(
+                  ChatwootSettingsSubpage.WARNINGS
+                )
+              }
             />
           )}
         </Box>
@@ -171,7 +188,13 @@ export const DashboardView: React.FC = () => {
                 justifyContent: "space-between",
               }}
             >
-              <Stack direction="row" spacing={1.5} alignItems="center">
+              <Stack
+                direction="row"
+                alignItems="center"
+                sx={{
+                  gap: 1.5,
+                }}
+              >
                 <Box
                   sx={{
                     width: 32,
@@ -183,7 +206,12 @@ export const DashboardView: React.FC = () => {
                     justifyContent: "center",
                   }}
                 >
-                  <HistoryIcon sx={{ fontSize: 18, color: DASHBOARD_TOKENS.colors.primary }} />
+                  <HistoryIcon
+                    sx={{
+                      fontSize: 18,
+                      color: DASHBOARD_TOKENS.colors.primary,
+                    }}
+                  />
                 </Box>
                 <Box>
                   <Typography
@@ -195,7 +223,7 @@ export const DashboardView: React.FC = () => {
                       lineHeight: 1.4,
                     }}
                   >
-                    Recent Activity
+                    {t("frontdesk.dashboard.recentActivity")}
                   </Typography>
                   <Typography
                     sx={{
@@ -204,7 +232,7 @@ export const DashboardView: React.FC = () => {
                       mt: 0.25,
                     }}
                   >
-                    Latest conversations
+                    {t("frontdesk.dashboard.latestConversations")}
                   </Typography>
                 </Box>
               </Stack>

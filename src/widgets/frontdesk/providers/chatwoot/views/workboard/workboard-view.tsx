@@ -120,7 +120,13 @@ const WorkboardViewComponent: React.FC = () => {
             padding: "16px 24px",
           }}
         >
-          <Stack direction="row" alignItems="center" spacing={2}>
+          <Stack
+            direction="row"
+            alignItems="center"
+            sx={{
+              gap: 2,
+            }}
+          >
             {/* Icon Container - 44px with 12px radius */}
             <Box
               sx={{
@@ -149,7 +155,7 @@ const WorkboardViewComponent: React.FC = () => {
                   letterSpacing: "-0.02em",
                 }}
               >
-                Control Station
+                {t("frontdesk.workboard.controlStation")}
               </Typography>
               {/* Subtitle - 13px muted gray */}
               <Typography
@@ -160,12 +166,21 @@ const WorkboardViewComponent: React.FC = () => {
                   marginTop: "2px",
                 }}
               >
-                {activeCount} active conversations • {agents.length} agents
+                {t("frontdesk.workboard.activeConversationsAndAgents", {
+                  activeCount,
+                  agentCount: agents.length,
+                })}
               </Typography>
             </Box>
           </Stack>
 
-          <Stack direction="row" alignItems="center" spacing={2.5}>
+          <Stack
+            direction="row"
+            alignItems="center"
+            sx={{
+              gap: 2.5,
+            }}
+          >
             {/* View Toggle */}
             <ViewToggle viewMode={viewMode} onViewModeChange={setViewMode} />
 

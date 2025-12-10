@@ -7,16 +7,23 @@
  * @module unified-list/triggers/AssignmentTrigger
  */
 
-import React from 'react';
-import { Box, Typography, Avatar, Button, CircularProgress } from '@mui/material';
-import GroupsIcon from '@mui/icons-material/Groups';
-import PersonIcon from '@mui/icons-material/Person';
-import { assignmentStyles, getAssignmentValueBoxSx } from '../styles';
-import { colorTokens } from '@/widgets/frontdesk/design-system';
+import React from "react";
+import { useTranslation } from "react-i18next";
+import {
+  Box,
+  Typography,
+  Avatar,
+  Button,
+  CircularProgress,
+} from "@mui/material";
+import GroupsIcon from "@mui/icons-material/Groups";
+import PersonIcon from "@mui/icons-material/Person";
+import { assignmentStyles, getAssignmentValueBoxSx } from "../styles";
+import { colorTokens } from "@/widgets/frontdesk/design-system";
 
 export interface AssignmentTriggerProps {
   /** Type of assignment */
-  type: 'agent' | 'team';
+  type: "agent" | "team";
   /** Section label */
   label: string;
   /** Current value display name */
@@ -47,7 +54,7 @@ export const AssignmentTrigger: React.FC<AssignmentTriggerProps> = ({
   valueName,
   valueDescription,
   avatarUrl,
-  avatarInitials = '??',
+  avatarInitials = "??",
   avatarColor = colorTokens.neutral[400],
   hasValue,
   placeholder,
@@ -55,10 +62,12 @@ export const AssignmentTrigger: React.FC<AssignmentTriggerProps> = ({
   loading = false,
   disabled = false,
 }) => {
+  const { t } = useTranslation();
+  const dir: "rtl" | "ltr" = t("direction");
   const isDisabled = disabled || loading;
 
   return (
-    <Box sx={assignmentStyles.container}>
+    <Box sx={{ ...assignmentStyles.container, direction: dir }}>
       <Typography variant="caption" sx={assignmentStyles.label}>
         {label}
       </Typography>
@@ -69,7 +78,7 @@ export const AssignmentTrigger: React.FC<AssignmentTriggerProps> = ({
             <CircularProgress size={32} />
           ) : (
             <>
-              {type === 'agent' ? (
+              {type === "agent" ? (
                 <Avatar
                   src={avatarUrl}
                   sx={{
@@ -86,7 +95,9 @@ export const AssignmentTrigger: React.FC<AssignmentTriggerProps> = ({
                     bgcolor: colorTokens.neutral[100],
                   }}
                 >
-                  <GroupsIcon sx={{ fontSize: 18, color: colorTokens.neutral[500] }} />
+                  <GroupsIcon
+                    sx={{ fontSize: 18, color: colorTokens.neutral[500] }}
+                  />
                 </Box>
               )}
               <Box sx={{ flex: 1, minWidth: 0 }}>
@@ -94,7 +105,10 @@ export const AssignmentTrigger: React.FC<AssignmentTriggerProps> = ({
                   {valueName}
                 </Typography>
                 {valueDescription && (
-                  <Typography variant="caption" sx={assignmentStyles.description}>
+                  <Typography
+                    variant="caption"
+                    sx={assignmentStyles.description}
+                  >
                     {valueDescription}
                   </Typography>
                 )}
@@ -110,7 +124,7 @@ export const AssignmentTrigger: React.FC<AssignmentTriggerProps> = ({
           startIcon={
             loading ? (
               <CircularProgress size={16} />
-            ) : type === 'agent' ? (
+            ) : type === "agent" ? (
               <PersonIcon />
             ) : (
               <GroupsIcon />
@@ -118,7 +132,7 @@ export const AssignmentTrigger: React.FC<AssignmentTriggerProps> = ({
           }
           onClick={onClick}
           disabled={isDisabled}
-          sx={assignmentStyles.emptyButton}
+          sx={{ ...assignmentStyles.emptyButton, direction: dir }}
         >
           {placeholder}
         </Button>
@@ -128,4 +142,3 @@ export const AssignmentTrigger: React.FC<AssignmentTriggerProps> = ({
 };
 
 export default AssignmentTrigger;
-

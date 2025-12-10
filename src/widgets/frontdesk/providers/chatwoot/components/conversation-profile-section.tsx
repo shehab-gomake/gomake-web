@@ -6,6 +6,7 @@
  */
 
 import React, { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Box,
   Typography,
@@ -96,6 +97,8 @@ export const ConversationProfileSection: React.FC<ConversationProfileSectionProp
   accountId,
   onCustomerLinked,
 }) => {
+  const { t } = useTranslation();
+  const dir: "rtl" | "ltr" = t("direction");
   const { primaryColor } = useGomakeTheme();
   const { callApi } = useGomakeAxios();
   const [customer, setCustomer] = useState<Customer | null>(null);
@@ -279,9 +282,9 @@ export const ConversationProfileSection: React.FC<ConversationProfileSectionProp
   // Helper to get client type label
   const getClientTypeLabel = (typeClient?: string) => {
     if (typeClient === CLIENT_TYPE.CUSTOMER || typeClient === "C") {
-      return "Customer";
+      return t("frontdesk.detailPanel.customer");
     } else if (typeClient === CLIENT_TYPE.SUPPLIER || typeClient === "S") {
-      return "Supplier";
+      return t("frontdesk.detailPanel.supplier");
     }
     return null;
   };
@@ -304,7 +307,7 @@ export const ConversationProfileSection: React.FC<ConversationProfileSectionProp
   const displayPhone = customer?.phone || contactPhoneNumber;
 
   return (
-    <Box sx={{ mb: 2.5 }}>
+    <Box sx={{ mb: 2.5, direction: dir }}>
       <Typography
         variant="caption"
         sx={{
@@ -316,7 +319,7 @@ export const ConversationProfileSection: React.FC<ConversationProfileSectionProp
           fontSize: 10,
         }}
       >
-        Contact
+        {t("frontdesk.detailPanel.contact")}
       </Typography>
 
       {loading ? (
@@ -337,7 +340,7 @@ export const ConversationProfileSection: React.FC<ConversationProfileSectionProp
             {customer ? (
               // Linked Customer Actions
               <>
-                <Tooltip title="View customer details">
+                <Tooltip title={t("frontdesk.detailPanel.viewCustomerDetails")}>
                   <IconButton
                     size="small"
                     onClick={(e) => {
@@ -358,7 +361,7 @@ export const ConversationProfileSection: React.FC<ConversationProfileSectionProp
                     <OpenInNewIcon sx={{ fontSize: 16 }} />
                   </IconButton>
                 </Tooltip>
-                <Tooltip title="Change linked customer">
+                <Tooltip title={t("frontdesk.detailPanel.changeLinkedCustomer")}>
                   <IconButton
                     size="small"
                     onClick={(e) => {
@@ -383,7 +386,7 @@ export const ConversationProfileSection: React.FC<ConversationProfileSectionProp
             ) : (
               // Unlinked Contact Actions
               <>
-                <Tooltip title="Create Customer">
+                <Tooltip title={t("frontdesk.detailPanel.createCustomer")}>
                   <IconButton
                     size="small"
                     onClick={() => handleCreateCustomer(CLIENT_TYPE.CUSTOMER)}
@@ -401,7 +404,7 @@ export const ConversationProfileSection: React.FC<ConversationProfileSectionProp
                     <PersonAddIcon sx={{ fontSize: 16 }} />
                   </IconButton>
                 </Tooltip>
-                <Tooltip title="Create Supplier">
+                <Tooltip title={t("frontdesk.detailPanel.createSupplier")}>
                   <IconButton
                     size="small"
                     onClick={() => handleCreateCustomer(CLIENT_TYPE.SUPPLIER)}
@@ -419,7 +422,7 @@ export const ConversationProfileSection: React.FC<ConversationProfileSectionProp
                     <BusinessIcon sx={{ fontSize: 16 }} />
                   </IconButton>
                 </Tooltip>
-                <Tooltip title="Link Existing">
+                <Tooltip title={t("frontdesk.detailPanel.linkExisting")}>
                   <IconButton
                     size="small"
                     onClick={() => setOpenLinkModal(true)}
@@ -551,7 +554,7 @@ export const ConversationProfileSection: React.FC<ConversationProfileSectionProp
                 )}
                 {contactBlocked !== null && contactBlocked !== undefined && contactBlocked && (
                   <Typography variant="caption" sx={{ fontSize: 13, color: colorTokens.error[600] }}>
-                    Blocked
+                    {t("frontdesk.detailPanel.blocked")}
                   </Typography>
                 )}
               </Box>

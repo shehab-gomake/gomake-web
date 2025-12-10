@@ -15,6 +15,7 @@
 
 import React, { useMemo } from "react";
 import { Box } from "@mui/material";
+import { useTranslation } from "react-i18next";
 import ForumIcon from "@mui/icons-material/Forum";
 import AssignmentLateIcon from "@mui/icons-material/AssignmentLate";
 import TrendingUpIcon from "@mui/icons-material/TrendingUp";
@@ -42,35 +43,37 @@ export const AdminStatsCards: React.FC<AdminStatsCardsProps> = ({
   onCardClick,
   onWarningsClick,
 }) => {
+  const { t } = useTranslation();
+  
   // Memoize card configurations to prevent unnecessary recalculations
   const cards = useMemo(
     () => [
       {
         id: "total-open-tickets" as const,
-        label: "Total Open Tickets",
+        label: t("frontdesk.dashboard.admin.totalOpenTickets"),
         value: formatStatCardValue(stats.totalOpenTickets),
         icon: <ForumIcon />,
         variant: "primary" as const,
-        description: "Across all agents",
+        description: t("frontdesk.dashboard.admin.acrossAllAgents"),
       },
       {
         id: "unassigned-tickets" as const,
-        label: "Unassigned Tickets",
+        label: t("frontdesk.dashboard.admin.unassignedTickets"),
         value: formatStatCardValue(stats.unassignedTickets),
         icon: <AssignmentLateIcon />,
         variant: getCardVariant(stats.unassignedTickets, "success", "error"),
-        description: "Need assignment",
+        description: t("frontdesk.dashboard.admin.needAssignment"),
       },
       {
         id: "active-today" as const,
-        label: "Active Today",
+        label: t("frontdesk.dashboard.admin.activeToday"),
         value: formatStatCardValue(stats.activeToday),
         icon: <TrendingUpIcon />,
         variant: "success" as const,
-        description: "Last 24 hours",
+        description: t("frontdesk.dashboard.admin.last24Hours"),
       },
     ],
-    [stats]
+    [stats, t]
   );
 
   return (

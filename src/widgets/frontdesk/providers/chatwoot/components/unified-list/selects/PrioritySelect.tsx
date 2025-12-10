@@ -8,6 +8,7 @@
  */
 
 import React, { useState, useCallback, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import FlagIcon from '@mui/icons-material/Flag';
 import { UnifiedListDropdown } from '../UnifiedListDropdown';
 import { PriorityListItemRenderer } from '../list-items';
@@ -42,11 +43,11 @@ export interface PrioritySelectProps {
 // CONSTANTS
 // =============================================================================
 
-const DEFAULT_PRIORITIES: PriorityListItem[] = [
+const getDefaultPriorities = (t: (key: string) => string): PriorityListItem[] => [
   {
     type: 'priority',
     id: ConversationPriority.URGENT,
-    label: 'Urgent',
+    label: t('frontdesk.detailPanel.priorityUrgent'),
     value: ConversationPriority.URGENT,
     level: 'urgent',
     color: priorityColors.urgent,
@@ -54,7 +55,7 @@ const DEFAULT_PRIORITIES: PriorityListItem[] = [
   {
     type: 'priority',
     id: ConversationPriority.HIGH,
-    label: 'High',
+    label: t('frontdesk.detailPanel.priorityHigh'),
     value: ConversationPriority.HIGH,
     level: 'high',
     color: priorityColors.high,
@@ -62,7 +63,7 @@ const DEFAULT_PRIORITIES: PriorityListItem[] = [
   {
     type: 'priority',
     id: ConversationPriority.MEDIUM,
-    label: 'Medium',
+    label: t('frontdesk.detailPanel.priorityMedium'),
     value: ConversationPriority.MEDIUM,
     level: 'medium',
     color: priorityColors.medium,
@@ -70,7 +71,7 @@ const DEFAULT_PRIORITIES: PriorityListItem[] = [
   {
     type: 'priority',
     id: ConversationPriority.LOW,
-    label: 'Low',
+    label: t('frontdesk.detailPanel.priorityLow'),
     value: ConversationPriority.LOW,
     level: 'low',
     color: priorityColors.low,
@@ -78,7 +79,7 @@ const DEFAULT_PRIORITIES: PriorityListItem[] = [
   {
     type: 'priority',
     id: 'none',
-    label: 'None',
+    label: t('frontdesk.detailPanel.priorityNone'),
     value: null,
     level: 'none',
     color: priorityColors.none,
@@ -95,14 +96,18 @@ export const PrioritySelect: React.FC<PrioritySelectProps> = ({
   updating = false,
   disabled = false,
 }) => {
+  const { t } = useTranslation();
+  const dir: "rtl" | "ltr" = t("direction");
+  const defaultPriorities = useMemo(() => getDefaultPriorities(t), [t]);
+  
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const open = Boolean(anchorEl);
 
   const currentPriority = useMemo(
     () =>
-      DEFAULT_PRIORITIES.find((p) => p.value === priority) ||
-      DEFAULT_PRIORITIES[DEFAULT_PRIORITIES.length - 1],
-    [priority]
+      defaultPriorities.find((p) => p.value === priority) ||
+      defaultPriorities[defaultPriorities.length - 1],
+    [priority, defaultPriorities]
   );
 
   const handleOpen = useCallback((event: React.MouseEvent<HTMLElement>) => {
@@ -117,13 +122,13 @@ export const PrioritySelect: React.FC<PrioritySelectProps> = ({
 
   const handleSelect = useCallback(
     (id: string | number | null) => {
-      const selectedPriority = DEFAULT_PRIORITIES.find((p) => p.id === id);
+      const selectedPriority = defaultPriorities.find((p) => p.id === id);
       if (selectedPriority) {
         onPriorityChange(selectedPriority.value as PriorityValue);
       }
       handleClose();
     },
-    [onPriorityChange, handleClose]
+    [defaultPriorities, onPriorityChange, handleClose]
   );
 
   const renderItem = useCallback(
@@ -147,7 +152,7 @@ export const PrioritySelect: React.FC<PrioritySelectProps> = ({
       <QuickSelectorTrigger
         icon={priorityIcon}
         label={currentPriority.label}
-        tooltip={`Change priority (currently: ${currentPriority.label})`}
+        tooltip={t("frontdesk.detailPanel.changePriorityTooltip", { priority: currentPriority.label })}
         onClick={handleOpen}
         loading={updating}
         disabled={disabled}
@@ -157,7 +162,7 @@ export const PrioritySelect: React.FC<PrioritySelectProps> = ({
         open={open}
         anchorEl={anchorEl}
         onClose={handleClose}
-        items={DEFAULT_PRIORITIES}
+        items={defaultPriorities}
         selectionMode="single"
         selectedValue={priority ?? 'none'}
         onSelect={handleSelect}

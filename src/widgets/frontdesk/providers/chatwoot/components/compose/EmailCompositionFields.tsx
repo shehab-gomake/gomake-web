@@ -7,10 +7,18 @@
 
 import React, { useState } from "react";
 import { Box, Stack, TextField, Typography, Button } from "@mui/material";
+import { useTranslation } from "react-i18next";
 
-import { createFieldContainerStyles, createStandardTextFieldStyles } from "../../styles/compose-styles";
+import {
+  createFieldContainerStyles,
+  createStandardTextFieldStyles,
+} from "../../styles/compose-styles";
 import type { ComposeValidationErrors } from "@/services/frontdesk/api/chatwoot/types/compose.types";
-import { colorTokens, radiusTokens, shadowTokens } from "@/widgets/frontdesk/design-system";
+import {
+  colorTokens,
+  radiusTokens,
+  shadowTokens,
+} from "@/widgets/frontdesk/design-system";
 
 export interface EmailCompositionFieldsProps {
   /** Email subject value */
@@ -34,7 +42,18 @@ export interface EmailCompositionFieldsProps {
  * Renders subject, CC, and BCC fields for email conversations
  */
 export const EmailCompositionFields = React.memo<EmailCompositionFieldsProps>(
-  ({ subject, ccEmails, bccEmails, errors, onSubjectChange, onCcChange, onBccChange }) => {
+  ({
+    subject,
+    ccEmails,
+    bccEmails,
+    errors,
+    onSubjectChange,
+    onCcChange,
+    onBccChange,
+  }) => {
+    const { t } = useTranslation();
+    const dir: "rtl" | "ltr" = t("direction");
+    const isRTL = dir === "rtl";
     const [showBcc, setShowBcc] = useState(!!bccEmails);
 
     const textFieldStyles = createStandardTextFieldStyles();
@@ -42,12 +61,17 @@ export const EmailCompositionFields = React.memo<EmailCompositionFieldsProps>(
     return (
       <>
         {/* Subject Field */}
-        <Box sx={createFieldContainerStyles({ backgroundColor: "light" })}>
+        <Box
+          sx={{
+            ...createFieldContainerStyles({ backgroundColor: "light" }),
+            direction: isRTL ? "rtl" : "ltr",
+          }}
+        >
           <TextField
             fullWidth
             variant="standard"
-            label="SUBJECT"
-            placeholder="Enter subject"
+            label={t("frontdesk.compose.subject")}
+            placeholder={t("frontdesk.compose.enterSubject")}
             value={subject}
             onChange={(e) => onSubjectChange(e.target.value)}
             error={!!errors.subject}
@@ -57,8 +81,21 @@ export const EmailCompositionFields = React.memo<EmailCompositionFieldsProps>(
         </Box>
 
         {/* CC Field */}
-        <Box sx={createFieldContainerStyles({ backgroundColor: "white", padding: "compact" })}>
-          <Stack direction="row" alignItems="center" spacing={2} sx={{ width: "100%" }}>
+        <Box
+          sx={{
+            ...createFieldContainerStyles({
+              backgroundColor: "white",
+              padding: "compact",
+            }),
+            direction: isRTL ? "rtl" : "ltr",
+          }}
+        >
+          <Stack
+            direction="row"
+            alignItems="center"
+            spacing={2}
+            sx={{ width: "100%" }}
+          >
             <Typography
               sx={{
                 minWidth: 50,
@@ -69,12 +106,12 @@ export const EmailCompositionFields = React.memo<EmailCompositionFieldsProps>(
                 letterSpacing: "0.05em",
               }}
             >
-              CC
+              {t("frontdesk.compose.cc")}
             </Typography>
             <TextField
               fullWidth
               variant="standard"
-              placeholder="email@example.com (optional)"
+              placeholder={t("frontdesk.compose.emailOptional")}
               value={ccEmails}
               onChange={(e) => onCcChange(e.target.value)}
               error={!!errors.ccEmails}
@@ -98,7 +135,7 @@ export const EmailCompositionFields = React.memo<EmailCompositionFieldsProps>(
                   },
                 }}
               >
-                + BCC
+                + {t("frontdesk.compose.bcc")}
               </Button>
             )}
           </Stack>
@@ -106,8 +143,21 @@ export const EmailCompositionFields = React.memo<EmailCompositionFieldsProps>(
 
         {/* BCC Field */}
         {showBcc && (
-          <Box sx={createFieldContainerStyles({ backgroundColor: "white", padding: "compact" })}>
-            <Stack direction="row" alignItems="center" spacing={2} sx={{ width: "100%" }}>
+          <Box
+            sx={{
+              ...createFieldContainerStyles({
+                backgroundColor: "white",
+                padding: "compact",
+              }),
+              direction: isRTL ? "rtl" : "ltr",
+            }}
+          >
+            <Stack
+              direction="row"
+              alignItems="center"
+              spacing={2}
+              sx={{ width: "100%" }}
+            >
               <Typography
                 sx={{
                   minWidth: 50,
@@ -118,12 +168,12 @@ export const EmailCompositionFields = React.memo<EmailCompositionFieldsProps>(
                   letterSpacing: "0.05em",
                 }}
               >
-                BCC
+                {t("frontdesk.compose.bcc")}
               </Typography>
               <TextField
                 fullWidth
                 variant="standard"
-                placeholder="email@example.com (optional)"
+                placeholder={t("frontdesk.compose.emailOptional")}
                 value={bccEmails}
                 onChange={(e) => onBccChange(e.target.value)}
                 error={!!errors.bccEmails}

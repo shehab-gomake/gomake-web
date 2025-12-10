@@ -14,9 +14,11 @@
 
 import React, { useEffect, useMemo, useCallback, useState } from "react";
 import { Stack, Box, Typography } from "@mui/material";
-import { 
-  PanelContent, 
-  EmptyState, 
+import { useTranslation } from "react-i18next";
+import { Inbox as InboxIcon } from "@mui/icons-material";
+import {
+  PanelContent,
+  EmptyState,
   colorTokens,
   layoutTokens,
   gridConfig,
@@ -30,15 +32,21 @@ import { ChatwootConversationDetailPanel } from "../components/chatwoot-conversa
 import { ComposeConversationModal } from "../components/compose/ComposeConversationModal";
 import { useChatwootProvider } from "../hooks/use-chatwoot-provider";
 import { useChatwootRouter } from "../hooks/use-chatwoot-router";
-import { ConversationStatus, ConversationAssigneeType } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
+import {
+  ConversationStatus,
+  ConversationAssigneeType,
+} from "@/services/frontdesk/api/chatwoot/types/conversations.types";
 import { NoConversationsEmptyState } from "../components/empty-states/no-conversations-empty-state";
 import { ChatwootView } from "@/widgets/frontdesk/routing/types";
 import type { ChatwootConversation } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
 
 export const MyInboxView: React.FC = () => {
+  const { t } = useTranslation();
+  const dir: "rtl" | "ltr" = t("direction");
+  const isRTL = dir === "rtl";
   const router = useChatwootRouter();
   const [showComposeModal, setShowComposeModal] = useState(false);
-  
+
   // Sidebar visibility state - persist to localStorage
   const [isSidebarVisible, setIsSidebarVisible] = useState(() => {
     if (typeof window !== "undefined") {
@@ -51,7 +59,10 @@ export const MyInboxView: React.FC = () => {
   // Save sidebar visibility preference to localStorage
   useEffect(() => {
     if (typeof window !== "undefined") {
-      localStorage.setItem("chatwoot-sidebar-visible", String(isSidebarVisible));
+      localStorage.setItem(
+        "chatwoot-sidebar-visible",
+        String(isSidebarVisible)
+      );
     }
   }, [isSidebarVisible]);
 
@@ -81,12 +92,16 @@ export const MyInboxView: React.FC = () => {
   // Phase 2: Apply default filters on mount and ensure they're set
   useEffect(() => {
     const currentRoute = router.currentRoute;
-    
+
     // Only set filters if they're not already set correctly for My Inbox
     if (currentRoute?.view === ChatwootView.MY_INBOX) {
-      const needsStatusUpdate = !currentRoute.filters?.status || currentRoute.filters.status !== ConversationStatus.OPEN;
-      const needsAssigneeUpdate = !currentRoute.filters?.assigneeType || currentRoute.filters.assigneeType !== ConversationAssigneeType.ME;
-      
+      const needsStatusUpdate =
+        !currentRoute.filters?.status ||
+        currentRoute.filters.status !== ConversationStatus.OPEN;
+      const needsAssigneeUpdate =
+        !currentRoute.filters?.assigneeType ||
+        currentRoute.filters.assigneeType !== ConversationAssigneeType.ME;
+
       if (needsStatusUpdate || needsAssigneeUpdate) {
         router.updateFilters({
           ...currentRoute.filters,
@@ -141,10 +156,10 @@ export const MyInboxView: React.FC = () => {
     }
 
     return (
-      <EmptyState 
-        icon="inbox" 
-        title="No conversation selected" 
-        description="Choose a conversation from the list to start viewing messages" 
+      <EmptyState
+        icon={<InboxIcon />}
+        title={t("frontdesk.emptyStates.noConversationSelected")}
+        description={t("frontdesk.emptyStates.chooseConversationToPreview")}
       />
     );
   }, [conversations.length, conversationsLoading.initialLoading, refresh]);
@@ -170,7 +185,7 @@ export const MyInboxView: React.FC = () => {
             letterSpacing: "-0.01em",
           }}
         >
-          My Tickets
+          {t("frontdesk.myInbox.myTickets")}
         </Typography>
         <Typography
           variant="body2"
@@ -180,10 +195,12 @@ export const MyInboxView: React.FC = () => {
           }}
         >
           {conversationsLoading.initialLoading
-            ? "Loading your conversations..."
+            ? t("frontdesk.myInbox.loadingConversations")
             : conversationCount === 0
-            ? "You're all caught up! No open conversations assigned to you."
-            : `Showing ${conversationCount} open conversation${conversationCount === 1 ? "" : "s"} assigned to you`}
+            ? t("frontdesk.myInbox.allCaughtUp")
+            : t("frontdesk.myInbox.showingConversations", {
+                count: conversationCount,
+              })}
         </Typography>
       </Box>
     );
@@ -197,8 +214,8 @@ export const MyInboxView: React.FC = () => {
         width: "100%",
         overflow: "hidden",
         backgroundColor: colorTokens.neutral[100],
-        gap: `${layoutTokens.columnGap.default}px`,        // Use design system gutter
-        padding: `${semanticSpacing.container.md}px`,      // Use design system container padding
+        gap: `${layoutTokens.columnGap.default}px`, // Use design system gutter
+        padding: `${semanticSpacing.container.md}px`, // Use design system container padding
       }}
     >
       {/* Conversation List Panel */}
@@ -208,14 +225,14 @@ export const MyInboxView: React.FC = () => {
           minWidth: layoutTokens.panel.conversationList.default,
           height: "100%",
           backgroundColor: colorTokens.semantic.background.primary,
-          borderRadius: `${layoutTokens.card.radius}px`,   // Use design system card radius
-          boxShadow: shadowTokens.card,                    // Use design system shadow
+          borderRadius: `${layoutTokens.card.radius}px`, // Use design system card radius
+          boxShadow: shadowTokens.card, // Use design system shadow
           overflow: "hidden",
           display: "flex",
           flexDirection: "column",
           transition: "box-shadow 0.2s ease",
           "&:hover": {
-            boxShadow: shadowTokens.cardHover,             // Use design system hover shadow
+            boxShadow: shadowTokens.cardHover, // Use design system hover shadow
           },
         }}
       >
@@ -223,7 +240,14 @@ export const MyInboxView: React.FC = () => {
         {listHeader}
 
         {/* Conversation List */}
-        <Box sx={{ flex: 1, overflow: "hidden", display: "flex", flexDirection: "column" }}>
+        <Box
+          sx={{
+            flex: 1,
+            overflow: "hidden",
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
           <ChatwootConversationList
             conversations={conversations}
             selectedConversationId={selectedConversation?.id}
@@ -259,15 +283,35 @@ export const MyInboxView: React.FC = () => {
         }}
       >
         {selectedConversation ? (
-          <Stack direction="row" spacing={0} sx={{ height: "100%", overflow: "hidden" }}>
+          <Stack
+            direction="row"
+            sx={{
+              gap: 0,
+              height: "100%",
+              overflow: "hidden",
+              direction: dir,
+            }}
+          >
             {/* Main Message Area */}
-            <Box sx={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0, overflow: "hidden" }}>
+            <Box
+              sx={{
+                flex: 1,
+                display: "flex",
+                flexDirection: "column",
+                minWidth: 0,
+                overflow: "hidden",
+              }}
+            >
               <ChatwootMessageViewer
                 conversation={selectedConversation}
                 accountId={currentAccountId || undefined}
                 onBack={handleBack}
                 onConversationUpdate={updateConversationInList}
-                currentStatusFilter={Array.isArray(filters.status) ? filters.status[0] : filters.status}
+                currentStatusFilter={
+                  Array.isArray(filters.status)
+                    ? filters.status[0]
+                    : filters.status
+                }
                 inboxes={inboxes}
                 inboxesLoading={inboxesLoading}
                 isSidebarVisible={isSidebarVisible}
@@ -281,7 +325,9 @@ export const MyInboxView: React.FC = () => {
                 sx={{
                   width: layoutTokens.panel.detailSidebar.default,
                   minWidth: layoutTokens.panel.detailSidebar.default,
-                  borderLeft: `1px solid ${colorTokens.semantic.border.light}`,
+                  [isRTL
+                    ? "borderRight"
+                    : "borderLeft"]: `1px solid ${colorTokens.semantic.border.light}`,
                   backgroundColor: colorTokens.semantic.background.primary,
                 }}
               >

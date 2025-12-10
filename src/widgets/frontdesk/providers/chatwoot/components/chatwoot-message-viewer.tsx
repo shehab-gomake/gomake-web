@@ -1,9 +1,19 @@
 import React from "react";
-import { Box, Typography, Stack, Button, CircularProgress, Fade, alpha, useTheme } from "@mui/material";
-import { 
-  PanelContent, 
-  EmptyState, 
-  colorTokens, 
+import {
+  Box,
+  Typography,
+  Stack,
+  Button,
+  CircularProgress,
+  Fade,
+  alpha,
+  useTheme,
+} from "@mui/material";
+import { useTranslation } from "react-i18next";
+import {
+  PanelContent,
+  EmptyState,
+  colorTokens,
   shadowTokens,
   semanticSpacing,
   layoutTokens,
@@ -19,7 +29,12 @@ import {
   ConversationPriority,
 } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
 
-type PriorityValue = ConversationPriority.URGENT | ConversationPriority.HIGH | ConversationPriority.MEDIUM | ConversationPriority.LOW | null;
+type PriorityValue =
+  | ConversationPriority.URGENT
+  | ConversationPriority.HIGH
+  | ConversationPriority.MEDIUM
+  | ConversationPriority.LOW
+  | null;
 import type { ChatwootInbox } from "@/services/frontdesk/api/chatwoot/types/inboxes.types";
 import { chatwootService } from "@/services/frontdesk";
 // New Chatwoot-specific loading and empty states
@@ -49,21 +64,34 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
   isSidebarVisible = true,
   onToggleSidebar,
 }) => {
+  const { t } = useTranslation();
+  const dir: "rtl" | "ltr" = t("direction");
   const theme = useTheme();
   const [isSending, setIsSending] = React.useState(false);
-  
+
   // Track previous conversation for smooth transitions
   const previousConversationIdRef = React.useRef<number | null>(null);
   const [isTransitioning, setIsTransitioning] = React.useState(false);
 
-  const { messages, loading, error, refresh, loadMoreMessages, hasMoreMessages, isLoadingMore } = useChatwootMessages({
+  const {
+    messages,
+    loading,
+    error,
+    refresh,
+    loadMoreMessages,
+    hasMoreMessages,
+    isLoadingMore,
+  } = useChatwootMessages({
     conversation,
     accountId: accountId || null,
   });
 
   // Detect conversation changes for transition animation
   React.useEffect(() => {
-    if (conversation?.id && previousConversationIdRef.current !== conversation.id) {
+    if (
+      conversation?.id &&
+      previousConversationIdRef.current !== conversation.id
+    ) {
       if (previousConversationIdRef.current !== null) {
         setIsTransitioning(true);
       }
@@ -103,31 +131,36 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
           overflow: "hidden",
           height: "100%",
           backgroundColor: colorTokens.semantic.background.primary,
+          direction: dir,
         }}
       >
         <EmptyState
-          title="No ticket selected"
-          description="Choose a ticket from the list to start viewing messages"
+          title={t("frontdesk.emptyStates.noTicketSelected")}
+          description={t("frontdesk.emptyStates.chooseTicketFromList")}
         />
       </Box>
     );
   }
 
   // Show full skeleton only on initial load (no previous messages)
-  const showFullSkeleton = loading && messages.length === 0 && previousConversationIdRef.current === null;
+  const showFullSkeleton =
+    loading &&
+    messages.length === 0 &&
+    previousConversationIdRef.current === null;
 
   // Helper to update conversation after status change (similar to Vue store.dispatch('toggleStatus'))
   const handleStatusChange = async (newStatus: string) => {
     if (!accountId || !conversation.id) return;
-    
+
     try {
       // Update conversation status via toggle_status API
-      const response = await chatwootService.conversations.updateConversationStatus(
-        accountId,
-        conversation.id,
-        { status: newStatus as 'open' | 'resolved' | 'pending' | 'snoozed' }
-      );
-      
+      const response =
+        await chatwootService.conversations.updateConversationStatus(
+          accountId,
+          conversation.id,
+          { status: newStatus as "open" | "resolved" | "pending" | "snoozed" }
+        );
+
       // Verify success
       if (response.payload?.success) {
         // Update conversation with new status
@@ -135,16 +168,21 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
           ...conversation,
           status: response.payload.current_status,
         };
-        
+
         // Update in list (similar to Vue: commit(types.CHANGE_CONVERSATION_STATUS))
         if (onConversationUpdate) {
           onConversationUpdate(finalConversation);
         }
       } else {
-        throw new Error("Status update failed: Unexpected response from server");
+        throw new Error(
+          "Status update failed: Unexpected response from server"
+        );
       }
     } catch (err) {
-      console.error(`Failed to update conversation status to ${newStatus}:`, err);
+      console.error(
+        `Failed to update conversation status to ${newStatus}:`,
+        err
+      );
       throw err;
     }
   };
@@ -162,7 +200,7 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
     if (!accountId || !conversation.id) return;
     try {
       await handleStatusChange("resolved");
-      
+
       // If filtering by OPEN and conversation is now RESOLVED, it should disappear from list
       // This is handled by the filter logic - no need to manually remove
     } catch (err) {
@@ -194,14 +232,19 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
     try {
       // Convert enum value to string for API (API expects string)
       const priorityString = newPriority || null;
-      
+
       // Update conversation via API
-      const response = await chatwootService.conversations.updateConversation(accountId, conversation.id, {
-        priority: priorityString,
-      });
+      const response = await chatwootService.conversations.updateConversation(
+        accountId,
+        conversation.id,
+        {
+          priority: priorityString,
+        }
+      );
 
       // Get updated conversation from response
-      const updatedConversation = response.payload || response.data || conversation;
+      const updatedConversation =
+        response.payload || response.data || conversation;
       const finalConversation = {
         ...conversation,
         ...updatedConversation,
@@ -216,7 +259,10 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
       // Refresh messages
       refresh();
     } catch (err) {
-      console.error(`Failed to update conversation priority to ${newPriority}:`, err);
+      console.error(
+        `Failed to update conversation priority to ${newPriority}:`,
+        err
+      );
       throw err;
     }
   };
@@ -230,17 +276,17 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
       await chatwootService.conversations.updateConversationStatus(
         accountId,
         conversation.id,
-        { status: 'resolved' }
+        { status: "resolved" }
       );
 
       // Update conversation in list
       if (onConversationUpdate) {
-        onConversationUpdate({ ...conversation, status: 'resolved' });
+        onConversationUpdate({ ...conversation, status: "resolved" });
       }
 
-      console.log('[handleArchive] Conversation archived successfully');
+      console.log("[handleArchive] Conversation archived successfully");
     } catch (error) {
-      console.error('[handleArchive] Failed to archive conversation:', error);
+      console.error("[handleArchive] Failed to archive conversation:", error);
     } finally {
       setIsSending(false);
     }
@@ -250,23 +296,30 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
     if (!conversation?.id || !accountId) return;
 
     // Confirm before deleting
-    if (!window.confirm('Are you sure you want to delete this conversation? This action cannot be undone.')) {
+    if (
+      !window.confirm(
+        "Are you sure you want to delete this conversation? This action cannot be undone."
+      )
+    ) {
       return;
     }
 
     try {
       setIsSending(true);
-      await chatwootService.conversations.deleteConversation(accountId, conversation.id);
+      await chatwootService.conversations.deleteConversation(
+        accountId,
+        conversation.id
+      );
 
       // Signal deletion to parent
       if (onConversationUpdate) {
         onConversationUpdate({ ...conversation, id: -1 }); // -1 signals deletion
       }
 
-      console.log('[handleDelete] Conversation deleted successfully');
+      console.log("[handleDelete] Conversation deleted successfully");
     } catch (error) {
-      console.error('[handleDelete] Failed to delete conversation:', error);
-      alert('Failed to delete conversation. Please try again.');
+      console.error("[handleDelete] Failed to delete conversation:", error);
+      alert("Failed to delete conversation. Please try again.");
     } finally {
       setIsSending(false);
     }
@@ -291,9 +344,11 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
         onConversationUpdate({ ...conversation, starred: newStarred });
       }
 
-      console.log(`[handleStar] Conversation ${newStarred ? 'starred' : 'unstarred'}`);
+      console.log(
+        `[handleStar] Conversation ${newStarred ? "starred" : "unstarred"}`
+      );
     } catch (error) {
-      console.error('[handleStar] Failed to toggle star:', error);
+      console.error("[handleStar] Failed to toggle star:", error);
     } finally {
       setIsSending(false);
     }
@@ -320,9 +375,10 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
         message_type: "outgoing",
         private: isPrivate,
         // Include attachments if provided
-        ...(attachments && attachments.length > 0 && {
-          attachments,
-        }),
+        ...(attachments &&
+          attachments.length > 0 && {
+            attachments,
+          }),
         // Include email recipient fields for email channels
         ...(recipientEmails && {
           ...(recipientEmails.cc && { cc_emails: recipientEmails.cc }),
@@ -410,10 +466,11 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
         sx={{
           flex: 1,
           overflow: "auto",
-          background: theme.palette.mode === "dark"
-            ? colorTokens.neutral[900]
-            : colorTokens.neutral[50],
-          px: `${semanticSpacing.container.lg}px`,  // Use design system container padding
+          background:
+            theme.palette.mode === "dark"
+              ? colorTokens.neutral[900]
+              : colorTokens.neutral[50],
+          px: `${semanticSpacing.container.lg}px`, // Use design system container padding
           py: 2,
           opacity: loading && messages.length === 0 ? 0.5 : 1,
           transition: "opacity 0.2s ease-in-out",
@@ -437,16 +494,22 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
           />
         ) : (
           <Fade in={!isTransitioning} timeout={200}>
-            <Stack spacing={`${semanticSpacing.component.xxs}px`}>  {/* 4px tight message grouping */}
+            <Stack spacing={`${semanticSpacing.component.xxs}px`}>
+              {" "}
+              {/* 4px tight message grouping */}
               {/* Load More Button - Show at top */}
               {hasMoreMessages && (
-                <Box sx={{ display: "flex", justifyContent: "center", py: 1.5 }}>
+                <Box
+                  sx={{ display: "flex", justifyContent: "center", py: 1.5 }}
+                >
                   <Button
                     variant="outlined"
                     size="small"
                     onClick={loadMoreMessages}
                     disabled={isLoadingMore}
-                    startIcon={isLoadingMore ? <CircularProgress size={14} /> : null}
+                    startIcon={
+                      isLoadingMore ? <CircularProgress size={14} /> : null
+                    }
                     sx={{
                       borderRadius: "8px",
                       textTransform: "none",
@@ -469,7 +532,6 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
                   </Button>
                 </Box>
               )}
-
               {(() => {
                 // Filter messages: Keep ALL activity messages, filter empty content for others
                 const visibleMessages = messages.filter((message) => {
@@ -481,14 +543,18 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
                   }
 
                   // For regular messages (incoming/outgoing), filter out empty content
-                  const hasContent = message.content && message.content.trim().length > 0;
+                  const hasContent =
+                    message.content && message.content.trim().length > 0;
                   return hasContent;
                 });
 
                 if (visibleMessages.length === 0) {
                   return (
                     <Box sx={{ p: 3, textAlign: "center" }}>
-                      <Typography variant="body2" sx={{ color: colorTokens.neutral[500] }}>
+                      <Typography
+                        variant="body2"
+                        sx={{ color: colorTokens.neutral[500] }}
+                      >
                         No messages to display
                       </Typography>
                     </Box>
@@ -497,8 +563,10 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
 
                 return visibleMessages.map((message, index) => {
                   // Determine if avatar should be shown (sender changed from previous visible message)
-                  const previousMessage = index > 0 ? visibleMessages[index - 1] : null;
-                  const showAvatar = index === 0 || 
+                  const previousMessage =
+                    index > 0 ? visibleMessages[index - 1] : null;
+                  const showAvatar =
+                    index === 0 ||
                     !previousMessage ||
                     previousMessage.sender?.id !== message.sender?.id ||
                     previousMessage.message_type !== message.message_type ||
@@ -544,4 +612,3 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
     </Box>
   );
 };
-

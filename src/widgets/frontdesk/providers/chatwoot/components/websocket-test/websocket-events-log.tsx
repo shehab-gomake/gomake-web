@@ -5,6 +5,7 @@
  */
 
 import React, { useState, useMemo, useRef, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Box,
   Typography,
@@ -45,6 +46,8 @@ export const WebSocketEventsLog: React.FC<WebSocketEventsLogProps> = ({
   onExportJSON,
   onExportCSV,
 }) => {
+  const { t } = useTranslation();
+  const dir: "rtl" | "ltr" = t("direction");
   const theme = useTheme();
   const logEndRef = useRef<HTMLDivElement>(null);
 
@@ -153,36 +156,39 @@ export const WebSocketEventsLog: React.FC<WebSocketEventsLogProps> = ({
         flexDirection: 'column',
         borderRadius: 2,
         boxShadow: theme.shadows[1],
+        direction: dir,
       }}
     >
       <CardContent sx={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 2, p: 3, overflow: 'hidden' }}>
         {/* Header */}
-        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <Typography
-            variant="h6"
-            sx={{
-              fontWeight: 600,
-              fontSize: '1rem',
-              color: colorTokens.neutral[900],
-            }}
-          >
-            Event Log
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', direction: dir }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, direction: dir }}>
+            <Typography
+              variant="h6"
+              sx={{
+                fontWeight: 600,
+                fontSize: '1rem',
+                color: colorTokens.neutral[900],
+              }}
+            >
+              {t("frontdesk.settings.webhookTestEventsLogTitle")}
+            </Typography>
             {filteredEvents.length !== events.length && (
               <Chip
                 label={`${filteredEvents.length} of ${events.length}`}
                 size="small"
                 sx={{
-                  ml: 1,
+                  [dir === "rtl" ? "mr" : "ml"]: 1,
                   height: 20,
                   fontSize: '0.75rem',
                   backgroundColor: colorTokens.neutral[100],
                 }}
               />
             )}
-          </Typography>
+          </Box>
 
-          <Stack direction="row" spacing={0.5}>
-            <Tooltip title="Filter events">
+          <Stack direction="row" spacing={0.5} sx={{ direction: dir }}>
+            <Tooltip title={t("frontdesk.settings.webhookTestEventsLogFilter")}>
               <IconButton
                 size="small"
                 onClick={(e) => setFilterMenuAnchor(e.currentTarget)}
@@ -194,7 +200,7 @@ export const WebSocketEventsLog: React.FC<WebSocketEventsLogProps> = ({
               </IconButton>
             </Tooltip>
 
-            <Tooltip title="Export events">
+            <Tooltip title={t("frontdesk.settings.webhookTestEventsLogExport")}>
               <IconButton
                 size="small"
                 onClick={(e) => setExportMenuAnchor(e.currentTarget)}
@@ -204,7 +210,7 @@ export const WebSocketEventsLog: React.FC<WebSocketEventsLogProps> = ({
               </IconButton>
             </Tooltip>
 
-            <Tooltip title="Clear log">
+            <Tooltip title={t("frontdesk.settings.webhookTestEventsLogClear")}>
               <IconButton
                 size="small"
                 onClick={onClearEvents}
@@ -219,16 +225,16 @@ export const WebSocketEventsLog: React.FC<WebSocketEventsLogProps> = ({
         <Divider />
 
         {/* Search and Controls */}
-        <Stack direction="row" spacing={1} alignItems="center">
+        <Stack direction="row" spacing={1} alignItems="center" sx={{ direction: dir }}>
           <TextField
             size="small"
-            placeholder="Search events..."
+            placeholder={t("frontdesk.settings.webhookTestEventsLogSearchPlaceholder")}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             InputProps={{
-              startAdornment: <SearchIcon fontSize="small" sx={{ mr: 0.5, color: colorTokens.neutral[400] }} />,
+              [dir === "rtl" ? "endAdornment" : "startAdornment"]: <SearchIcon fontSize="small" sx={{ [dir === "rtl" ? "ml" : "mr"]: 0.5, color: colorTokens.neutral[400] }} />,
             }}
-            sx={{ flex: 1 }}
+            sx={{ flex: 1, direction: dir }}
           />
 
           <FormControlLabel
@@ -241,21 +247,22 @@ export const WebSocketEventsLog: React.FC<WebSocketEventsLogProps> = ({
             }
             label={
               <Typography variant="caption" sx={{ fontSize: '0.75rem' }}>
-                Auto-scroll
+                {t("frontdesk.settings.webhookTestEventsLogAutoScroll")}
               </Typography>
             }
+            sx={{ direction: dir }}
           />
         </Stack>
 
         {/* Active Filters */}
         {(searchQuery || selectedEventTypes.size > 0) && (
-          <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap', alignItems: 'center' }}>
+          <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap', alignItems: 'center', direction: dir }}>
             <Typography variant="caption" sx={{ fontSize: '0.75rem', color: colorTokens.neutral[600] }}>
-              Filters:
+              {t("frontdesk.settings.webhookTestEventsLogFilters")}
             </Typography>
             {searchQuery && (
               <Chip
-                label={`Search: "${searchQuery}"`}
+                label={t("frontdesk.settings.webhookTestEventsLogSearch", { query: searchQuery })}
                 size="small"
                 onDelete={() => setSearchQuery('')}
                 sx={{ height: 24, fontSize: '0.75rem' }}
@@ -275,7 +282,7 @@ export const WebSocketEventsLog: React.FC<WebSocketEventsLogProps> = ({
               onClick={clearFilters}
               sx={{ textTransform: 'none', fontSize: '0.75rem', minWidth: 'auto', p: 0.5 }}
             >
-              Clear all
+              {t("frontdesk.settings.webhookTestEventsLogClearAll")}
             </Button>
           </Box>
         )}
@@ -288,6 +295,7 @@ export const WebSocketEventsLog: React.FC<WebSocketEventsLogProps> = ({
             border: `1px solid ${colorTokens.neutral[200]}`,
             borderRadius: 1,
             backgroundColor: colorTokens.neutral[50],
+            direction: dir,
           }}
         >
           {filteredEvents.length === 0 ? (
@@ -298,6 +306,7 @@ export const WebSocketEventsLog: React.FC<WebSocketEventsLogProps> = ({
                 justifyContent: 'center',
                 height: '100%',
                 p: 3,
+                direction: dir,
               }}
             >
               <Typography
@@ -308,12 +317,12 @@ export const WebSocketEventsLog: React.FC<WebSocketEventsLogProps> = ({
                   textAlign: 'center',
                 }}
               >
-                {events.length === 0 ? 'No events yet. Connect to start receiving events.' : 'No events match the current filters.'}
+                {events.length === 0 ? t("frontdesk.settings.webhookTestEventsLogNoEvents") : t("frontdesk.settings.webhookTestEventsLogNoMatches")}
               </Typography>
             </Box>
           ) : (
             <Box sx={{ p: 1.5 }}>
-              <Stack spacing={1}>
+              <Stack sx={{ gap: 1 }}>
                 {filteredEvents.map((event) => {
                   const isExpanded = expandedEvents.has(event.id);
                   const eventColor = getEventTypeColor(event.event);
@@ -331,21 +340,22 @@ export const WebSocketEventsLog: React.FC<WebSocketEventsLogProps> = ({
                         },
                       }}
                     >
-                      <Box
-                        sx={{
-                          display: 'flex',
-                          alignItems: 'flex-start',
-                          gap: 1,
-                          cursor: 'pointer',
-                        }}
-                        onClick={() => toggleEventExpansion(event.id)}
-                      >
-                        <IconButton size="small" sx={{ mt: -0.5 }}>
-                          {isExpanded ? <ExpandLessIcon fontSize="small" /> : <ExpandMoreIcon fontSize="small" />}
-                        </IconButton>
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        alignItems: 'flex-start',
+                        gap: 1,
+                        cursor: 'pointer',
+                        direction: dir,
+                      }}
+                      onClick={() => toggleEventExpansion(event.id)}
+                    >
+                      <IconButton size="small" sx={{ mt: -0.5 }}>
+                        {isExpanded ? <ExpandLessIcon fontSize="small" /> : <ExpandMoreIcon fontSize="small" />}
+                      </IconButton>
 
-                        <Box sx={{ flex: 1, minWidth: 0 }}>
-                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
+                      <Box sx={{ flex: 1, minWidth: 0 }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5, direction: dir }}>
                             <Typography
                               variant="caption"
                               sx={{
@@ -405,10 +415,15 @@ export const WebSocketEventsLog: React.FC<WebSocketEventsLogProps> = ({
         anchorEl={filterMenuAnchor}
         open={Boolean(filterMenuAnchor)}
         onClose={() => setFilterMenuAnchor(null)}
+        PaperProps={{
+          sx: {
+            direction: dir,
+          },
+        }}
       >
         <MenuItem disabled>
           <Typography variant="caption" sx={{ fontWeight: 600 }}>
-            Event Types
+            {t("frontdesk.settings.webhookTestEventsLogEventTypes")}
           </Typography>
         </MenuItem>
         <Divider />
@@ -426,6 +441,7 @@ export const WebSocketEventsLog: React.FC<WebSocketEventsLogProps> = ({
                   {type}
                 </Typography>
               }
+              sx={{ direction: dir }}
             />
           </MenuItem>
         ))}
@@ -436,6 +452,11 @@ export const WebSocketEventsLog: React.FC<WebSocketEventsLogProps> = ({
         anchorEl={exportMenuAnchor}
         open={Boolean(exportMenuAnchor)}
         onClose={() => setExportMenuAnchor(null)}
+        PaperProps={{
+          sx: {
+            direction: dir,
+          },
+        }}
       >
         <MenuItem
           onClick={() => {
@@ -444,7 +465,7 @@ export const WebSocketEventsLog: React.FC<WebSocketEventsLogProps> = ({
           }}
         >
           <Typography variant="body2" sx={{ fontSize: '0.875rem' }}>
-            Export as JSON
+            {t("frontdesk.settings.webhookTestEventsLogExportJSON")}
           </Typography>
         </MenuItem>
         <MenuItem
@@ -454,7 +475,7 @@ export const WebSocketEventsLog: React.FC<WebSocketEventsLogProps> = ({
           }}
         >
           <Typography variant="body2" sx={{ fontSize: '0.875rem' }}>
-            Export as CSV
+            {t("frontdesk.settings.webhookTestEventsLogExportCSV")}
           </Typography>
         </MenuItem>
       </Menu>

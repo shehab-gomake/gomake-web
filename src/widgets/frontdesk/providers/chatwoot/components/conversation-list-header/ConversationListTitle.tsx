@@ -6,8 +6,13 @@
 
 import React from "react";
 import { Stack, Typography, Chip } from "@mui/material";
+import { useTranslation } from "react-i18next";
 import { ConversationStatus } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
-import { colorTokens, radiusTokens, shadowTokens } from "@/widgets/frontdesk/design-system";
+import {
+  colorTokens,
+  radiusTokens,
+  shadowTokens,
+} from "@/widgets/frontdesk/design-system";
 
 export interface ConversationListTitleProps {
   /** Current conversation status */
@@ -23,8 +28,14 @@ export const ConversationListTitle: React.FC<ConversationListTitleProps> = ({
   getStatusLabel,
   neutralColor,
 }) => {
+  const { t } = useTranslation();
+  const dir: "rtl" | "ltr" = t("direction");
   return (
-    <Stack direction="row" alignItems="center" spacing={1.5}>
+    <Stack
+      direction="row"
+      alignItems="center"
+      sx={{ gap: 1.5, direction: dir }}
+    >
       <Typography
         variant="h6"
         sx={{
@@ -33,7 +44,7 @@ export const ConversationListTitle: React.FC<ConversationListTitleProps> = ({
           color: colorTokens.neutral[900],
         }}
       >
-        Tickets
+        {t("frontdesk.tabs.tickets")}
       </Typography>
       {status && status !== ConversationStatus.ALL && (
         <Chip
