@@ -44,7 +44,6 @@ const MaterialsAndProductionTimeModalWidget = ({
   const defaultValue = storageList?.find(
     (option: any) => option?.storage === state?.storage
   )
-  console.log("state", state);
   return (
     <GoMakeDialog
       open={openModal}
@@ -130,7 +129,31 @@ const MaterialsAndProductionTimeModalWidget = ({
       }}
 
     >
-      <Stack direction="column" gap="30px" marginTop="10px">
+      <Stack
+        direction="column"
+        gap="30px"
+        marginTop="10px"
+        sx={{
+          maxHeight: "300px",
+          overflowY: "auto",
+          overflowX: "hidden",
+          paddingRight: "10px",
+          "&::-webkit-scrollbar": {
+            width: "8px",
+          },
+          "&::-webkit-scrollbar-track": {
+            backgroundColor: "transparent",
+          },
+          "&::-webkit-scrollbar-thumb": {
+            backgroundColor: "#CCCDCF",
+            borderRadius: "4px",
+            cursor: "pointer",
+          },
+          "&::-webkit-scrollbar-thumb:hover": {
+            backgroundColor: "#888",
+          },
+        }}
+      >
         {showIsReady && (
           <div style={classes.subTitle}>
             {t("boardMissions.markDoneModalSubTitle")}
@@ -139,22 +162,6 @@ const MaterialsAndProductionTimeModalWidget = ({
         <Stack
           direction="row"
           gap="15px"
-        // maxHeight={"200px"}
-        // overflow={"scroll"}
-        // padding={"0px 10px"}
-        // sx={{
-        //   "::-webkit-scrollbar": {
-        //     width: "8px",
-        //   },
-        //   "::-webkit-scrollbar-thumb": {
-        //     backgroundColor: "#CCCDCF",
-        //     borderRadius: "4px",
-        //     cursor: "pointer",
-        //   },
-        //   "::-webkit-scrollbar-thumb:hover": {
-        //     backgroundColor: "#888",
-        //   },
-        // }}
         >
           {/* Production Time Input */}
           <div style={{ width: "100%" }}>
@@ -213,7 +220,7 @@ const MaterialsAndProductionTimeModalWidget = ({
         <Stack direction="column" gap="10px" width="100%">
           {/* Materials Mapping */}
           {state?.materials?.length > 0 && (
-            <Stack direction="row" gap="10px" flexWrap="wrap">
+            <Stack direction="column" gap="10px" >
               {state?.materials.map((material, index) => (
                 <Stack
                   key={index}
