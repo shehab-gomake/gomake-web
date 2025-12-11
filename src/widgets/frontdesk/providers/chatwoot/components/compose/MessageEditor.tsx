@@ -95,13 +95,14 @@ export const MessageEditor: React.FC<MessageEditorProps> = ({
   // Note: content prop is Markdown, but editor works with HTML
   // We don't convert back to HTML since the editor maintains its own state
   React.useEffect(() => {
-    if (editor && content) {
+    if (editor) {
       const currentMarkdown = htmlToMarkdown(editor.getHTML());
       // Only update if content actually changed to avoid cursor jumps
+      // Handle empty string to clear editor
       if (content !== currentMarkdown) {
         // For now, set content as plain text since Markdown→HTML conversion
         // would require a separate library. Editor will treat it as plain text.
-        editor.commands.setContent(content);
+        editor.commands.setContent(content || "");
       }
     }
   }, [content, editor]);

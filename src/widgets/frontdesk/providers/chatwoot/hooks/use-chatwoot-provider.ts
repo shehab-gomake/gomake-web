@@ -14,7 +14,10 @@ import {
 } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
 import type { Message } from "@/services/frontdesk/api/chatwoot/types/messages.types";
 import { createLogger } from "@/services/frontdesk/utils/logger";
-import { chatwootSelectedAccountAtom, chatwootSelectedConversationAtom } from "@/store/frontdesk/atoms/chatwoot.atoms";
+import {
+  chatwootSelectedAccountAtom,
+  chatwootSelectedConversationAtom,
+} from "@/store/frontdesk/atoms/chatwoot.atoms";
 
 // New hooks
 import { useConversationSelection } from "./use-conversation-selection";
@@ -24,15 +27,29 @@ import { useConversationUpdates } from "./use-conversation-updates";
 const logger = createLogger("useChatwootProvider");
 
 export const useChatwootProvider = () => {
-  const [selectedAccountId, setSelectedAccountId] = useRecoilState(chatwootSelectedAccountAtom);
-  const [selectedConversation, setSelectedConversation] = useRecoilState(chatwootSelectedConversationAtom);
+  const [selectedAccountId, setSelectedAccountId] = useRecoilState(
+    chatwootSelectedAccountAtom
+  );
+  const [selectedConversation, setSelectedConversation] = useRecoilState(
+    chatwootSelectedConversationAtom
+  );
 
   // Toast notifications
   const { setSnackbarStateValue } = useSnackBar();
 
   // Core hooks
-  const { profile, loading: profileLoading, error: profileError, fetchProfile } = useChatwootProfile();
-  const { inboxes, loading: inboxesLoading, selectedInbox, selectInbox } = useChatwootInboxes();
+  const {
+    profile,
+    loading: profileLoading,
+    error: profileError,
+    fetchProfile,
+  } = useChatwootProfile();
+  const {
+    inboxes,
+    loading: inboxesLoading,
+    selectedInbox,
+    selectInbox,
+  } = useChatwootInboxes();
   const router = useChatwootRouter();
 
   // Account Management
@@ -48,10 +65,14 @@ export const useChatwootProvider = () => {
   const cache = useChatwootCache(currentAccountId);
 
   // Filter Management - also get isRouterReady to control when fetching starts
-  const { filters, handleFiltersChange, isRouterReady } = useConversationFilters();
+  const { filters, handleFiltersChange, isRouterReady } =
+    useConversationFilters();
 
   // Selection Management
-  const { handleConversationSelect, handleBack } = useConversationSelection(currentAccountId, filters);
+  const { handleConversationSelect, handleBack } = useConversationSelection(
+    currentAccountId,
+    filters
+  );
 
   // Helper for filters (needed for other hooks)
   const statusFilter = useMemo(() => {
@@ -59,11 +80,17 @@ export const useChatwootProvider = () => {
   }, [filters.status]);
 
   const assigneeFilter = useMemo(() => {
-    return (filters.assignee_type as ConversationAssigneeType) || ConversationAssigneeType.ME;
+    return (
+      (filters.assignee_type as ConversationAssigneeType) ||
+      ConversationAssigneeType.ME
+    );
   }, [filters.assignee_type]);
 
   // Conversation Updates & WebSocket
-  const { updateConversationInList } = useConversationUpdates(statusFilter, assigneeFilter);
+  const { updateConversationInList } = useConversationUpdates(
+    statusFilter,
+    assigneeFilter
+  );
 
   const showToast = useCallback(
     (message: string, type: "success" | "error" | "warning" = "success") => {
@@ -87,14 +114,28 @@ export const useChatwootProvider = () => {
         }
         const senderName = conversation.meta?.sender?.name || "Unknown";
         const inboxChannel = conversation.meta?.channel || "";
-        logger.info("New conversation received via WebSocket:", { id: conversation.id, sender: senderName });
-        const channelIcon = inboxChannel === "Channel::Email" ? "📧" : inboxChannel === "Channel::Whatsapp" ? "💬" : "🔔";
-        showToast(`${channelIcon} New conversation from ${senderName}`, "success");
+        logger.info("New conversation received via WebSocket:", {
+          id: conversation.id,
+          sender: senderName,
+        });
+        const channelIcon =
+          inboxChannel === "Channel::Email"
+            ? "📧"
+            : inboxChannel === "Channel::Whatsapp"
+            ? "💬"
+            : "🔔";
+        showToast(
+          `${channelIcon} New conversation from ${senderName}`,
+          "success"
+        );
       },
       [showToast]
     ),
     onNewMessage: useCallback((conversationId: number, message: Message) => {
-      logger.debug("New message received via WebSocket:", { conversationId, messageId: message?.id });
+      logger.debug("New message received via WebSocket:", {
+        conversationId,
+        messageId: message?.id,
+      });
     }, []),
   });
 
