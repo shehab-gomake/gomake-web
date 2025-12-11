@@ -198,6 +198,7 @@ const InventoryIntakeModal: React.FC<InventoryIntakeModalProps> = ({
   const { classes } = useStyle();
   const { primaryColor } = useGomakeTheme();
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
+  const [showPurchaseOrderInventoryDialog, setShowPurchaseOrderInventoryDialog] = useState(false);
 
   // Use custom hook for all inventory intake modal logic
   const {
@@ -206,6 +207,7 @@ const InventoryIntakeModal: React.FC<InventoryIntakeModalProps> = ({
     isIntaking,
     updateCellData,
     handleIntake,
+    performIntake,
     handleSplitInventoryPackages,
     handleMergeInventoryPackages,
     handleCodeUpdate,
@@ -220,22 +222,37 @@ const InventoryIntakeModal: React.FC<InventoryIntakeModalProps> = ({
 
   // Intercept handleIntake to show confirmation modal if status is not Received
   const handleIntakeWithConfirmation = () => {
+    handleIntake(() => {
+      setShowPurchaseOrderInventoryDialog(true);
+    });
+
+  };
+
+  // Handle confirmation modal OK action (for status change)
+  const handleConfirmIntake = () => {
+    setShowConfirmationModal(false);
+    performIntake();
+  };
+
+  // Handle confirmation modal cancel action (for status change)
+  const handleCancelConfirmation = () => {
+    setShowConfirmationModal(false);
+  };
+
+  // Handle purchase order inventory dialog Yes action
+  const handleConfirmPurchaseOrderInventory = () => {
+    setShowPurchaseOrderInventoryDialog(false);
     if (status !== PurchaseOrderStatuses.Received) {
       setShowConfirmationModal(true);
-    } else {
-      handleIntake();
+    }
+    else {
+      performIntake();
     }
   };
 
-  // Handle confirmation modal OK action
-  const handleConfirmIntake = () => {
-    setShowConfirmationModal(false);
-    handleIntake();
-  };
-
-  // Handle confirmation modal cancel action
-  const handleCancelConfirmation = () => {
-    setShowConfirmationModal(false);
+  // Handle purchase order inventory dialog No action
+  const handleCancelPurchaseOrderInventory = () => {
+    setShowPurchaseOrderInventoryDialog(false);
   };
 
   return (
@@ -521,6 +538,24 @@ const InventoryIntakeModal: React.FC<InventoryIntakeModalProps> = ({
         <Box sx={{ padding: "20px" }}>
           <Typography variant="body1">
             {t("sales.purchaseOrder.statusChangeConfirmation") || "This Purchase order convert status to the Received"}
+          </Typography>
+        </Box>
+      </GoMakeDialog>
+      {/* Purchase Order Inventory Confirmation Dialog */}
+      <GoMakeDialog
+        open={showPurchaseOrderInventoryDialog}
+        onClose={handleCancelPurchaseOrderInventory}
+        title={t("sales.purchaseOrder.purchaseOrderInventory") || "Purchase Order Inventory"}
+        maxWidth="sm"
+        showFooter={true}
+        primaryButtonLabel={t("common.yes")}
+        cancelButtonLabel={t("common.no")}
+        onPrimaryAction={handleConfirmPurchaseOrderInventory}
+        hideCancelButton={false}
+      >
+        <Box sx={{ padding: "20px" }}>
+          <Typography variant="body1">
+            {t("sales.purchaseOrder.purchaseOrderInventoryMessage") || "You have purchase order inventory. Do you need to complete it?"}
           </Typography>
         </Box>
       </GoMakeDialog>
