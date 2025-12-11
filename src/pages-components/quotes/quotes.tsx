@@ -75,6 +75,8 @@ import { FrontDeskEmailComposerWrapper } from "./components/frontdesk-email-comp
 import { PrintPackingSlipModalWidget } from "@/widgets/production-floor/views/board-missions-view/navigation-buttons/print-packing-slip-modal-widget";
 import { useParameters } from "@/hooks/use-parameters";
 import { printHouseHasFrontDeskFeature } from "@/store/print-house-profile";
+import { PurchaseOrdersDialogsUndoIntakeWidget } from "@/widgets/purchas-orders-dialogs/purchase-orders-dialogs-undo-intake-widget";
+import { PurchaseOrdersDialogsIntakeValidationWidget } from "@/widgets/purchas-orders-dialogs/purchase-orders-dialogs-intake-validatin-widget";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -1153,41 +1155,17 @@ const QuotesListPageWidget = ({
         />
       )}
       {/* Intake Validation Dialog */}
-      <GoMakeDialog
-        open={showIntakeValidationDialog}
-        onClose={handleCancelIntakeValidation}
-        title={t("sales.purchaseOrder.intakeValidation") || "Intake Required"}
-        maxWidth="sm"
-        showFooter={true}
-        primaryButtonLabel={t("sales.purchaseOrder.intake")}
-        cancelButtonLabel={t("common.cancel")}
-        onPrimaryAction={handleOpenIntakeFromValidation}
-        hideCancelButton={false}
-      >
-        <Box sx={{ padding: "20px" }}>
-          <Typography variant="body1">
-            {t("sales.purchaseOrder.someItemsNotIntake") || "Some items not Intake need to Intake"}
-          </Typography>
-        </Box>
-      </GoMakeDialog>
+      <PurchaseOrdersDialogsIntakeValidationWidget
+        showIntakeValidationDialog={showIntakeValidationDialog}
+        handleCancelIntakeValidation={handleCancelIntakeValidation}
+        handleOpenIntakeFromValidation={handleOpenIntakeFromValidation}
+      />
       {/* Undo Intake Dialog - when changing from Received status */}
-      <GoMakeDialog
-        open={showUndoIntakeDialog}
-        onClose={handleCancelUndoIntake}
-        title={t("sales.purchaseOrder.undoIntakeConfirmation") || "Undo Intake?"}
-        maxWidth="sm"
-        showFooter={true}
-        primaryButtonLabel={t("common.yes")}
-        cancelButtonLabel={t("common.no")}
-        onPrimaryAction={handleConfirmUndoIntake}
-        hideCancelButton={false}
-      >
-        <Box sx={{ padding: "20px" }}>
-          <Typography variant="body1">
-            {t("sales.purchaseOrder.undoIntakeMessage") || "Do you want to undo the intake before changing the status?"}
-          </Typography>
-        </Box>
-      </GoMakeDialog>
+      <PurchaseOrdersDialogsUndoIntakeWidget
+        showUndoIntakeDialog={showUndoIntakeDialog}
+        handleCancelUndoIntake={handleCancelUndoIntake}
+        handleConfirmUndoIntake={handleConfirmUndoIntake}
+      />
     </>
   );
 };

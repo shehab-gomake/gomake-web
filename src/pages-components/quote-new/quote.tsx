@@ -14,7 +14,6 @@ import {
   GoMakeDeleteModal,
   GoMakeMenu,
 } from "@/components";
-import { GoMakeDialog } from "@/components/dialog/go-make-dialog";
 import { HeaderTitle } from "@/widgets";
 import { ArrowDownNewIcon, BudgetIcon, EditIcon } from "@/icons";
 import { useQuoteNew } from "./use-quote";
@@ -64,7 +63,7 @@ import { InvoiceCreationModal } from "@/widgets/quote-new/invoice-creation-modal
 import { useQuoteGetData } from "./use-quote-get-data";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { DateField } from "@/components/date-picker/date-filed";
-import { ModalType, PurchaseOrderStatuses } from "@/enums";
+import { ModalType } from "@/enums";
 import { DuplicateQuickModal } from "@/widgets/quote-new/modals-widgets/duplicate-quick-modal";
 import Stack from "@mui/material/Stack";
 import { ClientBalanceComponent } from "@/components/client-balance/client-balance";
@@ -83,7 +82,9 @@ import { EPreferences } from "@/enums/prefernces";
 import { updateQuoteStatusSocketIo } from "@/hooks/socket-io/update-quote-status-socket-io";
 import { useQuoteConfirmation } from "@/pages-components/quote-confirmation/use-quote-confirmation";
 import { FrontDeskEmailComposerWrapper } from "../quotes/components/frontdesk-email-composer-wrapper";
-
+import { PurchaseOrdersDialogsUndoIntakeWidget } from "@/widgets/purchas-orders-dialogs/purchase-orders-dialogs-undo-intake-widget";
+import { PurchaseOrdersDialogsIntakeValidationWidget } from "@/widgets/purchas-orders-dialogs/purchase-orders-dialogs-intake-validatin-widget";
+import { PurchaseOrdersDialogsAddItemRestrictionWidget } from "@/widgets/purchas-orders-dialogs/purchase-orders-dialogs-add-item-restriction-widget";
 interface IProps {
   documentType: DOCUMENT_TYPE;
   isQuoteConfirmation?: boolean;
@@ -1078,60 +1079,24 @@ const QuoteNewPageWidget = ({
         documentType={documentType}
       />
       {/* Intake Validation Dialog */}
-      <GoMakeDialog
-        open={showIntakeValidationDialog}
-        onClose={handleCancelIntakeValidation}
-        title={t("sales.purchaseOrder.intakeValidation") || "Intake Required"}
-        maxWidth="sm"
-        showFooter={true}
-        primaryButtonLabel={t("sales.purchaseOrder.intake")}
-        cancelButtonLabel={t("common.cancel")}
-        onPrimaryAction={handleOpenIntakeFromValidation}
-        hideCancelButton={false}
-      >
-        <Box sx={{ padding: "20px" }}>
-          <Typography variant="body1">
-            {t("sales.purchaseOrder.someItemsNotIntake") || "Some items not Intake"}
-          </Typography>
-        </Box>
-      </GoMakeDialog>
+      <PurchaseOrdersDialogsIntakeValidationWidget
+        showIntakeValidationDialog={showIntakeValidationDialog}
+        handleCancelIntakeValidation={handleCancelIntakeValidation}
+        handleOpenIntakeFromValidation={handleOpenIntakeFromValidation}
+      />
       {/* Undo Intake Dialog - when changing from Received status */}
-      <GoMakeDialog
-        open={showUndoIntakeDialog}
-        onClose={handleCancelUndoIntake}
-        title={t("sales.purchaseOrder.undoIntakeConfirmation") || "Undo Intake?"}
-        maxWidth="sm"
-        showFooter={true}
-        primaryButtonLabel={t("common.yes")}
-        cancelButtonLabel={t("common.no")}
-        onPrimaryAction={handleConfirmUndoIntake}
-        hideCancelButton={false}
-      >
-        <Box sx={{ padding: "20px" }}>
-          <Typography variant="body1">
-            {t("sales.purchaseOrder.undoIntakeMessage") || "Do you want to undo the intake before changing the status?"}
-          </Typography>
-        </Box>
-      </GoMakeDialog>
+      <PurchaseOrdersDialogsUndoIntakeWidget
+        showUndoIntakeDialog={showUndoIntakeDialog}
+        handleCancelUndoIntake={handleCancelUndoIntake}
+        handleConfirmUndoIntake={handleConfirmUndoIntake}
+      />
       {/* Add Item Restriction Dialog - when status is Closed or Received */}
-      <GoMakeDialog
-        open={showAddItemRestrictionDialog}
-        onClose={handleCancelAddItemRestriction}
-        title={t("sales.purchaseOrder.cannotAddItem") || "Cannot Add Item"}
-        maxWidth="sm"
-        showFooter={true}
-        primaryButtonLabel={t("sales.purchaseOrder.createNewPurchaseOrder") || "Create New Purchase Order"}
-        cancelButtonLabel={t("common.cancel")}
-        onPrimaryAction={handleCreateNewPurchaseOrder}
-        hideCancelButton={false}
-      >
-        <Box sx={{ padding: "20px" }}>
-          <Typography variant="body1">
-            {t("sales.purchaseOrder.addItemRestrictionMessage", { status: quoteItemValue?.documentStatus === PurchaseOrderStatuses.Received ? t("documentStatus.PurchaseOrder.Received") : t("documentStatus.PurchaseOrder.Closed") }) ||
-              `You are in {{status}} status and cannot add new items. Would you like to create a new purchase order?`}
-          </Typography>
-        </Box>
-      </GoMakeDialog>
+      <PurchaseOrdersDialogsAddItemRestrictionWidget
+        showAddItemRestrictionDialog={showAddItemRestrictionDialog}
+        handleCancelAddItemRestriction={handleCancelAddItemRestriction}
+        handleCreateNewPurchaseOrder={handleCreateNewPurchaseOrder}
+        documentStatus={quoteItemValue?.documentStatus}
+      />
       {!isPrePaymentPage && (
         <AddDeliveryModal
           openModal={openAddDeliveryModal}
