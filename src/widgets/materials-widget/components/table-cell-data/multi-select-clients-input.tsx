@@ -95,15 +95,20 @@ const MultiSelectClientsInput = ({
     isChecked: boolean,
     option: any
   ) => {
-    if (isHaveMorethanMaterialSuppliers) {
-      onClickOpenDeleteTableRowModal();
-    } else {
-      const updatedValues = isChecked
-        ? [...normalizedValues, option?.value]
-        : normalizedValues.filter((v) => v !== option?.value);
+    const updatedValues = isChecked
+      ? [...normalizedValues, option?.value]
+      : normalizedValues.filter((v) => v !== option?.value);
 
-      onChangeInputs(parameterKey, updatedValues);
-    }
+    onChangeInputs(parameterKey, updatedValues);
+    // if (isHaveMorethanMaterialSuppliers) {
+    //   onClickOpenDeleteTableRowModal();
+    // } else {
+    //   const updatedValues = isChecked
+    //     ? [...normalizedValues, option?.value]
+    //     : normalizedValues.filter((v) => v !== option?.value);
+
+    //   onChangeInputs(parameterKey, updatedValues);
+    // }
   };
 
   const onChangeInputs = async (key, value) => {

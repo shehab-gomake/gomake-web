@@ -138,12 +138,7 @@ const NumberStringInput = ({ value, isEditable, parameterKey, id, isAdmin, unit,
                         // Revert to previous value if API fails
                         setOptimisticValue(originalPreviousValue);
                     });
-                // } else if (isHaveMorethanMaterialSuppliers && !parameterKey.includes("price")) {
-                //     onClickOpenDeleteTableRowModal()
             }
-            // else if (isHaveMorethanMaterialSuppliers && !parameterKey.includes("price")) {
-            //     onClickOpenDeleteTableRowModal()
-            // }
             else if (unitType === UNIT_TYPE.IMPERIAL && (parameterKey === "weight" || parameterKey === "weightGSM") && materialType === "sheets") {
                 onClickOpenWeightDialog();
             }
