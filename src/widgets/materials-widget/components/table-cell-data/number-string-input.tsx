@@ -24,6 +24,7 @@ const NumberStringInput = ({ value, isEditable, parameterKey, id, isAdmin, unit,
     const [isLoading, setIsLoading] = useState<boolean>(false)
     const [updateValue, setUpdateValue] = useState('');
     const [optimisticValue, setOptimisticValue] = useState(value);
+    const [originalValue, setOriginalValue] = useState<string>(''); // Store original value before editing
     const [data, setData] = useRecoilState(materialCategoryDataState);
     const user = useRecoilValue<any>(userState);
     const unitType = user?.printHouseProfile?.unitType || 0
@@ -55,6 +56,7 @@ const NumberStringInput = ({ value, isEditable, parameterKey, id, isAdmin, unit,
             const data = unitType === UNIT_TYPE.IMPERIAL ? convertValueToImperial(unit, optimisticValue) : optimisticValue
             setIsUpdate(true);
             setUpdateValue(data);
+            setOriginalValue(optimisticValue as string); // Store original value before editing
         }
     }
     const onInputChange = (v: string) => {
@@ -64,6 +66,15 @@ const NumberStringInput = ({ value, isEditable, parameterKey, id, isAdmin, unit,
 
     const onClickOpenWeightDialog = () => {
         setOpenWeightDialog(true);
+    };
+
+    const onCloseWeightDialog = () => {
+        // Revert to original value when closing without saving
+        setOptimisticValue(originalValue);
+        const originalDisplayValue = unitType === UNIT_TYPE.IMPERIAL ? convertValueToImperial(unit, originalValue) : originalValue;
+        setUpdateValue(originalDisplayValue);
+        setIsUpdate(false);
+        setOpenWeightDialog(false);
     };
 
     const onBlur = () => {
@@ -219,7 +230,7 @@ const NumberStringInput = ({ value, isEditable, parameterKey, id, isAdmin, unit,
             />
             <GoMakeDialog
                 open={openWeightDialog}
-                onClose={() => setOpenWeightDialog(false)}
+                onClose={onCloseWeightDialog}
                 title={t("materials.modals.weightDialogTitle", {
                     weight: parameterKey === "weight" ? t("materials.modals.weight") : t("materials.modals.weightGSM")
                 })}
