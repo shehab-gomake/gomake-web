@@ -710,7 +710,7 @@ const BoardMissionsStationActionItem = ({
     await updateBoardMissionsActionDoneWithMaterialsApi(callApi, callBack, {
       updatedState: updatedStateArg,
       productType: productTypeArg,
-      isSendMessage: false, // Always false - we handle email sending programmatically via FrontDesk
+      isSendMessage: hasFrontDeskFeature ? false : sendMSgArg, // Always false - we handle email sending programmatically via FrontDesk
     });
   };
 
