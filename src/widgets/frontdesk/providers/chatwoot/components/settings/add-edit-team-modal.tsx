@@ -112,7 +112,9 @@ export const AddEditTeamModal: React.FC<AddEditTeamModalProps> = ({
 
   const handleAgentChange = (event: any) => {
     const value = event.target.value;
-    setSelectedAgentIds(typeof value === "string" ? value.split(",").map(Number) : value);
+    setSelectedAgentIds(
+      typeof value === "string" ? value.split(",").map(Number) : value
+    );
   };
 
   const canSubmit = !saving && !isSubmitting && name.trim().length > 0;
@@ -121,7 +123,11 @@ export const AddEditTeamModal: React.FC<AddEditTeamModalProps> = ({
     <CompactModal
       open={open}
       onClose={onClose}
-      title={isEditMode ? t("frontdesk.teams.editTeam") : t("frontdesk.teams.createTeam")}
+      title={
+        isEditMode
+          ? t("frontdesk.teams.editTeam")
+          : t("frontdesk.teams.createTeam")
+      }
       icon={<GroupsIcon />}
       error={error}
       isLoading={loadingAgents}
@@ -130,7 +136,11 @@ export const AddEditTeamModal: React.FC<AddEditTeamModalProps> = ({
         <CompactModalActions
           onCancel={onClose}
           onSubmit={handleSubmit}
-          submitLabel={isEditMode ? t("frontdesk.teams.saveChanges") : t("frontdesk.teams.createTeam")}
+          submitLabel={
+            isEditMode
+              ? t("frontdesk.teams.saveChanges")
+              : t("frontdesk.teams.createTeam")
+          }
           isSubmitting={saving || isSubmitting}
           submitDisabled={!canSubmit}
           cancelDisabled={saving || isSubmitting}
@@ -173,17 +183,37 @@ export const AddEditTeamModal: React.FC<AddEditTeamModalProps> = ({
               letterSpacing: "0.025em",
             }}
           >
-            {t("frontdesk.teams.teamMembers")} <span style={{ fontSize: "0.688rem", color: "#9ca3af", fontWeight: 400 }}>({t("frontdesk.teams.optional")})</span>
+            {t("frontdesk.teams.teamMembers")}{" "}
+            <span
+              style={{
+                fontSize: "0.688rem",
+                color: "#9ca3af",
+                fontWeight: 400,
+              }}
+            >
+              ({t("frontdesk.teams.optional")})
+            </span>
           </Typography>
           <FormControl fullWidth size="small" sx={{ direction: dir }}>
-            <InputLabel sx={{ fontSize: "0.813rem" }}>{t("frontdesk.teams.selectTeamMembers")}</InputLabel>
+            <InputLabel sx={{ fontSize: "0.813rem" }}>
+              {t("frontdesk.teams.selectTeamMembers")}
+            </InputLabel>
             <Select
               multiple
               value={selectedAgentIds}
               onChange={handleAgentChange}
-              input={<OutlinedInput label={t("frontdesk.teams.selectTeamMembers")} />}
+              input={
+                <OutlinedInput label={t("frontdesk.teams.selectTeamMembers")} />
+              }
               renderValue={(selected) => (
-                <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexWrap: "wrap",
+                    gap: 0.5,
+                    direction: dir,
+                  }}
+                >
                   {selected.map((agentId) => {
                     const agent = agents.find((a) => a.id === agentId);
                     return (
@@ -197,6 +227,10 @@ export const AddEditTeamModal: React.FC<AddEditTeamModalProps> = ({
                           backgroundColor: "rgba(99, 102, 241, 0.1)",
                           color: "#6366f1",
                           border: "none",
+                          direction: dir,
+                          "& .MuiChip-label": {
+                            direction: dir,
+                          },
                         }}
                       />
                     );
@@ -209,17 +243,28 @@ export const AddEditTeamModal: React.FC<AddEditTeamModalProps> = ({
               }}
             >
               {agents.map((agent) => (
-                <MenuItem key={agent.id} value={agent.id} sx={{ fontSize: "0.813rem", py: 1 }}>
-                  <Box sx={{ display: "flex", alignItems: "center", gap: 0.75 }}>
+                <MenuItem
+                  key={agent.id}
+                  value={agent.id}
+                  sx={{ fontSize: "0.813rem", py: 1 }}
+                >
+                  <Box
+                    sx={{ display: "flex", alignItems: "center", gap: 0.75 }}
+                  >
                     <Box
                       sx={{
                         width: 6,
                         height: 6,
                         borderRadius: "50%",
-                        bgcolor: agent.availability_status === "online" ? "#10b981" : "#d1d5db",
+                        bgcolor:
+                          agent.availability_status === "online"
+                            ? "#10b981"
+                            : "#d1d5db",
                       }}
                     />
-                    <Typography sx={{ fontSize: "0.813rem" }}>{agent.name}</Typography>
+                    <Typography sx={{ fontSize: "0.813rem" }}>
+                      {agent.name}
+                    </Typography>
                   </Box>
                 </MenuItem>
               ))}

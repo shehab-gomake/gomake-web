@@ -15,9 +15,13 @@ import { useFetchDeduplication } from "./use-chatwoot-initialization";
 import { useChatwootMetrics } from "./use-chatwoot-metrics";
 import { createFilterKey } from "../utils/filter-utils";
 import { CHATWOOT_CONSTANTS } from "../config/constants";
-import { useFetchLock, createConversationsLockKey } from "./core/use-fetch-lock";
+import {
+  useFetchLock,
+  createConversationsLockKey,
+} from "./core/use-fetch-lock";
 
-interface UseChatwootConversationsOptions extends Partial<ConversationListParams> {
+interface UseChatwootConversationsOptions
+  extends Partial<ConversationListParams> {
   /**
    * When false, skips fetching. Use this to wait for router to be ready.
    * Default: true
@@ -25,7 +29,10 @@ interface UseChatwootConversationsOptions extends Partial<ConversationListParams
   enabled?: boolean;
 }
 
-export const useChatwootConversations = (accountId: number | null, options: UseChatwootConversationsOptions = {}) => {
+export const useChatwootConversations = (
+  accountId: number | null,
+  options: UseChatwootConversationsOptions = {}
+) => {
   // Extract enabled flag from options, default to true
   const { enabled = true, ...filterOptions } = options;
 
@@ -45,16 +52,22 @@ export const useChatwootConversations = (accountId: number | null, options: UseC
   ]);
 
   // Centralized fetch lock for conversations
-  const { acquireLock, releaseLock, isLocked } = useFetchLock({ prefix: "conversations" });
+  const { acquireLock, releaseLock, isLocked } = useFetchLock({
+    prefix: "conversations",
+  });
 
   // CACHE-FIRST: Use cache atom family for this filter key
-  const [cache, setCache] = useRecoilState(chatwootConversationsCacheFamily(stableFilterKey));
+  const [cache, setCache] = useRecoilState(
+    chatwootConversationsCacheFamily(stableFilterKey)
+  );
   const [cacheKeys, setCacheKeys] = useRecoilState(chatwootCacheKeysAtom);
 
   // Backward compatibility: Keep legacy atom updated for components that still use it
   const setConversations = useSetRecoilState(chatwootConversationsAtom);
 
-  const [loadingState, setLoadingState] = useRecoilState(chatwootConversationsLoadingAtom);
+  const [loadingState, setLoadingState] = useRecoilState(
+    chatwootConversationsLoadingAtom
+  );
   const [error, setError] = useRecoilState(chatwootConversationsErrorAtom);
   const setCounts = useSetRecoilState(chatwootConversationCountsAtom);
 
@@ -67,7 +80,8 @@ export const useChatwootConversations = (accountId: number | null, options: UseC
   const metrics = useChatwootMetrics();
 
   // Fetch deduplication to prevent redundant API calls (instance-level backup)
-  const { shouldFetch, markFetchStart, markFetchComplete, markFetchFailed } = useFetchDeduplication<ConversationListParams>();
+  const { shouldFetch, markFetchStart, markFetchComplete, markFetchFailed } =
+    useFetchDeduplication<ConversationListParams>();
 
   // Track if we've completed the initial fetch (when enabled)
   // This is different from "first mount" - we only want to track first ENABLED fetch
@@ -113,7 +127,12 @@ export const useChatwootConversations = (accountId: number | null, options: UseC
   );
 
   const fetchConversations = useCallback(
-    async (page: number = 1, append: boolean = false, isFilterChange: boolean = false, forceRefresh: boolean = false) => {
+    async (
+      page: number = 1,
+      append: boolean = false,
+      isFilterChange: boolean = false,
+      forceRefresh: boolean = false
+    ) => {
       // Note: accountId can be null - the API endpoint /api/accounts/conversations
       // doesn't require accountId in the URL path, it uses the authenticated user's account automatically
       // So we allow the call even if accountId is null
@@ -124,14 +143,22 @@ export const useChatwootConversations = (accountId: number | null, options: UseC
         const isCacheFresh = cacheAge < CHATWOOT_CONSTANTS.CACHE_STALE_TIME;
 
         if (isCacheFresh) {
-          console.log(`[useChatwootConversations] ✨ Using fresh cache (age: ${Math.round(cacheAge / 1000)}s)`);
+          console.log(
+            `[useChatwootConversations] ✨ Using fresh cache (age: ${Math.round(
+              cacheAge / 1000
+            )}s)`
+          );
           // Track cache hit
           metrics.trackCacheHit("conversations.list", 500);
           // Update legacy atom for backward compatibility
           setConversations(cache.conversations);
           return;
         } else {
-          console.log(`[useChatwootConversations] 🔄 Cache stale (age: ${Math.round(cacheAge / 1000)}s), refetching...`);
+          console.log(
+            `[useChatwootConversations] 🔄 Cache stale (age: ${Math.round(
+              cacheAge / 1000
+            )}s), refetching...`
+          );
         }
       }
 
@@ -140,7 +167,9 @@ export const useChatwootConversations = (accountId: number | null, options: UseC
         limit: filterOptions.limit || CHATWOOT_CONSTANTS.DEFAULT_PAGE_SIZE,
         ...(filterOptions.status && { status: filterOptions.status }),
         ...(filterOptions.inbox_id && { inbox_id: filterOptions.inbox_id }),
-        ...(filterOptions.assignee_type && { assignee_type: filterOptions.assignee_type }),
+        ...(filterOptions.assignee_type && {
+          assignee_type: filterOptions.assignee_type,
+        }),
         ...(filterOptions.sort_by && { sort_by: filterOptions.sort_by }),
         ...(filterOptions.q && { q: filterOptions.q }),
         ...(filterOptions.team_id && { team_id: filterOptions.team_id }),
@@ -155,20 +184,26 @@ export const useChatwootConversations = (accountId: number | null, options: UseC
       if (!append) {
         // Check if same params as last successful fetch (and not a forced refresh)
         if (!forceRefresh && paramsKey === lastFetchParamsKeyRef.current) {
-          console.log("[useChatwootConversations] ⏭️ Same params as last fetch, skipping duplicate");
+          console.log(
+            "[useChatwootConversations] ⏭️ Same params as last fetch, skipping duplicate"
+          );
           return;
         }
 
         // Try to acquire lock for this specific filter combination
         if (!acquireLock(paramsKey)) {
-          console.log("[useChatwootConversations] ⏭️ Fetch already in progress for these params, skipping duplicate");
+          console.log(
+            "[useChatwootConversations] ⏭️ Fetch already in progress for these params, skipping duplicate"
+          );
           return;
         }
       }
 
       // Instance-level deduplication check (backup)
       if (!append && !shouldFetch(listParams)) {
-        console.log("[useChatwootConversations] Skipping duplicate/concurrent fetch (instance-level)");
+        console.log(
+          "[useChatwootConversations] Skipping duplicate/concurrent fetch (instance-level)"
+        );
         if (!append) {
           releaseLock(paramsKey);
         }
@@ -194,14 +229,25 @@ export const useChatwootConversations = (accountId: number | null, options: UseC
 
       try {
         // Pass accountId (can be null) - the service will handle it
-        const response = await chatwootService.conversations.listConversations(accountId, listParams);
+        const response = await chatwootService.conversations.listConversations(
+          accountId,
+          listParams
+        );
 
         // Track successful API call
-        metrics.trackAPICall("conversations.list", "GET", apiStartTime, true, false, listParams);
+        metrics.trackAPICall(
+          "conversations.list",
+          "GET",
+          apiStartTime,
+          true,
+          false,
+          listParams
+        );
 
         // Chatwoot API returns: { data: { payload: [...], meta: {...} } }
         // Handle nested structure
-        const conversationsList = response.data?.payload || response.payload || [];
+        const conversationsList =
+          response.data?.payload || response.payload || [];
         const limit = listParams.limit || CHATWOOT_CONSTANTS.DEFAULT_PAGE_SIZE;
 
         // Check if there are more pages
@@ -213,7 +259,9 @@ export const useChatwootConversations = (accountId: number | null, options: UseC
         // CACHE-FIRST: Update cache with new data (include lastAccessed for LRU)
         const now = Date.now();
         setCache((prev) => ({
-          conversations: append ? [...prev.conversations, ...conversationsList] : conversationsList,
+          conversations: append
+            ? [...prev.conversations, ...conversationsList]
+            : conversationsList,
           timestamp: now,
           lastAccessed: now,
           hasMore: hasMoreData,
@@ -222,7 +270,11 @@ export const useChatwootConversations = (accountId: number | null, options: UseC
         }));
 
         // Backward compatibility: Update legacy atom
-        setConversations(append ? [...cache.conversations, ...conversationsList] : conversationsList);
+        setConversations(
+          append
+            ? [...cache.conversations, ...conversationsList]
+            : conversationsList
+        );
 
         // Extract counts from API response meta
         setCounts({
@@ -243,7 +295,14 @@ export const useChatwootConversations = (accountId: number | null, options: UseC
         setError(errorMessage);
 
         // Track failed API call
-        metrics.trackAPICall("conversations.list", "GET", apiStartTime, false, false, listParams);
+        metrics.trackAPICall(
+          "conversations.list",
+          "GET",
+          apiStartTime,
+          false,
+          false,
+          listParams
+        );
 
         // CACHE-FIRST: Store error in cache (preserve lastAccessed)
         setCache((prev) => ({
@@ -295,7 +354,10 @@ export const useChatwootConversations = (accountId: number | null, options: UseC
   );
 
   const loadMore = useCallback(() => {
-    const isLoading = loadingState.initialLoading || loadingState.filtering || loadingState.loadingMore;
+    const isLoading =
+      loadingState.initialLoading ||
+      loadingState.filtering ||
+      loadingState.loadingMore;
     if (!isLoading && hasMore) {
       fetchConversations(currentPage + 1, true, false, false);
     }
@@ -319,16 +381,24 @@ export const useChatwootConversations = (accountId: number | null, options: UseC
    * @returns Promise<void>
    */
   const updateConversationStatus = useCallback(
-    async (conversationId: number, newStatus: "open" | "resolved" | "pending" | "snoozed") => {
+    async (
+      conversationId: number,
+      newStatus: "open" | "resolved" | "pending" | "snoozed"
+    ) => {
       if (!accountId) {
         console.error("[updateConversationStatus] Account ID is required");
         return;
       }
 
       // Find the conversation to update
-      const conversationToUpdate = conversations.find((c) => c.id === conversationId);
+      const conversationToUpdate = conversations.find(
+        (c) => c.id === conversationId
+      );
       if (!conversationToUpdate) {
-        console.error("[updateConversationStatus] Conversation not found in state:", conversationId);
+        console.error(
+          "[updateConversationStatus] Conversation not found in state:",
+          conversationId
+        );
         return;
       }
 
@@ -352,16 +422,23 @@ export const useChatwootConversations = (accountId: number | null, options: UseC
 
       try {
         // Step 2: Background API Call
-        const response = await chatwootService.conversations.updateConversationStatus(accountId, conversationId, {
-          status: newStatus,
-        });
+        const response =
+          await chatwootService.conversations.updateConversationStatus(
+            accountId,
+            conversationId,
+            {
+              status: newStatus,
+            }
+          );
 
         // Verify success from API response
         if (response.payload?.success && response.payload.current_status) {
           // API confirmed the status change, ensure UI and cache are synced with server response
           const serverStatus = response.payload.current_status;
           const syncedConversations = conversations.map((conv) =>
-            conv.id === conversationId ? { ...conv, status: serverStatus } : conv
+            conv.id === conversationId
+              ? { ...conv, status: serverStatus }
+              : conv
           );
 
           // Update cache (sync with server response)
@@ -374,17 +451,27 @@ export const useChatwootConversations = (accountId: number | null, options: UseC
           // Update legacy atom
           setConversations(syncedConversations);
 
-          console.log(`[updateConversationStatus] Successfully updated conversation ${conversationId} to ${serverStatus}`);
+          console.log(
+            `[updateConversationStatus] Successfully updated conversation ${conversationId} to ${serverStatus}`
+          );
         } else {
           // API call succeeded but response format unexpected - log warning but keep optimistic update
-          console.warn("[updateConversationStatus] Unexpected response format:", response);
+          console.warn(
+            "[updateConversationStatus] Unexpected response format:",
+            response
+          );
         }
       } catch (err: any) {
         // Step 3: Revert on Failure
-        console.error("[updateConversationStatus] Failed to update status, reverting:", err);
+        console.error(
+          "[updateConversationStatus] Failed to update status, reverting:",
+          err
+        );
 
         const revertedConversations = conversations.map((conv) =>
-          conv.id === conversationId ? { ...conv, status: originalStatus } : conv
+          conv.id === conversationId
+            ? { ...conv, status: originalStatus }
+            : conv
         );
 
         // Revert cache (on failure)
@@ -424,20 +511,27 @@ export const useChatwootConversations = (accountId: number | null, options: UseC
 
     // Skip fetching if disabled (e.g., router not ready yet)
     if (!enabled) {
-      console.log("[useChatwootConversations] Skipping - fetching disabled (waiting for router)");
+      console.log(
+        "[useChatwootConversations] Skipping - fetching disabled (waiting for router)"
+      );
       return;
     }
 
     // Skip if already fetching to prevent concurrent calls
     if (isFetchingRef.current) {
-      console.log("[useChatwootConversations] Skipping - fetch already in progress");
+      console.log(
+        "[useChatwootConversations] Skipping - fetch already in progress"
+      );
       return;
     }
 
     // First enabled fetch: When we become enabled for the first time with valid filters
     // This handles the case where enabled transitions from false to true
     if (!hasCompletedInitialFetchRef.current) {
-      console.log("[useChatwootConversations] Performing initial enabled fetch", { accountId, stableFilterKey });
+      console.log(
+        "[useChatwootConversations] Performing initial enabled fetch",
+        { accountId, stableFilterKey }
+      );
       hasCompletedInitialFetchRef.current = true;
       prevFilterKeyRef.current = stableFilterKey;
       isFetchingRef.current = true;
@@ -458,7 +552,9 @@ export const useChatwootConversations = (accountId: number | null, options: UseC
 
     // If filters haven't changed, don't do anything
     if (!isFilterChange) {
-      console.log("[useChatwootConversations] No filter change, skipping fetch");
+      console.log(
+        "[useChatwootConversations] No filter change, skipping fetch"
+      );
       return;
     }
 
@@ -470,7 +566,10 @@ export const useChatwootConversations = (accountId: number | null, options: UseC
 
     // Clear stale conversations immediately when filters change
     // This prevents showing old conversations from previous view during fetch
-    console.log("[useChatwootConversations] Filter changed, clearing and refetching", { accountId, stableFilterKey });
+    console.log(
+      "[useChatwootConversations] Filter changed, clearing and refetching",
+      { accountId, stableFilterKey }
+    );
     setConversations([]);
     setLoadingType("initialLoading", true);
 
@@ -500,6 +599,16 @@ export const useChatwootConversations = (accountId: number | null, options: UseC
         enabled: metrics.enabled,
       },
     }),
-    [conversations, loadingState, error, hasMore, loadMore, refresh, fetchConversations, updateConversationStatus, metrics]
+    [
+      conversations,
+      loadingState,
+      error,
+      hasMore,
+      loadMore,
+      refresh,
+      fetchConversations,
+      updateConversationStatus,
+      metrics,
+    ]
   );
 };
