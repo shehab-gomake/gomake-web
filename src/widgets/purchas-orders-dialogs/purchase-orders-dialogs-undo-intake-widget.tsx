@@ -1,6 +1,5 @@
 import React from "react";
 import { Box, Typography } from "@mui/material";
-// import { useTranslation } from "react-i18next";
 import { GoMakeDialog } from "@/components/dialog/go-make-dialog";
 import { useTranslation } from "react-i18next";
 

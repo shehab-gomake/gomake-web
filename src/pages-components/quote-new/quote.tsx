@@ -417,6 +417,7 @@ const QuoteNewPageWidget = ({
     showAddItemRestrictionDialog,
     handleCreateNewPurchaseOrder,
     handleCancelAddItemRestriction,
+    handleChangeStatusToUnderCreation,
   } = useQuoteNew({
     docType: documentType,
     isQuoteConfirmation: isQuoteConfirmation,
@@ -1095,6 +1096,7 @@ const QuoteNewPageWidget = ({
         showAddItemRestrictionDialog={showAddItemRestrictionDialog}
         handleCancelAddItemRestriction={handleCancelAddItemRestriction}
         handleCreateNewPurchaseOrder={handleCreateNewPurchaseOrder}
+        handleChangeStatusToUnderCreation={handleChangeStatusToUnderCreation}
         documentStatus={quoteItemValue?.documentStatus}
       />
       {!isPrePaymentPage && (

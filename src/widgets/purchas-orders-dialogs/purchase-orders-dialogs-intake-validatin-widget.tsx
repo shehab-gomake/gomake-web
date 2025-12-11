@@ -23,9 +23,9 @@ const PurchaseOrdersDialogsIntakeValidationWidget = ({ showIntakeValidationDialo
       onPrimaryAction={handleOpenIntakeFromValidation}
       hideCancelButton={false}
     >
-      <Box sx={{ padding: "20px" }}>
-        <Typography variant="body1">
-          {t("sales.purchaseOrder.someItemsNotIntake") || "Some items not Intake"}
+      <Box sx={{ paddingTop: "10px", textAlign: "center" }}>
+        <Typography>
+          {t("sales.purchaseOrder.someItemsNotIntake") || "Some items not Intake, please intake them before changing the status."}
         </Typography>
       </Box>
     </GoMakeDialog>
