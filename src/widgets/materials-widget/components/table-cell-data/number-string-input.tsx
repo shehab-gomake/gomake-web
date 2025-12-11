@@ -6,7 +6,7 @@ import { PrimaryButton } from "@/components/button/primary-button";
 import { useStyle } from "@/widgets/materials-widget/style";
 import { DotsLoader } from "@/components/dots-loader/dots-Loader";
 import { useRecoilValue, useRecoilState } from "recoil";
-import { materialCategorySuppliersState, materialCategoryDataState } from "../../state";
+import { materialCategorySuppliersState } from "../../state";
 import { GoMakeDeleteModal, GoMakeDialog } from "@/components";
 import { useTranslation } from "react-i18next";
 import { ModalType, UNIT_TYPE } from "@/enums";
@@ -25,14 +25,11 @@ const NumberStringInput = ({ value, isEditable, parameterKey, id, isAdmin, unit,
     const [updateValue, setUpdateValue] = useState('');
     const [optimisticValue, setOptimisticValue] = useState(value);
     const [originalValue, setOriginalValue] = useState<string>(''); // Store original value before editing
-    const [data, setData] = useRecoilState(materialCategoryDataState);
     const user = useRecoilValue<any>(userState);
     const unitType = user?.printHouseProfile?.unitType || 0
     const router = useRouter();
     const { materialType, materialCategory } = router.query;
 
-    console.log("materialType", materialType);
-    console.log("materialCategory", materialCategory);
 
     const materialSuppliers = useRecoilValue(materialCategorySuppliersState)
     const isHaveMorethanMaterialSuppliers = materialSuppliers?.length > 1
@@ -141,9 +138,12 @@ const NumberStringInput = ({ value, isEditable, parameterKey, id, isAdmin, unit,
                         // Revert to previous value if API fails
                         setOptimisticValue(originalPreviousValue);
                     });
-            } else if (isHaveMorethanMaterialSuppliers && !parameterKey.includes("price")) {
-                onClickOpenDeleteTableRowModal()
+                // } else if (isHaveMorethanMaterialSuppliers && !parameterKey.includes("price")) {
+                //     onClickOpenDeleteTableRowModal()
             }
+            // else if (isHaveMorethanMaterialSuppliers && !parameterKey.includes("price")) {
+            //     onClickOpenDeleteTableRowModal()
+            // }
             else if (unitType === UNIT_TYPE.IMPERIAL && (parameterKey === "weight" || parameterKey === "weightGSM") && materialType === "sheets") {
                 onClickOpenWeightDialog();
             }
