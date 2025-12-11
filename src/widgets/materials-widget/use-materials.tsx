@@ -141,6 +141,18 @@ const useMaterials = (isAdmin: boolean) => {
     ).then();
   };
 
+  const handleRefreshMaterialData = () => {
+    // Refresh materials data - calls v1/printhouse-materials/get-print-house-material-category-data-new for non-admin
+    if (materialType && materialCategory) {
+      getMaterialCategoryData(
+        materialType?.toString(),
+        materialCategory?.toString(),
+        [],
+        supplierId
+      ).then();
+    }
+  };
+
   const [materialName, setMaterialName] = useState<string>();
   const setMaterialActions = useSetRecoilState(materialActionState);
   const setMaterialTypeTable = useSetRecoilState(materialTypeTableState);
@@ -441,6 +453,7 @@ const useMaterials = (isAdmin: boolean) => {
             onClickOpenDeleteTableRowWhenHaveMoreSupplierModal
           }
           toggleIsActive={toggleIsActive}
+          onRefreshMaterialData={handleRefreshMaterialData}
         />,
       ];
     });
@@ -487,6 +500,7 @@ const useMaterials = (isAdmin: boolean) => {
               onClickOpenDeleteTableRowWhenHaveMoreSupplierModal
             }
             toggleIsActive={toggleIsActive}
+            onRefreshMaterialData={handleRefreshMaterialData}
           />,
         ]
       });
@@ -636,21 +650,6 @@ const useMaterials = (isAdmin: boolean) => {
     }
     // Reset input value after reading to prevent caching
     e.target.value = "";
-  };
-
-  const handleRefreshMaterialData = () => {
-    // Refresh materials data - calls v1/printhouse-materials/get-print-house-material-category-data-new for non-admin
-    if (materialType && materialCategory) {
-      getMaterialCategoryData(
-        materialType?.toString(),
-        materialCategory?.toString(),
-        materialFilter,
-        supplierId,
-        1, // pageNumber
-        20, // pageSize
-        false // appendMode
-      ).then();
-    }
   };
 
   const handleDeleteSelectedMaterials = async (selectedIds: string[]) => {

@@ -36,6 +36,8 @@ const GET_DOCUMENT_ITEM_DATA_FROM_ROW_MATERIAL = "/v1/materials/get-document-ite
 const TOGGLE_MATERIAL_TYPE_ACTIVE_URL = "/v1/materials/toggle-material-type-active";
 const GET_GROUPED_MATERIAL_TYPES_URL = "/v1/materials/get-grouped-material-types";
 const DELETE_PRINTHOUSE_MATERIAL_ROW_URL = "/v1/printhouse-materials/delete-printhouse-material-row";
+const DELETE_MATERIAL_PRODUCT_URL = "/v1/materials/delete-material-product-by-id";
+const ADD_MATERIAL_PRODUCT_URL = "/v1/materials/post-material-product-by-id";
 
 
 const getMaterialTableHeadersApi: ICallAndSetData = async (
@@ -468,6 +470,34 @@ const deletePrintHouseMaterialRowApi: ICallAndSetData = async (
   );
 };
 
+const deleteMaterialProductApi: ICallAndSetData = async (
+  callApi,
+  callBack,
+  data: { id: string }
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.DELETE,
+    DELETE_MATERIAL_PRODUCT_URL,
+    callBack,
+    { id: data.id }
+  );
+};
+
+const addMaterialProductApi: ICallAndSetData = async (
+  callApi,
+  callBack,
+  data: { id: string; body?: any }
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    ADD_MATERIAL_PRODUCT_URL,
+    callBack,
+    { id: data.id, ...(data.body || {}) }
+  );
+};
+
 export {
   getMaterialsTypesApi,
   getMaterialTableHeadersApi,
@@ -498,5 +528,7 @@ export {
   uploadQuoteItemFileApi,
   uploadQuoteItemFileForDocumentApi,
   removeQuoteItemFileApi,
-  deletePrintHouseMaterialRowApi
+  deletePrintHouseMaterialRowApi,
+  deleteMaterialProductApi,
+  addMaterialProductApi
 };
