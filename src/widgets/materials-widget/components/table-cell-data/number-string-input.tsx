@@ -220,9 +220,12 @@ const NumberStringInput = ({ value, isEditable, parameterKey, id, isAdmin, unit,
             <GoMakeDialog
                 open={openWeightDialog}
                 onClose={() => setOpenWeightDialog(false)}
-                title={t("materials.modals.weightDialogTitle")}
+                title={t("materials.modals.weightDialogTitle", {
+                    weight: parameterKey === "weight" ? t("materials.modals.weight") : t("materials.modals.weightGSM")
+                })}
                 primaryButtonLabel={t("modal.yes")}
                 cancelButtonLabel={t("modal.no")}
+                maxWidth="sm"
                 onPrimaryAction={() => {
                     setIsLoading(true)
                     const originalValue = unitType === UNIT_TYPE.IMPERIAL ? convertValueToOriginalUnit(unit, updateValue) : updateValue;
@@ -246,7 +249,7 @@ const NumberStringInput = ({ value, isEditable, parameterKey, id, isAdmin, unit,
                     );
                 }}
             >
-                <div>
+                <div style={{ textAlign: "center", paddingTop: "10px" }}>
                     <Typography variant="body1">{t("materials.modals.weightDialogDescription", {
                         weight: parameterKey !== "weight" ? t("materials.modals.weight") : t("materials.modals.weightGSM")
                     })}</Typography>
