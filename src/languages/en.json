@@ -2807,6 +2807,8 @@
     "tickets": {
       "title": "Tickets",
       "myTickets": "My Tickets",
+      "myTicketsTooltip": "My Tickets (Open only)",
+      "openOnly": "Open",
       "unassigned": "Unassigned",
       "allTickets": "All Tickets",
       "done": "Done",
