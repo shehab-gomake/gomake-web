@@ -128,7 +128,8 @@ const QuoteWidget = ({ isMobileScreen = false, title }: QuoteWidgetProps) => {
 
   const isCompositeSelectedProduct =
     selectedProduct?.category === ProductCategoryType.PRODUCT &&
-    selectedProduct?.productStructureType === EProductStructureType.COMPOSITE;
+    selectedProduct?.productStructureType === EProductStructureType.COMPOSITE &&
+    !selectedProduct?.isMaterial; // Don't treat as composite if it's a material
 
   const openCompositeDialog = async () => {
     setCompositeErrors({});

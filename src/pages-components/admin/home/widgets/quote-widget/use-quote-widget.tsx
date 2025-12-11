@@ -444,6 +444,7 @@ const useQuoteWidget = () => {
         productStructureType: matchedProduct?.productStructureType,
         name: matchedProduct?.name,
         isEmptyProduct: matchedProduct?.isEmptyProduct,
+        isMaterial: matchedProduct?.isMaterial,
       });
     } else {
       setSelectedProduct(null);
@@ -504,7 +505,8 @@ const useQuoteWidget = () => {
       jobName: string;
     }>;
   }) => {
-    if (selectedProduct?.category === ProductCategoryType.MATERIAL) {
+    // Check if product has isMaterial flag or is a material category
+    if (selectedProduct?.category === ProductCategoryType.MATERIAL || selectedProduct?.isMaterial === true) {
       addDocumentItemFromMaterial();
       return;
     }
