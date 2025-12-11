@@ -67,17 +67,23 @@ const MultiSelectList = ({
     isChecked: boolean,
     option: any
   ) => {
-    if (isHaveMorethanMaterialSuppliers) {
-      onClickOpenDeleteTableRowModal();
-    }
-    else {
-      onChangeInputs(
-        parameterKey,
-        isChecked
-          ? [...values, option?.value]
-          : values.filter((v) => v !== option?.value)
-      );
-    }
+    onChangeInputs(
+      parameterKey,
+      isChecked
+        ? [...values, option?.value]
+        : values.filter((v) => v !== option?.value)
+    );
+    // if (isHaveMorethanMaterialSuppliers) {
+    //   onClickOpenDeleteTableRowModal();
+    // }
+    // else {
+    //   onChangeInputs(
+    //     parameterKey,
+    //     isChecked
+    //       ? [...values, option?.value]
+    //       : values.filter((v) => v !== option?.value)
+    //   );
+    // }
 
   };
 

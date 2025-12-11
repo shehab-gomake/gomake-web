@@ -6,7 +6,7 @@ import { PrimaryButton } from "@/components/button/primary-button";
 import { useStyle } from "@/widgets/materials-widget/style";
 import { DotsLoader } from "@/components/dots-loader/dots-Loader";
 import { useRecoilValue, useRecoilState } from "recoil";
-import { materialCategorySuppliersState, materialCategoryDataState } from "../../state";
+import { materialCategorySuppliersState } from "../../state";
 import { GoMakeDeleteModal, GoMakeDialog } from "@/components";
 import { useTranslation } from "react-i18next";
 import { ModalType, UNIT_TYPE } from "@/enums";
@@ -24,14 +24,12 @@ const NumberStringInput = ({ value, isEditable, parameterKey, id, isAdmin, unit,
     const [isLoading, setIsLoading] = useState<boolean>(false)
     const [updateValue, setUpdateValue] = useState('');
     const [optimisticValue, setOptimisticValue] = useState(value);
-    const [data, setData] = useRecoilState(materialCategoryDataState);
+    const [originalValue, setOriginalValue] = useState<string>(''); // Store original value before editing
     const user = useRecoilValue<any>(userState);
     const unitType = user?.printHouseProfile?.unitType || 0
     const router = useRouter();
     const { materialType, materialCategory } = router.query;
 
-    console.log("materialType", materialType);
-    console.log("materialCategory", materialCategory);
 
     const materialSuppliers = useRecoilValue(materialCategorySuppliersState)
     const isHaveMorethanMaterialSuppliers = materialSuppliers?.length > 1
@@ -55,6 +53,7 @@ const NumberStringInput = ({ value, isEditable, parameterKey, id, isAdmin, unit,
             const data = unitType === UNIT_TYPE.IMPERIAL ? convertValueToImperial(unit, optimisticValue) : optimisticValue
             setIsUpdate(true);
             setUpdateValue(data);
+            setOriginalValue(optimisticValue as string); // Store original value before editing
         }
     }
     const onInputChange = (v: string) => {
@@ -64,6 +63,15 @@ const NumberStringInput = ({ value, isEditable, parameterKey, id, isAdmin, unit,
 
     const onClickOpenWeightDialog = () => {
         setOpenWeightDialog(true);
+    };
+
+    const onCloseWeightDialog = () => {
+        // Revert to original value when closing without saving
+        setOptimisticValue(originalValue);
+        const originalDisplayValue = unitType === UNIT_TYPE.IMPERIAL ? convertValueToImperial(unit, originalValue) : originalValue;
+        setUpdateValue(originalDisplayValue);
+        setIsUpdate(false);
+        setOpenWeightDialog(false);
     };
 
     const onBlur = () => {
@@ -130,8 +138,6 @@ const NumberStringInput = ({ value, isEditable, parameterKey, id, isAdmin, unit,
                         // Revert to previous value if API fails
                         setOptimisticValue(originalPreviousValue);
                     });
-            } else if (isHaveMorethanMaterialSuppliers && !parameterKey.includes("price")) {
-                onClickOpenDeleteTableRowModal()
             }
             else if (unitType === UNIT_TYPE.IMPERIAL && (parameterKey === "weight" || parameterKey === "weightGSM") && materialType === "sheets") {
                 onClickOpenWeightDialog();
@@ -219,10 +225,13 @@ const NumberStringInput = ({ value, isEditable, parameterKey, id, isAdmin, unit,
             />
             <GoMakeDialog
                 open={openWeightDialog}
-                onClose={() => setOpenWeightDialog(false)}
-                title={t("materials.modals.weightDialogTitle")}
+                onClose={onCloseWeightDialog}
+                title={t("materials.modals.weightDialogTitle", {
+                    weight: parameterKey === "weight" ? t("materials.modals.weight") : t("materials.modals.weightGSM")
+                })}
                 primaryButtonLabel={t("modal.yes")}
                 cancelButtonLabel={t("modal.no")}
+                maxWidth="sm"
                 onPrimaryAction={() => {
                     setIsLoading(true)
                     const originalValue = unitType === UNIT_TYPE.IMPERIAL ? convertValueToOriginalUnit(unit, updateValue) : updateValue;
@@ -246,7 +255,7 @@ const NumberStringInput = ({ value, isEditable, parameterKey, id, isAdmin, unit,
                     );
                 }}
             >
-                <div>
+                <div style={{ textAlign: "center", paddingTop: "10px" }}>
                     <Typography variant="body1">{t("materials.modals.weightDialogDescription", {
                         weight: parameterKey !== "weight" ? t("materials.modals.weight") : t("materials.modals.weightGSM")
                     })}</Typography>

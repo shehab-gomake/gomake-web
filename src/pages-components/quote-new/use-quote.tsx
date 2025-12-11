@@ -1318,6 +1318,13 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false, isPrePaymentPage = 
     // If supplier exists, we could potentially save, but user chose not to create new PO
     // Just close the dialog - no action needed as per requirements
   };
+
+  // Handle change status to Under Creation to allow adding items
+  const handleChangeStatusToUnderCreation = () => {
+    setShowAddItemRestrictionDialog(false);
+    // Change status to Under Creation (status = 0)
+    updatePurchaseOrderStatus(PurchaseOrderStatuses.UnderCreation);
+  };
   const onOpenNewContact = () => {
     setOpenAddNewContactModal(true);
   };
@@ -3236,6 +3243,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false, isPrePaymentPage = 
     showAddItemRestrictionDialog,
     handleCreateNewPurchaseOrder,
     handleCancelAddItemRestriction,
+    handleChangeStatusToUnderCreation,
   };
 };
 

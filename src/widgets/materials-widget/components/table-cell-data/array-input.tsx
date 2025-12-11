@@ -60,15 +60,18 @@ const ArrayInput = ({ valueArray, isEditable, parameterKey, id, isAdmin, isInven
           await updateCellData(id, parameterKey?.split(' ! ')[0], updateValue, isUpdate, pricingType);
           setIsUpdate(null);
         } else {
-          // Use original logic for main table
-          if (isHaveMorethanMaterialSuppliers && !parameterKey.includes("price")) {
-            setIsLoading(false);
-            onClickOpenDeleteTableRowModal()
-          } else {
-            await updateCellData(id, parameterKey?.split(' ! ')[0], updateValue, isUpdate);
-            setIsUpdate(null);
-            // alertSuccessUpdate();
-          }
+
+          await updateCellData(id, parameterKey?.split(' ! ')[0], updateValue, isUpdate);
+          setIsUpdate(null);
+
+          // if (isHaveMorethanMaterialSuppliers && !parameterKey.includes("price")) {
+          //   setIsLoading(false);
+          //   onClickOpenDeleteTableRowModal()
+          // } else {
+          //   await updateCellData(id, parameterKey?.split(' ! ')[0], updateValue, isUpdate);
+          //   setIsUpdate(null);
+          //   // alertSuccessUpdate();
+          // }
         }
       } catch (error) {
         alertFaultUpdate();

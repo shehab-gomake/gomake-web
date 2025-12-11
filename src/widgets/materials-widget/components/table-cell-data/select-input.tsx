@@ -51,13 +51,14 @@ const SelectInput = ({ values, parameterKey, id, value, isAdmin }: IProps) => {
   const [selectedValue, setSelectedValue] = useState<any>()
   const onSelectChange = async (event: SyntheticEvent, value) => {
     setSelectedValue(value)
-    if (isHaveMorethanMaterialSuppliers) {
-      onClickOpenDeleteTableRowModal()
-    }
-    else {
-      await updateCellData(id, parameterKey, value?.id);
+    await updateCellData(id, parameterKey, value?.id);
+    // if (isHaveMorethanMaterialSuppliers) {
+    //   onClickOpenDeleteTableRowModal()
+    // }
+    // else {
+    //   await updateCellData(id, parameterKey, value?.id);
 
-    }
+    // }
   };
 
   return (

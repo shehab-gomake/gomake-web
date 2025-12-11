@@ -242,12 +242,13 @@ const InventoryIntakeModal: React.FC<InventoryIntakeModalProps> = ({
   // Handle purchase order inventory dialog Yes action
   const handleConfirmPurchaseOrderInventory = () => {
     setShowPurchaseOrderInventoryDialog(false);
-    if (status !== PurchaseOrderStatuses.Received) {
-      setShowConfirmationModal(true);
-    }
-    else {
-      performIntake();
-    }
+    performIntake();
+    // if (status !== PurchaseOrderStatuses.Received) {
+    //   setShowConfirmationModal(true);
+    // }
+    // else {
+    //   performIntake();
+    // }
   };
 
   // Handle purchase order inventory dialog No action
@@ -553,7 +554,7 @@ const InventoryIntakeModal: React.FC<InventoryIntakeModalProps> = ({
         onPrimaryAction={handleConfirmPurchaseOrderInventory}
         hideCancelButton={false}
       >
-        <Box sx={{ padding: "20px" }}>
+        <Box sx={{ paddingTop: "10px" }}>
           <Typography variant="body1">
             {t("sales.purchaseOrder.purchaseOrderInventoryMessage") || "You have purchase order inventory. Do you need to complete it?"}
           </Typography>
