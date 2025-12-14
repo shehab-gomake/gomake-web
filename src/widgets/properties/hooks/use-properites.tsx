@@ -6,7 +6,7 @@ import { getAndSetProperites } from "@/services/hooks/admin-side/profits/get-set
 import { EHttpMethod } from "@/services/api-service/enums";
 import { useOutputs } from "./use-outputs";
 import { useParameters } from "./use-parameters";
-import { IconButton } from "@mui/material";
+import { IconButton, Skeleton } from "@mui/material";
 import { MoreCircleIcon } from "@/icons";
 import { useTranslation } from "react-i18next";
 import { getAndSetMachincesByActionId } from "@/services/hooks";
@@ -14,6 +14,9 @@ import { EValueType } from "@/pages-components/products/profits-new/enums/profit
 import { useRecoilState } from "recoil";
 import { actionEmployeesState } from "@/store/action-employees-state";
 import { UpdateValueInput } from "@/components/text-input/update-value-input";
+import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
+import { EParameterTypes } from "@/enums";
+import { ClickOutside } from "@/components/click-out-side/click-out-side";
 
 const useProperites = ({ classes }) => {
   const { t } = useTranslation();
@@ -116,26 +119,340 @@ const useProperites = ({ classes }) => {
         return rule.successEvent;
     }
   }
-  useEffect(() => {
-    const updatedProperties = updateProperties(
-      allProperties,
-      parameters,
-      Outputs
-    );
-    const mapData = updatedProperties?.map((property, index) => {
-      const isEditing = editingDefaultValue?.propertyId === property.propertyId && editingDefaultValue?.ruleType === property.ruleType;
-      const currentDefaultValue = property.defaultValue || "";
 
-      return [
-        property.propertyName,
-        property.defaultUnit || "-",
-        isEditing ? (
-          <div style={{ display: "flex", justifyContent: "center", width: "100%" }}>
+  const isValueLoading = (property: any, defaultValue: string): boolean => {
+    // Check if value is a UUID (needs resolution)
+    const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(defaultValue);
+    if (!isUUID) {
+      return false; // Not a UUID, no loading needed
+    }
+
+    const selectedOutput = Outputs?.find(
+      (output) => output?.id === property?.propertyId
+    );
+    const selectedParameter = parameters?.find(
+      (parameter) => parameter?.id === property?.propertyId
+    );
+
+    if (property?.ruleType === 0) {
+      // Output - check if data is loaded
+      switch (selectedOutput?.valueType) {
+        case EValueType.MACHINE:
+          const machinesLoaded = router.query.actionId
+            ? allMachincesList?.machines?.length > 0
+            : allMachincesList?.length > 0;
+          return !machinesLoaded;
+        case EValueType.MATERIAL:
+          return !parameters || parameters.length === 0;
+        case EValueType.EMPLOYEE:
+          return !actionEmployeeList || actionEmployeeList.length === 0;
+        default:
+          return false;
+      }
+    } else {
+      // Input - check if parameters are loaded
+      return !parameters || parameters.length === 0;
+    }
+  };
+
+  const getDefaultValueDisplay = (property: any, defaultValue: string) => {
+    if (!defaultValue || defaultValue === "-") {
+      return defaultValue || "-";
+    }
+
+    const selectedOutput = Outputs?.find(
+      (output) => output?.id === property?.propertyId
+    );
+    const selectedParameter = parameters?.find(
+      (parameter) => parameter?.id === property?.propertyId
+    );
+
+    if (property?.ruleType === 0) {
+      // Output - use valueType from Outputs
+      switch (selectedOutput?.valueType) {
+        case EValueType.MACHINE:
+          const machine = router.query.actionId
+            ? allMachincesList?.machines?.find(
+              (m) => String(m.machineId) === String(defaultValue)
+            )
+            : allMachincesList?.find(
+              (m) => String(m.id) === String(defaultValue)
+            );
+          return machine?.machineName || machine?.nickName || defaultValue;
+        case EValueType.MATERIAL:
+          const materialParams = parameters.find(
+            (param) => param?.id === property?.propertyId
+          )?.values;
+          const material = materialParams?.find(
+            (m) =>
+              String(m.materialTypeKey || m.id) === String(defaultValue)
+          );
+          return material?.materialTypeName || material?.name || defaultValue;
+        case EValueType.EMPLOYEE:
+          const employee = actionEmployeeList.find(
+            (e) => String(e.id) === String(defaultValue)
+          );
+          return employee?.label || defaultValue;
+        case EValueType.BOOLEAN:
+          return defaultValue === "true"
+            ? t("modal.yes")
+            : defaultValue === "false"
+              ? t("modal.no")
+              : defaultValue;
+        case EValueType.INPUTNUMBER:
+        case EValueType.INPUTTEXT:
+          return defaultValue;
+        default:
+          return defaultValue;
+      }
+    } else {
+      // Input - use type from Parameters
+      switch (selectedParameter?.type) {
+        case EParameterTypes.DROP_DOWN_LIST:
+        case EParameterTypes.SELECT_MATERIALS:
+          const paramValue = selectedParameter?.values?.find(
+            (v) => String(v.id) === String(defaultValue)
+          );
+          return paramValue?.name || defaultValue;
+        case EParameterTypes.SWITCH:
+          return defaultValue === "true"
+            ? t("modal.yes")
+            : defaultValue === "false"
+              ? t("modal.no")
+              : defaultValue;
+        case EParameterTypes.INPUT_NUMBER:
+        case EParameterTypes.INPUT_TEXT:
+          return defaultValue;
+        default:
+          return defaultValue;
+      }
+    }
+  }
+
+  const renderDefaultValueInput = (property: any, onSave: (value?: string) => void) => {
+    const selectedOutput = Outputs?.find(
+      (output) => output?.id === property?.propertyId
+    );
+    const selectedParameter = parameters?.find(
+      (parameter) => parameter?.id === property?.propertyId
+    );
+
+    if (property?.ruleType === 0) {
+      // Output - use valueType from Outputs
+      switch (selectedOutput?.valueType) {
+        case EValueType.MACHINE:
+          return (
+            <GoMakeAutoComplate
+              options={
+                router.query.actionId
+                  ? allMachincesList?.machines?.map((value) => ({
+                    ...value,
+                    label: value?.machineName,
+                    id: value.machineId,
+                  }))
+                  : allMachincesList?.map((value) => ({
+                    ...value,
+                    label: `${value?.nickName}`,
+                    id: value.id,
+                  }))
+              }
+              placeholder={t("products.profits.exceptions.selectMachine")}
+              value={
+                defaultValueInput
+                  ? router.query.actionId
+                    ? allMachincesList?.machines?.find(
+                      (m) => String(m.machineId) === String(defaultValueInput)
+                    )
+                      ? {
+                        ...allMachincesList?.machines?.find(
+                          (m) => String(m.machineId) === String(defaultValueInput)
+                        ),
+                        label: allMachincesList?.machines?.find(
+                          (m) => String(m.machineId) === String(defaultValueInput)
+                        )?.machineName,
+                        id: String(defaultValueInput),
+                      }
+                      : null
+                    : allMachincesList?.find((m) => String(m.id) === String(defaultValueInput))
+                      ? {
+                        ...allMachincesList?.find((m) => String(m.id) === String(defaultValueInput)),
+                        label: `${allMachincesList?.find((m) => String(m.id) === String(defaultValueInput))?.nickName}`,
+                        id: String(defaultValueInput),
+                      }
+                      : null
+                  : null
+              }
+              onChange={(e, value) => {
+                const newValue = String(value?.id || value?.machineId || "");
+                setDefaultValueInput(newValue);
+                onSave(newValue);
+              }}
+              style={{
+                width: "100%",
+                border: "0px",
+                background: "#fff",
+                borderRadius: 4,
+                minWidth: 180,
+              }}
+            />
+          );
+        case EValueType.MATERIAL:
+          const materialParams = parameters.find(
+            (param) => param?.id === property?.propertyId
+          )?.values;
+          return (
+            <GoMakeAutoComplate
+              options={materialParams?.map((value) => ({
+                ...value,
+                label: value.materialTypeName || value.name,
+                id: value.materialTypeKey || value.id,
+              }))}
+              placeholder={"Select Material"}
+              value={
+                defaultValueInput
+                  ? materialParams?.find(
+                    (m) =>
+                      String(m.materialTypeKey || m.id) === String(defaultValueInput)
+                  )
+                    ? {
+                      ...materialParams?.find(
+                        (m) =>
+                          String(m.materialTypeKey || m.id) === String(defaultValueInput)
+                      ),
+                      label:
+                        materialParams?.find(
+                          (m) =>
+                            String(m.materialTypeKey || m.id) === String(defaultValueInput)
+                        )?.materialTypeName ||
+                        materialParams?.find(
+                          (m) =>
+                            String(m.materialTypeKey || m.id) === String(defaultValueInput)
+                        )?.name,
+                      id: String(defaultValueInput),
+                    }
+                    : null
+                  : null
+              }
+              onChange={(e: any, value: any) => {
+                const newValue = String(value?.id || value?.materialTypeKey || "");
+                setDefaultValueInput(newValue);
+                onSave(newValue);
+              }}
+              style={{
+                width: "100%",
+                border: "0px",
+                background: "#fff",
+                borderRadius: 4,
+                minWidth: 180,
+              }}
+            />
+          );
+        case EValueType.INPUTNUMBER:
+          return (
+            <GomakeTextInput
+              type="number"
+              placeholder={t("products.profits.exceptions.enterValue")}
+              value={defaultValueInput}
+              onChange={(e: any) => {
+                setDefaultValueInput(e.target.value);
+              }}
+              onBlur={(e: any) => {
+                onSave(e.target.value);
+              }}
+              style={{
+                width: "100%",
+                border: "0px",
+                background: "#fff",
+                borderRadius: 4,
+                height: 40,
+                minWidth: 180,
+              }}
+            />
+          );
+        case EValueType.INPUTTEXT:
+          return (
+            <GomakeTextInput
+              placeholder={t("products.profits.exceptions.enterValue")}
+              value={defaultValueInput}
+              onChange={(e: any) => {
+                setDefaultValueInput(e.target.value);
+              }}
+              onBlur={(e: any) => {
+                onSave(e.target.value);
+              }}
+              style={{
+                width: "100%",
+                border: "0px",
+                background: "#fff",
+                borderRadius: 4,
+                height: 40,
+                minWidth: 180,
+              }}
+            />
+          );
+        case EValueType.BOOLEAN:
+          return (
+            <GoMakeAutoComplate
+              options={[
+                { label: t("modal.yes"), value: "true" },
+                { label: t("modal.no"), value: "false" },
+              ]}
+              placeholder={t("products.profits.exceptions.selectValue")}
+              disableClearable={false}
+              value={
+                defaultValueInput
+                  ? defaultValueInput === "true"
+                    ? { label: t("modal.yes"), value: "true" }
+                    : defaultValueInput === "false"
+                      ? { label: t("modal.no"), value: "false" }
+                      : null
+                  : null
+              }
+              onChange={(e: any, value: any) => {
+                const newValue = value === null || value === undefined ? "" : (value?.value as string || "");
+                setDefaultValueInput(newValue);
+                onSave(newValue);
+              }}
+              style={{
+                width: "100%",
+                border: "0px",
+                background: "#fff",
+                borderRadius: 4,
+                minWidth: 180,
+              }}
+            />
+          );
+        case EValueType.EMPLOYEE:
+          return (
+            <GoMakeAutoComplate
+              options={actionEmployeeList}
+              placeholder={t("products.profits.exceptions.selectEmployee")}
+              value={
+                defaultValueInput
+                  ? actionEmployeeList.find((e) => String(e.id) === String(defaultValueInput))
+                  : null
+              }
+              onChange={(e, value) => {
+                const newValue = String(value?.id || "");
+                setDefaultValueInput(newValue);
+                onSave(newValue);
+              }}
+              style={{
+                width: "100%",
+                border: "0px",
+                background: "#fff",
+                borderRadius: 4,
+                minWidth: 180,
+              }}
+            />
+          );
+        default:
+          return (
             <UpdateValueInput
               value={defaultValueInput}
               onInputChange={(value) => setDefaultValueInput(value)}
               onUpdate={async () => {
-                if (defaultValueInput !== currentDefaultValue) {
+                if (defaultValueInput !== (property.defaultValue || "")) {
                   await updatePropertyDefaultValue({
                     actionId: router.query.actionId as string,
                     propertyId: property.propertyId,
@@ -151,7 +468,7 @@ const useProperites = ({ classes }) => {
                 setDefaultValueInput("");
               }}
               clickedOut={async () => {
-                if (defaultValueInput !== currentDefaultValue) {
+                if (defaultValueInput !== (property.defaultValue || "")) {
                   await updatePropertyDefaultValue({
                     actionId: router.query.actionId as string,
                     propertyId: property.propertyId,
@@ -163,7 +480,250 @@ const useProperites = ({ classes }) => {
                 setDefaultValueInput("");
               }}
             />
-          </div>
+          );
+      }
+    } else {
+      // Input - use type from Parameters
+      switch (selectedParameter?.type) {
+        case EParameterTypes.DROP_DOWN_LIST:
+          return (
+            <GoMakeAutoComplate
+              options={selectedParameter?.values?.map((value) => ({
+                ...value,
+                label: value.name,
+                id: value.id,
+              }))}
+              placeholder={t("products.profits.exceptions.selectValue")}
+              value={
+                defaultValueInput
+                  ? selectedParameter?.values?.find(
+                    (v) => String(v.id) === String(defaultValueInput)
+                  )
+                    ? {
+                      ...selectedParameter?.values?.find(
+                        (v) => String(v.id) === String(defaultValueInput)
+                      ),
+                      label: selectedParameter?.values?.find(
+                        (v) => String(v.id) === String(defaultValueInput)
+                      )?.name,
+                      id: String(defaultValueInput),
+                    }
+                    : null
+                  : null
+              }
+              onChange={(e, value) => {
+                const newValue = String(value?.id || "");
+                setDefaultValueInput(newValue);
+                onSave(newValue);
+              }}
+              style={{
+                width: "100%",
+                border: "0px",
+                background: "#fff",
+                borderRadius: 4,
+                minWidth: 180,
+              }}
+            />
+          );
+        case EParameterTypes.INPUT_NUMBER:
+          return (
+            <GomakeTextInput
+              type="number"
+              placeholder={t("products.profits.exceptions.enterValue")}
+              value={defaultValueInput}
+              onChange={(e: any) => {
+                setDefaultValueInput(e.target.value);
+              }}
+              onBlur={(e: any) => {
+                onSave(e.target.value);
+              }}
+              style={{
+                width: "100%",
+                border: "0px",
+                background: "#fff",
+                borderRadius: 4,
+                height: 40,
+                minWidth: 180,
+              }}
+            />
+          );
+        case EParameterTypes.INPUT_TEXT:
+          return (
+            <GomakeTextInput
+              placeholder={t("products.profits.exceptions.enterValue")}
+              value={defaultValueInput}
+              onChange={(e: any) => {
+                setDefaultValueInput(e.target.value);
+              }}
+              onBlur={(e: any) => {
+                onSave(e.target.value);
+              }}
+              style={{
+                width: "100%",
+                border: "0px",
+                background: "#fff",
+                borderRadius: 4,
+                height: 40,
+                minWidth: 180,
+              }}
+            />
+          );
+        case EParameterTypes.SWITCH:
+          return (
+            <GoMakeAutoComplate
+              options={[
+                { label: t("modal.yes"), value: "true" },
+                { label: t("modal.no"), value: "false" },
+              ]}
+              placeholder={t("products.profits.exceptions.selectValue")}
+              disableClearable={false}
+              value={
+                defaultValueInput
+                  ? defaultValueInput === "true"
+                    ? { label: t("modal.yes"), value: "true" }
+                    : defaultValueInput === "false"
+                      ? { label: t("modal.no"), value: "false" }
+                      : null
+                  : null
+              }
+              onChange={(e: any, value: any) => {
+                const newValue = value === null || value === undefined ? "" : (value?.value as string || "");
+                setDefaultValueInput(newValue);
+                onSave(newValue);
+              }}
+              style={{
+                width: "100%",
+                border: "0px",
+                background: "#fff",
+                borderRadius: 4,
+                minWidth: 180,
+              }}
+            />
+          );
+        case EParameterTypes.SELECT_MATERIALS:
+          return (
+            <GoMakeAutoComplate
+              options={selectedParameter?.values?.map((value) => ({
+                ...value,
+                label: value.name,
+                id: value.id,
+              }))}
+              placeholder={t("products.profits.exceptions.selectValue")}
+              value={
+                defaultValueInput
+                  ? selectedParameter?.values?.find(
+                    (v) => String(v.id) === String(defaultValueInput)
+                  )
+                    ? {
+                      ...selectedParameter?.values?.find(
+                        (v) => String(v.id) === String(defaultValueInput)
+                      ),
+                      label: selectedParameter?.values?.find(
+                        (v) => String(v.id) === String(defaultValueInput)
+                      )?.name,
+                      id: String(defaultValueInput),
+                    }
+                    : null
+                  : null
+              }
+              onChange={(e, value) => {
+                const newValue = String(value?.id || "");
+                setDefaultValueInput(newValue);
+                onSave(newValue);
+              }}
+              style={{
+                width: "100%",
+                border: "0px",
+                background: "#fff",
+                borderRadius: 4,
+                minWidth: 180,
+              }}
+            />
+          );
+        default:
+          return (
+            <UpdateValueInput
+              value={defaultValueInput}
+              onInputChange={(value) => setDefaultValueInput(value)}
+              onUpdate={async () => {
+                if (defaultValueInput !== (property.defaultValue || "")) {
+                  await updatePropertyDefaultValue({
+                    actionId: router.query.actionId as string,
+                    propertyId: property.propertyId,
+                    defaultValue: defaultValueInput,
+                    ruleType: property.ruleType,
+                  });
+                }
+                setEditingDefaultValue(null);
+                setDefaultValueInput("");
+              }}
+              onCancel={() => {
+                setEditingDefaultValue(null);
+                setDefaultValueInput("");
+              }}
+              clickedOut={async () => {
+                if (defaultValueInput !== (property.defaultValue || "")) {
+                  await updatePropertyDefaultValue({
+                    actionId: router.query.actionId as string,
+                    propertyId: property.propertyId,
+                    defaultValue: defaultValueInput,
+                    ruleType: property.ruleType,
+                  });
+                }
+                setEditingDefaultValue(null);
+                setDefaultValueInput("");
+              }}
+            />
+          );
+      }
+    }
+  };
+  useEffect(() => {
+    const updatedProperties = updateProperties(
+      allProperties,
+      parameters,
+      Outputs
+    );
+    const mapData = updatedProperties?.map((property, index) => {
+      const isEditing = editingDefaultValue?.propertyId === property.propertyId && editingDefaultValue?.ruleType === property.ruleType;
+      const currentDefaultValue = property.defaultValue || "";
+
+      return [
+        property.propertyName,
+        property.defaultUnit || "-",
+        isEditing ? (
+          <ClickOutside
+            onClick={async () => {
+              const valueToSave = defaultValueInput;
+              if (valueToSave !== currentDefaultValue) {
+                await updatePropertyDefaultValue({
+                  actionId: router.query.actionId as string,
+                  propertyId: property.propertyId,
+                  defaultValue: valueToSave,
+                  ruleType: property.ruleType,
+                });
+              }
+              setEditingDefaultValue(null);
+              setDefaultValueInput("");
+            }}
+            style={{ width: "100%" }}
+          >
+            <div style={{ width: "100%" }}>
+              {renderDefaultValueInput(property, async (value?: string) => {
+                const valueToSave = value !== undefined ? value : defaultValueInput;
+                if (valueToSave !== currentDefaultValue) {
+                  await updatePropertyDefaultValue({
+                    actionId: router.query.actionId as string,
+                    propertyId: property.propertyId,
+                    defaultValue: valueToSave,
+                    ruleType: property.ruleType,
+                  });
+                }
+                setEditingDefaultValue(null);
+                setDefaultValueInput("");
+              })}
+            </div>
+          </ClickOutside>
         ) : (
           <div
             onClick={() => {
@@ -180,7 +740,18 @@ const useProperites = ({ classes }) => {
               width: "100%"
             }}
           >
-            {currentDefaultValue || "-"}
+            {isValueLoading(property, currentDefaultValue) ? (
+              <Skeleton
+                variant="text"
+                width="80%"
+                height={20}
+                sx={{
+                  mx: "auto",
+                }}
+              />
+            ) : (
+              getDefaultValueDisplay(property, currentDefaultValue)
+            )}
           </div>
         ),
         <div style={classes.rowItem} className="scrollBlue">
