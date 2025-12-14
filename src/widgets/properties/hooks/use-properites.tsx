@@ -981,10 +981,10 @@ const useProperites = ({ classes }) => {
   const columnWidths = [
     "5%",      // Empty (replaced by drag handle)
     "20%",       // Parameter
-    "12%",       // Default Option (wider)
+    "10%",       // Default Option (wider)
     "10%",        // Unit
     "10%",       // Type
-    "38%",       // Rule (smaller)
+    "40%",       // Rule (smaller)
     "5%",        // More
   ];
 
