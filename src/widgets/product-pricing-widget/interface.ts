@@ -124,6 +124,24 @@ export interface IWorkFlowAction {
   checkWhatRenderArray?: (arg: any) => void;
   setCustomer?: any;
   isFetching?: boolean;
+  pricePer1Product?: IOutput;
+  pricePer1000Product?: IOutput;
+  pricePer1Material?: IOutput;
+  pricePer1000Material?: IOutput;
+  pricePerMeter?: IOutput;
+  pricePerSquareMeter?: IOutput;
+  showPricePer1Product?: boolean;
+  showPricePer1000Product?: boolean;
+  showPricePer1Material?: boolean;
+  showPricePer1000Material?: boolean;
+  showPricePerMeter?: boolean;
+  showPricePerSquareMeter?: boolean;
+  pricePer1ProductValue?: number;
+  pricePer1000ProductValue?: number;
+  pricePer1MaterialValue?: number;
+  pricePer1000MaterialValue?: number;
+  pricePerMeterValue?: number;
+  pricePerSquareMeterValue?: number;
 }
 
 export interface IOutput {
