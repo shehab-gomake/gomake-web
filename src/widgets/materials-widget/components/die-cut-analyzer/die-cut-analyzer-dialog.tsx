@@ -30,11 +30,12 @@ interface UploadedFile {
   file: File;
   base64: string;
   status: "ready" | "analyzing" | "completed" | "error";
-  unitWidth?: number;
-  unitLength?: number;
-  columns?: number;
-  rows?: number;
-  colSpace?: number;
+  unitWidthInMm?: number | string;
+  unitLengthInMm?: number | string;
+  columns?: number | string;
+  rows?: number | string;
+  columnSpaceInMm?: number | string;
+  rowSpaceInMm?: number | string;
 }
 
 interface DieCutAnalyzerDialogProps {
@@ -157,23 +158,38 @@ const DieCutAnalyzerDialog: React.FC<DieCutAnalyzerDialogProps> = ({
     const analyzePromises = readyFiles.map(async (file) => {
       const callBack = (res: any) => {
         if (res.success && res.data) {
-          // Handle response data - could be nested in data.data or directly in data
+          // Handle response data - API returns an array of results
           const responseData = res.data?.data || res.data;
-          setUploadedFiles((prev) =>
-            prev.map((f) =>
-              f.id === file.id
-                ? {
-                  ...f,
-                  status: "completed",
-                  unitWidth: responseData?.unitWidth || responseData?.unit_width,
-                  unitLength: responseData?.unitLength || responseData?.unit_length,
-                  columns: responseData?.columns,
-                  rows: responseData?.rows,
-                  colSpace: responseData?.colSpace || responseData?.col_space || responseData?.columnSpace,
-                }
-                : f
-            )
-          );
+          const resultsArray = Array.isArray(responseData) ? responseData : [responseData];
+
+          // Find the result that matches the current file by fileName
+          const fileResult = resultsArray.find(
+            (result: any) => result?.fileName === file.fileName
+          ) || resultsArray[0]; // Fallback to first result if fileName doesn't match
+
+          if (fileResult) {
+            setUploadedFiles((prev) =>
+              prev.map((f) =>
+                f.id === file.id
+                  ? {
+                    ...f,
+                    status: "completed",
+                    unitWidthInMm: fileResult?.unitWidthInMm,
+                    unitLengthInMm: fileResult?.unitLengthInMm,
+                    columns: fileResult?.columns,
+                    rows: fileResult?.rows,
+                    columnSpaceInMm: fileResult?.columnSpaceInMm,
+                    rowSpaceInMm: fileResult?.rowSpaceInMm,
+                  }
+                  : f
+              )
+            );
+          } else {
+            setUploadedFiles((prev) =>
+              prev.map((f) => (f.id === file.id ? { ...f, status: "error" } : f))
+            );
+            alertFault(t("materials.dieCutAnalyzer.analysisFailed") || "Analysis failed - no result found");
+          }
         } else {
           setUploadedFiles((prev) =>
             prev.map((f) => (f.id === file.id ? { ...f, status: "error" } : f))
@@ -245,11 +261,6 @@ const DieCutAnalyzerDialog: React.FC<DieCutAnalyzerDialogProps> = ({
       maxWidth="lg"
       fullWidth
       showFooter={false}
-      customStyles={{
-        content: {
-          padding: "24px",
-        },
-      }}
     >
       <Stack gap={3}>
 
@@ -267,6 +278,7 @@ const DieCutAnalyzerDialog: React.FC<DieCutAnalyzerDialogProps> = ({
             cursor: "pointer",
             backgroundColor: isDragging ? primaryColor(50) : neutralColor(50),
             transition: "all 0.3s ease",
+            marginTop: "10px",
             "&:hover": {
               borderColor: primaryColor(500),
               backgroundColor: primaryColor(50),
@@ -452,6 +464,15 @@ const DieCutAnalyzerDialog: React.FC<DieCutAnalyzerDialogProps> = ({
                       ...FONT_FAMILY.Lexend(500, 14),
                     }}
                   >
+                    {t("materials.dieCutAnalyzer.table.rowSpace") || "ROW SPACE (MM)"}
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      backgroundColor: primaryColor(50),
+                      color: primaryColor(900),
+                      ...FONT_FAMILY.Lexend(500, 14),
+                    }}
+                  >
                     {t("materials.dieCutAnalyzer.table.actions") || "ACTIONS"}
                   </TableCell>
                 </TableRow>
@@ -484,7 +505,7 @@ const DieCutAnalyzerDialog: React.FC<DieCutAnalyzerDialogProps> = ({
                         color: neutralColor(700),
                       }}
                     >
-                      {file.unitWidth || "-"}
+                      {file.unitWidthInMm ?? "-"}
                     </TableCell>
                     <TableCell
                       sx={{
@@ -492,7 +513,7 @@ const DieCutAnalyzerDialog: React.FC<DieCutAnalyzerDialogProps> = ({
                         color: neutralColor(700),
                       }}
                     >
-                      {file.unitLength || "-"}
+                      {file.unitLengthInMm ?? "-"}
                     </TableCell>
                     <TableCell
                       sx={{
@@ -500,7 +521,7 @@ const DieCutAnalyzerDialog: React.FC<DieCutAnalyzerDialogProps> = ({
                         color: neutralColor(700),
                       }}
                     >
-                      {file.columns || "-"}
+                      {file.columns ?? "-"}
                     </TableCell>
                     <TableCell
                       sx={{
@@ -508,7 +529,7 @@ const DieCutAnalyzerDialog: React.FC<DieCutAnalyzerDialogProps> = ({
                         color: neutralColor(700),
                       }}
                     >
-                      {file.rows || "-"}
+                      {file.rows ?? "-"}
                     </TableCell>
                     <TableCell
                       sx={{
@@ -516,7 +537,15 @@ const DieCutAnalyzerDialog: React.FC<DieCutAnalyzerDialogProps> = ({
                         color: neutralColor(700),
                       }}
                     >
-                      {file.colSpace || "-"}
+                      {file.columnSpaceInMm ?? "-"}
+                    </TableCell>
+                    <TableCell
+                      sx={{
+                        ...FONT_FAMILY.Lexend(400, 14),
+                        color: neutralColor(700),
+                      }}
+                    >
+                      {file.rowSpaceInMm ?? "-"}
                     </TableCell>
                     <TableCell>
                       <Button
