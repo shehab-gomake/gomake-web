@@ -296,7 +296,15 @@ export const ChatwootConversationDetailPanel: React.FC<
 
       {/* Linked Documents Section - Wrapped in Suspense to handle async Recoil state */}
       <Suspense fallback={null}>
-        <LinkedDocumentsSection conversation={conversation} />
+        <LinkedDocumentsSection
+          conversation={conversation}
+          accountId={accountId}
+          onConversationUpdate={(updatedConversation) => {
+            handleConversationChange(conversation.id, {
+              custom_attributes: updatedConversation.custom_attributes,
+            });
+          }}
+        />
       </Suspense>
 
       {/* Contact History Section */}

@@ -6,25 +6,44 @@
  * Uses shared hooks and components for consistent behavior.
  */
 
-import React, { useMemo, useEffect } from 'react';
-import { Box, Typography, Stack, IconButton, Tooltip } from '@mui/material';
-import OpenInNewIcon from '@mui/icons-material/OpenInNew';
-import { useRecoilValue } from 'recoil';
-import { useGomakeRouter } from '@/hooks/use-gomake-router';
-import { DOCUMENT_TYPE } from '@/pages-components/quotes/enums';
-import { CHATWOOT_CUSTOM_ATTRIBUTES } from '@/widgets/frontdesk/constants/chatwoot-attributes';
-import { colorTokens } from '@/widgets/frontdesk/design-system';
-import { currencyUnitState } from '@/store/currency-units';
-import type { ChatwootConversation } from '@/services/frontdesk/api/chatwoot/types/conversations.types';
-import { useTranslation } from 'react-i18next';
-import { useDocumentDetails, createDocumentKey } from '../hooks/document/use-document-details';
+import React, {
+  useMemo,
+  useEffect,
+  useState,
+  useCallback,
+  useRef,
+} from "react";
+import {
+  Box,
+  Typography,
+  Stack,
+  IconButton,
+  Tooltip,
+  CircularProgress,
+} from "@mui/material";
+import OpenInNewIcon from "@mui/icons-material/OpenInNew";
+import CloseIcon from "@mui/icons-material/Close";
+import { useRecoilValue } from "recoil";
+import { useGomakeRouter } from "@/hooks/use-gomake-router";
+import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
+import { CHATWOOT_CUSTOM_ATTRIBUTES } from "@/widgets/frontdesk/constants/chatwoot-attributes";
+import { chatwootService } from "@/services/frontdesk";
+import { useSnackBar } from "@/hooks/use-snack-bar";
+import { colorTokens } from "@/widgets/frontdesk/design-system";
+import { currencyUnitState } from "@/store/currency-units";
+import type { ChatwootConversation } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
+import { useTranslation } from "react-i18next";
+import {
+  useDocumentDetails,
+  createDocumentKey,
+} from "../hooks/document/use-document-details";
 import {
   getDocumentTypeTitle,
   getDocumentRoute,
   openDocumentInNewTab,
   formatDocumentDateShort,
   formatDocumentPriceCompact,
-} from '../utils/document/formatting.utils';
+} from "../utils/document/formatting.utils";
 
 interface LinkedDocument {
   id: string;
@@ -34,12 +53,66 @@ interface LinkedDocument {
 
 interface LinkedDocumentsSectionProps {
   conversation: ChatwootConversation;
+  accountId?: number | null;
+  onConversationUpdate?: (updatedConversation: ChatwootConversation) => void;
+}
+
+/**
+ * Get attribute keys for a document type
+ */
+function getDocumentAttributeKeysByType(
+  documentType: DOCUMENT_TYPE
+): { idKey: string; typeKey: string; timestampKey: string } | null {
+  const typeMap: Record<
+    number,
+    { idKey: string; typeKey: string; timestampKey: string }
+  > = {
+    [DOCUMENT_TYPE.quote]: {
+      idKey: CHATWOOT_CUSTOM_ATTRIBUTES.LINKED_QUOTE_ID,
+      typeKey: CHATWOOT_CUSTOM_ATTRIBUTES.LINKED_QUOTE_TYPE,
+      timestampKey: CHATWOOT_CUSTOM_ATTRIBUTES.LINKED_QUOTE_AT,
+    },
+    [DOCUMENT_TYPE.invoice]: {
+      idKey: CHATWOOT_CUSTOM_ATTRIBUTES.LINKED_INVOICE_ID,
+      typeKey: CHATWOOT_CUSTOM_ATTRIBUTES.LINKED_INVOICE_TYPE,
+      timestampKey: CHATWOOT_CUSTOM_ATTRIBUTES.LINKED_INVOICE_AT,
+    },
+    [DOCUMENT_TYPE.order]: {
+      idKey: CHATWOOT_CUSTOM_ATTRIBUTES.LINKED_ORDER_ID,
+      typeKey: CHATWOOT_CUSTOM_ATTRIBUTES.LINKED_ORDER_TYPE,
+      timestampKey: CHATWOOT_CUSTOM_ATTRIBUTES.LINKED_ORDER_AT,
+    },
+    [DOCUMENT_TYPE.receipt]: {
+      idKey: CHATWOOT_CUSTOM_ATTRIBUTES.LINKED_RECEIPT_ID,
+      typeKey: CHATWOOT_CUSTOM_ATTRIBUTES.LINKED_RECEIPT_TYPE,
+      timestampKey: CHATWOOT_CUSTOM_ATTRIBUTES.LINKED_RECEIPT_AT,
+    },
+    [DOCUMENT_TYPE.deliveryNote]: {
+      idKey: CHATWOOT_CUSTOM_ATTRIBUTES.LINKED_DELIVERY_NOTE_ID,
+      typeKey: CHATWOOT_CUSTOM_ATTRIBUTES.LINKED_DELIVERY_NOTE_TYPE,
+      timestampKey: CHATWOOT_CUSTOM_ATTRIBUTES.LINKED_DELIVERY_NOTE_AT,
+    },
+    [DOCUMENT_TYPE.purchaseOrder]: {
+      idKey: CHATWOOT_CUSTOM_ATTRIBUTES.LINKED_PURCHASE_ORDER_ID,
+      typeKey: CHATWOOT_CUSTOM_ATTRIBUTES.LINKED_PURCHASE_ORDER_TYPE,
+      timestampKey: CHATWOOT_CUSTOM_ATTRIBUTES.LINKED_PURCHASE_ORDER_AT,
+    },
+    [DOCUMENT_TYPE.purchaseInvoice]: {
+      idKey: CHATWOOT_CUSTOM_ATTRIBUTES.LINKED_PURCHASE_INVOICE_ID,
+      typeKey: CHATWOOT_CUSTOM_ATTRIBUTES.LINKED_PURCHASE_INVOICE_TYPE,
+      timestampKey: CHATWOOT_CUSTOM_ATTRIBUTES.LINKED_PURCHASE_INVOICE_AT,
+    },
+  };
+
+  return typeMap[documentType] || null;
 }
 
 /**
  * Extract all linked documents from conversation custom attributes
  */
-function extractLinkedDocuments(conversation: ChatwootConversation): LinkedDocument[] {
+function extractLinkedDocuments(
+  conversation: ChatwootConversation
+): LinkedDocument[] {
   const customAttributes = conversation.custom_attributes || {};
   const documents: LinkedDocument[] = [];
 
@@ -101,8 +174,13 @@ function extractLinkedDocuments(conversation: ChatwootConversation): LinkedDocum
     let documentType: DOCUMENT_TYPE = type;
     if (documentTypeRaw !== undefined && documentTypeRaw !== null) {
       const parsedType =
-        typeof documentTypeRaw === 'string' ? parseInt(documentTypeRaw, 10) : Number(documentTypeRaw);
-      if (!isNaN(parsedType) && Object.values(DOCUMENT_TYPE).includes(parsedType)) {
+        typeof documentTypeRaw === "string"
+          ? parseInt(documentTypeRaw, 10)
+          : Number(documentTypeRaw);
+      if (
+        !isNaN(parsedType) &&
+        Object.values(DOCUMENT_TYPE).includes(parsedType)
+      ) {
         documentType = parsedType as DOCUMENT_TYPE;
       }
     }
@@ -114,7 +192,7 @@ function extractLinkedDocuments(conversation: ChatwootConversation): LinkedDocum
       documents.push({
         id: documentId,
         type: documentType,
-        linkedAt: linkedAt || '',
+        linkedAt: linkedAt || "",
       });
     }
   });
@@ -122,14 +200,26 @@ function extractLinkedDocuments(conversation: ChatwootConversation): LinkedDocum
   return documents;
 }
 
-export const LinkedDocumentsSection: React.FC<LinkedDocumentsSectionProps> = ({ conversation }) => {
+export const LinkedDocumentsSection: React.FC<LinkedDocumentsSectionProps> = ({
+  conversation,
+  accountId,
+  onConversationUpdate,
+}) => {
   const { navigate } = useGomakeRouter();
   const { t } = useTranslation();
   const currenciesUnits = useRecoilValue(currencyUnitState);
   const { details, loadingKeys, fetchMultipleDetails } = useDocumentDetails();
+  const { alertSuccess, alertFault } = useSnackBar();
+  const [unlinkingDocId, setUnlinkingDocId] = useState<string | null>(null);
+
+  // Use ref to prevent duplicate calls during async operations
+  const unlinkingRef = useRef<string | null>(null);
 
   // Extract linked documents from conversation
-  const linkedDocuments = useMemo(() => extractLinkedDocuments(conversation), [conversation]);
+  const linkedDocuments = useMemo(
+    () => extractLinkedDocuments(conversation),
+    [conversation]
+  );
 
   // Fetch document details when linked documents change
   useEffect(() => {
@@ -143,14 +233,98 @@ export const LinkedDocumentsSection: React.FC<LinkedDocumentsSectionProps> = ({ 
     return null;
   }
 
-  const handleDocumentClick = (documentType: DOCUMENT_TYPE, documentId: string) => {
+  const handleDocumentClick = (
+    documentType: DOCUMENT_TYPE,
+    documentId: string
+  ) => {
     const route = getDocumentRoute(documentType, documentId);
     navigate(route);
   };
 
-  const handleDocumentClickNewTab = (documentType: DOCUMENT_TYPE, documentId: string) => {
+  const handleDocumentClickNewTab = (
+    documentType: DOCUMENT_TYPE,
+    documentId: string
+  ) => {
     openDocumentInNewTab(documentType, documentId);
   };
+
+  // const handleUnlinkDocument = useCallback(
+  //   async (
+  //     documentType: DOCUMENT_TYPE,
+  //     documentId: string
+  //     // e: React.MouseEvent<HTMLButtonElement>
+  //   ) => {
+  //     // e.stopPropagation();
+  //     // e.preventDefault();
+
+  //     // Validation
+  //     if (!accountId || !conversation.id) {
+  //       alertFault("frontdesk.accountRequired");
+  //       return;
+  //     }
+
+  //     // Prevent duplicate calls
+  //     if (unlinkingRef.current === documentId) {
+  //       return;
+  //     }
+
+  //     // Get attribute keys
+  //     const attributeKeys = getDocumentAttributeKeysByType(documentType);
+  //     if (!attributeKeys) {
+  //       alertFault("frontdesk.unknownDocumentType");
+  //       return;
+  //     }
+
+  //     // Set loading state
+  //     setUnlinkingDocId(documentId);
+  //     unlinkingRef.current = documentId;
+
+  //     try {
+  //       const conversationId = conversation.id;
+  //       const currentAttributes = conversation.custom_attributes || {};
+
+  //       // Create new attributes object WITHOUT the document keys
+  //       const updatedAttributes: Record<string, unknown> = {};
+  //       Object.keys(currentAttributes).forEach((key) => {
+  //         if (
+  //           key !== attributeKeys.idKey &&
+  //           key !== attributeKeys.typeKey &&
+  //           key !== attributeKeys.timestampKey
+  //         ) {
+  //           updatedAttributes[key] = currentAttributes[key];
+  //         }
+  //       });
+
+  //       // Call API
+  //       const updatedConversation =
+  //         await chatwootService.conversations.updateConversationCustomAttributes(
+  //           accountId,
+  //           conversationId,
+  //           updatedAttributes
+  //         );
+
+  //       // Show success
+  //       alertSuccess("frontdesk.documentUnlinkedSuccess");
+
+  //       // Notify parent
+  //       if (onConversationUpdate) {
+  //         onConversationUpdate(updatedConversation);
+  //       }
+  //     } catch (error: any) {
+  //       console.error("[LinkedDocumentsSection] Error unlinking:", error);
+  //       const errorMessage =
+  //         error.message ||
+  //         t("frontdesk.documentUnlinkFailed", {
+  //           defaultValue: "Failed to unlink document",
+  //         });
+  //       alertFault(errorMessage);
+  //     } finally {
+  //       setUnlinkingDocId(null);
+  //       unlinkingRef.current = null;
+  //     }
+  //   },
+  //   [accountId, conversation, alertSuccess, alertFault, t, onConversationUpdate]
+  // );
 
   return (
     <Box sx={{ mb: 2.5 }}>
@@ -159,16 +333,16 @@ export const LinkedDocumentsSection: React.FC<LinkedDocumentsSectionProps> = ({ 
         sx={{
           color: colorTokens.semantic.text.secondary,
           mb: 1,
-          display: 'block',
+          display: "block",
           fontWeight: 600,
-          textTransform: 'uppercase',
+          textTransform: "uppercase",
           fontSize: 10,
         }}
       >
-        {t('frontdesk.linkedDocuments', { defaultValue: 'Linked Documents' })}
+        {t("frontdesk.linkedDocuments", { defaultValue: "Linked Documents" })}
       </Typography>
 
-      <Stack spacing={1}>
+      <Stack gap={1}>
         {linkedDocuments.map((doc) => {
           const documentTitle = getDocumentTypeTitle(doc.type);
           const key = createDocumentKey(doc.type, doc.id);
@@ -184,23 +358,23 @@ export const LinkedDocumentsSection: React.FC<LinkedDocumentsSectionProps> = ({ 
             currenciesUnits
           );
           const sourceDocText = docDetails?.sourceDocuments?.length
-            ? docDetails.sourceDocuments.map((s) => s.documentNumber).join(', ')
-            : '';
+            ? docDetails.sourceDocuments.map((s) => s.documentNumber).join(", ")
+            : "";
 
           return (
             <Box
               key={key}
               sx={{
-                display: 'flex',
-                alignItems: 'center',
+                display: "flex",
+                alignItems: "center",
                 gap: 1.5,
                 p: 1.5,
                 backgroundColor: colorTokens.neutral[50],
-                borderRadius: '6px',
+                borderRadius: "6px",
                 border: `1px solid ${colorTokens.semantic.border.default}`,
-                cursor: 'pointer',
-                transition: 'all 0.2s ease',
-                '&:hover': {
+                cursor: "pointer",
+                transition: "all 0.2s ease",
+                "&:hover": {
                   backgroundColor: colorTokens.neutral[100],
                 },
               }}
@@ -212,16 +386,16 @@ export const LinkedDocumentsSection: React.FC<LinkedDocumentsSectionProps> = ({ 
                   sx={{
                     fontWeight: 500,
                     fontSize: 13,
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap',
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
                     mb: 0.25,
                   }}
                 >
                   {documentTitle}
                   {docDetails?.number && ` #${docDetails.number}`}
                 </Typography>
-                <Stack spacing={0.25}>
+                <Stack gap={0.25}>
                   {priceText && (
                     <Typography
                       variant="caption"
@@ -240,50 +414,88 @@ export const LinkedDocumentsSection: React.FC<LinkedDocumentsSectionProps> = ({ 
                       sx={{
                         color: colorTokens.semantic.text.secondary,
                         fontSize: 10,
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                        whiteSpace: 'nowrap',
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
                       }}
                     >
-                      {t('frontdesk.sourceDocument', { defaultValue: 'Source' })}: {sourceDocText}
+                      {t("frontdesk.sourceDocument", {
+                        defaultValue: "Source",
+                      })}
+                      : {sourceDocText}
                     </Typography>
                   )}
                   {creationDate && (
                     <Typography
                       variant="caption"
-                      sx={{ color: colorTokens.semantic.text.secondary, fontSize: 10 }}
+                      sx={{
+                        color: colorTokens.semantic.text.secondary,
+                        fontSize: 10,
+                      }}
                     >
-                      {t('frontdesk.created', { defaultValue: 'Created' })}: {creationDate}
+                      {t("frontdesk.created", { defaultValue: "Created" })}:{" "}
+                      {creationDate}
                     </Typography>
                   )}
                   {dueDate && (
                     <Typography
                       variant="caption"
-                      sx={{ color: colorTokens.semantic.text.secondary, fontSize: 10 }}
+                      sx={{
+                        color: colorTokens.semantic.text.secondary,
+                        fontSize: 10,
+                      }}
                     >
-                      {t('frontdesk.dueDate', { defaultValue: 'Due' })}: {dueDate}
+                      {t("frontdesk.dueDate", { defaultValue: "Due" })}:{" "}
+                      {dueDate}
                     </Typography>
                   )}
                 </Stack>
               </Box>
-              <Tooltip title={t('frontdesk.openInNewTab', { defaultValue: 'Open in new tab' })}>
-                <IconButton
-                  size="small"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleDocumentClickNewTab(doc.type, doc.id);
-                  }}
-                  sx={{
-                    color: colorTokens.semantic.text.secondary,
-                    '&:hover': {
-                      backgroundColor: colorTokens.primary[50],
-                      color: colorTokens.primary[600],
-                    },
-                  }}
+              <Stack direction="row" gap={0.5}>
+                <Tooltip
+                  title={t("frontdesk.openInNewTab", {
+                    defaultValue: "Open in new tab",
+                  })}
                 >
-                  <OpenInNewIcon sx={{ fontSize: 16 }} />
-                </IconButton>
-              </Tooltip>
+                  <IconButton
+                    size="small"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDocumentClickNewTab(doc?.type, doc?.id);
+                    }}
+                    sx={{
+                      color: colorTokens.semantic.text.secondary,
+                      "&:hover": {
+                        backgroundColor: colorTokens.primary[50],
+                        color: colorTokens.primary[600],
+                      },
+                    }}
+                  >
+                    <OpenInNewIcon sx={{ fontSize: 16 }} />
+                  </IconButton>
+                </Tooltip>
+                {/* {accountId && (
+                  <Tooltip
+                    title={t("frontdesk.unlinkDocument", {
+                      defaultValue: "Remove linked document",
+                    })}
+                  >
+                    <IconButton
+                      size="small"
+                      onClick={() => {
+                        handleUnlinkDocument(doc.type, doc.id);
+                      }}
+                      disabled={unlinkingDocId === doc.id}
+                    >
+                      {unlinkingDocId === doc.id ? (
+                        <CircularProgress size={16} />
+                      ) : (
+                        <CloseIcon sx={{ fontSize: 16 }} />
+                      )}
+                    </IconButton>
+                  </Tooltip>
+                )} */}
+              </Stack>
             </Box>
           );
         })}
