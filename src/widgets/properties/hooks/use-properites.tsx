@@ -23,11 +23,11 @@ const useProperites = ({ classes }) => {
   const router = useRouter();
   const tableHeaders = [
     "",
-    t("properties.parameter"),
-    t("properties.unit"),
+    t("properties.properties"),
     t("properties.defaultOption"),
-    t("properties.rule"),
+    t("properties.unit"),
     t("properties.type"),
+    t("properties.rule"),
     t("properties.more"),
   ];
   const {
@@ -157,7 +157,7 @@ const useProperites = ({ classes }) => {
 
   const getDefaultValueDisplay = (property: any, defaultValue: string) => {
     if (!defaultValue || defaultValue === "-") {
-      return defaultValue || "-";
+      return defaultValue || t("products.profits.exceptions.selectValue");
     }
 
     const selectedOutput = Outputs?.find(
@@ -289,9 +289,10 @@ const useProperites = ({ classes }) => {
               }}
               style={{
                 width: "100%",
-                border: "0px",
+                border: "1px solid #e0e0e0",
                 background: "#fff",
                 borderRadius: 4,
+                maxWidth: 180,
                 minWidth: 180,
               }}
             />
@@ -340,9 +341,10 @@ const useProperites = ({ classes }) => {
               }}
               style={{
                 width: "100%",
-                border: "0px",
+                border: "1px solid #e0e0e0",
                 background: "#fff",
                 borderRadius: 4,
+                maxWidth: 180,
                 minWidth: 180,
               }}
             />
@@ -361,10 +363,11 @@ const useProperites = ({ classes }) => {
               }}
               style={{
                 width: "100%",
-                border: "0px",
+                border: "1px solid #e0e0e0",
                 background: "#fff",
                 borderRadius: 4,
                 height: 40,
+                maxWidth: 180,
                 minWidth: 180,
               }}
             />
@@ -382,7 +385,7 @@ const useProperites = ({ classes }) => {
               }}
               style={{
                 width: "100%",
-                border: "0px",
+                border: "1px solid #e0e0e0",
                 background: "#fff",
                 borderRadius: 4,
                 height: 40,
@@ -415,9 +418,10 @@ const useProperites = ({ classes }) => {
               }}
               style={{
                 width: "100%",
-                border: "0px",
+                border: "1px solid #e0e0e0",
                 background: "#fff",
                 borderRadius: 4,
+                maxWidth: 180,
                 minWidth: 180,
               }}
             />
@@ -439,47 +443,49 @@ const useProperites = ({ classes }) => {
               }}
               style={{
                 width: "100%",
-                border: "0px",
+                border: "1px solid #e0e0e0",
                 background: "#fff",
                 borderRadius: 4,
+                maxWidth: 180,
                 minWidth: 180,
               }}
             />
           );
         default:
           return (
-            <UpdateValueInput
-              value={defaultValueInput}
-              onInputChange={(value) => setDefaultValueInput(value)}
-              onUpdate={async () => {
-                if (defaultValueInput !== (property.defaultValue || "")) {
-                  await updatePropertyDefaultValue({
-                    actionId: router.query.actionId as string,
-                    propertyId: property.propertyId,
-                    defaultValue: defaultValueInput,
-                    ruleType: property.ruleType,
-                  });
-                }
-                setEditingDefaultValue(null);
-                setDefaultValueInput("");
-              }}
-              onCancel={() => {
-                setEditingDefaultValue(null);
-                setDefaultValueInput("");
-              }}
-              clickedOut={async () => {
-                if (defaultValueInput !== (property.defaultValue || "")) {
-                  await updatePropertyDefaultValue({
-                    actionId: router.query.actionId as string,
-                    propertyId: property.propertyId,
-                    defaultValue: defaultValueInput,
-                    ruleType: property.ruleType,
-                  });
-                }
-                setEditingDefaultValue(null);
-                setDefaultValueInput("");
-              }}
-            />
+            <></>
+            // <UpdateValueInput
+            //   value={defaultValueInput}
+            //   onInputChange={(value) => setDefaultValueInput(value)}
+            //   onUpdate={async () => {
+            //     if (defaultValueInput !== (property.defaultValue || "")) {
+            //       await updatePropertyDefaultValue({
+            //         actionId: router.query.actionId as string,
+            //         propertyId: property.propertyId,
+            //         defaultValue: defaultValueInput,
+            //         ruleType: property.ruleType,
+            //       });
+            //     }
+            //     setEditingDefaultValue(null);
+            //     setDefaultValueInput("");
+            //   }}
+            //   onCancel={() => {
+            //     setEditingDefaultValue(null);
+            //     setDefaultValueInput("");
+            //   }}
+            //   clickedOut={async () => {
+            //     if (defaultValueInput !== (property.defaultValue || "")) {
+            //       await updatePropertyDefaultValue({
+            //         actionId: router.query.actionId as string,
+            //         propertyId: property.propertyId,
+            //         defaultValue: defaultValueInput,
+            //         ruleType: property.ruleType,
+            //       });
+            //     }
+            //     setEditingDefaultValue(null);
+            //     setDefaultValueInput("");
+            //   }}
+            // />
           );
       }
     } else {
@@ -518,10 +524,10 @@ const useProperites = ({ classes }) => {
               }}
               style={{
                 width: "100%",
-                border: "0px",
+                border: "1px solid #e0e0e0",
                 background: "#fff",
                 borderRadius: 4,
-                minWidth: 180,
+                maxWidth: 180,
               }}
             />
           );
@@ -539,11 +545,11 @@ const useProperites = ({ classes }) => {
               }}
               style={{
                 width: "100%",
-                border: "0px",
+                border: "1px solid #e0e0e0",
                 background: "#fff",
                 borderRadius: 4,
                 height: 40,
-                minWidth: 180,
+                maxWidth: 180,
               }}
             />
           );
@@ -560,10 +566,11 @@ const useProperites = ({ classes }) => {
               }}
               style={{
                 width: "100%",
-                border: "0px",
+                border: "1px solid #e0e0e0",
                 background: "#fff",
                 borderRadius: 4,
                 height: 40,
+                maxWidth: 180,
                 minWidth: 180,
               }}
             />
@@ -593,9 +600,10 @@ const useProperites = ({ classes }) => {
               }}
               style={{
                 width: "100%",
-                border: "0px",
+                border: "1px solid #e0e0e0",
                 background: "#fff",
                 borderRadius: 4,
+                maxWidth: 180,
                 minWidth: 180,
               }}
             />
@@ -633,47 +641,49 @@ const useProperites = ({ classes }) => {
               }}
               style={{
                 width: "100%",
-                border: "0px",
+                border: "1px solid #e0e0e0",
                 background: "#fff",
                 borderRadius: 4,
+                maxWidth: 180,
                 minWidth: 180,
               }}
             />
           );
         default:
           return (
-            <UpdateValueInput
-              value={defaultValueInput}
-              onInputChange={(value) => setDefaultValueInput(value)}
-              onUpdate={async () => {
-                if (defaultValueInput !== (property.defaultValue || "")) {
-                  await updatePropertyDefaultValue({
-                    actionId: router.query.actionId as string,
-                    propertyId: property.propertyId,
-                    defaultValue: defaultValueInput,
-                    ruleType: property.ruleType,
-                  });
-                }
-                setEditingDefaultValue(null);
-                setDefaultValueInput("");
-              }}
-              onCancel={() => {
-                setEditingDefaultValue(null);
-                setDefaultValueInput("");
-              }}
-              clickedOut={async () => {
-                if (defaultValueInput !== (property.defaultValue || "")) {
-                  await updatePropertyDefaultValue({
-                    actionId: router.query.actionId as string,
-                    propertyId: property.propertyId,
-                    defaultValue: defaultValueInput,
-                    ruleType: property.ruleType,
-                  });
-                }
-                setEditingDefaultValue(null);
-                setDefaultValueInput("");
-              }}
-            />
+            <></>
+            // <UpdateValueInput
+            //   value={defaultValueInput}
+            //   onInputChange={(value) => setDefaultValueInput(value)}
+            //   onUpdate={async () => {
+            //     if (defaultValueInput !== (property.defaultValue || "")) {
+            //       await updatePropertyDefaultValue({
+            //         actionId: router.query.actionId as string,
+            //         propertyId: property.propertyId,
+            //         defaultValue: defaultValueInput,
+            //         ruleType: property.ruleType,
+            //       });
+            //     }
+            //     setEditingDefaultValue(null);
+            //     setDefaultValueInput("");
+            //   }}
+            //   onCancel={() => {
+            //     setEditingDefaultValue(null);
+            //     setDefaultValueInput("");
+            //   }}
+            //   clickedOut={async () => {
+            //     if (defaultValueInput !== (property.defaultValue || "")) {
+            //       await updatePropertyDefaultValue({
+            //         actionId: router.query.actionId as string,
+            //         propertyId: property.propertyId,
+            //         defaultValue: defaultValueInput,
+            //         ruleType: property.ruleType,
+            //       });
+            //     }
+            //     setEditingDefaultValue(null);
+            //     setDefaultValueInput("");
+            //   }}
+            // />
           );
       }
     }
@@ -690,7 +700,6 @@ const useProperites = ({ classes }) => {
 
       return [
         property.propertyName,
-        property.defaultUnit || "-",
         isEditing ? (
           <ClickOutside
             onClick={async () => {
@@ -708,7 +717,7 @@ const useProperites = ({ classes }) => {
             }}
             style={{ width: "100%" }}
           >
-            <div style={{ width: "100%" }}>
+            <div style={{ width: 180 }}>
               {renderDefaultValueInput(property, async (value?: string) => {
                 const valueToSave = value !== undefined ? value : defaultValueInput;
                 if (valueToSave !== currentDefaultValue) {
@@ -733,18 +742,22 @@ const useProperites = ({ classes }) => {
             style={{
               cursor: "pointer",
               padding: "4px",
-              minHeight: "26px",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              width: "100%"
+              border: "1px solid #e0e0e0",
+              background: "#fff",
+              borderRadius: 4,
+              maxWidth: 180,
+              minWidth: 180,
+              minHeight: 38,
             }}
           >
             {isValueLoading(property, currentDefaultValue) ? (
               <Skeleton
                 variant="text"
                 width="80%"
-                height={20}
+                height={40}
                 sx={{
                   mx: "auto",
                 }}
@@ -754,6 +767,8 @@ const useProperites = ({ classes }) => {
             )}
           </div>
         ),
+        property.defaultUnit || "-",
+        property.ruleType == 0 ? t("properties.output") : t("properties.input"),
         <div style={classes.rowItem} className="scrollBlue">
           {property.actionRules
             ?.sort((a, b) => a.priority - b.priority)
@@ -775,7 +790,6 @@ const useProperites = ({ classes }) => {
               );
             })}
         </div>,
-        property.ruleType == 0 ? t("properties.output") : t("properties.input"),
         <IconButton
           onClick={(e) => {
             handleClick(e);
@@ -952,18 +966,25 @@ const useProperites = ({ classes }) => {
     });
 
   useEffect(() => {
-    if (propertiesData?.length) {
-      const temp = filterArray(propertiesData, term);
-      setProperitesDataSearched(temp);
+    if (term && term.trim()) {
+      if (propertiesData?.length) {
+        const temp = filterArray(propertiesData, term);
+        setProperitesDataSearched(temp);
+      } else {
+        setProperitesDataSearched([]);
+      }
+    } else {
+      // When no search term, keep searched data in sync with main data
+      setProperitesDataSearched(propertiesData || []);
     }
-  }, [term]);
+  }, [term, propertiesData]);
   const columnWidths = [
-    "50px",      // Empty (replaced by drag handle)
-    "15%",       // Parameter
-    "8%",        // Unit
-    "18%",       // Default Option (wider)
-    "20%",       // Rule (smaller)
+    "5%",      // Empty (replaced by drag handle)
+    "20%",       // Parameter
+    "10%",       // Default Option (wider)
+    "10%",        // Unit
     "10%",       // Type
+    "40%",       // Rule (smaller)
     "5%",        // More
   ];
 
