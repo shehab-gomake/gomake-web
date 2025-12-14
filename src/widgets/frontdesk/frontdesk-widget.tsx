@@ -376,18 +376,33 @@ const FrontdeskWidget: React.FC = () => {
     }
 
     // For inbox, show provider content
+    console.log('[Frontdesk Widget] 🔵 Rendering provider view', {
+      currentChannel,
+      currentSection,
+      isInTicketMode,
+      route: currentRoute,
+    });
+    console.log(`[Frontdesk Widget] 📍 CURRENT CHANNEL: "${currentChannel}" (need "email" for EmailProviderView)`);
+
     switch (currentChannel) {
       case "all":
+        console.log('[Frontdesk Widget] ⚠️ Rendering UnifiedProvider (NOT EmailProviderView)');
         return <UnifiedProvider />;
       case "email":
+        console.log('[Frontdesk Widget] ✅✅✅ RENDERING EmailProviderView ✅✅✅');
         return <EmailProviderView />;
       case "whatsapp":
+        console.log('[Frontdesk Widget] ⚠️ Rendering WhatsAppProviderView (NOT EmailProviderView)');
         return <WhatsAppProviderView />;
       case "internal":
+        console.log('[Frontdesk Widget] ⚠️ Rendering DirectMessagesProviderView (NOT EmailProviderView)');
         return <DirectMessagesProviderView />;
       case "chatwoot":
+        console.log('[Frontdesk Widget] ⚠️ Rendering ChatwootProviderView (NOT EmailProviderView)');
         return <ChatwootProviderView />;
       default:
+        console.log(`[Frontdesk Widget] ⚠️⚠️⚠️ NO PROVIDER MATCHED! currentChannel: "${currentChannel}"`);
+        console.log('[Frontdesk Widget] Available channels: "all", "email", "whatsapp", "internal", "chatwoot"');
         return null;
     }
   };

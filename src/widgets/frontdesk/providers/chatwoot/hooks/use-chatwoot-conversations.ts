@@ -27,14 +27,17 @@ interface UseChatwootConversationsOptions
    * Default: true
    */
   enabled?: boolean;
+  /**
+   * Polling interval in milliseconds for automatic refresh
+   * Set to 0 or undefined to disable polling
+   * Default: undefined (no polling)
+   */
+  pollingInterval?: number;
 }
 
-export const useChatwootConversations = (
-  accountId: number | null,
-  options: UseChatwootConversationsOptions = {}
-) => {
-  // Extract enabled flag from options, default to true
-  const { enabled = true, ...filterOptions } = options;
+export const useChatwootConversations = (accountId: number | null, options: UseChatwootConversationsOptions = {}) => {
+  // Extract enabled flag and polling interval from options, default to true
+  const { enabled = true, pollingInterval, ...filterOptions } = options;
 
   // CACHE-FIRST: Create stable filter key for caching
   const stableFilterKey = useMemo(() => {
@@ -102,6 +105,15 @@ export const useChatwootConversations = (
     conversationsLengthRef.current = conversations.length;
   }, [conversations.length]);
 
+  // Polling interval ref to track and cleanup
+  const pollingIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  // Ref to track if fetch is in progress for polling (avoids recreating interval)
+  const isFetchingForPollRef = useRef<boolean>(false);
+  // Track poll count for debugging
+  const pollCountRef = useRef(0);
+  // Track effect runs for debugging
+  const effectRunCountRef = useRef(0);
+
   // CACHE-FIRST: Track this cache key
   useEffect(() => {
     if (stableFilterKey && !cacheKeys.has(stableFilterKey)) {
@@ -127,12 +139,7 @@ export const useChatwootConversations = (
   );
 
   const fetchConversations = useCallback(
-    async (
-      page: number = 1,
-      append: boolean = false,
-      isFilterChange: boolean = false,
-      forceRefresh: boolean = false
-    ) => {
+    async (page: number = 1, append: boolean = false, isFilterChange: boolean = false, forceRefresh: boolean = false, overrideLimit?: number) => {
       // Note: accountId can be null - the API endpoint /api/accounts/conversations
       // doesn't require accountId in the URL path, it uses the authenticated user's account automatically
       // So we allow the call even if accountId is null
@@ -164,7 +171,7 @@ export const useChatwootConversations = (
 
       const listParams: ConversationListParams = {
         page,
-        limit: filterOptions.limit || CHATWOOT_CONSTANTS.DEFAULT_PAGE_SIZE,
+        limit: overrideLimit ?? filterOptions.limit ?? CHATWOOT_CONSTANTS.DEFAULT_PAGE_SIZE,
         ...(filterOptions.status && { status: filterOptions.status }),
         ...(filterOptions.inbox_id && { inbox_id: filterOptions.inbox_id }),
         ...(filterOptions.assignee_type && {
@@ -324,6 +331,8 @@ export const useChatwootConversations = (
           filtering: false,
           loadingMore: false,
         });
+        // Ensure isFetchingRef is reset (important for polling)
+        isFetchingRef.current = false;
       }
     },
     [
@@ -363,9 +372,15 @@ export const useChatwootConversations = (
     }
   }, [loadingState, hasMore, currentPage, fetchConversations]);
 
-  const refresh = useCallback(() => {
+  const refresh = useCallback(async () => {
     // CACHE-FIRST: Force refresh (bypass cache)
-    fetchConversations(1, false, false, true);
+    await fetchConversations(1, false, false, true);
+  }, [fetchConversations]);
+
+  // Lightweight refresh for polling (uses limit=2 to reduce request time)
+  const refreshForPolling = useCallback(async () => {
+    // Force refresh with minimal limit for faster polling
+    await fetchConversations(1, false, false, true, 2);
   }, [fetchConversations]);
 
   /**
@@ -580,6 +595,170 @@ export const useChatwootConversations = (
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [stableFilterKey, enabled]); // Depend on stableFilterKey and enabled flag
+
+  // Automatic polling for real-time updates (fallback/backup mechanism)
+  useEffect(() => {
+    effectRunCountRef.current += 1;
+    console.log('[Chatwoot Conversations] 🔵 POLLING EFFECT RUNNING', {
+      effectRunCount: effectRunCountRef.current,
+      accountId,
+      pollingInterval,
+      enabled,
+      hasExistingInterval: !!pollingIntervalRef.current,
+      previousIntervalId: pollingIntervalRef.current,
+      timestamp: new Date().toISOString(),
+    });
+
+    // Don't poll if disabled or no accountId
+    if (!enabled || !accountId) {
+      if (pollingIntervalRef.current) {
+        console.log('[Chatwoot Conversations] Clearing polling - disabled or no accountId');
+        clearInterval(pollingIntervalRef.current);
+        pollingIntervalRef.current = null;
+      }
+      return;
+    }
+
+    // Get polling interval from options (default: disabled)
+    const interval = pollingInterval ?? 0;
+
+    // Disable polling if interval is 0 or negative
+    if (interval <= 0) {
+      console.log('[Chatwoot Conversations] Polling disabled (interval <= 0)');
+      if (pollingIntervalRef.current) {
+        clearInterval(pollingIntervalRef.current);
+        pollingIntervalRef.current = null;
+      }
+      return;
+    }
+
+    // Clear existing interval if it exists (will be recreated below)
+    if (pollingIntervalRef.current) {
+      console.log('[Chatwoot Conversations] Clearing existing polling interval before creating new one');
+      clearInterval(pollingIntervalRef.current);
+      pollingIntervalRef.current = null;
+    }
+
+    console.log(`[Chatwoot Conversations] ✅ Starting polling with interval: ${interval}ms for account: ${accountId}`);
+
+    // Set up polling interval - store the interval ID
+    const intervalId = setInterval(() => {
+      pollCountRef.current += 1;
+      
+      // Defensive check: ensure interval still exists
+      if (!pollingIntervalRef.current) {
+        console.warn('[Chatwoot Conversations] ⚠️ WARNING: Polling interval was cleared but callback fired!', {
+          pollCount: pollCountRef.current,
+        });
+        return;
+      }
+
+      console.log('[Chatwoot Conversations] 🔄 Polling interval triggered', {
+        pollCount: pollCountRef.current,
+        isFetchingForPoll: isFetchingForPollRef.current,
+        isFetching: isFetchingRef.current,
+        accountId,
+        hasInterval: !!pollingIntervalRef.current,
+        intervalId: intervalId,
+        timestamp: new Date().toISOString(),
+      });
+
+      // Only poll if not currently fetching (to avoid overlapping requests)
+      // Use ref to avoid stale closure issues
+      if (!isFetchingForPollRef.current && !isFetchingRef.current) {
+        console.log('[Chatwoot Conversations] ✅ Executing poll - calling refreshForPolling (limit=2)');
+        isFetchingForPollRef.current = true;
+        
+        // Use refreshForPolling which uses limit=2 for faster polling
+        // Wrap in try-catch to ensure we always reset the flag
+        refreshForPolling()
+          .then(() => {
+            console.log('[Chatwoot Conversations] ✅ Poll refresh completed successfully');
+          })
+          .catch((error) => {
+            console.error('[Chatwoot Conversations] ❌ Poll refresh error:', error);
+            // Don't stop polling on error - continue polling
+          })
+          .finally(() => {
+            // Always reset the flag, even on error
+            isFetchingForPollRef.current = false;
+            console.log('[Chatwoot Conversations] 🔄 Poll flag reset, ready for next poll');
+          });
+      } else {
+        console.log('[Chatwoot Conversations] ⏸️ Skipping poll - already fetching', {
+          isFetchingForPoll: isFetchingForPollRef.current,
+          isFetching: isFetchingRef.current,
+        });
+        // If stuck, force reset after a timeout (safety mechanism)
+        if (isFetchingRef.current) {
+          setTimeout(() => {
+            if (isFetchingRef.current) {
+              console.warn('[Chatwoot Conversations] ⚠️ isFetchingRef stuck, forcing reset');
+              isFetchingRef.current = false;
+            }
+          }, 30000); // Reset after 30 seconds if stuck
+        }
+      }
+    }, interval);
+
+    // Store the interval ID
+    pollingIntervalRef.current = intervalId;
+    console.log('[Chatwoot Conversations] 📌 Polling interval created with ID:', intervalId);
+
+    // Track when interval was created for debugging
+    const intervalCreatedAt = Date.now();
+
+    // Periodic health check to ensure interval is still active (every 60 seconds)
+    const healthCheckInterval = setInterval(() => {
+      if (!pollingIntervalRef.current) {
+        console.warn('[Chatwoot Conversations] ⚠️ HEALTH CHECK: Polling interval is null!', {
+          accountId,
+          enabled,
+          pollingInterval,
+          intervalCreatedAt,
+          timeSinceCreation: Date.now() - intervalCreatedAt,
+          pollCount: pollCountRef.current,
+        });
+        // Don't recreate here - let the effect handle it
+      } else {
+        console.log('[Chatwoot Conversations] ✅ HEALTH CHECK: Polling interval is active', {
+          intervalId: pollingIntervalRef.current,
+          pollCount: pollCountRef.current,
+          timeSinceCreation: Date.now() - intervalCreatedAt,
+        });
+      }
+    }, 60000); // Check every 60 seconds
+
+    // Cleanup on unmount or when dependencies change
+    return () => {
+      console.log('[Chatwoot Conversations] 🧹 CLEANUP FUNCTION CALLED', {
+        accountId,
+        enabled,
+        pollingInterval,
+        intervalId: pollingIntervalRef.current,
+        pollCount: pollCountRef.current,
+        effectRunCount: effectRunCountRef.current,
+        timeSinceCreation: Date.now() - intervalCreatedAt,
+        timestamp: new Date().toISOString(),
+        stackTrace: new Error().stack?.split('\n').slice(0, 5).join('\n'), // First 5 lines of stack
+      });
+      
+      // Clear health check
+      clearInterval(healthCheckInterval);
+      
+      if (pollingIntervalRef.current) {
+        console.log('[Chatwoot Conversations] 🧹 Clearing polling interval', {
+          intervalId: pollingIntervalRef.current,
+        });
+        clearInterval(pollingIntervalRef.current);
+        pollingIntervalRef.current = null;
+      }
+      isFetchingForPollRef.current = false;
+    };
+    // Only recreate interval when account, enabled, or polling interval changes
+    // IMPORTANT: Don't include refresh or refreshForPolling in dependencies to avoid recreating interval
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [accountId, enabled, pollingInterval]);
 
   return useMemo(
     () => ({

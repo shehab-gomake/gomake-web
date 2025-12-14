@@ -12,6 +12,8 @@ import { useTicketFormModal } from "../../tickets/hooks/use-ticket-form-modal";
 import { useFrontDeskRouter } from "@/widgets/frontdesk/routing/hooks/use-frontdesk-router";
 
 export const useEmailProvider = () => {
+  console.log('[Email Provider] 🟢 useEmailProvider hook initialized');
+  
   const router = useRouter();
   const { queryParams, isInitialized } = useFrontDeskRouter();
 
@@ -23,6 +25,11 @@ export const useEmailProvider = () => {
   const emailAuth = useEmailAuth();
   const emailLabels = useEmailLabels(emailAccounts.selectedAccountId || undefined);
 
+  console.log('[Email Provider] 🟡 useEmailProvider render', {
+    selectedAccountId: emailAccounts.selectedAccountId,
+    accountsCount: emailAccounts.accounts.length,
+  });
+
   // Providers for unified ticketing (simplified API)
   const providers = useProviders();
 
@@ -32,9 +39,16 @@ export const useEmailProvider = () => {
     : null;
   const combinedQuery = combineGmailQueries(labelQuery, searchQuery || null);
 
-  const emailConversations = useEmailConversations({
-    query: combinedQuery || undefined,
-  });
+  // Memoize options to prevent unnecessary re-renders of useEmailConversations
+  const conversationsOptions = useMemo(
+    () => ({
+      query: combinedQuery || undefined,
+      pollingInterval: 20000, // 20 seconds
+    }),
+    [combinedQuery]
+  );
+
+  const emailConversations = useEmailConversations(conversationsOptions);
 
   // Component management
   const conversationManager = useEmailConversationManager({

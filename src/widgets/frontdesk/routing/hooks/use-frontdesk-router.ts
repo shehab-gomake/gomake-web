@@ -178,7 +178,16 @@ export const useFrontDeskRouter = () => {
    * Backward compatibility helpers
    */
   const currentSection = useMemo(() => getSectionFromRoute(currentRoute), [currentRoute]);
-  const currentChannel = useMemo(() => getChannelFromRoute(currentRoute), [currentRoute]);
+  const currentChannel = useMemo(() => {
+    const channel = getChannelFromRoute(currentRoute);
+    console.log('[FrontDesk Router] 🔵 Current channel computed', {
+      channel,
+      route: currentRoute,
+      section: currentRoute.section,
+      channelFromRoute: currentRoute.channel,
+    });
+    return channel;
+  }, [currentRoute]);
   const currentTicketView = useMemo(() => getTicketViewFromRoute(currentRoute), [currentRoute]);
   const isInTicketMode = useMemo(() => isTicketRoute(currentRoute), [currentRoute]);
 
