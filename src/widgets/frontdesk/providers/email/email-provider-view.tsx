@@ -12,6 +12,8 @@ import { useFabPositioning } from "@/widgets/frontdesk/hooks/use-fab-positioning
 import { TicketFormModal } from "../tickets/components/ticket-form-modal";
 
 export const EmailProviderView: React.FC = () => {
+  console.log('[Email Provider View] 🟢 EmailProviderView component mounted');
+  
   const [showAuthModal, setShowAuthModal] = useState(false);
   const { primaryColor } = useGomakeTheme();
 
