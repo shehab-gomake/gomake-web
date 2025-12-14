@@ -45,14 +45,30 @@ const PropertiesTable = () => {
 
   const onDragEnd = (result) => {
     if (!result.destination) return;
+
+    // Use the currently displayed data (searched or not)
+    const currentRows = term ? propertiesDataSearched : propertiesData;
+
+    // Find the actual indices in propertiesData based on the property name
+    const sourceRow = currentRows[result.source.index];
+    const destRow = currentRows[result.destination.index];
+
+    if (!sourceRow || !destRow) return;
+
+    // Find indices in the full propertiesData array
+    const sourceIndexInFull = propertiesData.findIndex(row => row[0] === sourceRow[0]);
+    const destIndexInFull = propertiesData.findIndex(row => row[0] === destRow[0]);
+
+    if (sourceIndexInFull === -1 || destIndexInFull === -1) return;
+
     const reorderedRows = Array.from(propertiesData);
-    const [removed] = reorderedRows.splice(result.source.index, 1);
-    reorderedRows.splice(result.destination.index, 0, removed);
+    const [removed] = reorderedRows.splice(sourceIndexInFull, 1);
+    reorderedRows.splice(destIndexInFull, 0, removed);
     setProperitesData(reorderedRows);
 
     const reorderedHiddenData = Array.from(hiddenData);
-    const [removedHidden] = reorderedHiddenData.splice(result.source.index, 1);
-    reorderedHiddenData.splice(result.destination.index, 0, removedHidden);
+    const [removedHidden] = reorderedHiddenData.splice(sourceIndexInFull, 1);
+    reorderedHiddenData.splice(destIndexInFull, 0, removedHidden);
     setHiddenData(reorderedHiddenData);
 
     const reOrderData = reorderedHiddenData.map((data, newIndex) => ({

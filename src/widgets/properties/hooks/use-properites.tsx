@@ -717,7 +717,7 @@ const useProperites = ({ classes }) => {
             }}
             style={{ width: "100%" }}
           >
-            <div style={{ width: "100%" }}>
+            <div style={{ width: 180 }}>
               {renderDefaultValueInput(property, async (value?: string) => {
                 const valueToSave = value !== undefined ? value : defaultValueInput;
                 if (valueToSave !== currentDefaultValue) {
@@ -742,7 +742,6 @@ const useProperites = ({ classes }) => {
             style={{
               cursor: "pointer",
               padding: "4px",
-              minHeight: "26px",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
@@ -751,7 +750,7 @@ const useProperites = ({ classes }) => {
               borderRadius: 4,
               maxWidth: 180,
               minWidth: 180,
-              height: 38,
+              minHeight: 38,
             }}
           >
             {isValueLoading(property, currentDefaultValue) ? (
@@ -967,18 +966,25 @@ const useProperites = ({ classes }) => {
     });
 
   useEffect(() => {
-    if (propertiesData?.length) {
-      const temp = filterArray(propertiesData, term);
-      setProperitesDataSearched(temp);
+    if (term && term.trim()) {
+      if (propertiesData?.length) {
+        const temp = filterArray(propertiesData, term);
+        setProperitesDataSearched(temp);
+      } else {
+        setProperitesDataSearched([]);
+      }
+    } else {
+      // When no search term, keep searched data in sync with main data
+      setProperitesDataSearched(propertiesData || []);
     }
-  }, [term]);
+  }, [term, propertiesData]);
   const columnWidths = [
     "5%",      // Empty (replaced by drag handle)
     "20%",       // Parameter
-    "10%",       // Default Option (wider)
+    "12%",       // Default Option (wider)
     "10%",        // Unit
     "10%",       // Type
-    "40%",       // Rule (smaller)
+    "38%",       // Rule (smaller)
     "5%",        // More
   ];
 
