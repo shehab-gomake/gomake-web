@@ -54,7 +54,8 @@ import { useMaterialsCategories } from "./use-materials-categories";
 import { convertTitleUnits } from "@/utils/helpers";
 import { isLoadingMaterialsState, userState } from "@/store";
 import { UNIT_TYPE } from "@/enums";
-import { EMaterialActiveFilter } from "./enums";
+import { EMaterialActiveFilter, EMaterialsActions } from "./enums";
+import { EMaterialsTabsIcon } from "@/enums";
 
 const useMaterials = (isAdmin: boolean) => {
   const { query, push, replace } = useRouter();
@@ -318,7 +319,30 @@ const useMaterials = (isAdmin: boolean) => {
         const updatedArray = translatedHeaders
         setMaterialHeaders(updatedArray);
         setMaterialTypeTable(res.data);
-        setMaterialActions(res.data?.actions);
+
+        // Get actions from backend
+        let actions = res.data?.actions || [];
+
+        // Add Die Cutter analyzer action if not already present
+        const hasDieCutAnalyzer = actions.some(
+          (action: any) => action.action === EMaterialsActions.DieCutAnalyzer
+        );
+
+        if (!hasDieCutAnalyzer) {
+          actions = [
+            ...actions,
+            {
+              key: "DieCutAnalyzer",
+              text: "DieCutAnalyzer",
+              action: EMaterialsActions.DieCutAnalyzer,
+              icon: EMaterialsTabsIcon.DIE_CUT_ANALYZER,
+              isUnderLine: false,
+              isShowSubMenu: false,
+            },
+          ];
+        }
+
+        setMaterialActions(actions);
         setMaterialName(res.data?.materialTypeName);
       }
     };

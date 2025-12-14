@@ -18,6 +18,7 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { CustomerCardWidget } from "@/widgets/customer-card-modal";
 import { DuplicatesModal } from "../duplicates-modal";
+import { DieCutAnalyzerDialog } from "../die-cut-analyzer/die-cut-analyzer-dialog";
 import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 import { userState } from "@/store/user";
 import { useRecoilValue } from "recoil";
@@ -82,7 +83,9 @@ const ActionMenu = (props: IActionMenuProps) => {
     setOpenSupplierModal,
     openSupplierModal,
     materialType,
-    materialCategory
+    materialCategory,
+    openDieCutAnalyzerModal,
+    setOpenDieCutAnalyzerModal
   } = useMaterialsActions(props.isAdmin);
   const [submenuAnchorEl, setSubmenuAnchorEl] = useState<null | HTMLElement>(null);
   const [currentSubmenuAction, setCurrentSubmenuAction] = useState<any>(null);
@@ -108,11 +111,12 @@ const ActionMenu = (props: IActionMenuProps) => {
     // Always hide Upload Materials Pictures
     filteredActions = filteredActions.filter(x => x.action !== EMaterialsActions.UploadMaterialsPictures);
 
-    // When no subCategory, show only Download Excel and Upload Excel
+    // When no subCategory, show only Download Excel, Upload Excel, and Die Cut Analyzer
     if (!props.subCategory) {
       filteredActions = filteredActions.filter(x =>
         x.action === EMaterialsActions.DownLoadExcel ||
-        x.action === EMaterialsActions.UploadExcel
+        x.action === EMaterialsActions.UploadExcel ||
+        x.action === EMaterialsActions.DieCutAnalyzer
       );
     }
 
@@ -530,6 +534,12 @@ const ActionMenu = (props: IActionMenuProps) => {
         onDelete={handleDeleteSelectedMaterials}
         materialHeaders={materialHeaders}
         onRefreshData={handleRefreshMaterialData}
+      />
+
+      {/* Die-Cut Analyzer Modal */}
+      <DieCutAnalyzerDialog
+        open={openDieCutAnalyzerModal}
+        onClose={() => setOpenDieCutAnalyzerModal(false)}
       />
     </>
   );
