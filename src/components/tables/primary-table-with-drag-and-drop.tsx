@@ -146,7 +146,7 @@ const PrimaryTableWithDragAndDrop = ({
                         key={`header_${index}`}
                         align={index === 0 ? (dir === "rtl" ? "right" : "left") :
                           index === 1 ? (dir === "rtl" ? "right" : "left") : "center"}
-                        style={index === 0 ? { paddingLeft: "10px", paddingRight: "10px" } : {}}
+                        style={index === 0 ? { width: columnWidths?.[0], maxWidth: columnWidths?.[0], minWidth: columnWidths?.[0], paddingLeft: "10px", paddingRight: "10px" } : {}}
                       >
                         {header}
                       </TableCell>
@@ -173,7 +173,7 @@ const PrimaryTableWithDragAndDrop = ({
                           <TableCell
                             {...provided.dragHandleProps}
                             align={dir === "rtl" ? "right" : "left"}
-                            style={{ width: "50px", paddingLeft: "10px", paddingRight: "10px" }}
+                            style={{ width: "50px", maxWidth: "50px", minWidth: "50px", paddingLeft: "10px", paddingRight: "10px" }}
                           >
                             <SortIcon
                               style={{
@@ -185,7 +185,9 @@ const PrimaryTableWithDragAndDrop = ({
                           {row.map((cell, cellIndex) => {
                             const cellStyle = columnWidths
                               ? {
-                                width: columnWidths?.[cellIndex],
+                                width: columnWidths?.[cellIndex + 1],
+                                maxWidth: columnWidths?.[cellIndex + 1],
+                                minWidth: columnWidths?.[cellIndex + 1],
                               }
                               : {};
                             return (
