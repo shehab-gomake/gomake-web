@@ -7,13 +7,16 @@ import { useEmailConversations } from "./use-email-conversations";
 import { useEmailConversationManager } from "./use-email-conversation-manager";
 import { useEmailComposer } from "./use-email-composer";
 import { useProviders } from "./use-providers";
-import { getGmailQueryFromLabel, combineGmailQueries } from "../utils/query-utils";
+import {
+  getGmailQueryFromLabel,
+  combineGmailQueries,
+} from "../utils/query-utils";
 import { useTicketFormModal } from "../../tickets/hooks/use-ticket-form-modal";
 import { useFrontDeskRouter } from "@/widgets/frontdesk/routing/hooks/use-frontdesk-router";
 
 export const useEmailProvider = () => {
-  console.log('[Email Provider] 🟢 useEmailProvider hook initialized');
-  
+  console.log("[Email Provider] 🟢 useEmailProvider hook initialized");
+
   const router = useRouter();
   const { queryParams, isInitialized } = useFrontDeskRouter();
 
@@ -23,9 +26,11 @@ export const useEmailProvider = () => {
   // Core email functionality
   const emailAccounts = useEmailAccounts();
   const emailAuth = useEmailAuth();
-  const emailLabels = useEmailLabels(emailAccounts.selectedAccountId || undefined);
+  const emailLabels = useEmailLabels(
+    emailAccounts.selectedAccountId || undefined
+  );
 
-  console.log('[Email Provider] 🟡 useEmailProvider render', {
+  console.log("[Email Provider] 🟡 useEmailProvider render", {
     selectedAccountId: emailAccounts.selectedAccountId,
     accountsCount: emailAccounts.accounts.length,
   });
@@ -35,7 +40,10 @@ export const useEmailProvider = () => {
 
   // Combine label query with search query
   const labelQuery = emailLabels.selectedLabelId
-    ? getGmailQueryFromLabel(emailLabels.selectedLabelId, emailLabels.selectedLabel?.name || "")
+    ? getGmailQueryFromLabel(
+        emailLabels.selectedLabelId,
+        emailLabels.selectedLabel?.name || ""
+      )
     : null;
   const combinedQuery = combineGmailQueries(labelQuery, searchQuery || null);
 
@@ -54,6 +62,7 @@ export const useEmailProvider = () => {
   const conversationManager = useEmailConversationManager({
     selectedAccountId: emailAccounts.selectedAccountId,
     onRefresh: emailConversations.refresh,
+    onMarkAsRead: emailConversations.markAsRead,
   });
 
   const composer = useEmailComposer({
@@ -67,7 +76,11 @@ export const useEmailProvider = () => {
     if (emailAccounts.loading) return "connecting";
     if (emailAccounts.error) return "error";
     return "connected";
-  }, [emailAccounts.accounts.length, emailAccounts.loading, emailAccounts.error]);
+  }, [
+    emailAccounts.accounts.length,
+    emailAccounts.loading,
+    emailAccounts.error,
+  ]);
 
   const isConnected = connectionStatus === "connected";
 
@@ -129,7 +142,12 @@ export const useEmailProvider = () => {
       // Select the account specified in the URL
       emailAccounts.selectAccount(urlAccountId);
     }
-  }, [isInitialized, queryParams.account, emailAccounts.selectedAccountId, emailAccounts.selectAccount]);
+  }, [
+    isInitialized,
+    queryParams.account,
+    emailAccounts.selectedAccountId,
+    emailAccounts.selectAccount,
+  ]);
 
   // Sync URL conversation parameter with email conversation selection
   // This runs AFTER account selection to ensure correct context
@@ -139,7 +157,9 @@ export const useEmailProvider = () => {
     // If URL specifies an account, wait for it to be selected first
     const urlAccountId = queryParams.account;
     if (urlAccountId && urlAccountId !== emailAccounts.selectedAccountId) {
-      console.log("[Email Provider] Waiting for account selection before loading conversation");
+      console.log(
+        "[Email Provider] Waiting for account selection before loading conversation"
+      );
       return; // Wait for account to be selected first
     }
 
@@ -154,17 +174,30 @@ export const useEmailProvider = () => {
       });
 
       // Find the conversation in our list
-      const conversation = emailConversations.conversations.find((conv) => conv.id === urlConversationId);
+      const conversation = emailConversations.conversations.find(
+        (conv) => conv.id === urlConversationId
+      );
 
       if (conversation) {
         // FOUND in list: Just select it
         // The message viewer will fetch full details
-        console.log("[Email Provider] Conversation found in list, selecting:", urlConversationId);
-        conversationManager.selectConversation(conversation);
+        console.log(
+          "[Email Provider] Conversation found in list, selecting:",
+          urlConversationId
+        );
+        conversationManager.selectConversation(conversation).catch((error) => {
+          console.error(
+            "[Email Provider] Failed to select conversation:",
+            error
+          );
+        });
       } else {
         // NOT FOUND in list: Create a minimal conversation object for selection
         // The message viewer will fetch full details
-        console.log("[Email Provider] Conversation not in list, creating minimal object:", urlConversationId);
+        console.log(
+          "[Email Provider] Conversation not in list, creating minimal object:",
+          urlConversationId
+        );
 
         const minimalConversation = {
           id: urlConversationId,
@@ -180,14 +213,27 @@ export const useEmailProvider = () => {
             id: urlConversationId,
             threadId: urlConversationId,
             from: [{ email: "loading@example.com", name: "Loading..." }],
-            to: [{ email: emailAccounts.selectedAccountId ? "" : "loading@example.com" }],
+            to: [
+              {
+                email: emailAccounts.selectedAccountId
+                  ? ""
+                  : "loading@example.com",
+              },
+            ],
             date: new Date().toISOString(),
             snippet: "Loading conversation...",
             isRead: false,
           },
         };
 
-        conversationManager.selectConversation(minimalConversation as any);
+        conversationManager
+          .selectConversation(minimalConversation as any)
+          .catch((error) => {
+            console.error(
+              "[Email Provider] Failed to select conversation:",
+              error
+            );
+          });
       }
     }
   }, [
@@ -201,7 +247,10 @@ export const useEmailProvider = () => {
   ]);
 
   // State to store provider ID and conversation ID for modal
-  const [pendingTicketData, setPendingTicketData] = useState<{ providerId: string; conversationId: string } | null>(null);
+  const [pendingTicketData, setPendingTicketData] = useState<{
+    providerId: string;
+    conversationId: string;
+  } | null>(null);
 
   // Initialize create ticket modal
   const createTicketModal = useTicketFormModal({
@@ -227,17 +276,23 @@ export const useEmailProvider = () => {
       try {
         // Check if providers are still loading
         if (providers.isLoading) {
-          throw new Error("Providers are still loading. Please wait a moment and try again.");
+          throw new Error(
+            "Providers are still loading. Please wait a moment and try again."
+          );
         }
 
         // Check if providers have been loaded
         if (providers.providers.length === 0 && !providers.error) {
-          console.warn("[Email] ⚠️ No providers loaded, attempting to fetch...");
+          console.warn(
+            "[Email] ⚠️ No providers loaded, attempting to fetch..."
+          );
           await providers.fetchProviders();
         }
 
         // Get selected account
-        const account = emailAccounts.accounts.find((acc) => acc.id === emailAccounts.selectedAccountId);
+        const account = emailAccounts.accounts.find(
+          (acc) => acc.id === emailAccounts.selectedAccountId
+        );
 
         console.log("[Email] Selected account for ticket creation:", {
           accountId: account?.id,
@@ -246,18 +301,29 @@ export const useEmailProvider = () => {
         });
 
         if (!account) {
-          throw new Error("No email account selected. Please select an account first.");
+          throw new Error(
+            "No email account selected. Please select an account first."
+          );
         }
 
         // Find EMAIL provider that matches the selected account
-        console.log("[Email] 🔍 Looking for EMAIL provider for account:", account.email);
+        console.log(
+          "[Email] 🔍 Looking for EMAIL provider for account:",
+          account.email
+        );
 
         const emailProvider = providers.providers.find(
-          (provider) => provider.type === "EMAIL" && provider.metadata?.email?.toLowerCase() === account.email.toLowerCase()
+          (provider) =>
+            provider.type === "EMAIL" &&
+            provider.metadata?.email?.toLowerCase() ===
+              account.email.toLowerCase()
         );
 
         if (!emailProvider) {
-          console.error("[Email] ❌ No EMAIL provider found for:", account.email);
+          console.error(
+            "[Email] ❌ No EMAIL provider found for:",
+            account.email
+          );
           throw new Error(
             `No EMAIL provider found for ${account.email}.\n\n` +
               `The backend GET /providers must return an EMAIL provider with metadata.email="${account.email}".`
@@ -265,7 +331,12 @@ export const useEmailProvider = () => {
         }
 
         const providerId = emailProvider.id;
-        console.log("[Email] ✅ Found provider ID:", providerId, "for account:", account.email);
+        console.log(
+          "[Email] ✅ Found provider ID:",
+          providerId,
+          "for account:",
+          account.email
+        );
 
         // Set pending data and open modal
         setPendingTicketData({
@@ -277,11 +348,20 @@ export const useEmailProvider = () => {
         createTicketModal.openModal();
       } catch (error) {
         console.error("❌ Failed to prepare ticket creation:", error);
-        alert(`Failed to open ticket modal: ${error instanceof Error ? error.message : "Unknown error"}`);
+        alert(
+          `Failed to open ticket modal: ${
+            error instanceof Error ? error.message : "Unknown error"
+          }`
+        );
         throw error;
       }
     },
-    [emailAccounts.accounts, emailAccounts.selectedAccountId, providers, createTicketModal]
+    [
+      emailAccounts.accounts,
+      emailAccounts.selectedAccountId,
+      providers,
+      createTicketModal,
+    ]
   );
 
   return {

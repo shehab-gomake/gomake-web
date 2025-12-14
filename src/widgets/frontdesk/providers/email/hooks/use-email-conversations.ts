@@ -194,7 +194,11 @@ export const useEmailConversations = (options: UseEmailConversationsOptions = {}
         await emailApiClient.markAsRead(selectedAccountId, conversationId);
 
         setConversations((prev) =>
-          prev.map((conv) => (conv.id === conversationId ? { ...conv, isRead: true } : conv))
+          prev.map((conv) =>
+            conv.id === conversationId
+              ? { ...conv, isRead: true, unreadCount: 0 }
+              : conv
+          )
         );
       } catch (err: any) {
         console.error("Failed to mark conversation as read:", err);
