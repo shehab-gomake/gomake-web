@@ -1,0 +1,13 @@
+{
+    "folders": [
+        {
+            "path": "."
+        },
+        {
+            "path": "../messaging-hub-v2"
+        },
+        {
+            "path": "../Messaging-Hub"
+        }
+    ]
+}

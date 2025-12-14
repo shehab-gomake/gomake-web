@@ -102,6 +102,7 @@ export const useChatwootProvider = () => {
   const conversations = useChatwootConversations(currentAccountId, {
     ...filters,
     enabled: isRouterReady,
+    pollingInterval: 20000, // Poll every 20 seconds for real-time updates
   });
 
   // Auto-select account effect

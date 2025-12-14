@@ -76,6 +76,8 @@ const ActionMenu = (props: IActionMenuProps) => {
     handleCloseSubmenuModal,
     selectedSupplier,
     setSelectedSupplier,
+    selectedSupplierForPurchaseOrder,
+    setSelectedSupplierForPurchaseOrder,
     renderOptionsSupplier,
     checkWhatRenderArraySupplier,
     isFetchingSupplier,
@@ -450,6 +452,32 @@ const ActionMenu = (props: IActionMenuProps) => {
                 display: "flex", flexDirection: "column", justifyContent: "flex-start", alignItems: "flex-start",
                 alignContent: "flex-start", width: "100%", gap: 15,
               }}>
+                {/* Supplier Selection - Show for CreatePurchaseOrder */}
+                {action?.action === EMaterialsActions.CreatePurchaseOrder && (
+                  <div style={{ width: "100%" }}>
+                    <div style={{ marginBottom: 8, fontWeight: 500, display: "flex", alignItems: "center", gap: 5 }}>
+                      {t("materials.childTable.supplier")}
+                      <IconButton onClick={() => setOpenSupplierModal(true)} size="small">
+                        <AddIcon sx={{ color: "#f50057" }} />
+                      </IconButton>
+                    </div>
+                    <ClientAutocomplete
+                      key={selectedSupplierForPurchaseOrder?.id}
+                      clientType={CLIENT_TYPE.SUPPLIER}
+                      onChange={(e: any, supplier: any) => setSelectedSupplierForPurchaseOrder(supplier)}
+                      options={(renderOptionsSupplier || []).filter((supplier, index, self) =>
+                        index === self.findIndex((s) => s.id === supplier.id)
+                      )}
+                      placeholder={t("materials.childTable.selectSupplier")}
+                      style={{ width: "100%" }}
+                      value={selectedSupplierForPurchaseOrder}
+                      onChangeTextField={checkWhatRenderArraySupplier}
+                      loading={isFetchingSupplier}
+                      getOptionLabel={(option: any) => `${option.name}`}
+                    />
+                  </div>
+                )}
+
                 {action?.action === EMaterialsActions.CreatePurchaseOrder && <div style={{ marginBottom: 10, marginTop: 15 }}>{t("boardMissions.package")}</div>}
 
                 {/* Supplier Selection - Show for submenu options 1 and 2 */}
