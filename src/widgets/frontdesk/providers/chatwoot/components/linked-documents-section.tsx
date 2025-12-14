@@ -334,83 +334,88 @@ export const LinkedDocumentsSection: React.FC<LinkedDocumentsSectionProps> = ({
     openDocumentInNewTab(documentType, documentId);
   };
 
-  // const handleUnlinkDocument = useCallback(
-  //   async (
-  //     documentType: DOCUMENT_TYPE,
-  //     documentId: string
-  //     // e: React.MouseEvent<HTMLButtonElement>
-  //   ) => {
-  //     // e.stopPropagation();
-  //     // e.preventDefault();
+  const handleUnlinkDocument = useCallback(
+    async (documentType: DOCUMENT_TYPE, documentId: string) => {
+      // Validation
+      if (!accountId || !conversation.id) {
+        alertFault(
+          t("frontdesk.accountRequired", {
+            defaultValue: "Account is required",
+          })
+        );
+        return;
+      }
 
-  //     // Validation
-  //     if (!accountId || !conversation.id) {
-  //       alertFault("frontdesk.accountRequired");
-  //       return;
-  //     }
+      // Prevent duplicate calls
+      if (unlinkingRef.current === documentId) {
+        return;
+      }
 
-  //     // Prevent duplicate calls
-  //     if (unlinkingRef.current === documentId) {
-  //       return;
-  //     }
+      // Get attribute keys
+      const attributeKeys = getDocumentAttributeKeysByType(documentType);
+      if (!attributeKeys) {
+        alertFault(
+          t("frontdesk.unknownDocumentType", {
+            defaultValue: "Unknown document type",
+          })
+        );
+        return;
+      }
 
-  //     // Get attribute keys
-  //     const attributeKeys = getDocumentAttributeKeysByType(documentType);
-  //     if (!attributeKeys) {
-  //       alertFault("frontdesk.unknownDocumentType");
-  //       return;
-  //     }
+      // Set loading state
+      setUnlinkingDocId(documentId);
+      unlinkingRef.current = documentId;
 
-  //     // Set loading state
-  //     setUnlinkingDocId(documentId);
-  //     unlinkingRef.current = documentId;
+      try {
+        const conversationId = conversation.id;
+        const currentAttributes = conversation.custom_attributes || {};
 
-  //     try {
-  //       const conversationId = conversation.id;
-  //       const currentAttributes = conversation.custom_attributes || {};
+        // Create new attributes object WITHOUT the document keys
+        const updatedAttributes: Record<string, unknown> = {};
+        Object.keys(currentAttributes).forEach((key) => {
+          if (
+            key !== attributeKeys.idKey &&
+            key !== attributeKeys.typeKey &&
+            key !== attributeKeys.timestampKey
+          ) {
+            updatedAttributes[key] = currentAttributes[key];
+          }
+        });
 
-  //       // Create new attributes object WITHOUT the document keys
-  //       const updatedAttributes: Record<string, unknown> = {};
-  //       Object.keys(currentAttributes).forEach((key) => {
-  //         if (
-  //           key !== attributeKeys.idKey &&
-  //           key !== attributeKeys.typeKey &&
-  //           key !== attributeKeys.timestampKey
-  //         ) {
-  //           updatedAttributes[key] = currentAttributes[key];
-  //         }
-  //       });
+        // Call API
+        const updatedConversation =
+          await chatwootService.conversations.updateConversationCustomAttributes(
+            accountId,
+            conversationId,
+            updatedAttributes
+          );
 
-  //       // Call API
-  //       const updatedConversation =
-  //         await chatwootService.conversations.updateConversationCustomAttributes(
-  //           accountId,
-  //           conversationId,
-  //           updatedAttributes
-  //         );
+        // Show success
+        alertSuccess(
+          t("frontdesk.documentUnlinkedSuccess", {
+            defaultValue: "Document unlinked successfully",
+          })
+        );
 
-  //       // Show success
-  //       alertSuccess("frontdesk.documentUnlinkedSuccess");
-
-  //       // Notify parent
-  //       if (onConversationUpdate) {
-  //         onConversationUpdate(updatedConversation);
-  //       }
-  //     } catch (error: any) {
-  //       console.error("[LinkedDocumentsSection] Error unlinking:", error);
-  //       const errorMessage =
-  //         error.message ||
-  //         t("frontdesk.documentUnlinkFailed", {
-  //           defaultValue: "Failed to unlink document",
-  //         });
-  //       alertFault(errorMessage);
-  //     } finally {
-  //       setUnlinkingDocId(null);
-  //       unlinkingRef.current = null;
-  //     }
-  //   },
-  //   [accountId, conversation, alertSuccess, alertFault, t, onConversationUpdate]
-  // );
+        // Notify parent
+        if (onConversationUpdate) {
+          onConversationUpdate(updatedConversation);
+        }
+      } catch (error: any) {
+        console.error("[LinkedDocumentsSection] Error unlinking:", error);
+        const errorMessage =
+          error.message ||
+          t("frontdesk.documentUnlinkFailed", {
+            defaultValue: "Failed to unlink document",
+          });
+        alertFault(errorMessage);
+      } finally {
+        setUnlinkingDocId(null);
+        unlinkingRef.current = null;
+      }
+    },
+    [accountId, conversation, alertSuccess, alertFault, t, onConversationUpdate]
+  );
 
   return (
     <Box sx={{ mb: 2.5 }}>
@@ -544,8 +549,17 @@ export const LinkedDocumentsSection: React.FC<LinkedDocumentsSectionProps> = ({
                   })}
                 >
                   <IconButton
+                    type="button"
                     size="small"
-                    onClick={(e) => {
+                    onClick={(e: React.MouseEvent) => {
+                      e.preventDefault();
+                      if (
+                        e.nativeEvent &&
+                        typeof e.nativeEvent.stopImmediatePropagation ===
+                          "function"
+                      ) {
+                        e.nativeEvent.stopImmediatePropagation();
+                      }
                       e.stopPropagation();
                       handleDocumentClickNewTab(doc?.type, doc?.id);
                     }}
@@ -567,12 +581,28 @@ export const LinkedDocumentsSection: React.FC<LinkedDocumentsSectionProps> = ({
                     })}
                   >
                     <IconButton
+                      type="button"
                       size="small"
-                      onClick={(e) => {
+                      onClick={(e: React.MouseEvent) => {
+                        e.preventDefault();
+                        if (
+                          e.nativeEvent &&
+                          typeof e.nativeEvent.stopImmediatePropagation ===
+                            "function"
+                        ) {
+                          e.nativeEvent.stopImmediatePropagation();
+                        }
                         e.stopPropagation();
                         handleUnlinkDocument(doc.type, doc.id);
                       }}
                       disabled={unlinkingDocId === doc.id}
+                      sx={{
+                        color: colorTokens.semantic.text.secondary,
+                        "&:hover": {
+                          backgroundColor: colorTokens.error[50],
+                          color: colorTokens.error[600],
+                        },
+                      }}
                     >
                       {unlinkingDocId === doc.id ? (
                         <CircularProgress size={16} />
