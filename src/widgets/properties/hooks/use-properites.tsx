@@ -23,11 +23,11 @@ const useProperites = ({ classes }) => {
   const router = useRouter();
   const tableHeaders = [
     "",
-    t("properties.parameter"),
-    t("properties.unit"),
+    t("properties.properties"),
     t("properties.defaultOption"),
-    t("properties.rule"),
+    t("properties.unit"),
     t("properties.type"),
+    t("properties.rule"),
     t("properties.more"),
   ];
   const {
@@ -690,7 +690,6 @@ const useProperites = ({ classes }) => {
 
       return [
         property.propertyName,
-        property.defaultUnit || "-",
         isEditing ? (
           <ClickOutside
             onClick={async () => {
@@ -754,6 +753,8 @@ const useProperites = ({ classes }) => {
             )}
           </div>
         ),
+        property.defaultUnit || "-",
+        property.ruleType == 0 ? t("properties.output") : t("properties.input"),
         <div style={classes.rowItem} className="scrollBlue">
           {property.actionRules
             ?.sort((a, b) => a.priority - b.priority)
@@ -775,7 +776,6 @@ const useProperites = ({ classes }) => {
               );
             })}
         </div>,
-        property.ruleType == 0 ? t("properties.output") : t("properties.input"),
         <IconButton
           onClick={(e) => {
             handleClick(e);

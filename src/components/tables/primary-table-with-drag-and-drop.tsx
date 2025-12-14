@@ -142,9 +142,10 @@ const PrimaryTableWithDragAndDrop = ({
                 <TableHead>
                   <TableRow>
                     {headers?.map((header, index) => (
-                      <TableCell 
-                        key={`header_${index}`} 
-                        align={index === 0 ? (dir === "rtl" ? "right" : "left") : "center"}
+                      <TableCell
+                        key={`header_${index}`}
+                        align={index === 0 ? (dir === "rtl" ? "right" : "left") :
+                          index === 1 ? (dir === "rtl" ? "right" : "left") : "center"}
                         style={index === 0 ? { paddingLeft: "10px", paddingRight: "10px" } : {}}
                       >
                         {header}
@@ -174,23 +175,23 @@ const PrimaryTableWithDragAndDrop = ({
                             align={dir === "rtl" ? "right" : "left"}
                             style={{ width: "50px", paddingLeft: "10px", paddingRight: "10px" }}
                           >
-                            <SortIcon 
-                              style={{ 
+                            <SortIcon
+                              style={{
                                 cursor: "grab",
                                 transform: dir === "rtl" ? "scaleX(-1)" : "none"
-                              }} 
+                              }}
                             />
                           </TableCell>
                           {row.map((cell, cellIndex) => {
                             const cellStyle = columnWidths
                               ? {
-                                  width: columnWidths?.[cellIndex],
-                                }
+                                width: columnWidths?.[cellIndex],
+                              }
                               : {};
                             return (
                               <TableCell
                                 key={`cell_${cellIndex}`}
-                                align={"center"}
+                                align={cellIndex === 0 ? (dir === "rtl" ? "right" : "left") : "center"}
                                 style={cellStyle}
                               >
                                 {cell}
