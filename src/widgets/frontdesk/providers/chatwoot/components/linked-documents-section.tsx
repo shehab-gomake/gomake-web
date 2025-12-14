@@ -29,8 +29,10 @@ import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { CHATWOOT_CUSTOM_ATTRIBUTES } from "@/widgets/frontdesk/constants/chatwoot-attributes";
 import { chatwootService } from "@/services/frontdesk";
 import { useSnackBar } from "@/hooks/use-snack-bar";
+import { useGomakeAxios } from "@/hooks";
 import { colorTokens } from "@/widgets/frontdesk/design-system";
 import { currencyUnitState } from "@/store/currency-units";
+import { userQuoteState } from "@/store/user-qoute-state";
 import type { ChatwootConversation } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
 import { useTranslation } from "react-i18next";
 import {
@@ -44,6 +46,7 @@ import {
   formatDocumentDateShort,
   formatDocumentPriceCompact,
 } from "../utils/document/formatting.utils";
+import { updateDocumentApi } from "@/services/api-service/generic-doc/documents-api";
 
 interface LinkedDocument {
   id: string;
@@ -208,8 +211,10 @@ export const LinkedDocumentsSection: React.FC<LinkedDocumentsSectionProps> = ({
   const { navigate } = useGomakeRouter();
   const { t } = useTranslation();
   const currenciesUnits = useRecoilValue(currencyUnitState);
+  // const userQuoteIfExist = useRecoilValue(userQuoteState);
   const { details, loadingKeys, fetchMultipleDetails } = useDocumentDetails();
   const { alertSuccess, alertFault } = useSnackBar();
+  const { callApi } = useGomakeAxios();
   const [unlinkingDocId, setUnlinkingDocId] = useState<string | null>(null);
 
   // Use ref to prevent duplicate calls during async operations
@@ -233,10 +238,55 @@ export const LinkedDocumentsSection: React.FC<LinkedDocumentsSectionProps> = ({
     return null;
   }
 
+  const handleEditQuote = useCallback(
+    async (documentId: string) => {
+      // Update quote status first, then navigate to the specific quote
+      const callBack = (res: any) => {
+        if (res?.success) {
+          navigate(`/quote`);
+        } else {
+          if (res?.statusCode === 85) {
+            alertFault(res?.message);
+          } else {
+            alertFault(
+              t("frontdesk.editQuoteFailed", {
+                defaultValue: "Failed to edit quote",
+              })
+            );
+          }
+        }
+      };
+
+      try {
+        await updateDocumentApi(callApi, callBack, {
+          documentType: DOCUMENT_TYPE.quote,
+          document: {
+            documentId: documentId,
+          },
+        });
+      } catch (error: any) {
+        console.error("[LinkedDocumentsSection] Error editing quote:", error);
+        alertFault(
+          error.message ||
+            t("frontdesk.editQuoteFailed", {
+              defaultValue: "Failed to edit quote",
+            })
+        );
+      }
+    },
+    [navigate, callApi, alertFault, t]
+  );
+
   const handleDocumentClick = (
     documentType: DOCUMENT_TYPE,
     documentId: string
   ) => {
+    // Special handling for quotes - use edit logic
+    if (documentType === DOCUMENT_TYPE.quote) {
+      handleEditQuote(documentId);
+      return;
+    }
+    // For other document types, navigate normally
     const route = getDocumentRoute(documentType, documentId);
     navigate(route);
   };
@@ -245,6 +295,42 @@ export const LinkedDocumentsSection: React.FC<LinkedDocumentsSectionProps> = ({
     documentType: DOCUMENT_TYPE,
     documentId: string
   ) => {
+    // Special handling for quotes - use edit logic but open in new tab
+    if (documentType === DOCUMENT_TYPE.quote) {
+      // For quotes, update quote status first, then open in new tab
+      const callBack = (res: any) => {
+        if (res?.success) {
+          window.open(`/quote`, "_blank");
+        } else {
+          if (res?.statusCode === 85) {
+            alertFault(res?.message);
+          } else {
+            alertFault(
+              t("frontdesk.editQuoteFailed", {
+                defaultValue: "Failed to edit quote",
+              })
+            );
+          }
+        }
+      };
+
+      updateDocumentApi(callApi, callBack, {
+        documentType: DOCUMENT_TYPE.quote,
+        document: {
+          documentId: documentId,
+        },
+      }).catch((error: any) => {
+        console.error("[LinkedDocumentsSection] Error editing quote:", error);
+        alertFault(
+          error.message ||
+            t("frontdesk.editQuoteFailed", {
+              defaultValue: "Failed to edit quote",
+            })
+        );
+      });
+      return;
+    }
+    // For other document types, open normally in new tab
     openDocumentInNewTab(documentType, documentId);
   };
 
@@ -482,7 +568,8 @@ export const LinkedDocumentsSection: React.FC<LinkedDocumentsSectionProps> = ({
                   >
                     <IconButton
                       size="small"
-                      onClick={() => {
+                      onClick={(e) => {
+                        e.stopPropagation();
                         handleUnlinkDocument(doc.type, doc.id);
                       }}
                       disabled={unlinkingDocId === doc.id}
