@@ -7,7 +7,7 @@
 
 import { useRouter } from "next/router";
 import { useCallback, useMemo, useEffect, useState, useRef } from "react";
-import { FrontDeskRoute, NavigationOptions, FrontDeskChannel, FrontDeskSection, TicketView, Channel, Section } from "../types";
+import { FrontDeskRoute, NavigationOptions, FrontDeskChannel, FrontDeskSection, TicketView, Channel, Section, RouteType } from "../types";
 import { parseRoute, getSectionFromRoute, getChannelFromRoute, getTicketViewFromRoute, isTicketRoute } from "../route-parser";
 import { buildRoute, buildRoutePath, RouteBuilder, getRouteMetadata, routesEqual } from "../route-builder";
 
@@ -183,11 +183,11 @@ export const useFrontDeskRouter = () => {
     console.log('[FrontDesk Router] 🔵 Current channel computed', {
       channel,
       route: currentRoute,
-      section: currentRoute.section,
-      channelFromRoute: currentRoute.channel,
+      section: currentSection,
+      channelFromRoute: currentRoute.type === RouteType.CHANNEL ? currentRoute.channel : undefined,
     });
     return channel;
-  }, [currentRoute]);
+  }, [currentRoute, currentSection]);
   const currentTicketView = useMemo(() => getTicketViewFromRoute(currentRoute), [currentRoute]);
   const isInTicketMode = useMemo(() => isTicketRoute(currentRoute), [currentRoute]);
 
