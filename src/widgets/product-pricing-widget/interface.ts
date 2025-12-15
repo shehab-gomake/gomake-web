@@ -142,6 +142,8 @@ export interface IWorkFlowAction {
   pricePer1000MaterialValue?: number;
   pricePerMeterValue?: number;
   pricePerSquareMeterValue?: number;
+  materialName?: string;
+  printingMeter?: number;
 }
 
 export interface IOutput {

@@ -282,7 +282,10 @@ const ActionContainerComponent = ({
   pricePer1000MaterialValue,
   pricePerMeterValue,
   pricePerSquareMeterValue,
-  materialQuantity
+  materialQuantity,
+  materialName,
+  printArea,
+  printingMeter,
 }: IActionContainerComponentProps) => {
   source = source === EWorkSource.OUT ? EWorkSource.OUT : EWorkSource.INTERNAL;
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -1195,8 +1198,8 @@ const ActionContainerComponent = ({
                     <>
                       <Divider orientation={"vertical"} flexItem />
                       <EditableKeyValueViewComponent
-                    onUpdate={handleUpdatePrice}
-                    {...totalPrice}
+                    onUpdate={handleUpdatePricePer1Product}
+                    {...pricePer1Product}
                     values={pricePer1ProductValue}
                     source={source}
                     name={t("sales.quote.pricePer1Product")}
@@ -1207,8 +1210,8 @@ const ActionContainerComponent = ({
                     <>
                       <Divider orientation={"vertical"} flexItem />
                       <EditableKeyValueViewComponent
-                    onUpdate={handleUpdatePrice}
-                    {...totalPrice}
+                    onUpdate={handleUpdatePricePer1000Product}
+                    {...pricePer1000Product}
                     values={pricePer1000ProductValue}
                     source={source}
                     name={t("sales.quote.pricePer1000Product")}
@@ -1219,26 +1222,29 @@ const ActionContainerComponent = ({
                     <>
                       <Divider orientation={"vertical"} flexItem />
                       <EditableKeyValueViewComponent
-                    onUpdate={handleUpdatePrice}
-                    {...totalPrice}
+                    onUpdate={handleUpdatePricePer1Material}
+                    {...pricePer1Material}
                     values={pricePer1MaterialValue}
                     source={source}
-                    name={t("sales.quote.pricePer1Material")}
+                    name={`${materialQuantity} ${materialName}`}
                   />
+                  <span>
+                              {`${t("sales.quote.pricePer1Material")}`}
+                            </span>
                     </>
                   )}
                    {showPricePer1000Material && (
                     <>
                       <Divider orientation={"vertical"} flexItem />
                       <EditableKeyValueViewComponent
-                    onUpdate={handleUpdatePrice}
-                    {...totalPrice}
+                    onUpdate={handleUpdatePricePer1000Material}
+                    {...pricePer1000Material}
                     values={pricePer1000MaterialValue}
                     source={source}
-                    name={`${materialQuantity}`}
+                    name={`${materialQuantity} ${materialName}`}
                   />
                   <span>
-                              {`(${t("sales.quote.pricePer1000Material")})`}
+                              {`${t("sales.quote.pricePer1000Material")}`}
                             </span>
                     </>
                   )}
@@ -1246,24 +1252,30 @@ const ActionContainerComponent = ({
                     <>
                       <Divider orientation={"vertical"} flexItem />
                       <EditableKeyValueViewComponent
-                    onUpdate={handleUpdatePrice}
-                    {...totalPrice}
+                    onUpdate={handleUpdatePricePerMeter}
+                    {...pricePerMeter}
                     values={pricePerMeterValue}
                     source={source}
-                    name={t("sales.quote.pricePerMeter")}
+                    name={`${printingMeter} ${t("measurementUnits.meter")}`}
                   />
+                     <span>
+                              {`${t("sales.quote.pricePerMeter")}`}
+                            </span>
                     </>
                   )}
                   {showPricePerSquareMeter && ( 
                     <>
                       <Divider orientation={"vertical"} flexItem />
                       <EditableKeyValueViewComponent
-                    onUpdate={handleUpdatePrice}
-                    {...totalPrice}
+                    onUpdate={handleUpdatePricePerSquareMeter}
+                    {...pricePerSquareMeter}
                     values={pricePerSquareMeterValue}
                     source={source}
-                    name={t("sales.quote.pricePerSquareMeter")}
+                    name={`${printArea} ${t("measurementUnits.squareMeter")}`}
                   />
+                   <span>
+                              {`${t("sales.quote.pricePerSquareMeter")}`}
+                            </span>
                     </>
                   )}
                   {!isFromSetting && (
