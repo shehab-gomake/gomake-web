@@ -43,6 +43,7 @@ const RowMappingWidget = ({
   onClickDuplicateWithDifferentQTY,
   onClickQuickDuplicate,
   onClickDeleteQouteItem,
+  onClickUndoItemIntake,
   parentIndex,
   documentType,
   getQuote,
@@ -481,7 +482,7 @@ const RowMappingWidget = ({
             borderBottom: item?.childsDocumentItems && "none",
           }}
         >
-          {canUpdate && (
+          {(canUpdate || (documentType === DOCUMENT_TYPE.purchaseOrder && (item?.isDeletable || item?.isIntake === true))) && (
             <MoreMenuWidget
               quoteItem={item}
               onClickDuplicateWithDifferentQTY={
@@ -489,6 +490,7 @@ const RowMappingWidget = ({
               }
               onClickQuickDuplicate={onClickQuickDuplicate}
               onClickDeleteQouteItem={onClickDeleteQouteItem}
+              onClickUndoItemIntake={onClickUndoItemIntake}
               documentType={documentType}
             />
           )}

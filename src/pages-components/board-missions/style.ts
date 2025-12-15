@@ -166,6 +166,7 @@ const useStyle = () => {
         backgroundColor: "#2E3092",
         border: `1px solid #2E3092`,
         color: "#FFF",
+        width: "fit-content",
       },
       noBtn: {
         textAlign: "center",
@@ -176,6 +177,7 @@ const useStyle = () => {
         backgroundColor: "#FFF",
         color: "#272977",
         border: `1px solid #7375CD`,
+        width: "fit-content",
       },
       cancelBtn: {
         height: 44,
@@ -185,6 +187,7 @@ const useStyle = () => {
         color: "#344054",
         border: `1px solid #D0D5DD`,
         ...(!isMobile && { width: "33%" }),
+        width: "fit-content",
       },
       subTitle: {
         ...FONT_FAMILY.Lexend(400, 13),

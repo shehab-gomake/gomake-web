@@ -218,7 +218,7 @@ export enum PurchaseOrderStatuses
 {
     UnderCreation = 0,
     SentToSupplier= 10,
-    Received =11,
     SupplierRequestingApproval =12,
-    Closed =8,
+    Received =11,
+    // Closed =8,
 }

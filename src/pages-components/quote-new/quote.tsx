@@ -23,6 +23,7 @@ import { CancelBtnMenu } from "@/widgets/quote-new/cancel-btn-menu";
 import { SendBtnMenu } from "@/widgets/quote-new/send-btn-menu";
 import { _renderQuoteStatus } from "@/utils/constants";
 import {
+  Box,
   Button,
   CircularProgress,
   FormControlLabel,
@@ -31,6 +32,7 @@ import {
   Radio,
   RadioGroup,
   Skeleton,
+  Typography,
 } from "@mui/material";
 import { SettingQuoteMenu } from "@/widgets/quote-new/setting-quote-menu";
 import { AddDeliveryModal } from "@/widgets/quote-new/modals-widgets/add-delivery-modal/add-delivery-modal";
@@ -80,7 +82,9 @@ import { EPreferences } from "@/enums/prefernces";
 import { updateQuoteStatusSocketIo } from "@/hooks/socket-io/update-quote-status-socket-io";
 import { useQuoteConfirmation } from "@/pages-components/quote-confirmation/use-quote-confirmation";
 import { FrontDeskEmailComposerWrapper } from "../quotes/components/frontdesk-email-composer-wrapper";
-
+import { PurchaseOrdersDialogsUndoIntakeWidget } from "@/widgets/purchas-orders-dialogs/purchase-orders-dialogs-undo-intake-widget";
+import { PurchaseOrdersDialogsIntakeValidationWidget } from "@/widgets/purchas-orders-dialogs/purchase-orders-dialogs-intake-validatin-widget";
+import { PurchaseOrdersDialogsAddItemRestrictionWidget } from "@/widgets/purchas-orders-dialogs/purchase-orders-dialogs-add-item-restriction-widget";
 interface IProps {
   documentType: DOCUMENT_TYPE;
   isQuoteConfirmation?: boolean;
@@ -402,6 +406,18 @@ const QuoteNewPageWidget = ({
     onOpenPurchaseOrderTypeModal,
     onClosePurchaseOrderTypeModal,
     handleSelectPurchaseOrderType,
+    showIntakeValidationDialog,
+    handleOpenIntakeFromValidation,
+    handleCancelIntakeValidation,
+    handleUndoDocumentIntake,
+    handleUndoItemIntake,
+    showUndoIntakeDialog,
+    handleConfirmUndoIntake,
+    handleCancelUndoIntake,
+    showAddItemRestrictionDialog,
+    handleCreateNewPurchaseOrder,
+    handleCancelAddItemRestriction,
+    handleChangeStatusToUnderCreation,
   } = useQuoteNew({
     docType: documentType,
     isQuoteConfirmation: isQuoteConfirmation,
@@ -928,6 +944,7 @@ const QuoteNewPageWidget = ({
                   }
                   onClickQuickDuplicate={onClickQuickDuplicate}
                   onClickDeleteQouteItem={onClickDeleteQouteItem}
+                  onClickUndoItemIntake={handleUndoItemIntake}
                   quoteItems={quoteItems}
                   changeQuoteItems={changeQuoteItems}
                   getCalculateQuote={getCalculateQuote}
@@ -1046,6 +1063,8 @@ const QuoteNewPageWidget = ({
         inventoryData={inventoryData}
         loading={inventoryLoading}
         purchaseOrderId={router.query?.Id as string}
+        status={quoteItemValue?.status ?? quoteItemValue?.documentStatus}
+        onIntakeSuccess={getQuote}
       />
       <PurchaseOrderTypeModal
         open={openPurchaseOrderTypeModal}
@@ -1059,6 +1078,26 @@ const QuoteNewPageWidget = ({
         getQuote={getQuote}
         getAllClientContacts={getAllClientContacts}
         documentType={documentType}
+      />
+      {/* Intake Validation Dialog */}
+      <PurchaseOrdersDialogsIntakeValidationWidget
+        showIntakeValidationDialog={showIntakeValidationDialog}
+        handleCancelIntakeValidation={handleCancelIntakeValidation}
+        handleOpenIntakeFromValidation={handleOpenIntakeFromValidation}
+      />
+      {/* Undo Intake Dialog - when changing from Received status */}
+      <PurchaseOrdersDialogsUndoIntakeWidget
+        showUndoIntakeDialog={showUndoIntakeDialog}
+        handleCancelUndoIntake={handleCancelUndoIntake}
+        handleConfirmUndoIntake={handleConfirmUndoIntake}
+      />
+      {/* Add Item Restriction Dialog - when status is Closed or Received */}
+      <PurchaseOrdersDialogsAddItemRestrictionWidget
+        showAddItemRestrictionDialog={showAddItemRestrictionDialog}
+        handleCancelAddItemRestriction={handleCancelAddItemRestriction}
+        handleCreateNewPurchaseOrder={handleCreateNewPurchaseOrder}
+        handleChangeStatusToUnderCreation={handleChangeStatusToUnderCreation}
+        documentStatus={quoteItemValue?.documentStatus}
       />
       {!isPrePaymentPage && (
         <AddDeliveryModal
