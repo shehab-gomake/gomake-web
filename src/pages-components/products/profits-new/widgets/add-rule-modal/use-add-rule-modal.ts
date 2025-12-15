@@ -80,21 +80,29 @@ const useAddRuleModal = ({
       shouldRenderOnMount: openModal,
     });
 
+  const router = useRouter();
   const [propertieValue, setPropertieValue] = useState<any>();
   const isDefaultException =
     selectedPricingTableItems?.exceptionType === ETypeException.DEFAULT;
 
   const categories = useMemo(() => {
+    const actionId = router?.query?.actionId as string;
+    const showMaterialType = actionId === "5f3e9084-6724-4358-9f94-8c63019c8894";
+    
     const filteredCategories = [
       { label: t("products.profits.exceptions.machine"), id: "Machine" },
       {
         label: t("products.profits.exceptions.machineTypeCategory"),
         id: "Machine category",
       },
-      // {
-      //   label: t("products.profits.exceptions.materialType"),
-      //   id: "MATERIALTYPE",
-      // },
+      ...(showMaterialType
+        ? [
+            {
+              label: t("products.profits.exceptions.materialType"),
+              id: "MATERIALTYPE",
+            },
+          ]
+        : []),
       { label: t("products.profits.exceptions.products"), id: "Products" },
       {
         label: t("products.profits.exceptions.productType"),
@@ -116,7 +124,7 @@ const useAddRuleModal = ({
     return isQuoteWidge
       ? filteredCategories.filter((category) => category.id !== "ProductType")
       : filteredCategories.filter((category) => category.id !== "Agent");
-  }, [isQuoteWidge]);
+  }, [isQuoteWidge, router?.query?.actionId, t]);
 
   const EStatementCategory = {
     Machine: 1,
@@ -240,7 +248,6 @@ const useAddRuleModal = ({
     setSnackbarStateValue,
     alertFault,
   } = useSnackBar();
-  const router = useRouter();
 
   const initialRule = {
     linkCondition: "",
