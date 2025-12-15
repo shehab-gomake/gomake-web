@@ -1,5 +1,5 @@
 import { Divider, IconButton, MenuItem } from "@mui/material";
-import { MoreCircleIcon } from "@/icons";
+import { MoreCircleIcon, AddIcon } from "@/icons";
 import { GoMakeMenu } from "@/components";
 import { useMoreCircle } from "./use-more-circle";
 import { useStyle } from "./style";
@@ -15,6 +15,8 @@ import { actionMenuState } from "@/store";
 import { DfxIcon } from "@/components/icons/dfx-icon";
 import { PdfIcon } from "@/components/icons/pdf-icon";
 import VisibilityIcon from "@mui/icons-material/Visibility";
+import { useGomakeAxios, useSnackBar } from "@/hooks";
+import { deleteMaterialProductApi, addMaterialProductApi } from "@/services/api-service/materials/materials-endpoints";
 
 const MaterialMenuWidget = ({
   dataRow,
@@ -22,7 +24,8 @@ const MaterialMenuWidget = ({
   onClickOpenDeleteTableRowModal,
   onChangeRowCheckBox,
   onClickOpenDeleteTableRowWhenHaveMoreSupplierModal,
-  toggleIsActive
+  toggleIsActive,
+  onRefreshMaterialData
 }) => {
   const { clasess } = useStyle();
   const { open, anchorEl, handleClose, handleClick } = useMoreCircle({
@@ -30,6 +33,8 @@ const MaterialMenuWidget = ({
     dataRow,
   });
   const { t } = useTranslation();
+  const { callApi } = useGomakeAxios();
+  const { alertSuccessAdded, alertFaultDelete, alertFault } = useSnackBar();
 
   const { query } = useRouter();
   const { materialType, materialCategory } = query;
@@ -41,6 +46,7 @@ const MaterialMenuWidget = ({
   const setOpenExtraParametersModal = useSetRecoilState(openExtraParametersModalState);
 
   const hasExtraParameters = materialHeaders.some(header => header.isShowInExtraParameters);
+  const hasProduct = dataRow?.hasProduct;
 
 
   const [action, setAction] = useRecoilState<{
@@ -59,6 +65,56 @@ const MaterialMenuWidget = ({
       "icon": "duplicate",
       "action": EMaterialsActions.Duplicate
     });
+  };
+
+  const handleAddProduct = async () => {
+    const callBack = (res) => {
+      if (res.success) {
+        alertSuccessAdded();
+        handleClose();
+        // Refresh material data to update hasProduct flag
+        if (onRefreshMaterialData) {
+          onRefreshMaterialData();
+        }
+      } else {
+        const errorMessage = res?.message || res?.data?.message || res?.errors?.message || t("modal.addedfailed");
+        alertFault(errorMessage);
+        console.error("Add Material Product Error:", res);
+      }
+    };
+    try {
+      await addMaterialProductApi(callApi, callBack, { id: dataRow.id });
+    } catch (error) {
+      console.error("Add Material Product Exception:", error);
+      alertFault(t("modal.addedfailed"));
+    }
+  };
+
+  const handleDeleteProduct = async () => {
+    const callBack = (res) => {
+      if (res.success) {
+        alertSuccessAdded();
+        handleClose();
+        // Refresh material data to update hasProduct flag
+        if (onRefreshMaterialData) {
+          onRefreshMaterialData();
+        }
+      } else {
+        const errorMessage = res?.message || res?.data?.message || res?.errors?.message;
+        if (errorMessage) {
+          alertFault(errorMessage);
+        } else {
+          alertFaultDelete();
+        }
+        console.error("Delete Material Product Error:", res);
+      }
+    };
+    try {
+      await deleteMaterialProductApi(callApi, callBack, { id: dataRow.id });
+    } catch (error) {
+      console.error("Delete Material Product Exception:", error);
+      alertFaultDelete();
+    }
   };
   return (
     <>
@@ -139,6 +195,28 @@ const MaterialMenuWidget = ({
           <DeleteIcon />
           <div style={clasess.rowTextStyle}>
             {t("navigationButtons.delete")}
+          </div>
+        </MenuItem>
+        <Divider />
+        <MenuItem
+          style={clasess.menuItemContainer}
+          onClick={() => {
+            if (hasProduct) {
+              handleDeleteProduct();
+            } else {
+              handleAddProduct();
+            }
+          }}
+        >
+          {hasProduct ? (
+            <DeleteIcon />
+          ) : (
+            <AddIcon color={clasess.iconColor} />
+          )}
+          <div style={clasess.rowTextStyle}>
+            {hasProduct
+              ? t("products.profits.deleteProduct")
+              : t("addProduct")}
           </div>
         </MenuItem>
         {
