@@ -81,6 +81,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
   const [isSubmenuModalOpen, setIsSubmenuModalOpen] = useState(false);
   const [submenuModalAction, setSubmenuModalAction] = useState<any>(null);
   const [selectedSupplier, setSelectedSupplier] = useState<any>(null);
+  const [selectedSupplierForPurchaseOrder, setSelectedSupplierForPurchaseOrder] = useState<any>(null);
   const [listSupplier, setListSupplier] = useState([]);
   const [isFetchingSupplier, setIsFetchingSupplier] = useState(false);
   const [openSupplierModal, setOpenSupplierModal] = useState(false);
@@ -117,6 +118,10 @@ const useMaterialsActions = (isAdmin: boolean) => {
     }
     else if (action?.action === EMaterialsActions.CreatePurchaseOrder && updatedValue == "") {
       setUpdatedValue("1")
+    }
+    // Reset supplier for purchase order when action changes
+    if (action?.action !== EMaterialsActions.CreatePurchaseOrder) {
+      setSelectedSupplierForPurchaseOrder(null);
     }
   }, [action, updatedValue])
   const [currentCurrency, setCurrentCurrency] = useState<any>("");
@@ -605,6 +610,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
       setAction(null);
       setIsAllMaterialsChecked(false);
       setSelectedSupplier(null);
+      setSelectedSupplierForPurchaseOrder(null);
       setUpdatedValue("");
       setSelectedMaterialsIds([])
 
@@ -725,7 +731,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
       tableFilters: {
         materialKey: materialType,
         categoryKey: materialCategory,
-        supplierId,
+        supplierId: selectedSupplierForPurchaseOrder?.id || supplierId,
         isActive:
           activeFilter === EMaterialActiveFilter.ACTIVE
             ? true
@@ -737,6 +743,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
       quantity: null,
       package: updatedValue,
       priceIndex: 0,
+      supplierId: selectedSupplierForPurchaseOrder?.id || null,
     });
   };
 
@@ -1099,6 +1106,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
     setUpdatedValue(null);
     setProperties([initialProperties]);
     setSelectedSupplier(null);
+    setSelectedSupplierForPurchaseOrder(null);
   };
 
   // Supplier fetching functions
@@ -1361,6 +1369,8 @@ const useMaterialsActions = (isAdmin: boolean) => {
     handleCloseSubmenuModal,
     selectedSupplier,
     setSelectedSupplier,
+    selectedSupplierForPurchaseOrder,
+    setSelectedSupplierForPurchaseOrder,
     renderOptionsSupplier: listSupplier,
     checkWhatRenderArraySupplier,
     isFetchingSupplier,
