@@ -21,14 +21,16 @@ import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import DeleteIcon from "@mui/icons-material/Delete";
 import DownloadIcon from "@mui/icons-material/Download";
-import { analyzeDieCutApi } from "@/services/api-service/materials/materials-endpoints";
+import { analyzeDieCutApi, addPrintHouseMaterialsRowsApi } from "@/services/api-service/materials/materials-endpoints";
+import { getPrintHouseMaterialCategoryDataNewApi } from "@/services/api-service/materials/printhouse-materials-endpoints";
 import { useGomakeAxios } from "@/hooks";
 import { useSnackBar } from "@/hooks";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useRouter } from "next/router";
-import { useRecoilValue } from "recoil";
-import { currenciesState } from "@/widgets/materials-widget/state";
+import { useRecoilValue, useSetRecoilState } from "recoil";
+import { currenciesState, selectedSupplierIdState, materialsTablePageState, selectedSuppliersIdsState, activeFilterState, materialCategoryDataState } from "@/widgets/materials-widget/state";
 import { GoMakeAutoComplate } from "@/components";
+import { useMaterialsCategories } from "../../use-materials-categories";
 
 interface UploadedFile {
   id: string;
@@ -83,16 +85,24 @@ const DieCutAnalyzerDialog: React.FC<DieCutAnalyzerDialogProps> = ({
   const { t } = useTranslation();
   const { primaryColor, neutralColor } = useGomakeTheme();
   const { callApi } = useGomakeAxios();
-  const { alertSuccessAdded, alertFault } = useSnackBar();
+  const { alertSuccessAdded, alertFault, alertSuccess } = useSnackBar();
   const { query } = useRouter();
   const { materialType } = query;
   const currencies = useRecoilValue(currenciesState);
+  const supplierId = useRecoilValue(selectedSupplierIdState);
+  const pageNumber = useRecoilValue(materialsTablePageState);
+  const suppliersIds = useRecoilValue(selectedSuppliersIdsState);
+  const activeFilter = useRecoilValue(activeFilterState);
+  const setMaterialCategoryData = useSetRecoilState(materialCategoryDataState);
   const dir: "rtl" | "ltr" = t("direction");
   const isRTL = dir === "rtl";
 
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const materialKey = query?.materialType?.toString() || "";
+  const categoryKey = query?.materialCategory?.toString() || "";
 
   const convertFileToBase64 = (file: File): Promise<string> => {
     return new Promise((resolve, reject) => {
@@ -178,6 +188,19 @@ const DieCutAnalyzerDialog: React.FC<DieCutAnalyzerDialogProps> = ({
     [handleFileSelect]
   );
 
+  const { getMaterialCategoryData } = useMaterialsCategories(false);
+
+  const handleRefreshMaterialData = () => {
+    if (materialType && categoryKey) {
+      getMaterialCategoryData(
+        materialType?.toString(),
+        categoryKey?.toString(),
+        [],
+        supplierId,
+      ).then();
+    }
+  };
+
   const handleAnalyze = useCallback(async () => {
     const readyFiles = uploadedFiles.filter((f) => f.status === "ready");
     if (readyFiles.length === 0) {
@@ -219,8 +242,6 @@ const DieCutAnalyzerDialog: React.FC<DieCutAnalyzerDialogProps> = ({
               // Extract attributes object from API response
               const attributes = fileResult?.attributes || {};
               const materialType = fileResult?.materialType;
-
-              console.log("columnsToShow", { attributes, fileResult });
 
               // Map fields based on materialType
               if (materialType === "DieKissCut") {
@@ -269,6 +290,8 @@ const DieCutAnalyzerDialog: React.FC<DieCutAnalyzerDialogProps> = ({
                   perforationLineLengthInCm: attributes?.perforationLineLength,
                   defaultCost: attributes?.price,
                   currency: attributes?.currency || null,
+                  name: attributes?.name,
+                  directions: attributes?.directions,
                 };
                 return mappedFile;
               }
@@ -301,10 +324,143 @@ const DieCutAnalyzerDialog: React.FC<DieCutAnalyzerDialogProps> = ({
     setUploadedFiles([]);
   }, []);
 
-  const handleAddMaterials = useCallback(() => {
-    // TODO: Implement add materials functionality
-    alertFault(t("materials.dieCutAnalyzer.addMaterialsNotImplemented") || "Add materials functionality not yet implemented");
-  }, [alertFault, t]);
+  const handleAddMaterials = useCallback(async () => {
+    const completedFiles = uploadedFiles.filter((f) => f.status === "completed");
+
+    if (completedFiles.length === 0) {
+      alertFault(t("materials.dieCutAnalyzer.noCompletedFiles") || "No completed files to add");
+      return;
+    }
+
+    // Get required data from query params or state
+    const materialKey = query?.materialType?.toString() || "";
+    const categoryKey = query?.materialCategory?.toString() || "";
+    if (!materialKey || !categoryKey) {
+      alertFault(t("materials.dieCutAnalyzer.missingRequiredParams") || "Missing required parameters (materialKey, categoryKey)");
+      return;
+    }
+
+    // Validate required fields for each file
+    const missingFields: Array<{ fileName: string; fields: string[] }> = [];
+
+    completedFiles.forEach((file) => {
+      const missing: string[] = [];
+
+      // Check required fields based on materialType
+      if (file.materialType === "DieKissCut") {
+        if (!file.shape || file.shape === "" || file.shape === null) missing.push(t("materials.dieCutAnalyzer.table.shape") || "Shape");
+        if (!file.name_DieKissCut || file.name_DieKissCut === "" || file.name_DieKissCut === null) missing.push(t("materials.dieCutAnalyzer.table.name") || "Name");
+        if (file.unitWidthInMm_DieKissCut === null || file.unitWidthInMm_DieKissCut === undefined || file.unitWidthInMm_DieKissCut === "") missing.push(t("materials.dieCutAnalyzer.table.unitWidth") || "Unit Width");
+        if (file.unitLengthInMm_DieKissCut === null || file.unitLengthInMm_DieKissCut === undefined || file.unitLengthInMm_DieKissCut === "") missing.push(t("materials.dieCutAnalyzer.table.unitLength") || "Unit Length");
+        if (file.columnsAmount_DieKissCut === null || file.columnsAmount_DieKissCut === undefined || file.columnsAmount_DieKissCut === "") missing.push(t("materials.dieCutAnalyzer.table.columnsAmount") || "Columns Amount");
+        if (file.rowsAmount_DieKissCut === null || file.rowsAmount_DieKissCut === undefined || file.rowsAmount_DieKissCut === "") missing.push(t("materials.dieCutAnalyzer.table.rowsAmount") || "Rows Amount");
+        if (file.spaceBetweenColumnsInMm_DieKissCut === null || file.spaceBetweenColumnsInMm_DieKissCut === undefined || file.spaceBetweenColumnsInMm_DieKissCut === "") missing.push(t("materials.dieCutAnalyzer.table.spaceBetweenColumns") || "Space Between Columns");
+        if (file.spaceBetweenRowsInMm_DieKissCut === null || file.spaceBetweenRowsInMm_DieKissCut === undefined || file.spaceBetweenRowsInMm_DieKissCut === "") missing.push(t("materials.dieCutAnalyzer.table.spaceBetweenRows") || "Space Between Rows");
+        if (!file.directions || file.directions === "" || file.directions === null) missing.push(t("materials.dieCutAnalyzer.table.directions") || "Directions");
+        if (file.defaultCost_DieKissCut === null || file.defaultCost_DieKissCut === undefined || file.defaultCost_DieKissCut === "") missing.push(t("materials.dieCutAnalyzer.table.defaultCost") || "Default Cost");
+        if (!file.currency_DieKissCut || file.currency_DieKissCut === "" || file.currency_DieKissCut === null) missing.push(t("materials.dieCutAnalyzer.table.currency") || "Currency");
+      } else {
+        // DieCut - validate required fields
+        if (!file.shape || file.shape === "" || file.shape === null) missing.push(t("materials.dieCutAnalyzer.table.shape") || "Shape");
+        if (!file.name || file.name === "" || file.name === null) missing.push(t("materials.dieCutAnalyzer.table.name") || "Name");
+        if (file.dieCutFormWidthInCm === null || file.dieCutFormWidthInCm === undefined || file.dieCutFormWidthInCm === "") missing.push(t("materials.dieCutAnalyzer.table.dieUnitWidth") || "Die Unit Width");
+        if (file.dieCutFormLengthInCm === null || file.dieCutFormLengthInCm === undefined || file.dieCutFormLengthInCm === "") missing.push(t("materials.dieCutAnalyzer.table.dieUnitLength") || "Die Unit Length");
+        if (file.columnsAmount === null || file.columnsAmount === undefined || file.columnsAmount === "") missing.push(t("materials.dieCutAnalyzer.table.columnsAmount") || "Columns Amount");
+        if (file.rowsAmount === null || file.rowsAmount === undefined || file.rowsAmount === "") missing.push(t("materials.dieCutAnalyzer.table.rowsAmount") || "Rows Amount");
+        if (file.spaceBetweenColumnsInMm === null || file.spaceBetweenColumnsInMm === undefined || file.spaceBetweenColumnsInMm === "") missing.push(t("materials.dieCutAnalyzer.table.spaceBetweenColumns") || "Space Between Columns");
+        if (file.spaceBetweenRowsInMm === null || file.spaceBetweenRowsInMm === undefined || file.spaceBetweenRowsInMm === "") missing.push(t("materials.dieCutAnalyzer.table.spaceBetweenRows") || "Space Between Rows");
+        if (!file.directions || file.directions === "" || file.directions === null) missing.push(t("materials.dieCutAnalyzer.table.directions") || "Directions");
+        if (file.defaultCost === null || file.defaultCost === undefined || file.defaultCost === "") missing.push(t("materials.dieCutAnalyzer.table.defaultCost") || "Default Cost");
+        if (!file.currency || file.currency === "" || file.currency === null) missing.push(t("materials.dieCutAnalyzer.table.currency") || "Currency");
+      }
+
+      if (missing.length > 0) {
+        console.log("missing", { missing, file });
+        missingFields.push({ fileName: "", fields: missing });
+      }
+    });
+
+    // Show error if any required fields are missing
+    if (missingFields.length > 0) {
+      const errorMessages = missingFields.map(
+        (item) => `${item.fields.join(", ")}`
+      );
+      console.log("errorMessages", errorMessages);
+      alertFault(
+        "Please fill all required fields:" + errorMessages.join("\n")
+      );
+      return;
+    }
+
+    // Prepare payload - transform each completed file to the API format
+    const payload = completedFiles.map((file) => {
+      const image = file.base64;
+      // Build rowData object based on materialType
+      let rowData: any = {};
+
+      if (file.materialType === "DieKissCut") {
+        rowData = {
+          unitWidth: file.unitWidthInMm_DieKissCut.toString(),
+          unitLength: file.unitLengthInMm_DieKissCut.toString(),
+          "columns amount": file.columnsAmount_DieKissCut.toString(),
+          "lines amount": file.rowsAmount_DieKissCut.toString(),
+          "space between columns": file.spaceBetweenColumnsInMm_DieKissCut.toString(),
+          "space between lines": file.spaceBetweenRowsInMm_DieKissCut.toString(),
+          directions: file.directions,
+          unitPrice: file.defaultCost_DieKissCut.toString(),
+          currency: file.currency_DieKissCut,
+          shape: file.shape,
+          name: file.name_DieKissCut,
+          code: file.code_DieKissCut,
+          "Active": "false",
+          "image": `data:image/png;base64,${image}`,
+          isOutSource: "false",
+
+        };
+      } else {
+        // DieCut
+        rowData = {
+          shape: file.shape,
+          width: file.widthInCm,
+          length: file.lengthInCm,
+          unitWidth: file.dieCutFormWidthInCm,
+          unitLength: file.dieCutFormLengthInCm,
+          finalUnitWidth: file.finalProductWidthInCm,
+          finalUnitLength: file.finalProductLengthInCm,
+          finalUnitHeight: file.finalProductHeightInCm,
+          columnsAmount: file.columnsAmount,
+          linesAmount: file.rowsAmount,
+          spaceBetweenColumns: file.spaceBetweenColumnsInMm,
+          spaceBetweenLines: file.spaceBetweenRowsInMm,
+          cuttingLineLength: file.cuttingLineLengthInCm,
+          scoringLineLength: file.scoringLineLengthInCm,
+          perforationLineLength: file.perforationLineLengthInCm,
+          price: file.defaultCost,
+          currency: file.currency,
+        };
+      }
+
+      return {
+        materialKey,
+        categoryKey,
+        rowData,
+      };
+    });
+
+    const callBack = async (res: any) => {
+      if (res?.success) {
+        alertSuccess(res?.message);
+        handleRefreshMaterialData();
+        onClose();
+        setUploadedFiles([]);
+
+      } else {
+        alertFault(res?.message || t("materials.dieCutAnalyzer.addMaterialsFailed") || "Failed to add materials");
+      }
+    };
+
+    await addPrintHouseMaterialsRowsApi(callApi, callBack, payload);
+  }, [uploadedFiles, callApi, alertFault, alertSuccessAdded, t, query, supplierId, onClose, pageNumber, suppliersIds, activeFilter, materialKey, categoryKey, setMaterialCategoryData]);
 
   const handleRemoveFile = useCallback((fileId: string) => {
     setUploadedFiles((prev) => prev.filter((f) => f.id !== fileId));
