@@ -13,6 +13,8 @@ import {
   Paper,
   Chip,
   Typography,
+  CircularProgress,
+  TextField,
 } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
@@ -23,6 +25,10 @@ import { analyzeDieCutApi } from "@/services/api-service/materials/materials-end
 import { useGomakeAxios } from "@/hooks";
 import { useSnackBar } from "@/hooks";
 import { FONT_FAMILY } from "@/utils/font-family";
+import { useRouter } from "next/router";
+import { useRecoilValue } from "recoil";
+import { currenciesState } from "@/widgets/materials-widget/state";
+import { GoMakeAutoComplate } from "@/components";
 
 interface UploadedFile {
   id: string;
@@ -30,12 +36,39 @@ interface UploadedFile {
   file: File;
   base64: string;
   status: "ready" | "analyzing" | "completed" | "error";
-  unitWidthInMm?: number | string;
-  unitLengthInMm?: number | string;
-  columns?: number | string;
-  rows?: number | string;
-  columnSpaceInMm?: number | string;
-  rowSpaceInMm?: number | string;
+  materialType?: string;
+  // DieCut fields
+  shape?: string | null;
+  widthInCm?: number | string | null;
+  lengthInCm?: number | string | null;
+  dieCutFormWidthInCm?: number | string | null;
+  dieCutFormLengthInCm?: number | string | null;
+  finalProductWidthInCm?: number | string | null;
+  finalProductLengthInCm?: number | string | null;
+  finalProductHeightInCm?: number | string | null;
+  columnsAmount?: number | string | null;
+  rowsAmount?: number | string | null;
+  spaceBetweenColumnsInMm?: number | string | null;
+  spaceBetweenRowsInMm?: number | string | null;
+  cuttingLineLengthInCm?: number | string | null;
+  scoringLineLengthInCm?: number | string | null;
+  perforationLineLengthInCm?: number | string | null;
+  defaultCost?: number | string | null;
+  currency?: string | null;
+  // DieKissCut fields
+  unitWidthInMm_DieKissCut?: number | string | null;
+  unitLengthInMm_DieKissCut?: number | string | null;
+  columnsAmount_DieKissCut?: number | string | null;
+  rowsAmount_DieKissCut?: number | string | null;
+  spaceBetweenColumnsInMm_DieKissCut?: number | string | null;
+  spaceBetweenRowsInMm_DieKissCut?: number | string | null;
+  directions?: string | null;
+  defaultCost_DieKissCut?: number | string | null;
+  currency_DieKissCut?: string | null;
+  name_DieKissCut?: string | null;
+  code_DieKissCut?: string | null;
+  name?: string | null;
+  code?: string | null;
 }
 
 interface DieCutAnalyzerDialogProps {
@@ -51,6 +84,9 @@ const DieCutAnalyzerDialog: React.FC<DieCutAnalyzerDialogProps> = ({
   const { primaryColor, neutralColor } = useGomakeTheme();
   const { callApi } = useGomakeAxios();
   const { alertSuccessAdded, alertFault } = useSnackBar();
+  const { query } = useRouter();
+  const { materialType } = query;
+  const currencies = useRecoilValue(currenciesState);
   const dir: "rtl" | "ltr" = t("direction");
   const isRTL = dir === "rtl";
 
@@ -158,6 +194,7 @@ const DieCutAnalyzerDialog: React.FC<DieCutAnalyzerDialogProps> = ({
     const payload = readyFiles.map((file) => ({
       base64Image: file.base64,
       fileName: file.fileName,
+      materialType: materialType?.toString() || "",
     }));
 
     const callBack = (res: any) => {
@@ -179,18 +216,64 @@ const DieCutAnalyzerDialog: React.FC<DieCutAnalyzerDialogProps> = ({
             );
 
             if (fileResult) {
-              return {
-                ...file,
-                status: "completed",
-                unitWidthInMm: fileResult?.unitWidthInMm,
-                unitLengthInMm: fileResult?.unitLengthInMm,
-                columns: fileResult?.columns,
-                rows: fileResult?.rows,
-                columnSpaceInMm: fileResult?.columnSpaceInMm,
-                rowSpaceInMm: fileResult?.rowSpaceInMm,
-              };
+              // Extract attributes object from API response
+              const attributes = fileResult?.attributes || {};
+              const materialType = fileResult?.materialType;
+
+              console.log("columnsToShow", { attributes, fileResult });
+
+              // Map fields based on materialType
+              if (materialType === "DieKissCut") {
+                // DieKissCut fields mapping
+                const mappedFile: UploadedFile = {
+                  ...file,
+                  status: "completed" as const,
+                  materialType: materialType,
+
+                  // DieKissCut fields - map from attributes
+                  shape: attributes?.shape,
+                  unitWidthInMm_DieKissCut: attributes?.unitWidth, // API returns in MM
+                  unitLengthInMm_DieKissCut: attributes?.unitLength, // API returns in MM
+                  columnsAmount_DieKissCut: attributes?.columnsAmount,
+                  rowsAmount_DieKissCut: attributes?.linesAmount, // API returns "linesAmount"
+                  spaceBetweenColumnsInMm_DieKissCut: attributes?.spaceBetweenColumns,
+                  spaceBetweenRowsInMm_DieKissCut: attributes?.spaceBetweenLines,
+                  directions: attributes?.directions,
+                  defaultCost_DieKissCut: attributes?.price,
+                  currency_DieKissCut: attributes?.currency || null,
+                  name_DieKissCut: attributes?.name,
+                  code_DieKissCut: attributes?.code,
+                };
+                return mappedFile;
+              } else {
+                // DieCut fields mapping
+                const mappedFile: UploadedFile = {
+                  ...file,
+                  status: "completed" as const,
+                  materialType: materialType || "DieCut",
+                  // DieCut fields - map from attributes
+                  shape: attributes?.shape,
+                  widthInCm: attributes?.width,
+                  lengthInCm: attributes?.length,
+                  dieCutFormWidthInCm: attributes?.unitWidth,
+                  dieCutFormLengthInCm: attributes?.unitLength,
+                  finalProductWidthInCm: attributes?.finalUnitWidth,
+                  finalProductLengthInCm: attributes?.finalUnitLength,
+                  finalProductHeightInCm: attributes?.finalUnitHeight,
+                  columnsAmount: attributes?.columnsAmount,
+                  rowsAmount: attributes?.linesAmount, // API returns "linesAmount"
+                  spaceBetweenColumnsInMm: attributes?.spaceBetweenColumns,
+                  spaceBetweenRowsInMm: attributes?.spaceBetweenLines,
+                  cuttingLineLengthInCm: attributes?.cuttingLineLength,
+                  scoringLineLengthInCm: attributes?.scoringLineLength,
+                  perforationLineLengthInCm: attributes?.perforationLineLength,
+                  defaultCost: attributes?.price,
+                  currency: attributes?.currency || null,
+                };
+                return mappedFile;
+              }
             } else {
-              return { ...file, status: "error" };
+              return { ...file, status: "error" as const };
             }
           })
         );
@@ -205,7 +288,7 @@ const DieCutAnalyzerDialog: React.FC<DieCutAnalyzerDialogProps> = ({
       } else {
         // If API call fails, mark all analyzing files as error
         setUploadedFiles((prev) =>
-          prev.map((f) => (f.status === "analyzing" ? { ...f, status: "error" } : f))
+          prev.map((f) => (f.status === "analyzing" ? { ...f, status: "error" as const } : f))
         );
         alertFault(res.message || t("materials.dieCutAnalyzer.analysisFailed") || "Analysis failed");
       }
@@ -225,6 +308,19 @@ const DieCutAnalyzerDialog: React.FC<DieCutAnalyzerDialogProps> = ({
 
   const handleRemoveFile = useCallback((fileId: string) => {
     setUploadedFiles((prev) => prev.filter((f) => f.id !== fileId));
+  }, []);
+
+  const handleUpdateFileField = useCallback((fileId: string, field: keyof UploadedFile, value: any) => {
+    setUploadedFiles((prev) =>
+      prev.map((file) =>
+        file.id === fileId
+          ? {
+            ...file,
+            [field]: value,
+          }
+          : file
+      )
+    );
   }, []);
 
   const getStatusColor = (status: string) => {
@@ -258,13 +354,129 @@ const DieCutAnalyzerDialog: React.FC<DieCutAnalyzerDialogProps> = ({
   };
 
   const readyFilesCount = uploadedFiles.filter((f) => f.status === "ready").length;
+  const completedFilesCount = uploadedFiles.filter((f) => f.status === "completed").length;
+  // Enable "Add Materials" only when all files are analyzed (no "ready" status) and at least one is completed
+  const canAddMaterials = readyFilesCount === 0 && completedFilesCount > 0;
+
+  // Helper function to get display value
+  const getDisplayValue = (value: any) => {
+    if (value === null || value === undefined || value === "") {
+      return "-";
+    }
+    return value;
+  };
+
+  // Helper function to get the correct field value based on materialType
+  const getFieldValue = (file: UploadedFile, dieCutField: keyof UploadedFile, dieKissCutField: keyof UploadedFile) => {
+    if (file.materialType === "DieKissCut") {
+      return getDisplayValue(file[dieKissCutField]);
+    } else {
+      return getDisplayValue(file[dieCutField]);
+    }
+  };
+
+  // Helper function to render editable cell
+  const renderEditableCell = (
+    file: UploadedFile,
+    field: keyof UploadedFile,
+    type: "text" | "number" = "text",
+    options?: any[]
+  ) => {
+    const value = file[field] ?? "";
+    const isEditable = file.status === "completed";
+
+    if (!isEditable) {
+      return getDisplayValue(value);
+    }
+
+    if (options && options.length > 0) {
+      // For dropdown fields (currency, directions)
+      const selectedOption = options.find((opt: any) => opt.value === value || opt.label === value);
+      return (
+        <GoMakeAutoComplate
+          value={selectedOption || null}
+          options={options}
+          onChange={(e: any, newValue: any) => {
+            handleUpdateFileField(file.id, field, newValue?.value || newValue?.label || "");
+          }}
+          getOptionLabel={(option: any) => option.label || option.value || ""}
+          style={{ width: "100%", minWidth: "120px" }}
+        />
+      );
+    }
+
+    return (
+      <TextField
+        type={type}
+        value={value}
+        onChange={(e) => {
+          const newValue = type === "number" ? (e.target.value === "" ? "" : Number(e.target.value)) : e.target.value;
+          handleUpdateFileField(file.id, field, newValue);
+        }}
+        size="small"
+        sx={{
+          width: "100%",
+          "& .MuiOutlinedInput-root": {
+            height: "32px",
+            fontSize: "14px",
+          },
+        }}
+        inputProps={{
+          style: {
+            padding: "6px 8px",
+          },
+        }}
+      />
+    );
+  };
+
+  // Get table columns based on materialType
+  const getTableColumns = (materialType?: string) => {
+    if (materialType === "DieKissCut") {
+      return [
+        { key: "code_DieKissCut", label: t("materials.dieCutAnalyzer.table.code") || "Code", type: "text", materialType: "DieKissCut" },
+        { key: "shape", label: t("materials.dieCutAnalyzer.table.shape") || "Shape", type: "text", materialType: "DieKissCut" },
+        { key: "name_DieKissCut", label: t("materials.dieCutAnalyzer.table.name") || "Name", type: "text", materialType: "DieKissCut" },
+        { key: "unitWidthInMm_DieKissCut", label: t("materials.dieCutAnalyzer.table.unitWidth"), type: "number", materialType: "DieKissCut" },
+        { key: "unitLengthInMm_DieKissCut", label: t("materials.dieCutAnalyzer.table.unitLength") || "Unit Length (MM)", type: "number", materialType: "DieKissCut" },
+        { key: "columnsAmount_DieKissCut", label: t("materials.dieCutAnalyzer.table.columnsAmount") || "Columns Amount", type: "number", materialType: "DieKissCut" },
+        { key: "rowsAmount_DieKissCut", label: t("materials.dieCutAnalyzer.table.rowsAmount") || "Rows Amount", type: "number", materialType: "DieKissCut" },
+        { key: "spaceBetweenColumnsInMm_DieKissCut", label: t("materials.dieCutAnalyzer.table.spaceBetweenColumns") || "Space Between Columns (MM)", type: "number", materialType: "DieKissCut" },
+        { key: "spaceBetweenRowsInMm_DieKissCut", label: t("materials.dieCutAnalyzer.table.spaceBetweenLines") || "Space Between Lines (MM)", type: "number", materialType: "DieKissCut" },
+        { key: "directions", label: t("materials.dieCutAnalyzer.table.directions") || "Directions", type: "text", materialType: "DieKissCut" },
+        { key: "defaultCost_DieKissCut", label: t("materials.dieCutAnalyzer.table.defaultCost") || "Default Cost", type: "number", materialType: "DieKissCut" },
+        { key: "currency_DieKissCut", label: t("materials.dieCutAnalyzer.table.currency") || "Currency", type: "text", options: currencies, materialType: "DieKissCut" },
+      ];
+    } else {
+      // DieCut columns
+      return [
+        { key: "shape", label: t("materials.dieCutAnalyzer.table.shape") || "Shape", type: "text", materialType: "DieCut" },
+        { key: "widthInCm", label: t("materials.dieCutAnalyzer.table.width") || "Width (CM)", type: "number", materialType: "DieCut" },
+        { key: "lengthInCm", label: t("materials.dieCutAnalyzer.table.length") || "Length (CM)", type: "number", materialType: "DieCut" },
+        { key: "dieCutFormWidthInCm", label: t("materials.dieCutAnalyzer.table.dieUnitWidth") || "Die Unit Width (CM)", type: "number", materialType: "DieCut" },
+        { key: "dieCutFormLengthInCm", label: t("materials.dieCutAnalyzer.table.dieUnitLength") || "Die Unit Length (CM)", type: "number", materialType: "DieCut" },
+        { key: "finalProductWidthInCm", label: t("materials.dieCutAnalyzer.table.finalUnitWidth") || "Final Unit Width (CM)", type: "number", materialType: "DieCut" },
+        { key: "finalProductLengthInCm", label: t("materials.dieCutAnalyzer.table.finalUnitLength") || "Final Unit Length (CM)", type: "number", materialType: "DieCut" },
+        { key: "finalProductHeightInCm", label: t("materials.dieCutAnalyzer.table.finalUnitHeight") || "Final Unit Height (CM)", type: "number", materialType: "DieCut" },
+        { key: "columnsAmount", label: t("materials.dieCutAnalyzer.table.columnsAmount") || "Columns Amount", type: "number", materialType: "DieCut" },
+        { key: "rowsAmount", label: t("materials.dieCutAnalyzer.table.rowsAmount") || "Rows Amount", type: "number", materialType: "DieCut" },
+        { key: "spaceBetweenColumnsInMm", label: t("materials.dieCutAnalyzer.table.spaceBetweenColumns") || "Space Between Columns (MM)", type: "number", materialType: "DieCut" },
+        { key: "spaceBetweenRowsInMm", label: t("materials.dieCutAnalyzer.table.spaceBetweenLines") || "Space Between Lines (MM)", type: "number", materialType: "DieCut" },
+        { key: "cuttingLineLengthInCm", label: t("materials.dieCutAnalyzer.table.cuttingLineLength") || "Cutting Line Length (CM)", type: "number", materialType: "DieCut" },
+        { key: "scoringLineLengthInCm", label: t("materials.dieCutAnalyzer.table.scoringLineLength") || "Scoring Line Length (CM)", type: "number", materialType: "DieCut" },
+        { key: "perforationLineLengthInCm", label: t("materials.dieCutAnalyzer.table.perforationLineLength") || "Perforation Line Length (CM)", type: "number", materialType: "DieCut" },
+        { key: "defaultCost", label: t("materials.dieCutAnalyzer.table.defaultCost") || "Default Cost", type: "number", materialType: "DieCut" },
+        { key: "currency", label: t("materials.dieCutAnalyzer.table.currency") || "Currency", type: "text", options: currencies, materialType: "DieCut" },
+      ];
+    }
+  };
 
   return (
     <GoMakeDialog
       open={open}
       onClose={onClose}
       title={t("materials.dieCutAnalyzer.title") || "Die-Cut Analyzer"}
-      maxWidth="lg"
+      maxWidth="xl"
       fullWidth
       showFooter={false}
     >
@@ -363,12 +575,18 @@ const DieCutAnalyzerDialog: React.FC<DieCutAnalyzerDialogProps> = ({
               variant="outlined"
               startIcon={<DownloadIcon />}
               onClick={handleAddMaterials}
+              disabled={!canAddMaterials}
               sx={{
                 borderColor: neutralColor(300),
                 color: neutralColor(700),
                 "&:hover": {
                   borderColor: primaryColor(500),
                   backgroundColor: primaryColor(50),
+                },
+                "&:disabled": {
+                  borderColor: neutralColor(200),
+                  color: neutralColor(400),
+                  backgroundColor: neutralColor(50),
                 },
               }}
             >
@@ -396,8 +614,16 @@ const DieCutAnalyzerDialog: React.FC<DieCutAnalyzerDialogProps> = ({
 
         {/* Files Table */}
         {uploadedFiles.length > 0 && (
-          <TableContainer component={Paper} sx={{ maxHeight: 400 }}>
-            <Table stickyHeader>
+          <TableContainer
+            component={Paper}
+            sx={{
+              maxHeight: 400,
+              width: "100%",
+              overflowX: "auto",
+              overflowY: "auto",
+            }}
+          >
+            <Table stickyHeader sx={{ minWidth: "100%" }}>
               <TableHead>
                 <TableRow>
                   <TableCell
@@ -418,60 +644,29 @@ const DieCutAnalyzerDialog: React.FC<DieCutAnalyzerDialogProps> = ({
                   >
                     {t("materials.dieCutAnalyzer.table.status") || "STATUS"}
                   </TableCell>
-                  <TableCell
-                    sx={{
-                      backgroundColor: primaryColor(50),
-                      color: primaryColor(900),
-                      ...FONT_FAMILY.Lexend(500, 14),
-                    }}
-                  >
-                    {t("materials.dieCutAnalyzer.table.unitWidth") || "UNIT WIDTH (MM)"}
-                  </TableCell>
-                  <TableCell
-                    sx={{
-                      backgroundColor: primaryColor(50),
-                      color: primaryColor(900),
-                      ...FONT_FAMILY.Lexend(500, 14),
-                    }}
-                  >
-                    {t("materials.dieCutAnalyzer.table.unitLength") || "UNIT LENGTH (MM)"}
-                  </TableCell>
-                  <TableCell
-                    sx={{
-                      backgroundColor: primaryColor(50),
-                      color: primaryColor(900),
-                      ...FONT_FAMILY.Lexend(500, 14),
-                    }}
-                  >
-                    {t("materials.dieCutAnalyzer.table.columns") || "COLUMNS"}
-                  </TableCell>
-                  <TableCell
-                    sx={{
-                      backgroundColor: primaryColor(50),
-                      color: primaryColor(900),
-                      ...FONT_FAMILY.Lexend(500, 14),
-                    }}
-                  >
-                    {t("materials.dieCutAnalyzer.table.rows") || "ROWS"}
-                  </TableCell>
-                  <TableCell
-                    sx={{
-                      backgroundColor: primaryColor(50),
-                      color: primaryColor(900),
-                      ...FONT_FAMILY.Lexend(500, 14),
-                    }}
-                  >
-                    {t("materials.dieCutAnalyzer.table.colSpace") || "COL. SPACE (MM)"}
-                  </TableCell>
-                  <TableCell
-                    sx={{
-                      backgroundColor: primaryColor(50),
-                      color: primaryColor(900),
-                      ...FONT_FAMILY.Lexend(500, 14),
-                    }}
-                  >
-                    {t("materials.dieCutAnalyzer.table.rowSpace") || "ROW SPACE (MM)"}
-                  </TableCell>
+                  {(() => {
+                    // Determine which columns to show based on first completed file's materialType
+                    // If no completed files, show DieCut columns by default
+                    const completedFiles = uploadedFiles.filter((f) => f.status === "completed");
+                    const firstCompletedFile = completedFiles[0];
+                    const materialTypeToShow = firstCompletedFile?.materialType || query?.materialType?.toString() || "DieCut";
+                    const columnsToShow = getTableColumns(materialTypeToShow);
+                    return columnsToShow.map((column) => (
+                      <TableCell
+                        key={column.key}
+                        sx={{
+                          backgroundColor: primaryColor(50),
+                          color: primaryColor(900),
+                          ...FONT_FAMILY.Lexend(500, 14),
+                          width: "100%",
+                          minWidth: "200px",
+                          textAlign: "start",
+                        }}
+                      >
+                        {column.label}
+                      </TableCell>
+                    ));
+                  })()}
                   <TableCell
                     sx={{
                       backgroundColor: primaryColor(50),
@@ -484,90 +679,111 @@ const DieCutAnalyzerDialog: React.FC<DieCutAnalyzerDialogProps> = ({
                 </TableRow>
               </TableHead>
               <TableBody>
-                {uploadedFiles.map((file) => (
-                  <TableRow key={file.id}>
-                    <TableCell
-                      sx={{
-                        ...FONT_FAMILY.Lexend(400, 14),
-                        color: neutralColor(700),
-                      }}
-                    >
-                      {file.fileName}
-                    </TableCell>
-                    <TableCell>
-                      <Chip
-                        label={getStatusLabel(file.status)}
-                        size="small"
+                {uploadedFiles.map((file) => {
+                  // Get columns based on file's own materialType, or first completed file's materialType, or default to DieCut
+                  const completedFiles = uploadedFiles.filter((f) => f.status === "completed");
+                  const firstCompletedFile = completedFiles[0];
+                  const materialTypeToShow = file.materialType || firstCompletedFile?.materialType || query?.materialType?.toString() || "DieCut";
+                  const columnsToShow = getTableColumns(materialTypeToShow);
+                  console.log("columnsToShow", { columnsToShow, file });
+
+                  return (
+                    <TableRow key={file.id}>
+                      <TableCell
                         sx={{
-                          backgroundColor: getStatusColor(file.status),
-                          color: "white",
-                          ...FONT_FAMILY.Lexend(500, 12),
-                        }}
-                      />
-                    </TableCell>
-                    <TableCell
-                      sx={{
-                        ...FONT_FAMILY.Lexend(400, 14),
-                        color: neutralColor(700),
-                      }}
-                    >
-                      {file.unitWidthInMm ?? "-"}
-                    </TableCell>
-                    <TableCell
-                      sx={{
-                        ...FONT_FAMILY.Lexend(400, 14),
-                        color: neutralColor(700),
-                      }}
-                    >
-                      {file.unitLengthInMm ?? "-"}
-                    </TableCell>
-                    <TableCell
-                      sx={{
-                        ...FONT_FAMILY.Lexend(400, 14),
-                        color: neutralColor(700),
-                      }}
-                    >
-                      {file.columns ?? "-"}
-                    </TableCell>
-                    <TableCell
-                      sx={{
-                        ...FONT_FAMILY.Lexend(400, 14),
-                        color: neutralColor(700),
-                      }}
-                    >
-                      {file.rows ?? "-"}
-                    </TableCell>
-                    <TableCell
-                      sx={{
-                        ...FONT_FAMILY.Lexend(400, 14),
-                        color: neutralColor(700),
-                      }}
-                    >
-                      {file.columnSpaceInMm ?? "-"}
-                    </TableCell>
-                    <TableCell
-                      sx={{
-                        ...FONT_FAMILY.Lexend(400, 14),
-                        color: neutralColor(700),
-                      }}
-                    >
-                      {file.rowSpaceInMm ?? "-"}
-                    </TableCell>
-                    <TableCell>
-                      <Button
-                        size="small"
-                        onClick={() => handleRemoveFile(file.id)}
-                        sx={{
-                          color: "#F44336",
-                          minWidth: "auto",
-                          padding: "4px 8px",
+                          ...FONT_FAMILY.Lexend(400, 14),
+                          color: neutralColor(700),
+                          minWidth: 200,
+                          whiteSpace: "nowrap",
+                          textAlign: "start",
                         }}
                       >
-                        <DeleteIcon fontSize="small" />
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
+                        {file.fileName}
+                      </TableCell>
+                      <TableCell
+                        sx={{
+                          minWidth: 120,
+                          whiteSpace: "nowrap",
+                          textAlign: "start",
+                        }}
+                      >
+                        {file.status === "analyzing" ? (
+                          <Box
+                            sx={{
+                              display: "inline-flex",
+                              alignItems: "center",
+                              gap: 1,
+                              backgroundColor: getStatusColor(file.status),
+                              color: "white",
+                              padding: "4px 12px",
+                              borderRadius: "16px",
+                              ...FONT_FAMILY.Lexend(500, 12),
+                            }}
+                          >
+                            <CircularProgress
+                              size={14}
+                              thickness={4}
+                              sx={{
+                                color: "white",
+                              }}
+                            />
+                            <span>{getStatusLabel(file.status)}</span>
+                          </Box>
+                        ) : (
+                          <Chip
+                            label={getStatusLabel(file.status)}
+                            size="small"
+                            sx={{
+                              backgroundColor: getStatusColor(file.status),
+                              color: "white",
+                              ...FONT_FAMILY.Lexend(500, 12),
+                            }}
+                          />
+                        )}
+                      </TableCell>
+                      {columnsToShow.map((column) => {
+                        // Get value from file
+                        const cellValue = file[column.key as keyof UploadedFile];
+                        console.log("aaqqqq", { cellValue, column });
+
+                        return (
+                          <TableCell
+                            key={column.key}
+                            sx={{
+                              ...FONT_FAMILY.Lexend(400, 14),
+                              color: neutralColor(700),
+                              padding: file.status === "completed" ? "4px 8px" : "8px",
+                              minWidth: 120,
+                              whiteSpace: "nowrap",
+                            }}
+                          >
+                            {file.status === "completed" && cellValue !== undefined
+                              ? renderEditableCell(file, column.key as keyof UploadedFile, column.type as "text" | "number", column.options)
+                              : getDisplayValue(cellValue)}
+                          </TableCell>
+                        );
+                      })}
+                      <TableCell
+                        sx={{
+                          minWidth: 100,
+                          whiteSpace: "nowrap",
+                        }}
+                      >
+                        <Button
+                          size="small"
+                          onClick={() => handleRemoveFile(file.id)}
+                          sx={{
+                            color: "#F44336",
+                            minWidth: "auto",
+                            padding: "4px 8px",
+                          }}
+                        >
+                          <DeleteIcon fontSize="small" />
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
               </TableBody>
             </Table>
           </TableContainer>
