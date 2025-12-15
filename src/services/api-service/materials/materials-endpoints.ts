@@ -472,7 +472,7 @@ const deletePrintHouseMaterialRowApi: ICallAndSetData = async (
 const analyzeDieCutApi: ICallAndSetData = async (
   callApi,
   callBack,
-  data: { base64Image: string; fileName: string }
+  data: Array<{ base64Image: string; fileName: string }>
 ) => {
   return await getSetApiData(
     callApi,

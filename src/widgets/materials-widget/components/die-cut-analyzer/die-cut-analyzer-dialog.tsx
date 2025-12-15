@@ -154,58 +154,64 @@ const DieCutAnalyzerDialog: React.FC<DieCutAnalyzerDialogProps> = ({
       prev.map((f) => (f.status === "ready" ? { ...f, status: "analyzing" } : f))
     );
 
-    // Analyze each file
-    const analyzePromises = readyFiles.map(async (file) => {
-      const callBack = (res: any) => {
-        if (res.success && res.data) {
-          // Handle response data - API returns an array of results
-          const responseData = res.data?.data || res.data;
-          const resultsArray = Array.isArray(responseData) ? responseData : [responseData];
+    // Prepare payload array with all files
+    const payload = readyFiles.map((file) => ({
+      base64Image: file.base64,
+      fileName: file.fileName,
+    }));
 
-          // Find the result that matches the current file by fileName
-          const fileResult = resultsArray.find(
-            (result: any) => result?.fileName === file.fileName
-          ) || resultsArray[0]; // Fallback to first result if fileName doesn't match
+    const callBack = (res: any) => {
+      if (res.success && res.data) {
+        // Handle response data - API returns an array of results
+        const responseData = res.data?.data || res.data;
+        const resultsArray = Array.isArray(responseData) ? responseData : [responseData];
 
-          if (fileResult) {
-            setUploadedFiles((prev) =>
-              prev.map((f) =>
-                f.id === file.id
-                  ? {
-                    ...f,
-                    status: "completed",
-                    unitWidthInMm: fileResult?.unitWidthInMm,
-                    unitLengthInMm: fileResult?.unitLengthInMm,
-                    columns: fileResult?.columns,
-                    rows: fileResult?.rows,
-                    columnSpaceInMm: fileResult?.columnSpaceInMm,
-                    rowSpaceInMm: fileResult?.rowSpaceInMm,
-                  }
-                  : f
-              )
+        // Map results back to files by fileName
+        setUploadedFiles((prev) =>
+          prev.map((file) => {
+            if (file.status !== "analyzing") {
+              return file;
+            }
+
+            // Find the result that matches this file by fileName
+            const fileResult = resultsArray.find(
+              (result: any) => result?.fileName === file.fileName
             );
-          } else {
-            setUploadedFiles((prev) =>
-              prev.map((f) => (f.id === file.id ? { ...f, status: "error" } : f))
-            );
-            alertFault(t("materials.dieCutAnalyzer.analysisFailed") || "Analysis failed - no result found");
-          }
+
+            if (fileResult) {
+              return {
+                ...file,
+                status: "completed",
+                unitWidthInMm: fileResult?.unitWidthInMm,
+                unitLengthInMm: fileResult?.unitLengthInMm,
+                columns: fileResult?.columns,
+                rows: fileResult?.rows,
+                columnSpaceInMm: fileResult?.columnSpaceInMm,
+                rowSpaceInMm: fileResult?.rowSpaceInMm,
+              };
+            } else {
+              return { ...file, status: "error" };
+            }
+          })
+        );
+
+        // Check if all files were processed successfully
+        const hasErrors = resultsArray.length < readyFiles.length;
+        if (hasErrors) {
+          alertFault(t("materials.dieCutAnalyzer.analysisFailed") || "Some files failed to analyze");
         } else {
-          setUploadedFiles((prev) =>
-            prev.map((f) => (f.id === file.id ? { ...f, status: "error" } : f))
-          );
-          alertFault(res.message || t("materials.dieCutAnalyzer.analysisFailed") || "Analysis failed");
+          alertSuccessAdded();
         }
-      };
+      } else {
+        // If API call fails, mark all analyzing files as error
+        setUploadedFiles((prev) =>
+          prev.map((f) => (f.status === "analyzing" ? { ...f, status: "error" } : f))
+        );
+        alertFault(res.message || t("materials.dieCutAnalyzer.analysisFailed") || "Analysis failed");
+      }
+    };
 
-      await analyzeDieCutApi(callApi, callBack, {
-        base64Image: file.base64,
-        fileName: file.fileName,
-      });
-    });
-
-    await Promise.all(analyzePromises);
-    alertSuccessAdded();
+    await analyzeDieCutApi(callApi, callBack, payload);
   }, [uploadedFiles, callApi, alertFault, alertSuccessAdded, t]);
 
   const handleClearAll = useCallback(() => {
