@@ -142,7 +142,12 @@ const PrimaryTableWithDragAndDrop = ({
                 <TableHead>
                   <TableRow>
                     {headers?.map((header, index) => (
-                      <TableCell key={`header_${index}`} align={"center"}>
+                      <TableCell
+                        key={`header_${index}`}
+                        align={index === 0 ? (dir === "rtl" ? "right" : "left") :
+                          index === 1 ? (dir === "rtl" ? "right" : "left") : "center"}
+                        style={index === 0 ? { width: columnWidths?.[0], maxWidth: columnWidths?.[0], minWidth: columnWidths?.[0], paddingLeft: "10px", paddingRight: "10px" } : {}}
+                      >
                         {header}
                       </TableCell>
                     ))}
@@ -167,21 +172,28 @@ const PrimaryTableWithDragAndDrop = ({
                           {/* Add SortIcon as the drag handle */}
                           <TableCell
                             {...provided.dragHandleProps}
-                            align="center"
-                            style={{ width: "50px" }}
+                            align={dir === "rtl" ? "right" : "left"}
+                            style={{ width: "50px", maxWidth: "50px", minWidth: "50px", paddingLeft: "10px", paddingRight: "10px" }}
                           >
-                            <SortIcon style={{ cursor: "grab" }} />
+                            <SortIcon
+                              style={{
+                                cursor: "grab",
+                                transform: dir === "rtl" ? "scaleX(-1)" : "none"
+                              }}
+                            />
                           </TableCell>
                           {row.map((cell, cellIndex) => {
                             const cellStyle = columnWidths
                               ? {
-                                  width: columnWidths?.[cellIndex],
-                                }
+                                width: columnWidths?.[cellIndex + 1],
+                                maxWidth: columnWidths?.[cellIndex + 1],
+                                minWidth: columnWidths?.[cellIndex + 1],
+                              }
                               : {};
                             return (
                               <TableCell
                                 key={`cell_${cellIndex}`}
-                                align={"center"}
+                                align={cellIndex === 0 ? (dir === "rtl" ? "right" : "left") : "center"}
                                 style={cellStyle}
                               >
                                 {cell}

@@ -185,6 +185,7 @@ const AddRuleModal = ({
   const [selectedParameters, setSelectedParameters] =
     useState<selectedParametersProps>();
 
+
   useEffect(() => {
     const selectedOutputs = Outputs?.find(
       (output) => output?.id === selectedProperties?.propertyId
@@ -346,7 +347,8 @@ const AddRuleModal = ({
             </div>
           );
       }
-    } else {
+    }
+    else {
       switch (selectedParameters?.type) {
         case EParameterTypes.DROP_DOWN_LIST:
           return (
