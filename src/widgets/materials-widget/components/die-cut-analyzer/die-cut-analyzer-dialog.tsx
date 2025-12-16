@@ -513,12 +513,6 @@ const DieCutAnalyzerDialog: React.FC<DieCutAnalyzerDialogProps> = ({
                       </TableCell>
                       {columnsToShow.map((column) => {
                         const cellValue = file[column.key as keyof UploadedFile];
-
-                        // Debug: Log column and value
-                        if (file.status === "completed") {
-                          console.log(`Column: ${column.label} (key: ${column.key}), Value:`, cellValue, "File:", file);
-                        }
-
                         return (
                           <TableCell
                             key={column.key}

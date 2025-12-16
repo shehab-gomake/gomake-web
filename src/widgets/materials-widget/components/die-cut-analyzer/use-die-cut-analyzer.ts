@@ -373,9 +373,6 @@ export const useDieCutAnalyzer = (onClose: () => void) => {
 
     const type = materialType || "DieCut";
     
-    // Debug: Log headers and material type
-    console.log("getTableColumns - materialType:", type, "headers:", tableHeaders.map(h => ({ key: h.key, value: h.value })));
-    
     const filteredHeaders = tableHeaders.filter((header) => {
       // Only show required fields in the table
       if (header.isRequired !== true) {
@@ -397,9 +394,6 @@ export const useDieCutAnalyzer = (onClose: () => void) => {
 
     return filteredHeaders.map((header) => {
       const fieldKey = mapHeaderKeyToFieldKey(header.key, type);
-      
-      // Debug: Log mapping
-      console.log(`Mapping header key "${header.key}" (materialType: ${type}) -> fieldKey: "${fieldKey}"`);
       
       const inputType = getInputTypeFromHeader(header.inputType, header.values || []);
       
