@@ -38,6 +38,8 @@ const GET_GROUPED_MATERIAL_TYPES_URL = "/v1/materials/get-grouped-material-types
 const DELETE_PRINTHOUSE_MATERIAL_ROW_URL = "/v1/printhouse-materials/delete-printhouse-material-row";
 const DELETE_MATERIAL_PRODUCT_URL = "/v1/materials/delete-material-product-by-id";
 const ADD_MATERIAL_PRODUCT_URL = "/v1/materials/post-material-product-by-id";
+const DIE_CUT_ANALYZER_ANALYZE_URL = "/v1/materials/die-cut-analyzer/analyze";
+const ADD_PRINT_HOUSE_MATERIALS_ROWS_URL = "/v1/printhouse-materials/add-print-house-materials-rows";
 
 
 const getMaterialTableHeadersApi: ICallAndSetData = async (
@@ -470,6 +472,40 @@ const deletePrintHouseMaterialRowApi: ICallAndSetData = async (
   );
 };
 
+const analyzeDieCutApi: ICallAndSetData = async (
+  callApi,
+  callBack,
+  data: Array<{ base64Image: string; fileName: string; materialType: string }>
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    DIE_CUT_ANALYZER_ANALYZE_URL,
+    callBack,
+    data
+  );
+};
+
+const addPrintHouseMaterialsRowsApi: ICallAndSetData = async (
+  callApi,
+  callBack,
+  data: Array<{
+    materialKey: string;
+    categoryKey: string;
+    supplierId: string;
+    rowData: string;
+    connectionId: string;
+  }>
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    ADD_PRINT_HOUSE_MATERIALS_ROWS_URL,
+    callBack,
+    data
+  );
+};
+
 const deleteMaterialProductApi: ICallAndSetData = async (
   callApi,
   callBack,
@@ -530,5 +566,7 @@ export {
   removeQuoteItemFileApi,
   deletePrintHouseMaterialRowApi,
   deleteMaterialProductApi,
-  addMaterialProductApi
+  addMaterialProductApi,
+  analyzeDieCutApi,
+  addPrintHouseMaterialsRowsApi
 };

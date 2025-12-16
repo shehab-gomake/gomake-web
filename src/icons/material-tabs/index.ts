@@ -9,3 +9,4 @@ export * from "./currency-material";
 export * from "./percentage-material";
 export * from "./units-price-material";
 export * from "./upload-materials-pictures";
+export * from "./die-cut-analyzer";

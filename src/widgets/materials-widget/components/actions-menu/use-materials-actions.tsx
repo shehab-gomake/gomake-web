@@ -46,6 +46,7 @@ import {
   UnitsPriceMaterial,
   UploadExcelSheet,
   UploadMaterialsPictures,
+  DieCutAnalyzer,
 } from "@/icons";
 import {
   createPurchaseOrderApi,
@@ -89,6 +90,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
   // Duplicates/Deleted materials modal state
   const [openDuplicatesModal, setOpenDuplicatesModal] = useState(false);
   const [duplicatesData, setDuplicatesData] = useState<any[]>([]);
+  const [openDieCutAnalyzerModal, setOpenDieCutAnalyzerModal] = useState(false);
 
   // Get the table cell data functions for inventory updates
   const { updateInventoryTableData, updateMainTableData, updatePurchasePricingTableData } = useTableCellData(isAdmin, true, true);
@@ -276,6 +278,10 @@ const useMaterialsActions = (isAdmin: boolean) => {
     }
     if (action?.action === EMaterialsActions.UploadMaterialsPictures) {
       uploadImgRef.current.click();
+      return;
+    }
+    if (action?.action === EMaterialsActions.DieCutAnalyzer) {
+      setOpenDieCutAnalyzerModal(true);
       return;
     }
 
@@ -899,6 +905,9 @@ const useMaterialsActions = (isAdmin: boolean) => {
     if (iconName === EMaterialsTabsIcon.CREATE_PURCHASE_ORDER) {
       return <CreateOrder />;
     }
+    if (iconName === EMaterialsTabsIcon.DIE_CUT_ANALYZER) {
+      return <DieCutAnalyzer />;
+    }
   };
   const deleteProperty = (index) => {
     const updatedProperty = [...properties];
@@ -1383,7 +1392,9 @@ const useMaterialsActions = (isAdmin: boolean) => {
     handleCloseDuplicatesModal,
     handleRefreshMaterialData,
     materialType,
-    materialCategory
+    materialCategory,
+    openDieCutAnalyzerModal,
+    setOpenDieCutAnalyzerModal
   };
 };
 

@@ -17,7 +17,7 @@ export const DynamicMetaTags = () => {
   const [companyName, setCompanyName] = useState<string>("Gomake");
 
   useEffect(() => {
-    // Try to get login logo from Recoil state first
+    // Try to get login logo from Recoil state first (most up-to-date)
     if (companyProfile?.loginLogo) {
       setLoginLogo(companyProfile.loginLogo);
       if (companyProfile.name) {
