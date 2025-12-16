@@ -74,15 +74,21 @@ const DieCutAnalyzerDialog: React.FC<DieCutAnalyzerDialogProps> = ({
   const renderEditableCell = (
     file: UploadedFile,
     field: keyof UploadedFile,
-    column: { type: string; options?: any[]; placeholder?: string; isRequired?: boolean }
+    column: { type: string; options?: any[]; placeholder?: string; isRequired?: boolean; unit?: string | null }
   ) => {
-    const value = file[field] ?? "";
+    const value = file[field];
     const isEditable = file.status === "completed";
-    const { type, options, placeholder, isRequired } = column;
+    const { type, options, placeholder, isRequired, unit } = column;
 
     if (!isEditable) {
       return getDisplayValue(value);
     }
+
+    // Handle null/undefined/empty values - show input field with empty value
+    // For number types, convert 0 to empty string for display, but keep 0 as valid value
+    const displayValue = value === null || value === undefined || value === ""
+      ? ""
+      : (type === "number" && value === 0 ? 0 : value);
 
     // Handle dropdown types (dropdown, currency, boolean with options)
     if ((type === "dropdown" || type === "currency" || (type === "boolean" && options && options.length > 0)) && options && options.length > 0) {
@@ -92,18 +98,20 @@ const DieCutAnalyzerDialog: React.FC<DieCutAnalyzerDialogProps> = ({
       );
 
       return (
-        <GoMakeAutoComplate
-          value={selectedOption || null}
-          options={options}
-          onChange={(e: any, newValue: any) => {
-            // Save the key property if it exists, otherwise use value, label, or id
-            const saveValue = newValue?.key ?? newValue?.value ?? newValue?.label ?? newValue?.id ?? "";
-            handleUpdateFileField(file.id, field, saveValue);
-          }}
-          getOptionLabel={(option: any) => option.label || option.value || option.key || option.id || ""}
-          placeholder={placeholder || ""}
-          style={{ width: "100%", minWidth: "120px" }}
-        />
+        <Box sx={{ display: "flex", justifyContent: "center", width: "100%" }}>
+          <GoMakeAutoComplate
+            value={selectedOption || null}
+            options={options}
+            onChange={(e: any, newValue: any) => {
+              // Save the key property if it exists, otherwise use value, label, or id
+              const saveValue = newValue?.key ?? newValue?.value ?? newValue?.label ?? newValue?.id ?? "";
+              handleUpdateFileField(file.id, field, saveValue);
+            }}
+            getOptionLabel={(option: any) => option.label || option.value || option.key || option.id || ""}
+            placeholder={placeholder || ""}
+            style={{ width: "100%", minWidth: "120px" }}
+          />
+        </Box>
       );
     }
 
@@ -131,7 +139,7 @@ const DieCutAnalyzerDialog: React.FC<DieCutAnalyzerDialogProps> = ({
       return (
         <TextField
           type="number"
-          value={value}
+          value={displayValue}
           onChange={(e) => {
             const newValue = e.target.value === "" ? "" : Number(e.target.value);
             handleUpdateFileField(file.id, field, newValue);
@@ -144,11 +152,16 @@ const DieCutAnalyzerDialog: React.FC<DieCutAnalyzerDialogProps> = ({
             "& .MuiOutlinedInput-root": {
               height: "32px",
               fontSize: "14px",
+              textAlign: "center",
+            },
+            "& .MuiInputBase-input": {
+              textAlign: "center",
             },
           }}
           inputProps={{
             style: {
               padding: "6px 8px",
+              textAlign: "center",
             },
           }}
         />
@@ -159,7 +172,7 @@ const DieCutAnalyzerDialog: React.FC<DieCutAnalyzerDialogProps> = ({
     return (
       <TextField
         type="text"
-        value={value}
+        value={displayValue}
         onChange={(e) => {
           handleUpdateFileField(file.id, field, e.target.value);
         }}
@@ -171,11 +184,16 @@ const DieCutAnalyzerDialog: React.FC<DieCutAnalyzerDialogProps> = ({
           "& .MuiOutlinedInput-root": {
             height: "32px",
             fontSize: "14px",
+            textAlign: "center",
+          },
+          "& .MuiInputBase-input": {
+            textAlign: "center",
           },
         }}
         inputProps={{
           style: {
             padding: "6px 8px",
+            textAlign: "center",
           },
         }}
       />
@@ -337,6 +355,27 @@ const DieCutAnalyzerDialog: React.FC<DieCutAnalyzerDialogProps> = ({
               width: "100%",
               overflowX: "auto",
               overflowY: "auto",
+              // Custom scrollbar styling for better visibility
+              "&::-webkit-scrollbar": {
+                height: "12px",
+                width: "12px",
+              },
+              "&::-webkit-scrollbar-track": {
+                backgroundColor: neutralColor(100),
+                borderRadius: "6px",
+                margin: "4px",
+              },
+              "&::-webkit-scrollbar-thumb": {
+                backgroundColor: primaryColor(400),
+                borderRadius: "6px",
+                border: `2px solid ${neutralColor(100)}`,
+                "&:hover": {
+                  backgroundColor: primaryColor(500),
+                },
+              },
+              // Firefox scrollbar styling
+              scrollbarWidth: "thin",
+              scrollbarColor: `${primaryColor(400)} ${neutralColor(100)}`,
             }}
           >
             <Table stickyHeader sx={{ minWidth: "100%" }}>
@@ -374,12 +413,13 @@ const DieCutAnalyzerDialog: React.FC<DieCutAnalyzerDialogProps> = ({
                           backgroundColor: primaryColor(50),
                           color: primaryColor(900),
                           ...FONT_FAMILY.Lexend(500, 14),
-                          width: "100%",
                           minWidth: "200px",
-                          textAlign: "start",
+                          width: "auto",
+                          textAlign: "center",
+                          padding: "12px 16px",
                         }}
                       >
-                        <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+                        <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 0.5 }}>
                           {column.label}
                           {column.isRequired && (
                             <Typography
@@ -388,6 +428,7 @@ const DieCutAnalyzerDialog: React.FC<DieCutAnalyzerDialogProps> = ({
                                 color: "#F44336",
                                 fontSize: "14px",
                                 fontWeight: "bold",
+                                marginLeft: "2px",
                               }}
                             >
                               *
@@ -473,18 +514,25 @@ const DieCutAnalyzerDialog: React.FC<DieCutAnalyzerDialogProps> = ({
                       {columnsToShow.map((column) => {
                         const cellValue = file[column.key as keyof UploadedFile];
 
+                        // Debug: Log column and value
+                        if (file.status === "completed") {
+                          console.log(`Column: ${column.label} (key: ${column.key}), Value:`, cellValue, "File:", file);
+                        }
+
                         return (
                           <TableCell
                             key={column.key}
                             sx={{
                               ...FONT_FAMILY.Lexend(400, 14),
                               color: neutralColor(700),
-                              padding: file.status === "completed" ? "4px 8px" : "8px",
-                              minWidth: 120,
+                              padding: file.status === "completed" ? "8px 16px" : "12px 16px",
+                              minWidth: "200px",
+                              width: "auto",
+                              textAlign: "center",
                               whiteSpace: "nowrap",
                             }}
                           >
-                            {file.status === "completed" && cellValue !== undefined
+                            {file.status === "completed"
                               ? renderEditableCell(file, column.key as keyof UploadedFile, column)
                               : getDisplayValue(cellValue)}
                           </TableCell>

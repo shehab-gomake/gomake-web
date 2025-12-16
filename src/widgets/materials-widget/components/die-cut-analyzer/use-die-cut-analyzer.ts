@@ -59,7 +59,7 @@ export const useDieCutAnalyzer = (onClose: () => void) => {
   const currencies = useRecoilValue(currenciesState);
   const supplierId = useRecoilValue(selectedSupplierIdState);
   const { getMaterialCategoryData } = useMaterialsCategories(false);
-  const { transformApiResponseToUploadedFile, transformUploadedFileToPayload, validateFileFields } = useDieCutDataTransform();
+  const { transformApiResponseToUploadedFile, transformUploadedFileToPayload } = useDieCutDataTransform();
 
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
   const [isDragging, setIsDragging] = useState(false);
@@ -235,7 +235,14 @@ export const useDieCutAnalyzer = (onClose: () => void) => {
             );
 
             if (fileResult) {
-              return transformApiResponseToUploadedFile(file, fileResult);
+              const transformedFile = transformApiResponseToUploadedFile(file, fileResult);
+              
+              // Refetch headers if material type changed (e.g., DieKissCut)
+              if (transformedFile.materialType && transformedFile.materialType !== materialType) {
+                fetchTableHeaders(transformedFile.materialType);
+              }
+              
+              return transformedFile;
             } else {
               return { ...file, status: "error" as const };
             }
@@ -257,7 +264,7 @@ export const useDieCutAnalyzer = (onClose: () => void) => {
     };
 
     await analyzeDieCutApi(callApi, callBack, payload);
-  }, [uploadedFiles, callApi, alertFault, alertSuccessAdded, t, materialType, transformApiResponseToUploadedFile]);
+  }, [uploadedFiles, callApi, alertFault, alertSuccessAdded, t, materialType, transformApiResponseToUploadedFile, fetchTableHeaders]);
 
   /**
    * Handle clear all files
@@ -280,9 +287,13 @@ export const useDieCutAnalyzer = (onClose: () => void) => {
       finalUnitLength: "finalProductLengthInCm",
       finalUnitHeight: "finalProductHeightInCm",
       columnsAmount: "columnsAmount",
+      "columns amount": "columnsAmount",
       linesAmount: "rowsAmount",
+      "lines amount": "rowsAmount",
       spaceBetweenColumns: "spaceBetweenColumnsInMm",
+      "space between columns": "spaceBetweenColumnsInMm",
       spaceBetweenLines: "spaceBetweenRowsInMm",
+      "space between lines": "spaceBetweenRowsInMm",
       cuttingLineLength: "cuttingLineLengthInCm",
       scoringLineLength: "scoringLineLengthInCm",
       perforationLineLength: "perforationLineLengthInCm",
@@ -297,17 +308,23 @@ export const useDieCutAnalyzer = (onClose: () => void) => {
       Active: "Active",
     };
 
-    // Mapping for DieKissCut fields
+    // Mapping for DieKissCut fields - handle both camelCase and spaced versions
     const dieKissCutMapping: Record<string, string> = {
       code: "code_DieKissCut",
       name: "name_DieKissCut",
       shape: "shape",
       unitWidth: "unitWidthInMm_DieKissCut",
+      "unit width": "unitWidthInMm_DieKissCut",
       unitLength: "unitLengthInMm_DieKissCut",
+      "unit length": "unitLengthInMm_DieKissCut",
       columnsAmount: "columnsAmount_DieKissCut",
+      "columns amount": "columnsAmount_DieKissCut",
       linesAmount: "rowsAmount_DieKissCut",
+      "lines amount": "rowsAmount_DieKissCut",
       spaceBetweenColumns: "spaceBetweenColumnsInMm_DieKissCut",
+      "space between columns": "spaceBetweenColumnsInMm_DieKissCut",
       spaceBetweenLines: "spaceBetweenRowsInMm_DieKissCut",
+      "space between lines": "spaceBetweenRowsInMm_DieKissCut",
       directions: "directions",
       price: "defaultCost_DieKissCut",
       currency: "currency_DieKissCut",
@@ -355,6 +372,10 @@ export const useDieCutAnalyzer = (onClose: () => void) => {
     }
 
     const type = materialType || "DieCut";
+    
+    // Debug: Log headers and material type
+    console.log("getTableColumns - materialType:", type, "headers:", tableHeaders.map(h => ({ key: h.key, value: h.value })));
+    
     const filteredHeaders = tableHeaders.filter((header) => {
       // Only show required fields in the table
       if (header.isRequired !== true) {
@@ -376,6 +397,10 @@ export const useDieCutAnalyzer = (onClose: () => void) => {
 
     return filteredHeaders.map((header) => {
       const fieldKey = mapHeaderKeyToFieldKey(header.key, type);
+      
+      // Debug: Log mapping
+      console.log(`Mapping header key "${header.key}" (materialType: ${type}) -> fieldKey: "${fieldKey}"`);
+      
       const inputType = getInputTypeFromHeader(header.inputType, header.values || []);
       
       // Transform values array to options format
