@@ -179,8 +179,8 @@ export const useDieCutDataTransform = () => {
           shape: file.shape ?? "",
           width: file.widthInCm?.toString() ?? "",
           length: file.lengthInCm?.toString() ?? "",
-          unitWidth: file.dieCutFormWidthInCm?.toString() ?? "",
-          unitLength: file.dieCutFormLengthInCm?.toString() ?? "",
+          dieUnitWidth: file.dieCutFormWidthInCm?.toString() ?? "",
+          dieUnitLength: file.dieCutFormLengthInCm?.toString() ?? "",
           finalUnitWidth: file.finalProductWidthInCm?.toString() ?? "",
           finalUnitLength: file.finalProductLengthInCm?.toString() ?? "",
           finalUnitHeight: file.finalProductHeightInCm?.toString() ?? "",
@@ -191,8 +191,13 @@ export const useDieCutDataTransform = () => {
           cuttingLineLength: file.cuttingLineLengthInCm?.toString() ?? "",
           scoringLineLength: file.scoringLineLengthInCm?.toString() ?? "",
           perforationLineLength: file.perforationLineLengthInCm?.toString() ?? "",
-          price: file.defaultCost?.toString() ?? "",
+          unitPrice: file.defaultCost?.toString() ?? "",
           currency: file.currency ?? "",
+          image: `data:image/png;base64,${image}`,
+          isOutSource: "false",
+          Active: "false",
+          name: file.name ?? "",
+          code: file.code ?? "",
         };
       }
 
@@ -253,8 +258,6 @@ export const useDieCutDataTransform = () => {
           missing.push(t("materials.dieCutAnalyzer.table.spaceBetweenColumns") || "Space Between Columns");
         if (file.spaceBetweenRowsInMm === null || file.spaceBetweenRowsInMm === undefined || file.spaceBetweenRowsInMm === "")
           missing.push(t("materials.dieCutAnalyzer.table.spaceBetweenRows") || "Space Between Rows");
-        if (!file.directions || file.directions === "" || file.directions === null)
-          missing.push(t("materials.dieCutAnalyzer.table.directions") || "Directions");
         if (file.defaultCost === null || file.defaultCost === undefined || file.defaultCost === "")
           missing.push(t("materials.dieCutAnalyzer.table.defaultCost") || "Default Cost");
         if (!file.currency || file.currency === "" || file.currency === null)
