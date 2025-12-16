@@ -257,60 +257,66 @@ const DieCutAnalyzerDialog: React.FC<DieCutAnalyzerDialogProps> = ({
           <Stack
             direction="row"
             gap={2}
-            justifyContent="flex-start"
+            justifyContent="space-between"
             sx={{
               flexDirection: isRTL ? "row-reverse" : "row",
             }}
           >
-            <Button
-              variant="contained"
-              onClick={handleAnalyze}
-              disabled={readyFilesCount === 0}
-              sx={{
-                backgroundColor: primaryColor(500),
-                color: "white",
-                "&:hover": {
-                  backgroundColor: primaryColor(600),
-                },
-                "&:disabled": {
-                  backgroundColor: neutralColor(300),
-                  color: neutralColor(500),
-                },
-              }}
-            >
-              {t("materials.dieCutAnalyzer.analyzeFiles", { count: readyFilesCount }) ||
-                `Analyze ${readyFilesCount} Files`}
-            </Button>
+            <Stack direction="row" gap={2} sx={{
+              flexDirection: isRTL ? "row-reverse" : "row",
+            }}>
+              <Button
+                variant="contained"
+                onClick={handleAnalyze}
+                disabled={readyFilesCount === 0}
+                sx={{
+                  backgroundColor: primaryColor(500),
+                  color: "white",
+                  "&:hover": {
+                    backgroundColor: primaryColor(600),
+                  },
+                  "&:disabled": {
+                    backgroundColor: neutralColor(300),
+                    color: neutralColor(500),
+                  },
+                }}
+              >
+                {t("materials.dieCutAnalyzer.analyzeFiles", { count: readyFilesCount }) ||
+                  `Analyze ${readyFilesCount} Files`}
+              </Button>
+              <Button
+                variant="outlined"
+                startIcon={<div style={{ width: "12px", height: "12px", display: "flex", alignItems: "center", justifyContent: "center", marginRight: isRTL ? 0 : "16px", marginLeft: isRTL ? "16px" : 0 }}>
+                  <DownloadIcon />
+                </div>}
+                onClick={handleAddMaterials}
+                disabled={!canAddMaterials}
+                sx={{
+                  borderColor: neutralColor(300),
+                  color: neutralColor(700),
+                  "&:hover": {
+                    borderColor: primaryColor(500),
+                    backgroundColor: primaryColor(50),
+                  },
+                  "&:disabled": {
+                    borderColor: neutralColor(200),
+                    color: neutralColor(400),
+                    backgroundColor: neutralColor(50),
+                  },
+                }}
+              >
+                {t("materials.dieCutAnalyzer.addMaterials")}
+              </Button>
+            </Stack>
             <Button
               variant="outlined"
-              startIcon={<DownloadIcon />}
-              onClick={handleAddMaterials}
-              disabled={!canAddMaterials}
-              sx={{
-                borderColor: neutralColor(300),
-                color: neutralColor(700),
-                "&:hover": {
-                  borderColor: primaryColor(500),
-                  backgroundColor: primaryColor(50),
-                },
-                "&:disabled": {
-                  borderColor: neutralColor(200),
-                  color: neutralColor(400),
-                  backgroundColor: neutralColor(50),
-                },
-              }}
-            >
-              {t("materials.dieCutAnalyzer.addMaterials")}
-            </Button>
-            <Button
-              variant="outlined"
-              startIcon={<DeleteIcon />}
+              startIcon={<div style={{ width: "12px", height: "12px", display: "flex", alignItems: "center", justifyContent: "center", marginRight: isRTL ? 0 : "16px", marginLeft: isRTL ? "16px" : 0 }}>
+                <DeleteIcon />
+              </div>}
               onClick={handleClearAll}
               sx={{
                 borderColor: "#F44336",
                 color: "#F44336",
-                marginLeft: isRTL ? 0 : "auto",
-                marginRight: isRTL ? "auto" : 0,
                 "&:hover": {
                   borderColor: "#D32F2F",
                   backgroundColor: "#FFEBEE",
