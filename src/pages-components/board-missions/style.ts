@@ -105,6 +105,7 @@ const useStyle = () => {
         width: "100%",
         border: "none",
         height: 40,
+        zIndex: 99999999,
       },
       textInputForProductsStyle: {
         width: "100%",
@@ -192,10 +193,10 @@ const useStyle = () => {
       subTitle: {
         ...FONT_FAMILY.Lexend(400, 13),
         color: "#475467",
-        textAlign: "center" as "center",
+        // textAlign: "center" as "center",
+        // alignSelf: "center" as "center",
         marginBottom: 10,
         width: "70%",
-        alignSelf: "center" as "center",
       },
       tableAtagStyle: {
         color: "inherit" as "inherit",

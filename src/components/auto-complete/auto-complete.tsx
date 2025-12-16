@@ -41,6 +41,7 @@ const StyledAutocomplete: any = styled(Autocomplete, {
       fontWeight: 500,
       fontSize: 14,
       width: "100%",
+      zIndex: 9999999999999,
       // !here not sure about this style theme css variable
       "& fieldset": {
         border: props?.selectedOption
@@ -157,6 +158,7 @@ const GoMakeAutoComplate = ({
   multiple = false,
   onChangeTextField,
   PaperComponent,
+  PopperComponent,
   withArrow = false,
   groupBy,
   popupIcon,
@@ -171,7 +173,8 @@ const GoMakeAutoComplate = ({
   componentsProps,
   isOptionEqualToValue,
   labelText,
-  getOptionDisabled
+  getOptionDisabled,
+  disablePortal
 }: {
   value?: any;
   onChange?: any;
@@ -191,6 +194,7 @@ const GoMakeAutoComplate = ({
   disabled?: any;
   onChangeTextField?: any;
   PaperComponent?: any;
+  PopperComponent?: any;
   popupIcon?: any;
   withArrow?: boolean;
   renderGroup?: (params: any) => React.ReactNode;
@@ -208,6 +212,7 @@ const GoMakeAutoComplate = ({
   getOptionDisabled?: (option: any) => boolean;
   freeSolo?: boolean;
   inputValue?: string;
+  disablePortal?: boolean;
 }) => {
   const [selectedOption, setSelectedOption] = useState<any>();
   const { t } = useTranslation();
@@ -245,9 +250,9 @@ const GoMakeAutoComplate = ({
         <div style={{ ...FONT_FAMILY.Lexend(600, 14) }}>{labelText}</div>
       )}
       <StyledAutocomplete
-          {...(value && { value })}
+        {...(value && { value })}
         {...(selectedOption && { selectedOption })}
-          {...(selectedOption && { selectedOption })}
+        {...(selectedOption && { selectedOption })}
         direction={dir}
         onChange={(e: any, value: any) => {
           onChange(e, value);
@@ -320,6 +325,8 @@ const GoMakeAutoComplate = ({
           option?.id === value?.id
         }
         PaperComponent={PaperComponent}
+        PopperComponent={PopperComponent}
+        disablePortal={disablePortal}
         filterOptions={defaultFiltering ? undefined : (x) => x} //? Bypass default filtering
         noOptionsText={noOptionsText}
         componentsProps={componentsProps}
