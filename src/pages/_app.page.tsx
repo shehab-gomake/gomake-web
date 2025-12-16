@@ -22,7 +22,6 @@ import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import { MailTestProvider } from "@/providers/signalr-provider/mail-test-provider";
 import { useRouter } from "next/router";
 import { MultiThemeProvider } from "@/contexts/theme";
-import { DynamicMetaTags } from "@/components/meta-tags/dynamic-meta-tags";
 
 i18n
   .use(Backend)
@@ -60,7 +59,6 @@ export default function App({ Component, pageProps }: AppProps) {
                         direction: ${t("direction")};
                       }
                     `}</style>
-                    <DynamicMetaTags />
                     <GoMakeTourProvider>
                       <Component {...pageProps} />
                     </GoMakeTourProvider>

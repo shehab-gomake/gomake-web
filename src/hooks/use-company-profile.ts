@@ -45,14 +45,6 @@ const useCompanyProfile = () => {
     const callBack = (res) => {
       if (res.success) {
         setProfile(res.data);
-        // Store login logo in localStorage for meta tags (WhatsApp link previews)
-        if (res.data?.loginLogo && typeof window !== "undefined") {
-          localStorage.setItem("loginLogo", res.data.loginLogo);
-        }
-        // Store company name for meta tags
-        if (res.data?.name && typeof window !== "undefined") {
-          localStorage.setItem("companyName", res.data.name);
-        }
       }
     };
     await getCompanyProfile(callApi, callBack);
@@ -61,13 +53,7 @@ const useCompanyProfile = () => {
   const getCompanyLogo = async () => {
     const callBack = (res) => {
       if (res.success) {
-        // Store login logo in localStorage for meta tags (WhatsApp link previews)
-        if (res.data?.loginLogo && typeof window !== "undefined") {
-          localStorage.setItem("loginLogo", res.data.loginLogo);
-        }
-        if (res.data?.name && typeof window !== "undefined") {
-          localStorage.setItem("companyName", res.data.name);
-        }
+        // setProfile({ ...profile, loginLogo: res.data?.loginLogo });
       }
     };
     await getCompanyLoginLogo(callApi, callBack);
@@ -113,10 +99,6 @@ const useCompanyProfile = () => {
           ...profile,
           loginLogo: res.data?.url,
         });
-        // Store updated login logo in localStorage for meta tags (WhatsApp link previews)
-        if (res.data?.url && typeof window !== "undefined") {
-          localStorage.setItem("loginLogo", res.data.url);
-        }
         setChangeProfileImage(false);
       }
     };
