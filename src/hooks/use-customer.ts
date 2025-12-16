@@ -116,6 +116,20 @@ const useCustomer = (
         "systemLogo",
         validate?.data?.data?.customer?.printHouseProfile?.logo
       );
+      // Store login logo for meta tags (WhatsApp link previews)
+      if (validate?.data?.data?.customer?.printHouseProfile?.loginLogo) {
+        localStorage.setItem(
+          "loginLogo",
+          validate?.data?.data?.customer?.printHouseProfile?.loginLogo
+        );
+      }
+      // Store company name for meta tags
+      if (validate?.data?.data?.customer?.printHouseProfile?.name) {
+        localStorage.setItem(
+          "companyName",
+          validate?.data?.data?.customer?.printHouseProfile?.name
+        );
+      }
       if (validate?.data?.data?.customer?.systemLang) {
         localStorage.setItem(
           "systemLanguage",
