@@ -5,12 +5,31 @@ import {
   GomakePrimaryButton,
   GomakeTextInput,
 } from "@/components";
-import { Stack } from "@mui/material";
+import { Stack, Paper, Popper } from "@mui/material";
+import { styled } from "@mui/material/styles";
 import { useStyle } from "@/pages-components/board-missions/style";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { MaterialStockUnit } from "@/widgets/materials-widget/enums";
 import { useIsMobile } from "@/hooks/use-responsive";
 import { useMaterialAndProductionTimeModal } from "./use-material-and-production-time-modal";
+import React from "react";
+
+// Custom Popper with high z-index to appear above modal and match input width
+const StyledPopper = styled(Popper)(({ theme }) => ({
+  zIndex: 10000000, // Higher than modal z-index (9999999)
+  "&[data-popper-placement]": {
+    width: "var(--popper-anchor-width)",
+  },
+  "& .MuiAutocomplete-paper": {
+    zIndex: 10000000,
+    width: "var(--popper-anchor-width)",
+    minWidth: "var(--popper-anchor-width)",
+  },
+  "& .MuiAutocomplete-listbox": {
+    zIndex: 10000000,
+    width: "100%",
+  },
+}));
 
 interface IProps {
   openModal: boolean;
@@ -48,7 +67,7 @@ const MaterialsAndProductionTimeModalWidget = ({
     <GoMakeDialog
       open={openModal}
       onClose={onClose}
-      showCloseButton={showIsReady ? false : true}
+      // showCloseButton={showIsReady ? false : true}
       maxWidth="md"
       title={
         showIsReady
@@ -131,7 +150,7 @@ const MaterialsAndProductionTimeModalWidget = ({
     >
       <Stack
         direction="column"
-        gap="30px"
+        gap="20px"
         marginTop="10px"
         sx={{
           maxHeight: "300px",
@@ -211,6 +230,53 @@ const MaterialsAndProductionTimeModalWidget = ({
               }}
               onInputChange={(event: any, newInputValue: string) => {
                 setInputValue(newInputValue);
+              }}
+
+              PopperComponent={StyledPopper}
+              disablePortal={false}
+              componentsProps={{
+                popper: {
+                  sx: {
+                    zIndex: "10000000 !important", // Higher than modal z-index (9999999)
+                  },
+                  style: {
+                    zIndex: 10000000,
+                  },
+                  modifiers: [
+                    {
+                      name: "offset",
+                      options: {
+                        offset: [0, 4],
+                      },
+                    },
+                    {
+                      name: "preventOverflow",
+                      enabled: true,
+                    },
+                    {
+                      name: "flip",
+                      enabled: false,
+                    },
+                    {
+                      name: "sameWidth",
+                      enabled: true,
+                      phase: "beforeWrite",
+                      requires: ["computeStyles"],
+                      fn: ({ state }) => {
+                        state.styles.popper.width = `${state.rects.reference.width}px`;
+                      },
+                      effect: ({ state }) => {
+                        state.elements.popper.style.width = `${state.elements.reference.offsetWidth}px`;
+                      },
+                    },
+                  ],
+                },
+                listbox: {
+                  sx: {
+                    zIndex: 10000000,
+                    width: "100%",
+                  },
+                },
               }}
             />
           </div>

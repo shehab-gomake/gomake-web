@@ -9,7 +9,7 @@ export default function Document({ loginLogo, companyName }: DocumentProps) {
   // Default fallback image
   const defaultImage =
     "https://gomake-translations.s3.eu-central-1.amazonaws.com/favicon.ico";
-  
+
   // Ensure ogImage is always absolute URL (required by WhatsApp)
   const ogImage = loginLogo || defaultImage;
   const siteName = companyName || "Gomake";
@@ -24,13 +24,13 @@ export default function Document({ loginLogo, companyName }: DocumentProps) {
           name="viewport"
           content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
         />
-        
+
         {/* Favicon */}
         <link
           rel="icon"
           href={ogImage}
         />
-        
+
         {/* Open Graph / Facebook / WhatsApp Meta Tags - CRITICAL for WhatsApp previews */}
         <meta property="og:type" content="website" />
         <meta property="og:title" content={pageTitle} />
@@ -87,12 +87,12 @@ export default function Document({ loginLogo, companyName }: DocumentProps) {
 // Fetch login logo server-side for meta tags (WhatsApp crawler reads this!)
 Document.getInitialProps = async (ctx: DocumentContext): Promise<DocumentProps> => {
   const initialProps = await ctx.defaultGetInitialProps(ctx);
-  
+
   try {
     const getConfig = require("next/config").default();
     const { serverRuntimeConfig } = getConfig() || {};
     const API_SERVER = serverRuntimeConfig?.API_SERVER || process.env.API_SERVER;
-    
+
     if (!API_SERVER) {
       return initialProps;
     }
@@ -114,6 +114,7 @@ Document.getInitialProps = async (ctx: DocumentContext): Promise<DocumentProps> 
     // If they require auth, WhatsApp crawler won't be able to fetch the logo
     
     // Try method 1: Direct call to get-print-house-login-logo endpoint
+
     try {
       const response = await axios.get(
         `${API_SERVER}/v1/get-print-house-login-logo`,
@@ -130,14 +131,14 @@ Document.getInitialProps = async (ctx: DocumentContext): Promise<DocumentProps> 
 
       if (response?.data?.success) {
         const data = response?.data?.data?.data || response?.data?.data || response?.data;
-        
+
         if (data?.loginLogo) {
           let logoUrl = data.loginLogo;
           // Ensure absolute URL
           if (logoUrl && !logoUrl.startsWith("http://") && !logoUrl.startsWith("https://")) {
             logoUrl = `${protocol}://${host}${logoUrl.startsWith("/") ? logoUrl : `/${logoUrl}`}`;
           }
-          
+
           return {
             ...initialProps,
             loginLogo: logoUrl,
@@ -184,6 +185,6 @@ Document.getInitialProps = async (ctx: DocumentContext): Promise<DocumentProps> 
   } catch (error) {
     // If anything fails, return default props
   }
-  
+
   return initialProps;
 };

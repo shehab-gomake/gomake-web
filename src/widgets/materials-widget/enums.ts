@@ -16,6 +16,7 @@ export enum EMaterialsActions {
   UploadMaterialsPictures,
   CreatePurchaseOrder,
   sku,
+  DieCutAnalyzer,
 }
 
 export enum EMaterialActiveFilter {
