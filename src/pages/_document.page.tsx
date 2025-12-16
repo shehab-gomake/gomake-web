@@ -99,8 +99,8 @@ Document.getInitialProps = async (ctx: DocumentContext): Promise<DocumentProps> 
 
     const host = ctx.req?.headers.host || "";
     const domain = host.split(":")[0]; // Remove port if present
-    const protocol = ctx.req?.headers["x-forwarded-proto"] || 
-                    (ctx.req?.connection as any)?.encrypted ? "https" : "http";
+    const protocol = ctx.req?.headers["x-forwarded-proto"] ||
+      (ctx.req?.connection as any)?.encrypted ? "https" : "http";
 
     // Skip for localhost (development)
     if (!domain || domain === "localhost" || domain.includes("127.0.0.1")) {
@@ -108,11 +108,12 @@ Document.getInitialProps = async (ctx: DocumentContext): Promise<DocumentProps> 
     }
 
     const axios = require("axios");
-    
-    // IMPORTANT: These API endpoints MUST work WITHOUT authentication
-    // They should accept the "domain" header/param to identify the print house
-    // If they require auth, WhatsApp crawler won't be able to fetch the logo
-    
+
+    // CRITICAL: Backend API endpoint MUST work WITHOUT authentication
+    // It should accept "domain" header to identify print house
+    // WhatsApp crawler doesn't have auth tokens!
+
+    // Try direct backend API call
     // Try method 1: Direct call to get-print-house-login-logo endpoint
 
     try {
@@ -123,68 +124,55 @@ Document.getInitialProps = async (ctx: DocumentContext): Promise<DocumentProps> 
             Accept: "application/json",
             "Content-Type": "application/json",
             "project-name": "business-dashboard",
-            domain: domain, // Backend should use this to identify print house
+            domain: domain, // Backend MUST use this to identify print house without auth
           },
-          timeout: 2000,
+          timeout: 3000,
+          validateStatus: (status) => status < 500, // Don't throw on 4xx errors
         }
       );
 
-      if (response?.data?.success) {
-        const data = response?.data?.data?.data || response?.data?.data || response?.data;
-
-        if (data?.loginLogo) {
-          let logoUrl = data.loginLogo;
-          // Ensure absolute URL
-          if (logoUrl && !logoUrl.startsWith("http://") && !logoUrl.startsWith("https://")) {
-            logoUrl = `${protocol}://${host}${logoUrl.startsWith("/") ? logoUrl : `/${logoUrl}`}`;
-          }
-
-          return {
-            ...initialProps,
-            loginLogo: logoUrl,
-            companyName: data.name || "Gomake",
-          };
+      // Check various response structures
+      if (response?.status === 200 && response?.data) {
+        // Try different nested structures
+        let data = response.data;
+        if (data.success && data.data) {
+          data = data.data;
+          if (data.data) data = data.data;
+          if (data.data) data = data.data; // Handle triple nesting
         }
-      }
-    } catch (error1) {
-      // Method 1 failed, try method 2: check-print-house-domain endpoint
-      try {
-        const domainResponse = await axios.get(
-          `${API_SERVER}/v1/check-print-house-domain`,
-          {
-            params: { domain },
-            headers: {
-              Accept: "application/json",
-              "Content-Type": "application/json",
-              "project-name": "business-dashboard",
-            },
-            timeout: 2000,
-          }
-        );
 
-        if (domainResponse?.data?.success) {
-          const domainData = domainResponse?.data?.data?.data || domainResponse?.data?.data || domainResponse?.data;
-          
-          if (domainData?.loginLogo) {
-            let logoUrl = domainData.loginLogo;
-            if (logoUrl && !logoUrl.startsWith("http://") && !logoUrl.startsWith("https://")) {
-              logoUrl = `${protocol}://${host}${logoUrl.startsWith("/") ? logoUrl : `/${logoUrl}`}`;
+        const loginLogo = data?.loginLogo || data?.login_logo;
+        const companyName = data?.name || data?.companyName || data?.company_name;
+
+        if (loginLogo) {
+          let logoUrl = loginLogo;
+          // Ensure absolute URL (WhatsApp requirement)
+          if (response?.data?.success) {
+            const data = response?.data?.data?.data || response?.data?.data || response?.data;
+
+            if (data?.loginLogo) {
+              let logoUrl = data.loginLogo;
+              // Ensure absolute URL
+              if (logoUrl && !logoUrl.startsWith("http://") && !logoUrl.startsWith("https://")) {
+                logoUrl = `${protocol}://${host}${logoUrl.startsWith("/") ? logoUrl : `/${logoUrl}`}`;
+              }
+
+              return {
+                ...initialProps,
+                loginLogo: logoUrl,
+                companyName: companyName || "Gomake",
+              };
             }
-            
-            return {
-              ...initialProps,
-              loginLogo: logoUrl,
-              companyName: domainData.name || "Gomake",
-            };
           }
         }
-      } catch (error2) {
-        // Both methods failed - will use default logo
       }
+
+      return initialProps;
+    } catch (error) {
+      // If anything fails, return default props
+      return initialProps;
     }
   } catch (error) {
-    // If anything fails, return default props
+    return initialProps;
   }
-
-  return initialProps;
-};
+};  

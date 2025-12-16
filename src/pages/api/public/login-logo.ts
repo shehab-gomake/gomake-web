@@ -36,15 +36,25 @@ export default async function handler(
 
     try {
       // Try to fetch login logo - endpoint should work with domain header
+      // NOTE: If this endpoint requires auth, we need backend to support domain-based lookup
+      const headers: any = {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        "project-name": "business-dashboard",
+        domain: domain,
+      };
+      
+      // Try to get auth token from cookies if available (for logged-in users)
+      // But WhatsApp crawler won't have cookies, so backend must support domain-only lookup
+      const authToken = req.cookies?.token || req.headers.authorization?.replace("Bearer ", "");
+      if (authToken) {
+        headers.Authorization = `Bearer ${authToken}`;
+      }
+      
       const response = await axios.get(
         `${API_SERVER}/v1/get-print-house-login-logo`,
         {
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-            "project-name": "business-dashboard",
-            domain: domain,
-          },
+          headers,
           timeout: 3000,
         }
       );
