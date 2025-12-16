@@ -13,5 +13,5 @@ export enum EMaterialsTabsIcon {
   UPLOAD_EXCEL = "uploadFile",
   Upload_Materials_Pictures = "UploadMaterialsPictures",
   CREATE_PURCHASE_ORDER = "purchaseOrderIcon",
-
+  DIE_CUT_ANALYZER = "dieCutAnalyzer",
 }
