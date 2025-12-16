@@ -219,49 +219,49 @@ export const useDieCutDataTransform = () => {
 
       if (file.materialType === "DieKissCut") {
         if (!file.shape || file.shape === "" || file.shape === null)
-          missing.push(t("materials.dieCutAnalyzer.table.shape") || "Shape");
+          missing.push(t("materials.dieCutAnalyzer.table.shape"));
         if (!file.name_DieKissCut || file.name_DieKissCut === "" || file.name_DieKissCut === null)
-          missing.push(t("materials.dieCutAnalyzer.table.name") || "Name");
+          missing.push(t("materials.dieCutAnalyzer.table.name"));
         if (file.unitWidthInMm_DieKissCut === null || file.unitWidthInMm_DieKissCut === undefined || file.unitWidthInMm_DieKissCut === "")
-          missing.push(t("materials.dieCutAnalyzer.table.unitWidth") || "Unit Width");
+          missing.push(t("materials.dieCutAnalyzer.table.unitWidth"));
         if (file.unitLengthInMm_DieKissCut === null || file.unitLengthInMm_DieKissCut === undefined || file.unitLengthInMm_DieKissCut === "")
-          missing.push(t("materials.dieCutAnalyzer.table.unitLength") || "Unit Length");
+          missing.push(t("materials.dieCutAnalyzer.table.unitLength"));
         if (file.columnsAmount_DieKissCut === null || file.columnsAmount_DieKissCut === undefined || file.columnsAmount_DieKissCut === "")
-          missing.push(t("materials.dieCutAnalyzer.table.columnsAmount") || "Columns Amount");
+          missing.push(t("materials.dieCutAnalyzer.table.columnsAmount"));
         if (file.rowsAmount_DieKissCut === null || file.rowsAmount_DieKissCut === undefined || file.rowsAmount_DieKissCut === "")
-          missing.push(t("materials.dieCutAnalyzer.table.rowsAmount") || "Rows Amount");
+          missing.push(t("materials.dieCutAnalyzer.table.rowsAmount"));
         if (file.spaceBetweenColumnsInMm_DieKissCut === null || file.spaceBetweenColumnsInMm_DieKissCut === undefined || file.spaceBetweenColumnsInMm_DieKissCut === "")
-          missing.push(t("materials.dieCutAnalyzer.table.spaceBetweenColumns") || "Space Between Columns");
+          missing.push(t("materials.dieCutAnalyzer.table.spaceBetweenColumns"));
         if (file.spaceBetweenRowsInMm_DieKissCut === null || file.spaceBetweenRowsInMm_DieKissCut === undefined || file.spaceBetweenRowsInMm_DieKissCut === "")
-          missing.push(t("materials.dieCutAnalyzer.table.spaceBetweenRows") || "Space Between Rows");
+          missing.push(t("materials.dieCutAnalyzer.table.spaceBetweenRows"));
         if (!file.directions || file.directions === "" || file.directions === null)
-          missing.push(t("materials.dieCutAnalyzer.table.directions") || "Directions");
+          missing.push(t("materials.dieCutAnalyzer.table.directions"));
         if (file.defaultCost_DieKissCut === null || file.defaultCost_DieKissCut === undefined || file.defaultCost_DieKissCut === "")
-          missing.push(t("materials.dieCutAnalyzer.table.defaultCost") || "Default Cost");
+          missing.push(t("materials.dieCutAnalyzer.table.defaultCost"));
         if (!file.currency_DieKissCut || file.currency_DieKissCut === "" || file.currency_DieKissCut === null)
-          missing.push(t("materials.dieCutAnalyzer.table.currency") || "Currency");
+          missing.push(t("materials.dieCutAnalyzer.table.currency"));
       } else {
         // DieCut validation
         if (!file.shape || file.shape === "" || file.shape === null)
-          missing.push(t("materials.dieCutAnalyzer.table.shape") || "Shape");
+          missing.push(t("materials.dieCutAnalyzer.table.shape"));
         if (!file.name || file.name === "" || file.name === null)
-          missing.push(t("materials.dieCutAnalyzer.table.name") || "Name");
+          missing.push(t("materials.dieCutAnalyzer.table.name"));
         if (file.dieCutFormWidthInCm === null || file.dieCutFormWidthInCm === undefined || file.dieCutFormWidthInCm === "")
-          missing.push(t("materials.dieCutAnalyzer.table.dieUnitWidth") || "Die Unit Width");
+          missing.push(t("materials.dieCutAnalyzer.table.dieUnitWidth"));
         if (file.dieCutFormLengthInCm === null || file.dieCutFormLengthInCm === undefined || file.dieCutFormLengthInCm === "")
-          missing.push(t("materials.dieCutAnalyzer.table.dieUnitLength") || "Die Unit Length");
+          missing.push(t("materials.dieCutAnalyzer.table.dieUnitLength"));
         if (file.columnsAmount === null || file.columnsAmount === undefined || file.columnsAmount === "")
-          missing.push(t("materials.dieCutAnalyzer.table.columnsAmount") || "Columns Amount");
+          missing.push(t("materials.dieCutAnalyzer.table.columnsAmount"));
         if (file.rowsAmount === null || file.rowsAmount === undefined || file.rowsAmount === "")
-          missing.push(t("materials.dieCutAnalyzer.table.rowsAmount") || "Rows Amount");
+          missing.push(t("materials.dieCutAnalyzer.table.rowsAmount"));
         if (file.spaceBetweenColumnsInMm === null || file.spaceBetweenColumnsInMm === undefined || file.spaceBetweenColumnsInMm === "")
-          missing.push(t("materials.dieCutAnalyzer.table.spaceBetweenColumns") || "Space Between Columns");
+          missing.push(t("materials.dieCutAnalyzer.table.spaceBetweenColumns"));
         if (file.spaceBetweenRowsInMm === null || file.spaceBetweenRowsInMm === undefined || file.spaceBetweenRowsInMm === "")
-          missing.push(t("materials.dieCutAnalyzer.table.spaceBetweenRows") || "Space Between Rows");
+          missing.push(t("materials.dieCutAnalyzer.table.spaceBetweenRows"));
         if (file.defaultCost === null || file.defaultCost === undefined || file.defaultCost === "")
-          missing.push(t("materials.dieCutAnalyzer.table.defaultCost") || "Default Cost");
+          missing.push(t("materials.dieCutAnalyzer.table.defaultCost"));
         if (!file.currency || file.currency === "" || file.currency === null)
-          missing.push(t("materials.dieCutAnalyzer.table.currency") || "Currency");
+          missing.push(t("materials.dieCutAnalyzer.table.currency"));
       }
 
       return missing;

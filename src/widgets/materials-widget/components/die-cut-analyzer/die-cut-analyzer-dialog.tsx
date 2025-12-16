@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { GoMakeDialog } from "@/components/dialog";
 import {
   Box,
@@ -61,13 +61,22 @@ const DieCutAnalyzerDialog: React.FC<DieCutAnalyzerDialogProps> = ({
     getStatusLabel,
     getDisplayValue,
     getTableColumns,
+    clearAllData,
   } = useDieCutAnalyzer(onClose);
+
+  // Clear all data when modal closes
+  useEffect(() => {
+    if (!open) {
+      clearAllData();
+    }
+  }, [open, clearAllData]);
 
   const renderEditableCell = (
     file: UploadedFile,
     field: keyof UploadedFile,
     type: "text" | "number" = "text",
-    options?: any[]
+    options?: any[],
+    placeholder?: string
   ) => {
     const value = file[field] ?? "";
     const isEditable = file.status === "completed";
@@ -92,6 +101,7 @@ const DieCutAnalyzerDialog: React.FC<DieCutAnalyzerDialogProps> = ({
             handleUpdateFileField(file.id, field, saveValue);
           }}
           getOptionLabel={(option: any) => option.label || option.value || option.key || ""}
+          placeholder={placeholder || ""}
           style={{ width: "100%", minWidth: "120px" }}
         />
       );
@@ -105,6 +115,7 @@ const DieCutAnalyzerDialog: React.FC<DieCutAnalyzerDialogProps> = ({
           const newValue = type === "number" ? (e.target.value === "" ? "" : Number(e.target.value)) : e.target.value;
           handleUpdateFileField(file.id, field, newValue);
         }}
+        placeholder={placeholder}
         size="small"
         sx={{
           width: "100%",
@@ -126,7 +137,7 @@ const DieCutAnalyzerDialog: React.FC<DieCutAnalyzerDialogProps> = ({
     <GoMakeDialog
       open={open}
       onClose={onClose}
-      title={t("materials.dieCutAnalyzer.title") || "Die-Cut Analyzer"}
+      title={t("materials.dieCutAnalyzer.title")}
       maxWidth="xl"
       fullWidth
       showFooter={false}
@@ -169,9 +180,9 @@ const DieCutAnalyzerDialog: React.FC<DieCutAnalyzerDialogProps> = ({
             }}
           >
             <span style={{ color: primaryColor(500) }}>
-              {t("materials.dieCutAnalyzer.uploadFiles") || "Upload files"}
+              {t("materials.dieCutAnalyzer.uploadFiles")}
             </span>{" "}
-            {t("materials.dieCutAnalyzer.orDragAndDrop") || "or drag and drop"}
+            {t("materials.dieCutAnalyzer.orDragAndDrop")}
           </Typography>
           <Typography
             variant="caption"
@@ -180,7 +191,7 @@ const DieCutAnalyzerDialog: React.FC<DieCutAnalyzerDialogProps> = ({
               ...FONT_FAMILY.Lexend(400, 12),
             }}
           >
-            {t("materials.dieCutAnalyzer.fileTypes") || "PNG, JPG, PDF up to 10MB"}
+            {t("materials.dieCutAnalyzer.fileTypes")}
           </Typography>
           <input
             ref={fileInputRef}
@@ -240,7 +251,7 @@ const DieCutAnalyzerDialog: React.FC<DieCutAnalyzerDialogProps> = ({
                 },
               }}
             >
-              {t("materials.dieCutAnalyzer.addMaterials") || "Add Materials"}
+              {t("materials.dieCutAnalyzer.addMaterials")}
             </Button>
             <Button
               variant="outlined"
@@ -257,7 +268,7 @@ const DieCutAnalyzerDialog: React.FC<DieCutAnalyzerDialogProps> = ({
                 },
               }}
             >
-              {t("materials.dieCutAnalyzer.clearAll") || "Clear All"}
+              {t("materials.dieCutAnalyzer.clearAll")}
             </Button>
           </Stack>
         )}
@@ -283,7 +294,7 @@ const DieCutAnalyzerDialog: React.FC<DieCutAnalyzerDialogProps> = ({
                       ...FONT_FAMILY.Lexend(500, 14),
                     }}
                   >
-                    {t("materials.dieCutAnalyzer.table.file") || "FILE"}
+                    {t("materials.dieCutAnalyzer.table.file")}
                   </TableCell>
                   <TableCell
                     sx={{
@@ -292,7 +303,7 @@ const DieCutAnalyzerDialog: React.FC<DieCutAnalyzerDialogProps> = ({
                       ...FONT_FAMILY.Lexend(500, 14),
                     }}
                   >
-                    {t("materials.dieCutAnalyzer.table.status") || "STATUS"}
+                    {t("materials.dieCutAnalyzer.table.status")}
                   </TableCell>
                   {(() => {
                     const completedFiles = uploadedFiles.filter((f) => f.status === "completed");
@@ -322,7 +333,7 @@ const DieCutAnalyzerDialog: React.FC<DieCutAnalyzerDialogProps> = ({
                       ...FONT_FAMILY.Lexend(500, 14),
                     }}
                   >
-                    {t("materials.dieCutAnalyzer.table.actions") || "ACTIONS"}
+                    {t("materials.dieCutAnalyzer.table.actions")}
                   </TableCell>
                 </TableRow>
               </TableHead>
@@ -402,7 +413,7 @@ const DieCutAnalyzerDialog: React.FC<DieCutAnalyzerDialogProps> = ({
                             }}
                           >
                             {file.status === "completed" && cellValue !== undefined
-                              ? renderEditableCell(file, column.key as keyof UploadedFile, column.type as "text" | "number", column.options)
+                              ? renderEditableCell(file, column.key as keyof UploadedFile, column.type as "text" | "number", column.options, column.placeholder)
                               : getDisplayValue(cellValue)}
                           </TableCell>
                         );

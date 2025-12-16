@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import { useRecoilValue } from "recoil";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { analyzeDieCutApi, addPrintHouseMaterialsRowsApi } from "@/services/api-service/materials/materials-endpoints";
-import { currenciesState, selectedSupplierIdState, materialCategoryDataState } from "@/widgets/materials-widget/state";
+import { currenciesState, selectedSupplierIdState } from "@/widgets/materials-widget/state";
 import { useMaterialsCategories } from "../../use-materials-categories";
 import { UploadedFile, useDieCutDataTransform } from "./use-die-cut-data-transform";
 
@@ -21,6 +21,7 @@ export interface TableColumn {
   type: "text" | "number";
   materialType: string;
   options?: any[];
+  placeholder?: string;
 }
 
 /**
@@ -73,11 +74,11 @@ export const useDieCutAnalyzer = (onClose: () => void) => {
         const file = files[i];
         const validTypes = ["image/png", "image/jpeg", "image/jpg", "application/pdf"];
         if (!validTypes.includes(file.type)) {
-          alertFault(t("materials.dieCutAnalyzer.invalidFileType") || "Invalid file type. Please upload PNG, JPG, or PDF files.");
+          alertFault(t("materials.dieCutAnalyzer.invalidFileType"));
           continue;
         }
         if (file.size > 10 * 1024 * 1024) {
-          alertFault(t("materials.dieCutAnalyzer.fileTooLarge") || "File size exceeds 10MB limit.");
+          alertFault(t("materials.dieCutAnalyzer.fileTooLarge"));
           continue;
         }
 
@@ -91,7 +92,7 @@ export const useDieCutAnalyzer = (onClose: () => void) => {
             status: "ready",
           });
         } catch (error) {
-          alertFault(t("materials.dieCutAnalyzer.fileReadError") || "Error reading file.");
+          alertFault(t("materials.dieCutAnalyzer.fileReadError"));
         }
       }
 
@@ -154,7 +155,7 @@ export const useDieCutAnalyzer = (onClose: () => void) => {
   const handleAnalyze = useCallback(async () => {
     const readyFiles = uploadedFiles.filter((f) => f.status === "ready");
     if (readyFiles.length === 0) {
-      alertFault(t("materials.dieCutAnalyzer.noFilesToAnalyze") || "No files ready for analysis.");
+      alertFault(t("materials.dieCutAnalyzer.noFilesToAnalyze"));
       return;
     }
 
@@ -193,7 +194,7 @@ export const useDieCutAnalyzer = (onClose: () => void) => {
 
         const hasErrors = resultsArray.length < readyFiles.length;
         if (hasErrors) {
-          alertFault(t("materials.dieCutAnalyzer.analysisFailed") || "Some files failed to analyze");
+          alertFault(t("materials.dieCutAnalyzer.analysisFailed"));
         } else {
           alertSuccessAdded();
         }
@@ -201,7 +202,7 @@ export const useDieCutAnalyzer = (onClose: () => void) => {
         setUploadedFiles((prev) =>
           prev.map((f) => (f.status === "analyzing" ? { ...f, status: "error" as const } : f))
         );
-        alertFault(res.message || t("materials.dieCutAnalyzer.analysisFailed") || "Analysis failed");
+        alertFault(res.message || t("materials.dieCutAnalyzer.analysisFailed"));
       }
     };
 
@@ -222,12 +223,12 @@ export const useDieCutAnalyzer = (onClose: () => void) => {
     const completedFiles = uploadedFiles.filter((f) => f.status === "completed");
 
     if (completedFiles.length === 0) {
-      alertFault(t("materials.dieCutAnalyzer.noCompletedFiles") || "No completed files to add");
+      alertFault(t("materials.dieCutAnalyzer.noCompletedFiles"));
       return;
     }
 
     if (!materialKey || !categoryKey) {
-      alertFault(t("materials.dieCutAnalyzer.missingRequiredParams") || "Missing required parameters (materialKey, categoryKey)");
+      alertFault(t("materials.dieCutAnalyzer.missingRequiredParams"));
       return;
     }
 
@@ -244,7 +245,7 @@ export const useDieCutAnalyzer = (onClose: () => void) => {
         (item) => `${item.fileName}: ${item.fields.join(", ")}`
       );
       alertFault(
-        t("materials.dieCutAnalyzer.missingRequiredFields")+ "\n" + errorMessages.join("\n")
+        t("materials.dieCutAnalyzer.missingRequiredFields") + errorMessages.join("\n")
       );
       return;
     }
@@ -260,7 +261,7 @@ export const useDieCutAnalyzer = (onClose: () => void) => {
         onClose();
         setUploadedFiles([]);
       } else {
-        alertFault(res?.message || t("materials.dieCutAnalyzer.addMaterialsFailed") || "Failed to add materials");
+        alertFault(res?.message || t("materials.dieCutAnalyzer.addMaterialsFailed"));
       }
     };
 
@@ -314,13 +315,13 @@ export const useDieCutAnalyzer = (onClose: () => void) => {
   const getStatusLabel = useCallback((status: string) => {
     switch (status) {
       case "ready":
-        return t("materials.dieCutAnalyzer.status.ready") || "Ready";
+        return t("materials.dieCutAnalyzer.status.ready");
       case "analyzing":
-        return t("materials.dieCutAnalyzer.status.analyzing") || "Analyzing";
+        return t("materials.dieCutAnalyzer.status.analyzing");
       case "completed":
-        return t("materials.dieCutAnalyzer.status.completed") || "Completed";
+        return t("materials.dieCutAnalyzer.status.completed");
       case "error":
-        return t("materials.dieCutAnalyzer.status.error") || "Error";
+        return t("materials.dieCutAnalyzer.status.error");
       default:
         return status;
     }
@@ -366,38 +367,38 @@ export const useDieCutAnalyzer = (onClose: () => void) => {
 
     if (materialType === "DieKissCut") {
       return [
-        { key: "code_DieKissCut", label: t("materials.dieCutAnalyzer.table.code") || "Code", type: "text", materialType: "DieKissCut" },
-        { key: "shape", label: t("materials.dieCutAnalyzer.table.shape") || "Shape", type: "text", materialType: "DieKissCut", options: shapeOptions },
-        { key: "name_DieKissCut", label: t("materials.dieCutAnalyzer.table.name") || "Name", type: "text", materialType: "DieKissCut" },
-        { key: "unitWidthInMm_DieKissCut", label: t("materials.dieCutAnalyzer.table.unitWidth") || "Unit Width", type: "number", materialType: "DieKissCut" },
-        { key: "unitLengthInMm_DieKissCut", label: t("materials.dieCutAnalyzer.table.unitLength") || "Unit Length (MM)", type: "number", materialType: "DieKissCut" },
-        { key: "columnsAmount_DieKissCut", label: t("materials.dieCutAnalyzer.table.columnsAmount") || "Columns Amount", type: "number", materialType: "DieKissCut" },
-        { key: "rowsAmount_DieKissCut", label: t("materials.dieCutAnalyzer.table.rowsAmount") || "Rows Amount", type: "number", materialType: "DieKissCut" },
-        { key: "spaceBetweenColumnsInMm_DieKissCut", label: t("materials.dieCutAnalyzer.table.spaceBetweenColumns") || "Space Between Columns (MM)", type: "number", materialType: "DieKissCut" },
-        { key: "spaceBetweenRowsInMm_DieKissCut", label: t("materials.dieCutAnalyzer.table.spaceBetweenLines") || "Space Between Lines (MM)", type: "number", materialType: "DieKissCut" },
-        { key: "directions", label: t("materials.dieCutAnalyzer.table.directions") || "Directions", type: "text", materialType: "DieKissCut", options: directionsOptions },
-        { key: "defaultCost_DieKissCut", label: t("materials.dieCutAnalyzer.table.defaultCost") || "Default Cost", type: "number", materialType: "DieKissCut" },
-        { key: "currency_DieKissCut", label: t("materials.dieCutAnalyzer.table.currency") || "Currency", type: "text", options: currencies, materialType: "DieKissCut" },
+        { key: "code_DieKissCut", label: t("materials.dieCutAnalyzer.table.code"), type: "text", materialType: "DieKissCut", placeholder: t("materials.dieCutAnalyzer.placeholders.code") },
+        { key: "shape", label: t("materials.dieCutAnalyzer.table.shape"), type: "text", materialType: "DieKissCut", options: shapeOptions, placeholder: t("materials.dieCutAnalyzer.placeholders.selectShape") },
+        { key: "name_DieKissCut", label: t("materials.dieCutAnalyzer.table.name"), type: "text", materialType: "DieKissCut", placeholder: t("materials.dieCutAnalyzer.placeholders.name") },
+        { key: "unitWidthInMm_DieKissCut", label: t("materials.dieCutAnalyzer.table.unitWidth"), type: "number", materialType: "DieKissCut", placeholder: t("materials.dieCutAnalyzer.placeholders.unitWidth") },
+        { key: "unitLengthInMm_DieKissCut", label: t("materials.dieCutAnalyzer.table.unitLength"), type: "number", materialType: "DieKissCut", placeholder: t("materials.dieCutAnalyzer.placeholders.unitLength") },
+        { key: "columnsAmount_DieKissCut", label: t("materials.dieCutAnalyzer.table.columnsAmount"), type: "number", materialType: "DieKissCut", placeholder: t("materials.dieCutAnalyzer.placeholders.columnsAmount") },
+        { key: "rowsAmount_DieKissCut", label: t("materials.dieCutAnalyzer.table.rowsAmount"), type: "number", materialType: "DieKissCut", placeholder: t("materials.dieCutAnalyzer.placeholders.rowsAmount") },
+        { key: "spaceBetweenColumnsInMm_DieKissCut", label: t("materials.dieCutAnalyzer.table.spaceBetweenColumns"), type: "number", materialType: "DieKissCut", placeholder: t("materials.dieCutAnalyzer.placeholders.spaceBetweenColumns") },
+        { key: "spaceBetweenRowsInMm_DieKissCut", label: t("materials.dieCutAnalyzer.table.spaceBetweenLines"), type: "number", materialType: "DieKissCut", placeholder: t("materials.dieCutAnalyzer.placeholders.spaceBetweenRows") },
+        { key: "directions", label: t("materials.dieCutAnalyzer.table.directions"), type: "text", materialType: "DieKissCut", options: directionsOptions, placeholder: t("materials.dieCutAnalyzer.placeholders.selectDirections") },
+        { key: "defaultCost_DieKissCut", label: t("materials.dieCutAnalyzer.table.defaultCost"), type: "number", materialType: "DieKissCut", placeholder: t("materials.dieCutAnalyzer.placeholders.defaultCost") },
+        { key: "currency_DieKissCut", label: t("materials.dieCutAnalyzer.table.currency"), type: "text", options: currencies, materialType: "DieKissCut", placeholder: t("materials.dieCutAnalyzer.placeholders.selectCurrency") },
       ];
     } else {
       return [
-        { key: "shape", label: t("materials.dieCutAnalyzer.table.shape") || "Shape", type: "text", materialType: "DieCut", options: shapeOptions },
-        { key: "widthInCm", label: t("materials.dieCutAnalyzer.table.width") || "Width (CM)", type: "number", materialType: "DieCut" },
-        { key: "lengthInCm", label: t("materials.dieCutAnalyzer.table.length") || "Length (CM)", type: "number", materialType: "DieCut" },
-        { key: "dieCutFormWidthInCm", label: t("materials.dieCutAnalyzer.table.dieUnitWidth") || "Die Unit Width (CM)", type: "number", materialType: "DieCut" },
-        { key: "dieCutFormLengthInCm", label: t("materials.dieCutAnalyzer.table.dieUnitLength") || "Die Unit Length (CM)", type: "number", materialType: "DieCut" },
-        { key: "finalProductWidthInCm", label: t("materials.dieCutAnalyzer.table.finalUnitWidth") || "Final Unit Width (CM)", type: "number", materialType: "DieCut" },
-        { key: "finalProductLengthInCm", label: t("materials.dieCutAnalyzer.table.finalUnitLength") || "Final Unit Length (CM)", type: "number", materialType: "DieCut" },
-        { key: "finalProductHeightInCm", label: t("materials.dieCutAnalyzer.table.finalUnitHeight") || "Final Unit Height (CM)", type: "number", materialType: "DieCut" },
-        { key: "columnsAmount", label: t("materials.dieCutAnalyzer.table.columnsAmount") || "Columns Amount", type: "number", materialType: "DieCut" },
-        { key: "rowsAmount", label: t("materials.dieCutAnalyzer.table.rowsAmount") || "Rows Amount", type: "number", materialType: "DieCut" },
-        { key: "spaceBetweenColumnsInMm", label: t("materials.dieCutAnalyzer.table.spaceBetweenColumns") || "Space Between Columns (MM)", type: "number", materialType: "DieCut" },
-        { key: "spaceBetweenRowsInMm", label: t("materials.dieCutAnalyzer.table.spaceBetweenLines") || "Space Between Lines (MM)", type: "number", materialType: "DieCut" },
-        { key: "cuttingLineLengthInCm", label: t("materials.dieCutAnalyzer.table.cuttingLineLength") || "Cutting Line Length (CM)", type: "number", materialType: "DieCut" },
-        { key: "scoringLineLengthInCm", label: t("materials.dieCutAnalyzer.table.scoringLineLength") || "Scoring Line Length (CM)", type: "number", materialType: "DieCut" },
-        { key: "perforationLineLengthInCm", label: t("materials.dieCutAnalyzer.table.perforationLineLength") || "Perforation Line Length (CM)", type: "number", materialType: "DieCut" },
-        { key: "defaultCost", label: t("materials.dieCutAnalyzer.table.defaultCost") || "Default Cost", type: "number", materialType: "DieCut" },
-        { key: "currency", label: t("materials.dieCutAnalyzer.table.currency") || "Currency", type: "text", options: currencies, materialType: "DieCut" },
+        { key: "shape", label: t("materials.dieCutAnalyzer.table.shape"), type: "text", materialType: "DieCut", options: shapeOptions, placeholder: t("materials.dieCutAnalyzer.placeholders.selectShape") },
+        { key: "widthInCm", label: t("materials.dieCutAnalyzer.table.width"), type: "number", materialType: "DieCut", placeholder: t("materials.dieCutAnalyzer.placeholders.width") || "Enter width (CM)" },
+        { key: "lengthInCm", label: t("materials.dieCutAnalyzer.table.length"), type: "number", materialType: "DieCut", placeholder: t("materials.dieCutAnalyzer.placeholders.length") || "Enter length (CM)" },
+        { key: "dieCutFormWidthInCm", label: t("materials.dieCutAnalyzer.table.dieUnitWidth"), type: "number", materialType: "DieCut", placeholder: t("materials.dieCutAnalyzer.placeholders.dieUnitWidth") || "Enter die unit width (CM)" },
+        { key: "dieCutFormLengthInCm", label: t("materials.dieCutAnalyzer.table.dieUnitLength"), type: "number", materialType: "DieCut", placeholder: t("materials.dieCutAnalyzer.placeholders.dieUnitLength") || "Enter die unit length (CM)" },
+        { key: "finalProductWidthInCm", label: t("materials.dieCutAnalyzer.table.finalUnitWidth"), type: "number", materialType: "DieCut", placeholder: t("materials.dieCutAnalyzer.placeholders.finalUnitWidth") || "Enter final unit width (CM)" },
+        { key: "finalProductLengthInCm", label: t("materials.dieCutAnalyzer.table.finalUnitLength"), type: "number", materialType: "DieCut", placeholder: t("materials.dieCutAnalyzer.placeholders.finalUnitLength") || "Enter final unit length (CM)" },
+        { key: "finalProductHeightInCm", label: t("materials.dieCutAnalyzer.table.finalUnitHeight"), type: "number", materialType: "DieCut", placeholder: t("materials.dieCutAnalyzer.placeholders.finalUnitHeight") || "Enter final unit height (CM)" },
+        { key: "columnsAmount", label: t("materials.dieCutAnalyzer.table.columnsAmount"), type: "number", materialType: "DieCut", placeholder: t("materials.dieCutAnalyzer.placeholders.columnsAmount") || "Enter columns" },
+        { key: "rowsAmount", label: t("materials.dieCutAnalyzer.table.rowsAmount"), type: "number", materialType: "DieCut", placeholder: t("materials.dieCutAnalyzer.placeholders.rowsAmount") || "Enter rows" },
+        { key: "spaceBetweenColumnsInMm", label: t("materials.dieCutAnalyzer.table.spaceBetweenColumns"), type: "number", materialType: "DieCut", placeholder: t("materials.dieCutAnalyzer.placeholders.spaceBetweenColumns") || "Enter space (MM)" },
+        { key: "spaceBetweenRowsInMm", label: t("materials.dieCutAnalyzer.table.spaceBetweenLines"), type: "number", materialType: "DieCut", placeholder: t("materials.dieCutAnalyzer.placeholders.spaceBetweenRows") || "Enter space (MM)" },
+        { key: "cuttingLineLengthInCm", label: t("materials.dieCutAnalyzer.table.cuttingLineLength"), type: "number", materialType: "DieCut", placeholder: t("materials.dieCutAnalyzer.placeholders.cuttingLineLength") || "Enter cutting line length (CM)" },
+        { key: "scoringLineLengthInCm", label: t("materials.dieCutAnalyzer.table.scoringLineLength"), type: "number", materialType: "DieCut", placeholder: t("materials.dieCutAnalyzer.placeholders.scoringLineLength") || "Enter scoring line length (CM)" },
+        { key: "perforationLineLengthInCm", label: t("materials.dieCutAnalyzer.table.perforationLineLength"), type: "number", materialType: "DieCut", placeholder: t("materials.dieCutAnalyzer.placeholders.perforationLineLength") || "Enter perforation line length (CM)" },
+        { key: "defaultCost", label: t("materials.dieCutAnalyzer.table.defaultCost"), type: "number", materialType: "DieCut", placeholder: t("materials.dieCutAnalyzer.placeholders.defaultCost") || "Enter cost" },
+        { key: "currency", label: t("materials.dieCutAnalyzer.table.currency"), type: "text", options: currencies, materialType: "DieCut", placeholder: t("materials.dieCutAnalyzer.placeholders.selectCurrency") || "Select currency" },
       ];
     }
   }, [t, currencies, getDirectionsOptions, getShapeOptions]);
@@ -406,6 +407,17 @@ export const useDieCutAnalyzer = (onClose: () => void) => {
   const readyFilesCount = uploadedFiles.filter((f) => f.status === "ready").length;
   const completedFilesCount = uploadedFiles.filter((f) => f.status === "completed").length;
   const canAddMaterials = readyFilesCount === 0 && completedFilesCount > 0;
+
+  /**
+   * Clear all data (exposed for cleanup)
+   */
+  const clearAllData = useCallback(() => {
+    setUploadedFiles([]);
+    setIsDragging(false);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  }, []);
 
   return {
     uploadedFiles,
@@ -426,6 +438,7 @@ export const useDieCutAnalyzer = (onClose: () => void) => {
     getStatusLabel,
     getDisplayValue,
     getTableColumns,
+    clearAllData,
   };
 };
 
