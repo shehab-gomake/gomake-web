@@ -1,17 +1,16 @@
-import { Html, Head, Main, NextScript } from "next/document";
-import { DocumentContext, DocumentInitialProps } from "next/document";
+import { Html, Head, Main, NextScript, DocumentContext, DocumentInitialProps } from "next/document";
 
 interface DocumentProps extends DocumentInitialProps {
   loginLogo?: string | null;
   companyName?: string;
-  currentUrl?: string;
 }
 
-export default function Document({ loginLogo, companyName, currentUrl }: DocumentProps) {
+export default function Document({ loginLogo, companyName }: DocumentProps) {
   // Default fallback image
   const defaultImage =
     "https://gomake-translations.s3.eu-central-1.amazonaws.com/favicon.ico";
-  
+
+  // Ensure ogImage is always absolute URL (required by WhatsApp)
   const ogImage = loginLogo || defaultImage;
   const siteName = companyName || "Gomake";
   const pageTitle = `${siteName} - Business Management Platform`;
@@ -25,16 +24,15 @@ export default function Document({ loginLogo, companyName, currentUrl }: Documen
           name="viewport"
           content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
         />
-        
+
         {/* Favicon */}
         <link
           rel="icon"
-          href={loginLogo || defaultImage}
+          href={ogImage}
         />
-        
-        {/* Open Graph / Facebook / WhatsApp Meta Tags */}
+
+        {/* Open Graph / Facebook / WhatsApp Meta Tags - CRITICAL for WhatsApp previews */}
         <meta property="og:type" content="website" />
-        {currentUrl && <meta property="og:url" content={currentUrl} />}
         <meta property="og:title" content={pageTitle} />
         <meta
           property="og:description"
@@ -84,70 +82,79 @@ export default function Document({ loginLogo, companyName, currentUrl }: Documen
   );
 }
 
-// Fetch login logo server-side for meta tags
-Document.getInitialProps = async (ctx: DocumentContext) => {
+// Fetch login logo server-side for meta tags (WhatsApp crawler reads this!)
+Document.getInitialProps = async (ctx: DocumentContext): Promise<DocumentProps> => {
   const initialProps = await ctx.defaultGetInitialProps(ctx);
-  
-  // Build current URL for og:url
-  const protocol = ctx.req?.headers["x-forwarded-proto"] || 
-                   (ctx.req?.connection as any)?.encrypted ? "https" : "http";
-  const host = ctx.req?.headers.host || "";
-  const path = ctx.req?.url || "/";
-  const currentUrl = `${protocol}://${host}${path}`;
-  
+
   try {
     const getConfig = require("next/config").default();
     const { serverRuntimeConfig } = getConfig() || {};
     const API_SERVER = serverRuntimeConfig?.API_SERVER || process.env.API_SERVER;
-    
+
     if (!API_SERVER) {
-      return {
-        ...initialProps,
-        currentUrl,
-      };
+      return initialProps;
     }
 
+    const host = ctx.req?.headers.host || "";
     const domain = host.split(":")[0]; // Remove port if present
 
-    // Skip for localhost
+    // Skip for localhost (development)
     if (!domain || domain === "localhost" || domain.includes("127.0.0.1")) {
-      return {
-        ...initialProps,
-        currentUrl,
-      };
+      return initialProps;
     }
 
-    // Try to fetch login logo directly from API server
+    // Fetch login logo from API server based on domain
+    // This runs server-side, so WhatsApp crawler can see it!
+    // NOTE: This endpoint must work WITHOUT authentication (or backend must support domain-based lookup)
     const axios = require("axios");
-    const response = await axios.get(
-      `${API_SERVER}/v1/get-print-house-login-logo`,
-      {
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-          "project-name": "business-dashboard",
-          domain: domain,
-        },
-        timeout: 3000, // 3 second timeout
-      }
-    );
 
-    if (response?.data?.success && response?.data?.data?.data) {
-      const data = response.data.data.data;
-      return {
-        ...initialProps,
-        loginLogo: data.loginLogo || null,
-        companyName: data.name || "Gomake",
-        currentUrl,
-      };
+    try {
+      const response = await axios.get(
+        `${API_SERVER}/v1/get-print-house-login-logo`,
+        {
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            "project-name": "business-dashboard",
+            domain: domain, // Backend should identify print house by domain
+          },
+          timeout: 2000, // 2 second timeout - fail fast
+        }
+      );
+
+      // Check if response has the login logo
+      if (response?.data?.success) {
+        // Try different response structures (API might return nested data)
+        const data = response?.data?.data?.data || response?.data?.data || response?.data;
+
+        if (data?.loginLogo) {
+          // Ensure the logo URL is absolute (required by WhatsApp)
+          let logoUrl = data.loginLogo;
+          if (logoUrl && !logoUrl.startsWith("http://") && !logoUrl.startsWith("https://")) {
+            // If relative URL, make it absolute
+            const protocol = ctx.req?.headers["x-forwarded-proto"] || "https";
+            logoUrl = `${protocol}://${host}${logoUrl.startsWith("/") ? logoUrl : `/${logoUrl}`}`;
+          }
+
+          return {
+            ...initialProps,
+            loginLogo: logoUrl,
+            companyName: data.name || "Gomake",
+          };
+        }
+      }
+    } catch (apiError: any) {
+      // API call failed - this is OK, we'll use default logo
+      // This might happen if:
+      // 1. Endpoint requires authentication
+      // 2. Domain not found
+      // 3. Network error
+      // We'll silently fall back to default
     }
   } catch (error) {
-    // If API call fails, continue with default props
-    // This is expected if the endpoint requires authentication
+    // If anything fails, return default props
+    // This ensures the page still loads
   }
-  
-  return {
-    ...initialProps,
-    currentUrl,
-  };
+
+  return initialProps;
 };
