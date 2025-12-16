@@ -74,21 +74,21 @@ const DieCutAnalyzerDialog: React.FC<DieCutAnalyzerDialogProps> = ({
   const renderEditableCell = (
     file: UploadedFile,
     field: keyof UploadedFile,
-    type: "text" | "number" = "text",
-    options?: any[],
-    placeholder?: string
+    column: { type: string; options?: any[]; placeholder?: string; isRequired?: boolean }
   ) => {
     const value = file[field] ?? "";
     const isEditable = file.status === "completed";
+    const { type, options, placeholder, isRequired } = column;
 
     if (!isEditable) {
       return getDisplayValue(value);
     }
 
-    if (options && options.length > 0) {
-      // Match by key property first (for directions and shape), then by value or label
+    // Handle dropdown types (dropdown, currency, boolean with options)
+    if ((type === "dropdown" || type === "currency" || (type === "boolean" && options && options.length > 0)) && options && options.length > 0) {
+      // Match by key property first, then by value or label
       const selectedOption = options.find(
-        (opt: any) => opt.key === value || opt.value === value || opt.label === value
+        (opt: any) => opt.key === value || opt.value === value || opt.label === value || opt.id === value
       );
 
       return (
@@ -96,26 +96,75 @@ const DieCutAnalyzerDialog: React.FC<DieCutAnalyzerDialogProps> = ({
           value={selectedOption || null}
           options={options}
           onChange={(e: any, newValue: any) => {
-            // Save the key property if it exists, otherwise use value or label
-            const saveValue = newValue?.key ?? newValue?.value ?? newValue?.label ?? "";
+            // Save the key property if it exists, otherwise use value, label, or id
+            const saveValue = newValue?.key ?? newValue?.value ?? newValue?.label ?? newValue?.id ?? "";
             handleUpdateFileField(file.id, field, saveValue);
           }}
-          getOptionLabel={(option: any) => option.label || option.value || option.key || ""}
+          getOptionLabel={(option: any) => option.label || option.value || option.key || option.id || ""}
           placeholder={placeholder || ""}
           style={{ width: "100%", minWidth: "120px" }}
         />
       );
     }
 
+    // Handle boolean type (checkbox or toggle)
+    if (type === "boolean" && (!options || options.length === 0)) {
+      const stringValue = String(value || "");
+      const boolValue = stringValue === "true" || stringValue === "internal";
+      return (
+        <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <input
+            type="checkbox"
+            checked={boolValue}
+            onChange={(e) => {
+              const newValue = e.target.checked ? "internal" : "out source";
+              handleUpdateFileField(file.id, field, newValue);
+            }}
+            style={{ cursor: "pointer" }}
+          />
+        </Box>
+      );
+    }
+
+    // Handle number type
+    if (type === "number") {
+      return (
+        <TextField
+          type="number"
+          value={value}
+          onChange={(e) => {
+            const newValue = e.target.value === "" ? "" : Number(e.target.value);
+            handleUpdateFileField(file.id, field, newValue);
+          }}
+          placeholder={placeholder || ""}
+          required={isRequired}
+          size="small"
+          sx={{
+            width: "100%",
+            "& .MuiOutlinedInput-root": {
+              height: "32px",
+              fontSize: "14px",
+            },
+          }}
+          inputProps={{
+            style: {
+              padding: "6px 8px",
+            },
+          }}
+        />
+      );
+    }
+
+    // Handle text type (default)
     return (
       <TextField
-        type={type}
+        type="text"
         value={value}
         onChange={(e) => {
-          const newValue = type === "number" ? (e.target.value === "" ? "" : Number(e.target.value)) : e.target.value;
-          handleUpdateFileField(file.id, field, newValue);
+          handleUpdateFileField(file.id, field, e.target.value);
         }}
-        placeholder={placeholder}
+        placeholder={placeholder || ""}
+        required={isRequired}
         size="small"
         sx={{
           width: "100%",
@@ -322,7 +371,21 @@ const DieCutAnalyzerDialog: React.FC<DieCutAnalyzerDialogProps> = ({
                           textAlign: "start",
                         }}
                       >
-                        {column.label}
+                        <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+                          {column.label}
+                          {column.isRequired && (
+                            <Typography
+                              component="span"
+                              sx={{
+                                color: "#F44336",
+                                fontSize: "14px",
+                                fontWeight: "bold",
+                              }}
+                            >
+                              *
+                            </Typography>
+                          )}
+                        </Box>
                       </TableCell>
                     ));
                   })()}
@@ -413,7 +476,7 @@ const DieCutAnalyzerDialog: React.FC<DieCutAnalyzerDialogProps> = ({
                             }}
                           >
                             {file.status === "completed" && cellValue !== undefined
-                              ? renderEditableCell(file, column.key as keyof UploadedFile, column.type as "text" | "number", column.options, column.placeholder)
+                              ? renderEditableCell(file, column.key as keyof UploadedFile, column)
                               : getDisplayValue(cellValue)}
                           </TableCell>
                         );

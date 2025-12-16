@@ -1,9 +1,9 @@
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useRouter } from "next/router";
 import { useRecoilValue } from "recoil";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
-import { analyzeDieCutApi, addPrintHouseMaterialsRowsApi } from "@/services/api-service/materials/materials-endpoints";
+import { analyzeDieCutApi, addPrintHouseMaterialsRowsApi, getMaterialTableHeadersApi } from "@/services/api-service/materials/materials-endpoints";
 import { currenciesState, selectedSupplierIdState } from "@/widgets/materials-widget/state";
 import { useMaterialsCategories } from "../../use-materials-categories";
 import { UploadedFile, useDieCutDataTransform } from "./use-die-cut-data-transform";
@@ -15,13 +15,36 @@ interface ApiResponseItem {
   attributes: Record<string, any>;
 }
 
+export interface MaterialTableHeader {
+  key: string;
+  value: string;
+  unit: string | null;
+  isFilter: boolean;
+  isForAdmin: boolean | null;
+  isHideInDuplicate: boolean | null;
+  isRequired: boolean;
+  parameterId: string | null;
+  isShowInExtraParameters: boolean;
+  isPriceObject: boolean | null;
+  inputType: number | null;
+  filterType: string | null;
+  values: Array<{
+    key: string;
+    specialkey: string | null;
+    value: string;
+  }>;
+}
+
 export interface TableColumn {
   key: string;
   label: string;
-  type: "text" | "number";
+  type: "text" | "number" | "dropdown" | "boolean" | "image" | "currency";
   materialType: string;
   options?: any[];
   placeholder?: string;
+  isRequired?: boolean;
+  unit?: string | null;
+  inputType?: number | null;
 }
 
 /**
@@ -41,10 +64,37 @@ export const useDieCutAnalyzer = (onClose: () => void) => {
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [tableHeaders, setTableHeaders] = useState<MaterialTableHeader[]>([]);
+  const [loadingHeaders, setLoadingHeaders] = useState(false);
 
   const materialKey = query?.materialType?.toString() || "";
   const categoryKey = query?.materialCategory?.toString() || "";
-  const materialType = query?.materialType?.toString();
+  const materialType = query?.materialType?.toString() || "DieCut";
+
+  /**
+   * Fetch table headers from API
+   */
+  const fetchTableHeaders = useCallback(async (materialKey: string) => {
+    if (!materialKey) return;
+    
+    setLoadingHeaders(true);
+    const callBack = (res: any) => {
+      if (res?.success && res?.data?.tableHeaders) {
+        setTableHeaders(res.data.tableHeaders);
+      }
+      setLoadingHeaders(false);
+    };
+    await getMaterialTableHeadersApi(callApi, callBack, materialKey);
+  }, [callApi]);
+
+  /**
+   * Fetch headers when material type changes
+   */
+  useEffect(() => {
+    if (materialType) {
+      fetchTableHeaders(materialType);
+    }
+  }, [materialType, fetchTableHeaders]);
 
   /**
    * Convert file to base64 string
@@ -217,6 +267,167 @@ export const useDieCutAnalyzer = (onClose: () => void) => {
   }, []);
 
   /**
+   * Map API header key to UploadedFile field key
+   */
+  const mapHeaderKeyToFieldKey = useCallback((headerKey: string, materialType: string): string => {
+    // Mapping for DieCut fields
+    const dieCutMapping: Record<string, string> = {
+      width: "widthInCm",
+      length: "lengthInCm",
+      dieUnitWidth: "dieCutFormWidthInCm",
+      dieUnitLength: "dieCutFormLengthInCm",
+      finalUnitWidth: "finalProductWidthInCm",
+      finalUnitLength: "finalProductLengthInCm",
+      finalUnitHeight: "finalProductHeightInCm",
+      columnsAmount: "columnsAmount",
+      linesAmount: "rowsAmount",
+      spaceBetweenColumns: "spaceBetweenColumnsInMm",
+      spaceBetweenLines: "spaceBetweenRowsInMm",
+      cuttingLineLength: "cuttingLineLengthInCm",
+      scoringLineLength: "scoringLineLengthInCm",
+      perforationLineLength: "perforationLineLengthInCm",
+      price: "defaultCost",
+      currency: "currency",
+      code: "code",
+      name: "name",
+      shape: "shape",
+      type: "type",
+      image: "image",
+      isOutSource: "isOutSource",
+      Active: "Active",
+    };
+
+    // Mapping for DieKissCut fields
+    const dieKissCutMapping: Record<string, string> = {
+      code: "code_DieKissCut",
+      name: "name_DieKissCut",
+      shape: "shape",
+      unitWidth: "unitWidthInMm_DieKissCut",
+      unitLength: "unitLengthInMm_DieKissCut",
+      columnsAmount: "columnsAmount_DieKissCut",
+      linesAmount: "rowsAmount_DieKissCut",
+      spaceBetweenColumns: "spaceBetweenColumnsInMm_DieKissCut",
+      spaceBetweenLines: "spaceBetweenRowsInMm_DieKissCut",
+      directions: "directions",
+      price: "defaultCost_DieKissCut",
+      currency: "currency_DieKissCut",
+    };
+
+    const mapping = materialType === "DieKissCut" ? dieKissCutMapping : dieCutMapping;
+    return mapping[headerKey] || headerKey;
+  }, []);
+
+  /**
+   * Determine input type from header inputType
+   */
+  const getInputTypeFromHeader = useCallback((inputType: number | null, values: any[]): TableColumn["type"] => {
+    if (!inputType && inputType !== 0) return "text";
+    
+    // inputType mapping based on the API response
+    // 0 = text, 1 = number, 2 = boolean/dropdown, 3 = number (price), 
+    // 5 = dropdown (currency), 6 = dropdown (shape), 7 = image,
+    // 12 = dropdown (type), 14 = number, 15 = suppliers, 17 = dropdown
+    if (values && values.length > 0) {
+      return "dropdown";
+    }
+    if (inputType === 1 || inputType === 3 || inputType === 14) {
+      return "number";
+    }
+    if (inputType === 2) {
+      return "boolean";
+    }
+    if (inputType === 7) {
+      return "image";
+    }
+    if (inputType === 5) {
+      return "currency";
+    }
+    return "text";
+  }, []);
+
+  /**
+   * Get table columns based on fetched headers
+   */
+  const getTableColumns = useCallback((materialType?: string): TableColumn[] => {
+    if (!tableHeaders || tableHeaders.length === 0) {
+      // Fallback to empty array if headers not loaded yet
+      return [];
+    }
+
+    const type = materialType || "DieCut";
+    const filteredHeaders = tableHeaders.filter((header) => {
+      // Only show required fields in the table
+      if (header.isRequired !== true) {
+        return false;
+      }
+      
+      // Hide specific fields: code, image, type
+      if (header.key === "code" || header.key === "image" || header.key === "type") {
+        return false;
+      }
+      
+      // Hide all boolean fields (inputType === 2)
+      if (header.inputType === 2) {
+        return false;
+      }
+      
+      return true;
+    });
+
+    return filteredHeaders.map((header) => {
+      const fieldKey = mapHeaderKeyToFieldKey(header.key, type);
+      const inputType = getInputTypeFromHeader(header.inputType, header.values || []);
+      
+      // Transform values array to options format
+      let options: any[] | undefined = undefined;
+      if (header.values && header.values.length > 0) {
+        options = header.values.map((val) => ({
+          key: val.key,
+          value: val.value,
+          label: val.value,
+          specialkey: val.specialkey,
+        }));
+      }
+
+      // Special handling for currency field
+      if (header.key === "currency" && currencies && currencies.length > 0) {
+        options = currencies;
+      }
+
+      return {
+        key: fieldKey,
+        label: header.value,
+        type: inputType,
+        materialType: type,
+        options,
+        placeholder: header.value,
+        isRequired: header.isRequired,
+        unit: header.unit,
+        inputType: header.inputType,
+      };
+    });
+  }, [tableHeaders, mapHeaderKeyToFieldKey, getInputTypeFromHeader, currencies]);
+
+  /**
+   * Validate file fields using table headers isRequired
+   */
+  const validateFileFieldsWithHeaders = useCallback((file: UploadedFile): string[] => {
+    const missing: string[] = [];
+    const columns = getTableColumns(file.materialType || materialType);
+
+    columns.forEach((column) => {
+      if (column.isRequired) {
+        const value = file[column.key as keyof UploadedFile];
+        if (value === null || value === undefined || value === "" || (Array.isArray(value) && value.length === 0)) {
+          missing.push(column.label);
+        }
+      }
+    });
+
+    return missing;
+  }, [getTableColumns, materialType]);
+
+  /**
    * Handle add materials
    */
   const handleAddMaterials = useCallback(async () => {
@@ -234,7 +445,7 @@ export const useDieCutAnalyzer = (onClose: () => void) => {
 
     const missingFields: Array<{ fileName: string; fields: string[] }> = [];
     completedFiles.forEach((file) => {
-      const missing = validateFileFields(file);
+      const missing = validateFileFieldsWithHeaders(file);
       if (missing.length > 0) {
         missingFields.push({ fileName: file.fileName, fields: missing });
       }
@@ -266,7 +477,7 @@ export const useDieCutAnalyzer = (onClose: () => void) => {
     };
 
     await addPrintHouseMaterialsRowsApi(callApi, callBack, payload);
-  }, [uploadedFiles, callApi, alertFault, alertSuccess, t, materialKey, categoryKey, onClose, handleRefreshMaterialData, transformUploadedFileToPayload, validateFileFields]);
+  }, [uploadedFiles, callApi, alertFault, alertSuccess, t, materialKey, categoryKey, onClose, handleRefreshMaterialData, transformUploadedFileToPayload, validateFileFieldsWithHeaders]);
 
   /**
    * Handle remove file
@@ -358,51 +569,6 @@ export const useDieCutAnalyzer = (onClose: () => void) => {
     ];
   }, []);
 
-  /**
-   * Get table columns based on material type
-   */
-  const getTableColumns = useCallback((materialType?: string): TableColumn[] => {
-    const directionsOptions = getDirectionsOptions();
-    const shapeOptions = getShapeOptions();
-
-    if (materialType === "DieKissCut") {
-      return [
-        { key: "code_DieKissCut", label: t("materials.dieCutAnalyzer.table.code"), type: "text", materialType: "DieKissCut", placeholder: t("materials.dieCutAnalyzer.placeholders.code") },
-        { key: "shape", label: t("materials.dieCutAnalyzer.table.shape"), type: "text", materialType: "DieKissCut", options: shapeOptions, placeholder: t("materials.dieCutAnalyzer.placeholders.selectShape") },
-        { key: "name_DieKissCut", label: t("materials.dieCutAnalyzer.table.name"), type: "text", materialType: "DieKissCut", placeholder: t("materials.dieCutAnalyzer.placeholders.name") },
-        { key: "unitWidthInMm_DieKissCut", label: t("materials.dieCutAnalyzer.table.unitWidth"), type: "number", materialType: "DieKissCut", placeholder: t("materials.dieCutAnalyzer.placeholders.unitWidth") },
-        { key: "unitLengthInMm_DieKissCut", label: t("materials.dieCutAnalyzer.table.unitLength"), type: "number", materialType: "DieKissCut", placeholder: t("materials.dieCutAnalyzer.placeholders.unitLength") },
-        { key: "columnsAmount_DieKissCut", label: t("materials.dieCutAnalyzer.table.columnsAmount"), type: "number", materialType: "DieKissCut", placeholder: t("materials.dieCutAnalyzer.placeholders.columnsAmount") },
-        { key: "rowsAmount_DieKissCut", label: t("materials.dieCutAnalyzer.table.rowsAmount"), type: "number", materialType: "DieKissCut", placeholder: t("materials.dieCutAnalyzer.placeholders.rowsAmount") },
-        { key: "spaceBetweenColumnsInMm_DieKissCut", label: t("materials.dieCutAnalyzer.table.spaceBetweenColumns"), type: "number", materialType: "DieKissCut", placeholder: t("materials.dieCutAnalyzer.placeholders.spaceBetweenColumns") },
-        { key: "spaceBetweenRowsInMm_DieKissCut", label: t("materials.dieCutAnalyzer.table.spaceBetweenLines"), type: "number", materialType: "DieKissCut", placeholder: t("materials.dieCutAnalyzer.placeholders.spaceBetweenRows") },
-        { key: "directions", label: t("materials.dieCutAnalyzer.table.directions"), type: "text", materialType: "DieKissCut", options: directionsOptions, placeholder: t("materials.dieCutAnalyzer.placeholders.selectDirections") },
-        { key: "defaultCost_DieKissCut", label: t("materials.dieCutAnalyzer.table.defaultCost"), type: "number", materialType: "DieKissCut", placeholder: t("materials.dieCutAnalyzer.placeholders.defaultCost") },
-        { key: "currency_DieKissCut", label: t("materials.dieCutAnalyzer.table.currency"), type: "text", options: currencies, materialType: "DieKissCut", placeholder: t("materials.dieCutAnalyzer.placeholders.selectCurrency") },
-      ];
-    } else {
-      return [
-        { key: "shape", label: t("materials.dieCutAnalyzer.table.shape"), type: "text", materialType: "DieCut", options: shapeOptions, placeholder: t("materials.dieCutAnalyzer.placeholders.selectShape") },
-        { key: "widthInCm", label: t("materials.dieCutAnalyzer.table.width"), type: "number", materialType: "DieCut", placeholder: t("materials.dieCutAnalyzer.placeholders.width") || "Enter width (CM)" },
-        { key: "lengthInCm", label: t("materials.dieCutAnalyzer.table.length"), type: "number", materialType: "DieCut", placeholder: t("materials.dieCutAnalyzer.placeholders.length") || "Enter length (CM)" },
-        { key: "dieCutFormWidthInCm", label: t("materials.dieCutAnalyzer.table.dieUnitWidth"), type: "number", materialType: "DieCut", placeholder: t("materials.dieCutAnalyzer.placeholders.dieUnitWidth") || "Enter die unit width (CM)" },
-        { key: "dieCutFormLengthInCm", label: t("materials.dieCutAnalyzer.table.dieUnitLength"), type: "number", materialType: "DieCut", placeholder: t("materials.dieCutAnalyzer.placeholders.dieUnitLength") || "Enter die unit length (CM)" },
-        { key: "finalProductWidthInCm", label: t("materials.dieCutAnalyzer.table.finalUnitWidth"), type: "number", materialType: "DieCut", placeholder: t("materials.dieCutAnalyzer.placeholders.finalUnitWidth") || "Enter final unit width (CM)" },
-        { key: "finalProductLengthInCm", label: t("materials.dieCutAnalyzer.table.finalUnitLength"), type: "number", materialType: "DieCut", placeholder: t("materials.dieCutAnalyzer.placeholders.finalUnitLength") || "Enter final unit length (CM)" },
-        { key: "finalProductHeightInCm", label: t("materials.dieCutAnalyzer.table.finalUnitHeight"), type: "number", materialType: "DieCut", placeholder: t("materials.dieCutAnalyzer.placeholders.finalUnitHeight") || "Enter final unit height (CM)" },
-        { key: "columnsAmount", label: t("materials.dieCutAnalyzer.table.columnsAmount"), type: "number", materialType: "DieCut", placeholder: t("materials.dieCutAnalyzer.placeholders.columnsAmount") || "Enter columns" },
-        { key: "rowsAmount", label: t("materials.dieCutAnalyzer.table.rowsAmount"), type: "number", materialType: "DieCut", placeholder: t("materials.dieCutAnalyzer.placeholders.rowsAmount") || "Enter rows" },
-        { key: "spaceBetweenColumnsInMm", label: t("materials.dieCutAnalyzer.table.spaceBetweenColumns"), type: "number", materialType: "DieCut", placeholder: t("materials.dieCutAnalyzer.placeholders.spaceBetweenColumns") || "Enter space (MM)" },
-        { key: "spaceBetweenRowsInMm", label: t("materials.dieCutAnalyzer.table.spaceBetweenLines"), type: "number", materialType: "DieCut", placeholder: t("materials.dieCutAnalyzer.placeholders.spaceBetweenRows") || "Enter space (MM)" },
-        { key: "cuttingLineLengthInCm", label: t("materials.dieCutAnalyzer.table.cuttingLineLength"), type: "number", materialType: "DieCut", placeholder: t("materials.dieCutAnalyzer.placeholders.cuttingLineLength") || "Enter cutting line length (CM)" },
-        { key: "scoringLineLengthInCm", label: t("materials.dieCutAnalyzer.table.scoringLineLength"), type: "number", materialType: "DieCut", placeholder: t("materials.dieCutAnalyzer.placeholders.scoringLineLength") || "Enter scoring line length (CM)" },
-        { key: "perforationLineLengthInCm", label: t("materials.dieCutAnalyzer.table.perforationLineLength"), type: "number", materialType: "DieCut", placeholder: t("materials.dieCutAnalyzer.placeholders.perforationLineLength") || "Enter perforation line length (CM)" },
-        { key: "defaultCost", label: t("materials.dieCutAnalyzer.table.defaultCost"), type: "number", materialType: "DieCut", placeholder: t("materials.dieCutAnalyzer.placeholders.defaultCost") || "Enter cost" },
-        { key: "currency", label: t("materials.dieCutAnalyzer.table.currency"), type: "text", options: currencies, materialType: "DieCut", placeholder: t("materials.dieCutAnalyzer.placeholders.selectCurrency") || "Select currency" },
-      ];
-    }
-  }, [t, currencies, getDirectionsOptions, getShapeOptions]);
-
   // Computed values
   const readyFilesCount = uploadedFiles.filter((f) => f.status === "ready").length;
   const completedFilesCount = uploadedFiles.filter((f) => f.status === "completed").length;
@@ -439,6 +605,8 @@ export const useDieCutAnalyzer = (onClose: () => void) => {
     getDisplayValue,
     getTableColumns,
     clearAllData,
+    tableHeaders,
+    loadingHeaders,
   };
 };
 
