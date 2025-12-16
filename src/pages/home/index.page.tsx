@@ -12,7 +12,7 @@ function Home() {
     HomePageComponentForAdmin
   );
 
-  console.log("ThemedHomePageComponent", ThemedHomePageComponent);
+  console.log("ThemedHomePageComponent1", ThemedHomePageComponent);
 
   return (
     <CustomerAuthLayout
