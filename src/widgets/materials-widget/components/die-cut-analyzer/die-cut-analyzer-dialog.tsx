@@ -347,6 +347,7 @@ const DieCutAnalyzerDialog: React.FC<DieCutAnalyzerDialogProps> = ({
                       backgroundColor: primaryColor(50),
                       color: primaryColor(900),
                       ...FONT_FAMILY.Lexend(500, 14),
+                      textAlign: "start",
                     }}
                   >
                     {t("materials.dieCutAnalyzer.table.file")}
@@ -356,6 +357,7 @@ const DieCutAnalyzerDialog: React.FC<DieCutAnalyzerDialogProps> = ({
                       backgroundColor: primaryColor(50),
                       color: primaryColor(900),
                       ...FONT_FAMILY.Lexend(500, 14),
+                      textAlign: "start",
                     }}
                   >
                     {t("materials.dieCutAnalyzer.table.status")}
@@ -400,6 +402,7 @@ const DieCutAnalyzerDialog: React.FC<DieCutAnalyzerDialogProps> = ({
                       backgroundColor: primaryColor(50),
                       color: primaryColor(900),
                       ...FONT_FAMILY.Lexend(500, 14),
+                      textAlign: "start",
                     }}
                   >
                     {t("materials.dieCutAnalyzer.table.actions")}
