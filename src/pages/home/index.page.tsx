@@ -12,6 +12,8 @@ function Home() {
     HomePageComponentForAdmin
   );
 
+  console.log("ThemedHomePageComponent2", ThemedHomePageComponent);
+
   return (
     <CustomerAuthLayout
       staticPageTitle={"Gomake"}
