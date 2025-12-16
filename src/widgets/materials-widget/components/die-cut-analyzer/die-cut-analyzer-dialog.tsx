@@ -77,15 +77,21 @@ const DieCutAnalyzerDialog: React.FC<DieCutAnalyzerDialogProps> = ({
     }
 
     if (options && options.length > 0) {
-      const selectedOption = options.find((opt: any) => opt.value === value || opt.label === value);
+      // Match by key property first (for directions and shape), then by value or label
+      const selectedOption = options.find(
+        (opt: any) => opt.key === value || opt.value === value || opt.label === value
+      );
+
       return (
         <GoMakeAutoComplate
           value={selectedOption || null}
           options={options}
           onChange={(e: any, newValue: any) => {
-            handleUpdateFileField(file.id, field, newValue?.value || newValue?.label || "");
+            // Save the key property if it exists, otherwise use value or label
+            const saveValue = newValue?.key ?? newValue?.value ?? newValue?.label ?? "";
+            handleUpdateFileField(file.id, field, saveValue);
           }}
-          getOptionLabel={(option: any) => option.label || option.value || ""}
+          getOptionLabel={(option: any) => option.label || option.value || option.key || ""}
           style={{ width: "100%", minWidth: "120px" }}
         />
       );

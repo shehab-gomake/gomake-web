@@ -337,13 +337,37 @@ export const useDieCutAnalyzer = (onClose: () => void) => {
   }, []);
 
   /**
+   * Get directions options
+   */
+  const getDirectionsOptions = useCallback(() => {
+    return [
+      { key: "long", Specialkey: null, value: "Long", label: "Long" },
+      { key: "short", Specialkey: null, value: "Short", label: "Short" },
+    ];
+  }, []);
+
+  /**
+   * Get shape options
+   */
+  const getShapeOptions = useCallback(() => {
+    return [
+      { key: "Shape_rectangular", Specialkey: null, value: "Shape_rectangular", label: "Shape_rectangular" },
+      { key: "Shape_circular", Specialkey: null, value: "Shape_circular", label: "Shape_circular" },
+      { key: "Shape_formal", Specialkey: null, value: "Shape_formal", label: "Shape_formal" },
+    ];
+  }, []);
+
+  /**
    * Get table columns based on material type
    */
   const getTableColumns = useCallback((materialType?: string): TableColumn[] => {
+    const directionsOptions = getDirectionsOptions();
+    const shapeOptions = getShapeOptions();
+
     if (materialType === "DieKissCut") {
       return [
         { key: "code_DieKissCut", label: t("materials.dieCutAnalyzer.table.code") || "Code", type: "text", materialType: "DieKissCut" },
-        { key: "shape", label: t("materials.dieCutAnalyzer.table.shape") || "Shape", type: "text", materialType: "DieKissCut" },
+        { key: "shape", label: t("materials.dieCutAnalyzer.table.shape") || "Shape", type: "text", materialType: "DieKissCut", options: shapeOptions },
         { key: "name_DieKissCut", label: t("materials.dieCutAnalyzer.table.name") || "Name", type: "text", materialType: "DieKissCut" },
         { key: "unitWidthInMm_DieKissCut", label: t("materials.dieCutAnalyzer.table.unitWidth") || "Unit Width", type: "number", materialType: "DieKissCut" },
         { key: "unitLengthInMm_DieKissCut", label: t("materials.dieCutAnalyzer.table.unitLength") || "Unit Length (MM)", type: "number", materialType: "DieKissCut" },
@@ -351,13 +375,13 @@ export const useDieCutAnalyzer = (onClose: () => void) => {
         { key: "rowsAmount_DieKissCut", label: t("materials.dieCutAnalyzer.table.rowsAmount") || "Rows Amount", type: "number", materialType: "DieKissCut" },
         { key: "spaceBetweenColumnsInMm_DieKissCut", label: t("materials.dieCutAnalyzer.table.spaceBetweenColumns") || "Space Between Columns (MM)", type: "number", materialType: "DieKissCut" },
         { key: "spaceBetweenRowsInMm_DieKissCut", label: t("materials.dieCutAnalyzer.table.spaceBetweenLines") || "Space Between Lines (MM)", type: "number", materialType: "DieKissCut" },
-        { key: "directions", label: t("materials.dieCutAnalyzer.table.directions") || "Directions", type: "text", materialType: "DieKissCut" },
+        { key: "directions", label: t("materials.dieCutAnalyzer.table.directions") || "Directions", type: "text", materialType: "DieKissCut", options: directionsOptions },
         { key: "defaultCost_DieKissCut", label: t("materials.dieCutAnalyzer.table.defaultCost") || "Default Cost", type: "number", materialType: "DieKissCut" },
         { key: "currency_DieKissCut", label: t("materials.dieCutAnalyzer.table.currency") || "Currency", type: "text", options: currencies, materialType: "DieKissCut" },
       ];
     } else {
       return [
-        { key: "shape", label: t("materials.dieCutAnalyzer.table.shape") || "Shape", type: "text", materialType: "DieCut" },
+        { key: "shape", label: t("materials.dieCutAnalyzer.table.shape") || "Shape", type: "text", materialType: "DieCut", options: shapeOptions },
         { key: "widthInCm", label: t("materials.dieCutAnalyzer.table.width") || "Width (CM)", type: "number", materialType: "DieCut" },
         { key: "lengthInCm", label: t("materials.dieCutAnalyzer.table.length") || "Length (CM)", type: "number", materialType: "DieCut" },
         { key: "dieCutFormWidthInCm", label: t("materials.dieCutAnalyzer.table.dieUnitWidth") || "Die Unit Width (CM)", type: "number", materialType: "DieCut" },
@@ -376,7 +400,7 @@ export const useDieCutAnalyzer = (onClose: () => void) => {
         { key: "currency", label: t("materials.dieCutAnalyzer.table.currency") || "Currency", type: "text", options: currencies, materialType: "DieCut" },
       ];
     }
-  }, [t, currencies]);
+  }, [t, currencies, getDirectionsOptions, getShapeOptions]);
 
   // Computed values
   const readyFilesCount = uploadedFiles.filter((f) => f.status === "ready").length;
