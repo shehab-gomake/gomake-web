@@ -888,15 +888,14 @@ const useNewProfits = () => {
   }, [dataForPricing]);
 
   const reOrderPricingTables = useCallback(async (data: any) => {
+    const actionIdOrProductId = router.query.actionId ?? router.query.productId;
+    const isOutSource = router.query.isOutSource === 'true' || router.query.isOutSource === '1';
     const res = await callApi(
       EHttpMethod.PUT,
-      `/v1/printhouse-config/profits/update-re-order-pricing-tables?actionIdOrProductId=${router.query.actionId ?? router.query.productId
-      }?isOutSourc=${router.query.isOutSource ? true : false}`,
-      {
-        data,
-      }
+      `/v1/printhouse-config/profits/update-re-order-pricing-tables/${actionIdOrProductId}?isOutSource=${isOutSource}`,
+      data
     );
-  }, []);
+  }, [router.query.actionId, router.query.productId, router.query.isOutSource]);
 
   useEffect(() => {
     const filteredArray = profitsPricingTables?.reduce(
@@ -938,8 +937,9 @@ const useNewProfits = () => {
     const [removed] = newData.splice(result.source.index, 1);
     newData.splice(result.destination.index, 0, removed);
     const transformedArray = newData.map((item, index) => ({
+      recordID: index,
       id: item?.id,
-      index: index + 1,
+      index: index,
     }));
     setDataForPricing(newData);
     reOrderPricingTables(transformedArray);
