@@ -744,8 +744,6 @@ const useProperites = ({ classes }) => {
       const isEditing = editingDefaultValue?.propertyId === property.propertyId && editingDefaultValue?.ruleType === property.ruleType;
       const currentDefaultValue = property.defaultValue || "";
 
-      console.log("property", { property, isEditing, currentDefaultValue, defaultValueInput });
-
       return [
         property.propertyName,
         isEditing ? (
@@ -769,15 +767,25 @@ const useProperites = ({ classes }) => {
               {renderDefaultValueInput(property, async (value?: string) => {
                 const valueToSave = value !== undefined ? value : defaultValueInput;
                 if (valueToSave !== currentDefaultValue) {
-                  await updatePropertyDefaultValue({
-                    actionId: router.query.actionId as string,
-                    propertyId: property.propertyId,
-                    defaultValue: valueToSave,
-                    ruleType: property.ruleType,
-                  });
+                  try {
+                    await updatePropertyDefaultValue({
+                      actionId: router.query.actionId as string,
+                      propertyId: property.propertyId,
+                      defaultValue: valueToSave,
+                      ruleType: property.ruleType,
+                    });
+                    // Close editing mode after successful save
+                    setEditingDefaultValue(null);
+                    setDefaultValueInput("");
+                  } catch (error) {
+                    console.error('Error updating property default value:', error);
+                    // Keep editing mode open on error
+                  }
+                } else {
+                  // If value hasn't changed, just close editing mode
+                  setEditingDefaultValue(null);
+                  setDefaultValueInput("");
                 }
-                setEditingDefaultValue(null);
-                setDefaultValueInput("");
               })}
             </div>
           </ClickOutside>
