@@ -9,7 +9,7 @@ const DynamicFavicon: React.FC = () => {
   const { callApi } = useGomakeAxios();
   const [profile, setProfile] = useRecoilState<ICompanyProfile>(companyProfileState);
 
-  console.log("profile1", profile);
+  console.log("profile2", profile);
 
   const getProfile = async () => {
     const callBack = (res) => {
@@ -30,14 +30,14 @@ const DynamicFavicon: React.FC = () => {
   const siteUrl = typeof window !== "undefined" ? window.location.origin : "";
 
   // Only render meta tags if loginLogo exists
-  if (!imageUrl) {
-    return (
-      <Head>
-        {/* Favicon only - no social media tags without loginLogo */}
-        <link rel="icon" href="https://gomake-translations.s3.eu-central-1.amazonaws.com/favicon.ico" />
-      </Head>
-    );
-  }
+  // if (!imageUrl) {
+  //   return (
+  //     <Head>
+  //       {/* Favicon only - no social media tags without loginLogo */}
+  //       <link rel="icon" href="https://gomake-translations.s3.eu-central-1.amazonaws.com/favicon.ico" />
+  //     </Head>
+  //   );
+  // }
 
   return (
     <Head>
