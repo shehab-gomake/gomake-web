@@ -16,8 +16,14 @@
  * @module unified-list/UnifiedListDropdown
  */
 
-import React, { useState, useMemo, useCallback, useRef, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
+import React, {
+  useState,
+  useMemo,
+  useCallback,
+  useRef,
+  useEffect,
+} from "react";
+import { useTranslation } from "react-i18next";
 import {
   Box,
   Menu,
@@ -29,21 +35,22 @@ import {
   Divider,
   Checkbox,
   alpha,
-} from '@mui/material';
-import SearchIcon from '@mui/icons-material/Search';
-import CheckIcon from '@mui/icons-material/Check';
-import { colorTokens } from '@/widgets/frontdesk/design-system';
+} from "@mui/material";
+import SearchIcon from "@mui/icons-material/Search";
+import CheckIcon from "@mui/icons-material/Check";
+import { colorTokens } from "@/widgets/frontdesk/design-system";
 import type {
   BaseListItem,
   UnifiedListDropdownBaseProps,
   ActionItem,
-} from './types';
+} from "./types";
 
 // =============================================================================
 // PROPS
 // =============================================================================
 
-export interface UnifiedListDropdownProps<T extends BaseListItem> extends UnifiedListDropdownBaseProps {
+export interface UnifiedListDropdownProps<T extends BaseListItem>
+  extends UnifiedListDropdownBaseProps {
   /** Whether dropdown is open */
   open: boolean;
   /** Anchor element for positioning */
@@ -53,7 +60,7 @@ export interface UnifiedListDropdownProps<T extends BaseListItem> extends Unifie
   /** List items */
   items: T[];
   /** Selection mode */
-  selectionMode: 'single' | 'multiple';
+  selectionMode: "single" | "multiple";
   /** Selected value(s) */
   selectedValue?: string | number | null;
   selectedValues?: Array<string | number>;
@@ -61,7 +68,11 @@ export interface UnifiedListDropdownProps<T extends BaseListItem> extends Unifie
   onSelect?: (value: string | number | null, item: T | null) => void;
   onMultiSelect?: (values: Array<string | number>, items: T[]) => void;
   /** Custom item renderer */
-  renderItem?: (item: T, isSelected: boolean, onClick: () => void) => React.ReactNode;
+  renderItem?: (
+    item: T,
+    isSelected: boolean,
+    onClick: () => void
+  ) => React.ReactNode;
   /** Show none/unassign option */
   showNoneOption?: boolean;
   noneOptionLabel?: string;
@@ -87,7 +98,7 @@ export function UnifiedListDropdown<T extends BaseListItem>({
   onMultiSelect,
   renderItem,
   showNoneOption = false,
-  noneOptionLabel = 'None',
+  noneOptionLabel = "None",
   showClearAll = true,
   headerActions = [],
   // Base props
@@ -99,9 +110,9 @@ export function UnifiedListDropdown<T extends BaseListItem>({
   maxHeight = 360,
   loading = false,
   error,
-  emptyMessage = 'No items available',
+  emptyMessage = "No items available",
   searchable = false,
-  searchPlaceholder = 'Search...',
+  searchPlaceholder = "Search...",
   headerText,
   footerActions = [],
   closeOnSelect,
@@ -110,18 +121,18 @@ export function UnifiedListDropdown<T extends BaseListItem>({
   const { t } = useTranslation();
   const dir: "rtl" | "ltr" = t("direction");
   const isRTL = dir === "rtl";
-  
+
   // RTL-aware positioning
   const anchorOrigin = providedAnchorOrigin || {
-    vertical: 'bottom',
-    horizontal: isRTL ? 'left' : 'right',
+    vertical: "bottom",
+    horizontal: isRTL ? "left" : "right",
   };
   const transformOrigin = providedTransformOrigin || {
-    vertical: 'top',
-    horizontal: isRTL ? 'left' : 'right',
+    vertical: "top",
+    horizontal: isRTL ? "left" : "right",
   };
-  
-  const [searchQuery, setSearchQuery] = useState('');
+
+  const [searchQuery, setSearchQuery] = useState("");
   const searchInputRef = useRef<HTMLInputElement>(null);
 
   // Focus search input when menu opens
@@ -134,7 +145,7 @@ export function UnifiedListDropdown<T extends BaseListItem>({
   // Reset search when menu closes
   useEffect(() => {
     if (!open) {
-      setSearchQuery('');
+      setSearchQuery("");
     }
   }, [open]);
 
@@ -152,7 +163,7 @@ export function UnifiedListDropdown<T extends BaseListItem>({
   // Check if item is selected
   const isItemSelected = useCallback(
     (item: T): boolean => {
-      if (selectionMode === 'single') {
+      if (selectionMode === "single") {
         return selectedValue === item.id;
       }
       return selectedValues.includes(item.id);
@@ -165,7 +176,7 @@ export function UnifiedListDropdown<T extends BaseListItem>({
     (item: T) => {
       if (item.disabled) return;
 
-      if (selectionMode === 'single') {
+      if (selectionMode === "single") {
         onSelect?.(item.id, item);
         if (closeOnSelect !== false) {
           onClose();
@@ -186,12 +197,20 @@ export function UnifiedListDropdown<T extends BaseListItem>({
         }
       }
     },
-    [selectionMode, selectedValues, items, onSelect, onMultiSelect, onClose, closeOnSelect]
+    [
+      selectionMode,
+      selectedValues,
+      items,
+      onSelect,
+      onMultiSelect,
+      onClose,
+      closeOnSelect,
+    ]
   );
 
   // Handle "None" option click
   const handleNoneClick = useCallback(() => {
-    if (selectionMode === 'single') {
+    if (selectionMode === "single") {
       onSelect?.(null, null);
       if (closeOnSelect !== false) {
         onClose();
@@ -201,13 +220,14 @@ export function UnifiedListDropdown<T extends BaseListItem>({
 
   // Handle clear all
   const handleClearAll = useCallback(() => {
-    if (selectionMode === 'multiple') {
+    if (selectionMode === "multiple") {
       onMultiSelect?.([], []);
     }
   }, [selectionMode, onMultiSelect]);
 
   // Has selected items (for multi-select header)
-  const hasSelectedItems = selectionMode === 'multiple' && selectedValues.length > 0;
+  const hasSelectedItems =
+    selectionMode === "multiple" && selectedValues.length > 0;
 
   return (
     <Menu
@@ -221,13 +241,13 @@ export function UnifiedListDropdown<T extends BaseListItem>({
           mt: 1,
           minWidth,
           maxWidth,
-          backgroundColor: colorTokens.neutral[0] || '#ffffff',
+          backgroundColor: colorTokens.neutral[0] || "#ffffff",
           border: `1px solid ${colorTokens.neutral[200]}`,
-          boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
-          borderRadius: '8px',
-          overflow: 'hidden',
-          display: 'flex',
-          flexDirection: 'column',
+          boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.1)",
+          borderRadius: "8px",
+          overflow: "hidden",
+          display: "flex",
+          flexDirection: "column",
           direction: dir,
           ...menuSx,
         },
@@ -237,7 +257,9 @@ export function UnifiedListDropdown<T extends BaseListItem>({
       }}
     >
       {/* Header Section */}
-      {(headerText || headerActions.length > 0 || (searchable && items.length > 5)) && (
+      {(headerText ||
+        headerActions.length > 0 ||
+        (searchable && items.length > 5)) && (
         <Box sx={{ flexShrink: 0 }}>
           {/* Header Text */}
           {headerText && (
@@ -245,10 +267,10 @@ export function UnifiedListDropdown<T extends BaseListItem>({
               <Typography
                 variant="caption"
                 sx={{
-                  fontSize: '0.6875rem',
+                  fontSize: "0.6875rem",
                   fontWeight: 600,
                   color: colorTokens.neutral[500],
-                  textTransform: 'uppercase',
+                  textTransform: "uppercase",
                   letterSpacing: 0.5,
                 }}
               >
@@ -273,17 +295,26 @@ export function UnifiedListDropdown<T extends BaseListItem>({
                     gap: 1.5,
                     fontWeight: 600,
                     color: colorTokens.primary[600],
-                    '&:hover': {
+                    "&:hover": {
                       backgroundColor: alpha(colorTokens.primary[600], 0.08),
                     },
                   }}
                 >
                   {action.icon && (
-                    <Box sx={{ display: 'flex', alignItems: 'center', color: 'inherit' }}>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        color: "inherit",
+                      }}
+                    >
                       {action.icon}
                     </Box>
                   )}
-                  <Typography variant="body2" sx={{ fontSize: 13, fontWeight: 600 }}>
+                  <Typography
+                    variant="body2"
+                    sx={{ fontSize: 13, fontWeight: 600 }}
+                  >
                     {action.label}
                   </Typography>
                 </MenuItem>
@@ -305,19 +336,21 @@ export function UnifiedListDropdown<T extends BaseListItem>({
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position={isRTL ? "end" : "start"}>
-                      <SearchIcon sx={{ fontSize: 18, color: colorTokens.neutral[400] }} />
+                      <SearchIcon
+                        sx={{ fontSize: 18, color: colorTokens.neutral[400] }}
+                      />
                     </InputAdornment>
                   ),
                   sx: {
                     fontSize: 13,
                     direction: dir,
-                    '& input': { py: 0.75 },
+                    "& input": { py: 0.75 },
                   },
                 }}
                 sx={{
                   direction: dir,
-                  '& .MuiOutlinedInput-root': {
-                    borderRadius: '6px',
+                  "& .MuiOutlinedInput-root": {
+                    borderRadius: "6px",
                     backgroundColor: colorTokens.neutral[50],
                   },
                 }}
@@ -334,9 +367,9 @@ export function UnifiedListDropdown<T extends BaseListItem>({
             px: 2,
             py: 1,
             borderBottom: `1px solid ${colorTokens.neutral[200]}`,
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
             backgroundColor: colorTokens.neutral[50],
             flexShrink: 0,
           }}
@@ -353,8 +386,8 @@ export function UnifiedListDropdown<T extends BaseListItem>({
             sx={{
               color: colorTokens.primary[600],
               fontWeight: 600,
-              cursor: 'pointer',
-              '&:hover': { textDecoration: 'underline' },
+              cursor: "pointer",
+              "&:hover": { textDecoration: "underline" },
             }}
           >
             Clear all
@@ -366,21 +399,24 @@ export function UnifiedListDropdown<T extends BaseListItem>({
       <Box
         sx={{
           flex: 1,
-          overflowY: 'auto',
+          overflowY: "auto",
           maxHeight,
           py: 0.5,
         }}
       >
         {/* Loading State */}
         {loading && (
-          <Box sx={{ display: 'flex', justifyContent: 'center', py: 3 }}>
-            <CircularProgress size={24} sx={{ color: colorTokens.primary[600] }} />
+          <Box sx={{ display: "flex", justifyContent: "center", py: 3 }}>
+            <CircularProgress
+              size={24}
+              sx={{ color: colorTokens.primary[600] }}
+            />
           </Box>
         )}
 
         {/* Error State */}
         {error && !loading && (
-          <Box sx={{ px: 2, py: 3, textAlign: 'center' }}>
+          <Box sx={{ px: 2, py: 3, textAlign: "center" }}>
             <Typography
               variant="body2"
               sx={{ color: colorTokens.error[600], fontSize: 13 }}
@@ -392,26 +428,29 @@ export function UnifiedListDropdown<T extends BaseListItem>({
 
         {/* Empty State */}
         {!loading && !error && filteredItems.length === 0 && (
-          <Box sx={{ px: 2, py: 3, textAlign: 'center' }}>
+          <Box sx={{ px: 2, py: 3, textAlign: "center" }}>
             <Typography
               variant="body2"
               sx={{ color: colorTokens.neutral[500], fontSize: 13 }}
             >
-              {searchQuery ? 'No matching items' : emptyMessage}
+              {searchQuery ? "No matching items" : emptyMessage}
             </Typography>
           </Box>
         )}
 
         {/* None Option (for single select) */}
-        {!loading && !error && showNoneOption && selectionMode === 'single' && (
+        {!loading && !error && showNoneOption && selectionMode === "single" && (
           <MenuItem
             onClick={handleNoneClick}
             sx={{
               px: 2,
               py: 1,
               gap: 1.5,
-              backgroundColor: selectedValue === null ? alpha(colorTokens.primary[600], 0.08) : 'transparent',
-              '&:hover': {
+              backgroundColor:
+                selectedValue === null
+                  ? alpha(colorTokens.primary[600], 0.08)
+                  : "transparent",
+              "&:hover": {
                 backgroundColor: alpha(colorTokens.primary[600], 0.12),
               },
             }}
@@ -431,7 +470,7 @@ export function UnifiedListDropdown<T extends BaseListItem>({
                 sx={{
                   fontSize: 16,
                   color: colorTokens.primary[600],
-                  ml: 'auto',
+                  ml: "auto",
                 }}
               />
             )}
@@ -447,7 +486,10 @@ export function UnifiedListDropdown<T extends BaseListItem>({
             // Use custom renderer if provided
             if (renderItem) {
               return (
-                <Box key={item.id} onClick={() => !item.disabled && handleItemClick(item)}>
+                <Box
+                  key={item.id}
+                  onClick={() => !item.disabled && handleItemClick(item)}
+                >
                   {renderItem(item, isSelected, () => handleItemClick(item))}
                 </Box>
               );
@@ -463,26 +505,28 @@ export function UnifiedListDropdown<T extends BaseListItem>({
                   px: 2,
                   py: 1,
                   gap: 1.5,
-                  backgroundColor: isSelected ? alpha(colorTokens.primary[600], 0.08) : 'transparent',
-                  '&:hover': {
+                  backgroundColor: isSelected
+                    ? alpha(colorTokens.primary[600], 0.08)
+                    : "transparent",
+                  "&:hover": {
                     backgroundColor: isSelected
                       ? alpha(colorTokens.primary[600], 0.12)
                       : colorTokens.neutral[50],
                   },
-                  '&.Mui-disabled': {
+                  "&.Mui-disabled": {
                     opacity: 0.5,
                   },
                 }}
               >
                 {/* Checkbox for multi-select */}
-                {selectionMode === 'multiple' && (
+                {selectionMode === "multiple" && (
                   <Checkbox
                     checked={isSelected}
                     size="small"
                     sx={{
                       p: 0,
                       color: colorTokens.neutral[400],
-                      '&.Mui-checked': {
+                      "&.Mui-checked": {
                         color: colorTokens.primary[600],
                       },
                     }}
@@ -497,9 +541,9 @@ export function UnifiedListDropdown<T extends BaseListItem>({
                       fontSize: 13,
                       fontWeight: isSelected ? 600 : 400,
                       color: colorTokens.neutral[900],
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                      whiteSpace: 'nowrap',
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap",
                     }}
                   >
                     {item.label}
@@ -510,10 +554,10 @@ export function UnifiedListDropdown<T extends BaseListItem>({
                       sx={{
                         fontSize: 11,
                         color: colorTokens.neutral[500],
-                        display: 'block',
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                        whiteSpace: 'nowrap',
+                        display: "block",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
                       }}
                     >
                       {item.description}
@@ -522,7 +566,7 @@ export function UnifiedListDropdown<T extends BaseListItem>({
                 </Box>
 
                 {/* Check icon for single select */}
-                {selectionMode === 'single' && isSelected && (
+                {selectionMode === "single" && isSelected && (
                   <CheckIcon
                     sx={{
                       fontSize: 16,
@@ -545,34 +589,37 @@ export function UnifiedListDropdown<T extends BaseListItem>({
               key={action.id}
               onClick={() => {
                 action.onClick();
-                if (action.variant !== 'danger') {
+                if (action.variant !== "danger") {
                   // Don't close for danger actions (usually confirmation needed)
                 }
               }}
               sx={{
                 px: 2,
                 py: 1.25,
-                justifyContent: 'center',
+                justifyContent: "center",
                 gap: 1,
                 color:
-                  action.variant === 'danger'
+                  action.variant === "danger"
                     ? colorTokens.error[600]
-                    : action.variant === 'primary'
+                    : action.variant === "primary"
                     ? colorTokens.primary[600]
                     : colorTokens.neutral[700],
                 fontWeight: 600,
-                '&:hover': {
+                "&:hover": {
                   backgroundColor:
-                    action.variant === 'danger'
+                    action.variant === "danger"
                       ? alpha(colorTokens.error[600], 0.08)
-                      : action.variant === 'primary'
+                      : action.variant === "primary"
                       ? alpha(colorTokens.primary[600], 0.08)
                       : colorTokens.neutral[50],
                 },
               }}
             >
               {action.icon}
-              <Typography variant="body2" sx={{ fontSize: 13, fontWeight: 600 }}>
+              <Typography
+                variant="body2"
+                sx={{ fontSize: 13, fontWeight: 600 }}
+              >
                 {action.label}
               </Typography>
             </MenuItem>
@@ -584,4 +631,3 @@ export function UnifiedListDropdown<T extends BaseListItem>({
 }
 
 export default UnifiedListDropdown;
-

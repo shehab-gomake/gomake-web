@@ -162,6 +162,8 @@ export const ReplyComposerEmailFields: React.FC<
         alignItems="center"
         sx={{
           gap: 1.5,
+          flexDirection: isRTL ? "row-reverse" : "row",
+          direction: dir,
         }}
       >
         <Typography sx={labelStyle}>{t("frontdesk.compose.to")}</Typography>
@@ -217,6 +219,7 @@ export const ReplyComposerEmailFields: React.FC<
                 borderRadius: `${radiusTokens.md}px`,
                 border: `1px dashed ${colorTokens.neutral[300]}`,
                 transition: "all 0.15s ease",
+                flexShrink: 0,
                 "&:hover": {
                   backgroundColor: colorTokens.neutral[100],
                   borderColor: colorTokens.neutral[400],
@@ -232,8 +235,14 @@ export const ReplyComposerEmailFields: React.FC<
               anchorEl={anchorEl}
               open={menuOpen}
               onClose={handleMenuClose}
-              anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-              transformOrigin={{ vertical: "top", horizontal: "right" }}
+              anchorOrigin={{
+                vertical: "bottom",
+                horizontal: isRTL ? "left" : "right",
+              }}
+              transformOrigin={{
+                vertical: "top",
+                horizontal: isRTL ? "left" : "right",
+              }}
               PaperProps={{
                 sx: {
                   mt: 0.5,
@@ -241,6 +250,7 @@ export const ReplyComposerEmailFields: React.FC<
                   borderRadius: `${radiusTokens.lg}px`,
                   boxShadow: shadowTokens.lg,
                   border: `1px solid ${colorTokens.neutral[200]}`,
+                  direction: dir,
                 },
               }}
             >
@@ -307,6 +317,7 @@ export const ReplyComposerEmailFields: React.FC<
           sx={{
             gap: 1.5,
             flexDirection: isRTL ? "row-reverse" : "row",
+            direction: dir,
           }}
         >
           <Typography sx={labelStyle}>{t("frontdesk.compose.cc")}</Typography>
@@ -331,6 +342,7 @@ export const ReplyComposerEmailFields: React.FC<
               p: 0.5,
               color: colorTokens.neutral[400],
               borderRadius: `${radiusTokens.sm}px`,
+              flexShrink: 0,
               "&:hover": {
                 color: colorTokens.neutral[600],
                 backgroundColor: colorTokens.neutral[100],
@@ -351,6 +363,7 @@ export const ReplyComposerEmailFields: React.FC<
           sx={{
             gap: 1.5,
             flexDirection: isRTL ? "row-reverse" : "row",
+            direction: dir,
           }}
         >
           <Typography sx={labelStyle}>{t("frontdesk.compose.bcc")}</Typography>
@@ -375,6 +388,8 @@ export const ReplyComposerEmailFields: React.FC<
               p: 0.5,
               color: colorTokens.neutral[400],
               borderRadius: `${radiusTokens.sm}px`,
+              flexShrink: 0,
+              width: "fit-content",
               "&:hover": {
                 color: colorTokens.neutral[600],
                 backgroundColor: colorTokens.neutral[100],

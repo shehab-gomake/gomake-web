@@ -112,12 +112,13 @@ export const BaseConversationView: React.FC<BaseConversationViewProps> = ({
 
   // Handle successful conversation creation
   const handleComposeSuccess = useCallback(
-    (conversationId: number) => {
+    async (conversationId: number) => {
       setShowComposeModal(false);
       // Navigate to the newly created conversation
       router.navigateToConversation(conversationId.toString());
       // Refresh conversation list to show the new conversation
-      refresh();
+      // Force refresh to bypass cache and ensure new conversation appears
+      await refresh();
     },
     [router, refresh]
   );
@@ -263,6 +264,7 @@ export const BaseConversationView: React.FC<BaseConversationViewProps> = ({
         onClose={handleComposeClose}
         onSuccess={handleComposeSuccess}
         accountId={currentAccountId}
+        onRefreshConversations={refresh}
       />
     </Box>
   );

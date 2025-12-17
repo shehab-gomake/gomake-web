@@ -76,7 +76,21 @@ export const EmailCompositionFields = React.memo<EmailCompositionFieldsProps>(
             onChange={(e) => onSubjectChange(e.target.value)}
             error={!!errors.subject}
             helperText={errors.subject}
-            sx={textFieldStyles}
+            sx={{
+              ...textFieldStyles,
+              direction: dir,
+              "& .MuiInputLabel-root": {
+                direction: dir,
+              },
+              "& .MuiInputBase-input": {
+                direction: dir,
+                textAlign: dir === "rtl" ? "right" : "left",
+              },
+              "& .MuiFormHelperText-root": {
+                direction: dir,
+                textAlign: dir === "rtl" ? "right" : "left",
+              },
+            }}
           />
         </Box>
 
@@ -130,6 +144,9 @@ export const EmailCompositionFields = React.memo<EmailCompositionFieldsProps>(
                   color: colorTokens.primary[600],
                   fontWeight: 500,
                   minWidth: "auto",
+                  width: "fit-content",
+                  flexShrink: 0,
+                  direction: dir,
                   "&:hover": {
                     backgroundColor: colorTokens.primary[50],
                   },
