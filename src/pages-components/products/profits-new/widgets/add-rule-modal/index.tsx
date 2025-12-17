@@ -179,7 +179,6 @@ const AddRuleModal = ({
         return baseFilters;
     }
   };
-  console.log("rules", rules);
   const [selectedOutputs, setSelectedOutputs] =
     useState<selectedOutputsProps>();
   const [selectedParameters, setSelectedParameters] =
