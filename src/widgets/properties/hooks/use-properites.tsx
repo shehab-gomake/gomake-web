@@ -1,6 +1,6 @@
 import { matchSorter } from "match-sorter";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useRef } from "react";
 import { useRouter } from "next/router";
 import { getAndSetProperites } from "@/services/hooks/admin-side/profits/get-set-properites";
 import { EHttpMethod } from "@/services/api-service/enums";
@@ -21,6 +21,7 @@ import { ClickOutside } from "@/components/click-out-side/click-out-side";
 const useProperites = ({ classes }) => {
   const { t } = useTranslation();
   const router = useRouter();
+  const isMountedRef = useRef(true);
   const tableHeaders = [
     "",
     t("properties.properties"),
@@ -50,16 +51,46 @@ const useProperites = ({ classes }) => {
   const [defaultValueInput, setDefaultValueInput] = useState<string>("");
 
   const { callApi } = useGomakeAxios();
+
+  // Track if component is still mounted and on properties page
   useEffect(() => {
+    isMountedRef.current = router.pathname === '/properties';
+
+    // Listen for route changes to immediately stop effects
+    const handleRouteChangeStart = () => {
+      isMountedRef.current = false;
+    };
+
+    const handleRouteChangeComplete = () => {
+      isMountedRef.current = router.pathname === '/properties';
+    };
+
+    router.events.on('routeChangeStart', handleRouteChangeStart);
+    router.events.on('routeChangeComplete', handleRouteChangeComplete);
+
+    return () => {
+      isMountedRef.current = false;
+      router.events.off('routeChangeStart', handleRouteChangeStart);
+      router.events.off('routeChangeComplete', handleRouteChangeComplete);
+    };
+  }, [router.pathname, router.events]);
+
+  const getProperitesService = useCallback(async () => {
     if (router.query.actionId) {
+      await getAndSetProperites(callApi, setAllProperites, router);
+    }
+  }, [callApi, router.query.actionId]);
+
+  useEffect(() => {
+    // Only run when router is ready, we're on the properties page, and we have an actionId
+    // This prevents running during navigation away from the page
+    if (!isMountedRef.current) return;
+    const isPropertiesPage = router.pathname === '/properties';
+    if (router.isReady && isPropertiesPage && router.query.actionId) {
       getProperitesService();
       setActionId(router.query.actionId as string);
     }
-  }, [router]);
-
-  const getProperitesService = useCallback(async () => {
-    await getAndSetProperites(callApi, setAllProperites, router);
-  }, []);
+  }, [router.pathname, router.query.actionId, router.isReady, getProperitesService]);
 
   const [allMachincesList, setAllMachincesList] = useState<any>();
   const getMachincesByActionId = useCallback(async () => {
@@ -68,10 +99,17 @@ const useProperites = ({ classes }) => {
         actionId: router.query.actionId,
       });
     }
-  }, [router]);
+  }, [callApi, router.query.actionId]);
+
   useEffect(() => {
-    getMachincesByActionId()
-  }, [])
+    // Only run when router is ready, we're on the properties page, and we have an actionId
+    // This prevents running during navigation away from the page
+    if (!isMountedRef.current) return;
+    const isPropertiesPage = router.pathname === '/properties';
+    if (router.isReady && isPropertiesPage && router.query.actionId) {
+      getMachincesByActionId()
+    }
+  }, [router.pathname, router.query.actionId, router.isReady, getMachincesByActionId])
   const updatePropertyDefaultValue = useCallback(
     async (data: any) => {
       const res = await callApi(
@@ -689,6 +727,14 @@ const useProperites = ({ classes }) => {
     }
   };
   useEffect(() => {
+    // Only run this effect when we're on the properties page
+    // This prevents the heavy JSX creation from blocking navigation
+    if (!isMountedRef.current) return;
+    const isPropertiesPage = router.pathname === '/properties';
+    if (!isPropertiesPage) {
+      return;
+    }
+
     const updatedProperties = updateProperties(
       allProperties,
       parameters,
@@ -697,6 +743,8 @@ const useProperites = ({ classes }) => {
     const mapData = updatedProperties?.map((property, index) => {
       const isEditing = editingDefaultValue?.propertyId === property.propertyId && editingDefaultValue?.ruleType === property.ruleType;
       const currentDefaultValue = property.defaultValue || "";
+
+      console.log("property", { property, isEditing, currentDefaultValue, defaultValueInput });
 
       return [
         property.propertyName,
@@ -800,15 +848,18 @@ const useProperites = ({ classes }) => {
         </IconButton>,
       ];
     });
-    setProperitesData(mapData);
-    const hiddenData = updatedProperties?.map((property, index) => ({
-      propertyId: property.propertyId,
-      ruleType: property.ruleType,
-      index: index
-    }));
 
-    setHiddenData(hiddenData);
-  }, [parameters, Outputs, allProperties, allMachincesList, editingDefaultValue, defaultValueInput, updatePropertyDefaultValue, router.query.actionId, classes.rowItem, classes.item, t, actionEmployeeList]);
+    // Only update state if still on properties page
+    if (isMountedRef.current && router.pathname === '/properties') {
+      setProperitesData(mapData);
+      const hiddenData = updatedProperties?.map((property, index) => ({
+        propertyId: property.propertyId,
+        ruleType: property.ruleType,
+        index: index
+      }));
+      setHiddenData(hiddenData);
+    }
+  }, [parameters, Outputs, allProperties, allMachincesList, editingDefaultValue, defaultValueInput, updatePropertyDefaultValue, router.query.actionId, router.pathname, classes.rowItem, classes.item, t, actionEmployeeList]);
 
   const [openAddRule, setOpenAddRule] = useState<boolean>(false);
   const [openEditRule, setOpenEditRule] = useState<boolean>(false);
