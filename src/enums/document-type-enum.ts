@@ -133,10 +133,12 @@ export enum ORDER_STATUSES {
   Ready,
 }
 
-export enum EAdditionType {
+export enum EAdditionType 
+{
   Percentage,
   ValuePerJob,
   ValuePerUnit,
+  ValuePerProperty
 }
 
 export enum ECalculationStatus {
