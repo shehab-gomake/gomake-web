@@ -769,7 +769,9 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
 
           {/* My Tickets */}
           <Tooltip
-            title={t("frontdesk.tickets.myTickets")}
+            title={t("frontdesk.tickets.myTicketsTooltip", {
+              defaultValue: "My Tickets (Open only)",
+            })}
             placement="right"
             disableHoverListener={!isCollapsed}
           >
@@ -793,14 +795,25 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
                 }}
               />
               {!isCollapsed && (
-                <Typography
-                  sx={{
-                    fontSize: `${navigationTypography.menuItem.fontSize}px`,
-                    fontWeight: isMyInboxView ? 600 : 500,
-                  }}
-                >
-                  {t("frontdesk.tickets.myTickets")}
-                </Typography>
+                <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, flex: 1 }}>
+                  <Typography
+                    sx={{
+                      fontSize: `${navigationTypography.menuItem.fontSize}px`,
+                      fontWeight: isMyInboxView ? 600 : 500,
+                    }}
+                  >
+                    {t("frontdesk.tickets.myTickets")}
+                  </Typography>
+                  <Typography
+                    sx={{
+                      fontSize: `${navigationTypography.menuItem.fontSize - 2}px`,
+                      color: colorTokens.neutral[400],
+                      fontWeight: 400,
+                    }}
+                  >
+                    ({t("frontdesk.tickets.openOnly", { defaultValue: "Open" })})
+                  </Typography>
+                </Box>
               )}
             </ListItemButton>
           </Tooltip>

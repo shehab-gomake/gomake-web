@@ -2871,6 +2871,8 @@
     "tickets": {
       "title": "Tickets",
       "myTickets": "My Tickets",
+      "myTicketsTooltip": "My Tickets (Open only)",
+      "openOnly": "Open",
       "unassigned": "Unassigned",
       "allTickets": "All Tickets",
       "done": "Done",
@@ -3330,6 +3332,8 @@
       "attachFile": "Attach file",
       "attachFiles": "Attach files",
       "filesAttached": "{{count}} file attached",
+      "attachments": "ATTACHMENTS",
+      "chooseFiles": "Choose Files",
       "filesAttached_plural": "{{count}} files attached",
       "subject": "SUBJECT",
       "enterSubject": "Enter subject",

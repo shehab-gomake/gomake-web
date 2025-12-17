@@ -8,10 +8,15 @@
 
 import React, { useRef } from "react";
 import { Box, Button, Typography } from "@mui/material";
+import { useTranslation } from "react-i18next";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
 
 import { AttachmentPreviews } from "./AttachmentPreview";
-import { createFieldContainerStyles, createSectionLabelStyles, createOutlinedButtonStyles } from "../../styles/compose-styles";
+import {
+  createFieldContainerStyles,
+  createSectionLabelStyles,
+  createOutlinedButtonStyles,
+} from "../../styles/compose-styles";
 import { createLogger } from "@/services/frontdesk/utils/logger";
 
 const logger = createLogger("AttachmentUploader");
@@ -25,7 +30,10 @@ const fileSizeInMegaBytes = (bytes: number): number => {
 };
 
 // Check if file size is within limit
-const checkFileSizeLimit = (file: File, maximumUploadLimitMB: number): boolean => {
+const checkFileSizeLimit = (
+  file: File,
+  maximumUploadLimitMB: number
+): boolean => {
   const fileSizeInMB = fileSizeInMegaBytes(file.size);
   return fileSizeInMB <= maximumUploadLimitMB;
 };
@@ -47,6 +55,8 @@ export interface AttachmentUploaderProps {
  */
 export const AttachmentUploader = React.memo<AttachmentUploaderProps>(
   ({ files, onFilesSelect, onFileRemove, disabled = false }) => {
+    const { t } = useTranslation();
+    const dir: "rtl" | "ltr" = t("direction");
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -61,14 +71,18 @@ export const AttachmentUploader = React.memo<AttachmentUploaderProps>(
           validFiles.push(file);
         } else {
           invalidFiles.push(file.name);
-          logger.warn(`File ${file.name} exceeds size limit of ${MAXIMUM_FILE_UPLOAD_SIZE_MB}MB`);
+          logger.warn(
+            `File ${file.name} exceeds size limit of ${MAXIMUM_FILE_UPLOAD_SIZE_MB}MB`
+          );
         }
       });
 
       if (invalidFiles.length > 0) {
         // TODO: Show user-friendly error toast/snackbar
         console.warn(
-          `The following files exceed the ${MAXIMUM_FILE_UPLOAD_SIZE_MB}MB limit: ${invalidFiles.join(", ")}`
+          `The following files exceed the ${MAXIMUM_FILE_UPLOAD_SIZE_MB}MB limit: ${invalidFiles.join(
+            ", "
+          )}`
         );
       }
 
@@ -87,19 +101,36 @@ export const AttachmentUploader = React.memo<AttachmentUploaderProps>(
       fileInputRef.current?.click();
     };
 
+    const isRTL = dir === "rtl";
+
     return (
-      <Box sx={createFieldContainerStyles({ backgroundColor: "light" })}>
-        <Box sx={{ width: "100%" }}>
-          <Typography sx={createSectionLabelStyles()}>Attachments</Typography>
+      <Box
+        sx={{
+          ...createFieldContainerStyles({ backgroundColor: "light" }),
+          direction: dir,
+        }}
+      >
+        <Box sx={{ width: "100%", direction: dir }}>
+          <Typography sx={{ ...createSectionLabelStyles(), direction: dir }}>
+            {t("frontdesk.compose.attachments")}
+          </Typography>
           <Button
             onClick={handleButtonClick}
             disabled={disabled}
             startIcon={<AttachFileIcon sx={{ fontSize: 18 }} />}
             variant="outlined"
-            sx={createOutlinedButtonStyles()}
-            aria-label="Choose files to attach"
+            sx={{
+              ...createOutlinedButtonStyles(),
+              direction: dir,
+              "& .MuiButton-startIcon": {
+                ...(isRTL
+                  ? { marginLeft: "4px", marginRight: 0 }
+                  : { marginRight: "4px", marginLeft: 0 }),
+              },
+            }}
+            aria-label={t("frontdesk.compose.chooseFiles")}
           >
-            Choose Files
+            {t("frontdesk.compose.chooseFiles")}
             <input
               ref={fileInputRef}
               type="file"
@@ -107,7 +138,7 @@ export const AttachmentUploader = React.memo<AttachmentUploaderProps>(
               hidden
               onChange={handleFileSelect}
               disabled={disabled}
-              aria-label="File input"
+              aria-label={t("frontdesk.compose.chooseFiles")}
             />
           </Button>
           <AttachmentPreviews files={files} onRemove={onFileRemove} />

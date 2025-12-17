@@ -7,9 +7,10 @@ import { useFrontDeskRouter } from "@/widgets/frontdesk/routing/hooks/use-frontd
 interface UseEmailConversationManagerProps {
   selectedAccountId?: string;
   onRefresh: () => void;
+  onMarkAsRead?: (conversationId: string) => Promise<void>;
 }
 
-export const useEmailConversationManager = ({ selectedAccountId, onRefresh }: UseEmailConversationManagerProps) => {
+export const useEmailConversationManager = ({ selectedAccountId, onRefresh, onMarkAsRead }: UseEmailConversationManagerProps) => {
   const [selectedConversation, setSelectedConversation] = useState<EmailConversation | null>(null);
   const { goToEmailConversation, navigate, RouteBuilder } = useFrontDeskRouter();
 
@@ -17,18 +18,28 @@ export const useEmailConversationManager = ({ selectedAccountId, onRefresh }: Us
    * Internal function to select a conversation (state update only, no URL change)
    * Use this when the selection is triggered by URL changes to avoid circular updates
    */
-  const selectConversation = useCallback((conversation: EmailConversation) => {
+  const selectConversation = useCallback(async (conversation: EmailConversation) => {
     console.log('[Email Conversation Manager] Selecting conversation (state only):', conversation.id);
     setSelectedConversation(conversation);
-  }, []);
+    
+    // Mark conversation as read when opened (if unread)
+    if (!conversation.isRead && onMarkAsRead && selectedAccountId) {
+      try {
+        console.log('[Email Conversation Manager] Marking conversation as read:', conversation.id);
+        await onMarkAsRead(conversation.id);
+      } catch (error) {
+        console.error('[Email Conversation Manager] Failed to mark conversation as read:', error);
+      }
+    }
+  }, [onMarkAsRead, selectedAccountId]);
 
   /**
    * Public function to select a conversation (updates state AND URL)
    * Use this when the selection is triggered by user clicks
    */
-  const handleConversationSelect = useCallback((conversation: EmailConversation) => {
+  const handleConversationSelect = useCallback(async (conversation: EmailConversation) => {
     console.log('[Email Conversation Manager] User selected conversation:', conversation.id);
-    selectConversation(conversation);
+    await selectConversation(conversation);
     // Update URL to reflect conversation selection
     goToEmailConversation(conversation.id);
   }, [selectConversation, goToEmailConversation]);

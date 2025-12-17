@@ -15,6 +15,7 @@ import {
   createFieldLabelStyles,
   createSelectedChipStyles,
 } from "../../styles/compose-styles";
+import { colorTokens } from "@/widgets/frontdesk/design-system";
 import type { ContactDetail } from "@/services/frontdesk/api/chatwoot/types/contacts.types";
 import type { GomakeContact } from "../../hooks/use-compose-conversation";
 
@@ -47,12 +48,14 @@ export const ContactSelectionField = React.memo<ContactSelectionFieldProps>(
     error,
   }) => {
     const { t } = useTranslation();
+    const dir: "rtl" | "ltr" = t("direction");
+    const isRTL = dir === "rtl";
     return (
       <Box sx={createFieldContainerStyles({ backgroundColor: "light" })}>
         <Typography sx={createFieldLabelStyles()}>
           {t("frontdesk.compose.contact")} *
         </Typography>
-        <Box sx={{ flex: 1 }}>
+        <Box sx={{ flex: 1, direction: dir }}>
           {selectedContact ? (
             <Chip
               label={
@@ -61,7 +64,21 @@ export const ContactSelectionField = React.memo<ContactSelectionFieldProps>(
                 selectedContact.phone_number
               }
               onDelete={() => onSelectContact(null)}
-              sx={createSelectedChipStyles()}
+              sx={{
+                ...createSelectedChipStyles(),
+                "& .MuiChip-deleteIcon": {
+                  color: colorTokens.primary[400],
+                  ...(isRTL
+                    ? { marginLeft: "4px", marginRight: 0 }
+                    : { marginRight: "4px", marginLeft: 0 }),
+                  "&:hover": {
+                    color: colorTokens.primary[600],
+                  },
+                },
+                "& .MuiChip-label": {
+                  direction: dir,
+                },
+              }}
             />
           ) : (
             <ContactSelector

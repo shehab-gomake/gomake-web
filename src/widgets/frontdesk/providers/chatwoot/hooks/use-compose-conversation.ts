@@ -50,6 +50,8 @@ export interface UseComposeConversationOptions {
   onSuccess?: (conversationId: number) => void;
   /** Callback on error */
   onError?: (error: Error) => void;
+  /** Callback to refresh conversation list after creation */
+  onRefreshConversations?: () => void | Promise<void>;
 }
 
 export function useComposeConversation(options?: UseComposeConversationOptions) {
@@ -687,7 +689,21 @@ export function useComposeConversation(options?: UseComposeConversationOptions) 
       const conversationId = await conversationComposerService.createConversation(accountId, payload);
 
       if (conversationId) {
+        // Call success callback first
         options?.onSuccess?.(conversationId);
+        
+        // Refresh conversation list to ensure new conversation appears
+        // Add a small delay to ensure backend has processed the creation
+        if (options?.onRefreshConversations) {
+          setTimeout(async () => {
+            try {
+              await options.onRefreshConversations?.();
+            } catch (refreshError) {
+              console.error("[useComposeConversation] Failed to refresh conversations:", refreshError);
+            }
+          }, 500); // 500ms delay to ensure backend has processed
+        }
+        
         // Reset form
         resetForm();
         return conversationId;

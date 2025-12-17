@@ -124,12 +124,13 @@ export const MyInboxView: React.FC = () => {
 
   // Handle successful conversation creation
   const handleComposeSuccess = useCallback(
-    (conversationId: number) => {
+    async (conversationId: number) => {
       setShowComposeModal(false);
       // Navigate to the newly created conversation
       router.navigateToConversation(conversationId.toString());
       // Refresh conversation list to show the new conversation
-      refresh();
+      // Force refresh to bypass cache and ensure new conversation appears
+      await refresh();
     },
     [router, refresh]
   );
@@ -175,18 +176,29 @@ export const MyInboxView: React.FC = () => {
           backgroundColor: colorTokens.semantic.background.primary,
         }}
       >
-        <Typography
-          variant="h6"
-          sx={{
-            fontWeight: 600,
-            fontSize: "1.125rem",
-            color: colorTokens.semantic.text.primary,
-            mb: 0.5,
-            letterSpacing: "-0.01em",
-          }}
-        >
-          {t("frontdesk.myInbox.myTickets")}
-        </Typography>
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 0.5 }}>
+          <Typography
+            variant="h6"
+            sx={{
+              fontWeight: 600,
+              fontSize: "1.125rem",
+              color: colorTokens.semantic.text.primary,
+              letterSpacing: "-0.01em",
+            }}
+          >
+            {t("frontdesk.myInbox.myTickets")}
+          </Typography>
+          <Typography
+            variant="body2"
+            sx={{
+              fontSize: "0.875rem",
+              color: colorTokens.neutral[500],
+              fontWeight: 400,
+            }}
+          >
+            ({t("frontdesk.tickets.openOnly", { defaultValue: "Open" })})
+          </Typography>
+        </Box>
         <Typography
           variant="body2"
           sx={{
@@ -204,7 +216,7 @@ export const MyInboxView: React.FC = () => {
         </Typography>
       </Box>
     );
-  }, [conversationCount, conversationsLoading.initialLoading]);
+  }, [conversationCount, conversationsLoading.initialLoading, t]);
 
   return (
     <Box
@@ -352,6 +364,7 @@ export const MyInboxView: React.FC = () => {
         onClose={handleComposeClose}
         onSuccess={handleComposeSuccess}
         accountId={currentAccountId}
+        onRefreshConversations={refresh}
       />
     </Box>
   );

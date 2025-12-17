@@ -52,11 +52,13 @@ interface ComposeConversationModalProps {
   onClose: () => void;
   onSuccess?: (conversationId: number) => void;
   accountId: number | null;
+  /** Callback to refresh conversation list after creation */
+  onRefreshConversations?: () => void | Promise<void>;
 }
 
 export const ComposeConversationModal: React.FC<
   ComposeConversationModalProps
-> = ({ open, onClose, onSuccess, accountId }) => {
+> = ({ open, onClose, onSuccess, accountId, onRefreshConversations }) => {
   const { t } = useTranslation();
   const { setSnackbarStateValue } = useSnackBar();
   const [showTemplateSelector, setShowTemplateSelector] = useState(false);
@@ -84,6 +86,7 @@ export const ComposeConversationModal: React.FC<
         err.message || t("frontdesk.compose.failedToCreateConversation")
       );
     },
+    onRefreshConversations, // Pass refresh function to ensure conversation list updates
   });
 
   // Get channel requirements

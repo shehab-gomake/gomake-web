@@ -20,7 +20,10 @@ import {
   CircularProgress,
 } from "@mui/material";
 import type { ChatwootInbox } from "@/services/frontdesk/api/chatwoot/types/inboxes.types";
-import { SettingsSection, CompactPrimaryButton } from "../../../components/settings";
+import {
+  SettingsSection,
+  CompactPrimaryButton,
+} from "../../../components/settings";
 import { useChatwootAgents } from "../../../hooks/resources/use-chatwoot-agents";
 import { chatwootService } from "@/services/frontdesk";
 
@@ -73,7 +76,9 @@ export const InboxCollaboratorsTab: React.FC<InboxCollaboratorsTabProps> = ({
 
   const handleAgentChange = (event: any) => {
     const value = event.target.value;
-    setSelectedAgentIds(typeof value === "string" ? value.split(",").map(Number) : value);
+    setSelectedAgentIds(
+      typeof value === "string" ? value.split(",").map(Number) : value
+    );
     setHasAgentChanges(true);
   };
 
@@ -94,8 +99,17 @@ export const InboxCollaboratorsTab: React.FC<InboxCollaboratorsTabProps> = ({
         }}
       >
         <CircularProgress size={24} sx={{ color: "#6366f1" }} />
-        <Typography variant="body2" sx={{ [dir === "rtl" ? "mr" : "ml"]: 2, color: "#6b7280", fontSize: "0.813rem" }}>
-          {loadingAgents ? t("frontdesk.settings.inboxesCollaboratorsLoadingAgents") : t("frontdesk.settings.inboxesCollaboratorsLoadingAssignments")}
+        <Typography
+          variant="body2"
+          sx={{
+            [dir === "rtl" ? "mr" : "ml"]: 2,
+            color: "#6b7280",
+            fontSize: "0.813rem",
+          }}
+        >
+          {loadingAgents
+            ? t("frontdesk.settings.inboxesCollaboratorsLoadingAgents")
+            : t("frontdesk.settings.inboxesCollaboratorsLoadingAssignments")}
         </Typography>
       </Box>
     );
@@ -109,20 +123,38 @@ export const InboxCollaboratorsTab: React.FC<InboxCollaboratorsTabProps> = ({
         description={t("frontdesk.settings.inboxesCollaboratorsDescription")}
       >
         <FormControl fullWidth size="small" sx={{ mb: 2, direction: dir }}>
-          <InputLabel sx={{ fontSize: "0.813rem" }}>{t("frontdesk.settings.inboxesCollaboratorsSelectAgents")}</InputLabel>
+          <InputLabel sx={{ fontSize: "0.813rem" }}>
+            {t("frontdesk.settings.inboxesCollaboratorsSelectAgents")}
+          </InputLabel>
           <Select
             multiple
             value={selectedAgentIds}
             onChange={handleAgentChange}
-            input={<OutlinedInput label={t("frontdesk.settings.inboxesCollaboratorsSelectAgents")} />}
+            input={
+              <OutlinedInput
+                label={t("frontdesk.settings.inboxesCollaboratorsSelectAgents")}
+              />
+            }
             renderValue={(selected) => (
-              <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5, direction: dir }}>
+              <Box
+                sx={{
+                  display: "flex",
+                  flexWrap: "wrap",
+                  gap: 0.5,
+                  direction: dir,
+                }}
+              >
                 {selected.map((agentId) => {
                   const agent = agents.find((a) => a.id === agentId);
                   return (
                     <Chip
                       key={agentId}
-                      label={agent?.name || t("frontdesk.settings.inboxesCollaboratorsAgent", { id: agentId })}
+                      label={
+                        agent?.name ||
+                        t("frontdesk.settings.inboxesCollaboratorsAgent", {
+                          id: agentId,
+                        })
+                      }
                       size="small"
                       sx={{
                         fontSize: "0.75rem",
@@ -145,8 +177,20 @@ export const InboxCollaboratorsTab: React.FC<InboxCollaboratorsTabProps> = ({
             }}
           >
             {agents.map((agent) => (
-              <MenuItem key={agent.id} value={agent.id} sx={{ fontSize: "0.813rem", py: 1 }}>
-                <Box sx={{ display: "flex", alignItems: "center", gap: 0.75, width: "100%", direction: dir }}>
+              <MenuItem
+                key={agent.id}
+                value={agent.id}
+                sx={{ fontSize: "0.813rem", py: 1 }}
+              >
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 0.75,
+                    width: "100%",
+                    direction: dir,
+                  }}
+                >
                   <Box
                     sx={{
                       width: 6,
@@ -159,7 +203,9 @@ export const InboxCollaboratorsTab: React.FC<InboxCollaboratorsTabProps> = ({
                       flexShrink: 0,
                     }}
                   />
-                  <Typography sx={{ fontSize: "0.813rem", flex: 1 }}>{agent.name}</Typography>
+                  <Typography sx={{ fontSize: "0.813rem", flex: 1 }}>
+                    {agent.name}
+                  </Typography>
                 </Box>
               </MenuItem>
             ))}
@@ -167,18 +213,38 @@ export const InboxCollaboratorsTab: React.FC<InboxCollaboratorsTabProps> = ({
         </FormControl>
 
         {selectedAgentIds.length === 0 && (
-          <Alert severity="warning" sx={{ mb: 2, borderRadius: "6px", fontSize: "0.813rem", py: 0.75, direction: dir }}>
+          <Alert
+            severity="warning"
+            sx={{
+              mb: 2,
+              borderRadius: "6px",
+              fontSize: "0.813rem",
+              py: 0.75,
+              direction: dir,
+            }}
+          >
             {t("frontdesk.settings.inboxesCollaboratorsAtLeastOneAgent")}
           </Alert>
         )}
 
-        <Box sx={{ display: "flex", justifyContent: dir === "rtl" ? "flex-start" : "flex-end", mt: 2, direction: dir }}>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: dir === "rtl" ? "flex-start" : "flex-end",
+            mt: 2,
+            direction: dir,
+          }}
+        >
           <CompactPrimaryButton
             onClick={handleSaveAgents}
-            disabled={!hasAgentChanges || selectedAgentIds.length === 0 || isSaving}
+            disabled={
+              !hasAgentChanges || selectedAgentIds.length === 0 || isSaving
+            }
             loading={isSaving}
           >
-            {isSaving ? t("frontdesk.settings.inboxesSettingsSaving") : t("frontdesk.settings.inboxesSettingsSaveChanges")}
+            {isSaving
+              ? t("frontdesk.settings.inboxesSettingsSaving")
+              : t("frontdesk.settings.inboxesSettingsSaveChanges")}
           </CompactPrimaryButton>
         </Box>
       </SettingsSection>

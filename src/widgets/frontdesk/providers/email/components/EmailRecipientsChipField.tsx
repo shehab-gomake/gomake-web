@@ -5,8 +5,16 @@
  * Compact version for the email composer.
  */
 
-import React, { useState, useCallback, useRef, KeyboardEvent, ClipboardEvent, useMemo } from "react";
+import React, {
+  useState,
+  useCallback,
+  useRef,
+  KeyboardEvent,
+  ClipboardEvent,
+  useMemo,
+} from "react";
 import { Box, Chip, Stack } from "@mui/material";
+import { useTranslation } from "react-i18next";
 import {
   isValidEmail,
   parseEmailString,
@@ -31,12 +39,16 @@ interface EmailChip {
   isValid: boolean;
 }
 
-export const EmailRecipientsChipField: React.FC<EmailRecipientsChipFieldProps> = ({
+export const EmailRecipientsChipField: React.FC<
+  EmailRecipientsChipFieldProps
+> = ({
   emails,
   onChange,
   placeholder = "Enter email addresses",
   readOnly = false,
 }) => {
+  const { t } = useTranslation();
+  const dir: "rtl" | "ltr" = t("direction");
   const inputRef = useRef<HTMLInputElement>(null);
   const [inputValue, setInputValue] = useState("");
   const [isFocused, setIsFocused] = useState(false);
@@ -191,7 +203,16 @@ export const EmailRecipientsChipField: React.FC<EmailRecipientsChipFieldProps> =
             },
       }}
     >
-      <Stack direction="row" flexWrap="wrap" gap={0.5} flex={1} alignItems="center" sx={{ py: 0.25 }}>
+      <Stack
+        direction="row"
+        flexWrap="wrap"
+        gap={0.5}
+        flex={1}
+        alignItems="center"
+        sx={{
+          py: 0.25,
+        }}
+      >
         {chips.map((chip, index) => (
           <Chip
             key={`${chip.email}-${index}`}
@@ -207,6 +228,7 @@ export const EmailRecipientsChipField: React.FC<EmailRecipientsChipFieldProps> =
               "& .MuiChip-deleteIcon": {
                 fontSize: 16,
                 color: chip.isValid ? "#1565c0" : "#c62828",
+                [dir === "rtl" ? "marginLeft" : "marginRight"]: "-4px",
                 "&:hover": {
                   color: chip.isValid ? "#0d47a1" : "#b71c1c",
                 },
@@ -240,6 +262,7 @@ export const EmailRecipientsChipField: React.FC<EmailRecipientsChipFieldProps> =
               fontSize: "14px",
               color: "#202124",
               padding: 0,
+              textAlign: dir === "rtl" ? "right" : "left",
               "&::placeholder": {
                 color: "#999",
               },
