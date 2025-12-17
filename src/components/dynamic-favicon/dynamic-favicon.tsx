@@ -9,7 +9,7 @@ const DynamicFavicon: React.FC = () => {
   const { callApi } = useGomakeAxios();
   const [profile, setProfile] = useRecoilState<ICompanyProfile>(companyProfileState);
 
-  console.log("profile3", profile);
+  console.log("profile4", profile);
 
   const getProfile = async () => {
     const callBack = (res) => {
@@ -25,7 +25,7 @@ const DynamicFavicon: React.FC = () => {
   }, []);
 
   // Only use loginLogo if available - no default fallback
-  const imageUrl = profile?.loginLogo;
+  const imageUrl = `https://gomake-printhouses-logos.s3.amazonaws.com/favicon_${profile?.domain}.png`;
   const siteName = profile?.name || "Gomake";
   const siteUrl = typeof window !== "undefined" ? window.location.origin : "";
 
