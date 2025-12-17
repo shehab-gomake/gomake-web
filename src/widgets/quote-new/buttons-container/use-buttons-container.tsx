@@ -315,7 +315,7 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
         CheckoutModalOpen.open();
       } else {
         setShowPrintJobsModal(res.data.orderID);
-        const queryParams = shouldOpenComposer 
+        const queryParams = shouldOpenComposer
           ? `orderNumber=${res?.data?.number}&openComposer=true&orderId=${res?.data?.orderID}`
           : `orderNumber=${res?.data?.number}`;
         navigate(`/jobs?${queryParams}`);
@@ -566,7 +566,9 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     const callBack = (res) => {
       if (res?.success) {
         alertSuccessDelete();
-        navigate("/receipts");
+        isOutgoingPayments
+          ? navigate("/supplier-payments")
+          : navigate("/receipts");
       } else {
         alertFaultDelete();
       }
