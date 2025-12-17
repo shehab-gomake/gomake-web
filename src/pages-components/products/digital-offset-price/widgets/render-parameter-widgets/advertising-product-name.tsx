@@ -1,6 +1,6 @@
 import { GoMakeAutoComplate, GoMakeModal, GomakePrimaryButton, GomakeTextInput } from "@/components";
 import { AddNewIcon, AdvertisingIcon, WarnIcon, WarningModalIcon } from "@/icons";
-import { IconButton, Stack, Tooltip, Paper, Divider } from "@mui/material";
+import { IconButton, Stack, Tooltip, Paper, Divider, Popper, styled } from "@mui/material";
 import { SecondaryButton } from "@/components/button/secondary-button";
 import { useAdvertisingProductName } from "./use-advertising-product-name";
 import { TestIcon } from "@/icons/test-icon";
@@ -132,6 +132,8 @@ const AdvertisingProductNameParameterWidget = ({
         ? fixedDieCutterOptions
         : [];
 
+
+
     return (
       <Paper {...props} style={{ ...props.style, display: 'flex', flexDirection: 'column', maxHeight: '300px' }}>
         {/* Scrollable content */}
@@ -236,6 +238,19 @@ const AdvertisingProductNameParameterWidget = ({
     );
   }, [parameter, index,]);
 
+  const StyledPopper = styled(Popper)(({ theme }) => ({
+    // zIndex: 10000000, // Higher than modal z-index (9999999)
+    "&[data-popper-placement]": {
+      width: "150%",
+    },
+    "& .MuiAutocomplete-paper": {
+      width: "150%",
+      minWidth: "150%",
+    },
+    "& .MuiAutocomplete-listbox": {
+      width: "150%",
+    },
+  }));
   return (
     <div style={clasess.advertisingProductNameMain}>
       <div style={clasess.advertisingProductNameAutoComplete}>
@@ -272,6 +287,8 @@ const AdvertisingProductNameParameterWidget = ({
           getOptionLabel={(option: any) => option.updateName}
           disabled={parameter?.isLock ? parameter?.isLock : false}
           value={selectedValue} // Controlled value, reflecting the current state
+          PopperComponent={StyledPopper}
+          disablePortal={false}
           renderOption={(props, option) => {
             const image = option.additionalAttribute?.find(
               (attr) => attr.valueId === 'image'
