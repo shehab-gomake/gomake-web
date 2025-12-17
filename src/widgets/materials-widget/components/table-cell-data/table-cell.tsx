@@ -53,15 +53,17 @@ const TableCellData = ({
     setOpenDeleteTableRowModal(true);
   };
   const toggleIsActive = async () => {
-    if (isHaveMorethanMaterialSuppliers) {
-      onClickOpenDeleteTableRowModal()
-    }
-    else {
-      // Convert string "false"/"true" to boolean, then toggle
-      const boolValue = (!value || value === "false" || value === "") ? false : true;
-      await updateCellData(id, parameterKey, !boolValue);
+    const boolValue = (!value || value === "false" || value === "") ? false : true;
+    await updateCellData(id, parameterKey, !boolValue);
+    // if (isHaveMorethanMaterialSuppliers) {
+    //   onClickOpenDeleteTableRowModal()
+    // }
+    // else {
+    //   // Convert string "false"/"true" to boolean, then toggle
+    //   const boolValue = (!value || value === "false" || value === "") ? false : true;
+    //   await updateCellData(id, parameterKey, !boolValue);
 
-    }
+    // }
   };
   switch (type) {
 

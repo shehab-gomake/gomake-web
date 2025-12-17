@@ -67,6 +67,7 @@ const UPDATE_PRINTHOUSE_MATERIAL_SUPPLIERS_ACTION_URL = "/v1/printhouse-material
 const CALCULATE_PRICE_URL = "/v1/printhouse-materials/calculate-price";
 const ADD_SUPPLIER_INVENTORY_FOR_PURCHASE_ORDER_URL = "/v1/erp-service/documents/add-supplier-inventory-for-purchase-order";
 const RE_CALCULATE_DOCUMENT_ITEMS_DATA_FROM_ROW_MATERIALS_URL = "/v1/printhouse-materials/re-calculate-document-items-data-from-row-materials";
+const HAS_PURCHASE_ORDER_INVENTORY_URL = "/v1/printhouse-materials/has-purchase-order-inventory";
 
 const getPrintHouseMaterialCategoriesApi: ICallAndSetData = async (
   callApi,
@@ -669,6 +670,27 @@ const reCalculateDocumentItemsDataFromRowMaterialsApi: ICallAndSetData = async (
   );
 };
 
+const hasPurchaseOrderInventoryApi: ICallAndSetData = async (
+  callApi,
+  callBack,
+  purchaseOrderItemIds: string[]
+) => {
+  // Build query string with multiple purchaseOrderItemIds
+  const queryParams = purchaseOrderItemIds
+    .map((id) => `purchaseOrderItemIds=${encodeURIComponent(id)}`)
+    .join("&");
+  const url = `${HAS_PURCHASE_ORDER_INVENTORY_URL}?${queryParams}`;
+  
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.GET,
+    url,
+    callBack,
+    undefined,
+    false // Don't lock screen for this check
+  );
+};
+
 export {
   getPrintHouseMaterialCategoriesApi,
   getPrintHouseMaterialCategoryDataApi,
@@ -713,5 +735,7 @@ export {
   // Add supplier inventory for purchase order API
   addSupplierInventoryForPurchaseOrderApi,
   // Re-calculate document items data from row materials API
-  reCalculateDocumentItemsDataFromRowMaterialsApi
+  reCalculateDocumentItemsDataFromRowMaterialsApi,
+  // Check if purchase order items have inventory API
+  hasPurchaseOrderInventoryApi
 };

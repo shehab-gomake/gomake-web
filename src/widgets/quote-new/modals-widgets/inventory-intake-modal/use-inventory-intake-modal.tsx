@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
-import { addSupplierInventoryForPurchaseOrderApi } from "@/services/api-service/materials/printhouse-materials-endpoints";
+import { addSupplierInventoryForPurchaseOrderApi, hasPurchaseOrderInventoryApi } from "@/services/api-service/materials/printhouse-materials-endpoints";
 import { useInventoryIntake, InventoryRowData } from "./use-inventory-intake";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 
@@ -10,6 +10,7 @@ interface UseInventoryIntakeModalProps {
   purchaseOrderId?: string;
   documentType?: number;
   onClose: () => void;
+  onIntakeSuccess?: () => void; // Callback to refresh document after successful intake
 }
 
 export const useInventoryIntakeModal = ({
@@ -18,6 +19,7 @@ export const useInventoryIntakeModal = ({
   purchaseOrderId,
   documentType = DOCUMENT_TYPE.purchaseOrder,
   onClose,
+  onIntakeSuccess,
 }: UseInventoryIntakeModalProps) => {
   const { callApi } = useGomakeAxios();
   const { alertSuccessUpdate, alertFaultUpdate, alertRequiredFields } = useSnackBar();
@@ -118,7 +120,8 @@ export const useInventoryIntakeModal = ({
     }
   }, [open, inventoryData]);
 
-  const handleIntake = async () => {
+  // Internal function to perform the actual intake
+  const performIntake = async () => {
     // Validate required fields
     if (!purchaseOrderId) {
       alertRequiredFields();
@@ -180,13 +183,58 @@ export const useInventoryIntakeModal = ({
       if (res?.success) {
         alertSuccessUpdate();
         onClose();
-        // Optionally refresh the data or close the modal
+        // Refresh document after successful intake
+        if (onIntakeSuccess) {
+          onIntakeSuccess();
+        }
       } else {
         alertFaultUpdate();
       }
     };
 
     await addSupplierInventoryForPurchaseOrderApi(callApi, callBack, payload);
+  };
+
+  // Main intake handler that checks for purchase order inventory first
+  const handleIntake = async (onShowPurchaseOrderInventoryDialog?: () => void) => {
+    // Validate required fields
+    if (!purchaseOrderId) {
+      alertRequiredFields();
+      return;
+    }
+
+    if (rows.length === 0) {
+      alertRequiredFields();
+      return;
+    }
+
+    // Get unique purchase order item IDs (use original IDs for split items)
+    const purchaseOrderItemIds = Array.from(
+      new Set(
+        rows.map(row => row.splitGroupId || row.purchaseOrderItemId)
+      )
+    ).filter((id): id is string => !!id);
+
+    if (purchaseOrderItemIds.length === 0) {
+      alertRequiredFields();
+      return;
+    }
+
+    // Check if purchase order items have inventory
+    const checkInventoryCallback = (res: any) => {
+      // Check if API call was successful and data indicates purchase order has inventory
+      if (res?.success && res?.data === true) {
+        // Purchase order has inventory - show confirmation dialog
+        if (onShowPurchaseOrderInventoryDialog) {
+          onShowPurchaseOrderInventoryDialog();
+        }
+      } else {
+        // No purchase order inventory (data === false) or check failed - proceed with intake
+        performIntake();
+      }
+    };
+
+    await hasPurchaseOrderInventoryApi(callApi, checkInventoryCallback, purchaseOrderItemIds);
   };
 
   const handleSplitInventoryPackages = (purchaseOrderItemId: string) => {
@@ -282,6 +330,7 @@ export const useInventoryIntakeModal = ({
     isIntaking,
     updateCellData,
     handleIntake,
+    performIntake, // Expose performIntake for use after confirmation
     handleSplitInventoryPackages,
     handleMergeInventoryPackages,
     handleCodeUpdate,

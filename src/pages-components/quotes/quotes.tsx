@@ -25,6 +25,7 @@ import {
   RadioGroup,
   Skeleton,
   Stack,
+  Typography,
 } from "@mui/material";
 import { CardsSection } from "./widgets/statistics-section/statistics-sections";
 import { GoMakePagination } from "@/components/pagination/gomake-pagination";
@@ -36,6 +37,7 @@ import { OtherReasonModal } from "@/widgets/quote-new/total-price-and-vat/other-
 import { CustomerCardWidget } from "@/widgets/customer-card-modal";
 import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 import { useRouter } from "next/router";
+import { useTranslation } from "react-i18next";
 import { CloseOrderNotesModal } from "../products/profits-new/widgets/close-order-notes-modal";
 import { SendPaymentModal } from "./widgets/send-payment-modal/send-payment-modal";
 import { MakePaymentModal } from "./widgets/make-payment-modal/make-payment-modal";
@@ -73,6 +75,8 @@ import { FrontDeskEmailComposerWrapper } from "./components/frontdesk-email-comp
 import { PrintPackingSlipModalWidget } from "@/widgets/production-floor/views/board-missions-view/navigation-buttons/print-packing-slip-modal-widget";
 import { useParameters } from "@/hooks/use-parameters";
 import { printHouseHasFrontDeskFeature } from "@/store/print-house-profile";
+import { PurchaseOrdersDialogsUndoIntakeWidget } from "@/widgets/purchas-orders-dialogs/purchase-orders-dialogs-undo-intake-widget";
+import { PurchaseOrdersDialogsIntakeValidationWidget } from "@/widgets/purchas-orders-dialogs/purchase-orders-dialogs-intake-validatin-widget";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -260,6 +264,14 @@ const QuotesListPageWidget = ({
     inventoryData,
     inventoryLoading,
     selectedDocument: selectedInventoryDocument,
+    showIntakeValidationDialog,
+    handleOpenIntakeFromValidation,
+    handleCancelIntakeValidation,
+    handleUndoDocumentIntake,
+    handleUndoItemIntake,
+    showUndoIntakeDialog,
+    handleConfirmUndoIntake,
+    handleCancelUndoIntake,
     isMoveToReady,
     handleCheckboxChange,
     handleSortBE,
@@ -1080,15 +1092,15 @@ const QuotesListPageWidget = ({
         onClickDelete={moveOrderToReady}
       /> */}
       <ThreeOptionsModal
-          modalType={ModalType.WARNING}
-          title={t("boardMissions.markDoneModalTitle")}
-          subTitle={t("boardMissions.markDoneModalSubTitle")}
-          yesBtn={"boardMissions.markDoneModalYes"}
-          noBtn={"boardMissions.markDoneModalNo"}
-          openModal={MoveOrderToReady.isOpen}
-          onClose={onClickCloseMoveOrderToReadyModal}
-          onClickYes={() => moveOrderToReady(true)}
-          onClickNo={() => moveOrderToReady(false)}
+        modalType={ModalType.WARNING}
+        title={t("boardMissions.markDoneModalTitle")}
+        subTitle={t("boardMissions.markDoneModalSubTitle")}
+        yesBtn={"boardMissions.markDoneModalYes"}
+        noBtn={"boardMissions.markDoneModalNo"}
+        openModal={MoveOrderToReady.isOpen}
+        onClose={onClickCloseMoveOrderToReadyModal}
+        onClickYes={() => moveOrderToReady(true)}
+        onClickNo={() => moveOrderToReady(false)}
       />
       {/*<GoMakeDeleteModal
         modalType={ModalType.WARNING}
@@ -1128,6 +1140,8 @@ const QuotesListPageWidget = ({
         loading={inventoryLoading}
         purchaseOrderId={selectedInventoryDocument?.id}
         documentType={DOCUMENT_TYPE.purchaseOrder}
+        status={selectedInventoryDocument?.status}
+        onIntakeSuccess={getAllQuotes}
       />
       {/* FrontDesk Email Composer */}
       {isEmailComposerOpen && (
@@ -1140,6 +1154,18 @@ const QuotesListPageWidget = ({
           isLoading={isLoadingEmailData}
         />
       )}
+      {/* Intake Validation Dialog */}
+      <PurchaseOrdersDialogsIntakeValidationWidget
+        showIntakeValidationDialog={showIntakeValidationDialog}
+        handleCancelIntakeValidation={handleCancelIntakeValidation}
+        handleOpenIntakeFromValidation={handleOpenIntakeFromValidation}
+      />
+      {/* Undo Intake Dialog - when changing from Received status */}
+      <PurchaseOrdersDialogsUndoIntakeWidget
+        showUndoIntakeDialog={showUndoIntakeDialog}
+        handleCancelUndoIntake={handleCancelUndoIntake}
+        handleConfirmUndoIntake={handleConfirmUndoIntake}
+      />
     </>
   );
 };

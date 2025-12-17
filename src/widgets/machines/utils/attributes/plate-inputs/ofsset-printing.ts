@@ -3,6 +3,32 @@ import {EMeasurementUnits} from "@/widgets/machines/enums/measurement-units";
 const ofssetPrinting = (state: Record<string, any>) => {
     return [
         {
+            name: "plateInstallationTime",
+            label: "machineAttributes.plateInstallationTime",
+            type: "text",
+            placeholder: "machineAttributes.plateInstallationTime",
+            required: true,
+            parameterKey: "plateInstallationTime",
+            unit: EMeasurementUnits.MINUTE,
+            options: [],
+            value: state.attributes?.plateInstallationTime ? state.attributes?.plateInstallationTime : '',
+            machineInputType: 'input',
+            isValid: !!state?.attributes?.plateInstallationTime,
+        },
+        {
+            name: "paintTankRinsingTime",
+            label: "machineAttributes.paintTankRinsingTime",
+            type: "text",
+            placeholder: "machineAttributes.paintTankRinsingTime",
+            required: true,
+            parameterKey: "paintTankRinsingTime",
+            unit: EMeasurementUnits.MINUTE,
+            options: [],
+            value: state.attributes?.paintTankRinsingTime ? state.attributes?.paintTankRinsingTime : '',
+            machineInputType: 'input',
+            isValid: !!state?.attributes?.paintTankRinsingTime,
+        },
+        {
             name: 'machineAttributes.plateCylinder',
             parameterKey: 'plateCylinder',
             machineInputType: 'multiInput',

@@ -22,7 +22,6 @@ import {
   getOrderSummaryPDF,
 } from "@/services/api-service/generic-doc/documents-api";
 import { JobsIcon } from "./icons/jobs";
-import { LockIcon } from "./icons/lock";
 import { useUserPermission } from "@/hooks/use-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { useRouter } from "next/router";
@@ -127,6 +126,7 @@ const useMoreCircle = () => {
     onClickSendPaymentEmail,
     onClickSendPaymentSMS,
     onClickSendPaymentWhatsApp,
+    onClickUndoDocumentIntake,
     classes,
   }) => {
     const isEditableDocument = quote?.isEditable;
@@ -135,9 +135,8 @@ const useMoreCircle = () => {
 
     const getDocumentPath = (id?: string, extraParams: string = "") => {
       if (isSupplierPayments) {
-        return `/${
-          DOCUMENT_TYPE[DOCUMENT_TYPE.receipt]
-        }?isOutgoingPayments=true${id ? `&Id=${id}` : ""}${extraParams}`;
+        return `/${DOCUMENT_TYPE[DOCUMENT_TYPE.receipt]
+          }?isOutgoingPayments=true${id ? `&Id=${id}` : ""}${extraParams}`;
       }
       return `/${documentPath}${id ? `?Id=${id}` : ""}${extraParams}`;
     };
@@ -534,19 +533,19 @@ const useMoreCircle = () => {
             }
             onCloseAsDeliveryNote={
               isOrder &&
-              quote?.isCanClose &&
-              !isCanceledOrder &&
-              isEditableDocument
+                quote?.isCanClose &&
+                !isCanceledOrder &&
+                isEditableDocument
                 ? handleCloseAsDeliveryNote
                 : undefined
             }
             onCloseAsProformaInvoice={
               hasProformaInvoicePermission &&
-              ((isOrder &&
-                quote?.isCanClose &&
-                !isCanceledOrder &&
-                isEditableDocument) ||
-                (isDeliveryNote && quote?.isCanClose && isEditableDocument))
+                ((isOrder &&
+                  quote?.isCanClose &&
+                  !isCanceledOrder &&
+                  isEditableDocument) ||
+                  (isDeliveryNote && quote?.isCanClose && isEditableDocument))
                 ? handleCloseAsProformaInvoice
                 : undefined
             }
@@ -554,7 +553,7 @@ const useMoreCircle = () => {
               ((isOrder && quote?.isCanClose && !isCanceledOrder) ||
                 (isDeliveryNote && quote?.isCanClose) ||
                 (isProformaInvoice && quote?.isCanClose)) &&
-              isEditableDocument
+                isEditableDocument
                 ? handleCloseAsInvoice
                 : undefined
             }
@@ -575,9 +574,9 @@ const useMoreCircle = () => {
             }
             onCloseAsPurchaseInvoice={
               isPurchaseOrder &&
-              quote?.isCanClose &&
-              !isCanceledPurchaseOrder &&
-              isEditableDocument
+                quote?.isCanClose &&
+                !isCanceledPurchaseOrder &&
+                isEditableDocument
                 ? handleCloseAsPurchaseInvoice
                 : undefined
             }
@@ -627,7 +626,13 @@ const useMoreCircle = () => {
         condition: isPurchaseOrder && quote?.isCanIntake,
         onClick: () => onClickOpenInventoryIntakeModal(quote),
         icon: <PackageIcon />,
-        name: t("sales.purchaseOrder.addInventoryIntake"),
+        name: t("sales.purchaseOrder.inventoryIntake"),
+      },
+      {
+        condition: isPurchaseOrder && quote?.documentItems?.some((item: any) => item.isIntake === true),
+        onClick: () => onClickUndoDocumentIntake?.(quote),
+        icon: <PackageIcon />,
+        name: t("sales.purchaseOrder.undoDocumentIntake") || "Undo Document Intake",
       },
 
       {
@@ -702,7 +707,7 @@ const useMoreCircle = () => {
       },
       {
         condition:
-          isPurchaseOrder && !isCanceledPurchaseOrder && isEditableDocument,
+          isPurchaseOrder && !isCanceledPurchaseOrder && (isEditableDocument || quote?.isDeletable),
         onClick: () => onClickOpenIrrelevantModal(quote),
         icon: <TickCancelIcon color={primaryLavender(500)} />,
         name: t("sales.quote.cancel"),
@@ -726,61 +731,60 @@ const useMoreCircle = () => {
       },
       hasFrontDeskFeature
         ? {
-            condition:
-              ((!isPauseOrder && isOrder && !isCanceledOrder) ||
-                isInvoice ||
-                isProformaInvoice) &&
-              quote?.isCanClose &&
-              isSendPaymentToClient,
-            component: (closeMenu: () => void) => (
-              <SendPaymentSubmenu
-                onClickEmail={() => onClickSendPaymentEmail(quote)}
-                onClickSMS={() => onClickSendPaymentSMS(quote)}
-                onClickWhatsApp={() => onClickSendPaymentWhatsApp(quote)}
-                menuItemStyle={classes.menuRowStyle}
-                rowTextStyle={classes.rowTextStyle}
-                onCloseParentMenu={closeMenu}
-              />
-            ),
-          }
+          condition:
+            ((!isPauseOrder && isOrder && !isCanceledOrder) ||
+              isInvoice ||
+              isProformaInvoice) &&
+            quote?.isCanClose &&
+            isSendPaymentToClient,
+          component: (closeMenu: () => void) => (
+            <SendPaymentSubmenu
+              onClickEmail={() => onClickSendPaymentEmail(quote)}
+              onClickSMS={() => onClickSendPaymentSMS(quote)}
+              onClickWhatsApp={() => onClickSendPaymentWhatsApp(quote)}
+              menuItemStyle={classes.menuRowStyle}
+              rowTextStyle={classes.rowTextStyle}
+              onCloseParentMenu={closeMenu}
+            />
+          ),
+        }
         : {
-            condition:
-              ((!isPauseOrder && isOrder && !isCanceledOrder) ||
-                isInvoice ||
-                isProformaInvoice) &&
-              quote?.isCanClose &&
-              isSendPaymentToClient,
-            onClick: () => onClickSendPayment(quote, false, false),
-            icon: <PayIcon color={primaryLavender(500)} />,
-            name: t("sales.quote.sendPayment"),
-          },
+          condition:
+            ((!isPauseOrder && isOrder && !isCanceledOrder) ||
+              isInvoice ||
+              isProformaInvoice) &&
+            quote?.isCanClose &&
+            isSendPaymentToClient,
+          onClick: () => onClickSendPayment(quote, false, false),
+          icon: <PayIcon color={primaryLavender(500)} />,
+          name: t("sales.quote.sendPayment"),
+        },
       hasFrontDeskFeature
         ? {
-            condition: true,
-            component: (closeMenu: () => void) => (
-              <SendToCustomerSubmenu
-                onClickEmail={() => onClickSendToCustomerEmail(quote)}
-                onClickSMS={() => onClickSendToCustomerSMS(quote)}
-                onClickWhatsApp={() => onClickSendToCustomerWhatsApp(quote)}
-                menuItemStyle={classes.menuRowStyle}
-                rowTextStyle={classes.rowTextStyle}
-                onCloseParentMenu={closeMenu}
-              />
-            ),
-          }
+          condition: true,
+          component: (closeMenu: () => void) => (
+            <SendToCustomerSubmenu
+              onClickEmail={() => onClickSendToCustomerEmail(quote)}
+              onClickSMS={() => onClickSendToCustomerSMS(quote)}
+              onClickWhatsApp={() => onClickSendToCustomerWhatsApp(quote)}
+              menuItemStyle={classes.menuRowStyle}
+              rowTextStyle={classes.rowTextStyle}
+              onCloseParentMenu={closeMenu}
+            />
+          ),
+        }
         : {
-            condition: true,
-            onClick: () =>
-              onClickSendPayment(quote, true, !!isSendOrderReadyToClient),
-            icon: <MailIcon color={primaryLavender(500)} />,
-            name: t(
-              `sales.quote.${
-                isSendOrderReadyToClient
-                  ? "sendOrderReadyToClient"
-                  : "sendToClient"
-              }`
-            ),
-          },
+          condition: true,
+          onClick: () =>
+            onClickSendPayment(quote, true, !!isSendOrderReadyToClient),
+          icon: <MailIcon color={primaryLavender(500)} />,
+          name: t(
+            `sales.quote.${isSendOrderReadyToClient
+              ? "sendOrderReadyToClient"
+              : "sendToClient"
+            }`
+          ),
+        },
       {
         condition:
           !isPauseOrder &&

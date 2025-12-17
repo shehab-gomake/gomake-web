@@ -81,16 +81,22 @@ const SelectClientsInput = ({
     const onSelectChange = async (event: SyntheticEvent, selectedOption: any) => {
         setSelectedValue(selectedOption);
 
-        if (isHaveMorethanMaterialSuppliers) {
-            onClickOpenDeleteTableRowModal();
-        } else {
-            // For inventory/purchase tables, send as array format to match expected structure
-            const valueToSend = isInventoryTable || isPurchasePricingTable
-                ? [selectedOption?.value]
-                : selectedOption?.value || "";
+        const valueToSend = isInventoryTable || isPurchasePricingTable
+            ? [selectedOption?.value]
+            : selectedOption?.value || "";
 
-            await updateCellData(id, parameterKey, valueToSend);
-        }
+        await updateCellData(id, parameterKey, valueToSend);
+
+        // if (isHaveMorethanMaterialSuppliers) {
+        //     onClickOpenDeleteTableRowModal();
+        // } else {
+        //     // For inventory/purchase tables, send as array format to match expected structure
+        //     const valueToSend = isInventoryTable || isPurchasePricingTable
+        //         ? [selectedOption?.value]
+        //         : selectedOption?.value || "";
+
+        //     await updateCellData(id, parameterKey, valueToSend);
+        // }
     };
 
     return (

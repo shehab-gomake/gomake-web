@@ -264,6 +264,28 @@ const ActionContainerComponent = ({
   renderOptions,
   checkWhatRenderArray,
   isFetching,
+  pricePer1Product,
+  pricePer1000Product,
+  pricePer1Material,
+  pricePer1000Material,
+  pricePerMeter,
+  pricePerSquareMeter,
+  showPricePer1Product,
+  showPricePer1000Product,
+  showPricePer1Material,
+  showPricePer1000Material,
+  showPricePerMeter,
+  showPricePerSquareMeter,
+  pricePer1ProductValue,
+  pricePer1000ProductValue,
+  pricePer1MaterialValue,
+  pricePer1000MaterialValue,
+  pricePerMeterValue,
+  pricePerSquareMeterValue,
+  materialQuantity,
+  materialName,
+  printArea,
+  printingMeter,
 }: IActionContainerComponentProps) => {
   source = source === EWorkSource.OUT ? EWorkSource.OUT : EWorkSource.INTERNAL;
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -457,6 +479,54 @@ const ActionContainerComponent = ({
 
   };
 
+  const handleUpdatePricePer1Product = (price: string) => {
+    if (isFromSetting) {
+      updateProductAction({ actionId, value: +price, fieldName: "pricePer1Product" });
+    } else {
+      updateActionData(id, +price, "pricePer1Product", productType).then();
+    }
+  };
+
+  const handleUpdatePricePer1000Product = (price: string) => {
+    if (isFromSetting) {
+      updateProductAction({ actionId, value: +price, fieldName: "pricePer1000Product" });
+    } else {
+      updateActionData(id, +price, "pricePer1000Product", productType).then();
+    }
+  };
+
+  const handleUpdatePricePer1Material = (price: string) => {
+    if (isFromSetting) {
+      updateProductAction({ actionId, value: +price, fieldName: "pricePer1Material" });
+    } else {
+      updateActionData(id, +price, "pricePer1Material", productType).then();
+    }
+  };
+
+  const handleUpdatePricePer1000Material = (price: string) => {
+    if (isFromSetting) {
+      updateProductAction({ actionId, value: +price, fieldName: "pricePer1000Material" });
+    } else {
+      updateActionData(id, +price, "pricePer1000Material", productType).then();
+    }
+  };
+
+  const handleUpdatePricePerMeter = (price: string) => {
+    if (isFromSetting) {
+      updateProductAction({ actionId, value: +price, fieldName: "pricePerMeter" });
+    } else {
+      updateActionData(id, +price, "pricePerMeter", productType).then();
+    }
+  };
+
+  const handleUpdatePricePerSquareMeter = (price: string) => {
+    if (isFromSetting) {
+      updateProductAction({ actionId, value: +price, fieldName: "pricePerSquareMeter" });
+    } else {
+      updateActionData(id, +price, "pricePerSquareMeter", productType).then();
+    }
+  };
+
   const handleSourceChange = (source: EWorkSource) => {
     if (isFromSetting) {
       updateProductAction({ actionId, value: source, fieldName: "source" });
@@ -589,7 +659,7 @@ const ActionContainerComponent = ({
               >
                 <Stack
                   direction={"row"}
-                  gap={"16px"}
+                  gap={"8px"}
                   alignItems={"center"}
                   flexWrap={"wrap"}
                 >
@@ -597,12 +667,12 @@ const ActionContainerComponent = ({
                     style={classes.sectionTitle}
                     direction={"row"}
                     alignItems={"center"}
-                    gap={"10px"}
+                    gap={"8px"}
                   >
                     <span>{actionName}</span>
                     {source === EWorkSource.OUT ? (
                       <Stack
-                        gap={"10px"}
+                        gap={"8px"}
                         direction={"row"}
                         onClick={(e) => e.stopPropagation()}
                       >
@@ -1123,6 +1193,91 @@ const ActionContainerComponent = ({
                     valueColor={secondColor(500)}
                     name={t("sales.quote.price")}
                   />
+
+                  {showPricePer1Product && (
+                    <>
+                      <Divider orientation={"vertical"} flexItem />
+                      <EditableKeyValueViewComponent
+                    onUpdate={handleUpdatePricePer1Product}
+                    {...pricePer1Product}
+                    values={pricePer1ProductValue}
+                    source={source}
+                    name={t("sales.quote.pricePer1Product")}
+                  />
+                    </>
+                  )}
+                   {showPricePer1000Product && (
+                    <>
+                      <Divider orientation={"vertical"} flexItem />
+                      <EditableKeyValueViewComponent
+                    onUpdate={handleUpdatePricePer1000Product}
+                    {...pricePer1000Product}
+                    values={pricePer1000ProductValue}
+                    source={source}
+                    name={t("sales.quote.pricePer1000Product")}
+                  />
+                    </>
+                  )}
+                  {showPricePer1Material && (
+                    <>
+                      <Divider orientation={"vertical"} flexItem />
+                      <EditableKeyValueViewComponent
+                    onUpdate={handleUpdatePricePer1Material}
+                    {...pricePer1Material}
+                    values={pricePer1MaterialValue}
+                    source={source}
+                    name={`${materialQuantity} ${materialName}`}
+                  />
+                  <span>
+                              {`${t("sales.quote.pricePer1Material")}`}
+                            </span>
+                    </>
+                  )}
+                   {showPricePer1000Material && (
+                    <>
+                      <Divider orientation={"vertical"} flexItem />
+                      <EditableKeyValueViewComponent
+                    onUpdate={handleUpdatePricePer1000Material}
+                    {...pricePer1000Material}
+                    values={pricePer1000MaterialValue}
+                    source={source}
+                    name={`${materialQuantity} ${materialName}`}
+                  />
+                  <span>
+                              {`${t("sales.quote.pricePer1000Material")}`}
+                            </span>
+                    </>
+                  )}
+                  {showPricePerMeter && (
+                    <>
+                      <Divider orientation={"vertical"} flexItem />
+                      <EditableKeyValueViewComponent
+                    onUpdate={handleUpdatePricePerMeter}
+                    {...pricePerMeter}
+                    values={pricePerMeterValue}
+                    source={source}
+                    name={`${printingMeter} ${t("measurementUnits.meter")}`}
+                  />
+                     <span>
+                              {`${t("sales.quote.pricePerMeter")}`}
+                            </span>
+                    </>
+                  )}
+                  {showPricePerSquareMeter && ( 
+                    <>
+                      <Divider orientation={"vertical"} flexItem />
+                      <EditableKeyValueViewComponent
+                    onUpdate={handleUpdatePricePerSquareMeter}
+                    {...pricePerSquareMeter}
+                    values={pricePerSquareMeterValue}
+                    source={source}
+                    name={`${printArea} ${t("measurementUnits.squareMeter")}`}
+                  />
+                   <span>
+                              {`${t("sales.quote.pricePerSquareMeter")}`}
+                            </span>
+                    </>
+                  )}
                   {!isFromSetting && (
                     <Divider orientation={"vertical"} flexItem />
                   )}

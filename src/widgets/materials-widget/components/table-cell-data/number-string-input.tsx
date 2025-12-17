@@ -6,13 +6,15 @@ import { PrimaryButton } from "@/components/button/primary-button";
 import { useStyle } from "@/widgets/materials-widget/style";
 import { DotsLoader } from "@/components/dots-loader/dots-Loader";
 import { useRecoilValue, useRecoilState } from "recoil";
-import { materialCategorySuppliersState, materialCategoryDataState } from "../../state";
-import { GoMakeDeleteModal } from "@/components";
+import { materialCategorySuppliersState } from "../../state";
+import { GoMakeDeleteModal, GoMakeDialog } from "@/components";
 import { useTranslation } from "react-i18next";
 import { ModalType, UNIT_TYPE } from "@/enums";
 import { convertValueToImperial } from "@/utils/helpers";
 import { convertValueToOriginalUnit } from "@/utils/helpers";
 import { userState } from "@/store/user";
+import { useRouter } from "next/router";
+import { Typography } from "@mui/material";
 
 const NumberStringInput = ({ value, isEditable, parameterKey, id, isAdmin, unit, isInventoryTable, isPurchasePricingTable }: IRowData) => {
 
@@ -22,9 +24,12 @@ const NumberStringInput = ({ value, isEditable, parameterKey, id, isAdmin, unit,
     const [isLoading, setIsLoading] = useState<boolean>(false)
     const [updateValue, setUpdateValue] = useState('');
     const [optimisticValue, setOptimisticValue] = useState(value);
-    const [data, setData] = useRecoilState(materialCategoryDataState);
+    const [originalValue, setOriginalValue] = useState<string>(''); // Store original value before editing
     const user = useRecoilValue<any>(userState);
     const unitType = user?.printHouseProfile?.unitType || 0
+    const router = useRouter();
+    const { materialType, materialCategory } = router.query;
+
 
     const materialSuppliers = useRecoilValue(materialCategorySuppliersState)
     const isHaveMorethanMaterialSuppliers = materialSuppliers?.length > 1
@@ -48,11 +53,26 @@ const NumberStringInput = ({ value, isEditable, parameterKey, id, isAdmin, unit,
             const data = unitType === UNIT_TYPE.IMPERIAL ? convertValueToImperial(unit, optimisticValue) : optimisticValue
             setIsUpdate(true);
             setUpdateValue(data);
+            setOriginalValue(optimisticValue as string); // Store original value before editing
         }
     }
     const onInputChange = (v: string) => {
         setUpdateValue(v)
     }
+    const [openWeightDialog, setOpenWeightDialog] = useState<boolean>(false);
+
+    const onClickOpenWeightDialog = () => {
+        setOpenWeightDialog(true);
+    };
+
+    const onCloseWeightDialog = () => {
+        // Revert to original value when closing without saving
+        setOptimisticValue(originalValue);
+        const originalDisplayValue = unitType === UNIT_TYPE.IMPERIAL ? convertValueToImperial(unit, originalValue) : originalValue;
+        setUpdateValue(originalDisplayValue);
+        setIsUpdate(false);
+        setOpenWeightDialog(false);
+    };
 
     const onBlur = () => {
         if (updateValue !== value) {
@@ -118,9 +138,11 @@ const NumberStringInput = ({ value, isEditable, parameterKey, id, isAdmin, unit,
                         // Revert to previous value if API fails
                         setOptimisticValue(originalPreviousValue);
                     });
-            } else if (isHaveMorethanMaterialSuppliers && !parameterKey.includes("price")) {
-                onClickOpenDeleteTableRowModal()
-            } else {
+            }
+            else if (unitType === UNIT_TYPE.IMPERIAL && (parameterKey === "weight" || parameterKey === "weightGSM") && materialType === "sheets") {
+                onClickOpenWeightDialog();
+            }
+            else {
                 const originalValue = unitType === UNIT_TYPE.IMPERIAL ? convertValueToOriginalUnit(unit, updateValue) : updateValue;
                 setIsLoading(true);
 
@@ -185,18 +207,60 @@ const NumberStringInput = ({ value, isEditable, parameterKey, id, isAdmin, unit,
                 title={t("materials.modals.updateModalTitle")}
                 yesBtn={t("documentingSettings.update")}
                 onClickDelete={() => {
+                    if (unitType === UNIT_TYPE.IMPERIAL && (parameterKey === "weight" || parameterKey === "weightGSM") && materialType === "sheets") {
+                        onClickOpenWeightDialog();
+                    }
+                    else {
+                        setIsLoading(true)
+                        const originalValue = unitType === UNIT_TYPE.IMPERIAL ? convertValueToOriginalUnit(unit, updateValue) : updateValue;
+                        updateCellData(id, parameterKey, originalValue).then(
+                            () => {
+                                setIsLoading(false);
+                                setIsUpdate(false);
+                            }
+                        );
+                    }
+                }
+                }
+            />
+            <GoMakeDialog
+                open={openWeightDialog}
+                onClose={onCloseWeightDialog}
+                title={t("materials.modals.weightDialogTitle", {
+                    weight: parameterKey === "weight" ? t("materials.modals.weight") : t("materials.modals.weightGSM")
+                })}
+                primaryButtonLabel={t("modal.yes")}
+                cancelButtonLabel={t("modal.no")}
+                maxWidth="sm"
+                onPrimaryAction={() => {
                     setIsLoading(true)
                     const originalValue = unitType === UNIT_TYPE.IMPERIAL ? convertValueToOriginalUnit(unit, updateValue) : updateValue;
-                    updateCellData(id, parameterKey, originalValue).then(
+                    updateCellData(id, parameterKey, originalValue, undefined, undefined, true).then(
                         () => {
                             setIsLoading(false);
-
                             setIsUpdate(false);
-
+                            setOpenWeightDialog(false)
                         }
                     );
                 }}
-            />
+                onCancel={() => {
+                    setIsLoading(true)
+                    const originalValue = unitType === UNIT_TYPE.IMPERIAL ? convertValueToOriginalUnit(unit, updateValue) : updateValue;
+                    updateCellData(id, parameterKey, originalValue, undefined, undefined, false).then( // false to not update related fields
+                        () => {
+                            setIsLoading(false);
+                            setIsUpdate(false);
+                            setOpenWeightDialog(false)
+                        }
+                    );
+                }}
+            >
+                <div style={{ textAlign: "center", paddingTop: "10px" }}>
+                    <Typography variant="body1">{t("materials.modals.weightDialogDescription", {
+                        weight: parameterKey !== "weight" ? t("materials.modals.weight") : t("materials.modals.weightGSM")
+                    })}</Typography>
+                </div>
+            </GoMakeDialog>
         </>
     )
 }

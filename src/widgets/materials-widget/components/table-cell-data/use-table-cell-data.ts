@@ -123,7 +123,7 @@ const useTableCellData = (isAdmin:boolean, inventoryTable: boolean = false, purc
     };
     const { t } = useTranslation()
 
-    const updateCellData = async (id: string, key: string, value: string | boolean, index?:number, pricingType?: number) => {
+    const updateCellData = async (id: string, key: string, value: string | boolean, index?:number, pricingType?: number,UpdateRelatedFields?:boolean) => {
         return new Promise((resolve, reject) => {
             const callBack = (res) => {
                 const error = res?.errors;
@@ -213,6 +213,7 @@ const useTableCellData = (isAdmin:boolean, inventoryTable: boolean = false, purc
                     id,
                     updatedValue:  filterNullFromArrays(value),
                     priceIndex: index,
+                    updateRelatedFields: UpdateRelatedFields,
                 });
             }
         });

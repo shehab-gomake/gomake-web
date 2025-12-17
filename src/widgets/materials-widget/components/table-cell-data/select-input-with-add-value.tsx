@@ -37,24 +37,30 @@ const SelectInputWithAddValue = ({ values, parameterKey, id, value, isAdmin }: I
   }, [values]);
 
   const addNewParameterValue = async (newValue: string) => {
-    if (isHaveMorethanMaterialSuppliers) {
-      // For multiple suppliers, just set the selected value and open modal
-      // Don't add to local values yet
-      setSelectedValue({
-        id: "new_temp",
-        label: newValue,
-        isNew: true
-      });
-      onClickOpenDeleteTableRowModal();
-    } else {
-      // For single supplier, add immediately
-      try {
-        await updateCellData(id, parameterKey, newValue);
-        // The useEffect will sync the new values from props when the backend responds
-      } catch (error) {
-        console.error("Failed to add new value:", error);
-      }
+    try {
+      await updateCellData(id, parameterKey, newValue);
+      // The useEffect will sync the new values from props when the backend responds
+    } catch (error) {
+      console.error("Failed to add new value:", error);
     }
+    // if (isHaveMorethanMaterialSuppliers) {
+    //   // For multiple suppliers, just set the selected value and open modal
+    //   // Don't add to local values yet
+    //   setSelectedValue({
+    //     id: "new_temp",
+    //     label: newValue,
+    //     isNew: true
+    //   });
+    //   onClickOpenDeleteTableRowModal();
+    // } else {
+    //   // For single supplier, add immediately
+    //   try {
+    //     await updateCellData(id, parameterKey, newValue);
+    //     // The useEffect will sync the new values from props when the backend responds
+    //   } catch (error) {
+    //     console.error("Failed to add new value:", error);
+    //   }
+    // }
   };
 
   const baseOptions = localValues
@@ -90,13 +96,15 @@ const SelectInputWithAddValue = ({ values, parameterKey, id, value, isAdmin }: I
       // Add new value to the list - send only the inputValue, not the "Add" text
       await addNewParameterValue(inputValue);
       setInputValue("");
-    } else {
-      if (isHaveMorethanMaterialSuppliers) {
-        onClickOpenDeleteTableRowModal();
-      } else {
-        // Always send the label (actual value), never the id (UUID)
-        await updateCellData(id, parameterKey, value?.label);
-      }
+    }
+    else {
+      await updateCellData(id, parameterKey, value?.label);
+      // if (isHaveMorethanMaterialSuppliers) {
+      //   onClickOpenDeleteTableRowModal();
+      // } else {
+      //   // Always send the label (actual value), never the id (UUID)
+      //   await updateCellData(id, parameterKey, value?.label);
+      // }
     }
   };
 

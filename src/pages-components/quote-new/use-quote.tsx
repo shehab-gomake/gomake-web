@@ -65,8 +65,10 @@ import {
   updateQuoteItemQuantityApi,
   updateQuoteClientNoteAsShownApi,
   getDocumentInventoryApi,
+  undoDocumentIntakeApi,
+  undoDocumentItemIntakeApi,
 } from "@/services/api-service/generic-doc/documents-api";
-import { DOCUMENT_TYPE } from "../quotes/enums";
+import { DOCUMENT_TYPE, StatusTitleText } from "../quotes/enums";
 import { useRouter } from "next/router";
 import {
   getAllCreditTransactionsApi,
@@ -1415,6 +1417,9 @@ const useQuoteNew = ({
     setOpenDeleteModalContact(false);
   };
 
+  // State for add item restriction dialog
+  const [showAddItemRestrictionDialog, setShowAddItemRestrictionDialog] = useState(false);
+
   const onOpenNewItem = () => {
     // Check if it's a material purchase order and supplier is required
     if (
@@ -1425,7 +1430,40 @@ const useQuoteNew = ({
       alertFault(t("home.admin.pleaseSelectSupplier"));
       return;
     }
+
+    // Check if purchase order status is Closed or Received
+    if (isPurchaseOrder && !isNewCreation) {
+      const isClosed = quoteItemValue?.statusTitleText === StatusTitleText.PurchaseOrderClosed;
+      const isReceived = quoteItemValue?.documentStatus === PurchaseOrderStatuses.Received;
+
+      if (isClosed || isReceived) {
+        setShowAddItemRestrictionDialog(true);
+        return;
+      }
+    }
+
     setOpenAddNewItemModal(true);
+  };
+
+  // Handle create new purchase order - open type selection modal
+  const handleCreateNewPurchaseOrder = () => {
+    setShowAddItemRestrictionDialog(false);
+    // Open purchase order type selection modal (same as "Create new" button)
+    onOpenPurchaseOrderTypeModal();
+  };
+
+  // Handle cancel - check if can save with same supplier
+  const handleCancelAddItemRestriction = () => {
+    setShowAddItemRestrictionDialog(false);
+    // If supplier exists, we could potentially save, but user chose not to create new PO
+    // Just close the dialog - no action needed as per requirements
+  };
+
+  // Handle change status to Under Creation to allow adding items
+  const handleChangeStatusToUnderCreation = () => {
+    setShowAddItemRestrictionDialog(false);
+    // Change status to Under Creation (status = 0)
+    updatePurchaseOrderStatus(PurchaseOrderStatuses.UnderCreation);
   };
   const onOpenNewContact = () => {
     setOpenAddNewContactModal(true);
@@ -2805,23 +2843,84 @@ const useQuoteNew = ({
     [docType, quoteItemValue, allClientActiveBudgets]
   );
 
+  // State for intake validation dialog
+  const [showIntakeValidationDialog, setShowIntakeValidationDialog] = useState(false);
+  const [pendingStatusChange, setPendingStatusChange] = useState<number | null>(null);
+
   const updatePurchaseOrderStatus = useCallback(
-    async (status: number) => {
+    async (status: number, shouldUndoIntake: boolean | null = null) => {
       if (!isPurchaseOrder || !quoteItemValue?.id) {
         return;
       }
+
+      // Get current status - use status property (as per API response structure)
+      const currentStatus = quoteItemValue?.status ?? quoteItemValue?.documentStatus;
+
+      // Check if changing FROM Received status to another status
+      // Only show dialog if shouldUndoIntake is null (not explicitly set from dialog handlers)
+      if (shouldUndoIntake === null && currentStatus === PurchaseOrderStatuses.Received && status !== PurchaseOrderStatuses.Received) {
+        // Check if document has any items with isIntake = true
+        const hasIntakedItems = quoteItemValue?.documentItems?.some(
+          (item: any) => item.isIntake === true
+        );
+        console.log("hasIntakedItems", hasIntakedItems);
+
+        if (hasIntakedItems) {
+          // Show dialog asking if user wants to undo intake
+          setPendingStatusChangeWithUndo({ status, shouldUndoIntake: false });
+          setShowUndoIntakeDialog(true);
+          return;
+        }
+      }
+
+      // Default shouldUndoIntake to false if not explicitly set
+      const shouldUndo = shouldUndoIntake === null ? false : shouldUndoIntake;
+
+      // Check if changing to Received status
+      if (status === PurchaseOrderStatuses.Received) {
+        // Check if any documentItems have isIntake = false
+        const hasUnintakedItems = quoteItemValue?.documentItems?.some(
+          (item: any) => item.isIntake === false
+        );
+
+        if (hasUnintakedItems) {
+          // Show validation dialog
+          setPendingStatusChange(status);
+          setShowIntakeValidationDialog(true);
+          return;
+        }
+      }
+
+      // Proceed with status change
       setIsUpdatingPurchaseStatus(true);
       try {
-        const response = await updateDocumentStatusApi(callApi, () => { }, {
-          documentType: docType,
-          documentId: quoteItemValue.id,
-          status,
-        });
-        if (response?.success) {
-          alertSuccessUpdate();
-          await getQuote();
+        // If shouldUndo is true, call undo intake API (which also updates status)
+        if (shouldUndo) {
+          const undoResponse = await undoDocumentIntakeApi(callApi, () => { }, {
+            documentType: docType,
+            purchaseOrderId: quoteItemValue.id,
+            status: status,
+            shouldUndoIntake: true,
+          });
+          if (undoResponse?.success) {
+            alertSuccessUpdate();
+            await getQuote();
+          } else {
+            alertFaultUpdate();
+          }
         } else {
-          alertFaultUpdate();
+          // If not undoing intake, just update status normally
+          const response = await updateDocumentStatusApi(callApi, () => { }, {
+            documentType: docType,
+            documentId: quoteItemValue.id,
+            status,
+          });
+          if (response?.success) {
+            alertSuccessUpdate();
+            await getQuote();
+          } else {
+            alertFaultUpdate();
+          }
         }
       } catch (error) {
         alertFaultUpdate();
@@ -2837,8 +2936,93 @@ const useQuoteNew = ({
       getQuote,
       isPurchaseOrder,
       quoteItemValue?.id,
+      quoteItemValue?.documentStatus,
+      quoteItemValue?.documentItems,
     ]
   );
+
+  // Handle undo intake dialog - yes (undo intake)
+  const handleConfirmUndoIntake = () => {
+    if (pendingStatusChangeWithUndo) {
+      setShowUndoIntakeDialog(false);
+      updatePurchaseOrderStatus(pendingStatusChangeWithUndo.status, true);
+      setPendingStatusChangeWithUndo(null);
+    }
+  };
+
+  // Handle undo intake dialog - no (don't undo intake)
+  const handleCancelUndoIntake = () => {
+    if (pendingStatusChangeWithUndo) {
+      setShowUndoIntakeDialog(false);
+      updatePurchaseOrderStatus(pendingStatusChangeWithUndo.status, false);
+      setPendingStatusChangeWithUndo(null);
+    }
+  };
+
+  // Handle intake validation dialog - open intake modal
+  const handleOpenIntakeFromValidation = () => {
+    setShowIntakeValidationDialog(false);
+    onClickOpenInventoryIntakeModal();
+  };
+
+  // Handle intake validation dialog - cancel
+  const handleCancelIntakeValidation = () => {
+    setShowIntakeValidationDialog(false);
+    setPendingStatusChange(null);
+  };
+
+  // State for undo intake dialog when changing from Received status
+  const [showUndoIntakeDialog, setShowUndoIntakeDialog] = useState(false);
+  const [pendingStatusChangeWithUndo, setPendingStatusChangeWithUndo] = useState<{ status: number; shouldUndoIntake: boolean } | null>(null);
+  console.log("pendingStatusChangeWithUndo", pendingStatusChangeWithUndo);
+  // Handle undo document intake
+  const handleUndoDocumentIntake = useCallback(async (document?: any) => {
+    if (!isPurchaseOrder || !quoteItemValue?.id) {
+      return;
+    }
+
+    setIsUpdatingPurchaseStatus(true);
+    try {
+      const response = await undoDocumentIntakeApi(callApi, () => { }, {
+        documentType: docType,
+        purchaseOrderId: quoteItemValue.id,
+        status: quoteItemValue.documentStatus || 0,
+        shouldUndoIntake: true,
+      });
+      if (response?.success) {
+        alertSuccessUpdate();
+        await getQuote();
+      } else {
+        alertFaultUpdate();
+      }
+    } catch (error) {
+      alertFaultUpdate();
+    } finally {
+      setIsUpdatingPurchaseStatus(false);
+    }
+  }, [isPurchaseOrder, quoteItemValue?.id, quoteItemValue?.documentStatus, callApi, docType, getQuote, alertSuccessUpdate, alertFaultUpdate]);
+
+  // Handle undo item intake
+  const handleUndoItemIntake = useCallback(async (item: any) => {
+    if (!isPurchaseOrder || !item?.id) {
+      return;
+    }
+
+    try {
+      const response = await undoDocumentItemIntakeApi(callApi, () => { }, {
+        documentType: docType,
+        itemId: item.id,
+      });
+      if (response?.success) {
+        alertSuccessUpdate();
+        await getQuote();
+      } else {
+        alertFaultUpdate();
+      }
+    } catch (error) {
+      alertFaultUpdate();
+    }
+  }, [isPurchaseOrder, callApi, docType, getQuote, alertSuccessUpdate, alertFaultUpdate]);
 
   const handleSendUsingWhatsAppWeb = (sendWithInvoices = false) => {
     let checkPhones = checkArrayNotEmptyOrPhoneNotEmpty(
@@ -3296,6 +3480,20 @@ const useQuoteNew = ({
     onOpenPurchaseOrderTypeModal,
     onClosePurchaseOrderTypeModal,
     handleSelectPurchaseOrderType,
+    showIntakeValidationDialog,
+    handleOpenIntakeFromValidation,
+    handleCancelIntakeValidation,
+    pendingStatusChange,
+    handleUndoDocumentIntake,
+    handleUndoItemIntake,
+    showUndoIntakeDialog,
+    handleConfirmUndoIntake,
+    handleCancelUndoIntake,
+    // Add item restriction dialog
+    showAddItemRestrictionDialog,
+    handleCreateNewPurchaseOrder,
+    handleCancelAddItemRestriction,
+    handleChangeStatusToUnderCreation,
   };
 };
 
