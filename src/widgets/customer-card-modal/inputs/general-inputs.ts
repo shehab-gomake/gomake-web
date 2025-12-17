@@ -155,6 +155,17 @@ const generalInputs = (
       isValid: true,
       disabled: typeClient == "S" ? true : false,
     },
+    {
+      name: "clientNotReceiveMessages",
+      label: "customers.modal.clientNotReceiveMessages",
+      type: "switch",
+      placeholder: "customers.modal.clientNotReceiveMessages",
+      required: false,
+      parameterKey: "clientNotReceiveMessages",
+      options: [],
+      value: state?.clientNotReceiveMessages,
+      isValid: true,
+    },
   ];
 };
 
