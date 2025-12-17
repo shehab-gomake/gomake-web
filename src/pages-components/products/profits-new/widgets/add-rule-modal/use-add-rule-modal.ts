@@ -87,8 +87,9 @@ const useAddRuleModal = ({
 
   const categories = useMemo(() => {
     const actionId = router?.query?.actionId as string;
-    const showMaterialType = actionId === "5f3e9084-6724-4358-9f94-8c63019c8894";
-    
+    const showMaterialType =
+      actionId === "5f3e9084-6724-4358-9f94-8c63019c8894";
+
     const filteredCategories = [
       { label: t("products.profits.exceptions.machine"), id: "Machine" },
       {
@@ -317,7 +318,6 @@ const useAddRuleModal = ({
       cardType: CLIENT_TYPE_Id.CUSTOMER,
     });
   }, []);
-
 
   const getAllProductTypes = useCallback(async () => {
     const result = await getAllTemplets(callApi);
@@ -691,37 +691,40 @@ const useAddRuleModal = ({
   //   setToDate(toDate);
   // };
   const createForQuoteWidget = useCallback(async () => {
-
-   
     // Filter out empty/invalid rules
     const validRules = rules.filter((item) => {
-      return (
-        item?.category?.id &&
-        item?.statement2?.id &&
-        item?.condition?.id
-      );
+      return item?.category?.id && item?.statement2?.id && item?.condition?.id;
     });
 
     // Build exception condition properties only if there are valid rules
-    const exceptionConditionProperties = validRules.length > 0
-      ? validRules.map((item) => {
-          return {
-            statementValue:
-              typeof item?.statement === "object"
-                ? item?.statement2?.type === 5 ? item?.statement?.code : item?.statement?.id
-                : item?.statement,
-            statementId: item?.statement2?.id,
-            operator: item?.condition?.id,
-            conditionBetweenStatements: item?.linkCondition
-              ? item?.linkCondition?.id
-              : "",
-            statementCategory: EStatementCategory[item?.category?.id],
-          };
-        })
-      : [];
+    const exceptionConditionProperties =
+      validRules.length > 0
+        ? validRules.map((item) => {
+            return {
+              statementValue:
+                typeof item?.statement === "object"
+                  ? item?.statement2?.type === 5
+                    ? item?.statement?.code
+                    : item?.statement?.id
+                  : item?.statement,
+              statementId: item?.statement2?.id,
+              operator: item?.condition?.id,
+              conditionBetweenStatements: item?.linkCondition
+                ? item?.linkCondition?.id
+                : "",
+              statementCategory: EStatementCategory[item?.category?.id],
+            };
+          })
+        : [];
 
     try {
-      if (!filterData?.fromDate && !filterData?.toDate) {
+      // Check if at least one date is provided from any of the three date ranges
+      const hasDateRange = filterData?.fromDate || filterData?.toDate;
+      const hasDueDateRange = filterData?.fromDueDate || filterData?.toDueDate;
+      const hasReadyDateRange =
+        filterData?.fromReadyDate || filterData?.toReadyDate;
+
+      if (!hasDateRange && !hasDueDateRange && !hasReadyDateRange) {
         alertFault(t("boardMissions.dateFilterRequired"));
         return;
       }
@@ -732,33 +735,35 @@ const useAddRuleModal = ({
           documentType: documentType,
           exportType: detailsOption?.id,
           ...(documentType === DocumentTypeEnums.BoardMission
-            ? { 
-              boardMissionTableFilterDTO: {
-                clientId: filterData?.customerId,
-                agentId: filterData?.agentId,
-                search: filterData?.patternSearch,
-                fromDate: filterData?.fromDate,
-                toDate: filterData?.toDate,
-                fromDueDate: filterData?.fromDueDate,
-                toDueDate: filterData?.toDueDate,
-                fromReadyDate: filterData?.fromReadyDate,
-                toReadyDate: filterData?.toReadyDate,
-                productsIds: filterData?.productIds,
-                productionStatus: filterData?.statusId?.toString(),
-                orderStatus: filterData?.orderStatus?.toString(),
-                pageNumber: filterData?.pageNumber?.toString(),
-                pageSize: filterData?.pageSize,
-                orderNumber: filterData?.orderNumber,
-                order: filterData?.order || null,
-                exampleTypes: filterData?.proofTypes,
-                isPrinted: filterData?.isPrinted?.toString(),
-                }
+            ? {
+                boardMissionTableFilterDTO: {
+                  clientId: filterData?.customerId,
+                  agentId: filterData?.agentId,
+                  search: filterData?.patternSearch,
+                  fromDate: filterData?.fromDate,
+                  toDate: filterData?.toDate,
+                  fromDueDate: filterData?.fromDueDate,
+                  toDueDate: filterData?.toDueDate,
+                  fromReadyDate: filterData?.fromReadyDate,
+                  toReadyDate: filterData?.toReadyDate,
+                  productsIds: filterData?.productIds,
+                  productionStatus: filterData?.statusId?.toString(),
+                  orderStatus: filterData?.orderStatus?.toString(),
+                  pageNumber: filterData?.pageNumber?.toString(),
+                  pageSize: filterData?.pageSize,
+                  orderNumber: filterData?.orderNumber,
+                  order: filterData?.order || null,
+                  exampleTypes: filterData?.proofTypes,
+                  isPrinted: filterData?.isPrinted?.toString(),
+                },
               }
-            : { 
+            : {
                 filterDTO: {
                   statusId: filterData?.statusId,
                   closeStatus: filterData?.closeStatus,
-                  productionStatus: filterData?.productionStatus || filterData?.statusId?.toString(),
+                  productionStatus:
+                    filterData?.productionStatus ||
+                    filterData?.statusId?.toString(),
                   patternSearch: filterData?.patternSearch,
                   customerId: filterData?.customerId,
                   dateRange: filterData?.dateRange,
@@ -781,17 +786,16 @@ const useAddRuleModal = ({
                   isPrinted: filterData?.isPrinted,
                   isPurchaseJobs: filterData?.isPurchaseJobs,
                   exampleTypes: filterData?.proofTypes,
-                }
-              }
-          ),
-            groupBy: propertieValue,
-            exceptionConditionProperties: exceptionConditionProperties,
+                },
+              }),
+          groupBy: propertieValue,
+          exceptionConditionProperties: exceptionConditionProperties,
         }
       );
 
       if (res?.success && res?.data) {
         // If the response contains a URL string, download it
-        if (typeof res.data === 'string' && res.data.startsWith('http')) {
+        if (typeof res.data === "string" && res.data.startsWith("http")) {
           const downloadLink = document.createElement("a");
           downloadLink.href = res.data;
           downloadLink.download = "Reports Rule engine.xlsx";
@@ -815,7 +819,19 @@ const useAddRuleModal = ({
       console.error("Error generating report:", error);
       alertFaultAdded();
     }
-  }, [propertieValue, EStatementCategory, rules, filterData, detailsOption, documentType, onCloseModal, setRules, initialRule, callApi, alertFaultAdded]);
+  }, [
+    propertieValue,
+    EStatementCategory,
+    rules,
+    filterData,
+    detailsOption,
+    documentType,
+    onCloseModal,
+    setRules,
+    initialRule,
+    callApi,
+    alertFaultAdded,
+  ]);
 
   const getConditionText = (label) => {
     switch (label) {
@@ -851,7 +867,11 @@ const useAddRuleModal = ({
 
   // Map condition properties to rules format
   const mapConditionPropertiesToRules = useCallback(() => {
-    if (!pricingTableConditionProperties || !Array.isArray(pricingTableConditionProperties) || pricingTableConditionProperties.length === 0) {
+    if (
+      !pricingTableConditionProperties ||
+      !Array.isArray(pricingTableConditionProperties) ||
+      pricingTableConditionProperties.length === 0
+    ) {
       return [initialRule];
     }
 
@@ -865,7 +885,8 @@ const useAddRuleModal = ({
       };
 
       // Map statementCategory to category
-      const categoryId = StatementCategoryToCategoryId[conditionProp.statementCategory];
+      const categoryId =
+        StatementCategoryToCategoryId[conditionProp.statementCategory];
       if (categoryId) {
         const categoryObj = categories.find((cat) => cat.id === categoryId);
         if (categoryObj) {
@@ -874,16 +895,18 @@ const useAddRuleModal = ({
           // Fallback: create category object if not found in categories array
           // This can happen if categories haven't loaded yet or if the category is filtered out
           const categoryLabels: { [key: string]: string } = {
-            "Machine": t("products.profits.exceptions.machine"),
-            "Machine category": t("products.profits.exceptions.machineTypeCategory"),
-            "Products": t("products.profits.exceptions.products"),
-            "ProductType": t("products.profits.exceptions.productType"),
+            Machine: t("products.profits.exceptions.machine"),
+            "Machine category": t(
+              "products.profits.exceptions.machineTypeCategory"
+            ),
+            Products: t("products.profits.exceptions.products"),
+            ProductType: t("products.profits.exceptions.productType"),
             "Client Type": t("products.profits.exceptions.clientType"),
-            "Client": t("products.profits.exceptions.client"),
+            Client: t("products.profits.exceptions.client"),
             "Property output": t("products.profits.exceptions.propertyOutput"),
             "Property input": t("products.profits.exceptions.propertyInput"),
-            "Agent": t("products.profits.exceptions.agent"),
-            "Employee": t("products.profits.exceptions.employee"),
+            Agent: t("products.profits.exceptions.agent"),
+            Employee: t("products.profits.exceptions.employee"),
           };
           rule.category = {
             id: categoryId,
@@ -894,7 +917,9 @@ const useAddRuleModal = ({
 
       // Map operator to condition
       if (conditionProp.operator) {
-        const conditionObj = conditions.find((cond) => cond.id === conditionProp.operator);
+        const conditionObj = conditions.find(
+          (cond) => cond.id === conditionProp.operator
+        );
         if (conditionObj) {
           rule.condition = conditionObj;
         }
@@ -916,34 +941,54 @@ const useAddRuleModal = ({
 
         switch (categoryId) {
           case "Machine":
-            statement2Obj = allMachincesList?.find((m) => m.id === conditionProp.statementValue);
+            statement2Obj = allMachincesList?.find(
+              (m) => m.id === conditionProp.statementValue
+            );
             break;
           case "Products":
-            statement2Obj = productsStateValue?.find((p) => p.id === conditionProp.statementValue);
+            statement2Obj = productsStateValue?.find(
+              (p) => p.id === conditionProp.statementValue
+            );
             break;
           case "Client Type":
-            statement2Obj = clientTypesStateValue?.find((ct) => ct.id === conditionProp.statementValue);
+            statement2Obj = clientTypesStateValue?.find(
+              (ct) => ct.id === conditionProp.statementValue
+            );
             break;
           case "Property output":
-            statement2Obj = Outputs?.find((o) => o.id === conditionProp.statementValue);
+            statement2Obj = Outputs?.find(
+              (o) => o.id === conditionProp.statementValue
+            );
             break;
           case "Property input":
-            statement2Obj = parametersStateValue?.find((p) => p.id === conditionProp.statementValue);
+            statement2Obj = parametersStateValue?.find(
+              (p) => p.id === conditionProp.statementValue
+            );
             break;
           case "Agent":
-            statement2Obj = agentsCategories?.find((a: any) => a.id === conditionProp.statementValue);
+            statement2Obj = agentsCategories?.find(
+              (a: any) => a.id === conditionProp.statementValue
+            );
             break;
           case "Employee":
-            statement2Obj = actionEmployeeList?.find((e) => e.id === conditionProp.statementValue);
+            statement2Obj = actionEmployeeList?.find(
+              (e) => e.id === conditionProp.statementValue
+            );
             break;
           case "ProductType":
-            statement2Obj = allProductTypes?.find((pt) => pt.id === conditionProp.statementValue);
+            statement2Obj = allProductTypes?.find(
+              (pt) => pt.id === conditionProp.statementValue
+            );
             break;
           case "Machine category":
-            statement2Obj = categoriesList?.find((mc) => mc.id === conditionProp.statementValue);
+            statement2Obj = categoriesList?.find(
+              (mc) => mc.id === conditionProp.statementValue
+            );
             break;
           case "MATERIALTYPE":
-            statement2Obj = materialsTypes?.find((mt) => mt.materialTypeKey === conditionProp.statementValue);
+            statement2Obj = materialsTypes?.find(
+              (mt) => mt.materialTypeKey === conditionProp.statementValue
+            );
             break;
         }
 
@@ -965,18 +1010,25 @@ const useAddRuleModal = ({
             rule.statement2 = {
               ...statement2Obj,
               id: statement2Obj.id,
-              label: statement2Obj.label || statement2Obj.name || statement2Obj.text,
+              label:
+                statement2Obj.label || statement2Obj.name || statement2Obj.text,
             };
           }
         }
       }
 
       // Map statementId to statement if exists
-      if (conditionProp.statementId && rule.category?.id === "Property output" && rule.statement2) {
+      if (
+        conditionProp.statementId &&
+        rule.category?.id === "Property output" &&
+        rule.statement2
+      ) {
         // For Property output, statement might be a machine or value
         if (rule.statement2.valueType === 1) {
           // Machine type
-          const statementObj = allMachincesList?.find((m) => m.id === conditionProp.statementId);
+          const statementObj = allMachincesList?.find(
+            (m) => m.id === conditionProp.statementId
+          );
           if (statementObj) {
             rule.statement = {
               ...statementObj,
@@ -986,13 +1038,26 @@ const useAddRuleModal = ({
           }
         } else if (rule.statement2.valueType === 3) {
           // Boolean type
-          rule.statement = conditionProp.statementId === "true" || conditionProp.statementId === true ? "true" : "false";
-        } else if (rule.statement2.valueType === 4 || rule.statement2.valueType === 5) {
+          rule.statement =
+            conditionProp.statementId === "true" ||
+            conditionProp.statementId === true
+              ? "true"
+              : "false";
+        } else if (
+          rule.statement2.valueType === 4 ||
+          rule.statement2.valueType === 5
+        ) {
           // Number or Text type
           rule.statement = conditionProp.statementId;
-        } else if (rule.statement2.type === 0 || rule.statement2.type === 5 || rule.statement2.type === 4) {
+        } else if (
+          rule.statement2.type === 0 ||
+          rule.statement2.type === 5 ||
+          rule.statement2.type === 4
+        ) {
           // Dropdown type - find in values
-          const statementObj = rule.statement2.values?.find((v) => v.id === conditionProp.statementId);
+          const statementObj = rule.statement2.values?.find(
+            (v) => v.id === conditionProp.statementId
+          );
           if (statementObj) {
             rule.statement = {
               ...statementObj,
@@ -1001,10 +1066,15 @@ const useAddRuleModal = ({
             };
           }
         }
-      } else if (conditionProp.statementId && rule.category?.id === "Property input") {
+      } else if (
+        conditionProp.statementId &&
+        rule.category?.id === "Property input"
+      ) {
         // For Property input, statement might be in values
         if (rule.statement2?.values) {
-          const statementObj = rule.statement2.values.find((v) => v.id === conditionProp.statementId);
+          const statementObj = rule.statement2.values.find(
+            (v) => v.id === conditionProp.statementId
+          );
           if (statementObj) {
             rule.statement = {
               ...statementObj,
@@ -1042,21 +1112,35 @@ const useAddRuleModal = ({
     // Only apply mapping logic when duplicateRule is true
     if (duplicateRule && openModal) {
       // Wait for all data to be loaded before mapping (only when duplicating)
-      const isAllDataLoaded = 
+      const isAllDataLoaded =
         !isDataLoading && // Wait until data loading is complete
-        pricingTableConditionProperties && 
-        pricingTableConditionProperties.length > 0 && 
-        categories && 
+        pricingTableConditionProperties &&
+        pricingTableConditionProperties.length > 0 &&
+        categories &&
         categories.length > 0 &&
-        conditions && 
+        conditions &&
         conditions.length > 0 &&
-        (Array.isArray(allMachincesList) ? allMachincesList.length >= 0 : allMachincesList !== undefined) && // Machines can be empty array
-        (Array.isArray(productsStateValue) ? productsStateValue.length >= 0 : productsStateValue !== undefined) && // Products can be empty array
-        (Array.isArray(allProductTypes) ? allProductTypes.length >= 0 : allProductTypes !== undefined) && // Product types can be empty array
-        (Array.isArray(clientTypesStateValue) ? clientTypesStateValue.length >= 0 : clientTypesStateValue !== undefined) && // Client types can be empty array
-        (Array.isArray(Outputs) ? Outputs.length >= 0 : Outputs !== undefined) && // Outputs can be empty array
-        (Array.isArray(parametersStateValue) ? parametersStateValue.length >= 0 : parametersStateValue !== undefined) && // Parameters can be empty array
-        (Array.isArray(materialsTypes) ? materialsTypes.length >= 0 : materialsTypes !== undefined); // Materials can be empty array
+        (Array.isArray(allMachincesList)
+          ? allMachincesList.length >= 0
+          : allMachincesList !== undefined) && // Machines can be empty array
+        (Array.isArray(productsStateValue)
+          ? productsStateValue.length >= 0
+          : productsStateValue !== undefined) && // Products can be empty array
+        (Array.isArray(allProductTypes)
+          ? allProductTypes.length >= 0
+          : allProductTypes !== undefined) && // Product types can be empty array
+        (Array.isArray(clientTypesStateValue)
+          ? clientTypesStateValue.length >= 0
+          : clientTypesStateValue !== undefined) && // Client types can be empty array
+        (Array.isArray(Outputs)
+          ? Outputs.length >= 0
+          : Outputs !== undefined) && // Outputs can be empty array
+        (Array.isArray(parametersStateValue)
+          ? parametersStateValue.length >= 0
+          : parametersStateValue !== undefined) && // Parameters can be empty array
+        (Array.isArray(materialsTypes)
+          ? materialsTypes.length >= 0
+          : materialsTypes !== undefined); // Materials can be empty array
 
       if (isAllDataLoaded && !hasInitializedDuplicateRules.current) {
         // All data is loaded, now map the rules
@@ -1067,11 +1151,19 @@ const useAddRuleModal = ({
             const rulesWithCategories = mappedRules.map((rule) => {
               if (rule.category) {
                 // Always find the exact category object from the categories array to ensure reference match
-                const categoryId = typeof rule.category === 'string' ? rule.category : rule.category.id;
-                const categoryObj = categories.find((cat) => cat.id === categoryId);
+                const categoryId =
+                  typeof rule.category === "string"
+                    ? rule.category
+                    : rule.category.id;
+                const categoryObj = categories.find(
+                  (cat) => cat.id === categoryId
+                );
                 if (categoryObj) {
                   rule.category = categoryObj; // Use exact reference from categories array
-                } else if (typeof rule.category === 'object' && rule.category.id) {
+                } else if (
+                  typeof rule.category === "object" &&
+                  rule.category.id
+                ) {
                   // Keep the object if it has the right structure
                   rule.category = rule.category;
                 }
@@ -1089,26 +1181,26 @@ const useAddRuleModal = ({
       setRules([initialRule]);
       hasInitializedDuplicateRules.current = false;
     }
-    
+
     // Reset flag when modal closes
     if (!openModal) {
       hasInitializedDuplicateRules.current = false;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
-    duplicateRule, 
-    openModal, 
+    duplicateRule,
+    openModal,
     isDataLoading, // Only relevant when duplicateRule is true
     pricingTableConditionProperties,
-    categories, 
-    allMachincesList, 
-    productsStateValue, 
-    allProductTypes, 
-    clientTypesStateValue, 
-    Outputs, 
-    parametersStateValue, 
-    materialsTypes, 
-    conditions
+    categories,
+    allMachincesList,
+    productsStateValue,
+    allProductTypes,
+    clientTypesStateValue,
+    Outputs,
+    parametersStateValue,
+    materialsTypes,
+    conditions,
   ]);
 
   const createForHotFolderWidget = async () => {
