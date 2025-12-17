@@ -27,10 +27,6 @@ const StyledAutocomplete: any = styled(Autocomplete, {
     alignItems: "center",
     color: props?.error ? "red" : "#000000",
     backgroundColor: "#FFF",
-    // !here not sure about hiding the border bottom
-    // borderBottom: props?.selectedOption
-    //   ? "2px solid rgb(67,195,232)"
-    //   : "2px solid rgb(237, 2, 140)",
     boxShadow: "var(--theme-dropdown-shadow, 0px 1px 10px rgba(0, 0, 0, 0.08))",
     "& .MuiOutlinedInput-root": {
       paddingRight: "9px!important",
@@ -41,7 +37,7 @@ const StyledAutocomplete: any = styled(Autocomplete, {
       fontWeight: 500,
       fontSize: 14,
       width: "100%",
-      zIndex: 9999999999999,
+      // zIndex: 9999999999999,
       // !here not sure about this style theme css variable
       "& fieldset": {
         border: props?.selectedOption
