@@ -9,7 +9,7 @@ const DynamicFavicon: React.FC = () => {
   const { callApi } = useGomakeAxios();
   const [profile, setProfile] = useRecoilState<ICompanyProfile>(companyProfileState);
 
-  console.log("profile2", profile);
+  console.log("profile3", profile);
 
   const getProfile = async () => {
     const callBack = (res) => {
