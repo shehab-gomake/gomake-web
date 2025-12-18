@@ -4,7 +4,7 @@ import Tooltip, { tooltipClasses, TooltipProps } from "@mui/material/Tooltip";
 import { styled } from "@mui/material/styles";
 import { useEffect, useState } from "react";
 import { EParameterTypes } from "@/enums";
-import { IconButton } from "@mui/material";
+import { IconButton, Popper } from "@mui/material";
 import { GoToMaterialsIcon } from "@/icons";
 import { useTranslation } from "react-i18next";
 
@@ -19,8 +19,8 @@ const CustomWidthTooltip = styled(({ className, ...props }: TooltipProps) => (
 
 // Helper function to handle long text labels and apply tooltips
 const getLabelWithTooltip = (label: string) => {
-  if (label && label.length > 17) {
-    let shortLabel = label.substring(0, 17);
+  if (label && label.length > 50) {
+    let shortLabel = label.substring(0, 50);
     let lastSpace = shortLabel.lastIndexOf(" ");
     shortLabel = shortLabel.substring(0, lastSpace) + "...";
     return (
@@ -36,6 +36,20 @@ const getLabelWithTooltip = (label: string) => {
   }
   return label;
 };
+
+const StyledPopper = styled(Popper)(({ theme }) => ({
+  // zIndex: 10000000, // Higher than modal z-index (9999999)
+  "&[data-popper-placement]": {
+    width: "150%",
+  },
+  "& .MuiAutocomplete-paper": {
+    width: "150%",
+    minWidth: "150%",
+  },
+  "& .MuiAutocomplete-listbox": {
+    width: "150%",
+  },
+}));
 
 const DropDownListParameterWidget = ({
   parameter,
@@ -147,6 +161,8 @@ const DropDownListParameterWidget = ({
         getOptionLabel={(option) => option.updateName}
         value={selectedValue} // Controlled value, reflecting the current state
         onChange={handleValueChange}
+        PopperComponent={StyledPopper}
+        disablePortal={false}
         renderOption={(props, option) => (
           <li {...props}>{getLabelWithTooltip(option.updateName)}</li>
         )}

@@ -1,6 +1,7 @@
 import { GoMakeAutoComplate } from "@/components";
 import { useEffect, useState } from "react";
 import { EParameterTypes } from "@/enums";
+import { Popper, styled } from "@mui/material";
 
 const SelectChildParameterWidget = ({
   parameter,
@@ -52,6 +53,20 @@ const SelectChildParameterWidget = ({
 
   const myParameter = temp.find((item) => item.parameterId === parameter.id && item?.actionIndex === parameter.actionIndex);
 
+  const StyledPopper = styled(Popper)(({ theme }) => ({
+    // zIndex: 10000000, // Higher than modal z-index (9999999)
+    "&[data-popper-placement]": {
+      width: "150%",
+    },
+    "& .MuiAutocomplete-paper": {
+      width: "150%",
+      minWidth: "150%",
+    },
+    "& .MuiAutocomplete-listbox": {
+      width: "150%",
+    },
+  }));
+
   return (
     <div data-tour={parameter?.id} style={{ width: '100%' }}>
       {parameter?.valuesConfigs?.length > 0 && (
@@ -69,6 +84,8 @@ const SelectChildParameterWidget = ({
           value={selectedValue} // Controlled value, reflecting the current state
           disabled={disabled || (parameter?.isLock ?? myParameter?.isDisabled)}
           onChange={handleValueChange}
+          PopperComponent={StyledPopper}
+          disablePortal={false}
         />
       )}
     </div>
