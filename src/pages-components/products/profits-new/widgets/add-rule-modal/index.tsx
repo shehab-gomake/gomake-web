@@ -111,6 +111,9 @@ const AddRuleModal = ({
     setAdditionType,
     hotFolderNames,
     fetchHotFolderNames,
+    numberValueTypeProperties,
+    fetchNumberValueTypeProperties,
+    additionType,
   } = useAddRuleModal({
     typeExceptionSelected,
     selectedPricingBy,
@@ -148,6 +151,15 @@ const AddRuleModal = ({
     }
   }, [openModal, isHotFolderWidget, fetchHotFolderNames]);
 
+  // Reset states when modal closes
+  useEffect(() => {
+    if (!openModal) {
+      setSelectedProperty(null);
+      setAdditionType(null);
+      setPropertieValue(null);
+    }
+  }, [openModal, setAdditionType, setPropertieValue]);
+
   const [selectedProfitModel, setSelectedProfitModel] = useState<number>(null);
   const router = useRouter();
 
@@ -183,6 +195,7 @@ const AddRuleModal = ({
     useState<selectedOutputsProps>();
   const [selectedParameters, setSelectedParameters] =
     useState<selectedParametersProps>();
+  const [selectedProperty, setSelectedProperty] = useState<any>(null);
 
 
   useEffect(() => {
@@ -629,6 +642,9 @@ const AddRuleModal = ({
         }
         onClose={() => {
           setRules([initialRule]);
+          setSelectedProperty(null);
+          setAdditionType(null);
+          setPropertieValue(null);
           onCloseModal();
         }}
         insideStyle={clasess.insideStyle}
@@ -1184,7 +1200,7 @@ const AddRuleModal = ({
                   }}
                 />
               </div>
-              <div style={{ width: "20%" }}>
+              <div style={{ width: "25%" }}>
                 <div style={clasess.selectTypeStyle}>
                   {t("products.profits.exceptions.additionType")}
                 </div>
@@ -1202,14 +1218,75 @@ const AddRuleModal = ({
                       label: t("products.profits.exceptions.valuePerJob"),
                       value: EAdditionType.ValuePerJob,
                     },
+                    {
+                      label: t("products.profits.exceptions.valuePerProperty"),
+                      value: EAdditionType.ValuePerProperty,
+                    },
                   ]}
                   placeholder={t("products.profits.exceptions.additionType")}
                   style={clasess.autoComplateStyle}
                   onChange={(e: any, value: any) => {
                     setAdditionType(value?.value);
+                    if (value?.value !== EAdditionType.ValuePerProperty) {
+                      setPropertieValue(null);
+                      setSelectedProperty(null);
+                    }
                   }}
                 />
               </div>
+              {additionType === EAdditionType.ValuePerProperty && (
+                <div style={{ width: "50%" }}>
+                  <div style={clasess.selectTypeStyle}>
+                    {t("products.profits.exceptions.property")}
+                  </div>
+                  <GoMakeAutoComplate
+                    options={numberValueTypeProperties?.map((property) => ({
+                      label: property.propertyName,
+                      value: property.propertyId,
+                      id: property.propertyId,
+                      ruleType: property.ruleType,
+                    }))}
+                    placeholder={t("products.profits.exceptions.selectProperty")}
+                    style={clasess.autoComplateStyle}
+                    value={selectedProperty}
+                    onChange={(e: any, value: any) => {
+                      setSelectedProperty(value);
+                      setPropertieValue(value?.value);
+                    }}
+                    renderOption={(props: any, option: any) => {
+                      const isInput = option.ruleType === 1;
+                      const isOutput = option.ruleType === 0;
+                      const labelText = isInput ? t("properties.input") : isOutput ? t("properties.output") : "";
+                      const backgroundColor = isInput ? "#E6F3FF" : isOutput ? "#E6FFE6" : "transparent";
+                      const textColor = isInput ? "#4A90E2" : isOutput ? "#4CAF50" : "#000";
+
+                      return (
+                        <li {...props} style={{ ...props.style, display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center", gap: 8 }}>
+
+                          <span>{option.label}</span>
+                          {labelText && (
+                            <span style={{
+                              backgroundColor: backgroundColor,
+                              color: textColor,
+                              fontSize: 11,
+                              fontWeight: 600,
+                              padding: "2px 8px",
+                              borderRadius: 4,
+                              textTransform: "uppercase",
+                            }}>
+                              {labelText}
+                            </span>
+                          )}
+                        </li>
+                      );
+                    }}
+                    getOptionLabel={(option: any) => {
+                      if (!option) return "";
+                      return option.label || "";
+                    }}
+                  />
+                </div>
+              )}
             </div>
           )}
           {typeExceptionSelected === ETypeException.PROFIT && (

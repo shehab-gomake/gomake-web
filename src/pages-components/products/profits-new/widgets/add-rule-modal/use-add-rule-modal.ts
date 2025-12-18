@@ -17,7 +17,7 @@ import { ICallAndSetData } from "@/services/api-service/interface";
 import { getSetApiData } from "@/services/api-service/get-set-api-data";
 import { CLIENT_TYPE, CLIENT_TYPE_Id } from "@/pages/customers/enums";
 import { useTranslation } from "react-i18next";
-import { DocumentTypeEnums, EGroupByEnum } from "@/enums";
+import { DocumentTypeEnums, EGroupByEnum, EAdditionType } from "@/enums";
 import { agentsCategoriesState } from "@/pages/customers/customer-states";
 import {
   getAndSetEmployees2,
@@ -29,6 +29,7 @@ import { actionEmployeesState } from "@/store/action-employees-state";
 import { endOfToday, startOfYear } from "date-fns";
 import { addProductHotFolderRuleApi } from "@/services/api-service/products/product-endpoints";
 import { getHotFolderNames } from "@/services/api-service/files-api-settings/files-api-settings-endpoint";
+import { getNumberValueTypeProperties } from "@/services/api-service/print-house-action/print-house-action-endpoints";
 
 const useAddRuleModal = ({
   typeExceptionSelected,
@@ -54,6 +55,7 @@ const useAddRuleModal = ({
   const { t } = useTranslation();
   const [openScheduleModal, setOpenScheduleModal] = useState(false);
   const [hotFolderNames, setHotFolderNames] = useState([]);
+  const [numberValueTypeProperties, setNumberValueTypeProperties] = useState<any[]>([]);
   const categoriesList = useRecoilValue(machineCategoriesState);
 
   const fetchHotFolderNames = useCallback(async () => {
@@ -63,6 +65,15 @@ const useAddRuleModal = ({
       }
     };
     await getHotFolderNames(callApi, callBack);
+  }, [callApi]);
+
+  const fetchNumberValueTypeProperties = useCallback(async () => {
+    const callBack = (res) => {
+      if (res.success && res.data) {
+        setNumberValueTypeProperties(res.data || []);
+      }
+    };
+    await getNumberValueTypeProperties(callApi, callBack);
   }, [callApi]);
 
   const [additionType, setAdditionType] = useState<number>(null);
@@ -400,6 +411,13 @@ const useAddRuleModal = ({
     getEmployeesByActionId();
   }, [router]);
 
+  // Fetch number value type properties when ValuePerProperty is selected
+  useEffect(() => {
+    if (additionType === EAdditionType.ValuePerProperty) {
+      fetchNumberValueTypeProperties();
+    }
+  }, [additionType, fetchNumberValueTypeProperties]);
+
   const [exceptionType, setExceptionType] = useState<any>();
   const [additionalProfit, setAdditionalProfit] = useState<any>(0);
 
@@ -576,6 +594,17 @@ const useAddRuleModal = ({
       requestBody.duplicatedExceptionId = selectedPricingTableItems?.id;
     }
 
+    // Add ruleType and propertyId when ValuePerProperty is selected
+    if (additionType === EAdditionType.ValuePerProperty && propertieValue) {
+      const selectedProperty = numberValueTypeProperties.find(
+        (prop) => prop.propertyId === propertieValue
+      );
+      if (selectedProperty) {
+        requestBody.ruleType = selectedProperty.ruleType;
+        requestBody.propertyId = selectedProperty.propertyId;
+      }
+    }
+
     const res = await callApi(
       EHttpMethod.POST,
       `/v1/printhouse-config/action-profit-rows/add-action-exception`,
@@ -598,9 +627,17 @@ const useAddRuleModal = ({
     expression,
     actionProfitByActionId,
     additionalProfit,
-    EStatementCategory,
     rules,
     isDefaultException,
+    additionType,
+    propertieValue,
+    numberValueTypeProperties,
+    onCloseModal,
+    setRules,
+    initialRule,
+    getProfitsPricingTables,
+    alertSuccessAdded,
+    alertFaultAdded,
   ]);
 
   const createProperties = useCallback(async () => {
@@ -1321,6 +1358,9 @@ const useAddRuleModal = ({
     createForHotFolderWidget,
     hotFolderNames,
     fetchHotFolderNames,
+    numberValueTypeProperties,
+    fetchNumberValueTypeProperties,
+    additionType,
   };
 };
 
