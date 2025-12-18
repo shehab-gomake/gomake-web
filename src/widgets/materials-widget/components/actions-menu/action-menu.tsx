@@ -469,15 +469,17 @@ const ActionMenu = (props: IActionMenuProps) => {
                       key={selectedSupplierForPurchaseOrder?.id}
                       clientType={CLIENT_TYPE.SUPPLIER}
                       onChange={(e: any, supplier: any) => setSelectedSupplierForPurchaseOrder(supplier)}
-                      options={(renderOptionsSupplier || []).filter((supplier, index, self) =>
-                        index === self.findIndex((s) => s.id === supplier.id)
-                      )}
-                      placeholder={t("materials.childTable.selectSupplier")}
+                      options={renderOptionsSupplier || []}
+                      placeholder={t("materials.childTable.searchAndSelectSupplier")}
                       style={{ width: "100%" }}
                       value={selectedSupplierForPurchaseOrder}
                       onChangeTextField={checkWhatRenderArraySupplier}
                       loading={isFetchingSupplier}
                       getOptionLabel={(option: any) => `${option.name}`}
+                      customStyle={{
+                        borderBottom: "none",
+                        borderRadius: '4px',
+                      }}
                     />
                   </div>
                 )}

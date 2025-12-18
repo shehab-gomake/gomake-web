@@ -64,7 +64,7 @@ import { useMaterials } from "@/widgets/materials-widget/use-materials";
 import { CreateOrder } from "@/icons/material-tabs/create-order";
 import { convertValueToOriginalUnit } from "@/utils/helpers";
 import { useTableCellData } from "../table-cell-data/use-table-cell-data";
-import { getAndSetAllCustomers } from "@/services/hooks/cart-side/customers";
+import { getAndSetAllCustomers, getAndSetRecentCustomers } from "@/services/hooks/cart-side/customers";
 import { CLIENT_TYPE } from "@/pages/customers/enums";
 import { useDebouncedCallback } from "use-debounce";
 
@@ -1137,19 +1137,28 @@ const useMaterialsActions = (isAdmin: boolean) => {
     []
   );
 
+  const getRecentSuppliers = useCallback(async () => {
+    await getAndSetRecentCustomers(callApi, setListSupplier, {
+      ClientType: CLIENT_TYPE.SUPPLIER,
+    });
+  }, [callApi]);
+
   const checkWhatRenderArraySupplier = (e: any) => {
     const value = e.target.value.trim();
     if (value === "") {
       debouncedGetAllSuppliers.cancel();
+      getRecentSuppliers();
     } else {
       debouncedGetAllSuppliers(value);
     }
   };
 
+  // Load recent suppliers when CreatePurchaseOrder action is selected
   useEffect(() => {
-    // Fetch suppliers when component mounts
-    getAllSuppliers();
-  }, []);
+    if (action?.action === EMaterialsActions.CreatePurchaseOrder) {
+      getRecentSuppliers();
+    }
+  }, [action?.action, getRecentSuppliers]);
 
   // Submenu action handlers
   const handleSubmenuAction = async (data: {
