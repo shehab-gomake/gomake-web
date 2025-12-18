@@ -61,6 +61,8 @@ const useCreditCardTransactions = () => {
     t("creditCardTransactions.Customer"),
     t("creditCardTransactions.ReceiptNumber"),
     t("creditCardTransactions.Sum"),
+    t("sales.quote.total"),
+    t("creditCardTransactions.Count"),
     t("properties.more"),
   ];
 
@@ -109,6 +111,8 @@ const useCreditCardTransactions = () => {
           item?.clientName,
           item?.receiptNumber,
           item?.sum,
+          item?.total ?? "",
+          item?.count ?? "",
           item?.isEditable ? (
             <MoreMenuWidget
               transaction={item}
@@ -161,6 +165,8 @@ const useCreditCardTransactions = () => {
             updatedTransaction.clientName,
             updatedTransaction.receiptNumber,
             updatedTransaction.sum,
+            updatedTransaction.total ?? "",
+            updatedTransaction.count ?? "",
             updatedTransaction.isEditable ? (
               <MoreMenuWidget
                 transaction={updatedTransaction}
@@ -201,6 +207,8 @@ const useCreditCardTransactions = () => {
             updatedTransaction.clientName,
             updatedTransaction.receiptNumber,
             updatedTransaction.sum,
+            updatedTransaction.total ?? "",
+            updatedTransaction.count ?? "",
             updatedTransaction.isEditable ? (
               <MoreMenuWidget
                 transaction={updatedTransaction}
