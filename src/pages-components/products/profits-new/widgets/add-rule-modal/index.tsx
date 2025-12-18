@@ -151,6 +151,15 @@ const AddRuleModal = ({
     }
   }, [openModal, isHotFolderWidget, fetchHotFolderNames]);
 
+  // Reset states when modal closes
+  useEffect(() => {
+    if (!openModal) {
+      setSelectedProperty(null);
+      setAdditionType(null);
+      setPropertieValue(null);
+    }
+  }, [openModal, setAdditionType, setPropertieValue]);
+
   const [selectedProfitModel, setSelectedProfitModel] = useState<number>(null);
   const router = useRouter();
 
@@ -634,6 +643,8 @@ const AddRuleModal = ({
         onClose={() => {
           setRules([initialRule]);
           setSelectedProperty(null);
+          setAdditionType(null);
+          setPropertieValue(null);
           onCloseModal();
         }}
         insideStyle={clasess.insideStyle}
