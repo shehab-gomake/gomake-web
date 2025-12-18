@@ -253,21 +253,6 @@ const useMaterialsActions = (isAdmin: boolean) => {
       setOpenUpdatedNumburingModal(true);
       return;
     }
-    // if (action?.action === EMaterialsActions.CreatePurchaseOrder) {
-    //   if (selectedMaterialsIds.length === 0) {
-    //     setSnackbarStateValue({
-    //       state: true,
-    //       message: t("modal.noMaterialsSelected"),
-    //       type: "error",
-    //     });
-    //     return;
-    //   }
-    //   else {
-    //     setOpenCreatePurchaseOrderModal(true);
-    //     return;
-    //   }
-
-    // }
     if (action?.action === EMaterialsActions.DownLoadExcel) {
       downloadExcelFile().then();
       return;
@@ -316,16 +301,6 @@ const useMaterialsActions = (isAdmin: boolean) => {
         );
       }
       setAction(action)
-      // const areCurrenciesSame = selectedMaterials.every(
-      //   item => item.rowData.currency.value === selectedMaterials[0].rowData.currency.value
-      // );
-      // if (areCurrenciesSame) {
-      //   setAction(action);
-      // }
-      // else {
-      //   alertFault(t("materials.inputs.errorCurrencyMsg"));
-      // }
-
       return;
     }
     setAction(action);
