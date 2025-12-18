@@ -752,7 +752,10 @@ const useAddProduct = ({ classes }) => {
         }
         if (allMaterialsCopy) {
           materialsOptions = [];
-          materialsOptions.push(...allMaterialsCopy.data);
+          if(allMaterialsCopy && allMaterialsCopy.data){
+            materialsOptions.push(...allMaterialsCopy.data);
+          }
+          
         }
       } else {
         allMaterialsCopy = allMaterialsCopy?.find((material) =>
@@ -1213,7 +1216,10 @@ const useAddProduct = ({ classes }) => {
           }
           if (allMaterialsCopy) {
             options = [];
-            options.push(...allMaterialsCopy.data);
+            if(allMaterialsCopy && allMaterialsCopy.data){
+              options.push(...allMaterialsCopy.data);
+            }
+            
           }
         } else {
           allMaterialsCopy = allMaterialsCopy?.find((material) =>
