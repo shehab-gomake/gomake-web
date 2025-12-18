@@ -334,26 +334,6 @@ const useMaterials = (isAdmin: boolean) => {
 
         // Get actions from backend
         let actions = res.data?.actions || [];
-
-        // Add Die Cutter analyzer action if not already present
-        const hasDieCutAnalyzer = actions.some(
-          (action: any) => action.action === EMaterialsActions.DieCutAnalyzer
-        );
-
-        if (!hasDieCutAnalyzer) {
-          actions = [
-            ...actions,
-            {
-              key: "DieCutAnalyzer",
-              text: "DieCutAnalyzer",
-              action: EMaterialsActions.DieCutAnalyzer,
-              icon: EMaterialsTabsIcon.DIE_CUT_ANALYZER,
-              isUnderLine: false,
-              isShowSubMenu: false,
-            },
-          ];
-        }
-
         setMaterialActions(actions);
         setMaterialName(res.data?.materialTypeName);
       }
