@@ -41,35 +41,14 @@ export default function DocumentPage() {
             // The API returns the PDF link in res.data
             let link = String(res.data).trim();
 
-            // Normalize the URL - ensure it's a complete absolute URL with protocol
             if (link) {
-              // Get current origin to detect and fix duplication
-              const currentOrigin = window.location.origin;
-              const currentDomain = currentOrigin.replace(/^https?:\/\//, '');
-
-              // Remove any duplicate domain patterns
-              // Pattern 1: https://domain.com/domain.com/...
-              const duplicatePattern1 = new RegExp(`${currentDomain}/${currentDomain}`, 'g');
-              if (duplicatePattern1.test(link)) {
-                link = link.replace(duplicatePattern1, currentDomain);
-              }
-
-              // Pattern 2: domain.com/domain.com/...
-              const duplicatePattern2 = new RegExp(`^${currentDomain}/${currentDomain}`, 'g');
-              if (duplicatePattern2.test(link)) {
-                link = link.replace(duplicatePattern2, currentDomain);
-              }
-
               // If it doesn't start with http:// or https://, add https://
               if (!link.startsWith("http://") && !link.startsWith("https://")) {
-                // Remove any leading slashes to avoid double slashes
-                link = link.replace(/^\/+/, "");
-                // Add https:// protocol
                 link = `https://${link}`;
               }
 
               setPdfUrl(link);
-              // Redirect to the PDF URL using window.location.replace to avoid history entry
+              // Redirect to the PDF URL
               window.location.replace(link);
             } else {
               setError("PDF link not found");
