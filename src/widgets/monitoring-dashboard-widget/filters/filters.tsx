@@ -35,6 +35,11 @@ const DashboardFilters = () => {
     toggleDocumentStatus,
     toggleAllDocumentStatuses,
     showDocumentStatusFilter,
+    productionStatusCategories,
+    selectedProductionStatuses,
+    toggleProductionStatus,
+    toggleAllProductionStatuses,
+    showProductionStatusFilter,
   } = useSalesDashboardFilters();
 
   return (
@@ -49,6 +54,15 @@ const DashboardFilters = () => {
           onToggle={toggleDocumentStatus}
           onToggleAll={toggleAllDocumentStatuses}
           buttonLabel={t("sales.quote.status")}
+        />
+      )}
+      {showProductionStatusFilter && (
+        <MultiSelectDropdown
+          items={productionStatusCategories}
+          selectedIds={selectedProductionStatuses}
+          onToggle={toggleProductionStatus}
+          onToggleAll={toggleAllProductionStatuses}
+          buttonLabel={t("boardMissions.productionStatus")}
         />
       )}
       <SingleSelectSearchDropdown />

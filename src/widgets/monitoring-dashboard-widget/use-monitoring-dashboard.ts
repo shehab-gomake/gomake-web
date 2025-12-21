@@ -8,6 +8,7 @@ import {
   getPieProductTypeChartApi,
   getProductPerformanceChartApi,
   getSalesChartRouteApi,
+  getDailyDocumentsSummaryApi,
 } from "@/services/api-service/reports-service/sales-controller-endpoints";
 import { useRecoilValue } from "recoil";
 import { dashboardDateState, systemCurrencyState } from "@/store";
@@ -23,7 +24,9 @@ import { selectedDashClientState } from "./filters/states/selected-client-id";
 import { selectedDataTypeState } from "./filters/states/selected-data-type";
 import { selectedDocumentTypeState } from "./filters/states/selected-document-type";
 import { selectedDocumentStatusesState } from "./filters/states/selected-document-statuses";
+import { selectedProductionStatusesState } from "./filters/states/selected-production-statuses";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { DocumentTypeEnums } from "@/enums/document-type-enum";
 
 type TableRow = [
   string, // clientName or AgentName or ProductName
@@ -61,6 +64,15 @@ const useMonitoringDashboard = () => {
   const [productsRow, setProductsRow] = useState<TableRow[]>([]);
   const [agentsRow, setAgentsRow] = useState<TableRow[]>([]);
   const [clientsRow, setClientsRow] = useState<TableRow[]>([]);
+  const [dailyDocumentsSummary, setDailyDocumentsSummary] = useState<
+    {
+      date: string;
+      ordersUnits: number;
+      ordersTotal: number;
+      deliveryNotesTotal: number;
+      invoiceTotal: number;
+    }[]
+  >([]);
   const systemCurrency = useRecoilValue<any>(systemCurrencyState);
   const currUnit = getCurrencyUnitText(systemCurrency);
 
@@ -84,6 +96,40 @@ const useMonitoringDashboard = () => {
     } catch (e) {
       return utcString;
     }
+  };
+
+  // Helper function to filter document statuses based on document type
+  // Order/Quote only support status 1 and 2, so filter out status 3
+  const getFilteredDocumentStatuses = (
+    documentType: DocumentTypeEnums | null,
+    documentStatuses: number[] | undefined
+  ): number[] | undefined => {
+    if (!documentStatuses?.length) return undefined;
+
+    if (
+      documentType === DocumentTypeEnums.Order ||
+      documentType === DocumentTypeEnums.Quote
+    ) {
+      // Filter out status 3 (PartialClosed) for Order/Quote
+      const filtered = documentStatuses.filter((id) => id !== 3);
+      return filtered.length > 0 ? filtered : undefined;
+    }
+
+    return documentStatuses;
+  };
+
+  // Helper function to get production status only if document type is Order
+  const getFilteredProductionStatus = (
+    documentType: DocumentTypeEnums | null,
+    productionStatuses: number[] | undefined
+  ): number[] | undefined => {
+    if (
+      documentType === DocumentTypeEnums.Order &&
+      productionStatuses?.length
+    ) {
+      return productionStatuses;
+    }
+    return undefined;
   };
 
   const getSalesChartRoute = async (
@@ -119,8 +165,23 @@ const useMonitoringDashboard = () => {
       ...(filters?.selectedDocumentType !== null && {
         documentType: filters.selectedDocumentType,
       }),
-      ...(filters?.selectedDocumentStatuses?.length && {
-        documentStatuses: filters.selectedDocumentStatuses,
+      ...(getFilteredDocumentStatuses(
+        filters?.selectedDocumentType,
+        filters?.selectedDocumentStatuses
+      ) && {
+        documentStatuses: getFilteredDocumentStatuses(
+          filters?.selectedDocumentType,
+          filters?.selectedDocumentStatuses
+        ),
+      }),
+      ...(getFilteredProductionStatus(
+        filters?.selectedDocumentType,
+        filters?.selectedProductionStatuses
+      ) && {
+        productionStatus: getFilteredProductionStatus(
+          filters?.selectedDocumentType,
+          filters?.selectedProductionStatuses
+        ),
       }),
       ...extraCostData,
     };
@@ -163,8 +224,23 @@ const useMonitoringDashboard = () => {
       ...(filters?.selectedDocumentType !== null && {
         documentType: filters.selectedDocumentType,
       }),
-      ...(filters?.selectedDocumentStatuses?.length && {
-        documentStatuses: filters.selectedDocumentStatuses,
+      ...(getFilteredDocumentStatuses(
+        filters?.selectedDocumentType,
+        filters?.selectedDocumentStatuses
+      ) && {
+        documentStatuses: getFilteredDocumentStatuses(
+          filters?.selectedDocumentType,
+          filters?.selectedDocumentStatuses
+        ),
+      }),
+      ...(getFilteredProductionStatus(
+        filters?.selectedDocumentType,
+        filters?.selectedProductionStatuses
+      ) && {
+        productionStatus: getFilteredProductionStatus(
+          filters?.selectedDocumentType,
+          filters?.selectedProductionStatuses
+        ),
       }),
     };
 
@@ -210,8 +286,23 @@ const useMonitoringDashboard = () => {
       ...(filters?.selectedDocumentType !== null && {
         documentType: filters.selectedDocumentType,
       }),
-      ...(filters?.selectedDocumentStatuses?.length && {
-        documentStatuses: filters.selectedDocumentStatuses,
+      ...(getFilteredDocumentStatuses(
+        filters?.selectedDocumentType,
+        filters?.selectedDocumentStatuses
+      ) && {
+        documentStatuses: getFilteredDocumentStatuses(
+          filters?.selectedDocumentType,
+          filters?.selectedDocumentStatuses
+        ),
+      }),
+      ...(getFilteredProductionStatus(
+        filters?.selectedDocumentType,
+        filters?.selectedProductionStatuses
+      ) && {
+        productionStatus: getFilteredProductionStatus(
+          filters?.selectedDocumentType,
+          filters?.selectedProductionStatuses
+        ),
       }),
     };
     const callBack = (res) => {
@@ -219,30 +310,54 @@ const useMonitoringDashboard = () => {
         const data = res.data;
         const mapData = data?.map((row) => [
           row?.productName,
-          row?.totalJobs?.toLocaleString('en-US') || "0",
-          row?.qunatites?.toLocaleString('en-US') || "0",
-          row?.finalPrice != null ? `${currUnit} ${row.finalPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : "-",
-          row?.totalCalculatedPrice != null
-            ? `${currUnit} ${row.totalCalculatedPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+          row?.totalJobs?.toLocaleString("en-US") || "0",
+          row?.qunatites?.toLocaleString("en-US") || "0",
+          row?.finalPrice != null
+            ? `${currUnit} ${row.finalPrice.toLocaleString("en-US", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}`
             : "-",
-          row?.totalCost != null ? `${currUnit} ${row.totalCost.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : "-",
-          row?.totalProfit != null ? `${currUnit} ${row.totalProfit.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : "-",
-          row?.avgProfit != null ? `${currUnit} ${row.avgProfit.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : "-",
+          row?.totalCalculatedPrice != null
+            ? `${currUnit} ${row.totalCalculatedPrice.toLocaleString("en-US", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}`
+            : "-",
+          row?.totalCost != null
+            ? `${currUnit} ${row.totalCost.toLocaleString("en-US", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}`
+            : "-",
+          row?.totalProfit != null
+            ? `${currUnit} ${row.totalProfit.toLocaleString("en-US", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}`
+            : "-",
+          row?.avgProfit != null
+            ? `${currUnit} ${row.avgProfit.toLocaleString("en-US", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}`
+            : "-",
           row?.finalPrice
             ? `${((row?.totalProfit / row.finalPrice) * 100).toFixed(2)}%`
             : "0.00%",
-          row?.avgPerOrder?.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || "0.00",
+          row?.avgPerOrder?.toLocaleString("en-US", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          }) || "0.00",
           row?.os != null ? `${row.os.toFixed(2)}%` : "-",
           row?.successRate != null ? `${row.successRate.toFixed(2)}%` : "-",
-          typeof row?.growth === "number" ? (
-            // Render badge via JSX in table cell
-            require("react").createElement(
-              require("./growth-badge").GrowthBadge,
-              { value: row.growth }
-            )
-          ) : (
-            "-"
-          ),
+          typeof row?.growth === "number"
+            ? // Render badge via JSX in table cell
+              require("react").createElement(
+                require("./growth-badge").GrowthBadge,
+                { value: row.growth }
+              )
+            : "-",
         ]);
         setProductsRow(mapData);
       }
@@ -278,8 +393,23 @@ const useMonitoringDashboard = () => {
       ...(filters?.selectedDocumentType !== null && {
         documentType: filters.selectedDocumentType,
       }),
-      ...(filters?.selectedDocumentStatuses?.length && {
-        documentStatuses: filters.selectedDocumentStatuses,
+      ...(getFilteredDocumentStatuses(
+        filters?.selectedDocumentType,
+        filters?.selectedDocumentStatuses
+      ) && {
+        documentStatuses: getFilteredDocumentStatuses(
+          filters?.selectedDocumentType,
+          filters?.selectedDocumentStatuses
+        ),
+      }),
+      ...(getFilteredProductionStatus(
+        filters?.selectedDocumentType,
+        filters?.selectedProductionStatuses
+      ) && {
+        productionStatus: getFilteredProductionStatus(
+          filters?.selectedDocumentType,
+          filters?.selectedProductionStatuses
+        ),
       }),
     };
 
@@ -288,29 +418,53 @@ const useMonitoringDashboard = () => {
         const data = res.data;
         const mapData = data?.map((row) => [
           row?.agentName,
-          row?.totalJobs?.toLocaleString('en-US') || "0",
-          row?.qunatites?.toLocaleString('en-US') || "0",
-          row?.finalPrice != null ? `${currUnit} ${row.finalPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : "-",
-          row?.totalCalculatedPrice != null
-            ? `${currUnit} ${row.totalCalculatedPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+          row?.totalJobs?.toLocaleString("en-US") || "0",
+          row?.qunatites?.toLocaleString("en-US") || "0",
+          row?.finalPrice != null
+            ? `${currUnit} ${row.finalPrice.toLocaleString("en-US", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}`
             : "-",
-          row?.totalCost != null ? `${currUnit} ${row.totalCost.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : "-",
-          row?.totalProfit != null ? `${currUnit} ${row.totalProfit.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : "-",
-          row?.avgProfit != null ? `${currUnit} ${row.avgProfit.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : "-",
+          row?.totalCalculatedPrice != null
+            ? `${currUnit} ${row.totalCalculatedPrice.toLocaleString("en-US", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}`
+            : "-",
+          row?.totalCost != null
+            ? `${currUnit} ${row.totalCost.toLocaleString("en-US", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}`
+            : "-",
+          row?.totalProfit != null
+            ? `${currUnit} ${row.totalProfit.toLocaleString("en-US", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}`
+            : "-",
+          row?.avgProfit != null
+            ? `${currUnit} ${row.avgProfit.toLocaleString("en-US", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}`
+            : "-",
           row?.finalPrice
             ? `${((row?.totalProfit / row.finalPrice) * 100).toFixed(2)}%`
             : "0.00%",
-          row?.avgPerOrder?.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || "0.00",
+          row?.avgPerOrder?.toLocaleString("en-US", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          }) || "0.00",
           row?.os != null ? `${row.os.toFixed(2)}%` : "-",
           row?.successRate != null ? `${row.successRate.toFixed(2)}%` : "-",
-          typeof row?.growth === "number" ? (
-            require("react").createElement(
-              require("./growth-badge").GrowthBadge,
-              { value: row.growth }
-            )
-          ) : (
-            "-"
-          ),
+          typeof row?.growth === "number"
+            ? require("react").createElement(
+                require("./growth-badge").GrowthBadge,
+                { value: row.growth }
+              )
+            : "-",
         ]);
         setAgentsRow(mapData);
       }
@@ -346,8 +500,23 @@ const useMonitoringDashboard = () => {
       ...(filters?.selectedDocumentType !== null && {
         documentType: filters.selectedDocumentType,
       }),
-      ...(filters?.selectedDocumentStatuses?.length && {
-        documentStatuses: filters.selectedDocumentStatuses,
+      ...(getFilteredDocumentStatuses(
+        filters?.selectedDocumentType,
+        filters?.selectedDocumentStatuses
+      ) && {
+        documentStatuses: getFilteredDocumentStatuses(
+          filters?.selectedDocumentType,
+          filters?.selectedDocumentStatuses
+        ),
+      }),
+      ...(getFilteredProductionStatus(
+        filters?.selectedDocumentType,
+        filters?.selectedProductionStatuses
+      ) && {
+        productionStatus: getFilteredProductionStatus(
+          filters?.selectedDocumentType,
+          filters?.selectedProductionStatuses
+        ),
       }),
     };
 
@@ -356,29 +525,53 @@ const useMonitoringDashboard = () => {
         const data = res.data;
         const mapData = data?.map((row) => [
           row?.clientName,
-          row?.totalJobs?.toLocaleString('en-US') || "0",
-          row?.qunatites?.toLocaleString('en-US') || "0",
-          row?.finalPrice != null ? `${currUnit} ${row.finalPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : "-",
-          row?.totalCalculatedPrice != null
-            ? `${currUnit} ${row.totalCalculatedPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+          row?.totalJobs?.toLocaleString("en-US") || "0",
+          row?.qunatites?.toLocaleString("en-US") || "0",
+          row?.finalPrice != null
+            ? `${currUnit} ${row.finalPrice.toLocaleString("en-US", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}`
             : "-",
-          row?.totalCost != null ? `${currUnit} ${row.totalCost.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : "-",
-          row?.totalProfit != null ? `${currUnit} ${row.totalProfit.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : "-",
-          row?.avgProfit != null ? `${currUnit} ${row.avgProfit.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : "-",
+          row?.totalCalculatedPrice != null
+            ? `${currUnit} ${row.totalCalculatedPrice.toLocaleString("en-US", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}`
+            : "-",
+          row?.totalCost != null
+            ? `${currUnit} ${row.totalCost.toLocaleString("en-US", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}`
+            : "-",
+          row?.totalProfit != null
+            ? `${currUnit} ${row.totalProfit.toLocaleString("en-US", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}`
+            : "-",
+          row?.avgProfit != null
+            ? `${currUnit} ${row.avgProfit.toLocaleString("en-US", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}`
+            : "-",
           row?.finalPrice
             ? `${((row?.totalProfit / row.finalPrice) * 100).toFixed(2)}%`
             : "0.00%",
-          row?.avgPerOrder?.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || "0.00",
+          row?.avgPerOrder?.toLocaleString("en-US", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          }) || "0.00",
           row?.os != null ? `${row.os.toFixed(2)}%` : "-",
           row?.successRate != null ? `${row.successRate.toFixed(2)}%` : "-",
-          typeof row?.growth === "number" ? (
-            require("react").createElement(
-              require("./growth-badge").GrowthBadge,
-              { value: row.growth }
-            )
-          ) : (
-            "-"
-          ),
+          typeof row?.growth === "number"
+            ? require("react").createElement(
+                require("./growth-badge").GrowthBadge,
+                { value: row.growth }
+              )
+            : "-",
         ]);
         setClientsRow(mapData);
       }
@@ -414,8 +607,23 @@ const useMonitoringDashboard = () => {
       ...(filters?.selectedDocumentType !== null && {
         documentType: filters.selectedDocumentType,
       }),
-      ...(filters?.selectedDocumentStatuses?.length && {
-        documentStatuses: filters.selectedDocumentStatuses,
+      ...(getFilteredDocumentStatuses(
+        filters?.selectedDocumentType,
+        filters?.selectedDocumentStatuses
+      ) && {
+        documentStatuses: getFilteredDocumentStatuses(
+          filters?.selectedDocumentType,
+          filters?.selectedDocumentStatuses
+        ),
+      }),
+      ...(getFilteredProductionStatus(
+        filters?.selectedDocumentType,
+        filters?.selectedProductionStatuses
+      ) && {
+        productionStatus: getFilteredProductionStatus(
+          filters?.selectedDocumentType,
+          filters?.selectedProductionStatuses
+        ),
       }),
     };
     const callBack = (res) => {
@@ -430,6 +638,61 @@ const useMonitoringDashboard = () => {
       }
     };
     await getPieAgentChartApi(callApi, callBack, data);
+  };
+
+  const getDailyDocumentsSummary = async (filters) => {
+    const data: any = {
+      fromDate: convertUtcToLocalIsoString(filters?.startDate),
+      toDate: convertUtcToLocalIsoString(filters?.endDate),
+      ...(filters.selectedAgentIds?.length && {
+        agents: filters.selectedAgentIds,
+      }),
+      ...(filters.selectedProductsIds?.length && {
+        products: filters.selectedProductsIds,
+      }),
+      ...(filters.selectedProductTypesIds?.length && {
+        productTypes: filters.selectedProductTypesIds,
+      }),
+      ...(filters.selectedClientTypesIds?.length && {
+        clentTypes: filters.selectedClientTypesIds,
+      }),
+      ...(filters.selectedJobTypesIds?.length && {
+        sourceTypes: filters.selectedJobTypesIds,
+      }),
+      ...(filters.selectedClient?.id && {
+        clients: [filters.selectedClient.id],
+      }),
+      ...(filters?.selectedDataType !== null && {
+        dataType: filters.selectedDataType,
+      }),
+      ...(filters?.selectedDocumentType !== null && {
+        documentType: filters.selectedDocumentType,
+      }),
+      ...(getFilteredDocumentStatuses(
+        filters?.selectedDocumentType,
+        filters?.selectedDocumentStatuses
+      ) && {
+        documentStatuses: getFilteredDocumentStatuses(
+          filters?.selectedDocumentType,
+          filters?.selectedDocumentStatuses
+        ),
+      }),
+      ...(getFilteredProductionStatus(
+        filters?.selectedDocumentType,
+        filters?.selectedProductionStatuses
+      ) && {
+        productionStatus: getFilteredProductionStatus(
+          filters?.selectedDocumentType,
+          filters?.selectedProductionStatuses
+        ),
+      }),
+    };
+    const callBack = (res) => {
+      if (res.success) {
+        setDailyDocumentsSummary(res.data || []);
+      }
+    };
+    await getDailyDocumentsSummaryApi(callApi, callBack, data);
   };
 
   const baseTableHeaders = [
@@ -463,6 +726,9 @@ const useMonitoringDashboard = () => {
   const selectedDocumentStatuses = useRecoilValue(
     selectedDocumentStatusesState
   );
+  const selectedProductionStatuses = useRecoilValue(
+    selectedProductionStatusesState
+  );
 
   const filters = useMemo(
     () => ({
@@ -477,6 +743,7 @@ const useMonitoringDashboard = () => {
       selectedDataType,
       selectedDocumentType,
       selectedDocumentStatuses,
+      selectedProductionStatuses,
     }),
     [
       dates?.startDate,
@@ -490,6 +757,7 @@ const useMonitoringDashboard = () => {
       selectedDataType,
       selectedDocumentType,
       selectedDocumentStatuses,
+      selectedProductionStatuses,
     ]
   );
 
@@ -510,6 +778,8 @@ const useMonitoringDashboard = () => {
     getProductPerformanceChart,
     getAgentPerformanceChart,
     getClientPerformanceChart,
+    getDailyDocumentsSummary,
+    dailyDocumentsSummary,
     productsRow,
     productTableHeaders,
     clientsRow,
