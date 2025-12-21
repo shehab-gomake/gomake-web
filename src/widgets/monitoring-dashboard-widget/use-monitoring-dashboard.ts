@@ -8,6 +8,7 @@ import {
   getPieProductTypeChartApi,
   getProductPerformanceChartApi,
   getSalesChartRouteApi,
+  getDailyDocumentsSummaryApi,
 } from "@/services/api-service/reports-service/sales-controller-endpoints";
 import { useRecoilValue } from "recoil";
 import { dashboardDateState, systemCurrencyState } from "@/store";
@@ -63,6 +64,15 @@ const useMonitoringDashboard = () => {
   const [productsRow, setProductsRow] = useState<TableRow[]>([]);
   const [agentsRow, setAgentsRow] = useState<TableRow[]>([]);
   const [clientsRow, setClientsRow] = useState<TableRow[]>([]);
+  const [dailyDocumentsSummary, setDailyDocumentsSummary] = useState<
+    {
+      date: string;
+      ordersUnits: number;
+      ordersTotal: number;
+      deliveryNotesTotal: number;
+      invoiceTotal: number;
+    }[]
+  >([]);
   const systemCurrency = useRecoilValue<any>(systemCurrencyState);
   const currUnit = getCurrencyUnitText(systemCurrency);
 
@@ -630,6 +640,61 @@ const useMonitoringDashboard = () => {
     await getPieAgentChartApi(callApi, callBack, data);
   };
 
+  const getDailyDocumentsSummary = async (filters) => {
+    const data: any = {
+      fromDate: convertUtcToLocalIsoString(filters?.startDate),
+      toDate: convertUtcToLocalIsoString(filters?.endDate),
+      ...(filters.selectedAgentIds?.length && {
+        agents: filters.selectedAgentIds,
+      }),
+      ...(filters.selectedProductsIds?.length && {
+        products: filters.selectedProductsIds,
+      }),
+      ...(filters.selectedProductTypesIds?.length && {
+        productTypes: filters.selectedProductTypesIds,
+      }),
+      ...(filters.selectedClientTypesIds?.length && {
+        clentTypes: filters.selectedClientTypesIds,
+      }),
+      ...(filters.selectedJobTypesIds?.length && {
+        sourceTypes: filters.selectedJobTypesIds,
+      }),
+      ...(filters.selectedClient?.id && {
+        clients: [filters.selectedClient.id],
+      }),
+      ...(filters?.selectedDataType !== null && {
+        dataType: filters.selectedDataType,
+      }),
+      ...(filters?.selectedDocumentType !== null && {
+        documentType: filters.selectedDocumentType,
+      }),
+      ...(getFilteredDocumentStatuses(
+        filters?.selectedDocumentType,
+        filters?.selectedDocumentStatuses
+      ) && {
+        documentStatuses: getFilteredDocumentStatuses(
+          filters?.selectedDocumentType,
+          filters?.selectedDocumentStatuses
+        ),
+      }),
+      ...(getFilteredProductionStatus(
+        filters?.selectedDocumentType,
+        filters?.selectedProductionStatuses
+      ) && {
+        productionStatus: getFilteredProductionStatus(
+          filters?.selectedDocumentType,
+          filters?.selectedProductionStatuses
+        ),
+      }),
+    };
+    const callBack = (res) => {
+      if (res.success) {
+        setDailyDocumentsSummary(res.data || []);
+      }
+    };
+    await getDailyDocumentsSummaryApi(callApi, callBack, data);
+  };
+
   const baseTableHeaders = [
     t("dashboard.jobs"),
     t("dashboard.quantity"),
@@ -713,6 +778,8 @@ const useMonitoringDashboard = () => {
     getProductPerformanceChart,
     getAgentPerformanceChart,
     getClientPerformanceChart,
+    getDailyDocumentsSummary,
+    dailyDocumentsSummary,
     productsRow,
     productTableHeaders,
     clientsRow,

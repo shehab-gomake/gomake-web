@@ -36,7 +36,8 @@ const MonitoringDashboardWidget = () => {
 
   const growthValue = (cell: any): number => {
     if (cell == null) return -Infinity;
-    if (typeof cell === "string") return cell === "-" ? -Infinity : parsePercent(cell);
+    if (typeof cell === "string")
+      return cell === "-" ? -Infinity : parsePercent(cell);
     try {
       const value = cell?.props?.value;
       return typeof value === "number" ? value : -Infinity;
@@ -56,6 +57,8 @@ const MonitoringDashboardWidget = () => {
     getProductPerformanceChart,
     getAgentPerformanceChart,
     getClientPerformanceChart,
+    getDailyDocumentsSummary,
+    dailyDocumentsSummary,
     productsRow,
     productTableHeaders,
     clientsRow,
@@ -74,9 +77,20 @@ const MonitoringDashboardWidget = () => {
   } = useMonitoringDashboard();
 
   // Controlled sort state per table (default: Final Price desc at column index 3)
-  const [agentSort, setAgentSort] = useState<{ key: number; direction: "asc" | "desc" }>({ key: 3, direction: "desc" });
-  const [productSort, setProductSort] = useState<{ key: number; direction: "asc" | "desc" }>({ key: 3, direction: "desc" });
-  const [clientSort, setClientSort] = useState<{ key: number; direction: "asc" | "desc" }>({ key: 3, direction: "desc" });
+  const [agentSort, setAgentSort] = useState<{
+    key: number;
+    direction: "asc" | "desc";
+  }>({ key: 3, direction: "desc" });
+  const [productSort, setProductSort] = useState<{
+    key: number;
+    direction: "asc" | "desc";
+  }>({ key: 3, direction: "desc" });
+  const [clientSort, setClientSort] = useState<{
+    key: number;
+    direction: "asc" | "desc";
+  }>({ key: 3, direction: "desc" });
+  const [visibleDailyDocumentsRows, setVisibleDailyDocumentsRows] =
+    useState<number>(10);
 
   useEffect(() => {
     const fetchAllData = async () => {
@@ -87,6 +101,7 @@ const MonitoringDashboardWidget = () => {
         getProductPerformanceChart(filters),
         getAgentPerformanceChart(filters),
         getClientPerformanceChart(filters),
+        getDailyDocumentsSummary(filters),
       ]);
     };
 
@@ -153,7 +168,13 @@ const MonitoringDashboardWidget = () => {
       if (!sortConfig) return rows;
       const fn = sortFns[sortConfig.key];
       const sorted = [...rows].sort((a, b) => {
-        const result = fn ? fn(a, b) : (a[sortConfig.key] < b[sortConfig.key] ? -1 : a[sortConfig.key] > b[sortConfig.key] ? 1 : 0);
+        const result = fn
+          ? fn(a, b)
+          : a[sortConfig.key] < b[sortConfig.key]
+          ? -1
+          : a[sortConfig.key] > b[sortConfig.key]
+          ? 1
+          : 0;
         return sortConfig.direction === "asc" ? result : -result;
       });
       return sorted;
@@ -187,7 +208,21 @@ const MonitoringDashboardWidget = () => {
             11: (a, b) => parsePercent(a[11]) - parsePercent(b[11]), // successRate
             12: (a, b) => growthValue(a[12]) - growthValue(b[12]), // growth badge
           }}
-          columnWidths={["10%", "5%", "7%", "8%", "10%", "7%", "7%", "8%", "8%", "8%", "5%", "10%", "10%"]}
+          columnWidths={[
+            "10%",
+            "5%",
+            "7%",
+            "8%",
+            "10%",
+            "7%",
+            "7%",
+            "8%",
+            "8%",
+            "8%",
+            "5%",
+            "10%",
+            "10%",
+          ]}
           variant="RoundTable"
         />
         {rows.length > 10 && (
@@ -269,6 +304,94 @@ const MonitoringDashboardWidget = () => {
         getSalesChartRoute={getSalesChartRoute}
         filters={filters}
       />
+      {dailyDocumentsSummary &&
+        dailyDocumentsSummary.length > 0 &&
+        (() => {
+          const dailyDocumentsRows = dailyDocumentsSummary.map((item) => {
+            const date = new Date(item.date);
+            const formattedDate = date.toLocaleDateString("en-GB", {
+              day: "2-digit",
+              month: "2-digit",
+              year: "numeric",
+            });
+            return [
+              formattedDate,
+              item.ordersUnits?.toLocaleString("en-US") || "0",
+              item.ordersTotal != null
+                ? `${currUnit} ${item.ordersTotal.toLocaleString("en-US", {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  })}`
+                : `${currUnit} 0.00`,
+              item.deliveryNotesTotal != null
+                ? `${currUnit} ${item.deliveryNotesTotal.toLocaleString(
+                    "en-US",
+                    {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    }
+                  )}`
+                : `${currUnit} 0.00`,
+              item.invoiceTotal != null
+                ? `${currUnit} ${item.invoiceTotal.toLocaleString("en-US", {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  })}`
+                : `${currUnit} 0.00`,
+            ];
+          });
+
+          const hasMore = dailyDocumentsRows.length > visibleDailyDocumentsRows;
+          const handleToggle = () => {
+            if (hasMore) {
+              setVisibleDailyDocumentsRows((prev) => prev + 10);
+            } else {
+              setVisibleDailyDocumentsRows(10);
+            }
+          };
+
+          return (
+            <div style={classes.subContainer}>
+              <h3 style={classes.labelStyle}>
+                {t("dashboard.dailyDocumentsSummary")}
+              </h3>
+              <PrimaryTable
+                stickyFirstCol={false}
+                stickyHeader={false}
+                rows={dailyDocumentsRows.slice(0, visibleDailyDocumentsRows)}
+                headers={[
+                  t("dashboard.date"),
+                  t("dashboard.ordersUnits"),
+                  `${t("dashboard.ordersTotal")} (${currUnit})`,
+                  `${t("dashboard.deliveryNotesTotal")} (${currUnit})`,
+                  `${t("dashboard.invoiceTotal")} (${currUnit})`,
+                ]}
+                withSort={false}
+                variant="RoundTable"
+              />
+              {dailyDocumentsRows.length > 10 && (
+                <Button
+                  onClick={handleToggle}
+                  style={classes.showMoreButton}
+                  endIcon={
+                    <Box
+                      component="span"
+                      sx={{
+                        display: "inline-flex",
+                        transition: "transform 0.3s ease",
+                        transform: hasMore ? "rotate(0deg)" : "rotate(180deg)",
+                      }}
+                    >
+                      <SouthRoundedIcon fontSize="small" />
+                    </Box>
+                  }
+                >
+                  {t(hasMore ? "sales.quote.showMore" : "sales.quote.showLess")}
+                </Button>
+              )}
+            </div>
+          );
+        })()}
       {renderTableSection(
         "dashboard.agentPerformanceTitle",
         agentsRow,

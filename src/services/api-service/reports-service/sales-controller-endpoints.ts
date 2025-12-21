@@ -11,6 +11,8 @@ const GET_CLIENT_PERFORMANCE_CHART_URL =
   "/v1/reports-service/sales/get-client-performance-chart";
 const GET_PRODUCT_PERFORMANCE_CHART_URL =
   "/v1/reports-service/sales/get-product-performance-chart";
+const GET_DAILY_DOCUMENTS_SUMMARY_URL =
+  "/v1/reports-service/sales/get-daily-documents-summary";
 
 const getSalesChartRouteApi: ICallAndSetData = async (
   callApi,
@@ -96,6 +98,20 @@ const getPieAgentChartApi: ICallAndSetData = async (
   );
 };
 
+const getDailyDocumentsSummaryApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    GET_DAILY_DOCUMENTS_SUMMARY_URL,
+    setState,
+    data
+  );
+};
+
 export {
   getSalesChartRouteApi,
   getPieAgentChartApi,
@@ -103,4 +119,5 @@ export {
   getAgentPerformanceChartApi,
   getClientPerformanceChartApi,
   getProductPerformanceChartApi,
+  getDailyDocumentsSummaryApi,
 };
