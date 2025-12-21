@@ -444,12 +444,12 @@ const getDocumentPdfApi: ICallAndSetData = async (
 const getPdfLinkApi: ICallAndSetData = async (
   callApi,
   setState,
-  data: { printHouseId: string; linkId: string }
+  data: {  linkId: string }
 ) => {
   return await getSetApiData(
     callApi,
     EHttpMethod.GET,
-    `${GET_PDF_LINK_URL}/${data.printHouseId}/${data.linkId}`,
+    `${GET_PDF_LINK_URL}/${data.linkId}`,
     setState,
     {}
   );
