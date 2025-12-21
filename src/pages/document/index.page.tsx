@@ -67,7 +67,6 @@ export default function DocumentPage() {
           callApi,
           callBack,
           {
-            printHouseId: userProfile.printHouseId,
             linkId: id,
           }
         );
