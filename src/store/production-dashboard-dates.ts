@@ -55,8 +55,14 @@ const productionActivityDateState = atom<{
   },
 });
 
+const productionStatusesState = atom<string[]>({
+  key: "productionStatuses",
+  default: [],
+});
+
 export {
   productionDeliveryDateState,
   productionCreationDateState,
   productionActivityDateState,
+  productionStatusesState,
 };

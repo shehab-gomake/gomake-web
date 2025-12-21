@@ -1,21 +1,27 @@
 import { useStyle } from "../style";
 import { useRecoilState } from "recoil";
 import { useTranslation } from "react-i18next";
-import { useEffect, useState } from "react";
-import { useSnackBar } from "@/hooks";
+import { useEffect, useState, useMemo } from "react";
+import { useSnackBar, useGomakeAxios } from "@/hooks";
 import { PrimaryButton } from "@/components/button/primary-button";
 import {
   productionCreationDateState,
   productionDeliveryDateState,
   productionActivityDateState,
+  productionStatusesState,
 } from "@/store/production-dashboard-dates";
 import { ControlledDateRangePicker } from "@/components/datepicker";
 import { subMonths, startOfDay, endOfDay } from "date-fns";
+import { MultiSelectDropdown } from "@/components/multi-select/multi-select-drop-down";
+import { getAllBoardMissionStatusApi } from "@/services/api-service/board-missions/board-mission-station-filter-groups";
+import { IProductionStatus } from "@/widgets/production-floor/interfaces/production-floor-status";
+import { FONT_FAMILY } from "@/utils/font-family";
 
 const ProductionDashboardFilters = () => {
   const { classes } = useStyle();
   const { t } = useTranslation();
   const { alertFault } = useSnackBar();
+  const { callApi } = useGomakeAxios();
 
   // Recoil state
   const [deliveryDate, setDeliveryDate] = useRecoilState(
@@ -26,6 +32,9 @@ const ProductionDashboardFilters = () => {
   );
   const [activityDate, setActivityDate] = useRecoilState(
     productionActivityDateState
+  );
+  const [selectedStatuses, setSelectedStatuses] = useRecoilState(
+    productionStatusesState
   );
 
   // Default date range for Activity Date only: Today
@@ -39,6 +48,39 @@ const ProductionDashboardFilters = () => {
   const [creationToDate, setCreationToDate] = useState<Date | null>(null);
   const [fromInDate, setFromInDate] = useState<Date | null>(defaultStartDate);
   const [toInDate, setToInDate] = useState<Date | null>(defaultEndDate);
+
+  // Local state for statuses
+  const [statusItems, setStatusItems] = useState<
+    Array<{ id: string; label: string }>
+  >([]);
+  const [statusesLoading, setStatusesLoading] = useState(false);
+  const [localSelectedStatuses, setLocalSelectedStatuses] = useState<string[]>(
+    []
+  );
+
+  // Fetch statuses on mount
+  useEffect(() => {
+    const fetchStatuses = async () => {
+      setStatusesLoading(true);
+      try {
+        const response = await getAllBoardMissionStatusApi(callApi, () => {});
+        if (response?.success && response?.data) {
+          const statuses: IProductionStatus[] = response.data;
+          const items = statuses.map((status) => ({
+            id: status.id,
+            label: t(`productionStatuses.${status.key}`) || status.name,
+          }));
+          setStatusItems(items);
+        }
+      } catch (error) {
+        console.error("Error fetching statuses:", error);
+      } finally {
+        setStatusesLoading(false);
+      }
+    };
+
+    fetchStatuses();
+  }, [callApi]);
 
   // Initialize local state from Recoil on mount
   useEffect(() => {
@@ -63,6 +105,10 @@ const ProductionDashboardFilters = () => {
       setCreationFromDate(creationDate.dates.startDate);
       setCreationToDate(creationDate.dates.endDate);
     }
+
+    // Initialize local statuses from Recoil
+    setLocalSelectedStatuses(selectedStatuses);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Date change handlers
@@ -89,6 +135,46 @@ const ProductionDashboardFilters = () => {
     setFromInDate(startDate);
     setToInDate(endDate);
   };
+
+  // Status toggle handlers
+  const toggleStatus = (statusId: string) => {
+    setLocalSelectedStatuses((prev) => {
+      if (prev.includes(statusId)) {
+        return prev.filter((id) => id !== statusId);
+      } else {
+        return [...prev, statusId];
+      }
+    });
+  };
+
+  const toggleAllStatuses = () => {
+    if (localSelectedStatuses.length === statusItems.length) {
+      setLocalSelectedStatuses([]);
+    } else {
+      setLocalSelectedStatuses(statusItems.map((item) => item.id));
+    }
+  };
+
+  // Compute button label with selected status names
+  const statusButtonLabel = useMemo(() => {
+    if (statusesLoading) {
+      return t("common.loading") || "Loading...";
+    }
+    if (localSelectedStatuses.length === 0) {
+      return t("dashboard-widget.status") || "Statuses";
+    }
+    const selectedStatusNames = localSelectedStatuses
+      .map((id) => {
+        const item = statusItems.find((item) => item.id === id);
+        return item?.label || "";
+      })
+      .filter((name) => name !== "")
+      .join(", ");
+    // Truncate if too long
+    return selectedStatusNames.length > 50
+      ? `${selectedStatusNames.substring(0, 50)}...`
+      : selectedStatusNames;
+  }, [statusesLoading, localSelectedStatuses, statusItems, t]);
 
   // Search button handler
   const handleSearch = () => {
@@ -126,6 +212,9 @@ const ProductionDashboardFilters = () => {
         endDate: toInDate || undefined,
       },
     });
+
+    // Update statuses state
+    setSelectedStatuses(localSelectedStatuses);
   };
 
   return (
@@ -152,6 +241,29 @@ const ProductionDashboardFilters = () => {
         dateFormat="MMM d, yyyy"
         tooltip={t("productionReport.activityDateTooltip")}
       />
+      <div>
+        <label
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 6,
+            marginBottom: 8,
+            ...FONT_FAMILY.Lexend(500, 15),
+          }}
+        >
+          <span>{t("dashboard-widget.status") || "Status"}</span>
+        </label>
+        <MultiSelectDropdown
+          items={statusItems}
+          selectedIds={localSelectedStatuses}
+          onToggle={toggleStatus}
+          onToggleAll={toggleAllStatuses}
+          buttonLabel={statusButtonLabel}
+          buttonStyle={{
+            height: "40px",
+          }}
+        />
+      </div>
       <PrimaryButton
         variant="contained"
         onClick={handleSearch}

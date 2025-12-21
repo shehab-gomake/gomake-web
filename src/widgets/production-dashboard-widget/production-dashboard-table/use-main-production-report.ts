@@ -5,6 +5,7 @@ import {
   productionCreationDateState,
   productionDeliveryDateState,
   productionActivityDateState,
+  productionStatusesState,
 } from "@/store/production-dashboard-dates";
 import { useGomakeAxios } from "@/hooks";
 import { MainProductionReportResponseDTO } from "./interfaces";
@@ -14,6 +15,7 @@ export const useMainProductionReport = () => {
   const { dates: deliveryDates } = useRecoilValue(productionDeliveryDateState);
   const { dates: creationDates } = useRecoilValue(productionCreationDateState);
   const { dates: activityDates } = useRecoilValue(productionActivityDateState);
+  const statuses = useRecoilValue(productionStatusesState);
   const systemCurrency = useRecoilValue(systemCurrencyState);
 
   // State management
@@ -66,6 +68,7 @@ export const useMainProductionReport = () => {
           toInDate: activityDates.endDate
             ? activityDates.endDate.toISOString()
             : undefined,
+          statuses: statuses && statuses.length > 0 ? statuses : undefined,
         },
         false
       );
@@ -156,7 +159,7 @@ export const useMainProductionReport = () => {
     }).format(safeValue);
   };
 
-  // Fetch data when dates change (triggered by search button or initial load)
+  // Fetch data when dates or statuses change (triggered by search button or initial load)
   useEffect(() => {
     const hasDeliveryDates = deliveryDates.startDate && deliveryDates.endDate;
     const hasCreationDates = creationDates.startDate && creationDates.endDate;
@@ -173,6 +176,7 @@ export const useMainProductionReport = () => {
     creationDates.endDate,
     activityDates.startDate,
     activityDates.endDate,
+    statuses,
   ]);
 
   return {

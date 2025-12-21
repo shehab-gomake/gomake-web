@@ -669,7 +669,11 @@ const MainProductionReportTable = () => {
                   <Chip
                     label={`${t(
                       "productionReport.onTimeDelivery"
-                    )}: ${formatPercentage(data.otd)}`}
+                    )}: ${formatPercentage(data.otd)} (${parseFloat(
+                      Number(data.jobsDoneOnTimeCount || 0).toFixed(2)
+                    )} / ${parseFloat(
+                      Number(data.allJobsCount || 0).toFixed(2)
+                    )})`}
                     sx={{
                       backgroundColor: "#e3f2fd",
                       color: "#495057",
@@ -688,7 +692,11 @@ const MainProductionReportTable = () => {
                   <Chip
                     label={`${t(
                       "productionReport.timeBasedOnTimeDelivery"
-                    )}: ${formatPercentage(data.tB_OTD)}`}
+                    )}: ${formatPercentage(data.tB_OTD)} (${parseFloat(
+                      Number(data.jobsDoneBasedTime || 0).toFixed(2)
+                    )} / ${parseFloat(
+                      Number(data.allJobsBasedTime || 0).toFixed(2)
+                    )})`}
                     sx={{
                       backgroundColor: "#e3f2fd",
                       color: "#495057",
