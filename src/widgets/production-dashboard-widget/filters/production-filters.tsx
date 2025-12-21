@@ -51,12 +51,15 @@ const ProductionDashboardFilters = () => {
 
   // Local state for statuses
   const [statusItems, setStatusItems] = useState<
-    Array<{ id: string; label: string }>
+    Array<{ id: string; label: string; readOnly?: boolean }>
   >([]);
   const [statusesLoading, setStatusesLoading] = useState(false);
   const [localSelectedStatuses, setLocalSelectedStatuses] = useState<string[]>(
     []
   );
+
+  // Done status ID constant
+  const DONE_STATUS_ID = "done";
 
   // Fetch statuses on mount
   useEffect(() => {
@@ -70,7 +73,15 @@ const ProductionDashboardFilters = () => {
             id: status.id,
             label: t(`productionStatuses.${status.key}`) || status.name,
           }));
-          setStatusItems(items);
+
+          // Add "done" status as read-only option
+          const doneItem = {
+            id: DONE_STATUS_ID,
+            label: t("boardMissions.done") || "Done",
+            readOnly: true,
+          };
+
+          setStatusItems([...items, doneItem]);
         }
       } catch (error) {
         console.error("Error fetching statuses:", error);
@@ -106,8 +117,13 @@ const ProductionDashboardFilters = () => {
       setCreationToDate(creationDate.dates.endDate);
     }
 
-    // Initialize local statuses from Recoil
-    setLocalSelectedStatuses(selectedStatuses);
+    // Initialize local statuses from Recoil, ensure "done" is always included
+    const initialStatuses =
+      selectedStatuses.length > 0 ? selectedStatuses : [DONE_STATUS_ID];
+    if (!initialStatuses.includes(DONE_STATUS_ID)) {
+      initialStatuses.unshift(DONE_STATUS_ID);
+    }
+    setLocalSelectedStatuses(initialStatuses);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -138,20 +154,40 @@ const ProductionDashboardFilters = () => {
 
   // Status toggle handlers
   const toggleStatus = (statusId: string) => {
+    // Prevent unselecting "done" status (read-only)
+    if (statusId === DONE_STATUS_ID) {
+      return;
+    }
+
     setLocalSelectedStatuses((prev) => {
-      if (prev.includes(statusId)) {
-        return prev.filter((id) => id !== statusId);
+      // Ensure "done" is always in the selection
+      const otherStatuses = prev.filter((id) => id !== DONE_STATUS_ID);
+
+      if (otherStatuses.includes(statusId)) {
+        return [
+          DONE_STATUS_ID,
+          ...otherStatuses.filter((id) => id !== statusId),
+        ];
       } else {
-        return [...prev, statusId];
+        return [DONE_STATUS_ID, ...otherStatuses, statusId];
       }
     });
   };
 
   const toggleAllStatuses = () => {
-    if (localSelectedStatuses.length === statusItems.length) {
-      setLocalSelectedStatuses([]);
+    // Exclude read-only "done" from toggle all logic
+    const selectableItems = statusItems.filter((item) => !item.readOnly);
+    const selectableIds = selectableItems.map((item) => item.id);
+    const currentSelectable = localSelectedStatuses.filter(
+      (id) => id !== DONE_STATUS_ID
+    );
+
+    if (currentSelectable.length === selectableIds.length) {
+      // Deselect all (but keep "done")
+      setLocalSelectedStatuses([DONE_STATUS_ID]);
     } else {
-      setLocalSelectedStatuses(statusItems.map((item) => item.id));
+      // Select all (including "done")
+      setLocalSelectedStatuses([DONE_STATUS_ID, ...selectableIds]);
     }
   };
 

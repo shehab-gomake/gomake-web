@@ -68,7 +68,10 @@ export const useMainProductionReport = () => {
           toInDate: activityDates.endDate
             ? activityDates.endDate.toISOString()
             : undefined,
-          statuses: statuses && statuses.length > 0 ? statuses : undefined,
+          statuses:
+            statuses && statuses.length > 0
+              ? statuses.filter((statusId) => statusId !== "done")
+              : undefined,
         },
         false
       );

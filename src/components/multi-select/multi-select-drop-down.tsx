@@ -18,6 +18,7 @@ import { PrimaryCheckbox } from "../check-box/primary-check-box";
 interface Item<T = string | number> {
   id: T;
   label: string;
+  readOnly?: boolean;
 }
 
 interface MultiSelectDropdownProps<T = string | number> {
@@ -152,6 +153,7 @@ export const MultiSelectDropdown = <T extends string | number>({
                     <PrimaryCheckbox
                       checked={selectedIds.includes(item.id)}
                       onChange={() => onToggle(item.id)}
+                      disabled={item.readOnly}
                     />
                   }
                 />
