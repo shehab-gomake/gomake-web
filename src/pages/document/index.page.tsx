@@ -48,7 +48,7 @@ export default function DocumentPage() {
               }
 
               setPdfUrl(link);
-              // Redirect to the PDF URL
+              // Redirect to the PDF URL              
               window.location.replace(link);
             } else {
               setError("PDF link not found");
@@ -89,7 +89,7 @@ export default function DocumentPage() {
       disableHeaderSideMenu={true}
     >
       <Box
-        display="flex"
+        display="fl              ex"
         flexDirection="column"
         alignItems="center"
         justifyContent="center"
@@ -103,7 +103,7 @@ export default function DocumentPage() {
               variant="body1"
               style={{ marginTop: 16, color: "#666" }}
             >
-              {t("document.loading", { defaultValue: "Loading document..." })}
+              {t("doc  ument.loading", { defaultValue: "Loading document..." })}
             </Typography>
           </>
         )}
