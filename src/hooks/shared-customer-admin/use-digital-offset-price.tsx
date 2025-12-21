@@ -2663,6 +2663,13 @@ const useDigitalOffsetPrice = ({
                 defualtValueConfig.values.length > 0
               ) {
                 defaultValue = defualtValueConfig.values[0];
+              } else if (
+                defualtValueConfig &&
+                defualtValueConfig.materialValueIds &&
+                defualtValueConfig.materialValueIds.length > 0
+              ) {
+                defaultValue =
+                  defualtValueConfig.materialValueIds[0].valueId ?? defualtValueConfig.id;
               } else if (defualtValueConfig) {
                 defaultValue = defualtValueConfig.id;
               }
@@ -4934,6 +4941,52 @@ const useDigitalOffsetPrice = ({
     productTemplate,
     subProducts
   ) => {
+    const resolveParameterValues = (param) => {
+      const values = [];
+
+      if (param) {
+        if (Array.isArray(param.valueIds) && param.valueIds.length > 0) {
+          values.push(...param.valueIds);
+        } else if (param.valueIds) {
+          values.push(param.valueIds);
+        }
+
+        if (Array.isArray(param.values) && param.values.length > 0) {
+          values.push(...param.values);
+        } else if (param.values) {
+          values.push(param.values);
+        }
+      }
+
+      if (values.length > 0) {
+        return values;
+      }
+
+      const defaultConfig = parameter?.valuesConfigs?.find((x) => x.isDefault);
+      if (defaultConfig) {
+        if (defaultConfig.values && defaultConfig.values.length > 0) {
+          return [...defaultConfig.values];
+        }
+        if (defaultConfig.materialValueIds && defaultConfig.materialValueIds.length > 0) {
+          const materialValues = defaultConfig.materialValueIds
+            .map((mv) => mv.valueId)
+            .filter((valueId) => valueId);
+          if (materialValues.length > 0) {
+            return materialValues;
+          }
+        }
+        if (defaultConfig.id) {
+          return [defaultConfig.id];
+        }
+      }
+
+      if (parameter?.defaultValue) {
+        return [parameter.defaultValue];
+      }
+
+      return [];
+    };
+
     const hasRelatedParams = parameter?.relatedParameters?.length > 0;
     const hasChildParams = parameter?.childsParameters?.length > 0;
     const isHidden = parameter.isHidden === true;
@@ -5158,11 +5211,7 @@ const useDigitalOffsetPrice = ({
           relatedParameter.selectedValueIds.length > 0
         ) {
           // Use selectedValueIds: show when selected value is in selectedValueIds
-          const valueIdsToCheck = Array.isArray(parm?.valueIds)
-            ? parm.valueIds
-            : parm?.valueIds
-              ? [parm.valueIds]
-              : [];
+          const valueIdsToCheck = resolveParameterValues(parm);
           const valueInArray = valueIdsToCheck.some((valueId) =>
             relatedParameter.selectedValueIds.includes(valueId)
           );
@@ -5174,16 +5223,12 @@ const useDigitalOffsetPrice = ({
           relatedParameter.notSelectedValueIds.length > 0
         ) {
           // Use notSelectedValueIds: show when selected value is NOT in notSelectedValueIds (reverse logic)
-          const valueIdsToCheck = Array.isArray(parm?.valueIds)
-            ? parm.valueIds
-            : parm?.valueIds
-              ? [parm.valueIds]
-              : [];
+          const valueIdsToCheck = resolveParameterValues(parm);
           const valueInNotSelectedArray = valueIdsToCheck.some((valueId) =>
             relatedParameter.notSelectedValueIds.includes(valueId)
           );
           // Show if value is NOT in notSelectedValueIds
-          if (!valueInNotSelectedArray && parm?.valueIds) {
+          if (!valueInNotSelectedArray && valueIdsToCheck.length > 0) {
             shouldShow = true;
           }
         }
@@ -5317,13 +5362,7 @@ const useDigitalOffsetPrice = ({
           relatedParameter.selectedValueIds.length > 0
         ) {
           // Use selectedValueIds: show when selected value is in selectedValueIds
-          const valueToCheck =
-            parm?.ParameterType === 11 ? parm?.valueIds : parm?.values;
-          const valuesToCheck = Array.isArray(valueToCheck)
-            ? valueToCheck
-            : valueToCheck
-              ? [valueToCheck]
-              : [];
+          const valuesToCheck = resolveParameterValues(parm);
           const valueInArray =
             valuesToCheck.some((value) =>
               relatedParameter.selectedValueIds.includes(value)
@@ -5345,24 +5384,13 @@ const useDigitalOffsetPrice = ({
           relatedParameter.notSelectedValueIds.length > 0
         ) {
           // Use notSelectedValueIds: show when selected value is NOT in notSelectedValueIds (reverse logic)
-          const valueToCheck =
-            parm?.ParameterType === 11 ? parm?.valueIds : parm?.values;
-          const valuesToCheck = Array.isArray(valueToCheck)
-            ? valueToCheck
-            : valueToCheck
-              ? [valueToCheck]
-              : [];
+          const valuesToCheck = resolveParameterValues(parm);
           const valueInNotSelectedArray = valuesToCheck.some((value) =>
             relatedParameter.notSelectedValueIds.includes(value)
           );
           // Show if value is NOT in notSelectedValueIds
           // Only show if there's a selection AND the value is not in notSelectedValueIds
-          if (
-            !valueInNotSelectedArray &&
-            myParameter &&
-            valueToCheck &&
-            valuesToCheck.length > 0
-          ) {
+          if (!valueInNotSelectedArray && valuesToCheck.length > 0) {
             shouldShow = true;
           }
           // If no value selected (!parm), shouldShow remains false (parameter stays hidden)
