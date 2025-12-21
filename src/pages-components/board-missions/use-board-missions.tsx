@@ -65,6 +65,7 @@ import { DocumentTypeEnums } from "@/enums/document-type-enum";
 import { useFrontDeskEmailIntegration } from "../quotes/hooks/use-frontdesk-email-integration";
 import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
 import { EPreferences } from "@/enums/prefernces";
+import NextLink from "next/link";
 
 type StatusOption = {
   label: string;
@@ -1033,15 +1034,10 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
               : mission?.number,
             relatedDocuments: (() => {
               const clickBehavior = GetPreferenceValueKey(EPreferences.RELATED_DOCUMENT_CLICK_BEHAVIOR) || "openDocument";
-              
-              const handleOrderClick = (e: React.MouseEvent) => {
-                e.preventDefault();
-                if (clickBehavior === "openTable") {
-                  navigate(`/orders?finalPatternSearch=${mission?.orderNumber}`);
-                } else {
-                  navigate(`/order?Id=${mission?.orderID}`);
-                }
-              };
+              const orderHref =
+                clickBehavior === "openTable"
+                  ? `/orders?finalPatternSearch=${mission?.orderNumber}`
+                  : `/order?Id=${mission?.orderID}`;
 
               const handleQuoteClick = (e: React.MouseEvent) => {
                 e.preventDefault();
@@ -1067,16 +1063,17 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
                       {mission?.quoteNumber}
                     </Box>
                   )}
-                  <Box
-                    component="span"
-                    onClick={handleOrderClick}
-                    sx={{
-                      ...classes.tableAtagStyle,
-                      cursor: "pointer",
-                    }}
-                  >
-                    {mission?.orderNumber}
-                  </Box>
+                  <NextLink href={orderHref} legacyBehavior passHref>
+                    <Box
+                      component="a"
+                      sx={{
+                        ...classes.tableAtagStyle,
+                        cursor: "pointer",
+                      }}
+                    >
+                      {mission?.orderNumber}
+                    </Box>
+                  </NextLink>
                 </Stack>
               );
             })(),
