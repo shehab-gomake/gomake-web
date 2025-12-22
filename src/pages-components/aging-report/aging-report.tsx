@@ -191,8 +191,7 @@ const AgingReportWidget = ({ clientType }: IProps) => {
         customerName={customer?.name || ""}
         debits={availableDebits}
         onSend={sendSelectedDebitsPayment}
-        initialEmail={selectedContactById?.mail || ""}
-        initialPhoneNumber={selectedContactById?.phone || selectedContactById?.phoneNumber || ""}
+        clientContacts={clientContactsValue}
       />
     </div>
   );

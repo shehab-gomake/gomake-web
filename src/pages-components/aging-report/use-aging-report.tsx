@@ -16,6 +16,7 @@ import { areDatesValid, initialFromDate } from "@/utils/helpers";
 import { useClientTypesList } from "@/hooks/use-client-types";
 import { useModal } from "@/hooks/use-modal";
 import { getAndSetClientContacts } from "@/services/hooks/cart-side/customers/get-client-contacts";
+import { MessageType } from "@/pages-components/quote-new/use-quote";
 
 const useAgingReport = (clientType: CLIENT_TYPE) => {
   const { t } = useTranslation();
@@ -710,14 +711,16 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
       const formattedEndDate = toDate ? new Date(toDate).toISOString() : new Date().toISOString();
       const formattedReferDate = selectDate ? new Date(selectDate).toISOString() : new Date().toISOString();
 
-      // Determine messageType: 0 = Email, 1 = SMS, 2 = WhatsApp, 
-      let messageType = 0;
+      // Determine messageType using MessageType enum
+      let messageType = MessageType.Email;
       if (data.sendByWhatsApp) {
-        messageType = 2; // WhatsApp
+        messageType = 2; // WhatsApp (not in MessageType enum, keep as 2)
+      } else if (data.sendByEmail && data.sendBySms) {
+        messageType = MessageType.Both; // Both Email and SMS
       } else if (data.sendBySms) {
-        messageType = 1; // SMS
+        messageType = MessageType.SMS;
       } else if (data.sendByEmail) {
-        messageType = 0; // Email
+        messageType = MessageType.Email;
       }
 
       const res = await callApi(

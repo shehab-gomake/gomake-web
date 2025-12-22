@@ -50,20 +50,29 @@ const AgingReportButtonWidget = ({
         <FileDownloadOutlinedIcon style={{ color: primaryLavender(500) }} />
       ),
     },
+    // {
+    //   name: t("sales.quote.sendPayment"),
+    //   onclick: onClickBtn4,
+    //   icon: (
+    //     <ForwardToInboxRoundedIcon
+    //       style={{ color: primaryLavender(500), fontSize: "22px" }}
+    //     />
+    //   ),
+    // },
+    // {
+    //   name: t("reports.sendViaWhatsApp"),
+    //   onclick: onClickBtn5,
+    //   icon: (
+    //     <WhatsAppIcon
+    //       style={{ color: primaryLavender(500), fontSize: "22px" }}
+    //     />
+    //   ),
+    // },
     {
       name: t("sales.quote.sendPayment"),
-      onclick: onClickBtn4,
+      onclick: onClickBtn7,
       icon: (
         <ForwardToInboxRoundedIcon
-          style={{ color: primaryLavender(500), fontSize: "22px" }}
-        />
-      ),
-    },
-    {
-      name: t("reports.sendViaWhatsApp"),
-      onclick: onClickBtn5,
-      icon: (
-        <WhatsAppIcon
           style={{ color: primaryLavender(500), fontSize: "22px" }}
         />
       ),
@@ -77,15 +86,7 @@ const AgingReportButtonWidget = ({
         />
       ),
     },
-    {
-      name: t("sales.quote.sendPayment") + " - " + (t("reports.selected") || "Selected"),
-      onclick: onClickBtn7,
-      icon: (
-        <ForwardToInboxRoundedIcon
-          style={{ color: primaryLavender(500), fontSize: "22px" }}
-        />
-      ),
-    },
+
   ];
 
   return (
