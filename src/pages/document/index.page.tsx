@@ -54,7 +54,7 @@ export default function DocumentPage() {
               console.log("PDF URL received, opening:", link);
 
               // Try to open PDF in a new tab first
-              const newWindow = window.open(link, "_blank");
+              const newWindow = window.open(link, "_self");
 
               // If popup was blocked, navigate in current window
               if (!newWindow || newWindow.closed || typeof newWindow.closed === "undefined") {
