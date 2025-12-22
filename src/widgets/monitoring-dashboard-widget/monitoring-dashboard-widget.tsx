@@ -116,6 +116,44 @@ const MonitoringDashboardWidget = () => {
   }, [filters]);
 
   const handleExportToExcel = () => {
+    // Prepare Daily Documents Summary data for export
+    const dailyDocumentsRows =
+      dailyDocumentsSummary && dailyDocumentsSummary.length > 0
+        ? dailyDocumentsSummary.map((item) => {
+            const date = new Date(item.date);
+            const formattedDate = date.toLocaleDateString("en-GB", {
+              day: "2-digit",
+              month: "2-digit",
+              year: "numeric",
+            });
+            return [
+              formattedDate,
+              item.ordersUnits?.toLocaleString("en-US") || "0",
+              item.ordersTotal != null
+                ? `${currUnit} ${item.ordersTotal.toLocaleString("en-US", {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  })}`
+                : `${currUnit} 0.00`,
+              item.deliveryNotesTotal != null
+                ? `${currUnit} ${item.deliveryNotesTotal.toLocaleString(
+                    "en-US",
+                    {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    }
+                  )}`
+                : `${currUnit} 0.00`,
+              item.invoiceTotal != null
+                ? `${currUnit} ${item.invoiceTotal.toLocaleString("en-US", {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  })}`
+                : `${currUnit} 0.00`,
+            ];
+          })
+        : [];
+
     const exportData = {
       agentsData: agentsRow || [],
       productsData: productsRow || [],
@@ -125,6 +163,19 @@ const MonitoringDashboardWidget = () => {
       clientHeaders: clientTableHeaders || [],
       statistics,
       salesItems: salesItems || [],
+      dailyDocumentsSummary:
+        dailyDocumentsRows.length > 0
+          ? {
+              data: dailyDocumentsRows,
+              headers: [
+                t("dashboard.date"),
+                t("dashboard.ordersUnits"),
+                `${t("dashboard.ordersTotal")} (${currUnit})`,
+                `${t("dashboard.deliveryNotesTotal")} (${currUnit})`,
+                `${t("dashboard.invoiceTotal")} (${currUnit})`,
+              ],
+            }
+          : undefined,
     };
 
     exportDashboardToExcel(exportData, "monitoring-dashboard");
@@ -304,6 +355,34 @@ const MonitoringDashboardWidget = () => {
         getSalesChartRoute={getSalesChartRoute}
         filters={filters}
       />
+
+      {renderTableSection(
+        "dashboard.agentPerformanceTitle",
+        agentsRow,
+        agentTableHeaders,
+        visibleAgentRows,
+        setVisibleAgentRows,
+        agentSort,
+        setAgentSort
+      )}
+      {renderTableSection(
+        "dashboard.productPerformanceTitle",
+        productsRow,
+        productTableHeaders,
+        visibleProductRows,
+        setVisibleProductRows,
+        productSort,
+        setProductSort
+      )}
+      {renderTableSection(
+        "dashboard.clientPerformanceTitle",
+        clientsRow,
+        clientTableHeaders,
+        visibleClientRows,
+        setVisibleClientRows,
+        clientSort,
+        setClientSort
+      )}
       {dailyDocumentsSummary &&
         dailyDocumentsSummary.length > 0 &&
         (() => {
@@ -392,33 +471,6 @@ const MonitoringDashboardWidget = () => {
             </div>
           );
         })()}
-      {renderTableSection(
-        "dashboard.agentPerformanceTitle",
-        agentsRow,
-        agentTableHeaders,
-        visibleAgentRows,
-        setVisibleAgentRows,
-        agentSort,
-        setAgentSort
-      )}
-      {renderTableSection(
-        "dashboard.productPerformanceTitle",
-        productsRow,
-        productTableHeaders,
-        visibleProductRows,
-        setVisibleProductRows,
-        productSort,
-        setProductSort
-      )}
-      {renderTableSection(
-        "dashboard.clientPerformanceTitle",
-        clientsRow,
-        clientTableHeaders,
-        visibleClientRows,
-        setVisibleClientRows,
-        clientSort,
-        setClientSort
-      )}
     </div>
   );
 };

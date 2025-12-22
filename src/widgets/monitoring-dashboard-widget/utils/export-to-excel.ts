@@ -9,6 +9,10 @@ interface ExportData {
   clientHeaders: string[];
   statistics?: any;
   salesItems?: any[];
+  dailyDocumentsSummary?: {
+    data: any[];
+    headers: string[];
+  };
 }
 
 export const exportDashboardToExcel = (
@@ -109,6 +113,24 @@ export const exportDashboardToExcel = (
       ...salesData,
     ]);
     XLSX.utils.book_append_sheet(workbook, salesWorksheet, "Sales Time Series");
+    hasSheets = true;
+  }
+
+  // Export Daily Documents Summary
+  if (data.dailyDocumentsSummary && data.dailyDocumentsSummary.data && data.dailyDocumentsSummary.data.length > 0) {
+    const dailyDocumentsWorksheet = XLSX.utils.aoa_to_sheet([
+      data.dailyDocumentsSummary.headers,
+      ...data.dailyDocumentsSummary.data.map((row) =>
+        row.map((cell) =>
+          typeof cell === "string" || typeof cell === "number" ? cell : String(cell)
+        )
+      ),
+    ]);
+    XLSX.utils.book_append_sheet(
+      workbook,
+      dailyDocumentsWorksheet,
+      "Daily Documents Summary"
+    );
     hasSheets = true;
   }
 
