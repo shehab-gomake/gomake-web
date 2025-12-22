@@ -15,6 +15,7 @@ export interface AgingReportButtonWidgetProps {
   onClickBtn4: () => void;
   onClickBtn5: () => void;
   onClickBtn6: () => void;
+  onClickBtn7: () => void;
 }
 const AgingReportButtonWidget = ({
   onClickBtn1,
@@ -23,6 +24,7 @@ const AgingReportButtonWidget = ({
   onClickBtn4,
   onClickBtn5,
   onClickBtn6,
+  onClickBtn7,
 }: AgingReportButtonWidgetProps) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -69,6 +71,15 @@ const AgingReportButtonWidget = ({
     {
       name: t("reports.sendDebitsToAllClients"),
       onclick: onClickBtn6,
+      icon: (
+        <ForwardToInboxRoundedIcon
+          style={{ color: primaryLavender(500), fontSize: "22px" }}
+        />
+      ),
+    },
+    {
+      name: t("sales.quote.sendPayment") + " - " + (t("reports.selected") || "Selected"),
+      onclick: onClickBtn7,
       icon: (
         <ForwardToInboxRoundedIcon
           style={{ color: primaryLavender(500), fontSize: "22px" }}
