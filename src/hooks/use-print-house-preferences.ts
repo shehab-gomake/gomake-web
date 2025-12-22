@@ -58,10 +58,34 @@ const usePrintHousePreferences = () => {
     return preference?.valueKey;
   };
 
+  const GetPreferenceKey = (key: string): string | undefined => {
+    const preference = preferences.find((pref: any) => pref.code === key);
+
+    if (!preference) {
+      return undefined;
+    }
+    // If preference has preferenceValues array, find the matching value by ID
+    if (
+      preference.preferenceValues &&
+      Array.isArray(preference.preferenceValues)
+    ) {
+      const matchedValue = preference.preferenceValues.find(
+        (opt: any) => opt.id === preference.value
+      );
+
+      // Return key from matchedValue if available, otherwise fallback to preference.valueKey
+      return matchedValue?.key || preference?.valueKey;
+    }
+
+    // Fallback to direct valueKey if no preferenceValues array
+    return preference?.valueKey;
+  };
+
   return {
     CheckPreferenceValue,
     GetProductionFontSizeFromPreferences,
     GetPreferenceValueKey,
+    GetPreferenceKey,
   };
 };
 
