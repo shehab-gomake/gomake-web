@@ -61,8 +61,8 @@ const OtherOptionsSection = ({
     const callBack = (res) => {
       if (res?.success) {
         const pdfLink = res.data;
-        navigate(pdfLink);
-        // window.open(pdfLink, "_blank");
+        //navigate(pdfLink);
+        window.open(pdfLink, "_blank");
         // downloadPdf(pdfLink);
       } else {
         alertFaultGetData();
