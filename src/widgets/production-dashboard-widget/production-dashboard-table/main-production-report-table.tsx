@@ -26,7 +26,7 @@ import {
 import { useMainProductionReport } from "./use-main-production-report";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { InfoTooltip } from "@/components/info-tooltip/info-tooltip";
-import { adaptMarginLeft, adaptMarginRight } from "@/utils/adapter";
+import { adaptMarginLeft } from "@/utils/adapter";
 
 const MainProductionReportTable = () => {
   const { classes } = useStyle();
@@ -723,21 +723,22 @@ const MainProductionReportTable = () => {
             ...adaptMarginLeft(t("direction"), 1),
           }}
         >
-          <Tooltip
+          {/* <Tooltip
             title={t("materialsActions.DownLoadExcel") || "Download Excel"}
+            placement={t("direction") === "rtl" ? "left" : "right"}
+          > */}
+          <IconButton
+            onClick={handleExportToExcel}
+            size="small"
+            sx={{
+              backgroundColor: primaryColor(500),
+              "&:hover": { backgroundColor: primaryColor(200) },
+              color: "white",
+            }}
           >
-            <IconButton
-              onClick={handleExportToExcel}
-              size="small"
-              sx={{
-                backgroundColor: primaryColor(500),
-                "&:hover": { backgroundColor: primaryColor(200) },
-                color: "white",
-              }}
-            >
-              <DownloadIcon fontSize="small" />
-            </IconButton>
-          </Tooltip>
+            <DownloadIcon fontSize="small" />
+          </IconButton>
+          {/* </Tooltip> */}
           <Box sx={{ display: "flex", gap: 1, alignItems: "center", mt: 1.5 }}>
             <IconButton
               onClick={toggleAllDepartments}
