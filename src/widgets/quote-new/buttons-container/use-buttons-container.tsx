@@ -137,7 +137,7 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
   const open = Boolean(anchorEl);
 
   const validateAddress = async (addressWithMetadata) => {
-    return await validateAddressApi(callApi, () => {}, addressWithMetadata);
+    return await validateAddressApi(callApi, () => { }, addressWithMetadata);
   };
 
   const setShouldReopen = useSetRecoilState(shouldReopenOrderModalState);
@@ -472,7 +472,9 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     const callBack = (res) => {
       if (res?.success) {
         const pdfLink = res.data;
-        downloadPdf(pdfLink);
+        navigate(pdfLink);
+        // window.open(pdfLink, "_blank");
+        // downloadPdf(pdfLink);
       } else {
         alertFaultGetData();
       }
@@ -648,9 +650,8 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
               const { conversation } =
                 await directMessagesService.createConversation({
                   participantIds: [participantId],
-                  name: `Quote Approval - ${
-                    quoteItemValue?.number || quoteItemValue?.id
-                  }`,
+                  name: `Quote Approval - ${quoteItemValue?.number || quoteItemValue?.id
+                    }`,
                   contextId: quoteItemValue?.id,
                   contextType: "QUOTE",
                 });
@@ -738,10 +739,10 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
         isOrder
           ? navigate("/orders")
           : isDeliveryNote
-          ? navigate("/deliveryNotes")
-          : isInvoice
-          ? navigate("/invoices")
-          : navigate("/purchaseOrders");
+            ? navigate("/deliveryNotes")
+            : isInvoice
+              ? navigate("/invoices")
+              : navigate("/purchaseOrders");
       } else {
         alertFaultUpdate();
       }
