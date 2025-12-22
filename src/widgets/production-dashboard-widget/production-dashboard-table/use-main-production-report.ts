@@ -162,6 +162,96 @@ export const useMainProductionReport = () => {
     }).format(safeValue);
   };
 
+  // Download Excel function
+  const downloadExcel = async () => {
+    // Require at least one date range to be filled
+    const hasDeliveryDates = deliveryDates.startDate && deliveryDates.endDate;
+    const hasCreationDates = creationDates.startDate && creationDates.endDate;
+    const hasActivityDates = activityDates.startDate && activityDates.endDate;
+
+    if (!hasDeliveryDates && !hasCreationDates && !hasActivityDates) {
+      setError(
+        "Please select at least one date range (Delivery Date, Creation Date, or Activity Date)"
+      );
+      return;
+    }
+
+    try {
+      const response = await callApi(
+        "POST",
+        "/v1/job-service/production-dashboard/download-production-dashboard-report",
+        {
+          fromDeliveryDate: deliveryDates.startDate
+            ? deliveryDates.startDate.toISOString()
+            : undefined,
+          toDeliveryDate: deliveryDates.endDate
+            ? deliveryDates.endDate.toISOString()
+            : undefined,
+          fromCreationDate: creationDates.startDate
+            ? creationDates.startDate.toISOString()
+            : undefined,
+          toCreationDate: creationDates.endDate
+            ? creationDates.endDate.toISOString()
+            : undefined,
+          fromInDate: activityDates.startDate
+            ? activityDates.startDate.toISOString()
+            : undefined,
+          toInDate: activityDates.endDate
+            ? activityDates.endDate.toISOString()
+            : undefined,
+          statuses:
+            statuses && statuses.length > 0
+              ? statuses.filter((statusId) => statusId !== "done")
+              : undefined,
+        },
+        true, // lock screen
+        null, // abort controller
+        "blob" // responseType for file download
+      );
+
+      // For blob responses, response.data is the blob itself
+      if (response?.success && response.data) {
+        // response.data is already a Blob when responseType is "blob"
+        const blob =
+          response.data instanceof Blob
+            ? response.data
+            : new Blob([response.data], {
+                type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+              });
+
+        // Create download link
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+
+        // Generate filename with current date
+        const date = new Date();
+        const formattedDate = date
+          .toISOString()
+          .split("T")[0]
+          .replace(/-/g, "-");
+        const formattedTime = date
+          .toTimeString()
+          .split(" ")[0]
+          .replace(/:/g, "-");
+        link.download = `Production_Report_${formattedDate}_${formattedTime}.xlsx`;
+
+        // Trigger download
+        document.body.appendChild(link);
+        link.click();
+
+        // Cleanup
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+      } else {
+        setError("Failed to download report");
+      }
+    } catch (err) {
+      setError("An error occurred while downloading the report");
+      console.error("Error downloading production report:", err);
+    }
+  };
+
   // Fetch data when dates or statuses change (triggered by search button or initial load)
   useEffect(() => {
     const hasDeliveryDates = deliveryDates.startDate && deliveryDates.endDate;
@@ -197,5 +287,6 @@ export const useMainProductionReport = () => {
     formatPercentage,
     formatNumber,
     formatCurrency,
+    downloadExcel,
   };
 };

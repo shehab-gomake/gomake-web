@@ -24,7 +24,6 @@ import {
 } from "./interfaces";
 import { useMainProductionReport } from "./use-main-production-report";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
-import { exportProductionDashboardToExcel } from "../production-dashboard-export-utils";
 import { InfoTooltip } from "@/components/info-tooltip/info-tooltip";
 
 const MainProductionReportTable = () => {
@@ -43,6 +42,7 @@ const MainProductionReportTable = () => {
     formatTime,
     formatPercentage,
     formatCurrency,
+    downloadExcel,
   } = useMainProductionReport();
 
   // Helper function to extract boardMissionIds and apply filter
@@ -601,8 +601,7 @@ const MainProductionReportTable = () => {
 
   // Export to Excel handler
   const handleExportToExcel = () => {
-    if (!data?.departments) return;
-    exportProductionDashboardToExcel(data.departments, t);
+    downloadExcel();
   };
 
   if (loading) {
