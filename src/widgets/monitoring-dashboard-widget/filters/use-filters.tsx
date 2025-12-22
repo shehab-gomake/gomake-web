@@ -16,7 +16,10 @@ import {
 import { selectedDocumentTypeState } from "./states/selected-document-type";
 import { selectedDocumentStatusesState } from "./states/selected-document-statuses";
 import { selectedProductionStatusesState } from "./states/selected-production-statuses";
-import { DocumentTypeEnums } from "@/enums/document-type-enum";
+import {
+  DocumentTypeEnums,
+  INVOICE_AND_OPEN_DELIVERY_NOTES_AND_ORDERS_ID,
+} from "@/enums/document-type-enum";
 
 const useSalesDashboardFilters = () => {
   const { t } = useTranslation();
@@ -149,8 +152,10 @@ const useSalesDashboardFilters = () => {
     ];
   }, [selectedDocumentType, t]);
 
-  // Show document status filter for all document types
-  const showDocumentStatusFilter = selectedDocumentType !== null;
+  // Show document status filter for all document types except the special option
+  const showDocumentStatusFilter =
+    selectedDocumentType !== null &&
+    selectedDocumentType !== INVOICE_AND_OPEN_DELIVERY_NOTES_AND_ORDERS_ID;
 
   // Production status values aligned with backend enum: InProcess=1, Ready=2
   const productionStatusCategories = [
@@ -158,7 +163,7 @@ const useSalesDashboardFilters = () => {
     { id: 2, label: t("documentStatus.Order.Ready") },
   ];
 
-  // Show production status filter only when Order is selected
+  // Show production status filter only when Order is selected (not the special option)
   const showProductionStatusFilter =
     selectedDocumentType === DocumentTypeEnums.Order;
 

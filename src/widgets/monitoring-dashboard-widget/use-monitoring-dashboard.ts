@@ -26,7 +26,10 @@ import { selectedDocumentTypeState } from "./filters/states/selected-document-ty
 import { selectedDocumentStatusesState } from "./filters/states/selected-document-statuses";
 import { selectedProductionStatusesState } from "./filters/states/selected-production-statuses";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
-import { DocumentTypeEnums } from "@/enums/document-type-enum";
+import {
+  DocumentTypeEnums,
+  INVOICE_AND_OPEN_DELIVERY_NOTES_AND_ORDERS_ID,
+} from "@/enums/document-type-enum";
 
 type TableRow = [
   string, // clientName or AgentName or ProductName
@@ -136,6 +139,10 @@ const useMonitoringDashboard = () => {
     filters,
     extraCostData?: { actualCost?: number; target?: number }
   ) => {
+    const isSpecialOption =
+      filters?.selectedDocumentType ===
+      INVOICE_AND_OPEN_DELIVERY_NOTES_AND_ORDERS_ID;
+
     const data: any = {
       fromDate: convertUtcToLocalIsoString(filters?.startDate),
       toDate: convertUtcToLocalIsoString(filters?.endDate),
@@ -162,27 +169,31 @@ const useMonitoringDashboard = () => {
       ...(filters?.selectedDataType !== null && {
         dataType: filters.selectedDataType,
       }),
-      ...(filters?.selectedDocumentType !== null && {
-        documentType: filters.selectedDocumentType,
-      }),
-      ...(getFilteredDocumentStatuses(
-        filters?.selectedDocumentType,
-        filters?.selectedDocumentStatuses
-      ) && {
-        documentStatuses: getFilteredDocumentStatuses(
+      ...(isSpecialOption
+        ? { isInvoiceAndOpenDeliveryNotesAndOrders: true }
+        : filters?.selectedDocumentType !== null && {
+            documentType: filters.selectedDocumentType,
+          }),
+      ...(!isSpecialOption &&
+        getFilteredDocumentStatuses(
           filters?.selectedDocumentType,
           filters?.selectedDocumentStatuses
-        ),
-      }),
-      ...(getFilteredProductionStatus(
-        filters?.selectedDocumentType,
-        filters?.selectedProductionStatuses
-      ) && {
-        productionStatus: getFilteredProductionStatus(
+        ) && {
+          documentStatuses: getFilteredDocumentStatuses(
+            filters?.selectedDocumentType,
+            filters?.selectedDocumentStatuses
+          ),
+        }),
+      ...(!isSpecialOption &&
+        getFilteredProductionStatus(
           filters?.selectedDocumentType,
           filters?.selectedProductionStatuses
-        ),
-      }),
+        ) && {
+          productionStatus: getFilteredProductionStatus(
+            filters?.selectedDocumentType,
+            filters?.selectedProductionStatuses
+          ),
+        }),
       ...extraCostData,
     };
 
@@ -197,6 +208,10 @@ const useMonitoringDashboard = () => {
   };
 
   const getPieProductTypeChart = async (filters) => {
+    const isSpecialOption =
+      filters?.selectedDocumentType ===
+      INVOICE_AND_OPEN_DELIVERY_NOTES_AND_ORDERS_ID;
+
     const data: any = {
       fromDate: convertUtcToLocalIsoString(filters?.startDate),
       toDate: convertUtcToLocalIsoString(filters?.endDate),
@@ -221,27 +236,31 @@ const useMonitoringDashboard = () => {
       ...(filters?.selectedDataType !== null && {
         dataType: filters.selectedDataType,
       }),
-      ...(filters?.selectedDocumentType !== null && {
-        documentType: filters.selectedDocumentType,
-      }),
-      ...(getFilteredDocumentStatuses(
-        filters?.selectedDocumentType,
-        filters?.selectedDocumentStatuses
-      ) && {
-        documentStatuses: getFilteredDocumentStatuses(
+      ...(isSpecialOption
+        ? { isInvoiceAndOpenDeliveryNotesAndOrders: true }
+        : filters?.selectedDocumentType !== null && {
+            documentType: filters.selectedDocumentType,
+          }),
+      ...(!isSpecialOption &&
+        getFilteredDocumentStatuses(
           filters?.selectedDocumentType,
           filters?.selectedDocumentStatuses
-        ),
-      }),
-      ...(getFilteredProductionStatus(
-        filters?.selectedDocumentType,
-        filters?.selectedProductionStatuses
-      ) && {
-        productionStatus: getFilteredProductionStatus(
+        ) && {
+          documentStatuses: getFilteredDocumentStatuses(
+            filters?.selectedDocumentType,
+            filters?.selectedDocumentStatuses
+          ),
+        }),
+      ...(!isSpecialOption &&
+        getFilteredProductionStatus(
           filters?.selectedDocumentType,
           filters?.selectedProductionStatuses
-        ),
-      }),
+        ) && {
+          productionStatus: getFilteredProductionStatus(
+            filters?.selectedDocumentType,
+            filters?.selectedProductionStatuses
+          ),
+        }),
     };
 
     const callBack = (res) => {
@@ -259,6 +278,10 @@ const useMonitoringDashboard = () => {
   };
 
   const getProductPerformanceChart = async (filters) => {
+    const isSpecialOption =
+      filters?.selectedDocumentType ===
+      INVOICE_AND_OPEN_DELIVERY_NOTES_AND_ORDERS_ID;
+
     const data: any = {
       fromDate: convertUtcToLocalIsoString(filters?.startDate),
       toDate: convertUtcToLocalIsoString(filters?.endDate),
@@ -283,27 +306,31 @@ const useMonitoringDashboard = () => {
       ...(filters?.selectedDataType !== null && {
         dataType: filters.selectedDataType,
       }),
-      ...(filters?.selectedDocumentType !== null && {
-        documentType: filters.selectedDocumentType,
-      }),
-      ...(getFilteredDocumentStatuses(
-        filters?.selectedDocumentType,
-        filters?.selectedDocumentStatuses
-      ) && {
-        documentStatuses: getFilteredDocumentStatuses(
+      ...(isSpecialOption
+        ? { isInvoiceAndOpenDeliveryNotesAndOrders: true }
+        : filters?.selectedDocumentType !== null && {
+            documentType: filters.selectedDocumentType,
+          }),
+      ...(!isSpecialOption &&
+        getFilteredDocumentStatuses(
           filters?.selectedDocumentType,
           filters?.selectedDocumentStatuses
-        ),
-      }),
-      ...(getFilteredProductionStatus(
-        filters?.selectedDocumentType,
-        filters?.selectedProductionStatuses
-      ) && {
-        productionStatus: getFilteredProductionStatus(
+        ) && {
+          documentStatuses: getFilteredDocumentStatuses(
+            filters?.selectedDocumentType,
+            filters?.selectedDocumentStatuses
+          ),
+        }),
+      ...(!isSpecialOption &&
+        getFilteredProductionStatus(
           filters?.selectedDocumentType,
           filters?.selectedProductionStatuses
-        ),
-      }),
+        ) && {
+          productionStatus: getFilteredProductionStatus(
+            filters?.selectedDocumentType,
+            filters?.selectedProductionStatuses
+          ),
+        }),
     };
     const callBack = (res) => {
       if (res.success) {
@@ -366,6 +393,10 @@ const useMonitoringDashboard = () => {
   };
 
   const getAgentPerformanceChart = async (filters) => {
+    const isSpecialOption =
+      filters?.selectedDocumentType ===
+      INVOICE_AND_OPEN_DELIVERY_NOTES_AND_ORDERS_ID;
+
     const data: any = {
       fromDate: convertUtcToLocalIsoString(filters?.startDate),
       toDate: convertUtcToLocalIsoString(filters?.endDate),
@@ -390,27 +421,31 @@ const useMonitoringDashboard = () => {
       ...(filters?.selectedDataType !== null && {
         dataType: filters.selectedDataType,
       }),
-      ...(filters?.selectedDocumentType !== null && {
-        documentType: filters.selectedDocumentType,
-      }),
-      ...(getFilteredDocumentStatuses(
-        filters?.selectedDocumentType,
-        filters?.selectedDocumentStatuses
-      ) && {
-        documentStatuses: getFilteredDocumentStatuses(
+      ...(isSpecialOption
+        ? { isInvoiceAndOpenDeliveryNotesAndOrders: true }
+        : filters?.selectedDocumentType !== null && {
+            documentType: filters.selectedDocumentType,
+          }),
+      ...(!isSpecialOption &&
+        getFilteredDocumentStatuses(
           filters?.selectedDocumentType,
           filters?.selectedDocumentStatuses
-        ),
-      }),
-      ...(getFilteredProductionStatus(
-        filters?.selectedDocumentType,
-        filters?.selectedProductionStatuses
-      ) && {
-        productionStatus: getFilteredProductionStatus(
+        ) && {
+          documentStatuses: getFilteredDocumentStatuses(
+            filters?.selectedDocumentType,
+            filters?.selectedDocumentStatuses
+          ),
+        }),
+      ...(!isSpecialOption &&
+        getFilteredProductionStatus(
           filters?.selectedDocumentType,
           filters?.selectedProductionStatuses
-        ),
-      }),
+        ) && {
+          productionStatus: getFilteredProductionStatus(
+            filters?.selectedDocumentType,
+            filters?.selectedProductionStatuses
+          ),
+        }),
     };
 
     const callBack = (res) => {
@@ -473,6 +508,10 @@ const useMonitoringDashboard = () => {
   };
 
   const getClientPerformanceChart = async (filters) => {
+    const isSpecialOption =
+      filters?.selectedDocumentType ===
+      INVOICE_AND_OPEN_DELIVERY_NOTES_AND_ORDERS_ID;
+
     const data: any = {
       fromDate: convertUtcToLocalIsoString(filters?.startDate),
       toDate: convertUtcToLocalIsoString(filters?.endDate),
@@ -497,27 +536,31 @@ const useMonitoringDashboard = () => {
       ...(filters?.selectedDataType !== null && {
         dataType: filters.selectedDataType,
       }),
-      ...(filters?.selectedDocumentType !== null && {
-        documentType: filters.selectedDocumentType,
-      }),
-      ...(getFilteredDocumentStatuses(
-        filters?.selectedDocumentType,
-        filters?.selectedDocumentStatuses
-      ) && {
-        documentStatuses: getFilteredDocumentStatuses(
+      ...(isSpecialOption
+        ? { isInvoiceAndOpenDeliveryNotesAndOrders: true }
+        : filters?.selectedDocumentType !== null && {
+            documentType: filters.selectedDocumentType,
+          }),
+      ...(!isSpecialOption &&
+        getFilteredDocumentStatuses(
           filters?.selectedDocumentType,
           filters?.selectedDocumentStatuses
-        ),
-      }),
-      ...(getFilteredProductionStatus(
-        filters?.selectedDocumentType,
-        filters?.selectedProductionStatuses
-      ) && {
-        productionStatus: getFilteredProductionStatus(
+        ) && {
+          documentStatuses: getFilteredDocumentStatuses(
+            filters?.selectedDocumentType,
+            filters?.selectedDocumentStatuses
+          ),
+        }),
+      ...(!isSpecialOption &&
+        getFilteredProductionStatus(
           filters?.selectedDocumentType,
           filters?.selectedProductionStatuses
-        ),
-      }),
+        ) && {
+          productionStatus: getFilteredProductionStatus(
+            filters?.selectedDocumentType,
+            filters?.selectedProductionStatuses
+          ),
+        }),
     };
 
     const callBack = (res) => {
@@ -580,6 +623,10 @@ const useMonitoringDashboard = () => {
   };
 
   const getPieAgentChart = async (filters) => {
+    const isSpecialOption =
+      filters?.selectedDocumentType ===
+      INVOICE_AND_OPEN_DELIVERY_NOTES_AND_ORDERS_ID;
+
     const data: any = {
       fromDate: convertUtcToLocalIsoString(filters?.startDate),
       toDate: convertUtcToLocalIsoString(filters?.endDate),
@@ -604,27 +651,31 @@ const useMonitoringDashboard = () => {
       ...(filters?.selectedDataType !== null && {
         dataType: filters.selectedDataType,
       }),
-      ...(filters?.selectedDocumentType !== null && {
-        documentType: filters.selectedDocumentType,
-      }),
-      ...(getFilteredDocumentStatuses(
-        filters?.selectedDocumentType,
-        filters?.selectedDocumentStatuses
-      ) && {
-        documentStatuses: getFilteredDocumentStatuses(
+      ...(isSpecialOption
+        ? { isInvoiceAndOpenDeliveryNotesAndOrders: true }
+        : filters?.selectedDocumentType !== null && {
+            documentType: filters.selectedDocumentType,
+          }),
+      ...(!isSpecialOption &&
+        getFilteredDocumentStatuses(
           filters?.selectedDocumentType,
           filters?.selectedDocumentStatuses
-        ),
-      }),
-      ...(getFilteredProductionStatus(
-        filters?.selectedDocumentType,
-        filters?.selectedProductionStatuses
-      ) && {
-        productionStatus: getFilteredProductionStatus(
+        ) && {
+          documentStatuses: getFilteredDocumentStatuses(
+            filters?.selectedDocumentType,
+            filters?.selectedDocumentStatuses
+          ),
+        }),
+      ...(!isSpecialOption &&
+        getFilteredProductionStatus(
           filters?.selectedDocumentType,
           filters?.selectedProductionStatuses
-        ),
-      }),
+        ) && {
+          productionStatus: getFilteredProductionStatus(
+            filters?.selectedDocumentType,
+            filters?.selectedProductionStatuses
+          ),
+        }),
     };
     const callBack = (res) => {
       if (res.success) {
@@ -641,6 +692,10 @@ const useMonitoringDashboard = () => {
   };
 
   const getDailyDocumentsSummary = async (filters) => {
+    const isSpecialOption =
+      filters?.selectedDocumentType ===
+      INVOICE_AND_OPEN_DELIVERY_NOTES_AND_ORDERS_ID;
+
     const data: any = {
       fromDate: convertUtcToLocalIsoString(filters?.startDate),
       toDate: convertUtcToLocalIsoString(filters?.endDate),
@@ -665,27 +720,31 @@ const useMonitoringDashboard = () => {
       ...(filters?.selectedDataType !== null && {
         dataType: filters.selectedDataType,
       }),
-      ...(filters?.selectedDocumentType !== null && {
-        documentType: filters.selectedDocumentType,
-      }),
-      ...(getFilteredDocumentStatuses(
-        filters?.selectedDocumentType,
-        filters?.selectedDocumentStatuses
-      ) && {
-        documentStatuses: getFilteredDocumentStatuses(
+      ...(isSpecialOption
+        ? { isInvoiceAndOpenDeliveryNotesAndOrders: true }
+        : filters?.selectedDocumentType !== null && {
+            documentType: filters.selectedDocumentType,
+          }),
+      ...(!isSpecialOption &&
+        getFilteredDocumentStatuses(
           filters?.selectedDocumentType,
           filters?.selectedDocumentStatuses
-        ),
-      }),
-      ...(getFilteredProductionStatus(
-        filters?.selectedDocumentType,
-        filters?.selectedProductionStatuses
-      ) && {
-        productionStatus: getFilteredProductionStatus(
+        ) && {
+          documentStatuses: getFilteredDocumentStatuses(
+            filters?.selectedDocumentType,
+            filters?.selectedDocumentStatuses
+          ),
+        }),
+      ...(!isSpecialOption &&
+        getFilteredProductionStatus(
           filters?.selectedDocumentType,
           filters?.selectedProductionStatuses
-        ),
-      }),
+        ) && {
+          productionStatus: getFilteredProductionStatus(
+            filters?.selectedDocumentType,
+            filters?.selectedProductionStatuses
+          ),
+        }),
     };
     const callBack = (res) => {
       if (res.success) {

@@ -77,6 +77,9 @@ export enum DocumentTypeEnums {
   ProformaInvoice = 14,
 }
 
+// Special ID for "Invoice and Open Delivery Notes and Orders" option
+export const INVOICE_AND_OPEN_DELIVERY_NOTES_AND_ORDERS_ID = -1;
+
 export enum ERPDocumentsTypesEnum {
   order = 1,
   invoice,
@@ -133,12 +136,11 @@ export enum ORDER_STATUSES {
   Ready,
 }
 
-export enum EAdditionType 
-{
+export enum EAdditionType {
   Percentage,
   ValuePerJob,
   ValuePerUnit,
-  ValuePerProperty
+  ValuePerProperty,
 }
 
 export enum ECalculationStatus {
@@ -198,11 +200,9 @@ export enum ShowPricesEnum {
   HidePrices = 2,
 }
 
-
-export enum PurchaseOrderType
-{
-    Products,
-    Materials
+export enum PurchaseOrderType {
+  Products,
+  Materials,
 }
 
 export enum ItemCalculationType {
@@ -215,12 +215,10 @@ export enum ItemCalculationType {
   QuantityInPackage = 6,
 }
 
-
-export enum PurchaseOrderStatuses
-{
-    UnderCreation = 0,
-    SentToSupplier= 10,
-    SupplierRequestingApproval =12,
-    Received =11,
-    // Closed =8,
+export enum PurchaseOrderStatuses {
+  UnderCreation = 0,
+  SentToSupplier = 10,
+  SupplierRequestingApproval = 12,
+  Received = 11,
+  // Closed =8,
 }

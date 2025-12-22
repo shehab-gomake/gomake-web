@@ -304,6 +304,34 @@ const MonitoringDashboardWidget = () => {
         getSalesChartRoute={getSalesChartRoute}
         filters={filters}
       />
+
+      {renderTableSection(
+        "dashboard.agentPerformanceTitle",
+        agentsRow,
+        agentTableHeaders,
+        visibleAgentRows,
+        setVisibleAgentRows,
+        agentSort,
+        setAgentSort
+      )}
+      {renderTableSection(
+        "dashboard.productPerformanceTitle",
+        productsRow,
+        productTableHeaders,
+        visibleProductRows,
+        setVisibleProductRows,
+        productSort,
+        setProductSort
+      )}
+      {renderTableSection(
+        "dashboard.clientPerformanceTitle",
+        clientsRow,
+        clientTableHeaders,
+        visibleClientRows,
+        setVisibleClientRows,
+        clientSort,
+        setClientSort
+      )}
       {dailyDocumentsSummary &&
         dailyDocumentsSummary.length > 0 &&
         (() => {
@@ -392,33 +420,6 @@ const MonitoringDashboardWidget = () => {
             </div>
           );
         })()}
-      {renderTableSection(
-        "dashboard.agentPerformanceTitle",
-        agentsRow,
-        agentTableHeaders,
-        visibleAgentRows,
-        setVisibleAgentRows,
-        agentSort,
-        setAgentSort
-      )}
-      {renderTableSection(
-        "dashboard.productPerformanceTitle",
-        productsRow,
-        productTableHeaders,
-        visibleProductRows,
-        setVisibleProductRows,
-        productSort,
-        setProductSort
-      )}
-      {renderTableSection(
-        "dashboard.clientPerformanceTitle",
-        clientsRow,
-        clientTableHeaders,
-        visibleClientRows,
-        setVisibleClientRows,
-        clientSort,
-        setClientSort
-      )}
     </div>
   );
 };
