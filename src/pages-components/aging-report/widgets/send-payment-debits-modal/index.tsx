@@ -2,9 +2,7 @@ import { useState, useMemo, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { Stack, Typography, Divider, Box } from "@mui/material";
 import { GoMakeDialog } from "@/components/dialog/go-make-dialog";
-import { SecondaryCheckBox } from "@/components/check-box/secondary-check-box";
 import { GomakeTextInput } from "@/components/text-input/text-input";
-import { SecondaryButton } from "@/components/button/secondary-button";
 import { PrimaryTable } from "@/components/tables/primary-table";
 import { useStyle } from "./style";
 import { getDocumentTypeName } from "../../../transaction-journal-report/use-transaction-journal-report";
@@ -13,7 +11,6 @@ import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { getLabelTypography } from "@/utils/typography-utils";
 import { PrimaryCheckbox } from "@/components/check-box/primary-check-box";
 import { FONT_FAMILY } from "@/utils/font-family";
-import { SendIcon } from "@/pages-components/quotes/widgets/delivery-status-button/utils/icons";
 
 interface DebitItem {
   docType: number;
@@ -66,6 +63,7 @@ const SendPaymentDebitsModal = ({
   const [sendByWhatsApp, setSendByWhatsApp] = useState<boolean>(false);
   const [email, setEmail] = useState<string>("");
   const [phoneNumber, setPhoneNumber] = useState<string>("");
+  const [selectedMethod, setSelectedMethod] = useState<"email" | "phone" | null>(null);
   const tableContainerRef = useRef<HTMLDivElement>(null);
 
   // Select all debits by default when modal opens
@@ -95,6 +93,11 @@ const SendPaymentDebitsModal = ({
     } else if (!openModal) {
       // Reset selection when modal closes
       setSelectedDebitIds(new Set());
+      setEmail("");
+      setPhoneNumber("");
+      setSelectedMethod(null);
+      setSendByEmail(false);
+      setSendBySms(false);
     }
   }, [openModal, debits]);
 
@@ -118,22 +121,6 @@ const SendPaymentDebitsModal = ({
     return selectedDebits.reduce((sum, debit) => sum + (debit.total || 0), 0);
   }, [selectedDebits]);
 
-  const allSelected = useMemo(() => {
-    return debits.length > 0 && selectedDebitIds.size === debits.length;
-  }, [debits.length, selectedDebitIds.size]);
-
-  const someSelected = useMemo(() => {
-    return selectedDebitIds.size > 0 && selectedDebitIds.size < debits.length;
-  }, [selectedDebitIds.size, debits.length]);
-
-  const handleSelectAll = (checked: boolean) => {
-    if (checked) {
-      const allIds = new Set(debits.map((debit) => debit.docNumber));
-      setSelectedDebitIds(allIds);
-    } else {
-      setSelectedDebitIds(new Set());
-    }
-  };
 
   // Transform debits data for PrimaryTable
   const tableHeaders = useMemo(() => {
@@ -142,7 +129,7 @@ const SendPaymentDebitsModal = ({
       t("reports.documentNumber"),
       t("reports.documentDate"),
       t("reports.dueDate"),
-      t("reports.total"),
+      t("reports.balanceDue"),
     ];
   }, [t]);
 
@@ -175,19 +162,42 @@ const SendPaymentDebitsModal = ({
     if (selectedDebits.length === 0) {
       return;
     }
-    if (!sendBySms && !sendByEmail && !sendByWhatsApp) {
+    if (!selectedMethod) {
       return;
     }
+
+    // Set the appropriate sending method based on selectedMethod
+    const sendByEmailValue = selectedMethod === "email";
+    const sendBySmsValue = selectedMethod === "phone";
 
     onSend({
       selectedDebits,
       numberOfInstallments,
-      sendBySms,
-      sendByEmail,
-      sendByWhatsApp,
+      sendBySms: sendBySmsValue,
+      sendByEmail: sendByEmailValue,
+      sendByWhatsApp: false,
       email,
       phoneNumber,
     });
+  };
+
+  const handleMethodChange = (method: "email" | "phone") => {
+    if (selectedMethod === method) {
+      // If clicking the same method, deselect it
+      setSelectedMethod(null);
+      setSendByEmail(false);
+      setSendBySms(false);
+    } else {
+      // Select the new method and deselect the other
+      setSelectedMethod(method);
+      if (method === "email") {
+        setSendByEmail(true);
+        setSendBySms(false);
+      } else {
+        setSendByEmail(false);
+        setSendBySms(true);
+      }
+    }
   };
 
 
@@ -202,7 +212,7 @@ const SendPaymentDebitsModal = ({
       primaryButtonLabel={t("login.send")}
       primaryButtonDisabled={
         selectedDebits.length === 0 ||
-        (!sendBySms && !sendByEmail && !sendByWhatsApp) ||
+        !selectedMethod ||
         isLoading
       }
       primaryButtonLoading={isLoading}
@@ -288,38 +298,41 @@ const SendPaymentDebitsModal = ({
               style={{ direction: isRTL ? "rtl" : "ltr" }}
             />
           </Box>
-        </Stack>
 
-        {/* Email Field */}
-        <Stack direction="row" alignItems="center" gap="16px">
-          <Typography style={getLabelTypography()} sx={{ minWidth: "150px" }}>
-            {t("sales.quote.email") || "Email"}
-          </Typography>
-          <Box sx={{ width: "200px" }}>
-            <GomakeTextInput
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder={t("sales.quote.email") || "Email"}
-              style={{ direction: isRTL ? "rtl" : "ltr" }}
-            />
-          </Box>
-        </Stack>
+          {selectedMethod === "email" && (
+            <Stack direction="row" alignItems="center" gap="16px">
+              <Typography style={getLabelTypography()}>
+                {t("sales.quote.email") || "Email"}
+              </Typography>
+              <Box sx={{ width: "200px" }}>
+                <GomakeTextInput
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder={t("sales.quote.email") || "Email"}
+                  style={{ direction: isRTL ? "rtl" : "ltr" }}
+                />
+              </Box>
+            </Stack>
+          )}
 
-        {/* Phone Number Field */}
-        <Stack direction="row" alignItems="center" gap="16px">
-          <Typography style={getLabelTypography()} sx={{ minWidth: "150px" }}>
-            {t("customers.phone") || "Phone Number"}
-          </Typography>
-          <Box sx={{ width: "200px" }}>
-            <GomakeTextInput
-              type="tel"
-              value={phoneNumber}
-              onChange={(e) => setPhoneNumber(e.target.value)}
-              placeholder={t("customers.phone") || "Phone Number"}
-              style={{ direction: isRTL ? "rtl" : "ltr" }}
-            />
-          </Box>
+          {/* Phone Number Field - Show only when phone is selected */}
+          {selectedMethod === "phone" && (
+            <Stack direction="row" alignItems="center" gap="16px">
+              <Typography style={getLabelTypography()} >
+                {t("customers.phone") || "Phone Number"}
+              </Typography>
+              <Box sx={{ width: "200px" }}>
+                <GomakeTextInput
+                  type="tel"
+                  value={phoneNumber}
+                  onChange={(e) => setPhoneNumber(e.target.value)}
+                  placeholder={t("customers.phone") || "Phone Number"}
+                  style={{ direction: isRTL ? "rtl" : "ltr" }}
+                />
+              </Box>
+            </Stack>
+          )}
         </Stack>
 
         {/* Sending Methods */}
@@ -330,27 +343,23 @@ const SendPaymentDebitsModal = ({
           <Stack direction="row" gap="16px">
             <Stack direction="row" alignItems="center" gap="8px">
               <PrimaryCheckbox
-                checked={sendBySms}
-                onChange={(e) => setSendBySms(e.target.checked)}
+                checked={selectedMethod === "phone"}
+                onChange={() => handleMethodChange("phone")}
               />
-              <Typography>SMS</Typography>
+              <Typography>{t("customers.phone") || "Phone"}</Typography>
             </Stack>
             <Stack direction="row" alignItems="center" gap="8px">
               <PrimaryCheckbox
-                checked={sendByEmail}
-                onChange={(e) => setSendByEmail(e.target.checked)}
+                checked={selectedMethod === "email"}
+                onChange={() => handleMethodChange("email")}
               />
               <Typography>{t("sales.quote.email")}</Typography>
             </Stack>
-            {/* <Stack direction="row" alignItems="center" gap="8px">
-              <PrimaryCheckbox
-                checked={sendByWhatsApp}
-                onChange={(e) => setSendByWhatsApp(e.target.checked)}
-              />
-              <Typography>{t("sales.quote.whatsApp")}</Typography>
-            </Stack> */}
           </Stack>
         </Stack>
+
+        {/* Email Field - Show only when email is selected */}
+
 
         {/* Total Payment */}
         <Stack

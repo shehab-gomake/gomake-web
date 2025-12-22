@@ -710,10 +710,10 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
       const formattedEndDate = toDate ? new Date(toDate).toISOString() : new Date().toISOString();
       const formattedReferDate = selectDate ? new Date(selectDate).toISOString() : new Date().toISOString();
 
-      // Determine messageType: 0 = Email, 1 = SMS, 2 = Both
+      // Determine messageType: 0 = Email, 1 = SMS, 2 = WhatsApp, 
       let messageType = 0;
-      if (data.sendBySms && data.sendByEmail) {
-        messageType = 2; // Both
+      if (data.sendByWhatsApp) {
+        messageType = 2; // WhatsApp
       } else if (data.sendBySms) {
         messageType = 1; // SMS
       } else if (data.sendByEmail) {
