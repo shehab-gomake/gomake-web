@@ -7,6 +7,7 @@ import {
   IconButton,
   Chip,
   Button,
+  Tooltip,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
@@ -25,6 +26,7 @@ import {
 import { useMainProductionReport } from "./use-main-production-report";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { InfoTooltip } from "@/components/info-tooltip/info-tooltip";
+import { adaptMarginLeft, adaptMarginRight } from "@/utils/adapter";
 
 const MainProductionReportTable = () => {
   const { classes } = useStyle();
@@ -712,22 +714,31 @@ const MainProductionReportTable = () => {
             </Box>
           )}
         </Box>
-        <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
-          <Button
-            variant="contained"
-            startIcon={<DownloadIcon />}
-            onClick={handleExportToExcel}
-            size="small"
-            sx={{
-              backgroundColor: primaryColor(500),
-              "&:hover": { backgroundColor: primaryColor(200) },
-              textTransform: "none",
-              fontWeight: "bold",
-            }}
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 2,
+            alignItems: "flex-end",
+            ...adaptMarginLeft(t("direction"), 1),
+          }}
+        >
+          <Tooltip
+            title={t("materialsActions.DownLoadExcel") || "Download Excel"}
           >
-            {t("materialsActions.DownLoadExcel") || "Download Excel"}
-          </Button>
-          <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
+            <IconButton
+              onClick={handleExportToExcel}
+              size="small"
+              sx={{
+                backgroundColor: primaryColor(500),
+                "&:hover": { backgroundColor: primaryColor(200) },
+                color: "white",
+              }}
+            >
+              <DownloadIcon fontSize="small" />
+            </IconButton>
+          </Tooltip>
+          <Box sx={{ display: "flex", gap: 1, alignItems: "center", mt: 1.5 }}>
             <IconButton
               onClick={toggleAllDepartments}
               size="small"
