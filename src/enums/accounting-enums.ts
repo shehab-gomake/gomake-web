@@ -28,6 +28,7 @@ export enum EnumTermsPayment {
   Net90Eom,
   Net120Eom,
   Net70Eom,
+  Net90EomSuppliers,
 }
 
 export enum BodyTypeEnum {

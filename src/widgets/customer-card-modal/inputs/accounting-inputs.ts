@@ -21,6 +21,7 @@ const accountingInputs = (state, isSupplier, t) => {
           EnumTermsPayment.Net30EomSuppliers,
           EnumTermsPayment.Net45EomSuppliers,
           EnumTermsPayment.Net60EomSuppliers,
+          EnumTermsPayment.Net90EomSuppliers,
           EnumTermsPayment.BasicCash,
           EnumTermsPayment.SpreadPayments,
           EnumTermsPayment.Prepayment,
