@@ -11,7 +11,8 @@ export enum HtmlElementType {
     TEXT = 1,
     IMAGE,
     TEXT_AREA = 4,
-    TABLE = 5
+    TABLE = 5,
+    BOOLEAN = 6,
 }
 
 export enum FontStyleEnum

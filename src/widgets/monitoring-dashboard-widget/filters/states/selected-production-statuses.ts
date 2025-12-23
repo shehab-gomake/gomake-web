@@ -1,10 +1,10 @@
 import { atom } from "recoil";
 
-// Selected production statuses match backend enum values
+// Selected production status matches backend enum values
 // 1 = InProcess, 2 = Ready
-const selectedProductionStatusesState = atom<number[]>({
+const selectedProductionStatusesState = atom<number | null>({
   key: "selectedProductionStatusesState",
-  default: [],
+  default: null,
 });
 
 export { selectedProductionStatusesState };
