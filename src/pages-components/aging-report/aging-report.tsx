@@ -11,6 +11,7 @@ import { SendEmailLedgerReportModal } from "../ledger-report/widgets/send-email-
 import { Stack } from "@mui/material";
 import { WhatsAppWebModal } from "@/widgets/quote-new/modals-widgets/whats-app-web-modal";
 import { GoMakeAlertModal } from "@/components/modal/alert-modal";
+import { SendPaymentDebitsModal } from "./widgets/send-payment-debits-modal";
 
 interface IProps {
   clientType: CLIENT_TYPE;
@@ -70,6 +71,10 @@ const AgingReportWidget = ({ clientType }: IProps) => {
     whatsappMessage,
     isSendToAllClientsModal,
     sendPaymentToAllClients,
+    isSendPaymentDebitsModal,
+    availableDebits,
+    onClickBtn7,
+    sendSelectedDebitsPayment,
   } = useAgingReport(clientType);
 
   const { classes } = useStyle();
@@ -124,6 +129,7 @@ const AgingReportWidget = ({ clientType }: IProps) => {
           onClickBtn4={onClickBtn4}
           onClickBtn5={onClickBtn5}
           onClickBtn6={onClickBtn6}
+          onClickBtn7={onClickBtn7}
         />
       </Stack>
       <Divider />
@@ -178,6 +184,14 @@ const AgingReportWidget = ({ clientType }: IProps) => {
         subTitle="reports.confirmSendDebitsToAllClients"
         onClickConfirm={sendPaymentToAllClients}
         yesBtn="sales.quote.Confirm"
+      />
+      <SendPaymentDebitsModal
+        openModal={isSendPaymentDebitsModal.isOpen}
+        onClose={() => isSendPaymentDebitsModal.close()}
+        customerName={customer?.name || ""}
+        debits={availableDebits}
+        onSend={sendSelectedDebitsPayment}
+        clientContacts={clientContactsValue}
       />
     </div>
   );

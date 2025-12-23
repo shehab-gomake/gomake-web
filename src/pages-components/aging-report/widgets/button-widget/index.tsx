@@ -15,6 +15,7 @@ export interface AgingReportButtonWidgetProps {
   onClickBtn4: () => void;
   onClickBtn5: () => void;
   onClickBtn6: () => void;
+  onClickBtn7: () => void;
 }
 const AgingReportButtonWidget = ({
   onClickBtn1,
@@ -23,6 +24,7 @@ const AgingReportButtonWidget = ({
   onClickBtn4,
   onClickBtn5,
   onClickBtn6,
+  onClickBtn7,
 }: AgingReportButtonWidgetProps) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -48,20 +50,29 @@ const AgingReportButtonWidget = ({
         <FileDownloadOutlinedIcon style={{ color: primaryLavender(500) }} />
       ),
     },
+    // {
+    //   name: t("sales.quote.sendPayment"),
+    //   onclick: onClickBtn4,
+    //   icon: (
+    //     <ForwardToInboxRoundedIcon
+    //       style={{ color: primaryLavender(500), fontSize: "22px" }}
+    //     />
+    //   ),
+    // },
+    // {
+    //   name: t("reports.sendViaWhatsApp"),
+    //   onclick: onClickBtn5,
+    //   icon: (
+    //     <WhatsAppIcon
+    //       style={{ color: primaryLavender(500), fontSize: "22px" }}
+    //     />
+    //   ),
+    // },
     {
       name: t("sales.quote.sendPayment"),
-      onclick: onClickBtn4,
+      onclick: onClickBtn7,
       icon: (
         <ForwardToInboxRoundedIcon
-          style={{ color: primaryLavender(500), fontSize: "22px" }}
-        />
-      ),
-    },
-    {
-      name: t("reports.sendViaWhatsApp"),
-      onclick: onClickBtn5,
-      icon: (
-        <WhatsAppIcon
           style={{ color: primaryLavender(500), fontSize: "22px" }}
         />
       ),
@@ -75,6 +86,7 @@ const AgingReportButtonWidget = ({
         />
       ),
     },
+
   ];
 
   return (

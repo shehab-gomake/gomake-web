@@ -16,6 +16,7 @@ import { areDatesValid, initialFromDate } from "@/utils/helpers";
 import { useClientTypesList } from "@/hooks/use-client-types";
 import { useModal } from "@/hooks/use-modal";
 import { getAndSetClientContacts } from "@/services/hooks/cart-side/customers/get-client-contacts";
+import { MessageType } from "@/pages-components/quote-new/use-quote";
 
 const useAgingReport = (clientType: CLIENT_TYPE) => {
   const { t } = useTranslation();
@@ -38,6 +39,7 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
   const isSendPaymentModal = useModal();
   const isWhatsAppModal = useModal();
   const isSendToAllClientsModal = useModal();
+  const isSendPaymentDebitsModal = useModal();
 
   const { agent, agentsCategories, handleAgentChange } = useAgentsList();
   const [selectDate, setSelectDate] = useState<string>(
@@ -61,6 +63,7 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
   const [clientContactsValue, setClientContactsValue] = useState<any>([]);
   const [selectedContactById, setSelectedContactById] = useState<any>();
   const [whatsappMessage, setWhatsappMessage] = useState<string>("");
+  const [availableDebits, setAvailableDebits] = useState<any[]>([]);
 
   const transformedHeaders = tableHeader?.map((header) => {
     const containsNumber = /\d/.test(header.key);
@@ -326,6 +329,57 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
 
   const onClickBtn6 = () => {
     isSendToAllClientsModal.open();
+  };
+
+  const onClickBtn7 = () => {
+    if (!customer?.id) {
+      alertFault("reports.pleaseSelectCustomer");
+      return;
+    }
+    if (!detailedReport) {
+      alertFault("reports.pleaseEnableDetailedReport");
+      return;
+    }
+    if (!tableData || tableData.length === 0) {
+      alertFault("reports.noDataAvailable");
+      return;
+    }
+
+    // Extract debits from table data
+    const debits: any[] = [];
+    tableData.forEach((data: any) => {
+      if (Array.isArray(data.data) && data.data.length > 0) {
+        data.data.forEach((nestedItem: any) => {
+          if (nestedItem.docNumber) {
+            // Extract values using header keys (supporting nested paths)
+            const getValue = (key: string) => {
+              return key.split(".").reduce((acc, part) => acc && acc[part], nestedItem);
+            };
+
+            const docNumber = getValue("docNumber");
+            const balanceDue = getValue("balanceDue") || getValue("total") || nestedItem.balanceDue || nestedItem.total || 0;
+
+            if (docNumber && (balanceDue > 0 || balanceDue < 0)) {
+              debits.push({
+                docType: nestedItem.docType || getValue("docType"),
+                docNumber: docNumber,
+                docDate: getValue("docDate") || nestedItem.docDate,
+                dueDate: getValue("dueDate") || nestedItem.dueDate,
+                total: balanceDue,
+              });
+            }
+          }
+        });
+      }
+    });
+
+    if (debits.length === 0) {
+      alertFault("reports.noDebitsAvailable");
+      return;
+    }
+
+    setAvailableDebits(debits);
+    isSendPaymentDebitsModal.open();
   };
 
   const getAgingReportFilter = useCallback(
@@ -627,6 +681,100 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
     isSendToAllClientsModal,
   ]);
 
+  const sendSelectedDebitsPayment = useCallback(
+    async (data: {
+      selectedDebits: any[];
+      numberOfInstallments: number;
+      sendBySms: boolean;
+      sendByEmail: boolean;
+      sendByWhatsApp: boolean;
+      email: string;
+      phoneNumber: string;
+    }) => {
+      if (!areDatesValid(fromDate, toDate)) {
+        alertFault("alerts.pleaseEnsureDatesSelected");
+        return;
+      }
+
+      if (!data.email && data.sendByEmail) {
+        alertFault("alerts.noMail");
+        return;
+      }
+
+      if ((!data.phoneNumber || data.phoneNumber.trim() === "") && (data.sendBySms || data.sendByWhatsApp)) {
+        alertFault("alerts.noPhoneNumber");
+        return;
+      }
+
+      // Format dates as ISO strings
+      const formattedStartDate = fromDate ? new Date(fromDate).toISOString() : new Date().toISOString();
+      const formattedEndDate = toDate ? new Date(toDate).toISOString() : new Date().toISOString();
+      const formattedReferDate = selectDate ? new Date(selectDate).toISOString() : new Date().toISOString();
+
+      // Determine messageType using MessageType enum
+      let messageType = MessageType.Email;
+      if (data.sendByWhatsApp) {
+        messageType = 2; // WhatsApp (not in MessageType enum, keep as 2)
+      } else if (data.sendByEmail && data.sendBySms) {
+        messageType = MessageType.Both; // Both Email and SMS
+      } else if (data.sendBySms) {
+        messageType = MessageType.SMS;
+      } else if (data.sendByEmail) {
+        messageType = MessageType.Email;
+      }
+
+      const res = await callApi(
+        EHttpMethod.POST,
+        `/v1/erp-service/reports/send-debit-payment-to-client`,
+        {
+          startDate: formattedStartDate,
+          endDate: formattedEndDate,
+          referDate: formattedReferDate,
+          cardCode: (customer as any)?.customerCode || (customer as any)?.code || "",
+          cardType: isPurchaseReport
+            ? CLIENT_TYPE.SUPPLIER
+            : CLIENT_TYPE.CUSTOMER,
+          agentCode: (agent as any)?.code || 0,
+          clientId: customer?.id,
+          agentId: agent?.id,
+          byCreationDate: agingReportByCreationDate,
+          expendedReport: detailedReport,
+          orderBy: orderBy,
+          isDescOrder: isDescOrder,
+          email: data.email || "",
+          phoneNumber: data.phoneNumber || "",
+          numberOfPayments: data.numberOfInstallments,
+          messageType: messageType,
+          documentNumbers: data.selectedDebits.map((d) => d.docNumber),
+        }
+      );
+      if (res?.success) {
+        alertSuccessSend();
+        isSendPaymentDebitsModal.close();
+      } else {
+        alertFaultSend();
+      }
+    },
+    [
+      fromDate,
+      toDate,
+      customer,
+      selectDate,
+      agent,
+      selectedContactById,
+      isPurchaseReport,
+      agingReportByCreationDate,
+      detailedReport,
+      orderBy,
+      isDescOrder,
+      callApi,
+      alertFault,
+      alertSuccessSend,
+      alertFaultSend,
+      isSendPaymentDebitsModal,
+    ]
+  );
+
   return {
     t,
     handleClickSelectDate,
@@ -684,6 +832,10 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
     whatsappMessage,
     isSendToAllClientsModal,
     sendPaymentToAllClients,
+    isSendPaymentDebitsModal,
+    availableDebits,
+    onClickBtn7,
+    sendSelectedDebitsPayment,
   };
 };
 
