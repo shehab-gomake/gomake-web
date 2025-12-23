@@ -15,7 +15,6 @@ import {
 } from "./states/selected-job-types-ids";
 import { selectedDocumentTypeState } from "./states/selected-document-type";
 import { selectedDocumentStatusesState } from "./states/selected-document-statuses";
-import { selectedProductionStatusesState } from "./states/selected-production-statuses";
 import {
   DocumentTypeEnums,
   INVOICE_AND_OPEN_DELIVERY_NOTES_AND_ORDERS_ID,
@@ -56,8 +55,6 @@ const useSalesDashboardFilters = () => {
   const [selectedDocumentType] = useRecoilState(selectedDocumentTypeState);
   const [selectedDocumentStatuses, setSelectedDocumentStatuses] =
     useRecoilState(selectedDocumentStatusesState);
-  const [selectedProductionStatuses, setSelectedProductionStatuses] =
-    useRecoilState(selectedProductionStatusesState);
 
   const toggleAgent = (id: string) => {
     setSelectedAgentIds((prev) =>
@@ -181,20 +178,6 @@ const useSalesDashboardFilters = () => {
     setSelectedDocumentStatuses(isAllSelected ? [] : allIds);
   };
 
-  const toggleProductionStatus = (id: number) => {
-    setSelectedProductionStatuses((prev) =>
-      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
-    );
-  };
-
-  const toggleAllProductionStatuses = () => {
-    const allIds = productionStatusCategories.map((a) => a.id);
-    const isAllSelected = allIds.every((id) =>
-      selectedProductionStatuses.includes(id)
-    );
-    setSelectedProductionStatuses(isAllSelected ? [] : allIds);
-  };
-
   return {
     t,
     agentsCategories,
@@ -225,10 +208,6 @@ const useSalesDashboardFilters = () => {
     toggleAllDocumentStatuses,
     showDocumentStatusFilter,
     // production statuses
-    productionStatusCategories,
-    selectedProductionStatuses,
-    toggleProductionStatus,
-    toggleAllProductionStatuses,
     showProductionStatusFilter,
   };
 };

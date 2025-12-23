@@ -5,6 +5,7 @@ import { MultiSelectDropdown } from "@/components/multi-select/multi-select-drop
 import { SingleSelectSearchDropdown } from "./components/single-customer-select-dropdown";
 import { FixedDataType } from "./components/fixed-data-type-component";
 import { FixedDocumentType } from "./components/fixed-document-type-component";
+import { FixedProductionStatus } from "./components/fixed-production-status-component";
 
 const DashboardFilters = () => {
   const { classes } = useStyle();
@@ -35,10 +36,6 @@ const DashboardFilters = () => {
     toggleDocumentStatus,
     toggleAllDocumentStatuses,
     showDocumentStatusFilter,
-    productionStatusCategories,
-    selectedProductionStatuses,
-    toggleProductionStatus,
-    toggleAllProductionStatuses,
     showProductionStatusFilter,
   } = useSalesDashboardFilters();
 
@@ -56,15 +53,7 @@ const DashboardFilters = () => {
           buttonLabel={t("sales.quote.status")}
         />
       )}
-      {showProductionStatusFilter && (
-        <MultiSelectDropdown
-          items={productionStatusCategories}
-          selectedIds={selectedProductionStatuses}
-          onToggle={toggleProductionStatus}
-          onToggleAll={toggleAllProductionStatuses}
-          buttonLabel={t("boardMissions.productionStatus")}
-        />
-      )}
+      {showProductionStatusFilter && <FixedProductionStatus />}
       <SingleSelectSearchDropdown />
 
       <MultiSelectDropdown
