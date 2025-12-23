@@ -7,6 +7,7 @@ import {
   IconButton,
   Chip,
   Button,
+  Tooltip,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
@@ -24,8 +25,8 @@ import {
 } from "./interfaces";
 import { useMainProductionReport } from "./use-main-production-report";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
-import { exportProductionDashboardToExcel } from "../production-dashboard-export-utils";
 import { InfoTooltip } from "@/components/info-tooltip/info-tooltip";
+import { adaptMarginLeft } from "@/utils/adapter";
 
 const MainProductionReportTable = () => {
   const { classes } = useStyle();
@@ -43,6 +44,7 @@ const MainProductionReportTable = () => {
     formatTime,
     formatPercentage,
     formatCurrency,
+    downloadExcel,
   } = useMainProductionReport();
 
   // Helper function to extract boardMissionIds and apply filter
@@ -127,12 +129,16 @@ const MainProductionReportTable = () => {
     boardMissionsStatusFilter,
     statuses,
     fontWeight = "bold",
+    unitName,
+    unitQuantity,
   }: {
     timeValue: string;
     jobCount: number;
     boardMissionsStatusFilter?: BoardMissionsStatusFilterItem[];
     statuses: number[];
     fontWeight?: "bold" | "normal";
+    unitName?: string;
+    unitQuantity?: number;
   }) => {
     const isClickable = hasStatusIds(boardMissionsStatusFilter, statuses);
     const item = { boardMissionsStatusFilter };
@@ -163,6 +169,12 @@ const MainProductionReportTable = () => {
         >
           {jobCount}
         </span>
+        {unitName && unitQuantity !== undefined && (
+          <span style={{ fontWeight, lineHeight: 1.2 }}>
+            {" / "}
+            {unitQuantity} {t(`productionReport.${unitName}`)}
+          </span>
+        )}
       </Box>
     );
   };
@@ -175,6 +187,8 @@ const MainProductionReportTable = () => {
     boardMissionsStatusFilter,
     statuses,
     fontWeight = "bold",
+    unitName,
+    unitQuantity,
   }: {
     timeValue: string;
     jobCount: number;
@@ -182,6 +196,8 @@ const MainProductionReportTable = () => {
     boardMissionsStatusFilter?: BoardMissionsStatusFilterItem[];
     statuses: number[];
     fontWeight?: "bold" | "normal";
+    unitName?: string;
+    unitQuantity?: number;
   }) => {
     const isClickable = hasStatusIds(boardMissionsStatusFilter, statuses);
     const item = { boardMissionsStatusFilter };
@@ -212,6 +228,12 @@ const MainProductionReportTable = () => {
           >
             {jobCount}
           </span>
+          {unitName && unitQuantity !== undefined && (
+            <span style={{ fontWeight, lineHeight: 1.2 }}>
+              {" / "}
+              {unitQuantity} {t(`productionReport.${unitName}`)}
+            </span>
+          )}
         </Box>
         {totalEstimatedJobs > 0 && (
           <Typography
@@ -430,6 +452,8 @@ const MainProductionReportTable = () => {
               boardMissionsStatusFilter={station.boardMissionsStatusFilter}
               statuses={[0, 1]} // totalJobs = inProcess + done
               fontWeight="normal"
+              unitName={station.totalEstimated.unitName}
+              unitQuantity={station.totalEstimated.unitQuantity}
             />,
             <ClickableJobCount
               timeValue={formatTime(station.done.time)}
@@ -437,6 +461,8 @@ const MainProductionReportTable = () => {
               boardMissionsStatusFilter={station.boardMissionsStatusFilter}
               statuses={[1]} // done
               fontWeight="normal"
+              unitName={station.done.unitName}
+              unitQuantity={station.done.unitQuantity}
             />,
             <ClickableJobCount
               timeValue={formatTime(station.inProcess.time)}
@@ -444,6 +470,8 @@ const MainProductionReportTable = () => {
               boardMissionsStatusFilter={station.boardMissionsStatusFilter}
               statuses={[0]} // inProcess
               fontWeight="normal"
+              unitName={station.inProcess.unitName}
+              unitQuantity={station.inProcess.unitQuantity}
             />,
             <ClickableReportedJobCount
               timeValue={formatTime(station.reported.time)}
@@ -452,6 +480,8 @@ const MainProductionReportTable = () => {
               boardMissionsStatusFilter={station.boardMissionsStatusFilter}
               statuses={[2]} // reported
               fontWeight="normal"
+              unitName={station.reported.unitName}
+              unitQuantity={station.reported.unitQuantity}
             />,
             <Box sx={{ py: 0.4 }}>
               <span style={{ lineHeight: 1.2, display: "block" }}>
@@ -524,7 +554,7 @@ const MainProductionReportTable = () => {
         </Typography>
       </InfoTooltip>
       <Typography variant="caption" color="textSecondary">
-        {t("productionReport.timeJobs")}
+        {t("productionReport.timeJobs")} / {t("productionReport.materialUnits")}
       </Typography>
     </Box>,
     <Box>
@@ -534,7 +564,7 @@ const MainProductionReportTable = () => {
         </Typography>
       </InfoTooltip>
       <Typography variant="caption" color="textSecondary">
-        {t("productionReport.timeJobs")}
+        {t("productionReport.timeJobs")} / {t("productionReport.materialUnits")}
       </Typography>
     </Box>,
     <Box>
@@ -544,7 +574,7 @@ const MainProductionReportTable = () => {
         </Typography>
       </InfoTooltip>
       <Typography variant="caption" color="textSecondary">
-        {t("productionReport.timeJobs")}
+        {t("productionReport.timeJobs")} / {t("productionReport.materialUnits")}
       </Typography>
     </Box>,
     <Box>
@@ -601,8 +631,7 @@ const MainProductionReportTable = () => {
 
   // Export to Excel handler
   const handleExportToExcel = () => {
-    if (!data?.departments) return;
-    exportProductionDashboardToExcel(data.departments, t);
+    downloadExcel();
   };
 
   if (loading) {
@@ -669,7 +698,11 @@ const MainProductionReportTable = () => {
                   <Chip
                     label={`${t(
                       "productionReport.onTimeDelivery"
-                    )}: ${formatPercentage(data.otd)}`}
+                    )}: ${formatPercentage(data.otd)} (${parseFloat(
+                      Number(data.jobsDoneOnTimeCount || 0).toFixed(2)
+                    )} / ${parseFloat(
+                      Number(data.allJobsCount || 0).toFixed(2)
+                    )})`}
                     sx={{
                       backgroundColor: "#e3f2fd",
                       color: "#495057",
@@ -688,7 +721,11 @@ const MainProductionReportTable = () => {
                   <Chip
                     label={`${t(
                       "productionReport.timeBasedOnTimeDelivery"
-                    )}: ${formatPercentage(data.tB_OTD)}`}
+                    )}: ${formatPercentage(data.tB_OTD)} (${parseFloat(
+                      Number(data.jobsDoneBasedTime || 0).toFixed(2)
+                    )} / ${parseFloat(
+                      Number(data.allJobsBasedTime || 0).toFixed(2)
+                    )})`}
                     sx={{
                       backgroundColor: "#e3f2fd",
                       color: "#495057",
@@ -705,22 +742,32 @@ const MainProductionReportTable = () => {
             </Box>
           )}
         </Box>
-        <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
-          <Button
-            variant="contained"
-            startIcon={<DownloadIcon />}
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 2,
+            alignItems: "flex-end",
+            ...adaptMarginLeft(t("direction"), 1),
+          }}
+        >
+          {/* <Tooltip
+            title={t("materialsActions.DownLoadExcel") || "Download Excel"}
+            placement={t("direction") === "rtl" ? "left" : "right"}
+          > */}
+          <IconButton
             onClick={handleExportToExcel}
             size="small"
             sx={{
               backgroundColor: primaryColor(500),
               "&:hover": { backgroundColor: primaryColor(200) },
-              textTransform: "none",
-              fontWeight: "bold",
+              color: "white",
             }}
           >
-            {t("materialsActions.DownLoadExcel") || "Download Excel"}
-          </Button>
-          <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
+            <DownloadIcon fontSize="small" />
+          </IconButton>
+          {/* </Tooltip> */}
+          <Box sx={{ display: "flex", gap: 1, alignItems: "center", mt: 1.5 }}>
             <IconButton
               onClick={toggleAllDepartments}
               size="small"
