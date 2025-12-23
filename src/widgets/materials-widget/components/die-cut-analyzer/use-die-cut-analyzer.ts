@@ -375,19 +375,34 @@ export const useDieCutAnalyzer = (onClose: () => void) => {
     
     const filteredHeaders = tableHeaders.filter((header) => {
       // Only show required fields in the table
-      if (header.isRequired !== true) {
-        return false;
-      }
+      // if (header.isRequired !== true) {
+      //   return false;
+      // }
       
       // Hide specific fields: code, image, type
-      if (header.key === "code" || header.key === "image" || header.key === "type") {
+      if (
+        header.key === "code" 
+        || 
+        header.key === "image" 
+        || 
+        header.key === "type"
+        ||
+        header.key === "purchasePricing"
+        ||
+        header.key ==="totalInventory"
+        ||
+        header.key ==="Active"
+        ||
+        header.key ==="isOutSource"
+       
+      ) {
         return false;
       }
       
       // Hide all boolean fields (inputType === 2)
-      if (header.inputType === 2) {
-        return false;
-      }
+      // if (header.inputType === 2) {
+      //   return false;
+      // }
       
       return true;
     });
