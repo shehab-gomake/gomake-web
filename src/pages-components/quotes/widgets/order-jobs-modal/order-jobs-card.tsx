@@ -50,11 +50,11 @@ const OrderJobsCard: React.FC<OrderJobsCardProps> = ({
           ? job.station.supplierName
           : job.station.employeeName;
       if (empName) {
-        return `${t(
-          "productionStatuses." + job.boardMissionStatus.name
-        )} \n\r ${job.station.actionName} \n\r ${empName}`;
+        return `${t("productionStatuses." + job.boardMissionStatus.name)} - ${
+          job.station.actionName
+        } - ${empName}`;
       }
-      return `${t("productionStatuses." + job.boardMissionStatus.name)} \n\r ${
+      return `${t("productionStatuses." + job.boardMissionStatus.name)} - ${
         job.station.actionName
       }`;
     }
@@ -94,12 +94,7 @@ const OrderJobsCard: React.FC<OrderJobsCardProps> = ({
                     <Typography sx={classes.jobLabel}>
                       {t("tableHeaders.status") || "Status"}:
                     </Typography>
-                    <Typography
-                      sx={classes.jobValue}
-                      style={{ whiteSpace: "pre-line" }}
-                    >
-                      {status}
-                    </Typography>
+                    <Typography sx={classes.jobValue}>{status}</Typography>
                   </Box>
                 )}
               </Box>
