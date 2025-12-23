@@ -375,19 +375,34 @@ export const useDieCutAnalyzer = (onClose: () => void) => {
     
     const filteredHeaders = tableHeaders.filter((header) => {
       // Only show required fields in the table
-      if (header.isRequired !== true) {
-        return false;
-      }
+      // if (header.isRequired !== true) {
+      //   return false;
+      // }
       
       // Hide specific fields: code, image, type
-      if (header.key === "code" || header.key === "image" || header.key === "type") {
+      if (
+        header.key === "code" 
+        || 
+        header.key === "image" 
+        || 
+        header.key === "type"
+        ||
+        header.key === "purchasePricing"
+        ||
+        header.key ==="totalInventory"
+        ||
+        header.key ==="Active"
+        ||
+        header.key ==="isOutSource"
+       
+      ) {
         return false;
       }
       
       // Hide all boolean fields (inputType === 2)
-      if (header.inputType === 2) {
-        return false;
-      }
+      // if (header.inputType === 2) {
+      //   return false;
+      // }
       
       return true;
     });
@@ -565,27 +580,6 @@ export const useDieCutAnalyzer = (onClose: () => void) => {
       return "-";
     }
     return value;
-  }, []);
-
-  /**
-   * Get directions options
-   */
-  const getDirectionsOptions = useCallback(() => {
-    return [
-      { key: "long", Specialkey: null, value: "Long", label: "Long" },
-      { key: "short", Specialkey: null, value: "Short", label: "Short" },
-    ];
-  }, []);
-
-  /**
-   * Get shape options
-   */
-  const getShapeOptions = useCallback(() => {
-    return [
-      { key: "Shape_rectangular", Specialkey: null, value: "Shape_rectangular", label: "Shape_rectangular" },
-      { key: "Shape_circular", Specialkey: null, value: "Shape_circular", label: "Shape_circular" },
-      { key: "Shape_formal", Specialkey: null, value: "Shape_formal", label: "Shape_formal" },
-    ];
   }, []);
 
   // Computed values
