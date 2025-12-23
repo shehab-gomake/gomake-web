@@ -582,27 +582,6 @@ export const useDieCutAnalyzer = (onClose: () => void) => {
     return value;
   }, []);
 
-  /**
-   * Get directions options
-   */
-  const getDirectionsOptions = useCallback(() => {
-    return [
-      { key: "long", Specialkey: null, value: "Long", label: "Long" },
-      { key: "short", Specialkey: null, value: "Short", label: "Short" },
-    ];
-  }, []);
-
-  /**
-   * Get shape options
-   */
-  const getShapeOptions = useCallback(() => {
-    return [
-      { key: "Shape_rectangular", Specialkey: null, value: "Shape_rectangular", label: "Shape_rectangular" },
-      { key: "Shape_circular", Specialkey: null, value: "Shape_circular", label: "Shape_circular" },
-      { key: "Shape_formal", Specialkey: null, value: "Shape_formal", label: "Shape_formal" },
-    ];
-  }, []);
-
   // Computed values
   const readyFilesCount = uploadedFiles.filter((f) => f.status === "ready").length;
   const completedFilesCount = uploadedFiles.filter((f) => f.status === "completed").length;
