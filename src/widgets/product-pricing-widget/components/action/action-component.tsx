@@ -40,6 +40,7 @@ import { PermissionCheck } from "@/components/CheckPermission";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { _renderIconLogs } from "@/utils/constants";
 import { TableOutPutComponent } from "../table-output/table-output-component";
+import { BooleanOutputComponent } from "./boolean-output-component";
 import { EWidgetProductType } from "@/pages-components/products/digital-offset-price/enums";
 import {
   isActionEmployeeUpdatedState,
@@ -377,6 +378,13 @@ const ActionContainerComponent = ({
       parameter &&
       parameter?.propertyType === RuleType.OUTPUT &&
       parameter?.htmlElementType === HtmlElementType.IMAGE &&
+      (source === EWorkSource.INTERNAL || parameter?.showInOutSourceAction === true)
+  );
+  const booleanOutputs = outputs?.filter(
+    (parameter) =>
+      parameter &&
+      parameter?.propertyType === RuleType.OUTPUT &&
+      parameter?.htmlElementType === HtmlElementType.BOOLEAN &&
       (source === EWorkSource.INTERNAL || parameter?.showInOutSourceAction === true)
   );
 
@@ -1198,84 +1206,84 @@ const ActionContainerComponent = ({
                     <>
                       <Divider orientation={"vertical"} flexItem />
                       <EditableKeyValueViewComponent
-                    onUpdate={handleUpdatePricePer1Product}
-                    {...pricePer1Product}
-                    values={pricePer1ProductValue}
-                    source={source}
-                    name={t("sales.quote.pricePer1Product")}
-                  />
+                        onUpdate={handleUpdatePricePer1Product}
+                        {...pricePer1Product}
+                        values={pricePer1ProductValue}
+                        source={source}
+                        name={t("sales.quote.pricePer1Product")}
+                      />
                     </>
                   )}
-                   {showPricePer1000Product && (
+                  {showPricePer1000Product && (
                     <>
                       <Divider orientation={"vertical"} flexItem />
                       <EditableKeyValueViewComponent
-                    onUpdate={handleUpdatePricePer1000Product}
-                    {...pricePer1000Product}
-                    values={pricePer1000ProductValue}
-                    source={source}
-                    name={t("sales.quote.pricePer1000Product")}
-                  />
+                        onUpdate={handleUpdatePricePer1000Product}
+                        {...pricePer1000Product}
+                        values={pricePer1000ProductValue}
+                        source={source}
+                        name={t("sales.quote.pricePer1000Product")}
+                      />
                     </>
                   )}
                   {showPricePer1Material && (
                     <>
                       <Divider orientation={"vertical"} flexItem />
                       <EditableKeyValueViewComponent
-                    onUpdate={handleUpdatePricePer1Material}
-                    {...pricePer1Material}
-                    values={pricePer1MaterialValue}
-                    source={source}
-                    name={`${materialQuantity} ${materialName}`}
-                  />
-                  <span>
-                              {`${t("sales.quote.pricePer1Material")}`}
-                            </span>
+                        onUpdate={handleUpdatePricePer1Material}
+                        {...pricePer1Material}
+                        values={pricePer1MaterialValue}
+                        source={source}
+                        name={`${materialQuantity} ${materialName}`}
+                      />
+                      <span>
+                        {`${t("sales.quote.pricePer1Material")}`}
+                      </span>
                     </>
                   )}
-                   {showPricePer1000Material && (
+                  {showPricePer1000Material && (
                     <>
                       <Divider orientation={"vertical"} flexItem />
                       <EditableKeyValueViewComponent
-                    onUpdate={handleUpdatePricePer1000Material}
-                    {...pricePer1000Material}
-                    values={pricePer1000MaterialValue}
-                    source={source}
-                    name={`${materialQuantity} ${materialName}`}
-                  />
-                  <span>
-                              {`${t("sales.quote.pricePer1000Material")}`}
-                            </span>
+                        onUpdate={handleUpdatePricePer1000Material}
+                        {...pricePer1000Material}
+                        values={pricePer1000MaterialValue}
+                        source={source}
+                        name={`${materialQuantity} ${materialName}`}
+                      />
+                      <span>
+                        {`${t("sales.quote.pricePer1000Material")}`}
+                      </span>
                     </>
                   )}
                   {showPricePerMeter && (
                     <>
                       <Divider orientation={"vertical"} flexItem />
                       <EditableKeyValueViewComponent
-                    onUpdate={handleUpdatePricePerMeter}
-                    {...pricePerMeter}
-                    values={pricePerMeterValue}
-                    source={source}
-                    name={`${printingMeter} ${t("measurementUnits.meter")}`}
-                  />
-                     <span>
-                              {`${t("sales.quote.pricePerMeter")}`}
-                            </span>
+                        onUpdate={handleUpdatePricePerMeter}
+                        {...pricePerMeter}
+                        values={pricePerMeterValue}
+                        source={source}
+                        name={`${printingMeter} ${t("measurementUnits.meter")}`}
+                      />
+                      <span>
+                        {`${t("sales.quote.pricePerMeter")}`}
+                      </span>
                     </>
                   )}
-                  {showPricePerSquareMeter && ( 
+                  {showPricePerSquareMeter && (
                     <>
                       <Divider orientation={"vertical"} flexItem />
                       <EditableKeyValueViewComponent
-                    onUpdate={handleUpdatePricePerSquareMeter}
-                    {...pricePerSquareMeter}
-                    values={pricePerSquareMeterValue}
-                    source={source}
-                    name={`${printArea} ${t("measurementUnits.squareMeter")}`}
-                  />
-                   <span>
-                              {`${t("sales.quote.pricePerSquareMeter")}`}
-                            </span>
+                        onUpdate={handleUpdatePricePerSquareMeter}
+                        {...pricePerSquareMeter}
+                        values={pricePerSquareMeterValue}
+                        source={source}
+                        name={`${printArea} ${t("measurementUnits.squareMeter")}`}
+                      />
+                      <span>
+                        {`${t("sales.quote.pricePerSquareMeter")}`}
+                      </span>
                     </>
                   )}
                   {!isFromSetting && (
@@ -1490,9 +1498,10 @@ const ActionContainerComponent = ({
                   </>
                 )}
                 {(outputsParameters?.length > 0 ||
-                  textAreaOutputs?.length > 0) &&
-                  // source === EWorkSource.INTERNAL &&
-                  (
+                  textAreaOutputs?.length > 0 ||
+                  imageOutputs?.length > 0 ||
+                  tableOutputs?.length > 0 ||
+                  booleanOutputs?.length > 0) && (
                     <>
                       <Divider />
                       <Stack
@@ -1510,10 +1519,33 @@ const ActionContainerComponent = ({
                             setChangeWorkFlowOutputDTO
                           }
                         />
+                        {booleanOutputs?.map((parameter, index) => {
+                          const isFirstBoolean = index === 0;
+                          const isLastBoolean = index === booleanOutputs.length - 1;
+                          const hasContentBefore = outputsParameters?.length > 0 || !isFirstBoolean;
+                          const hasContentAfter =
+                            !isLastBoolean ||
+                            imageOutputs?.length > 0 ||
+                            textAreaOutputs?.length > 0 ||
+                            tableOutputs?.length > 0;
+                          return (
+                            <Stack key={`boolean-${index}`} direction={"row"} alignItems={"center"}>
+                              {hasContentBefore && <Divider orientation={"vertical"} flexItem />}
+                              <BooleanOutputComponent
+                                {...parameter}
+                                changeWorkFlowOutputDTO={changeWorkFlowOutputDTO}
+                                setChangeWorkFlowOutputDTO={setChangeWorkFlowOutputDTO}
+                              />
+                              {hasContentAfter && <Divider orientation={"vertical"} flexItem />}
+                            </Stack>
+                          );
+                        })}
                         {imageOutputs.map((parameter) => (
                           <PrintImageComponent {...parameter} />
                         ))}
-                        <Divider orientation={"vertical"} flexItem />
+                        {imageOutputs?.length > 0 && (
+                          <Divider orientation={"vertical"} flexItem />
+                        )}
                         <TextAreaActionsMapping
                           parameters={textAreaOutputs}
                           actionId={id}
