@@ -77,7 +77,6 @@ import { useParameters } from "@/hooks/use-parameters";
 import { printHouseHasFrontDeskFeature } from "@/store/print-house-profile";
 import { PurchaseOrdersDialogsUndoIntakeWidget } from "@/widgets/purchas-orders-dialogs/purchase-orders-dialogs-undo-intake-widget";
 import { PurchaseOrdersDialogsIntakeValidationWidget } from "@/widgets/purchas-orders-dialogs/purchase-orders-dialogs-intake-validatin-widget";
-import { OrderJobsModal } from "./widgets/order-jobs-modal/order-jobs-modal";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -328,11 +327,6 @@ const QuotesListPageWidget = ({
     isDocumentTableLoading,
     isDocumentTableError,
     isSocketRefreshingDocuments,
-    isOrderJobsModalOpen,
-    setIsOrderJobsModalOpen,
-    selectedOrderJobs,
-    modalTitle,
-    selectedQuoteNumber,
     scheduledReports,
     totalCount: scheduledReportsTotalCount,
     pageNumber: scheduledReportsPageNumber,
@@ -1172,16 +1166,6 @@ const QuotesListPageWidget = ({
         handleCancelUndoIntake={handleCancelUndoIntake}
         handleConfirmUndoIntake={handleConfirmUndoIntake}
       />
-      {/* Order Jobs Modal */}
-      {isOrder && (
-        <OrderJobsModal
-          open={isOrderJobsModalOpen}
-          onClose={() => setIsOrderJobsModalOpen(false)}
-          orderJobs={selectedOrderJobs}
-          title={modalTitle}
-          quoteNumber={selectedQuoteNumber}
-        />
-      )}
     </>
   );
 };

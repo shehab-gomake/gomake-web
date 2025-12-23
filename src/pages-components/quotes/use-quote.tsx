@@ -133,7 +133,7 @@ import { currenciesState } from "@/widgets/materials-widget/state";
 import { getCurrencies } from "@/services/api-service/general/enums";
 import { useFrontDeskEmailIntegration } from "./hooks/use-frontdesk-email-integration";
 import { printHouseHasFrontDeskFeature } from "@/store/print-house-profile";
-import { OrderJob } from "./widgets/order-jobs-modal/order-jobs-modal";
+import { OrderJobsCell } from "./widgets/order-jobs-modal/order-jobs-cell";
 
 type PaymentTypeOption = {
   label: string;
@@ -363,12 +363,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   );
 
   const [currentSortOrder, setCurrentSortOrder] = useState<any>(null);
-
-  // Order Jobs Modal state
-  const [isOrderJobsModalOpen, setIsOrderJobsModalOpen] = useState(false);
-  const [selectedOrderJobs, setSelectedOrderJobs] = useState<OrderJob[]>([]);
-  const [modalTitle, setModalTitle] = useState<string>("");
-  const [selectedQuoteNumber, setSelectedQuoteNumber] = useState<string>("");
 
   const typeOfPayments = [
     { label: t("payment.cash"), value: PAYMENT_TYPE.Cash },
@@ -1016,35 +1010,13 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         }
 
         if (isOrder) {
-          const jobsElement = CheckPermission(
-            Permissions.SHOW_BOARD_MISSIONS
-          ) ? (
-            <span
-              style={{
-                cursor: "pointer",
-                color: "inherit",
-                textDecoration: "unset",
-              }}
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                if (quote?.orderJobs && Array.isArray(quote.orderJobs)) {
-                  setSelectedOrderJobs(quote.orderJobs);
-                  setSelectedQuoteNumber(quote?.number || "");
-
-                  setModalTitle(
-                    `${t("sales.quote.order")} ${quote?.number || ""} - ${t(
-                      "sales.quote.jobs"
-                    )}`
-                  );
-                  setIsOrderJobsModalOpen(true);
-                }
-              }}
-            >
-              {quote?.jobs}
-            </span>
-          ) : (
-            quote?.jobs
+          const jobsElement = (
+            <OrderJobsCell
+              jobs={quote?.jobs}
+              orderJobs={quote?.orderJobs || []}
+              quoteNumber={quote?.number}
+              hasPermission={CheckPermission(Permissions.SHOW_BOARD_MISSIONS)}
+            />
           );
 
           const paymentStatus = `${
@@ -1597,35 +1569,15 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             }
 
             if (isOrder) {
-              const jobsElement = CheckPermission(
-                Permissions.SHOW_BOARD_MISSIONS
-              ) ? (
-                <span
-                  style={{
-                    cursor: "pointer",
-                    color: "inherit",
-                    textDecoration: "unset",
-                  }}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    if (quote?.orderJobs && Array.isArray(quote.orderJobs)) {
-                      debugger;
-                      setSelectedOrderJobs(quote.orderJobs);
-                      setSelectedQuoteNumber(quote?.number || "");
-                      setModalTitle(
-                        `${t("sales.quote.order")} ${quote?.number || ""} - ${t(
-                          "sales.quote.jobs"
-                        )}`
-                      );
-                      setIsOrderJobsModalOpen(true);
-                    }
-                  }}
-                >
-                  {quote?.jobs}
-                </span>
-              ) : (
-                quote?.jobs
+              const jobsElement = (
+                <OrderJobsCell
+                  jobs={quote?.jobs}
+                  orderJobs={quote?.orderJobs || []}
+                  quoteNumber={quote?.number}
+                  hasPermission={CheckPermission(
+                    Permissions.SHOW_BOARD_MISSIONS
+                  )}
+                />
               );
 
               const paymentStatus = `${
@@ -2187,34 +2139,13 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
           }
 
           if (isOrder) {
-            const jobsElement = CheckPermission(
-              Permissions.SHOW_BOARD_MISSIONS
-            ) ? (
-              <span
-                style={{
-                  cursor: "pointer",
-                  color: "inherit",
-                  textDecoration: "unset",
-                }}
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  if (quote?.orderJobs && Array.isArray(quote.orderJobs)) {
-                    setSelectedOrderJobs(quote.orderJobs);
-                    setSelectedQuoteNumber(quote?.number || "");
-                    setModalTitle(
-                      `${t("sales.quote.order")} ${quote?.number || ""} - ${t(
-                        "sales.quote.jobs"
-                      )}`
-                    );
-                    setIsOrderJobsModalOpen(true);
-                  }
-                }}
-              >
-                {quote?.jobs}
-              </span>
-            ) : (
-              quote?.jobs
+            const jobsElement = (
+              <OrderJobsCell
+                jobs={quote?.jobs}
+                orderJobs={quote?.orderJobs || []}
+                quoteNumber={quote?.number}
+                hasPermission={CheckPermission(Permissions.SHOW_BOARD_MISSIONS)}
+              />
             );
 
             const paymentStatus = `${
@@ -5432,12 +5363,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     showUndoIntakeDialog,
     handleConfirmUndoIntake,
     handleCancelUndoIntake,
-    // Order Jobs Modal
-    isOrderJobsModalOpen,
-    setIsOrderJobsModalOpen,
-    selectedOrderJobs,
-    modalTitle,
-    selectedQuoteNumber,
   };
 };
 
