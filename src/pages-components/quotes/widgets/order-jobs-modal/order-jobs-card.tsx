@@ -43,20 +43,29 @@ const OrderJobsCard: React.FC<OrderJobsCardProps> = ({
       return t("boardMissions.waitingForPayment");
     }
     if (job?.boardMissionStatus && job?.station) {
+      const statusParts = [
+        t("productionStatuses." + job.boardMissionStatus.name),
+      ];
+
+      // Only add actionName if it's not null or empty
+      if (job.station.actionName) {
+        statusParts.push(job.station.actionName);
+      }
+
+      // Get employee/machine/supplier name
       const empName =
         job.station.machineName && job.station.machineId
           ? job.station.machineName
           : job.station?.supplierId
           ? job.station.supplierName
           : job.station.employeeName;
-      if (empName) {
-        return `${t("productionStatuses." + job.boardMissionStatus.name)} - ${
-          job.station.actionName
-        } - ${empName}`;
+
+      // Only add empName if it's not empty or just whitespace
+      if (empName && empName.trim() !== "" && empName !== "-") {
+        statusParts.push(empName);
       }
-      return `${t("productionStatuses." + job.boardMissionStatus.name)} - ${
-        job.station.actionName
-      }`;
+
+      return statusParts.join(" - ");
     }
     return "";
   };
