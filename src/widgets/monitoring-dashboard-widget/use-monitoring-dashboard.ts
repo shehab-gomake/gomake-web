@@ -124,13 +124,14 @@ const useMonitoringDashboard = () => {
   // Helper function to get production status only if document type is Order
   const getFilteredProductionStatus = (
     documentType: DocumentTypeEnums | null,
-    productionStatuses: number[] | undefined
-  ): number[] | undefined => {
+    productionStatus: number | null | undefined
+  ): number | undefined => {
     if (
       documentType === DocumentTypeEnums.Order &&
-      productionStatuses?.length
+      productionStatus !== null &&
+      productionStatus !== undefined
     ) {
-      return productionStatuses;
+      return productionStatus;
     }
     return undefined;
   };
@@ -187,11 +188,11 @@ const useMonitoringDashboard = () => {
       ...(!isSpecialOption &&
         getFilteredProductionStatus(
           filters?.selectedDocumentType,
-          filters?.selectedProductionStatuses
+          filters?.selectedProductionStatus
         ) && {
           productionStatus: getFilteredProductionStatus(
             filters?.selectedDocumentType,
-            filters?.selectedProductionStatuses
+            filters?.selectedProductionStatus
           ),
         }),
       ...extraCostData,
@@ -254,11 +255,11 @@ const useMonitoringDashboard = () => {
       ...(!isSpecialOption &&
         getFilteredProductionStatus(
           filters?.selectedDocumentType,
-          filters?.selectedProductionStatuses
+          filters?.selectedProductionStatus
         ) && {
           productionStatus: getFilteredProductionStatus(
             filters?.selectedDocumentType,
-            filters?.selectedProductionStatuses
+            filters?.selectedProductionStatus
           ),
         }),
     };
@@ -324,11 +325,11 @@ const useMonitoringDashboard = () => {
       ...(!isSpecialOption &&
         getFilteredProductionStatus(
           filters?.selectedDocumentType,
-          filters?.selectedProductionStatuses
+          filters?.selectedProductionStatus
         ) && {
           productionStatus: getFilteredProductionStatus(
             filters?.selectedDocumentType,
-            filters?.selectedProductionStatuses
+            filters?.selectedProductionStatus
           ),
         }),
     };
@@ -439,11 +440,11 @@ const useMonitoringDashboard = () => {
       ...(!isSpecialOption &&
         getFilteredProductionStatus(
           filters?.selectedDocumentType,
-          filters?.selectedProductionStatuses
+          filters?.selectedProductionStatus
         ) && {
           productionStatus: getFilteredProductionStatus(
             filters?.selectedDocumentType,
-            filters?.selectedProductionStatuses
+            filters?.selectedProductionStatus
           ),
         }),
     };
@@ -554,11 +555,11 @@ const useMonitoringDashboard = () => {
       ...(!isSpecialOption &&
         getFilteredProductionStatus(
           filters?.selectedDocumentType,
-          filters?.selectedProductionStatuses
+          filters?.selectedProductionStatus
         ) && {
           productionStatus: getFilteredProductionStatus(
             filters?.selectedDocumentType,
-            filters?.selectedProductionStatuses
+            filters?.selectedProductionStatus
           ),
         }),
     };
@@ -669,11 +670,11 @@ const useMonitoringDashboard = () => {
       ...(!isSpecialOption &&
         getFilteredProductionStatus(
           filters?.selectedDocumentType,
-          filters?.selectedProductionStatuses
+          filters?.selectedProductionStatus
         ) && {
           productionStatus: getFilteredProductionStatus(
             filters?.selectedDocumentType,
-            filters?.selectedProductionStatuses
+            filters?.selectedProductionStatus
           ),
         }),
     };
@@ -738,11 +739,11 @@ const useMonitoringDashboard = () => {
       ...(!isSpecialOption &&
         getFilteredProductionStatus(
           filters?.selectedDocumentType,
-          filters?.selectedProductionStatuses
+          filters?.selectedProductionStatus
         ) && {
           productionStatus: getFilteredProductionStatus(
             filters?.selectedDocumentType,
-            filters?.selectedProductionStatuses
+            filters?.selectedProductionStatus
           ),
         }),
     };
@@ -785,7 +786,7 @@ const useMonitoringDashboard = () => {
   const selectedDocumentStatuses = useRecoilValue(
     selectedDocumentStatusesState
   );
-  const selectedProductionStatuses = useRecoilValue(
+  const selectedProductionStatus = useRecoilValue(
     selectedProductionStatusesState
   );
 
@@ -802,7 +803,7 @@ const useMonitoringDashboard = () => {
       selectedDataType,
       selectedDocumentType,
       selectedDocumentStatuses,
-      selectedProductionStatuses,
+      selectedProductionStatus,
     }),
     [
       dates?.startDate,
@@ -816,7 +817,7 @@ const useMonitoringDashboard = () => {
       selectedDataType,
       selectedDocumentType,
       selectedDocumentStatuses,
-      selectedProductionStatuses,
+      selectedProductionStatus,
     ]
   );
 
