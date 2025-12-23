@@ -77,6 +77,7 @@ import { useParameters } from "@/hooks/use-parameters";
 import { printHouseHasFrontDeskFeature } from "@/store/print-house-profile";
 import { PurchaseOrdersDialogsUndoIntakeWidget } from "@/widgets/purchas-orders-dialogs/purchase-orders-dialogs-undo-intake-widget";
 import { PurchaseOrdersDialogsIntakeValidationWidget } from "@/widgets/purchas-orders-dialogs/purchase-orders-dialogs-intake-validatin-widget";
+import { OrderJobsModal } from "./widgets/order-jobs-modal/order-jobs-modal";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -327,6 +328,11 @@ const QuotesListPageWidget = ({
     isDocumentTableLoading,
     isDocumentTableError,
     isSocketRefreshingDocuments,
+    isOrderJobsModalOpen,
+    setIsOrderJobsModalOpen,
+    selectedOrderJobs,
+    modalTitle,
+    selectedQuoteNumber,
     scheduledReports,
     totalCount: scheduledReportsTotalCount,
     pageNumber: scheduledReportsPageNumber,
@@ -465,7 +471,7 @@ const QuotesListPageWidget = ({
   useEffect(() => {
     const loadDocumentColumnSettings = async () => {
       try {
-        const res = await getDocumentTableSettingsApi(callApi, () => { }, {
+        const res = await getDocumentTableSettingsApi(callApi, () => {}, {
           documentType,
         });
         const saved: ColumnSetting[] = res?.data;
@@ -532,16 +538,16 @@ const QuotesListPageWidget = ({
                     isOrder
                       ? onclickCreateNew
                       : isSupplierPayments
-                        ? () => navigate(`/${documentPath}`)
-                        : isPurchaseOrder
-                          ? () => {
-                            setSelectedItems([]);
-                            onOpenPurchaseOrderTypeModal();
-                          }
-                          : () => {
-                            setSelectedItems([]);
-                            navigate(`/${documentPath}?isNewCreation=true`);
-                          }
+                      ? () => navigate(`/${documentPath}`)
+                      : isPurchaseOrder
+                      ? () => {
+                          setSelectedItems([]);
+                          onOpenPurchaseOrderTypeModal();
+                        }
+                      : () => {
+                          setSelectedItems([]);
+                          navigate(`/${documentPath}?isNewCreation=true`);
+                        }
                   )}
               </div>
             </div>
@@ -905,16 +911,16 @@ const QuotesListPageWidget = ({
           isSelectedCLoseAsDeliveryNote
             ? "customers.modal.closeOrderAsDeliveryNote"
             : isSelectedCLoseAsProformaInvoice
-              ? "customers.modal.closeOrderAsProformaInvoice"
-              : "customers.modal.closeOrderAsInvoice"
+            ? "customers.modal.closeOrderAsProformaInvoice"
+            : "customers.modal.closeOrderAsInvoice"
         }
         subTitle={"customers.modal.thisOrderIsAlreadyInProcess"}
         yesBtn={
           isSelectedCLoseAsDeliveryNote
             ? t("customers.modal.closeAsDeliveryNote")
             : isSelectedCLoseAsProformaInvoice
-              ? t("customers.modal.closeAsProformaInvoice")
-              : t("customers.modal.closeAsInvoice")
+            ? t("customers.modal.closeAsProformaInvoice")
+            : t("customers.modal.closeAsInvoice")
         }
         openModal={openChangeProductionStatusModal}
         onClose={onClickCloseChangeProductionStatusModal}
@@ -1166,6 +1172,16 @@ const QuotesListPageWidget = ({
         handleCancelUndoIntake={handleCancelUndoIntake}
         handleConfirmUndoIntake={handleConfirmUndoIntake}
       />
+      {/* Order Jobs Modal */}
+      {isOrder && (
+        <OrderJobsModal
+          open={isOrderJobsModalOpen}
+          onClose={() => setIsOrderJobsModalOpen(false)}
+          orderJobs={selectedOrderJobs}
+          title={modalTitle}
+          quoteNumber={selectedQuoteNumber}
+        />
+      )}
     </>
   );
 };
