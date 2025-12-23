@@ -8,9 +8,9 @@ import { GoMakeAutoComplate } from "@/components";
 import { useTranslation } from "react-i18next";
 
 interface IBooleanOutputComponentProps extends IOutput {
-  changeWorkFlowOutputDTO?: [{ Value: string; orginalName: string }];
+  changeWorkFlowOutputDTO?: Array<{ Value: string; orginalName: string }>;
   setChangeWorkFlowOutputDTO?: (
-    changeWorkFlowOutputDTO: [{ Value: string; orginalName: string }]
+    changeWorkFlowOutputDTO: Array<{ Value: string; orginalName: string }>
   ) => void;
 }
 
