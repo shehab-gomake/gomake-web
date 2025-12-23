@@ -133,9 +133,10 @@ const BusinessNewWidget = ({
     }
 
     // Get printHouseMaterialsIds from document items
-    const printHouseMaterialsIds = quoteStateValue?.documentItems
-      ?.filter((item) => item.printHouseMaterialId)
-      ?.map((item) => item.printHouseMaterialId) || [];
+    const printHouseMaterialsIds =
+      quoteStateValue?.documentItems
+        ?.filter((item) => item.printHouseMaterialId)
+        ?.map((item) => item.printHouseMaterialId) || [];
 
     if (printHouseMaterialsIds.length === 0) {
       alertFaultUpdate();
@@ -150,7 +151,7 @@ const BusinessNewWidget = ({
       if (res?.success && res?.data) {
         // Get the re-calculated items from the response
         // The data is already extracted by getSetApiData, so res.data is the array
-        const items = Array.isArray(res.data) ? res.data : (res.data?.data || []);
+        const items = Array.isArray(res.data) ? res.data : res.data?.data || [];
 
         if (items.length === 0) {
           alertFaultUpdate();
@@ -167,7 +168,8 @@ const BusinessNewWidget = ({
           workName: "",
           discount: 0,
           finalPrice: item.finalPrice || item.unitPrice,
-          quantity: item.quantity || (item.packagesQuantity * item.quantityInPackage),
+          quantity:
+            item.quantity || item.packagesQuantity * item.quantityInPackage,
           productName: item.productName,
           isSelected: false,
           productType: 0,
@@ -193,14 +195,10 @@ const BusinessNewWidget = ({
       }
     };
 
-    await reCalculateDocumentItemsDataFromRowMaterialsApi(
-      callApi,
-      callBack,
-      {
-        supplierId: selectedClient.id,
-        printHouseMaterialsIds: printHouseMaterialsIds,
-      }
-    );
+    await reCalculateDocumentItemsDataFromRowMaterialsApi(callApi, callBack, {
+      supplierId: selectedClient.id,
+      printHouseMaterialsIds: printHouseMaterialsIds,
+    });
   };
 
   // Handler for option 3: Change supplier and keep items without price change
@@ -380,7 +378,9 @@ const BusinessNewWidget = ({
             </span>
           )}
         </PermissionCheck>
-        {quoteStateValue?.client?.isOccasional && (
+        {(quoteStateValue?.client?.isOccasional ||
+          clientName ||
+          isUpdateClientName) && (
           <InputUpdatedValues
             value={clientName}
             placeholder={clientName ? clientName : t("reports.enterClientName")}

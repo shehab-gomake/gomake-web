@@ -5,7 +5,10 @@ import { useTranslation } from "react-i18next";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import { selectedDocumentTypeState } from "../states/selected-document-type";
 import { useStyle } from "./style";
-import { DocumentTypeEnums } from "@/enums/document-type-enum";
+import {
+  DocumentTypeEnums,
+  INVOICE_AND_OPEN_DELIVERY_NOTES_AND_ORDERS_ID,
+} from "@/enums/document-type-enum";
 
 const FixedDocumentType = () => {
   const { classes } = useStyle();
@@ -17,11 +20,15 @@ const FixedDocumentType = () => {
 
   const open = Boolean(anchorEl);
 
-  const documentConfig: Array<[string, DocumentTypeEnums]> = [
+  const documentConfig: Array<[string, DocumentTypeEnums | number]> = [
     ["sales.quote.quote", DocumentTypeEnums.Quote],
     ["sales.quote.order", DocumentTypeEnums.Order],
     ["sales.quote.deliveryNote", DocumentTypeEnums.DeliveryNote],
     ["sales.quote.invoice", DocumentTypeEnums.Invoice],
+    [
+      "dashboard.invoiceAndOpenDeliveryNotesAndOrders",
+      INVOICE_AND_OPEN_DELIVERY_NOTES_AND_ORDERS_ID,
+    ],
   ];
 
   const DOCUMENT_OPTIONS = documentConfig.map(([label, value]) => ({
@@ -34,7 +41,7 @@ const FixedDocumentType = () => {
 
   const selectedLabel = useMemo(() => {
     const selected = options.find((opt) => opt.value === selectedType);
-    return selected ? t(selected.label) : t("dashboard.documentType");
+    return selected ? t(selected.label) : t("reports.documentType");
   }, [selectedType, options, t]);
 
   const handleClick = (e: React.MouseEvent<HTMLElement>) => {

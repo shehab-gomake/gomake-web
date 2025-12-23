@@ -5,14 +5,12 @@ import { useBoardMissions } from "./use-board-missions";
 import {
   GoMakeAutoComplate,
   GoMakeDeleteModal,
-  GomakeTextInput,
   ThreeOptionsModal,
 } from "@/components";
 import { useEffect, useState } from "react";
 import { Box, CircularProgress, Stack } from "@mui/material";
 import { GoMakePagination } from "@/components/pagination/gomake-pagination";
 import { DocumentTypeEnums, DuplicateType, ModalType } from "@/enums";
-import { PrintPackingSlipModal } from "./widgets/print-packing-slip-modal";
 import QrListenerWidget from "@/widgets/qr-listener/qr-listener-widget";
 import { useUserPermission } from "@/hooks/use-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
@@ -47,7 +45,6 @@ import { ColumnSetting } from "@/widgets/production-floor/state/production-floor
 import { AddRuleModal } from "../products/profits-new/widgets/add-rule-modal";
 import { ScheduledReportsTable } from "../quotes/widgets/scheduled-reports-table/scheduled-reports-table";
 import { JobsFiltersSection } from "./components/jobs-filters-section";
-import { PrimaryButton } from "@/components/button/primary-button";
 import { FrontDeskEmailComposerWrapper } from "../quotes/components/frontdesk-email-composer-wrapper";
 import { DOCUMENT_TYPE } from "../quotes/enums";
 import { PrintPackingSlipModalWidget } from "@/widgets/production-floor/views/board-missions-view/navigation-buttons/print-packing-slip-modal-widget";
@@ -108,30 +105,19 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
     onClickDuplicateMission,
     openPackagesModal,
     onClosePackagesModal,
-    quantityPerPackage,
-    quantityOfPackages,
-    packageInputs,
-    handleQuantityPerPackageChange,
-    handleQuantityOfPackagesChange,
     openModal,
     onCloseModal,
     onOpenPackagesModal,
     missionItem,
-    onClickPrintPackagingSlip,
     openMarkReadyThenPrintModal,
     onCloseMarkReadyThenPrintModal,
     onOpenMarkReadyThenPrintModal,
     onClickMoveBoardMissionToDone,
     isEmailComposerOpen,
     emailData,
-    openEmailComposer,
     closeEmailComposer,
     pendingOrderIdForComposer,
     onClickBackToProcess,
-    handleClick,
-    handleClose,
-    open,
-    anchorEl,
     orderStatuses,
     orderStatus,
     handleOrderStatusChange,
@@ -144,7 +130,6 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
     router,
     isFetching,
     printOrderJobsUsingPrintNode,
-    searchInputRef,
     showCustomerModal,
     customerForEdit,
     setShowCustomerModal,
@@ -181,7 +166,6 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
     pendingPrintParams,
     openMarkReadyTypeModal,
     onCloseMarkReadyTypeModal,
-    onOpenMarkReadyTypeModal,
     pendingMarkReadyParams,
     handleMarkReadyTypeChoice,
     isJobsTableLoading,
@@ -222,7 +206,6 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
     updateQuoteStatusForQualityIssue,
     // Start Production Modal
     openStartProductionModal,
-    onOpenStartProductionModal,
     onCloseStartProductionModal,
     handleStartProductionConfirm,
   } = useBoardMissions({ isPurchaseJobs });

@@ -37,6 +37,7 @@ const UPDATE_DOCUMENT_ITEM_SELECT_URL =
   "/v1/erp-service/documents/update-docuement-item-select";
 const GET_IF_Exist_CART = "/v1/erp-service/documents/get-exist-document";
 const GET_DOCUMENT_PDF_URL = "/v1/erp-service/documents/get-document-pdf";
+const GET_PDF_LINK_URL = "/v1/erp-service/documents/get-pdf-link";
 const GET_BOARD_MISSION_PDF =
   "/v1/erp-service/board-missions-tables/export-board-mission-pdf";
 const GET_ORDER_BOARD_MISSION_PDF =
@@ -437,6 +438,20 @@ const getDocumentPdfApi: ICallAndSetData = async (
     GET_DOCUMENT_PDF_URL,
     setState,
     data
+  );
+};
+
+const getPdfLinkApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data: {  linkId: string }
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.GET,
+    `${GET_PDF_LINK_URL}/${data.linkId}`,
+    setState,
+    {}
   );
 };
 
@@ -1548,6 +1563,7 @@ export {
   duplicateDocumentApi,
   duplicateWithAnotherQuantityApi,
   getDocumentPdfApi,
+  getPdfLinkApi,
   updatePurchaseNumberApi,
   checkPurchaseNumberExistsApi,
   addDeliveryApi,

@@ -208,7 +208,7 @@ const useSendPaymentModal = ({ openPaymentModal, documentType }) => {
 
     const contactMail =
       selectedContact?.contactMail || payState.contactMail || "";
-
+   
     const dataToSend = {
       documentId: payState.documentId,
       price: payState?.totalPayment,
@@ -220,6 +220,7 @@ const useSendPaymentModal = ({ openPaymentModal, documentType }) => {
       sendByMail: payState.sendByMail,
       sendBySms: payState.sendBySms,
       sendByWhatsapp: payState.sendByWhatsapp,
+      percentageOfTotal: payState.percentageOfTotal
     };
 
     if (payState.totalPayment === 0) {

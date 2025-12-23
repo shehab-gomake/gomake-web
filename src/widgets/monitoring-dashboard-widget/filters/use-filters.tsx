@@ -1,6 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { selectedAgentIdsState } from "./states/selected-agent-id";
 import { useRecoilState } from "recoil";
+import { useMemo } from "react";
 import { useAllProductsDropDownList } from "@/hooks/use-products-drop-down-list";
 import { useAgentsList } from "@/hooks/use-agent-list";
 import { selectedProductTypesIdsState } from "./states/selected-product-type-id";
@@ -14,7 +15,10 @@ import {
 } from "./states/selected-job-types-ids";
 import { selectedDocumentTypeState } from "./states/selected-document-type";
 import { selectedDocumentStatusesState } from "./states/selected-document-statuses";
-import { DocumentTypeEnums } from "@/enums/document-type-enum";
+import {
+  DocumentTypeEnums,
+  INVOICE_AND_OPEN_DELIVERY_NOTES_AND_ORDERS_ID,
+} from "@/enums/document-type-enum";
 
 const useSalesDashboardFilters = () => {
   const { t } = useTranslation();
@@ -124,16 +128,41 @@ const useSalesDashboardFilters = () => {
     setSelectedJobTypesIds(isAllSelected ? [] : allIds);
   };
 
-  // Document status values aligned with backend enum: Open=1, Closed=2, PartialClosed=3
-  const documentStatusCategories = [
-    { id: 1, label: t("sales.quote.open") },
-    { id: 2, label: t("sales.quote.closed") },
-    { id: 3, label: t("sales.quote.partialClosed") },
+  // Document status values - different options based on document type
+  // For Order and Quote: Open=1, Closed=2
+  // For Invoice and DeliveryNote: Open=1, Closed=2, PartialClosed=3
+  const documentStatusCategories = useMemo(() => {
+    if (
+      selectedDocumentType === DocumentTypeEnums.Order ||
+      selectedDocumentType === DocumentTypeEnums.Quote
+    ) {
+      return [
+        { id: 1, label: t("sales.quote.open") },
+        { id: 2, label: t("sales.quote.closed") },
+      ];
+    }
+    // For Invoice, DeliveryNote, or any other type
+    return [
+      { id: 1, label: t("sales.quote.open") },
+      { id: 2, label: t("sales.quote.closed") },
+      { id: 3, label: t("sales.quote.partialClosed") },
+    ];
+  }, [selectedDocumentType, t]);
+
+  // Show document status filter for all document types except the special option
+  const showDocumentStatusFilter =
+    selectedDocumentType !== null &&
+    selectedDocumentType !== INVOICE_AND_OPEN_DELIVERY_NOTES_AND_ORDERS_ID;
+
+  // Production status values aligned with backend enum: InProcess=1, Ready=2
+  const productionStatusCategories = [
+    { id: 1, label: t("dashboard-widget.inProcess") },
+    { id: 2, label: t("documentStatus.Order.Ready") },
   ];
 
-  const showDocumentStatusFilter =
-    selectedDocumentType === DocumentTypeEnums.Invoice ||
-    selectedDocumentType === DocumentTypeEnums.DeliveryNote;
+  // Show production status filter only when Order is selected (not the special option)
+  const showProductionStatusFilter =
+    selectedDocumentType === DocumentTypeEnums.Order;
 
   const toggleDocumentStatus = (id: number) => {
     setSelectedDocumentStatuses((prev) =>
@@ -178,6 +207,8 @@ const useSalesDashboardFilters = () => {
     toggleDocumentStatus,
     toggleAllDocumentStatuses,
     showDocumentStatusFilter,
+    // production statuses
+    showProductionStatusFilter,
   };
 };
 
