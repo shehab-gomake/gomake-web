@@ -2663,14 +2663,16 @@ const useDigitalOffsetPrice = ({
                 defualtValueConfig.values.length > 0
               ) {
                 defaultValue = defualtValueConfig.values[0];
-              } else if (
-                defualtValueConfig &&
-                defualtValueConfig.materialValueIds &&
-                defualtValueConfig.materialValueIds.length > 0
-              ) {
-                defaultValue =
-                  defualtValueConfig.materialValueIds[0].valueId ?? defualtValueConfig.id;
-              } else if (defualtValueConfig) {
+              }
+              // else if (
+              //   defualtValueConfig &&
+              //   defualtValueConfig.materialValueIds &&
+              //   defualtValueConfig.materialValueIds.length > 0
+              // ) {
+              //   defaultValue =
+              //     defualtValueConfig.materialValueIds[0].valueId ?? defualtValueConfig.id;
+              // }
+              else if (defualtValueConfig) {
                 defaultValue = defualtValueConfig.id;
               }
             }
@@ -4941,65 +4943,65 @@ const useDigitalOffsetPrice = ({
     productTemplate,
     subProducts
   ) => {
-    const resolveParameterValues = (param) => {
-      if (param?.parameterType === 11) {
-        const values = [];
+    // const resolveParameterValues = (param) => {
+    //   if (param?.parameterType === 11) {
+    //     const values = [];
 
-        if (param) {
-          if (Array.isArray(param.valueIds) && param.valueIds.length > 0) {
-            values.push(...param.valueIds);
-          } else if (param.valueIds) {
-            values.push(param.valueIds);
-          }
+    //     if (param) {
+    //       if (Array.isArray(param.valueIds) && param.valueIds.length > 0) {
+    //         values.push(...param.valueIds);
+    //       } else if (param.valueIds) {
+    //         values.push(param.valueIds);
+    //       }
 
-          if (Array.isArray(param.values) && param.values.length > 0) {
-            values.push(...param.values);
-          } else if (param.values) {
-            values.push(param.values);
-          }
-        }
+    //       if (Array.isArray(param.values) && param.values.length > 0) {
+    //         values.push(...param.values);
+    //       } else if (param.values) {
+    //         values.push(param.values);
+    //       }
+    //     }
 
-        if (values.length > 0) {
-          return values;
-        }
+    //     if (values.length > 0) {
+    //       return values;
+    //     }
 
-        const defaultConfig = parameter?.valuesConfigs?.find((x) => x.isDefault);
-        if (defaultConfig) {
-          if (defaultConfig.values && defaultConfig.values.length > 0) {
-            return [...defaultConfig.values];
-          }
-          if (defaultConfig.materialValueIds && defaultConfig.materialValueIds.length > 0) {
-            const materialValues = defaultConfig.materialValueIds
-              .map((mv) => mv.valueId)
-              .filter((valueId) => valueId);
-            if (materialValues.length > 0) {
-              return materialValues;
-            }
-          }
-          if (defaultConfig.id) {
-            return [defaultConfig.id];
-          }
-        }
+    //     const defaultConfig = parameter?.valuesConfigs?.find((x) => x.isDefault);
+    //     if (defaultConfig) {
+    //       if (defaultConfig.values && defaultConfig.values.length > 0) {
+    //         return [...defaultConfig.values];
+    //       }
+    //       if (defaultConfig.materialValueIds && defaultConfig.materialValueIds.length > 0) {
+    //         const materialValues = defaultConfig.materialValueIds
+    //           .map((mv) => mv.valueId)
+    //           .filter((valueId) => valueId);
+    //         if (materialValues.length > 0) {
+    //           return materialValues;
+    //         }
+    //       }
+    //       if (defaultConfig.id) {
+    //         return [defaultConfig.id];
+    //       }
+    //     }
 
-        if (parameter?.defaultValue) {
-          return [parameter.defaultValue];
-        }
+    //     if (parameter?.defaultValue) {
+    //       return [parameter.defaultValue];
+    //     }
 
-        return [];
-      }
-      else {
-        const valueToCheck =
-          param?.ParameterType === 11 ? param?.valueIds : param?.values;
-        const valuesToCheck = Array.isArray(valueToCheck)
-          ? valueToCheck
-          : valueToCheck
-            ? [valueToCheck]
-            : [];
+    //     return [];
+    //   }
+    //   else {
+    //     const valueToCheck =
+    //       param?.ParameterType === 11 ? param?.valueIds : param?.values;
+    //     const valuesToCheck = Array.isArray(valueToCheck)
+    //       ? valueToCheck
+    //       : valueToCheck
+    //         ? [valueToCheck]
+    //         : [];
 
-        return valuesToCheck;
-      }
+    //     return valuesToCheck;
+    //   }
 
-    };
+    // };
 
     const hasRelatedParams = parameter?.relatedParameters?.length > 0;
     const hasChildParams = parameter?.childsParameters?.length > 0;
@@ -5225,7 +5227,11 @@ const useDigitalOffsetPrice = ({
           relatedParameter.selectedValueIds.length > 0
         ) {
           // Use selectedValueIds: show when selected value is in selectedValueIds
-          const valueIdsToCheck = resolveParameterValues(parm);
+          const valueIdsToCheck = Array.isArray(parm?.valueIds)
+            ? parm.valueIds
+            : parm?.valueIds
+              ? [parm.valueIds]
+              : [];
           const valueInArray = valueIdsToCheck.some((valueId) =>
             relatedParameter.selectedValueIds.includes(valueId)
           );
@@ -5237,12 +5243,16 @@ const useDigitalOffsetPrice = ({
           relatedParameter.notSelectedValueIds.length > 0
         ) {
           // Use notSelectedValueIds: show when selected value is NOT in notSelectedValueIds (reverse logic)
-          const valueIdsToCheck = resolveParameterValues(parm);
+          const valueIdsToCheck = Array.isArray(parm?.valueIds)
+            ? parm.valueIds
+            : parm?.valueIds
+              ? [parm.valueIds]
+              : [];
           const valueInNotSelectedArray = valueIdsToCheck.some((valueId) =>
             relatedParameter.notSelectedValueIds.includes(valueId)
           );
           // Show if value is NOT in notSelectedValueIds
-          if (!valueInNotSelectedArray && valueIdsToCheck.length > 0) {
+          if (!valueInNotSelectedArray && parm?.valueIds) {
             shouldShow = true;
           }
         }
@@ -5376,7 +5386,13 @@ const useDigitalOffsetPrice = ({
           relatedParameter.selectedValueIds.length > 0
         ) {
           // Use selectedValueIds: show when selected value is in selectedValueIds
-          const valuesToCheck = resolveParameterValues(parm);
+          const valueToCheck =
+            parm?.ParameterType === 11 ? parm?.valueIds : parm?.values;
+          const valuesToCheck = Array.isArray(valueToCheck)
+            ? valueToCheck
+            : valueToCheck
+              ? [valueToCheck]
+              : [];
           const valueInArray =
             valuesToCheck.some((value) =>
               relatedParameter.selectedValueIds.includes(value)
@@ -5398,16 +5414,27 @@ const useDigitalOffsetPrice = ({
           relatedParameter.notSelectedValueIds.length > 0
         ) {
           // Use notSelectedValueIds: show when selected value is NOT in notSelectedValueIds (reverse logic)
-          const valuesToCheck = resolveParameterValues(parm);
+          const valueToCheck =
+            parm?.ParameterType === 11 ? parm?.valueIds : parm?.values;
+          const valuesToCheck = Array.isArray(valueToCheck)
+            ? valueToCheck
+            : valueToCheck
+              ? [valueToCheck]
+              : [];
           const valueInNotSelectedArray = valuesToCheck.some((value) =>
             relatedParameter.notSelectedValueIds.includes(value)
           );
           // Show if value is NOT in notSelectedValueIds
           // Only show if there's a selection AND the value is not in notSelectedValueIds
-          if (!valueInNotSelectedArray && valuesToCheck.length > 0) {
-            shouldShow = true;
+          if (
+            !valueInNotSelectedArray &&
+            myParameter &&
+            valueToCheck &&
+            valuesToCheck.length > 0
+          ) {
+            // If no value selected (!parm), shouldShow remains false (parameter stays hidden)
+            shouldShow = false;
           }
-          // If no value selected (!parm), shouldShow remains false (parameter stays hidden)
         }
 
         if (shouldShow) {
