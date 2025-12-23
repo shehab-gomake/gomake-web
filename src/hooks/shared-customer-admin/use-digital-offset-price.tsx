@@ -4942,49 +4942,63 @@ const useDigitalOffsetPrice = ({
     subProducts
   ) => {
     const resolveParameterValues = (param) => {
-      const values = [];
+      if (param?.parameterType === 11) {
+        const values = [];
 
-      if (param) {
-        if (Array.isArray(param.valueIds) && param.valueIds.length > 0) {
-          values.push(...param.valueIds);
-        } else if (param.valueIds) {
-          values.push(param.valueIds);
-        }
+        if (param) {
+          if (Array.isArray(param.valueIds) && param.valueIds.length > 0) {
+            values.push(...param.valueIds);
+          } else if (param.valueIds) {
+            values.push(param.valueIds);
+          }
 
-        if (Array.isArray(param.values) && param.values.length > 0) {
-          values.push(...param.values);
-        } else if (param.values) {
-          values.push(param.values);
-        }
-      }
-
-      if (values.length > 0) {
-        return values;
-      }
-
-      const defaultConfig = parameter?.valuesConfigs?.find((x) => x.isDefault);
-      if (defaultConfig) {
-        if (defaultConfig.values && defaultConfig.values.length > 0) {
-          return [...defaultConfig.values];
-        }
-        if (defaultConfig.materialValueIds && defaultConfig.materialValueIds.length > 0) {
-          const materialValues = defaultConfig.materialValueIds
-            .map((mv) => mv.valueId)
-            .filter((valueId) => valueId);
-          if (materialValues.length > 0) {
-            return materialValues;
+          if (Array.isArray(param.values) && param.values.length > 0) {
+            values.push(...param.values);
+          } else if (param.values) {
+            values.push(param.values);
           }
         }
-        if (defaultConfig.id) {
-          return [defaultConfig.id];
+
+        if (values.length > 0) {
+          return values;
         }
+
+        const defaultConfig = parameter?.valuesConfigs?.find((x) => x.isDefault);
+        if (defaultConfig) {
+          if (defaultConfig.values && defaultConfig.values.length > 0) {
+            return [...defaultConfig.values];
+          }
+          if (defaultConfig.materialValueIds && defaultConfig.materialValueIds.length > 0) {
+            const materialValues = defaultConfig.materialValueIds
+              .map((mv) => mv.valueId)
+              .filter((valueId) => valueId);
+            if (materialValues.length > 0) {
+              return materialValues;
+            }
+          }
+          if (defaultConfig.id) {
+            return [defaultConfig.id];
+          }
+        }
+
+        if (parameter?.defaultValue) {
+          return [parameter.defaultValue];
+        }
+
+        return [];
+      }
+      else {
+        const valueToCheck =
+          param?.ParameterType === 11 ? param?.valueIds : param?.values;
+        const valuesToCheck = Array.isArray(valueToCheck)
+          ? valueToCheck
+          : valueToCheck
+            ? [valueToCheck]
+            : [];
+
+        return valuesToCheck;
       }
 
-      if (parameter?.defaultValue) {
-        return [parameter.defaultValue];
-      }
-
-      return [];
     };
 
     const hasRelatedParams = parameter?.relatedParameters?.length > 0;
