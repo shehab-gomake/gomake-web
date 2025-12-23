@@ -37,6 +37,8 @@ export interface StationMetrics {
   time: number;
   jobs: number;
   percentageReported?: number;
+  unitName?: string;
+  unitQuantity?: number;
 }
 
 export interface CapacityMetricsDTO {

@@ -129,12 +129,16 @@ const MainProductionReportTable = () => {
     boardMissionsStatusFilter,
     statuses,
     fontWeight = "bold",
+    unitName,
+    unitQuantity,
   }: {
     timeValue: string;
     jobCount: number;
     boardMissionsStatusFilter?: BoardMissionsStatusFilterItem[];
     statuses: number[];
     fontWeight?: "bold" | "normal";
+    unitName?: string;
+    unitQuantity?: number;
   }) => {
     const isClickable = hasStatusIds(boardMissionsStatusFilter, statuses);
     const item = { boardMissionsStatusFilter };
@@ -165,6 +169,12 @@ const MainProductionReportTable = () => {
         >
           {jobCount}
         </span>
+        {unitName && unitQuantity !== undefined && (
+          <span style={{ fontWeight, lineHeight: 1.2 }}>
+            {" / "}
+            {unitQuantity} {t(`productionReport.${unitName}`)}
+          </span>
+        )}
       </Box>
     );
   };
@@ -177,6 +187,8 @@ const MainProductionReportTable = () => {
     boardMissionsStatusFilter,
     statuses,
     fontWeight = "bold",
+    unitName,
+    unitQuantity,
   }: {
     timeValue: string;
     jobCount: number;
@@ -184,6 +196,8 @@ const MainProductionReportTable = () => {
     boardMissionsStatusFilter?: BoardMissionsStatusFilterItem[];
     statuses: number[];
     fontWeight?: "bold" | "normal";
+    unitName?: string;
+    unitQuantity?: number;
   }) => {
     const isClickable = hasStatusIds(boardMissionsStatusFilter, statuses);
     const item = { boardMissionsStatusFilter };
@@ -214,6 +228,12 @@ const MainProductionReportTable = () => {
           >
             {jobCount}
           </span>
+          {unitName && unitQuantity !== undefined && (
+            <span style={{ fontWeight, lineHeight: 1.2 }}>
+              {" / "}
+              {unitQuantity} {t(`productionReport.${unitName}`)}
+            </span>
+          )}
         </Box>
         {totalEstimatedJobs > 0 && (
           <Typography
@@ -432,6 +452,8 @@ const MainProductionReportTable = () => {
               boardMissionsStatusFilter={station.boardMissionsStatusFilter}
               statuses={[0, 1]} // totalJobs = inProcess + done
               fontWeight="normal"
+              unitName={station.totalEstimated.unitName}
+              unitQuantity={station.totalEstimated.unitQuantity}
             />,
             <ClickableJobCount
               timeValue={formatTime(station.done.time)}
@@ -439,6 +461,8 @@ const MainProductionReportTable = () => {
               boardMissionsStatusFilter={station.boardMissionsStatusFilter}
               statuses={[1]} // done
               fontWeight="normal"
+              unitName={station.done.unitName}
+              unitQuantity={station.done.unitQuantity}
             />,
             <ClickableJobCount
               timeValue={formatTime(station.inProcess.time)}
@@ -446,6 +470,8 @@ const MainProductionReportTable = () => {
               boardMissionsStatusFilter={station.boardMissionsStatusFilter}
               statuses={[0]} // inProcess
               fontWeight="normal"
+              unitName={station.inProcess.unitName}
+              unitQuantity={station.inProcess.unitQuantity}
             />,
             <ClickableReportedJobCount
               timeValue={formatTime(station.reported.time)}
@@ -454,6 +480,8 @@ const MainProductionReportTable = () => {
               boardMissionsStatusFilter={station.boardMissionsStatusFilter}
               statuses={[2]} // reported
               fontWeight="normal"
+              unitName={station.reported.unitName}
+              unitQuantity={station.reported.unitQuantity}
             />,
             <Box sx={{ py: 0.4 }}>
               <span style={{ lineHeight: 1.2, display: "block" }}>
@@ -526,7 +554,7 @@ const MainProductionReportTable = () => {
         </Typography>
       </InfoTooltip>
       <Typography variant="caption" color="textSecondary">
-        {t("productionReport.timeJobs")}
+        {t("productionReport.timeJobs")} / {t("productionReport.materialUnits")}
       </Typography>
     </Box>,
     <Box>
@@ -536,7 +564,7 @@ const MainProductionReportTable = () => {
         </Typography>
       </InfoTooltip>
       <Typography variant="caption" color="textSecondary">
-        {t("productionReport.timeJobs")}
+        {t("productionReport.timeJobs")} / {t("productionReport.materialUnits")}
       </Typography>
     </Box>,
     <Box>
@@ -546,7 +574,7 @@ const MainProductionReportTable = () => {
         </Typography>
       </InfoTooltip>
       <Typography variant="caption" color="textSecondary">
-        {t("productionReport.timeJobs")}
+        {t("productionReport.timeJobs")} / {t("productionReport.materialUnits")}
       </Typography>
     </Box>,
     <Box>
