@@ -5385,8 +5385,9 @@ const useDigitalOffsetPrice = ({
           relatedParameter.selectedValueIds &&
           relatedParameter.selectedValueIds.length > 0
         ) {
+          debugger
           // Use selectedValueIds: show when selected value is in selectedValueIds
-          const valueToCheck = parm?.parameterType === 11 ? parm?.valueIds : parm?.values;
+          const valueToCheck = (parm?.parameterType === 11 || parm?.ParameterType === 11) ? parm?.valueIds : parm?.values;
           const valuesToCheck = Array.isArray(valueToCheck)
             ? valueToCheck
             : valueToCheck
@@ -5414,7 +5415,7 @@ const useDigitalOffsetPrice = ({
         ) {
           // Use notSelectedValueIds: show when selected value is NOT in notSelectedValueIds (reverse logic)
           const valueToCheck =
-            parm?.parameterType === 11 ? parm?.valueIds : parm?.values;
+            (parm?.parameterType === 11 || parm?.ParameterType === 11) ? parm?.valueIds : parm?.values;
           const valuesToCheck = Array.isArray(valueToCheck)
             ? valueToCheck
             : valueToCheck
