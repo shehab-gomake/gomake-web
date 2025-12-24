@@ -44,6 +44,7 @@ const UserForm = ({ user, onDelete, setUser }: IProps) => {
 
   const showPassFiled = user.id ? true : false;
 
+  // Fetch roles once on mount
   useEffect(() => {
     const fetchRoles = async () => {
       const callBack = (res) => {
@@ -60,19 +61,6 @@ const UserForm = ({ user, onDelete, setUser }: IProps) => {
             })
           );
           setRolesOptions(roles);
-
-          // Set default role if user doesn't have one and there's a role with isClientRole = true
-          if (!user.roleId && roles.length > 0) {
-            const defaultRole = roles.find(
-              (role) => role.isClientRole === true
-            );
-            if (defaultRole) {
-              setUser((prevUser) => ({
-                ...prevUser,
-                roleId: defaultRole.value,
-              }));
-            }
-          }
         }
       };
       await getAllRolesForDropdownApi(callApi, callBack);
@@ -80,6 +68,21 @@ const UserForm = ({ user, onDelete, setUser }: IProps) => {
     fetchRoles();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Set default role when roles are loaded and user doesn't have a roleId
+  useEffect(() => {
+    if (rolesOptions.length > 0 && !user.roleId) {
+      const defaultRole = rolesOptions.find(
+        (role) => role.isClientRole === true
+      );
+      if (defaultRole) {
+        setUser({
+          ...user,
+          roleId: defaultRole.value,
+        });
+      }
+    }
+  }, [rolesOptions, user, setUser]);
 
   const onChangeInputs = (key, value) => {
     if (key == "email") {
