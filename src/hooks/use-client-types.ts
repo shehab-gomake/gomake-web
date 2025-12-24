@@ -24,6 +24,7 @@ const useClientTypesList = (
           id: types.id,
           additionProfits: types?.additionProfits ?? 0,
           discount: types?.discount ?? 0,
+          excludeOutsourceJobs: types?.excludeOutsourceJobs ?? false,
         }));
         setClientTypesCategories(clientTypes);
       }

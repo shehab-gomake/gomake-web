@@ -15,6 +15,7 @@ const useClientType = (cardTypeId, selectedClientTypeId) => {
     clientTypeName: "",
     additionProfits: "0",
     discount: "0",
+    excludeOutsourceJobs: false,
   });
   const { getClientTypesCategories } = useClientTypesList();
 
@@ -28,6 +29,7 @@ const useClientType = (cardTypeId, selectedClientTypeId) => {
         clientTypeName: selectedItem.label,
         additionProfits: selectedItem.additionProfits,
         discount: selectedItem.discount,
+        excludeOutsourceJobs: selectedItem.excludeOutsourceJobs ?? false,
       });
     }
   }, [selectedItem]);
@@ -42,7 +44,8 @@ const useClientType = (cardTypeId, selectedClientTypeId) => {
   const addClientType = async (
     name: string,
     additionProfits?: string,
-    discount?: string
+    discount?: string,
+    excludeOutsourceJobs?: boolean
   ) => {
     const callBack = (res) => {
       if (res.success) {
@@ -54,6 +57,7 @@ const useClientType = (cardTypeId, selectedClientTypeId) => {
       cardType: cardTypeId,
       additionProfits,
       discount,
+      excludeOutsourceJobs,
     });
   };
 
@@ -63,6 +67,7 @@ const useClientType = (cardTypeId, selectedClientTypeId) => {
       clientTypeName: editedValues.clientTypeName,
       additionProfits: editedValues.additionProfits,
       discount: editedValues.discount,
+      excludeOutsourceJobs: editedValues.excludeOutsourceJobs,
     };
     const { label, ...updatedClientTypeWithoutLabel } = updatedClientType;
 
