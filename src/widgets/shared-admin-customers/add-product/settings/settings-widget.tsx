@@ -189,7 +189,12 @@ const SettingsWidget = ({
                   };
                 })}
                 placeholder={t("products.addProduct.admin.byClient")}
-                style={clasess.multiSelectStyle}
+                style={{
+                  ...clasess.multiSelectStyle,
+                  overflow: "auto",
+                  height: "auto",
+                  minHeight: "40px",
+                }}
                 multiple
                 onChangeTextField={checkWhatRenderArray}
                 loading={isFetching}
