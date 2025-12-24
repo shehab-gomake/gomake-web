@@ -59,7 +59,10 @@ import {
   columnOrderStateFamily,
   columnVisibilityStateFamily,
 } from "./states/board-missions-columns-settings-state";
-import { printHouseHasFrontDeskFeature, printHouseUsePrintNode } from "@/store/print-house-profile";
+import {
+  printHouseHasFrontDeskFeature,
+  printHouseUsePrintNode,
+} from "@/store/print-house-profile";
 import { useScheduledReports } from "@/hooks/use-scheduled-reports";
 import { DocumentTypeEnums } from "@/enums/document-type-enum";
 import { useFrontDeskEmailIntegration } from "../quotes/hooks/use-frontdesk-email-integration";
@@ -506,9 +509,9 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     t("boardMissions.outSourceType"),
     t("boardMissions.quantity"),
     CheckPermission(Permissions.SHOW_COSTS_IN_BOARD_MISSIONS) &&
-    t("boardMissions.costFromOrderItem"),
+      t("boardMissions.costFromOrderItem"),
     CheckPermission(Permissions.SHOW_COSTS_IN_BOARD_MISSIONS) &&
-    t("boardMissions.priceFromOrderItem"),
+      t("boardMissions.priceFromOrderItem"),
     isPrintHouseUsePrintNode && t("boardMissions.isPrinted"),
     t("boardMissions.isQualityFixJob"),
     t("boardMissions.jobName"),
@@ -552,7 +555,6 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     selectedSupplierId(value);
   };
 
-  //!here
   const handleClickSearch = () => {
     const newQuery: Query = { ...router.query };
 
@@ -832,8 +834,8 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
             {mission?.storage === "undefined"
               ? ""
               : mission?.storage
-                ? ` ${mission.storage}`
-                : " "}
+              ? ` ${mission.storage}`
+              : " "}
           </div>
         </>
       );
@@ -850,8 +852,8 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
         mission.station.machineName && mission.station.machineId
           ? mission.station.machineName
           : mission.station?.supplierId
-            ? mission.station.supplierName
-            : mission.station.employeeName;
+          ? mission.station.supplierName
+          : mission.station.employeeName;
       if (empName)
         return `${t(
           "productionStatuses." + mission.boardMissionStatus.name
@@ -991,7 +993,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
         const mapData = _data.data?.map((mission: any) => {
           const itemCalculatedPrice =
             mission?.calculatedPrice &&
-              mission?.calculatedPrice != mission?.price
+            mission?.calculatedPrice != mission?.price
               ? mission?.calculatedPrice
               : 0;
 
@@ -1029,11 +1031,15 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
               </div>
             ),
             missionNumber: mission?.productType
-              ? `${mission?.number} / ${mission?.productTypeName ?? mission?.productType
-              }`
+              ? `${mission?.number} / ${
+                  mission?.productTypeName ?? mission?.productType
+                }`
               : mission?.number,
             relatedDocuments: (() => {
-              const clickBehavior = GetPreferenceValueKey(EPreferences.RELATED_DOCUMENT_CLICK_BEHAVIOR) || "openDocument";
+              const clickBehavior =
+                GetPreferenceValueKey(
+                  EPreferences.RELATED_DOCUMENT_CLICK_BEHAVIOR
+                ) || "openDocument";
               const orderHref =
                 clickBehavior === "openTable"
                   ? `/orders?finalPatternSearch=${mission?.orderNumber}`
@@ -1090,10 +1096,12 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
                 ? `${mission?.cost} ${getCurrencyUnitText(mission?.currency)}`
                 : `${getCurrencyUnitText(mission?.currency)} ${mission?.cost}`,
               priceFromOrderItem: isRTL
-                ? `${mission?.price}${itemCalculatedPrice ? ` (${itemCalculatedPrice})` : ""
-                } ${getCurrencyUnitText(mission?.currency)}`
-                : `${getCurrencyUnitText(mission?.currency)} ${mission?.price}${itemCalculatedPrice ? ` (${itemCalculatedPrice})` : ""
-                }`,
+                ? `${mission?.price}${
+                    itemCalculatedPrice ? ` (${itemCalculatedPrice})` : ""
+                  } ${getCurrencyUnitText(mission?.currency)}`
+                : `${getCurrencyUnitText(mission?.currency)} ${mission?.price}${
+                    itemCalculatedPrice ? ` (${itemCalculatedPrice})` : ""
+                  }`,
             }),
             ...(isPrintHouseUsePrintNode && {
               isPrinted: mission?.isPrinted ? t("modal.yes") : t("modal.no"),
@@ -1155,14 +1163,14 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     const currentProductsIds = Array.isArray(router.query.productsIds)
       ? router.query.productsIds
       : router.query.productsIds
-        ? [router.query.productsIds]
-        : productIds;
+      ? [router.query.productsIds]
+      : productIds;
 
     const currentProofTypes = Array.isArray(router.query.proofTypes)
       ? router.query.proofTypes
       : router.query.proofTypes
-        ? [router.query.proofTypes]
-        : proofTypes;
+      ? [router.query.proofTypes]
+      : proofTypes;
 
     const currentOrderStatus = router.query.orderStatus;
 
@@ -1222,60 +1230,60 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
 
     const data = isClear
       ? {
-        productsIds: [],
-        pageNumber: currentPageNumber || pageNumber,
-        pageSize: currentPageSize,
-        // Clear boardMissionsIds when clearing filters
-        ...(boardMissionsIds && { boardMissionsIds: [] }),
-      }
+          productsIds: [],
+          pageNumber: currentPageNumber || pageNumber,
+          pageSize: currentPageSize,
+          // Clear boardMissionsIds when clearing filters
+          ...(boardMissionsIds && { boardMissionsIds: [] }),
+        }
       : {
-        clientId: router?.query?.clientId || customer?.id,
-        agentId: router?.query?.agentId || agent?.id,
-        search:
-          finalPatternSearch !== null &&
+          clientId: router?.query?.clientId || customer?.id,
+          agentId: router?.query?.agentId || agent?.id,
+          search:
+            finalPatternSearch !== null &&
             finalPatternSearch !== undefined &&
             finalPatternSearch !== ""
-            ? finalPatternSearch
-            : currentFinalPatternSearch,
-        fromDate:
-          currentFormattedFromDate || (fromDate && GetDateFormat(fromDate)),
-        toDate: currentFormattedToDate || (toDate && GetDateFormat(toDate)),
-        fromDueDate:
-          currentFormattedFromDueDate ||
-          (fromDueDate && GetDateFormat(fromDueDate)),
-        toDueDate:
-          currentFormattedToDueDate ||
-          (toDueDate && GetDateFormat(toDueDate)),
+              ? finalPatternSearch
+              : currentFinalPatternSearch,
+          fromDate:
+            currentFormattedFromDate || (fromDate && GetDateFormat(fromDate)),
+          toDate: currentFormattedToDate || (toDate && GetDateFormat(toDate)),
+          fromDueDate:
+            currentFormattedFromDueDate ||
+            (fromDueDate && GetDateFormat(fromDueDate)),
+          toDueDate:
+            currentFormattedToDueDate ||
+            (toDueDate && GetDateFormat(toDueDate)),
 
-        fromReadyDate:
-          currentFormattedFromReadyDate ||
-          (fromReadyDate && GetDateFormat(fromReadyDate)),
-        toReadyDate:
-          currentFormattedToReadyDate ||
-          (toReadyDate && GetDateFormat(toReadyDate)),
-        productsIds: currentProductsIds,
-        productionStatus: currentProductionStatus || status?.value,
-        orderStatus: currentOrderStatus || orderStatus?.value,
-        pageNumber: currentPageNumber || pageNumber,
-        pageSize: currentPageSize,
-        orderNumber: router?.query?.orderNumber,
-        order: sortOrder,
-        exampleTypes: currentProofTypes,
-        isPrinted: currentIsPrinted || isPrintedState,
-        isQualityFixJob:
-          currentIsQualityFixJob !== null &&
+          fromReadyDate:
+            currentFormattedFromReadyDate ||
+            (fromReadyDate && GetDateFormat(fromReadyDate)),
+          toReadyDate:
+            currentFormattedToReadyDate ||
+            (toReadyDate && GetDateFormat(toReadyDate)),
+          productsIds: currentProductsIds,
+          productionStatus: currentProductionStatus || status?.value,
+          orderStatus: currentOrderStatus || orderStatus?.value,
+          pageNumber: currentPageNumber || pageNumber,
+          pageSize: currentPageSize,
+          orderNumber: router?.query?.orderNumber,
+          order: sortOrder,
+          exampleTypes: currentProofTypes,
+          isPrinted: currentIsPrinted || isPrintedState,
+          isQualityFixJob:
+            currentIsQualityFixJob !== null &&
             currentIsQualityFixJob !== undefined
-            ? currentIsQualityFixJob
-            : isQualityFixJob !== null
+              ? currentIsQualityFixJob
+              : isQualityFixJob !== null
               ? isQualityFixJob
               : undefined,
-        // Include boardMissionsIds - prioritize dashboard filter, then state
-        ...(dashboardBoardMissionsIds && dashboardBoardMissionsIds.length > 0
-          ? { boardMissionsIds: dashboardBoardMissionsIds }
-          : boardMissionsIds && boardMissionsIds.length > 0
+          // Include boardMissionsIds - prioritize dashboard filter, then state
+          ...(dashboardBoardMissionsIds && dashboardBoardMissionsIds.length > 0
+            ? { boardMissionsIds: dashboardBoardMissionsIds }
+            : boardMissionsIds && boardMissionsIds.length > 0
             ? { boardMissionsIds }
             : {}),
-      };
+        };
     await setBoardMissionsFiltersApi(callApi, callBack, data);
     setIsJobsTableLoading(false);
   };
@@ -1303,8 +1311,9 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
             ),
             supplierName: mission?.supplierName,
             missionNumber: mission?.productType
-              ? `${mission?.number} / ${mission?.productTypeName ?? mission?.productType
-              }`
+              ? `${mission?.number} / ${
+                  mission?.productTypeName ?? mission?.productType
+                }`
               : mission?.number,
             orderNumber: mission?.orderNumber,
             purchaseOrderNumber: mission?.purchaseOrderNumber,
@@ -1325,8 +1334,8 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
             currentBoardMissionStatus: mission?.isReady
               ? t("boardMissions.done")
               : mission?.boardMissionStatus && mission?.station
-                ? `${mission.boardMissionStatus.name} / ${mission.station.actionName}`
-                : "",
+              ? `${mission.boardMissionStatus.name} / ${mission.station.actionName}`
+              : "",
             more: (
               <MoreMenuWidget
                 mission={mission}
@@ -1376,44 +1385,44 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     const currentProofTypes = Array.isArray(router.query.proofTypes)
       ? router.query.proofTypes
       : router.query.proofTypes
-        ? [router.query.proofTypes]
-        : proofTypes;
+      ? [router.query.proofTypes]
+      : proofTypes;
     await getAllPurchaseJobsApi(
       callApi,
       callBack,
       isClear
         ? {
-          productsIds: [],
-          pageNumber: currentPageNumber || pageNumber,
-          pageSize: currentPageSize,
-        }
+            productsIds: [],
+            pageNumber: currentPageNumber || pageNumber,
+            pageSize: currentPageSize,
+          }
         : {
-          clientId: customer?.id,
-          agentId: agent?.id,
-          search:
-            finalPatternSearch !== null &&
+            clientId: customer?.id,
+            agentId: agent?.id,
+            search:
+              finalPatternSearch !== null &&
               finalPatternSearch !== undefined &&
               finalPatternSearch !== ""
-              ? finalPatternSearch
-              : currentFinalPatternSearch,
-          fromDate: fromDate && GetDateFormat(fromDate),
-          toDate: toDate && GetDateFormat(toDate),
+                ? finalPatternSearch
+                : currentFinalPatternSearch,
+            fromDate: fromDate && GetDateFormat(fromDate),
+            toDate: toDate && GetDateFormat(toDate),
 
-          fromDueDate: fromDueDate && GetDateFormat(fromDueDate),
-          toDueDate: toDueDate && GetDateFormat(toDueDate),
+            fromDueDate: fromDueDate && GetDateFormat(fromDueDate),
+            toDueDate: toDueDate && GetDateFormat(toDueDate),
 
-          fromReadyDate: fromReadyDate && GetDateFormat(fromReadyDate),
-          toReadyDate: toReadyDate && GetDateFormat(toReadyDate),
+            fromReadyDate: fromReadyDate && GetDateFormat(fromReadyDate),
+            toReadyDate: toReadyDate && GetDateFormat(toReadyDate),
 
-          productsIds: productIds,
-          productionStatus: status?.value,
-          orderStatus: orderStatus?.value,
-          exampleTypes: currentProofTypes,
-          pageNumber: currentPageNumber || pageNumber,
-          pageSize: currentPageSize,
-          supplierId: supplierId?.value,
-          isPurchaseJobs: true,
-        }
+            productsIds: productIds,
+            productionStatus: status?.value,
+            orderStatus: orderStatus?.value,
+            exampleTypes: currentProofTypes,
+            pageNumber: currentPageNumber || pageNumber,
+            pageSize: currentPageSize,
+            supplierId: supplierId?.value,
+            isPurchaseJobs: true,
+          }
     );
     setIsJobsTableLoading(false);
   };
@@ -1422,12 +1431,16 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     const { targetOrderId, targetOrderNumber } = router?.query;
     if (targetOrderId)
       navigate(
-        `/products/duplicate?clientTypeId=${missionItem?.clientTypeId
-        }&customerId=${missionItem?.customerID
+        `/products/duplicate?clientTypeId=${
+          missionItem?.clientTypeId
+        }&customerId=${
+          missionItem?.customerID
         }&customerName=${encodeURIComponent(
           missionItem?.clientName || ""
-        )}&productId=${missionItem?.productID}&documentItemId=${missionItem?.orderItemId
-        }&documentType=${DOCUMENT_TYPE.order
+        )}&productId=${missionItem?.productID}&documentItemId=${
+          missionItem?.orderItemId
+        }&documentType=${
+          DOCUMENT_TYPE.order
         }&documentNumber=${targetOrderNumber}&documentId=${targetOrderId}&duplicateType=${duplicateType}`
       );
     else
@@ -1729,13 +1742,20 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     openEmailComposer,
     closeEmailComposer,
   } = useFrontDeskEmailIntegration({
-    documentType: router.query.openComposer === "true" ? DOCUMENT_TYPE.order : DOCUMENT_TYPE.boardMission,
+    documentType:
+      router.query.openComposer === "true"
+        ? DOCUMENT_TYPE.order
+        : DOCUMENT_TYPE.boardMission,
   });
 
-  const [pendingOrderIdForComposer, setPendingOrderIdForComposer] = useState<string | null>(null);
+  const [pendingOrderIdForComposer, setPendingOrderIdForComposer] = useState<
+    string | null
+  >(null);
   const composerOpenedRef = useRef(false);
 
-  const onClickMoveBoardMissionToDone = async (sendMessage: boolean = false) => {
+  const onClickMoveBoardMissionToDone = async (
+    sendMessage: boolean = false
+  ) => {
     const callBack = (res) => {
       if (res?.success) {
         alertSuccessUpdate();
@@ -2132,7 +2152,11 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
         }
       } catch (apiError: any) {
         // Silently handle API errors - don't show unhandled error to user
-        console.warn("Failed to open email composer for order:", orderId, apiError?.message || apiError);
+        console.warn(
+          "Failed to open email composer for order:",
+          orderId,
+          apiError?.message || apiError
+        );
 
         // Clear the pending order ID on error and reset the ref
         if (isMounted) {
@@ -2169,7 +2193,12 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
       }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [router.isReady, router.query.openComposer, router.query.orderId, hasFrontDeskFeature]);
+  }, [
+    router.isReady,
+    router.query.openComposer,
+    router.query.orderId,
+    hasFrontDeskFeature,
+  ]);
 
   // Clear pending order ID when composer closes
   useEffect(() => {
@@ -2208,14 +2237,14 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     const currentProductsIds = Array.isArray(router.query.productsIds)
       ? router.query.productsIds
       : router.query.productsIds
-        ? [router.query.productsIds]
-        : productIds;
+      ? [router.query.productsIds]
+      : productIds;
 
     const currentProofTypes = Array.isArray(router.query.proofTypes)
       ? router.query.proofTypes
       : router.query.proofTypes
-        ? [router.query.proofTypes]
-        : proofTypes;
+      ? [router.query.proofTypes]
+      : proofTypes;
 
     const currentOrderStatus = router.query.orderStatus;
 
@@ -2297,8 +2326,8 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
       agentId: router?.query?.agentId || agent?.id,
       search:
         finalPatternSearch !== null &&
-          finalPatternSearch !== undefined &&
-          finalPatternSearch !== ""
+        finalPatternSearch !== undefined &&
+        finalPatternSearch !== ""
           ? finalPatternSearch
           : currentFinalPatternSearch,
       fromDate:
@@ -2325,8 +2354,8 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
       exampleTypes: currentProofTypes,
       // Include boardMissionsIds when applyBoardMissionsFilter is true
       ...(router.query.applyBoardMissionsFilter === "1" &&
-        exportBoardMissionsIds &&
-        exportBoardMissionsIds.length > 0
+      exportBoardMissionsIds &&
+      exportBoardMissionsIds.length > 0
         ? { boardMissionsIds: exportBoardMissionsIds }
         : {}),
     };
