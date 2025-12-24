@@ -24,7 +24,8 @@ const OrderJobsCard: React.FC<OrderJobsCardProps> = ({
 
   const handleNavigateToJobs = () => {
     if (quoteNumber) {
-      router.push(`/jobs?pageNumber=1&finalPatternSearch=${quoteNumber}`);
+      window.open(`/jobs?pageNumber=1&finalPatternSearch=${quoteNumber}`, "_blank");
+      //router.push();
       onClose?.();
     }
   };
