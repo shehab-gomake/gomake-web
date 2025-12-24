@@ -21,7 +21,6 @@ const SettingsWidget = ({
   onChangeStateProduct,
   isUpdate = false,
 }) => {
-  console.log("productState", productState);
   const { clasess } = useStyle();
   const { t } = useTranslation();
   const {
@@ -61,7 +60,6 @@ const SettingsWidget = ({
     updateSelectedCustomersCache,
     selectedCustomersCache,
   } = useSettings({ onClickParametersTab, productState, onChangeStateProduct });
-  console.log("productClientsList", productClientsList);
 
   const [defultProductSKU, setDefultProductSKU] = useState();
   const [defultTemplate, setDefultTemplate] = useState();
@@ -123,8 +121,6 @@ const SettingsWidget = ({
     }
     return defultTemplate || null;
   }, [isCompositeStructure, productState?.templateId, pricingTypeOptions, defultTemplate]);
-
-  console.log("selectedPricingType", selectedPricingType);
 
   useEffect(() => {
     if (!isCompositeStructure) {
@@ -408,7 +404,6 @@ const SettingsWidget = ({
                           : productState?.templateId
                     }
                     onChange={(e: any, value: any) => {
-                      console.log("value", value);
                       // Store templateId for display but don't send in payload
                       onChangeStateProduct("templateId", value);
                       // If templateId is cleared and not composite, set to BASE
