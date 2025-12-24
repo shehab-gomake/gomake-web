@@ -135,7 +135,7 @@ const OrderNowPrePaymentModal = ({
             <GomakePrimaryButton
               style={classes.btnStyle}
               onClick={() =>
-                handleOrderConfirmation(true, true, totalAmount, false)
+                handleOrderConfirmation(true, true, totalAmount,percentage, false)
               }
             >
               {t("sales.modals.withPaymentMessage")}
@@ -143,7 +143,7 @@ const OrderNowPrePaymentModal = ({
             <GomakePrimaryButton
               style={classes.secondBtn}
               onClick={() =>
-                handleOrderConfirmation(false, true, totalAmount, false)
+                handleOrderConfirmation(false, true, totalAmount,percentage, false)
               }
             >
               {t("sales.modals.withoutPaymentMessage")}

@@ -403,6 +403,7 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     sendMessage: boolean,
     isPrepaymentClient: boolean = false,
     totalPrePaymentAmount: number = 0,
+    percentageOfTotal: number = 0,
     isStripeCash: boolean = false,
     shouldOpenComposer: boolean = false
   ) => {
@@ -428,6 +429,7 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
       sendMessage,
       ...(sendMessage && quoteItemValue?.isUsedStripe && { isStripeCash }),
       ...(isPrepaymentClient && { totalPrePaymentAmount }),
+      ...(isPrepaymentClient && { percentageOfTotal }),
     };
 
     await createOrderApi(callApi, callBack, requestBody);
@@ -451,10 +453,10 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
   const onClickConfirmWithoutNotification = () =>
     handleOrderConfirmation(false);
   const onClickConfirmWithNotification = (isStripeCash: boolean) =>
-    handleOrderConfirmation(true, false, 0, !!isStripeCash);
+    handleOrderConfirmation(true, false, 0,0, !!isStripeCash);
   const onClickConfirm = () => {
     // When frontdesk is enabled, always open composer after order creation
-    handleOrderConfirmation(false, false, 0, false, hasFrontDeskFeature);
+    handleOrderConfirmation(false, false, 0,0, false, hasFrontDeskFeature);
   };
 
   const onClickPrint = async (withInvoices?: boolean) => {
