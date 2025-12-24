@@ -21,6 +21,7 @@ const SettingsWidget = ({
   onChangeStateProduct,
   isUpdate = false,
 }) => {
+  console.log("productState", productState);
   const { clasess } = useStyle();
   const { t } = useTranslation();
   const {
@@ -54,7 +55,11 @@ const SettingsWidget = ({
     productSKU,
     updateProductSKURow,
     productsList,
+    renderOptions,
+    checkWhatRenderArray,
+    isFetching,
   } = useSettings({ onClickParametersTab, productState, onChangeStateProduct });
+  console.log("productClientsList", productClientsList);
 
   const [defultProductSKU, setDefultProductSKU] = useState();
   const [defultTemplate, setDefultTemplate] = useState();
@@ -117,6 +122,8 @@ const SettingsWidget = ({
     return defultTemplate || null;
   }, [isCompositeStructure, productState?.templateId, pricingTypeOptions, defultTemplate]);
 
+  console.log("selectedPricingType", selectedPricingType);
+
   useEffect(() => {
     if (!isCompositeStructure) {
       return;
@@ -172,7 +179,7 @@ const SettingsWidget = ({
             </div>
             <div style={{ width: "100%" }}>
               <GoMakeAutoComplate
-                options={customersList?.map((item) => {
+                options={renderOptions()?.map((item) => {
                   return {
                     ...item,
                     label: item?.name,
@@ -182,21 +189,61 @@ const SettingsWidget = ({
                 placeholder={t("products.addProduct.admin.byClient")}
                 style={clasess.multiSelectStyle}
                 multiple
+                onChangeTextField={checkWhatRenderArray}
+                loading={isFetching}
+                defaultFiltering={false}
                 onChange={(e: any, value: any) => {
+                  // Filter out special options (recentOptions, searchMore, addClient)
+                  const validValues = value?.filter(
+                    (item: any) =>
+                      item?.id &&
+                      item?.id !== "recentOptions" &&
+                      item?.id !== "searchMore" &&
+                      item?.id !== "addClient"
+                  );
                   onChangeStateProduct(
                     "clients",
-                    value?.map((item: any) => item?.id)
+                    validValues?.map((item: any) => item?.id) || []
                   );
                 }}
                 value={productState?.clients?.map((item: any) => {
                   const customer = customersList?.find(
                     (customer: any) => customer?.id === item
                   );
+                  if (!customer) return null;
                   return {
                     label: customer?.name,
                     id: customer?.id,
                   };
-                })}
+                })?.filter(Boolean)}
+                getOptionLabel={(option: any) => {
+                  if (option?.isInfo) {
+                    return option?.name || "";
+                  }
+                  return option?.name || option?.label || "";
+                }}
+                renderOption={(props: any, option: any) => {
+                  if (option?.isInfo) {
+                    return (
+                      <li
+                        {...props}
+                        style={{
+                          ...props.style,
+                          cursor: option?.id === "searchMore" ? "pointer" : "default",
+                          color: option?.id === "recentOptions" ? "#2e3092" : "#1976d2",
+                          fontWeight: option?.id === "recentOptions" ? "bold" : "normal",
+                        }}
+                      >
+                        {option?.name}
+                      </li>
+                    );
+                  }
+                  return (
+                    <li {...props}>
+                      {option?.name || option?.label || ""}
+                    </li>
+                  );
+                }}
               />
             </div>
           </div>
@@ -536,7 +583,7 @@ const SettingsWidget = ({
               </div>
               <div style={{ width: "100%" }}>
                 <GoMakeAutoComplate
-                  key={SelectproductClient?.id}
+                  key={productState?.pricingType}
                   options={productClientsList}
                   placeholder={t("products.addProduct.admin.pricingType")}
                   style={clasess.dropDownListStyle}
