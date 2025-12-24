@@ -5,10 +5,12 @@ import {
   getAlltProductSKU,
   getAndSetAllCustomers,
   getAndSetClientTypes,
+  getAndSetRecentCustomers,
 } from "@/services/hooks";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useDebouncedCallback } from "use-debounce";
 import { v4 as uuidv4 } from "uuid";
 import {
   EProductClient,
@@ -16,7 +18,7 @@ import {
   ProductClient,
 } from "./settings-data";
 import { EHttpMethod } from "@/services/api-service/enums";
-import { CLIENT_TYPE_Id } from "@/pages/customers/enums";
+import { CLIENT_TYPE_Id, CLIENT_TYPE } from "@/pages/customers/enums";
 import { useSetRecoilState } from "recoil";
 import {
   EWidgetProductSettingsTabs,
@@ -439,6 +441,9 @@ const useSettings = ({
     useState<ProductClient>();
   const [customersList, setCustomersList] = useState([]);
   const [clientTypesList, setClientTypesList] = useState([]);
+  const [isFetching, setIsFetching] = useState<boolean>(false);
+  const [isRecentSource, setIsRecentSource] = useState<boolean>(true);
+  const [selectedCustomersCache, setSelectedCustomersCache] = useState<any[]>([]);
   const { productList: productsList } = useAllProductsDropDownList();
   const productClientsList: ProductClient[] = useMemo(
     () => [
@@ -458,13 +463,101 @@ const useSettings = ({
     []
   );
 
-  const getAllClients = useCallback(async (SearchTerm?) => {
-    await getAndSetAllCustomers(callApi, setCustomersList, {
-      clientType: "C",
-      onlyCreateOrderClients: false,
-      searchTerm: SearchTerm,
+  const getAllClients = useCallback(
+    async (SearchTerm?: string) => {
+      if (SearchTerm) {
+        setIsFetching(true);
+      }
+      setIsRecentSource(false);
+      await getAndSetAllCustomers(callApi, setCustomersList, {
+        clientType: CLIENT_TYPE.CUSTOMER,
+        onlyCreateOrderClients: false,
+        searchTerm: SearchTerm as string,
+      });
+      setIsFetching(false);
+    },
+    []
+  );
+
+  const getRecentClients = useCallback(async () => {
+    setIsRecentSource(true);
+    await getAndSetRecentCustomers(callApi, setCustomersList, {
+      ClientType: CLIENT_TYPE.CUSTOMER,
     });
   }, []);
+
+  const debouncedGetAllClients = useDebouncedCallback((value: string) => {
+    getAllClients(value);
+  }, 1200);
+
+  const checkWhatRenderArray = (e: any) => {
+    const value = e?.target?.value?.trim();
+    if (value === "") {
+      debouncedGetAllClients.cancel();
+      getRecentClients();
+    } else {
+      debouncedGetAllClients(value);
+    }
+  };
+
+  const renderOptions = (selectedCustomerIds?: string[]) => {
+    const additionalOption = {
+      name: t("general.searchMore"),
+      id: "searchMore",
+      isInfo: true,
+    };
+    const additionalOption1 = {
+      name: `—— ${t("general.recentOptions")} ——`,
+      id: "recentOptions",
+      isInfo: true,
+    };
+
+    const noOptions = {
+      name: t("general.addYourFirstCustomer"),
+      id: "addClient",
+      isInfo: true,
+    };
+
+    // Merge selected customers that aren't in the current list
+    const currentCustomerIds = new Set(customersList.map((c: any) => c.id));
+    const missingSelectedCustomers = selectedCustomersCache.filter(
+      (c: any) => selectedCustomerIds?.includes(c.id) && !currentCustomerIds.has(c.id)
+    );
+    const mergedCustomersList = [...customersList, ...missingSelectedCustomers];
+
+    if (isRecentSource) {
+      if (mergedCustomersList.length === 0) {
+        return [noOptions];
+      }
+      return [additionalOption1, ...mergedCustomersList, additionalOption];
+    }
+
+    return mergedCustomersList;
+  };
+
+  // Update selected customers cache when customers are selected
+  const updateSelectedCustomersCache = useCallback((selectedIds: string[], selectedCustomers?: any[]) => {
+    if (!selectedIds || selectedIds.length === 0) {
+      setSelectedCustomersCache([]);
+      return;
+    }
+
+    setSelectedCustomersCache((prevCache) => {
+      const newSelectedIds = new Set(selectedIds);
+
+      // Keep only selected customers in cache
+      const filteredCache = prevCache.filter((c: any) => newSelectedIds.has(c.id));
+
+      // Add newly selected customers from the provided list or current customersList
+      const currentIds = new Set(filteredCache.map((c: any) => c.id));
+      const sourceList = selectedCustomers || customersList;
+      const missingCustomers = sourceList.filter(
+        (c: any) => newSelectedIds.has(c.id) && !currentIds.has(c.id)
+      );
+
+      return [...filteredCache, ...missingCustomers];
+    });
+  }, [customersList]);
 
   const getAllClientTypes = useCallback(async () => {
     await getAndSetClientTypes(callApi, setClientTypesList, {
@@ -473,7 +566,7 @@ const useSettings = ({
   }, []);
 
   useEffect(() => {
-    getAllClients();
+    getRecentClients();
     getAllClientTypes();
   }, []);
 
@@ -571,6 +664,11 @@ const useSettings = ({
     selectPricingType,
     productSKU,
     updateProductSKURow,
+    renderOptions,
+    checkWhatRenderArray,
+    isFetching,
+    updateSelectedCustomersCache,
+    selectedCustomersCache,
   };
 };
 

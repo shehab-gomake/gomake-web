@@ -54,6 +54,11 @@ const SettingsWidget = ({
     productSKU,
     updateProductSKURow,
     productsList,
+    renderOptions,
+    checkWhatRenderArray,
+    isFetching,
+    updateSelectedCustomersCache,
+    selectedCustomersCache,
   } = useSettings({ onClickParametersTab, productState, onChangeStateProduct });
 
   const [defultProductSKU, setDefultProductSKU] = useState();
@@ -172,7 +177,7 @@ const SettingsWidget = ({
             </div>
             <div style={{ width: "100%" }}>
               <GoMakeAutoComplate
-                options={customersList?.map((item) => {
+                options={renderOptions(productState?.clients)?.map((item) => {
                   return {
                     ...item,
                     label: item?.name,
@@ -180,23 +185,77 @@ const SettingsWidget = ({
                   };
                 })}
                 placeholder={t("products.addProduct.admin.byClient")}
-                style={clasess.multiSelectStyle}
+                style={{
+                  ...clasess.multiSelectStyle,
+                  overflow: "auto",
+                  height: "auto",
+                  minHeight: "40px",
+                }}
                 multiple
+                onChangeTextField={checkWhatRenderArray}
+                loading={isFetching}
+                defaultFiltering={false}
                 onChange={(e: any, value: any) => {
-                  onChangeStateProduct(
-                    "clients",
-                    value?.map((item: any) => item?.id)
+                  // Filter out special options (recentOptions, searchMore, addClient)
+                  const validValues = value?.filter(
+                    (item: any) =>
+                      item?.id &&
+                      item?.id !== "recentOptions" &&
+                      item?.id !== "searchMore" &&
+                      item?.id !== "addClient"
                   );
+                  const selectedIds = validValues?.map((item: any) => item?.id) || [];
+                  // Store the full customer objects for selected customers
+                  updateSelectedCustomersCache(selectedIds, validValues);
+                  onChangeStateProduct("clients", selectedIds);
                 }}
                 value={productState?.clients?.map((item: any) => {
-                  const customer = customersList?.find(
+                  // First try to find in current customersList
+                  let customer = customersList?.find(
                     (customer: any) => customer?.id === item
                   );
+                  // If not found in current list, try to find in cached selected customers
+                  if (!customer) {
+                    customer = selectedCustomersCache?.find(
+                      (c: any) => c?.id === item
+                    );
+                  }
+                  if (!customer) {
+                    return null;
+                  }
                   return {
                     label: customer?.name,
                     id: customer?.id,
                   };
-                })}
+                })?.filter(Boolean)}
+                getOptionLabel={(option: any) => {
+                  if (option?.isInfo) {
+                    return option?.name || "";
+                  }
+                  return option?.name || option?.label || "";
+                }}
+                renderOption={(props: any, option: any) => {
+                  if (option?.isInfo) {
+                    return (
+                      <li
+                        {...props}
+                        style={{
+                          ...props.style,
+                          cursor: option?.id === "searchMore" ? "pointer" : "default",
+                          color: option?.id === "recentOptions" ? "#2e3092" : "#1976d2",
+                          fontWeight: option?.id === "recentOptions" ? "bold" : "normal",
+                        }}
+                      >
+                        {option?.name}
+                      </li>
+                    );
+                  }
+                  return (
+                    <li {...props}>
+                      {option?.name || option?.label || ""}
+                    </li>
+                  );
+                }}
               />
             </div>
           </div>
@@ -345,7 +404,6 @@ const SettingsWidget = ({
                           : productState?.templateId
                     }
                     onChange={(e: any, value: any) => {
-                      console.log("value", value);
                       // Store templateId for display but don't send in payload
                       onChangeStateProduct("templateId", value);
                       // If templateId is cleared and not composite, set to BASE
@@ -536,7 +594,7 @@ const SettingsWidget = ({
               </div>
               <div style={{ width: "100%" }}>
                 <GoMakeAutoComplate
-                  key={SelectproductClient?.id}
+                  key={productState?.pricingType}
                   options={productClientsList}
                   placeholder={t("products.addProduct.admin.pricingType")}
                   style={clasess.dropDownListStyle}
