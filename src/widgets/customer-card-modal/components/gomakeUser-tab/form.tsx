@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useEffect, useState } from "react";
 import { useStyle } from "./style";
 import { useTranslation } from "react-i18next";
 import { RemoveIcon } from "@/components/icons/icons";
@@ -10,6 +11,8 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { gomakeUserState } from "./gomakeUserState";
 import { resetPassModalState } from "../../state";
 import { languageOptionsState, languagesState } from "@/store/languages";
+import { useGomakeAxios } from "@/hooks/use-gomake-axios";
+import { getAllRolesForDropdownApi } from "@/services/api-service/users/roles-api";
 
 interface IProps {
   user: {
@@ -19,6 +22,7 @@ interface IProps {
     email?: string;
     userIPAddress?: string;
     isCanLoginWithCode?: boolean;
+    roleId?: string;
     index?: number;
   };
   onDelete: (value: number) => void;
@@ -30,11 +34,52 @@ const UserForm = ({ user, onDelete, setUser }: IProps) => {
   const setGomakeUser = useSetRecoilState<{}>(gomakeUserState);
   // const languagesOptions = useRecoilValue(languagesState);
   const languagesOptions = useRecoilValue(languageOptionsState);
+  const { callApi } = useGomakeAxios();
+  const [rolesOptions, setRolesOptions] = useState<
+    { value: string; text: string; isClientRole?: boolean }[]
+  >([]);
 
   const { classes } = useStyle();
   const { t } = useTranslation();
 
   const showPassFiled = user.id ? true : false;
+
+  useEffect(() => {
+    const fetchRoles = async () => {
+      const callBack = (res) => {
+        if (res?.success) {
+          const roles = res?.data?.map(
+            (item: {
+              value: string;
+              text: string;
+              isClientRole?: boolean;
+            }) => ({
+              value: item.value,
+              text: item.text,
+              isClientRole: item.isClientRole,
+            })
+          );
+          setRolesOptions(roles);
+
+          // Set default role if user doesn't have one and there's a role with isClientRole = true
+          if (!user.roleId && roles.length > 0) {
+            const defaultRole = roles.find(
+              (role) => role.isClientRole === true
+            );
+            if (defaultRole) {
+              setUser((prevUser) => ({
+                ...prevUser,
+                roleId: defaultRole.value,
+              }));
+            }
+          }
+        }
+      };
+      await getAllRolesForDropdownApi(callApi, callBack);
+    };
+    fetchRoles();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const onChangeInputs = (key, value) => {
     if (key == "email") {
@@ -47,14 +92,16 @@ const UserForm = ({ user, onDelete, setUser }: IProps) => {
   return (
     <div>
       <div style={classes.customerInfoStyle}>
-        {userInputs(user, showPassFiled, languagesOptions).map((item) => (
-          <FormInput
-            input={item as IInput}
-            changeState={onChangeInputs}
-            error={item.required && !item.value}
-            readonly={false}
-          />
-        ))}
+        {userInputs(user, showPassFiled, languagesOptions, rolesOptions).map(
+          (item) => (
+            <FormInput
+              input={item as IInput}
+              changeState={onChangeInputs}
+              error={item.required && !item.value}
+              readonly={false}
+            />
+          )
+        )}
 
         {showPassFiled && (
           <Stack direction={"column"} gap={"10px"} width={"180px"}>
