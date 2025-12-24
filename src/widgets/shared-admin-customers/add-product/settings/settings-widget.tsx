@@ -58,6 +58,8 @@ const SettingsWidget = ({
     renderOptions,
     checkWhatRenderArray,
     isFetching,
+    updateSelectedCustomersCache,
+    selectedCustomersCache,
   } = useSettings({ onClickParametersTab, productState, onChangeStateProduct });
   console.log("productClientsList", productClientsList);
 
@@ -179,7 +181,7 @@ const SettingsWidget = ({
             </div>
             <div style={{ width: "100%" }}>
               <GoMakeAutoComplate
-                options={renderOptions()?.map((item) => {
+                options={renderOptions(productState?.clients)?.map((item) => {
                   return {
                     ...item,
                     label: item?.name,
@@ -201,16 +203,25 @@ const SettingsWidget = ({
                       item?.id !== "searchMore" &&
                       item?.id !== "addClient"
                   );
-                  onChangeStateProduct(
-                    "clients",
-                    validValues?.map((item: any) => item?.id) || []
-                  );
+                  const selectedIds = validValues?.map((item: any) => item?.id) || [];
+                  // Store the full customer objects for selected customers
+                  updateSelectedCustomersCache(selectedIds, validValues);
+                  onChangeStateProduct("clients", selectedIds);
                 }}
                 value={productState?.clients?.map((item: any) => {
-                  const customer = customersList?.find(
+                  // First try to find in current customersList
+                  let customer = customersList?.find(
                     (customer: any) => customer?.id === item
                   );
-                  if (!customer) return null;
+                  // If not found in current list, try to find in cached selected customers
+                  if (!customer) {
+                    customer = selectedCustomersCache?.find(
+                      (c: any) => c?.id === item
+                    );
+                  }
+                  if (!customer) {
+                    return null;
+                  }
                   return {
                     label: customer?.name,
                     id: customer?.id,

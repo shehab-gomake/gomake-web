@@ -443,6 +443,7 @@ const useSettings = ({
   const [clientTypesList, setClientTypesList] = useState([]);
   const [isFetching, setIsFetching] = useState<boolean>(false);
   const [isRecentSource, setIsRecentSource] = useState<boolean>(true);
+  const [selectedCustomersCache, setSelectedCustomersCache] = useState<any[]>([]);
   const { productList: productsList } = useAllProductsDropDownList();
   const productClientsList: ProductClient[] = useMemo(
     () => [
@@ -499,7 +500,7 @@ const useSettings = ({
     }
   };
 
-  const renderOptions = () => {
+  const renderOptions = (selectedCustomerIds?: string[]) => {
     const additionalOption = {
       name: t("general.searchMore"),
       id: "searchMore",
@@ -517,15 +518,46 @@ const useSettings = ({
       isInfo: true,
     };
 
+    // Merge selected customers that aren't in the current list
+    const currentCustomerIds = new Set(customersList.map((c: any) => c.id));
+    const missingSelectedCustomers = selectedCustomersCache.filter(
+      (c: any) => selectedCustomerIds?.includes(c.id) && !currentCustomerIds.has(c.id)
+    );
+    const mergedCustomersList = [...customersList, ...missingSelectedCustomers];
+
     if (isRecentSource) {
-      if (customersList.length === 0) {
+      if (mergedCustomersList.length === 0) {
         return [noOptions];
       }
-      return [additionalOption1, ...customersList, additionalOption];
+      return [additionalOption1, ...mergedCustomersList, additionalOption];
     }
 
-    return customersList;
+    return mergedCustomersList;
   };
+
+  // Update selected customers cache when customers are selected
+  const updateSelectedCustomersCache = useCallback((selectedIds: string[], selectedCustomers?: any[]) => {
+    if (!selectedIds || selectedIds.length === 0) {
+      setSelectedCustomersCache([]);
+      return;
+    }
+
+    setSelectedCustomersCache((prevCache) => {
+      const newSelectedIds = new Set(selectedIds);
+
+      // Keep only selected customers in cache
+      const filteredCache = prevCache.filter((c: any) => newSelectedIds.has(c.id));
+
+      // Add newly selected customers from the provided list or current customersList
+      const currentIds = new Set(filteredCache.map((c: any) => c.id));
+      const sourceList = selectedCustomers || customersList;
+      const missingCustomers = sourceList.filter(
+        (c: any) => newSelectedIds.has(c.id) && !currentIds.has(c.id)
+      );
+
+      return [...filteredCache, ...missingCustomers];
+    });
+  }, [customersList]);
 
   const getAllClientTypes = useCallback(async () => {
     await getAndSetClientTypes(callApi, setClientTypesList, {
@@ -635,6 +667,8 @@ const useSettings = ({
     renderOptions,
     checkWhatRenderArray,
     isFetching,
+    updateSelectedCustomersCache,
+    selectedCustomersCache,
   };
 };
 
