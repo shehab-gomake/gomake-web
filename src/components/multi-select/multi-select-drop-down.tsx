@@ -18,6 +18,7 @@ import { PrimaryCheckbox } from "../check-box/primary-check-box";
 interface Item<T = string | number> {
   id: T;
   label: string;
+  readOnly?: boolean;
 }
 
 interface MultiSelectDropdownProps<T = string | number> {
@@ -27,6 +28,7 @@ interface MultiSelectDropdownProps<T = string | number> {
   onToggleAll: () => void;
   buttonLabel: string;
   placeholder?: string;
+  buttonStyle?: React.CSSProperties;
 }
 
 const StyledMenu = styled((props: MenuProps) => (
@@ -71,6 +73,7 @@ export const MultiSelectDropdown = <T extends string | number>({
   onToggleAll,
   buttonLabel,
   placeholder = "Search",
+  buttonStyle,
 }: MultiSelectDropdownProps<T>) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -103,7 +106,11 @@ export const MultiSelectDropdown = <T extends string | number>({
 
   return (
     <>
-      <Button style={classes.button} variant="contained" onClick={handleClick}>
+      <Button
+        style={{ ...classes.button, ...buttonStyle }}
+        variant="contained"
+        onClick={handleClick}
+      >
         <span>{buttonLabel}</span>
         <KeyboardArrowDownIcon />
       </Button>
@@ -146,6 +153,7 @@ export const MultiSelectDropdown = <T extends string | number>({
                     <PrimaryCheckbox
                       checked={selectedIds.includes(item.id)}
                       onChange={() => onToggle(item.id)}
+                      disabled={item.readOnly}
                     />
                   }
                 />

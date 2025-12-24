@@ -3,6 +3,10 @@ export interface MainProductionReportResponseDTO {
   departments: DepartmentPerformanceDTO[];
   otd: number;
   tB_OTD: number;
+  jobsDoneOnTimeCount: number;
+  allJobsCount: number;
+  allJobsBasedTime: number;
+  jobsDoneBasedTime: number;
 }
 
 export interface DepartmentPerformanceDTO {
@@ -33,6 +37,8 @@ export interface StationMetrics {
   time: number;
   jobs: number;
   percentageReported?: number;
+  unitName?: string;
+  unitQuantity?: number;
 }
 
 export interface CapacityMetricsDTO {
