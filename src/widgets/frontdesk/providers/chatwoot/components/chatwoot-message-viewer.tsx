@@ -51,6 +51,8 @@ interface ChatwootMessageViewerProps {
   inboxesLoading?: boolean;
   isSidebarVisible?: boolean;
   onToggleSidebar?: () => void;
+  /** Callback to refresh the conversation list after sending a message */
+  onConversationListRefresh?: () => void | Promise<void>;
 }
 
 export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
@@ -63,6 +65,7 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
   inboxesLoading = false,
   isSidebarVisible = true,
   onToggleSidebar,
+  onConversationListRefresh,
 }) => {
   const { t } = useTranslation();
   const dir: "rtl" | "ltr" = t("direction");
@@ -389,6 +392,18 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
 
       // Refresh messages after sending
       await refresh();
+
+      // Refresh conversation list to show updated preview and move conversation to top
+      // Use a small delay to ensure the backend has processed the message
+      if (onConversationListRefresh) {
+        setTimeout(async () => {
+          try {
+            await onConversationListRefresh();
+          } catch (refreshError) {
+            console.error("Failed to refresh conversation list:", refreshError);
+          }
+        }, 500);
+      }
     } catch (err) {
       console.error("Failed to send message:", err);
       throw err;
