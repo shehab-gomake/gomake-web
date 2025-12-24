@@ -32,10 +32,7 @@ import { ChatwootConversationDetailPanel } from "../components/chatwoot-conversa
 import { ComposeConversationModal } from "../components/compose/ComposeConversationModal";
 import { useChatwootProvider } from "../hooks/use-chatwoot-provider";
 import { useChatwootRouter } from "../hooks/use-chatwoot-router";
-import {
-  ConversationStatus,
-  ConversationAssigneeType,
-} from "@/services/frontdesk/api/chatwoot/types/conversations.types";
+import { ConversationStatus, ConversationAssigneeType } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
 import { NoConversationsEmptyState } from "../components/empty-states/no-conversations-empty-state";
 import { ChatwootView } from "@/widgets/frontdesk/routing/types";
 import type { ChatwootConversation } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
@@ -59,10 +56,7 @@ export const MyInboxView: React.FC = () => {
   // Save sidebar visibility preference to localStorage
   useEffect(() => {
     if (typeof window !== "undefined") {
-      localStorage.setItem(
-        "chatwoot-sidebar-visible",
-        String(isSidebarVisible)
-      );
+      localStorage.setItem("chatwoot-sidebar-visible", String(isSidebarVisible));
     }
   }, [isSidebarVisible]);
 
@@ -95,12 +89,9 @@ export const MyInboxView: React.FC = () => {
 
     // Only set filters if they're not already set correctly for My Inbox
     if (currentRoute?.view === ChatwootView.MY_INBOX) {
-      const needsStatusUpdate =
-        !currentRoute.filters?.status ||
-        currentRoute.filters.status !== ConversationStatus.OPEN;
+      const needsStatusUpdate = !currentRoute.filters?.status || currentRoute.filters.status !== ConversationStatus.OPEN;
       const needsAssigneeUpdate =
-        !currentRoute.filters?.assigneeType ||
-        currentRoute.filters.assigneeType !== ConversationAssigneeType.ME;
+        !currentRoute.filters?.assigneeType || currentRoute.filters.assigneeType !== ConversationAssigneeType.ME;
 
       if (needsStatusUpdate || needsAssigneeUpdate) {
         router.updateFilters({
@@ -147,13 +138,7 @@ export const MyInboxView: React.FC = () => {
     }
 
     if (conversations.length === 0) {
-      return (
-        <NoConversationsEmptyState
-          filterContext="mine"
-          hasFilters={false}
-          onRefresh={refresh}
-        />
-      );
+      return <NoConversationsEmptyState filterContext="mine" hasFilters={false} onRefresh={refresh} />;
     }
 
     return (
@@ -319,15 +304,12 @@ export const MyInboxView: React.FC = () => {
                 accountId={currentAccountId || undefined}
                 onBack={handleBack}
                 onConversationUpdate={updateConversationInList}
-                currentStatusFilter={
-                  Array.isArray(filters.status)
-                    ? filters.status[0]
-                    : filters.status
-                }
+                currentStatusFilter={Array.isArray(filters.status) ? filters.status[0] : filters.status}
                 inboxes={inboxes}
                 inboxesLoading={inboxesLoading}
                 isSidebarVisible={isSidebarVisible}
                 onToggleSidebar={handleToggleSidebar}
+                onConversationListRefresh={refresh}
               />
             </Box>
 
@@ -337,9 +319,7 @@ export const MyInboxView: React.FC = () => {
                 sx={{
                   width: layoutTokens.panel.detailSidebar.default,
                   minWidth: layoutTokens.panel.detailSidebar.default,
-                  [isRTL
-                    ? "borderRight"
-                    : "borderLeft"]: `1px solid ${colorTokens.semantic.border.light}`,
+                  [isRTL ? "borderRight" : "borderLeft"]: `1px solid ${colorTokens.semantic.border.light}`,
                   backgroundColor: colorTokens.semantic.background.primary,
                 }}
               >
