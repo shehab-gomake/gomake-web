@@ -465,7 +465,7 @@ const QuotesListPageWidget = ({
   useEffect(() => {
     const loadDocumentColumnSettings = async () => {
       try {
-        const res = await getDocumentTableSettingsApi(callApi, () => { }, {
+        const res = await getDocumentTableSettingsApi(callApi, () => {}, {
           documentType,
         });
         const saved: ColumnSetting[] = res?.data;
@@ -532,16 +532,16 @@ const QuotesListPageWidget = ({
                     isOrder
                       ? onclickCreateNew
                       : isSupplierPayments
-                        ? () => navigate(`/${documentPath}`)
-                        : isPurchaseOrder
-                          ? () => {
-                            setSelectedItems([]);
-                            onOpenPurchaseOrderTypeModal();
-                          }
-                          : () => {
-                            setSelectedItems([]);
-                            navigate(`/${documentPath}?isNewCreation=true`);
-                          }
+                      ? () => navigate(`/${documentPath}`)
+                      : isPurchaseOrder
+                      ? () => {
+                          setSelectedItems([]);
+                          onOpenPurchaseOrderTypeModal();
+                        }
+                      : () => {
+                          setSelectedItems([]);
+                          navigate(`/${documentPath}?isNewCreation=true`);
+                        }
                   )}
               </div>
             </div>
@@ -905,16 +905,16 @@ const QuotesListPageWidget = ({
           isSelectedCLoseAsDeliveryNote
             ? "customers.modal.closeOrderAsDeliveryNote"
             : isSelectedCLoseAsProformaInvoice
-              ? "customers.modal.closeOrderAsProformaInvoice"
-              : "customers.modal.closeOrderAsInvoice"
+            ? "customers.modal.closeOrderAsProformaInvoice"
+            : "customers.modal.closeOrderAsInvoice"
         }
         subTitle={"customers.modal.thisOrderIsAlreadyInProcess"}
         yesBtn={
           isSelectedCLoseAsDeliveryNote
             ? t("customers.modal.closeAsDeliveryNote")
             : isSelectedCLoseAsProformaInvoice
-              ? t("customers.modal.closeAsProformaInvoice")
-              : t("customers.modal.closeAsInvoice")
+            ? t("customers.modal.closeAsProformaInvoice")
+            : t("customers.modal.closeAsInvoice")
         }
         openModal={openChangeProductionStatusModal}
         onClose={onClickCloseChangeProductionStatusModal}

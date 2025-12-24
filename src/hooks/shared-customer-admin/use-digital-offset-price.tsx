@@ -5252,7 +5252,7 @@ const useDigitalOffsetPrice = ({
             relatedParameter.notSelectedValueIds.includes(valueId)
           );
           // Show if value is NOT in notSelectedValueIds
-          if (!valueInNotSelectedArray && parm?.valueIds) {
+          if (!valueInNotSelectedArray && valueIdsToCheck.length > 0) {
             shouldShow = true;
           }
         }
@@ -5386,8 +5386,7 @@ const useDigitalOffsetPrice = ({
           relatedParameter.selectedValueIds.length > 0
         ) {
           // Use selectedValueIds: show when selected value is in selectedValueIds
-          const valueToCheck =
-            parm?.ParameterType === 11 ? parm?.valueIds : parm?.values;
+          const valueToCheck = parm?.parameterType === 11 ? parm?.valueIds : parm?.values;
           const valuesToCheck = Array.isArray(valueToCheck)
             ? valueToCheck
             : valueToCheck
@@ -5415,7 +5414,7 @@ const useDigitalOffsetPrice = ({
         ) {
           // Use notSelectedValueIds: show when selected value is NOT in notSelectedValueIds (reverse logic)
           const valueToCheck =
-            parm?.ParameterType === 11 ? parm?.valueIds : parm?.values;
+            parm?.parameterType === 11 ? parm?.valueIds : parm?.values;
           const valuesToCheck = Array.isArray(valueToCheck)
             ? valueToCheck
             : valueToCheck
@@ -5426,15 +5425,10 @@ const useDigitalOffsetPrice = ({
           );
           // Show if value is NOT in notSelectedValueIds
           // Only show if there's a selection AND the value is not in notSelectedValueIds
-          if (
-            !valueInNotSelectedArray &&
-            myParameter &&
-            valueToCheck &&
-            valuesToCheck.length > 0
-          ) {
-            // If no value selected (!parm), shouldShow remains false (parameter stays hidden)
-            shouldShow = false;
+          if (!valueInNotSelectedArray && valuesToCheck.length > 0) {
+            shouldShow = true;
           }
+
         }
 
         if (shouldShow) {
