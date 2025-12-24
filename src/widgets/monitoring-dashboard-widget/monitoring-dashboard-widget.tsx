@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Box, Button, Skeleton } from "@mui/material";
+import { Box, Button, Skeleton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 import Stack from "@mui/material/Stack";
 import { useStyle } from "./style";
 import { Cards } from "./cards/cards";
@@ -11,6 +11,7 @@ import SouthRoundedIcon from "@mui/icons-material/SouthRounded";
 import { exportDashboardToExcel } from "./utils/export-to-excel";
 import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined";
 import { ReportActionsMenu } from "@/pages-components/transaction-journal-report/widgets/button-widget/report-actions-menu/report-actions-menu";
+import { RoundTableCell, RoundTableRow } from "@/components/tables/primary-table";
 
 const MonitoringDashboardWidget = () => {
   const { classes } = useStyle();
@@ -150,9 +151,65 @@ const MonitoringDashboardWidget = () => {
                     maximumFractionDigits: 2,
                   })}`
                 : `${currUnit} 0.00`,
+              item.total != null
+                ? `${currUnit} ${item.total.toLocaleString("en-US", {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  })}`
+                : `${currUnit} 0.00`,
             ];
           })
         : [];
+
+    // Calculate totals for each column
+    const totals =
+      dailyDocumentsSummary && dailyDocumentsSummary.length > 0
+        ? dailyDocumentsSummary.reduce(
+            (acc, item) => {
+              acc.ordersUnits += item.ordersUnits || 0;
+              acc.ordersTotal += item.ordersTotal || 0;
+              acc.deliveryNotesTotal += item.deliveryNotesTotal || 0;
+              acc.invoiceTotal += item.invoiceTotal || 0;
+              acc.total += item.total || 0;
+              return acc;
+            },
+            {
+              ordersUnits: 0,
+              ordersTotal: 0,
+              deliveryNotesTotal: 0,
+              invoiceTotal: 0,
+              total: 0,
+            }
+          )
+        : null;
+
+    // Add totals row to the data if totals exist
+    const dailyDocumentsRowsWithTotals =
+      dailyDocumentsRows.length > 0 && totals
+        ? [
+            ...dailyDocumentsRows,
+            [
+              t("dashboard.total"),
+              totals.ordersUnits.toLocaleString("en-US"),
+              `${currUnit} ${totals.ordersTotal.toLocaleString("en-US", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}`,
+              `${currUnit} ${totals.deliveryNotesTotal.toLocaleString("en-US", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}`,
+              `${currUnit} ${totals.invoiceTotal.toLocaleString("en-US", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}`,
+              `${currUnit} ${totals.total.toLocaleString("en-US", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}`,
+            ],
+          ]
+        : dailyDocumentsRows;
 
     const exportData = {
       agentsData: agentsRow || [],
@@ -164,15 +221,16 @@ const MonitoringDashboardWidget = () => {
       statistics,
       salesItems: salesItems || [],
       dailyDocumentsSummary:
-        dailyDocumentsRows.length > 0
+        dailyDocumentsRowsWithTotals.length > 0
           ? {
-              data: dailyDocumentsRows,
+              data: dailyDocumentsRowsWithTotals,
               headers: [
                 t("dashboard.date"),
                 t("dashboard.ordersUnits"),
                 `${t("dashboard.ordersTotal")} (${currUnit})`,
                 `${t("dashboard.deliveryNotesTotal")} (${currUnit})`,
                 `${t("dashboard.invoiceTotal")} (${currUnit})`,
+                `${t("dashboard.total")} (${currUnit})`,
               ],
             }
           : undefined,
@@ -417,8 +475,54 @@ const MonitoringDashboardWidget = () => {
                     maximumFractionDigits: 2,
                   })}`
                 : `${currUnit} 0.00`,
+              item.total != null
+                ? `${currUnit} ${item.total.toLocaleString("en-US", {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  })}`
+                : `${currUnit} 0.00`,
             ];
           });
+
+          // Calculate totals for each column
+          const totals = dailyDocumentsSummary.reduce(
+            (acc, item) => {
+              acc.ordersUnits += item.ordersUnits || 0;
+              acc.ordersTotal += item.ordersTotal || 0;
+              acc.deliveryNotesTotal += item.deliveryNotesTotal || 0;
+              acc.invoiceTotal += item.invoiceTotal || 0;
+              acc.total += item.total || 0;
+              return acc;
+            },
+            {
+              ordersUnits: 0,
+              ordersTotal: 0,
+              deliveryNotesTotal: 0,
+              invoiceTotal: 0,
+              total: 0,
+            }
+          );
+
+          const totalRow = [
+            t("dashboard.total"),
+            totals.ordersUnits.toLocaleString("en-US"),
+            `${currUnit} ${totals.ordersTotal.toLocaleString("en-US", {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })}`,
+            `${currUnit} ${totals.deliveryNotesTotal.toLocaleString("en-US", {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })}`,
+            `${currUnit} ${totals.invoiceTotal.toLocaleString("en-US", {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })}`,
+            `${currUnit} ${totals.total.toLocaleString("en-US", {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })}`,
+          ];
 
           const hasMore = dailyDocumentsRows.length > visibleDailyDocumentsRows;
           const handleToggle = () => {
@@ -434,20 +538,67 @@ const MonitoringDashboardWidget = () => {
               <h3 style={classes.labelStyle}>
                 {t("dashboard.dailyDocumentsSummary")}
               </h3>
-              <PrimaryTable
-                stickyFirstCol={false}
-                stickyHeader={false}
-                rows={dailyDocumentsRows.slice(0, visibleDailyDocumentsRows)}
-                headers={[
-                  t("dashboard.date"),
-                  t("dashboard.ordersUnits"),
-                  `${t("dashboard.ordersTotal")} (${currUnit})`,
-                  `${t("dashboard.deliveryNotesTotal")} (${currUnit})`,
-                  `${t("dashboard.invoiceTotal")} (${currUnit})`,
-                ]}
-                withSort={false}
-                variant="RoundTable"
-              />
+              <Paper
+                sx={{
+                  width: "100%",
+                  overflow: "hidden",
+                  borderRadius: "var(--theme-radius-lg, 12px)",
+                  border:
+                    "1px solid var(--theme-table-border-color, var(--theme-border-color, #EAECF0)) !important",
+                }}
+              >
+                <TableContainer>
+                  <Table>
+                    <TableHead>
+                      <RoundTableRow>
+                        {[
+                          t("dashboard.date"),
+                          t("dashboard.ordersUnits"),
+                          `${t("dashboard.ordersTotal")} (${currUnit})`,
+                          `${t("dashboard.deliveryNotesTotal")} (${currUnit})`,
+                          `${t("dashboard.invoiceTotal")} (${currUnit})`,
+                          `${t("dashboard.total")} (${currUnit})`,
+                        ].map((header, index) => (
+                          <RoundTableCell key={index} align="center">
+                            {header}
+                          </RoundTableCell>
+                        ))}
+                      </RoundTableRow>
+                    </TableHead>
+                    <TableBody>
+                      {dailyDocumentsRows
+                        .slice(0, visibleDailyDocumentsRows)
+                        .map((row, rowIndex) => (
+                          <RoundTableRow key={rowIndex}>
+                            {row.map((cell, cellIndex) => (
+                              <RoundTableCell key={cellIndex} align="center">
+                                {cell}
+                              </RoundTableCell>
+                            ))}
+                          </RoundTableRow>
+                        ))}
+                      {/* Totals row at the bottom */}
+                      <RoundTableRow>
+                        {totalRow.map((total, index) => (
+                          <RoundTableCell
+                            key={index}
+                            align="center"
+                            sx={{
+                              fontWeight: 600,
+                              backgroundColor:
+                                "var(--theme-table-round-head-bg, var(--theme-bg-secondary, #F9FAFB))",
+                              borderTop:
+                                "2px solid var(--theme-table-border-color, var(--theme-border-color, #EAECF0))",
+                            }}
+                          >
+                            {total}
+                          </RoundTableCell>
+                        ))}
+                      </RoundTableRow>
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              </Paper>
               {dailyDocumentsRows.length > 10 && (
                 <Button
                   onClick={handleToggle}
