@@ -58,10 +58,38 @@ const useStyle = () => {
         maxWidth: "350px",
         minWidth: "280px",
         maxHeight: "400px",
-        overflow: "auto",
+        overflow: "hidden",
+        display: "flex",
+        flexDirection: "column",
+      },
+      cardContainer: {
+        display: "flex",
+        flexDirection: "column",
+        height: "100%",
+        maxHeight: "400px",
       },
       cardContent: {
         padding: "12px",
+        overflowY: "auto",
+        flex: 1,
+        minHeight: 0,
+        // Custom scrollbar styling
+        "&::-webkit-scrollbar": {
+          width: "6px",
+        },
+        "&::-webkit-scrollbar-track": {
+          background: "transparent",
+        },
+        "&::-webkit-scrollbar-thumb": {
+          background: "#9e9e9e",
+          borderRadius: "3px",
+          "&:hover": {
+            background: "#757575",
+          },
+        },
+        // Firefox scrollbar
+        scrollbarWidth: "thin",
+        scrollbarColor: "#9e9e9e transparent",
       },
       jobItem: {
         padding: "8px 0",
@@ -91,9 +119,13 @@ const useStyle = () => {
       cardButtonContainer: {
         display: "flex",
         justifyContent: "flex-end",
-        marginTop: "12px",
-        paddingTop: "8px",
+        padding: "8px 12px",
         borderTop: `1px solid ${primaryColor(200)}`,
+        backgroundColor: "white",
+        position: "sticky",
+        bottom: 0,
+        zIndex: 1,
+        flexShrink: 0,
       },
       smallButton: {
         padding: "4px 12px",
