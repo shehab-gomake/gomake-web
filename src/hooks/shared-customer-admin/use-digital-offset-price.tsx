@@ -9297,7 +9297,18 @@ const useDigitalOffsetPrice = ({
         );
       });
       if (parentParameter && parentParameter.isHidden === true) {
-        return true; // Hide child if parent is hidden
+        // Exception: If parent has isHidden=true, isHiddenInSetting=true, and has default value, show child parameters
+        const hasDefaultValue = parentParameter.valuesConfigs?.some((x) => x.isDefault);
+        const shouldHideChild = !(
+          parentParameter.isHidden === true &&
+          parentParameter.isHiddenInSetting === true &&
+          hasDefaultValue
+        );
+        if (shouldHideChild) {
+          return true; // Hide child if parent is hidden (and exception doesn't apply)
+        }
+        // If exception applies, child should be visible but may need default values
+        return false;
       }
       return false;
     };
