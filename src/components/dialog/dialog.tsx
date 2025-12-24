@@ -21,6 +21,7 @@ interface GoMakeDialogProps {
   children?: React.ReactNode;
   maxWidth?: "xs" | "sm" | "md" | "lg" | "xl";
   fullWidth?: boolean;
+  showButton?: boolean;
 }
 
 const GoMakeDialog: React.FC<GoMakeDialogProps> = ({
@@ -32,6 +33,7 @@ const GoMakeDialog: React.FC<GoMakeDialogProps> = ({
   children,
   maxWidth = "md",
   fullWidth = true,
+  showButton = true,
 }) => {
   const { t } = useTranslation();
 
@@ -70,11 +72,13 @@ const GoMakeDialog: React.FC<GoMakeDialogProps> = ({
         {children}
       </DialogContent>
 
-      <DialogActions>
-        <Button onClick={onClose} color="primary" autoFocus>
-          {t(buttonText)}
-        </Button>
-      </DialogActions>
+      {showButton && (
+        <DialogActions>
+          <Button onClick={onClose} color="primary" autoFocus>
+            {t(buttonText)}
+          </Button>
+        </DialogActions>
+      )}
     </Dialog>
   );
 };

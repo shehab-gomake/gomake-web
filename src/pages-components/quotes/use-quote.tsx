@@ -133,6 +133,7 @@ import { currenciesState } from "@/widgets/materials-widget/state";
 import { getCurrencies } from "@/services/api-service/general/enums";
 import { useFrontDeskEmailIntegration } from "./hooks/use-frontdesk-email-integration";
 import { printHouseHasFrontDeskFeature } from "@/store/print-house-profile";
+import { OrderJobsCell } from "./widgets/order-jobs-modal/order-jobs-cell";
 
 type PaymentTypeOption = {
   label: string;
@@ -181,8 +182,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const router = useRouter();
   const documentPath =
     docType === DOCUMENT_TYPE.supplierPayments
-      ? `${DOCUMENT_TYPE[DOCUMENT_TYPE.receipt]
-      }?isOutgoingPayments=true&isNewCreation=true`
+      ? `${
+          DOCUMENT_TYPE[DOCUMENT_TYPE.receipt]
+        }?isOutgoingPayments=true&isNewCreation=true`
       : DOCUMENT_TYPE[docType];
 
   const searchInputRef = useRef(null);
@@ -899,10 +901,11 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
           discount: quote?.discount,
           totalPriceWithoutVat: isRTL
             ? `${quote?.totalPriceWithoutVat} ${getCurrencyUnitText(
-              quote?.currency
-            )}`
-            : `${getCurrencyUnitText(quote?.currency)} ${quote?.totalPriceWithoutVat
-            }`,
+                quote?.currency
+              )}`
+            : `${getCurrencyUnitText(quote?.currency)} ${
+                quote?.totalPriceWithoutVat
+              }`,
           totalPrice: isRTL
             ? `${quote?.totalPrice} ${getCurrencyUnitText(quote?.currency)}`
             : `${getCurrencyUnitText(quote?.currency)} ${quote?.totalPrice}`,
@@ -1007,30 +1010,24 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         }
 
         if (isOrder) {
-          const jobsElement = CheckPermission(
-            Permissions.SHOW_BOARD_MISSIONS
-          ) ? (
-            <a
-              style={{
-                cursor: "pointer",
-                color: "inherit",
-                textDecoration: "unset",
-              }}
-              href={`/jobs?pageNumber=1&finalPatternSearch=${quote?.number}`}
-            >
-              {quote?.jobs}
-            </a>
-          ) : (
-            quote?.jobs
+          const jobsElement = (
+            <OrderJobsCell
+              jobs={quote?.jobs}
+              orderJobs={quote?.orderJobs || []}
+              quoteNumber={quote?.number}
+              hasPermission={CheckPermission(Permissions.SHOW_BOARD_MISSIONS)}
+            />
           );
 
-          const paymentStatus = `${isRTL
-            ? `${quote?.sumApplied} ${getCurrencyUnitText(quote?.currency)}`
-            : `${getCurrencyUnitText(quote?.currency)} ${quote?.sumApplied}`
-            }/${isRTL
+          const paymentStatus = `${
+            isRTL
+              ? `${quote?.sumApplied} ${getCurrencyUnitText(quote?.currency)}`
+              : `${getCurrencyUnitText(quote?.currency)} ${quote?.sumApplied}`
+          }/${
+            isRTL
               ? `${quote?.totalPrice} ${getCurrencyUnitText(quote?.currency)}`
               : `${getCurrencyUnitText(quote?.currency)} ${quote?.totalPrice}`
-            }`;
+          }`;
 
           return {
             ...baseRow,
@@ -1460,15 +1457,17 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               discount: quote?.discount,
               totalPriceWithoutVat: isRTL
                 ? `${quote?.totalPriceWithoutVat} ${getCurrencyUnitText(
-                  quote?.currency
-                )}`
-                : `${getCurrencyUnitText(quote?.currency)} ${quote?.totalPriceWithoutVat
-                }`,
+                    quote?.currency
+                  )}`
+                : `${getCurrencyUnitText(quote?.currency)} ${
+                    quote?.totalPriceWithoutVat
+                  }`,
 
               totalPrice: isRTL
                 ? `${quote?.totalPrice} ${getCurrencyUnitText(quote?.currency)}`
-                : `${getCurrencyUnitText(quote?.currency)} ${quote?.totalPrice
-                }`,
+                : `${getCurrencyUnitText(quote?.currency)} ${
+                    quote?.totalPrice
+                  }`,
               notes: quote?.notes,
               status: renderStatusCell(quote),
               more: (
@@ -1504,7 +1503,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                   }
                   onOpenDuplicateModal={onOpenDuplicateModal}
                   handleGetTaxConfirmNo={handleGetTaxConfirmNo}
-                  onClickOpenInventoryIntakeModal={onClickOpenInventoryIntakeModal}
+                  onClickOpenInventoryIntakeModal={
+                    onClickOpenInventoryIntakeModal
+                  }
                   onClickUndoDocumentIntake={handleUndoDocumentIntake}
                   onClickSendToCustomerEmail={onClickSendToCustomerEmail}
                   onClickSendToCustomerSMS={onClickSendToCustomerSMS}
@@ -1568,36 +1569,34 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             }
 
             if (isOrder) {
-              const jobsElement = CheckPermission(
-                Permissions.SHOW_BOARD_MISSIONS
-              ) ? (
-                <a
-                  style={{
-                    cursor: "pointer",
-                    color: "inherit",
-                    textDecoration: "unset",
-                  }}
-                  href={`/jobs?pageNumber=1&finalPatternSearch=${quote?.number}`}
-                >
-                  {quote?.jobs}
-                </a>
-              ) : (
-                quote?.jobs
+              const jobsElement = (
+                <OrderJobsCell
+                  jobs={quote?.jobs}
+                  orderJobs={quote?.orderJobs || []}
+                  quoteNumber={quote?.number}
+                  hasPermission={CheckPermission(
+                    Permissions.SHOW_BOARD_MISSIONS
+                  )}
+                />
               );
 
-              const paymentStatus = `${isRTL
-                ? `${quote?.sumApplied} ${getCurrencyUnitText(
-                  quote?.currency
-                )}`
-                : `${getCurrencyUnitText(quote?.currency)} ${quote?.sumApplied
-                }`
-                }/${isRTL
+              const paymentStatus = `${
+                isRTL
+                  ? `${quote?.sumApplied} ${getCurrencyUnitText(
+                      quote?.currency
+                    )}`
+                  : `${getCurrencyUnitText(quote?.currency)} ${
+                      quote?.sumApplied
+                    }`
+              }/${
+                isRTL
                   ? `${quote?.totalPrice} ${getCurrencyUnitText(
-                    quote?.currency
-                  )}`
-                  : `${getCurrencyUnitText(quote?.currency)} ${quote?.totalPrice
-                  }`
-                }`;
+                      quote?.currency
+                    )}`
+                  : `${getCurrencyUnitText(quote?.currency)} ${
+                      quote?.totalPrice
+                    }`
+              }`;
 
               return {
                 ...baseRow,
@@ -1699,8 +1698,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               paymentMethod: _renderPaymentType(quote?.paymentType),
               totalPrice: isRTL
                 ? `${quote?.totalPrice} ${getCurrencyUnitText(quote?.currency)}`
-                : `${getCurrencyUnitText(quote?.currency)} ${quote?.totalPrice
-                }`,
+                : `${getCurrencyUnitText(quote?.currency)} ${
+                    quote?.totalPrice
+                  }`,
               notes: quote?.notes,
               status: t(`documentStatus.${quote?.status}`),
               more: (
@@ -1786,51 +1786,51 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         const currentMaxPrice = router.query.maxPrice || maxPrice;
         const currentFromDate = router.query.fromDate
           ? new Date(
-            Array.isArray(router.query.fromDate)
-              ? router.query.fromDate[0]
-              : router.query.fromDate
-          )
+              Array.isArray(router.query.fromDate)
+                ? router.query.fromDate[0]
+                : router.query.fromDate
+            )
           : null;
         const currentToDate = router.query.toDate
           ? new Date(
-            Array.isArray(router.query.toDate)
-              ? router.query.toDate[0]
-              : router.query.toDate
-          )
+              Array.isArray(router.query.toDate)
+                ? router.query.toDate[0]
+                : router.query.toDate
+            )
           : null;
 
         const currentCheckFromDate = router.query.checkFromDate
           ? new Date(
-            Array.isArray(router.query.checkFromDate)
-              ? router.query.checkFromDate[0]
-              : router.query.checkFromDate
-          )
+              Array.isArray(router.query.checkFromDate)
+                ? router.query.checkFromDate[0]
+                : router.query.checkFromDate
+            )
           : null;
 
         const currentCheckToDate = router.query.checkToDate
           ? new Date(
-            Array.isArray(router.query.checkToDate)
-              ? router.query.checkToDate[0]
-              : router.query.checkToDate
-          )
+              Array.isArray(router.query.checkToDate)
+                ? router.query.checkToDate[0]
+                : router.query.checkToDate
+            )
           : null;
 
         const currentAccountingStatus = router.query.accountingStatus
           ? accountingStatuses.find(
-            (status) => status.value === Number(router.query.accountingStatus)
-          )
+              (status) => status.value === Number(router.query.accountingStatus)
+            )
           : null;
 
         const currentDeliveryStatusStatus = router.query.deliveryStatus
           ? deliveryStatuses.find(
-            (status) => status.value === Number(router.query.deliveryStatus)
-          )
+              (status) => status.value === Number(router.query.deliveryStatus)
+            )
           : null;
 
         const currentProductionStatus = router.query.productionStatus
           ? productionStatuses.find(
-            (status) => status.value === Number(router.query.productionStatus)
-          )
+              (status) => status.value === Number(router.query.productionStatus)
+            )
           : null;
 
         const currentIsCanceled = router.query.isCanceled;
@@ -1839,8 +1839,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         const currentProductsIds = Array.isArray(router.query.productsIds)
           ? router.query.productsIds
           : router.query.productsIds
-            ? [router.query.productsIds]
-            : productIds;
+          ? [router.query.productsIds]
+          : productIds;
 
         const currentCurrency = router.query.currency
           ? currencies.find((curr) => curr.value === router.query.currency)
@@ -1848,8 +1848,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
 
         const currentPaymentType = router.query.paymentType
           ? typeOfPayments.find(
-            (type) => type.value === Number(router.query.paymentType)
-          )
+              (type) => type.value === Number(router.query.paymentType)
+            )
           : null;
 
         // keep your API call logic unchanged
@@ -1864,8 +1864,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             paymentType: currentPaymentType?.value ?? paymentType?.value,
             patternSearch:
               finalPatternSearch !== null &&
-                finalPatternSearch !== undefined &&
-                finalPatternSearch !== ""
+              finalPatternSearch !== undefined &&
+              finalPatternSearch !== ""
                 ? finalPatternSearch
                 : currentFinalPatternSearch,
 
@@ -1919,8 +1919,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
 
               patternSearch:
                 finalPatternSearch !== null &&
-                  finalPatternSearch !== undefined &&
-                  finalPatternSearch !== ""
+                finalPatternSearch !== undefined &&
+                finalPatternSearch !== ""
                   ? finalPatternSearch
                   : currentFinalPatternSearch,
 
@@ -2029,10 +2029,11 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             discount: quote?.discount,
             totalPriceWithoutVat: isRTL
               ? `${quote?.totalPriceWithoutVat} ${getCurrencyUnitText(
-                quote?.currency
-              )}`
-              : `${getCurrencyUnitText(quote?.currency)} ${quote?.totalPriceWithoutVat
-              }`,
+                  quote?.currency
+                )}`
+              : `${getCurrencyUnitText(quote?.currency)} ${
+                  quote?.totalPriceWithoutVat
+                }`,
 
             totalPrice: isRTL
               ? `${quote?.totalPrice} ${getCurrencyUnitText(quote?.currency)}`
@@ -2072,7 +2073,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 }
                 onOpenDuplicateModal={onOpenDuplicateModal}
                 handleGetTaxConfirmNo={handleGetTaxConfirmNo}
-                onClickOpenInventoryIntakeModal={onClickOpenInventoryIntakeModal}
+                onClickOpenInventoryIntakeModal={
+                  onClickOpenInventoryIntakeModal
+                }
                 onClickUndoDocumentIntake={handleUndoDocumentIntake}
                 onClickSendToCustomerEmail={onClickSendToCustomerEmail}
                 onClickSendToCustomerSMS={onClickSendToCustomerSMS}
@@ -2136,30 +2139,24 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
           }
 
           if (isOrder) {
-            const jobsElement = CheckPermission(
-              Permissions.SHOW_BOARD_MISSIONS
-            ) ? (
-              <a
-                style={{
-                  cursor: "pointer",
-                  color: "inherit",
-                  textDecoration: "unset",
-                }}
-                href={`/jobs?pageNumber=1&finalPatternSearch=${quote?.number}`}
-              >
-                {quote?.jobs}
-              </a>
-            ) : (
-              quote?.jobs
+            const jobsElement = (
+              <OrderJobsCell
+                jobs={quote?.jobs}
+                orderJobs={quote?.orderJobs || []}
+                quoteNumber={quote?.number}
+                hasPermission={CheckPermission(Permissions.SHOW_BOARD_MISSIONS)}
+              />
             );
 
-            const paymentStatus = `${isRTL
-              ? `${quote?.sumApplied} ${getCurrencyUnitText(quote?.currency)}`
-              : `${getCurrencyUnitText(quote?.currency)} ${quote?.sumApplied}`
-              }/${isRTL
+            const paymentStatus = `${
+              isRTL
+                ? `${quote?.sumApplied} ${getCurrencyUnitText(quote?.currency)}`
+                : `${getCurrencyUnitText(quote?.currency)} ${quote?.sumApplied}`
+            }/${
+              isRTL
                 ? `${quote?.totalPrice} ${getCurrencyUnitText(quote?.currency)}`
                 : `${getCurrencyUnitText(quote?.currency)} ${quote?.totalPrice}`
-              }`;
+            }`;
 
             return {
               ...baseRow,
@@ -2327,22 +2324,41 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   };
 
   // State for intake validation dialog
-  const [showIntakeValidationDialog, setShowIntakeValidationDialog] = useState(false);
-  const [pendingStatusChange, setPendingStatusChange] = useState<{ documentId: string; status: number } | null>(null);
-  const [selectedDocumentForValidation, setSelectedDocumentForValidation] = useState<any>(null);
+  const [showIntakeValidationDialog, setShowIntakeValidationDialog] =
+    useState(false);
+  const [pendingStatusChange, setPendingStatusChange] = useState<{
+    documentId: string;
+    status: number;
+  } | null>(null);
+  const [selectedDocumentForValidation, setSelectedDocumentForValidation] =
+    useState<any>(null);
 
   // State for undo intake dialog when changing from Received status
   const [showUndoIntakeDialog, setShowUndoIntakeDialog] = useState(false);
-  const [pendingStatusChangeWithUndo, setPendingStatusChangeWithUndo] = useState<{ documentId: string; status: number; shouldUndoIntake: boolean } | null>(null);
+  const [pendingStatusChangeWithUndo, setPendingStatusChangeWithUndo] =
+    useState<{
+      documentId: string;
+      status: number;
+      shouldUndoIntake: boolean;
+    } | null>(null);
 
   const handlePurchaseOrderStatusChange = useCallback(
-    async (documentId: string, nextStatus: number, document?: any, shouldUndoIntake: boolean | null = null) => {
+    async (
+      documentId: string,
+      nextStatus: number,
+      document?: any,
+      shouldUndoIntake: boolean | null = null
+    ) => {
       // Get current status - use status property (as per API response structure)
       const currentStatus = document?.status ?? document?.documentStatus ?? 0;
 
       // Check if changing FROM Received status to another status
       // Only show dialog if shouldUndoIntake is null (not explicitly set from dialog handlers)
-      if (shouldUndoIntake === null && currentStatus === PurchaseOrderStatuses.Received && nextStatus !== PurchaseOrderStatuses.Received) {
+      if (
+        shouldUndoIntake === null &&
+        currentStatus === PurchaseOrderStatuses.Received &&
+        nextStatus !== PurchaseOrderStatuses.Received
+      ) {
         // Use document data already available in the table (no need to fetch - avoids 500 error)
         // Check document-level isIntake flag (available in list response)
         const documentIsIntake = document?.isIntake === true;
@@ -2350,7 +2366,11 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         // Show dialog if document-level flag is true OR if any items have isIntake = true
         if (documentIsIntake) {
           // Show dialog asking if user wants to undo intake
-          setPendingStatusChangeWithUndo({ documentId, status: nextStatus, shouldUndoIntake: false });
+          setPendingStatusChangeWithUndo({
+            documentId,
+            status: nextStatus,
+            shouldUndoIntake: false,
+          });
           setSelectedDocumentForValidation(document);
           setShowUndoIntakeDialog(true);
           return;
@@ -2361,11 +2381,13 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       const shouldUndo = shouldUndoIntake === null ? false : shouldUndoIntake;
 
       // Check if changing from Under Creation to Received status
-      if (currentStatus === PurchaseOrderStatuses.UnderCreation && nextStatus === PurchaseOrderStatuses.Received) {
+      if (
+        currentStatus === PurchaseOrderStatuses.UnderCreation &&
+        nextStatus === PurchaseOrderStatuses.Received
+      ) {
         // Use document data already available in the table (no need to fetch)
         // Check if document has documentItems with isIntake = false (if available)
         const hasUnintakedItems = document?.isIntake === false;
-
 
         if (hasUnintakedItems) {
           // Show validation dialog
@@ -2381,7 +2403,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       try {
         // If shouldUndo is true, call undo intake API (which also updates status)
         if (shouldUndo && document) {
-          const undoResponse = await undoDocumentIntakeApi(callApi, () => { }, {
+          const undoResponse = await undoDocumentIntakeApi(callApi, () => {}, {
             documentType: docType,
             purchaseOrderId: documentId,
             status: nextStatus,
@@ -2395,7 +2417,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
           }
         } else {
           // If not undoing intake, just update status normally
-          const response = await updateDocumentStatusApi(callApi, () => { }, {
+          const response = await updateDocumentStatusApi(callApi, () => {}, {
             documentType: docType,
             documentId,
             status: nextStatus,
@@ -2457,53 +2479,73 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   };
 
   // Handle undo document intake
-  const handleUndoDocumentIntake = useCallback(async (document: any) => {
-    if (!isPurchaseOrder || !document?.id) {
-      return;
-    }
-
-    setStatusUpdatingId(document.id);
-    try {
-      const response = await undoDocumentIntakeApi(callApi, () => { }, {
-        documentType: docType,
-        purchaseOrderId: document.id,
-        status: document.documentStatus || document.status || 0,
-        shouldUndoIntake: true,
-      });
-      if (response?.success) {
-        alertSuccessUpdate();
-        await getAllQuotes(undefined, true);
-      } else {
-        alertFaultUpdate();
+  const handleUndoDocumentIntake = useCallback(
+    async (document: any) => {
+      if (!isPurchaseOrder || !document?.id) {
+        return;
       }
-    } catch (error) {
-      alertFaultUpdate();
-    } finally {
-      setStatusUpdatingId(null);
-    }
-  }, [isPurchaseOrder, callApi, docType, getAllQuotes, alertSuccessUpdate, alertFaultUpdate]);
+
+      setStatusUpdatingId(document.id);
+      try {
+        const response = await undoDocumentIntakeApi(callApi, () => {}, {
+          documentType: docType,
+          purchaseOrderId: document.id,
+          status: document.documentStatus || document.status || 0,
+          shouldUndoIntake: true,
+        });
+        if (response?.success) {
+          alertSuccessUpdate();
+          await getAllQuotes(undefined, true);
+        } else {
+          alertFaultUpdate();
+        }
+      } catch (error) {
+        alertFaultUpdate();
+      } finally {
+        setStatusUpdatingId(null);
+      }
+    },
+    [
+      isPurchaseOrder,
+      callApi,
+      docType,
+      getAllQuotes,
+      alertSuccessUpdate,
+      alertFaultUpdate,
+    ]
+  );
 
   // Handle undo item intake
-  const handleUndoItemIntake = useCallback(async (item: any, document: any) => {
-    if (!isPurchaseOrder || !item?.id) {
-      return;
-    }
+  const handleUndoItemIntake = useCallback(
+    async (item: any, document: any) => {
+      if (!isPurchaseOrder || !item?.id) {
+        return;
+      }
 
-    try {
-      const response = await undoDocumentItemIntakeApi(callApi, () => { }, {
-        documentType: docType,
-        itemId: item.id,
-      });
-      if (response?.success) {
-        alertSuccessUpdate();
-        await getAllQuotes(undefined, true);
-      } else {
+      try {
+        const response = await undoDocumentItemIntakeApi(callApi, () => {}, {
+          documentType: docType,
+          itemId: item.id,
+        });
+        if (response?.success) {
+          alertSuccessUpdate();
+          await getAllQuotes(undefined, true);
+        } else {
+          alertFaultUpdate();
+        }
+      } catch (error) {
         alertFaultUpdate();
       }
-    } catch (error) {
-      alertFaultUpdate();
-    }
-  }, [isPurchaseOrder, callApi, docType, getAllQuotes, alertSuccessUpdate, alertFaultUpdate]);
+    },
+    [
+      isPurchaseOrder,
+      callApi,
+      docType,
+      getAllQuotes,
+      alertSuccessUpdate,
+      alertFaultUpdate,
+    ]
+  );
 
   // Handle intake validation dialog - cancel
   const handleCancelIntakeValidation = () => {
@@ -2736,19 +2778,19 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
 
   const tableHeaders = isPurchaseOrder
     ? [
-      t("sales.quote.creationDate"),
-      t("sales.quote.purchaseOrderNumber"),
-      t("sales.quote.orderNumber"),
-      t("sales.quote.supplierName"),
-      t("sales.quote.client"),
-      t("sales.quote.itemsNumber"),
-      t("sales.quote.totalPrice"),
-      t("sales.quote.notes"),
-      t("sales.quote.status"),
-      t("sales.quote.more"),
-    ]
+        t("sales.quote.creationDate"),
+        t("sales.quote.purchaseOrderNumber"),
+        t("sales.quote.orderNumber"),
+        t("sales.quote.supplierName"),
+        t("sales.quote.client"),
+        t("sales.quote.itemsNumber"),
+        t("sales.quote.totalPrice"),
+        t("sales.quote.notes"),
+        t("sales.quote.status"),
+        t("sales.quote.more"),
+      ]
     : isPurchaseInvoice || isPurchaseInvoiceRefund
-      ? [
+    ? [
         t("sales.quote.creationDate"),
         t("sales.quote.purchaseInvoiceNumber"),
         t("sales.quote.invoiceNumber"),
@@ -2760,64 +2802,64 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         t("sales.quote.status"),
         t("sales.quote.more"),
       ]
-      : isQuote
-        ? [
-          t("sales.quote.createdDate"),
-          t("sales.quote.client"),
-          t("sales.quote.agent"),
-          t("documentingDesign.TableSetting.number"),
-          t("sales.quote.worksName"),
-          t("sales.quote.totalPrice"),
-          t("sales.quote.notes"),
-          t("sales.quote.status"),
-          t("sales.quote.more"),
-        ]
-        : [
-          t("sales.quote.createdDate"),
-          isSupplierPayments
-            ? t("sales.quote.supplier")
-            : t("sales.quote.client"),
-          t("sales.quote.agent"),
-          (() => {
-            switch (docType) {
-              case DOCUMENT_TYPE.order:
-                return t("sales.quote.orderNumber");
-              default:
-                return t("documentingDesign.TableSetting.number");
-            }
-          })(),
-          isOrder
-            ? t("sales.quote.quoteNumber")
-            : isReceipt || isSupplierPayments
-              ? null
-              : t("sales.quote.sourceDocument"),
+    : isQuote
+    ? [
+        t("sales.quote.createdDate"),
+        t("sales.quote.client"),
+        t("sales.quote.agent"),
+        t("documentingDesign.TableSetting.number"),
+        t("sales.quote.worksName"),
+        t("sales.quote.totalPrice"),
+        t("sales.quote.notes"),
+        t("sales.quote.status"),
+        t("sales.quote.more"),
+      ]
+    : [
+        t("sales.quote.createdDate"),
+        isSupplierPayments
+          ? t("sales.quote.supplier")
+          : t("sales.quote.client"),
+        t("sales.quote.agent"),
+        (() => {
+          switch (docType) {
+            case DOCUMENT_TYPE.order:
+              return t("sales.quote.orderNumber");
+            default:
+              return t("documentingDesign.TableSetting.number");
+          }
+        })(),
+        isOrder
+          ? t("sales.quote.quoteNumber")
+          : isReceipt || isSupplierPayments
+          ? null
+          : t("sales.quote.sourceDocument"),
 
-          isOrder && t("sales.quote.purchaseNumber"),
-          isOrder && t("sales.quote.productionStatus"),
-          isOrder && t("sales.quote.jobs"),
-          isOrder && CheckPermission(Permissions.SHOW_COSTS_IN_ORDERS) && (
-            <PermissionCheck userPermission={Permissions.SHOW_COSTS_IN_ORDERS}>
-              {t("sales.quote.cost")}
-            </PermissionCheck>
-          ),
-          isReceipt || isSupplierPayments
-            ? t("sales.quote.paymentMethod")
-            : t("sales.quote.worksName"),
-          (isReceipt || isSupplierPayments) && t("sales.quote.checkNumber"),
-          (isReceipt || isSupplierPayments) && t("sales.quote.checkDueDate"),
-          isOrdersTracking
-            ? t("customers.modal.paymentStatus")
-            : t("sales.quote.totalPrice"),
-          t("sales.quote.notes"),
-          (isOrder ||
-            isInvoice ||
-            isInvoiceRefund ||
-            isDeliveryNote ||
-            isDeliveryNoteRefund) &&
+        isOrder && t("sales.quote.purchaseNumber"),
+        isOrder && t("sales.quote.productionStatus"),
+        isOrder && t("sales.quote.jobs"),
+        isOrder && CheckPermission(Permissions.SHOW_COSTS_IN_ORDERS) && (
+          <PermissionCheck userPermission={Permissions.SHOW_COSTS_IN_ORDERS}>
+            {t("sales.quote.cost")}
+          </PermissionCheck>
+        ),
+        isReceipt || isSupplierPayments
+          ? t("sales.quote.paymentMethod")
+          : t("sales.quote.worksName"),
+        (isReceipt || isSupplierPayments) && t("sales.quote.checkNumber"),
+        (isReceipt || isSupplierPayments) && t("sales.quote.checkDueDate"),
+        isOrdersTracking
+          ? t("customers.modal.paymentStatus")
+          : t("sales.quote.totalPrice"),
+        t("sales.quote.notes"),
+        (isOrder ||
+          isInvoice ||
+          isInvoiceRefund ||
+          isDeliveryNote ||
+          isDeliveryNoteRefund) &&
           t("sales.documentDeliveries.deliveryStatus"),
-          t("sales.quote.status"),
-          t("sales.quote.more"),
-        ].filter(Boolean);
+        t("sales.quote.status"),
+        t("sales.quote.more"),
+      ].filter(Boolean);
 
   const logsTableHeaders = [
     t("sales.quote.actionDate"),
@@ -3028,11 +3070,11 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               : formatCustomDateTime(document?.createdDate),
             isRTL
               ? document?.totalPrice +
-              " " +
-              getCurrencyUnitText(document?.currency)
+                " " +
+                getCurrencyUnitText(document?.currency)
               : getCurrencyUnitText(document?.currency) +
-              " " +
-              document?.totalPrice,
+                " " +
+                document?.totalPrice,
             <div style={{ display: "flex", justifyContent: "center" }}>
               <h2
                 style={
@@ -3255,8 +3297,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       case LogActionType[8]:
         return t("logs.CONTACTS_UPDATED");
       case LogActionType[9]:
-        return `${t("logs.CLIENT_UPDATED")} ${t("logs.from")} "${values[0]
-          }" ${t("logs.to")} "${values[1]}"`;
+        return `${t("logs.CLIENT_UPDATED")} ${t("logs.from")} "${
+          values[0]
+        }" ${t("logs.to")} "${values[1]}"`;
       case LogActionType[10]:
         if (values[0] === null) {
           return `${t("logs.AGENT_UPDATED")} ${t("logs.to")} ${values[1]}`;
@@ -3267,18 +3310,21 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         }
       case LogActionType[11]:
         if (values[0] === null) {
-          return `${t("logs.PURCHASE_NUMBER_UPDATE")} ${t("logs.to")} "${values[1]
-            }"`;
+          return `${t("logs.PURCHASE_NUMBER_UPDATE")} ${t("logs.to")} "${
+            values[1]
+          }"`;
         } else {
-          return `${t("logs.PURCHASE_NUMBER_UPDATE")} ${t("logs.from")} ${values[0]
-            } ${t("logs.to")} ${values[1]}`;
+          return `${t("logs.PURCHASE_NUMBER_UPDATE")} ${t("logs.from")} ${
+            values[0]
+          } ${t("logs.to")} ${values[1]}`;
         }
       case LogActionType[12]:
         if (values[0] === null) {
           return `${t("logs.COMMENTS_UPDATE")} ${t("logs.to")} "${values[1]}"`;
         } else {
-          return `${t("logs.COMMENTS_UPDATE")} ${t("logs.from")} "${values[0]
-            }" ${t("logs.to")} "${values[1]}"`;
+          return `${t("logs.COMMENTS_UPDATE")} ${t("logs.from")} "${
+            values[0]
+          }" ${t("logs.to")} "${values[1]}"`;
         }
       case LogActionType[13]:
         return `${t("logs.DOCUMENT_DUPLICATED", {
@@ -3417,14 +3463,14 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
           documentId: documentId,
           data: isClear
             ? {
-              fromDate: fromLogsDate && GetDateFormat(fromLogsDate),
-              toDate: toLogsDate && GetDateFormat(toLogsDate),
-            }
+                fromDate: fromLogsDate && GetDateFormat(fromLogsDate),
+                toDate: toLogsDate && GetDateFormat(toLogsDate),
+              }
             : {
-              userId: employeeId?.id,
-              fromDate: fromLogsDate && GetDateFormat(fromLogsDate),
-              toDate: toLogsDate && GetDateFormat(toLogsDate),
-            },
+                userId: employeeId?.id,
+                fromDate: fromLogsDate && GetDateFormat(fromLogsDate),
+                toDate: toLogsDate && GetDateFormat(toLogsDate),
+              },
         });
       } catch (error) {
         reject();
@@ -3494,17 +3540,17 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const accountingStatuses =
     isReceipt || isSupplierPayments
       ? [
-        {
-          label: t("documentStatus.Receipt.Created"),
-          value: ReceiptAccountingStatus.CREATED,
-        },
-        {
-          label: t("documentStatus.Receipt.Canceled"),
-          value: ReceiptAccountingStatus.CANCELED,
-        },
-      ]
+          {
+            label: t("documentStatus.Receipt.Created"),
+            value: ReceiptAccountingStatus.CREATED,
+          },
+          {
+            label: t("documentStatus.Receipt.Canceled"),
+            value: ReceiptAccountingStatus.CANCELED,
+          },
+        ]
       : isInvoice || isPurchaseInvoice
-        ? [
+      ? [
           { label: t("sales.quote.open"), value: AStatus.OPEN },
           {
             label: t("sales.quote.partialClosed"),
@@ -3513,48 +3559,48 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
           { label: t("sales.quote.closed"), value: AStatus.CLOSED },
           { label: t("sales.quote.draft"), value: AStatus.DRAFT },
         ]
-        : isPurchaseOrder
-          ? [
-            {
-              label: t("documentStatus.PurchaseOrder.UnderCreation"),
-              value: DocumentCloseStatus.Open,
-            },
-            {
-              label: t("sales.quote.partialClosed"),
-              value: DocumentCloseStatus.PartialClosed,
-            },
-            {
-              label: t("sales.quote.closed"),
-              value: DocumentCloseStatus.Closed,
-            },
-            // {
-            //   label: t("documentStatus.PurchaseOrder.Draft"),
-            //   value: DocumentCloseStatus.Draft
-            // },
-            {
-              label: t("documentStatus.PurchaseOrder.SentToSupplier"),
-              value: DocumentCloseStatus.SentToSupplier,
-            },
-            {
-              label: t("documentStatus.PurchaseOrder.Received"),
-              value: DocumentCloseStatus.Received,
-            },
-            {
-              label: t("documentStatus.PurchaseOrder.SupplierRequestingApproval"),
-              value: DocumentCloseStatus.SupplierRequestingApproval,
-            },
-          ]
-          : [
-            {
-              label: t("sales.quote.open"),
-              value: AStatus.OPEN,
-            },
-            {
-              label: t("sales.quote.partialClosed"),
-              value: AStatus.PARTIAL_CLOSED,
-            },
-            { label: t("sales.quote.closed"), value: AStatus.CLOSED },
-          ];
+      : isPurchaseOrder
+      ? [
+          {
+            label: t("documentStatus.PurchaseOrder.UnderCreation"),
+            value: DocumentCloseStatus.Open,
+          },
+          {
+            label: t("sales.quote.partialClosed"),
+            value: DocumentCloseStatus.PartialClosed,
+          },
+          {
+            label: t("sales.quote.closed"),
+            value: DocumentCloseStatus.Closed,
+          },
+          // {
+          //   label: t("documentStatus.PurchaseOrder.Draft"),
+          //   value: DocumentCloseStatus.Draft
+          // },
+          {
+            label: t("documentStatus.PurchaseOrder.SentToSupplier"),
+            value: DocumentCloseStatus.SentToSupplier,
+          },
+          {
+            label: t("documentStatus.PurchaseOrder.Received"),
+            value: DocumentCloseStatus.Received,
+          },
+          {
+            label: t("documentStatus.PurchaseOrder.SupplierRequestingApproval"),
+            value: DocumentCloseStatus.SupplierRequestingApproval,
+          },
+        ]
+      : [
+          {
+            label: t("sales.quote.open"),
+            value: AStatus.OPEN,
+          },
+          {
+            label: t("sales.quote.partialClosed"),
+            value: AStatus.PARTIAL_CLOSED,
+          },
+          { label: t("sales.quote.closed"), value: AStatus.CLOSED },
+        ];
 
   const deliveryStatuses = useMemo(
     () => [
@@ -3890,8 +3936,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     const path = isSelectedCLoseAsDeliveryNote
       ? `/deliveryNote?isNewCreation=true&orderId=${selectedDocument?.id}`
       : isOrder
-        ? `/invoice?isNewCreation=true&orderId=${selectedDocument?.id}`
-        : `/invoice?isNewCreation=true&deliveryNoteId=${selectedDocument?.id}`;
+      ? `/invoice?isNewCreation=true&orderId=${selectedDocument?.id}`
+      : `/invoice?isNewCreation=true&deliveryNoteId=${selectedDocument?.id}`;
 
     window.open(path, "_blank");
     setTriggeredFromMoveOrderToReady(false);
@@ -4156,9 +4202,15 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               if (res.data && res.data.length > 0) {
                 const firstContact = res.data[0];
                 newSendPaymentState.selectedContactIndex = 0;
-                newSendPaymentState.contactName = (firstContact.contactName || "").trim();
-                newSendPaymentState.contactPhone = (firstContact.contactPhone || "").trim();
-                newSendPaymentState.contactMail = (firstContact.contactMail || "").trim();
+                newSendPaymentState.contactName = (
+                  firstContact.contactName || ""
+                ).trim();
+                newSendPaymentState.contactPhone = (
+                  firstContact.contactPhone || ""
+                ).trim();
+                newSendPaymentState.contactMail = (
+                  firstContact.contactMail || ""
+                ).trim();
               } else {
                 newSendPaymentState.selectedContactIndex = -1;
                 newSendPaymentState.contactName = "";
@@ -4247,7 +4299,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       const contactEmail = selectedContact?.contactMail;
       const contactPhone = selectedContact?.contactPhone;
       const contactName = selectedContact?.contactName || selectedContact?.name;
-      const contactID = selectedContact?.contactID
+      const contactID = selectedContact?.contactID;
       await openEmailComposer(
         document?.id,
         contactEmail,
@@ -4272,14 +4324,26 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       setSendPayment((prevState) => {
         // Ensure contact fields are populated from documentContacts if they exist
         let updatedState = { ...prevState };
-        if (prevState.documentContacts && prevState.documentContacts.length > 0) {
-          const contactIndex = prevState.selectedContactIndex >= 0 ? prevState.selectedContactIndex : 0;
+        if (
+          prevState.documentContacts &&
+          prevState.documentContacts.length > 0
+        ) {
+          const contactIndex =
+            prevState.selectedContactIndex >= 0
+              ? prevState.selectedContactIndex
+              : 0;
           const selectedContact = prevState.documentContacts[contactIndex];
           if (selectedContact) {
             updatedState.selectedContactIndex = contactIndex;
-            updatedState.contactName = (selectedContact.contactName || "").trim();
-            updatedState.contactPhone = (selectedContact.contactPhone || "").trim();
-            updatedState.contactMail = (selectedContact.contactMail || "").trim();
+            updatedState.contactName = (
+              selectedContact.contactName || ""
+            ).trim();
+            updatedState.contactPhone = (
+              selectedContact.contactPhone || ""
+            ).trim();
+            updatedState.contactMail = (
+              selectedContact.contactMail || ""
+            ).trim();
           }
         }
         return {
@@ -4311,14 +4375,26 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       setSendPayment((prevState) => {
         // Ensure contact fields are populated from documentContacts if they exist
         let updatedState = { ...prevState };
-        if (prevState.documentContacts && prevState.documentContacts.length > 0) {
-          const contactIndex = prevState.selectedContactIndex >= 0 ? prevState.selectedContactIndex : 0;
+        if (
+          prevState.documentContacts &&
+          prevState.documentContacts.length > 0
+        ) {
+          const contactIndex =
+            prevState.selectedContactIndex >= 0
+              ? prevState.selectedContactIndex
+              : 0;
           const selectedContact = prevState.documentContacts[contactIndex];
           if (selectedContact) {
             updatedState.selectedContactIndex = contactIndex;
-            updatedState.contactName = (selectedContact.contactName || "").trim();
-            updatedState.contactPhone = (selectedContact.contactPhone || "").trim();
-            updatedState.contactMail = (selectedContact.contactMail || "").trim();
+            updatedState.contactName = (
+              selectedContact.contactName || ""
+            ).trim();
+            updatedState.contactPhone = (
+              selectedContact.contactPhone || ""
+            ).trim();
+            updatedState.contactMail = (
+              selectedContact.contactMail || ""
+            ).trim();
           }
         }
         return {
@@ -4388,7 +4464,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         sendBySms: true,
         sendByMail: false,
         sendByWhatsapp: false,
-        selectedContactIndex: prev.documentContacts?.length > 0 ? 0 : prev.selectedContactIndex,
+        selectedContactIndex:
+          prev.documentContacts?.length > 0 ? 0 : prev.selectedContactIndex,
       }));
       setPaymentModalTitle(
         `${t("prePayment.paymentPageFor")} ${t(
@@ -4414,7 +4491,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         sendByWhatsapp: true,
         sendByMail: false,
         sendBySms: false,
-        selectedContactIndex: prev.documentContacts?.length > 0 ? 0 : prev.selectedContactIndex,
+        selectedContactIndex:
+          prev.documentContacts?.length > 0 ? 0 : prev.selectedContactIndex,
       }));
       setPaymentModalTitle(
         `${t("prePayment.paymentPageFor")} ${t(
@@ -4762,10 +4840,13 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             // Set documentForEmail so FrontDeskEmailComposerWrapper can use it
             setDocumentForEmail(selectedDocument);
             // Get contact info from selectedDocument if available
-            const contactEmail = selectedDocument?.contactEmail || selectedDocument?.contactMail;
+            const contactEmail =
+              selectedDocument?.contactEmail || selectedDocument?.contactMail;
             const contactPhone = selectedDocument?.contactPhone;
-            const customerId = selectedDocument?.customerId || selectedDocument?.clientId;
-            const customerName = selectedDocument?.customerName || selectedDocument?.clientName;
+            const customerId =
+              selectedDocument?.customerId || selectedDocument?.clientId;
+            const customerName =
+              selectedDocument?.customerName || selectedDocument?.clientName;
             const contactName = selectedDocument?.contactName;
 
             openEmailComposer(
