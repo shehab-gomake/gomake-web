@@ -42,6 +42,8 @@ export interface UploadedFile {
   base64: string;
   status: "ready" | "analyzing" | "completed" | "error";
   materialType?: string;
+  // Analyzed image from API response (base64 string without prefix)
+  analyzedImage?: string | null;
   // DieCut fields
   shape?: string | null;
   widthInCm?: number | string | null;
@@ -97,11 +99,36 @@ export const useDieCutDataTransform = () => {
     (file: UploadedFile, apiResponse: ApiResponseItem): UploadedFile => {
       const { materialType, attributes } = apiResponse;
 
+      // Store the analyzed image from API response
+      const analyzedImage = attributes?.image ?? null;
+
+      // Get all additional fields from attributes that aren't explicitly mapped
+      // This includes fields like DieUnitLidHeight_LID, DieUnitFlapLength_FOLD, etc.
+      const additionalFields: Record<string, any> = {};
+      if (attributes) {
+        Object.keys(attributes).forEach((key) => {
+          // Skip fields that are already explicitly mapped
+          const mappedKeys = [
+            'code', 'shape', 'name', 'image', 'type', 'pdfUrl', 'dxfUrl',
+            'unitWidth', 'unitLength', 'columnsAmount', 'linesAmount',
+            'spaceBetweenColumns', 'spaceBetweenLines', 'directions',
+            'price', 'currency', 'isOutSource',
+            'width', 'length', 'finalUnitWidth', 'finalUnitLength', 'finalUnitHeight',
+            'cuttingLineLength', 'scoringLineLength', 'perforationLineLength'
+          ];
+          
+          if (!mappedKeys.includes(key)) {
+            additionalFields[key] = attributes[key];
+          }
+        });
+      }
+
       if (materialType === "DieKissCut") {
         return {
           ...file,
           status: "completed" as const,
           materialType,
+          analyzedImage,
           // DieKissCut fields mapping
           shape: attributes?.shape ?? null,
           unitWidthInMm_DieKissCut: attributes?.unitWidth ?? null,
@@ -115,6 +142,8 @@ export const useDieCutDataTransform = () => {
           currency_DieKissCut: attributes?.currency ?? null,
           name_DieKissCut: attributes?.name ?? null,
           code_DieKissCut: attributes?.code ?? null,
+          // Include all additional fields from API response
+          ...additionalFields,
         };
       } else {
         // DieCut fields mapping
@@ -122,6 +151,7 @@ export const useDieCutDataTransform = () => {
           ...file,
           status: "completed" as const,
           materialType: materialType || "DieCut",
+          analyzedImage,
           shape: attributes?.shape ?? null,
           widthInCm: attributes?.width ?? null,
           lengthInCm: attributes?.length ?? null,
@@ -141,6 +171,8 @@ export const useDieCutDataTransform = () => {
           currency: attributes?.currency ?? null,
           name: attributes?.name ?? null,
           directions: attributes?.directions ?? null,
+          // Include all additional fields from API response
+          ...additionalFields,
         };
       }
     },
@@ -152,7 +184,15 @@ export const useDieCutDataTransform = () => {
    */
   const transformUploadedFileToPayload = useCallback(
     (file: UploadedFile, materialKey: string, categoryKey: string): AddMaterialPayload => {
-      const image = file.base64;
+      // Use analyzed image from API if available, otherwise fallback to original base64
+      // The analyzed image is already a base64 string, we just need to add the prefix
+      const imageBase64 = file.analyzedImage || file.base64;
+      const image = imageBase64 ? `data:image/png;base64,${imageBase64}` : "";
+      
+      // Fields to exclude from the payload (internal fields)
+      const excludeFields = ['id', 'fileName', 'file', 'base64', 'analyzedImage', 'status', 'materialType'];
+      
+      // Start with base rowData
       let rowData: Record<string, any> = {};
 
       if (file.materialType === "DieKissCut") {
@@ -170,7 +210,7 @@ export const useDieCutDataTransform = () => {
           name: file.name_DieKissCut ?? "",
           code: file.code_DieKissCut ?? "",
           "Active": "false",
-          "image": `data:image/png;base64,${image}`,
+          image: image,
           isOutSource: "false",
         };
       } else {
@@ -193,13 +233,34 @@ export const useDieCutDataTransform = () => {
           perforationLineLength: file.perforationLineLengthInCm?.toString() ?? "",
           unitPrice: file.defaultCost?.toString() ?? "",
           currency: file.currency ?? "",
-          image: `data:image/png;base64,${image}`,
+          image: image,
           isOutSource: "false",
           Active: "false",
           name: file.name ?? "",
           code: file.code ?? "",
         };
       }
+
+      // Add all additional fields from the file object that are not in the base structure
+      // This includes fields like DieUnitLidHeight_LID, DieUnitFlapLength_FOLD, etc.
+      Object.keys(file).forEach((key) => {
+        // Skip if already in rowData or in excludeFields
+        if (rowData.hasOwnProperty(key) || excludeFields.includes(key)) {
+          return;
+        }
+        
+        const value = (file as any)[key];
+        
+        // Only include fields that have values (not null, undefined, or empty string)
+        if (value !== null && value !== undefined && value !== '') {
+          // Convert to string if it's not already
+          if (Array.isArray(value)) {
+            rowData[key] = value; // Keep arrays as-is
+          } else {
+            rowData[key] = String(value);
+          }
+        }
+      });
 
       return {
         materialKey,
