@@ -5385,7 +5385,6 @@ const useDigitalOffsetPrice = ({
           relatedParameter.selectedValueIds &&
           relatedParameter.selectedValueIds.length > 0
         ) {
-          debugger
           // Use selectedValueIds: show when selected value is in selectedValueIds
           const valueToCheck = (parm?.parameterType === 11 || parm?.ParameterType === 11) ? parm?.valueIds : parm?.values;
           const valuesToCheck = Array.isArray(valueToCheck)
