@@ -37,10 +37,15 @@ export const useMyTickets = () => {
   // Check if user has permission to view all tickets - make it reactive to permission changes
   const canViewAllTickets = useMemo(() => {
     if (!permissions || !Array.isArray(permissions)) {
-      console.log("[MyTickets] Permissions not loaded or invalid:", permissions);
+      console.log(
+        "[MyTickets] Permissions not loaded or invalid:",
+        permissions
+      );
       return false;
     }
-    const hasPermission = permissions.includes(Permissions.SHOW_ALL_SUPPORT_TICKETS);
+    const hasPermission = permissions.includes(
+      Permissions.SHOW_ALL_SUPPORT_TICKETS
+    );
     console.log("[MyTickets] Permission check:", {
       permission: Permissions.SHOW_ALL_SUPPORT_TICKETS,
       permissions: permissions,
@@ -60,7 +65,7 @@ export const useMyTickets = () => {
       // Use getSetApiData to handle response structure correctly (extracts from data.data.data)
       const callBack = (res: any) => {
         console.log("[MyTickets] Fetch users callback response:", res);
-        
+
         if (res.success && res.data && Array.isArray(res.data)) {
           const employees = res.data;
           console.log("[MyTickets] Parsed employees:", employees);
@@ -69,28 +74,37 @@ export const useMyTickets = () => {
             .filter((employee: any) => {
               // Filter out invalid userIDs and ensure userID exists
               const userID = employee.userID || employee.userId;
-              const isValid = userID && 
-                             userID !== "00000000-0000-0000-0000-000000000000" &&
-                             String(userID).trim() !== "";
+              const isValid =
+                userID &&
+                userID !== "00000000-0000-0000-0000-000000000000" &&
+                String(userID).trim() !== "";
               return isValid;
             })
             .map((employee: any) => {
               const userID = employee.userID || employee.userId;
-              const fullName = `${employee.firstname || ""} ${employee.lastname || ""}`.trim() || employee.email || "Unknown";
+              const fullName =
+                `${employee.firstname || ""} ${
+                  employee.lastname || ""
+                }`.trim() ||
+                employee.email ||
+                "Unknown";
               return {
                 label: fullName,
                 id: userID,
                 value: userID,
               };
             });
-          
+
           console.log("[MyTickets] User options:", userOptions);
           setUsers(userOptions);
         } else {
-          console.warn("[MyTickets] No employees found in response. Response:", res);
+          console.warn(
+            "[MyTickets] No employees found in response. Response:",
+            res
+          );
         }
       };
-      
+
       await getSetApiData(
         callApi,
         EHttpMethod.GET,
@@ -109,7 +123,7 @@ export const useMyTickets = () => {
     try {
       setLoading(true);
       const ticketFilters: any = { ...filters };
-      
+
       // If user doesn't have permission, only show their own tickets
       if (!canViewAllTickets) {
         ticketFilters.userId = userProfile?.userId || "";
@@ -127,7 +141,13 @@ export const useMyTickets = () => {
     } finally {
       setLoading(false);
     }
-  }, [callApi, filters, selectedUserId, canViewAllTickets, userProfile?.userId]);
+  }, [
+    callApi,
+    filters,
+    selectedUserId,
+    canViewAllTickets,
+    userProfile?.userId,
+  ]);
 
   // Fetch users on mount if user has permission
   useEffect(() => {
@@ -140,7 +160,7 @@ export const useMyTickets = () => {
 
   const tableHeaders = [
     t("tickets.ticketId"),
-    t("tickets.title"),
+    t("tickets.summary") || "Summary",
     t("tickets.status"),
     t("tickets.priority"),
     t("tickets.assignedTo"),
@@ -172,7 +192,7 @@ export const useMyTickets = () => {
           },
           ticket.ticketId
         ),
-        ticket.title,
+        ticket.summary || "-",
         ticket.status,
         ticket.priority,
         ticket.assignedEmployeeName || t("tickets.unassigned"),
