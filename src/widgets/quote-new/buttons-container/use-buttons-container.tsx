@@ -453,10 +453,10 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
   const onClickConfirmWithoutNotification = () =>
     handleOrderConfirmation(false);
   const onClickConfirmWithNotification = (isStripeCash: boolean) =>
-    handleOrderConfirmation(true, false, 0,0, !!isStripeCash);
+    handleOrderConfirmation(true, false, 0, 0, !!isStripeCash);
   const onClickConfirm = () => {
     // When frontdesk is enabled, always open composer after order creation
-    handleOrderConfirmation(false, false, 0,0, false, hasFrontDeskFeature);
+    handleOrderConfirmation(false, false, 0, 0, false, hasFrontDeskFeature);
   };
 
   const onClickPrint = async (withInvoices?: boolean) => {
@@ -628,8 +628,8 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
         const mappedManagers = res.data.map((manager) => ({
           value: manager.id,
           text: manager.name,
+          email: manager.email, // Include email from API response
         }));
-        console.log("Mapped managers:", mappedManagers);
         setManagersOptions(mappedManagers);
       }
     };

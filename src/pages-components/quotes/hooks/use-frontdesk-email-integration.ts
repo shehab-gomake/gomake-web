@@ -68,7 +68,8 @@ export const useFrontDeskEmailIntegration = ({
       sendWithInvoices?: boolean,
       customerId?: string | number,
       customerName?: string,
-      contactName?: string
+      contactName?: string,
+      managerIds?: string[]
     ) => {
       setIsLoadingEmailData(true);
       setEmailData(null); // Clear previous data
@@ -152,6 +153,7 @@ export const useFrontDeskEmailIntegration = ({
               ...(customerId && { customerId }),
               ...(customerName && { customerName }),
               ...(contactName && { contactName }),
+              ...(managerIds && managerIds.length > 0 && { managerIds }),
             },
           }
         );
