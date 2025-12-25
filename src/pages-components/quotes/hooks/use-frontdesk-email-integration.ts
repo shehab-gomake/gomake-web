@@ -69,7 +69,7 @@ export const useFrontDeskEmailIntegration = ({
       customerId?: string | number,
       customerName?: string,
       contactName?: string,
-      managerIds?: string[]
+      managerEmails?: string[]
     ) => {
       setIsLoadingEmailData(true);
       setEmailData(null); // Clear previous data
@@ -113,9 +113,19 @@ export const useFrontDeskEmailIntegration = ({
                 res.data.contactEmail ||
                 (Array.isArray(res.data.tos) ? res.data.tos[0] : undefined);
 
+              // Get existing tos array from API response
+              const existingTos = Array.isArray(res.data.tos) ? res.data.tos : [];
+              
+              // Merge manager emails into tos array, removing duplicates
+              const managerEmailsArray = Array.isArray(managerEmails) 
+                ? managerEmails.filter((email) => email && email.trim())
+                : [];
+              
+              const combinedTos = Array.from(new Set([...managerEmailsArray, ...existingTos]));
+
               // Simplified: Just pass the document data, let the wrapper handle contact/inbox resolution
               const normalizedEmailData: EmailData = {
-                tos: res.data.tos || [],
+                tos: combinedTos,
                 ccs: normalizeRecipients(res.data.cc || res.data.ccs),
                 bccs: normalizeRecipients(res.data.bcc || res.data.bccs),
                 subject: res.data.subject || "",
@@ -153,7 +163,6 @@ export const useFrontDeskEmailIntegration = ({
               ...(customerId && { customerId }),
               ...(customerName && { customerName }),
               ...(contactName && { contactName }),
-              ...(managerIds && managerIds.length > 0 && { managerIds }),
             },
           }
         );

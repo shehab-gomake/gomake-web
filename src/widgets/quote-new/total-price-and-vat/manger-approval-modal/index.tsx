@@ -5,7 +5,7 @@ import { useStyle } from "./style";
 import { managerInput } from "./inputs";
 import { FormInput } from "@/components/form-inputs/form-input";
 import { IInput } from "@/components/form-inputs/interfaces";
-import { useState, useEffect, useMemo } from "react";
+import { useState } from "react";
 import { useSnackBar } from "@/hooks";
 import { useRecoilValue } from "recoil";
 import { printHouseHasFrontDeskFeature } from "@/store/print-house-profile";
@@ -40,35 +40,6 @@ const ManagerApprovalModal = ({ openModal, onClose, managersOptions, onSend, doc
         closeEmailComposer,
     } = useFrontDeskEmailIntegration({ documentType: DOCUMENT_TYPE.QuoteApprovalRequest });
 
-    // Extract manager emails from selected managers and merge into emailData
-    const emailDataWithManagerEmails = useMemo(() => {
-        if (!emailData || !managers?.managerIds || managers.managerIds.length === 0) {
-            return emailData;
-        }
-
-        // Extract manager emails from selected manager IDs
-        const selectedManagers = managersOptions.filter((manager) =>
-            managers.managerIds.includes(manager.value)
-        );
-        const managerEmails = selectedManagers
-            .map((manager) => manager.email)
-            .filter((email) => email && email.trim());
-
-        // If we have manager emails, merge them with existing tos array
-        if (managerEmails.length > 0) {
-            // Combine manager emails with existing tos, removing duplicates
-            const existingTos = emailData.tos || [];
-            const combinedTos = Array.from(new Set([...managerEmails, ...existingTos]));
-
-            return {
-                ...emailData,
-                tos: combinedTos,
-            };
-        }
-
-        return emailData;
-    }, [emailData, managers?.managerIds, managersOptions]);
-
     const onChangeInputs = (key, value) => {
         setManagers({ ...managers, [key]: value });
     };
@@ -99,9 +70,8 @@ const ManagerApprovalModal = ({ openModal, onClose, managersOptions, onSend, doc
                 return;
             }
 
-            // Open email composer with manager IDs
-            // The backend API will populate the tos array with manager emails based on managerIds
-            // The useMemo hook will also merge manager emails into the tos array
+            // Open email composer with manager IDs and manager emails
+            // The manager emails will be merged into the tos array in the API response
             await openEmailComposer(
                 documentId,
                 undefined, // contactEmail - will be set by backend from manager emails
@@ -112,7 +82,7 @@ const ManagerApprovalModal = ({ openModal, onClose, managersOptions, onSend, doc
                 undefined, // customerId
                 undefined, // customerName
                 undefined, // contactName
-                managers.managerIds // managerIds - backend will use these to populate email recipients
+                managerEmails // managerEmails - will be added to tos array in the response
             );
 
             // Close the manager approval modal when email composer opens
@@ -163,7 +133,7 @@ const ManagerApprovalModal = ({ openModal, onClose, managersOptions, onSend, doc
                 <FrontDeskEmailComposerWrapper
                     open={isEmailComposerOpen}
                     onClose={closeEmailComposer}
-                    emailData={emailDataWithManagerEmails}
+                    emailData={emailData}
                     documentId={documentId}
                     documentType={DOCUMENT_TYPE.QuoteApprovalRequest}
                 />
