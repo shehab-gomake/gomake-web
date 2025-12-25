@@ -29,6 +29,7 @@ export const useMyTickets = () => {
   const [users, setUsers] = useState<UserOption[]>([]);
   const [loadingUsers, setLoadingUsers] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState<string>("");
+  const [selectedStatuses, setSelectedStatuses] = useState<string[]>([]);
   const [filters, setFilters] = useState({
     status: "",
     priority: "",
@@ -124,6 +125,12 @@ export const useMyTickets = () => {
       setLoading(true);
       const ticketFilters: any = { ...filters };
 
+      // Handle status filter - send as comma-separated string for backend OR logic
+      // Backend will parse comma-separated string into statuses array for SQL IN clause
+      if (selectedStatuses.length > 0) {
+        ticketFilters.status = selectedStatuses.join(",");
+      }
+
       // If user doesn't have permission, only show their own tickets
       if (!canViewAllTickets) {
         ticketFilters.userId = userProfile?.userId || "";
@@ -145,6 +152,7 @@ export const useMyTickets = () => {
     callApi,
     filters,
     selectedUserId,
+    selectedStatuses,
     canViewAllTickets,
     userProfile?.userId,
   ]);
@@ -205,6 +213,27 @@ export const useMyTickets = () => {
     [tickets, t]
   );
 
+  // Status options for multi-select filter
+  const statusOptions = useMemo(
+    () => [
+      {
+        label: t("tickets.statuses.aiProcessing") || "AI Processing",
+        value: "ai_processing",
+      },
+      { label: t("tickets.statuses.open") || "Open", value: "open" },
+      {
+        label: t("tickets.statuses.inProgress") || "In Progress",
+        value: "in_progress",
+      },
+      {
+        label: t("tickets.statuses.resolved") || "Resolved",
+        value: "resolved",
+      },
+      { label: t("tickets.statuses.closed") || "Closed", value: "closed" },
+    ],
+    [t]
+  );
+
   return {
     tickets,
     loading,
@@ -217,6 +246,9 @@ export const useMyTickets = () => {
     loadingUsers,
     selectedUserId,
     setSelectedUserId,
+    selectedStatuses,
+    setSelectedStatuses,
+    statusOptions,
     canViewAllTickets,
   };
 };
