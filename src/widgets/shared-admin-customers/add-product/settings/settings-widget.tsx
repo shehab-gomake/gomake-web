@@ -168,139 +168,178 @@ const SettingsWidget = ({
   }, [productState, allTemplate, allProductSKU]);
 
   const _renderProductClientSelector = () => {
-    if (customersList?.length > 0 && clientTypesList?.length) {
-      if (productState?.pricingType === EProductClient.BY_CLIENT) {
-        return (
-          <div style={clasess.itemGropupsContainer}>
-            <div style={clasess.labelTitleStyle}>
-              {t("products.addProduct.admin.byClient")}
-            </div>
-            <div style={{ width: "100%" }}>
-              <GoMakeAutoComplate
-                options={renderOptions(productState?.clients)?.map((item) => {
-                  return {
-                    ...item,
-                    label: item?.name,
-                    id: item.id,
-                  };
-                })}
-                placeholder={t("products.addProduct.admin.byClient")}
-                style={{
-                  ...clasess.multiSelectStyle,
-                  overflow: "auto",
-                  height: "auto",
-                  minHeight: "40px",
-                }}
-                multiple
-                onChangeTextField={checkWhatRenderArray}
-                loading={isFetching}
-                defaultFiltering={false}
-                onChange={(e: any, value: any) => {
-                  // Filter out special options (recentOptions, searchMore, addClient)
-                  const validValues = value?.filter(
-                    (item: any) =>
-                      item?.id &&
-                      item?.id !== "recentOptions" &&
-                      item?.id !== "searchMore" &&
-                      item?.id !== "addClient"
-                  );
-                  const selectedIds = validValues?.map((item: any) => item?.id) || [];
-                  // Store the full customer objects for selected customers
-                  updateSelectedCustomersCache(selectedIds, validValues);
-                  onChangeStateProduct("clients", selectedIds);
-                }}
-                value={productState?.clients?.map((item: any) => {
+    if (productState?.pricingType === EProductClient.BY_CLIENT) {
+      return (
+        <div style={clasess.itemGropupsContainer}>
+          <div style={clasess.labelTitleStyle}>
+            {t("products.addProduct.admin.byClient")}
+          </div>
+          <div style={{ width: "100%" }}>
+            <GoMakeAutoComplate
+              options={renderOptions(productState?.clients)?.map((item) => {
+                return {
+                  ...item,
+                  label: item?.name,
+                  id: item.id,
+                };
+              })}
+              placeholder={t("products.addProduct.admin.byClient")}
+              style={{
+                ...clasess.multiSelectStyle,
+                overflow: "auto",
+                height: "auto",
+                minHeight: "40px",
+              }}
+              multiple
+              onChangeTextField={checkWhatRenderArray}
+              loading={isFetching}
+              defaultFiltering={false}
+              onChange={(e: any, value: any) => {
+                // Filter out special options (recentOptions, searchMore, addClient)
+                const validValues = value?.filter(
+                  (item: any) =>
+                    item?.id &&
+                    item?.id !== "recentOptions" &&
+                    item?.id !== "searchMore" &&
+                    item?.id !== "addClient"
+                );
+                const selectedIds = validValues?.map((item: any) => item?.id) || [];
+
+                // Store the full customer objects for selected customers
+                updateSelectedCustomersCache(selectedIds, validValues);
+
+                // Update both clients (IDs) and clientsDetails (full objects with names)
+                onChangeStateProduct("clients", selectedIds);
+
+                // Also update clientsDetails with the full customer objects
+                const clientsDetails = validValues.map((item: any) => ({
+                  id: item.id,
+                  name: item.name || item.label || item.customerName || item.clientName || '',
+                }));
+                onChangeStateProduct("clientsDetails", clientsDetails);
+              }}
+              value={(() => {
+                // Priority 1: Use clientsDetails if available (from backend or updated by onChange)
+                if (productState?.clientsDetails && Array.isArray(productState.clientsDetails) && productState.clientsDetails.length > 0) {
+                  return productState.clientsDetails.map((customer: any) => ({
+                    label: customer?.name || customer?.customerName || customer?.clientName || customer?.label || '',
+                    id: customer?.id,
+                  })).filter((c: any) => c.id && c.label);
+                }
+
+                // Priority 2: Use clients array (could be IDs or objects)
+                if (!productState?.clients || productState.clients.length === 0) {
+                  return [];
+                }
+
+                return productState.clients.map((item: any) => {
+                  // Check if item is already an object with id and name
+                  if (typeof item === 'object' && item.id) {
+                    return {
+                      label: item?.name || item?.customerName || item?.clientName || item?.label || '',
+                      id: item.id,
+                    };
+                  }
+
+                  // Item is an ID string - find customer in lists
+                  const customerId = item;
                   // First try to find in current customersList
                   let customer = customersList?.find(
-                    (customer: any) => customer?.id === item
+                    (customer: any) => customer?.id === customerId
                   );
                   // If not found in current list, try to find in cached selected customers
                   if (!customer) {
                     customer = selectedCustomersCache?.find(
-                      (c: any) => c?.id === item
+                      (c: any) => c?.id === customerId
                     );
                   }
                   if (!customer) {
                     return null;
                   }
+                  // Get customer name - check multiple possible field names
+                  const customerName = customer?.name || customer?.customerName || customer?.clientName || customer?.label || null;
+                  if (!customerName) {
+                    // If no name found, return null so it doesn't show with ID
+                    return null;
+                  }
                   return {
-                    label: customer?.name,
+                    label: customerName,
                     id: customer?.id,
                   };
-                })?.filter(Boolean)}
-                getOptionLabel={(option: any) => {
-                  if (option?.isInfo) {
-                    return option?.name || "";
-                  }
-                  return option?.name || option?.label || "";
-                }}
-                renderOption={(props: any, option: any) => {
-                  if (option?.isInfo) {
-                    return (
-                      <li
-                        {...props}
-                        style={{
-                          ...props.style,
-                          cursor: option?.id === "searchMore" ? "pointer" : "default",
-                          color: option?.id === "recentOptions" ? "#2e3092" : "#1976d2",
-                          fontWeight: option?.id === "recentOptions" ? "bold" : "normal",
-                        }}
-                      >
-                        {option?.name}
-                      </li>
-                    );
-                  }
+                }).filter(Boolean);
+              })()}
+              getOptionLabel={(option: any) => {
+                if (option?.isInfo) {
+                  return option?.name || "";
+                }
+                return option?.name || option?.label || "";
+              }}
+              renderOption={(props: any, option: any) => {
+                if (option?.isInfo) {
                   return (
-                    <li {...props}>
-                      {option?.name || option?.label || ""}
+                    <li
+                      {...props}
+                      style={{
+                        ...props.style,
+                        cursor: option?.id === "searchMore" ? "pointer" : "default",
+                        color: option?.id === "recentOptions" ? "#2e3092" : "#1976d2",
+                        fontWeight: option?.id === "recentOptions" ? "bold" : "normal",
+                      }}
+                    >
+                      {option?.name}
                     </li>
                   );
-                }}
-              />
-            </div>
+                }
+                return (
+                  <li {...props}>
+                    {option?.name || option?.label || ""}
+                  </li>
+                );
+              }}
+            />
           </div>
-        );
-      } else if (productState?.pricingType === EProductClient.BY_CLIENT_TYPE) {
-        return (
-          <div style={clasess.itemGropupsContainer}>
-            <div style={clasess.labelTitleStyle}>
-              {t("products.addProduct.admin.byClientType")}
-            </div>
-            <div style={{ width: "100%" }}>
-              <GoMakeAutoComplate
-                key={SelectproductClient?.id}
-                options={clientTypesList.map((item) => {
-                  return {
-                    ...item,
-                    label: item?.name,
-                    id: item.id,
-                  };
-                })}
-                placeholder={t("products.addProduct.admin.byClientType")}
-                style={clasess.multiSelectStyle}
-                multiple
-                onChange={(e: any, value: any) => {
-                  onChangeStateProduct(
-                    "clientsTypes",
-                    value?.map((item: any) => item?.id)
-                  );
-                }}
-                value={productState?.clientsTypes?.map((item: any) => {
-                  const clientType = clientTypesList?.find(
-                    (clientType: any) => clientType?.id === item
-                  );
-                  return {
-                    label: clientType?.name,
-                    id: clientType?.id,
-                  };
-                })}
-              />
-            </div>
+        </div>
+      );
+    } else if (productState?.pricingType === EProductClient.BY_CLIENT_TYPE) {
+      return (
+        <div style={clasess.itemGropupsContainer}>
+          <div style={clasess.labelTitleStyle}>
+            {t("products.addProduct.admin.byClientType")}
           </div>
-        );
-      } else {
-        return null;
-      }
+          <div style={{ width: "100%" }}>
+            <GoMakeAutoComplate
+              key={SelectproductClient?.id}
+              options={clientTypesList.map((item) => {
+                return {
+                  ...item,
+                  label: item?.name,
+                  id: item.id,
+                };
+              })}
+              placeholder={t("products.addProduct.admin.byClientType")}
+              style={clasess.multiSelectStyle}
+              multiple
+              onChange={(e: any, value: any) => {
+                onChangeStateProduct(
+                  "clientsTypes",
+                  value?.map((item: any) => item?.id)
+                );
+              }}
+              value={productState?.clientsTypes?.map((item: any) => {
+                const clientType = clientTypesList?.find(
+                  (clientType: any) => clientType?.id === item
+                );
+                return {
+                  label: clientType?.name,
+                  id: clientType?.id,
+                };
+              })}
+            />
+          </div>
+        </div>
+      );
+    } else {
+      return null;
     }
   };
   return (
