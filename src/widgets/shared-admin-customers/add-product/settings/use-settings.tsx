@@ -570,6 +570,90 @@ const useSettings = ({
     getAllClientTypes();
   }, []);
 
+  // Initialize selected customers cache when productState.clients or clientsDetails changes
+  useEffect(() => {
+    // If clientsDetails is provided by backend, use it directly
+    if (productState?.clientsDetails && Array.isArray(productState.clientsDetails) && productState.clientsDetails.length > 0) {
+      const clientsDetails = productState.clientsDetails;
+
+      // Add all clientsDetails to cache
+      setSelectedCustomersCache((prevCache) => {
+        const existingIds = new Set(prevCache.map((c: any) => c.id));
+        const newCustomers = clientsDetails.filter((c: any) => c.id && !existingIds.has(c.id));
+        return [...prevCache, ...newCustomers];
+      });
+      return; // Exit early if we have clientsDetails
+    }
+
+    // Fallback: If clientsDetails is not available, use the old logic
+    if (productState?.clients && productState.clients.length > 0) {
+      // Check if clients is array of IDs (strings) or array of objects
+      const isArrayOfIds = typeof productState.clients[0] === 'string';
+      const selectedIds = isArrayOfIds
+        ? productState.clients
+        : productState.clients.map((c: any) => c.id || c);
+
+      if (customersList.length > 0) {
+        // Check which selected customers are missing from both customersList and cache
+        const currentCustomerIds = new Set(customersList.map((c: any) => c.id));
+        const cachedCustomerIds = new Set(selectedCustomersCache.map((c: any) => c.id));
+        const allAvailableIds = new Set([...Array.from(currentCustomerIds), ...Array.from(cachedCustomerIds)]);
+
+        const missingIds = selectedIds.filter((id: string) => !allAvailableIds.has(id));
+
+        // Find selected customers that are in the current customersList
+        const foundCustomers = customersList.filter((c: any) => selectedIds.includes(c.id));
+
+        // Update cache with found customers
+        if (foundCustomers.length > 0) {
+          setSelectedCustomersCache((prevCache) => {
+            const existingIds = new Set(prevCache.map((c: any) => c.id));
+            const newCustomers = foundCustomers.filter((c: any) => !existingIds.has(c.id));
+            return [...prevCache, ...newCustomers];
+          });
+        }
+
+        // If there are missing customers, fetch them by getting all customers and filtering
+        if (missingIds.length > 0) {
+          const fetchMissingCustomers = async () => {
+            try {
+              // getAndSetAllCustomers returns the data directly (extracted from result.data.data.data)
+              const allCustomers = await getAndSetAllCustomers(callApi, undefined, {
+                clientType: CLIENT_TYPE.CUSTOMER,
+                onlyCreateOrderClients: false,
+              });
+
+              if (Array.isArray(allCustomers) && allCustomers.length > 0) {
+                const missingCustomers = allCustomers.filter((c: any) =>
+                  missingIds.includes(c.id)
+                );
+
+                if (missingCustomers.length > 0) {
+                  // Ensure all customers have the required fields
+                  const validCustomers = missingCustomers.map((c: any) => ({
+                    ...c,
+                    name: c.name || c.customerName || c.clientName || c.label || `Customer ${c.id?.substring(0, 8)}...`,
+                    id: c.id,
+                  }));
+
+                  setSelectedCustomersCache((prevCache) => {
+                    const existingIds = new Set(prevCache.map((c: any) => c.id));
+                    const newCustomers = validCustomers.filter((c: any) => !existingIds.has(c.id));
+                    return [...prevCache, ...newCustomers];
+                  });
+                }
+              }
+            } catch (error) {
+              console.error("Error fetching missing customers:", error);
+            }
+          };
+
+          fetchMissingCustomers();
+        }
+      }
+    }
+  }, [productState?.clients, productState?.clientsDetails, customersList.length]);
+
   const UploadProductImage = useCallback(async (productId: any, fileBase64) => {
     const res: any = await callApi(
       EHttpMethod.POST,
