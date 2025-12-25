@@ -48,20 +48,12 @@ export const useMyTickets = () => {
   // Check if user has permission to view all tickets - make it reactive to permission changes
   const canViewAllTickets = useMemo(() => {
     if (!permissions || !Array.isArray(permissions)) {
-      console.log(
-        "[MyTickets] Permissions not loaded or invalid:",
-        permissions
-      );
       return false;
     }
     const hasPermission = permissions.includes(
       Permissions.SHOW_ALL_SUPPORT_TICKETS
     );
-    console.log("[MyTickets] Permission check:", {
-      permission: Permissions.SHOW_ALL_SUPPORT_TICKETS,
-      permissions: permissions,
-      hasPermission: hasPermission,
-    });
+
     return hasPermission;
   }, [permissions]);
 
