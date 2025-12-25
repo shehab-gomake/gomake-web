@@ -24,7 +24,7 @@ export const useMyTickets = () => {
   const userProfile = useRecoilValue(userProfileState);
   const permissions = useRecoilValue<any>(permissionsState);
   const { CheckPermission } = useUserPermission();
-  const [tickets, setTickets] = useState<Ticket[]>([]);
+  const [allTickets, setAllTickets] = useState<Ticket[]>([]); // Store all tickets fetched from API (before status filtering)
   const [loading, setLoading] = useState(true);
   const [users, setUsers] = useState<UserOption[]>([]);
   const [loadingUsers, setLoadingUsers] = useState(false);
@@ -34,6 +34,16 @@ export const useMyTickets = () => {
     status: "",
     priority: "",
   });
+
+  // Filter tickets locally by status (client-side filtering)
+  const tickets = useMemo(() => {
+    if (selectedStatuses.length === 0) {
+      return allTickets; // No status filter, return all tickets
+    }
+    return allTickets.filter((ticket) =>
+      selectedStatuses.includes(ticket.status)
+    );
+  }, [allTickets, selectedStatuses]);
 
   // Check if user has permission to view all tickets - make it reactive to permission changes
   const canViewAllTickets = useMemo(() => {
@@ -119,18 +129,16 @@ export const useMyTickets = () => {
     }
   }, [callApi, canViewAllTickets]);
 
-  // Fetch tickets based on filters and selected user
+  // Fetch tickets based on userId only (status filtering is done client-side)
   const fetchTickets = useCallback(async () => {
     try {
       setLoading(true);
       const ticketFilters: any = { ...filters };
 
-      // Handle status filter - send as comma-separated string for backend OR logic
-      // Backend will parse comma-separated string into statuses array for SQL IN clause
-      if (selectedStatuses.length > 0) {
-        ticketFilters.status = selectedStatuses.join(",");
-      }
+      // Explicitly remove status filter - we'll filter locally by status
+      delete ticketFilters.status;
 
+      // Only filter by userId (which requires API call)
       // If user doesn't have permission, only show their own tickets
       if (!canViewAllTickets) {
         ticketFilters.userId = userProfile?.userId || "";
@@ -142,7 +150,7 @@ export const useMyTickets = () => {
       // This will result in no userId in query params, which backend interprets as "show all tickets"
 
       const data = await getTickets(callApi, ticketFilters);
-      setTickets(data);
+      setAllTickets(data); // Store all tickets (status filtering will be done in useMemo)
     } catch (error) {
       console.error("Error fetching tickets:", error);
     } finally {
@@ -150,11 +158,11 @@ export const useMyTickets = () => {
     }
   }, [
     callApi,
-    filters,
-    selectedUserId,
-    selectedStatuses,
+    filters, // Keep filters for priority (if needed)
+    selectedUserId, // Only fetch when userId changes
     canViewAllTickets,
     userProfile?.userId,
+    // Removed selectedStatuses from dependencies - status filtering is now client-side
   ]);
 
   // Fetch users on mount if user has permission
