@@ -56,7 +56,7 @@ const ManagerApprovalModal = ({ openModal, onClose, managersOptions, onSend, doc
         }
 
         // If FrontDesk feature is enabled and documentId is available, open email composer
-        if (!hasFrontDeskFeature && documentId) {
+        if (hasFrontDeskFeature && documentId) {
             // Extract manager emails from selected manager IDs
             const selectedManagers = managersOptions.filter((manager) =>
                 managers.managerIds.includes(manager.value)
@@ -86,6 +86,11 @@ const ManagerApprovalModal = ({ openModal, onClose, managersOptions, onSend, doc
             );
 
             // Close the manager approval modal when email composer opens
+            handleClose();
+        }
+        else {
+            // Original behavior: call onSend callback (only when FrontDesk is NOT enabled)
+            onSend?.(managers.managerIds);
             handleClose();
         }
     };
