@@ -39,6 +39,7 @@ const useStyle = () => {
       filterContainer: {
         display: "flex",
         alignItems: "center",
+        gap: 16,
         marginBottom: 20,
         width: "100%",
       },
@@ -52,4 +53,3 @@ const useStyle = () => {
   };
 };
 export { useStyle };
-

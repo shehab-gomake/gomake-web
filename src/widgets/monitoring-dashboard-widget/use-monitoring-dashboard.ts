@@ -74,6 +74,7 @@ const useMonitoringDashboard = () => {
       ordersTotal: number;
       deliveryNotesTotal: number;
       invoiceTotal: number;
+      total: number;
     }[]
   >([]);
   const systemCurrency = useRecoilValue<any>(systemCurrencyState);

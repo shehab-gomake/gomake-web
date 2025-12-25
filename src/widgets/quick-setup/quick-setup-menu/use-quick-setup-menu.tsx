@@ -40,17 +40,17 @@ const useSetupGuideMenu = ({
   const { callApi } = useGomakeAxios();
 
   // Handler for support links
-  const handleGoSupportClick = async (redirect?: "tickets" | "articles") => {
-    await generateCustomerLoginLinkApi(
-      callApi,
-      (res) => {
-        if (res?.success && res?.data) {
-          window.open(res.data, "_blank");
-        }
-      },
-      redirect ? { redirect } : undefined
-    );
-  };
+  // const handleGoSupportClick = async (redirect?: "tickets" | "articles") => {
+  //   await generateCustomerLoginLinkApi(
+  //     callApi,
+  //     (res) => {
+  //       if (res?.success && res?.data) {
+  //         window.open(res.data, "_blank");
+  //       }
+  //     },
+  //     redirect ? { redirect } : undefined
+  //   );
+  // };
 
   // Modal states for customer/supplier
   const [openCustomerModal, setOpenCustomerModal] = useState(false);
@@ -405,8 +405,8 @@ const useSetupGuideMenu = ({
                 StepStatus.DONE
               );
             }
-            handleGoSupportClick("tickets");
-            setIsExpanded(false);
+            navigate("/my-tickets");
+            collapseMenu();
           },
         },
       ],
@@ -572,7 +572,7 @@ const useSetupGuideMenu = ({
         tab: null,
       },
       [SetupStep.HELP_CENTER_CUSTOMER_SERVICE]: {
-        path: "/customer-service",
+        path: "/my-tickets",
         tab: null,
       },
     };
