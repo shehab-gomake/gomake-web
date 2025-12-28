@@ -329,7 +329,7 @@ const startJobProductionApi: ICallAndSetData = async (
   );
 };
 
-const REPEAT_ORDER_URL = "/v1/erp-service/board-missions-tables/repeat-order";
+const REPEAT_ORDER_URL = "/v1/erp-service/documents/create-quote-from-reorder";
 
 const repeatOrderApi: ICallAndSetData = async (
   callApi,
