@@ -329,6 +329,22 @@ const startJobProductionApi: ICallAndSetData = async (
   );
 };
 
+const REPEAT_ORDER_URL = "/v1/erp-service/board-missions-tables/repeat-order";
+
+const repeatOrderApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data: { boardMissionId: string; quantity: number; orderItemId: string }
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    REPEAT_ORDER_URL,
+    setState,
+    data
+  );
+};
+
 export {
   setBoardMissionsFiltersApi,
   getOrderSummeryPdfApi,
@@ -351,4 +367,5 @@ export {
   getJobsTableSettingsApi,
   checkIfProductIsLabelInRollsApi,
   startJobProductionApi,
+  repeatOrderApi,
 };
