@@ -1,7 +1,6 @@
-import {emailRegex} from "@/utils/regex";
+import { emailRegex } from "@/utils/regex";
 
-const userInputs = (state, showPass,languagesOptions) => {
-
+const userInputs = (state, showPass, languagesOptions, rolesOptions = []) => {
   return [
     {
       name: "email",
@@ -12,7 +11,7 @@ const userInputs = (state, showPass,languagesOptions) => {
       parameterKey: "email",
       options: [],
       value: state?.email,
-      isValid: !!state?.email, 
+      isValid: !!state?.email,
       regex: emailRegex,
       readonly: false,
     },
@@ -61,7 +60,21 @@ const userInputs = (state, showPass,languagesOptions) => {
       required: false,
       parameterKey: "systemLanguage",
       options: languagesOptions,
-      value: state?.systemLanguage, 
+      value: state?.systemLanguage,
+      isValid: true,
+    },
+    {
+      name: "role",
+      label: "customers.modal.role",
+      type: "select",
+      placeholder: "customers.modal.role",
+      required: false,
+      parameterKey: "roleId",
+      options: rolesOptions,
+      value:
+        state?.roleId ||
+        rolesOptions.find((role) => role.isClientRole === true)?.value ||
+        "",
       isValid: true,
     },
     {
