@@ -95,6 +95,7 @@ const useWhatsAppWeb = () => {
   };
 
   const openWhatsAppWebLink = (whatsappMassage, phoneNumber, isWeb = true) => {
+    console.log("whatsappMassage", { whatsappMassage, phoneNumber, isWeb });
     if (!whatsappMassage?.trim()) {
       alertFault("alerts.noTemplateFound");
       return;
@@ -109,11 +110,11 @@ const useWhatsAppWeb = () => {
 
     const url = isWeb
       ? `https://web.whatsapp.com/send?phone=${phoneForUrl}&text=${encodeURIComponent(
-          whatsappMassage
-        )}`
+        whatsappMassage
+      )}`
       : `whatsapp://send?phone=${phoneForUrl}&text=${encodeURIComponent(
-          whatsappMassage
-        )}`;
+        whatsappMassage
+      )}`;
 
     window.open(url, "_blank");
   };
