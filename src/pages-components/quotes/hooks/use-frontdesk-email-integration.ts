@@ -38,6 +38,7 @@ export const useFrontDeskEmailIntegration = ({
   const [isEmailComposerOpen, setIsEmailComposerOpen] = useState(false);
   const [emailData, setEmailData] = useState<EmailData | null>(null);
   const [isLoadingEmailData, setIsLoadingEmailData] = useState(false);
+  const [isFromPaymentPage, setIsFromPaymentPage] = useState(false);
 
   const normalizeRecipients = useCallback((value: unknown): string[] => {
     if (Array.isArray(value)) {
@@ -69,10 +70,12 @@ export const useFrontDeskEmailIntegration = ({
       customerId?: string | number,
       customerName?: string,
       contactName?: string,
-      managerEmails?: string[]
+      managerEmails?: string[],
+      isFromPaymentPage?: boolean
     ) => {
       setIsLoadingEmailData(true);
       setEmailData(null); // Clear previous data
+      setIsFromPaymentPage(isFromPaymentPage ?? false);
       
       try {
         await getDocumentMailDataApi(
@@ -148,7 +151,7 @@ export const useFrontDeskEmailIntegration = ({
             setIsLoadingEmailData(false);
           },
           {
-            documentType,
+            documentType: isFromPaymentPage ? (18 as DOCUMENT_TYPE) : documentType,
             document: {
               // For board missions, use boardMissionId instead of documentId
               ...(documentType === DOCUMENT_TYPE.boardMission 
@@ -179,6 +182,7 @@ export const useFrontDeskEmailIntegration = ({
   const closeEmailComposer = useCallback(() => {
     setIsEmailComposerOpen(false);
     setEmailData(null);
+    setIsFromPaymentPage(false);
   }, []);
 
   return {
@@ -187,5 +191,6 @@ export const useFrontDeskEmailIntegration = ({
     isLoadingEmailData,
     openEmailComposer,
     closeEmailComposer,
+    isFromPaymentPage,
   };
 };
