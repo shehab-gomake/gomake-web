@@ -818,6 +818,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
             patternSearch: patternSearch,
             pageNumber: pageNumber,
             pageSize: pageSize,
+            isQualityFixJob: isQualityFixJob,
           }}
           boardMissionTableFilterDTO={{
             customerId: customer?.id,
@@ -834,6 +835,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
             fromReadyDate: fromReadyDate,
             toReadyDate: toReadyDate,
             patternSearch: patternSearch,
+            isQualityFixJob: isQualityFixJob,
           }}
           documentType={DocumentTypeEnums.BoardMission}
           availableDateFilters={getAvailableDateFilters()}
