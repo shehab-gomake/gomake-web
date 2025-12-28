@@ -33,7 +33,21 @@ interface ISendPaymentProps {
   isSendOrderReadyToClient?: boolean;
   showAlertModal: (params: { message: string; onConfirm?: () => void }) => void;
   hideCheckboxes?: boolean;
-  preSelectedMethod?: "sms" | "whatsapp" | null;
+  preSelectedMethod?: "sms" | "whatsapp" | "email" | null;
+  onOpenEmailComposer?: (
+    documentId: string | number,
+    contactEmail?: string,
+    contactPhone?: string,
+    messageType?: number,
+    sendMailIfNotVerifiedAgent?: boolean,
+    sendWithInvoices?: boolean,
+    customerId?: string | number,
+    customerName?: string,
+    contactName?: string,
+    managerEmails?: string[],
+    isFromPaymentPage?: boolean
+  ) => Promise<void>;
+  documentForEmail?: any;
 }
 
 const SendPaymentModal = ({
@@ -46,6 +60,8 @@ const SendPaymentModal = ({
   showAlertModal,
   hideCheckboxes = false,
   preSelectedMethod = null,
+  onOpenEmailComposer,
+  documentForEmail,
 }: ISendPaymentProps) => {
   const { classes } = useStyle();
   const { alertFaultSend, alertSuccessSend, alertFault } = useSnackBar();
@@ -53,7 +69,6 @@ const SendPaymentModal = ({
   const { getWhatsWebUrl, openWhatsAppWebLink } = useWhatsAppWeb();
   const isReceipt = documentType === DOCUMENT_TYPE.receipt;
   const hasFrontDeskFeature = useRecoilValue(printHouseHasFrontDeskFeature);
-
   const {
     t,
     payState,
@@ -61,7 +76,7 @@ const SendPaymentModal = ({
     handleCheckBoxChange,
     onChangePaymentInputs,
     handleSendPaymentPage,
-  } = useSendPaymentModal({ openPaymentModal, documentType });
+  } = useSendPaymentModal({ openPaymentModal, documentType, preSelectedMethod });
 
   const handleSendUsingWhatsAppWeb = (sendWithInvoices = false) => {
     getWhatsAppMessageApi(
@@ -367,6 +382,36 @@ const SendPaymentModal = ({
                 isSendToClient
                   ? () => onClickSendQuoteToClient(isSendOrderReadyToClient)
                   : async () => {
+                    // If FrontDesk is enabled and Email is selected, open email composer
+                    if (hasFrontDeskFeature && payState.sendByMail && onOpenEmailComposer && documentForEmail?.id) {
+                      const selectedContact =
+                        payState?.documentContacts?.[payState?.selectedContactIndex];
+                      const contactEmail =
+                        selectedContact?.contactMail || payState.contactMail || "";
+                      const contactPhone =
+                        selectedContact?.contactPhone || payState.contactPhone || "";
+                      const contactName =
+                        selectedContact?.contactName ||
+                        selectedContact?.name ||
+                        documentForEmail?.customerName ||
+                        documentForEmail?.clientName ||
+                        "";
+                      onClickClosePaymentModal();
+                      await onOpenEmailComposer(
+                        documentForEmail.id,
+                        contactEmail,
+                        contactPhone,
+                        undefined,
+                        undefined,
+                        undefined,
+                        documentForEmail?.customerId || documentForEmail?.clientId,
+                        documentForEmail?.customerName || documentForEmail?.clientName,
+                        contactName,
+                        undefined,
+                        true // isFromPaymentPage: true when not sending to client
+                      );
+                      return;
+                    }
                     const shouldSendWhatsApp = await handleSendPaymentPage();
                     if (shouldSendWhatsApp) {
                       handleSendUsingWhatsAppWeb(false);
@@ -390,6 +435,36 @@ const SendPaymentModal = ({
                     ? () =>
                       onClickSendQuoteToClient(isSendOrderReadyToClient, true)
                     : async () => {
+                      // If FrontDesk is enabled and Email is selected, open email composer
+                      if (hasFrontDeskFeature && payState.sendByMail && onOpenEmailComposer && documentForEmail?.id) {
+                        const selectedContact =
+                          payState?.documentContacts?.[payState?.selectedContactIndex];
+                        const contactEmail =
+                          selectedContact?.contactMail || payState.contactMail || "";
+                        const contactPhone =
+                          selectedContact?.contactPhone || payState.contactPhone || "";
+                        const contactName =
+                          selectedContact?.contactName ||
+                          selectedContact?.name ||
+                          documentForEmail?.customerName ||
+                          documentForEmail?.clientName ||
+                          "";
+                        onClickClosePaymentModal();
+                        await onOpenEmailComposer(
+                          documentForEmail.id,
+                          contactEmail,
+                          contactPhone,
+                          undefined,
+                          undefined,
+                          undefined,
+                          documentForEmail?.customerId || documentForEmail?.clientId,
+                          documentForEmail?.customerName || documentForEmail?.clientName,
+                          contactName,
+                          undefined,
+                          true // isFromPaymentPage: true when not sending to client
+                        );
+                        return;
+                      }
                       const shouldSendWhatsApp =
                         await handleSendPaymentPage();
                       if (shouldSendWhatsApp) {
@@ -411,6 +486,36 @@ const SendPaymentModal = ({
                   isSendToClient
                     ? () => onClickSendQuoteToClient(isSendOrderReadyToClient)
                     : async () => {
+                      // If FrontDesk is enabled and Email is selected, open email composer
+                      if (hasFrontDeskFeature && payState.sendByMail && onOpenEmailComposer && documentForEmail?.id) {
+                        const selectedContact =
+                          payState?.documentContacts?.[payState?.selectedContactIndex];
+                        const contactEmail =
+                          selectedContact?.contactMail || payState.contactMail || "";
+                        const contactPhone =
+                          selectedContact?.contactPhone || payState.contactPhone || "";
+                        const contactName =
+                          selectedContact?.contactName ||
+                          selectedContact?.name ||
+                          documentForEmail?.customerName ||
+                          documentForEmail?.clientName ||
+                          "";
+                        onClickClosePaymentModal();
+                        await onOpenEmailComposer(
+                          documentForEmail.id,
+                          contactEmail,
+                          contactPhone,
+                          undefined,
+                          undefined,
+                          undefined,
+                          documentForEmail?.customerId || documentForEmail?.clientId,
+                          documentForEmail?.customerName || documentForEmail?.clientName,
+                          contactName,
+                          undefined,
+                          true // isFromPaymentPage: true when not sending to client
+                        );
+                        return;
+                      }
                       const shouldSendWhatsApp =
                         await handleSendPaymentPage();
                       if (shouldSendWhatsApp) {

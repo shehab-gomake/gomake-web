@@ -1,7 +1,7 @@
 import { useStyle } from "../style";
 import { useRecoilState } from "recoil";
 import { useTranslation } from "react-i18next";
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useRef } from "react";
 import { useSnackBar, useGomakeAxios } from "@/hooks";
 import { PrimaryButton } from "@/components/button/primary-button";
 import {
@@ -9,6 +9,7 @@ import {
   productionDeliveryDateState,
   productionActivityDateState,
   productionStatusesState,
+  productionStatusesInitializedState,
 } from "@/store/production-dashboard-dates";
 import { ControlledDateRangePicker } from "@/components/datepicker";
 import { subMonths, startOfDay, endOfDay } from "date-fns";
@@ -36,6 +37,9 @@ const ProductionDashboardFilters = () => {
   const [selectedStatuses, setSelectedStatuses] = useRecoilState(
     productionStatusesState
   );
+  const [, setStatusesInitialized] = useRecoilState(
+    productionStatusesInitializedState
+  );
 
   // Default date range for Activity Date only: Today
   const defaultStartDate = startOfDay(new Date());
@@ -60,6 +64,9 @@ const ProductionDashboardFilters = () => {
 
   // Done status ID constant
   const DONE_STATUS_ID = "done";
+
+  // Track if we've initialized statuses from Recoil
+  const hasInitializedFromRecoil = useRef(false);
 
   // Fetch statuses on mount
   useEffect(() => {
@@ -117,15 +124,42 @@ const ProductionDashboardFilters = () => {
       setCreationToDate(creationDate.dates.endDate);
     }
 
-    // Initialize local statuses from Recoil, ensure "done" is always included
-    const initialStatuses =
-      selectedStatuses.length > 0 ? selectedStatuses : [DONE_STATUS_ID];
-    if (!initialStatuses.includes(DONE_STATUS_ID)) {
-      initialStatuses.unshift(DONE_STATUS_ID);
+    // Initialize local statuses from Recoil
+    if (selectedStatuses.length > 0) {
+      setLocalSelectedStatuses(selectedStatuses);
+      hasInitializedFromRecoil.current = true;
+      setStatusesInitialized(true);
     }
-    setLocalSelectedStatuses(initialStatuses);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Select all statuses by default when they're first loaded
+  useEffect(() => {
+    // Only auto-select all if:
+    // 1. Status items are loaded
+    // 2. No statuses are currently selected in Recoil (initial state)
+    // 3. We haven't initialized from Recoil yet (meaning it's the first load)
+    if (
+      statusItems.length > 0 &&
+      selectedStatuses.length === 0 &&
+      !hasInitializedFromRecoil.current &&
+      localSelectedStatuses.length === 0
+    ) {
+      // Select all status items (including the "done" status)
+      const allStatusIds = statusItems.map((item) => item.id);
+      setLocalSelectedStatuses(allStatusIds);
+      // Also update Recoil state immediately so the API call includes the statuses
+      setSelectedStatuses(allStatusIds);
+      // Mark statuses as initialized so the API can be called
+      setStatusesInitialized(true);
+    }
+  }, [
+    statusItems,
+    selectedStatuses.length,
+    localSelectedStatuses.length,
+    setSelectedStatuses,
+    setStatusesInitialized,
+  ]);
 
   // Date change handlers
   const handleCreationDateChange = (
@@ -251,6 +285,8 @@ const ProductionDashboardFilters = () => {
 
     // Update statuses state
     setSelectedStatuses(localSelectedStatuses);
+    // Ensure statuses are marked as initialized after manual search
+    setStatusesInitialized(true);
   };
 
   return (

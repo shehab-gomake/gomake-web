@@ -145,6 +145,7 @@ export function getDocumentTypeTitle(documentType: DOCUMENT_TYPE): string {
     [DOCUMENT_TYPE.boardMission]: "Board Mission",
     [DOCUMENT_TYPE.customerChat]: "Customer Chat",
     [DOCUMENT_TYPE.supplierPayments]: "Supplier Payments",
+    [DOCUMENT_TYPE.QuoteApprovalRequest]: "Quote Approval Request",
   };
   return titles[documentType] || "Document";
 }

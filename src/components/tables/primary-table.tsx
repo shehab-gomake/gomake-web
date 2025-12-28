@@ -462,4 +462,4 @@ const PrimaryTable = ({
   );
 };
 
-export { TableCell, TableRow, PrimaryTable, PrimaryTableCell, PrimaryTableRow };
+export { TableCell, TableRow, PrimaryTable, PrimaryTableCell, PrimaryTableRow, RoundTableCell, RoundTableRow };

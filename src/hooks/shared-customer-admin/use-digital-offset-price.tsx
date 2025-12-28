@@ -5386,7 +5386,7 @@ const useDigitalOffsetPrice = ({
           relatedParameter.selectedValueIds.length > 0
         ) {
           // Use selectedValueIds: show when selected value is in selectedValueIds
-          const valueToCheck = parm?.parameterType === 11 ? parm?.valueIds : parm?.values;
+          const valueToCheck = (parm?.parameterType === 11 || parm?.ParameterType === 11) ? parm?.valueIds : parm?.values;
           const valuesToCheck = Array.isArray(valueToCheck)
             ? valueToCheck
             : valueToCheck
@@ -5414,7 +5414,7 @@ const useDigitalOffsetPrice = ({
         ) {
           // Use notSelectedValueIds: show when selected value is NOT in notSelectedValueIds (reverse logic)
           const valueToCheck =
-            parm?.parameterType === 11 ? parm?.valueIds : parm?.values;
+            (parm?.parameterType === 11 || parm?.ParameterType === 11) ? parm?.valueIds : parm?.values;
           const valuesToCheck = Array.isArray(valueToCheck)
             ? valueToCheck
             : valueToCheck
@@ -9297,7 +9297,18 @@ const useDigitalOffsetPrice = ({
         );
       });
       if (parentParameter && parentParameter.isHidden === true) {
-        return true; // Hide child if parent is hidden
+        // Exception: If parent has isHidden=true, isHiddenInSetting=true, and has default value, show child parameters
+        const hasDefaultValue = parentParameter.valuesConfigs?.some((x) => x.isDefault);
+        const shouldHideChild = !(
+          parentParameter.isHidden === true &&
+          parentParameter.isHiddenInSetting === true &&
+          hasDefaultValue
+        );
+        if (shouldHideChild) {
+          return true; // Hide child if parent is hidden (and exception doesn't apply)
+        }
+        // If exception applies, child should be visible but may need default values
+        return false;
       }
       return false;
     };

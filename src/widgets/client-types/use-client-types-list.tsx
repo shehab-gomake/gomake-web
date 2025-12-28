@@ -38,6 +38,7 @@ export const useClientTypesList = (clientType: CLIENT_TYPE) => {
     t("customers.name"),
     t("customers.modal.additionProfits"),
     t("sales.quote.discount"),
+    t("customers.modal.excludeOutsourceJobs"),
     t("tabs.actions"),
   ];
   const [openModal, setOpenModal] = useState(false);
@@ -68,6 +69,7 @@ export const useClientTypesList = (clientType: CLIENT_TYPE) => {
       item?.label,
       `${item?.additionProfits}%`,
       `${item?.discount}%`,
+      item?.excludeOutsourceJobs ? t("modal.yes") : t("modal.no"),
       <div key={`actions-${item.id}`}>
         <IconButton onClick={() => handleEdit(item.id)} size="small">
           <EditPencilIcon height={20} width={20} />
