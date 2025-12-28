@@ -38,6 +38,7 @@ export const useFrontDeskEmailIntegration = ({
   const [isEmailComposerOpen, setIsEmailComposerOpen] = useState(false);
   const [emailData, setEmailData] = useState<EmailData | null>(null);
   const [isLoadingEmailData, setIsLoadingEmailData] = useState(false);
+  const [isFromPaymentPage, setIsFromPaymentPage] = useState(false);
 
   const normalizeRecipients = useCallback((value: unknown): string[] => {
     if (Array.isArray(value)) {
@@ -68,10 +69,13 @@ export const useFrontDeskEmailIntegration = ({
       sendWithInvoices?: boolean,
       customerId?: string | number,
       customerName?: string,
-      contactName?: string
+      contactName?: string,
+      managerEmails?: string[],
+      isFromPaymentPage?: boolean
     ) => {
       setIsLoadingEmailData(true);
       setEmailData(null); // Clear previous data
+      setIsFromPaymentPage(isFromPaymentPage ?? false);
       
       try {
         await getDocumentMailDataApi(
@@ -112,9 +116,19 @@ export const useFrontDeskEmailIntegration = ({
                 res.data.contactEmail ||
                 (Array.isArray(res.data.tos) ? res.data.tos[0] : undefined);
 
+              // Get existing tos array from API response
+              const existingTos = Array.isArray(res.data.tos) ? res.data.tos : [];
+              
+              // Merge manager emails into tos array, removing duplicates
+              const managerEmailsArray = Array.isArray(managerEmails) 
+                ? managerEmails.filter((email) => email && email.trim())
+                : [];
+              
+              const combinedTos = Array.from(new Set([...managerEmailsArray, ...existingTos]));
+
               // Simplified: Just pass the document data, let the wrapper handle contact/inbox resolution
               const normalizedEmailData: EmailData = {
-                tos: res.data.tos || [],
+                tos: combinedTos,
                 ccs: normalizeRecipients(res.data.cc || res.data.ccs),
                 bccs: normalizeRecipients(res.data.bcc || res.data.bccs),
                 subject: res.data.subject || "",
@@ -137,7 +151,7 @@ export const useFrontDeskEmailIntegration = ({
             setIsLoadingEmailData(false);
           },
           {
-            documentType,
+            documentType: isFromPaymentPage ? (18 as DOCUMENT_TYPE) : documentType,
             document: {
               // For board missions, use boardMissionId instead of documentId
               ...(documentType === DOCUMENT_TYPE.boardMission 
@@ -168,6 +182,7 @@ export const useFrontDeskEmailIntegration = ({
   const closeEmailComposer = useCallback(() => {
     setIsEmailComposerOpen(false);
     setEmailData(null);
+    setIsFromPaymentPage(false);
   }, []);
 
   return {
@@ -176,5 +191,6 @@ export const useFrontDeskEmailIntegration = ({
     isLoadingEmailData,
     openEmailComposer,
     closeEmailComposer,
+    isFromPaymentPage,
   };
 };
