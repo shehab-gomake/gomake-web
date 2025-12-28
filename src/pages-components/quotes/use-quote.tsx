@@ -4171,7 +4171,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     useState(false);
   const [hideCheckboxes, setHideCheckboxes] = useState(false);
   const [preSelectedMethod, setPreSelectedMethod] = useState<
-    "sms" | "whatsapp" | null
+    "sms" | "whatsapp" | "email" | null
   >(null);
 
   const [paymentModalTitle, setPaymentModalTitle] = useState("");
@@ -4417,38 +4417,59 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       alertFaultGetData();
     }
   };
-  console.log("sendPayment", sendPayment);
   // Send Payment - Email Handler
   const onClickSendPaymentEmail = async (document: any) => {
     setDocumentForEmail(document);
     try {
       // First, get contact information
       await onClickSendPaymentOld(document, false);
-      // Then open email composer with document data
-      // Handle both documentContacts array and direct contact properties
-      const selectedContact =
-        sendPayment?.documentContacts?.[sendPayment?.selectedContactIndex];
-      const contactEmail =
-        selectedContact?.contactMail || sendPayment?.contactMail || "";
-      const contactPhone =
-        selectedContact?.contactPhone || sendPayment?.contactPhone || "";
-      const contactName =
-        selectedContact?.contactName ||
-        selectedContact?.name ||
-        document?.customerName ||
-        document?.clientName ||
-        "";
-      await openEmailComposer(
-        document?.id,
-        contactEmail,
-        contactPhone,
-        undefined, // messageType - not needed, will use default
-        undefined, // sendMailIfNotVerifiedAgent - will use default true
-        undefined, // sendWithInvoices - will use default false
-        document?.customerId || document?.clientId,
-        document?.customerName || document?.clientName,
-        contactName
-      );
+      
+      if (hasFrontDeskFeature) {
+        // When FrontDesk is enabled, open the modal with Email pre-selected
+        setSendPayment((prev) => ({
+          ...prev,
+          sendByMail: true,
+          sendBySms: false,
+          sendByWhatsapp: false,
+          selectedContactIndex:
+            prev.documentContacts?.length > 0 ? 0 : prev.selectedContactIndex,
+        }));
+        setPaymentModalTitle(
+          `${t("prePayment.paymentPageFor")} ${t(
+            `sales.quote.${DOCUMENT_TYPE[docType]}`
+          ).toLowerCase()} ${t("sales.quote.number")} - ${document?.number}`
+        );
+        setIsSendToClient(false);
+        setHideCheckboxes(true); // Hide checkboxes when opened from submenu
+        setPreSelectedMethod("email"); // Set email as pre-selected method
+        setOpenPaymentModal(true);
+      } else {
+        // When FrontDesk is disabled, open email composer directly (old behavior)
+        // Handle both documentContacts array and direct contact properties
+        const selectedContact =
+          sendPayment?.documentContacts?.[sendPayment?.selectedContactIndex];
+        const contactEmail =
+          selectedContact?.contactMail || sendPayment?.contactMail || "";
+        const contactPhone =
+          selectedContact?.contactPhone || sendPayment?.contactPhone || "";
+        const contactName =
+          selectedContact?.contactName ||
+          selectedContact?.name ||
+          document?.customerName ||
+          document?.clientName ||
+          "";
+        await openEmailComposer(
+          document?.id,
+          contactEmail,
+          contactPhone,
+          undefined, // messageType - not needed, will use default
+          undefined, // sendMailIfNotVerifiedAgent - will use default true
+          undefined, // sendWithInvoices - will use default false
+          document?.customerId || document?.clientId,
+          document?.customerName || document?.clientName,
+          contactName
+        );
+      }
     } catch (error) {
       alertFaultGetData();
     }
@@ -4473,7 +4494,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         ).toLowerCase()} ${t("sales.quote.number")} - ${document?.number}`
       );
       setIsSendToClient(false);
-      setHideCheckboxes(false); // Show checkboxes to allow selecting multiple methods
+      setHideCheckboxes(true); // Hide checkboxes when opened from submenu
       setPreSelectedMethod("sms");
       setOpenPaymentModal(true);
     } catch (error) {
@@ -4500,7 +4521,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         ).toLowerCase()} ${t("sales.quote.number")} - ${document?.number}`
       );
       setIsSendToClient(false);
-      setHideCheckboxes(false); // Show checkboxes to allow selecting multiple methods
+      setHideCheckboxes(true); // Hide checkboxes when opened from submenu
       setPreSelectedMethod("whatsapp");
       setOpenPaymentModal(true);
     } catch (error) {
@@ -5349,6 +5370,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     emailData,
     isLoadingEmailData,
     closeEmailComposer,
+    openEmailComposer,
     // Send to customer modal state
     hideCheckboxes,
     preSelectedMethod,

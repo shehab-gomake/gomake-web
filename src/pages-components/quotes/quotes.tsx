@@ -343,6 +343,7 @@ const QuotesListPageWidget = ({
     emailData,
     isLoadingEmailData,
     closeEmailComposer,
+    openEmailComposer,
     documentForEmail,
     hideCheckboxes,
     preSelectedMethod,
@@ -848,6 +849,8 @@ const QuotesListPageWidget = ({
         showAlertModal={showAlertModal}
         hideCheckboxes={hideCheckboxes}
         preSelectedMethod={preSelectedMethod}
+        onOpenEmailComposer={openEmailComposer}
+        documentForEmail={documentForEmail}
       />
       <GoMakeAlertModal
         openModal={alertNotVerifiedMailModal.isOpen}
