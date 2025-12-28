@@ -27,11 +27,13 @@
  */
 
 import { useEffect, useCallback, useRef, useState } from "react";
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState, useRecoilCallback } from "recoil";
 import {
   chatwootConversationsAtom,
   chatwootSelectedConversationAtom,
   chatwootProfileAtom,
+  chatwootConversationsCacheFamily,
+  chatwootCacheKeysAtom,
 } from "@/store/frontdesk/atoms/chatwoot.atoms";
 import { chatwootConversationsWebSocketHelper, chatwootWebSocketService } from "@/services/frontdesk";
 import { ConnectionState } from "@/services/frontdesk/websocket/chatwoot-websocket.service";
@@ -127,7 +129,6 @@ export const useChatwootConversationWebSocket = (
   // ============================================================================
 
   const profile = useRecoilValue(chatwootProfileAtom);
-  const [, setConversations] = useRecoilState(chatwootConversationsAtom);
   const setSelectedConversation = useSetRecoilState(chatwootSelectedConversationAtom);
 
   // Local state
@@ -161,17 +162,44 @@ export const useChatwootConversationWebSocket = (
   /**
    * Update all conversation caches with a mutation function
    * This ensures consistency across different filter views
+   * Uses useRecoilCallback to access and update atomFamily entries dynamically
    */
-  const updateAllCaches = useCallback(
-    (updateFn: (conversations: ChatwootConversation[]) => ChatwootConversation[]) => {
-      // Update main conversations atom
-      setConversations(updateFn);
+  const updateAllCaches = useRecoilCallback(
+    ({ set, snapshot }) =>
+      async (updateFn: (conversations: ChatwootConversation[]) => ChatwootConversation[]) => {
+        // 1. Update Legacy Atom
+        set(chatwootConversationsAtom, updateFn);
 
-      // Note: Cache family updates would need to be done through the hook that owns them
-      // The conversation list hook should handle its own cache updates
-      // This is a limitation of Recoil - we can't easily update atomFamily from outside
-    },
-    [setConversations]
+        // 2. Update Cache Family (The source of truth for UI)
+        try {
+          // Get all active cache keys
+          const cacheKeys = await snapshot.getPromise(chatwootCacheKeysAtom);
+          
+          // Iterate and update each cache entry
+          cacheKeys.forEach((key) => {
+            set(chatwootConversationsCacheFamily(key), (prevCache) => {
+              // Apply the update function to the conversations in this cache
+              const updatedConversations = updateFn(prevCache.conversations);
+              
+              // Only update if reference changed (updateFn should return new array if changed)
+              if (updatedConversations === prevCache.conversations) {
+                return prevCache;
+              }
+
+              return {
+                ...prevCache,
+                conversations: updatedConversations,
+                lastAccessed: Date.now(), // Update timestamp to keep cache fresh
+              };
+            });
+          });
+          
+          logger.debug(`WebSocket update applied to ${cacheKeys.size} cache entries`);
+        } catch (err) {
+          logger.error("Failed to update conversation caches", err);
+        }
+      },
+    []
   );
 
   // ============================================================================

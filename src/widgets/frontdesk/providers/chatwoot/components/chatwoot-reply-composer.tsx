@@ -1,22 +1,17 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import { Box } from "@mui/material";
-import {
-  colorTokens,
-  radiusTokens,
-  shadowTokens,
-  semanticSpacing,
-} from "@/widgets/frontdesk/design-system";
+import { colorTokens, radiusTokens, shadowTokens, semanticSpacing } from "@/widgets/frontdesk/design-system";
 import type { ChatwootConversation } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
 import type { ChatwootInbox } from "@/services/frontdesk/api/chatwoot/types/inboxes.types";
-import {
-  ReplyComposerTabs,
-  ReplyComposerEmailFields,
-  ReplyComposerBottomToolbar,
-} from "./reply-composer";
+import type { WhatsAppTemplateParams } from "@/services/frontdesk/api/chatwoot/types/compose.types";
+import { ReplyComposerTabs, ReplyComposerEmailFields, ReplyComposerBottomToolbar } from "./reply-composer";
 import { useChannelFeatures } from "../hooks/use-channel-features";
 import { createLogger } from "@/services/frontdesk/utils/logger";
 import { AttachmentPreviews } from "./compose/AttachmentPreview";
 import { MessageEditor } from "./compose/MessageEditor";
+import { WhatsAppTemplateSelector } from "./templates";
+import type { WhatsAppTemplate, TemplateSelectorState } from "../types/whatsapp-templates.types";
+import { convertToTemplateParams, generateMessageContent } from "../utils/whatsapp-template.utils";
 
 const logger = createLogger("ChatwootReplyComposer");
 
@@ -29,10 +24,7 @@ const fileSizeInMegaBytes = (bytes: number): number => {
 };
 
 // Check if file size is within limit
-const checkFileSizeLimit = (
-  file: File,
-  maximumUploadLimitMB: number
-): boolean => {
+const checkFileSizeLimit = (file: File, maximumUploadLimitMB: number): boolean => {
   const fileSizeInMB = fileSizeInMegaBytes(file.size);
   return fileSizeInMB <= maximumUploadLimitMB;
 };
@@ -44,7 +36,8 @@ interface ChatwootReplyComposerProps {
     content: string,
     isPrivate: boolean,
     recipientEmails?: { to?: string; cc?: string; bcc?: string },
-    attachments?: File[]
+    attachments?: File[],
+    templateParams?: WhatsAppTemplateParams
   ) => Promise<void>;
   isSending?: boolean;
   uiSettings?: {
@@ -72,12 +65,12 @@ export const ChatwootReplyComposer: React.FC<ChatwootReplyComposerProps> = ({
   const [attachments, setAttachments] = useState<File[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // WhatsApp Template State
+  const [showTemplateSelector, setShowTemplateSelector] = useState(false);
+  const [pendingTemplateParams, setPendingTemplateParams] = useState<WhatsAppTemplateParams | null>(null);
+
   // Use channel features hook (memoized)
-  const channelFeatures = useChannelFeatures(
-    inbox,
-    activeTab === "private",
-    uiSettings
-  );
+  const channelFeatures = useChannelFeatures(inbox, activeTab === "private", uiSettings);
 
   // Extract recipient email from conversation
   const defaultRecipient = conversation?.meta?.sender?.email || "";
@@ -91,9 +84,10 @@ export const ChatwootReplyComposer: React.FC<ChatwootReplyComposerProps> = ({
       setBccEmails("");
       setShowCc(false);
       setShowBcc(false);
-      // Also clear message content and attachments
+      // Also clear message content, attachments, and template params
       setMessageContent("");
       setAttachments([]);
+      setPendingTemplateParams(null);
     }
   }, [conversation?.id, defaultRecipient]);
 
@@ -121,28 +115,18 @@ export const ChatwootReplyComposer: React.FC<ChatwootReplyComposerProps> = ({
         validFiles.push(file);
       } else {
         invalidFiles.push(file.name);
-        logger.warn(
-          `File ${file.name} exceeds size limit of ${MAXIMUM_FILE_UPLOAD_SIZE_MB}MB`
-        );
+        logger.warn(`File ${file.name} exceeds size limit of ${MAXIMUM_FILE_UPLOAD_SIZE_MB}MB`);
       }
     });
 
     if (invalidFiles.length > 0) {
       // TODO: Show user-friendly error toast/snackbar
-      console.warn(
-        `The following files exceed the ${MAXIMUM_FILE_UPLOAD_SIZE_MB}MB limit: ${invalidFiles.join(
-          ", "
-        )}`
-      );
+      console.warn(`The following files exceed the ${MAXIMUM_FILE_UPLOAD_SIZE_MB}MB limit: ${invalidFiles.join(", ")}`);
     }
 
     if (validFiles.length > 0) {
       setAttachments([...attachments, ...validFiles]);
-      logger.debug(
-        `Added ${validFiles.length} file(s), total: ${
-          attachments.length + validFiles.length
-        }`
-      );
+      logger.debug(`Added ${validFiles.length} file(s), total: ${attachments.length + validFiles.length}`);
     }
 
     // Reset input to allow selecting the same file again
@@ -173,9 +157,7 @@ export const ChatwootReplyComposer: React.FC<ChatwootReplyComposerProps> = ({
             if (checkFileSizeLimit(file, MAXIMUM_FILE_UPLOAD_SIZE_MB)) {
               imageFiles.push(file);
             } else {
-              logger.warn(
-                `Pasted image exceeds size limit of ${MAXIMUM_FILE_UPLOAD_SIZE_MB}MB`
-              );
+              logger.warn(`Pasted image exceeds size limit of ${MAXIMUM_FILE_UPLOAD_SIZE_MB}MB`);
               // TODO: Show user-friendly error toast/snackbar
             }
           }
@@ -197,14 +179,55 @@ export const ChatwootReplyComposer: React.FC<ChatwootReplyComposerProps> = ({
 
   const handleFileRemove = (index: number) => {
     setAttachments(attachments.filter((_, i) => i !== index));
-    logger.debug(
-      `Removed file at index ${index}, remaining: ${attachments.length - 1}`
-    );
+    logger.debug(`Removed file at index ${index}, remaining: ${attachments.length - 1}`);
   };
 
   const handleAttachClick = () => {
     fileInputRef.current?.click();
   };
+
+  // WhatsApp Template Handlers
+  const handleTemplateClick = useCallback(() => {
+    setShowTemplateSelector(true);
+  }, []);
+
+  const handleTemplateSelect = useCallback((template: WhatsAppTemplate, state: TemplateSelectorState) => {
+    // Convert template selection to API-ready params
+    const templateParams = convertToTemplateParams(template, state);
+
+    // Generate message content from template with filled variables
+    const content = generateMessageContent(template, state.bodyVariables);
+
+    // Set the message content and template params
+    setMessageContent(content);
+    setPendingTemplateParams(templateParams);
+
+    // Close the selector
+    setShowTemplateSelector(false);
+
+    logger.info("WhatsApp template selected", {
+      templateName: template.name,
+      category: template.category,
+    });
+  }, []);
+
+  const handleTemplateClose = useCallback(() => {
+    setShowTemplateSelector(false);
+  }, []);
+
+  // Clear template params when message content is manually changed
+  const handleMessageChange = useCallback(
+    (content: string) => {
+      setMessageContent(content);
+      // If user edits the message manually, clear template params
+      // as the message is no longer a pure template message
+      if (pendingTemplateParams) {
+        setPendingTemplateParams(null);
+        logger.debug("Template params cleared due to manual message edit");
+      }
+    },
+    [pendingTemplateParams]
+  );
 
   const handleSend = async () => {
     if (!messageContent.trim() && attachments.length === 0) {
@@ -233,12 +256,15 @@ export const ChatwootReplyComposer: React.FC<ChatwootReplyComposerProps> = ({
               bcc: bccEmails || undefined,
             }
           : undefined,
-        attachments.length > 0 ? attachments : undefined
+        attachments.length > 0 ? attachments : undefined,
+        // Include template params if this is a WhatsApp template message
+        pendingTemplateParams || undefined
       );
 
       // Clear form after successful send
       setMessageContent("");
       setAttachments([]);
+      setPendingTemplateParams(null); // Clear template params after send
       // Clear email fields only if not private note (for email channels)
       if (!isPrivate && channelFeatures.shouldShowEmailHeader) {
         // Reset to default recipient (keep To field with default)
@@ -249,7 +275,9 @@ export const ChatwootReplyComposer: React.FC<ChatwootReplyComposerProps> = ({
         setShowBcc(false);
       }
       logger.info(
-        `Message sent successfully (private: ${isPrivate}, attachments: ${attachments.length})`
+        `Message sent successfully (private: ${isPrivate}, attachments: ${
+          attachments.length
+        }, template: ${!!pendingTemplateParams})`
       );
     } catch (error) {
       logger.error("Failed to send message", error);
@@ -317,10 +345,12 @@ export const ChatwootReplyComposer: React.FC<ChatwootReplyComposerProps> = ({
       <Box sx={{ px: 2, pt: 2 }}>
         <MessageEditor
           content={messageContent}
-          onChange={setMessageContent}
+          onChange={handleMessageChange}
           placeholder={
             activeTab === "private"
               ? "Write a private note..."
+              : pendingTemplateParams
+              ? "Template message ready to send..."
               : "Type your reply..."
           }
           disabled={isSending}
@@ -355,10 +385,16 @@ export const ChatwootReplyComposer: React.FC<ChatwootReplyComposerProps> = ({
         isSending={isSending}
         onSend={handleSend}
         onAttachClick={handleAttachClick}
+        onTemplateClick={channelFeatures.shouldShowWhatsAppTemplates ? handleTemplateClick : undefined}
         attachmentCount={attachments.length}
         borderColor={borderColor}
         lightGrayText={lightGrayText}
       />
+
+      {/* WhatsApp Template Selector Modal */}
+      {channelFeatures.shouldShowWhatsAppTemplates && (
+        <WhatsAppTemplateSelector open={showTemplateSelector} onClose={handleTemplateClose} onSelect={handleTemplateSelect} />
+      )}
     </Box>
   );
 };
