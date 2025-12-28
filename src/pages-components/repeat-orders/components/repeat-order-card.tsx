@@ -60,49 +60,56 @@ const RepeatOrderCard = ({
               </Box>
             )}
 
-            {/* Job Number */}
-            {job.number && (
-              <Box sx={classes.fieldContainer}>
-                <Box sx={classes.fieldLabel}>
-                  {t("boardMissions.missionNumber")}
-                </Box>
-                <Box sx={classes.fieldValue}>
-                  {job.productType
-                    ? `${job.number} / ${
-                        job.productTypeName || job.productType
-                      }`
-                    : job.number}
-                </Box>
+            {/* Job Number and Job Name - Same Row */}
+            {(job.number || job.jobName) && (
+              <Box sx={classes.fieldRowContainer}>
+                {/* Job Number */}
+                {job.number && (
+                  <Box sx={classes.fieldContainerHalf}>
+                    <Box sx={classes.fieldLabel}>
+                      {t("boardMissions.missionNumber")}
+                    </Box>
+                    <Box sx={classes.fieldValue}>
+                      {job.productType
+                        ? `${job.number} / ${
+                            job.productTypeName || job.productType
+                          }`
+                        : job.number}
+                    </Box>
+                  </Box>
+                )}
+                {/* Job Name */}
+                {job.jobName && (
+                  <Box sx={classes.fieldContainerHalf}>
+                    <Box sx={classes.fieldLabel}>
+                      {t("boardMissions.jobName")}
+                    </Box>
+                    <Box sx={classes.fieldValue}>{job.jobName}</Box>
+                  </Box>
+                )}
               </Box>
             )}
 
-            {/* Job Name */}
-            {job.jobName && (
-              <Box sx={classes.fieldContainer}>
-                <Box sx={classes.fieldLabel}>{t("boardMissions.jobName")}</Box>
-                <Box sx={classes.fieldValue}>{job.jobName}</Box>
-              </Box>
-            )}
-
-            {/* Product Name */}
-            {job.productName && (
-              <Box sx={classes.fieldContainer}>
-                <Box sx={classes.fieldLabel}>
-                  {t("boardMissions.productName")}
-                </Box>
-                <Box sx={classes.fieldValue}>{job.productName}</Box>
-              </Box>
-            )}
-
-            {/* Status */}
-            {job.currentBoardMissionStatus && (
-              <Box sx={classes.fieldContainer}>
-                <Box sx={classes.fieldLabel}>
-                  {t("boardMissions.currentBoardMissionStatus")}
-                </Box>
-                <Box sx={classes.statusValue}>
-                  {job.currentBoardMissionStatus}
-                </Box>
+            {/* Product Name and Status - Same Row */}
+            {(job.productName || job.boardMissionStatus?.name) && (
+              <Box sx={classes.fieldRowContainer}>
+                {/* Product Name */}
+                {job.productName && (
+                  <Box sx={classes.fieldContainerHalf}>
+                    <Box sx={classes.fieldLabel}>
+                      {t("boardMissions.productName")}
+                    </Box>
+                    <Box sx={classes.fieldValue}>{job.productName}</Box>
+                  </Box>
+                )}
+                {/* Status - No Label */}
+                {job.boardMissionStatus?.name && (
+                  <Box sx={classes.fieldContainerHalfNoLabel}>
+                    <Box sx={classes.statusValue}>
+                      {t(`productionStatuses.${job.boardMissionStatus.name}`)}
+                    </Box>
+                  </Box>
+                )}
               </Box>
             )}
 
@@ -118,7 +125,7 @@ const RepeatOrderCard = ({
                   </Box>
                 </Box>
               )}
-
+              {/* 
               {job.dueDate && (
                 <Box sx={classes.dateField}>
                   <Box sx={classes.dateLabel}>{t("boardMissions.dueDate")}</Box>
@@ -126,7 +133,7 @@ const RepeatOrderCard = ({
                     {formatISODateTime(job.dueDate)}
                   </Box>
                 </Box>
-              )}
+              )} */}
             </Stack>
           </Stack>
 

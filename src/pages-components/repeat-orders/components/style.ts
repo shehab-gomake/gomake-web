@@ -72,6 +72,26 @@ const useStyle = () => {
         flexDirection: "column" as "column",
         gap: "4px",
       },
+      fieldRowContainer: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        gap: "12px",
+        width: "100%",
+      },
+      fieldContainerHalf: {
+        display: "flex",
+        flexDirection: "column" as "column",
+        gap: "4px",
+        flex: 1,
+        minWidth: 0,
+      },
+      fieldContainerHalfNoLabel: {
+        display: "flex",
+        flexDirection: "column" as "column",
+        justifyContent: "flex-end" as "flex-end",
+        flex: 1,
+        minWidth: 0,
+      },
       fieldLabel: {
         ...FONT_FAMILY.Lexend(500, 11),
         color: "#8E8E93",

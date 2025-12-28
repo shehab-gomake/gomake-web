@@ -1,5 +1,4 @@
 import { useTranslation } from "react-i18next";
-import { useStyle } from "./style";
 import { HeaderTitle } from "@/widgets";
 import { useRepeatOrders } from "./use-repeat-orders";
 import { Box, CircularProgress, Grid, Stack } from "@mui/material";
@@ -9,6 +8,8 @@ import { RepeatOrderCard } from "./components/repeat-order-card";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { GoMakeDeleteModal } from "@/components";
 import { ModalType } from "@/enums";
+import { useStyle } from "./style";
+// import { useStyle } from "../board-missions/style";
 
 const RepeatOrdersWidget = () => {
   const { classes } = useStyle();
@@ -86,18 +87,19 @@ const RepeatOrdersWidget = () => {
   return (
     <Stack
       direction="column"
-      justifyContent="space-between"
       display="flex"
-      spacing={1}
       height="100%"
+      sx={classes.pageContainer}
     >
-      <div style={classes.mainContainer}>
+      <Box sx={classes.headerContainer}>
         <HeaderTitle
           title={t("repeatOrders.title")}
           marginTop={1}
           marginBottom={1}
         />
+      </Box>
 
+      <Box sx={classes.filtersContainer}>
         <JobsFiltersSection
           // Customer/Supplier props
           customer={customer}
@@ -158,8 +160,9 @@ const RepeatOrdersWidget = () => {
           classes={classes}
           hideActionButtons={true}
         />
+      </Box>
 
-        {/* Jobs Cards Grid */}
+      <Box sx={classes.scrollableContainer}>
         {isLoading ? (
           <Box
             display="flex"
@@ -205,7 +208,7 @@ const RepeatOrdersWidget = () => {
             </Box>
           </Box>
         ) : (
-          <Grid container spacing={3} sx={{ padding: "20px 0" }}>
+          <Grid container spacing={3}>
             {jobs.map((job) => (
               <Grid item xs={12} sm={6} md={4} lg={3} key={job.id}>
                 <RepeatOrderCard
@@ -220,18 +223,22 @@ const RepeatOrdersWidget = () => {
             ))}
           </Grid>
         )}
-      </div>
-      <GoMakePagination
-        onChangePageNumber={handlePageChange}
-        onChangePageSize={handlePageSizeChange}
-        page={pageNumber}
-        setPage={setPageNumber}
-        pagesCount={pagesCount}
-        pageSize={pageSize}
-        router={router}
-        isFromDocumentsOrJobs={true}
-        initialPageSize={initialPageSize}
-      />
+      </Box>
+
+      <Box sx={classes.paginationContainer}>
+        <GoMakePagination
+          onChangePageNumber={handlePageChange}
+          onChangePageSize={handlePageSizeChange}
+          page={pageNumber}
+          setPage={setPageNumber}
+          pagesCount={pagesCount}
+          pageSize={pageSize}
+          router={router}
+          isFromDocumentsOrJobs={true}
+          initialPageSize={initialPageSize}
+        />
+      </Box>
+
       <GoMakeDeleteModal
         modalType={ModalType.WARNING}
         title={t("sales.quote.titleModal")}
