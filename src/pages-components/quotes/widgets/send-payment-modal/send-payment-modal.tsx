@@ -44,7 +44,8 @@ interface ISendPaymentProps {
     customerId?: string | number,
     customerName?: string,
     contactName?: string,
-    managerEmails?: string[]
+    managerEmails?: string[],
+    isFromPaymentPage?: boolean
   ) => Promise<void>;
   documentForEmail?: any;
 }
@@ -68,7 +69,6 @@ const SendPaymentModal = ({
   const { getWhatsWebUrl, openWhatsAppWebLink } = useWhatsAppWeb();
   const isReceipt = documentType === DOCUMENT_TYPE.receipt;
   const hasFrontDeskFeature = useRecoilValue(printHouseHasFrontDeskFeature);
-
   const {
     t,
     payState,
@@ -406,7 +406,9 @@ const SendPaymentModal = ({
                         undefined,
                         documentForEmail?.customerId || documentForEmail?.clientId,
                         documentForEmail?.customerName || documentForEmail?.clientName,
-                        contactName
+                        contactName,
+                        undefined,
+                        true // isFromPaymentPage: true when not sending to client
                       );
                       return;
                     }
@@ -457,7 +459,9 @@ const SendPaymentModal = ({
                           undefined,
                           documentForEmail?.customerId || documentForEmail?.clientId,
                           documentForEmail?.customerName || documentForEmail?.clientName,
-                          contactName
+                          contactName,
+                          undefined,
+                          true // isFromPaymentPage: true when not sending to client
                         );
                         return;
                       }
@@ -506,7 +510,9 @@ const SendPaymentModal = ({
                           undefined,
                           documentForEmail?.customerId || documentForEmail?.clientId,
                           documentForEmail?.customerName || documentForEmail?.clientName,
-                          contactName
+                          contactName,
+                          undefined,
+                          true // isFromPaymentPage: true when not sending to client
                         );
                         return;
                       }
