@@ -1905,6 +1905,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
       setOrderStatus(null);
       setSampleType(null);
       setProductIds([]);
+      setIsQualityFixJob(null);
       setFromDate(undefined);
       setToDate(undefined);
       setFromDueDate(undefined);
@@ -1943,8 +1944,13 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
       sampleType,
       proofTypes,
       isPrinted,
+      isQualityFixJob,
       pageSize: qPageSize, // <-- add this
     } = q;
+
+    if (isQualityFixJob) {
+      setIsQualityFixJob(isQualityFixJob === "true" ? true : false);
+    }
 
     if (proofTypes) {
       const proofTypesArray = Array.isArray(proofTypes)
@@ -1952,6 +1958,8 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
         : [proofTypes];
       setProofTypes(proofTypesArray);
     }
+
+
 
     if (sampleType) {
       const sampleTypeValue = Array.isArray(sampleType)
