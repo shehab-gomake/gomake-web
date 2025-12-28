@@ -7,7 +7,7 @@ import { PrimaryTable } from "@/components/tables/primary-table";
 import { useTicketChatbot } from "@/components/ticket-chatbot";
 import { useMemo } from "react";
 import { CircularProgress } from "@mui/material";
-import { GoMakeAutoComplate } from "@/components";
+import { GoMakeAutoComplate, GoMakeMultiSelect } from "@/components";
 
 function MyTicketsContent() {
   const { t } = useTranslation();
@@ -22,6 +22,9 @@ function MyTicketsContent() {
     loadingUsers,
     selectedUserId,
     setSelectedUserId,
+    selectedStatuses,
+    setSelectedStatuses,
+    statusOptions,
     canViewAllTickets,
   } = useMyTickets();
 
@@ -46,7 +49,9 @@ function MyTicketsContent() {
     if (!selectedUserId) {
       return allUsersOption;
     }
-    return userOptions.find((u) => u.value === selectedUserId) || allUsersOption;
+    return (
+      userOptions.find((u) => u.value === selectedUserId) || allUsersOption
+    );
   }, [selectedUserId, userOptions, allUsersOption]);
 
   return (
@@ -56,8 +61,8 @@ function MyTicketsContent() {
         <AddTicketButton onClick={() => openNewTicket()} />
       </div>
 
-      {canViewAllTickets && (
-        <div style={classes.filterContainer}>
+      <div style={classes.filterContainer}>
+        {canViewAllTickets && (
           <GoMakeAutoComplate
             options={userOptions}
             value={selectedOption}
@@ -73,8 +78,18 @@ function MyTicketsContent() {
               option?.value === value?.value
             }
           />
-        </div>
-      )}
+        )}
+        <GoMakeMultiSelect
+          options={statusOptions}
+          value={selectedStatuses}
+          onChange={setSelectedStatuses}
+          placeholder={t("customerService.selectStatus") || "Choose Status"}
+          isClearable={true}
+          isSearchable={true}
+          closeMenuOnSelect={false}
+          minWidth={250}
+        />
+      </div>
 
       <div style={classes.tableContainer}>
         <PrimaryTable
@@ -101,4 +116,3 @@ export default function MyTickets() {
     </CustomerAuthLayout>
   );
 }
-
