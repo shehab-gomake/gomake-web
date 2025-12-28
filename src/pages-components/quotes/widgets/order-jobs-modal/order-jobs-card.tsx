@@ -24,7 +24,10 @@ const OrderJobsCard: React.FC<OrderJobsCardProps> = ({
 
   const handleNavigateToJobs = () => {
     if (quoteNumber) {
-      window.open(`/jobs?pageNumber=1&finalPatternSearch=${quoteNumber}`, "_blank");
+      window.open(
+        `/jobs?pageNumber=1&finalPatternSearch=${quoteNumber}`,
+        "_blank"
+      );
       //router.push();
       onClose?.();
     }
@@ -85,33 +88,37 @@ const OrderJobsCard: React.FC<OrderJobsCardProps> = ({
 
   return (
     <Paper elevation={3} sx={classes.cardPaper}>
-      <Box sx={classes.cardContent}>
-        {orderJobs.map((job, index) => {
-          const status = getJobStatus(job);
-          return (
-            <Box key={index}>
-              <Box sx={classes.jobItem}>
-                <Box sx={classes.jobInfo}>
-                  <Typography sx={classes.jobLabel}>
-                    {t("boardMissions.missionNumber")}:
-                  </Typography>
-                  <Typography sx={classes.jobValue}>
-                    {job.jobNumber || "-"}
-                  </Typography>
-                </Box>
-                {status && (
+      <Box sx={classes.cardContainer}>
+        <Box sx={classes.cardContent}>
+          {orderJobs.map((job, index) => {
+            const status = getJobStatus(job);
+            return (
+              <Box key={index}>
+                <Box sx={classes.jobItem}>
                   <Box sx={classes.jobInfo}>
                     <Typography sx={classes.jobLabel}>
-                      {t("tableHeaders.status") || "Status"}:
+                      {t("boardMissions.missionNumber")}:
                     </Typography>
-                    <Typography sx={classes.jobValue}>{status}</Typography>
+                    <Typography sx={classes.jobValue}>
+                      {job.jobNumber || "-"}
+                    </Typography>
                   </Box>
+                  {status && (
+                    <Box sx={classes.jobInfo}>
+                      <Typography sx={classes.jobLabel}>
+                        {t("tableHeaders.status") || "Status"}:
+                      </Typography>
+                      <Typography sx={classes.jobValue}>{status}</Typography>
+                    </Box>
+                  )}
+                </Box>
+                {index < orderJobs.length - 1 && (
+                  <Divider sx={classes.divider} />
                 )}
               </Box>
-              {index < orderJobs.length - 1 && <Divider sx={classes.divider} />}
-            </Box>
-          );
-        })}
+            );
+          })}
+        </Box>
         {quoteNumber && (
           <Box sx={classes.cardButtonContainer}>
             <GomakePrimaryButton
