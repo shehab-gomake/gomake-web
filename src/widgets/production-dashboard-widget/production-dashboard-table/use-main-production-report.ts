@@ -6,6 +6,7 @@ import {
   productionDeliveryDateState,
   productionActivityDateState,
   productionStatusesState,
+  productionStatusesInitializedState,
 } from "@/store/production-dashboard-dates";
 import { useGomakeAxios } from "@/hooks";
 import { MainProductionReportResponseDTO } from "./interfaces";
@@ -16,6 +17,9 @@ export const useMainProductionReport = () => {
   const { dates: creationDates } = useRecoilValue(productionCreationDateState);
   const { dates: activityDates } = useRecoilValue(productionActivityDateState);
   const statuses = useRecoilValue(productionStatusesState);
+  const statusesInitialized = useRecoilValue(
+    productionStatusesInitializedState
+  );
   const systemCurrency = useRecoilValue(systemCurrencyState);
 
   // State management
@@ -253,13 +257,19 @@ export const useMainProductionReport = () => {
   };
 
   // Fetch data when dates or statuses change (triggered by search button or initial load)
+  // Only call API after statuses have been initialized (loaded from board-missions/statuses/get-all)
   useEffect(() => {
     const hasDeliveryDates = deliveryDates.startDate && deliveryDates.endDate;
     const hasCreationDates = creationDates.startDate && creationDates.endDate;
     const hasActivityDates = activityDates.startDate && activityDates.endDate;
 
-    // Only fetch if at least one date range is set
-    if (hasDeliveryDates || hasCreationDates || hasActivityDates) {
+    // Only fetch if:
+    // 1. At least one date range is set
+    // 2. Statuses have been initialized (loaded from API)
+    if (
+      (hasDeliveryDates || hasCreationDates || hasActivityDates) &&
+      statusesInitialized
+    ) {
       fetchData();
     }
   }, [
@@ -270,6 +280,7 @@ export const useMainProductionReport = () => {
     activityDates.startDate,
     activityDates.endDate,
     statuses,
+    statusesInitialized,
   ]);
 
   return {

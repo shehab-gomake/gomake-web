@@ -60,9 +60,15 @@ const productionStatusesState = atom<string[]>({
   default: [],
 });
 
+const productionStatusesInitializedState = atom<boolean>({
+  key: "productionStatusesInitialized",
+  default: false,
+});
+
 export {
   productionDeliveryDateState,
   productionCreationDateState,
   productionActivityDateState,
   productionStatusesState,
+  productionStatusesInitializedState,
 };
