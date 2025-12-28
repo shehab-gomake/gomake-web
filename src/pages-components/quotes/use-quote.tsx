@@ -2665,8 +2665,10 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     if (maxPrice) query.maxPrice = maxPrice;
     else delete query.maxPrice;
 
-    if (page) query.pageNumber = page;
-    else delete query.pageNumber;
+    // Always set page to 1 when searching
+    delete query.pageNumber;
+    query.pageNumber = 1;
+    setPage(1);
 
     if (fromDate instanceof Date) query.fromDate = fromDate.toISOString();
     else delete query.fromDate;
@@ -2712,7 +2714,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     }
 
     handleClose();
-    setPage(1);
 
     if (statusId !== null && statusId !== undefined) {
       handleSecondCardClick();
@@ -2720,7 +2721,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
 
     await router.push({
       pathname: router.pathname,
-      query: { ...query },
+      query: { ...query, pageNumber: 1 },
     });
   };
 
