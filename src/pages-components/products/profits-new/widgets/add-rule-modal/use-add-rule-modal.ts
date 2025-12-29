@@ -167,7 +167,7 @@ const useAddRuleModal = ({
     11: "MATERIALTYPE",
   };
 
-  const { Outputs } = useOutputs({ shouldRenderOutputsOnMount: openModal });
+  const { Outputs, getOutputs } = useOutputs({ shouldRenderOutputsOnMount: false });
   const [materialsTypes, setMaterialsTypes] = useState<
     { materialTypeKey: string; materialTypeName: string }[]
   >([]);
@@ -372,38 +372,31 @@ const useAddRuleModal = ({
     }
   };
 
-  // Track loading state for all data (only when duplicating)
+  // Track loading state for all data
   const [isDataLoading, setIsDataLoading] = useState(false);
 
   // ensuring it only renders when the 'Add Rule' modal is opened.
   useEffect(() => {
     if (openModal) {
-      // Only wait for all data when duplicating, otherwise load normally
-      if (duplicateRule) {
-        setIsDataLoading(true);
-        // Load all data in parallel and wait for all to complete (only for duplicate)
-        Promise.all([
-          getClientTypes(),
-          getProducts(),
-          getAllMaterials(),
-          getAllProductTypes(),
-          getEmployeeCategories(),
-          getMachincesByActionId(),
-        ]).finally(() => {
-          // Small delay to ensure state updates are complete
-          setTimeout(() => {
-            setIsDataLoading(false);
-          }, 100);
-        });
-      } else {
-        // Normal add - load data without waiting
-        getClientTypes();
-        getProducts();
-        getAllMaterials();
-        getAllProductTypes();
-        getEmployeeCategories();
-        getMachincesByActionId();
-      }
+      setIsDataLoading(true);
+      // Load all data in parallel and wait for all to complete
+      Promise.all([
+        getClientTypes(),
+        getProducts(),
+        getAllMaterials(),
+        getAllProductTypes(),
+        getEmployeeCategories(),
+        getMachincesByActionId(),
+        getOutputs(), // Also wait for Outputs to load
+      ]).finally(() => {
+        // Small delay to ensure state updates are complete
+        setTimeout(() => {
+          setIsDataLoading(false);
+        }, 300);
+      });
+    } else {
+      // Reset loading state when modal closes
+      setIsDataLoading(false);
     }
   }, [openModal, duplicateRule]);
 
@@ -1363,6 +1356,7 @@ const useAddRuleModal = ({
     numberValueTypeProperties,
     fetchNumberValueTypeProperties,
     additionType,
+    isDataLoading,
   };
 };
 
