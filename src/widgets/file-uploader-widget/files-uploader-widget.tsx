@@ -18,7 +18,7 @@ import { useTranslation } from "react-i18next";
 import { printHouseProfile } from "@/store/print-house-profile";
 import { clearUploadingFilesListApi } from "@/services/api-service/production-floor/production-floor-endpoints";
 import { useGomakeAxios } from "@/hooks";
-import {useFilesStatusSocketIO} from "@/hooks/socket-io/use-files-status-socket-io";
+import { useFilesStatusSocketIO } from "@/hooks/socket-io/use-files-status-socket-io";
 
 const FilesUploaderWidget = () => {
   const [files, setFiles] = useRecoilState(uploadingFilesState);
@@ -28,7 +28,7 @@ const FilesUploaderWidget = () => {
   const [companyProfile] = useRecoilState(printHouseProfile);
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
-  const {} = useFilesStatusSocketIO(companyProfile.id);
+  const { } = useFilesStatusSocketIO(companyProfile.id);
   const onClickClear = async () => {
     setShow(false);
     setOpen(false);
@@ -51,7 +51,7 @@ const FilesUploaderWidget = () => {
       <Paper
         style={{
           position: "fixed",
-          right: "300px",
+          right: "470px",
           bottom: 0,
           zIndex: 9,
         }}

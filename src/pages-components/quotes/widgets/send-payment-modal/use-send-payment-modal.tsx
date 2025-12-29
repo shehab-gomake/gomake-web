@@ -11,7 +11,7 @@ import { useDateFormat } from "@/hooks/use-date-format";
 import { useEffect, useState } from "react";
 import { emailRegex } from "@/utils/regex";
 
-const useSendPaymentModal = ({ openPaymentModal, documentType }) => {
+const useSendPaymentModal = ({ openPaymentModal, documentType, preSelectedMethod }) => {
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
   const { alertSuccess, alertFault } = useSnackBar();
@@ -67,6 +67,37 @@ const useSendPaymentModal = ({ openPaymentModal, documentType }) => {
       }
     }
   }, [openPaymentModal, payState.documentContacts, payState.selectedContactIndex]);
+
+  // Auto-select method based on preSelectedMethod prop when modal opens
+  useEffect(() => {
+    if (openPaymentModal && preSelectedMethod) {
+      setPayState((prev) => {
+        if (preSelectedMethod === "sms" && !prev.sendBySms) {
+          return {
+            ...prev,
+            sendBySms: true,
+            sendByMail: false,
+            sendByWhatsapp: false,
+          };
+        } else if (preSelectedMethod === "whatsapp" && !prev.sendByWhatsapp) {
+          return {
+            ...prev,
+            sendByWhatsapp: true,
+            sendByMail: false,
+            sendBySms: false,
+          };
+        } else if (preSelectedMethod === "email" && !prev.sendByMail) {
+          return {
+            ...prev,
+            sendByMail: true,
+            sendBySms: false,
+            sendByWhatsapp: false,
+          };
+        }
+        return prev;
+      });
+    }
+  }, [openPaymentModal, preSelectedMethod]);
 
   const formatFloatValue = (value, decimals) => {
     const parsedValue = parseFloat(value);

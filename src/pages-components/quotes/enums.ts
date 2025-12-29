@@ -14,6 +14,7 @@ export enum DOCUMENT_TYPE {
   customerChat,
   supplierPayments,
   proformaInvoice = 14,
+  QuoteApprovalRequest = 17,
 }
 
 export enum QUOTE_STATUSES {

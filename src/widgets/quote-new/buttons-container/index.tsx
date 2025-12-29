@@ -643,6 +643,7 @@ const ButtonsContainer = ({
           onClose={onClickCloseMangerApprovalModal}
           onSend={onClickSendAndChat}
           managersOptions={managersOptions}
+          documentId={quoteItemValue?.id}
         />
         <PaymentModal
           onClose={onClickClosePaymentModal}

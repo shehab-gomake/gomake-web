@@ -5,6 +5,7 @@ const UPDATE_ROLE_NAME_URL = "/v1/crm-service/roles/update-role";
 const ADD_NEW_ROLE_URL = "/v1/crm-service/roles/add-roles";
 const DELETE_ROLE_URL = "/v1/crm-service/roles/delete-role";
 const GET_ALL_ROLES_URL = "/v1/crm-service/roles/get-all-roles-for-table";
+const GET_ALL_ROLES_DROPDOWN_URL = "/v1/crm-service/roles/get-all-roles";
 
 const updateRoleNameApi = async (callApi, callBack, data) => {
   return await getSetApiData(
@@ -45,4 +46,19 @@ const deleteRoleApi = async (callApi, callBack, data) => {
   );
 };
 
-export { updateRoleNameApi, addNewRoleApi, deleteRoleApi, getAllRolesApi };
+const getAllRolesForDropdownApi = async (callApi, callBack) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.GET,
+    GET_ALL_ROLES_DROPDOWN_URL,
+    callBack
+  );
+};
+
+export {
+  updateRoleNameApi,
+  addNewRoleApi,
+  deleteRoleApi,
+  getAllRolesApi,
+  getAllRolesForDropdownApi,
+};
