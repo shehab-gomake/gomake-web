@@ -75,6 +75,7 @@ const AgingReportWidget = ({ clientType }: IProps) => {
     availableDebits,
     onClickBtn7,
     sendSelectedDebitsPayment,
+    isLoadingDebits,
   } = useAgingReport(clientType);
 
   const { classes } = useStyle();
@@ -192,6 +193,7 @@ const AgingReportWidget = ({ clientType }: IProps) => {
         debits={availableDebits}
         onSend={sendSelectedDebitsPayment}
         clientContacts={clientContactsValue}
+        isLoading={isLoadingDebits}
       />
     </div>
   );
