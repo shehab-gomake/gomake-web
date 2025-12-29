@@ -183,7 +183,7 @@ const RightSideWidget = ({
               options={combinedData}
               onChange={(e) => {
                 setSubProducts([]);
-                handleProductChange(e);
+                handleProductChange(e, true);
               }}
               placeholder={t("home.admin.selectProductOrMaterial")}
               selectedTab={ETab.PRODUCTS}
@@ -307,7 +307,7 @@ const RightSideWidget = ({
         {calculationProgress &&
           calculationProgress.currentWorkFlowsCount > 0 &&
           calculationProgress.currentWorkFlowsCount !==
-            calculationProgress.totalWorkFlowsCount && (
+          calculationProgress.totalWorkFlowsCount && (
             <div style={{ marginBottom: "15px" }}>
               <ProgressBar
                 bottomLeftText={t(
@@ -338,19 +338,19 @@ const RightSideWidget = ({
                 price: roundPrice(
                   isNaN(
                     sliderCurrentProductItemValueTotalPrice /
-                      ((quantity &&
-                        quantity.values &&
-                        quantity.values.length &&
-                        quantity?.values[0]) ||
-                        1)
+                    ((quantity &&
+                      quantity.values &&
+                      quantity.values.length &&
+                      quantity?.values[0]) ||
+                      1)
                   )
                     ? 0
                     : (sliderCurrentProductItemValueTotalPrice || 0) /
-                        ((quantity &&
-                          quantity.values &&
-                          quantity.values.length &&
-                          quantity?.values[0]) ||
-                          1)
+                    ((quantity &&
+                      quantity.values &&
+                      quantity.values.length &&
+                      quantity?.values[0]) ||
+                      1)
                 ),
                 unitPrice: systemCurrency,
               })}
@@ -396,7 +396,7 @@ const RightSideWidget = ({
         )}
 
         {widgetType === EWidgetProductType.EDIT ||
-        widgetType === EWidgetProductType.DUPLICATE ? (
+          widgetType === EWidgetProductType.DUPLICATE ? (
           <div
             style={{
               display: "flex",
@@ -710,17 +710,15 @@ const RightSideWidget = ({
                         }}
                       >
                         <div style={{ ...clasess.titleLogsTextStyle }}>
-                          {`${item.actionName ? item.actionName + ": " : ""}${
-                            item?.exception?.exceptionMessage || " "
-                          }${renderExceptionMessage(
-                            item?.exception?.exceptionKey,
-                            item?.exception?.values,
-                            t
-                          )}${
-                            !item?.exception?.exceptionKey
+                          {`${item.actionName ? item.actionName + ": " : ""}${item?.exception?.exceptionMessage || " "
+                            }${renderExceptionMessage(
+                              item?.exception?.exceptionKey,
+                              item?.exception?.values,
+                              t
+                            )}${!item?.exception?.exceptionKey
                               ? renderValues(item?.exception?.values)
                               : ""
-                          }`}
+                            }`}
                         </div>
                       </div>
                     </div>
@@ -747,17 +745,15 @@ const RightSideWidget = ({
                         }}
                       >
                         <div style={{ ...clasess.titleLogsTextStyle }}>
-                          {`${
-                            item?.exceptionMessage || " "
-                          }${renderExceptionMessage(
-                            item?.exceptionKey,
-                            item?.values,
-                            t
-                          )}${
-                            !item?.exceptionKey
+                          {`${item?.exceptionMessage || " "
+                            }${renderExceptionMessage(
+                              item?.exceptionKey,
+                              item?.values,
+                              t
+                            )}${!item?.exceptionKey
                               ? renderValues(item?.values)
                               : ""
-                          }`}
+                            }`}
                         </div>
                       </div>
                     </div>
