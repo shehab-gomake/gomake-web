@@ -234,6 +234,8 @@ const QuotesListPageWidget = ({
     onChangeDocumentSearch,
     isPausedOrders,
     setIsPausedOrders,
+    isOrdersWithoutJobs,
+    setIsOrdersWithoutJobs,
     openDuplicateModal,
     onCloseDuplicateModal,
     onClickDocumentDuplicate,
@@ -597,6 +599,8 @@ const QuotesListPageWidget = ({
               typeOfPayments={typeOfPayments}
               isPausedOrders={isPausedOrders}
               setIsPausedOrders={setIsPausedOrders}
+              isOrdersWithoutJobs={isOrdersWithoutJobs}
+              setIsOrdersWithoutJobs={setIsOrdersWithoutJobs}
               minPrice={minPrice}
               maxPrice={maxPrice}
               handleMinPriceChange={handleMinPriceChange}

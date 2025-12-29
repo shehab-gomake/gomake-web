@@ -89,6 +89,10 @@ interface IDocumentsFilterSectionProps {
   isPausedOrders: boolean;
   setIsPausedOrders: (value: boolean) => void;
 
+  // Orders without jobs
+  isOrdersWithoutJobs: boolean;
+  setIsOrdersWithoutJobs: (value: boolean) => void;
+
   // Price range
   minPrice: string;
   maxPrice: string;
@@ -175,6 +179,8 @@ const DocumentsFilterSection: React.FC<IDocumentsFilterSectionProps> = ({
   typeOfPayments,
   isPausedOrders,
   setIsPausedOrders,
+  isOrdersWithoutJobs,
+  setIsOrdersWithoutJobs,
   minPrice,
   maxPrice,
   handleMinPriceChange,
@@ -214,6 +220,7 @@ const DocumentsFilterSection: React.FC<IDocumentsFilterSectionProps> = ({
     isCanceledState ||
     paymentType ||
     isPausedOrders ||
+    isOrdersWithoutJobs ||
     minPrice ||
     maxPrice ||
     fromDate ||
@@ -490,6 +497,23 @@ const DocumentsFilterSection: React.FC<IDocumentsFilterSectionProps> = ({
                 checked={isPausedOrders}
                 onChange={(e) => {
                   setIsPausedOrders(e.target.checked);
+                }}
+              />
+            ),
+          },
+        ]
+      : []),
+    // Orders without jobs filter
+    ...(isOrder
+      ? [
+          {
+            id: "ordersWithoutJobs",
+            label: t("sales.quote.ordersWithoutJobs"),
+            component: (
+              <SecondSwitch
+                checked={isOrdersWithoutJobs}
+                onChange={(e) => {
+                  setIsOrdersWithoutJobs(e.target.checked);
                 }}
               />
             ),

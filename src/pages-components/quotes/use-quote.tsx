@@ -157,6 +157,7 @@ interface Query {
   productionStatus?: string;
   isCanceled?: boolean;
   isPaused?: boolean;
+  isOrdersWithoutJobs?: boolean;
   pageNumber?: number;
   productsIds?: string[];
   paymentType?: string;
@@ -214,6 +215,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const [customerId, setCustomerId] = useState<any>();
   const [isCanceledState, setIsCanceledState] = useState(false);
   const [isPausedOrders, setIsPausedOrders] = useState(false);
+  const [isOrdersWithoutJobs, setIsOrdersWithoutJobs] = useState(false);
   const [openPurchaseOrderTypeModal, setOpenPurchaseOrderTypeModal] =
     useState(false);
   const [dateRange, setDateRange] = useState<any>();
@@ -454,6 +456,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       currencyFilter ||
       isCanceledState ||
       isPausedOrders ||
+      isOrdersWithoutJobs ||
       minPrice ||
       maxPrice ||
       fromDate ||
@@ -487,9 +490,10 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     setDeliveryStatus(null);
     setProductIds([]);
     setCurrencyFilter(null);
-    setIsCanceledState(false);
-    setIsPausedOrders(false);
-    setMinPrice("");
+      setIsCanceledState(false);
+      setIsPausedOrders(false);
+      setIsOrdersWithoutJobs(false);
+      setMinPrice("");
     setMaxPrice("");
     setFromDate(null);
     setToDate(null);
@@ -790,6 +794,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         productList: productIds,
         isCanceled: isCanceledState,
         isPaused: isPausedOrders,
+        isOrdersWithoutJobs: isOrdersWithoutJobs,
         isOrderInTracking: isOrdersTracking,
         fromDate: fromDate && GetDateFormat(fromDate),
         toDate: toDate && GetDateFormat(toDate),
@@ -835,6 +840,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         productList: productIds,
         isCanceled: isCanceledState,
         isPaused: isPausedOrders,
+        isOrdersWithoutJobs: isOrdersWithoutJobs,
         isOrderInTracking: isOrdersTracking,
         fromDate: fromDate && GetDateFormat(fromDate),
         toDate: toDate && GetDateFormat(toDate),
@@ -1824,8 +1830,21 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
           )
           : null;
 
-        const currentIsCanceled = router.query.isCanceled;
-        const currentIsPaused = router.query.isPaused;
+        const currentIsCanceled = router.query.isCanceled
+          ? Array.isArray(router.query.isCanceled)
+            ? router.query.isCanceled[0] === "true"
+            : router.query.isCanceled === "true"
+          : false;
+        const currentIsPaused = router.query.isPaused
+          ? Array.isArray(router.query.isPaused)
+            ? router.query.isPaused[0] === "true"
+            : router.query.isPaused === "true"
+          : false;
+        const currentIsOrdersWithoutJobs = router.query.isOrdersWithoutJobs
+          ? Array.isArray(router.query.isOrdersWithoutJobs)
+            ? router.query.isOrdersWithoutJobs[0] === "true"
+            : router.query.isOrdersWithoutJobs === "true"
+          : false;
 
         const currentProductsIds = Array.isArray(router.query.productsIds)
           ? router.query.productsIds
@@ -1935,6 +1954,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
 
               isCanceled: currentIsCanceled || isCanceledState,
               isPaused: currentIsPaused || isPausedOrders,
+              isOrdersWithoutJobs:
+                currentIsOrdersWithoutJobs || isOrdersWithoutJobs,
               isOrderInTracking: isOrdersTracking,
             },
           });
@@ -1966,6 +1987,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       productIds,
       isCanceledState,
       isPausedOrders,
+      isOrdersWithoutJobs,
       fromDate,
       toDate,
       onClickOpenModal,
@@ -2692,6 +2714,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     if (isPausedOrders) query.isPaused = isPausedOrders;
     else delete query.isPaused;
 
+    if (isOrdersWithoutJobs) query.isOrdersWithoutJobs = isOrdersWithoutJobs;
+    else delete query.isOrdersWithoutJobs;
+
     const trimmedSearch = patternSearch?.trim() || "";
     setFinalPatternSearch(trimmedSearch);
 
@@ -2731,6 +2756,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     setResetDatePicker(true);
     setIsCanceledState(false);
     setIsPausedOrders(false);
+    setIsOrdersWithoutJobs(false);
     setPage(1);
     setMinPrice("");
     setMaxPrice("");
@@ -4682,6 +4708,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       isCanceled,
       pageNumber,
       isPaused,
+      isOrdersWithoutJobs,
       productsIds,
       paymentType,
       currency,
@@ -4824,6 +4851,14 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     if (isPaused) {
       setIsPausedOrders(
         Array.isArray(isPaused) ? isPaused[0] === "true" : isPaused === "true"
+      );
+    }
+
+    if (isOrdersWithoutJobs) {
+      setIsOrdersWithoutJobs(
+        Array.isArray(isOrdersWithoutJobs)
+          ? isOrdersWithoutJobs[0] === "true"
+          : isOrdersWithoutJobs === "true"
       );
     }
   }, [router.query, agentsCategories, currencies]);
@@ -5239,6 +5274,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     onChangeDocumentSearch,
     isPausedOrders,
     setIsPausedOrders,
+    isOrdersWithoutJobs,
+    setIsOrdersWithoutJobs,
     openDuplicateModal,
     onCloseDuplicateModal,
     onClickDocumentDuplicate,

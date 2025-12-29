@@ -1908,7 +1908,11 @@
       "deliveryNote": "Delivery Note",
       "invoiceNumber": "Invoice Number",
       "receiptNumber": "Receipt Number",
-      "deliveryNoteNumber": "Delivery Note Number"
+      "deliveryNoteNumber": "Delivery Note Number",
+      "canceledOrders": "Canceled orders",
+      "canceledPurchaseOrders": "Canceled purchase orders",
+      "pausedOrders": "Paused orders",
+      "ordersWithoutJobs": "Orders without jobs"
     }
   },
   "usersSettings": {
