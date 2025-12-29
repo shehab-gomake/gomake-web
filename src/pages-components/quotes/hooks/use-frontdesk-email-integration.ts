@@ -71,7 +71,8 @@ export const useFrontDeskEmailIntegration = ({
       customerName?: string,
       contactName?: string,
       managerEmails?: string[],
-      isFromPaymentPage?: boolean
+      isFromPaymentPage?: boolean,
+      paymentRequestId?: string
     ) => {
       setIsLoadingEmailData(true);
       setEmailData(null); // Clear previous data
@@ -166,6 +167,7 @@ export const useFrontDeskEmailIntegration = ({
               ...(customerId && { customerId }),
               ...(customerName && { customerName }),
               ...(contactName && { contactName }),
+              ...(paymentRequestId && { paymentRequestId }),
             },
           }
         );
