@@ -346,7 +346,8 @@ export const convertTitleUnits = (unit: string | null) => {
       return "LB"; // kilograms -> pounds
     case "Gram/m^2":
       return "lb/yd²"; // grams per m² -> lb per yd²
-
+    case "kgPerSquareMeter":
+      return "lb/yd²"; // kg per m² -> lb per yd²
     // VOLUME
     case "liter":
       return "gallon"; // liters -> gallons

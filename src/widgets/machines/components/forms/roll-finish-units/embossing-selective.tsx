@@ -77,9 +77,18 @@ const inputs = (state) => {
                     placeholder: "machineAttributes.heightLevel",
                     required: true,
                     parameterKey: "value",
-                    options: [],
-                    unit: EMeasurementUnits.MM
+                    options: []
                 },
+                {
+                    name: "",
+                    label: "machineAttributes.WeightOfVarnish",
+                    type: "text",
+                    placeholder: "machineAttributes.WeightOfVarnish",
+                    required: true,
+                    parameterKey: "weightPerArea",
+                    options: [],
+                    unit: EMeasurementUnits.KgPerSquareMeter
+                }
             ]
         },
     ]

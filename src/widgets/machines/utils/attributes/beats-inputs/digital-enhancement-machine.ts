@@ -44,8 +44,17 @@ const digitalEnhancementMachine = (state: Record<string, any>) => {
                     required: true,
                     parameterKey: "value",
                     options: [],
-                    unit: EMeasurementUnits.MM
                 },
+                {
+                    name: "",
+                    label: "machineAttributes.WeightOfVarnish",
+                    type: "text",
+                    placeholder: "machineAttributes.WeightOfVarnish",
+                    required: true,
+                    parameterKey: "weightPerArea",
+                    options: [],
+                    unit: EMeasurementUnits.KgPerSquareMeter
+                }
             ]
         },
     ]

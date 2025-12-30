@@ -32,7 +32,7 @@ export interface FilterState {
   toAccount: string;
   startDate: Date | null;
   endDate: Date | null;
-  accountCode?: string;
+  accountCode?: string | string[];
 }
 
 interface IDataTableStatistics {
@@ -100,8 +100,6 @@ const useTransactionJournalReport = ({
     initialFromDate("", defaultStartDate)
   );
   const [toDate, setToDate] = useState<Date>(defaultEndDate);
-
-  console.log("fromDate", { fromDate, toDate })
 
   const [dataTable, setDataTable] = useState<any>([]);
   const [dataTableStatistics, setDataTableStatistics] =
@@ -303,7 +301,6 @@ const useTransactionJournalReport = ({
   };
 
   const getTransactionJournalReportFilter = useCallback(async () => {
-
     if (!areDatesValid(fromDate, toDate)) {
       alertFault("alerts.pleaseEnsureDatesSelected");
       return;
@@ -709,19 +706,22 @@ const useTransactionJournalReport = ({
 
   const [balanceInput, setBalanceInput] = useState<number>();
 
-  const submitBalance = useCallback(async (balanceSum) => {
-    const res = await callApi(
-      EHttpMethod.POST,
-      `/v1/erp-service/reports/set-balance-to-cash-account`,
-      { balanceSum }
-    );
-    if (res?.success) {
-      alertSuccessUpdate();
-      getTransactionJournalReportFilter();
-    } else {
-      alertFaultUpdate();
-    }
-  }, [fromDate, toDate]);
+  const submitBalance = useCallback(
+    async (balanceSum) => {
+      const res = await callApi(
+        EHttpMethod.POST,
+        `/v1/erp-service/reports/set-balance-to-cash-account`,
+        { balanceSum }
+      );
+      if (res?.success) {
+        alertSuccessUpdate();
+        getTransactionJournalReportFilter();
+      } else {
+        alertFaultUpdate();
+      }
+    },
+    [fromDate, toDate]
+  );
 
   const [erpAccountsList, setErpAccountsList] = useState([]);
 

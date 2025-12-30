@@ -2,10 +2,12 @@ import {
   AccountingTransactionReportHeaderProps,
   useAgingReportHeader,
 } from "./use-header-widget";
-import { GoMakeAutoComplate } from "@/components";
 import { formatDateToISOString } from "@/components/date-time/date-time-component";
 import { DateField } from "@/components/date-picker/date-filed";
 import { Box } from "@mui/material";
+import { NestedCheckbox } from "@/components/nested-checkbox";
+import { transformAccountsToNestedGroups } from "@/components/nested-checkbox/transform-accounts";
+import { useMemo } from "react";
 
 const AccountingTransactionReportHeader = ({
   filterState,
@@ -16,10 +18,29 @@ const AccountingTransactionReportHeader = ({
   const { classes, t } = useAgingReportHeader();
   const dir: "rtl" | "ltr" = t("direction");
 
-  const handleAccountChange = (e: any, value: any) => {
+  // Transform flat account list to nested groups
+  const nestedGroups = useMemo(() => {
+    if (!erpAccountsList || erpAccountsList.length === 0) {
+      return [];
+    }
+    return transformAccountsToNestedGroups(erpAccountsList);
+  }, [erpAccountsList]);
+
+  // Get selected codes as array (handle both string and array formats)
+  const selectedCodes = useMemo(() => {
+    if (!filterState?.accountCode) {
+      return [];
+    }
+    if (Array.isArray(filterState.accountCode)) {
+      return filterState.accountCode;
+    }
+    return [filterState.accountCode];
+  }, [filterState?.accountCode]);
+
+  const handleAccountCodesChange = (selectedCodes: string[]) => {
     setFilterState((prevState) => ({
       ...prevState,
-      accountCode: value?.code ?? null,
+      accountCode: selectedCodes.length > 0 ? selectedCodes : null,
     }));
   };
 
@@ -64,17 +85,21 @@ const AccountingTransactionReportHeader = ({
         </Box>
       </div>
 
-      <div style={{ ...classes.date1FilterContainer, width: "18%" }}>
+      <div
+        style={{
+          ...classes.date1FilterContainer,
+          minWidth: "200px",
+          maxWidth: "300px",
+          flex: "0 0 auto",
+        }}
+      >
         <h3 style={classes.filterLabelStyle}>{t("reports.accountCode")}</h3>
-        <GoMakeAutoComplate
-          options={erpAccountsList}
-          getOptionLabel={(option: any) => option.name}
-          style={classes.textInputStyle}
+        <NestedCheckbox
+          groups={nestedGroups}
+          selectedCodes={selectedCodes}
+          onChange={handleAccountCodesChange}
           placeholder={t("reports.selectAccountCode")}
-          value={erpAccountsList?.find(
-            (option) => option.code === filterState?.accountCode
-          )}
-          onChange={handleAccountChange}
+          style={classes.textInputStyle}
         />
       </div>
 

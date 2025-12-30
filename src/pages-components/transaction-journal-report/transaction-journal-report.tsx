@@ -19,7 +19,7 @@ import { CreateNewTransactionModal } from "../ledger-report/widgets/create-trans
 import { AdjustmentsLedgerReportModal } from "../ledger-report/widgets/adjustments-modal";
 import { ClientAutocomplete } from "@/widgets/Clients-Autocomplete/clients-list";
 import { TransactionSummaryCards } from "./widgets/transction-report-summery/transction-report-summery";
-import { Stack } from "@mui/material";
+import { Stack, Box } from "@mui/material";
 import { GomakePrimaryButton, GomakeTextInput } from "@/components";
 import { PrimaryButton } from "@/components/button/primary-button";
 
@@ -147,63 +147,81 @@ const TransactionJournalReportWidget = ({
         )}
       </div>
 
-      <Stack direction={"row"} width={"100%"}>
-        {isAdjustmentsReport && (
-          <div
-            style={{
-              ...classes.date1FilterContainer,
-              width: "18%",
-              maxWidth: "200px",
-            }}
-          >
-            <h3 style={classes.filterLabelStyle}>
-              {t("sales.quote.customer")}
-            </h3>
-            <ClientAutocomplete
-              key={customer?.id}
-              options={renderOptions()}
-              onChangeTextField={checkWhatRenderArray}
-              getOptionLabel={(option: any) => `${option.name}`}
-              style={classes.textInputStyle}
-              onChange={handleCustomerChange}
-              value={customer}
-              loading={isFetching}
+      <Stack
+        direction={{ xs: "column", sm: "row" }}
+        width={"100%"}
+        spacing={2}
+        sx={{
+          alignItems: { xs: "stretch", sm: "center" },
+          flexWrap: "wrap",
+        }}
+      >
+        <Box sx={{ flex: 1, minWidth: { xs: "100%", sm: "300px" } }}>
+          {isAdjustmentsReport && (
+            <div
+              style={{
+                ...classes.date1FilterContainer,
+                width: "100%",
+                maxWidth: "200px",
+              }}
+            >
+              <h3 style={classes.filterLabelStyle}>
+                {t("sales.quote.customer")}
+              </h3>
+              <ClientAutocomplete
+                key={customer?.id}
+                options={renderOptions()}
+                onChangeTextField={checkWhatRenderArray}
+                getOptionLabel={(option: any) => `${option.name}`}
+                style={classes.textInputStyle}
+                onChange={handleCustomerChange}
+                value={customer}
+                loading={isFetching}
+              />
+            </div>
+          )}
+          {isAccountingTransaction && (
+            <AccountingTransactionReportHeader
+              filterState={filterState}
+              setFilterState={setFilterState}
+              handleClickClear={handleClearFilters}
+              erpAccountsList={erpAccountsList}
             />
-          </div>
-        )}
-        {isAccountingTransaction && (
-          <AccountingTransactionReportHeader
-            filterState={filterState}
-            setFilterState={setFilterState}
-            handleClickClear={handleClearFilters}
-            erpAccountsList={erpAccountsList}
-          />
-        )}
-        {!isAdjustmentsReport && !isAccountingTransaction && (
-          <TransactionJournalReportHeaderWidget
-            handleDocumentTypeChange={handleDocumentTypeChange}
-            documentType={documentType}
-            documentsTypeList={documentsTypeList}
+          )}
+          {!isAdjustmentsReport && !isAccountingTransaction && (
+            <TransactionJournalReportHeaderWidget
+              handleDocumentTypeChange={handleDocumentTypeChange}
+              documentType={documentType}
+              documentsTypeList={documentsTypeList}
+              reportType={reportType}
+              fromDate={fromDate}
+              toDate={toDate}
+              setToDate={setToDate}
+              setFromDate={setFromDate}
+            />
+          )}
+        </Box>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: { xs: "flex-start", sm: "flex-end" },
+            width: { xs: "100%", sm: "auto" },
+          }}
+        >
+          <LedgerReportButtonWidget
+            onClickPrintCard={onClickPrintCard}
+            onClickShowCard={onClickShowCard}
+            onClickCreateNewTransaction={onClickOpenCreateTransactionModal}
+            onClickOpenAdjustmentsModal={onClickOpenAdjustmentsModal}
+            onClickExportAccountingReportExcel={
+              onClickExportAccountingReportExcel
+            }
+            onClickExportJournalExcelReport={onClickExportJournalExcelReport}
+            onClickDownloadMovingFiles={onClickDownloadMovingFiles}
+            onClickExportJournalPDFReport={onClickExportJournalPDFReport}
             reportType={reportType}
-            fromDate={fromDate}
-            toDate={toDate}
-            setToDate={setToDate}
-            setFromDate={setFromDate}
           />
-        )}
-        <LedgerReportButtonWidget
-          onClickPrintCard={onClickPrintCard}
-          onClickShowCard={onClickShowCard}
-          onClickCreateNewTransaction={onClickOpenCreateTransactionModal}
-          onClickOpenAdjustmentsModal={onClickOpenAdjustmentsModal}
-          onClickExportAccountingReportExcel={
-            onClickExportAccountingReportExcel
-          }
-          onClickExportJournalExcelReport={onClickExportJournalExcelReport}
-          onClickDownloadMovingFiles={onClickDownloadMovingFiles}
-          onClickExportJournalPDFReport={onClickExportJournalPDFReport}
-          reportType={reportType}
-        />
+        </Box>
       </Stack>
       <Divider />
 
@@ -226,7 +244,7 @@ const TransactionJournalReportWidget = ({
       {!isAccountingTransaction && !isAdjustmentsReport && (
         <div style={{ width: "100%", height: "100%" }}>
           {documentType?.id !== DocumentsTypeReportList.Payments &&
-            reportType !== EReportType.DailyPayments ? (
+          reportType !== EReportType.DailyPayments ? (
             <div>
               {showTable &&
                 dataTable?.map((item) => {
@@ -275,7 +293,9 @@ const TransactionJournalReportWidget = ({
                         {isCashAccount && (
                           <div style={classes.balanceInputMainContainer}>
                             <div style={classes.balanceInputContainer}>
-                              <div style={classes.titlebalance}>{t("payment.openingBalance")}</div>
+                              <div style={classes.titlebalance}>
+                                {t("payment.openingBalance")}
+                              </div>
                               <GomakeTextInput
                                 value={balanceInput}
                                 style={classes.balanceInput}
@@ -297,10 +317,16 @@ const TransactionJournalReportWidget = ({
                           </div>
                         )}
                         <div style={classes.balanceTotalContainer}>
-                          {isCashAccount && <div>{t("payment.openingBalance")} : {item.openBalance.toFixed(2)}</div>}
-                          <div>{t("deposits.total")} : {item.total.toFixed(2)}</div>
+                          {isCashAccount && (
+                            <div>
+                              {t("payment.openingBalance")} :{" "}
+                              {item.openBalance.toFixed(2)}
+                            </div>
+                          )}
+                          <div>
+                            {t("deposits.total")} : {item.total.toFixed(2)}
+                          </div>
                         </div>
-
                       </div>
                     </div>
                   );
