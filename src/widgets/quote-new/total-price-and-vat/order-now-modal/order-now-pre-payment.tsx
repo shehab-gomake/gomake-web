@@ -135,22 +135,33 @@ const OrderNowPrePaymentModal = ({
           </Stack>
 
           <div style={classes.mainBtnContainer}>
-            <GomakePrimaryButton
-              style={classes.btnStyle}
-              onClick={() =>
-                handleOrderConfirmation(true, true, totalAmount, percentage, false, hasFrontDeskFeature)
-              }
-            >
-              {t("sales.modals.withPaymentMessage")}
-            </GomakePrimaryButton>
-            <GomakePrimaryButton
-              style={classes.secondBtn}
-              onClick={() =>
-                handleOrderConfirmation(false, true, totalAmount, percentage, false, hasFrontDeskFeature)
-              }
-            >
-              {t("sales.modals.withoutPaymentMessage")}
-            </GomakePrimaryButton>
+            {!hasFrontDeskFeature ? <>
+              <GomakePrimaryButton
+                style={classes.btnStyle}
+                onClick={() =>
+                  handleOrderConfirmation(true, true, totalAmount, percentage, false, hasFrontDeskFeature)
+                }
+              >
+                {t("sales.modals.withPaymentMessage")}
+              </GomakePrimaryButton>
+              <GomakePrimaryButton
+                style={classes.secondBtn}
+                onClick={() =>
+                  handleOrderConfirmation(false, true, totalAmount, percentage, false, hasFrontDeskFeature)
+                }
+              >
+                {t("sales.modals.withoutPaymentMessage")}
+              </GomakePrimaryButton>
+            </> : <>
+              <GomakePrimaryButton
+                style={classes.btnStyle}
+                onClick={() =>
+                  handleOrderConfirmation(true, true, totalAmount, percentage, false, hasFrontDeskFeature)
+                }
+              >
+                {t("mailingSettings.Confirm")}
+              </GomakePrimaryButton>
+            </>}
             <GomakePrimaryButton
               style={{
                 borderRadius: "8px",
