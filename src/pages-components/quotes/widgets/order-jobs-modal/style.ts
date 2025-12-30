@@ -73,23 +73,28 @@ const useStyle = () => {
         overflowY: "auto",
         flex: 1,
         minHeight: 0,
-        // Custom scrollbar styling
+        // Custom scrollbar styling - always visible
         "&::-webkit-scrollbar": {
-          width: "6px",
+          width: "8px",
+          WebkitAppearance: "none",
         },
         "&::-webkit-scrollbar-track": {
-          background: "transparent",
+          background: "#f1f1f1",
+          borderRadius: "4px",
         },
         "&::-webkit-scrollbar-thumb": {
           background: "#9e9e9e",
-          borderRadius: "3px",
+          borderRadius: "4px",
+          minHeight: "20px", // Ensure minimum thumb size
           "&:hover": {
             background: "#757575",
           },
         },
+        // Force scrollbar to always be visible on macOS/iOS
+        scrollbarGutter: "stable",
         // Firefox scrollbar
         scrollbarWidth: "thin",
-        scrollbarColor: "#9e9e9e transparent",
+        scrollbarColor: "#9e9e9e #f1f1f1",
       },
       jobItem: {
         padding: "8px 0",
