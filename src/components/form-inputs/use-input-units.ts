@@ -194,6 +194,10 @@ const useInputUnit = () => {
         [EMeasurementUnits.GSM]: {
             imperialRatio: 1,
             imperialUnit: EMeasurementUnits.GSM
+        },
+        [EMeasurementUnits.KgPerSquareMeter]: {
+            imperialRatio: 1,
+            imperialUnit: EMeasurementUnits.PoundsPerSquareYard
         }
     };
 

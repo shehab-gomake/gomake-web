@@ -55,5 +55,5 @@ export enum EMeasurementUnits {
     PT = 'pt',
     UNITS = 'units',
     GSM = 'gsm',
-
+    KgPerSquareMeter = 'kgPerSquareMeter'
 }
