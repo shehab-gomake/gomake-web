@@ -73,15 +73,6 @@ const SystemHelp = () => {
   };
 
   const helpMenuList = [
-    // {
-    //   name: t("header.customerSupport"),
-    //   onclick: () =>
-    //     navigate(`/customer-service?from=${encodeURIComponent(currentPath)}`),
-    // },
-    {
-      name: t("quickSetup.steps.customerService"),
-      onclick: () => handleGoSupportClick("tickets"),
-    },
     {
       name: t("header.guideAndTutorial"),
       onclick: () => navigate("/help-center"),

@@ -1,6 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { GoMakeModal, GomakeTextInput } from "@/components";
 import { PrimaryButton } from "@/components/button/primary-button";
+import { PrimaryCheckbox } from "@/components/check-box/primary-check-box";
 import { useStyle } from "../style";
 import { useClientType } from "./use-client-type-modal";
 import { Stack } from "@mui/material";
@@ -71,6 +72,25 @@ const ClientTypeModal = ({
     </Stack>
   );
 
+  const renderCheckbox = (
+    label: string,
+    checked: boolean,
+    onChange: (checked: boolean) => void
+  ) => (
+    <Stack
+      direction={"row"}
+      alignItems={"center"}
+      gap={"8px"}
+      style={classes.textInputContainer}
+    >
+      <PrimaryCheckbox
+        checked={checked}
+        onChange={(e) => onChange(e.target.checked)}
+      />
+      <span style={classes.inputLbl}>{label}</span>
+    </Stack>
+  );
+
   return (
     <GoMakeModal
       openModal={openModal}
@@ -97,6 +117,13 @@ const ClientTypeModal = ({
           editedValues?.discount ?? selectedItem.discount,
           (e) => handleInputChange("discount", e.target.value)
         )}
+        {renderCheckbox(
+          t("customers.modal.excludeOutsourceJobs"),
+          editedValues?.excludeOutsourceJobs ??
+            selectedItem?.excludeOutsourceJobs ??
+            false,
+          (checked) => handleInputChange("excludeOutsourceJobs", checked)
+        )}
       </div>
       <Stack
         direction={"row"}
@@ -120,7 +147,8 @@ const ClientTypeModal = ({
               addClientType(
                 editedValues?.clientTypeName,
                 editedValues?.additionProfits,
-                editedValues?.discount
+                editedValues?.discount,
+                editedValues?.excludeOutsourceJobs
               );
             } else {
               updateClientType();

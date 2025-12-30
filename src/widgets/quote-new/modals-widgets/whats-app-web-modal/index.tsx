@@ -9,7 +9,7 @@ import { EPreferences } from "@/enums/prefernces";
 import { clearPhoneNumberPrefix } from "@/utils/helpers";
 import { quoteItemState } from "@/store/quote-item";
 import { useRecoilValue } from "recoil";
-import { FormControlLabel, Radio, RadioGroup } from "@mui/material";
+import { FormControlLabel, Radio, RadioGroup, CircularProgress } from "@mui/material";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { PrimaryButton } from "@/components/button/primary-button";
 import { GoMakeTextInput } from "@/components/text-input/go-make-text-input";
@@ -42,6 +42,7 @@ const WhatsAppWebModal = ({
   const { openWhatsAppWebLink } = useWhatsAppWeb();
   const { CheckPreferenceValue } = usePrintHousePreferences();
   const { primaryColor } = useGomakeTheme();
+  const [isLoading, setIsLoading] = useState(false);
 
   // Use clientContacts if provided (for aging report), otherwise use quoteItemValue
   const contacts = clientContacts || quoteItemValue?.documentContacts;
@@ -50,24 +51,51 @@ const WhatsAppWebModal = ({
   // true = web, false = desktop
 
   const handleWhatsAppClick = () => {
-    if (selectedMethod === null) return;
+    if (selectedMethod === null || !whatsappMassage) return;
 
     openWhatsAppWebLink(whatsappMassage, phoneNumber, selectedMethod);
   };
 
   useEffect(() => {
+    setIsLoading(true);
     if (openModal) {
-      if (
-        documentType === DOCUMENT_TYPE.receipt &&
-        getWhatsAppMessageForReceipt
-      ) {
-        getWhatsAppMessageForReceipt();
-      } else if (getWhatsAppMessage) {
-        getWhatsAppMessage();
+      // If message is already available, don't show loading
+      if (!whatsappMassage) {
+        setIsLoading(true);
       }
-      // If neither function is provided, the message should already be set (e.g., from aging report)
+      const fetchMessage = async () => {
+        try {
+          if (
+            documentType === DOCUMENT_TYPE.receipt &&
+            getWhatsAppMessageForReceipt
+          ) {
+            await getWhatsAppMessageForReceipt();
+          } else if (getWhatsAppMessage) {
+            await getWhatsAppMessage();
+          }
+          // If neither function is provided, the message should already be set (e.g., from aging report)
+          // In that case, we don't need to wait
+          if (!getWhatsAppMessage && !getWhatsAppMessageForReceipt) {
+            setIsLoading(false);
+          }
+        } catch (error) {
+          console.error("Error fetching WhatsApp message:", error);
+          setIsLoading(false);
+        }
+      };
+      fetchMessage();
+    } else {
+      // Reset loading when modal closes
+      setIsLoading(false);
     }
   }, [openModal, documentType]);
+
+  // Stop loading when message is received
+  useEffect(() => {
+    if (whatsappMassage && isLoading) {
+      setIsLoading(false);
+    }
+  }, [whatsappMassage]);
 
   useEffect(() => {
     if (openModal && contacts && contacts.length > 0) {
@@ -98,6 +126,7 @@ const WhatsAppWebModal = ({
           onClose();
           setPhoneNumber("");
           setSelectedClient({});
+          setIsLoading(false);
         }}
         insideStyle={classes.insideStyle}
       >
@@ -165,9 +194,16 @@ const WhatsAppWebModal = ({
             variant="contained"
             style={classes.btnContainer}
             onClick={handleWhatsAppClick}
-            disabled={selectedMethod === null}
+            disabled={isLoading}
           >
-            {t("sales.modals.openWhatsApp")}
+            {isLoading ? (
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <CircularProgress size={16} sx={{ color: "white" }} />
+                {t("loading") || "Loading..."}
+              </div>
+            ) : (
+              t("sales.modals.openWhatsApp")
+            )}
           </PrimaryButton>
         </div>
       </GoMakeModal>

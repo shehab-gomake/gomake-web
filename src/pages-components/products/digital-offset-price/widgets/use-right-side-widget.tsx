@@ -85,12 +85,12 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
       const findDefaultProduct = products.find(
         (item) => item.value === router?.query?.productId
       );
-      if (findDefaultProduct) {
-        handleProductChange(findDefaultProduct?.value);
+      if (findDefaultProduct && selectedProduct?.id !== findDefaultProduct?.value) {
+        handleProductChange(findDefaultProduct?.value, false);
       }
     }
   }, [combinedData, router?.query?.productId]);
-  const handleProductChange = (e) => {
+  const handleProductChange = (e, shouldReload = false) => {
     const selectedValue = e;
     // Find the selected node from combinedData
     const findNodeByKey = (key, nodes) => {
@@ -111,14 +111,23 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
     const selectedNode = findNodeByKey(selectedValue, combinedData);
 
     if (selectedNode && !selectedNode.children) {
-      router.push({
-        pathname: router.pathname,
-        query: { ...router.query, productId: selectedValue },
-      });
-      setSelectedProduct({
-        id: selectedValue,
-        category: selectedNode?.category,
-      });
+      if (shouldReload) {
+        // Reload page when changed from dropdown
+        const newQuery = { ...router.query, productId: selectedValue };
+        const queryString = new URLSearchParams(newQuery as any).toString();
+        const newUrl = `${window.location.origin}${router.asPath.split('?')[0]}${queryString ? `?${queryString}` : ''}`;
+        window.location.href = newUrl;
+      } else {
+        // Just update URL and state without reload (from useEffect)
+        router.push({
+          pathname: router.pathname,
+          query: { ...router.query, productId: selectedValue },
+        });
+        setSelectedProduct({
+          id: selectedValue,
+          category: selectedNode?.category,
+        });
+      }
     } else {
       setSelectedProduct(null);
     }
@@ -207,7 +216,7 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
         (item) => item.id === router?.query?.productId
       );
       if (findDefaultProduct) {
-        handleProductChange(findDefaultProduct?.id);
+        handleProductChange(findDefaultProduct?.id, false);
       }
     }
   }, [combinedData, router?.query?.productId]);
@@ -323,7 +332,7 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
             t.actionName === item.actionName &&
             t?.exception?.exceptionKey === item?.exception?.exceptionKey &&
             t?.exception?.exceptionMessage ===
-              item?.exception?.exceptionMessage &&
+            item?.exception?.exceptionMessage &&
             tValuesArray.sort().join(",") === itemValuesSorted
           );
         })

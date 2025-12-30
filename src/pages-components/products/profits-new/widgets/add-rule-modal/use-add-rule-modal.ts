@@ -792,6 +792,7 @@ const useAddRuleModal = ({
                   order: filterData?.order || null,
                   exampleTypes: filterData?.proofTypes,
                   isPrinted: filterData?.isPrinted?.toString(),
+                  isQualityFixJob: filterData?.isQualityFixJob,
                 },
               }
             : {
@@ -823,6 +824,7 @@ const useAddRuleModal = ({
                   isPrinted: filterData?.isPrinted,
                   isPurchaseJobs: filterData?.isPurchaseJobs,
                   exampleTypes: filterData?.proofTypes,
+                  isQualityFixJob: filterData?.isQualityFixJob,
                 },
               }),
           groupBy: propertieValue,
