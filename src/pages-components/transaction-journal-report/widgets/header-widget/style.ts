@@ -8,9 +8,10 @@ const useStyle = () => {
         display: "flex",
         flexDirection: "row" as "row",
         justifyContent: "flex-start",
-        alignItems: "center",
+        alignItems: "flex-start",
         width: "100%",
         gap: 10,
+        flexWrap: "wrap" as "wrap",
       },
       date1FilterContainer: {
         display: "flex",
