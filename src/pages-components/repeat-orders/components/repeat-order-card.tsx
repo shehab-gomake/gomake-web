@@ -5,6 +5,7 @@ import { PrimaryButton } from "@/components/button/primary-button";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { Add, Remove, Close } from "@mui/icons-material";
 import { useState } from "react";
+import { createPortal } from "react-dom";
 
 interface RepeatOrderCardProps {
   job: any;
@@ -34,33 +35,40 @@ const RepeatOrderCard = ({
 
   return (
     <Box sx={classes.cardContainer}>
-      {/* Image Section */}
-      {job.boardMissionImage && !imageError && (
-        <Box
-          sx={classes.imageContainer}
-          onClick={() => setImageViewerOpen(true)}
-        >
-          <img
-            src={job.boardMissionImage}
-            alt={job.productName || job.jobName}
-            style={classes.cardImage}
-            onError={() => setImageError(true)}
-          />
-        </Box>
-      )}
-
       {/* Card Content */}
       <Box sx={classes.cardContent}>
         <Stack gap={1.5} sx={classes.contentStack}>
           {/* Main Info Section */}
           <Stack gap={1}>
-            {/* Customer Name - Prominent */}
+            {/* Customer Name - Prominent with Image Thumbnail */}
             {job.clientName && (
               <Box sx={classes.mainFieldContainer}>
-                <Box sx={classes.fieldLabel}>
-                  {t("boardMissions.clientName")}
+                <Box sx={classes.customerNameRow}>
+                  {/* First div: Label and Value stacked */}
+                  <Box sx={classes.customerNameColumn}>
+                    <Box sx={classes.fieldLabel}>
+                      {t("boardMissions.clientName")}
+                    </Box>
+                    <Box sx={classes.fieldValue}>{job.clientName}</Box>
+                  </Box>
+                  {/* Second div: Image Thumbnail */}
+                  {job.boardMissionImage && !imageError && (
+                    <Box
+                      sx={classes.imageThumbnail}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setImageViewerOpen(true);
+                      }}
+                    >
+                      <img
+                        src={job.boardMissionImage}
+                        alt={job.productName || job.jobName}
+                        style={classes.thumbnailImage}
+                        onError={() => setImageError(true)}
+                      />
+                    </Box>
+                  )}
                 </Box>
-                <Box sx={classes.fieldValue}>{job.clientName}</Box>
               </Box>
             )}
 
@@ -79,6 +87,7 @@ const RepeatOrderCard = ({
                             job.productTypeName || job.productType
                           }`
                         : job.number}
+                      {job.orderNumber && ` / ${job.orderNumber}`}
                     </Box>
                   </Box>
                 )}
@@ -94,8 +103,8 @@ const RepeatOrderCard = ({
               </Box>
             )}
 
-            {/* Product Name and Status - Same Row */}
-            {(job.productName || job.boardMissionStatus?.name) && (
+            {/* Product Name and Price - Same Row */}
+            {(job.productName || job.price) && (
               <Box sx={classes.fieldRowContainer}>
                 {/* Product Name */}
                 {job.productName && (
@@ -106,11 +115,15 @@ const RepeatOrderCard = ({
                     <Box sx={classes.fieldValue}>{job.productName}</Box>
                   </Box>
                 )}
-                {/* Status - No Label */}
-                {job.boardMissionStatus?.name && (
-                  <Box sx={classes.fieldContainerHalfNoLabel}>
+                {job.price && (
+                  <Box sx={classes.fieldContainerHalf}>
+                    <Box sx={classes.fieldLabel}>
+                      {t("pricingWidget.finalPrice")}
+                    </Box>
                     <Box sx={classes.statusValue}>
-                      {t(`productionStatuses.${job.boardMissionStatus.name}`)}
+                      {job.currency
+                        ? `${job.price} ${job.currency}`
+                        : job.price}
                     </Box>
                   </Box>
                 )}
@@ -122,22 +135,13 @@ const RepeatOrderCard = ({
               {job.createdDate && (
                 <Box sx={classes.dateField}>
                   <Box sx={classes.dateLabel}>
-                    {t("boardMissions.creationDate")}
+                    {t("repeatOrders.lastOrder")}
                   </Box>
                   <Box sx={classes.dateValue}>
                     {formatISODateTime(job.createdDate)}
                   </Box>
                 </Box>
               )}
-              {/* 
-              {job.dueDate && (
-                <Box sx={classes.dateField}>
-                  <Box sx={classes.dateLabel}>{t("boardMissions.dueDate")}</Box>
-                  <Box sx={classes.dateValue}>
-                    {formatISODateTime(job.dueDate)}
-                  </Box>
-                </Box>
-              )} */}
             </Stack>
           </Stack>
 
@@ -181,30 +185,42 @@ const RepeatOrderCard = ({
         </Stack>
       </Box>
 
-      {/* Image Viewer Modal */}
-      {imageViewerOpen && job.boardMissionImage && (
-        <Box
-          sx={classes.imageViewerOverlay}
-          onClick={() => setImageViewerOpen(false)}
-        >
+      {/* Image Viewer Modal - Rendered via Portal to avoid card hover effects */}
+      {imageViewerOpen &&
+        job.boardMissionImage &&
+        typeof document !== "undefined" &&
+        createPortal(
           <Box
-            sx={classes.imageViewerContent}
-            onClick={(e) => e.stopPropagation()}
+            sx={classes.imageViewerOverlay}
+            onClick={(e) => {
+              // Only close if clicking directly on the overlay, not on the content
+              if (e.target === e.currentTarget) {
+                setImageViewerOpen(false);
+              }
+            }}
           >
-            <img
-              src={job.boardMissionImage}
-              alt={job.productName || job.jobName}
-              style={classes.imageViewerImage}
-            />
-            <IconButton
-              sx={classes.imageViewerClose}
-              onClick={() => setImageViewerOpen(false)}
+            <Box
+              sx={classes.imageViewerContent}
+              onClick={(e) => e.stopPropagation()}
             >
-              <Close />
-            </IconButton>
-          </Box>
-        </Box>
-      )}
+              <img
+                src={job.boardMissionImage}
+                alt={job.productName || job.jobName}
+                style={classes.imageViewerImage}
+              />
+              <IconButton
+                sx={classes.imageViewerClose}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setImageViewerOpen(false);
+                }}
+              >
+                <Close />
+              </IconButton>
+            </Box>
+          </Box>,
+          document.body
+        )}
     </Box>
   );
 };

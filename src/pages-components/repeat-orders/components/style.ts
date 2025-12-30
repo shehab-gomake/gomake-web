@@ -23,29 +23,39 @@ const useStyle = () => {
           borderColor: primaryColor(200),
         },
       },
-      imageContainer: {
+      customerNameRow: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        gap: "12px",
         width: "100%",
-        height: "220px",
+      },
+      imageThumbnail: {
+        width: "56px",
+        height: "56px",
+        minWidth: "56px",
+        minHeight: "56px",
+        borderRadius: "8px",
         overflow: "hidden" as "hidden",
         backgroundColor: "#FAFAFA",
         cursor: "pointer",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        borderBottom: "1px solid #E5E7EB",
-        transition: "background-color 0.2s ease",
+        border: "1px solid #E5E7EB",
+        transition: "all 0.2s ease",
+        flexShrink: 0,
         "&:hover": {
-          backgroundColor: "#F5F5F5",
+          borderColor: primaryColor(300),
+          boxShadow: "0px 2px 8px rgba(0, 0, 0, 0.1)",
+          transform: "scale(1.05)",
         },
       },
-      cardImage: {
+      thumbnailImage: {
         width: "100%",
         height: "100%",
         objectFit: "contain" as "contain",
-        transition: "transform 0.3s ease",
-        "&:hover": {
-          transform: "scale(1.05)",
-        },
       },
       cardContent: {
         padding: "20px",
@@ -62,10 +72,17 @@ const useStyle = () => {
       mainFieldContainer: {
         display: "flex",
         flexDirection: "column" as "column",
-        gap: "6px",
+        gap: "0px",
         paddingBottom: "12px",
         borderBottom: "1px solid #E5E5E5",
         marginBottom: "4px",
+      },
+      customerNameColumn: {
+        display: "flex",
+        flexDirection: "column" as "column",
+        gap: "6px",
+        flex: 1,
+        minWidth: 0,
       },
       fieldContainer: {
         display: "flex",
@@ -104,6 +121,8 @@ const useStyle = () => {
         color: "#1A1A1A",
         lineHeight: "1.4",
         wordBreak: "break-word" as "break-word",
+        flex: 1,
+        minWidth: 0,
       },
       statusValue: {
         ...FONT_FAMILY.Lexend(600, 13),
