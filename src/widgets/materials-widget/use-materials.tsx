@@ -14,7 +14,7 @@ import {
 } from "@/services/api-service/materials/printhouse-materials-endpoints";
 import { IMaterialCategoryRow } from "@/widgets/materials-widget/interface";
 import { TableCellData } from "@/widgets/materials-widget/components/table-cell-data/table-cell";
-import { Checkbox } from "@mui/material";
+import { Checkbox, Box } from "@mui/material";
 import { getCurrencies } from "@/services/api-service/general/enums";
 import {
   useRecoilState,
@@ -41,6 +41,7 @@ import {
   materialTypeTableState,
   openChildTableState,
   selectedSupplierIdState,
+  openExtraParametersModalState,
 } from "@/widgets/materials-widget/state";
 import { getMaterialSuppliersApi } from "@/services/api-service/materials/materials-suppliers-endpoints";
 import { useTranslation } from "react-i18next";
@@ -130,6 +131,7 @@ const useMaterials = (isAdmin: boolean) => {
   const setMaterialCategorySuppliers = useSetRecoilState(
     materialCategorySuppliersState
   );
+  const setOpenExtraParametersModal = useSetRecoilState(openExtraParametersModalState);
   const { updateCellData } = useTableCellData(isAdmin);
   const { getMaterialCategoryData } = useMaterialsCategories(isAdmin);
   const toggleIsActive = async (id, parameterKey, value) => {
@@ -395,6 +397,8 @@ const useMaterials = (isAdmin: boolean) => {
   const user = useRecoilValue<any>(userState);
   const unitType = user?.printHouseProfile?.unitType || 0;
   const tableHeadersNew = useCallback(() => {
+    const hasExtraParameters = materialHeaders.some(header => header.isShowInExtraParameters);
+
     return [
       <Checkbox
         onChange={(event, checked) => onChangeHeaderCheckBox(checked)}
@@ -426,10 +430,12 @@ const useMaterials = (isAdmin: boolean) => {
           <div style={{ textTransform: "capitalize" }}>{header.value}</div>
         );
       }),
+      // Add "Show More" header if hasExtraParameters
+      ...(hasExtraParameters ? [""] : []),
       // t("usersSettings.isActive"),
       " ",
     ];
-  }, [materialHeaders, materialCategoryData]);
+  }, [materialHeaders, materialCategoryData, t]);
 
   const tableRows = useMemo(() => {
     return materialCategoryData.map((dataRow) => {
@@ -464,6 +470,7 @@ const useMaterials = (isAdmin: boolean) => {
 
   const tableRowsNew = useMemo(() => {
     const rows = [];
+    const hasExtraParameters = materialHeaders.some(header => header.isShowInExtraParameters);
 
     materialCategoryData.forEach((dataRow) => {
       const filteredHeaders = isAdmin
@@ -511,6 +518,31 @@ const useMaterials = (isAdmin: boolean) => {
               rowData={dataRow.rowData}
             />
           )),
+          // Add "Show More" cell if hasExtraParameters
+          ...(hasExtraParameters ? [
+            <Box
+              key="show-more"
+              onClick={() => {
+                setOpenExtraParametersModal({
+                  open: true,
+                  rowData: dataRow,
+                  rowId: dataRow.id,
+                });
+              }}
+              sx={{
+                cursor: 'pointer',
+                color: '#1976d2',
+                textDecoration: 'underline',
+                padding: '8px',
+                textAlign: 'center',
+                '&:hover': {
+                  backgroundColor: '#f5f5f5',
+                },
+              }}
+            >
+              {t("sales.quote.showMore")}
+            </Box>
+          ] : []),
           <MaterialMenuWidget
             dataRow={dataRow}
             isAdmin={isAdmin}
