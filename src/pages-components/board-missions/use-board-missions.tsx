@@ -21,6 +21,7 @@ import {
   printJobUsingPrintNodeApi,
   printNodeModalCancelLog,
   printOrderJobUsingPrintNodeApi,
+  repeatOrderApi,
   setBoardMissionsFiltersApi,
   startJobProductionApi,
 } from "@/services/api-service/board-missions/board-missions-table";
@@ -171,6 +172,17 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     useState<boolean>(false);
   const [allBoardMissions, setAllBoardMissions] = useState([]);
   const [allPurchaseJobs, setAllPurchaseJobs] = useState([]);
+  // Raw missions data (before table formatting) for cards view
+  const [rawMissionsData, setRawMissionsData] = useState<any[]>([]);
+  // Quantity management state
+  const [quantities, setQuantities] = useState<Record<string, number>>({});
+  // Change Status Modal state for repeat order
+  const [
+    openChangeStatusModalForRepeatOrder,
+    setOpenChangeStatusModalForRepeatOrder,
+  ] = useState<boolean>(false);
+  const [selectedQuoteIdForRepeatOrder, setSelectedQuoteIdForRepeatOrder] =
+    useState<string | null>(null);
   const { GetDateFormat, formatISODateTime } = useDateFormat();
 
   const {
@@ -705,6 +717,11 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
       pageSize: String(router.query.pageSize ?? pageSize),
     };
 
+    // Preserve view parameter if it exists
+    if (router.query.view) {
+      query.view = router.query.view;
+    }
+
     router.replace({ pathname: router.pathname, query }, undefined, {
       shallow: true,
     });
@@ -716,14 +733,18 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
 
   // track whether we've already fetched for the exact combo of (query + pageSize)
   useEffect(() => {
-    const isNotFilteredData = Object.keys(router?.query || {}).length === 0;
+    // Exclude 'view' from query check since it only affects UI, not data
+    const queryWithoutView = { ...router?.query };
+    delete queryWithoutView.view;
+
+    const isNotFilteredData = Object.keys(queryWithoutView || {}).length === 0;
 
     const effectivePageSize = router.query.pageSize
       ? Number(router.query.pageSize)
       : pageSize;
 
     const signature = JSON.stringify({
-      q: router.query,
+      q: queryWithoutView, // Exclude view from signature
       pageSize: effectivePageSize,
       boardMissionsIds: boardMissionsIds,
     });
@@ -990,6 +1011,9 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
       if (res?.success) {
         const _data = res?.data;
 
+        // Store raw missions data for cards view
+        setRawMissionsData(_data.data || []);
+
         const mapData = _data.data?.map((mission: any) => {
           const itemCalculatedPrice =
             mission?.calculatedPrice &&
@@ -1153,6 +1177,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
         setIsJobsTableError(res?.status && res.status !== 200);
         alertFaultGetData();
         setAllBoardMissions([]);
+        setRawMissionsData([]);
       }
     };
     if (!router.isReady) {
@@ -1294,9 +1319,22 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
   ) => {
     setIsJobsTableError(false);
     setIsJobsTableLoading(!isSocketRefreshingJobs);
+
+    if (!router.isReady) {
+      return;
+    }
+
+    const currentPageSize = router.query.pageSize
+      ? Number(router.query.pageSize)
+      : pageSize;
+
     const callBack = (res) => {
       if (res?.success) {
         const _data = res?.data;
+
+        // Store raw missions data for cards view
+        setRawMissionsData(_data.data || []);
+
         const mapData = _data.data?.map((mission: any) => {
           const row: Record<string, React.ReactNode> = {
             creationDate: formatISODateTime(mission?.createdDate),
@@ -1367,20 +1405,14 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
         setIsJobsTableError(res?.status && res.status !== 200);
         alertFaultGetData();
         setAllPurchaseJobs([]);
+        setRawMissionsData([]);
       }
     };
 
-    if (!router.isReady) {
-      return;
-    }
     const currentFinalPatternSearch = router.query.finalPatternSearch;
     const currentSampleType = router.query.sampleType;
 
     const currentPageNumber = router.query.pageNumber ?? 1;
-
-    const currentPageSize = router.query.pageSize
-      ? Number(router.query.pageSize)
-      : pageSize;
 
     const currentProofTypes = Array.isArray(router.query.proofTypes)
       ? router.query.proofTypes
@@ -1978,8 +2010,6 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
         : [proofTypes];
       setProofTypes(proofTypesArray);
     }
-
-
 
     if (sampleType) {
       const sampleTypeValue = Array.isArray(sampleType)
@@ -2581,6 +2611,97 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     createScheduledReportApi(data);
   };
 
+  // Initialize quantities from raw missions data when it changes
+  useEffect(() => {
+    if (rawMissionsData && rawMissionsData.length > 0) {
+      const newQuantities: Record<string, number> = {};
+      rawMissionsData.forEach((job: any) => {
+        newQuantities[job.id] = job.quantity || 1;
+      });
+      setQuantities(newQuantities);
+    }
+  }, [rawMissionsData]);
+
+  // Quantity management handlers
+  const handleQuantityIncrease = (jobId: string) => {
+    setQuantities((prev) => ({
+      ...prev,
+      [jobId]: (prev[jobId] || 1) + 1,
+    }));
+  };
+
+  const handleQuantityDecrease = (jobId: string) => {
+    setQuantities((prev) => ({
+      ...prev,
+      [jobId]: Math.max(1, (prev[jobId] || 1) - 1),
+    }));
+  };
+
+  // Change Status Modal handlers for repeat order
+  const onClickOpenChangeStatusModalForRepeatOrder = (quoteId: string) => {
+    setSelectedQuoteIdForRepeatOrder(quoteId);
+    setOpenChangeStatusModalForRepeatOrder(true);
+  };
+
+  const onClickCloseChangeStatusModalForRepeatOrder = () => {
+    setOpenChangeStatusModalForRepeatOrder(false);
+    setSelectedQuoteIdForRepeatOrder(null);
+  };
+
+  const updateQuoteStatusForRepeatOrder = async () => {
+    if (!selectedQuoteIdForRepeatOrder) return;
+
+    const callBack = (res) => {
+      if (res?.success) {
+        onClickCloseChangeStatusModalForRepeatOrder();
+        navigate("/quote");
+      } else {
+        if (res?.statusCode === 85) {
+          alertFault(res?.message);
+        } else {
+          alertFaultUpdate();
+        }
+      }
+    };
+
+    await updateDocumentApi(callApi, callBack, {
+      documentType: 0,
+      document: {
+        documentId: selectedQuoteIdForRepeatOrder,
+      },
+    });
+  };
+
+  // Repeat order handler
+  const handleRepeatOrder = async (job: any) => {
+    const quantity = quantities[job.id] || job.quantity || 1;
+
+    const callBack = (res) => {
+      if (res?.success) {
+        alertSuccessUpdate();
+        // Refresh the jobs list by triggering a refetch
+        handleClickSearch();
+
+        const isAnotherQuoteInCreate = res?.data?.isAnotherQuoteInCreate;
+        const documentId = res?.data?.documentId;
+
+        if (!isAnotherQuoteInCreate) {
+          navigate("/quote");
+        } else {
+          onClickOpenChangeStatusModalForRepeatOrder(documentId);
+        }
+      } else {
+        alertFault(res?.message || t("repeatOrders.repeatOrderError"));
+      }
+    };
+
+    await repeatOrderApi(callApi, callBack, {
+      boardMissionId: job.id,
+      quantity: quantity,
+      orderItemId: job.orderItemId || job.orderId,
+    });
+  };
+
   return {
     tableHeader,
     tableHeaderForPurchaseJobs,
@@ -2599,6 +2720,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     onChangeMissionsSearch,
     allBoardMissions,
     allPurchaseJobs,
+    rawMissionsData,
     patternSearch,
     handleAgentChange,
     handleStatusChange,
@@ -2606,6 +2728,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     handleCustomerChange,
     checkWhatRenderArray,
     pagesCount,
+    setPagesCount,
     pageNumber,
     setPageNumber,
     handlePageChange,
@@ -2756,6 +2879,16 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     onOpenStartProductionModal,
     onCloseStartProductionModal,
     handleStartProductionConfirm,
+    formatISODateTime,
+    // Quantity management
+    quantities,
+    handleQuantityIncrease,
+    handleQuantityDecrease,
+    // Repeat order
+    handleRepeatOrder,
+    openChangeStatusModalForRepeatOrder,
+    onClickCloseChangeStatusModalForRepeatOrder,
+    updateQuoteStatusForRepeatOrder,
   };
 };
 

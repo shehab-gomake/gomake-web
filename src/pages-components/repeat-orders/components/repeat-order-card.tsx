@@ -9,10 +9,12 @@ import { useState } from "react";
 interface RepeatOrderCardProps {
   job: any;
   quantity: number;
-  onQuantityIncrease: () => void;
-  onQuantityDecrease: () => void;
-  onRepeatOrder: () => void;
+  onQuantityIncrease?: () => void;
+  onQuantityDecrease?: () => void;
+  onRepeatOrder?: () => void;
   formatISODateTime: (date: string) => string;
+  showQuantityControls?: boolean;
+  showRepeatButton?: boolean;
 }
 
 const RepeatOrderCard = ({
@@ -22,6 +24,8 @@ const RepeatOrderCard = ({
   onQuantityDecrease,
   onRepeatOrder,
   formatISODateTime,
+  showQuantityControls = true,
+  showRepeatButton = true,
 }: RepeatOrderCardProps) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -138,36 +142,42 @@ const RepeatOrderCard = ({
           </Stack>
 
           {/* Quantity Counter Section */}
-          <Box sx={classes.quantityContainer}>
-            <Box sx={classes.quantityLabel}>{t("boardMissions.quantity")}</Box>
-            <Stack direction="row" alignItems="center" gap={1}>
-              <IconButton
-                size="small"
-                onClick={onQuantityDecrease}
-                disabled={quantity <= 1}
-                sx={classes.quantityButton}
-              >
-                <Remove />
-              </IconButton>
-              <Box sx={classes.quantityValue}>{quantity}</Box>
-              <IconButton
-                size="small"
-                onClick={onQuantityIncrease}
-                sx={classes.quantityButton}
-              >
-                <Add />
-              </IconButton>
-            </Stack>
-          </Box>
+          {showQuantityControls && (
+            <Box sx={classes.quantityContainer}>
+              <Box sx={classes.quantityLabel}>
+                {t("boardMissions.quantity")}
+              </Box>
+              <Stack direction="row" alignItems="center" gap={1}>
+                <IconButton
+                  size="small"
+                  onClick={onQuantityDecrease}
+                  disabled={quantity <= 1}
+                  sx={classes.quantityButton}
+                >
+                  <Remove />
+                </IconButton>
+                <Box sx={classes.quantityValue}>{quantity}</Box>
+                <IconButton
+                  size="small"
+                  onClick={onQuantityIncrease}
+                  sx={classes.quantityButton}
+                >
+                  <Add />
+                </IconButton>
+              </Stack>
+            </Box>
+          )}
 
           {/* Repeat Button */}
-          <PrimaryButton
-            variant="contained"
-            onClick={onRepeatOrder}
-            style={classes.repeatButton}
-          >
-            {t("repeatOrders.repeat")}
-          </PrimaryButton>
+          {showRepeatButton && (
+            <PrimaryButton
+              variant="contained"
+              onClick={onRepeatOrder}
+              style={classes.repeatButton}
+            >
+              {t("repeatOrders.repeat")}
+            </PrimaryButton>
+          )}
         </Stack>
       </Box>
 

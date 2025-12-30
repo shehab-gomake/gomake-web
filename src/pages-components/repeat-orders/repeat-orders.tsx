@@ -1,10 +1,10 @@
 import { useTranslation } from "react-i18next";
 import { HeaderTitle } from "@/widgets";
 import { useRepeatOrders } from "./use-repeat-orders";
-import { Box, CircularProgress, Grid, Stack } from "@mui/material";
+import { Box, CircularProgress, Stack } from "@mui/material";
 import { GoMakePagination } from "@/components/pagination/gomake-pagination";
 import { JobsFiltersSection } from "../board-missions/components/jobs-filters-section";
-import { RepeatOrderCard } from "./components/repeat-order-card";
+import { JobsCardsView } from "../board-missions/components/jobs-cards-view";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { GoMakeDeleteModal } from "@/components";
 import { ModalType } from "@/enums";
@@ -163,66 +163,18 @@ const RepeatOrdersWidget = () => {
       </Box>
 
       <Box sx={classes.scrollableContainer}>
-        {isLoading ? (
-          <Box
-            display="flex"
-            justifyContent="center"
-            alignItems="center"
-            height="400px"
-            width="100%"
-          >
-            <CircularProgress />
-          </Box>
-        ) : isError ? (
-          <Box
-            display="flex"
-            justifyContent="center"
-            alignItems="center"
-            height="400px"
-            width="100%"
-          >
-            <Box
-              style={{
-                ...FONT_FAMILY.Lexend(500, 16),
-                color: "#FF0000",
-              }}
-            >
-              {t("repeatOrders.errorLoadingJobs")}
-            </Box>
-          </Box>
-        ) : jobs.length === 0 ? (
-          <Box
-            display="flex"
-            justifyContent="center"
-            alignItems="center"
-            height="400px"
-            width="100%"
-          >
-            <Box
-              style={{
-                ...FONT_FAMILY.Lexend(500, 16),
-                color: "#666",
-              }}
-            >
-              {t("repeatOrders.noJobsFound")}
-            </Box>
-          </Box>
-        ) : (
-          <Grid container spacing={3}>
-            {jobs.map((job) => (
-              <Grid item xs={12} sm={6} md={4} lg={3} key={job.id}>
-                <RepeatOrderCard
-                  job={job}
-                  quantity={quantities[job.id] || job.quantity || 1}
-                  onQuantityIncrease={() => handleQuantityIncrease(job.id)}
-                  onQuantityDecrease={() => handleQuantityDecrease(job.id)}
-                  onRepeatOrder={() => handleRepeatOrder(job)}
-                  formatISODateTime={formatISODateTime}
-                />
-              </Grid>
-            ))}
-          </Grid>
-        )}
+        <JobsCardsView
+          jobs={jobs}
+          isLoading={isLoading}
+          isError={isError}
+          quantities={quantities}
+          onQuantityIncrease={handleQuantityIncrease}
+          onQuantityDecrease={handleQuantityDecrease}
+          onRepeatOrder={handleRepeatOrder}
+          formatISODateTime={formatISODateTime}
+          showQuantityControls={true}
+          showRepeatButton={true}
+        />
       </Box>
 
       <Box sx={classes.paginationContainer}>

@@ -111,12 +111,6 @@ const useAuthLayoutHook = (
             path: "/jobs",
           },
           {
-            key: "repeatOrders",
-            title: "tabs.repeatOrders",
-            Permission: Permissions.SHOW_BOARD_MISSIONS,
-            path: "/repeat-orders",
-          },
-          {
             key: "quotes",
             title: "tabs.quotes",
             path: "/quotes",
