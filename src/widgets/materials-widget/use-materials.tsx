@@ -54,8 +54,8 @@ import { useMaterialsCategories } from "./use-materials-categories";
 import { convertTitleUnits } from "@/utils/helpers";
 import { isLoadingMaterialsState, userState } from "@/store";
 import { UNIT_TYPE } from "@/enums";
-import { EMaterialActiveFilter, EMaterialsActions } from "./enums";
-import { EMaterialsTabsIcon } from "@/enums";
+import { EMaterialActiveFilter } from "./enums";
+import { EDataTypeEnum } from "./components/table-cell-data/data-type-enum";
 
 const useMaterials = (isAdmin: boolean) => {
   const { query, push, replace } = useRouter();
@@ -394,7 +394,6 @@ const useMaterials = (isAdmin: boolean) => {
   }, [materialHeaders, materialCategoryData]);
   const user = useRecoilValue<any>(userState);
   const unitType = user?.printHouseProfile?.unitType || 0;
-
   const tableHeadersNew = useCallback(() => {
     return [
       <Checkbox
@@ -402,8 +401,8 @@ const useMaterials = (isAdmin: boolean) => {
         checked={isAllSelected()}
       />,
       ...(isAdmin
-        ? materialHeaders.filter((x) => x.key !== "stock" && !x.isShowInExtraParameters)
-        : materialHeaders.filter((header) => !header.isForAdmin && !header.isShowInExtraParameters)
+        ? materialHeaders.filter((x) => x.key !== "stock" && !x.isShowInExtraParameters && x.key !== "totalInventory" && x.key !== "purchasePricing")
+        : materialHeaders.filter((header) => !header.isForAdmin && !header.isShowInExtraParameters && header.key !== "totalInventory" && header.key !== "purchasePricing")
       ).map((header) => {
         const convertedUnit =
           unitType === UNIT_TYPE.IMPERIAL
@@ -468,8 +467,30 @@ const useMaterials = (isAdmin: boolean) => {
 
     materialCategoryData.forEach((dataRow) => {
       const filteredHeaders = isAdmin
-        ? materialHeaders.filter((x) => x.key !== "stock" && !x.isShowInExtraParameters)
-        : materialHeaders.filter((header) => !header.isForAdmin && !header.isShowInExtraParameters);
+        ? materialHeaders.filter((x) => {
+          // Filter out stock, extra parameters, totalInventory, and headers with INVENTORY or PURCHASE_PRICING type
+          if (x.key === "stock" || x.isShowInExtraParameters || x.key === "totalInventory") {
+            return false;
+          }
+          // Check if this header's rowData has INVENTORY or PURCHASE_PRICING type
+          const rowDataForHeader = dataRow.rowData[x.key];
+          if (rowDataForHeader?.type === EDataTypeEnum.INVENTORY || rowDataForHeader?.type === EDataTypeEnum.PURCHASE_PRICING) {
+            return false;
+          }
+          return true;
+        })
+        : materialHeaders.filter((header) => {
+          // Filter out admin-only, extra parameters, totalInventory, and headers with INVENTORY or PURCHASE_PRICING type
+          if (header.isForAdmin || header.isShowInExtraParameters || header.key === "totalInventory") {
+            return false;
+          }
+          // Check if this header's rowData has INVENTORY or PURCHASE_PRICING type
+          const rowDataForHeader = dataRow.rowData[header.key];
+          if (rowDataForHeader?.type === EDataTypeEnum.INVENTORY || rowDataForHeader?.type === EDataTypeEnum.PURCHASE_PRICING) {
+            return false;
+          }
+          return true;
+        });
 
       // Main row
       rows.push({
@@ -490,11 +511,6 @@ const useMaterials = (isAdmin: boolean) => {
               rowData={dataRow.rowData}
             />
           )),
-          // Add suppliers column manually since it's now static
-          // dataRow?.isActive
-          //   ? <span style={{ color: "green" }}>{t("usersSettings.active")}</span>
-          //   : <span style={{ color: "red" }}>{t("usersSettings.inactive")}</span>,
-
           <MaterialMenuWidget
             dataRow={dataRow}
             isAdmin={isAdmin}

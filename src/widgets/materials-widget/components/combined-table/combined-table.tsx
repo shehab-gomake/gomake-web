@@ -1,10 +1,9 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, Tooltip } from "@mui/material";
+import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, } from "@mui/material";
 import { useRecoilValue } from "recoil";
 import { openChildTableState } from "../../state";
 import { useTranslation } from "react-i18next";
 import { ChildTableRow } from "../child-table-row/child-table-row";
-import { ChevronRight, ChevronLeft } from "@mui/icons-material";
 import { useStyle } from "./style";
 
 
@@ -230,18 +229,6 @@ const CombinedTable = ({
                         </Box>
                     )}
                 </TableContainer>
-
-                {/* Scroll Indicator Button - positioned at first fixed column */}
-                {showScrollIndicator && (
-                    <Tooltip title={t("materials.childTable.scrollToSeeMoreColumns")} arrow>
-                        <IconButton
-                            onClick={scrollToRight}
-                            sx={classes.scrollIndicatorButton}
-                        >
-                            {isRTL ? <ChevronLeft /> : <ChevronRight />}
-                        </IconButton>
-                    </Tooltip>
-                )}
             </Box>
         </>
     );
