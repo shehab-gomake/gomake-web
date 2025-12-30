@@ -291,14 +291,13 @@ const NestedCheckbox: React.FC<NestedCheckboxProps> = ({
           ),
         }}
       />
-
       <Popper
         open={open}
         anchorEl={anchorRef.current}
-        placement="bottom-start"
+        placement={isRTL ? "bottom-end" : "bottom-start"}
         style={{
-          width: anchorRef.current?.offsetWidth || "100%",
-          minWidth: anchorRef.current?.offsetWidth || "100%",
+          width: Math.max(anchorRef.current?.offsetWidth || 200, 350),
+          minWidth: 350,
           zIndex: 1300,
         }}
         modifiers={[
@@ -319,9 +318,9 @@ const NestedCheckbox: React.FC<NestedCheckboxProps> = ({
         <ClickAwayListener onClickAway={handleClickAway}>
           <StyledPaper
             sx={{
-              width: anchorRef.current?.offsetWidth || "100%",
-              minWidth: anchorRef.current?.offsetWidth || "100%",
-              maxWidth: anchorRef.current?.offsetWidth || "100%",
+              width: Math.max(anchorRef.current?.offsetWidth || 200, 350),
+              minWidth: 350,
+              maxWidth: "90vw",
             }}
           >
             <Box
@@ -354,7 +353,7 @@ const NestedCheckbox: React.FC<NestedCheckboxProps> = ({
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "space-between",
-                      padding: "12px 8px",
+                      padding: "8px",
                       borderBottom: "1px solid #E5E7EB",
                       backgroundColor: "#FAFBFC",
                       position: "sticky",
@@ -380,8 +379,8 @@ const NestedCheckbox: React.FC<NestedCheckboxProps> = ({
                       <Typography
                         variant="body2"
                         sx={{
-                          marginLeft: isRTL ? 0 : "8px",
-                          marginRight: isRTL ? "8px" : 0,
+                          marginLeft: isRTL ? 0 : "4px",
+                          marginRight: isRTL ? "4px" : 0,
                           fontWeight: 600,
                           fontSize: "14px",
                           color: "#1F2937",
@@ -395,7 +394,7 @@ const NestedCheckbox: React.FC<NestedCheckboxProps> = ({
                     <Box
                       sx={{
                         display: "flex",
-                        gap: "8px",
+                        gap: "4px",
                         alignItems: "center",
                       }}
                     >
@@ -404,13 +403,18 @@ const NestedCheckbox: React.FC<NestedCheckboxProps> = ({
                           size="small"
                           onClick={handleCollapseAll}
                           sx={{
-                            padding: "4px",
+                            padding: "2px",
+                            minWidth: "24px",
+                            width: "24px",
+                            height: "24px",
                             color: "#6B7280",
                             "&:hover": {
                               backgroundColor: "#F3F4F6",
                             },
                           }}
-                          title={t("general.collapseAll") || "Collapse All"}
+                          title={
+                            t("productionReport.collapseAll") || "Collapse All"
+                          }
                         >
                           <ExpandLessIcon fontSize="small" />
                         </IconButton>
@@ -419,20 +423,25 @@ const NestedCheckbox: React.FC<NestedCheckboxProps> = ({
                           size="small"
                           onClick={handleExpandAll}
                           sx={{
-                            padding: "4px",
+                            padding: "2px",
+                            minWidth: "24px",
+                            width: "24px",
+                            height: "24px",
                             color: "#6B7280",
                             "&:hover": {
                               backgroundColor: "#F3F4F6",
                             },
                           }}
-                          title={t("general.expandAll") || "Expand All"}
+                          title={
+                            t("productionReport.expandAll") || "Expand All"
+                          }
                         >
                           <ExpandMoreIcon fontSize="small" />
                         </IconButton>
                       )}
                     </Box>
                   </Box>
-                  <Box sx={{ padding: "8px" }}>
+                  <Box sx={{ padding: "6px" }}>
                     {groups.map((group) => {
                       const isExpanded = expandedGroups.has(group.sortCode);
                       const isFullySelected = isGroupFullySelected(group);
@@ -447,7 +456,7 @@ const NestedCheckbox: React.FC<NestedCheckboxProps> = ({
                             sx={{
                               display: "flex",
                               alignItems: "center",
-                              padding: "8px",
+                              padding: "6px 8px",
                               backgroundColor: isFullySelected
                                 ? "#F3F4F6"
                                 : isPartiallySelected
@@ -470,10 +479,13 @@ const NestedCheckbox: React.FC<NestedCheckboxProps> = ({
                                 toggleGroup(group.sortCode);
                               }}
                               sx={{
-                                padding: "4px",
+                                padding: "2px",
+                                minWidth: "24px",
+                                width: "24px",
+                                height: "24px",
                                 ...(isRTL
-                                  ? { marginLeft: "8px" }
-                                  : { marginRight: "8px" }),
+                                  ? { marginLeft: "4px" }
+                                  : { marginRight: "4px" }),
                               }}
                             >
                               {isExpanded ? (
@@ -504,8 +516,8 @@ const NestedCheckbox: React.FC<NestedCheckboxProps> = ({
                               variant="body2"
                               sx={{
                                 ...(isRTL
-                                  ? { marginRight: "8px" }
-                                  : { marginLeft: "8px" }),
+                                  ? { marginRight: "4px" }
+                                  : { marginLeft: "4px" }),
                                 fontWeight: 500,
                                 fontSize: "14px",
                                 color: "#1F2937",
@@ -528,9 +540,9 @@ const NestedCheckbox: React.FC<NestedCheckboxProps> = ({
                             <Box
                               sx={{
                                 ...(isRTL
-                                  ? { paddingRight: "40px" }
-                                  : { paddingLeft: "40px" }),
-                                paddingTop: "4px",
+                                  ? { paddingRight: "32px" }
+                                  : { paddingLeft: "32px" }),
+                                paddingTop: "2px",
                               }}
                             >
                               {group.children.map((child) => {
@@ -545,7 +557,7 @@ const NestedCheckbox: React.FC<NestedCheckboxProps> = ({
                                     sx={{
                                       display: "flex",
                                       alignItems: "center",
-                                      padding: "6px 8px",
+                                      padding: "4px 8px",
                                       borderRadius: "4px",
                                       width: "100%",
                                       boxSizing: "border-box",
@@ -572,8 +584,8 @@ const NestedCheckbox: React.FC<NestedCheckboxProps> = ({
                                       variant="body2"
                                       sx={{
                                         ...(isRTL
-                                          ? { marginRight: "8px" }
-                                          : { marginLeft: "8px" }),
+                                          ? { marginRight: "4px" }
+                                          : { marginLeft: "4px" }),
                                         fontSize: "13px",
                                         color: "#374151",
                                         flex: 1,
