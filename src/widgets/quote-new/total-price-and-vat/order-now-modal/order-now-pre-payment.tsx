@@ -9,6 +9,8 @@ import { OrderNowIcon } from "./icons";
 import { Stack } from "@mui/material";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useEffect, useState } from "react";
+import { useRecoilValue } from "recoil";
+import { printHouseHasFrontDeskFeature } from "@/store/print-house-profile";
 
 const OrderNowPrePaymentModal = ({
   openModal,
@@ -22,6 +24,7 @@ const OrderNowPrePaymentModal = ({
   const [totalAmount, setTotalAmount] = useState(
     quoteItemValue?.totalPayment || 0
   );
+  const hasFrontDeskFeature = useRecoilValue(printHouseHasFrontDeskFeature);
 
   useEffect(() => {
     setTotalAmount(quoteItemValue?.totalPayment || 0);
@@ -135,7 +138,7 @@ const OrderNowPrePaymentModal = ({
             <GomakePrimaryButton
               style={classes.btnStyle}
               onClick={() =>
-                handleOrderConfirmation(true, true, totalAmount,percentage, false)
+                handleOrderConfirmation(true, true, totalAmount, percentage, false, hasFrontDeskFeature)
               }
             >
               {t("sales.modals.withPaymentMessage")}
@@ -143,7 +146,7 @@ const OrderNowPrePaymentModal = ({
             <GomakePrimaryButton
               style={classes.secondBtn}
               onClick={() =>
-                handleOrderConfirmation(false, true, totalAmount,percentage, false)
+                handleOrderConfirmation(false, true, totalAmount, percentage, false, hasFrontDeskFeature)
               }
             >
               {t("sales.modals.withoutPaymentMessage")}

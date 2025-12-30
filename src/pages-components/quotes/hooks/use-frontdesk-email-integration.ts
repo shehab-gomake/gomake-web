@@ -152,9 +152,12 @@ export const useFrontDeskEmailIntegration = ({
             setIsLoadingEmailData(false);
           },
           {
-            documentType: isFromPaymentPage 
-              ? (documentType === 3 ? (19 as DOCUMENT_TYPE) : (18 as DOCUMENT_TYPE))
-              : documentType,
+            // When paymentRequestId is present, always use document type 18 (payment request)
+            documentType: paymentRequestId 
+              ? (18 as DOCUMENT_TYPE)
+              : (isFromPaymentPage 
+                  ? (documentType === 3 ? (19 as DOCUMENT_TYPE) : (18 as DOCUMENT_TYPE))
+                  : documentType),
             document: {
               // For board missions, use boardMissionId instead of documentId
               ...(documentType === DOCUMENT_TYPE.boardMission 

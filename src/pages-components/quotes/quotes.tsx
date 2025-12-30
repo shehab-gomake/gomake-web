@@ -1148,12 +1148,12 @@ const QuotesListPageWidget = ({
         onIntakeSuccess={getAllQuotes}
       />
       {/* FrontDesk Email Composer */}
-      {isEmailComposerOpen && (
+      {isEmailComposerOpen && documentForEmail?.id && (
         <FrontDeskEmailComposerWrapper
           open={isEmailComposerOpen}
           onClose={closeEmailComposer}
           emailData={emailData}
-          documentId={documentForEmail?.id}
+          documentId={documentForEmail.id}
           documentType={isFromPaymentPage ? (18 as DOCUMENT_TYPE) : documentType}
           isLoading={isLoadingEmailData}
         />
