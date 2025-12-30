@@ -151,48 +151,28 @@ const CombinedTable = ({
                     <Table sx={classes.table} stickyHeader>
                         <TableHead>
                             <TableRow sx={classes.headerRow}>
-                                {headers?.map((header, index) => {
-                                    const isFirstColumn = index === 0;
-                                    const isLastFixedColumn = index >= Math.max(headers.length - 4, 0); // Last 4 columns
-                                    const isLastColumn = index === headers.length - 1;
-                                    const isLastSecondColumn = index === headers.length - 2;
-                                    const isLastThirdColumn = index === headers.length - 3;
-                                    const isLastFourthColumn = index === headers.length - 4;
-                                    return (
-                                        <TableCell
-                                            key={index}
-                                            sx={getHeaderCellStyle(isFirstColumn, isLastFixedColumn, index, headers.length, isLastColumn, isLastSecondColumn, isLastThirdColumn, isLastFourthColumn)}
-                                        >
-                                            {header}
-                                        </TableCell>
-                                    );
-                                })}
+                                {headers?.map((header, index) => (
+                                    <TableCell
+                                        key={index}
+                                        sx={getHeaderCellStyle()}
+                                    >
+                                        {header}
+                                    </TableCell>
+                                ))}
                             </TableRow>
                         </TableHead>
                         <TableBody>
                             {rows?.map((row, rowIndex) => (
                                 <React.Fragment key={rowIndex}>
                                     <TableRow sx={classes.bodyRow}>
-                                        {row.cells?.map((cell, cellIndex) => {
-                                            const isFirstColumn = cellIndex === 0;
-                                            const isLastFixedColumn = cellIndex >= Math.max(headers.length - 4, 0);
-                                            const isLastColumn = cellIndex === headers.length - 1;
-                                            const isLastSecondColumn = cellIndex === headers.length - 2;
-                                            const isLastThirdColumn = cellIndex === headers.length - 3;
-                                            const isLastFourthColumn = cellIndex === headers.length - 4;
-                                            const isFixedColumn = isFirstColumn || isLastFixedColumn;
-
-
-                                            return (
-                                                <TableCell
-                                                    key={cellIndex}
-                                                    className={isFixedColumn ? 'fixed-column' : ''}
-                                                    sx={getBodyCellStyle(isFirstColumn, isLastFixedColumn, cellIndex, headers.length, isLastColumn, isLastSecondColumn, isLastThirdColumn, isLastFourthColumn)}
-                                                >
-                                                    {cell}
-                                                </TableCell>
-                                            );
-                                        })}
+                                        {row.cells?.map((cell, cellIndex) => (
+                                            <TableCell
+                                                key={cellIndex}
+                                                sx={getBodyCellStyle()}
+                                            >
+                                                {cell}
+                                            </TableCell>
+                                        ))}
                                     </TableRow>
                                     {/* Check if this row has an open child table */}
                                     {openChildTable.rowId === row.id && (
