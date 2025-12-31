@@ -24,8 +24,10 @@ const useDuplicateQuickModal = ({
   const [quoteItemValue, setQuoteItemValue] =
     useRecoilState<any>(quoteItemState);
   const [productSizes, setProductSizes] = useState([]);
+  const [isLoadingProductSizes, setIsLoadingProductSizes] = useState(false);
   const [bookParameters, setBookParameters] = useState<any[]>([]);
   const [bookParametersValues, setBookParametersValues] = useState<Record<number, Record<string, string>>>({});
+  const [isLoadingBookParameters, setIsLoadingBookParameters] = useState(false);
   const { alertSuccessUpdate, alertFaultUpdate } = useSnackBar();
   const [companyProfile] = useRecoilState(printHouseProfile);
   const { CheckPreferenceValue } = usePrintHousePreferences();
@@ -266,18 +268,26 @@ const useDuplicateQuickModal = ({
   };
 
   const getProductSizes = async () => {
+    setIsLoadingProductSizes(true);
     const callBack = (res) => {
+      setIsLoadingProductSizes(false);
       if (res?.success) {
         setProductSizes(res?.data);
       }
     };
-    await getProductSizesApi(callApi, callBack, {
-      productId: quoteItem?.productID,
-    });
+    try {
+      await getProductSizesApi(callApi, callBack, {
+        productId: quoteItem?.productID,
+      });
+    } catch (error) {
+      setIsLoadingProductSizes(false);
+    }
   };
 
   const getBookParameters = async () => {
+    setIsLoadingBookParameters(true);
     const callBack = (res) => {
+      setIsLoadingBookParameters(false);
       if (res?.success) {
         setBookParameters(res?.data || []);
         // Initialize values for each group - use productType as unique key
@@ -291,15 +301,20 @@ const useDuplicateQuickModal = ({
         setBookParametersValues(initialValues);
       }
     };
-    await getBookParametersFromDocumentItemApi(callApi, callBack, {
-      documentType: documentType,
-      documentId: quoteItemId,
-    });
+    try {
+      await getBookParametersFromDocumentItemApi(callApi, callBack, {
+        documentType: documentType,
+        documentId: quoteItemId,
+      });
+    } catch (error) {
+      setIsLoadingBookParameters(false);
+    }
   };
 
   const resetBookParameters = () => {
     setBookParameters([]);
     setBookParametersValues({});
+    setIsLoadingBookParameters(false);
   };
 
   const handleBookParameterValueChange = (
@@ -358,6 +373,7 @@ const useDuplicateQuickModal = ({
     setIsRelatedJobs,
     getProductSizes,
     productSizes,
+    isLoadingProductSizes,
     lastGroupRef,
     areAllParametersUsed,
     getBookParameters,
@@ -365,6 +381,7 @@ const useDuplicateQuickModal = ({
     bookParametersValues,
     handleBookParameterValueChange,
     resetBookParameters,
+    isLoadingBookParameters,
   };
 };
 

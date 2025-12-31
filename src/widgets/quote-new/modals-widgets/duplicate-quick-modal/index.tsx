@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { Checkbox, Divider } from "@mui/material";
+import { Checkbox, Divider, Skeleton } from "@mui/material";
 import { GoMakeAutoComplate, GoMakeModal, GomakePrimaryButton, GomakeTextInput } from "@/components";
 import { CartWithoutBgIcon, CheckboxCheckedIcon } from "@/icons";
 import { CheckboxIcon } from "@/icons";
@@ -36,6 +36,7 @@ const DuplicateQuickModal = ({
     setIsRelatedJobs,
     getProductSizes,
     productSizes,
+    isLoadingProductSizes,
     lastGroupRef,
     areAllParametersUsed,
     getBookParameters,
@@ -43,6 +44,7 @@ const DuplicateQuickModal = ({
     bookParametersValues,
     handleBookParameterValueChange,
     resetBookParameters,
+    isLoadingBookParameters,
   } = useDuplicateQuickModal({ getQuote, onClose, documentType, quoteItemId, quoteItem })
   console.log("bookParameters", bookParameters);
   useEffect(() => {
@@ -118,78 +120,111 @@ const DuplicateQuickModal = ({
           marginTop: "16px",
           marginBottom: "16px"
         }}>
-          {/* Job Name Input */}
-          <div style={{ flex: 1 }}>
-            <div style={{ marginBottom: "8px" }}>{t("boardMissions.jobName")}</div>
-            <GomakeTextInput
-              style={{ width: "100%" }}
-              placeholder={t("products.profits.exceptions.enterValue")}
-              value={group.parameters[0]?.value || ""}
-              onChange={(e) => handleTextInputChange(groupIndex, 0, e.target.value)}
-            />
-          </div>
+          {isLoadingBookParameters && quoteItem?.isBook ? (
+            // Show skeleton while loading product sizes
+            <>
+              {/* Job Name Skeleton */}
+              <div style={{ flex: 1 }}>
+                <Skeleton variant="text" width="60%" height={20} style={{ marginBottom: "8px" }} />
+                <Skeleton variant="rounded" width="100%" height={40} />
+              </div>
+              {/* Quantity Skeleton */}
+              <div style={{ flex: 1 }}>
+                <Skeleton variant="text" width="60%" height={20} style={{ marginBottom: "8px" }} />
+                <Skeleton variant="rounded" width="100%" height={40} />
+              </div>
+              {/* Size Skeleton */}
+              <div style={{ flex: 1 }}>
+                <Skeleton variant="text" width="60%" height={20} style={{ marginBottom: "8px" }} />
+                <Skeleton variant="rounded" width="100%" height={40} />
+              </div>
+              {/* Width Skeleton */}
+              <div style={{ flex: 1 }}>
+                <Skeleton variant="text" width="60%" height={20} style={{ marginBottom: "8px" }} />
+                <Skeleton variant="rounded" width="100%" height={40} />
+              </div>
+              {/* Length Skeleton */}
+              <div style={{ flex: 1 }}>
+                <Skeleton variant="text" width="60%" height={20} style={{ marginBottom: "8px" }} />
+                <Skeleton variant="rounded" width="100%" height={40} />
+              </div>
+            </>
+          ) : (
+            <>
+              {/* Job Name Input */}
+              <div style={{ flex: 1 }}>
+                <div style={{ marginBottom: "8px" }}>{t("boardMissions.jobName")}</div>
+                <GomakeTextInput
+                  style={{ width: "100%" }}
+                  placeholder={t("products.profits.exceptions.enterValue")}
+                  value={group.parameters[0]?.value || ""}
+                  onChange={(e) => handleTextInputChange(groupIndex, 0, e.target.value)}
+                />
+              </div>
 
-          {/* Quantity Input */}
-          <div style={{ flex: 1 }}>
-            <div style={{ marginBottom: "8px" }}>{t("boardMissions.quantity")}</div>
-            <GomakeTextInput
-              style={{ width: "100%" }}
-              placeholder={t("products.profits.exceptions.enterValue")}
-              value={group.parameters[1]?.value || ""}
-              onChange={(e) => handleTextInputChange(groupIndex, 1, e.target.value)}
-              type="number"
-            />
-          </div>
+              {/* Quantity Input */}
+              <div style={{ flex: 1 }}>
+                <div style={{ marginBottom: "8px" }}>{t("boardMissions.quantity")}</div>
+                <GomakeTextInput
+                  style={{ width: "100%" }}
+                  placeholder={t("products.profits.exceptions.enterValue")}
+                  value={group.parameters[1]?.value || ""}
+                  onChange={(e) => handleTextInputChange(groupIndex, 1, e.target.value)}
+                  type="number"
+                />
+              </div>
 
-          {/* Size Selector */}
-          {productSizes?.length > 0 && (
-            <div style={{ flex: 1 }}>
-              <div style={{ marginBottom: "8px" }}>{t("machineAttributes.size")}</div>
-              <GoMakeAutoComplate
-                options={productSizes}
-                onChange={(e, value) => {
-                  if (value) {
-                    handleTextInputChange(groupIndex, 2, value.width, "width");
-                    handleTextInputChange(groupIndex, 2, value, "value");
-                    handleTextInputChange(groupIndex, 2, value.length, "length");
-                  }
-                }}
-                value={group.parameters[2]?.value}
-                getOptionLabel={(option) => option?.name}
-                style={{ width: "100%" }}
-                placeholder={t("products.profits.exceptions.selectParameter")}
-                withArrow={true}
-              />
-            </div>
+              {/* Size Selector */}
+              {productSizes?.length > 0 && (
+                <div style={{ flex: 1 }}>
+                  <div style={{ marginBottom: "8px" }}>{t("machineAttributes.size")}</div>
+                  <GoMakeAutoComplate
+                    options={productSizes}
+                    onChange={(e, value) => {
+                      if (value) {
+                        handleTextInputChange(groupIndex, 2, value.width, "width");
+                        handleTextInputChange(groupIndex, 2, value, "value");
+                        handleTextInputChange(groupIndex, 2, value.length, "length");
+                      }
+                    }}
+                    value={group.parameters[2]?.value}
+                    getOptionLabel={(option) => option?.name}
+                    style={{ width: "100%" }}
+                    placeholder={t("products.profits.exceptions.selectParameter")}
+                    withArrow={true}
+                  />
+                </div>
+              )}
+
+              {/* Width Input */}
+              <div style={{ flex: 1 }}>
+                <div style={{ marginBottom: "8px" }}>{t("machineAttributes.width")}</div>
+                <GomakeTextInput
+                  style={{ width: "100%" }}
+                  placeholder={t("products.profits.exceptions.enterValue")}
+                  value={group.parameters[2]?.width || ""}
+                  onChange={(e) => handleTextInputChange(groupIndex, 2, e.target.value, "width")}
+                  disabled={group.parameters[2]?.width && group.parameters[2]?.value && group.parameters[2]?.value?.width !== null}
+                />
+              </div>
+
+              {/* Length Input */}
+              <div style={{ flex: 1 }}>
+                <div style={{ marginBottom: "8px" }}>{t("machineAttributes.length")}</div>
+                <GomakeTextInput
+                  style={{ width: "100%" }}
+                  placeholder={t("products.profits.exceptions.enterValue")}
+                  value={group.parameters[2]?.length || ""}
+                  onChange={(e) => handleTextInputChange(groupIndex, 2, e.target.value, "length")}
+                  disabled={group.parameters[2]?.length && group.parameters[2]?.value && group.parameters[2]?.value?.length !== null}
+                />
+              </div>
+            </>
           )}
-
-          {/* Width Input */}
-          <div style={{ flex: 1 }}>
-            <div style={{ marginBottom: "8px" }}>{t("machineAttributes.width")}</div>
-            <GomakeTextInput
-              style={{ width: "100%" }}
-              placeholder={t("products.profits.exceptions.enterValue")}
-              value={group.parameters[2]?.width || ""}
-              onChange={(e) => handleTextInputChange(groupIndex, 2, e.target.value, "width")}
-              disabled={group.parameters[2]?.width && group.parameters[2]?.value && group.parameters[2]?.value?.width !== null}
-            />
-          </div>
-
-          {/* Length Input */}
-          <div style={{ flex: 1 }}>
-            <div style={{ marginBottom: "8px" }}>{t("machineAttributes.length")}</div>
-            <GomakeTextInput
-              style={{ width: "100%" }}
-              placeholder={t("products.profits.exceptions.enterValue")}
-              value={group.parameters[2]?.length || ""}
-              onChange={(e) => handleTextInputChange(groupIndex, 2, e.target.value, "length")}
-              disabled={group.parameters[2]?.length && group.parameters[2]?.value && group.parameters[2]?.value?.length !== null}
-            />
-          </div>
         </div>
 
         {/* Book Parameters Section */}
-        {quoteItem?.isBook && bookParameters?.length > 0 && (
+        {quoteItem?.isBook && (
           <div style={{
             display: "flex",
             flexDirection: "row",
@@ -199,22 +234,37 @@ const DuplicateQuickModal = ({
             marginBottom: "16px",
             flexWrap: "wrap"
           }}>
-            {bookParameters.map((bookParam) => (
-              <div key={`${group.id}-${bookParam.productType}`} style={{
-                display: "flex", flexDirection: "column", gap: "8px", width: "48%"
+            {isLoadingBookParameters ? (
+              // Show skeleton while loading
+              <>
+                <div style={{ display: "flex", flexDirection: "column", gap: "8px", width: "48%" }}>
+                  <Skeleton variant="text" width="60%" height={20} style={{ marginBottom: "8px" }} />
+                  <Skeleton variant="rounded" width="100%" height={40} />
+                </div>
+                <div style={{ display: "flex", flexDirection: "column", gap: "8px", width: "48%" }}>
+                  <Skeleton variant="text" width="60%" height={20} style={{ marginBottom: "8px" }} />
+                  <Skeleton variant="rounded" width="100%" height={40} />
+                </div>
+              </>
+            ) : (
+              // Show actual inputs when loaded
+              bookParameters?.length > 0 && bookParameters.map((bookParam) => (
+                <div key={`${group.id}-${bookParam.productType}`} style={{
+                  display: "flex", flexDirection: "column", gap: "8px", width: "48%"
 
-              }}>
-                <div style={{ marginBottom: "8px" }}>{bookParam.sectionName} / {t("machineAttributes.internalPagesNumber")}</div>
-                <GomakeTextInput
-                  key={`${group.id}-${bookParam.productType}-input`}
-                  style={{ width: "100%" }}
-                  placeholder={t("products.profits.exceptions.enterValue")}
-                  value={bookParametersValues[group.id]?.[bookParam.productType] || ""}
-                  onChange={(e) => handleBookParameterValueChange(group.id, bookParam.productType, e.target.value)}
-                  type="number"
-                />
-              </div>
-            ))}
+                }}>
+                  <div style={{ marginBottom: "8px" }}>{bookParam.sectionName} / {t("machineAttributes.internalPagesNumber")}</div>
+                  <GomakeTextInput
+                    key={`${group.id}-${bookParam.productType}-input`}
+                    style={{ width: "100%" }}
+                    placeholder={t("products.profits.exceptions.enterValue")}
+                    value={bookParametersValues[group.id]?.[bookParam.productType] || ""}
+                    onChange={(e) => handleBookParameterValueChange(group.id, bookParam.productType, e.target.value)}
+                    type="number"
+                  />
+                </div>
+              ))
+            )}
           </div>
         )}
 
