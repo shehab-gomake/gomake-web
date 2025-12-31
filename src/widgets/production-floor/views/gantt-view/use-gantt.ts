@@ -36,6 +36,7 @@ const useGantt = (reschedulingHook?: any) => {
   const prevToEstimatedProductionTimeRef = useRef(null);
   const prevAgentIdsRef = useRef(null);
   const prevCurrentMonthRef = useRef<Moment | null>(null);
+  const prevMonthFromFilterRef = useRef<Moment | null>(null);
 
   // Modal state
   const [showRescheduleModal, setShowRescheduleModal] = useState(false);
@@ -72,6 +73,44 @@ const useGantt = (reschedulingHook?: any) => {
   const [currentMonth, setCurrentMonth] = useState(moment());
   const [isTimeLineLocked, setIsTimeLineLocked] = useState(false);
 
+  // Track if we're in filter mode vs manual navigation mode
+  const isFilterModeRef = useRef(false);
+
+  // Helper function to determine active filter by priority
+  // Priority: Create > Delivery > Estimated Production
+  const getActiveFilter = useCallback(() => {
+    const hasCreateFilter =
+      filtersState.fromCreateDate || filtersState.toCreateDate;
+    const hasDeliveryFilter =
+      filtersState.fromDeliveryTime || filtersState.toDeliveryTime;
+    const hasEstimatedFilter =
+      filtersState.fromEstimatedProductionTime ||
+      filtersState.toEstimatedProductionTime;
+
+    if (hasCreateFilter) {
+      return {
+        type: "create" as const,
+        fromDate: filtersState.fromCreateDate,
+        toDate: filtersState.toCreateDate,
+      };
+    }
+    if (hasDeliveryFilter) {
+      return {
+        type: "delivery" as const,
+        fromDate: filtersState.fromDeliveryTime,
+        toDate: filtersState.toDeliveryTime,
+      };
+    }
+    if (hasEstimatedFilter) {
+      return {
+        type: "estimated" as const,
+        fromDate: filtersState.fromEstimatedProductionTime,
+        toDate: filtersState.toEstimatedProductionTime,
+      };
+    }
+    return null;
+  }, [filtersState]);
+
   const getData = useCallback(
     async (month, stationsOverride?, groupIdOverride?) => {
       // Prevent concurrent API calls
@@ -82,21 +121,54 @@ const useGantt = (reschedulingHook?: any) => {
 
       isFetching.current = true;
 
-      // Calculate start and end dates for the selected month in UTC
-      // Use currentMonth.clone() to ensure we use the correct year from currentMonth
-      const startOfMonth = currentMonth
-        .clone()
-        .month(month) // Set the correct month
-        .startOf("month") // Start of the month
-        .utc() // Convert to UTC
-        .toISOString();
+      // Calculate startDate/endDate for API request:
+      // 1. If manual navigation happened (prevMonthFromFilterRef is null), use currentMonth boundaries
+      // 2. If active filter exists and no manual navigation, use month boundaries that contain the filter's fromDate
+      // 3. Otherwise, use currentMonth boundaries
+      const activeFilter = getActiveFilter();
+      let startOfMonth: string;
+      let endOfMonth: string;
 
-      const endOfMonth = currentMonth
-        .clone()
-        .month(month) // Set the correct month
-        .endOf("month") // End of the month
-        .utc() // Convert to UTC
-        .toISOString();
+      // Check if manual navigation happened (prevMonthFromFilterRef is null means manual nav occurred)
+      const isManualNavigation = prevMonthFromFilterRef.current === null;
+
+      if (isManualNavigation) {
+        // Manual navigation happened - always use currentMonth boundaries, even if filters are active
+        startOfMonth = currentMonth
+          .clone()
+          .month(month)
+          .startOf("month")
+          .utc()
+          .toISOString();
+        endOfMonth = currentMonth
+          .clone()
+          .month(month)
+          .endOf("month")
+          .utc()
+          .toISOString();
+      } else if (activeFilter && activeFilter.fromDate) {
+        // Filter is active and no manual navigation - use filter's month boundaries
+        const filterFromDate = moment(activeFilter.fromDate);
+        const filterMonth = filterFromDate.clone().startOf("month");
+
+        // Use start and end of that month (not the actual filter dates)
+        startOfMonth = filterMonth.clone().startOf("month").utc().toISOString();
+        endOfMonth = filterMonth.clone().endOf("month").utc().toISOString();
+      } else {
+        // No active filter - use currentMonth boundaries
+        startOfMonth = currentMonth
+          .clone()
+          .month(month)
+          .startOf("month")
+          .utc()
+          .toISOString();
+        endOfMonth = currentMonth
+          .clone()
+          .month(month)
+          .endOf("month")
+          .utc()
+          .toISOString();
+      }
 
       const callBack = (res) => {
         if (res.success) {
@@ -170,8 +242,83 @@ const useGantt = (reschedulingHook?: any) => {
         isFetching.current = false;
       }
     },
-    [filtersState, currentMonth, callApi]
+    [filtersState, currentMonth, callApi, getActiveFilter]
   );
+
+  // Apply filter selection: sets currentMonth from active filter and updates timeline
+  const applyFilterSelection = useCallback(() => {
+    const activeFilter = getActiveFilter();
+
+    if (activeFilter && activeFilter.fromDate) {
+      // Normalize the fromDate to get the month (for visible month)
+      const filterFromDate = moment(activeFilter.fromDate);
+      const filterMonth = filterFromDate.clone().startOf("month");
+
+      // Set currentMonth to the month of the filter's from date (after normalization)
+      // Mark that this change came from a filter so manual navigation useEffect doesn't override it
+      prevMonthFromFilterRef.current = filterMonth.clone();
+      setCurrentMonth(filterMonth);
+      // Update currentDate to match the filter's month so the date label displays correctly
+      setCurrentDate(filterMonth.clone());
+      isFilterModeRef.current = true;
+
+      // Update visibleTimeRange to show the correct month in the timeline
+      const monthStart = filterMonth.clone().startOf("month").valueOf();
+      const monthEnd = filterMonth.clone().endOf("month").valueOf();
+      setVisibleTimeRange({
+        start: monthStart,
+        end: monthEnd,
+      });
+
+      // Trigger API call with the month index
+      if (!isFetching.current) {
+        getData(filterMonth.month());
+      }
+    } else {
+      // No active filter - use default current month
+      const defaultMonth = moment().startOf("month");
+      // Clear filter flag when no filter is active
+      prevMonthFromFilterRef.current = null;
+      setCurrentMonth(defaultMonth);
+      // Update currentDate to match default month so the date label displays correctly
+      setCurrentDate(moment());
+      isFilterModeRef.current = false;
+
+      // Update visibleTimeRange to show the default month
+      const monthStart = defaultMonth.clone().startOf("month").valueOf();
+      const monthEnd = defaultMonth.clone().endOf("month").valueOf();
+      setVisibleTimeRange({
+        start: monthStart,
+        end: monthEnd,
+      });
+
+      if (!isFetching.current) {
+        getData(defaultMonth.month());
+      }
+    }
+  }, [getActiveFilter, getData]);
+
+  // Apply manual navigation: updates timeline based on currentMonth
+  // Manual navigation always works, even if filters are still filled
+  const applyManualNavigation = useCallback(() => {
+    // Always allow manual navigation - update visibleTimeRange and trigger API call
+    // Clear the filter flag since this is manual navigation
+    prevMonthFromFilterRef.current = null;
+    // Don't change isFilterModeRef - keep it as is so that if filters change later,
+    // they can still override manual navigation
+
+    // Update visibleTimeRange to show the currentMonth
+    const monthStart = currentMonth.clone().startOf("month").valueOf();
+    const monthEnd = currentMonth.clone().endOf("month").valueOf();
+    setVisibleTimeRange({
+      start: monthStart,
+      end: monthEnd,
+    });
+
+    if (!isFetching.current) {
+      getData(currentMonth.month());
+    }
+  }, [currentMonth, getData]);
 
   const handleItemResize = async (itemId, time, edge) => {
     setLoadingItemId(itemId);
@@ -551,8 +698,25 @@ const useGantt = (reschedulingHook?: any) => {
   // Note: filtersState is already reset by production-floor-widget.tsx before mounting
   useEffect(() => {
     if (isInitialLoad.current) {
-      // Call API with empty stations and null groupId
-      getData(currentMonth.month(), [], null).then();
+      // Initialize currentMonth based on active filter or default to current month
+      const activeFilter = getActiveFilter();
+      if (activeFilter && activeFilter.fromDate) {
+        const filterFromDate = moment(activeFilter.fromDate);
+        const filterMonth = filterFromDate.clone().startOf("month");
+
+        prevMonthFromFilterRef.current = filterMonth.clone();
+        setCurrentMonth(filterMonth);
+        isFilterModeRef.current = true;
+        getData(filterMonth.month(), [], null).then();
+      } else {
+        // Default to current month
+        const defaultMonth = moment().startOf("month");
+        prevMonthFromFilterRef.current = null;
+        setCurrentMonth(defaultMonth);
+        isFilterModeRef.current = false;
+        getData(defaultMonth.month(), [], null).then();
+      }
+
       isInitialLoad.current = false;
 
       // Store current filter values to prevent subsequent triggers
@@ -571,13 +735,12 @@ const useGantt = (reschedulingHook?: any) => {
         : null;
       prevCurrentMonthRef.current = currentMonth.clone();
     }
-  }, []);
+  }, [getActiveFilter, getData]);
 
-  // Subsequent updates: call API when filters actually change (after initial load)
+  // Watch for date filter changes and apply filter selection
+  // This handles filter changes (set/update/clear) and calls applyFilterSelection exactly once
   useEffect(() => {
     if (!isInitialLoad.current && !isFetching.current) {
-      const currentStations = JSON.stringify(filtersState.stations);
-      const currentGroupId = filtersState.groupId;
       const currentFromCreateDate = filtersState.fromCreateDate || null;
       const currentToCreateDate = filtersState.toCreateDate || null;
       const currentFromDeliveryTime = filtersState.fromDeliveryTime || null;
@@ -586,13 +749,8 @@ const useGantt = (reschedulingHook?: any) => {
         filtersState.fromEstimatedProductionTime || null;
       const currentToEstimatedProductionTime =
         filtersState.toEstimatedProductionTime || null;
-      const currentAgentIds = filtersState.agentIds
-        ? JSON.stringify(filtersState.agentIds)
-        : null;
 
-      // Only call API if values actually changed
-      const stationsChanged = prevStationsRef.current !== currentStations;
-      const groupIdChanged = prevGroupIdRef.current !== currentGroupId;
+      // Check if any date filter changed
       const fromCreateDateChanged =
         prevFromCreateDateRef.current !== currentFromCreateDate;
       const toCreateDateChanged =
@@ -607,21 +765,16 @@ const useGantt = (reschedulingHook?: any) => {
       const toEstimatedProductionTimeChanged =
         prevToEstimatedProductionTimeRef.current !==
         currentToEstimatedProductionTime;
-      const agentIdsChanged = prevAgentIdsRef.current !== currentAgentIds;
 
       if (
-        stationsChanged ||
-        groupIdChanged ||
         fromCreateDateChanged ||
         toCreateDateChanged ||
         fromDeliveryTimeChanged ||
         toDeliveryTimeChanged ||
         fromEstimatedProductionTimeChanged ||
-        toEstimatedProductionTimeChanged ||
-        agentIdsChanged
+        toEstimatedProductionTimeChanged
       ) {
-        prevStationsRef.current = currentStations;
-        prevGroupIdRef.current = currentGroupId;
+        // Update refs
         prevFromCreateDateRef.current = currentFromCreateDate;
         prevToCreateDateRef.current = currentToCreateDate;
         prevFromDeliveryTimeRef.current = currentFromDeliveryTime;
@@ -630,6 +783,41 @@ const useGantt = (reschedulingHook?: any) => {
           currentFromEstimatedProductionTime;
         prevToEstimatedProductionTimeRef.current =
           currentToEstimatedProductionTime;
+
+        // Apply filter selection - this will determine active filter by priority
+        // and update startDate/endDate/currentMonth accordingly
+        applyFilterSelection();
+      }
+    }
+  }, [
+    filtersState.fromCreateDate,
+    filtersState.toCreateDate,
+    filtersState.fromDeliveryTime,
+    filtersState.toDeliveryTime,
+    filtersState.fromEstimatedProductionTime,
+    filtersState.toEstimatedProductionTime,
+    applyFilterSelection,
+  ]);
+
+  // Subsequent updates: call API when non-date filters change (after initial load)
+  // NOTE: Date filter changes are handled by the effect above
+  // This effect only handles non-date filter changes (stations, groupId, agentIds)
+  useEffect(() => {
+    if (!isInitialLoad.current && !isFetching.current) {
+      const currentStations = JSON.stringify(filtersState.stations);
+      const currentGroupId = filtersState.groupId;
+      const currentAgentIds = filtersState.agentIds
+        ? JSON.stringify(filtersState.agentIds)
+        : null;
+
+      // Only check non-date filter changes
+      const stationsChanged = prevStationsRef.current !== currentStations;
+      const groupIdChanged = prevGroupIdRef.current !== currentGroupId;
+      const agentIdsChanged = prevAgentIdsRef.current !== currentAgentIds;
+
+      if (stationsChanged || groupIdChanged || agentIdsChanged) {
+        prevStationsRef.current = currentStations;
+        prevGroupIdRef.current = currentGroupId;
         prevAgentIdsRef.current = currentAgentIds;
         getGanttData();
       }
@@ -637,17 +825,14 @@ const useGantt = (reschedulingHook?: any) => {
   }, [
     filtersState.stations,
     filtersState.groupId,
-    filtersState.fromCreateDate,
-    filtersState.toCreateDate,
-    filtersState.fromDeliveryTime,
-    filtersState.toDeliveryTime,
-    filtersState.fromEstimatedProductionTime,
-    filtersState.toEstimatedProductionTime,
     filtersState.agentIds,
     getGanttData,
   ]);
 
-  // Watch for currentMonth changes and trigger API call when month/year changes
+  // Watch for currentMonth changes from manual navigation
+  // NOTE: This only handles manual navigation, not filter changes
+  // Filter changes are handled by applyFilterSelection() which updates currentMonth
+  // We need to distinguish between filter-initiated changes and manual navigation
   useEffect(() => {
     if (!isInitialLoad.current && !isFetching.current) {
       const prevMonth = prevCurrentMonthRef.current;
@@ -658,15 +843,26 @@ const useGantt = (reschedulingHook?: any) => {
       const yearChanged = prevMonth && !currentMonth.isSame(prevMonth, "year");
 
       if (monthChanged || yearChanged) {
+        // Check if this change came from a filter (applyFilterSelection sets prevMonthFromFilterRef)
+        const isFromFilter =
+          prevMonthFromFilterRef.current &&
+          currentMonth.isSame(prevMonthFromFilterRef.current, "month");
+
+        if (isFromFilter) {
+          // This change came from applyFilterSelection - don't call applyManualNavigation
+          prevMonthFromFilterRef.current = null; // Reset the flag
+        } else {
+          // This is manual navigation - apply it
+          applyManualNavigation();
+        }
+
         prevCurrentMonthRef.current = currentMonth.clone();
-        // Use currentMonth.month() to get the month index (0-11) for the current month
-        getData(currentMonth.month());
       } else if (!prevMonth) {
         // Initialize the ref if it's null
         prevCurrentMonthRef.current = currentMonth.clone();
       }
     }
-  }, [currentMonth, getData]);
+  }, [currentMonth, applyManualNavigation]);
 
   // Socket.IO listener for updateTimeLineBoard event
   useEffect(() => {
@@ -791,13 +987,15 @@ const useGantt = (reschedulingHook?: any) => {
           break;
       }
 
-      // If month or year has changed, update currentMonth
-      // This ensures API is called when navigating between years (e.g., Dec 2025 -> Jan 2026)
+      // If month or year has changed, update currentMonth and apply manual navigation
+      // Manual navigation always works, even if filters are still filled
       if (
         !newDate.isSame(currentMonth, "month") ||
         !newDate.isSame(currentMonth, "year")
       ) {
-        setCurrentMonth(newDate.clone().startOf("month"));
+        const newMonth = newDate.clone().startOf("month");
+        setCurrentMonth(newMonth);
+        // applyManualNavigation will be called by the useEffect watching currentMonth
       }
       return newDate;
     });
@@ -861,8 +1059,7 @@ const useGantt = (reschedulingHook?: any) => {
       if (!newCenterDate.isSame(currentMonth, "month")) {
         const newMonthStart = newCenterDate.clone().startOf("month");
         setCurrentMonth(newMonthStart);
-        // Use current filter values (stations and groupId from filtersState)
-        getData(newMonthStart.month());
+        // applyManualNavigation will be called by the useEffect watching currentMonth
       }
     }
   };
