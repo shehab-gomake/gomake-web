@@ -46,11 +46,11 @@ const useDuplicateQuickModal = ({
       };
       setGroups([...groups, newGroup]);
 
-      // Initialize book parameters values for the new group
+      // Initialize book parameters values for the new group - use productType as unique key
       if (bookParameters.length > 0) {
         const newBookValues: Record<string, string> = {};
         bookParameters.forEach((param) => {
-          newBookValues[param.parameterId] = "";
+          newBookValues[param.productType] = "";
         });
         setBookParametersValues((prev) => ({
           ...prev,
@@ -91,10 +91,10 @@ const useDuplicateQuickModal = ({
         if (oldGroupId && bookParametersValues[oldGroupId]) {
           newBookParametersValues[newIndex + 1] = { ...bookParametersValues[oldGroupId] };
         } else {
-          // Initialize empty values for new group
+          // Initialize empty values for new group - use productType as unique key
           const newBookValues: Record<string, string> = {};
           bookParameters.forEach((param) => {
-            newBookValues[param.parameterId] = "";
+            newBookValues[param.productType] = "";
           });
           newBookParametersValues[newIndex + 1] = newBookValues;
         }
@@ -155,17 +155,17 @@ const useDuplicateQuickModal = ({
         }
       });
 
-      // Add book parameters if they exist
+      // Add book parameters if they exist - use productType as unique key
       const bookParams = bookParameters
         .filter((bookParam) => {
-          const value = bookParametersValues[group.id]?.[bookParam.parameterId];
+          const value = bookParametersValues[group.id]?.[bookParam.productType];
           return value && value !== "";
         })
         .map((bookParam) => ({
           parameterId: bookParam.parameterId,
           productType: bookParam.productType,
           actionIndex: bookParam.actionIndex,
-          value: bookParametersValues[group.id][bookParam.parameterId],
+          value: bookParametersValues[group.id][bookParam.productType],
         }));
 
       return {
@@ -280,12 +280,12 @@ const useDuplicateQuickModal = ({
     const callBack = (res) => {
       if (res?.success) {
         setBookParameters(res?.data || []);
-        // Initialize values for each group
+        // Initialize values for each group - use productType as unique key
         const initialValues: Record<number, Record<string, string>> = {};
         groups.forEach((group) => {
           initialValues[group.id] = {};
           (res?.data || []).forEach((param: any) => {
-            initialValues[group.id][param.parameterId] = "";
+            initialValues[group.id][param.productType] = "";
           });
         });
         setBookParametersValues(initialValues);
@@ -304,14 +304,14 @@ const useDuplicateQuickModal = ({
 
   const handleBookParameterValueChange = (
     groupId: number,
-    parameterId: string,
+    productType: string,
     value: string
   ) => {
     setBookParametersValues((prev) => ({
       ...prev,
       [groupId]: {
         ...prev[groupId],
-        [parameterId]: value,
+        [productType]: value,
       },
     }));
   };

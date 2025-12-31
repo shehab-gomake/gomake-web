@@ -200,16 +200,17 @@ const DuplicateQuickModal = ({
             flexWrap: "wrap"
           }}>
             {bookParameters.map((bookParam) => (
-              <div key={bookParam.parameterId} style={{
-                display: "flex", flexDirection: "column", gap: "8px", width: "50%"
+              <div key={`${group.id}-${bookParam.productType}`} style={{
+                display: "flex", flexDirection: "column", gap: "8px", width: "48%"
 
               }}>
                 <div style={{ marginBottom: "8px" }}>{bookParam.sectionName} / {t("machineAttributes.internalPagesNumber")}</div>
                 <GomakeTextInput
+                  key={`${group.id}-${bookParam.productType}-input`}
                   style={{ width: "100%" }}
                   placeholder={t("products.profits.exceptions.enterValue")}
-                  value={bookParametersValues[group.id]?.[bookParam.parameterId] || ""}
-                  onChange={(e) => handleBookParameterValueChange(group.id, bookParam.parameterId, e.target.value)}
+                  value={bookParametersValues[group.id]?.[bookParam.productType] || ""}
+                  onChange={(e) => handleBookParameterValueChange(group.id, bookParam.productType, e.target.value)}
                   type="number"
                 />
               </div>
