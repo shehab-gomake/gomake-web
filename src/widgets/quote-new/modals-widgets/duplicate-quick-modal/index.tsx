@@ -19,6 +19,7 @@ const DuplicateQuickModal = ({
   quoteItem,
   isAddQuantity
 }) => {
+  console.log("quoteItem", quoteItem);
   const { t } = useTranslation();
   const { clasess } = useStyle();
   const {
@@ -36,12 +37,21 @@ const DuplicateQuickModal = ({
     getProductSizes,
     productSizes,
     lastGroupRef,
-    areAllParametersUsed
+    areAllParametersUsed,
+    getBookParameters,
+    bookParameters,
+    bookParametersValues,
+    handleBookParameterValueChange,
+    resetBookParameters,
   } = useDuplicateQuickModal({ getQuote, onClose, documentType, quoteItemId, quoteItem })
-
+  console.log("bookParameters", bookParameters);
   useEffect(() => {
     if (quoteItem?.productID && openModal) {
       getProductSizes()
+    }
+
+    if (quoteItem?.isBook && openModal) {
+      getBookParameters()
     }
 
     const initialParameters = [
@@ -178,6 +188,35 @@ const DuplicateQuickModal = ({
           </div>
         </div>
 
+        {/* Book Parameters Section */}
+        {quoteItem?.isBook && bookParameters?.length > 0 && (
+          <div style={{
+            display: "flex",
+            flexDirection: "row",
+            gap: "16px",
+            alignItems: "flex-end",
+            marginTop: "16px",
+            marginBottom: "16px",
+            flexWrap: "wrap"
+          }}>
+            {bookParameters.map((bookParam) => (
+              <div key={bookParam.parameterId} style={{
+                display: "flex", flexDirection: "column", gap: "8px", width: "50%"
+
+              }}>
+                <div style={{ marginBottom: "8px" }}>{bookParam.sectionName} / {t("machineAttributes.internalPagesNumber")}</div>
+                <GomakeTextInput
+                  style={{ width: "100%" }}
+                  placeholder={t("products.profits.exceptions.enterValue")}
+                  value={bookParametersValues[group.id]?.[bookParam.parameterId] || ""}
+                  onChange={(e) => handleBookParameterValueChange(group.id, bookParam.parameterId, e.target.value)}
+                  type="number"
+                />
+              </div>
+            ))}
+          </div>
+        )}
+
         {group.id !== groups.length && <Divider style={{ marginTop: 24 }} />}
 
         <div style={clasess.groupActions}>
@@ -277,6 +316,7 @@ const DuplicateQuickModal = ({
         onClose={() => {
           onClose()
           setGroups([{ id: 1, parameters: [{ name: "", value: "" }] }])
+          resetBookParameters()
         }}
         insideStyle={clasess.insideStyle}
       >
@@ -296,6 +336,7 @@ const DuplicateQuickModal = ({
 
         <div style={clasess.buttonContainer} onClick={() => {
           setGroups([{ id: 1, parameters: [{ name: "", value: "" }] }])
+          resetBookParameters()
           onClose()
         }}>
           <GomakePrimaryButton style={clasess.cancelButton}>

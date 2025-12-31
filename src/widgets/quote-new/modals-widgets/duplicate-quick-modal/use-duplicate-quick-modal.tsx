@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 
-import { quickDuplicateApi } from "@/services/api-service/generic-doc/documents-api";
+import { quickDuplicateApi, getBookParametersFromDocumentItemApi } from "@/services/api-service/generic-doc/documents-api";
 import { useGomakeAxios } from "@/hooks";
 import { useSnackBar } from "@/hooks";
 import { useRecoilState } from "recoil";
@@ -24,6 +24,8 @@ const useDuplicateQuickModal = ({
   const [quoteItemValue, setQuoteItemValue] =
     useRecoilState<any>(quoteItemState);
   const [productSizes, setProductSizes] = useState([]);
+  const [bookParameters, setBookParameters] = useState<any[]>([]);
+  const [bookParametersValues, setBookParametersValues] = useState<Record<number, Record<string, string>>>({});
   const { alertSuccessUpdate, alertFaultUpdate } = useSnackBar();
   const [companyProfile] = useRecoilState(printHouseProfile);
   const { CheckPreferenceValue } = usePrintHousePreferences();
@@ -36,12 +38,25 @@ const useDuplicateQuickModal = ({
   const addGroup = (groupIndex) => {
     if (groups[groupIndex]) {
       const groupToDuplicate = groups[groupIndex];
+      const newGroupId = groups.length + 1;
       const newGroup = {
         ...groupToDuplicate,
-        id: groups.length + 1,
+        id: newGroupId,
         parameters: groupToDuplicate.parameters.map((param) => ({ ...param })),
       };
       setGroups([...groups, newGroup]);
+
+      // Initialize book parameters values for the new group
+      if (bookParameters.length > 0) {
+        const newBookValues: Record<string, string> = {};
+        bookParameters.forEach((param) => {
+          newBookValues[param.parameterId] = "";
+        });
+        setBookParametersValues((prev) => ({
+          ...prev,
+          [newGroupId]: newBookValues,
+        }));
+      }
     }
   };
   const addParameter = (groupIndex) => {
@@ -56,6 +71,7 @@ const useDuplicateQuickModal = ({
     setGroups(newGroups);
   };
   const deleteGroup = (groupIndex) => {
+    const deletedGroupId = groups[groupIndex]?.id;
     const newGroups = groups.filter((_, index) => index !== groupIndex);
     // Reassign ids based on the new index
     const reorderedGroups = newGroups.map((group, index) => ({
@@ -63,6 +79,28 @@ const useDuplicateQuickModal = ({
       id: index + 1,
     }));
     setGroups(reorderedGroups);
+
+    // Clean up book parameters values for deleted group and rebuild with new IDs
+    if (bookParameters.length > 0 && Object.keys(bookParametersValues).length > 0) {
+      const newBookParametersValues: Record<number, Record<string, string>> = {};
+      // Map old groups to new groups - groups before deleted index keep same position, after shift by 1
+      newGroups.forEach((group, newIndex) => {
+        const oldIndex = newIndex < groupIndex ? newIndex : newIndex + 1;
+        const oldGroupId = groups[oldIndex]?.id;
+
+        if (oldGroupId && bookParametersValues[oldGroupId]) {
+          newBookParametersValues[newIndex + 1] = { ...bookParametersValues[oldGroupId] };
+        } else {
+          // Initialize empty values for new group
+          const newBookValues: Record<string, string> = {};
+          bookParameters.forEach((param) => {
+            newBookValues[param.parameterId] = "";
+          });
+          newBookParametersValues[newIndex + 1] = newBookValues;
+        }
+      });
+      setBookParametersValues(newBookParametersValues);
+    }
   };
   const handleDropdownChange = (groupIndex, paramIndex, value) => {
     const newGroups = [...groups];
@@ -82,9 +120,8 @@ const useDuplicateQuickModal = ({
   };
 
   function transformGroupList(groupList) {
-    return groupList.map((group) => ({
-      ...group,
-      parameters: group?.parameters.flatMap((param) => {
+    return groupList.map((group) => {
+      const transformedParameters = group?.parameters.flatMap((param) => {
         if (typeof param.value === "object" || (param.length && param.width)) {
           const result = [];
           if (typeof param.value === "object") {
@@ -116,8 +153,26 @@ const useDuplicateQuickModal = ({
           // Leave unchanged if value is not an object
           return param;
         }
-      }),
-    }));
+      });
+
+      // Add book parameters if they exist
+      const bookParams = bookParameters
+        .filter((bookParam) => {
+          const value = bookParametersValues[group.id]?.[bookParam.parameterId];
+          return value && value !== "";
+        })
+        .map((bookParam) => ({
+          parameterId: bookParam.parameterId,
+          productType: bookParam.productType,
+          actionIndex: bookParam.actionIndex,
+          value: bookParametersValues[group.id][bookParam.parameterId],
+        }));
+
+      return {
+        ...group,
+        parameters: [...transformedParameters, ...bookParams],
+      };
+    });
   }
 
   const onClickQuickDuplicate = async () => {
@@ -138,10 +193,22 @@ const useDuplicateQuickModal = ({
             param.value !== undefined &&
             param.value !== ""
         )
-        .map((param) => ({
-          parameterId: param?.name.value, // Example ID, replace with actual logic if needed
-          value: param.value,
-        })),
+        .map((param) => {
+          // Book parameters already have parameterId, productType, actionIndex
+          if (param.parameterId) {
+            return {
+              parameterId: param.parameterId,
+              productType: param.productType,
+              actionIndex: param.actionIndex,
+              value: param.value,
+            };
+          }
+          // Regular parameters have name.value structure
+          return {
+            parameterId: param?.name?.value,
+            value: param?.value,
+          };
+        }),
     }));
     const callBack = async (res) => {
       if (res?.success) {
@@ -161,6 +228,8 @@ const useDuplicateQuickModal = ({
 
         alertSuccessUpdate();
         setGroups([{ id: 1, parameters: [{ name: "", value: "" }] }]);
+        setBookParameters([]);
+        setBookParametersValues({});
         if (isRelatedJobs) {
           const selectedItemIndex = quoteItemValue?.documentItems?.findIndex(
             (item) => item?.id === quoteItemId
@@ -207,6 +276,46 @@ const useDuplicateQuickModal = ({
     });
   };
 
+  const getBookParameters = async () => {
+    const callBack = (res) => {
+      if (res?.success) {
+        setBookParameters(res?.data || []);
+        // Initialize values for each group
+        const initialValues: Record<number, Record<string, string>> = {};
+        groups.forEach((group) => {
+          initialValues[group.id] = {};
+          (res?.data || []).forEach((param: any) => {
+            initialValues[group.id][param.parameterId] = "";
+          });
+        });
+        setBookParametersValues(initialValues);
+      }
+    };
+    await getBookParametersFromDocumentItemApi(callApi, callBack, {
+      documentType: documentType,
+      documentId: quoteItemId,
+    });
+  };
+
+  const resetBookParameters = () => {
+    setBookParameters([]);
+    setBookParametersValues({});
+  };
+
+  const handleBookParameterValueChange = (
+    groupId: number,
+    parameterId: string,
+    value: string
+  ) => {
+    setBookParametersValues((prev) => ({
+      ...prev,
+      [groupId]: {
+        ...prev[groupId],
+        [parameterId]: value,
+      },
+    }));
+  };
+
   // Function to check if all available parameters are already added to a group
   const areAllParametersUsed = (groupIndex) => {
     const availableParameters = [
@@ -251,6 +360,11 @@ const useDuplicateQuickModal = ({
     productSizes,
     lastGroupRef,
     areAllParametersUsed,
+    getBookParameters,
+    bookParameters,
+    bookParametersValues,
+    handleBookParameterValueChange,
+    resetBookParameters,
   };
 };
 
