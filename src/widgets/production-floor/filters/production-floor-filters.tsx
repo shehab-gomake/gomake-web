@@ -271,6 +271,25 @@ const ProductionFloorFilters = ({
       {view !== EProductionFloorView.DONE_JOBS && (
         <ControlledDateRangePicker
           startDate={
+            createDateFilter?.fromDate
+              ? new Date(createDateFilter.fromDate)
+              : null
+          }
+          endDate={
+            createDateFilter?.toDate ? new Date(createDateFilter.toDate) : null
+          }
+          onChange={(startDate, endDate) =>
+            onSelectCreateDates(startDate, endDate)
+          }
+          placeholder={t("productionFloor.createTime")}
+          buttonStyle={{
+            height: "36px",
+          }}
+        />
+      )}
+      {view !== EProductionFloorView.DONE_JOBS && (
+        <ControlledDateRangePicker
+          startDate={
             deliveryDateFilter?.fromDate
               ? new Date(deliveryDateFilter.fromDate)
               : null
@@ -284,25 +303,6 @@ const ProductionFloorFilters = ({
             onSelectDeliveryTimeDates(startDate, endDate)
           }
           placeholder={t("sales.quote.deliveryDate")}
-          buttonStyle={{
-            height: "36px",
-          }}
-        />
-      )}
-      {view !== EProductionFloorView.DONE_JOBS && (
-        <ControlledDateRangePicker
-          startDate={
-            createDateFilter?.fromDate
-              ? new Date(createDateFilter.fromDate)
-              : null
-          }
-          endDate={
-            createDateFilter?.toDate ? new Date(createDateFilter.toDate) : null
-          }
-          onChange={(startDate, endDate) =>
-            onSelectCreateDates(startDate, endDate)
-          }
-          placeholder={t("productionFloor.createTime")}
           buttonStyle={{
             height: "36px",
           }}
