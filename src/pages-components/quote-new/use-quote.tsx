@@ -549,11 +549,11 @@ const useQuoteNew = ({
     "#",
     isDeliveryNote || isInvoice ? t("products.profits.documentNumber") : null,
     !CheckPreferenceValue(EPreferences.HIDE_ITEM_CODE_FROM_DOCUMENT_CART) &&
-    t("sales.quote.itemCode"),
+      t("sales.quote.itemCode"),
     !CheckPreferenceValue(EPreferences.HIDE_ITEM_CODE_FROM_DOCUMENT_CART) &&
-    t("products.profits.itemName"),
+      t("products.profits.itemName"),
     CheckPreferenceValue(EPreferences.HIDE_ITEM_CODE_FROM_DOCUMENT_CART) &&
-    t("products.profits.itemName"),
+      t("products.profits.itemName"),
     showDetails ? t("products.profits.details") : null,
     isMaterialPurchaseOrder ? t("sales.purchaseOrder.packagesQuantity") : null,
     isMaterialPurchaseOrder ? t("sales.purchaseOrder.quantityInPackage") : null,
@@ -569,37 +569,37 @@ const useQuoteNew = ({
 
   const columnWidths = isMaterialPurchaseOrder
     ? [
-      "5%", // "#"
-      "9%", // Item Code
-      "10%", // Item Name
-      "15%", // Details column (optional)
-      "9%", // Amount
-      "9%", // Amount
-      "9%", // Amount
-      "5%", // Unit Price
-      showPrices ? "8%" : null, // Unit Price
-      showPrices ? "8%" : null, // Discount
-      showPrices ? "8%" : null, // Final Price
-      "5%", // More
-    ]
+        "5%", // "#"
+        "9%", // Item Code
+        "10%", // Item Name
+        "15%", // Details column (optional)
+        "9%", // Amount
+        "9%", // Amount
+        "9%", // Amount
+        "5%", // Unit Price
+        showPrices ? "8%" : null, // Unit Price
+        showPrices ? "8%" : null, // Discount
+        showPrices ? "8%" : null, // Final Price
+        "5%", // More
+      ]
     : [
-      "5%", // "#"
-      isDeliveryNote || isInvoice ? "10%" : null, // Document Number
-      !CheckPreferenceValue(EPreferences.HIDE_ITEM_CODE_FROM_DOCUMENT_CART)
-        ? "10%"
-        : null, // Item Code
-      "12%", // Item Name
-      source?.showDetails === ShowDocumentDetailsEnum.All
-        ? "25%"
-        : source?.showDetails === ShowDocumentDetailsEnum.ShowJobNameOnly
+        "5%", // "#"
+        isDeliveryNote || isInvoice ? "10%" : null, // Document Number
+        !CheckPreferenceValue(EPreferences.HIDE_ITEM_CODE_FROM_DOCUMENT_CART)
+          ? "10%"
+          : null, // Item Code
+        "12%", // Item Name
+        source?.showDetails === ShowDocumentDetailsEnum.All
+          ? "25%"
+          : source?.showDetails === ShowDocumentDetailsEnum.ShowJobNameOnly
           ? "10%"
           : null, // Details column (optional)
-      "10%", // Amount
-      showPrices ? "10%" : null, // Unit Price
-      showPrices ? "10%" : null, // Discount
-      showPrices ? "10%" : null, // Final Price
-      "8%", // More
-    ].filter(Boolean);
+        "10%", // Amount
+        showPrices ? "10%" : null, // Unit Price
+        showPrices ? "10%" : null, // Discount
+        showPrices ? "10%" : null, // Final Price
+        "8%", // More
+      ].filter(Boolean);
 
   // const columnWidths = ["5%", "10%", "12%", "25%", "10%", "10%", "10%", "10%"];
   const headerHeight = "44px";
@@ -612,13 +612,25 @@ const useQuoteNew = ({
       updatedQuoteItemValue.creationDate = creationDate;
       setQuoteItemValue(updatedQuoteItemValue);
     } else {
+      // Store the old date value before making the API call
+      const oldDueDate = quoteItemValue?.dueDate;
+
       const callBack = (res) => {
         if (res?.success) {
           alertSuccessAdded();
           getQuote();
         } else {
-          alertFaultAdded();
-          setSelectDate(quoteItemValue?.dueDate);
+          if (
+            res?.errors?.message === "delivrey_date_less_than_est" ||
+            res?.statusCode === 116
+          ) {
+            const errorMessage = t("alerts.deliveryDateLessThanEstimated");
+            alertFault(errorMessage);
+          } else {
+            alertFaultUpdate();
+          }
+          // Reset to the old date value that was stored before the API call
+          setSelectDate(oldDueDate);
           // setCreationDate(quoteItemValue?.creationDate)
           // setTaxDate(quoteItemValue?.taxDate)
         }
@@ -1418,23 +1430,22 @@ const useQuoteNew = ({
   };
 
   // State for add item restriction dialog
-  const [showAddItemRestrictionDialog, setShowAddItemRestrictionDialog] = useState(false);
+  const [showAddItemRestrictionDialog, setShowAddItemRestrictionDialog] =
+    useState(false);
 
   const onOpenNewItem = () => {
     // Check if it's a material purchase order and supplier is required
-    if (
-      isPurchaseOrder &&
-      isNewCreation &&
-      !quoteItemValue?.client?.id
-    ) {
+    if (isPurchaseOrder && isNewCreation && !quoteItemValue?.client?.id) {
       alertFault(t("home.admin.pleaseSelectSupplier"));
       return;
     }
 
     // Check if purchase order status is Closed or Received
     if (isPurchaseOrder && !isNewCreation) {
-      const isClosed = quoteItemValue?.statusTitleText === StatusTitleText.PurchaseOrderClosed;
-      const isReceived = quoteItemValue?.documentStatus === PurchaseOrderStatuses.Received;
+      const isClosed =
+        quoteItemValue?.statusTitleText === StatusTitleText.PurchaseOrderClosed;
+      const isReceived =
+        quoteItemValue?.documentStatus === PurchaseOrderStatuses.Received;
 
       if (isClosed || isReceived) {
         setShowAddItemRestrictionDialog(true);
@@ -1512,7 +1523,7 @@ const useQuoteNew = ({
         discount: quoteItem?.discount,
         isPrintHouseMaterialItem:
           quoteItem?.printHouseMaterialId &&
-            (isPrintHouseMaterialItem || selectedFirstMaterial)
+          (isPrintHouseMaterialItem || selectedFirstMaterial)
             ? true
             : false,
         finalPrice: quoteItemEdit?.finalPrice,
@@ -1798,7 +1809,7 @@ const useQuoteNew = ({
           alertSuccessDelete();
           onCloseDeleteItemModal();
           quoteItemValue?.documentItems?.length === 1 ||
-            res?.data?.succ === false
+          res?.data?.succ === false
             ? navigate("/home")
             : getQuote();
         } else {
@@ -2208,7 +2219,7 @@ const useQuoteNew = ({
   const receiptSendModal = useModal();
   const [modalCallback, setModalCallback] = useState<
     (includeInvoices: boolean) => void
-  >(() => () => { });
+  >(() => () => {});
 
   const openReceiptModal = (callback: (includeInvoices: boolean) => void) => {
     receiptSendModal.open();
@@ -2844,8 +2855,11 @@ const useQuoteNew = ({
   );
 
   // State for intake validation dialog
-  const [showIntakeValidationDialog, setShowIntakeValidationDialog] = useState(false);
-  const [pendingStatusChange, setPendingStatusChange] = useState<number | null>(null);
+  const [showIntakeValidationDialog, setShowIntakeValidationDialog] =
+    useState(false);
+  const [pendingStatusChange, setPendingStatusChange] = useState<number | null>(
+    null
+  );
 
   const updatePurchaseOrderStatus = useCallback(
     async (status: number, shouldUndoIntake: boolean | null = null) => {
@@ -2854,11 +2868,16 @@ const useQuoteNew = ({
       }
 
       // Get current status - use status property (as per API response structure)
-      const currentStatus = quoteItemValue?.status ?? quoteItemValue?.documentStatus;
+      const currentStatus =
+        quoteItemValue?.status ?? quoteItemValue?.documentStatus;
 
       // Check if changing FROM Received status to another status
       // Only show dialog if shouldUndoIntake is null (not explicitly set from dialog handlers)
-      if (shouldUndoIntake === null && currentStatus === PurchaseOrderStatuses.Received && status !== PurchaseOrderStatuses.Received) {
+      if (
+        shouldUndoIntake === null &&
+        currentStatus === PurchaseOrderStatuses.Received &&
+        status !== PurchaseOrderStatuses.Received
+      ) {
         // Check if document has any items with isIntake = true
         const hasIntakedItems = quoteItemValue?.documentItems?.some(
           (item: any) => item.isIntake === true
@@ -2896,7 +2915,7 @@ const useQuoteNew = ({
       try {
         // If shouldUndo is true, call undo intake API (which also updates status)
         if (shouldUndo) {
-          const undoResponse = await undoDocumentIntakeApi(callApi, () => { }, {
+          const undoResponse = await undoDocumentIntakeApi(callApi, () => {}, {
             documentType: docType,
             purchaseOrderId: quoteItemValue.id,
             status: status,
@@ -2910,7 +2929,7 @@ const useQuoteNew = ({
           }
         } else {
           // If not undoing intake, just update status normally
-          const response = await updateDocumentStatusApi(callApi, () => { }, {
+          const response = await updateDocumentStatusApi(callApi, () => {}, {
             documentType: docType,
             documentId: quoteItemValue.id,
             status,
@@ -2973,56 +2992,79 @@ const useQuoteNew = ({
 
   // State for undo intake dialog when changing from Received status
   const [showUndoIntakeDialog, setShowUndoIntakeDialog] = useState(false);
-  const [pendingStatusChangeWithUndo, setPendingStatusChangeWithUndo] = useState<{ status: number; shouldUndoIntake: boolean } | null>(null);
+  const [pendingStatusChangeWithUndo, setPendingStatusChangeWithUndo] =
+    useState<{ status: number; shouldUndoIntake: boolean } | null>(null);
   console.log("pendingStatusChangeWithUndo", pendingStatusChangeWithUndo);
   // Handle undo document intake
-  const handleUndoDocumentIntake = useCallback(async (document?: any) => {
-    if (!isPurchaseOrder || !quoteItemValue?.id) {
-      return;
-    }
-
-    setIsUpdatingPurchaseStatus(true);
-    try {
-      const response = await undoDocumentIntakeApi(callApi, () => { }, {
-        documentType: docType,
-        purchaseOrderId: quoteItemValue.id,
-        status: quoteItemValue.documentStatus || 0,
-        shouldUndoIntake: true,
-      });
-      if (response?.success) {
-        alertSuccessUpdate();
-        await getQuote();
-      } else {
-        alertFaultUpdate();
+  const handleUndoDocumentIntake = useCallback(
+    async (document?: any) => {
+      if (!isPurchaseOrder || !quoteItemValue?.id) {
+        return;
       }
-    } catch (error) {
-      alertFaultUpdate();
-    } finally {
-      setIsUpdatingPurchaseStatus(false);
-    }
-  }, [isPurchaseOrder, quoteItemValue?.id, quoteItemValue?.documentStatus, callApi, docType, getQuote, alertSuccessUpdate, alertFaultUpdate]);
+
+      setIsUpdatingPurchaseStatus(true);
+      try {
+        const response = await undoDocumentIntakeApi(callApi, () => {}, {
+          documentType: docType,
+          purchaseOrderId: quoteItemValue.id,
+          status: quoteItemValue.documentStatus || 0,
+          shouldUndoIntake: true,
+        });
+        if (response?.success) {
+          alertSuccessUpdate();
+          await getQuote();
+        } else {
+          alertFaultUpdate();
+        }
+      } catch (error) {
+        alertFaultUpdate();
+      } finally {
+        setIsUpdatingPurchaseStatus(false);
+      }
+    },
+    [
+      isPurchaseOrder,
+      quoteItemValue?.id,
+      quoteItemValue?.documentStatus,
+      callApi,
+      docType,
+      getQuote,
+      alertSuccessUpdate,
+      alertFaultUpdate,
+    ]
+  );
 
   // Handle undo item intake
-  const handleUndoItemIntake = useCallback(async (item: any) => {
-    if (!isPurchaseOrder || !item?.id) {
-      return;
-    }
+  const handleUndoItemIntake = useCallback(
+    async (item: any) => {
+      if (!isPurchaseOrder || !item?.id) {
+        return;
+      }
 
-    try {
-      const response = await undoDocumentItemIntakeApi(callApi, () => { }, {
-        documentType: docType,
-        itemId: item.id,
-      });
-      if (response?.success) {
-        alertSuccessUpdate();
-        await getQuote();
-      } else {
+      try {
+        const response = await undoDocumentItemIntakeApi(callApi, () => {}, {
+          documentType: docType,
+          itemId: item.id,
+        });
+        if (response?.success) {
+          alertSuccessUpdate();
+          await getQuote();
+        } else {
+          alertFaultUpdate();
+        }
+      } catch (error) {
         alertFaultUpdate();
       }
-    } catch (error) {
-      alertFaultUpdate();
-    }
-  }, [isPurchaseOrder, callApi, docType, getQuote, alertSuccessUpdate, alertFaultUpdate]);
+    },
+    [
+      isPurchaseOrder,
+      callApi,
+      docType,
+      getQuote,
+      alertSuccessUpdate,
+      alertFaultUpdate,
+    ]
+  );
 
   const handleSendUsingWhatsAppWeb = (sendWithInvoices = false) => {
     let checkPhones = checkArrayNotEmptyOrPhoneNotEmpty(
