@@ -35,6 +35,7 @@ const useGantt = (reschedulingHook?: any) => {
   const prevFromEstimatedProductionTimeRef = useRef(null);
   const prevToEstimatedProductionTimeRef = useRef(null);
   const prevAgentIdsRef = useRef(null);
+  const prevCurrentMonthRef = useRef<Moment | null>(null);
 
   // Modal state
   const [showRescheduleModal, setShowRescheduleModal] = useState(false);
@@ -82,15 +83,16 @@ const useGantt = (reschedulingHook?: any) => {
       isFetching.current = true;
 
       // Calculate start and end dates for the selected month in UTC
-      const startOfMonth = moment()
-        .year(currentMonth.year()) // Ensure the year aligns with the selected month
+      // Use currentMonth.clone() to ensure we use the correct year from currentMonth
+      const startOfMonth = currentMonth
+        .clone()
         .month(month) // Set the correct month
         .startOf("month") // Start of the month
         .utc() // Convert to UTC
         .toISOString();
 
-      const endOfMonth = moment()
-        .year(currentMonth.year()) // Ensure the year aligns with the selected month
+      const endOfMonth = currentMonth
+        .clone()
         .month(month) // Set the correct month
         .endOf("month") // End of the month
         .utc() // Convert to UTC
@@ -567,6 +569,7 @@ const useGantt = (reschedulingHook?: any) => {
       prevAgentIdsRef.current = filtersState.agentIds
         ? JSON.stringify(filtersState.agentIds)
         : null;
+      prevCurrentMonthRef.current = currentMonth.clone();
     }
   }, []);
 
@@ -643,6 +646,27 @@ const useGantt = (reschedulingHook?: any) => {
     filtersState.agentIds,
     getGanttData,
   ]);
+
+  // Watch for currentMonth changes and trigger API call when month/year changes
+  useEffect(() => {
+    if (!isInitialLoad.current && !isFetching.current) {
+      const prevMonth = prevCurrentMonthRef.current;
+
+      // Check if month or year has changed (explicitly check both to handle year boundaries)
+      const monthChanged =
+        prevMonth && !currentMonth.isSame(prevMonth, "month");
+      const yearChanged = prevMonth && !currentMonth.isSame(prevMonth, "year");
+
+      if (monthChanged || yearChanged) {
+        prevCurrentMonthRef.current = currentMonth.clone();
+        // Use currentMonth.month() to get the month index (0-11) for the current month
+        getData(currentMonth.month());
+      } else if (!prevMonth) {
+        // Initialize the ref if it's null
+        prevCurrentMonthRef.current = currentMonth.clone();
+      }
+    }
+  }, [currentMonth, getData]);
 
   // Socket.IO listener for updateTimeLineBoard event
   useEffect(() => {
@@ -767,8 +791,12 @@ const useGantt = (reschedulingHook?: any) => {
           break;
       }
 
-      // If month has changed, update currentMonth
-      if (!newDate.isSame(currentMonth, "month")) {
+      // If month or year has changed, update currentMonth
+      // This ensures API is called when navigating between years (e.g., Dec 2025 -> Jan 2026)
+      if (
+        !newDate.isSame(currentMonth, "month") ||
+        !newDate.isSame(currentMonth, "year")
+      ) {
         setCurrentMonth(newDate.clone().startOf("month"));
       }
       return newDate;
