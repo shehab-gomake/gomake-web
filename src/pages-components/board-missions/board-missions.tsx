@@ -10,13 +10,19 @@ import {
 import { useEffect, useState } from "react";
 import { Box, CircularProgress, Stack } from "@mui/material";
 import { GoMakePagination } from "@/components/pagination/gomake-pagination";
+import { JobsViewToggle } from "./components/jobs-view-toggle";
+import { useJobsView } from "./hooks/use-jobs-view";
+import { JobsCardsView } from "./components/jobs-cards-view";
 import { DocumentTypeEnums, DuplicateType, ModalType } from "@/enums";
 import QrListenerWidget from "@/widgets/qr-listener/qr-listener-widget";
 import { useUserPermission } from "@/hooks/use-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { newOrderIdToPrintJobsState } from "@/store/new-order-id-to-print-jobs-state";
-import { printHouseProfile, printHouseHasFrontDeskFeature } from "@/store/print-house-profile";
+import {
+  printHouseProfile,
+  printHouseHasFrontDeskFeature,
+} from "@/store/print-house-profile";
 import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 import { CustomerCardWidget } from "@/widgets/customer-card-modal";
 import { createGlobalStyle } from "styled-components";
@@ -56,6 +62,11 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
   const { t } = useTranslation();
   const { CheckPermission } = useUserPermission();
   const hasFrontDeskFeature = useRecoilValue(printHouseHasFrontDeskFeature);
+  const { currentView, setView } = useJobsView();
+
+  // For purchase jobs, always use table view
+  const effectiveView = isPurchaseJobs ? "table" : currentView;
+
   const {
     storageList,
     inputValue,
@@ -87,6 +98,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
     checkWhatRenderArray,
     handlePageChange,
     pagesCount,
+    setPagesCount,
     pageNumber,
     setPageNumber,
     onSelectDeliveryTimeDates,
@@ -208,8 +220,20 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
     openStartProductionModal,
     onCloseStartProductionModal,
     handleStartProductionConfirm,
-  } = useBoardMissions({ isPurchaseJobs });
-  const { callApi } = useGomakeAxios();
+    formatISODateTime,
+    rawMissionsData,
+    // Quantity management
+    quantities,
+    handleQuantityIncrease,
+    handleQuantityDecrease,
+    // Repeat order
+    handleRepeatOrder,
+    openChangeStatusModalForRepeatOrder,
+    onClickCloseChangeStatusModalForRepeatOrder,
+    updateQuoteStatusForRepeatOrder,
+  } = useBoardMissions({
+    isPurchaseJobs,
+  });
   const [companyProfile] = useRecoilState(printHouseProfile);
   const [connectionId] = useRecoilState(fileUploaderConnectionIdState);
   const [newOrderId, setNewOrderId] = useRecoilState(
@@ -219,6 +243,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
   const [printNodeOrderId, setPrintNodeOrderId] = useState(null);
   const { CheckPreferenceValue } = usePrintHousePreferences();
   const { parametersStateValue } = useParameters();
+  const { callApi } = useGomakeAxios();
 
   useEffect(() => {
     if (router.isReady && companyProfile.filesApiAddress && newOrderId) {
@@ -245,7 +270,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
       }
 
       if (connectionId) {
-        const callBack = (res) => { };
+        const callBack = (res) => {};
         addOrderBoardMissionsToFileUploaderApi(callApi, callBack, {
           orderId: newOrderId,
           connectionId: connectionId,
@@ -262,7 +287,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
           !CheckPreferenceValue(EPreferences.USE_PRINTNODE_AFTER_UPLOAD_FILE)
         )
       ) {
-        printNodeModalShowLog(callApi, () => { }, {
+        printNodeModalShowLog(callApi, () => {}, {
           orderId: newOrderId,
         }).then();
         setOpenPrintNodeModal(true);
@@ -290,7 +315,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
   useEffect(() => {
     const loadDocumentColumnSettings = async () => {
       try {
-        const res = await getJobsTableSettingsApi(callApi, () => { }, {
+        const res = await getJobsTableSettingsApi(callApi, () => {}, {
           isPurchaseJobs,
         });
         const saved: ColumnSetting[] = res?.data;
@@ -337,78 +362,226 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
         height="100%"
       >
         <QrCodeReader qrCodeListenerFrom={QR_CODE_LISTENER_FROM.JOBS} />
-        <div style={classes.mainContainer}>
-          <HeaderTitle
-            title={
-              !isPurchaseJobs
-                ? t("boardMissions.title")
-                : t("boardMissions.purchaseJobsTitle")
-            }
-            marginTop={1}
-            marginBottom={1}
-          />
+        {effectiveView === "cards" ? (
+          <Stack
+            direction="column"
+            display="flex"
+            height="100%"
+            sx={{
+              paddingLeft: "20px",
+              paddingRight: "20px",
+              overflow: "hidden",
+            }}
+          >
+            <Box
+              sx={{
+                flexShrink: 0,
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <HeaderTitle
+                title={
+                  !isPurchaseJobs
+                    ? t("boardMissions.title")
+                    : t("boardMissions.purchaseJobsTitle")
+                }
+                marginTop={1}
+                marginBottom={1}
+              />
+              {!isPurchaseJobs && (
+                <JobsViewToggle
+                  currentView={currentView}
+                  onViewChange={setView}
+                />
+              )}
+            </Box>
 
-          <JobsFiltersSection
-            // Customer/Supplier props
-            customer={customer}
-            handleCustomerChange={handleCustomerChange}
-            renderOptions={renderOptions}
-            checkWhatRenderArray={checkWhatRenderArray}
-            isFetching={isFetching}
-            isPurchaseJobs={isPurchaseJobs}
-            // Agent props
-            agent={agent}
-            agentsCategories={agentsCategories}
-            handleAgentChange={handleAgentChange}
-            // Production status props
-            status={status}
-            handleStatusChange={handleStatusChange}
-            productionStatuses={productionStatuses}
-            // Status props
-            orderStatus={orderStatus}
-            handleOrderStatusChange={handleOrderStatusChange}
-            orderStatuses={orderStatuses}
-            // Proof types props
-            proofTypes={proofTypes}
-            exampleTypeValues={exampleTypeValues}
-            handleProofTypesChange={handleProofTypesChange}
-            // Is printed props
-            isPrintedState={isPrintedState}
-            setIsPrintedState={setIsPrintedState}
-            isPrintHouseUsePrintNode={isPrintHouseUsePrintNode}
-            // Is Quality fix job props
-            isQualityFixJob={isQualityFixJob}
-            setIsQualityFixJob={setIsQualityFixJob}
-            // Products props
-            productsList={productsList}
-            productIds={productIds}
-            handleMultiSelectChange={handleMultiSelectChange}
-            // Date range props
-            fromDate={fromDate}
-            toDate={toDate}
-            onSelectDeliveryTimeDates={onSelectDeliveryTimeDates}
-            fromDueDate={fromDueDate}
-            toDueDate={toDueDate}
-            onSelectDueTimeDates={onSelectDueTimeDates}
-            fromReadyDate={fromReadyDate}
-            toReadyDate={toReadyDate}
-            onSelectReadyTimeDates={onSelectReadyTimeDates}
-            // Search props
-            patternSearch={patternSearch}
-            onChangeMissionsSearch={onChangeMissionsSearch}
-            // Action props
-            onClickClearFilter={handleClickClear}
-            onClickSearchFilter={handleClickSearch}
-            // Menu component props
-            columnsReady={columnsReady}
-            tableKey={tableKey}
-            ExportJobsTableToExcel={ExportJobsTableToExcel}
-            onGenerateReportClick={onOpenAddRuleModal}
-            // Styles
-            classes={classes}
-          />
-          {/* jobs table */}
-          <>
+            <Box sx={{ flexShrink: 0, marginBottom: "10px" }}>
+              <JobsFiltersSection
+                // Customer/Supplier props
+                customer={customer}
+                handleCustomerChange={handleCustomerChange}
+                renderOptions={renderOptions}
+                checkWhatRenderArray={checkWhatRenderArray}
+                isFetching={isFetching}
+                isPurchaseJobs={isPurchaseJobs}
+                // Agent props
+                agent={agent}
+                agentsCategories={agentsCategories}
+                handleAgentChange={handleAgentChange}
+                // Production status props
+                status={status}
+                handleStatusChange={handleStatusChange}
+                productionStatuses={productionStatuses}
+                // Status props
+                orderStatus={orderStatus}
+                handleOrderStatusChange={handleOrderStatusChange}
+                orderStatuses={orderStatuses}
+                // Proof types props
+                proofTypes={proofTypes}
+                exampleTypeValues={exampleTypeValues}
+                handleProofTypesChange={handleProofTypesChange}
+                // Is printed props
+                isPrintedState={isPrintedState}
+                setIsPrintedState={setIsPrintedState}
+                isPrintHouseUsePrintNode={isPrintHouseUsePrintNode}
+                // Is Quality fix job props
+                isQualityFixJob={isQualityFixJob}
+                setIsQualityFixJob={setIsQualityFixJob}
+                // Products props
+                productsList={productsList}
+                productIds={productIds}
+                handleMultiSelectChange={handleMultiSelectChange}
+                // Date range props
+                fromDate={fromDate}
+                toDate={toDate}
+                onSelectDeliveryTimeDates={onSelectDeliveryTimeDates}
+                fromDueDate={fromDueDate}
+                toDueDate={toDueDate}
+                onSelectDueTimeDates={onSelectDueTimeDates}
+                fromReadyDate={fromReadyDate}
+                toReadyDate={toReadyDate}
+                onSelectReadyTimeDates={onSelectReadyTimeDates}
+                // Search props
+                patternSearch={patternSearch}
+                onChangeMissionsSearch={onChangeMissionsSearch}
+                // Action props
+                onClickClearFilter={handleClickClear}
+                onClickSearchFilter={handleClickSearch}
+                // Menu component props
+                columnsReady={columnsReady}
+                tableKey={tableKey}
+                ExportJobsTableToExcel={ExportJobsTableToExcel}
+                onGenerateReportClick={onOpenAddRuleModal}
+                // Styles
+                classes={classes}
+              />
+            </Box>
+
+            <Box
+              sx={{
+                flex: 1,
+                overflowY: "auto",
+                overflowX: "hidden",
+                minHeight: 0,
+                paddingTop: "4px",
+                paddingBottom: "4px",
+              }}
+            >
+              <JobsCardsView
+                jobs={rawMissionsData}
+                isLoading={isJobsTableLoading}
+                isError={isJobsTableError}
+                formatISODateTime={formatISODateTime}
+                quantities={quantities}
+                onQuantityIncrease={handleQuantityIncrease}
+                onQuantityDecrease={handleQuantityDecrease}
+                onRepeatOrder={handleRepeatOrder}
+                showQuantityControls={true}
+                showRepeatButton={true}
+              />
+            </Box>
+
+            <Box sx={{ flexShrink: 0 }}>
+              <GoMakePagination
+                onChangePageNumber={handlePageChange}
+                onChangePageSize={handlePageSizeChange}
+                page={pageNumber}
+                setPage={setPageNumber}
+                pagesCount={pagesCount}
+                pageSize={pageSize}
+                router={router}
+                isFromDocumentsOrJobs={true}
+                initialPageSize={initialPageSize}
+              />
+            </Box>
+          </Stack>
+        ) : (
+          <div style={classes.mainContainer}>
+            <Box
+              display="flex"
+              justifyContent="space-between"
+              alignItems="center"
+            >
+              <HeaderTitle
+                title={
+                  !isPurchaseJobs
+                    ? t("boardMissions.title")
+                    : t("boardMissions.purchaseJobsTitle")
+                }
+                marginTop={1}
+                marginBottom={1}
+              />
+              {!isPurchaseJobs && (
+                <JobsViewToggle
+                  currentView={currentView}
+                  onViewChange={setView}
+                />
+              )}
+            </Box>
+
+            <JobsFiltersSection
+              // Customer/Supplier props
+              customer={customer}
+              handleCustomerChange={handleCustomerChange}
+              renderOptions={renderOptions}
+              checkWhatRenderArray={checkWhatRenderArray}
+              isFetching={isFetching}
+              isPurchaseJobs={isPurchaseJobs}
+              // Agent props
+              agent={agent}
+              agentsCategories={agentsCategories}
+              handleAgentChange={handleAgentChange}
+              // Production status props
+              status={status}
+              handleStatusChange={handleStatusChange}
+              productionStatuses={productionStatuses}
+              // Status props
+              orderStatus={orderStatus}
+              handleOrderStatusChange={handleOrderStatusChange}
+              orderStatuses={orderStatuses}
+              // Proof types props
+              proofTypes={proofTypes}
+              exampleTypeValues={exampleTypeValues}
+              handleProofTypesChange={handleProofTypesChange}
+              // Is printed props
+              isPrintedState={isPrintedState}
+              setIsPrintedState={setIsPrintedState}
+              isPrintHouseUsePrintNode={isPrintHouseUsePrintNode}
+              // Is Quality fix job props
+              isQualityFixJob={isQualityFixJob}
+              setIsQualityFixJob={setIsQualityFixJob}
+              // Products props
+              productsList={productsList}
+              productIds={productIds}
+              handleMultiSelectChange={handleMultiSelectChange}
+              // Date range props
+              fromDate={fromDate}
+              toDate={toDate}
+              onSelectDeliveryTimeDates={onSelectDeliveryTimeDates}
+              fromDueDate={fromDueDate}
+              toDueDate={toDueDate}
+              onSelectDueTimeDates={onSelectDueTimeDates}
+              fromReadyDate={fromReadyDate}
+              toReadyDate={toReadyDate}
+              onSelectReadyTimeDates={onSelectReadyTimeDates}
+              // Search props
+              patternSearch={patternSearch}
+              onChangeMissionsSearch={onChangeMissionsSearch}
+              // Action props
+              onClickClearFilter={handleClickClear}
+              onClickSearchFilter={handleClickSearch}
+              // Menu component props
+              columnsReady={columnsReady}
+              tableKey={tableKey}
+              ExportJobsTableToExcel={ExportJobsTableToExcel}
+              onGenerateReportClick={onOpenAddRuleModal}
+              // Styles
+              classes={classes}
+            />
+            {/* jobs table */}
             {columnsReady ? (
               <DocumentPrimaryTable
                 stickyFirstCol={false}
@@ -438,19 +611,21 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
                 <CircularProgress />
               </Box>
             )}
-          </>
-        </div>
-        <GoMakePagination
-          onChangePageNumber={handlePageChange}
-          onChangePageSize={handlePageSizeChange}
-          page={pageNumber}
-          setPage={setPageNumber}
-          pagesCount={pagesCount}
-          pageSize={pageSize}
-          router={router}
-          isFromDocumentsOrJobs={true}
-          initialPageSize={initialPageSize}
-        />
+          </div>
+        )}
+        {effectiveView !== "cards" && (
+          <GoMakePagination
+            onChangePageNumber={handlePageChange}
+            onChangePageSize={handlePageSizeChange}
+            page={pageNumber}
+            setPage={setPageNumber}
+            pagesCount={pagesCount}
+            pageSize={pageSize}
+            router={router}
+            isFromDocumentsOrJobs={true}
+            initialPageSize={initialPageSize}
+          />
+        )}
       </Stack>
       {/* Duplicate Modal */}
       <ThreeOptionsModal
@@ -500,12 +675,12 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
                 ) || inputValue === ""
                   ? storageList
                   : [
-                    {
-                      storage: `Add "${inputValue}" as a new storage`,
-                      id: "new",
-                    },
-                    ...storageList,
-                  ]
+                      {
+                        storage: `Add "${inputValue}" as a new storage`,
+                        id: "new",
+                      },
+                      ...storageList,
+                    ]
               }
               placeholder={t("boardMissions.selectStorage")}
               key={defaultValue}
@@ -547,12 +722,12 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
                 ) || inputValue === ""
                   ? storageList
                   : [
-                    {
-                      storage: `Add "${inputValue}" as a new storage`,
-                      id: "new",
-                    },
-                    ...storageList,
-                  ]
+                      {
+                        storage: `Add "${inputValue}" as a new storage`,
+                        id: "new",
+                      },
+                      ...storageList,
+                    ]
               }
               placeholder={t("boardMissions.selectStorage")}
               key={defaultValue}
@@ -594,12 +769,12 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
               ) || inputValue === ""
                 ? storageList
                 : [
-                  {
-                    storage: `Add "${inputValue}" as a new storage`,
-                    id: "new",
-                  },
-                  ...storageList,
-                ]
+                    {
+                      storage: `Add "${inputValue}" as a new storage`,
+                      id: "new",
+                    },
+                    ...storageList,
+                  ]
             }
             placeholder={t("boardMissions.selectStorage")}
             key={defaultValue}
@@ -658,7 +833,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
         subTitle={" "}
         yesBtn={t("sales.quote.print")}
         openModal={openPrintNodeModal}
-        onClose={() => { }}
+        onClose={() => {}}
         onClickDelete={() => {
           setOpenPrintNodeModal(false);
           printOrderJobsUsingPrintNode(printNodeOrderId).then();
@@ -716,12 +891,12 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
               ) || inputValue === ""
                 ? storageList
                 : [
-                  {
-                    storage: `Add "${inputValue}" as a new storage`,
-                    id: "new",
-                  },
-                  ...storageList,
-                ]
+                    {
+                      storage: `Add "${inputValue}" as a new storage`,
+                      id: "new",
+                    },
+                    ...storageList,
+                  ]
             }
             placeholder={t("boardMissions.selectStorage")}
             key={defaultValue}
@@ -753,11 +928,11 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
         subTitle={
           pendingPrintParams?.productType
             ? t("boardMissions.askPrintType", {
-              productType:
-                pendingPrintParams?.productTypeName ||
-                pendingPrintParams?.productName ||
-                pendingPrintParams?.productType,
-            })
+                productType:
+                  pendingPrintParams?.productTypeName ||
+                  pendingPrintParams?.productName ||
+                  pendingPrintParams?.productType,
+              })
             : ""
         }
         yesBtn={"boardMissions.printAllJobs"}
@@ -777,10 +952,10 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
         subTitle={
           pendingMarkReadyParams?.productType
             ? t("boardMissions.askMarkReadyType", {
-              productType:
-                pendingMarkReadyParams.productTypeName ||
-                pendingMarkReadyParams.productType,
-            })
+                productType:
+                  pendingMarkReadyParams.productTypeName ||
+                  pendingMarkReadyParams.productType,
+              })
             : ""
         }
         yesBtn={t("boardMissions.markAllJobsReady")}
@@ -913,8 +1088,16 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
           open={isEmailComposerOpen}
           onClose={closeEmailComposer}
           emailData={emailData}
-          documentId={pendingOrderIdForComposer || selectedMission?.orderId || selectedMission?.id}
-          documentType={router.query.openComposer === "true" ? DOCUMENT_TYPE.order : DOCUMENT_TYPE.boardMission}
+          documentId={
+            pendingOrderIdForComposer ||
+            selectedMission?.orderId ||
+            selectedMission?.id
+          }
+          documentType={
+            router.query.openComposer === "true"
+              ? DOCUMENT_TYPE.order
+              : DOCUMENT_TYPE.boardMission
+          }
         />
       )}
       <QualityIssueModal
@@ -939,6 +1122,15 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
         title={t("boardMissions.startProduction")}
         subTitle={t("boardMissions.startProductionConfirmMessage")}
         yesBtn={t("boardMissions.startProduction")}
+      />
+      <GoMakeDeleteModal
+        modalType={ModalType.WARNING}
+        title={t("sales.quote.titleModal")}
+        subTitle={t("sales.quote.subTitleModal")}
+        yesBtn={t("sales.quote.changeStatus")}
+        openModal={openChangeStatusModalForRepeatOrder}
+        onClose={onClickCloseChangeStatusModalForRepeatOrder}
+        onClickDelete={updateQuoteStatusForRepeatOrder}
       />
     </>
   );
