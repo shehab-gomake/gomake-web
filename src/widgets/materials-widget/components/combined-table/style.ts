@@ -69,22 +69,11 @@ const useStyle = () => {
         backgroundColor: '#EBECFF',
       },
 
-      // Header cell with fixed column background
-      headerCellFixed: {
-        textAlign: 'center',
-        fontWeight: 'bold',
-        whiteSpace: 'nowrap',
-        padding: '4px',
-        backgroundColor: '#D5D7FF',
-      },
 
       // Body row styles
       bodyRow: {
         '&:hover': {
           backgroundColor: '#f8f9fa',
-          '& .MuiTableCell-root.fixed-column': {
-            backgroundColor: '#f5f5f5'
-          }
         }
       },
 
@@ -97,20 +86,6 @@ const useStyle = () => {
         position: 'relative',
       },
 
-      // First column sticky styles
-      firstColumnSticky: {
-        position: 'sticky',
-        left: 0,
-        zIndex: 5,
-        backgroundColor: '#fff',
-      },
-
-      // Last fixed columns sticky styles
-      lastFixedColumnSticky: {
-        position: 'sticky',
-        zIndex: 5,
-        backgroundColor: '#fff',
-      },
 
       // Child table row container
       childTableRowContainer: {
@@ -132,7 +107,7 @@ const useStyle = () => {
       scrollIndicatorButton: {
         position: 'absolute',
         top: '50%',
-        [isRTL ? 'left' : 'right']: `${4 * (133)}px`, // Position at the start of fixed columns (4 columns)
+        [isRTL ? 'left' : 'right']: '16px',
         transform: 'translateY(-50%)',
         backgroundColor: primaryColor(200),
         color: '#fff',
@@ -166,52 +141,20 @@ const useStyle = () => {
   }, [theme, primaryColor, secondColor, isRTL, dir]);
 
   // Utility functions for dynamic styles
-  const getHeaderCellStyle = (isFirstColumn: boolean, isLastFixedColumn: boolean, index: number, headersLength: number, isLastColumn: boolean, isLastSecondColumn: boolean, isLastThirdColumn: boolean, isLastFourthColumn: boolean) => ({
+  const getHeaderCellStyle = () => ({
     textAlign: 'center',
     fontWeight: 'bold',
     whiteSpace: 'nowrap',
     padding: '4px',
-    backgroundColor: isLastFixedColumn ? '#D5D7FF' : '#EBECFF',
-    minWidth: isFirstColumn ? '50px' : isLastFixedColumn ? isLastColumn ? "auto" : '165px' : 'auto',
-    width: isFirstColumn ? '50px' : isLastFixedColumn ? isLastColumn ? "auto" : '165px' : 'auto',
-    maxWidth: isFirstColumn ? '50px' : isLastFixedColumn ? isLastColumn ? "auto" : '165px' : 'auto',
-    ...(isFirstColumn && {
-      position: "sticky",
-      [isRTL ? 'right' : 'left']: 0,
-      zIndex: 110,
-    }),
-    ...(isLastFixedColumn && {
-      position: 'sticky',
-      [isRTL ? 'left' : 'right']: isLastColumn ? 0 : isLastSecondColumn ? "57px" : isLastThirdColumn ? "222px" : isLastFourthColumn ? "387px" : "0px",
-      zIndex: 105,
-      boxShadow: index === headersLength && (isRTL ? '4px 0 8px rgba(0,0,0,0.15), 2px 0 4px rgba(0,0,0,0.1)' : '-4px 0 8px rgba(0,0,0,0.15), -2px 0 4px rgba(0,0,0,0.1)'),
-      [isRTL ? 'borderRight' : 'borderLeft']: index === headersLength - 4 ? '0.5px solid rgba(0,0,0,0.15)' : 'none'
-    })
+    backgroundColor: '#EBECFF',
   });
 
-  const getBodyCellStyle = (isFirstColumn: boolean, isLastFixedColumn: boolean, cellIndex: number, headersLength: number, isLastColumn: boolean, isLastSecondColumn: boolean, isLastThirdColumn: boolean, isLastFourthColumn: boolean) => ({
+  const getBodyCellStyle = () => ({
     textAlign: 'center',
     padding: '12px 8px',
     whiteSpace: 'nowrap',
     borderBottom: '1px solid #e0e0e0',
     position: 'relative',
-    minWidth: isFirstColumn ? '50px' : isLastFixedColumn ? isLastColumn ? "auto" : '165px' : 'auto',
-    width: isFirstColumn ? '50px' : isLastFixedColumn ? isLastColumn ? "auto" : '165px' : 'auto',
-    maxWidth: isFirstColumn ? '50px' : isLastFixedColumn ? isLastColumn ? "auto" : '165px' : 'auto',
-    ...(isFirstColumn && {
-      position: 'sticky',
-      [isRTL ? 'right' : 'left']: 0,
-      zIndex: 5,
-      backgroundColor: '#fff',
-    }),
-    ...(isLastFixedColumn && {
-      position: 'sticky',
-      [isRTL ? 'left' : 'right']: isLastColumn ? "0px" : isLastSecondColumn ? "57px" : isLastThirdColumn ? "222px" : isLastFourthColumn ? "387px" : "0px",
-      zIndex: 5,
-      backgroundColor: '#fff',
-      boxShadow: cellIndex === headersLength && (isRTL ? '4px 0 8px rgba(0,0,0,0.15), 2px 0 4px rgba(0,0,0,0.1)' : '-4px 0 8px rgba(0,0,0,0.15), -2px 0 4px rgba(0,0,0,0.1)'),
-      [isRTL ? 'borderRight' : 'borderLeft']: cellIndex === headersLength - 4 ? '0.5px solid rgba(0,0,0,0.15)' : 'none'
-    })
   });
   
   return {
