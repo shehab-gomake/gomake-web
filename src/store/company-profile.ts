@@ -8,6 +8,7 @@ export const companyProfileState = atom<ICompanyProfile>({
 export interface ICompanyProfile {
   vat: 17;
   address?: null | string;
+  domain?: string;
   city?: string;
   street?: null | string;
   streetNumber?: null | string;
