@@ -64,6 +64,7 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
   const [selectedContactById, setSelectedContactById] = useState<any>();
   const [whatsappMessage, setWhatsappMessage] = useState<string>("");
   const [availableDebits, setAvailableDebits] = useState<any[]>([]);
+  const [isLoadingDebits, setIsLoadingDebits] = useState<boolean>(false);
 
   const transformedHeaders = tableHeader?.map((header) => {
     const containsNumber = /\d/.test(header.key);
@@ -331,55 +332,102 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
     isSendToAllClientsModal.open();
   };
 
-  const onClickBtn7 = () => {
+  const onClickBtn7 = async () => {
     if (!customer?.id) {
       alertFault("reports.pleaseSelectCustomer");
       return;
     }
-    if (!detailedReport) {
-      alertFault("reports.pleaseEnableDetailedReport");
-      return;
-    }
-    if (!tableData || tableData.length === 0) {
-      alertFault("reports.noDataAvailable");
-      return;
-    }
+    // if (!detailedReport) {
+    //   alertFault("reports.pleaseEnableDetailedReport");
+    //   return;
+    // }
 
-    // Extract debits from table data
-    const debits: any[] = [];
-    tableData.forEach((data: any) => {
-      if (Array.isArray(data.data) && data.data.length > 0) {
-        data.data.forEach((nestedItem: any) => {
-          if (nestedItem.docNumber) {
-            // Extract values using header keys (supporting nested paths)
-            const getValue = (key: string) => {
-              return key.split(".").reduce((acc, part) => acc && acc[part], nestedItem);
-            };
+    // Open modal first
+    isSendPaymentDebitsModal.open();
+    setIsLoadingDebits(true);
+    setAvailableDebits([]);
 
-            const docNumber = getValue("docNumber");
-            const balanceDue = getValue("balanceDue") || getValue("total") || nestedItem.balanceDue || nestedItem.total || 0;
+    try {
+      // Fetch data with detailedReport always true
+      if (!areDatesValid(fromDate, toDate)) {
+        alertFault("alerts.pleaseEnsureDatesSelected");
+        setIsLoadingDebits(false);
+        isSendPaymentDebitsModal.close();
+        return;
+      }
 
-            if (docNumber && (balanceDue > 0 || balanceDue < 0)) {
-              debits.push({
-                docType: nestedItem.docType || getValue("docType"),
-                docNumber: docNumber,
-                docDate: getValue("docDate") || nestedItem.docDate,
-                dueDate: getValue("dueDate") || nestedItem.dueDate,
-                total: balanceDue,
-              });
-            }
+      const formattedStartDate = format(fromDate, "yyyy-MM-dd");
+      const formattedEndDate = format(toDate, "yyyy-MM-dd");
+
+      const res = await callApi(
+        EHttpMethod.POST,
+        `/v1/erp-service/reports/get-aging-report`,
+        {
+          startDate: formattedStartDate,
+          endDate: formattedEndDate,
+          clientId: customer?.id,
+          referDate: selectDate ? selectDate : new Date(),
+          agentId: agent?.id,
+          expendedReport: true, // Always true for detailed report
+          byCreationDate: agingReportByCreationDate,
+          orderBy,
+          isDescOrder,
+          cardType: isPurchaseReport
+            ? CLIENT_TYPE.SUPPLIER
+            : CLIENT_TYPE.CUSTOMER,
+        }
+      );
+
+      if (res?.success && res?.data?.data?.data?.data) {
+        const fetchedTableData = res?.data?.data?.data?.data;
+
+        // Extract debits from fetched data
+        const debits: any[] = [];
+        fetchedTableData.forEach((data: any) => {
+          if (Array.isArray(data.data) && data.data.length > 0) {
+            data.data.forEach((nestedItem: any) => {
+              if (nestedItem.docNumber) {
+                // Extract values using header keys (supporting nested paths)
+                const getValue = (key: string) => {
+                  return key.split(".").reduce((acc, part) => acc && acc[part], nestedItem);
+                };
+
+                const docNumber = getValue("docNumber");
+                const balanceDue = getValue("balanceDue") || getValue("total") || nestedItem.balanceDue || nestedItem.total || 0;
+
+                if (docNumber && (balanceDue > 0 || balanceDue < 0)) {
+                  debits.push({
+                    docType: nestedItem.docType || getValue("docType"),
+                    docNumber: docNumber,
+                    docDate: getValue("docDate") || nestedItem.docDate,
+                    dueDate: getValue("dueDate") || nestedItem.dueDate,
+                    total: balanceDue,
+                  });
+                }
+              }
+            });
           }
         });
+
+        if (debits.length === 0) {
+          alertFault("reports.noDebitsAvailable");
+          setIsLoadingDebits(false);
+          return;
+        }
+
+        setAvailableDebits(debits);
+      } else {
+        alertFaultGetData();
+        setIsLoadingDebits(false);
+        return;
       }
-    });
-
-    if (debits.length === 0) {
-      alertFault("reports.noDebitsAvailable");
+    } catch (error) {
+      alertFaultGetData();
+      setIsLoadingDebits(false);
       return;
+    } finally {
+      setIsLoadingDebits(false);
     }
-
-    setAvailableDebits(debits);
-    isSendPaymentDebitsModal.open();
   };
 
   const getAgingReportFilter = useCallback(
@@ -836,6 +884,7 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
     availableDebits,
     onClickBtn7,
     sendSelectedDebitsPayment,
+    isLoadingDebits,
   };
 };
 

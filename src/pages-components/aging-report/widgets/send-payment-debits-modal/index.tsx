@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect, useRef, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { Stack, Typography, Divider, Box } from "@mui/material";
+import { Stack, Typography, Divider, Box, CircularProgress } from "@mui/material";
 import { GoMakeDialog } from "@/components/dialog/go-make-dialog";
 import { GomakeTextInput } from "@/components/text-input/text-input";
 import { PrimaryTable } from "@/components/tables/primary-table";
@@ -59,7 +59,7 @@ const SendPaymentDebitsModal = ({
   clientContacts = [],
 }: SendPaymentDebitsModalProps) => {
   const { t } = useTranslation();
-  const { secondColor, neutralColor, primaryColor } = useGomakeTheme();
+  const { secondColor, primaryColor } = useGomakeTheme();
   const classes = useStyle();
   const direction: "rtl" | "ltr" = t("direction");
   const isRTL = direction === "rtl";
@@ -88,8 +88,8 @@ const SendPaymentDebitsModal = ({
 
   // Initialize and reset state based on modal open/close
   useEffect(() => {
-    if (openModal && debits.length > 0) {
-      // Initialize state when modal opens
+    if (openModal && !isLoading && debits.length > 0) {
+      // Initialize state when modal opens and data is loaded
       const allIds = new Set(debits.map((debit) => debit.docNumber));
       setSelectedDebitIds(allIds);
 
@@ -124,7 +124,7 @@ const SendPaymentDebitsModal = ({
       // Reset all state when modal closes
       resetAllState();
     }
-  }, [openModal, debits, clientContacts, resetAllState]);
+  }, [openModal, isLoading, debits, clientContacts, resetAllState]);
 
   // Handle contact selection change
   const handleContactChange = useCallback((event: any, value: IContactData | null) => {
@@ -246,29 +246,47 @@ const SendPaymentDebitsModal = ({
         <Divider />
 
         {/* Debits Table */}
-        <Box ref={tableContainerRef} sx={{ maxHeight: "300px", ...classes.tableContainer }}>
-          <PrimaryTable
-            rows={tableRows}
-            headers={tableHeaders}
-            maxHeight="300px"
-            stickyHeader={true}
-            enableCheckboxes={true}
-            onSelectionChange={(selectedIndices: Set<number>) => {
-              // Update selected debit IDs based on PrimaryTable's selection
-              const newSelectedIds = new Set<string>();
-              selectedIndices.forEach((index) => {
-                if (debits[index]) {
-                  newSelectedIds.add(debits[index].docNumber);
-                }
-              });
-              setSelectedDebitIds(newSelectedIds);
+        {isLoading ? (
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              minHeight: "300px",
             }}
-            rowCheckboxCondition={() => true}
-          />
-        </Box>
+          >
+            <Stack direction="column" alignItems="center" gap="16px">
+              <CircularProgress size={40} />
+              <Typography style={getLabelTypography()}>
+                {t("tickets.loading")}
+              </Typography>
+            </Stack>
+          </Box>
+        ) : (
+          <Box ref={tableContainerRef} sx={{ maxHeight: "300px", ...classes.tableContainer }}>
+            <PrimaryTable
+              rows={tableRows}
+              headers={tableHeaders}
+              maxHeight="300px"
+              stickyHeader={true}
+              enableCheckboxes={true}
+              onSelectionChange={(selectedIndices: Set<number>) => {
+                // Update selected debit IDs based on PrimaryTable's selection
+                const newSelectedIds = new Set<string>();
+                selectedIndices.forEach((index) => {
+                  if (debits[index]) {
+                    newSelectedIds.add(debits[index].docNumber);
+                  }
+                });
+                setSelectedDebitIds(newSelectedIds);
+              }}
+              rowCheckboxCondition={() => true}
+            />
+          </Box>
+        )}
 
         {/* Contact Selector */}
-        {clientContacts.length > 0 && (
+        {!isLoading && clientContacts.length > 0 && (
           <Stack direction="row" alignItems="center" gap="16px">
             <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
               <Typography style={getLabelTypography()} >
@@ -323,75 +341,78 @@ const SendPaymentDebitsModal = ({
         )}
 
         {/* Number of Installments */}
-        <Stack direction="row" alignItems="center" gap="16px">
-          <Typography style={getLabelTypography()} sx={{ minWidth: "150px" }}>
-            {t("prePayment.numberOfInstallments") || "Number of installments"}
-          </Typography>
-          <Box sx={{ width: "200px" }}>
-            <GomakeTextInput
-              type="number"
-              value={numberOfInstallments.toString()}
-              onChange={(e) => {
-                const value = parseInt(e.target.value) || 1;
-                setNumberOfInstallments(Math.max(1, value));
-              }}
-              placeholder={t("prePayment.numberOfInstallments") || "Number of installments"}
-              style={{ direction: isRTL ? "rtl" : "ltr" }}
-            />
-          </Box>
-        </Stack>
-
-        {/* Email Field - Show when email checkbox is selected */}
-
+        {!isLoading && (
+          <Stack direction="row" alignItems="center" gap="16px">
+            <Typography style={getLabelTypography()} sx={{ minWidth: "150px" }}>
+              {t("prePayment.numberOfInstallments") || "Number of installments"}
+            </Typography>
+            <Box sx={{ width: "200px" }}>
+              <GomakeTextInput
+                type="number"
+                value={numberOfInstallments.toString()}
+                onChange={(e) => {
+                  const value = parseInt(e.target.value) || 1;
+                  setNumberOfInstallments(Math.max(1, value));
+                }}
+                placeholder={t("prePayment.numberOfInstallments") || "Number of installments"}
+                style={{ direction: isRTL ? "rtl" : "ltr" }}
+              />
+            </Box>
+          </Stack>
+        )}
 
         {/* Sending Methods */}
-        <Stack direction="row" gap="24px" alignItems="center">
-          <Typography style={getLabelTypography()}>
-            {t("reports.sendingMethod") || "Sending method"}
-          </Typography>
-          <Stack direction="row" gap="16px">
-            <Stack direction="row" alignItems="center" gap="8px">
-              <PrimaryCheckbox
-                checked={sendBySms}
-                onChange={(e) => handlePhoneCheckboxChange(e.target.checked)}
-              />
-              <Typography>{t("customers.phone") || "Phone"}</Typography>
-            </Stack>
-            <Stack direction="row" alignItems="center" gap="8px">
-              <PrimaryCheckbox
-                checked={sendByEmail}
-                onChange={(e) => handleEmailCheckboxChange(e.target.checked)}
-              />
-              <Typography>{t("sales.quote.email")}</Typography>
+        {!isLoading && (
+          <Stack direction="row" gap="24px" alignItems="center">
+            <Typography style={getLabelTypography()}>
+              {t("reports.sendingMethod") || "Sending method"}
+            </Typography>
+            <Stack direction="row" gap="16px">
+              <Stack direction="row" alignItems="center" gap="8px">
+                <PrimaryCheckbox
+                  checked={sendBySms}
+                  onChange={(e) => handlePhoneCheckboxChange(e.target.checked)}
+                />
+                <Typography>{t("customers.phone") || "Phone"}</Typography>
+              </Stack>
+              <Stack direction="row" alignItems="center" gap="8px">
+                <PrimaryCheckbox
+                  checked={sendByEmail}
+                  onChange={(e) => handleEmailCheckboxChange(e.target.checked)}
+                />
+                <Typography>{t("sales.quote.email")}</Typography>
+              </Stack>
             </Stack>
           </Stack>
-        </Stack>
+        )}
 
 
         {/* Total Payment */}
-        <Stack
-          direction="row"
-          justifyContent="flex-end"
-          alignItems="center"
-          sx={{
-            backgroundColor: secondColor(50),
-            gap: "10px",
-          }}
-        >
-          <Typography
-            style={{
-              ...FONT_FAMILY.Lexend(500, 16),
-            }} >
-            {t("prePayment.totalToPay") || "Total payment"}:
-          </Typography>
-          <Typography
-            style={{
-              ...FONT_FAMILY.Lexend(700, 16),
+        {!isLoading && (
+          <Stack
+            direction="row"
+            justifyContent="flex-end"
+            alignItems="center"
+            sx={{
+              backgroundColor: secondColor(50),
+              gap: "10px",
             }}
           >
-            {totalPayment.toLocaleString()}
-          </Typography>
-        </Stack>
+            <Typography
+              style={{
+                ...FONT_FAMILY.Lexend(500, 16),
+              }} >
+              {t("prePayment.totalToPay") || "Total payment"}:
+            </Typography>
+            <Typography
+              style={{
+                ...FONT_FAMILY.Lexend(700, 16),
+              }}
+            >
+              {totalPayment.toLocaleString()}
+            </Typography>
+          </Stack>
+        )}
       </Stack>
     </GoMakeDialog>
   );
