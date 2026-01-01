@@ -15,6 +15,7 @@ import { GoMakeMenu } from "@/components";
 import { useRecoilState } from "recoil";
 import {
   ENotificationType,
+  ISystemNotification,
   systemNotificationsState,
 } from "@/store/system-notifications";
 import Divider from "@mui/material/Divider";
@@ -37,7 +38,8 @@ const SystemNotifications = () => {
     systemNotificationsState
   );
   const { callApi } = useGomakeAxios();
-  const { pathname } = useRouter();
+  const router = useRouter();
+  const { pathname } = router;
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [noNotificationsAnchorEl, setNoNotificationsAnchorEl] =
     useState<null | HTMLElement>(null);
@@ -102,6 +104,34 @@ const SystemNotifications = () => {
     await markNotificationAsReadByIdApi(callApi, callBack, id);
   };
 
+  const getNotificationUrl = (notification: ISystemNotification): string | null => {
+    switch (notification.type) {
+      case ENotificationType.QUOTE_APPROVED_STATUS:
+      case ENotificationType.QUOTE_APPROVED_BY_MANAGER_STATUS:
+      case ENotificationType.QUOTE_REJECTED_BY_MANAGER_STATUS:
+      case ENotificationType.QUOTE_REJECTED_STATUS:
+        return `/quotes?finalPatternSearch=${notification.message}`;
+      case ENotificationType.BOARD_MISSIONS_APPROVED_STATUS:
+      case ENotificationType.BOARD_MISSIONS_REJECTED_STATUS:
+        return `/production-floor?boardMissionsId=${notification.documentId}&step=stations`;
+      case ENotificationType.INVOICE_PAYMENT_REQUEST_PAID_BY_CLIENT:
+        return `/invoice?id=${notification.documentId}`;
+      case ENotificationType.ORDER_PAYMENT_REQUEST_PAID_BY_CLIENT:
+        return `/order?id=${notification.documentId}`;
+      default:
+        return null;
+    }
+  };
+
+  const handleNotificationClick = async (notification: ISystemNotification) => {
+    const url = getNotificationUrl(notification);
+    if (url) {
+      await markNotificationAsRead(notification.id);
+      handleClose();
+      router.push(url);
+    }
+  };
+
   useEffect(() => {
     getNotifications().then();
   }, [pathname]);
@@ -142,35 +172,38 @@ const SystemNotifications = () => {
     <GoMakeMenu handleClose={handleClose} open={open} anchorEl={anchorEl}>
       <Stack width="auto" padding="10px 20px 0 20px" height="fit-content">
         <Stack gap="10px">
-          {notifications?.map((notification) => (
-            <Stack gap="10px" key={notification.id}>
-              <Stack
-                style={{ cursor: "pointer" }}
-                onClick={() => markNotificationAsRead(notification.id)}
-                direction="row"
-                alignItems="center"
-                gap="10px"
-              >
-                <div
-                  style={{
-                    borderRadius: "50%",
-                    backgroundColor: getNotificationStatusColor(
-                      notification.type
-                    ),
-                    height: "15px",
-                    width: "15px",
-                  }}
-                />
-                <Stack gap="5px">
-                  <NotificationMessageComponent {...notification} />
-                  <MessageDateTimeComponent
-                    date={new Date(notification.createdDate)}
+          {notifications?.map((notification) => {
+            return (
+              <Stack gap="10px" key={notification.id}>
+                <Stack
+                  style={{ cursor: "pointer" }}
+                  onClick={() => handleNotificationClick(notification)}
+                  direction="row"
+                  alignItems="center"
+                  gap="10px"
+                >
+                  <div
+                    style={{
+                      borderRadius: "50%",
+                      backgroundColor: getNotificationStatusColor(
+                        notification.type
+                      ),
+                      height: "15px",
+                      width: "15px",
+                    }}
                   />
+                  <Stack gap="5px">
+                    <NotificationMessageComponent {...notification} />
+                    <MessageDateTimeComponent
+                      date={new Date(notification.createdDate)}
+                    />
+                  </Stack>
                 </Stack>
+                <Divider flexItem orientation="horizontal" />
               </Stack>
-              <Divider flexItem orientation="horizontal" />
-            </Stack>
-          ))}
+            )
+          }
+          )}
         </Stack>
         <PrimaryButton
           onClick={markNotificationsASRead}
