@@ -3,10 +3,8 @@ import { useRecoilValue } from "recoil";
 import { useGomakeAxios } from "@/hooks/use-gomake-axios";
 import { useSnackBar } from "@/hooks/use-snack-bar";
 import { getDocumentMailDataApi } from "@/services/api-service/generic-doc/documents-api";
-import { chatwootService } from "@/services/frontdesk";
 import { chatwootSelectedAccountAtom } from "@/store/frontdesk/atoms/chatwoot.atoms";
-import { ChannelType, type ContactableInbox } from "@/services/frontdesk/api/chatwoot/types/inboxes.types";
-import { EmailAttachment, EmailSenderOption } from "@/widgets/frontdesk/providers/email/types/email.types";
+import { EmailAttachment } from "@/widgets/frontdesk/providers/email/types/email.types";
 import { DOCUMENT_TYPE } from "../enums";
 import { getFileExtension, getMimeTypeFromExtension } from "@/widgets/frontdesk/providers/chatwoot/utils/attachment.utils";
 
@@ -40,6 +38,7 @@ export const useFrontDeskEmailIntegration = ({
   const [isLoadingEmailData, setIsLoadingEmailData] = useState(false);
   const [isFromPaymentPage, setIsFromPaymentPage] = useState(false);
 
+
   const normalizeRecipients = useCallback((value: unknown): string[] => {
     if (Array.isArray(value)) {
       return value
@@ -71,8 +70,10 @@ export const useFrontDeskEmailIntegration = ({
       customerName?: string,
       contactName?: string,
       managerEmails?: string[],
-      isFromPaymentPage?: boolean
+      isFromPaymentPage?: boolean,
+      paymentRequestId?: string
     ) => {
+
       setIsLoadingEmailData(true);
       setEmailData(null); // Clear previous data
       setIsFromPaymentPage(isFromPaymentPage ?? false);
@@ -145,13 +146,19 @@ export const useFrontDeskEmailIntegration = ({
               setEmailData(normalizedEmailData);
               setIsEmailComposerOpen(true); // Open email composer after data is loaded
             } else {
-              alertFault("Failed to load email data");
               setIsEmailComposerOpen(false); // Close modal on error
             }
             setIsLoadingEmailData(false);
           },
           {
-            documentType: isFromPaymentPage ? (18 as DOCUMENT_TYPE) : documentType,
+            // When paymentRequestId is present, always use document type 18 (payment request)
+            documentType: paymentRequestId 
+              ? (isFromPaymentPage 
+                ? (documentType === 3 ? (19 as DOCUMENT_TYPE) : (18 as DOCUMENT_TYPE))
+                : documentType)
+              : (isFromPaymentPage 
+                  ? (documentType === 3 ? (19 as DOCUMENT_TYPE) : (18 as DOCUMENT_TYPE))
+                  : documentType),
             document: {
               // For board missions, use boardMissionId instead of documentId
               ...(documentType === DOCUMENT_TYPE.boardMission 
@@ -166,6 +173,7 @@ export const useFrontDeskEmailIntegration = ({
               ...(customerId && { customerId }),
               ...(customerName && { customerName }),
               ...(contactName && { contactName }),
+              ...(paymentRequestId && { paymentRequestId }),
             },
           }
         );
@@ -184,6 +192,8 @@ export const useFrontDeskEmailIntegration = ({
     setEmailData(null);
     setIsFromPaymentPage(false);
   }, []);
+
+
 
   return {
     isEmailComposerOpen,

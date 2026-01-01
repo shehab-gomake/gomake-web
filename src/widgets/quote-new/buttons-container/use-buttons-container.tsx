@@ -304,7 +304,30 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
         }
       }
     } else if (isPrepaymentClient) {
-      navigate(`/orders?finalPatternSearch=${res?.data?.number}`);
+      // When shouldOpenComposer=true, always open composer (same as jobs page behavior)
+      if (shouldOpenComposer) {
+        // Extract client information from quote to pass in URL
+        const firstContact = quoteItemValue?.documentContacts?.[0];
+        const contactEmail = firstContact?.contactMail || firstContact?.email || quoteItemValue?.contactEmail || quoteItemValue?.contactMail;
+        const contactPhone = firstContact?.contactPhone || firstContact?.phone || quoteItemValue?.contactPhone;
+        const contactName = firstContact?.contactName || firstContact?.name || quoteItemValue?.contactName;
+        const customerId = quoteItemValue?.customerID || quoteItemValue?.clientId || quoteItemValue?.client?.id;
+        const customerName = quoteItemValue?.customerName || quoteItemValue?.clientName || quoteItemValue?.client?.name;
+
+        // Build URL parameters
+        const paymentRequestIdParam = res?.data?.paymentRequestId
+          ? `&paymentRequestId=${encodeURIComponent(res?.data?.paymentRequestId)}`
+          : '';
+        const contactEmailParam = contactEmail ? `&contactEmail=${encodeURIComponent(contactEmail)}` : '';
+        const contactPhoneParam = contactPhone ? `&contactPhone=${encodeURIComponent(contactPhone)}` : '';
+        const contactNameParam = contactName ? `&contactName=${encodeURIComponent(contactName)}` : '';
+        const customerIdParam = customerId ? `&customerId=${encodeURIComponent(customerId)}` : '';
+        const customerNameParam = customerName ? `&customerName=${encodeURIComponent(customerName)}` : '';
+
+        navigate(`/orders?finalPatternSearch=${res?.data?.number}&openComposer=true&orderId=${res?.data?.orderID}${paymentRequestIdParam}&isPrepaymentClient=${isPrepaymentClient}${contactEmailParam}${contactPhoneParam}${contactNameParam}${customerIdParam}${customerNameParam}`);
+      } else {
+        navigate(`/orders?finalPatternSearch=${res?.data?.number}`);
+      }
     } else {
       if (res.data.isShowCheckoutModal) {
         setCheckoutModalData({
@@ -451,9 +474,9 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
   };
 
   const onClickConfirmWithoutNotification = () =>
-    handleOrderConfirmation(false);
+    handleOrderConfirmation(false, false, 0, 0, false, hasFrontDeskFeature);
   const onClickConfirmWithNotification = (isStripeCash: boolean) =>
-    handleOrderConfirmation(true, false, 0, 0, !!isStripeCash);
+    handleOrderConfirmation(true, false, 0, 0, !!isStripeCash, hasFrontDeskFeature);
   const onClickConfirm = () => {
     // When frontdesk is enabled, always open composer after order creation
     handleOrderConfirmation(false, false, 0, 0, false, hasFrontDeskFeature);

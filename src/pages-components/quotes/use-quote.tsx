@@ -188,6 +188,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       : DOCUMENT_TYPE[docType];
 
   const searchInputRef = useRef(null);
+  const composerOpenedRef = useRef(false);
   const { getCurrencyUnitText } = useQuoteGetData();
   const { navigate } = useGomakeRouter();
   const { CheckPermission } = useUserPermission();
@@ -357,7 +358,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const isSelectedCLoseAsDeliveryNote = useRecoilValue(
     isSelectedCLoseAsDeliveryNoteState
   );
-  console.log("isFromPaymentPage", isFromPaymentPage)
   const isSelectedCLoseAsProformaInvoice = useRecoilValue(
     isSelectedCLoseAsProformaInvoiceState
   );
@@ -4862,6 +4862,196 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       );
     }
   }, [router.query, agentsCategories, currencies]);
+
+  // Check for openComposer query parameter and open composer if needed
+  // This works the same way as the jobs page (board-missions) for consistency
+  useEffect(() => {
+    // Early returns - don't proceed if conditions aren't met
+    if (!router.isReady || !hasFrontDeskFeature || !isOrder) {
+      composerOpenedRef.current = false;
+      return;
+    }
+
+    // Check if openEmailComposer is available
+    if (!openEmailComposer || typeof openEmailComposer !== "function") {
+      return;
+    }
+
+    const shouldOpenComposer = router.query.openComposer === "true";
+    const orderIdParam = router.query.orderId;
+    const paymentRequestIdParam = router.query.paymentRequestId;
+    const isPrepaymentClientParam = router.query.isPrepaymentClient;
+    // Get client information from URL parameters (passed from quote)
+    const contactEmailParam = router.query.contactEmail;
+    const contactPhoneParam = router.query.contactPhone;
+    const contactNameParam = router.query.contactName;
+    const customerIdParam = router.query.customerId;
+    const customerNameParam = router.query.customerName;
+
+    // Only proceed if both conditions are met and we haven't already opened it
+    if (!shouldOpenComposer || !orderIdParam) {
+      composerOpenedRef.current = false;
+      return;
+    }
+
+    // Prevent duplicate calls
+    if (composerOpenedRef.current) {
+      return;
+    }
+
+    const orderId = Array.isArray(orderIdParam)
+      ? orderIdParam[0]
+      : orderIdParam;
+
+    // Validate orderId
+    if (!orderId || typeof orderId !== "string" || orderId.trim() === "") {
+      return;
+    }
+
+    const paymentRequestId = paymentRequestIdParam
+      ? (Array.isArray(paymentRequestIdParam)
+        ? paymentRequestIdParam[0]
+        : paymentRequestIdParam)
+      : undefined;
+
+    // Check if isPrepaymentClient is true in URL
+    const isPrepaymentClient = isPrepaymentClientParam
+      ? (Array.isArray(isPrepaymentClientParam)
+        ? isPrepaymentClientParam[0] === "true"
+        : String(isPrepaymentClientParam) === "true")
+      : false;
+
+    // Mark as opened to prevent duplicate calls
+    composerOpenedRef.current = true;
+
+    // Use a flag to prevent state updates after unmount
+    let isMounted = true;
+    let timeoutId: NodeJS.Timeout | null = null;
+
+    const openComposer = async () => {
+      if (!isMounted) return;
+
+      try {
+        // Extract client information from URL parameters (passed from quote)
+        // These are the true values from the quote before conversion to order
+        const contactEmail = contactEmailParam
+          ? (Array.isArray(contactEmailParam) ? contactEmailParam[0] : String(contactEmailParam))
+          : undefined;
+        const contactPhone = contactPhoneParam
+          ? (Array.isArray(contactPhoneParam) ? contactPhoneParam[0] : String(contactPhoneParam))
+          : undefined;
+        const contactName = contactNameParam
+          ? (Array.isArray(contactNameParam) ? contactNameParam[0] : String(contactNameParam))
+          : undefined;
+        const customerId = customerIdParam
+          ? (Array.isArray(customerIdParam) ? customerIdParam[0] : String(customerIdParam))
+          : undefined;
+        const customerName = customerNameParam
+          ? (Array.isArray(customerNameParam) ? customerNameParam[0] : String(customerNameParam))
+          : undefined;
+
+        // Set documentForEmail so FrontDeskEmailComposerWrapper can use it
+        setDocumentForEmail({ id: orderId });
+
+        // Wrap the API call in a promise that catches errors (same pattern as jobs page)
+        const composerPromise = new Promise<void>((resolve, reject) => {
+          // Open email composer with paymentRequestId if available
+          // When isPrepaymentClient=true OR paymentRequestId is present, set isFromPaymentPage=true to use document type 18
+          // Pass client information from URL parameters (from quote)
+          openEmailComposer(
+            orderId,
+            contactEmail, // contactEmail from URL (from quote)
+            contactPhone, // contactPhone from URL (from quote)
+            undefined, // messageType
+            undefined, // sendMailIfNotVerifiedAgent
+            undefined, // sendWithInvoices
+            customerId, // customerId from URL (from quote)
+            customerName, // customerName from URL (from quote)
+            contactName, // contactName from URL (from quote)
+            undefined, // managerEmails
+            isPrepaymentClient || !!paymentRequestId, // isFromPaymentPage - true when isPrepaymentClient=true OR paymentRequestId exists
+            paymentRequestId ? String(paymentRequestId) : undefined // paymentRequestId
+          ).then(resolve).catch(reject);
+        });
+
+        await composerPromise;
+
+        // Clean up the query parameters only if successful
+        if (isMounted) {
+          const newQuery = { ...router.query };
+          delete newQuery.openComposer;
+          delete newQuery.orderId;
+          delete newQuery.paymentRequestId;
+
+          router.replace(
+            {
+              pathname: router.pathname,
+              query: newQuery,
+            },
+            undefined,
+            { shallow: true }
+          );
+        }
+      } catch (apiError: any) {
+        // Silently handle API errors - don't show unhandled error to user
+        console.warn("Failed to open email composer for order:", orderId, apiError?.message || apiError);
+
+        // Clear the ref on error
+        if (isMounted) {
+          composerOpenedRef.current = false;
+          setDocumentForEmail(null);
+
+          // Clean up query params even on error
+          const newQuery = { ...router.query };
+          delete newQuery.openComposer;
+          delete newQuery.orderId;
+          delete newQuery.paymentRequestId;
+          delete newQuery.isPrepaymentClient;
+          delete newQuery.contactEmail;
+          delete newQuery.contactPhone;
+          delete newQuery.contactName;
+          delete newQuery.customerId;
+          delete newQuery.customerName;
+          delete newQuery.contactEmail;
+          delete newQuery.contactPhone;
+          delete newQuery.contactName;
+          delete newQuery.customerId;
+          delete newQuery.customerName;
+
+          router.replace(
+            {
+              pathname: router.pathname,
+              query: newQuery,
+            },
+            undefined,
+            { shallow: true }
+          );
+        }
+      }
+    };
+
+    // Use setTimeout to ensure the page is fully loaded and order is created
+    // Same delay as jobs page for consistency
+    timeoutId = setTimeout(() => {
+      openComposer();
+    }, 1000);
+
+    return () => {
+      isMounted = false;
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [router.isReady, router.query.openComposer, router.query.orderId, router.query.paymentRequestId, router.query.isPrepaymentClient, router.query.contactEmail, router.query.contactPhone, router.query.contactName, router.query.customerId, router.query.customerName, hasFrontDeskFeature, isOrder]);
+
+  // Clear composer opened ref and documentForEmail when composer closes
+  useEffect(() => {
+    if (!isEmailComposerOpen) {
+      composerOpenedRef.current = false;
+      // Don't clear documentForEmail here - it might be used by other parts of the UI
+    }
+  }, [isEmailComposerOpen]);
 
   const closeOrderAsInvoiceOrDeliveryNote = useRecoilValue(
     closeOrderAsInvoiceOrDeliveryNoteState

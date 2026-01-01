@@ -9,6 +9,8 @@ import { OrderNowIcon } from "./icons";
 import { Stack } from "@mui/material";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useEffect, useState } from "react";
+import { useRecoilValue } from "recoil";
+import { printHouseHasFrontDeskFeature } from "@/store/print-house-profile";
 
 const OrderNowPrePaymentModal = ({
   openModal,
@@ -22,6 +24,7 @@ const OrderNowPrePaymentModal = ({
   const [totalAmount, setTotalAmount] = useState(
     quoteItemValue?.totalPayment || 0
   );
+  const hasFrontDeskFeature = useRecoilValue(printHouseHasFrontDeskFeature);
 
   useEffect(() => {
     setTotalAmount(quoteItemValue?.totalPayment || 0);
@@ -132,22 +135,33 @@ const OrderNowPrePaymentModal = ({
           </Stack>
 
           <div style={classes.mainBtnContainer}>
-            <GomakePrimaryButton
-              style={classes.btnStyle}
-              onClick={() =>
-                handleOrderConfirmation(true, true, totalAmount,percentage, false)
-              }
-            >
-              {t("sales.modals.withPaymentMessage")}
-            </GomakePrimaryButton>
-            <GomakePrimaryButton
-              style={classes.secondBtn}
-              onClick={() =>
-                handleOrderConfirmation(false, true, totalAmount,percentage, false)
-              }
-            >
-              {t("sales.modals.withoutPaymentMessage")}
-            </GomakePrimaryButton>
+            {!hasFrontDeskFeature ? <>
+              <GomakePrimaryButton
+                style={classes.btnStyle}
+                onClick={() =>
+                  handleOrderConfirmation(true, true, totalAmount, percentage, false, hasFrontDeskFeature)
+                }
+              >
+                {t("sales.modals.withPaymentMessage")}
+              </GomakePrimaryButton>
+              <GomakePrimaryButton
+                style={classes.secondBtn}
+                onClick={() =>
+                  handleOrderConfirmation(false, true, totalAmount, percentage, false, hasFrontDeskFeature)
+                }
+              >
+                {t("sales.modals.withoutPaymentMessage")}
+              </GomakePrimaryButton>
+            </> : <>
+              <GomakePrimaryButton
+                style={classes.btnStyle}
+                onClick={() =>
+                  handleOrderConfirmation(true, true, totalAmount, percentage, false, hasFrontDeskFeature)
+                }
+              >
+                {t("mailingSettings.Confirm")}
+              </GomakePrimaryButton>
+            </>}
             <GomakePrimaryButton
               style={{
                 borderRadius: "8px",

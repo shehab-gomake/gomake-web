@@ -17,12 +17,14 @@ import {
   sendOrderReadyToClientApi,
   sendDocumentToClientApi,
 } from "@/services/api-service/generic-doc/documents-api";
+import { sendPrePaymentToClientApi } from "@/services/api-service/pay/pay-api";
 import { useGomakeAxios } from "@/hooks/use-gomake-axios";
 import { useWhatsAppWeb } from "@/pages-components/quote-new/use-whats-app-web";
 import { MessageType } from "@/pages-components/quote-new/use-quote";
 import { emailRegex } from "@/utils/regex";
 import { useRecoilValue } from "recoil";
 import { printHouseHasFrontDeskFeature } from "@/store/print-house-profile";
+import { useDateFormat } from "@/hooks/use-date-format";
 
 interface ISendPaymentProps {
   openPaymentModal?: any;
@@ -45,7 +47,8 @@ interface ISendPaymentProps {
     customerName?: string,
     contactName?: string,
     managerEmails?: string[],
-    isFromPaymentPage?: boolean
+    isFromPaymentPage?: boolean,
+    paymentRequestId?: string
   ) => Promise<void>;
   documentForEmail?: any;
 }
@@ -67,6 +70,7 @@ const SendPaymentModal = ({
   const { alertFaultSend, alertSuccessSend, alertFault } = useSnackBar();
   const { callApi } = useGomakeAxios();
   const { getWhatsWebUrl, openWhatsAppWebLink } = useWhatsAppWeb();
+  const { formatISODateTime } = useDateFormat();
   const isReceipt = documentType === DOCUMENT_TYPE.receipt;
   const hasFrontDeskFeature = useRecoilValue(printHouseHasFrontDeskFeature);
   const {
@@ -99,6 +103,63 @@ const SendPaymentModal = ({
         ...(isReceipt ? { sendWithInvoices } : {}),
       }
     );
+  };
+
+  const sendPrePaymentAndGetRequestId = async (): Promise<string | null> => {
+    const selectedContact =
+      payState?.documentContacts?.[payState?.selectedContactIndex] || null;
+    const contactPhone =
+      selectedContact?.contactPhone || payState.contactPhone || "";
+    const contactMail =
+      selectedContact?.contactMail || payState.contactMail || "";
+
+    const dataToSend = {
+      documentId: payState.documentId,
+      price: payState?.totalPayment,
+      maxPayments: payState.numberOfInstallments,
+      invoiceDateStr: formatISODateTime(payState.invoiceDate).split(" ")[0],
+      contactName: selectedContact?.contactName || "",
+      contactPhone,
+      contactMail,
+      sendByMail: hasFrontDeskFeature ? false : payState.sendByMail,
+      sendBySms: hasFrontDeskFeature ? false : payState.sendBySms,
+      sendByWhatsapp: hasFrontDeskFeature ? false : payState.sendByWhatsapp,
+      percentageOfTotal: payState.percentageOfTotal
+    };
+
+    if (payState.totalPayment === 0) {
+      alertFault(t("alerts.totalPaymentZero"));
+      return null;
+    }
+    if (payState.sendByMail && !contactMail) {
+      alertFault(t("alerts.noMail"));
+      return null;
+    }
+    if (!emailRegex.test(contactMail) && payState.sendByMail) {
+      alertFault("customers.invalidEmail");
+      return null;
+    }
+
+    return new Promise((resolve) => {
+      sendPrePaymentToClientApi(
+        callApi,
+        (res) => {
+          if (res?.success && res?.data) {
+            // The API returns { "data": "paymentRequestId" }
+            // res.data is the paymentRequestId string directly
+            const paymentRequestId = typeof res.data === "string" ? res.data : String(res.data);
+            resolve(paymentRequestId);
+          } else {
+            alertFault(t("alerts.sendFailed"));
+            resolve(null);
+          }
+        },
+        {
+          documentType,
+          data: dataToSend,
+        }
+      );
+    });
   };
 
   const onClickSendQuoteToClient = async (
@@ -381,8 +442,9 @@ const SendPaymentModal = ({
               onClick={
                 isSendToClient
                   ? () => onClickSendQuoteToClient(isSendOrderReadyToClient)
-                  : async () => {
-                    // If FrontDesk is enabled and Email is selected, open email composer
+                  :
+                  async () => {
+                    // If FrontDesk is enabled and Email is selected, send pre-payment first, then open email composer
                     if (hasFrontDeskFeature && payState.sendByMail && onOpenEmailComposer && documentForEmail?.id) {
                       const selectedContact =
                         payState?.documentContacts?.[payState?.selectedContactIndex];
@@ -396,6 +458,14 @@ const SendPaymentModal = ({
                         documentForEmail?.customerName ||
                         documentForEmail?.clientName ||
                         "";
+
+                      // First, send pre-payment to get paymentRequestId
+                      const paymentRequestId = await sendPrePaymentAndGetRequestId();
+                      if (!paymentRequestId) {
+                        // Error already shown in sendPrePaymentAndGetRequestId
+                        return;
+                      }
+
                       onClickClosePaymentModal();
                       await onOpenEmailComposer(
                         documentForEmail.id,
@@ -408,7 +478,8 @@ const SendPaymentModal = ({
                         documentForEmail?.customerName || documentForEmail?.clientName,
                         contactName,
                         undefined,
-                        true // isFromPaymentPage: true when not sending to client
+                        true, // isFromPaymentPage: true when not sending to client
+                        paymentRequestId // Pass the paymentRequestId
                       );
                       return;
                     }
@@ -435,7 +506,7 @@ const SendPaymentModal = ({
                     ? () =>
                       onClickSendQuoteToClient(isSendOrderReadyToClient, true)
                     : async () => {
-                      // If FrontDesk is enabled and Email is selected, open email composer
+                      // If FrontDesk is enabled and Email is selected, send pre-payment first, then open email composer
                       if (hasFrontDeskFeature && payState.sendByMail && onOpenEmailComposer && documentForEmail?.id) {
                         const selectedContact =
                           payState?.documentContacts?.[payState?.selectedContactIndex];
@@ -449,6 +520,14 @@ const SendPaymentModal = ({
                           documentForEmail?.customerName ||
                           documentForEmail?.clientName ||
                           "";
+
+                        // First, send pre-payment to get paymentRequestId
+                        const paymentRequestId = await sendPrePaymentAndGetRequestId();
+                        if (!paymentRequestId) {
+                          // Error already shown in sendPrePaymentAndGetRequestId
+                          return;
+                        }
+
                         onClickClosePaymentModal();
                         await onOpenEmailComposer(
                           documentForEmail.id,
@@ -461,7 +540,8 @@ const SendPaymentModal = ({
                           documentForEmail?.customerName || documentForEmail?.clientName,
                           contactName,
                           undefined,
-                          true // isFromPaymentPage: true when not sending to client
+                          true, // isFromPaymentPage: true when not sending to client
+                          paymentRequestId // Pass the paymentRequestId
                         );
                         return;
                       }
@@ -486,7 +566,7 @@ const SendPaymentModal = ({
                   isSendToClient
                     ? () => onClickSendQuoteToClient(isSendOrderReadyToClient)
                     : async () => {
-                      // If FrontDesk is enabled and Email is selected, open email composer
+                      // If FrontDesk is enabled and Email is selected, send pre-payment first, then open email composer
                       if (hasFrontDeskFeature && payState.sendByMail && onOpenEmailComposer && documentForEmail?.id) {
                         const selectedContact =
                           payState?.documentContacts?.[payState?.selectedContactIndex];
@@ -500,6 +580,14 @@ const SendPaymentModal = ({
                           documentForEmail?.customerName ||
                           documentForEmail?.clientName ||
                           "";
+
+                        // First, send pre-payment to get paymentRequestId
+                        const paymentRequestId = await sendPrePaymentAndGetRequestId();
+                        if (!paymentRequestId) {
+                          // Error already shown in sendPrePaymentAndGetRequestId
+                          return;
+                        }
+
                         onClickClosePaymentModal();
                         await onOpenEmailComposer(
                           documentForEmail.id,
@@ -512,7 +600,8 @@ const SendPaymentModal = ({
                           documentForEmail?.customerName || documentForEmail?.clientName,
                           contactName,
                           undefined,
-                          true // isFromPaymentPage: true when not sending to client
+                          true, // isFromPaymentPage: true when not sending to client
+                          paymentRequestId // Pass the paymentRequestId
                         );
                         return;
                       }
