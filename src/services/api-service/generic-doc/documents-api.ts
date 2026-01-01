@@ -137,6 +137,8 @@ const SEND_QUOTE_APPROVAL_TO_MANAGER =
   "/v1/erp-service/documents/send-quote-approval-to-manager";
 const PAY_ORDER_IN_URL = "/v1/erp-service/documents/pay-order-in-tracking";
 const QUICK_DUPLICATE_URL = "/v1/erp-service/documents/quick-duplicate";
+const GET_BOOK_PARAMETERS_FROM_DOCUMENT_ITEM_URL =
+  "/v1/erp-service/documents/get-book-parameters-from-document-item";
 const CLOSE_AND_TRACK_ORDER_URL =
   "/v1/erp-service/documents/close-and-track-order";
 const UPDATE_DOCUMENT_TITLE_URL =
@@ -1213,6 +1215,21 @@ const quickDuplicateApi: ICallAndSetData = async (callApi, setState, data) => {
   );
 };
 
+const getBookParametersFromDocumentItemApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data: { documentType: DOCUMENT_TYPE; documentId: string }
+) => {
+  const url = `${GET_BOOK_PARAMETERS_FROM_DOCUMENT_ITEM_URL}/${data.documentType}/${data.documentId}`;
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.GET,
+    url,
+    setState,
+    undefined
+  );
+};
+
 const closeAndTrackOrderApi: ICallAndSetData = async (
   callApi,
   setState,
@@ -1630,6 +1647,7 @@ export {
   startOrderProductionApi,
   addGenericProductToDocumentApi,
   quickDuplicateApi,
+  getBookParametersFromDocumentItemApi,
   deleteDocumentAttachmentApi,
   getDocumentDeliveryDateApi,
   sendOrderReadyToClientApi,
