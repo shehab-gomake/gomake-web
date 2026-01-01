@@ -22,6 +22,7 @@ const useBoardMissionsNotes = (onCloseModal?: () => void) => {
   const { boardMissionsId, productType } = query;
   const [deleting, setDeleting] = useState<boolean>(false);
   const [addingNote, setAddingNote] = useState<boolean>(false);
+  const [isNotesExpanded, setIsNotesExpanded] = useState<boolean>(false);
   const {
     alertSuccessAdded,
     alertFaultAdded,
@@ -76,6 +77,10 @@ const useBoardMissionsNotes = (onCloseModal?: () => void) => {
     });
   };
 
+  const toggleNotesExpanded = () => {
+    setIsNotesExpanded((prev) => !prev);
+  };
+
   return {
     newNote,
     setNewNote,
@@ -84,6 +89,8 @@ const useBoardMissionsNotes = (onCloseModal?: () => void) => {
     onDeleteNote,
     deleting,
     addingNote,
+    isNotesExpanded,
+    toggleNotesExpanded,
   };
 };
 
