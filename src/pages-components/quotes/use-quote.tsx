@@ -113,6 +113,7 @@ import { getDeliveryTickerPdfApi } from "@/services/api-service/board-missions/b
 import {
   exportDeliveryTicketPDFApi,
   printDeliveryTicketPDFApi,
+  toggleOrderLockApi,
 } from "@/services/api-service/generic-doc/orders-api";
 import { GomakeTextInput, GoMakeMenu } from "@/components";
 import { downloadPdf } from "@/utils/helpers";
@@ -490,10 +491,10 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     setDeliveryStatus(null);
     setProductIds([]);
     setCurrencyFilter(null);
-      setIsCanceledState(false);
-      setIsPausedOrders(false);
-      setIsOrdersWithoutJobs(false);
-      setMinPrice("");
+    setIsCanceledState(false);
+    setIsPausedOrders(false);
+    setIsOrdersWithoutJobs(false);
+    setMinPrice("");
     setMaxPrice("");
     setFromDate(null);
     setToDate(null);
@@ -939,6 +940,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               onClickOpenModal={onClickOpenOtherReasonModal}
               onClickMakePayment={onClickMakePayment}
               onClickPauseOrResume={onClickPauseOrResume}
+              onClickToggleOrderLock={onClickToggleOrderLock}
               onClickStartProduction={onClickOpenStartProductionModal}
               onClickCloseAndTrack={onClickOpenTrackModal}
               onClickOpenMoveOrderToReadyModal={
@@ -1494,6 +1496,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                   onClickOpenModal={onClickOpenOtherReasonModal}
                   onClickMakePayment={onClickMakePayment}
                   onClickPauseOrResume={onClickPauseOrResume}
+                  onClickToggleOrderLock={onClickToggleOrderLock}
                   onClickStartProduction={onClickOpenStartProductionModal}
                   onClickCloseAndTrack={onClickOpenTrackModal}
                   onClickOpenMoveOrderToReadyModal={
@@ -4295,6 +4298,20 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     await pauseOrdResumeOrderApi(callApi, callBack, {
       documentId,
       documentType: docType,
+    });
+  };
+
+  const onClickToggleOrderLock = async (order: any) => {
+    const callBack = (res) => {
+      if (res?.success) {
+        alertSuccessUpdate();
+        getAllQuotes();
+      } else {
+        alertFaultUpdate();
+      }
+    };
+    await toggleOrderLockApi(callApi, callBack, {
+      orderId: order?.id,
     });
   };
   const [documentForEmail, setDocumentForEmail] = useState<any>(null);

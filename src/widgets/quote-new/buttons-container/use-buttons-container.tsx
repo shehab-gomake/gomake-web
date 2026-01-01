@@ -750,6 +750,7 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
 
   const isShowCloseButton =
     quoteItemValue?.isCanClose &&
+    !quoteItemValue?.isLocked &&
     ((isOrder &&
       quoteItemValue?.statusTitleText !== StatusTitleText.OrderCanceled) ||
       isInvoice ||

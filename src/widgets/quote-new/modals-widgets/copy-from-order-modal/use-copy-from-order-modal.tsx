@@ -279,7 +279,7 @@ const useCopyFromOrderModal = ({
     const callBack = (res) => {
       if (res?.success) {
         const updatedData = res.data
-          .filter((doc) => doc.id !== currentDocumentId)
+          .filter((doc) => doc.id !== currentDocumentId && !doc.isLocked)
           .map((doc) => {
             const sourceDocumentNumber = doc.number;
             const sourceDocumentId = doc.id;
