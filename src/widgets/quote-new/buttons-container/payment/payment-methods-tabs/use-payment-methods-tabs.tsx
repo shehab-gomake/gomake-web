@@ -29,6 +29,7 @@ import {
   totalTransferState,
   transactionOptionsData,
   transferTabState,
+  checkedItemsIdsState,
 } from "../../states";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { createCreditTransactionApi } from "@/services/api-service/generic-doc/receipts-api";
@@ -155,21 +156,21 @@ const usePaymentMethodsTabs = () => {
       const lastRow = data.length > 0 ? data[data.length - 1] : null;
       const newRow = lastRow
         ? {
-            ...lastRow,
-            checkNumber: Number(checkNumberBase) + data.length,
-            // Auto-fill bank details if not already set
-            bankCode: lastRow.bankCode || bankName,
-            branch: lastRow.branch || branch,
-            accountNum: lastRow.accountNum || accountNum,
-          }
+          ...lastRow,
+          checkNumber: Number(checkNumberBase) + data.length,
+          // Auto-fill bank details if not already set
+          bankCode: lastRow.bankCode || bankName,
+          branch: lastRow.branch || branch,
+          accountNum: lastRow.accountNum || accountNum,
+        }
         : {
-            dueDate: new Date().toISOString().split("T")[0],
-            checkNumber: Number(checkNumberBase),
-            bankCode: bankName,
-            branch: branch,
-            accountNum: accountNum,
-            checkSum: 0,
-          };
+          dueDate: new Date().toISOString().split("T")[0],
+          checkNumber: Number(checkNumberBase),
+          bankCode: bankName,
+          branch: branch,
+          accountNum: accountNum,
+          checkSum: 0,
+        };
       setData((prevData) => [...prevData, newRow]);
     } else {
       // Regular receipts: don't auto-fill bank details
@@ -359,7 +360,7 @@ const usePaymentMethodsTabs = () => {
       value={row.checkNumber}
       placeholder={t("payment.checkNumber")}
       onChange={(e) => handleInputChange(index, "checkNumber", e.target.value)}
-      //  readOnly={!!isOutgoingPayments && quoteItemValue?.checksSerialNumber}
+    //  readOnly={!!isOutgoingPayments && quoteItemValue?.checksSerialNumber}
     />,
     <input
       style={{ width: "100px" }}
@@ -404,13 +405,13 @@ const usePaymentMethodsTabs = () => {
     setTotalCash(value);
     setTotalPayment(
       Number(value) +
-        Number(totalBit) +
-        Number(totalTransfer) +
-        Number(totalChecks) +
-        (isOutgoingPayments
-          ? Number(totalSupplierCreditCard)
-          : Number(totalCreditCard)) +
-        Number(taxDeduction)
+      Number(totalBit) +
+      Number(totalTransfer) +
+      Number(totalChecks) +
+      (isOutgoingPayments
+        ? Number(totalSupplierCreditCard)
+        : Number(totalCreditCard)) +
+      Number(taxDeduction)
     );
   };
 
@@ -422,10 +423,10 @@ const usePaymentMethodsTabs = () => {
     resetTransferTabState();
     setTotalPayment(
       Number(value) +
-        Number(totalCash) +
-        Number(totalChecks) +
-        Number(totalCreditCard) +
-        Number(taxDeduction)
+      Number(totalCash) +
+      Number(totalChecks) +
+      Number(totalCreditCard) +
+      Number(taxDeduction)
     );
   };
 
@@ -438,12 +439,12 @@ const usePaymentMethodsTabs = () => {
     resetTotalBit();
     setTotalPayment(
       Number(value) +
-        Number(totalCash) +
-        Number(totalChecks) +
-        (isOutgoingPayments
-          ? Number(totalSupplierCreditCard)
-          : Number(totalCreditCard)) +
-        Number(taxDeduction)
+      Number(totalCash) +
+      Number(totalChecks) +
+      (isOutgoingPayments
+        ? Number(totalSupplierCreditCard)
+        : Number(totalCreditCard)) +
+      Number(taxDeduction)
     );
   };
 
@@ -454,10 +455,10 @@ const usePaymentMethodsTabs = () => {
     setTotalSupplierCreditCard(value);
     setTotalPayment(
       Number(value) +
-        Number(totalCash) +
-        Number(totalChecks) +
-        Number(totalTransfer) +
-        Number(taxDeduction)
+      Number(totalCash) +
+      Number(totalChecks) +
+      Number(totalTransfer) +
+      Number(taxDeduction)
     );
   };
 
@@ -468,11 +469,11 @@ const usePaymentMethodsTabs = () => {
     setTotalTotalCreditCard(Number(value));
     setTotalPayment(
       Number(value) +
-        Number(totalCash) +
-        Number(totalBit) +
-        Number(totalChecks) +
-        Number(totalTransfer) +
-        Number(taxDeduction)
+      Number(totalCash) +
+      Number(totalBit) +
+      Number(totalChecks) +
+      Number(totalTransfer) +
+      Number(taxDeduction)
     );
   };
 
@@ -484,13 +485,13 @@ const usePaymentMethodsTabs = () => {
     setTotalChecks(newTotalChecks);
     setTotalPayment(
       Number(newTotalChecks) +
-        Number(totalCash) +
-        Number(totalBit) +
-        Number(totalTransfer) +
-        (isOutgoingPayments
-          ? Number(totalSupplierCreditCard)
-          : Number(totalCreditCard)) +
-        Number(taxDeduction)
+      Number(totalCash) +
+      Number(totalBit) +
+      Number(totalTransfer) +
+      (isOutgoingPayments
+        ? Number(totalSupplierCreditCard)
+        : Number(totalCreditCard)) +
+      Number(taxDeduction)
     );
   }, [
     data,
@@ -717,6 +718,8 @@ const usePaymentMethodsTabs = () => {
 
   const [existingTransactionId, setExistingTransactionId] = useState(null);
   const alertExistTransactionModal = useModal();
+  const checkedItemsIds = useRecoilValue(checkedItemsIdsState);
+
   const onClickMakePayment = async (
     handleSaveAndClose,
     isPinPadUsed,
@@ -762,9 +765,26 @@ const usePaymentMethodsTabs = () => {
       setLoadingWithLockScreen(false);
     };
 
+    // Get selected document numbers
+    const selectedDocumentNumbers: string[] = [];
+    if (checkedItemsIds && quoteItemValue?.receiptItems) {
+      Object.keys(checkedItemsIds).forEach((key) => {
+        const item = quoteItemValue.receiptItems.find(
+          (item) => item.id === checkedItemsIds[key]
+        );
+        if (item?.docNum) {
+          selectedDocumentNumbers.push(item.docNum);
+        }
+      });
+    }
+    const notes = selectedDocumentNumbers.join(",");
+
     await createCreditTransactionApi(callApi, callBack, {
       ClientID: quoteItemValue?.client?.id,
-      creditCard,
+      creditCard: {
+        ...creditCard,
+        ...(notes && { notes }),
+      },
       ...(isForce && { isForce }),
       ...(isPinPadUsed && { isPinPadUsed }),
     });
