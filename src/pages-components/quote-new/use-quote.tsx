@@ -760,6 +760,29 @@ const useQuoteNew = ({
       return;
     }
 
+    if ((isInvoice || isDeliveryNote) && isNewCreation) {
+      const updatedQuoteItemValue = { ...quoteItemValue };
+      updatedQuoteItemValue.exchangeRate = value;
+
+      setQuoteItemValue(updatedQuoteItemValue);
+      setIsUpdateExchangeRate(null);
+
+      if (
+        !quoteItemValue?.documentItems ||
+        quoteItemValue.documentItems.length === 0
+      ) {
+        return;
+      }
+
+      getCalculateQuoteItem(
+        updatedQuoteItemValue.documentItems[0],
+        ItemCalculationType.ExchangeRate,
+        value,
+        updatedQuoteItemValue
+      );
+      return;
+    }
+
     const callBack = (res) => {
       if (res?.success) {
         alertSuccessUpdate();
@@ -779,6 +802,52 @@ const useQuoteNew = ({
   };
 
   const refreshExchangeRate = async () => {
+    if ((isInvoice || isDeliveryNote) && isNewCreation) {
+      // For new creations, fetch exchange rate from API
+      const fromCurrency =
+        quoteItemValue?.fromCurrency || quoteItemValue?.systemCurrency;
+      const toCurrency = quoteItemValue?.currency;
+
+      if (!fromCurrency || !toCurrency) {
+        return;
+      }
+
+      const callBack = (res) => {
+        if (res?.success && res?.data?.data?.data) {
+          const newExchangeRate = res.data?.data?.data;
+          const updatedQuoteItemValue = { ...quoteItemValue };
+          updatedQuoteItemValue.exchangeRate = newExchangeRate;
+
+          setQuoteItemValue(updatedQuoteItemValue);
+
+          if (
+            quoteItemValue?.documentItems &&
+            quoteItemValue.documentItems.length > 0
+          ) {
+            getCalculateQuoteItem(
+              quoteItemValue.documentItems[0],
+              ItemCalculationType.ExchangeRate,
+              newExchangeRate,
+              updatedQuoteItemValue
+            );
+          }
+        } else {
+          alertFaultUpdate();
+        }
+      };
+
+      await callApi(
+        EHttpMethod.GET,
+        `/v1/erp-service/currencies/get-exchange-rate`,
+        {
+          fromCurrency: fromCurrency,
+          toCurrency: toCurrency,
+        },
+        false
+      ).then(callBack);
+      return;
+    }
+
     const callBack = (res) => {
       if (res?.success) {
         getQuote();
