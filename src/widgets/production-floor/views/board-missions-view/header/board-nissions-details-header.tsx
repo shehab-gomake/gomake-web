@@ -24,7 +24,7 @@ import { useIsMobile } from "@/hooks/use-responsive";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { DateField } from "@/components/date-picker/date-filed";
 import { updateJobDueDateApi } from "@/services/api-service/production-floor/production-floor-endpoints";
-import { useGomakeAxios } from "@/hooks";
+import { useGomakeAxios, useSnackBar } from "@/hooks";
 import moment from "moment/moment";
 import { GoMakeDeleteModal } from "@/components/modal-deleted/modal";
 import { AddStuckReasonWidget } from "@/widgets/production-floor/add-stuck-reason/add-stuck-reason";
@@ -54,6 +54,7 @@ const HeaderDividerComponent = () => {
 const InfoSection = ({ boardMissionsDetails, CheckPreferenceValue, t }) => {
   const { classes } = useStyle();
   const { callApi } = useGomakeAxios();
+  const { alertFault, alertFaultUpdate } = useSnackBar();
   const [jobDueDate, setJobDueDate] = useState(
     boardMissionsDetails.dueDate?.toString()
   );
@@ -61,6 +62,28 @@ const InfoSection = ({ boardMissionsDetails, CheckPreferenceValue, t }) => {
     setJobDueDate(boardMissionsDetails.dueDate?.toString());
   }, [boardMissionsDetails]);
   const [openDatePicker, setOpenDatePicker] = useState<boolean>(false);
+
+  // Check if delivery date should be red (less than estimated production date or current day)
+  const shouldShowRedDeliveryDate = useMemo(() => {
+    if (!jobDueDate) return false;
+    const deliveryDate = moment(convertUtcToLocalIsoString(jobDueDate));
+    const currentDate = moment();
+    const estimatedProductionDate =
+      boardMissionsDetails?.estimatedProductionDate
+        ? moment(
+            convertUtcToLocalIsoString(
+              boardMissionsDetails.estimatedProductionDate.toString()
+            )
+          )
+        : null;
+
+    // Red if less than current day OR less than estimated production date
+    return (
+      deliveryDate.isBefore(currentDate, "day") ||
+      (estimatedProductionDate &&
+        deliveryDate.isBefore(estimatedProductionDate))
+    );
+  }, [jobDueDate, boardMissionsDetails?.estimatedProductionDate]);
   const fieldMappings = useMemo(
     () => [
       {
@@ -92,16 +115,36 @@ const InfoSection = ({ boardMissionsDetails, CheckPreferenceValue, t }) => {
                   label={""}
                   date={convertUtcToLocalIsoString(jobDueDate)}
                   handleChange={(newDate) => {
+                    // Store the old date value before making the API call
+                    const oldDueDate = jobDueDate;
                     let utcDueDate = new Date(newDate).toUTCString();
                     let mom = moment(newDate);
                     let formattedDueDate = mom
                       .utc()
                       .format("YYYY-MM-DD HH:mm:ss");
                     setJobDueDate(formattedDueDate);
-                    updateJobDueDateApi(callApi, () => { }, {
-                      boardMissionId: boardMissionsDetails.boardMissionId,
-                      dueDate: utcDueDate,
-                    }).then();
+                    updateJobDueDateApi(
+                      callApi,
+                      (res: any) => {
+                        if (!res?.success) {
+                          // Check for specific error: delivery date less than estimated
+                          if (res?.statusCode === 116) {
+                            const errorMessage = t(
+                              "alerts.deliveryDateLessThanEstimated"
+                            );
+                            alertFault(errorMessage);
+                          } else {
+                            alertFaultUpdate();
+                          }
+                          // Reset to the old date value that was stored before the API call
+                          setJobDueDate(oldDueDate);
+                        }
+                      },
+                      {
+                        boardMissionId: boardMissionsDetails.boardMissionId,
+                        dueDate: utcDueDate,
+                      }
+                    ).then();
                   }}
                   isEditable={true}
                   withTime={true}
@@ -113,7 +156,10 @@ const InfoSection = ({ boardMissionsDetails, CheckPreferenceValue, t }) => {
               </div>
             </div>
             <span
-              style={{ cursor: "pointer" }}
+              style={{
+                cursor: "pointer",
+                color: shouldShowRedDeliveryDate ? "#DC2626" : "inherit",
+              }}
               onClick={() => setOpenDatePicker(true)}
             >
               {DateHourFormatterShort(convertUtcToLocalIsoString(jobDueDate))}
@@ -146,13 +192,26 @@ const InfoSection = ({ boardMissionsDetails, CheckPreferenceValue, t }) => {
           : boardMissionsDetails.clientPhone,
       },
     ],
-    [boardMissionsDetails, t, jobDueDate, openDatePicker, callApi]
+    [
+      boardMissionsDetails,
+      t,
+      jobDueDate,
+      openDatePicker,
+      callApi,
+      shouldShowRedDeliveryDate,
+      alertFault,
+    ]
   );
 
   const statusLabels = [
     {
       condition: boardMissionsDetails?.isNeedExample,
-      label: t("boardMissions.sampleRequired") + " : " + (boardMissionsDetails?.exampleType === 1 ? t("products.offsetPrice.admin.Physical") : t("products.offsetPrice.admin.Digital")),
+      label:
+        t("boardMissions.sampleRequired") +
+        " : " +
+        (boardMissionsDetails?.exampleType === 1
+          ? t("products.offsetPrice.admin.Physical")
+          : t("products.offsetPrice.admin.Digital")),
       background: "#BE0270",
     },
     {
@@ -161,7 +220,9 @@ const InfoSection = ({ boardMissionsDetails, CheckPreferenceValue, t }) => {
       background: undefined,
     },
     {
-      condition: boardMissionsDetails?.isRepetitiveWork && !boardMissionsDetails?.qualityIssueReason,
+      condition:
+        boardMissionsDetails?.isRepetitiveWork &&
+        !boardMissionsDetails?.qualityIssueReason,
       label: t("boardMissions.isRepetitiveWork"),
       background: "#B93815",
     },
@@ -199,19 +260,20 @@ const InfoSection = ({ boardMissionsDetails, CheckPreferenceValue, t }) => {
       {/* Render Status Labels */}
       {statusLabels.map(
         ({ condition, label, background, tooltip }, index) =>
-          condition && (
-            tooltip ? (
-              <Tooltip key={index} title={tooltip} arrow>
-                <span style={{ ...classes.labelsStyle, background, cursor: "help" }}>
-                  {label}
-                </span>
-              </Tooltip>
-            ) : (
-              <span key={index} style={{ ...classes.labelsStyle, background }}>
+          condition &&
+          (tooltip ? (
+            <Tooltip key={index} title={tooltip} arrow>
+              <span
+                style={{ ...classes.labelsStyle, background, cursor: "help" }}
+              >
                 {label}
               </span>
-            )
-          )
+            </Tooltip>
+          ) : (
+            <span key={index} style={{ ...classes.labelsStyle, background }}>
+              {label}
+            </span>
+          ))
       )}
     </Stack>
   );
@@ -354,7 +416,10 @@ const BoardMissionsDetailsHeader = () => {
                   variant={"square"}
                   onClick={() => {
                     if (boardMissionsDetails?.boardMissionImage) {
-                      window.open(boardMissionsDetails.boardMissionImage, '_blank');
+                      window.open(
+                        boardMissionsDetails.boardMissionImage,
+                        "_blank"
+                      );
                     }
                   }}
                 >
@@ -391,8 +456,9 @@ const BoardMissionsDetailsHeader = () => {
                     />
                     <HeaderDividerComponent />
                     <HeaderTitleComponent
-                      title={`${boardMissionsDetails.boardMissionNumber}/${boardMissionsDetails.orderNumber
-                        }${!!boardMissionsDetails.productType ? "/" : ""}`}
+                      title={`${boardMissionsDetails.boardMissionNumber}/${
+                        boardMissionsDetails.orderNumber
+                      }${!!boardMissionsDetails.productType ? "/" : ""}`}
                     />
                     <span style={classes.productType}>
                       {boardMissionsDetails.sectionName}
