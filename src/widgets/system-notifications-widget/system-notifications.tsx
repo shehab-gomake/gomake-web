@@ -123,10 +123,10 @@ const SystemNotifications = () => {
     }
   };
 
-  const handleNotificationClick = async (notification: ISystemNotification) => {
+  const handleNotificationClick = (notification: ISystemNotification) => {
     const url = getNotificationUrl(notification);
     if (url) {
-      await markNotificationAsRead(notification.id);
+      // await markNotificationAsRead(notification.id);
       handleClose();
       router.push(url);
     }
