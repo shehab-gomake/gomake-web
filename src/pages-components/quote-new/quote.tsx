@@ -1536,7 +1536,8 @@ const QuoteNewPageWidget = ({
         />
       )}
       {/* Order Update Confirmation Modal */}
-      <ThreeOptionsModal
+      {
+        /*<ThreeOptionsModal
         hideIcon
         title={t("sales.quote.sendToClient")}
         subTitle={t("sales.modals.doYouWantToSendOrderUpdateToClient")}
@@ -1550,7 +1551,8 @@ const QuoteNewPageWidget = ({
         onClickYes={handleOrderUpdateYes}
         onClickNo={handleOrderUpdateNo}
         isCancelBtn={false}
-      />
+      />*/
+      }
       {/* Order Update Send Modal (Non-FrontDesk) */}
       {documentType === DOCUMENT_TYPE.order && (
         <SendPaymentModal
