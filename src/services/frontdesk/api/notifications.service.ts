@@ -8,11 +8,8 @@
  * Tenant scoping: Automatic via printHouseId from JWT
  */
 
-import { MessagingHubHttpClient } from '@/services/messaging-hub-http-client';
-import {
-  BackendNotification,
-  BackendNotificationType,
-} from '@/services/frontdesk/utils/notification-type-mapper';
+import { MessagingHubHttpClient } from "@/services/messaging-hub-http-client";
+import { BackendNotification, BackendNotificationType } from "@/services/frontdesk/utils/notification-type-mapper";
 
 /**
  * Query filters for listing notifications
@@ -63,7 +60,7 @@ export interface SuccessResponse {
   message: string;
 }
 
-const NOTIFICATIONS_BASE_URL = '/notifications';
+const NOTIFICATIONS_BASE_URL = "/notifications";
 
 /**
  * NotificationsService
@@ -80,12 +77,12 @@ export class NotificationsService extends MessagingHubHttpClient {
   async getNotifications(filters?: NotificationFilters): Promise<PaginatedNotificationsResponse> {
     const params = new URLSearchParams();
 
-    if (filters?.type) params.append('type', filters.type);
-    if (filters?.unreadOnly) params.append('unreadOnly', 'true');
-    if (filters?.page) params.append('page', filters.page.toString());
-    if (filters?.limit) params.append('limit', filters.limit.toString());
+    if (filters?.type) params.append("type", filters.type);
+    if (filters?.unreadOnly) params.append("unreadOnly", "true");
+    if (filters?.page) params.append("page", filters.page.toString());
+    if (filters?.limit) params.append("limit", filters.limit.toString());
 
-    const queryString = params.toString() ? `?${params.toString()}` : '';
+    const queryString = params.toString() ? `?${params.toString()}` : "";
 
     // Backend returns { success, data: [...notifications], pagination }
     // MessagingHubHttpClient auto-unwraps to return the data object
@@ -104,9 +101,9 @@ export class NotificationsService extends MessagingHubHttpClient {
    */
   async getUnreadCount(type?: BackendNotificationType): Promise<number> {
     const params = new URLSearchParams();
-    if (type) params.append('type', type);
+    if (type) params.append("type", type);
 
-    const queryString = params.toString() ? `?${params.toString()}` : '';
+    const queryString = params.toString() ? `?${params.toString()}` : "";
     const response = await this.get<UnreadCountResponse>(`${NOTIFICATIONS_BASE_URL}/unread/count${queryString}`);
 
     return response.count;
@@ -132,9 +129,9 @@ export class NotificationsService extends MessagingHubHttpClient {
    */
   async markAllAsRead(type?: BackendNotificationType): Promise<{ count: number }> {
     const params = new URLSearchParams();
-    if (type) params.append('type', type);
+    if (type) params.append("type", type);
 
-    const queryString = params.toString() ? `?${params.toString()}` : '';
+    const queryString = params.toString() ? `?${params.toString()}` : "";
     const response = await this.post<MarkAllAsReadResponse>(`${NOTIFICATIONS_BASE_URL}/mark-all-read${queryString}`);
 
     return { count: response.count };

@@ -32,12 +32,13 @@ import { Google as GoogleIcon } from "@mui/icons-material";
 import { OutlookIcon } from "@/icons/outlook-icon";
 
 import { useChatwootOAuth } from "@/widgets/frontdesk/providers/chatwoot/hooks/use-chatwoot-oauth";
+import { useWhatsAppOAuth } from "@/widgets/frontdesk/providers/chatwoot/hooks/use-whatsapp-oauth";
 import { useChatwootInboxes } from "@/widgets/frontdesk/providers/chatwoot/hooks/use-chatwoot-inboxes";
 import { useChatwootAgents } from "@/widgets/frontdesk/providers/chatwoot/hooks/resources/use-chatwoot-agents";
 import { useChatwootProfile } from "@/widgets/frontdesk/providers/chatwoot/hooks/use-chatwoot-profile";
 import { chatwootService } from "@/services/frontdesk";
 import { chatwootInboxAgentsMapAtom } from "@/store/frontdesk/atoms/chatwoot.atoms";
-import { colorTokens, radiusTokens, shadowTokens } from "@/widgets/frontdesk/design-system";
+import { colorTokens } from "@/widgets/frontdesk/design-system";
 
 interface AddChannelModalProps {
   open: boolean;
@@ -82,9 +83,9 @@ const getSteps = (currentStep: number, t: (key: string) => string) => [
   },
 ];
 
-export const AddChannelModal: React.FC<AddChannelModalProps> = ({ 
-  open, 
-  onClose, 
+export const AddChannelModal: React.FC<AddChannelModalProps> = ({
+  open,
+  onClose,
   error,
   preloadedInboxId = null,
   preloadedAccountId = null,
@@ -100,9 +101,24 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
   const [agentAssignmentError, setAgentAssignmentError] = useState<string | null>(null);
 
   const { authenticate, isAuthenticating, error: oauthError, clearError } = useChatwootOAuth();
+  const {
+    authenticate: authenticateWhatsApp,
+    isAuthenticating: isWhatsAppAuthenticating,
+    error: whatsAppError,
+    clearError: clearWhatsAppError,
+    checkConfiguration: checkWhatsAppConfiguration,
+  } = useWhatsAppOAuth();
+
+  // Debug: Log when component renders
+  console.log("[AddChannelModal] Rendering with selectedChannel:", selectedChannel, "currentStep:", currentStep);
   const { refresh: refreshInboxes } = useChatwootInboxes();
   const { profile } = useChatwootProfile();
-  const { agents, loading: agentsLoading, error: agentsError, refresh: refreshAgents } = useChatwootAgents(newInboxData?.accountId ?? null, false);
+  const {
+    agents,
+    loading: agentsLoading,
+    error: agentsError,
+    refresh: refreshAgents,
+  } = useChatwootAgents(newInboxData?.accountId ?? null, false);
   const setInboxAgentsMap = useSetRecoilState(chatwootInboxAgentsMapAtom);
 
   const channels: ChannelOption[] = [
@@ -178,7 +194,7 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
       console.log("[AddChannelModal] Fetching agents for step 3");
       refreshAgents();
     }
-    
+
     // Reset the ref when step changes away from 3
     if (currentStep !== 3) {
       hasAttemptedFetchRef.current = false;
@@ -188,25 +204,17 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
   // Fetch current inbox assignments when entering Step 3
   useEffect(() => {
     const fetchInboxAgents = async () => {
-      if (
-        currentStep === 3 && 
-        newInboxData?.accountId && 
-        newInboxData?.inboxId && 
-        !hasFetchedInboxAgentsRef.current
-      ) {
+      if (currentStep === 3 && newInboxData?.accountId && newInboxData?.inboxId && !hasFetchedInboxAgentsRef.current) {
         hasFetchedInboxAgentsRef.current = true;
         console.log("[AddChannelModal] Fetching existing inbox agents");
-        
+
         try {
-          const response = await chatwootService.inboxes.getInboxAgents(
-            newInboxData.accountId,
-            newInboxData.inboxId
-          );
-          
+          const response = await chatwootService.inboxes.getInboxAgents(newInboxData.accountId, newInboxData.inboxId);
+
           // Extract agent IDs from response
           const inboxAgents = response?.payload || response || [];
           const agentIds = inboxAgents.map((agent: any) => agent.id);
-          
+
           console.log("[AddChannelModal] Found existing agents:", agentIds);
           if (agentIds.length > 0) {
             setSelectedAgents(agentIds);
@@ -231,19 +239,20 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
     }
   }, [currentStep, agents, profile, selectedAgents.length]);
 
+  // Combined authenticating state
+  const isAnyAuthenticating = isAuthenticating || isWhatsAppAuthenticating;
+
   const handleClose = useCallback(() => {
-    if (!isAuthenticating) {
+    if (!isAnyAuthenticating) {
       onClose();
     }
-  }, [isAuthenticating, onClose]);
+  }, [isAnyAuthenticating, onClose]);
 
   const handleChannelSelect = (channelId: string) => {
-    // Don't allow WhatsApp selection yet
-    if (channelId === "whatsapp") {
-      return;
-    }
+    console.log("[AddChannelModal] Channel selected:", channelId);
     setSelectedChannel(channelId);
     clearError();
+    clearWhatsAppError();
     setSuccessMessage(null);
   };
 
@@ -263,6 +272,7 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
     if (!selectedChannel) return;
 
     clearError();
+    clearWhatsAppError();
     setSuccessMessage(null);
     setAgentAssignmentError(null);
 
@@ -285,10 +295,13 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
           // Fallback: If no inbox data, skip to success (legacy flow)
           setCurrentStep(4);
 
-          const providerName = provider === "google" ? t("frontdesk.addChannel.channels.gmail.name") : provider === "microsoft" ? t("frontdesk.addChannel.channels.outlook.name") : "Email";
-          setSuccessMessage(
-            t("frontdesk.addChannel.success.connected", { provider: providerName, count: result.accountsAdded })
-          );
+          const providerName =
+            provider === "google"
+              ? t("frontdesk.addChannel.channels.gmail.name")
+              : provider === "microsoft"
+              ? t("frontdesk.addChannel.channels.outlook.name")
+              : "Email";
+          setSuccessMessage(t("frontdesk.addChannel.success.connected", { provider: providerName, count: result.accountsAdded }));
 
           // Refresh inboxes to show new channels
           await refreshInboxes();
@@ -302,12 +315,36 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
           }, 2000);
         }
       } else if (provider === "whatsapp") {
-        // WhatsApp not implemented
-        throw new Error(t("frontdesk.addChannel.errors.whatsappComingSoon"));
+        // WhatsApp Embedded Signup flow
+        const result = await authenticateWhatsApp();
+
+        if (result.success && result.accountId && result.inboxId) {
+          // Store inbox data for Step 3
+          setNewInboxData({
+            accountId: result.accountId,
+            inboxId: result.inboxId,
+          });
+
+          // Move to Step 3 (Add Agents)
+          setCurrentStep(3);
+        } else {
+          // If we got a result but no inbox data, go to success
+          setCurrentStep(4);
+          setSuccessMessage(t("frontdesk.addChannel.success.whatsappConnected", { name: result.inboxName || "WhatsApp" }));
+
+          await refreshInboxes();
+
+          setTimeout(() => {
+            onClose();
+            setSelectedChannel(null);
+            setSuccessMessage(null);
+            setCurrentStep(1);
+          }, 2000);
+        }
       }
     } catch (err: any) {
       console.error("Channel connection failed:", err);
-      // Error is already set by useChatwootOAuth hook
+      // Error is already set by the OAuth hooks
     }
   };
 
@@ -326,7 +363,7 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
       setAgentAssignmentError(t("frontdesk.addChannel.errors.invalidInboxData"));
       return;
     }
-    
+
     // Current user should always be in the selected agents
     if (selectedAgents.length === 0) {
       setAgentAssignmentError(t("frontdesk.addChannel.errors.atLeastOneAgent"));
@@ -338,19 +375,12 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
 
     try {
       // Call agent assignment API
-      await chatwootService.inboxes.addAgentsToInbox(
-        newInboxData.accountId,
-        newInboxData.inboxId,
-        selectedAgents
-      );
+      await chatwootService.inboxes.addAgentsToInbox(newInboxData.accountId, newInboxData.inboxId, selectedAgents);
 
       // Fetch updated agents list and update Recoil state
-      const response = await chatwootService.inboxes.getInboxAgents(
-        newInboxData.accountId,
-        newInboxData.inboxId
-      );
+      const response = await chatwootService.inboxes.getInboxAgents(newInboxData.accountId, newInboxData.inboxId);
       const updatedAgents = response?.payload || [];
-      
+
       // Update the agents map in Recoil state
       setInboxAgentsMap((prev) => ({
         ...prev,
@@ -375,16 +405,14 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
       }, 2000);
     } catch (err: any) {
       console.error("Agent assignment failed:", err);
-      setAgentAssignmentError(
-        err.message || t("frontdesk.addChannel.errors.failedToAssignAgents")
-      );
+      setAgentAssignmentError(err.message || t("frontdesk.addChannel.errors.failedToAssignAgents"));
     } finally {
       setIsAssigningAgents(false);
     }
   };
 
   const selectedChannelData = channels.find((c) => c.id === selectedChannel);
-  const displayError = error || oauthError || agentAssignmentError;
+  const displayError = error || oauthError || whatsAppError || agentAssignmentError;
   const steps = getSteps(currentStep, t);
 
   return (
@@ -448,7 +476,7 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
         </Box>
         <IconButton
           onClick={handleClose}
-          disabled={isAuthenticating}
+          disabled={isAnyAuthenticating}
           size="small"
           sx={{
             color: colorTokens.neutral[600],
@@ -565,7 +593,10 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
             {displayError && (
               <Alert
                 severity="error"
-                onClose={clearError}
+                onClose={() => {
+                  clearError();
+                  clearWhatsAppError();
+                }}
                 sx={{
                   mb: 3,
                   borderRadius: 2,
@@ -600,7 +631,7 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
                 >
                   {channels.map((channel) => {
                     const isSelected = selectedChannel === channel.id;
-                    const isDisabled = channel.id === "whatsapp";
+                    const isDisabled = false; // All channels enabled
                     return (
                       <Paper
                         key={channel.id}
@@ -735,7 +766,9 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
                     mb: 2,
                   }}
                 >
-                  {selectedChannelData.name === t("frontdesk.addChannel.channels.gmail.name") ? t("frontdesk.addChannel.channels.googleEmail") : selectedChannelData.name}
+                  {selectedChannelData.name === t("frontdesk.addChannel.channels.gmail.name")
+                    ? t("frontdesk.addChannel.channels.googleEmail")
+                    : selectedChannelData.name}
                 </Typography>
 
                 <Typography
@@ -753,7 +786,7 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
                 <Box>
                   <Button
                     onClick={() => handleSignIn(selectedChannelData.provider)}
-                    disabled={isAuthenticating}
+                    disabled={isAnyAuthenticating}
                     variant="contained"
                     sx={{
                       backgroundColor: colorTokens.primary[500],
@@ -775,7 +808,7 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
                       },
                     }}
                   >
-                    {isAuthenticating ? (
+                    {isAnyAuthenticating ? (
                       <>
                         <CircularProgress size={20} sx={{ color: "#ffffff" }} />
                         {t("frontdesk.addChannel.step2.connecting")}
@@ -801,7 +834,7 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
                 >
                   <Button
                     onClick={handleBack}
-                    disabled={isAuthenticating}
+                    disabled={isAnyAuthenticating}
                     variant="outlined"
                     sx={{
                       color: colorTokens.neutral[700],
@@ -959,7 +992,15 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
                             </Avatar>
 
                             {/* Agent Info */}
-                            <Box sx={{ flex: 1, minWidth: 0, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                            <Box
+                              sx={{
+                                flex: 1,
+                                minWidth: 0,
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "space-between",
+                              }}
+                            >
                               <Box sx={{ display: "flex", alignItems: "center", gap: 1, minWidth: 0 }}>
                                 <Typography
                                   sx={{
@@ -1153,8 +1194,6 @@ export const AddChannelModal: React.FC<AddChannelModalProps> = ({
           </Box>
         </Box>
       </DialogContent>
-
     </Dialog>
   );
 };
-

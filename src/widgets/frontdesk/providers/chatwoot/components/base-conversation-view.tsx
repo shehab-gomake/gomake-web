@@ -227,6 +227,7 @@ export const BaseConversationView: React.FC<BaseConversationViewProps> = ({
                 inboxesLoading={inboxesLoading}
                 isSidebarVisible={isSidebarVisible}
                 onToggleSidebar={handleToggleSidebar}
+                onConversationListRefresh={refresh}
                 {...messageViewerProps}
               />
             </Box>

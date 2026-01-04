@@ -28,6 +28,7 @@ import {
   ConversationStatus,
   ConversationPriority,
 } from "@/services/frontdesk/api/chatwoot/types/conversations.types";
+import type { WhatsAppTemplateParams } from "@/services/frontdesk/api/chatwoot/types/compose.types";
 
 type PriorityValue =
   | ConversationPriority.URGENT
@@ -51,6 +52,8 @@ interface ChatwootMessageViewerProps {
   inboxesLoading?: boolean;
   isSidebarVisible?: boolean;
   onToggleSidebar?: () => void;
+  /** Callback to refresh the conversation list after sending a message */
+  onConversationListRefresh?: () => void | Promise<void>;
 }
 
 export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
@@ -63,6 +66,7 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
   inboxesLoading = false,
   isSidebarVisible = true,
   onToggleSidebar,
+  onConversationListRefresh,
 }) => {
   const { t } = useTranslation();
   const dir: "rtl" | "ltr" = t("direction");
@@ -72,6 +76,19 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
   // Track previous conversation for smooth transitions
   const previousConversationIdRef = React.useRef<number | null>(null);
   const [isTransitioning, setIsTransitioning] = React.useState(false);
+
+  // Ref for scroll-to-bottom sentinel element (consistent with BaseMessageList pattern)
+  const messagesEndRef = React.useRef<HTMLDivElement>(null);
+
+  // Scroll to bottom using scrollIntoView (consistent with BaseMessageList pattern)
+  const scrollToBottom = React.useCallback((smooth = false) => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ 
+        behavior: smooth ? "smooth" : "auto",
+        block: "end" 
+      });
+    }
+  }, []);
 
   const {
     messages,
@@ -107,6 +124,16 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
       return () => clearTimeout(timer);
     }
   }, [loading, messages.length, isTransitioning]);
+
+  // Auto-scroll to bottom when messages finish loading or conversation changes
+  React.useEffect(() => {
+    if (!loading && messages.length > 0 && !isTransitioning) {
+      // Use requestAnimationFrame to ensure DOM is updated before scrolling
+      requestAnimationFrame(() => {
+        scrollToBottom();
+      });
+    }
+  }, [loading, messages.length, conversation?.id, scrollToBottom, isTransitioning]);
 
   // Get inbox for the conversation from props
   const inbox = React.useMemo(() => {
@@ -362,7 +389,8 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
     content: string,
     isPrivate: boolean,
     recipientEmails?: { to?: string; cc?: string; bcc?: string },
-    attachments?: File[]
+    attachments?: File[],
+    templateParams?: WhatsAppTemplateParams
   ) => {
     if (!accountId || !conversation.id) return;
 
@@ -370,7 +398,7 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
     try {
       // Note: For email channels, cc/bcc/to are passed as separate fields
       // These are required for proper email delivery with attachments
-      await chatwootService.messages.createMessage(accountId, conversation.id, {
+      const newMessage = await chatwootService.messages.createMessage(accountId, conversation.id, {
         content,
         message_type: "outgoing",
         private: isPrivate,
@@ -385,10 +413,46 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
           ...(recipientEmails.bcc && { bcc_emails: recipientEmails.bcc }),
           ...(recipientEmails.to && { to_emails: recipientEmails.to }),
         }),
+        // Include WhatsApp template params if provided
+        ...(templateParams && {
+          template_params: templateParams,
+        }),
       });
+
+      // Optimistic Update: Update conversation in list immediately
+      // This ensures the preview and timestamp are updated without waiting for refetch
+      if (onConversationUpdate && newMessage) {
+        const updatedConversation: ChatwootConversation = {
+          ...conversation,
+          last_non_activity_message: newMessage,
+          // Update timestamp to now (or message creation time) to move to top if sorted by activity
+          timestamp: newMessage.created_at?.toString() || Math.floor(Date.now() / 1000).toString(),
+          last_activity_at: newMessage.created_at || Math.floor(Date.now() / 1000),
+          // Important: Update updated_at as it takes precedence in timestamp formatting
+          updated_at: newMessage.created_at || Math.floor(Date.now() / 1000),
+        };
+        onConversationUpdate(updatedConversation);
+      }
 
       // Refresh messages after sending
       await refresh();
+
+      // Scroll to bottom to show the new message with smooth animation
+      requestAnimationFrame(() => {
+        scrollToBottom(true); // Use smooth scroll for sent messages
+      });
+
+      // Refresh conversation list to show updated preview and move conversation to top
+      // Use a small delay to ensure the backend has processed the message
+      if (onConversationListRefresh) {
+        setTimeout(async () => {
+          try {
+            await onConversationListRefresh();
+          } catch (refreshError) {
+            console.error("Failed to refresh conversation list:", refreshError);
+          }
+        }, 500);
+      }
     } catch (err) {
       console.error("Failed to send message:", err);
       throw err;
@@ -588,6 +652,8 @@ export const ChatwootMessageViewer: React.FC<ChatwootMessageViewerProps> = ({
               {conversation.status === "resolved" && (
                 <ChatwootResolutionStatusBar conversation={conversation} />
               )}
+              {/* Scroll sentinel - consistent with BaseMessageList pattern */}
+              <div ref={messagesEndRef} />
             </Stack>
           </Fade>
         )}

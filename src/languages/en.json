@@ -3336,6 +3336,7 @@
       "attachFile": "Attach file",
       "attachFiles": "Attach files",
       "filesAttached": "{{count}} file attached",
+      "whatsappTemplates": "WhatsApp Templates",
       "attachments": "ATTACHMENTS",
       "chooseFiles": "Choose Files",
       "filesAttached_plural": "{{count}} files attached",
@@ -3527,7 +3528,7 @@
       "channels": {
         "whatsapp": {
           "name": "WhatsApp",
-          "description": "Support your customers on WhatsApp. (Coming Soon)"
+          "description": "Connect your WhatsApp Business account."
         },
         "gmail": {
           "name": "Gmail",
@@ -3546,13 +3547,14 @@
       },
       "success": {
         "connected": "Successfully connected {{provider}}! {{count}} account(s) added.",
-        "assignedAgents": "Successfully assigned {{count}} agent(s) to the inbox!"
+        "assignedAgents": "Successfully assigned {{count}} agent(s) to the inbox!",
+        "whatsappConnected": "WhatsApp channel {{name}} connected successfully!"
       },
       "errors": {
         "invalidInboxData": "Invalid inbox data.",
         "atLeastOneAgent": "At least one agent must be assigned to the inbox.",
         "failedToAssignAgents": "Failed to assign agents. Please try again.",
-        "whatsappComingSoon": "WhatsApp integration is coming soon!"
+        "whatsappNotConfigured": "WhatsApp is not configured. Please contact administrator."
       }
     },
     "title": "FrontDesk",
