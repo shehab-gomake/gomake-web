@@ -52,6 +52,7 @@ const CHECK_PURCHASE_NUMBER_EXISTS_URL =
 const ADD_DELIVERY_URL = "/v1/erp-service/documents/add-delivery";
 const ADD_RELATED_DOCUMENT_URL =
   "/v1/erp-service/documents/add-related-document";
+const ASSIGN_TO_TICKET_URL = "/v1/erp-service/documents/assign-to-ticket";
 const CANCEL_DOCUMENT_URL = "/v1/erp-service/documents/cancel-document";
 const SEND_DOCUMENT_TO_CLIENT_URL =
   "/v1/erp-service/documents/send-document-to-client";
@@ -506,6 +507,25 @@ const addRelatedDocumentApi: ICallAndSetData = async (
     ADD_RELATED_DOCUMENT_URL,
     setState,
     data
+  );
+};
+
+const assignToTicketApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data: {
+    documentId: string;
+    ticketId: string;
+    documentType: DOCUMENT_TYPE;
+  }
+) => {
+  const { documentType, ...payload } = data || {};
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.PUT,
+    `${ASSIGN_TO_TICKET_URL}/${documentType}`,
+    setState,
+    payload
   );
 };
 
@@ -1661,6 +1681,7 @@ export {
   updateQuoteClientNoteAsShownApi,
   getDocumentInventoryApi,
   addCompositeProductsApi,
+  assignToTicketApi,
   undoDocumentIntakeApi,
   undoDocumentItemIntakeApi,
 };

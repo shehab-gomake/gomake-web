@@ -394,6 +394,7 @@ const QuoteNewPageWidget = ({
     isEmailComposerOpen,
     emailData,
     closeEmailComposer,
+    isLoadingEmailData,
     isMaterial,
     isMaterialPurchaseOrder,
     isCanIntake,
@@ -1524,6 +1525,7 @@ const QuoteNewPageWidget = ({
           emailData={emailData}
           documentId={quoteItemValue?.id}
           documentType={documentType}
+          isLoading={isLoadingEmailData}
         />
       )}
       {/* Order Update Confirmation Modal */}

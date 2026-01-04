@@ -6,27 +6,14 @@
  */
 
 import React from "react";
-import {
-  Box,
-  Stack,
-  IconButton,
-  Tooltip,
-  Button,
-  Typography,
-  Divider,
-} from "@mui/material";
+import { Box, Stack, IconButton, Tooltip, Button, Typography, Divider } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import AttachFileOutlinedIcon from "@mui/icons-material/AttachFileOutlined";
 import SendRoundedIcon from "@mui/icons-material/SendRounded";
 import CodeOutlinedIcon from "@mui/icons-material/CodeOutlined";
 import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 import type { UseChannelFeaturesReturn } from "../../hooks/use-channel-features";
-import {
-  colorTokens,
-  radiusTokens,
-  shadowTokens,
-  semanticSpacing,
-} from "@/widgets/frontdesk/design-system";
+import { colorTokens, radiusTokens, shadowTokens, semanticSpacing } from "@/widgets/frontdesk/design-system";
 
 interface ReplyComposerBottomToolbarProps {
   channelFeatures: UseChannelFeaturesReturn;
@@ -35,20 +22,20 @@ interface ReplyComposerBottomToolbarProps {
   isSending: boolean;
   onSend: () => void;
   onAttachClick: () => void;
+  onTemplateClick?: () => void;
   attachmentCount: number;
   borderColor: string;
   lightGrayText: string;
 }
 
-export const ReplyComposerBottomToolbar: React.FC<
-  ReplyComposerBottomToolbarProps
-> = ({
+export const ReplyComposerBottomToolbar: React.FC<ReplyComposerBottomToolbarProps> = ({
   channelFeatures,
   messageContent,
   canSend,
   isSending,
   onSend,
   onAttachClick,
+  onTemplateClick,
   attachmentCount,
   lightGrayText,
 }) => {
@@ -151,9 +138,9 @@ export const ReplyComposerBottomToolbar: React.FC<
         )}
 
         {/* WhatsApp Templates Button - only for WhatsApp Cloud */}
-        {channelFeatures.shouldShowWhatsAppTemplates && (
-          <Tooltip title="WhatsApp Templates" arrow>
-            <IconButton size="small" sx={iconButtonStyle}>
+        {channelFeatures.shouldShowWhatsAppTemplates && onTemplateClick && (
+          <Tooltip title={t("frontdesk.compose.whatsappTemplates")} arrow>
+            <IconButton size="small" onClick={onTemplateClick} sx={iconButtonStyle} aria-label="Open WhatsApp templates">
               <DescriptionOutlinedIcon />
             </IconButton>
           </Tooltip>
@@ -195,8 +182,7 @@ export const ReplyComposerBottomToolbar: React.FC<
               color:
                 messageContent.length > channelFeatures.maxMessageLength
                   ? colorTokens.error[600]
-                  : messageContent.length >
-                    channelFeatures.maxMessageLength * 0.9
+                  : messageContent.length > channelFeatures.maxMessageLength * 0.9
                   ? colorTokens.warning[600]
                   : colorTokens.neutral[400],
               fontSize: "0.75rem",
@@ -204,8 +190,7 @@ export const ReplyComposerBottomToolbar: React.FC<
               fontVariantNumeric: "tabular-nums",
             }}
           >
-            {messageContent.length.toLocaleString()} /{" "}
-            {channelFeatures.maxMessageLength.toLocaleString()}
+            {messageContent.length.toLocaleString()} / {channelFeatures.maxMessageLength.toLocaleString()}
           </Typography>
         )}
 
