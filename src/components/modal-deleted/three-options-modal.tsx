@@ -20,6 +20,7 @@ const ThreeOptionsModal = ({
   yesBtn = "modal.yes",
   noBtn = "modal.no",
   cancelBtn = "modal.cancel",
+  isCancelBtn = true,
   modalType = ModalType.DELETE,
   withClose = true,
   withRoundedCloseIcon = false,
@@ -95,9 +96,9 @@ const ThreeOptionsModal = ({
                 </GomakePrimaryButton>
               </>
             )}
-            <GomakePrimaryButton style={classes.cancelBtn} onClick={onClose}>
+            {isCancelBtn && <GomakePrimaryButton style={classes.cancelBtn} onClick={onClose}>
               {t(cancelBtn)}
-            </GomakePrimaryButton>
+            </GomakePrimaryButton>}
           </div>
           {bottomActionLabel && onBottomAction && (
             <Box style={classes.bottomActionContainer}>

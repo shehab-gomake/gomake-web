@@ -24,7 +24,6 @@ import { SendBtnMenu } from "@/widgets/quote-new/send-btn-menu";
 import { _renderQuoteStatus } from "@/utils/constants";
 import {
   Box,
-  Button,
   CircularProgress,
   FormControlLabel,
   IconButton,
@@ -32,7 +31,6 @@ import {
   Radio,
   RadioGroup,
   Skeleton,
-  Typography,
 } from "@mui/material";
 import { SettingQuoteMenu } from "@/widgets/quote-new/setting-quote-menu";
 import { AddDeliveryModal } from "@/widgets/quote-new/modals-widgets/add-delivery-modal/add-delivery-modal";
@@ -85,6 +83,8 @@ import { FrontDeskEmailComposerWrapper } from "../quotes/components/frontdesk-em
 import { PurchaseOrdersDialogsUndoIntakeWidget } from "@/widgets/purchas-orders-dialogs/purchase-orders-dialogs-undo-intake-widget";
 import { PurchaseOrdersDialogsIntakeValidationWidget } from "@/widgets/purchas-orders-dialogs/purchase-orders-dialogs-intake-validatin-widget";
 import { PurchaseOrdersDialogsAddItemRestrictionWidget } from "@/widgets/purchas-orders-dialogs/purchase-orders-dialogs-add-item-restriction-widget";
+import { SendPaymentModal } from "../quotes/widgets/send-payment-modal/send-payment-modal";
+import { ThreeOptionsModal } from "@/components/modal-deleted/three-options-modal";
 interface IProps {
   documentType: DOCUMENT_TYPE;
   isQuoteConfirmation?: boolean;
@@ -418,6 +418,10 @@ const QuoteNewPageWidget = ({
     handleCreateNewPurchaseOrder,
     handleCancelAddItemRestriction,
     handleChangeStatusToUnderCreation,
+    orderUpdateConfirmationModal,
+    orderUpdateSendModal,
+    handleOrderUpdateYes,
+    handleOrderUpdateNo,
   } = useQuoteNew({
     docType: documentType,
     isQuoteConfirmation: isQuoteConfirmation,
@@ -1520,6 +1524,47 @@ const QuoteNewPageWidget = ({
           emailData={emailData}
           documentId={quoteItemValue?.id}
           documentType={documentType}
+        />
+      )}
+      {/* Order Update Confirmation Modal */}
+      <ThreeOptionsModal
+        hideIcon
+        title={t("sales.quote.sendToClient")}
+        subTitle={t("sales.modals.doYouWantToSendOrderUpdateToClient")}
+        yesBtn={"modal.yes"}
+        noBtn={"modal.no"}
+        openModal={orderUpdateConfirmationModal.isOpen}
+        onClose={() => {
+          orderUpdateConfirmationModal.close();
+          handleOrderUpdateNo();
+        }}
+        onClickYes={handleOrderUpdateYes}
+        onClickNo={handleOrderUpdateNo}
+        isCancelBtn={false}
+      />
+      {/* Order Update Send Modal (Non-FrontDesk) */}
+      {documentType === DOCUMENT_TYPE.order && (
+        <SendPaymentModal
+          openPaymentModal={orderUpdateSendModal.isOpen}
+          onClickClosePaymentModal={() => {
+            orderUpdateSendModal.close();
+            // Remove URL parameter
+            if (router.query.showUpdateModal) {
+              const newQuery = { ...router.query };
+              delete newQuery.showUpdateModal;
+              router.replace({ pathname: router.pathname, query: newQuery }, undefined, { shallow: true });
+            }
+          }}
+          paymentModalTitle={t("sales.quote.sendToClient")}
+          documentType={documentType}
+          isSendToClient={true}
+          showAlertModal={(params) => {
+            // Simple alert modal handler
+            alert(params.message);
+          }}
+          hideCheckboxes={false}
+          documentForEmail={quoteItemValue}
+          isOrderUpdate={true}
         />
       )}
     </>
