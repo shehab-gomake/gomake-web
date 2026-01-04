@@ -762,7 +762,7 @@ const useQuoteNew = ({
 
     if ((isInvoice || isDeliveryNote) && isNewCreation) {
       const updatedQuoteItemValue = { ...quoteItemValue };
-      updatedQuoteItemValue.exchangeRate = value;
+      // updatedQuoteItemValue.exchangeRate = value;
 
       setQuoteItemValue(updatedQuoteItemValue);
       setIsUpdateExchangeRate(null);
@@ -775,7 +775,7 @@ const useQuoteNew = ({
       }
 
       getCalculateQuoteItem(
-        updatedQuoteItemValue.documentItems[0],
+        updatedQuoteItemValue,
         ItemCalculationType.ExchangeRate,
         value,
         updatedQuoteItemValue
@@ -816,7 +816,7 @@ const useQuoteNew = ({
         if (res?.success && res?.data?.data?.data) {
           const newExchangeRate = res.data?.data?.data;
           const updatedQuoteItemValue = { ...quoteItemValue };
-          updatedQuoteItemValue.exchangeRate = newExchangeRate;
+          // updatedQuoteItemValue.exchangeRate = newExchangeRate;
 
           setQuoteItemValue(updatedQuoteItemValue);
 
@@ -825,7 +825,7 @@ const useQuoteNew = ({
             quoteItemValue.documentItems.length > 0
           ) {
             getCalculateQuoteItem(
-              quoteItemValue.documentItems[0],
+              updatedQuoteItemValue,
               ItemCalculationType.ExchangeRate,
               newExchangeRate,
               updatedQuoteItemValue
@@ -1569,6 +1569,7 @@ const useQuoteNew = ({
   const [selectedFirstMaterial, setSelectedFirstMaterial] = useRecoilState<any>(
     selectedFirstMaterialState
   );
+
   const getCalculateQuoteItem = async (
     quoteItem: any,
     calculationType: number,
@@ -1640,8 +1641,18 @@ const useQuoteNew = ({
       if (res?.success) {
         const _data = res?.data?.data?.data;
         // if is request to change the currency in document in creation mode just multiple the prices with exchange rate
-        if (calculationType === 4) {
+        if (
+          calculationType === ItemCalculationType.Currency ||
+          calculationType === ItemCalculationType.ExchangeRate
+        ) {
           let exchangeRate = _data.exchangeRate;
+          let oldExchangeRate =
+            quoteItem.exchangeRate === 0 ||
+            quoteItem.exchangeRate === null ||
+            quoteItem.exchangeRate === undefined
+              ? 1
+              : quoteItem.exchangeRate;
+
           const updatedQuoteItemValue = {
             ...newQuoteItemValue,
             discount: _data?.document?.discount,
@@ -1656,11 +1667,18 @@ const useQuoteNew = ({
               (documentItem) => {
                 return {
                   ...documentItem,
-                  finalPrice: (documentItem.finalPrice * exchangeRate).toFixed(
-                    3
-                  ),
-                  price: (documentItem.price * exchangeRate).toFixed(3),
-                  discount: (documentItem.discount * exchangeRate).toFixed(3),
+                  finalPrice: (
+                    (documentItem.finalPrice * exchangeRate) /
+                    oldExchangeRate
+                  ).toFixed(3),
+                  price: (
+                    (documentItem.price * exchangeRate) /
+                    oldExchangeRate
+                  ).toFixed(3),
+                  discount: (
+                    (documentItem.discount * exchangeRate) /
+                    oldExchangeRate
+                  ).toFixed(3),
                 };
               }
             ),
@@ -1953,6 +1971,7 @@ const useQuoteNew = ({
     setQuoteItem(quoteItem);
   };
   const [loading, setLoading] = useRecoilState(loadingWithShadowState);
+
   const getCalculateQuote = async (calculationType: number, data: number) => {
     if (isNewCreation) {
       setLoading(true);
