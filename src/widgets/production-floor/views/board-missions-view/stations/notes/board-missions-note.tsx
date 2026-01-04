@@ -27,17 +27,16 @@ const BoardMissionsNote = ({ index, note }: IProps) => {
   const { onDeleteNote, deleting } = useBoardMissionsNotes();
 
   return (
-    <Stack direction={"row"} gap={"10px"} alignItems={"center"}>
+    <Stack direction={"row"} gap={"10px"} alignItems={"center"} >
       <Stack direction={"row"} gap={"4px"} alignItems={"center"}>
         <span
           style={{ ...FONT_FAMILY.Inter(600, 16), color: secondColor(500) }}
         >
-          {`${
-            note?.noteType !== NoteTypeEnum.general
+          {`${note?.noteType !== NoteTypeEnum.general
               ? note?.name || "Unknown"
               : t(`productionFloor.${NoteTypeEnum[note?.noteType]}`) ||
-                "Unknown"
-          }:`}
+              "Unknown"
+            }:`}
         </span>
         <span style={{ ...FONT_FAMILY.Inter(500, 16), color: "#344054" }}>
           {parse(note?.value)}

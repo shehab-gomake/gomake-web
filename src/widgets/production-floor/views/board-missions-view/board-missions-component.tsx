@@ -19,6 +19,8 @@ import { RelatedOrderItemsComponent } from "./related-order-items/related-order-
 import WorkTypesWidget from "./work-types/work-types-widget";
 import { useBoardMissionsActivities } from "@/widgets/production-floor/views/board-missions-view/activity/use-board-missions-activities";
 import { useBoardMissionsFiles } from "./files/use-board-missions-files";
+import { useBoardMissionsNotes } from "./stations/notes/use-board-missions-notes";
+import { OpenInFull as ExpandIcon, CloseFullscreen as CollapseIcon } from "@mui/icons-material";
 
 interface IProps {
   boardMissionsId: string;
@@ -30,6 +32,7 @@ interface IProps {
 const BoardMissionsComponent = ({ boardMissionsId, productType }: IProps) => {
   const { getAllActivities } = useBoardMissionsActivities();
   const { getAllBoardMissionsFiles } = useBoardMissionsFiles();
+  const { isNotesExpanded, toggleNotesExpanded } = useBoardMissionsNotes();
   const {
     t,
     getBoardMissions,
@@ -48,6 +51,7 @@ const BoardMissionsComponent = ({ boardMissionsId, productType }: IProps) => {
     renderSkeletons,
     productWorksTypes,
     companyProfile,
+    notes,
     classes,
     ProductDetailsSectionRef,
     typesConHeight,
@@ -59,7 +63,7 @@ const BoardMissionsComponent = ({ boardMissionsId, productType }: IProps) => {
     renderMobileSkeletons,
   } = useBoardMissions();
 
-  const {} = useJobModalSocketIO({
+  const { } = useJobModalSocketIO({
     boardMissionId: boardMissionsId,
     getBoardMissions,
     getStations,
@@ -123,21 +127,46 @@ const BoardMissionsComponent = ({ boardMissionsId, productType }: IProps) => {
             </CardContainer>
             <CardContainer
               label={t("sales.quote.notes")}
-              style={classes.mobileCard}
+              style={{
+                ...classes.mobileCard,
+                height: isNotesExpanded ? "30vh" : "15vh",
+                minHeight: isNotesExpanded ? "30vh" : "15vh",
+                maxHeight: isNotesExpanded ? "30vh" : "none",
+                transition: "all 0.3s ease-in-out",
+              }}
               actionButton={
-                <PermissionCheck
-                  userPermission={
-                    Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR
-                  }
-                >
-                  <Button
-                    onClick={handleOpenNotesModal}
-                    variant="text"
-                    style={classes.addNote}
+                <Stack direction="row" gap="8px" alignItems="center">
+                  <IconButton
+                    onClick={toggleNotesExpanded}
+                    size="small"
+                    sx={{
+                      padding: "4px",
+                      color: "#FFFFFF",
+                      "&:hover": {
+                        backgroundColor: "rgba(255, 255, 255, 0.1)",
+                      },
+                    }}
                   >
-                    + {t("productionFloor.addNote")}
-                  </Button>
-                </PermissionCheck>
+                    {isNotesExpanded ? (
+                      <CollapseIcon sx={{ fontSize: "18px" }} />
+                    ) : (
+                      <ExpandIcon sx={{ fontSize: "18px" }} />
+                    )}
+                  </IconButton>
+                  <PermissionCheck
+                    userPermission={
+                      Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR
+                    }
+                  >
+                    <Button
+                      onClick={handleOpenNotesModal}
+                      variant="text"
+                      style={classes.addNote}
+                    >
+                      + {t("productionFloor.addNote")}
+                    </Button>
+                  </PermissionCheck>
+                </Stack>
               }
             >
               <BoardMissionsNotes />
@@ -145,22 +174,22 @@ const BoardMissionsComponent = ({ boardMissionsId, productType }: IProps) => {
             {isLoadingStations
               ? renderMobileSkeletons()
               : productDetails?.length > 0 &&
-                productDetails.map((section, index) => (
-                  <ProductDetailsSection
-                    key={index}
-                    name={section?.name}
-                    productionFloorSubSections={
-                      section?.productionFloorSubSections
-                    }
-                    withHeader={index === 0}
-                    header={
-                      index === 0
-                        ? t("productionFloor.productDetails")
-                        : undefined
-                    }
-                    style={{ background: "#F6F6F6" }}
-                  />
-                ))}
+              productDetails.map((section, index) => (
+                <ProductDetailsSection
+                  key={index}
+                  name={section?.name}
+                  productionFloorSubSections={
+                    section?.productionFloorSubSections
+                  }
+                  withHeader={index === 0}
+                  header={
+                    index === 0
+                      ? t("productionFloor.productDetails")
+                      : undefined
+                  }
+                  style={{ background: "#F6F6F6" }}
+                />
+              ))}
             {productWorksTypes?.length > 0 && (
               <CardContainer
                 label={t("productionFloor.types")}
@@ -206,24 +235,60 @@ const BoardMissionsComponent = ({ boardMissionsId, productType }: IProps) => {
         ) : (
           <>
             {/* Notes + Types + Products details */}
-            <div style={classes.ColumnOne}>
+            <div
+              style={{
+                ...classes.ColumnOne,
+                overflow: isNotesExpanded ? "auto" : "hidden",
+                gridTemplateRows: isNotesExpanded
+                  ? "30vh auto"
+                  : (Array.isArray(notes) && notes.length > 0
+                    ? "calc(15% - 6px) auto"
+                    : "calc(10% - 6px) auto"),
+                transition: "grid-template-rows 0.3s ease-in-out",
+              }}
+            >
               <CardContainer
                 label={t("sales.quote.notes")}
-                style={{ background: "#F6F6F6" }}
+                style={{
+                  background: "#F6F6F6",
+                  height: isNotesExpanded ? "30vh" : "auto",
+                  minHeight: isNotesExpanded ? "30vh" : "auto",
+                  maxHeight: isNotesExpanded ? "30vh" : "none",
+                  transition: "all 0.3s ease-in-out",
+                }}
                 actionButton={
-                  <PermissionCheck
-                    userPermission={
-                      Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR
-                    }
-                  >
-                    <Button
-                      onClick={handleOpenNotesModal}
-                      variant="text"
-                      style={classes.addNote}
+                  <Stack direction="row" gap="8px" alignItems="center">
+                    <IconButton
+                      onClick={toggleNotesExpanded}
+                      size="small"
+                      sx={{
+                        padding: "4px",
+                        color: "#FFFFFF",
+                        "&:hover": {
+                          backgroundColor: "rgba(255, 255, 255, 0.1)",
+                        },
+                      }}
                     >
-                      + {t("productionFloor.addNote")}
-                    </Button>
-                  </PermissionCheck>
+                      {isNotesExpanded ? (
+                        <CollapseIcon sx={{ fontSize: "18px" }} />
+                      ) : (
+                        <ExpandIcon sx={{ fontSize: "18px" }} />
+                      )}
+                    </IconButton>
+                    <PermissionCheck
+                      userPermission={
+                        Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR
+                      }
+                    >
+                      <Button
+                        onClick={handleOpenNotesModal}
+                        variant="text"
+                        style={classes.addNote}
+                      >
+                        + {t("productionFloor.addNote")}
+                      </Button>
+                    </PermissionCheck>
+                  </Stack>
                 }
               >
                 <BoardMissionsNotes />
@@ -284,7 +349,7 @@ const BoardMissionsComponent = ({ boardMissionsId, productType }: IProps) => {
                     style={{
                       overflowY:
                         relatedOrderItems?.length > 0 ||
-                        productWorksTypes?.length > 0
+                          productWorksTypes?.length > 0
                           ? "auto"
                           : "visible",
 
