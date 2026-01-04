@@ -2,6 +2,7 @@ import { useTranslation } from "react-i18next";
 import { EnumVATStatus } from "@/enums/accounting-enums";
 import { quoteItemState } from "@/store";
 import { useRecoilValue } from "recoil";
+import { useEffect, useState } from "react";
 
 const useSttingsVatListMenu = () => {
   const { t } = useTranslation();
@@ -18,10 +19,20 @@ const useSttingsVatListMenu = () => {
     (status) => status.value === quoteStateValue?.vatStatus
   )?.text;
 
+  const [exchangeRate, setExchangeRate] = useState(
+    quoteStateValue?.exchangeRate || "-"
+  );
+
+  useEffect(() => {
+    setExchangeRate(quoteStateValue?.exchangeRate || "-");
+  }, [quoteStateValue?.exchangeRate]);
+
   return {
     quoteStateValue,
     vatStatus,
     vatStatusList,
+    exchangeRate,
+    setExchangeRate,
     t,
   };
 };

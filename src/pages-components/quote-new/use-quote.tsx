@@ -687,6 +687,29 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false, isPrePaymentPage = 
       return;
     }
 
+    if ((isInvoice || isDeliveryNote) && isNewCreation) {
+      const updatedQuoteItemValue = { ...quoteItemValue };
+      // updatedQuoteItemValue.exchangeRate = value;
+
+      setQuoteItemValue(updatedQuoteItemValue);
+      setIsUpdateExchangeRate(null);
+
+      if (
+        !quoteItemValue?.documentItems ||
+        quoteItemValue.documentItems.length === 0
+      ) {
+        return;
+      }
+
+      getCalculateQuoteItem(
+        updatedQuoteItemValue,
+        ItemCalculationType.ExchangeRate,
+        value,
+        updatedQuoteItemValue
+      );
+      return;
+    }
+
     const callBack = (res) => {
       if (res?.success) {
         alertSuccessUpdate();
@@ -706,6 +729,52 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false, isPrePaymentPage = 
   };
 
   const refreshExchangeRate = async () => {
+    if ((isInvoice || isDeliveryNote) && isNewCreation) {
+      // For new creations, fetch exchange rate from API
+      const fromCurrency =
+        quoteItemValue?.fromCurrency || quoteItemValue?.systemCurrency;
+      const toCurrency = quoteItemValue?.currency;
+
+      if (!fromCurrency || !toCurrency) {
+        return;
+      }
+
+      const callBack = (res) => {
+        if (res?.success && res?.data?.data?.data) {
+          const newExchangeRate = res.data?.data?.data;
+          const updatedQuoteItemValue = { ...quoteItemValue };
+          // updatedQuoteItemValue.exchangeRate = newExchangeRate;
+
+          setQuoteItemValue(updatedQuoteItemValue);
+
+          if (
+            quoteItemValue?.documentItems &&
+            quoteItemValue.documentItems.length > 0
+          ) {
+            getCalculateQuoteItem(
+              updatedQuoteItemValue,
+              ItemCalculationType.ExchangeRate,
+              newExchangeRate,
+              updatedQuoteItemValue
+            );
+          }
+        } else {
+          alertFaultUpdate();
+        }
+      };
+
+      await callApi(
+        EHttpMethod.GET,
+        `/v1/erp-service/currencies/get-exchange-rate`,
+        {
+          fromCurrency: fromCurrency,
+          toCurrency: toCurrency,
+        },
+        false
+      ).then(callBack);
+      return;
+    }
+
     const callBack = (res) => {
       if (res?.success) {
         getQuote();
@@ -1439,8 +1508,18 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false, isPrePaymentPage = 
       if (res?.success) {
         const _data = res?.data?.data?.data;
         // if is request to change the currency in document in creation mode just multiple the prices with exchange rate
-        if (calculationType === 4) {
+        if (
+          calculationType === ItemCalculationType.Currency ||
+          calculationType === ItemCalculationType.ExchangeRate
+        ) {
           let exchangeRate = _data.exchangeRate;
+          let oldExchangeRate =
+            quoteItem.exchangeRate === 0 ||
+            quoteItem.exchangeRate === null ||
+            quoteItem.exchangeRate === undefined
+              ? 1
+              : quoteItem.exchangeRate;
+
           const updatedQuoteItemValue = {
             ...newQuoteItemValue,
             discount: _data?.document?.discount,
@@ -1451,14 +1530,25 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false, isPrePaymentPage = 
             totalVAT: _data?.document?.totalVAT,
             vat: _data?.document?.vat,
             exchangeRate,
-            documentItems: newQuoteItemValue.documentItems.map((documentItem) => {
-              return {
-                ...documentItem,
-                finalPrice: (documentItem.finalPrice * exchangeRate).toFixed(3),
-                price: (documentItem.price * exchangeRate).toFixed(3),
-                discount: (documentItem.discount * exchangeRate).toFixed(3),
-              };
-            }),
+            documentItems: newQuoteItemValue.documentItems.map(
+              (documentItem) => {
+                return {
+                  ...documentItem,
+                  finalPrice: (
+                    (documentItem.finalPrice * exchangeRate) /
+                    oldExchangeRate
+                  ).toFixed(3),
+                  price: (
+                    (documentItem.price * exchangeRate) /
+                    oldExchangeRate
+                  ).toFixed(3),
+                  discount: (
+                    (documentItem.discount * exchangeRate) /
+                    oldExchangeRate
+                  ).toFixed(3),
+                };
+              }
+            ),
           };
           setQuoteItemValue(updatedQuoteItemValue);
         } else {
@@ -1721,6 +1811,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false, isPrePaymentPage = 
     setQuoteItem(quoteItem);
   };
   const [loading, setLoading] = useRecoilState(loadingWithShadowState);
+
   const getCalculateQuote = async (calculationType: number, data: number) => {
     if (isNewCreation) {
       setLoading(true);
