@@ -71,6 +71,7 @@ export interface CreditCardData {
   transactionType?: any;
   numberOfPayments?: number;
   pinPadId?: number;
+  notes?: string;
 }
 
 export interface ReceiptCreditCardData {
