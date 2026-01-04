@@ -12,6 +12,8 @@ import { Stack } from "@mui/material";
 import { WhatsAppWebModal } from "@/widgets/quote-new/modals-widgets/whats-app-web-modal";
 import { GoMakeAlertModal } from "@/components/modal/alert-modal";
 import { SendPaymentDebitsModal } from "./widgets/send-payment-debits-modal";
+import { FrontDeskEmailComposerWrapper } from "@/pages-components/quotes/components/frontdesk-email-composer-wrapper";
+import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 
 interface IProps {
   clientType: CLIENT_TYPE;
@@ -76,6 +78,11 @@ const AgingReportWidget = ({ clientType }: IProps) => {
     onClickBtn7,
     sendSelectedDebitsPayment,
     isLoadingDebits,
+    // FrontDesk email integration
+    isFrontDeskEmailComposerOpen,
+    frontDeskEmailData,
+    isLoadingFrontDeskEmailData,
+    closeFrontDeskEmailComposer,
   } = useAgingReport(clientType);
 
   const { classes } = useStyle();
@@ -195,6 +202,17 @@ const AgingReportWidget = ({ clientType }: IProps) => {
         clientContacts={clientContactsValue}
         isLoading={isLoadingDebits}
       />
+      {/* FrontDesk Email Composer for Aging Report */}
+      {isFrontDeskEmailComposerOpen && customer?.id && (
+        <FrontDeskEmailComposerWrapper
+          open={isFrontDeskEmailComposerOpen}
+          onClose={closeFrontDeskEmailComposer}
+          emailData={frontDeskEmailData}
+          documentId={customer.id}
+          documentType={21 as DOCUMENT_TYPE}
+          isLoading={isLoadingFrontDeskEmailData}
+        />
+      )}
     </div>
   );
 };

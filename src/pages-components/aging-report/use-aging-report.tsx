@@ -17,6 +17,8 @@ import { useClientTypesList } from "@/hooks/use-client-types";
 import { useModal } from "@/hooks/use-modal";
 import { getAndSetClientContacts } from "@/services/hooks/cart-side/customers/get-client-contacts";
 import { MessageType } from "@/pages-components/quote-new/use-quote";
+import { printHouseHasFrontDeskFeature } from "@/store/print-house-profile";
+import { useRecoilValue } from "recoil";
 
 const useAgingReport = (clientType: CLIENT_TYPE) => {
   const { t } = useTranslation();
@@ -36,6 +38,7 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
     handleCustomerChange,
     isFetching,
   } = useCustomerDropDownList({ clientType });
+  const hasFrontDeskFeature = useRecoilValue(printHouseHasFrontDeskFeature);
   const isSendPaymentModal = useModal();
   const isWhatsAppModal = useModal();
   const isSendToAllClientsModal = useModal();
@@ -65,6 +68,11 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
   const [whatsappMessage, setWhatsappMessage] = useState<string>("");
   const [availableDebits, setAvailableDebits] = useState<any[]>([]);
   const [isLoadingDebits, setIsLoadingDebits] = useState<boolean>(false);
+
+  // FrontDesk email integration state
+  const [isFrontDeskEmailComposerOpen, setIsFrontDeskEmailComposerOpen] = useState(false);
+  const [frontDeskEmailData, setFrontDeskEmailData] = useState<any>(null);
+  const [isLoadingFrontDeskEmailData, setIsLoadingFrontDeskEmailData] = useState(false);
 
   const transformedHeaders = tableHeader?.map((header) => {
     const containsNumber = /\d/.test(header.key);
@@ -754,6 +762,130 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
         return;
       }
 
+      // Check if FrontDesk is enabled
+      if (hasFrontDeskFeature && data.sendByEmail) {
+        setIsLoadingFrontDeskEmailData(true);
+        // Don't open composer yet - wait for data to load
+        setIsFrontDeskEmailComposerOpen(false);
+        setFrontDeskEmailData(null);
+
+        try {
+          // Format dates as ISO strings for the API call
+          const formattedStartDate = fromDate ? new Date(fromDate).toISOString() : new Date().toISOString();
+          const formattedEndDate = toDate ? new Date(toDate).toISOString() : new Date().toISOString();
+          const formattedReferDate = selectDate ? new Date(selectDate).toISOString() : new Date().toISOString();
+
+          // Build SelectedDocuments array with DocumentNumber and TotalPayment
+          const selectedDocuments = data.selectedDebits.map((debit) => ({
+            documentNumber: debit.docNumber,
+            amountToPay: debit.totalPayment !== undefined ? debit.totalPayment : (debit.total || 0),
+          }));
+
+          // Call the get-debits-payment-mail-data endpoint with the same payload
+          const mailDataRes = await callApi(
+            EHttpMethod.POST,
+            `/v1/erp-service/reports/get-debits-payment-mail-data`,
+            {
+              startDate: formattedStartDate,
+              endDate: formattedEndDate,
+              referDate: formattedReferDate,
+              cardCode: (customer as any)?.customerCode || (customer as any)?.code || "",
+              cardType: isPurchaseReport
+                ? CLIENT_TYPE.SUPPLIER
+                : CLIENT_TYPE.CUSTOMER,
+              agentCode: (agent as any)?.code || 0,
+              clientId: customer?.id,
+              agentId: agent?.id,
+              byCreationDate: agingReportByCreationDate,
+              expendedReport: detailedReport,
+              orderBy: orderBy,
+              isDescOrder: isDescOrder,
+              email: data.email || "",
+              phoneNumber: data.phoneNumber || "",
+              numberOfPayments: data.numberOfInstallments,
+              selectedDocuments: selectedDocuments,
+            }
+          );
+
+          // Extract response data from nested structure
+          // Response structure: { success: true, data: { data: { data: { tos, subject, body, ... } } } }
+          let responseData = null;
+          if (mailDataRes?.success) {
+            isSendPaymentDebitsModal.close();
+            // Try deeply nested structure: res.data.data.data (actual structure from API)
+            if (mailDataRes.data?.data?.data &&
+              typeof mailDataRes.data.data.data === 'object' &&
+              !Array.isArray(mailDataRes.data.data.data) &&
+              (mailDataRes.data.data.data.tos || mailDataRes.data.data.data.subject)) {
+              responseData = mailDataRes.data.data.data;
+            }
+            // Fallback: res.data.data (if structure is different)
+            else if (mailDataRes.data?.data &&
+              typeof mailDataRes.data.data === 'object' &&
+              !Array.isArray(mailDataRes.data.data) &&
+              (mailDataRes.data.data.tos || mailDataRes.data.data.subject)) {
+              responseData = mailDataRes.data.data;
+            }
+            // Fallback: res.data (direct structure)
+            else if (mailDataRes.data &&
+              typeof mailDataRes.data === 'object' &&
+              !Array.isArray(mailDataRes.data) &&
+              (mailDataRes.data.tos || mailDataRes.data.subject)) {
+              responseData = mailDataRes.data;
+            }
+          }
+
+          if (responseData) {
+            const normalizeBcc = (bcc: any): string[] => {
+              if (!bcc) return [];
+              if (Array.isArray(bcc)) return bcc.filter(Boolean);
+              if (typeof bcc === "string") return [bcc];
+              return [];
+            };
+
+            const normalizedEmailData = {
+              tos: Array.isArray(responseData.tos) ? responseData.tos : (responseData.tos ? [responseData.tos] : []),
+              ccs: [],
+              bccs: normalizeBcc(responseData.bcc),
+              subject: responseData.subject || "",
+              body: responseData.body || "",
+              attachments: Array.isArray(responseData.attachments)
+                ? responseData.attachments.map((att: any) => ({
+                  id: att.id || att.filename || "attachment",
+                  filename: att.filename || "attachment",
+                  mimeType: att.contentType || att.mimeType || "application/pdf",
+                  contentType: att.contentType || att.mimeType || "application/pdf",
+                  size: att.size || 0,
+                  url: att.url || "",
+                  // Keep original data for reference
+                  ...(att.content && { content: att.content }),
+                  ...(att.data && { data: att.data }),
+                }))
+                : [],
+              sender: responseData.sender,
+              contactEmail: data.email,
+              contactPhone: data.phoneNumber,
+              customerId: customer?.id,
+              customerName: customer?.name,
+            };
+            setFrontDeskEmailData(normalizedEmailData);
+            // Open composer after data is loaded
+            setIsFrontDeskEmailComposerOpen(true);
+          } else {
+            alertFault("alerts.failedToGetEmailData");
+            setIsFrontDeskEmailComposerOpen(false);
+          }
+          setIsLoadingFrontDeskEmailData(false);
+        } catch (error) {
+          console.error("Error fetching email data:", error);
+          alertFault("alerts.failedToGetEmailData");
+          setIsLoadingFrontDeskEmailData(false);
+          setIsFrontDeskEmailComposerOpen(false);
+        }
+        return; // Exit early, FrontDesk will handle the send
+      }
+
+      // Original flow when FrontDesk is not enabled or sendByEmail is false
       // Format dates as ISO strings
       const formattedStartDate = fromDate ? new Date(fromDate).toISOString() : new Date().toISOString();
       const formattedEndDate = toDate ? new Date(toDate).toISOString() : new Date().toISOString();
@@ -826,8 +958,16 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
       alertSuccessSend,
       alertFaultSend,
       isSendPaymentDebitsModal,
+      hasFrontDeskFeature,
     ]
   );
+
+  const closeFrontDeskEmailComposer = useCallback(() => {
+    setIsFrontDeskEmailComposerOpen(false);
+    setFrontDeskEmailData(null);
+    // Close the send payment debits modal when closing email composer
+    isSendPaymentDebitsModal.close();
+  }, [isSendPaymentDebitsModal]);
 
   return {
     t,
@@ -891,6 +1031,11 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
     onClickBtn7,
     sendSelectedDebitsPayment,
     isLoadingDebits,
+    // FrontDesk email integration
+    isFrontDeskEmailComposerOpen,
+    frontDeskEmailData,
+    isLoadingFrontDeskEmailData,
+    closeFrontDeskEmailComposer,
   };
 };
 
