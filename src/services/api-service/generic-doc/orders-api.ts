@@ -50,4 +50,19 @@ const printDeliveryTicketPDFApi: ICallAndSetData = async (
   );
 };
 
-export { getProfitsChartDataApi, exportDeliveryTicketPDFApi, printDeliveryTicketPDFApi };
+const UPDATE_LOCKED_ORDER_URL = "/v1/erp-service/documents/update-locked-order";
+
+const toggleOrderLockApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data: { orderId: string; isLocked: boolean }
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.PUT,
+    `${UPDATE_LOCKED_ORDER_URL}/${data.orderId}`,
+    setState,
+  );
+};
+
+export { getProfitsChartDataApi, exportDeliveryTicketPDFApi, printDeliveryTicketPDFApi, toggleOrderLockApi };

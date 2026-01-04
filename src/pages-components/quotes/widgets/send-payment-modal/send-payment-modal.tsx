@@ -51,6 +51,7 @@ interface ISendPaymentProps {
     paymentRequestId?: string
   ) => Promise<void>;
   documentForEmail?: any;
+  isOrderUpdate?: boolean; // Flag to indicate this is an order update
 }
 
 const SendPaymentModal = ({
@@ -65,6 +66,7 @@ const SendPaymentModal = ({
   preSelectedMethod = null,
   onOpenEmailComposer,
   documentForEmail,
+  isOrderUpdate = false,
 }: ISendPaymentProps) => {
   const { classes } = useStyle();
   const { alertFaultSend, alertSuccessSend, alertFault } = useSnackBar();
@@ -261,8 +263,10 @@ const SendPaymentModal = ({
       if (isSendOrderReadyToClient) {
         await sendOrderReadyToClientApi(callApi, callBack, documentData);
       } else {
+        // Use documentType 20 for order updates, otherwise use the provided documentType
+        const finalDocumentType = isOrderUpdate ? (20 as DOCUMENT_TYPE) : documentType;
         await sendDocumentToClientApi(callApi, callBack, {
-          documentType,
+          documentType: finalDocumentType,
           document: documentData,
         });
       }

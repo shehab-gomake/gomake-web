@@ -137,7 +137,7 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
   const open = Boolean(anchorEl);
 
   const validateAddress = async (addressWithMetadata) => {
-    return await validateAddressApi(callApi, () => { }, addressWithMetadata);
+    return await validateAddressApi(callApi, () => {}, addressWithMetadata);
   };
 
   const setShouldReopen = useSetRecoilState(shouldReopenOrderModalState);
@@ -560,6 +560,17 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
       alertFault(t("alerts.totalPaymentZero"));
       return;
     }
+    // Check if receipt items are empty and user doesn't have permission to create empty receipts
+    if (
+      filteredReceiptItems.length === 0 &&
+      !CheckPermission(Permissions.CAN_CREATE_EMPTY_RECEIPT)
+    ) {
+      alertFault(
+        t("alerts.receiptItemsRequired") ||
+          "Please select at least one invoice or document to create a receipt"
+      );
+      return;
+    }
     const callBack = (res) => {
       if (res?.success) {
         const receiptId = res?.data;
@@ -583,6 +594,18 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
 
     if (finalTotalPayment === 0) {
       alertFault(t("alerts.totalPaymentZero"));
+      return;
+    }
+
+    // Check if receipt items are empty and user doesn't have permission to create empty receipts
+    if (
+      filteredReceiptItems.length === 0 &&
+      !CheckPermission(Permissions.CAN_CREATE_EMPTY_RECEIPT)
+    ) {
+      alertFault(
+        t("alerts.receiptItemsRequired") ||
+          "Please select at least one invoice or document to create a receipt"
+      );
       return;
     }
 
@@ -675,8 +698,9 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
               const { conversation } =
                 await directMessagesService.createConversation({
                   participantIds: [participantId],
-                  name: `Quote Approval - ${quoteItemValue?.number || quoteItemValue?.id
-                    }`,
+                  name: `Quote Approval - ${
+                    quoteItemValue?.number || quoteItemValue?.id
+                  }`,
                   contextId: quoteItemValue?.id,
                   contextType: "QUOTE",
                 });
@@ -750,6 +774,7 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
 
   const isShowCloseButton =
     quoteItemValue?.isCanClose &&
+    !quoteItemValue?.isLocked &&
     ((isOrder &&
       quoteItemValue?.statusTitleText !== StatusTitleText.OrderCanceled) ||
       isInvoice ||
@@ -764,10 +789,10 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
         isOrder
           ? navigate("/orders")
           : isDeliveryNote
-            ? navigate("/deliveryNotes")
-            : isInvoice
-              ? navigate("/invoices")
-              : navigate("/purchaseOrders");
+          ? navigate("/deliveryNotes")
+          : isInvoice
+          ? navigate("/invoices")
+          : navigate("/purchaseOrders");
       } else {
         alertFaultUpdate();
       }

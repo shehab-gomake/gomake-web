@@ -51,8 +51,9 @@ const CloseBtnMenu = ({
   const getMenuOptions = () => {
     switch (documentType) {
       case DOCUMENT_TYPE.order:
+        const isOrderLocked = documentState?.isLocked === true;
         return [
-          ...(canCloseDocumentManually
+          ...(canCloseDocumentManually && !isOrderLocked
             ? [
                 {
                   label: t("sales.quote.close"),
@@ -68,7 +69,9 @@ const CloseBtnMenu = ({
             : []),
           {
             label: t("sales.quote.closeAsDeliveryNote"),
+            disabled: isOrderLocked,
             action: () => {
+              if (isOrderLocked) return;
               if (documentState?.productionStatus) {
                 if (documentState?.closeOrderNotes?.trim()) {
                   onClickOpenCloseOrderNotesModal(() =>
@@ -91,7 +94,9 @@ const CloseBtnMenu = ({
             ? [
                 {
                   label: t("sales.quote.closeAsProformaInvoice"),
+                  disabled: isOrderLocked,
                   action: () => {
+                    if (isOrderLocked) return;
                     if (documentState?.productionStatus) {
                       if (documentState?.closeOrderNotes?.trim()) {
                         onClickOpenCloseOrderNotesModal(() =>
@@ -114,7 +119,9 @@ const CloseBtnMenu = ({
             : []),
           {
             label: t("sales.quote.closeAsInvoice"),
+            disabled: isOrderLocked,
             action: () => {
+              if (isOrderLocked) return;
               if (documentState?.productionStatus) {
                 if (documentState?.closeOrderNotes?.trim()) {
                   onClickOpenCloseOrderNotesModal(() =>
@@ -264,9 +271,12 @@ const CloseBtnMenu = ({
       {menuOptions.map((option, index) => (
         <MenuItem
           key={index}
+          disabled={option.disabled}
           onClick={() => {
-            option.action();
-            handleClose();
+            if (!option.disabled) {
+              option.action();
+              handleClose();
+            }
           }}
         >
           {capitalizeFirstLetter(option.label)}

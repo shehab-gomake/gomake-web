@@ -9859,7 +9859,7 @@ const useDigitalOffsetPrice = ({
             ? isCreation
               ? navigate("/quote")
               : navigate("/home")
-            : navigate(`/order?Id=${router?.query?.documentId}`);
+            : navigate(`/order?Id=${router?.query?.documentId}&showUpdateModal=true`);
           setWorkFlows([]);
           setJobActions([]);
           setLoadingWithLockScreen(false);

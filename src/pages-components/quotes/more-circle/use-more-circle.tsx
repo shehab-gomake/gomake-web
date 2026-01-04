@@ -26,6 +26,7 @@ import { useUserPermission } from "@/hooks/use-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { useRouter } from "next/router";
 import { TrackingIcon } from "./icons/tracking";
+import { LockIcon } from "./icons/lock";
 import { UnLockIcon } from "./icons/unlock";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import {
@@ -127,6 +128,7 @@ const useMoreCircle = () => {
     onClickSendPaymentSMS,
     onClickSendPaymentWhatsApp,
     onClickUndoDocumentIntake,
+    onClickToggleOrderLock,
     classes,
   }) => {
     const isEditableDocument = quote?.isEditable;
@@ -135,9 +137,8 @@ const useMoreCircle = () => {
 
     const getDocumentPath = (id?: string, extraParams: string = "") => {
       if (isSupplierPayments) {
-        return `/${
-          DOCUMENT_TYPE[DOCUMENT_TYPE.receipt]
-        }?isOutgoingPayments=true${id ? `&Id=${id}` : ""}${extraParams}`;
+        return `/${DOCUMENT_TYPE[DOCUMENT_TYPE.receipt]
+          }?isOutgoingPayments=true${id ? `&Id=${id}` : ""}${extraParams}`;
       }
       return `/${documentPath}${id ? `?Id=${id}` : ""}${extraParams}`;
     };
@@ -534,19 +535,19 @@ const useMoreCircle = () => {
             }
             onCloseAsDeliveryNote={
               isOrder &&
-              quote?.isCanClose &&
-              !isCanceledOrder &&
-              isEditableDocument
+                quote?.isCanClose &&
+                !isCanceledOrder &&
+                isEditableDocument
                 ? handleCloseAsDeliveryNote
                 : undefined
             }
             onCloseAsProformaInvoice={
               hasProformaInvoicePermission &&
-              ((isOrder &&
-                quote?.isCanClose &&
-                !isCanceledOrder &&
-                isEditableDocument) ||
-                (isDeliveryNote && quote?.isCanClose && isEditableDocument))
+                ((isOrder &&
+                  quote?.isCanClose &&
+                  !isCanceledOrder &&
+                  isEditableDocument) ||
+                  (isDeliveryNote && quote?.isCanClose && isEditableDocument))
                 ? handleCloseAsProformaInvoice
                 : undefined
             }
@@ -554,7 +555,7 @@ const useMoreCircle = () => {
               ((isOrder && quote?.isCanClose && !isCanceledOrder) ||
                 (isDeliveryNote && quote?.isCanClose) ||
                 (isProformaInvoice && quote?.isCanClose)) &&
-              isEditableDocument
+                isEditableDocument
                 ? handleCloseAsInvoice
                 : undefined
             }
@@ -575,9 +576,9 @@ const useMoreCircle = () => {
             }
             onCloseAsPurchaseInvoice={
               isPurchaseOrder &&
-              quote?.isCanClose &&
-              !isCanceledPurchaseOrder &&
-              isEditableDocument
+                quote?.isCanClose &&
+                !isCanceledPurchaseOrder &&
+                isEditableDocument
                 ? handleCloseAsPurchaseInvoice
                 : undefined
             }
@@ -649,6 +650,20 @@ const useMoreCircle = () => {
         onClick: () => onClickReopenDocument(quote),
         icon: <UnLockIcon color={primaryLavender(500)} />,
         name: t("sales.quote.open"),
+      },
+      {
+        condition:
+          isOrder &&
+          !isCanceledOrder &&
+          !isPauseOrder,
+        onClick: () => onClickToggleOrderLock?.(quote),
+        icon: quote?.isLocked ? (
+          <UnLockIcon color={primaryLavender(500)} />
+        ) : (
+          <LockIcon color={primaryLavender(500)} />
+        ),
+        name: quote?.isLocked ? t("sales.quote.unlock") : t("sales.quote.lock"),
+
       },
       {
         condition:
@@ -737,63 +752,62 @@ const useMoreCircle = () => {
       },
       hasFrontDeskFeature
         ? {
-            condition:
-              ((!isPauseOrder && isOrder && !isCanceledOrder) ||
-                isInvoice ||
-                isProformaInvoice) &&
-              quote?.isCanClose &&
-              isSendPaymentToClient &&
-              quote?.canSendMessage !== false,
-            component: (closeMenu: () => void) => (
-              <SendPaymentSubmenu
-                onClickEmail={() => onClickSendPaymentEmail(quote)}
-                onClickSMS={() => onClickSendPaymentSMS(quote)}
-                onClickWhatsApp={() => onClickSendPaymentWhatsApp(quote)}
-                menuItemStyle={classes.menuRowStyle}
-                rowTextStyle={classes.rowTextStyle}
-                onCloseParentMenu={closeMenu}
-              />
-            ),
-          }
+          condition:
+            ((!isPauseOrder && isOrder && !isCanceledOrder) ||
+              isInvoice ||
+              isProformaInvoice) &&
+            quote?.isCanClose &&
+            isSendPaymentToClient &&
+            quote?.canSendMessage !== false,
+          component: (closeMenu: () => void) => (
+            <SendPaymentSubmenu
+              onClickEmail={() => onClickSendPaymentEmail(quote)}
+              onClickSMS={() => onClickSendPaymentSMS(quote)}
+              onClickWhatsApp={() => onClickSendPaymentWhatsApp(quote)}
+              menuItemStyle={classes.menuRowStyle}
+              rowTextStyle={classes.rowTextStyle}
+              onCloseParentMenu={closeMenu}
+            />
+          ),
+        }
         : {
-            condition:
-              ((!isPauseOrder && isOrder && !isCanceledOrder) ||
-                isInvoice ||
-                isProformaInvoice) &&
-              quote?.isCanClose &&
-              isSendPaymentToClient &&
-              quote?.canSendMessage !== false,
-            onClick: () => onClickSendPayment(quote, false, false),
-            icon: <PayIcon color={primaryLavender(500)} />,
-            name: t("sales.quote.sendPayment"),
-          },
+          condition:
+            ((!isPauseOrder && isOrder && !isCanceledOrder) ||
+              isInvoice ||
+              isProformaInvoice) &&
+            quote?.isCanClose &&
+            isSendPaymentToClient &&
+            quote?.canSendMessage !== false,
+          onClick: () => onClickSendPayment(quote, false, false),
+          icon: <PayIcon color={primaryLavender(500)} />,
+          name: t("sales.quote.sendPayment"),
+        },
       hasFrontDeskFeature
         ? {
-            condition: quote?.canSendMessage !== false,
-            component: (closeMenu: () => void) => (
-              <SendToCustomerSubmenu
-                onClickEmail={() => onClickSendToCustomerEmail(quote)}
-                onClickSMS={() => onClickSendToCustomerSMS(quote)}
-                onClickWhatsApp={() => onClickSendToCustomerWhatsApp(quote)}
-                menuItemStyle={classes.menuRowStyle}
-                rowTextStyle={classes.rowTextStyle}
-                onCloseParentMenu={closeMenu}
-              />
-            ),
-          }
+          condition: quote?.canSendMessage !== false,
+          component: (closeMenu: () => void) => (
+            <SendToCustomerSubmenu
+              onClickEmail={() => onClickSendToCustomerEmail(quote)}
+              onClickSMS={() => onClickSendToCustomerSMS(quote)}
+              onClickWhatsApp={() => onClickSendToCustomerWhatsApp(quote)}
+              menuItemStyle={classes.menuRowStyle}
+              rowTextStyle={classes.rowTextStyle}
+              onCloseParentMenu={closeMenu}
+            />
+          ),
+        }
         : {
-            condition: quote?.canSendMessage !== false,
-            onClick: () =>
-              onClickSendPayment(quote, true, !!isSendOrderReadyToClient),
-            icon: <MailIcon color={primaryLavender(500)} />,
-            name: t(
-              `sales.quote.${
-                isSendOrderReadyToClient
-                  ? "sendOrderReadyToClient"
-                  : "sendToClient"
-              }`
-            ),
-          },
+          condition: quote?.canSendMessage !== false,
+          onClick: () =>
+            onClickSendPayment(quote, true, !!isSendOrderReadyToClient),
+          icon: <MailIcon color={primaryLavender(500)} />,
+          name: t(
+            `sales.quote.${isSendOrderReadyToClient
+              ? "sendOrderReadyToClient"
+              : "sendToClient"
+            }`
+          ),
+        },
       {
         condition:
           !isPauseOrder &&

@@ -71,7 +71,8 @@ export const useFrontDeskEmailIntegration = ({
       contactName?: string,
       managerEmails?: string[],
       isFromPaymentPage?: boolean,
-      paymentRequestId?: string
+      paymentRequestId?: string,
+      isOrderUpdated?: boolean
     ) => {
 
       setIsLoadingEmailData(true);
@@ -152,13 +153,16 @@ export const useFrontDeskEmailIntegration = ({
           },
           {
             // When paymentRequestId is present, always use document type 18 (payment request)
-            documentType: paymentRequestId 
-              ? (isFromPaymentPage 
-                ? (documentType === 3 ? (19 as DOCUMENT_TYPE) : (18 as DOCUMENT_TYPE))
-                : documentType)
-              : (isFromPaymentPage 
+            // When isOrderUpdated is true, use document type 20 (OrderUpdated)
+            documentType: isOrderUpdated
+              ? (20 as DOCUMENT_TYPE)
+              : (paymentRequestId 
+                ? (isFromPaymentPage 
                   ? (documentType === 3 ? (19 as DOCUMENT_TYPE) : (18 as DOCUMENT_TYPE))
-                  : documentType),
+                  : documentType)
+                : (isFromPaymentPage 
+                    ? (documentType === 3 ? (19 as DOCUMENT_TYPE) : (18 as DOCUMENT_TYPE))
+                    : documentType)),
             document: {
               // For board missions, use boardMissionId instead of documentId
               ...(documentType === DOCUMENT_TYPE.boardMission 
