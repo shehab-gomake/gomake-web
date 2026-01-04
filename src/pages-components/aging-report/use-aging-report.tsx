@@ -771,6 +771,12 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
         messageType = MessageType.Email;
       }
 
+      // Build SelectedDocuments array with DocumentNumber and TotalPayment
+      const selectedDocuments = data.selectedDebits.map((debit) => ({
+        documentNumber: debit.docNumber,
+        amountToPay: debit.totalPayment !== undefined ? debit.totalPayment : (debit.total || 0),
+      }));
+
       const res = await callApi(
         EHttpMethod.POST,
         `/v1/erp-service/reports/send-debit-payment-to-client`,
@@ -793,7 +799,7 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
           phoneNumber: data.phoneNumber || "",
           numberOfPayments: data.numberOfInstallments,
           messageType: messageType,
-          documentNumbers: data.selectedDebits.map((d) => d.docNumber),
+          selectedDocuments: selectedDocuments,
         }
       );
       if (res?.success) {
