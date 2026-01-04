@@ -10,10 +10,11 @@ import Link from "next/link";
 
 interface CloseOption {
   label: string;
-  onClick: () => void;
+  onClick?: () => void;
   icon?: React.ReactNode;
   isLink?: boolean;
   href?: string;
+  disabled?: boolean;
 }
 
 interface CloseDocumentSubmenuProps {
@@ -99,8 +100,9 @@ export const CloseDocumentSubmenu: React.FC<CloseDocumentSubmenuProps> = ({
 
     switch (documentType) {
       case DOCUMENT_TYPE.order:
+        const isOrderLocked = document?.isLocked === true;
         // Close order
-        if (onCloseDocument) {
+        if (onCloseDocument && !isOrderLocked) {
           options.push({
             label: t("sales.quote.close"),
             onClick: () => {
@@ -124,9 +126,10 @@ export const CloseDocumentSubmenu: React.FC<CloseDocumentSubmenuProps> = ({
             document?.productionStatus && !document?.closeOrderNotes?.trim();
           options.push({
             label: t("sales.quote.closeAsDeliveryNote"),
-            onClick: onCloseAsDeliveryNote,
-            isLink: shouldBeLink,
-            href: shouldBeLink
+            onClick: isOrderLocked ? undefined : onCloseAsDeliveryNote,
+            disabled: isOrderLocked,
+            isLink: shouldBeLink && !isOrderLocked,
+            href: shouldBeLink && !isOrderLocked
               ? `/deliveryNote?isNewCreation=true&orderId=${document?.id}`
               : undefined,
           });
@@ -138,9 +141,10 @@ export const CloseDocumentSubmenu: React.FC<CloseDocumentSubmenuProps> = ({
             document?.productionStatus && !document?.closeOrderNotes?.trim();
           options.push({
             label: t("sales.quote.closeAsProformaInvoice"),
-            onClick: onCloseAsProformaInvoice,
-            isLink: shouldBeLink,
-            href: shouldBeLink
+            onClick: isOrderLocked ? undefined : onCloseAsProformaInvoice,
+            disabled: isOrderLocked,
+            isLink: shouldBeLink && !isOrderLocked,
+            href: shouldBeLink && !isOrderLocked
               ? `/proformaInvoice?isNewCreation=true&orderId=${document?.id}`
               : undefined,
           });
@@ -152,9 +156,10 @@ export const CloseDocumentSubmenu: React.FC<CloseDocumentSubmenuProps> = ({
             document?.productionStatus && !document?.closeOrderNotes?.trim();
           options.push({
             label: t("sales.quote.closeAsInvoice"),
-            onClick: onCloseAsInvoice,
-            isLink: shouldBeLink,
-            href: shouldBeLink
+            onClick: isOrderLocked ? undefined : onCloseAsInvoice,
+            disabled: isOrderLocked,
+            isLink: shouldBeLink && !isOrderLocked,
+            href: shouldBeLink && !isOrderLocked
               ? `/invoice?isNewCreation=true&orderId=${document?.id}`
               : undefined,
           });
@@ -317,13 +322,14 @@ export const CloseDocumentSubmenu: React.FC<CloseDocumentSubmenuProps> = ({
     return (
       <MenuItem
         style={menuItemStyle}
+        disabled={option.disabled}
         onClick={
-          option.isLink
+          option.disabled || option.isLink
             ? undefined
             : handleMenuItemClick(option.onClick, option.isLink)
         }
       >
-        {option?.isLink ? (
+        {option?.isLink && !option.disabled ? (
           <Link
             href={option.href || "#"}
             rel="noopener noreferrer"
@@ -404,19 +410,20 @@ export const CloseDocumentSubmenu: React.FC<CloseDocumentSubmenuProps> = ({
         }}
       >
         {closeOptions.map((option, index) => {
-          const handleClick = option.isLink
+          const handleClick = option.disabled || option.isLink
             ? undefined
             : handleMenuItemClick(option.onClick, option.isLink);
           return (
             <MenuItem
               key={`${option.label}-${index}`}
+              disabled={option.disabled}
               onClick={handleClick}
               sx={{
                 padding: "6px 12px",
                 minHeight: "auto",
               }}
             >
-              {option?.isLink ? (
+              {option?.isLink && !option.disabled ? (
                 <Link
                   href={option.href || "#"}
                   rel="noopener noreferrer"
