@@ -2037,6 +2037,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false, isPrePaymentPage = 
         alertFault("sales.quote.phoneContectErrorMsg");
         return false;
       }
+      // @ts-ignore
       if (messageType === MessageType.Email && !emailValid) {
         alertFault("sales.quote.mailContectErrorMsg");
         return false;
@@ -2061,6 +2062,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false, isPrePaymentPage = 
         alertSuccessSend();
         setOpenInvoiceCreationModal(false);
       } else {
+        // @ts-ignore
         if ((messageType === MessageType.Email || messageType === MessageType.Both) && res?.errors?.message) {
           if (res.errors.message === "agent_not_verified") {
             showAlertModal({
