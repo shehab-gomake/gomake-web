@@ -87,6 +87,7 @@ const RightSideWidget = ({
     minDiscount,
     sliderCurrentProductItemValueTotalPrice,
     priceIncludeVat,
+    unitPriceWithVat,
     systemVAT,
     selectedProduct,
     combinedData,
@@ -108,6 +109,9 @@ const RightSideWidget = ({
     handleProductChange,
     handleSliderChange,
     setPriceIncludeVat,
+    setUnitPrice,
+    setUnitPriceWithVat,
+    isEditingUnitPriceWithVatRef,
     setSubProducts,
     primaryColor,
     alertFault,
@@ -233,7 +237,7 @@ const RightSideWidget = ({
                 <GomakeTextInput
                   direction={direction}
                   value={
-                    localStateValue ??
+                    roundPrice(localStateValue) ??
                     roundPrice(sliderCurrentProductItemValueTotalPrice) ??
                     "---------"
                   }
@@ -326,7 +330,7 @@ const RightSideWidget = ({
               />
             </div>
           )}
-        {sliderCurrentProductItemValueTotalPrice && (
+        {(sliderCurrentProductItemValueTotalPrice || sliderCurrentProductItemValueTotalPrice === 0) && (
           <>
             <div style={clasess.orderContainer}>
               {t("products.offsetPrice.admin.orderToral", {
@@ -356,6 +360,80 @@ const RightSideWidget = ({
               })}
             </div>
             <div style={clasess.vatContainer}>
+              {t("products.offsetPrice.admin.unitPriceWithVAT")}:{" "}
+              {!isRTL && systemCurrency}
+              <input
+                value={unitPriceWithVat || ""}
+                onFocus={() => {
+                  isEditingUnitPriceWithVatRef.current = true;
+                }}
+                onBlur={(e) => {
+                  isEditingUnitPriceWithVatRef.current = false;
+                  // Round the value on blur for display
+                  const numValue = Number(e.target.value);
+                  if (!isNaN(numValue) && numValue > 0) {
+                    const roundedValue = roundPrice(numValue);
+                    setUnitPriceWithVat(roundedValue);
+                  }
+                }}
+                onChange={(e) => {
+                  let newUnitPriceWithVat = e.target.value;
+
+                  // Allow only numbers and decimal point
+                  // Remove any non-numeric characters except decimal point
+                  newUnitPriceWithVat = newUnitPriceWithVat.replace(/[^0-9.]/g, '');
+
+                  // Prevent multiple decimal points
+                  const parts = newUnitPriceWithVat.split('.');
+                  if (parts.length > 2) {
+                    newUnitPriceWithVat = parts[0] + '.' + parts.slice(1).join('');
+                  }
+
+                  // Allow typing freely - don't round while typing
+                  setUnitPriceWithVat(newUnitPriceWithVat);
+
+                  // Only calculate if we have a valid number
+                  const numValue = parseFloat(newUnitPriceWithVat);
+                  if (
+                    quantity &&
+                    quantity.values &&
+                    quantity.values.length &&
+                    quantity?.values[0] &&
+                    newUnitPriceWithVat !== "" &&
+                    newUnitPriceWithVat !== null &&
+                    !isNaN(numValue) &&
+                    numValue > 0
+                  ) {
+                    const qty = Number(quantity.values[0]) || 1;
+                    // Calculate unit price without VAT
+                    const unitPriceWithoutVat = numValue / (1 + systemVAT);
+                    // Calculate total price without VAT
+                    const newTotalPrice = unitPriceWithoutVat * qty;
+                    // Calculate total price with VAT
+                    const newTotalPriceWithVat = numValue * qty;
+
+                    // Update all related values
+                    setUnitPrice(roundPrice(unitPriceWithoutVat));
+                    setSliderCurrentProductItemValueTotalPrice(newTotalPrice);
+                    setLocalStateValue(newTotalPrice);
+                    setPriceIncludeVat(roundPrice(newTotalPriceWithVat));
+                  } else if (newUnitPriceWithVat === "" || newUnitPriceWithVat === null) {
+                    // Clear related values if input is empty
+                    setUnitPrice(null);
+                    setPriceIncludeVat(null);
+                  }
+                }}
+                style={{
+                  width: "65px",
+                  border: "none",
+                  outline: "none",
+                  color: "#2E3092",
+                  padding: "5px",
+                }}
+              />
+              {isRTL && systemCurrency}
+            </div>
+            <div style={clasess.vatContainer2}>
               {t("products.offsetPrice.admin.includeVAT")}:{" "}
               {!isRTL && systemCurrency}
               <input
@@ -377,9 +455,9 @@ const RightSideWidget = ({
                       Number(newPriceIncludeVat) / (1 + systemVAT)
                     );
                     setSliderCurrentProductItemValueTotalPrice(
-                      Number(newTotalPrice)
+                      roundPrice(Number(newTotalPrice))
                     );
-                    setLocalStateValue(Number(newTotalPrice));
+                    setLocalStateValue(roundPrice(Number(newTotalPrice)));
                   }
                 }}
                 style={{
