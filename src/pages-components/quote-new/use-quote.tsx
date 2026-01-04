@@ -161,7 +161,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false, isPrePaymentPage = 
     isPurchaseOrder || isPurchaseInvoice || isPurchaseInvoiceRefund || isSupplierPayments || isOutgoingPayments;
 
   // FrontDesk Email Integration
-  const { isEmailComposerOpen, emailData, openEmailComposer, closeEmailComposer } = useFrontDeskEmailIntegration({
+  const { isEmailComposerOpen, emailData, openEmailComposer, closeEmailComposer, isLoadingEmailData } = useFrontDeskEmailIntegration({
     documentType: docType,
   });
 
@@ -1896,6 +1896,13 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false, isPrePaymentPage = 
   };
 
   const onClickSendQuoteToClient = async (messageType: MessageType) => {
+    // Redirect Email to FrontDesk Composer
+    if (messageType === MessageType.Email) {
+      await onClickSendEmailViaComposer();
+      setOpenInvoiceCreationModal(false);
+      return;
+    }
+
     if (!isSelectedAtLeastOne && docType === DOCUMENT_TYPE.quote) {
       alertFault("reports.pleaseSelectOneItem");
       return;
@@ -3217,6 +3224,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false, isPrePaymentPage = 
     onClickSendEmailViaComposer,
     isEmailComposerOpen,
     emailData,
+    isLoadingEmailData,
     closeEmailComposer,
     isMaterial,
     isMaterialPurchaseOrder,

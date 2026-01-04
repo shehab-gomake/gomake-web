@@ -73,6 +73,8 @@ export const useFrontDeskEmailIntegration = ({
       managerEmails?: string[],
       isFromPaymentPage?: boolean
     ) => {
+      // Open modal immediately to improve UX
+      setIsEmailComposerOpen(true);
       setIsLoadingEmailData(true);
       setEmailData(null); // Clear previous data
       setIsFromPaymentPage(isFromPaymentPage ?? false);
@@ -143,7 +145,6 @@ export const useFrontDeskEmailIntegration = ({
               };
 
               setEmailData(normalizedEmailData);
-              setIsEmailComposerOpen(true); // Open email composer after data is loaded
             } else {
               alertFault("Failed to load email data");
               setIsEmailComposerOpen(false); // Close modal on error
