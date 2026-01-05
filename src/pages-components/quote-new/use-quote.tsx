@@ -319,17 +319,6 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false, isPrePaymentPage = 
     setIsSelectedAtLeastOne(data);
   }, [quoteItemValue]);
 
-  // Detect URL parameter to show order update confirmation modal
-  useEffect(() => {
-    if (
-      router.query.showUpdateModal === "true" &&
-      docType === DOCUMENT_TYPE.order &&
-      quoteItemValue?.id &&
-      !orderUpdateConfirmationModal.isOpen
-    ) {
-      orderUpdateConfirmationModal.open();
-    }
-  }, [router.query.showUpdateModal, docType, quoteItemValue?.id,]);
 
   const onClickOpenWhatsAppModal = (includeInvoices = false) => {
     setSendWithInvoices(includeInvoices);
@@ -940,6 +929,19 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false, isPrePaymentPage = 
   const [originalPurchaseNumber, setOriginalPurchaseNumber] = useState(null);
   const [pendingPurchaseNumber, setPendingPurchaseNumber] = useState(null);
   const purchaseNumberCheckTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Detect URL parameter to show order update confirmation modal
+  // useEffect(() => {
+  //   if (
+  //     router.query.showUpdateModal === "true" &&
+  //     docType === DOCUMENT_TYPE.order &&
+  //     quoteItemValue?.id &&
+  //     !orderUpdateConfirmationModal.isOpen
+  //   ) {
+  //     orderUpdateConfirmationModal.open();
+  //   }
+  // }, [router.query.showUpdateModal, docType, quoteItemValue?.id, orderUpdateConfirmationModal]);
+
 
   const checkPurchaseNumber = async (value: string) => {
     if (!value || value.trim() === "") {
@@ -2317,7 +2319,16 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false, isPrePaymentPage = 
   const handleSaveBtnClick = async () => {
     const callBack = (res) => {
       if (res?.success) {
-        navigate("/home");
+        if (
+          router.query.showUpdateModal === "true" &&
+          docType === DOCUMENT_TYPE.order &&
+          quoteItemValue?.id &&
+          !orderUpdateConfirmationModal.isOpen
+        ) {
+          orderUpdateConfirmationModal.open();
+        } else {
+          navigate("/home");
+        }
       } else {
         alertFaultUpdate();
       }
