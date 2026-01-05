@@ -167,6 +167,12 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false, isPrePaymentPage = 
     documentType: docType,
   });
 
+  // Wrap closeEmailComposer to reset order update flag
+  const handleCloseEmailComposer = useCallback(() => {
+    closeEmailComposer();
+    setIsOrderUpdateEmailComposer(false);
+  }, [closeEmailComposer]);
+
   const purchaseOrderStatusOptions = useMemo(
     () =>
       Object.keys(PurchaseOrderStatuses)
@@ -320,17 +326,6 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false, isPrePaymentPage = 
     setIsSelectedAtLeastOne(data);
   }, [quoteItemValue]);
 
-  // Detect URL parameter to show order update confirmation modal
-  useEffect(() => {
-    if (
-      router.query.showUpdateModal === "true" &&
-      docType === DOCUMENT_TYPE.order &&
-      quoteItemValue?.id &&
-      !orderUpdateConfirmationModal.isOpen
-    ) {
-      orderUpdateConfirmationModal.open();
-    }
-  }, [router.query.showUpdateModal, docType, quoteItemValue?.id]);
 
   const onClickOpenWhatsAppModal = (includeInvoices = false) => {
     setSendWithInvoices(includeInvoices);
@@ -934,6 +929,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false, isPrePaymentPage = 
   const alertExistPurchaseNumber = useModal();
   const orderUpdateConfirmationModal = useModal();
   const orderUpdateSendModal = useModal();
+  const [isOrderUpdateEmailComposer, setIsOrderUpdateEmailComposer] = useState(false);
 
   // Import sendPaymentState to populate it when opening order update modal
   const [sendPayment, setSendPayment] =
@@ -942,6 +938,19 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false, isPrePaymentPage = 
   const [originalPurchaseNumber, setOriginalPurchaseNumber] = useState(null);
   const [pendingPurchaseNumber, setPendingPurchaseNumber] = useState(null);
   const purchaseNumberCheckTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Detect URL parameter to show order update confirmation modal
+  // useEffect(() => {
+  //   if (
+  //     router.query.showUpdateModal === "true" &&
+  //     docType === DOCUMENT_TYPE.order &&
+  //     quoteItemValue?.id &&
+  //     !orderUpdateConfirmationModal.isOpen
+  //   ) {
+  //     orderUpdateConfirmationModal.open();
+  //   }
+  // }, [router.query.showUpdateModal, docType, quoteItemValue?.id, orderUpdateConfirmationModal]);
+
 
   const checkPurchaseNumber = async (value: string) => {
     if (!value || value.trim() === "") {
@@ -2254,6 +2263,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false, isPrePaymentPage = 
     orderUpdateConfirmationModal.close();
     if (hasFrontDeskFeature) {
       // Frontdesk case: Send SMS and open email composer
+      setIsOrderUpdateEmailComposer(true);
       handleOrderUpdateWithFrontDesk();
     } else {
       // Non-frontdesk case: Populate state and show SendPaymentModal
@@ -2281,7 +2291,22 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false, isPrePaymentPage = 
         { shallow: true }
       );
     }
+    //  navigate("/home");
   }, [orderUpdateConfirmationModal, router]);
+
+  // Handler to navigate to home and clean up order update state
+  const handleOrderUpdateComplete = useCallback(() => {
+    // Remove the URL parameter
+    if (router.query.showUpdateModal) {
+      const newQuery = { ...router.query };
+      delete newQuery.showUpdateModal;
+      router.replace({ pathname: router.pathname, query: newQuery }, undefined, { shallow: true });
+    }
+    // Navigate to home
+    navigate("/home");
+    // Reset order update email composer flag
+    setIsOrderUpdateEmailComposer(false);
+  }, [router, navigate]);
 
   const onClickSendReceiptToClient = async (
     messageType: number,
@@ -2364,7 +2389,16 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false, isPrePaymentPage = 
   const handleSaveBtnClick = async () => {
     const callBack = (res) => {
       if (res?.success) {
-        navigate("/home");
+        if (
+          router.query.showUpdateModal === "true" &&
+          docType === DOCUMENT_TYPE.order &&
+          quoteItemValue?.id &&
+          !orderUpdateConfirmationModal.isOpen
+        ) {
+          orderUpdateConfirmationModal.open();
+        } else {
+          navigate("/home");
+        }
       } else {
         alertFaultUpdate();
       }
@@ -3555,7 +3589,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false, isPrePaymentPage = 
     isEmailComposerOpen,
     emailData,
     isLoadingEmailData,
-    closeEmailComposer,
+    closeEmailComposer: handleCloseEmailComposer,
     isMaterial,
     isMaterialPurchaseOrder,
     isCanIntake,
@@ -3587,6 +3621,8 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false, isPrePaymentPage = 
     orderUpdateSendModal,
     handleOrderUpdateYes,
     handleOrderUpdateNo,
+    handleOrderUpdateComplete,
+    isOrderUpdateEmailComposer,
   };
 };
 
