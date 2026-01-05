@@ -472,34 +472,6 @@ const deletePrintHouseMaterialRowApi: ICallAndSetData = async (
   );
 };
 
-const deleteMaterialProductApi: ICallAndSetData = async (
-  callApi,
-  callBack,
-  data: { id: string }
-) => {
-  return await getSetApiData(
-    callApi,
-    EHttpMethod.DELETE,
-    DELETE_MATERIAL_PRODUCT_URL,
-    callBack,
-    { id: data.id }
-  );
-};
-
-const addMaterialProductApi: ICallAndSetData = async (
-  callApi,
-  callBack,
-  data: { id: string; body?: any }
-) => {
-  return await getSetApiData(
-    callApi,
-    EHttpMethod.POST,
-    ADD_MATERIAL_PRODUCT_URL,
-    callBack,
-    { id: data.id, ...(data.body || {}) }
-  );
-};
-
 const analyzeDieCutApi: ICallAndSetData = async (
   callApi,
   callBack,
@@ -531,6 +503,34 @@ const addPrintHouseMaterialsRowsApi: ICallAndSetData = async (
     ADD_PRINT_HOUSE_MATERIALS_ROWS_URL,
     callBack,
     data
+  );
+};
+
+const deleteMaterialProductApi: ICallAndSetData = async (
+  callApi,
+  callBack,
+  data: { id: string }
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.DELETE,
+    DELETE_MATERIAL_PRODUCT_URL,
+    callBack,
+    { id: data.id }
+  );
+};
+
+const addMaterialProductApi: ICallAndSetData = async (
+  callApi,
+  callBack,
+  data: { id: string; body?: any }
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    ADD_MATERIAL_PRODUCT_URL,
+    callBack,
+    { id: data.id, ...(data.body || {}) }
   );
 };
 

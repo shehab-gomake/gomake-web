@@ -22,7 +22,7 @@ import {
   workFlowsState,
   deliveryPriceState,
 } from "@/widgets/product-pricing-widget/state";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { getAllProductAndMaterialsApi } from "@/services/api-service/products/product-endpoints";
@@ -71,7 +71,10 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
   const [localStateValue, setLocalStateValue] =
     useRecoilState<number>(localStateValueState);
   const [priceIncludeVat, setPriceIncludeVat] = useState<any>();
+  const [unitPrice, setUnitPrice] = useState<any>();
+  const [unitPriceWithVat, setUnitPriceWithVat] = useState<any>();
   const [qualityIssueReason, setQualityIssueReason] = useState<string>("");
+  const isEditingUnitPriceWithVatRef = useRef(false);
 
   const [selectedProduct, setSelectedProduct] = useState<any>({});
   const [combinedData, setCombinedData] = useState<any>([]);
@@ -295,6 +298,31 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
     }
   }, [sliderCurrentProductItemValueTotalPrice]);
 
+  // Calculate unit price when total price or quantity changes
+  // Skip recalculation if user is actively editing unitPriceWithVat
+  useEffect(() => {
+    if (isEditingUnitPriceWithVatRef.current) {
+      return;
+    }
+    if (
+      sliderCurrentProductItemValueTotalPrice !== null &&
+      quantity &&
+      quantity.values &&
+      quantity.values.length &&
+      quantity?.values[0]
+    ) {
+      const qty = Number(quantity.values[0]) || 1;
+      const calculatedUnitPrice = sliderCurrentProductItemValueTotalPrice / qty;
+      setUnitPrice(calculatedUnitPrice?.toFixed(3));
+      setUnitPriceWithVat(
+        (calculatedUnitPrice * (1 + systemVAT))?.toFixed(3)
+      );
+    } else {
+      setUnitPrice(null);
+      setUnitPriceWithVat(null);
+    }
+  }, [sliderCurrentProductItemValueTotalPrice, quantity, systemVAT]);
+
   const setSubProducts = useSetRecoilState<any>(subProductsParametersState);
   const workFlows = useRecoilValue(workFlowsState);
   const dir: "rtl" | "ltr" = t("direction");
@@ -403,6 +431,8 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
     minDiscount,
     sliderCurrentProductItemValueTotalPrice,
     priceIncludeVat,
+    unitPrice,
+    unitPriceWithVat,
     systemVAT,
     selectedProduct,
     combinedData,
@@ -424,6 +454,9 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
     handleProductChange,
     handleSliderChange,
     setPriceIncludeVat,
+    setUnitPrice,
+    setUnitPriceWithVat,
+    isEditingUnitPriceWithVatRef,
     setSubProducts,
     primaryColor,
     alertFault,

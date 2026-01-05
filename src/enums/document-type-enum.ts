@@ -213,6 +213,7 @@ export enum ItemCalculationType {
   Currency = 4,
   PackagesQuantity = 5,
   QuantityInPackage = 6,
+  ExchangeRate = 7,
 }
 
 export enum PurchaseOrderStatuses {

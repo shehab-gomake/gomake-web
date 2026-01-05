@@ -1,6 +1,8 @@
-import { Divider } from "@mui/material";
+import { Divider, IconButton } from "@mui/material";
+import SyncIcon from "@mui/icons-material/Sync";
 import { GoMakeMenu } from "@/components";
 import { AutoCompleteUpdatedValue } from "../auto-complete-updated";
+import { InputUpdatedValues } from "../input-updated-values";
 import { useStyle } from "./style";
 import { useSttingsVatListMenu } from "./use-setting-vat-menu";
 import { useRecoilValue } from "recoil";
@@ -19,9 +21,14 @@ const SettingVatListMenu = ({
   setIsUpdateCurrency,
   onBlurCurrency,
   quoteStateValue,
+  onBlurExchangeRate,
+  setIsUpdateExchangeRate,
+  isUpdateExchangeRate,
+  onClickRefresh,
 }) => {
   const { classes } = useStyle();
-  const { vatStatus, vatStatusList, t } = useSttingsVatListMenu();
+  const { vatStatus, vatStatusList, exchangeRate, setExchangeRate, t } =
+    useSttingsVatListMenu();
 
   const currencies =
     useRecoilValue<{ label: string; value: string }[]>(currenciesState);
@@ -68,6 +75,26 @@ const SettingVatListMenu = ({
               onChange={(e, value) => updateCurrency(value?.value)}
             />
           </div>
+          {quoteStateValue?.isForeignCurrency && (
+            <>
+              <Divider />
+              <div style={classes.menuRowStyle}>
+                <div style={classes.menuTabStyle}>
+                  {t("sales.quote.exchangeRate")}
+                </div>
+                <InputUpdatedValues
+                  value={exchangeRate}
+                  onBlur={() => onBlurExchangeRate(exchangeRate)}
+                  isUpdate={isUpdateExchangeRate}
+                  setIsUpdate={setIsUpdateExchangeRate}
+                  onInputChange={(v) => setExchangeRate(v)}
+                />
+                <IconButton onClick={onClickRefresh}>
+                  <SyncIcon />
+                </IconButton>
+              </div>
+            </>
+          )}
         </div>
       </GoMakeMenu>
     </>

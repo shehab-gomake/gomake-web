@@ -74,7 +74,8 @@ export const useFrontDeskEmailIntegration = ({
       paymentRequestId?: string,
       isOrderUpdated?: boolean
     ) => {
-
+      // Open modal immediately to improve UX
+      setIsEmailComposerOpen(true);
       setIsLoadingEmailData(true);
       setEmailData(null); // Clear previous data
       setIsFromPaymentPage(isFromPaymentPage ?? false);
@@ -145,7 +146,6 @@ export const useFrontDeskEmailIntegration = ({
               };
 
               setEmailData(normalizedEmailData);
-              setIsEmailComposerOpen(true); // Open email composer after data is loaded
             } else {
               setIsEmailComposerOpen(false); // Close modal on error
             }

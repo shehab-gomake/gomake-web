@@ -65,6 +65,7 @@ const SendPaymentDebitsModal = ({
   const isRTL = direction === "rtl";
 
   const [selectedDebitIds, setSelectedDebitIds] = useState<Set<string>>(new Set());
+  const [customPaymentValues, setCustomPaymentValues] = useState<Map<string, number>>(new Map());
   const [numberOfInstallments, setNumberOfInstallments] = useState<number>(1);
   const [sendByEmail, setSendByEmail] = useState<boolean>(false);
   const [sendBySms, setSendBySms] = useState<boolean>(false);
@@ -78,6 +79,7 @@ const SendPaymentDebitsModal = ({
   // Reset all state when modal closes
   const resetAllState = useCallback(() => {
     setSelectedDebitIds(new Set());
+    setCustomPaymentValues(new Map());
     setNumberOfInstallments(1);
     setEmail("");
     setPhoneNumber("");
@@ -145,8 +147,77 @@ const SendPaymentDebitsModal = ({
   }, [debits, selectedDebitIds]);
 
   const totalPayment = useMemo(() => {
-    return selectedDebits.reduce((sum, debit) => sum + (debit.total || 0), 0);
-  }, [selectedDebits]);
+    return selectedDebits.reduce((sum, debit) => {
+      const customValue = customPaymentValues.get(debit.docNumber);
+      const paymentValue = customValue !== undefined ? customValue : (debit.total || 0);
+      return sum + paymentValue;
+    }, 0);
+  }, [selectedDebits, customPaymentValues]);
+
+  // Handle payment value change with validation
+  const handlePaymentValueChange = useCallback((docNumber: string, value: string, originalTotal: number) => {
+    // Allow empty value for better UX
+    if (value === "" || value === "-") {
+      return;
+    }
+
+    const numValue = parseFloat(value);
+    
+    // Check if value is a valid number
+    if (isNaN(numValue)) {
+      return; // Don't update if invalid
+    }
+
+    // Validation: If original is positive, new value must be between 0 and original
+    // If original is negative, new value must be between original and 0
+    let isValid = false;
+    if (originalTotal >= 0) {
+      isValid = numValue >= 0 && numValue <= originalTotal;
+    } else {
+      isValid = numValue >= originalTotal && numValue <= 0;
+    }
+
+    if (isValid) {
+      setCustomPaymentValues((prev) => {
+        const newMap = new Map(prev);
+        newMap.set(docNumber, numValue);
+        return newMap;
+      });
+    }
+  }, []);
+
+  // Handle blur to validate and reset if invalid
+  const handlePaymentValueBlur = useCallback((docNumber: string, value: string, originalTotal: number) => {
+    const numValue = parseFloat(value);
+    
+    // If empty or invalid, reset to original
+    if (value === "" || isNaN(numValue)) {
+      setCustomPaymentValues((prev) => {
+        const newMap = new Map(prev);
+        newMap.delete(docNumber);
+        return newMap;
+      });
+      return;
+    }
+
+    // Validation: If original is positive, new value must be between 0 and original
+    // If original is negative, new value must be between original and 0
+    let isValid = false;
+    if (originalTotal >= 0) {
+      isValid = numValue >= 0 && numValue <= originalTotal;
+    } else {
+      isValid = numValue >= originalTotal && numValue <= 0;
+    }
+
+    // If invalid, reset to original
+    if (!isValid) {
+      setCustomPaymentValues((prev) => {
+        const newMap = new Map(prev);
+        newMap.delete(docNumber);
+        return newMap;
+      });
+    }
+  }, []);
 
 
   // Transform debits data for PrimaryTable
@@ -170,16 +241,38 @@ const SendPaymentDebitsModal = ({
   }, []);
 
   const tableRows = useMemo(() => {
-    return debits.map((debit) => [
-      getDocumentTypeName(t, debit.docType),
-      debit.docNumber,
-      formatDate(debit?.docDate),
-      formatDate(debit?.dueDate),
-      <span key={`total-${debit.docNumber}`} style={{ textAlign: "center", display: "block", width: "100%" }}>
-        {debit.total?.toLocaleString() || "0"}
-      </span>,
-    ]);
-  }, [debits, t, formatDate]);
+    return debits.map((debit) => {
+      const isSelected = selectedDebitIds.has(debit.docNumber);
+      const customValue = customPaymentValues.get(debit.docNumber);
+      const displayValue = customValue !== undefined ? customValue : (debit.total || 0);
+      
+      return [
+        getDocumentTypeName(t, debit.docType),
+        debit.docNumber,
+        formatDate(debit?.docDate),
+        formatDate(debit?.dueDate),
+        isSelected ? (
+          <Box key={`total-input-${debit.docNumber}`} sx={{ display: "flex", justifyContent: "center", width: "100%" }}>
+            <GomakeTextInput
+              type="number"
+              value={displayValue.toString()}
+              onChange={(e) => handlePaymentValueChange(debit.docNumber, e.target.value, debit.total || 0)}
+              onBlur={(e) => handlePaymentValueBlur(debit.docNumber, e.target.value, debit.total || 0)}
+              style={{
+                width: "120px",
+                textAlign: "center",
+                direction: isRTL ? "rtl" : "ltr",
+              }}
+            />
+          </Box>
+        ) : (
+          <span key={`total-${debit.docNumber}`} style={{ textAlign: "center", display: "block", width: "100%" }}>
+            {debit.total?.toLocaleString() || "0"}
+          </span>
+        ),
+      ];
+    });
+  }, [debits, t, formatDate, selectedDebitIds, customPaymentValues, handlePaymentValueChange, handlePaymentValueBlur, isRTL]);
 
 
   const handleSend = useCallback(() => {
@@ -190,8 +283,17 @@ const SendPaymentDebitsModal = ({
       return;
     }
 
+    // Map selected debits with custom payment values
+    const selectedDebitsWithPayment = selectedDebits.map((debit) => {
+      const customValue = customPaymentValues.get(debit.docNumber);
+      return {
+        ...debit,
+        totalPayment: customValue !== undefined ? customValue : (debit.total || 0),
+      };
+    });
+
     onSend({
-      selectedDebits,
+      selectedDebits: selectedDebitsWithPayment,
       numberOfInstallments,
       sendBySms,
       sendByEmail,
@@ -199,7 +301,7 @@ const SendPaymentDebitsModal = ({
       email,
       phoneNumber,
     });
-  }, [selectedDebits, numberOfInstallments, sendBySms, sendByEmail, email, phoneNumber, onSend]);
+  }, [selectedDebits, customPaymentValues, numberOfInstallments, sendBySms, sendByEmail, email, phoneNumber, onSend]);
 
   const handleEmailCheckboxChange = useCallback((checked: boolean) => {
     setSendByEmail(checked);

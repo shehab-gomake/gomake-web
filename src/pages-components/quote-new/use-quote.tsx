@@ -71,10 +71,7 @@ import {
 } from "@/services/api-service/generic-doc/documents-api";
 import { DOCUMENT_TYPE, StatusTitleText } from "../quotes/enums";
 import { useRouter } from "next/router";
-import {
-  getAllCreditTransactionsApi,
-  getClientPaymentItemsApi,
-} from "@/services/api-service/generic-doc/receipts-api";
+import { getAllCreditTransactionsApi, getClientPaymentItemsApi } from "@/services/api-service/generic-doc/receipts-api";
 import {
   checkedItemsIdsState,
   creditTransactionsState,
@@ -83,15 +80,8 @@ import {
   CheckData,
 } from "@/widgets/quote-new/buttons-container/states";
 import { QuoteStatuses } from "@/widgets/quote-new/total-price-and-vat/enums";
-import {
-  isSelectedCLoseAsDeliveryNoteState,
-  isSelectedCLoseAsProformaInvoiceState,
-} from "@/pages/customers/customer-states";
-import {
-  checkArrayNotEmptyOrEmailNotEmpty,
-  checkArrayNotEmptyOrPhoneNotEmpty,
-  isAtLeastOneSelected,
-} from "@/utils/helpers";
+import { isSelectedCLoseAsDeliveryNoteState, isSelectedCLoseAsProformaInvoiceState } from "@/pages/customers/customer-states";
+import { checkArrayNotEmptyOrEmailNotEmpty, checkArrayNotEmptyOrPhoneNotEmpty, isAtLeastOneSelected } from "@/utils/helpers";
 import { useWhatsAppWeb } from "@/pages-components/quote-new/use-whats-app-web";
 import { EAddressType } from "@/widgets/quote-new/business-widget/address-widget/state";
 import { ClientChangeSource } from "./store/quote";
@@ -108,18 +98,12 @@ import { PlusIcon } from "../quotes/widgets/icons/header-section-icons";
 import { useStyle } from "./style";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { useFrontDeskEmailIntegration } from "../quotes/hooks/use-frontdesk-email-integration";
-import {
-  PurchaseOrderType,
-  ShowDocumentDetailsEnum,
-  ShowPricesEnum,
-  ItemCalculationType,
-  PurchaseOrderStatuses,
-} from "@/enums";
-import {
-  StatePayment,
-  sendPaymentState,
-} from "@/pages-components/quotes/widgets/send-payment-modal/states";
+import { StatePayment, sendPaymentState } from "@/pages-components/quotes/widgets/send-payment-modal/states";
 import { getDocumentContactApi } from "@/services/api-service/pay/pay-api";
+import { PurchaseOrderType, ShowDocumentDetailsEnum, ShowPricesEnum, ItemCalculationType, PurchaseOrderStatuses } from "@/enums";
+import { chatwootService } from "@/services/frontdesk";
+import { CHATWOOT_CUSTOM_ATTRIBUTES } from "@/widgets/frontdesk/constants/chatwoot-attributes";
+import { assignToTicketApi } from "@/services/api-service/generic-doc/documents-api";
 
 export enum MessageType {
   Email = 0,
@@ -132,11 +116,7 @@ interface IQuoteProps {
   isQuoteConfirmation?: boolean;
   isPrePaymentPage?: boolean;
 }
-const useQuoteNew = ({
-  docType,
-  isQuoteConfirmation = false,
-  isPrePaymentPage = false,
-}: IQuoteProps) => {
+const useQuoteNew = ({ docType, isQuoteConfirmation = false, isPrePaymentPage = false }: IQuoteProps) => {
   const documentPath = DOCUMENT_TYPE[docType];
   const { t } = useTranslation();
   const dir: "rtl" | "ltr" = t("direction");
@@ -167,64 +147,42 @@ const useQuoteNew = ({
   // Alert VAT Mismatch Modal state
   const [openVatMismatchModal, setOpenVatMismatchModal] = useState(false);
 
-  const { getQuote, getAllClientContacts } = useQuoteGetData(
-    docType,
-    systemVAT,
-    setOpenVatMismatchModal
-  );
-  const [quoteItemValue, setQuoteItemValue] =
-    useRecoilState<any>(quoteItemState);
-  const [quoteConfirm, setQuoteConfirm] = useRecoilState<any>(
-    quoteConfirmationState
-  );
-  const [openReceiptCreationModal, setOpenReceiptCreationModal] =
-    useRecoilState(openReceiptCreationModalState);
+  const { getQuote, getAllClientContacts } = useQuoteGetData(docType, systemVAT, setOpenVatMismatchModal);
+  const [quoteItemValue, setQuoteItemValue] = useRecoilState<any>(quoteItemState);
+  const [quoteConfirm, setQuoteConfirm] = useRecoilState<any>(quoteConfirmationState);
+  const [openReceiptCreationModal, setOpenReceiptCreationModal] = useRecoilState(openReceiptCreationModalState);
   const checksReceipt = useRecoilValue<CheckData[]>(checksRowState);
 
   const isOutgoingPayments = router.query.isOutgoingPayments === "true";
   const isSupplierPayments = docType === DOCUMENT_TYPE.supplierPayments;
   const isPurchaseOrder = docType === DOCUMENT_TYPE.purchaseOrder;
   const isPurchaseInvoice = docType === DOCUMENT_TYPE.purchaseInvoice;
-  const isPurchaseInvoiceRefund =
-    docType === DOCUMENT_TYPE.purchaseInvoiceRefund;
+  const isPurchaseInvoiceRefund = docType === DOCUMENT_TYPE.purchaseInvoiceRefund;
 
   const isPurchaseDocument =
-    isPurchaseOrder ||
-    isPurchaseInvoice ||
-    isPurchaseInvoiceRefund ||
-    isSupplierPayments ||
-    isOutgoingPayments;
+    isPurchaseOrder || isPurchaseInvoice || isPurchaseInvoiceRefund || isSupplierPayments || isOutgoingPayments;
 
   // FrontDesk Email Integration
-  const {
-    isEmailComposerOpen,
-    emailData,
-    openEmailComposer,
-    closeEmailComposer,
-  } = useFrontDeskEmailIntegration({ documentType: docType });
+  const { isEmailComposerOpen, emailData, openEmailComposer, closeEmailComposer, isLoadingEmailData } = useFrontDeskEmailIntegration({
+    documentType: docType,
+  });
 
   const purchaseOrderStatusOptions = useMemo(
     () =>
       Object.keys(PurchaseOrderStatuses)
         .filter((key) => isNaN(Number(key)))
         .map((key) => ({
-          value:
-            PurchaseOrderStatuses[key as keyof typeof PurchaseOrderStatuses],
+          value: PurchaseOrderStatuses[key as keyof typeof PurchaseOrderStatuses],
           label: t(`documentStatus.PurchaseOrder.${key}`),
         })),
     [t]
   );
-  const [isUpdatingPurchaseStatus, setIsUpdatingPurchaseStatus] =
-    useState(false);
+  const [isUpdatingPurchaseStatus, setIsUpdatingPurchaseStatus] = useState(false);
 
   const [creationDate, setCreationDate] = useState(
-    isQuoteConfirmation
-      ? quoteConfirm?.creationDate
-      : quoteItemValue?.creationDate
+    isQuoteConfirmation ? quoteConfirm?.creationDate : quoteItemValue?.creationDate
   );
-  const [taxDate, setTaxDate] = useState(
-    isQuoteConfirmation ? quoteConfirm?.taxDate : quoteItemValue?.taxDate
-  );
+  const [taxDate, setTaxDate] = useState(isQuoteConfirmation ? quoteConfirm?.taxDate : quoteItemValue?.taxDate);
 
   const [selectDate, setSelectDate] = useState<string | null>(null); // Represents the Delivery Date for Quotes and Orders, and the Due Date for other documents
 
@@ -232,36 +190,21 @@ const useQuoteNew = ({
   //   isQuoteConfirmation ? quoteConfirm?.dueDate : quoteItemValue?.dueDate
   // );
 
-  const [isUpdateBusinessName, setIsUpdateBusinessName] = useState<
-    number | null
-  >(null);
-  const [isUpdatePurchaseNumber, setIsUpdatePurchaseNumber] = useState<
-    number | null
-  >(null);
-  const [isUpdateDocumentTitle, setIsUpdateDocumentTitle] = useState<
-    number | null
-  >(null);
-  const [isUpdateClientName, setIsUpdateClientName] = useState<number | null>(
-    null
-  );
-  const [clientName, setClientName] = useState(
-    quoteItemValue?.occasionalClientName
-  );
+  const [isUpdateBusinessName, setIsUpdateBusinessName] = useState<number | null>(null);
+  const [isUpdatePurchaseNumber, setIsUpdatePurchaseNumber] = useState<number | null>(null);
+  const [isUpdateDocumentTitle, setIsUpdateDocumentTitle] = useState<number | null>(null);
+  const [isUpdateClientName, setIsUpdateClientName] = useState<number | null>(null);
+  const [clientName, setClientName] = useState(quoteItemValue?.occasionalClientName);
 
-  const [isUpdateExchangeRate, setIsUpdateExchangeRate] = useState<
-    number | null
-  >(null);
+  const [isUpdateExchangeRate, setIsUpdateExchangeRate] = useState<number | null>(null);
 
   const [isUpdateCurrency, setIsUpdateCurrency] = useState<string>(null);
-  const [isUpdateVatStatus, setIsUpdateVatStatus] = useState<number | null>(
-    null
-  );
+  const [isUpdateVatStatus, setIsUpdateVatStatus] = useState<number | null>(null);
   const [, setIsUpdateBusinessCode] = useState<number | null>(null);
   const [isUpdateAddress, setIsUpdateAddress] = useState<number | null>(null);
   const [isUpdateAgent, setIsUpdateAgent] = useState<number | null>(null);
   const [selectedAgent, setSelectedAgent] = useState<any>();
-  const [agentListValue, setAgentListValue] =
-    useRecoilState<{ text: string; value: string }[]>(agentListsState);
+  const [agentListValue, setAgentListValue] = useRecoilState<{ text: string; value: string }[]>(agentListsState);
   const [isDisplayWidget, setIsDisplayWidget] = useState(false);
   const [items, setItems] = useState([]);
   const [reasonText, setReasonText] = useState("");
@@ -271,8 +214,7 @@ const useQuoteNew = ({
   const [isUpdateContactName1, setIsUpdateContactName1] = useState(null);
   const [isUpdateContactEmail1, setIsUpdateContactEmail1] = useState(null);
   const [isUpdateContactMobile1, setIsUpdateContactMobile1] = useState(null);
-  const [clientContactsValue, setClientContactsValue] =
-    useRecoilState<IContactData[]>(clientContactsState);
+  const [clientContactsValue, setClientContactsValue] = useRecoilState<IContactData[]>(clientContactsState);
   const [selectedContact, setSelectedContact] = useState();
   const [openDeleteModalContact, setOpenDeleteModalContact] = useState(false);
   const [openAddNewItemModal, setOpenAddNewItemModal] = useState(false);
@@ -280,10 +222,7 @@ const useQuoteNew = ({
   const [openCopyFromOrderModal, setOpenCopyFromOrderModal] = useState(false);
   const [quoteItemId, setQuateItemId] = useState();
   const [quoteItem, setQuoteItem] = useState();
-  const [
-    openDuplicateWithDifferentQTYModal,
-    setOpenDuplicateWithDifferentQTYModal,
-  ] = useState(false);
+  const [openDuplicateWithDifferentQTYModal, setOpenDuplicateWithDifferentQTYModal] = useState(false);
   const [isAddQuantity, setIsAddQuantity] = useState(false);
 
   const [openQuickDuplicateModal, setOpenQuickDuplicateModal] = useState(false);
@@ -292,15 +231,10 @@ const useQuoteNew = ({
   const [openDeleteItemModal, setOpenDeleteItemModal] = useState(false);
   const [documentItems, setPriceListItems] = useState<any>([]);
   const [quoteItems, setQuoteItems] = useState<any>([]);
-  const [anchorElCancelBtn, setAnchorElCancelBtn] =
-    useState<null | HTMLElement>(null);
-  const [anchorElSendBtn, setAnchorElSendBtn] = useState<null | HTMLElement>(
-    null
-  );
-  const [anchorElSettingMenu, setAnchorElSettingMenu] =
-    useState<null | HTMLElement>(null);
-  const [anchorElSettingMenuForVat, setAnchorElSettingMenuForVat] =
-    useState<null | HTMLElement>(null);
+  const [anchorElCancelBtn, setAnchorElCancelBtn] = useState<null | HTMLElement>(null);
+  const [anchorElSendBtn, setAnchorElSendBtn] = useState<null | HTMLElement>(null);
+  const [anchorElSettingMenu, setAnchorElSettingMenu] = useState<null | HTMLElement>(null);
+  const [anchorElSettingMenuForVat, setAnchorElSettingMenuForVat] = useState<null | HTMLElement>(null);
   const [displayedItems, setDisplayedItems] = useState<number>(2);
   const openSendBtn = Boolean(anchorElSendBtn);
   const openCancelBtn = Boolean(anchorElCancelBtn);
@@ -308,23 +242,21 @@ const useQuoteNew = ({
   const openNewSttingMenuForVat = Boolean(anchorElSettingMenuForVat);
   const isQuote = docType === DOCUMENT_TYPE.quote;
   const isOrder = docType === DOCUMENT_TYPE.order;
-  const isDeliveryNote =
-    docType === DOCUMENT_TYPE.deliveryNote ||
-    docType === DOCUMENT_TYPE.deliveryNoteRefund;
-  const isInvoice =
-    docType === DOCUMENT_TYPE.invoice ||
-    docType === DOCUMENT_TYPE.invoiceRefund;
+  const isDeliveryNote = docType === DOCUMENT_TYPE.deliveryNote || docType === DOCUMENT_TYPE.deliveryNoteRefund;
+  const isInvoice = docType === DOCUMENT_TYPE.invoice || docType === DOCUMENT_TYPE.invoiceRefund;
   const isReceipt = docType === DOCUMENT_TYPE.receipt;
   const isNewCreation = router.query.isNewCreation === "true";
   const isMaterial = router.query.isMaterial === "true";
 
+  // FrontDesk Chatwoot integration - for invoice linking
+  const chatwootTicketId = router.query.ticketId as string | undefined;
+  const chatwootAccountId = router.query.accountId as string | undefined;
+
   const [openWhatsAppModal, setOpenWatsAppModal] = useState(false);
   const [isSelectedAtLeastOne, setIsSelectedAtLeastOne] = useState(null);
   const [openNewItemNotesModal, setOpenNewItemNotesModal] = useState(false);
-  const [openRelatedDocumentsModal, setOpenRelatedDocumentsModal] =
-    useState(false);
-  const [openInvoiceCreationModal, setOpenInvoiceCreationModal] =
-    useState(false);
+  const [openRelatedDocumentsModal, setOpenRelatedDocumentsModal] = useState(false);
+  const [openInvoiceCreationModal, setOpenInvoiceCreationModal] = useState(false);
 
   const onClickOpenInvoiceCreation = () => {
     setOpenInvoiceCreationModal(true);
@@ -415,9 +347,7 @@ const useQuoteNew = ({
   const handleSettingMenuClose = () => {
     setAnchorElSettingMenu(null);
   };
-  const handleSettingMenuClickForVat = (
-    event: React.MouseEvent<HTMLElement>
-  ) => {
+  const handleSettingMenuClickForVat = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElSettingMenuForVat(event.currentTarget);
   };
   const handleSettingMenuCloseForVat = () => {
@@ -441,8 +371,7 @@ const useQuoteNew = ({
   const [openAddDeliveryModal, setOpenAddDeliveryModal] = useState(false);
   const [openUpdateDeliveryModal, setOpenUpdateDeliveryModal] = useState(false);
   const [openAddAttachmentsModal, setOpenAddAttachmentsModal] = useState(false);
-  const [openAddAttachmentsPurchaseModal, setOpenAddAttachmentsPurchaseModal] =
-    useState(false);
+  const [openAddAttachmentsPurchaseModal, setOpenAddAttachmentsPurchaseModal] = useState(false);
   const [openDeleteDeliveryModal, setOpenDeleteDeliveryModal] = useState(false);
   const onClickOpenDeleteDeliveryModal = () => {
     setOpenDeleteDeliveryModal(true);
@@ -479,14 +408,10 @@ const useQuoteNew = ({
 
   const [isOpenRelatedDocuments, setIsOpenRelatedDocuments] = useState(true);
   const [isMoveToReady, setIsMoveToReady] = useState(false);
-  const [moveToReadyOption, setMoveToReadyOption] = useState<
-    "withMessage" | "withoutMessage"
-  >("withoutMessage");
+  const [moveToReadyOption, setMoveToReadyOption] = useState<"withMessage" | "withoutMessage">("withoutMessage");
 
   const handleRadioChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setMoveToReadyOption(
-      event.target.value as "withMessage" | "withoutMessage"
-    );
+    setMoveToReadyOption(event.target.value as "withMessage" | "withoutMessage");
   };
 
   const handleCheckboxChange = () => {
@@ -498,15 +423,10 @@ const useQuoteNew = ({
     }
   };
 
-  const [openChangeProductionStatusModal, setOpenChangeProductionStatusModal] =
-    useState(false);
+  const [openChangeProductionStatusModal, setOpenChangeProductionStatusModal] = useState(false);
   const [selectedDocument, setSelectedDocument] = useState<any>({});
-  const isSelectedCLoseAsDeliveryNote = useRecoilValue(
-    isSelectedCLoseAsDeliveryNoteState
-  );
-  const isSelectedCLoseAsProformaInvoice = useRecoilValue(
-    isSelectedCLoseAsProformaInvoiceState
-  );
+  const isSelectedCLoseAsDeliveryNote = useRecoilValue(isSelectedCLoseAsDeliveryNoteState);
+  const isSelectedCLoseAsProformaInvoice = useRecoilValue(isSelectedCLoseAsProformaInvoiceState);
   const onClickCloseChangeProductionStatusModal = () => {
     setOpenChangeProductionStatusModal(false);
     setIsMoveToReady(false);
@@ -517,12 +437,10 @@ const useQuoteNew = ({
   };
 
   // Inventory Intake Modal State
-  const [openInventoryIntakeModal, setOpenInventoryIntakeModal] =
-    useState(false);
+  const [openInventoryIntakeModal, setOpenInventoryIntakeModal] = useState(false);
   const [inventoryData, setInventoryData] = useState<any[]>([]);
   const [inventoryLoading, setInventoryLoading] = useState(false);
-  const [openPurchaseOrderTypeModal, setOpenPurchaseOrderTypeModal] =
-    useState(false);
+  const [openPurchaseOrderTypeModal, setOpenPurchaseOrderTypeModal] = useState(false);
 
   const onClickOpenInventoryIntakeModal = async () => {
     setOpenInventoryIntakeModal(true);
@@ -552,31 +470,24 @@ const useQuoteNew = ({
   const { CheckPreferenceValue } = usePrintHousePreferences();
 
   const source = isQuoteConfirmation ? quoteConfirm : quoteItemValue;
-  const showDetails =
-    source?.showDetails !== ShowDocumentDetailsEnum.HideDetails;
+  const showDetails = source?.showDetails !== ShowDocumentDetailsEnum.HideDetails;
 
   const showPrices = source?.showPrices !== ShowPricesEnum.HidePrices;
 
   const isCanIntake = source?.isCanIntake === true;
-  const isMaterialPurchaseOrder =
-    (isPurchaseOrder && isNewCreation && isMaterial) ||
-    (isPurchaseOrder && isCanIntake);
+  const isMaterialPurchaseOrder = (isPurchaseOrder && isNewCreation && isMaterial) || (isPurchaseOrder && isCanIntake);
 
   const tableHeaders = [
     "#",
     isDeliveryNote || isInvoice ? t("products.profits.documentNumber") : null,
+    !CheckPreferenceValue(EPreferences.HIDE_ITEM_CODE_FROM_DOCUMENT_CART) && t("sales.quote.itemCode"),
+    !CheckPreferenceValue(EPreferences.HIDE_ITEM_CODE_FROM_DOCUMENT_CART) && t("products.profits.itemName"),
+    CheckPreferenceValue(EPreferences.HIDE_ITEM_CODE_FROM_DOCUMENT_CART) && t("products.profits.itemName"),
     !CheckPreferenceValue(EPreferences.HIDE_ITEM_CODE_FROM_DOCUMENT_CART) &&
-      t("sales.quote.itemCode"),
-    !CheckPreferenceValue(EPreferences.HIDE_ITEM_CODE_FROM_DOCUMENT_CART) &&
-      t("products.profits.itemName"),
-    CheckPreferenceValue(EPreferences.HIDE_ITEM_CODE_FROM_DOCUMENT_CART) &&
-      t("products.profits.itemName"),
-    showDetails ? t("products.profits.details") : null,
+      showDetails ? t("products.profits.details") : null,
     isMaterialPurchaseOrder ? t("sales.purchaseOrder.packagesQuantity") : null,
     isMaterialPurchaseOrder ? t("sales.purchaseOrder.quantityInPackage") : null,
-    isMaterialPurchaseOrder
-      ? t("sales.purchaseOrder.totalQuantity")
-      : t("sales.quote.amount"),
+    isMaterialPurchaseOrder ? t("sales.purchaseOrder.totalQuantity") : t("sales.quote.amount"),
     isMaterialPurchaseOrder ? t("sales.purchaseOrder.unit") : null,
     showPrices ? t("products.profits.pricingListWidget.unitPrice") : null,
     showPrices ? t("sales.quote.discount") : null,
@@ -777,6 +688,29 @@ const useQuoteNew = ({
       return;
     }
 
+    if ((isInvoice || isDeliveryNote) && isNewCreation) {
+      const updatedQuoteItemValue = { ...quoteItemValue };
+      // updatedQuoteItemValue.exchangeRate = value;
+
+      setQuoteItemValue(updatedQuoteItemValue);
+      setIsUpdateExchangeRate(null);
+
+      if (
+        !quoteItemValue?.documentItems ||
+        quoteItemValue.documentItems.length === 0
+      ) {
+        return;
+      }
+
+      getCalculateQuoteItem(
+        updatedQuoteItemValue,
+        ItemCalculationType.ExchangeRate,
+        value,
+        updatedQuoteItemValue
+      );
+      return;
+    }
+
     const callBack = (res) => {
       if (res?.success) {
         alertSuccessUpdate();
@@ -796,6 +730,52 @@ const useQuoteNew = ({
   };
 
   const refreshExchangeRate = async () => {
+    if ((isInvoice || isDeliveryNote) && isNewCreation) {
+      // For new creations, fetch exchange rate from API
+      const fromCurrency =
+        quoteItemValue?.fromCurrency || quoteItemValue?.systemCurrency;
+      const toCurrency = quoteItemValue?.currency;
+
+      if (!fromCurrency || !toCurrency) {
+        return;
+      }
+
+      const callBack = (res) => {
+        if (res?.success && res?.data?.data?.data) {
+          const newExchangeRate = res.data?.data?.data;
+          const updatedQuoteItemValue = { ...quoteItemValue };
+          // updatedQuoteItemValue.exchangeRate = newExchangeRate;
+
+          setQuoteItemValue(updatedQuoteItemValue);
+
+          if (
+            quoteItemValue?.documentItems &&
+            quoteItemValue.documentItems.length > 0
+          ) {
+            getCalculateQuoteItem(
+              updatedQuoteItemValue,
+              ItemCalculationType.ExchangeRate,
+              newExchangeRate,
+              updatedQuoteItemValue
+            );
+          }
+        } else {
+          alertFaultUpdate();
+        }
+      };
+
+      await callApi(
+        EHttpMethod.GET,
+        `/v1/erp-service/currencies/get-exchange-rate`,
+        {
+          fromCurrency: fromCurrency,
+          toCurrency: toCurrency,
+        },
+        false
+      ).then(callBack);
+      return;
+    }
+
     const callBack = (res) => {
       if (res?.success) {
         getQuote();
@@ -811,10 +791,7 @@ const useQuoteNew = ({
     });
   };
 
-  const updateCurrency = async (
-    currency: string,
-    exchangeRate: number = null
-  ) => {
+  const updateCurrency = async (currency: string, exchangeRate: number = null) => {
     const callBack = (res) => {
       if (res?.success) {
         alertSuccessUpdate();
@@ -841,8 +818,7 @@ const useQuoteNew = ({
               ri.docLine === updatedQuoteItemValue.receiptItems[i].docLine
           );
           if (newItem != null) {
-            updatedQuoteItemValue.receiptItems[i].sumApplied =
-              newItem.sumApplied;
+            updatedQuoteItemValue.receiptItems[i].sumApplied = newItem.sumApplied;
           }
         }
 
@@ -879,12 +855,7 @@ const useQuoteNew = ({
       //   return; // Skip the API call
       // }
 
-      getCalculateQuoteItem(
-        updatedQuoteItemValue,
-        ItemCalculationType.Currency,
-        quoteItemValue.price,
-        updatedQuoteItemValue
-      );
+      getCalculateQuoteItem(updatedQuoteItemValue, ItemCalculationType.Currency, quoteItemValue.price, updatedQuoteItemValue);
     } else {
       await updateDocumentCurrencyApi(callApi, callBack, {
         documentType: docType,
@@ -914,12 +885,7 @@ const useQuoteNew = ({
       updatedQuoteItemValue.vat = changeVatValueForVatStatus(vatStatus);
       setQuoteItemValue(updatedQuoteItemValue);
       setIsUpdateVatStatus(null);
-      getCalculateQuoteItem(
-        updatedQuoteItemValue,
-        ItemCalculationType.Discount,
-        quoteItemValue.discount,
-        updatedQuoteItemValue
-      );
+      getCalculateQuoteItem(updatedQuoteItemValue, ItemCalculationType.Discount, quoteItemValue.discount, updatedQuoteItemValue);
     } else {
       const callBack = (res) => {
         if (res?.success) {
@@ -1070,8 +1036,7 @@ const useQuoteNew = ({
     }
   }, []);
 
-  const [routerChangedFromClientSelect, setRouterChangedFromClientSelect] =
-    useState(false);
+  const [routerChangedFromClientSelect, setRouterChangedFromClientSelect] = useState(false);
 
   const onCloseVatMismatchModal = () => {
     setOpenVatMismatchModal(false);
@@ -1092,16 +1057,10 @@ const useQuoteNew = ({
         setLoadingWithShadow(false);
         if (res?.success) {
           const _data = res?.data || {};
-          if (
-            router?.query?.isNewCreation &&
-            router?.query?.documentNumber &&
-            router?.query?.ClientId
-          ) {
+          if (router?.query?.isNewCreation && router?.query?.documentNumber && router?.query?.ClientId) {
             const documentNumber = router.query.documentNumber;
             if (documentNumber) {
-              const foundRow = _data?.receiptItems?.find(
-                (row) => row.docNum === documentNumber
-              );
+              const foundRow = _data?.receiptItems?.find((row) => row.docNum === documentNumber);
               if (foundRow) {
                 foundRow.isChecked = true;
               } else {
@@ -1133,30 +1092,18 @@ const useQuoteNew = ({
         false
       );
     } else if (router?.query?.isNewCreation) {
-      const res = await callApi(
-        EHttpMethod.POST,
-        `/v1/erp-service/documents/get-new-document-data`,
-        {
-          documentType: docType,
-          clientId: item?.id,
-          ...(router?.query?.budgetId
-            ? { budgetId: router.query.budgetId }
-            : {}),
-        }
-      );
+      const res = await callApi(EHttpMethod.POST, `/v1/erp-service/documents/get-new-document-data`, {
+        documentType: docType,
+        clientId: item?.id,
+        ...(router?.query?.budgetId ? { budgetId: router.query.budgetId } : {}),
+      });
 
       if (res?.success) {
         const _data = res?.data?.data?.result || {};
         const isNewCreation = router?.query?.isNewCreation === "true";
 
         if (clientChangeSource === ClientChangeSource.SAVE_AND_START_NEW_DOC) {
-          const {
-            orderId,
-            deliveryNoteId,
-            documentId,
-            documentToDuplicateId,
-            ...newQuery
-          } = router.query;
+          const { orderId, deliveryNoteId, documentId, documentToDuplicateId, ...newQuery } = router.query;
 
           router.replace(
             {
@@ -1169,10 +1116,7 @@ const useQuoteNew = ({
 
           setRouterChangedFromClientSelect(true);
         }
-        if (
-          clientChangeSource === ClientChangeSource.SAVE_AND_CHANGE_CLIENT &&
-          prevDocumentItem
-        ) {
+        if (clientChangeSource === ClientChangeSource.SAVE_AND_CHANGE_CLIENT && prevDocumentItem) {
           setQuoteItemValue({
             ..._data,
             documentItems: prevDocumentItem?.documentItems,
@@ -1197,35 +1141,25 @@ const useQuoteNew = ({
 
           // Recalculate totals after updating document items
           if (isNewCreation) {
-            const calculateRes = await callApi(
-              EHttpMethod.POST,
-              `/v1/erp-service/documents/calculate-document-new`,
-              {
-                documentType: docType,
-                document: {
-                  exchangeRate:
-                    updatedQuoteItemValue?.exchangeRate === 0
-                      ? 1
-                      : updatedQuoteItemValue?.exchangeRate,
-                  totalPrice: updatedQuoteItemValue?.totalPrice,
-                  data: updatedQuoteItemValue?.discount || 0,
-                  calculationType: 0,
-                  totalPriceAfterDiscount:
-                    updatedQuoteItemValue?.totalPriceAfterDiscount,
-                  discount: updatedQuoteItemValue?.discount || 0,
-                  discountAmount: updatedQuoteItemValue?.discountAmount || 0,
-                  totalPayment: updatedQuoteItemValue?.totalPayment,
-                  vat: updatedQuoteItemValue?.vat || 0.17,
-                  totalVAT: updatedQuoteItemValue?.totalVAT || 0,
-                  roundPrices: updatedQuoteItemValue?.client?.roundPrices,
-                  documentItems: updatedQuoteItemValue.documentItems?.map(
-                    (item) => ({
-                      finalPrice: item.finalPrice,
-                    })
-                  ),
-                },
-              }
-            );
+            const calculateRes = await callApi(EHttpMethod.POST, `/v1/erp-service/documents/calculate-document-new`, {
+              documentType: docType,
+              document: {
+                exchangeRate: updatedQuoteItemValue?.exchangeRate === 0 ? 1 : updatedQuoteItemValue?.exchangeRate,
+                totalPrice: updatedQuoteItemValue?.totalPrice,
+                data: updatedQuoteItemValue?.discount || 0,
+                calculationType: 0,
+                totalPriceAfterDiscount: updatedQuoteItemValue?.totalPriceAfterDiscount,
+                discount: updatedQuoteItemValue?.discount || 0,
+                discountAmount: updatedQuoteItemValue?.discountAmount || 0,
+                totalPayment: updatedQuoteItemValue?.totalPayment,
+                vat: updatedQuoteItemValue?.vat || 0.17,
+                totalVAT: updatedQuoteItemValue?.totalVAT || 0,
+                roundPrices: updatedQuoteItemValue?.client?.roundPrices,
+                documentItems: updatedQuoteItemValue.documentItems?.map((item) => ({
+                  finalPrice: item.finalPrice,
+                })),
+              },
+            });
             if (calculateRes?.success) {
               const calculatedData = calculateRes?.data?.data?.data;
               setQuoteItemValue({
@@ -1245,8 +1179,7 @@ const useQuoteNew = ({
         }
 
         // Check if the client vat Exempt and show modal if needed
-        const isCorrectPage =
-          router.pathname === "/invoice" || router.pathname === "/deliveryNote";
+        const isCorrectPage = router.pathname === "/invoice" || router.pathname === "/deliveryNote";
         const isVATMismatch = Math.abs(systemVAT - _data?.vat) > 0.001;
 
         if (isNewCreation && isCorrectPage && isVATMismatch) {
@@ -1312,10 +1245,7 @@ const useQuoteNew = ({
         contactPhone: selectedContactById?.phone,
         documentID: quoteItemValue?.id,
       };
-      updatedQuoteItemValue.documentContacts = [
-        ...updatedQuoteItemValue.documentContacts,
-        newContact,
-      ];
+      updatedQuoteItemValue.documentContacts = [...updatedQuoteItemValue.documentContacts, newContact];
       setQuoteItemValue(updatedQuoteItemValue);
       setIsDisplayWidget(false);
     } else {
@@ -1344,14 +1274,12 @@ const useQuoteNew = ({
   const updateClientContact = async (item: any) => {
     if (isNewCreation) {
       const updatedQuoteItemValue = { ...quoteItemValue };
-      const updatedContacts = updatedQuoteItemValue.documentContacts.map(
-        (contact: any) => {
-          if (contact.id === item.id) {
-            return item;
-          }
-          return contact;
+      const updatedContacts = updatedQuoteItemValue.documentContacts.map((contact: any) => {
+        if (contact.id === item.id) {
+          return item;
         }
-      );
+        return contact;
+      });
 
       updatedQuoteItemValue.documentContacts = updatedContacts;
       setQuoteItemValue(updatedQuoteItemValue);
@@ -1384,11 +1312,9 @@ const useQuoteNew = ({
   const onClickDeleteContact = async (item: any) => {
     if (isNewCreation) {
       const updatedQuoteItemValue = { ...quoteItemValue };
-      const updatedContacts = updatedQuoteItemValue.documentContacts.filter(
-        (contact: any) => {
-          return contact.id !== item.id;
-        }
-      );
+      const updatedContacts = updatedQuoteItemValue.documentContacts.filter((contact: any) => {
+        return contact.id !== item.id;
+      });
       updatedQuoteItemValue.documentContacts = updatedContacts;
       setQuoteItemValue(updatedQuoteItemValue);
     } else {
@@ -1506,8 +1432,7 @@ const useQuoteNew = ({
     setOpenCopyFromOrderModal(false);
   };
 
-  const [copyFromDocumentType, setCopyFromDocumentType] =
-    useState<DOCUMENT_TYPE>();
+  const [copyFromDocumentType, setCopyFromDocumentType] = useState<DOCUMENT_TYPE>();
 
   const onOpenCopyFromOrder = (documentNum: DOCUMENT_TYPE) => {
     setCopyFromDocumentType(documentNum);
@@ -1520,9 +1445,7 @@ const useQuoteNew = ({
   const onCloseNewContact = () => {
     setOpenAddNewContactModal(false);
   };
-  const [selectedFirstMaterial, setSelectedFirstMaterial] = useRecoilState<any>(
-    selectedFirstMaterialState
-  );
+  const [selectedFirstMaterial, setSelectedFirstMaterial] = useRecoilState<any>(selectedFirstMaterialState);
   const getCalculateQuoteItem = async (
     quoteItem: any,
     calculationType: number,
@@ -1532,16 +1455,11 @@ const useQuoteNew = ({
   ) => {
     if (isNewCreation) {
       const newQuoteItemValue = newUpdatedQuoteItemValue ?? quoteItemValue;
-      const quoteItemEdit = newQuoteItemValue.documentItems.find(
-        (item) => item.id === quoteItem.id
-      );
+      const quoteItemEdit = newQuoteItemValue.documentItems.find((item) => item.id === quoteItem.id);
 
       // Prepare document payload
       const documentPayload: any = {
-        exchangeRate:
-          newQuoteItemValue?.exchangeRate == 0
-            ? 1
-            : newQuoteItemValue?.exchangeRate,
+        exchangeRate: newQuoteItemValue?.exchangeRate == 0 ? 1 : newQuoteItemValue?.exchangeRate,
         price: quoteItem?.price,
         discount: quoteItem?.discount,
         isPrintHouseMaterialItem:
@@ -1576,10 +1494,8 @@ const useQuoteNew = ({
           calculationType === ItemCalculationType.Amount) &&
         quoteItem?.printHouseMaterialId
       ) {
-        documentPayload.packagesQuantity =
-          quoteItem?.packagesQuantity || quoteItem?.packageQuantity || 0;
-        documentPayload.quantityInPackage =
-          quoteItem?.quantityInPackage || quoteItem?.quantityPerPackage || 0;
+        documentPayload.packagesQuantity = quoteItem?.packagesQuantity || quoteItem?.packageQuantity || 0;
+        documentPayload.quantityInPackage = quoteItem?.quantityInPackage || quoteItem?.quantityPerPackage || 0;
       }
 
       const res = await callApi(
@@ -1594,8 +1510,18 @@ const useQuoteNew = ({
       if (res?.success) {
         const _data = res?.data?.data?.data;
         // if is request to change the currency in document in creation mode just multiple the prices with exchange rate
-        if (calculationType === 4) {
+        if (
+          calculationType === ItemCalculationType.Currency ||
+          calculationType === ItemCalculationType.ExchangeRate
+        ) {
           let exchangeRate = _data.exchangeRate;
+          let oldExchangeRate =
+            quoteItem.exchangeRate === 0 ||
+              quoteItem.exchangeRate === null ||
+              quoteItem.exchangeRate === undefined
+              ? 1
+              : quoteItem.exchangeRate;
+
           const updatedQuoteItemValue = {
             ...newQuoteItemValue,
             discount: _data?.document?.discount,
@@ -1610,11 +1536,18 @@ const useQuoteNew = ({
               (documentItem) => {
                 return {
                   ...documentItem,
-                  finalPrice: (documentItem.finalPrice * exchangeRate).toFixed(
-                    3
-                  ),
-                  price: (documentItem.price * exchangeRate).toFixed(3),
-                  discount: (documentItem.discount * exchangeRate).toFixed(3),
+                  finalPrice: (
+                    (documentItem.finalPrice * exchangeRate) /
+                    oldExchangeRate
+                  ).toFixed(3),
+                  price: (
+                    (documentItem.price * exchangeRate) /
+                    oldExchangeRate
+                  ).toFixed(3),
+                  discount: (
+                    (documentItem.discount * exchangeRate) /
+                    oldExchangeRate
+                  ).toFixed(3),
                 };
               }
             ),
@@ -1630,44 +1563,42 @@ const useQuoteNew = ({
             totalPriceAfterDiscount: _data?.document?.totalPriceAfterDiscount,
             totalVAT: _data?.document?.totalVAT,
             vat: _data?.document?.vat,
-            documentItems: newQuoteItemValue.documentItems.map(
-              (documentItem) => {
-                if (documentItem.id === quoteItem.id) {
-                  // Preserve packagesQuantity and quantityInPackage when updating PackagesQuantity or QuantityInPackage
-                  const updatedItem: any = {
-                    ...documentItem,
-                    finalPrice: _data.finalPrice,
-                    price: _data.price,
-                    quantity: _data.quantity,
-                    discount: _data.discount,
-                  };
+            documentItems: newQuoteItemValue.documentItems.map((documentItem) => {
+              if (documentItem.id === quoteItem.id) {
+                // Preserve packagesQuantity and quantityInPackage when updating PackagesQuantity or QuantityInPackage
+                const updatedItem: any = {
+                  ...documentItem,
+                  finalPrice: _data.finalPrice,
+                  price: _data.price,
+                  quantity: _data.quantity,
+                  discount: _data.discount,
+                };
 
-                  // Preserve packagesQuantity and quantityInPackage if they exist in the response or in the original item
-                  if (
-                    calculationType === ItemCalculationType.PackagesQuantity ||
-                    calculationType === ItemCalculationType.QuantityInPackage ||
-                    calculationType === ItemCalculationType.Amount
-                  ) {
-                    updatedItem.packagesQuantity =
-                      _data.packagesQuantity ??
-                      quoteItem.packagesQuantity ??
-                      quoteItem.packageQuantity ??
-                      documentItem.packagesQuantity ??
-                      documentItem.packageQuantity;
-                    updatedItem.quantityInPackage =
-                      _data.quantityInPackage ??
-                      quoteItem.quantityInPackage ??
-                      quoteItem.quantityPerPackage ??
-                      documentItem.quantityInPackage ??
-                      documentItem.quantityPerPackage;
-                  }
-
-                  return updatedItem;
-                } else {
-                  return documentItem;
+                // Preserve packagesQuantity and quantityInPackage if they exist in the response or in the original item
+                if (
+                  calculationType === ItemCalculationType.PackagesQuantity ||
+                  calculationType === ItemCalculationType.QuantityInPackage ||
+                  calculationType === ItemCalculationType.Amount
+                ) {
+                  updatedItem.packagesQuantity =
+                    _data.packagesQuantity ??
+                    quoteItem.packagesQuantity ??
+                    quoteItem.packageQuantity ??
+                    documentItem.packagesQuantity ??
+                    documentItem.packageQuantity;
+                  updatedItem.quantityInPackage =
+                    _data.quantityInPackage ??
+                    quoteItem.quantityInPackage ??
+                    quoteItem.quantityPerPackage ??
+                    documentItem.quantityInPackage ??
+                    documentItem.quantityPerPackage;
                 }
+
+                return updatedItem;
+              } else {
+                return documentItem;
               }
-            ),
+            }),
           };
           setQuoteItemValue(updatedQuoteItemValue);
           setSelectedFirstMaterial(false);
@@ -1698,14 +1629,8 @@ const useQuoteNew = ({
     }
   };
 
-  const getCalculateQuoteConfirmationItem = async (
-    printHouseId: string,
-    ItemId: string,
-    quantity?: number
-  ) => {
-    const documentItemIds = quoteConfirm?.documentItems
-      ?.filter((x) => x.isChecked)
-      ?.map((x) => x.id);
+  const getCalculateQuoteConfirmationItem = async (printHouseId: string, ItemId: string, quantity?: number) => {
+    const documentItemIds = quoteConfirm?.documentItems?.filter((x) => x.isChecked)?.map((x) => x.id);
     const callBack = (res) => {
       if (res?.success) {
         alertSuccessUpdate();
@@ -1779,51 +1704,40 @@ const useQuoteNew = ({
 
   const deleteQuoteItem = async () => {
     if (isNewCreation) {
-      const updatedDocumentItems = quoteItemValue.documentItems.filter(
-        (item) => item.id !== quoteItemId
-      );
+      const updatedDocumentItems = quoteItemValue.documentItems.filter((item) => item.id !== quoteItemId);
       const updatedQuoteItemValue = {
         ...quoteItemValue,
         documentItems: updatedDocumentItems,
       };
-      const res = await callApi(
-        EHttpMethod.POST,
-        `/v1/erp-service/documents/calculate-document-new`,
-        {
-          documentType: docType,
-          document: {
-            exchangeRate: updatedQuoteItemValue?.exchangeRate || 1,
-            totalPrice: updatedQuoteItemValue?.totalPrice,
-            data: 0,
-            calculationType: 0,
-            totalPriceAfterDiscount:
-              updatedQuoteItemValue?.totalPriceAfterDiscount,
-            discount: updatedQuoteItemValue?.discount,
-            discountAmount: updatedQuoteItemValue?.discountAmount,
-            totalPayment: updatedQuoteItemValue?.totalPayment,
-            vat: updatedQuoteItemValue?.vat || 0.17,
-            totalVAT: updatedQuoteItemValue?.totalVAT || 0.17,
-            roundPrices: quoteItemValue?.client?.roundPrices,
-            documentItems: updatedQuoteItemValue?.documentItems.map((item) => ({
-              finalPrice: item.finalPrice,
-            })),
-          },
-        }
-      );
+      const res = await callApi(EHttpMethod.POST, `/v1/erp-service/documents/calculate-document-new`, {
+        documentType: docType,
+        document: {
+          exchangeRate: updatedQuoteItemValue?.exchangeRate || 1,
+          totalPrice: updatedQuoteItemValue?.totalPrice,
+          data: 0,
+          calculationType: 0,
+          totalPriceAfterDiscount: updatedQuoteItemValue?.totalPriceAfterDiscount,
+          discount: updatedQuoteItemValue?.discount,
+          discountAmount: updatedQuoteItemValue?.discountAmount,
+          totalPayment: updatedQuoteItemValue?.totalPayment,
+          vat: updatedQuoteItemValue?.vat || 0.17,
+          totalVAT: updatedQuoteItemValue?.totalVAT || 0.17,
+          roundPrices: quoteItemValue?.client?.roundPrices,
+          documentItems: updatedQuoteItemValue?.documentItems.map((item) => ({
+            finalPrice: item.finalPrice,
+          })),
+        },
+      });
       if (res?.success) {
         const _data = res?.data?.data?.data;
         updatedQuoteItemValue.discount = _data.discount;
         updatedQuoteItemValue.discountAmount = _data.discountAmount;
         updatedQuoteItemValue.totalPayment = _data.totalPayment;
         updatedQuoteItemValue.totalPrice = _data.totalPrice;
-        updatedQuoteItemValue.totalPriceAfterDiscount =
-          _data.totalPriceAfterDiscount;
+        updatedQuoteItemValue.totalPriceAfterDiscount = _data.totalPriceAfterDiscount;
         updatedQuoteItemValue.totalVAT = _data.totalVAT;
         updatedQuoteItemValue.vat = _data.vat;
-        updatedQuoteItemValue.exchangeRate =
-          documentItems[0]?.exchangeRate === 0
-            ? 1
-            : documentItems[0]?.exchangeRate;
+        updatedQuoteItemValue.exchangeRate = documentItems[0]?.exchangeRate === 0 ? 1 : documentItems[0]?.exchangeRate;
         setQuoteItemValue(updatedQuoteItemValue);
       }
     } else {
@@ -1876,16 +1790,8 @@ const useQuoteNew = ({
             productType: 1,
             calculationStatus: null,
           };
-          updatedQuoteItemValue.documentItems = [
-            ...updatedQuoteItemValue.documentItems,
-            newItem,
-          ];
-          getCalculateQuoteItem(
-            newItem,
-            1,
-            newItem.price,
-            updatedQuoteItemValue
-          );
+          updatedQuoteItemValue.documentItems = [...updatedQuoteItemValue.documentItems, newItem];
+          getCalculateQuoteItem(newItem, 1, newItem.price, updatedQuoteItemValue);
         } else getQuote();
       } else {
         alertFaultAdded();
@@ -1907,35 +1813,29 @@ const useQuoteNew = ({
     setQuoteItem(quoteItem);
   };
   const [loading, setLoading] = useRecoilState(loadingWithShadowState);
+
   const getCalculateQuote = async (calculationType: number, data: number) => {
     if (isNewCreation) {
       setLoading(true);
-      const res = await callApi(
-        EHttpMethod.POST,
-        `/v1/erp-service/documents/calculate-document-new`,
-        {
-          documentType: docType,
-          document: {
-            exchangeRate:
-              quoteItemValue?.exchangeRate === 0
-                ? 1
-                : quoteItemValue?.exchangeRate,
-            totalPrice: quoteItemValue?.totalPrice,
-            data,
-            calculationType,
-            totalPriceAfterDiscount: quoteItemValue?.totalPriceAfterDiscount,
-            discount: data,
-            discountAmount: quoteItemValue?.discountAmount,
-            totalPayment: quoteItemValue?.totalPayment,
-            vat: quoteItemValue?.vat || 0.17,
-            totalVAT: quoteItemValue?.totalVAT || 0.17,
-            roundPrices: quoteItemValue?.client?.roundPrices,
-            documentItems: quoteItemValue.documentItems?.map((item) => ({
-              finalPrice: item.finalPrice,
-            })),
-          },
-        }
-      );
+      const res = await callApi(EHttpMethod.POST, `/v1/erp-service/documents/calculate-document-new`, {
+        documentType: docType,
+        document: {
+          exchangeRate: quoteItemValue?.exchangeRate === 0 ? 1 : quoteItemValue?.exchangeRate,
+          totalPrice: quoteItemValue?.totalPrice,
+          data,
+          calculationType,
+          totalPriceAfterDiscount: quoteItemValue?.totalPriceAfterDiscount,
+          discount: data,
+          discountAmount: quoteItemValue?.discountAmount,
+          totalPayment: quoteItemValue?.totalPayment,
+          vat: quoteItemValue?.vat || 0.17,
+          totalVAT: quoteItemValue?.totalVAT || 0.17,
+          roundPrices: quoteItemValue?.client?.roundPrices,
+          documentItems: quoteItemValue.documentItems?.map((item) => ({
+            finalPrice: item.finalPrice,
+          })),
+        },
+      });
       if (res?.success) {
         const _data = res?.data?.data?.data;
         const updatedQuoteItemValue = { ...quoteItemValue };
@@ -1943,8 +1843,7 @@ const useQuoteNew = ({
         updatedQuoteItemValue.discountAmount = _data.discountAmount;
         updatedQuoteItemValue.totalPayment = _data.totalPayment;
         updatedQuoteItemValue.totalPrice = _data.totalPrice;
-        updatedQuoteItemValue.totalPriceAfterDiscount =
-          _data.totalPriceAfterDiscount;
+        updatedQuoteItemValue.totalPriceAfterDiscount = _data.totalPriceAfterDiscount;
         updatedQuoteItemValue.totalVAT = _data.totalVAT;
         updatedQuoteItemValue.vat = _data.vat;
 
@@ -1969,11 +1868,7 @@ const useQuoteNew = ({
     }
   };
 
-  const changeDocumentItems = (
-    index: number,
-    filedName: string,
-    value: any
-  ) => {
+  const changeDocumentItems = (index: number, filedName: string, value: any) => {
     let temp = [...documentItems];
     temp[index] = {
       ...temp[index],
@@ -1982,12 +1877,7 @@ const useQuoteNew = ({
     setPriceListItems(temp);
   };
 
-  const changeDocumentItemsChild = (
-    parentIndex: number,
-    childInex: number,
-    filedName: string,
-    value: any
-  ) => {
+  const changeDocumentItemsChild = (parentIndex: number, childInex: number, filedName: string, value: any) => {
     let temp = lodashClonedeep(documentItems);
     temp[parentIndex].childsDocumentItems[childInex] = {
       ...temp[parentIndex].childsDocumentItems[childInex],
@@ -2012,19 +1902,14 @@ const useQuoteNew = ({
   const dateRef = useRef(null);
   const taxDateRef = useRef(null);
   const [activeClickAway, setActiveClickAway] = useState(false); //for duaDate/deliveryDate
-  const [activeClickAwayForCreationDate, setActiveClickAwayForCreationDate] =
-    useState(false);
-  const [activeClickAwayForTaxDate, setActiveClickAwayForTaxDate] =
-    useState(false);
+  const [activeClickAwayForCreationDate, setActiveClickAwayForCreationDate] = useState(false);
+  const [activeClickAwayForTaxDate, setActiveClickAwayForTaxDate] = useState(false);
 
   const [openOtherReasonModal, setOpenOtherReasonModal] = useState(false);
-  const [openSignatureApprovalModal, setOpenSignatureApprovalModal] =
-    useState(false);
-  const [openIrrelevantCancelModal, setOpenIrrelevantCancelModal] =
-    useState(false);
+  const [openSignatureApprovalModal, setOpenSignatureApprovalModal] = useState(false);
+  const [openIrrelevantCancelModal, setOpenIrrelevantCancelModal] = useState(false);
   const [openPriceCancelModal, setOpenPriceCancelModal] = useState(false);
-  const [openDeliveryTimeCancelModal, setOpenDeliveryTimeCancelModal] =
-    useState(false);
+  const [openDeliveryTimeCancelModal, setOpenDeliveryTimeCancelModal] = useState(false);
 
   const onClickOpenIrrelevantModal = () => {
     setOpenIrrelevantCancelModal(true);
@@ -2105,13 +1990,7 @@ const useQuoteNew = ({
     message: "",
   });
 
-  const showAlertModal = ({
-    message,
-    onConfirm,
-  }: {
-    message: string;
-    onConfirm?: () => void;
-  }) => {
+  const showAlertModal = ({ message, onConfirm }: { message: string; onConfirm?: () => void }) => {
     setAlertModalState({ message, onConfirm });
     alertNotVerifiedMail.open();
   };
@@ -2153,6 +2032,7 @@ const useQuoteNew = ({
         alertFault("sales.quote.phoneContectErrorMsg");
         return false;
       }
+      // @ts-ignore
       if (messageType === MessageType.Email && !emailValid) {
         alertFault("sales.quote.mailContectErrorMsg");
         return false;
@@ -2177,11 +2057,8 @@ const useQuoteNew = ({
         alertSuccessSend();
         setOpenInvoiceCreationModal(false);
       } else {
-        if (
-          (messageType === MessageType.Email ||
-            messageType === MessageType.Both) &&
-          res?.errors?.message
-        ) {
+        // @ts-ignore
+        if ((messageType === MessageType.Email || messageType === MessageType.Both) && res?.errors?.message) {
           if (res.errors.message === "agent_not_verified") {
             showAlertModal({
               message: t("alerts.agentEmailNotVerified"),
@@ -2411,9 +2288,7 @@ const useQuoteNew = ({
     sendWithInvoices: boolean = false
   ) => {
     if (messageType === MessageType.SMS) {
-      let checkPhones = checkArrayNotEmptyOrPhoneNotEmpty(
-        quoteItemValue?.documentContacts
-      );
+      let checkPhones = checkArrayNotEmptyOrPhoneNotEmpty(quoteItemValue?.documentContacts);
       if (checkPhones) {
         const callBack = (res) => {
           if (res?.success) {
@@ -2434,9 +2309,7 @@ const useQuoteNew = ({
         alertFault("sales.quote.phoneContectErrorMsg");
       }
     } else {
-      let checkEmails = checkArrayNotEmptyOrEmailNotEmpty(
-        quoteItemValue?.documentContacts
-      );
+      let checkEmails = checkArrayNotEmptyOrEmailNotEmpty(quoteItemValue?.documentContacts);
       if (checkEmails) {
         const callBack = (res) => {
           if (res?.success) {
@@ -2482,8 +2355,7 @@ const useQuoteNew = ({
         taxDate: taxDate,
         dueDate: selectDate,
         ...(router?.query?.budgetId ? { budgetID: router.query.budgetId } : {}),
-        exchangeRate:
-          quoteItemValue.exchangeRate === 0 ? 1 : quoteItemValue.exchangeRate,
+        exchangeRate: quoteItemValue.exchangeRate === 0 ? 1 : quoteItemValue.exchangeRate,
         isOpenRelatedDocuments: isOpenRelatedDocuments,
       },
     });
@@ -2551,6 +2423,46 @@ const useQuoteNew = ({
     }, 500);
   };
 
+  /**
+   * Link invoice to Chatwoot conversation (only for invoices from FrontDesk)
+   */
+  const linkInvoiceToChatwootConversation = async (invoiceId: string) => {
+    if (!chatwootTicketId || !chatwootAccountId) {
+      return; // Not coming from FrontDesk, skip linking
+    }
+
+    try {
+      const ticketId = parseInt(chatwootTicketId, 10);
+      const accountId = parseInt(chatwootAccountId, 10);
+
+      if (isNaN(ticketId) || isNaN(accountId)) {
+        console.error("[linkInvoiceToChatwoot] Invalid ticketId or accountId");
+        return;
+      }
+
+      // 1. Assign invoice to ticket in ERP service
+      await assignToTicketApi(callApi, () => { }, {
+        documentId: invoiceId,
+        ticketId: chatwootTicketId,
+        documentType: DOCUMENT_TYPE.invoice,
+      });
+
+      // 2. Update Chatwoot conversation custom attributes
+      const customAttributes = {
+        [CHATWOOT_CUSTOM_ATTRIBUTES.LINKED_INVOICE_ID]: invoiceId,
+        [CHATWOOT_CUSTOM_ATTRIBUTES.LINKED_INVOICE_TYPE]: DOCUMENT_TYPE.invoice,
+        [CHATWOOT_CUSTOM_ATTRIBUTES.LINKED_INVOICE_AT]: new Date().toISOString(),
+      };
+
+      await chatwootService.conversations.updateConversationCustomAttributes(accountId, ticketId, customAttributes);
+
+      console.log(`[linkInvoiceToChatwoot] Successfully linked invoice ${invoiceId} to conversation ${ticketId}`);
+    } catch (error) {
+      console.error("[linkInvoiceToChatwoot] Error linking invoice:", error);
+      // Don't throw - invoice was created successfully, just linking failed
+    }
+  };
+
   const handleSaveBtnClickForDocument = async () => {
     // Check if we're creating a new document and if the document already has more than 100 items
     const isNewCreation = router?.query?.isNewCreation === "true";
@@ -2566,15 +2478,18 @@ const useQuoteNew = ({
     //   alertFault(validationError);
     //   return;
     // }
-    const callBack = (res) => {
+    const callBack = async (res) => {
       if (res?.success) {
         alertSuccessAdded();
         const _data = res?.data || {};
         setQuoteItemValue(_data);
-        if (
-          docType === DOCUMENT_TYPE.invoice ||
-          docType === DOCUMENT_TYPE.deliveryNote
-        ) {
+
+        // Link invoice to Chatwoot conversation if coming from FrontDesk
+        if (docType === DOCUMENT_TYPE.invoice && _data?.id) {
+          await linkInvoiceToChatwootConversation(_data.id);
+        }
+
+        if (docType === DOCUMENT_TYPE.invoice || docType === DOCUMENT_TYPE.deliveryNote) {
           router.replace(`/${documentPath}?Id=${_data?.id}`);
           onClickOpenInvoiceCreation();
         } else {
@@ -2593,29 +2508,21 @@ const useQuoteNew = ({
         taxDate: taxDate,
         dueDate: selectDate,
         ...(router?.query?.budgetId ? { budgetID: router.query.budgetId } : {}),
-        exchangeRate:
-          quoteItemValue.exchangeRate === 0 ? 1 : quoteItemValue.exchangeRate,
+        exchangeRate: quoteItemValue.exchangeRate === 0 ? 1 : quoteItemValue.exchangeRate,
         isOpenRelatedDocuments: isOpenRelatedDocuments,
-        type: isMaterialPurchaseOrder
-          ? PurchaseOrderType.Materials
-          : PurchaseOrderType.Products,
+        type: isMaterialPurchaseOrder ? PurchaseOrderType.Materials : PurchaseOrderType.Products,
       },
     });
   };
 
   const onClickDeleteAddress = async (item: any, addressType: EAddressType) => {
-    const addressArray =
-      addressType === EAddressType.BILLING
-        ? "documentBillingAddresses"
-        : "documentDeliveryAddresses";
+    const addressArray = addressType === EAddressType.BILLING ? "documentBillingAddresses" : "documentDeliveryAddresses";
 
     if (isNewCreation) {
       const updatedQuoteItemValue = { ...quoteItemValue };
 
       // Remove the address with the matching ID
-      updatedQuoteItemValue[addressArray] = updatedQuoteItemValue[
-        addressArray
-      ]?.filter((address) => address.id !== item.id);
+      updatedQuoteItemValue[addressArray] = updatedQuoteItemValue[addressArray]?.filter((address) => address.id !== item.id);
 
       setQuoteItemValue(updatedQuoteItemValue);
     } else {
@@ -2635,9 +2542,7 @@ const useQuoteNew = ({
     }
   };
 
-  const setCardTransactions = useSetRecoilState<transactionOptionsData[]>(
-    creditTransactionsState
-  );
+  const setCardTransactions = useSetRecoilState<transactionOptionsData[]>(creditTransactionsState);
   const getAllCreditCardTransactions = async (id: string) => {
     const callBack = (res) => {
       if (res?.success) {
@@ -2683,15 +2588,7 @@ const useQuoteNew = ({
     return () => {
       document.removeEventListener("click", handleClickOutside);
     };
-  }, [
-    dateRef,
-    taxDateRef,
-    activeClickAway,
-    activeClickAwayForTaxDate,
-    quoteItemValue,
-    selectDate,
-    taxDate,
-  ]);
+  }, [dateRef, taxDateRef, activeClickAway, activeClickAwayForTaxDate, quoteItemValue, selectDate, taxDate]);
 
   const [openReferenceModal, setOpenReferenceModal] = useState(false);
   const [confirmCreateDocument, setConfirmCreateDocument] = useState(false);
@@ -2708,16 +2605,10 @@ const useQuoteNew = ({
   };
 
   const [newCreationDate, setNewCreationDate] = useState(
-    isQuoteConfirmation
-      ? quoteConfirm?.creationDate
-      : quoteItemValue?.creationDate
+    isQuoteConfirmation ? quoteConfirm?.creationDate : quoteItemValue?.creationDate
   );
   useEffect(() => {
-    setNewCreationDate(
-      isQuoteConfirmation
-        ? quoteConfirm?.creationDate
-        : quoteItemValue?.creationDate
-    );
+    setNewCreationDate(isQuoteConfirmation ? quoteConfirm?.creationDate : quoteItemValue?.creationDate);
   }, []);
 
   const onClickCloseReferenceModal = () => {
@@ -2739,9 +2630,7 @@ const useQuoteNew = ({
 
   useEffect(() => {
     if (agentListValue?.length > 0) {
-      const selectedAgent1 = agentListValue.find(
-        (agent) => agent.value === quoteItemValue?.agentId
-      );
+      const selectedAgent1 = agentListValue.find((agent) => agent.value === quoteItemValue?.agentId);
       setSelectedAgent(selectedAgent1);
     }
   }, [agentListValue, quoteItemValue]);
@@ -2757,32 +2646,18 @@ const useQuoteNew = ({
     setClientName(source?.occasionalClientName);
 
     // Check if we should skip setting the due date because we have valid checks
-    const hasValidChecks = checksReceipt?.some(
-      (check) => check.dueDate && check.checkSum > 0
-    );
-    const shouldSkipDueDateUpdate =
-      isReceipt && isOutgoingPayments && isNewCreation && hasValidChecks;
+    const hasValidChecks = checksReceipt?.some((check) => check.dueDate && check.checkSum > 0);
+    const shouldSkipDueDateUpdate = isReceipt && isOutgoingPayments && isNewCreation && hasValidChecks;
 
     if (!isQuote && !shouldSkipDueDateUpdate) {
       setSelectDate(source?.dueDate);
     }
-  }, [
-    quoteItemValue,
-    quoteConfirm,
-    isQuote,
-    isQuoteConfirmation,
-    checksReceipt,
-    isReceipt,
-    isOutgoingPayments,
-    isNewCreation,
-  ]);
+  }, [quoteItemValue, quoteConfirm, isQuote, isQuoteConfirmation, checksReceipt, isReceipt, isOutgoingPayments, isNewCreation]);
 
   useEffect(() => {
     if (!isQuote) return;
 
-    const isDeliveryDateRequired = CheckPreferenceValue(
-      EPreferences.DELIVERY_DATE_REQUIRED_IN_QUOTE
-    );
+    const isDeliveryDateRequired = CheckPreferenceValue(EPreferences.DELIVERY_DATE_REQUIRED_IN_QUOTE);
 
     if (!isDeliveryDateRequired || quoteItemValue?.dueDateUpdatedByUser) {
       getQuoteDeliveryDate();
@@ -2800,9 +2675,7 @@ const useQuoteNew = ({
         hasMountedRef.current = true;
       } else {
         // Check if the router query has changed (to avoid redundant calls)
-        const hasQueryChanged =
-          JSON.stringify(prevRouterQueryRef.current) !==
-          JSON.stringify(router.query);
+        const hasQueryChanged = JSON.stringify(prevRouterQueryRef.current) !== JSON.stringify(router.query);
 
         if (hasQueryChanged) {
           getQuote();
@@ -2874,10 +2747,7 @@ const useQuoteNew = ({
     });
   };
 
-  const updateDocumentPreference = async (
-    value: string,
-    documentSettingTYpe: number
-  ) => {
+  const updateDocumentPreference = async (value: string, documentSettingTYpe: number) => {
     const callBack = (res) => {
       if (res?.success) {
         alertSuccessUpdate();
@@ -2951,10 +2821,7 @@ const useQuoteNew = ({
     }
   };
 
-  const onChangeSelectedItemRowForQoute = async (
-    isSelected: boolean,
-    itemId: string
-  ) => {
+  const onChangeSelectedItemRowForQoute = async (isSelected: boolean, itemId: string) => {
     const callBack = (res) => {
       if (res?.success) {
         alertSuccessUpdate();
@@ -2972,19 +2839,15 @@ const useQuoteNew = ({
     });
   };
 
-  const isShowSettingIcon =
-    !(isNewCreation && (isDeliveryNote || isInvoice)) && quoteItemValue.client;
+  const isShowSettingIcon = !(isNewCreation && (isDeliveryNote || isInvoice)) && quoteItemValue.client;
 
-  const showVatListInSettingIconNew =
-    isNewCreation && (isDeliveryNote || isInvoice) && quoteItemValue.client;
+  const showVatListInSettingIconNew = isNewCreation && (isDeliveryNote || isInvoice) && quoteItemValue.client;
 
   const moveOrderToReady = async (isSendMessage: boolean = false) => {
     const callBack = (res) => {
       if (res?.success) {
         if (isSelectedCLoseAsDeliveryNote) {
-          navigate(
-            `/deliveryNote?isNewCreation=true&orderId=${selectedDocument?.id}`
-          );
+          navigate(`/deliveryNote?isNewCreation=true&orderId=${selectedDocument?.id}`);
         } else if (isSelectedCLoseAsProformaInvoice) {
           const path = isOrder
             ? `/proformaInvoice?isNewCreation=true&orderId=${selectedDocument?.id}`
@@ -3032,15 +2895,11 @@ const useQuoteNew = ({
         ? allClientActiveBudgets.find((b) => b.id === quoteItemValue.budgetId)
         : null;
 
-      const res = await callApi(
-        EHttpMethod.PUT,
-        `/v1/erp-service/budgets/update-document-budget`,
-        {
-          documentType: docType,
-          documentId: quoteItemValue?.id,
-          budgetId: budget.id,
-        }
-      );
+      const res = await callApi(EHttpMethod.PUT, `/v1/erp-service/budgets/update-document-budget`, {
+        documentType: docType,
+        documentId: quoteItemValue?.id,
+        budgetId: budget.id,
+      });
       if (res?.success) {
         alertSuccessUpdate();
         getQuote();
@@ -3148,17 +3007,9 @@ const useQuoteNew = ({
         setIsUpdatingPurchaseStatus(false);
       }
     },
-    [
-      alertFaultUpdate,
-      alertSuccessUpdate,
-      callApi,
-      docType,
-      getQuote,
-      isPurchaseOrder,
-      quoteItemValue?.id,
-      quoteItemValue?.documentStatus,
-      quoteItemValue?.documentItems,
-    ]
+    [alertFaultUpdate, alertSuccessUpdate, callApi, docType, getQuote, isPurchaseOrder, quoteItemValue?.id, quoteItemValue?.documentStatus,
+      quoteItemValue?.documentItems,]
+
   );
 
   // Handle undo intake dialog - yes (undo intake)
@@ -3268,9 +3119,7 @@ const useQuoteNew = ({
   );
 
   const handleSendUsingWhatsAppWeb = (sendWithInvoices = false) => {
-    let checkPhones = checkArrayNotEmptyOrPhoneNotEmpty(
-      quoteItemValue?.documentContacts
-    );
+    let checkPhones = checkArrayNotEmptyOrPhoneNotEmpty(quoteItemValue?.documentContacts);
     if (!checkPhones) {
       alertFault("sales.quote.phoneContectErrorMsg");
       return;
@@ -3361,9 +3210,7 @@ const useQuoteNew = ({
 
   const handleSelectPurchaseOrderType = (isForMaterial: boolean) => {
     setOpenPurchaseOrderTypeModal(false);
-    const url = isForMaterial
-      ? `/${documentPath}?isNewCreation=true&isMaterial=true`
-      : `/${documentPath}?isNewCreation=true`;
+    const url = isForMaterial ? `/${documentPath}?isNewCreation=true&isMaterial=true` : `/${documentPath}?isNewCreation=true`;
     navigate(url);
   };
 
@@ -3372,9 +3219,7 @@ const useQuoteNew = ({
       sx={{
         ...classes.createNewDocument,
         "& .MuiButton-startIcon": {
-          ...(RTL
-            ? { marginLeft: "4px", marginRight: 0 }
-            : { marginRight: "4px", marginLeft: 0 }),
+          ...(RTL ? { marginLeft: "4px", marginRight: 0 } : { marginRight: "4px", marginLeft: 0 }),
         },
       }}
       onClick={() => {
@@ -3412,9 +3257,7 @@ const useQuoteNew = ({
 
   // Export to Excel handler
   const handleExportToExcel = () => {
-    const {
-      exportQuoteToExcel,
-    } = require("@/widgets/quote-new/utils/export-quote-to-excel");
+    const { exportQuoteToExcel } = require("@/widgets/quote-new/utils/export-quote-to-excel");
     exportQuoteToExcel({
       documentItems: quoteItemValue?.documentItems || [],
       documentType: docType,
@@ -3711,6 +3554,7 @@ const useQuoteNew = ({
     onClickSendEmailViaComposer,
     isEmailComposerOpen,
     emailData,
+    isLoadingEmailData,
     closeEmailComposer,
     isMaterial,
     isMaterialPurchaseOrder,
