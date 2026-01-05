@@ -53,12 +53,6 @@ const useBoardMissionsDetailsHeader = () => {
   // This condition ( boardsIds?.length && !boardsIds ) ensures that if we open the Board Mission from the Job or from the Search,
   // the `boardsIds` array will be undefined. To handle this scenario, we provide a fallback
   const handleStatusChange = async (id: string, newStatusId: string, productType: string) => {
-    // if(newStatusId === "79251980-1c2d-4b4f-9ab4-9ccb9cb9fb63" && boardFromTable.isNeedExample){
-    //   handleOpenModal(newStatusId, [boardFromTable], id);
-    // }
-    // else if(newStatusId === "56dd1e80-7436-462c-82e9-cf8a90afd614"){
-    //   handleOpenStuckModal(newStatusId, [boardFromTable], id, productType);
-    // }
     setIsLoadingStatus(true);
     try {
       const newStatus = statuses.find((status) => status.id === newStatusId);

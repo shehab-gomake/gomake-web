@@ -23,6 +23,10 @@ import {
   boardMissionsUpdateActionMachine,
   boardMissionsUpdateActionEmployee,
 } from "@/services/api-service/production-floor/production-floor-endpoints";
+import { useSimpleApproveModal } from "@/hooks/use-simple-approve-modal";
+import { GoMakeDeleteModal } from "@/components";
+import { ModalType } from "@/enums";
+import { AddStuckReasonWidget } from "../../add-stuck-reason/add-stuck-reason";
 
 interface IProps {
   station: IStation;
@@ -37,10 +41,22 @@ const StationLane: React.FC<IProps> = ({
   isMobile,
   categoryName,
 }) => {
-  const { updateStatus } = useProductionFloorData();
+  const { updateStatus, t: productionFloorT } = useProductionFloorData();
   const globalStatuses = useRecoilValue(productionFloorStatusesState);
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
+  const {
+    openSimpleApproveModal,
+    handleOpenModal,
+    handleCloseModal,
+    handleConfirm,
+    openSimpleStuckModal,
+    handleOpenStuckModal,
+    handleCloseStuckModal,
+    stuckReason,
+    setStuckReason,
+    onUpdateStuckReason,
+  } = useSimpleApproveModal(updateStatus);
 
   // Use fixed status columns that match the header
   const statusColumns = STATUS_COLUMNS;
@@ -373,6 +389,17 @@ const StationLane: React.FC<IProps> = ({
     headerDrop(headerRef.current);
   }, [headerDrop]);
 
+  // Helper function to handle status update with modal checks
+  const handleStatusUpdate = useCallback((mission: any, statusId: string) => {
+    if (statusId === "79251980-1c2d-4b4f-9ab4-9ccb9cb9fb63" && mission.isNeedExample) {
+      handleOpenModal(statusId, [mission], mission.id);
+    } else if (statusId === "56dd1e80-7436-462c-82e9-cf8a90afd614") {
+      handleOpenStuckModal(statusId, [mission], mission.id, mission.productType);
+    } else {
+      updateStatus([mission], statusId).then();
+    }
+  }, [handleOpenModal, handleOpenStuckModal, updateStatus]);
+
   // Helper function to update station (machine or employee)
   const updateStation = async (
     mission: any,
@@ -404,7 +431,7 @@ const StationLane: React.FC<IProps> = ({
 
     // If we have a target status ID, also update the status
     if (targetStatusId) {
-      updateStatus([mission], targetStatusId).then();
+      handleStatusUpdate(mission, targetStatusId);
     }
   };
 
@@ -573,7 +600,7 @@ const StationLane: React.FC<IProps> = ({
                 // This is a status change within the same station
                 const actualStatusId = getStatusIdForName(status.name);
                 if (actualStatusId) {
-                  updateStatus([item], actualStatusId).then();
+                  handleStatusUpdate(item, actualStatusId);
                 } else {
                   console.warn(
                     `No status ID found for status name: ${status.name}`
@@ -592,6 +619,7 @@ const StationLane: React.FC<IProps> = ({
             getStatusIdForName,
             stationInfo,
             categoryName,
+            handleStatusUpdate,
           ]
         );
 
@@ -760,6 +788,30 @@ const StationLane: React.FC<IProps> = ({
           },
         }}
       />
+      <GoMakeDeleteModal
+        title={t("sales.quote.simpleApproveMail")}
+        yesBtn={t("modal.yes")}
+        modalType={ModalType.WARNING}
+        subTitle={" "}
+        openModal={openSimpleApproveModal}
+        onClose={handleCloseModal}
+        onClickDelete={handleConfirm}
+        onClickCancel={handleCloseModal}
+      />
+      <GoMakeDeleteModal
+        title={t("sales.quote.stuckReasonTitleModal")}
+        yesBtn={t("modal.yes")}
+        modalType={ModalType.WARNING}
+        subTitle={" "}
+        openModal={openSimpleStuckModal}
+        onClose={handleCloseStuckModal}
+        onClickDelete={() => onUpdateStuckReason(stuckReason)}
+      >
+        <AddStuckReasonWidget
+          stuckReason={stuckReason}
+          setStuckReason={setStuckReason}
+        />
+      </GoMakeDeleteModal>
     </Stack>
   );
 };

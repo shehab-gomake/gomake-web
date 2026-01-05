@@ -62,12 +62,11 @@ function KanbanColumnComponent({
         if (didDrop) {
           return;
         }
-        if (status.key === "Approval required" && item.isNeedExample) {
+        if (status.id === "79251980-1c2d-4b4f-9ab4-9ccb9cb9fb63" && item.isNeedExample) {
           handleOpenModal(status.id, [item], item.id);
-        } else {
-          /*else if (status.key === "Stuck") {
+        } else if (status.id === "56dd1e80-7436-462c-82e9-cf8a90afd614") {
           handleOpenStuckModal(status.id, [item], item.id, item.productType);
-        }*/
+        } else {
           updateStatus([item], status.id).then();
         }
       },
