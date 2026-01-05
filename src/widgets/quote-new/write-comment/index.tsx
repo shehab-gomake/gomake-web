@@ -143,11 +143,19 @@ const WriteCommentComp = ({
                 ) {
                   const url = `/receipt?isOutgoingPayments=true&Id=${item.documentId}`;
                   window.open(url, "_blank");
-                } else {
+                }
+                else if (item?.documentPath === "purchase" && item?.documentType === ERPDocumentsTypesEnum.purchase) {
+                  const url = `/purchaseOrder?Id=${item.documentId}`;
+                  window.open(url, "_blank");
+                }
+                else {
+
+
                   const url = `/${item.documentPath.charAt(0).toLowerCase() +
                     item.documentPath.slice(1)
                     }?Id=${item.documentId}`;
                   window.open(url, "_blank");
+
                 }
               }
             }}
