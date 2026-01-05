@@ -10,8 +10,8 @@ import { selectedUpdateTypeState } from "@/store";
 import { useRouter } from "next/router";
 import { updateProductParametersValuesExternalValuesApi } from "@/services/api-service/products/product-endpoints";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
-import {PlusNewIcon} from "@/icons";
-import {DeleteIcon} from "@/components/icons/delete-icon";
+import { PlusNewIcon } from "@/icons";
+import { DeleteIcon } from "@/components/icons/delete-icon";
 
 const ExternalValuesIdModal = ({
   openModal,
@@ -25,7 +25,7 @@ const ExternalValuesIdModal = ({
   const router = useRouter();
   const { classes } = useStyle();
   const { callApi } = useGomakeAxios();
-  const { alertFaultUpdate, alertSuccessUpdate,alertFault } = useSnackBar();
+  const { alertFaultUpdate, alertSuccessUpdate, alertFault } = useSnackBar();
   // const modalTitle = `${parameter?.name} / ${t(
   //   "products.parameters.admin.values"
   // )}`;
@@ -101,15 +101,15 @@ const ExternalValuesIdModal = ({
       updatePayload
     );
   };
-  const addEmptyValue = ()=>{
-    if(valuesConfigs && valuesConfigs.length > 0 && valuesConfigs.find(x=> !x.updateName)){
+  const addEmptyValue = () => {
+    if (valuesConfigs && valuesConfigs.length > 0 && valuesConfigs.find(x => !x.updateName)) {
       alertFault("there is a empty row")
       return;
     }
-    setValuesConfigs([...valuesConfigs,{updateName:""}])
+    setValuesConfigs([...valuesConfigs, { updateName: "" }])
   }
-  const removeRow = (value,externalValue)=>{
-    setValuesConfigs(valuesConfigs.filter(x=> !(x.updateName === value && x.externalValue === externalValue)))
+  const removeRow = (value, externalValue) => {
+    setValuesConfigs(valuesConfigs.filter(x => !(x.updateName === value && x.externalValue === externalValue)))
   }
   return (
     <>
@@ -131,8 +131,8 @@ const ExternalValuesIdModal = ({
           }}
         >
           {
-              parameter.parameterType === EParameterTypes.INPUT_TEXT || parameter.parameterType === EParameterTypes.INPUT_NUMBER  ?
-              <div onClick={addEmptyValue}><PlusNewIcon></PlusNewIcon></div> 
+            parameter.parameterType === EParameterTypes.INPUT_TEXT || parameter.parameterType === EParameterTypes.INPUT_NUMBER ?
+              <div onClick={addEmptyValue}><PlusNewIcon></PlusNewIcon></div>
               : <div></div>
           }
           {valuesConfigs.map((item, index) => (
@@ -148,38 +148,38 @@ const ExternalValuesIdModal = ({
             >
               {
                 parameter.parameterType === EParameterTypes.INPUT_TEXT || parameter.parameterType === EParameterTypes.INPUT_NUMBER ?
-                    <GomakeTextInput
-                        style={{width: "50%"}}
-                        placeholder={t("products.profits.exceptions.enterValue")}
-                        onChange={(e) =>
-                            changeItems(index, "updateName", e.target.value)
-                        }
-                        defaultValue={item?.updateName}
-                    /> : 
-                    <span>
-                        {isMaterial || isSwitch ? item?.value : item?.updateName}
-                    </span>
+                  <GomakeTextInput
+                    style={{ width: "90%" }}
+                    placeholder={t("products.profits.exceptions.enterValue")}
+                    onChange={(e) =>
+                      changeItems(index, "updateName", e.target.value)
+                    }
+                    defaultValue={item?.updateName}
+                  /> :
+                  <span>
+                    {isMaterial || isSwitch ? item?.value : item?.updateName}
+                  </span>
               }
 
               <GomakeTextInput
-                  style={{width: "50%"}}
-                  placeholder={t("products.profits.exceptions.enterValue")}
+                style={{ width: "90%" }}
+                placeholder={t("products.profits.exceptions.enterExternalCode")}
                 onChange={(e) =>
                   changeItems(index, "externalValue", e.target.value)
                 }
                 defaultValue={item?.externalValue || ""}
               />
               {
-                parameter.parameterType === EParameterTypes.INPUT_TEXT || parameter.parameterType === EParameterTypes.INPUT_NUMBER  ?
-                    <div onClick={()=> removeRow(item?.updateName,item?.externalValue)}>
-                      <DeleteIcon
-                          color={'#ac1515'}
-                          width={20}
-                          height={20}>
-                        
-                      </DeleteIcon>
-                    </div>
-                    : <div></div>
+                parameter.parameterType === EParameterTypes.INPUT_TEXT || parameter.parameterType === EParameterTypes.INPUT_NUMBER ?
+                  <div onClick={() => removeRow(item?.updateName, item?.externalValue)}>
+                    <DeleteIcon
+                      color={'#ac1515'}
+                      width={20}
+                      height={20}>
+
+                    </DeleteIcon>
+                  </div>
+                  : <div></div>
               }
             </div>
           ))}
