@@ -9,8 +9,13 @@ import { ChangeEvent, useEffect, useState } from "react";
 import { useRecoilValue } from "recoil";
 import { EnumVATStatus } from "@/enums/accounting-enums";
 import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
+import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 
-const useSttingsQuoteMenu = ({ updateDocumentPreference }) => {
+const useSttingsQuoteMenu = ({
+  updateDocumentPreference,
+  updatePaymentRequired,
+  documentType,
+}) => {
   const { t } = useTranslation();
   const { CheckPreferenceValue } = usePrintHousePreferences();
   const quoteStateValue = useRecoilValue<any>(quoteItemState);
@@ -71,6 +76,12 @@ const useSttingsQuoteMenu = ({ updateDocumentPreference }) => {
   const [hideItemDiscountColumn, setHideItemDiscountColumn] = useState(
     quoteStateValue?.hideItemDiscountColumn
   );
+  // Payment Required: default ON if isPrepaymentClient is true, OFF otherwise
+  const [isPaymentRequired, setIsPaymentRequired] = useState(
+    quoteStateValue?.isPaymentRequired ??
+      quoteStateValue?.isPrepaymentClient ??
+      false
+  );
 
   const currencies =
     useRecoilValue<{ label: string; value: string }[]>(currenciesState);
@@ -107,12 +118,20 @@ const useSttingsQuoteMenu = ({ updateDocumentPreference }) => {
     setShowGraphics(quoteStateValue?.isShowGraphicsItems);
     setShowDelivery(quoteStateValue?.isShowDeliveryItems);
     setHideItemDiscountColumn(quoteStateValue?.hideItemDiscountColumn);
+    // Update isPaymentRequired: use API value if exists, otherwise default based on isPrepaymentClient
+    setIsPaymentRequired(
+      quoteStateValue?.isPaymentRequired ??
+        quoteStateValue?.isPrepaymentClient ??
+        false
+    );
   }, [
     quoteStateValue?.showDetails,
     quoteStateValue?.showPrices,
     quoteStateValue?.isShowGraphicsItems,
     quoteStateValue?.isShowDeliveryItems,
     quoteStateValue?.hideItemDiscountColumn,
+    quoteStateValue?.isPaymentRequired,
+    quoteStateValue?.isPrepaymentClient,
   ]);
 
   useEffect(() => {
@@ -151,6 +170,13 @@ const useSttingsQuoteMenu = ({ updateDocumentPreference }) => {
       event.target.checked,
       DocumentPreferencesEnum.HideItemDiscountColumn
     );
+  };
+
+  const handleSwitchCheckForPaymentRequired = (
+    event: ChangeEvent<HTMLInputElement>
+  ) => {
+    setIsPaymentRequired(event.target.checked);
+    updatePaymentRequired(event.target.checked);
   };
 
   const handleTableSorting = (event: React.MouseEvent<HTMLElement>) => {
@@ -206,6 +232,16 @@ const useSttingsQuoteMenu = ({ updateDocumentPreference }) => {
       checked: hideItemDiscountColumn,
       onChange: handleSwitchCheckForHideItemDiscountColumn,
     },
+    // Only show Payment Required switch for quote documents
+    ...(documentType === DOCUMENT_TYPE.quote
+      ? [
+          {
+            label: t("sales.quote.paymentRequired"),
+            checked: isPaymentRequired,
+            onChange: handleSwitchCheckForPaymentRequired,
+          },
+        ]
+      : []),
   ];
   return {
     quoteStateValue,

@@ -48,6 +48,7 @@ import {
   sendReceiptToClientApi,
   sortDocumentItemsApi,
   updateAgentApi,
+  updatePaymentRequiredApi,
   updateDiscountTypeApi,
   updateDocuementItemSelectApi,
   updateDocumentApi,
@@ -329,7 +330,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false, isPrePaymentPage = 
     ) {
       orderUpdateConfirmationModal.open();
     }
-  }, [router.query.showUpdateModal, docType, quoteItemValue?.id,]);
+  }, [router.query.showUpdateModal, docType, quoteItemValue?.id]);
 
   const onClickOpenWhatsAppModal = (includeInvoices = false) => {
     setSendWithInvoices(includeInvoices);
@@ -496,37 +497,37 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false, isPrePaymentPage = 
 
   const columnWidths = isMaterialPurchaseOrder
     ? [
-      "5%", // "#"
-      "9%", // Item Code
-      "10%", // Item Name
-      "15%", // Details column (optional)
-      "9%", // Amount
-      "9%", // Amount
-      "9%", // Amount
-      "5%", // Unit Price
-      showPrices ? "8%" : null, // Unit Price
-      showPrices ? "8%" : null, // Discount
-      showPrices ? "8%" : null, // Final Price
-      "5%", // More
-    ]
+        "5%", // "#"
+        "9%", // Item Code
+        "10%", // Item Name
+        "15%", // Details column (optional)
+        "9%", // Amount
+        "9%", // Amount
+        "9%", // Amount
+        "5%", // Unit Price
+        showPrices ? "8%" : null, // Unit Price
+        showPrices ? "8%" : null, // Discount
+        showPrices ? "8%" : null, // Final Price
+        "5%", // More
+      ]
     : [
-      "5%", // "#"
-      isDeliveryNote || isInvoice ? "10%" : null, // Document Number
-      !CheckPreferenceValue(EPreferences.HIDE_ITEM_CODE_FROM_DOCUMENT_CART)
-        ? "10%"
-        : null, // Item Code
-      "12%", // Item Name
-      source?.showDetails === ShowDocumentDetailsEnum.All
-        ? "25%"
-        : source?.showDetails === ShowDocumentDetailsEnum.ShowJobNameOnly
+        "5%", // "#"
+        isDeliveryNote || isInvoice ? "10%" : null, // Document Number
+        !CheckPreferenceValue(EPreferences.HIDE_ITEM_CODE_FROM_DOCUMENT_CART)
+          ? "10%"
+          : null, // Item Code
+        "12%", // Item Name
+        source?.showDetails === ShowDocumentDetailsEnum.All
+          ? "25%"
+          : source?.showDetails === ShowDocumentDetailsEnum.ShowJobNameOnly
           ? "10%"
           : null, // Details column (optional)
-      "10%", // Amount
-      showPrices ? "10%" : null, // Unit Price
-      showPrices ? "10%" : null, // Discount
-      showPrices ? "10%" : null, // Final Price
-      "8%", // More
-    ].filter(Boolean);
+        "10%", // Amount
+        showPrices ? "10%" : null, // Unit Price
+        showPrices ? "10%" : null, // Discount
+        showPrices ? "10%" : null, // Final Price
+        "8%", // More
+      ].filter(Boolean);
 
   // const columnWidths = ["5%", "10%", "12%", "25%", "10%", "10%", "10%", "10%"];
   const headerHeight = "44px";
@@ -935,7 +936,8 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false, isPrePaymentPage = 
   const orderUpdateSendModal = useModal();
 
   // Import sendPaymentState to populate it when opening order update modal
-  const [sendPayment, setSendPayment] = useRecoilState<StatePayment>(sendPaymentState);
+  const [sendPayment, setSendPayment] =
+    useRecoilState<StatePayment>(sendPaymentState);
 
   const [originalPurchaseNumber, setOriginalPurchaseNumber] = useState(null);
   const [pendingPurchaseNumber, setPendingPurchaseNumber] = useState(null);
@@ -1462,7 +1464,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false, isPrePaymentPage = 
         discount: quoteItem?.discount,
         isPrintHouseMaterialItem:
           quoteItem?.printHouseMaterialId &&
-            (isPrintHouseMaterialItem || selectedFirstMaterial)
+          (isPrintHouseMaterialItem || selectedFirstMaterial)
             ? true
             : false,
         finalPrice: quoteItemEdit?.finalPrice,
@@ -1744,7 +1746,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false, isPrePaymentPage = 
           alertSuccessDelete();
           onCloseDeleteItemModal();
           quoteItemValue?.documentItems?.length === 1 ||
-            res?.data?.succ === false
+          res?.data?.succ === false
             ? navigate("/home")
             : getQuote();
         } else {
@@ -2117,7 +2119,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false, isPrePaymentPage = 
   const receiptSendModal = useModal();
   const [modalCallback, setModalCallback] = useState<
     (includeInvoices: boolean) => void
-  >(() => () => { });
+  >(() => () => {});
 
   const openReceiptModal = (callback: (includeInvoices: boolean) => void) => {
     receiptSendModal.open();
@@ -2130,11 +2132,27 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false, isPrePaymentPage = 
     if (!quoteItemValue?.id) return;
 
     const firstContact = quoteItemValue?.documentContacts?.[0];
-    const contactEmail = firstContact?.contactMail || firstContact?.email || quoteItemValue?.contactEmail || quoteItemValue?.contactMail;
-    const contactPhone = firstContact?.contactPhone || firstContact?.phone || quoteItemValue?.contactPhone;
-    const contactName = firstContact?.contactName || firstContact?.name || quoteItemValue?.contactName;
-    const customerId = quoteItemValue?.customerID || quoteItemValue?.clientId || quoteItemValue?.client?.id;
-    const customerName = quoteItemValue?.customerName || quoteItemValue?.clientName || quoteItemValue?.client?.name;
+    const contactEmail =
+      firstContact?.contactMail ||
+      firstContact?.email ||
+      quoteItemValue?.contactEmail ||
+      quoteItemValue?.contactMail;
+    const contactPhone =
+      firstContact?.contactPhone ||
+      firstContact?.phone ||
+      quoteItemValue?.contactPhone;
+    const contactName =
+      firstContact?.contactName ||
+      firstContact?.name ||
+      quoteItemValue?.contactName;
+    const customerId =
+      quoteItemValue?.customerID ||
+      quoteItemValue?.clientId ||
+      quoteItemValue?.client?.id;
+    const customerName =
+      quoteItemValue?.customerName ||
+      quoteItemValue?.clientName ||
+      quoteItemValue?.client?.name;
 
     // Send SMS first
     const callBack = (res) => {
@@ -2184,16 +2202,35 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false, isPrePaymentPage = 
           if (res.data && res.data.length > 0) {
             const firstContact = res.data[0];
             newSendPaymentState.selectedContactIndex = 0;
-            newSendPaymentState.contactName = (firstContact.contactName || "").trim();
-            newSendPaymentState.contactPhone = (firstContact.contactPhone || "").trim();
-            newSendPaymentState.contactMail = (firstContact.contactMail || "").trim();
+            newSendPaymentState.contactName = (
+              firstContact.contactName || ""
+            ).trim();
+            newSendPaymentState.contactPhone = (
+              firstContact.contactPhone || ""
+            ).trim();
+            newSendPaymentState.contactMail = (
+              firstContact.contactMail || ""
+            ).trim();
           } else {
             // Fallback to document-level contact info if no contacts
             newSendPaymentState.selectedContactIndex = -1;
             const firstContact = quoteItemValue?.documentContacts?.[0];
-            newSendPaymentState.contactName = (firstContact?.contactName || quoteItemValue?.contactName || "").trim();
-            newSendPaymentState.contactPhone = (firstContact?.contactPhone || quoteItemValue?.contactPhone || "").trim();
-            newSendPaymentState.contactMail = (firstContact?.contactMail || quoteItemValue?.contactEmail || quoteItemValue?.contactMail || "").trim();
+            newSendPaymentState.contactName = (
+              firstContact?.contactName ||
+              quoteItemValue?.contactName ||
+              ""
+            ).trim();
+            newSendPaymentState.contactPhone = (
+              firstContact?.contactPhone ||
+              quoteItemValue?.contactPhone ||
+              ""
+            ).trim();
+            newSendPaymentState.contactMail = (
+              firstContact?.contactMail ||
+              quoteItemValue?.contactEmail ||
+              quoteItemValue?.contactMail ||
+              ""
+            ).trim();
           }
 
           // Set default checkboxes (all checked by default)
@@ -2223,7 +2260,13 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false, isPrePaymentPage = 
       await populateOrderUpdatePaymentState();
       orderUpdateSendModal.open();
     }
-  }, [hasFrontDeskFeature, orderUpdateConfirmationModal, orderUpdateSendModal, handleOrderUpdateWithFrontDesk, populateOrderUpdatePaymentState]);
+  }, [
+    hasFrontDeskFeature,
+    orderUpdateConfirmationModal,
+    orderUpdateSendModal,
+    handleOrderUpdateWithFrontDesk,
+    populateOrderUpdatePaymentState,
+  ]);
 
   // Handler for order update confirmation - No
   const handleOrderUpdateNo = useCallback(() => {
@@ -2232,7 +2275,11 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false, isPrePaymentPage = 
     if (router.query.showUpdateModal) {
       const newQuery = { ...router.query };
       delete newQuery.showUpdateModal;
-      router.replace({ pathname: router.pathname, query: newQuery }, undefined, { shallow: true });
+      router.replace(
+        { pathname: router.pathname, query: newQuery },
+        undefined,
+        { shallow: true }
+      );
     }
   }, [orderUpdateConfirmationModal, router]);
 
@@ -2718,6 +2765,27 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false, isPrePaymentPage = 
     });
   };
 
+  const updatePaymentRequired = async (isPaymentRequired: boolean) => {
+    const callBack = (res) => {
+      if (res?.success) {
+        alertSuccessUpdate();
+        if (res?.data) {
+          setQuoteItemValue(res.data);
+        } else {
+          getQuote();
+        }
+      } else {
+        alertFaultUpdate();
+      }
+    };
+    await updatePaymentRequiredApi(callApi, callBack, {
+      documentType: docType,
+      document: {
+        documentId: quoteItemValue?.id,
+      },
+    });
+  };
+
   const [whatsappMassage, setWhatsAppMassage] = useState("");
 
   const getWhatsAppMessage = async () => {
@@ -2907,7 +2975,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false, isPrePaymentPage = 
       try {
         // If shouldUndo is true, call undo intake API (which also updates status)
         if (shouldUndo) {
-          const undoResponse = await undoDocumentIntakeApi(callApi, () => { }, {
+          const undoResponse = await undoDocumentIntakeApi(callApi, () => {}, {
             documentType: docType,
             purchaseOrderId: quoteItemValue.id,
             status: status,
@@ -2921,7 +2989,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false, isPrePaymentPage = 
           }
         } else {
           // If not undoing intake, just update status normally
-          const response = await updateDocumentStatusApi(callApi, () => { }, {
+          const response = await updateDocumentStatusApi(callApi, () => {}, {
             documentType: docType,
             documentId: quoteItemValue.id,
             status,
@@ -2988,7 +3056,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false, isPrePaymentPage = 
 
       setIsUpdatingPurchaseStatus(true);
       try {
-        const response = await undoDocumentIntakeApi(callApi, () => { }, {
+        const response = await undoDocumentIntakeApi(callApi, () => {}, {
           documentType: docType,
           purchaseOrderId: quoteItemValue.id,
           status: quoteItemValue.documentStatus || 0,
@@ -3026,7 +3094,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false, isPrePaymentPage = 
       }
 
       try {
-        const response = await undoDocumentItemIntakeApi(callApi, () => { }, {
+        const response = await undoDocumentItemIntakeApi(callApi, () => {}, {
           documentType: docType,
           itemId: item.id,
         });
@@ -3361,6 +3429,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false, isPrePaymentPage = 
     onClickCloseWhatsAppModal,
     sortDocumentItems,
     updateDocumentPreference,
+    updatePaymentRequired,
     getWhatsAppMessage,
     getWhatsAppMessageForReceipt,
     whatsappMassage,
