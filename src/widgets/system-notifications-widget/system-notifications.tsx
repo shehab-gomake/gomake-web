@@ -110,7 +110,7 @@ const SystemNotifications = () => {
       case ENotificationType.QUOTE_APPROVED_BY_MANAGER_STATUS:
       case ENotificationType.QUOTE_REJECTED_BY_MANAGER_STATUS:
       case ENotificationType.QUOTE_REJECTED_STATUS:
-        return `/quotes?finalPatternSearch=${notification.message}`;
+        return `/quotes?documentNumber=${notification.message}`;
       case ENotificationType.BOARD_MISSIONS_APPROVED_STATUS:
       case ENotificationType.BOARD_MISSIONS_REJECTED_STATUS:
         return `/production-floor?boardMissionsId=${notification.documentId}&step=stations`;

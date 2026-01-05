@@ -164,6 +164,7 @@ interface Query {
   paymentType?: string;
   currency?: string;
   finalPatternSearch?: string;
+  documentNumber?: string;
 }
 
 const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
@@ -1779,6 +1780,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         const currentPageNumber = router.query.pageNumber;
         const currentStatusId = router.query.statusId;
         const currentFinalPatternSearch = router.query.finalPatternSearch;
+        const currentDocumentNumber = router.query.documentNumber;
         const currentCustomerId = router.query.customerId;
         const currentAgentId = router.query.agentId;
         const currentApprovalStatusId = router.query.approvalStatusId;
@@ -1880,7 +1882,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 finalPatternSearch !== undefined &&
                 finalPatternSearch !== ""
                 ? finalPatternSearch
-                : currentFinalPatternSearch,
+                : currentFinalPatternSearch || currentDocumentNumber,
+            ...(currentDocumentNumber ? { documentNumber: currentDocumentNumber } : {}),
 
             ...(currentFromDate
               ? { fromDate: GetDateFormat(currentFromDate) }
@@ -1935,7 +1938,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                   finalPatternSearch !== undefined &&
                   finalPatternSearch !== ""
                   ? finalPatternSearch
-                  : currentFinalPatternSearch,
+                  : currentFinalPatternSearch || currentDocumentNumber,
+              ...(currentDocumentNumber ? { documentNumber: currentDocumentNumber } : {}),
 
               ...(currentFromDate
                 ? { fromDate: GetDateFormat(currentFromDate) }
@@ -2720,7 +2724,24 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     if (isOrdersWithoutJobs) query.isOrdersWithoutJobs = isOrdersWithoutJobs;
     else delete query.isOrdersWithoutJobs;
 
-    const trimmedSearch = patternSearch?.trim() || "";
+    // Handle documentNumber from URL - add it to patternSearch
+    const documentNumberFromUrl = router.query.documentNumber as string;
+    let trimmedSearch = patternSearch?.trim() || "";
+    
+    // If documentNumber is in URL, include it in patternSearch
+    if (documentNumberFromUrl) {
+      if (trimmedSearch && !trimmedSearch.includes(documentNumberFromUrl)) {
+        // Combine existing patternSearch with documentNumber
+        trimmedSearch = `${trimmedSearch} ${documentNumberFromUrl}`.trim();
+      } else if (!trimmedSearch) {
+        // Use documentNumber as patternSearch if patternSearch is empty
+        trimmedSearch = documentNumberFromUrl;
+      }
+      query.documentNumber = documentNumberFromUrl;
+    } else {
+      delete query.documentNumber;
+    }
+
     setFinalPatternSearch(trimmedSearch);
 
     if (trimmedSearch) {
@@ -4729,6 +4750,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       productsIds,
       paymentType,
       currency,
+      documentNumber,
     } = q;
 
     if (productsIds) {
@@ -4788,7 +4810,19 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     if (checkToDate && typeof checkToDate === "string")
       setCheckToDate(new Date(checkToDate));
 
-    if (finalPatternSearch && typeof finalPatternSearch === "string") {
+    // Handle documentNumber from URL - add it to patternSearch
+    if (documentNumber && typeof documentNumber === "string") {
+      if (
+        !(
+          searchInputRef &&
+          searchInputRef.current &&
+          document.activeElement.id == searchInputRef.current.id
+        )
+      ) {
+        setPatternSearch(documentNumber);
+        setFinalPatternSearch(documentNumber);
+      }
+    } else if (finalPatternSearch && typeof finalPatternSearch === "string") {
       if (
         !(
           searchInputRef &&
