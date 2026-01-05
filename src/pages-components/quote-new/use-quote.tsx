@@ -1515,8 +1515,8 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false, isPrePaymentPage = 
           let exchangeRate = _data.exchangeRate;
           let oldExchangeRate =
             quoteItem.exchangeRate === 0 ||
-            quoteItem.exchangeRate === null ||
-            quoteItem.exchangeRate === undefined
+              quoteItem.exchangeRate === null ||
+              quoteItem.exchangeRate === undefined
               ? 1
               : quoteItem.exchangeRate;
 
@@ -2016,13 +2016,6 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false, isPrePaymentPage = 
   };
 
   const onClickSendQuoteToClient = async (messageType: MessageType) => {
-    // Redirect Email to FrontDesk Composer
-    if (messageType === MessageType.Email) {
-      await onClickSendEmailViaComposer();
-      setOpenInvoiceCreationModal(false);
-      return;
-    }
-
     if (!isSelectedAtLeastOne && docType === DOCUMENT_TYPE.quote) {
       alertFault("reports.pleaseSelectOneItem");
       return;
