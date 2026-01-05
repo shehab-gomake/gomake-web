@@ -84,6 +84,8 @@ const UPDATE_DOCUMENT_ITEM_URL =
   "/v1/erp-service/documents/update-document-item";
 const UPDATE_DUE_DATE_URL = "/v1/erp-service/documents/update-due-date";
 const UPDATE_AGENT_URL = "/v1/erp-service/documents/update-agent";
+const UPDATE_PAYMENT_REQUIRED_URL =
+  "/v1/erp-service/documents/update-payment-required";
 const GET_PRODUCT_ITEM_BY_ID_URL =
   "/v1/erp-service/documents/get-product-document-item-by-id";
 const GET_PRODUCT_CALCULATION_EXCEPTION_BY_ID_URL =
@@ -446,7 +448,7 @@ const getDocumentPdfApi: ICallAndSetData = async (
 const getPdfLinkApi: ICallAndSetData = async (
   callApi,
   setState,
-  data: {  linkId: string }
+  data: { linkId: string }
 ) => {
   return await getSetApiData(
     callApi,
@@ -537,7 +539,12 @@ const updateDocumentStatusApi: ICallAndSetData = async (
 const undoDocumentIntakeApi: ICallAndSetData = async (
   callApi,
   setState,
-  data: { documentType: DOCUMENT_TYPE; purchaseOrderId: string; status: number; shouldUndoIntake: boolean }
+  data: {
+    documentType: DOCUMENT_TYPE;
+    purchaseOrderId: string;
+    status: number;
+    shouldUndoIntake: boolean;
+  }
 ) => {
   const { documentType, ...payload } = data || {};
   return await getSetApiData(
@@ -784,6 +791,20 @@ const updateAgentApi: ICallAndSetData = async (callApi, setState, data) => {
   );
 };
 
+const updatePaymentRequiredApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.PUT,
+    UPDATE_PAYMENT_REQUIRED_URL,
+    setState,
+    data
+  );
+};
+
 const getProductByItemIdApi: ICallAndSetData = async (
   callApi,
   setState,
@@ -798,7 +819,7 @@ const getProductByItemIdApi: ICallAndSetData = async (
   );
 };
 
-const getProductCalculationExceptionByIdApi: ICallAndSetData = async (  
+const getProductCalculationExceptionByIdApi: ICallAndSetData = async (
   callApi,
   setState,
   data
@@ -1353,11 +1374,7 @@ const moveOrderToReadyApi: ICallAndSetData = async (
   );
 };
 
-const moveOrderToDoneApi: ICallAndSetData = async (
-  callApi,
-  setState,
-  data
-) => {
+const moveOrderToDoneApi: ICallAndSetData = async (callApi, setState, data) => {
   return await getSetApiData(
     callApi,
     EHttpMethod.GET,
@@ -1490,11 +1507,7 @@ const getDocumentTableSettingsApi: ICallAndSetData = async (
   );
 };
 
-const reCalculateItemApi: ICallAndSetData = async (
-  callApi,
-  setState,
-  data
-) => {
+const reCalculateItemApi: ICallAndSetData = async (callApi, setState, data) => {
   return await getSetApiData(
     callApi,
     EHttpMethod.PUT,
@@ -1598,6 +1611,7 @@ export {
   updateDocumentItemApi,
   updateDueDateApi,
   updateAgentApi,
+  updatePaymentRequiredApi,
   getProductByItemIdApi,
   getProductCalculationExceptionByIdApi,
   updateDocumentCurrencyApi,

@@ -29,6 +29,7 @@ const SettingQuoteMenu = ({
   sortDocumentItems,
   updateDiscountType,
   updateDocumentPreference,
+  updatePaymentRequired,
   documentType,
   onBlurVatStatus,
   setIsUpdateVatStatus,
@@ -69,7 +70,11 @@ const SettingQuoteMenu = ({
     isUpdateShowDetails,
     setIsUpdateShowDetails,
     onBlurShowDetails,
-  } = useSttingsQuoteMenu({ updateDocumentPreference });
+  } = useSttingsQuoteMenu({
+    updateDocumentPreference,
+    updatePaymentRequired,
+    documentType,
+  });
 
   return (
     <>
