@@ -13,25 +13,25 @@ const NotificationMessageComponent = ({ message, type, documentId }: ISystemNoti
   };
   const { t } = useTranslation();
   return type === ENotificationType.QUOTE_APPROVED_STATUS ? (
-    <Link style={style} href={`/quotes?finalPatternSearch=${message}`}>
+    <Link style={style} href={`/quotes?documentNumber=${message}`}>
       {t("notifications.approvedQuoteMessage", {
         number: message,
       })}
     </Link>
   ) : type === ENotificationType.QUOTE_APPROVED_BY_MANAGER_STATUS ? (
-    <Link style={style} href={`/quotes?finalPatternSearch=${message}`}>
+    <Link style={style} href={`/quotes?documentNumber=${message}`}>
       {t("notifications.adminApprovedQuoteMessage", {
         number: message,
       })}
     </Link>
   ) : type === ENotificationType.QUOTE_REJECTED_BY_MANAGER_STATUS ? (
-    <Link style={style} href={`/quotes?finalPatternSearch=${message}`}>
+    <Link style={style} href={`/quotes?documentNumber=${message}`}>
       {t("notifications.adminRejectedQuoteMessage", {
         number: message,
       })}
     </Link>
   ) : type === ENotificationType.QUOTE_REJECTED_STATUS ? (
-    <Link style={style} href={`/quotes?finalPatternSearch=${message}`}>
+    <Link style={style} href={`/quotes?documentNumber=${message}`}>
       {t("notifications.rejectedQuoteMessage", {
         number: message,
       })}
