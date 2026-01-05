@@ -277,6 +277,7 @@ const QuoteNewPageWidget = ({
     sortDocumentItems,
     updateDiscountType,
     updateDocumentPreference,
+    updatePaymentRequired,
     getWhatsAppMessage,
     getWhatsAppMessageForReceipt,
     whatsappMassage,
@@ -1190,6 +1191,7 @@ const QuoteNewPageWidget = ({
         sortDocumentItems={sortDocumentItems}
         updateDiscountType={updateDiscountType}
         updateDocumentPreference={updateDocumentPreference}
+        updatePaymentRequired={updatePaymentRequired}
         documentType={documentType}
         onBlurVatStatus={onBlurVatStatus}
         setIsUpdateVatStatus={setIsUpdateVatStatus}
@@ -1569,7 +1571,11 @@ const QuoteNewPageWidget = ({
             if (router.query.showUpdateModal) {
               const newQuery = { ...router.query };
               delete newQuery.showUpdateModal;
-              router.replace({ pathname: router.pathname, query: newQuery }, undefined, { shallow: true });
+              router.replace(
+                { pathname: router.pathname, query: newQuery },
+                undefined,
+                { shallow: true }
+              );
             }
           }}
           paymentModalTitle={t("sales.quote.sendToClient")}
