@@ -166,6 +166,12 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false, isPrePaymentPage = 
     documentType: docType,
   });
 
+  // Wrap closeEmailComposer to reset order update flag
+  const handleCloseEmailComposer = useCallback(() => {
+    closeEmailComposer();
+    setIsOrderUpdateEmailComposer(false);
+  }, [closeEmailComposer]);
+
   const purchaseOrderStatusOptions = useMemo(
     () =>
       Object.keys(PurchaseOrderStatuses)
@@ -922,6 +928,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false, isPrePaymentPage = 
   const alertExistPurchaseNumber = useModal();
   const orderUpdateConfirmationModal = useModal();
   const orderUpdateSendModal = useModal();
+  const [isOrderUpdateEmailComposer, setIsOrderUpdateEmailComposer] = useState(false);
 
   // Import sendPaymentState to populate it when opening order update modal
   const [sendPayment, setSendPayment] = useRecoilState<StatePayment>(sendPaymentState);
@@ -2219,6 +2226,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false, isPrePaymentPage = 
     orderUpdateConfirmationModal.close();
     if (hasFrontDeskFeature) {
       // Frontdesk case: Send SMS and open email composer
+      setIsOrderUpdateEmailComposer(true);
       handleOrderUpdateWithFrontDesk();
     } else {
       // Non-frontdesk case: Populate state and show SendPaymentModal
@@ -2236,7 +2244,22 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false, isPrePaymentPage = 
       delete newQuery.showUpdateModal;
       router.replace({ pathname: router.pathname, query: newQuery }, undefined, { shallow: true });
     }
+    //  navigate("/home");
   }, [orderUpdateConfirmationModal, router]);
+
+  // Handler to navigate to home and clean up order update state
+  const handleOrderUpdateComplete = useCallback(() => {
+    // Remove the URL parameter
+    if (router.query.showUpdateModal) {
+      const newQuery = { ...router.query };
+      delete newQuery.showUpdateModal;
+      router.replace({ pathname: router.pathname, query: newQuery }, undefined, { shallow: true });
+    }
+    // Navigate to home
+    navigate("/home");
+    // Reset order update email composer flag
+    setIsOrderUpdateEmailComposer(false);
+  }, [router, navigate]);
 
   const onClickSendReceiptToClient = async (
     messageType: number,
@@ -3497,7 +3520,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false, isPrePaymentPage = 
     isEmailComposerOpen,
     emailData,
     isLoadingEmailData,
-    closeEmailComposer,
+    closeEmailComposer: handleCloseEmailComposer,
     isMaterial,
     isMaterialPurchaseOrder,
     isCanIntake,
@@ -3529,6 +3552,8 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false, isPrePaymentPage = 
     orderUpdateSendModal,
     handleOrderUpdateYes,
     handleOrderUpdateNo,
+    handleOrderUpdateComplete,
+    isOrderUpdateEmailComposer,
   };
 };
 

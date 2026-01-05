@@ -52,6 +52,7 @@ interface ISendPaymentProps {
   ) => Promise<void>;
   documentForEmail?: any;
   isOrderUpdate?: boolean; // Flag to indicate this is an order update
+  onSendSuccess?: () => void; // Callback when document is successfully sent
 }
 
 const SendPaymentModal = ({
@@ -67,6 +68,7 @@ const SendPaymentModal = ({
   onOpenEmailComposer,
   documentForEmail,
   isOrderUpdate = false,
+  onSendSuccess,
 }: ISendPaymentProps) => {
   const { classes } = useStyle();
   const { alertFaultSend, alertSuccessSend, alertFault } = useSnackBar();
@@ -207,7 +209,12 @@ const SendPaymentModal = ({
     const callBack = (res) => {
       if (res?.success) {
         alertSuccessSend();
-        onClickClosePaymentModal();
+        // Call onSendSuccess callback if provided (for order updates)
+        if (onSendSuccess) {
+          onSendSuccess();
+        } else {
+          onClickClosePaymentModal();
+        }
       } else {
         if (
           (messageType === MessageType.Email ||

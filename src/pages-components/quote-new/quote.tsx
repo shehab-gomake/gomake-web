@@ -423,6 +423,8 @@ const QuoteNewPageWidget = ({
     orderUpdateSendModal,
     handleOrderUpdateYes,
     handleOrderUpdateNo,
+    handleOrderUpdateComplete,
+    isOrderUpdateEmailComposer,
   } = useQuoteNew({
     docType: documentType,
     isQuoteConfirmation: isQuoteConfirmation,
@@ -1533,6 +1535,7 @@ const QuoteNewPageWidget = ({
           documentId={quoteItemValue?.id}
           documentType={documentType}
           isLoading={isLoadingEmailData}
+          onSendSuccess={isOrderUpdateEmailComposer ? handleOrderUpdateComplete : undefined}
         />
       )}
       {/* Order Update Confirmation Modal */}
@@ -1540,7 +1543,7 @@ const QuoteNewPageWidget = ({
         <ThreeOptionsModal
           hideIcon
           title={t("sales.quote.sendToClient")}
-          subTitle={t("sales.modals.doYouWantToSendOrderUpdateToClient")}
+          subTitle={t("sales.quote.doYouWantToSendOrderUpdateToClient")}
           yesBtn={"modal.yes"}
           noBtn={"modal.no"}
           openModal={orderUpdateConfirmationModal.isOpen}
@@ -1549,7 +1552,10 @@ const QuoteNewPageWidget = ({
             handleOrderUpdateNo();
           }}
           onClickYes={handleOrderUpdateYes}
-          onClickNo={handleOrderUpdateNo}
+          onClickNo={() => {
+            handleOrderUpdateNo();
+            navigate("/home");
+          }}
           isCancelBtn={false}
         />
       }
@@ -1559,7 +1565,7 @@ const QuoteNewPageWidget = ({
           openPaymentModal={orderUpdateSendModal.isOpen}
           onClickClosePaymentModal={() => {
             orderUpdateSendModal.close();
-            // Remove URL parameter
+            // Remove URL parameter if it exists (when user cancels)
             if (router.query.showUpdateModal) {
               const newQuery = { ...router.query };
               delete newQuery.showUpdateModal;
@@ -1576,6 +1582,7 @@ const QuoteNewPageWidget = ({
           hideCheckboxes={false}
           documentForEmail={quoteItemValue}
           isOrderUpdate={true}
+          onSendSuccess={handleOrderUpdateComplete}
         />
       )}
     </>

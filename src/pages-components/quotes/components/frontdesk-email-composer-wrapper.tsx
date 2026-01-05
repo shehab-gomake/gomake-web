@@ -85,6 +85,7 @@ interface FrontDeskEmailComposerWrapperProps {
   documentId: string | number;
   documentType: DOCUMENT_TYPE;
   isLoading?: boolean;
+  onSendSuccess?: () => void;
 }
 
 export const FrontDeskEmailComposerWrapper: React.FC<FrontDeskEmailComposerWrapperProps> = ({
@@ -94,6 +95,7 @@ export const FrontDeskEmailComposerWrapper: React.FC<FrontDeskEmailComposerWrapp
   documentId,
   documentType,
   isLoading = false,
+  onSendSuccess,
 }) => {
   const { alertSuccessSend, alertFaultSend } = useSnackBar();
   const selectedAccountId = useRecoilValue(chatwootSelectedAccountAtom);
@@ -361,6 +363,10 @@ export const FrontDeskEmailComposerWrapper: React.FC<FrontDeskEmailComposerWrapp
           });
         }
         alertSuccessSend();
+        // Call onSendSuccess callback if provided
+        if (onSendSuccess) {
+          onSendSuccess();
+        }
         return true;
       }
 
