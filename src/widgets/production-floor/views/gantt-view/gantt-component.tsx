@@ -559,7 +559,18 @@ const TimelineWidget = () => {
           </Stack>
         </Box>
       ) : (
-        <div style={{ position: "relative", direction: "ltr" }}>
+        <div
+          style={{
+            position: "relative",
+            direction: "ltr",
+            flex: 1,
+            display: "flex",
+            flexDirection: "column",
+            minHeight: 0,
+            overflow: "hidden",
+          }}
+        >
+          {/* Zoom controls - positioned absolutely over the timeline header */}
           <Stack
             alignItems="center"
             direction="row"
@@ -592,186 +603,191 @@ const TimelineWidget = () => {
               />
             </Stack>
           </Stack>
-          <Timeline
-            groups={
-              filteredGroups.length > 0
-                ? filteredGroups
-                : [
-                    {
-                      id: "empty",
-                      title: (
-                        <div
-                          style={{
-                            fontSize: "16px",
-                            fontWeight: "500",
-                            color: "#7A7A7A",
-                            textAlign: "center",
-                            padding: "0px 10px",
-                            borderRadius: "8px",
-                          }}
-                        >
-                          {t("productionFloor.noGroupsAvailable")}
-                        </div>
-                      ),
-                    },
-                  ]
-            }
-            items={items
-              .filter((item) => {
-                // Find the group for this item to get the correct key
-                const itemGroup = groups.find((g) => g.id === item.group);
-                if (itemGroup) {
-                  const groupKey = getGroupKey(itemGroup);
-                  const isGroupOpen = openGroups[groupKey];
-                  return isGroupOpen ? item.isEditable : true;
-                }
-                // If group not found, show the item (fallback)
-                return true;
-              })
-              .map((item) => {
-                // Map item.group to use composite key for Timeline matching
-                const itemGroup = groups.find((g) => g.id === item.group);
-                if (itemGroup) {
-                  const groupKey = getGroupKey(itemGroup);
-                  return {
-                    ...item,
-                    group: groupKey, // Use composite key for Timeline matching
-                  };
-                }
-                return item;
-              })}
-            defaultTimeStart={timeRange.defaultTimeStart}
-            defaultTimeEnd={timeRange.defaultTimeEnd}
-            sidebarWidth={240}
-            onItemMove={handleItemMove}
-            onItemResize={handleItemResize}
-            onZoom={handleZoom}
-            canResize={"right"}
-            canChangeGroup={true}
-            itemRenderer={(props) => {
-              return <JobComponent {...props} toggleGroup={toggleGroup} />;
-            }}
-            onTimeChange={onTimeChange}
-            visibleTimeStart={visibleTimeRange.start}
-            visibleTimeEnd={visibleTimeRange.end}
-            onItemSelect={handleItemSelect}
-            onItemDeselect={handleItemDeselect}
-            selected={items.filter((item) => !!item.selected).map((i) => i.id)}
-            dragSnap={1000 * 60}
-            style={{
-              backgroundColor: "#fff",
-              borderRadius: "12px",
-              boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
-            }}
-          >
-            {/* Red Overdue Indicator */}
-            <TimelineMarkers>
-              <TodayMarker>
-                {({ styles }) => (
-                  <div
-                    style={{
-                      ...styles,
-                      backgroundColor: "red",
-                      width: "2px",
-                      zIndex: 10,
-                    }}
-                  />
-                )}
-              </TodayMarker>
-            </TimelineMarkers>
-            <TimelineHeaders style={{ ...FONT_FAMILY.Inter(500, 12) }}>
-              <SidebarHeader>
-                {({ getRootProps }) => {
-                  return (
-                    <Box
-                      {...getRootProps()}
-                      sx={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        width: "280px",
-                        paddingLeft: "24px",
-                        backgroundColor: "#F8F9FA",
-                        ...FONT_FAMILY.Inter(600, 14),
-                        color: "#495057",
+          {/* Timeline container with scrollable content and sticky header */}
+          <div className="gantt-timeline-wrapper">
+            <Timeline
+              groups={
+                filteredGroups.length > 0
+                  ? filteredGroups
+                  : [
+                      {
+                        id: "empty",
+                        title: (
+                          <div
+                            style={{
+                              fontSize: "16px",
+                              fontWeight: "500",
+                              color: "#7A7A7A",
+                              textAlign: "center",
+                              padding: "0px 10px",
+                              borderRadius: "8px",
+                            }}
+                          >
+                            {t("productionFloor.noGroupsAvailable")}
+                          </div>
+                        ),
+                      },
+                    ]
+              }
+              items={items
+                .filter((item) => {
+                  // Find the group for this item to get the correct key
+                  const itemGroup = groups.find((g) => g.id === item.group);
+                  if (itemGroup) {
+                    const groupKey = getGroupKey(itemGroup);
+                    const isGroupOpen = openGroups[groupKey];
+                    return isGroupOpen ? item.isEditable : true;
+                  }
+                  // If group not found, show the item (fallback)
+                  return true;
+                })
+                .map((item) => {
+                  // Map item.group to use composite key for Timeline matching
+                  const itemGroup = groups.find((g) => g.id === item.group);
+                  if (itemGroup) {
+                    const groupKey = getGroupKey(itemGroup);
+                    return {
+                      ...item,
+                      group: groupKey, // Use composite key for Timeline matching
+                    };
+                  }
+                  return item;
+                })}
+              defaultTimeStart={timeRange.defaultTimeStart}
+              defaultTimeEnd={timeRange.defaultTimeEnd}
+              sidebarWidth={240}
+              onItemMove={handleItemMove}
+              onItemResize={handleItemResize}
+              onZoom={handleZoom}
+              canResize={"right"}
+              canChangeGroup={true}
+              itemRenderer={(props) => {
+                return <JobComponent {...props} toggleGroup={toggleGroup} />;
+              }}
+              onTimeChange={onTimeChange}
+              visibleTimeStart={visibleTimeRange.start}
+              visibleTimeEnd={visibleTimeRange.end}
+              onItemSelect={handleItemSelect}
+              onItemDeselect={handleItemDeselect}
+              selected={items
+                .filter((item) => !!item.selected)
+                .map((i) => i.id)}
+              dragSnap={1000 * 60}
+              style={{
+                backgroundColor: "#fff",
+                borderRadius: "12px",
+                boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
+              }}
+            >
+              {/* Red Overdue Indicator */}
+              <TimelineMarkers>
+                <TodayMarker>
+                  {({ styles }) => (
+                    <div
+                      style={{
+                        ...styles,
+                        backgroundColor: "red",
+                        width: "2px",
+                        zIndex: 10,
                       }}
-                    >
-                      <Stack
-                        direction="row"
-                        alignItems="center"
-                        gap={1}
+                    />
+                  )}
+                </TodayMarker>
+              </TimelineMarkers>
+              <TimelineHeaders style={{ ...FONT_FAMILY.Inter(500, 12) }}>
+                <SidebarHeader>
+                  {({ getRootProps }) => {
+                    return (
+                      <Box
+                        {...getRootProps()}
                         sx={{
-                          pointerEvents: "auto",
-                          position: "relative",
-                          zIndex: 10,
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                          width: "280px",
+                          paddingLeft: "24px",
+                          backgroundColor: "#F8F9FA",
+                          ...FONT_FAMILY.Inter(600, 14),
+                          color: "#495057",
                         }}
-                        onClick={(e) => e.stopPropagation()}
                       >
-                        <Typography variant="subtitle2" fontWeight={600}>
-                          {t("productionFloor.stations")}
-                        </Typography>
-                        <Box
+                        <Stack
+                          direction="row"
+                          alignItems="center"
+                          gap={1}
                           sx={{
                             pointerEvents: "auto",
                             position: "relative",
-                            zIndex: 11,
+                            zIndex: 10,
                           }}
                           onClick={(e) => e.stopPropagation()}
                         >
-                          <ExpandCollapseControls
-                            groups={groups}
-                            openGroups={openGroups}
-                            getGroupKey={getGroupKey}
-                            onExpandAll={expandAllGroups}
-                            onCollapseAll={collapseAllGroups}
-                          />
-                        </Box>
-                      </Stack>
-                      <Stack
-                        direction={"row"}
-                        alignItems={"center"}
-                        style={{
-                          height: "60px",
-                          ...adaptRight(dir, 0),
-                          pointerEvents: "auto",
-                          zIndex: 10,
-                          background: "#fff",
-                          borderRadius: "8px",
-                          boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-                        }}
-                      >
-                        <IconButton onClick={() => scrollTimeline("left")}>
-                          <KeyboardArrowLeftIcon />
-                        </IconButton>
-                      </Stack>
-                    </Box>
-                  );
-                }}
-              </SidebarHeader>
-              {/* this the header that top of hours,days, etc..  */}
-              <DateHeader unit="primaryHeader" />
-              <DateHeader
-                labelFormat={([start, end], unit) => {
-                  const momentStart = moment(start);
-                  switch (unit) {
-                    case "year":
-                      return `${start?.getFullYear()}`;
-                    case "month":
-                      return `${momentStart?.format("MMMM")}`;
-                    case "day":
-                      return `${momentStart?.format("DD")}`;
-                    case "hour":
-                      // return `${momentStart?.format("hh:mm A")}`;
-                      return `${momentStart.format("ha")}`; // <-- Simplified format here
-                    case "minute":
-                      return `${momentStart?.format("mm")}`;
-                    default:
-                      return "";
-                  }
-                }}
-              />
-            </TimelineHeaders>
-          </Timeline>
+                          <Typography variant="subtitle2" fontWeight={600}>
+                            {t("productionFloor.stations")}
+                          </Typography>
+                          <Box
+                            sx={{
+                              pointerEvents: "auto",
+                              position: "relative",
+                              zIndex: 11,
+                            }}
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <ExpandCollapseControls
+                              groups={groups}
+                              openGroups={openGroups}
+                              getGroupKey={getGroupKey}
+                              onExpandAll={expandAllGroups}
+                              onCollapseAll={collapseAllGroups}
+                            />
+                          </Box>
+                        </Stack>
+                        <Stack
+                          direction={"row"}
+                          alignItems={"center"}
+                          style={{
+                            height: "60px",
+                            ...adaptRight(dir, 0),
+                            pointerEvents: "auto",
+                            zIndex: 10,
+                            background: "#fff",
+                            borderRadius: "8px",
+                            boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+                          }}
+                        >
+                          <IconButton onClick={() => scrollTimeline("left")}>
+                            <KeyboardArrowLeftIcon />
+                          </IconButton>
+                        </Stack>
+                      </Box>
+                    );
+                  }}
+                </SidebarHeader>
+                {/* this the header that top of hours,days, etc..  */}
+                <DateHeader unit="primaryHeader" />
+                <DateHeader
+                  labelFormat={([start, end], unit) => {
+                    const momentStart = moment(start);
+                    switch (unit) {
+                      case "year":
+                        return `${start?.getFullYear()}`;
+                      case "month":
+                        return `${momentStart?.format("MMMM")}`;
+                      case "day":
+                        return `${momentStart?.format("DD")}`;
+                      case "hour":
+                        // return `${momentStart?.format("hh:mm A")}`;
+                        return `${momentStart.format("ha")}`; // <-- Simplified format here
+                      case "minute":
+                        return `${momentStart?.format("mm")}`;
+                      default:
+                        return "";
+                    }
+                  }}
+                />
+              </TimelineHeaders>
+            </Timeline>
+          </div>
         </div>
       )}
       <GoMakeDeleteModal
