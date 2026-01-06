@@ -37,12 +37,10 @@ const StyledAutocomplete: any = styled(Autocomplete, {
       fontWeight: 500,
       fontSize: 14,
       width: "100%",
-      // zIndex: 9999999999999,
-      // !here not sure about this style theme css variable
       "& fieldset": {
         border: props?.selectedOption
           ? "1px solid var(--theme-dropdown-border-color, transparent) !important"
-          : "var(--theme-dropdown-border, none) !important", //!here i don't know if it's correct to set to !important
+          : "var(--theme-dropdown-border, none) !important",
         borderColor: props?.selectedOption
           ? "var(--theme-dropdown-border-color, transparent)"
           : "transparent",
@@ -170,7 +168,7 @@ const GoMakeAutoComplate = ({
   isOptionEqualToValue,
   labelText,
   getOptionDisabled,
-  disablePortal
+  disablePortal,
 }: {
   value?: any;
   onChange?: any;
@@ -263,7 +261,9 @@ const GoMakeAutoComplate = ({
         options={options}
         disabled={disabled}
         //freeSolo={freeSolo}
-        popupIcon={withArrow ? popupIcon ? popupIcon : <ArrowDropDownIcon /> : ""}
+        popupIcon={
+          withArrow ? popupIcon ? popupIcon : <ArrowDropDownIcon /> : ""
+        }
         groupBy={groupBy}
         renderGroup={(params) => (
           <div key={params.key}>

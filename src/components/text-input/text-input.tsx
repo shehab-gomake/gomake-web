@@ -43,16 +43,10 @@ const StyledTextField = styled(TextField, {
         ? `2px solid ${props.errorColor(300)}`
         : `var(--theme-input-border-hover, 1px solid var(--theme-input-border-color, #FFFFFF))`,
     },
-    "&:hover input": {
-      borderColor: "var(--theme-input-border-color, transparent) !important",
-      borderWidth: "1px !important",
-      borderStyle: "solid !important",
-    },
-    //!here should fix
     "& fieldset": {
       border: props.error
         ? `1px solid ${props.errorColor(300)}`
-        : `1px solid var(--theme-input-border-color, #E0E0E0)`,
+        : `1px solid var(--theme-input-border-color, transparent) !important`,
       boxSizing: "border-box",
       borderRadius: props?.style?.borderRadius || "var(--theme-radius-md, 4px)",
       width: "100%",
