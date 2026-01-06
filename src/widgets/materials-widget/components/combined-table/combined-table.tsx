@@ -1,11 +1,12 @@
-import React, { useState, useRef, useEffect } from "react";
-import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, Tooltip } from "@mui/material";
+import React, { useState, useRef, useEffect, useCallback } from "react";
+import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, Tooltip, Button } from "@mui/material";
 import { useRecoilValue } from "recoil";
-import { openChildTableState } from "../../state";
+import { openChildTableState, materialHeadersState } from "../../state";
 import { useTranslation } from "react-i18next";
 import { ChildTableRow } from "../child-table-row/child-table-row";
 import { ChevronRight, ChevronLeft } from "@mui/icons-material";
 import { useStyle } from "./style";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 
 interface ICombinedTableProps {
@@ -23,6 +24,7 @@ interface ICombinedTableProps {
     hasMoreData?: boolean;
     isLoadingMore?: boolean;
     filterBarHeight?: number;
+    isAdmin?: boolean;
 }
 
 const CombinedTable = ({
@@ -40,14 +42,84 @@ const CombinedTable = ({
     hasMoreData = false,
     isLoadingMore = false,
     filterBarHeight = 40,
+    isAdmin = false,
 }: ICombinedTableProps) => {
     const { classes, getHeaderCellStyle, getBodyCellStyle } = useStyle();
+    const { secondColor } = useGomakeTheme();
     const { t } = useTranslation();
     const dir: "rtl" | "ltr" = t("direction");
     const isRTL = dir === "rtl";
     const openChildTable = useRecoilValue(openChildTableState);
+    const materialHeaders = useRecoilValue(materialHeadersState);
+
+    // Calculate hidden columns count - columns that are scrolled off to the right
+    const calculateHiddenColumns = useCallback(() => {
+        if (!tableContainerRef.current || !headers || headers.length === 0) {
+            setHiddenColumnsCount(0);
+            return;
+        }
+
+        const container = tableContainerRef.current;
+        const { scrollWidth, clientWidth } = container;
+
+        // If table is not scrollable, no hidden columns
+        if (scrollWidth <= clientWidth) {
+            setHiddenColumnsCount(0);
+            return;
+        }
+
+        const table = container.querySelector('table');
+        if (!table) {
+            setHiddenColumnsCount(0);
+            return;
+        }
+
+        // Get header row to count visible columns
+        const headerRow = table.querySelector('thead tr');
+        if (!headerRow) {
+            setHiddenColumnsCount(0);
+            return;
+        }
+
+        const headerCells = headerRow.querySelectorAll('th');
+        if (headerCells.length === 0 || headerCells.length !== headers.length) {
+            setHiddenColumnsCount(0);
+            return;
+        }
+
+        const containerRect = container.getBoundingClientRect();
+        const containerLeft = containerRect.left;
+        const containerRight = containerRect.right;
+
+        // Count how many columns are visible in the viewport
+        // The last 2 columns are fixed, so we need to find the last non-fixed visible column
+        const totalColumns = headers.length;
+        const fixedColumnsCount = 2; // Last 2 columns are fixed (Status and Total Inventory)
+        let lastNonFixedVisibleIndex = -1;
+
+        headerCells.forEach((cell, index) => {
+            // Skip fixed columns (last 2)
+            if (index < totalColumns - fixedColumnsCount) {
+                const cellRect = cell.getBoundingClientRect();
+                // Column is visible if any part of it is in the viewport
+                if (cellRect.right > containerLeft && cellRect.left < containerRight) {
+                    lastNonFixedVisibleIndex = index;
+                }
+            }
+        });
+
+        // Calculate columns that are to the right of the last visible non-fixed column
+        const scrollableColumnsCount = totalColumns - fixedColumnsCount;
+        const visibleScrollableColumns = lastNonFixedVisibleIndex + 1;
+        const hiddenScrollableColumns = scrollableColumnsCount - visibleScrollableColumns;
+
+        // Total hidden = hidden scrollable columns (fixed columns are always visible, so don't count them)
+        const count = hiddenScrollableColumns > 0 ? hiddenScrollableColumns : 0;
+        setHiddenColumnsCount(count);
+    }, [headers]);
 
     const [showScrollIndicator, setShowScrollIndicator] = useState(true);
+    const [hiddenColumnsCount, setHiddenColumnsCount] = useState(0);
     const tableContainerRef = useRef<HTMLDivElement>(null);
     const isLoadingRef = useRef(false);
     const loadMoreTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -89,6 +161,11 @@ const CombinedTable = ({
 
             setShowScrollIndicator(!isAtEnd);
         }
+
+        // Recalculate hidden columns on scroll (debounced)
+        setTimeout(() => {
+            calculateHiddenColumns();
+        }, 50);
     };
 
     const scrollToRight = () => {
@@ -110,6 +187,25 @@ const CombinedTable = ({
         }
     };
 
+    const scrollToLastColumn = () => {
+        if (tableContainerRef.current) {
+            if (isRTL) {
+                // In RTL, scroll to the leftmost position
+                const maxScrollLeft = tableContainerRef.current.scrollWidth - tableContainerRef.current.clientWidth;
+                tableContainerRef.current.scrollTo({
+                    left: -maxScrollLeft,
+                    behavior: 'smooth'
+                });
+            } else {
+                // In LTR, scroll to the rightmost position to show last column
+                tableContainerRef.current.scrollTo({
+                    left: tableContainerRef.current.scrollWidth,
+                    behavior: 'smooth'
+                });
+            }
+        }
+    };
+
     // Reset loading ref when loading completes
     useEffect(() => {
         if (!isLoadingMore) {
@@ -123,18 +219,65 @@ const CombinedTable = ({
             // Check initial scroll state
             handleScroll();
 
+            // Calculate hidden columns initially (with delay to ensure DOM is ready)
+            const timeoutId1 = setTimeout(() => {
+                calculateHiddenColumns();
+            }, 100);
+
+            const timeoutId2 = setTimeout(() => {
+                calculateHiddenColumns();
+            }, 500);
+
             // Add scroll listener
             container.addEventListener('scroll', handleScroll);
 
             // Cleanup
             return () => {
+                clearTimeout(timeoutId1);
+                clearTimeout(timeoutId2);
                 container.removeEventListener('scroll', handleScroll);
                 if (loadMoreTimeoutRef.current) {
                     clearTimeout(loadMoreTimeoutRef.current);
                 }
             };
         }
-    }, [rows, hasMoreData, isLoadingMore]); // Re-check when rows change
+    }, [rows, hasMoreData, isLoadingMore, headers, calculateHiddenColumns]); // Re-check when rows or headers change
+
+    // Recalculate when headers change
+    useEffect(() => {
+        const timeoutId1 = setTimeout(() => {
+            calculateHiddenColumns();
+        }, 100);
+        const timeoutId2 = setTimeout(() => {
+            calculateHiddenColumns();
+        }, 500);
+        const timeoutId3 = setTimeout(() => {
+            calculateHiddenColumns();
+        }, 1000);
+        return () => {
+            clearTimeout(timeoutId1);
+            clearTimeout(timeoutId2);
+            clearTimeout(timeoutId3);
+        };
+    }, [headers, calculateHiddenColumns]);
+
+    // Use ResizeObserver to recalculate when table size changes
+    useEffect(() => {
+        const container = tableContainerRef.current;
+        if (!container) return;
+
+        const resizeObserver = new ResizeObserver(() => {
+            setTimeout(() => {
+                calculateHiddenColumns();
+            }, 100);
+        });
+
+        resizeObserver.observe(container);
+
+        return () => {
+            resizeObserver.disconnect();
+        };
+    }, [calculateHiddenColumns]);
 
     // Calculate dynamic table height based on actual filter bar height
     // Base offset: 120px (header) + 10px (padding) + filterBarHeight
@@ -161,7 +304,51 @@ const CombinedTable = ({
                                             key={index}
                                             sx={getHeaderCellStyle(isFirstColumn, isLastFixedColumn, index, headers.length, isLastColumn, isLastSecondColumn)}
                                         >
-                                            {header}
+                                            {isLastColumn ? (
+                                                <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
+                                                    <Box>{header}</Box>
+                                                    {hiddenColumnsCount > 0 && (
+                                                        <Tooltip
+                                                            title={t("materials.buttons.missingColumnsTooltip", { count: hiddenColumnsCount + 2 })}
+                                                            arrow
+                                                            placement="top"
+                                                        >
+                                                            <span>
+                                                                <Button
+                                                                    size="small"
+                                                                    variant="outlined"
+                                                                    onClick={scrollToLastColumn}
+                                                                    sx={{
+                                                                        minWidth: 'auto',
+                                                                        padding: '2px 8px',
+                                                                        fontSize: '10px',
+                                                                        textTransform: 'none',
+                                                                        borderColor: secondColor(600),
+                                                                        backgroundColor: secondColor(600),
+                                                                        color: "#FFF",
+                                                                        fontWeight: 600,
+                                                                        display: 'flex',
+                                                                        flexDirection: 'column',
+                                                                        alignItems: 'center',
+                                                                        justifyContent: 'center',
+                                                                        gap: "2px",
+                                                                        '&:hover': {
+                                                                            borderColor: secondColor(600),
+                                                                            backgroundColor: secondColor(600),
+                                                                            color: "#FFF",
+                                                                        },
+                                                                    }}
+                                                                >
+                                                                    {t("materials.sheetPaper.view")}
+                                                                    <div>({hiddenColumnsCount + 2})</div>
+                                                                </Button>
+                                                            </span>
+                                                        </Tooltip>
+                                                    )}
+                                                </Box>
+                                            ) : (
+                                                header
+                                            )}
                                         </TableCell>
                                     );
                                 })}
