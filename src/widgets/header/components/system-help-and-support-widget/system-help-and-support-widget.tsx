@@ -14,12 +14,14 @@ import { useModal } from "@/hooks/use-modal";
 import { lastVersionState } from "@/store/last-version-state";
 import { updateUserVersionApi } from "@/services/api-service/gomake-versioning/gomake-versioning-endpoint";
 import { generateCustomerLoginLinkApi } from "@/services/api-service/support/support-endpoints";
+import { TermModal } from "@/widgets/login/terms-modal/TermModal";
 
 const SystemHelp = () => {
   const { t } = useTranslation();
   const { classes } = useStyle();
   const { navigate } = useGomakeRouter();
   const whatsNewModal = useModal();
+  const termsModal = useModal();
   const [version, setVersion] = useRecoilState(lastVersionState);
   const { callApi } = useGomakeAxios();
   const { getIconOverride, currentTheme } = useTheme();
@@ -45,7 +47,7 @@ const SystemHelp = () => {
   };
 
   const updateUserVersion = async () => {
-    await updateUserVersionApi(callApi, (res) => {});
+    await updateUserVersionApi(callApi, (res) => { });
   };
 
   const handleWhatsNewClick = async () => {
@@ -72,6 +74,11 @@ const SystemHelp = () => {
     );
   };
 
+  const handleTermsClick = () => {
+    handleCloseSupport();
+    termsModal.open();
+  };
+
   const helpMenuList = [
     {
       name: t("header.guideAndTutorial"),
@@ -84,6 +91,10 @@ const SystemHelp = () => {
     {
       name: t("tabs.myTickets"),
       onclick: () => navigate("/my-tickets"),
+    },
+    {
+      name: t("tabs.gomakeTerms"),
+      onclick: handleTermsClick,
     },
   ];
 
@@ -158,6 +169,13 @@ const SystemHelp = () => {
         open={whatsNewModal.isOpen}
         onClose={whatsNewModal.close}
         version={version}
+      />
+      <TermModal
+        open={termsModal.isOpen}
+        onClose={termsModal.close}
+        setIsTermsAccepted={() => { }}
+        setIsModalOpen={termsModal.close}
+        isQuickSetup={true}
       />
     </Badge>
   );
