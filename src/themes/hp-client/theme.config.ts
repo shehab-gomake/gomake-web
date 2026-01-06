@@ -12,6 +12,8 @@ import {
   HpNotificationsIcon,
   HpTrialIndicator,
 } from "./components/hp-top-header";
+import { HpSideBarContainer } from "./components/hp-side-bar-container";
+import { HpSideList } from "./components/hp-side-list";
 import {
   HpUserIcon,
   HpHelpIcon,
@@ -266,6 +268,8 @@ const hpClientThemeConfig: ThemeConfig = {
     CardsWidget: HpCardsWidget,
     LeftSideLayout: HpLeftSideLayout,
     TrialIndicator: HpTrialIndicator,
+    SideBarContainer: HpSideBarContainer,
+    SideList: HpSideList,
   },
 
   // Icon overrides for HP Client theme

@@ -6,12 +6,6 @@ import { adaptRight } from "@/utils/adapter";
 import styled from "styled-components";
 import Link from "next/link";
 
-/**
- * HP Client Theme - Tab Styles
- * Based on Figma specifications
- */
-
-// Styled Menu Item with hover support
 const StyledMenuItem = styled.div<{
   $isSelected: boolean;
   $isListOpen?: boolean;

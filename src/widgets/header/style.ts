@@ -4,11 +4,14 @@ import i18next from "i18next";
 import { convertWidthToVW, leftRightAdapter } from "@/utils/adapter";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { useTheme } from "@/contexts/theme";
 
 const useStyle = () => {
   const { t } = useTranslation();
   const { neutralColor, primaryColor, successColor, secondColor } =
     useGomakeTheme();
+  const { currentTheme } = useTheme();
+  const isHpClient = currentTheme === "hp-client";
   const classes = useMemo(() => {
     return {
       container: {
@@ -22,7 +25,7 @@ const useStyle = () => {
         backgroundColor: "var(--theme-bg-primary, #ffffff)",
         paddingLeft: 12,
         paddingRight: 12,
-        marginBottom: 20,
+        marginBottom: isHpClient ? 0 : 20,
         borderBottom: "1px solid var(--theme-border-color, transparent)",
       },
       searchInputContainer: {
@@ -208,7 +211,7 @@ const useStyle = () => {
         margin: "0 8px",
       },
     };
-  }, [i18next.language, t]);
+  }, [i18next.language, t, isHpClient]);
   return {
     classes,
     primaryColor,
