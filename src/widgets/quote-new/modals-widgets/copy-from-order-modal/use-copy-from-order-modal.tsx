@@ -360,7 +360,7 @@ const useCopyFromOrderModal = ({
               ? 1
               : documentItems[0]?.exchangeRate,
           totalPrice: quoteItemValue?.totalPrice,
-          data: 0,
+          data: quoteItemValue?.discount || 0,
           calculationType: 0,
           totalPriceAfterDiscount: quoteItemValue?.totalPriceAfterDiscount,
           discount: quoteItemValue?.discount,

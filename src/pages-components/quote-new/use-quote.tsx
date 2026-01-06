@@ -1712,7 +1712,7 @@ const useQuoteNew = ({ docType, isQuoteConfirmation = false, isPrePaymentPage = 
         document: {
           exchangeRate: updatedQuoteItemValue?.exchangeRate || 1,
           totalPrice: updatedQuoteItemValue?.totalPrice,
-          data: 0,
+          data: updatedQuoteItemValue?.discount || 0,
           calculationType: 0,
           totalPriceAfterDiscount: updatedQuoteItemValue?.totalPriceAfterDiscount,
           discount: updatedQuoteItemValue?.discount,
