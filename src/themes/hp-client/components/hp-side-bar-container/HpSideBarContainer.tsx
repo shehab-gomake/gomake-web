@@ -27,10 +27,9 @@ const HpSideBarContainer = ({
     return {
       mainContainer: {
         padding: "0",
-        maxHeight: convertHeightToVH(SCREEN_HEIGHT - HEADER_HEIGHT),
-        ...adaptPaddingLeft(direction, 20),
-        ...adaptPaddingRight(direction, 0), // maybe 5
         width: "100%",
+        // maxHeight: convertHeightToVH(SCREEN_HEIGHT - HEADER_HEIGHT),
+        height: "100%",
       },
       container: {
         display: "flex",
@@ -41,13 +40,15 @@ const HpSideBarContainer = ({
       },
       main: {
         width: "100%",
-        paddingTop: isPriceProfitPage ? 0 : 28,
         ...(isPriceProfitPage
           ? {}
           : {
-              ...adaptPaddingLeft(direction, 0),
-              ...adaptPaddingRight(direction, 28),
+              padding: "28px 28px 0px 28px",
             }),
+        backgroundColor: "var(--theme-bg-body-settings,#FFFFFF)",
+      },
+      sideList: {
+        height: "93vh",
       },
       header: {
         fontFamily:
@@ -72,7 +73,7 @@ const HpSideBarContainer = ({
     <div style={classes.mainContainer}>
       {header && <h1 style={classes.header}>{header}</h1>}
       <div style={classes.container}>
-        <div>{side}</div>
+        <div style={classes.sideList}>{side}</div>
         <div style={classes.main}>
           {subHeader && <h2 style={classes.subHeader}>{subHeader}</h2>}
           <div
