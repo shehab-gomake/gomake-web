@@ -77,6 +77,8 @@ const SAVE_UPLOADED_FILE_URL =
   "/v1/erp-service/board-missions/save-uploaded-file";
 const GET_UPLOADED_FILES_URL =
   "/v1/erp-service/board-missions/get-uploaded-files/";
+const SEND_GRAPHICS_APPROVAL_TO_CLIENT_URL =
+  "/v1/erp-service/board-missions/send-graphics-approval-to-client";
 const GET_UPLOADING_FILES_URL =
   "/v1/erp-service/board-missions/get-uploading-files/";
 const GET_BOARD_MISSIONS_ID_BY_QR_CODE_URL =
@@ -961,6 +963,21 @@ const ungroupJobsApi: ICallAndSetData = async (callApi, callBack, groupId) => {
   );
 };
 
+// 6. Send Graphics Approval to Client
+const sendGraphicsApprovalToClientApi: ICallAndSetData = async (
+  callApi,
+  callBack,
+  data: { boardMissionId: string; fileUrls: string[] }
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    SEND_GRAPHICS_APPROVAL_TO_CLIENT_URL,
+    callBack,
+    data
+  );
+};
+
 export {
   boardMissionsUpdateActionEmployee,
   handleBoardMissionsBarcodeActions,
@@ -1018,4 +1035,5 @@ export {
   groupJobsApi,
   getGroupJobsUsingOrderIdApi,
   ungroupJobsApi,
+  sendGraphicsApprovalToClientApi,
 };
