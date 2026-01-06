@@ -57,7 +57,6 @@ const RowMappingWidget = ({
   updateItemStatus,
   isMaterialPurchaseOrder,
 }) => {
-  console.log("item", item);
   const router = useRouter();
   const { t } = useTranslation();
   const { classes } = useStyle({ headerHeight });
@@ -144,9 +143,9 @@ const RowMappingWidget = ({
         }}
       >
         {!isPrePaymentPage &&
-          isQuoteConfirmation &&
-          !quoteConfirm?.isConfirmed &&
-          quoteConfirm?.documentStatus !== QUOTE_STATUSES.Canceled ? (
+        isQuoteConfirmation &&
+        !quoteConfirm?.isConfirmed &&
+        quoteConfirm?.documentStatus !== QUOTE_STATUSES.Canceled ? (
           <div style={classes.checkBoxContainer}>
             <Checkbox
               icon={<CheckboxIcon />}
@@ -156,7 +155,9 @@ const RowMappingWidget = ({
             />
             {parentIndex}
           </div>
-        ) : (isQuote || isOrder) && !isPrePaymentPage && !isQuoteConfirmation ? (
+        ) : (isQuote || isOrder) &&
+          !isPrePaymentPage &&
+          !isQuoteConfirmation ? (
           <span style={classes.checkBoxContainer}>
             {item?.childsDocumentItems?.length > 0 && (
               <IconButton onClick={() => setIsShowChilds((prev) => !prev)}>
@@ -166,8 +167,7 @@ const RowMappingWidget = ({
             {!item?.childsDocumentItems && hasChilds && (
               <div style={{ width: "32px", height: "32px" }} />
             )}
-            {
-              !isOrder &&
+            {!isOrder && (
               <Checkbox
                 icon={<CheckboxIcon />}
                 checkedIcon={
@@ -178,8 +178,8 @@ const RowMappingWidget = ({
                 checked={isSelected}
                 disabled={
                   item?.relatedWorkTypeItemId?.length > 0 ||
-                    item?.isConfirmedByClient ||
-                    item?.isClosed
+                  item?.isConfirmedByClient ||
+                  item?.isClosed
                     ? true
                     : false
                 }
@@ -187,7 +187,7 @@ const RowMappingWidget = ({
                   handleChangeSelectedItem(e.target.checked, item?.id)
                 }
               />
-            }
+            )}
 
             {parentIndex}
           </span>
@@ -207,9 +207,10 @@ const RowMappingWidget = ({
           <span style={{ display: "block", color: "#5859A8" }}>
             {item?.sourceDocumentType
               ? `${t(
-                `SourceDocument.${ERPDocumentsTypesEnum[item?.sourceDocumentType]
-                }`
-              )} ${t("general.shortForNum")}`
+                  `SourceDocument.${
+                    ERPDocumentsTypesEnum[item?.sourceDocumentType]
+                  }`
+                )} ${t("general.shortForNum")}`
               : ""}
           </span>
           <span style={{ display: "block" }}>
@@ -220,32 +221,32 @@ const RowMappingWidget = ({
       {!CheckPreferenceValue(
         EPreferences.HIDE_ITEM_CODE_FROM_DOCUMENT_CART
       ) && (
-          <>
-            <PrimaryTableCell
-              style={{
-                width: columnWidths[1],
-                ...classes.cellContainerStyle,
-                color: "#000000",
-                borderBottom: item?.childsDocumentItems && "none",
-              }}
-            >
-              {item?.code || item?.productCode || "000"}
-            </PrimaryTableCell>
-            <PrimaryTableCell
-              style={{
-                width: columnWidths[2],
-                ...FONT_FAMILY.Inter(600, 14),
-                color: "#5859A8",
-                ...classes.cellContainerStyle,
-                borderBottom: item?.childsDocumentItems && "none",
-              }}
-            >
-              {item?.productName === "Delivery"
-                ? t("home.tabs.Delivery")
-                : item?.productName}
-            </PrimaryTableCell>
-          </>
-        )}
+        <>
+          <PrimaryTableCell
+            style={{
+              width: columnWidths[1],
+              ...classes.cellContainerStyle,
+              color: "#000000",
+              borderBottom: item?.childsDocumentItems && "none",
+            }}
+          >
+            {item?.code || item?.productCode || "000"}
+          </PrimaryTableCell>
+          <PrimaryTableCell
+            style={{
+              width: columnWidths[2],
+              ...FONT_FAMILY.Inter(600, 14),
+              color: "#5859A8",
+              ...classes.cellContainerStyle,
+              borderBottom: item?.childsDocumentItems && "none",
+            }}
+          >
+            {item?.productName === "Delivery"
+              ? t("home.tabs.Delivery")
+              : item?.productName}
+          </PrimaryTableCell>
+        </>
+      )}
       {CheckPreferenceValue(EPreferences.HIDE_ITEM_CODE_FROM_DOCUMENT_CART) && (
         <>
           <PrimaryTableCell
@@ -290,16 +291,27 @@ const RowMappingWidget = ({
       {isMaterialPurchaseOrder && (
         <PrimaryTableCell
           style={{
-            width: columnWidths[quoteItems?.showDetails !== ShowDocumentDetailsEnum.HideDetails ? 4 : 3],
+            width:
+              columnWidths[
+                quoteItems?.showDetails !== ShowDocumentDetailsEnum.HideDetails
+                  ? 4
+                  : 3
+              ],
             ...classes.cellContainerStyle,
             borderBottom: item?.childsDocumentItems && "none",
           }}
         >
           <div style={classes.cellTextInputStyle}>
             <InputUpdatedValues
-              value={item?.packagesQuantity || item?.packageQuantity || (item?.amount ? "1" : "0")}
+              value={
+                item?.packagesQuantity ||
+                item?.packageQuantity ||
+                (item?.amount ? "1" : "0")
+              }
               onBlur={onBlurPackagesQuantity}
-              isUpdate={canUpdate && isUpdatePackagesQuantity && !isPrePaymentPage}
+              isUpdate={
+                canUpdate && isUpdatePackagesQuantity && !isPrePaymentPage
+              }
               setIsUpdate={setIsUpdatePackagesQuantity}
               onInputChange={(e) => onInputChangePackagesQuantity(e)}
             />
@@ -309,16 +321,27 @@ const RowMappingWidget = ({
       {isMaterialPurchaseOrder && (
         <PrimaryTableCell
           style={{
-            width: columnWidths[quoteItems?.showDetails !== ShowDocumentDetailsEnum.HideDetails ? 5 : 4],
+            width:
+              columnWidths[
+                quoteItems?.showDetails !== ShowDocumentDetailsEnum.HideDetails
+                  ? 5
+                  : 4
+              ],
             ...classes.cellContainerStyle,
             borderBottom: item?.childsDocumentItems && "none",
           }}
         >
           <div style={classes.cellTextInputStyle}>
             <InputUpdatedValues
-              value={item?.quantityInPackage || item?.quantityPerPackage || (item?.amount ? item.amount.toString() : "1")}
+              value={
+                item?.quantityInPackage ||
+                item?.quantityPerPackage ||
+                (item?.amount ? item.amount.toString() : "1")
+              }
               onBlur={onBlurQuantityInPackage}
-              isUpdate={canUpdate && isUpdateQuantityInPackage && !isPrePaymentPage}
+              isUpdate={
+                canUpdate && isUpdateQuantityInPackage && !isPrePaymentPage
+              }
               setIsUpdate={setIsUpdateQuantityInPackage}
               onInputChange={(e) => onInputChangeQuantityInPackage(e)}
             />
@@ -327,12 +350,19 @@ const RowMappingWidget = ({
       )}
       <PrimaryTableCell
         style={{
-          width: columnWidths[isMaterialPurchaseOrder ? (quoteItems?.showDetails !== ShowDocumentDetailsEnum.HideDetails ? 6 : 5) : 5],
+          width:
+            columnWidths[
+              isMaterialPurchaseOrder
+                ? quoteItems?.showDetails !==
+                  ShowDocumentDetailsEnum.HideDetails
+                  ? 6
+                  : 5
+                : 5
+            ],
           ...classes.cellContainerStyle,
           borderBottom: item?.childsDocumentItems && "none",
         }}
       >
-
         <QuoteQuantityCell
           classes={classes}
           item={item}
@@ -353,33 +383,50 @@ const RowMappingWidget = ({
       {isMaterialPurchaseOrder && (
         <PrimaryTableCell
           style={{
-            width: columnWidths[isMaterialPurchaseOrder ? (quoteItems?.showDetails !== ShowDocumentDetailsEnum.HideDetails ? 7 : 6) : 6],
+            width:
+              columnWidths[
+                isMaterialPurchaseOrder
+                  ? quoteItems?.showDetails !==
+                    ShowDocumentDetailsEnum.HideDetails
+                    ? 7
+                    : 6
+                  : 6
+              ],
             ...classes.cellContainerStyle,
             borderBottom: item?.childsDocumentItems && "none",
           }}
         >
           {item?.unit?.value ||
-            (typeof item?.unit === 'string' ? item?.unit : null) ||
+            (typeof item?.unit === "string" ? item?.unit : null) ||
             item?.packagesUnit ||
             (item?.stockUnit !== undefined && item?.stockUnit !== null
-              ? (typeof item.stockUnit === 'number'
-                ? t(`boardMissions.${MaterialStockUnit[item.stockUnit]}`) || MaterialStockUnit[item.stockUnit]
-                : item.stockUnit)
+              ? typeof item.stockUnit === "number"
+                ? t(`boardMissions.${MaterialStockUnit[item.stockUnit]}`) ||
+                  MaterialStockUnit[item.stockUnit]
+                : item.stockUnit
               : "")}
         </PrimaryTableCell>
       )}
       {quoteItems?.showPrices !== ShowPricesEnum.HidePrices && (
         <PrimaryTableCell
           style={{
-            width: columnWidths[isMaterialPurchaseOrder ? (quoteItems?.showDetails !== ShowDocumentDetailsEnum.HideDetails ? 8 : 7) : 5],
+            width:
+              columnWidths[
+                isMaterialPurchaseOrder
+                  ? quoteItems?.showDetails !==
+                    ShowDocumentDetailsEnum.HideDetails
+                    ? 8
+                    : 7
+                  : 5
+              ],
             ...classes.cellContainerStyle,
             borderBottom: item?.childsDocumentItems && "none",
           }}
         >
           <div style={classes.cellTextInputStyle}>
             {item?.calculationStatus === null ||
-              item?.calculationStatus === undefined ||
-              item?.calculationStatus === ECalculationStatus.Done ? (
+            item?.calculationStatus === undefined ||
+            item?.calculationStatus === ECalculationStatus.Done ? (
               <InputUpdatedValues
                 value={item.price}
                 onBlur={onBlurPrice}
@@ -399,15 +446,23 @@ const RowMappingWidget = ({
       {quoteItems?.showPrices !== ShowPricesEnum.HidePrices && (
         <PrimaryTableCell
           style={{
-            width: columnWidths[isMaterialPurchaseOrder ? (quoteItems?.showDetails !== ShowDocumentDetailsEnum.HideDetails ? 9 : 8) : 6],
+            width:
+              columnWidths[
+                isMaterialPurchaseOrder
+                  ? quoteItems?.showDetails !==
+                    ShowDocumentDetailsEnum.HideDetails
+                    ? 9
+                    : 8
+                  : 6
+              ],
             ...classes.cellContainerStyle,
             borderBottom: item?.childsDocumentItems && "none",
           }}
         >
           <div style={classes.cellTextInputStyle}>
             {item?.calculationStatus === null ||
-              item?.calculationStatus === undefined ||
-              item?.calculationStatus === ECalculationStatus.Done ? (
+            item?.calculationStatus === undefined ||
+            item?.calculationStatus === ECalculationStatus.Done ? (
               <InputUpdatedValues
                 value={item.discount ? item.discount : "0"}
                 onBlur={onBlurDiscount}
@@ -427,7 +482,15 @@ const RowMappingWidget = ({
       {quoteItems?.showPrices !== ShowPricesEnum.HidePrices && (
         <PrimaryTableCell
           style={{
-            width: columnWidths[isMaterialPurchaseOrder ? (quoteItems?.showDetails !== ShowDocumentDetailsEnum.HideDetails ? 10 : 9) : 7],
+            width:
+              columnWidths[
+                isMaterialPurchaseOrder
+                  ? quoteItems?.showDetails !==
+                    ShowDocumentDetailsEnum.HideDetails
+                    ? 10
+                    : 9
+                  : 7
+              ],
             ...classes.cellContainerStyle,
             borderBottom: item?.childsDocumentItems && "none",
           }}
@@ -452,12 +515,14 @@ const RowMappingWidget = ({
             ) : (
               <>
                 {item?.calculationStatus === null ||
-                  item?.calculationStatus === undefined ||
-                  item?.calculationStatus === ECalculationStatus.Done ? (
+                item?.calculationStatus === undefined ||
+                item?.calculationStatus === ECalculationStatus.Done ? (
                   <InputUpdatedValues
                     value={item.finalPrice}
                     onBlur={onBlurFinalPrice}
-                    isUpdate={canUpdate && isUpdateFinalPrice && !isPrePaymentPage}
+                    isUpdate={
+                      canUpdate && isUpdateFinalPrice && !isPrePaymentPage
+                    }
                     setIsUpdate={
                       isQuoteConfirmation
                         ? setIsConfirmation
@@ -482,7 +547,9 @@ const RowMappingWidget = ({
             borderBottom: item?.childsDocumentItems && "none",
           }}
         >
-          {(canUpdate || (documentType === DOCUMENT_TYPE.purchaseOrder && (item?.isDeletable || item?.isIntake === true))) && (
+          {(canUpdate ||
+            (documentType === DOCUMENT_TYPE.purchaseOrder &&
+              (item?.isDeletable || item?.isIntake === true))) && (
             <MoreMenuWidget
               quoteItem={item}
               onClickDuplicateWithDifferentQTY={
@@ -500,6 +567,3 @@ const RowMappingWidget = ({
   );
 };
 export { RowMappingWidget };
-
-
-

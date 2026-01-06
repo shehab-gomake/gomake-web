@@ -5,6 +5,8 @@ import { GoMakeTreeSelect } from "@/components/auto-complete/tree-select";
 import { useStyle } from "./style";
 import { useAddNewItem } from "../modals-widgets/add-new-item-modal/use-add-new-item";
 import { DeleteIcon } from "@/pages-components/quotes/more-circle/icons/delete";
+import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
+import { EPreferences } from "@/enums/prefernces";
 
 interface InlineAddItemRowProps {
   columnWidths: any[];
@@ -42,6 +44,7 @@ const InlineAddItemRow: React.FC<InlineAddItemRowProps> = ({
   const { t } = useTranslation();
   const { classes } = useStyle({ headerHeight });
   const [isAdding, setIsAdding] = useState(false);
+  const { CheckPreferenceValue } = usePrintHousePreferences();
 
   const {
     onClickCreateQuoteForCustomer,
@@ -51,7 +54,7 @@ const InlineAddItemRow: React.FC<InlineAddItemRowProps> = ({
     selectedTab,
     setSelectedTab,
   } = useAddNewItem({
-    onClose: () => { },
+    onClose: () => {},
     getQuote: getQuote, // We don't need to refresh the quote here
     documentType,
     getCalculateQuoteItem,
@@ -114,11 +117,15 @@ const InlineAddItemRow: React.FC<InlineAddItemRowProps> = ({
         {rowNumber}
       </TableCell>
 
-      <TableCell
-        style={{ width: columnWidths[1], ...classes.cellContainerStyle }}
-      >
-        {/* Item code - will be filled after selection */}
-      </TableCell>
+      {!CheckPreferenceValue(
+        EPreferences.HIDE_ITEM_CODE_FROM_DOCUMENT_CART
+      ) && (
+        <TableCell
+          style={{ width: columnWidths[1], ...classes.cellContainerStyle }}
+        >
+          {/* Item code - will be filled after selection */}
+        </TableCell>
+      )}
 
       <TableCell
         style={{
