@@ -54,6 +54,7 @@ import React from "react";
 import { TableVirtuoso } from "react-virtuoso";
 import { FrontDeskEmailComposerWrapper } from "@/pages-components/quotes/components/frontdesk-email-composer-wrapper";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
+import { printHouseHasFrontDeskFeature } from "@/store/print-house-profile";
 
 interface IProps {
   status: IProductionStatus;
@@ -65,6 +66,11 @@ interface IProps {
   employeesCategories?: any;
   visibleColumns: string[];
   isVirtualizing?: boolean;
+  isEmailComposerOpenApproval?: boolean;
+  emailDataApproval?: any;
+  openEmailComposerApproval?: (documentId: string | number) => void;
+  closeEmailComposerApproval?: () => void;
+  isLoadingEmailDataApproval?: boolean;
 }
 
 const StatusTableComponent = ({
@@ -77,6 +83,11 @@ const StatusTableComponent = ({
   employeesCategories,
   visibleColumns,
   isVirtualizing = false,
+  isEmailComposerOpenApproval,
+  emailDataApproval,
+  openEmailComposerApproval,
+  closeEmailComposerApproval,
+  isLoadingEmailDataApproval,
 }: IProps) => {
   const { isOpen, onClickStatus, tableHeaders } = useStatusTable();
   const [search] = useRecoilState(productionFloorTextSearchState);
@@ -93,7 +104,7 @@ const StatusTableComponent = ({
   const virtuosoRef = useRef<any>(null);
 
   const [heightMultiplier, setHeightMultiplier] = useState<number>(1);
-
+  const hasFrontDeskFeature = useRecoilValue(printHouseHasFrontDeskFeature);
   const reSortingCurrentStation = useCallback(
     async (direction: CurrentStationOrderingEnum) => {
       await setFilters({
@@ -159,6 +170,7 @@ const StatusTableComponent = ({
     selectedMission,
   } = useProductionFloorData();
 
+
   const {
     openSimpleApproveModal,
     handleOpenModal,
@@ -170,6 +182,7 @@ const StatusTableComponent = ({
     stuckReason,
     setStuckReason,
     onUpdateStuckReason,
+    boardMissionId,
   } = useSimpleApproveModal(updateStatus);
 
   const [currentStationOrdering, setCurrentStationOrdering] = useRecoilState(
@@ -183,6 +196,7 @@ const StatusTableComponent = ({
   const [createDateOrdering, setCreateDateOrdering] = useRecoilState(
     createDateOrderingState
   );
+
 
   const dropRef = useRef<HTMLDivElement>(null);
   const [{ isOver }, drop] = useDrop(
@@ -295,6 +309,11 @@ const StatusTableComponent = ({
             onUpdateJobDueDate={updateJobDueDate}
             employeesCategories={employeesCategories}
             visibleColumns={visibleColumns}
+            isEmailComposerOpenApproval={isEmailComposerOpenApproval}
+            emailDataApproval={emailDataApproval}
+            openEmailComposerApproval={openEmailComposerApproval}
+            closeEmailComposerApproval={closeEmailComposerApproval}
+            isLoadingEmailDataApproval={isLoadingEmailDataApproval}
           />
         );
       }
@@ -355,12 +374,12 @@ const StatusTableComponent = ({
                 width,
                 ...(isMobileScreen &&
                   index <= 1 && {
-                    position: "sticky",
-                    top: 0,
-                    [RTL ? "right" : "left"]: index === 0 ? 0 : 48,
-                    zIndex: 3, //  raise above body cells
-                    background: "#f2f2f5",
-                  }),
+                  position: "sticky",
+                  top: 0,
+                  [RTL ? "right" : "left"]: index === 0 ? 0 : 48,
+                  zIndex: 3, //  raise above body cells
+                  background: "#f2f2f5",
+                }),
               }}
               key={"statusTable" + status.id + index}
               align="center"
@@ -368,31 +387,31 @@ const StatusTableComponent = ({
                 header === t("productionFloor.currentStation")
                   ? currentStationOrdering === CurrentStationOrderingEnum.NONE
                     ? {
-                        "& .sort-icon": { opacity: 0 },
-                        "&:hover .sort-icon": { opacity: 1 },
-                      }
+                      "& .sort-icon": { opacity: 0 },
+                      "&:hover .sort-icon": { opacity: 1 },
+                    }
                     : {
-                        "& .sort-icon": { opacity: 1 },
-                      }
+                      "& .sort-icon": { opacity: 1 },
+                    }
                   : header === t("sales.quote.deliveryDate")
-                  ? deliveryTimeOrdering === CurrentStationOrderingEnum.NONE
-                    ? {
+                    ? deliveryTimeOrdering === CurrentStationOrderingEnum.NONE
+                      ? {
                         "& .sort-icon": { opacity: 0 },
                         "&:hover .sort-icon": { opacity: 1 },
                       }
-                    : {
+                      : {
                         "& .sort-icon": { opacity: 1 },
                       }
-                  : header === t("sales.quote.creationDate")
-                  ? createDateOrdering === CurrentStationOrderingEnum.NONE
-                    ? {
-                        "& .sort-icon": { opacity: 0 },
-                        "&:hover .sort-icon": { opacity: 1 },
-                      }
-                    : {
-                        "& .sort-icon": { opacity: 1 },
-                      }
-                  : undefined
+                    : header === t("sales.quote.creationDate")
+                      ? createDateOrdering === CurrentStationOrderingEnum.NONE
+                        ? {
+                          "& .sort-icon": { opacity: 0 },
+                          "&:hover .sort-icon": { opacity: 1 },
+                        }
+                        : {
+                          "& .sort-icon": { opacity: 1 },
+                        }
+                      : undefined
               }
             >
               <div
@@ -417,12 +436,12 @@ const StatusTableComponent = ({
                     onClick={() => {
                       const newDirection =
                         currentStationOrdering ===
-                        CurrentStationOrderingEnum.NONE
+                          CurrentStationOrderingEnum.NONE
                           ? CurrentStationOrderingEnum.ASC
                           : currentStationOrdering ===
                             CurrentStationOrderingEnum.ASC
-                          ? CurrentStationOrderingEnum.DESC
-                          : CurrentStationOrderingEnum.NONE;
+                            ? CurrentStationOrderingEnum.DESC
+                            : CurrentStationOrderingEnum.NONE;
 
                       setSortConfig({
                         key: t("productionFloor.currentStation"),
@@ -439,12 +458,12 @@ const StatusTableComponent = ({
                         fontSize: "14px",
                         transform:
                           currentStationOrdering ===
-                          CurrentStationOrderingEnum.ASC
+                            CurrentStationOrderingEnum.ASC
                             ? "rotate(0deg)"
                             : currentStationOrdering ===
                               CurrentStationOrderingEnum.DESC
-                            ? "rotate(180deg)"
-                            : "rotate(0deg)",
+                              ? "rotate(180deg)"
+                              : "rotate(0deg)",
                         transition: "transform 0.2s",
                       }}
                     />
@@ -464,8 +483,8 @@ const StatusTableComponent = ({
                           ? CurrentStationOrderingEnum.ASC
                           : deliveryTimeOrdering ===
                             CurrentStationOrderingEnum.ASC
-                          ? CurrentStationOrderingEnum.DESC
-                          : CurrentStationOrderingEnum.NONE;
+                            ? CurrentStationOrderingEnum.DESC
+                            : CurrentStationOrderingEnum.NONE;
 
                       setSortConfig({
                         key: t("sales.quote.deliveryDate"),
@@ -484,12 +503,12 @@ const StatusTableComponent = ({
                         fontSize: "14px",
                         transform:
                           deliveryTimeOrdering ===
-                          CurrentStationOrderingEnum.ASC
+                            CurrentStationOrderingEnum.ASC
                             ? "rotate(0deg)"
                             : deliveryTimeOrdering ===
                               CurrentStationOrderingEnum.DESC
-                            ? "rotate(180deg)"
-                            : "rotate(0deg)",
+                              ? "rotate(180deg)"
+                              : "rotate(0deg)",
                         transition: "transform 0.2s",
                       }}
                     />
@@ -509,8 +528,8 @@ const StatusTableComponent = ({
                           ? CurrentStationOrderingEnum.ASC
                           : createDateOrdering ===
                             CurrentStationOrderingEnum.ASC
-                          ? CurrentStationOrderingEnum.DESC
-                          : CurrentStationOrderingEnum.NONE;
+                            ? CurrentStationOrderingEnum.DESC
+                            : CurrentStationOrderingEnum.NONE;
 
                       setSortConfig({
                         key: t("sales.quote.creationDate"),
@@ -532,8 +551,8 @@ const StatusTableComponent = ({
                             ? "rotate(0deg)"
                             : createDateOrdering ===
                               CurrentStationOrderingEnum.DESC
-                            ? "rotate(180deg)"
-                            : "rotate(0deg)",
+                              ? "rotate(180deg)"
+                              : "rotate(0deg)",
                         transition: "transform 0.2s",
                       }}
                     />
@@ -629,24 +648,23 @@ const StatusTableComponent = ({
             },
           }}
         >
-          {`${
-            !status.isGroup
-              ? t("productionStatuses." + status.name)
-              : status.name
-          } (${getBoards().length})`}
+          {`${!status.isGroup
+            ? t("productionStatuses." + status.name)
+            : status.name
+            } (${getBoards().length})`}
         </Button>
         {getBoards().length > 20 && (
           <Tooltip
             title={
               heightMultiplier === 1
                 ? t("productionFloor.increaseItemsTo50", {
-                    count: 50,
-                    defaultValue: `Increase items to ${50}`,
-                  })
+                  count: 50,
+                  defaultValue: `Increase items to ${50}`,
+                })
                 : t("productionFloor.decreaseItemsTo10", {
-                    count: 10,
-                    defaultValue: `Decrease items to ${10}`,
-                  })
+                  count: 10,
+                  defaultValue: `Decrease items to ${10}`,
+                })
             }
             arrow
           >
@@ -699,7 +717,7 @@ const StatusTableComponent = ({
             }}
           >
             {getBoards().length >
-            (isMobileScreen ? TABLE_CONFIG.MOBILE_MAX_VISIBLE_ITEMS : 10) ? (
+              (isMobileScreen ? TABLE_CONFIG.MOBILE_MAX_VISIBLE_ITEMS : 10) ? (
               <TableVirtuoso
                 key={`virtuoso-${status.id}-${sortedBoards.length}`}
                 ref={virtuosoRef}
@@ -730,6 +748,11 @@ const StatusTableComponent = ({
                     visibleColumns={visibleColumns}
                     cellsOnly
                     handleOpenStuckModal={handleOpenStuckModal}
+                    isEmailComposerOpenApproval={isEmailComposerOpenApproval}
+                    emailDataApproval={emailDataApproval}
+                    openEmailComposerApproval={openEmailComposerApproval}
+                    closeEmailComposerApproval={closeEmailComposerApproval}
+                    isLoadingEmailDataApproval={isLoadingEmailDataApproval}
                   />
                 )}
               />
@@ -780,6 +803,11 @@ const StatusTableComponent = ({
                           employeesCategories={employeesCategories}
                           visibleColumns={visibleColumns}
                           handleOpenStuckModal={handleOpenStuckModal}
+                          isEmailComposerOpenApproval={isEmailComposerOpenApproval}
+                          emailDataApproval={emailDataApproval}
+                          openEmailComposerApproval={openEmailComposerApproval}
+                          closeEmailComposerApproval={closeEmailComposerApproval}
+                          isLoadingEmailDataApproval={isLoadingEmailDataApproval}
                         />
                       ))}
                     </TableBody>
@@ -807,9 +835,25 @@ const StatusTableComponent = ({
         subTitle={" "}
         openModal={openSimpleApproveModal}
         onClose={handleCloseModal}
-        onClickDelete={handleConfirm}
+        onClickDelete={hasFrontDeskFeature && boardMissionId ? () => {
+          openEmailComposerApproval?.(boardMissionId);
+          handleCloseModal();
+        } : () => {
+          handleConfirm();
+        }}
         onClickCancel={handleCloseModal}
       />
+
+      {isEmailComposerOpenApproval && boardMissionId && (
+        <FrontDeskEmailComposerWrapper
+          open={isEmailComposerOpenApproval}
+          onClose={closeEmailComposerApproval}
+          emailData={emailDataApproval}
+          documentId={boardMissionId}
+          documentType={21 as DOCUMENT_TYPE}
+          isLoading={isLoadingEmailDataApproval}
+        />
+      )}
 
       <GoMakeDeleteModal
         title={t("sales.quote.stuckReasonTitleModal")}

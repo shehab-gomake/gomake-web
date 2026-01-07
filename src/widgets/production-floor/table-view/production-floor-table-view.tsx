@@ -48,7 +48,7 @@ import { printJobUsingPrintNodeApi } from "@/services/api-service/board-missions
 
 const DEBOUNCE_DELAY = 300; // Debounce search and filter operations
 
-const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
+const ProductionFloorTableView = ({ connectionId, updateStatus, getData, isEmailComposerOpenApproval, emailDataApproval, openEmailComposerApproval, closeEmailComposerApproval, isLoadingEmailDataApproval }) => {
   const selectedChipId = useRecoilValue(selectedChipIdsState);
   const hasFrontDeskFeature = useRecoilValue(printHouseHasFrontDeskFeature);
   const { sendEmailProgrammatically } = useProductionFloorData();
@@ -538,6 +538,11 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData }) => {
               employeesCategories={employeesCategories}
               visibleColumns={visibleColumns}
               isVirtualizing={false}
+              isEmailComposerOpenApproval={isEmailComposerOpenApproval}
+              emailDataApproval={emailDataApproval}
+              openEmailComposerApproval={openEmailComposerApproval}
+              closeEmailComposerApproval={closeEmailComposerApproval}
+              isLoadingEmailDataApproval={isLoadingEmailDataApproval}
             />
           );
         })}

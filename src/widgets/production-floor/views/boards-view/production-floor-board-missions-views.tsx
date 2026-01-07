@@ -24,6 +24,8 @@ import { useUserPermission } from "@/hooks/use-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { getProductionFloorTableSettingsApi } from "@/services/api-service/production-floor/production-floor-table-settings";
 import { useGomakeAxios } from "@/hooks/use-gomake-axios";
+import { useFrontDeskEmailIntegration } from "@/pages-components/quotes/hooks/use-frontdesk-email-integration";
+import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 const ProductionFloorBoardMissionsViews = ({
   connectionId,
 }: {
@@ -49,6 +51,17 @@ const ProductionFloorBoardMissionsViews = ({
   const hasInitializedRef = useRef(false);
   const lastConnectionIdRef = useRef<string | null>(null);
   const lastViewRef = useRef<EProductionFloorView | null>(null);
+
+
+  const {
+    isEmailComposerOpen: isEmailComposerOpenApproval,
+    emailData: emailDataApproval,
+    openEmailComposer: openEmailComposerApproval,
+    closeEmailComposer: closeEmailComposerApproval,
+    isLoadingEmailData: isLoadingEmailDataApproval,
+  } = useFrontDeskEmailIntegration({
+    documentType: 21 as DOCUMENT_TYPE,
+  });
 
   // Memoized effect to prevent unnecessary re-renders
   const shouldFetchData = useMemo(() => {
@@ -83,7 +96,7 @@ const ProductionFloorBoardMissionsViews = ({
         try {
           const res = await getProductionFloorTableSettingsApi(
             callApi,
-            () => {}
+            () => { }
           );
           const saved: ColumnSetting[] = res?.data;
 
@@ -225,6 +238,11 @@ const ProductionFloorBoardMissionsViews = ({
           connectionId={connectionId}
           updateStatus={updateStatus}
           getData={getData}
+          isEmailComposerOpenApproval={isEmailComposerOpenApproval}
+          emailDataApproval={emailDataApproval}
+          openEmailComposerApproval={openEmailComposerApproval}
+          closeEmailComposerApproval={closeEmailComposerApproval}
+          isLoadingEmailDataApproval={isLoadingEmailDataApproval}
         />
       );
     }
