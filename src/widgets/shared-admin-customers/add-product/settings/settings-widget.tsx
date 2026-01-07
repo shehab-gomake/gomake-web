@@ -21,7 +21,7 @@ const SettingsWidget = ({
   onChangeStateProduct,
   isUpdate = false,
 }) => {
-  const { clasess } = useStyle();
+  const { classes } = useStyle();
   const { t } = useTranslation();
   const {
     allProductSKU,
@@ -185,8 +185,8 @@ const SettingsWidget = ({
   const _renderProductClientSelector = () => {
     if (productState?.pricingType === EProductClient.BY_CLIENT) {
       return (
-        <div style={clasess.itemGropupsContainer}>
-          <div style={clasess.labelTitleStyle}>
+        <div style={classes.itemGropupsContainer}>
+          <div style={classes.labelTitleStyle}>
             {t("products.addProduct.admin.byClient")}
           </div>
           <div style={{ width: "100%" }}>
@@ -200,7 +200,7 @@ const SettingsWidget = ({
               })}
               placeholder={t("products.addProduct.admin.byClient")}
               style={{
-                ...clasess.multiSelectStyle,
+                ...classes.multiSelectStyle,
                 overflow: "auto",
                 height: "auto",
                 minHeight: "40px",
@@ -352,8 +352,8 @@ const SettingsWidget = ({
       );
     } else if (productState?.pricingType === EProductClient.BY_CLIENT_TYPE) {
       return (
-        <div style={clasess.itemGropupsContainer}>
-          <div style={clasess.labelTitleStyle}>
+        <div style={classes.itemGropupsContainer}>
+          <div style={classes.labelTitleStyle}>
             {t("products.addProduct.admin.byClientType")}
           </div>
           <div style={{ width: "100%" }}>
@@ -367,7 +367,7 @@ const SettingsWidget = ({
                 };
               })}
               placeholder={t("products.addProduct.admin.byClientType")}
-              style={clasess.multiSelectStyle}
+              style={classes.multiSelectStyle}
               multiple
               onChange={(e: any, value: any) => {
                 onChangeStateProduct(
@@ -393,12 +393,12 @@ const SettingsWidget = ({
     }
   };
   return (
-    <div style={clasess.mainContainer} className="custom-scrollbar">
-      <div style={clasess.categoryNameStyle}>
+    <div style={classes.mainContainer} className="custom-scrollbar">
+      <div style={classes.categoryNameStyle}>
         {t("products.addProduct.admin.productCategory")}
       </div>
 
-      <div style={clasess.firstContainer}>
+      <div style={classes.firstContainer}>
         {isUpdate && (
           <UploadImgProduct
             productState={productState}
@@ -406,14 +406,14 @@ const SettingsWidget = ({
             UploadProductImage={UploadProductImage}
           />
         )}
-        <div style={clasess.itemOnFirstContainer}>
-          <div style={clasess.labelTitleStyle}>
+        <div style={classes.itemOnFirstContainer}>
+          <div style={classes.labelTitleStyle}>
             {t("products.addProduct.admin.productName")}
-            <span style={clasess.requierdInput}>*</span>
+            <span style={classes.requierdInput}>*</span>
           </div>
           <div>
             <GomakeTextInput
-              style={clasess.textInputStyle}
+              style={classes.textInputStyle}
               placeholder={t("products.addProduct.admin.productName")}
               onChange={(e: any) => {
                 onChangeStateProduct("name", e.target.value);
@@ -422,13 +422,13 @@ const SettingsWidget = ({
             />
           </div>
         </div>
-        <div style={clasess.itemOnFirstContainer}>
-          <div style={clasess.labelTitleStyle}>
+        <div style={classes.itemOnFirstContainer}>
+          <div style={classes.labelTitleStyle}>
             {t("products.addProduct.admin.details")}
           </div>
           <div>
             <GomakeTextInput
-              style={clasess.textInputStyle}
+              style={classes.textInputStyle}
               placeholder={t("products.addProduct.admin.details")}
               onChange={(e: any) => {
                 onChangeStateProduct("details", e.target.value);
@@ -437,11 +437,11 @@ const SettingsWidget = ({
             />
           </div>
         </div>
-        <div style={clasess.itemOnFirstContainer}>
-          <div style={clasess.labelTitleStyle}>
+        <div style={classes.itemOnFirstContainer}>
+          <div style={classes.labelTitleStyle}>
             {t("products.addProduct.admin.productCode")}
-            <span style={clasess.requierdInput}>*</span>
-            <span onClick={onClickOpenProductSKU} style={clasess.plusInput}>
+            <span style={classes.requierdInput}>*</span>
+            <span onClick={onClickOpenProductSKU} style={classes.plusInput}>
               +
             </span>
           </div>
@@ -451,7 +451,7 @@ const SettingsWidget = ({
                 key={defultProductSKU}
                 options={allProductSKU}
                 placeholder={t("products.addProduct.admin.productCode")}
-                style={clasess.dropDownListStyle}
+                style={classes.dropDownListStyle}
                 getOptionLabel={(option: any) =>
                   `${option.name} - ${option.code}`
                 }
@@ -469,8 +469,8 @@ const SettingsWidget = ({
         </div>
         {isCompositeStructure ? (
           <>
-            <div style={clasess.itemOnFirstContainer}>
-              <div style={clasess.labelTitleStyle}>
+            <div style={classes.itemOnFirstContainer}>
+              <div style={classes.labelTitleStyle}>
                 {t("products.addProduct.admin.pricingType")}
               </div>
               <div style={{ width: "100%" }}>
@@ -479,7 +479,7 @@ const SettingsWidget = ({
                     key={defultTemplate}
                     options={allTemplate}
                     placeholder={t("products.addProduct.admin.pricingType")}
-                    style={clasess.dropDownListStyle}
+                    style={classes.dropDownListStyle}
                     getOptionLabel={(option: any) => option.name}
                     value={
                       productState?.productStructureType ===
@@ -520,10 +520,10 @@ const SettingsWidget = ({
                 )}
               </div>
             </div>
-            <div style={clasess.itemGropupsContainer}>
-              <div style={clasess.labelTitleStyle}>
+            <div style={classes.itemGropupsContainer}>
+              <div style={classes.labelTitleStyle}>
                 {t("boardMissions.products")}
-                <span style={clasess.requierdInput}>*</span>
+                <span style={classes.requierdInput}>*</span>
               </div>
               <ProductMultiSelect
                 products={productsList ?? []}
@@ -539,10 +539,10 @@ const SettingsWidget = ({
           </>
         ) : (
           <>
-            <div style={clasess.itemOnFirstContainer}>
-              <div style={clasess.labelTitleStyle}>
+            <div style={classes.itemOnFirstContainer}>
+              <div style={classes.labelTitleStyle}>
                 {t("products.addProduct.admin.pricingType")}
-                <span style={clasess.requierdInput}>*</span>
+                <span style={classes.requierdInput}>*</span>
               </div>
               <div style={{ width: "100%" }}>
                 {pricingTypeOptions && pricingTypeOptions.length > 0 && (
@@ -554,7 +554,7 @@ const SettingsWidget = ({
                     }
                     options={pricingTypeOptions}
                     placeholder={t("products.addProduct.admin.pricingType")}
-                    style={clasess.dropDownListStyle}
+                    style={classes.dropDownListStyle}
                     getOptionLabel={(option: any) => option.name}
                     value={selectedPricingType}
                     onChange={(e: any, value: any) => {
@@ -597,13 +597,13 @@ const SettingsWidget = ({
                 )}
               </div>
             </div>
-            <div style={clasess.itemOnFirstContainer}>
-              <div style={clasess.labelTitleStyle}>
+            <div style={classes.itemOnFirstContainer}>
+              <div style={classes.labelTitleStyle}>
                 {t("products.addProduct.admin.deliveryTime")}
               </div>
               <div>
                 <GomakeTextInput
-                  style={clasess.textInputStyle}
+                  style={classes.textInputStyle}
                   placeholder={t("products.addProduct.admin.deliveryTime")}
                   onChange={(e: any) => {
                     onChangeStateProduct("deliveryTime", e.target.value);
@@ -612,13 +612,13 @@ const SettingsWidget = ({
                 />
               </div>
             </div>
-            <div style={clasess.itemOnFirstContainer}>
-              <div style={clasess.labelTitleStyle}>
+            <div style={classes.itemOnFirstContainer}>
+              <div style={classes.labelTitleStyle}>
                 {`${t("customers.modal.additionProfits")} (%)`}
               </div>
               <div>
                 <GomakeTextInput
-                  style={clasess.textInputStyle}
+                  style={classes.textInputStyle}
                   placeholder={t("customers.modal.additionProfits")}
                   onChange={(e: any) => {
                     onChangeStateProduct("additionProfits", e.target.value);
@@ -628,13 +628,13 @@ const SettingsWidget = ({
                 />
               </div>
             </div>
-            <div style={clasess.itemOnFirstContainer}>
-              <div style={clasess.labelTitleStyle}>
+            <div style={classes.itemOnFirstContainer}>
+              <div style={classes.labelTitleStyle}>
                 {t("products.addProduct.admin.externalCode")}
               </div>
               <div>
                 <GomakeTextInput
-                  style={clasess.textInputStyle}
+                  style={classes.textInputStyle}
                   placeholder={t("products.addProduct.admin.externalCode")}
                   onChange={(e: any) => {
                     onChangeStateProduct("externalCode", e.target.value);
@@ -643,13 +643,13 @@ const SettingsWidget = ({
                 />
               </div>
             </div>
-            <div style={clasess.itemOnFirstContainer}>
-              <div style={clasess.labelTitleStyle}>
+            <div style={classes.itemOnFirstContainer}>
+              <div style={classes.labelTitleStyle}>
                 {t("products.addProduct.admin.minimumPrice")}
               </div>
               <div>
                 <GomakeTextInput
-                  style={clasess.textInputStyle}
+                  style={classes.textInputStyle}
                   placeholder={t("products.addProduct.admin.minimumPrice")}
                   onChange={(e: any) => {
                     onChangeStateProduct("minimumPrice", e.target.value);
@@ -664,8 +664,8 @@ const SettingsWidget = ({
       </div>
       {!isCompositeStructure && (
         <>
-          <div style={clasess.itemGropupsContainer}>
-            <div style={clasess.labelTitleStyle}>
+          <div style={classes.itemGropupsContainer}>
+            <div style={classes.labelTitleStyle}>
               {t("products.addProduct.admin.groups")}
             </div>
             <div style={{ width: "100%" }}>
@@ -673,7 +673,7 @@ const SettingsWidget = ({
                 <GoMakeAutoComplate
                   options={allGroups}
                   placeholder={t("products.addProduct.admin.groups")}
-                  style={clasess.multiSelectStyle}
+                  style={classes.multiSelectStyle}
                   multiple
                   onChange={(e: any, value: any) => {
                     onChangeStateProduct(
@@ -695,12 +695,12 @@ const SettingsWidget = ({
             </div>
           </div>
 
-          <div style={clasess.categoryNameStyle}>
+          <div style={classes.categoryNameStyle}>
             {t("products.addProduct.admin.clients")}
           </div>
-          <div style={clasess.firstContainer}>
-            <div style={clasess.itemOnFirstContainer}>
-              <div style={clasess.labelTitleStyle}>
+          <div style={classes.firstContainer}>
+            <div style={classes.itemOnFirstContainer}>
+              <div style={classes.labelTitleStyle}>
                 {t("products.addProduct.admin.pricingType")}
               </div>
               <div style={{ width: "100%" }}>
@@ -708,7 +708,7 @@ const SettingsWidget = ({
                   key={productState?.pricingType}
                   options={productClientsList}
                   placeholder={t("products.addProduct.admin.pricingType")}
-                  style={clasess.dropDownListStyle}
+                  style={classes.dropDownListStyle}
                   onChange={(e: any, value: any) => {
                     onChangeStateProduct("pricingType", value?.id);
                     onChangeStateProduct("clientsTypes", []);
@@ -722,15 +722,15 @@ const SettingsWidget = ({
             </div>
             {_renderProductClientSelector()}
           </div>
-          <div style={clasess.categoryNameStyle}>
+          <div style={classes.categoryNameStyle}>
             {t("products.addProduct.admin.style")}
           </div>
-          <div style={clasess.firstContainer}>
-            {/* <div style={clasess.itemOnFirstContainer}>
-          <div style={clasess.labelTitleStyle}>
+          <div style={classes.firstContainer}>
+            {/* <div style={classes.itemOnFirstContainer}>
+          <div style={classes.labelTitleStyle}>
             {t("products.addProduct.admin.noteColor")}
           </div>
-          <div style={clasess.fileInputStyle}>
+          <div style={classes.fileInputStyle}>
             <MuiColorInput
               value={
                 productState?.noteColor ??
@@ -751,11 +751,11 @@ const SettingsWidget = ({
             )}
           </div>
         </div> */}
-            {/* <div style={clasess.itemOnFirstContainer}>
-          <div style={clasess.labelTitleStyle}>
+            {/* <div style={classes.itemOnFirstContainer}>
+          <div style={classes.labelTitleStyle}>
             {t("products.addProduct.admin.textColor")}
           </div>
-          <div style={clasess.fileInputStyle}>
+          <div style={classes.fileInputStyle}>
             <MuiColorInput
               value={
                 productState?.textColor ??
@@ -776,11 +776,11 @@ const SettingsWidget = ({
             )}
           </div>
         </div> */}
-            <div style={clasess.itemOnFirstContainer}>
-              <div style={clasess.labelTitleStyle}>
+            <div style={classes.itemOnFirstContainer}>
+              <div style={classes.labelTitleStyle}>
                 {t("products.addProduct.admin.jobColor")}
               </div>
-              <div style={clasess.fileInputStyle}>
+              <div style={classes.fileInputStyle}>
                 <MuiColorInput
                   value={
                     productState?.productionFloorJobColor ??
@@ -820,17 +820,17 @@ const SettingsWidget = ({
           </div>
         </>
       )}
-      {/* <div style={clasess.categoryNameStyle}>
+      {/* <div style={classes.categoryNameStyle}>
         {t("products.addProduct.admin.graphicsRequired")}
       </div>
-      <div style={clasess.firstContainer}>
-        <div style={clasess.itemOnFirstContainer}>
-          <div style={clasess.labelTitleStyle}>
+      <div style={classes.firstContainer}>
+        <div style={classes.itemOnFirstContainer}>
+          <div style={classes.labelTitleStyle}>
             {t("products.addProduct.admin.startingPrice")}
           </div>
           <div>
             <GomakeTextInput
-              style={clasess.textInputStyle}
+              style={classes.textInputStyle}
               placeholder={t("products.addProduct.admin.startingPrice")}
               onChange={(e: any) => {
                 onChangeStateProduct("startingPrice", e.target.value);
@@ -839,13 +839,13 @@ const SettingsWidget = ({
             />
           </div>
         </div>
-        <div style={clasess.itemOnFirstContainer}>
-          <div style={clasess.labelTitleStyle}>
+        <div style={classes.itemOnFirstContainer}>
+          <div style={classes.labelTitleStyle}>
             {t("products.addProduct.admin.additionToType")}
           </div>
           <div>
             <GomakeTextInput
-              style={clasess.textInputStyle}
+              style={classes.textInputStyle}
               placeholder={t("products.addProduct.admin.additionToType")}
               onChange={(e: any) => {
                 onChangeStateProduct("additionPrice", e.target.value);
@@ -856,22 +856,22 @@ const SettingsWidget = ({
         </div>
       </div> */}
       {isUpdate ? (
-        <div style={clasess.btnsContainer}>
-          <div style={clasess.addNwBtn} onClick={updatedProduct}>
+        <div style={classes.btnsContainer}>
+          <div style={classes.addNwBtn} onClick={updatedProduct}>
             {t("products.addProduct.admin.updateNewProduct")}
           </div>
         </div>
       ) : (
-        <div style={clasess.btnsContainer}>
+        <div style={classes.btnsContainer}>
           {!isCompositeStructure && (
             <div
-              style={clasess.goToListBtn}
+              style={classes.goToListBtn}
               onClick={createNewProductAndGoToParameterList}
             >
               {t("products.addProduct.admin.addGoToList")}
             </div>
           )}
-          <div style={clasess.addNwBtn} onClick={createNewProduct}>
+          <div style={classes.addNwBtn} onClick={createNewProduct}>
             {t("products.addProduct.admin.addNewProduct")}
           </div>
         </div>

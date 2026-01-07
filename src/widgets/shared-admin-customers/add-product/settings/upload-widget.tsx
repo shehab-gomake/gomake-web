@@ -9,7 +9,7 @@ const UploadImgProduct = ({
   onChangeStateProduct,
   UploadProductImage,
 }) => {
-  const { clasess } = useStyle();
+  const { classes } = useStyle();
   const { t } = useTranslation();
   const dir: "rtl" | "ltr" = t("direction");
   const inputRef = useRef(null);
@@ -24,20 +24,20 @@ const UploadImgProduct = ({
     }
   };
   return (
-    <div style={clasess.itemOnFirstContainer}>
-      <div style={clasess.labelTitleStyle}>
+    <div style={classes.itemOnFirstContainer}>
+      <div style={classes.labelTitleStyle}>
         {t("products.addProduct.admin.uploadImg")}
       </div>
       <Stack
-        style={clasess.attachmentContainer}
+        style={classes.attachmentContainer}
         onClick={() => inputRef.current?.click()}
       >
-        <Stack style={clasess.attachmentStyle}>
+        <Stack style={classes.attachmentStyle}>
           <Avatar
-            sx={clasess.avatar}
+            sx={classes.avatar}
             src={`${productState.img}?${new Date().toString()}`}
           />
-          <label style={clasess.labelStyle}>
+          <label style={classes.labelStyle}>
             {productState?.img
               ? t("products.addProduct.admin.imageUploaded")
               : t("mailingSettings.noAttachment")}

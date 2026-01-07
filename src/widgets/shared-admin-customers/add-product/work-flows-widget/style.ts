@@ -8,7 +8,7 @@ import { FONT_FAMILY } from "@/utils/font-family";
 const useStyle = () => {
   const { t } = useTranslation();
 
-  const clasess = useMemo(() => {
+  const classes = useMemo(() => {
     return {
       mainContainer: {
         display: "flex",
@@ -26,13 +26,13 @@ const useStyle = () => {
         width: "100%",
         gap: 15,
       },
-      switchContainer:{
+      switchContainer: {
         display: "flex",
         flexDirection: "row" as "row",
         justifyContent: "flex-end",
         alignItems: "center",
       },
-      switchLabel:{
+      switchLabel: {
         ...FONT_FAMILY.Inter(700, 14),
         color: "#344054",
       },
@@ -48,8 +48,8 @@ const useStyle = () => {
         borderRadius: 8,
         boxShadow: "none",
         backgroundColor: "#FFF",
-        color:"#344054",
-        ...FONT_FAMILY.Inter(500, 14)
+        color: "#344054",
+        ...FONT_FAMILY.Inter(500, 14),
       },
       copyToAnotherProductsButton: {
         width: "fit-content",
@@ -85,7 +85,7 @@ const useStyle = () => {
     };
   }, [i18next.language, t]);
   return {
-    clasess,
+    classes,
   };
 };
 export { useStyle };
