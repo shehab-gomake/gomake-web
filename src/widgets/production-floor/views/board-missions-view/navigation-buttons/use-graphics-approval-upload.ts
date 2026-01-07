@@ -89,8 +89,6 @@ const useGraphicsApprovalUpload = ({
           fileName: file.name, 
           contentType: file.type,
           bucketName: "gomake-graphics-approval",
-          isDev: true,
-          origin: "http://localhost:3004",
         },
         {
           headers: {
