@@ -72,7 +72,7 @@ const useStyle = ({
   navStatus: any;
   customGap?: number;
 }) => {
-  const { primaryColor, primaryLavender } = useGomakeTheme();
+  const { primaryColor, primarySecondaryBlend } = useGomakeTheme();
   const { t } = useTranslation();
   const isRTL = t("direction") === "rtl";
 
@@ -177,7 +177,7 @@ const useStyle = ({
         transition: "opacity 0.2s ease",
       },
     };
-  }, [isSelected, navStatus, primaryColor, primaryLavender, isRTL]);
+  }, [isSelected, navStatus, primaryColor, primarySecondaryBlend, isRTL]);
 
   return {
     classes,

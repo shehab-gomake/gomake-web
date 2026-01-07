@@ -195,7 +195,7 @@ const useGomakeTheme = () => {
     [theme]
   );
 
-  const primaryLavender = useCallback(
+  const primarySecondaryBlend = useCallback(
     (degree: number = 500) => {
       // Check for CSS variable first (for theme-based colors)
       if (typeof window !== "undefined") {
@@ -205,6 +205,7 @@ const useGomakeTheme = () => {
         // Map degree to CSS variable names
         const cssVarMap: { [key: number]: string } = {
           100: "--theme-secondary-on-dark",
+          300: "--theme-secondary-color",
           500: "--theme-secondary-color",
           700: "--theme-secondary-on-light",
         };
@@ -221,6 +222,7 @@ const useGomakeTheme = () => {
       // Default fallbacks based on degree
       const defaultMap: { [key: number]: string } = {
         100: "#CBCBE4", // Light variant
+        300: "#8283BE",
         500: "#8283BE", // Medium/base variant
         700: "#504fa1", // Dark variant
       };
@@ -241,7 +243,7 @@ const useGomakeTheme = () => {
     errorColor,
     warningColor,
     grayColor,
-    primaryLavender,
+    primarySecondaryBlend,
   };
 };
 

@@ -1,8 +1,9 @@
 import { PrimaryButton } from "@/components/button/primary-button";
 import { Stack } from "@mui/material";
-import { FC } from "react";
+import { FC, useMemo } from "react";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useTranslation } from "react-i18next";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 interface DaySelectorProps {
   groupIndex: number;
@@ -28,37 +29,98 @@ const DaysComponent: FC<DaySelectorProps> = ({
   onToggleDay,
 }) => {
   const { t } = useTranslation();
+  const { primaryColor, neutralColor } = useGomakeTheme();
+
+  const containerStyle = useMemo(
+    () => ({
+      backgroundColor: `var(--theme-bg-secondary, ${neutralColor(50)})`,
+      borderRadius: `var(--theme-radius-md, 8px)`,
+      gap: "8px",
+      overflow: "hidden",
+      padding: "6px",
+      border: `1px solid var(--theme-border-color, ${neutralColor(300)})`,
+    }),
+    [neutralColor]
+  );
+
+  const buttonStyle = useMemo(
+    () => ({
+      padding: "8px 4px",
+      border: "none",
+      borderRadius: `var(--theme-radius-md, 4px)`,
+      minWidth: 0,
+      width: "100%",
+      height: "40px",
+      ...FONT_FAMILY.Inter(600, 14),
+      transition: "all 0.2s ease",
+      "&:hover": {
+        transform: "translateY(-1px)",
+      },
+    }),
+    []
+  );
+
+  const getButtonVariant = (dayValue: number) => {
+    const isSelected = days?.includes(dayValue);
+    const isDisabled =
+      selectedDays.includes(dayValue) && !days.includes(dayValue);
+    return isSelected ? "contained" : "outlined";
+  };
+
   return (
-    <Stack
-      bgcolor={"#EAECF0"}
-      borderRadius={"10px"}
-      gap={"28px"}
-      overflow={"hidden"}
-      padding={"4px 12px"}
-      direction={"row"}
-      width={"100%"}
-    >
-      {DAYS.map((day) => (
-        <PrimaryButton
-          key={day.value}
-          variant={days?.includes(day?.value) ? "contained" : "outlined"}
-          disabled={
-            selectedDays.includes(day?.value) && !days.includes(day?.value)
-          }
-          onClick={() => onToggleDay(groupIndex, day?.value)}
-          sx={{
-            padding: "1px",
-            border: 0,
-            borderRadius: "4px",
-            minWidth: 0,
-            width: "100%",
-            height: "36px",
-            ...FONT_FAMILY.Inter(600, 14),
-          }}
-        >
-          {t(day.label)}
-        </PrimaryButton>
-      ))}
+    <Stack sx={containerStyle} direction={"row"} width={"100%"}>
+      {DAYS.map((day) => {
+        const isSelected = days?.includes(day?.value);
+        const isDisabled =
+          selectedDays.includes(day?.value) && !days.includes(day?.value);
+
+        return (
+          <PrimaryButton
+            key={day.value}
+            variant={getButtonVariant(day.value)}
+            disabled={isDisabled}
+            onClick={() => onToggleDay(groupIndex, day?.value)}
+            sx={{
+              ...buttonStyle,
+              ...(isSelected && {
+                backgroundColor: `var(--theme-primary-color, ${primaryColor(
+                  500
+                )})`,
+                color: "#FFFFFF",
+                "&:hover": {
+                  backgroundColor: `var(--theme-primary-hover, ${primaryColor(
+                    500
+                  )})`,
+                },
+              }),
+              ...(!isSelected && {
+                backgroundColor: "transparent",
+                color: `var(--theme-text-primary, ${neutralColor(900)})`,
+                border: `1px solid var(--theme-border-color, ${neutralColor(
+                  300
+                )})`,
+                "&:hover": {
+                  backgroundColor: `var(--theme-bg-tertiary, ${neutralColor(
+                    50
+                  )})`,
+                  borderColor: `var(--theme-primary-color, ${primaryColor(
+                    500
+                  )})`,
+                },
+              }),
+              ...(isDisabled && {
+                opacity: 0.4,
+                cursor: "not-allowed",
+                "&:hover": {
+                  transform: "none",
+                },
+              }),
+            }}
+          >
+            {t(day.label)}
+          </PrimaryButton>
+        );
+      })}
     </Stack>
   );
 };

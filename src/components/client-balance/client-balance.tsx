@@ -37,7 +37,7 @@ const ClientBalanceComponent = ({
   const { callApi } = useGomakeAxios();
   const {
     primaryColor,
-    primaryLavender,
+    primarySecondaryBlend,
     errorColor,
     neutralColor,
     successColor,
@@ -95,7 +95,9 @@ const ClientBalanceComponent = ({
                 padding: "4px 12px",
                 backgroundColor: isNegative
                   ? errorColor(500)
-                  : `var(--theme-secondary-light, ${primaryLavender(500)})`,
+                  : `var(--theme-secondary-light, ${primarySecondaryBlend(
+                      500
+                    )})`,
                 color: isNegative
                   ? "#FFFFFF !important"
                   : `var(--theme-secondary-color, ${primaryColor(

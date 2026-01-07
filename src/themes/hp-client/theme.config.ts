@@ -14,6 +14,7 @@ import {
 } from "./components/hp-top-header";
 import { HpSideBarContainer } from "./components/hp-side-bar-container";
 import { HpSideList } from "./components/hp-side-list";
+import { HpProfileAvatar } from "./components/hp-profile-avatar";
 import {
   HpUserIcon,
   HpHelpIcon,
@@ -27,7 +28,9 @@ const hpClientThemeConfig: ThemeConfig = {
 
   styles: {
     cssVariables: {
-      // Primary Colors
+      /* -------------------------------------------------
+       HP PRIMARY COLORS
+      --------------------------------------------------*/
       "--theme-primary-color": "#024AD8", // Blue - primary(500)
       "--theme-primary-hover": "#1A5FFF", // Lighter/more vibrant for hover
       "--theme-primary-light": "#B2D2FF", // More bold/darker than before
@@ -43,8 +46,7 @@ const hpClientThemeConfig: ThemeConfig = {
       "--theme-secondary-color": "#568393", // Power Storm - shade A (main, white background)
       "--theme-secondary-on-dark": "#789CA9", // Power Storm - shade B (darker photos)
       "--theme-secondary-on-light": "#4D7684", // Power Storm - shade C (lighter photos)
-      //!HERE FROM ME
-      "--theme-secondary-light": "#E8F0F3", // Power Storm - light background tint (for hover states on white)
+      "--theme-secondary-light": "#E8F0F3", // Power Storm - light background tint (for hover states on white) //!HERE FROM ME
 
       // ORANGE BLOOM
       "--theme-accent-color": "#FF5050", // Orange Bloom - shade A (main, white background)
@@ -270,6 +272,7 @@ const hpClientThemeConfig: ThemeConfig = {
     TrialIndicator: HpTrialIndicator,
     SideBarContainer: HpSideBarContainer,
     SideList: HpSideList,
+    ProfileAvatar: HpProfileAvatar,
   },
 
   // Icon overrides for HP Client theme

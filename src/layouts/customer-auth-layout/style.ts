@@ -24,7 +24,7 @@ const useStyle = ({
   navStatus: any;
   customGap?: number;
 }) => {
-  const { theme, primaryColor, primaryLavender } = useGomakeTheme();
+  const { theme, primaryColor, primarySecondaryBlend } = useGomakeTheme();
   const isMobile = useIsMobile();
   const mobileHeight = useMobileHeight();
   const { currentTheme } = useTheme();
@@ -43,7 +43,7 @@ const useStyle = ({
       logoContainer: {
         display: "flex",
         marginTop: navStatus?.isClosed ? 20 : 0,
-        backgroundColor: primaryLavender(700),
+        backgroundColor: primarySecondaryBlend(700),
         borderRadius: 8,
         padding: 10,
       },

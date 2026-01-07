@@ -2,13 +2,15 @@ import React, { useRef, useState } from "react";
 import Stack from "@mui/material/Stack";
 import CloudUploadOutlinedIcon from "@mui/icons-material/CloudUploadOutlined";
 
-import Button from "@mui/material/Button";
+import { PrimaryButton } from "@/components/button/primary-button";
 import { IFileUploadComponentProps } from "@/widgets/settings-profile-widget/components/upload-file/interface";
 import { Avatar } from "@mui/material";
 import { useTranslation } from "react-i18next";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 const FileUploadComponent = ({ onUpload }: IFileUploadComponentProps) => {
   const [selectedFile, setSelectedFile] = useState(null);
+  const { primaryColor } = useGomakeTheme();
   const inputRef = useRef(null);
   const { t } = useTranslation();
   const handleFileSelect = (e) => {
@@ -44,6 +46,7 @@ const FileUploadComponent = ({ onUpload }: IFileUploadComponentProps) => {
     }
     onUpload(selectedFile);
   };
+
   return (
     <Stack
       direction={"column"}
@@ -69,7 +72,10 @@ const FileUploadComponent = ({ onUpload }: IFileUploadComponentProps) => {
         {selectedFile ? (
           <Avatar src={selectedFile} sx={{ width: 180, height: 180 }} />
         ) : (
-          <CloudUploadOutlinedIcon fontSize={"large"} color={"primary"} />
+          <CloudUploadOutlinedIcon
+            fontSize={"large"}
+            style={{ color: primaryColor(500) }}
+          />
         )}
       </div>
       <input
@@ -79,17 +85,22 @@ const FileUploadComponent = ({ onUpload }: IFileUploadComponentProps) => {
         style={{ display: "none" }}
         ref={inputRef}
       />
-      <Button variant={"contained"} onClick={() => inputRef.current?.click()}>
+      <PrimaryButton
+        variant={"contained"}
+        onClick={() => inputRef.current?.click()}
+        style={{ width: "fit-content" }}
+      >
         {t("usersSettings.selectFile")}
-      </Button>
-      <Button
+      </PrimaryButton>
+      <PrimaryButton
         color={"success"}
         variant={"contained"}
         onClick={handleUpload}
         disabled={selectedFile === null ? true : false}
+        style={{ width: "fit-content" }}
       >
         {t("usersSettings.uploadFile")}
-      </Button>
+      </PrimaryButton>
     </Stack>
   );
 };
