@@ -248,7 +248,13 @@ const ProductionFloorBoardMissionsViews = ({
     }
 
     if (view === EProductionFloorView.KANBAN) {
-      return <ProductionFloorKanbanBoard />;
+      return <ProductionFloorKanbanBoard
+        isEmailComposerOpenApproval={isEmailComposerOpenApproval}
+        emailDataApproval={emailDataApproval}
+        openEmailComposerApproval={openEmailComposerApproval}
+        closeEmailComposerApproval={closeEmailComposerApproval}
+        isLoadingEmailDataApproval={isLoadingEmailDataApproval}
+      />;
     }
 
     return <div />;
