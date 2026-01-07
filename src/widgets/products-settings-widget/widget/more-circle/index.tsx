@@ -13,9 +13,13 @@ import { DeleteMenuIcon } from "@/widgets/quote-new/more-circle/icons/delete-men
 import { DuplicateIcon } from "@/components/icons/icons";
 import { ModalType } from "@/enums";
 
-
-const MoreMenuWidget = ({ item, updatedProduct, getActions, isSubProduct }: any) => {
-  const { clasess } = useStyle();
+const MoreMenuWidget = ({
+  item,
+  updatedProduct,
+  getActions,
+  isSubProduct,
+}: any) => {
+  const { classes } = useStyle();
   const { t } = useTranslation();
   const {
     open,
@@ -38,11 +42,12 @@ const MoreMenuWidget = ({ item, updatedProduct, getActions, isSubProduct }: any)
     onClickDuplicateProduct,
     openDuplicateRowModal,
     onClickCloseDuplicateRowModal,
-    onClickOpenDuplicateRowModal
+    onClickOpenDuplicateRowModal,
+    primarySecondaryBlend,
   } = useMoreCircle({
     updatedProduct,
     item,
-    getActions
+    getActions,
   });
   return (
     <>
@@ -58,59 +63,67 @@ const MoreMenuWidget = ({ item, updatedProduct, getActions, isSubProduct }: any)
               handleClose();
 
               const url = router?.query?.isSubProducts
-                ? `/settings/products/edit/${item?.id}?productName=${encodeURIComponent(item?.name)}&isSubProducts=true`
-                : `/settings/products/edit/${item?.id}?productName=${encodeURIComponent(item?.name)}`;
+                ? `/settings/products/edit/${
+                    item?.id
+                  }?productName=${encodeURIComponent(
+                    item?.name
+                  )}&isSubProducts=true`
+                : `/settings/products/edit/${
+                    item?.id
+                  }?productName=${encodeURIComponent(item?.name)}`;
 
               // Force navigation using window.location to ensure clean state
               // This ensures the page fully reloads and clears any search state
               window.location.href = url;
             }}
           >
-            <div style={clasess.menuRowStyle}>
+            <div style={classes.menuRowStyle}>
               <EditingIcon />
-              <div style={clasess.rowTextStyle}>{t("remainWords.editing")}</div>
+              <div style={classes.rowTextStyle}>{t("remainWords.editing")}</div>
             </div>
           </MenuItem>
           <MenuItem onClick={() => updatedProductInside(item)}>
-            <div style={clasess.menuRowStyle}>
+            <div style={classes.menuRowStyle}>
               <ConvertIcon />
-              <div style={clasess.rowTextStyle}>
+              <div style={classes.rowTextStyle}>
                 {item?.status
                   ? t("remainWords.convertToInactive")
                   : t("remainWords.convertToActive")}
               </div>
             </div>
           </MenuItem>
-          {!router.query.productId && !router.query.isSubProducts && !isSubProduct && (
-            <>
-              <MenuItem onClick={() => createSubProduct(item)}>
-                <div style={clasess.menuRowStyle}>
-                  <PlusIcon stroke="#8283BE" />
-                  <div style={clasess.rowTextStyle}>
-                    {t("remainWords.createSubProduct")}
+          {!router.query.productId &&
+            !router.query.isSubProducts &&
+            !isSubProduct && (
+              <>
+                <MenuItem onClick={() => createSubProduct(item)}>
+                  <div style={classes.menuRowStyle}>
+                    <PlusIcon stroke={primarySecondaryBlend(500)} />
+                    <div style={classes.rowTextStyle}>
+                      {t("remainWords.createSubProduct")}
+                    </div>
                   </div>
-                </div>
-              </MenuItem>
-            </>
-          )}
+                </MenuItem>
+              </>
+            )}
           <MenuItem>
             <div
-              style={clasess.menuRowStyle}
+              style={classes.menuRowStyle}
               onClick={onClickOpenDuplicateRowModal}
             >
               <DuplicateIcon />
-              <div style={clasess.rowTextStyle}>
+              <div style={classes.rowTextStyle}>
                 {t("navigationButtons.duplicate")}
               </div>
             </div>
           </MenuItem>
           <MenuItem>
             <div
-              style={clasess.menuRowStyle}
+              style={classes.menuRowStyle}
               onClick={onClickOpenDeleteRowModal}
             >
               <DeleteMenuIcon />
-              <div style={clasess.rowTextStyle}>
+              <div style={classes.rowTextStyle}>
                 {t("navigationButtons.delete")}
               </div>
             </div>
@@ -127,7 +140,7 @@ const MoreMenuWidget = ({ item, updatedProduct, getActions, isSubProduct }: any)
           horizontal: "left",
         }}
       >
-        <div style={clasess.errorMsgStyle}>no sub products founded</div>
+        <div style={classes.errorMsgStyle}>no sub products founded</div>
       </Popover>
       <GoMakeDeleteModal
         modalType={ModalType.DELETE}
@@ -146,7 +159,6 @@ const MoreMenuWidget = ({ item, updatedProduct, getActions, isSubProduct }: any)
         onClose={onClickCloseDuplicateRowModal}
         onClickDelete={onClickDuplicateProduct}
       />
-
     </>
   );
 };

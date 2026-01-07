@@ -1,5 +1,8 @@
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+
 const MoreCircleIcon = (props: any) => {
   const { color } = props;
+  const { primaryColor } = useGomakeTheme();
   return (
     <svg
       width="25"
@@ -11,7 +14,7 @@ const MoreCircleIcon = (props: any) => {
       <path
         d="M22.6111 12C22.6111 6.5 18.0236 2 12.4166 2C6.80967 2 2.22217 6.5 2.22217 12C2.22217 17.5 6.80967 22 12.4166 22C18.0236 22 22.6111 17.5 22.6111 12Z"
         fill="white"
-        stroke={color || "#5859A8"}
+        stroke={color || `var(--theme-secondary-color, ${primaryColor(500)})`}
         strokeWidth="1.5"
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -24,7 +27,7 @@ const MoreCircleIcon = (props: any) => {
       />
       <path
         d="M12.4167 8.00354V7.99456"
-        stroke={color || "#5859A8"}
+        stroke={color || `var(--theme-secondary-color, ${primaryColor(500)})`}
         strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -37,7 +40,7 @@ const MoreCircleIcon = (props: any) => {
       />
       <path
         d="M12.4167 12.0045V11.9955"
-        stroke={color || "#5859A8"}
+        stroke={color || `var(--theme-secondary-color, ${primaryColor(500)})`}
         strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -50,7 +53,7 @@ const MoreCircleIcon = (props: any) => {
       />
       <path
         d="M12.4167 16.0055V15.9965"
-        stroke={color || "#5859A8"}
+        stroke={color || `var(--theme-secondary-color, ${primaryColor(500)})`}
         strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"

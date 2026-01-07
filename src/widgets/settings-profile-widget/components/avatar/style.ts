@@ -47,7 +47,7 @@ const useStyle = () => {
         display: "flex",
         alignItems: "center",
         gap: 8,
-        color: primarySecondaryBlend(300),
+        color: primarySecondaryBlend(500),
         height: "10px",
       },
       avatarTitle: {

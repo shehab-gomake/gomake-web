@@ -99,10 +99,11 @@ const SettingsWidget = ({
       name: t("products.addProduct.admin.composite"),
       isComposite: true,
     };
-    const templateOptions = allTemplate?.map((template: any) => ({
-      ...template,
-      isComposite: false,
-    })) || [];
+    const templateOptions =
+      allTemplate?.map((template: any) => ({
+        ...template,
+        isComposite: false,
+      })) || [];
     return [compositeOption, ...templateOptions];
   }, [allTemplate, t]);
 
@@ -112,15 +113,25 @@ const SettingsWidget = ({
       return pricingTypeOptions[0]; // Composite option
     }
     if (productState?.templateId) {
-      const templateId = typeof productState?.templateId === "object"
-        ? productState?.templateId?.id
-        : productState?.templateId;
-      return pricingTypeOptions.find(
-        (option: any) => option.id === templateId && !option.isComposite
-      ) || defultTemplate || null;
+      const templateId =
+        typeof productState?.templateId === "object"
+          ? productState?.templateId?.id
+          : productState?.templateId;
+      return (
+        pricingTypeOptions.find(
+          (option: any) => option.id === templateId && !option.isComposite
+        ) ||
+        defultTemplate ||
+        null
+      );
     }
     return defultTemplate || null;
-  }, [isCompositeStructure, productState?.templateId, pricingTypeOptions, defultTemplate]);
+  }, [
+    isCompositeStructure,
+    productState?.templateId,
+    pricingTypeOptions,
+    defultTemplate,
+  ]);
 
   useEffect(() => {
     if (!isCompositeStructure) {
@@ -144,7 +155,11 @@ const SettingsWidget = ({
         )
       );
     }
-  }, [isCompositeStructure, productState?.compositeProductIds, onChangeStateProduct]);
+  }, [
+    isCompositeStructure,
+    productState?.compositeProductIds,
+    onChangeStateProduct,
+  ]);
 
   useEffect(() => {
     if (!productState?.productStructureType) {
@@ -203,7 +218,8 @@ const SettingsWidget = ({
                     item?.id !== "searchMore" &&
                     item?.id !== "addClient"
                 );
-                const selectedIds = validValues?.map((item: any) => item?.id) || [];
+                const selectedIds =
+                  validValues?.map((item: any) => item?.id) || [];
 
                 // Store the full customer objects for selected customers
                 updateSelectedCustomersCache(selectedIds, validValues);
@@ -214,59 +230,90 @@ const SettingsWidget = ({
                 // Also update clientsDetails with the full customer objects
                 const clientsDetails = validValues.map((item: any) => ({
                   id: item.id,
-                  name: item.name || item.label || item.customerName || item.clientName || '',
+                  name:
+                    item.name ||
+                    item.label ||
+                    item.customerName ||
+                    item.clientName ||
+                    "",
                 }));
                 onChangeStateProduct("clientsDetails", clientsDetails);
               }}
               value={(() => {
                 // Priority 1: Use clientsDetails if available (from backend or updated by onChange)
-                if (productState?.clientsDetails && Array.isArray(productState.clientsDetails) && productState.clientsDetails.length > 0) {
-                  return productState.clientsDetails.map((customer: any) => ({
-                    label: customer?.name || customer?.customerName || customer?.clientName || customer?.label || '',
-                    id: customer?.id,
-                  })).filter((c: any) => c.id && c.label);
+                if (
+                  productState?.clientsDetails &&
+                  Array.isArray(productState.clientsDetails) &&
+                  productState.clientsDetails.length > 0
+                ) {
+                  return productState.clientsDetails
+                    .map((customer: any) => ({
+                      label:
+                        customer?.name ||
+                        customer?.customerName ||
+                        customer?.clientName ||
+                        customer?.label ||
+                        "",
+                      id: customer?.id,
+                    }))
+                    .filter((c: any) => c.id && c.label);
                 }
 
                 // Priority 2: Use clients array (could be IDs or objects)
-                if (!productState?.clients || productState.clients.length === 0) {
+                if (
+                  !productState?.clients ||
+                  productState.clients.length === 0
+                ) {
                   return [];
                 }
 
-                return productState.clients.map((item: any) => {
-                  // Check if item is already an object with id and name
-                  if (typeof item === 'object' && item.id) {
-                    return {
-                      label: item?.name || item?.customerName || item?.clientName || item?.label || '',
-                      id: item.id,
-                    };
-                  }
+                return productState.clients
+                  .map((item: any) => {
+                    // Check if item is already an object with id and name
+                    if (typeof item === "object" && item.id) {
+                      return {
+                        label:
+                          item?.name ||
+                          item?.customerName ||
+                          item?.clientName ||
+                          item?.label ||
+                          "",
+                        id: item.id,
+                      };
+                    }
 
-                  // Item is an ID string - find customer in lists
-                  const customerId = item;
-                  // First try to find in current customersList
-                  let customer = customersList?.find(
-                    (customer: any) => customer?.id === customerId
-                  );
-                  // If not found in current list, try to find in cached selected customers
-                  if (!customer) {
-                    customer = selectedCustomersCache?.find(
-                      (c: any) => c?.id === customerId
+                    // Item is an ID string - find customer in lists
+                    const customerId = item;
+                    // First try to find in current customersList
+                    let customer = customersList?.find(
+                      (customer: any) => customer?.id === customerId
                     );
-                  }
-                  if (!customer) {
-                    return null;
-                  }
-                  // Get customer name - check multiple possible field names
-                  const customerName = customer?.name || customer?.customerName || customer?.clientName || customer?.label || null;
-                  if (!customerName) {
-                    // If no name found, return null so it doesn't show with ID
-                    return null;
-                  }
-                  return {
-                    label: customerName,
-                    id: customer?.id,
-                  };
-                }).filter(Boolean);
+                    // If not found in current list, try to find in cached selected customers
+                    if (!customer) {
+                      customer = selectedCustomersCache?.find(
+                        (c: any) => c?.id === customerId
+                      );
+                    }
+                    if (!customer) {
+                      return null;
+                    }
+                    // Get customer name - check multiple possible field names
+                    const customerName =
+                      customer?.name ||
+                      customer?.customerName ||
+                      customer?.clientName ||
+                      customer?.label ||
+                      null;
+                    if (!customerName) {
+                      // If no name found, return null so it doesn't show with ID
+                      return null;
+                    }
+                    return {
+                      label: customerName,
+                      id: customer?.id,
+                    };
+                  })
+                  .filter(Boolean);
               })()}
               getOptionLabel={(option: any) => {
                 if (option?.isInfo) {
@@ -281,9 +328,14 @@ const SettingsWidget = ({
                       {...props}
                       style={{
                         ...props.style,
-                        cursor: option?.id === "searchMore" ? "pointer" : "default",
-                        color: option?.id === "recentOptions" ? "#2e3092" : "#1976d2",
-                        fontWeight: option?.id === "recentOptions" ? "bold" : "normal",
+                        cursor:
+                          option?.id === "searchMore" ? "pointer" : "default",
+                        color:
+                          option?.id === "recentOptions"
+                            ? "#2e3092"
+                            : "#1976d2",
+                        fontWeight:
+                          option?.id === "recentOptions" ? "bold" : "normal",
                       }}
                     >
                       {option?.name}
@@ -291,9 +343,7 @@ const SettingsWidget = ({
                   );
                 }
                 return (
-                  <li {...props}>
-                    {option?.name || option?.label || ""}
-                  </li>
+                  <li {...props}>{option?.name || option?.label || ""}</li>
                 );
               }}
             />
@@ -432,26 +482,37 @@ const SettingsWidget = ({
                     style={clasess.dropDownListStyle}
                     getOptionLabel={(option: any) => option.name}
                     value={
-                      productState?.productStructureType === EProductStructureType.COMPOSITE ? {
-                        label: t("products.addProduct.admin.composite"),
-                        id: "COMPOSITE",
-                        name: t("products.addProduct.admin.composite"),
-                        isComposite: true,
-                      } :
-                        typeof productState?.templateId != "object"
-                          ? defultTemplate
-                          : productState?.templateId
+                      productState?.productStructureType ===
+                      EProductStructureType.COMPOSITE
+                        ? {
+                            label: t("products.addProduct.admin.composite"),
+                            id: "COMPOSITE",
+                            name: t("products.addProduct.admin.composite"),
+                            isComposite: true,
+                          }
+                        : typeof productState?.templateId != "object"
+                        ? defultTemplate
+                        : productState?.templateId
                     }
                     onChange={(e: any, value: any) => {
                       // Store templateId for display but don't send in payload
                       onChangeStateProduct("templateId", value);
                       // If templateId is cleared and not composite, set to BASE
-                      if (!value && productState?.productStructureType === EProductStructureType.COMPOSITE) {
-                        onChangeStateProduct("productStructureType", EProductStructureType.BASE);
+                      if (
+                        !value &&
+                        productState?.productStructureType ===
+                          EProductStructureType.COMPOSITE
+                      ) {
+                        onChangeStateProduct(
+                          "productStructureType",
+                          EProductStructureType.BASE
+                        );
                         onChangeStateProduct("compositeProductIds", []);
-                      }
-                      else {
-                        onChangeStateProduct("productStructureType", EProductStructureType.BASE);
+                      } else {
+                        onChangeStateProduct(
+                          "productStructureType",
+                          EProductStructureType.BASE
+                        );
                         onChangeStateProduct("compositeProductIds", []);
                       }
                     }}
@@ -470,9 +531,7 @@ const SettingsWidget = ({
                 onProductChange={(ids) => {
                   onChangeStateProduct("compositeProductIds", ids);
                 }}
-                placeholder={t(
-                  "boardMissions.selectProducts"
-                )}
+                placeholder={t("boardMissions.selectProducts")}
                 containerStyle={{ width: "100%" }}
                 selectStyle={{ width: "100%" }}
               />
@@ -488,7 +547,11 @@ const SettingsWidget = ({
               <div style={{ width: "100%" }}>
                 {pricingTypeOptions && pricingTypeOptions.length > 0 && (
                   <GoMakeAutoComplate
-                    key={selectedPricingType ? String(selectedPricingType.id) : "pricing-type"}
+                    key={
+                      selectedPricingType
+                        ? String(selectedPricingType.id)
+                        : "pricing-type"
+                    }
                     options={pricingTypeOptions}
                     placeholder={t("products.addProduct.admin.pricingType")}
                     style={clasess.dropDownListStyle}
@@ -497,14 +560,20 @@ const SettingsWidget = ({
                     onChange={(e: any, value: any) => {
                       if (!value) {
                         // Value cleared: reset to BASE (1)
-                        onChangeStateProduct("productStructureType", EProductStructureType.BASE);
+                        onChangeStateProduct(
+                          "productStructureType",
+                          EProductStructureType.BASE
+                        );
                         onChangeStateProduct("compositeProductIds", []);
                         onChangeStateProduct("templateId", null);
                         return;
                       }
                       if (value?.isComposite) {
                         // ONLY when Composite is selected: set productStructureType to COMPOSITE (2)
-                        onChangeStateProduct("productStructureType", EProductStructureType.COMPOSITE);
+                        onChangeStateProduct(
+                          "productStructureType",
+                          EProductStructureType.COMPOSITE
+                        );
                         if (!Array.isArray(productState?.compositeProductIds)) {
                           onChangeStateProduct("compositeProductIds", []);
                         }
@@ -512,7 +581,10 @@ const SettingsWidget = ({
                         onChangeStateProduct("templateId", null);
                       } else {
                         // When selecting ANY template option: set productStructureType to BASE (1)
-                        onChangeStateProduct("productStructureType", EProductStructureType.BASE);
+                        onChangeStateProduct(
+                          "productStructureType",
+                          EProductStructureType.BASE
+                        );
                         onChangeStateProduct("compositeProductIds", []);
                         if (isUpdate) {
                           onClickOpenPricingType(value);
@@ -718,6 +790,20 @@ const SettingsWidget = ({
                     onChangeStateProduct("productionFloorJobColor", value);
                   }}
                   format="hex"
+                  sx={{
+                    "& .MuiOutlinedInput-notchedOutline": {
+                      border: "none",
+                    },
+                    "& .MuiOutlinedInput-root fieldset": {
+                      border: "none",
+                    },
+                    "&:hover .MuiOutlinedInput-notchedOutline": {
+                      border: "none",
+                    },
+                    "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                      border: "none",
+                    },
+                  }}
                 />
                 {productState?.productionFloorJobColor && (
                   <div

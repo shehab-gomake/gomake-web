@@ -39,9 +39,16 @@ const StyledAutocomplete: any = styled(Autocomplete, {
       width: "100%",
       "& fieldset": {
         border: props?.selectedOption
-          ? "1px solid var(--theme-dropdown-border-color, transparent) !important"
+          ? `1px solid ${
+              props?.style?.borderColor ||
+              "var(--theme-dropdown-border-color, transparent)"
+            } !important`
+          : props?.style?.borderColor
+          ? `1px solid ${props?.style?.borderColor} !important`
           : "var(--theme-dropdown-border, none) !important",
-        borderColor: props?.selectedOption
+        borderColor: props?.style?.borderColor
+          ? props?.style?.borderColor
+          : props?.selectedOption
           ? "var(--theme-dropdown-border-color, transparent)"
           : "transparent",
         boxSizing: "border-box",
@@ -49,33 +56,44 @@ const StyledAutocomplete: any = styled(Autocomplete, {
       },
       "& .MuiOutlinedInput-notchedOutline": {
         border: props?.selectedOption
-          ? "1px solid var(--theme-dropdown-border-color, transparent)"
+          ? `1px solid ${
+              props?.style?.borderColor ||
+              "var(--theme-dropdown-border-color, transparent)"
+            }`
+          : props?.style?.borderColor
+          ? `1px solid ${props?.style?.borderColor}`
           : "var(--theme-dropdown-border, none)",
-        borderColor: props?.selectedOption
+        borderColor: props?.style?.borderColor
+          ? props?.style?.borderColor
+          : props?.selectedOption
           ? "var(--theme-dropdown-border-color, transparent)"
           : "transparent",
       },
       "&.Mui-focused fieldset": {
-        borderColor:
-          "var(--theme-dropdown-border-color, transparent) !important",
+        borderColor: props?.style?.borderColor
+          ? `${props?.style?.borderColor} !important`
+          : "var(--theme-dropdown-border-color, transparent) !important",
         borderWidth: "1px !important",
         borderStyle: "solid !important",
       },
       "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-        borderColor:
-          "var(--theme-dropdown-border-color, transparent) !important",
+        borderColor: props?.style?.borderColor
+          ? `${props?.style?.borderColor} !important`
+          : "var(--theme-dropdown-border-color, transparent) !important",
         borderWidth: "1px !important",
         borderStyle: "solid !important",
       },
       "&:hover fieldset": {
-        borderColor:
-          "var(--theme-dropdown-border-color, transparent) !important",
+        borderColor: props?.style?.borderColor
+          ? `${props?.style?.borderColor} !important`
+          : "var(--theme-dropdown-border-color, transparent) !important",
         borderWidth: "1px !important",
         borderStyle: "solid !important",
       },
       "&:hover .MuiOutlinedInput-notchedOutline": {
-        borderColor:
-          "var(--theme-dropdown-border-color, transparent) !important",
+        borderColor: props?.style?.borderColor
+          ? `${props?.style?.borderColor} !important`
+          : "var(--theme-dropdown-border-color, transparent) !important",
         borderWidth: "1px !important",
         borderStyle: "solid !important",
       },

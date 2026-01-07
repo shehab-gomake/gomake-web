@@ -36,6 +36,7 @@ import { useRecoilValue } from "recoil";
 import { boardsMissionsState } from "@/widgets/production-floor/state/boards";
 import { selectedChipIdsState } from "@/widgets/production-floor/state/text-search";
 import { ProductionFloorExportButtons } from "@/widgets/production-floor/table-view/export-buttons/production-floor-export-buttons";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 const ProductionFloorHeader = ({
   filterGroups,
@@ -54,6 +55,7 @@ const ProductionFloorHeader = ({
   } = useProductionFloorHeader(connectionId);
   const { t } = useTranslation();
   const dir = t("direction");
+  const { primaryColor } = useGomakeTheme();
   const updateViewInUrl = useUpdateViewInUrl();
   const { CheckPermission } = useUserPermission();
   const isMobileScreen = useIsMobile();
@@ -126,8 +128,8 @@ const ProductionFloorHeader = ({
               }}
               variant={"contained"}
               style={{
-                backgroundColor: "#CBCBE4",
-                color: "#252675",
+                background: primaryColor(100),
+                color: primaryColor(500),
                 height: "30px",
                 gap: "5px",
                 alignItems: "center",

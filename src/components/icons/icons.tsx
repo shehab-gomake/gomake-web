@@ -1,3 +1,5 @@
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+
 const RemoveIcon = () => {
   return (
     <svg
@@ -82,7 +84,11 @@ const AddIcon = ({ onClick = null, color = "#2E3092" }) => {
   );
 };
 
-const EditIcon = () => {
+const EditIcon = (props: any) => {
+  const { primaryColor } = useGomakeTheme();
+  const color =
+    props.color || `var(--theme-secondary-color, ${primaryColor(500)})`;
+
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -93,14 +99,14 @@ const EditIcon = () => {
     >
       <path
         d="M7.33325 1.3335H5.99992C2.66659 1.3335 1.33325 2.66683 1.33325 6.00016V10.0002C1.33325 13.3335 2.66659 14.6668 5.99992 14.6668H9.99992C13.3333 14.6668 14.6666 13.3335 14.6666 10.0002V8.66683"
-        stroke="#2E3092"
+        stroke={color}
         stroke-width="1.5"
         stroke-linecap="round"
         stroke-linejoin="round"
       />
       <path
         d="M10.6933 2.0135L5.43992 7.26684C5.23992 7.46684 5.03992 7.86017 4.99992 8.14684L4.71325 10.1535C4.60659 10.8802 5.11992 11.3868 5.84659 11.2868L7.85325 11.0002C8.13325 10.9602 8.52659 10.7602 8.73325 10.5602L13.9866 5.30684C14.8933 4.40017 15.3199 3.34684 13.9866 2.0135C12.6533 0.680168 11.5999 1.10684 10.6933 2.0135Z"
-        stroke="#2E3092"
+        stroke={color}
         stroke-width="1.5"
         stroke-miterlimit="10"
         stroke-linecap="round"
@@ -108,7 +114,7 @@ const EditIcon = () => {
       />
       <path
         d="M9.93994 2.7666C10.3866 4.35993 11.6333 5.6066 13.2333 6.05993"
-        stroke="#2E3092"
+        stroke={color}
         stroke-width="1.5"
         stroke-miterlimit="10"
         stroke-linecap="round"
@@ -119,7 +125,9 @@ const EditIcon = () => {
 };
 
 const DuplicateIcon = (props: any) => {
-  const color = props.color || "#2E3092";
+  const { primaryColor } = useGomakeTheme();
+  const color =
+    props.color || `var(--theme-secondary-color, ${primaryColor(500)})`;
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"

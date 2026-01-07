@@ -6,8 +6,14 @@ import { useTranslation } from "react-i18next";
 
 const useStyle = () => {
   const { t } = useTranslation();
-  const { primaryColor, successColor, secondColor, errorColor, neutralColor } =
-    useGomakeTheme();
+  const {
+    primaryColor,
+    successColor,
+    secondColor,
+    errorColor,
+    neutralColor,
+    primarySecondaryBlend,
+  } = useGomakeTheme();
   const classes = useMemo(() => {
     return {
       mainContainer: {
@@ -46,8 +52,8 @@ const useStyle = () => {
         borderRadius: 4,
         height: 40,
         backgroundColor: "#FFF",
-        border: "0px",
-        boxShadow: "0px 1px 2px 0px rgba(0, 0, 0, 0.08)",
+        boxShadow:
+          "var(--theme-dropdown-shadow, 0px 1px 2px 0px rgba(0, 0, 0, 0.08))",
       },
       dropDownListByTableStyle: {
         width: "100%",
@@ -59,6 +65,7 @@ const useStyle = () => {
         alignItems: "center",
         color: primaryColor(500),
         backgroundColor: "transparent",
+        borderColor: "transparent",
       },
       profitProductsCellStyle: {
         display: "flex",
@@ -181,7 +188,8 @@ const useStyle = () => {
       backButtonStyle: {
         height: 30,
         marginRight: 5,
-        background: "#CBCBE5",
+        background: primaryColor(100),
+        color: primaryColor(500),
         width: 90,
         borderRadius: 8,
       },

@@ -1,15 +1,19 @@
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { adaptMarginRight } from "@/utils/adapter";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
+import { useTranslation } from "react-i18next";
 
 const useStyle = () => {
   const { secondColor } = useGomakeTheme();
-  const clasess = useMemo(() => {
+  const { t } = useTranslation();
+  const classes = useMemo(() => {
     return {
       insideStyle: {
         width: 800,
         borderRadius: 5,
         height: 385,
+        padding: 16,
       },
       mainContainer: {
         display: "flex",
@@ -40,7 +44,7 @@ const useStyle = () => {
       },
       sendBtn: {
         width: "25%",
-        marginLeft: "5%",
+        ...adaptMarginRight(t("direction"), 16),
         backgroundColor: secondColor(500),
         height: 3,
       },
@@ -48,7 +52,7 @@ const useStyle = () => {
         width: "25%",
         backgroundColor: "#fff",
         color: secondColor(500),
-        border: "1px solid rgb(237, 2, 140)",
+        border: `1px solid ${secondColor(500)}`,
         height: 3,
       },
       lineStyle: {
@@ -66,7 +70,7 @@ const useStyle = () => {
       deleteBtn: {
         cursor: "pointer",
       },
-      iconsContainer:{
+      iconsContainer: {
         display: "flex",
         flexDirection: "row" as "row",
         justifyContent: "space-between",
@@ -79,18 +83,18 @@ const useStyle = () => {
         alignItems: "center",
         gap: 20,
       },
-      mainContainerStyle:{
+      mainContainerStyle: {
         display: "flex",
         flexDirection: "row" as "row",
         justifyContent: "flex-start",
         alignItems: "center",
         width: "100%",
         gap: 8,
-      }
+      },
     };
   }, []);
   return {
-    clasess,
+    classes,
   };
 };
 export { useStyle };

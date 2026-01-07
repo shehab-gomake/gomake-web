@@ -12,7 +12,7 @@ import { Permissions } from "@/components/CheckPermission/enum";
 import { HotFolderWidget } from "@/widgets/shared-admin-customers/add-product/hot-folder-widget";
 
 const EditProductWidget = () => {
-  const { clasess } = useStyle();
+  const { classes } = useStyle();
   const {
     t,
     tabs,
@@ -23,7 +23,7 @@ const EditProductWidget = () => {
     router,
     dir,
     handleGoBack,
-    getProductById
+    getProductById,
   } = useAddProduct();
   // const WorkFlowsTab = {
   //   id: "c66465de-95d6-4ea3-bd3f-7efe6664cb0555",
@@ -32,7 +32,7 @@ const EditProductWidget = () => {
   // };
   return (
     <>
-      <div style={clasess.mainContainer}>
+      <div style={classes.mainContainer}>
         <div
           style={{
             display: "flex",
@@ -47,40 +47,42 @@ const EditProductWidget = () => {
             variant={"text"}
             onClick={handleGoBack}
             startIcon={dir === "ltr" ? <ArrowBackIcon /> : <ArrowForwardIcon />}
-            style={clasess.backButtonStyle}
+            style={classes.backButtonStyle}
           >
             {t("materials.buttons.back")}
           </PrimaryButton>
-          <h1 style={clasess.header}>
+          <h1 style={classes.header}>
             {t("products.addProduct.admin.editProduct")}
           </h1>
           {router?.query?.productName && (
-            <h4 style={clasess.subHeader}>/ {router?.query?.productName}</h4>
+            <h4 style={classes.subHeader}>/ {router?.query?.productName}</h4>
           )}
         </div>
-        <div style={clasess.headerTabsContainer}>
-          {tabs?.filter((item) => item.permission)?.map((item, index) => {
-            return (
-              <div
-                key={index}
-                style={clasess.headerTabContainer}
-                onClick={item.onclick()}
-              >
-                <div>
-                  {item?.name === activeTab ? item.activeIcon : item?.icon}
-                </div>
+        <div style={classes.headerTabsContainer}>
+          {tabs
+            ?.filter((item) => item.permission)
+            ?.map((item, index) => {
+              return (
                 <div
-                  style={
-                    item.name === activeTab
-                      ? clasess.activeStyle
-                      : clasess.unActiveStyle
-                  }
+                  key={index}
+                  style={classes.headerTabContainer}
+                  onClick={item.onclick()}
                 >
-                  {item?.name}
+                  <div>
+                    {item?.name === activeTab ? item.activeIcon : item?.icon}
+                  </div>
+                  <div
+                    style={
+                      item.name === activeTab
+                        ? classes.activeStyle
+                        : classes.unActiveStyle
+                    }
+                  >
+                    {item?.name}
+                  </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
         </div>
         {activeTab === t("products.addProduct.admin.settings") ? (
           <SettingsWidget
@@ -92,11 +94,18 @@ const EditProductWidget = () => {
         ) : activeTab === t("products.addProduct.admin.parameters") ? (
           <ParameterWidget />
         ) : activeTab === t("pricingWidget.workFlow") ? (
-          <PermissionCheck userPermission={Permissions.ADD_WORK_FLOW_TO_PRODUCT}>
-            <WorkFlowsWidget productState={productState} getProductById={getProductById} />
+          <PermissionCheck
+            userPermission={Permissions.ADD_WORK_FLOW_TO_PRODUCT}
+          >
+            <WorkFlowsWidget
+              productState={productState}
+              getProductById={getProductById}
+            />
           </PermissionCheck>
         ) : activeTab === t("pricingWidget.hotFolder") ? (
-          <PermissionCheck userPermission={Permissions.ADD_HOT_FOLDER_TO_PRODUCT}>
+          <PermissionCheck
+            userPermission={Permissions.ADD_HOT_FOLDER_TO_PRODUCT}
+          >
             <HotFolderWidget />
           </PermissionCheck>
         ) : (

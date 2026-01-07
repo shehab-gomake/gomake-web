@@ -169,9 +169,10 @@ html * {
   color: #2e3092 !important;
 }
 
-.MuiOutlinedInput-root fieldset {
+/* remove related to text input - hp requirement */
+/* .MuiOutlinedInput-root fieldset {
   border: none !important;
-}
+} */
 
 .MuiTextField-root input {
   border: none !important;
@@ -873,7 +874,7 @@ df-messenger {
 .tiptap-editor .ProseMirror pre {
   background: #0d0d0d;
   color: #fff;
-  font-family: 'JetBrainsMono', monospace;
+  font-family: "JetBrainsMono", monospace;
   padding: 0.75rem 1rem;
   border-radius: 0.5rem;
 }
