@@ -84,7 +84,7 @@ const useGraphicsApprovalUpload = ({
 
       // Step 1: Request upload session from gomake-cloud-files-api
       const response = await axios.post(
-        `${companyProfile.filesApiAddress}/api/Files/CreateUploadSession`,
+        `https://gomake-cloud-files-api-il-683372436778.me-west1.run.app/api/Files/CreateUploadSession`,
         { 
           fileName: file.name, 
           contentType: file.type,
