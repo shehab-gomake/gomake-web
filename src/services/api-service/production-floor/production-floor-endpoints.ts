@@ -967,7 +967,7 @@ const ungroupJobsApi: ICallAndSetData = async (callApi, callBack, groupId) => {
 const sendGraphicsApprovalToClientApi: ICallAndSetData = async (
   callApi,
   callBack,
-  data: { boardMissionId: string; fileUrls: string[] }
+  data: { boardMissionId: string; files: Array<{ url: string; description: string }> }
 ) => {
   return await getSetApiData(
     callApi,

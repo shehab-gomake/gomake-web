@@ -6,7 +6,7 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { PrimaryButton } from "@/components/button/primary-button";
 import { DotsLoader } from "@/components/dots-loader/dots-Loader";
-import { IconButton } from "@mui/material";
+import { IconButton, TextField } from "@mui/material";
 import FileOpenIcon from "@mui/icons-material/FileOpen";
 import { WastebasketNew } from "@/icons/wastebasket-new";
 
@@ -26,6 +26,7 @@ const GraphicsApprovalUploadModal = ({
     handleDeleteFile,
     handleDownloadFile,
     handleSendGraphicsApproval,
+    handleUpdateFileDescription,
     deletingFiles,
     downloadingFiles,
     isSending,
@@ -56,6 +57,17 @@ const GraphicsApprovalUploadModal = ({
             ? `${file.name.substring(0, 35)}...`
             : file.name}
         </h4>,
+        <div
+          key={`uploading-description-${file.name}-${index}`}
+          style={{ opacity: 0.5 }}
+        >
+          <TextField
+            disabled
+            size="small"
+            placeholder={t("fileUploader.description") || "Description"}
+            sx={{ width: "100%" }}
+          />
+        </div>,
         <div
           key={`uploading-download-${file.name}-${index}`}
           style={{ opacity: 0.5 }}
@@ -91,6 +103,15 @@ const GraphicsApprovalUploadModal = ({
             ? `${file.fileName.substring(0, 35)}...`
             : file.fileName}
         </h4>,
+        <TextField
+          key={`description-${file.fileName}-${index}`}
+          size="small"
+          placeholder={t("fileUploader.description") || "Description"}
+          value={file.description || ""}
+          onChange={(e) => handleUpdateFileDescription(file.bucketKey, e.target.value)}
+          disabled={deletingFiles.includes(file.bucketKey)}
+          sx={{ width: "100%" }}
+        />,
         <IconButton
           key={`download-${file.fileName}-${index}`}
           onClick={() => handleDownloadFile(file.bucketKey)}
@@ -140,10 +161,11 @@ const GraphicsApprovalUploadModal = ({
               headers={[
                 "",
                 t("fileUploader.fileName"),
+                t("fileUploader.description") || "Description",
                 t("fileUploader.downloadFile"),
                 t("fileUploader.deleteFile"),
               ]}
-              columnWidths={["10%", "55%", "15%", "20%"]}
+              columnWidths={["5%", "30%", "30%", "15%", "20%"]}
             />
             <div
               onClick={() => document.getElementById("graphics-file-upload").click()}

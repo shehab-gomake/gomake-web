@@ -17,6 +17,7 @@ interface UploadedFile {
   fileName: string;
   url: string;
   bucketKey: string;
+  description?: string;
 }
 
 const useGraphicsApprovalUpload = ({
@@ -88,7 +89,7 @@ const useGraphicsApprovalUpload = ({
         { 
           fileName: file.name, 
           contentType: file.type,
-          bucketName: "gomake-graphics-approval",
+          bucketName: "gomake-graphics-approval"
         },
         {
           headers: {
@@ -123,6 +124,7 @@ const useGraphicsApprovalUpload = ({
           fileName: file.name,
           url: fileUrl,
           bucketKey: bucketName,
+          description: "",
         },
       ]);
       alertSuccessUpdate();
@@ -167,6 +169,14 @@ const useGraphicsApprovalUpload = ({
       // Remove file from downloading state
       setDownloadingFiles((prev) => prev.filter((key) => key !== bucketKey));
     }
+  };
+
+  const handleUpdateFileDescription = (bucketKey: string, description: string) => {
+    setUploadedFiles((prev) =>
+      prev.map((file) =>
+        file.bucketKey === bucketKey ? { ...file, description } : file
+      )
+    );
   };
 
   const handleDeleteFile = async (bucketKey: string, fileName: string, url: string) => {
@@ -229,7 +239,10 @@ const useGraphicsApprovalUpload = ({
 
       await sendGraphicsApprovalToClientApi(callApi, callBack, {
         boardMissionId: boardMissionId,
-        fileUrls: uploadedFiles.map((file) => file.url),
+        files: uploadedFiles.map((file) => ({
+          url: file.url,
+          description: file.description || "",
+        })),
       });
     } catch (error) {
       console.error("Error sending graphics approval:", error);
@@ -245,6 +258,7 @@ const useGraphicsApprovalUpload = ({
     handleDeleteFile,
     handleDownloadFile,
     handleSendGraphicsApproval,
+    handleUpdateFileDescription,
     deletingFiles,
     downloadingFiles,
     isSending,
