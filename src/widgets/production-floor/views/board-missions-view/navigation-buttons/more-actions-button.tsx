@@ -25,6 +25,7 @@ import { addBoardMissionsToFileUploaderApi } from "@/services/api-service/board-
 import { ungroupJobsApi } from "@/services/api-service/production-floor/production-floor-endpoints";
 import { useFrontDeskEmailIntegration } from "@/pages-components/quotes/hooks/use-frontdesk-email-integration";
 import { FrontDeskEmailComposerWrapper } from "@/pages-components/quotes/components/frontdesk-email-composer-wrapper";
+import { GraphicsApprovalUploadModal } from "./graphics-approval-upload-modal";
 
 const MoreActionsButton = ({ isMobile = false }) => {
   const { t } = useTranslation();
@@ -42,8 +43,10 @@ const MoreActionsButton = ({ isMobile = false }) => {
   const [, setOpenFileUploader] = useRecoilState(openFileUploaderList);
   const [, setShowFileUploader] = useRecoilState(pinFileUploaderState);
   const [connectionId] = useRecoilState(fileUploaderConnectionIdState);
+  const [openGraphicsApprovalUploadModal, setOpenGraphicsApprovalUploadModal] =
+    useState<boolean>(false);
 
-  // Email composer integration with document type 16
+  // Email composer integration with document type 16 (OLD FUNCTIONALITY - KEPT FOR REFERENCE)
   const {
     isEmailComposerOpen,
     emailData,
@@ -97,7 +100,8 @@ const MoreActionsButton = ({ isMobile = false }) => {
     ).then();
   };
 
-  const getDocumentContacts = async () => {
+  // OLD FUNCTIONALITY - Opens email composer (KEPT FOR REFERENCE)
+  const getDocumentContactsOld = async () => {
     handleClose(); // Close the menu
     // Open email composer with document type 16
     await openEmailComposer(
@@ -111,6 +115,12 @@ const MoreActionsButton = ({ isMobile = false }) => {
       boardMissions.clientName,
       boardMissions.contactName
     );
+  };
+
+  // NEW FUNCTIONALITY - Opens file upload modal
+  const getDocumentContacts = () => {
+    handleClose(); // Close the menu
+    setOpenGraphicsApprovalUploadModal(true);
   };
 
   const handleClickUnGroupJob = async () => {
@@ -183,7 +193,17 @@ const MoreActionsButton = ({ isMobile = false }) => {
         onClose={() => setOpenSendGraphicFileModal(false)}
       />
 
-      {/* Email Composer Wrapper for Graphics Approval */}
+      {/* NEW: Graphics Approval Upload Modal */}
+      <GraphicsApprovalUploadModal
+        openModal={openGraphicsApprovalUploadModal}
+        onClose={() => setOpenGraphicsApprovalUploadModal(false)}
+        boardMissionId={boardMissions.boardMissionId}
+        orderItemId={boardMissions.orderItemId}
+        orderId={boardMissions.orderId}
+        productType={boardMissions.productType}
+      />
+
+      {/* OLD: Email Composer Wrapper for Graphics Approval (KEPT FOR REFERENCE) */}
       <FrontDeskEmailComposerWrapper
         open={isEmailComposerOpen}
         onClose={closeEmailComposer}

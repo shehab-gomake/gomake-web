@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import {useCallback, useEffect, useState} from "react";
 import { useRouter } from "next/router";
 import { useGomakeAxios } from "@/hooks/use-gomake-axios";
 import { Box, Stack, Typography, CircularProgress } from "@mui/material";
@@ -7,6 +7,7 @@ import { useTranslation } from "react-i18next";
 import { SuccessIcon } from "@/icons/success-icon";
 import { ErrorIcon } from "@/icons/error-icon";
 import { style } from "./style";
+import {updateTempUserTokenStorage} from "@/services/storage-data";
 
 const GraphicsApprovalWidget = () => {
   const router = useRouter();
@@ -81,9 +82,21 @@ const GraphicsApprovalWidget = () => {
         setIsLoading(false);
       }
     };
-
+    const getTempUserToken = async () => {
+      const TokenRes: any = await callApi("GET", "/v1/auth/get-temp-user-token", {
+        token: boardMissionId,
+      });
+      if (TokenRes?.success) {
+        const userToken = TokenRes?.data?.data?.result?.token;
+        if (userToken) {
+          updateTempUserTokenStorage(userToken);
+          updateGraphicsApproval();
+        }
+      }
+      return null;
+    };
     if (router.isReady) {
-      updateGraphicsApproval();
+      getTempUserToken();
     }
   }, [boardMissionId, router.isReady, router.query.approved, callApi]);
 
