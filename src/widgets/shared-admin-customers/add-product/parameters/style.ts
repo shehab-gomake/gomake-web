@@ -254,7 +254,7 @@ const useStyle = () => {
         color: secondColor(500),
       },
       activeTabContainer: {
-        backgroundColor: primarySecondaryBlend(300), //!here now
+        backgroundColor: primarySecondaryBlend(300),
         minHeight: 48,
         borderBottom: "none",
       },
@@ -267,7 +267,7 @@ const useStyle = () => {
       },
       subSectionAccordionStyle: {
         ...FONT_FAMILY.Lexend(600, 16),
-        color: primaryColor(500),
+        color: primarySecondaryBlend(700),
       },
       subSectionAccordionActiveStyle: {
         ...FONT_FAMILY.Lexend(600, 16),
@@ -297,7 +297,7 @@ const useStyle = () => {
         height: "auto",
         maxHeight: 600,
         zIndex: 999999,
-        padding: "20px",
+        padding: "16px",
       },
       cancelButton: {
         ...FONT_FAMILY.Inter(600, 16),
