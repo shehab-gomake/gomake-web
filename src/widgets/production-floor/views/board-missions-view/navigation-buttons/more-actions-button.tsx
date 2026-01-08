@@ -199,6 +199,7 @@ const MoreActionsButton = ({ isMobile = false }) => {
         onClose={() => setOpenGraphicsApprovalUploadModal(false)}
         boardMissionId={boardMissions.boardMissionId}
         orderItemId={boardMissions.orderItemId}
+        orderId={boardMissions.orderId}
         productType={boardMissions.productType}
       />
 

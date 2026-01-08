@@ -1,20 +1,40 @@
-import { GoMakeModal } from "@/components";
+import { GoMakeModal, GomakeTextInput, GoMakeAutoComplate } from "@/components";
 import { useStyle } from "@/widgets/quote-new/modals-widgets/style";
 import { PrimaryTable } from "@/components/tables/primary-table";
 import { useGraphicsApprovalUpload } from "./use-graphics-approval-upload";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { PrimaryButton } from "@/components/button/primary-button";
 import { DotsLoader } from "@/components/dots-loader/dots-Loader";
-import { IconButton, TextField } from "@mui/material";
+import { IconButton, TextField, Stack, Typography, Box, Paper, Popper } from "@mui/material";
+import { styled } from "@mui/material/styles";
 import FileOpenIcon from "@mui/icons-material/FileOpen";
 import { WastebasketNew } from "@/icons/wastebasket-new";
+import { getLabelTypography } from "@/utils/typography-utils";
+
+// Custom Popper with high z-index to appear above modal and match input width
+const StyledPopper = styled(Popper)(({ theme }) => ({
+  zIndex: 99999999999,
+  "&[data-popper-placement]": {
+    width: "var(--popper-anchor-width)",
+  },
+  "& .MuiAutocomplete-paper": {
+    zIndex: 99999999999,
+    width: "var(--popper-anchor-width)",
+    minWidth: "var(--popper-anchor-width)",
+  },
+  "& .MuiAutocomplete-listbox": {
+    zIndex: 99999999999,
+    width: "100%",
+  },
+}));
 
 const GraphicsApprovalUploadModal = ({
   openModal,
   onClose,
   boardMissionId,
   orderItemId,
+  orderId,
   productType,
 }) => {
   const { classes } = useStyle();
@@ -30,9 +50,16 @@ const GraphicsApprovalUploadModal = ({
     deletingFiles,
     downloadingFiles,
     isSending,
+    documentContacts,
+    selectedContactIndex,
+    handleContactChange,
+    isLoadingContacts,
+    contactEmail,
+    setContactEmail,
   } = useGraphicsApprovalUpload({
     boardMissionId,
     orderItemId,
+    orderId,
     productType,
     openModal,
   });
@@ -152,6 +179,98 @@ const GraphicsApprovalUploadModal = ({
       <div style={classes.modalContentContainer}>
         {/* Scrollable Content Area */}
         <div style={classes.scrollableContent}>
+          {/* Contact Selector */}
+          {orderId && (
+            <Stack direction="row" alignItems="center" gap="16px" sx={{ marginBottom: "16px", flexWrap: "wrap" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                <Typography style={getLabelTypography()}>
+                  {t("customers.modal.contacts") || "Contact"}
+                </Typography>
+                <Box sx={{ width: "300px" }}>
+                  <GoMakeAutoComplate
+                    value={documentContacts.length > 0 && selectedContactIndex >= 0 ? documentContacts[selectedContactIndex] : null}
+                    onChange={(e: any, value: any) => {
+                      handleContactChange(value);
+                    }}
+                    options={documentContacts}
+                    getOptionLabel={(option: any) => 
+                      option?.contactName || option?.name || ""
+                    }
+                    placeholder={
+                      isLoadingContacts 
+                        ? t("common.loading") || "Loading..." 
+                        : documentContacts.length === 0
+                        ? t("customers.modal.noContacts") || "No contacts available"
+                        : t("prePayment.selectContact") || "Select contact"
+                    }
+                    loading={isLoadingContacts}
+                    disabled={isSending || isLoadingContacts}
+                    disableClearable={false}
+                    defaultFiltering={true}
+                    disablePortal={false}
+                    PopperComponent={StyledPopper}
+                    componentsProps={{
+                      popper: {
+                        sx: {
+                          zIndex: "99999999999 !important",
+                        },
+                        style: {
+                          zIndex: 99999999999,
+                        },
+                        modifiers: [
+                          {
+                            name: "offset",
+                            options: {
+                              offset: [0, 4],
+                            },
+                          },
+                          {
+                            name: "preventOverflow",
+                            enabled: true,
+                          },
+                          {
+                            name: "flip",
+                            enabled: false,
+                          },
+                          {
+                            name: "sameWidth",
+                            enabled: true,
+                            phase: "beforeWrite",
+                            requires: ["computeStyles"],
+                            fn: ({ state }) => {
+                              state.styles.popper.width = `${state.rects.reference.width}px`;
+                            },
+                            effect: ({ state }) => {
+                              state.elements.popper.style.width = `${state.elements.reference.offsetWidth}px`;
+                            },
+                          },
+                        ],
+                      },
+                      listbox: {
+                        sx: {
+                          zIndex: 99999999999,
+                        },
+                      },
+                    }}
+                  />
+                </Box>
+              </div>
+              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                <Typography style={getLabelTypography()}>
+                  {t("sales.quote.email") || "Email"}
+                </Typography>
+                <Box sx={{ width: "300px" }}>
+                  <GomakeTextInput
+                    type="email"
+                    value={contactEmail}
+                    onChange={(e) => setContactEmail(e.target.value)}
+                    placeholder={t("sales.quote.email") || "Email"}
+                    disabled={isSending}
+                  />
+                </Box>
+              </div>
+            </Stack>
+          )}
           <div>
             <PrimaryTable
               stickyFirstCol={false}

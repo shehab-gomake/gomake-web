@@ -12,6 +12,7 @@ import {
   sendGraphicsApprovalToClientApi,
 } from "@/services/api-service/production-floor/production-floor-endpoints";
 import { FileTypeENUM } from "@/widgets/file-uploader-widget/interface";
+import { getDocumentContactApi } from "@/services/api-service/pay/pay-api";
 
 interface UploadedFile {
   fileName: string;
@@ -20,9 +21,18 @@ interface UploadedFile {
   description?: string;
 }
 
+interface DocumentContact {
+  id?: string;
+  contactID?: string;
+  contactName?: string;
+  contactMail?: string;
+  contactPhone?: string;
+}
+
 const useGraphicsApprovalUpload = ({
   boardMissionId,
   orderItemId,
+  orderId,
   productType,
   openModal,
 }) => {
@@ -34,14 +44,21 @@ const useGraphicsApprovalUpload = ({
   const [downloadingFiles, setDownloadingFiles] = useState<string[]>([]);
   const [deletingFiles, setDeletingFiles] = useState<string[]>([]);
   const [isSending, setIsSending] = useState<boolean>(false);
+  const [documentContacts, setDocumentContacts] = useState<DocumentContact[]>([]);
+  const [selectedContactIndex, setSelectedContactIndex] = useState<number>(0);
+  const [isLoadingContacts, setIsLoadingContacts] = useState<boolean>(false);
+  const [contactEmail, setContactEmail] = useState<string>("");
 
-  // Load existing files when modal opens
+  // Load existing files and contacts when modal opens
   useEffect(() => {
     if (openModal && orderItemId) {
       loadExistingFiles();
     }
+    if (openModal && orderId) {
+      loadDocumentContacts();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [openModal, orderItemId, productType]);
+  }, [openModal, orderItemId, orderId, productType]);
 
   const loadExistingFiles = async () => {
     const callBack = (res) => {
@@ -53,6 +70,7 @@ const useGraphicsApprovalUpload = ({
             fileName: file.fileName,
             url: file.filePath,
             bucketKey: file.bucketKey || "",
+            description: "",
           }));
         setUploadedFiles(graphicsFiles);
       }
@@ -68,6 +86,38 @@ const useGraphicsApprovalUpload = ({
       false,
       null
     );
+  };
+
+  const loadDocumentContacts = async () => {
+    if (!orderId) return;
+    
+    setIsLoadingContacts(true);
+    const callBack = (res) => {
+      setIsLoadingContacts(false);
+      if (res?.success && res?.data) {
+        // res.data is directly the array of contacts
+        const contacts = Array.isArray(res.data) 
+          ? res.data.map((contact: any) => ({
+              ...contact,
+              // Ensure we have an id field for isOptionEqualToValue matching
+              id: contact.id || contact.contactID || contact.Id || contact.ContactID,
+            }))
+          : [];
+        setDocumentContacts(contacts);
+        // Set first contact as selected by default
+        if (contacts.length > 0) {
+          setSelectedContactIndex(0);
+          setContactEmail(contacts[0]?.contactMail || "");
+        } else {
+          setContactEmail("");
+        }
+      }
+    };
+
+    await getDocumentContactApi(callApi, callBack, {
+      documentId: orderId,
+      documentType: 1, // Order document type
+    });
   };
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -89,7 +139,7 @@ const useGraphicsApprovalUpload = ({
         { 
           fileName: file.name, 
           contentType: file.type,
-          bucketName: "gomake-graphics-approval"
+          bucketName: "gomake-graphics-approval",
         },
         {
           headers: {
@@ -243,11 +293,24 @@ const useGraphicsApprovalUpload = ({
           url: file.url,
           description: file.description || "",
         })),
+        contactEmail: contactEmail || undefined,
       });
     } catch (error) {
       console.error("Error sending graphics approval:", error);
       setIsSending(false);
       alertFaultUpdate();
+    }
+  };
+
+  const handleContactChange = (contact: DocumentContact | null) => {
+    if (contact) {
+      const index = documentContacts.findIndex(
+        (c) => c.contactID === contact.contactID || c.id === contact.id
+      );
+      if (index >= 0) {
+        setSelectedContactIndex(index);
+        setContactEmail(contact.contactMail || "");
+      }
     }
   };
 
@@ -262,6 +325,12 @@ const useGraphicsApprovalUpload = ({
     deletingFiles,
     downloadingFiles,
     isSending,
+    documentContacts,
+    selectedContactIndex,
+    handleContactChange,
+    isLoadingContacts,
+    contactEmail,
+    setContactEmail,
   };
 };
 
