@@ -63,9 +63,17 @@ const StyledTextField = styled(TextField, {
       // borderColor: props.error
       //   ? `${props.errorColor(300)}`
       //   : `var(--theme-input-border-focus-color, var(--theme-input-border-color, #E0E0E0))`,
-      border: "none",
+      border: `1px solid var(--theme-input-border-focus-color, var(--theme-input-border-color, transparent))`,
       borderRadius: props?.style?.borderRadius || "var(--theme-radius-md, 4px)",
       width: "100%",
+    },
+    "&.Mui-disabled fieldset": {
+      border:
+        "1px solid var(--theme-input-border-color, transparent) !important",
+    },
+    "&.Mui-disabled .MuiOutlinedInput-notchedOutline": {
+      border:
+        "1px solid var(--theme-input-border-color, transparent) !important",
     },
   },
   "& .MuiInputBase-input.Mui-disabled": {
@@ -86,6 +94,7 @@ const StyledTextField = styled(TextField, {
     color: "#000",
     WebkitTextFillColor: "#000",
     opacity: 1,
+    border: "1px solid var(--theme-input-border-color, transparent) !important",
   },
 }));
 

@@ -12,6 +12,7 @@ import { MuiColorInput } from "mui-color-input";
 import { usePrintNodePrinters } from "@/hooks/use-print-node-printers";
 import ProductItem from "./sku-components/product-item-row";
 import { ModalType } from "@/enums";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 interface AddProductSkuModalProps {
   openModal: boolean;
@@ -59,8 +60,8 @@ const AddProductSkuModal = ({
   updateProductSKURow,
 }: AddProductSkuModalProps) => {
   const { t } = useTranslation();
-  const { clasess } = useStyle();
-
+  const { classes } = useStyle();
+  const { neutralColor, primaryColor, errorColor } = useGomakeTheme();
   const {
     printers,
     getPrinterBins,
@@ -78,21 +79,21 @@ const AddProductSkuModal = ({
         openModal={openModal}
         modalTitle={modalTitle}
         onClose={onClose}
-        insideStyle={clasess.insideStyle}
+        insideStyle={classes.insideStyle}
       >
-        <div style={clasess.modalMainContainer}>
-          <div style={clasess.productMappingContainer}>
+        <div style={classes.modalMainContainer}>
+          <div style={classes.productMappingContainer}>
             <div>
               <GomakeTextInput
                 value={productSKUState?.name}
-                style={clasess.textInputStyle}
+                style={classes.textInputStyle}
                 placeholder={t("products.addProduct.admin.enterName")}
                 onChange={(e: any) => {
                   onChangeStateProductSKU("name", e.target.value);
                 }}
               />
               {errorName && (
-                <div style={clasess.errorlabelStyle}>
+                <div style={classes.errorlabelStyle}>
                   {t("login.thisFieldRequired")}
                 </div>
               )}
@@ -100,24 +101,38 @@ const AddProductSkuModal = ({
             <div>
               <GomakeTextInput
                 value={productSKUState?.code}
-                style={clasess.textInputStyle}
+                style={classes.textInputStyle}
                 placeholder={t("products.addProduct.admin.enterCode")}
                 onChange={(e: any) => {
                   onChangeStateProductSKU("code", e.target.value);
                 }}
               />
               {errorCode && (
-                <div style={clasess.errorlabelStyle}>
+                <div style={classes.errorlabelStyle}>
                   {t("login.thisFieldRequired")}
                 </div>
               )}
             </div>
-            <div style={clasess.colorInputStyle}>
+            <div style={classes.colorInputStyle}>
               <MuiColorInput
                 value={productSKUState?.productionFloorJobColor}
                 format="hex"
                 onChange={(value: any) => {
                   onChangeStateProductSKU("productionFloorJobColor", value);
+                }}
+                sx={{
+                  "& .MuiOutlinedInput-notchedOutline": {
+                    border: "none",
+                  },
+                  "& .MuiOutlinedInput-root fieldset": {
+                    border: "none",
+                  },
+                  "&:hover .MuiOutlinedInput-notchedOutline": {
+                    border: "none",
+                  },
+                  "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                    border: "none",
+                  },
                 }}
               />
             </div>
@@ -151,14 +166,14 @@ const AddProductSkuModal = ({
               title={t("products.addProduct.admin.modalProductCodeTitle")}
             >
               <IconButton onClick={() => createNewProductSKU()}>
-                <AddNewIcon />
+                <AddNewIcon color={neutralColor(600)} />
               </IconButton>
             </Tooltip>
           </div>
           {allProductSKU?.map((item, index) => (
             <ProductItem
               t={t}
-              clasess={clasess}
+              classes={classes}
               key={item.id}
               item={item}
               onClickOpenDeleteRowModal={onClickOpenDeleteRowModal}
@@ -167,6 +182,8 @@ const AddProductSkuModal = ({
               getPrinterNameByPrinterId={getPrinterNameByPrinterId}
               getPrinterBins={getPrinterBins}
               printers={printers}
+              primaryColor={primaryColor}
+              errorColor={errorColor}
             />
           ))}
         </div>

@@ -2,7 +2,6 @@ import { useTranslation } from "react-i18next";
 import { useStyle } from "./style";
 import { Avatar, Stack } from "@mui/material";
 import { useRef } from "react";
-import { AddNewButton } from "@/components/button/add-new-button";
 
 const UploadImgProduct = ({
   productState,
@@ -11,7 +10,6 @@ const UploadImgProduct = ({
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
-  const dir: "rtl" | "ltr" = t("direction");
   const inputRef = useRef(null);
   const handleFileSelect = (e) => {
     const file = e.target.files[0];

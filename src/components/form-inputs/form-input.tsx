@@ -601,6 +601,20 @@ const FormInput = ({
                   value={color}
                   onChange={handleChange}
                   format="hex"
+                  sx={{
+                    "& .MuiOutlinedInput-notchedOutline": {
+                      border: "none",
+                    },
+                    "& .MuiOutlinedInput-root fieldset": {
+                      border: "none",
+                    },
+                    "&:hover .MuiOutlinedInput-notchedOutline": {
+                      border: "none",
+                    },
+                    "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                      border: "none",
+                    },
+                  }}
                 />
               </div>
             ) : input.type === "image" ? (

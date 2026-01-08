@@ -70,6 +70,7 @@ const useGomakeTheme = () => {
           500: "--theme-primary-color",
           600: "--theme-primary-dark",
           700: "--theme-primary-text",
+          900: "#000",
         };
 
         const cssVar = cssVarMap[degree];

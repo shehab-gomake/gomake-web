@@ -38,6 +38,7 @@ const hpClientThemeConfig: ThemeConfig = {
       "--theme-primary-dark": "#002E8D", // Darker for disabled state
       "--theme-primary-on-light": "#0039B8", // Darker blue for better contrast on light backgrounds
       "--theme-primary-on-dark": "#B2D2FF",
+      "--theme-primary-text": "#002E8D", //!here we should change
 
       /* -------------------------------------------------
        HP SECONDARY COLORS
@@ -199,17 +200,17 @@ const hpClientThemeConfig: ThemeConfig = {
 
       // Dropdown/Autocomplete Styles
       "--theme-dropdown-shadow": "none",
-      // "--theme-dropdown-border": "none",
       "--theme-dropdown-border":
         "1px solid var(--theme-dropdown-border-color, #E0E0E0)",
       "--theme-dropdown-border-color": "#E0E0E0",
       "--theme-dropdown-border-radius": "var(--theme-radius-md, 8px)",
+      "--theme-dropdown-height": "40px",
       "--theme-dropdown-placeholder-color": "#A3A3A3",
       "--theme-dropdown-placeholder-size": "14px",
       "--theme-dropdown-placeholder-weight": "400",
 
       "--theme-input-shadow": "none",
-      "--theme-input-border": "none",
+      "--theme-input-border": "1px solid var(--theme-border-color, #E0E0E0)",
       "--theme-input-border-color": "#E0E0E0",
       "--theme-input-border-radius": "var(--theme-radius-md, 4px)",
       "--theme-input-height": "40px",
@@ -240,6 +241,8 @@ const hpClientThemeConfig: ThemeConfig = {
       "--theme-card-orders": "#FFFFFF", // White
       "--theme-card-canceled": "#E0E0E0", // Light Gray
       "--theme-card-stuck-jobs": "#EF6B6B", // Reddish
+
+      "--theme-button-height": "40px",
 
       // Card Text Colors (HP Client specific - for white/light cards)
       // Used by use-cards-widget.tsx getCardTextColor()

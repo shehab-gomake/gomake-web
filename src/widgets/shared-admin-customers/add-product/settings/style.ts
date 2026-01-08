@@ -8,7 +8,7 @@ import { FONT_FAMILY } from "@/utils/font-family";
 
 const useStyle = () => {
   const { t } = useTranslation();
-  const { primaryColor, secondColor } = useGomakeTheme();
+  const { primaryColor, secondColor, errorColor, theme } = useGomakeTheme();
 
   const classes = useMemo(() => {
     return {
@@ -58,12 +58,12 @@ const useStyle = () => {
       },
       textInputStyle: {
         width: "100%",
-        borderRadius: 4,
+        borderRadius: "var(--theme-radius-md, 4px)",
         height: 40,
         backgroundColor: "#FFF",
       },
       selectColorStyle: {
-        borderRadius: 4,
+        borderRadius: "var(--theme-radius-md, 4px)",
         height: 40,
         backgroundColor: "#FFF",
         border: "0px solid #000000",
@@ -72,7 +72,7 @@ const useStyle = () => {
       dropDownListStyle: {
         //width:"100%"
         width: "180px",
-        borderRadius: 4,
+        borderRadius: "var(--theme-radius-md, 4px)",
         height: 40,
         backgroundColor: "#FFF",
         border: "0px",
@@ -81,7 +81,7 @@ const useStyle = () => {
       multiSelectStyle: {
         backgroundColor: "#FFFFFF",
         width: "100%",
-        borderRadius: 4,
+        borderRadius: "var(--theme-radius-md, 4px)",
         display: "flex",
         border: "0px",
         flexDirection: "row" as "row",
@@ -95,7 +95,8 @@ const useStyle = () => {
       },
       requierdInput: {
         ...FONT_FAMILY.Lexend(500, 14),
-        color: secondColor(500),
+        // color: secondColor(500),
+        color: errorColor(500),
       },
       plusInput: {
         ...FONT_FAMILY.Lexend(500, 14),
@@ -116,7 +117,7 @@ const useStyle = () => {
         justifyContent: "center",
         alignItems: "center",
         border: `1px solid ${secondColor(500)} `,
-        borderRadius: "4px",
+        borderRadius: "var(--theme-radius-md, 4px)",
         padding: "10px 32px",
         color: secondColor(500),
         ...FONT_FAMILY.Lexend(500, 16),
@@ -127,7 +128,7 @@ const useStyle = () => {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        borderRadius: "4px",
+        borderRadius: "var(--theme-radius-md, 4px)",
         padding: "10px 32px",
         color: "white",
         backgroundColor: secondColor(500),
@@ -159,7 +160,10 @@ const useStyle = () => {
         width: "100%",
         cursor: "pointer",
         backgroundColor: "#FFF",
-        boxShadow: "0px 1px 10px rgba(0, 0, 0, 0.08)",
+        boxShadow:
+          "var(--theme-input-shadow, 0px 1px 10px rgba(0, 0, 0, 0.08))",
+        borderRadius: "var(--theme-radius-md, 4px)",
+        border: "var(--theme-input-border, none)",
       },
       IconButtonStyle: {
         background: primaryColor(100),
@@ -180,23 +184,25 @@ const useStyle = () => {
         justifyContent: "center",
         gap: "10px",
         height: "40px",
-        borderRadius: "4px",
+        borderRadius: "var(--theme-radius-md, 4px)",
       },
       fileInputStyle: {
         boxSizing: "border-box" as "border-box",
-        borderRadius: "4px",
-        height: "40px",
+        borderRadius: "var(--theme-radius-md, 4px)",
+        height: "var(--theme-input-height, 40px)",
         padding: "7px",
         ...FONT_FAMILY.Lexend(300, 14),
         display: "flex",
         alignItems: "center",
-        boxShadow: "0px 1px 10px rgba(0, 0, 0, 0.08)",
-        color: "#8283BE",
+        boxShadow:
+          "var(--theme-input-shadow, 0px 1px 10px rgba(0, 0, 0, 0.08))",
+        color: primaryColor(300),
         justifyContent: "space-between",
         backgroundColor: "#FFFFFF",
+        border: "var(--theme-input-border, none)",
       },
     };
-  }, [i18next.language, t]);
+  }, [i18next.language, t, theme]);
   return {
     classes,
   };

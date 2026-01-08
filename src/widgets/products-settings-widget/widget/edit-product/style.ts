@@ -42,7 +42,7 @@ const useStyle = () => {
       },
       unActiveStyle: {
         ...FONT_FAMILY.Lexend(500, 16),
-        color: primaryColor(700),
+        color: primaryColor(600),
       },
       mainRowContainer: {
         display: "flex",
@@ -220,7 +220,7 @@ const useStyle = () => {
       },
       subHeader: {
         ...FONT_FAMILY.Lexend(600, 20),
-        color: "#5759A8",
+        color: primaryColor(500),
       },
     };
   }, [i18next.language, t]);
