@@ -3,6 +3,7 @@ import { Stack } from "@mui/material";
 import { ProfileAvatar } from "@/widgets/settings-profile-widget/components/avatar/profile-avatar";
 import { companyContactsInputs } from "@/widgets/settings-profile-widget/components/profiles/inputs/company-contacts-inputs";
 import { companyProfileInputs } from "@/widgets/settings-profile-widget/components/profiles/inputs/company-profile-inputs";
+import { companyLanguagesInputs } from "@/widgets/settings-profile-widget/components/profiles/inputs/company-languages-inputs";
 import { useCompanyProfile } from "@/hooks/use-company-profile";
 import { useTranslation } from "react-i18next";
 import { FormInput } from "@/components/form-inputs/form-input";
@@ -11,11 +12,16 @@ import { SecondaryButton } from "@/components/button/secondary-button";
 import { IInput } from "@/widgets/machines/utils/interfaces-temp/inputs-interfaces";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { PermissionCheck } from "@/components/CheckPermission";
+import { useRecoilValue } from "recoil";
+import { languageOptionsState } from "@/store/languages";
 
 const CompanyBasicInfoComponent = () => {
   const { t } = useTranslation();
-  const { profile, profileChange, updateProfileChanges, currencies ,changeCompanyLoginImage , changeCompanyProfileImage} =
+  const { profile, profileChange, updateProfileChanges, currencies, changeCompanyLoginImage, changeCompanyProfileImage } =
     useCompanyProfile();
+  const languages = useRecoilValue(languageOptionsState);
+
+  console.log("languages", { languages, profile });
 
   const changeState = (key: string, value: any) => {
     profileChange({ ...profile, [key]: value });
@@ -29,6 +35,10 @@ const CompanyBasicInfoComponent = () => {
     {
       inputs: companyContactsInputs(profile),
       title: "profileSettings.contacts",
+    },
+    {
+      inputs: companyLanguagesInputs(profile, languages),
+      title: "profileSettings.languages",
     },
   ];
 
