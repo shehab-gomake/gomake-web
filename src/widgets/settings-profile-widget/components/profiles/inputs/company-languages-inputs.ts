@@ -4,6 +4,13 @@ const companyLanguagesInputs = (
   state: ICompanyProfile,
   languages: { value: string; text: string; label?: string }[]
 ) => {
+  // Filter default language options to only show selected languages
+  // If languages are selected, show only those; otherwise show all
+  const selectedLanguages = state.languages || [];
+  const defaultLanguageOptions = selectedLanguages.length > 0
+    ? languages.filter((lang) => selectedLanguages.includes(lang.value))
+    : languages;
+
   return [
     {
       name: "languages",
@@ -18,6 +25,20 @@ const companyLanguagesInputs = (
       })),
       value: state.languages || [],
       multiple: true,
+      isValid: true,
+    },
+    {
+      name: "defaultLanguage",
+      label: "profileSettings.defaultLanguage",
+      type: "select",
+      placeholder: "profileSettings.defaultLanguage",
+      required: false,
+      parameterKey: "systemLanguage",
+      options: defaultLanguageOptions.map((lang) => ({
+        value: lang.value,
+        text: lang.text,
+      })),
+      value: state.systemLanguage || "",
       isValid: true,
     },
   ];

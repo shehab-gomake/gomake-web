@@ -21,8 +21,6 @@ const CompanyBasicInfoComponent = () => {
     useCompanyProfile();
   const languages = useRecoilValue(languageOptionsState);
 
-  console.log("languages", { languages, profile });
-
   const changeState = (key: string, value: any) => {
     profileChange({ ...profile, [key]: value });
   };

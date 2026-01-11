@@ -80,6 +80,7 @@ export interface ICompanyProfile {
     bankAccountNUM?: string;
   }>;
   languages?: string[];
+  systemLanguage?: string;
 }
 
 export enum CreditClearanceCompanies {
