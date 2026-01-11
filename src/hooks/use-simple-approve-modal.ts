@@ -75,6 +75,7 @@ export const useSimpleApproveModal = (updateStatus:any) => {
     handleCloseStuckModal,
     stuckReason,
     setStuckReason,
-    onUpdateStuckReason
+    onUpdateStuckReason,
+    boardMissionId,
   };
 };

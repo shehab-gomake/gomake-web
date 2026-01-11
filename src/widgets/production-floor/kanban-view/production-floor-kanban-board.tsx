@@ -82,7 +82,7 @@ const generateCategoriesFromData = (
   return categories;
 };
 
-const ProductionFloorKanbanBoard = () => {
+const ProductionFloorKanbanBoard = ({ isEmailComposerOpenApproval, emailDataApproval, openEmailComposerApproval, closeEmailComposerApproval, isLoadingEmailDataApproval }: { isEmailComposerOpenApproval: boolean, emailDataApproval: any, openEmailComposerApproval: (documentId: string | number) => void, closeEmailComposerApproval: () => void, isLoadingEmailDataApproval: boolean }) => {
   const { data } = useProductionFloorKanban();
   const isMobile = useIsMobile();
   const [collapsedCategories, setCollapsedCategories] = useState<Set<string>>(
@@ -121,18 +121,18 @@ const ProductionFloorKanbanBoard = () => {
   const matchSearch = (mission: IBoardMissions) => {
     return search
       ? `${mission.boardMissionNumber}\\${mission.orderNumber}`.includes(
-          search
-        ) ||
-          `${mission.clientName?.toLowerCase()}`.includes(
-            search.toLowerCase()
-          ) ||
-          `${mission.productName?.toLowerCase()}`.includes(
-            search.toLowerCase()
-          ) ||
-          mission.automatedTags?.some((tag) =>
-            tag.toLowerCase().includes(search.toLowerCase())
-          ) ||
-          `${mission?.jobName?.toLowerCase()}`.includes(search.toLowerCase())
+        search
+      ) ||
+      `${mission.clientName?.toLowerCase()}`.includes(
+        search.toLowerCase()
+      ) ||
+      `${mission.productName?.toLowerCase()}`.includes(
+        search.toLowerCase()
+      ) ||
+      mission.automatedTags?.some((tag) =>
+        tag.toLowerCase().includes(search.toLowerCase())
+      ) ||
+      `${mission?.jobName?.toLowerCase()}`.includes(search.toLowerCase())
       : true;
   };
 
@@ -281,6 +281,11 @@ const ProductionFloorKanbanBoard = () => {
               isCollapsed={collapsedCategories.has(category.id)}
               onToggleCollapse={() => toggleCategory(category.id)}
               isMobile={isMobile}
+              isEmailComposerOpenApproval={isEmailComposerOpenApproval}
+              emailDataApproval={emailDataApproval}
+              openEmailComposerApproval={openEmailComposerApproval}
+              closeEmailComposerApproval={closeEmailComposerApproval}
+              isLoadingEmailDataApproval={isLoadingEmailDataApproval}
             />
           ))}
         </Stack>
