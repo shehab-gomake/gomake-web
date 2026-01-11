@@ -10,8 +10,15 @@ import { ClientAutocomplete } from "@/widgets/Clients-Autocomplete/clients-list"
 import { predefinedRanges } from "@/utils/dateRanges";
 import { DateField } from "@/components/date-picker/date-filed";
 import { formatDateToISOString } from "@/components/date-time/date-time-component";
-import { Box } from "@mui/material";
+import { Box, Skeleton } from "@mui/material";
 import { PrimaryButton } from "@/components/button/primary-button";
+import { TotalCardComponent } from "@/pages-components/quotes/widgets/statistics-section/total-card";
+import {
+  ItemsCountIcon,
+  WalletIcon,
+} from "@/pages-components/quotes/widgets/icons/header-section-icons";
+import { PermissionCheck } from "@/components/CheckPermission";
+import { Permissions } from "@/components/CheckPermission/enum";
 
 const CreditCardTransactionsReportHeaderWidget = ({
   customer,
@@ -31,6 +38,8 @@ const CreditCardTransactionsReportHeaderWidget = ({
   isFetchingCustomers,
   setToDate,
   setFromDate,
+  totalTransactionsCount,
+  getValueByKey,
 }: CreditCardTransactionsReportHeaderWidgetProps) => {
   const { t } = useTranslation();
   const { classes } = useStyle();
@@ -51,6 +60,46 @@ const CreditCardTransactionsReportHeaderWidget = ({
           marginBottom={1}
           title={t("creditCardTransactions.creditCardTransactions")}
         />
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "flex-start",
+            alignItems: "center",
+            gap: 10,
+          }}
+        >
+          {/* <PermissionCheck
+            userPermission={Permissions.SHOW_ERP_DOCUMENTS_TABLE_SUMMERY}
+          > */}
+          {totalTransactionsCount !== undefined ? (
+            <>
+              <TotalCardComponent
+                text={t("creditCardTransactions.transactionsCount")}
+                number={totalTransactionsCount}
+                icon={<ItemsCountIcon />}
+              />
+              <TotalCardComponent
+                text={t("sales.quote.totalPrice")}
+                number={getValueByKey?.("totalPrice") || "0"}
+                icon={<WalletIcon />}
+                withCurrency={true}
+              />
+            </>
+          ) : (
+            <>
+              <Skeleton
+                variant="rectangular"
+                sx={{ width: 180, height: 40, borderRadius: 2 }}
+              />
+              <Skeleton
+                variant="rectangular"
+                sx={{ width: 180, height: 40, borderRadius: 2 }}
+              />
+            </>
+          )}
+          {/* </PermissionCheck> */}
+        </div>
       </div>
       <div style={classes.filtersContainer}>
         <div style={classes.date2FilterContainer}>
