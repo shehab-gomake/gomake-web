@@ -29,7 +29,7 @@ const useStyle = () => {
         marginTop: 40,
       },
       loginLbl: {
-        color: primaryColor(600),
+        color: `var(--theme-typography-heading-color,${primaryColor(600)})`,
         ...FONT_FAMILY.Outfit(600, 48),
         marginBottom: 40,
       },

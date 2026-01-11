@@ -10,51 +10,30 @@ const StyledButton = styled(Button, {
     propName !== "primaryColor" &&
     propName !== "errorColor",
 })((props: any) => {
-  // Helper to get CSS variable or fallback
-  const getThemeValue = (cssVar: string, fallback: string) => {
-    if (typeof window !== "undefined") {
-      const root = document.documentElement;
-      const computedStyle = getComputedStyle(root);
-      const cssValue = computedStyle.getPropertyValue(cssVar).trim();
-      return cssValue || fallback;
-    }
-    return fallback;
-  };
+  // Get fallback values once
+  const primaryColorValue = props.primaryColor(500);
+  const defaultBorderColor = "#E0E0E0";
+  const defaultFontFamily = FONT_FAMILY.Lexend(500, 16).fontFamily || "inherit";
 
   return {
-    boxShadow: "none", // No box shadow as requested
+    boxShadow: "none",
     textTransform: "none",
     padding: "14px",
-    backgroundColor: getThemeValue(
-      "--theme-button-bg-primary",
-      props.primaryColor(500)
-    ),
-    border: `1px solid ${getThemeValue(
-      "--theme-button-border-color",
-      "#E0E0E0"
-    )}`, // Border with theme support
-    borderColor: getThemeValue("--theme-button-border-color", "#E0E0E0"),
+    backgroundColor: `var(--theme-button-bg-primary, ${primaryColorValue})`,
+    border: `1px solid var(--theme-button-border-color, ${defaultBorderColor})`,
+    borderColor: `var(--theme-button-border-color, ${defaultBorderColor})`,
     height: props.height || 56,
-    borderRadius: getThemeValue("--theme-button-radius", "4px"),
+    borderRadius: `var(--theme-button-radius, 4px)`,
     gap: 7,
-    color: getThemeValue("--theme-button-text-primary", "#FFFFFF"),
-    fontFamily: getThemeValue(
-      "--theme-typography-button-font-family",
-      FONT_FAMILY.Lexend(500, 16).fontFamily || "inherit"
-    ),
-    fontWeight: getThemeValue("--theme-typography-button-font-weight", "500"),
-    fontSize: getThemeValue("--theme-typography-button-font-size", "16px"),
-    lineHeight: getThemeValue("--theme-typography-button-line-height", "24px"),
-    letterSpacing: getThemeValue(
-      "--theme-typography-button-letter-spacing",
-      "0px"
-    ),
+    color: `var(--theme-button-text-primary, #FFFFFF)`,
+    fontFamily: `var(--theme-typography-button-font-family, ${defaultFontFamily})`,
+    fontWeight: `var(--theme-typography-button-font-weight, 500)`,
+    fontSize: `var(--theme-typography-button-font-size, 16px)`,
+    lineHeight: `var(--theme-typography-button-line-height, 24px)`,
+    letterSpacing: `var(--theme-typography-button-letter-spacing, 0px)`,
     "&:hover": {
-      backgroundColor: getThemeValue(
-        "--theme-button-bg-primary-hover",
-        props.primaryColor(500)
-      ),
-      borderColor: getThemeValue("--theme-button-border-color", "#E0E0E0"),
+      backgroundColor: `var(--theme-button-bg-primary-hover, ${primaryColorValue})`,
+      borderColor: `var(--theme-button-border-color, ${defaultBorderColor})`,
     },
     transition: "0.25s",
     width: "100%",

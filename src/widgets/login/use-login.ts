@@ -9,6 +9,7 @@ import { companyProfileState } from "@/store/company-profile";
 import { useTranslation } from "react-i18next";
 import useTermsFlag from "@/hooks/use-terms"; // import the terms hook
 import { tokenExpiredState } from "@/store/token-expired-modal";
+import { autoSetThemeFromDomain } from "@/contexts/theme";
 
 const useGomakeLogin = () => {
   const { t } = useTranslation();
@@ -53,6 +54,9 @@ const useGomakeLogin = () => {
         if (result?.data?.data?.customer?.refreshToken) {
           updateRefreshTokenStorage(result?.data?.data?.customer?.refreshToken);
         }
+
+        // Auto-set theme based on domain after successful login
+        autoSetThemeFromDomain();
 
         const urlParams = new URLSearchParams(window.location.search);
         const redirectPath = urlParams.get("redirect");
