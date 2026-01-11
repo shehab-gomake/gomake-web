@@ -640,9 +640,11 @@ const useQuoteNew = ({
         } else {
           if (
             res?.errors?.message === "delivrey_date_less_than_est" ||
-            res?.statusCode === 116
+            res?.statusCode === 116 ||
+            res?.statusCode === 100 ||
+            res?.errors?.message === "date_not_valid"
           ) {
-            const errorMessage = t("alerts.deliveryDateLessThanEstimated");
+            const errorMessage = t(`alerts.${res?.errors?.message}`);
             alertFault(errorMessage);
           } else {
             alertFaultUpdate();

@@ -6,7 +6,10 @@ const useStyle = () => {
       // Main container styles
       mainContainer: {
         backgroundColor: "#F8F9FA",
-        // minHeight: "100vh",
+        height: "100%",
+        display: "flex",
+        flexDirection: "column" as const,
+        overflow: "hidden",
       },
 
       // Header section styles
@@ -14,6 +17,9 @@ const useStyle = () => {
         backgroundColor: "#FFFFFF",
         borderBottom: "1px solid #E9ECEF",
         padding: "12px 24px",
+        position: "sticky" as const,
+        top: 0,
+        zIndex: 1100,
       },
 
       headerContent: {

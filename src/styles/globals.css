@@ -686,6 +686,9 @@ df-messenger {
   border-bottom: 1px solid #eaecf0 !important;
   background-color: #fff;
   pointer-events: none !important;
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 100 !important;
 }
 
 /* Add a bottom border to the primary header row */
@@ -717,6 +720,41 @@ df-messenger {
 
 .react-calendar-timeline .rct-sidebar {
   border: 0;
+}
+
+/* Gantt Timeline Scrollable Container */
+.gantt-timeline-wrapper {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: relative;
+  min-height: 0; /* Important for flex children to enable scrolling */
+}
+
+.gantt-timeline-wrapper::-webkit-scrollbar {
+  width: 8px;
+}
+
+.gantt-timeline-wrapper::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.gantt-timeline-wrapper::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+.gantt-timeline-wrapper::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* Make sidebar rows also sticky for horizontal scrolling alignment */
+.react-calendar-timeline .rct-sidebar-header {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 101 !important;
+  background-color: #fff !important;
 }
 
 .custom-date-range-picker {
@@ -873,7 +911,7 @@ df-messenger {
 .tiptap-editor .ProseMirror pre {
   background: #0d0d0d;
   color: #fff;
-  font-family: 'JetBrainsMono', monospace;
+  font-family: "JetBrainsMono", monospace;
   padding: 0.75rem 1rem;
   border-radius: 0.5rem;
 }
