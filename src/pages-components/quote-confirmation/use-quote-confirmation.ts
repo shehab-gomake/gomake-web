@@ -24,6 +24,8 @@ import {
   ERPDocumentsTypesEnum,
   mapERPTypeToDocumentType,
 } from "@/enums/document-type-enum";
+import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
+import { EPreferences } from "@/enums/prefernces";
 
 interface IProps {
   documentType?: DOCUMENT_TYPE;
@@ -48,14 +50,21 @@ const useQuoteConfirmation = ({
 
   const [checkedItems, setCheckedItems] = useState({});
   const { i18n } = useTranslation();
+  const { CheckPreferenceValue } = usePrintHousePreferences();
+  const [fileItems, setFileItems] = useRecoilState(fileItemsState);
 
   const getQuoteConfirmation = async () => {
     let documentItemIds = [];
+    const isAllItemsSelected = CheckPreferenceValue(
+      EPreferences.IS_ALL_ITEMS_SELECTED_IN_QUOTE_CONFIRMATION
+    );
     const callBack = (res) => {
       if (res?.success) {
         const quote = res?.data;
+        // Check preference: if true, set all items to checked by default
+        const defaultCheckedValue = isAllItemsSelected === true ? true : false;
         quote.documentItems = quote.documentItems.map((item) => {
-          item.isChecked = false;
+          item.isChecked = defaultCheckedValue;
           return item;
         });
 
@@ -65,6 +74,16 @@ const useQuoteConfirmation = ({
             documentItemIds.push(item.id);
           }
         });
+
+        // If preference is true, initialize fileItems with all items
+        if (isAllItemsSelected === true) {
+          const initialFileItems = quote.documentItems.map((item) => ({
+            id: item.id,
+            productName: item.productName,
+            files: null,
+          }));
+          setFileItems(initialFileItems);
+        }
 
         quote.clientLang && i18n.changeLanguage(quote.clientLang);
         setQuoteConfirm(quote);
@@ -191,7 +210,6 @@ const useQuoteConfirmation = ({
     },
     [requestAbortController]
   );
-  const [fileItems, setFileItems] = useRecoilState(fileItemsState);
 
   const handleItemCheck = (e, itemId) => {
     let quoteCopy = cloneDeep(quoteConfirm);
