@@ -117,24 +117,24 @@ const GraphicsApprovalUploadModal = ({
     // Add uploaded files
     uploadedFiles.forEach((file, index) => {
       rows.push([
-        <div key={`empty-${file.fileName}-${index}`}></div>,
+        <div key={`empty-${file?.fileName}-${index}`}></div>,
         <h4
-          key={`file-${file.fileName}-${index}`}
+          key={`file-${file?.fileName}-${index}`}
           style={{
             whiteSpace: "nowrap",
             overflow: "hidden",
             textOverflow: "ellipsis",
           }}
         >
-          {file.fileName.length > 50
+          {file.fileName && file.fileName.length > 50
             ? `${file.fileName.substring(0, 35)}...`
             : file.fileName}
         </h4>,
         <TextField
-          key={`description-${file.fileName}-${index}`}
+          key={`description-${file?.fileName}-${index}`}
           size="small"
           placeholder={t("fileUploader.description") || "Description"}
-          value={file.description || ""}
+          value={file?.description || ""}
           onChange={(e) => handleUpdateFileDescription(file.bucketKey, e.target.value)}
           disabled={deletingFiles.includes(file.bucketKey)}
           sx={{ width: "100%" }}
