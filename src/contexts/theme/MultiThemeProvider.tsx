@@ -26,7 +26,7 @@ export const shouldUseHpClientTheme = (): boolean => {
   const hostname = window.location.hostname;
   const port = window.location.port;
 
-  // // Check for localhost:3004
+  // Check for localhost:3004
   // if (hostname === "localhost" && port === "3004") {
   //   return true;
   // }

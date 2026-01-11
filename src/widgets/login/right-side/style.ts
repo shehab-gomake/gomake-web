@@ -1,9 +1,12 @@
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
+import { useTheme } from "@/contexts/theme";
 
 const useStyle = () => {
-  const { theme, primaryColor } = useGomakeTheme();
+  const { theme } = useGomakeTheme();
+  const { currentTheme } = useTheme();
+  const isHpClient = currentTheme === "hp-client";
   const classes = useMemo(() => {
     return {
       rightContainer: {
@@ -11,7 +14,7 @@ const useStyle = () => {
         flexDirection: "column" as "column",
         justifyContent: "center",
         alignItems: "center",
-        backgroundColor: "#504FA1",
+        backgroundColor: isHpClient ? "#0642be" : "#504FA1",
         height: "100%",
         minHeight: "100vh",
         width: "50%",
@@ -48,7 +51,7 @@ const useStyle = () => {
         lineHeight: "20px",
       },
     };
-  }, [theme]);
+  }, [theme, isHpClient]);
   return {
     classes,
   };

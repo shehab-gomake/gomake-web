@@ -8,11 +8,15 @@ import { useRecoilValue } from "recoil";
 import { companyProfileState } from "@/store/company-profile";
 import { Link, useMediaQuery } from "@mui/material";
 import { TermModal } from "../terms-modal/TermModal";
+import { useTheme } from "@/contexts/theme";
+import { HpLogoIcon } from "@/themes/hp-client/icons";
 
 const LoginLeftSide = () => {
   const { classes } = useStyle();
   const userProfile = useRecoilValue(companyProfileState);
   const isMobile = useMediaQuery("(max-width: 768px)");
+  const { currentTheme } = useTheme();
+  const isHpClient = currentTheme === "hp-client";
 
   const {
     errors,
@@ -30,7 +34,7 @@ const LoginLeftSide = () => {
 
   return (
     <div style={isMobile ? classes.MobileSubContainer : classes.leftContainer}>
-      {userProfile?.loginLogo && (
+      {userProfile?.loginLogo ? (
         <div style={classes.logoContainer}>
           <Image
             src={userProfile?.loginLogo}
@@ -44,7 +48,14 @@ const LoginLeftSide = () => {
             height={isMobile ? 70 : 150}
           />
         </div>
-      )}
+      ) : isHpClient ? (
+        <div style={classes.logoContainer}>
+          <HpLogoIcon
+            width={isMobile ? 70 : 150}
+            height={isMobile ? 70 : 150}
+          />
+        </div>
+      ) : null}
 
       <div
         style={{
