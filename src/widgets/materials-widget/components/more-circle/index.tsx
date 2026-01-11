@@ -7,21 +7,16 @@ import { useTranslation } from "react-i18next";
 import { ConvertIcon } from "@/pages-components/quotes/more-circle/icons/convert";
 import { DeleteIcon } from "@/widgets/settings-mailing/messageTemplates/components/more-circle/icons/delete";
 import { DuplicateIcon } from "@/components/icons/duplicate-icon";
-import { useRouter } from "next/router";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
-import { filterState, materialCategorySuppliersState, materialHeadersState, openExtraParametersModalState, selectedMaterialIdForUpdateState, selectedSupplierIdState, openChildTableState } from "../../state";
+import { materialCategorySuppliersState, materialHeadersState, openExtraParametersModalState, selectedMaterialIdForUpdateState, openChildTableState } from "../../state";
+import StoreIcon from "@mui/icons-material/Store";
 import { EMaterialsActions } from "../../enums";
 import { actionMenuState } from "@/store";
 import { DfxIcon } from "@/components/icons/dfx-icon";
 import { PdfIcon } from "@/components/icons/pdf-icon";
 import VisibilityIcon from "@mui/icons-material/Visibility";
-import InventoryIcon from "@mui/icons-material/Inventory";
-import StoreIcon from "@mui/icons-material/Store";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { deleteMaterialProductApi, addMaterialProductApi } from "@/services/api-service/materials/materials-endpoints";
-import { FONT_FAMILY } from "@/utils/font-family";
 
 const MaterialMenuWidget = ({
   dataRow,
@@ -41,10 +36,6 @@ const MaterialMenuWidget = ({
   const { callApi } = useGomakeAxios();
   const { alertSuccessAdded, alertFaultDelete, alertFault } = useSnackBar();
 
-  const { query } = useRouter();
-  const { materialType, materialCategory } = query;
-  const supplierId = useRecoilValue(selectedSupplierIdState);
-  const materialFilter = useRecoilValue(filterState);
   const setSelectedMaterialIdForUpdate = useSetRecoilState(selectedMaterialIdForUpdateState);
   const materialSuppliers = useRecoilValue(materialCategorySuppliersState);
   const materialHeaders = useRecoilValue(materialHeadersState);
@@ -54,32 +45,12 @@ const MaterialMenuWidget = ({
   const hasExtraParameters = materialHeaders.some(header => header.isShowInExtraParameters);
   const hasProduct = dataRow?.hasProduct;
 
-  // Get labels from materialHeaders
-  const totalInventoryHeader = materialHeaders.find(header => header.key === 'totalInventory');
+  // Get suppliers label from materialHeaders
   const purchasePricingHeader = materialHeaders.find(header => header.key === 'purchasePricing');
-
-  const totalInventoryLabel = totalInventoryHeader?.value;
-  const totalInventoryUnit = totalInventoryHeader?.unit ? ` (${totalInventoryHeader.unit})` : '';
   const suppliersLabel = purchasePricingHeader?.value;
-
-  // Get totalInventory value
-  const totalInventoryValue = dataRow?.rowData?.totalInventory?.value || '0';
-
-  // Check if inventory table is open for this row
-  const isInventoryExpanded = openChildTable.rowId === dataRow.id && openChildTable.tableType === 'inventory';
 
   // Check if purchasePricing (suppliers) table is open for this row
   const isPurchasePricingExpanded = openChildTable.rowId === dataRow.id && openChildTable.tableType === 'purchasePricing';
-
-  // Toggle inventory table (Total Inventory)
-  const toggleInventory = () => {
-    if (isInventoryExpanded) {
-      setOpenChildTable({ rowId: '', tableType: null });
-    } else {
-      setOpenChildTable({ rowId: dataRow.id, tableType: 'inventory' });
-    }
-    handleClose();
-  };
 
   // Toggle purchasePricing table (Suppliers)
   const togglePurchasePricing = () => {
@@ -165,43 +136,26 @@ const MaterialMenuWidget = ({
         <MoreCircleIcon />
       </IconButton>
       <GoMakeMenu handleClose={handleClose} open={open} anchorEl={anchorEl}>
-        {/* Total Inventory Menu Item */}
-        <MenuItem
-          style={clasess.menuItemContainer}
-          onClick={toggleInventory}
-        >
-          <div style={clasess.menuRowStyle}>
-            <InventoryIcon sx={{ fontSize: 20, color: clasess.iconColor }} />
-            <div style={clasess.rowTextStyle}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: '8px', justifyContent: 'space-between', width: '100%' }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <span>{totalInventoryLabel}{totalInventoryUnit}:</span>
-                  <span style={{ fontWeight: 600 }}>{totalInventoryValue}</span>
-                </Box>
-                {isInventoryExpanded ? <KeyboardArrowDownIcon /> : <KeyboardArrowUpIcon />}
-              </Box>
-            </div>
-          </div>
-        </MenuItem>
-        <Divider />
-
         {/* Suppliers Toggle Menu Item */}
-        <MenuItem
-          style={clasess.menuItemContainer}
-          onClick={togglePurchasePricing}
-        >
-          <div style={clasess.menuRowStyle}>
-            <StoreIcon sx={{ fontSize: 20, color: clasess.iconColor }} />
-            <div style={clasess.rowTextStyle}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: '8px', justifyContent: 'space-between', width: '100%' }}>
-                <span>{suppliersLabel}</span>
-                {isPurchasePricingExpanded ? <KeyboardArrowDownIcon /> : <KeyboardArrowUpIcon />}
-              </Box>
-            </div>
-          </div>
-        </MenuItem>
-        <Divider />
-
+        {suppliersLabel && (
+          <>
+            <MenuItem
+              style={clasess.menuItemContainer}
+              onClick={togglePurchasePricing}
+            >
+              <div style={clasess.menuRowStyle}>
+                <StoreIcon sx={{ fontSize: 20, color: clasess.iconColor }} />
+                <div style={clasess.rowTextStyle}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: '8px', justifyContent: 'space-between', width: '100%' }}>
+                    <span>{suppliersLabel}</span>
+                    {/* {isPurchasePricingExpanded ? <KeyboardArrowDownIcon /> : <KeyboardArrowUpIcon />} */}
+                  </Box>
+                </div>
+              </div>
+            </MenuItem>
+            <Divider />
+          </>
+        )}
         {
           !isAdmin ? <div>
             <MenuItem style={clasess.menuItemContainer}>

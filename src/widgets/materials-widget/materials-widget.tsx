@@ -432,6 +432,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
                           hasMoreData={hasMoreData}
                           isLoadingMore={isLoadingMore}
                           filterBarHeight={filterBarHeight}
+                          isAdmin={props.isAdmin}
                         />
                       ) : flag &&
                         materialCategories.find(
