@@ -928,7 +928,7 @@ const QuotesListPageWidget = ({
         onClose={onClickCloseChangeProductionStatusModal}
         onClickDelete={() => {
           if (isMoveToReady) {
-            moveOrderToReady();
+            moveOrderToReady(moveToReadyOption === "withMessage" ? true : false);
           } else {
             if (isSelectedCLoseAsDeliveryNote) {
               const path = `/deliveryNote?isNewCreation=true&orderId=${selectedDocument?.id}`;
