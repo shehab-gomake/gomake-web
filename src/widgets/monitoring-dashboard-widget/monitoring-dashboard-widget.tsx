@@ -12,6 +12,7 @@ import { exportDashboardToExcel } from "./utils/export-to-excel";
 import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined";
 import { ReportActionsMenu } from "@/pages-components/transaction-journal-report/widgets/button-widget/report-actions-menu/report-actions-menu";
 import { RoundTableCell, RoundTableRow } from "@/components/tables/primary-table";
+import { INVOICE_AND_OPEN_DELIVERY_NOTES_AND_ORDERS_ID } from "@/enums/document-type-enum";
 
 const MonitoringDashboardWidget = () => {
   const { classes } = useStyle();
@@ -117,99 +118,123 @@ const MonitoringDashboardWidget = () => {
   }, [filters]);
 
   const handleExportToExcel = () => {
+    // Check if special filter is active
+    const isSpecialFilter =
+      filters?.selectedDocumentType ===
+      INVOICE_AND_OPEN_DELIVERY_NOTES_AND_ORDERS_ID;
+
     // Prepare Daily Documents Summary data for export
     const dailyDocumentsRows =
       dailyDocumentsSummary && dailyDocumentsSummary.length > 0
         ? dailyDocumentsSummary.map((item) => {
-            const date = new Date(item.date);
-            const formattedDate = date.toLocaleDateString("en-GB", {
-              day: "2-digit",
-              month: "2-digit",
-              year: "numeric",
-            });
-            return [
-              formattedDate,
-              item.ordersUnits?.toLocaleString("en-US") || "0",
-              item.ordersTotal != null
-                ? `${currUnit} ${item.ordersTotal.toLocaleString("en-US", {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2,
-                  })}`
-                : `${currUnit} 0.00`,
-              item.deliveryNotesTotal != null
-                ? `${currUnit} ${item.deliveryNotesTotal.toLocaleString(
-                    "en-US",
-                    {
-                      minimumFractionDigits: 2,
-                      maximumFractionDigits: 2,
-                    }
-                  )}`
-                : `${currUnit} 0.00`,
-              item.invoiceTotal != null
-                ? `${currUnit} ${item.invoiceTotal.toLocaleString("en-US", {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2,
-                  })}`
-                : `${currUnit} 0.00`,
-              item.total != null
-                ? `${currUnit} ${item.total.toLocaleString("en-US", {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2,
-                  })}`
-                : `${currUnit} 0.00`,
-            ];
-          })
+          const date = new Date(item.date);
+          const formattedDate = date.toLocaleDateString("en-GB", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+          });
+          return [
+            formattedDate,
+            item.ordersUnits?.toLocaleString("en-US") || "0",
+            item.ordersTotal != null
+              ? `${currUnit} ${item.ordersTotal.toLocaleString("en-US", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}`
+              : `${currUnit} 0.00`,
+            item.deliveryNotesTotal != null
+              ? `${currUnit} ${item.deliveryNotesTotal.toLocaleString(
+                "en-US",
+                {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                }
+              )}`
+              : `${currUnit} 0.00`,
+            item.invoiceTotal != null
+              ? `${currUnit} ${item.invoiceTotal.toLocaleString("en-US", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}`
+              : `${currUnit} 0.00`,
+            item.total != null
+              ? `${currUnit} ${item.total.toLocaleString("en-US", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}`
+              : `${currUnit} 0.00`,
+          ];
+        })
         : [];
 
     // Calculate totals for each column
     const totals =
       dailyDocumentsSummary && dailyDocumentsSummary.length > 0
         ? dailyDocumentsSummary.reduce(
-            (acc, item) => {
-              acc.ordersUnits += item.ordersUnits || 0;
-              acc.ordersTotal += item.ordersTotal || 0;
-              acc.deliveryNotesTotal += item.deliveryNotesTotal || 0;
-              acc.invoiceTotal += item.invoiceTotal || 0;
-              acc.total += item.total || 0;
-              return acc;
-            },
-            {
-              ordersUnits: 0,
-              ordersTotal: 0,
-              deliveryNotesTotal: 0,
-              invoiceTotal: 0,
-              total: 0,
-            }
-          )
+          (acc, item) => {
+            acc.ordersUnits += item.ordersUnits || 0;
+            acc.ordersTotal += item.ordersTotal || 0;
+            acc.deliveryNotesTotal += item.deliveryNotesTotal || 0;
+            acc.invoiceTotal += item.invoiceTotal || 0;
+            acc.total += item.total || 0;
+            return acc;
+          },
+          {
+            ordersUnits: 0,
+            ordersTotal: 0,
+            deliveryNotesTotal: 0,
+            invoiceTotal: 0,
+            total: 0,
+          }
+        )
         : null;
 
     // Add totals row to the data if totals exist
     const dailyDocumentsRowsWithTotals =
       dailyDocumentsRows.length > 0 && totals
         ? [
-            ...dailyDocumentsRows,
-            [
-              t("dashboard.total"),
-              totals.ordersUnits.toLocaleString("en-US"),
-              `${currUnit} ${totals.ordersTotal.toLocaleString("en-US", {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2,
-              })}`,
-              `${currUnit} ${totals.deliveryNotesTotal.toLocaleString("en-US", {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2,
-              })}`,
-              `${currUnit} ${totals.invoiceTotal.toLocaleString("en-US", {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2,
-              })}`,
-              `${currUnit} ${totals.total.toLocaleString("en-US", {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2,
-              })}`,
-            ],
-          ]
+          ...dailyDocumentsRows,
+          [
+            isSpecialFilter ? t("dashboard.totalSales") : t("dashboard.totalSales"),
+            totals.ordersUnits.toLocaleString("en-US"),
+            `${currUnit} ${totals.ordersTotal.toLocaleString("en-US", {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })}`,
+            `${currUnit} ${totals.deliveryNotesTotal.toLocaleString("en-US", {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })}`,
+            `${currUnit} ${totals.invoiceTotal.toLocaleString("en-US", {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })}`,
+            `${currUnit} ${totals.total.toLocaleString("en-US", {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })}`,
+          ],
+        ]
         : dailyDocumentsRows;
+
+    // Conditionally set headers based on filter
+    const dailyDocumentsHeaders = isSpecialFilter
+      ? [
+        t("dashboard.date"),
+        t("dashboard.openAndReadyOrder"),
+        `${t("dashboard.ordersTotal")} (${currUnit})`,
+        `${t("dashboard.openDeliveryNotes")} (${currUnit})`,
+        `${t("dashboard.invoiceTotal")} (${currUnit})`,
+        `${t("dashboard.totalSales")} (${currUnit})`,
+      ]
+      : [
+        t("dashboard.date"),
+        t("dashboard.ordersUnits"),
+        `${t("dashboard.ordersTotal")} (${currUnit})`,
+        `${t("dashboard.deliveryNotesTotal")} (${currUnit})`,
+        `${t("dashboard.invoiceTotal")} (${currUnit})`,
+        `${t("dashboard.totalSales")} (${currUnit})`,
+      ];
 
     const exportData = {
       agentsData: agentsRow || [],
@@ -223,16 +248,9 @@ const MonitoringDashboardWidget = () => {
       dailyDocumentsSummary:
         dailyDocumentsRowsWithTotals.length > 0
           ? {
-              data: dailyDocumentsRowsWithTotals,
-              headers: [
-                t("dashboard.date"),
-                t("dashboard.ordersUnits"),
-                `${t("dashboard.ordersTotal")} (${currUnit})`,
-                `${t("dashboard.deliveryNotesTotal")} (${currUnit})`,
-                `${t("dashboard.invoiceTotal")} (${currUnit})`,
-                `${t("dashboard.total")} (${currUnit})`,
-              ],
-            }
+            data: dailyDocumentsRowsWithTotals,
+            headers: dailyDocumentsHeaders,
+          }
           : undefined,
     };
 
@@ -280,10 +298,10 @@ const MonitoringDashboardWidget = () => {
         const result = fn
           ? fn(a, b)
           : a[sortConfig.key] < b[sortConfig.key]
-          ? -1
-          : a[sortConfig.key] > b[sortConfig.key]
-          ? 1
-          : 0;
+            ? -1
+            : a[sortConfig.key] > b[sortConfig.key]
+              ? 1
+              : 0;
         return sortConfig.direction === "asc" ? result : -result;
       });
       return sorted;
@@ -444,6 +462,11 @@ const MonitoringDashboardWidget = () => {
       {dailyDocumentsSummary &&
         dailyDocumentsSummary.length > 0 &&
         (() => {
+          // Check if special filter is active
+          const isSpecialFilter =
+            filters?.selectedDocumentType ===
+            INVOICE_AND_OPEN_DELIVERY_NOTES_AND_ORDERS_ID;
+
           const dailyDocumentsRows = dailyDocumentsSummary.map((item) => {
             const date = new Date(item.date);
             const formattedDate = date.toLocaleDateString("en-GB", {
@@ -456,30 +479,30 @@ const MonitoringDashboardWidget = () => {
               item.ordersUnits?.toLocaleString("en-US") || "0",
               item.ordersTotal != null
                 ? `${currUnit} ${item.ordersTotal.toLocaleString("en-US", {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2,
-                  })}`
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })}`
                 : `${currUnit} 0.00`,
               item.deliveryNotesTotal != null
                 ? `${currUnit} ${item.deliveryNotesTotal.toLocaleString(
-                    "en-US",
-                    {
-                      minimumFractionDigits: 2,
-                      maximumFractionDigits: 2,
-                    }
-                  )}`
+                  "en-US",
+                  {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  }
+                )}`
                 : `${currUnit} 0.00`,
               item.invoiceTotal != null
                 ? `${currUnit} ${item.invoiceTotal.toLocaleString("en-US", {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2,
-                  })}`
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })}`
                 : `${currUnit} 0.00`,
               item.total != null
                 ? `${currUnit} ${item.total.toLocaleString("en-US", {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2,
-                  })}`
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })}`
                 : `${currUnit} 0.00`,
             ];
           });
@@ -503,8 +526,27 @@ const MonitoringDashboardWidget = () => {
             }
           );
 
+          // Conditionally set headers based on filter
+          const headers = isSpecialFilter
+            ? [
+              t("dashboard.date"),
+              t("dashboard.openAndReadyOrder"),
+              `${t("dashboard.ordersTotal")} (${currUnit})`,
+              `${t("dashboard.openDeliveryNotes")} (${currUnit})`,
+              `${t("dashboard.invoiceTotal")} (${currUnit})`,
+              `${t("dashboard.totalSales")} (${currUnit})`,
+            ]
+            : [
+              t("dashboard.date"),
+              t("dashboard.ordersUnits"),
+              `${t("dashboard.ordersTotal")} (${currUnit})`,
+              `${t("dashboard.deliveryNotesTotal")} (${currUnit})`,
+              `${t("dashboard.invoiceTotal")} (${currUnit})`,
+              `${t("dashboard.totalSales")} (${currUnit})`,
+            ];
+
           const totalRow = [
-            t("dashboard.total"),
+            isSpecialFilter ? t("dashboard.totalSales") : t("dashboard.totalSales"),
             totals.ordersUnits.toLocaleString("en-US"),
             `${currUnit} ${totals.ordersTotal.toLocaleString("en-US", {
               minimumFractionDigits: 2,
@@ -551,14 +593,7 @@ const MonitoringDashboardWidget = () => {
                   <Table>
                     <TableHead>
                       <RoundTableRow>
-                        {[
-                          t("dashboard.date"),
-                          t("dashboard.ordersUnits"),
-                          `${t("dashboard.ordersTotal")} (${currUnit})`,
-                          `${t("dashboard.deliveryNotesTotal")} (${currUnit})`,
-                          `${t("dashboard.invoiceTotal")} (${currUnit})`,
-                          `${t("dashboard.total")} (${currUnit})`,
-                        ].map((header, index) => (
+                        {headers.map((header, index) => (
                           <RoundTableCell key={index} align="center">
                             {header}
                           </RoundTableCell>
