@@ -991,7 +991,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             ),
             itemsNumber: quote?.itemsNumber,
             status:
-              isInvoice && quote?.isDraft ? (
+              (isInvoice || isPurchaseInvoice) && quote?.isDraft ? (
                 <span style={{ color: "#e77676" }}>
                   {t("sales.quote.draft")}
                 </span>
@@ -1100,7 +1100,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               <div>—</div>
             ),
           status:
-            isInvoice && quote?.isDraft ? (
+            (isInvoice || isPurchaseInvoice) && quote?.isDraft ? (
               <span style={{ color: "#e77676" }}>{t("sales.quote.draft")}</span>
             ) : (
               renderStatusCell(quote)
@@ -1548,7 +1548,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 ),
                 itemsNumber: quote?.itemsNumber,
                 status:
-                  isInvoice && quote?.isDraft ? (
+                  (isInvoice || isPurchaseInvoice) && quote?.isDraft ? (
                     <span style={{ color: "#e77676" }}>
                       {t("sales.quote.draft")}
                     </span>
@@ -1663,7 +1663,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                   <div>—</div>
                 ),
               status:
-                isInvoice && quote?.isDraft ? (
+                (isInvoice || isPurchaseInvoice) && quote?.isDraft ? (
                   <span style={{ color: "#e77676" }}>
                     {t("sales.quote.draft")}
                   </span>
@@ -2131,7 +2131,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               ),
               itemsNumber: quote?.itemsNumber,
               status:
-                isInvoice && quote?.isDraft ? (
+                (isInvoice || isPurchaseInvoice) && quote?.isDraft ? (
                   <span style={{ color: "#e77676" }}>
                     {t("sales.quote.draft")}
                   </span>
@@ -2238,7 +2238,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 <div>—</div>
               ),
             status:
-              isInvoice && quote?.isDraft ? (
+              (isInvoice || isPurchaseInvoice) && quote?.isDraft ? (
                 <span style={{ color: "#e77676" }}>
                   {t("sales.quote.draft")}
                 </span>
@@ -2727,7 +2727,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     // Handle documentNumber from URL - add it to patternSearch
     const documentNumberFromUrl = router.query.documentNumber as string;
     let trimmedSearch = patternSearch?.trim() || "";
-    
+
     // If documentNumber is in URL, include it in patternSearch
     if (documentNumberFromUrl) {
       if (trimmedSearch && !trimmedSearch.includes(documentNumberFromUrl)) {
