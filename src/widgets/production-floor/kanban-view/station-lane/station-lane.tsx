@@ -27,12 +27,20 @@ import { useSimpleApproveModal } from "@/hooks/use-simple-approve-modal";
 import { GoMakeDeleteModal } from "@/components";
 import { ModalType } from "@/enums";
 import { AddStuckReasonWidget } from "../../add-stuck-reason/add-stuck-reason";
+import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
+import { FrontDeskEmailComposerWrapper } from "@/pages-components/quotes/components/frontdesk-email-composer-wrapper";
+import { printHouseHasFrontDeskFeature } from "@/store/print-house-profile";
 
 interface IProps {
   station: IStation;
   missions: IStatusesBoardsMissions[];
   isMobile?: boolean;
   categoryName?: string; // Add category name to validate action boundaries
+  isEmailComposerOpenApproval?: boolean;
+  emailDataApproval?: any;
+  openEmailComposerApproval?: (documentId: string | number) => void;
+  closeEmailComposerApproval?: () => void;
+  isLoadingEmailDataApproval?: boolean;
 }
 
 const StationLane: React.FC<IProps> = ({
@@ -40,11 +48,17 @@ const StationLane: React.FC<IProps> = ({
   missions,
   isMobile,
   categoryName,
+  isEmailComposerOpenApproval,
+  emailDataApproval,
+  openEmailComposerApproval,
+  closeEmailComposerApproval,
+  isLoadingEmailDataApproval,
 }) => {
   const { updateStatus, t: productionFloorT } = useProductionFloorData();
   const globalStatuses = useRecoilValue(productionFloorStatusesState);
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
+  const hasFrontDeskFeature = useRecoilValue(printHouseHasFrontDeskFeature);
   const {
     openSimpleApproveModal,
     handleOpenModal,
@@ -56,6 +70,7 @@ const StationLane: React.FC<IProps> = ({
     stuckReason,
     setStuckReason,
     onUpdateStuckReason,
+    boardMissionId,
   } = useSimpleApproveModal(updateStatus);
 
   // Use fixed status columns that match the header
@@ -406,7 +421,7 @@ const StationLane: React.FC<IProps> = ({
     targetStationInfo: any,
     targetStatusId?: string
   ) => {
-    const callBack = (res: any) => {};
+    const callBack = (res: any) => { };
 
     if (targetStationInfo.machineId && targetStationInfo.machineName) {
       // Update machine
@@ -484,8 +499,8 @@ const StationLane: React.FC<IProps> = ({
             isHeaderOver && canHeaderDrop
               ? "#f0f8ff"
               : isHeaderOver && !canHeaderDrop
-              ? "#fff5f5"
-              : "#f8f9fa",
+                ? "#fff5f5"
+                : "#f8f9fa",
           borderRight: "1px solid #e0e0e0",
           padding: "12px 16px",
           display: "flex",
@@ -495,8 +510,8 @@ const StationLane: React.FC<IProps> = ({
             isHeaderOver && canHeaderDrop
               ? "2px dashed #1976d2"
               : isHeaderOver && !canHeaderDrop
-              ? "2px dashed #f44336"
-              : "none",
+                ? "2px dashed #f44336"
+                : "none",
           boxSizing: "border-box",
         }}
       >
@@ -639,14 +654,14 @@ const StationLane: React.FC<IProps> = ({
                     ? "240px"
                     : "300px"
                   : isMobile
-                  ? "120px"
-                  : "150px",
+                    ? "120px"
+                    : "150px",
               backgroundColor:
                 isOver && canDrop
                   ? "#f0f8ff"
                   : isOver && !canDrop
-                  ? "#fff5f5"
-                  : "white",
+                    ? "#fff5f5"
+                    : "white",
               padding: "8px",
               display: status.name === "Waiting" ? "grid" : "flex",
               flexDirection: status.name === "Waiting" ? undefined : "column",
@@ -671,8 +686,8 @@ const StationLane: React.FC<IProps> = ({
                 isOver && canDrop
                   ? "2px dashed #1976d2"
                   : isOver && !canDrop
-                  ? "2px dashed #f44336"
-                  : "none",
+                    ? "2px dashed #f44336"
+                    : "none",
               outlineOffset: "-2px", // Adjust outline position
               "::-webkit-scrollbar": {
                 width: "8px",
@@ -702,17 +717,17 @@ const StationLane: React.FC<IProps> = ({
                     sx={
                       status.name === "Waiting"
                         ? {
-                            width: "100%",
-                            minWidth: 0,
-                            height: "auto",
-                            alignSelf: "start",
-                          }
+                          width: "100%",
+                          minWidth: 0,
+                          height: "auto",
+                          alignSelf: "start",
+                        }
                         : {
-                            width: "100%",
-                            flexShrink: 0,
-                            flexGrow: 0,
-                            height: "auto",
-                          }
+                          width: "100%",
+                          flexShrink: 0,
+                          flexGrow: 0,
+                          height: "auto",
+                        }
                     }
                   >
                     <JobCard
@@ -795,9 +810,25 @@ const StationLane: React.FC<IProps> = ({
         subTitle={" "}
         openModal={openSimpleApproveModal}
         onClose={handleCloseModal}
-        onClickDelete={handleConfirm}
+        onClickDelete={hasFrontDeskFeature && boardMissionId ? () => {
+          openEmailComposerApproval?.(boardMissionId);
+          handleCloseModal();
+        } : () => {
+          handleConfirm();
+        }}
         onClickCancel={handleCloseModal}
       />
+
+      {isEmailComposerOpenApproval && boardMissionId && (
+        <FrontDeskEmailComposerWrapper
+          open={isEmailComposerOpenApproval}
+          onClose={closeEmailComposerApproval}
+          emailData={emailDataApproval}
+          documentId={boardMissionId}
+          documentType={21 as DOCUMENT_TYPE}
+          isLoading={isLoadingEmailDataApproval}
+        />
+      )}
       <GoMakeDeleteModal
         title={t("sales.quote.stuckReasonTitleModal")}
         yesBtn={t("modal.yes")}

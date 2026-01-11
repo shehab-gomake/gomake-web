@@ -35,6 +35,7 @@ const AddNewParameterModal = ({
     { text: t("machineAttributes.boolean"), value: 3 },
     { text: t("machineAttributes.fixedValues"), value: 6 },
     { text: t("machineAttributes.quantity"), value: 7 },
+    { text: t("sales.quote.jobName"), value: 8 },
   ];
 
   const addActionToProduct = async () => {
@@ -55,14 +56,16 @@ const AddNewParameterModal = ({
     }
 
     const isQuantityParameter = newParameterState?.parameterType === 7;
+    const isJobNameParameter = newParameterState?.parameterType === 8;
     const payload = {
       productId: newParameterState?.productId,
       sectionId: newParameterState?.sectionId,
       subSectionId: newParameterState?.subSectionId,
       updateType: newParameterState?.updateType,
       parameterName: newParameterState?.parameterName,
-      parameterType: isQuantityParameter ? 1 : newParameterState?.parameterType,
-      ...(isQuantityParameter && { isQuantityParameter: true })
+      parameterType: isQuantityParameter ? 1 : isJobNameParameter ? 0 : newParameterState?.parameterType,
+      ...(isQuantityParameter && { isQuantityParameter: true }),
+      ...(isJobNameParameter && { isJobNameParameter: true })
     };
 
     await addParameterToProductApi(callApi, callBack, payload);

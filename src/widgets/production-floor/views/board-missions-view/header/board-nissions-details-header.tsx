@@ -128,9 +128,12 @@ const InfoSection = ({ boardMissionsDetails, CheckPreferenceValue, t }) => {
                       (res: any) => {
                         if (!res?.success) {
                           // Check for specific error: delivery date less than estimated
-                          if (res?.statusCode === 116) {
+                          if (
+                            res?.statusCode === 116 ||
+                            res?.statusCode === 100
+                          ) {
                             const errorMessage = t(
-                              "alerts.deliveryDateLessThanEstimated"
+                              `alerts.${res?.errors?.message}`
                             );
                             alertFault(errorMessage);
                           } else {

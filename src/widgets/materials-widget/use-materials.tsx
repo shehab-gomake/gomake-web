@@ -14,7 +14,7 @@ import {
 } from "@/services/api-service/materials/printhouse-materials-endpoints";
 import { IMaterialCategoryRow } from "@/widgets/materials-widget/interface";
 import { TableCellData } from "@/widgets/materials-widget/components/table-cell-data/table-cell";
-import { Checkbox, Box } from "@mui/material";
+import { Checkbox } from "@mui/material";
 import { getCurrencies } from "@/services/api-service/general/enums";
 import {
   useRecoilState,
@@ -41,7 +41,6 @@ import {
   materialTypeTableState,
   openChildTableState,
   selectedSupplierIdState,
-  openExtraParametersModalState,
 } from "@/widgets/materials-widget/state";
 import { getMaterialSuppliersApi } from "@/services/api-service/materials/materials-suppliers-endpoints";
 import { useTranslation } from "react-i18next";
@@ -56,7 +55,6 @@ import { convertTitleUnits } from "@/utils/helpers";
 import { isLoadingMaterialsState, userState } from "@/store";
 import { UNIT_TYPE } from "@/enums";
 import { EMaterialActiveFilter } from "./enums";
-import { EDataTypeEnum } from "./components/table-cell-data/data-type-enum";
 
 const useMaterials = (isAdmin: boolean) => {
   const { query, push, replace } = useRouter();
@@ -131,7 +129,6 @@ const useMaterials = (isAdmin: boolean) => {
   const setMaterialCategorySuppliers = useSetRecoilState(
     materialCategorySuppliersState
   );
-  const setOpenExtraParametersModal = useSetRecoilState(openExtraParametersModalState);
   const { updateCellData } = useTableCellData(isAdmin);
   const { getMaterialCategoryData } = useMaterialsCategories(isAdmin);
   const toggleIsActive = async (id, parameterKey, value) => {
@@ -396,17 +393,16 @@ const useMaterials = (isAdmin: boolean) => {
   }, [materialHeaders, materialCategoryData]);
   const user = useRecoilValue<any>(userState);
   const unitType = user?.printHouseProfile?.unitType || 0;
-  const tableHeadersNew = useCallback(() => {
-    const hasExtraParameters = materialHeaders.some(header => header.isShowInExtraParameters);
 
+  const tableHeadersNew = useCallback(() => {
     return [
       <Checkbox
         onChange={(event, checked) => onChangeHeaderCheckBox(checked)}
         checked={isAllSelected()}
       />,
       ...(isAdmin
-        ? materialHeaders.filter((x) => x.key !== "stock" && !x.isShowInExtraParameters && x.key !== "totalInventory" && x.key !== "purchasePricing")
-        : materialHeaders.filter((header) => !header.isForAdmin && !header.isShowInExtraParameters && header.key !== "totalInventory" && header.key !== "purchasePricing")
+        ? materialHeaders.filter((x) => x.key !== "stock" && !x.isShowInExtraParameters && x.key !== "purchasePricing")
+        : materialHeaders.filter((header) => !header.isForAdmin && !header.isShowInExtraParameters && header.key !== "purchasePricing")
       ).map((header) => {
         const convertedUnit =
           unitType === UNIT_TYPE.IMPERIAL
@@ -430,12 +426,10 @@ const useMaterials = (isAdmin: boolean) => {
           <div style={{ textTransform: "capitalize" }}>{header.value}</div>
         );
       }),
-      // Add "Show More" header if hasExtraParameters
-      ...(hasExtraParameters ? [""] : []),
       // t("usersSettings.isActive"),
       " ",
     ];
-  }, [materialHeaders, materialCategoryData, t]);
+  }, [materialHeaders, materialCategoryData]);
 
   const tableRows = useMemo(() => {
     return materialCategoryData.map((dataRow) => {
@@ -470,34 +464,11 @@ const useMaterials = (isAdmin: boolean) => {
 
   const tableRowsNew = useMemo(() => {
     const rows = [];
-    const hasExtraParameters = materialHeaders.some(header => header.isShowInExtraParameters);
 
     materialCategoryData.forEach((dataRow) => {
       const filteredHeaders = isAdmin
-        ? materialHeaders.filter((x) => {
-          // Filter out stock, extra parameters, totalInventory, and headers with INVENTORY or PURCHASE_PRICING type
-          if (x.key === "stock" || x.isShowInExtraParameters || x.key === "totalInventory") {
-            return false;
-          }
-          // Check if this header's rowData has INVENTORY or PURCHASE_PRICING type
-          const rowDataForHeader = dataRow.rowData[x.key];
-          if (rowDataForHeader?.type === EDataTypeEnum.INVENTORY || rowDataForHeader?.type === EDataTypeEnum.PURCHASE_PRICING) {
-            return false;
-          }
-          return true;
-        })
-        : materialHeaders.filter((header) => {
-          // Filter out admin-only, extra parameters, totalInventory, and headers with INVENTORY or PURCHASE_PRICING type
-          if (header.isForAdmin || header.isShowInExtraParameters || header.key === "totalInventory") {
-            return false;
-          }
-          // Check if this header's rowData has INVENTORY or PURCHASE_PRICING type
-          const rowDataForHeader = dataRow.rowData[header.key];
-          if (rowDataForHeader?.type === EDataTypeEnum.INVENTORY || rowDataForHeader?.type === EDataTypeEnum.PURCHASE_PRICING) {
-            return false;
-          }
-          return true;
-        });
+        ? materialHeaders.filter((x) => x.key !== "stock" && !x.isShowInExtraParameters && x.key !== "purchasePricing")
+        : materialHeaders.filter((header) => !header.isForAdmin && !header.isShowInExtraParameters && header.key !== "purchasePricing");
 
       // Main row
       rows.push({
@@ -518,31 +489,11 @@ const useMaterials = (isAdmin: boolean) => {
               rowData={dataRow.rowData}
             />
           )),
-          // Add "Show More" cell if hasExtraParameters
-          ...(hasExtraParameters ? [
-            <Box
-              key="show-more"
-              onClick={() => {
-                setOpenExtraParametersModal({
-                  open: true,
-                  rowData: dataRow,
-                  rowId: dataRow.id,
-                });
-              }}
-              sx={{
-                cursor: 'pointer',
-                color: '#1976d2',
-                textDecoration: 'underline',
-                padding: '8px',
-                textAlign: 'center',
-                '&:hover': {
-                  backgroundColor: '#f5f5f5',
-                },
-              }}
-            >
-              {t("sales.quote.showMore")}
-            </Box>
-          ] : []),
+          // Add suppliers column manually since it's now static
+          // dataRow?.isActive
+          //   ? <span style={{ color: "green" }}>{t("usersSettings.active")}</span>
+          //   : <span style={{ color: "red" }}>{t("usersSettings.inactive")}</span>,
+
           <MaterialMenuWidget
             dataRow={dataRow}
             isAdmin={isAdmin}

@@ -12,6 +12,10 @@ import { GoMakeDeleteModal, GomakeTextInput } from "@/components";
 import { ModalType } from "@/enums";
 import { useSimpleApproveModal } from "@/hooks/use-simple-approve-modal";
 import { AddStuckReasonWidget } from "../../add-stuck-reason/add-stuck-reason";
+import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
+import { FrontDeskEmailComposerWrapper } from "@/pages-components/quotes/components/frontdesk-email-composer-wrapper";
+import { printHouseHasFrontDeskFeature } from "@/store/print-house-profile";
+import { useRecoilValue } from "recoil";
 
 interface IProps {
   status: IProductionStatus;
@@ -20,6 +24,11 @@ interface IProps {
   isMobile?: boolean;
   stationId?: string;
   maxCards?: number;
+  isEmailComposerOpenApproval?: boolean;
+  emailDataApproval?: any;
+  openEmailComposerApproval?: (documentId: string | number) => void;
+  closeEmailComposerApproval?: () => void;
+  isLoadingEmailDataApproval?: boolean;
 }
 
 function KanbanColumnComponent({
@@ -28,10 +37,16 @@ function KanbanColumnComponent({
   isMobile,
   stationId,
   maxCards = 4,
+  isEmailComposerOpenApproval,
+  emailDataApproval,
+  openEmailComposerApproval,
+  closeEmailComposerApproval,
+  isLoadingEmailDataApproval,
 }: IProps) {
   const { classes } = useStyle();
   const [search] = useRecoilState(productionFloorTextSearchState);
   const { updateStatus, t, RTL } = useProductionFloorData();
+  const hasFrontDeskFeature = useRecoilValue(printHouseHasFrontDeskFeature);
   const {
     openSimpleApproveModal,
     handleOpenModal,
@@ -43,6 +58,7 @@ function KanbanColumnComponent({
     stuckReason,
     setStuckReason,
     onUpdateStuckReason,
+    boardMissionId,
   } = useSimpleApproveModal(updateStatus);
   const dropRef = useRef<HTMLDivElement>(null);
   const [{ isOver }, drop] = useDrop(
@@ -85,18 +101,18 @@ function KanbanColumnComponent({
   const getBoards = useCallback(() => {
     const filteredBoards = !!search
       ? boardsMissions?.filter(
-          (board) =>
-            `${board?.boardMissionNumber}\\${board?.orderNumber}`.includes(
-              search
-            ) ||
-            `${board?.clientName?.toLowerCase()}`.includes(
-              search.toLowerCase()
-            ) ||
-            board?.automatedTags?.some((tag) =>
-              `${tag.toLowerCase()}`.includes(search.toLowerCase())
-            ) ||
-            `${board?.jobName?.toLowerCase()}`.includes(search.toLowerCase())
-        )
+        (board) =>
+          `${board?.boardMissionNumber}\\${board?.orderNumber}`.includes(
+            search
+          ) ||
+          `${board?.clientName?.toLowerCase()}`.includes(
+            search.toLowerCase()
+          ) ||
+          board?.automatedTags?.some((tag) =>
+            `${tag.toLowerCase()}`.includes(search.toLowerCase())
+          ) ||
+          `${board?.jobName?.toLowerCase()}`.includes(search.toLowerCase())
+      )
       : boardsMissions;
 
     // Limit the number of cards displayed
@@ -188,9 +204,26 @@ function KanbanColumnComponent({
         subTitle={" "}
         openModal={openSimpleApproveModal}
         onClose={handleCloseModal}
-        onClickDelete={handleConfirm}
+        onClickDelete={hasFrontDeskFeature && boardMissionId ? () => {
+          openEmailComposerApproval?.(boardMissionId);
+          handleCloseModal();
+        } : () => {
+          handleConfirm();
+        }}
         onClickCancel={handleCloseModal}
       />
+
+      {isEmailComposerOpenApproval && boardMissionId && (
+        <FrontDeskEmailComposerWrapper
+          open={isEmailComposerOpenApproval}
+          onClose={closeEmailComposerApproval}
+          emailData={emailDataApproval}
+          documentId={boardMissionId}
+          documentType={21 as DOCUMENT_TYPE}
+          isLoading={isLoadingEmailDataApproval}
+        />
+      )}
+
       <GoMakeDeleteModal
         title={t("sales.quote.stuckReasonTitleModal")}
         yesBtn={t("modal.yes")}

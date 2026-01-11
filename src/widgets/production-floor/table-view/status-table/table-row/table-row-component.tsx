@@ -2,7 +2,7 @@ import { SecondaryTableCell } from "@/components/tables/secondary-table";
 import { CurrentStationComponent } from "@/widgets/production-floor/table-view/status-table/stations/current-station";
 import { BoardStatusComponent } from "@/widgets/production-floor/table-view/status-table/board-status/board-status";
 import { useDrag, useDrop } from "react-dnd";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import {
   boardMissionsDetailsState,
   selectedBoardsMissionsState,
@@ -47,6 +47,10 @@ import { AddStuckReasonWidget } from "@/widgets/production-floor/add-stuck-reaso
 import { CharacterDetails } from "@/widgets/quote-new/quote-table/row-details/character-details";
 import { ChangeMachineEmployeeComponent } from "../stations/change-machine-employee";
 import { useEffect } from "react";
+import { FrontDeskEmailComposerWrapper } from "@/pages-components/quotes/components/frontdesk-email-composer-wrapper";
+import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
+import { useFrontDeskEmailIntegration } from "@/pages-components/quotes/hooks/use-frontdesk-email-integration";
+import { printHouseHasFrontDeskFeature } from "@/store/print-house-profile";
 
 // Helper component for truncation detection with conditional tooltip
 const TruncatedTextWithTooltip = ({
@@ -132,6 +136,11 @@ interface IProps {
     boardMissionId?: string,
     productType?: string
   ) => void;
+  isEmailComposerOpenApproval?: boolean;
+  emailDataApproval?: any;
+  openEmailComposerApproval?: (documentId: string | number) => void;
+  closeEmailComposerApproval?: () => void;
+  isLoadingEmailDataApproval?: boolean;
 }
 
 enum EDropArea {
@@ -155,6 +164,11 @@ const TableRowComponent = ({
   visibleColumns,
   cellsOnly = false,
   handleOpenStuckModal,
+  isEmailComposerOpenApproval,
+  emailDataApproval,
+  openEmailComposerApproval,
+  closeEmailComposerApproval,
+  isLoadingEmailDataApproval,
 }: IProps) => {
   const { push } = useRouter();
   const [selectedIds, setSelectedIds] = useRecoilState(
@@ -272,27 +286,23 @@ const TableRowComponent = ({
     handleOpenModal,
     handleCloseModal,
     handleConfirm,
-    openSimpleStuckModal,
-    // handleOpenStuckModal,
-    handleCloseStuckModal,
-    stuckReason,
-    setStuckReason,
-    onUpdateStuckReason,
+    boardMissionId,
   } = useSimpleApproveModal(updateStatus);
+
+  const hasFrontDeskFeature = useRecoilValue(printHouseHasFrontDeskFeature);
+
+  // const {
+  //   isEmailComposerOpen,
+  //   emailData,
+  //   openEmailComposer,
+  //   closeEmailComposer,
+  //   isLoadingEmailData,
+  // } = useFrontDeskEmailIntegration({
+  //   documentType: 21 as DOCUMENT_TYPE,
+  // });
 
   const { GetProductionFontSizeFromPreferences } = usePrintHousePreferences();
 
-  // const onSelectBoardMissions = (id: string, checked: boolean) => {
-  //   setSelectedIds(
-  //     checked
-  //       ? [...selectedIds, boardMission]
-  //       : selectedIds.filter(
-  //           (selectedBoard) =>
-  //             selectedBoard.id !== id &&
-  //             selectedBoard.productType === boardMission.productType
-  //         )
-  //   );
-  // };
 
   const onSelectBoardMissions = (id: string, checked: boolean) => {
     setSelectedIds(
@@ -337,12 +347,12 @@ const TableRowComponent = ({
 
                   ...(isMobileScreen &&
                     key === "checkbox" && {
-                      position: "sticky",
-                      top: "auto",
-                      [isRTL ? "right" : "left"]: 0,
-                      zIndex: 1,
-                      backgroundColor: commonStyle.backgroundColor,
-                    }),
+                    position: "sticky",
+                    top: "auto",
+                    [isRTL ? "right" : "left"]: 0,
+                    zIndex: 1,
+                    backgroundColor: commonStyle.backgroundColor,
+                  }),
 
                   padding: "0px",
                 }}
@@ -375,12 +385,12 @@ const TableRowComponent = ({
 
                 ...(isMobileScreen &&
                   key === "job_order" && {
-                    position: "sticky",
-                    top: "auto",
-                    [isRTL ? "right" : "left"]: 48,
-                    zIndex: 1,
-                    backgroundColor: commonStyle.backgroundColor,
-                  }),
+                  position: "sticky",
+                  top: "auto",
+                  [isRTL ? "right" : "left"]: 48,
+                  zIndex: 1,
+                  backgroundColor: commonStyle.backgroundColor,
+                }),
               }}
             >
               <div
@@ -447,8 +457,8 @@ const TableRowComponent = ({
                 backgroundColor: boardMission.jobDeliveryTimeAlertColor
                   ? boardMission.jobDeliveryTimeAlertColor
                   : index % 2 === 0
-                  ? "#FFFFFF"
-                  : "#F9F9F9",
+                    ? "#FFFFFF"
+                    : "#F9F9F9",
               }}
             >
               <div
@@ -651,8 +661,8 @@ const TableRowComponent = ({
                 backgroundColor: boardMission?.currentStationColor
                   ? boardMission?.currentStationColor
                   : index % 2 === 0
-                  ? "#FFFFFF"
-                  : "#F9F9F9",
+                    ? "#FFFFFF"
+                    : "#F9F9F9",
               }}
             >
               <CurrentStationComponent
@@ -817,23 +827,26 @@ const TableRowComponent = ({
         subTitle={" "}
         openModal={openSimpleApproveModal}
         onClose={handleCloseModal}
-        onClickDelete={handleConfirm}
-        onClickCancel={handleCloseModal}
+        onClickDelete={hasFrontDeskFeature && (boardMissionId || boardMission?.id) ? () => {
+          openEmailComposerApproval?.(boardMissionId || boardMission?.id);
+          handleCloseModal();
+        } : () => {
+          handleConfirm();
+        }}
+        onClickCancel={() => {
+          handleCloseModal();
+        }}
       />
-      {/* <GoMakeDeleteModal
-        title={t("sales.quote.stuckReasonTitleModal")}
-        yesBtn={t("modal.yes")}
-        modalType={ModalType.WARNING}
-        subTitle={" "}
-        openModal={openSimpleStuckModal}
-        onClose={handleCloseStuckModal}
-        onClickDelete={() => onUpdateStuckReason(stuckReason)}
-      >
-        <AddStuckReasonWidget
-          stuckReason={stuckReason}
-          setStuckReason={setStuckReason}
+      {isEmailComposerOpenApproval && (boardMissionId || boardMission?.id) && (
+        <FrontDeskEmailComposerWrapper
+          open={isEmailComposerOpenApproval}
+          onClose={closeEmailComposerApproval}
+          emailData={emailDataApproval}
+          documentId={boardMissionId || boardMission?.id}
+          documentType={21 as DOCUMENT_TYPE}
+          isLoading={isLoadingEmailDataApproval}
         />
-      </GoMakeDeleteModal> */}
+      )}
     </>
   );
 };

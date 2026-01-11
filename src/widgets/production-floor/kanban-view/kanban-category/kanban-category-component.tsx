@@ -12,6 +12,11 @@ interface IProps {
   isCollapsed: boolean;
   onToggleCollapse: () => void;
   isMobile?: boolean;
+  isEmailComposerOpenApproval: boolean;
+  emailDataApproval: any;
+  openEmailComposerApproval: (documentId: string | number) => void;
+  closeEmailComposerApproval: () => void;
+  isLoadingEmailDataApproval: boolean;
 }
 
 const KanbanCategoryComponent: React.FC<IProps> = ({
@@ -20,6 +25,11 @@ const KanbanCategoryComponent: React.FC<IProps> = ({
   isCollapsed,
   onToggleCollapse,
   isMobile,
+  isEmailComposerOpenApproval,
+  emailDataApproval,
+  openEmailComposerApproval,
+  closeEmailComposerApproval,
+  isLoadingEmailDataApproval,
 }) => {
   const { t } = useTranslation();
   const totalStations = category.stations.length;
@@ -95,6 +105,11 @@ const KanbanCategoryComponent: React.FC<IProps> = ({
               missions={missionsByStation[station.id] || []}
               isMobile={isMobile}
               categoryName={category.name}
+              isEmailComposerOpenApproval={isEmailComposerOpenApproval}
+              emailDataApproval={emailDataApproval}
+              openEmailComposerApproval={openEmailComposerApproval}
+              closeEmailComposerApproval={closeEmailComposerApproval}
+              isLoadingEmailDataApproval={isLoadingEmailDataApproval}
             />
           ))}
         </Stack>
