@@ -56,7 +56,7 @@ const useDocumentNumbers = () => {
             document.nextValue,
             ShowDocumentData(
               document,
-              primaryColor(500),
+              `var(--theme-secondary-color, ${primaryColor(500)})`,
               setOpenModal,
               setDocument,
               t("documentingSettings.edit"),

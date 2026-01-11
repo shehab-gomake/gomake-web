@@ -56,7 +56,6 @@ const useGomakeTheme = () => {
 
   const primaryColor = useCallback(
     (degree: number) => {
-      // Check for CSS variable first (for theme-based colors) //!here important
       if (typeof window !== "undefined") {
         const root = document.documentElement;
         const computedStyle = getComputedStyle(root);
@@ -90,7 +89,6 @@ const useGomakeTheme = () => {
 
   const secondColor = useCallback(
     (degree: number) => {
-      // Check for CSS variable first (for theme-based colors) //!here important
       if (typeof window !== "undefined") {
         const root = document.documentElement;
         const computedStyle = getComputedStyle(root);
@@ -98,6 +96,7 @@ const useGomakeTheme = () => {
         // Map degree to CSS variable names
         const cssVarMap: { [key: number]: string } = {
           100: "--theme-secondary-on-dark",
+          300: "--theme-secondary-light",
           500: "--theme-secondary-color",
           700: "--theme-secondary-on-light",
         };

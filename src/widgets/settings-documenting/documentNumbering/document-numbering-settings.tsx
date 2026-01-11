@@ -53,7 +53,7 @@ const DocumentNumbering = () => {
           }
         >
           <Stack direction={"column"} gap={"20px"} padding={3}>
-            <Stack direction={"row"}>
+            <Stack direction={"row"} gap={"10px"}>
               {editDocumentInputs(document).map((item) => (
                 <div style={{ display: "flex", alignItems: "flex-end" }}>
                   <FormInput
@@ -73,7 +73,7 @@ const DocumentNumbering = () => {
                     >
                       <div>⚠️</div>
                     </Tooltip>
-                  )}{" "}
+                  )}
                 </div>
               ))}
             </Stack>

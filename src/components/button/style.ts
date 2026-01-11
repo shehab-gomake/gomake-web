@@ -19,10 +19,11 @@ const useStyle = () => {
         textTransform: "capitalize",
       },
       addNewBtn: {
+        borderRadius: "var(--theme-radius-md, 4px)",
         ...FONT_FAMILY.Lexend(500, 14),
-        color: primaryColor(500),
+        color: `var(--theme-secondary-color, ${primaryColor(500)})`,
         "&:hover": {
-          backgroundColor: primaryColor(200),
+          backgroundColor: `var(--theme-secondary-light, ${primaryColor(200)})`,
         },
         "& .MuiButton-startIcon": {
           margin: "0 8px",

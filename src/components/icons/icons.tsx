@@ -48,7 +48,8 @@ const RemoveIcon = () => {
   );
 };
 
-const AddIcon = ({ onClick = null, color = "#2E3092" }) => {
+const AddIcon = ({ onClick = null, color = undefined }) => {
+  const stroke = color || `var(--theme-secondary-color, #2E3092)`;
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -61,21 +62,21 @@ const AddIcon = ({ onClick = null, color = "#2E3092" }) => {
     >
       <path
         d="M5.33325 8H10.6666"
-        stroke={color}
+        stroke={stroke}
         stroke-width="1.5"
         stroke-linecap="round"
         stroke-linejoin="round"
       />
       <path
         d="M8 10.6666V5.33325"
-        stroke={color}
+        stroke={stroke}
         stroke-width="1.5"
         stroke-linecap="round"
         stroke-linejoin="round"
       />
       <path
         d="M5.99992 14.6666H9.99992C13.3333 14.6666 14.6666 13.3333 14.6666 9.99992V5.99992C14.6666 2.66659 13.3333 1.33325 9.99992 1.33325H5.99992C2.66659 1.33325 1.33325 2.66659 1.33325 5.99992V9.99992C1.33325 13.3333 2.66659 14.6666 5.99992 14.6666Z"
-        stroke={color}
+        stroke={stroke}
         stroke-width="1.5"
         stroke-linecap="round"
         stroke-linejoin="round"

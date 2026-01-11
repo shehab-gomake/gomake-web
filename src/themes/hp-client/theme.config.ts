@@ -75,7 +75,8 @@ const hpClientThemeConfig: ThemeConfig = {
       "--theme-status-error-text": "#991b1b",
 
       // Error Colors - Degree variants
-      "--theme-error-color": "#ef4444", // Base error color (like 500)
+      // "--theme-error-color": "#ef4444", // Base error color
+      "--theme-error-color": "#D92C2C", // Base error color (like 500)
       "--theme-error-light": "#fee2e2", // Light error variant
       "--theme-error-dark": "#991b1b", // Dark error variant
 
@@ -208,6 +209,10 @@ const hpClientThemeConfig: ThemeConfig = {
       "--theme-dropdown-placeholder-color": "#A3A3A3",
       "--theme-dropdown-placeholder-size": "14px",
       "--theme-dropdown-placeholder-weight": "400",
+
+      "--theme-select-bg": "var(--theme-primary-light, #F4F3FF)",
+      "--theme-select-text-color": "var(--theme-primary-color)",
+      "--theme-select-border-radius": "var(--theme-radius-xl, 8px)",
 
       "--theme-input-shadow": "none",
       "--theme-input-border": "1px solid var(--theme-border-color, #E0E0E0)",

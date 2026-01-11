@@ -44,7 +44,7 @@ const PdfUploadComponent = ({ onUpload, fileName }: IProps) => {
       {(!onUpload || fileName || isAttachment) && (
         <Stack style={classes.attachmentStyle}>
           <IconButton style={classes.IconButtonStyle}>
-            <FileIcon></FileIcon>
+            <FileIcon />
           </IconButton>
           <label style={classes.labelStyle}>
             {!!fileName

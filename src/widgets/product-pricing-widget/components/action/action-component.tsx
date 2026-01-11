@@ -23,13 +23,17 @@ import {
   RuleType,
 } from "@/widgets/product-pricing-widget/enums";
 import { useActionUpdateValues } from "@/widgets/product-pricing-widget/components/action/use-action-update-values";
-import { useRecoilState, useRecoilValue, useSetRecoilState, } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import {
   currentProductItemValueState,
   outsourceSuppliersState,
   workFlowsState,
 } from "@/widgets/product-pricing-widget/state";
-import { GoMakeAutoComplate, GoMakeDeleteModal, GomakePrimaryButton } from "@/components";
+import {
+  GoMakeAutoComplate,
+  GoMakeDeleteModal,
+  GomakePrimaryButton,
+} from "@/components";
 import Button from "@mui/material/Button";
 import { useTranslation } from "react-i18next";
 import { PrintImageComponent } from "@/widgets/product-pricing-widget/components/print-image/print-image-component";
@@ -347,7 +351,9 @@ const ActionContainerComponent = ({
   };
 
   const [hideRelatedActions, setHideRelatedActions] = useState<boolean>(false);
-  const setIsActionEmployeeUpdated = useSetRecoilState(isActionEmployeeUpdatedState);
+  const setIsActionEmployeeUpdated = useSetRecoilState(
+    isActionEmployeeUpdatedState
+  );
 
   const suppliers = useMemo(() => {
     return suppliersState?.map((s) => ({
@@ -364,28 +370,32 @@ const ActionContainerComponent = ({
       parameter &&
       parameter?.propertyType === RuleType.PARAMETER &&
       parameter?.htmlElementType === HtmlElementType.TEXT &&
-      (source === EWorkSource.INTERNAL || parameter?.showInOutSourceAction === true)
+      (source === EWorkSource.INTERNAL ||
+        parameter?.showInOutSourceAction === true)
   );
   const outputsParameters = outputs?.filter(
     (parameter) =>
       parameter &&
       parameter?.propertyType === RuleType.OUTPUT &&
       parameter?.htmlElementType === HtmlElementType.TEXT &&
-      (source === EWorkSource.INTERNAL || parameter?.showInOutSourceAction === true)
+      (source === EWorkSource.INTERNAL ||
+        parameter?.showInOutSourceAction === true)
   );
   const imageOutputs = outputs?.filter(
     (parameter) =>
       parameter &&
       parameter?.propertyType === RuleType.OUTPUT &&
       parameter?.htmlElementType === HtmlElementType.IMAGE &&
-      (source === EWorkSource.INTERNAL || parameter?.showInOutSourceAction === true)
+      (source === EWorkSource.INTERNAL ||
+        parameter?.showInOutSourceAction === true)
   );
   const booleanOutputs = outputs?.filter(
     (parameter) =>
       parameter &&
       parameter?.propertyType === RuleType.OUTPUT &&
       parameter?.htmlElementType === HtmlElementType.BOOLEAN &&
-      (source === EWorkSource.INTERNAL || parameter?.showInOutSourceAction === true)
+      (source === EWorkSource.INTERNAL ||
+        parameter?.showInOutSourceAction === true)
   );
 
   const textAreaOutputs = outputs?.filter(
@@ -393,8 +403,13 @@ const ActionContainerComponent = ({
       parameter &&
       parameter?.propertyType === RuleType.OUTPUT &&
       parameter?.htmlElementType === HtmlElementType.TEXT_AREA &&
-      (source === EWorkSource.INTERNAL || parameter?.showInOutSourceAction === true) &&
-      !(source === EWorkSource.INTERNAL && (parameter?.name === "Purchase Order Details" || parameter?.orginalName === "PurchaseOrderDetails"))
+      (source === EWorkSource.INTERNAL ||
+        parameter?.showInOutSourceAction === true) &&
+      !(
+        source === EWorkSource.INTERNAL &&
+        (parameter?.name === "Purchase Order Details" ||
+          parameter?.orginalName === "PurchaseOrderDetails")
+      )
   );
 
   const tableOutputs = outputs?.filter(
@@ -402,7 +417,8 @@ const ActionContainerComponent = ({
       parameter &&
       parameter?.propertyType === RuleType.OUTPUT &&
       parameter?.htmlElementType === HtmlElementType.TABLE &&
-      (source === EWorkSource.INTERNAL || parameter?.showInOutSourceAction === true)
+      (source === EWorkSource.INTERNAL ||
+        parameter?.showInOutSourceAction === true)
   );
   const handleDeliveryTimeUpdate = (newValue: string) => {
     if (newValue === totalProductionTime?.values[0]?.toString()) {
@@ -462,7 +478,6 @@ const ActionContainerComponent = ({
     }
     if (isFromSetting) {
       updateProductAction({ actionId, value: newCost, fieldName: "totalcost" });
-
     } else {
       updateActionData(id, +newCost, "totalCost", productType).then();
     }
@@ -484,12 +499,15 @@ const ActionContainerComponent = ({
     } else {
       updateActionData(id, +price, "totalPrice", productType).then();
     }
-
   };
 
   const handleUpdatePricePer1Product = (price: string) => {
     if (isFromSetting) {
-      updateProductAction({ actionId, value: +price, fieldName: "pricePer1Product" });
+      updateProductAction({
+        actionId,
+        value: +price,
+        fieldName: "pricePer1Product",
+      });
     } else {
       updateActionData(id, +price, "pricePer1Product", productType).then();
     }
@@ -497,7 +515,11 @@ const ActionContainerComponent = ({
 
   const handleUpdatePricePer1000Product = (price: string) => {
     if (isFromSetting) {
-      updateProductAction({ actionId, value: +price, fieldName: "pricePer1000Product" });
+      updateProductAction({
+        actionId,
+        value: +price,
+        fieldName: "pricePer1000Product",
+      });
     } else {
       updateActionData(id, +price, "pricePer1000Product", productType).then();
     }
@@ -505,7 +527,11 @@ const ActionContainerComponent = ({
 
   const handleUpdatePricePer1Material = (price: string) => {
     if (isFromSetting) {
-      updateProductAction({ actionId, value: +price, fieldName: "pricePer1Material" });
+      updateProductAction({
+        actionId,
+        value: +price,
+        fieldName: "pricePer1Material",
+      });
     } else {
       updateActionData(id, +price, "pricePer1Material", productType).then();
     }
@@ -513,7 +539,11 @@ const ActionContainerComponent = ({
 
   const handleUpdatePricePer1000Material = (price: string) => {
     if (isFromSetting) {
-      updateProductAction({ actionId, value: +price, fieldName: "pricePer1000Material" });
+      updateProductAction({
+        actionId,
+        value: +price,
+        fieldName: "pricePer1000Material",
+      });
     } else {
       updateActionData(id, +price, "pricePer1000Material", productType).then();
     }
@@ -521,7 +551,11 @@ const ActionContainerComponent = ({
 
   const handleUpdatePricePerMeter = (price: string) => {
     if (isFromSetting) {
-      updateProductAction({ actionId, value: +price, fieldName: "pricePerMeter" });
+      updateProductAction({
+        actionId,
+        value: +price,
+        fieldName: "pricePerMeter",
+      });
     } else {
       updateActionData(id, +price, "pricePerMeter", productType).then();
     }
@@ -529,7 +563,11 @@ const ActionContainerComponent = ({
 
   const handleUpdatePricePerSquareMeter = (price: string) => {
     if (isFromSetting) {
-      updateProductAction({ actionId, value: +price, fieldName: "pricePerSquareMeter" });
+      updateProductAction({
+        actionId,
+        value: +price,
+        fieldName: "pricePerSquareMeter",
+      });
     } else {
       updateActionData(id, +price, "pricePerSquareMeter", productType).then();
     }
@@ -628,10 +666,10 @@ const ActionContainerComponent = ({
 
   const mappedSuppliers = renderOptions
     ? renderOptions()?.map((supplier) => ({
-      text: supplier?.name,
-      id: supplier?.id,
-      ...supplier,
-    }))
+        text: supplier?.name,
+        id: supplier?.id,
+        ...supplier,
+      }))
     : [];
 
   const [isUpdateBusinessName, setIsUpdateBusinessName] = useState<any>(null);
@@ -639,8 +677,6 @@ const ActionContainerComponent = ({
   const onBlurBusinessName = async () => {
     setIsUpdateBusinessName(null);
   };
-
-
 
   return (
     <>
@@ -775,7 +811,6 @@ const ActionContainerComponent = ({
                                       machineId: selectedMachine?.value,
                                       printingActionId: id,
                                     });
-
                                   }
                                   setChooseMachine(false);
                                 }}
@@ -914,9 +949,9 @@ const ActionContainerComponent = ({
                                 {materials[0]?.materialCategories[0]?.name
                                   ?.length > 20
                                   ? materials[0]?.materialCategories[0]?.name.slice(
-                                    0,
-                                    20
-                                  ) + "..."
+                                      0,
+                                      20
+                                    ) + "..."
                                   : materials[0]?.materialCategories[0]?.name}
                               </>
                             ) : (
@@ -951,7 +986,9 @@ const ActionContainerComponent = ({
                               placeholder={t(
                                 "materials.sheetPaper.chooseMaterial"
                               )}
-                              value={materials[0]?.materialCategories?.[0]?.name}
+                              value={
+                                materials[0]?.materialCategories?.[0]?.name
+                              }
                             />
                             <IconButton
                               onClick={(e) => {
@@ -1102,20 +1139,20 @@ const ActionContainerComponent = ({
                               )}
                             />
                             <span>
-                              {`(${source === EWorkSource.OUT
-                                ? formatValueWithUnit(
-                                  calculateOutSourceProfitInMoney(),
-                                  totalPrice?.defaultUnit
-                                )
-                                : formatValueWithUnit(
-                                  calculateProfitInMoney(),
-                                  totalPrice?.defaultUnit
-                                )
-                                })`}
+                              {`(${
+                                source === EWorkSource.OUT
+                                  ? formatValueWithUnit(
+                                      calculateOutSourceProfitInMoney(),
+                                      totalPrice?.defaultUnit
+                                    )
+                                  : formatValueWithUnit(
+                                      calculateProfitInMoney(),
+                                      totalPrice?.defaultUnit
+                                    )
+                              })`}
                             </span>
                           </Stack>
                         </>
-
                       )}
                       {!isFromSetting && source !== EWorkSource.OUT && (
                         <Divider
@@ -1187,11 +1224,13 @@ const ActionContainerComponent = ({
                       </>
                     )}
                   </PermissionCheck>
-                  {!isFromSetting && <Divider
-                    orientation={"vertical"}
-                    style={{ height: "50%", margin: "auto 0" }}
-                    flexItem
-                  />}
+                  {!isFromSetting && (
+                    <Divider
+                      orientation={"vertical"}
+                      style={{ height: "50%", margin: "auto 0" }}
+                      flexItem
+                    />
+                  )}
 
                   <EditableKeyValueViewComponent
                     onUpdate={handleUpdatePrice}
@@ -1236,9 +1275,7 @@ const ActionContainerComponent = ({
                         source={source}
                         name={`${materialQuantity} ${materialName}`}
                       />
-                      <span>
-                        {`${t("sales.quote.pricePer1Material")}`}
-                      </span>
+                      <span>{`${t("sales.quote.pricePer1Material")}`}</span>
                     </>
                   )}
                   {showPricePer1000Material && (
@@ -1251,9 +1288,7 @@ const ActionContainerComponent = ({
                         source={source}
                         name={`${materialQuantity} ${materialName}`}
                       />
-                      <span>
-                        {`${t("sales.quote.pricePer1000Material")}`}
-                      </span>
+                      <span>{`${t("sales.quote.pricePer1000Material")}`}</span>
                     </>
                   )}
                   {showPricePerMeter && (
@@ -1266,9 +1301,7 @@ const ActionContainerComponent = ({
                         source={source}
                         name={`${printingMeter} ${t("measurementUnits.meter")}`}
                       />
-                      <span>
-                        {`${t("sales.quote.pricePerMeter")}`}
-                      </span>
+                      <span>{`${t("sales.quote.pricePerMeter")}`}</span>
                     </>
                   )}
                   {showPricePerSquareMeter && (
@@ -1279,11 +1312,11 @@ const ActionContainerComponent = ({
                         {...pricePerSquareMeter}
                         values={pricePerSquareMeterValue}
                         source={source}
-                        name={`${printArea} ${t("measurementUnits.squareMeter")}`}
+                        name={`${printArea} ${t(
+                          "measurementUnits.squareMeter"
+                        )}`}
                       />
-                      <span>
-                        {`${t("sales.quote.pricePerSquareMeter")}`}
-                      </span>
+                      <span>{`${t("sales.quote.pricePerSquareMeter")}`}</span>
                     </>
                   )}
                   {!isFromSetting && (
@@ -1308,7 +1341,13 @@ const ActionContainerComponent = ({
                   }}
                 >
                   {actionException && (
-                    <Tooltip title={renderExceptionMessage(actionException?.exceptionKey, actionException?.values, t)}>
+                    <Tooltip
+                      title={renderExceptionMessage(
+                        actionException?.exceptionKey,
+                        actionException?.values,
+                        t
+                      )}
+                    >
                       <IconButton>
                         {_renderIconLogs(
                           actionException?.exceptionType,
@@ -1327,7 +1366,7 @@ const ActionContainerComponent = ({
                     }}
                   >
                     <SettingsIcon
-                      stroke={"rgba(237, 2, 140, 1)"}
+                      stroke={`var(--theme-accent-color, ${secondColor(500)})`}
                       width={24}
                       height={24}
                     />
@@ -1502,88 +1541,98 @@ const ActionContainerComponent = ({
                   imageOutputs?.length > 0 ||
                   tableOutputs?.length > 0 ||
                   booleanOutputs?.length > 0) && (
-                    <>
-                      <Divider />
-                      <Stack
-                        padding={"10px 0"}
-                        direction={"row"}
-                        gap={"16px"}
-                        flexWrap={"wrap"}
-                        position={"relative"}
-                      >
-                        <ParametersMapping
-                          source={source}
-                          parameters={outputsParameters}
-                          changeWorkFlowOutputDTO={changeWorkFlowOutputDTO}
-                          setChangeWorkFlowOutputDTO={
-                            setChangeWorkFlowOutputDTO
-                          }
-                        />
-                        {booleanOutputs?.map((parameter, index) => {
-                          const isFirstBoolean = index === 0;
-                          const isLastBoolean = index === booleanOutputs.length - 1;
-                          const hasContentBefore = outputsParameters?.length > 0 || !isFirstBoolean;
-                          const hasContentAfter =
-                            !isLastBoolean ||
-                            imageOutputs?.length > 0 ||
-                            textAreaOutputs?.length > 0 ||
-                            tableOutputs?.length > 0;
-                          return (
-                            <Stack key={`boolean-${index}`} direction={"row"} alignItems={"center"}>
-                              {hasContentBefore && <Divider orientation={"vertical"} flexItem />}
-                              <BooleanOutputComponent
-                                {...parameter}
-                                changeWorkFlowOutputDTO={changeWorkFlowOutputDTO}
-                                setChangeWorkFlowOutputDTO={setChangeWorkFlowOutputDTO}
-                              />
-                              {hasContentAfter && <Divider orientation={"vertical"} flexItem />}
-                            </Stack>
-                          );
-                        })}
-                        {imageOutputs.map((parameter) => (
-                          <PrintImageComponent {...parameter} />
-                        ))}
-                        {imageOutputs?.length > 0 && (
-                          <Divider orientation={"vertical"} flexItem />
+                  <>
+                    <Divider />
+                    <Stack
+                      padding={"10px 0"}
+                      direction={"row"}
+                      gap={"16px"}
+                      flexWrap={"wrap"}
+                      position={"relative"}
+                    >
+                      <ParametersMapping
+                        source={source}
+                        parameters={outputsParameters}
+                        changeWorkFlowOutputDTO={changeWorkFlowOutputDTO}
+                        setChangeWorkFlowOutputDTO={setChangeWorkFlowOutputDTO}
+                      />
+                      {booleanOutputs?.map((parameter, index) => {
+                        const isFirstBoolean = index === 0;
+                        const isLastBoolean =
+                          index === booleanOutputs.length - 1;
+                        const hasContentBefore =
+                          outputsParameters?.length > 0 || !isFirstBoolean;
+                        const hasContentAfter =
+                          !isLastBoolean ||
+                          imageOutputs?.length > 0 ||
+                          textAreaOutputs?.length > 0 ||
+                          tableOutputs?.length > 0;
+                        return (
+                          <Stack
+                            key={`boolean-${index}`}
+                            direction={"row"}
+                            alignItems={"center"}
+                          >
+                            {hasContentBefore && (
+                              <Divider orientation={"vertical"} flexItem />
+                            )}
+                            <BooleanOutputComponent
+                              {...parameter}
+                              changeWorkFlowOutputDTO={changeWorkFlowOutputDTO}
+                              setChangeWorkFlowOutputDTO={
+                                setChangeWorkFlowOutputDTO
+                              }
+                            />
+                            {hasContentAfter && (
+                              <Divider orientation={"vertical"} flexItem />
+                            )}
+                          </Stack>
+                        );
+                      })}
+                      {imageOutputs.map((parameter) => (
+                        <PrintImageComponent {...parameter} />
+                      ))}
+                      {imageOutputs?.length > 0 && (
+                        <Divider orientation={"vertical"} flexItem />
+                      )}
+                      <TextAreaActionsMapping
+                        parameters={textAreaOutputs}
+                        actionId={id}
+                        currentProductItemValue={currentProductItemValue}
+                        productType={productType}
+                      />
+                      {tableOutputs?.map((parameter) => (
+                        <TableOutPutComponent {...parameter} />
+                      ))}
+                      {showSaveChangesButton &&
+                        changeWorkFlowOutputDTO?.length > 0 && (
+                          <GomakePrimaryButton
+                            leftIcon={<ReloadPriceIcon color={"#FFF"} />}
+                            onClick={() => {
+                              changeWorkFlowOutputDTOApi(
+                                actionId,
+                                productType,
+                                actionIndex,
+                                id,
+                                changeWorkFlowOutputDTO
+                              );
+                            }}
+                            style={{
+                              width: "fit-content",
+                              height: "40px",
+                              marginBottom: "10px",
+                              position: "absolute",
+                              ...adaptLeft(direction, 0),
+                              bottom: 0,
+                              backgroundColor: "rgba(237, 2, 140, 1)",
+                            }}
+                          >
+                            {t("pricingWidget.saveAndReCalculate")}
+                          </GomakePrimaryButton>
                         )}
-                        <TextAreaActionsMapping
-                          parameters={textAreaOutputs}
-                          actionId={id}
-                          currentProductItemValue={currentProductItemValue}
-                          productType={productType}
-                        />
-                        {tableOutputs?.map((parameter) => (
-                          <TableOutPutComponent {...parameter} />
-                        ))}
-                        {showSaveChangesButton &&
-                          changeWorkFlowOutputDTO?.length > 0 && (
-                            <GomakePrimaryButton
-                              leftIcon={<ReloadPriceIcon color={"#FFF"} />}
-                              onClick={() => {
-                                changeWorkFlowOutputDTOApi(
-                                  actionId,
-                                  productType,
-                                  actionIndex,
-                                  id,
-                                  changeWorkFlowOutputDTO
-                                );
-                              }}
-                              style={{
-                                width: "fit-content",
-                                height: "40px",
-                                marginBottom: "10px",
-                                position: "absolute",
-                                ...adaptLeft(direction, 0),
-                                bottom: 0,
-                                backgroundColor: "rgba(237, 2, 140, 1)",
-                              }}
-                            >
-                              {t("pricingWidget.saveAndReCalculate")}
-                            </GomakePrimaryButton>
-                          )}
-                      </Stack>
-                    </>
-                  )}
+                    </Stack>
+                  </>
+                )}
               </Collapse>
               <SettingsMenu
                 handleClose={handleClose}
@@ -1609,17 +1658,28 @@ const ActionContainerComponent = ({
             title={t("pricingWidget.changeWorkflowModalTitle")}
             subTitle={" "}
             yesBtn={t("pricingWidget.yesBtnChangeWorkflowModal")}
-            confirmBtnStyle={{ width: "100%", height: 44, fontSize: "14px", lineHeight: "14px", whiteSpace: "pre-line", }}
-            cancelBtnStyle={{ width: "100%", height: 44, fontSize: "14px", lineHeight: "14px", whiteSpace: "pre-line" }}
+            confirmBtnStyle={{
+              width: "100%",
+              height: 44,
+              fontSize: "14px",
+              lineHeight: "14px",
+              whiteSpace: "pre-line",
+            }}
+            cancelBtnStyle={{
+              width: "100%",
+              height: 44,
+              fontSize: "14px",
+              lineHeight: "14px",
+              whiteSpace: "pre-line",
+            }}
             cancelBtn={
-              <Stack alignItems={'center'} justifyContent={'center'}>
-                {
-                  t('pricingWidget.noBtnChangeWorkflowModal').split(('\n')).map(text =>
+              <Stack alignItems={"center"} justifyContent={"center"}>
+                {t("pricingWidget.noBtnChangeWorkflowModal")
+                  .split("\n")
+                  .map((text) => (
                     <span>{text}</span>
-                  )
-                }
+                  ))}
               </Stack>
-
             }
             // cancelBtn={`${t("pricingWidget.yesBtnChangeWorkflowModal")},\n${t("pricingWidget.noBtnChangeWorkflowModal")}`}
             modalType={ModalType.WARNING}
@@ -1636,8 +1696,7 @@ const ActionContainerComponent = ({
                   selectedMachine?.label,
                   true
                 );
-              }
-              else if (selectedMaterial) {
+              } else if (selectedMaterial) {
                 selectNewMaterials(
                   selectedMaterial?.value,
                   actionId,
@@ -1658,8 +1717,7 @@ const ActionContainerComponent = ({
                   selectedMachine?.label,
                   false
                 );
-              }
-              else if (selectedMaterial) {
+              } else if (selectedMaterial) {
                 selectNewMaterials(
                   selectedMaterial?.value,
                   actionId,

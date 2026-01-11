@@ -26,10 +26,10 @@ export const shouldUseHpClientTheme = (): boolean => {
   const hostname = window.location.hostname;
   const port = window.location.port;
 
-  // Check for localhost:3004
-  if (hostname === "localhost" && port === "3004") {
-    return true;
-  }
+  // // Check for localhost:3004
+  // if (hostname === "localhost" && port === "3004") {
+  //   return true;
+  // }
 
   // Check for hp.gomake.net
   if (hostname === "hp.gomake.net") {
@@ -38,7 +38,7 @@ export const shouldUseHpClientTheme = (): boolean => {
 
   // Also check origin strings for exact matches
   if (
-    origin === "http://localhost:3004" ||
+    // origin === "http://localhost:3004" ||
     origin === "https://hp.gomake.net"
   ) {
     return true;

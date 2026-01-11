@@ -24,6 +24,7 @@ const ShowDocumentData = (
       startIcon={<EditIcon color={primaryColor} width={18} height={18} />}
       onClick={handleEditClick}
       variant={"text"}
+      style={{ color: primaryColor }}
     >
       {textEdit}
     </PrimaryButton>
