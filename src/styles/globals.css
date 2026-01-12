@@ -170,9 +170,9 @@ html * {
 }
 
 /* remove related to text input - hp requirement */
-/* .MuiOutlinedInput-root fieldset {
+.MuiOutlinedInput-root fieldset {
   border: none !important;
-} */
+}
 
 .MuiTextField-root input {
   border: none !important;
