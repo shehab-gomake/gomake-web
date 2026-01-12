@@ -94,8 +94,9 @@ const QuoteConfirmationPageWidget = ({
         } else {
           updateTempUserTokenStorage(userToken);
           // Fetch preferences before loading quote confirmation
-          await fetchPrintHousePreferences();
-          await getQuoteConfirmation();
+          const preferences = await fetchPrintHousePreferences();
+          console.log("preferences111", preferences);
+          await getQuoteConfirmation(preferences || undefined);
         }
       }
     };

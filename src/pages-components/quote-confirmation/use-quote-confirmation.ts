@@ -57,10 +57,8 @@ const useQuoteConfirmation = ({
     printHousePreferencesState
   );
 
-  console.log("checkedItems", checkedItems);
-
-  const fetchPrintHousePreferences = useCallback(async () => {
-    return new Promise((resolve) => {
+  const fetchPrintHousePreferences = useCallback(async (): Promise<any[] | null> => {
+    return new Promise<any[] | null>((resolve) => {
       const callBack = (res) => {
         if (res?.success && res?.data?.preferences) {
           setPrintHousePreferences(res.data.preferences);
@@ -73,16 +71,50 @@ const useQuoteConfirmation = ({
     });
   }, [callApi, setPrintHousePreferences]);
 
-  const getQuoteConfirmation = async () => {
+  // Helper function to get preference value directly from preferences array
+  const getPreferenceValue = (preferences: any[], code: string): boolean | undefined => {
+    if (!preferences || !Array.isArray(preferences)) {
+      return undefined;
+    }
+    const preference = preferences.find((pref: any) => pref.code === code);
+    if (!preference) {
+      return undefined;
+    }
+    // Convert "true"/"false" strings to boolean
+    if (preference.value === "true") {
+      return true;
+    }
+    if (preference.value === "false") {
+      return false;
+    }
+    return undefined;
+  };
+
+  const getQuoteConfirmation = async (preferences?: any[]) => {
     let documentItemIds = [];
-    const isAllItemsSelected = CheckPreferenceValue(
-      EPreferences.IS_ALL_ITEMS_SELECTED_IN_QUOTE_CONFIRMATION
-    );
+    
+    // Get the preference value - prefer passed preferences, fallback to Recoil state
+    let isAllItemsSelected: boolean | undefined;
+    if (preferences) {
+      isAllItemsSelected = getPreferenceValue(
+        preferences,
+        EPreferences.IS_ALL_ITEMS_SELECTED_IN_QUOTE_CONFIRMATION
+      );
+    } else {
+      isAllItemsSelected = CheckPreferenceValue(
+        EPreferences.IS_ALL_ITEMS_SELECTED_IN_QUOTE_CONFIRMATION
+      ) as boolean | undefined;
+    }
+    
+    // Debug: Log the preference check result
+    console.log("IS_ALL_ITEMS_SELECTED_IN_QUOTE_CONFIRMATION preference value:", isAllItemsSelected);
     const callBack = (res) => {
       if (res?.success) {
         const quote = res?.data;
         // Check preference: if true, set all items to checked by default
-        const defaultCheckedValue = isAllItemsSelected === true ? true : false;
+        // isAllItemsSelected will be true (boolean) if preference value is "true", false if "false", or undefined if not found
+        const defaultCheckedValue = isAllItemsSelected === true;
+        console.log("Setting default checked value for all items:", defaultCheckedValue);
         quote.documentItems = quote.documentItems.map((item) => {
           item.isChecked = defaultCheckedValue;
           return item;
