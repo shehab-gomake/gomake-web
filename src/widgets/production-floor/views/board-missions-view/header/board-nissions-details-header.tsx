@@ -29,6 +29,8 @@ import moment from "moment/moment";
 import { GoMakeDeleteModal } from "@/components/modal-deleted/modal";
 import { AddStuckReasonWidget } from "@/widgets/production-floor/add-stuck-reason/add-stuck-reason";
 import { ModalType } from "@/enums";
+import { FrontDeskEmailComposerWrapper } from "@/pages-components/quotes/components/frontdesk-email-composer-wrapper";
+import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 
 const HeaderTitleComponent = ({ title }: { title?: string }) => {
   const { classes } = useStyle();
@@ -71,10 +73,10 @@ const InfoSection = ({ boardMissionsDetails, CheckPreferenceValue, t }) => {
     const estimatedProductionDate =
       boardMissionsDetails?.estimatedProductionDate
         ? moment(
-            convertUtcToLocalIsoString(
-              boardMissionsDetails.estimatedProductionDate.toString()
-            )
+          convertUtcToLocalIsoString(
+            boardMissionsDetails.estimatedProductionDate.toString()
           )
+        )
         : null;
 
     // Red if less than current day OR less than estimated production date
@@ -309,7 +311,13 @@ const BoardMissionsDetailsHeader = () => {
     stuckReason,
     setStuckReason,
     handleCloseStuckModal,
+    handleCloseApproveModal,
+    handleConfirmApprove,
     onUpdateStuckReason,
+    isEmailComposerOpenApproval,
+    emailDataApproval,
+    closeEmailComposerApproval,
+    isLoadingEmailDataApproval,
   } = useBoardMissionsDetailsHeader();
 
   const isLoading = !boardMissionsDetails?.boardMissionId; // Check if boardMissionId exists
@@ -459,9 +467,8 @@ const BoardMissionsDetailsHeader = () => {
                     />
                     <HeaderDividerComponent />
                     <HeaderTitleComponent
-                      title={`${boardMissionsDetails.boardMissionNumber}/${
-                        boardMissionsDetails.orderNumber
-                      }${!!boardMissionsDetails.productType ? "/" : ""}`}
+                      title={`${boardMissionsDetails.boardMissionNumber}/${boardMissionsDetails.orderNumber
+                        }${!!boardMissionsDetails.productType ? "/" : ""}`}
                     />
                     <span style={classes.productType}>
                       {boardMissionsDetails.sectionName}
@@ -670,6 +677,26 @@ const BoardMissionsDetailsHeader = () => {
             </Stack>
           )}
 
+          <GoMakeDeleteModal
+            title={t("sales.quote.simpleApproveMail")}
+            yesBtn={t("modal.yes")}
+            modalType={ModalType.WARNING}
+            subTitle={" "}
+            openModal={openSimpleApproveModal}
+            onClose={handleCloseApproveModal}
+            onClickDelete={handleConfirmApprove}
+            onClickCancel={handleCloseApproveModal}
+          />
+          {isEmailComposerOpenApproval && boardMissionsDetails?.boardMissionId && (
+            <FrontDeskEmailComposerWrapper
+              open={isEmailComposerOpenApproval}
+              onClose={closeEmailComposerApproval}
+              emailData={emailDataApproval}
+              documentId={boardMissionsDetails.boardMissionId}
+              documentType={21 as DOCUMENT_TYPE}
+              isLoading={isLoadingEmailDataApproval}
+            />
+          )}
           <GoMakeDeleteModal
             title={t("sales.quote.stuckReasonTitleModal")}
             yesBtn={t("modal.yes")}

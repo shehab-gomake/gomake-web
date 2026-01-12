@@ -12,9 +12,13 @@ import {
   toggleBoardMissionsActionTimer,
   updateBoardMissionStuckReasonApi,
   updateBoardsMissionsStatusApi,
+  sendJobExampleConfirmationToClientApi,
 } from "@/services/api-service/production-floor/production-floor-endpoints";
 import { IStatusesBoardsMissions } from "@/widgets/production-floor/interfaces/production-floor-data-response";
 import { boardMissionsStationsState } from "../stations/state";
+import { printHouseHasFrontDeskFeature } from "@/store/print-house-profile";
+import { useFrontDeskEmailIntegration } from "@/pages-components/quotes/hooks/use-frontdesk-email-integration";
+import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 
 const useBoardMissionsDetailsHeader = () => {
   const [boardFromTable, setBoardFromTable] = useState<IBoardMissions>(
@@ -31,6 +35,16 @@ const useBoardMissionsDetailsHeader = () => {
   const { alertFaultUpdate, alertSuccessUpdate } = useSnackBar();
   const router = useRouter();
   const { pathname, query, push } = router;
+  const hasFrontDeskFeature = useRecoilValue(printHouseHasFrontDeskFeature);
+  const {
+    isEmailComposerOpen: isEmailComposerOpenApproval,
+    emailData: emailDataApproval,
+    openEmailComposer: openEmailComposerApproval,
+    closeEmailComposer: closeEmailComposerApproval,
+    isLoadingEmailData: isLoadingEmailDataApproval,
+  } = useFrontDeskEmailIntegration({
+    documentType: 21 as DOCUMENT_TYPE,
+  });
   const [isLoadingStatus, setIsLoadingStatus] = useState(false);
   const [openSimpleApproveModal, setOpenSimpleApproveModal] = useState<boolean>(false);
   const [openSimpleStuckModal, setOpenStuckModal] = useState<boolean>(false);
@@ -38,6 +52,36 @@ const useBoardMissionsDetailsHeader = () => {
   const handleCloseStuckModal = () => {
     setOpenStuckModal(false);
     setStuckReason("");
+  }
+  const handleCloseApproveModal = () => {
+    setOpenSimpleApproveModal(false);
+  }
+  const handleConfirmApprove = async () => {
+    const boardMissionId = boardMissionsDetails?.boardMissionId;
+    if (!boardMissionId) {
+      setOpenSimpleApproveModal(false);
+      return;
+    }
+
+    // If FrontDesk feature is enabled, open email composer instead of sending directly
+    if (hasFrontDeskFeature) {
+      openEmailComposerApproval(boardMissionId);
+      setOpenSimpleApproveModal(false);
+    } else {
+      // Fallback to direct API call if FrontDesk is not enabled
+      const callBack = (res) => {
+        if (res.success) {
+          alertSuccessUpdate();
+        } else {
+          alertFaultUpdate();
+        }
+        setOpenSimpleApproveModal(false);
+      };
+      await sendJobExampleConfirmationToClientApi(callApi, callBack, {
+        boardMissionId,
+        productType: boardMissionsDetails?.productType || "",
+      });
+    }
   }
   const onNavigateBoardMissions = (boardId: string, productType: string) => {
     push(
@@ -213,7 +257,13 @@ const useBoardMissionsDetailsHeader = () => {
     stuckReason,
     setStuckReason,
     handleCloseStuckModal,
-    onUpdateStuckReason
+    handleCloseApproveModal,
+    handleConfirmApprove,
+    onUpdateStuckReason,
+    isEmailComposerOpenApproval,
+    emailDataApproval,
+    closeEmailComposerApproval,
+    isLoadingEmailDataApproval,
   };
 };
 
