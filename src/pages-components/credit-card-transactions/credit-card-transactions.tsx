@@ -44,6 +44,8 @@ const CreditCardTransactionsWidget = () => {
     setToDate,
     setFromDate,
     cardNumber,
+    totalTransactionsCount,
+    getValueByKey,
   } = useCreditCardTransactions();
 
   return (
@@ -68,6 +70,8 @@ const CreditCardTransactionsWidget = () => {
             setToDate={setToDate}
             setFromDate={setFromDate}
             cardNumber={cardNumber}
+            totalTransactionsCount={totalTransactionsCount}
+            getValueByKey={getValueByKey}
           />
           <PrimaryTable
             stickyFirstCol={false}

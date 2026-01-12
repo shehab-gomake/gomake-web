@@ -67,11 +67,7 @@ const AddNewParameterModal = ({
       subSectionId: newParameterState?.subSectionId,
       updateType: newParameterState?.updateType,
       parameterName: newParameterState?.parameterName,
-      parameterType: isQuantityParameter
-        ? 1
-        : isJobNameParameter
-        ? 0
-        : newParameterState?.parameterType,
+      parameterType: isQuantityParameter ? 1 : isJobNameParameter ? 2 : newParameterState?.parameterType,
       ...(isQuantityParameter && { isQuantityParameter: true }),
       ...(isJobNameParameter && { isJobNameParameter: true }),
     };

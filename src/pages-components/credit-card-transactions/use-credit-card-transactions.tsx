@@ -34,6 +34,16 @@ const useCreditCardTransactions = () => {
   const [allCreditCardTransaction, setAllCreditCardTransaction] =
     useState<any>();
   const [allPureTransaction, setAllPureTransaction] = useState<any>();
+  const [totalTransactionsCount, setTotalTransactionsCount] =
+    useState<number>(0);
+  const [statisticsList, setStatisticsList] = useState<
+    { key: string; value: string }[]
+  >([]);
+
+  const getValueByKey = (key: string) => {
+    const stat = statisticsList?.find((item) => item.key === key);
+    return stat ? stat.value : "";
+  };
   const [page, setPage] = useState(1);
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [openRefundModal, setOpenRefundModal] = useState<boolean>(false);
@@ -61,8 +71,6 @@ const useCreditCardTransactions = () => {
     t("creditCardTransactions.Customer"),
     t("creditCardTransactions.ReceiptNumber"),
     t("creditCardTransactions.Sum"),
-    t("sales.quote.total"),
-    t("creditCardTransactions.Count"),
     t("properties.more"),
   ];
 
@@ -105,14 +113,14 @@ const useCreditCardTransactions = () => {
       if (res?.success) {
         setAllPureTransaction(res.data?.data);
         const totalItems = res.data?.totalItems;
+        setTotalTransactionsCount(totalItems);
+        setStatisticsList(res.data?.documentStatisticsList ?? []);
         const mapData = res.data?.data.map((item: any) => [
           formatISODateTime(item?.creationDate),
           item?.cardNumber,
           item?.clientName,
           item?.receiptNumber,
           item?.sum,
-          item?.total ?? "",
-          item?.count ?? "",
           item?.isEditable ? (
             <MoreMenuWidget
               transaction={item}
@@ -165,8 +173,6 @@ const useCreditCardTransactions = () => {
             updatedTransaction.clientName,
             updatedTransaction.receiptNumber,
             updatedTransaction.sum,
-            updatedTransaction.total ?? "",
-            updatedTransaction.count ?? "",
             updatedTransaction.isEditable ? (
               <MoreMenuWidget
                 transaction={updatedTransaction}
@@ -207,8 +213,6 @@ const useCreditCardTransactions = () => {
             updatedTransaction.clientName,
             updatedTransaction.receiptNumber,
             updatedTransaction.sum,
-            updatedTransaction.total ?? "",
-            updatedTransaction.count ?? "",
             updatedTransaction.isEditable ? (
               <MoreMenuWidget
                 transaction={updatedTransaction}
@@ -312,6 +316,8 @@ const useCreditCardTransactions = () => {
     setToDate,
     setFromDate,
     cardNumber,
+    totalTransactionsCount,
+    getValueByKey,
   };
 };
 

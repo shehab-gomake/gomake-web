@@ -52,7 +52,7 @@ const useGraphicsApprovalUpload = ({
   // Load existing files and contacts when modal opens
   useEffect(() => {
     if (openModal && orderItemId) {
-      loadExistingFiles();
+      //loadExistingFiles();
     }
     if (openModal && orderId) {
       loadDocumentContacts();

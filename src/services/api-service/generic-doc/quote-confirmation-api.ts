@@ -64,7 +64,10 @@ const approveDocumentItemsApi: ICallAndSetData = async (callApi, setState, data)
     EHttpMethod.PUT,
     PUT_DOCUMENT_ITEMS_URL,
     setState,
-    data
+    data,
+    true, 
+    null,
+    true
   );
 };
 
