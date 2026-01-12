@@ -19,8 +19,13 @@ const useStyle = ({ isMobileScreen }: IProps) => {
   const { t } = useTranslation();
   const direction = t("direction");
 
-  const { primaryColor, secondColor, errorColor, neutralColor, successColor } =
-    useGomakeTheme();
+  const {
+    primaryColor,
+    secondColor,
+    errorColor,
+    neutralColor,
+    primarySecondaryBlend,
+  } = useGomakeTheme();
 
   const [screenWidth, setScreenWidth] = useState<number | null>(null);
 
@@ -228,7 +233,7 @@ const useStyle = ({ isMobileScreen }: IProps) => {
       },
       subSectionAccordionStyle: {
         ...FONT_FAMILY.Lexend(600, 16),
-        color: primaryColor(500),
+        color: primarySecondaryBlend(700),
       },
       parametersContainer: {
         display: "flex",
@@ -665,7 +670,7 @@ const useStyle = ({ isMobileScreen }: IProps) => {
         color: primaryColor(500),
         ...FONT_FAMILY.Lexend(500, 16),
         border: `1px solid ${primaryColor(500)}`,
-        borderRadius: 4,
+        borderRadius: "var(--theme-radius-md, 4px)",
         cursor: "pointer",
         width: "100%",
         minWidth: "fit-content",

@@ -3,12 +3,12 @@ import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 
 const useStyle = (onUpload: boolean) => {
-  const { primaryColor } = useGomakeTheme();
+  const { primarySecondaryBlend, errorColor, theme } = useGomakeTheme();
   const classes = useMemo(() => {
     return {
       pdfLabelStyle: {
         ...FONT_FAMILY.Lexend(400, 12),
-        color: primaryColor(300),
+        color: primarySecondaryBlend(500),
         lineHeight: "15px",
       },
       pdfCellStyle: {
@@ -19,11 +19,11 @@ const useStyle = (onUpload: boolean) => {
       },
       labelStyle: {
         ...FONT_FAMILY.Lexend(400, 12),
-        color: primaryColor(300),
+        color: primarySecondaryBlend(500),
         overflow: "hidden",
       },
       IconButtonStyle: {
-        background: primaryColor(100),
+        background: primarySecondaryBlend(300),
         width: "24px",
         height: "24px",
       },
@@ -47,9 +47,9 @@ const useStyle = (onUpload: boolean) => {
       },
       removeBtn: {
         ...FONT_FAMILY.Lexend(500, 14),
-        color: "#f44336",
+        color: errorColor(500),
         "&:hover": {
-          backgroundColor: "#ffcdd2",
+          backgroundColor: errorColor(100),
         },
         "& .MuiButton-startIcon": {
           margin: "0 8px",
@@ -57,7 +57,7 @@ const useStyle = (onUpload: boolean) => {
         textTransform: "lowercase",
       },
     };
-  }, []);
+  }, [theme]);
   return {
     classes,
   };

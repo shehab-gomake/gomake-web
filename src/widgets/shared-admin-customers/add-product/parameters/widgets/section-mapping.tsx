@@ -25,6 +25,7 @@ import { useRouter } from "next/router";
 import { AddNewParameterModal } from "./add-new-parameter-modal";
 import { DeleteIcon } from "@/widgets/settings-mailing/messageTemplates/components/more-circle/icons/delete";
 import { useModal } from "@/hooks/use-modal";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 export enum UpdateTypes {
   PRODUCT_ONLY = 0,
@@ -55,9 +56,9 @@ const SectionMappingWidget = ({
   getProductById,
   removeProductParamete,
 }) => {
-  console.log("subSection", subSection);
   const { t } = useTranslation();
   const { alertFault, alertWarning } = useSnackBar();
+  const { secondColor } = useGomakeTheme();
   const router = useRouter();
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [selectedParameter, setSelectedParameter] = useState(null);
@@ -69,13 +70,14 @@ const SectionMappingWidget = ({
   const [doNotAskNextTime, setDoNotAskNextTime] = useRecoilState(
     doNotAskNextTimeState
   );
-  const [isAddNewParameterModalOpen, setIsAddNewParameterModalOpen] = useState(false);
+  const [isAddNewParameterModalOpen, setIsAddNewParameterModalOpen] =
+    useState(false);
   const handleCloseAddNewParameterModal = () => {
     setIsAddNewParameterModalOpen(false);
-  }
+  };
   const handleOpenAddNewParameterModal = () => {
     setIsAddNewParameterModalOpen(true);
-  }
+  };
   const [newParameterState, setNewParameterState] = useState({
     parameterName: "",
     parameterType: 0,
@@ -84,9 +86,11 @@ const SectionMappingWidget = ({
     subSectionId: "",
     updateType: 0,
   });
+
   const onChangeInputs = (key: string, value: any) => {
     setNewParameterState({ ...newParameterState, [key]: value });
-  }
+  };
+
   const renderIconWithTooltip = (
     condition,
     trueIcon,
@@ -120,10 +124,14 @@ const SectionMappingWidget = ({
 
   const hasDefaultValue = (parameter) => {
     // Check for DROP_DOWN_LIST, SELECT_MATERIALS, or other specific types
-    if (parameter?.parameterType === EParameterTypes.DROP_DOWN_LIST ||
-      parameter?.parameterType === EParameterTypes.SELECT_MATERIALS) {
+    if (
+      parameter?.parameterType === EParameterTypes.DROP_DOWN_LIST ||
+      parameter?.parameterType === EParameterTypes.SELECT_MATERIALS
+    ) {
       // Check valuesConfigs for default value
-      return parameter?.valuesConfigs?.some(config => config.isDefault === true);
+      return parameter?.valuesConfigs?.some(
+        (config) => config.isDefault === true
+      );
     }
     // For other parameter types, check defaultValue
     return !!parameter?.defaultValue;
@@ -186,40 +194,53 @@ const SectionMappingWidget = ({
 
   return (
     <div key={index} style={classes.subSectionContainer}>
-      {
-        doNotAskNextTime && index === 0 &&
-        <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "20px" }}>
+      {doNotAskNextTime && index === 0 && (
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "10px",
+            marginBottom: "20px",
+          }}
+        >
           <div style={{ fontSize: "14px", fontWeight: "500" }}>
             {t("products.parameters.samePricingType")}
           </div>
           <SecondSwitch
-            defaultChecked={selectedUpdateType === UpdateTypes.SAME_PRICING_TYPE}
+            defaultChecked={
+              selectedUpdateType === UpdateTypes.SAME_PRICING_TYPE
+            }
             checked={selectedUpdateType === UpdateTypes.SAME_PRICING_TYPE}
             onChange={(e: any, value: any) => {
-              setSelectedUpdateType(value ? UpdateTypes.SAME_PRICING_TYPE : UpdateTypes.PRODUCT_ONLY)
+              setSelectedUpdateType(
+                value ? UpdateTypes.SAME_PRICING_TYPE : UpdateTypes.PRODUCT_ONLY
+              );
             }}
             key={selectedUpdateType}
           />
         </div>
-      }
+      )}
       <div style={classes.subSectionTitleStyle}>
         {subSection.name}
         <Tooltip title={"Add New Parameter"} placement="top">
-          <IconButton onClick={() => {
-            handleOpenAddNewParameterModal();
-            setNewParameterState({
-              productId: router?.query?.id as string,
-              sectionId: section?.id,
-              subSectionId: subSection?.id,
-              updateType: 0,
-              parameterName: "",
-              parameterType: 0
-            })
-          }}>
-            <PlusIcon />
+          <IconButton
+            onClick={() => {
+              handleOpenAddNewParameterModal();
+              setNewParameterState({
+                productId: router?.query?.id as string,
+                sectionId: section?.id,
+                subSectionId: subSection?.id,
+                updateType: 0,
+                parameterName: "",
+                parameterType: 0,
+              });
+            }}
+          >
+            <PlusIcon
+              stroke={`var(--theme-accent-color, ${secondColor(500)})`}
+            />
           </IconButton>
         </Tooltip>
-
       </div>
 
       <div style={classes.parametersContainer}>
@@ -228,14 +249,14 @@ const SectionMappingWidget = ({
           ?.map((parameter, paramIndex) => {
             const ShowEditExternalCodeValue =
               parameter?.parameterType ===
-              EParameterTypes.SELECT_CHILDS_PARAMETERS ||
+                EParameterTypes.SELECT_CHILDS_PARAMETERS ||
               parameter?.parameterType === EParameterTypes.SELECT_MATERIALS ||
               parameter?.parameterType === EParameterTypes.DROP_DOWN_LIST ||
               parameter?.parameterType ===
-              EParameterTypes.ADVERTISING_PRODUCT_CATEGORY ||
+                EParameterTypes.ADVERTISING_PRODUCT_CATEGORY ||
               parameter?.parameterType ===
-              EParameterTypes.ADVERTISING_PRODUCT_NAME || parameter?.parameterType ===
-              EParameterTypes.SWITCH;
+                EParameterTypes.ADVERTISING_PRODUCT_NAME ||
+              parameter?.parameterType === EParameterTypes.SWITCH;
             return (
               <div key={paramIndex}>
                 <div style={classes.parameterContainer}>
@@ -246,19 +267,23 @@ const SectionMappingWidget = ({
                     </div>
                     {parameter?.parameterType ===
                       EParameterTypes.SELECT_CHILDS_PARAMETERS && (
-                        <div
-                          style={classes.plusIconStyle}
-                          onClick={() =>
-                            onOpenModal(parameter, section?.id, subSection?.id)
-                          }
-                        >
-                          <SettingIcon width={20} height={20} />
-                        </div>
-                      )}
+                      <div
+                        style={classes.plusIconStyle}
+                        onClick={() =>
+                          onOpenModal(parameter, section?.id, subSection?.id)
+                        }
+                      >
+                        <SettingIcon width={20} height={20} />
+                      </div>
+                    )}
                     {renderIconWithTooltip(
                       parameter?.isHidden,
                       <HiddenIcon />,
-                      <NotHiddenIcon />,
+                      <NotHiddenIcon
+                        stroke={`var(--theme-accent-color, ${secondColor(
+                          500
+                        )})`}
+                      />,
                       "hidden",
                       "visible",
                       () => {
@@ -284,13 +309,19 @@ const SectionMappingWidget = ({
                     {parameter?.parameterType !== EParameterTypes.SWITCH &&
                       renderIconWithTooltip(
                         parameter?.isRequired,
-                        <RequiredIcon />,
+                        <RequiredIcon
+                          stroke={`var(--theme-accent-color, ${secondColor(
+                            500
+                          )})`}
+                        />,
                         <NotRequiredIcon />,
                         "required",
                         "notRequired",
                         () => {
                           if (parameter?.isRequiredInTemplate) {
-                            alertWarning("products.parameters.isRequiredInTemplate");
+                            alertWarning(
+                              "products.parameters.isRequiredInTemplate"
+                            );
                             return;
                           }
                           if (!doNotAskNextTime) {
@@ -309,7 +340,11 @@ const SectionMappingWidget = ({
                     {renderIconWithTooltip(
                       parameter?.isLock,
                       <LockedIcon />,
-                      <NotLockedIcon />,
+                      <NotLockedIcon
+                        stroke={`var(--theme-accent-color, ${secondColor(
+                          500
+                        )})`}
+                      />,
                       "readOnly",
                       "editable",
                       () => {
@@ -328,7 +363,11 @@ const SectionMappingWidget = ({
                     )}
                     {renderIconWithTooltip(
                       parameter?.isShowToClient,
-                      <DetailIcon />,
+                      <DetailIcon
+                        stroke={`var(--theme-accent-color, ${secondColor(
+                          500
+                        )})`}
+                      />,
                       <NotDetailIcon />,
                       "shownInDetails",
                       "hiddenFromDetails",
@@ -359,19 +398,25 @@ const SectionMappingWidget = ({
                         )
                       }
                     >
-                      <EditIcon />
+                      <EditIcon
+                        stroke={`var(--theme-accent-color, ${secondColor(
+                          500
+                        )})`}
+                      />
                     </div>
-                    {parameter?.isDeletable && <Tooltip title={t("modal.delete")} placement="top">
-                      <div
-                        style={classes.plusIconStyle}
-                        onClick={() => {
-                          setSelectedParameter(parameter);
-                          openModal();
-                        }}
-                      >
-                        <DeleteIcon stroke="#F135A3" width={20} height={20} />
-                      </div>
-                    </Tooltip>}
+                    {parameter?.isDeletable && (
+                      <Tooltip title={t("modal.delete")} placement="top">
+                        <div
+                          style={classes.plusIconStyle}
+                          onClick={() => {
+                            setSelectedParameter(parameter);
+                            openModal();
+                          }}
+                        >
+                          <DeleteIcon stroke="#F135A3" width={20} height={20} />
+                        </div>
+                      </Tooltip>
+                    )}
                   </div>
                   <div style={classes.renderParameterTypeContainer}>
                     {_renderParameterType(
@@ -394,7 +439,13 @@ const SectionMappingWidget = ({
         onClose={handleCloseModal}
         selectedUpdateType={selectedUpdateType}
         setSelectedUpdateType={setSelectedUpdateType}
-        onUpdate={() => handleUpdate(selectedActionType, selectedParameter, selectedUpdateType)}
+        onUpdate={() =>
+          handleUpdate(
+            selectedActionType,
+            selectedParameter,
+            selectedUpdateType
+          )
+        }
         setDoNotAskNextTime={setDoNotAskNextTime}
         doNotAskNextTime={doNotAskNextTime}
       />
@@ -409,7 +460,14 @@ const SectionMappingWidget = ({
         modalType={ModalType.DELETE}
         openModal={isOpen}
         onClose={closeModal}
-        onClickDelete={() => removeProductParamete(section?.id, subSection?.id, selectedParameter, selectedUpdateType)}
+        onClickDelete={() =>
+          removeProductParamete(
+            section?.id,
+            subSection?.id,
+            selectedParameter,
+            selectedUpdateType
+          )
+        }
       />
     </div>
   );

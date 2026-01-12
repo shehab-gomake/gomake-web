@@ -7,6 +7,7 @@ import {
 import { loadgingState } from "@/store/loading";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSetRecoilState } from "recoil";
+import { autoSetThemeFromDomain } from "@/contexts/theme";
 // import { useTranslation } from "react-i18next";
 
 const useGomakeAdminLogin = () => {
@@ -35,6 +36,9 @@ const useGomakeAdminLogin = () => {
       if (result?.data?.data?.customer?.refreshToken) {
         updateRefreshTokenStorage(result?.data?.data?.customer?.refreshToken);
       }
+
+      // Auto-set theme based on domain after successful login
+      autoSetThemeFromDomain();
 
       navigate("/admin");
     }

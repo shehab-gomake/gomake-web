@@ -28,7 +28,7 @@ const AgingReportButtonWidget = ({
 }: AgingReportButtonWidgetProps) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
-  const { primaryColor, primaryLavender } = useGomakeTheme();
+  const { primaryColor, primarySecondaryBlend } = useGomakeTheme();
 
   const primaryActions = [
     {
@@ -41,13 +41,15 @@ const AgingReportButtonWidget = ({
     {
       name: t("reports.printDebtCollection"),
       onclick: onClickBtn2,
-      icon: <PrintIcon stroke={primaryLavender(500)} />,
+      icon: <PrintIcon stroke={primarySecondaryBlend(500)} />,
     },
     {
       name: t("reports.excelDebtCollection"),
       onclick: onClickBtn3,
       icon: (
-        <FileDownloadOutlinedIcon style={{ color: primaryLavender(500) }} />
+        <FileDownloadOutlinedIcon
+          style={{ color: primarySecondaryBlend(500) }}
+        />
       ),
     },
     // {
@@ -55,7 +57,7 @@ const AgingReportButtonWidget = ({
     //   onclick: onClickBtn4,
     //   icon: (
     //     <ForwardToInboxRoundedIcon
-    //       style={{ color: primaryLavender(500), fontSize: "22px" }}
+    //       style={{ color: primarySecondaryBlend(500), fontSize: "22px" }}
     //     />
     //   ),
     // },
@@ -64,7 +66,7 @@ const AgingReportButtonWidget = ({
     //   onclick: onClickBtn5,
     //   icon: (
     //     <WhatsAppIcon
-    //       style={{ color: primaryLavender(500), fontSize: "22px" }}
+    //       style={{ color: primarySecondaryBlend(500), fontSize: "22px" }}
     //     />
     //   ),
     // },
@@ -73,7 +75,7 @@ const AgingReportButtonWidget = ({
       onclick: onClickBtn7,
       icon: (
         <ForwardToInboxRoundedIcon
-          style={{ color: primaryLavender(500), fontSize: "22px" }}
+          style={{ color: primarySecondaryBlend(500), fontSize: "22px" }}
         />
       ),
     },
@@ -82,11 +84,10 @@ const AgingReportButtonWidget = ({
       onclick: onClickBtn6,
       icon: (
         <ForwardToInboxRoundedIcon
-          style={{ color: primaryLavender(500), fontSize: "22px" }}
+          style={{ color: primarySecondaryBlend(500), fontSize: "22px" }}
         />
       ),
     },
-
   ];
 
   return (

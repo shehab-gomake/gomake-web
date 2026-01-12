@@ -17,4 +17,6 @@ export interface CreditCardTransactionsReportHeaderWidgetProps {
   isFetchingCustomers?: boolean;
   setToDate?: any;
   setFromDate?: any;
+  totalTransactionsCount?: number;
+  getValueByKey?: (key: string) => string;
 }

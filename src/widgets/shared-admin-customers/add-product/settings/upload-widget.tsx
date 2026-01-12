@@ -2,16 +2,14 @@ import { useTranslation } from "react-i18next";
 import { useStyle } from "./style";
 import { Avatar, Stack } from "@mui/material";
 import { useRef } from "react";
-import { AddNewButton } from "@/components/button/add-new-button";
 
 const UploadImgProduct = ({
   productState,
   onChangeStateProduct,
   UploadProductImage,
 }) => {
-  const { clasess } = useStyle();
+  const { classes } = useStyle();
   const { t } = useTranslation();
-  const dir: "rtl" | "ltr" = t("direction");
   const inputRef = useRef(null);
   const handleFileSelect = (e) => {
     const file = e.target.files[0];
@@ -24,20 +22,20 @@ const UploadImgProduct = ({
     }
   };
   return (
-    <div style={clasess.itemOnFirstContainer}>
-      <div style={clasess.labelTitleStyle}>
+    <div style={classes.itemOnFirstContainer}>
+      <div style={classes.labelTitleStyle}>
         {t("products.addProduct.admin.uploadImg")}
       </div>
       <Stack
-        style={clasess.attachmentContainer}
+        style={classes.attachmentContainer}
         onClick={() => inputRef.current?.click()}
       >
-        <Stack style={clasess.attachmentStyle}>
+        <Stack style={classes.attachmentStyle}>
           <Avatar
-            sx={clasess.avatar}
+            sx={classes.avatar}
             src={`${productState.img}?${new Date().toString()}`}
           />
-          <label style={clasess.labelStyle}>
+          <label style={classes.labelStyle}>
             {productState?.img
               ? t("products.addProduct.admin.imageUploaded")
               : t("mailingSettings.noAttachment")}

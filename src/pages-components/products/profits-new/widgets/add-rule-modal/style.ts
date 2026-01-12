@@ -3,9 +3,8 @@ import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 
 const useStyle = () => {
-  const { secondColor } = useGomakeTheme();
-  const { primaryColor } = useGomakeTheme();
-  const clasess = useMemo(() => {
+  const { primarySecondaryBlend, theme, secondColor } = useGomakeTheme();
+  const classes = useMemo(() => {
     return {
       insideStyle: {
         width: "50%",
@@ -24,7 +23,7 @@ const useStyle = () => {
         alignItems: "flex-end",
         width: "100%",
         marginTop: 50,
-        gap:10
+        gap: 10,
       },
       sendBtn: {
         width: "fit-content",
@@ -39,7 +38,7 @@ const useStyle = () => {
       inputsContainer: {
         display: "flex",
         flexDirection: "row" as "row",
-        flexWrap:"wrap" as "wrap",
+        flexWrap: "wrap" as "wrap",
         justifyContent: "flex-start",
         alignItems: "center",
         marginTop: 10,
@@ -71,7 +70,7 @@ const useStyle = () => {
       },
       spanAddNewRule: {
         ...FONT_FAMILY.Lexend(500, 12),
-        color: primaryColor(500),
+        color: primarySecondaryBlend(500),
         fontSize: 15,
         marginLeft: 10,
       },
@@ -90,7 +89,7 @@ const useStyle = () => {
       },
       removeIcon: {
         color: secondColor(500),
-        border: "1px solid rgb(237, 2, 140)",
+        border: `1px solid var(--theme-accent-color, ${secondColor(500)})`,
         borderRadius: 4,
         padding: 1,
         height: 15,
@@ -121,17 +120,17 @@ const useStyle = () => {
       filterLabelStyle: {
         ...FONT_FAMILY.Lexend(500, 14),
       },
-      inputsForQuotesContainer:{
+      inputsForQuotesContainer: {
         display: "flex",
-        flexDirection: "row" as "row", 
-        justifyContent: "flex-start", 
-        alignItems: "center", 
-        gap: 20
-      }
+        flexDirection: "row" as "row",
+        justifyContent: "flex-start",
+        alignItems: "center",
+        gap: 20,
+      },
     };
-  }, []);
+  }, [theme]);
   return {
-    clasess,
+    classes,
   };
 };
 export { useStyle };

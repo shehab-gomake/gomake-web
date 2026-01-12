@@ -37,13 +37,18 @@ const StyledAutocomplete: any = styled(Autocomplete, {
       fontWeight: 500,
       fontSize: 14,
       width: "100%",
-      // zIndex: 9999999999999,
-      // !here not sure about this style theme css variable
       "& fieldset": {
         border: props?.selectedOption
-          ? "1px solid var(--theme-dropdown-border-color, transparent) !important"
-          : "var(--theme-dropdown-border, none) !important", //!here i don't know if it's correct to set to !important
-        borderColor: props?.selectedOption
+          ? `1px solid ${
+              props?.style?.borderColor ||
+              "var(--theme-dropdown-border-color, transparent)"
+            } !important`
+          : props?.style?.borderColor
+          ? `1px solid ${props?.style?.borderColor} !important`
+          : "var(--theme-dropdown-border, none) !important",
+        borderColor: props?.style?.borderColor
+          ? props?.style?.borderColor
+          : props?.selectedOption
           ? "var(--theme-dropdown-border-color, transparent)"
           : "transparent",
         boxSizing: "border-box",
@@ -51,33 +56,44 @@ const StyledAutocomplete: any = styled(Autocomplete, {
       },
       "& .MuiOutlinedInput-notchedOutline": {
         border: props?.selectedOption
-          ? "1px solid var(--theme-dropdown-border-color, transparent)"
+          ? `1px solid ${
+              props?.style?.borderColor ||
+              "var(--theme-dropdown-border-color, transparent)"
+            }`
+          : props?.style?.borderColor
+          ? `1px solid ${props?.style?.borderColor}`
           : "var(--theme-dropdown-border, none)",
-        borderColor: props?.selectedOption
+        borderColor: props?.style?.borderColor
+          ? props?.style?.borderColor
+          : props?.selectedOption
           ? "var(--theme-dropdown-border-color, transparent)"
           : "transparent",
       },
       "&.Mui-focused fieldset": {
-        borderColor:
-          "var(--theme-dropdown-border-color, transparent) !important",
+        borderColor: props?.style?.borderColor
+          ? `${props?.style?.borderColor} !important`
+          : "var(--theme-dropdown-border-color, transparent) !important",
         borderWidth: "1px !important",
         borderStyle: "solid !important",
       },
       "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-        borderColor:
-          "var(--theme-dropdown-border-color, transparent) !important",
+        borderColor: props?.style?.borderColor
+          ? `${props?.style?.borderColor} !important`
+          : "var(--theme-dropdown-border-color, transparent) !important",
         borderWidth: "1px !important",
         borderStyle: "solid !important",
       },
       "&:hover fieldset": {
-        borderColor:
-          "var(--theme-dropdown-border-color, transparent) !important",
+        borderColor: props?.style?.borderColor
+          ? `${props?.style?.borderColor} !important`
+          : "var(--theme-dropdown-border-color, transparent) !important",
         borderWidth: "1px !important",
         borderStyle: "solid !important",
       },
       "&:hover .MuiOutlinedInput-notchedOutline": {
-        borderColor:
-          "var(--theme-dropdown-border-color, transparent) !important",
+        borderColor: props?.style?.borderColor
+          ? `${props?.style?.borderColor} !important`
+          : "var(--theme-dropdown-border-color, transparent) !important",
         borderWidth: "1px !important",
         borderStyle: "solid !important",
       },
@@ -170,7 +186,7 @@ const GoMakeAutoComplate = ({
   isOptionEqualToValue,
   labelText,
   getOptionDisabled,
-  disablePortal
+  disablePortal,
 }: {
   value?: any;
   onChange?: any;
@@ -263,7 +279,9 @@ const GoMakeAutoComplate = ({
         options={options}
         disabled={disabled}
         //freeSolo={freeSolo}
-        popupIcon={withArrow ? popupIcon ? popupIcon : <ArrowDropDownIcon /> : ""}
+        popupIcon={
+          withArrow ? popupIcon ? popupIcon : <ArrowDropDownIcon /> : ""
+        }
         groupBy={groupBy}
         renderGroup={(params) => (
           <div key={params.key}>

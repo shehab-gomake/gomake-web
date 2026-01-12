@@ -12,7 +12,7 @@ const useStyle = () => {
         width: "fit-content",
         cursor: "pointer",
       },
-      headerStyle:{
+      headerStyle: {
         display: "flex",
         flexDirection: "row" as "row",
         justifyContent: "space-between",
@@ -21,14 +21,14 @@ const useStyle = () => {
         paddingRight: 10,
         paddingLeft: 10,
       },
-      backButtonStyle:{
+      backButtonStyle: {
         height: 22,
-        background: "#CBCBE5",
+        background: primaryColor(100),
+        color: primaryColor(500),
         width: 90,
         borderRadius: 8,
         marginRight: 10,
         marginLeft: 10,
-        
       },
       subHeader: {
         ...FONT_FAMILY.Lexend(600, 20),

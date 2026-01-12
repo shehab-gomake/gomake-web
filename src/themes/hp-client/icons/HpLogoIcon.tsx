@@ -4,11 +4,16 @@ import React from "react";
  * HP Theme - Logo Icon
  * Official HP logo with white circular background
  */
-export const HpLogoIcon = () => {
+interface HpLogoIconProps {
+  width?: number;
+  height?: number;
+}
+
+export const HpLogoIcon = ({ width = 42, height = 42 }: HpLogoIconProps) => {
   return (
     <svg
-      width="42"
-      height="42"
+      width={width}
+      height={height}
       viewBox="0 0 42 42"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"

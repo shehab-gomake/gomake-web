@@ -15,7 +15,7 @@ const EditRulesModal = ({
   reOrderPricingTables,
 }) => {
   const { t } = useTranslation();
-  const { clasess } = useStyle();
+  const { classes } = useStyle();
   const [rules, setRules] = useState<any>();
 
   useEffect(() => {
@@ -29,7 +29,7 @@ const EditRulesModal = ({
         selectedProperties?.ruleType,
         ruleId
       );
-    } catch (error) { }
+    } catch (error) {}
   };
   const ReOrderPropertyRule = async (data: any) => {
     try {
@@ -38,7 +38,7 @@ const EditRulesModal = ({
         selectedProperties?.ruleType,
         data
       );
-    } catch (error) { }
+    } catch (error) {}
   };
 
   const onDragEnd = (result) => {
@@ -69,10 +69,10 @@ const EditRulesModal = ({
         onClose={() => {
           onClose();
         }}
-        insideStyle={clasess.insideStyle}
+        insideStyle={classes.insideStyle}
       >
-        <div style={clasess.mainContainer}>
-          <div style={clasess.rulesContainer}>
+        <div style={classes.mainContainer}>
+          <div style={classes.rulesContainer}>
             <DragDropContext onDragEnd={onDragEnd}>
               <Droppable droppableId="rules">
                 {(provided: any, snapshot: any) => (
@@ -109,18 +109,18 @@ const EditRulesModal = ({
               </Droppable>
             </DragDropContext>
           </div>
-          <div style={clasess.btnContainer}>
+          <div style={classes.btnContainer}>
             <GomakePrimaryButton
               onClick={() => {
                 onClose();
               }}
-              style={clasess.cancelBtn}
+              style={classes.cancelBtn}
             >
               {t("properties.cancel")}
             </GomakePrimaryButton>
 
             <GomakePrimaryButton
-              style={clasess.sendBtn}
+              style={classes.sendBtn}
               onClick={() => {
                 onOpenAddRuleModal();
                 onClose();

@@ -8,6 +8,8 @@ import { FONT_FAMILY } from "@/utils/font-family";
 import { useMobileHeight } from "@/hooks/use-responsive";
 import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
 import { forgetPasswordApi } from "@/services/api-service/users/users-auth";
+import { useTheme } from "@/contexts/theme";
+import { HpLogoIcon } from "@/themes/hp-client/icons";
 
 interface ForgotPasswordLeftSideProps {
   isMobile?: boolean;
@@ -24,6 +26,8 @@ const ForgotPasswordLeftSide = ({ isMobile }: ForgotPasswordLeftSideProps) => {
   const { navigate } = useGomakeRouter();
   const { alertFaultUpdate } = useSnackBar();
   const [openSuccessModal, setOpenSuccessModal] = useState(false);
+  const { currentTheme } = useTheme();
+  const isHpClient = currentTheme === "hp-client";
 
   const onClickSendEmail = async () => {
     if (email?.length <= 0) {
@@ -49,25 +53,29 @@ const ForgotPasswordLeftSide = ({ isMobile }: ForgotPasswordLeftSideProps) => {
         ...classes.leftContainer,
         ...(isMobile
           ? {
-            width: "100%",
-            height: mobileHeight,
-            minHeight: "unset",
-          }
+              width: "100%",
+              height: mobileHeight,
+              minHeight: "unset",
+            }
           : {}),
       }}
     >
-      <Image
-        alt="logo"
-        // src={"https://i.ibb.co/wzpwSq6/Group-1239.png"}
-        src={
-          "https://gomake-printhouses-logos.s3.amazonaws.com/default_generalLogo.jpeg"
-        }
-        width={isMobile ? 100 : 180}
-        height={isMobile ? 100 : 180}
-        style={{
-          borderRadius: "8px",
-        }}
-      />
+      {isHpClient ? (
+        <HpLogoIcon width={isMobile ? 70 : 150} height={isMobile ? 70 : 150} />
+      ) : (
+        <Image
+          alt="logo"
+          // src={"https://i.ibb.co/wzpwSq6/Group-1239.png"}
+          src={
+            "https://gomake-printhouses-logos.s3.amazonaws.com/default_generalLogo.jpeg"
+          }
+          width={isMobile ? 100 : 180}
+          height={isMobile ? 100 : 180}
+          style={{
+            borderRadius: "8px",
+          }}
+        />
+      )}
       <div style={classes.loginContainer}>
         <div
           style={{

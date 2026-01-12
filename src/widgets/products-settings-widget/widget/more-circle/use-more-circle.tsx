@@ -1,10 +1,12 @@
 import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { EHttpMethod } from "@/services/api-service/enums";
 import { useRouter } from "next/router";
 import { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 const useMoreCircle = ({ updatedProduct, item, getActions }) => {
+  const { primarySecondaryBlend } = useGomakeTheme();
   const [anchorElPopover, setAnchorElPopover] =
     useState<HTMLButtonElement | null>(null);
   const openPopover = Boolean(anchorElPopover);
@@ -19,8 +21,14 @@ const useMoreCircle = ({ updatedProduct, item, getActions }) => {
   const { callApi } = useGomakeAxios();
   const router = useRouter();
   const { t } = useTranslation();
-  const { setSnackbarStateValue, alertFaultAdded, alertSuccessAdded, alertSuccessDelete, alertFaultDelete, alertFaultDuplicate } =
-    useSnackBar();
+  const {
+    setSnackbarStateValue,
+    alertFaultAdded,
+    alertSuccessAdded,
+    alertSuccessDelete,
+    alertFaultDelete,
+    alertFaultDuplicate,
+  } = useSnackBar();
 
   const { navigate } = useGomakeRouter();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -32,7 +40,8 @@ const useMoreCircle = ({ updatedProduct, item, getActions }) => {
     setAnchorEl(null);
   };
   const [openDeleteRowModal, setOpenDeleteRowModal] = useState<boolean>(false);
-  const [openDuplicateRowModal, setOpenDuplicateRowModal] = useState<boolean>(false);
+  const [openDuplicateRowModal, setOpenDuplicateRowModal] =
+    useState<boolean>(false);
   const onClickCloseDeleteRowModal = () => {
     setOpenDeleteRowModal(false);
     handleClose();
@@ -86,7 +95,6 @@ const useMoreCircle = ({ updatedProduct, item, getActions }) => {
     }
   }, []);
 
-
   const onClickDuplicateProduct = useCallback(async () => {
     const res = await callApi(
       "POST",
@@ -105,24 +113,20 @@ const useMoreCircle = ({ updatedProduct, item, getActions }) => {
     }
   }, [item]);
 
-  const deleteProductById = useCallback(
-    async () => {
-      const res = await callApi(
-        EHttpMethod.DELETE,
-        `/v1/printhouse-config/products/delete-product-by-id?Id=${item?.id}`
-      );
-      if (res?.success) {
-        handleClose()
-        alertSuccessDelete();
-        onClickCloseDeleteRowModal()
-        getActions()
-      } else {
-        alertFaultDelete();
-      }
-    },
-    [item]
-  );
-
+  const deleteProductById = useCallback(async () => {
+    const res = await callApi(
+      EHttpMethod.DELETE,
+      `/v1/printhouse-config/products/delete-product-by-id?Id=${item?.id}`
+    );
+    if (res?.success) {
+      handleClose();
+      alertSuccessDelete();
+      onClickCloseDeleteRowModal();
+      getActions();
+    } else {
+      alertFaultDelete();
+    }
+  }, [item]);
 
   return {
     open,
@@ -148,7 +152,8 @@ const useMoreCircle = ({ updatedProduct, item, getActions }) => {
     openDuplicateRowModal,
     onClickCloseDuplicateRowModal,
     onClickOpenDuplicateRowModal,
-    onClickDuplicateProduct
+    onClickDuplicateProduct,
+    primarySecondaryBlend,
   };
 };
 

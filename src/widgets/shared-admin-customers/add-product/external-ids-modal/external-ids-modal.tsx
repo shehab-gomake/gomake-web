@@ -12,6 +12,9 @@ import { updateProductParametersValuesExternalValuesApi } from "@/services/api-s
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { PlusNewIcon } from "@/icons";
 import { DeleteIcon } from "@/components/icons/delete-icon";
+import { Stack } from "@mui/material";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { FONT_FAMILY } from "@/utils/font-family";
 
 const ExternalValuesIdModal = ({
   openModal,
@@ -26,6 +29,7 @@ const ExternalValuesIdModal = ({
   const { classes } = useStyle();
   const { callApi } = useGomakeAxios();
   const { alertFaultUpdate, alertSuccessUpdate, alertFault } = useSnackBar();
+  const { primaryColor } = useGomakeTheme();
   // const modalTitle = `${parameter?.name} / ${t(
   //   "products.parameters.admin.values"
   // )}`;
@@ -102,15 +106,23 @@ const ExternalValuesIdModal = ({
     );
   };
   const addEmptyValue = () => {
-    if (valuesConfigs && valuesConfigs.length > 0 && valuesConfigs.find(x => !x.updateName)) {
-      alertFault("there is a empty row")
+    if (
+      valuesConfigs &&
+      valuesConfigs.length > 0 &&
+      valuesConfigs.find((x) => !x.updateName)
+    ) {
+      alertFault("there is a empty row");
       return;
     }
-    setValuesConfigs([...valuesConfigs, { updateName: "" }])
-  }
+    setValuesConfigs([...valuesConfigs, { updateName: "" }]);
+  };
   const removeRow = (value, externalValue) => {
-    setValuesConfigs(valuesConfigs.filter(x => !(x.updateName === value && x.externalValue === externalValue)))
-  }
+    setValuesConfigs(
+      valuesConfigs.filter(
+        (x) => !(x.updateName === value && x.externalValue === externalValue)
+      )
+    );
+  };
   return (
     <>
       <GoMakeModal
@@ -121,68 +133,105 @@ const ExternalValuesIdModal = ({
         withRoundedCloseIcon={false}
         insideStyle={classes.insideStyle}
       >
-        <div
-          className="custom-scrollbar"
-          style={{
-            height: 330,
-            overflow: "scroll",
-            padding: "0px 10px",
-            width: "100%",
-          }}
-        >
-          {
-            parameter.parameterType === EParameterTypes.INPUT_TEXT || parameter.parameterType === EParameterTypes.INPUT_NUMBER ?
-              <div onClick={addEmptyValue}><PlusNewIcon></PlusNewIcon></div>
-              : <div></div>
-          }
-          {valuesConfigs.map((item, index) => (
+        <div className="custom-scrollbar" style={classes.scrollContainer}>
+          {(parameter.parameterType === EParameterTypes.INPUT_TEXT ||
+            parameter.parameterType === EParameterTypes.INPUT_NUMBER) && (
             <div
-              key={isMaterial || isSwitch ? item?.valueId : item?.id}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                marginBottom: 8,
-                justifyContent: "space-between",
-                width: "100%",
+              onClick={addEmptyValue}
+              style={classes.addButtonContainer}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor =
+                  "var(--theme-bg-tertiary, rgba(0, 0, 0, 0.04))";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = "transparent";
               }}
             >
-              {
-                parameter.parameterType === EParameterTypes.INPUT_TEXT || parameter.parameterType === EParameterTypes.INPUT_NUMBER ?
-                  <GomakeTextInput
-                    style={{ width: "90%" }}
-                    placeholder={t("products.profits.exceptions.enterValue")}
-                    onChange={(e) =>
-                      changeItems(index, "updateName", e.target.value)
-                    }
-                    defaultValue={item?.updateName}
-                  /> :
-                  <span>
-                    {isMaterial || isSwitch ? item?.value : item?.updateName}
-                  </span>
-              }
-
-              <GomakeTextInput
-                style={{ width: "90%" }}
-                placeholder={t("products.profits.exceptions.enterExternalCode")}
-                onChange={(e) =>
-                  changeItems(index, "externalValue", e.target.value)
-                }
-                defaultValue={item?.externalValue || ""}
-              />
-              {
-                parameter.parameterType === EParameterTypes.INPUT_TEXT || parameter.parameterType === EParameterTypes.INPUT_NUMBER ?
-                  <div onClick={() => removeRow(item?.updateName, item?.externalValue)}>
-                    <DeleteIcon
-                      color={'#ac1515'}
-                      width={20}
-                      height={20}>
-
-                    </DeleteIcon>
-                  </div>
-                  : <div></div>
-              }
+              <PlusNewIcon />
+              <span
+                style={{
+                  marginLeft: 8,
+                  ...FONT_FAMILY.Inter(500, 16),
+                  color: `var(--theme-primary-color, ${primaryColor(500)})`,
+                }}
+              >
+                {t("materials.buttons.add")}
+              </span>
             </div>
-          ))}
+          )}
+          <Stack direction="column" spacing={1} width="100%">
+            {valuesConfigs.map((item, index) => (
+              <div
+                key={isMaterial || isSwitch ? item?.valueId : item?.id}
+                style={classes.rowContainer}
+              >
+                <Stack
+                  direction="row"
+                  spacing={2}
+                  alignItems="center"
+                  width="100%"
+                  sx={{ flex: 1, minWidth: 0 }}
+                >
+                  {parameter.parameterType === EParameterTypes.INPUT_TEXT ||
+                  parameter.parameterType === EParameterTypes.INPUT_NUMBER ? (
+                    <GomakeTextInput
+                      style={{ flex: 1, minWidth: 0 }}
+                      placeholder={t("products.profits.exceptions.enterValue")}
+                      onChange={(e) =>
+                        changeItems(index, "updateName", e.target.value)
+                      }
+                      defaultValue={item?.updateName}
+                    />
+                  ) : (
+                    <span
+                      style={{
+                        fontFamily: FONT_FAMILY.Inter(500, 14).fontFamily,
+                        fontWeight: FONT_FAMILY.Inter(500, 14).fontWeight,
+                        fontSize: FONT_FAMILY.Inter(500, 14).fontSize,
+                        color: "var(--theme-text-primary, #000000)",
+                        flex: 1,
+                      }}
+                    >
+                      {isMaterial || isSwitch ? item?.value : item?.updateName}
+                    </span>
+                  )}
+
+                  <GomakeTextInput
+                    style={{ flex: 1, minWidth: 0 }}
+                    placeholder={t(
+                      "products.profits.exceptions.enterExternalCode"
+                    )}
+                    onChange={(e) =>
+                      changeItems(index, "externalValue", e.target.value)
+                    }
+                    defaultValue={item?.externalValue || ""}
+                  />
+                </Stack>
+                {(parameter.parameterType === EParameterTypes.INPUT_TEXT ||
+                  parameter.parameterType === EParameterTypes.INPUT_NUMBER) && (
+                  <div
+                    onClick={() =>
+                      removeRow(item?.updateName, item?.externalValue)
+                    }
+                    style={classes.deleteButton}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor =
+                        "var(--theme-error-bg-hover, rgba(172, 21, 21, 0.1))";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = "transparent";
+                    }}
+                  >
+                    <DeleteIcon
+                      color="var(--theme-error-color, #ac1515)"
+                      width={20}
+                      height={20}
+                    />
+                  </div>
+                )}
+              </div>
+            ))}
+          </Stack>
         </div>
         <div style={classes.updateBtn}>
           <PrimaryButton

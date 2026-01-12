@@ -121,10 +121,9 @@ const SettingsUsersWidget = () => {
       />
       <GoMakeModal
         insideStyle={{
-          paddingLeft: 0,
-          paddingRight: 0,
+          padding: 10,
           width: 500,
-          height: 250,
+          height: "fit-content",
         }}
         headerPadding={20}
         openModal={openAddRoleModal}

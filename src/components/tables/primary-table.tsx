@@ -189,6 +189,7 @@ const PrimaryTable = ({
   const { t } = useTranslation();
   const dir: "rtl" | "ltr" = t("direction");
   const { classes } = useStyle(maxHeight, dir);
+  const { primarySecondaryBlend } = useGomakeTheme();
   const [selectedRows, setSelectedRows] = useState<Set<number>>(new Set());
   const [hoveredColumn, setHoveredColumn] = useState<string | null>(null);
 
@@ -199,9 +200,9 @@ const PrimaryTable = ({
   } | null>(
     withSort && defaultSortIndex !== undefined
       ? {
-        key: defaultSortIndex as number,
-        direction: defaultSortDirection || "desc",
-      }
+          key: defaultSortIndex as number,
+          direction: defaultSortDirection || "desc",
+        }
       : null
   );
   const sortConfig = externalSortConfig ?? internalSortConfig;
@@ -237,17 +238,17 @@ const PrimaryTable = ({
     variant === "ClassicTable"
       ? ClassicTableCell
       : variant === "RoundTable"
-        ? RoundTableCell
-        : PrimaryTableCell;
+      ? RoundTableCell
+      : PrimaryTableCell;
 
   const TableRow =
     variant === "ClassicTable"
       ? ClassicTableRow
       : variant === "OddEvenTable"
-        ? OddEvenTableRow
-        : variant === "RoundTable"
-          ? RoundTableRow
-          : PrimaryTableRow;
+      ? OddEvenTableRow
+      : variant === "RoundTable"
+      ? RoundTableRow
+      : PrimaryTableRow;
 
   // Sorting logic
   const sortedRows = useMemo(() => {
@@ -260,10 +261,10 @@ const PrimaryTable = ({
       const result = sortFn
         ? sortFn(a, b)
         : a[key] < b[key]
-          ? -1
-          : a[key] > b[key]
-            ? 1
-            : 0;
+        ? -1
+        : a[key] > b[key]
+        ? 1
+        : 0;
       return direction === "asc" ? result : -result;
     });
   }, [rows, sortConfig, customSortFns]);
@@ -413,14 +414,13 @@ const PrimaryTable = ({
                 <TableRow
                   key={`row_${rowIndex}`}
                   style={{
-                    backgroundColor:
-                      isSubProductRow
-                        ? "#EBECFF"
-                        : isAgingeport && isAgingDetailedReport && row[0] == " "
-                          ? "#F6F6F6"
-                          : isLastItemTotal && rowIndex === rows.length - 1
-                            ? "#EFDDFF"
-                            : "inherit",
+                    backgroundColor: isSubProductRow
+                      ? primarySecondaryBlend(300)
+                      : isAgingeport && isAgingDetailedReport && row[0] == " "
+                      ? "#F6F6F6"
+                      : isLastItemTotal && rowIndex === rows.length - 1
+                      ? "#EFDDFF"
+                      : "inherit",
                   }}
                 >
                   {enableCheckboxes && (
@@ -429,7 +429,9 @@ const PrimaryTable = ({
                         <PrimaryCheckbox
                           checked={selectedRows.has(rowIndex)}
                           onChange={() => handleRowSelection(rowIndex)}
-                          inputProps={{ "aria-label": `select row ${rowIndex}` }}
+                          inputProps={{
+                            "aria-label": `select row ${rowIndex}`,
+                          }}
                         />
                       ) : null}
                     </TableCell>
@@ -439,7 +441,9 @@ const PrimaryTable = ({
                       ? { width: columnWidths[cellIndex] }
                       : {};
                     if (cellIndex === 0 && stickyFirstCol) {
-                      return <TableCell style={classes.sticky}>{cell}</TableCell>;
+                      return (
+                        <TableCell style={classes.sticky}>{cell}</TableCell>
+                      );
                     } else {
                       return (
                         <TableCell
@@ -462,4 +466,12 @@ const PrimaryTable = ({
   );
 };
 
-export { TableCell, TableRow, PrimaryTable, PrimaryTableCell, PrimaryTableRow, RoundTableCell, RoundTableRow };
+export {
+  TableCell,
+  TableRow,
+  PrimaryTable,
+  PrimaryTableCell,
+  PrimaryTableRow,
+  RoundTableCell,
+  RoundTableRow,
+};

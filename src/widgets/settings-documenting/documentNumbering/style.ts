@@ -24,9 +24,7 @@ const useStyle = () => {
         color: "rgba(130, 131, 190, 1)",
       },
       insideStyle: {
-        paddingLeft: 15,
-        paddingTop: 15,
-        paddingRight: 0,
+        padding: 16,
         width: "460px",
         height: "384px",
         borderRadius: 16,

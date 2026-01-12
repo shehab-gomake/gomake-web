@@ -1,5 +1,11 @@
 import { useGomakeAxios, useSnackBar } from "@/hooks";
-import { AddNewIcon, EditIcon, RemoveIcon, WarnIcon, WastebasketNew2 } from "@/icons";
+import {
+  AddNewIcon,
+  EditIcon,
+  RemoveIcon,
+  WarnIcon,
+  WastebasketNew2,
+} from "@/icons";
 import { EHttpMethod } from "@/services/api-service/enums";
 import { subProductsParametersState } from "@/store/general-parameters-state";
 import { _renderActiveIcon, _renderUnActiveIcon } from "@/utils/constants";
@@ -12,6 +18,7 @@ import { useRecoilValue } from "recoil";
 import { useTranslation } from "react-i18next";
 import { EWidgetProductType } from "../enums";
 import { updateProductSectionNameApi } from "@/services/api-service/products/product-endpoints";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 const TabsMappingWidget = ({
   classes,
   index,
@@ -27,14 +34,14 @@ const TabsMappingWidget = ({
   widgetType,
 }: any) => {
   const { callApi } = useGomakeAxios();
+  const { secondColor, primaryColor } = useGomakeTheme();
   const {
     alertFaultAdded,
     alertSuccessAdded,
     alertSuccessDelete,
     alertFaultDelete,
     alertSuccessUpdate,
-    alertFaultUpdate
-
+    alertFaultUpdate,
   } = useSnackBar();
   const router = useRouter();
   const { t } = useTranslation();
@@ -63,7 +70,9 @@ const TabsMappingWidget = ({
       });
       if (parentParameter && parentParameter.isHidden === true) {
         // Exception: If parent has isHidden=true, isHiddenInSetting=true, and has default value, show child parameters
-        const hasDefaultValue = parentParameter.valuesConfigs?.some((x) => x.isDefault);
+        const hasDefaultValue = parentParameter.valuesConfigs?.some(
+          (x) => x.isDefault
+        );
         const shouldHideChild = !(
           parentParameter.isHidden === true &&
           parentParameter.isHiddenInSetting === true &&
@@ -82,10 +91,10 @@ const TabsMappingWidget = ({
       const subProduct = subProducts.find((sp) => sp.type === subSection?.type);
 
       // Get parameters for this subSection
-      const subProductParameters = subProduct?.parameters?.filter(p =>
-        p.sectionId === item.id &&
-        p.subSectionId === subSection.id
-      ) || [];
+      const subProductParameters =
+        subProduct?.parameters?.filter(
+          (p) => p.sectionId === item.id && p.subSectionId === subSection.id
+        ) || [];
 
       // Check each parameter in the subSection
       if (Array.isArray(subSection?.parameters)) {
@@ -97,7 +106,9 @@ const TabsMappingWidget = ({
 
           const isParameterMissing =
             parameter.isRequired &&
-            !subProductParameters.some(p => p.parameterCode === parameter.code);
+            !subProductParameters.some(
+              (p) => p.parameterCode === parameter.code
+            );
 
           if (isParameterMissing) {
             return true;
@@ -143,23 +154,21 @@ const TabsMappingWidget = ({
     [router]
   );
 
-
   const handleNameUpdate = async (newName: any) => {
-    const callBack = res => {
+    const callBack = (res) => {
       if (res.success) {
         alertSuccessUpdate();
         getProductById();
       } else {
         alertFaultUpdate();
       }
-    }
+    };
     await updateProductSectionNameApi(callApi, callBack, {
       productId: router?.query?.id,
       sectionId: item?.id,
-      name: newName
+      name: newName,
     });
   };
-
 
   return (
     <div>
@@ -188,12 +197,11 @@ const TabsMappingWidget = ({
                 style={{ marginTop: 5 }}
               >
                 <span>
-                  {" "}
                   <WarnIcon />
                 </span>
               </Tooltip>
             ) : (
-              _renderUnActiveIcon(item.icon)
+              _renderUnActiveIcon(item.icon, primaryColor)
             )
           ) : !isAdmin && hasMissingRequiredParameters(item) ? (
             <Tooltip
@@ -211,7 +219,6 @@ const TabsMappingWidget = ({
               style={{ marginTop: 5 }}
             >
               <span>
-                {" "}
                 <WarnIcon />
               </span>
             </Tooltip>
@@ -239,13 +246,13 @@ const TabsMappingWidget = ({
               }}
               autoFocus
               style={{
-                border: 'none',
-                background: 'transparent',
-                outline: 'none',
-                fontSize: 'inherit',
-                color: 'inherit',
-                width: '100%',
-                minWidth: 200
+                border: "none",
+                background: "transparent",
+                outline: "none",
+                fontSize: "inherit",
+                color: "inherit",
+                width: "100%",
+                minWidth: 200,
               }}
             />
           ) : (
@@ -258,9 +265,15 @@ const TabsMappingWidget = ({
                     e.stopPropagation();
                     setIsEditing(true);
                   }}
-                  style={{ marginLeft: '8px', cursor: 'pointer' }}
+                  style={{ marginLeft: "8px", cursor: "pointer" }}
                 >
-                  <EditIcon stroke={index === activeIndex ? "#EC038D" : "#2E3092"} />
+                  <EditIcon
+                    stroke={
+                      index === activeIndex
+                        ? secondColor(500)
+                        : primaryColor(600)
+                    }
+                  />
                 </span>
               )}
             </>
@@ -289,14 +302,20 @@ const TabsMappingWidget = ({
             <AddNewIcon />
           </div>
         ) : null}
-        {(item.isCanDeleted) && !isAdmin && (widgetType === EWidgetProductType.DUPLICATE || widgetType === EWidgetProductType.EDIT) ? (
+        {item.isCanDeleted &&
+        !isAdmin &&
+        (widgetType === EWidgetProductType.DUPLICATE ||
+          widgetType === EWidgetProductType.EDIT) ? (
           <div onClick={() => onRemoveSection(item)}>
             <WastebasketNew2 />
           </div>
         ) : (
           <></>
         )}
-        {item.isCanDuplicated && item.index && !isAdmin && widgetType === EWidgetProductType.CREATE ? (
+        {item.isCanDuplicated &&
+        item.index &&
+        !isAdmin &&
+        widgetType === EWidgetProductType.CREATE ? (
           <div onClick={() => onRemoveSection(item)}>
             <WastebasketNew2 />
           </div>

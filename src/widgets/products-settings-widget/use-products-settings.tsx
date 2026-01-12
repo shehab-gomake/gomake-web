@@ -65,7 +65,7 @@ const useProductsSettings = () => {
     CheckPermission(Permissions.SHOW_PRODUCTS) && {
       title: t("settings.productManagement"),
       component: (
-        <Stack data-tour={"productsSettingsWidget"}>
+        <Stack>
           <ProductManagementWidget />
         </Stack>
       ),

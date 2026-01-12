@@ -6,12 +6,6 @@ import { adaptRight } from "@/utils/adapter";
 import styled from "styled-components";
 import Link from "next/link";
 
-/**
- * HP Client Theme - Tab Styles
- * Based on Figma specifications
- */
-
-// Styled Menu Item with hover support
 const StyledMenuItem = styled.div<{
   $isSelected: boolean;
   $isListOpen?: boolean;
@@ -78,7 +72,7 @@ const useStyle = ({
   navStatus: any;
   customGap?: number;
 }) => {
-  const { primaryColor, primaryLavender } = useGomakeTheme();
+  const { primaryColor, primarySecondaryBlend } = useGomakeTheme();
   const { t } = useTranslation();
   const isRTL = t("direction") === "rtl";
 
@@ -183,7 +177,7 @@ const useStyle = ({
         transition: "opacity 0.2s ease",
       },
     };
-  }, [isSelected, navStatus, primaryColor, primaryLavender, isRTL]);
+  }, [isSelected, navStatus, primaryColor, primarySecondaryBlend, isRTL]);
 
   return {
     classes,

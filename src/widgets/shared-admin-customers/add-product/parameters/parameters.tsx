@@ -1,5 +1,9 @@
 import { TabsMappingWidget } from "@/pages-components/products/digital-offset-price/widgets/tabs-mapping";
-import { GomakePrimaryButton, GoMakeDialog, GomakeTextInput } from "@/components";
+import {
+  GomakePrimaryButton,
+  GoMakeDialog,
+  GomakeTextInput,
+} from "@/components";
 import { useAddProduct } from "@/hooks";
 import { ChildParameterModal } from "../child-parameter-modal";
 import { useStyle } from "./style";
@@ -12,6 +16,7 @@ import { ExternalValuesIdModal } from "../external-ids-modal";
 import { useState } from "react";
 import { Stack } from "@mui/material";
 
+//!here now
 const ParameterWidget = () => {
   const { classes } = useStyle();
   const {
@@ -62,18 +67,22 @@ const ParameterWidget = () => {
     openExternalIdsModal,
     removeProductParamete,
     productState,
-    addSubSectionToProduct
+    addSubSectionToProduct,
   } = useAddProduct({ classes });
 
-  const [isAddSubSectionDialogOpen, setIsAddSubSectionDialogOpen] = useState(false);
+  const [isAddSubSectionDialogOpen, setIsAddSubSectionDialogOpen] =
+    useState(false);
   const [subSectionName, setSubSectionName] = useState("");
-  const [selectedSectionIdForSubSection, setSelectedSectionIdForSubSection] = useState<string | null>(null);
+  const [selectedSectionIdForSubSection, setSelectedSectionIdForSubSection] =
+    useState<string | null>(null);
 
   const visibleSections = template?.sections;
 
   const CUSTOM_PRODUCT_TEMPLATE_ID = "a4b096a5-cf5a-4b72-a101-c79f5eccfef8";
-  const isCustomProduct = productState?.templateId === CUSTOM_PRODUCT_TEMPLATE_ID ||
-    (typeof productState?.templateId === "object" && productState?.templateId?.id === CUSTOM_PRODUCT_TEMPLATE_ID);
+  const isCustomProduct =
+    productState?.templateId === CUSTOM_PRODUCT_TEMPLATE_ID ||
+    (typeof productState?.templateId === "object" &&
+      productState?.templateId?.id === CUSTOM_PRODUCT_TEMPLATE_ID);
 
   console.log("visibleSections", { visibleSections, template });
 
@@ -94,11 +103,13 @@ const ParameterWidget = () => {
       return;
     }
     if (selectedSectionIdForSubSection) {
-      addSubSectionToProduct(selectedSectionIdForSubSection, subSectionName.trim());
+      addSubSectionToProduct(
+        selectedSectionIdForSubSection,
+        subSectionName.trim()
+      );
       handleCloseAddSubSectionDialog();
     }
   };
-
 
   return (
     <>
@@ -138,14 +149,23 @@ const ParameterWidget = () => {
                       return (
                         <div key={`section-${index}`}>
                           {showAddSubSectionButton && (
-                            <div style={{
-                              marginBottom: "20px"
-                            }}>
+                            <div
+                              style={{
+                                marginBottom: "20px",
+                              }}
+                            >
                               <GomakePrimaryButton
-                                onClick={() => handleOpenAddSubSectionDialog(section?.id)}
-                                style={{ minWidth: "200px", maxWidth: "200px", height: "40px" }}
+                                onClick={() =>
+                                  handleOpenAddSubSectionDialog(section?.id)
+                                }
+                                style={{
+                                  minWidth: "200px",
+                                  maxWidth: "200px",
+                                  height: "40px",
+                                }}
                               >
-                                {t("products.addProduct.admin.addSubSection") || "Add SubSection"}
+                                {t("products.addProduct.admin.addSubSection") ||
+                                  "Add SubSection"}
                               </GomakePrimaryButton>
                             </div>
                           )}
@@ -160,7 +180,9 @@ const ParameterWidget = () => {
                                   handleChange={handleChange}
                                   subSection={subSection}
                                   onOpenModal={onOpenModal}
-                                  onOpenExternalIdsModal={onOpenExternalIdsModal}
+                                  onOpenExternalIdsModal={
+                                    onOpenExternalIdsModal
+                                  }
                                   section={section}
                                   updatedProductParameterHidden={
                                     updatedProductParameterHidden
@@ -188,7 +210,9 @@ const ParameterWidget = () => {
                                   classes={classes}
                                   subSection={subSection}
                                   onOpenModal={onOpenModal}
-                                  onOpenExternalIdsModal={onOpenExternalIdsModal}
+                                  onOpenExternalIdsModal={
+                                    onOpenExternalIdsModal
+                                  }
                                   section={section}
                                   updatedProductParameterHidden={
                                     updatedProductParameterHidden
@@ -309,12 +333,16 @@ const ParameterWidget = () => {
         <Stack gap={2} paddingTop={"10px"}>
           <div>
             <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 8 }}>
-              {t("products.addProduct.admin.subSectionName") || "SubSection Name"}
+              {t("products.addProduct.admin.subSectionName") ||
+                "SubSection Name"}
             </div>
             <GomakeTextInput
               value={subSectionName}
               onChange={(e: any) => setSubSectionName(e.target.value)}
-              placeholder={t("products.addProduct.admin.enterSubSectionName") || "Enter SubSection Name"}
+              placeholder={
+                t("products.addProduct.admin.enterSubSectionName") ||
+                "Enter SubSection Name"
+              }
               style={{ width: "100%", height: "40px" }}
             />
           </div>

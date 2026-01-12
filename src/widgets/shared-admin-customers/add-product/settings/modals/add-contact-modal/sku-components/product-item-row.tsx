@@ -12,11 +12,13 @@ const ProductItem = ({
   item,
   onClickOpenDeleteRowModal,
   onSaveEdit,
-  clasess,
+  classes,
   isPrintHouseUsePrintNode,
   getPrinterNameByPrinterId,
   getPrinterBins,
   printers,
+  primaryColor,
+  errorColor,
 }) => {
   const [editingData, setEditingData] = useState({
     id: item.id,
@@ -34,28 +36,42 @@ const ProductItem = ({
   };
 
   return (
-    <div key={item.id} style={clasess.productMappingContainer}>
+    <div key={item.id} style={classes.productMappingContainer}>
       <div>
         <GomakeTextInput
-          style={clasess.textInputStyle}
+          style={classes.textInputStyle}
           value={editingData.name}
           onChange={(e) => handleEditFieldChange("name", e.target.value)}
         />
       </div>
       <div>
         <GomakeTextInput
-          style={clasess.textInputStyle}
+          style={classes.textInputStyle}
           value={editingData.code}
           onChange={(e) => handleEditFieldChange("code", e.target.value)}
         />
       </div>
-      <div style={clasess.colorInputStyle}>
+      <div style={classes.colorInputStyle}>
         <MuiColorInput
           value={editingData.productionFloorJobColor}
           format="hex"
           onChange={(value) =>
             handleEditFieldChange("productionFloorJobColor", value)
           }
+          sx={{
+            "& .MuiOutlinedInput-notchedOutline": {
+              border: "none",
+            },
+            "& .MuiOutlinedInput-root fieldset": {
+              border: "none",
+            },
+            "&:hover .MuiOutlinedInput-notchedOutline": {
+              border: "none",
+            },
+            "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+              border: "none",
+            },
+          }}
         />
       </div>
       {isPrintHouseUsePrintNode && (
@@ -66,16 +82,16 @@ const ProductItem = ({
           getPrinterNameByPrinterId={getPrinterNameByPrinterId}
           getPrinterBins={(id) => (id ? getPrinterBins(id) : [])}
           printers={printers}
-          clasess={clasess}
+          classes={classes}
           t={t}
         />
       )}
       <Stack direction={"row"}>
         <IconButton onClick={() => onSaveEdit(editingData)}>
-          <EditPencilIcon height={20} width={20} color="#2E3092" />
+          <EditPencilIcon height={20} width={20} color={primaryColor(500)} />
         </IconButton>
         <IconButton onClick={() => onClickOpenDeleteRowModal(editingData?.id)}>
-          <TrashIcon height={20} width={20} color="red" />
+          <TrashIcon height={20} width={20} color={errorColor(500)} />
         </IconButton>
       </Stack>
     </div>

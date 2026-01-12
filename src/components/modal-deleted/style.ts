@@ -8,7 +8,7 @@ import { adaptMarginLeft } from "@/utils/adapter";
 
 const useStyle = ({ modalType }: { modalType: ModalType }) => {
   const { t } = useTranslation();
-  const { theme, errorColor } = useGomakeTheme();
+  const { theme, errorColor, primaryColor } = useGomakeTheme();
   const dir: "rtl" | "ltr" = t("direction");
   const RTL = dir === "rtl";
   const isMobile = useIsMobile();
@@ -81,9 +81,10 @@ const useStyle = ({ modalType }: { modalType: ModalType }) => {
         lineHeight: "10px",
         borderRadius: "15px",
         ...FONT_FAMILY.Lexend(600, 16),
-        backgroundColor: modalType === ModalType.DELETE ? "#D92D20" : "#2E3092",
+        backgroundColor:
+          modalType === ModalType.DELETE ? errorColor(500) : primaryColor(500),
         border: `1px solid ${
-          modalType === ModalType.DELETE ? "#D92D20" : "#2E3092"
+          modalType === ModalType.DELETE ? errorColor(500) : primaryColor(500)
         }`,
         color: "#FFF",
       },
@@ -108,8 +109,8 @@ const useStyle = ({ modalType }: { modalType: ModalType }) => {
         lineHeight: "18px",
         borderRadius: "15px",
         ...FONT_FAMILY.Lexend(600, 16),
-        backgroundColor: "#2E3092",
-        border: `1px solid #2E3092`,
+        backgroundColor: primaryColor(500),
+        border: `1px solid ${primaryColor(500)}`,
         color: "#FFF",
       },
       noBtn: {
@@ -135,7 +136,7 @@ const useStyle = ({ modalType }: { modalType: ModalType }) => {
         border: "none",
         cursor: "pointer",
         textDecoration: "underline",
-        color: "#2E3092",
+        color: primaryColor(500),
         ...FONT_FAMILY.Lexend(500, 14),
         padding: 0,
       },

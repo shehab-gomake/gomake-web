@@ -8,6 +8,7 @@ import { UpdateTypes } from "./section-mapping";
 import { CheckboxIcon } from "@/icons";
 import { CheckboxCheckedIcon } from "@/icons";
 import { useSnackBar } from "@/hooks";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 interface UpdateParameterModalProps {
   openModal: boolean;
@@ -36,7 +37,7 @@ const UpdateParameterModal = ({
   const { t } = useTranslation();
   const { classes } = useStyle();
   const { alertFault } = useSnackBar();
-
+  const { primaryColor } = useGomakeTheme();
   return (
     <>
       <GoMakeModal
@@ -56,6 +57,7 @@ const UpdateParameterModal = ({
             <CircleCheckbox
               checked={selectedUpdateType === UpdateTypes.PRODUCT_ONLY}
               onChange={() => setSelectedUpdateType(UpdateTypes.PRODUCT_ONLY)}
+              color={primaryColor(500)}
             />
             <span style={classes.optionsTitle}>
               {t("products.parameters.productOnly")}
@@ -67,6 +69,7 @@ const UpdateParameterModal = ({
               onChange={() =>
                 setSelectedUpdateType(UpdateTypes.SAME_PRICING_TYPE)
               }
+              color={primaryColor(500)}
             />
             <span style={classes.optionsTitle}>
               {t("products.parameters.samePricingType")}
@@ -77,6 +80,7 @@ const UpdateParameterModal = ({
               <CircleCheckbox
                 checked={selectedUpdateType === UpdateTypes.ALL_PRODUCTS}
                 onChange={() => setSelectedUpdateType(UpdateTypes.ALL_PRODUCTS)}
+                color={primaryColor(500)}
               />
               <span style={classes.optionsTitle}>
                 {t("products.parameters.allProducts")}
