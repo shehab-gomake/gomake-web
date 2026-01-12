@@ -10,7 +10,7 @@ import {
 } from "@/store/quote-item";
 import { useRouter } from "next/router";
 import { useCallback, useState } from "react";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import cloneDeep from "lodash.clonedeep";
 import {
   getDebtsPaymentByIdApi,
@@ -19,13 +19,14 @@ import {
 } from "@/services/api-service/pay/pay-api";
 import { useTranslation } from "react-i18next";
 import { DOCUMENT_TYPE } from "../quotes/enums";
-import { getCompanyLoginLogo } from "@/services/api-service/profiles/company-profile-api";
+import { getCompanyLoginLogo, getCompanyProfile } from "@/services/api-service/profiles/company-profile-api";
 import {
   ERPDocumentsTypesEnum,
   mapERPTypeToDocumentType,
 } from "@/enums/document-type-enum";
 import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
 import { EPreferences } from "@/enums/prefernces";
+import { printHousePreferencesState } from "@/store/print-house-preferences";
 
 interface IProps {
   documentType?: DOCUMENT_TYPE;
@@ -52,17 +53,68 @@ const useQuoteConfirmation = ({
   const { i18n } = useTranslation();
   const { CheckPreferenceValue } = usePrintHousePreferences();
   const [fileItems, setFileItems] = useRecoilState(fileItemsState);
+  const setPrintHousePreferences = useSetRecoilState<any>(
+    printHousePreferencesState
+  );
 
-  const getQuoteConfirmation = async () => {
+  const fetchPrintHousePreferences = useCallback(async (): Promise<any[] | null> => {
+    return new Promise<any[] | null>((resolve) => {
+      const callBack = (res) => {
+        if (res?.success && res?.data?.preferences) {
+          setPrintHousePreferences(res.data.preferences);
+          resolve(res.data.preferences);
+        } else {
+          resolve(null);
+        }
+      };
+      getCompanyProfile(callApi, callBack);
+    });
+  }, [callApi, setPrintHousePreferences]);
+
+  // Helper function to get preference value directly from preferences array
+  const getPreferenceValue = (preferences: any[], code: string): boolean | undefined => {
+    if (!preferences || !Array.isArray(preferences)) {
+      return undefined;
+    }
+    const preference = preferences.find((pref: any) => pref.code === code);
+    if (!preference) {
+      return undefined;
+    }
+    // Convert "true"/"false" strings to boolean
+    if (preference.value === "true") {
+      return true;
+    }
+    if (preference.value === "false") {
+      return false;
+    }
+    return undefined;
+  };
+
+  const getQuoteConfirmation = async (preferences?: any[]) => {
     let documentItemIds = [];
-    const isAllItemsSelected = CheckPreferenceValue(
-      EPreferences.IS_ALL_ITEMS_SELECTED_IN_QUOTE_CONFIRMATION
-    );
+    
+    // Get the preference value - prefer passed preferences, fallback to Recoil state
+    let isAllItemsSelected: boolean | undefined;
+    if (preferences) {
+      isAllItemsSelected = getPreferenceValue(
+        preferences,
+        EPreferences.IS_ALL_ITEMS_SELECTED_IN_QUOTE_CONFIRMATION
+      );
+    } else {
+      isAllItemsSelected = CheckPreferenceValue(
+        EPreferences.IS_ALL_ITEMS_SELECTED_IN_QUOTE_CONFIRMATION
+      ) as boolean | undefined;
+    }
+    
+    // Debug: Log the preference check result
+    console.log("IS_ALL_ITEMS_SELECTED_IN_QUOTE_CONFIRMATION preference value:", isAllItemsSelected);
     const callBack = (res) => {
       if (res?.success) {
         const quote = res?.data;
         // Check preference: if true, set all items to checked by default
-        const defaultCheckedValue = isAllItemsSelected === true ? true : false;
+        // isAllItemsSelected will be true (boolean) if preference value is "true", false if "false", or undefined if not found
+        const defaultCheckedValue = isAllItemsSelected === true;
+        console.log("Setting default checked value for all items:", defaultCheckedValue);
         quote.documentItems = quote.documentItems.map((item) => {
           item.isChecked = defaultCheckedValue;
           return item;
@@ -343,6 +395,7 @@ const useQuoteConfirmation = ({
     getDebtsPaymentById,
     handleDebtItemCheck,
     getDocumentPdfByNumber,
+    fetchPrintHousePreferences,
   };
 };
 
