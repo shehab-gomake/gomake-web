@@ -12,7 +12,7 @@ const DebtRowMappingWidget = ({ item, index, headerHeight, parentIndex }) => {
   const { t } = useTranslation();
   const { classes } = useStyle({ headerHeight });
   const { formatISODateTime } = useDateFormat();
-  const { primaryLavender } = useGomakeTheme();
+  const { primarySecondaryBlend } = useGomakeTheme();
   const columnWidths = ["10%", "22%"];
   const { getDocumentPdfByNumber, handleDebtItemCheck, quoteConfirm } =
     useQuoteConfirmation();
@@ -66,13 +66,13 @@ const DebtRowMappingWidget = ({ item, index, headerHeight, parentIndex }) => {
           variant="text"
           sx={{
             ...classes.documentNum,
-            color: primaryLavender(500),
+            color: primarySecondaryBlend(500),
             textDecoration: "underline",
-            textDecorationColor: primaryLavender(500),
+            textDecorationColor: primarySecondaryBlend(500),
             "&:hover": {
               textDecoration: "underline",
               backgroundColor: "rgba(88, 89, 168, 0.08)",
-              textDecorationColor: primaryLavender(500),
+              textDecorationColor: primarySecondaryBlend(500),
             },
           }}
         >

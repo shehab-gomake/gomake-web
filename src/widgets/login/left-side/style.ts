@@ -1,6 +1,7 @@
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { adaptPaddingRight } from "@/utils/adapter";
 import { FONT_FAMILY } from "@/utils/font-family";
+import { getTitleTypography } from "@/utils/typography-utils";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -37,7 +38,7 @@ const useStyle = () => {
         ...adaptPaddingRight(t("direction"), 48),
       },
       loginLbl: {
-        color: primaryColor(500),
+        color: `var(--theme-typography-heading-color,${primaryColor(500)})`,
         ...FONT_FAMILY.Outfit(600, 48),
         marginBottom: 40,
       },
@@ -60,9 +61,6 @@ const useStyle = () => {
       },
       forgotStyle: {
         display: "flex",
-        // alignItems: "flex-end",
-        // alignSelf: "flex-end",
-        // justifyContent: "flex-end",
         marginTop: 10,
         marginBottom: 10,
         cursor: "pointer",

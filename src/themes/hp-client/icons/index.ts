@@ -1,3 +1,13 @@
+export { HpProfileIcon } from "./HpProfileIcon";
+export { HpBusinessProfileIcon } from "./HpBusinessProfileIcon";
+export { HpPricingProfileIcon } from "./HpPricingProfileIcon";
+export { HpProductsIcon } from "./HpProductsIcon";
+export { HpMailingIcon } from "./HpMailingIcon";
+export { HpDocumentingIcon } from "./HpDocumentingIcon";
+export { HpUsersIcon } from "./HpUsersIcon";
+export { HpFileApiIcon } from "./HpFileApiIcon";
+export { HpPreferencesIcon } from "./HpPreferencesIcon";
+export { HpManageBillingIcon } from "./HpManageBillingIcon";
 export { MonthlyPerformanceIcon } from "./MonthlyPerformanceIcon";
 export { CanceledIcon } from "./CanceledIcon";
 export { ApprovedIcon } from "./ApprovedIcon";

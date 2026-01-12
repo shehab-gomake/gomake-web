@@ -41,7 +41,6 @@ const HotFolderWidget = () => {
   } = useModal();
   const { parametersStateValue } = useParameters();
 
-
   return (
     <div style={clasess.mainContainer}>
       <div style={clasess.headerContainer}>
@@ -104,7 +103,7 @@ const HotFolderWidget = () => {
                                   {`${rule.expression}`}
                                 </div>
                                 <div style={{ fontWeight: 500 }}>
-                                  {t("products.profits.exceptions.folderName")}:{" "}
+                                  {t("products.profits.exceptions.folderName")}:
                                   {getHotFolderNameById(rule.hotFolderPath)}
                                 </div>
                               </div>

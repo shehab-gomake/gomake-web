@@ -34,6 +34,7 @@ import {
 import { useRouter } from "next/router";
 import { adaptPaddingLeft } from "@/utils/adapter";
 import { CloseIcon } from "@/widgets/quote-new/receipts-table/Payment-methods-details/icons/close-icon";
+import { useThemeComponent } from "@/contexts/theme/useThemeComponent";
 
 const ListButton = styled(ListItemButton)(() => {
   const { primaryColor } = useGomakeTheme();
@@ -50,7 +51,7 @@ const ListButton = styled(ListItemButton)(() => {
   };
 });
 
-const SideList = ({
+const BaseSideList = ({
   list,
   selectedItem,
   onSelect,
@@ -59,7 +60,7 @@ const SideList = ({
   children,
   isAdmin,
   isHaveDeleteIcon = false,
-  onClickCloseSidebar
+  onClickCloseSidebar,
 }: ISideListProps) => {
   const { query } = useRouter();
   const { materialType } = query;
@@ -151,9 +152,11 @@ const SideList = ({
     <>
       <Box style={classes.container}>
         <h1 style={classes.header}>{title}</h1>
-        {isHaveDeleteIcon && <IconButton style={classes.closeIcon} onClick={onClickCloseSidebar}>
-          <CloseIcon />
-        </IconButton>}
+        {isHaveDeleteIcon && (
+          <IconButton style={classes.closeIcon} onClick={onClickCloseSidebar}>
+            <CloseIcon />
+          </IconButton>
+        )}
         <div data-tour="first-step">
           <SearchInput
             name={"side-list-search"}
@@ -326,6 +329,13 @@ const SideList = ({
       </Box>
     </>
   );
+};
+
+// Theme-aware wrapper
+//!here why not use getComponentOverride from useThemeComponent
+const SideList = (props: ISideListProps) => {
+  const ThemedSideList = useThemeComponent("SideList", BaseSideList);
+  return <ThemedSideList {...props} />;
 };
 
 export { SideList };

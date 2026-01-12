@@ -38,32 +38,42 @@ const StyledTextField = styled(TextField, {
 
   "& .MuiOutlinedInput-root": {
     width: "100%",
+    // "&:hover fieldset": {
+    //   border: props.error
+    //     ? `1px solid ${props.errorColor(300)}`
+    //     : `var(--theme-input-border-hover, 1px solid var(--theme-input-border-color, #FFFFFF))`,
+    // },
     "&:hover fieldset": {
-      border: props.error
-        ? `2px solid ${props.errorColor(300)}`
-        : `var(--theme-input-border-hover, 1px solid var(--theme-input-border-color, #FFFFFF))`,
+      border:
+        "var(--theme-input-border-hover, 1px solid var(--theme-input-border-color, #FFFFFF))",
     },
-    "&:hover input": {
-      borderColor: "var(--theme-input-border-color, transparent) !important",
-      borderWidth: "1px !important",
-      borderStyle: "solid !important",
-    },
-    //!here should fix
     "& fieldset": {
+      // border: props.error
+      //   ? `1px solid ${props.errorColor(300)}`
+      //   : `1px solid var(--theme-input-border-color, transparent) !important`,
       border: props.error
-        ? `1px solid ${props.errorColor(300)}`
-        : `1px solid var(--theme-input-border-color, #E0E0E0)`,
+        ? "1px solid var(--theme-input-border-color, transparent) !important"
+        : `1px solid var(--theme-input-border-color, transparent)`,
       boxSizing: "border-box",
       borderRadius: props?.style?.borderRadius || "var(--theme-radius-md, 4px)",
       width: "100%",
     },
 
     "&.Mui-focused fieldset": {
-      borderColor: props.error
-        ? `${props.errorColor(300)}`
-        : `var(--theme-input-border-focus-color, var(--theme-input-border-color, #E0E0E0))`,
+      // borderColor: props.error
+      //   ? `${props.errorColor(300)}`
+      //   : `var(--theme-input-border-focus-color, var(--theme-input-border-color, #E0E0E0))`,
+      border: `1px solid var(--theme-input-border-focus-color, var(--theme-input-border-color, transparent))`,
       borderRadius: props?.style?.borderRadius || "var(--theme-radius-md, 4px)",
       width: "100%",
+    },
+    "&.Mui-disabled fieldset": {
+      border:
+        "1px solid var(--theme-input-border-color, transparent) !important",
+    },
+    "&.Mui-disabled .MuiOutlinedInput-notchedOutline": {
+      border:
+        "1px solid var(--theme-input-border-color, transparent) !important",
     },
   },
   "& .MuiInputBase-input.Mui-disabled": {
@@ -84,6 +94,7 @@ const StyledTextField = styled(TextField, {
     color: "#000",
     WebkitTextFillColor: "#000",
     opacity: 1,
+    border: "1px solid var(--theme-input-border-color, transparent) !important",
   },
 }));
 

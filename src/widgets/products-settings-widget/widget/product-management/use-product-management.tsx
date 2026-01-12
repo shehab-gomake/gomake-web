@@ -22,9 +22,11 @@ import { useAllProductTypesDropDownList } from "@/hooks/use-product-types-drop-d
 import { IconButton } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 const useProductManagement = () => {
   const router = useRouter();
+  const { primarySecondaryBlend } = useGomakeTheme();
   const { callApi } = useGomakeAxios();
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -191,21 +193,21 @@ const useProductManagement = () => {
             </div>
             {(subProduct.profitsModal === EProductProfits.BY_PRODUCT ||
               subProduct.profitsModal === EProductProfits.BY_RULE) && (
-                <div
-                  style={{ display: "inline-flex", cursor: "pointer" }}
-                  onClick={() => {
-                    subProduct.profitsModal === EProductProfits.BY_PRODUCT
-                      ? window.open(
+              <div
+                style={{ display: "inline-flex", cursor: "pointer" }}
+                onClick={() => {
+                  subProduct.profitsModal === EProductProfits.BY_PRODUCT
+                    ? window.open(
                         `/products/profits?productId=${subProduct?.id}&productName=${subProduct?.name}`,
                         "_blank"
                       )
-                      : setEditProfitRule(true);
-                    setEditProductId(subProduct?.id);
-                  }}
-                >
-                  <SettingIcon />
-                </div>
-              )}
+                    : setEditProfitRule(true);
+                  setEditProductId(subProduct?.id);
+                }}
+              >
+                <SettingIcon />
+              </div>
+            )}
           </div>,
           <div
             style={{ display: "inline-flex" }}
@@ -237,7 +239,8 @@ const useProductManagement = () => {
                   gap: 10,
                 }}
               >
-                <PlusIcon stroke="#8283BE" /> {t("materials.buttons.add")}{" "}
+                <PlusIcon stroke={primarySecondaryBlend(500)} />{" "}
+                {t("materials.buttons.add")}{" "}
               </div>
             )}
           </div>,
@@ -287,8 +290,8 @@ const useProductManagement = () => {
   const getActions = useCallback(async () => {
     const data = router.query.productId
       ? await getAllSubProducts(callApi, setAllProducts, {
-        productId: router.query.productId,
-      })
+          productId: router.query.productId,
+        })
       : await getAllProductsMongoDB(callApi, setAllProducts);
 
     const mapData = data?.map((item) => {
@@ -306,7 +309,14 @@ const useProductManagement = () => {
 
       return {
         row: [
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: 8,
+            }}
+          >
             {hasSubProducts ? (
               <IconButton
                 size="small"
@@ -359,21 +369,21 @@ const useProductManagement = () => {
             </div>
             {(item.profitsModal === EProductProfits.BY_PRODUCT ||
               item.profitsModal === EProductProfits.BY_RULE) && (
-                <div
-                  style={{ display: "inline-flex", cursor: "pointer" }}
-                  onClick={() => {
-                    item.profitsModal === EProductProfits.BY_PRODUCT
-                      ? window.open(
+              <div
+                style={{ display: "inline-flex", cursor: "pointer" }}
+                onClick={() => {
+                  item.profitsModal === EProductProfits.BY_PRODUCT
+                    ? window.open(
                         `/products/profits?productId=${item?.id}&productName=${item?.name}`,
                         "_blank"
                       )
-                      : setEditProfitRule(true);
-                    setEditProductId(item?.id);
-                  }}
-                >
-                  <SettingIcon />
-                </div>
-              )}
+                    : setEditProfitRule(true);
+                  setEditProductId(item?.id);
+                }}
+              >
+                <SettingIcon />
+              </div>
+            )}
           </div>,
           <div
             style={{ display: "inline-flex" }}
@@ -405,7 +415,8 @@ const useProductManagement = () => {
                   gap: 10,
                 }}
               >
-                <PlusIcon stroke="#8283BE" /> {t("materials.buttons.add")}{" "}
+                <PlusIcon stroke={primarySecondaryBlend(500)} />{" "}
+                {t("materials.buttons.add")}
               </div>
             )}
           </div>,

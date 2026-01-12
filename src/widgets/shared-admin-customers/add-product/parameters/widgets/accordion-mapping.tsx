@@ -2,6 +2,7 @@ import { EditIcon } from "@/icons";
 import { Accordion, AccordionDetails, AccordionSummary } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { SectionMappingWidget } from "./section-mapping";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 const AccordionMappingWidget = ({
   expanded,
   index,
@@ -18,8 +19,9 @@ const AccordionMappingWidget = ({
   updatedProductParameterShowToClient,
   onOpenExternalIdsModal,
   getProductById,
-  removeProductParamete
+  removeProductParamete,
 }) => {
+  const { primaryColor, primarySecondaryBlend } = useGomakeTheme();
   return (
     <Accordion
       expanded={expanded === `panel_${index}`}
@@ -34,9 +36,9 @@ const AccordionMappingWidget = ({
       >
         <div style={classes.headerAccordionContainer}>
           {expanded === `panel_${index}` ? (
-            <EditIcon stroke={"rgba(18, 19, 58, 1)"} />
+            <EditIcon stroke={primaryColor(900)} />
           ) : (
-            <EditIcon />
+            <EditIcon stroke={primarySecondaryBlend(700)} />
           )}
 
           <div

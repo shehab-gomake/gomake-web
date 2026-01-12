@@ -1,7 +1,9 @@
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 
 const useStyle = () => {
+  const { primaryColor, theme } = useGomakeTheme();
   const classes = useMemo(() => {
     return {
       menuItemContainer: {
@@ -14,7 +16,7 @@ const useStyle = () => {
       },
       rowTextStyle: {
         ...FONT_FAMILY.Lexend(500, 13),
-        color: "rgba(130, 131, 190, 1)",
+        color: `var(--theme-primary-color,${primaryColor(300)})`,
       },
       actionIconStyle: {
         width: 20,
@@ -31,7 +33,7 @@ const useStyle = () => {
         border: "none",
       },
     };
-  }, []);
+  }, [theme]);
   return {
     classes,
   };

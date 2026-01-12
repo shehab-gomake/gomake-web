@@ -17,7 +17,7 @@ interface IProps {
   defaultCountry?: string;
   variant?: "default" | "circular";
   placeholder?: string;
-  labelText?: string
+  labelText?: string;
 }
 
 const PhoneInputComponent = ({
@@ -28,7 +28,7 @@ const PhoneInputComponent = ({
   defaultCountry,
   variant = "default",
   placeholder = "",
-  labelText = ""
+  labelText = "",
 }: IProps) => {
   const printHouseProfileState = useRecoilValue<any>(printHouseProfile);
   const { CheckPreferenceValue } = usePrintHousePreferences();
@@ -43,11 +43,12 @@ const PhoneInputComponent = ({
   };
 
   const inputHeight = customStyle?.height
-    ? `${typeof customStyle.height === "number"
-      ? customStyle.height + "px"
-      : customStyle.height
-    } !important`
-    : "40px !important";
+    ? `${
+        typeof customStyle.height === "number"
+          ? customStyle.height + "px"
+          : customStyle.height
+      } !important`
+    : "var(--theme-input-height, 40px) !important";
 
   const GlobalStyleCircular = createGlobalStyle`
     .react-international-phone-input-container {
@@ -58,24 +59,34 @@ const PhoneInputComponent = ({
     .react-international-phone-input-container .react-international-phone-input {
       height: ${inputHeight};
       width: 100%;
-      border-radius: ${LTR ? "0px 8px 8px 0px" : "8px 0px 0px 8px"};
-      border: 1px solid #D0D5DD !important;
-      box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
+      border-radius: ${
+        LTR
+          ? `0px var(--theme-radius-md, 8px) var(--theme-radius-md, 8px) 0px`
+          : `var(--theme-radius-md, 8px) 0px 0px var(--theme-radius-md, 8px)`
+      };
+      border: 1px solid var(--theme-input-border-color, none) !important;
+      box-shadow: var(--theme-input-shadow, 0px 1px 2px 0px rgba(16, 24, 40, 0.05));
       text-align: ${LTR ? "left" : "right"};
+      background-color: var(--theme-bg-primary, #FFF);
     }
     .react-international-phone-input-container .react-international-phone-country-selector-button {
       height: ${inputHeight};
-      border-radius: ${LTR ? "8px 0px 0px 8px" : "0px 8px 8px 0px"};
-      border: 1px solid #D0D5DD !important;
-      box-shadow: 0px 1px 2px 0px rgba(4, 24, 65, 0.05);
+      border-radius: ${
+        LTR
+          ? `var(--theme-radius-md, 8px) 0px 0px var(--theme-radius-md, 8px)`
+          : `0px var(--theme-radius-md, 8px) var(--theme-radius-md, 8px) 0px`
+      };
+      border: 1px solid var(--theme-input-border-color, none) !important;
+      box-shadow: var(--theme-input-shadow, 0px 1px 2px 0px rgba(4, 24, 65, 0.05));
+      background-color: var(--theme-bg-primary, #FFF);
     }
 
     .react-international-phone-input::placeholder {
-     color: #B1B1B1 !important;
+     color: var(--theme-input-placeholder-color, #B1B1B1) !important;
   opacity: 1;
-  font-family: 'Heebo', sans-serif;
+  font-family: var(--theme-font-family-base, 'Heebo'), sans-serif;
   font-style: normal;
-  font-weight: 500;
+  font-weight: var(--theme-font-weight-medium, 500);
   }
   `;
 
@@ -87,37 +98,46 @@ const PhoneInputComponent = ({
 }
 .react-international-phone-input-container .react-international-phone-input {
   height: ${inputHeight};
-  border: 0px !important;
+  border: 1px solid var(--theme-input-border-color, none) !important;
   width: 100%;
-  box-shadow: 0px 1px 10px rgba(0, 0, 0, 0.08) !important;
+  box-shadow: var(--theme-input-shadow, 0px 1px 10px rgba(0, 0, 0, 0.08)) !important;
   -webkit-appearance: none;
   text-align: ${LTR ? "left" : "right"};
-  border-radius: ${LTR ? "0px 8px 8px 0px" : "8px 0px 0px 8px"};
+  border-radius: ${
+    LTR
+      ? `0px var(--theme-radius-md, 8px) var(--theme-radius-md, 8px) 0px`
+      : `var(--theme-radius-md, 8px) 0px 0px var(--theme-radius-md, 8px)`
+  };
+  background-color: var(--theme-bg-primary, #FFF);
 }
 .react-international-phone-input-container
   .react-international-phone-country-selector-button {
   height: ${inputHeight};
-  border: 0px !important;
-  box-shadow: 0px 1px 10px rgba(0, 0, 0, 0.08) !important;
-  border-radius: ${LTR ? "8px 0px 0px 8px" : "0px 8px 8px 0px"};
+  border: 1px solid var(--theme-input-border-color, none) !important;
+  box-shadow: var(--theme-input-shadow, 0px 1px 10px rgba(0, 0, 0, 0.08)) !important;
+  border-radius: ${
+    LTR
+      ? `var(--theme-radius-md, 8px) 0px 0px var(--theme-radius-md, 8px)`
+      : `0px var(--theme-radius-md, 8px) var(--theme-radius-md, 8px) 0px`
+  };
+  background-color: var(--theme-bg-primary, #FFF);
 }
 
 .react-international-phone-input::placeholder {
- color: #B1B1B1 !important;
+ color: var(--theme-input-placeholder-color, #B1B1B1) !important;
   opacity: 1;
-  font-family: 'Heebo', sans-serif;
+  font-family: var(--theme-font-family-base, 'Heebo'), sans-serif;
   font-style: normal;
-  font-weight: 500;
+  font-weight: var(--theme-font-weight-medium, 500);
   }
 `;
   //
   return (
     <div onKeyPress={handleKeyPress} dir={dir}>
       {variant === "circular" ? <GlobalStyleCircular /> : <GlobalStyle />}
-      {
-        labelText &&
+      {labelText && (
         <div style={{ ...FONT_FAMILY.Lexend(600, 14) }}>{labelText}</div>
-      }
+      )}
       <PhoneInput
         key={defaultCountry}
         defaultCountry={

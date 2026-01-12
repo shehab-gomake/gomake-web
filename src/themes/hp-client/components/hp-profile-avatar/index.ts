@@ -1,0 +1,1 @@
+export { HpProfileAvatar } from "./HpProfileAvatar";

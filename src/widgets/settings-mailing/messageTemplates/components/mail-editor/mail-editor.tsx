@@ -215,10 +215,10 @@ const EmailSettings = ({ onClickSave, onOpenDeleteModal }: IProps) => {
                   )}
                 </h3>
                 <QuillEditor
-                    value={body.body || ""}
-                    setValue={(content) =>
-                        handleBodyContentChange(body.type, content)
-                    }
+                  value={body.body || ""}
+                  setValue={(content) =>
+                    handleBodyContentChange(body.type, content)
+                  }
                 />
                 {/*<AdvancedEmailEditor
                   value={body.body || ""}

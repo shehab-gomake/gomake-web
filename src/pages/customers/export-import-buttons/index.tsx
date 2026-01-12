@@ -12,7 +12,7 @@ interface IActionMenuProps {
 }
 
 const ExcelMenu = (props: IActionMenuProps) => {
-  const { classes, primaryColor, primaryLavender } = useStyle();
+  const { classes, primaryColor, primarySecondaryBlend } = useStyle();
   const { t } = useTranslation();
   const elementRef = useRef(null);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -50,7 +50,7 @@ const ExcelMenu = (props: IActionMenuProps) => {
           onClick={props.onClickExport}
         >
           <div style={classes.actionIconStyle}>
-            <DownloadExcelSheet color={primaryLavender(700)} />
+            <DownloadExcelSheet color={primarySecondaryBlend(700)} />
           </div>
           <div style={classes.rowTextStyle}>
             {t("materialsActions.DownLoadExcel")}
@@ -61,7 +61,7 @@ const ExcelMenu = (props: IActionMenuProps) => {
           onClick={() => elementRef && elementRef.current.click()}
         >
           <div style={classes.actionIconStyle}>
-            <UploadExcelSheet color={primaryLavender(700)} />
+            <UploadExcelSheet color={primarySecondaryBlend(700)} />
           </div>
           <div style={classes.rowTextStyle}>
             {t("materialsActions.UploadExcel")}

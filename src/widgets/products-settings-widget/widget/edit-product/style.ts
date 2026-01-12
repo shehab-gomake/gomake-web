@@ -8,9 +8,10 @@ import { FONT_FAMILY } from "@/utils/font-family";
 
 const useStyle = () => {
   const { t } = useTranslation();
-  const { primaryColor, secondColor, errorColor } = useGomakeTheme();
+  const { primaryColor, secondColor, errorColor, primarySecondaryBlend } =
+    useGomakeTheme();
 
-  const clasess = useMemo(() => {
+  const classes = useMemo(() => {
     return {
       mainContainer: {
         display: "flex",
@@ -41,7 +42,7 @@ const useStyle = () => {
       },
       unActiveStyle: {
         ...FONT_FAMILY.Lexend(500, 16),
-        color: primaryColor(700),
+        color: primaryColor(600),
       },
       mainRowContainer: {
         display: "flex",
@@ -208,7 +209,8 @@ const useStyle = () => {
       backButtonStyle: {
         height: 30,
         marginRight: 5,
-        background: "#CBCBE5",
+        background: primaryColor(100),
+        color: primaryColor(500),
         width: 90,
         borderRadius: 8,
       },
@@ -218,12 +220,12 @@ const useStyle = () => {
       },
       subHeader: {
         ...FONT_FAMILY.Lexend(600, 20),
-        color: "#5759A8",
+        color: primaryColor(500),
       },
     };
   }, [i18next.language, t]);
   return {
-    clasess,
+    classes,
   };
 };
 export { useStyle };

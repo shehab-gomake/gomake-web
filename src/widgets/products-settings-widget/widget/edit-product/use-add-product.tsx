@@ -7,12 +7,13 @@ import { GraphicIcon, PrameterIcon, PricingIcon, SettingIcon } from "@/widgets";
 import { ESourceView } from "@/enums/products";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { useUserPermission } from "@/hooks/use-permission";
-import WhatshotIcon from '@mui/icons-material/Whatshot';
+import WhatshotIcon from "@mui/icons-material/Whatshot";
 import { EProductStructureType } from "@/widgets/shared-admin-customers/add-product/settings/settings-data";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 const useAddProduct = () => {
   const { callApi } = useGomakeAxios();
   const router = useRouter();
-
+  const { secondColor, primaryColor } = useGomakeTheme();
   const { t } = useTranslation();
   const [activeIndex, setActiveIndex] = useState(0);
   const [productState, setProductState] = useState<any>([]);
@@ -76,36 +77,36 @@ const useAddProduct = () => {
     const baseTabs = [
       {
         name: t("products.addProduct.admin.settings"),
-        icon: <SettingIcon stroke="#1C1D58" />,
-        activeIcon: <SettingIcon />,
+        icon: <SettingIcon stroke={primaryColor(600)} />,
+        activeIcon: <SettingIcon stroke={secondColor(500)} />,
         onclick: () => onClickSettingsTab,
         permission: true,
       },
       {
         name: t("products.addProduct.admin.parameters"),
-        icon: <PrameterIcon />,
-        activeIcon: <PrameterIcon stroke="#ED028C" />,
+        icon: <PrameterIcon stroke={primaryColor(600)} />,
+        activeIcon: <PrameterIcon stroke={secondColor(500)} />,
         onclick: () => onClickParametersTab,
         permission: true,
       },
       {
         name: t("pricingWidget.workFlow"),
-        icon: <PricingIcon />,
-        activeIcon: <PricingIcon stroke="#ED028C" />,
+        icon: <PricingIcon stroke={primaryColor(600)} />,
+        activeIcon: <PricingIcon stroke={secondColor(500)} />,
         onclick: () => onClickWorkFlowsTab,
         permission: CheckPermission(Permissions.ADD_WORK_FLOW_TO_PRODUCT),
       },
       {
         name: t("pricingWidget.hotFolder"),
-        icon: <WhatshotIcon style={{ color: "#1C1D58" }} />,
-        activeIcon: <WhatshotIcon style={{ color: "#ED028C" }} />,
+        icon: <WhatshotIcon style={{ color: primaryColor(600) }} />,
+        activeIcon: <WhatshotIcon style={{ color: secondColor(500) }} />,
         onclick: () => onClickHotFolderTab,
         permission: CheckPermission(Permissions.ADD_HOT_FOLDER_TO_PRODUCT),
       },
       // {
       //   name: t("products.addProduct.admin.graphic"),
-      //   icon: <GraphicIcon />,
-      //   activeIcon: <GraphicIcon stroke="#ED028C" />,
+      //   icon: <GraphicIcon stroke={primaryColor(600)} />,
+      //   activeIcon: <GraphicIcon stroke={secondColor(500)} />,
       //   onclick: () => onClickGraphicTab,
       //   permission: true,
       // },
@@ -161,7 +162,7 @@ const useAddProduct = () => {
     router,
     dir,
     handleGoBack,
-    getProductById
+    getProductById,
   };
 };
 

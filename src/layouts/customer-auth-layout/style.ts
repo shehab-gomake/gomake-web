@@ -12,6 +12,8 @@ import {
   SIDE_MENU_Layout,
 } from "@/utils/layout-config";
 import { useMemo } from "react";
+import { useTheme } from "@/contexts/theme";
+import { useRouter } from "next/router";
 
 const useStyle = ({
   isHover = false,
@@ -22,9 +24,13 @@ const useStyle = ({
   navStatus: any;
   customGap?: number;
 }) => {
-  const { theme, primaryColor, primaryLavender } = useGomakeTheme();
+  const { theme, primaryColor, primarySecondaryBlend } = useGomakeTheme();
   const isMobile = useIsMobile();
   const mobileHeight = useMobileHeight();
+  const { currentTheme } = useTheme();
+  const router = useRouter();
+  const isHpClient = currentTheme === "hp-client";
+  const isSettingsPage = router.pathname?.startsWith("/settings");
 
   const classes = useMemo(() => {
     return {
@@ -37,7 +43,7 @@ const useStyle = ({
       logoContainer: {
         display: "flex",
         marginTop: navStatus?.isClosed ? 20 : 0,
-        backgroundColor: primaryLavender(700),
+        backgroundColor: primarySecondaryBlend(700),
         borderRadius: 8,
         padding: 10,
       },
@@ -82,6 +88,7 @@ const useStyle = ({
         height: "100%",
         // overflow: "scroll",
         overflow: "auto",
+        marginTop: isHpClient && !isSettingsPage ? 20 : 0,
       },
       poweredContainer: {
         display: "flex",
@@ -174,7 +181,16 @@ const useStyle = ({
         backgroundColor: primaryColor(500),
       },
     };
-  }, [isHover, navStatus, isMobile, mobileHeight, theme]);
+  }, [
+    isHover,
+    navStatus,
+    isMobile,
+    mobileHeight,
+    theme,
+    isHpClient,
+    isSettingsPage,
+    router.pathname,
+  ]);
   return {
     classes,
   };

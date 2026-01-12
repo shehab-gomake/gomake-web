@@ -58,7 +58,8 @@ const mailInputs1 = (state: ISMSTemplate, mailingProviderType, t) => {
       value: state?.sendFrom,
       isValid: true,
     },
-    (mailingProviderType === IMailProviders.GMAIL || mailingProviderType === IMailProviders.OUTLOOK) &&
+    (mailingProviderType === IMailProviders.GMAIL ||
+      mailingProviderType === IMailProviders.OUTLOOK) &&
       mailingProviderType && {
         name: "appPassword",
         label: "profileSettings.appPassword",
@@ -82,7 +83,7 @@ const mailInputs2 = (state) => {
     {
       name: "sendCopyToMainMail",
       label: "mailingSettings.sendCopyToMainMail",
-      type: "primeSwitch",
+      type: "switch",
       placeholder: "mailingSettings.sendCopyToMainMail",
       required: false,
       parameterKey: "sendMailCopy",
@@ -94,7 +95,7 @@ const mailInputs2 = (state) => {
     {
       name: "fromAgentMail",
       label: "mailingSettings.fromAgentMail",
-      type: "primeSwitch",
+      type: "switch",
       placeholder: "mailingSettings.fromAgentMail",
       required: false,
       parameterKey: "sendFromAgent",
@@ -122,7 +123,7 @@ const mailInputs3 = (state) => {
     {
       name: "sendCopyToAgentMail",
       label: "mailingSettings.sendCopyToAgentMail",
-      type: "primeSwitch",
+      type: "switch",
       placeholder: "mailingSettings.sendCopyToAgentMail",
       required: false,
       parameterKey: "sendMailCopyToAgent",

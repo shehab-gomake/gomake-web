@@ -9,8 +9,13 @@ import { adaptPaddingRight } from "@/utils/adapter";
 
 const useStyle = () => {
   const { t } = useTranslation();
-  const { primaryColor, secondColor, errorColor, neutralColor } =
-    useGomakeTheme();
+  const {
+    primaryColor,
+    secondColor,
+    errorColor,
+    neutralColor,
+    primarySecondaryBlend,
+  } = useGomakeTheme();
 
   const classes = useMemo(() => {
     return {
@@ -91,7 +96,7 @@ const useStyle = () => {
       },
       tabNameStyle: {
         ...FONT_FAMILY.Lexend(500, 16),
-        color: primaryColor(500),
+        color: primaryColor(600),
       },
       tabNameActiveStyle: {
         ...FONT_FAMILY.Lexend(500, 16),
@@ -157,22 +162,22 @@ const useStyle = () => {
       },
       textInputStyle: {
         width: "100%",
-        borderRadius: 4,
-        height: 40,
+        borderRadius: "var(--theme-radius-md, 4px)",
+        height: "var(--theme-input-height, 40px)",
       },
       renderParameterTypeContainer: {
         display: "flex",
         width: "100%",
-        borderRadius: 4,
+        borderRadius: "var(--theme-radius-md, 4px)",
       },
       dropDownListStyle: {
         width: "100%",
-        borderRadius: 4,
-        height: 40,
+        borderRadius: "var(--theme-radius-md, 4px)",
+        height: "var(--theme-dropdown-height, 40px)",
         border: "0px",
       },
       dynamicBtn: {
-        height: 40,
+        height: "var(--theme-button-height, 40px)",
         backgroundColor: "white",
         border: `1px solid ${secondColor(500)}`,
         color: secondColor(500),
@@ -238,18 +243,18 @@ const useStyle = () => {
       },
       nextBtnStyle: {
         width: 110,
-        height: 40,
+        height: "var(--theme-button-height, 40px)",
         backgroundColor: secondColor(500),
       },
       previousBtnStyle: {
         width: 110,
-        height: 40,
+        height: "var(--theme-button-height, 40px)",
         backgroundColor: "white",
         border: `1px solid ${secondColor(500)}`,
         color: secondColor(500),
       },
       activeTabContainer: {
-        backgroundColor: "#EBECFF",
+        backgroundColor: primarySecondaryBlend(300),
         minHeight: 48,
         borderBottom: "none",
       },
@@ -262,7 +267,7 @@ const useStyle = () => {
       },
       subSectionAccordionStyle: {
         ...FONT_FAMILY.Lexend(600, 16),
-        color: primaryColor(500),
+        color: primarySecondaryBlend(700),
       },
       subSectionAccordionActiveStyle: {
         ...FONT_FAMILY.Lexend(600, 16),
@@ -288,16 +293,16 @@ const useStyle = () => {
       insideStyle: {
         width: "544px",
         minWidth: "400px",
-        borderRadius: "12px",
+        borderRadius: "var(--theme-radius-lg, 12px)",
         height: "auto",
         maxHeight: 600,
         zIndex: 999999,
-        padding: "20px",
+        padding: "16px",
       },
       cancelButton: {
         ...FONT_FAMILY.Inter(600, 16),
         width: "50%",
-        borderRadius: "8px",
+        borderRadius: "var(--theme-radius-md, 8px)",
         height: "44px",
         backgroundColor: "#FFFFFF",
         color: "#344054",

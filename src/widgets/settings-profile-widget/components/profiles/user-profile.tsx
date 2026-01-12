@@ -55,24 +55,19 @@ const UserProfile = () => {
             </FormInputsSectionComponent>
           );
         })}
-        <div>
-          <Button onClick={() => setOpenModal(true)} variant={"contained"}>
+        <Stack direction={"row"} gap={"12px"}>
+          <SecondaryButton
+            onClick={() => setOpenModal(true)}
+            variant={"outlined"}
+            style={{ width: "fit-content" }}
+          >
             {t("profileSettings.changePass")}
-          </Button>
-        </div>
+          </SecondaryButton>
+          <SecondaryButton onClick={updateProfile} variant={"contained"}>
+            {t("navigationButtons.update")}
+          </SecondaryButton>
+        </Stack>
       </Stack>
-      <div
-        style={{
-          position: "sticky",
-          bottom: 10,
-          display: "flex",
-          justifyContent: "flex-end",
-        }}
-      >
-        <SecondaryButton onClick={updateProfile} variant={"contained"}>
-          {t("navigationButtons.update")}
-        </SecondaryButton>
-      </div>
       <GoMakeModal
         insideStyle={{
           paddingLeft: 0,

@@ -1,9 +1,5 @@
 import { IIconProps } from "@/components/icons/interface";
 
-/**
- * HP Client Theme - Canceled Icon
- * Custom icon for canceled card in HP client theme
- */
 const CanceledIcon = (props: IIconProps) => {
   const iconColor = props.color || "#A3A3A3"; // Default to gray
 

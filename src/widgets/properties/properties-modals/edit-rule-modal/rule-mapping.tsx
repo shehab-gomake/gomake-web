@@ -27,7 +27,7 @@ const RuleMappingWidget = ({
   productId,
   selectedProperties,
 }: RuleMappingWidgetProps) => {
-  const { clasess } = useStyle();
+  const { classes } = useStyle();
   const { t } = useTranslation();
   const { parameters } = useParameters();
   const { callApi } = useGomakeAxios();
@@ -70,11 +70,11 @@ const RuleMappingWidget = ({
     }
   };
   return (
-    <div style={clasess.mainContainerStyle}>
+    <div style={classes.mainContainerStyle}>
       <div>
         <ReOrderIcon />
       </div>
-      <div style={clasess.lineStyle}>
+      <div style={classes.lineStyle}>
         <div>
           {rule.expression}{" "}
           <span>
@@ -82,10 +82,10 @@ const RuleMappingWidget = ({
             {getSuccessEvent(selectedProperties, rule)}
           </span>
         </div>
-        <div style={clasess.iconsContainer}>
+        <div style={classes.iconsContainer}>
           {rule?.profitsModel === EProductProfits.BY_PRODUCT && (
             <div
-              style={clasess.deleteBtn}
+              style={classes.deleteBtn}
               onClick={() =>
                 window.open(
                   `/products/profits?productId=${productId}`,
@@ -97,7 +97,7 @@ const RuleMappingWidget = ({
             </div>
           )}
           <div
-            style={clasess.deleteBtn}
+            style={classes.deleteBtn}
             onClick={() => {
               deletePropertyRule(rule.id);
             }}

@@ -12,6 +12,9 @@ import {
   HpNotificationsIcon,
   HpTrialIndicator,
 } from "./components/hp-top-header";
+import { HpSideBarContainer } from "./components/hp-side-bar-container";
+import { HpSideList } from "./components/hp-side-list";
+import { HpProfileAvatar } from "./components/hp-profile-avatar";
 import {
   HpUserIcon,
   HpHelpIcon,
@@ -25,7 +28,9 @@ const hpClientThemeConfig: ThemeConfig = {
 
   styles: {
     cssVariables: {
-      // Primary Colors
+      /* -------------------------------------------------
+       HP PRIMARY COLORS
+      --------------------------------------------------*/
       "--theme-primary-color": "#024AD8", // Blue - primary(500)
       "--theme-primary-hover": "#1A5FFF", // Lighter/more vibrant for hover
       "--theme-primary-light": "#B2D2FF", // More bold/darker than before
@@ -33,6 +38,7 @@ const hpClientThemeConfig: ThemeConfig = {
       "--theme-primary-dark": "#002E8D", // Darker for disabled state
       "--theme-primary-on-light": "#0039B8", // Darker blue for better contrast on light backgrounds
       "--theme-primary-on-dark": "#B2D2FF",
+      "--theme-primary-text": "#002E8D", //!here we should change
 
       /* -------------------------------------------------
        HP SECONDARY COLORS
@@ -41,8 +47,7 @@ const hpClientThemeConfig: ThemeConfig = {
       "--theme-secondary-color": "#568393", // Power Storm - shade A (main, white background)
       "--theme-secondary-on-dark": "#789CA9", // Power Storm - shade B (darker photos)
       "--theme-secondary-on-light": "#4D7684", // Power Storm - shade C (lighter photos)
-      //!HERE FROM ME
-      "--theme-secondary-light": "#E8F0F3", // Power Storm - light background tint (for hover states on white)
+      "--theme-secondary-light": "#E8F0F3", // Power Storm - light background tint (for hover states on white) //!HERE FROM ME
 
       // ORANGE BLOOM
       "--theme-accent-color": "#FF5050", // Orange Bloom - shade A (main, white background)
@@ -70,7 +75,8 @@ const hpClientThemeConfig: ThemeConfig = {
       "--theme-status-error-text": "#991b1b",
 
       // Error Colors - Degree variants
-      "--theme-error-color": "#ef4444", // Base error color (like 500)
+      // "--theme-error-color": "#ef4444", // Base error color
+      "--theme-error-color": "#D92C2C", // Base error color (like 500)
       "--theme-error-light": "#fee2e2", // Light error variant
       "--theme-error-dark": "#991b1b", // Dark error variant
 
@@ -195,17 +201,21 @@ const hpClientThemeConfig: ThemeConfig = {
 
       // Dropdown/Autocomplete Styles
       "--theme-dropdown-shadow": "none",
-      // "--theme-dropdown-border": "none",
       "--theme-dropdown-border":
         "1px solid var(--theme-dropdown-border-color, #E0E0E0)",
       "--theme-dropdown-border-color": "#E0E0E0",
       "--theme-dropdown-border-radius": "var(--theme-radius-md, 8px)",
+      "--theme-dropdown-height": "40px",
       "--theme-dropdown-placeholder-color": "#A3A3A3",
       "--theme-dropdown-placeholder-size": "14px",
       "--theme-dropdown-placeholder-weight": "400",
 
+      "--theme-select-bg": "var(--theme-primary-light, #F4F3FF)",
+      "--theme-select-text-color": "var(--theme-primary-color)",
+      "--theme-select-border-radius": "var(--theme-radius-xl, 8px)",
+
       "--theme-input-shadow": "none",
-      "--theme-input-border": "none",
+      "--theme-input-border": "1px solid var(--theme-border-color, #E0E0E0)",
       "--theme-input-border-color": "#E0E0E0",
       "--theme-input-border-radius": "var(--theme-radius-md, 4px)",
       "--theme-input-height": "40px",
@@ -237,6 +247,8 @@ const hpClientThemeConfig: ThemeConfig = {
       "--theme-card-canceled": "#E0E0E0", // Light Gray
       "--theme-card-stuck-jobs": "#EF6B6B", // Reddish
 
+      "--theme-button-height": "40px",
+
       // Card Text Colors (HP Client specific - for white/light cards)
       // Used by use-cards-widget.tsx getCardTextColor()
       "--theme-card-success-rate-text": "#FFFFFF", // White text on blue
@@ -266,6 +278,9 @@ const hpClientThemeConfig: ThemeConfig = {
     CardsWidget: HpCardsWidget,
     LeftSideLayout: HpLeftSideLayout,
     TrialIndicator: HpTrialIndicator,
+    SideBarContainer: HpSideBarContainer,
+    SideList: HpSideList,
+    ProfileAvatar: HpProfileAvatar,
   },
 
   // Icon overrides for HP Client theme

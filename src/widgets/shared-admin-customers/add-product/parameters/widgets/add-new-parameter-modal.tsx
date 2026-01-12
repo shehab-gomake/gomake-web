@@ -1,4 +1,8 @@
-import { GoMakeAutoComplate, GoMakeModal, GomakePrimaryButton, } from "@/components";
+import {
+  GoMakeAutoComplate,
+  GoMakeModal,
+  GomakePrimaryButton,
+} from "@/components";
 import { CircleCheckbox } from "@/components/check-box/circle-check-box";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useTranslation } from "react-i18next";
@@ -9,6 +13,7 @@ import { GoMakeTextInput } from "@/components/text-input/go-make-text-input";
 import { Button, Stack } from "@mui/material";
 import { addParameterToProductApi } from "@/services/api-service/products/product-endpoints";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 interface AddNewParameterModalProps {
   openModal: boolean;
@@ -23,12 +28,13 @@ const AddNewParameterModal = ({
   onClose,
   newParameterState,
   onChangeInputs,
-  getProductById
+  getProductById,
 }: AddNewParameterModalProps) => {
   const { callApi } = useGomakeAxios();
   const { alertFaultAdded, alertSuccessAdded, alertFault } = useSnackBar();
   const { t } = useTranslation();
   const { classes } = useStyle();
+  const { primaryColor } = useGomakeTheme();
   const parameterTypeOptions = [
     { text: t("machineAttributes.number"), value: 1 },
     { text: t("machineAttributes.text"), value: 2 },
@@ -41,19 +47,17 @@ const AddNewParameterModal = ({
   const addActionToProduct = async () => {
     const callBack = (res) => {
       if (res.success) {
-        alertSuccessAdded()
-        getProductById()
-        onClose()
-      }
-      else {
+        alertSuccessAdded();
+        getProductById();
+        onClose();
+      } else {
         if (res?.errors?.ErrorMessage) {
-          alertFault(res?.errors?.ErrorMessage)
-        }
-        else {
-          alertFaultAdded()
+          alertFault(res?.errors?.ErrorMessage);
+        } else {
+          alertFaultAdded();
         }
       }
-    }
+    };
 
     const isQuantityParameter = newParameterState?.parameterType === 7;
     const isJobNameParameter = newParameterState?.parameterType === 8;
@@ -63,13 +67,17 @@ const AddNewParameterModal = ({
       subSectionId: newParameterState?.subSectionId,
       updateType: newParameterState?.updateType,
       parameterName: newParameterState?.parameterName,
-      parameterType: isQuantityParameter ? 1 : isJobNameParameter ? 0 : newParameterState?.parameterType,
+      parameterType: isQuantityParameter
+        ? 1
+        : isJobNameParameter
+        ? 0
+        : newParameterState?.parameterType,
       ...(isQuantityParameter && { isQuantityParameter: true }),
-      ...(isJobNameParameter && { isJobNameParameter: true })
+      ...(isJobNameParameter && { isJobNameParameter: true }),
     };
 
     await addParameterToProductApi(callApi, callBack, payload);
-  }
+  };
   return (
     <>
       <GoMakeModal
@@ -104,8 +112,13 @@ const AddNewParameterModal = ({
           <Stack direction={"column"} gap={"5px"} paddingBottom={"20px"}>
             <Stack direction={"row"} width={"100%"} alignItems={"center"}>
               <CircleCheckbox
-                checked={newParameterState?.updateType === UpdateTypes.PRODUCT_ONLY}
-                onChange={() => onChangeInputs("updateType", UpdateTypes.PRODUCT_ONLY)}
+                checked={
+                  newParameterState?.updateType === UpdateTypes.PRODUCT_ONLY
+                }
+                onChange={() =>
+                  onChangeInputs("updateType", UpdateTypes.PRODUCT_ONLY)
+                }
+                color={primaryColor(500)}
               />
               <span style={classes.optionsTitle}>
                 {t("products.parameters.productOnly")}
@@ -113,16 +126,19 @@ const AddNewParameterModal = ({
             </Stack>
             <Stack direction={"row"} width={"100%"} alignItems={"center"}>
               <CircleCheckbox
-                checked={newParameterState?.updateType === UpdateTypes.SAME_PRICING_TYPE}
+                checked={
+                  newParameterState?.updateType ===
+                  UpdateTypes.SAME_PRICING_TYPE
+                }
                 onChange={() =>
                   onChangeInputs("updateType", UpdateTypes.SAME_PRICING_TYPE)
                 }
+                color={primaryColor(500)}
               />
               <span style={classes.optionsTitle}>
                 {t("products.parameters.samePricingType")}
               </span>
             </Stack>
-
           </Stack>
           <Stack direction={"row"} gap={"10px"}>
             <Button style={classes.cancelButton} onClick={onClose}>

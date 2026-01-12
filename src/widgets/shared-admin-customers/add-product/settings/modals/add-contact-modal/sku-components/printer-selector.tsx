@@ -12,7 +12,7 @@ interface PrinterSelectorProps {
   printerBin: string | undefined;
   onEdit: (field: string, value: any) => void;
   getPrinterNameByPrinterId?: (id: number | undefined) => string;
-  clasess: any;
+  classes: any;
   getPrinterBins: (printerId: number | undefined) => any[];
   printers: any[];
   t: any;

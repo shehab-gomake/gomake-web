@@ -5,14 +5,21 @@ import { ArrowDropDownIcon } from "@mui/x-date-pickers/icons";
 import { ActionsListMenu } from "@/widgets/product-pricing-widget/components/actions-menu";
 import { useWorkFlows } from "./use-work-flows";
 import { Typography } from "@mui/material";
-import { GoMakeDeleteModal, GomakePrimaryButton, SecondSwitch } from "@/components";
+import {
+  GoMakeDeleteModal,
+  GomakePrimaryButton,
+  SecondSwitch,
+} from "@/components";
 import { CopyAnotherProductsModal } from "./copy-another-products-modal";
-import { EPricingViews, EWorkSource } from "@/widgets/product-pricing-widget/enums";
+import {
+  EPricingViews,
+  EWorkSource,
+} from "@/widgets/product-pricing-widget/enums";
 import { InOutSourceSelect } from "@/widgets/product-pricing-widget/components/in-out-source-select/in-out-source-select";
 import { useModal } from "@/hooks/use-modal";
 
 const WorkFlowsWidget = ({ productState, getProductById }: any) => {
-  const { clasess } = useStyle();
+  const { classes } = useStyle();
   const { t } = useTranslation();
   const {
     productActions,
@@ -41,44 +48,48 @@ const WorkFlowsWidget = ({ productState, getProductById }: any) => {
     updateProductSourceType,
     sourceType,
     setSourceType,
-  } = useWorkFlows({ getProductById, sourceTypeFromProduct: productState?.sourceType });
+  } = useWorkFlows({
+    getProductById,
+    sourceTypeFromProduct: productState?.sourceType,
+  });
   const alertChangeSourceTypeModal = useModal();
 
   return (
-    <div style={clasess.mainContainer}>
-      <div style={clasess.headerContainer}>
-        <div style={clasess.switchContainer}>
+    <div style={classes.mainContainer}>
+      <div style={classes.headerContainer}>
+        <div style={classes.switchContainer}>
           <SecondSwitch
             checked={productState?.ignoreCalculatedWorkflows}
             onChange={(e) => toggleIgnoreCalculatedWorkflows()}
           />
-          <span style={clasess.switchLabel}>
+          <span style={classes.switchLabel}>
             {t("pricingWidget.ignoreCalculatedWorkflow")}
           </span>
         </div>
         {productActions?.length > 0 && (
           <GomakePrimaryButton
-            style={clasess.copyToAnotherProductsButton}
+            style={classes.copyToAnotherProductsButton}
             onClick={handleOpenCopyAnotherProductsModal}
           >
             {t("pricingWidget.copyToAnotherProducts")}
           </GomakePrimaryButton>
         )}
 
-        {view !== EPricingViews.OUTSOURCE_WORKFLOW && <div
-          style={clasess.autoCompleteSelectedSectionName}
-          onClick={(e) => {
-            handleOpenActionsListMenu(e);
-          }}
-        >
-          {t("pricingWidget.addAction")}
-          <ArrowDropDownIcon />
-        </div>}
+        {view !== EPricingViews.OUTSOURCE_WORKFLOW && (
+          <div
+            style={classes.autoCompleteSelectedSectionName}
+            onClick={(e) => {
+              handleOpenActionsListMenu(e);
+            }}
+          >
+            {t("pricingWidget.addAction")}
+            <ArrowDropDownIcon />
+          </div>
+        )}
         <InOutSourceSelect
           onChange={(v: EWorkSource) => {
             alertChangeSourceTypeModal.open();
             setSourceType(v);
-
           }}
           value={
             view === EPricingViews.OUTSOURCE_WORKFLOW
