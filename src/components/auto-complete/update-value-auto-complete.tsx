@@ -69,7 +69,7 @@ const UpdateValueAutoComplete = ({
             display: "inline-flex",
             width: 250,
             height: "26px",
-            border: "1px solid " + secondColor(400),
+            border: "1px solid " + secondColor(500),
             boxShadow: "none",
             position: "relative",
           }}
@@ -93,6 +93,19 @@ const UpdateValueAutoComplete = ({
               <TextField
                 {...params}
                 onChange={onChangeTextField}
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    "& fieldset": {
+                      border: "none",
+                    },
+                    "&:hover fieldset": {
+                      border: "none",
+                    },
+                    "&.Mui-focused fieldset": {
+                      border: "none",
+                    },
+                  },
+                }}
                 InputProps={{
                   ...params.InputProps,
                   ...(loading && {
@@ -111,7 +124,9 @@ const UpdateValueAutoComplete = ({
             popupIcon={
               RTL ? (
                 <div style={{ position: "absolute", left: -225 }}>
-                  <ArrowUpIcon />
+                  <ArrowUpIcon
+                    stroke={`var(--theme-secondary-color, #ED028C)`}
+                  />
                 </div>
               ) : (
                 <div
@@ -121,7 +136,9 @@ const UpdateValueAutoComplete = ({
                     transform: "translateY(-50%)",
                   }}
                 >
-                  <ArrowUpIcon />
+                  <ArrowUpIcon
+                    stroke={`var(--theme-secondary-color, #ED028C)`}
+                  />
                 </div>
               )
             }

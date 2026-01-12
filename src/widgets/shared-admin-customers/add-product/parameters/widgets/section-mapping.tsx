@@ -413,7 +413,13 @@ const SectionMappingWidget = ({
                             openModal();
                           }}
                         >
-                          <DeleteIcon stroke="#F135A3" width={20} height={20} />
+                          <DeleteIcon
+                            stroke={`var(--theme-accent-color, ${secondColor(
+                              500
+                            )})`}
+                            width={20}
+                            height={20}
+                          />
                         </div>
                       </Tooltip>
                     )}

@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 const HeaderMapping = ({ item, index }) => {
   const { t } = useTranslation();
   const dir: "rtl" | "ltr" = t("direction");
-  const RTL = dir === 'rtl';
+  const RTL = dir === "rtl";
   return (
     <div
       style={{
