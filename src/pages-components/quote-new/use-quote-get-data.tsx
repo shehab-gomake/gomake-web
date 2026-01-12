@@ -41,6 +41,7 @@ import { shouldReopenOrderModalState } from "@/store/order-modal-states";
 import { useButtonsContainer } from "@/widgets/quote-new/buttons-container/use-buttons-container";
 import { navStatusState, pageTitleState } from "@/store/nav-status";
 import { useDocumentTitle } from "@/pages-components/quote-new/use-document-title";
+import { userProfileState } from "@/store/user-profile";
 
 const useQuoteGetData = (
   docType?: DOCUMENT_TYPE,
@@ -48,6 +49,7 @@ const useQuoteGetData = (
   setOpenVatMismatchModal?: (open: boolean) => void
 ) => {
   const { callApi } = useGomakeAxios();
+  const userProfile = useRecoilValue(userProfileState);
   const { t } = useTranslation();
   const router = useRouter();
   const {
@@ -196,6 +198,10 @@ const useQuoteGetData = (
 
         if (res?.success) {
           const _data = res?.data?.data?.result || {};
+          // Set default language to creator's language if not set
+          if (!_data?.defaultLanguage && userProfile?.systemLang) {
+            _data.defaultLanguage = userProfile.systemLang;
+          }
           setQuoteItemValue(_data);
           // Check if the client vat Exempt and show modal if needed
           if (systemVAT && setOpenVatMismatchModal && _data?.client) {
@@ -236,6 +242,10 @@ const useQuoteGetData = (
           if (res?.success) {
             let indexs = 0;
             const _data = res?.data || {};
+            // Handle defaultLanguage from response
+            if (_data?.defaultLanguage) {
+              _data.defaultLanguage = _data.defaultLanguage;
+            }
             setPageTitle(documentTitle + " " + _data.number);
             const mapData = _data?.documentItems?.map((item, index) => {
               indexs++;
@@ -260,10 +270,10 @@ const useQuoteGetData = (
                     style={
                       _childsDocumentItemsMapping
                         ? {
-                            height: "100%",
-                            overflowY: "scroll",
-                            paddingRight: 5,
-                          }
+                          height: "100%",
+                          overflowY: "scroll",
+                          paddingRight: 5,
+                        }
                         : { height: 36, overflowY: "scroll", paddingRight: 5 }
                     }
                   >
@@ -319,7 +329,7 @@ const useQuoteGetData = (
   ]);
 
   const validateAddress = async (addressWithMetadata) => {
-    return await validateAddressApi(callApi, () => {}, addressWithMetadata);
+    return await validateAddressApi(callApi, () => { }, addressWithMetadata);
   };
 
   const onClickAddAddress = async (item: any, addressType: EAddressType) => {
