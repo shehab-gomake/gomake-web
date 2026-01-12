@@ -18,6 +18,7 @@ interface IProductTranslationModalProps {
   onClose: () => void;
   translations: IProductTranslation[];
   onSave: (translations: IProductTranslation[]) => void;
+  productName?: string;
 }
 
 const ProductTranslationModal: React.FC<IProductTranslationModalProps> = ({
@@ -25,6 +26,7 @@ const ProductTranslationModal: React.FC<IProductTranslationModalProps> = ({
   onClose,
   translations,
   onSave,
+  productName = "",
 }) => {
   const { t } = useTranslation();
   const { classes } = useStyle();
@@ -40,6 +42,11 @@ const ProductTranslationModal: React.FC<IProductTranslationModalProps> = ({
       profile.languages?.includes(lang.value)
     );
   }, [profile?.languages, allLanguages]);
+
+  // Get default language from profile
+  const defaultLanguage = useMemo(() => {
+    return profile?.systemLanguage || printHouseLanguages[0]?.value || "en";
+  }, [profile?.systemLanguage, printHouseLanguages]);
 
   // Initialize translations state
   const [localTranslations, setLocalTranslations] = useState<
@@ -57,9 +64,13 @@ const ProductTranslationModal: React.FC<IProductTranslationModalProps> = ({
           }
         });
       }
+      // Pre-fill default language with product name if not already set
+      if (productName && !initialTranslations[defaultLanguage]) {
+        initialTranslations[defaultLanguage] = productName;
+      }
       setLocalTranslations(initialTranslations);
     }
-  }, [open, translations]);
+  }, [open, translations, productName, defaultLanguage]);
 
   const handleTranslationChange = (lang: string, value: string) => {
     setLocalTranslations((prev) => ({
@@ -94,7 +105,7 @@ const ProductTranslationModal: React.FC<IProductTranslationModalProps> = ({
       <Stack spacing={2} sx={classes.container}>
         {printHouseLanguages.length === 0 ? (
           <Typography sx={classes.emptyState}>
-            {t("products.addProduct.admin.noLanguagesConfigured")}
+            {t("products.addProduct.admin.noTranslationsAvailable")}
           </Typography>
         ) : (
           printHouseLanguages.map((lang) => (
@@ -102,7 +113,7 @@ const ProductTranslationModal: React.FC<IProductTranslationModalProps> = ({
               <Typography sx={classes.label}>{lang.text}</Typography>
               <GomakeTextInput
                 style={classes.textInput}
-                placeholder={t("products.addProduct.admin.enterTranslation")}
+                placeholder={t("products.addProduct.admin.enterProductName")}
                 value={localTranslations[lang.value] || ""}
                 onChange={(e: any) =>
                   handleTranslationChange(lang.value, e.target.value)

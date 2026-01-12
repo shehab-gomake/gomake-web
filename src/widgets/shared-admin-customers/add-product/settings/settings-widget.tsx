@@ -894,6 +894,7 @@ const SettingsWidget = ({
         onClose={() => setOpenTranslationModal(false)}
         translations={productState?.translations || []}
         onSave={handleTranslationSave}
+        productName={getDefaultLanguageName}
       />
     </div>
   );
