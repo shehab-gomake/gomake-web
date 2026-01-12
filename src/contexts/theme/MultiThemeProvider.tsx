@@ -90,12 +90,20 @@ export const MultiThemeProvider: React.FC<MultiThemeProviderProps> = ({
         if (themeConfig.styles.customStylesheet) {
           removeStylesheet(getThemeStylesheetId(themeConfig.name));
         }
+        // Remove data-theme attribute when clearing theme
+        if (typeof window !== "undefined") {
+          document.documentElement.removeAttribute("data-theme");
+        }
       }
 
       // If no theme, reset to base
       if (!themeName) {
         setThemeConfig(null);
         setCurrentTheme(null);
+        // Remove data-theme attribute
+        if (typeof window !== "undefined") {
+          document.documentElement.removeAttribute("data-theme");
+        }
         return;
       }
 
@@ -119,12 +127,21 @@ export const MultiThemeProvider: React.FC<MultiThemeProviderProps> = ({
             );
           }
 
+          // Set data-theme attribute on HTML element
+          if (typeof window !== "undefined") {
+            document.documentElement.setAttribute("data-theme", themeName);
+          }
+
           setThemeConfig(config);
           setCurrentTheme(themeName);
         } else {
           console.warn(`Theme "${themeName}" not found, using base theme`);
           setThemeConfig(null);
           setCurrentTheme(null);
+          // Remove data-theme attribute
+          if (typeof window !== "undefined") {
+            document.documentElement.removeAttribute("data-theme");
+          }
         }
       } catch (error) {
         console.error(`Error loading theme "${themeName}":`, error);

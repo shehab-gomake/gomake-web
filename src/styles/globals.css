@@ -170,7 +170,8 @@ html * {
 }
 
 /* remove related to text input - hp requirement */
-.MuiOutlinedInput-root fieldset {
+/* Hide border removal for hp-client theme only */
+html:not([data-theme="hp-client"]) .MuiOutlinedInput-root fieldset {
   border: none !important;
 }
 
