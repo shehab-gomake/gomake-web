@@ -413,9 +413,10 @@ const SettingsWidget = ({
                   size="small"
                   onClick={() => setOpenTranslationModal(true)}
                   sx={{
-                    padding: "4px",
                     marginLeft: "8px",
+                    marginRight: "8px",
                     color: clasess.labelTitleStyle.color,
+                    height: "20px",
                   }}
                 >
                   <TranslateIcon fontSize="small" />
