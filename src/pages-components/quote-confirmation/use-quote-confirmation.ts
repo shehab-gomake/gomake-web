@@ -10,7 +10,7 @@ import {
 } from "@/store/quote-item";
 import { useRouter } from "next/router";
 import { useCallback, useState } from "react";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import cloneDeep from "lodash.clonedeep";
 import {
   getDebtsPaymentByIdApi,
@@ -19,13 +19,14 @@ import {
 } from "@/services/api-service/pay/pay-api";
 import { useTranslation } from "react-i18next";
 import { DOCUMENT_TYPE } from "../quotes/enums";
-import { getCompanyLoginLogo } from "@/services/api-service/profiles/company-profile-api";
+import { getCompanyLoginLogo, getCompanyProfile } from "@/services/api-service/profiles/company-profile-api";
 import {
   ERPDocumentsTypesEnum,
   mapERPTypeToDocumentType,
 } from "@/enums/document-type-enum";
 import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
 import { EPreferences } from "@/enums/prefernces";
+import { printHousePreferencesState } from "@/store/print-house-preferences";
 
 interface IProps {
   documentType?: DOCUMENT_TYPE;
@@ -52,6 +53,25 @@ const useQuoteConfirmation = ({
   const { i18n } = useTranslation();
   const { CheckPreferenceValue } = usePrintHousePreferences();
   const [fileItems, setFileItems] = useRecoilState(fileItemsState);
+  const setPrintHousePreferences = useSetRecoilState<any>(
+    printHousePreferencesState
+  );
+
+  console.log("checkedItems", checkedItems);
+
+  const fetchPrintHousePreferences = useCallback(async () => {
+    return new Promise((resolve) => {
+      const callBack = (res) => {
+        if (res?.success && res?.data?.preferences) {
+          setPrintHousePreferences(res.data.preferences);
+          resolve(res.data.preferences);
+        } else {
+          resolve(null);
+        }
+      };
+      getCompanyProfile(callApi, callBack);
+    });
+  }, [callApi, setPrintHousePreferences]);
 
   const getQuoteConfirmation = async () => {
     let documentItemIds = [];
@@ -343,6 +363,7 @@ const useQuoteConfirmation = ({
     getDebtsPaymentById,
     handleDebtItemCheck,
     getDocumentPdfByNumber,
+    fetchPrintHousePreferences,
   };
 };
 

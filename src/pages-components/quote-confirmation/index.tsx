@@ -41,6 +41,7 @@ const QuoteConfirmationPageWidget = ({
     companyLogo,
     getCompanyLogo,
     quoteConfirm,
+    fetchPrintHousePreferences,
   } = useQuoteConfirmation({ documentType, isPrePaymentPage });
 
   const { classes } = useStyle({ direction });
@@ -92,6 +93,8 @@ const QuoteConfirmationPageWidget = ({
           setIsPageNotFound(true);
         } else {
           updateTempUserTokenStorage(userToken);
+          // Fetch preferences before loading quote confirmation
+          await fetchPrintHousePreferences();
           await getQuoteConfirmation();
         }
       }
