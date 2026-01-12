@@ -9,7 +9,7 @@ const companyLanguagesInputs = (
   const selectedLanguages = state.languages || [];
   const defaultLanguageOptions = selectedLanguages.length > 0
     ? languages.filter((lang) => selectedLanguages.includes(lang.value))
-    : languages;
+    : [];
 
   return [
     {
@@ -29,9 +29,9 @@ const companyLanguagesInputs = (
     },
     {
       name: "defaultLanguage",
-      label: "profileSettings.defaultLanguage",
+      label: "signup.defaultLanguage",
       type: "select",
-      placeholder: "profileSettings.defaultLanguage",
+      placeholder: "signup.defaultLanguage",
       required: false,
       parameterKey: "systemLanguage",
       options: defaultLanguageOptions.map((lang) => ({
