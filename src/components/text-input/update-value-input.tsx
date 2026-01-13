@@ -50,7 +50,7 @@ const UpdateValueInput = ({
           alignItems: "center",
           width: width || "137px",
           height: height || "26px",
-          border: "1px solid " + secondColor(400),
+          border: "1px solid " + secondColor(500),
           boxShadow: "none",
         }}
       >

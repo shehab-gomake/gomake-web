@@ -175,6 +175,10 @@ html:not([data-theme="hp-client"]) .MuiOutlinedInput-root fieldset {
   border: none !important;
 }
 
+.MuiOutlinedInput-root fieldset {
+  border: none;
+}
+
 .MuiTextField-root input {
   border: none !important;
 }

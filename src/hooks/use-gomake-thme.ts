@@ -162,6 +162,7 @@ const useGomakeTheme = () => {
         // Map degree to CSS variable names
         const cssVarMap: { [key: number]: string } = {
           100: "--theme-error-light",
+          300: "--theme-error-on-dark",
           500: "--theme-error-color",
           700: "--theme-error-dark",
         };

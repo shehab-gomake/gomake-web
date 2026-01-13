@@ -1,7 +1,9 @@
 import { useMemo } from "react";
 import { FONT_FAMILY } from "@/utils/font-family";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 const useStyle = () => {
+  const { secondColor, theme } = useGomakeTheme();
   const classes = useMemo(() => {
     return {
       mainContainer: {
@@ -41,7 +43,7 @@ const useStyle = () => {
         boxShadow: "none",
         ...FONT_FAMILY.Inter(600, 14),
         lineHeight: "20px",
-        color: "#F135A3",
+        color: secondColor(500),
       },
       firstDiv: {
         display: "flex",
@@ -80,7 +82,7 @@ const useStyle = () => {
         padding: "0px 15px",
       },
     };
-  }, []);
+  }, [theme]);
   return {
     classes,
   };

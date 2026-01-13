@@ -81,7 +81,7 @@ const useStyle = () => {
         paddingBottom: 4,
         paddingRight: 0,
         paddingLeft: 0,
-        color: secondColor(400),
+        color: secondColor(500),
         boxShadow: "0px 4px 40px rgba(0, 0, 0, 0.08)",
       },
       headerMainCointaner: {

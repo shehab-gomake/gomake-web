@@ -42,7 +42,7 @@ const useStyle = () => {
         alignItems: "flex-start",
         width: "100%",
         flexWrap: "wrap" as "wrap",
-        gap:10
+        gap: 10,
       },
       btnStyle: {
         display: "flex",
@@ -55,10 +55,8 @@ const useStyle = () => {
         cursor: "pointer",
         width: "100%",
         height: 40,
-        backgroundColor:"#FFF",
-        minWidth:116,
-
-        
+        backgroundColor: "#FFF",
+        minWidth: 116,
       },
       btnStyle2: {
         display: "flex",
@@ -76,8 +74,8 @@ const useStyle = () => {
         width: "100%",
         height: 40,
         marginTop: 10,
-        backgroundColor:"#FFF",
-        minWidth:123
+        backgroundColor: "#FFF",
+        minWidth: 123,
       },
       rightSideContainer: {
         display: "flex",
@@ -102,7 +100,7 @@ const useStyle = () => {
         justifyContent: "space-between",
         alignItems: "center",
         width: "50%",
-        minWidth:300
+        minWidth: 300,
       },
       discountBefore: {
         display: "flex",
@@ -110,8 +108,7 @@ const useStyle = () => {
         justifyContent: "space-between",
         alignItems: "center",
         width: "50%",
-        minWidth:300
-        
+        minWidth: 300,
       },
       priceContainer: {
         display: "flex",
@@ -125,11 +122,11 @@ const useStyle = () => {
         ...FONT_FAMILY.Lexend(400, 16),
         color: "#000000",
         width: "40%",
-        minWidth:"fit-content",
+        minWidth: "fit-content",
       },
       numbersStyle: {
         ...FONT_FAMILY.Lexend(400, 16),
-        color: secondColor(400),
+        color: secondColor(500),
         width: "25%",
       },
       totalContainer: {
@@ -182,14 +179,14 @@ const useStyle = () => {
         ...FONT_FAMILY.Lexend(500, 16),
         width: "50%",
         height: 40,
-        backgroundColor:"#FFF"
+        backgroundColor: "#FFF",
       },
       textInputWithoutStyle: {
-        width: "100%", 
+        width: "100%",
         height: 20,
         backgroundColor: "transparent",
         ...FONT_FAMILY.Lexend(400, 16),
-        color: secondColor(400),
+        color: secondColor(500),
         paddingLeft: 2,
         boxShadow: "none",
       },

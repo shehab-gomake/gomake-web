@@ -48,7 +48,7 @@ const useStyle = ({ row }: any) => {
 
         border: "1px solid red",
         backgroundColor: "#FFFFFF",
-        color: secondColor(400),
+        color: secondColor(500),
         boxShadow: "0px 4px 40px rgba(0, 0, 0, 0.08)",
       },
       deleteContainer: {

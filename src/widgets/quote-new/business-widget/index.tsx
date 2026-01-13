@@ -108,6 +108,7 @@ const BusinessNewWidget = ({
     isPurchaseDocument,
     canUpdateAgent,
     alertFault,
+    secondColor,
   } = useBusinessWidget({ values, documentType, onChangeSelectBusiness });
 
   const dir: "rtl" | "ltr" = t("direction");
@@ -577,7 +578,7 @@ const BusinessNewWidget = ({
             : !isQuoteConfirmation &&
               canEditAddress && (
                 <div style={classes.addNewAddressStyle}>
-                  <PlusNewIcon />
+                  <PlusNewIcon color={secondColor(500)} />
                   <div
                     style={classes.addNewAddressTextStyle}
                     onClick={openDeliveryModal}
@@ -658,7 +659,7 @@ const BusinessNewWidget = ({
             : !isQuoteConfirmation &&
               canEditAddress && (
                 <div style={classes.addNewAddressStyle}>
-                  <PlusNewIcon />
+                  <PlusNewIcon color={secondColor(500)} />
                   <div
                     style={classes.addNewAddressTextStyle}
                     onClick={openBillingModal}

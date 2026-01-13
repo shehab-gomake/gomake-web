@@ -8,14 +8,17 @@ const useStyle = () => {
     return {
       createNew: {
         width: "160px",
-        height: "40px",
-        borderRadius: "4px",
-        background: "#DCDCEC",
-        color: "#101020",
+        height: "var(--theme-button-height, 40px)",
+        borderRadius: "var(--theme-radius-md, 4px)",
+        background: "var(--theme-button-bg-secondary, #DCDCEC)",
+        color: "var(--theme-text-primary, #101020)",
         ...FONT_FAMILY.Lexend(500, 16),
         lineHeight: "20px",
-        textTransform: "none" as "none",
+        textTransform: "none",
         gap: "10px",
+        "&:hover": {
+          background: "var(--theme-button-bg-secondary-hover, #C8C8DC)",
+        },
       },
       ticketStyle: {
         display: "flex",
@@ -23,6 +26,7 @@ const useStyle = () => {
         height: "40px",
         alignItems: "center",
         boxShadow: "none",
+        borderRadius: "var(--theme-radius-md, 4px)",
       },
       ticketContentStyle: {
         display: "flex",

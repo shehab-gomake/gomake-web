@@ -10,6 +10,7 @@ import { DocumentPermission } from "@/components/CheckPermission/enum";
 import { useCustomerDropDownList, useSnackBar } from "@/hooks";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { CLIENT_TYPE } from "@/pages/customers/enums";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 const useBusinessWidget = ({
   values,
@@ -19,10 +20,9 @@ const useBusinessWidget = ({
   const { t } = useTranslation();
   const router = useRouter();
   const { alertFault } = useSnackBar();
-
   const [isConfirmation, setIsConfirmation] = useState();
   const isOutgoingPayments = router.query.isOutgoingPayments === "true";
-
+  const { secondColor } = useGomakeTheme();
   const isPurchaseDocument =
     documentType === DOCUMENT_TYPE.purchaseOrder ||
     documentType === DOCUMENT_TYPE.purchaseInvoice ||
@@ -44,7 +44,9 @@ const useBusinessWidget = ({
   // Sync purchaseNumber with values when it changes (e.g., when modal resets it)
   useEffect(() => {
     if (values?.purchaseNumber !== undefined) {
-      setPurchaseNumber(values?.purchaseNumber || t("sales.quote.noPurchaseNumber"));
+      setPurchaseNumber(
+        values?.purchaseNumber || t("sales.quote.noPurchaseNumber")
+      );
     }
   }, [values?.purchaseNumber]);
 
@@ -141,7 +143,10 @@ const useBusinessWidget = ({
     openChangeClientModalFromInvoice,
     setOpenChangeClientModalFromInvoice,
   ] = useState(false);
-  const [openSupplierChangeConfirmationModal, setOpenSupplierChangeConfirmationModal] = useState(false);
+  const [
+    openSupplierChangeConfirmationModal,
+    setOpenSupplierChangeConfirmationModal,
+  ] = useState(false);
 
   const [selectedClient, setSelectedClient] = useState<any>({});
   const isMaterial = router.query.isMaterial === "true";
@@ -254,6 +259,7 @@ const useBusinessWidget = ({
     isOutgoingPayments,
     canUpdateAgent,
     alertFault,
+    secondColor,
   };
 };
 

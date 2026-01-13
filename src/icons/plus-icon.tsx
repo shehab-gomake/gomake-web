@@ -1,7 +1,9 @@
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
-const PlusNewIcon = () => {
+const PlusNewIcon = (props: any) => {
+  const { color } = props;
   const { primaryColor } = useGomakeTheme();
+  const stroke = color || primaryColor(500);
   return (
     <svg
       width="20"
@@ -12,7 +14,7 @@ const PlusNewIcon = () => {
     >
       <path
         d="M10.0003 4.1665V15.8332M4.16699 9.99984H15.8337"
-        stroke={primaryColor(500)}
+        stroke={stroke}
         stroke-width="1.66667"
         stroke-linecap="round"
         stroke-linejoin="round"

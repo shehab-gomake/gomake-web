@@ -9,6 +9,7 @@ import { useSnackBar } from "@/hooks";
 import { isValidEmail, isValidPhoneNumber } from "@/utils/helpers";
 import { AutoCompleteUpdatedValue } from "../auto-complete-updated";
 import { EditUnderLineIcon } from "@/icons/edit-icon-under-line";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 const ContactMapping = ({
   item,
@@ -27,6 +28,7 @@ const ContactMapping = ({
   const { classes } = useStyle();
   const { alertFault } = useSnackBar();
   const { t } = useTranslation();
+  const { secondColor, primarySecondaryBlend } = useGomakeTheme();
   const [isUpdateContactName, setIsUpdateContactName] = useState(null);
   const [isUpdateContactEmail, setIsUpdateContactEmail] = useState(null);
   const [isUpdateContactMobile, setIsUpdateContactMobile] = useState(null);
@@ -180,11 +182,14 @@ const ContactMapping = ({
                 {...props}
                 style={{
                   ...props.style,
-                  backgroundColor: option.id === "new" ? "#2E3092" : "transparent",
+                  backgroundColor:
+                    option.id === "new"
+                      ? primarySecondaryBlend(500)
+                      : "transparent",
                   color: option.id === "new" ? "white" : "inherit",
                   fontWeight: option.id === "new" ? "500" : "normal",
                   minWidth: 200,
-                  gap: 10
+                  gap: 10,
                 }}
               >
                 <AddNewIcon color="white" />
@@ -207,7 +212,9 @@ const ContactMapping = ({
         )}
         {!isQuoteConfirmation && canEditContacts && !isEditingContactName && (
           <IconButton onClick={enterContactNameEditMode}>
-            <EditUnderLineIcon stroke={"#ed028c"} />
+            <EditUnderLineIcon
+              stroke={`var(--theme-accent-color, ${secondColor(500)})`}
+            />
           </IconButton>
         )}
       </Stack>
@@ -278,23 +285,24 @@ const ContactMapping = ({
               style={classes.addNewContactNameStyle}
               onClick={() => setIsDisplayWidget(true)}
             >
-              <PlusNewIcon />
+              <PlusNewIcon color={secondColor(500)} />
               <div style={classes.addNewContactNameTextStyle}>
                 {t("sales.quote.addContact")}
               </div>
             </div>
           )}
-          {index === Math.min(displayedItems - 1, (items?.length || 0) - 1) && items?.length > 1 && (
-            <div
-              style={classes.addNewContactNameStyle}
-              onClick={() => setIsDisplayWidget(true)}
-            >
-              <PlusNewIcon />
-              <div style={classes.addNewContactNameTextStyle}>
-                {t("sales.quote.addContact")}
+          {index === Math.min(displayedItems - 1, (items?.length || 0) - 1) &&
+            items?.length > 1 && (
+              <div
+                style={classes.addNewContactNameStyle}
+                onClick={() => setIsDisplayWidget(true)}
+              >
+                <PlusNewIcon color={secondColor(500)} />
+                <div style={classes.addNewContactNameTextStyle}>
+                  {t("sales.quote.addContact")}
+                </div>
               </div>
-            </div>
-          )}
+            )}
         </div>
       )}
     </div>

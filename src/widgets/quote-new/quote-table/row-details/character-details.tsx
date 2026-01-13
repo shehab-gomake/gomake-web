@@ -30,7 +30,7 @@ const CharacterDetails = ({
   documentType,
   workName,
   isPrePaymentPage,
-  item
+  item,
 }: CharacterDetailsProps) => {
   const {
     t,
@@ -59,7 +59,8 @@ const CharacterDetails = ({
 
   const { classes } = useStyleCharacterDetails({ showAll, showLessHeightFit });
 
-  const canEditDetails = canUpdate && !canNotEditWhenShowJobNameOnly && !isPrePaymentPage;
+  const canEditDetails =
+    canUpdate && !canNotEditWhenShowJobNameOnly && !isPrePaymentPage;
 
   return (
     <>
