@@ -55,7 +55,6 @@ const CharacterDetails = ({
     documentType,
     workName,
   });
-  console.log("item", item);
 
   const { classes } = useStyleCharacterDetails({ showAll, showLessHeightFit });
 
@@ -117,6 +116,7 @@ const CharacterDetails = ({
         jobName={jobName}
         setJobName={setJobName}
         documentType={documentType}
+        item={item}
       />
     </>
   );

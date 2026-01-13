@@ -57,7 +57,11 @@ const useCharacterDetails = ({
     return formatted;
   };
 
-  const updateDocumentItemContent = async (jobName?: string, data?: string) => {
+  const updateDocumentItemContent = async (
+    jobName?: string,
+    data?: string,
+    translations?: Array<{ lang: string; name: string }>
+  ) => {
     if (router.query.isNewCreation) {
       const updatedQuoteItemValue = { ...quoteItemValue };
       const documentItemIndex = updatedQuoteItemValue.documentItems.findIndex(
@@ -69,6 +73,7 @@ const useCharacterDetails = ({
         const updatedDocumentItem = {
           ...updatedQuoteItemValue.documentItems[documentItemIndex],
           details: data,
+          ...(translations && { contentTranslations: translations }),
         };
 
         // Create a new array with the updated document item
@@ -92,6 +97,9 @@ const useCharacterDetails = ({
         const updatedDocumentItem = {
           ...updatedQuoteItemValue.documentItems[documentItemIndex],
           details: res?.data,
+          ...(res?.data?.contentTranslations && {
+            contentTranslations: res.data.contentTranslations,
+          }),
         };
 
         if (res?.success) {
@@ -120,6 +128,12 @@ const useCharacterDetails = ({
           documentItemId: documentItemId,
           content: formatContent(data),
           jobName: jobName,
+          ...(translations && {
+            contentTranslations: translations.map((trans) => ({
+              lang: trans.lang,
+              name: formatContent(trans.name),
+            })),
+          }),
         },
       });
     }
@@ -132,21 +146,24 @@ const useCharacterDetails = ({
     setIsEdit(false);
   };
 
-  const handleSave = (data: string) => {
+  const handleSave = (
+    data: string,
+    translations?: Array<{ lang: string; name: string }>
+  ) => {
     const hasDataChanged = data !== originalValue;
     const hasJobNameChanged = jobName !== workName;
 
     // Early return if nothing has changed
-    if (!hasDataChanged && !hasJobNameChanged) {
+    if (!hasDataChanged && !hasJobNameChanged && !translations) {
       setIsEdit(false);
       return;
     }
 
     // Only update if something has actually changed
     if (hasJobNameChanged) {
-      updateDocumentItemContent(jobName, data);
-    } else if (hasDataChanged) {
-      updateDocumentItemContent(null, data);
+      updateDocumentItemContent(jobName, data, translations);
+    } else if (hasDataChanged || translations) {
+      updateDocumentItemContent(null, data, translations);
     }
 
     // Update the original value only after successful change
