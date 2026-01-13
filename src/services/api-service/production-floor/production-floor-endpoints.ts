@@ -79,6 +79,8 @@ const GET_UPLOADED_FILES_URL =
   "/v1/erp-service/board-missions/get-uploaded-files/";
 const SEND_GRAPHICS_APPROVAL_TO_CLIENT_URL =
   "/v1/erp-service/board-missions/send-graphics-approval-to-client";
+const GET_GRAPHICS_APPROVAL_URL = "/v1/erp-service/board-missions/get-graphics-approval";
+const UPDATE_GRAPHICS_APPROVAL_FILE_URL = "/v1/erp-service/board-missions/update-graphics-approval-file";
 const GET_UPLOADING_FILES_URL =
   "/v1/erp-service/board-missions/get-uploading-files/";
 const GET_BOARD_MISSIONS_ID_BY_QR_CODE_URL =
@@ -964,6 +966,34 @@ const ungroupJobsApi: ICallAndSetData = async (callApi, callBack, groupId) => {
 };
 
 // 6. Send Graphics Approval to Client
+const getGraphicsApprovalApi: ICallAndSetData = async (
+  callApi,
+  callBack,
+  data: { id: string }
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.GET,
+    `${GET_GRAPHICS_APPROVAL_URL}/${data.id}`,
+    callBack,
+    undefined
+  );
+};
+
+const updateGraphicsApprovalFileApi: ICallAndSetData = async (
+  callApi,
+  callBack,
+  data: { fileId: string; status: number; note?: string }
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    UPDATE_GRAPHICS_APPROVAL_FILE_URL,
+    callBack,
+    data
+  );
+};
+
 const sendGraphicsApprovalToClientApi: ICallAndSetData = async (
   callApi,
   callBack,
@@ -1036,4 +1066,6 @@ export {
   getGroupJobsUsingOrderIdApi,
   ungroupJobsApi,
   sendGraphicsApprovalToClientApi,
+  getGraphicsApprovalApi,
+  updateGraphicsApprovalFileApi,
 };

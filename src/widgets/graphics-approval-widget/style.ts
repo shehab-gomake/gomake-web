@@ -5,6 +5,7 @@ interface StyleProps {
   successColor: (degree: number) => string;
   errorColor: (degree: number) => string;
   neutralColor: (degree: number) => string;
+  primaryColor?: (degree: number) => string;
 }
 
 export const style = ({
@@ -14,6 +15,53 @@ export const style = ({
   neutralColor,
 }: StyleProps) => {
   const isRTL = direction === "rtl";
+
+  const firstContainer: SxProps<Theme> = {
+    width: "100%",
+    height: "100vh",
+    display: "flex",
+    flexDirection: "column",
+    background: "#FFFFFF",
+    overflow: "scroll",
+    direction: direction,
+  };
+
+  const iconStyle: SxProps<Theme> = {
+    width: "100%",
+    height: "7%",
+    display: "flex",
+    background: "#F4F1F6",
+    padding: "30px 110px",
+    alignItems: "center",
+  };
+
+  const iconMobileStyle: SxProps<Theme> = {
+    width: "100%",
+    minHeight: "60px",
+    display: "flex",
+    background: "#F4F1F6",
+    alignItems: "center",
+    padding: { xs: "16px 20px", sm: "25px 20px" },
+  };
+
+  const printHouseLogo: React.CSSProperties = {
+    width: 50,
+    height: 50,
+    objectFit: "contain",
+    borderRadius: "12px",
+    padding: "4px",
+    flexShrink: 0,
+  };
+
+  const contentWrapper: SxProps<Theme> = {
+    flex: 1,
+    display: "flex",
+    alignItems: "flex-start",
+    justifyContent: "center",
+    backgroundColor: neutralColor(50),
+    padding: { xs: "16px", sm: "24px" },
+    overflow: "auto",
+  };
 
   const container: SxProps<Theme> = {
     minHeight: "100vh",
@@ -111,6 +159,11 @@ export const style = ({
   };
 
   return {
+    firstContainer,
+    iconStyle,
+    iconMobileStyle,
+    printHouseLogo,
+    contentWrapper,
     container,
     content,
     iconContainer,
