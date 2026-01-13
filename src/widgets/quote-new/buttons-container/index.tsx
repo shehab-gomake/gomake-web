@@ -73,7 +73,7 @@ const ButtonsContainer = ({
   isCanIntake,
   onClickOpenInventoryIntakeModal,
 }) => {
-  const { classes } = useStyle();
+  const { classes, primarySecondaryBlend } = useStyle();
   const { t } = useTranslation();
   const { alertFault } = useSnackBar();
   const { navigate } = useGomakeRouter();
@@ -471,7 +471,7 @@ const ButtonsContainer = ({
         )}
         {!isReceipt && handleExportToExcel && (
           <GomakePrimaryButton
-            leftIcon={<DownloadExcelSheet />}
+            leftIcon={<DownloadExcelSheet color={primarySecondaryBlend(700)} />}
             style={classes.btnSecondContainer}
             onClick={handleExportToExcel}
           >

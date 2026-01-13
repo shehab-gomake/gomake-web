@@ -129,7 +129,7 @@ const PriceProfitHeaderWidget = ({
           style={classes.autoCompleteStyle}
           placeholder={t("products.profits.admin.selectAction")}
           withArrow
-          popupIcon={<ArrowDownNewIcon />}
+          popupIcon={<ArrowDownNewIcon color="#252675" />}
         />
         {action?.actionId &&
           profitsPricingTables &&
@@ -155,7 +155,7 @@ const PriceProfitHeaderWidget = ({
                 "products.profits.pricingListWidget.selectPricingTable"
               )}
               withArrow
-              popupIcon={<ArrowDownNewIcon />}
+              popupIcon={<ArrowDownNewIcon color="#252675" />}
             />
           )}
         <ExcelMenu

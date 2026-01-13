@@ -2,7 +2,7 @@ import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 const useStyle = () => {
-  const { primarySecondaryBlend, theme } = useGomakeTheme();
+  const { primarySecondaryBlend, theme, secondColor } = useGomakeTheme();
   const classes = useMemo(() => {
     return {
       tableFooterContainer: {
@@ -49,8 +49,10 @@ const useStyle = () => {
       },
     };
   }, [theme]);
+
   return {
     classes,
+    secondColor,
   };
 };
 export { useStyle };

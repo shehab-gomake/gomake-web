@@ -96,7 +96,7 @@ const ClientBalanceComponent = ({
                 backgroundColor: isNegative
                   ? errorColor(500)
                   : `var(--theme-secondary-light, ${primarySecondaryBlend(
-                      500
+                      300
                     )})`,
                 color: isNegative
                   ? "#FFFFFF !important"
@@ -111,7 +111,7 @@ const ClientBalanceComponent = ({
                 "&:hover": {
                   backgroundColor: isNegative
                     ? errorColor(700)
-                    : successColor(200),
+                    : successColor(100),
                   boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
                 },
               }}

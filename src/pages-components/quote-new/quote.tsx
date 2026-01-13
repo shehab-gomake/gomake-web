@@ -559,7 +559,7 @@ const QuoteNewPageWidget = ({
   return (
     <>
       {quoteState?.id ? (
-        <div data-tour={"quoteStep1"} style={classes.mainContainer}>
+        <div style={classes.mainContainer}>
           <div style={classes.secondContainer}>
             <div style={{ paddingLeft: 20, paddingRight: 12 }}>
               <div style={classes.titleSettingContainer}>
@@ -998,7 +998,7 @@ const QuoteNewPageWidget = ({
             )}
           </div>
           {!isQuoteConfirmation && (
-            <div style={{ width: "100%" }} data-tour={"quoteStep2"}>
+            <div style={{ width: "100%" }}>
               <ButtonsContainer
                 openSendBtn={openSendBtn}
                 onOpenNewItem={onOpenNewItem}

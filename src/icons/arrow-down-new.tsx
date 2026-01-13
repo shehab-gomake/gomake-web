@@ -1,5 +1,9 @@
 import { IIconProps } from "@/components/icons/interface";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+
 const ArrowDownNewIcon = ({ width, height, color }: IIconProps) => {
+  const { primarySecondaryBlend } = useGomakeTheme();
+  const strokeColor = color || primarySecondaryBlend(700);
   return (
     <svg
       width={width || "20"}
@@ -10,7 +14,7 @@ const ArrowDownNewIcon = ({ width, height, color }: IIconProps) => {
     >
       <path
         d="M5 7.5L10 12.5L15 7.5"
-        stroke={color || "#252675"}
+        stroke={strokeColor}
         stroke-width="1.67"
         stroke-linecap="round"
         stroke-linejoin="round"

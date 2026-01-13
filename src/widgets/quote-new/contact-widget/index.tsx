@@ -16,6 +16,7 @@ import { updateDocumentContactsReorderApi } from "@/services/api-service/generic
 import { useGomakeAxios } from "@/hooks/use-gomake-axios";
 import { useSnackBar } from "@/hooks";
 import { CLIENT_TYPE } from "@/pages/customers/enums";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 const ContactNewWidget = ({
   handleShowLess,
@@ -57,6 +58,7 @@ const ContactNewWidget = ({
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
   const { alertFault } = useSnackBar();
+  const { secondColor } = useGomakeTheme();
   const router = useRouter();
   const { CheckDocumentPermission } = useUserPermission();
   const [quoteItemValue, setQuoteItemValue] =
@@ -193,7 +195,7 @@ const ContactNewWidget = ({
                 }
               }}
             >
-              <PlusNewIcon />
+              <PlusNewIcon color={secondColor(500)} />
               <div style={classes.addNewContactNameTextStyle}>
                 {t("sales.quote.addContact")}
               </div>

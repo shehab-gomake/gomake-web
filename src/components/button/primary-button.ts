@@ -32,15 +32,19 @@ const PrimaryButton = styled(Button)<PrimaryButtonProps>((props) => {
       props.variant === "contained"
         ? "#FFFFFF"
         : `var(--theme-primary-color, ${primaryColorValue})`,
-    transition: "0.25s",
+    transition: "all 0.25s ease",
     ...FONT_FAMILY.Lexend(500, 16),
     "&:hover": {
-      // letterSpacing: "0.1em",
       backgroundColor:
         props.variant === "contained"
           ? `var(--theme-primary-hover, ${primaryHover})`
-          : "#FFF",
+          : `var(--theme-primary-light, ${primaryLight})`,
       borderColor: `var(--theme-primary-color, ${primaryColorValue})`,
+      boxShadow:
+        props.variant === "contained"
+          ? "0px 4px 8px rgba(0, 0, 0, 0.15)"
+          : "none",
+      transform: props.variant === "contained" ? "translateY(-1px)" : "none",
     },
     ...(props.hoverStyle &&
       props.variant === "contained" && {

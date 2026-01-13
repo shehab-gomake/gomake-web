@@ -10,6 +10,7 @@ import { useTranslation } from "react-i18next";
 import { useSetRecoilState } from "recoil";
 import { useUserPermission } from "@/hooks/use-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 interface ICloseMenuProps {
   handleClose: () => void;
@@ -33,6 +34,7 @@ const CloseBtnMenu = ({
   onClickOpenCloseOrderNotesModal,
 }: ICloseMenuProps) => {
   const { t } = useTranslation();
+  const { primarySecondaryBlend } = useGomakeTheme();
   const { navigate } = useGomakeRouter();
   const setIsSelectedCLoseAsDeliveryNote = useSetRecoilState(
     isSelectedCLoseAsDeliveryNoteState
@@ -263,7 +265,7 @@ const CloseBtnMenu = ({
       style={{ marginTop: -45 }}
       sx={{
         "& .MuiPaper-root": {
-          border: "1px solid #cbcbe4",
+          border: `1px solid ${primarySecondaryBlend(100)}`,
           borderRadius: "8px",
         },
       }}
