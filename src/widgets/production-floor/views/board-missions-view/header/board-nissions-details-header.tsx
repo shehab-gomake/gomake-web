@@ -338,11 +338,17 @@ const BoardMissionsDetailsHeader = () => {
           b.boardMissionStatus?.boardMissionStatus?.id ===
           boardMissionsDetails.boardMissionStatus.id
       )?.boardMissions;
-      setBoardFromTable(
-        statusBoards?.find(
-          (bm) => bm?.id === boardMissionsDetails?.boardMissionId
-        )
-      );
+      if (statusBoards.length > 0) {
+        setBoardFromTable(
+          statusBoards?.find(
+            (bm) => bm?.id === boardMissionsDetails?.boardMissionId
+          )
+        );
+      }
+      else {
+        setBoardFromTable(boardMissionsDetails as any);
+      }
+
     }
   }, [boards, boardMissionsDetails]);
 

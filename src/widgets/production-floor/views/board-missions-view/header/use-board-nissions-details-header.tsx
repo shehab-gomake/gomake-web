@@ -171,7 +171,7 @@ const useBoardMissionsDetailsHeader = () => {
         statusId: newStatusId,
       });
     } catch (error) {
-      alertFaultUpdate();
+      // alertFaultUpdate();
     }
   };
 
