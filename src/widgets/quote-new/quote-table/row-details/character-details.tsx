@@ -72,7 +72,7 @@ const CharacterDetails = ({
         }}
       >
         <div style={{ ...classes.mainContainer }}>
-          {parse(truncatedDetails || "")}
+          {parse(String(truncatedDetails || ""))}
           {!showAll && ".. "}
           {details?.length > 90 && (
             <span

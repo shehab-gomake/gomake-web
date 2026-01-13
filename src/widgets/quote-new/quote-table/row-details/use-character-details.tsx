@@ -36,7 +36,9 @@ const useCharacterDetails = ({
 
   const [quoteItemValue, setQuoteItemValue] =
     useRecoilState<any>(quoteItemState);
-  const truncatedDetails = showAll ? details : details?.slice(0, 90);
+  const truncatedDetails = showAll
+    ? (details || "")
+    : (details ? String(details).slice(0, 90) : "");
   const canNotEditWhenShowJobNameOnly =
     quoteItemValue?.showDetails === ShowDocumentDetailsEnum.ShowJobNameOnly;
 
@@ -90,34 +92,12 @@ const useCharacterDetails = ({
       }
     } else {
       const callBack = (res) => {
-        const updatedQuoteItemValue = { ...quoteItemValue };
-        const documentItemIndex = updatedQuoteItemValue.documentItems.findIndex(
-          (item) => item.id === documentItemId
-        );
-        const updatedDocumentItem = {
-          ...updatedQuoteItemValue.documentItems[documentItemIndex],
-          details: res?.data,
-          ...(res?.data?.contentTranslations && {
-            contentTranslations: res.data.contentTranslations,
-          }),
-        };
-
         if (res?.success) {
           alertSuccessUpdate();
-          setQuoteItemValue({
-            ...updatedQuoteItemValue,
-            documentItems: [
-              ...updatedQuoteItemValue.documentItems.slice(
-                0,
-                documentItemIndex
-              ),
-              updatedDocumentItem,
-              ...updatedQuoteItemValue.documentItems.slice(
-                documentItemIndex + 1
-              ),
-            ],
-          });
-          // getQuote();
+          // After successful update, refresh the document to get the latest data
+          if (getQuote) {
+            getQuote();
+          }
         } else {
           alertFaultUpdate();
         }

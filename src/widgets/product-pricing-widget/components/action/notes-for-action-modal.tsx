@@ -232,7 +232,7 @@ const NotesForActionModal = ({
                     color: "#5859A8",
                   }}
                 >
-                  {t("sales.quote.lang")}: {getLanguageName(translation.lang)}
+                  {t("customers.modal.language")}: {getLanguageName(translation.lang)}
                 </Typography>
                 {typeof window !== "undefined" && (
                   <Suspense>
