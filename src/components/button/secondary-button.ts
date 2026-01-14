@@ -20,7 +20,7 @@ const SecondaryButton = styled(Button)((props: ButtonProps) => {
     color: props.variant === "contained" ? "#FFFFFF" : secondColor(500),
     "&:hover": {
       backgroundColor:
-        props.variant === "outlined" ? secondColor(100) : secondColor(300),
+        props.variant === "contained" ? secondColor(300) : secondColor(100),
       borderColor: secondColor(500),
       borderRadius: "var(--theme-radius-md, 4px)",
     },

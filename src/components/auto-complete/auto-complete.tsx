@@ -187,6 +187,7 @@ const GoMakeAutoComplate = ({
   labelText,
   getOptionDisabled,
   disablePortal,
+  sx,
 }: {
   value?: any;
   onChange?: any;
@@ -225,6 +226,7 @@ const GoMakeAutoComplate = ({
   freeSolo?: boolean;
   inputValue?: string;
   disablePortal?: boolean;
+  sx?: any;
 }) => {
   const [selectedOption, setSelectedOption] = useState<any>();
   const { t } = useTranslation();
@@ -350,6 +352,7 @@ const GoMakeAutoComplate = ({
             String(option?.id) === String(value?.id))
         }
         getOptionDisabled={getOptionDisabled}
+        sx={sx}
       />
     </>
   );

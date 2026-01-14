@@ -198,7 +198,7 @@ input::-webkit-input-placeholder {
   padding-left: 8px;
   padding-top: 13px;
   padding-bottom: 12px;
-  color: var(--medium-200, #b9b9d9);
+  color: var(--theme-input-placeholder-color, #b9b9d9);
   font-family: Lexend;
   font-size: 12px;
   font-style: normal;
@@ -214,7 +214,7 @@ input::-moz-placeholder {
   padding-left: 8px;
   padding-top: 13px;
   padding-bottom: 12px;
-  color: var(--medium-200, #b9b9d9);
+  color: var(--theme-input-placeholder-color, #b9b9d9);
   font-family: Lexend;
   font-size: 12px;
   font-style: normal;
@@ -230,7 +230,7 @@ input::-ms-placeholder {
   padding-left: 8px;
   padding-top: 13px;
   padding-bottom: 12px;
-  color: var(--medium-200, #b9b9d9);
+  color: var(--theme-input-placeholder-color, #b9b9d9);
   font-family: Lexend;
   font-size: 12px;
   font-style: normal;
@@ -247,7 +247,7 @@ input::placeholder {
   padding-left: 8px;
   padding-top: 13px;
   padding-bottom: 12px;
-  color: var(--medium-200, #b9b9d9);
+  color: var(--theme-input-placeholder-color, #b9b9d9);
   font-family: Lexend;
   font-size: 12px;
   font-style: normal;
