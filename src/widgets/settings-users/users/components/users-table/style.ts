@@ -26,13 +26,13 @@ const useStyle = () => {
       icon: {
         width: 16,
         height: 16,
-        color: primarySecondaryBlend(500),
+        color: primarySecondaryBlend(300),
       },
       menuBtn: {
         display: "flex",
         alignItems: "center",
         gap: 8,
-        color: primarySecondaryBlend(500),
+        color: primarySecondaryBlend(300),
       },
       active: {
         color: successColor(500),

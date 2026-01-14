@@ -50,7 +50,7 @@ const ExcelMenu = (props: IActionMenuProps) => {
           onClick={props.onClickExport}
         >
           <div style={classes.actionIconStyle}>
-            <DownloadExcelSheet color={primarySecondaryBlend(700)} />
+            <DownloadExcelSheet color={primarySecondaryBlend(400)} />
           </div>
           <div style={classes.rowTextStyle}>
             {t("materialsActions.DownLoadExcel")}
@@ -61,7 +61,7 @@ const ExcelMenu = (props: IActionMenuProps) => {
           onClick={() => elementRef && elementRef.current.click()}
         >
           <div style={classes.actionIconStyle}>
-            <UploadExcelSheet color={primarySecondaryBlend(700)} />
+            <UploadExcelSheet color={primarySecondaryBlend(400)} />
           </div>
           <div style={classes.rowTextStyle}>
             {t("materialsActions.UploadExcel")}

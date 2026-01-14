@@ -59,7 +59,7 @@ const RowMappingWidget = ({
 }) => {
   const router = useRouter();
   const { t } = useTranslation();
-  const { classes } = useStyle({ headerHeight });
+  const { classes, primarySecondaryBlend } = useStyle({ headerHeight });
   const [isConfirmation, setIsConfirmation] = useState(null);
   const [isSelected, setIsSelected] = useState(item?.isSelected);
 
@@ -204,7 +204,12 @@ const RowMappingWidget = ({
             borderBottom: item?.childsDocumentItems && "none",
           }}
         >
-          <span style={{ display: "block", color: "#5859A8" }}>
+          <span
+            style={{
+              display: "block",
+              color: primarySecondaryBlend(400),
+            }}
+          >
             {item?.sourceDocumentType
               ? `${t(
                   `SourceDocument.${
@@ -236,7 +241,7 @@ const RowMappingWidget = ({
             style={{
               width: columnWidths[2],
               ...FONT_FAMILY.Inter(600, 14),
-              color: "#5859A8",
+              color: primarySecondaryBlend(400),
               ...classes.cellContainerStyle,
               borderBottom: item?.childsDocumentItems && "none",
             }}

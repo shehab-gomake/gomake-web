@@ -8,6 +8,7 @@ import { useRouter } from "next/router";
 import { useDateFormat } from "@/hooks/use-date-format";
 import { ERPDocumentsTypesEnum } from "@/enums";
 import { fmt2 } from "@/utils/helpers";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 const RowMappingWidget = ({
   item,
@@ -23,6 +24,8 @@ const RowMappingWidget = ({
   const { classes } = useStyle({ headerHeight });
   const { t } = useTranslation();
   const router = useRouter();
+  const { primarySecondaryBlend } = useGomakeTheme();
+  const { formatISODateTime } = useDateFormat();
 
   const handleAllocatedSumChange = (event) => {
     const newAllocatedSum = event.target.value;
@@ -37,8 +40,6 @@ const RowMappingWidget = ({
     }
     setAllocatedSum(index, Number(newAllocatedSum));
   };
-
-  const { formatISODateTime } = useDateFormat();
 
   return (
     <TableRow
@@ -88,7 +89,7 @@ const RowMappingWidget = ({
         style={{
           width: columnWidths[3],
           ...FONT_FAMILY.Inter(600, 14),
-          color: "#5859A8",
+          color: primarySecondaryBlend(400),
           ...classes.cellContainerStyle,
         }}
       >
@@ -98,7 +99,7 @@ const RowMappingWidget = ({
             target="_blank"
             rel="noopener noreferrer"
             style={{
-              color: "#5859A8",
+              color: primarySecondaryBlend(400),
               textDecoration: "none",
               cursor: "pointer",
             }}

@@ -2,7 +2,7 @@ import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 const NegotiateRequestIcon = (props) => {
   const { primarySecondaryBlend } = useGomakeTheme();
-  const strokeColor = props.color || primarySecondaryBlend(500);
+  const strokeColor = props.color || primarySecondaryBlend(300);
   return (
     <svg
       width="16"

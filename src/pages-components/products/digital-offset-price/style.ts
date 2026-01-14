@@ -233,7 +233,7 @@ const useStyle = ({ isMobileScreen }: IProps) => {
       },
       subSectionAccordionStyle: {
         ...FONT_FAMILY.Lexend(600, 16),
-        color: primarySecondaryBlend(700),
+        color: primarySecondaryBlend(400),
       },
       parametersContainer: {
         display: "flex",
@@ -916,7 +916,7 @@ const useStyle = ({ isMobileScreen }: IProps) => {
         justifyContent: "flex-start",
         alignItems: "flex-start",
         ...FONT_FAMILY.Lexend(400, 14),
-        color: "#504FA1",
+        color: primarySecondaryBlend(400),
       },
       titleLogsTextStyle: {
         display: "flex",

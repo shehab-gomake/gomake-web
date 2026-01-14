@@ -215,11 +215,16 @@ const useGomakeTheme = () => {
 
         // Map degree to CSS variable names
         const cssVarMap: { [key: number]: string } = {
+          50: "--theme-secondary-50",
           100: "--theme-secondary-100",
-          300: "--theme-secondary-100",
+          200: "--theme-secondary-200",
+          300: "--theme-secondary-300",
+          400: "--theme-secondary-400",
           500: "--theme-secondary-color",
           600: "--theme-secondary-600",
           700: "--theme-secondary-700",
+          800: "--theme-secondary-800",
+          900: "--theme-secondary-900",
         };
 
         const cssVar = cssVarMap[degree];
@@ -231,16 +236,8 @@ const useGomakeTheme = () => {
         }
       }
 
-      // Default fallbacks based on degree
-      const defaultMap: { [key: number]: string } = {
-        100: "#D5D6E9",
-        300: "#EBECFF",
-        500: "#8283BE", // Medium/base variant
-        600: "#252675",
-        700: "#504fa1", // Dark variant
-      };
-
-      return defaultMap[degree] || defaultMap[500];
+      // Fallback to existing behavior
+      return getColor("primary", degree);
     },
     [theme]
   );

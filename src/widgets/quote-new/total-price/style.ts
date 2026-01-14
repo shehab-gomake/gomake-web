@@ -27,7 +27,7 @@ const useStyle = () => {
         textAlign: "center" as "center",
         padding: "12px 24px",
         color: "#FFFF",
-        background: primarySecondaryBlend(500),
+        background: primarySecondaryBlend(300),
         ...FONT_FAMILY.Inter(500, 12),
         height: 44,
         borderBottom: "1px solid #EAECF0",

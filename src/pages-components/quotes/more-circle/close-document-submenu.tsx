@@ -351,12 +351,12 @@ export const CloseDocumentSubmenu: React.FC<CloseDocumentSubmenuProps> = ({
               gap: 8,
             }}
           >
-            <TickIcon color={primarySecondaryBlend(500)} />
+            <TickIcon color={primarySecondaryBlend(300)} />
             <span style={rowTextStyle}>{option.label}</span>
           </Link>
         ) : (
           <>
-            <TickIcon color={primarySecondaryBlend(500)} />
+            <TickIcon color={primarySecondaryBlend(300)} />
             <div style={rowTextStyle}>{option.label}</div>
           </>
         )}
@@ -367,7 +367,7 @@ export const CloseDocumentSubmenu: React.FC<CloseDocumentSubmenuProps> = ({
   return (
     <>
       <MenuItem style={menuItemStyle} onClick={handleClick}>
-        <TickIcon color={primarySecondaryBlend(500)} />
+        <TickIcon color={primarySecondaryBlend(300)} />
         <div style={rowTextStyle}>{t("sales.quote.closeDocument")}</div>
         <div
           onMouseEnter={handleClick}

@@ -10,7 +10,7 @@ const useMoreMenu = ({ preferenceItem, onClickEdit }: any) => {
       onclick: () => {
         onClickEdit(preferenceItem);
       },
-      icon: <EditingIcon color={primarySecondaryBlend(500)} />,
+      icon: <EditingIcon color={primarySecondaryBlend(300)} />,
       name: t("sales.quote.edit"),
     },
   ];

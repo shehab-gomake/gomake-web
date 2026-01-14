@@ -1889,25 +1889,30 @@ const useQuoteNew = ({
         ...quoteItemValue,
         documentItems: updatedDocumentItems,
       };
-      const res = await callApi(EHttpMethod.POST, `/v1/erp-service/documents/calculate-document-new`, {
-        documentType: docType,
-        document: {
-          exchangeRate: updatedQuoteItemValue?.exchangeRate || 1,
-          totalPrice: updatedQuoteItemValue?.totalPrice,
-          data: updatedQuoteItemValue?.discount || 0,
-          calculationType: 0,
-          totalPriceAfterDiscount: updatedQuoteItemValue?.totalPriceAfterDiscount,
-          discount: updatedQuoteItemValue?.discount,
-          discountAmount: updatedQuoteItemValue?.discountAmount,
-          totalPayment: updatedQuoteItemValue?.totalPayment,
-          vat: updatedQuoteItemValue?.vat || 0.17,
-          totalVAT: updatedQuoteItemValue?.totalVAT || 0.17,
-          roundPrices: quoteItemValue?.client?.roundPrices,
-          documentItems: updatedQuoteItemValue?.documentItems.map((item) => ({
-            finalPrice: item.finalPrice,
-          })),
-        },
-      });
+      const res = await callApi(
+        EHttpMethod.POST,
+        `/v1/erp-service/documents/calculate-document-new`,
+        {
+          documentType: docType,
+          document: {
+            exchangeRate: updatedQuoteItemValue?.exchangeRate || 1,
+            totalPrice: updatedQuoteItemValue?.totalPrice,
+            data: updatedQuoteItemValue?.discount || 0,
+            calculationType: 0,
+            totalPriceAfterDiscount:
+              updatedQuoteItemValue?.totalPriceAfterDiscount,
+            discount: updatedQuoteItemValue?.discount,
+            discountAmount: updatedQuoteItemValue?.discountAmount,
+            totalPayment: updatedQuoteItemValue?.totalPayment,
+            vat: updatedQuoteItemValue?.vat || 0.17,
+            totalVAT: updatedQuoteItemValue?.totalVAT || 0.17,
+            roundPrices: quoteItemValue?.client?.roundPrices,
+            documentItems: updatedQuoteItemValue?.documentItems.map((item) => ({
+              finalPrice: item.finalPrice,
+            })),
+          },
+        }
+      );
       if (res?.success) {
         const _data = res?.data?.data?.data;
         updatedQuoteItemValue.discount = _data.discount;
@@ -3573,7 +3578,7 @@ const useQuoteNew = ({
           );
         }
       }}
-      startIcon={<PlusIcon />}
+      startIcon={<PlusIcon stroke={primaryColor(600)} />}
     >
       {t("sales.quote.createNew")}
     </Button>

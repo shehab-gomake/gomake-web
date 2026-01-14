@@ -95,7 +95,7 @@ const ClientBalanceComponent = ({
                 padding: "4px 12px",
                 backgroundColor: isNegative
                   ? errorColor(500)
-                  : `var(--theme-secondary-100, ${primarySecondaryBlend(300)})`,
+                  : `var(--theme-secondary-100, ${primarySecondaryBlend(50)})`, //!here back to primarySecondaryBlend(300)ok?
                 color: isNegative
                   ? "#FFFFFF !important"
                   : `var(--theme-secondary-color, ${primaryColor(

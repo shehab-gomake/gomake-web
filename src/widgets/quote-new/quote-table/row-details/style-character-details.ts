@@ -16,7 +16,7 @@ const useStyleCharacterDetails = ({ showAll, showLessHeightFit }) => {
       },
       showAllContaner: {
         ...FONT_FAMILY.Inter(500, 14),
-        color: primarySecondaryBlend(500),
+        color: primarySecondaryBlend(300),
         textDecoration: "underLine",
         cursor: "pointer",
       },

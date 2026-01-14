@@ -54,7 +54,7 @@ const useStyle = () => {
       },
       rowTextStyle: {
         ...FONT_FAMILY.Lexend(500, 13),
-        color: primarySecondaryBlend(500),
+        color: primarySecondaryBlend(300),
       },
       actionIconStyle: {
         width: 20,

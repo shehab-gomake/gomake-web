@@ -4,7 +4,7 @@ import { useStyle } from "./style";
 import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { CharacterDetails } from "../../quote-table/row-details/character-details";
-
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 const RowMappingWidget = ({
   item,
   index,
@@ -17,6 +17,8 @@ const RowMappingWidget = ({
     handleItemSelect(item);
   };
   const { classes } = useStyle();
+  const { primarySecondaryBlend } = useGomakeTheme();
+
   return (
     <TableRow
       key={item.id}
@@ -62,7 +64,7 @@ const RowMappingWidget = ({
         style={{
           width: columnWidths[2],
           ...FONT_FAMILY.Inter(600, 14),
-          color: "#5859A8",
+          color: primarySecondaryBlend(400),
           ...classes.cellContainerStyle,
           borderBottom: item?.childsDocumentItems && "none",
         }}
@@ -84,7 +86,6 @@ const RowMappingWidget = ({
         />
       </PrimaryTableCell>
       <PrimaryTableCell
-
         style={{
           width: columnWidths[4],
           ...classes.cellContainerStyle,

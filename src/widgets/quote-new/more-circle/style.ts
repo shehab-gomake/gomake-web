@@ -17,7 +17,7 @@ const useStyle = () => {
       },
       menuTitleStyle: {
         ...FONT_FAMILY.Lexend(500, 12),
-        color: primarySecondaryBlend(500),
+        color: primarySecondaryBlend(300),
       },
       lineStyle: {
         width: "100%",

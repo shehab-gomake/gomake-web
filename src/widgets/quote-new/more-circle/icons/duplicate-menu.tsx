@@ -2,7 +2,7 @@ import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 const DuplicateMenuIcon = (props: any) => {
   const { primarySecondaryBlend } = useGomakeTheme();
-  const strokeColor = props.color || primarySecondaryBlend(500);
+  const strokeColor = props.color || primarySecondaryBlend(300);
 
   return (
     <svg

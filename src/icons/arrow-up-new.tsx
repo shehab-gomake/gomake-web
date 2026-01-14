@@ -3,7 +3,7 @@ import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 const ArrowUpNewIcon = (props: any) => {
   const { color } = props;
   const { primarySecondaryBlend } = useGomakeTheme();
-  const strokeColor = color || primarySecondaryBlend(700);
+  const strokeColor = color || primarySecondaryBlend(400);
   return (
     <svg
       width="20"

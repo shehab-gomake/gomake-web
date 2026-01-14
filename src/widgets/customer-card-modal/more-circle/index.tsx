@@ -25,18 +25,18 @@ const MoreMenuWidget = ({ item, updatedStatus, onClickEdit }: any) => {
     <>
       <PermissionCheck userPermission={Permissions.EDIT_CLIENT}>
         <IconButton onClick={handleClick}>
-          <MoreCircleIcon color={primarySecondaryBlend(500)} />
+          <MoreCircleIcon color={primarySecondaryBlend(300)} />
         </IconButton>
         <GoMakeMenu handleClose={handleClose} open={open} anchorEl={anchorEl}>
           <MenuItem onClick={handleEditClick}>
             <div style={classes.menuRowStyle}>
-              <EditingIcon color={primarySecondaryBlend(500)} />
+              <EditingIcon color={primarySecondaryBlend(300)} />
               <div style={classes.rowTextStyle}>{t("remainWords.editing")}</div>
             </div>
           </MenuItem>
           <MenuItem onClick={() => updatedCustomerStatus(item)}>
             <div style={classes.menuRowStyle}>
-              <ConvertIcon color={primarySecondaryBlend(500)} />
+              <ConvertIcon color={primarySecondaryBlend(300)} />
               <div style={classes.rowTextStyle}>
                 {item?.isActive
                   ? t("remainWords.convertToInactive")

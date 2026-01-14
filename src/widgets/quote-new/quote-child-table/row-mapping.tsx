@@ -14,6 +14,7 @@ import { CharacterDetails } from "../quote-table/row-details/character-details";
 import { ECalculationStatus, ShowDocumentDetailsEnum } from "@/enums";
 import { useTranslation } from "react-i18next";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 const RowMappingChildWidget = ({
   item,
@@ -63,6 +64,7 @@ const RowMappingChildWidget = ({
   });
   const router = useRouter();
   const { t } = useTranslation();
+  const { primarySecondaryBlend } = useGomakeTheme();
   const { CheckDocumentPermission } = useUserPermission();
   const [isSelected, setIsSelected] = useState(item?.isSelected);
   const canUpdate = router.query.isNewCreation ? true : item?.isEditable;
@@ -73,11 +75,12 @@ const RowMappingChildWidget = ({
   const canUpdatePrices = router.query.isNewCreation
     ? true
     : item?.isEditable &&
-    CheckDocumentPermission(
-      documentType,
-      DocumentPermission.UPDATE_DOCUMENT_ITEM_PRICES
-    );
+      CheckDocumentPermission(
+        documentType,
+        DocumentPermission.UPDATE_DOCUMENT_ITEM_PRICES
+      );
   const isOrder = documentType === DOCUMENT_TYPE.order;
+
   return (
     <TableRow
       key={item.id}
@@ -92,7 +95,7 @@ const RowMappingChildWidget = ({
           borderBottom: childList?.length - 1 !== childInex && "none",
         }}
       >
-        {(
+        {
           <>
             <div
               style={{
@@ -124,18 +127,22 @@ const RowMappingChildWidget = ({
                 }}
               />
 
-              {!isOrder ? <Checkbox
-                icon={<CheckboxIcon />}
-                checkedIcon={<CheckboxCheckedIcon />}
-                checked={isSelected}
-                onChange={(e) =>
-                  handleChangeSelectedItem(e.target.checked, item?.id)
-                }
-              /> : <div style={{ width: "32px", height: "32px" }} />}
+              {!isOrder ? (
+                <Checkbox
+                  icon={<CheckboxIcon />}
+                  checkedIcon={<CheckboxCheckedIcon />}
+                  checked={isSelected}
+                  onChange={(e) =>
+                    handleChangeSelectedItem(e.target.checked, item?.id)
+                  }
+                />
+              ) : (
+                <div style={{ width: "32px", height: "32px" }} />
+              )}
               {index}
             </div>
           </>
-        )}
+        }
         {/* {!item?.isShowDuplicateWithSameJob && index} */}
       </PrimaryTableCell>
       <PrimaryTableCell
@@ -152,7 +159,7 @@ const RowMappingChildWidget = ({
         style={{
           width: columnWidths[2],
           ...FONT_FAMILY.Inter(600, 14),
-          color: "#5859A8",
+          color: primarySecondaryBlend(400),
           ...classes.cellContainerStyle,
           borderBottom: item?.childsDocumentItems && "none",
         }}
@@ -197,7 +204,7 @@ const RowMappingChildWidget = ({
       >
         <div style={classes.cellTextInputStyle}>
           {item?.calculationStatus === null ||
-            item?.calculationStatus === ECalculationStatus.Done ? (
+          item?.calculationStatus === ECalculationStatus.Done ? (
             <InputUpdatedValues
               value={item.quantity}
               onBlur={onBlurAmount}
@@ -219,7 +226,7 @@ const RowMappingChildWidget = ({
       >
         <div style={classes.cellTextInputStyle}>
           {item?.calculationStatus === null ||
-            item?.calculationStatus === ECalculationStatus.Done ? (
+          item?.calculationStatus === ECalculationStatus.Done ? (
             <InputUpdatedValues
               value={item.price}
               onBlur={onBlurPrice}
@@ -241,7 +248,7 @@ const RowMappingChildWidget = ({
       >
         <div style={classes.cellTextInputStyle}>
           {item?.calculationStatus === null ||
-            item?.calculationStatus === ECalculationStatus.Done ? (
+          item?.calculationStatus === ECalculationStatus.Done ? (
             <InputUpdatedValues
               value={item.discount ? item.discount : "0"}
               onBlur={onBlurDiscount}
@@ -263,7 +270,7 @@ const RowMappingChildWidget = ({
       >
         <div style={classes.cellTextInputStyle}>
           {item?.calculationStatus === null ||
-            item?.calculationStatus === ECalculationStatus.Done ? (
+          item?.calculationStatus === ECalculationStatus.Done ? (
             <InputUpdatedValues
               value={item.finalPrice}
               onBlur={onBlurFinalPrice}

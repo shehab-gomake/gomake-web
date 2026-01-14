@@ -3,7 +3,7 @@ import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 const ArrowDownNewIcon = ({ width, height, color }: IIconProps) => {
   const { primarySecondaryBlend } = useGomakeTheme();
-  const strokeColor = color || primarySecondaryBlend(700);
+  const strokeColor = color || primarySecondaryBlend(400);
   return (
     <svg
       width={width || "20"}

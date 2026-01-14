@@ -6,18 +6,18 @@ import { direction } from "html2canvas/dist/types/css/property-descriptors/direc
 import { useTranslation } from "react-i18next";
 
 const useStyle = ({ headerHeight }) => {
-  const { grayColor } = useGomakeTheme();
+  const { theme, grayColor, primarySecondaryBlend } = useGomakeTheme();
   const { t } = useTranslation();
   const direction = t("direction");
   const classes = useMemo(() => {
     return {
       tableRowStyle: {
         height: headerHeight,
-        background: "#8283BE",
+        background: primarySecondaryBlend(300),
         color: "white",
       },
       tableHeaderStyle: {
-        borderRight: "1px solid #EAECF0",
+        borderRight: `1px solid ${grayColor(200)}`,
         color: "#FFF",
         textAlign: "center" as "center",
         ...FONT_FAMILY.Inter(400, 12),
@@ -49,10 +49,10 @@ const useStyle = ({ headerHeight }) => {
         textAlign: "center" as "center",
         padding: "12px 24px",
         color: "#FFFF",
-        background: "#8283BE",
+        background: primarySecondaryBlend(300),
         ...FONT_FAMILY.Inter(500, 12),
         height: 44,
-        borderBottom: "1px solid #EAECF0",
+        borderBottom: `1px solid ${grayColor(200)}`,
       },
       oddRowContainer: {
         display: "flex",
@@ -60,7 +60,7 @@ const useStyle = ({ headerHeight }) => {
         background: "#FFFFFFF",
         ...FONT_FAMILY.Inter(400, 14),
         height: 44,
-        borderBottom: "1px solid #EAECF0",
+        borderBottom: `1px solid ${grayColor(200)}`,
       },
       cellTextInputStyle: {
         display: "flex",
@@ -77,9 +77,11 @@ const useStyle = ({ headerHeight }) => {
         ...adaptRight(direction, 5),
       },
     };
-  }, []);
+  }, [theme]);
+
   return {
     classes,
   };
 };
+
 export { useStyle };

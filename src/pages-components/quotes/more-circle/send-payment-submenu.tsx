@@ -54,7 +54,7 @@ export const SendPaymentSubmenu: React.FC<SendPaymentSubmenuProps> = ({
   return (
     <>
       <MenuItem style={menuItemStyle} onClick={handleClick}>
-        <PayIcon color="#8283BE" />
+        <PayIcon color={primarySecondaryBlend(300)} />
         <div style={rowTextStyle}>{t("sales.quote.sendPayment")}</div>
         <div
           onMouseEnter={handleClick}

@@ -254,7 +254,7 @@ const useStyle = () => {
         color: secondColor(500),
       },
       activeTabContainer: {
-        backgroundColor: primarySecondaryBlend(300),
+        backgroundColor: primarySecondaryBlend(50),
         minHeight: 48,
         borderBottom: "none",
       },
@@ -267,7 +267,7 @@ const useStyle = () => {
       },
       subSectionAccordionStyle: {
         ...FONT_FAMILY.Lexend(600, 16),
-        color: primarySecondaryBlend(700),
+        color: primarySecondaryBlend(400),
       },
       subSectionAccordionActiveStyle: {
         ...FONT_FAMILY.Lexend(600, 16),

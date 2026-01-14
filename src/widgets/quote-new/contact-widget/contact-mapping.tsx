@@ -184,7 +184,7 @@ const ContactMapping = ({
                   ...props.style,
                   backgroundColor:
                     option.id === "new"
-                      ? primarySecondaryBlend(500)
+                      ? primarySecondaryBlend(300)
                       : "transparent",
                   color: option.id === "new" ? "white" : "inherit",
                   fontWeight: option.id === "new" ? "500" : "normal",

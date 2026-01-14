@@ -39,7 +39,7 @@ const useStyle = () => {
         border: `1px solid ${primarySecondaryBlend(100)}`,
         boxShadow: "0px 1px 2px 0px #1018280D",
         backgroundColor: primarySecondaryBlend(100),
-        color: primarySecondaryBlend(700),
+        color: primarySecondaryBlend(400),
         ...FONT_FAMILY.Inter(600, 14),
         height: "var(--theme-button-height, 40px)",
         width: "fit-content",

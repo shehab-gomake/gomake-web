@@ -415,7 +415,7 @@ const PrimaryTable = ({
                   key={`row_${rowIndex}`}
                   style={{
                     backgroundColor: isSubProductRow
-                      ? primarySecondaryBlend(300)
+                      ? primarySecondaryBlend(50)
                       : isAgingeport && isAgingDetailedReport && row[0] == " "
                       ? "#F6F6F6"
                       : isLastItemTotal && rowIndex === rows.length - 1

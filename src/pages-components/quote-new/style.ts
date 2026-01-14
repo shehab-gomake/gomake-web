@@ -181,7 +181,7 @@ const useStyle = (isQuoteConfirmation) => {
         alignItems: "center",
         gap: "4px",
         borderRadius: "8px",
-        border: "1px solid #2E3092",
+        border: `1px solid ${primaryColor(600)}`,
         background: "#FFF",
         boxShadow: "0px 1px 2px 0px rgba(16, 24, 40, 0.05)",
         textTransform: "none" as "none",

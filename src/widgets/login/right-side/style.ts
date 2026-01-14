@@ -4,7 +4,7 @@ import { useMemo } from "react";
 import { useTheme } from "@/contexts/theme";
 
 const useStyle = () => {
-  const { theme } = useGomakeTheme();
+  const { theme, primaryColor } = useGomakeTheme();
   const { currentTheme } = useTheme();
   const isHpClient = currentTheme === "hp-client";
   const classes = useMemo(() => {
@@ -14,7 +14,7 @@ const useStyle = () => {
         flexDirection: "column" as "column",
         justifyContent: "center",
         alignItems: "center",
-        backgroundColor: isHpClient ? "#0642be" : "#504FA1",
+        backgroundColor: isHpClient ? "#0642be" : primaryColor(400),
         height: "100%",
         minHeight: "100vh",
         width: "50%",

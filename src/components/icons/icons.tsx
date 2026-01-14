@@ -195,7 +195,7 @@ const MoreIcon = () => {
       <path
         d="M22.6943 12C22.6943 6.5 18.1068 2 12.4999 2C6.89292 2 2.30542 6.5 2.30542 12C2.30542 17.5 6.89292 22 12.4999 22C18.1068 22 22.6943 17.5 22.6943 12Z"
         fill="white"
-        stroke="#5859A8"
+        stroke="var(--theme-secondary-400,#5859a8)"
         stroke-width="1.5"
         stroke-linecap="round"
         stroke-linejoin="round"
@@ -208,7 +208,7 @@ const MoreIcon = () => {
       />
       <path
         d="M12.5 8.00354V7.99456"
-        stroke="#5859A8"
+        stroke="var(--theme-secondary-400,#5859a8)"
         stroke-width="2"
         stroke-linecap="round"
         stroke-linejoin="round"
@@ -221,7 +221,7 @@ const MoreIcon = () => {
       />
       <path
         d="M12.5 12.0045V11.9955"
-        stroke="#5859A8"
+        stroke="var(--theme-secondary-400,#5859a8)"
         stroke-width="2"
         stroke-linecap="round"
         stroke-linejoin="round"
@@ -234,7 +234,7 @@ const MoreIcon = () => {
       />
       <path
         d="M12.5 16.0054V15.9964"
-        stroke="#5859A8"
+        stroke="var(--theme-secondary-400,#5859a8)"
         stroke-width="2"
         stroke-linecap="round"
         stroke-linejoin="round"

@@ -97,7 +97,7 @@ const InlineAddItemRow: React.FC<InlineAddItemRowProps> = ({
         <IconButton
           onClick={handleShowInlineAddRow}
           style={{
-            color: primarySecondaryBlend(500),
+            color: primarySecondaryBlend(300),
             borderRadius: "8px",
             padding: "8px 16px",
             fontSize: "14px",

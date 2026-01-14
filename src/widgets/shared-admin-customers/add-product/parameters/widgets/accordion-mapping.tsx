@@ -38,7 +38,7 @@ const AccordionMappingWidget = ({
           {expanded === `panel_${index}` ? (
             <EditIcon stroke={primaryColor(900)} />
           ) : (
-            <EditIcon stroke={primarySecondaryBlend(700)} />
+            <EditIcon stroke={primarySecondaryBlend(400)} />
           )}
 
           <div

@@ -79,7 +79,7 @@ const HpLeftSideLayout = ({ customGap }: { customGap?: number }) => {
             {/* Company Name and Tagline */}
             {!isSidebarClosed && (
               <div style={classes.headerText}>
-                <div style={classes.companyName}>HP XXX</div>
+                <div style={classes.companyName}>HP</div>
                 <div style={classes.poweredBy}>powered by GoMake</div>
               </div>
             )}

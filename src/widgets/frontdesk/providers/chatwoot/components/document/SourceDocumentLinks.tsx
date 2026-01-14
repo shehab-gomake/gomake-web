@@ -5,14 +5,14 @@
  * Replaces duplicate implementations across components.
  */
 
-import React from 'react';
-import { Box, Typography } from '@mui/material';
-import { useTranslation } from 'react-i18next';
+import React from "react";
+import { Box, Typography } from "@mui/material";
+import { useTranslation } from "react-i18next";
 import {
   renderDocumentTypeForSourceDocumentNumber,
   renderURLDocumentType,
-} from '@/widgets/settings-documenting/documentDesign/enums/document-type';
-import { SourceDocumentInfo } from '../../types/document.types';
+} from "@/widgets/settings-documenting/documentDesign/enums/document-type";
+import { SourceDocumentInfo } from "../../types/document.types";
 
 interface SourceDocumentLinksProps {
   /** Array of source documents */
@@ -22,7 +22,7 @@ interface SourceDocumentLinksProps {
   /** Show "X more" count for hidden documents */
   showMoreCount?: boolean;
   /** Display style: 'inline' for horizontal, 'list' for vertical */
-  layout?: 'inline' | 'list';
+  layout?: "inline" | "list";
   /** Link color */
   linkColor?: string;
   /** Font size */
@@ -35,9 +35,9 @@ export const SourceDocumentLinks: React.FC<SourceDocumentLinksProps> = ({
   sourceDocuments,
   maxDisplay,
   showMoreCount = true,
-  layout = 'inline',
-  linkColor = '#5859A8',
-  fontSize = '0.75rem',
+  layout = "inline",
+  linkColor = "var(--theme-secondary-400, #5859a8)",
+  fontSize = "0.75rem",
   neutralColor,
 }) => {
   const { t } = useTranslation();
@@ -53,27 +53,34 @@ export const SourceDocumentLinks: React.FC<SourceDocumentLinksProps> = ({
     ? Math.max(0, sourceDocuments.length - maxDisplay)
     : 0;
 
-  const getMoreTextColor = neutralColor?.(600) || '#4B5563';
+  const getMoreTextColor = neutralColor?.(600) || "#4B5563";
 
-  if (layout === 'list') {
+  if (layout === "list") {
     return (
       <Box>
         {documentsToShow.map((item, index) => (
           <a
             key={`${item.documentId}-${index}`}
-            href={renderURLDocumentType(item.sourceDocumentType as any, item.documentId)}
+            href={renderURLDocumentType(
+              item.sourceDocumentType as any,
+              item.documentId
+            )}
             onClick={(e) => e.stopPropagation()}
             style={{
-              cursor: 'pointer',
+              cursor: "pointer",
               color: linkColor,
-              textDecoration: 'none',
+              textDecoration: "none",
               fontSize,
-              display: 'block',
-              marginBottom: index < documentsToShow.length - 1 ? '2px' : '0',
+              display: "block",
+              marginBottom: index < documentsToShow.length - 1 ? "2px" : "0",
             }}
           >
-            {t(renderDocumentTypeForSourceDocumentNumber(item.sourceDocumentType as any))}:{' '}
-            {item.documentNumber}
+            {t(
+              renderDocumentTypeForSourceDocumentNumber(
+                item.sourceDocumentType as any
+              )
+            )}
+            : {item.documentNumber}
           </a>
         ))}
         {showMoreCount && remainingCount > 0 && (
@@ -81,9 +88,9 @@ export const SourceDocumentLinks: React.FC<SourceDocumentLinksProps> = ({
             variant="caption"
             sx={{
               color: getMoreTextColor,
-              fontSize: '0.7rem',
-              fontStyle: 'italic',
-              display: 'block',
+              fontSize: "0.7rem",
+              fontStyle: "italic",
+              display: "block",
             }}
           >
             +{remainingCount} more
@@ -95,22 +102,31 @@ export const SourceDocumentLinks: React.FC<SourceDocumentLinksProps> = ({
 
   // Inline layout
   return (
-    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, alignItems: 'center' }}>
+    <Box
+      sx={{ display: "flex", flexWrap: "wrap", gap: 0.5, alignItems: "center" }}
+    >
       {documentsToShow.map((item, index) => (
         <a
           key={`${item.documentId}-${index}`}
-          href={renderURLDocumentType(item.sourceDocumentType as any, item.documentId)}
+          href={renderURLDocumentType(
+            item.sourceDocumentType as any,
+            item.documentId
+          )}
           onClick={(e) => e.stopPropagation()}
           style={{
-            cursor: 'pointer',
+            cursor: "pointer",
             color: linkColor,
-            textDecoration: 'none',
+            textDecoration: "none",
             fontSize,
-            marginRight: index < documentsToShow.length - 1 ? '4px' : '0',
+            marginRight: index < documentsToShow.length - 1 ? "4px" : "0",
           }}
         >
-          {t(renderDocumentTypeForSourceDocumentNumber(item.sourceDocumentType as any))}:{' '}
-          {item.documentNumber}
+          {t(
+            renderDocumentTypeForSourceDocumentNumber(
+              item.sourceDocumentType as any
+            )
+          )}
+          : {item.documentNumber}
         </a>
       ))}
       {showMoreCount && remainingCount > 0 && (
@@ -118,8 +134,8 @@ export const SourceDocumentLinks: React.FC<SourceDocumentLinksProps> = ({
           variant="caption"
           sx={{
             color: getMoreTextColor,
-            fontSize: '0.7rem',
-            fontStyle: 'italic',
+            fontSize: "0.7rem",
+            fontStyle: "italic",
           }}
         >
           +{remainingCount} more
