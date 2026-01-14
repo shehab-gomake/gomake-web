@@ -74,19 +74,24 @@ export const TemplateVariableButton = Node.create<TemplateVariableButtonOptions>
         tag: 'a[data-node-type="templateVariableButton"]',
         priority: 100,
         getAttrs: (dom) => {
-          const element = dom as HTMLElement;
-          const marker = element.getAttribute('data-marker');
-          const title = element.getAttribute('data-title') || element.textContent?.trim();
-          const displayText = element.getAttribute('data-display-text');
-          
-          console.log('Parsing anchor templateVariableButton:', { marker, title, displayText });
-          
-          if (marker && title) {
-            return {
-              marker: marker,
-              title: title,
-              displayText: displayText || null,
-            };
+          try {
+            if (!dom || typeof dom !== 'object') return false;
+            const element = dom as HTMLElement;
+            if (!element || !element.getAttribute) return false;
+            
+            const marker = element.getAttribute('data-marker');
+            const title = element.getAttribute('data-title') || element.textContent?.trim();
+            const displayText = element.getAttribute('data-display-text');
+            
+            if (marker && title) {
+              return {
+                marker: marker,
+                title: title,
+                displayText: displayText || null,
+              };
+            }
+          } catch (error) {
+            console.warn('Error parsing templateVariableButton anchor:', error);
           }
           return false;
         },
@@ -95,19 +100,24 @@ export const TemplateVariableButton = Node.create<TemplateVariableButtonOptions>
         tag: 'span[data-node-type="templateVariableButton"]',
         priority: 95,
         getAttrs: (dom) => {
-          const element = dom as HTMLElement;
-          const marker = element.getAttribute('data-marker');
-          const title = element.getAttribute('data-title') || element.textContent?.trim();
-          const displayText = element.getAttribute('data-display-text');
-          
-          console.log('Parsing span templateVariableButton:', { marker, title, displayText });
-          
-          if (marker && title) {
-            return {
-              marker: marker,
-              title: title,
-              displayText: displayText || null,
-            };
+          try {
+            if (!dom || typeof dom !== 'object') return false;
+            const element = dom as HTMLElement;
+            if (!element || !element.getAttribute) return false;
+            
+            const marker = element.getAttribute('data-marker');
+            const title = element.getAttribute('data-title') || element.textContent?.trim();
+            const displayText = element.getAttribute('data-display-text');
+            
+            if (marker && title) {
+              return {
+                marker: marker,
+                title: title,
+                displayText: displayText || null,
+              };
+            }
+          } catch (error) {
+            console.warn('Error parsing templateVariableButton span:', error);
           }
           return false;
         },
@@ -116,19 +126,24 @@ export const TemplateVariableButton = Node.create<TemplateVariableButtonOptions>
         tag: 'a.badgeVariable',
         priority: 90,
         getAttrs: (dom) => {
-          const element = dom as HTMLElement;
-          const marker = element.getAttribute('data-marker');
-          const title = element.getAttribute('data-title') || element.textContent?.trim();
-          const displayText = element.getAttribute('data-display-text');
-          
-          console.log('Parsing anchor badgeVariable:', { marker, title, displayText });
-          
-          if (marker && title) {
-            return {
-              marker: marker,
-              title: title,
-              displayText: displayText || null,
-            };
+          try {
+            if (!dom || typeof dom !== 'object') return false;
+            const element = dom as HTMLElement;
+            if (!element || !element.getAttribute) return false;
+            
+            const marker = element.getAttribute('data-marker');
+            const title = element.getAttribute('data-title') || element.textContent?.trim();
+            const displayText = element.getAttribute('data-display-text');
+            
+            if (marker && title) {
+              return {
+                marker: marker,
+                title: title,
+                displayText: displayText || null,
+              };
+            }
+          } catch (error) {
+            console.warn('Error parsing badgeVariable anchor:', error);
           }
           return false;
         },
@@ -137,19 +152,24 @@ export const TemplateVariableButton = Node.create<TemplateVariableButtonOptions>
         tag: 'span.badgeVariable',
         priority: 85,
         getAttrs: (dom) => {
-          const element = dom as HTMLElement;
-          const marker = element.getAttribute('data-marker');
-          const title = element.getAttribute('data-title') || element.textContent?.trim();
-          const displayText = element.getAttribute('data-display-text');
-          
-          console.log('Parsing span badgeVariable:', { marker, title, displayText });
-          
-          if (marker && title) {
-            return {
-              marker: marker,
-              title: title,
-              displayText: displayText || null,
-            };
+          try {
+            if (!dom || typeof dom !== 'object') return false;
+            const element = dom as HTMLElement;
+            if (!element || !element.getAttribute) return false;
+            
+            const marker = element.getAttribute('data-marker');
+            const title = element.getAttribute('data-title') || element.textContent?.trim();
+            const displayText = element.getAttribute('data-display-text');
+            
+            if (marker && title) {
+              return {
+                marker: marker,
+                title: title,
+                displayText: displayText || null,
+              };
+            }
+          } catch (error) {
+            console.warn('Error parsing badgeVariable span:', error);
           }
           return false;
         },
@@ -164,39 +184,38 @@ export const TemplateVariableButton = Node.create<TemplateVariableButtonOptions>
     const isLinkVariable = (title && title.toLowerCase().includes('link')) || 
                           (marker && marker.toLowerCase().includes('link'));
     
-    // CRITICAL FIX: For link variables, render as an actual <a> tag, not a <span>
-    // This ensures email clients properly display them as clickable links
+    // Match QuillEditor format: ALL variables use class="badgeVariable" with data-marker and data-title
+    // This ensures backend can process them correctly
     if (isLinkVariable) {
-      // Link variables: render as anchor tag with button styling
+      // Link variables: render as span (backend will convert to <a> tag)
+      // Match QuillEditor's exact format
       const buttonText = displayText || title || marker;
       return [
-        'a',
+        'span',
         {
-          'href': marker, // Use marker as the actual href for email clients
+          'class': 'badgeVariable',
           'data-marker': marker,
           'data-title': title,
-          'data-display-text': displayText,
+          'data-display-text': displayText || null,
           'data-node-type': 'templateVariableButton',
-          'class': 'badgeVariable',
           'style': 'display: inline-block; padding: 8px 16px; background-color: #5048ED; color: #ffffff !important; text-decoration: none; border-radius: 6px; font-family: Inter, sans-serif; font-weight: 500; font-size: 13px; margin: 0 4px; cursor: pointer;',
-          'target': '_blank',
-          'rel': 'noopener noreferrer',
         },
-        buttonText, // Display text is customizable
+        buttonText,
       ];
     }
     
-    // For non-link variables (template variables): render as plain text
+    // For non-link variables: use same format as QuillEditor
+    // All variables must have class="badgeVariable" for backend processing
     return [
       'span',
       {
-        'class': 'templateVariable',
+        'class': 'badgeVariable',
         'data-marker': marker,
         'data-title': title,
+        'data-display-text': displayText || null,
         'data-node-type': 'templateVariableButton',
-        'style': 'font-family: Inter, sans-serif; font-weight: 400; font-size: 14px; color: #666666;',
       },
-      title, // innerHTML is the title
+      title || marker, // innerHTML is the title (matching QuillEditor)
     ];
   },
 
