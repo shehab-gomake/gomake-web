@@ -94,7 +94,7 @@ import {
 } from "@/utils/helpers";
 import { useWhatsAppWeb } from "@/pages-components/quote-new/use-whats-app-web";
 import { EAddressType } from "@/widgets/quote-new/business-widget/address-widget/state";
-import { ClientChangeSource } from "./store/quote";
+import { ClientChangeSource, hasTableCellUpdatesState } from "./store/quote";
 import { EnumVATStatus } from "@/enums/accounting-enums";
 import { useClientTypesList } from "@/hooks/use-client-types";
 import { useModal } from "@/hooks/use-modal";
@@ -1039,8 +1039,10 @@ const useQuoteNew = ({
 
   const alertExistPurchaseNumber = useModal();
   const orderUpdateConfirmationModal = useModal();
-  // Track if table cells were updated (not via edit modal)
-  const [hasTableCellUpdates, setHasTableCellUpdates] = useState(false);
+  // Track if table cells were updated (not via edit modal) - using Recoil atom
+  const [hasTableCellUpdates, setHasTableCellUpdates] = useRecoilState(
+    hasTableCellUpdatesState
+  );
   const orderUpdateSendModal = useModal();
   const [isOrderUpdateEmailComposer, setIsOrderUpdateEmailComposer] =
     useState(false);
