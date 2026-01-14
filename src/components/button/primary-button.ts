@@ -11,7 +11,7 @@ const PrimaryButton = styled(Button)<PrimaryButtonProps>((props) => {
   const { primaryColor } = useGomakeTheme();
   const primaryColorValue = primaryColor(500);
   const primaryLight = primaryColor(100);
-  const primaryHover = primaryColor(500);
+  const primaryHover = primaryColor(400);
   const primaryDisabled = primaryColor(200);
 
   return {
@@ -21,25 +21,17 @@ const PrimaryButton = styled(Button)<PrimaryButtonProps>((props) => {
     lineHeight: "1.5px",
     height: 40,
     width: "100%",
-    backgroundColor:
-      props.variant === "contained"
-        ? `var(--theme-primary-color, ${primaryColorValue})`
-        : "#FFF",
+    backgroundColor: props.variant === "contained" ? primaryColorValue : "#FFF",
     borderRadius: "var(--theme-radius-md, 4px)",
-    borderColor: `var(--theme-primary-color, ${primaryColorValue})`,
+    borderColor: primaryColorValue,
     gap: 7,
-    color:
-      props.variant === "contained"
-        ? "#FFFFFF"
-        : `var(--theme-primary-color, ${primaryColorValue})`,
+    color: props.variant === "contained" ? "#FFFFFF" : primaryColorValue,
     transition: "all 0.25s ease",
     ...FONT_FAMILY.Lexend(500, 16),
     "&:hover": {
       backgroundColor:
-        props.variant === "contained"
-          ? `var(--theme-primary-hover, ${primaryHover})`
-          : `var(--theme-primary-100, ${primaryLight})`,
-      borderColor: `var(--theme-primary-color, ${primaryColorValue})`,
+        props.variant === "contained" ? primaryHover : primaryLight,
+      borderColor: primaryColorValue,
       boxShadow:
         props.variant === "contained"
           ? "0px 4px 8px rgba(0, 0, 0, 0.15)"
@@ -49,15 +41,15 @@ const PrimaryButton = styled(Button)<PrimaryButtonProps>((props) => {
     ...(props.hoverStyle &&
       props.variant === "contained" && {
         "&:hover": {
-          backgroundColor: `var(--theme-primary-100, ${primaryLight})`,
-          borderColor: `var(--theme-primary-color, ${primaryColorValue})`,
+          backgroundColor: primaryLight,
+          borderColor: primaryColorValue,
           opacity: 0.8,
-          color: `var(--theme-primary-color, ${primaryColorValue})`,
+          color: primaryColorValue,
         },
       }),
     "&.MuiButton-text": {
       backgroundColor: "inherit",
-      color: `var(--theme-primary-color, ${primaryColorValue})`,
+      color: primaryColorValue,
       width: "fit-content",
       "&:hover": {
         letterSpacing: 0,
@@ -70,7 +62,7 @@ const PrimaryButton = styled(Button)<PrimaryButtonProps>((props) => {
       },
     },
     "&.Mui-disabled": {
-      backgroundColor: `var(--theme-primary-disabled, ${primaryDisabled})`,
+      backgroundColor: primaryDisabled,
       color: "#FFFFFF",
     },
   };

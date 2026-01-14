@@ -50,10 +50,16 @@ const hpClientThemeConfig: ThemeConfig = {
        HP SECONDARY COLORS
       --------------------------------------------------*/
       // POWER STORM
-      "--theme-secondary-color": "#568393", // Power Storm - shade A (main, white background)
-      "--theme-secondary-on-dark": "#789CA9", // Power Storm - shade B (darker photos)
-      "--theme-secondary-on-light": "#4D7684", // Power Storm - shade C (lighter photos)
-      "--theme-secondary-light": "#E8F0F3", // Power Storm - light background tint (for hover states on white) //!HERE FROM ME
+      "--theme-secondary-50": "#F5F9FA",
+      "--theme-secondary-100": "#E8F0F3",
+      "--theme-secondary-200": "#CFE0E6",
+      "--theme-secondary-300": "#789CA9", // Power Storm - shade B
+      "--theme-secondary-400": "#6B93A1",
+      "--theme-secondary-color": "#568393", // Power Storm - shade A // base
+      "--theme-secondary-600": "#4F7B89",
+      "--theme-secondary-700": "#4D7684", // Power Storm - shade C
+      "--theme-secondary-800": "#3F6470",
+      "--theme-secondary-900": "#2E4A54",
 
       // ORANGE BLOOM
       "--theme-accent-color": "#FF5050", // Orange Bloom - shade A (main, white background)
@@ -233,7 +239,7 @@ const hpClientThemeConfig: ThemeConfig = {
       "--theme-widget-shadow": "none", // No shadow for hp-client
 
       // Table Styles
-      "--theme-table-head-bg": "var(--theme-secondary-light, #E8F2FF8)",
+      "--theme-table-head-bg": "var(--theme-secondary-100, #E8F2FF8)",
       "--theme-table-head-color": "var(--theme-text-primary,rgb(26, 44, 28))", // Table header text color
       "--theme-table-body-color": "var(--theme-text-primary, #1a202c)", // Table body text color
       "--theme-table-row-even-bg": "rgba(236, 236, 236, 0.54)", // Even row background (#ececec8a)

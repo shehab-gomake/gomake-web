@@ -424,7 +424,7 @@ input::placeholder {
 }
 
 .table-sorting:hover {
-  background-color: #ebecff;
+  background-color: var(--theme-primary-50, #ebecef);
 }
 
 .MuiTabs-flexContainer {

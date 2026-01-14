@@ -13,7 +13,7 @@ const ArrowUpIcon = (props: any) => {
         width="16"
         height="16"
         rx="4"
-        fill={"var(--theme-secondary-light, #EAEAF4)"}
+        fill={"var(--theme-secondary-100, #EAEAF4)"}
       />
       <path
         d="M11 9.5L8 6.5L5 9.5"

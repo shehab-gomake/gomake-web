@@ -11,7 +11,7 @@ const LeftArrowIcon = () => {
         cx="11"
         cy="11"
         r="10.5"
-        fill="var(--theme-secondary-light, #E3DFFB)"
+        fill="var(--theme-secondary-100, #E3DFFB)"
         stroke="var(--theme-secondary-color, #5859A8)"
       />
       <g clip-path="url(#clip0_7667_71071)">

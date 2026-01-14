@@ -83,14 +83,10 @@ const DaysComponent: FC<DaySelectorProps> = ({
             sx={{
               ...buttonStyle,
               ...(isSelected && {
-                backgroundColor: `var(--theme-primary-color, ${primaryColor(
-                  500
-                )})`,
+                backgroundColor: primaryColor(500),
                 color: "#FFFFFF",
                 "&:hover": {
-                  backgroundColor: `var(--theme-primary-hover, ${primaryColor(
-                    500
-                  )})`,
+                  backgroundColor: primaryColor(400),
                 },
               }),
               ...(!isSelected && {
@@ -103,9 +99,7 @@ const DaysComponent: FC<DaySelectorProps> = ({
                   backgroundColor: `var(--theme-bg-tertiary, ${neutralColor(
                     50
                   )})`,
-                  borderColor: `var(--theme-primary-color, ${primaryColor(
-                    500
-                  )})`,
+                  borderColor: primaryColor(500),
                 },
               }),
               ...(isDisabled && {

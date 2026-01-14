@@ -17,13 +17,9 @@ const baseThemeConfig: ThemeConfig = {
       "--theme-primary-100": "#ede9fe",
       "--theme-primary-700": "#252675",
 
-      "--theme-primary-lavender-color": "#CBCBE4",
-      "--theme-primary-lavender-light": "#8283be",
-      "--theme-primary-lavender-dark": "#504fa1",
-
       "--theme-secondary-color": "#ec4899",
       "--theme-secondary-hover": "#db2777",
-      "--theme-secondary-light": "#fce7f3",
+      "--theme-secondary-100": "#fce7f3",
 
       // Background Colors
       "--theme-bg-body": "#f6f6f6", // Page background
