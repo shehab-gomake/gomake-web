@@ -2061,6 +2061,10 @@ const useQuoteNew = ({
         setLoading(false);
       }
     } else {
+      // Mark that footer table cells were updated (not via edit modal) for orders
+      if (docType === DOCUMENT_TYPE.order) {
+        setHasTableCellUpdates(true);
+      }
       const callBack = (res) => {
         if (res?.success) {
           alertSuccessUpdate();
