@@ -6,6 +6,7 @@ export interface ITaskCategoryLabelProps {
   documentType: DOCUMENT_TYPE;
   openModalOnClick?: boolean;
   onClickOpenMoveOrderToReadyModal: any;
+  getAllQuotes?: () => Promise<void>;
 }
 
 export interface IUpdateDeliveryStatusModalProps {
@@ -21,6 +22,7 @@ export interface IUpdateDeliveryStatusModalProps {
   clientContacts?: any;
   documentType: DOCUMENT_TYPE;
   onClickOpenMoveOrderToReadyModal: any;
+  getAllQuotes?: () => Promise<void>;
 }
 
 export interface DeliveryStateDetails {
