@@ -48,7 +48,16 @@ import { printJobUsingPrintNodeApi } from "@/services/api-service/board-missions
 
 const DEBOUNCE_DELAY = 300; // Debounce search and filter operations
 
-const ProductionFloorTableView = ({ connectionId, updateStatus, getData, isEmailComposerOpenApproval, emailDataApproval, openEmailComposerApproval, closeEmailComposerApproval, isLoadingEmailDataApproval }) => {
+const ProductionFloorTableView = ({
+  connectionId,
+  updateStatus,
+  getData,
+  isEmailComposerOpenApproval,
+  emailDataApproval,
+  openEmailComposerApproval,
+  closeEmailComposerApproval,
+  isLoadingEmailDataApproval,
+}) => {
   const selectedChipId = useRecoilValue(selectedChipIdsState);
   const hasFrontDeskFeature = useRecoilValue(printHouseHasFrontDeskFeature);
   const { sendEmailProgrammatically } = useProductionFloorData();
@@ -371,7 +380,10 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData, isEmail
                         job?.customerName
                       );
                     } catch (error) {
-                      console.error(`Error sending email for job ${job.id}:`, error);
+                      console.error(
+                        `Error sending email for job ${job.id}:`,
+                        error
+                      );
                     }
                   })
                 );
@@ -401,7 +413,15 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData, isEmail
         alertFaultUpdate();
       }
     },
-    [callApi, setSelectedIds, getData, alertFaultUpdate, inputValue, hasFrontDeskFeature, sendEmailProgrammatically]
+    [
+      callApi,
+      setSelectedIds,
+      getData,
+      alertFaultUpdate,
+      inputValue,
+      hasFrontDeskFeature,
+      sendEmailProgrammatically,
+    ]
   );
 
   const handleClearSelection = useCallback(() => {
@@ -591,8 +611,6 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData, isEmail
         statusOptions={statusOptions}
         t={t}
       />
-
-      {/* !here what is this  */}
       <ThreeOptionsModal
         modalType={ModalType.WARNING}
         title={t("boardMissions.markDoneModalTitle")}
@@ -612,12 +630,12 @@ const ProductionFloorTableView = ({ connectionId, updateStatus, getData, isEmail
               ) || inputValue === ""
                 ? storageList
                 : [
-                  {
-                    storage: `Add "${inputValue}" as a new storage`,
-                    id: "new",
-                  },
-                  ...storageList,
-                ]
+                    {
+                      storage: `Add "${inputValue}" as a new storage`,
+                      id: "new",
+                    },
+                    ...storageList,
+                  ]
             }
             placeholder={t("boardMissions.selectStorage")}
             key={defaultValue}

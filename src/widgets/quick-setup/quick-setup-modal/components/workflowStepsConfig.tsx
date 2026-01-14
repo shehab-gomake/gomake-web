@@ -108,7 +108,6 @@ export const packingMethods = [
   "cartoon_packaging",
 ];
 
-//!here
 export const getSetupStepsConfig = (isUs: boolean): SetupStepConfig[] => [
   {
     type: "methods",

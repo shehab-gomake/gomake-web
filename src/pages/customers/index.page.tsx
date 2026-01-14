@@ -118,7 +118,6 @@ export default function Customers() {
     isActive,
   ]);
 
-  //!here
   const renderAddButton = (activeTabTitle: string) => {
     if (activeTabTitle === t("customers.title")) {
       return (

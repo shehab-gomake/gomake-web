@@ -99,7 +99,6 @@ export const initializeFinishingCategories = (): FinishingCategory[] => [
     machines: [],
     categoryType: "digital_offset",
   },
-  //!here only for
   {
     id: ECategoryId.THERMAL_PLATE_PROCESSOR,
     name: "machinesCategories.thermalPlateProcessor",

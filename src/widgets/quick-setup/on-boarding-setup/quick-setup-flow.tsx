@@ -810,7 +810,7 @@ const QuickSetupFlow: React.FC = () => {
 
           // Navigate to the next setup step (Company Profile Logo)
           alertSuccessAdded();
-        //  navigate("/materials-setup");
+          //  navigate("/materials-setup");
           // navigate("/");
           navigate("/settings/company-profile?tab=company");
         } else {
@@ -928,7 +928,6 @@ const QuickSetupFlow: React.FC = () => {
         <Typography variant="h6" sx={{ mb: 1 }}>
           {t(dynamicSteps.find((step) => step.id === currentStep)?.title || "")}
         </Typography>
-        {/* !here hide description */}
         <Typography variant="body2" sx={{ mb: 2, color: "text.secondary" }}>
           {dynamicSteps.find((step) => step.id === currentStep)?.description ||
             ""}

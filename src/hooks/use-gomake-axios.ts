@@ -5,14 +5,12 @@ import { useRecoilState, useSetRecoilState } from "recoil";
 import { useTranslation } from "react-i18next";
 import { ResponseType } from "axios";
 import { loadingWithShadowState } from "@/store/loading-with-shadow";
-import { useRouter } from "next/router";
 import {
   isLoggedInState,
   tokenExpiredState,
 } from "@/store/token-expired-modal";
 import { HttpErrorCodes } from "@/enums/error-types";
 
-//!here
 const useGomakeAxios = () => {
   const setLoading = useSetRecoilState(loadgingState);
   const setLoadingWithShadow = useSetRecoilState(loadingWithShadowState);
