@@ -218,6 +218,7 @@ const useGomakeTheme = () => {
           100: "--theme-secondary-100",
           300: "--theme-secondary-100",
           500: "--theme-secondary-color",
+          600: "--theme-secondary-600",
           700: "--theme-secondary-700",
         };
 
@@ -232,9 +233,10 @@ const useGomakeTheme = () => {
 
       // Default fallbacks based on degree
       const defaultMap: { [key: number]: string } = {
-        100: "#CBCBE4", // Light variant
+        100: "#D5D6E9",
         300: "#EBECFF",
         500: "#8283BE", // Medium/base variant
+        600: "#252675",
         700: "#504fa1", // Dark variant
       };
 

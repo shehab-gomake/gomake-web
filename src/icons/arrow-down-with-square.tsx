@@ -15,11 +15,11 @@ const ArrowDownWithSquare = (props: any) => {
           width="39"
           height="39"
           rx="7.5"
-          stroke="#CBCBE4"
+          stroke="var(--theme-primary-100, #CBCBE4)"
         />
         <path
           d="M17 18.5L22 23.5L27 18.5"
-          stroke="#252675"
+          stroke="var(--theme-primary-600, #252675)"
           stroke-width="1.67"
           stroke-linecap="round"
           stroke-linejoin="round"

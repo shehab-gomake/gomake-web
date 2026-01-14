@@ -7,6 +7,7 @@ import PhoneAndroidIcon from "@mui/icons-material/PhoneAndroid";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import { FONT_FAMILY } from "@/utils/font-family";
 import MailOutlineRoundedIcon from "@mui/icons-material/MailOutlineRounded";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 interface SendToCustomerSubmenuProps {
   onClickEmail: () => void;
@@ -30,7 +31,7 @@ export const SendToCustomerSubmenu: React.FC<SendToCustomerSubmenuProps> = ({
   const isRTL = direction === "rtl";
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
-
+  const { primarySecondaryBlend } = useGomakeTheme();
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     event.stopPropagation();
     setAnchorEl(event.currentTarget);
@@ -91,7 +92,7 @@ export const SendToCustomerSubmenu: React.FC<SendToCustomerSubmenuProps> = ({
         }}
         sx={{
           "& .MuiPaper-root": {
-            border: "1px solid #cbcbe4",
+            border: `1px solid ${primarySecondaryBlend(100)}`,
             borderRadius: "8px",
             minWidth: 180,
           },

@@ -8,7 +8,7 @@ import { Typography } from "@mui/material";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { WalletIcon } from "@/pages-components/quotes/widgets/icons/header-section-icons";
 import { useTranslation } from "react-i18next";
-
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 interface IProps {
   clientId: string;
 }
@@ -18,7 +18,7 @@ const ClientBalance = ({ clientId }: IProps) => {
   const direction = t("direction");
   const { callApi } = useGomakeAxios();
   const [balance, setBalance] = useState<number>();
-
+  const { primarySecondaryBlend } = useGomakeTheme();
   useEffect(() => {
     if (clientId) {
       getClientBalanceApi(
@@ -51,7 +51,7 @@ const ClientBalance = ({ clientId }: IProps) => {
                 justifyContent: "center",
                 alignItems: "center",
                 padding: "4px 12px",
-                backgroundColor: "#CBCBE4",
+                backgroundColor: primarySecondaryBlend(100),
                 color: "#252675 !important",
                 borderRadius: 16,
                 ...FONT_FAMILY.Inter(500, 14),

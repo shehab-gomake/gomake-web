@@ -16,229 +16,231 @@ import { ModalType } from "@/enums";
 import { useParameters } from "@/hooks/use-parameters";
 
 const ProfitRightSideWidget = ({
-    pricingTableConditionProperties,
-    anchorElPricingTables,
-    openPricingTables,
-    handleClickPricingTables,
-    handleClosePricingTables,
-    anchorElPricingTablesMapping,
-    openPricingTablesMapping,
-    handleClickPricingTablesMapping,
-    handleClosePricingTablesMapping,
-    selectedPricingTableItems,
-    setSelectedPricingTableItems,
-    dataForExceptions,
-    dataForDefault,
-    dataForPricing,
-    onDragEnd,
-    deleteExceptionProfit,
-    selectedPricingBy,
-    actionProfitByActionId,
-    getProfitsPricingTables,
-    typeExceptionSelected,
-    setTypeExceptionSelected,
-    selectedAdditionalProfitRow,
-    setSelectedActionProfitRow,
-    anchorElAdditionalProfitMenu,
-    openAdditionalProfitMenu,
-    handleCloseAdditionalProfitMenu,
-    handleClickAdditionalProfitMenu,
-    ProfitCurrency,
-    getAllActionProfitRowsByActionId,
-    getCalculateCaseProfits
+  pricingTableConditionProperties,
+  anchorElPricingTables,
+  openPricingTables,
+  handleClickPricingTables,
+  handleClosePricingTables,
+  anchorElPricingTablesMapping,
+  openPricingTablesMapping,
+  handleClickPricingTablesMapping,
+  handleClosePricingTablesMapping,
+  selectedPricingTableItems,
+  setSelectedPricingTableItems,
+  dataForExceptions,
+  dataForDefault,
+  dataForPricing,
+  onDragEnd,
+  deleteExceptionProfit,
+  selectedPricingBy,
+  actionProfitByActionId,
+  getProfitsPricingTables,
+  typeExceptionSelected,
+  setTypeExceptionSelected,
+  selectedAdditionalProfitRow,
+  setSelectedActionProfitRow,
+  anchorElAdditionalProfitMenu,
+  openAdditionalProfitMenu,
+  handleCloseAdditionalProfitMenu,
+  handleClickAdditionalProfitMenu,
+  ProfitCurrency,
+  getAllActionProfitRowsByActionId,
+  getCalculateCaseProfits,
 }: ProfitRightSideProps) => {
-    const { clasess } = useStyle();
-    const { t } = useTranslation();
-    const [openDeleteRowModal, setOpenDeleteRowModal] = useState<boolean>(false);
-    const [openDeleteAdditionalRowModal, setOpenDeleteAdditionalRowModal] =
-        useState<boolean>(false);
-    const [openAddNewRuleModal, setOpenAddNewRuleModal] =
-        useState<boolean>(false);
-    const [duplicateRule, setDuplicateRule] = useState<boolean>(false);
-    const onClickOpenDeleteAdditionalRowModal = () => {
-        setOpenDeleteAdditionalRowModal(true);
-    };
-    const onClickCloseDeleteAdditionalRowModal = () => {
-        setOpenDeleteAdditionalRowModal(false);
-    };
-    const onClickOpenDeleteRowModal = () => {
-        setOpenDeleteRowModal(true);
-    };
-    const onClickCloseDeleteRowModal = () => {
-        setOpenDeleteRowModal(false);
-    };
-    const onClickOpenAddNewRuleModal = () => {
-        setOpenAddNewRuleModal(true);
-    };
-    const onClickOpenDuplicateNewRuleModal = () => {
-        setOpenAddNewRuleModal(true);
-        setDuplicateRule(true);
-    };
-    const onClickCloseAddNewRuleModal = () => {
-        setOpenAddNewRuleModal(false);
-        setDuplicateRule(false);
-    };
-    const { parametersStateValue } = useParameters();
-    return (
-        <div style={clasess.mainHeaderContainer}>
-            <AccordionTable
-                title={t("products.profits.pricingListWidget.pricingTables")}
-                isDefault={true}
-                onclickOpenMenu={(e) => {
-                    handleClickPricingTables(e),
-                        setTypeExceptionSelected(ETypeException.NEWBASE);
-                }}
-            >
-                <div style={{ width: "100%" }}>
-                    <DragDropContext onDragEnd={onDragEnd}>
-                        <Droppable droppableId="droppable">
-                            {(provided) => (
-                                <div {...provided.droppableProps} ref={provided.innerRef}>
-                                    {dataForPricing?.map((item, index) =>
-                                        item.exceptionType !== ETypeException.DEFAULT ? (
-                                            <Draggable
-                                                key={item.id}
-                                                draggableId={item.id}
-                                                index={index}
-                                            >
-                                                {(provided) => (
-                                                    <div
-                                                        ref={provided.innerRef}
-                                                        {...provided.draggableProps}
-                                                        {...provided.dragHandleProps}
-                                                    >
-                                                        <PricingTableMapping
-                                                            key={item.id}
-                                                            item={item}
-                                                            handleClickPricingTablesMapping={
-                                                                handleClickPricingTablesMapping
-                                                            }
-                                                            setSelectedPricingTableItems={
-                                                                setSelectedPricingTableItems
-                                                            }
-                                                            selectedPricingTableItems={
-                                                                selectedPricingTableItems
-                                                            }
-                                                        />
-                                                    </div>
-                                                )}
-                                            </Draggable>
-                                        ) : (
-                                            <div key={item.id}>
-                                                <PricingTableMapping
-                                                    item={item}
-                                                    handleClickPricingTablesMapping={
-                                                        handleClickPricingTablesMapping
-                                                    }
-                                                    setSelectedPricingTableItems={
-                                                        setSelectedPricingTableItems
-                                                    }
-                                                    selectedPricingTableItems={selectedPricingTableItems}
-                                                />
-                                            </div>
-                                        )
-                                    )}
-                                    {provided.placeholder}
-                                </div>
-                            )}
-                        </Droppable>
-                    </DragDropContext>
-                </div>
-                {dataForDefault?.map((item) => {
-                    return (
-                        <div key={item.id} style={{ width: "100%" }}>
+  const { clasess } = useStyle();
+  const { t } = useTranslation();
+  const [openDeleteRowModal, setOpenDeleteRowModal] = useState<boolean>(false);
+  const [openDeleteAdditionalRowModal, setOpenDeleteAdditionalRowModal] =
+    useState<boolean>(false);
+  const [openAddNewRuleModal, setOpenAddNewRuleModal] =
+    useState<boolean>(false);
+  const [duplicateRule, setDuplicateRule] = useState<boolean>(false);
+  const onClickOpenDeleteAdditionalRowModal = () => {
+    setOpenDeleteAdditionalRowModal(true);
+  };
+  const onClickCloseDeleteAdditionalRowModal = () => {
+    setOpenDeleteAdditionalRowModal(false);
+  };
+  const onClickOpenDeleteRowModal = () => {
+    setOpenDeleteRowModal(true);
+  };
+  const onClickCloseDeleteRowModal = () => {
+    setOpenDeleteRowModal(false);
+  };
+  const onClickOpenAddNewRuleModal = () => {
+    setOpenAddNewRuleModal(true);
+  };
+  const onClickOpenDuplicateNewRuleModal = () => {
+    setOpenAddNewRuleModal(true);
+    setDuplicateRule(true);
+  };
+  const onClickCloseAddNewRuleModal = () => {
+    setOpenAddNewRuleModal(false);
+    setDuplicateRule(false);
+  };
+  const { parametersStateValue } = useParameters();
+  return (
+    <div style={clasess.mainHeaderContainer}>
+      <AccordionTable
+        title={t("products.profits.pricingListWidget.pricingTables")}
+        isDefault={true}
+        onclickOpenMenu={(e) => {
+          handleClickPricingTables(e),
+            setTypeExceptionSelected(ETypeException.NEWBASE);
+        }}
+      >
+        <div style={{ width: "100%" }}>
+          <DragDropContext onDragEnd={onDragEnd}>
+            <Droppable droppableId="droppable">
+              {(provided) => (
+                <div {...provided.droppableProps} ref={provided.innerRef}>
+                  {dataForPricing?.map((item, index) =>
+                    item.exceptionType !== ETypeException.DEFAULT ? (
+                      <Draggable
+                        key={item.id}
+                        draggableId={item.id}
+                        index={index}
+                      >
+                        {(provided) => (
+                          <div
+                            ref={provided.innerRef}
+                            {...provided.draggableProps}
+                            {...provided.dragHandleProps}
+                          >
                             <PricingTableMapping
-                                item={item}
-                                handleClickPricingTablesMapping={
-                                    handleClickPricingTablesMapping
-                                }
-                                setSelectedPricingTableItems={setSelectedPricingTableItems}
-                                selectedPricingTableItems={selectedPricingTableItems}
+                              key={item.id}
+                              item={item}
+                              handleClickPricingTablesMapping={
+                                handleClickPricingTablesMapping
+                              }
+                              setSelectedPricingTableItems={
+                                setSelectedPricingTableItems
+                              }
+                              selectedPricingTableItems={
+                                selectedPricingTableItems
+                              }
                             />
-                        </div>
-                    );
-                })}
-            </AccordionTable>
-            <div data-tour={'profitStep3'} style={{ width: '100%' }}>
-                <AccordionTable
-                    title={t("products.profits.pricingListWidget.additionsAndExceptions")}
-                    onclickOpenMenu={(e) => {
-                        handleClickPricingTables(e),
-                            setTypeExceptionSelected(ETypeException.ADDITIONAL);
-                    }}
-                >
-                    {dataForExceptions?.map((item) => {
-                        return (
-                            <div key={item.id} style={{ width: "100%" }}>
-                                <AdditionsAndExceptionsMapping
-                                    item={item}
-                                    handleClickPricingTablesMapping={
-                                        handleClickAdditionalProfitMenu
-                                    }
-                                    selectedAdditionalProfitRow={selectedAdditionalProfitRow}
-                                    setSelectedActionProfitRow={setSelectedActionProfitRow}
-                                    ProfitCurrency={ProfitCurrency}
-                                    getAllActionProfitRowsByActionId={getAllActionProfitRowsByActionId}
-                                    getCalculateCaseProfits={getCalculateCaseProfits}
-                                />
-                            </div>
-                        );
-                    })}
-                </AccordionTable>
-            </div>
-            <PricingTableMenu
-                handleClose={handleClosePricingTables}
-                open={openPricingTables}
-                anchorEl={anchorElPricingTables}
-                onClickOpenAddNewRuleModal={onClickOpenAddNewRuleModal}
-            />
-            <PricingTableMappingMenu
-                handleClose={handleClosePricingTablesMapping}
-                open={openPricingTablesMapping}
-                anchorEl={anchorElPricingTablesMapping}
-                selectedPricingTableItems={selectedPricingTableItems}
-                onClickOpenDeleteRowModal={onClickOpenDeleteRowModal}
-                onClickOpenAddNewRuleModal={onClickOpenAddNewRuleModal}
-                onClickOpenDuplicateNewRuleModal={onClickOpenDuplicateNewRuleModal}
-                setTypeExceptionSelected={setTypeExceptionSelected}
-            />
-            <AdditinalProfitMenu
-                handleClose={handleCloseAdditionalProfitMenu}
-                open={openAdditionalProfitMenu}
-                anchorEl={anchorElAdditionalProfitMenu}
-                onClickOpenDeleteAdditionalRowModal={
-                    onClickOpenDeleteAdditionalRowModal
-                }
-            />
-            <GoMakeDeleteModal
-                modalType={ModalType.DELETE}
-                openModal={openDeleteRowModal}
-                onClose={onClickCloseDeleteRowModal}
-                onClickDelete={() =>
-                    deleteExceptionProfit(selectedPricingTableItems?.id)
-                }
-            />
-            <GoMakeDeleteModal
-                modalType={ModalType.DELETE}
-                openModal={openDeleteAdditionalRowModal}
-                onClose={onClickCloseDeleteAdditionalRowModal}
-                onClickDelete={() =>
-                    deleteExceptionProfit(selectedAdditionalProfitRow?.id)
-                }
-            />
-            <AddRuleModal
-                openModal={openAddNewRuleModal}
-                onCloseModal={onClickCloseAddNewRuleModal}
-                typeExceptionSelected={typeExceptionSelected}
-                selectedPricingBy={selectedPricingBy}
-                actionProfitByActionId={actionProfitByActionId}
-                getProfitsPricingTables={getProfitsPricingTables}
-                selectedPricingTableItems={selectedPricingTableItems}
-                parametersStateValue={parametersStateValue}
-                pricingTableConditionProperties={pricingTableConditionProperties}
-                duplicateRule={duplicateRule}
-            />
+                          </div>
+                        )}
+                      </Draggable>
+                    ) : (
+                      <div key={item.id}>
+                        <PricingTableMapping
+                          item={item}
+                          handleClickPricingTablesMapping={
+                            handleClickPricingTablesMapping
+                          }
+                          setSelectedPricingTableItems={
+                            setSelectedPricingTableItems
+                          }
+                          selectedPricingTableItems={selectedPricingTableItems}
+                        />
+                      </div>
+                    )
+                  )}
+                  {provided.placeholder}
+                </div>
+              )}
+            </Droppable>
+          </DragDropContext>
         </div>
-    );
+        {dataForDefault?.map((item) => {
+          return (
+            <div key={item.id} style={{ width: "100%" }}>
+              <PricingTableMapping
+                item={item}
+                handleClickPricingTablesMapping={
+                  handleClickPricingTablesMapping
+                }
+                setSelectedPricingTableItems={setSelectedPricingTableItems}
+                selectedPricingTableItems={selectedPricingTableItems}
+              />
+            </div>
+          );
+        })}
+      </AccordionTable>
+      <div data-tour={"profitStep3"} style={{ width: "100%" }}>
+        <AccordionTable
+          title={t("products.profits.pricingListWidget.additionsAndExceptions")}
+          onclickOpenMenu={(e) => {
+            handleClickPricingTables(e),
+              setTypeExceptionSelected(ETypeException.ADDITIONAL);
+          }}
+        >
+          {dataForExceptions?.map((item) => {
+            return (
+              <div key={item.id} style={{ width: "100%" }}>
+                <AdditionsAndExceptionsMapping
+                  item={item}
+                  handleClickPricingTablesMapping={
+                    handleClickAdditionalProfitMenu
+                  }
+                  selectedAdditionalProfitRow={selectedAdditionalProfitRow}
+                  setSelectedActionProfitRow={setSelectedActionProfitRow}
+                  ProfitCurrency={ProfitCurrency}
+                  getAllActionProfitRowsByActionId={
+                    getAllActionProfitRowsByActionId
+                  }
+                  getCalculateCaseProfits={getCalculateCaseProfits}
+                />
+              </div>
+            );
+          })}
+        </AccordionTable>
+      </div>
+      <PricingTableMenu
+        handleClose={handleClosePricingTables}
+        open={openPricingTables}
+        anchorEl={anchorElPricingTables}
+        onClickOpenAddNewRuleModal={onClickOpenAddNewRuleModal}
+      />
+      <PricingTableMappingMenu
+        handleClose={handleClosePricingTablesMapping}
+        open={openPricingTablesMapping}
+        anchorEl={anchorElPricingTablesMapping}
+        selectedPricingTableItems={selectedPricingTableItems}
+        onClickOpenDeleteRowModal={onClickOpenDeleteRowModal}
+        onClickOpenAddNewRuleModal={onClickOpenAddNewRuleModal}
+        onClickOpenDuplicateNewRuleModal={onClickOpenDuplicateNewRuleModal}
+        setTypeExceptionSelected={setTypeExceptionSelected}
+      />
+      <AdditinalProfitMenu
+        handleClose={handleCloseAdditionalProfitMenu}
+        open={openAdditionalProfitMenu}
+        anchorEl={anchorElAdditionalProfitMenu}
+        onClickOpenDeleteAdditionalRowModal={
+          onClickOpenDeleteAdditionalRowModal
+        }
+      />
+      <GoMakeDeleteModal
+        modalType={ModalType.DELETE}
+        openModal={openDeleteRowModal}
+        onClose={onClickCloseDeleteRowModal}
+        onClickDelete={() =>
+          deleteExceptionProfit(selectedPricingTableItems?.id)
+        }
+      />
+      <GoMakeDeleteModal
+        modalType={ModalType.DELETE}
+        openModal={openDeleteAdditionalRowModal}
+        onClose={onClickCloseDeleteAdditionalRowModal}
+        onClickDelete={() =>
+          deleteExceptionProfit(selectedAdditionalProfitRow?.id)
+        }
+      />
+      <AddRuleModal
+        openModal={openAddNewRuleModal}
+        onCloseModal={onClickCloseAddNewRuleModal}
+        typeExceptionSelected={typeExceptionSelected}
+        selectedPricingBy={selectedPricingBy}
+        actionProfitByActionId={actionProfitByActionId}
+        getProfitsPricingTables={getProfitsPricingTables}
+        selectedPricingTableItems={selectedPricingTableItems}
+        parametersStateValue={parametersStateValue}
+        pricingTableConditionProperties={pricingTableConditionProperties}
+        duplicateRule={duplicateRule}
+      />
+    </div>
+  );
 };
 export { ProfitRightSideWidget };
