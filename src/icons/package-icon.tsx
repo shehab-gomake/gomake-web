@@ -1,5 +1,5 @@
 const PackageIcon = (props: any) => {
-  const color = props.color || "#8283BE";
+  const color = props.color || "var(--theme-secondary-300, #8283BE)";
   return (
     <svg
       width="18"

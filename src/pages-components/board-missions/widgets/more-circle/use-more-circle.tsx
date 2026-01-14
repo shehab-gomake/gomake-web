@@ -196,7 +196,7 @@ const useMoreCircle = ({
           {t("materials.buttons.edit")}
         </a>
       ),
-      icon: <EditIcon stroke={"#8283BE"} />,
+      icon: <EditIcon stroke={"var(--theme-secondary-300, #8283BE)"} />,
       onclick: () => navigate(handleClickEdit(mission)),
     },
     {
