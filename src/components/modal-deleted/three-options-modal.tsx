@@ -96,9 +96,11 @@ const ThreeOptionsModal = ({
                 </GomakePrimaryButton>
               </>
             )}
-            {isCancelBtn && <GomakePrimaryButton style={classes.cancelBtn} onClick={onClose}>
-              {t(cancelBtn)}
-            </GomakePrimaryButton>}
+            {isCancelBtn && (
+              <GomakePrimaryButton style={classes.cancelBtn} onClick={onClose}>
+                {t(cancelBtn)}
+              </GomakePrimaryButton>
+            )}
           </div>
           {bottomActionLabel && onBottomAction && (
             <Box style={classes.bottomActionContainer}>

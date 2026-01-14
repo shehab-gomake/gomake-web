@@ -10,7 +10,7 @@ const useStyle = ({
   navStatus: any;
   customGap?: number;
 }) => {
-  const { primaryColor, primarySecondaryBlend } = useGomakeTheme();
+  const { primaryColor, primarySecondaryBlend, theme } = useGomakeTheme();
   const { t } = useTranslation();
   const isRTL = t("direction") === "rtl";
 
@@ -176,10 +176,11 @@ const useStyle = ({
         // Icon will be replaced with actual SVG/component
       },
     };
-  }, [navStatus, primaryColor, primarySecondaryBlend, isRTL]);
+  }, [navStatus, primaryColor, primarySecondaryBlend, isRTL, theme]);
 
   return {
     classes,
+    primaryColor,
   };
 };
 

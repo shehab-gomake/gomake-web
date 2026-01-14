@@ -66,9 +66,11 @@ const useGomakeTheme = () => {
           100: "--theme-primary-light",
           200: "--theme-primary-disabled",
           300: "--theme-primary-on-dark",
+          400: "--theme-primary-lavender-light",
           500: "--theme-primary-color",
           600: "--theme-primary-dark",
           700: "--theme-primary-text",
+          800: "--theme-primary-lavender-dark",
           900: "#000",
         };
 

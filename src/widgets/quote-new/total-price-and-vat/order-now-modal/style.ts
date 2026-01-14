@@ -3,7 +3,7 @@ import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 
 const useStyle = () => {
-  const { secondColor } = useGomakeTheme();
+  const { secondColor, primaryColor, theme } = useGomakeTheme();
   const classes = useMemo(() => {
     return {
       insideStyle: {
@@ -88,14 +88,14 @@ const useStyle = () => {
       secondBtn: {
         borderRadius: "8px",
         height: "40px",
-        color: "#272977",
-        border: "1px solid  #272977",
+        color: primaryColor(500),
+        border: `1px solid ${primaryColor(500)}`,
         background: "white",
         lineHeight: "18px",
         ...FONT_FAMILY.Lexend(500, 14),
       },
     };
-  }, []);
+  }, [theme]);
   return {
     classes,
   };

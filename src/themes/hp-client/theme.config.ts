@@ -31,14 +31,23 @@ const hpClientThemeConfig: ThemeConfig = {
       /* -------------------------------------------------
        HP PRIMARY COLORS
       --------------------------------------------------*/
-      "--theme-primary-color": "#024AD8", // Blue - primary(500)
       "--theme-primary-hover": "#1A5FFF", // Lighter/more vibrant for hover
-      "--theme-primary-light": "#B2D2FF", // More bold/darker than before
       "--theme-primary-disabled": "#8db3e8", // Lighter/muted for disabled state
-      "--theme-primary-dark": "#002E8D", // Darker for disabled state
-      "--theme-primary-on-light": "#0039B8", // Darker blue for better contrast on light backgrounds
-      "--theme-primary-on-dark": "#B2D2FF",
-      "--theme-primary-text": "#002E8D", //!here we should change
+      //"--theme-primary-dark": "#002E8D", // Darker for disabled state
+      //"--theme-primary-on-light": "#0039B8", // Darker blue for better contrast on light backgrounds
+      //  "--theme-primary-on-dark": "#B2D2FF",
+      //"--theme-primary-text": "#002E8D",
+      // "--theme-primary-light": "#B2D2FF", // More bold/darker than before
+
+      "--theme-primary-100": "#E6EEFF",
+      "--theme-primary-200": "#B2D2FF", // should replace in every use of -theme-primary-on-dark or --theme-primary-light
+      "--theme-primary-300": "#7FB0FF",
+      "--theme-primary-400": "#4D8CFF",
+      "--theme-primary-color": "#024AD8", // base Blue - primary(500)
+      "--theme-primary-600": "#0039B8", // should replace in every use of --theme-primary-on-light
+      "--theme-primary-700": "#002E8D", // should replace in every use of --theme-primary-text or --theme-primary-dark
+      "--theme-primary-800": "#001F5F",
+      "--theme-primary-900": "#000A2A",
 
       /* -------------------------------------------------
        HP SECONDARY COLORS

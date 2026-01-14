@@ -31,11 +31,12 @@ const OrderNowModal = ({
   );
 
   const confirmWithoutNotificationText = t(
-    `sales.quote.${isUsedStripe
-      ? isConnectedToStripe
-        ? "continueWithoutCheckout"
-        : "continue"
-      : "confirmWithoutNotification"
+    `sales.quote.${
+      isUsedStripe
+        ? isConnectedToStripe
+          ? "continueWithoutCheckout"
+          : "continue"
+        : "confirmWithoutNotification"
     }`
   );
 
