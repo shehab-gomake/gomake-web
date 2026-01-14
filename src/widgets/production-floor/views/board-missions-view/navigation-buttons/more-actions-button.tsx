@@ -13,7 +13,6 @@ import {
   IContact,
   SelectContactComponent,
 } from "@/widgets/production-floor/views/board-missions-view/navigation-buttons/select-contact-component";
-import { getDocumentContactsApi } from "@/services/api-service/documents/documents-service-api";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { createBoardMissionsChatRoomApi } from "@/services/api-service/chat/quick-blox-chat-endpoints";
 import {
@@ -38,7 +37,7 @@ const MoreActionsButton = ({ isMobile = false }) => {
   const direction = t("direction");
   const { callApi } = useGomakeAxios();
   const { query, push } = useRouter();
-  const { alertFaultGetData, alertSuccessUpdate, alertFaultUpdate } = useSnackBar();
+  const { alertFaultGetData, alertSuccessUpdate, alertFaultUpdate, alertSuccess, alertFault } = useSnackBar();
   const { primaryColor } = useGomakeTheme();
   const [loading] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(false);
@@ -213,6 +212,34 @@ const MoreActionsButton = ({ isMobile = false }) => {
     }
   };
 
+  const handleCopyFilesPath = async () => {
+    handleClose();
+    // First check if filesPath is already in the state
+    if (boardMissions?.filesPath) {
+      try {
+        // Try modern clipboard API first
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          await navigator.clipboard.writeText(boardMissions.filesPath);
+        } else {
+          // Fallback for older browsers
+          const textArea = document.createElement("textarea");
+          textArea.value = boardMissions.filesPath;
+          textArea.style.position = "fixed";
+          textArea.style.opacity = "0";
+          document.body.appendChild(textArea);
+          textArea.select();
+          document.execCommand("copy");
+          document.body.removeChild(textArea);
+        }
+        alertSuccess(t("productionFloor.filesPathCopiedToClipboard"));
+        return;
+      } catch (error) {
+        alertFault(t("productionFloor.failedToCopyFilesPath") || "");
+        return;
+      }
+    }
+  };
+
   const buttonRef = useRef<HTMLButtonElement>(null);
 
   return (
@@ -257,6 +284,9 @@ const MoreActionsButton = ({ isMobile = false }) => {
             </MenuItem>
             <MenuItem onClick={getDocumentContacts}>
               {t("productionFloor.sendGraphicsApprove")}
+            </MenuItem>
+            <MenuItem onClick={handleCopyFilesPath}>
+              {t("productionFloor.copyFilesPath")}
             </MenuItem>
             {boardMissions?.orderId && (
               <>
