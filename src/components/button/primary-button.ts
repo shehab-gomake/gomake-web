@@ -38,7 +38,7 @@ const PrimaryButton = styled(Button)<PrimaryButtonProps>((props) => {
       backgroundColor:
         props.variant === "contained"
           ? `var(--theme-primary-hover, ${primaryHover})`
-          : `var(--theme-primary-light, ${primaryLight})`,
+          : `var(--theme-primary-100, ${primaryLight})`,
       borderColor: `var(--theme-primary-color, ${primaryColorValue})`,
       boxShadow:
         props.variant === "contained"
@@ -49,7 +49,7 @@ const PrimaryButton = styled(Button)<PrimaryButtonProps>((props) => {
     ...(props.hoverStyle &&
       props.variant === "contained" && {
         "&:hover": {
-          backgroundColor: `var(--theme-primary-light, ${primaryLight})`,
+          backgroundColor: `var(--theme-primary-100, ${primaryLight})`,
           borderColor: `var(--theme-primary-color, ${primaryColorValue})`,
           opacity: 0.8,
           color: `var(--theme-primary-color, ${primaryColorValue})`,

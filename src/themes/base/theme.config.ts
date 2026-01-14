@@ -14,8 +14,8 @@ const baseThemeConfig: ThemeConfig = {
       // Primary Colors - Your current purple/pink scheme
       "--theme-primary-color": "#2e3092",
       "--theme-primary-hover": "#6d28d9",
-      "--theme-primary-light": "#ede9fe",
-      "--theme-primary-dark": "#252675",
+      "--theme-primary-100": "#ede9fe",
+      "--theme-primary-700": "#252675",
 
       "--theme-primary-lavender-color": "#CBCBE4",
       "--theme-primary-lavender-light": "#8283be",

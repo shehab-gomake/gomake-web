@@ -3,12 +3,6 @@ import { useStyle } from "@/components/containers/side-container/style";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useRouter } from "next/router";
-import {
-  adaptPaddingLeft,
-  adaptPaddingRight,
-  convertHeightToVH,
-} from "@/utils/adapter";
-import { HEADER_HEIGHT, SCREEN_HEIGHT } from "@/utils/layout-config";
 
 const HpSideBarContainer = ({
   side,

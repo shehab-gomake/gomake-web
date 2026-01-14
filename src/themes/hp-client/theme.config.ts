@@ -31,21 +31,18 @@ const hpClientThemeConfig: ThemeConfig = {
       /* -------------------------------------------------
        HP PRIMARY COLORS
       --------------------------------------------------*/
-      "--theme-primary-hover": "#1A5FFF", // Lighter/more vibrant for hover
-      "--theme-primary-disabled": "#8db3e8", // Lighter/muted for disabled state
-      //"--theme-primary-dark": "#002E8D", // Darker for disabled state
-      //"--theme-primary-on-light": "#0039B8", // Darker blue for better contrast on light backgrounds
-      //  "--theme-primary-on-dark": "#B2D2FF",
-      //"--theme-primary-text": "#002E8D",
-      // "--theme-primary-light": "#B2D2FF", // More bold/darker than before
+      "--theme-primary-hover": "#1A5FFF",
+      "--theme-primary-disabled": "#8db3e8",
 
+      "--theme-primary-50": "#F2F6FF",
       "--theme-primary-100": "#E6EEFF",
-      "--theme-primary-200": "#B2D2FF", // should replace in every use of -theme-primary-on-dark or --theme-primary-light
+      "--theme-primary-200": "#B2D2FF",
+      "--theme-primary-200-alpha": "rgba(178, 210, 255, 0.3)",
       "--theme-primary-300": "#7FB0FF",
       "--theme-primary-400": "#4D8CFF",
       "--theme-primary-color": "#024AD8", // base Blue - primary(500)
-      "--theme-primary-600": "#0039B8", // should replace in every use of --theme-primary-on-light
-      "--theme-primary-700": "#002E8D", // should replace in every use of --theme-primary-text or --theme-primary-dark
+      "--theme-primary-600": "#0039B8",
+      "--theme-primary-700": "#002E8D",
       "--theme-primary-800": "#001F5F",
       "--theme-primary-900": "#000A2A",
 
@@ -219,7 +216,7 @@ const hpClientThemeConfig: ThemeConfig = {
       "--theme-dropdown-placeholder-size": "14px",
       "--theme-dropdown-placeholder-weight": "400",
 
-      "--theme-select-bg": "var(--theme-primary-light, #F4F3FF)",
+      "--theme-select-bg": "var(--theme-primary-100, #F4F3FF)",
       "--theme-select-text-color": "var(--theme-primary-color)",
       "--theme-select-border-radius": "var(--theme-radius-xl, 8px)",
 

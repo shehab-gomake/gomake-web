@@ -1,11 +1,13 @@
 import { useMemo } from "react";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useTranslation } from "react-i18next";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 const useStyle = () => {
   const { t } = useTranslation();
   const dir: "rtl" | "ltr" = t("direction");
-  const RTL = dir === 'rtl';
+  const RTL = dir === "rtl";
+  const { primaryColor, theme } = useGomakeTheme();
   const classes = useMemo(() => {
     return {
       mainContainer: {
@@ -16,12 +18,11 @@ const useStyle = () => {
       bodyContainer: {
         minWidth: 236,
         padding: "10px 15px",
-      }
-      ,
+      },
       menuTabStyle: {
         padding: "10px 0px",
         ...FONT_FAMILY.Lexend(600, 14),
-        color: "#8283BE",
+        color: primaryColor(400),
         cursor: "pointer",
       },
       menuRowStyle: {
@@ -30,30 +31,30 @@ const useStyle = () => {
         justifyContent: "space-between",
         alignItems: "center",
       },
-      selectedTabStyle:{
+      selectedTabStyle: {
         display: "flex",
         flexDirection: "column" as "column",
-        justify:"flex-start",
+        justify: "flex-start",
         alignItems: "flex-start",
-        gpa:5
+        gpa: 5,
       },
-      mainTabContainer:{
+      mainTabContainer: {
         display: "flex",
         flexDirection: "row" as "row",
         justifyContent: "space-between",
         alignItems: "center",
-        width:"100%",
-        marginBottom:12
+        width: "100%",
+        marginBottom: 12,
       },
-      selectedTabContainer:{
+      selectedTabContainer: {
         display: "flex",
         flexDirection: "row" as "row",
         justifyContent: "flex-start",
         alignItems: "center",
-        width:"100%",
-        gap:8,
-        ...FONT_FAMILY.Lexend(600,12),
-      }
+        width: "100%",
+        gap: 8,
+        ...FONT_FAMILY.Lexend(600, 12),
+      },
     };
   }, []);
   return {
