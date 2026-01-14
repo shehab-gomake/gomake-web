@@ -29,6 +29,7 @@ import { CheckboxCheckedIcon } from "@/icons";
 import { useEffect, useState } from "react";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { printHouseProfile } from "@/store/print-house-profile";
+import { RichTextEditor } from "./rich-text-editor";
 
 export interface IProps {
   onClickSave: (value: any) => void;
@@ -141,12 +142,12 @@ const EmailSettings = ({ onClickSave, onOpenDeleteModal }: IProps) => {
       </div>
       <div style={classes.subSection}>
         <h3 style={classes.subSectionHeader}>{t("mailingSettings.subject")}</h3>
-        <QuillEditor value={subject} setValue={setSubject} />
+        <RichTextEditor value={subject} setValue={setSubject} />
         {/*<AdvancedEmailEditor value={subject} setValue={setSubject} />*/}
       </div>
       <div style={classes.subSection}>
         <h3 style={classes.subSectionHeader}>{t("mailingSettings.body")}</h3>
-        <QuillEditor value={body} setValue={setBody} />
+        <RichTextEditor value={body} setValue={setBody} />
         {/*<AdvancedEmailEditor value={body} setValue={setBody} />*/}
       </div>
       <div style={classes.subSection}>
