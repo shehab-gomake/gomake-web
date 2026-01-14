@@ -87,7 +87,7 @@ export const CancelDocumentSubmenu: React.FC<CancelDocumentSubmenuProps> = ({
         style={menuItemStyle}
         onClick={handleMenuItemClick(cancelOptions[0].onClick)}
       >
-        <TickCancelIcon color="#8283BE" />
+        <TickCancelIcon color="var(--theme-secondary-300, #8283BE)" />
         <div style={rowTextStyle}>{cancelOptions[0].label}</div>
       </MenuItem>
     );
@@ -96,7 +96,7 @@ export const CancelDocumentSubmenu: React.FC<CancelDocumentSubmenuProps> = ({
   return (
     <>
       <MenuItem style={menuItemStyle} onClick={handleClick}>
-        <TickCancelIcon color="#8283BE" />
+        <TickCancelIcon color="var(--theme-secondary-300, #8283BE)" />
         <div style={rowTextStyle}>{t("sales.quote.cancel")}</div>
         <div
           onMouseEnter={handleClick}
