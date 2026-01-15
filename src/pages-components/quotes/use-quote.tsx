@@ -1071,6 +1071,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 onClickOpenMoveOrderToReadyModal={
                   onClickOpenMoveOrderToReadyModal
                 }
+                getAllQuotes={getAllQuotes}
               />
             ),
           };
@@ -1095,6 +1096,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 onClickOpenMoveOrderToReadyModal={
                   onClickOpenMoveOrderToReadyModal
                 }
+                getAllQuotes={getAllQuotes}
               />
             ) : (
               <div>—</div>
@@ -1635,6 +1637,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                     onClickOpenMoveOrderToReadyModal={
                       onClickOpenMoveOrderToReadyModal
                     }
+                    getAllQuotes={getAllQuotes}
                   />
                 ),
               };
@@ -1658,6 +1661,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                     onClickOpenMoveOrderToReadyModal={
                       onClickOpenMoveOrderToReadyModal
                     }
+                    getAllQuotes={getAllQuotes}
                   />
                 ) : (
                   <div>—</div>
@@ -2210,6 +2214,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                   onClickOpenMoveOrderToReadyModal={
                     onClickOpenMoveOrderToReadyModal
                   }
+                  getAllQuotes={getAllQuotes}
                 />
               ),
             };
@@ -2233,6 +2238,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                   onClickOpenMoveOrderToReadyModal={
                     onClickOpenMoveOrderToReadyModal
                   }
+                  getAllQuotes={getAllQuotes}
                 />
               ) : (
                 <div>—</div>

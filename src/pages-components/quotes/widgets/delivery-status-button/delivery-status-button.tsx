@@ -16,6 +16,7 @@ const ClickableStatusButton = ({
   documentType,
   openModalOnClick = false,
   onClickOpenMoveOrderToReadyModal,
+  getAllQuotes,
 }: ITaskCategoryLabelProps) => {
   const {
     t,
@@ -57,8 +58,7 @@ const ClickableStatusButton = ({
         style={classes.spanStyle}
       >
         {t(
-          `sales.documentDeliveries.${
-            DocumentDeliveryStatuses[document?.deliveryStatus]
+          `sales.documentDeliveries.${DocumentDeliveryStatuses[document?.deliveryStatus]
           }`
         )}
       </span>
@@ -103,6 +103,7 @@ const ClickableStatusButton = ({
         documentType={documentType}
         documentId={document?.id}
         onClickOpenMoveOrderToReadyModal={onClickOpenMoveOrderToReadyModal}
+        getAllQuotes={getAllQuotes}
       />
       <GoMakeDeleteModal
         modalType={ModalType.DELETE}

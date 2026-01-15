@@ -25,6 +25,7 @@ export interface ISignatureModalProps {
   isMobile?: boolean;
   onClickOpenMoveOrderToReadyModal: any;
   document: any;
+  getAllQuotes?: () => Promise<void>;
 }
 
 const SignatureModal = ({
@@ -42,6 +43,7 @@ const SignatureModal = ({
   isMobile = false,
   onClickOpenMoveOrderToReadyModal,
   document,
+  getAllQuotes,
 }: ISignatureModalProps) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -71,16 +73,25 @@ const SignatureModal = ({
         editableQuantities[item.itemId] || item.deliveredQuantity,
     }));
 
-    const callBack = (res) => {
+    const callBack = async (res) => {
       if (res.success) {
-        const isShowMoveToReadyModal = res?.data?.isShowMoveToReadyModal;
         setEditableQuantities({});
         setSelectedItems([]);
         setDocumentItems(res.data?.data);
         alertSuccessUpdate();
         onCloseAllModals();
+
+        // Refresh all documents after successful update
+        if (getAllQuotes) {
+          await getAllQuotes();
+        }
+
+        // Check document production status instead of response flag
+        // If productionStatus is not "Done" (true), open the move to ready modal
         setTimeout(() => {
-          isShowMoveToReadyModal && onClickOpenMoveOrderToReadyModal(document);
+          if (document?.productionStatus !== true && document?.documentType === DOCUMENT_TYPE.order) {
+            onClickOpenMoveOrderToReadyModal(document);
+          }
         }, 500);
       } else {
         alertFaultUpdate();

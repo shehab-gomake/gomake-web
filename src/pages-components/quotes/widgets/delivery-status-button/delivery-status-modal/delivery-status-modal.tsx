@@ -29,6 +29,7 @@ const UpdateDeliveryStatusModal = ({
   documentId,
   documentNumber,
   onClickOpenMoveOrderToReadyModal,
+  getAllQuotes,
 }: IUpdateDeliveryStatusModalProps) => {
   const { classes } = useStyle();
   const isMobile = useIsMobile();
@@ -196,6 +197,7 @@ const UpdateDeliveryStatusModal = ({
         deliveryState={deliveryState}
         isMobile={isMobile}
         onClickOpenMoveOrderToReadyModal={onClickOpenMoveOrderToReadyModal}
+        getAllQuotes={getAllQuotes}
       />
     </GoMakeModal>
   );

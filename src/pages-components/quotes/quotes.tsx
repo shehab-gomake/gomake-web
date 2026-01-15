@@ -1079,6 +1079,7 @@ const QuotesListPageWidget = ({
         documentId={deliveryOrderId?.toString()}
         documentNumber={deliveryOrderNumber?.toString()}
         onClickOpenMoveOrderToReadyModal={onClickOpenMoveOrderToReadyModal}
+        getAllQuotes={getAllQuotes}
       />
       <GoMakeDeleteModal
         modalType={ModalType.DELETE}
