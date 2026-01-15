@@ -752,10 +752,9 @@ const useAddProduct = ({ classes }) => {
         }
         if (allMaterialsCopy) {
           materialsOptions = [];
-          if(allMaterialsCopy && allMaterialsCopy.data){
+          if (allMaterialsCopy && allMaterialsCopy.data) {
             materialsOptions.push(...allMaterialsCopy.data);
           }
-          
         }
       } else {
         allMaterialsCopy = allMaterialsCopy?.find((material) =>
@@ -1059,7 +1058,7 @@ const useAddProduct = ({ classes }) => {
               }}
             >
               <SettingsIcon
-                stroke={"rgba(237, 2, 140, 1)"}
+                stroke={"var(--theme-secondary-color, #ED028C)"}
                 width={24}
                 height={24}
               />
@@ -1216,10 +1215,9 @@ const useAddProduct = ({ classes }) => {
           }
           if (allMaterialsCopy) {
             options = [];
-            if(allMaterialsCopy && allMaterialsCopy.data){
+            if (allMaterialsCopy && allMaterialsCopy.data) {
               options.push(...allMaterialsCopy.data);
             }
-            
           }
         } else {
           allMaterialsCopy = allMaterialsCopy?.find((material) =>

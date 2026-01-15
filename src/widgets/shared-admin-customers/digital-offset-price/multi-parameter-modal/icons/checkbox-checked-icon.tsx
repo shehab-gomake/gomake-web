@@ -1,4 +1,6 @@
-const CheckboxCheckedIcon = () => {
+const CheckboxCheckedIcon = (props: any) => {
+  const { stroke } = props;
+  const color = stroke || `var(--theme-secondary-color, #ED028C)`;
   return (
     <svg
       width="20"
@@ -10,12 +12,12 @@ const CheckboxCheckedIcon = () => {
       <rect x="0.5" y="0.5" width="19" height="19" rx="5.5" fill="#F2F6F9" />
       <path
         d="M14.6668 6.5L8.25016 12.9167L5.3335 10"
-        stroke="#ED028C"
+        stroke={color}
         stroke-width="2"
         stroke-linecap="round"
         stroke-linejoin="round"
       />
-      <rect x="0.5" y="0.5" width="19" height="19" rx="5.5" stroke="#ED028C" />
+      <rect x="0.5" y="0.5" width="19" height="19" rx="5.5" stroke={color} />
     </svg>
   );
 };

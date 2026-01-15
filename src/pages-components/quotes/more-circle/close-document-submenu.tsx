@@ -7,6 +7,7 @@ import { FONT_FAMILY } from "@/utils/font-family";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { TickIcon } from "@/icons";
 import Link from "next/link";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 interface CloseOption {
   label: string;
@@ -59,6 +60,7 @@ export const CloseDocumentSubmenu: React.FC<CloseDocumentSubmenuProps> = ({
   const isRTL = direction === "rtl";
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
+  const { primarySecondaryBlend } = useGomakeTheme();
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     event.stopPropagation();
@@ -129,9 +131,10 @@ export const CloseDocumentSubmenu: React.FC<CloseDocumentSubmenuProps> = ({
             onClick: isOrderLocked ? undefined : onCloseAsDeliveryNote,
             disabled: isOrderLocked,
             isLink: shouldBeLink && !isOrderLocked,
-            href: shouldBeLink && !isOrderLocked
-              ? `/deliveryNote?isNewCreation=true&orderId=${document?.id}`
-              : undefined,
+            href:
+              shouldBeLink && !isOrderLocked
+                ? `/deliveryNote?isNewCreation=true&orderId=${document?.id}`
+                : undefined,
           });
         }
 
@@ -144,9 +147,10 @@ export const CloseDocumentSubmenu: React.FC<CloseDocumentSubmenuProps> = ({
             onClick: isOrderLocked ? undefined : onCloseAsProformaInvoice,
             disabled: isOrderLocked,
             isLink: shouldBeLink && !isOrderLocked,
-            href: shouldBeLink && !isOrderLocked
-              ? `/proformaInvoice?isNewCreation=true&orderId=${document?.id}`
-              : undefined,
+            href:
+              shouldBeLink && !isOrderLocked
+                ? `/proformaInvoice?isNewCreation=true&orderId=${document?.id}`
+                : undefined,
           });
         }
 
@@ -159,9 +163,10 @@ export const CloseDocumentSubmenu: React.FC<CloseDocumentSubmenuProps> = ({
             onClick: isOrderLocked ? undefined : onCloseAsInvoice,
             disabled: isOrderLocked,
             isLink: shouldBeLink && !isOrderLocked,
-            href: shouldBeLink && !isOrderLocked
-              ? `/invoice?isNewCreation=true&orderId=${document?.id}`
-              : undefined,
+            href:
+              shouldBeLink && !isOrderLocked
+                ? `/invoice?isNewCreation=true&orderId=${document?.id}`
+                : undefined,
           });
         }
         break;
@@ -346,12 +351,12 @@ export const CloseDocumentSubmenu: React.FC<CloseDocumentSubmenuProps> = ({
               gap: 8,
             }}
           >
-            <TickIcon color="#8283BE" />
+            <TickIcon color={primarySecondaryBlend(300)} />
             <span style={rowTextStyle}>{option.label}</span>
           </Link>
         ) : (
           <>
-            <TickIcon color="#8283BE" />
+            <TickIcon color={primarySecondaryBlend(300)} />
             <div style={rowTextStyle}>{option.label}</div>
           </>
         )}
@@ -361,11 +366,8 @@ export const CloseDocumentSubmenu: React.FC<CloseDocumentSubmenuProps> = ({
 
   return (
     <>
-      <MenuItem 
-        style={menuItemStyle}
-        onClick={handleClick}
-      >
-        <TickIcon color="#8283BE" />
+      <MenuItem style={menuItemStyle} onClick={handleClick}>
+        <TickIcon color={primarySecondaryBlend(300)} />
         <div style={rowTextStyle}>{t("sales.quote.closeDocument")}</div>
         <div
           onMouseEnter={handleClick}
@@ -399,7 +401,7 @@ export const CloseDocumentSubmenu: React.FC<CloseDocumentSubmenuProps> = ({
         }}
         sx={{
           "& .MuiPaper-root": {
-            border: "1px solid #cbcbe4",
+            border: `1px solid ${primarySecondaryBlend(100)}`,
             borderRadius: "8px",
             minWidth: "auto",
             width: "max-content",
@@ -410,9 +412,10 @@ export const CloseDocumentSubmenu: React.FC<CloseDocumentSubmenuProps> = ({
         }}
       >
         {closeOptions.map((option, index) => {
-          const handleClick = option.disabled || option.isLink
-            ? undefined
-            : handleMenuItemClick(option.onClick, option.isLink);
+          const handleClick =
+            option.disabled || option.isLink
+              ? undefined
+              : handleMenuItemClick(option.onClick, option.isLink);
           return (
             <MenuItem
               key={`${option.label}-${index}`}

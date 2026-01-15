@@ -103,7 +103,6 @@ const useStyle = () => {
         padding: "4px",
         height: "fit-content",
       },
-
       selectInputs: {
         outline: "none",
         ...FONT_FAMILY.Lexend(500, 14),
@@ -112,6 +111,41 @@ const useStyle = () => {
         padding: "4px",
         width: "100%",
         height: "33px",
+        "& .MuiOutlinedInput-notchedOutline": {
+          border: `none !important`,
+        },
+        "& .MuiOutlinedInput-root": {
+          "& fieldset": {
+            border: `none !important`,
+          },
+          "& .MuiOutlinedInput-notchedOutline": {
+            border: `none !important`,
+          },
+          "&.Mui-focused fieldset": {
+            border: `none !important`,
+          },
+          "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+            border: `none !important`,
+          },
+          "&:hover fieldset": {
+            border: `none !important`,
+          },
+          "&:hover .MuiOutlinedInput-notchedOutline": {
+            border: `none !important`,
+          },
+        },
+        "&.Mui-focused fieldset": {
+          border: `none !important`,
+        },
+        "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+          border: `none !important`,
+        },
+        "&:hover fieldset": {
+          border: `none !important`,
+        },
+        "&:hover .MuiOutlinedInput-notchedOutline": {
+          border: `none !important`,
+        },
       },
       creditButtons: {
         ...FONT_FAMILY.Lexend(500, 14),
@@ -124,6 +158,7 @@ const useStyle = () => {
   }, [theme]);
   return {
     classes,
+    primaryColor,
   };
 };
 export { useStyle };

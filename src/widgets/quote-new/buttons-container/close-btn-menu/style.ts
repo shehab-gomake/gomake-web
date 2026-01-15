@@ -1,8 +1,12 @@
 import { useMemo } from "react";
 import { FONT_FAMILY } from "@/utils/font-family";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 const useStyle = () => {
-  const clasess = useMemo(() => {
+  const { primarySecondaryBlend, theme, primaryColor, secondColor } =
+    useGomakeTheme();
+
+  const classes = useMemo(() => {
     return {
       writeCommentContainer: {
         display: "flex",
@@ -33,10 +37,10 @@ const useStyle = () => {
         borderRadius: 8,
       },
       btnSecondContainer: {
-        border: "1px solid #CBCBE4",
+        border: `1px solid ${primarySecondaryBlend(100)}`,
         boxShadow: "0px 1px 2px 0px #1018280D",
-        backgroundColor: "#CBCBE4",
-        color: "#252675",
+        backgroundColor: primarySecondaryBlend(100),
+        color: primaryColor(600),
         ...FONT_FAMILY.Inter(600, 14),
         height: 40,
         width: "fit-content",
@@ -44,9 +48,9 @@ const useStyle = () => {
         borderRadius: 8,
       },
       btnThirdContainer: {
-        border: "1px solid #2E3092",
+        border: `1px solid ${primaryColor(500)}`,
         boxShadow: "0px 1px 2px 0px #1018280D",
-        backgroundColor: "#2E3092",
+        backgroundColor: primaryColor(500),
         color: "#FFFFFF",
         ...FONT_FAMILY.Inter(400, 14),
         height: 40,
@@ -55,9 +59,9 @@ const useStyle = () => {
         borderRadius: 8,
       },
       btnOrderNowContainer: {
-        border: "1px solid #F135A3",
+        border: `1px solid ${secondColor(400)}`,
         boxShadow: "0px 1px 2px 0px #1018280D",
-        backgroundColor: "#F135A3",
+        backgroundColor: secondColor(400),
         color: "#FFFFFF",
         ...FONT_FAMILY.Inter(400, 14),
         height: 40,
@@ -66,9 +70,9 @@ const useStyle = () => {
         borderRadius: 8,
       },
     };
-  }, []);
+  }, [theme]);
   return {
-    clasess,
+    classes,
   };
 };
 export { useStyle };

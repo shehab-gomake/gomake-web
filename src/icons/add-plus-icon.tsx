@@ -2,7 +2,7 @@ import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 const AddPlusIcon = (props: any) => {
   const { primarySecondaryBlend } = useGomakeTheme();
-  const stroke = props.stroke || primarySecondaryBlend(500);
+  const stroke = props.stroke || primarySecondaryBlend(300);
   return (
     <svg
       width="16"

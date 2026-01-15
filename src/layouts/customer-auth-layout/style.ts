@@ -43,7 +43,7 @@ const useStyle = ({
       logoContainer: {
         display: "flex",
         marginTop: navStatus?.isClosed ? 20 : 0,
-        backgroundColor: primarySecondaryBlend(700),
+        backgroundColor: primarySecondaryBlend(400),
         borderRadius: 8,
         padding: 10,
       },

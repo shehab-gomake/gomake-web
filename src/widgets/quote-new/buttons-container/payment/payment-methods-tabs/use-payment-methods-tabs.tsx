@@ -43,11 +43,13 @@ import { loadingWithShadowState, quoteItemState } from "@/store";
 import { useRouter } from "next/router";
 import { createAccountCodeApi } from "@/services/api-service/generic-doc/deposits-api";
 import { useModal } from "@/hooks/use-modal";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 const usePaymentMethodsTabs = () => {
   const { t } = useTranslation();
   const dir: "rtl" | "ltr" = t("direction");
   const { callApi } = useGomakeAxios();
+  const { primarySecondaryBlend } = useGomakeTheme();
   const router = useRouter();
   const isOutgoingPayments = router.query.isOutgoingPayments === "true";
   const { alertSuccessUpdate, alertFault, alertFaultAdded } = useSnackBar();
@@ -156,21 +158,21 @@ const usePaymentMethodsTabs = () => {
       const lastRow = data.length > 0 ? data[data.length - 1] : null;
       const newRow = lastRow
         ? {
-          ...lastRow,
-          checkNumber: Number(checkNumberBase) + data.length,
-          // Auto-fill bank details if not already set
-          bankCode: lastRow.bankCode || bankName,
-          branch: lastRow.branch || branch,
-          accountNum: lastRow.accountNum || accountNum,
-        }
+            ...lastRow,
+            checkNumber: Number(checkNumberBase) + data.length,
+            // Auto-fill bank details if not already set
+            bankCode: lastRow.bankCode || bankName,
+            branch: lastRow.branch || branch,
+            accountNum: lastRow.accountNum || accountNum,
+          }
         : {
-          dueDate: new Date().toISOString().split("T")[0],
-          checkNumber: Number(checkNumberBase),
-          bankCode: bankName,
-          branch: branch,
-          accountNum: accountNum,
-          checkSum: 0,
-        };
+            dueDate: new Date().toISOString().split("T")[0],
+            checkNumber: Number(checkNumberBase),
+            bankCode: bankName,
+            branch: branch,
+            accountNum: accountNum,
+            checkSum: 0,
+          };
       setData((prevData) => [...prevData, newRow]);
     } else {
       // Regular receipts: don't auto-fill bank details
@@ -286,7 +288,7 @@ const usePaymentMethodsTabs = () => {
     t("payment.branch"),
     t("payment.account"),
     t("payment.sum"),
-    <IconButton onClick={addRow} style={{ color: "#5859A8" }}>
+    <IconButton onClick={addRow} style={{ color: primarySecondaryBlend(400) }}>
       <AddCircleOutlineIcon />
     </IconButton>,
   ];
@@ -360,7 +362,7 @@ const usePaymentMethodsTabs = () => {
       value={row.checkNumber}
       placeholder={t("payment.checkNumber")}
       onChange={(e) => handleInputChange(index, "checkNumber", e.target.value)}
-    //  readOnly={!!isOutgoingPayments && quoteItemValue?.checksSerialNumber}
+      //  readOnly={!!isOutgoingPayments && quoteItemValue?.checksSerialNumber}
     />,
     <input
       style={{ width: "100px" }}
@@ -405,13 +407,13 @@ const usePaymentMethodsTabs = () => {
     setTotalCash(value);
     setTotalPayment(
       Number(value) +
-      Number(totalBit) +
-      Number(totalTransfer) +
-      Number(totalChecks) +
-      (isOutgoingPayments
-        ? Number(totalSupplierCreditCard)
-        : Number(totalCreditCard)) +
-      Number(taxDeduction)
+        Number(totalBit) +
+        Number(totalTransfer) +
+        Number(totalChecks) +
+        (isOutgoingPayments
+          ? Number(totalSupplierCreditCard)
+          : Number(totalCreditCard)) +
+        Number(taxDeduction)
     );
   };
 
@@ -423,10 +425,10 @@ const usePaymentMethodsTabs = () => {
     resetTransferTabState();
     setTotalPayment(
       Number(value) +
-      Number(totalCash) +
-      Number(totalChecks) +
-      Number(totalCreditCard) +
-      Number(taxDeduction)
+        Number(totalCash) +
+        Number(totalChecks) +
+        Number(totalCreditCard) +
+        Number(taxDeduction)
     );
   };
 
@@ -439,12 +441,12 @@ const usePaymentMethodsTabs = () => {
     resetTotalBit();
     setTotalPayment(
       Number(value) +
-      Number(totalCash) +
-      Number(totalChecks) +
-      (isOutgoingPayments
-        ? Number(totalSupplierCreditCard)
-        : Number(totalCreditCard)) +
-      Number(taxDeduction)
+        Number(totalCash) +
+        Number(totalChecks) +
+        (isOutgoingPayments
+          ? Number(totalSupplierCreditCard)
+          : Number(totalCreditCard)) +
+        Number(taxDeduction)
     );
   };
 
@@ -455,10 +457,10 @@ const usePaymentMethodsTabs = () => {
     setTotalSupplierCreditCard(value);
     setTotalPayment(
       Number(value) +
-      Number(totalCash) +
-      Number(totalChecks) +
-      Number(totalTransfer) +
-      Number(taxDeduction)
+        Number(totalCash) +
+        Number(totalChecks) +
+        Number(totalTransfer) +
+        Number(taxDeduction)
     );
   };
 
@@ -469,11 +471,11 @@ const usePaymentMethodsTabs = () => {
     setTotalTotalCreditCard(Number(value));
     setTotalPayment(
       Number(value) +
-      Number(totalCash) +
-      Number(totalBit) +
-      Number(totalChecks) +
-      Number(totalTransfer) +
-      Number(taxDeduction)
+        Number(totalCash) +
+        Number(totalBit) +
+        Number(totalChecks) +
+        Number(totalTransfer) +
+        Number(taxDeduction)
     );
   };
 
@@ -485,13 +487,13 @@ const usePaymentMethodsTabs = () => {
     setTotalChecks(newTotalChecks);
     setTotalPayment(
       Number(newTotalChecks) +
-      Number(totalCash) +
-      Number(totalBit) +
-      Number(totalTransfer) +
-      (isOutgoingPayments
-        ? Number(totalSupplierCreditCard)
-        : Number(totalCreditCard)) +
-      Number(taxDeduction)
+        Number(totalCash) +
+        Number(totalBit) +
+        Number(totalTransfer) +
+        (isOutgoingPayments
+          ? Number(totalSupplierCreditCard)
+          : Number(totalCreditCard)) +
+        Number(taxDeduction)
     );
   }, [
     data,

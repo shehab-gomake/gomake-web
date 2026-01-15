@@ -120,8 +120,8 @@ const useStyle = ({ modalType }: { modalType: ModalType }) => {
         lineHeight: "18px",
         ...FONT_FAMILY.Lexend(600, 16),
         backgroundColor: "#FFF",
-        color: "#272977",
-        border: `1px solid #7375CD`,
+        color: primaryColor(500),
+        border: `1px solid ${primaryColor(500)}`,
       },
       bottomActionContainer: {
         width: "100%",

@@ -6,9 +6,10 @@ import { MessageType } from "@/pages-components/quote-new/use-quote";
 import {
   GOMAKE_AI_FEATURE_ID,
   printHouseHasCustomizeAIFeature,
-  printHouseHasFrontDeskFeature
+  printHouseHasFrontDeskFeature,
 } from "@/store/print-house-profile";
-import {useRecoilValue} from "recoil";
+import { useRecoilValue } from "recoil";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 const SendBtnMenu = ({
   handleClose,
@@ -20,12 +21,12 @@ const SendBtnMenu = ({
   documentType,
   onClickSendReceiptToClient,
   openReceiptModal,
-  onClickSendEmailViaComposer
+  onClickSendEmailViaComposer,
 }) => {
   const { t } = useTranslation();
   const isReceipt = documentType === DOCUMENT_TYPE.receipt;
   const hasFrontDeskFeature = useRecoilValue(printHouseHasFrontDeskFeature);
-
+  const { primarySecondaryBlend } = useGomakeTheme();
   return (
     <GoMakeMenu
       handleClose={handleClose}
@@ -34,7 +35,7 @@ const SendBtnMenu = ({
       style={{ marginTop: -45 }}
       sx={{
         "& .MuiPaper-root": {
-          border: "1px solid #cbcbe4",
+          border: `1px solid ${primarySecondaryBlend(100)}`,
           borderRadius: "8px",
         },
       }}
@@ -48,9 +49,9 @@ const SendBtnMenu = ({
                 handleClose();
               });
             } else {
-              if(hasFrontDeskFeature){
+              if (hasFrontDeskFeature) {
                 onClickSendEmailViaComposer?.();
-              }else {
+              } else {
                 onClickSendQuoteToClient(MessageType.Email);
               }
             }

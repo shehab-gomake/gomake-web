@@ -48,7 +48,7 @@ const DebtRowMappingWidget = ({ item, index, headerHeight, parentIndex }) => {
         style={{
           width: columnWidths[1],
           ...classes.cellContainerStyle,
-          color: "#5859A8",
+          color: primarySecondaryBlend(400),
         }}
       >
         {item?.docDate ? formatISODateTime(item?.docDate).split(" ")[0] : "-"}
@@ -66,13 +66,13 @@ const DebtRowMappingWidget = ({ item, index, headerHeight, parentIndex }) => {
           variant="text"
           sx={{
             ...classes.documentNum,
-            color: primarySecondaryBlend(500),
+            color: primarySecondaryBlend(300),
             textDecoration: "underline",
-            textDecorationColor: primarySecondaryBlend(500),
+            textDecorationColor: primarySecondaryBlend(300),
             "&:hover": {
               textDecoration: "underline",
               backgroundColor: "rgba(88, 89, 168, 0.08)",
-              textDecorationColor: primarySecondaryBlend(500),
+              textDecorationColor: primarySecondaryBlend(300),
             },
           }}
         >

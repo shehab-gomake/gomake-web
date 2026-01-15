@@ -42,7 +42,8 @@ const InlineAddItemRow: React.FC<InlineAddItemRowProps> = ({
   getQuote,
 }) => {
   const { t } = useTranslation();
-  const { classes } = useStyle({ headerHeight });
+  const { classes, primarySecondaryBlend } = useStyle({ headerHeight });
+
   const [isAdding, setIsAdding] = useState(false);
   const { CheckPreferenceValue } = usePrintHousePreferences();
 
@@ -96,7 +97,7 @@ const InlineAddItemRow: React.FC<InlineAddItemRowProps> = ({
         <IconButton
           onClick={handleShowInlineAddRow}
           style={{
-            color: "#2E3092",
+            color: primarySecondaryBlend(300),
             borderRadius: "8px",
             padding: "8px 16px",
             fontSize: "14px",

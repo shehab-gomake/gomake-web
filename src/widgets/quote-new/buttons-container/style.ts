@@ -1,7 +1,10 @@
 import { useMemo } from "react";
 import { FONT_FAMILY } from "@/utils/font-family";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 const useStyle = () => {
+  const { primaryColor, secondColor, primarySecondaryBlend, theme } =
+    useGomakeTheme();
   const classes = useMemo(() => {
     return {
       writeCommentContainer: {
@@ -11,7 +14,7 @@ const useStyle = () => {
         alignItems: "center",
         width: "100%",
         padding: "14px 29px",
-        background: "#F4F1F6",
+        background: "var(--theme-bg-secondary,#F4F1F6)",
       },
       btnsContainer: {
         display: "flex",
@@ -30,50 +33,55 @@ const useStyle = () => {
         height: 36,
         width: "fit-content",
         padding: "8px 14px",
-        borderRadius: 8,
+        borderRadius: "var(--theme-radius-md, 8px)",
       },
       btnSecondContainer: {
-        border: "1px solid #CBCBE4",
+        border: `1px solid ${primarySecondaryBlend(100)}`,
         boxShadow: "0px 1px 2px 0px #1018280D",
-        backgroundColor: "#CBCBE4",
-        color: "#252675",
+        backgroundColor: primarySecondaryBlend(100),
+        color: primarySecondaryBlend(400),
         ...FONT_FAMILY.Inter(600, 14),
-        height: 40,
+        height: "var(--theme-button-height, 40px)",
         width: "fit-content",
         padding: "10px",
-        borderRadius: 8,
+        borderRadius: "var(--theme-radius-md, 8px)",
       },
       btnThirdContainer: {
-        border: "1px solid #2E3092",
+        // border: `1px solid var(--theme-accent-color, ${primaryColor(500)})`,
+        // backgroundColor: `var(--theme-accent-on-dark, ${primaryColor(500)})`,
+        border: `1px solid ${primaryColor(500)})`,
+        backgroundColor: primaryColor(500),
         boxShadow: "0px 1px 2px 0px #1018280D",
-        backgroundColor: "#2E3092",
         color: "#FFFFFF",
         ...FONT_FAMILY.Inter(400, 14),
-        height: 40,
+        height: "var(--theme-button-height, 40px)",
         width: "fit-content",
         padding: "10px",
-        borderRadius: 8,
+        borderRadius: "var(--theme-radius-md, 8px)",
       },
       btnSaveDraft: {
+        // border: `1px solid var(--theme-accent-color, ${primaryColor(500)})`,
+        // backgroundColor: `var(--theme-accent-on-dark, ${primaryColor(500)})`,
+        border: `1px solid ${primaryColor(500)})`,
+        backgroundColor: primaryColor(500),
         boxShadow: "0px 1px 2px 0px #1018280D",
-        backgroundColor: "#F135A3",
         color: "#FFFFFF",
         ...FONT_FAMILY.Inter(400, 14),
-        height: 40,
+        height: "var(--theme-button-height, 40px)",
         width: "fit-content",
         padding: "10px",
-        borderRadius: 8,
+        borderRadius: "var(--theme-radius-md, 8px)",
       },
       btnOrderNowContainer: {
-        border: "1px solid #F135A3",
+        border: `1px solid ${secondColor(500)})`,
         boxShadow: "0px 1px 2px 0px #1018280D",
-        backgroundColor: "#F135A3",
+        backgroundColor: secondColor(500),
         color: "#FFFFFF",
         ...FONT_FAMILY.Inter(400, 14),
-        height: 40,
+        height: "var(--theme-button-height, 40px)",
         width: "fit-content",
         padding: "10px",
-        borderRadius: 8,
+        borderRadius: "var(--theme-radius-md, 8px)",
       },
       insideStyle: {
         width: "800px",
@@ -98,9 +106,6 @@ const useStyle = () => {
         flexDirection: "column" as "column",
         justifyContent: "space-between",
       },
-      borderRadius: {
-        borderRadius: "4px",
-      },
       boxStyle: {
         display: "flex",
         flexDirection: "column" as "column",
@@ -124,17 +129,18 @@ const useStyle = () => {
       },
       btnStyle: {
         ...FONT_FAMILY.Inter(600, 14),
-        height: 40,
+        height: "var(--theme-button-height, 40px)",
         width: "fit-content",
         padding: "8px 14px",
-        borderRadius: 8,
+        borderRadius: "var(--theme-radius-md, 8px)",
         lineHeight: "14px",
       },
     };
-  }, []);
+  }, [theme]);
 
   return {
     classes,
+    primarySecondaryBlend,
   };
 };
 

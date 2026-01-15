@@ -16,6 +16,7 @@ import { quoteItemState } from "@/store";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { useRouter } from "next/router";
 import { v4 as uuidv4 } from "uuid";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 const AddContactNewWidget = ({
   clientContactsValue,
@@ -45,8 +46,8 @@ const AddContactNewWidget = ({
     useRecoilState<any>(quoteItemState);
   const router = useRouter();
   const isNewCreation = router.query.isNewCreation === "true";
-
   const { callApi } = useGomakeAxios();
+  const { primarySecondaryBlend } = useGomakeTheme();
   const { alertSuccessAdded, alertFaultAdded } = useSnackBar();
 
   const addNewContactNew = async (contactID) => {
@@ -182,7 +183,9 @@ const AddContactNewWidget = ({
               style={{
                 ...props.style,
                 backgroundColor:
-                  option.id === "new" ? "#2E3092" : "transparent",
+                  option.id === "new"
+                    ? primarySecondaryBlend(300)
+                    : "transparent",
                 color: option.id === "new" ? "white" : "inherit",
                 fontWeight: option.id === "new" ? "500" : "normal",
                 minWidth: 200,

@@ -1,6 +1,7 @@
 import { GoMakeMenu } from "@/components";
 import { MenuItem } from "@mui/material";
 import { useTranslation } from "react-i18next";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 interface CancelBtnMenuProps {
   handleClose: () => void;
@@ -23,6 +24,7 @@ const CancelBtnMenu = ({
   onClickOpenModal,
 }: CancelBtnMenuProps) => {
   const { t } = useTranslation();
+  const { primarySecondaryBlend } = useGomakeTheme();
 
   return (
     <GoMakeMenu
@@ -31,10 +33,10 @@ const CancelBtnMenu = ({
       anchorEl={anchorEl}
       style={{ marginTop: -45 }}
       sx={{
-        '& .MuiPaper-root': {
-          border: '1px solid #cbcbe4',
-          borderRadius: "8px"
-        }
+        "& .MuiPaper-root": {
+          border: `1px solid ${primarySecondaryBlend(100)}`,
+          borderRadius: "8px",
+        },
       }}
     >
       <MenuItem

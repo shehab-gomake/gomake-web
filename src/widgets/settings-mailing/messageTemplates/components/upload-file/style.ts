@@ -8,7 +8,7 @@ const useStyle = (onUpload: boolean) => {
     return {
       pdfLabelStyle: {
         ...FONT_FAMILY.Lexend(400, 12),
-        color: primarySecondaryBlend(500),
+        color: primarySecondaryBlend(300),
         lineHeight: "15px",
       },
       pdfCellStyle: {
@@ -19,11 +19,11 @@ const useStyle = (onUpload: boolean) => {
       },
       labelStyle: {
         ...FONT_FAMILY.Lexend(400, 12),
-        color: primarySecondaryBlend(500),
+        color: primarySecondaryBlend(300),
         overflow: "hidden",
       },
       IconButtonStyle: {
-        background: primarySecondaryBlend(300),
+        background: primarySecondaryBlend(50),
         width: "24px",
         height: "24px",
       },

@@ -70,7 +70,7 @@ const useStyle = () => {
       },
       spanAddNewRule: {
         ...FONT_FAMILY.Lexend(500, 12),
-        color: primarySecondaryBlend(500),
+        color: primarySecondaryBlend(300),
         fontSize: 15,
         marginLeft: 10,
       },

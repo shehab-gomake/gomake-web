@@ -5,108 +5,115 @@ import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
 const useStyle = () => {
-  const {t}=useTranslation()
-  const { primaryColor,secondColor } = useGomakeTheme();
+  const { t } = useTranslation();
+  const { primaryColor, secondColor, grayColor, theme, primarySecondaryBlend } =
+    useGomakeTheme();
   const classes = useMemo(() => {
     return {
       insideStyle: {
         width: "50%",
         borderRadius: 5,
         height: "auto",
-        maxHeight:670,
+        maxHeight: 670,
         overflow: "hidden",
-        background:"#F6F6F6",
+        background: "#F6F6F6",
+        padding: "28px 16px 20px 16px",
       },
-      mainContainer:{
+      mainContainer: {
         display: "flex",
         flexDirection: "column" as "column",
         justifyContent: "space-between",
         alignItems: "flex-start",
         width: "100%",
-        marginTop:20
+        marginTop: 20,
       },
-      headerContainer:{ width: "100%", height: 80 },
-      filtersContainer:{
+      headerContainer: { width: "100%", height: 80 },
+      filtersContainer: {
         display: "flex",
         flexDirection: "row" as "row",
         // justifyContent: "space-between",
-        gap:"10px",
+        gap: "10px",
         alignItems: "flex-start",
         width: "100%",
       },
-      searchContainer:{
+      searchContainer: {
         display: "flex",
         flexDirection: "column" as "column",
         justifyContent: "flex-start",
         alignItems: "flex-start",
-        gap:10
+        gap: 10,
       },
-      searchLabelStyle:{
-        ...FONT_FAMILY.Lexend(500,14),
+      searchLabelStyle: {
+        ...FONT_FAMILY.Lexend(500, 14),
         ...adaptPaddingRight(t("direction"), 8),
       },
-      switchiesContainer:{
+      switchiesContainer: {
         display: "flex",
         flexDirection: "row" as "row",
         justifyContent: "flex-start",
-        alignItems:"center",
-        gap:10
+        alignItems: "center",
+        gap: 10,
       },
-      switchLabelContainer:{
+      switchLabelContainer: {
         display: "flex",
         flexDirection: "row" as "row",
         justifyContent: "flex-start",
-        alignItems:"center",
-        gap:5
+        alignItems: "center",
+        gap: 5,
       },
-      labelSwitchStyle:{
-        ...FONT_FAMILY.Lexend(400,12),
-        color:primaryColor(900)
+      labelSwitchStyle: {
+        ...FONT_FAMILY.Lexend(400, 12),
+        color: primaryColor(900),
       },
-      footerModalContainer:{ 
-      display: "flex",
-      flexDirection: "row" as "row",
-      justifyContent:"space-between",
-      alignItems:"center",
-      height: 50, 
-      width: "100%",
-      marginTop:10
-      },
-      bodyContainer: { width: "100%", height: "auto", maxHeight: 410, overflow: "scroll" },
-      selectAllContainer:{
+      footerModalContainer: {
         display: "flex",
         flexDirection: "row" as "row",
-        justifyContent:"flex-end",
-        alignItems:"center",
+        justifyContent: "space-between",
+        alignItems: "center",
+        height: 50,
+        width: "100%",
+        marginTop: 10,
       },
-      selectAllDocumentsContainer:{
+      bodyContainer: {
+        width: "100%",
+        height: "auto",
+        maxHeight: 410,
+        overflow: "scroll",
+      },
+      selectAllContainer: {
         display: "flex",
         flexDirection: "row" as "row",
-        justifyContent:"flex-start",
-        alignItems:"center",
+        justifyContent: "flex-end",
+        alignItems: "center",
       },
-      selectAllStyle:{
-        ...FONT_FAMILY.Lexend(400,12),
+      selectAllDocumentsContainer: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "flex-start",
+        alignItems: "center",
       },
-      totalStyle:{
-        ...FONT_FAMILY.Lexend(400,12),
-        color:secondColor(500)
+      selectAllStyle: {
+        ...FONT_FAMILY.Lexend(400, 12),
       },
-      btnContainer:{
-        backgroundColor:secondColor(500),
-        color:"#FFF",
-        border:"none",
-        ...FONT_FAMILY.Lexend(500,16),
-        height:40,
-        width:"fit-content"
+      totalStyle: {
+        ...FONT_FAMILY.Lexend(400, 12),
+        color: secondColor(500),
+      },
+      btnContainer: {
+        backgroundColor: secondColor(500),
+        color: "#FFF",
+        border: "none",
+        ...FONT_FAMILY.Lexend(500, 16),
+        height: 40,
+        width: "fit-content",
       },
       tableRowStyle: {
-        height:"44px",
-        background: "#8283BE",
+        height: "44px",
+        background: primarySecondaryBlend(300),
         color: "white",
       },
       tableHeaderStyle: {
-        borderRight: "1px solid #EAECF0",
+        borderRight: `1px solid ${grayColor(200)}`,
         color: "#FFF",
         textAlign: "center" as "center",
         backgroundColor: "inherit",
@@ -121,36 +128,36 @@ const useStyle = () => {
         justifyContent: "center",
         alignItems: "center",
       },
-      dateStyle:{
-        ...FONT_FAMILY.Lexend(500,14),
-        color:primaryColor(500)
+      dateStyle: {
+        ...FONT_FAMILY.Lexend(500, 14),
+        color: primarySecondaryBlend(500),
       },
-      dateSelectAllContainer:{
-        display:"flex",
+      dateSelectAllContainer: {
+        display: "flex",
         flexDirection: "row" as "row",
         justifyContent: "space-between",
         alignItems: "center",
         width: "100%",
-        marginBottom:5
+        marginBottom: 5,
       },
-      switchContainer:{
-        alignSelf:"flex-end",
+      switchContainer: {
+        alignSelf: "flex-end",
       },
       switchLabel: {
         ...FONT_FAMILY.Lexend(400, 12),
         color: primaryColor(9800),
-        minWidth: 'fit-content' as 'fit-content',
+        minWidth: "fit-content" as "fit-content",
       },
-      skeletonheaderTable:{
-        display: 'flex',
+      skeletonheaderTable: {
+        display: "flex",
         flexDirection: "row" as "row",
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        width: '100%',
-        marginTop:20
-      }
+        justifyContent: "space-between",
+        alignItems: "center",
+        width: "100%",
+        marginTop: 20,
+      },
     };
-  }, [t]);
+  }, [t, theme]);
   return {
     classes,
   };

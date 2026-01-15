@@ -11,13 +11,13 @@ const LeftArrowIcon = () => {
         cx="11"
         cy="11"
         r="10.5"
-        fill="var(--theme-secondary-light, #E3DFFB)"
-        stroke="var(--theme-secondary-color, #5859A8)"
+        fill="var(--theme-secondary-100, #E3DFFB)"
+        stroke="var(--theme-secondary-400, #5859a8)"
       />
       <g clip-path="url(#clip0_7667_71071)">
         <path
           d="M6.57958 11C6.57958 10.7849 6.6617 10.5699 6.82559 10.4059L11.9854 5.24617C12.3136 4.91794 12.8458 4.91794 13.1739 5.24617C13.5019 5.57426 13.5019 6.10632 13.1739 6.43457L8.60819 11L13.1737 15.5654C13.5018 15.8936 13.5018 16.4256 13.1737 16.7537C12.8456 17.0821 12.3134 17.0821 11.9852 16.7537L6.82543 11.594C6.66151 11.43 6.57958 11.215 6.57958 11Z"
-          fill="var(--theme-secondary-color, #5859A8)"
+          fill="var(--theme-secondary-400, #5859a8)"
         />
       </g>
       <defs>

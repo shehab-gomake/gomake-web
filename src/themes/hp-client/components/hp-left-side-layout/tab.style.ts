@@ -22,9 +22,9 @@ const StyledMenuItem = styled.div<{
   height: 40px;
   background: ${(props) =>
     props.$isSelected
-      ? "#B2D2FF"
+      ? "var(--theme-primary-200, #B2D2FF)"
       : props.$isListOpen
-      ? "rgba(178, 210, 255, 0.3)"
+      ? "var(--theme-primary-200-alpha, rgba(178, 210, 255, 0.3))"
       : "transparent"};
   border-radius: 12px;
   cursor: pointer;
@@ -33,7 +33,9 @@ const StyledMenuItem = styled.div<{
 
   &:hover {
     background: ${(props) =>
-      props.$isSelected ? "#B2D2FF" : "rgba(178, 210, 255, 0.3)"};
+      props.$isSelected
+        ? "var(--theme-primary-200, #B2D2FF)"
+        : "var(--theme-primary-200-alpha, rgba(178, 210, 255, 0.3))"};
   }
 `;
 

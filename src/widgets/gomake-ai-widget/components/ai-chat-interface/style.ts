@@ -10,10 +10,6 @@ const useStyle = () => {
         flexDirection: "column" as "column",
         height: "100%",
         maxHeight: "100%",
-        //!here style
-        // border: "1px solid #E5E7EB",
-        // borderRadius: 8,
-        // backgroundColor: "#FAFAFA",
         overflow: "hidden",
       },
       messagesContainer: {

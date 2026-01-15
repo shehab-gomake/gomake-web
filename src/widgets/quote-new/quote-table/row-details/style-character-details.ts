@@ -1,20 +1,22 @@
 import { useMemo } from "react";
 import { FONT_FAMILY } from "@/utils/font-family";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 const useStyleCharacterDetails = ({ showAll, showLessHeightFit }) => {
+  const { secondColor, theme, primarySecondaryBlend } = useGomakeTheme();
   const classes = useMemo(() => {
     return {
       mainContainer: {
         height: showAll ? 100 : showLessHeightFit ? "fit-content" : 74,
         overflowY: "scroll" as "scroll",
-        borderRight: showAll ? "1px solid  #F135A3" : "none",
+        borderRight: showAll ? `1px solid  ${secondColor(500)}` : "none",
         padding: "5px 10px 0px 10px",
         color: "#000000",
         ...FONT_FAMILY.Inter(400, 14),
       },
       showAllContaner: {
         ...FONT_FAMILY.Inter(500, 14),
-        color: "#5859A8",
+        color: primarySecondaryBlend(300),
         textDecoration: "underLine",
         cursor: "pointer",
       },
@@ -29,7 +31,7 @@ const useStyleCharacterDetails = ({ showAll, showLessHeightFit }) => {
         ...FONT_FAMILY.Lexend(500, 14),
       },
     };
-  }, [showAll]);
+  }, [showAll, theme]);
   return {
     classes,
   };

@@ -1,4 +1,8 @@
-const NegotiateRequestIcon = () => {
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+
+const NegotiateRequestIcon = (props) => {
+  const { primarySecondaryBlend } = useGomakeTheme();
+  const strokeColor = props.color || primarySecondaryBlend(300);
   return (
     <svg
       width="16"
@@ -9,21 +13,21 @@ const NegotiateRequestIcon = () => {
     >
       <path
         d="M8.00065 14.6667C11.6673 14.6667 14.6673 11.6667 14.6673 8.00004C14.6673 4.33337 11.6673 1.33337 8.00065 1.33337C4.33398 1.33337 1.33398 4.33337 1.33398 8.00004C1.33398 11.6667 4.33398 14.6667 8.00065 14.6667Z"
-        stroke="#8283BE"
+        stroke={strokeColor}
         stroke-width="1.5"
         stroke-linecap="round"
         stroke-linejoin="round"
       />
       <path
         d="M5.33398 8H10.6673"
-        stroke="#8283BE"
+        stroke={strokeColor}
         stroke-width="1.5"
         stroke-linecap="round"
         stroke-linejoin="round"
       />
       <path
         d="M8 10.6667V5.33337"
-        stroke="#8283BE"
+        stroke={strokeColor}
         stroke-width="1.5"
         stroke-linecap="round"
         stroke-linejoin="round"

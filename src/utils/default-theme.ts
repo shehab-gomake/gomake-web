@@ -1,6 +1,5 @@
 import { ITheme } from "@/store";
 
-//!here color important
 export const defaultTheme: ITheme = {
   themeMode: "light",
   primary: {

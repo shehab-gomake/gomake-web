@@ -28,7 +28,7 @@ const PrimaryTableCell = styled(TableCell)(() => {
   return {
     [`&.${tableCellClasses.head}`]: {
       backgroundColor:
-        "var(--theme-table-head-bg, var(--theme-primary-light, " +
+        "var(--theme-table-head-bg, var(--theme-primary-100, " +
         primaryColor(50) +
         "))",
       color:
@@ -415,7 +415,7 @@ const PrimaryTable = ({
                   key={`row_${rowIndex}`}
                   style={{
                     backgroundColor: isSubProductRow
-                      ? primarySecondaryBlend(300)
+                      ? primarySecondaryBlend(50)
                       : isAgingeport && isAgingDetailedReport && row[0] == " "
                       ? "#F6F6F6"
                       : isLastItemTotal && rowIndex === rows.length - 1

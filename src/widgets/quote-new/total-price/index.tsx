@@ -21,7 +21,7 @@ const TotalPriceComp = ({
   isQuoteConfirmation = false,
 }) => {
   const router = useRouter();
-  const { classes } = useStyle();
+  const { classes, secondColor } = useStyle();
   const { t } = useTranslation();
   const { CheckPreferenceValue } = usePrintHousePreferences();
 
@@ -72,10 +72,10 @@ const TotalPriceComp = ({
   const canUpdateDiscount = router.query.isNewCreation
     ? true
     : quoteItems?.isEditable &&
-    CheckDocumentPermission(
-      documentType,
-      DocumentPermission.UPDATE_DOCUMENT_DISCOUNT
-    );
+      CheckDocumentPermission(
+        documentType,
+        DocumentPermission.UPDATE_DOCUMENT_DISCOUNT
+      );
 
   const dir: "rtl" | "ltr" = t("direction");
   const isRTL = dir === "rtl";
@@ -180,7 +180,9 @@ const TotalPriceComp = ({
         ) : (
           <>
             <div style={{ ...classes.evenRowContainer, width: "13%" }}>
-              {`${t("sales.quote.vat")} (${(Number(quoteItems?.vat) * 100).toFixed(2).replace(/\.?0+$/, '')}%)`}
+              {`${t("sales.quote.vat")} (${(Number(quoteItems?.vat) * 100)
+                .toFixed(2)
+                .replace(/\.?0+$/, "")}%)`}
             </div>
             <div style={{ ...classes.oddRowContainer, width: "23%" }}>
               {isRTL ? (
@@ -195,50 +197,50 @@ const TotalPriceComp = ({
       {!(isQuoteConfirmation
         ? quoteItems?.hideVatInSystem
         : CheckPreferenceValue(EPreferences.HIDE_VAT_FROM_DOCUMENTS)) && (
-          <div style={classes.firstRowForFooterContainer}>
-            <div
-              style={{
-                ...classes.evenRowContainer,
-                width: "13%",
-                borderBottomLeftRadius: 6,
-                borderBottomRightRadius: 6,
-              }}
-            >
-              {t("sales.quote.totalPrice")}
-            </div>
-            <div
-              style={{
-                ...classes.oddRowContainer,
-                width: "87%",
-                padding: isRTL ? "12px" : "12px 24px",
-              }}
-            >
-              <div style={classes.cellTextInputStyle}>
-                {!isRTL && CurrencyUnit}
-                <InputUpdatedValues
-                  value={quoteItems?.totalPayment}
-                  onBlur={onBlurTotalPayment}
-                  isUpdate={canUpdateDiscount && isUpdateTotalPayment}
-                  setIsUpdate={
-                    isQuoteConfirmation
-                      ? setIsConfirmation
-                      : setIsUpdateTotalPayment
-                  }
-                  onInputChange={(e) => onInputTotalPayment(e)}
-                  specialStyle={{
-                    color: "#F135A3",
-                    ...FONT_FAMILY.Inter(700, 18),
-                    padding: 0,
-                  }}
-                  inputMainContainerStyle={{
-                    gap: 0,
-                  }}
-                />
-                {isRTL && CurrencyUnit}
-              </div>
+        <div style={classes.firstRowForFooterContainer}>
+          <div
+            style={{
+              ...classes.evenRowContainer,
+              width: "13%",
+              borderBottomLeftRadius: 6,
+              borderBottomRightRadius: 6,
+            }}
+          >
+            {t("sales.quote.totalPrice")}
+          </div>
+          <div
+            style={{
+              ...classes.oddRowContainer,
+              width: "87%",
+              padding: isRTL ? "12px" : "12px 24px",
+            }}
+          >
+            <div style={classes.cellTextInputStyle}>
+              {!isRTL && CurrencyUnit}
+              <InputUpdatedValues
+                value={quoteItems?.totalPayment}
+                onBlur={onBlurTotalPayment}
+                isUpdate={canUpdateDiscount && isUpdateTotalPayment}
+                setIsUpdate={
+                  isQuoteConfirmation
+                    ? setIsConfirmation
+                    : setIsUpdateTotalPayment
+                }
+                onInputChange={(e) => onInputTotalPayment(e)}
+                specialStyle={{
+                  color: secondColor(500),
+                  ...FONT_FAMILY.Inter(700, 18),
+                  padding: 0,
+                }}
+                inputMainContainerStyle={{
+                  gap: 0,
+                }}
+              />
+              {isRTL && CurrencyUnit}
             </div>
           </div>
-        )}
+        </div>
+      )}
     </div>
   );
 };

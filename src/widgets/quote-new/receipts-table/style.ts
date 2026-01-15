@@ -1,19 +1,21 @@
 import { useMemo } from "react";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useTranslation } from "react-i18next";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 const useStyle = ({ headerHeight }) => {
   const { t } = useTranslation();
-  const dir = t('direction');
+  const dir = t("direction");
+  const { theme, primarySecondaryBlend, grayColor } = useGomakeTheme();
   const classes = useMemo(() => {
     return {
       tableRowStyle: {
         height: headerHeight,
-        background: "#8283BE",
+        background: primarySecondaryBlend(300),
         color: "white",
       },
       tableHeaderStyle: {
-        borderRight: "1px solid #EAECF0",
+        borderRight: `1px solid ${grayColor(200)}`,
         color: "#FFF",
         textAlign: "center" as "center",
         backgroundColor: "inherit",
@@ -65,7 +67,7 @@ const useStyle = ({ headerHeight }) => {
         textAlign: "center" as "center",
         padding: "12px 24px",
         color: "#FFFF",
-        background: "#8283BE",
+        background: primarySecondaryBlend(300),
         ...FONT_FAMILY.Inter(500, 12),
         height: 44,
       },
@@ -74,7 +76,7 @@ const useStyle = ({ headerHeight }) => {
         textAlign: "center" as "center",
         padding: "12px 24px",
         color: "#FFFF",
-        background: "#8283BE",
+        background: primarySecondaryBlend(300),
         ...FONT_FAMILY.Inter(500, 12),
         height: 44,
         width: "50%",
@@ -96,10 +98,10 @@ const useStyle = ({ headerHeight }) => {
       receiptMethodsTable: {
         display: "flex",
         flexDirection: "column" as "column",
-        gap: "5px"
-      }
+        gap: "5px",
+      },
     };
-  }, [headerHeight]);
+  }, [headerHeight, theme]);
   return {
     classes,
   };

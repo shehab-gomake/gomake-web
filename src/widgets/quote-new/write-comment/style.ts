@@ -10,63 +10,64 @@ const useStyle = (isQuoteConfirmation) => {
         alignItems: "center",
         width: "100%",
         padding: "14px 29px",
-        borderBottom: isQuoteConfirmation ? "none" : "1px solid #67707F",
+        borderBottom: isQuoteConfirmation
+          ? "none"
+          : "1px solid var(--theme-border-dark, #67707F)",
         borderTopRightRadius: 8,
         borderTopLeftRadius: 8,
         flex: 0.1,
-        gap:30
+        gap: 30,
       },
-      textInputStyle: isQuoteConfirmation ? 
-      {
-        background: "#FFFFFF",
-        boxShadow: "none",
-        border: "1px solid #D0D5DD",
-        borderRadius:"8px",
-        width: "100%",
-      }
-      :
-       {
-        height: 44,
-        background: "#FFFFFF",
-        boxShadow: "none",
-        borderRadius:"8px",
-        width: "100%",
-      },
-      autoComplateStyle:{
+      textInputStyle: isQuoteConfirmation
+        ? {
+            background: "#FFFFFF",
+            boxShadow: "none",
+            border: "1px solid #D0D5DD",
+            borderRadius: "8px",
+            width: "100%",
+          }
+        : {
+            height: 44,
+            background: "#FFFFFF",
+            boxShadow: "none",
+            borderRadius: "8px",
+            width: "100%",
+          },
+      autoComplateStyle: {
         background: "#FFFFFF",
         boxShadow: "none",
         border: "none",
-        borderRadius:"8px",
+        borderRadius: "8px",
         width: "100%",
       },
-      itemContainer:{
+      itemContainer: {
         width: "20%",
         display: "flex",
         flexDirection: "column" as "column",
         justifyContent: "flex-start",
         alignItems: "flex-start",
-        gap:5
+        gap: 5,
       },
-      addRelatedOption:{
-        display:"flex",
-        alignItems:"center",
-        gap:8,
-        ...FONT_FAMILY.Lexend(500,13),
-        color:"#475467",
-        padding:"4px"
+      addRelatedOption: {
+        display: "flex",
+        alignItems: "center",
+        gap: 8,
+        ...FONT_FAMILY.Lexend(500, 13),
+        color: "#475467",
+        padding: "4px",
       },
-      item2Container:{
+      item2Container: {
         width: "40%",
         display: "flex",
         flexDirection: "column" as "column",
         justifyContent: "flex-start",
         alignItems: "flex-start",
-        gap:5
+        gap: 5,
       },
-      labelTextStyle:{
-        ...FONT_FAMILY.Lexend(500,14),
-        color:"#000"
-      }
+      labelTextStyle: {
+        ...FONT_FAMILY.Lexend(500, 14),
+        color: "#000",
+      },
     };
   }, [isQuoteConfirmation]);
   return {

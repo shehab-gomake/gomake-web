@@ -109,15 +109,17 @@ const useStyle = () => {
       },
       textInputForProductsStyle: {
         width: "100%",
-        border: "none",
       },
       searchInputStyle: {
-        borderRadius: "4px",
+        borderRadius: "var(--theme-input-border-radius, 4px)",
         boxShadow: "0px 1px 10px rgba(0, 0, 0, 0.08);",
         width: "100%",
-        border: "none",
-        height: "40px",
         marginRight: "0px",
+        borderColor: "var(--theme-input-border-color, transparent) !important",
+        borderWidth: "1px",
+        borderStyle: "solid !important",
+        background: "var(--theme-bg-primary, #FFFFFF)",
+        height: "var(--theme-input-height, 40px)",
       },
       clearBtnStyle: {
         height: 40,

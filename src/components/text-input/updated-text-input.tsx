@@ -62,7 +62,7 @@ const UpdatedTextInput = ({
         boxShadow: "0px 1px 2px 0px rgba(0, 0, 0, 0.08)",
         backgroundColor: "#FFF",
         border:
-          withBorder && `1px solid ${isFocused ? secondColor(400) : "gray"}`,
+          withBorder && `1px solid ${isFocused ? secondColor(500) : "gray"}`,
       }}
       onBlur={debouncedOnBlur}
     >

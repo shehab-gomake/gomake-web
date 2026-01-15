@@ -69,7 +69,7 @@ const useStyle = () => {
         width: "fit-content" as "fit-content",
         height: "40px",
         borderRadius: "8px",
-        fontWeight: 600,
+        fontWeight: 500,
         padding: "8px 16px",
       },
       multiInputLabel: {

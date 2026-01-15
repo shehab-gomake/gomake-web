@@ -96,8 +96,7 @@ const HpListButton = styled(ListItemButton)(() => {
     alignSelf: "stretch",
     flexGrow: 0,
     "&.Mui-selected": {
-      backgroundColor: "var(--theme-primary-light, #B2D2FF)",
-      //borderLeft: "3px solid var(--theme-primary-color, #024AD8)",
+      backgroundColor: "var(--theme-primary-200, #B2D2FF)",
       "&::before": {
         content: '""',
         position: "absolute",
@@ -139,11 +138,13 @@ const HpListButton = styled(ListItemButton)(() => {
         },
       },
     },
+
     "&.Mui-selected:hover": {
-      backgroundColor: "#B2D2FF",
+      backgroundColor: "var(--theme-primary-200, #B2D2FF)",
     },
     "&:hover": {
-      backgroundColor: "rgba(178, 210, 255, 0.3)",
+      backgroundColor:
+        "var(--theme-primary-200-alpha, rgba(178, 210, 255, 0.3))",
     },
     "& .MuiListItemText-primary": {
       color: "#1A1A1A",

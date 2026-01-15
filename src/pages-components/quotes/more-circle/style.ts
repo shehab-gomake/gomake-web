@@ -33,7 +33,7 @@ const useStyle = () => {
       },
       rowTextStyle: {
         ...FONT_FAMILY.Lexend(500, 10),
-        color: primarySecondaryBlend(500),
+        color: primarySecondaryBlend(300),
         fontSize: "12px",
         textDecoration: "unset",
         display: "block",

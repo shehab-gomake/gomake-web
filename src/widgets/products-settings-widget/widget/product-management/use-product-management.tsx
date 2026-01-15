@@ -239,7 +239,7 @@ const useProductManagement = () => {
                   gap: 10,
                 }}
               >
-                <PlusIcon stroke={primarySecondaryBlend(500)} />{" "}
+                <PlusIcon stroke={primarySecondaryBlend(300)} />{" "}
                 {t("materials.buttons.add")}{" "}
               </div>
             )}
@@ -415,7 +415,7 @@ const useProductManagement = () => {
                   gap: 10,
                 }}
               >
-                <PlusIcon stroke={primarySecondaryBlend(500)} />{" "}
+                <PlusIcon stroke={primarySecondaryBlend(300)} />{" "}
                 {t("materials.buttons.add")}
               </div>
             )}

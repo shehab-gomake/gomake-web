@@ -5,8 +5,14 @@ import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 const useStyle = (width?: string) => {
   const { t } = useTranslation();
-  const { theme, grayColor, secondColor, primaryColor, errorColor } =
-    useGomakeTheme();
+  const {
+    theme,
+    grayColor,
+    secondColor,
+    primaryColor,
+    errorColor,
+    primarySecondaryBlend,
+  } = useGomakeTheme();
   const dir = t("direction");
   const classes = useMemo(() => {
     return {
@@ -51,7 +57,7 @@ const useStyle = (width?: string) => {
       },
       tableRowStyle: {
         //   height: headerHeight,
-        background: "#8283BE",
+        background: primarySecondaryBlend(300),
         color: "white",
       },
       tableHeaderStyle: {
@@ -109,7 +115,7 @@ const useStyle = (width?: string) => {
         textAlign: "center" as "center",
         padding: "12px 24px",
         color: "#FFFF",
-        background: "#8283BE",
+        background: primarySecondaryBlend(300),
         ...FONT_FAMILY.Inter(500, 12),
         height: 44,
       },
@@ -118,7 +124,7 @@ const useStyle = (width?: string) => {
         textAlign: "center" as "center",
         padding: "12px 24px",
         color: "#FFFF",
-        background: "#8283BE",
+        background: primarySecondaryBlend(300),
         ...FONT_FAMILY.Inter(500, 12),
         height: 44,
         width: "50%",

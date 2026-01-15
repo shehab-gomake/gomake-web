@@ -46,10 +46,14 @@ const ProductMultiSelect = ({
     control: (provided, state) => ({
       ...provided,
       minHeight: "38px",
-      borderColor: state.isFocused ? "#0066cc" : "#d1d5db",
-      boxShadow: state.isFocused ? "0 0 0 1px #0066cc" : "none",
+      borderRadius: "var(--theme-dropdown-border-radius, 4px)",
+      border: "1px solid var(--theme-dropdown-border-color, transparent)",
+      borderColor: "var(--theme-dropdown-border-color, transparent)",
+      boxShadow: state.isFocused
+        ? "none"
+        : "var(--theme-dropdown-shadow, 0px 1px 10px rgba(0, 0, 0, 0.08))",
       "&:hover": {
-        borderColor: "#0066cc",
+        borderColor: "var(--theme-dropdown-border-color, transparent)",
       },
       ...selectStyle,
     }),

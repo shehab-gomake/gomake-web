@@ -34,8 +34,10 @@ const StyledButton = styled(Button, {
     "&:hover": {
       backgroundColor: `var(--theme-button-bg-primary-hover, ${primaryColorValue})`,
       borderColor: `var(--theme-button-border-color, ${defaultBorderColor})`,
+      boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.15)",
+      transform: "translateY(-1px)",
     },
-    transition: "0.25s",
+    transition: "all 0.25s ease",
     width: "100%",
   };
 });

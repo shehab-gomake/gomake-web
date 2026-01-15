@@ -44,7 +44,7 @@ const StyledTab = styled(Tab)(() => {
     ...FONT_FAMILY.Inter(500, 15),
     transition: "all 0.2s ease",
     "&:hover": {
-      backgroundColor: `var(--theme-secondary-light, ${primaryLight})`,
+      backgroundColor: `var(--theme-secondary-100, ${primaryLight})`,
       color: `var(--theme-secondary-color, ${primaryColorValue})`,
       borderColor: `var(--theme-secondary-color, ${primaryDisabled})`,
     },

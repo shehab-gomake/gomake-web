@@ -63,7 +63,7 @@ const GoMakeSelect = ({
             "var(--theme-select-icon-color, var(--theme-primary-color, #5925DC))",
         },
         "& .MuiPaper-root": {
-          backgroundColor: "var(--theme-primary-light, #FFFFFF)",
+          backgroundColor: "var(--theme-primary-100, #FFFFFF)",
           borderRadius: "var(--theme-select-menu-radius, 8px)",
         },
       }}
@@ -79,12 +79,12 @@ const GoMakeSelect = ({
               },
               "&.Mui-selected": {
                 backgroundColor:
-                  "var(--theme-select-menu-item-selected, var(--theme-primary-light, rgba(89, 37, 220, 0.1)))",
+                  "var(--theme-select-menu-item-selected, var(--theme-primary-100, rgba(89, 37, 220, 0.1)))",
                 color:
                   "var(--theme-select-menu-item-selected-text, var(--theme-primary-color, #5925DC))",
                 "&:hover": {
                   backgroundColor:
-                    "var(--theme-select-menu-item-selected-hover, var(--theme-primary-light, rgba(89, 37, 220, 0.15)))",
+                    "var(--theme-select-menu-item-selected-hover, var(--theme-primary-100, rgba(89, 37, 220, 0.15)))",
                 },
               },
             },

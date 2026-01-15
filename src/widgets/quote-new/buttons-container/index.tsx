@@ -73,7 +73,7 @@ const ButtonsContainer = ({
   isCanIntake,
   onClickOpenInventoryIntakeModal,
 }) => {
-  const { classes } = useStyle();
+  const { classes, primarySecondaryBlend } = useStyle();
   const { t } = useTranslation();
   const { alertFault } = useSnackBar();
   const { navigate } = useGomakeRouter();
@@ -294,7 +294,7 @@ const ButtonsContainer = ({
         {!isNewCreation && isInvoice && quoteItemValue?.isCanClose && (
           <PermissionCheck userPermission={Permissions.SEND_PAYMENT_TO_CLIENT}>
             <GomakePrimaryButton
-              leftIcon={<PayIcon />}
+              leftIcon={<CreditCardIcon color={"#344054"} />}
               onClick={() => onClickSendPayment(quoteItemValue, false)}
               style={classes.btnContainer}
             >
@@ -471,7 +471,7 @@ const ButtonsContainer = ({
         )}
         {!isReceipt && handleExportToExcel && (
           <GomakePrimaryButton
-            leftIcon={<DownloadExcelSheet />}
+            leftIcon={<DownloadExcelSheet color={primarySecondaryBlend(400)} />}
             style={classes.btnSecondContainer}
             onClick={handleExportToExcel}
           >

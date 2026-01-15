@@ -542,7 +542,6 @@ const CustomerCardWidget = ({
                     <PlusIcon color={secondaryColor(500)} />
                   </IconButton>
                 </div>
-                {/* !here */}
                 <div style={{ width: "180px" }}>
                   <GoMakeAutoComplate
                     key={customer?.clientTypeId || "default"}

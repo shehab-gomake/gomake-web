@@ -28,7 +28,6 @@ export const boardMissionsSubWorkFlowsState = atom({
   default: [],
 });
 
-//!here why have no key ?
 export const isReadyBoardMissionsState = atom<boolean>({
   key: "isReadyBoardMissionsState",
   default: false,

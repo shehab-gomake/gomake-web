@@ -197,7 +197,7 @@ export const BoardMissionsColumnSettingsMenu = ({
         <IconButton onClick={handleOpen} sx={classes.iconButton}>
           <VisibilityOutlinedIcon
             sx={{
-              color: "#2e3092",
+              color: "var(--theme-secondary-color, #2e3092)",
               fontSize: "22px",
               transition: "color 0.2s ease-in-out",
             }}

@@ -138,6 +138,7 @@ const SettingQuoteMenu = ({
               <div style={classes.menuRowStyle}>
                 <div style={classes.menuTabStyle}>{config.label}</div>
                 <SecondSwitch
+                  variant="primary"
                   checked={config.checked}
                   onChange={config.onChange}
                 />

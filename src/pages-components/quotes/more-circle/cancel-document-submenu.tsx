@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import { TickCancelIcon } from "@/icons";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 interface CancelDocumentSubmenuProps {
   quote: any;
@@ -31,6 +32,7 @@ export const CancelDocumentSubmenu: React.FC<CancelDocumentSubmenuProps> = ({
   const isRTL = direction === "rtl";
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
+  const { primarySecondaryBlend } = useGomakeTheme();
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     event.stopPropagation();
@@ -85,7 +87,7 @@ export const CancelDocumentSubmenu: React.FC<CancelDocumentSubmenuProps> = ({
         style={menuItemStyle}
         onClick={handleMenuItemClick(cancelOptions[0].onClick)}
       >
-        <TickCancelIcon color="#8283BE" />
+        <TickCancelIcon color="var(--theme-secondary-300, #8283BE)" />
         <div style={rowTextStyle}>{cancelOptions[0].label}</div>
       </MenuItem>
     );
@@ -94,7 +96,7 @@ export const CancelDocumentSubmenu: React.FC<CancelDocumentSubmenuProps> = ({
   return (
     <>
       <MenuItem style={menuItemStyle} onClick={handleClick}>
-        <TickCancelIcon color="#8283BE" />
+        <TickCancelIcon color="var(--theme-secondary-300, #8283BE)" />
         <div style={rowTextStyle}>{t("sales.quote.cancel")}</div>
         <div
           onMouseEnter={handleClick}
@@ -128,7 +130,7 @@ export const CancelDocumentSubmenu: React.FC<CancelDocumentSubmenuProps> = ({
         }}
         sx={{
           "& .MuiPaper-root": {
-            border: "1px solid #cbcbe4",
+            border: `1px solid ${primarySecondaryBlend(100)}`,
             borderRadius: "8px",
             minWidth: 160,
           },

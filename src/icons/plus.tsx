@@ -1,4 +1,7 @@
-const PlusIcon = ({ color = "#ED028C", ...props }) => {
+const PlusIcon = ({
+  color = "var(--theme-secondary-color,#ED028C)",
+  ...props
+}) => {
   return (
     <svg
       width={props.width || "16"}

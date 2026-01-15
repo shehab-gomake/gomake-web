@@ -10,7 +10,6 @@ import { useEffect } from "react";
 const MachineList = ({}: IMachineList) => {
   const { setMachines, getMachinesList } = useGomakeMachines();
 
-  //!here should fix
   const onUpdateMachines = (stations: IStation[]) => {
     const machinesIds = stations.flatMap((station) => station.machineIds);
     setMachines((prevState) =>

@@ -51,7 +51,7 @@ interface IProps {
 const PrimaryCheckbox = ({
   checked,
   onChange,
-  color = "#2E3092",
+  color = "var(--theme-primary-color, #2E3092)",
   inputProps,
   disabled,
 }: IProps) => {

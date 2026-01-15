@@ -95,9 +95,7 @@ const ClientBalanceComponent = ({
                 padding: "4px 12px",
                 backgroundColor: isNegative
                   ? errorColor(500)
-                  : `var(--theme-secondary-light, ${primarySecondaryBlend(
-                      500
-                    )})`,
+                  : `var(--theme-secondary-100, ${primarySecondaryBlend(50)})`,
                 color: isNegative
                   ? "#FFFFFF !important"
                   : `var(--theme-secondary-color, ${primaryColor(
@@ -111,7 +109,7 @@ const ClientBalanceComponent = ({
                 "&:hover": {
                   backgroundColor: isNegative
                     ? errorColor(700)
-                    : successColor(200),
+                    : successColor(100),
                   boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
                 },
               }}

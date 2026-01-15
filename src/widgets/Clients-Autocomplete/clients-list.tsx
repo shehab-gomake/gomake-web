@@ -119,7 +119,7 @@ export const ClientAutocomplete = ({
           {...props}
           style={{
             pointerEvents: option.id === "addClient" ? "auto" : "none",
-            color: primaryColor(500),
+            color: `var(--theme-secondary-color, ${primaryColor(500)})`,
             fontWeight: 500,
             fontSize: "14px",
             cursor: option.id === "addClient" ? "pointer" : "default",

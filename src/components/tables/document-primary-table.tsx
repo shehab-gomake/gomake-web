@@ -46,7 +46,7 @@ const StyledTableCell = styled(TableCell)(() => {
   return {
     [`&.${tableCellClasses.head}`]: {
       backgroundColor:
-        "var(--theme-table-head-bg, var(--theme-primary-light, " +
+        "var(--theme-table-head-bg, var(--theme-primary-100, " +
         primaryColor(50) +
         "))",
       color:

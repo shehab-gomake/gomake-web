@@ -126,7 +126,7 @@ const useStyle = () => {
       },
       statusValue: {
         ...FONT_FAMILY.Lexend(600, 13),
-        color: primaryColor(600),
+        color: primaryColor(500),
         lineHeight: "1.4",
         wordBreak: "break-word" as "break-word",
       },
@@ -200,7 +200,7 @@ const useStyle = () => {
         width: "100%",
         marginTop: "8px",
         height: "44px",
-        ...FONT_FAMILY.Lexend(600, 15),
+        ...FONT_FAMILY.Lexend(500, 15),
         textTransform: "none" as "none",
         borderRadius: "8px",
         boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",

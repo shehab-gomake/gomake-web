@@ -3,7 +3,7 @@ import { FONT_FAMILY } from "@/utils/font-family";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 const useStyle = () => {
-  const { theme, primaryColor } = useGomakeTheme();
+  const { theme, primaryColor, primarySecondaryBlend } = useGomakeTheme();
   const classes = useMemo(() => {
     return {
       modalStyle: {
@@ -56,7 +56,7 @@ const useStyle = () => {
         padding: "8px 14px",
         borderRadius: 8,
         lineHeight: "20px",
-        background: "#8283BE",
+        background: primarySecondaryBlend(300),
       },
     };
   }, [theme]);

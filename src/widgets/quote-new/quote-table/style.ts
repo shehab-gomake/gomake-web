@@ -1,12 +1,14 @@
 import { useMemo } from "react";
 import { FONT_FAMILY } from "@/utils/font-family";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 const useStyle = ({ headerHeight }) => {
+  const { primarySecondaryBlend, primaryColor, theme } = useGomakeTheme();
   const classes = useMemo(() => {
     return {
       tableRowStyle: {
         height: headerHeight,
-        background: "#8283BE",
+        background: primarySecondaryBlend(300),
         color: "white",
       },
       tableHeaderStyle: {
@@ -42,7 +44,7 @@ const useStyle = ({ headerHeight }) => {
         textAlign: "center" as "center",
         padding: "12px 24px",
         color: "#FFFF",
-        background: "#8283BE",
+        background: primarySecondaryBlend(300),
         ...FONT_FAMILY.Inter(500, 12),
         height: 44,
         // borderBottom: "1px solid #EAECF0",
@@ -75,9 +77,11 @@ const useStyle = ({ headerHeight }) => {
         display: "inline-block",
       },
     };
-  }, []);
+  }, [theme]);
   return {
     classes,
+    primarySecondaryBlend,
+    primaryColor,
   };
 };
 export { useStyle };

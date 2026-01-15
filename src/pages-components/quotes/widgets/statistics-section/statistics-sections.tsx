@@ -58,7 +58,7 @@ const CardsSection = (props: ICardsSection) => {
             isActive={props.activeCard === EStatisticsLabels.WAITING}
             text={t("sales.quote.waiting")}
             number={getValueByKey(props.statistics, "waitingCount")}
-            textColor={warningColor(300)}
+            textColor={`var(--theme-card-pending, ${warningColor(300)})`}
             icon={<HourglassTopIcon />}
             onSecondClick={props.onSecondClickCard}
           />
@@ -73,7 +73,7 @@ const CardsSection = (props: ICardsSection) => {
             isActive={props.activeCard === EStatisticsLabels.APPROVED}
             text={t("sales.quote.approved")}
             number={getValueByKey(props.statistics, "approvedCount")}
-            textColor={successColor(300)}
+            textColor={`var(--theme-card-approved, ${successColor(300)})`}
             icon={<DoneAllIcon />}
             onSecondClick={props.onSecondClickCard}
           />
@@ -96,7 +96,7 @@ const CardsSection = (props: ICardsSection) => {
           <CardComponent
             text={t("sales.quote.successRate")}
             number={getValueByKey(props.statistics, "successRate") + "%"}
-            textColor={primaryColor(300)}
+            textColor={`var(--theme-card-success-rate, ${primaryColor(300)})`}
             icon={<TrendingUpIcon />}
           />
           <CardComponent
@@ -108,10 +108,15 @@ const CardsSection = (props: ICardsSection) => {
         </>
       )}
       <Button
-        style={classes.createNew}
+        sx={classes.createNew}
         onClick={props.onClick}
         startIcon={
-          <AddCircleOutlineIcon style={{ color: "black", fontSize: "24px" }} />
+          <AddCircleOutlineIcon
+            style={{
+              color: "var(--theme-text-primary, #101020)",
+              fontSize: "24px",
+            }}
+          />
         }
       >
         {t("sales.quote.createNew")}

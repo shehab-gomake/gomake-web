@@ -98,7 +98,7 @@ const MoreMenuWidget = ({
               <>
                 <MenuItem onClick={() => createSubProduct(item)}>
                   <div style={classes.menuRowStyle}>
-                    <PlusIcon stroke={primarySecondaryBlend(500)} />
+                    <PlusIcon stroke={primarySecondaryBlend(300)} />
                     <div style={classes.rowTextStyle}>
                       {t("remainWords.createSubProduct")}
                     </div>

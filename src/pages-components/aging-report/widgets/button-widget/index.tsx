@@ -41,14 +41,14 @@ const AgingReportButtonWidget = ({
     {
       name: t("reports.printDebtCollection"),
       onclick: onClickBtn2,
-      icon: <PrintIcon stroke={primarySecondaryBlend(500)} />,
+      icon: <PrintIcon stroke={primarySecondaryBlend(300)} />,
     },
     {
       name: t("reports.excelDebtCollection"),
       onclick: onClickBtn3,
       icon: (
         <FileDownloadOutlinedIcon
-          style={{ color: primarySecondaryBlend(500) }}
+          style={{ color: primarySecondaryBlend(300) }}
         />
       ),
     },
@@ -57,7 +57,7 @@ const AgingReportButtonWidget = ({
     //   onclick: onClickBtn4,
     //   icon: (
     //     <ForwardToInboxRoundedIcon
-    //       style={{ color: primarySecondaryBlend(500), fontSize: "22px" }}
+    //       style={{ color: primarySecondaryBlend(300), fontSize: "22px" }}
     //     />
     //   ),
     // },
@@ -66,7 +66,7 @@ const AgingReportButtonWidget = ({
     //   onclick: onClickBtn5,
     //   icon: (
     //     <WhatsAppIcon
-    //       style={{ color: primarySecondaryBlend(500), fontSize: "22px" }}
+    //       style={{ color: primarySecondaryBlend(300), fontSize: "22px" }}
     //     />
     //   ),
     // },
@@ -75,7 +75,7 @@ const AgingReportButtonWidget = ({
       onclick: onClickBtn7,
       icon: (
         <ForwardToInboxRoundedIcon
-          style={{ color: primarySecondaryBlend(500), fontSize: "22px" }}
+          style={{ color: primarySecondaryBlend(300), fontSize: "22px" }}
         />
       ),
     },
@@ -84,7 +84,7 @@ const AgingReportButtonWidget = ({
       onclick: onClickBtn6,
       icon: (
         <ForwardToInboxRoundedIcon
-          style={{ color: primarySecondaryBlend(500), fontSize: "22px" }}
+          style={{ color: primarySecondaryBlend(300), fontSize: "22px" }}
         />
       ),
     },

@@ -1,6 +1,8 @@
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 const useStyle = () => {
+  const { primarySecondaryBlend, theme, secondColor } = useGomakeTheme();
   const classes = useMemo(() => {
     return {
       tableFooterContainer: {
@@ -25,7 +27,7 @@ const useStyle = () => {
         textAlign: "center" as "center",
         padding: "12px 24px",
         color: "#FFFF",
-        background: "#8283BE",
+        background: primarySecondaryBlend(300),
         ...FONT_FAMILY.Inter(500, 12),
         height: 44,
         borderBottom: "1px solid #EAECF0",
@@ -43,12 +45,14 @@ const useStyle = () => {
         flexDirection: "row" as "row",
         justifyContent: "center",
         alignItems: "center",
-        gap:5
+        gap: 5,
       },
     };
-  }, []);
+  }, [theme]);
+
   return {
     classes,
+    secondColor,
   };
 };
 export { useStyle };

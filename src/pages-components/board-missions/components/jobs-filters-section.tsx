@@ -290,43 +290,41 @@ const JobsFiltersSection = ({
     },
     ...(isPrintHouseUsePrintNode
       ? [
-        {
-          id: "isPrinted",
-          label: t("boardMissions.isPrinted"),
-          component: (
-            <GoMakeAutoComplate
-              key={
-                isPrintedState === null ? "null" : isPrintedState.toString()
-              }
-              options={[
-                { value: true, text: t("modal.yes") },
-                { value: false, text: t("modal.no") },
-              ]}
-              getOptionLabel={(option: any) => option.text}
-              placeholder={t("boardMissions.isPrinted")}
-              style={classes.textInputStyle}
-              onChange={(e, value) => setIsPrintedState(value?.value ?? null)}
-              value={
-                isPrintedState === null
-                  ? null
-                  : isPrintedState === true
+          {
+            id: "isPrinted",
+            label: t("boardMissions.isPrinted"),
+            component: (
+              <GoMakeAutoComplate
+                key={
+                  isPrintedState === null ? "null" : isPrintedState.toString()
+                }
+                options={[
+                  { value: true, text: t("modal.yes") },
+                  { value: false, text: t("modal.no") },
+                ]}
+                getOptionLabel={(option: any) => option.text}
+                placeholder={t("boardMissions.isPrinted")}
+                style={classes.textInputStyle}
+                onChange={(e, value) => setIsPrintedState(value?.value ?? null)}
+                value={
+                  isPrintedState === null
+                    ? null
+                    : isPrintedState === true
                     ? { value: true, text: t("modal.yes") }
                     : { value: false, text: t("modal.no") }
-              }
-              withArrow={true}
-            />
-          ),
-        },
-      ]
+                }
+                withArrow={true}
+              />
+            ),
+          },
+        ]
       : []),
     {
       id: "isQualityFixJob",
       label: t("boardMissions.isQualityFixJob"),
       component: (
         <GoMakeAutoComplate
-          key={
-            isQualityFixJob === null ? "null" : isQualityFixJob?.toString()
-          }
+          key={isQualityFixJob === null ? "null" : isQualityFixJob?.toString()}
           options={[
             { value: true, text: t("modal.yes") },
             { value: false, text: t("modal.no") },
@@ -339,8 +337,8 @@ const JobsFiltersSection = ({
             isQualityFixJob === null
               ? null
               : isQualityFixJob === true
-                ? { value: true, text: t("modal.yes") }
-                : { value: false, text: t("modal.no") }
+              ? { value: true, text: t("modal.yes") }
+              : { value: false, text: t("modal.no") }
           }
           withArrow={true}
         />
@@ -374,7 +372,8 @@ const JobsFiltersSection = ({
           allowManualInput={true}
           dateFormat="dd-MM-yyyy"
           buttonStyle={{
-            borderRadius: "5px",
+            borderRadius:
+              "var(--theme-input-border-radius, var(--theme-radius-md, 5px))",
           }}
           textStyle={{
             ...FONT_FAMILY.Heebo(500, 13),
@@ -396,7 +395,8 @@ const JobsFiltersSection = ({
           allowManualInput={true}
           dateFormat="dd-MM-yyyy"
           buttonStyle={{
-            borderRadius: "5px",
+            borderRadius:
+              "var(--theme-input-border-radius, var(--theme-radius-md, 5px))",
           }}
           textStyle={{
             ...FONT_FAMILY.Heebo(500, 13),
@@ -418,7 +418,8 @@ const JobsFiltersSection = ({
           allowManualInput={true}
           dateFormat="dd-MM-yyyy"
           buttonStyle={{
-            borderRadius: "5px",
+            borderRadius:
+              "var(--theme-input-border-radius, var(--theme-radius-md, 5px))",
           }}
           textStyle={{
             ...FONT_FAMILY.Heebo(500, 13),
@@ -448,7 +449,9 @@ const JobsFiltersSection = ({
         />
       )}
       <ExcelMenu
-        onGenerateReportClick={isPurchaseJobs ? undefined : onGenerateReportClick}
+        onGenerateReportClick={
+          isPurchaseJobs ? undefined : onGenerateReportClick
+        }
         onExportTableClick={ExportJobsTableToExcel}
         documentType={null}
       />

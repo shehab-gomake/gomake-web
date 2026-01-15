@@ -23,7 +23,7 @@ const useStyle = () => {
         ...FONT_FAMILY.Lexend(500, 14),
         color: `var(--theme-secondary-color, ${primaryColor(500)})`,
         "&:hover": {
-          backgroundColor: `var(--theme-secondary-light, ${primaryColor(200)})`,
+          backgroundColor: `var(--theme-secondary-100, ${primaryColor(200)})`,
         },
         "& .MuiButton-startIcon": {
           margin: "0 8px",

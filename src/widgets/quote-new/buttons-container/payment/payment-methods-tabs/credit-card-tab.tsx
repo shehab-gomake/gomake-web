@@ -45,7 +45,7 @@ const CreditCardTab = ({
   handleSaveAndClose,
   documentItemValue,
 }) => {
-  const { classes } = useStyle();
+  const { classes, primaryColor } = useStyle();
   const { getCardNumberProps, getCVCProps } = usePaymentInputs();
   const {
     t,
@@ -132,7 +132,7 @@ const CreditCardTab = ({
           <GoMakeAutoComplate
             key={"chooseExistingCard-select"}
             value={transactionSelected}
-            style={classes.selectInputs}
+            sx={classes.selectInputs}
             options={cardTransactionsOptions}
             placeholder={t("payment.chooseExistingCard")}
             onChange={(e, value) => handleChooseExistingCard(value)}
@@ -153,7 +153,7 @@ const CreditCardTab = ({
                         : classes.creditCardInputsContainer.border,
                   }}
                 >
-                  <CreditCardIcon sx={{ color: "#2e3092" }} />
+                  <CreditCardIcon sx={{ color: primaryColor(500) }} />
                   <input
                     {...getCardNumberProps({
                       onChange: handleCardNumberChange,
@@ -299,7 +299,7 @@ const CreditCardTab = ({
                     value={transactionTypes.find(
                       (option) => option.value === creditCard?.transactionType
                     )}
-                    style={classes.selectInputs}
+                    sx={classes.selectInputs}
                     options={transactionTypes}
                     placeholder={t("payment.transactionType")}
                     onChange={(e, value) =>
@@ -314,7 +314,7 @@ const CreditCardTab = ({
                       <GoMakeAutoComplate
                         key={"numberOfPayments"}
                         value={creditCard?.numberOfPayments}
-                        style={classes.selectInputs}
+                        sx={classes.selectInputs}
                         options={numberOfPayments}
                         placeholder={t("payment.numberOfPayments")}
                         onChange={(e, value) =>
@@ -428,7 +428,7 @@ const CreditCardTab = ({
                     value={transactionTypes.find(
                       (option) => option.value === creditCard?.transactionType
                     )}
-                    style={classes.selectInputs}
+                    sx={classes.selectInputs}
                     options={transactionTypes}
                     placeholder={t("payment.transactionType")}
                     onChange={(e, value) =>
@@ -443,7 +443,7 @@ const CreditCardTab = ({
                       <GoMakeAutoComplate
                         key={"numberOfPayments-2"}
                         value={creditCard?.numberOfPayments}
-                        style={classes.selectInputs}
+                        sx={classes.selectInputs}
                         options={numberOfPayments}
                         placeholder={t("payment.numberOfPayments")}
                         onChange={(e, value) =>

@@ -16,7 +16,7 @@ const HpLeftSideLayout = ({ customGap }: { customGap?: number }) => {
   const { tabs1, tabs2, tabs3, tabs4 } = useAuthLayoutHook(null, true);
   const [isSidebarClosed, setIsSidebarClosed] = useState(false);
   const { CheckPermission } = useUserPermission();
-  const { classes } = useStyle({
+  const { classes, primaryColor } = useStyle({
     navStatus: { isClosed: isSidebarClosed },
     customGap,
   });
@@ -79,7 +79,7 @@ const HpLeftSideLayout = ({ customGap }: { customGap?: number }) => {
             {/* Company Name and Tagline */}
             {!isSidebarClosed && (
               <div style={classes.headerText}>
-                <div style={classes.companyName}>HP XXX</div>
+                <div style={classes.companyName}>HP</div>
                 <div style={classes.poweredBy}>powered by GoMake</div>
               </div>
             )}
@@ -159,7 +159,7 @@ const HpLeftSideLayout = ({ customGap }: { customGap?: number }) => {
         <div
           style={{
             flexShrink: 0,
-            padding: "28px 0px",
+            padding: "20px 0px",
             paddingLeft: isSidebarClosed ? "16px" : "0px",
             paddingRight: isSidebarClosed ? "16px" : "0px",
             display: "flex",
@@ -204,14 +204,14 @@ const HpLeftSideLayout = ({ customGap }: { customGap?: number }) => {
               alignItems: "center",
               width: "28px",
               height: "28px",
-              border: "1px solid #024AD8",
+              border: `1px solid ${primaryColor(500)}`,
               transition: "all 0.3s ease",
             }}
             onClick={() => {
               setIsSidebarClosed(!isSidebarClosed);
             }}
           >
-            <HpArrowIcon isOpen={isSidebarClosed} />
+            <HpArrowIcon isOpen={isSidebarClosed} color={primaryColor(500)} />
           </div>
         </div>
       </div>

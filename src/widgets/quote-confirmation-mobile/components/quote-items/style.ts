@@ -11,7 +11,6 @@ const useStyle = () => {
         flexDirection: "column" as "column",
         // width: "70%",
         width: "85%",
-
         marginBottom: "10px",
         background: "#F4F1F6",
         minHeight: "295px",
