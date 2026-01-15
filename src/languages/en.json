@@ -2300,7 +2300,9 @@
     "creditCards": "Credit Cards",
     "taxAuthority": "Tax Authority",
     "hours": "Hours",
-    "businessProfile": "Business Profile"
+    "businessProfile": "Business Profile",
+    "integrations": "Integrations",
+    "hpHmac": "HP HMAC"
   },
   "remainWords": {
     "newQuote": "New quote",

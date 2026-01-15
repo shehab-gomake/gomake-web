@@ -8,6 +8,7 @@ import { CompanyAddressComponent } from "./components/tabs-components/company-ad
 import { CompanyFinancialComponent } from "./components/tabs-components/company-financial-component";
 import { CompanyCommunicationComponent } from "./components/tabs-components/company-communication-component";
 import { CompanyPrintNodeComponent } from "./components/tabs-components/company-print-node-component";
+import { CompanyIntegrationsComponent } from "./components/tabs-components/company-integrations-component";
 import { useCompanyProfile } from "@/hooks/use-company-profile";
 import { useTranslation } from "react-i18next";
 import { useRecoilValue } from "recoil";
@@ -68,6 +69,11 @@ const SettingsCompanyProfileWidget = () => {
           title: t("profileSettings.smsAndEmails"),
           component: <CompanyCommunicationComponent />,
           id: "communication",
+        },
+        {
+          title: t("profileSettings.integrations"),
+          component: <CompanyIntegrationsComponent />,
+          id: "integrations",
         },
       ];
 

@@ -79,6 +79,7 @@ export interface ICompanyProfile {
     bankBranch?: string;
     bankAccountNUM?: string;
   }>;
+  hpHmac?: string;
 }
 
 export enum CreditClearanceCompanies {
