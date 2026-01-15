@@ -15,6 +15,8 @@ const UPDATE_EMPLOYEE_DEFAULT_WORKING_HOURS_URL = '/v1/crm-service/employee/upda
 const UPDATE_EMPLOYEE_DAY_WORKING_HOURS_URL = '/v1/crm-service/employee/update-employee-day-working-hours';
 const RESET_EMPLOYEE_DAY_WORKING_HOURS_URL = '/v1/crm-service/employee/reset-employee-day-working-hours';
 const GET_ALL_EMPLOYEES_URL = '/v1/crm-service/employee/get-all-employees-for-dropdown';
+const INVITE_EMPLOYEE_URL = '/v1/crm-service/employee/invite-employee';
+const ACCEPT_INVITATION_URL = '/v1/crm-service/employee/accept-invitation';
 
 
 const getAllUsersApi: ICallAndSetData = async (callApi, setState) => {
@@ -58,6 +60,14 @@ const resetEmployeesDayWorkingHoursApi: ICallAndSetData = async (callApi, setSta
     return await getSetApiData(callApi, EHttpMethod.POST, RESET_EMPLOYEE_DAY_WORKING_HOURS_URL, setState, data);
 }
 
+const inviteEmployeeApi: ICallAndSetData = async (callApi, setState, data: { firstname: string; lastname: string; email: string; roleID: string }) => {
+    return await getSetApiData(callApi, EHttpMethod.POST, INVITE_EMPLOYEE_URL, setState, data);
+}
+
+const acceptInvitationApi: ICallAndSetData = async (callApi, setState, data: { token: string; password: string }) => {
+    return await getSetApiData(callApi, EHttpMethod.POST, ACCEPT_INVITATION_URL, setState, data);
+}
+
 
 export {
     getAllUsersApi,
@@ -71,5 +81,7 @@ export {
     updateEmployeesWorkingHoursApi,
     updateEmployeesDayWorkingHoursApi,
     resetEmployeesDayWorkingHoursApi,
-    getAllEmployeesApi
+    getAllEmployeesApi,
+    inviteEmployeeApi,
+    acceptInvitationApi
 };

@@ -27,7 +27,6 @@ const UsersSettings = () => {
         <div style={{ position: "relative" }}>
             <div style={classes.header}>
                 <div style={classes.headerBtn}>
-
                 </div>
                 <TableFilter
                     onChangeFilter={updateSearch}
