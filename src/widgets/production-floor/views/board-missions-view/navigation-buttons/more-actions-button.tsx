@@ -1,5 +1,5 @@
 import { PrimaryButton } from "@/components/button/primary-button";
-import { CircularProgress, MenuItem, Paper } from "@mui/material";
+import { CircularProgress, MenuItem, Paper, FormControlLabel, Radio, RadioGroup, Stack } from "@mui/material";
 import { useRef, useState } from "react";
 import { useRouter } from "next/router";
 import { useRecoilState } from "recoil";
@@ -13,7 +13,6 @@ import {
   IContact,
   SelectContactComponent,
 } from "@/widgets/production-floor/views/board-missions-view/navigation-buttons/select-contact-component";
-import { getDocumentContactsApi } from "@/services/api-service/documents/documents-service-api";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { createBoardMissionsChatRoomApi } from "@/services/api-service/chat/quick-blox-chat-endpoints";
 import {
@@ -26,13 +25,20 @@ import { ungroupJobsApi } from "@/services/api-service/production-floor/producti
 import { useFrontDeskEmailIntegration } from "@/pages-components/quotes/hooks/use-frontdesk-email-integration";
 import { FrontDeskEmailComposerWrapper } from "@/pages-components/quotes/components/frontdesk-email-composer-wrapper";
 import { GraphicsApprovalUploadModal } from "./graphics-approval-upload-modal";
+import { GoMakeDeleteModal } from "@/components/modal-deleted/modal";
+import { ModalType } from "@/enums";
+import { PrimaryCheckbox } from "@/components/check-box/primary-check-box";
+import { FONT_FAMILY } from "@/utils/font-family";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { moveOrderToReadyApi } from "@/services/api-service/generic-doc/documents-api";
 
 const MoreActionsButton = ({ isMobile = false }) => {
   const { t } = useTranslation();
   const direction = t("direction");
   const { callApi } = useGomakeAxios();
   const { query, push } = useRouter();
-  const { alertFaultGetData, alertSuccessUpdate, alertFaultUpdate } = useSnackBar();
+  const { alertFaultGetData, alertSuccessUpdate, alertFaultUpdate, alertSuccess, alertFault } = useSnackBar();
+  const { primaryColor } = useGomakeTheme();
   const [loading] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(false);
   const [companyProfile] = useRecoilState(printHouseProfile);
@@ -45,6 +51,12 @@ const MoreActionsButton = ({ isMobile = false }) => {
   const [connectionId] = useRecoilState(fileUploaderConnectionIdState);
   const [openGraphicsApprovalUploadModal, setOpenGraphicsApprovalUploadModal] =
     useState<boolean>(false);
+
+  // Modal state for close as delivery note/invoice
+  const [openChangeProductionStatusModal, setOpenChangeProductionStatusModal] = useState<boolean>(false);
+  const [isMoveToReady, setIsMoveToReady] = useState(false);
+  const [moveToReadyOption, setMoveToReadyOption] = useState<"withMessage" | "withoutMessage">("withoutMessage");
+  const [isSelectedCLoseAsDeliveryNote, setIsSelectedCLoseAsDeliveryNote] = useState(false);
 
   // Email composer integration with document type 16 (OLD FUNCTIONALITY - KEPT FOR REFERENCE)
   const {
@@ -137,6 +149,97 @@ const MoreActionsButton = ({ isMobile = false }) => {
     await ungroupJobsApi(callApi, callBack, boardMissions.boardMissionId);
   };
 
+  const handleCheckboxChange = () => {
+    const newValue = !isMoveToReady;
+    setIsMoveToReady(newValue);
+    if (newValue) {
+      setMoveToReadyOption("withoutMessage");
+    }
+  };
+
+  const handleRadioChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setMoveToReadyOption(event.target.value as "withMessage" | "withoutMessage");
+  };
+
+  const onClickCloseChangeProductionStatusModal = () => {
+    setOpenChangeProductionStatusModal(false);
+    setIsMoveToReady(false);
+    setIsSelectedCLoseAsDeliveryNote(false);
+  };
+
+  const moveOrderToReady = async (isSendMessage: boolean = false) => {
+    if (!boardMissions?.orderId) return;
+
+    const callBack = (res) => {
+      if (res?.success) {
+        alertSuccessUpdate();
+        onClickCloseChangeProductionStatusModal();
+        // Refresh the page or update state as needed
+        if (isSelectedCLoseAsDeliveryNote) {
+          window.open(`/deliveryNote?isNewCreation=true&orderId=${boardMissions.orderId}`, '_blank');
+        }
+      } else {
+        alertFaultUpdate();
+      }
+    };
+
+    await moveOrderToReadyApi(callApi, callBack, {
+      orderId: boardMissions.orderId,
+      isSendMessage,
+    });
+  };
+
+  const handleCloseAsDeliveryNote = () => {
+    handleClose();
+    if (!boardMissions?.orderId) return;
+
+    // Check if order is not ready (isReady = false)
+    if (boardMissions.isReady === false) {
+      setIsSelectedCLoseAsDeliveryNote(true);
+      setOpenChangeProductionStatusModal(true);
+    } else {
+      // If ready, directly open delivery note
+      window.open(`/deliveryNote?isNewCreation=true&orderId=${boardMissions.orderId}`, '_blank');
+    }
+  };
+
+  const handleCloseAsInvoice = () => {
+    handleClose();
+    if (!boardMissions?.orderId) return;
+    else {
+      // If ready, directly open invoice
+      window.open(`/invoice?isNewCreation=true&orderId=${boardMissions.orderId}`, '_blank');
+    }
+  };
+
+  const handleCopyFilesPath = async () => {
+    handleClose();
+    // First check if filesPath is already in the state
+    if (boardMissions?.filesPath) {
+      try {
+        // Try modern clipboard API first
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          await navigator.clipboard.writeText(boardMissions.filesPath);
+        } else {
+          // Fallback for older browsers
+          const textArea = document.createElement("textarea");
+          textArea.value = boardMissions.filesPath;
+          textArea.style.position = "fixed";
+          textArea.style.opacity = "0";
+          document.body.appendChild(textArea);
+          textArea.select();
+          document.execCommand("copy");
+          document.body.removeChild(textArea);
+        }
+        alertSuccess(t("productionFloor.filesPathCopiedToClipboard"));
+        return;
+      } catch (error) {
+        alertFault(t("productionFloor.failedToCopyFilesPath") || "");
+        return;
+      }
+    }
+  };
+
   const buttonRef = useRef<HTMLButtonElement>(null);
 
   return (
@@ -182,6 +285,19 @@ const MoreActionsButton = ({ isMobile = false }) => {
             <MenuItem onClick={getDocumentContacts}>
               {t("productionFloor.sendGraphicsApprove")}
             </MenuItem>
+            <MenuItem onClick={handleCopyFilesPath}>
+              {t("productionFloor.copyFilesPath")}
+            </MenuItem>
+            {boardMissions?.orderId && (
+              <>
+                <MenuItem onClick={handleCloseAsDeliveryNote}>
+                  {t("sales.quote.closeAsDeliveryNote")}
+                </MenuItem>
+                <MenuItem onClick={handleCloseAsInvoice}>
+                  {t("sales.quote.closeAsInvoice")}
+                </MenuItem>
+              </>
+            )}
           </Paper>
         </ClickOutside>
       )}
@@ -212,6 +328,90 @@ const MoreActionsButton = ({ isMobile = false }) => {
         documentType={16 as any}
         isLoading={isLoadingEmailData}
       />
+
+      {/* Modal for Close as Delivery Note/Invoice */}
+      <GoMakeDeleteModal
+        modalType={ModalType.WARNING}
+        title={
+          isSelectedCLoseAsDeliveryNote
+            ? "customers.modal.closeOrderAsDeliveryNote"
+            : "customers.modal.closeOrderAsInvoice"
+        }
+        subTitle={"customers.modal.thisOrderIsAlreadyInProcess"}
+        yesBtn={
+          isSelectedCLoseAsDeliveryNote
+            ? t("customers.modal.closeAsDeliveryNote")
+            : t("customers.modal.closeAsInvoice")
+        }
+        openModal={openChangeProductionStatusModal}
+        onClose={onClickCloseChangeProductionStatusModal}
+        onClickDelete={() => {
+          if (isMoveToReady) {
+            moveOrderToReady(moveToReadyOption === "withMessage");
+          } else {
+            if (isSelectedCLoseAsDeliveryNote) {
+              window.open(`/deliveryNote?isNewCreation=true&orderId=${boardMissions.orderId}`, '_blank');
+              onClickCloseChangeProductionStatusModal();
+            }
+          }
+        }}
+      >
+        <Stack alignItems={"center"} spacing={2}>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
+              color: isMoveToReady ? "black" : "#475467",
+            }}
+          >
+            <PrimaryCheckbox
+              checked={isMoveToReady}
+              onChange={handleCheckboxChange}
+            />
+            {t("sales.moveToReadyAndCloseOrder")}
+          </div>
+          {isMoveToReady && (
+            <RadioGroup
+              row
+              value={moveToReadyOption}
+              onChange={handleRadioChange}
+              style={{ marginTop: 8 }}
+            >
+              <FormControlLabel
+                value="withoutMessage"
+                control={
+                  <Radio
+                    sx={{ transform: "scale(0.8)", p: 0.5 }}
+                    style={{ color: primaryColor(300) }}
+                  />
+                }
+                label={t("sales.moveToReadyWithoutMessage")}
+                sx={{
+                  "& .MuiFormControlLabel-label": {
+                    ...FONT_FAMILY.Lexend(500, 13),
+                  },
+                }}
+              />
+              <FormControlLabel
+                value="withMessage"
+                control={
+                  <Radio
+                    sx={{ transform: "scale(0.8)", p: 0.5 }}
+                    style={{ color: primaryColor(300) }}
+                  />
+                }
+                label={t("sales.moveToReadyWithMessage")}
+                sx={{
+                  "& .MuiFormControlLabel-label": {
+                    ...FONT_FAMILY.Lexend(500, 13),
+                  },
+                }}
+              />
+            </RadioGroup>
+          )}
+        </Stack>
+      </GoMakeDeleteModal>
     </div>
   );
 };
