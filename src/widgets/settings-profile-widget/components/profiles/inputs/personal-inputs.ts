@@ -1,10 +1,14 @@
 import { IUserProfile } from "@/store/user-profile";
 import { useRecoilValue } from "recoil";
 import { languageOptionsState } from "@/store/languages";
+import { companyProfileState, ICompanyProfile } from "@/store/company-profile";
 
 const personalInputs = (state: IUserProfile) => {
   const languages = useRecoilValue(languageOptionsState);
-
+  const profileData = useRecoilValue<ICompanyProfile>(companyProfileState);
+  const defaultLanguageOptions = profileData?.languages?.length > 0
+    ? languages.filter((lang) => profileData?.languages?.includes(lang.value))
+    : [];
   return [
     {
       name: "firstName",
@@ -52,7 +56,7 @@ const personalInputs = (state: IUserProfile) => {
       placeholder: "profileSettings.systemLanguage",
       required: true,
       parameterKey: "systemLang",
-      options: languages,
+      options: defaultLanguageOptions,
       value: state.systemLang,
       isValid: !!state.systemLang,
       readonly: false,

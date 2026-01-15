@@ -92,7 +92,7 @@ const InviteEmployeeModal = ({
     await inviteEmployeeApi(callApi, callback, formData);
   };
 
-  const inputs: IInput[] = [
+  const inputs: any[] = [
     {
       name: "firstName",
       label: "usersSettings.firstName",

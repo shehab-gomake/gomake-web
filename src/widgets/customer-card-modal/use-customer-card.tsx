@@ -30,6 +30,7 @@ import { printHouseCountryState } from "@/store/print-house-country";
 import { EPreferences } from "@/enums/prefernces";
 import { getAllShipmentTypesApi } from "@/services/api-service/shipmentTypes/shipment-type-api";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { companyProfileState, ICompanyProfile } from "@/store/company-profile";
 
 const useCustomerCard = ({
   t,
@@ -63,6 +64,10 @@ const useCustomerCard = ({
   const gomakeUser = useRecoilValue<any>(gomakeUserState);
   // const languagesOptions = useRecoilValue(languagesState);
   const languagesOptions = useRecoilValue(languageOptionsState);
+  const profileData = useRecoilValue<ICompanyProfile>(companyProfileState);
+  const defaultLanguageOptions = profileData?.languages?.length > 0
+    ? languagesOptions.filter((lang) => profileData?.languages?.includes(lang.value))
+    : [];
   const { CheckPreferenceValue, GetPreferenceKey } = usePrintHousePreferences();
   const { CheckPermission } = useUserPermission();
   const printHouseCountry = useRecoilValue<string>(printHouseCountryState);
@@ -685,7 +690,7 @@ const useCustomerCard = ({
     resetPassModal,
     clientTypesCategories,
     handleClose,
-    languagesOptions,
+    languagesOptions: defaultLanguageOptions,
     gomakeUser,
     isClientType,
     onClickCloseClientType,

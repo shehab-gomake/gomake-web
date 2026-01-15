@@ -23,18 +23,18 @@ const CompanyBasicInfoComponent = () => {
 
   const changeState = (key: string, value: any) => {
     const updatedProfile = { ...profile, [key]: value };
-    
+
     // If languages are being updated, check if the default language was removed
     if (key === "languages") {
       const newLanguages = value || [];
       const currentSystemLanguage = profile?.systemLanguage;
-      
+
       // If the current default language is not in the new languages array, clear it
       if (currentSystemLanguage && !newLanguages.includes(currentSystemLanguage)) {
         updatedProfile.systemLanguage = "";
       }
     }
-    
+
     profileChange(updatedProfile);
   };
 

@@ -19,6 +19,7 @@ import { Box, Typography } from "@mui/material";
 import { useRecoilValue } from "recoil";
 import { languageOptionsState } from "@/store/languages";
 import parse from "html-react-parser";
+import { companyProfileState, ICompanyProfile } from "@/store/company-profile";
 
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
@@ -61,6 +62,10 @@ const NotesForActionModal = ({
   const dir: "rtl" | "ltr" = t("direction");
   const isRTL = dir === "rtl";
   const allLanguages = useRecoilValue(languageOptionsState);
+  const profileData = useRecoilValue<ICompanyProfile>(companyProfileState);
+  const defaultLanguageOptions = profileData?.languages?.length > 0
+    ? allLanguages.filter((lang) => profileData?.languages?.includes(lang.value))
+    : [];
 
   // Check if contentTranslations exists and has items
   const hasTranslations =
@@ -70,7 +75,7 @@ const NotesForActionModal = ({
 
   // Get language name from code
   const getLanguageName = (langCode: string) => {
-    const lang = allLanguages.find((l) => l.value === langCode);
+    const lang = defaultLanguageOptions.find((l) => l.value === langCode);
     return lang?.text || langCode.toUpperCase();
   };
 
