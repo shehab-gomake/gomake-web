@@ -26,6 +26,7 @@ import { ungroupJobsApi } from "@/services/api-service/production-floor/producti
 import { useFrontDeskEmailIntegration } from "@/pages-components/quotes/hooks/use-frontdesk-email-integration";
 import { FrontDeskEmailComposerWrapper } from "@/pages-components/quotes/components/frontdesk-email-composer-wrapper";
 import { GraphicsApprovalUploadModal } from "./graphics-approval-upload-modal";
+import { GraphicsApprovalViewModal } from "@/widgets/production-floor/table-view/status-table/table-row/graphics-approval-view-modal";
 
 const MoreActionsButton = ({ isMobile = false }) => {
   const { t } = useTranslation();
@@ -44,6 +45,8 @@ const MoreActionsButton = ({ isMobile = false }) => {
   const [, setShowFileUploader] = useRecoilState(pinFileUploaderState);
   const [connectionId] = useRecoilState(fileUploaderConnectionIdState);
   const [openGraphicsApprovalUploadModal, setOpenGraphicsApprovalUploadModal] =
+    useState<boolean>(false);
+  const [openGraphicsApprovalViewModal, setOpenGraphicsApprovalViewModal] =
     useState<boolean>(false);
 
   // Email composer integration with document type 16 (OLD FUNCTIONALITY - KEPT FOR REFERENCE)
@@ -117,10 +120,16 @@ const MoreActionsButton = ({ isMobile = false }) => {
     );
   };
 
-  // NEW FUNCTIONALITY - Opens file upload modal
+  // NEW FUNCTIONALITY - Opens file upload modal or view modal based on status
   const getDocumentContacts = () => {
     handleClose(); // Close the menu
-    setOpenGraphicsApprovalUploadModal(true);
+    // If graphics approval status exists, open view modal (edit mode)
+    // Otherwise, open upload modal (new approval)
+    if (boardMissions.showGraphicsApprovalAlert !== undefined && boardMissions.showGraphicsApprovalAlert !== null) {
+      setOpenGraphicsApprovalViewModal(true);
+    } else {
+      setOpenGraphicsApprovalUploadModal(true);
+    }
   };
 
   const handleClickUnGroupJob = async () => {
@@ -180,7 +189,9 @@ const MoreActionsButton = ({ isMobile = false }) => {
               {t("productionFloor.unGroupJob")}
             </MenuItem>
             <MenuItem onClick={getDocumentContacts}>
-              {t("productionFloor.sendGraphicsApprove")}
+              {boardMissions.showGraphicsApprovalAlert !== undefined && boardMissions.showGraphicsApprovalAlert !== null
+                ? t("productionFloor.editGraphicsApproval") || "Edit Graphics Approval"
+                : t("productionFloor.sendGraphicsApprove")}
             </MenuItem>
           </Paper>
         </ClickOutside>
@@ -201,7 +212,21 @@ const MoreActionsButton = ({ isMobile = false }) => {
         orderItemId={boardMissions.orderItemId}
         orderId={boardMissions.orderId}
         productType={boardMissions.productType}
+        jobGraphicApprovalId={undefined}
+        onSuccess={() => {}}
       />
+
+      {/* Graphics Approval View Modal (Edit Mode) */}
+      {boardMissions?.boardMissionId && (
+        <GraphicsApprovalViewModal
+          open={openGraphicsApprovalViewModal}
+          onClose={() => setOpenGraphicsApprovalViewModal(false)}
+          boardMissionId={boardMissions.boardMissionId}
+          orderItemId={boardMissions.orderItemId}
+          orderId={boardMissions.orderId}
+          productType={boardMissions.productType}
+        />
+      )}
 
       {/* OLD: Email Composer Wrapper for Graphics Approval (KEPT FOR REFERENCE) */}
       <FrontDeskEmailComposerWrapper

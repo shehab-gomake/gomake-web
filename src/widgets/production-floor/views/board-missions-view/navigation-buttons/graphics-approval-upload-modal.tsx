@@ -36,6 +36,8 @@ const GraphicsApprovalUploadModal = ({
   orderItemId,
   orderId,
   productType,
+  jobGraphicApprovalId,
+  onSuccess,
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -62,6 +64,7 @@ const GraphicsApprovalUploadModal = ({
     orderId,
     productType,
     openModal,
+    jobGraphicApprovalId,
   });
   const [isDragging, setIsDragging] = useState(false);
 
@@ -369,7 +372,12 @@ const GraphicsApprovalUploadModal = ({
           </PrimaryButton>
           <PrimaryButton
             variant="contained"
-            onClick={() => handleSendGraphicsApproval(onClose)}
+            onClick={() => handleSendGraphicsApproval(() => {
+              onClose();
+              if (onSuccess) {
+                onSuccess();
+              }
+            })}
             disabled={uploadedFiles.length === 0 || uploadingFiles.length > 0 || isSending}
           >
             {isSending ? t("sales.quote.sending") || "Sending..." : t("sales.quote.send") || "Send"}

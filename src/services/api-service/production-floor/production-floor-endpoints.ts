@@ -980,10 +980,24 @@ const getGraphicsApprovalApi: ICallAndSetData = async (
   );
 };
 
+const getGraphicsApprovalByBoardMissionIdApi: ICallAndSetData = async (
+  callApi,
+  callBack,
+  data: { boardMissionId: string }
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.GET,
+    `/v1/erp-service/board-missions/get-graphics-approval-by-board-mission-id/${data.boardMissionId}`,
+    callBack,
+    undefined
+  );
+};
+
 const updateGraphicsApprovalFileApi: ICallAndSetData = async (
   callApi,
   callBack,
-  data: { fileId: string; status: number; note?: string }
+  data: { fileId: string; status?: number; note?: string }
 ) => {
   return await getSetApiData(
     callApi,
@@ -997,7 +1011,7 @@ const updateGraphicsApprovalFileApi: ICallAndSetData = async (
 const sendGraphicsApprovalToClientApi: ICallAndSetData = async (
   callApi,
   callBack,
-  data: { boardMissionId: string; files: Array<{ url: string; description: string }>; contactEmail?: string }
+  data: { boardMissionId: string; files: Array<{ url: string; description: string }>; contactEmail?: string; jobGraphicApprovalId?: string }
 ) => {
   return await getSetApiData(
     callApi,
@@ -1068,4 +1082,5 @@ export {
   sendGraphicsApprovalToClientApi,
   getGraphicsApprovalApi,
   updateGraphicsApprovalFileApi,
+  getGraphicsApprovalByBoardMissionIdApi,
 };

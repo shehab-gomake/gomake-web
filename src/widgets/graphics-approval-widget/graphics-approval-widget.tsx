@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useRef, memo } from "react";
+import { useDebounce } from "@/utils/use-debounce";
 import { useRouter } from "next/router";
 import { useGomakeAxios } from "@/hooks/use-gomake-axios";
 import { Box, Stack, Typography, CircularProgress, Paper, Button, TextField } from "@mui/material";
@@ -34,15 +35,89 @@ interface GraphicsApproval {
   sentDate?: string;
   jobNumber?: string;
   orderNumber?: string;
+  clientLang?: string;
   files: GraphicsApprovalFile[];
 }
+
+// Note Input Component with Debouncing - moved outside to prevent recreation on each render
+const NoteInput = memo(({ fileId, value, onChange, onSave, isUpdating, disabled, placeholder, label }: {
+  fileId: string;
+  value: string;
+  onChange: (value: string) => void;
+  onSave: (note: string) => void;
+  isUpdating: boolean;
+  disabled: boolean;
+  placeholder: string;
+  label: string;
+}) => {
+  const debouncedNote = useDebounce(value, 1000); // 1 second debounce
+  const previousSavedValueRef = useRef<string>(value);
+  const onSaveRef = useRef(onSave);
+  const isInitialMountRef = useRef(true);
+
+  // Keep refs updated
+  useEffect(() => {
+    onSaveRef.current = onSave;
+  }, [onSave]);
+
+  // Initialize previousSavedValueRef only on mount or when value changes externally (from server)
+  useEffect(() => {
+    if (isInitialMountRef.current) {
+      previousSavedValueRef.current = value;
+      isInitialMountRef.current = false;
+    }
+  }, []); // Only run on mount
+
+  // Debounced save
+  useEffect(() => {
+    // Only save if the debounced value has actually changed from the previously saved value
+    if (debouncedNote !== previousSavedValueRef.current && !isInitialMountRef.current) {
+      previousSavedValueRef.current = debouncedNote;
+      onSaveRef.current(debouncedNote);
+    }
+  }, [debouncedNote, fileId]); // Removed onSave from dependencies
+
+  // Handle blur - save immediately when focus is lost
+  const handleBlur = useCallback(() => {
+    // Always save on blur if value has changed, regardless of debounce
+    const currentValue = value;
+    // Compare with the last saved value - if different, save immediately
+    if (currentValue !== previousSavedValueRef.current) {
+      // Update ref before saving to prevent duplicate saves
+      previousSavedValueRef.current = currentValue;
+      // Save immediately
+      onSaveRef.current(currentValue);
+    }
+  }, [value]);
+
+  return (
+    <TextField
+      label={label}
+      multiline
+      rows={3}
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      onBlur={handleBlur}
+      disabled={disabled}
+      fullWidth
+      placeholder={placeholder}
+      InputProps={{
+        endAdornment: isUpdating ? (
+          <CircularProgress size={20} sx={{ marginRight: 1 }} />
+        ) : null,
+      }}
+    />
+  );
+});
+
+NoteInput.displayName = "NoteInput";
 
 const GraphicsApprovalWidget = () => {
   const router = useRouter();
   const { id, boardMissionId } = router.query;
   const { callApi } = useGomakeAxios();
   const { successColor, errorColor, neutralColor, primaryColor } = useGomakeTheme();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const direction: "rtl" | "ltr" = t("direction");
   const classes = style({ direction, successColor, errorColor, neutralColor, primaryColor });
 
@@ -53,7 +128,10 @@ const GraphicsApprovalWidget = () => {
   const [approval, setApproval] = useState<GraphicsApproval | null>(null);
   const [fileNotes, setFileNotes] = useState<Record<string, string>>({});
   const [updatingFiles, setUpdatingFiles] = useState<Set<string>>(new Set());
+  const [updatingNotes, setUpdatingNotes] = useState<Set<string>>(new Set());
+  const [editingFiles, setEditingFiles] = useState<Set<string>>(new Set());
   const [isMobile, setIsMobile] = useState(false);
+  const languageSetRef = useRef(false);
   const [companyLogo, setCompanyLogo] = useState<{
     loginLogo: string;
     name: string;
@@ -75,6 +153,16 @@ const GraphicsApprovalWidget = () => {
       if (res?.success && res?.data) {
         const data = res.data.data || res.data;
         setApproval(data);
+        
+        // Set client language if available (only once)
+        if (data.clientLang && !languageSetRef.current && i18n.language !== data.clientLang) {
+          localStorage.setItem("systemLanguage", data.clientLang);
+          i18n.changeLanguage(data.clientLang).then(() => {
+            languageSetRef.current = true;
+            // Language changed successfully
+          });
+        }
+        
         // Initialize notes from existing file notes
         const notes: Record<string, string> = {};
         data.files?.forEach((file: GraphicsApprovalFile) => {
@@ -91,13 +179,11 @@ const GraphicsApprovalWidget = () => {
     await getGraphicsApprovalApi(callApi, callBack, { id });
   }, [id, callApi, t]);
 
-  // Update file approval status
+  // Update file approval status (without note)
   const handleFileStatusUpdate = async (fileId: string, status: number) => {
     if (updatingFiles.has(fileId)) return;
 
     setUpdatingFiles((prev) => new Set(prev).add(fileId));
-
-    const note = fileNotes[fileId] || "";
 
     const callBack = (res: any) => {
       setUpdatingFiles((prev) => {
@@ -107,6 +193,12 @@ const GraphicsApprovalWidget = () => {
       });
 
       if (res?.success) {
+        // Exit edit mode
+        setEditingFiles((prev) => {
+          const next = new Set(prev);
+          next.delete(fileId);
+          return next;
+        });
         // Reload approval data to get updated status
         loadGraphicsApproval();
       } else {
@@ -117,7 +209,42 @@ const GraphicsApprovalWidget = () => {
     await updateGraphicsApprovalFileApi(callApi, callBack, {
       fileId,
       status,
+    });
+  };
+
+  // Update file note only (debounced)
+  const handleNoteUpdate = useCallback(async (fileId: string, note: string) => {
+    if (updatingNotes.has(fileId)) return;
+
+    setUpdatingNotes((prev) => new Set(prev).add(fileId));
+
+    const callBack = (res: any) => {
+      setUpdatingNotes((prev) => {
+        const next = new Set(prev);
+        next.delete(fileId);
+        return next;
+      });
+
+      if (!res?.success) {
+        setError(res?.message || t("graphicsApproval.noteUpdateFailed") || "Failed to update note");
+      }
+    };
+
+    await updateGraphicsApprovalFileApi(callApi, callBack, {
+      fileId,
       note,
+    });
+  }, [callApi, t]);
+
+  const handleChangeStatusClick = (fileId: string) => {
+    setEditingFiles((prev) => new Set(prev).add(fileId));
+  };
+
+  const handleCancelChangeStatus = (fileId: string) => {
+    setEditingFiles((prev) => {
+      const next = new Set(prev);
+      next.delete(fileId);
+      return next;
     });
   };
 
@@ -393,6 +520,8 @@ const GraphicsApprovalWidget = () => {
             {approval.files.map((file) => {
               const isUpdating = updatingFiles.has(file.id);
               const isPending = file.status === 0;
+              const isEditing = editingFiles.has(file.id);
+              const showActionButtons = isPending || isEditing;
 
               return (
                 <Paper key={file.id} elevation={2} sx={{ padding: isMobile ? "16px" : "24px" }}>
@@ -429,16 +558,18 @@ const GraphicsApprovalWidget = () => {
                             {file.description}
                           </Typography>
                         )}
-                        <Typography
-                          variant="body2"
-                          sx={{
-                            color: getStatusColor(file.status),
-                            fontWeight: "bold",
-                            fontSize: isMobile ? "13px" : undefined,
-                          }}
-                        >
-                          {getStatusLabel(file.status)}
-                        </Typography>
+                        {!isEditing && (
+                          <Typography
+                            variant="body2"
+                            sx={{
+                              color: getStatusColor(file.status),
+                              fontWeight: "bold",
+                              fontSize: isMobile ? "13px" : undefined,
+                            }}
+                          >
+                            {getStatusLabel(file.status)}
+                          </Typography>
+                        )}
                       </Box>
                       <Box sx={{ width: isMobile ? "100%" : "auto" }}>
                         <a
@@ -459,30 +590,41 @@ const GraphicsApprovalWidget = () => {
                     </Stack>
 
                     {/* Note Input */}
-                    <TextField
-                      label={t("graphicsApproval.note") || "Note"}
-                      multiline
-                      rows={3}
+                    <NoteInput
+                      fileId={file.id}
                       value={fileNotes[file.id] || ""}
-                      onChange={(e) =>
+                      onChange={(value) =>
                         setFileNotes((prev) => ({
                           ...prev,
-                          [file.id]: e.target.value,
+                          [file.id]: value,
                         }))
                       }
-                      disabled={!isPending || isUpdating}
-                      fullWidth
+                      onSave={(note) => handleNoteUpdate(file.id, note)}
+                      isUpdating={updatingNotes.has(file.id)}
+                      disabled={isUpdating}
                       placeholder={t("graphicsApproval.notePlaceholder") || "Add a note (optional)"}
+                      label={t("graphicsApproval.note") || "Note"}
                     />
 
                     {/* Action Buttons */}
-                    {isPending && (
+                    {showActionButtons ? (
                       <Stack 
                         direction={isMobile ? "column" : "row"} 
                         spacing={2} 
                         justifyContent="flex-end"
                         sx={{ width: "100%" }}
                       >
+                        {isEditing && (
+                          <Button
+                            variant="outlined"
+                            onClick={() => handleCancelChangeStatus(file.id)}
+                            disabled={isUpdating}
+                            fullWidth={isMobile}
+                            size={isMobile ? "medium" : "small"}
+                          >
+                            {t("graphicsApproval.cancel") || "Cancel"}
+                          </Button>
+                        )}
                         <Button
                           variant="outlined"
                           color="error"
@@ -510,6 +652,23 @@ const GraphicsApprovalWidget = () => {
                           ) : (
                             t("graphicsApproval.approve") || "Approve"
                           )}
+                        </Button>
+                      </Stack>
+                    ) : (
+                      <Stack 
+                        direction={isMobile ? "column" : "row"} 
+                        spacing={2} 
+                        justifyContent="flex-end"
+                        sx={{ width: "100%" }}
+                      >
+                        <Button
+                          variant="outlined"
+                          onClick={() => handleChangeStatusClick(file.id)}
+                          disabled={isUpdating}
+                          fullWidth={isMobile}
+                          size={isMobile ? "medium" : "small"}
+                        >
+                          {t("graphicsApproval.changeStatus") || "Change Status"}
                         </Button>
                       </Stack>
                     )}
