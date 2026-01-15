@@ -104,6 +104,7 @@ const InviteEmployeeModal = ({
       value: formData.firstname,
       machineInputType: "input",
       isValid: !!formData.firstname,
+      inputs: []
     },
     {
       name: "lastName",
@@ -116,6 +117,7 @@ const InviteEmployeeModal = ({
       value: formData.lastname,
       machineInputType: "input",
       isValid: !!formData.lastname,
+      inputs: []
     },
     {
       name: "email",
@@ -129,6 +131,7 @@ const InviteEmployeeModal = ({
       machineInputType: "input",
       isValid: !!formData.email && emailRegex.test(formData.email),
       regex: emailRegex,
+      inputs: []
     },
     {
       name: "roleID",
@@ -141,6 +144,7 @@ const InviteEmployeeModal = ({
       options: [],
       isValid: true,
       optionsUrl: "/v1/crm-service/roles/get-all-roles",
+      inputs: []
     },
   ];
 
