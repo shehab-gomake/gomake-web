@@ -198,7 +198,7 @@ const useAddAttachmentsModal = ({
         const sessionUri = response.data.sessionUri;
         const bucketName = response.data.bucketName;
         const fileUrl = response.data.fileUrl;
-        await uploadFileToGCS(sessionUri, file, (progress) => {});
+        await uploadFileToGCS(sessionUri, file, (progress) => { });
         await uploadQuoteItemFileForDocument({
           id: item.id,
           fileName: file.name,
@@ -217,7 +217,6 @@ const useAddAttachmentsModal = ({
           const existingItemIndex = prevItems.findIndex(
             (i) => i.id === item.id
           );
-          debugger;
           if (existingItemIndex >= 0) {
             const updatedItems = [...prevItems];
             if (updatedItems?.find((x) => x.fileUrl === fileUrl)) {
@@ -227,22 +226,22 @@ const useAddAttachmentsModal = ({
               ...updatedItems[existingItemIndex],
               files: updatedItems[existingItemIndex].files
                 ? [
-                    ...updatedItems[existingItemIndex].files,
-                    {
-                      fileName: file.name,
-                      screenShot: "",
-                      url: fileUrl,
-                      bucketName: bucketName,
-                    },
-                  ]
+                  ...updatedItems[existingItemIndex].files,
+                  {
+                    fileName: file.name,
+                    screenShot: "",
+                    url: fileUrl,
+                    bucketName: bucketName,
+                  },
+                ]
                 : [
-                    {
-                      fileName: file.name,
-                      screenShot: "",
-                      url: fileUrl,
-                      bucketName: bucketName,
-                    },
-                  ],
+                  {
+                    fileName: file.name,
+                    screenShot: "",
+                    url: fileUrl,
+                    bucketName: bucketName,
+                  },
+                ],
             };
             return updatedItems;
           } else {
@@ -274,117 +273,117 @@ const useAddAttachmentsModal = ({
       }
       return;
       // Call onFileUploadStart if provided
-     /* if (onFileUploadStart) {
-        onFileUploadStart();
-      }
-
-      const reader = new FileReader();
-      reader.onload = async (event) => {
-        const arrayBuffer = event.target.result;
-        const data = new Uint8Array(arrayBuffer as ArrayBuffer);
-        const base64Content = `data:${file.type};base64,${btoa(
-          new Uint8Array(data).reduce((data, byte) => {
-            return data + String.fromCharCode(byte);
-          }, "")
-        )}`;
-
-        try {
-          let userToken = getUserToken();
-          if (!userToken) {
-            userToken = getTempUserToken();
-          }
-          const response = await axios.post(
-            `${quoteConfirm?.filesApiAddress}/api/Files/UploadBase64`,
-            {
-              quoteItemId: quoteConfirm?.id,
-              fileName: file.name,
-              base64Content: base64Content,
-            },
-            {
-              headers: {
-                authorization: "Bearer " + userToken,
-              },
-            }
-          );
-
-          if (!response) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-          }
-
-          const res = response.data;
-          uploadQuoteItemFileForDocument({
-            id: item.id,
-            fileName: file.name,
-            screenShot: res.screenshotUrl,
-            url: res.fileUrl,
-          });
-          setFileItems((prevItems) => {
-            const existingItemIndex = prevItems.findIndex(
-              (i) => i.id === item.id
-            );
-
-            if (existingItemIndex >= 0) {
-              const updatedItems = [...prevItems];
-              updatedItems[existingItemIndex] = {
-                ...updatedItems[existingItemIndex],
-                files: updatedItems[existingItemIndex].files
-                  ? [
-                      ...updatedItems[existingItemIndex].files,
-                      {
-                        fileName: file.name,
-                        screenShot: res.screenshotUrl,
-                        url: res.fileUrl,
-                      },
-                    ]
-                  : [
-                      {
-                        fileName: file.name,
-                        screenShot: res.screenshotUrl,
-                        url: res.fileUrl,
-                      },
-                    ],
-              };
-              return updatedItems;
-            } else {
-              return [
-                ...prevItems,
-                {
-                  id: item.id,
-                  productName: item.productName,
-                  files: [
-                    {
-                      fileName: file.name,
-                      screenShot: res.screenshotUrl,
-                      url: res.fileUrl,
-                    },
-                  ],
-                },
-              ];
-            }
-          });
-
-          // Call onFileUploadComplete if provided
-          if (onFileUploadComplete) {
-            onFileUploadComplete();
-          }
-        } catch (error) {
-          console.error("File upload error:", error);
-          // Call onFileUploadComplete even on error
-          if (onFileUploadComplete) {
-            onFileUploadComplete();
-          }
-        }
-      };
-
-      reader.onerror = () => {
-        console.error("File reader error");
-        // Call onFileUploadComplete on reader error
-        if (onFileUploadComplete) {
-          onFileUploadComplete();
-        }
-      };
-
-      reader.readAsArrayBuffer(file);*/
+      /* if (onFileUploadStart) {
+         onFileUploadStart();
+       }
+ 
+       const reader = new FileReader();
+       reader.onload = async (event) => {
+         const arrayBuffer = event.target.result;
+         const data = new Uint8Array(arrayBuffer as ArrayBuffer);
+         const base64Content = `data:${file.type};base64,${btoa(
+           new Uint8Array(data).reduce((data, byte) => {
+             return data + String.fromCharCode(byte);
+           }, "")
+         )}`;
+ 
+         try {
+           let userToken = getUserToken();
+           if (!userToken) {
+             userToken = getTempUserToken();
+           }
+           const response = await axios.post(
+             `${quoteConfirm?.filesApiAddress}/api/Files/UploadBase64`,
+             {
+               quoteItemId: quoteConfirm?.id,
+               fileName: file.name,
+               base64Content: base64Content,
+             },
+             {
+               headers: {
+                 authorization: "Bearer " + userToken,
+               },
+             }
+           );
+ 
+           if (!response) {
+             throw new Error(`HTTP error! status: ${response.status}`);
+           }
+ 
+           const res = response.data;
+           uploadQuoteItemFileForDocument({
+             id: item.id,
+             fileName: file.name,
+             screenShot: res.screenshotUrl,
+             url: res.fileUrl,
+           });
+           setFileItems((prevItems) => {
+             const existingItemIndex = prevItems.findIndex(
+               (i) => i.id === item.id
+             );
+ 
+             if (existingItemIndex >= 0) {
+               const updatedItems = [...prevItems];
+               updatedItems[existingItemIndex] = {
+                 ...updatedItems[existingItemIndex],
+                 files: updatedItems[existingItemIndex].files
+                   ? [
+                       ...updatedItems[existingItemIndex].files,
+                       {
+                         fileName: file.name,
+                         screenShot: res.screenshotUrl,
+                         url: res.fileUrl,
+                       },
+                     ]
+                   : [
+                       {
+                         fileName: file.name,
+                         screenShot: res.screenshotUrl,
+                         url: res.fileUrl,
+                       },
+                     ],
+               };
+               return updatedItems;
+             } else {
+               return [
+                 ...prevItems,
+                 {
+                   id: item.id,
+                   productName: item.productName,
+                   files: [
+                     {
+                       fileName: file.name,
+                       screenShot: res.screenshotUrl,
+                       url: res.fileUrl,
+                     },
+                   ],
+                 },
+               ];
+             }
+           });
+ 
+           // Call onFileUploadComplete if provided
+           if (onFileUploadComplete) {
+             onFileUploadComplete();
+           }
+         } catch (error) {
+           console.error("File upload error:", error);
+           // Call onFileUploadComplete even on error
+           if (onFileUploadComplete) {
+             onFileUploadComplete();
+           }
+         }
+       };
+ 
+       reader.onerror = () => {
+         console.error("File reader error");
+         // Call onFileUploadComplete on reader error
+         if (onFileUploadComplete) {
+           onFileUploadComplete();
+         }
+       };
+ 
+       reader.readAsArrayBuffer(file);*/
     }
   };
   async function uploadFileToGCS(
