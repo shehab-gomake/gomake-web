@@ -9,7 +9,7 @@ import {
   requestAbortControllerState,
 } from "@/store/quote-item";
 import { useRouter } from "next/router";
-import { useCallback, useState } from "react";
+import { useCallback, useState, useEffect, useRef } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import cloneDeep from "lodash.clonedeep";
 import {
@@ -139,6 +139,12 @@ const useQuoteConfirmation = ({
 
         quote.clientLang && i18n.changeLanguage(quote.clientLang);
         setQuoteConfirm(quote);
+        
+        // If all items are selected by default, mark for calculation after state update
+        if (isAllItemsSelected === true && quote?.documentItems?.length > 0) {
+          shouldCalculateOnLoad.current = true;
+          initialQuoteRef.current = quote;
+        }
       } else {
         alertFaultUpdate();
       }
@@ -212,12 +218,20 @@ const useQuoteConfirmation = ({
   };
 
   const [counter, setCounter] = useState(0);
+  const shouldCalculateOnLoad = useRef(false);
+  const initialQuoteRef = useRef<any>(null);
 
   const calculateSelectedItems = useCallback(
-    async (quote) => {
+    async (quote, showSuccessAlert = true) => {
       const documentItemIds = quote?.documentItems
         ?.filter((x) => x.isChecked)
         ?.map((x) => x.id);
+      
+      // Don't calculate if no items are checked
+      if (!documentItemIds || documentItemIds.length === 0) {
+        return;
+      }
+      
       // Abort any existing request
       if (requestAbortController) {
         requestAbortController.abort();
@@ -236,7 +250,9 @@ const useQuoteConfirmation = ({
             return item;
           });
           setQuoteConfirm(newQuote);
-          alertSuccessUpdate();
+          if (showSuccessAlert) {
+            alertSuccessUpdate();
+          }
         } else {
           // alertFaultUpdate();
         }
@@ -260,8 +276,30 @@ const useQuoteConfirmation = ({
         throw error;
       }
     },
-    [requestAbortController]
+    [requestAbortController, callApi, setRequestAbortController, setQuoteConfirm, alertSuccessUpdate, counter]
   );
+
+  // Effect to calculate total price when quote loads with all items selected
+  useEffect(() => {
+    if (shouldCalculateOnLoad.current && initialQuoteRef.current && quoteConfirm?.id) {
+      const quote = initialQuoteRef.current;
+      const hasCheckedItems = quote?.documentItems?.some((item) => item.isChecked);
+      const checkedItemsCount = quote?.documentItems?.filter((item) => item.isChecked)?.length || 0;
+      
+      // Only calculate if there are checked items and the quote ID matches
+      // This ensures we only calculate once on initial load
+      if (hasCheckedItems && checkedItemsCount > 0 && quote?.id === quoteConfirm?.id) {
+        shouldCalculateOnLoad.current = false;
+        initialQuoteRef.current = null;
+        calculateSelectedItems(quote, false).catch((error) => {
+          console.error("Error calculating selected items on initial load:", error);
+          // Reset flag on error so it can retry if needed
+          shouldCalculateOnLoad.current = true;
+          initialQuoteRef.current = quote;
+        });
+      }
+    }
+  }, [quoteConfirm?.id, calculateSelectedItems]);
 
   const handleItemCheck = (e, itemId) => {
     let quoteCopy = cloneDeep(quoteConfirm);
