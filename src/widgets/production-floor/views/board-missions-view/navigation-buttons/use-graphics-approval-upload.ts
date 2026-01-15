@@ -35,6 +35,14 @@ const useGraphicsApprovalUpload = ({
   orderId,
   productType,
   openModal,
+  jobGraphicApprovalId,
+}: {
+  boardMissionId: string;
+  orderItemId?: string;
+  orderId?: string;
+  productType?: string;
+  openModal: boolean;
+  jobGraphicApprovalId?: string;
 }) => {
   const { callApi } = useGomakeAxios();
   const { alertFaultGetData, alertSuccessUpdate, alertFaultUpdate } = useSnackBar();
@@ -140,6 +148,8 @@ const useGraphicsApprovalUpload = ({
           fileName: file.name, 
           contentType: file.type,
           bucketName: "gomake-graphics-approval",
+          isDev: true,
+          origin: "http://localhost:3004",
         },
         {
           headers: {
@@ -278,6 +288,10 @@ const useGraphicsApprovalUpload = ({
       const callBack = (res) => {
         setIsSending(false);
         if (res?.success) {
+          // Clear uploaded files and reset state after successful upload
+          setUploadedFiles([]);
+          setContactEmail("");
+          setSelectedContactIndex(0);
           alertSuccessUpdate();
           if (onSuccess) {
             onSuccess();
@@ -294,6 +308,7 @@ const useGraphicsApprovalUpload = ({
           description: file.description || "",
         })),
         contactEmail: contactEmail || undefined,
+        jobGraphicApprovalId: jobGraphicApprovalId || undefined,
       });
     } catch (error) {
       console.error("Error sending graphics approval:", error);
