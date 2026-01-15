@@ -79,7 +79,8 @@ export interface ICompanyProfile {
     bankBranch?: string;
     bankAccountNUM?: string;
   }>;
-  hpHmac?: string;
+  hpHmacSecret?: string;
+  hpHmacKey?: string;
 }
 
 export enum CreditClearanceCompanies {

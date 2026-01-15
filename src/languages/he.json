@@ -2106,7 +2106,8 @@
     "hours": "שעות",
     "businessProfile": "פרופיל עסקי",
     "integrations": "אינטגרציות",
-    "hpHmac": "HP HMAC"
+    "hpHmacSecret": "HP HMAC Secret",
+    "hpHmacKey": "HP HMAC Key"
   },
   "remainWords": {
     "newQuote": "ציטוט חדש",

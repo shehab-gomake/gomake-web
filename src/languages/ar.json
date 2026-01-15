@@ -2105,7 +2105,8 @@
     "hours": "ساعات",
     "businessProfile": "الملف الشخصي للشركة",
     "integrations": "التكاملات",
-    "hpHmac": "HP HMAC"
+    "hpHmacSecret": "HP HMAC Secret",
+    "hpHmacKey": "HP HMAC Key"
   },
   "remainWords": {
     "newQuote": "عرض جديد",

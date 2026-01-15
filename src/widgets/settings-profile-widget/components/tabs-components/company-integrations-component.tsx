@@ -1,3 +1,4 @@
+import { Stack } from "@mui/material";
 import { useCompanyProfile } from "@/hooks/use-company-profile";
 import { useTranslation } from "react-i18next";
 import { companyIntegrationsInputs } from "@/widgets/settings-profile-widget/components/profiles/inputs/company-integrations-inputs";
@@ -21,17 +22,19 @@ const CompanyIntegrationsComponent = () => {
       <FormInputsSectionComponent
         sectionTitle={t("profileSettings.integrations")}
       >
-        {inputs.map((input) => (
-          <div key={input.parameterKey}>
-            <FormInput
-              input={input}
-              changeState={changeState}
-              error={
-                (input.required && !input.value) || !input.isValid
-              }
-            />
-          </div>
-        ))}
+        <Stack direction="row" gap="20px">
+          {inputs.map((input) => (
+            <div key={input.parameterKey} style={{ flex: 1 }}>
+              <FormInput
+                input={input}
+                changeState={changeState}
+                error={
+                  (input.required && !input.value) || !input.isValid
+                }
+              />
+            </div>
+          ))}
+        </Stack>
       </FormInputsSectionComponent>
 
       <div

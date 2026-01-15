@@ -2302,7 +2302,8 @@
     "hours": "Hours",
     "businessProfile": "Business Profile",
     "integrations": "Integrations",
-    "hpHmac": "HP HMAC"
+    "hpHmacSecret": "HP HMAC Secret",
+    "hpHmacKey": "HP HMAC Key"
   },
   "remainWords": {
     "newQuote": "New quote",
