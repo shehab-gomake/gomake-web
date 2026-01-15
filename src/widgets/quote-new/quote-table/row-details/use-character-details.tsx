@@ -36,7 +36,9 @@ const useCharacterDetails = ({
 
   const [quoteItemValue, setQuoteItemValue] =
     useRecoilState<any>(quoteItemState);
-  const truncatedDetails = showAll ? details : details?.slice(0, 90);
+  const truncatedDetails = showAll
+    ? (details || "")
+    : (details ? String(details).slice(0, 90) : "");
   const canNotEditWhenShowJobNameOnly =
     quoteItemValue?.showDetails === ShowDocumentDetailsEnum.ShowJobNameOnly;
 
@@ -57,7 +59,11 @@ const useCharacterDetails = ({
     return formatted;
   };
 
-  const updateDocumentItemContent = async (jobName?: string, data?: string) => {
+  const updateDocumentItemContent = async (
+    jobName?: string,
+    data?: string,
+    translations?: Array<{ lang: string; name: string }>
+  ) => {
     if (router.query.isNewCreation) {
       const updatedQuoteItemValue = { ...quoteItemValue };
       const documentItemIndex = updatedQuoteItemValue.documentItems.findIndex(
@@ -69,6 +75,7 @@ const useCharacterDetails = ({
         const updatedDocumentItem = {
           ...updatedQuoteItemValue.documentItems[documentItemIndex],
           details: data,
+          ...(translations && { contentTranslations: translations }),
         };
 
         // Create a new array with the updated document item
@@ -85,31 +92,12 @@ const useCharacterDetails = ({
       }
     } else {
       const callBack = (res) => {
-        const updatedQuoteItemValue = { ...quoteItemValue };
-        const documentItemIndex = updatedQuoteItemValue.documentItems.findIndex(
-          (item) => item.id === documentItemId
-        );
-        const updatedDocumentItem = {
-          ...updatedQuoteItemValue.documentItems[documentItemIndex],
-          details: res?.data,
-        };
-
         if (res?.success) {
           alertSuccessUpdate();
-          setQuoteItemValue({
-            ...updatedQuoteItemValue,
-            documentItems: [
-              ...updatedQuoteItemValue.documentItems.slice(
-                0,
-                documentItemIndex
-              ),
-              updatedDocumentItem,
-              ...updatedQuoteItemValue.documentItems.slice(
-                documentItemIndex + 1
-              ),
-            ],
-          });
-          // getQuote();
+          // After successful update, refresh the document to get the latest data
+          if (getQuote) {
+            getQuote();
+          }
         } else {
           alertFaultUpdate();
         }
@@ -120,6 +108,12 @@ const useCharacterDetails = ({
           documentItemId: documentItemId,
           content: formatContent(data),
           jobName: jobName,
+          ...(translations && {
+            contentTranslations: translations.map((trans) => ({
+              lang: trans.lang,
+              name: formatContent(trans.name),
+            })),
+          }),
         },
       });
     }
@@ -132,21 +126,24 @@ const useCharacterDetails = ({
     setIsEdit(false);
   };
 
-  const handleSave = (data: string) => {
+  const handleSave = (
+    data: string,
+    translations?: Array<{ lang: string; name: string }>
+  ) => {
     const hasDataChanged = data !== originalValue;
     const hasJobNameChanged = jobName !== workName;
 
     // Early return if nothing has changed
-    if (!hasDataChanged && !hasJobNameChanged) {
+    if (!hasDataChanged && !hasJobNameChanged && !translations) {
       setIsEdit(false);
       return;
     }
 
     // Only update if something has actually changed
     if (hasJobNameChanged) {
-      updateDocumentItemContent(jobName, data);
-    } else if (hasDataChanged) {
-      updateDocumentItemContent(null, data);
+      updateDocumentItemContent(jobName, data, translations);
+    } else if (hasDataChanged || translations) {
+      updateDocumentItemContent(null, data, translations);
     }
 
     // Update the original value only after successful change

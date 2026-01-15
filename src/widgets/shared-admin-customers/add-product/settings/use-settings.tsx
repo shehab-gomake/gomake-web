@@ -209,6 +209,7 @@ const useSettings = ({
       clients: productState?.clients,
       clientsTypes: productState?.clientsTypes,
       productStructureType: structureTypeValue,
+      translations: productState?.translations || [],
     };
 
     if (isCompositeStructure) {
@@ -301,6 +302,7 @@ const useSettings = ({
       additionProfits: productState?.additionProfits,
       externalCode: productState?.externalCode,
       productStructureType: structureTypeValue,
+      translations: productState?.translations || [],
     };
 
     if (isCompositeStructure) {
@@ -397,6 +399,7 @@ const useSettings = ({
       minimumPrice:
         productState?.minimumPrice === "" ? 0 : productState?.minimumPrice,
       productStructureType: structureTypeValue,
+      translations: productState?.translations || [],
     };
 
     if (isCompositeStructure) {

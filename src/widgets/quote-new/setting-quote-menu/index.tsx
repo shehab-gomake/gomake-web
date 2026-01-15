@@ -35,6 +35,10 @@ const SettingQuoteMenu = ({
   setIsUpdateVatStatus,
   isUpdateVatStatus,
   updateVatStatus,
+  updateDefaultLanguage,
+  onBlurDefaultLanguage,
+  isUpdateDefaultLanguage,
+  setIsUpdateDefaultLanguage,
 }) => {
   const { classes } = useStyle();
   const {
@@ -70,10 +74,17 @@ const SettingQuoteMenu = ({
     isUpdateShowDetails,
     setIsUpdateShowDetails,
     onBlurShowDetails,
+    defaultLanguageText,
+    printHouseLanguages,
+    defaultLanguage,
   } = useSttingsQuoteMenu({
     updateDocumentPreference,
     updatePaymentRequired,
     documentType,
+    updateDefaultLanguage,
+    onBlurDefaultLanguage,
+    isUpdateDefaultLanguage,
+    setIsUpdateDefaultLanguage,
   });
 
   return (
@@ -109,30 +120,30 @@ const SettingQuoteMenu = ({
           <Divider />
           {(documentType === DOCUMENT_TYPE.quote ||
             documentType === DOCUMENT_TYPE.order) && (
-            <>
-              <div
-                onClick={handleAutomaticDiscount}
-                className="table-sorting"
-                style={classes.menuTabStyle}
-              >
-                {quoteStateValue?.discountType !== null ? (
-                  <div style={classes.selectedTabStyle}>
-                    <div style={classes.mainTabContainer}>
-                      {t("sales.quote.automaticDiscount")}
-                      <DotIcon />
+              <>
+                <div
+                  onClick={handleAutomaticDiscount}
+                  className="table-sorting"
+                  style={classes.menuTabStyle}
+                >
+                  {quoteStateValue?.discountType !== null ? (
+                    <div style={classes.selectedTabStyle}>
+                      <div style={classes.mainTabContainer}>
+                        {t("sales.quote.automaticDiscount")}
+                        <DotIcon />
+                      </div>
+                      <div style={classes.selectedTabContainer}>
+                        <Check style={{ width: 16, height: 16 }} />{" "}
+                        {_renderSelectionType(quoteStateValue?.discountType)}
+                      </div>
                     </div>
-                    <div style={classes.selectedTabContainer}>
-                      <Check style={{ width: 16, height: 16 }} />{" "}
-                      {_renderSelectionType(quoteStateValue?.discountType)}
-                    </div>
-                  </div>
-                ) : (
-                  t("sales.quote.automaticDiscount")
-                )}
-              </div>
-              <Divider />
-            </>
-          )}
+                  ) : (
+                    t("sales.quote.automaticDiscount")
+                  )}
+                </div>
+                <Divider />
+              </>
+            )}
           {switchConfigs.map((config, index) => (
             <React.Fragment key={index}>
               <div style={classes.menuRowStyle}>
@@ -250,6 +261,30 @@ const SettingQuoteMenu = ({
                 </div>
               </>
             )}
+          {printHouseLanguages && printHouseLanguages.length > 0 && (
+            <>
+              <Divider />
+              <div style={classes.menuRowStyle}>
+                <div style={classes.menuTabStyle}>
+                  {t("signup.defaultLanguage")}
+                </div>
+                <AutoCompleteUpdatedValue
+                  value={defaultLanguageText}
+                  options={printHouseLanguages.map((lang) => ({
+                    value: lang.value,
+                    text: lang.text,
+                  }))}
+                  onBlur={onBlurDefaultLanguage}
+                  isUpdate={isUpdateDefaultLanguage}
+                  setIsUpdate={setIsUpdateDefaultLanguage}
+                  getOptionLabel={(item) => item.text}
+                  onChange={(e, value) =>
+                    updateDefaultLanguage(value?.value)
+                  }
+                />
+              </div>
+            </>
+          )}
         </div>
       </GoMakeMenu>
       <TableSortingMenu

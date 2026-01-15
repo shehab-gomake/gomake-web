@@ -262,6 +262,10 @@ const QuoteNewPageWidget = ({
     isUpdateVatStatus,
     updateCurrency,
     updateVatStatus,
+    updateDefaultLanguage,
+    onBlurDefaultLanguage,
+    isUpdateDefaultLanguage,
+    setIsUpdateDefaultLanguage,
     refreshExchangeRate,
     getQuote,
     reCalculateItem,
@@ -1196,6 +1200,10 @@ const QuoteNewPageWidget = ({
         onBlurVatStatus={onBlurVatStatus}
         setIsUpdateVatStatus={setIsUpdateVatStatus}
         isUpdateVatStatus={isUpdateVatStatus}
+        updateDefaultLanguage={updateDefaultLanguage}
+        onBlurDefaultLanguage={onBlurDefaultLanguage}
+        isUpdateDefaultLanguage={isUpdateDefaultLanguage}
+        setIsUpdateDefaultLanguage={setIsUpdateDefaultLanguage}
       />
       <SettingVatListMenu
         handleClose={handleSettingMenuCloseForVat}
