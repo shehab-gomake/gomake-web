@@ -150,36 +150,38 @@ const InviteEmployeeModal = ({
 
   return (
     <div style={classes.container}>
-      <Stack spacing={2} sx={{ padding: "20px" }}>
-        {inputs.map((input) => (
-          <FormInput
-            key={input.parameterKey}
-            input={input}
-            changeState={(key, value) =>
-              updateFormData(key as keyof InviteFormData, value)
-            }
-            error={
-              input.required && !formData[input.parameterKey as keyof InviteFormData]
-            }
-          />
-        ))}
-        <div style={classes.btnContainer}>
-          <Button
-            sx={classes.cancelBtn}
-            onClick={onClose}
-            disabled={loading}
-          >
-            {t("modal.cancel")}
-          </Button>
-          <Button
-            sx={classes.actionBtn}
-            onClick={handleInvite}
-            disabled={loading || !isValid()}
-          >
-            {loading ? t("modal.sending") : t("modal.send")}
-          </Button>
-        </div>
-      </Stack>
+      <div style={classes.contentContainer}>
+        <Stack spacing={1.5} sx={{ padding: "20px", paddingBottom: "15px" }}>
+          {inputs.map((input) => (
+            <FormInput
+              key={input.parameterKey}
+              input={input}
+              changeState={(key, value) =>
+                updateFormData(key as keyof InviteFormData, value)
+              }
+              error={
+                input.required && !formData[input.parameterKey as keyof InviteFormData]
+              }
+            />
+          ))}
+        </Stack>
+      </div>
+      <div style={classes.btnContainer}>
+        <Button
+          sx={classes.cancelBtn}
+          onClick={onClose}
+          disabled={loading}
+        >
+          {t("modal.cancel")}
+        </Button>
+        <Button
+          sx={classes.actionBtn}
+          onClick={handleInvite}
+          disabled={loading || !isValid()}
+        >
+          {loading ? t("modal.sending") : t("modal.send")}
+        </Button>
+      </div>
     </div>
   );
 };

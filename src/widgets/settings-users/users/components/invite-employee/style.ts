@@ -6,14 +6,22 @@ const useStyle = () => {
   const classes = useMemo(() => {
     return {
       container: {
-        maxHeight: "100%",
+        display: "flex" as "flex",
+        flexDirection: "column" as "column",
+        maxHeight: "fit-content",
         position: "relative" as "relative",
+      },
+      contentContainer: {
+        flex: 1,
+        minHeight: 0,
       },
       btnContainer: {
         display: "flex",
         justifyContent: "flex-end",
         gap: "10px",
-        marginTop: "20px",
+        padding: "15px 20px",
+        backgroundColor: "#fff",
+        borderTop: "1px solid #D0D5DD",
       },
       actionBtn: {
         backgroundColor: secondColor(500),

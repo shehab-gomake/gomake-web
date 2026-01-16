@@ -157,7 +157,7 @@ const SettingsUsersWidget = () => {
         />
       </GoMakeModal>
       <GoMakeModal
-        insideStyle={{ paddingLeft: 0, paddingRight: 0 }}
+        insideStyle={{ paddingLeft: 0, paddingRight: 0, maxHeight: "500px", height: "fit-content" }}
         headerPadding={20}
         openModal={openInviteModal}
         onClose={() => setOpenInviteModal(false)}

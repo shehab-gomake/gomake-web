@@ -7,6 +7,7 @@ import { useRouter } from "next/router";
 import { useGomakeAxios } from "@/hooks";
 import { acceptInvitationApi } from "@/services/api-service/users/users-api";
 import { useSnackBar } from "@/hooks";
+import { getCompanyLoginLogo } from "@/services/api-service/profiles/company-profile-api";
 
 const InviteAcceptanceLeftSide = () => {
   const { t } = useTranslation();
@@ -19,16 +20,35 @@ const InviteAcceptanceLeftSide = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const [loading, setLoading] = useState(false);
+  const [loginLogo, setLoginLogo] = useState<string | null>(null);
   const [error, setError] = useState({
     password: false,
     confirmPassword: false,
   });
 
   useEffect(() => {
+    if (!router.isReady) return;
     if (!token) {
       setErrorMsg(t("invite.invalidToken"));
+      return;
     }
-  }, [token]);
+
+    // Fetch login logo
+    const fetchLoginLogo = async () => {
+      const callback = (res: any) => {
+        if (res?.success) {
+          // Handle nested response structure: res.data.data.loginLogo
+          const logoUrl = res.data?.data?.loginLogo || res.data?.loginLogo;
+          if (logoUrl) {
+            setLoginLogo(logoUrl);
+          }
+        }
+      };
+      await getCompanyLoginLogo(callApi, callback);
+    };
+
+    fetchLoginLogo();
+  }, [token, router.isReady]);
 
   const onClickAcceptInvitation = async () => {
     if (!token) {
@@ -84,12 +104,18 @@ const InviteAcceptanceLeftSide = () => {
   const { clasess } = useStyle();
   return (
     <div style={clasess.leftContainer}>
-      <Image
-        alt="logo"
-        src={"https://i.ibb.co/wzpwSq6/Group-1239.png"}
-        width={180}
-        height={180}
-      />
+      {loginLogo ? (
+        <Image
+          alt="logo"
+          src={loginLogo}
+          width={180}
+          height={180}
+          style={{
+            objectFit: "contain",
+            borderRadius: 8,
+          }}
+        />
+      ) : <div></div>}
       <div style={clasess.loginContainer}>
         <div style={clasess.loginLbl}>{t("invite.acceptInvitation")}</div>
         <div style={clasess.descriptionLbl}>
