@@ -560,6 +560,44 @@ export const HpCustomerServiceIcon = ({
   );
 };
 
+export const HpListArrowIcon = ({
+  isOpen = false,
+  isSelected = false,
+  isRTL = false,
+}: {
+  isOpen?: boolean;
+  isSelected?: boolean;
+  isRTL?: boolean;
+}) => {
+  const strokeColor = isSelected ? "#001CB0" : "#1A1A1A";
+
+  return (
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 16 16"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      style={{
+        transform: isOpen
+          ? isRTL
+            ? "rotate(-90deg)"
+            : "rotate(90deg)"
+          : "rotate(0deg)",
+        transition: "transform 0.2s ease",
+      }}
+    >
+      <path
+        d={isRTL ? "M10 4L6 8L10 12" : "M6 4L10 8L6 12"}
+        stroke={strokeColor}
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+};
+
 export const getHpIcon = (
   tabKey: string,
   isSelected?: boolean

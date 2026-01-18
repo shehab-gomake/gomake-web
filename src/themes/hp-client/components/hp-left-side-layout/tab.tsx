@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState, useRef } from "react";
+import { createPortal } from "react-dom";
 import { useStyle } from "./tab.style";
 import { useGomakeRouter } from "@/hooks";
 import { useRecoilState } from "recoil";
@@ -7,7 +8,7 @@ import { useTranslation } from "react-i18next";
 import { useUserPermission } from "@/hooks/use-permission";
 import Link from "next/link";
 import { Collapse } from "@mui/material";
-import { getHpIcon } from "./icons";
+import { getHpIcon, HpListArrowIcon } from "./icons";
 import { useRouter } from "next/router";
 
 interface IProps {
@@ -23,21 +24,22 @@ interface IProps {
   };
   customGap?: number;
   isSidebarClosed?: boolean;
+  onOpenSidebar?: () => void;
 }
 
-/**
- * HP Client Theme - Tab Component
- * New design based on Figma specifications
- */
-const HpTab = ({ tab, customGap, isSidebarClosed = false }: IProps) => {
+
+const HpTab = ({ tab, customGap, isSidebarClosed = false, onOpenSidebar }: IProps) => {
   const router = useRouter();
   const [selectedTabValue, setSelectedTabValue] =
     useRecoilState(selectedTabState);
   const { navigate } = useGomakeRouter();
   const [isListOpen, setIsListOpen] = useState(tab?.key === selectedTabValue);
   const { t } = useTranslation();
+  const isRTL = t("direction") === "rtl";
   const { CheckPermission } = useUserPermission();
   const prevPathRef = useRef<string>(router.pathname);
+  const menuItemRef = useRef<HTMLDivElement>(null);
+  const [tooltipPosition, setTooltipPosition] = useState<{ top: number; left: number } | null>(null);
 
   // Check if current route matches this tab or any of its sub-items
   // Normalize paths by removing query parameters for comparison
@@ -84,6 +86,10 @@ const HpTab = ({ tab, customGap, isSidebarClosed = false }: IProps) => {
 
   const onClickTab = useCallback(() => {
     if (tab.isList) {
+      // If sidebar is closed, open it first
+      if (isSidebarClosed && onOpenSidebar) {
+        onOpenSidebar();
+      }
       // Toggle selected tab value (this will trigger useEffect to open/close list)
       if (tab.key === selectedTabValue) {
         // If already selected, deselect (unless we're on a matching route)
@@ -98,7 +104,7 @@ const HpTab = ({ tab, customGap, isSidebarClosed = false }: IProps) => {
       changeRoute(tab.path);
       setSelectedTabValue(tab.key || "");
     }
-  }, [tab, selectedTabValue, setSelectedTabValue, isCurrentRoute]);
+  }, [tab, selectedTabValue, setSelectedTabValue, isCurrentRoute, isSidebarClosed, onOpenSidebar]);
 
   const changeRoute = useCallback((route: string) => {
     navigate(route);
@@ -153,21 +159,51 @@ const HpTab = ({ tab, customGap, isSidebarClosed = false }: IProps) => {
     []
   );
 
+  const handleMouseEnter = useCallback(() => {
+    if (isSidebarClosed && menuItemRef.current) {
+      const rect = menuItemRef.current.getBoundingClientRect();
+      setTooltipPosition({
+        top: rect.top + rect.height / 2,
+        left: rect.right + 8,
+      });
+    }
+  }, [isSidebarClosed]);
+
+  const handleMouseLeave = useCallback(() => {
+    setTooltipPosition(null);
+  }, []);
+
   return (
     <>
       {tab.isList ? (
         <>
-          <StyledMenuItem
-            $isSelected={isSelected}
-            $isListOpen={isListOpen}
-            $isClosed={isSidebarClosed}
-            onClick={onClickTab}
-            onMouseDown={(e) => handleOpenInNewTab(tab.path, e)}
+          <div
+            ref={menuItemRef}
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
           >
+            <StyledMenuItem
+              $isSelected={isSelected}
+              $isListOpen={isListOpen}
+              $isClosed={isSidebarClosed}
+              onClick={onClickTab}
+              onMouseDown={(e) => handleOpenInNewTab(tab.path, e)}
+            >
             <div style={classes.menuItemContent}>
               <div style={classes.iconContainer}>{iconToRender}</div>
               {!isSidebarClosed && (
-                <div style={classes.label}>{t(tab.title)}</div>
+                <>
+                  <div style={classes.label}>{t(tab.title)}</div>
+                  {tab.isList && (
+                    <div className="list-arrow" style={classes.listArrow}>
+                      <HpListArrowIcon
+                        isOpen={isListOpen}
+                        isSelected={isSelected}
+                        isRTL={isRTL}
+                      />
+                    </div>
+                  )}
+                </>
               )}
             </div>
             {isSelected && (
@@ -176,6 +212,7 @@ const HpTab = ({ tab, customGap, isSidebarClosed = false }: IProps) => {
               </div>
             )}
           </StyledMenuItem>
+          </div>
           <Collapse in={isListOpen && !isSidebarClosed}>
             {!isSidebarClosed &&
               tab.list
@@ -207,12 +244,17 @@ const HpTab = ({ tab, customGap, isSidebarClosed = false }: IProps) => {
           rel="noreferrer"
           style={classes.menuItemLink}
         >
-          <StyledMenuItem
-            $isSelected={isSelected}
-            $isClosed={isSidebarClosed}
-            onClick={onClickTab}
-            onMouseDown={(e) => handleOpenInNewTab(tab.path, e)}
+          <div
+            ref={menuItemRef}
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
           >
+            <StyledMenuItem
+              $isSelected={isSelected}
+              $isClosed={isSidebarClosed}
+              onClick={onClickTab}
+              onMouseDown={(e) => handleOpenInNewTab(tab.path, e)}
+            >
             <div style={classes.menuItemContent}>
               <div style={classes.iconContainer}>{iconToRender}</div>
               {!isSidebarClosed && (
@@ -225,8 +267,28 @@ const HpTab = ({ tab, customGap, isSidebarClosed = false }: IProps) => {
               </div>
             )}
           </StyledMenuItem>
+          </div>
         </Link>
       )}
+      {isSidebarClosed &&
+        tab.title &&
+        tooltipPosition &&
+        typeof window !== "undefined" &&
+        createPortal(
+          <div
+            className="hp-closed-tooltip"
+            style={{
+              ...classes.closedTooltip,
+              position: "fixed",
+              top: `${tooltipPosition.top}px`,
+              left: `${tooltipPosition.left}px`,
+              transform: "translateY(-50%)",
+            }}
+          >
+            {t(tab.title)}
+          </div>,
+          document.body
+        )}
     </>
   );
 };

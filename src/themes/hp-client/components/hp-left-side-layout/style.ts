@@ -21,7 +21,7 @@ const useStyle = ({
         boxSizing: "border-box" as const,
         position: "relative" as "relative",
         zIndex: 1,
-        width: navStatus?.isClosed ? "60px" : "229px",
+        width: navStatus?.isClosed ? "60px" : "270px",
         height: "100vh",
         left: "0px",
         top: "0px",
@@ -31,7 +31,8 @@ const useStyle = ({
           : { borderRight: "1px solid #E0E0E0" }),
         borderRadius: "0px",
         transition: "width 0.3s ease",
-        overflow: "hidden",
+        overflowY: "hidden" as const,
+        overflowX: "visible" as const, // Allow horizontal overflow to show full text
         display: "flex",
         flexDirection: "column" as const,
       },
@@ -121,7 +122,7 @@ const useStyle = ({
         minHeight: 0, // Important for flexbox scrolling
         width: "100%",
         overflowY: "auto" as const,
-        overflowX: "hidden" as const,
+        overflowX: "visible" as const, // Allow horizontal overflow to show full text
         borderRadius: "0px",
         transition: "all 0.3s ease",
         marginTop: navStatus?.isClosed ? "0px" : "18px", // Space between header and navigation only when open
@@ -131,7 +132,7 @@ const useStyle = ({
         padding: navStatus?.isClosed ? "0px 8px 16px" : "0px 8px 16px",
         display: "flex",
         flexDirection: "column" as const,
-        gap: navStatus?.isClosed ? "4px" : "0px",
+        gap: "4px",
         alignItems: navStatus?.isClosed ? "center" : "flex-start", // Center when closed, left when open
         transition: "all 0.3s ease",
         minHeight: "100%", // Ensure container takes full height for scrolling
@@ -149,9 +150,9 @@ const useStyle = ({
         position: "absolute" as const,
         width: "28px",
         height: "28px",
-        left: navStatus?.isClosed ? "26px" : "192px",
+        left: navStatus?.isClosed ? "26px" : "208px",
         top: "863px",
-        border: "1px solid #024AD8",
+        border: "1px solid var(--theme-primary-color, #024AD8)",
         borderRadius: "32px",
         cursor: "pointer",
         transition: "left 0.3s ease",
@@ -172,7 +173,7 @@ const useStyle = ({
       collapseIcon: {
         width: "20px",
         height: "20px",
-        background: "#024AD8",
+        background: "var(--theme-primary-color, #024AD8)",
         // Icon will be replaced with actual SVG/component
       },
     };
