@@ -15,6 +15,7 @@ import {
 import { useTranslation } from "react-i18next";
 import {
   ApprovalStatus,
+  EStatisticsLabels,
   INVOICES_EXPORT_TYPES,
   LogActionType,
   QUOTE_STATUSES,
@@ -192,6 +193,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
 
   const searchInputRef = useRef(null);
   const composerOpenedRef = useRef(false);
+  const shouldAutoSearchRef = useRef(false);
   const { getCurrencyUnitText } = useQuoteGetData();
   const { navigate } = useGomakeRouter();
   const { CheckPermission } = useUserPermission();
@@ -278,6 +280,14 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   useEffect(() => {
     getCurrenciesApi();
   }, []);
+
+  // Auto-trigger search when approvalStatusId changes from a card click
+  useEffect(() => {
+    if (shouldAutoSearchRef.current) {
+      shouldAutoSearchRef.current = false;
+      onClickSearchFilter();
+    }
+  }, [approvalStatusId]);
 
   const [openAddRule, setOpenAddRule] = useState<boolean>(false);
   const [openFilterConfirmationModal, setOpenFilterConfirmationModal] =
@@ -3278,15 +3288,40 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     setPage(1);
     setActiveCard(cardKey);
     setStatusId(null);
-    setQuoteStatusId({
-      label: t(`sales.quote.${cardKey}`),
-      value: statusValue,
-    });
+    setQuoteStatusId(null);
+
+    // Map statistics cards to approval status values
+    let approvalStatusValue = null;
+    if (cardKey === EStatisticsLabels.WAITING) {
+      approvalStatusValue = ApprovalStatus.WaitingForClient;
+    } else if (cardKey === EStatisticsLabels.APPROVED) {
+      approvalStatusValue = ApprovalStatus.ApprovedByClient;
+    } else if (cardKey === EStatisticsLabels.CANCELED) {
+      approvalStatusValue = ApprovalStatus.RejectedByClient;
+    }
+
+    // Set approval status filter
+    if (approvalStatusValue) {
+      // Create approval status object directly using the enum value and translation
+      const approvalStatus = {
+        value: approvalStatusValue,
+        label: t(`documentStatus.${ApprovalStatus[approvalStatusValue]}`),
+      };
+      // Set flag to trigger auto-search after state update
+      shouldAutoSearchRef.current = true;
+      setApprovalStatusId(approvalStatus);
+    } else {
+      shouldAutoSearchRef.current = true;
+      setApprovalStatusId(null);
+    }
   };
 
   const handleSecondCardClick = () => {
     setQuoteStatusId(undefined);
     setActiveCard(null);
+    // Set flag to trigger auto-search after clearing the filter
+    shouldAutoSearchRef.current = true;
+    setApprovalStatusId(null);
   };
 
   const onSelectDeliveryTimeDates = (value) => {
