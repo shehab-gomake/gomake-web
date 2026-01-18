@@ -226,18 +226,21 @@ const MoreActionsButton = ({ isMobile = false }) => {
     // First check if filesPath is already in the state
     if (boardMissions?.filesPath) {
       try {
+        debugger;
+        let localFilePathMapping = companyProfile.localFilePathMapping;
+        localFilePathMapping = "c:\\gomake-graphics-approval";
+        let pathToCopy = boardMissions.filesPath;
+        const mapping = localFilePathMapping.replace(/[/\\]+$/, '');
+        const filePathPart = pathToCopy.replace(/^[/\\]+/, '');
+        // Join with appropriate separator based on the mapping (Windows uses \, Unix uses /)
+        const separator = mapping.includes('\\') ? '\\' : '/';
+        pathToCopy = `${mapping}${separator}${filePathPart}`;
         // Try modern clipboard API first
         if (navigator.clipboard && navigator.clipboard.writeText) {
-          await navigator.clipboard.writeText(boardMissions.filesPath);
+          await navigator.clipboard.writeText(pathToCopy);
         } else {
           // Fallback for older browsers
           const textArea = document.createElement("textarea");
-          let pathToCopy = boardMissions.filesPath;
-          const mapping = companyProfile.localFilePathMapping.replace(/[/\\]+$/, '');
-          const filePathPart = pathToCopy.replace(/^[/\\]+/, '');
-          // Join with appropriate separator based on the mapping (Windows uses \, Unix uses /)
-          const separator = mapping.includes('\\') ? '\\' : '/';
-          pathToCopy = `${mapping}${separator}${filePathPart}`;
           textArea.value = pathToCopy ;
           textArea.style.position = "fixed";
           textArea.style.opacity = "0";

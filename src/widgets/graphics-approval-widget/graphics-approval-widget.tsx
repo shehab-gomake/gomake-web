@@ -35,6 +35,7 @@ interface GraphicsApproval {
   sentDate?: string;
   jobNumber?: string;
   orderNumber?: string;
+  workName?: string;
   clientLang?: string;
   files: GraphicsApprovalFile[];
 }
@@ -503,12 +504,26 @@ const GraphicsApprovalWidget = () => {
           </Typography>
           <Typography variant="body2" sx={{ color: neutralColor(600), fontSize: isMobile ? "14px" : undefined }}>
             {t("graphicsApproval.subtitle") || "Review and approve or reject the graphics files"}
-            {approval.jobNumber && approval.orderNumber && (
+            {(approval.jobNumber || approval.orderNumber || approval.workName) && (
               <>
                 {" - "}
-                {t("graphicsApproval.jobNumber") || "Job"}: {approval.jobNumber}
-                {", "}
-                {t("graphicsApproval.orderNumber") || "Order"}: {approval.orderNumber}
+                {approval.jobNumber && (
+                  <>
+                    {t("graphicsApproval.jobNumber") || "Job"}: {approval.jobNumber}
+                    {approval.orderNumber || approval.workName ? ", " : ""}
+                  </>
+                )}
+                {approval.orderNumber && (
+                  <>
+                    {t("graphicsApproval.orderNumber") || "Order"}: {approval.orderNumber}
+                    {approval.workName ? ", " : ""}
+                  </>
+                )}
+                {approval.workName && (
+                  <>
+                    {t("graphicsApproval.workName") || "Work"}: {approval.workName}
+                  </>
+                )}
               </>
             )}
           </Typography>
@@ -535,11 +550,11 @@ const GraphicsApprovalWidget = () => {
                     >
                       <Box sx={{ flex: 1, width: "100%" }}>
                         <Typography 
-                          variant={isMobile ? "subtitle1" : "h6"} 
+                          variant="body2" 
                           sx={{ 
                             fontWeight: "bold", 
                             marginBottom: "8px",
-                            fontSize: isMobile ? "16px" : undefined,
+                            fontSize: isMobile ? "12px" : "14px",
                             wordBreak: "break-word"
                           }}
                         >
@@ -547,11 +562,11 @@ const GraphicsApprovalWidget = () => {
                         </Typography>
                         {file.description && (
                           <Typography 
-                            variant="body2" 
+                            variant="body1" 
                             sx={{ 
                               color: neutralColor(600), 
                               marginBottom: "8px",
-                              fontSize: isMobile ? "13px" : undefined,
+                              fontSize: isMobile ? "15px" : "16px",
                               wordBreak: "break-word"
                             }}
                           >
