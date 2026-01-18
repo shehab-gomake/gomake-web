@@ -43,22 +43,29 @@ const useStyle = ({
         width: "100%",
         minHeight: "64px",
         padding: navStatus?.isClosed ? "0px" : "16px 0px",
-        paddingLeft: navStatus?.isClosed ? "0px" : "8px",
-        paddingRight: navStatus?.isClosed ? "0px" : "8px",
+        ...(isRTL
+          ? {
+              paddingRight: navStatus?.isClosed ? "0px" : "8px",
+              paddingLeft: navStatus?.isClosed ? "0px" : "8px",
+            }
+          : {
+              paddingLeft: navStatus?.isClosed ? "0px" : "8px",
+              paddingRight: navStatus?.isClosed ? "0px" : "8px",
+            }),
         display: "flex",
         alignItems: "center",
-        justifyContent: navStatus?.isClosed ? "center" : "flex-start",
+        justifyContent: navStatus?.isClosed ? "center" : isRTL ? "flex-end" : "flex-start",
         transition: "all 0.3s ease",
       },
 
       headerContent: {
         display: "flex",
         flexDirection: "column" as const,
-        alignItems: navStatus?.isClosed ? "center" : "flex-start",
+        alignItems: navStatus?.isClosed ? "center" : isRTL ? "flex-end" : "flex-start",
         padding: navStatus?.isClosed ? "0px" : "0px 8px 12px",
         gap: navStatus?.isClosed ? "0px" : "12px",
         width: "100%",
-        justifyContent: navStatus?.isClosed ? "center" : "flex-start",
+        justifyContent: navStatus?.isClosed ? "center" : isRTL ? "flex-end" : "flex-start",
         position: "relative" as const,
       },
 
@@ -73,7 +80,11 @@ const useStyle = ({
           : ("absolute" as const),
         width: navStatus?.isClosed ? "42px" : "42px",
         height: navStatus?.isClosed ? "42px" : "42px",
-        left: navStatus?.isClosed ? "auto" : "0px",
+        ...(navStatus?.isClosed
+          ? { left: "auto", right: "auto" }
+          : isRTL
+          ? { right: "0px", left: "auto" }
+          : { left: "0px", right: "auto" }),
         top: navStatus?.isClosed ? "auto" : "0px",
         margin: navStatus?.isClosed ? "16px auto" : "0px",
         background: navStatus?.isClosed
@@ -85,7 +96,7 @@ const useStyle = ({
 
       headerText: {
         position: "absolute" as const,
-        left: "52px",
+        ...(isRTL ? { right: "52px", left: "auto" } : { left: "52px", right: "auto" }),
         top: "0px",
       },
 
