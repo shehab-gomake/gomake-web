@@ -834,7 +834,7 @@ const useMoreCircle = () => {
       },
       {
         condition: !!companyProfile.filesApiAddress && !!onClickOpenUploadFilesModal,
-        onClick: () => onClickOpenUploadFilesModal?.(quote),
+        onClick: () => isOrder ? addOrderBoardMissionsToFileUploader(quote?.id) : onClickOpenUploadFilesModal?.(quote),
         icon: <PDFIcon color={primarySecondaryBlend(300)} />,
         name: t("fileUploader.uploadFile"),
       },
