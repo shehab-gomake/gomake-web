@@ -166,7 +166,7 @@ const ButtonsConfirmContainer = ({
         openModal={openAttachmentsModal}
         onClose={onClickCloseAddAttachmentsModal}
         documentType={1}
-        getQuote={() => {}}
+        getQuote={() => { }}
         isQuoteConfirmation={true}
         quoteConfirm={quoteConfirm}
         onFileUploadStart={onFileUploadStart}

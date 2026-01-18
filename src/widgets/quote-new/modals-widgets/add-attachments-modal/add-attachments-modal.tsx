@@ -59,7 +59,7 @@ const AddAttachmentsModal = ({
                 {quoteConfirm?.documentItems?.map(
                   (item: any, index: number) => {
                     return (
-                      item.isChecked && (
+                      item.isChecked && item.workName && (
                         <div key={index}>
                           <h4
                             style={{ marginBottom: "10px", marginTop: "10px" }}
@@ -168,7 +168,7 @@ const AddAttachmentsModal = ({
                 {quoteConfirm?.documentItems?.map(
                   (item: any, index: number) => {
                     return (
-                      item.isSelected && (
+                      item.isSelected && item.workName && (
                         <div key={index}>
                           <h4
                             style={{ marginBottom: "10px", marginTop: "10px" }}

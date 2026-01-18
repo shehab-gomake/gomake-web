@@ -675,6 +675,17 @@ const useQuoteNew = ({
     await getDocumentDeliveryDateApi(callApi, callBack);
   };
 
+  // For quote confirmation, only get estimated production date (not delivery date)
+  const getEstimatedProductionDate = async () => {
+    const callBack = (res) => {
+      if (res?.success) {
+        // Only set estimated production date, don't override delivery date
+        setEstimatedProductionDate(res?.data?.estimatedProductionTime ?? null);
+      }
+    };
+    await getDocumentDeliveryDateApi(callApi, callBack);
+  };
+
   const updateOccasionalClientName = async (value) => {
     if (isNewCreation) {
       const updatedQuoteItemValue = { ...quoteItemValue };
@@ -2982,7 +2993,9 @@ const useQuoteNew = ({
     const shouldSkipDueDateUpdate =
       isReceipt && isOutgoingPayments && isNewCreation && hasValidChecks;
 
-    if (!isQuote && !shouldSkipDueDateUpdate) {
+    // For quote confirmation, always use dueDate from get-document-by-id
+    // For other documents, set dueDate if not a quote or if it's quote confirmation
+    if ((!isQuote || isQuoteConfirmation) && !shouldSkipDueDateUpdate) {
       setSelectDate(source?.dueDate);
     }
   }, [
@@ -2999,6 +3012,14 @@ const useQuoteNew = ({
   useEffect(() => {
     if (!isQuote) return;
 
+    // For quote confirmation, only get estimated production date
+    // Delivery date comes from get-document-by-id
+    if (isQuoteConfirmation) {
+      getEstimatedProductionDate();
+      return;
+    }
+
+    // For regular quotes, get both delivery date and estimated production date
     const isDeliveryDateRequired = CheckPreferenceValue(
       EPreferences.DELIVERY_DATE_REQUIRED_IN_QUOTE
     );
@@ -3006,7 +3027,7 @@ const useQuoteNew = ({
     if (!isDeliveryDateRequired || quoteItemValue?.dueDateUpdatedByUser) {
       getQuoteDeliveryDate();
     }
-  }, [isQuote, quoteItemValue?.dueDateUpdatedByUser]);
+  }, [isQuote, isQuoteConfirmation, quoteItemValue?.dueDateUpdatedByUser]);
 
   const prevRouterQueryRef = useRef(router.query);
   const hasMountedRef = useRef(false);
