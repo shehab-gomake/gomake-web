@@ -708,15 +708,7 @@ const RightSideWidget = ({
           </div>
           {activeTab === t("quality.production") ? (
             <div style={clasess.productionStatus}>
-              <div style={clasess.qualityIssueContainer}>
-                <div style={clasess.labelTextStyle}>
-                  {t("productionFloor.qualityIssueReasonLabel")}
-                </div>
-                <QualityIssueSelector
-                  value={qualityIssueReason}
-                  onChange={setQualityIssueReason}
-                />
-              </div>
+
               <div style={clasess.sampleTypeStyle}>
                 {t("products.offsetPrice.admin.proof")}
               </div>
@@ -747,6 +739,15 @@ const RightSideWidget = ({
                   placeholder={t(
                     "products.offsetPrice.admin.productionComment"
                   )}
+                />
+              </div>
+              <div style={clasess.qualityIssueContainer}>
+                <div style={clasess.labelTextStyle}>
+                  {t("productionFloor.qualityIssueReasonLabel")}
+                </div>
+                <QualityIssueSelector
+                  value={qualityIssueReason}
+                  onChange={setQualityIssueReason}
                 />
               </div>
             </div>
