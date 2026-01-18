@@ -211,7 +211,7 @@ const InfoSection = ({ boardMissionsDetails, CheckPreferenceValue, t }) => {
 
   const statusLabels = [
     {
-      condition: boardMissionsDetails?.isNeedExample,
+      condition: boardMissionsDetails?.exampleType !== null || boardMissionsDetails?.isNeedExample,
       label:
         t("boardMissions.sampleRequired") +
         " : " +
