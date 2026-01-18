@@ -1,6 +1,6 @@
 import React from "react";
 
-export const HpHomeIcon = ({
+export const HpHomeIconOld = ({
   isSelected = false,
 }: {
   isSelected?: boolean;
@@ -23,6 +23,48 @@ export const HpHomeIcon = ({
         d={isSelected ? selectedPath : unselectedPath}
         fill={isSelected ? "#001CB0" : "#1A1A1A"}
       />
+    </svg>
+  );
+};
+
+export const HpHomeIcon = ({
+  isSelected = false,
+}: {
+  isSelected?: boolean;
+}) => {
+  const strokeColor = isSelected ? "#001CB0" : "#1A1A1A";
+  const fillColor = isSelected ? "#001CB0" : undefined;
+
+  if (isSelected) {
+    // Filled icon when selected
+    return (
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="21"
+        height="21"
+        viewBox="0 0 24 24"
+        fill={fillColor}
+      >
+        <path d="M11.47 3.841a.75.75 0 0 1 1.06 0l8.69 8.69a.75.75 0 1 0 1.06-1.061l-8.689-8.69a2.25 2.25 0 0 0-3.182 0l-8.69 8.69a.75.75 0 1 0 1.061 1.06l8.69-8.689Z" />
+        <path d="m12 5.432 8.159 8.159c.03.03.06.058.091.086v6.198c0 1.035-.84 1.875-1.875 1.875H15a.75.75 0 0 1-.75-.75v-4.5a.75.75 0 0 0-.75-.75h-3a.75.75 0 0 0-.75.75V21a.75.75 0 0 1-.75.75H5.625a1.875 1.875 0 0 1-1.875-1.875v-6.198a2.29 2.29 0 0 0 .091-.086L12 5.432Z" />
+      </svg>
+    );
+  }
+
+  // Outline icon when not selected
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="21"
+      height="21"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke={strokeColor}
+      strokeWidth="1.66667"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
     </svg>
   );
 };
@@ -102,6 +144,7 @@ export const HpSalesIcon = ({
     </svg>
   );
 };
+
 export const HpBankingIcon = ({
   isSelected = false,
 }: {
@@ -144,40 +187,20 @@ export const HpProductFloorIcon = ({
 
   return (
     <svg
+      xmlns="http://www.w3.org/2000/svg"
       width="20"
       height="20"
-      viewBox="0 0 20 20"
+      viewBox="0 0 24 24"
       fill="none"
-      xmlns="http://www.w3.org/2000/svg"
+      stroke={strokeColor}
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     >
-      <path
-        d="M10 13.333H10.0083"
-        stroke={strokeColor}
-        strokeWidth="1.66667"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M13.334 13.334H13.3423"
-        stroke={strokeColor}
-        strokeWidth="1.66667"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M2.5 15.8333C2.5 16.2754 2.67559 16.6993 2.98816 17.0118C3.30072 17.3244 3.72464 17.5 4.16667 17.5H15.8333C16.2754 17.5 16.6993 17.3244 17.0118 17.0118C17.3244 16.6993 17.5 16.2754 17.5 15.8333V7.08333C17.5001 7.00858 17.48 6.93519 17.442 6.87085C17.404 6.8065 17.3493 6.75357 17.2838 6.71761C17.2183 6.68165 17.1443 6.66398 17.0696 6.66645C16.9948 6.66893 16.9222 6.69145 16.8592 6.73167L13.1408 9.10167C13.0778 9.14188 13.0052 9.16441 12.9304 9.16688C12.8557 9.16935 12.7817 9.15168 12.7162 9.11572C12.6507 9.07976 12.596 9.02683 12.558 8.96249C12.52 8.89814 12.4999 8.82475 12.5 8.75V7.08333C12.5001 7.00858 12.48 6.93519 12.442 6.87085C12.404 6.8065 12.3493 6.75357 12.2838 6.71761C12.2183 6.68165 12.1443 6.66398 12.0696 6.66645C11.9948 6.66893 11.9222 6.69145 11.8592 6.73167L8.14167 9.10167C8.07864 9.1421 8.00589 9.1648 7.93106 9.16739C7.85622 9.16998 7.78208 9.15235 7.71641 9.11636C7.65075 9.08038 7.596 9.02736 7.55791 8.96289C7.51983 8.89842 7.49982 8.82488 7.5 8.75V4.16667C7.5 3.72464 7.3244 3.30072 7.01184 2.98816C6.69928 2.67559 6.27536 2.5 5.83333 2.5H4.16667C3.72464 2.5 3.30072 2.67559 2.98816 2.98816C2.67559 3.30072 2.5 3.72464 2.5 4.16667V15.8333Z"
-        stroke={strokeColor}
-        strokeWidth="1.66667"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M6.66602 13.334H6.67435"
-        stroke={strokeColor}
-        strokeWidth="1.66667"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
+      <path d="M12 16h.01" />
+      <path d="M16 16h.01" />
+      <path d="M3 19a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8.5a.5.5 0 0 0-.769-.422l-4.462 2.844A.5.5 0 0 1 15 10.5v-2a.5.5 0 0 0-.769-.422L9.77 10.922A.5.5 0 0 1 9 10.5V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2z" />
+      <path d="M8 16h.01" />
     </svg>
   );
 };
@@ -353,6 +376,41 @@ export const HpMachinesIcon = ({
   );
 };
 
+export const HpMachinesAdminIcon = ({
+  isSelected = false,
+}: {
+  isSelected?: boolean;
+}) => {
+  const strokeColor = isSelected ? "#001CB0" : "#1A1A1A";
+
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke={strokeColor}
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 17h-8a1 1 0 0 1 -1 -1v-12a1 1 0 0 1 1 -1h16a1 1 0 0 1 1 1v8" />
+      <path d="M3 13h13" />
+      <path d="M8 21h4" />
+      <path d="M10 17l-.5 4" />
+      <path d="M17.001 19a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
+      <path d="M19.001 15.5v1.5" />
+      <path d="M19.001 21v1.5" />
+      <path d="M22.032 17.25l-1.299 .75" />
+      <path d="M17.27 20l-1.3 .75" />
+      <path d="M15.97 17.25l1.3 .75" />
+      <path d="M20.733 20l1.3 .75" />
+    </svg>
+  );
+};
+
 export const HpMaterialsIcon = ({
   isSelected = false,
 }: {
@@ -396,6 +454,68 @@ export const HpMaterialsIcon = ({
         stroke-linecap="round"
         stroke-linejoin="round"
       />
+    </svg>
+  );
+};
+
+export const HpMaterialsAdminIcon = ({
+  isSelected = false,
+}: {
+  isSelected?: boolean;
+}) => {
+  const strokeColor = isSelected ? "#001CB0" : "#1A1A1A";
+
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke={strokeColor}
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M12 22v-9" />
+      <path d="M15.17 2.21a1.67 1.67 0 0 1 1.63 0L21 4.57a1.93 1.93 0 0 1 0 3.36L8.82 14.79a1.655 1.655 0 0 1-1.64 0L3 12.43a1.93 1.93 0 0 1 0-3.36z" />
+      <path d="M20 13v3.87a2.06 2.06 0 0 1-1.11 1.83l-6 3.08a1.93 1.93 0 0 1-1.78 0l-6-3.08A2.06 2.06 0 0 1 4 16.87V13" />
+      <path d="M21 12.43a1.93 1.93 0 0 0 0-3.36L8.83 2.2a1.64 1.64 0 0 0-1.63 0L3 4.57a1.93 1.93 0 0 0 0 3.36l12.18 6.86a1.636 1.636 0 0 0 1.63 0z" />
+    </svg>
+  );
+};
+
+export const HpMaterialsAdminIconNew = ({
+  isSelected = false,
+}: {
+  isSelected?: boolean;
+}) => {
+  const strokeColor = isSelected ? "#001CB0" : "#1A1A1A";
+
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke={strokeColor}
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M2.97 12.92A2 2 0 0 0 2 14.63v3.24a2 2 0 0 0 .97 1.71l3 1.8a2 2 0 0 0 2.06 0L12 19v-5.5l-5-3-4.03 2.42Z" />
+      <path d="m7 16.5-4.74-2.85" />
+      <path d="m7 16.5 5-3" />
+      <path d="M7 16.5v5.17" />
+      <path d="M12 13.5V19l3.97 2.38a2 2 0 0 0 2.06 0l3-1.8a2 2 0 0 0 .97-1.71v-3.24a2 2 0 0 0-.97-1.71L17 10.5l-5 3Z" />
+      <path d="m17 16.5-5-3" />
+      <path d="m17 16.5 4.74-2.85" />
+      <path d="M17 16.5v5.17" />
+      <path d="M7.97 4.42A2 2 0 0 0 7 6.13v4.37l5 3 5-3V6.13a2 2 0 0 0-.97-1.71l-3-1.8a2 2 0 0 0-2.06 0l-3 1.8Z" />
+      <path d="M12 8 7.26 5.15" />
+      <path d="m12 8 4.74-2.85" />
+      <path d="M12 13.5V8" />
     </svg>
   );
 };
@@ -543,19 +663,18 @@ export const HpCustomerServiceIcon = ({
 
   return (
     <svg
+      xmlns="http://www.w3.org/2000/svg"
       width="20"
       height="20"
-      viewBox="0 0 24 25"
+      viewBox="0 0 24 24"
       fill="none"
-      xmlns="http://www.w3.org/2000/svg"
+      stroke={strokeColor}
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     >
-      <path
-        d="M21 18.5V12.5C21 7.52944 16.9706 3.5 12 3.5C7.02944 3.5 3 7.52944 3 12.5V18.5M5.5 21.5C4.11929 21.5 3 20.3807 3 19V17C3 15.6193 4.11929 14.5 5.5 14.5C6.88071 14.5 8 15.6193 8 17V19C8 20.3807 6.88071 21.5 5.5 21.5ZM18.5 21.5C17.1193 21.5 16 20.3807 16 19V17C16 15.6193 17.1193 14.5 18.5 14.5C19.8807 14.5 21 15.6193 21 17V19C21 20.3807 19.8807 21.5 18.5 21.5Z"
-        stroke={strokeColor}
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-      />
+      <path d="M3 11h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-5Zm0 0a9 9 0 1 1 18 0m0 0v5a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3Z" />
+      <path d="M21 16v2a4 4 0 0 1-4 4h-5" />
     </svg>
   );
 };
@@ -598,6 +717,116 @@ export const HpListArrowIcon = ({
   );
 };
 
+export const HpCustomerReportsIcon = ({
+  isSelected = false,
+}: {
+  isSelected?: boolean;
+}) => {
+  const strokeColor = isSelected ? "#001CB0" : "#1A1A1A";
+
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke={strokeColor}
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M13 22h5a2 2 0 0 0 2-2V8a2.4 2.4 0 0 0-.706-1.706l-3.588-3.588A2.4 2.4 0 0 0 14 2H6a2 2 0 0 0-2 2v3.3" />
+      <path d="M14 2v5a1 1 0 0 0 1 1h5" />
+      <path d="m7.69 16.479 1.29 4.88a.5.5 0 0 1-.698.591l-1.843-.849a1 1 0 0 0-.879.001l-1.846.85a.5.5 0 0 1-.692-.593l1.29-4.88" />
+      <circle cx="6" cy="14" r="3" />
+    </svg>
+  );
+};
+
+export const HpAccountingReportsIcon = ({
+  isSelected = false,
+}: {
+  isSelected?: boolean;
+}) => {
+  const strokeColor = isSelected ? "#001CB0" : "#1A1A1A";
+
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke={strokeColor}
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z" />
+      <path d="M14 2v5a1 1 0 0 0 1 1h5" />
+      <path d="M8 18v-1" />
+      <path d="M12 18v-6" />
+      <path d="M16 18v-3" />
+    </svg>
+  );
+};
+
+export const HpPurchaseIcon = ({
+  isSelected = false,
+}: {
+  isSelected?: boolean;
+}) => {
+  const strokeColor = isSelected ? "#001CB0" : "#1A1A1A";
+
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke={strokeColor}
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M4 19a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path d="M13 17h-7v-14h-2" />
+      <path d="M6 5l14 1l-.575 4.022m-4.925 2.978h-8.5" />
+      <path d="M21 15h-2.5a1.5 1.5 0 0 0 0 3h1a1.5 1.5 0 0 1 0 3h-2.5" />
+      <path d="M19 21v1m0 -8v1" />
+    </svg>
+  );
+};
+
+export const HpCompanyReportIcon = ({
+  isSelected = false,
+}: {
+  isSelected?: boolean;
+}) => {
+  const strokeColor = isSelected ? "#001CB0" : "#1A1A1A";
+
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke={strokeColor}
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z" />
+      <path d="M14 2v5a1 1 0 0 0 1 1h5" />
+      <path d="m16 13-3.5 3.5-2-2L8 17" />
+    </svg>
+  );
+};
+
 export const getHpIcon = (
   tabKey: string,
   isSelected?: boolean
@@ -611,7 +840,7 @@ export const getHpIcon = (
       <HpProductFloorIcon isSelected={isSelected} />
     ),
     sales: (isSelected?: boolean) => <HpSalesIcon isSelected={isSelected} />,
-    purchase: (isSelected?: boolean) => <HpSalesIcon isSelected={isSelected} />,
+    purchase: (isSelected?: boolean) => <HpPurchaseIcon isSelected={isSelected} />,
     banking: (isSelected?: boolean) => (
       <HpBankingIcon isSelected={isSelected} />
     ),
@@ -622,31 +851,32 @@ export const getHpIcon = (
       <HpMachinesIcon isSelected={isSelected} />
     ),
     machinesAdmin: (isSelected?: boolean) => (
-      <HpMachinesIcon isSelected={isSelected} />
+      <HpMachinesAdminIcon isSelected={isSelected} />
     ),
     materials: (isSelected?: boolean) => (
       <HpMaterialsIcon isSelected={isSelected} />
     ),
     materialsAdmin: (isSelected?: boolean) => (
-      <HpMaterialsIcon isSelected={isSelected} />
+      <HpMaterialsAdminIcon isSelected={isSelected} />
     ),
     actions: (isSelected?: boolean) => (
       <HpActionsIcon isSelected={isSelected} />
     ),
     customerReports: (isSelected?: boolean) => (
-      <HpReportIcon isSelected={isSelected} />
+      // <HpReportIcon isSelected={isSelected} />
+      <HpCustomerReportsIcon  isSelected={isSelected}/>
     ),
     supplierReports: (isSelected?: boolean) => (
       <HpReportIcon isSelected={isSelected} />
     ),
     accountingReports: (isSelected?: boolean) => (
-      <HpReportIcon isSelected={isSelected} />
+      <HpAccountingReportsIcon isSelected={isSelected} />
     ),
     settings: (isSelected?: boolean) => (
       <HpSettingsIcon isSelected={isSelected} />
     ),
     companyReports: (isSelected?: boolean) => (
-      <HpReportIcon isSelected={isSelected} />
+      <HpCompanyReportIcon isSelected={isSelected} />
     ),
     customerService: (isSelected?: boolean) => (
       <HpCustomerServiceIcon isSelected={isSelected} />
