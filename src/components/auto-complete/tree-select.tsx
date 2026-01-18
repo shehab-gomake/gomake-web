@@ -32,21 +32,14 @@ const StyledTreeSelect = styled<any>(TreeSelect)(
     fontStyle: "normal",
     fontWeight: 500,
     lineHeight: "20px",
-    border: !isRequired
-      ? "var(--theme-dropdown-border, 1px solid transparent) !important"
-      : "transparent !important",
+    border: "none !important", // Remove wrapper border to prevent double border
     borderBottom: !isRequired
       ? "unset !important"
       : selectedOption
       ? "2px solid rgb(67,195,232) !important"
       : "2px solid rgb(237, 2, 140) !important",
     "& .ant-select-selector": {
-      border: hasValue
-        ? "1px solid var(--theme-dropdown-border-color, transparent) !important"
-        : "var(--theme-dropdown-border, none) !important",
-      borderColor: hasValue
-        ? "var(--theme-dropdown-border-color, transparent) !important"
-        : "transparent !important",
+      border: "1px solid var(--theme-dropdown-border-color, transparent) !important",
       borderRadius: "var(--theme-dropdown-border-radius, 4px) !important",
       display: "flex !important",
       alignItems: "center !important",
@@ -207,11 +200,15 @@ const GoMakeTreeSelect = ({
             transform: translateY(-50%);
         }
 
+        .editorDiv .ant-select-selector {
+            border: 1px solid var(--theme-dropdown-border-color, transparent) !important;
+        }
+        
         .editorDiv .ant-select-focused .ant-select-selector {
             border-color: var(--theme-dropdown-border-color, transparent) !important;
             border-width: 1px !important;
             border-style: solid !important;
-            box-shadow: 0 0 0 2px rgba(224, 224, 224, 0.2) !important;
+            box-shadow: var(--theme-dropdown-shadow, 0 0 0 2px rgba(224, 224, 224, 0.2)) !important;
         }
         
         .editorDiv .ant-select:not(.ant-select-disabled):hover .ant-select-selector {
