@@ -46,7 +46,8 @@ const START_JOB_PRODUCTION_URL =
   "/v1/job-service/board-missions/start-job-production/";
 const TEST_UPLOAD_FILES_URL =
   "/v1/erp-service/pix-orders/test-upload-files/";
-
+const UPDATE_EXAMPLE_TYPE_URL =
+  "/v1/erp-service/board-missions/update-example-type";
 const setBoardMissionsFiltersApi: ICallAndSetData = async (
   callApi,
   setState,
@@ -360,6 +361,20 @@ const testUploadFilesApi: ICallAndSetData = async (
   );
 };
 
+const updateExampleTypeApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data: { boardMissionId: string; exampleType: number }
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.PUT,
+    UPDATE_EXAMPLE_TYPE_URL,
+    setState,
+    data
+  );
+};
+
 export {
   setBoardMissionsFiltersApi,
   getOrderSummeryPdfApi,
@@ -384,4 +399,5 @@ export {
   startJobProductionApi,
   repeatOrderApi,
   testUploadFilesApi,
+  updateExampleTypeApi,
 };
