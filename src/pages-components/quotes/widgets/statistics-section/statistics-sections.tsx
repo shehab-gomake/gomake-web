@@ -86,7 +86,7 @@ const CardsSection = (props: ICardsSection) => {
               )
             }
             isActive={props.activeCard === EStatisticsLabels.CANCELED}
-            text={t("sales.quote.canceled")}
+            text={t("sales.quote.rejected")}
             number={getValueByKey(props.statistics, "canceledCount")}
             textColor={errorColor(300)}
             icon={<DoDisturbAltIcon />}
