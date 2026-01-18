@@ -232,7 +232,13 @@ const MoreActionsButton = ({ isMobile = false }) => {
         } else {
           // Fallback for older browsers
           const textArea = document.createElement("textarea");
-          textArea.value = boardMissions.filesPath;
+          let pathToCopy = boardMissions.filesPath;
+          const mapping = companyProfile.localFilePathMapping.replace(/[/\\]+$/, '');
+          const filePathPart = pathToCopy.replace(/^[/\\]+/, '');
+          // Join with appropriate separator based on the mapping (Windows uses \, Unix uses /)
+          const separator = mapping.includes('\\') ? '\\' : '/';
+          pathToCopy = `${mapping}${separator}${filePathPart}`;
+          textArea.value = pathToCopy ;
           textArea.style.position = "fixed";
           textArea.style.opacity = "0";
           document.body.appendChild(textArea);
