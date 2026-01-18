@@ -227,8 +227,8 @@ const MoreActionsButton = ({ isMobile = false }) => {
     if (boardMissions?.filesPath) {
       try {
         debugger;
-        let localFilePathMapping = companyProfile.localFilePathMapping;
-        localFilePathMapping = "c:\\gomake-graphics-approval";
+        const localFilePathMapping = companyProfile.localFilePathMapping;
+        //localFilePathMapping = "c:\\gomake-graphics-approval";
         let pathToCopy = boardMissions.filesPath;
         const mapping = localFilePathMapping.replace(/[/\\]+$/, '');
         const filePathPart = pathToCopy.replace(/^[/\\]+/, '');
