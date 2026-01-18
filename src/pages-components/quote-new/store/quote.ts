@@ -12,6 +12,11 @@ export const QuoteNumberState = atom({
   default: "",
 });
 
+export const hasTableCellUpdatesState = atom({
+  key: "hasTableCellUpdatesState",
+  default: false,
+});
+
 export const QuoteIfExistState = atom({
   key: "QuoteIfExistState",
   default: "",

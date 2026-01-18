@@ -94,7 +94,7 @@ import {
 } from "@/utils/helpers";
 import { useWhatsAppWeb } from "@/pages-components/quote-new/use-whats-app-web";
 import { EAddressType } from "@/widgets/quote-new/business-widget/address-widget/state";
-import { ClientChangeSource } from "./store/quote";
+import { ClientChangeSource, hasTableCellUpdatesState } from "./store/quote";
 import { EnumVATStatus } from "@/enums/accounting-enums";
 import { useClientTypesList } from "@/hooks/use-client-types";
 import { useModal } from "@/hooks/use-modal";
@@ -570,7 +570,7 @@ const useQuoteNew = ({
     "#",
     isDeliveryNote || isInvoice ? t("products.profits.documentNumber") : null,
     !CheckPreferenceValue(EPreferences.HIDE_ITEM_CODE_FROM_DOCUMENT_CART) &&
-      t("sales.quote.itemCode"),
+    t("sales.quote.itemCode"),
     t("products.profits.itemName"),
     showDetails ? t("products.profits.details") : null,
     isMaterialPurchaseOrder ? t("sales.purchaseOrder.packagesQuantity") : null,
@@ -587,37 +587,37 @@ const useQuoteNew = ({
 
   const columnWidths = isMaterialPurchaseOrder
     ? [
-        "5%", // "#"
-        "9%", // Item Code
-        "10%", // Item Name
-        "15%", // Details column (optional)
-        "9%", // Amount
-        "9%", // Amount
-        "9%", // Amount
-        "5%", // Unit Price
-        showPrices ? "8%" : null, // Unit Price
-        showPrices ? "8%" : null, // Discount
-        showPrices ? "8%" : null, // Final Price
-        "5%", // More
-      ]
+      "5%", // "#"
+      "9%", // Item Code
+      "10%", // Item Name
+      "15%", // Details column (optional)
+      "9%", // Amount
+      "9%", // Amount
+      "9%", // Amount
+      "5%", // Unit Price
+      showPrices ? "8%" : null, // Unit Price
+      showPrices ? "8%" : null, // Discount
+      showPrices ? "8%" : null, // Final Price
+      "5%", // More
+    ]
     : [
-        "5%", // "#"
-        isDeliveryNote || isInvoice ? "10%" : null, // Document Number
-        !CheckPreferenceValue(EPreferences.HIDE_ITEM_CODE_FROM_DOCUMENT_CART)
-          ? "10%"
-          : null, // Item Code
-        "12%", // Item Name
-        source?.showDetails === ShowDocumentDetailsEnum.All
-          ? "25%"
-          : source?.showDetails === ShowDocumentDetailsEnum.ShowJobNameOnly
+      "5%", // "#"
+      isDeliveryNote || isInvoice ? "10%" : null, // Document Number
+      !CheckPreferenceValue(EPreferences.HIDE_ITEM_CODE_FROM_DOCUMENT_CART)
+        ? "10%"
+        : null, // Item Code
+      "12%", // Item Name
+      source?.showDetails === ShowDocumentDetailsEnum.All
+        ? "25%"
+        : source?.showDetails === ShowDocumentDetailsEnum.ShowJobNameOnly
           ? "10%"
           : null, // Details column (optional)
-        "10%", // Amount
-        showPrices ? "10%" : null, // Unit Price
-        showPrices ? "10%" : null, // Discount
-        showPrices ? "10%" : null, // Final Price
-        "8%", // More
-      ].filter(Boolean);
+      "10%", // Amount
+      showPrices ? "10%" : null, // Unit Price
+      showPrices ? "10%" : null, // Discount
+      showPrices ? "10%" : null, // Final Price
+      "8%", // More
+    ].filter(Boolean);
 
   // const columnWidths = ["5%", "10%", "12%", "25%", "10%", "10%", "10%", "10%"];
   const headerHeight = "44px";
@@ -669,6 +669,17 @@ const useQuoteNew = ({
     const callBack = (res) => {
       if (res?.success) {
         setSelectDate(res?.data?.dueDate ?? null);
+        setEstimatedProductionDate(res?.data?.estimatedProductionTime ?? null);
+      }
+    };
+    await getDocumentDeliveryDateApi(callApi, callBack);
+  };
+
+  // For quote confirmation, only get estimated production date (not delivery date)
+  const getEstimatedProductionDate = async () => {
+    const callBack = (res) => {
+      if (res?.success) {
+        // Only set estimated production date, don't override delivery date
         setEstimatedProductionDate(res?.data?.estimatedProductionTime ?? null);
       }
     };
@@ -1039,6 +1050,10 @@ const useQuoteNew = ({
 
   const alertExistPurchaseNumber = useModal();
   const orderUpdateConfirmationModal = useModal();
+  // Track if table cells were updated (not via edit modal) - using Recoil atom
+  const [hasTableCellUpdates, setHasTableCellUpdates] = useRecoilState(
+    hasTableCellUpdatesState
+  );
   const orderUpdateSendModal = useModal();
   const [isOrderUpdateEmailComposer, setIsOrderUpdateEmailComposer] =
     useState(false);
@@ -1602,6 +1617,8 @@ const useQuoteNew = ({
 
   const onCloseNewItem = () => {
     setOpenAddNewItemModal(false);
+    // Clear table cell update flag when item edit modal is closed
+    setHasTableCellUpdates(false);
   };
   const onCloseNewContact = () => {
     setOpenAddNewContactModal(false);
@@ -1632,7 +1649,7 @@ const useQuoteNew = ({
         discount: quoteItem?.discount,
         isPrintHouseMaterialItem:
           quoteItem?.printHouseMaterialId &&
-          (isPrintHouseMaterialItem || selectedFirstMaterial)
+            (isPrintHouseMaterialItem || selectedFirstMaterial)
             ? true
             : false,
         finalPrice: quoteItemEdit?.finalPrice,
@@ -1687,8 +1704,8 @@ const useQuoteNew = ({
           let exchangeRate = _data.exchangeRate;
           let oldExchangeRate =
             quoteItem.exchangeRate === 0 ||
-            quoteItem.exchangeRate === null ||
-            quoteItem.exchangeRate === undefined
+              quoteItem.exchangeRate === null ||
+              quoteItem.exchangeRate === undefined
               ? 1
               : quoteItem.exchangeRate;
 
@@ -1779,6 +1796,10 @@ const useQuoteNew = ({
         setSelectedFirstMaterial(false);
       }
     } else {
+      // Mark that table cells were updated (not via edit modal)
+      if (docType === DOCUMENT_TYPE.order) {
+        setHasTableCellUpdates(true);
+      }
       const callBack = (res) => {
         if (res?.success) {
           alertSuccessUpdate();
@@ -1935,7 +1956,7 @@ const useQuoteNew = ({
           alertSuccessDelete();
           onCloseDeleteItemModal();
           quoteItemValue?.documentItems?.length === 1 ||
-          res?.data?.succ === false
+            res?.data?.succ === false
             ? navigate("/home")
             : getQuote();
         } else {
@@ -2056,6 +2077,10 @@ const useQuoteNew = ({
         setLoading(false);
       }
     } else {
+      // Mark that footer table cells were updated (not via edit modal) for orders
+      if (docType === DOCUMENT_TYPE.order) {
+        setHasTableCellUpdates(true);
+      }
       const callBack = (res) => {
         if (res?.success) {
           alertSuccessUpdate();
@@ -2348,7 +2373,7 @@ const useQuoteNew = ({
   const receiptSendModal = useModal();
   const [modalCallback, setModalCallback] = useState<
     (includeInvoices: boolean) => void
-  >(() => () => {});
+  >(() => () => { });
 
   const openReceiptModal = (callback: (includeInvoices: boolean) => void) => {
     receiptSendModal.open();
@@ -2501,6 +2526,8 @@ const useQuoteNew = ({
   // Handler for order update confirmation - No
   const handleOrderUpdateNo = useCallback(() => {
     orderUpdateConfirmationModal.close();
+    // Clear the table cell update flag
+    setHasTableCellUpdates(false);
     // Remove the URL parameter
     if (router.query.showUpdateModal) {
       const newQuery = { ...router.query };
@@ -2516,6 +2543,8 @@ const useQuoteNew = ({
 
   // Handler to navigate to home and clean up order update state
   const handleOrderUpdateComplete = useCallback(() => {
+    // Clear the table cell update flag
+    setHasTableCellUpdates(false);
     // Remove the URL parameter
     if (router.query.showUpdateModal) {
       const newQuery = { ...router.query };
@@ -2618,14 +2647,27 @@ const useQuoteNew = ({
   const handleSaveBtnClick = async () => {
     const callBack = (res) => {
       if (res?.success) {
+        // Show modal if table cells were updated (not via edit modal) and it's an order
         if (
+          hasTableCellUpdates &&
+          docType === DOCUMENT_TYPE.order &&
+          quoteItemValue?.id &&
+          !orderUpdateConfirmationModal.isOpen
+        ) {
+          orderUpdateConfirmationModal.open();
+          // Clear the flag after showing modal
+          setHasTableCellUpdates(false);
+        } else if (
           router.query.showUpdateModal === "true" &&
           docType === DOCUMENT_TYPE.order &&
           quoteItemValue?.id &&
           !orderUpdateConfirmationModal.isOpen
         ) {
           orderUpdateConfirmationModal.open();
+          setHasTableCellUpdates(false);
         } else {
+          // Clear the flag if navigating away
+          setHasTableCellUpdates(false);
           navigate("/home");
         }
       } else {
@@ -2704,7 +2746,7 @@ const useQuoteNew = ({
       }
 
       // 1. Assign invoice to ticket in ERP service
-      await assignToTicketApi(callApi, () => {}, {
+      await assignToTicketApi(callApi, () => { }, {
         documentId: invoiceId,
         ticketId: chatwootTicketId,
         documentType: DOCUMENT_TYPE.invoice,
@@ -2951,7 +2993,9 @@ const useQuoteNew = ({
     const shouldSkipDueDateUpdate =
       isReceipt && isOutgoingPayments && isNewCreation && hasValidChecks;
 
-    if (!isQuote && !shouldSkipDueDateUpdate) {
+    // For quote confirmation, always use dueDate from get-document-by-id
+    // For other documents, set dueDate if not a quote or if it's quote confirmation
+    if ((!isQuote || isQuoteConfirmation) && !shouldSkipDueDateUpdate) {
       setSelectDate(source?.dueDate);
     }
   }, [
@@ -2968,6 +3012,14 @@ const useQuoteNew = ({
   useEffect(() => {
     if (!isQuote) return;
 
+    // For quote confirmation, only get estimated production date
+    // Delivery date comes from get-document-by-id
+    if (isQuoteConfirmation) {
+      getEstimatedProductionDate();
+      return;
+    }
+
+    // For regular quotes, get both delivery date and estimated production date
     const isDeliveryDateRequired = CheckPreferenceValue(
       EPreferences.DELIVERY_DATE_REQUIRED_IN_QUOTE
     );
@@ -2975,7 +3027,7 @@ const useQuoteNew = ({
     if (!isDeliveryDateRequired || quoteItemValue?.dueDateUpdatedByUser) {
       getQuoteDeliveryDate();
     }
-  }, [isQuote, quoteItemValue?.dueDateUpdatedByUser]);
+  }, [isQuote, isQuoteConfirmation, quoteItemValue?.dueDateUpdatedByUser]);
 
   const prevRouterQueryRef = useRef(router.query);
   const hasMountedRef = useRef(false);
@@ -3304,7 +3356,7 @@ const useQuoteNew = ({
       try {
         // If shouldUndo is true, call undo intake API (which also updates status)
         if (shouldUndo) {
-          const undoResponse = await undoDocumentIntakeApi(callApi, () => {}, {
+          const undoResponse = await undoDocumentIntakeApi(callApi, () => { }, {
             documentType: docType,
             purchaseOrderId: quoteItemValue.id,
             status: status,
@@ -3318,7 +3370,7 @@ const useQuoteNew = ({
           }
         } else {
           // If not undoing intake, just update status normally
-          const response = await updateDocumentStatusApi(callApi, () => {}, {
+          const response = await updateDocumentStatusApi(callApi, () => { }, {
             documentType: docType,
             documentId: quoteItemValue.id,
             status,
@@ -3393,7 +3445,7 @@ const useQuoteNew = ({
 
       setIsUpdatingPurchaseStatus(true);
       try {
-        const response = await undoDocumentIntakeApi(callApi, () => {}, {
+        const response = await undoDocumentIntakeApi(callApi, () => { }, {
           documentType: docType,
           purchaseOrderId: quoteItemValue.id,
           status: quoteItemValue.documentStatus || 0,
@@ -3431,7 +3483,7 @@ const useQuoteNew = ({
       }
 
       try {
-        const response = await undoDocumentItemIntakeApi(callApi, () => {}, {
+        const response = await undoDocumentItemIntakeApi(callApi, () => { }, {
           documentType: docType,
           itemId: item.id,
         });

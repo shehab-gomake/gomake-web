@@ -2077,7 +2077,10 @@
     "creditCards": "Kreditkarten",
     "taxAuthority": "Steuerbehörde",
     "hours": "Stunden",
-    "businessProfile": "Geschäftsprofil"
+    "businessProfile": "Geschäftsprofil",
+    "integrations": "Integrationen",
+    "hpHmacSecret": "HP HMAC Secret",
+    "hpHmacKey": "HP HMAC Key"
   },
   "remainWords": {
     "newQuote": "Neues Angebot",

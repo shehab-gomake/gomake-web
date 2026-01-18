@@ -48,6 +48,12 @@ export const TransactionSummaryCards = ({ data }: Props) => {
         icon={<WalletIcon />}
         withCurrency
       />
+      <TotalCardComponent
+        text={t("reports.total")}
+        number={( (data?.totalDebit ?? 0) - (data?.totalCredit ?? 0) ).toFixed(2)}
+        icon={<WalletIcon />}
+        withCurrency
+      />
     </div>
   );
 };

@@ -2103,7 +2103,10 @@
     "creditCards": "البطاقات الائتمانية",
     "taxAuthority": "الهيئة الضريبية",
     "hours": "ساعات",
-    "businessProfile": "الملف الشخصي للشركة"
+    "businessProfile": "الملف الشخصي للشركة",
+    "integrations": "التكاملات",
+    "hpHmacSecret": "HP HMAC Secret",
+    "hpHmacKey": "HP HMAC Key"
   },
   "remainWords": {
     "newQuote": "عرض جديد",

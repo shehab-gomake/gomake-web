@@ -17,10 +17,13 @@ import { useUserPermission } from "@/hooks/use-permission";
 import { GoMakeDialog } from "@/components/dialog/dialog";
 import { RolesWidget } from "./Roles/roles-widget";
 import Head from "next/head";
+import { useState } from "react";
+import { InviteEmployeeModal } from "@/widgets/settings-users/users/components/invite-employee/invite-employee-modal";
 
 const SettingsUsersWidget = () => {
   const { t } = useTranslation();
   const { CheckPermission } = useUserPermission();
+  const [openInviteModal, setOpenInviteModal] = useState(false);
   const {
     handleAddEmployeeClick,
     openModal,
@@ -30,6 +33,7 @@ const SettingsUsersWidget = () => {
     action,
     openVerificationModal,
     handleCloseVerificationModal,
+    getAllUsers,
   } = useEmployee();
 
   const {
@@ -57,15 +61,28 @@ const SettingsUsersWidget = () => {
     },
   ].filter(Boolean);
 
+  const handleInviteSuccess = () => {
+    getAllUsers();
+    setOpenInviteModal(false);
+  };
+
   const renderAddButton = (activeTabTitle: string) => {
     if (activeTabTitle === t("usersSettings.users")) {
       return (
-        <PermissionCheck userPermission={Permissions.ADD_EMPLOYEE}>
-          <AddButton
-            label={t("usersSettings.addEmployee")}
-            onClick={handleAddEmployeeClick}
-          />
-        </PermissionCheck>
+        <>
+          <PermissionCheck userPermission={Permissions.ADD_EMPLOYEE}>
+            <AddButton
+              label={t("usersSettings.addEmployee")}
+              onClick={handleAddEmployeeClick}
+            />
+          </PermissionCheck>
+          <PermissionCheck userPermission={Permissions.ADD_EMPLOYEE}>
+            <AddButton
+              label={t("usersSettings.invite")}
+              onClick={() => setOpenInviteModal(true)}
+            />
+          </PermissionCheck>
+        </>
       );
     } else if (activeTabTitle === t("usersSettings.roles")) {
       return (
@@ -137,6 +154,19 @@ const SettingsUsersWidget = () => {
           onChange={(v) => {
             setInputValue(v);
           }}
+        />
+      </GoMakeModal>
+      <GoMakeModal
+        insideStyle={{ paddingLeft: 0, paddingRight: 0, maxHeight: "500px", height: "fit-content" }}
+        headerPadding={20}
+        openModal={openInviteModal}
+        onClose={() => setOpenInviteModal(false)}
+        modalTitle={t("usersSettings.inviteEmployee")}
+      >
+        <InviteEmployeeModal
+          openModal={openInviteModal}
+          onClose={() => setOpenInviteModal(false)}
+          onSuccess={handleInviteSuccess}
         />
       </GoMakeModal>
     </div>

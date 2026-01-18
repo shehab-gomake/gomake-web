@@ -2104,7 +2104,10 @@
     "creditCards": "כרטיסי אשראי",
     "taxAuthority": "רשות המסים",
     "hours": "שעות",
-    "businessProfile": "פרופיל עסקי"
+    "businessProfile": "פרופיל עסקי",
+    "integrations": "אינטגרציות",
+    "hpHmacSecret": "HP HMAC Secret",
+    "hpHmacKey": "HP HMAC Key"
   },
   "remainWords": {
     "newQuote": "ציטוט חדש",

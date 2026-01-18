@@ -77,6 +77,7 @@ import { useParameters } from "@/hooks/use-parameters";
 import { printHouseHasFrontDeskFeature } from "@/store/print-house-profile";
 import { PurchaseOrdersDialogsUndoIntakeWidget } from "@/widgets/purchas-orders-dialogs/purchase-orders-dialogs-undo-intake-widget";
 import { PurchaseOrdersDialogsIntakeValidationWidget } from "@/widgets/purchas-orders-dialogs/purchase-orders-dialogs-intake-validatin-widget";
+import { AddAttachmentsModal } from "@/widgets/quote-new/modals-widgets/add-attachments-modal/add-attachments-modal";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -350,6 +351,12 @@ const QuotesListPageWidget = ({
     isFromPaymentPage,
     hideCheckboxes,
     preSelectedMethod,
+    // Upload files modal
+    openUploadFileModal,
+    onCloseUploadFilesModal,
+    onClickOpenUploadFilesModal,
+    quoteForUploadModal,
+    getQuoteForUploadModal,
   } = useQuotes(documentType, isFromHomePage);
 
   // Get the main quotes pagination handler
@@ -1081,6 +1088,7 @@ const QuotesListPageWidget = ({
         documentId={deliveryOrderId?.toString()}
         documentNumber={deliveryOrderNumber?.toString()}
         onClickOpenMoveOrderToReadyModal={onClickOpenMoveOrderToReadyModal}
+        getAllQuotes={getAllQuotes}
       />
       <GoMakeDeleteModal
         modalType={ModalType.DELETE}
@@ -1177,6 +1185,15 @@ const QuotesListPageWidget = ({
         showUndoIntakeDialog={showUndoIntakeDialog}
         handleCancelUndoIntake={handleCancelUndoIntake}
         handleConfirmUndoIntake={handleConfirmUndoIntake}
+      />
+      {/* Upload Files Modal */}
+      <AddAttachmentsModal
+        openModal={openUploadFileModal}
+        onClose={onCloseUploadFilesModal}
+        documentType={documentType}
+        getQuote={getQuoteForUploadModal}
+        isQuoteConfirmation={false}
+        quoteConfirm={quoteForUploadModal}
       />
     </>
   );

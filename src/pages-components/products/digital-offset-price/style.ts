@@ -740,7 +740,7 @@ const useStyle = ({ isMobileScreen }: IProps) => {
       },
       qualityIssueContainer: {
         width: "100%",
-        marginBottom: 20,
+        marginBottom: 80,
       },
       multiLineTextInputStyle: {
         width: "100%",

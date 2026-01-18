@@ -129,6 +129,7 @@ const useMoreCircle = () => {
     onClickSendPaymentWhatsApp,
     onClickUndoDocumentIntake,
     onClickToggleOrderLock,
+    onClickOpenUploadFilesModal,
     classes,
   }) => {
     const isEditableDocument = quote?.isEditable;
@@ -137,9 +138,8 @@ const useMoreCircle = () => {
 
     const getDocumentPath = (id?: string, extraParams: string = "") => {
       if (isSupplierPayments) {
-        return `/${
-          DOCUMENT_TYPE[DOCUMENT_TYPE.receipt]
-        }?isOutgoingPayments=true${id ? `&Id=${id}` : ""}${extraParams}`;
+        return `/${DOCUMENT_TYPE[DOCUMENT_TYPE.receipt]
+          }?isOutgoingPayments=true${id ? `&Id=${id}` : ""}${extraParams}`;
       }
       return `/${documentPath}${id ? `?Id=${id}` : ""}${extraParams}`;
     };
@@ -536,19 +536,19 @@ const useMoreCircle = () => {
             }
             onCloseAsDeliveryNote={
               isOrder &&
-              quote?.isCanClose &&
-              !isCanceledOrder &&
-              isEditableDocument
+                quote?.isCanClose &&
+                !isCanceledOrder &&
+                isEditableDocument
                 ? handleCloseAsDeliveryNote
                 : undefined
             }
             onCloseAsProformaInvoice={
               hasProformaInvoicePermission &&
-              ((isOrder &&
-                quote?.isCanClose &&
-                !isCanceledOrder &&
-                isEditableDocument) ||
-                (isDeliveryNote && quote?.isCanClose && isEditableDocument))
+                ((isOrder &&
+                  quote?.isCanClose &&
+                  !isCanceledOrder &&
+                  isEditableDocument) ||
+                  (isDeliveryNote && quote?.isCanClose && isEditableDocument))
                 ? handleCloseAsProformaInvoice
                 : undefined
             }
@@ -556,7 +556,7 @@ const useMoreCircle = () => {
               ((isOrder && quote?.isCanClose && !isCanceledOrder) ||
                 (isDeliveryNote && quote?.isCanClose) ||
                 (isProformaInvoice && quote?.isCanClose)) &&
-              isEditableDocument
+                isEditableDocument
                 ? handleCloseAsInvoice
                 : undefined
             }
@@ -577,9 +577,9 @@ const useMoreCircle = () => {
             }
             onCloseAsPurchaseInvoice={
               isPurchaseOrder &&
-              quote?.isCanClose &&
-              !isCanceledPurchaseOrder &&
-              isEditableDocument
+                quote?.isCanClose &&
+                !isCanceledPurchaseOrder &&
+                isEditableDocument
                 ? handleCloseAsPurchaseInvoice
                 : undefined
             }
@@ -749,24 +749,24 @@ const useMoreCircle = () => {
       },
       hasFrontDeskFeature
         ? {
-            condition:
-              ((!isPauseOrder && isOrder && !isCanceledOrder) ||
-                isInvoice ||
-                isProformaInvoice) &&
-              quote?.isCanClose &&
-              isSendPaymentToClient &&
-              quote?.canSendMessage !== false,
-            component: (closeMenu: () => void) => (
-              <SendPaymentSubmenu
-                onClickEmail={() => onClickSendPaymentEmail(quote)}
-                onClickSMS={() => onClickSendPaymentSMS(quote)}
-                onClickWhatsApp={() => onClickSendPaymentWhatsApp(quote)}
-                menuItemStyle={classes.menuRowStyle}
-                rowTextStyle={classes.rowTextStyle}
-                onCloseParentMenu={closeMenu}
-              />
-            ),
-          }
+          condition:
+            ((!isPauseOrder && isOrder && !isCanceledOrder) ||
+              isInvoice ||
+              isProformaInvoice) &&
+            quote?.isCanClose &&
+            isSendPaymentToClient &&
+            quote?.canSendMessage !== false,
+          component: (closeMenu: () => void) => (
+            <SendPaymentSubmenu
+              onClickEmail={() => onClickSendPaymentEmail(quote)}
+              onClickSMS={() => onClickSendPaymentSMS(quote)}
+              onClickWhatsApp={() => onClickSendPaymentWhatsApp(quote)}
+              menuItemStyle={classes.menuRowStyle}
+              rowTextStyle={classes.rowTextStyle}
+              onCloseParentMenu={closeMenu}
+            />
+          ),
+        }
         : {
             condition:
               ((!isPauseOrder && isOrder && !isCanceledOrder) ||
@@ -781,18 +781,18 @@ const useMoreCircle = () => {
           },
       hasFrontDeskFeature
         ? {
-            condition: quote?.canSendMessage !== false,
-            component: (closeMenu: () => void) => (
-              <SendToCustomerSubmenu
-                onClickEmail={() => onClickSendToCustomerEmail(quote)}
-                onClickSMS={() => onClickSendToCustomerSMS(quote)}
-                onClickWhatsApp={() => onClickSendToCustomerWhatsApp(quote)}
-                menuItemStyle={classes.menuRowStyle}
-                rowTextStyle={classes.rowTextStyle}
-                onCloseParentMenu={closeMenu}
-              />
-            ),
-          }
+          condition: quote?.canSendMessage !== false,
+          component: (closeMenu: () => void) => (
+            <SendToCustomerSubmenu
+              onClickEmail={() => onClickSendToCustomerEmail(quote)}
+              onClickSMS={() => onClickSendToCustomerSMS(quote)}
+              onClickWhatsApp={() => onClickSendToCustomerWhatsApp(quote)}
+              menuItemStyle={classes.menuRowStyle}
+              rowTextStyle={classes.rowTextStyle}
+              onCloseParentMenu={closeMenu}
+            />
+          ),
+        }
         : {
             condition: quote?.canSendMessage !== false,
             onClick: () =>
@@ -833,8 +833,8 @@ const useMoreCircle = () => {
         name: t("sales.quote.resume"),
       },
       {
-        condition: !!companyProfile.filesApiAddress,
-        onClick: () => addOrderBoardMissionsToFileUploader(quote?.id),
+        condition: !!companyProfile.filesApiAddress && !!onClickOpenUploadFilesModal,
+        onClick: () => isOrder ? addOrderBoardMissionsToFileUploader(quote?.id) : onClickOpenUploadFilesModal?.(quote),
         icon: <PDFIcon color={primarySecondaryBlend(300)} />,
         name: t("fileUploader.uploadFile"),
       },

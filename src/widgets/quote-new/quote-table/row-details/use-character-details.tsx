@@ -6,7 +6,8 @@ import { quoteItemState } from "@/store";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import { hasTableCellUpdatesState } from "@/pages-components/quote-new/store/quote";
 
 const useCharacterDetails = ({
   details,
@@ -36,6 +37,7 @@ const useCharacterDetails = ({
 
   const [quoteItemValue, setQuoteItemValue] =
     useRecoilState<any>(quoteItemState);
+  const setHasTableCellUpdates = useSetRecoilState(hasTableCellUpdatesState);
   const truncatedDetails = showAll ? details : details?.slice(0, 90);
   const canNotEditWhenShowJobNameOnly =
     quoteItemValue?.showDetails === ShowDocumentDetailsEnum.ShowJobNameOnly;
@@ -109,6 +111,10 @@ const useCharacterDetails = ({
               ),
             ],
           });
+          // Mark that table cells (details) were updated for orders
+          if (documentType === DOCUMENT_TYPE.order && !router.query.isNewCreation) {
+            setHasTableCellUpdates(true);
+          }
           // getQuote();
         } else {
           alertFaultUpdate();

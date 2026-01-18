@@ -32,14 +32,14 @@ export const shouldUseHpClientTheme = (): boolean => {
   // }
 
   // Check for hp.gomake.net
-  if (hostname === "hp.gomake.net") {
+  if (hostname === "hp.gomake.net" || hostname === "hp.staging.gomake.net") {
     return true;
   }
 
   // Also check origin strings for exact matches
   if (
     // origin === "http://localhost:3004" ||
-    origin === "https://hp.gomake.net"
+    origin === "https://hp.gomake.net" || origin === "https://hp.staging.gomake.net"
   ) {
     return true;
   }

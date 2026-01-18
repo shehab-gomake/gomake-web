@@ -116,7 +116,12 @@ const GoMakeDialog: React.FC<GoMakeDialogProps> = ({
             PaperProps={{
                 sx: { ...classes.paper, direction },
             }}
+            container={dialogProps.container}
             {...dialogProps}
+            slotProps={{
+                ...dialogProps.slotProps,
+            }}
+            sx={dialogProps.sx}
         >
             {/* Header */}
             {(title || customTitle || showCloseButton) && (

@@ -15,6 +15,7 @@ import {
 import { useTranslation } from "react-i18next";
 import {
   ApprovalStatus,
+  EStatisticsLabels,
   INVOICES_EXPORT_TYPES,
   LogActionType,
   QUOTE_STATUSES,
@@ -44,6 +45,7 @@ import {
   ExportDocumentTableToPdfApi,
   getAllDocumentLogsApi,
   getAllDocumentsApi,
+  getDocumentApi,
   getDocumentInventoryApi,
   getDocumentPdfApi,
   manuallyCloseDocumentApi,
@@ -191,6 +193,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
 
   const searchInputRef = useRef(null);
   const composerOpenedRef = useRef(false);
+  const shouldAutoSearchRef = useRef(false);
   const { getCurrencyUnitText } = useQuoteGetData();
   const { navigate } = useGomakeRouter();
   const { CheckPermission } = useUserPermission();
@@ -221,6 +224,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const [isOrdersWithoutJobs, setIsOrdersWithoutJobs] = useState(false);
   const [openPurchaseOrderTypeModal, setOpenPurchaseOrderTypeModal] =
     useState(false);
+  const [openUploadFileModal, setOpenUploadFileModal] = useState(false);
+  const [selectedQuoteForUpload, setSelectedQuoteForUpload] = useState<any>(null);
+  const [quoteForUploadModal, setQuoteForUploadModal] = useState<any>(null);
   const [dateRange, setDateRange] = useState<any>();
   const [agentId, setAgentId] = useState<any>();
   const [allQuotes, setAllQuotes] = useState<any[] | undefined>(undefined);
@@ -274,6 +280,14 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   useEffect(() => {
     getCurrenciesApi();
   }, []);
+
+  // Auto-trigger search when approvalStatusId changes from a card click
+  useEffect(() => {
+    if (shouldAutoSearchRef.current) {
+      shouldAutoSearchRef.current = false;
+      onClickSearchFilter();
+    }
+  }, [approvalStatusId]);
 
   const [openAddRule, setOpenAddRule] = useState<boolean>(false);
   const [openFilterConfirmationModal, setOpenFilterConfirmationModal] =
@@ -614,6 +628,64 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     setOpenExportReceiptPdfModal(false);
   };
 
+  const onClickOpenUploadFilesModal = async (quote: any) => {
+    setSelectedQuoteForUpload(quote);
+    setOpenUploadFileModal(true);
+
+    // Fetch the full quote data with documentItems for the modal
+    const callBack = (res) => {
+      if (res?.success) {
+        const quoteData = res?.data || {};
+        // Ensure documentItems have isSelected or isChecked based on quote type
+        if (quoteData.documentItems) {
+          quoteData.documentItems = quoteData.documentItems.map((item: any) => {
+            // For quotes, use isSelected
+            item.isSelected = item.isSelected ?? false;
+            return item;
+          });
+        }
+        setQuoteForUploadModal(quoteData);
+      } else {
+        alertFaultGetData();
+        setOpenUploadFileModal(false);
+      }
+    };
+
+    await getDocumentApi(callApi, callBack, {
+      id: quote?.id,
+      documentType: docType,
+    });
+  };
+
+  const onCloseUploadFilesModal = () => {
+    setOpenUploadFileModal(false);
+    setSelectedQuoteForUpload(null);
+    setQuoteForUploadModal(null);
+  };
+
+  const getQuoteForUploadModal = async () => {
+    if (!selectedQuoteForUpload?.id) return;
+
+    const callBack = (res) => {
+      if (res?.success) {
+        const quoteData = res?.data || {};
+        if (quoteData.documentItems) {
+          quoteData.documentItems = quoteData.documentItems.map((item: any) => {
+            // For quotes, use isSelected
+            item.isSelected = item.isSelected ?? false;
+            return item;
+          });
+        }
+        setQuoteForUploadModal(quoteData);
+      }
+    };
+
+    await getDocumentApi(callApi, callBack, {
+      id: selectedQuoteForUpload?.id,
+      documentType: docType,
+    });
+  };
+
   const getEmployeeCategories = async (isAgent: boolean, setState: any) => {
     const callBack = (res) => {
       if (res.success) {
@@ -951,6 +1023,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               onClickOpenCloseOrderNotesModal={onClickOpenCloseOrderNotesModal}
               onOpenDuplicateModal={onOpenDuplicateModal}
               handleGetTaxConfirmNo={handleGetTaxConfirmNo}
+              onClickOpenUploadFilesModal={onClickOpenUploadFilesModal}
               onClickOpenInventoryIntakeModal={onClickOpenInventoryIntakeModal}
               onClickUndoDocumentIntake={handleUndoDocumentIntake}
               onClickSendToCustomerEmail={onClickSendToCustomerEmail}
@@ -1071,6 +1144,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 onClickOpenMoveOrderToReadyModal={
                   onClickOpenMoveOrderToReadyModal
                 }
+                getAllQuotes={getAllQuotes}
               />
             ),
           };
@@ -1095,6 +1169,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 onClickOpenMoveOrderToReadyModal={
                   onClickOpenMoveOrderToReadyModal
                 }
+                getAllQuotes={getAllQuotes}
               />
             ) : (
               <div>—</div>
@@ -1509,6 +1584,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                   }
                   onOpenDuplicateModal={onOpenDuplicateModal}
                   handleGetTaxConfirmNo={handleGetTaxConfirmNo}
+                  onClickOpenUploadFilesModal={onClickOpenUploadFilesModal}
+
                   onClickOpenInventoryIntakeModal={
                     onClickOpenInventoryIntakeModal
                   }
@@ -1635,6 +1712,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                     onClickOpenMoveOrderToReadyModal={
                       onClickOpenMoveOrderToReadyModal
                     }
+                    getAllQuotes={getAllQuotes}
                   />
                 ),
               };
@@ -1658,6 +1736,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                     onClickOpenMoveOrderToReadyModal={
                       onClickOpenMoveOrderToReadyModal
                     }
+                    getAllQuotes={getAllQuotes}
                   />
                 ) : (
                   <div>—</div>
@@ -1723,6 +1802,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                   onClickSendToCustomerEmail={onClickSendToCustomerEmail}
                   onClickSendToCustomerSMS={onClickSendToCustomerSMS}
                   onClickSendToCustomerWhatsApp={onClickSendToCustomerWhatsApp}
+                  onClickOpenUploadFilesModal={onClickOpenUploadFilesModal}
                 />
               ),
             };
@@ -2092,6 +2172,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 }
                 onOpenDuplicateModal={onOpenDuplicateModal}
                 handleGetTaxConfirmNo={handleGetTaxConfirmNo}
+                onClickOpenUploadFilesModal={onClickOpenUploadFilesModal}
                 onClickOpenInventoryIntakeModal={
                   onClickOpenInventoryIntakeModal
                 }
@@ -2210,6 +2291,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                   onClickOpenMoveOrderToReadyModal={
                     onClickOpenMoveOrderToReadyModal
                   }
+                  getAllQuotes={getAllQuotes}
                 />
               ),
             };
@@ -2233,6 +2315,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                   onClickOpenMoveOrderToReadyModal={
                     onClickOpenMoveOrderToReadyModal
                   }
+                  getAllQuotes={getAllQuotes}
                 />
               ) : (
                 <div>—</div>
@@ -2290,6 +2373,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               onClickSendPaymentEmail={onClickSendPaymentEmail}
               onClickSendPaymentSMS={onClickSendPaymentSMS}
               onClickSendPaymentWhatsApp={onClickSendPaymentWhatsApp}
+              onClickOpenUploadFilesModal={onClickOpenUploadFilesModal}
             />
           ),
         }));
@@ -3174,6 +3258,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               onClickSendPaymentEmail={onClickSendPaymentEmail}
               onClickSendPaymentSMS={onClickSendPaymentSMS}
               onClickSendPaymentWhatsApp={onClickSendPaymentWhatsApp}
+              onClickOpenUploadFilesModal={onClickOpenUploadFilesModal}
             />
           );
 
@@ -3203,15 +3288,40 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     setPage(1);
     setActiveCard(cardKey);
     setStatusId(null);
-    setQuoteStatusId({
-      label: t(`sales.quote.${cardKey}`),
-      value: statusValue,
-    });
+    setQuoteStatusId(null);
+
+    // Map statistics cards to approval status values
+    let approvalStatusValue = null;
+    if (cardKey === EStatisticsLabels.WAITING) {
+      approvalStatusValue = ApprovalStatus.WaitingForClient;
+    } else if (cardKey === EStatisticsLabels.APPROVED) {
+      approvalStatusValue = ApprovalStatus.ApprovedByClient;
+    } else if (cardKey === EStatisticsLabels.CANCELED) {
+      approvalStatusValue = ApprovalStatus.RejectedByClient;
+    }
+
+    // Set approval status filter
+    if (approvalStatusValue) {
+      // Create approval status object directly using the enum value and translation
+      const approvalStatus = {
+        value: approvalStatusValue,
+        label: t(`documentStatus.${ApprovalStatus[approvalStatusValue]}`),
+      };
+      // Set flag to trigger auto-search after state update
+      shouldAutoSearchRef.current = true;
+      setApprovalStatusId(approvalStatus);
+    } else {
+      shouldAutoSearchRef.current = true;
+      setApprovalStatusId(null);
+    }
   };
 
   const handleSecondCardClick = () => {
     setQuoteStatusId(undefined);
     setActiveCard(null);
+    // Set flag to trigger auto-search after clearing the filter
+    shouldAutoSearchRef.current = true;
+    setApprovalStatusId(null);
   };
 
   const onSelectDeliveryTimeDates = (value) => {
@@ -5649,6 +5759,12 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     showUndoIntakeDialog,
     handleConfirmUndoIntake,
     handleCancelUndoIntake,
+    // Upload files modal
+    openUploadFileModal,
+    onCloseUploadFilesModal,
+    onClickOpenUploadFilesModal,
+    quoteForUploadModal,
+    getQuoteForUploadModal,
   };
 };
 

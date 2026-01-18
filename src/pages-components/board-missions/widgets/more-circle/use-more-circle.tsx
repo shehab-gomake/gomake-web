@@ -5,6 +5,7 @@ import { PDFIcon } from "./icons/pdf-icon";
 import { StartProductionIcon } from "./icons/start-production";
 import TaskAltOutlinedIcon from "@mui/icons-material/TaskAltOutlined";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
+import SendIcon from "@mui/icons-material/Send";
 import { useStyle } from "./style";
 import { PackageIcon } from "@/icons/package-icon";
 import { QualityIssueIcon } from "@/widgets/production-floor/table-view/status-table/table-row/more-circle/icons/quality-issue";
@@ -13,7 +14,7 @@ import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
 import { BoardMissionStatusForFilter } from "../enums";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { DocumentPermission } from "@/components/CheckPermission/enum";
-import { addBoardMissionsToFileUploaderApi } from "@/services/api-service/board-missions/board-missions-table";
+import { addBoardMissionsToFileUploaderApi, testUploadFilesApi } from "@/services/api-service/board-missions/board-missions-table";
 import { useRecoilState } from "recoil";
 import {
   fileUploaderConnectionIdState,
@@ -55,7 +56,7 @@ const useMoreCircle = ({
   const { classes } = useStyle();
   const { callApi } = useGomakeAxios();
   const { navigate } = useGomakeRouter();
-  const { alertFaultGetData } = useSnackBar();
+  const { alertFaultGetData, alertSuccessSend } = useSnackBar();
   const [connectionId] = useRecoilState(fileUploaderConnectionIdState);
   const [, setOpenFileUploader] = useRecoilState(openFileUploaderList);
   const [, setShowFileUploader] = useRecoilState(pinFileUploaderState);
@@ -105,6 +106,21 @@ const useMoreCircle = ({
       connectionId: connectionId,
       productType: mission?.productType,
     });
+  };
+
+  const handleSendToFreeflow = async (mission) => {
+    if (!mission?.apiItemId) {
+      alertFaultGetData();
+      return;
+    }
+    const callBack = (res) => {
+      if (res?.success) {
+        alertSuccessSend();
+      } else {
+        alertFaultGetData();
+      }
+    };
+    await testUploadFilesApi(callApi, callBack, mission.apiItemId);
   };
 
   // ✅ UPDATED handleClickMarkAsReady FUNCTION
@@ -315,6 +331,12 @@ const useMoreCircle = ({
       name: t("fileUploader.uploadFile"),
       icon: <PDFIcon />,
       onclick: () => addBoardMissionsToFileUploader(mission),
+    },
+    {
+      condition: true && isSendPaymentToClient && mission?.apiItemId,
+      name: t("boardMissions.sendToFreeflow") || "Send to Freeflow",
+      icon: <SendIcon style={classes.iconStyle} />,
+      onclick: () => handleSendToFreeflow(mission),
     },
   ];
 

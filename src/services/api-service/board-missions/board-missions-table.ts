@@ -44,6 +44,8 @@ const GET_JOBS_TABLE_SETTINGS_URL =
   "/v1/job-service/production-floor-table-settings/get-jobs-table-settings";
 const START_JOB_PRODUCTION_URL =
   "/v1/job-service/board-missions/start-job-production/";
+const TEST_UPLOAD_FILES_URL =
+  "/v1/erp-service/pix-orders/test-upload-files/";
 
 const setBoardMissionsFiltersApi: ICallAndSetData = async (
   callApi,
@@ -345,6 +347,19 @@ const repeatOrderApi: ICallAndSetData = async (
   );
 };
 
+const testUploadFilesApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  apiItemId: string
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    TEST_UPLOAD_FILES_URL + apiItemId,
+    setState
+  );
+};
+
 export {
   setBoardMissionsFiltersApi,
   getOrderSummeryPdfApi,
@@ -368,4 +383,5 @@ export {
   checkIfProductIsLabelInRollsApi,
   startJobProductionApi,
   repeatOrderApi,
+  testUploadFilesApi,
 };

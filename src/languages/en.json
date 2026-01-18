@@ -129,6 +129,9 @@
     "formNotValid": "Form not valid",
     "RequiredFields": "Missing required fields",
     "noMaterialsSelected": "Please select materials",
+    "cancel": "Cancel",
+    "send": "Send",
+    "sending": "Sending...",
     "duplicateFailed": "Duplicate failed"
   },
   "home": {
@@ -1962,7 +1965,18 @@
     "addProfileImage": "Add profile image",
     "editInitials": "Edit initials",
     "uploadFile": "Upload file",
-    "selectFile": "Select file"
+    "selectFile": "Select file",
+    "invite": "Invite",
+    "inviteEmployee": "Invite Employee",
+    "mailVerificationRequired": "Mail verification required",
+    "verificationMailSent": "A verification email has been sent to the employee's email address"
+  },
+  "invite": {
+    "acceptInvitation": "Accept Invitation",
+    "setPasswordDescription": "Please set your password to complete your account setup",
+    "accepting": "Accepting...",
+    "invalidToken": "Invalid invitation token",
+    "acceptanceFailed": "Failed to accept invitation. Please try again or contact support."
   },
   "permissionsSettings": {
     "title": "Management of roles and privileges",
@@ -2300,7 +2314,10 @@
     "creditCards": "Credit Cards",
     "taxAuthority": "Tax Authority",
     "hours": "Hours",
-    "businessProfile": "Business Profile"
+    "businessProfile": "Business Profile",
+    "integrations": "Integrations",
+    "hpHmacSecret": "HP HMAC Secret",
+    "hpHmacKey": "HP HMAC Key"
   },
   "remainWords": {
     "newQuote": "New quote",

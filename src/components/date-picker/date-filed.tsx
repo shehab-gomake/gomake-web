@@ -91,51 +91,52 @@ const DateField: React.FC<IDateFieldProps> = ({
 
   const textFieldSlot = useMemo(
     () => (params: any) =>
-      (
-        <TextField
-          {...params}
-          size={compactMode ? "small" : "medium"}
-          placeholder={t("sales.quote.selectDate")}
-          disabled={!isEditable}
-          InputProps={{
-            ...params.InputProps,
-            endAdornment: isEditable && (
-              <InputAdornment
-                position="end"
-                onMouseDown={(e) => e.preventDefault()}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleOpenPicker(e as any);
-                }}
-              >
-                {params.InputProps?.endAdornment}
-              </InputAdornment>
-            ),
-          }}
-          // Do not open picker when clicking the input; open only from icon
-          sx={{
-            marginRight: isRTL ? "6px" : isEditable ? "0px" : "-100px",
-            marginLeft: !isRTL ? "0px" : isEditable ? "0px" : "-100px",
+    (
+      <TextField
+        {...params}
+        size={compactMode ? "small" : "medium"}
+        placeholder={t("sales.quote.selectDate")}
+        disabled={!isEditable}
+        InputProps={{
+          ...params.InputProps,
+          endAdornment: isEditable && (
+            <InputAdornment
+              position="end"
+              onMouseDown={(e) => e.preventDefault()}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleOpenPicker(e as any);
+              }}
+            >
+              {params.InputProps?.endAdornment}
+            </InputAdornment>
+          ),
+        }}
+        // Do not open picker when clicking the input; open only from icon
+        sx={{
+          marginRight: isRTL ? "6px" : isEditable ? "0px" : "-100px",
+          marginLeft: !isRTL ? "0px" : isEditable ? "0px" : "-100px",
+          width: withTime ? "250px" : "auto",
 
-            "& .MuiOutlinedInput-root": {
-              "& fieldset": {
-                border: "none",
-              },
-              "&:hover fieldset": {
-                border: "none",
-              },
-              "&.Mui-focused fieldset": {
-                border: "none",
-              },
+          "& .MuiOutlinedInput-root": {
+            "& fieldset": {
+              border: "none",
             },
+            "&:hover fieldset": {
+              border: "none",
+            },
+            "&.Mui-focused fieldset": {
+              border: "none",
+            },
+          },
 
-            "& .MuiInputAdornment-root": {
-              marginLeft: isRTL ? "0px" : withTime ? "-10px" : "-30px",
-              marginRight: isRTL ? (withTime ? "-10px" : "-30px") : "0px",
-            },
-          }}
-        />
-      ),
+          "& .MuiInputAdornment-root": {
+            marginLeft: isRTL ? "0px" : withTime ? "-10px" : "-30px",
+            marginRight: isRTL ? (withTime ? "-10px" : "-30px") : "0px",
+          },
+        }}
+      />
+    ),
     [t, isEditable, preventOpenCondition, withTime]
   );
 

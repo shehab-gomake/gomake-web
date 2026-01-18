@@ -15,6 +15,7 @@ import { EPreferences } from "@/enums/prefernces";
 import { clearPhoneNumberPrefix } from "@/utils/helpers";
 import { convertUtcToLocalIsoString } from "@/components/date-time/date-time-component";
 import { ApprovalFileStatusComponent } from "@/widgets/production-floor/table-view/status-table/table-row/approval-file-status-component";
+import { GraphicsApprovalViewModal } from "@/widgets/production-floor/table-view/status-table/table-row/graphics-approval-view-modal";
 import { DocumentsButton } from "../navigation-buttons/documents-button";
 import { PermissionCheck } from "@/components/CheckPermission";
 import { MoreActionsButton } from "../navigation-buttons/more-actions-button";
@@ -294,6 +295,7 @@ const BoardMissionsDetailsHeader = () => {
   const { t } = useTranslation();
   const direction = t("direction");
   const { CheckPreferenceValue } = usePrintHousePreferences();
+  const [openGraphicsApprovalModal, setOpenGraphicsApprovalModal] = useState(false);
   const {
     boards,
     boardFromTable,
@@ -638,6 +640,8 @@ const BoardMissionsDetailsHeader = () => {
                     width={"30px"}
                     fileStatus={boardMissionsDetails.showGraphicsApprovalAlert}
                     t={t}
+                    onClick={() => setOpenGraphicsApprovalModal(true)}
+                    boardMissionId={boardMissionsDetails.boardMissionId}
                   />
                   <DocumentsButton />
                   <PermissionCheck
@@ -671,6 +675,8 @@ const BoardMissionsDetailsHeader = () => {
                 width={isMobile ? "20px" : "30px"}
                 fileStatus={boardMissionsDetails.showGraphicsApprovalAlert}
                 t={t}
+                onClick={() => setOpenGraphicsApprovalModal(true)}
+                boardMissionId={boardMissionsDetails.boardMissionId}
               />
               <DocumentsButton isMobile={isMobile} />
               <PermissionCheck
@@ -724,6 +730,16 @@ const BoardMissionsDetailsHeader = () => {
             />
           </GoMakeDeleteModal>
         </>
+      )}
+      {boardMissionsDetails?.boardMissionId && (
+        <GraphicsApprovalViewModal
+          open={openGraphicsApprovalModal}
+          onClose={() => setOpenGraphicsApprovalModal(false)}
+          boardMissionId={boardMissionsDetails.boardMissionId}
+          orderItemId={boardMissionsDetails.orderItemId}
+          orderId={boardMissionsDetails.orderId}
+          productType={boardMissionsDetails.productType}
+        />
       )}
     </>
   );
