@@ -43,6 +43,7 @@ const MoreMenuWidget = ({
   onClickOpenInventoryIntakeModal,
   onClickUndoDocumentIntake,
   onClickToggleOrderLock,
+  onClickOpenUploadFilesModal,
 }: any) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -85,6 +86,7 @@ const MoreMenuWidget = ({
     onClickSendPaymentWhatsApp,
     onClickUndoDocumentIntake,
     onClickToggleOrderLock,
+    onClickOpenUploadFilesModal,
     classes,
   });
 
@@ -95,16 +97,16 @@ const MoreMenuWidget = ({
   const isCanceledPurchaseOrder = quote?.statusTitleText?.includes("PurchaseOrderCanceled") || quote?.statusTitleText?.includes("Canceled");
   const canDelete = isPurchaseOrder && !isCanceledPurchaseOrder && quote?.isDeletable;
   const shouldShowMenuForPurchaseOrder = isPurchaseOrder && (hasIntakedItems || canDelete);
-  
+
   // Filter menu items - show items that meet their condition OR are special purchase order items
   const filteredMenuList = menuList.filter((item: any) => {
     if (item?.condition) return true;
     // For purchase orders, always show delete and undo intake options even if other conditions fail
     if (shouldShowMenuForPurchaseOrder) {
       const itemName = typeof item?.name === 'string' ? item.name : item?.name;
-      if (itemName === t("sales.quote.cancel") || 
-          itemName === t("sales.purchaseOrder.undoDocumentIntake") || 
-          itemName === "Undo Document Intake") {
+      if (itemName === t("sales.quote.cancel") ||
+        itemName === t("sales.purchaseOrder.undoDocumentIntake") ||
+        itemName === "Undo Document Intake") {
         return true;
       }
     }
@@ -121,12 +123,12 @@ const MoreMenuWidget = ({
       {(closeMenu: any) =>
         filteredMenuList.map((item: any, index: number) => {
           const itemName = typeof item?.name === 'string' ? item.name : item?.name;
-          const shouldShow = item?.condition || 
-            (shouldShowMenuForPurchaseOrder && 
-             (itemName === t("sales.quote.cancel") || 
-              itemName === t("sales.purchaseOrder.undoDocumentIntake") || 
-              itemName === "Undo Document Intake"));
-          
+          const shouldShow = item?.condition ||
+            (shouldShowMenuForPurchaseOrder &&
+              (itemName === t("sales.quote.cancel") ||
+                itemName === t("sales.purchaseOrder.undoDocumentIntake") ||
+                itemName === "Undo Document Intake"));
+
           return shouldShow ? (
             item?.component ? (
               // Render custom component (e.g., submenu) with close handler

@@ -16,7 +16,7 @@ const AddAttachmentsModal = ({
   onFileUploadStart,
   onFileUploadComplete,
   onContinueApproval = undefined,
-}) => {
+}: any) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
   const {

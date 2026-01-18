@@ -44,6 +44,7 @@ import {
   ExportDocumentTableToPdfApi,
   getAllDocumentLogsApi,
   getAllDocumentsApi,
+  getDocumentApi,
   getDocumentInventoryApi,
   getDocumentPdfApi,
   manuallyCloseDocumentApi,
@@ -221,6 +222,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const [isOrdersWithoutJobs, setIsOrdersWithoutJobs] = useState(false);
   const [openPurchaseOrderTypeModal, setOpenPurchaseOrderTypeModal] =
     useState(false);
+  const [openUploadFileModal, setOpenUploadFileModal] = useState(false);
+  const [selectedQuoteForUpload, setSelectedQuoteForUpload] = useState<any>(null);
+  const [quoteForUploadModal, setQuoteForUploadModal] = useState<any>(null);
   const [dateRange, setDateRange] = useState<any>();
   const [agentId, setAgentId] = useState<any>();
   const [allQuotes, setAllQuotes] = useState<any[] | undefined>(undefined);
@@ -614,6 +618,64 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     setOpenExportReceiptPdfModal(false);
   };
 
+  const onClickOpenUploadFilesModal = async (quote: any) => {
+    setSelectedQuoteForUpload(quote);
+    setOpenUploadFileModal(true);
+
+    // Fetch the full quote data with documentItems for the modal
+    const callBack = (res) => {
+      if (res?.success) {
+        const quoteData = res?.data || {};
+        // Ensure documentItems have isSelected or isChecked based on quote type
+        if (quoteData.documentItems) {
+          quoteData.documentItems = quoteData.documentItems.map((item: any) => {
+            // For quotes, use isSelected
+            item.isSelected = item.isSelected ?? false;
+            return item;
+          });
+        }
+        setQuoteForUploadModal(quoteData);
+      } else {
+        alertFaultGetData();
+        setOpenUploadFileModal(false);
+      }
+    };
+
+    await getDocumentApi(callApi, callBack, {
+      id: quote?.id,
+      documentType: docType,
+    });
+  };
+
+  const onCloseUploadFilesModal = () => {
+    setOpenUploadFileModal(false);
+    setSelectedQuoteForUpload(null);
+    setQuoteForUploadModal(null);
+  };
+
+  const getQuoteForUploadModal = async () => {
+    if (!selectedQuoteForUpload?.id) return;
+
+    const callBack = (res) => {
+      if (res?.success) {
+        const quoteData = res?.data || {};
+        if (quoteData.documentItems) {
+          quoteData.documentItems = quoteData.documentItems.map((item: any) => {
+            // For quotes, use isSelected
+            item.isSelected = item.isSelected ?? false;
+            return item;
+          });
+        }
+        setQuoteForUploadModal(quoteData);
+      }
+    };
+
+    await getDocumentApi(callApi, callBack, {
+      id: selectedQuoteForUpload?.id,
+      documentType: docType,
+    });
+  };
+
   const getEmployeeCategories = async (isAgent: boolean, setState: any) => {
     const callBack = (res) => {
       if (res.success) {
@@ -951,6 +1013,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               onClickOpenCloseOrderNotesModal={onClickOpenCloseOrderNotesModal}
               onOpenDuplicateModal={onOpenDuplicateModal}
               handleGetTaxConfirmNo={handleGetTaxConfirmNo}
+              onClickOpenUploadFilesModal={onClickOpenUploadFilesModal}
               onClickOpenInventoryIntakeModal={onClickOpenInventoryIntakeModal}
               onClickUndoDocumentIntake={handleUndoDocumentIntake}
               onClickSendToCustomerEmail={onClickSendToCustomerEmail}
@@ -1511,6 +1574,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                   }
                   onOpenDuplicateModal={onOpenDuplicateModal}
                   handleGetTaxConfirmNo={handleGetTaxConfirmNo}
+                  onClickOpenUploadFilesModal={onClickOpenUploadFilesModal}
+
                   onClickOpenInventoryIntakeModal={
                     onClickOpenInventoryIntakeModal
                   }
@@ -1727,6 +1792,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                   onClickSendToCustomerEmail={onClickSendToCustomerEmail}
                   onClickSendToCustomerSMS={onClickSendToCustomerSMS}
                   onClickSendToCustomerWhatsApp={onClickSendToCustomerWhatsApp}
+                  onClickOpenUploadFilesModal={onClickOpenUploadFilesModal}
                 />
               ),
             };
@@ -2096,6 +2162,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 }
                 onOpenDuplicateModal={onOpenDuplicateModal}
                 handleGetTaxConfirmNo={handleGetTaxConfirmNo}
+                onClickOpenUploadFilesModal={onClickOpenUploadFilesModal}
                 onClickOpenInventoryIntakeModal={
                   onClickOpenInventoryIntakeModal
                 }
@@ -2296,6 +2363,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               onClickSendPaymentEmail={onClickSendPaymentEmail}
               onClickSendPaymentSMS={onClickSendPaymentSMS}
               onClickSendPaymentWhatsApp={onClickSendPaymentWhatsApp}
+              onClickOpenUploadFilesModal={onClickOpenUploadFilesModal}
             />
           ),
         }));
@@ -3180,6 +3248,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               onClickSendPaymentEmail={onClickSendPaymentEmail}
               onClickSendPaymentSMS={onClickSendPaymentSMS}
               onClickSendPaymentWhatsApp={onClickSendPaymentWhatsApp}
+              onClickOpenUploadFilesModal={onClickOpenUploadFilesModal}
             />
           );
 
@@ -5655,6 +5724,12 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     showUndoIntakeDialog,
     handleConfirmUndoIntake,
     handleCancelUndoIntake,
+    // Upload files modal
+    openUploadFileModal,
+    onCloseUploadFilesModal,
+    onClickOpenUploadFilesModal,
+    quoteForUploadModal,
+    getQuoteForUploadModal,
   };
 };
 
