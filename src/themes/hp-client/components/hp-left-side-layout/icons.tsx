@@ -744,7 +744,7 @@ export const HpCustomerReportsIcon = ({
   );
 };
 
-export const HpAccountingReportsIcon = ({
+export const HpCompanyReportIcon = ({
   isSelected = false,
 }: {
   isSelected?: boolean;
@@ -801,7 +801,7 @@ export const HpPurchaseIcon = ({
   );
 };
 
-export const HpCompanyReportIcon = ({
+export const HpAccountingReportsIcon = ({
   isSelected = false,
 }: {
   isSelected?: boolean;
@@ -857,7 +857,7 @@ export const getHpIcon = (
       <HpMaterialsIcon isSelected={isSelected} />
     ),
     materialsAdmin: (isSelected?: boolean) => (
-      <HpMaterialsAdminIcon isSelected={isSelected} />
+      <HpMaterialsAdminIconNew isSelected={isSelected} />
     ),
     actions: (isSelected?: boolean) => (
       <HpActionsIcon isSelected={isSelected} />
