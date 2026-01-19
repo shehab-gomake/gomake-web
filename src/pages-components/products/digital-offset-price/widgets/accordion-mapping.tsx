@@ -4,6 +4,7 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { SectionMappingWidget } from "./section-mapping";
 import { useRecoilValue } from "recoil";
 import { subProductsParametersState } from "@/store";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 const AccordionMappingWidget = ({
   clasess,
   expanded,
@@ -20,6 +21,7 @@ const AccordionMappingWidget = ({
   underParameterIds,
 }: any) => {
   const subProducts = useRecoilValue<any>(subProductsParametersState);
+  const { primarySecondaryBlend } = useGomakeTheme();
   const parameterList = subProducts?.find(
     (x) => x.type === subSection?.type
   )?.parameters;
@@ -89,7 +91,7 @@ const AccordionMappingWidget = ({
             ) : hasMatching ? (
               <CheckBoxAccordion />
             ) : (
-              <EditIcon />
+              <EditIcon stroke={primarySecondaryBlend(500)} />
             )}
 
           <div

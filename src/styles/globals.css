@@ -99,7 +99,7 @@ html * {
 }
 .scrollBlue::-webkit-scrollbar {
   display: unset !important;
-  background: #2e3092;
+  background: var(--theme-primary-color, #2E3092);
   width: 4px;
   border-radius: 24px;
 }
@@ -116,7 +116,7 @@ html * {
 }
 
 .show-scrollbar::-webkit-scrollbar-thumb {
-  background: #2e3092;
+  background: var(--theme-primary-color, #2E3092);
   border-radius: 10px;
 }
 
@@ -166,7 +166,7 @@ html * {
 }
 
 .MuiSlider-root {
-  color: #2e3092 !important;
+  color: var(--theme-primary-color, #2E3092) !important;
 }
 
 /* remove related to text input - hp requirement */
@@ -484,11 +484,11 @@ df-messenger {
 }
 
 .react-chatbot-kit-chat-btn-send {
-  background-color: #2e3092 !important;
+  background-color: var(--theme-primary-color, #2E3092) !important;
 }
 
 .react-chatbot-kit-chat-header {
-  background-color: #2e3092 !important;
+  background-color: var(--theme-primary-color, #2E3092) !important;
   color: #fff !important;
 }
 

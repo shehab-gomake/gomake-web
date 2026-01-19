@@ -225,8 +225,6 @@ const RightSideWidget = ({
                   style={{
                     ...clasess.totalCurrancyStyle,
                     position: "absolute",
-                    // left: 30,
-                    // zIndex: 999999,
                     left: 10,
                     zIndex: 2,
                     pointerEvents: "none",
@@ -286,6 +284,7 @@ const RightSideWidget = ({
                       WebkitTextFillColor: "#f44336",
                     }),
                   }}
+                  sx={clasess.totalSxContainer}
                 />
               </div>
             )}
@@ -435,7 +434,7 @@ const RightSideWidget = ({
                   width: "65px",
                   border: "none",
                   outline: "none",
-                  color: "#2E3092",
+                  color: "var(--theme-primary-color, #2E3092)",
                   padding: "5px",
                 }}
               />
@@ -472,7 +471,7 @@ const RightSideWidget = ({
                   width: "65px",
                   border: "none",
                   outline: "none",
-                  color: "#2E3092",
+                  color: "var(--theme-primary-color, #2E3092)",
                   padding: "5px",
                 }}
               />
@@ -622,7 +621,7 @@ const RightSideWidget = ({
                       style={{
                         textDecoration: "line-through",
                         fontWeight: 300,
-                        color: "#2E3092",
+                        color: "var(--theme-primary-color, #2E3092)",
                       }}
                     >
                       {item.lastPrice} {systemCurrency}
@@ -708,7 +707,6 @@ const RightSideWidget = ({
           </div>
           {activeTab === t("quality.production") ? (
             <div style={clasess.productionStatus}>
-
               <div style={clasess.sampleTypeStyle}>
                 {t("products.offsetPrice.admin.proof")}
               </div>
@@ -732,6 +730,19 @@ const RightSideWidget = ({
                 <GomakeTextInput
                   multiline={6}
                   style={clasess.multiLineTextInputStyle}
+                  sx={{
+                    "& .MuiOutlinedInput-root": {
+                      "& fieldset": {
+                        border: "none",
+                      },
+                      "&:hover fieldset": {
+                        border: "none",
+                      },
+                      "&.Mui-focused fieldset": {
+                        border: "none",
+                      },
+                    },
+                  }}
                   onChange={(e: any) => {
                     setPrintingNotes(e.target.value);
                   }}

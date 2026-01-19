@@ -1,8 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import i18next from "i18next";
-
 import { useTranslation } from "react-i18next";
-
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { FONT_FAMILY } from "@/utils/font-family";
 import {
@@ -15,6 +13,8 @@ import {
 interface IProps {
   isMobileScreen?: boolean;
 }
+
+//!here
 const useStyle = ({ isMobileScreen }: IProps) => {
   const { t } = useTranslation();
   const direction = t("direction");
@@ -83,7 +83,6 @@ const useStyle = ({ isMobileScreen }: IProps) => {
         justifyContent: "flex-start",
         alignItems: "flex-start",
         width: "100%",
-
         ...(isMobileScreen
           ? { padding: "0px" }
           : adaptPaddingLeft(direction, 20)),
@@ -104,7 +103,7 @@ const useStyle = ({ isMobileScreen }: IProps) => {
         borderRadius: 5,
         position: "fixed" as "fixed",
         ...adaptLeft(t("direction"), 0),
-        overflow: "scroll",
+        overflow: "auto",
         paddingBottom: 150,
       },
 
@@ -124,7 +123,7 @@ const useStyle = ({ isMobileScreen }: IProps) => {
         borderRadius: 5,
         position: "fixed" as "fixed",
         ...adaptLeft(t("direction"), 0),
-        overflow: "scroll",
+        overflow: "auto",
         paddingBottom: 150,
       },
       rightSideContainer: {
@@ -192,6 +191,7 @@ const useStyle = ({ isMobileScreen }: IProps) => {
         width: "100%",
         maxWidth: isMobileScreen ? "100%" : "unset",
         overflow: "hidden",
+        paddingTop: 4,
       },
       subSectionContainer: {
         display: "flex",
@@ -210,11 +210,10 @@ const useStyle = ({ isMobileScreen }: IProps) => {
         color: neutralColor(800),
       },
       activeTabContainer: {
-        backgroundColor: "var(--theme-bg-primary, var(--theme-primary-50, #EBECFF))",
+        backgroundColor: primarySecondaryBlend(100),
         minHeight: 48,
         borderBottom: "none",
       },
-
       activeTabContainer2: {
         backgroundColor: "#39B2000A",
         minHeight: 48,
@@ -375,14 +374,14 @@ const useStyle = ({ isMobileScreen }: IProps) => {
       },
       clientTypographyStyle: {
         height: 40,
-        border: "0px",
+        border: "var(--theme-input-border, none)",
         ...FONT_FAMILY.Lexend(500, 14),
         width: "100%",
         padding: "8px 16px",
-        borderRadius: "4px",
+        borderRadius: "var(--theme-radius-md, 4px)",
         backgroundColor: "#fff",
         color: "inherit",
-        boxShadow: "0px 1px 10px rgba(0, 0, 0, 0.08)",
+        boxShadow: "var(--theme-input-shadow, 0px 1px 10px rgba(0, 0, 0, 0.08))",
       },
       renderParameterTypeContainer: {
         display: "flex",
@@ -580,6 +579,19 @@ const useStyle = ({ isMobileScreen }: IProps) => {
         alignItems: "center",
         height: 35,
       },
+      totalSxContainer: {
+          "& .MuiOutlinedInput-root": {
+            "& fieldset": {
+              border: "none",
+            },
+            "&:hover fieldset": {
+              border: "none",
+            },
+            "&.Mui-focused fieldset": {
+              border: "none",
+            },
+          
+        }      },
       totalCurrancyStyle: {
         color: primaryColor(500),
         ...FONT_FAMILY.Lexend(700, 14),
@@ -603,6 +615,7 @@ const useStyle = ({ isMobileScreen }: IProps) => {
         whiteSpace: "nowrap",
         overflow: "hidden",
         textOverflow: "ellipsis",
+
       },
       priceRecoveryContainer: {
         display: "flex",
@@ -639,7 +652,7 @@ const useStyle = ({ isMobileScreen }: IProps) => {
         justifyContent: "center",
         alignItems: "center",
         padding: "8px 10px",
-        backgroundColor: primaryColor(500),
+        backgroundColor: primarySecondaryBlend(500),
         color: "white",
         ...FONT_FAMILY.Lexend(500, 16),
         borderRadius: "var(--theme-radius-md, 4px)",
@@ -668,9 +681,9 @@ const useStyle = ({ isMobileScreen }: IProps) => {
         alignItems: "center",
         padding: "8px 10px",
         backgroundColor: "white",
-        color: primaryColor(500),
+        color: primarySecondaryBlend(500),
         ...FONT_FAMILY.Lexend(500, 16),
-        border: `1px solid ${primaryColor(500)}`,
+        border: `1px solid ${primarySecondaryBlend(500)}`,
         borderRadius: "var(--theme-radius-md, 4px)",
         cursor: "pointer",
         width: "100%",
@@ -747,12 +760,13 @@ const useStyle = ({ isMobileScreen }: IProps) => {
         width: "100%",
         borderRadius: 12,
         height: 110,
-        overflow: "scroll",
+        overflow: "auto",
         padding: 5,
         border: "1px solid #ccc",
         color: "#000000",
         ...FONT_FAMILY.Lexend(500, 14),
       },
+    
       pricingSectionContainer: {
         display: "flex",
         flexDirection: "column" as "column",
@@ -902,7 +916,7 @@ const useStyle = ({ isMobileScreen }: IProps) => {
         borderRadius: 8,
         width: "100%",
         height: 250,
-        backgroundColor: primaryColor(50),
+        backgroundColor: primarySecondaryBlend(50),
         padding: 10,
         overflowY: "scroll",
         overflowX: "hidden",
