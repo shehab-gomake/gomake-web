@@ -1506,8 +1506,8 @@ const ActionContainerComponent = ({
                         }}
                       >
                         <SettingsIcon
-                          stroke={"rgba(237, 2, 140, 1)"}
-                          width={24}
+                      stroke={`var(--theme-accent-color, ${secondColor(500)})`}
+                      width={24}
                           height={24}
                         />
                       </IconButton>
@@ -1624,7 +1624,7 @@ const ActionContainerComponent = ({
                               position: "absolute",
                               ...adaptLeft(direction, 0),
                               bottom: 0,
-                              backgroundColor: "rgba(237, 2, 140, 1)",
+                              backgroundColor: "var(--theme-secondary-color, #ED028C)",
                             }}
                           >
                             {t("pricingWidget.saveAndReCalculate")}

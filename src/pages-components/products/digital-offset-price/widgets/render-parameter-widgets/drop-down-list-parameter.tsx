@@ -199,7 +199,7 @@ const DropDownListParameterWidget = ({
           }}
         >
           <SettingsIcon
-            stroke={"rgba(237, 2, 140, 1)"}
+            stroke={"var(--theme-accent-color, var(--theme-secondary-color, #ED028C))"}
             width={24}
             height={24}
           />

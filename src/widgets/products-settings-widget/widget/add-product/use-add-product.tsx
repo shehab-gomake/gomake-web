@@ -1,10 +1,9 @@
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { useTranslation } from "react-i18next";
 import { useCallback, useEffect, useMemo, useState } from "react";
-
 import { getAndSetProductById } from "@/services/hooks";
 import { useRouter } from "next/router";
-import { GraphicIcon, PrameterIcon, SettingIcon } from "@/widgets";
+import { GraphicIcon, ParameterIcon, SettingIcon } from "@/widgets";
 import { ESourceView } from "@/enums/products";
 import { EProductStructureType } from "@/widgets/shared-admin-customers/add-product/settings/settings-data";
 
@@ -15,9 +14,9 @@ const useAddProduct = () => {
   const router = useRouter();
   const { t } = useTranslation();
   const [productState, setProductState] = useState<any>([]);
-  console.log("productState", productState);
   const [changeName, setChangeName] = useState("");
   const [changeDefaultValue, setChangeDefaultValue] = useState("");
+  
   const onChangeStateProduct = useCallback(
     (filedName: string, value: any) => {
       setProductState((prev) => {
@@ -62,20 +61,20 @@ const useAddProduct = () => {
     const baseTabs = [
       {
         name: t("products.addProduct.admin.settings"),
-        icon: <SettingIcon stroke="#1C1D58" />,
+        icon: <SettingIcon stroke="var(--theme-primary-700, #1C1D58)" />,
         activeIcon: <SettingIcon />,
         onclick: () => onClickSettingsTab,
       },
       {
         name: t("products.addProduct.admin.parameters"),
-        icon: <PrameterIcon />,
-        activeIcon: <PrameterIcon stroke="#ED028C" />,
+        icon: <ParameterIcon />,
+        activeIcon: <ParameterIcon stroke="var(--theme-secondary-color, #ED028C)" />,
         onclick: () => onClickParametersTab,
       },
       // {
       //   name: t("products.addProduct.admin.graphic"),
       //   icon: <GraphicIcon />,
-      //   activeIcon: <GraphicIcon stroke="#ED028C" />,
+      //   activeIcon: <GraphicIcon stroke="var(--theme-secondary-color, #ED028C)" />,
       //   onclick: () => onClickGraphicTab,
       // },
     ];

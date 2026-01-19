@@ -5,7 +5,7 @@ import { FONT_FAMILY } from "@/utils/font-family";
 import { useTranslation } from "react-i18next";
 import { adaptRight } from "@/utils/adapter";
 const useStyle = () => {
-  const { theme, neutralColor, primaryColor } = useGomakeTheme();
+  const { theme, neutralColor, primaryColor, secondColor } = useGomakeTheme();
   const { t } = useTranslation();
   const direction = t("direction");
   const classes = useMemo(() => {
@@ -105,7 +105,7 @@ const useStyle = () => {
         border: "none",
         borderRadius: 0,
         "&:hover": {
-          border: "2px solid #2E3092",
+          border: `2px solid ${primaryColor(500)}`,
         }
       },
       button: {
@@ -124,7 +124,7 @@ const useStyle = () => {
           borderRadius: 0,
           letterSpacing: "0em",
           transition: "0s",
-          border: "2px solid #2E3092",
+          border: `2px solid ${primaryColor(500)}`,
         },
       },
       sourceLabel: {
@@ -200,6 +200,8 @@ const useStyle = () => {
   }, [theme, direction]);
   return {
     classes,
+    primaryColor,
+    secondColor,
   };
 };
 export { useStyle };

@@ -54,7 +54,7 @@ const CreditCardPaySection = ({
         <>
           <div style={{ ...FONT_FAMILY.Lexend(600, 14) }}>{t("payment.creditCardDetails")}</div>
           <div style={classes.creditCardInputsContainer}>
-            <CreditCardIcon sx={{ color: "#2e3092" }} />
+            <CreditCardIcon sx={{ color: "var(--theme-primary-color, #2E3092)" }} />
             <input
               {...getCardNumberProps({ onChange: handleCardNumberChange })}
               style={{

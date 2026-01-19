@@ -162,7 +162,7 @@ const SystemNotifications = () => {
         {NotificationsIcon ? (
           <NotificationsIcon width={22} height={22} showBadge={showIconBadge} />
         ) : (
-          <NotificationsNoneOutlinedIcon style={{ color: "#2e3092" }} />
+          <NotificationsNoneOutlinedIcon style={{ color: primaryColor(500) }} />
         )}
       </IconButton>
     </CustomTooltip>

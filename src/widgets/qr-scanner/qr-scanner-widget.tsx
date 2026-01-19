@@ -326,7 +326,7 @@ const QRScannerPage = () => {
                   <CircularProgress
                     size={60}
                     sx={{
-                      color: "#2e3092",
+                      color: "var(--theme-primary-color, #2E3092)",
                       mb: 2,
                       width: { xs: 50, sm: 60 },
                       height: { xs: 50, sm: 60 },
@@ -335,7 +335,7 @@ const QRScannerPage = () => {
                   <Typography
                     variant="h6"
                     sx={{
-                      color: "#2e3092",
+                      color: "var(--theme-primary-color, #2E3092)",
                       fontWeight: 600,
                       mb: 1,
                     }}
@@ -348,7 +348,7 @@ const QRScannerPage = () => {
                       borderRadius: 2,
                       backgroundColor: "rgba(46,48,146,0.1)",
                       "& .MuiLinearProgress-bar": {
-                        backgroundColor: "#2e3092",
+                        backgroundColor: "var(--theme-primary-color, #2E3092)",
                       },
                     }}
                   />
@@ -480,8 +480,8 @@ const QRScannerPage = () => {
               startIcon={<Home />}
               onClick={() => router.push("/")}
               sx={{
-                borderColor: "#2e3092",
-                color: "#2e3092",
+                borderColor: "var(--theme-primary-color, #2E3092)",
+                color: "var(--theme-primary-color, #2E3092)",
                 borderRadius: { xs: 2, sm: 3 },
                 py: { xs: 1.2, sm: 1.5 },
                 fontWeight: 600,

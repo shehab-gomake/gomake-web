@@ -50,7 +50,7 @@ const PricingWidget = ({
   isMobileScreen,
   SelectWorkFlowById
 }: IPricingWidgetProps) => {
-  const { classes } = useStyle();
+  const { classes ,primaryColor, secondColor} = useStyle();
   const {
     view,
     setView,
@@ -255,7 +255,7 @@ const PricingWidget = ({
                             borderRadius: 0,
                             letterSpacing: "0em",
                             transition: "0s",
-                            border: "2px solid #2E3092",
+                            border: `2px solid ${primaryColor(500)}`,
                           },
                           ...(isCompareMode && !section.isSelected && {
                             border: "1px solid transparent",
@@ -268,7 +268,7 @@ const PricingWidget = ({
                               left: 0,
                               right: 0,
                               bottom: 0,
-                              background: "linear-gradient(90deg, #2E3092, #fff, #2E3092, #fff, #2E3092)",
+                              background: `linear-gradient(90deg, ${primaryColor(500)}, #fff, ${primaryColor(500)}, #fff, ${primaryColor(500)})`,
                               backgroundSize: "300% 300%",
                               borderRadius: "inherit",
                               zIndex: -1,
@@ -400,7 +400,7 @@ const PricingWidget = ({
             calculationResult?.tabs?.length > 1 &&
             <Tooltip title={t("Start comparison")} style={{ backgroundColor: "white" }}>
               <IconButton onClick={() => setIsCompareMode(!isCompareMode)}>
-                <CompareIcon style={{ color: "rgb(236,3,141)" }} />
+                <CompareIcon style={{ color: secondColor(500) }} />
               </IconButton>
             </Tooltip>
           }
@@ -571,12 +571,12 @@ const PricingWidget = ({
                     gap: 10,
                     ...FONT_FAMILY.Lexend(500, 14),
                     cursor: "pointer",
-                    color: "#2E3092",
+                    color: primaryColor(500),
                   }}
                   onClick={handleScroll}
                 >
                   {t("sales.quote.showMore")}{" "}
-                  <ReadMoreIcon style={{ color: "#2E3092" }} />
+                  <ReadMoreIcon style={{ color: primaryColor(500) }} />
                 </div>
               </>
             )}

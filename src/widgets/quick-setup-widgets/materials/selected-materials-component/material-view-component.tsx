@@ -11,8 +11,8 @@ export interface IMaterialViewComponentProps {
 }
 
 const MaterialViewComponent = ({
-                                   bgColor = '#F89AD1',
-                                   textColor = '#252675',
+                                   bgColor = 'var(--theme-secondary-200, #F89AD1)',
+                                   textColor = 'var(--theme-secondary-600, #252675)',
                                    label,
                                    onRemove,
                                    id

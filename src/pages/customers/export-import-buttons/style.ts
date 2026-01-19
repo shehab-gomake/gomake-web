@@ -3,7 +3,7 @@ import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 
 const useStyle = () => {
-  const { primaryColor, primarySecondaryBlend, theme } = useGomakeTheme();
+  const { primaryColor, primarySecondaryBlend, theme, neutralColor } = useGomakeTheme();
   const classes = useMemo(() => {
     return {
       secondText: {
@@ -104,6 +104,7 @@ const useStyle = () => {
     classes,
     primaryColor,
     primarySecondaryBlend,
+    neutralColor,
   };
 };
 export { useStyle };

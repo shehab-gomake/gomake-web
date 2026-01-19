@@ -99,6 +99,7 @@ const HpLeftSideLayout = ({ customGap }: { customGap?: number }) => {
                       tab={tab}
                       customGap={customGap}
                       isSidebarClosed={isSidebarClosed}
+                      onOpenSidebar={() => setIsSidebarClosed(false)}
                     />
                   </div>
                 );
@@ -115,6 +116,7 @@ const HpLeftSideLayout = ({ customGap }: { customGap?: number }) => {
                         tab={tab}
                         customGap={customGap}
                         isSidebarClosed={isSidebarClosed}
+                        onOpenSidebar={() => setIsSidebarClosed(false)}
                       />
                     </div>
                   );
@@ -131,6 +133,7 @@ const HpLeftSideLayout = ({ customGap }: { customGap?: number }) => {
                         tab={tab}
                         customGap={customGap}
                         isSidebarClosed={isSidebarClosed}
+                        onOpenSidebar={() => setIsSidebarClosed(false)}
                       />
                     </div>
                   );
@@ -147,6 +150,7 @@ const HpLeftSideLayout = ({ customGap }: { customGap?: number }) => {
                         tab={tab}
                         customGap={customGap}
                         isSidebarClosed={isSidebarClosed}
+                        onOpenSidebar={() => setIsSidebarClosed(false)}
                       />
                     </div>
                   );

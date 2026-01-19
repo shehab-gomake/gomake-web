@@ -14,14 +14,14 @@ const Progress = (props: any) => {
         width={props.data || "0%"}
         height="8"
         rx="4"
-        fill="#2E3092"
+        fill="var(--theme-primary-color, #2E3092)"
       />
       <ellipse
         cx={props.data || "0%"}
         cy="8"
         rx="8.37143"
         ry="8"
-        fill="#2E3092"
+        fill="var(--theme-primary-color, #2E3092)"
       />
     </svg>
   );

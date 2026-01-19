@@ -38,6 +38,7 @@ const useDownloadAccountFilesModal = () => {
     { id: CpaFileType.Incoming, label: t("financesWidget.openFormat") },
     { id: CpaFileType.Payments, label: t("financesWidget.openFormatSuppOnly") },
     { id: CpaFileType.Deposits, label: t("financesWidget.deposits") },
+    { id: CpaFileType.MoveInPriority, label: t("financesWidget.moveInPriority") },
   ];
 
   const onClickDownloadTable = async (onClose) => {

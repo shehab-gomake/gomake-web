@@ -175,7 +175,7 @@ const AdvertisingProductNameParameterWidget = ({
                       e.stopPropagation();
                     }}
                     style={{
-                      backgroundColor: option.id === "add_new" ? '#2E3092' : option.id === "generate_new" ? '#FF69B4' : '#2E3092',
+                      backgroundColor: option.id === "add_new" ? 'var(--theme-primary-color, #2E3092)' : option.id === "generate_new" ? '#FF69B4' : 'var(--theme-primary-color, #2E3092)',
                       color: "white",
                       display: "flex",
                       alignItems: "center",
@@ -333,13 +333,10 @@ const AdvertisingProductNameParameterWidget = ({
         {
           (parameter?.code === "DiecutType" || parameter?.code === "DieCutter") &&
           <IconButton onClick={() => setIsOpenDieCutModal(true)}>
-            <OpenWithIcon style={{ color: "#2E3092" }} />
+            <OpenWithIcon style={{ color: "var(--theme-secondary-color, #2E3092)" }} />
           </IconButton>
         }
-
       </div>
-
-
       <GoMakeModal
         open={openModal}
         onClose={() => setOpenModal(false)}
@@ -507,7 +504,7 @@ const AdvertisingProductNameParameterWidget = ({
                         sx={{
                           width: "fit-content",
                           height: 40,
-                          backgroundColor: !allFieldsFilled ? "#ccc" : "#2E3092"
+                          backgroundColor: !allFieldsFilled ? "#ccc" : "var(--theme-primary-color, #2E3092)"
                         }}
                         disabled={!allFieldsFilled}
                         onClick={createNewTemplateWithCustomDimensions}
@@ -617,7 +614,7 @@ const AdvertisingProductNameParameterWidget = ({
                     <div
                       key={item.id}
                       style={{
-                        border: isSelected ? "2px solid #2E3092" : "1px solid #e0e0e0",
+                        border: isSelected ? "2px solid var(--theme-primary-color, #2E3092)" : "1px solid #e0e0e0",
                         borderRadius: 8,
                         padding: 12,
                         width: 220,

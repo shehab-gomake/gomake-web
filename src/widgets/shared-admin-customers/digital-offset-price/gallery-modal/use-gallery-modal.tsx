@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
-
 import {
   materialBtnDataState,
   selectParameterButtonState,
@@ -16,9 +15,11 @@ import { useTranslation } from "react-i18next";
 import { EHttpMethod } from "@/services/api-service/enums";
 import { filterState } from "@/widgets/materials-widget/state";
 import { useRouter } from "next/router";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForNewDie, straightKnife, isParameterSettings, getProductById, template, _getParameter }) => {
   const { callApi } = useGomakeAxios();
+  const { secondColor } = useGomakeTheme();
   const { alertFaultAdded, alertSuccessAdded } = useSnackBar();
   const { t } = useTranslation();
   const router = useRouter()
@@ -328,7 +329,7 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
       icon: <StaightKnifeIcon />,
       onclick: onClickStraight,
       onDoubleClick: onClickChoosParameter,
-      backgroundColor: "#F467BA",
+      backgroundColor: secondColor(300),
       isShow: isShowStraightKnife
     },
   ];

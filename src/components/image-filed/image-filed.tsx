@@ -76,7 +76,7 @@ export const GoMakeImageFiled = ({ selectedNameFile , onChange }) => {
         <Button 
         variant="contained" 
         onClick={handleButtonClick} 
-        style={{ backgroundColor: '#ED028C', height: "30px",   marginRight: isLtr ? "3px" : "0", 
+        style={{ backgroundColor: 'var(--theme-secondary-color, #ED028C)', height: "30px",   marginRight: isLtr ? "3px" : "0", 
           marginLeft: !isLtr ? "3px" : "0"  }}
         >
           {t("general.uploadLogo")}

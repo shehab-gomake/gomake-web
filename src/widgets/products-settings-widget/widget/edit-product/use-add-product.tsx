@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/router";
 import { getAndSetProductById } from "@/services/hooks";
-import { GraphicIcon, PrameterIcon, PricingIcon, SettingIcon } from "@/widgets";
+import { GraphicIcon, ParameterIcon, PricingIcon, SettingIcon } from "@/widgets";
 import { ESourceView } from "@/enums/products";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { useUserPermission } from "@/hooks/use-permission";
@@ -84,8 +84,8 @@ const useAddProduct = () => {
       },
       {
         name: t("products.addProduct.admin.parameters"),
-        icon: <PrameterIcon stroke={primaryColor(600)} />,
-        activeIcon: <PrameterIcon stroke={secondColor(500)} />,
+        icon: <ParameterIcon stroke={primaryColor(600)} />,
+        activeIcon: <ParameterIcon stroke={secondColor(500)} />,
         onclick: () => onClickParametersTab,
         permission: true,
       },

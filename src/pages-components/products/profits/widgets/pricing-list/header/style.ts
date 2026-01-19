@@ -35,7 +35,7 @@ const useStyle = ({ width, header }: any) => {
         lineHeight: "18px",
 
         // ...(header == t("products.profits.pricingListWidget.Expprofit") && {
-        //   border: " 1px solid #F135A3",
+        //   border: " 1px solid var(--theme-secondary-400, #F135A3)",
         //   borderTopLeftRadius: "4px",
         //   borderTopRightRadius: "4px",
         //   borderBottom: "0px",

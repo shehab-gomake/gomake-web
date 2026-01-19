@@ -1,10 +1,9 @@
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
-import { FONT_FAMILY } from "@/utils/font-family";
 const useStyle = () => {
   const { t } = useTranslation();
-  const { primaryColor, neutralColor } = useGomakeTheme();
+  const { primaryColor, secondColor , theme } = useGomakeTheme();
 
   const classes = useMemo(() => {
     return {
@@ -12,8 +11,7 @@ const useStyle = () => {
         position: "fixed",
         bottom: 20,
         right: 20,
-        // backgroundColor: "#2e3092",
-        background: "linear-gradient(135deg,#2E3092 30%, #ED028C 90%)",
+        background: `linear-gradient(135deg, ${primaryColor(500)} 30%, ${secondColor(500)} 90%)`,
         color: "white",
         "&:hover": { backgroundColor: "#115293" },
         boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.2)",
@@ -23,9 +21,9 @@ const useStyle = () => {
         padding: "10px",
         fontWeight: "bold",
         textTransform: "none",
-        backgroundColor: "#2e3092",
+        backgroundColor: primaryColor(500),
         "&:hover": {
-          backgroundColor: "#1d1f75",
+          backgroundColor: primaryColor(600),
         },
       },
       cardContainer: {
@@ -35,7 +33,7 @@ const useStyle = () => {
         boxShadow: 3,
       },
     };
-  }, [t]);
+  }, [t , theme]);
   return {
     classes,
   };

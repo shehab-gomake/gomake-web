@@ -21,7 +21,7 @@ const useStyle = ({
         boxSizing: "border-box" as const,
         position: "relative" as "relative",
         zIndex: 1,
-        width: navStatus?.isClosed ? "60px" : "229px",
+        width: navStatus?.isClosed ? "60px" : "270px",
         height: "100vh",
         left: "0px",
         top: "0px",
@@ -31,7 +31,8 @@ const useStyle = ({
           : { borderRight: "1px solid #E0E0E0" }),
         borderRadius: "0px",
         transition: "width 0.3s ease",
-        overflow: "hidden",
+        overflowY: "hidden" as const,
+        overflowX: "visible" as const, // Allow horizontal overflow to show full text
         display: "flex",
         flexDirection: "column" as const,
       },
@@ -42,22 +43,29 @@ const useStyle = ({
         width: "100%",
         minHeight: "64px",
         padding: navStatus?.isClosed ? "0px" : "16px 0px",
-        paddingLeft: navStatus?.isClosed ? "0px" : "8px",
-        paddingRight: navStatus?.isClosed ? "0px" : "8px",
+        ...(isRTL
+          ? {
+              paddingRight: navStatus?.isClosed ? "0px" : "8px",
+              paddingLeft: navStatus?.isClosed ? "0px" : "8px",
+            }
+          : {
+              paddingLeft: navStatus?.isClosed ? "0px" : "8px",
+              paddingRight: navStatus?.isClosed ? "0px" : "8px",
+            }),
         display: "flex",
         alignItems: "center",
-        justifyContent: navStatus?.isClosed ? "center" : "flex-start",
+        justifyContent: navStatus?.isClosed ? "center" : isRTL ? "flex-end" : "flex-start",
         transition: "all 0.3s ease",
       },
 
       headerContent: {
         display: "flex",
         flexDirection: "column" as const,
-        alignItems: navStatus?.isClosed ? "center" : "flex-start",
+        alignItems: navStatus?.isClosed ? "center" : isRTL ? "flex-end" : "flex-start",
         padding: navStatus?.isClosed ? "0px" : "0px 8px 12px",
         gap: navStatus?.isClosed ? "0px" : "12px",
         width: "100%",
-        justifyContent: navStatus?.isClosed ? "center" : "flex-start",
+        justifyContent: navStatus?.isClosed ? "center" : isRTL ? "flex-end" : "flex-start",
         position: "relative" as const,
       },
 
@@ -72,7 +80,11 @@ const useStyle = ({
           : ("absolute" as const),
         width: navStatus?.isClosed ? "42px" : "42px",
         height: navStatus?.isClosed ? "42px" : "42px",
-        left: navStatus?.isClosed ? "auto" : "0px",
+        ...(navStatus?.isClosed
+          ? { left: "auto", right: "auto" }
+          : isRTL
+          ? { right: "0px", left: "auto" }
+          : { left: "0px", right: "auto" }),
         top: navStatus?.isClosed ? "auto" : "0px",
         margin: navStatus?.isClosed ? "16px auto" : "0px",
         background: navStatus?.isClosed
@@ -84,7 +96,7 @@ const useStyle = ({
 
       headerText: {
         position: "absolute" as const,
-        left: "52px",
+        ...(isRTL ? { right: "52px", left: "auto" } : { left: "52px", right: "auto" }),
         top: "0px",
       },
 
@@ -121,7 +133,7 @@ const useStyle = ({
         minHeight: 0, // Important for flexbox scrolling
         width: "100%",
         overflowY: "auto" as const,
-        overflowX: "hidden" as const,
+        overflowX: "visible" as const, // Allow horizontal overflow to show full text
         borderRadius: "0px",
         transition: "all 0.3s ease",
         marginTop: navStatus?.isClosed ? "0px" : "18px", // Space between header and navigation only when open
@@ -131,7 +143,7 @@ const useStyle = ({
         padding: navStatus?.isClosed ? "0px 8px 16px" : "0px 8px 16px",
         display: "flex",
         flexDirection: "column" as const,
-        gap: navStatus?.isClosed ? "4px" : "0px",
+        gap: "4px",
         alignItems: navStatus?.isClosed ? "center" : "flex-start", // Center when closed, left when open
         transition: "all 0.3s ease",
         minHeight: "100%", // Ensure container takes full height for scrolling
@@ -149,9 +161,9 @@ const useStyle = ({
         position: "absolute" as const,
         width: "28px",
         height: "28px",
-        left: navStatus?.isClosed ? "26px" : "192px",
+        left: navStatus?.isClosed ? "26px" : "208px",
         top: "863px",
-        border: "1px solid #024AD8",
+        border: "1px solid var(--theme-primary-color, #024AD8)",
         borderRadius: "32px",
         cursor: "pointer",
         transition: "left 0.3s ease",
@@ -172,7 +184,7 @@ const useStyle = ({
       collapseIcon: {
         width: "20px",
         height: "20px",
-        background: "#024AD8",
+        background: "var(--theme-primary-color, #024AD8)",
         // Icon will be replaced with actual SVG/component
       },
     };

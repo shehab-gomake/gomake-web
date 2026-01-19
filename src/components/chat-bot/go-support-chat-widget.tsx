@@ -191,7 +191,7 @@ const GoSupportChatWidget: React.FC<GoSupportChatWidgetProps> = ({
           onClick={handleClick}
       >
         <HeadsetMicOutlinedIcon
-            style={{ color: "#2e3092", width: 22, height: 22 }}
+            style={{ color: "var(--theme-primary-color, #2E3092)", width: 22, height: 22 }}
         />
       </IconButton>
   );

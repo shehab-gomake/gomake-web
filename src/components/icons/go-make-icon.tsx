@@ -5,7 +5,7 @@ interface GoMakeIconProps {
 }
 
 const GoMakeIcon = ({
-  color = "#ed028c",
+  color = "var(--theme-secondary-color, #ED028C)",
   width = 159,
   height = 32,
 }: GoMakeIconProps) => {

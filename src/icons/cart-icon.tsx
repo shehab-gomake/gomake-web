@@ -1,7 +1,7 @@
 import { IIconProps } from "@/components/icons/interface";
 
 const CartIcon = (props: IIconProps) => {
-  const { color = "#ed028c" } = props;
+  const { color = "var(--theme-secondary-color, #ED028C)" } = props;
   return (
     <svg
       width="22"

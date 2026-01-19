@@ -93,7 +93,7 @@ export const useStyle = () => {
 
       },
       headerCellText: {
-        color: "#2E3092",
+        color: "var(--theme-primary-color, #2E3092)",
       },
 
       // Body row styles
@@ -109,7 +109,7 @@ export const useStyle = () => {
         padding: '12px 8px',
         whiteSpace: 'nowrap' as 'nowrap',
         borderBottom: '1px solid #e0e0e0',
-        color: "#2E3092",
+        color: "var(--theme-primary-color, #2E3092)",
         backgroundColor: '#fff',
       },
 

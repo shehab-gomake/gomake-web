@@ -1,7 +1,9 @@
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 
 const useStyle = () => {
+  const { primaryColor } = useGomakeTheme();
   const clasess = useMemo(() => {
     return {
       insideStyle: {
@@ -14,9 +16,9 @@ const useStyle = () => {
         marginTop: 25
       },
       btnThirdContainer: {
-        border: "1px solid #2E3092",
+        border: `1px solid ${primaryColor(500)}`,
         boxShadow: "0px 1px 2px 0px #1018280D",
-        backgroundColor: "#2E3092",
+        backgroundColor: primaryColor(500),
         color: "#FFFFFF",
         ...FONT_FAMILY.Inter(400, 14),
         height: 40,

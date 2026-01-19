@@ -149,17 +149,17 @@ const GoMakeMultiSelect: React.FC<IGoMakeMultiSelectProps> = ({
         }),
         multiValueLabel: (provided) => ({
             ...provided,
-            color: "#2e3092",
+            color: "var(--theme-primary-color, #2E3092)",   
             fontFamily: "Heebo, sans-serif",
             fontSize: "14px",
         }),
         multiValueRemove: (provided) => ({
             ...provided,
-            color: "#2e3092",
+            color: "var(--theme-primary-color, #2E3092)",
             cursor: "pointer",
             "&:hover": {
                 backgroundColor: "rgba(46, 48, 146, 0.2)",
-                color: "#2e3092",
+                color: "var(--theme-primary-color, #2E3092)",
             },
         }),
         menu: (provided) => ({

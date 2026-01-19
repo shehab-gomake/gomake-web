@@ -17,7 +17,7 @@ const ArrowUpIcon = (props: any) => {
       />
       <path
         d="M11 9.5L8 6.5L5 9.5"
-        stroke={stroke || "#ED028C"}
+        stroke={stroke || "var(--theme-secondary-color, #ED028C)"}
         stroke-linecap="round"
         stroke-linejoin="round"
       />

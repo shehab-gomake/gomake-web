@@ -41,6 +41,7 @@ import { ProductCategoryType } from "@/pages-components/admin/home/widgets/quote
 import { EditIcon } from "@/icons";
 import { useSelectedProduct } from "@/hooks/shared-customer-admin/use-selected-product";
 
+//!here
 const PriceListPageWidget = ({
   widgetType,
   isMobileScreen = false,
@@ -259,7 +260,7 @@ const PriceListPageWidget = ({
                   !isMobileScreen
                     ? {
                       height: "calc(100vh - 300px)",
-                      overflow: "scroll",
+                      overflow: "auto",
                       width: "calc(100% - 330px)",
                     }
                     : {

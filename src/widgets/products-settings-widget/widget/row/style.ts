@@ -3,7 +3,7 @@ import { useMemo } from "react";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 const useStyle = ({ width, index, tablePercent }: any) => {
-  const { primaryColor } = useGomakeTheme();
+  const { primaryColor, secondColor, theme } = useGomakeTheme();
   const clasess = useMemo(() => {
     return {
       bodyRow: {
@@ -35,7 +35,7 @@ const useStyle = ({ width, index, tablePercent }: any) => {
         lineHeight: "18px",
         marginBottom: 8.5,
         marginTop: 8.5,
-        color: " #F135A3",
+        color: secondColor(400),
         textAlign: "center" as "center",
         maxHeight: 45,
         overflow: "auto",
@@ -67,7 +67,7 @@ const useStyle = ({ width, index, tablePercent }: any) => {
         width: 80,
       },
     };
-  }, []);
+  }, [theme]);
   return {
     clasess,
   };

@@ -24,7 +24,7 @@ const ProductItem = ({
     id: item.id,
     name: item.name,
     code: item.code,
-    productionFloorJobColor: item.productionFloorJobColor || "#2e3092",
+    productionFloorJobColor: item.productionFloorJobColor || "var(--theme-primary-color, #2E3092)",
     printerBin: item.printerBin || "",
     printerId: item.printerId || 0,
   });
