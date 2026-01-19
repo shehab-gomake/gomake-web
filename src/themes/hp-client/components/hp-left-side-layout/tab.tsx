@@ -39,7 +39,7 @@ const HpTab = ({ tab, customGap, isSidebarClosed = false, onOpenSidebar }: IProp
   const { CheckPermission } = useUserPermission();
   const prevPathRef = useRef<string>(router.pathname);
   const menuItemRef = useRef<HTMLDivElement>(null);
-  const [tooltipPosition, setTooltipPosition] = useState<{ top: number; left: number } | null>(null);
+  const [tooltipPosition, setTooltipPosition] = useState<{ top: number; left: number; isRTL: boolean } | null>(null);
 
   // Check if current route matches this tab or any of its sub-items
   // Normalize paths by removing query parameters for comparison
@@ -143,11 +143,9 @@ const HpTab = ({ tab, customGap, isSidebarClosed = false, onOpenSidebar }: IProp
   // Only auto-update based on route, don't clear manual selections immediately
   useEffect(() => {
     if (isCurrentRoute) {
-      // If we're on this tab's route, set it as selected
       setSelectedTabValue(tab.key || "");
     }
-    // Don't clear selection here - let it persist for manual clicks
-    // It will be cleared when navigating to a different route that matches another tab
+ 
   }, [currentPath, isCurrentRoute, tab.key, setSelectedTabValue]);
 
   const handleOpenInNewTab = useCallback(
@@ -162,12 +160,22 @@ const HpTab = ({ tab, customGap, isSidebarClosed = false, onOpenSidebar }: IProp
   const handleMouseEnter = useCallback(() => {
     if (isSidebarClosed && menuItemRef.current) {
       const rect = menuItemRef.current.getBoundingClientRect();
-      setTooltipPosition({
-        top: rect.top + rect.height / 2,
-        left: rect.right + 8,
-      });
+      if (isRTL) {
+      
+        setTooltipPosition({
+          top: rect.top + rect.height / 2,
+          left: rect.left - 8,
+          isRTL: true,
+        });
+      } else {
+        setTooltipPosition({
+          top: rect.top + rect.height / 2,
+          left: rect.right + 8,
+          isRTL: false,
+        });
+      }
     }
-  }, [isSidebarClosed]);
+  }, [isSidebarClosed, isRTL]);
 
   const handleMouseLeave = useCallback(() => {
     setTooltipPosition(null);
@@ -282,7 +290,7 @@ const HpTab = ({ tab, customGap, isSidebarClosed = false, onOpenSidebar }: IProp
               position: "fixed",
               top: `${tooltipPosition.top}px`,
               left: `${tooltipPosition.left}px`,
-              transform: "translateY(-50%)",
+              transform: tooltipPosition.isRTL ? "translate(-100%, -50%)" : "translateY(-50%)",
             }}
           >
             {t(tab.title)}
