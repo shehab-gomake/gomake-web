@@ -2,7 +2,7 @@ import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { useMemo } from "react";
 
 const useStyle = () => {
-  const { theme } = useGomakeTheme();
+  const { theme, primaryColor, secondColor } = useGomakeTheme();
   const classes = useMemo(() => {
     return {
       mainBox: {
@@ -10,7 +10,7 @@ const useStyle = () => {
         justifyContent: "center",
         alignItems: "center",
         height: "100vh",
-        background: "linear-gradient(135deg, #2e3092, #ed028c)",
+        background: `linear-gradient(135deg, ${primaryColor(500)}, ${secondColor(500)})`,
       },
       cardStyle: {
         padding: "2.5rem",
@@ -33,11 +33,11 @@ const useStyle = () => {
         marginTop: 3,
       },
       homeBtn: {
-        borderColor: "#ed028c",
-        color: "#ed028c",
+        borderColor: primaryColor(100),
+        color: primaryColor(100),
         "&:hover": {
-          borderColor: "#2e3092",
-          color: "#2e3092",
+          borderColor: primaryColor(500),
+          color: primaryColor(500),
         },
       },
     };

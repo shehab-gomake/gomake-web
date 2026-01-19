@@ -3,7 +3,7 @@ import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 
 const useStyle = () => {
-  const { secondColor, primaryColor } = useGomakeTheme();
+  const { secondColor, primaryColor , theme} = useGomakeTheme();
 
   const clasess = useMemo(() => {
     return {
@@ -30,8 +30,8 @@ const useStyle = () => {
       },
       textInputStyle: {
         width: "100%",
-        border: "1px solid #2E3092",
-        borderRadius: 4,
+        border: `1px solid ${primaryColor(500)}`,
+        borderRadius: "var(--theme-radius-md, 4px)",
         height: 110,
         overflow: "scroll",
       },
@@ -48,8 +48,8 @@ const useStyle = () => {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        border: "1px solid #ED028C",
-        borderRadius: 4,
+        border: `1px solid ${secondColor(500)}`,
+        borderRadius: "var(--theme-radius-md, 4px)",
         ...FONT_FAMILY.Lexend(500, 16),
         color: secondColor(500),
         cursor: "pointer",
@@ -62,8 +62,8 @@ const useStyle = () => {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        border: "1px solid #ED028C",
-        borderRadius: 4,
+        border: `1px solid ${secondColor(500)}`,
+        borderRadius: "var(--theme-radius-md, 4px)", 
         paddingTop: 10,
         paddingBottom: 10,
         paddingLeft: 20,
@@ -161,7 +161,7 @@ const useStyle = () => {
         paddingTop: 10,
         paddingBottom: 10,
         backgroundColor: secondColor(500),
-        borderRadius: 4,
+        borderRadius: "var(--theme-radius-md, 4px)",
         color: "#FFFFFF",
         ...FONT_FAMILY.Lexend(500, 16),
         width: "50%",
@@ -173,9 +173,9 @@ const useStyle = () => {
         alignItems: "center",
         paddingTop: 10,
         paddingBottom: 10,
-        borderRadius: 4,
+        borderRadius: "var(--theme-radius-md, 4px)",
         color: secondColor(500),
-        border: "1px solid #ED028C",
+        border: `1px solid ${secondColor(500)}`,
         ...FONT_FAMILY.Lexend(500, 16),
         width: "50%",
         height: 40,
@@ -202,7 +202,7 @@ const useStyle = () => {
         color: primaryColor(500),
       },
     };
-  }, []);
+  }, [theme]);
   return {
     clasess,
   };

@@ -19,7 +19,7 @@ const useStyle = () => {
         width: convertWidthToVW(100),
         height: convertHeightToVH(50),
         marginRight: convertWidthToVW(10),
-        backgroundColor: "#F135A3",
+        backgroundColor: secondColor(400), 
       },
       insideStyle: {
         width: "75%",
@@ -125,7 +125,7 @@ const useStyle = () => {
         fontStyle: "normal",
         lineHeight: "normal",
         borderRadius: "4px",
-        background: "#ED028C",
+        background: secondColor(500),
         ...FONT_FAMILY.Lexend(500, 16),
       },
       filterStyle: {
@@ -136,7 +136,7 @@ const useStyle = () => {
         marginBottom: "7px",
       },
       headers3Style: {
-        color: "#F135A3",
+        color: secondColor(400), 
         ...FONT_FAMILY.Lexend(500, 18),
       },
       tableContainer: {

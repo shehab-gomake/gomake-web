@@ -25,6 +25,7 @@ const useStyle = ({ isMobileScreen }: IProps) => {
     errorColor,
     neutralColor,
     primarySecondaryBlend,
+    grayColor
   } = useGomakeTheme();
 
   const [screenWidth, setScreenWidth] = useState<number | null>(null);
@@ -209,7 +210,7 @@ const useStyle = ({ isMobileScreen }: IProps) => {
         color: neutralColor(800),
       },
       activeTabContainer: {
-        backgroundColor: "#EBECFF",
+        backgroundColor: "var(--theme-bg-primary, var(--theme-primary-50, #EBECFF))",
         minHeight: 48,
         borderBottom: "none",
       },
@@ -318,7 +319,7 @@ const useStyle = ({ isMobileScreen }: IProps) => {
 
       textInputStyle: {
         width: "200px",
-        borderRadius: 4,
+        borderRadius: "var(--theme-radius-md, 4px)",
         height: 40,
         border: "0px",
         backgroundColor: "#fff",
@@ -328,7 +329,7 @@ const useStyle = ({ isMobileScreen }: IProps) => {
       },
       requiredTextInputStyle: {
         width: "200px",
-        borderRadius: 4,
+        borderRadius: "var(--theme-radius-md, 4px)",
         borderBottom: "1px solid red",
         backgroundColor: "#fff",
         ...FONT_FAMILY.Lexend(500, 14),
@@ -337,7 +338,7 @@ const useStyle = ({ isMobileScreen }: IProps) => {
       },
       dropDownListStyle: {
         width: "200px",
-        borderRadius: 4,
+        borderRadius: "var(--theme-radius-md, 4px)",
         height: 40,
         border: "0px",
         backgroundColor: "#fff",
@@ -345,7 +346,7 @@ const useStyle = ({ isMobileScreen }: IProps) => {
         boxShadow: "none",
       },
       proofDropDownListStyle: {
-        borderRadius: 4,
+        borderRadius: "var(--theme-radius-md, 4px)",
         height: 40,
         border: "0px",
         backgroundColor: "#fff",
@@ -353,7 +354,7 @@ const useStyle = ({ isMobileScreen }: IProps) => {
       },
       requiredDropDownListStyle: {
         width: "200px",
-        borderRadius: 4,
+        borderRadius: "var(--theme-radius-md, 4px)",
         height: 40,
         borderBottom: "1px solid red",
         backgroundColor: "#fff",
@@ -387,7 +388,7 @@ const useStyle = ({ isMobileScreen }: IProps) => {
         display: "flex",
         width: "100%",
         // maxWidth: "200px",
-        borderRadius: 4,
+        borderRadius: "var(--theme-radius-md, 4px)",
       },
 
       switchStyle: {
@@ -641,7 +642,7 @@ const useStyle = ({ isMobileScreen }: IProps) => {
         backgroundColor: primaryColor(500),
         color: "white",
         ...FONT_FAMILY.Lexend(500, 16),
-        borderRadius: 4,
+        borderRadius: "var(--theme-radius-md, 4px)",
         cursor: "pointer",
         width: "100%",
         minWidth: "fit-content",
@@ -655,7 +656,7 @@ const useStyle = ({ isMobileScreen }: IProps) => {
         backgroundColor: secondColor(500),
         color: "white",
         ...FONT_FAMILY.Lexend(500, 16),
-        borderRadius: 4,
+        borderRadius: "var(--theme-radius-md, 4px)",
         cursor: "pointer",
         width: "100%",
         minWidth: "fit-content",
@@ -1011,7 +1012,7 @@ const useStyle = ({ isMobileScreen }: IProps) => {
       },
       advertisingProductPriceStyle: {
         ...FONT_FAMILY.Lexend(600, 10),
-        color: "#ED028C",
+        color: secondColor(500),
       },
       advertisingProductUnitsStyle: {
         ...FONT_FAMILY.Lexend(500, 10),
@@ -1074,7 +1075,7 @@ const useStyle = ({ isMobileScreen }: IProps) => {
       modalSubTitleForMission: {
         display: "flex",
         ...FONT_FAMILY.Lexend(400, 14),
-        color: "#475467",
+        color: grayColor(800),
         textAlign: "center" as "center",
         padding: "0px 30px",
       },

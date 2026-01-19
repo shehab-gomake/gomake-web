@@ -623,7 +623,7 @@ const AddRuleModal = ({
               onClick={handleOpenSettings}
               size="small"
               style={{
-                color: "var(--theme-accent-color, #ED028C)",
+                color: "var(--theme-accent-color, var(--theme-secondary-color, #ED028C))",
                 fontSize: "16px",
                 padding: "4px",
                 width: "20px",

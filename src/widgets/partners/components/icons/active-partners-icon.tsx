@@ -31,7 +31,7 @@ const ActivePartnersIcon = (props: any) => {
         />
       </mask>
       <g mask="url(#mask0_5505_158564)">
-        <rect x="11" y="11" width="24" height="24" fill="#ED028C" />
+        <rect x="11" y="11" width="24" height="24" fill="var(--theme-secondary-color, #ED028C)" />
       </g>
     </svg>
   );

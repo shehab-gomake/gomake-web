@@ -3,7 +3,7 @@ import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { FONT_FAMILY } from "@/utils/font-family";
 
 const useStyle = () => {
-  const { primaryColor, secondColor } = useGomakeTheme();
+  const { primaryColor, secondColor , theme} = useGomakeTheme();
 
   const classes = useMemo(() => {
     return {
@@ -23,8 +23,8 @@ const useStyle = () => {
       },
       modalTitle: {
         ...FONT_FAMILY.Lexend(700, 28),
-        color: "#ED028C",
-        background: "linear-gradient(135deg, #ED028C 0%, #9333ea 100%)",
+        color: secondColor(500),
+        background: `linear-gradient(135deg, ${secondColor(500)} 0%, #9333ea 100%)`,
         WebkitBackgroundClip: "text",
         WebkitTextFillColor: "transparent",
         backgroundClip: "text",
@@ -61,7 +61,7 @@ const useStyle = () => {
         display: "block",
       },
       required: {
-        color: "#ED028C",
+        color: secondColor(500),
         marginLeft: "4px",
       },
       input: {
@@ -96,15 +96,14 @@ const useStyle = () => {
         width: { xs: "44px", sm: "50px" },
         height: { xs: "44px", sm: "50px" },
         borderRadius: "50%",
-        //   background: "linear-gradient(135deg, #9333ea 0%, #c084fc 100%)",
         background:
-          "linear-gradient(135deg, rgb(237, 2, 140) 0%, rgb(147, 51, 234) 100%)",
+          `linear-gradient(135deg, ${secondColor(500)} 0%, rgb(147, 51, 234) 100%)`,
         display: "flex",
         alignItems: "center" as "center",
         justifyContent: "center",
       },
     };
-  }, [primaryColor, secondColor]);
+  }, [primaryColor, secondColor, theme]);
 
   return { classes };
 };

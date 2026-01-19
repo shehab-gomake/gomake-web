@@ -4,8 +4,7 @@ import { useMemo } from "react";
 import { convertHeightToVH } from "@/utils/adapter";
 
 const useStyle = () => {
-  const { theme } = useGomakeTheme();
-  const { secondColor } = useGomakeTheme();
+  const { secondColor , primaryColor , theme } = useGomakeTheme();
   const classes = useMemo(() => {
     return {
       mainContainer: {
@@ -61,14 +60,14 @@ const useStyle = () => {
       subTitleStyle: {
         fontStyle: "normal",
         lineHeight: "normal",
-        color: "#ED028C",
+        color: secondColor(500),
         ...FONT_FAMILY.Lexend(600, 16),
       },
       subTitleStyleDocumentType: {
         fontStyle: "normal",
         lineHeight: "normal",
         marginBottom: "24px",
-        color: "#2E3092",
+        color: primaryColor(500),
         ...FONT_FAMILY.Lexend(600, 16),
       },
       subTitleSpanStyle: {

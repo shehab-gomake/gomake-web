@@ -11,7 +11,7 @@ import {
   GraphicIcon,
   HiddenIcon,
   NotHiddenIcon,
-  PrameterIcon,
+  ParameterIcon,
   SettingIcon,
 } from "@/widgets";
 import {
@@ -124,20 +124,22 @@ const useAddProduct = ({ classes }) => {
   const tabs = [
     {
       name: "Settings",
-      icon: <SettingIcon stroke="#1C1D58" />,
+      icon: <SettingIcon stroke={"var(--theme-primary-700, #1C1D58)"} />,
       activeIcon: <SettingIcon />,
       onclick: () => onClickSettingsTab,
     },
     {
       name: "Parameters",
-      icon: <PrameterIcon />,
-      activeIcon: <PrameterIcon stroke="#ED028C" />,
+      icon: <ParameterIcon />,
+      activeIcon: <ParameterIcon stroke={"var(--theme-secondary-color, #ED028C)"}
+      />,
       onclick: () => onClickParametersTab,
     },
     {
       name: "Graphic",
       icon: <GraphicIcon />,
-      activeIcon: <GraphicIcon stroke="#ED028C" />,
+      activeIcon: <GraphicIcon stroke={"var(--theme-secondary-color, #ED028C)"}
+      />,
       onclick: () => onClickGraphicTab,
     },
   ];

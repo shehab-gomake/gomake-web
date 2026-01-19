@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { convertHeightToVH } from "@/utils/adapter";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 const useStyle = ({
   isCollapsed = false,
@@ -9,6 +10,7 @@ const useStyle = ({
   isCollapsed?: boolean;
   isMobile?: boolean;
 }) => {
+  const { secondColor, theme } = useGomakeTheme();
   const classes = useMemo(() => {
     return {
       sidebarContainer: {
@@ -134,13 +136,13 @@ const useStyle = ({
           top: 0,
           bottom: 0,
           width: 3,
-          backgroundColor: "#ed028c",
+          backgroundColor: secondColor(500),
           borderRadius: "0 2px 2px 0",
         },
       },
       navIcon: {
         ...FONT_FAMILY.Inter(600, 16),
-        color: "#ed028c",
+        color: secondColor(500),
         minWidth: 20,
         display: "flex",
         alignItems: "center",
@@ -382,7 +384,7 @@ const useStyle = ({
       },
       collapsedBackButtonIcon: {
         fontSize: 16,
-        color: "#ed028c",
+        color: secondColor(500),
       },
       collapsedPoweredBy: {
         display: "flex",
@@ -391,7 +393,7 @@ const useStyle = ({
         opacity: 0.7,
       },
     };
-  }, [isCollapsed, isMobile]);
+  }, [isCollapsed, isMobile , theme]);
 
   return {
     classes,

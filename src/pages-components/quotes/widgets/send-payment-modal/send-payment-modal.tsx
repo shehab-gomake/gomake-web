@@ -418,7 +418,7 @@ const SendPaymentModal = ({
           <Stack display="flex" flexWrap="wrap" direction="row" gap="10px">
             <div style={classes.inputLbl}>
               <PrimaryCheckbox
-                color={`var(--theme-accent-color, #2E3092)`}
+                color={`var(--theme-accent-color, var(--theme-primary-color, #2E3092))`}
                 checked={payState?.sendBySms || false}
                 onChange={(event) =>
                   handleCheckBoxChange("sendBySms", event.target.checked)
@@ -428,7 +428,7 @@ const SendPaymentModal = ({
             </div>
             <div style={classes.inputLbl}>
               <PrimaryCheckbox
-                color={`var(--theme-accent-color, #2E3092)`}
+                color={`var(--theme-accent-color, var(--theme-primary-color, #2E3092))`}
                 checked={payState?.sendByMail || false}
                 onChange={(event) =>
                   handleCheckBoxChange("sendByMail", event.target.checked)
@@ -438,7 +438,7 @@ const SendPaymentModal = ({
             </div>
             <div style={classes.inputLbl}>
               <PrimaryCheckbox
-                color={`var(--theme-accent-color, #2E3092)`}
+                color={`var(--theme-accent-color, var(--theme-primary-color, #2E3092))`}
                 checked={payState?.sendByWhatsapp || false}
                 onChange={(event) =>
                   handleCheckBoxChange("sendByWhatsapp", event.target.checked)
