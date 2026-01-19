@@ -11,7 +11,7 @@ const ResetColorIcon = ({ width, height, color }: IIconProps) => {
     >
       <path
         d="M1 5C1 5 2.00249 3.63411 2.81692 2.81912C3.63134 2.00413 4.7568 1.5 6 1.5C8.48528 1.5 10.5 3.51472 10.5 6C10.5 8.48528 8.48528 10.5 6 10.5C3.94845 10.5 2.21756 9.12714 1.67588 7.25M1 5V2M1 5H4"
-        stroke={color || "#8283BE"}
+        stroke={color || "var(--theme-secondary-300, #8283BE)"}
         stroke-linecap="round"
         stroke-linejoin="round"
       />

@@ -48,16 +48,26 @@ const useStyle = ({ source }: any) => {
         gap: "10px",
       },
       searchFiledStyle: {
-        borderRadius: "6px",
+        borderRadius: "var(--theme-radius-md, 6px)",
         background: "#FFF",
         display: "flex",
-        border: "1px solid #D0D5DD",
+       border: "1px solid #D0D5DD",
         "& .MuiOutlinedInput-root": {
+          "& fieldset": {
+            border: "none",
+          },
+          "&:hover fieldset": {
+            border: "none",
+          },
+          "&.Mui-focused fieldset": {
+            border: "none",
+          },
           "& input": {
             height: "40px",
             width: "100%",
           },
         },
+
       },
       listContainer: {
         position: "sticky" as "sticky",

@@ -66,7 +66,7 @@ const useMoreCircle = ({
         condition: true,
         onClick: () => openJobModal(),
         href: openJobHref,
-        icon: <SearchIcon width={17} height={17} />,
+        icon: <SearchIcon width={17} height={17} stroke={"var(--theme-secondary-300, #8283BE)"} />,
         name: t("productionFloor.openJob"),
       },
       {

@@ -37,6 +37,7 @@ import { boardsMissionsState } from "@/widgets/production-floor/state/boards";
 import { selectedChipIdsState } from "@/widgets/production-floor/state/text-search";
 import { ProductionFloorExportButtons } from "@/widgets/production-floor/table-view/export-buttons/production-floor-export-buttons";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import {  getTitleTypography } from "@/utils/typography-utils";
 
 const ProductionFloorHeader = ({
   filterGroups,
@@ -147,9 +148,11 @@ const ProductionFloorHeader = ({
           )}
         <h1
           style={{
-            ...FONT_FAMILY.Lexend(700, 20),
-            color: "#2E3092",
             ...(isMobileScreen && { marginTop: "5px" }),
+            ...getTitleTypography({
+              fontWeight: 700,
+              fontSize: "20px",
+            }),
           }}
         >
           {_renderTitleComponent()}
@@ -216,7 +219,7 @@ const ProductionFloorHeader = ({
               <Typography
                 variant="body1"
                 sx={{
-                  color: "#2e3092",
+                  color: "var(--theme-primary-color, #2E3092)",
                   fontWeight: 600,
                   fontSize: "16px",
                 }}
@@ -255,7 +258,7 @@ const ProductionFloorHeader = ({
               <Typography
                 variant="body1"
                 sx={{
-                  color: "#2e3092",
+                  color: "var(--theme-primary-color, #2E3092)",
                   fontWeight: 600,
                   fontSize: "16px",
                 }}
@@ -303,7 +306,7 @@ const ProductionFloorHeader = ({
                 onClickApply={onStationsChange}
                 buttonElement={
                   <PrimaryButton
-                    style={{ minWidth: "40px", height: "40px", padding: 0 }}
+                    style={{ minWidth: "40px", height: "40px", padding: 0 , }}
                     variant={"outlined"}
                   >
                     <SettingsIcon />

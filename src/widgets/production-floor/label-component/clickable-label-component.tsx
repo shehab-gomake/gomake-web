@@ -116,7 +116,7 @@ const ClickableLabelComponent = ({ label, t, key, textColor, id }: ITaskCategory
                     <Typography
                         style={{
                             ...FONT_FAMILY.Lexend(500, 12),
-                            color: "#8283BE",
+                            color: "var(--theme-secondary-300, #8283BE)",
                             fontStyle: "normal",
                             lineHeight: "20px",
                         }}
@@ -131,7 +131,7 @@ const ClickableLabelComponent = ({ label, t, key, textColor, id }: ITaskCategory
                     <Typography
                         style={{
                             ...FONT_FAMILY.Lexend(500, 12),
-                            color: "#8283BE",
+                            color: "var(--theme-secondary-300, #8283BE)",
                             fontStyle: "normal",
                             lineHeight: "20px"
                         }}

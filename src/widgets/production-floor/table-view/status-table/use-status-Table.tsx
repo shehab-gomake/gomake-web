@@ -94,7 +94,7 @@ const useStatusTable = () => {
             }}
             icon={<CheckboxIcon color="#D0D5DD" width="20" height="20" />}
             checkedIcon={
-              <CheckboxCheckedIcon fill="#2E3092" width="20" height="20" />
+              <CheckboxCheckedIcon fill="var(--theme-primary-color, #2E3092)" width="20" height="20" />
             }
           />
         ),
