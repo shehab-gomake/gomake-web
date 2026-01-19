@@ -34,6 +34,7 @@ import { DotsLoader } from "@/components/dots-loader/dots-Loader";
 import { SecondaryButton } from "@/components/button/secondary-button";
 import { ErrorsModalWidget } from "./errors-modal-widget";
 
+//!here
 const PriceListPageWidget = ({
   widgetType,
   isMobileScreen = false,

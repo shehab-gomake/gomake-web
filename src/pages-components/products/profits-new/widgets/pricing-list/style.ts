@@ -4,7 +4,7 @@ import { useMemo } from "react";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 const useStyle = () => {
-  const { neutralColor, secondColor, primaryColor } = useGomakeTheme();
+  const { neutralColor, secondColor, primaryColor , theme } = useGomakeTheme();
   const classes = useMemo(() => {
     return {
       container: {
@@ -169,7 +169,7 @@ const useStyle = () => {
         maxHeight: 33,
         borderRadius: 0,
         ...FONT_FAMILY.Lexend(400, 14),
-        color: "#F135A3",
+        color:secondColor(400),
         borderBottom: "none",
         border: "none",
       },
@@ -221,7 +221,8 @@ const useStyle = () => {
         height: 40,
       },
     };
-  }, []);
+  }, [theme]);
+
   return {
     classes,
   };

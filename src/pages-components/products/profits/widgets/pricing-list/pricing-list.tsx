@@ -14,6 +14,7 @@ import { productTestState } from "@/store/product-test";
 import { AddQuantityModal } from "./add-quantity-modal";
 import { actionProfitPricingTableRowsState } from "@/store/action-profit-pricing-table-rows";
 import { LineChart } from "../line-chart";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 interface IProps {
   tableHeaders: any[];
@@ -22,6 +23,7 @@ interface IProps {
 
 const PricingList = ({ tableHeaders, tablePercent }: IProps) => {
   const { t } = useTranslation();
+  const { secondColor } = useGomakeTheme();
   const actionProfits = useRecoilValue<any>(actionProfitLists);
   const profitsStateValue = useRecoilValue<any>(profitsState);
   const profitsValue = useRecoilValue<any>(profitsState);
@@ -83,7 +85,7 @@ const PricingList = ({ tableHeaders, tablePercent }: IProps) => {
                       position: "absolute",
                       top: 0,
                       left: "29.2%",
-                      border: "1px solid #F135A3",
+                      border: `1px solid ${secondColor(400)}`,
                       borderRadius: 4,
                     }}
                   ></div>

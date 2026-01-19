@@ -1452,7 +1452,7 @@ const useAddProduct = ({ classes }) => {
               }}
             >
               <SettingsIcon
-                stroke={"rgba(237, 2, 140, 1)"}
+                stroke={"var(--theme-secondary-color, #ED028C)"}
                 width={24}
                 height={24}
               />

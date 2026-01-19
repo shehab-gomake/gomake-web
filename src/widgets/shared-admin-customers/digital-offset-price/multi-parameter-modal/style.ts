@@ -100,7 +100,7 @@ const useStyle = () => {
         boxShadow: "none",
         color: "black",
         ...FONT_FAMILY.Lexend(500, 14),
-        // border: "1px solid rgba(237, 2, 140, 1)",
+        // border: "1px solid var(--theme-secondary-color, #ED028C)",
         borderRadius: 4,
       },
       childRowContainer: {

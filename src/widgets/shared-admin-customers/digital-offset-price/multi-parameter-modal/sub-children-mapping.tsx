@@ -70,7 +70,7 @@ const SubChildrenMapping = ({
             <GomakeTextInput
               style={{
                 ...clasess.textInputStyle,
-                border: isFocused ? "1px solid rgba(237, 2, 140, 1)" : "",
+                border: isFocused ? "1px solid var(--theme-secondary-color, #ED028C)" : "",
               }}
               onFocus={() => setIsFocused(true)}
               onChange={(e) => onChangeText(e, item.id)}
