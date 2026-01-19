@@ -140,7 +140,7 @@ const QuoteForPriceTable = ({
           {t("general.error")}!
           <span
             style={{
-              color: "#2E3092",
+              color: "var(--theme-primary-color, #2E3092)",
               textDecoration: "underline",
               cursor: "pointer",
             }}

@@ -86,7 +86,7 @@ export const PieChartComponent: React.FC<PieChartComponentProps> = ({
             >
               {chartTitle}
             </h3>
-            <PieChartIcon style={{ color: "#2e3092" }} />
+            <PieChartIcon style={{ color: "var(--theme-primary-color, #2E3092)" }} />
           </div>
           <div
             style={{

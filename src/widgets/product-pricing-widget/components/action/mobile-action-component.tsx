@@ -367,7 +367,7 @@ const MobileActionContainerComponent = ({
                     }}
                   >
                     <SettingsIcon
-                      stroke={"rgba(237, 2, 140, 1)"}
+                      stroke={"var(--theme-secondary-color, #ED028C)"}
                       width={20}
                       height={20}
                     />

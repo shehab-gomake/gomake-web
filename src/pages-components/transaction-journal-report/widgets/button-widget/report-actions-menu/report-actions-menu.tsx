@@ -14,7 +14,7 @@ interface ReportActionsMenuProps {
 }
 
 export const ReportActionsMenu = ({ actions }: ReportActionsMenuProps) => {
-  const { classes } = useStyle();
+  const { classes, neutralColor } = useStyle();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const handleOpenMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -28,7 +28,7 @@ export const ReportActionsMenu = ({ actions }: ReportActionsMenuProps) => {
   return (
     <>
       <IconButton onClick={handleOpenMenu} size="small">
-        <SettingsIcon stroke={"#7E7E7E"} width={25} height={25} />
+        <SettingsIcon stroke={neutralColor(600)} width={25} height={25} />
       </IconButton>
       <Menu
         open={Boolean(anchorEl)}

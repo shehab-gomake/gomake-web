@@ -20,7 +20,7 @@ const useStyle = (bgColor: string, selected: boolean) => {
             },
             value: {
                 ...FONT_FAMILY.Inter(600, 14),
-                color: '#2E3092',
+                color: primaryColor(500),
             },
             iconWrapper: {
                 backgroundColor: 'white',

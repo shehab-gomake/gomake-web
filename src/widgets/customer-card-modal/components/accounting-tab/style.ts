@@ -1,8 +1,10 @@
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { convertHeightToVH, convertWidthToVW } from "@/utils/adapter";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 
 const useStyle = () => {
+  const { theme, secondColor } = useGomakeTheme();
   const classes = useMemo(() => {
     return {
       customerInfoStyle: {
@@ -48,7 +50,7 @@ const useStyle = () => {
         height: convertHeightToVH(30),
         marginRight: convertWidthToVW(1),
         marginTop: "23px",
-        background: "#F135A3",
+        background: secondColor(400),
       },
 
       autoComplateStyle: {
@@ -88,7 +90,7 @@ const useStyle = () => {
         cursor: "pointer",
       },
     };
-  }, []);
+  }, [theme]);
   return {
     classes,
   };

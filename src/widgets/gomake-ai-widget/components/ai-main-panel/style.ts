@@ -1,7 +1,9 @@
 import { useMemo } from "react";
 import { FONT_FAMILY } from "@/utils/font-family";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 const useStyle = ({ isFullWidth = false }: { isFullWidth?: boolean } = {}) => {
+  const { secondColor, theme } = useGomakeTheme();
   const classes = useMemo(() => {
     return {
       bottomFormContainer: {
@@ -121,7 +123,7 @@ const useStyle = ({ isFullWidth = false }: { isFullWidth?: boolean } = {}) => {
       headerIcon: {
         textAlign: "center" as "center",
         marginBottom: 8,
-        color: "#ed028c",
+        color: secondColor(500),
       },
       headerTitle: {
         ...FONT_FAMILY.Inter(600, 32),
@@ -179,7 +181,7 @@ const useStyle = ({ isFullWidth = false }: { isFullWidth?: boolean } = {}) => {
 
         "&:focus": {
           outline: "none",
-          borderColor: "#ed028c",
+          borderColor: secondColor(500),
           boxShadow: "0 0 0 3px rgba(237, 2, 140, 0.1)",
         },
         "&::placeholder": {
@@ -271,7 +273,7 @@ const useStyle = ({ isFullWidth = false }: { isFullWidth?: boolean } = {}) => {
         position: "relative" as "relative",
         overflow: "hidden",
         "&:hover": {
-          borderColor: "#ed028c",
+          borderColor: secondColor(500),
           boxShadow: "0 8px 25px rgba(236, 72, 153, 0.15)",
           transform: "translateY(-4px) scale(1.02)",
           backgroundColor: "#FDF2F8",
@@ -385,7 +387,7 @@ const useStyle = ({ isFullWidth = false }: { isFullWidth?: boolean } = {}) => {
 
       jobTypeIcon: {
         fontSize: "26px",
-        color: "#ed028c", // pink theme
+        color: secondColor(500), 
       },
       loadingOverlay: {
         flex: 1,

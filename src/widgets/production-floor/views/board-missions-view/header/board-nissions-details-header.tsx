@@ -32,6 +32,7 @@ import { AddStuckReasonWidget } from "@/widgets/production-floor/add-stuck-reaso
 import { ModalType } from "@/enums";
 import { FrontDeskEmailComposerWrapper } from "@/pages-components/quotes/components/frontdesk-email-composer-wrapper";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 const HeaderTitleComponent = ({ title }: { title?: string }) => {
   const { classes } = useStyle();
@@ -57,6 +58,7 @@ const HeaderDividerComponent = () => {
 const InfoSection = ({ boardMissionsDetails, CheckPreferenceValue, t }) => {
   const { classes } = useStyle();
   const { callApi } = useGomakeAxios();
+  const { secondColor } = useGomakeTheme();
   const { alertFault, alertFaultUpdate } = useSnackBar();
   const [jobDueDate, setJobDueDate] = useState(
     boardMissionsDetails.dueDate?.toString()
@@ -218,7 +220,7 @@ const InfoSection = ({ boardMissionsDetails, CheckPreferenceValue, t }) => {
         (boardMissionsDetails?.exampleType === 1
           ? t("products.offsetPrice.admin.Physical")
           : t("products.offsetPrice.admin.Digital")),
-      background: "#BE0270",
+      background: secondColor(600),
     },
     {
       condition: boardMissionsDetails?.isUrgentWork,

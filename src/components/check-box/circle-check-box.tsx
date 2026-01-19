@@ -43,7 +43,7 @@ interface IProps {
   color?: string;
 }
 
-const CircleCheckbox = ({ checked, onChange, color = "#2e3092" }: IProps) => {
+const CircleCheckbox = ({ checked, onChange, color = "var(--theme-primary-color, #2E3092)" }: IProps) => {
   return (
     <Checkbox
       checked={checked}

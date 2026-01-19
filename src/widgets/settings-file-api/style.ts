@@ -35,7 +35,7 @@ const useStyle = () => {
         width: "24px",
         height: "24px",
         borderRadius: "50%",
-        backgroundColor: "#2e3092",
+        backgroundColor: "var(--theme-primary-color, #2E3092)",
         color: "white",
         display: "flex",
         alignItems: "center",

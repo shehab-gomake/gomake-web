@@ -34,6 +34,7 @@ import { DotsLoader } from "@/components/dots-loader/dots-Loader";
 import { SecondaryButton } from "@/components/button/secondary-button";
 import { ErrorsModalWidget } from "./errors-modal-widget";
 
+//!here
 const PriceListPageWidget = ({
   widgetType,
   isMobileScreen = false,
@@ -158,7 +159,7 @@ const PriceListPageWidget = ({
         <div style={clasess.mainContainer}>
           <HeaderTitle
             title={productTemplate?.name}
-            marginTop={1}
+            marginTop={6}
             marginBottom={24}
           />
           <div style={clasess.mainRowContainer}>
@@ -207,7 +208,7 @@ const PriceListPageWidget = ({
                   !isMobileScreen
                     ? {
                         height: "calc(100vh - 300px)",
-                        overflow: "scroll",
+                        overflow: "auto",
                         width: "calc(100% - 330px)",
                       }
                     : {

@@ -374,7 +374,7 @@ const NestedCheckbox: React.FC<NestedCheckboxProps> = ({
                         inputProps={{
                           "aria-label": "Select all",
                         }}
-                        color={areSomeItemsSelected ? "#9CA3AF" : "#2E3092"}
+                        color={areSomeItemsSelected ? "#9CA3AF" : "var(--theme-primary-color, #2E3092)"}
                       />
                       <Typography
                         variant="body2"
@@ -508,7 +508,7 @@ const NestedCheckbox: React.FC<NestedCheckboxProps> = ({
                                 "aria-label": `Select all ${parentLabel}`,
                               }}
                               color={
-                                isPartiallySelected ? "#9CA3AF" : "#2E3092"
+                                isPartiallySelected ? "#9CA3AF" : "var(--theme-primary-color, #2E3092)"
                               }
                             />
 

@@ -12,7 +12,7 @@ interface IActionMenuProps {
 }
 
 const ExcelMenu = (props: IActionMenuProps) => {
-  const { classes, primaryColor, primarySecondaryBlend } = useStyle();
+  const { classes, neutralColor, primarySecondaryBlend } = useStyle();
   const { t } = useTranslation();
   const elementRef = useRef(null);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -28,7 +28,7 @@ const ExcelMenu = (props: IActionMenuProps) => {
   return (
     <>
       <IconButton onClick={handleMoreOptionIconClick} size="small">
-        <SettingsIcon stroke={"#7E7E7E"} width={25} height={25} />
+        <SettingsIcon stroke={neutralColor(600)} width={25} height={25} />
       </IconButton>
       <input
         ref={elementRef}

@@ -26,6 +26,7 @@ export const defaultTheme: ITheme = {
       300: "#F467BA",
       200: "#F89AD1",
       100: "#FBCCE8",
+      50: "#FCE7F3",
     },
     dark: {
       500: "#ED028C",
@@ -111,7 +112,8 @@ export const defaultTheme: ITheme = {
       500: "#667085",
       600: "#667085",
       700: "#344054",
-      800: "#EAECF0",
+      // 800: "#EAECF0",
+      800:"#475467",
       900: "#101828",
     },
   },

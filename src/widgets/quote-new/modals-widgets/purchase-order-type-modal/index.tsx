@@ -41,8 +41,8 @@ const PurchaseOrderTypeModal: React.FC<PurchaseOrderTypeModalProps> = ({
               minWidth: "fit-content",
               borderRadius: "15px",
               ...FONT_FAMILY.Lexend(600, 14),
-              backgroundColor: "rgb(46, 48, 146)",
-              border: "1px solid rgb(46, 48, 146)",
+              backgroundColor: "var(--theme-primary-color, #2E3092)",
+              border: "1px solid var(--theme-primary-color, #2E3092)",
               color: "rgb(255, 255, 255)",
             }}
           >
@@ -56,8 +56,8 @@ const PurchaseOrderTypeModal: React.FC<PurchaseOrderTypeModalProps> = ({
               minWidth: "fit-content",
               borderRadius: "15px",
               ...FONT_FAMILY.Lexend(600, 14),
-              backgroundColor: "rgb(46, 48, 146)",
-              border: "1px solid rgb(46, 48, 146)",
+              backgroundColor: "var(--theme-primary-color, #2E3092)",
+              border: "1px solid var(--theme-primary-color, #2E3092)",
               color: "rgb(255, 255, 255)",
             }}
           >

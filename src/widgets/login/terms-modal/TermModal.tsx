@@ -101,7 +101,7 @@ const TermModal = ({
           style={{
             marginTop: 5,
             textAlign: "right",
-            color: "rgb(46, 48, 146)",
+            color: "var(--theme-primary-color, #2E3092)",
           }}
         >
           Scroll to accept terms.

@@ -24,11 +24,11 @@ export const DateInput = styled("input")(({ theme }) => ({
   backgroundColor: "#fff",
   transition: "border-color 0.2s ease, box-shadow 0.2s ease",
   "&:hover": {
-    // borderColor: "#2E3092",
+    // borderColor: "var(--theme-primary-color, #2E3092)",
   },
   "&:focus": {
     outline: "none",
-    // borderColor: "#2E3092",
+    // borderColor: "var(--theme-primary-color, #2E3092)",
     boxShadow: "0 0 0 2px rgba(46, 48, 146, 0.1)",
   },
   "&::placeholder": {
@@ -128,7 +128,7 @@ export const DateRangePickerWrapper = styled("div")(({ theme }) => ({
 }));
 
 export const ChooseButton = styled("button")(({ theme }) => ({
-  backgroundColor: "#2E3092",
+  backgroundColor: "var(--theme-primary-color, #2E3092)",
   color: "white",
   border: "none",
   borderRadius: "8px",

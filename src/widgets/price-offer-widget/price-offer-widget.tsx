@@ -55,7 +55,7 @@ const PriceOfferWidget: React.FC<PriceWidgetProps> = ({
             fontSize: "14px",
             fontWeight: "bold",
             marginTop: "5px",
-            color: "rgb(46,48,146)",
+            color: "var(--theme-primary-color, #2E3092)",
           }}
         />
       </div>

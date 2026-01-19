@@ -1,8 +1,9 @@
 import { useMemo } from "react";
 import { FONT_FAMILY } from "@/utils/font-family";
-import { convertHeightToVH, convertWidthToVW } from "@/utils/adapter";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 const useStyle = () => {
+  const { secondColor, theme } = useGomakeTheme();
   const classes = useMemo(() => {
     return {
       chatContainer: {
@@ -143,20 +144,20 @@ const useStyle = () => {
       },
       optionButton: {
         ...FONT_FAMILY.Inter(400, 14),
-        color: "#ed028c",
-        backgroundColor: "#FDF2F8",
-        border: "1px solid #FCE7F3",
+        color: secondColor(500), 
+        backgroundColor: secondColor(50),
+        border: `1px solid ${secondColor(50)}`,
         borderRadius: 8,
         padding: "8px 12px",
         cursor: "pointer",
         transition: "all 0.2s ease",
         textAlign: "left" as "left",
         "&:hover": {
-          backgroundColor: "#FCE7F3",
-          borderColor: "#ed028c",
+          backgroundColor: secondColor(50), 
+          borderColor: secondColor(500), 
         },
         "&:active": {
-          backgroundColor: "#F9A8D4",
+          backgroundColor: secondColor(200), 
         },
       },
       optionButtonMobile: {
@@ -165,7 +166,7 @@ const useStyle = () => {
         borderRadius: 10,
       },
     };
-  }, []);
+  }, [theme]);
 
   return {
     classes,
