@@ -11,30 +11,24 @@ export const HpPricingProfileIcon: React.FC<HpIconProps> = ({
   width = 16,
   height = 16,
 }) => {
-  const fillColor = selected ? "#001CB0" : "#1A1A1A";
+  const strokeColor = selected ? "#001CB0" : "#1A1A1A";
 
   return (
     <svg
+      xmlns="http://www.w3.org/2000/svg"
       width={width}
       height={height}
-      viewBox="0 0 16 16"
+      viewBox="0 0 24 24"
       fill="none"
-      xmlns="http://www.w3.org/2000/svg"
+      stroke={strokeColor}
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     >
-      <path
-        d="M8 1.33301V14.6663"
-        stroke={fillColor}
-        stroke-width="1.33333"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-      />
-      <path
-        d="M11.3333 3.33301H6.33333C5.71449 3.33301 5.121 3.57884 4.68342 4.01643C4.24583 4.45401 4 5.0475 4 5.66634C4 6.28518 4.24583 6.87867 4.68342 7.31626C5.121 7.75384 5.71449 7.99967 6.33333 7.99967H9.66667C10.2855 7.99967 10.879 8.24551 11.3166 8.68309C11.7542 9.12068 12 9.71417 12 10.333C12 10.9518 11.7542 11.5453 11.3166 11.9829C10.879 12.4205 10.2855 12.6663 9.66667 12.6663H4"
-        stroke={fillColor}
-        stroke-width="1.33333"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-      />
+      <path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z" />
+      <path d="m15 9-6 6" />
+      <path d="M9 9h.01" />
+      <path d="M15 15h.01" />
     </svg>
   );
 };
