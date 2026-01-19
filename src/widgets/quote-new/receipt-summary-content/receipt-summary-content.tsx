@@ -129,7 +129,7 @@ export const ReceiptSummaryContent: FC<ReceiptSummaryContentProps> = ({
         <Typography
           variant={remainingToPay === 0 ? "body2" : "body1"}
           fontWeight={600}
-          color="#2e3092"
+          color="var(--theme-primary-color, #2E3092)"
         >
           {t("payment.remainingToPay")}:{" "}
           {`${remainingToPay.toFixed(2)} ${currencySymbol}`}

@@ -102,7 +102,7 @@ export const BarChartComponent: React.FC<BarChartComponentProps> = ({
             >
               {chartTitle}
             </h3>
-            <BarChartIcon style={{ color: "#2e3092" }} />
+            <BarChartIcon style={{ color: "var(--theme-primary-color, #2E3092)" }} />
           </div>
           <div
             style={{

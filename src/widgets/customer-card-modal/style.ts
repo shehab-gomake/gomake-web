@@ -90,7 +90,7 @@ const useStyle = () => {
       inputStyle: {
         border: "none",
         borderBottom: "1px solid black",
-        borderBottomColor: "#2E3092",
+        borderBottomColor: primaryColor(500),
         padding: "0.5rem",
         display: "inline-block",
         boxShadow: "none",

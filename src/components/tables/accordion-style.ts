@@ -40,7 +40,7 @@ const useAccordionStyle = () => {
       },
       defaultStyle: {
         ...FONT_FAMILY.Lexend(700, 20),
-        color: "#2E3092",
+        color: "var(--theme-primary-color, #2E3092)",
       },
       chidrenTableContainer: {
         display: "flex",

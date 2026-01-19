@@ -304,7 +304,7 @@ const GoMakeTreeSelect = ({
         </div>
         {isSelected && (
           <CheckIcon
-            style={{ width: "20px", height: "20px", color: "#2e3092" }}
+            style={{ width: "20px", height: "20px", color: "var(--theme-primary-color, #2E3092)" }}
           />
         )}
       </div>

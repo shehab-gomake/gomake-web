@@ -23,9 +23,9 @@ const useStyle = () => {
       title: {
         fontWeight: "bold",
         marginTop: 2,
-        color: "#2e3092",
+        color: primaryColor(500),
       },
-      subTitle: { marginTop: 1, color: "#2e3092", fontSize: "1.1rem" },
+      subTitle: { marginTop: 1, color: primaryColor(500), fontSize: "1.1rem" },
       boxIcon: {
         display: "flex",
         justifyContent: "center",

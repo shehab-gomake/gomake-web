@@ -38,7 +38,7 @@ const GoMakeTextEditor = ({
       const customButton = document.createElement("button");
       customButton.innerHTML = t("textEditor.send");
       customButton.onclick = () => handle.call({ quill });
-      customButton.style.backgroundColor = "#2E3092";
+      customButton.style.backgroundColor = "var(--theme-primary-color, #2E3092)";
       customButton.style.color = "white";
       customButton.style.width = "65px";
       customButton.style.height = "40px";
