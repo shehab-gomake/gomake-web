@@ -34,6 +34,7 @@ export enum CpaFileType
     Incoming,
     Payments,
     Deposits,
+    MoveInPriority,
 }
 
 export enum  CurrentStationOrderingEnum
