@@ -238,6 +238,8 @@ const hpClientThemeConfig: ThemeConfig = {
       "--theme-widget-border-color": "#E0E0E0", // Border color for hp-client
       "--theme-widget-shadow": "none", // No shadow for hp-client
 
+      "--theme-box-shadow": "none",
+      "--theme-box-border": "1px solid var(--theme-border-color, none)",
       // Table Styles
       "--theme-table-head-bg": "var(--theme-secondary-100, #E8F2FF8)",
       "--theme-table-head-color": "var(--theme-text-primary,rgb(26, 44, 28))", // Table header text color

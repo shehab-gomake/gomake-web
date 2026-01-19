@@ -1155,8 +1155,9 @@ const useStyle = ({ isMobileScreen }: IProps) => {
         position: "fixed" as "fixed",
         bottom: 0,
         right: 0,
-        boxShadow: "0px 0px 5px rgba(0, 0, 0, 0.08)",
-        height: 65,
+        boxShadow: "var(--theme-box-shadow, 0px 0px 5px rgba(0, 0, 0, 0.08))",
+        borderTop: "var(--theme-box-border, none)",
+        height: 69,
         backgroundColor: "#FFF",
       },
       aiButtonsContainer: {
