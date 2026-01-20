@@ -40,6 +40,7 @@ import { getAllProductAndMaterialsApi } from "@/services/api-service/products/pr
 import { ProductCategoryType } from "@/pages-components/admin/home/widgets/quote-widget/states";
 import { EditIcon } from "@/icons";
 import { useSelectedProduct } from "@/hooks/shared-customer-admin/use-selected-product";
+import { EditUnderLineIcon } from "@/icons/edit-icon-under-line";
 
 //!here
 const PriceListPageWidget = ({
@@ -198,7 +199,7 @@ const PriceListPageWidget = ({
                   />
                 </div>
                 <div onClick={onCnClickChangeProductMode} style={{ cursor: "pointer", marginTop: -6 }}>
-                  <EditIcon />
+                  <EditUnderLineIcon stroke="var(--theme-primary-color, #2E3092)" />
                 </div>
               </div>
             </> :
@@ -210,7 +211,7 @@ const PriceListPageWidget = ({
                   marginBottom={1}
                 />
                 <div onClick={onCnClickChangeProductMode} style={{ cursor: "pointer", marginTop: 7 }}>
-                  <EditIcon />
+                  <EditUnderLineIcon stroke="var(--theme-primary-color, #2E3092)" />
                 </div>
               </div>
 
