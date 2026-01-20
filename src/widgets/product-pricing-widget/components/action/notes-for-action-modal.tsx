@@ -174,7 +174,7 @@ const NotesForActionModal = ({
       onClose={onClose}
       modalTitle={modalTitle || t("sales.notesForAction")}
       insideStyle={classes.modalStyle}
-      style={{ zIndex: 999999 }}
+      style={{ zIndex: 999999, }}
     >
       <div
         style={{
@@ -211,9 +211,10 @@ const NotesForActionModal = ({
         {hasTranslations && (
           <Box
             sx={{
-              marginBottom: 2,
+              marginBottom: "40px",
               maxHeight: "400px",
               overflowY: "auto",
+              boxShadow: "0px 0px 10px 0px rgba(0, 0, 0, 0.1)",
             }}
           >
             {item.contentTranslations.map((translation: any, index: number) => (
@@ -270,7 +271,7 @@ const NotesForActionModal = ({
           style={{
             width: "fit-content",
             height: 35,
-            position: "absolute",
+            position: "fixed",
             bottom: 4,
             [isRTL ? "left" : "right"]: 15,
           }}

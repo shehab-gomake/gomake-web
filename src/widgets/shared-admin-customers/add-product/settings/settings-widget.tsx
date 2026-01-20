@@ -441,7 +441,7 @@ const SettingsWidget = ({
                   onChangeStateProduct("translations", updatedTranslations);
                 }
               }}
-              value={getDefaultLanguageName}
+              value={productState?.name}
             />
           </div>
         </div>
