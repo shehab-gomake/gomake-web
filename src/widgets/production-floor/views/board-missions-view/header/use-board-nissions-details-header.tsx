@@ -27,6 +27,8 @@ const useBoardMissionsDetailsHeader = () => {
   const [boardMissionsDetails, setBoardMissionsDetails] = useRecoilState(
     boardMissionsDetailsState
   );
+  console.log("boardMissionsDetails", boardMissionsDetails);
+
   const boards = useRecoilValue(boardsMissionsState);
   const [data, setData] =
     useRecoilState<IStatusesBoardsMissions[]>(boardsMissionsState);
@@ -103,6 +105,7 @@ const useBoardMissionsDetailsHeader = () => {
       const boardsIds = [boardFromTable].filter(
         (b) => b?.statusId !== newStatusId
       );
+      console.log("boardsIds", boardsIds);
       const callBack = (res) => {
         setIsLoadingStatus(false);
         if (res.success) {
@@ -146,7 +149,7 @@ const useBoardMissionsDetailsHeader = () => {
               })
             );
           }
-          if (newStatusId === "79251980-1c2d-4b4f-9ab4-9ccb9cb9fb63" && boardFromTable.isNeedExample) {
+          if (newStatusId === "79251980-1c2d-4b4f-9ab4-9ccb9cb9fb63" && (boardMissionsDetails.isNeedExample || boardMissionsDetails.exampleType >= 0)) {
             setOpenSimpleApproveModal(true);
           }
           else if (newStatusId === "56dd1e80-7436-462c-82e9-cf8a90afd614") {
