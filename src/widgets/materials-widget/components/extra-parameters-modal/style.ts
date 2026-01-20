@@ -2,7 +2,7 @@ import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { useMemo } from "react";
 
 const useStyle = () => {
-  const { primaryColor, secondColor } = useGomakeTheme();
+  const { primaryColor, secondColor , primarySecondaryBlend , theme} = useGomakeTheme();
 
   const classes = useMemo(() => {
     return {
@@ -29,7 +29,7 @@ const useStyle = () => {
         textAlign: "center",
         fontWeight: "bold",
         whiteSpace: "nowrap",
-        backgroundColor: "#EBECFF",
+        backgroundColor: primarySecondaryBlend(50),
         color: "#333",
         fontSize: "14px",
         padding: "16px 12px",
@@ -47,7 +47,7 @@ const useStyle = () => {
         fontSize: "14px",
       },
     };
-  }, [primaryColor, secondColor]);
+  }, [ theme]);
 
   return { classes };
 };

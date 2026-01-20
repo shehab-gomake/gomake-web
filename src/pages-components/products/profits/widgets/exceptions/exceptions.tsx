@@ -63,7 +63,7 @@ const Exceptions = ({ tableHeaders, tableRows }: IProps) => {
                       style={
                         row?.id === actionExceptionProfitIdValue?.id
                           ? {
-                              backgroundColor: "#EBECFF",
+                              backgroundColor: "var(--theme-secondary-50, #EBECFF)",
                               width: "100%",
                               marginTop: 5,
                               paddingLeft: 22,

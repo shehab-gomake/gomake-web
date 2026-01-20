@@ -4,7 +4,7 @@ import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
 const useStyle = () => {
-  const { theme, primaryColor, secondColor } = useGomakeTheme();
+  const { theme, primaryColor, secondColor , primarySecondaryBlend} = useGomakeTheme();
   const { t } = useTranslation();
   const dir: "rtl" | "ltr" = t("direction");
   const isRTL = dir === "rtl";
@@ -116,7 +116,7 @@ const useStyle = () => {
         fontWeight: "bold",
         whiteSpace: "nowrap",
         padding: "4px",
-        backgroundColor: "#EBECFF",
+        backgroundColor: primarySecondaryBlend(50),
         width: "fit-content",
         minWidth: "fit-content",
         textTransform: "capitalize" as "capitalize",
@@ -129,14 +129,14 @@ const useStyle = () => {
         textTransform: "capitalize" as "capitalize",
       },
       headerCellText: {
-        color: "#2E3092",
+        color: primaryColor(500),
       },
       headerCellSticky: {
         textAlign: "center",
         fontWeight: "bold",
         whiteSpace: "nowrap",
         padding: "4px",
-        backgroundColor: "#EBECFF",
+        backgroundColor: primarySecondaryBlend(50),
         position: "sticky",
         [isRTL ? "left" : "right"]: "123px",
         zIndex: 105,
@@ -149,7 +149,7 @@ const useStyle = () => {
         fontWeight: "bold",
         whiteSpace: "nowrap",
         padding: "4px",
-        backgroundColor: "#EBECFF",
+        backgroundColor: primarySecondaryBlend(50),
         position: "sticky",
         [isRTL ? "left" : "right"]: 0,
         zIndex: 105,
@@ -288,7 +288,7 @@ const useStyle = () => {
       addButton: {
         color: secondColor(500),
         "&:hover": {
-          backgroundColor: primaryColor(50),
+          backgroundColor: primarySecondaryBlend(50),
         },
       },
       deleteButton: {
@@ -301,7 +301,7 @@ const useStyle = () => {
         color: primaryColor(500),
         marginRight: "4px",
         "&:hover": {
-          backgroundColor: primaryColor(50),
+          backgroundColor: primarySecondaryBlend(50),
         },
       },
       dialogTitle: {
@@ -402,7 +402,7 @@ const useStyle = () => {
         transform: "rotate(1deg)",
       },
       dropZone: {
-        backgroundColor: primaryColor(50),
+        backgroundColor: primarySecondaryBlend(50),
         borderTop: `2px solid ${primaryColor(500)}`,
       },
       modalActionsContainer: {

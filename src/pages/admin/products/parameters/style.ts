@@ -28,7 +28,7 @@ const useStyle = () => {
         paddingLeft: 83,
         paddingRight: 54,
         backgroundColor: primaryColor(50),
-        border: " 1px solid #EBECFF",
+        border: " 1px solid var(--theme-secondary-50, #EBECFF)",
       },
       headerNameStyle: {
         display: "flex",
@@ -49,7 +49,7 @@ const useStyle = () => {
         paddingLeft: 83,
         paddingRight: 54,
         backgroundColor: "#FFF",
-        border: " 1px solid #EBECFF",
+        border: " 1px solid var(--theme-secondary-50, #EBECFF)",
       },
       line: {
         borderBottom: `0.4px solid ${neutralColor(400)}`,

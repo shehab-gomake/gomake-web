@@ -32,7 +32,7 @@ const useStyle = () => {
       },
       subHeader: {
         ...FONT_FAMILY.Lexend(600, 20),
-        color: "#5759A8",
+        color: "var(--theme-secondary-color, #5759A8)",
         cursor: "pointer",
         width: "fit-content",
       },

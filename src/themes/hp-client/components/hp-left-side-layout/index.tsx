@@ -2,19 +2,18 @@ import { useTranslation } from "react-i18next";
 import { useStyle, NavigationScrollbarStyles } from "./style";
 import { HpTab } from "./tab";
 import { useAuthLayoutHook } from "@/layouts/customer-auth-layout/use-auth-layout-hook";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { hpSidebarStatusState } from "@/store/nav-status";
 import { useUserPermission } from "@/hooks/use-permission";
-import { useState } from "react";
 import { printHouseHasAIFeature } from "@/store/print-house-profile";
 import { HpArrowIcon } from "./arrow-icon";
-import { adaptRight } from "@/utils/adapter";
 import { HpLogoIcon } from "@/themes/hp-client/icons/HpLogoIcon";
 
 const HpLeftSideLayout = ({ customGap }: { customGap?: number }) => {
   const { t } = useTranslation();
   const isRTL = t("direction") === "rtl";
   const { tabs1, tabs2, tabs3, tabs4 } = useAuthLayoutHook(null, true);
-  const [isSidebarClosed, setIsSidebarClosed] = useState(false);
+  const [isSidebarClosed, setIsSidebarClosed] = useRecoilState(hpSidebarStatusState);
   const { CheckPermission } = useUserPermission();
   const { classes, primaryColor } = useStyle({
     navStatus: { isClosed: isSidebarClosed },

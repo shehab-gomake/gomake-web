@@ -1,14 +1,11 @@
 import { useMemo } from "react";
-import i18next from "i18next";
-
 import { useTranslation } from "react-i18next";
 import { convertHeightToVH } from "@/utils/adapter";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 const useStyle = () => {
-  const { t } = useTranslation();
-  const { primaryColor, secondColor } = useGomakeTheme();
+  const { primaryColor, secondColor , primarySecondaryBlend , theme} = useGomakeTheme();
 
   const clasess = useMemo(() => {
     return {
@@ -20,7 +17,7 @@ const useStyle = () => {
             position:"sticky" as "sticky",
             left: 0,
             marginLeft: "20px",
-            backgroundColor: primaryColor(50),
+            backgroundColor: primarySecondaryBlend(50),
             minWidth:"200px",
             padding:"20px"
         
@@ -42,7 +39,7 @@ const useStyle = () => {
             width: "100%",
             justifyContent: "space-around",
             alignItems: "center",
-            backgroundColor: primaryColor(50),
+            backgroundColor: primarySecondaryBlend(50),
             lineHeight: "17.5px",
             ...FONT_FAMILY.Lexend(500, 14),
             position:"sticky" as "sticky",
@@ -51,7 +48,7 @@ const useStyle = () => {
             zIndex:3,
           },
           HeaderTable:{
-            backgroundColor:"#EBECFF",
+            backgroundColor:"var(--theme-secondary-50, #EBECFF)",
           },
           tableBody: {
             display: "flex",
@@ -77,7 +74,7 @@ const useStyle = () => {
           },
      
     };
-  }, []);
+  }, [theme]);
   return {
     clasess
   };
