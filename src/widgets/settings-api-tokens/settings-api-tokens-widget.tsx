@@ -13,8 +13,10 @@ const SettingsApiTokensWidget = () => {
         <title>{t("settings.apiTokens")}</title>
       </Head>
       <div style={classes.mainContainer}>
-        <h2 style={classes.pageTitle}>{t("settings.apiTokens")}</h2>
-        <ApiTokensList />
+        <h2 style={{ ...classes.pageTitle, flexShrink: 0 }}>{t("settings.apiTokens")}</h2>
+        <div style={{ flex: 1, overflow: "hidden", minHeight: 0 }}>
+          <ApiTokensList />
+        </div>
       </div>
     </>
   );

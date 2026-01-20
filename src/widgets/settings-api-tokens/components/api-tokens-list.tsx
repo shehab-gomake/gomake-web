@@ -54,7 +54,9 @@ export const ApiTokensList = () => {
       </div>
 
       {loading ? (
-        <div>{t("common.loading")}</div>
+        <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
+          {t("common.loading")}
+        </div>
       ) : tokens.length === 0 ? (
         <div style={classes.emptyState}>
           {t("apiTokens.noTokens")}

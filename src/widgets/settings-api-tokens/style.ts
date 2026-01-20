@@ -8,6 +8,10 @@ const useStyle = () => {
     return {
       mainContainer: {
         padding: "20px",
+        height: "100%",
+        display: "flex",
+        flexDirection: "column" as "column",
+        overflow: "hidden",
       },
       pageTitle: {
         fontSize: "24px",
@@ -19,23 +23,31 @@ const useStyle = () => {
       container: {
         display: "flex",
         flexDirection: "column" as "column",
-        gap: "20px",
+        height: "100%",
+        maxHeight: "calc(100vh - 200px)",
+        overflow: "hidden",
       },
       header: {
         display: "flex",
         justifyContent: "flex-end",
         marginBottom: "16px",
+        flexShrink: 0,
       },
       emptyState: {
         textAlign: "center" as "center",
         padding: "40px",
         color: secondColor(500),
         ...FONT_FAMILY.Lexend(400, 16),
+        overflowY: "auto",
+        flex: 1,
       },
       tokensList: {
         display: "flex",
         flexDirection: "column" as "column",
         gap: "16px",
+        overflowY: "auto",
+        flex: 1,
+        paddingRight: "8px",
       },
       card: {
         border: "1px solid #E5E7EB",
