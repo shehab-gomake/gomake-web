@@ -354,7 +354,7 @@ const useStyle = ({ isMobileScreen }: IProps) => {
       requiredDropDownListStyle: {
         width: "200px",
         borderRadius: "var(--theme-radius-md, 4px)",
-        height: 40,
+        height: 40.5,
         borderBottom: "1px solid red",
         backgroundColor: "#fff",
         ...FONT_FAMILY.Lexend(500, 14),
