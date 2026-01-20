@@ -24,6 +24,8 @@ import { CompanyProfileIcon } from "@/components/icons/company-profile";
 import { SettingsSubscriptionWidget } from "@/widgets/settings-subscription-widget/settings-subscription-widget";
 import { SettingsFileApiWidget } from "../settings-file-api/settings-file-api-widget";
 import { FileApiIcon } from "@/components/icons/file-api-icon";
+import { SettingsApiTokensWidget } from "../settings-api-tokens/settings-api-tokens-widget";
+import { ApiTokenIcon } from "@/components/icons/api-token-icon";
 import FolderOpenOutlinedIcon from "@mui/icons-material/FolderOpenOutlined";
 
 export const list: IListItem[] = [
@@ -96,6 +98,13 @@ export const list: IListItem[] = [
     value: "11",
     icon: FileApiIcon,
     path: "file-api-settings",
+  },
+  {
+    component: SettingsApiTokensWidget,
+    text: "settings.apiTokens",
+    value: "13",
+    icon: ApiTokenIcon,
+    path: "api-tokens",
   },
   {
     component: SettingsPreferencesWidget,
