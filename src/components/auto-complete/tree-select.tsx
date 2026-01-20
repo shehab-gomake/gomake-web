@@ -36,8 +36,8 @@ const StyledTreeSelect = styled<any>(TreeSelect)(
     borderBottom: !isRequired
       ? "unset !important"
       : selectedOption
-      ? "2px solid rgb(67,195,232) !important"
-      : "2px solid rgb(237, 2, 140) !important",
+        ? "2px solid rgb(67,195,232) !important"
+        : "2px solid rgb(237, 2, 140) !important",
     "& .ant-select-selector": {
       border: "1px solid var(--theme-dropdown-border-color, transparent) !important",
       borderRadius: "var(--theme-dropdown-border-radius, 4px) !important",
@@ -147,6 +147,7 @@ const GoMakeTreeSelect = ({
   setSelectedTab,
   isRequired,
   hideOtherTabs,
+  hideClear,
   ...props
 }: {
   value?: any;
@@ -157,6 +158,7 @@ const GoMakeTreeSelect = ({
   selectedTab?: any;
   isRequired?: boolean;
   hideOtherTabs?: boolean;
+  hideClear?: boolean;
   setSelectedTab: (value: any) => void;
 }) => {
   const [selectedNodeKey, setSelectedNodeKey] = useState<any>(null);
@@ -342,7 +344,7 @@ const GoMakeTreeSelect = ({
       : selectedNode?.children || [];
   }, [selectedTab, options]);
 
-  const onPopupScroll: TreeSelectProps["onPopupScroll"] = (e) => {};
+  const onPopupScroll: TreeSelectProps["onPopupScroll"] = (e) => { };
 
   const filterTreeNode = (inputValue, treeNode) => {
     if (!inputValue) return true;
@@ -393,14 +395,14 @@ const GoMakeTreeSelect = ({
         value={value?.id}
         dropdownStyle={{ maxHeight: 400, overflow: "auto" }}
         placeholder={placeholder || t("modal.pleaseSelect")}
-        allowClear
+        allowClear={!hideClear}
         onChange={onChange}
         isRequired={isRequired}
         treeData={filteredTreeData}
         onPopupScroll={onPopupScroll}
         filterTreeNode={filterTreeNode}
         suffixIcon={<CustomArrowIcon />}
-        clearIcon={<CustomClearIcon />}
+        clearIcon={hideClear ? null : <CustomClearIcon />}
         dir={dir}
         hasValue={!!value?.id}
         dropdownRender={(menu) => (

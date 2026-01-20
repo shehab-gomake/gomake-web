@@ -1,6 +1,6 @@
 import { useStyle } from "./style";
 import { HeaderTitle } from "@/widgets";
-import { useDigitalOffsetPrice, useSnackBar } from "@/hooks";
+import { useDigitalOffsetPrice, useGomakeAxios, useSnackBar } from "@/hooks";
 import {
   GoMakeDeleteModal,
   GoMakeModal,
@@ -20,8 +20,8 @@ import { Permissions } from "@/components/CheckPermission/enum";
 import { EWidgetProductType } from "./enums";
 import { PricingWidget } from "@/widgets/product-pricing-widget/pricing-widget";
 import { createTheme, Tabs, ThemeProvider } from "@mui/material";
-import { useEffect } from "react";
-import { useRecoilValue } from "recoil";
+import { useCallback, useEffect, useState } from "react";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import { PriceListPageSkeletonWidget } from "./digital-offset-price-skeleton";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { useRouter } from "next/router";
@@ -33,6 +33,13 @@ import { permissionsState } from "@/store/permissions";
 import { DotsLoader } from "@/components/dots-loader/dots-Loader";
 import { SecondaryButton } from "@/components/button/secondary-button";
 import { ErrorsModalWidget } from "./errors-modal-widget";
+import { GoMakeTreeSelect } from "@/components/auto-complete/tree-select";
+import { subProductsParametersState } from "@/store/general-parameters-state";
+import { ETab } from "@/pages-components/admin/home/widgets/quote-widget/enums";
+import { getAllProductAndMaterialsApi } from "@/services/api-service/products/product-endpoints";
+import { ProductCategoryType } from "@/pages-components/admin/home/widgets/quote-widget/states";
+import { EditIcon } from "@/icons";
+import { useSelectedProduct } from "@/hooks/shared-customer-admin/use-selected-product";
 
 //!here
 const PriceListPageWidget = ({
@@ -153,16 +160,62 @@ const PriceListPageWidget = ({
     getSelectedWorkFlow(currentSignalRConnectionId).then();
   };
 
+  const {
+    isEditProductMode,
+    selectedProduct,
+    combinedData,
+    setSubProducts,
+    handleProductChange,
+    onCnClickSaveProductMode,
+    onCnClickChangeProductMode,
+    onCnClickEditProductMode
+  } = useSelectedProduct();
+
   return (
     <div>
       {productTemplate?.sections?.length > 0 ? (
         <div style={clasess.mainContainer}>
-          <HeaderTitle
-            title={productTemplate?.name}
-            marginTop={6}
-            marginBottom={24}
-          />
-          <div style={clasess.mainRowContainer}>
+          {
+            isEditProductMode ? <>
+              <div style={clasess.autoComplateRowContainer} >
+                <div
+                  data-tour="select-product"
+                  style={{ width: "30%", marginBottom: 16 }}
+                >
+                  <GoMakeTreeSelect
+                    value={selectedProduct}
+                    options={combinedData}
+                    onChange={(e) => {
+                      setSubProducts([]);
+                      handleProductChange(e, true);
+                      onCnClickSaveProductMode();
+                    }}
+                    placeholder={t("home.admin.selectProductOrMaterial")}
+                    selectedTab={ETab.PRODUCTS}
+                    setSelectedTab={null}
+                    hideOtherTabs={true}
+                    hideClear={true}
+                  />
+                </div>
+                <div onClick={onCnClickChangeProductMode} style={{ cursor: "pointer", marginTop: -6 }}>
+                  <EditIcon />
+                </div>
+              </div>
+            </> :
+              <div onClick={onCnClickEditProductMode}
+                style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: 10, marginBottom: 23 }}>
+                <HeaderTitle
+                  title={productTemplate?.name}
+                  marginTop={1}
+                  marginBottom={1}
+                />
+                <div onClick={onCnClickChangeProductMode} style={{ cursor: "pointer", marginTop: 7 }}>
+                  <EditIcon />
+                </div>
+              </div>
+
+          }
+          <div style={clasess.mainRowContainer} onClick={onCnClickSaveProductMode}>
             <div style={clasess.leftSideContainer}>
               <div style={clasess.tabsContainer}>
                 <ThemeProvider theme={theme}>
@@ -207,14 +260,14 @@ const PriceListPageWidget = ({
                 style={
                   !isMobileScreen
                     ? {
-                        height: "calc(100vh - 300px)",
-                        overflow: "auto",
-                        width: "calc(100% - 330px)",
-                      }
+                      height: "calc(100vh - 300px)",
+                      overflow: "auto",
+                      width: "calc(100% - 330px)",
+                    }
                     : {
-                        height: "calc(100vh - 260px)",
-                        overflow: "auto",
-                      }
+                      height: "calc(100vh - 260px)",
+                      overflow: "auto",
+                    }
                 }
               >
                 <div style={clasess.sectionsContainer}>
@@ -421,15 +474,15 @@ const PriceListPageWidget = ({
                   ].length -
                     1 !==
                     activeIndex && (
-                    <div data-tour="next-button">
-                      <GomakePrimaryButton
-                        style={clasess.nextBtnStyle}
-                        onClick={handleNextClick}
-                      >
-                        {t("products.offsetPrice.admin.nextBtn")}
-                      </GomakePrimaryButton>
-                    </div>
-                  )}
+                      <div data-tour="next-button">
+                        <GomakePrimaryButton
+                          style={clasess.nextBtnStyle}
+                          onClick={handleNextClick}
+                        >
+                          {t("products.offsetPrice.admin.nextBtn")}
+                        </GomakePrimaryButton>
+                      </div>
+                    )}
                 </div>
               </div>
             )}
@@ -458,7 +511,7 @@ const PriceListPageWidget = ({
 
                       if (
                         DOCUMENT_TYPE.order ===
-                          Number(router.query.documentType) &&
+                        Number(router.query.documentType) &&
                         isFlowChanged &&
                         missionsListForEdit &&
                         missionsListForEdit.length > 0
