@@ -27,8 +27,6 @@ const useBoardMissionsDetailsHeader = () => {
   const [boardMissionsDetails, setBoardMissionsDetails] = useRecoilState(
     boardMissionsDetailsState
   );
-  console.log("boardMissionsDetails", boardMissionsDetails);
-
   const boards = useRecoilValue(boardsMissionsState);
   const [data, setData] =
     useRecoilState<IStatusesBoardsMissions[]>(boardsMissionsState);
@@ -105,7 +103,6 @@ const useBoardMissionsDetailsHeader = () => {
       const boardsIds = [boardFromTable].filter(
         (b) => b?.statusId !== newStatusId
       );
-      console.log("boardsIds", boardsIds);
       const callBack = (res) => {
         setIsLoadingStatus(false);
         if (res.success) {
