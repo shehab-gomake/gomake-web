@@ -15,7 +15,7 @@ import { useTranslation } from "react-i18next";
 const useActions = () => {
   const { callApi } = useGomakeAxios();
   const { navigate } = useGomakeRouter();
-  const { primaryColor } = useGomakeTheme();
+  const { primarySecondaryBlend } = useGomakeTheme();
   const [term, setTerm] = useState("");
   const [materilasSearched, setMaterilasSearched] = useState([]);
   const { t } = useTranslation();
@@ -69,11 +69,14 @@ const useActions = () => {
       ),
       <PermissionCheck userPermission={Permissions.EDIT_MACHINE}>
         <PrimaryButton
+          style={{
+            color: primarySecondaryBlend(500),
+          }}
           data-tour={
             action?.id === PRINTING_ACTION_ID ? "editPrintingAction" : undefined
           }
           startIcon={
-            <EditIcon color={primaryColor(500)} width={20} height={20} />
+            <EditIcon stroke={primarySecondaryBlend(500)} width={20} height={20} />
           }
           onClick={() =>
             navigate(
@@ -87,8 +90,11 @@ const useActions = () => {
       </PermissionCheck>,
       <PermissionCheck userPermission={Permissions.EDIT_MACHINE}>
         <PrimaryButton
+          style={{
+            color: primarySecondaryBlend(500),
+          }}
           startIcon={
-            <EditIcon color={primaryColor(500)} width={20} height={20} />
+            <EditIcon stroke={primarySecondaryBlend(500)} width={20} height={20} />
           }
           onClick={() =>
             navigate(
@@ -103,8 +109,11 @@ const useActions = () => {
 
       <PermissionCheck userPermission={Permissions.EDIT_PROPERTIES}>
         <PrimaryButton
+          style={{
+            color: primarySecondaryBlend(500),
+          }}
           startIcon={
-            <EditIcon color={primaryColor(500)} width={20} height={20} />
+            <EditIcon stroke={primarySecondaryBlend(500)} width={20} height={20} />
           }
           onClick={() =>
             navigate(
