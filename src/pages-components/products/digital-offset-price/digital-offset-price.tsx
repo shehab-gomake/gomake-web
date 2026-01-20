@@ -194,6 +194,7 @@ const PriceListPageWidget = ({
                     selectedTab={ETab.PRODUCTS}
                     setSelectedTab={null}
                     hideOtherTabs={true}
+                    hideClear={true}
                   />
                 </div>
                 <div onClick={onCnClickChangeProductMode} style={{ cursor: "pointer", marginTop: -6 }}>
