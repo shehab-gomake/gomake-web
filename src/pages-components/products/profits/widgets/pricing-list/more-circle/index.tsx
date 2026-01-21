@@ -1,50 +1,29 @@
 import { usePricingListMenu } from "./use-menu-modal";
-
 import { IconButton, MenuItem } from "@mui/material";
 import { MoreCircleIcon } from "@/icons";
 import { GoMakeMenu } from "@/components";
-import { useRecoilState, useRecoilValue } from "recoil";
+import {  useRecoilValue } from "recoil";
 import { profitsState } from "../../../store/profits";
-import { editPriceListState } from "../../../store/edit-price-list";
-import { actionExceptionProfitId } from "@/store";
+import { useTranslation } from "react-i18next";
 
 const PricingListMenuWidget = ({ item }: any) => {
-  const { open, handleClose, handleClick, anchorEl } = usePricingListMenu();
+  const { t } = useTranslation();
+  const { open, handleClose, handleClick, anchorEl , primaryColor } = usePricingListMenu();
   const profitsStateValue = useRecoilValue<any>(profitsState);
-  const [, setEditPriceListState] = useRecoilState<any>(editPriceListState);
-  const actionExceptionProfitIdValue = useRecoilValue<any>(
-    actionExceptionProfitId
-  );
 
   return (
     <>
       <IconButton disabled={!!item?.isBaseCaseQuantity} onClick={handleClick}>
-        <MoreCircleIcon />
-
-        {/* <DeleteIcon style={{ color: "#a1a2cd" }} /> */}
+        <MoreCircleIcon color={primaryColor(500)}/>
       </IconButton>
       <GoMakeMenu handleClose={handleClose} open={open} anchorEl={anchorEl}>
-        {/* <MenuItem
-          onClick={() => {
-            setEditPriceListState({
-              isEdit: true,
-              state: { ...item },
-              id: item.id,
-            });
-            handleClose();
-          }}
-        >
-          Edit
-        </MenuItem> */}
         <MenuItem
           onClick={() => {
             profitsStateValue?.deleteActionProfitRow(item?.id);
             handleClose();
           }}
-
-          // onClick={() => profitsStateValue?.deleteActionProfitRow(item?.id)}
         >
-          Delete
+          {t("products.profits.delete")}
         </MenuItem>
       </GoMakeMenu>
     </>

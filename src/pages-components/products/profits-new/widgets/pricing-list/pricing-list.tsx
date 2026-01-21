@@ -112,12 +112,12 @@ const PricingList = ({
           >
             <SettingsIcon stroke={"#000000"} width={24} height={24} />
           </IconButton>
-          <GoMakeTextInput
+          <GomakeTextInput
             value={minimumValue === 0 ? "" : minimumValue}
             onChange={(e: ChangeEvent<HTMLInputElement>) =>
               onInputChangeMinimumValue(e.target.value)}
             onBlur={() => onBlurMinimumValue()}
-            style={classes.autoCompleteStyleContainer}
+            style={classes.textInputContainer}
             placeholder={t("products.addProduct.admin.minimumPrice")}
           />
           {router?.query?.isOutSource && (

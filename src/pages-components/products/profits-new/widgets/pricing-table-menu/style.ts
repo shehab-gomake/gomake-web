@@ -4,17 +4,17 @@ import { useMemo } from "react";
 
 const useStyle = () => {
   const { primaryColor } = useGomakeTheme();
-  const clasess = useMemo(() => {
+  const classes = useMemo(() => {
     return {
       menuItemStyle: {
-        ...FONT_FAMILY.Lexend(500, 10),
-        color: primaryColor(300),
+        ...FONT_FAMILY.Lexend(500, 11),
+        color: `var(--theme-text-primary, ${primaryColor(400)})`,
       },
       dividerStyle: { margin: 0 },
     };
   }, []);
   return {
-    clasess,
+    classes,
   };
 };
 export { useStyle };

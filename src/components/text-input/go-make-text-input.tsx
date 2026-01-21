@@ -58,6 +58,7 @@ interface GoMakeTextInputProps {
   helperText?: ReactNode;
   direction?: "ltr" | "rtl";
   error?: any;
+  sx?: any;
 }
 
 const GoMakeTextInput = ({
@@ -80,6 +81,7 @@ const GoMakeTextInput = ({
   helperText,
   direction,
   error,
+  sx,
 }: GoMakeTextInputProps) => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const trimmedValue = e.target.value.trimStart();
@@ -122,6 +124,7 @@ const GoMakeTextInput = ({
       dir={direction}
       onWheel={handleWheel}
       style={style}
+      sx={sx}
     />
   );
 };

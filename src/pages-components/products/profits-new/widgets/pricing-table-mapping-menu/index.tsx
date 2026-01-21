@@ -14,7 +14,7 @@ const PricingTableMappingMenu = ({
   onClickOpenDuplicateNewRuleModal,
   setTypeExceptionSelected,
 }) => {
-  const { clasess } = useStyle();
+  const { classes } = useStyle();
   const { t } = useTranslation();
   const isDefaultException =
     selectedPricingTableItems?.exceptionType === ETypeException.DEFAULT;
@@ -54,15 +54,15 @@ const PricingTableMappingMenu = ({
           <>
             {item.hidden ? null : (
               <MenuItem
-                style={clasess.menuItemContainer}
+                style={classes.menuItemContainer}
                 key={index}
                 onClick={item?.onclick}
               >
-                <div style={clasess.menuTitleStyle}>{item?.name}</div>
+                <div style={classes.menuTitleStyle}>{item?.name}</div>
               </MenuItem>
             )}
             {index != menuList?.length - 1 ? (
-              <div style={clasess.lineStyle} />
+              <div style={classes.lineStyle} />
             ) : null}
           </>
         );

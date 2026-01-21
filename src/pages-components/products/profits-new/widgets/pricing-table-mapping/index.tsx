@@ -9,24 +9,24 @@ const PricingTableMapping = ({
   setSelectedPricingTableItems,
   selectedPricingTableItems,
 }) => {
-  const { clasess } = useStyle();
+  const { classes , primaryColor } = useStyle();
   const { t } = useTranslation();
 
   return (
-    <div style={clasess.mainContainer}>
+    <div style={classes.mainContainer}>
       {item.exceptionType != ETypeException.DEFAULT ? (
-        <div style={clasess.sortStyle}>
+        <div style={classes.sortStyle}>
           <SortIcon />
         </div>
       ) : (
-        <div style={clasess.emptyStyle} />
+        <div style={classes.emptyStyle} />
       )}
 
       <div
         style={
           selectedPricingTableItems?.id === item?.id
-            ? clasess.WithBordermainContainer
-            : clasess.cardItemWithMore
+            ? classes.WithBordermainContainer
+            : classes.cardItemWithMore
         }
       >
         <div
@@ -43,9 +43,9 @@ const PricingTableMapping = ({
             handleClickPricingTablesMapping(e);
             setSelectedPricingTableItems(item);
           }}
-          style={clasess.moreIconStyle}
+          style={classes.moreIconStyle}
         >
-          <MoreCircleIcon />
+          <MoreCircleIcon color={primaryColor(500)}/>
         </div>
       </div>
     </div>

@@ -9,7 +9,7 @@ const AdditinalProfitMenu = ({
   anchorEl,
   onClickOpenDeleteAdditionalRowModal,
 }) => {
-  const { clasess } = useStyle();
+  const { classes } = useStyle();
   const { t } = useTranslation();
 
   const menuList = [
@@ -27,14 +27,14 @@ const AdditinalProfitMenu = ({
         return (
           <>
             <MenuItem
-              style={clasess.menuItemContainer}
+              style={classes.menuItemContainer}
               key={index}
               onClick={item?.onclick}
             >
-              <div style={clasess.menuTitleStyle}>{item?.name}</div>
+              <div style={classes.menuTitleStyle}>{item?.name}</div>
             </MenuItem>
             {index != menuList?.length - 1 ? (
-              <div style={clasess.lineStyle} />
+              <div style={classes.lineStyle} />
             ) : null}
           </>
         );

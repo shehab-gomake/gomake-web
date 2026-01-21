@@ -1,7 +1,9 @@
 import { CSSProperties, useMemo } from "react";
 import { FONT_FAMILY } from "@/utils/font-family";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 const useAccordionStyle = () => {
+  const {primaryColor  , theme} = useGomakeTheme();
   const classes = useMemo((): Record<string, CSSProperties> => {
     return {
       mainContainer: {
@@ -20,7 +22,7 @@ const useAccordionStyle = () => {
         padding: "10px 16px",
 
         borderRadius: "16px",
-        backgroundColor: "#D5D6E9",
+        backgroundColor: primaryColor(100),
         cursor: "pointer",
       },
       headerTitleStyle: {
@@ -55,9 +57,10 @@ const useAccordionStyle = () => {
         paddingBottom: 0,
       },
     };
-  }, []);
+  }, [theme]);
   return {
     classes,
+    primaryColor,
   };
 };
 export { useAccordionStyle };

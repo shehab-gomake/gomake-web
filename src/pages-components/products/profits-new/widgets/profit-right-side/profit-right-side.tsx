@@ -47,7 +47,7 @@ const ProfitRightSideWidget = ({
   getAllActionProfitRowsByActionId,
   getCalculateCaseProfits,
 }: ProfitRightSideProps) => {
-  const { clasess } = useStyle();
+  const { classes } = useStyle();
   const { t } = useTranslation();
   const [openDeleteRowModal, setOpenDeleteRowModal] = useState<boolean>(false);
   const [openDeleteAdditionalRowModal, setOpenDeleteAdditionalRowModal] =
@@ -80,8 +80,8 @@ const ProfitRightSideWidget = ({
   };
   const { parametersStateValue } = useParameters();
   return (
-    <div style={clasess.mainHeaderContainer}>
-      <AccordionTable
+    <div style={classes.mainHeaderContainer}>
+      <AccordionTable 
         title={t("products.profits.pricingListWidget.pricingTables")}
         isDefault={true}
         onclickOpenMenu={(e) => {
