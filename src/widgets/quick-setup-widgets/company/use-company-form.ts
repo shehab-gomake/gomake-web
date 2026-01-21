@@ -13,12 +13,17 @@ import {
   getAllCountriesApi,
 } from "@/services/api-service/profiles/company-profile-api";
 import { domainRegex, emailRegex } from "@/utils/regex";
+import { companyProfileState, ICompanyProfile } from "@/store/company-profile";
 
 const useCompanyForm = () => {
   const [state, setState] = useRecoilState(signupCompanyState);
   const [currencies, setCurrencies] = useRecoilState(currenciesState);
   const { callApi } = useGomakeAxios();
   const languages = useRecoilValue(languageOptionsState);
+  const profileData = useRecoilValue<ICompanyProfile>(companyProfileState);
+  const defaultLanguageOptions = profileData?.languages?.length > 0
+    ? languages.filter((lang) => profileData?.languages?.includes(lang.value))
+    : [];
   const [loading, setLoading] = useState<boolean>(false);
   const { alertFaultAdded, alertFault } = useSnackBar();
   const [isAvailable, setIsAvailable] = useState(false);
@@ -35,7 +40,7 @@ const useCompanyForm = () => {
   }, [state.country]);
   useEffect(() => {
     if (state.country?.languageCode) {
-      let languagesTemp = languages.find((item) => item.value === state.country.languageCode);
+      let languagesTemp = defaultLanguageOptions.find((item) => item.value === state.country.languageCode);
       if (languagesTemp?.value) {
         onChange("systemLanguage", languagesTemp);
       }
@@ -141,7 +146,7 @@ const useCompanyForm = () => {
     state,
     onChange,
     currencies,
-    languages,
+    languages: defaultLanguageOptions,
     onclickNext,
     loading,
     countryList,

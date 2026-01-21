@@ -31,6 +31,10 @@ const SettingsWidget = ({
   const { t } = useTranslation();
   const profile = useRecoilValue<ICompanyProfile>(companyProfileState);
   const allLanguages = useRecoilValue(languageOptionsState);
+  const profileData = useRecoilValue<ICompanyProfile>(companyProfileState);
+  const defaultLanguageOptions = profileData?.languages?.length > 0
+    ? allLanguages.filter((lang) => profileData?.languages?.includes(lang.value))
+    : [];
   const [openTranslationModal, setOpenTranslationModal] = useState(false);
   const {
     allProductSKU,
@@ -78,10 +82,10 @@ const SettingsWidget = ({
     if (!profile?.languages || profile.languages.length === 0) {
       return [];
     }
-    return allLanguages.filter((lang) =>
+    return defaultLanguageOptions.filter((lang) =>
       profile.languages?.includes(lang.value)
     );
-  }, [profile?.languages, allLanguages]);
+  }, [profile?.languages, defaultLanguageOptions]);
 
   // Get default language
   const defaultLanguage = useMemo(() => {
@@ -555,16 +559,16 @@ const SettingsWidget = ({
                     getOptionLabel={(option: any) => option.name}
                     value={
                       productState?.productStructureType ===
-                      EProductStructureType.COMPOSITE
+                        EProductStructureType.COMPOSITE
                         ? {
-                            label: t("products.addProduct.admin.composite"),
-                            id: "COMPOSITE",
-                            name: t("products.addProduct.admin.composite"),
-                            isComposite: true,
-                          }
+                          label: t("products.addProduct.admin.composite"),
+                          id: "COMPOSITE",
+                          name: t("products.addProduct.admin.composite"),
+                          isComposite: true,
+                        }
                         : typeof productState?.templateId != "object"
-                        ? defultTemplate
-                        : productState?.templateId
+                          ? defultTemplate
+                          : productState?.templateId
                     }
                     onChange={(e: any, value: any) => {
                       // Store templateId for display but don't send in payload
@@ -573,7 +577,7 @@ const SettingsWidget = ({
                       if (
                         !value &&
                         productState?.productStructureType ===
-                          EProductStructureType.COMPOSITE
+                        EProductStructureType.COMPOSITE
                       ) {
                         onChangeStateProduct(
                           "productStructureType",

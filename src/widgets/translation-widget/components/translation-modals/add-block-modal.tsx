@@ -7,6 +7,7 @@ import { GoMakeAutoComplate, GoMakeModal, GomakeTextInput } from "@/components";
 import { useStyle } from "../style";
 import { languageOptionsState } from "@/store/languages";
 import { useRecoilValue } from "recoil";
+import { companyProfileState, ICompanyProfile } from "@/store/company-profile";
 
 interface IAddLangModalProps {
   openModal: boolean;
@@ -23,6 +24,10 @@ const AddLangModal = ({
   const { classes } = useStyle();
   const [langKey, setLangKey] = useState<string>();
   const languages = useRecoilValue(languageOptionsState);
+  const profileData = useRecoilValue<ICompanyProfile>(companyProfileState);
+  const defaultLanguageOptions = profileData?.languages?.length > 0
+    ? languages.filter((lang) => profileData?.languages?.includes(lang.value))
+    : [];
 
   return (
     <GoMakeModal
@@ -33,7 +38,7 @@ const AddLangModal = ({
     >
       <Stack style={classes.firstStackStyle}>
         <GoMakeAutoComplate
-          options={languages}
+          options={defaultLanguageOptions}
           onChange={(e: any, value: any) => setLangKey(value?.value)}
           placeholder={t("translations.selectLang")}
         />

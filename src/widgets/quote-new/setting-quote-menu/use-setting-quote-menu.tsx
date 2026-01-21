@@ -11,7 +11,7 @@ import { EnumVATStatus } from "@/enums/accounting-enums";
 import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { languageOptionsState } from "@/store/languages";
-import { companyProfileState } from "@/store/company-profile";
+import { companyProfileState, ICompanyProfile } from "@/store/company-profile";
 
 const useSttingsQuoteMenu = ({
   updateDocumentPreference,
@@ -27,16 +27,20 @@ const useSttingsQuoteMenu = ({
   const quoteStateValue = useRecoilValue<any>(quoteItemState);
   const { getCurrenciesApi, profile } = useCompanyProfile();
   const allLanguages = useRecoilValue(languageOptionsState);
+  const profileData = useRecoilValue<ICompanyProfile>(companyProfileState);
+  const defaultLanguageOptions = profileData?.languages?.length > 0
+    ? allLanguages.filter((lang) => profileData?.languages?.includes(lang.value))
+    : [];
 
   // Get print house languages
   const printHouseLanguages = useMemo(() => {
     if (!profile?.languages || profile.languages.length === 0) {
       return [];
     }
-    return allLanguages.filter((lang) =>
+    return defaultLanguageOptions.filter((lang) =>
       profile.languages?.includes(lang.value)
     );
-  }, [profile?.languages, allLanguages]);
+  }, [profile?.languages, defaultLanguageOptions]);
 
   // Get current default language display text
   const defaultLanguageText = useMemo(() => {

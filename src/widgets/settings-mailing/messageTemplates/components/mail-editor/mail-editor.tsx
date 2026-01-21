@@ -30,6 +30,7 @@ import { useEffect, useState } from "react";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { printHouseProfile } from "@/store/print-house-profile";
 import { RichTextEditor } from "./rich-text-editor";
+import { companyProfileState, ICompanyProfile } from "@/store/company-profile";
 
 export interface IProps {
   onClickSave: (value: any) => void;
@@ -42,6 +43,10 @@ const EmailSettings = ({ onClickSave, onOpenDeleteModal }: IProps) => {
   const [subject, setSubject] = useRecoilState<string>(smsSubjectState);
   const [body, setBody] = useRecoilState<string>(smsBodyState);
   const languages = useRecoilValue(languageOptionsState);
+  const profileData = useRecoilValue<ICompanyProfile>(companyProfileState);
+  const defaultLanguageOptions = profileData?.languages?.length > 0
+    ? languages.filter((lang) => profileData?.languages?.includes(lang.value))
+    : [];
   const printHouseProfileState = useRecoilValue(printHouseProfile);
 
   useEffect(() => {
@@ -124,8 +129,8 @@ const EmailSettings = ({ onClickSave, onOpenDeleteModal }: IProps) => {
           {t("mailingSettings.language")}
         </h3>
         <GoMakeAutoComplate
-          options={languages.map(({ text, value }) => ({
-            ...languages,
+          options={defaultLanguageOptions.map(({ text, value }) => ({
+            ...defaultLanguageOptions,
             label: text,
             value,
           }))}
@@ -133,7 +138,7 @@ const EmailSettings = ({ onClickSave, onOpenDeleteModal }: IProps) => {
           style={classes.dropDownListStyle}
           value={
             !!state.lang
-              ? languages.find((lang) => lang.value === state?.lang)?.text
+              ? defaultLanguageOptions.find((lang) => lang.value === state?.lang)?.text
               : ""
           }
           disableClearable={true}

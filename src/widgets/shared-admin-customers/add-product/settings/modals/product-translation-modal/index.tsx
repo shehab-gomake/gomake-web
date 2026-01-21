@@ -32,16 +32,20 @@ const ProductTranslationModal: React.FC<IProductTranslationModalProps> = ({
   const { classes } = useStyle();
   const profile = useRecoilValue<ICompanyProfile>(companyProfileState);
   const allLanguages = useRecoilValue(languageOptionsState);
+  const profileData = useRecoilValue<ICompanyProfile>(companyProfileState);
+  const defaultLanguageOptions = profileData?.languages?.length > 0
+    ? allLanguages.filter((lang) => profileData?.languages?.includes(lang.value))
+    : [];
 
   // Get print house languages
   const printHouseLanguages = useMemo(() => {
     if (!profile?.languages || profile.languages.length === 0) {
       return [];
     }
-    return allLanguages.filter((lang) =>
+    return defaultLanguageOptions.filter((lang) =>
       profile.languages?.includes(lang.value)
     );
-  }, [profile?.languages, allLanguages]);
+  }, [profile?.languages, defaultLanguageOptions]);
 
   // Get default language from profile
   const defaultLanguage = useMemo(() => {
