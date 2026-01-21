@@ -1,4 +1,5 @@
 import { allSMSTemplatesListState } from "@/store";
+import { companyProfileState, ICompanyProfile } from "@/store/company-profile";
 import { languageOptionsState } from "@/store/languages";
 import { EmployeeQuoteLimitationType } from "@/widgets/settings-users/users/enums/employee-actions";
 import {
@@ -13,6 +14,10 @@ const employeeInfoInputs = (
   quoteLimitationOptions: any
 ) => {
   const languages = useRecoilValue(languageOptionsState);
+  const profileData = useRecoilValue<ICompanyProfile>(companyProfileState);
+  const defaultLanguageOptions = profileData?.languages?.length > 0
+    ? languages.filter((lang) => profileData?.languages?.includes(lang.value))
+    : [];
   const allSMSTemplatesList = useRecoilValue(allSMSTemplatesListState);
   return [
     {
@@ -70,7 +75,7 @@ const employeeInfoInputs = (
       placeholder: "customers.modal.language",
       required: false,
       parameterKey: "systemLanguage",
-      options: languages,
+      options: defaultLanguageOptions,
       value: userState?.systemLanguage,
       isValid: !!userState?.systemLanguage,
       readonly: false,

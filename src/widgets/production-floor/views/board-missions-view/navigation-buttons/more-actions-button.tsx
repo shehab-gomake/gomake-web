@@ -1,6 +1,6 @@
 import { PrimaryButton } from "@/components/button/primary-button";
 import { CircularProgress, MenuItem, Paper, FormControlLabel, Radio, RadioGroup, Stack } from "@mui/material";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { useRecoilState } from "recoil";
 import { printHouseProfile } from "@/store/print-house-profile";
@@ -32,6 +32,11 @@ import { FONT_FAMILY } from "@/utils/font-family";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { moveOrderToReadyApi } from "@/services/api-service/generic-doc/documents-api";
 import { GraphicsApprovalViewModal } from "@/widgets/production-floor/table-view/status-table/table-row/graphics-approval-view-modal";
+import { GoMakeDialog, GoMakeAutoComplate } from "@/components";
+import { updateExampleTypeApi } from "@/services/api-service/board-missions/board-missions-table";
+import { useExampleTypes } from "@/store/example-type";
+import { Box } from "@mui/material";
+import { getBoardMissionsById } from "@/services/api-service/production-floor/production-floor-endpoints";
 
 const MoreActionsButton = ({ isMobile = false }) => {
   const { t } = useTranslation();
@@ -43,7 +48,7 @@ const MoreActionsButton = ({ isMobile = false }) => {
   const [loading] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(false);
   const [companyProfile] = useRecoilState(printHouseProfile);
-  const [boardMissions] = useRecoilState(boardMissionsDetailsState);
+  const [boardMissions, setBoardMissions] = useRecoilState(boardMissionsDetailsState);
   const [openSendGraphicFileModal, setOpenSendGraphicFileModal] =
     useState<boolean>(false);
   const [contacts, setContacts] = useState<IContact[]>([]);
@@ -55,11 +60,26 @@ const MoreActionsButton = ({ isMobile = false }) => {
   const [openGraphicsApprovalViewModal, setOpenGraphicsApprovalViewModal] =
     useState<boolean>(false);
 
+  // Sample type modal state
+  const { exampleTypeValues, refetch: refetchExampleTypes, isLoading: isLoadingExampleTypes } = useExampleTypes();
+  const [openSampleTypeModal, setOpenSampleTypeModal] = useState<boolean>(false);
+  const [selectedSampleType, setSelectedSampleType] = useState<any>(null);
+  const [isUpdatingSampleType, setIsUpdatingSampleType] = useState<boolean>(false);
+
+  // Refetch example types when modal opens if we don't have data
+  useEffect(() => {
+    if (openSampleTypeModal && exampleTypeValues.length === 0 && !isLoadingExampleTypes) {
+      refetchExampleTypes();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [openSampleTypeModal]); // Only check when modal opens
+
   // Modal state for close as delivery note/invoice
   const [openChangeProductionStatusModal, setOpenChangeProductionStatusModal] = useState<boolean>(false);
   const [isMoveToReady, setIsMoveToReady] = useState(false);
   const [moveToReadyOption, setMoveToReadyOption] = useState<"withMessage" | "withoutMessage">("withoutMessage");
   const [isSelectedCLoseAsDeliveryNote, setIsSelectedCLoseAsDeliveryNote] = useState(false);
+  const [isSelectedCLoseAsInvoice, setIsSelectedCLoseAsInvoice] = useState(false);
 
   // Email composer integration with document type 16 (OLD FUNCTIONALITY - KEPT FOR REFERENCE)
   const {
@@ -174,6 +194,7 @@ const MoreActionsButton = ({ isMobile = false }) => {
     setOpenChangeProductionStatusModal(false);
     setIsMoveToReady(false);
     setIsSelectedCLoseAsDeliveryNote(false);
+    setIsSelectedCLoseAsInvoice(false);
   };
 
   const moveOrderToReady = async (isSendMessage: boolean = false) => {
@@ -186,6 +207,8 @@ const MoreActionsButton = ({ isMobile = false }) => {
         // Refresh the page or update state as needed
         if (isSelectedCLoseAsDeliveryNote) {
           window.open(`/deliveryNote?isNewCreation=true&orderId=${boardMissions.orderId}`, '_blank');
+        } else if (isSelectedCLoseAsInvoice) {
+          window.open(`/invoice?isNewCreation=true&orderId=${boardMissions.orderId}`, '_blank');
         }
       } else {
         alertFaultUpdate();
@@ -215,10 +238,83 @@ const MoreActionsButton = ({ isMobile = false }) => {
   const handleCloseAsInvoice = () => {
     handleClose();
     if (!boardMissions?.orderId) return;
-    else {
+
+    // Check if order is not ready (isReady = false)
+    if (boardMissions.isReady === false) {
+      setIsSelectedCLoseAsInvoice(true);
+      setOpenChangeProductionStatusModal(true);
+    } else {
       // If ready, directly open invoice
       window.open(`/invoice?isNewCreation=true&orderId=${boardMissions.orderId}`, '_blank');
     }
+  };
+
+  const handleViewLikeOrder = () => {
+    handleClose();
+    if (!boardMissions?.orderId) return;
+    push(`/orders?orderId=${boardMissions.orderId}`).then();
+  };
+
+  const onOpenSampleTypeModal = () => {
+    handleClose();
+    setSelectedSampleType(null);
+    setOpenSampleTypeModal(true);
+  };
+
+  const onCloseSampleTypeModal = () => {
+    setOpenSampleTypeModal(false);
+    setSelectedSampleType(null);
+  };
+
+  const handleUpdateExampleType = async () => {
+    if (!boardMissions?.boardMissionId || !selectedSampleType) {
+      return;
+    }
+
+    setIsUpdatingSampleType(true);
+    const callBack = async (res) => {
+      if (res?.success) {
+        alertSuccessUpdate();
+        onCloseSampleTypeModal();
+
+        // Refresh board missions data after successful update
+        if (boardMissions.boardMissionId) {
+          const refreshCallBack = (refreshRes) => {
+            setIsUpdatingSampleType(false);
+            if (refreshRes?.success && refreshRes?.data) {
+              // Update the Recoil state with the refreshed data
+              setBoardMissions(refreshRes.data);
+            } else {
+              setIsUpdatingSampleType(false);
+            }
+          };
+
+          await getBoardMissionsById(
+            callApi,
+            refreshCallBack,
+            {
+              id: boardMissions.boardMissionId,
+              productType: boardMissions.productType || "",
+            },
+            false
+          );
+        } else {
+          setIsUpdatingSampleType(false);
+        }
+      } else {
+        setIsUpdatingSampleType(false);
+        alertFaultUpdate();
+      }
+    };
+
+    await updateExampleTypeApi(
+      callApi,
+      callBack,
+      {
+        boardMissionId: boardMissions.boardMissionId,
+        exampleType: Number(selectedSampleType.value),
+      }
+    );
   };
 
   const handleCopyFilesPath = async () => {
@@ -241,7 +337,7 @@ const MoreActionsButton = ({ isMobile = false }) => {
         } else {
           // Fallback for older browsers
           const textArea = document.createElement("textarea");
-          textArea.value = pathToCopy ;
+          textArea.value = pathToCopy;
           textArea.style.position = "fixed";
           textArea.style.opacity = "0";
           document.body.appendChild(textArea);
@@ -308,6 +404,11 @@ const MoreActionsButton = ({ isMobile = false }) => {
             <MenuItem onClick={handleCopyFilesPath}>
               {t("productionFloor.copyFilesPath")}
             </MenuItem>
+            {!boardMissions?.isNeedExample && !(boardMissions as any)?.exampleType && (
+              <MenuItem onClick={onOpenSampleTypeModal}>
+                {t("boardMissions.addSampleType")}
+              </MenuItem>
+            )}
             {boardMissions?.orderId && (
               <>
                 <MenuItem onClick={handleCloseAsDeliveryNote}>
@@ -338,7 +439,7 @@ const MoreActionsButton = ({ isMobile = false }) => {
         orderId={boardMissions.orderId}
         productType={boardMissions.productType}
         jobGraphicApprovalId={undefined}
-        onSuccess={() => {}}
+        onSuccess={() => { }}
       />
 
       {/* Graphics Approval View Modal (Edit Mode) */}
@@ -385,6 +486,9 @@ const MoreActionsButton = ({ isMobile = false }) => {
           } else {
             if (isSelectedCLoseAsDeliveryNote) {
               window.open(`/deliveryNote?isNewCreation=true&orderId=${boardMissions.orderId}`, '_blank');
+              onClickCloseChangeProductionStatusModal();
+            } else if (isSelectedCLoseAsInvoice) {
+              window.open(`/invoice?isNewCreation=true&orderId=${boardMissions.orderId}`, '_blank');
               onClickCloseChangeProductionStatusModal();
             }
           }
@@ -446,6 +550,61 @@ const MoreActionsButton = ({ isMobile = false }) => {
           )}
         </Stack>
       </GoMakeDeleteModal>
+
+      {/* Sample Type Modal */}
+      <GoMakeDialog
+        open={openSampleTypeModal}
+        onClose={onCloseSampleTypeModal}
+        title={t("boardMissions.selectSampleType")}
+        onPrimaryAction={handleUpdateExampleType}
+        primaryButtonLabel={t("common.save")}
+        cancelButtonLabel={t("common.cancel")}
+        primaryButtonDisabled={!selectedSampleType}
+        primaryButtonLoading={isUpdatingSampleType}
+        sx={{
+          zIndex: 9999999999,
+        }}
+        customStyles={{
+          paper: {
+            zIndex: 9999999999,
+          },
+        }}
+      >
+        <Box sx={{ padding: 2, minWidth: 300 }}>
+          <GoMakeAutoComplate
+            options={
+              exampleTypeValues?.map((option) => ({
+                value: option.key,
+                text: t(`products.proofTypes.${option.value}`),
+              })) || []
+            }
+            getOptionLabel={(option: any) => option.text}
+            placeholder={t("boardMissions.selectSampleType")}
+            onChange={(e, value) => setSelectedSampleType(value)}
+            value={selectedSampleType}
+            style={{
+              width: "100%",
+            }}
+            componentsProps={{
+              popper: {
+                sx: {
+                  zIndex: "10000000000 !important", // Higher than modal z-index (9999999999)
+                },
+                style: {
+                  zIndex: 10000000000,
+                  minWidth: "836px",
+                },
+              },
+              listbox: {
+                sx: {
+                  zIndex: 10000000000,
+                  minWidth: "836px",
+                },
+              },
+            }}
+          />
+        </Box>
+      </GoMakeDialog>
     </div>
   );
 };

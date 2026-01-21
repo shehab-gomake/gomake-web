@@ -58,6 +58,7 @@ import {
   updateDocumentTitleApi,
   updateDocumentStatusApi,
   updateDocumentVatStatusApi,
+  updateDocumentDefaultLanguageApi,
   updateDueDateApi,
   updateExchangeRateApi,
   updateOccasionalClientNameApi,
@@ -268,6 +269,9 @@ const useQuoteNew = ({
   const [isUpdateVatStatus, setIsUpdateVatStatus] = useState<number | null>(
     null
   );
+  const [isUpdateDefaultLanguage, setIsUpdateDefaultLanguage] = useState<
+    number | null
+  >(null);
   const [, setIsUpdateBusinessCode] = useState<number | null>(null);
   const [isUpdateAddress, setIsUpdateAddress] = useState<number | null>(null);
   const [isUpdateAgent, setIsUpdateAgent] = useState<number | null>(null);
@@ -748,6 +752,9 @@ const useQuoteNew = ({
   const onBlurVatStatus = async () => {
     setIsUpdateVatStatus(null);
   };
+  const onBlurDefaultLanguage = async () => {
+    setIsUpdateDefaultLanguage(null);
+  };
 
   const getAllEmployees = useCallback(async () => {
     await getAndSetAllEmployees(callApi, setAgentListValue, {
@@ -1019,6 +1026,30 @@ const useQuoteNew = ({
           documentId: quoteItemValue?.id,
           vatStatus: vatStatus,
         },
+      });
+    }
+  };
+
+  const updateDefaultLanguage = async (defaultLanguage: string) => {
+    if (isNewCreation) {
+      const updatedQuoteItemValue = { ...quoteItemValue };
+      updatedQuoteItemValue.defaultLanguage = defaultLanguage;
+      setQuoteItemValue(updatedQuoteItemValue);
+      setIsUpdateDefaultLanguage(null);
+    } else {
+      const callBack = (res) => {
+        if (res?.success) {
+          alertSuccessUpdate();
+          setIsUpdateDefaultLanguage(null);
+          getQuote();
+        } else {
+          alertFaultUpdate();
+        }
+      };
+      await updateDocumentDefaultLanguageApi(callApi, callBack, {
+        documentType: docType,
+        documentId: quoteItemValue?.id,
+        defaultLanguage: defaultLanguage,
       });
     }
   };
@@ -3811,6 +3842,10 @@ const useQuoteNew = ({
     updateExchangeRate,
     updateCurrency,
     updateVatStatus,
+    updateDefaultLanguage,
+    onBlurDefaultLanguage,
+    isUpdateDefaultLanguage,
+    setIsUpdateDefaultLanguage,
     refreshExchangeRate,
     getQuote,
     openCopyFromOrderModal,

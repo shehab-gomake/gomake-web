@@ -5,21 +5,53 @@ import { DocumentPreferencesEnum } from "@/enums";
 import { useCompanyProfile } from "@/hooks/use-company-profile";
 import { quoteItemState } from "@/store";
 import { currenciesState } from "@/widgets/materials-widget/state";
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState, useMemo } from "react";
 import { useRecoilValue } from "recoil";
 import { EnumVATStatus } from "@/enums/accounting-enums";
 import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
+import { languageOptionsState } from "@/store/languages";
+import { companyProfileState, ICompanyProfile } from "@/store/company-profile";
 
 const useSttingsQuoteMenu = ({
   updateDocumentPreference,
   updatePaymentRequired,
   documentType,
+  updateDefaultLanguage,
+  onBlurDefaultLanguage,
+  isUpdateDefaultLanguage,
+  setIsUpdateDefaultLanguage,
 }) => {
   const { t } = useTranslation();
   const { CheckPreferenceValue } = usePrintHousePreferences();
   const quoteStateValue = useRecoilValue<any>(quoteItemState);
-  const { getCurrenciesApi } = useCompanyProfile();
+  const { getCurrenciesApi, profile } = useCompanyProfile();
+  const allLanguages = useRecoilValue(languageOptionsState);
+  const profileData = useRecoilValue<ICompanyProfile>(companyProfileState);
+  const defaultLanguageOptions = profileData?.languages?.length > 0
+    ? allLanguages.filter((lang) => profileData?.languages?.includes(lang.value))
+    : [];
+
+  // Get print house languages
+  const printHouseLanguages = useMemo(() => {
+    if (!profile?.languages || profile.languages.length === 0) {
+      return [];
+    }
+    return defaultLanguageOptions.filter((lang) =>
+      profile.languages?.includes(lang.value)
+    );
+  }, [profile?.languages, defaultLanguageOptions]);
+
+  // Get current default language display text
+  const defaultLanguageText = useMemo(() => {
+    if (!quoteStateValue?.defaultLanguage) {
+      return t("signup.defaultLanguage");
+    }
+    const lang = printHouseLanguages.find(
+      (l) => l.value === quoteStateValue.defaultLanguage
+    );
+    return lang?.text || quoteStateValue.defaultLanguage;
+  }, [quoteStateValue?.defaultLanguage, printHouseLanguages, t]);
 
   const [detailsView, setDetailsView] = useState<ShowDocumentDetailsEnum>(
     quoteStateValue?.showDetails ?? ShowDocumentDetailsEnum.All
@@ -79,8 +111,8 @@ const useSttingsQuoteMenu = ({
   // Payment Required: default ON if isPrepaymentClient is true, OFF otherwise
   const [isPaymentRequired, setIsPaymentRequired] = useState(
     quoteStateValue?.isPaymentRequired ??
-      quoteStateValue?.isPrepaymentClient ??
-      false
+    quoteStateValue?.isPrepaymentClient ??
+    false
   );
 
   const currencies =
@@ -121,8 +153,8 @@ const useSttingsQuoteMenu = ({
     // Update isPaymentRequired: use API value if exists, otherwise default based on isPrepaymentClient
     setIsPaymentRequired(
       quoteStateValue?.isPaymentRequired ??
-        quoteStateValue?.isPrepaymentClient ??
-        false
+      quoteStateValue?.isPrepaymentClient ??
+      false
     );
   }, [
     quoteStateValue?.showDetails,
@@ -235,12 +267,12 @@ const useSttingsQuoteMenu = ({
     // Only show Payment Required switch for quote documents
     ...(documentType === DOCUMENT_TYPE.quote
       ? [
-          {
-            label: t("sales.quote.paymentRequired"),
-            checked: isPaymentRequired,
-            onChange: handleSwitchCheckForPaymentRequired,
-          },
-        ]
+        {
+          label: t("sales.quote.paymentRequired"),
+          checked: isPaymentRequired,
+          onChange: handleSwitchCheckForPaymentRequired,
+        },
+      ]
       : []),
   ];
   return {
@@ -276,6 +308,9 @@ const useSttingsQuoteMenu = ({
     isUpdateShowDetails,
     setIsUpdateShowDetails,
     onBlurShowDetails,
+    defaultLanguageText,
+    printHouseLanguages,
+    defaultLanguage: quoteStateValue?.defaultLanguage,
   };
 };
 

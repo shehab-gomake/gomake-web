@@ -95,6 +95,8 @@ const UPDATE_DOCUMENT_CURRENCY_URL =
   "/v1/erp-service/documents/update-document-currency";
 const UPDATE_DOCUMENT_VAT_STATUS_URL =
   "/v1/erp-service/documents/update-document-vat-status";
+const UPDATE_DOCUMENT_DEFAULT_LANGUAGE_URL =
+  "/v1/erp-service/documents/update-default-language";
 const UPDATE_EXCHANGE_RATE_URL =
   "/v1/erp-service/documents/update-document-exchange-rate";
 const REFRESH_EXCHANGE_RATE_URL =
@@ -881,6 +883,23 @@ const updateDocumentVatStatusApi: ICallAndSetData = async (
   );
 };
 
+const updateDocumentDefaultLanguageApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.PUT,
+    `${UPDATE_DOCUMENT_DEFAULT_LANGUAGE_URL}/${data.documentType}`,
+    setState,
+    {
+      documentId: data.documentId,
+      defaultLanguage: data.defaultLanguage,
+    }
+  );
+};
+
 const updateExchangeRateApi: ICallAndSetData = async (
   callApi,
   setState,
@@ -1636,6 +1655,7 @@ export {
   getProductCalculationExceptionByIdApi,
   updateDocumentCurrencyApi,
   updateDocumentVatStatusApi,
+  updateDocumentDefaultLanguageApi,
   updateExchangeRateApi,
   refreshExchangeRateApi,
   createNewDocumentApi,

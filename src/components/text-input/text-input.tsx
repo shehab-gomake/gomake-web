@@ -108,6 +108,7 @@ const GomakeTextInput = ({
   placeholder,
   onKeyDown,
   multiline,
+  rows,
   InputProps,
   autoFocus,
   onMouseLeave,
@@ -131,6 +132,7 @@ const GomakeTextInput = ({
   placeholder?: any;
   onKeyDown?: any;
   multiline?: any;
+  rows?: number;
   InputProps?: any;
   autoFocus?: any;
   onMouseLeave?: any;
@@ -180,6 +182,7 @@ const GomakeTextInput = ({
         placeholder={placeholder}
         onKeyDown={onKeyDown}
         multiline={multiline}
+        rows={rows}
         InputProps={InputProps}
         // @ts-ignore
         secondColor={secondColor}

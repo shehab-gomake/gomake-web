@@ -55,7 +55,6 @@ const CharacterDetails = ({
     documentType,
     workName,
   });
-  console.log("item", item);
 
   const { classes } = useStyleCharacterDetails({ showAll, showLessHeightFit });
 
@@ -74,7 +73,7 @@ const CharacterDetails = ({
         }}
       >
         <div style={{ ...classes.mainContainer }}>
-          {parse(truncatedDetails || "")}
+          {parse(String(truncatedDetails || ""))}
           {!showAll && ".. "}
           {details?.length > 90 && (
             <span
@@ -118,6 +117,7 @@ const CharacterDetails = ({
         jobName={jobName}
         setJobName={setJobName}
         documentType={documentType}
+        item={item}
       />
     </>
   );

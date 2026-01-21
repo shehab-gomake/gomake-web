@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { PreferenceValueType } from "../../use-general-settings";
 import { useRecoilValue } from "recoil";
 import { languageOptionsState } from "@/store/languages";
+import { companyProfileState, ICompanyProfile } from "@/store/company-profile";
 
 interface IEditModalProps {
   openModal: boolean;
@@ -23,6 +24,10 @@ const EditModal = ({
   const { classes } = useStyle();
   const { t } = useTranslation();
   const languages = useRecoilValue(languageOptionsState);
+  const profileData = useRecoilValue<ICompanyProfile>(companyProfileState);
+  const defaultLanguageOptions = profileData?.languages?.length > 0
+    ? languages.filter((lang) => profileData?.languages?.includes(lang.value))
+    : [];
   const initialState = {
     name: selectedSetting?.name || "",
     value: selectedSetting?.value || "",
@@ -150,21 +155,21 @@ const EditModal = ({
             )}
             {selectedSetting?.preferenceType ===
               PreferenceValueType.Boolean && (
-              <GoMakeAutoComplate
-                key={`value-select-boolean-${selectedSetting?.preferenceId}`}
-                withArrow
-                style={{ border: 0 }}
-                placeholder={t("documentingSettings.value")}
-                options={booleanOptions}
-                value={
-                  booleanOptions.find((opt) => opt.value === state.value) ||
-                  null
-                }
-                onChange={(e: any, value: any) => {
-                  handleChange("value", value?.value);
-                }}
-              />
-            )}
+                <GoMakeAutoComplate
+                  key={`value-select-boolean-${selectedSetting?.preferenceId}`}
+                  withArrow
+                  style={{ border: 0 }}
+                  placeholder={t("documentingSettings.value")}
+                  options={booleanOptions}
+                  value={
+                    booleanOptions.find((opt) => opt.value === state.value) ||
+                    null
+                  }
+                  onChange={(e: any, value: any) => {
+                    handleChange("value", value?.value);
+                  }}
+                />
+              )}
           </div>
         </Stack>
         {selectedSetting?.preferenceType === PreferenceValueType.Select &&
@@ -186,101 +191,100 @@ const EditModal = ({
                 </h3>
                 {selectedSetting?.secondaryValuePreferenceType ===
                   PreferenceValueType.Number && (
-                  <GomakeTextInput
-                    key={`secondary-value-number-${selectedSetting?.preferenceId}`}
-                    placeholder={t("documentingSettings.secondaryValue")}
-                    type="number"
-                    value={state?.secondaryValue}
-                    onChange={(e) =>
-                      handleChange("secondaryValue", e.target.value)
-                    }
-                  />
-                )}
+                    <GomakeTextInput
+                      key={`secondary-value-number-${selectedSetting?.preferenceId}`}
+                      placeholder={t("documentingSettings.secondaryValue")}
+                      type="number"
+                      value={state?.secondaryValue}
+                      onChange={(e) =>
+                        handleChange("secondaryValue", e.target.value)
+                      }
+                    />
+                  )}
                 {selectedSetting?.secondaryValuePreferenceType ===
                   PreferenceValueType.Select && (
-                  <GoMakeAutoComplate
-                    key={`secondary-value-select-${selectedSetting?.preferenceId}`}
-                    withArrow
-                    style={{ border: 0 }}
-                    placeholder={t("documentingSettings.secondaryValue")}
-                    options={
-                      selectedSetting?.secondaryPreferenceValues?.map(
-                        (item: { id: string | number; value: string }) => ({
-                          label: t(`preferences.${item?.value}`),
-                          value: item.id,
-                        })
-                      ) || []
-                    }
-                    value={
-                      selectedSetting?.secondaryPreferenceValues?.find(
-                        (opt: { id: string | number }) =>
-                          opt.id === state.secondaryValue
-                      )
-                        ? {
+                    <GoMakeAutoComplate
+                      key={`secondary-value-select-${selectedSetting?.preferenceId}`}
+                      withArrow
+                      style={{ border: 0 }}
+                      placeholder={t("documentingSettings.secondaryValue")}
+                      options={
+                        selectedSetting?.secondaryPreferenceValues?.map(
+                          (item: { id: string | number; value: string }) => ({
+                            label: t(`preferences.${item?.value}`),
+                            value: item.id,
+                          })
+                        ) || []
+                      }
+                      value={
+                        selectedSetting?.secondaryPreferenceValues?.find(
+                          (opt: { id: string | number }) =>
+                            opt.id === state.secondaryValue
+                        )
+                          ? {
                             label: t(
-                              `preferences.${
-                                selectedSetting?.secondaryPreferenceValues?.find(
-                                  (opt: { id: string | number }) =>
-                                    opt.id === state.secondaryValue
-                                )?.value || ""
+                              `preferences.${selectedSetting?.secondaryPreferenceValues?.find(
+                                (opt: { id: string | number }) =>
+                                  opt.id === state.secondaryValue
+                              )?.value || ""
                               }`
                             ),
                             value: state.secondaryValue,
                           }
-                        : null
-                    }
-                    onChange={(e: any, value: any) => {
-                      handleChange("secondaryValue", value?.value || "");
-                    }}
-                  />
-                )}
+                          : null
+                      }
+                      onChange={(e: any, value: any) => {
+                        handleChange("secondaryValue", value?.value || "");
+                      }}
+                    />
+                  )}
                 {selectedSetting?.secondaryValuePreferenceType ===
                   PreferenceValueType.Boolean && (
-                  <GoMakeAutoComplate
-                    key={`secondary-value-boolean-${selectedSetting?.preferenceId}`}
-                    withArrow
-                    style={{ border: 0 }}
-                    placeholder={t("documentingSettings.secondaryValue")}
-                    options={booleanOptions}
-                    value={
-                      booleanOptions.find(
-                        (opt) => opt.value === state.secondaryValue
-                      ) || null
-                    }
-                    onChange={(e: any, value: any) => {
-                      handleChange("secondaryValue", value?.value);
-                    }}
-                  />
-                )}
+                    <GoMakeAutoComplate
+                      key={`secondary-value-boolean-${selectedSetting?.preferenceId}`}
+                      withArrow
+                      style={{ border: 0 }}
+                      placeholder={t("documentingSettings.secondaryValue")}
+                      options={booleanOptions}
+                      value={
+                        booleanOptions.find(
+                          (opt) => opt.value === state.secondaryValue
+                        ) || null
+                      }
+                      onChange={(e: any, value: any) => {
+                        handleChange("secondaryValue", value?.value);
+                      }}
+                    />
+                  )}
                 {selectedSetting?.secondaryValuePreferenceType ===
                   PreferenceValueType.Language && (
-                  <GoMakeAutoComplate
-                    key={`secondary-value-language-${selectedSetting?.preferenceId}`}
-                    withArrow
-                    style={{ border: 0 }}
-                    placeholder={t("documentingSettings.secondaryValue")}
-                    options={languages.map((lang) => ({
-                      label: lang.text,
-                      value: lang.value,
-                    }))}
-                    value={
-                      languages.find(
-                        (lang) => lang.value === state.secondaryValue
-                      )
-                        ? {
+                    <GoMakeAutoComplate
+                      key={`secondary-value-language-${selectedSetting?.preferenceId}`}
+                      withArrow
+                      style={{ border: 0 }}
+                      placeholder={t("documentingSettings.secondaryValue")}
+                      options={defaultLanguageOptions.map((lang) => ({
+                        label: lang.text,
+                        value: lang.value,
+                      }))}
+                      value={
+                        defaultLanguageOptions.find(
+                          (lang) => lang.value === state.secondaryValue
+                        )
+                          ? {
                             label:
-                              languages.find(
+                              defaultLanguageOptions.find(
                                 (lang) => lang.value === state.secondaryValue
                               )?.text || "",
                             value: state.secondaryValue,
                           }
-                        : null
-                    }
-                    onChange={(e: any, value: any) => {
-                      handleChange("secondaryValue", value?.value || "");
-                    }}
-                  />
-                )}
+                          : null
+                      }
+                      onChange={(e: any, value: any) => {
+                        handleChange("secondaryValue", value?.value || "");
+                      }}
+                    />
+                  )}
               </div>
             );
           })()}
