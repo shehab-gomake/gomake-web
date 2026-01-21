@@ -81,6 +81,8 @@ export interface ICompanyProfile {
   }>;
   hpHmacSecret?: string;
   hpHmacKey?: string;
+  languages?: string[];
+  systemLanguage?: string;
 }
 
 export enum CreditClearanceCompanies {

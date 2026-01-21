@@ -13,7 +13,13 @@ import { EProductClient, EProductStructureType } from "./settings-data";
 import { useSettings } from "./use-settings";
 import { useStyle } from "./style";
 import FormatColorResetIcon from "@mui/icons-material/FormatColorReset";
+import TranslateIcon from "@mui/icons-material/Translate";
+import { IconButton, Tooltip } from "@mui/material";
 import { ModalType } from "@/enums";
+import { ProductTranslationModal, IProductTranslation } from "./modals/product-translation-modal";
+import { useRecoilValue } from "recoil";
+import { companyProfileState, ICompanyProfile } from "@/store/company-profile";
+import { languageOptionsState } from "@/store/languages";
 
 const SettingsWidget = ({
   onClickParametersTab,
@@ -23,6 +29,9 @@ const SettingsWidget = ({
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
+  const profile = useRecoilValue<ICompanyProfile>(companyProfileState);
+  const allLanguages = useRecoilValue(languageOptionsState);
+  const [openTranslationModal, setOpenTranslationModal] = useState(false);
   const {
     allProductSKU,
     allTemplate,
@@ -63,6 +72,44 @@ const SettingsWidget = ({
 
   const [defultProductSKU, setDefultProductSKU] = useState();
   const [defultTemplate, setDefultTemplate] = useState();
+
+  // Get print house languages
+  const printHouseLanguages = useMemo(() => {
+    if (!profile?.languages || profile.languages.length === 0) {
+      return [];
+    }
+    return allLanguages.filter((lang) =>
+      profile.languages?.includes(lang.value)
+    );
+  }, [profile?.languages, allLanguages]);
+
+  // Get default language
+  const defaultLanguage = useMemo(() => {
+    return profile?.systemLanguage || printHouseLanguages[0]?.value || "en";
+  }, [profile?.systemLanguage, printHouseLanguages]);
+
+  // Get product name from default language translation
+  const getDefaultLanguageName = useMemo(() => {
+    if (!productState?.translations || productState.translations.length === 0) {
+      return productState?.name || "";
+    }
+    const defaultTranslation = productState.translations.find(
+      (trans: IProductTranslation) => trans.lang === defaultLanguage
+    );
+    return defaultTranslation?.name || productState?.name || "";
+  }, [productState?.translations, productState?.name, defaultLanguage]);
+
+  // Handle translation modal save
+  const handleTranslationSave = (translations: IProductTranslation[]) => {
+    onChangeStateProduct("translations", translations);
+    // Update product name with default language translation
+    const defaultTranslation = translations.find(
+      (trans) => trans.lang === defaultLanguage
+    );
+    if (defaultTranslation?.name) {
+      onChangeStateProduct("name", defaultTranslation.name);
+    }
+  };
   const productStructureOptions = useMemo(
     () => [
       {
@@ -410,6 +457,21 @@ const SettingsWidget = ({
           <div style={classes.labelTitleStyle}>
             {t("products.addProduct.admin.productName")}
             <span style={classes.requierdInput}>*</span>
+            {printHouseLanguages.length > 0 && (
+              <Tooltip title={t("products.addProduct.admin.translateProductName")}>
+                <IconButton
+                  size="small"
+                  onClick={() => setOpenTranslationModal(true)}
+                  sx={{
+                    marginLeft: "8px",
+                    marginRight: "8px",
+                    height: "20px",
+                  }}
+                >
+                  <TranslateIcon fontSize="small" />
+                </IconButton>
+              </Tooltip>
+            )}
           </div>
           <div>
             <GomakeTextInput
@@ -417,6 +479,16 @@ const SettingsWidget = ({
               placeholder={t("products.addProduct.admin.productName")}
               onChange={(e: any) => {
                 onChangeStateProduct("name", e.target.value);
+                // Update default language translation when name changes
+                if (productState?.translations) {
+                  const updatedTranslations = productState.translations.map(
+                    (trans: IProductTranslation) =>
+                      trans.lang === defaultLanguage
+                        ? { ...trans, name: e.target.value }
+                        : trans
+                  );
+                  onChangeStateProduct("translations", updatedTranslations);
+                }
               }}
               value={productState?.name}
             />
@@ -902,6 +974,13 @@ const SettingsWidget = ({
         onClickDelete={() =>
           onChangeStateProduct("templateId", selectPricingType)
         }
+      />
+      <ProductTranslationModal
+        open={openTranslationModal}
+        onClose={() => setOpenTranslationModal(false)}
+        translations={productState?.translations || []}
+        onSave={handleTranslationSave}
+        productName={getDefaultLanguageName}
       />
     </div>
   );

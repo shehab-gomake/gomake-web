@@ -173,6 +173,7 @@ const useStyle = () => {
         height: "auto",
         gap: "10px",
         zIndex: 5,
+        paddingTop: 0,
       },
       autoCompleteSelectedAction: {
         width: 200,
