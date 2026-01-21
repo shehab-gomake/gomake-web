@@ -84,6 +84,7 @@ export interface IBoardMissionsDetails {
   contactName?: string;
   isHaveDelivery?: boolean;
   qualityIssueReason?: string;
+  exampleType?: number;
 }
 
 export interface IBoardMissionStep {

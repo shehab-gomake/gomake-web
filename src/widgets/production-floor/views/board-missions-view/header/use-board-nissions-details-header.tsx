@@ -146,7 +146,7 @@ const useBoardMissionsDetailsHeader = () => {
               })
             );
           }
-          if (newStatusId === "79251980-1c2d-4b4f-9ab4-9ccb9cb9fb63" && boardFromTable.isNeedExample) {
+          if (newStatusId === "79251980-1c2d-4b4f-9ab4-9ccb9cb9fb63" && (boardMissionsDetails.isNeedExample || boardMissionsDetails.exampleType >= 0)) {
             setOpenSimpleApproveModal(true);
           }
           else if (newStatusId === "56dd1e80-7436-462c-82e9-cf8a90afd614") {
