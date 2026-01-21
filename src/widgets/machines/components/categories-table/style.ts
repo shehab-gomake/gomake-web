@@ -1,9 +1,13 @@
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { useMemo } from "react";
 import { FONT_FAMILY } from "@/utils/font-family";
+import { useTheme } from "@/contexts/theme";
 
 const useStyle = () => {
   const { theme, primaryColor } = useGomakeTheme();
+  const { currentTheme } = useTheme();
+  const isHpClient = currentTheme === "hp-client";
+  
   const classes = useMemo(() => {
     return {
       mainContainer: {
@@ -11,10 +15,11 @@ const useStyle = () => {
         flexDirection: "column" as "column",
         justifyContent: "flex-start",
         alignItems: "flex-start",
-        gap: 20,
-        paddingLeft: 20,
-        paddingRight: 20,
-        marginBottom:20
+        gap: isHpClient ? 0 : 20,
+        paddingLeft: isHpClient ? 0 : 20,
+        paddingRight: isHpClient ? 0 : 20,
+        marginBottom: isHpClient ? 0 : 20,
+        
       },
       headerContainer: {
         display: "flex",
@@ -76,7 +81,7 @@ const useStyle = () => {
         ...FONT_FAMILY.Inter(600, 12),
       }
     };
-  }, [theme]);
+  }, [theme, isHpClient]);
   return {
     classes,
   };

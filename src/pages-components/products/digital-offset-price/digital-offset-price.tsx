@@ -42,7 +42,6 @@ import { EditIcon } from "@/icons";
 import { useSelectedProduct } from "@/hooks/shared-customer-admin/use-selected-product";
 import { EditUnderLineIcon } from "@/icons/edit-icon-under-line";
 
-//!here
 const PriceListPageWidget = ({
   widgetType,
   isMobileScreen = false,

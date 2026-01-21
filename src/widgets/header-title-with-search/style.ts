@@ -6,7 +6,7 @@ const useStyle = () => {
   const { t } = useTranslation();
   const dir: "rtl" | "ltr" = t("direction");
   const isRTL = dir === "rtl";
-  const clasess = useMemo(() => {
+  const classes = useMemo(() => {
     return {
       mainContainer: {
         display: "flex",
@@ -24,7 +24,7 @@ const useStyle = () => {
     };
   }, [isRTL,dir]);
   return {
-    clasess,
+    classes,
   };
 };
 export { useStyle };

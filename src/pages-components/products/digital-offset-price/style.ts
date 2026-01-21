@@ -14,7 +14,6 @@ interface IProps {
   isMobileScreen?: boolean;
 }
 
-//!here
 const useStyle = ({ isMobileScreen }: IProps) => {
   const { t } = useTranslation();
   const direction = t("direction");

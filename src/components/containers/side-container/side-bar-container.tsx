@@ -32,8 +32,6 @@ const BaseSideBarContainer = ({
 };
 
 // Theme-aware wrapper
-//!here why not use getComponentOverride from useThemeComponent
-
 const SideBarContainer = (props: ISideBarContainer) => {
   const ThemedSideBarContainer = useThemeComponent(
     "SideBarContainer",

@@ -332,7 +332,6 @@ const BaseSideList = ({
 };
 
 // Theme-aware wrapper
-//!here why not use getComponentOverride from useThemeComponent
 const SideList = (props: ISideListProps) => {
   const ThemedSideList = useThemeComponent("SideList", BaseSideList);
   return <ThemedSideList {...props} />;
