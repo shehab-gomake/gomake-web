@@ -43,10 +43,15 @@ const ClientBalanceComponent = ({
     successColor,
   } = useGomakeTheme();
 
-  const [balance, setBalance] = useState<number>(clientBalance);
+  const [balance, setBalance] = useState<number | undefined>(clientBalance);
 
   useEffect(() => {
-    if (!clientBalance && clientId) {
+    // Update balance when clientBalance prop changes
+    if (clientBalance !== undefined) {
+      setBalance(clientBalance);
+    } else if (clientId) {
+      // Only fetch if clientBalance is undefined (not provided) and we have a clientId
+      // Note: 0 is a valid balance, so we only fetch when it's undefined
       getClientBalanceApi(
         callApi,
         (res) => {
@@ -56,16 +61,19 @@ const ClientBalanceComponent = ({
         },
         clientId
       ).then();
+    } else {
+      // No clientId, reset balance
+      setBalance(undefined);
     }
-  }, [clientBalance, clientId]);
+  }, [clientBalance, clientId, callApi]);
 
-  // Determine if balance is negative
-  const isNegative = balance < 0;
+  // Determine if balance is negative (only if balance is defined)
+  const isNegative = balance !== undefined && balance < 0;
 
   return (
     <>
       <PermissionCheck userPermission={Permissions.SHOW_CLIENT_BALANCE}>
-        {balance !== undefined && (
+        {balance !== undefined && balance !== null && (
           <Stack direction="row" alignItems="center" gap={"2px"}>
             <span
               style={{

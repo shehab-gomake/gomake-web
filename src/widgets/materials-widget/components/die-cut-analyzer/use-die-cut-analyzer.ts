@@ -5,6 +5,7 @@ import { useRecoilValue } from "recoil";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { analyzeDieCutApi, addPrintHouseMaterialsRowsApi, getMaterialTableHeadersApi } from "@/services/api-service/materials/materials-endpoints";
 import { currenciesState, selectedSupplierIdState } from "@/widgets/materials-widget/state";
+import { companyProfileState } from "@/store/company-profile";
 import { useMaterialsCategories } from "../../use-materials-categories";
 import { UploadedFile, useDieCutDataTransform } from "./use-die-cut-data-transform";
 
@@ -58,6 +59,7 @@ export const useDieCutAnalyzer = (onClose: () => void) => {
   const { alertSuccessAdded, alertFault, alertSuccess } = useSnackBar();
   const currencies = useRecoilValue(currenciesState);
   const supplierId = useRecoilValue(selectedSupplierIdState);
+  const companyProfile = useRecoilValue(companyProfileState);
   const { getMaterialCategoryData } = useMaterialsCategories(false);
   const { transformApiResponseToUploadedFile, transformUploadedFileToPayload } = useDieCutDataTransform();
 
@@ -235,7 +237,8 @@ export const useDieCutAnalyzer = (onClose: () => void) => {
             );
 
             if (fileResult) {
-              const transformedFile = transformApiResponseToUploadedFile(file, fileResult);
+              const defaultCurrency = companyProfile?.systemCurrency || null;
+              const transformedFile = transformApiResponseToUploadedFile(file, fileResult, defaultCurrency);
               
               // Refetch headers if material type changed (e.g., DieKissCut)
               if (transformedFile.materialType && transformedFile.materialType !== materialType) {

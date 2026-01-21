@@ -96,7 +96,7 @@ export const useDieCutDataTransform = () => {
    * Transform API response (with nested attributes) to UploadedFile format
    */
   const transformApiResponseToUploadedFile = useCallback(
-    (file: UploadedFile, apiResponse: ApiResponseItem): UploadedFile => {
+    (file: UploadedFile, apiResponse: ApiResponseItem, defaultCurrency?: string | null): UploadedFile => {
       const { materialType, attributes } = apiResponse;
 
       // Store the analyzed image from API response
@@ -139,7 +139,7 @@ export const useDieCutDataTransform = () => {
           spaceBetweenRowsInMm_DieKissCut: attributes?.spaceBetweenLines ?? null,
           directions: attributes?.directions ?? null,
           defaultCost_DieKissCut: attributes?.price ?? null,
-          currency_DieKissCut: attributes?.currency ?? null,
+          currency_DieKissCut: attributes?.currency ?? defaultCurrency ?? null,
           name_DieKissCut: attributes?.name ?? null,
           code_DieKissCut: attributes?.code ?? null,
           // Include all additional fields from API response
@@ -168,7 +168,7 @@ export const useDieCutDataTransform = () => {
           scoringLineLengthInCm: attributes?.scoringLineLength ?? null,
           perforationLineLengthInCm: attributes?.perforationLineLength ?? null,
           defaultCost: attributes?.price ?? null,
-          currency: attributes?.currency ?? null,
+          currency: attributes?.currency ?? defaultCurrency ?? null,
           name: attributes?.name ?? null,
           directions: attributes?.directions ?? null,
           // Include all additional fields from API response
@@ -203,6 +203,10 @@ export const useDieCutDataTransform = () => {
           "lines amount": file.rowsAmount_DieKissCut?.toString() ?? "",
           "space between columns": file.spaceBetweenColumnsInMm_DieKissCut?.toString() ?? "",
           "space between lines": file.spaceBetweenRowsInMm_DieKissCut?.toString() ?? "",
+          spaceBetweenColumns: file.spaceBetweenColumnsInMm_DieKissCut?.toString() ?? "",
+          spaceBetweenLines: file.spaceBetweenRowsInMm_DieKissCut?.toString() ?? "",
+          columnsAmount: file.columnsAmount_DieKissCut?.toString() ?? "",
+          linesAmount: file.rowsAmount_DieKissCut?.toString() ?? "",
           directions: file.directions ?? "",
           unitPrice: file.defaultCost_DieKissCut?.toString() ?? "",
           currency: file.currency_DieKissCut ?? "",
