@@ -3,8 +3,8 @@ import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 
 const useStyle = () => {
-  const { primaryColor } = useGomakeTheme();
-  const clasess = useMemo(() => {
+  const { primaryColor , primarySecondaryBlend , theme} = useGomakeTheme();
+  const classes = useMemo(() => {
     return {
       insideStyle: { width: "85%" },
       menuItemContainer: {
@@ -17,17 +17,18 @@ const useStyle = () => {
       },
       menuTitleStyle: {
         ...FONT_FAMILY.Lexend(500, 12),
-        color: primaryColor(300),
+        color: primarySecondaryBlend(300),
       },
       lineStyle: {
         width: "100%",
         height: 1,
         backgroundColor: "#EEEEEE",
       },
+      iconColor: primarySecondaryBlend(300)
     };
-  }, []);
+  }, [theme]);
   return {
-    clasess,
+    classes,
   };
 };
 export { useStyle };

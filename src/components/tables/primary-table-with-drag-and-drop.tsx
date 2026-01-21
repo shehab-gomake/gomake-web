@@ -18,18 +18,28 @@ import { useTranslation } from "react-i18next";
 import SortIcon from "@mui/icons-material/Sort"; // Sort icon import
 
 const PrimaryTableCell = styled(TableCell)(() => {
-  const { primaryColor } = useGomakeTheme();
+  const {  primaryColor} = useGomakeTheme();
   return {
     [`&.${tableCellClasses.head}`]: {
-      backgroundColor: primaryColor(50),
-      color: primaryColor(900),
+      backgroundColor:
+      "var(--theme-table-head-bg, var(--theme-primary-50, " +
+      primaryColor(50) +
+      "))",
+    color:
+      "var(--theme-table-head-color, var(--theme-text-primary, " +
+      primaryColor(900) +
+      "))",
+      
       ...FONT_FAMILY.Lexend(500, 14),
       padding: "5px 5px",
       height: 47,
     },
     [`&.${tableCellClasses.body}`]: {
       ...FONT_FAMILY.Lexend(500, 14),
-      color: primaryColor(500),
+      color:
+      "var(--theme-table-body-color, var(--theme-text-primary, " +
+      primaryColor(500) +
+      "))",
       padding: "3px 0",
       height: 47,
     },
