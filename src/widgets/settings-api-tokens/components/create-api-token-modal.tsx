@@ -8,6 +8,7 @@ import { SecondaryButton } from "@/components/button/secondary-button";
 import { SecretDisplay } from "./secret-display";
 import { useStyle } from "../style";
 import { FONT_FAMILY } from "@/utils/font-family";
+import { CircularProgress } from "@mui/material";
 
 interface CreateApiTokenModalProps {
   onSuccess: () => void;
@@ -141,10 +142,14 @@ export const CreateApiTokenModal = ({
       </div>
 
       <div style={classes.modalActions}>
-        <SecondaryButton onClick={onClose}>
+        <SecondaryButton onClick={onClose} disabled={loading}>
           {t("common.cancel")}
         </SecondaryButton>
-        <PrimaryButton onClick={handleSubmit} loading={loading}>
+        <PrimaryButton 
+          onClick={handleSubmit} 
+          disabled={loading}
+          endIcon={loading && <CircularProgress style={{width: '20px', height: '20px', color: '#FFFFFF'}}/>}
+        >
           {t("common.create")}
         </PrimaryButton>
       </div>
