@@ -19,8 +19,6 @@ import { _renderIconLogs } from "@/utils/constants";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { Box, Slider } from "@mui/material";
 import { PermissionCheck } from "@/components/CheckPermission/check-permission";
-import { GoMakeTreeSelect } from "@/components/auto-complete/tree-select";
-import { ETab } from "@/pages-components/admin/home/widgets/quote-widget/enums";
 import { ReloadPriceIcon } from "@/icons/reload-price";
 import WarningAmberRoundedIcon from "@mui/icons-material/WarningAmberRounded";
 import { formatValueWithUnit } from "@/utils/is-currency";
@@ -130,9 +128,9 @@ const RightSideWidget = ({
         <div style={clasess.headerClientRightSide}>
           {clientDefaultValue && (
             <div style={clasess.clientContainer}>
-              <div style={clasess.labelTextStyle}>
+              {/* <div style={clasess.labelTextStyle}>
                 {t("products.offsetPrice.admin.client")}
-              </div>
+              </div> */}
 
               <Typography
                 key={"client-name"}
@@ -147,9 +145,9 @@ const RightSideWidget = ({
           {/* Client types Select */}
           {clientTypeDefaultValue && (
             <div style={clasess.typeContainer}>
-              <div style={clasess.labelTextStyle}>
+              {/* <div style={clasess.labelTextStyle}>
                 {t("products.offsetPrice.admin.type")}
-              </div>
+              </div> */}
               <GoMakeAutoComplate
                 options={clientTypesCategories}
                 disableClearable
@@ -177,7 +175,7 @@ const RightSideWidget = ({
         </div>
 
         {/* Product Select */}
-        <div style={clasess.autoComplateRowContainer}>
+        {/* <div style={clasess.autoComplateRowContainer}>
           <div
             data-tour="select-product"
             style={{ width: "100%", marginBottom: 16 }}
@@ -195,7 +193,7 @@ const RightSideWidget = ({
               hideOtherTabs={true}
             />
           </div>
-        </div>
+        </div> */}
         {template.img ? (
           <div style={clasess.imgProductContainer}>
             <img src={template.img} alt="gomake" style={{ width: "100%" }} />
@@ -310,7 +308,7 @@ const RightSideWidget = ({
         {calculationProgress &&
           calculationProgress.currentWorkFlowsCount > 0 &&
           calculationProgress.currentWorkFlowsCount !==
-            calculationProgress.totalWorkFlowsCount && (
+          calculationProgress.totalWorkFlowsCount && (
             <div style={{ marginBottom: "15px" }}>
               <ProgressBar
                 bottomLeftText={t(
@@ -329,159 +327,222 @@ const RightSideWidget = ({
               />
             </div>
           )}
+
+        {
+          (sliderCurrentProductItemValueTotalPrice ||
+            sliderCurrentProductItemValueTotalPrice === 0) && (
+            <>
+              <div style={{
+                ...clasess.vatContainer2,
+                display: "flex",
+                alignItems: "center",
+                gap: 4,
+                minWidth: 0,
+                flexShrink: 1,
+              }} key="include-vat-input">
+                <Tooltip
+                  title={t("products.offsetPrice.admin.includeVAT")}
+                  arrow
+                >
+                  <span style={{
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
+                    minWidth: 0,
+                    flexShrink: 1,
+                  }}>
+                    {t("products.offsetPrice.admin.includeVAT")}:{" "}
+                  </span>
+                </Tooltip>
+                {!isRTL && systemCurrency}
+                <input
+                  value={roundPrice(priceIncludeVat)}
+                  // type="number"
+                  onChange={(e) => {
+                    const newPriceIncludeVat = e.target.value;
+                    setPriceIncludeVat(newPriceIncludeVat);
+                    if (
+                      quantity &&
+                      quantity.values &&
+                      quantity.values.length &&
+                      quantity?.values[0] &&
+                      newPriceIncludeVat !== "" &&
+                      newPriceIncludeVat !== null &&
+                      newPriceIncludeVat !== "0"
+                    ) {
+                      const newTotalPrice = roundPrice(
+                        Number(newPriceIncludeVat) / (1 + systemVAT)
+                      );
+                      setSliderCurrentProductItemValueTotalPrice(
+                        roundPrice(Number(newTotalPrice))
+                      );
+                      setLocalStateValue(roundPrice(Number(newTotalPrice)));
+                    }
+                  }}
+                  style={{
+                    width: "30%",
+                    border: "none",
+                    outline: "none",
+                    color: "var(--theme-primary-color, #2E3092)",
+                    padding: "5px",
+                    fontSize: 16,
+                    fontWeight: 700,
+                    flexShrink: 0,
+                  }}
+                />
+                {isRTL && systemCurrency}
+              </div>
+            </>
+          )
+        }
         {(sliderCurrentProductItemValueTotalPrice ||
           sliderCurrentProductItemValueTotalPrice === 0) && (
-          <>
-            <div style={clasess.orderContainer}>
-              {t("products.offsetPrice.admin.orderToral", {
-                prieceNum:
-                  quantity &&
-                  quantity.values &&
-                  quantity.values.length &&
-                  quantity?.values[0],
-                price: roundPrice(
-                  isNaN(
-                    sliderCurrentProductItemValueTotalPrice /
+            <div style={{
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "flex-start",
+              gap: 10,
+              flexWrap: "nowrap",
+              width: "100%",
+              overflow: "hidden",
+            }}>
+
+              <div style={{
+                ...clasess.orderContainer,
+              }}>
+                {t("products.offsetPrice.admin.orderToral", {
+                  // prieceNum:
+                  //   quantity &&
+                  //   quantity.values &&
+                  //   quantity.values.length &&
+                  //   quantity?.values[0],
+                  price: roundPrice(
+                    isNaN(
+                      sliderCurrentProductItemValueTotalPrice /
                       ((quantity &&
                         quantity.values &&
                         quantity.values.length &&
                         quantity?.values[0]) ||
                         1)
-                  )
-                    ? 0
-                    : (sliderCurrentProductItemValueTotalPrice || 0) /
-                        ((quantity &&
-                          quantity.values &&
-                          quantity.values.length &&
-                          quantity?.values[0]) ||
-                          1)
-                ),
-                unitPrice: systemCurrency,
-              })}
-            </div>
-            <div style={clasess.vatContainer}>
-              {t("products.offsetPrice.admin.unitPriceWithVAT")}:{" "}
-              {!isRTL && systemCurrency}
-              <input
-                value={unitPriceWithVat || ""}
-                onFocus={() => {
-                  isEditingUnitPriceWithVatRef.current = true;
-                }}
-                onBlur={(e) => {
-                  isEditingUnitPriceWithVatRef.current = false;
-                  // Round the value on blur for display
-                  const numValue = Number(e.target.value);
-                  if (!isNaN(numValue) && numValue > 0) {
-                    const roundedValue = roundPrice(numValue);
-                    setUnitPriceWithVat(roundedValue);
-                  }
-                }}
-                onChange={(e) => {
-                  let newUnitPriceWithVat = e.target.value;
+                    )
+                      ? 0
+                      : (sliderCurrentProductItemValueTotalPrice || 0) /
+                      ((quantity &&
+                        quantity.values &&
+                        quantity.values.length &&
+                        quantity?.values[0]) ||
+                        1)
+                  ),
+                  unitPrice: systemCurrency,
+                })}
+              </div>
+              <div style={{
+                ...clasess.vatContainer,
+                display: "flex",
+                alignItems: "center",
+                minWidth: 0,
+                flexShrink: 1,
+              }}>
+                <Tooltip
+                  title={t("products.offsetPrice.admin.unitPriceWithVAT")}
+                  arrow
+                >
+                  <span style={{
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
+                    minWidth: 0,
+                    flexShrink: 1,
+                  }}>
+                    {t("products.offsetPrice.admin.unitPriceWithVAT")}:{" "}
+                  </span>
+                </Tooltip>
+                {!isRTL && systemCurrency}
+                <input
+                  value={unitPriceWithVat || ""}
+                  onFocus={() => {
+                    isEditingUnitPriceWithVatRef.current = true;
+                  }}
+                  onBlur={(e) => {
+                    isEditingUnitPriceWithVatRef.current = false;
+                    // Round the value on blur for display
+                    const numValue = Number(e.target.value);
+                    if (!isNaN(numValue) && numValue > 0) {
+                      const roundedValue = roundPrice(numValue);
+                      setUnitPriceWithVat(roundedValue);
+                    }
+                  }}
+                  onChange={(e) => {
+                    let newUnitPriceWithVat = e.target.value;
 
-                  // Allow only numbers and decimal point
-                  // Remove any non-numeric characters except decimal point
-                  newUnitPriceWithVat = newUnitPriceWithVat.replace(
-                    /[^0-9.]/g,
-                    ""
-                  );
-
-                  // Prevent multiple decimal points
-                  const parts = newUnitPriceWithVat.split(".");
-                  if (parts.length > 2) {
-                    newUnitPriceWithVat =
-                      parts[0] + "." + parts.slice(1).join("");
-                  }
-
-                  // Allow typing freely - don't round while typing
-                  setUnitPriceWithVat(newUnitPriceWithVat);
-
-                  // Only calculate if we have a valid number
-                  const numValue = parseFloat(newUnitPriceWithVat);
-                  if (
-                    quantity &&
-                    quantity.values &&
-                    quantity.values.length &&
-                    quantity?.values[0] &&
-                    newUnitPriceWithVat !== "" &&
-                    newUnitPriceWithVat !== null &&
-                    !isNaN(numValue) &&
-                    numValue > 0
-                  ) {
-                    const qty = Number(quantity.values[0]) || 1;
-                    // Calculate unit price without VAT
-                    const unitPriceWithoutVat = numValue / (1 + systemVAT);
-                    // Calculate total price without VAT
-                    const newTotalPrice = unitPriceWithoutVat * qty;
-                    // Calculate total price with VAT
-                    const newTotalPriceWithVat = numValue * qty;
-
-                    // Update all related values
-                    setUnitPrice(roundPrice(unitPriceWithoutVat));
-                    setSliderCurrentProductItemValueTotalPrice(newTotalPrice);
-                    setLocalStateValue(newTotalPrice);
-                    setPriceIncludeVat(roundPrice(newTotalPriceWithVat));
-                  } else if (
-                    newUnitPriceWithVat === "" ||
-                    newUnitPriceWithVat === null
-                  ) {
-                    // Clear related values if input is empty
-                    setUnitPrice(null);
-                    setPriceIncludeVat(null);
-                  }
-                }}
-                style={{
-                  width: "65px",
-                  border: "none",
-                  outline: "none",
-                  color: "var(--theme-primary-color, #2E3092)",
-                  padding: "5px",
-                }}
-              />
-              {isRTL && systemCurrency}
-            </div>
-            <div style={clasess.vatContainer2}>
-              {t("products.offsetPrice.admin.includeVAT")}:{" "}
-              {!isRTL && systemCurrency}
-              <input
-                value={roundPrice(priceIncludeVat)}
-                // type="number"
-                onChange={(e) => {
-                  const newPriceIncludeVat = e.target.value;
-                  setPriceIncludeVat(newPriceIncludeVat);
-                  if (
-                    quantity &&
-                    quantity.values &&
-                    quantity.values.length &&
-                    quantity?.values[0] &&
-                    newPriceIncludeVat !== "" &&
-                    newPriceIncludeVat !== null &&
-                    newPriceIncludeVat !== "0"
-                  ) {
-                    const newTotalPrice = roundPrice(
-                      Number(newPriceIncludeVat) / (1 + systemVAT)
+                    // Allow only numbers and decimal point
+                    // Remove any non-numeric characters except decimal point
+                    newUnitPriceWithVat = newUnitPriceWithVat.replace(
+                      /[^0-9.]/g,
+                      ""
                     );
-                    setSliderCurrentProductItemValueTotalPrice(
-                      roundPrice(Number(newTotalPrice))
-                    );
-                    setLocalStateValue(roundPrice(Number(newTotalPrice)));
-                  }
-                }}
-                style={{
-                  width: "65px",
-                  border: "none",
-                  outline: "none",
-                  color: "var(--theme-primary-color, #2E3092)",
-                  padding: "5px",
-                }}
-              />
-              {isRTL && systemCurrency}
+
+                    // Prevent multiple decimal points
+                    const parts = newUnitPriceWithVat.split(".");
+                    if (parts.length > 2) {
+                      newUnitPriceWithVat =
+                        parts[0] + "." + parts.slice(1).join("");
+                    }
+
+                    // Allow typing freely - don't round while typing
+                    setUnitPriceWithVat(newUnitPriceWithVat);
+
+                    // Only calculate if we have a valid number
+                    const numValue = parseFloat(newUnitPriceWithVat);
+                    if (
+                      quantity &&
+                      quantity.values &&
+                      quantity.values.length &&
+                      quantity?.values[0] &&
+                      newUnitPriceWithVat !== "" &&
+                      newUnitPriceWithVat !== null &&
+                      !isNaN(numValue) &&
+                      numValue > 0
+                    ) {
+                      const qty = Number(quantity.values[0]) || 1;
+                      // Calculate unit price without VAT
+                      const unitPriceWithoutVat = numValue / (1 + systemVAT);
+                      // Calculate total price without VAT
+                      const newTotalPrice = unitPriceWithoutVat * qty;
+                      // Calculate total price with VAT
+                      const newTotalPriceWithVat = numValue * qty;
+
+                      // Update all related values
+                      setUnitPrice(roundPrice(unitPriceWithoutVat));
+                      setSliderCurrentProductItemValueTotalPrice(newTotalPrice);
+                      setLocalStateValue(newTotalPrice);
+                      setPriceIncludeVat(roundPrice(newTotalPriceWithVat));
+                    } else if (
+                      newUnitPriceWithVat === "" ||
+                      newUnitPriceWithVat === null
+                    ) {
+                      // Clear related values if input is empty
+                      setUnitPrice(null);
+                      setPriceIncludeVat(null);
+                    }
+                  }}
+                  style={{
+                    width: "25%",
+                    border: "none",
+                    outline: "none",
+                    color: "var(--theme-primary-color, #2E3092)",
+                    padding: "5px",
+                    flexShrink: 0,
+                  }}
+                />
+                {isRTL && systemCurrency}
+              </div>
             </div>
-          </>
-        )}
+          )}
 
         {widgetType === EWidgetProductType.EDIT ||
-        widgetType === EWidgetProductType.DUPLICATE ? (
+          widgetType === EWidgetProductType.DUPLICATE ? (
           <div
             style={{
               display: "flex",
@@ -554,25 +615,20 @@ const RightSideWidget = ({
               userPermission={Permissions.UPDATE_CALCULATED_PRICE}
             >
               <Box
-                sx={{ width: 300, textAlign: "center", margin: "20px auto" }}
+                sx={{
+                  width: 300,
+                  margin: "5px auto",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 2,
+                  direction: direction,
+                }}
               >
-                <Box
-                  display="flex"
-                  justifyContent="space-between"
-                  alignItems="center"
-                  sx={{ direction: direction }}
-                >
-                  <Typography sx={clasess.labelsStyle}>
-                    {!isRTL && systemCurrency}
-                    {Math.round(minDiscount)}
-                    {isRTL && systemCurrency}
-                  </Typography>
-                  <Typography sx={clasess.labelsStyle}>
-                    {!isRTL && systemCurrency}
-                    {Math.round(maxIncrease)}
-                    {isRTL && systemCurrency}
-                  </Typography>
-                </Box>
+                <Typography sx={clasess.labelsStyle}>
+                  {!isRTL && systemCurrency}
+                  {Math.round(minDiscount)}
+                  {isRTL && systemCurrency}
+                </Typography>
                 <Slider
                   value={sliderCurrentProductItemValueTotalPrice}
                   onChange={handleSliderChange}
@@ -581,6 +637,7 @@ const RightSideWidget = ({
                   max={Math.round(Number(maxIncrease))}
                   step={1}
                   sx={{
+                    flex: 1,
                     direction: direction,
                     transform: isRtl ? "scaleX(-1)" : "none",
                     "& .MuiSlider-track": {
@@ -588,6 +645,11 @@ const RightSideWidget = ({
                     },
                   }}
                 />
+                <Typography sx={clasess.labelsStyle}>
+                  {!isRTL && systemCurrency}
+                  {Math.round(maxIncrease)}
+                  {isRTL && systemCurrency}
+                </Typography>
               </Box>
             </PermissionCheck>
           )}
@@ -807,17 +869,15 @@ const RightSideWidget = ({
                         }}
                       >
                         <div style={{ ...clasess.titleLogsTextStyle }}>
-                          {`${item.actionName ? item.actionName + ": " : ""}${
-                            item?.exception?.exceptionMessage || " "
-                          }${renderExceptionMessage(
-                            item?.exception?.exceptionKey,
-                            item?.exception?.values,
-                            t
-                          )}${
-                            !item?.exception?.exceptionKey
+                          {`${item.actionName ? item.actionName + ": " : ""}${item?.exception?.exceptionMessage || " "
+                            }${renderExceptionMessage(
+                              item?.exception?.exceptionKey,
+                              item?.exception?.values,
+                              t
+                            )}${!item?.exception?.exceptionKey
                               ? renderValues(item?.exception?.values)
                               : ""
-                          }`}
+                            }`}
                         </div>
                       </div>
                     </div>
@@ -844,17 +904,15 @@ const RightSideWidget = ({
                         }}
                       >
                         <div style={{ ...clasess.titleLogsTextStyle }}>
-                          {`${
-                            item?.exceptionMessage || " "
-                          }${renderExceptionMessage(
-                            item?.exceptionKey,
-                            item?.values,
-                            t
-                          )}${
-                            !item?.exceptionKey
+                          {`${item?.exceptionMessage || " "
+                            }${renderExceptionMessage(
+                              item?.exceptionKey,
+                              item?.values,
+                              t
+                            )}${!item?.exceptionKey
                               ? renderValues(item?.values)
                               : ""
-                          }`}
+                            }`}
                         </div>
                       </div>
                     </div>

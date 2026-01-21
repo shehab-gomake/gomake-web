@@ -418,7 +418,7 @@ const useStyle = ({ isMobileScreen }: IProps) => {
         justifyContent: "space-between",
         alignItems: "center",
         width: "100%",
-        marginBottom: 16,
+        marginBottom: 10,
       },
       clientContainer: {
         display: "flex",
@@ -445,10 +445,10 @@ const useStyle = ({ isMobileScreen }: IProps) => {
       },
       imgProductContainer: {
         width: "100%",
-        height: 170,
+        height: 150,
         borderRadius: 16,
         overflow: "hidden",
-        marginBottom: 15,
+        marginBottom: 10,
       },
       secondText: {
         color: primaryColor(500),
@@ -508,30 +508,18 @@ const useStyle = ({ isMobileScreen }: IProps) => {
         gap: 10,
       },
       orderContainer: {
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
         color: primaryColor(500),
-        ...FONT_FAMILY.Lexend(500, 14),
+        ...FONT_FAMILY.Lexend(500, 12),
+        minWidth: 107,
       },
 
       vatContainer: {
-        display: "flex",
-        justifyContent: "flex-start",
-        alignItems: "center",
-        textAlign: "center" as "center",
         color: primaryColor(500),
-        ...FONT_FAMILY.Lexend(500, 13),
+        ...FONT_FAMILY.Lexend(500, 12),
       },
       vatContainer2: {
-        display: "flex",
-        justifyContent: "flex-start",
-        alignItems: "center",
-        textAlign: "center" as "center",
         color: primaryColor(500),
-        ...FONT_FAMILY.Lexend(500, 13),
-        marginBottom: 16,
-        marginTop: -8,
+        ...FONT_FAMILY.Lexend(700, 16),
       },
       labelsStyle: {
         color: primaryColor(500),
