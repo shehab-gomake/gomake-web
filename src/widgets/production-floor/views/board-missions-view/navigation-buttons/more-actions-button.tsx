@@ -60,6 +60,7 @@ const MoreActionsButton = ({ isMobile = false }) => {
   const [isMoveToReady, setIsMoveToReady] = useState(false);
   const [moveToReadyOption, setMoveToReadyOption] = useState<"withMessage" | "withoutMessage">("withoutMessage");
   const [isSelectedCLoseAsDeliveryNote, setIsSelectedCLoseAsDeliveryNote] = useState(false);
+  const [isSelectedCLoseAsInvoice, setIsSelectedCLoseAsInvoice] = useState(false);
 
   // Email composer integration with document type 16 (OLD FUNCTIONALITY - KEPT FOR REFERENCE)
   const {
@@ -174,6 +175,7 @@ const MoreActionsButton = ({ isMobile = false }) => {
     setOpenChangeProductionStatusModal(false);
     setIsMoveToReady(false);
     setIsSelectedCLoseAsDeliveryNote(false);
+    setIsSelectedCLoseAsInvoice(false);
   };
 
   const moveOrderToReady = async (isSendMessage: boolean = false) => {
@@ -186,6 +188,8 @@ const MoreActionsButton = ({ isMobile = false }) => {
         // Refresh the page or update state as needed
         if (isSelectedCLoseAsDeliveryNote) {
           window.open(`/deliveryNote?isNewCreation=true&orderId=${boardMissions.orderId}`, '_blank');
+        } else if (isSelectedCLoseAsInvoice) {
+          window.open(`/invoice?isNewCreation=true&orderId=${boardMissions.orderId}`, '_blank');
         }
       } else {
         alertFaultUpdate();
@@ -215,10 +219,21 @@ const MoreActionsButton = ({ isMobile = false }) => {
   const handleCloseAsInvoice = () => {
     handleClose();
     if (!boardMissions?.orderId) return;
-    else {
+
+    // Check if order is not ready (isReady = false)
+    if (boardMissions.isReady === false) {
+      setIsSelectedCLoseAsInvoice(true);
+      setOpenChangeProductionStatusModal(true);
+    } else {
       // If ready, directly open invoice
       window.open(`/invoice?isNewCreation=true&orderId=${boardMissions.orderId}`, '_blank');
     }
+  };
+
+  const handleViewLikeOrder = () => {
+    handleClose();
+    if (!boardMissions?.orderId) return;
+    push(`/orders?orderId=${boardMissions.orderId}`).then();
   };
 
   const handleCopyFilesPath = async () => {
@@ -338,7 +353,7 @@ const MoreActionsButton = ({ isMobile = false }) => {
         orderId={boardMissions.orderId}
         productType={boardMissions.productType}
         jobGraphicApprovalId={undefined}
-        onSuccess={() => {}}
+        onSuccess={() => { }}
       />
 
       {/* Graphics Approval View Modal (Edit Mode) */}
@@ -385,6 +400,9 @@ const MoreActionsButton = ({ isMobile = false }) => {
           } else {
             if (isSelectedCLoseAsDeliveryNote) {
               window.open(`/deliveryNote?isNewCreation=true&orderId=${boardMissions.orderId}`, '_blank');
+              onClickCloseChangeProductionStatusModal();
+            } else if (isSelectedCLoseAsInvoice) {
+              window.open(`/invoice?isNewCreation=true&orderId=${boardMissions.orderId}`, '_blank');
               onClickCloseChangeProductionStatusModal();
             }
           }
