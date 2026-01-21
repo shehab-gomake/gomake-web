@@ -1,7 +1,7 @@
 
 export const HP_SIDEBAR_OFFSETS = {
   CLOSED: 60,
-  OPEN: 250,
+  OPEN: 240,
 } as const;
 
 export const getHpSidebarOffset = (isClosed: boolean): number => {

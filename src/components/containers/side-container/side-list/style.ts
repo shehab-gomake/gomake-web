@@ -9,7 +9,7 @@ const useStyle = ({isHaveDeleteIcon}) => {
       container: {
         position: "relative" as "relative",
         boxShadow: "0px 4px 40px rgba(0, 0, 0, 0.08)",
-        //   height: convertHeightToVH(735)
+        //  height: convertHeightToVH(735)
         //  height:"100%"
       },
       closeIcon: {

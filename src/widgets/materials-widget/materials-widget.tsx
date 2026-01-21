@@ -61,9 +61,9 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
   const activeFilter = useRecoilValue(activeFilterState);
   const isHpSidebarClosed = useRecoilValue(hpSidebarStatusState);
   const { currentTheme } = useTheme();
-  
+  const isHpClient = currentTheme === "hp-client";
   // Use HP theme constants if HP theme is active, otherwise use default values
-  const sidebarOffset = currentTheme === "hp-client" 
+  const sidebarOffset = isHpClient 
     ? getHpSidebarOffset(isHpSidebarClosed)
     : 135; // Default offset for non-HP themes
   const setOpenAddRowModal = useSetRecoilState(openAddRowModalState);
@@ -371,7 +371,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
             <Box
               sx={{
                 position: "fixed",
-                top: 120,
+                top: isHpClient ? 130 : 120,
                 [dir === "rtl" ? "right" : "left"]: sidebarOffset,
                 [dir !== "rtl" ? "right" : "left"]: 0,
                 // left: 140,

@@ -3,7 +3,7 @@ import { useMemo } from "react";
 import { FONT_FAMILY } from "@/utils/font-family";
 
 const useStyle = () => {
-  const { theme, primaryColor } = useGomakeTheme();
+  const { theme, primaryColor , primarySecondaryBlend} = useGomakeTheme();
   const classes = useMemo(() => {
     return {
       multiSelectStyle2: {
@@ -24,13 +24,13 @@ const useStyle = () => {
         width: 125,
         justifyContent: "space-between",
         alignItems: "center",
-        color: primaryColor(300),
+        color: primarySecondaryBlend(300),
       },
       menuBtn: {
         display: "flex",
         alignItems: "center",
         gap: 8,
-        color: primaryColor(300),
+        color: primarySecondaryBlend(300),
         height: "10px",
       },
       multiSelectStyle: {

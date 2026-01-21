@@ -55,6 +55,7 @@ import { convertTitleUnits } from "@/utils/helpers";
 import { isLoadingMaterialsState, userState } from "@/store";
 import { UNIT_TYPE } from "@/enums";
 import { EMaterialActiveFilter } from "./enums";
+import { PrimaryCheckbox } from "@/components/check-box/primary-check-box";
 
 const useMaterials = (isAdmin: boolean) => {
   const { query, push, replace } = useRouter();
@@ -384,8 +385,9 @@ const useMaterials = (isAdmin: boolean) => {
 
   const tableHeaders = useCallback(() => {
     return [
-      <Checkbox
-        onChange={(event, checked) => onChangeHeaderCheckBox(checked)}
+      <PrimaryCheckbox 
+        // onChange={(event, checked) => onChangeHeaderCheckBox(checked)}
+        onChange={(e) => onChangeHeaderCheckBox(e.target.checked)}
         checked={isAllSelected()}
       />,
       ...materialHeaders.map((header) => header.value),
@@ -396,8 +398,9 @@ const useMaterials = (isAdmin: boolean) => {
 
   const tableHeadersNew = useCallback(() => {
     return [
-      <Checkbox
-        onChange={(event, checked) => onChangeHeaderCheckBox(checked)}
+      <PrimaryCheckbox
+        // onChange={(event, checked) => onChangeHeaderCheckBox(checked)}
+        onChange={(e) => onChangeHeaderCheckBox(e.target.checked)}
         checked={isAllSelected()}
       />,
       ...(isAdmin
@@ -434,8 +437,9 @@ const useMaterials = (isAdmin: boolean) => {
   const tableRows = useMemo(() => {
     return materialCategoryData.map((dataRow) => {
       return [
-        <Checkbox
-          onChange={(e, checked) => onChangeRowCheckBox(dataRow.id, checked)}
+        <PrimaryCheckbox
+          // onChange={(e, checked) => onChangeRowCheckBox(dataRow.id, checked)}
+          onChange={(e) => onChangeRowCheckBox(dataRow.id, e.target.checked)}
           checked={dataRow.checked}
         />,
         ...materialHeaders.map((header) => (
@@ -474,8 +478,9 @@ const useMaterials = (isAdmin: boolean) => {
       rows.push({
         id: dataRow.id,
         cells: [
-          <Checkbox
-            onChange={(e, checked) => onChangeRowCheckBox(dataRow.id, checked)}
+          <PrimaryCheckbox
+            // onChange={(e, checked) => onChangeRowCheckBox(dataRow.id, checked)}
+            onChange={(e) => onChangeRowCheckBox(dataRow.id, e.target.checked)}
             checked={dataRow.checked}
           />,
           ...filteredHeaders.map((header) => (

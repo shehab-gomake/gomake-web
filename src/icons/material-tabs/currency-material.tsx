@@ -1,6 +1,6 @@
 import { IIconProps } from "@/components/icons/interface";
 
-const CurrencyMaterial = ({ width, height, color }: IIconProps) => {
+const CurrencyMaterial = ({ color }: IIconProps) => {
   return (
     <svg
       width="24"

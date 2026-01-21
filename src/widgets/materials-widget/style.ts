@@ -65,6 +65,7 @@ const useStyle = () => {
         height: 34,
       },
       clickableData: {
+        color: "var(--theme-text-primary, var(--theme-primary-color, #2E3092))",
         padding: "0 10px",
         height: "26px",
         borderRadius: "4",

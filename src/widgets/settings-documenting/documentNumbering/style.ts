@@ -3,7 +3,7 @@ import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 
 const useStyle = () => {
-  const { theme } = useGomakeTheme();
+  const { theme , primarySecondaryBlend} = useGomakeTheme();
   const classes = useMemo(() => {
     return {
       container: {
@@ -21,7 +21,7 @@ const useStyle = () => {
       },
       rowTextStyle: {
         ...FONT_FAMILY.Lexend(500, 10),
-        color: "rgba(130, 131, 190, 1)",
+        color: primarySecondaryBlend(300),
       },
       insideStyle: {
         padding: 16,

@@ -47,7 +47,7 @@ import {
 
 const HpSearchInput = styled(TextField)(() => {
   return {
-    width: "231px",
+    width: "100%",
     "& .MuiOutlinedInput-root": {
       height: "36px",
       padding: "4px 12px",
@@ -84,7 +84,7 @@ const HpListButton = styled(ListItemButton)(() => {
   return {
     position: "relative" as "relative",
     isolation: "isolate" as "isolate",
-    width: "231px",
+    width: "100%",
     height: "40px",
     padding: "8px",
     gap: "6px",
@@ -116,7 +116,7 @@ const HpListButton = styled(ListItemButton)(() => {
         fontWeight: 400,
         fontSize: "16px",
         lineHeight: "20px",
-        width: "183px",
+        width: "183px", //!here
         height: "20px",
         display: "flex",
         alignItems: "center",
@@ -155,7 +155,6 @@ const HpListButton = styled(ListItemButton)(() => {
       lineHeight: "20px",
     },
     "& .MuiListItemIcon-root": {
-      // minWidth: "24px",
       justifyContent: "center",
       width: "16px",
       height: "16px",
@@ -199,7 +198,7 @@ const HpSideList = ({
         alignItems: "flex-start",
         padding: "24px 25px 0px 24px",
         gap: "24px",
-        width: "280px",
+        width: "100%",
         backgroundColor: "#FFFFFF",
         ...(isRTL
           ? { borderLeft: "1px solid #E0E0E0" }
@@ -214,7 +213,7 @@ const HpSideList = ({
         cursor: "pointer" as "pointer",
       },
       header: {
-        width: "231px",
+        width: "100%",
         height: "40px",
         fontFamily: "'Forma DJR UI', sans-serif",
         fontStyle: "normal" as "normal",
@@ -226,7 +225,7 @@ const HpSideList = ({
         padding: 0,
       },
       searchContainer: {
-        width: "231px",
+        width: "100%",
       },
       listContainer: {
         display: "flex",
@@ -234,11 +233,15 @@ const HpSideList = ({
         alignItems: "flex-start",
         padding: "0px",
         gap: "4px",
-        width: "231px",
+        width: "100%",
         backgroundColor: "inherit",
         overflow: "auto",
-        height: isHaveDeleteIcon
-          ? "calc(100vh - 305px)"
+        //!here
+        // height: isHaveDeleteIcon
+        //   ? "calc(100vh - 305px)"
+        //   : "calc(100vh - 235px)",
+          height: isHaveDeleteIcon
+          ? "calc(100vh - 360px)"
           : "calc(100vh - 235px)",
       },
       buttonWrapper: {

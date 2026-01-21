@@ -67,12 +67,14 @@ import { useTableCellData } from "../table-cell-data/use-table-cell-data";
 import { getAndSetAllCustomers, getAndSetRecentCustomers } from "@/services/hooks/cart-side/customers";
 import { CLIENT_TYPE } from "@/pages/customers/enums";
 import { useDebouncedCallback } from "use-debounce";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 const useMaterialsActions = (isAdmin: boolean) => {
   const { callApi } = useGomakeAxios();
   const { navigate } = useGomakeRouter();
   const { query } = useRouter();
   const { materialType, materialCategory } = query;
+  const { primarySecondaryBlend } = useGomakeTheme();
   const user = useRecoilValue<any>(userState);
   const unitType = user?.printHouseProfile?.unitType || 0
   const { getMaterialCategories } = useMaterials(isAdmin);
@@ -839,49 +841,49 @@ const useMaterialsActions = (isAdmin: boolean) => {
 
   const _renderIcons = (iconName: string) => {
     if (iconName === EMaterialsTabsIcon.UPDATE_PRICE_PER_TON) {
-      return <UnitsPriceMaterial />;
+      return <UnitsPriceMaterial color={primarySecondaryBlend(300)} />;
     }
     if (iconName === EMaterialsTabsIcon.UPDATE_UNIT_PRICE) {
-      return <UnitsPriceMaterial />;
+      return <UnitsPriceMaterial color={primarySecondaryBlend(300)} />;
     }
     if (iconName === EMaterialsTabsIcon.ADD_PERCENT_TO_UNIT_PRICE) {
-      return <PercentageMaterial />;
+      return <PercentageMaterial fill={primarySecondaryBlend(300)} />;
     }
     if (iconName === EMaterialsTabsIcon.ADD_PERCENT_TO_PRICE_PER_TON) {
-      return <PercentageMaterial />;
+      return <PercentageMaterial fill={primarySecondaryBlend(300)} />;
     }
     if (iconName === EMaterialsTabsIcon.UPDATE_CURRENCY) {
-      return <CurrencyMaterial />;
+      return <CurrencyMaterial color={primarySecondaryBlend(300)} />;
     }
     if (iconName === EMaterialsTabsIcon.CHANGE_TO_ACTIVE) {
-      return <ActiveMaterial />;
+      return <ActiveMaterial fill={primarySecondaryBlend(300)} />;
     }
     if (iconName === EMaterialsTabsIcon.CHANGE_TO_INACTIVE) {
-      return <DeActiveMaterial />;
+      return <DeActiveMaterial color={primarySecondaryBlend(300)} />;
     }
     if (iconName === EMaterialsTabsIcon.ADD_NEW) {
-      return <AddNewMaterial />;
+      return <AddNewMaterial color={primarySecondaryBlend(300)} />;
     }
     if (iconName === EMaterialsTabsIcon.DUPLICATE) {
-      return <DuplicateMaterial />;
+      return <DuplicateMaterial color={primarySecondaryBlend(300)} />;
     }
     if (iconName === EMaterialsTabsIcon.DELETE) {
-      return <DeleteMaterial />;
+      return <DeleteMaterial stroke={primarySecondaryBlend(300)} />;
     }
     if (iconName === EMaterialsTabsIcon.DOWNLOAD_EXCEL) {
-      return <DownloadExcelSheet />;
+      return <DownloadExcelSheet color={primarySecondaryBlend(300)} />;
     }
     if (iconName === EMaterialsTabsIcon.UPLOAD_EXCEL) {
-      return <UploadExcelSheet />;
+      return <UploadExcelSheet color={primarySecondaryBlend(300)} />;
     }
     if (iconName === EMaterialsTabsIcon.Upload_Materials_Pictures) {
-      return <UploadMaterialsPictures />;
+      return <UploadMaterialsPictures color={primarySecondaryBlend(300)} />;
     }
     if (iconName === EMaterialsTabsIcon.CREATE_PURCHASE_ORDER) {
-      return <CreateOrder />;
+      return <CreateOrder color={primarySecondaryBlend(300)} />;
     }
     if (iconName === EMaterialsTabsIcon.DIE_CUT_ANALYZER) {
-      return <DieCutAnalyzer />;
+      return <DieCutAnalyzer color={primarySecondaryBlend(300)} />;
     }
   };
   const deleteProperty = (index) => {

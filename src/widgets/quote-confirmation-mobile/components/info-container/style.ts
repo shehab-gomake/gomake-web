@@ -3,7 +3,7 @@ import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 
 const useStyle = () => {
-  const { primaryColor, secondColor, grayColor, theme } = useGomakeTheme();
+  const { primaryColor, secondColor, grayColor, theme , primarySecondaryBlend} = useGomakeTheme();
 
   const classes = useMemo(() => {
     return {
@@ -80,7 +80,7 @@ const useStyle = () => {
       },
       removeAddressTextStyle: {
         ...FONT_FAMILY.Lexend(500, 16),
-        color: "rgb(130, 131, 190)",
+        color: primarySecondaryBlend(300),
       },
       inputMainContainer: {
         display: "flex",

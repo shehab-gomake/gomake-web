@@ -26,7 +26,7 @@ const SideLeftMenuWidget = ({
         handleClick(e)
         e.stopPropagation();
       }} >
-        <MoreCircleIcon />
+        <MoreCircleIcon color={clasess.boldIconColor} />
       </IconButton>
       <GoMakeMenu handleClose={handleClose} open={open} anchorEl={anchorEl}>
         <MenuItem
@@ -40,7 +40,7 @@ const SideLeftMenuWidget = ({
             handleClose();
           }}
         >
-          <EditIcon />
+          <EditIcon stroke={clasess.iconColor} />
           <div style={clasess.rowTextStyle}>
             {t("navigationButtons.edit")}
           </div>
@@ -56,7 +56,7 @@ const SideLeftMenuWidget = ({
             handleClose();
           }}
         >
-          <DuplicateIcon />
+          <DuplicateIcon color={clasess.iconColor} />
           <div style={clasess.rowTextStyle}>
             {t("navigationButtons.duplicate")}
           </div>
@@ -70,7 +70,7 @@ const SideLeftMenuWidget = ({
               handleClose();
             }}
           >
-            <DeleteIcon stroke="#2E3092" />
+            <DeleteIcon stroke={clasess.iconColor} />
             <div style={clasess.rowTextStyle}>
               {t("navigationButtons.delete")}
             </div>

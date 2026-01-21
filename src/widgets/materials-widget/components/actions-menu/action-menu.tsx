@@ -218,7 +218,7 @@ const ActionMenu = (props: IActionMenuProps) => {
                     {actionItem.isShowSubMenu ? (
                       <>
                         {
-                          isRTL ? <ChevronRightIcon sx={{ ml: "auto", color: "rgb(130, 131, 190)" }} /> : <ChevronLeftIcon sx={{ ml: "auto", color: "rgb(130, 131, 190)" }} />
+                          isRTL ? <ChevronRightIcon sx={clasess.chevronIconColor} /> : <ChevronLeftIcon sx={clasess.chevronIconColor} />
                         }
                       </>
                     ) : hasAnySubmenu ? <div style={{ width: 24, height: 24 }} /> : null}
@@ -524,7 +524,7 @@ const ActionMenu = (props: IActionMenuProps) => {
                     type={action?.action === EMaterialsActions.CreatePurchaseOrder ? "number" : action?.submenuOption !== undefined ? "number" : undefined}
                     placeholder={action?.submenuOption !== undefined ? t("reports.enterPrice") : undefined}
                     style={{
-                      borderBottom: !updatedValue ? '2px solid #EC038D' : '2px solid rgb(67,195,232)',
+                      borderBottom: !updatedValue ? '2px solid var(--theme-primary-color, #EC038D)' : '2px solid var(--theme-primary-300,#43c3e8)',
                       borderRadius: '4px',
                     }}
                   />
