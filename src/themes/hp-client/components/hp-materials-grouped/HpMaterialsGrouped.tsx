@@ -153,7 +153,7 @@ const HpContainer = styled(Box)({
   flexGrow: 0,
 });
 
-const HpCategoryHeader = styled(Box)({
+const HpCategoryHeader = styled(Box)<{ isCollapsed?: boolean }>(({ isCollapsed }) => ({
   display: "flex",
   flexDirection: "row",
   justifyContent: "space-between",
@@ -167,9 +167,9 @@ const HpCategoryHeader = styled(Box)({
   cursor: "pointer",
   "&:hover": {
     backgroundColor: "rgba(2, 74, 216, 0.04)",
-    borderRadius: "8px",
+    borderRadius: isCollapsed ? "8px" : "0px",
   },
-});
+}));
 
 const HpCategoryInfo = styled(Box)({
   display: "flex",
@@ -552,6 +552,7 @@ const HpMaterialsGrouped = ({ isAdmin }: IHpMaterialsGroupedProps) => {
               <HpContainer key={categoryKey}>
                 {/* Category Header */}
                 <HpCategoryHeader
+                  isCollapsed={isCollapsed}
                   onClick={() => {
                     setCollapsedCategories((prev) => ({
                       ...prev,

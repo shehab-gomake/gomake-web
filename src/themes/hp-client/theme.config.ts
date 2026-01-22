@@ -21,6 +21,7 @@ import {
   HpFrontDeskIcon,
 } from "./components/hp-top-header";
 import { HpMaterialsGrouped } from "./components/hp-materials-grouped";
+import { HpMachinesGrouped } from "./components/hp-machines-grouped";
 
 /* HP CLIENT THEME - Custom Brand Theme */
 
@@ -297,6 +298,7 @@ const hpClientThemeConfig: ThemeConfig = {
     SideList: HpSideList,
     ProfileAvatar: HpProfileAvatar,
     MaterialsGrouped: HpMaterialsGrouped,
+    MachinesGrouped: HpMachinesGrouped,
   },
 
   // Icon overrides for HP Client theme

@@ -21,8 +21,10 @@ import { usePrintHouseAddMachine } from "@/widgets/machines/hooks/use-print-hous
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { machineState } from "@/widgets/machines/state/machine-state";
+import { useThemeComponent } from "@/contexts/theme/useThemeComponent";
 
-const CustomerMachinesGrouped = () => {
+// Base component for default theme
+const BaseCustomerMachinesGrouped = () => {
   const { classes } = useStyle();
   const { t } = useTranslation();
   const { primaryColor } = useGomakeTheme();
@@ -386,6 +388,15 @@ const CustomerMachinesGrouped = () => {
       </GoMakeModal>
     </div>
   );
+};
+
+// Theme-aware wrapper - uses HP component when hp-client theme is active
+const CustomerMachinesGrouped = () => {
+  const ThemedMachinesGrouped = useThemeComponent(
+    "MachinesGrouped",
+    BaseCustomerMachinesGrouped
+  );
+  return <ThemedMachinesGrouped />;
 };
 
 export { CustomerMachinesGrouped };
