@@ -8,7 +8,7 @@ import { useTranslation } from "react-i18next";
 import { SuccessIcon } from "@/icons/success-icon";
 import { ErrorIcon } from "@/icons/error-icon";
 import { style } from "./style";
-import { updateTempUserTokenStorage } from "@/services/storage-data";
+import {removeTempUserTokenStorage, updateTempUserTokenStorage} from "@/services/storage-data";
 import { getGraphicsApprovalApi, updateGraphicsApprovalFileApi } from "@/services/api-service/production-floor/production-floor-endpoints";
 import { getCompanyLoginLogo } from "@/services/api-service/profiles/company-profile-api";
 import { FONT_FAMILY } from "@/utils/font-family";
@@ -334,6 +334,8 @@ const GraphicsApprovalWidget = () => {
     };
 
     if (router.isReady) {
+      setIsTokenReady(false);
+      removeTempUserTokenStorage()
       getTempUserToken();
     }
   }, [router.isReady, id, boardMissionId, callApi]);
