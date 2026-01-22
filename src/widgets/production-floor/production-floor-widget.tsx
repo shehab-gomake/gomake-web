@@ -204,6 +204,7 @@ const ProductionFloorWidget = () => {
       setAbortControllerFiles(newRequestAbortController);
       setAbortControllerActivities(newRequestAbortController);
       setAbortControllerDetails(newRequestAbortController);
+      getDataForGroupViewWhenCloseModal(connectionId);
     }
   };
 
@@ -373,12 +374,6 @@ const ProductionFloorWidget = () => {
     productType,
   ]);
 
-
-  useEffect(() => {
-    if (!router.query.boardMissionsId) {
-      getDataForGroupViewWhenCloseModal(connectionId);
-    }
-  }, [router.query.boardMissionsId]);
 
   return (
     <Stack gap={"10px"} height={"100%"} maxHeight={"100%"} overflow={"hidden"}>
