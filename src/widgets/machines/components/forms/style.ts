@@ -2,7 +2,7 @@ import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { useMemo } from "react";
 
 const useStyle = () => {
-  const { theme } = useGomakeTheme();
+  const { theme , primarySecondaryBlend} = useGomakeTheme();
   const classes = useMemo(() => {
     return {
       container: {
@@ -29,8 +29,10 @@ const useStyle = () => {
       },
       actionButton: {
         height: 40,
-        width: 'fit-content'
-      }
+         width: 'fit-content',
+      },
+      secondaryButton: {
+        color: primarySecondaryBlend(500) , width: 'fit-content' , padding: '0px'      }
     };
   }, [theme]);
   return {

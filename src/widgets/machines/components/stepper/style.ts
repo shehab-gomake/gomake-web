@@ -3,7 +3,7 @@ import { useMemo } from "react";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 const useStyle = () => {
-  const { primaryColor } = useGomakeTheme();
+  const {  primarySecondaryBlend , theme} = useGomakeTheme();
   const classes = useMemo(() => {
     return {
       stepLabelContainer: {
@@ -18,7 +18,7 @@ const useStyle = () => {
 
       },
       activeStepLabel: {
-        backgroundColor: primaryColor(50),
+        backgroundColor: primarySecondaryBlend(50),
         padding: 10,
         cursor: 'pointer' as 'pointer'
 
@@ -32,7 +32,7 @@ const useStyle = () => {
         margin: '0 2px'
       }
     };
-  }, []);
+  }, [theme]);
   return {
     classes,
   };

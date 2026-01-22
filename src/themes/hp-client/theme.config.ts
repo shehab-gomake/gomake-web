@@ -121,6 +121,16 @@ const hpClientThemeConfig: ThemeConfig = {
       "--theme-font-weight-semibold": "600",
       "--theme-font-weight-bold": "700",
 
+
+      "--theme-font-size-small": "12px",
+      "--theme-font-size-medium": "14px",
+      "--theme-font-size-large": "16px",
+      "--theme-font-size-xlarge": "18px",
+      "--theme-font-size-xxlarge": "20px",
+      "--theme-font-size-xxxlarge": "22px",
+      "--theme-font-size-xxxxlarge": "24px",
+
+
       // Typography - Title Styles (h1, h2, main headings)
       "--theme-typography-title-font-family": '"Forma DJR UI", sans-serif',
       "--theme-typography-title-font-weight": "500",
@@ -227,6 +237,11 @@ const hpClientThemeConfig: ThemeConfig = {
       "--theme-select-bg": "var(--theme-primary-100, #F4F3FF)",
       "--theme-select-text-color": "var(--theme-primary-color)",
       "--theme-select-border-radius": "var(--theme-radius-xl, 8px)",
+
+
+      "--theme-search-input-bg": "#FFF",
+      "--theme-search-input-placeholder-color": "var(#000, #A3A3A3)",
+      "--theme-search-input-text-color": "var(--theme-text-primary, #1a202c)",
 
       "--theme-input-shadow": "none",
       "--theme-input-border": "1px solid var(--theme-border-color, #E0E0E0)",

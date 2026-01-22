@@ -21,16 +21,16 @@ import { ISideListProps } from "@/components/containers/interface";
 import { useStyle } from "@/components/containers/machines-container/side-list/style";
 
 const ListButton = styled(ListItemButton)(() => {
-    const { primaryColor } = useGomakeTheme();
+    const {  primarySecondaryBlend} = useGomakeTheme();
     return {
         "&.Mui-selected": {
-            backgroundColor: primaryColor(50),
+            backgroundColor: primarySecondaryBlend(50),
         },
         "&.Mui-selected:hover": {
-            backgroundColor: primaryColor(50),
+            backgroundColor: primarySecondaryBlend(50),
         },
         "&:hover": {
-            backgroundColor: primaryColor(50),
+            backgroundColor: primarySecondaryBlend(50),
         },
     };
 });

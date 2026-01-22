@@ -134,13 +134,14 @@ const HpCategoryHeader = styled(Box)<{ isCollapsed?: boolean }>(({ isCollapsed }
   padding: "0px 16px",
   width: "100%",
   height: "54px",
-  borderRadius: "0px",
+  borderRadius: "12px",
   alignSelf: "stretch",
   flexGrow: 0,
   cursor: "pointer",
   "&:hover": {
     backgroundColor: "rgba(2, 74, 216, 0.04)",
-    borderRadius: isCollapsed ? "8px" : "0px",
+    borderBottomLeftRadius: isCollapsed ? "12px" : "0px",
+    borderBottomRightRadius: isCollapsed ? "12px" : "0px",
   },
 }));
 
