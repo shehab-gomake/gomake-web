@@ -4,9 +4,11 @@ interface ExportData {
   agentsData: any[];
   productsData: any[];
   clientsData: any[];
+  productTypeData?: any[];
   agentHeaders: string[];
   productHeaders: string[];
   clientHeaders: string[];
+  productTypeHeaders?: string[];
   statistics?: any;
   salesItems?: any[];
   dailyDocumentsSummary?: {
@@ -62,6 +64,24 @@ export const exportDashboardToExcel = (
       workbook,
       clientsWorksheet,
       "Clients Performance"
+    );
+    hasSheets = true;
+  }
+
+  // Export Product Type Data
+  if (data.productTypeData && data.productTypeData.length > 0) {
+    const productTypeWorksheet = XLSX.utils.aoa_to_sheet([
+      data.productTypeHeaders || ["Product type", "Total sales"],
+      ...data.productTypeData.map((r) =>
+        r.map((c) =>
+          typeof c === "string" || typeof c === "number" ? c : String(c)
+        )
+      ),
+    ]);
+    XLSX.utils.book_append_sheet(
+      workbook,
+      productTypeWorksheet,
+      "Product Types"
     );
     hasSheets = true;
   }

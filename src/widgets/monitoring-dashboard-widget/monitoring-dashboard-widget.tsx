@@ -250,13 +250,30 @@ const MonitoringDashboardWidget = () => {
         `${t("dashboard.totalSales")} (${currUnit})`,
       ];
 
+    const productTypeHeaders = [
+      t("products.profits.exceptions.productType"),
+      `${t("dashboard.totalSales")} (${currUnit})`,
+    ];
+
+    const productTypeRows = (productTypeChartData || []).map((item) => [
+      item?.label ?? "-",
+      item?.value != null
+        ? `${currUnit} ${Number(item.value).toLocaleString("en-US", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        })}`
+        : "-",
+    ]);
+
     const exportData = {
       agentsData: normalizeRowsForExport(agentsRow || []),
       productsData: normalizeRowsForExport(productsRow || []),
       clientsData: normalizeRowsForExport(clientsRow || []),
+      productTypeData: productTypeRows,
       agentHeaders: agentTableHeaders || [],
       productHeaders: productTableHeaders || [],
       clientHeaders: clientTableHeaders || [],
+      productTypeHeaders,
       statistics,
       salesItems: salesItems || [],
       dailyDocumentsSummary:
