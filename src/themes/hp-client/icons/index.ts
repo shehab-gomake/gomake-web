@@ -6,6 +6,7 @@ export { HpMailingIcon } from "./HpMailingIcon";
 export { HpDocumentingIcon } from "./HpDocumentingIcon";
 export { HpUsersIcon } from "./HpUsersIcon";
 export { HpFileApiIcon } from "./HpFileApiIcon";
+export { HpApiTokenIcon } from "./HpApiTokenIcon";
 export { HpPreferencesIcon } from "./HpPreferencesIcon";
 export { HpManageBillingIcon } from "./HpManageBillingIcon";
 export { MonthlyPerformanceIcon } from "./MonthlyPerformanceIcon";

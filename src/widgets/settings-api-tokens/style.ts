@@ -4,7 +4,7 @@ import { FONT_FAMILY } from "@/utils/font-family";
 import { convertHeightToVH } from "@/utils/adapter";
 
 const useStyle = () => {
-  const { theme, primaryColor, secondColor, errorColor } = useGomakeTheme();
+  const { theme, primaryColor, secondColor, errorColor, successColor, primarySecondaryBlend } = useGomakeTheme();
   const classes = useMemo(() => {
     return {
       mainContainer: {
@@ -17,7 +17,7 @@ const useStyle = () => {
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
-        marginBottom: convertHeightToVH(50),
+        marginBottom: convertHeightToVH(30),
         flexShrink: 0,
       },
       pageTitle: {
@@ -31,6 +31,7 @@ const useStyle = () => {
         display: "flex",
         flexDirection: "column" as "column",
         height: "100%",
+        // minHeight: 0,
         maxHeight: "calc(100vh - 200px)",
         overflow: "hidden",
       },
@@ -53,53 +54,135 @@ const useStyle = () => {
         flexDirection: "column" as "column",
         gap: "16px",
         overflowY: "auto" as "auto",
+        overflowX: "hidden" as "hidden",
         flex: 1,
+        minHeight: 0,
         paddingRight: "8px",
+        paddingBottom: "8px",
       },
       card: {
+        position: "relative" as "relative",
         border: "1px solid #E5E7EB",
-        borderRadius: "8px",
-        padding: "20px",
+        borderRadius: "var(--theme-radius-md, 12px)",
         backgroundColor: "#FFFFFF",
-        boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)",
+        boxShadow: "var(--theme-shadow-sm, 0 1px 3px rgba(0, 0, 0, 0.1))",
+        overflow: "visible" as "visible",
+        transition: "all 0.2s ease-in-out",
+        flexShrink: 0,
+      },
+      cardContent: {
+        padding: "16px",
+        width: "100%",
+        boxSizing: "border-box" as "border-box",
+        minWidth: 0,
+        overflow: "visible" as "visible",
       },
       cardHeader: {
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
         marginBottom: "12px",
       },
-      statusBadge: {
-        padding: "4px 12px",
-        borderRadius: "12px",
-        fontSize: "12px",
-        fontWeight: 500,
-        ...FONT_FAMILY.Lexend(500, 12),
+      cardTitleSection: {
+        display: "flex",
+        alignItems: "flex-start",
+        gap: "10px",
+      },
+      cardTitleWrapper: {
+        flex: 1,
+        display: "flex",
+        flexDirection: "column" as "column",
+        gap: "6px",
+      },
+      cardTitle: {
+        margin: 0,
+        fontSize: "18px",
+        fontWeight: 600,
+        lineHeight: "24px",
+        ...FONT_FAMILY.Lexend(600, 18),
+        color: "#1A1A1A",
+      },
+      statusBadgeContainer: {
+        display: "flex",
+        alignItems: "center",
+        gap: "4px",
       },
       cardDescription: {
         color: secondColor(500),
         marginBottom: "12px",
+        fontSize: "14px",
+        lineHeight: "20px",
         ...FONT_FAMILY.Lexend(400, 14),
       },
-      cardInfo: {
-        display: "flex",
-        flexDirection: "column" as "column",
-        gap: "8px",
+      clientIdSection: {
         marginBottom: "16px",
-        fontSize: "14px",
-        ...FONT_FAMILY.Lexend(400, 14),
+        padding: "10px 12px",
+        backgroundColor: "#F9FAFB",
+        borderRadius: "8px",
+        border: "1px solid #E5E7EB",
+        boxSizing: "border-box" as "border-box",
+        width: "100%",
+        minWidth: 0,
+      },
+      clientIdLabel: {
+        fontSize: "12px",
+        fontWeight: 500,
+        marginBottom: "4px",
+        ...FONT_FAMILY.Lexend(500, 12),
       },
       code: {
-        backgroundColor: "#F3F4F6",
-        padding: "2px 6px",
-        borderRadius: "4px",
+        backgroundColor: "#FFFFFF",
+        padding: "6px 10px",
+        borderRadius: "6px",
         fontFamily: "monospace",
-        fontSize: "12px",
+        fontSize: "13px",
         color: primaryColor(900),
+        display: "block",
+        wordBreak: "break-all" as "break-all",
+        overflowWrap: "break-word" as "break-word",
+        border: "1px solid #E5E7EB",
+        width: "100%",
+        maxWidth: "100%",
+        boxSizing: "border-box" as "border-box",
+        overflow: "visible" as "visible",
+        whiteSpace: "pre-wrap" as "pre-wrap",
+        minWidth: 0,
+      },
+      cardInfoGrid: {
+        display: "grid",
+        gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+        gap: "12px",
+        marginBottom: "12px",
+      },
+      infoItem: {
+        display: "flex",
+        alignItems: "flex-start",
+        gap: "10px",
+      },
+      infoContent: {
+        display: "flex",
+        flexDirection: "column" as "column",
+        gap: "3px",
+        flex: 1,
+      },
+      infoLabel: {
+        fontSize: "12px",
+        fontWeight: 500,
+        color: primaryColor(600),
+        ...FONT_FAMILY.Lexend(500, 12),
+      },
+      infoValue: {
+        fontSize: "14px",
+        fontWeight: 400,
+        color: "#1A1A1A",
+        ...FONT_FAMILY.Lexend(400, 14),
       },
       cardActions: {
         display: "flex",
         justifyContent: "flex-end",
+        paddingTop: "12px",
+        borderTop: "1px solid #E5E7EB",
+      },
+      revokeButton: {
+        // width: "100%",
+        width: "fit-content",
       },
       modalStyle: {
         width: "600px",
@@ -227,8 +310,44 @@ const useStyle = () => {
         color: "#718096",
         marginTop: "4px",
       },
+      // Dynamic style functions
+      cardIconContainer: {
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        width: "48px",
+        height: "48px",
+        borderRadius: "10px",
+        backgroundColor: primaryColor(50),
+        flexShrink: 0,
+      },
+      cardIcon: {
+        fontSize: "22px",
+        color: primaryColor(600),
+      },
+      statusIcon: (colorFn: any) => ({
+        fontSize: "16px",
+        color: colorFn(500),
+      }),
+      statusBadge: (isActive: boolean) => ({
+        padding: "4px 12px",
+        borderRadius: "16px",
+        fontSize: "12px",
+        fontWeight: 500,
+        ...FONT_FAMILY.Lexend(500, 12),
+        backgroundColor: isActive ? successColor(100) : errorColor(100),
+        color: isActive ? successColor(700) : errorColor(700),
+        display: "inline-flex",
+        alignItems: "center",
+      }),
+      infoIcon: {
+        fontSize: "18px",
+        color: primaryColor(500),
+        marginTop: "2px",
+        flexShrink: 0,
+      },
     };
-  }, [theme, primaryColor, secondColor, errorColor]);
+  }, [theme, primaryColor, secondColor, errorColor, successColor, primarySecondaryBlend]);
   return {
     classes,
   };
