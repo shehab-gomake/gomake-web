@@ -7,8 +7,7 @@ import { PrimaryButton } from "@/components/button/primary-button";
 import { SecondaryButton } from "@/components/button/secondary-button";
 import { SecretDisplay } from "./secret-display";
 import { useStyle } from "../style";
-import { FONT_FAMILY } from "@/utils/font-family";
-import { CircularProgress } from "@mui/material";
+import { CircularProgress, Typography } from "@mui/material";
 
 interface CreateApiTokenModalProps {
   onSuccess: () => void;
@@ -96,59 +95,61 @@ export const CreateApiTokenModal = ({
 
   return (
     <div style={classes.modalContent}>
-      <h3 style={classes.modalTitle}>{t("apiTokens.createToken")}</h3>
-      
-      <div style={classes.inputContainer}>
-        <label style={classes.inputLabel}>
-          {t("apiTokens.name")}
-          <span style={classes.required}>*</span>
-        </label>
-        <GomakeTextInput
-          value={formData.name}
-          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-          placeholder={t("apiTokens.name")}
-          style={classes.input}
-        />
-      </div>
+      <div style={classes.formContainer}>
+        <div style={classes.inputContainer}>
+          <label style={classes.inputLabel}>
+            {t("apiTokens.name")}
+            <span style={classes.required}>*</span>
+          </label>
+          <GomakeTextInput
+            value={formData.name}
+            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            placeholder={t("apiTokens.name")}
+            style={classes.input}
+          />
+        </div>
 
-      <div style={classes.inputContainer}>
-        <label style={classes.inputLabel}>
-          {t("apiTokens.description")}
-        </label>
-        <GomakeTextInput
-          value={formData.description}
-          onChange={(e) =>
-            setFormData({ ...formData, description: e.target.value })
-          }
-          multiline
-          rows={3}
-          placeholder={t("apiTokens.description")}
-          style={classes.input}
-        />
-      </div>
+        <div style={classes.inputContainer}>
+          <label style={classes.inputLabel}>
+            {t("apiTokens.description")}
+          </label>
+          <GomakeTextInput
+            value={formData.description}
+            onChange={(e) =>
+              setFormData({ ...formData, description: e.target.value })
+            }
+            multiline
+            rows={3}
+            placeholder={t("apiTokens.description")}
+            sx={classes.multilineInput}
+          />
+        </div>
 
-      <div style={classes.inputContainer}>
-        <label style={classes.inputLabel}>
-          {t("apiTokens.expiresAt")}
-        </label>
-        <GomakeTextInput
-          type="datetime-local"
-          value={formData.expiresAt}
-          onChange={(e) =>
-            setFormData({ ...formData, expiresAt: e.target.value })
-          }
-          style={classes.input}
-        />
+        <div style={classes.inputContainer}>
+          <label style={classes.inputLabel}>
+            {t("apiTokens.expiresAt")}
+          </label>
+          <GomakeTextInput
+            type="datetime-local"
+            value={formData.expiresAt}
+            onChange={(e) =>
+              setFormData({ ...formData, expiresAt: e.target.value })
+            }
+            style={{...classes.input, width: "fit-content"}}
+          />
+        </div>
       </div>
 
       <div style={classes.modalActions}>
-        <SecondaryButton onClick={onClose} disabled={loading}>
+        <PrimaryButton onClick={onClose} disabled={loading} >
           {t("common.cancel")}
-        </SecondaryButton>
+        </PrimaryButton>
         <PrimaryButton 
+        variant="contained"
           onClick={handleSubmit} 
-          disabled={loading}
-          endIcon={loading && <CircularProgress style={{width: '20px', height: '20px', color: '#FFFFFF'}}/>}
+          disabled={loading || !formData.name.trim()}
+          endIcon={loading && <CircularProgress size={20} sx={{ color: '#FFFFFF' }} />}
+          style={{width: "fit-content"}}
         >
           {t("common.create")}
         </PrimaryButton>

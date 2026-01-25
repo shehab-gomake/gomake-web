@@ -1,17 +1,24 @@
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { useMemo } from "react";
 import { FONT_FAMILY } from "@/utils/font-family";
+import { convertHeightToVH } from "@/utils/adapter";
 
 const useStyle = () => {
   const { theme, primaryColor, secondColor, errorColor } = useGomakeTheme();
   const classes = useMemo(() => {
     return {
       mainContainer: {
-        padding: "20px",
         height: "100%",
         display: "flex",
         flexDirection: "column" as "column",
         overflow: "hidden",
+      },
+      headerRow: {
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        marginBottom: convertHeightToVH(50),
+        flexShrink: 0,
       },
       pageTitle: {
         fontSize: "24px",
@@ -96,35 +103,51 @@ const useStyle = () => {
       },
       modalStyle: {
         width: "600px",
+        maxWidth: "90vw",
+        height: "auto",
+        maxHeight: "90vh",
+        overflow: "hidden",
       },
       modalContent: {
-        padding: "20px",
+        padding: "16px 16px 8px 16px",
+        display: "flex",
+        flexDirection: "column" as "column",
+        gap: "24px",
+        width: "100%",
+        boxSizing: "border-box" as "border-box",
+        overflow: "hidden",
       },
       modalTitle: {
-        fontSize: "20px",
-        fontWeight: 600,
-        marginBottom: "20px",
-        ...FONT_FAMILY.Lexend(600, 20),
-        color: primaryColor(900),
+        fontSize: "24px",
+        fontWeight: 500,
+        margin: 0,
+        padding: 0,
+        fontFamily: "'Forma DJR UI', sans-serif",
+        color: "#1A1A1A",
+        lineHeight: "32px",
       },
       modalActions: {
         display: "flex",
         justifyContent: "flex-end",
         gap: "12px",
-        marginTop: "24px",
+        marginTop: "8px",
+        paddingTop: "24px",
+        borderTop: "1px solid #E0E0E0",
       },
       warningText: {
         color: errorColor(500),
         marginBottom: "20px",
-        padding: "12px",
+        padding: "12px 16px",
         backgroundColor: "#FEE2E2",
-        borderRadius: "4px",
-        ...FONT_FAMILY.Lexend(400, 14),
+        borderRadius: "8px",
+        fontFamily: "'Forma DJR UI', sans-serif",
+        fontSize: "14px",
+        lineHeight: "20px",
       },
       secretContainer: {
         display: "flex",
         flexDirection: "column" as "column",
-        gap: "16px",
+        gap: "20px",
       },
       secretField: {
         display: "flex",
@@ -137,35 +160,72 @@ const useStyle = () => {
         alignItems: "center",
         "& code": {
           flex: 1,
-          padding: "8px",
-          backgroundColor: "#F3F4F6",
-          borderRadius: "4px",
+          padding: "12px",
+          backgroundColor: "#F9FAFB",
+          borderRadius: "8px",
           wordBreak: "break-all" as "break-all",
           fontFamily: "monospace",
-          fontSize: "12px",
+          fontSize: "13px",
+          border: "1px solid #E0E0E0",
         },
       },
       secretLabel: {
-        ...FONT_FAMILY.Lexend(600, 14),
-        color: primaryColor(900),
+        fontFamily: "'Forma DJR UI', sans-serif",
+        fontWeight: 500,
+        fontSize: "14px",
+        lineHeight: "21px",
+        color: "#1A1A1A",
       },
       inputContainer: {
         display: "flex",
         flexDirection: "column" as "column",
         gap: "8px",
-        marginBottom: "16px",
+        marginBottom: 0,
       },
       inputLabel: {
-        ...FONT_FAMILY.Lexend(600, 14),
-        color: primaryColor(900),
+        fontFamily: "'Forma DJR UI', sans-serif",
+        fontWeight: 500,
+        fontSize: "14px",
+        lineHeight: "21px",
+        color: "#1A1A1A",
         display: "flex",
+        alignItems: "center" as "center",
         gap: "4px",
+        marginBottom: "4px",
       },
       input: {
         width: "100%",
       },
+      multilineInput: {
+        width: "100%",
+        "& .MuiOutlinedInput-root": {
+          boxShadow: "var(--theme-input-shadow, 0px 1px 10px rgba(0, 0, 0, 0.08))",
+          WebkitBoxShadow: "var(--theme-input-shadow, 0px 1px 10px rgba(0, 0, 0, 0.08))",
+          "& textarea": {
+            padding: "8px",
+          },
+        },
+      },
       required: {
         color: errorColor(500),
+        fontSize: "14px",
+        lineHeight: "21px",
+      },
+      formContainer: {
+        display: "flex",
+        flexDirection: "column" as "column",
+        gap: "20px",
+        width: "100%",
+        flex: 1,
+        minHeight: 0,
+        overflowY: "auto" as "auto",
+      },
+      helperText: {
+        fontFamily: "'Forma DJR UI', sans-serif",
+        fontSize: "12px",
+        lineHeight: "18px",
+        color: "#718096",
+        marginTop: "4px",
       },
     };
   }, [theme, primaryColor, secondColor, errorColor]);
