@@ -8,7 +8,7 @@ import { useTranslation } from "react-i18next";
 import { SuccessIcon } from "@/icons/success-icon";
 import { ErrorIcon } from "@/icons/error-icon";
 import { style } from "./style";
-import {removeTempUserTokenStorage, updateTempUserTokenStorage} from "@/services/storage-data";
+import { removeTempUserTokenStorage, updateTempUserTokenStorage } from "@/services/storage-data";
 import { getGraphicsApprovalApi, updateGraphicsApprovalFileApi } from "@/services/api-service/production-floor/production-floor-endpoints";
 import { getCompanyLoginLogo } from "@/services/api-service/profiles/company-profile-api";
 import { FONT_FAMILY } from "@/utils/font-family";
@@ -107,6 +107,11 @@ const NoteInput = memo(({ fileId, value, onChange, onSave, isUpdating, disabled,
           <CircularProgress size={20} sx={{ marginRight: 1 }} />
         ) : null,
       }}
+      style={{
+        border: "1px solid #E0E0E0",
+        borderRadius: "8px",
+        padding: "8px",
+      }}
     />
   );
 });
@@ -154,7 +159,7 @@ const GraphicsApprovalWidget = () => {
       if (res?.success && res?.data) {
         const data = res.data.data || res.data;
         setApproval(data);
-        
+
         // Set client language if available (only once)
         if (data.clientLang && !languageSetRef.current && i18n.language !== data.clientLang) {
           localStorage.setItem("systemLanguage", data.clientLang);
@@ -163,7 +168,7 @@ const GraphicsApprovalWidget = () => {
             // Language changed successfully
           });
         }
-        
+
         // Initialize notes from existing file notes
         const notes: Record<string, string> = {};
         data.files?.forEach((file: GraphicsApprovalFile) => {
@@ -385,8 +390,8 @@ const GraphicsApprovalWidget = () => {
         <Box sx={classes.contentWrapper}>
           <Stack spacing={3} alignItems="center" sx={{ padding: isMobile ? "16px" : "24px" }}>
             <CircularProgress size={isMobile ? 40 : 60} sx={{ color: primaryColor(500) }} />
-            <Typography 
-              variant={isMobile ? "body1" : "h6"} 
+            <Typography
+              variant={isMobile ? "body1" : "h6"}
               sx={{ ...classes.loadingText, fontSize: isMobile ? "16px" : undefined }}
             >
               {t("graphicsApproval.loading") || "Loading..."}
@@ -436,14 +441,14 @@ const GraphicsApprovalWidget = () => {
             <Box sx={{ ...classes.iconContainerError, width: isMobile ? "120px" : "200px", height: isMobile ? "120px" : "200px" }}>
               <ErrorIcon width={isMobile ? "60" : "80"} height={isMobile ? "60" : "80"} />
             </Box>
-            <Typography 
-              variant={isMobile ? "h5" : "h4"} 
+            <Typography
+              variant={isMobile ? "h5" : "h4"}
               sx={{ ...classes.titleError, fontSize: isMobile ? "20px" : undefined }}
             >
               {t("graphicsApproval.errorTitle") || "Error"}
             </Typography>
-            <Typography 
-              variant="body1" 
+            <Typography
+              variant="body1"
               sx={{ ...classes.message, fontSize: isMobile ? "14px" : undefined, padding: isMobile ? "0 16px" : undefined }}
             >
               {error}
@@ -496,217 +501,223 @@ const GraphicsApprovalWidget = () => {
       {/* Content */}
       <Box sx={classes.contentWrapper}>
         <Stack spacing={isMobile ? 3 : 4} sx={{ maxWidth: "1200px", width: "100%", padding: isMobile ? "16px" : "24px" }}>
-        {/* Header */}
-        <Box>
-          <Typography 
-            variant={isMobile ? "h5" : "h4"} 
-            sx={{ fontWeight: "bold", marginBottom: "8px", fontSize: isMobile ? "20px" : undefined }}
-          >
-            {t("graphicsApproval.title") || "Graphics Approval"}
-          </Typography>
-          <Typography variant="body2" sx={{ color: neutralColor(600), fontSize: isMobile ? "14px" : undefined }}>
-            {t("graphicsApproval.subtitle") || "Review and approve or reject the graphics files"}
-            {(approval.jobNumber || approval.orderNumber || approval.workName) && (
-              <>
-                {" - "}
-                {approval.jobNumber && (
-                  <>
-                    {t("graphicsApproval.jobNumber") || "Job"}: {approval.jobNumber}
-                    {approval.orderNumber || approval.workName ? ", " : ""}
-                  </>
-                )}
-                {approval.orderNumber && (
-                  <>
-                    {t("graphicsApproval.orderNumber") || "Order"}: {approval.orderNumber}
-                    {approval.workName ? ", " : ""}
-                  </>
-                )}
-                {approval.workName && (
-                  <>
-                    {t("graphicsApproval.workName") || "Work"}: {approval.workName}
-                  </>
-                )}
-              </>
-            )}
-          </Typography>
-        </Box>
+          {/* Header */}
+          <Box>
+            <Typography
+              variant={isMobile ? "h5" : "h4"}
+              sx={{ fontWeight: "bold", marginBottom: "8px", fontSize: isMobile ? "20px" : undefined }}
+            >
+              {t("graphicsApproval.title") || "Graphics Approval"}
+            </Typography>
+            <Typography variant="body2" sx={{ color: neutralColor(600), fontSize: isMobile ? "14px" : "18px", fontWeight: "600" }}>
+              {t("graphicsApproval.subtitle")}
+              {(approval.jobNumber || approval.orderNumber || approval.workName) && (
+                <>
+                  {" - "}
+                  {approval.jobNumber && (
+                    <>
+                      {t("graphicsApproval.jobNumber") || "Job"}: {approval.jobNumber}
+                      {approval.orderNumber || approval.workName ? ", " : ""}
+                    </>
+                  )}
+                  {approval.orderNumber && (
+                    <>
+                      {t("graphicsApproval.orderNumber") || "Order"}: {approval.orderNumber}
+                      {approval.workName ? ", " : ""}
+                    </>
+                  )}
+                  {approval.workName && (
+                    <>
+                      {t("graphicsApproval.workName") || "Work"}: {approval.workName}
+                    </>
+                  )}
+                </>
+              )}
+            </Typography>
+          </Box>
 
-        {/* Files List */}
-        {approval.files && approval.files.length > 0 ? (
-          <Stack spacing={3}>
-            {approval.files.map((file) => {
-              const isUpdating = updatingFiles.has(file.id);
-              const isPending = file.status === 0;
-              const isEditing = editingFiles.has(file.id);
-              const showActionButtons = isPending || isEditing;
+          {/* Files List */}
+          {approval.files && approval.files.length > 0 ? (
+            <Stack spacing={3}>
+              {approval.files.map((file) => {
+                const isUpdating = updatingFiles.has(file.id);
+                const isPending = file.status === 0;
+                const isEditing = editingFiles.has(file.id);
+                const showActionButtons = isPending || isEditing;
 
-              return (
-                <Paper key={file.id} elevation={2} sx={{ padding: isMobile ? "16px" : "24px" }}>
-                  <Stack spacing={2}>
-                    {/* File Header */}
-                    <Stack 
-                      direction={isMobile ? "column" : "row"} 
-                      justifyContent="space-between" 
-                      alignItems={isMobile ? "flex-start" : "flex-start"}
-                      spacing={isMobile ? 2 : 0}
-                    >
-                      <Box sx={{ flex: 1, width: "100%" }}>
-                        <Typography 
-                          variant="body2" 
-                          sx={{ 
-                            fontWeight: "bold", 
-                            marginBottom: "8px",
-                            fontSize: isMobile ? "12px" : "14px",
-                            wordBreak: "break-word"
-                          }}
-                        >
-                          {file.fileName}
-                        </Typography>
-                        {file.description && (
-                          <Typography 
-                            variant="body1" 
-                            sx={{ 
-                              color: neutralColor(600), 
-                              marginBottom: "8px",
-                              fontSize: isMobile ? "15px" : "16px",
-                              wordBreak: "break-word"
-                            }}
-                          >
-                            {file.description}
-                          </Typography>
-                        )}
-                        {!isEditing && (
+                return (
+                  <Paper key={file.id} elevation={2} sx={{ padding: isMobile ? "16px" : "24px" }}>
+                    <Stack spacing={2}>
+                      {/* File Header */}
+                      <Stack
+                        direction={isMobile ? "column" : "row"}
+                        justifyContent="space-between"
+                        alignItems={isMobile ? "flex-start" : "flex-start"}
+                        spacing={isMobile ? 2 : 0}
+                      >
+                        <Box sx={{ flex: 1, width: "100%" }}>
                           <Typography
                             variant="body2"
                             sx={{
-                              color: getStatusColor(file.status),
                               fontWeight: "bold",
-                              fontSize: isMobile ? "13px" : undefined,
+                              marginBottom: "16px",
+                              fontSize: isMobile ? "12px" : "14px",
+                              wordBreak: "break-word",
+                              display: "flex",
+                              flexDirection: "row",
+                              justifyContent: "flex-start",
+                              alignItems: "center",
+                              gap: "8px",
                             }}
                           >
-                            {getStatusLabel(file.status)}
+                            {file.fileName}
+                            {file.description && <div> - </div>}
+                            {file.description && (
+                              <Typography
+                                variant="body1"
+                                sx={{
+                                  fontSize: isMobile ? "15px" : "16px",
+                                  wordBreak: "break-word",
+                                  fontWeight: "bold",
+                                }}
+                              >
+                                {file.description}
+                              </Typography>
+                            )}
                           </Typography>
-                        )}
-                      </Box>
-                      <Box sx={{ width: isMobile ? "100%" : "auto" }}>
-                        <a
-                          href={file.fileUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          style={{ textDecoration: "none", width: isMobile ? "100%" : "auto", display: "block" }}
-                        >
-                          <Button 
-                            variant="outlined" 
-                            size={isMobile ? "medium" : "small"}
-                            fullWidth={isMobile}
+
+                          {!isEditing && (
+                            <Typography
+                              variant="body2"
+                              sx={{
+                                color: getStatusColor(file.status),
+                                fontWeight: "bold",
+                                fontSize: isMobile ? "13px" : undefined,
+                              }}
+                            >
+                              {getStatusLabel(file.status)}
+                            </Typography>
+                          )}
+                        </Box>
+                        <Box sx={{ width: isMobile ? "100%" : "auto" }}>
+                          <a
+                            href={file.fileUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{ textDecoration: "none", width: isMobile ? "100%" : "auto", display: "block" }}
                           >
-                            {t("graphicsApproval.viewFile") || "View File"}
-                          </Button>
-                        </a>
-                      </Box>
-                    </Stack>
+                            <Button
+                              variant="outlined"
+                              size={isMobile ? "medium" : "small"}
+                              fullWidth={isMobile}
+                            >
+                              {t("graphicsApproval.viewFile") || "View File"}
+                            </Button>
+                          </a>
+                        </Box>
+                      </Stack>
 
-                    {/* Note Input */}
-                    <NoteInput
-                      fileId={file.id}
-                      value={fileNotes[file.id] || ""}
-                      onChange={(value) =>
-                        setFileNotes((prev) => ({
-                          ...prev,
-                          [file.id]: value,
-                        }))
-                      }
-                      onSave={(note) => handleNoteUpdate(file.id, note)}
-                      isUpdating={updatingNotes.has(file.id)}
-                      disabled={isUpdating}
-                      placeholder={t("graphicsApproval.notePlaceholder") || "Add a note (optional)"}
-                      label={t("graphicsApproval.note") || "Note"}
-                    />
+                      {/* Note Input */}
+                      <NoteInput
+                        fileId={file.id}
+                        value={fileNotes[file.id] || ""}
+                        onChange={(value) =>
+                          setFileNotes((prev) => ({
+                            ...prev,
+                            [file.id]: value,
+                          }))
+                        }
+                        onSave={(note) => handleNoteUpdate(file.id, note)}
+                        isUpdating={updatingNotes.has(file.id)}
+                        disabled={isUpdating}
+                        placeholder={t("graphicsApproval.notePlaceholder") || "Add a note (optional)"}
+                        label={t("graphicsApproval.note") || "Note"}
+                      />
 
-                    {/* Action Buttons */}
-                    {showActionButtons ? (
-                      <Stack 
-                        direction={isMobile ? "column" : "row"} 
-                        spacing={2} 
-                        justifyContent="flex-end"
-                        sx={{ width: "100%" }}
-                      >
-                        {isEditing && (
+                      {/* Action Buttons */}
+                      {showActionButtons ? (
+                        <Stack
+                          direction={isMobile ? "column" : "row"}
+                          spacing={2}
+                          justifyContent="flex-end"
+                          sx={{ width: "100%", gap: isMobile ? 0 : "8px" }}
+                        >
+                          {isEditing && (
+                            <Button
+                              variant="outlined"
+                              onClick={() => handleCancelChangeStatus(file.id)}
+                              disabled={isUpdating}
+                              fullWidth={isMobile}
+                              size={isMobile ? "medium" : "small"}
+                            >
+                              {t("graphicsApproval.cancel") || "Cancel"}
+                            </Button>
+                          )}
                           <Button
                             variant="outlined"
-                            onClick={() => handleCancelChangeStatus(file.id)}
+                            color="error"
+                            onClick={() => handleFileStatusUpdate(file.id, 2)}
                             disabled={isUpdating}
                             fullWidth={isMobile}
                             size={isMobile ? "medium" : "small"}
                           >
-                            {t("graphicsApproval.cancel") || "Cancel"}
+                            {isUpdating ? (
+                              <CircularProgress size={20} />
+                            ) : (
+                              t("graphicsApproval.reject") || "Reject"
+                            )}
                           </Button>
-                        )}
-                        <Button
-                          variant="outlined"
-                          color="error"
-                          onClick={() => handleFileStatusUpdate(file.id, 2)}
-                          disabled={isUpdating}
-                          fullWidth={isMobile}
-                          size={isMobile ? "medium" : "small"}
+                          <Button
+                            variant="contained"
+                            color="success"
+                            onClick={() => handleFileStatusUpdate(file.id, 1)}
+                            disabled={isUpdating}
+                            fullWidth={isMobile}
+                            size={isMobile ? "medium" : "small"}
+                          >
+                            {isUpdating ? (
+                              <CircularProgress size={20} />
+                            ) : (
+                              t("graphicsApproval.approve") || "Approve"
+                            )}
+                          </Button>
+                        </Stack>
+                      ) : (
+                        <Stack
+                          direction={isMobile ? "column" : "row"}
+                          spacing={2}
+                          justifyContent="flex-end"
+                          sx={{ width: "100%" }}
                         >
-                          {isUpdating ? (
-                            <CircularProgress size={20} />
-                          ) : (
-                            t("graphicsApproval.reject") || "Reject"
-                          )}
-                        </Button>
-                        <Button
-                          variant="contained"
-                          color="success"
-                          onClick={() => handleFileStatusUpdate(file.id, 1)}
-                          disabled={isUpdating}
-                          fullWidth={isMobile}
-                          size={isMobile ? "medium" : "small"}
-                        >
-                          {isUpdating ? (
-                            <CircularProgress size={20} />
-                          ) : (
-                            t("graphicsApproval.approve") || "Approve"
-                          )}
-                        </Button>
-                      </Stack>
-                    ) : (
-                      <Stack 
-                        direction={isMobile ? "column" : "row"} 
-                        spacing={2} 
-                        justifyContent="flex-end"
-                        sx={{ width: "100%" }}
-                      >
-                        <Button
-                          variant="outlined"
-                          onClick={() => handleChangeStatusClick(file.id)}
-                          disabled={isUpdating}
-                          fullWidth={isMobile}
-                          size={isMobile ? "medium" : "small"}
-                        >
-                          {t("graphicsApproval.changeStatus") || "Change Status"}
-                        </Button>
-                      </Stack>
-                    )}
-                  </Stack>
-                </Paper>
-              );
-            })}
-          </Stack>
-        ) : (
-          <Paper sx={{ padding: isMobile ? "16px" : "24px", textAlign: "center" }}>
-            <Typography 
-              variant="body1" 
-              sx={{ 
-                color: neutralColor(600),
-                fontSize: isMobile ? "14px" : undefined
-              }}
-            >
-              {t("graphicsApproval.noFiles") || "No files found"}
-            </Typography>
-          </Paper>
-        )}
+                          <Button
+                            variant="outlined"
+                            onClick={() => handleChangeStatusClick(file.id)}
+                            disabled={isUpdating}
+                            fullWidth={isMobile}
+                            size={isMobile ? "medium" : "small"}
+                          >
+                            {t("graphicsApproval.changeStatus") || "Change Status"}
+                          </Button>
+                        </Stack>
+                      )}
+                    </Stack>
+                  </Paper>
+                );
+              })}
+            </Stack>
+          ) : (
+            <Paper sx={{ padding: isMobile ? "16px" : "24px", textAlign: "center" }}>
+              <Typography
+                variant="body1"
+                sx={{
+                  color: neutralColor(600),
+                  fontSize: isMobile ? "14px" : undefined
+                }}
+              >
+                {t("graphicsApproval.noFiles") || "No files found"}
+              </Typography>
+            </Paper>
+          )}
         </Stack>
       </Box>
     </Box>
