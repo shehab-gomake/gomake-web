@@ -5,10 +5,10 @@ import { PrimaryButton } from "@/components/button/primary-button";
 import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import { PreferenceValueType } from "../../use-general-settings";
+import { useDefaultLanguageOptions } from "@/hooks/use-default-language-options";
+import { permissionsState } from "@/store";
 import { useRecoilValue } from "recoil";
-import { languageOptionsState } from "@/store/languages";
-import { companyProfileState, ICompanyProfile } from "@/store/company-profile";
-
+import { Permissions } from "@/components/CheckPermission/enum";
 interface IEditModalProps {
   openModal: boolean;
   onClose: () => void;
@@ -23,11 +23,8 @@ const EditModal = ({
 }: IEditModalProps) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
-  const languages = useRecoilValue(languageOptionsState);
-  const profileData = useRecoilValue<ICompanyProfile>(companyProfileState);
-  const defaultLanguageOptions = profileData?.languages?.length > 0
-    ? languages.filter((lang) => profileData?.languages?.includes(lang.value))
-    : [];
+  const { defaultLanguageOptions } = useDefaultLanguageOptions();
+  const permissions = useRecoilValue(permissionsState);
   const initialState = {
     name: selectedSetting?.name || "",
     value: selectedSetting?.value || "",
@@ -281,6 +278,14 @@ const EditModal = ({
                           : null
                       }
                       onChange={(e: any, value: any) => {
+                        if (value?.value === "add_language_action") {
+                          if (!permissions?.includes(Permissions.EDIT_COMPANY_PROFILE)) {
+                            window.alert("ask your admin to add language");
+                            return;
+                          }
+                          window.location.href = "/settings/company-profile";
+                          return;
+                        }
                         handleChange("secondaryValue", value?.value || "");
                       }}
                     />

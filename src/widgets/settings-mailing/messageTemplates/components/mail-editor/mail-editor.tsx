@@ -14,9 +14,7 @@ import { FormInput } from "@/components/form-inputs/form-input";
 import { IInput } from "@/components/form-inputs/interfaces";
 import { Checkbox, Stack } from "@mui/material";
 import { QuillEditor } from "./quill-editor";
-//import { AdvancedEmailEditor } from "./advanced-email-editor";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
-import { languageOptionsState } from "@/store/languages";
 import {
   GoMakeAutoComplate,
   GoMakeModal,
@@ -30,7 +28,9 @@ import { useEffect, useState } from "react";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { printHouseProfile } from "@/store/print-house-profile";
 import { RichTextEditor } from "./rich-text-editor";
-import { companyProfileState, ICompanyProfile } from "@/store/company-profile";
+import { useDefaultLanguageOptions } from "@/hooks/use-default-language-options";
+import { permissionsState } from "@/store";
+import { Permissions } from "@/components/CheckPermission/enum";
 
 export interface IProps {
   onClickSave: (value: any) => void;
@@ -42,13 +42,9 @@ const EmailSettings = ({ onClickSave, onOpenDeleteModal }: IProps) => {
   const [state, setState] = useRecoilState<ISMSTemplate>(smsTemplateState);
   const [subject, setSubject] = useRecoilState<string>(smsSubjectState);
   const [body, setBody] = useRecoilState<string>(smsBodyState);
-  const languages = useRecoilValue(languageOptionsState);
-  const profileData = useRecoilValue<ICompanyProfile>(companyProfileState);
-  const defaultLanguageOptions = profileData?.languages?.length > 0
-    ? languages.filter((lang) => profileData?.languages?.includes(lang.value))
-    : [];
+  const { defaultLanguageOptions } = useDefaultLanguageOptions();
   const printHouseProfileState = useRecoilValue(printHouseProfile);
-
+  const permissions = useRecoilValue(permissionsState);
   useEffect(() => {
     if (state?.smsTemplateBodies === null) {
       setState({
@@ -134,7 +130,17 @@ const EmailSettings = ({ onClickSave, onOpenDeleteModal }: IProps) => {
             label: text,
             value,
           }))}
-          onChange={(e: any, value: any) => onChangeLanguage(e, value)}
+          onChange={(e: any, value: any) => {
+            if (value?.value === "add_language_action") {
+              if (!permissions?.includes(Permissions.EDIT_COMPANY_PROFILE)) {
+                window.alert("ask your admin to add language");
+                return;
+              }
+              window.location.href = "/settings/company-profile";
+              return;
+            }
+            onChangeLanguage(e, value);
+          }}
           style={classes.dropDownListStyle}
           value={
             !!state.lang

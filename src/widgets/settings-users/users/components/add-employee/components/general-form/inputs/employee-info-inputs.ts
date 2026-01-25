@@ -7,17 +7,14 @@ import {
   IUserData,
 } from "@/widgets/settings-users/users/interface/employee";
 import { useRecoilValue } from "recoil";
+import { useDefaultLanguageOptions } from "@/hooks/use-default-language-options";
 
 const employeeInfoInputs = (
   state: Employee,
   userState: IUserData,
   quoteLimitationOptions: any
 ) => {
-  const languages = useRecoilValue(languageOptionsState);
-  const profileData = useRecoilValue<ICompanyProfile>(companyProfileState);
-  const defaultLanguageOptions = profileData?.languages?.length > 0
-    ? languages.filter((lang) => profileData?.languages?.includes(lang.value))
-    : [];
+  const { defaultLanguageOptions } = useDefaultLanguageOptions();
   const allSMSTemplatesList = useRecoilValue(allSMSTemplatesListState);
   return [
     {

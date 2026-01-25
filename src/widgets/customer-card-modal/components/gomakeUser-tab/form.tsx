@@ -14,6 +14,7 @@ import { languageOptionsState, languagesState } from "@/store/languages";
 import { useGomakeAxios } from "@/hooks/use-gomake-axios";
 import { getAllRolesForDropdownApi } from "@/services/api-service/users/roles-api";
 import { companyProfileState, ICompanyProfile } from "@/store/company-profile";
+import { useDefaultLanguageOptions } from "@/hooks/use-default-language-options";
 
 interface IProps {
   user: {
@@ -33,11 +34,7 @@ interface IProps {
 const UserForm = ({ user, onDelete, setUser }: IProps) => {
   const setOpenModal = useSetRecoilState<boolean>(resetPassModalState);
   const setGomakeUser = useSetRecoilState<{}>(gomakeUserState);
-  const languagesOptions = useRecoilValue(languageOptionsState);
-  const profileData = useRecoilValue<ICompanyProfile>(companyProfileState);
-  const defaultLanguageOptions = profileData?.languages?.length > 0
-    ? languagesOptions.filter((lang) => profileData?.languages?.includes(lang.value))
-    : [];
+  const { defaultLanguageOptions } = useDefaultLanguageOptions();
   const { callApi } = useGomakeAxios();
   const [rolesOptions, setRolesOptions] = useState<
     { value: string; text: string; isClientRole?: boolean }[]

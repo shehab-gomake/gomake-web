@@ -1,16 +1,11 @@
+import { useDefaultLanguageOptions } from "@/hooks/use-default-language-options";
 import { ICompanyProfile } from "@/store/company-profile";
 
 const companyLanguagesInputs = (
   state: ICompanyProfile,
   languages: { value: string; text: string; label?: string }[]
 ) => {
-  // Filter default language options to only show selected languages
-  // If languages are selected, show only those; otherwise show all
-  const selectedLanguages = state.languages || [];
-  const defaultLanguageOptions = selectedLanguages.length > 0
-    ? languages.filter((lang) => selectedLanguages.includes(lang.value))
-    : [];
-
+  const { defaultLanguageOptions } = useDefaultLanguageOptions();
   return [
     {
       name: "languages",
