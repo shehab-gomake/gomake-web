@@ -236,7 +236,7 @@ const MonitoringDashboardWidget = () => {
       ? [
         t("dashboard.date"),
         t("dashboard.openAndReadyOrder"),
-        `${t("dashboard.ordersTotal")} (${currUnit})`,
+        `${t("dashboard.openAndReadyordersTotal")} (${currUnit})`,
         `${t("dashboard.openDeliveryNotes")} (${currUnit})`,
         `${t("dashboard.invoiceTotal")} (${currUnit})`,
         `${t("dashboard.totalSales")} (${currUnit})`,
@@ -562,7 +562,7 @@ const MonitoringDashboardWidget = () => {
             ? [
               t("dashboard.date"),
               t("dashboard.openAndReadyOrder"),
-              `${t("dashboard.ordersTotal")} (${currUnit})`,
+              `${t("dashboard.openAndReadyordersTotal")} (${currUnit})`,
               `${t("dashboard.openDeliveryNotes")} (${currUnit})`,
               `${t("dashboard.invoiceTotal")} (${currUnit})`,
               `${t("dashboard.totalSales")} (${currUnit})`,
