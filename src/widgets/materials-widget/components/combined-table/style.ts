@@ -80,20 +80,10 @@ const useStyle = () => {
 
       // Body row styles
       bodyRow: {
-        transition: 'all 0.3s ease-in-out',
-        cursor: 'pointer',
         '&:hover': {
-          backgroundColor: '#e3f2fd',
-          transform: 'translateY(-2px)',
-          boxShadow: '0 4px 12px rgba(25, 118, 210, 0.2)',
-          [isRTL ? 'borderRight' : 'borderLeft']: `3px solid ${primaryColor(500)}`,
+          backgroundColor: '#f8f9fa',
           '& .MuiTableCell-root.fixed-column': {
-            backgroundColor: '#bbdefb',
-            transition: 'background-color 0.3s ease-in-out'
-          },
-          '& .MuiTableCell-root': {
-            transition: 'all 0.3s ease-in-out',
-            backgroundColor: '#e3f2fd',
+            backgroundColor: '#f5f5f5'
           }
         }
       },
