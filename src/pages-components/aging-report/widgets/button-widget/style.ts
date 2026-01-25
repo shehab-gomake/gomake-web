@@ -41,11 +41,11 @@ const useStyle = () => {
         ...FONT_FAMILY.Inter(500, 16),
         borderRadius: "8px",
         height: "40px",
-        backgroundColor: `var(--theme-accent-color, ${primaryColor(500)})`,
+        backgroundColor: primaryColor(500),
         color: "#FFF",
         textTransform: "capitalize",
         "&:hover": {
-          backgroundColor: `var(--theme-accent-on-light, ${primaryColor(600)})`,
+          backgroundColor:primaryColor(600),
         },
       },
     };

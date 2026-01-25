@@ -27,7 +27,9 @@ const MessageLogs = () => {
     handleUserChange,
     userId,
     customerId,
-    setCustomerId
+    setCustomerId,
+    primaryColor,
+     secondColor
   } = useMessageLogs();
   const { renderOptions, checkWhatRenderArray, isFetching } =
     useCustomerDropDownList({
@@ -60,18 +62,6 @@ const MessageLogs = () => {
             onChange={handleUserChange}
             value={users.find(option => option.id === userId) || null}
           />
-          <div style={{
-            display: "flex",
-            flexDirection: "column" as "column",
-            justifyContent: "flex-start",
-            alignItems: "flex-start",
-            gap: 10,
-            minWidth: "fit-content",
-            width: "200px",
-            borderBottom: customerId?.id ? "2px solid rgb(67,195,232)" : "2px solid rgb(237, 2, 140)",
-            borderRadius: 4
-          }}>
-
             <ClientAutocomplete
               key={customerId?.id}
               clientType={CLIENT_TYPE.All}
@@ -80,14 +70,15 @@ const MessageLogs = () => {
                 `${option.name}`
               }
               onChangeTextField={checkWhatRenderArray}
-              style={{ width: "100%", border: "none" }}
+              style={{ border: "none" ,minWidth: "fit-content",
+                width: "200px",            borderBottom: customerId?.id ? `2px solid ${primaryColor(500)}` : `2px solid ${secondColor(500)}`, 
+              }}
               onChange={(e: any, value: any) => {
                 setCustomerId(value);
               }}
               value={customerId}
               loading={isFetching}
             />
-          </div>
         </Stack>
       </Stack>
 

@@ -176,20 +176,20 @@ const CreditCardTransactionsReportHeaderWidget = ({
           </Box>
         </div>
         <div style={classes.date3FilterContainer}>
-          <PrimaryButton
+          <SecondaryButton
             variant="contained"
             style={classes.searchBtnStyle}
             onClick={onClickSearchFilter}
           >
             {t("sales.quote.search")}
-          </PrimaryButton>
-          <PrimaryButton
+          </SecondaryButton>
+          <SecondaryButton
             variant="outlined"
             style={classes.clearBtnStyle}
             onClick={onClickClearFilter}
           >
             {t("sales.quote.clear")}
-          </PrimaryButton>
+          </SecondaryButton>
         </div>
       </div>
     </>
