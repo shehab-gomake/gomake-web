@@ -44,9 +44,9 @@ const ProfitLeftSideWidget = ({
 
 
 }: ProfitLeftSideProps) => {
-  const { clasess } = useStyle();
+  const { classes } = useStyle();
   return (
-    <div style={clasess.mainHeaderContainer}>
+    <div style={classes.mainHeaderContainer}>
       <PricingList
         tableHeaders={tableHeaders}
         tableBodyList={actionProfitRowsList}

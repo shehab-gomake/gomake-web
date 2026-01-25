@@ -32,8 +32,7 @@ const useLedgerReportHeader = ({
   onClickExportJournalPDFReport,
   reportType,
 }: LedgerReportButtonWidgetProps) => {
-  const { primaryColor } = useGomakeTheme();
-
+  const { primaryColor , primarySecondaryBlend} = useGomakeTheme();
   const { t } = useTranslation();
   const isAccountingTransaction =
     reportType === EReportType.AccountingTransaction;

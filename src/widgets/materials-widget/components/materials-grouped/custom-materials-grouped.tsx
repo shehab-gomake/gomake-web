@@ -23,12 +23,14 @@ import { useState } from "react";
 import { Filter2Icon } from "@/icons/filter2-icon";
 import { GoMakeMenu } from "@/components";
 import { MenuItem } from "@mui/material";
+import { useThemeComponent } from "@/contexts/theme/useThemeComponent";
 
 interface ICustomMaterialsGroupedProps {
   isAdmin: boolean;
 }
 
-const CustomMaterialsGrouped = ({ isAdmin }: ICustomMaterialsGroupedProps) => {
+// Base component for default theme
+const BaseMaterialsGrouped = ({ isAdmin }: ICustomMaterialsGroupedProps) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
   const { primaryColor } = useGomakeTheme();
@@ -39,13 +41,11 @@ const CustomMaterialsGrouped = ({ isAdmin }: ICustomMaterialsGroupedProps) => {
     categoriesWithMaterials,
     onFilterChange,
     loading,
-    allMaterials,
     filter,
     filterStatus,
     setFilterStatus,
     filterStatusList,
     toggleMaterialTypeActive,
-    refreshMaterials,
   } = useMaterialsGrouped(isAdmin);
 
   const [collapsedCategories, setCollapsedCategories] = useState<{
@@ -139,7 +139,6 @@ const CustomMaterialsGrouped = ({ isAdmin }: ICustomMaterialsGroupedProps) => {
           </div>
         }
       />
-
       <div style={{ width: "100%" }} data-tour={"materialsTable"}>
         {categoriesWithMaterials.length === 0 ? (
           <Box>
@@ -346,7 +345,6 @@ const CustomMaterialsGrouped = ({ isAdmin }: ICustomMaterialsGroupedProps) => {
           </div>
         )}
       </div>
-
       <GoMakeMenu handleClose={handleClose} open={open} anchorEl={anchorEl}>
         {filterStatusList.map((status) => (
           <MenuItem
@@ -363,6 +361,15 @@ const CustomMaterialsGrouped = ({ isAdmin }: ICustomMaterialsGroupedProps) => {
       </GoMakeMenu>
     </div>
   );
+};
+
+// Theme-aware wrapper - uses HP component when hp-client theme is active
+const CustomMaterialsGrouped = (props: ICustomMaterialsGroupedProps) => {
+  const ThemedMaterialsGrouped = useThemeComponent(
+    "MaterialsGrouped",
+    BaseMaterialsGrouped
+  );
+  return <ThemedMaterialsGrouped {...props} />;
 };
 
 export { CustomMaterialsGrouped };

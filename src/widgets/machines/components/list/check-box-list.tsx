@@ -1,3 +1,4 @@
+import { SecondaryCheckBox } from "@/components/check-box/secondary-check-box";
 import { Checkbox, List, ListItem, ListItemIcon, ListItemText, Paper } from "@mui/material";
 
 const CheckBoxList = (items: { id: string, name: string, checked: boolean }[], onClickOnCheckbox: (id: string) => void) => (
@@ -14,10 +15,14 @@ const CheckBoxList = (items: { id: string, name: string, checked: boolean }[], o
                         onClick={() => onClickOnCheckbox(item.id)}
                     >
                         <ListItemIcon>
-                            <Checkbox
+                            {/* <Checkbox
                                 checked={item.checked}
                                 tabIndex={-1}
                                 disableRipple
+                            /> */}
+                              <SecondaryCheckBox
+                                checked={item.checked}
+                                inputProps={{ tabIndex: -1 }}
                             />
                         </ListItemIcon>
                         <ListItemText id={labelId} primary={item.name} />

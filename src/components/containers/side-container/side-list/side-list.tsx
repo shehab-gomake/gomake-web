@@ -37,16 +37,16 @@ import { CloseIcon } from "@/widgets/quote-new/receipts-table/Payment-methods-de
 import { useThemeComponent } from "@/contexts/theme/useThemeComponent";
 
 const ListButton = styled(ListItemButton)(() => {
-  const { primaryColor } = useGomakeTheme();
+  const { primaryColor , primarySecondaryBlend } = useGomakeTheme();
   return {
     "&.Mui-selected": {
-      backgroundColor: primaryColor(50),
+      backgroundColor: primarySecondaryBlend(50),
     },
     "&.Mui-selected:hover": {
-      backgroundColor: primaryColor(50),
+      backgroundColor: primarySecondaryBlend(50),
     },
     "&:hover": {
-      backgroundColor: primaryColor(50),
+      backgroundColor: primarySecondaryBlend(50),
     },
   };
 });
@@ -332,7 +332,6 @@ const BaseSideList = ({
 };
 
 // Theme-aware wrapper
-//!here why not use getComponentOverride from useThemeComponent
 const SideList = (props: ISideListProps) => {
   const ThemedSideList = useThemeComponent("SideList", BaseSideList);
   return <ThemedSideList {...props} />;

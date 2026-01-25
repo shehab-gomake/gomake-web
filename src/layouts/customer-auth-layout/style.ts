@@ -30,7 +30,9 @@ const useStyle = ({
   const { currentTheme } = useTheme();
   const router = useRouter();
   const isHpClient = currentTheme === "hp-client";
-  const isSettingsPage = router.pathname?.startsWith("/settings");
+  const shouldSkipMargin = ["/settings", "/products/profits"].some(path => 
+    router.pathname?.startsWith(path)
+  );
 
   const classes = useMemo(() => {
     return {
@@ -88,7 +90,7 @@ const useStyle = ({
         height: "100%",
         // overflow: "scroll",
         overflow: "auto",
-        marginTop: isHpClient && !isSettingsPage ? 20 : 0,
+        marginTop: isHpClient && !shouldSkipMargin ? 20 : 0,
       },
       poweredContainer: {
         display: "flex",
@@ -188,7 +190,7 @@ const useStyle = ({
     mobileHeight,
     theme,
     isHpClient,
-    isSettingsPage,
+    shouldSkipMargin,
     router.pathname,
   ]);
   return {

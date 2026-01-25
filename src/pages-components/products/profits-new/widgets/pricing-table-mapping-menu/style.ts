@@ -4,7 +4,7 @@ import { useMemo } from "react";
 
 const useStyle = () => {
   const { primaryColor } = useGomakeTheme();
-  const clasess = useMemo(() => {
+  const classes = useMemo(() => {
     return {
       insideStyle: { width: "85%" },
       menuItemContainer: {
@@ -18,8 +18,8 @@ const useStyle = () => {
         height: "34px",
       },
       menuTitleStyle: {
-        ...FONT_FAMILY.Lexend(500, 10),
-        color: primaryColor(300),
+        ...FONT_FAMILY.Lexend(500, 11),
+        color: `var(--theme-text-primary, ${primaryColor(300)})`,
       },
       lineStyle: {
         width: "100%",
@@ -30,7 +30,7 @@ const useStyle = () => {
     };
   }, []);
   return {
-    clasess,
+    classes,
   };
 };
 export { useStyle };

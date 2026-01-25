@@ -4,10 +4,11 @@ import { GeneralInformationComponent } from "@/widgets/product-pricing-widget/co
 import { useRouter } from "next/router";
 
 const ProfitHeaderWidget = ({ calculateCaseValue }) => {
-  const { clasess } = useStyle();
+  const { classes } = useStyle();
   const [selectedWorkFlow, setSelectedWorkFlow] = useState<any>();
   const [selectedAction, setSelectedAction] = useState<any>();
   const router = useRouter();
+  
   useEffect(() => {
     if (calculateCaseValue) {
       const workFlow = calculateCaseValue?.productItemValue?.workFlows;
@@ -20,16 +21,17 @@ const ProfitHeaderWidget = ({ calculateCaseValue }) => {
       }
     }
   }, [calculateCaseValue, router]);
+
   return (
-    <div style={clasess.mainHeaderContainer}>
-      <div style={clasess.firstHeaderContainer}>
+    <div style={classes.mainHeaderContainer}>
+      <div style={classes.firstHeaderContainer}>
         {selectedWorkFlow && (
           <GeneralInformationComponent
             details={selectedWorkFlow?.generalInformation}
           />
         )}
       </div>
-      <div style={clasess.secondHeaderContainer}>
+      <div style={classes.secondHeaderContainer}>
         {selectedAction && (
           <GeneralInformationComponent
             details={selectedAction?.outputs}

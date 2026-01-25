@@ -3,7 +3,7 @@ import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 
 const useStyle = () => {
-  const { primarySecondaryBlend, theme, neutralColor } = useGomakeTheme();
+  const { primarySecondaryBlend, theme, neutralColor , primaryColor} = useGomakeTheme();
   const classes = useMemo(() => {
     return {
       menuItemContainer: {
@@ -16,7 +16,9 @@ const useStyle = () => {
       },
       rowTextStyle: {
         ...FONT_FAMILY.Lexend(500, 13),
-        color: primarySecondaryBlend(300),
+        // color: primarySecondaryBlend(300),
+        color: primaryColor(300),
+
       },
       actionIconStyle: {
         width: 20,

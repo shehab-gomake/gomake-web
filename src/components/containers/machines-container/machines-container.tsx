@@ -8,7 +8,7 @@ import {useTranslation} from "react-i18next";
 import Stack from "@mui/material/Stack";
 
 const MachinesContainer = ({side, children, subHeader, header, actions, sideAction, sideDataTour, bodyDataTour}: ISideBarContainer) => {
-    const {classes} = useStyle();
+    const {classes, primaryColor} = useStyle();
     const {t} = useTranslation();
     const dir = t('direction');
     return (
@@ -21,7 +21,7 @@ const MachinesContainer = ({side, children, subHeader, header, actions, sideActi
                         startIcon={dir === "ltr" ? <ArrowBackIcon /> : <ArrowForwardIcon />}
                         style={{  height: 30,
                             marginRight: 5,
-                            background: "#CBCBE5",
+                            background: primaryColor(100),
                             width: 90,
                             borderRadius: 8,
                         }}

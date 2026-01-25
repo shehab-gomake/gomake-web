@@ -11,7 +11,7 @@ const AccordionTable = ({
   children,
   onclickOpenMenu,
 }: IAccordionTable) => {
-  const { classes } = useAccordionStyle();
+  const { classes , primaryColor } = useAccordionStyle();
   const { t } = useTranslation();
   const [checked, setChecked] = useState(true);
 
@@ -31,7 +31,7 @@ const AccordionTable = ({
         </div>
         <div style={classes.headerTitleStyle}>
           <div style={classes.iconContainer} onClick={onclickOpenMenu}>
-            <MoreCircleIcon />
+            <MoreCircleIcon color={primaryColor(500)}/>
           </div>
           <div style={classes.iconContainer} onClick={handleChange}>
             <ArrowDownWithSquare />

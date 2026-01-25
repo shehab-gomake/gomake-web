@@ -11,17 +11,17 @@ const MinimumWidget = ({
   setIsUpdateMinimumValue,
   onInputChangeMinimumValue,
 }: any) => {
-  const { clasess } = useStyle();
+  const { classes } = useStyle();
   const { t } = useTranslation();
 
   return (
-    <div style={clasess.headerTableContainer}>
-      <div style={clasess.headerTitleStyle}>
-        <div style={clasess.titleStyle}>
+    <div style={classes.headerTableContainer}>
+      <div style={classes.headerTitleStyle}>
+        <div style={classes.titleStyle}>
           {t("products.profits.exceptions.min")}
         </div>
-        <div style={clasess.lineStyle} />
-        <div style={clasess.valueTextStyle}>
+        <div style={classes.lineStyle} />
+        <div style={classes.valueTextStyle}>
           {t("products.profits.exceptions.value")}
         </div>
         <InputUpdatedValues

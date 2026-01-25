@@ -32,7 +32,7 @@ const useStyle = () => {
       },
       subHeader: {
         ...FONT_FAMILY.Lexend(600, 20),
-        color: "#5759A8",
+        color: "var(--theme-secondary-color, #5759A8)",
         cursor: "pointer",
         width: "fit-content",
       },
@@ -65,6 +65,7 @@ const useStyle = () => {
         height: 34,
       },
       clickableData: {
+        color: "var(--theme-text-primary, var(--theme-primary-color, #2E3092))",
         padding: "0 10px",
         height: "26px",
         borderRadius: "4",

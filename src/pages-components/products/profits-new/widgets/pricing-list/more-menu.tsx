@@ -14,7 +14,7 @@ const MoreMenuWidget = ({
   const { t } = useTranslation();
   return (
     <GoMakeMenu handleClose={handleClose} open={open} anchorEl={anchorEl}>
-      <MenuItem
+      <MenuItem 
         style={classes.menuItemStyle}
         onClick={() => {
           onClickOpenDeleteRowModal();

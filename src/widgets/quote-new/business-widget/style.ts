@@ -3,7 +3,7 @@ import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 
 const useStyle = ({ isRTL }) => {
-  const { grayColor, secondColor, theme } = useGomakeTheme();
+  const { grayColor, secondColor, theme , primarySecondaryBlend} = useGomakeTheme();
   const classes = useMemo(() => {
     return {
       businessContainerStyle: {
@@ -51,7 +51,7 @@ const useStyle = ({ isRTL }) => {
       },
       removeAddressTextStyle: {
         ...FONT_FAMILY.Lexend(500, 16),
-        color: "rgb(130, 131, 190)",
+        color: primarySecondaryBlend(300),
       },
     };
   }, [theme]);

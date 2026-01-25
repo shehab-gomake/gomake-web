@@ -15,7 +15,9 @@ import {
   selectedSupplierIdState,
   selectedSuppliersIdsState,
 } from "@/widgets/materials-widget/state";
-import { navStatusState } from "@/store/nav-status";
+import { hpSidebarStatusState } from "@/store/nav-status";
+import { useTheme } from "@/contexts/theme";
+import { getHpSidebarOffset } from "@/themes/hp-client/constants";
 import { AddSupplierModal } from "@/widgets/materials-widget/components/add-supplier/add-supplier-modal";
 import { PrimaryButton } from "@/components/button/primary-button";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -57,8 +59,13 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
   const [filterBarHeight, setFilterBarHeight] = useState(40); // Default single-line height
   const { getMaterialCategoryData } = useMaterialsCategories(props.isAdmin);
   const activeFilter = useRecoilValue(activeFilterState);
-  const navStatus = useRecoilValue(navStatusState);
-  const sidebarOffset = navStatus.isClosed ? 135 : 270;
+  const isHpSidebarClosed = useRecoilValue(hpSidebarStatusState);
+  const { currentTheme } = useTheme();
+  const isHpClient = currentTheme === "hp-client";
+  // Use HP theme constants if HP theme is active, otherwise use default values
+  const sidebarOffset = isHpClient 
+    ? getHpSidebarOffset(isHpSidebarClosed)
+    : 135; // Default offset for non-HP themes
   const setOpenAddRowModal = useSetRecoilState(openAddRowModalState);
   const setOpenAddCategoryModal = useSetRecoilState(openAddCategoryModalState);
   const changeEditCategoryModalState = useSetRecoilState(
@@ -336,7 +343,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
               >
                 <KeyboardArrowDownIcon
                   fontSize="medium"
-                  sx={{ color: "#5759A8", marginTop: "3px" }}
+                  sx={{ color: "var(--theme-secondary-color, #5759A8)", marginTop: "3px" }}
                 />
                 {/* <EditIcon fontSize="small" /> */}
               </IconButton>
@@ -364,7 +371,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
             <Box
               sx={{
                 position: "fixed",
-                top: 120,
+                top: isHpClient ? 130 : 120,
                 [dir === "rtl" ? "right" : "left"]: sidebarOffset,
                 [dir !== "rtl" ? "right" : "left"]: 0,
                 // left: 140,

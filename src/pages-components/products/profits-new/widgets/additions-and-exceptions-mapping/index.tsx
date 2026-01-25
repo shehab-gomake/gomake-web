@@ -13,7 +13,7 @@ const AdditionsAndExceptionsMapping = ({
   getAllActionProfitRowsByActionId,
   getCalculateCaseProfits
 }) => {
-  const { clasess } = useStyle();
+  const { classes , primaryColor } = useStyle();
   const router = useRouter()
   const { t } = useTranslation();
   const renderAdditionType = (additionType: EAdditionType) => {
@@ -30,12 +30,12 @@ const AdditionsAndExceptionsMapping = ({
   };
 
   return (
-    <div style={clasess.mainContainer}>
+    <div style={classes.mainContainer}>
       <div
         style={
           selectedAdditionalProfitRow?.id === item?.id
-            ? clasess.WithBordermainContainer
-            : clasess.cardItemWithMore
+            ? classes.WithBordermainContainer
+            : classes.cardItemWithMore
         }
         onClick={() => {
           if (router.query.signalRConnectionId) {
@@ -59,14 +59,14 @@ const AdditionsAndExceptionsMapping = ({
 
         }}
       >
-        <div style={clasess.firstRowStyle}>
-          <div style={clasess.ruleTextStyle}>{t("properties.rule")}</div>
+        <div style={classes.firstRowStyle}>
+          <div style={classes.ruleTextStyle}>{t("properties.rule")}</div>
           <div style={{ width: "80%" }}>{item.name}</div>
-          <div style={clasess.lineStyle} />
-          <div style={clasess.ruleTextStyle}>
+          <div style={classes.lineStyle} />
+          <div style={classes.ruleTextStyle}>
             {t("products.profits.exceptions.value")}
           </div>
-          <div style={clasess.valueStyle}>
+          <div style={classes.valueStyle}>
             {item?.profitValue} {renderAdditionType(item?.additionType)}
           </div>
         </div>
@@ -76,9 +76,9 @@ const AdditionsAndExceptionsMapping = ({
             handleClickPricingTablesMapping(e);
             setSelectedActionProfitRow(item);
           }}
-          style={clasess.moreIconStyle}
+          style={classes.moreIconStyle}
         >
-          <MoreCircleIcon />
+          <MoreCircleIcon color={primaryColor(500)}/>
         </div>
       </div>
     </div>

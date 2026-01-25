@@ -17,33 +17,33 @@ const MoreMenuWidget = ({
   updateIsHiddenFromCalculation,
   ToggleIsShowInOutSourceDetails
 }) => {
-  const { clasess } = useStyle();
+  const { classes } = useStyle();
   const { t } = useTranslation();
 
   return (
     <GoMakeMenu handleClose={handleClose} open={open} anchorEl={anchorEl}>
       <MenuItem
-        style={clasess.menuItemContainer}
+        style={classes.menuItemContainer}
         onClick={() => {
           onCOpenEditModal();
           handleClose();
         }}
       >
-        <EditMenuIcon />
-        <div style={clasess.menuTitleStyle}>{t("properties.editRules")}</div>
+        <EditMenuIcon color={classes.iconColor} />
+        <div style={classes.menuTitleStyle}>{t("properties.editRules")}</div>
       </MenuItem>
       <MenuItem
-        style={clasess.menuItemContainer}
+        style={classes.menuItemContainer}
         onClick={() => {
           onOpenAddRuleModal();
           handleClose();
         }}
       >
         <AddPlusIcon />
-        <div style={clasess.menuTitleStyle}>{t("properties.addRule")}</div>
+        <div style={classes.menuTitleStyle}>{t("properties.addRule")}</div>
       </MenuItem>
       <MenuItem
-        style={clasess.menuItemContainer}
+        style={classes.menuItemContainer}
         onClick={() => {
           updateIsHiddenFromWorkFlow();
           handleClose();
@@ -53,13 +53,13 @@ const MoreMenuWidget = ({
         <VisibilityOutlinedIcon style={{
           width: "18px",
           height: "18px",
-          color: "#8283BE"
+          color: classes.iconColor
         }} />
-        <div style={clasess.menuTitleStyle}>{selectedProperties?.isHiddenFromWorkFlow ? t("properties.showPropertyFromWorkFlow") : t("properties.hidePropertyFromWorkFlow")}</div>
+        <div style={classes.menuTitleStyle}>{selectedProperties?.isHiddenFromWorkFlow ? t("properties.showPropertyFromWorkFlow") : t("properties.hidePropertyFromWorkFlow")}</div>
       </MenuItem>
 
       <MenuItem
-        style={clasess.menuItemContainer}
+        style={classes.menuItemContainer}
         onClick={() => {
           updateIsHiddenFromCalculation();
           handleClose();
@@ -69,25 +69,24 @@ const MoreMenuWidget = ({
         <VisibilityOutlinedIcon style={{
           width: "18px",
           height: "18px",
-          color: "#8283BE"
+          color: classes.iconColor
         }} />
-        <div style={clasess.menuTitleStyle}>{selectedProperties?.isHiddenFromCalculation ? t("properties.showPropertyFromCalculation") : t("properties.hidePropertyFromCalculation")}</div>
+        <div style={classes.menuTitleStyle}>{selectedProperties?.isHiddenFromCalculation ? t("properties.showPropertyFromCalculation") : t("properties.hidePropertyFromCalculation")}</div>
       </MenuItem>
 
       <MenuItem
-        style={clasess.menuItemContainer}
+        style={classes.menuItemContainer}
         onClick={() => {
           ToggleIsShowInOutSourceDetails();
           handleClose();
         }}
       >
-
         <VisibilityOutlinedIcon style={{
           width: "18px",
           height: "18px",
-          color: "#8283BE"
+          color: classes.iconColor
         }} />
-        <div style={clasess.menuTitleStyle}>{selectedProperties?.isShowInOutSourceDetails ? t("properties.hidePropertyFromPurchaseOrder") : t("properties.showPropertyFromPurchaseOrder")}</div>
+        <div style={classes.menuTitleStyle}>{selectedProperties?.isShowInOutSourceDetails ? t("properties.hidePropertyFromPurchaseOrder") : t("properties.showPropertyFromPurchaseOrder")}</div>
       </MenuItem>
     </GoMakeMenu>
   );

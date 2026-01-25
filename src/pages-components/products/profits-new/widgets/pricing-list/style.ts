@@ -108,7 +108,7 @@ const useStyle = () => {
         display: "flex",
         alignItems: "center",
         textalign: "center",
-        color: primaryColor(500),
+        color: `var(--theme-text-secondary, ${primaryColor(500)})`,
       },
       filtersCointaner: {
         display: "flex",
@@ -167,11 +167,11 @@ const useStyle = () => {
       autoCompleteStyleContainer: {
         height: 33,
         maxHeight: 33,
-        borderRadius: 0,
-        ...FONT_FAMILY.Lexend(400, 14),
-        color:secondColor(400),
-        borderBottom: "none",
-        border: "none",
+      },
+      textInputContainer: {
+        width: "fit-content",
+        height: 33,
+        maxHeight: 33,
       },
       chartContainer: {
         maxHeight: 300,
@@ -179,8 +179,8 @@ const useStyle = () => {
         width: "100%",
       },
       menuItemStyle: {
-        ...FONT_FAMILY.Lexend(500, 10),
-        color: primaryColor(300),
+        ...FONT_FAMILY.Lexend(500, 11),
+        color: `var(--theme-text-primary, ${primaryColor(400)})`,
       },
       menuContainer: {
         display: "flex",
@@ -225,6 +225,7 @@ const useStyle = () => {
 
   return {
     classes,
+    primaryColor,
   };
 };
 export { useStyle };

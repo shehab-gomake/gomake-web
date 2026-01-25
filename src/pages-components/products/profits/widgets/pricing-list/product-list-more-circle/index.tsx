@@ -17,13 +17,14 @@ const ProductTestListMoreCircleWidget = ({ item }: any) => {
     handleClick,
     onOpenDeleteModal,
     onCloseDeleteModal,
+    primaryColor,
   } = useProductListMoreCircle();
   const profitsStateValue = useRecoilValue<any>(profitsState);
 
   return (
     <>
       <IconButton onClick={handleClick}>
-        <MoreCircleIcon />
+        <MoreCircleIcon color={primaryColor(500)}/>
       </IconButton>
       <GoMakeMenu handleClose={handleClose} open={open} anchorEl={anchorEl}>
         <MenuItem
@@ -32,9 +33,7 @@ const ProductTestListMoreCircleWidget = ({ item }: any) => {
             handleClose();
             profitsStateValue?.setTestProductState(item?.id);
           }}
-        >
-          Delete
-        </MenuItem>
+        >{t("products.profits.delete")}</MenuItem>
       </GoMakeMenu>
       <GoMakeDeleteModal
         hideIcon={true}

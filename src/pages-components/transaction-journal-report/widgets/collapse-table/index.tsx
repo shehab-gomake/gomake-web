@@ -29,7 +29,7 @@ function CollapsibleTable({ rows, headers, style }: CollapsibleTableProps) {
         <TableRow
           sx={{
             "& > *": { borderBottom: "unset" },
-            background: "#ebecff",
+            background: "var(--theme-secondary-50, #EBECFF)",
             textAlign: isRtl ? "right" : "left",
           }}
         >

@@ -1,9 +1,7 @@
-import { useRouter } from "next/router";
 import { useMemo } from "react";
 
 const useStyle = () => {
-  const router = useRouter();
-  const clasess = useMemo(() => {
+  const classes = useMemo(() => {
     return {
       mainHeaderContainer: {
         display: "flex",
@@ -21,7 +19,7 @@ const useStyle = () => {
     };
   }, []);
   return {
-    clasess,
+    classes,
   };
 };
 export { useStyle };

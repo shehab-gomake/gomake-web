@@ -5,11 +5,12 @@ import { error } from "console";
 
 const useStyle = () => {
   const { secondColor, errorColor } = useGomakeTheme();
-  const clasess = useMemo(() => {
+  const classes = useMemo(() => {
     return {
       insideStyle: {
         width: 500,
         height: 280,
+        padding: "10px 16px",
       },
       textInputStyle: {
         height: 40,
@@ -52,7 +53,7 @@ const useStyle = () => {
     };
   }, []);
   return {
-    clasess,
+    classes,
   };
 };
 export { useStyle };

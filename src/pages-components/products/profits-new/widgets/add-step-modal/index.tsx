@@ -16,7 +16,7 @@ const AddStepModal = ({
   addNewStepForActionProfitRow,
 }: AddStepModalProps) => {
   const router = useRouter()
-  const { clasess } = useStyle();
+  const { classes } = useStyle();
   const { t } = useTranslation();
   const [value, setValue] = useState<number>(null);
   const [totalPrice, setTotalPrice] = useState<number>(null);
@@ -32,15 +32,15 @@ const AddStepModal = ({
         openModal={openModal}
         modalTitle={t("products.profits.pricingListWidget.addNewStep")}
         onClose={onCloseModal}
-        insideStyle={clasess.insideStyle}
+        insideStyle={classes.insideStyle}
       >
-        <div style={clasess.mainContainer}>
-          <div style={clasess.textInputsContainer}>
-            <div style={clasess.labelTextContainer}>
+        <div style={classes.mainContainer}>
+          <div style={classes.textInputsContainer}>
+            <div style={classes.labelTextContainer}>
               <div>{selectedPricingBy?.label}</div>
               <GomakeTextInput
                 placeholder={selectedPricingBy?.label}
-                style={clasess.textInputStyle}
+                style={classes.textInputStyle}
                 value={value}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                   setValue(parseFloat(e.target.value));
@@ -48,11 +48,11 @@ const AddStepModal = ({
                 type="number"
               />
             </div>
-            <div style={clasess.labelTextContainer}>
+            <div style={classes.labelTextContainer}>
               <div>{totalPriceLabel}</div>
               <GomakeTextInput
                 placeholder={totalPriceLabel}
-                style={clasess.textInputStyle}
+                style={classes.textInputStyle}
                 value={totalPrice}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                   setTotalPrice(parseFloat(e.target.value));
@@ -61,10 +61,10 @@ const AddStepModal = ({
               />
             </div>
           </div>
-          <div style={clasess.errorMsgStyle}>{errorMsg}</div>
-          <div style={clasess.btnContainer}>
+          <div style={classes.errorMsgStyle}>{errorMsg}</div>
+          <div style={classes.btnContainer}>
             <GomakePrimaryButton
-              style={clasess.btnStyle}
+              style={classes.btnStyle}
               onClick={() => {
                 if (
                   value !== null &&

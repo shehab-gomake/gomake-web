@@ -6,7 +6,7 @@ import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { FONT_FAMILY } from "@/utils/font-family";
 
 const useStyle = () => {
-  const { secondColor } = useGomakeTheme();
+  const { secondColor , primarySecondaryBlend , theme} = useGomakeTheme();
 
   const { t } = useTranslation();
 
@@ -36,7 +36,7 @@ const useStyle = () => {
       },
       rowTextStyle: {
         ...FONT_FAMILY.Lexend(500, 13),
-        color: "rgba(130, 131, 190, 1)",
+        color: primarySecondaryBlend(300),
         textDecoration: "unset",
         display: "block",
       },
@@ -73,7 +73,7 @@ const useStyle = () => {
         paddingBottom: "10px",
       },
     };
-  }, [i18next.language, t]);
+  }, [i18next.language, t, theme]);
   return {
     classes,
   };

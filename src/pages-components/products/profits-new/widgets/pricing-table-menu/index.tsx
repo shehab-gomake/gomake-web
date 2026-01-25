@@ -9,12 +9,12 @@ const PricingTableMenu = ({
   anchorEl,
   onClickOpenAddNewRuleModal,
 }) => {
-  const { clasess } = useStyle();
+  const { classes } = useStyle();
   const { t } = useTranslation();
   return (
     <GoMakeMenu handleClose={handleClose} open={open} anchorEl={anchorEl}>
       <MenuItem
-        style={clasess.menuItemStyle}
+        style={classes.menuItemStyle}
         onClick={() => {
           onClickOpenAddNewRuleModal();
           handleClose();
@@ -22,8 +22,8 @@ const PricingTableMenu = ({
       >
         {t("products.profits.exceptions.addNewRule")}
       </MenuItem>
-      <Divider style={clasess.dividerStyle} />
-      <MenuItem style={clasess.menuItemStyle} onClick={handleClose}>
+      <Divider style={classes.dividerStyle} />
+      <MenuItem style={classes.menuItemStyle} onClick={handleClose}>
         {t("products.profits.exceptions.reorder")}
       </MenuItem>
     </GoMakeMenu>

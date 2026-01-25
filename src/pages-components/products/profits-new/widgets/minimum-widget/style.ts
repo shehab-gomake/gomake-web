@@ -2,7 +2,7 @@ import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 
 const useStyle = () => {
-  const clasess = useMemo(() => {
+  const classes = useMemo(() => {
     return {
       headerTableContainer: {
         display: "flex",
@@ -37,7 +37,7 @@ const useStyle = () => {
     };
   }, []);
   return {
-    clasess,
+    classes,
   };
 };
 export { useStyle };

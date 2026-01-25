@@ -3,7 +3,7 @@ import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
 const useStyle = () => {
-  const { primaryColor, secondColor, errorColor } = useGomakeTheme();
+  const { primaryColor, secondColor, errorColor , primarySecondaryBlend} = useGomakeTheme();
   const { t } = useTranslation();
   const dir: "rtl" | "ltr" = t("direction");
   const isRTL = dir === "rtl";
@@ -102,7 +102,7 @@ const useStyle = () => {
         },
       },
       headerCell: {
-        backgroundColor: "#EBECFF",
+        backgroundColor: primarySecondaryBlend(50),
         fontWeight: "bold" as const,
         color: "#000",
         borderBottom: "1px solid #e0e0e0",
@@ -119,7 +119,7 @@ const useStyle = () => {
         },
       },
       selectedRow: {
-        backgroundColor: primaryColor(50),
+        backgroundColor: primarySecondaryBlend(50),
         "&:hover": {
           backgroundColor: primaryColor(100),
         },

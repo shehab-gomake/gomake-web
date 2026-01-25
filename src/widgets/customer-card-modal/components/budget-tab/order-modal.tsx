@@ -50,7 +50,7 @@ const OrdersModal = ({
               width: "fit-content",
               marginBottom: 25,
               height: 40,
-              backgroundColor: "#EC038D",
+              backgroundColor: "var(--theme-secondary-400, #EC038D)",
             }}
             onClick={handleClientOrdersClick}
           >
@@ -104,7 +104,7 @@ const OrdersModal = ({
               width: "fit-content",
               marginTop: 25,
               height: 40,
-              backgroundColor: "#EC038D",
+              backgroundColor: "var(--theme-secondary-400, #EC038D)",
             }}
             onClick={() => updateDocumentsBudget()}
           >

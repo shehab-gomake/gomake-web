@@ -199,6 +199,7 @@ const CustomerEditMachines = () => {
             style={{
               width: "80%",
               margin: "auto",
+              lineHeight: "15px",
             }}
           >
             {t("tabs.addMachine")}

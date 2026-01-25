@@ -14,7 +14,6 @@ interface IProps {
   isMobileScreen?: boolean;
 }
 
-//!here
 const useStyle = ({ isMobileScreen }: IProps) => {
   const { t } = useTranslation();
   const direction = t("direction");
@@ -67,7 +66,7 @@ const useStyle = ({ isMobileScreen }: IProps) => {
         justifyContent: "flex-start",
         alignItems: "center",
         width: "100%",
-        gap: 30,
+        gap: 16,
       },
       mainRowContainer: {
         display: "flex",
@@ -354,7 +353,7 @@ const useStyle = ({ isMobileScreen }: IProps) => {
       requiredDropDownListStyle: {
         width: "200px",
         borderRadius: "var(--theme-radius-md, 4px)",
-        height: 40,
+        height: 41,
         borderBottom: "1px solid red",
         backgroundColor: "#fff",
         ...FONT_FAMILY.Lexend(500, 14),

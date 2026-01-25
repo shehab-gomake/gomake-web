@@ -17,7 +17,7 @@ const StyledAutocomplete: any = styled(Autocomplete, {
     direction: props?.direction,
     boxSizing: "border-box",
     borderRadius: "var(--theme-dropdown-border-radius, 4px)",
-    height: props?.style?.height || 40,
+    height: props?.style?.height || "var(--theme-dropdown-height, 40px)",
     fontFamily: "Lexend",
     fontStyle: "normal",
     fontWeight: 300,

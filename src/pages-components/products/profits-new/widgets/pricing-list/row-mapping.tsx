@@ -19,7 +19,7 @@ const RowMappingWidget = ({
   setSelectedActionProfit,
   selectedAdditionalProfitRow,
 }: PricingListTableRowProps) => {
-  const { classes } = useStyle();
+  const { classes , primaryColor } = useStyle();
   const router = useRouter();
   const {
     isUpdateCost,
@@ -214,7 +214,7 @@ const RowMappingWidget = ({
             alignSelf: "flex-start",
           }}
         >
-          <MoreCircleIcon />
+          <MoreCircleIcon color={primaryColor(500)}/>
         </div>
       </PrimaryTableCell>
     </TableRow>

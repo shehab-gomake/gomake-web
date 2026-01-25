@@ -3,7 +3,7 @@ import {useMemo} from "react";
 import {useGomakeTheme} from "@/hooks/use-gomake-thme";
 
 const useStyle = () => {
-    const {primaryColor} = useGomakeTheme();
+    const {primaryColor , primarySecondaryBlend , theme} = useGomakeTheme();
     const classes = useMemo(() => {
         return {
             container: {
@@ -55,11 +55,11 @@ const useStyle = () => {
                 width: 125,
                 justifyContent: 'space-between',
                 alignItems: 'center',
-                color: primaryColor(300)
+                color: primarySecondaryBlend(300)
             },
-            iconColor: primaryColor(300)
+            iconColor: primarySecondaryBlend(300)
         };
-    }, []);
+    }, [theme]);
     return {
         classes,
     };

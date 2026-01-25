@@ -189,7 +189,7 @@ const NumberStringInput = ({ value, isEditable, parameterKey, id, isAdmin, unit,
                     :
                     isEditable ?
                         <PrimaryButton
-                            style={{ minWidth: "max-content" }}
+                            style={{ minWidth: "max-content" , color:"var(--theme-text-primary, var(--theme-primary-color, #2E3092))" }}
                             sx={classes.clickableData}
                             onClick={onClick}
                             variant={'text'}

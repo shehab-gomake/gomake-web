@@ -108,7 +108,6 @@ const JobsModal = ({
     const { t } = useTranslation();
     // Use the actual backend data
     const displayData = jobsData;
-
     const title = `${materialName} · ${supplierName} · ${materialCode} — ${t("materials.jobsModal.title")}`;
 
     return (
@@ -130,12 +129,12 @@ const JobsModal = ({
                 <TableContainer component={Paper} sx={{ maxHeight: 400, width: '100%', marginTop: "10px" }}>
                     <Table stickyHeader>
                         <TableHead>
-                            <TableRow sx={{ backgroundColor: "#EBECFF" }}>
+                            <TableRow sx={{ backgroundColor: "var(--theme-secondary-50, #EBECFF)" }}>
                                 <TableCell sx={{
                                     textAlign: "center",
                                     fontWeight: "bold",
                                     whiteSpace: "nowrap",
-                                    backgroundColor: "#EBECFF"
+                                    backgroundColor: "var(--theme-secondary-50, #EBECFF)"
                                 }}>
                                     {t("materials.jobsModal.tableHeaders.clientName")}
                                 </TableCell>
@@ -143,7 +142,7 @@ const JobsModal = ({
                                     textAlign: "center",
                                     fontWeight: "bold",
                                     whiteSpace: "nowrap",
-                                    backgroundColor: "#EBECFF"
+                                    backgroundColor: "var(--theme-secondary-50, #EBECFF)"
                                 }}>
                                     {t("materials.jobsModal.tableHeaders.documentType")}
                                 </TableCell>
@@ -151,7 +150,7 @@ const JobsModal = ({
                                     textAlign: "center",
                                     fontWeight: "bold",
                                     whiteSpace: "nowrap",
-                                    backgroundColor: "#EBECFF"
+                                    backgroundColor: "var(--theme-secondary-50, #EBECFF)"  
                                 }}>
                                     {t("materials.jobsModal.tableHeaders.documentNumber")}
                                 </TableCell>
@@ -159,7 +158,7 @@ const JobsModal = ({
                                     textAlign: "center",
                                     fontWeight: "bold",
                                     whiteSpace: "nowrap",
-                                    backgroundColor: "#EBECFF"
+                                    backgroundColor: "var(--theme-secondary-50, #EBECFF)"
                                 }}>
                                     {t("materials.jobsModal.tableHeaders.jobName")}
                                 </TableCell>
@@ -167,7 +166,7 @@ const JobsModal = ({
                                     textAlign: "center",
                                     fontWeight: "bold",
                                     whiteSpace: "nowrap",
-                                    backgroundColor: "#EBECFF"
+                                    backgroundColor: "var(--theme-secondary-50, #EBECFF)"
                                 }}>
                                     {t("materials.jobsModal.tableHeaders.jobNumber")}
                                 </TableCell>
@@ -175,7 +174,7 @@ const JobsModal = ({
                                     textAlign: "center",
                                     fontWeight: "bold",
                                     whiteSpace: "nowrap",
-                                    backgroundColor: "#EBECFF"
+                                    backgroundColor: "var(--theme-secondary-50, #EBECFF)"
                                 }}>
                                     {t("materials.jobsModal.tableHeaders.usedInventory")}
                                 </TableCell>
@@ -183,7 +182,7 @@ const JobsModal = ({
                                     textAlign: "center",
                                     fontWeight: "bold",
                                     whiteSpace: "nowrap",
-                                    backgroundColor: "#EBECFF"
+                                    backgroundColor: "var(--theme-secondary-50, #EBECFF)"
                                 }}>
                                     {t("materials.jobsModal.tableHeaders.status")}
                                 </TableCell>

@@ -3,7 +3,7 @@ import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 
 const useStyle = () => {
-  const { primaryColor, theme } = useGomakeTheme();
+  const { primaryColor, theme  ,grayColor} = useGomakeTheme();
   const classes = useMemo(() => {
     return {
       mainContainer: {
@@ -29,7 +29,7 @@ const useStyle = () => {
         borderRadius: "8px",
         height: "40px",
         backgroundColor: "#FFFFFF",
-        color: "#344054",
+        color: grayColor(700),
         border: "1px solid #D0D5DD",
         display: "flex",
         justifyContent: "center",

@@ -4,11 +4,11 @@ import { useMachineAttributes } from "@/widgets/machines/hooks/use-machine-attri
 import { useEffect, useState } from "react";
 import { useGomakeAxios } from "@/hooks";
 import { Grid } from "@mui/material";
-import Button from "@mui/material/Button";
 import { useTranslation } from "react-i18next";
 import { CheckBoxList } from "@/widgets/machines/components/list/check-box-list";
 import { useRecoilValue } from "recoil";
 import { machineState as STATE } from "@/widgets/machines/state/machine-state";
+import { SecondaryButton } from "@/components/button/secondary-button";
 
 
 const ActionsMaterialsComponent = ({ }: IStepFormProps) => {
@@ -158,7 +158,8 @@ const ActionsMaterialsComponent = ({ }: IStepFormProps) => {
                     </Grid>
                     <Grid item>
                         <Grid container direction="column" alignItems="center">
-                            <Button
+                            <SecondaryButton
+                            style={classes.secondaryButton}
                                 sx={{ my: 0.5 }}
                                 variant="outlined"
                                 size="small"
@@ -166,8 +167,9 @@ const ActionsMaterialsComponent = ({ }: IStepFormProps) => {
                                 aria-label="move selected right"
                             >
                                 &gt;
-                            </Button>
-                            <Button
+                            </SecondaryButton>
+                            <SecondaryButton
+                            style={classes.secondaryButton}
                                 sx={{ my: 0.5 }}
                                 variant="outlined"
                                 size="small"
@@ -175,7 +177,7 @@ const ActionsMaterialsComponent = ({ }: IStepFormProps) => {
                                 aria-label="move selected left"
                             >
                                 &lt;
-                            </Button>
+                            </SecondaryButton>
                         </Grid>
                     </Grid>
                     <Grid item>
@@ -188,7 +190,8 @@ const ActionsMaterialsComponent = ({ }: IStepFormProps) => {
                     </Grid>
                     <Grid item>
                         <Grid container direction="column" alignItems="center">
-                            <Button
+                            <SecondaryButton
+                            style={classes.secondaryButton}
                                 sx={{ my: 0.5 }}
                                 variant="outlined"
                                 size="small"
@@ -196,8 +199,9 @@ const ActionsMaterialsComponent = ({ }: IStepFormProps) => {
                                 aria-label="move selected right"
                             >
                                 &gt;
-                            </Button>
-                            <Button
+                            </SecondaryButton>
+                            <SecondaryButton
+                            style={classes.secondaryButton}
                                 sx={{ my: 0.5 }}
                                 variant="outlined"
                                 size="small"
@@ -205,7 +209,7 @@ const ActionsMaterialsComponent = ({ }: IStepFormProps) => {
                                 aria-label="move selected left"
                             >
                                 &lt;
-                            </Button>
+                            </SecondaryButton>
                         </Grid>
                     </Grid>
                     <Grid item>

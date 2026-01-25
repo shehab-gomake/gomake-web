@@ -150,7 +150,7 @@ const SubmenuActionModal: React.FC<ISubmenuActionModalProps> = ({
                                 type="number"
                                 placeholder={t("reports.enterPrice")}
                                 style={{
-                                    borderBottom: !priceValue ? '2px solid #EC038D' : '2px solid rgb(67,195,232)',
+                                    borderBottom: !priceValue ? '2px solid var(--theme-primary-color, #EC038D)' : '2px solid var(--theme-primary-300,#43c3e8)',
                                     borderRadius: '4px',
                                 }}
                             />

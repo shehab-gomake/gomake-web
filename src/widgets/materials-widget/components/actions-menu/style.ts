@@ -3,11 +3,11 @@ import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 
 const useStyle = () => {
-  const { primaryColor } = useGomakeTheme();
+  const { primaryColor , primarySecondaryBlend} = useGomakeTheme();
   const clasess = useMemo(() => {
     return {
       secondText: {
-        color: primaryColor(200),
+        color: `var(--theme-primary-400, ${primaryColor(300)})`,
         ...FONT_FAMILY.Lexend(400, 12),
       },
       UpdateCurrencyView: {
@@ -37,10 +37,11 @@ const useStyle = () => {
         alignItems: "center",
         gap: 8,
       },
-      iconColor: primaryColor(300),
+      iconColor: primarySecondaryBlend(300),
+      chevronIconColor: { ml: "auto", color: primarySecondaryBlend(300) },
       menuTitleStyle: {
         ...FONT_FAMILY.Lexend(500, 12),
-        color: primaryColor(300),
+        color: primarySecondaryBlend(300),
       },
       lineStyle: {
         width: "100%",
@@ -56,7 +57,7 @@ const useStyle = () => {
       },
       rowTextStyle: {
         ...FONT_FAMILY.Lexend(500, 13),
-        color: "rgba(130, 131, 190, 1)",
+        color: primarySecondaryBlend(300),
       },
       actionIconStyle: {
         width: 20,

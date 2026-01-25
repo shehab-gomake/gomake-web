@@ -3,7 +3,7 @@ import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
 const useStyle = () => {
-  const { theme, primaryColor, secondColor } = useGomakeTheme();
+  const { theme,  secondColor , primarySecondaryBlend } = useGomakeTheme();
   const { t } = useTranslation();
   const dir: "rtl" | "ltr" = t("direction");
   const isRTL = dir === "rtl";
@@ -46,7 +46,7 @@ const useStyle = () => {
 
       // Header row styles
       headerRow: {
-        backgroundColor: '#EBECFF',
+        backgroundColor: primarySecondaryBlend(50),
         position: 'sticky',
         top: 0,
         zIndex: 100
@@ -66,7 +66,7 @@ const useStyle = () => {
         fontWeight: 'bold',
         whiteSpace: 'nowrap',
         padding: '4px',
-        backgroundColor: '#EBECFF',
+        backgroundColor: primarySecondaryBlend(50),
       },
 
       // Header cell with fixed column background
@@ -75,7 +75,7 @@ const useStyle = () => {
         fontWeight: 'bold',
         whiteSpace: 'nowrap',
         padding: '4px',
-        backgroundColor: '#D5D7FF',
+        backgroundColor: primarySecondaryBlend(100), 
       },
 
       // Body row styles
@@ -134,15 +134,15 @@ const useStyle = () => {
         top: '48.5%',
         [isRTL ? 'left' : 'right']: `${2 * (102)}px`, // Position at the start of fixed columns (4 columns)
         transform: 'translateY(-50%)',
-        backgroundColor: primaryColor(200),
+        backgroundColor: primarySecondaryBlend(200),
         color: '#fff',
         width: '32px',
         height: '32px',
-        boxShadow: `0 4px 12px ${primaryColor(200)}`,
+        boxShadow: `0 4px 12px ${primarySecondaryBlend(200)}`,
         zIndex: 1000,
         '&:hover': {
-          backgroundColor: primaryColor(200),
-          boxShadow: `0 6px 16px ${primaryColor(200)}`,
+          backgroundColor: primarySecondaryBlend(200),
+          boxShadow: `0 6px 16px ${primarySecondaryBlend(200)}`,
         },
         '&:active': {
           transform: 'translateY(-50%) scale(0.95)',
@@ -150,20 +150,20 @@ const useStyle = () => {
         transition: 'all 0.2s ease-in-out',
         '@keyframes pulse': {
           '0%': {
-            boxShadow: `0 4px 12px ${primaryColor(300)}`
+            boxShadow: `0 4px 12px ${primarySecondaryBlend(300)}`
           },
           '50%': {
-            boxShadow: `0 6px 20px ${primaryColor(500)}`
+            boxShadow: `0 6px 20px ${primarySecondaryBlend(500)}`
           },
           '100%': {
-            boxShadow: `0 4px 12px ${primaryColor(300)}`
+            boxShadow: `0 4px 12px ${primarySecondaryBlend(300)}`
           }
         },
         animation: 'pulse 2s ease-in-out infinite'
       },
 
     };
-  }, [theme, primaryColor, secondColor, isRTL, dir]);
+  }, [theme, primarySecondaryBlend, secondColor, isRTL, dir]);
 
   // Utility functions for dynamic styles
   const getHeaderCellStyle = (isFirstColumn: boolean, isLastFixedColumn: boolean, index: number, headersLength: number, isLastColumn: boolean, isLastSecondColumn: boolean) => {
@@ -174,7 +174,7 @@ const useStyle = () => {
       fontWeight: 'bold',
       whiteSpace: 'nowrap',
       padding: '4px',
-      backgroundColor: isLastFixedColumn ? '#D5D7FF' : '#EBECFF',
+      backgroundColor: isLastFixedColumn ? primarySecondaryBlend(100) : primarySecondaryBlend(50),
       minWidth: isFirstColumn ? '50px' : isLastFixedColumn ? isLastColumn ? "auto" : '165px' : 'auto',
       width: isFirstColumn ? '50px' : isLastFixedColumn ? isLastColumn ? "auto" : '165px' : 'auto',
       maxWidth: isFirstColumn ? '50px' : isLastFixedColumn ? isLastColumn ? "auto" : '165px' : 'auto',

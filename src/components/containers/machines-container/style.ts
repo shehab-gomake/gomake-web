@@ -6,7 +6,7 @@ import {useTranslation} from "react-i18next";
 import {HEADER_HEIGHT, SCREEN_HEIGHT} from "@/utils/layout-config";
 
 const useStyle = () => {
-  const { theme, primaryColor, secondColor } = useGomakeTheme();
+  const { theme, primaryColor, secondColor , primarySecondaryBlend} = useGomakeTheme();
   const {t} = useTranslation()
   const direction = t('direction');
   const classes = useMemo(() => {
@@ -44,14 +44,14 @@ const useStyle = () => {
       subHeader: {
         ...FONT_FAMILY.Lexend(500, 24),
         color: secondColor(500),
-        paddingBottom: 12,
+        padding: "0px 10px",
         gridArea: 'subHeader'
       },
       footer: {
         gridArea: 'footer',
         display: 'flex',
         alignItems: 'center' as 'center',
-        backgroundColor: primaryColor(50),
+        backgroundColor: primarySecondaryBlend(50),
         marginLeft: -10,
         ...adaptPaddingLeft(direction, 10),
       },
@@ -59,13 +59,14 @@ const useStyle = () => {
         display: 'flex',
         gridArea: 'sideActionFooter',
         alignItems: 'center' as 'center',
-        backgroundColor: primaryColor(50),
+        backgroundColor: primarySecondaryBlend(50),
         padding: '0 10px'
       }
     };
   }, [theme]);
   return {
     classes,
+    primaryColor,
   };
 };
 export { useStyle };

@@ -2,6 +2,7 @@ import { useStyle } from "@/widgets/machines/components/forms/style";
 import { GomakePrimaryButton } from "@/components";
 import { SecondaryButton } from "@/components/button/secondary-button";
 import { useTranslation } from "react-i18next";
+import { PrimaryButton } from "@/components/button/primary-button";
 
 const NavigationButtons = ({
     onClickNext,
@@ -28,7 +29,7 @@ const NavigationButtons = ({
         <div style={classes.navigationButtons}>
             {hasBack && <SecondaryButton variant={'outlined'} onClick={onClickBack}>{t('navigationButtons.back')}</SecondaryButton>}
             {canUpdate &&
-                <GomakePrimaryButton style={classes.actionButton} onClick={onClickUpdate}>{t('navigationButtons.update')}</GomakePrimaryButton>}
+                <SecondaryButton variant={'text'} style={classes.actionButton} onClick={onClickUpdate}>{t('navigationButtons.update')}</SecondaryButton>}
             {/* {canAddMachine && <GomakePrimaryButton style={classes.actionButton} onClick={onClickAddMachine}>{t('navigationButtons.add')}</GomakePrimaryButton>} */}
             {hasNext && <SecondaryButton variant={'contained'} onClick={onClickNext}>{t('navigationButtons.next')}</SecondaryButton>}
         </div>
