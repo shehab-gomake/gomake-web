@@ -47,6 +47,20 @@ const MonitoringDashboardWidget = () => {
       return -Infinity;
     }
   };
+
+  const formatGrowthExport = (cell: any): string => {
+    const value = growthValue(cell);
+    if (!Number.isFinite(value)) return "-";
+    const sign = value > 0 ? "+" : "";
+    return `${sign}${value.toFixed(1)}%`;
+  };
+
+  const normalizeRowsForExport = (rows: any[]) =>
+    rows.map((row) =>
+      row.map((cell, index) =>
+        index === row.length - 1 ? formatGrowthExport(cell) : cell
+      )
+    );
   const {
     t,
     salesItems,
@@ -237,9 +251,9 @@ const MonitoringDashboardWidget = () => {
       ];
 
     const exportData = {
-      agentsData: agentsRow || [],
-      productsData: productsRow || [],
-      clientsData: clientsRow || [],
+      agentsData: normalizeRowsForExport(agentsRow || []),
+      productsData: normalizeRowsForExport(productsRow || []),
+      clientsData: normalizeRowsForExport(clientsRow || []),
       agentHeaders: agentTableHeaders || [],
       productHeaders: productTableHeaders || [],
       clientHeaders: clientTableHeaders || [],
