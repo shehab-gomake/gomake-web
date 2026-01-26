@@ -47,6 +47,20 @@ const MonitoringDashboardWidget = () => {
       return -Infinity;
     }
   };
+
+  const formatGrowthExport = (cell: any): string => {
+    const value = growthValue(cell);
+    if (!Number.isFinite(value)) return "-";
+    const sign = value > 0 ? "+" : "";
+    return `${sign}${value.toFixed(1)}%`;
+  };
+
+  const normalizeRowsForExport = (rows: any[]) =>
+    rows.map((row) =>
+      row.map((cell, index) =>
+        index === row.length - 1 ? formatGrowthExport(cell) : cell
+      )
+    );
   const {
     t,
     salesItems,
@@ -222,7 +236,7 @@ const MonitoringDashboardWidget = () => {
       ? [
         t("dashboard.date"),
         t("dashboard.openAndReadyOrder"),
-        `${t("dashboard.ordersTotal")} (${currUnit})`,
+        `${t("dashboard.openAndReadyordersTotal")} (${currUnit})`,
         `${t("dashboard.openDeliveryNotes")} (${currUnit})`,
         `${t("dashboard.invoiceTotal")} (${currUnit})`,
         `${t("dashboard.totalSales")} (${currUnit})`,
@@ -236,13 +250,30 @@ const MonitoringDashboardWidget = () => {
         `${t("dashboard.totalSales")} (${currUnit})`,
       ];
 
+    const productTypeHeaders = [
+      t("products.profits.exceptions.productType"),
+      `${t("dashboard.totalSales")} (${currUnit})`,
+    ];
+
+    const productTypeRows = (productTypeChartData || []).map((item) => [
+      item?.label ?? "-",
+      item?.value != null
+        ? `${currUnit} ${Number(item.value).toLocaleString("en-US", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        })}`
+        : "-",
+    ]);
+
     const exportData = {
-      agentsData: agentsRow || [],
-      productsData: productsRow || [],
-      clientsData: clientsRow || [],
+      agentsData: normalizeRowsForExport(agentsRow || []),
+      productsData: normalizeRowsForExport(productsRow || []),
+      clientsData: normalizeRowsForExport(clientsRow || []),
+      productTypeData: productTypeRows,
       agentHeaders: agentTableHeaders || [],
       productHeaders: productTableHeaders || [],
       clientHeaders: clientTableHeaders || [],
+      productTypeHeaders,
       statistics,
       salesItems: salesItems || [],
       dailyDocumentsSummary:
@@ -531,7 +562,7 @@ const MonitoringDashboardWidget = () => {
             ? [
               t("dashboard.date"),
               t("dashboard.openAndReadyOrder"),
-              `${t("dashboard.ordersTotal")} (${currUnit})`,
+              `${t("dashboard.openAndReadyordersTotal")} (${currUnit})`,
               `${t("dashboard.openDeliveryNotes")} (${currUnit})`,
               `${t("dashboard.invoiceTotal")} (${currUnit})`,
               `${t("dashboard.totalSales")} (${currUnit})`,
