@@ -55,6 +55,7 @@ import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { setBoardFiltersApi } from "@/services/api-service/production-floor/production-floor-endpoints";
 
 const ProductionFloorWidget = () => {
+  const router = useRouter();
   const [view, setView] = useRecoilState(productionFloorViewState);
   const [filtersState, setFiltersState] = useRecoilState(
     productionFloorFiltersState
@@ -117,6 +118,7 @@ const ProductionFloorWidget = () => {
     onClickDoneScopeAllJobs,
     onClickDoneScopeProductType,
     tryMoveBoardMissionsToDone,
+    getDataForGroupViewWhenCloseModal
   } = useProductionFloorData();
 
   // Storage functionality for mark ready modal
@@ -202,6 +204,7 @@ const ProductionFloorWidget = () => {
       setAbortControllerFiles(newRequestAbortController);
       setAbortControllerActivities(newRequestAbortController);
       setAbortControllerDetails(newRequestAbortController);
+      getDataForGroupViewWhenCloseModal(connectionId);
     }
   };
 
@@ -371,6 +374,7 @@ const ProductionFloorWidget = () => {
     productType,
   ]);
 
+
   return (
     <Stack gap={"10px"} height={"100%"} maxHeight={"100%"} overflow={"hidden"}>
       <ProductionFloorHeader
@@ -481,10 +485,10 @@ const ProductionFloorWidget = () => {
         style={
           isMobile
             ? {
-                width: "95vw",
-                maxWidth: 600,
-                minWidth: "unset",
-              }
+              width: "95vw",
+              maxWidth: 600,
+              minWidth: "unset",
+            }
             : undefined
         }
       />
@@ -523,11 +527,11 @@ const ProductionFloorWidget = () => {
         subTitle={
           pendingPrintParams?.productType
             ? t("boardMissions.askPrintType", {
-                productType:
-                  pendingPrintParams?.productTypeName ||
-                  pendingPrintParams?.productName ||
-                  pendingPrintParams?.productType,
-              })
+              productType:
+                pendingPrintParams?.productTypeName ||
+                pendingPrintParams?.productName ||
+                pendingPrintParams?.productType,
+            })
             : ""
         }
         yesBtn={"boardMissions.printAllJobs"}
@@ -561,12 +565,12 @@ const ProductionFloorWidget = () => {
               ) || inputValue === ""
                 ? storageList
                 : [
-                    {
-                      storage: `Add "${inputValue}" as a new storage`,
-                      id: "new",
-                    },
-                    ...storageList,
-                  ]
+                  {
+                    storage: `Add "${inputValue}" as a new storage`,
+                    id: "new",
+                  },
+                  ...storageList,
+                ]
             }
             placeholder={t("boardMissions.selectStorage")}
             key={defaultValue}
@@ -610,12 +614,12 @@ const ProductionFloorWidget = () => {
               ) || inputValue === ""
                 ? storageList
                 : [
-                    {
-                      storage: `Add "${inputValue}" as a new storage`,
-                      id: "new",
-                    },
-                    ...storageList,
-                  ]
+                  {
+                    storage: `Add "${inputValue}" as a new storage`,
+                    id: "new",
+                  },
+                  ...storageList,
+                ]
             }
             placeholder={t("boardMissions.selectStorage")}
             key={defaultValue}
@@ -649,10 +653,10 @@ const ProductionFloorWidget = () => {
         subTitle={
           selectedMission?.productType
             ? t("boardMissions.askDoneScope", {
-                productType:
-                  selectedMission?.productTypeName ||
-                  selectedMission?.productType,
-              })
+              productType:
+                selectedMission?.productTypeName ||
+                selectedMission?.productType,
+            })
             : ""
         }
         yesBtn={t("boardMissions.markAllJobsReady", {
@@ -661,13 +665,12 @@ const ProductionFloorWidget = () => {
         noBtn={
           selectedMission?.productType
             ? t("boardMissions.markProductTypeOnly", {
-                productType:
-                  selectedMission?.productTypeName ||
-                  selectedMission?.productType,
-                defaultValue: `Mark ${
-                  selectedMission?.productType || "Product Type"
+              productType:
+                selectedMission?.productTypeName ||
+                selectedMission?.productType,
+              defaultValue: `Mark ${selectedMission?.productType || "Product Type"
                 } Only`,
-              })
+            })
             : undefined
         }
         openModal={openDoneScopeModal}
