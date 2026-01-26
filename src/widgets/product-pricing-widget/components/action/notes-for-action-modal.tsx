@@ -16,10 +16,7 @@ import {
 import dynamic from "next/dynamic";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { Box, Typography } from "@mui/material";
-import { useRecoilValue } from "recoil";
-import { languageOptionsState } from "@/store/languages";
-import parse from "html-react-parser";
-import { companyProfileState, ICompanyProfile } from "@/store/company-profile";
+import { useDefaultLanguageOptions } from "@/hooks/use-default-language-options";
 
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
@@ -61,11 +58,7 @@ const NotesForActionModal = ({
   const { t } = useTranslation();
   const dir: "rtl" | "ltr" = t("direction");
   const isRTL = dir === "rtl";
-  const allLanguages = useRecoilValue(languageOptionsState);
-  const profileData = useRecoilValue<ICompanyProfile>(companyProfileState);
-  const defaultLanguageOptions = profileData?.languages?.length > 0
-    ? allLanguages.filter((lang) => profileData?.languages?.includes(lang.value))
-    : [];
+  const { defaultLanguageOptions } = useDefaultLanguageOptions();
 
   // Check if contentTranslations exists and has items
   const hasTranslations =

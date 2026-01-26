@@ -3,11 +3,12 @@ import { useTranslation } from "react-i18next";
 import { Stack } from "@mui/material";
 import { SecondaryButton } from "@/components/button/secondary-button";
 import { useState } from "react";
-import { GoMakeAutoComplate, GoMakeModal, GomakeTextInput } from "@/components";
+import { GoMakeAutoComplate, GoMakeModal } from "@/components";
 import { useStyle } from "../style";
-import { languageOptionsState } from "@/store/languages";
+import { useDefaultLanguageOptions } from "@/hooks/use-default-language-options";
+import { permissionsState } from "@/store";
 import { useRecoilValue } from "recoil";
-import { companyProfileState, ICompanyProfile } from "@/store/company-profile";
+import { Permissions } from "@/components/CheckPermission/enum";
 
 interface IAddLangModalProps {
   openModal: boolean;
@@ -23,11 +24,8 @@ const AddLangModal = ({
   const { t } = useTranslation();
   const { classes } = useStyle();
   const [langKey, setLangKey] = useState<string>();
-  const languages = useRecoilValue(languageOptionsState);
-  const profileData = useRecoilValue<ICompanyProfile>(companyProfileState);
-  const defaultLanguageOptions = profileData?.languages?.length > 0
-    ? languages.filter((lang) => profileData?.languages?.includes(lang.value))
-    : [];
+  const { defaultLanguageOptions } = useDefaultLanguageOptions();
+  const permissions = useRecoilValue(permissionsState);
 
   return (
     <GoMakeModal
@@ -39,7 +37,18 @@ const AddLangModal = ({
       <Stack style={classes.firstStackStyle}>
         <GoMakeAutoComplate
           options={defaultLanguageOptions}
-          onChange={(e: any, value: any) => setLangKey(value?.value)}
+          onChange={(e: any, value: any) => {
+            if (value?.value === "add_language_action") {
+              if (!permissions?.includes(Permissions.EDIT_COMPANY_PROFILE)) {
+                window.alert("ask your admin to add language");
+                return;
+              }
+              window.location.href = "/settings/company-profile";
+              return;
+            }
+            setLangKey(value?.value);
+
+          }}
           placeholder={t("translations.selectLang")}
         />
 

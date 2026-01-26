@@ -10,8 +10,7 @@ import { useRecoilValue } from "recoil";
 import { EnumVATStatus } from "@/enums/accounting-enums";
 import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
-import { languageOptionsState } from "@/store/languages";
-import { companyProfileState, ICompanyProfile } from "@/store/company-profile";
+import { useDefaultLanguageOptions } from "@/hooks/use-default-language-options";
 
 const useSttingsQuoteMenu = ({
   updateDocumentPreference,
@@ -26,11 +25,7 @@ const useSttingsQuoteMenu = ({
   const { CheckPreferenceValue } = usePrintHousePreferences();
   const quoteStateValue = useRecoilValue<any>(quoteItemState);
   const { getCurrenciesApi, profile } = useCompanyProfile();
-  const allLanguages = useRecoilValue(languageOptionsState);
-  const profileData = useRecoilValue<ICompanyProfile>(companyProfileState);
-  const defaultLanguageOptions = profileData?.languages?.length > 0
-    ? allLanguages.filter((lang) => profileData?.languages?.includes(lang.value))
-    : [];
+  const { defaultLanguageOptions } = useDefaultLanguageOptions();
 
   // Get print house languages
   const printHouseLanguages = useMemo(() => {

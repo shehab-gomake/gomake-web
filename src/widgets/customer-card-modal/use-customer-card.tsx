@@ -14,7 +14,6 @@ import {
   clientTypesCategoriesState,
 } from "@/pages/customers/customer-states";
 import { gomakeUserState } from "./components/gomakeUser-tab/gomakeUserState";
-import { languageOptionsState, languagesState } from "@/store/languages";
 import { useEditCustomer } from "@/pages/customers/edit-customer/use-edit-customer";
 import { useAddCustomer } from "@/pages/customers/add-customer/use-add-customer";
 import { CLIENT_TYPE, CLIENT_TYPE_Id } from "@/pages/customers/enums";
@@ -22,7 +21,6 @@ import { emailRegex } from "@/utils/regex";
 import { useUserProfile } from "@/hooks/use-user-profile";
 import { getClientsGroupsApi } from "@/services/api-service/suppliers/suppliers-endpoints";
 import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
-// import { clearPhoneNumberPrefix } from "@/utils/helpers";
 import { isValidCustomer } from "@/utils/helpers";
 import { useUserPermission } from "@/hooks/use-permission";
 import { userProfileState } from "@/store/user-profile";
@@ -30,7 +28,7 @@ import { printHouseCountryState } from "@/store/print-house-country";
 import { EPreferences } from "@/enums/prefernces";
 import { getAllShipmentTypesApi } from "@/services/api-service/shipmentTypes/shipment-type-api";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
-import { companyProfileState, ICompanyProfile } from "@/store/company-profile";
+import { useDefaultLanguageOptions } from "@/hooks/use-default-language-options";
 
 const useCustomerCard = ({
   t,
@@ -56,18 +54,13 @@ const useCustomerCard = ({
     useState<boolean>(false);
   const [selectedClient, setSelectedClient] =
     useRecoilState(selectedClientState);
-  const { alertRequiredFields, alertFault } = useSnackBar();
+  const { alertFault } = useSnackBar();
   const systemCurrency = useRecoilValue<any>(systemCurrencyState);
   const [resetPassModal, setResetPassModalModal] =
     useRecoilState<boolean>(resetPassModalState);
   const clientTypesCategories = useRecoilValue(clientTypesCategoriesState);
   const gomakeUser = useRecoilValue<any>(gomakeUserState);
-  // const languagesOptions = useRecoilValue(languagesState);
-  const languagesOptions = useRecoilValue(languageOptionsState);
-  const profileData = useRecoilValue<ICompanyProfile>(companyProfileState);
-  const defaultLanguageOptions = profileData?.languages?.length > 0
-    ? languagesOptions.filter((lang) => profileData?.languages?.includes(lang.value))
-    : [];
+  const { defaultLanguageOptions } = useDefaultLanguageOptions();
   const { CheckPreferenceValue, GetPreferenceKey } = usePrintHousePreferences();
   const { CheckPermission } = useUserPermission();
   const printHouseCountry = useRecoilValue<string>(printHouseCountryState);

@@ -1,14 +1,8 @@
 import { IUserProfile } from "@/store/user-profile";
-import { useRecoilValue } from "recoil";
-import { languageOptionsState } from "@/store/languages";
-import { companyProfileState, ICompanyProfile } from "@/store/company-profile";
+import { useDefaultLanguageOptions } from "@/hooks/use-default-language-options";
 
 const personalInputs = (state: IUserProfile) => {
-  const languages = useRecoilValue(languageOptionsState);
-  const profileData = useRecoilValue<ICompanyProfile>(companyProfileState);
-  const defaultLanguageOptions = profileData?.languages?.length > 0
-    ? languages.filter((lang) => profileData?.languages?.includes(lang.value))
-    : [];
+  const { defaultLanguageOptions } = useDefaultLanguageOptions();
   return [
     {
       name: "firstName",

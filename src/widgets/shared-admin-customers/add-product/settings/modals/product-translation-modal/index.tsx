@@ -2,11 +2,11 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRecoilValue } from "recoil";
 import { companyProfileState, ICompanyProfile } from "@/store/company-profile";
-import { languageOptionsState } from "@/store/languages";
 import { GoMakeDialog } from "@/components/dialog/go-make-dialog";
 import { GomakeTextInput } from "@/components";
 import { Stack, Typography, Box } from "@mui/material";
 import { useStyle } from "./style";
+import { useDefaultLanguageOptions } from "@/hooks/use-default-language-options";
 
 interface IProductTranslation {
   name: string;
@@ -31,11 +31,7 @@ const ProductTranslationModal: React.FC<IProductTranslationModalProps> = ({
   const { t } = useTranslation();
   const { classes } = useStyle();
   const profile = useRecoilValue<ICompanyProfile>(companyProfileState);
-  const allLanguages = useRecoilValue(languageOptionsState);
-  const profileData = useRecoilValue<ICompanyProfile>(companyProfileState);
-  const defaultLanguageOptions = profileData?.languages?.length > 0
-    ? allLanguages.filter((lang) => profileData?.languages?.includes(lang.value))
-    : [];
+  const { defaultLanguageOptions } = useDefaultLanguageOptions();
 
   // Get print house languages
   const printHouseLanguages = useMemo(() => {

@@ -24,6 +24,8 @@ import {
   materialsParametersState,
 } from "@/widgets/materials-widget/state";
 import { productsForDropDownList, userState } from "@/store";
+import { permissionsState } from "@/store/permissions";
+import { Permissions } from "@/components/CheckPermission/enum";
 import { GoMakeImageFiled } from "../image-filed/image-filed";
 import { useInputUnit } from "@/components/form-inputs/use-input-units";
 import { UNIT_TYPE } from "@/enums";
@@ -52,6 +54,7 @@ const FormInput = ({
   const clientsCategories = useRecoilValue<any>(materialsClientsState);
   const parametersCategories = useRecoilValue<any>(materialsParametersState);
   const productValue = useRecoilValue(productsForDropDownList);
+  const permissions = useRecoilValue(permissionsState);
   const [optionsUrl, setOptionsUrl] = useState<string>("");
   const { translateUnit, restoreUnitValue, convertUnitValue, units } =
     useInputUnit();
@@ -94,6 +97,14 @@ const FormInput = ({
   };
 
   const selectChange = async (event: SyntheticEvent, value): Promise<void> => {
+    if (value?.value === "add_language_action") {
+      if (!permissions?.includes(Permissions.EDIT_COMPANY_PROFILE)) {
+        window.alert("ask your admin to add language");
+        return;
+      }
+      window.location.href = "/settings/company-profile";
+      return;
+    }
     // Handle "Add new value" option for storageLocation
     if (value?.value === "new" && input.parameterKey === "storageLocation") {
       const newOption = {
@@ -317,25 +328,25 @@ const FormInput = ({
                 options={
                   input.multiple
                     ? [
-                        {
-                          label: t("navigationButtons.all") || "all",
-                          value: "all",
-                        },
-                        ...options,
-                      ]
+                      {
+                        label: t("navigationButtons.all") || "all",
+                        value: "all",
+                      },
+                      ...options,
+                    ]
                     : options
                 }
                 value={(() => {
                   const currentValue = Array.isArray(input.value)
                     ? input.value
                     : input.value
-                    ? [input.value]
-                    : [];
+                      ? [input.value]
+                      : [];
                   // If all non-info options are selected, include "all" in the value
                   if (
                     input.multiple &&
                     currentValue.length ===
-                      options.filter((o: any) => !o.isInfo).length &&
+                    options.filter((o: any) => !o.isInfo).length &&
                     options.length > 0
                   ) {
                     return ["all", ...currentValue];
@@ -402,39 +413,39 @@ const FormInput = ({
                 onChange={
                   input.multiple
                     ? (event: any, newValue: any) => {
-                        // Handle multi-select changes including chip deletions
-                        setSelectedOptions(newValue || []);
-                        // Convert objects back to value strings for the form state
-                        const valueStrings = (newValue || []).map(
-                          (item: any) => item.value
-                        );
+                      // Handle multi-select changes including chip deletions
+                      setSelectedOptions(newValue || []);
+                      // Convert objects back to value strings for the form state
+                      const valueStrings = (newValue || []).map(
+                        (item: any) => item.value
+                      );
 
-                        changeState(input.parameterKey, valueStrings);
-                      }
+                      changeState(input.parameterKey, valueStrings);
+                    }
                     : input.parameterKey === "storageLocation"
-                    ? (event: any, newValue: any) => {
+                      ? (event: any, newValue: any) => {
                         const valueStrings = Array.isArray(newValue)
                           ? newValue.map((item: any) => item.label)
                           : newValue
-                          ? newValue.label
-                          : [];
+                            ? newValue.label
+                            : [];
                         changeState(input.parameterKey, valueStrings);
                       }
-                    : selectChange
+                      : selectChange
                 }
                 onInputChange={
                   input.parameterKey === "storageLocation"
                     ? (event: any, newInputValue: string) => {
-                        setInputValue(newInputValue);
-                      }
+                      setInputValue(newInputValue);
+                    }
                     : input.parameterKey === "clients"
-                    ? (event: any, newInputValue: string) => {
+                      ? (event: any, newInputValue: string) => {
                         // Convert MUI Autocomplete's onInputChange signature to match checkWhatRenderArray
                         checkWhatRenderArray({
                           target: { value: newInputValue },
                         });
                       }
-                    : undefined
+                      : undefined
                 }
                 // value={input.multiple ? selectedOptions?.length > 0 ? selectedOptions?.map((item: any) => {
                 //   return {
@@ -458,14 +469,14 @@ const FormInput = ({
                           inputValue.toLowerCase()
                       ) &&
                       inputValue.trim() !== ""
-                    ? [
+                      ? [
                         {
                           label: inputValue,
                           value: "new",
                         },
                         ...options,
                       ]
-                    : options
+                      : options
                 }
                 onChangeTextField={undefined}
                 multiple={!!input.multiple}
@@ -474,97 +485,97 @@ const FormInput = ({
                 renderOption={
                   input.multiple
                     ? (props: any, option: any) => {
-                        // Check if this is an informational option (non-selectable)
-                        if (option.isInfo) {
-                          return (
-                            <Stack
-                              style={{
-                                ...classes.multiSelectOption,
-                                pointerEvents: "none",
-                                cursor: "default",
-                                opacity: 0.7,
-                                paddingLeft: "16px",
-                              }}
-                            >
-                              <div
-                                style={{ fontStyle: "italic", color: "#666" }}
-                              >
-                                {option.label}
-                              </div>
-                            </Stack>
-                          );
-                        }
-
+                      // Check if this is an informational option (non-selectable)
+                      if (option.isInfo) {
                         return (
-                          <Stack style={classes.multiSelectOption}>
-                            <div>
-                              <Checkbox
-                                onChange={(e, checked) => {
-                                  if (option.value === "all") {
-                                    if (checked) {
-                                      const allValues = options
-                                        .filter((o) => !o.isInfo)
-                                        .map((o) => o.value);
-                                      setValues(allValues);
-                                      setSelectedOptions(
-                                        options
-                                          .filter((o) => !o.isInfo)
-                                          .map((o) => ({
-                                            label: o.label,
-                                            value: o.value,
-                                          }))
-                                      );
-                                      changeState(
-                                        input.parameterKey,
-                                        allValues
-                                      );
-                                    } else {
-                                      setValues([]);
-                                      setSelectedOptions([]);
-                                      changeState(input.parameterKey, []);
-                                    }
-                                  } else {
-                                    if (checked) {
-                                      setSelectedOptions((prevValues) => [
-                                        ...prevValues,
-                                        {
-                                          label: option.label,
-                                          value: option.value,
-                                        },
-                                      ]);
-                                    } else {
-                                      setSelectedOptions((prevValues) =>
-                                        prevValues.filter(
-                                          (item) => item.value !== option.value
-                                        )
-                                      );
-                                    }
-                                    handleSelectCheck(
-                                      input.parameterKey,
-                                      checked,
-                                      option
-                                    );
-                                  }
-                                }}
-                                icon={<CheckboxIcon />}
-                                checkedIcon={<CheckboxCheckedIcon />}
-                                checked={
-                                  option.value === "all"
-                                    ? values.length ===
-                                        options.filter((o) => !o.isInfo)
-                                          .length &&
-                                      options.filter((o) => !o.isInfo).length >
-                                        0
-                                    : values?.length > 0
-                                    ? values?.includes(option?.value)
-                                    : input?.value?.includes(option?.value)
-                                }
-                              />
+                          <Stack
+                            style={{
+                              ...classes.multiSelectOption,
+                              pointerEvents: "none",
+                              cursor: "default",
+                              opacity: 0.7,
+                              paddingLeft: "16px",
+                            }}
+                          >
+                            <div
+                              style={{ fontStyle: "italic", color: "#666" }}
+                            >
+                              {option.label}
                             </div>
-                            <div>{option.label}</div>
                           </Stack>
                         );
                       }
+
+                      return (
+                        <Stack style={classes.multiSelectOption}>
+                          <div>
+                            <Checkbox
+                              onChange={(e, checked) => {
+                                if (option.value === "all") {
+                                  if (checked) {
+                                    const allValues = options
+                                      .filter((o) => !o.isInfo)
+                                      .map((o) => o.value);
+                                    setValues(allValues);
+                                    setSelectedOptions(
+                                      options
+                                        .filter((o) => !o.isInfo)
+                                        .map((o) => ({
+                                          label: o.label,
+                                          value: o.value,
+                                        }))
+                                    );
+                                    changeState(
+                                      input.parameterKey,
+                                      allValues
+                                    );
+                                  } else {
+                                    setValues([]);
+                                    setSelectedOptions([]);
+                                    changeState(input.parameterKey, []);
+                                  }
+                                } else {
+                                  if (checked) {
+                                    setSelectedOptions((prevValues) => [
+                                      ...prevValues,
+                                      {
+                                        label: option.label,
+                                        value: option.value,
+                                      },
+                                    ]);
+                                  } else {
+                                    setSelectedOptions((prevValues) =>
+                                      prevValues.filter(
+                                        (item) => item.value !== option.value
+                                      )
+                                    );
+                                  }
+                                  handleSelectCheck(
+                                    input.parameterKey,
+                                    checked,
+                                    option
+                                  );
+                                }
+                              }}
+                              icon={<CheckboxIcon />}
+                              checkedIcon={<CheckboxCheckedIcon />}
+                              checked={
+                                option.value === "all"
+                                  ? values.length ===
+                                  options.filter((o) => !o.isInfo)
+                                    .length &&
+                                  options.filter((o) => !o.isInfo).length >
+                                  0
+                                  : values?.length > 0
+                                    ? values?.includes(option?.value)
+                                    : input?.value?.includes(option?.value)
+                              }
+                            />
+                          </div>
+                          <div>{option.label}</div>
+                        </Stack>
+                      );
+                    }
                     : undefined
                 }
                 PaperComponent={(props: any) => (
@@ -666,7 +677,7 @@ const FormInput = ({
                 placeholder={t(input.placeholder)}
                 disabled={!!readonly}
                 value={input.value}
-                //value={translateUnit && input.unit ? (String(input.value).endsWith('.') ? convertUnitValue(input.unit, parseFloat(input.value)) + '.' : convertUnitValue(input.unit, parseFloat(input.value))) : input.value}
+              //value={translateUnit && input.unit ? (String(input.value).endsWith('.') ? convertUnitValue(input.unit, parseFloat(input.value)) + '.' : convertUnitValue(input.unit, parseFloat(input.value))) : input.value}
               />
             )}
           </div>

@@ -1,10 +1,9 @@
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState } from "recoil";
 import { ICompanyDataState, signupCompanyState } from "@/widgets/quick-setup-widgets/company/state";
 import { currenciesState } from "@/widgets/materials-widget/state";
 import { getCurrenciesApi } from "@/services/api-service/enums/enums-endpoints";
 import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
 import { useEffect, useState } from "react";
-import { languageOptionsState } from "@/store/languages";
 import { useRouter } from "next/router";
 import { clearStorage } from "@/services/storage-data";
 import {
@@ -13,17 +12,13 @@ import {
   getAllCountriesApi,
 } from "@/services/api-service/profiles/company-profile-api";
 import { domainRegex, emailRegex } from "@/utils/regex";
-import { companyProfileState, ICompanyProfile } from "@/store/company-profile";
+import { useDefaultLanguageOptions } from "@/hooks/use-default-language-options";
 
 const useCompanyForm = () => {
   const [state, setState] = useRecoilState(signupCompanyState);
   const [currencies, setCurrencies] = useRecoilState(currenciesState);
   const { callApi } = useGomakeAxios();
-  const languages = useRecoilValue(languageOptionsState);
-  const profileData = useRecoilValue<ICompanyProfile>(companyProfileState);
-  const defaultLanguageOptions = profileData?.languages?.length > 0
-    ? languages.filter((lang) => profileData?.languages?.includes(lang.value))
-    : [];
+  const { defaultLanguageOptions } = useDefaultLanguageOptions();
   const [loading, setLoading] = useState<boolean>(false);
   const { alertFaultAdded, alertFault } = useSnackBar();
   const [isAvailable, setIsAvailable] = useState(false);

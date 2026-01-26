@@ -19,7 +19,7 @@ import { ModalType } from "@/enums";
 import { ProductTranslationModal, IProductTranslation } from "./modals/product-translation-modal";
 import { useRecoilValue } from "recoil";
 import { companyProfileState, ICompanyProfile } from "@/store/company-profile";
-import { languageOptionsState } from "@/store/languages";
+import { useDefaultLanguageOptions } from "@/hooks/use-default-language-options";
 
 const SettingsWidget = ({
   onClickParametersTab,
@@ -30,11 +30,7 @@ const SettingsWidget = ({
   const { classes } = useStyle();
   const { t } = useTranslation();
   const profile = useRecoilValue<ICompanyProfile>(companyProfileState);
-  const allLanguages = useRecoilValue(languageOptionsState);
-  const profileData = useRecoilValue<ICompanyProfile>(companyProfileState);
-  const defaultLanguageOptions = profileData?.languages?.length > 0
-    ? allLanguages.filter((lang) => profileData?.languages?.includes(lang.value))
-    : [];
+  const { defaultLanguageOptions } = useDefaultLanguageOptions();
   const [openTranslationModal, setOpenTranslationModal] = useState(false);
   const {
     allProductSKU,
