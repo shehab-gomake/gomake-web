@@ -10608,9 +10608,9 @@ const useDigitalOffsetPrice = ({
       return { isValid: true, errors: [] };
     }
     const errors = [];
+    // Allow items without actions (Task B1212 - calculation page - add item without action)
     if (!data?.actions || data?.actions?.length === 0) {
-      errors.push(t("validateWorkflows.noAction"));
-      return { isValid: false, errors };
+      return { isValid: true, errors: [] };
     }
     for (let i = 0; i < data.actions.length; i++) {
       const action = data.actions[i];
