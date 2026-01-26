@@ -19,6 +19,10 @@ export interface Ticket {
   createdBy: string;
   createdByUserId?: string;
   expectedDeliveryDate?: string; // Expected delivery date (ISO string format)
+  firstMessage?: string; // First message text (for quick preview)
+  firstMessageSenderType?: string; // First message sender type
+  firstMessageSenderName?: string; // First message sender name
+  firstMessageCreatedAt?: string; // First message creation date (ISO string format)
 }
 
 export interface CreateTicketRequest {

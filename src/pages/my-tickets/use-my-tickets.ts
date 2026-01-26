@@ -200,7 +200,7 @@ export const useMyTickets = () => {
           },
           ticket.ticketId
         ),
-        ticket.summary || "-",
+        ticket.firstMessage || ticket.summary || "-",
         ticket.status,
         ticket.priority,
         ticket.assignedEmployeeName || t("tickets.unassigned"),
