@@ -250,7 +250,7 @@ const MaterialMenuWidget = ({
           <div style={clasess.rowTextStyle}>
             {hasProduct
               ? t("products.profits.deleteProduct")
-              : t("addProduct")}
+              : t("products.productManagement.admin.addProduct")}
           </div>
         </MenuItem>
         {
