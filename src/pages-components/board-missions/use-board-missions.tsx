@@ -72,6 +72,8 @@ import { useFrontDeskEmailIntegration } from "../quotes/hooks/use-frontdesk-emai
 import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
 import { EPreferences } from "@/enums/prefernces";
 import NextLink from "next/link";
+import { PlusIcon } from "@/icons";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 type StatusOption = {
   label: string;
@@ -124,6 +126,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     alertSuccess,
   } = useSnackBar();
   const { navigate } = useGomakeRouter();
+  const { secondColor } = useGomakeTheme();
   const { GetPreferenceValueKey } = usePrintHousePreferences();
   const [status, setStatus] = useState<{
     label: string;
@@ -1118,22 +1121,24 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
             sampleType: mission?.exampleType ? (
               getSampleType(mission.exampleType)
             ) : (
-              <Box
-                sx={{
+
+              <div
+                onClick={() => onOpenSampleTypeModal(mission)}
+                style={{
+                  cursor: "pointer",
                   display: "flex",
                   alignItems: "center",
-                  gap: 1,
+                  gap: "8px",
+                  fontSize: "14px",
+                  fontWeight: "500",
+                  width: "fit-content",
+                  minWidth: "135px",
+                  color: secondColor(500),
                 }}
               >
-                <div
-                  onClick={() => onOpenSampleTypeModal(mission)}
-                  style={{
-                    cursor: "pointer",
-                  }}
-                >
-                  {t("boardMissions.addSampleType")}
-                </div>
-              </Box>
+                <PlusIcon />
+                {t("boardMissions.addSampleType")}
+              </div>
             ),
             outSourceType: t(
               "boardMissions." + EWorkSource[mission?.outSourceType ?? 0]
