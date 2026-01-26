@@ -254,6 +254,14 @@ const BaseMaterialsGrouped = ({ isAdmin }: ICustomMaterialsGroupedProps) => {
                               backgroundColor: "rgba(0,0,0,0.02)",
                               borderRadius: 1,
                               border: "1px solid rgba(0,0,0,0.1)",
+                              transition: "all 0.3s ease-in-out",
+                              cursor: "pointer",
+                              "&:hover": {
+                                backgroundColor: "rgba(25, 118, 210, 0.12)",
+                                border: "1px solid rgba(25, 118, 210, 0.3)",
+                                transform: isRTL ? "translateX(-4px)" : "translateX(4px)",
+                                boxShadow: "0 2px 8px rgba(0, 0, 0, 0.15)",
+                              },
                             }}
                           >
                             <Box
