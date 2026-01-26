@@ -1,19 +1,22 @@
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useGomakeAxios } from "@/hooks";
-import { AddButton } from "@/components/button/add-button";
 import { GoMakeModal } from "@/components";
 import { CreateApiTokenModal } from "./create-api-token-modal";
 import { ApiTokenCard } from "./api-token-card";
 import { useStyle } from "../style";
 
-export const ApiTokensList = () => {
+interface ApiTokensListProps {
+  openCreateModal: boolean;
+  onCloseCreateModal: () => void;
+}
+
+export const ApiTokensList = ({ openCreateModal, onCloseCreateModal }: ApiTokensListProps) => {
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
   const { classes } = useStyle();
   const [tokens, setTokens] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
-  const [openCreateModal, setOpenCreateModal] = useState(false);
 
   const fetchTokens = async () => {
     setLoading(true);
@@ -41,18 +44,11 @@ export const ApiTokensList = () => {
 
   const handleCreateSuccess = () => {
     fetchTokens();
-    setOpenCreateModal(false);
+    onCloseCreateModal();
   };
 
   return (
     <div style={classes.container}>
-      <div style={classes.header}>
-        <AddButton
-          label={t("apiTokens.createToken")}
-          onClick={() => setOpenCreateModal(true)}
-        />
-      </div>
-
       {loading ? (
         <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
           {t("common.loading")}
@@ -74,13 +70,14 @@ export const ApiTokensList = () => {
       )}
 
       <GoMakeModal
+        modalTitle={t("apiTokens.createToken")}
         openModal={openCreateModal}
-        onClose={() => setOpenCreateModal(false)}
+        onClose={onCloseCreateModal}
         insideStyle={classes.modalStyle}
       >
         <CreateApiTokenModal
           onSuccess={handleCreateSuccess}
-          onClose={() => setOpenCreateModal(false)}
+          onClose={onCloseCreateModal}
         />
       </GoMakeModal>
     </div>

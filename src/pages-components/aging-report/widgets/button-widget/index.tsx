@@ -6,7 +6,6 @@ import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined";
 import { Button } from "@mui/material";
 import { ReportActionsMenu } from "@/pages-components/transaction-journal-report/widgets/button-widget/report-actions-menu/report-actions-menu";
 import ForwardToInboxRoundedIcon from "@mui/icons-material/ForwardToInboxRounded";
-import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 
 export interface AgingReportButtonWidgetProps {
   onClickBtn1: () => void;
@@ -28,7 +27,7 @@ const AgingReportButtonWidget = ({
 }: AgingReportButtonWidgetProps) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
-  const { primaryColor, primarySecondaryBlend } = useGomakeTheme();
+  const {primaryColor } = useGomakeTheme();
 
   const primaryActions = [
     {
@@ -41,14 +40,14 @@ const AgingReportButtonWidget = ({
     {
       name: t("reports.printDebtCollection"),
       onclick: onClickBtn2,
-      icon: <PrintIcon stroke={primarySecondaryBlend(300)} />,
+      icon: <PrintIcon stroke={primaryColor(300)} />,
     },
     {
       name: t("reports.excelDebtCollection"),
       onclick: onClickBtn3,
       icon: (
         <FileDownloadOutlinedIcon
-          style={{ color: primarySecondaryBlend(300) }}
+          style={{ color: primaryColor(300) }}
         />
       ),
     },
@@ -57,7 +56,7 @@ const AgingReportButtonWidget = ({
     //   onclick: onClickBtn4,
     //   icon: (
     //     <ForwardToInboxRoundedIcon
-    //       style={{ color: primarySecondaryBlend(300), fontSize: "22px" }}
+    //       style={{ color: primaryColor(300), fontSize: "22px" }}
     //     />
     //   ),
     // },
@@ -66,7 +65,7 @@ const AgingReportButtonWidget = ({
     //   onclick: onClickBtn5,
     //   icon: (
     //     <WhatsAppIcon
-    //       style={{ color: primarySecondaryBlend(300), fontSize: "22px" }}
+    //       style={{ color: primaryColor(300), fontSize: "22px" }}
     //     />
     //   ),
     // },
@@ -75,7 +74,7 @@ const AgingReportButtonWidget = ({
       onclick: onClickBtn7,
       icon: (
         <ForwardToInboxRoundedIcon
-          style={{ color: primarySecondaryBlend(300), fontSize: "22px" }}
+          style={{ color: primaryColor(300), fontSize: "22px" }}
         />
       ),
     },
@@ -84,7 +83,7 @@ const AgingReportButtonWidget = ({
       onclick: onClickBtn6,
       icon: (
         <ForwardToInboxRoundedIcon
-          style={{ color: primarySecondaryBlend(300), fontSize: "22px" }}
+          style={{ color: primaryColor(300), fontSize: "22px" }}
         />
       ),
     },

@@ -291,7 +291,7 @@ const CreateNewTransactionModal = ({
               </div>
             </div>
 
-            <div style={{ width: "80%", gap: "10px" }}>
+            <div style={{ width: "80%", display: "flex", flexDirection: "column", gap: "10px" }}>
               <h3 style={classes.filterLabelStyle}>
                 {t("usersSettings.description")}
               </h3>
@@ -301,6 +301,7 @@ const CreateNewTransactionModal = ({
                 style={classes.descriptionStyle}
                 value={description}
                 onChange={onChangeDescription}
+                sx={classes.descriptionSx}
               />
             </div>
           </div>

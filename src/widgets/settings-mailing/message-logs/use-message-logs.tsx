@@ -6,8 +6,10 @@ import { useDebounce } from "@/utils/use-debounce";
 import { SMSTemplatesEnum } from "../messageTemplates/enums/enum";
 import { getAllEmployeesApi } from "@/services/api-service/users/users-api";
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 const useMessageLogs = () => {
+  const { primaryColor , secondColor } = useGomakeTheme();
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
   const [mailLogs, setMailLogs] = useState<any[]>([]);
@@ -201,7 +203,8 @@ const useMessageLogs = () => {
     handleUserChange,
     userId,
     customerId,
-    setCustomerId
+    setCustomerId,
+    primaryColor , secondColor
   };
 };
 

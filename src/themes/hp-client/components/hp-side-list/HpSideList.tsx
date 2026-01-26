@@ -41,6 +41,7 @@ import {
   HpDocumentingIcon,
   HpUsersIcon,
   HpFileApiIcon,
+  HpApiTokenIcon,
   HpPreferencesIcon,
   HpManageBillingIcon,
 } from "@/themes/hp-client/icons";
@@ -361,6 +362,7 @@ const HpSideList = ({
       documents: HpDocumentingIcon,
       users: HpUsersIcon,
       "file-api-settings": HpFileApiIcon,
+      "api-tokens": HpApiTokenIcon,
       preferences: HpPreferencesIcon,
       subscriptions: HpManageBillingIcon,
       translations: (props: { selected?: boolean }) => (

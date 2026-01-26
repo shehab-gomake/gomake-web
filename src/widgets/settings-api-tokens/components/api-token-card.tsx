@@ -2,7 +2,14 @@ import { useTranslation } from "react-i18next";
 import { useGomakeAxios } from "@/hooks";
 import { useSnackBar } from "@/hooks/use-snack-bar";
 import { PrimaryButton } from "@/components/button/primary-button";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { useStyle } from "../style";
+import { Box } from "@mui/material";
+import VpnKeyIcon from "@mui/icons-material/VpnKey";
+import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
+import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 
 interface ApiTokenCardProps {
   token: any;
@@ -13,7 +20,9 @@ export const ApiTokenCard = ({ token, onRevoke }: ApiTokenCardProps) => {
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
   const { alertSuccess, alertFault } = useSnackBar();
+  const { successColor, errorColor } = useGomakeTheme();
   const { classes } = useStyle();
+  const isActive = token.isActive !== false;
 
   const handleRevoke = async () => {
     if (!confirm(t("apiTokens.confirmRevoke"))) return;
@@ -48,62 +57,101 @@ export const ApiTokenCard = ({ token, onRevoke }: ApiTokenCardProps) => {
   };
 
   return (
-    <div style={classes.card}>
-      <div style={classes.cardHeader}>
-        <h4 style={{ margin: 0, ...classes.modalTitle }}>
-          {token.name || t("apiTokens.unnamedToken")}
-        </h4>
-        <span
-          style={{
-            ...classes.statusBadge,
-            backgroundColor: token.isActive !== false ? "#D1FAE5" : "#FEE2E2",
-            color: token.isActive !== false ? "#059669" : "#DC2626",
-          }}
-        >
-          {token.isActive !== false ? t("apiTokens.active") : t("apiTokens.revoked")}
-        </span>
-      </div>
+    <Box
+      sx={{
+        ...classes.card,
+        "&:hover": {
+          boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
+        },
+      }}
+    >
+      <div style={classes.cardContent}>
+        {/* Header Section */}
+        <div style={classes.cardHeader}>
+          <div style={classes.cardTitleSection}>
+            <div style={classes.cardIconContainer}>
+              <VpnKeyIcon style={classes.cardIcon} />
+            </div>
+            <div style={classes.cardTitleWrapper}>
+              <h4 style={classes.cardTitle}>
+                {token.name || t("apiTokens.unnamedToken")}
+              </h4>
+              <div style={classes.statusBadgeContainer}>
+                {isActive ? (
+                  <CheckCircleOutlineIcon style={classes.statusIcon(successColor)} />
+                ) : (
+                  <CancelOutlinedIcon style={classes.statusIcon(errorColor)} />
+                )}
+                <span style={classes.statusBadge(isActive)}>
+                  {isActive ? t("apiTokens.active") : t("apiTokens.revoked")}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
 
-      {token.description && (
-        <p style={classes.cardDescription}>{token.description}</p>
-      )}
+        {/* Description */}
+        {token.description && (
+          <p style={classes.cardDescription}>{token.description}</p>
+        )}
 
-      <div style={classes.cardInfo}>
-        <div>
-          <strong>{t("apiTokens.clientId")}:</strong>{" "}
+        {/* Client ID Section */}
+        <div style={classes.clientIdSection}>
+          <div style={classes.clientIdLabel}>{t("apiTokens.clientId")}</div>
           <code style={classes.code}>{token.clientId || token.client_id}</code>
         </div>
-        {token.createdAt && (
-          <div>
-            <strong>{t("apiTokens.created")}:</strong>{" "}
-            {formatDate(token.createdAt || token.created_at)}
-          </div>
-        )}
-        {token.lastUsedAt && (
-          <div>
-            <strong>{t("apiTokens.lastUsed")}:</strong>{" "}
-            {formatDate(token.lastUsedAt || token.last_used_at)}
-          </div>
-        )}
-        {token.expiresAt && (
-          <div>
-            <strong>{t("apiTokens.expiresAt")}:</strong>{" "}
-            {formatDate(token.expiresAt || token.expires_at)}
+
+        {/* Info Grid */}
+        <div style={classes.cardInfoGrid}>
+          {token.createdAt && (
+            <div style={classes.infoItem}>
+              <CalendarTodayIcon style={classes.infoIcon} />
+              <div style={classes.infoContent}>
+                <div style={classes.infoLabel}>{t("apiTokens.created")}</div>
+                <div style={classes.infoValue}>
+                  {formatDate(token.createdAt || token.created_at)}
+                </div>
+              </div>
+            </div>
+          )}
+          {token.lastUsedAt && (
+            <div style={classes.infoItem}>
+              <AccessTimeIcon style={classes.infoIcon} />
+              <div style={classes.infoContent}>
+                <div style={classes.infoLabel}>{t("apiTokens.lastUsed")}</div>
+                <div style={classes.infoValue}>
+                  {formatDate(token.lastUsedAt || token.last_used_at)}
+                </div>
+              </div>
+            </div>
+          )}
+          {token.expiresAt && (
+            <div style={classes.infoItem}>
+              <CalendarTodayIcon style={classes.infoIcon} />
+              <div style={classes.infoContent}>
+                <div style={classes.infoLabel}>{t("apiTokens.expiresAt")}</div>
+                <div style={classes.infoValue}>
+                  {formatDate(token.expiresAt || token.expires_at)}
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Actions */}
+        {isActive && (
+          <div style={classes.cardActions}>
+            <PrimaryButton
+              style={classes.revokeButton}
+              variant="outlined"
+              color="error"
+              onClick={handleRevoke}
+            >
+              {t("apiTokens.revoke")}
+            </PrimaryButton>
           </div>
         )}
       </div>
-
-      {token.isActive !== false && (
-        <div style={classes.cardActions}>
-          <PrimaryButton
-            variant="outlined"
-            color="error"
-            onClick={handleRevoke}
-          >
-            {t("apiTokens.revoke")}
-          </PrimaryButton>
-        </div>
-      )}
-    </div>
+    </Box>
   );
 };
