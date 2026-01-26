@@ -148,6 +148,8 @@ const useGraphicsApprovalUpload = ({
           fileName: file.name, 
           contentType: file.type,
           bucketName: "gomake-graphics-approval",
+          isDev: true,
+          origin: "http://localhost:3004",
         },
         {
           headers: {
@@ -304,6 +306,7 @@ const useGraphicsApprovalUpload = ({
         files: uploadedFiles.map((file) => ({
           url: file.url,
           description: file.description || "",
+          fileName: file.fileName || "",
         })),
         contactEmail: contactEmail || undefined,
         jobGraphicApprovalId: jobGraphicApprovalId || undefined,

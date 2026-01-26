@@ -81,6 +81,7 @@ const SEND_GRAPHICS_APPROVAL_TO_CLIENT_URL =
   "/v1/erp-service/board-missions/send-graphics-approval-to-client";
 const GET_GRAPHICS_APPROVAL_URL = "/v1/erp-service/board-missions/get-graphics-approval";
 const UPDATE_GRAPHICS_APPROVAL_FILE_URL = "/v1/erp-service/board-missions/update-graphics-approval-file";
+const DELETE_GRAPHICS_APPROVAL_FILE_URL = "/v1/erp-service/board-missions/delete-graphics-approval-file";
 const GET_UPLOADING_FILES_URL =
   "/v1/erp-service/board-missions/get-uploading-files/";
 const GET_BOARD_MISSIONS_ID_BY_QR_CODE_URL =
@@ -1011,7 +1012,7 @@ const updateGraphicsApprovalFileApi: ICallAndSetData = async (
 const sendGraphicsApprovalToClientApi: ICallAndSetData = async (
   callApi,
   callBack,
-  data: { boardMissionId: string; files: Array<{ url: string; description: string }>; contactEmail?: string; jobGraphicApprovalId?: string }
+  data: { boardMissionId: string; files: Array<{ url: string; description: string; fileName?: string }>; contactEmail?: string; jobGraphicApprovalId?: string }
 ) => {
   return await getSetApiData(
     callApi,
@@ -1019,6 +1020,20 @@ const sendGraphicsApprovalToClientApi: ICallAndSetData = async (
     SEND_GRAPHICS_APPROVAL_TO_CLIENT_URL,
     callBack,
     data
+  );
+};
+
+const deleteGraphicsApprovalFileApi: ICallAndSetData = async (
+  callApi,
+  callBack,
+  data: { fileId: string }
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.DELETE,
+    `${DELETE_GRAPHICS_APPROVAL_FILE_URL}/${data.fileId}`,
+    callBack,
+    undefined
   );
 };
 
@@ -1083,4 +1098,5 @@ export {
   getGraphicsApprovalApi,
   updateGraphicsApprovalFileApi,
   getGraphicsApprovalByBoardMissionIdApi,
+  deleteGraphicsApprovalFileApi,
 };

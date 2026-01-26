@@ -1,10 +1,11 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { GoMakeDialog } from "@/components/dialog/go-make-dialog";
 import { useGomakeAxios } from "@/hooks/use-gomake-axios";
-import { Box, Stack, Typography, CircularProgress, Paper, Button, TextField } from "@mui/material";
+import { Box, Stack, Typography, CircularProgress, Paper, Button, TextField, IconButton } from "@mui/material";
+import { Delete as DeleteIcon } from "@mui/icons-material";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { useTranslation } from "react-i18next";
-import { getGraphicsApprovalByBoardMissionIdApi, updateGraphicsApprovalFileApi } from "@/services/api-service/production-floor/production-floor-endpoints";
+import { getGraphicsApprovalByBoardMissionIdApi, updateGraphicsApprovalFileApi, deleteGraphicsApprovalFileApi } from "@/services/api-service/production-floor/production-floor-endpoints";
 import { GraphicsApprovalUploadModal } from "@/widgets/production-floor/views/board-missions-view/navigation-buttons/graphics-approval-upload-modal";
 import { NoteInput } from "./note-input-component";
 
@@ -62,6 +63,7 @@ const GraphicsApprovalViewModal = ({
   const [updatingFiles, setUpdatingFiles] = useState<Set<string>>(new Set());
   const [updatingNotes, setUpdatingNotes] = useState<Set<string>>(new Set());
   const [editingFiles, setEditingFiles] = useState<Set<string>>(new Set());
+  const [deletingFiles, setDeletingFiles] = useState<Set<string>>(new Set());
   const [openUploadModal, setOpenUploadModal] = useState(false);
 
   // Load graphics approval data
@@ -205,6 +207,39 @@ const GraphicsApprovalViewModal = ({
     }
   };
 
+  // Delete file
+  const handleDeleteFile = async (fileId: string) => {
+    if (deletingFiles.has(fileId)) return;
+    
+    // Confirm deletion
+    if (!window.confirm(t("graphicsApproval.confirmDelete") || "Are you sure you want to delete this file?")) {
+      return;
+    }
+
+    setDeletingFiles((prev) => new Set(prev).add(fileId));
+
+    const callBack = (res: any) => {
+      setDeletingFiles((prev) => {
+        const next = new Set(prev);
+        next.delete(fileId);
+        return next;
+      });
+
+      if (res?.success) {
+        // Reload approval data to get updated file list
+        loadGraphicsApproval();
+        // Notify parent to refresh status
+        if (onStatusUpdate) {
+          onStatusUpdate();
+        }
+      } else {
+        setError(res?.message || t("graphicsApproval.deleteFailed") || "Failed to delete file");
+      }
+    };
+
+    await deleteGraphicsApprovalFileApi(callApi, callBack, { fileId });
+  };
+
   return (
     <>
       <GoMakeDialog
@@ -300,7 +335,7 @@ const GraphicsApprovalViewModal = ({
                                 </Typography>
                               )}
                             </Box>
-                            <Box>
+                            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                               <a
                                 href={file.fileUrl}
                                 target="_blank"
@@ -311,6 +346,18 @@ const GraphicsApprovalViewModal = ({
                                   {t("graphicsApproval.viewFile") || "View File"}
                                 </Button>
                               </a>
+                              <IconButton
+                                onClick={() => handleDeleteFile(file.id)}
+                                disabled={deletingFiles.has(file.id)}
+                                size="small"
+                                sx={{ color: errorColor(500) }}
+                              >
+                                {deletingFiles.has(file.id) ? (
+                                  <CircularProgress size={20} />
+                                ) : (
+                                  <DeleteIcon fontSize="small" />
+                                )}
+                              </IconButton>
                             </Box>
                           </Stack>
 
