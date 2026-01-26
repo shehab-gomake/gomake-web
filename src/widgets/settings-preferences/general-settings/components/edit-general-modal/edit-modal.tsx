@@ -300,6 +300,19 @@ const EditModal = ({
             // value={state?.description}
             value={t(`preferences.${state?.description.trim()}`)}
             disabled={true}
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                "& fieldset": {
+                  border: "none",
+                },
+                "&:hover fieldset": {
+                  border: "none",
+                },
+                "&.Mui-focused fieldset": {
+                  border: "none",
+                },
+              },
+            }}
           />
         </div>
         <PrimaryButton variant="contained" onClick={handleUpdate}>

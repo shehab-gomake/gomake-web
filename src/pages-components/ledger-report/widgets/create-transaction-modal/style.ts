@@ -78,28 +78,47 @@ const useStyle = () => {
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
-        background: "#FFF",
-        boxShadow: "0px 1px 10px rgba(0, 0, 0, 0.08)",
-        height: 40,
+        background: "var(--theme-bg-primary, #FFF)",
+        boxShadow: "var(--theme-input-shadow, 0px 1px 10px rgba(0, 0, 0, 0.08))",
+        height: "var(--theme-input-height, 40px)", 
         width: "100%",
         paddingLeft: 10,
         paddingRight: 10,
         cursor: "pointer",
         position: "relative" as "relative",
+        border:
+        "var(--theme-input-border-hover, 1px solid var(--theme-input-border-color, #FFFFFF))",
+        borderRadius: "var(--theme-radius-md, 8px)",
       },
       descriptionStyle: {
-        height: "120px",
-        display: "flex",
-        padding: "var(--spacing-lg, 12px) 14px",
-        alignItems: "flex-start",
-        gap: "var(--spacing-md, 8px)",
-        flex: "1 0 0",
-        alignSelf: "stretch",
-        borderRadius: "var(--radius-md, 8px)",
-        border: "1px solid var(--Colors-Border-border-primary, #D0D5DD)",
-        background: "var(--Colors-Background-bg-primary, #FFF)",
-        boxShadow: "0px 1px 2px 0px rgba(16, 24, 40, 0.05)",
+        width: "100%",
+        minHeight: "120px",
       },
+      descriptionSx:{
+        "& .MuiOutlinedInput-root": {
+          minHeight: "120px",
+          alignItems: "flex-start",
+          borderRadius: "var(--radius-md, 8px)",
+          background: "var(--Colors-Background-bg-primary, #FFF)",
+          border: "1px solid var(--Colors-Border-border-primary, #D0D5DD)",
+          "& fieldset": {
+            border: "none",
+            
+          },
+          "&:hover fieldset": {
+            border: "none",
+          },
+          "&.Mui-focused fieldset": {
+            border: "none",
+          },
+        },
+        "& .MuiInputBase-input": {
+          minHeight: "120px !important",
+          padding: "var(--spacing-lg, 12px) 14px",
+
+        },
+      }
+      
     };
   }, []);
   return {
