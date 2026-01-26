@@ -409,7 +409,7 @@ const MoreActionsButton = ({ isMobile = false }) => {
                 {t("boardMissions.addSampleType")}
               </MenuItem>
             )}
-            {boardMissions?.orderId && (
+            {boardMissions?.orderId && !boardMissions?.isClosed && (
               <>
                 <MenuItem onClick={handleCloseAsDeliveryNote}>
                   {t("sales.quote.closeAsDeliveryNote")}

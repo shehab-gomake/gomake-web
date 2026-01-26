@@ -85,6 +85,7 @@ export interface IBoardMissionsDetails {
   isHaveDelivery?: boolean;
   qualityIssueReason?: string;
   exampleType?: number;
+  isClosed?: string;
 }
 
 export interface IBoardMissionStep {
