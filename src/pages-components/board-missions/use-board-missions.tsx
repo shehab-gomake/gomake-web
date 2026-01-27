@@ -1120,26 +1120,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
             purchaseNumber: mission?.purchaseNumber,
             sampleType: mission?.exampleType ? (
               getSampleType(mission.exampleType)
-            ) : (
-
-              <div
-                onClick={() => onOpenSampleTypeModal(mission)}
-                style={{
-                  cursor: "pointer",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "8px",
-                  fontSize: "14px",
-                  fontWeight: "500",
-                  width: "fit-content",
-                  minWidth: "135px",
-                  color: secondColor(500),
-                }}
-              >
-                <PlusIcon />
-                {t("boardMissions.addSampleType")}
-              </div>
-            ),
+            ) : null,
             outSourceType: t(
               "boardMissions." + EWorkSource[mission?.outSourceType ?? 0]
             ),
