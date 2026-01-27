@@ -65,6 +65,8 @@ const GraphicsApprovalViewModal = ({
   const [editingFiles, setEditingFiles] = useState<Set<string>>(new Set());
   const [deletingFiles, setDeletingFiles] = useState<Set<string>>(new Set());
   const [openUploadModal, setOpenUploadModal] = useState(false);
+  const [openDeleteConfirmModal, setOpenDeleteConfirmModal] = useState(false);
+  const [fileToDelete, setFileToDelete] = useState<string | null>(null);
 
   // Load graphics approval data
   const loadGraphicsApproval = useCallback(async () => {
@@ -207,21 +209,23 @@ const GraphicsApprovalViewModal = ({
     }
   };
 
-  // Delete file
-  const handleDeleteFile = async (fileId: string) => {
-    if (deletingFiles.has(fileId)) return;
-    
-    // Confirm deletion
-    if (!window.confirm(t("graphicsApproval.confirmDelete") || "Are you sure you want to delete this file?")) {
-      return;
-    }
+  // Open delete confirmation modal
+  const handleDeleteFileClick = (fileId: string) => {
+    setFileToDelete(fileId);
+    setOpenDeleteConfirmModal(true);
+  };
 
-    setDeletingFiles((prev) => new Set(prev).add(fileId));
+  // Confirm and delete file
+  const handleConfirmDelete = async () => {
+    if (!fileToDelete || deletingFiles.has(fileToDelete)) return;
+
+    setOpenDeleteConfirmModal(false);
+    setDeletingFiles((prev) => new Set(prev).add(fileToDelete));
 
     const callBack = (res: any) => {
       setDeletingFiles((prev) => {
         const next = new Set(prev);
-        next.delete(fileId);
+        next.delete(fileToDelete);
         return next;
       });
 
@@ -235,9 +239,16 @@ const GraphicsApprovalViewModal = ({
       } else {
         setError(res?.message || t("graphicsApproval.deleteFailed") || "Failed to delete file");
       }
+      setFileToDelete(null);
     };
 
-    await deleteGraphicsApprovalFileApi(callApi, callBack, { fileId });
+    await deleteGraphicsApprovalFileApi(callApi, callBack, { fileId: fileToDelete });
+  };
+
+  // Cancel delete
+  const handleCancelDelete = () => {
+    setOpenDeleteConfirmModal(false);
+    setFileToDelete(null);
   };
 
   return (
@@ -347,7 +358,7 @@ const GraphicsApprovalViewModal = ({
                                 </Button>
                               </a>
                               <IconButton
-                                onClick={() => handleDeleteFile(file.id)}
+                                onClick={() => handleDeleteFileClick(file.id)}
                                 disabled={deletingFiles.has(file.id)}
                                 size="small"
                                 sx={{ color: errorColor(500) }}
@@ -458,6 +469,41 @@ const GraphicsApprovalViewModal = ({
         jobGraphicApprovalId={approval?.id}
         onSuccess={handleUploadSuccess}
       />
+
+      {/* Delete Confirmation Modal */}
+      <GoMakeDialog
+        open={openDeleteConfirmModal}
+        onClose={handleCancelDelete}
+        title={t("graphicsApproval.deleteFile") || "Delete File"}
+        onPrimaryAction={handleConfirmDelete}
+        onCancel={handleCancelDelete}
+        primaryButtonLabel={t("graphicsApproval.delete") || "Delete"}
+        cancelButtonLabel={t("graphicsApproval.cancel") || "Cancel"}
+        primaryButtonLoading={fileToDelete ? deletingFiles.has(fileToDelete) : false}
+        primaryButtonDisabled={fileToDelete ? deletingFiles.has(fileToDelete) : false}
+        maxWidth="sm"
+        slotProps={{
+          backdrop: {
+            sx: {
+              zIndex: 99999998,
+            },
+          },
+        }}
+        customStyles={{
+          paper: {
+            zIndex: 99999999,
+          },
+        }}
+        sx={{
+          zIndex: 99999999,
+        }}
+      >
+        <Box sx={{ padding: "16px 0" }}>
+          <Typography variant="body1">
+            {t("graphicsApproval.confirmDelete") || "Are you sure you want to delete this file? This action cannot be undone."}
+          </Typography>
+        </Box>
+      </GoMakeDialog>
     </>
   );
 };
